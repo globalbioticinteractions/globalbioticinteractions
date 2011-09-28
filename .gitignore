@@ -1,0 +1,8 @@
+target/
+.project
+.classpath
+test-output/
+*.iml
+*.ipr
+*.iws
+.idea/
