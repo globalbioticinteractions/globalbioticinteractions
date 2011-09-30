@@ -7,7 +7,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 import org.trophic.graph.domain.Movie;
-import org.trophic.graph.service.CineastsRepository;
 
 import java.util.HashSet;
 import java.util.List;

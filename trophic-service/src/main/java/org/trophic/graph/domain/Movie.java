@@ -5,6 +5,7 @@ import org.springframework.data.neo4j.annotation.NodeEntity;
 import org.springframework.data.neo4j.annotation.RelatedTo;
 import org.springframework.data.neo4j.annotation.RelatedToVia;
 import org.springframework.data.neo4j.annotation.Indexed;
+import org.springframework.data.neo4j.core.NodeBacked;
 
 import java.util.*;
 

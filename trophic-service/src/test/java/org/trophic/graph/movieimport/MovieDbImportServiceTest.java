@@ -8,7 +8,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 import org.trophic.graph.domain.Movie;
 import org.trophic.graph.domain.Person;
-import org.trophic.graph.movieimport.MovieDbImportService;
 import org.trophic.graph.service.CineastsRepository;
 
 import static org.junit.Assert.assertEquals;
