@@ -26,7 +26,7 @@ import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration({"/movies-test-context.xml"})
+@ContextConfiguration({"/base-test-context.xml"})
 @Transactional
 public class StudyImporterImplTest {
 
@@ -57,14 +57,14 @@ public class StudyImporterImplTest {
                                         createString())));
 
             }
-        }, "predators eat prey");
+        });
         studyImporter.setLocationRepository(locationRepository);
         studyImporter.setSpeciesRepository(speciesRepository);
         studyImporter.setStudyRepository(studyRepository);
 
         Study study = studyImporter.importStudy();
 
-        ClosableIterable<Study> foundStudies = studyRepository.findAllByQuery("search", "title", "eat*");
+        ClosableIterable<Study> foundStudies = studyRepository.findAllByQuery("search", "title", StudyImporterImpl.DEFAULT_STUDY_TITLE);
         Study foundStudy = foundStudies.iterator().next();
         assertNotNull(foundStudy);
         assertEquals(study.getSpecimens().size(), foundStudy.getSpecimens().size());

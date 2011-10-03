@@ -19,7 +19,7 @@ import org.trophic.graph.repository.PaperRepository;
  * @since 04.03.11
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration({"/movies-test-context.xml"})
+@ContextConfiguration({"/base-test-context.xml"})
 @Transactional
 public class PaperTest {
 

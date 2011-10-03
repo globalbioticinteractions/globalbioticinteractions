@@ -3,6 +3,8 @@ package org.trophic.graph.data;
 import com.Ostermiller.util.LabeledCSVParser;
 import org.neo4j.helpers.collection.ClosableIterable;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.trophic.graph.domain.Location;
 import org.trophic.graph.domain.Species;
 import org.trophic.graph.domain.Specimen;
@@ -13,10 +15,12 @@ import org.trophic.graph.repository.StudyRepository;
 
 import java.io.IOException;
 
-class StudyImporterImpl implements StudyImporter {
+@Component
+public class StudyImporterImpl implements StudyImporter {
 
     public static final String PREDATOR = "predator";
     public static final String PREY = "prey";
+    public static final String DEFAULT_STUDY_TITLE = "mississippi alabama fish study";
 
     @Autowired
     private SpeciesRepository speciesRepository;
@@ -27,18 +31,20 @@ class StudyImporterImpl implements StudyImporter {
     @Autowired
     private StudyRepository studyRepository;
 
+    @Autowired
     private ParserFactory parserFactory;
 
-    private String studyTitle;
+    public StudyImporterImpl() {
+        this(null);
+    }
 
-    public StudyImporterImpl(ParserFactory parserFactory, String title) {
-        studyTitle = title;
+    public StudyImporterImpl(ParserFactory parserFactory) {
         this.parserFactory = parserFactory;
     }
 
     @Override
     public Study importStudy() throws IOException {
-        return createAndPopulateStudy(parserFactory, studyTitle);
+        return createAndPopulateStudy(parserFactory, DEFAULT_STUDY_TITLE);
     }
 
     private Study createAndPopulateStudy(ParserFactory parserFactory, String title) throws IOException {

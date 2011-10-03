@@ -16,7 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.trophic.graph.repository.StudyRepository;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration({"/movies-test-context.xml"})
+@ContextConfiguration({"/base-test-context.xml"})
 @Transactional
 public class StudyTest {
 
