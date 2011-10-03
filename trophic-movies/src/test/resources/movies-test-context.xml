@@ -15,14 +15,7 @@
 		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd http://www.springframework.org/schema/data/graph http://www.springframework.org/schema/data/graph/datagraph-1.0.xsd">
 
-    <context:annotation-config/>
-    <context:spring-configured/>
-    <context:component-scan base-package="org.trophic.graph"/>
-
-    <datagraph:config graphDatabaseService="graphDatabaseService"/>
-    <datagraph:repositories base-package="org.trophic.graph.repository"/>
-
-    <bean id="graphDatabaseService" class="org.neo4j.test.ImpermanentGraphDatabase"/>
+   <import resource="classpath:/base-test-context.xml"/>
 
     <bean class="org.trophic.graph.movieimport.MovieDbApiClient">
         <constructor-arg value="926d2a79e82920b62f03b1cb57e532e6"/>
@@ -30,5 +23,4 @@
     <bean class="org.trophic.graph.movieimport.MovieDbLocalStorage">
         <constructor-arg value="target/json-data"/>
     </bean>
-    <tx:annotation-driven mode="aspectj"/>
 </beans>
