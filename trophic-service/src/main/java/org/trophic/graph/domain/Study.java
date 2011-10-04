@@ -21,7 +21,7 @@ public class Study {
 	@Indexed
 	private String id;
 
-	@Indexed(fulltext = true, indexName = "search")
+	@Indexed
 	private String title;
 	
     @RelatedTo(elementClass = Specimen.class, type = "COLLECTED")

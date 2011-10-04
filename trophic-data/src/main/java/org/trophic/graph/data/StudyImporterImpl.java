@@ -5,6 +5,7 @@ import org.neo4j.helpers.collection.ClosableIterable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.trophic.graph.domain.Location;
 import org.trophic.graph.domain.Species;
 import org.trophic.graph.domain.Specimen;
@@ -72,15 +73,11 @@ public class StudyImporterImpl implements StudyImporter {
     }
 
     private Study findOrCreateStudy(String title) {
-        Study study = null;
-        ClosableIterable<Study> foundStudies = studyRepository.findAllByPropertyValue("title", title);
-        if (foundStudies.iterator().hasNext()) {
-            study = foundStudies.iterator().next();
-        } else {
+        Study study = studyRepository.findByPropertyValue("title", title);
+        if (null == study) {
             study = new Study().persist();
             study.setTitle(title);
         }
-        foundStudies.close();
         return study;
     }
 

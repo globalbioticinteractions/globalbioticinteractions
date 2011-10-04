@@ -16,7 +16,8 @@ import java.util.Set;
 public class Species {
     @Indexed
     String id;
-    
+
+    @Indexed
     String scientificName;
 
     public Species(String id, String scientificName) {

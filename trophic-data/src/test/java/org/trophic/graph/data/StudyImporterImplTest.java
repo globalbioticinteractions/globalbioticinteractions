@@ -62,9 +62,17 @@ public class StudyImporterImplTest {
         studyImporter.setSpeciesRepository(speciesRepository);
         studyImporter.setStudyRepository(studyRepository);
 
+        assertEquals(0, studyRepository.count());
+        assertEquals(0, speciesRepository.count());
+        assertEquals(0, locationRepository.count());
         Study study = studyImporter.importStudy();
+        studyImporter.importStudy();
 
-        ClosableIterable<Study> foundStudies = studyRepository.findAllByQuery("search", "title", StudyImporterImpl.DEFAULT_STUDY_TITLE);
+        assertEquals(3, speciesRepository.count());
+        assertEquals(1, studyRepository.count());
+        assertEquals(2, locationRepository.count());
+
+        ClosableIterable<Study> foundStudies = studyRepository.findAllByPropertyValue("title", StudyImporterImpl.DEFAULT_STUDY_TITLE);
         Study foundStudy = foundStudies.iterator().next();
         assertNotNull(foundStudy);
         assertEquals(study.getSpecimens().size(), foundStudy.getSpecimens().size());

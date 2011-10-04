@@ -20,14 +20,15 @@ import org.trophic.graph.repository.StudyRepository;
 @Transactional
 public class StudyTest {
 
+    public static final String CARCHARODON_CARCHARIAS = "Carcharodon carcharias";
+
     @Autowired
     protected StudyRepository studyRepository;
-    
 
     @Test
     public void researcherCanContributeToPaper() {
         Study study = new Study("1", "Our first study").persist();
-        Species greatWhiteSpecies = new Species("1", "Carcharodon carcharias").persist();
+        Species greatWhiteSpecies = new Species("1", CARCHARODON_CARCHARIAS).persist();
         Species goldFishSpecies = new Species("2", "Carassius auratus auratus").persist();
 
         Specimen shark = new Specimen("1").persist();
@@ -48,15 +49,16 @@ public class StudyTest {
 
         Specimen firstSpecimen = study.getSpecimens().iterator().next();
         assertEquals(shark, firstSpecimen);
+        assertEquals(CARCHARODON_CARCHARIAS, firstSpecimen.getSpecies().getScientificName());
         assertEquals(greatWhiteSpecies, firstSpecimen.getSpecies());
     }
 
     @Test
-    public void canFindPaperByPartialTitle() {
+    public void canFindPaper() {
     	Study study = new Study("1", "A study of theory of special relativity").persist();
     	Paper paper = new Paper("1", "Aspects of special relativity").persist();
     	study.publishedIn(paper);
-        Iterator<Study> queryResults = this.studyRepository.findAllByQuery("search", "title", "Theory*").iterator();
+        Iterator<Study> queryResults = this.studyRepository.findAllByPropertyValue("title", "A study of theory of special relativity").iterator();
         assertTrue("found paper by query",queryResults.hasNext());
         Study foundStudy = queryResults.next();
         assertEquals(study, foundStudy);

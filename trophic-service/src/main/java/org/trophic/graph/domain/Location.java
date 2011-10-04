@@ -21,10 +21,13 @@ public class Location {
 	@Indexed
 	private String id;
 
+    @Indexed
 	private Double latitude;
 
+    @Indexed
 	private Double longitude;
 
+    @Indexed
 	private Double altitude;
 
 	public Location() {
