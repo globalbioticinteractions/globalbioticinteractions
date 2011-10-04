@@ -22,6 +22,9 @@ public class Location {
 	private String id;
 
     @Indexed
+    private String name;
+
+    @Indexed
 	private Double latitude;
 
     @Indexed

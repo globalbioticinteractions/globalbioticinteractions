@@ -40,9 +40,8 @@ public class StudyTest {
         
         Location bolinasBay = new Location("1", 12.2d, 12.1d, -100.0d);
         shark.collectedIn(bolinasBay);
-        shark.collectedAsPartOf(study);
-        shark.collectedAt(new Date());
-        
+        study.getSpecimens().add(shark);
+
         Study foundStudy = this.studyRepository.findByPropertyValue("id", "1");
         
         assertEquals(study, foundStudy);

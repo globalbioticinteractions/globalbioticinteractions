@@ -54,6 +54,7 @@ public class StudyImporterImpl implements StudyImporter {
         while (csvParser.getLine() != null) {
             addNextRecordToStudy(csvParser, study);
         }
+        study.persist();
         return study;
     }
 
@@ -64,33 +65,38 @@ public class StudyImporterImpl implements StudyImporter {
 
         Specimen prey = createSpecimenForSpecies(csvParser.getValueByLabel(PREY));
         setWithExistingOrNewLocation(prey, latitude, longitude, altitude);
+        prey.persist();
 
         Specimen predator = createSpecimenForSpecies(csvParser.getValueByLabel(PREDATOR));
         setWithExistingOrNewLocation(predator, latitude, longitude, altitude);
+        predator.persist();
         predator.ate(prey);
-
+        predator.persist();
         study.getSpecimens().add(predator);
+
     }
 
     private Study findOrCreateStudy(String title) {
         Study study = studyRepository.findByPropertyValue("title", title);
         if (null == study) {
-            study = new Study().persist();
+            study = new Study();
             study.setTitle(title);
+            study.persist();
         }
         return study;
     }
 
-    private void setWithExistingOrNewLocation(Specimen soecimen, Double lat, Double longitude, Double altitude) {
-        Location foundLocation = findLocation(lat, longitude, altitude);
-        if (null == foundLocation) {
-            foundLocation = new Location().persist();
-            foundLocation.setLatitude(lat);
-            foundLocation.setLongitude(longitude);
-            foundLocation.setAltitude(altitude);
+    private void setWithExistingOrNewLocation(Specimen specimen, Double lat, Double longitude, Double altitude) {
+        Location location = findLocation(lat, longitude, altitude);
+        if (null == location) {
+            location = new Location();
+            location.setLatitude(lat);
+            location.setLongitude(longitude);
+            location.setAltitude(altitude);
+            location.persist();
         }
 
-        soecimen.collectedIn(foundLocation);
+        specimen.collectedIn(location);
     }
 
     private Location findLocation(Double latitude, Double longitude, Double altitude) {
@@ -107,12 +113,13 @@ public class StudyImporterImpl implements StudyImporter {
     }
 
     private Specimen createSpecimenForSpecies(String scientificName) {
-        Specimen specimen = new Specimen().persist();
+        Specimen specimen = new Specimen();
 
         Species species = speciesRepository.findByPropertyValue("scientificName", scientificName);
         if (null == species) {
-            species = new Species().persist();
+            species = new Species();
             species.setScientificName(scientificName);
+            species.persist();
         }
         specimen.setSpecies(species);
         return specimen;
