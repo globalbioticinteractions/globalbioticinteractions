@@ -37,10 +37,10 @@ public class StudyTest {
         
         shark.ate(goldFish);
         
-        Location bolinasBay = new Location("1", 12.2d, 12.1d, -100.0d);
+        Location bolinasBay = new Location("1", 12.2d, 12.1d, -100.0d).persist();
         shark.caughtIn(bolinasBay);
 
-        Season winter = new Season("winter").persist();
+        Season winter = new Season("1", "winter").persist();
         shark.caughtDuring(winter);
         study.getSpecimens().add(shark);
 
@@ -52,6 +52,8 @@ public class StudyTest {
         assertEquals(shark, firstSpecimen);
         assertEquals(CARCHARODON_CARCHARIAS, firstSpecimen.getSpecies().getScientificName());
         assertEquals(greatWhiteSpecies, firstSpecimen.getSpecies());
+        assertEquals(new Double(-100.0d), firstSpecimen.getSampleLocation().getAltitude());
+        assertEquals("winter", firstSpecimen.getSeason().getTitle());
     }
 
     @Test

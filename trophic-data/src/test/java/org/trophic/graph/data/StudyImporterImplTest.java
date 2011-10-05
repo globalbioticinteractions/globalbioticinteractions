@@ -10,16 +10,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
-import org.trophic.graph.domain.Location;
-import org.trophic.graph.domain.Species;
-import org.trophic.graph.domain.Specimen;
-import org.trophic.graph.domain.Study;
+import org.trophic.graph.domain.*;
 import org.trophic.graph.repository.LocationRepository;
+import org.trophic.graph.repository.SeasonRepository;
 import org.trophic.graph.repository.SpeciesRepository;
 import org.trophic.graph.repository.StudyRepository;
 
 import java.io.IOException;
 import java.io.StringReader;
+import java.util.Iterator;
 import java.util.Set;
 
 import static junit.framework.Assert.assertEquals;
@@ -38,6 +37,9 @@ public class StudyImporterImplTest {
 
     @Autowired
     LocationRepository locationRepository;
+
+    @Autowired
+    SeasonRepository seasonRepository;
 
     @Test
     public void createAndPopulateStudy() throws IOException {
@@ -58,6 +60,8 @@ public class StudyImporterImplTest {
 
             }
         });
+
+        studyImporter.setSeasonRepository(seasonRepository);
         studyImporter.setLocationRepository(locationRepository);
         studyImporter.setSpeciesRepository(speciesRepository);
         studyImporter.setStudyRepository(studyRepository);
@@ -65,34 +69,38 @@ public class StudyImporterImplTest {
         assertEquals(0, studyRepository.count());
         assertEquals(0, speciesRepository.count());
         assertEquals(0, locationRepository.count());
+        assertEquals(0, seasonRepository.count());
         Study study = studyImporter.importStudy();
         studyImporter.importStudy();
 
         assertEquals(3, speciesRepository.count());
         assertEquals(1, studyRepository.count());
         assertEquals(2, locationRepository.count());
+        assertEquals(1, seasonRepository.count());
 
         ClosableIterable<Study> foundStudies = studyRepository.findAllByPropertyValue("title", StudyImporterImpl.DEFAULT_STUDY_TITLE);
         Study foundStudy = foundStudies.iterator().next();
         assertNotNull(foundStudy);
         assertEquals(study.getSpecimens().size(), foundStudy.getSpecimens().size());
         assertEquals(study.getId(), foundStudy.getId());
-        Specimen firstSpecimen = study.getSpecimens().iterator().next();
+        for (Specimen firstSpecimen : study.getSpecimens()) {
+            if ("Rhynchoconger flavus".equals(firstSpecimen.getSpecies().getScientificName())) {
+                Location sampleLocation = firstSpecimen.getSampleLocation();
+                assertNotNull(sampleLocation);
+                assertEquals(348078.84, sampleLocation.getLongitude());
+                assertEquals(3257617.25, sampleLocation.getLatitude());
+                assertEquals(-60.0, sampleLocation.getAltitude());
 
-        Location sampleLocation = firstSpecimen.getSampleLocation();
-        assertNotNull(sampleLocation);
-        assertEquals(348078.84, sampleLocation.getLongitude());
-        assertEquals(3257617.25, sampleLocation.getLatitude());
-        assertEquals(-60.0, sampleLocation.getAltitude());
+                Set<Specimen> stomachContents = firstSpecimen.getStomachContents();
+                assertEquals(1, stomachContents.size());
+                assertEquals("Ampelisca sp. (abdita complex)", stomachContents.iterator().next().getSpecies().getScientificName());
 
-        Set<Specimen> stomachContents = firstSpecimen.getStomachContents();
-        assertEquals(1, stomachContents.size());
-        assertEquals("Ampelisca sp. (abdita complex)", stomachContents.iterator().next().getSpecies().getScientificName());
+                Season season = firstSpecimen.getSeason();
+                assertEquals("summer", season.getTitle());
+            }
 
-        Species species = firstSpecimen.getSpecies();
-        assertNotNull(species);
-        assertNotNull(species.getScientificName());
-        assertEquals("Rhynchoconger flavus", species.getScientificName());
+        }
+
     }
 
 

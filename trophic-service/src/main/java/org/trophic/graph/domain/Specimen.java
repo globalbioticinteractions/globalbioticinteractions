@@ -1,14 +1,10 @@
 package org.trophic.graph.domain;
 
-import static org.springframework.data.neo4j.core.Direction.INCOMING;
-
-import java.util.Date;
-import java.util.Set;
-
 import org.springframework.data.neo4j.annotation.Indexed;
 import org.springframework.data.neo4j.annotation.NodeEntity;
 import org.springframework.data.neo4j.annotation.RelatedTo;
-import org.springframework.data.neo4j.annotation.RelatedToVia;
+
+import java.util.Set;
 
 @NodeEntity
 public class Specimen {
@@ -24,7 +20,7 @@ public class Specimen {
     @RelatedTo(elementClass = Location.class, type = "CAUGHT_AT")
     private Location sampleLocation;
 
-    @RelatedTo(elementClass = Season.class, type = "CAUGHT_DURING")
+    @RelatedTo(elementClass = Season.class, type = "WHATEVER")
     private Season season;
 
     public Specimen(String id) {

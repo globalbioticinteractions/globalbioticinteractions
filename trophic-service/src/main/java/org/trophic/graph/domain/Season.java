@@ -7,23 +7,38 @@ import org.springframework.data.neo4j.annotation.NodeEntity;
 public class Season {
 
     @Indexed
-    private String name;
+    private String id;
+
+    @Indexed
+    private String title;
 
     public Season() {
-        this(null);
     }
 
-    public Season(String name) {
-        this.name = name;
+    public Season(String id, String title) {
+        this.id = id;
+        this.title = title;
     }
 
-    public String getName() {
-        return name;
+     @Override
+    public String toString() {
+        return String.format("%s [%s]", title, id);
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public String getTitle() {
+        return title;
     }
 
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
 }

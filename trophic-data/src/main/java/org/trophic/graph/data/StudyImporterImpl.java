@@ -4,13 +4,9 @@ import com.Ostermiller.util.LabeledCSVParser;
 import org.neo4j.helpers.collection.ClosableIterable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.trophic.graph.domain.Location;
-import org.trophic.graph.domain.Species;
-import org.trophic.graph.domain.Specimen;
-import org.trophic.graph.domain.Study;
+import org.trophic.graph.domain.*;
 import org.trophic.graph.repository.LocationRepository;
+import org.trophic.graph.repository.SeasonRepository;
 import org.trophic.graph.repository.SpeciesRepository;
 import org.trophic.graph.repository.StudyRepository;
 
@@ -29,6 +25,10 @@ public class StudyImporterImpl implements StudyImporter {
     @Autowired
     private LocationRepository locationRepository;
 
+
+    @Autowired
+    private SeasonRepository seasonRepository;
+
     @Autowired
     private StudyRepository studyRepository;
 
@@ -36,7 +36,7 @@ public class StudyImporterImpl implements StudyImporter {
     private ParserFactory parserFactory;
 
     public StudyImporterImpl() {
-        this(null);
+
     }
 
     public StudyImporterImpl(ParserFactory parserFactory) {
@@ -49,7 +49,7 @@ public class StudyImporterImpl implements StudyImporter {
     }
 
     private Study createAndPopulateStudy(ParserFactory parserFactory, String title) throws IOException {
-        Study study = findOrCreateStudy(title);
+        Study study = getOrCreateStudy(title);
         LabeledCSVParser csvParser = parserFactory.createParser();
         while (csvParser.getLine() != null) {
             addNextRecordToStudy(csvParser, study);
@@ -62,21 +62,34 @@ public class StudyImporterImpl implements StudyImporter {
         Double latitude = Double.parseDouble(csvParser.getValueByLabel("lat"));
         Double longitude = Double.parseDouble(csvParser.getValueByLabel("long"));
         Double altitude = -Double.parseDouble(csvParser.getValueByLabel("depth"));
-
+        String seasonName = csvParser.getValueByLabel("season");
         Specimen prey = createSpecimenForSpecies(csvParser.getValueByLabel(PREY));
         setWithExistingOrNewLocation(prey, latitude, longitude, altitude);
+        prey.caughtDuring(getOrCreateSeason(seasonName));
         prey.persist();
 
         Specimen predator = createSpecimenForSpecies(csvParser.getValueByLabel(PREDATOR));
         setWithExistingOrNewLocation(predator, latitude, longitude, altitude);
         predator.persist();
         predator.ate(prey);
+        predator.caughtDuring(getOrCreateSeason(seasonName));
         predator.persist();
         study.getSpecimens().add(predator);
 
     }
 
-    private Study findOrCreateStudy(String title) {
+    private Season getOrCreateSeason(String seasonName) {
+        String seasonNameLower = seasonName.toLowerCase();
+        Season season = seasonRepository.findByPropertyValue("title", seasonNameLower);
+        if (null == season) {
+            season = new Season();
+            season.setTitle(seasonNameLower);
+            season.persist();
+        }
+        return season;
+    }
+
+    private Study getOrCreateStudy(String title) {
         Study study = studyRepository.findByPropertyValue("title", title);
         if (null == study) {
             study = new Study();
@@ -96,7 +109,7 @@ public class StudyImporterImpl implements StudyImporter {
             location.persist();
         }
 
-        specimen.collectedIn(location);
+        specimen.caughtIn(location);
     }
 
     private Location findLocation(Double latitude, Double longitude, Double altitude) {
@@ -135,5 +148,9 @@ public class StudyImporterImpl implements StudyImporter {
 
     public void setStudyRepository(StudyRepository studyRepository) {
         this.studyRepository = studyRepository;
+    }
+
+    public void setSeasonRepository(SeasonRepository seasonRepository) {
+        this.seasonRepository = seasonRepository;
     }
 }
