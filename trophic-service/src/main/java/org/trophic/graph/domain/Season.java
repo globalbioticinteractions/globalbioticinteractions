@@ -9,6 +9,10 @@ public class Season {
     @Indexed
     private String name;
 
+    public Season() {
+        this(null);
+    }
+
     public Season(String name) {
         this.name = name;
     }

@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import java.util.Date;
 import java.util.Iterator;
 
 import org.junit.Test;
@@ -39,7 +38,10 @@ public class StudyTest {
         shark.ate(goldFish);
         
         Location bolinasBay = new Location("1", 12.2d, 12.1d, -100.0d);
-        shark.collectedIn(bolinasBay);
+        shark.caughtIn(bolinasBay);
+
+        Season winter = new Season("winter").persist();
+        shark.caughtDuring(winter);
         study.getSpecimens().add(shark);
 
         Study foundStudy = this.studyRepository.findByPropertyValue("id", "1");
