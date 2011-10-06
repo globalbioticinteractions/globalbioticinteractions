@@ -11,13 +11,17 @@ import org.trophic.graph.repository.SpeciesRepository;
 import org.trophic.graph.repository.StudyRepository;
 
 import java.io.IOException;
+import java.util.Map;
 
 @Component
 public class StudyImporterImpl implements StudyImporter {
 
-    public static final String PREDATOR = "predator";
-    public static final String PREY = "prey";
-    public static final String DEFAULT_STUDY_TITLE = "mississippi alabama fish study";
+    public static final String LATITUDE = "latitude";
+    public static final String LONGITUDE = "longitude";
+    public static final String DEPTH = "depth";
+    public static final String SEASON = "season";
+    public static final String PREY_SPECIES = "prey species";
+    public static final String PREDATOR_SPECIES = "predator species";
 
     @Autowired
     private SpeciesRepository speciesRepository;
@@ -44,32 +48,49 @@ public class StudyImporterImpl implements StudyImporter {
     }
 
     @Override
-    public Study importStudy() throws IOException {
-        return createAndPopulateStudy(parserFactory, DEFAULT_STUDY_TITLE);
+    public Study importStudy() throws StudyImporterException {
+        return importStudy(StudyLibrary.MISSISSIPPI_ALABAMA);
     }
 
-    private Study createAndPopulateStudy(ParserFactory parserFactory, String title) throws IOException {
-        Study study = getOrCreateStudy(title);
-        LabeledCSVParser csvParser = parserFactory.createParser();
-        while (csvParser.getLine() != null) {
-            addNextRecordToStudy(csvParser, study);
+    @Override
+    public Study importStudy(String studyResource) throws StudyImporterException {
+        return createAndPopulateStudy(parserFactory, studyResource);
+    }
+
+
+    private Study createAndPopulateStudy(ParserFactory parserFactory, String studyResource) throws StudyImporterException {
+        Map<String, String> columnMapper = StudyLibrary.COLUMN_MAPPERS.get(studyResource);
+        if (null == columnMapper) {
+            throw new StudyImporterException("no suitable column mapper found for [" + studyResource + "]");
+        }
+        return importStudy(parserFactory, studyResource);
+    }
+
+    private Study importStudy(ParserFactory parserFactory, String studyResource) throws StudyImporterException {
+        Study study = getOrCreateStudy(studyResource);
+        try {
+            LabeledCSVParser csvParser = parserFactory.createParser(studyResource);
+            while (csvParser.getLine() != null) {
+                addNextRecordToStudy(csvParser, study, StudyLibrary.COLUMN_MAPPERS.get(studyResource));
+            }
+        } catch (IOException e) {
+            throw new StudyImporterException("failed to parse study [" + studyResource + "]", e);
         }
         study.persist();
         return study;
     }
 
-    private void addNextRecordToStudy(LabeledCSVParser csvParser, Study study) throws IOException {
-        Double latitude = Double.parseDouble(csvParser.getValueByLabel("lat"));
-        Double longitude = Double.parseDouble(csvParser.getValueByLabel("long"));
-        Double altitude = -Double.parseDouble(csvParser.getValueByLabel("depth"));
-        String seasonName = csvParser.getValueByLabel("season");
-        Specimen prey = createSpecimenForSpecies(csvParser.getValueByLabel(PREY));
-        setWithExistingOrNewLocation(prey, latitude, longitude, altitude);
+    private void addNextRecordToStudy(LabeledCSVParser csvParser, Study study, Map<String, String> columnToNormalizedTermMapper) throws IOException {
+        String seasonName = csvParser.getValueByLabel(columnToNormalizedTermMapper.get(SEASON));
+        Specimen prey = createSpecimenForSpecies(csvParser.getValueByLabel(columnToNormalizedTermMapper.get(PREY_SPECIES)));
+
+        Location sampleLocation = getOrCreateSampleLocation(csvParser, columnToNormalizedTermMapper);
+        prey.caughtIn(sampleLocation);
         prey.caughtDuring(getOrCreateSeason(seasonName));
         prey.persist();
 
-        Specimen predator = createSpecimenForSpecies(csvParser.getValueByLabel(PREDATOR));
-        setWithExistingOrNewLocation(predator, latitude, longitude, altitude);
+        Specimen predator = createSpecimenForSpecies(csvParser.getValueByLabel(columnToNormalizedTermMapper.get(PREDATOR_SPECIES)));
+        predator.caughtIn(sampleLocation);
         predator.persist();
         predator.ate(prey);
         predator.caughtDuring(getOrCreateSeason(seasonName));
@@ -99,17 +120,30 @@ public class StudyImporterImpl implements StudyImporter {
         return study;
     }
 
-    private void setWithExistingOrNewLocation(Specimen specimen, Double lat, Double longitude, Double altitude) {
-        Location location = findLocation(lat, longitude, altitude);
-        if (null == location) {
-            location = new Location();
-            location.setLatitude(lat);
-            location.setLongitude(longitude);
-            location.setAltitude(altitude);
-            location.persist();
-        }
+    private Location getOrCreateSampleLocation(LabeledCSVParser csvParser, Map<String, String> columnToNormalizedTermMapper) {
+        Double latitude = parseAsDouble(csvParser, columnToNormalizedTermMapper.get(LATITUDE));
+        Double longitude = parseAsDouble(csvParser, columnToNormalizedTermMapper.get(LONGITUDE));
+        Double depth = parseAsDouble(csvParser, columnToNormalizedTermMapper.get(DEPTH));
+        Double altitude = depth == null ? null : -depth;
 
-        specimen.caughtIn(location);
+
+        Location location = null;
+        if (latitude != null && longitude != null && altitude != null) {
+            location = findLocation(latitude, longitude, altitude);
+            if (null == location) {
+                location = new Location();
+                location.setLatitude(latitude);
+                location.setLongitude(longitude);
+                location.setAltitude(altitude);
+                location.persist();
+            }
+        }
+        return location;
+    }
+
+    private Double parseAsDouble(LabeledCSVParser csvParser, String stringValue) {
+        String valueByLabel = csvParser.getValueByLabel(stringValue);
+        return valueByLabel == null ? null : Double.parseDouble(valueByLabel);
     }
 
     private Location findLocation(Double latitude, Double longitude, Double altitude) {

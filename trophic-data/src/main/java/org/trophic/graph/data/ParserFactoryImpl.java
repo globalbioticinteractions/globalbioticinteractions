@@ -10,8 +10,8 @@ import java.util.zip.GZIPInputStream;
 @Component
 public class ParserFactoryImpl implements ParserFactory {
 
-    public LabeledCSVParser createParser() throws IOException {
-        return new LabeledCSVParser(new CSVParser(new GZIPInputStream(getClass().getResourceAsStream("mississippiAlabamaFishDiet.csv.gz"))));
+    public LabeledCSVParser createParser(String studyResource) throws IOException {
+        return new LabeledCSVParser(new CSVParser(new GZIPInputStream(getClass().getResourceAsStream(studyResource))));
     }
 
 }

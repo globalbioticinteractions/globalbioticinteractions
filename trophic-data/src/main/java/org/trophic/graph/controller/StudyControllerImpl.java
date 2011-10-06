@@ -3,11 +3,9 @@ package org.trophic.graph.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.trophic.graph.data.ParserFactoryImpl;
 import org.trophic.graph.data.StudyImporter;
-import org.trophic.graph.data.StudyImporterImpl;
-
-import java.io.IOException;
+import org.trophic.graph.data.StudyImporterException;
+import org.trophic.graph.data.StudyLibrary;
 
 @Controller
 public class StudyControllerImpl implements StudyController {
@@ -18,8 +16,9 @@ public class StudyControllerImpl implements StudyController {
     @Override
     public String populate(Model model) {
         try {
-            studyImporter.importStudy();
-        } catch (IOException e) {
+            studyImporter.importStudy(StudyLibrary.MISSISSIPPI_ALABAMA);
+            studyImporter.importStudy(StudyLibrary.LAVACA_BAY);
+        } catch (StudyImporterException e) {
             throw new RuntimeException("failed to populate", e);
         }
 

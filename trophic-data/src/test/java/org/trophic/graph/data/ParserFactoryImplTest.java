@@ -22,14 +22,14 @@ public class ParserFactoryImplTest {
                 return csvString;
             }
 
-            public LabeledCSVParser createParser() throws IOException {
+            public LabeledCSVParser createParser(String studyResource) throws IOException {
                 return new LabeledCSVParser(
                         new CSVParser(
                                 new StringReader(
                                         createString())));
 
             }
-        }.createParser();
+        }.createParser(StudyLibrary.MISSISSIPPI_ALABAMA);
 
         lcsvp.getLine();
         assertFirstLine(lcsvp);
@@ -42,7 +42,7 @@ public class ParserFactoryImplTest {
     public void parseCompressedDataSet() throws IOException {
         LabeledCSVParser labeledCSVParser = null;
         try {
-            labeledCSVParser = new ParserFactoryImpl().createParser();
+            labeledCSVParser = new ParserFactoryImpl().createParser(StudyLibrary.MISSISSIPPI_ALABAMA);
             labeledCSVParser.getLine();
             assertFirstLine(labeledCSVParser);
             labeledCSVParser.getLine();
@@ -62,8 +62,8 @@ public class ParserFactoryImplTest {
 
     private void assertFirstLine(LabeledCSVParser lcsvp) {
         assertEquals("1", lcsvp.getValueByLabel("Obs"));
-        assertEquals("Rhynchoconger flavus", lcsvp.getValueByLabel(StudyImporterImpl.PREDATOR));
-        assertEquals("Ampelisca sp. (abdita complex)", lcsvp.getValueByLabel(StudyImporterImpl.PREY));
+        assertEquals("Rhynchoconger flavus", lcsvp.getValueByLabel("predator"));
+        assertEquals("Ampelisca sp. (abdita complex)", lcsvp.getValueByLabel("prey"));
     }
 
 }
