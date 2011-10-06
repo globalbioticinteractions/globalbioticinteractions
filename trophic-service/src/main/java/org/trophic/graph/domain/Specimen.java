@@ -20,7 +20,7 @@ public class Specimen {
     @RelatedTo(elementClass = Location.class, type = "CAUGHT_AT")
     private Location sampleLocation;
 
-    @RelatedTo(elementClass = Season.class, type = "WHATEVER")
+    @RelatedTo(elementClass = Season.class, type = "CAUGHT_DURING")
     private Season season;
 
     public Specimen(String id) {
