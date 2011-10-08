@@ -4,10 +4,10 @@ import com.Ostermiller.util.LabeledCSVParser;
 import org.neo4j.helpers.collection.ClosableIterable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 import org.trophic.graph.domain.*;
 import org.trophic.graph.repository.LocationRepository;
 import org.trophic.graph.repository.SeasonRepository;
-import org.trophic.graph.repository.SpeciesRepository;
 import org.trophic.graph.repository.StudyRepository;
 
 import java.io.IOException;
@@ -19,22 +19,24 @@ public class StudyImporterImpl implements StudyImporter {
     public static final String LATITUDE = "latitude";
     public static final String LONGITUDE = "longitude";
     public static final String DEPTH = "depth";
+    public static final String LENGTH_RANGE_IN_MM = "lengthRangeInMm";
+    public static final String LENGTH_IN_MM = "lengthInMm";
     public static final String SEASON = "season";
     public static final String PREY_SPECIES = "prey species";
     public static final String PREDATOR_SPECIES = "predator species";
-
-    @Autowired
-    private SpeciesRepository speciesRepository;
+    public static final String PREDATOR_FAMILY = "predatorFamily";
 
     @Autowired
     private LocationRepository locationRepository;
-
 
     @Autowired
     private SeasonRepository seasonRepository;
 
     @Autowired
     private StudyRepository studyRepository;
+
+    @Autowired
+    private TaxonFactory taxonFactory;
 
     @Autowired
     private ParserFactory parserFactory;
@@ -70,26 +72,36 @@ public class StudyImporterImpl implements StudyImporter {
         Study study = getOrCreateStudy(studyResource);
         try {
             LabeledCSVParser csvParser = parserFactory.createParser(studyResource);
+            LengthParser parser = new LengthParserFactory().createParser(study.getTitle());
             while (csvParser.getLine() != null) {
-                addNextRecordToStudy(csvParser, study, StudyLibrary.COLUMN_MAPPERS.get(studyResource));
+                addNextRecordToStudy(csvParser, study, StudyLibrary.COLUMN_MAPPERS.get(studyResource), parser);
             }
         } catch (IOException e) {
-            throw new StudyImporterException("failed to parse study [" + studyResource + "]", e);
+            throw new StudyImporterException("failed to create study [" + studyResource + "]", e);
         }
         study.persist();
         return study;
     }
 
-    private void addNextRecordToStudy(LabeledCSVParser csvParser, Study study, Map<String, String> columnToNormalizedTermMapper) throws IOException {
+    private void addNextRecordToStudy(LabeledCSVParser csvParser, Study study, Map<String, String> columnToNormalizedTermMapper, LengthParser lengthParser) throws StudyImporterException {
         String seasonName = csvParser.getValueByLabel(columnToNormalizedTermMapper.get(SEASON));
-        Specimen prey = createSpecimenForSpecies(csvParser.getValueByLabel(columnToNormalizedTermMapper.get(PREY_SPECIES)));
+        Specimen prey = createAndClassifySpecimen(csvParser.getValueByLabel(columnToNormalizedTermMapper.get(PREY_SPECIES)), null);
 
         Location sampleLocation = getOrCreateSampleLocation(csvParser, columnToNormalizedTermMapper);
         prey.caughtIn(sampleLocation);
         prey.caughtDuring(getOrCreateSeason(seasonName));
         prey.persist();
 
-        Specimen predator = createSpecimenForSpecies(csvParser.getValueByLabel(columnToNormalizedTermMapper.get(PREDATOR_SPECIES)));
+        String speciesName = csvParser.getValueByLabel(columnToNormalizedTermMapper.get(PREDATOR_SPECIES));
+        String familyName = csvParser.getValueByLabel(columnToNormalizedTermMapper.get(PREDATOR_FAMILY));
+        Specimen predator = null;
+        try {
+            predator = createAndClassifySpecimen(speciesName, taxonFactory.createFamily(familyName));
+        } catch (TaxonFactoryException e) {
+            throw new StudyImporterException("failed to create taxon", e);
+        }
+        predator.setLengthInMm(lengthParser.parseLengthInMm(csvParser));
+
         predator.caughtIn(sampleLocation);
         predator.persist();
         predator.ate(prey);
@@ -100,7 +112,7 @@ public class StudyImporterImpl implements StudyImporter {
     }
 
     private Season getOrCreateSeason(String seasonName) {
-        String seasonNameLower = seasonName.toLowerCase();
+        String seasonNameLower = seasonName.toLowerCase().trim();
         Season season = seasonRepository.findByPropertyValue("title", seasonNameLower);
         if (null == season) {
             season = new Season();
@@ -159,21 +171,15 @@ public class StudyImporterImpl implements StudyImporter {
         return foundLocation;
     }
 
-    private Specimen createSpecimenForSpecies(String scientificName) {
-        Specimen specimen = new Specimen();
-
-        Species species = speciesRepository.findByPropertyValue("scientificName", scientificName);
-        if (null == species) {
-            species = new Species();
-            species.setScientificName(scientificName);
-            species.persist();
+    private Specimen createAndClassifySpecimen(final String speciesName, Family family) throws StudyImporterException {
+        Specimen specimen = new Specimen().persist();
+        String trimmedSpeciesName = StringUtils.trimWhitespace(speciesName);
+        try {
+            specimen.classifyAs(taxonFactory.create(trimmedSpeciesName, family));
+        } catch (TaxonFactoryException e) {
+            throw new StudyImporterException("failed to classify specimen", e);
         }
-        specimen.setSpecies(species);
         return specimen;
-    }
-
-    public void setSpeciesRepository(SpeciesRepository speciesRepository) {
-        this.speciesRepository = speciesRepository;
     }
 
     public void setLocationRepository(LocationRepository locationRepository) {
@@ -187,4 +193,14 @@ public class StudyImporterImpl implements StudyImporter {
     public void setSeasonRepository(SeasonRepository seasonRepository) {
         this.seasonRepository = seasonRepository;
     }
+
+    public TaxonFactory getTaxonFactory() {
+        return taxonFactory;
+    }
+
+    public void setTaxonFactory(TaxonFactory taxonFactory) {
+        this.taxonFactory = taxonFactory;
+    }
 }
+
+

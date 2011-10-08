@@ -11,8 +11,8 @@ public class Specimen {
     @Indexed
     String id;
 
-    @RelatedTo(elementClass = Species.class, type = "CLASSIFIED_AS")
-    Species species;
+    @RelatedTo(elementClass = Taxon.class, type = "CLASSIFIED_AS")
+    Set<Taxon> classifications;
 
     @RelatedTo(elementClass = Specimen.class, type = "ATE")
     private Set<Specimen> stomachContents;
@@ -22,6 +22,8 @@ public class Specimen {
 
     @RelatedTo(elementClass = Season.class, type = "CAUGHT_DURING")
     private Season season;
+
+    Double lengthInMm;
 
     public Specimen(String id) {
         this.id = id;
@@ -34,17 +36,9 @@ public class Specimen {
         return id;
     }
 
-    public Species getSpecies() {
-        return species;
-    }
-
-    public void setSpecies(Species species) {
-        this.species = species;
-    }
-
     @Override
     public String toString() {
-        return String.format("%s [%s]", species, id);
+        return String.format("[%s]", id);
     }
 
     public void setStomachContents(Set<Specimen> stomachContents) {
@@ -81,5 +75,26 @@ public class Specimen {
 
     public void caughtDuring(Season season) {
         this.season = season;
+    }
+
+    public Double getLengthInMm() {
+        return lengthInMm;
+    }
+
+    public void setLengthInMm(Double lengthInMm) {
+        this.lengthInMm = lengthInMm;
+    }
+
+
+    public Set<Taxon> getClassifications() {
+        return classifications;
+    }
+
+    public void setClassifications(Set<Taxon> classifications) {
+        this.classifications = classifications;
+    }
+
+    public void classifyAs(Taxon taxon) {
+        this.classifications.add(taxon);
     }
 }

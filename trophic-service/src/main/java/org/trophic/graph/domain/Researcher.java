@@ -8,10 +8,6 @@ import org.springframework.data.neo4j.annotation.Indexed;
 import java.util.Date;
 import java.util.Set;
 
-/**
- * @author mh
- * @since 12.03.11
- */
 @NodeEntity
 public class Researcher {
     @Indexed

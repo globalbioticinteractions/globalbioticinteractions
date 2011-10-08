@@ -1,8 +1,6 @@
 package org.trophic.graph.data;
 
 
-import com.Ostermiller.util.CSVParser;
-import com.Ostermiller.util.LabeledCSVParser;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.neo4j.helpers.collection.ClosableIterable;
@@ -13,16 +11,12 @@ import org.springframework.transaction.annotation.Transactional;
 import org.trophic.graph.domain.*;
 import org.trophic.graph.repository.LocationRepository;
 import org.trophic.graph.repository.SeasonRepository;
-import org.trophic.graph.repository.SpeciesRepository;
 import org.trophic.graph.repository.StudyRepository;
+import org.trophic.graph.repository.TaxonRepository;
 
-import java.io.IOException;
-import java.io.StringReader;
 import java.util.Set;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.assertNull;
+import static junit.framework.Assert.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration({"/base-test-context.xml"})
@@ -33,7 +27,7 @@ public class StudyImporterImplTest {
     StudyRepository studyRepository;
 
     @Autowired
-    SpeciesRepository speciesRepository;
+    TaxonRepository taxonRespository;
 
     @Autowired
     LocationRepository locationRepository;
@@ -41,28 +35,24 @@ public class StudyImporterImplTest {
     @Autowired
     SeasonRepository seasonRepository;
 
+    @Autowired
+    TaxonFactory taxonFactory;
+
     @Test
     public void createAndPopulateStudyMississippiAlabama() throws StudyImporterException {
         String csvString
                 = "\"Obs\",\"spcode\", \"sizecl\", \"cruise\", \"stcode\", \"numstom\", \"numfood\", \"pctfull\", \"predator famcode\", \"prey\", \"number\", \"season\", \"depth\", \"transect\", \"alphcode\", \"taxord\", \"station\", \"long\", \"lat\", \"time\", \"sizeclass\", \"predator\"\n";
-        csvString += "1, 1, 16, 3, 2, 6, 6, 205.5, 1, \"Ampelisca sp. (abdita complex)\", 1, \"Summer\", 60, \"Chandeleur Islands\", \"aabd\", 47.11, \"C2\", 348078.84, 3257617.25, 313, \"201-300\", \"Rhynchoconger flavus\"\n";
+        csvString += "1, 1, 16, 3, 2, 6, 6, 205.5, 1, \"Ampelisca sp. (abdita complex)  \", 1, \"Summer\", 60, \"Chandeleur Islands\", \"aabd\", 47.11, \"C2\", 348078.84, 3257617.25, 313, \"201-300\", \"Rhynchoconger flavus\"\n";
         csvString += "2, 11, 2, 1, 1, 20, 15, 592.5, 6, \"Ampelisca sp. (abdita complex)\", 1, \"Summer\", 20, \"Chandeleur Islands\", \"aabd\", 47.11, \"C1\", 344445.31, 3323087.25, 144, \"26-50\", \"Halieutichthys aculeatus\"\n";
 
         StudyImporterImpl studyImporter = new StudyImporterImpl(new TestParserFactory(csvString));
+        init(studyImporter);
 
-        studyImporter.setSeasonRepository(seasonRepository);
-        studyImporter.setLocationRepository(locationRepository);
-        studyImporter.setSpeciesRepository(speciesRepository);
-        studyImporter.setStudyRepository(studyRepository);
-
-        assertEquals(0, studyRepository.count());
-        assertEquals(0, speciesRepository.count());
-        assertEquals(0, locationRepository.count());
-        assertEquals(0, seasonRepository.count());
+        assertEmpty();
         Study study = studyImporter.importStudy();
         studyImporter.importStudy();
 
-        assertEquals(3, speciesRepository.count());
+        assertEquals(5, taxonRespository.count());
         assertEquals(1, studyRepository.count());
         assertEquals(2, locationRepository.count());
         assertEquals(1, seasonRepository.count());
@@ -73,7 +63,8 @@ public class StudyImporterImplTest {
         assertEquals(study.getSpecimens().size(), foundStudy.getSpecimens().size());
         assertEquals(study.getId(), foundStudy.getId());
         for (Specimen firstSpecimen : study.getSpecimens()) {
-            if ("Rhynchoconger flavus".equals(firstSpecimen.getSpecies().getScientificName())) {
+            String scientificName = firstSpecimen.getClassifications().iterator().next().getName();
+            if ("Rhynchoconger flavus".equals(scientificName)) {
                 Location sampleLocation = firstSpecimen.getSampleLocation();
                 assertNotNull(sampleLocation);
                 assertEquals(348078.84, sampleLocation.getLongitude());
@@ -82,77 +73,118 @@ public class StudyImporterImplTest {
 
                 Set<Specimen> stomachContents = firstSpecimen.getStomachContents();
                 assertEquals(1, stomachContents.size());
-                assertEquals("Ampelisca sp. (abdita complex)", stomachContents.iterator().next().getSpecies().getScientificName());
+                Specimen prey = stomachContents.iterator().next();
+                assertEquals("Ampelisca", prey.getClassifications().iterator().next().getName());
 
                 Season season = firstSpecimen.getSeason();
                 assertEquals("summer", season.getTitle());
-            }
 
+                assertEquals((201.0d + 300.0d) / 2.0d, firstSpecimen.getLengthInMm());
+            } else if ("Halieutichthys aculeatus".equals(scientificName)) {
+                Location sampleLocation = firstSpecimen.getSampleLocation();
+                assertNotNull(sampleLocation);
+                assertEquals(344445.31, sampleLocation.getLongitude());
+                assertEquals(3323087.25, sampleLocation.getLatitude());
+                assertEquals(-20.0, sampleLocation.getAltitude());
+
+                Set<Specimen> stomachContents = firstSpecimen.getStomachContents();
+                assertEquals(1, stomachContents.size());
+                Specimen prey = stomachContents.iterator().next();
+                Taxon genus = prey.getClassifications().iterator().next();
+                assertEquals("Ampelisca", genus.getName());
+                assertTrue(genus instanceof Genus);
+
+                Season season = firstSpecimen.getSeason();
+                assertEquals("summer", season.getTitle());
+
+                assertEquals((26.0d + 50.0d) / 2.0d, firstSpecimen.getLengthInMm());
+            } else {
+                fail("found predator with unexpected scientificName [" + scientificName + "]");
+            }
         }
 
+    }
+
+    private void assertEmpty() {
+        assertEquals(0, studyRepository.count());
+        assertEquals(0, taxonRespository.count());
+        assertEquals(0, locationRepository.count());
+        assertEquals(0, seasonRepository.count());
     }
 
     @Test
     public void createAndPopulateStudyFromLavacaBay() throws StudyImporterException {
         String csvString =
                 "\"Region\",\"Season\",\"Habitat\",\"Site\",\"Family\",\"Predator Species\",\"TL\",\"Prey Item Species\",\"Prey item\",\"Number\",\"Condition Index\",\"Volume\",\"Percent Content\",\"Prey Item Trophic Level\",\"Notes\"\n";
-        csvString += "\"Lower\",\"Fall\",\"Marsh\",1,\"Sciaenidae\",\"Sciaenops ocellatus\",420,\"Acrididae spp. \",\"Acrididae \",1,\"III\",0.4,3.2520325203,2.5,\n";
-        csvString += "\"Lower\",\"Spring\",\"Non-Veg \",1,\"Ariidae\",\"Arius felis\",176,\"Aegathoa oculata \",\"Aegathoa oculata\",4,\"I\",0.01,3.3333333333,2.1,\n";
+        csvString += "\"Lower\",\"Fall\",\"Marsh\",1,\"Sciaenidae\",\"Sciaenops ocellatus\",420,\"Acrididae spp. \",\"Acrididae \",1,\"III\",0.4,3.2520325203,2.5,\n";
+        csvString += "\"Lower\",\"Spring\",\"Non-Veg \",1,\"Ariidae\",\"Arius felis\",176,\"Aegathoa oculata \",\"Aegathoa oculata\",4,\"I\",0.01,3.3333333333,2.1,\n";
         StudyImporterImpl studyImporter = new StudyImporterImpl(new TestParserFactory(csvString));
 
 
-        studyImporter.setSeasonRepository(seasonRepository);
-        studyImporter.setLocationRepository(locationRepository);
-        studyImporter.setSpeciesRepository(speciesRepository);
-        studyImporter.setStudyRepository(studyRepository);
+        init(studyImporter);
 
-        assertEquals(0, studyRepository.count());
-        assertEquals(0, speciesRepository.count());
-        assertEquals(0, locationRepository.count());
-        assertEquals(0, seasonRepository.count());
+        assertEmpty();
         Study study = studyImporter.importStudy(StudyLibrary.LAVACA_BAY);
 
         assertEquals(1, studyRepository.count());
         assertEquals(0, locationRepository.count());
         assertEquals(2, seasonRepository.count());
-        assertEquals(4, speciesRepository.count());
+        assertEquals(9, taxonRespository.count());
 
         ClosableIterable<Study> foundStudies = studyRepository.findAllByPropertyValue("title", StudyLibrary.LAVACA_BAY);
         Study foundStudy = foundStudies.iterator().next();
         assertNotNull(foundStudy);
-        assertEquals(study.getSpecimens().size(), foundStudy.getSpecimens().size());
+        assertEquals(2, foundStudy.getSpecimens().size());
         assertEquals(study.getId(), foundStudy.getId());
         for (Specimen specimen : study.getSpecimens()) {
-            if ("Sciaenops ocellatus".equals(specimen.getSpecies().getScientificName())) {
+            Taxon species = specimen.getClassifications().iterator().next();
+            String scientificName = species.getName();
+            if ("Sciaenops ocellatus".equals(scientificName)) {
+                Genus genus = ((Species) species).getGenus();
+                assertEquals("Sciaenops", genus.getName());
+                assertEquals("Sciaenidae", genus.getFamily().getName());
                 Location sampleLocation = specimen.getSampleLocation();
                 assertNull(sampleLocation);
 
                 Set<Specimen> stomachContents = specimen.getStomachContents();
                 assertEquals(1, stomachContents.size());
-                assertEquals("Acrididae spp.", stomachContents.iterator().next().getSpecies().getScientificName());
+                String expected = "Acrididae";
+                Taxon family = stomachContents.iterator().next().getClassifications().iterator().next();
+                String actual = family.getName();
+                assertEquals("[" + expected + "] != [" + actual + "]", expected, actual);
+                assertTrue("expected a family object type", family instanceof Family);
 
                 Season season = specimen.getSeason();
                 assertEquals("fall", season.getTitle());
+
+                assertEquals(420.0d, specimen.getLengthInMm());
+            } else if ("Arius felis".equals(scientificName)) {
+                Location sampleLocation = specimen.getSampleLocation();
+                assertNull(sampleLocation);
+
+                Set<Specimen> stomachContents = specimen.getStomachContents();
+                assertEquals(1, stomachContents.size());
+                assertEquals("Aegathoa oculata", stomachContents.iterator().next().getClassifications().iterator().next().getName());
+
+                Season season = specimen.getSeason();
+                assertEquals("spring", season.getTitle());
+
+                assertEquals(176.0d, specimen.getLengthInMm());
+            } else {
+                fail("unexpected scientificName of predator [" + scientificName + "]");
             }
 
         }
 
     }
 
-
-    private static class TestParserFactory implements ParserFactory {
-        private String csvString;
-
-        public TestParserFactory(String csvString) {
-            this.csvString = csvString;
-        }
-
-        public LabeledCSVParser createParser(String studyResource) throws IOException {
-            return new LabeledCSVParser(
-                    new CSVParser(
-                            new StringReader(
-                                    csvString)));
-
-        }
+    private void init(StudyImporterImpl studyImporter) {
+        studyImporter.setSeasonRepository(seasonRepository);
+        studyImporter.setLocationRepository(locationRepository);
+        studyImporter.setStudyRepository(studyRepository);
+        studyImporter.setTaxonFactory(taxonFactory);
+        taxonFactory.setTaxonRepository(taxonRespository);
     }
+
+
 }

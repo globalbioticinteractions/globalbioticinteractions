@@ -11,10 +11,6 @@ import org.springframework.data.neo4j.annotation.Indexed;
 import org.springframework.data.neo4j.annotation.NodeEntity;
 import org.springframework.data.neo4j.annotation.RelatedTo;
 
-/**
- * @author mh
- * @since 04.03.11
- */
 @NodeEntity
 public class Study {
 

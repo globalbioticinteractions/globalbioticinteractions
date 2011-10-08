@@ -2,27 +2,16 @@ package org.trophic.graph.domain;
 
 import org.springframework.data.neo4j.annotation.NodeEntity;
 import org.springframework.data.neo4j.annotation.RelatedTo;
-import org.springframework.data.neo4j.annotation.RelatedToVia;
 import org.springframework.data.neo4j.annotation.Indexed;
 
-import java.util.Date;
-import java.util.Set;
-
-/**
- * @author mh
- * @since 12.03.11
- */
 @NodeEntity
-public class Species {
-    @Indexed
-    String id;
+public class Species extends Taxon {
+    @RelatedTo(elementClass = Genus.class, type = "PART_OF")
+    Genus genus;
 
-    @Indexed
-    String scientificName;
-
-    public Species(String id, String scientificName) {
+    public Species(String id, String name) {
         this.id = id;
-        this.scientificName = scientificName;
+        this.name = name;
     }
 
     public Species() {
@@ -32,17 +21,30 @@ public class Species {
         return id;
     }
 
-    public String getScientificName() {
-        return scientificName;
+    public String getName() {
+        return name;
     }
 
-    public void setScientificName(String scientificName) {
-        this.scientificName = scientificName;
+    public void setName(String name) {
+        this.name = name;
+    }
+
+
+    public Genus getGenus() {
+        return genus;
+    }
+
+    public void setGenus(Genus genus) {
+        this.genus = genus;
+    }
+
+    public void partOf(Genus genus) {
+        this.genus = genus;
     }
 
     @Override
     public String toString() {
-        return String.format("%s [%s]", scientificName, id);
+        return String.format("%s [%s]", name, id);
     }
 
 }

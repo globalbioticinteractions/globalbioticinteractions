@@ -1,20 +1,8 @@
 package org.trophic.graph.domain;
 
-import static org.springframework.data.neo4j.core.Direction.INCOMING;
-
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
-
 import org.springframework.data.neo4j.annotation.Indexed;
 import org.springframework.data.neo4j.annotation.NodeEntity;
-import org.springframework.data.neo4j.annotation.RelatedTo;
 
-/**
- * @author mh
- * @since 04.03.11
- */
 @NodeEntity
 public class Location {
 

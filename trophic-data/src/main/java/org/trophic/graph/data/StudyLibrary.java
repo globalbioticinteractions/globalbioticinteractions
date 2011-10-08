@@ -1,7 +1,5 @@
 package org.trophic.graph.data;
 
-import org.trophic.graph.domain.Study;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,11 +15,14 @@ public class StudyLibrary {
             put(StudyImporterImpl.SEASON, "season");
             put(StudyImporterImpl.PREY_SPECIES, "prey");
             put(StudyImporterImpl.PREDATOR_SPECIES, "predator");
+            put(StudyImporterImpl.LENGTH_RANGE_IN_MM, "sizeclass");
         }});
         put(LAVACA_BAY, new HashMap<String, String>() {{
             put(StudyImporterImpl.SEASON, "Season");
-            put(StudyImporterImpl.PREY_SPECIES, "Predator Species");
-            put(StudyImporterImpl.PREDATOR_SPECIES, "Prey Item Species");
+            put(StudyImporterImpl.PREY_SPECIES, "Prey Item Species");
+            put(StudyImporterImpl.PREDATOR_SPECIES, "Predator Species");
+            put(StudyImporterImpl.LENGTH_IN_MM, "TL");
+            put(StudyImporterImpl.PREDATOR_FAMILY, "Family");
         }});
     }};
 }
