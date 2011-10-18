@@ -16,7 +16,7 @@
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>trophic-data</artifactId>
+            <artifactId>trophic-importer</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

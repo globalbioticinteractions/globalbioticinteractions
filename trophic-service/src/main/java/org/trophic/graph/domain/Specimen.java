@@ -12,7 +12,7 @@ public class Specimen {
     String id;
 
     @RelatedTo(elementClass = Taxon.class, type = "CLASSIFIED_AS")
-    Set<Taxon> classifications;
+    private Set<Taxon> classifications;
 
     @RelatedTo(elementClass = Specimen.class, type = "ATE")
     private Set<Specimen> stomachContents;
@@ -23,7 +23,7 @@ public class Specimen {
     @RelatedTo(elementClass = Season.class, type = "CAUGHT_DURING")
     private Season season;
 
-    Double lengthInMm;
+    private Double lengthInMm;
 
     public Specimen(String id) {
         this.id = id;

@@ -8,9 +8,9 @@
         <version>1.0-SNAPSHOT</version>
         <relativePath>../trophic-parent/pom.xml</relativePath>
     </parent>
-    <artifactId>trophic-data</artifactId>
+    <artifactId>trophic-import</artifactId>
 
-    <name>Trophic Graph Data</name>
+    <name>Trophic Data Importer</name>
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>

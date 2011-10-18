@@ -31,3 +31,5 @@
 2011-10-06 22:14:17,648 [main] INFO WebClosure - Dereferencing URI <http://dbpedia.org/resource/Acanthosquilla_biminiensis>
 2011-10-06 22:15:36,569 [main] INFO WebClosure - Dereferencing URI <http://dbpedia.org/resource/Acanthosquilla>
 2011-10-06 22:16:30,567 [main] INFO WebClosure - Dereferencing URI <http://dbpedia.org/resource/Thalassoplax_angusta>
+2011-10-16 15:35:37,376 [main] INFO WebClosure - Dereferencing URI <http://dbpedia.org/resource/Micropogonias_undulatus>
+2011-10-16 15:35:38,727 [main] INFO WebClosure - Dereferencing URI <http://dbpedia.org/resource/Atlantic_croaker>
