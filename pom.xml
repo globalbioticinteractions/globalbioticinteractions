@@ -13,7 +13,7 @@
         <module>trophic-parent</module>
         <module>trophic-service</module>
         <module>trophic-server</module>
-        <module>trophic-data</module>
+        <module>tropic-import</module>
         <module>trophic-movies</module>
     </modules>
 
