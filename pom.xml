@@ -11,6 +11,7 @@
 
     <modules>
         <module>trophic-parent</module>
+        <module>trophic-service</module>
         <module>trophic-server</module>
         <module>trophic-import</module>
         <module>trophic-movies</module>
