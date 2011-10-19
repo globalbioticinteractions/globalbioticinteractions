@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project name="Trophic Graph">
+
+	<bannerLeft>
+		<name>Trophic Graph</name>
+        <href>http://www.trophic.com/</href>
+	</bannerLeft>
+
+	<publishDate position="navigation-bottom" format="dd.MM.yyyy"/>
+	<body>
+
+		<menu name="Trophic Graph">
+			<item name="Introduction" href="index.html"/>
+		</menu>
+
+		<menu ref="reports"/>
+
+	</body>
+
+</project>
