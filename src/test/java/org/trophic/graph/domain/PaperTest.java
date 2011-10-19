@@ -39,10 +39,6 @@ public class PaperTest {
         Paper foundPaper = this.paperRepository.findByPropertyValue("id", "1");
         
         assertEquals(paper, foundPaper);
-
-        Researcher firstResearcher = paper.getResearchers().iterator().next();
-        assertEquals(einstein, firstResearcher);
-        assertEquals("Albert Einstein", firstResearcher.getName());
     }
 
     @Test
