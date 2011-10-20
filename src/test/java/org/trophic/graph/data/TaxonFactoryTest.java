@@ -1,11 +1,7 @@
 package org.trophic.graph.data;
 
+import org.junit.Ignore;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.transaction.annotation.Transactional;
 import org.trophic.graph.domain.Family;
 import org.trophic.graph.domain.Genus;
 import org.trophic.graph.domain.Species;
@@ -15,12 +11,9 @@ import static junit.framework.Assert.assertNull;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration({"/base-test-context.xml"})
-@Transactional
+@Ignore
 public class TaxonFactoryTest {
 
-    @Autowired
     TaxonFactory taxonFactory;
 
     @Test

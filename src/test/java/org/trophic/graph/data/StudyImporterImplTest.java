@@ -1,13 +1,9 @@
 package org.trophic.graph.data;
 
 
+import org.junit.Ignore;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.neo4j.helpers.collection.ClosableIterable;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.transaction.annotation.Transactional;
 import org.trophic.graph.domain.*;
 import org.trophic.graph.repository.LocationRepository;
 import org.trophic.graph.repository.SeasonRepository;
@@ -18,24 +14,17 @@ import java.util.Set;
 
 import static junit.framework.Assert.*;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration({"/base-test-context.xml"})
-@Transactional
+@Ignore
 public class StudyImporterImplTest {
 
-    @Autowired
     StudyRepository studyRepository;
 
-    @Autowired
     TaxonRepository taxonRespository;
 
-    @Autowired
     LocationRepository locationRepository;
 
-    @Autowired
     SeasonRepository seasonRepository;
 
-    @Autowired
     TaxonFactory taxonFactory;
 
     @Test
