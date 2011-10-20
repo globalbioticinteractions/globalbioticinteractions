@@ -50,6 +50,8 @@ public class LocationPure {
 	}
 
 	public String getName() {
+		if (name == null)
+			name = "name";
 		return name;
 	}
 
