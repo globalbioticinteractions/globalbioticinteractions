@@ -1,19 +1,15 @@
 package org.trophic.graph.data;
 
+import org.apache.commons.lang3.StringUtils;
 import org.neo4j.helpers.collection.ClosableIterable;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 import org.trophic.graph.domain.Family;
 import org.trophic.graph.domain.Genus;
 import org.trophic.graph.domain.Species;
 import org.trophic.graph.domain.Taxon;
 import org.trophic.graph.repository.TaxonRepository;
 
-@Component
 public class TaxonFactory {
 
-    @Autowired
     TaxonRepository taxonRepository;
 
     public Taxon create(String speciesName2, Family family) throws TaxonFactoryException {
@@ -83,7 +79,7 @@ public class TaxonFactory {
     public Family createFamily(final String familyName) throws TaxonFactoryException {
         Family family = null;
         if (familyName != null) {
-            String trimmedFamilyName = StringUtils.trimWhitespace(familyName);
+            String trimmedFamilyName = StringUtils.trim(familyName);
             Taxon foundFamily = findTaxonOfClass(trimmedFamilyName, Family.class);
             if (foundFamily == null) {
                 family = new Family(trimmedFamilyName).persist();

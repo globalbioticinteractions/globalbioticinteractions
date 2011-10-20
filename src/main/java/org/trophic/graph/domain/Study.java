@@ -1,30 +1,14 @@
 package org.trophic.graph.domain;
 
-import static org.springframework.data.neo4j.core.Direction.INCOMING;
-
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
 import java.util.Set;
 
-import org.springframework.data.neo4j.annotation.Indexed;
-import org.springframework.data.neo4j.annotation.NodeEntity;
-import org.springframework.data.neo4j.annotation.RelatedTo;
+public class Study extends NodeBacked<Study>{
 
-@NodeEntity
-public class Study {
-
-	@Indexed
 	private String id;
 
-	@Indexed
 	private String title;
 	
-    @RelatedTo(elementClass = Specimen.class, type = "COLLECTED")
-	private Set<Specimen> specimens;
-
-    @RelatedTo(elementClass = Paper.class, type = "PUBLISHED_IN")
-	private Set<Paper> papers;
+    private Set<Specimen> specimens;
 
     public Study() {
 	}
@@ -56,18 +40,6 @@ public class Study {
 
 	public Set<Specimen> getSpecimens() {
 		return specimens;
-	}
-
-	public void setPapers(Set<Paper> papers) {
-		this.papers = papers;
-	}
-
-	public Set<Paper> getPapers() {
-		return papers;
-	}
-
-	public void publishedIn(Paper paper) {
-		getPapers().add(paper);
 	}
 
 }

@@ -1,26 +1,16 @@
 package org.trophic.graph.domain;
 
-import org.springframework.data.neo4j.annotation.Indexed;
-import org.springframework.data.neo4j.annotation.NodeEntity;
-import org.springframework.data.neo4j.annotation.RelatedTo;
-
 import java.util.Set;
 
-@NodeEntity
-public class Specimen {
-    @Indexed
+public class Specimen extends NodeBacked<Specimen> {
     String id;
 
-    @RelatedTo(elementClass = Taxon.class, type = "CLASSIFIED_AS")
     private Set<Taxon> classifications;
 
-    @RelatedTo(elementClass = Specimen.class, type = "ATE")
     private Set<Specimen> stomachContents;
 
-    @RelatedTo(elementClass = Location.class, type = "CAUGHT_AT")
     private Location sampleLocation;
 
-    @RelatedTo(elementClass = Season.class, type = "CAUGHT_DURING")
     private Season season;
 
     private Double lengthInMm;

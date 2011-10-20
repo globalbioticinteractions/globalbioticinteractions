@@ -13,11 +13,11 @@
 
     <repositories>
         <repository>
-			<id>ibiblio.org</id>
-			<name>ibiblio Repository for Maven 2</name>
-			<url>http://mirrors.ibiblio.org/pub/mirrors/maven2/</url>
-			<layout>default</layout>
-		</repository>
+            <id>ibiblio.org</id>
+            <name>ibiblio Repository for Maven 2</name>
+            <url>http://mirrors.ibiblio.org/pub/mirrors/maven2/</url>
+            <layout>default</layout>
+        </repository>
     </repositories>
 
     <pluginRepositories>
@@ -35,12 +35,9 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <spring.version>3.0.5.RELEASE</spring.version>
         <neo4j.version>1.5.M02</neo4j.version>
         <slf4j.version>1.5.10</slf4j.version>
         <org.slf4j-version>1.5.10</org.slf4j-version>
-        <spring-data-graph.version>1.1.0.RELEASE</spring-data-graph.version>
-        <aspectj.version>1.6.11</aspectj.version>
     </properties>
 
     <build>
@@ -56,32 +53,33 @@
                 </configuration>
             </plugin>
 
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-shade-plugin</artifactId>
-				<version>1.4</version>
-				<executions>
-					<execution>
-						<phase>package</phase>
-							<goals>
-								<goal>shade</goal>
-							</goals>
-							<configuration>
-								<shadedArtifactAttached>true</shadedArtifactAttached>
-								<shadedClassifierName>all</shadedClassifierName> <!-- Any name that makes sense -->
-							</configuration>
-					</execution>
-		        </executions>
-			</plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>1.4</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <shadedArtifactAttached>true</shadedArtifactAttached>
+                            <shadedClassifierName>all</shadedClassifierName>
+                            <!-- Any name that makes sense -->
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
 
             <plugin>
-				<artifactId>maven-site-plugin</artifactId>
+                <artifactId>maven-site-plugin</artifactId>
                 <version>3.0</version>
-				<configuration>
-					<locales>en</locales>
-					<outputEncoding>UTF-8</outputEncoding>
-				</configuration>
-			</plugin>
+                <configuration>
+                    <locales>en</locales>
+                    <outputEncoding>UTF-8</outputEncoding>
+                </configuration>
+            </plugin>
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -101,140 +99,76 @@
                 </configuration>
             </plugin>
 
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>aspectj-maven-plugin</artifactId>
-                <version>1.2</version>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.aspectj</groupId>
-                        <artifactId>aspectjrt</artifactId>
-                        <version>${aspectj.version}</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>org.aspectj</groupId>
-                        <artifactId>aspectjtools</artifactId>
-                        <version>${aspectj.version}</version>
-                    </dependency>
-                </dependencies>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>compile</goal>
-                            <goal>test-compile</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <outxml>true</outxml>
-                    <aspectLibraries>
-                        <aspectLibrary>
-                            <groupId>org.springframework</groupId>
-                            <artifactId>spring-aspects</artifactId>
-                        </aspectLibrary>
-                        <aspectLibrary>
-                            <groupId>org.springframework.data</groupId>
-                            <artifactId>spring-data-neo4j</artifactId>
-                        </aspectLibrary>
-                    </aspectLibraries>
-                    <source>1.6</source>
-                    <target>1.6</target>
-                </configuration>
-            </plugin>
-
-            <plugin>
-                <groupId>org.mortbay.jetty</groupId>
-                <artifactId>jetty-maven-plugin</artifactId>
-                <version>7.1.2.v20100523</version>
-                <configuration>
-                    <webAppConfig>
-                        <contextPath>/</contextPath>
-                    </webAppConfig>
-                </configuration>
-            </plugin>
 
         </plugins>
     </build>
 
     <reporting>
-		<plugins>
+        <plugins>
 
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-project-info-reports-plugin</artifactId>
-				<version>2.2</version>
-				<reportSets>
-					<reportSet>
-						<reports>
-							<!--<report>dependencies</report>-->
-							<report>project-team</report>
-							<report>summary</report>
-							<report>scm</report>
-						</reports>
-					</reportSet>
-				</reportSets>
-			</plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-project-info-reports-plugin</artifactId>
+                <version>2.2</version>
+                <reportSets>
+                    <reportSet>
+                        <reports>
+                            <!--<report>dependencies</report>-->
+                            <report>project-team</report>
+                            <report>summary</report>
+                            <report>scm</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+            </plugin>
 
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-javadoc-plugin</artifactId>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
                 <version>2.8</version>
-			</plugin>
+            </plugin>
 
-			<plugin>
+            <plugin>
 
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<version>${surefireVersion}</version>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${surefireVersion}</version>
 
-				<configuration>
+                <configuration>
 
-					<argLine>-Xmx1024m</argLine>
-					<disableXmlReport>true</disableXmlReport>
+                    <argLine>-Xmx1024m</argLine>
+                    <disableXmlReport>true</disableXmlReport>
 
-					<parallel>tests</parallel>
-					<threadCount>1</threadCount>
+                    <parallel>tests</parallel>
+                    <threadCount>1</threadCount>
 
-				</configuration>
+                </configuration>
 
-			</plugin>
+            </plugin>
 
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-report-plugin</artifactId>
-				<version>${surefireVersion}</version>
-			</plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-report-plugin</artifactId>
+                <version>${surefireVersion}</version>
+            </plugin>
 
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-pmd-plugin</artifactId>
-				<version>2.3</version>
-				<configuration>
-					<linkXref>false</linkXref>
-					<sourceEncoding>${encoding}</sourceEncoding>
-					<minimumTokens>100</minimumTokens>
-					<targetJdk>${javaVersion}</targetJdk>
-				</configuration>
-			</plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-pmd-plugin</artifactId>
+                <version>2.3</version>
+                <configuration>
+                    <linkXref>false</linkXref>
+                    <sourceEncoding>${encoding}</sourceEncoding>
+                    <minimumTokens>100</minimumTokens>
+                    <targetJdk>${javaVersion}</targetJdk>
+                </configuration>
+            </plugin>
 
-		</plugins>
-	</reporting>
+        </plugins>
+    </reporting>
 
 
     <dependencies>
-
-        <!-- AOP -->
-        <dependency>
-            <groupId>org.aspectj</groupId>
-            <artifactId>aspectjrt</artifactId>
-            <version>${aspectj.version}</version>
-        </dependency>
-        <dependency>
-			<groupId>org.aspectj</groupId>
-			<artifactId>aspectjweaver</artifactId>
-			<version>${aspectj.version}</version>
-			<scope>compile</scope>
-		</dependency>
 
         <!-- Bytecode manipulation -->
         <dependency>
@@ -259,62 +193,6 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- Spring Framework for DI, IoC, TX, AOP and more -->
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-core</artifactId>
-            <version>${spring.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>commons-logging</groupId>
-                    <artifactId>commons-logging</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-context</artifactId>
-            <version>${spring.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-aop</artifactId>
-            <version>${spring.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-aspects</artifactId>
-            <version>${spring.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-tx</artifactId>
-            <version>${spring.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-test</artifactId>
-            <version>${spring.version}</version>
-            <scope>test</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>commons-logging</groupId>
-                    <artifactId>commons-logging</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.data</groupId>
-            <artifactId>spring-data-neo4j</artifactId>
-            <version>${spring-data-graph.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.hibernate.javax.persistence</groupId>
-                    <artifactId>hibernate-jpa-2.0-api</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
         <!-- Graph Database Neo4J. NoSQL -->
         <dependency>
             <groupId>org.neo4j</groupId>
@@ -327,26 +205,6 @@
             <groupId>org.neo4j</groupId>
             <artifactId>neo4j-enterprise</artifactId>
             <version>${neo4j.version}</version>
-        </dependency>
-
-        <!-- Hibernate, Persistence, Validator -->
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-validator</artifactId>
-            <version>4.0.2.GA</version>
-        </dependency>
-
-        <!-- JPA -->
-        <dependency>
-            <groupId>org.hibernate.javax.persistence</groupId>
-            <artifactId>hibernate-jpa-2.0-api</artifactId>
-            <version>1.0.0.Final</version>
-        </dependency>
-        <dependency>
-            <groupId>javax.persistence</groupId>
-            <artifactId>persistence-api</artifactId>
-            <version>1.0</version>
-            <scope>provided</scope>
         </dependency>
 
         <!-- For Logging -->
@@ -379,6 +237,12 @@
             <groupId>org.ostermiller</groupId>
             <artifactId>utils</artifactId>
             <version>1.07.00</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.0.1</version>
         </dependency>
 
     </dependencies>

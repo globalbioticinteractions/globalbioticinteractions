@@ -1,24 +1,15 @@
 package org.trophic.graph.domain;
 
-import org.springframework.data.neo4j.annotation.Indexed;
-import org.springframework.data.neo4j.annotation.NodeEntity;
+public class Location extends NodeBacked<Location> {
 
-@NodeEntity
-public class Location {
-
-	@Indexed
 	private String id;
 
-    @Indexed
     private String name;
 
-    @Indexed
 	private Double latitude;
 
-    @Indexed
 	private Double longitude;
 
-    @Indexed
 	private Double altitude;
 
 	public Location() {

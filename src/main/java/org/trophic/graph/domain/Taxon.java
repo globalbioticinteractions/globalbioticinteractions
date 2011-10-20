@@ -1,14 +1,8 @@
 package org.trophic.graph.domain;
 
-import org.springframework.data.neo4j.annotation.Indexed;
-import org.springframework.data.neo4j.annotation.NodeEntity;
-
-@NodeEntity
-public abstract class Taxon {
-    @Indexed
+public abstract class Taxon<T> extends NodeBacked<T> {
     String id;
 
-    @Indexed
     String name;
 
 

@@ -1,15 +1,9 @@
 package org.trophic.graph.domain;
 
-import org.springframework.data.neo4j.annotation.Indexed;
-import org.springframework.data.neo4j.annotation.NodeEntity;
+public class Season extends NodeBacked<Season>{
 
-@NodeEntity
-public class Season {
-
-    @Indexed
     private String id;
 
-    @Indexed
     private String title;
 
     public Season() {

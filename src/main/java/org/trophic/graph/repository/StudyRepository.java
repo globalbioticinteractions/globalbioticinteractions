@@ -1,8 +1,12 @@
 package org.trophic.graph.repository;
 
-import org.springframework.data.neo4j.repository.GraphRepository;
-import org.springframework.data.neo4j.repository.NamedIndexRepository;
+import org.neo4j.helpers.collection.ClosableIterable;
 import org.trophic.graph.domain.Study;
 
-public interface StudyRepository extends GraphRepository<Study>, NamedIndexRepository<Study> {
+public interface StudyRepository  {
+    Study findByPropertyValue(String id, String s);
+
+    ClosableIterable<Study> findAllByPropertyValue(String title, String mississippiAlabama);
+
+    long count();
 }

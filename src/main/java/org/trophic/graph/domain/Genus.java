@@ -1,12 +1,6 @@
 package org.trophic.graph.domain;
 
-import org.springframework.data.neo4j.annotation.Indexed;
-import org.springframework.data.neo4j.annotation.NodeEntity;
-import org.springframework.data.neo4j.annotation.RelatedTo;
-
-@NodeEntity
-public class Genus extends Taxon {
-    @RelatedTo(elementClass = Family.class, type = "PART_OF")
+public class Genus extends Taxon<Genus> {
     Family family;
 
 

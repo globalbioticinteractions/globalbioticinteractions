@@ -1,9 +1,7 @@
 package org.trophic.graph.domain;
 
-import org.springframework.data.neo4j.annotation.NodeEntity;
 
-@NodeEntity
-public class Family extends Taxon {
+public class Family extends Taxon<Family> {
     public Family(String name) {
         this.name = name;
     }
@@ -24,4 +22,7 @@ public class Family extends Taxon {
         return String.format("%s", name);
     }
 
+    public Family persist() {
+        return null;
+    }
 }

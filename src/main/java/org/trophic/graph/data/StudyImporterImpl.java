@@ -1,10 +1,8 @@
 package org.trophic.graph.data;
 
 import com.Ostermiller.util.LabeledCSVParser;
+import org.apache.commons.lang3.StringUtils;
 import org.neo4j.helpers.collection.ClosableIterable;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 import org.trophic.graph.domain.*;
 import org.trophic.graph.repository.LocationRepository;
 import org.trophic.graph.repository.SeasonRepository;
@@ -13,7 +11,6 @@ import org.trophic.graph.repository.StudyRepository;
 import java.io.IOException;
 import java.util.Map;
 
-@Component
 public class StudyImporterImpl implements StudyImporter {
 
     public static final String LATITUDE = "latitude";
@@ -26,19 +23,14 @@ public class StudyImporterImpl implements StudyImporter {
     public static final String PREDATOR_SPECIES = "predator species";
     public static final String PREDATOR_FAMILY = "predatorFamily";
 
-    @Autowired
     private LocationRepository locationRepository;
 
-    @Autowired
     private SeasonRepository seasonRepository;
 
-    @Autowired
     private StudyRepository studyRepository;
 
-    @Autowired
     private TaxonFactory taxonFactory;
 
-    @Autowired
     private ParserFactory parserFactory;
 
     public StudyImporterImpl() {
@@ -173,7 +165,7 @@ public class StudyImporterImpl implements StudyImporter {
 
     private Specimen createAndClassifySpecimen(final String speciesName, Family family) throws StudyImporterException {
         Specimen specimen = new Specimen().persist();
-        String trimmedSpeciesName = StringUtils.trimWhitespace(speciesName);
+        String trimmedSpeciesName = StringUtils.trim(speciesName);
         try {
             specimen.classifyAs(taxonFactory.create(trimmedSpeciesName, family));
         } catch (TaxonFactoryException e) {

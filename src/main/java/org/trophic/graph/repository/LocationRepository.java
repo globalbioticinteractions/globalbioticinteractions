@@ -1,9 +1,10 @@
 package org.trophic.graph.repository;
 
-import org.springframework.data.neo4j.repository.GraphRepository;
-import org.springframework.data.neo4j.repository.NamedIndexRepository;
+import org.neo4j.helpers.collection.ClosableIterable;
 import org.trophic.graph.domain.Location;
 
-public interface LocationRepository extends GraphRepository<Location>,
-		NamedIndexRepository<Location> {
+public interface LocationRepository  {
+    ClosableIterable<Location> findAllByPropertyValue(String longitude, Double longitude1);
+
+    long count();
 }
