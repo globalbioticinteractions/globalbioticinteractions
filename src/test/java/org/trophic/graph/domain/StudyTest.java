@@ -1,13 +1,17 @@
 package org.trophic.graph.domain;
 
+import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.trophic.graph.data.GraphDBTestCase;
+import org.trophic.graph.data.TaxonFactory;
+import org.trophic.graph.data.TaxonFactoryException;
 import org.trophic.graph.repository.StudyRepository;
 
 import static org.junit.Assert.*;
 
 @Ignore
-public class StudyTest {
+public class StudyTest extends GraphDBTestCase {
 
     public static final String CARCHARODON = "Carcharodon";
     public static final String CARCHARODON_CARCHARIAS = CARCHARODON + " carcharias";
@@ -16,19 +20,28 @@ public class StudyTest {
 
     protected StudyRepository studyRepository;
 
+    private TaxonFactory factory;
+
+    @Before
+    public void createFactory() {
+        factory = new TaxonFactory(getGraphDb(), null);
+    }
+
     @Test
-    public void researcherCanContributeToPaper() {
+    public void researcherCanContributeToPaper() throws TaxonFactoryException {
         Study study = new Study("1", "Our first study").persist();
 
-        Family family = new Family(WHITE_SHARK_FAMILY).persist();
+
+        Family family = factory.createFamily(WHITE_SHARK_FAMILY);
 
 
-        Genus genus = new Genus(CARCHARODON).persist();
-        genus.partOf(family);
+        Genus genus2 = factory.createGenus(CARCHARODON);
+        genus2.partOf(family);
+        Genus genus = genus2;
 
-        Species greatWhiteSpecies = new Species("1", CARCHARODON_CARCHARIAS).persist();
-        greatWhiteSpecies.setGenus(genus);
-        Species goldFishSpecies = new Species("2", CARASSIUS_AURATUS_AURATUS).persist();
+        Species greatWhiteSpecies = factory.createSpecies(genus, CARCHARODON_CARCHARIAS);
+
+        Species goldFishSpecies = new Species(getGraphDb().createNode(), "2", CARASSIUS_AURATUS_AURATUS);
 
         Specimen goldFish = new Specimen("2").persist();
         goldFish.classifyAs(goldFishSpecies);

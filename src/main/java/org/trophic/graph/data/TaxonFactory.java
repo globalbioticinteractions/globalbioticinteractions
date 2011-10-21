@@ -1,6 +1,8 @@
 package org.trophic.graph.data;
 
 import org.apache.commons.lang3.StringUtils;
+import org.neo4j.graphdb.GraphDatabaseService;
+import org.neo4j.graphdb.Transaction;
 import org.neo4j.helpers.collection.ClosableIterable;
 import org.trophic.graph.domain.Family;
 import org.trophic.graph.domain.Genus;
@@ -10,7 +12,13 @@ import org.trophic.graph.repository.TaxonRepository;
 
 public class TaxonFactory {
 
-    TaxonRepository taxonRepository;
+    private TaxonRepository taxonRepository;
+    private GraphDatabaseService graphDb;
+
+    public TaxonFactory(GraphDatabaseService graphDb, TaxonRepository taxonRepository) {
+        this.graphDb = graphDb;
+        this.taxonRepository = taxonRepository;
+    }
 
     public Taxon create(String speciesName2, Family family) throws TaxonFactoryException {
         String cleanedSpeciesName = createName(speciesName2);
@@ -25,8 +33,11 @@ public class TaxonFactory {
                 if (isFamilyName(firstPart)) {
                     taxon = createFamily(firstPart);
                 } else {
-                    Species species = createSpecies(createGenus(family, firstPart), cleanedSpeciesName);
-                    species.persist();
+                    Genus genus = createGenus(firstPart);
+                    if (family != null) {
+                        genus.partOf(family);
+                    }
+                    Species species = createSpecies(genus, cleanedSpeciesName);
                     taxon = species;
                 }
             }
@@ -45,7 +56,11 @@ public class TaxonFactory {
         if (isFamilyName(firstPart)) {
             taxon = createFamily(firstPart);
         } else {
-            taxon = createGenus(family, firstPart);
+            Genus genus = createGenus(firstPart);
+            if (family != null) {
+                genus.partOf(family);
+            }
+            taxon = genus;
         }
         return taxon;
     }
@@ -54,25 +69,34 @@ public class TaxonFactory {
         return firstPart.endsWith("ae");
     }
 
-    private Species createSpecies(Genus genus, String speciesName) throws TaxonFactoryException {
+    public Species createSpecies(Genus genus, String speciesName) throws TaxonFactoryException {
         Species species = (Species) findTaxonOfClass(speciesName, Species.class);
         if (species == null) {
-            species = new Species();
-            species.setName(speciesName);
-            species.persist();
+            Transaction transaction = graphDb.beginTx();
+            try {
+                species = new Species(graphDb.createNode());
+                species.setName(speciesName);
+                transaction.success();
+            } finally {
+                transaction.finish();
+            }
         }
         species.partOf(genus);
         return species;
     }
 
-    private Genus createGenus(Family family, String genusName) throws TaxonFactoryException {
-
-
+    public Genus createGenus(String genusName) throws TaxonFactoryException {
         Genus genus = (Genus) findTaxonOfClass(genusName, Genus.class);
         if (genus == null) {
-            genus = new Genus(genusName).persist();
+            Transaction transaction = graphDb.beginTx();
+            try {
+                genus = new Genus(graphDb.createNode(), genusName);
+                transaction.success();
+            } finally {
+                transaction.finish();
+            }
+
         }
-        genus.partOf(family);
         return genus;
     }
 
@@ -82,7 +106,13 @@ public class TaxonFactory {
             String trimmedFamilyName = StringUtils.trim(familyName);
             Taxon foundFamily = findTaxonOfClass(trimmedFamilyName, Family.class);
             if (foundFamily == null) {
-                family = new Family(trimmedFamilyName).persist();
+                Transaction transaction = graphDb.beginTx();
+                try {
+                    family = new Family(graphDb.createNode(), trimmedFamilyName);
+                    transaction.success();
+                } finally {
+                    transaction.finish();
+                }
             } else {
                 family = (Family) foundFamily;
             }
@@ -93,7 +123,7 @@ public class TaxonFactory {
     private Taxon findTaxonOfClass(String taxonName, Class expectedClass) throws TaxonFactoryException {
         ClosableIterable<Taxon> taxons = taxonRepository.findAllByPropertyValue("name", taxonName);
         Taxon taxon = null;
-        if (taxons.iterator().hasNext()) {
+        if (taxons != null && taxons.iterator().hasNext()) {
             Taxon first = taxons.iterator().next();
             if (taxons.iterator().hasNext()) {
                 Taxon second = taxons.iterator().next();

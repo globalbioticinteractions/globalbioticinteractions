@@ -1,20 +1,36 @@
 package org.trophic.graph.data;
 
-import org.junit.Ignore;
+import org.junit.Before;
 import org.junit.Test;
+import org.neo4j.helpers.collection.ClosableIterable;
 import org.trophic.graph.domain.Family;
 import org.trophic.graph.domain.Genus;
 import org.trophic.graph.domain.Species;
 import org.trophic.graph.domain.Taxon;
+import org.trophic.graph.repository.TaxonRepository;
 
 import static junit.framework.Assert.assertNull;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-@Ignore
-public class TaxonFactoryTest {
+public class TaxonFactoryTest extends GraphDBTestCase {
 
     TaxonFactory taxonFactory;
+
+    @Before
+    public void createFactory() {
+        taxonFactory = new TaxonFactory(getGraphDb(), new TaxonRepository() {
+            @Override
+            public ClosableIterable<Taxon> findAllByPropertyValue(String name, String taxonName) {
+                return null;
+            }
+
+            @Override
+            public long count() {
+                return 0;
+            }
+        });
+    }
 
     @Test
     public void createSpecies() throws TaxonFactoryException {
@@ -52,7 +68,7 @@ public class TaxonFactoryTest {
 
     @Test
     public void createSpeciesWithFamily() throws TaxonFactoryException {
-        Family family = new Family("theFam").persist();
+        Family family = taxonFactory.createFamily("theFam");
         Taxon taxon = taxonFactory.create("bla bla", family);
         assertTrue(taxon instanceof Species);
         Species species = (Species) taxon;
@@ -82,6 +98,7 @@ public class TaxonFactoryTest {
         assertEquals("bla", genus.getName());
         assertNull(genus.getFamily());
     }
+
     private void assertFamily(String speciesName) throws TaxonFactoryException {
         Taxon taxon = taxonFactory.create(speciesName, null);
         assertTrue(taxon instanceof Family);

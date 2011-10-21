@@ -1,44 +1,29 @@
 package org.trophic.graph.domain;
 
+import org.neo4j.graphdb.Node;
+
 public class Species extends Taxon<Species> {
-    Genus genus;
 
-    public Species(String id, String name) {
-        this.id = id;
-        this.name = name;
+    public Species(Node node, String id, String name) {
+        super(node);
+        setName(name);
+
     }
-
-    public Species() {
+    public Species(Node node) {
+        super(node);
     }
-
-    public String getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
 
     public Genus getGenus() {
-        return genus;
+        return new Genus(super.isPartOf());
     }
 
     public void setGenus(Genus genus) {
-        this.genus = genus;
-    }
-
-    public void partOf(Genus genus) {
-        this.genus = genus;
+        super.partOf(genus);
     }
 
     @Override
     public String toString() {
-        return String.format("%s [%s]", name, id);
+        return String.format("%s [%s]", getName());
     }
 
 }
