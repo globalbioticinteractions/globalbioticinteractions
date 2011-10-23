@@ -5,8 +5,7 @@ import org.neo4j.graphdb.Node;
 
 public class Family extends Taxon {
     public Family(Node node, String name) {
-        this(node);
-        setName(name);
+        super(node, name, Family.class.getSimpleName());
     }
 
     public Family(Node node) {

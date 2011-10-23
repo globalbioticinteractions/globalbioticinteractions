@@ -1,30 +1,38 @@
 package org.trophic.graph.data;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.lucene.search.MultiTermQuery;
+import org.apache.lucene.search.NumericRangeQuery;
+import org.apache.lucene.search.Query;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.index.Index;
-import org.neo4j.helpers.collection.ClosableIterable;
+import org.neo4j.graphdb.index.IndexHits;
+import org.neo4j.index.lucene.QueryContext;
+import org.neo4j.index.lucene.ValueContext;
 import org.trophic.graph.domain.*;
-import org.trophic.graph.repository.TaxonRepository;
 
 import static org.trophic.graph.domain.RelTypes.PART_OF;
 
 public class TaxonFactory {
 
-    private TaxonRepository taxonRepository;
     private GraphDatabaseService graphDb;
     private Index<Node> studies;
+    private Index<Node> seasons;
+    private Index<Node> locations;
+    private Index<Node> taxons;
 
-    public TaxonFactory(GraphDatabaseService graphDb, TaxonRepository taxonRepository) {
+    public TaxonFactory(GraphDatabaseService graphDb) {
         this.graphDb = graphDb;
-        this.taxonRepository = taxonRepository;
         this.studies = graphDb.index().forNodes("studies");
-        
+        this.seasons = graphDb.index().forNodes("seasons");
+        this.locations = graphDb.index().forNodes("locations");
+        this.taxons = graphDb.index().forNodes("taxons");
+
     }
 
-    public Taxon create(String speciesName2, Family family) throws TaxonFactoryException {
+    public Taxon create(String speciesName2, Taxon family) throws TaxonFactoryException {
         String cleanedSpeciesName = createName(speciesName2);
         String[] split = cleanedSpeciesName.split(" ");
         Taxon taxon = null;
@@ -35,13 +43,13 @@ public class TaxonFactory {
                 taxon = createFamilyOrGenus(family, firstPart);
             } else {
                 if (isFamilyName(firstPart)) {
-                    taxon = createFamily(firstPart);
+                    taxon = getOrCreateFamily(firstPart);
                 } else {
-                    Genus genus = createGenus(firstPart);
+                    Taxon genus = getOrCreateGenus(firstPart);
                     if (family != null) {
                         genus.createRelationshipTo(family, PART_OF);
                     }
-                    Species species = createSpecies(genus, cleanedSpeciesName);
+                    Taxon species = getOrCreateSpecies(genus, cleanedSpeciesName);
                     taxon = species;
                 }
             }
@@ -55,12 +63,12 @@ public class TaxonFactory {
         return speciesName2.replaceAll("\\(.*\\)", "");
     }
 
-    private Taxon createFamilyOrGenus(Family family, String firstPart) throws TaxonFactoryException {
+    private Taxon createFamilyOrGenus(Taxon family, String firstPart) throws TaxonFactoryException {
         Taxon taxon;
         if (isFamilyName(firstPart)) {
-            taxon = createFamily(firstPart);
+            taxon = getOrCreateFamily(firstPart);
         } else {
-            Genus genus = createGenus(firstPart);
+            Taxon genus = getOrCreateGenus(firstPart);
             if (family != null) {
                 genus.createRelationshipTo(family, PART_OF);
             }
@@ -73,13 +81,14 @@ public class TaxonFactory {
         return firstPart.endsWith("ae");
     }
 
-    public Species createSpecies(Genus genus, String speciesName) throws TaxonFactoryException {
-        Species species = (Species) findTaxonOfClass(speciesName, Species.class);
+    public Taxon getOrCreateSpecies(Taxon genus, String speciesName) throws TaxonFactoryException {
+        Taxon species = findTaxonOfType(speciesName, Species.class);
         if (species == null) {
             Transaction transaction = graphDb.beginTx();
             try {
-                species = new Species(graphDb.createNode());
-                species.setName(speciesName);
+                Node node = graphDb.createNode();
+                species = new Taxon(node, speciesName, Species.class.getSimpleName());
+                addTaxonToIndex(species, speciesName, node);
                 transaction.success();
             } finally {
                 transaction.finish();
@@ -91,12 +100,14 @@ public class TaxonFactory {
         return species;
     }
 
-    public Genus createGenus(String genusName) throws TaxonFactoryException {
-        Genus genus = (Genus) findTaxonOfClass(genusName, Genus.class);
+    public Taxon getOrCreateGenus(String genusName) throws TaxonFactoryException {
+        Taxon genus = findTaxonOfType(genusName, Genus.class);
         if (genus == null) {
             Transaction transaction = graphDb.beginTx();
             try {
-                genus = new Genus(graphDb.createNode(), genusName);
+                Node node = graphDb.createNode();
+                genus = new Taxon(node, genusName, Genus.class.getSimpleName());
+                addTaxonToIndex(genus, genusName, node);
                 transaction.success();
             } finally {
                 transaction.finish();
@@ -106,54 +117,64 @@ public class TaxonFactory {
         return genus;
     }
 
-    public Family createFamily(final String familyName) throws TaxonFactoryException {
-        Family family = null;
+    public Taxon getOrCreateFamily(final String familyName) throws TaxonFactoryException {
+        Taxon family = null;
         if (familyName != null) {
             String trimmedFamilyName = StringUtils.trim(familyName);
-            Taxon foundFamily = findTaxonOfClass(trimmedFamilyName, Family.class);
+            Taxon foundFamily = findTaxonOfType(trimmedFamilyName, Family.class);
             if (foundFamily == null) {
                 Transaction transaction = graphDb.beginTx();
                 try {
-                    family = new Family(graphDb.createNode(), trimmedFamilyName);
+                    Node node = graphDb.createNode();
+                    family = new Taxon(node, trimmedFamilyName, Family.class.getSimpleName());
+                    addTaxonToIndex(family, trimmedFamilyName, node);
                     transaction.success();
                 } finally {
                     transaction.finish();
                 }
             } else {
-                family = (Family) foundFamily;
+                family = foundFamily;
             }
         }
         return family;
     }
 
-    private Taxon findTaxonOfClass(String taxonName, Class expectedClass) throws TaxonFactoryException {
-        ClosableIterable<Taxon> taxons = taxonRepository.findAllByPropertyValue("name", taxonName);
-        Taxon taxon = null;
-        if (taxons != null && taxons.iterator().hasNext()) {
-            Taxon first = taxons.iterator().next();
-            if (taxons.iterator().hasNext()) {
-                Taxon second = taxons.iterator().next();
-                throw new TaxonFactoryException("found taxon with duplicate name: [" + first.getName() + first.getClass().getSimpleName() + "] and [" + second.getName() + second.getClass().getSimpleName() + "]");
+    private void addTaxonToIndex(Taxon taxon, String trimmedFamilyName, Node node) {
+        taxons.add(node, Taxon.NAME, trimmedFamilyName);
+        taxons.add(node, Taxon.TYPE, taxon.getType());
+    }
+
+    public Taxon findTaxonOfType(String taxonName, Class expectedClass) throws TaxonFactoryException {
+        IndexHits<Node> matchingTaxons = taxons.query("name:\"" + taxonName + "\" AND type:" + expectedClass.getSimpleName());
+        Node matchingTaxon = matchingTaxons.getSingle();
+        matchingTaxons.close();
+        return matchingTaxon == null ? null : new Taxon(matchingTaxon);
+    }
+
+    public Location findLocation(Double latitude, Double longitude, Double altitude) {
+        QueryContext queryOrQueryObject = QueryContext.numericRange(Location.LATITUDE, latitude, latitude);
+        IndexHits<Node> matchingLocations = locations.query(queryOrQueryObject);
+        Node matchingLocation = null;
+        for (Node node : matchingLocations) {
+            Double foundLongitude = (Double) node.getProperty(Location.LONGITUDE);
+            Double foundAltitude = (Double) node.getProperty(Location.ALTITUDE);
+            if (longitude.equals(foundLongitude) && altitude.equals(foundAltitude)) {
+                matchingLocation = node;
+                break;
             }
-            taxon = (first != null &&
-                    first.getClass().equals(expectedClass)) ? first : null;
+
         }
-        return taxon;
-    }
-
-    public TaxonRepository getTaxonRepository() {
-        return taxonRepository;
-    }
-
-    public void setTaxonRepository(TaxonRepository taxonRepository) {
-        this.taxonRepository = taxonRepository;
+        matchingLocations.close();
+        return matchingLocation == null ? null : new Location(matchingLocation);
     }
 
     public Season createSeason(String seasonNameLower) {
         Transaction transaction = graphDb.beginTx();
         Season season;
         try {
-            season = new Season(graphDb.createNode(), seasonNameLower);
+            Node node = graphDb.createNode();
+            season = new Season(node, seasonNameLower);
+            seasons.add(node, Season.TITLE, seasonNameLower);
             transaction.success();
         } finally {
             transaction.finish();
@@ -165,7 +186,11 @@ public class TaxonFactory {
         Transaction transaction = graphDb.beginTx();
         Location location;
         try {
-            location = new Location(graphDb.createNode(), latitude, longitude, altitude);
+            Node node = graphDb.createNode();
+            location = new Location(node, latitude, longitude, altitude);
+            locations.add(node, Location.LATITUDE, ValueContext.numeric(latitude));
+            locations.add(node, Location.LONGITUDE, ValueContext.numeric(longitude));
+            locations.add(node, Location.ALTITUDE, ValueContext.numeric(altitude));
             transaction.success();
         } finally {
             transaction.finish();
@@ -201,6 +226,37 @@ public class TaxonFactory {
     }
 
     public Study findStudy(String title) {
-        return new Study(studies.get("title", title).getSingle());
+        Node foundStudyNode = studies.get(Study.TITLE, title).getSingle();
+        return foundStudyNode == null ? null : new Study(foundStudyNode);
+    }
+
+    public long totalNumberOfTaxons() {
+        return 0;
+    }
+
+    public long totalNumberOfSeasons() {
+        return 0;
+    }
+
+    public long totalNumberOfStudies() {
+        return 0;
+    }
+
+    public long totalNumberOfLocations() {
+        return 0;
+    }
+
+    public long countTaxonsWithName(String name) {
+        IndexHits<Node> hits = taxons.get("name", name);
+        int size = hits.size();
+        hits.close();
+        return size;
+    }
+
+    public Season findSeason(String seasonName) {
+        IndexHits<Node> nodeIndexHits = seasons.get(Season.TITLE, seasonName);
+        Node seasonHit = nodeIndexHits.getSingle();
+        nodeIndexHits.close();
+        return seasonHit == null ? null : new Season(seasonHit);
     }
 }

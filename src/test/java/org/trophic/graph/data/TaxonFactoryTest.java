@@ -1,13 +1,13 @@
 package org.trophic.graph.data;
 
+import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.neo4j.helpers.collection.ClosableIterable;
+import org.neo4j.graphdb.Node;
 import org.trophic.graph.domain.Family;
 import org.trophic.graph.domain.Genus;
 import org.trophic.graph.domain.Species;
 import org.trophic.graph.domain.Taxon;
-import org.trophic.graph.repository.TaxonRepository;
 
 import static junit.framework.Assert.assertNull;
 import static org.junit.Assert.assertEquals;
@@ -19,26 +19,15 @@ public class TaxonFactoryTest extends GraphDBTestCase {
 
     @Before
     public void createFactory() {
-        taxonFactory = new TaxonFactory(getGraphDb(), new TaxonRepository() {
-            @Override
-            public ClosableIterable<Taxon> findAllByPropertyValue(String name, String taxonName) {
-                return null;
-            }
-
-            @Override
-            public long count() {
-                return 0;
-            }
-        });
+        taxonFactory = new TaxonFactory(getGraphDb());
     }
 
     @Test
     public void createSpecies() throws TaxonFactoryException {
         Taxon taxon = taxonFactory.create("bla bla", null);
-        assertTrue(taxon instanceof Species);
-        Species species = (Species) taxon;
-        assertEquals("bla bla", species.getName());
-        assertEquals("bla", species.getGenus().getName());
+        assertEquals("Species", taxon.getType());
+        assertEquals("bla bla", taxon.getName());
+        assertEquals("bla", taxon.isPartOf().getProperty("name"));
     }
 
     @Test
@@ -61,20 +50,19 @@ public class TaxonFactoryTest extends GraphDBTestCase {
     private void assertFamilyCorrectness(String expectedOutputName, String inputName) throws TaxonFactoryException {
         taxonFactory.create(inputName, null);
         Taxon taxon = taxonFactory.create(inputName, null);
-        assertTrue(taxon instanceof Family);
-        Family family = (Family) taxon;
-        assertEquals(expectedOutputName, family.getName());
+        Assert.assertEquals(Family.class.getSimpleName(), taxon.getType());
+        assertEquals(expectedOutputName, taxon.getName());
     }
 
     @Test
     public void createSpeciesWithFamily() throws TaxonFactoryException {
-        Family family = taxonFactory.createFamily("theFam");
+        Taxon family = taxonFactory.getOrCreateFamily("theFam");
         Taxon taxon = taxonFactory.create("bla bla", family);
-        assertTrue(taxon instanceof Species);
-        Species species = (Species) taxon;
-        assertEquals("bla bla", species.getName());
-        assertEquals("bla", species.getGenus().getName());
-        assertEquals("theFam", species.getGenus().getFamily().getName());
+        Assert.assertEquals("Species", taxon.getType());
+        assertEquals("bla bla", taxon.getName());
+        Taxon genusTaxon = taxon.isPartOfTaxon();
+        assertEquals("bla", genusTaxon.getName());
+        assertEquals("theFam", genusTaxon.isPartOfTaxon().getName());
     }
 
     @Test
@@ -93,16 +81,15 @@ public class TaxonFactoryTest extends GraphDBTestCase {
 
     private void assertGenus(String speciesName) throws TaxonFactoryException {
         Taxon taxon = taxonFactory.create(speciesName, null);
-        assertTrue(taxon instanceof Genus);
-        Genus genus = (Genus) taxon;
+        Taxon genus = taxon;
+        assertEquals("Genus", genus.getType());
         assertEquals("bla", genus.getName());
-        assertNull(genus.getFamily());
+        assertNull(genus.isPartOf());
     }
 
     private void assertFamily(String speciesName) throws TaxonFactoryException {
-        Taxon taxon = taxonFactory.create(speciesName, null);
-        assertTrue(taxon instanceof Family);
-        Family family = (Family) taxon;
+        Taxon family = taxonFactory.create(speciesName, null);
+        assertEquals("Family", family.getType());
         assertEquals("Blabae", family.getName());
     }
 }

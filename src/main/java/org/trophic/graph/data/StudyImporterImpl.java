@@ -2,12 +2,7 @@ package org.trophic.graph.data;
 
 import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.lang3.StringUtils;
-import org.neo4j.helpers.collection.ClosableIterable;
 import org.trophic.graph.domain.*;
-import org.trophic.graph.repository.LocationRepository;
-import org.trophic.graph.repository.SeasonRepository;
-import org.trophic.graph.repository.StudyRepository;
-
 import java.io.IOException;
 import java.util.Map;
 
@@ -22,12 +17,6 @@ public class StudyImporterImpl implements StudyImporter {
     public static final String PREY_SPECIES = "prey species";
     public static final String PREDATOR_SPECIES = "predator species";
     public static final String PREDATOR_FAMILY = "predatorFamily";
-
-    private LocationRepository locationRepository;
-
-    private SeasonRepository seasonRepository;
-
-    private StudyRepository studyRepository;
 
     private TaxonFactory taxonFactory;
 
@@ -88,7 +77,7 @@ public class StudyImporterImpl implements StudyImporter {
         String familyName = csvParser.getValueByLabel(columnToNormalizedTermMapper.get(PREDATOR_FAMILY));
         Specimen predator = null;
         try {
-            predator = createAndClassifySpecimen(speciesName, taxonFactory.createFamily(familyName));
+            predator = createAndClassifySpecimen(speciesName, taxonFactory.getOrCreateFamily(familyName));
         } catch (TaxonFactoryException e) {
             throw new StudyImporterException("failed to create taxon", e);
         }
@@ -103,15 +92,15 @@ public class StudyImporterImpl implements StudyImporter {
 
     private Season getOrCreateSeason(String seasonName) {
         String seasonNameLower = seasonName.toLowerCase().trim();
-        Season season = seasonRepository.findByPropertyValue("title", seasonNameLower);
+        Season season = taxonFactory.findSeason(seasonNameLower);
         if (null == season) {
-            taxonFactory.createSeason(seasonNameLower);
+            season = taxonFactory.createSeason(seasonNameLower);
         }
         return season;
     }
 
     private Study getOrCreateStudy(String title) {
-        Study study = studyRepository.findByPropertyValue("title", title);
+        Study study = taxonFactory.findStudy(title);
         if (null == study) {
             study = taxonFactory.createStudy(title);
         }
@@ -124,12 +113,11 @@ public class StudyImporterImpl implements StudyImporter {
         Double depth = parseAsDouble(csvParser, columnToNormalizedTermMapper.get(DEPTH));
         Double altitude = depth == null ? null : -depth;
 
-
         Location location = null;
         if (latitude != null && longitude != null && altitude != null) {
             location = findLocation(latitude, longitude, altitude);
             if (null == location) {
-                taxonFactory.createLocation(latitude, longitude, altitude);
+                location = taxonFactory.createLocation(latitude, longitude, altitude);
             }
         }
         return location;
@@ -141,19 +129,10 @@ public class StudyImporterImpl implements StudyImporter {
     }
 
     private Location findLocation(Double latitude, Double longitude, Double altitude) {
-        Location foundLocation = null;
-        ClosableIterable<Location> matchForLongitude = locationRepository.findAllByPropertyValue("longitude", longitude);
-        for (Location location : matchForLongitude) {
-            if (latitude.equals(location.getLatitude()) && altitude.equals(location.getAltitude())) {
-                foundLocation = location;
-                break;
-            }
-        }
-        matchForLongitude.close();
-        return foundLocation;
+        return taxonFactory.findLocation(latitude, longitude, altitude);
     }
 
-    private Specimen createAndClassifySpecimen(final String speciesName, Family family) throws StudyImporterException {
+    private Specimen createAndClassifySpecimen(final String speciesName, Taxon family) throws StudyImporterException {
         Specimen specimen = taxonFactory.createSpecimen();
         String trimmedSpeciesName = StringUtils.trim(speciesName);
         try {
@@ -162,18 +141,6 @@ public class StudyImporterImpl implements StudyImporter {
             throw new StudyImporterException("failed to classify specimen", e);
         }
         return specimen;
-    }
-
-    public void setLocationRepository(LocationRepository locationRepository) {
-        this.locationRepository = locationRepository;
-    }
-
-    public void setStudyRepository(StudyRepository studyRepository) {
-        this.studyRepository = studyRepository;
-    }
-
-    public void setSeasonRepository(SeasonRepository seasonRepository) {
-        this.seasonRepository = seasonRepository;
     }
 
     public TaxonFactory getTaxonFactory() {

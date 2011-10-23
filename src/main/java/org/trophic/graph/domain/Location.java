@@ -12,7 +12,7 @@ public class Location extends NodeBacked {
         super(node);
     }
 
-    public Location(Node node, Double longitude, Double latitude, Double altitude) {
+    public Location(Node node, Double latitude, Double longitude, Double altitude) {
         this(node);
         getUnderlyingNode().setProperty(ALTITUDE, altitude);
         getUnderlyingNode().setProperty(LATITUDE, latitude);

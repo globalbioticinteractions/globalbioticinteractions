@@ -5,12 +5,9 @@ import org.junit.Test;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
-import org.neo4j.helpers.collection.ClosableIterable;
 import org.trophic.graph.data.GraphDBTestCase;
 import org.trophic.graph.data.TaxonFactory;
 import org.trophic.graph.data.TaxonFactoryException;
-import org.trophic.graph.repository.StudyRepository;
-import org.trophic.graph.repository.TaxonRepository;
 
 import static org.junit.Assert.*;
 import static org.trophic.graph.domain.RelTypes.PART_OF;
@@ -23,40 +20,13 @@ public class StudyTest extends GraphDBTestCase {
     public static final String WHITE_SHARK_FAMILY = "Lamnidae";
     public static final String NAME = "name";
 
-    protected StudyRepository studyRepository;
-
     private TaxonFactory factory;
 
     @Before
     public void createFactory() {
-        factory = new TaxonFactory(getGraphDb(), new TaxonRepository() {
-            @Override
-            public ClosableIterable<Taxon> findAllByPropertyValue(String name, String taxonName) {
-                return null;
-            }
+        factory = new TaxonFactory(getGraphDb());
 
-            @Override
-            public long count() {
-                return 0;
-            }
-        });
 
-        studyRepository = new StudyRepository() {
-            @Override
-            public Study findByPropertyValue(String id, String s) {
-                return null;
-            }
-
-            @Override
-            public ClosableIterable<Study> findAllByPropertyValue(String title, String mississippiAlabama) {
-                return null;
-            }
-
-            @Override
-            public long count() {
-                return 0;
-            }
-        };
     }
 
     @Test
@@ -64,17 +34,17 @@ public class StudyTest extends GraphDBTestCase {
         Study study = factory.createStudy("Our first study");
 
 
-        Family family = factory.createFamily(WHITE_SHARK_FAMILY);
+        Taxon family = factory.getOrCreateFamily(WHITE_SHARK_FAMILY);
 
 
-        Genus genus2 = factory.createGenus(CARCHARODON);
+        Taxon genus2 = factory.getOrCreateGenus(CARCHARODON);
         genus2.createRelationshipTo(family, PART_OF);
-        Genus genus = genus2;
+        Taxon genus = genus2;
 
-        Species greatWhiteSpecies = factory.createSpecies(genus, CARCHARODON_CARCHARIAS);
+        Taxon greatWhiteSpecies = factory.getOrCreateSpecies(genus, CARCHARODON_CARCHARIAS);
 
 
-        Species goldFishSpecies = factory.createSpecies(null, CARASSIUS_AURATUS_AURATUS);
+        Taxon goldFishSpecies = factory.getOrCreateSpecies(null, CARASSIUS_AURATUS_AURATUS);
 
         Specimen goldFish = factory.createSpecimen();
         goldFish.classifyAs(goldFishSpecies);

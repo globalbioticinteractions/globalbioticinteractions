@@ -7,8 +7,7 @@ import static org.trophic.graph.domain.RelTypes.PART_OF;
 public class Genus extends Taxon {
 
     public Genus(Node node, String name) {
-        this(node);
-        setName(name);
+        super(node, name, Genus.class.getSimpleName());
     }
 
     public Genus(Node node) {

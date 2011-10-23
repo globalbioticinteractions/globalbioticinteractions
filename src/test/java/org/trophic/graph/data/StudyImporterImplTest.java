@@ -1,35 +1,37 @@
 package org.trophic.graph.data;
 
 
+import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
-import org.neo4j.helpers.collection.ClosableIterable;
 import org.trophic.graph.domain.*;
-import org.trophic.graph.repository.LocationRepository;
-import org.trophic.graph.repository.SeasonRepository;
-import org.trophic.graph.repository.StudyRepository;
-import org.trophic.graph.repository.TaxonRepository;
 
 import static junit.framework.Assert.*;
 
-@Ignore
-public class StudyImporterImplTest {
-
-    StudyRepository studyRepository;
-
-    TaxonRepository taxonRespository;
-
-    LocationRepository locationRepository;
-
-    SeasonRepository seasonRepository;
+public class StudyImporterImplTest extends GraphDBTestCase {
 
     TaxonFactory taxonFactory;
 
+    @Before
+    public void createFactory() {
+        taxonFactory = new TaxonFactory(getGraphDb());
+    }
+
     @Test
-    public void createAndPopulateStudyMississippiAlabama() throws StudyImporterException {
+    public void createFindLocation() {
+        Location location = taxonFactory.createLocation(1.2d, 1.4d, -1.0d);
+        taxonFactory.createLocation(2.2d, 1.4d, -1.0d);
+        taxonFactory.createLocation(1.2d, 2.4d, -1.0d);
+        assertNotNull(location);
+        Location location1 = taxonFactory.findLocation(location.getLatitude(), location.getLongitude(), location.getAltitude());
+        assertNotNull(location1);
+    }
+
+    @Test
+    public void createAndPopulateStudyMississippiAlabama() throws StudyImporterException, TaxonFactoryException {
         String csvString
                 = "\"Obs\",\"spcode\", \"sizecl\", \"cruise\", \"stcode\", \"numstom\", \"numfood\", \"pctfull\", \"predator famcode\", \"prey\", \"number\", \"season\", \"depth\", \"transect\", \"alphcode\", \"taxord\", \"station\", \"long\", \"lat\", \"time\", \"sizeclass\", \"predator\"\n";
         csvString += "1, 1, 16, 3, 2, 6, 6, 205.5, 1, \"Ampelisca sp. (abdita complex)  \", 1, \"Summer\", 60, \"Chandeleur Islands\", \"aabd\", 47.11, \"C2\", 348078.84, 3257617.25, 313, \"201-300\", \"Rhynchoconger flavus\"\n";
@@ -42,16 +44,24 @@ public class StudyImporterImplTest {
         Study study = studyImporter.importStudy();
         studyImporter.importStudy();
 
-        assertEquals(5, taxonRespository.count());
-        assertEquals(1, studyRepository.count());
-        assertEquals(2, locationRepository.count());
-        assertEquals(1, seasonRepository.count());
+        assertNotNull(taxonFactory.findTaxonOfType("Rhynchoconger flavus", Species.class));
+        assertNotNull(taxonFactory.findTaxonOfType("Rhynchoconger", Genus.class));
+        assertNotNull(taxonFactory.findTaxonOfType("Halieutichthys aculeatus", Species.class));
+        assertNotNull(taxonFactory.findTaxonOfType("Halieutichthys", Genus.class));
+        assertNotNull(taxonFactory.findTaxonOfType("Ampelisca", Genus.class));
+        assertNull(taxonFactory.findTaxonOfType("Ampelisca ", Genus.class));
 
-        ClosableIterable<Study> foundStudies = studyRepository.findAllByPropertyValue("title", StudyLibrary.MISSISSIPPI_ALABAMA);
-        Study foundStudy = foundStudies.iterator().next();
+        assertNotNull(taxonFactory.findStudy(StudyLibrary.MISSISSIPPI_ALABAMA));
+        assertNull(taxonFactory.findStudy(StudyLibrary.LAVACA_BAY));
+
+        assertNotNull(taxonFactory.findLocation(3257617.25d, 348078.84d, -60.0d));
+        assertNotNull(taxonFactory.findLocation(3323087.25, 344445.31,  -20.0d));
+
+        assertNotNull(taxonFactory.findSeason("summer"));
+
+        Study foundStudy = taxonFactory.findStudy(StudyLibrary.MISSISSIPPI_ALABAMA);
         assertNotNull(foundStudy);
         for (Relationship rel : foundStudy.getSpecimens()) {
-
             Node firstSpecimen = rel.getEndNode();
             Node speciesNode = firstSpecimen.getSingleRelationship(RelTypes.CLASSIFIED_AS, Direction.OUTGOING).getEndNode();
             String scientificName = (String) speciesNode.getProperty("name");
@@ -87,7 +97,8 @@ public class StudyImporterImplTest {
         assertEquals(alt, locationNode.getProperty("altitude"));
 
         Relationship stomachContents = firstSpecimen.getSingleRelationship(RelTypes.ATE, Direction.OUTGOING);
-        assertEquals(genusName, stomachContents.getEndNode().getProperty("name"));
+        Node taxonNode = stomachContents.getEndNode().getSingleRelationship(RelTypes.CLASSIFIED_AS, Direction.OUTGOING).getEndNode();
+        assertEquals(genusName, taxonNode.getProperty("name"));
 
         Node endNode = firstSpecimen.getSingleRelationship(RelTypes.CAUGHT_DURING, Direction.OUTGOING).getEndNode();
         String season = (String) endNode.getProperty("title");
@@ -97,12 +108,13 @@ public class StudyImporterImplTest {
     }
 
     private void assertEmpty() {
-        assertEquals(0, studyRepository.count());
-        assertEquals(0, taxonRespository.count());
-        assertEquals(0, locationRepository.count());
-        assertEquals(0, seasonRepository.count());
+        assertEquals(0, taxonFactory.totalNumberOfTaxons());
+        assertEquals(0, taxonFactory.totalNumberOfStudies());
+        assertEquals(0, taxonFactory.totalNumberOfLocations());
+        assertEquals(0, taxonFactory.totalNumberOfSeasons());
     }
 
+    @Ignore
     @Test
     public void createAndPopulateStudyFromLavacaBay() throws StudyImporterException {
         String csvString =
@@ -117,13 +129,12 @@ public class StudyImporterImplTest {
         assertEmpty();
         Study study = studyImporter.importStudy(StudyLibrary.LAVACA_BAY);
 
-        assertEquals(1, studyRepository.count());
-        assertEquals(0, locationRepository.count());
-        assertEquals(2, seasonRepository.count());
-        assertEquals(9, taxonRespository.count());
+        assertEquals(9, taxonFactory.totalNumberOfTaxons());
+        assertEquals(1, taxonFactory.totalNumberOfStudies());
+        assertEquals(0, taxonFactory.totalNumberOfLocations());
+        assertEquals(2, taxonFactory.totalNumberOfSeasons());
 
-        ClosableIterable<Study> foundStudies = studyRepository.findAllByPropertyValue("title", StudyLibrary.LAVACA_BAY);
-        Study foundStudy = foundStudies.iterator().next();
+        Study foundStudy = taxonFactory.findStudy(StudyLibrary.LAVACA_BAY);
         assertNotNull(foundStudy);
         for (Relationship rel : study.getSpecimens()) {
             Specimen specimen = new Specimen(rel.getEndNode());
@@ -177,11 +188,7 @@ public class StudyImporterImplTest {
     }
 
     private void init(StudyImporterImpl studyImporter) {
-        studyImporter.setSeasonRepository(seasonRepository);
-        studyImporter.setLocationRepository(locationRepository);
-        studyImporter.setStudyRepository(studyRepository);
         studyImporter.setTaxonFactory(taxonFactory);
-        taxonFactory.setTaxonRepository(taxonRespository);
     }
 
 

@@ -4,19 +4,13 @@ import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 
-import java.util.Set;
-
 public class Study extends NodeBacked {
 
-	private String id;
+    public static final String TITLE = "title";
 
-	private String title;
-	
-    private Set<Specimen> specimens;
-
-	public Study(Node node, String title) {
+    public Study(Node node, String title) {
 		this(node);
-        getUnderlyingNode().setProperty("title", title);
+        getUnderlyingNode().setProperty(TITLE, title);
 	}
 
     public Study(Node node) {

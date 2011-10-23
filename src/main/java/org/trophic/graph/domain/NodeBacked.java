@@ -28,13 +28,13 @@ public class NodeBacked {
                 underlyingNode.equals(((NodeBacked) o).getUnderlyingNode());
     }
 
-    public void createRelationshipTo(NodeBacked otherTaxon, RelTypes relType) {
+    public void createRelationshipTo(NodeBacked nodeBacked, RelTypes relType) {
         Transaction tx = getUnderlyingNode().getGraphDatabase().beginTx();
         try {
-            if (!this.equals(otherTaxon)) {
-                Relationship friendRel = isPartOf(otherTaxon, relType);
-                if (friendRel == null) {
-                    getUnderlyingNode().createRelationshipTo(otherTaxon.getUnderlyingNode(), relType);
+            if (!this.equals(nodeBacked)) {
+                Relationship rel = getFirstIncomingRelationshipOfType(nodeBacked, relType);
+                if (rel == null) {
+                    getUnderlyingNode().createRelationshipTo(nodeBacked.getUnderlyingNode(), relType);
                 }
                 tx.success();
             }
@@ -43,7 +43,7 @@ public class NodeBacked {
         }
     }
 
-    private Relationship isPartOf(NodeBacked otherTaxon, RelTypes relType) {
+    private Relationship getFirstIncomingRelationshipOfType(NodeBacked otherTaxon, RelTypes relType) {
         Node otherNode = otherTaxon.getUnderlyingNode();
         for (Relationship rel : getUnderlyingNode().getRelationships(Direction.INCOMING, relType)) {
             if (rel.getOtherNode(getUnderlyingNode()).equals(otherNode)) {
