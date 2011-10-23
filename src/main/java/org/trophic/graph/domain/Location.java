@@ -1,57 +1,36 @@
 package org.trophic.graph.domain;
 
-public class Location extends NodeBacked<Location> {
+import org.neo4j.graphdb.Node;
 
-	private String id;
+public class Location extends NodeBacked {
 
-    private String name;
+    public static final String LONGITUDE = "longitude";
+    public static final String ALTITUDE = "altitude";
+    public static final String LATITUDE = "latitude";
 
-	private Double latitude;
+    public Location(Node node) {
+        super(node);
+    }
 
-	private Double longitude;
+    public Location(Node node, Double longitude, Double latitude, Double altitude) {
+        this(node);
+        getUnderlyingNode().setProperty(ALTITUDE, altitude);
+        getUnderlyingNode().setProperty(LATITUDE, latitude);
+        getUnderlyingNode().setProperty(LONGITUDE, longitude);
+    }
 
-	private Double altitude;
 
-	public Location() {
-	}
+    public Double getAltitude() {
+        return (Double) getUnderlyingNode().getProperty(ALTITUDE);
+    }
 
-	public Location(String id, Double longitude, Double latitude, Double altitude) {
-		this.id = id;
-		this.setLongitude(longitude);
-		this.setLatitude(latitude);
-		this.setAltitude(altitude);
-	}
+    public Double getLongitude() {
+        return (Double) getUnderlyingNode().getProperty(LONGITUDE);
+    }
 
-	public void setAltitude(Double altitude) {
-		this.altitude = altitude;
-	}
+    public Double getLatitude() {
+        return (Double) getUnderlyingNode().getProperty(LATITUDE);
+    }
 
-	public Double getAltitude() {
-		return altitude;
-	}
-
-	public void setLongitude(Double longitude) {
-		this.longitude = longitude;
-	}
-
-	public Double getLongitude() {
-		return longitude;
-	}
-
-	public void setLatitude(Double latitude) {
-		this.latitude = latitude;
-	}
-
-	public Double getLatitude() {
-		return latitude;
-	}
-
-	public void setId(String id) {
-		this.id = id;
-	}
-
-	public String getId() {
-		return id;
-	}
 
 }

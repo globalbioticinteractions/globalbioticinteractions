@@ -1,90 +1,68 @@
 package org.trophic.graph.domain;
 
-import java.util.Set;
+import org.neo4j.graphdb.Direction;
+import org.neo4j.graphdb.Node;
+import org.neo4j.graphdb.Relationship;
+import org.neo4j.graphdb.Transaction;
 
-public class Specimen extends NodeBacked<Specimen> {
-    String id;
+public class Specimen extends NodeBacked {
 
-    private Set<Taxon> classifications;
+    public static final String LENGTH_IN_MM = "lengthInMm";
 
-    private Set<Specimen> stomachContents;
-
-    private Location sampleLocation;
-
-    private Season season;
-
-    private Double lengthInMm;
-
-    public Specimen(String id) {
-        this.id = id;
-    }
-
-    public Specimen() {
-    }
-
-    public String getId() {
-        return id;
+    public Specimen(Node node) {
+        super(node);
     }
 
     @Override
     public String toString() {
-        return String.format("[%s]", id);
+        return String.format("[%s]", hashCode());
     }
 
-    public void setStomachContents(Set<Specimen> stomachContents) {
-        this.stomachContents = stomachContents;
-    }
-
-    public Set<Specimen> getStomachContents() {
-        return stomachContents;
-    }
-
-    public void setSampleLocation(Location sampleLocation) {
-        this.sampleLocation = sampleLocation;
+    public Iterable<Relationship> getStomachContents() {
+        return getUnderlyingNode().getRelationships(RelTypes.ATE, Direction.OUTGOING);
     }
 
     public Location getSampleLocation() {
-        return sampleLocation;
+        Relationship singleRelationship = getUnderlyingNode().getSingleRelationship(RelTypes.COLLECTED_AT, Direction.OUTGOING);
+        return singleRelationship == null ? null : new Location(singleRelationship.getEndNode());
     }
 
     public void ate(Specimen specimen) {
-        this.stomachContents.add(specimen);
+        createRelationshipTo(specimen, RelTypes.ATE);
     }
 
     public void caughtIn(Location sampleLocation) {
-        this.sampleLocation = sampleLocation;
+        createRelationshipTo(sampleLocation, RelTypes.COLLECTED_AT);
     }
 
     public Season getSeason() {
-        return season;
-    }
-
-    public void setSeason(Season season) {
-        this.season = season;
+        Relationship singleRelationship = getUnderlyingNode().getSingleRelationship(RelTypes.CAUGHT_DURING, Direction.OUTGOING);
+        return singleRelationship == null ? null : new Season(singleRelationship.getEndNode());
     }
 
     public void caughtDuring(Season season) {
-        this.season = season;
+        createRelationshipTo(season, RelTypes.CAUGHT_DURING);
     }
 
     public Double getLengthInMm() {
-        return lengthInMm;
+        return (Double) getUnderlyingNode().getProperty(LENGTH_IN_MM);
     }
 
-    public void setLengthInMm(Double lengthInMm) {
-        this.lengthInMm = lengthInMm;
-    }
-
-
-    public Set<Taxon> getClassifications() {
-        return classifications;
-    }
-
-    public void setClassifications(Set<Taxon> classifications) {
-        this.classifications = classifications;
+    public Iterable<Relationship> getClassifications() {
+        return getUnderlyingNode().getRelationships(Direction.OUTGOING, RelTypes.CLASSIFIED_AS);
     }
 
     public void classifyAs(Taxon taxon) {
-        this.classifications.add(taxon);
+        createRelationshipTo(taxon, RelTypes.CLASSIFIED_AS);
+    }
+
+    public void setLengthInMm(Double aDouble) {
+        Transaction transaction = getUnderlyingNode().getGraphDatabase().beginTx();
+        try {
+            getUnderlyingNode().setProperty(LENGTH_IN_MM, aDouble);
+            transaction.success();
+        } finally {
+            transaction.finish();
+        }
     }
 }

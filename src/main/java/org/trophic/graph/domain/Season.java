@@ -1,38 +1,28 @@
 package org.trophic.graph.domain;
 
-public class Season extends NodeBacked<Season>{
+import org.neo4j.graphdb.Node;
 
-    private String id;
+public class Season extends NodeBacked {
 
-    private String title;
+    public static final String TITLE = "title";
 
-    public Season() {
+    public Season(Node node, String title) {
+        this(node);
+        getUnderlyingNode().setProperty(TITLE, title);
     }
 
-    public Season(String id, String title) {
-        this.id = id;
-        this.title = title;
+    public Season(Node node) {
+        super(node);
     }
 
-     @Override
+    @Override
     public String toString() {
-        return String.format("%s [%s]", title, id);
+        return String.format("%s [%s]", getTitle());
     }
 
     public String getTitle() {
-        return title;
+        return (String)getUnderlyingNode().getProperty(TITLE);
     }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
 
 }

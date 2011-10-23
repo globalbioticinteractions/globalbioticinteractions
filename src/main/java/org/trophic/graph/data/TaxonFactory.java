@@ -2,22 +2,26 @@ package org.trophic.graph.data;
 
 import org.apache.commons.lang3.StringUtils;
 import org.neo4j.graphdb.GraphDatabaseService;
+import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Transaction;
+import org.neo4j.graphdb.index.Index;
 import org.neo4j.helpers.collection.ClosableIterable;
-import org.trophic.graph.domain.Family;
-import org.trophic.graph.domain.Genus;
-import org.trophic.graph.domain.Species;
-import org.trophic.graph.domain.Taxon;
+import org.trophic.graph.domain.*;
 import org.trophic.graph.repository.TaxonRepository;
+
+import static org.trophic.graph.domain.RelTypes.PART_OF;
 
 public class TaxonFactory {
 
     private TaxonRepository taxonRepository;
     private GraphDatabaseService graphDb;
+    private Index<Node> studies;
 
     public TaxonFactory(GraphDatabaseService graphDb, TaxonRepository taxonRepository) {
         this.graphDb = graphDb;
         this.taxonRepository = taxonRepository;
+        this.studies = graphDb.index().forNodes("studies");
+        
     }
 
     public Taxon create(String speciesName2, Family family) throws TaxonFactoryException {
@@ -35,7 +39,7 @@ public class TaxonFactory {
                 } else {
                     Genus genus = createGenus(firstPart);
                     if (family != null) {
-                        genus.partOf(family);
+                        genus.createRelationshipTo(family, PART_OF);
                     }
                     Species species = createSpecies(genus, cleanedSpeciesName);
                     taxon = species;
@@ -58,7 +62,7 @@ public class TaxonFactory {
         } else {
             Genus genus = createGenus(firstPart);
             if (family != null) {
-                genus.partOf(family);
+                genus.createRelationshipTo(family, PART_OF);
             }
             taxon = genus;
         }
@@ -81,7 +85,9 @@ public class TaxonFactory {
                 transaction.finish();
             }
         }
-        species.partOf(genus);
+        if (null != genus) {
+            species.createRelationshipTo(genus, PART_OF);
+        }
         return species;
     }
 
@@ -143,4 +149,58 @@ public class TaxonFactory {
         this.taxonRepository = taxonRepository;
     }
 
+    public Season createSeason(String seasonNameLower) {
+        Transaction transaction = graphDb.beginTx();
+        Season season;
+        try {
+            season = new Season(graphDb.createNode(), seasonNameLower);
+            transaction.success();
+        } finally {
+            transaction.finish();
+        }
+        return season;
+    }
+
+    public Location createLocation(Double latitude, Double longitude, Double altitude) {
+        Transaction transaction = graphDb.beginTx();
+        Location location;
+        try {
+            location = new Location(graphDb.createNode(), latitude, longitude, altitude);
+            transaction.success();
+        } finally {
+            transaction.finish();
+        }
+        return location;
+    }
+
+    public Specimen createSpecimen() {
+        Transaction transaction = graphDb.beginTx();
+        Specimen specimen;
+        try {
+            specimen = new Specimen(graphDb.createNode());
+            transaction.success();
+        } finally {
+            transaction.finish();
+        }
+        return specimen;
+    }
+
+    public Study createStudy(String title) {
+        Transaction transaction = graphDb.beginTx();
+        Study study;
+        try {
+            Node node = graphDb.createNode();
+            study = new Study(node, title);
+            studies.add(node, "title", title);
+            transaction.success();
+        } finally {
+            transaction.finish();
+        }
+
+        return study;
+    }
+
+    public Study findStudy(String title) {
+        return new Study(studies.get("title", title).getSingle());
+    }
 }

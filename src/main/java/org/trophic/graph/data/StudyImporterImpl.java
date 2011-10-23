@@ -41,6 +41,8 @@ public class StudyImporterImpl implements StudyImporter {
         this.parserFactory = parserFactory;
     }
 
+
+
     @Override
     public Study importStudy() throws StudyImporterException {
         return importStudy(StudyLibrary.MISSISSIPPI_ALABAMA);
@@ -71,7 +73,6 @@ public class StudyImporterImpl implements StudyImporter {
         } catch (IOException e) {
             throw new StudyImporterException("failed to create study [" + studyResource + "]", e);
         }
-        study.persist();
         return study;
     }
 
@@ -82,7 +83,6 @@ public class StudyImporterImpl implements StudyImporter {
         Location sampleLocation = getOrCreateSampleLocation(csvParser, columnToNormalizedTermMapper);
         prey.caughtIn(sampleLocation);
         prey.caughtDuring(getOrCreateSeason(seasonName));
-        prey.persist();
 
         String speciesName = csvParser.getValueByLabel(columnToNormalizedTermMapper.get(PREDATOR_SPECIES));
         String familyName = csvParser.getValueByLabel(columnToNormalizedTermMapper.get(PREDATOR_FAMILY));
@@ -95,11 +95,9 @@ public class StudyImporterImpl implements StudyImporter {
         predator.setLengthInMm(lengthParser.parseLengthInMm(csvParser));
 
         predator.caughtIn(sampleLocation);
-        predator.persist();
         predator.ate(prey);
         predator.caughtDuring(getOrCreateSeason(seasonName));
-        predator.persist();
-        study.getSpecimens().add(predator);
+        study.collected(predator);
 
     }
 
@@ -107,9 +105,7 @@ public class StudyImporterImpl implements StudyImporter {
         String seasonNameLower = seasonName.toLowerCase().trim();
         Season season = seasonRepository.findByPropertyValue("title", seasonNameLower);
         if (null == season) {
-            season = new Season();
-            season.setTitle(seasonNameLower);
-            season.persist();
+            taxonFactory.createSeason(seasonNameLower);
         }
         return season;
     }
@@ -117,9 +113,7 @@ public class StudyImporterImpl implements StudyImporter {
     private Study getOrCreateStudy(String title) {
         Study study = studyRepository.findByPropertyValue("title", title);
         if (null == study) {
-            study = new Study();
-            study.setTitle(title);
-            study.persist();
+            study = taxonFactory.createStudy(title);
         }
         return study;
     }
@@ -135,11 +129,7 @@ public class StudyImporterImpl implements StudyImporter {
         if (latitude != null && longitude != null && altitude != null) {
             location = findLocation(latitude, longitude, altitude);
             if (null == location) {
-                location = new Location();
-                location.setLatitude(latitude);
-                location.setLongitude(longitude);
-                location.setAltitude(altitude);
-                location.persist();
+                taxonFactory.createLocation(latitude, longitude, altitude);
             }
         }
         return location;
@@ -164,7 +154,7 @@ public class StudyImporterImpl implements StudyImporter {
     }
 
     private Specimen createAndClassifySpecimen(final String speciesName, Family family) throws StudyImporterException {
-        Specimen specimen = new Specimen().persist();
+        Specimen specimen = taxonFactory.createSpecimen();
         String trimmedSpeciesName = StringUtils.trim(speciesName);
         try {
             specimen.classifyAs(taxonFactory.create(trimmedSpeciesName, family));

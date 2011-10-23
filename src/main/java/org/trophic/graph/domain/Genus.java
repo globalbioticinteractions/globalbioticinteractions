@@ -2,7 +2,9 @@ package org.trophic.graph.domain;
 
 import org.neo4j.graphdb.Node;
 
-public class Genus extends Taxon<Genus> {
+import static org.trophic.graph.domain.RelTypes.PART_OF;
+
+public class Genus extends Taxon {
 
     public Genus(Node node, String name) {
         this(node);
@@ -25,7 +27,7 @@ public class Genus extends Taxon<Genus> {
     }
 
     public void setFamily(Family family) {
-        super.partOf(family);
+        super.createRelationshipTo(family, PART_OF);
     }
 
 }

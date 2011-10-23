@@ -7,5 +7,6 @@ public enum RelTypes implements RelationshipType {
     PART_OF,
     ATE,
     COLLECTED_AT,
+    CAUGHT_DURING,
     COLLECTED
 }

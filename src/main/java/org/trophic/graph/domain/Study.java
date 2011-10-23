@@ -1,8 +1,12 @@
 package org.trophic.graph.domain;
 
+import org.neo4j.graphdb.Direction;
+import org.neo4j.graphdb.Node;
+import org.neo4j.graphdb.Relationship;
+
 import java.util.Set;
 
-public class Study extends NodeBacked<Study>{
+public class Study extends NodeBacked {
 
 	private String id;
 
@@ -10,36 +14,25 @@ public class Study extends NodeBacked<Study>{
 	
     private Set<Specimen> specimens;
 
-    public Study() {
+	public Study(Node node, String title) {
+		this(node);
+        getUnderlyingNode().setProperty("title", title);
 	}
 
-	public Study(String id, String title) {
-		this.setId(id);
-		this.setTitle(title);
-	}
-
-	public void setId(String id) {
-		this.id = id;
-	}
-
-	public String getId() {
-		return id;
-	}
-
-	public void setTitle(String title) {
-		this.title = title;
-	}
+    public Study(Node node) {
+        super(node);
+    }
 
 	public String getTitle() {
-		return title;
+		return (String) getUnderlyingNode().getProperty("title");
 	}
 
-	public void setSpecimens(Set<Specimen> specimens) {
-		this.specimens = specimens;
+	public Iterable<Relationship> getSpecimens() {
+        return getUnderlyingNode().getRelationships(Direction.OUTGOING, RelTypes.COLLECTED);
+
 	}
 
-	public Set<Specimen> getSpecimens() {
-		return specimens;
-	}
-
+    public void collected(Specimen specimen) {
+        createRelationshipTo(specimen, RelTypes.COLLECTED);
+    }
 }

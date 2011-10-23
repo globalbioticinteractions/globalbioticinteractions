@@ -3,14 +3,15 @@ package org.trophic.graph.data;
 
 import org.junit.Ignore;
 import org.junit.Test;
+import org.neo4j.graphdb.Direction;
+import org.neo4j.graphdb.Node;
+import org.neo4j.graphdb.Relationship;
 import org.neo4j.helpers.collection.ClosableIterable;
 import org.trophic.graph.domain.*;
 import org.trophic.graph.repository.LocationRepository;
 import org.trophic.graph.repository.SeasonRepository;
 import org.trophic.graph.repository.StudyRepository;
 import org.trophic.graph.repository.TaxonRepository;
-
-import java.util.Set;
 
 import static junit.framework.Assert.*;
 
@@ -49,49 +50,50 @@ public class StudyImporterImplTest {
         ClosableIterable<Study> foundStudies = studyRepository.findAllByPropertyValue("title", StudyLibrary.MISSISSIPPI_ALABAMA);
         Study foundStudy = foundStudies.iterator().next();
         assertNotNull(foundStudy);
-        assertEquals(study.getSpecimens().size(), foundStudy.getSpecimens().size());
-        assertEquals(study.getId(), foundStudy.getId());
-        for (Specimen firstSpecimen : study.getSpecimens()) {
-            String scientificName = firstSpecimen.getClassifications().iterator().next().getName();
+        for (Relationship rel : foundStudy.getSpecimens()) {
+
+            Node firstSpecimen = rel.getEndNode();
+            Node speciesNode = firstSpecimen.getSingleRelationship(RelTypes.CLASSIFIED_AS, Direction.OUTGOING).getEndNode();
+            String scientificName = (String) speciesNode.getProperty("name");
             if ("Rhynchoconger flavus".equals(scientificName)) {
-                Location sampleLocation = firstSpecimen.getSampleLocation();
-                assertNotNull(sampleLocation);
-                assertEquals(348078.84, sampleLocation.getLongitude());
-                assertEquals(3257617.25, sampleLocation.getLatitude());
-                assertEquals(-60.0, sampleLocation.getAltitude());
+                double longitude = 348078.84;
+                double lat = 3257617.25;
+                double alt = -60.0;
+                String seasonName = "summer";
+                String genusName = "Ampelisca";
 
-                Set<Specimen> stomachContents = firstSpecimen.getStomachContents();
-                assertEquals(1, stomachContents.size());
-                Specimen prey = stomachContents.iterator().next();
-                assertEquals("Ampelisca", prey.getClassifications().iterator().next().getName());
-
-                Season season = firstSpecimen.getSeason();
-                assertEquals("summer", season.getTitle());
-
-                assertEquals((201.0d + 300.0d) / 2.0d, firstSpecimen.getLengthInMm());
+                double length = (201.0d + 300.0d) / 2.0d;
+                assertSpecimen(firstSpecimen, longitude, lat, alt, seasonName, genusName, length);
             } else if ("Halieutichthys aculeatus".equals(scientificName)) {
-                Location sampleLocation = firstSpecimen.getSampleLocation();
-                assertNotNull(sampleLocation);
-                assertEquals(344445.31, sampleLocation.getLongitude());
-                assertEquals(3323087.25, sampleLocation.getLatitude());
-                assertEquals(-20.0, sampleLocation.getAltitude());
-
-                Set<Specimen> stomachContents = firstSpecimen.getStomachContents();
-                assertEquals(1, stomachContents.size());
-                Specimen prey = stomachContents.iterator().next();
-                Taxon genus = prey.getClassifications().iterator().next();
-                assertEquals("Ampelisca", genus.getName());
-                assertTrue(genus instanceof Genus);
-
-                Season season = firstSpecimen.getSeason();
-                assertEquals("summer", season.getTitle());
-
-                assertEquals((26.0d + 50.0d) / 2.0d, firstSpecimen.getLengthInMm());
+                double longitude = 344445.31;
+                double lat = 3323087.25;
+                double alt = -20.0;
+                String genusName = "Ampelisca";
+                String seasonName = "summer";
+                double length = (26.0d + 50.0d) / 2.0d;
+                assertSpecimen(firstSpecimen, longitude, lat, alt, seasonName, genusName, length);
             } else {
                 fail("found predator with unexpected scientificName [" + scientificName + "]");
             }
         }
 
+    }
+
+    private void assertSpecimen(Node firstSpecimen, double longitude, double lat, double alt, String seasonName, String genusName, double length) {
+        Node locationNode = firstSpecimen.getSingleRelationship(RelTypes.COLLECTED_AT, Direction.OUTGOING).getEndNode();
+        assertNotNull(locationNode);
+        assertEquals(longitude, locationNode.getProperty("longitude"));
+        assertEquals(lat, locationNode.getProperty("latitude"));
+        assertEquals(alt, locationNode.getProperty("altitude"));
+
+        Relationship stomachContents = firstSpecimen.getSingleRelationship(RelTypes.ATE, Direction.OUTGOING);
+        assertEquals(genusName, stomachContents.getEndNode().getProperty("name"));
+
+        Node endNode = firstSpecimen.getSingleRelationship(RelTypes.CAUGHT_DURING, Direction.OUTGOING).getEndNode();
+        String season = (String) endNode.getProperty("title");
+        assertEquals(seasonName, season);
+
+        assertEquals(length, firstSpecimen.getProperty(Specimen.LENGTH_IN_MM));
     }
 
     private void assertEmpty() {
@@ -123,48 +125,55 @@ public class StudyImporterImplTest {
         ClosableIterable<Study> foundStudies = studyRepository.findAllByPropertyValue("title", StudyLibrary.LAVACA_BAY);
         Study foundStudy = foundStudies.iterator().next();
         assertNotNull(foundStudy);
-        assertEquals(2, foundStudy.getSpecimens().size());
-        assertEquals(study.getId(), foundStudy.getId());
-        for (Specimen specimen : study.getSpecimens()) {
-            Taxon species = specimen.getClassifications().iterator().next();
-            String scientificName = species.getName();
-            if ("Sciaenops ocellatus".equals(scientificName)) {
-                Genus genus = ((Species) species).getGenus();
-                assertEquals("Sciaenops", genus.getName());
-                assertEquals("Sciaenidae", genus.getFamily().getName());
-                Location sampleLocation = specimen.getSampleLocation();
-                assertNull(sampleLocation);
+        for (Relationship rel : study.getSpecimens()) {
+            Specimen specimen = new Specimen(rel.getEndNode());
+            for (Relationship ateRel : specimen.getStomachContents()) {
+                Taxon taxon = new Taxon(ateRel.getEndNode());
+                String scientificName = taxon.getName();
+                if ("Sciaenops ocellatus".equals(scientificName)) {
+                    Taxon genus = new Taxon(taxon.isPartOf());
+                    assertEquals("Sciaenops", genus.getName());
+                    assertEquals("Sciaenidae", new Taxon(genus.isPartOf()).getName());
+                    Location sampleLocation = specimen.getSampleLocation();
+                    assertNull(sampleLocation);
+                    Iterable<Relationship> stomachContents = specimen.getStomachContents();
+                    int count = 0;
+                    for (Relationship containsRel : stomachContents) {
+                        Node endNode = containsRel.getEndNode().getSingleRelationship(RelTypes.CLASSIFIED_AS, Direction.OUTGOING).getEndNode();
+                        Object name = endNode.getProperty("name");
+                        assertEquals("Acrididae", name);
+                        Object familyName = endNode.getSingleRelationship(RelTypes.CLASSIFIED_AS, Direction.OUTGOING).getEndNode().getProperty("name");
+                        assertEquals("Acrididae", familyName);
+                        count++;
+                    }
+                    assertEquals(1, count);
+                    Season season = specimen.getSeason();
+                    assertEquals("fall", season.getTitle());
+                    assertEquals(420.0d, specimen.getLengthInMm());
+                } else if ("Arius felis".equals(scientificName)) {
+                    Location sampleLocation = specimen.getSampleLocation();
+                    assertNull(sampleLocation);
 
-                Set<Specimen> stomachContents = specimen.getStomachContents();
-                assertEquals(1, stomachContents.size());
-                String expected = "Acrididae";
-                Taxon family = stomachContents.iterator().next().getClassifications().iterator().next();
-                String actual = family.getName();
-                assertEquals("[" + expected + "] != [" + actual + "]", expected, actual);
-                assertTrue("expected a family object type", family instanceof Family);
+                    Iterable<Relationship> stomachContents = specimen.getStomachContents();
+                    int count = 0;
+                    for (Relationship containsRel : stomachContents) {
+                        Object name = containsRel.getEndNode().getSingleRelationship(RelTypes.CLASSIFIED_AS, Direction.OUTGOING).getEndNode().getProperty("name");
+                        assertEquals("Aegathoa oculata", name);
+                        count++;
+                    }
+                    assertEquals(1, count);
 
-                Season season = specimen.getSeason();
-                assertEquals("fall", season.getTitle());
+                    Season season = specimen.getSeason();
+                    assertEquals("spring", season.getTitle());
 
-                assertEquals(420.0d, specimen.getLengthInMm());
-            } else if ("Arius felis".equals(scientificName)) {
-                Location sampleLocation = specimen.getSampleLocation();
-                assertNull(sampleLocation);
+                    assertEquals(176.0d, specimen.getLengthInMm());
+                } else {
+                    fail("unexpected scientificName of predator [" + scientificName + "]");
+                }
 
-                Set<Specimen> stomachContents = specimen.getStomachContents();
-                assertEquals(1, stomachContents.size());
-                assertEquals("Aegathoa oculata", stomachContents.iterator().next().getClassifications().iterator().next().getName());
-
-                Season season = specimen.getSeason();
-                assertEquals("spring", season.getTitle());
-
-                assertEquals(176.0d, specimen.getLengthInMm());
-            } else {
-                fail("unexpected scientificName of predator [" + scientificName + "]");
             }
 
         }
-
     }
 
     private void init(StudyImporterImpl studyImporter) {

@@ -1,22 +1,27 @@
 package org.trophic.graph.domain;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
+import org.neo4j.graphdb.Direction;
+import org.neo4j.graphdb.Node;
+import org.neo4j.graphdb.Relationship;
+import org.neo4j.helpers.collection.ClosableIterable;
 import org.trophic.graph.data.GraphDBTestCase;
 import org.trophic.graph.data.TaxonFactory;
 import org.trophic.graph.data.TaxonFactoryException;
 import org.trophic.graph.repository.StudyRepository;
+import org.trophic.graph.repository.TaxonRepository;
 
 import static org.junit.Assert.*;
+import static org.trophic.graph.domain.RelTypes.PART_OF;
 
-@Ignore
 public class StudyTest extends GraphDBTestCase {
 
     public static final String CARCHARODON = "Carcharodon";
     public static final String CARCHARODON_CARCHARIAS = CARCHARODON + " carcharias";
     public static final String CARASSIUS_AURATUS_AURATUS = "Carassius auratus auratus";
     public static final String WHITE_SHARK_FAMILY = "Lamnidae";
+    public static final String NAME = "name";
 
     protected StudyRepository studyRepository;
 
@@ -24,73 +29,100 @@ public class StudyTest extends GraphDBTestCase {
 
     @Before
     public void createFactory() {
-        factory = new TaxonFactory(getGraphDb(), null);
+        factory = new TaxonFactory(getGraphDb(), new TaxonRepository() {
+            @Override
+            public ClosableIterable<Taxon> findAllByPropertyValue(String name, String taxonName) {
+                return null;
+            }
+
+            @Override
+            public long count() {
+                return 0;
+            }
+        });
+
+        studyRepository = new StudyRepository() {
+            @Override
+            public Study findByPropertyValue(String id, String s) {
+                return null;
+            }
+
+            @Override
+            public ClosableIterable<Study> findAllByPropertyValue(String title, String mississippiAlabama) {
+                return null;
+            }
+
+            @Override
+            public long count() {
+                return 0;
+            }
+        };
     }
 
     @Test
-    public void researcherCanContributeToPaper() throws TaxonFactoryException {
-        Study study = new Study("1", "Our first study").persist();
+    public void populateStudy() throws TaxonFactoryException {
+        Study study = factory.createStudy("Our first study");
 
 
         Family family = factory.createFamily(WHITE_SHARK_FAMILY);
 
 
         Genus genus2 = factory.createGenus(CARCHARODON);
-        genus2.partOf(family);
+        genus2.createRelationshipTo(family, PART_OF);
         Genus genus = genus2;
 
         Species greatWhiteSpecies = factory.createSpecies(genus, CARCHARODON_CARCHARIAS);
 
-        Species goldFishSpecies = new Species(getGraphDb().createNode(), "2", CARASSIUS_AURATUS_AURATUS);
 
-        Specimen goldFish = new Specimen("2").persist();
+        Species goldFishSpecies = factory.createSpecies(null, CARASSIUS_AURATUS_AURATUS);
+
+        Specimen goldFish = factory.createSpecimen();
         goldFish.classifyAs(goldFishSpecies);
 
-        Specimen shark = new Specimen("1").persist();
+        Specimen shark = factory.createSpecimen();
         shark.classifyAs(greatWhiteSpecies);
-        Specimen fuzzyShark = new Specimen("3").persist();
+        Specimen fuzzyShark = factory.createSpecimen();
         fuzzyShark.classifyAs(genus);
 
         shark.ate(goldFish);
         fuzzyShark.ate(goldFish);
 
-        Location bolinasBay = new Location("1", 12.2d, 12.1d, -100.0d).persist();
+        Location bolinasBay = factory.createLocation(12.2d, 12.1d, -100.0d);
         shark.caughtIn(bolinasBay);
 
-        Season winter = new Season("1", "winter").persist();
+        Season winter = factory.createSeason("winter");
         shark.caughtDuring(winter);
-        study.getSpecimens().add(shark);
-        study.getSpecimens().add(fuzzyShark);
+        study.collected(shark);
+        study.collected(fuzzyShark);
 
         shark.setLengthInMm(1.2d);
 
-        Study foundStudy = this.studyRepository.findByPropertyValue("id", "1");
+        Study foundStudy = this.factory.findStudy("Our first study");
 
-        assertEquals(study, foundStudy);
+        assertEquals(study.getTitle(), foundStudy.getTitle());
 
-        assertEquals(2, study.getSpecimens().size());
-
-        for (Specimen specimen : study.getSpecimens()) {
-            if (specimen.getId().equals("1")) {
-                assertEquals(shark, specimen);
-                assertEquals(1, specimen.getClassifications().size());
-                Taxon species = specimen.getClassifications().iterator().next();
-                assertEquals(CARCHARODON_CARCHARIAS, species.getName());
-                assertTrue(species instanceof Species);
-                Genus genus1 = ((Species) species).getGenus();
-                assertEquals(CARCHARODON, genus1.getName());
-                Family family1 = genus.getFamily();
-                assertTrue(family1 instanceof Family);
-                assertEquals(WHITE_SHARK_FAMILY, family.getName());
-                assertEquals(new Double(-100.0d), specimen.getSampleLocation().getAltitude());
-                assertEquals("winter", specimen.getSeason().getTitle());
-                assertEquals(new Double(1.2d), specimen.getLengthInMm());
-
-            } else if (specimen.getId().equals("3")) {
-                Taxon actualGenus = specimen.getClassifications().iterator().next();
-                assertEquals(CARCHARODON, actualGenus.getName());
-                assertTrue(actualGenus instanceof Genus);
-                assertEquals(1, specimen.getClassifications().size());
+        for (Relationship rel : study.getSpecimens()) {
+            Specimen specimen = new Specimen(rel.getEndNode());
+            Relationship caughtDuringRel = rel.getEndNode().getSingleRelationship(RelTypes.CAUGHT_DURING, Direction.OUTGOING);
+            if (caughtDuringRel != null) {
+                Node seasonNode = caughtDuringRel.getEndNode();
+                if (seasonNode != null && seasonNode.getProperty(Season.TITLE).equals("winter")) {
+                    Relationship next = specimen.getClassifications().iterator().next();
+                    Node endNode = next.getEndNode();
+                    String speciesName = (String) endNode.getProperty("name");
+                    assertEquals(CARCHARODON_CARCHARIAS, speciesName);
+                    Node genusNode = endNode.getSingleRelationship(RelTypes.PART_OF, Direction.OUTGOING).getEndNode();
+                    assertEquals(CARCHARODON, genusNode.getProperty("name"));
+                    Node familyNode = genusNode.getSingleRelationship(RelTypes.PART_OF, Direction.OUTGOING).getEndNode();
+                    assertEquals(WHITE_SHARK_FAMILY, familyNode.getProperty(NAME));
+                    assertEquals(new Double(-100.0d), specimen.getSampleLocation().getAltitude());
+                    assertEquals(new Double(1.2d), specimen.getLengthInMm());
+                } else {
+                    fail("expected to find a specimen");
+                }
+            } else if (specimen.equals(fuzzyShark)) {
+                Node genusNode = specimen.getClassifications().iterator().next().getEndNode();
+                assertEquals(CARCHARODON, genusNode.getProperty("name"));
             } else {
                 fail("found unexpected specimen [" + specimen + "] in study");
             }
