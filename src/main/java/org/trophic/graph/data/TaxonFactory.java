@@ -1,9 +1,6 @@
 package org.trophic.graph.data;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.lucene.search.MultiTermQuery;
-import org.apache.lucene.search.NumericRangeQuery;
-import org.apache.lucene.search.Query;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Transaction;
@@ -82,12 +79,12 @@ public class TaxonFactory {
     }
 
     public Taxon getOrCreateSpecies(Taxon genus, String speciesName) throws TaxonFactoryException {
-        Taxon species = findTaxonOfType(speciesName, Species.class);
+        Taxon species = findTaxonOfType(speciesName, Taxon.SPECIES);
         if (species == null) {
             Transaction transaction = graphDb.beginTx();
             try {
                 Node node = graphDb.createNode();
-                species = new Taxon(node, speciesName, Species.class.getSimpleName());
+                species = new Taxon(node, speciesName, Taxon.SPECIES);
                 addTaxonToIndex(species, speciesName, node);
                 transaction.success();
             } finally {
@@ -101,12 +98,12 @@ public class TaxonFactory {
     }
 
     public Taxon getOrCreateGenus(String genusName) throws TaxonFactoryException {
-        Taxon genus = findTaxonOfType(genusName, Genus.class);
+        Taxon genus = findTaxonOfType(genusName, Taxon.GENUS);
         if (genus == null) {
             Transaction transaction = graphDb.beginTx();
             try {
                 Node node = graphDb.createNode();
-                genus = new Taxon(node, genusName, Genus.class.getSimpleName());
+                genus = new Taxon(node, genusName, Taxon.GENUS);
                 addTaxonToIndex(genus, genusName, node);
                 transaction.success();
             } finally {
@@ -121,12 +118,12 @@ public class TaxonFactory {
         Taxon family = null;
         if (familyName != null) {
             String trimmedFamilyName = StringUtils.trim(familyName);
-            Taxon foundFamily = findTaxonOfType(trimmedFamilyName, Family.class);
+            Taxon foundFamily = findTaxonOfType(trimmedFamilyName, Taxon.FAMILY);
             if (foundFamily == null) {
                 Transaction transaction = graphDb.beginTx();
                 try {
                     Node node = graphDb.createNode();
-                    family = new Taxon(node, trimmedFamilyName, Family.class.getSimpleName());
+                    family = new Taxon(node, trimmedFamilyName, Taxon.FAMILY);
                     addTaxonToIndex(family, trimmedFamilyName, node);
                     transaction.success();
                 } finally {
@@ -144,8 +141,8 @@ public class TaxonFactory {
         taxons.add(node, Taxon.TYPE, taxon.getType());
     }
 
-    public Taxon findTaxonOfType(String taxonName, Class expectedClass) throws TaxonFactoryException {
-        IndexHits<Node> matchingTaxons = taxons.query("name:\"" + taxonName + "\" AND type:" + expectedClass.getSimpleName());
+    public Taxon findTaxonOfType(String taxonName, String type) throws TaxonFactoryException {
+        IndexHits<Node> matchingTaxons = taxons.query("name:\"" + taxonName + "\" AND type:" + type);
         Node matchingTaxon = matchingTaxons.getSingle();
         matchingTaxons.close();
         return matchingTaxon == null ? null : new Taxon(matchingTaxon);

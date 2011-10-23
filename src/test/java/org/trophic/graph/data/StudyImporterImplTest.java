@@ -44,12 +44,12 @@ public class StudyImporterImplTest extends GraphDBTestCase {
         Study study = studyImporter.importStudy();
         studyImporter.importStudy();
 
-        assertNotNull(taxonFactory.findTaxonOfType("Rhynchoconger flavus", Species.class));
-        assertNotNull(taxonFactory.findTaxonOfType("Rhynchoconger", Genus.class));
-        assertNotNull(taxonFactory.findTaxonOfType("Halieutichthys aculeatus", Species.class));
-        assertNotNull(taxonFactory.findTaxonOfType("Halieutichthys", Genus.class));
-        assertNotNull(taxonFactory.findTaxonOfType("Ampelisca", Genus.class));
-        assertNull(taxonFactory.findTaxonOfType("Ampelisca ", Genus.class));
+        assertNotNull(taxonFactory.findTaxonOfType("Rhynchoconger flavus", Taxon.SPECIES));
+        assertNotNull(taxonFactory.findTaxonOfType("Rhynchoconger", Taxon.GENUS));
+        assertNotNull(taxonFactory.findTaxonOfType("Halieutichthys aculeatus", Taxon.SPECIES));
+        assertNotNull(taxonFactory.findTaxonOfType("Halieutichthys", Taxon.GENUS));
+        assertNotNull(taxonFactory.findTaxonOfType("Ampelisca", Taxon.GENUS));
+        assertNull(taxonFactory.findTaxonOfType("Ampelisca ", Taxon.GENUS));
 
         assertNotNull(taxonFactory.findStudy(StudyLibrary.MISSISSIPPI_ALABAMA));
         assertNull(taxonFactory.findStudy(StudyLibrary.LAVACA_BAY));

@@ -9,6 +9,9 @@ import static org.trophic.graph.domain.RelTypes.PART_OF;
 public class Taxon extends NodeBacked {
     public static final String NAME = "name";
     public static final String TYPE = "type";
+    public static final String SPECIES = "Species";
+    public static final String GENUS = "Genus";
+    public static final String FAMILY = "Family";
 
     public Taxon(Node node) {
         super(node);

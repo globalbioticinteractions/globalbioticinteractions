@@ -3,10 +3,6 @@ package org.trophic.graph.data;
 import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.neo4j.graphdb.Node;
-import org.trophic.graph.domain.Family;
-import org.trophic.graph.domain.Genus;
-import org.trophic.graph.domain.Species;
 import org.trophic.graph.domain.Taxon;
 
 import static junit.framework.Assert.assertNull;
@@ -50,7 +46,7 @@ public class TaxonFactoryTest extends GraphDBTestCase {
     private void assertFamilyCorrectness(String expectedOutputName, String inputName) throws TaxonFactoryException {
         taxonFactory.create(inputName, null);
         Taxon taxon = taxonFactory.create(inputName, null);
-        Assert.assertEquals(Family.class.getSimpleName(), taxon.getType());
+        Assert.assertEquals(Taxon.FAMILY, taxon.getType());
         assertEquals(expectedOutputName, taxon.getName());
     }
 
