@@ -12,7 +12,7 @@ import org.trophic.graph.domain.*;
 
 import static org.trophic.graph.domain.RelTypes.PART_OF;
 
-public class TaxonFactory {
+public class NodeFactory {
 
     private GraphDatabaseService graphDb;
     private Index<Node> studies;
@@ -20,7 +20,7 @@ public class TaxonFactory {
     private Index<Node> locations;
     private Index<Node> taxons;
 
-    public TaxonFactory(GraphDatabaseService graphDb) {
+    public NodeFactory(GraphDatabaseService graphDb) {
         this.graphDb = graphDb;
         this.studies = graphDb.index().forNodes("studies");
         this.seasons = graphDb.index().forNodes("seasons");
@@ -29,8 +29,8 @@ public class TaxonFactory {
 
     }
 
-    public Taxon create(String speciesName2, Taxon family) throws TaxonFactoryException {
-        String cleanedSpeciesName = createName(speciesName2);
+    public Taxon createTaxon(String speciesName2, Taxon family) throws TaxonFactoryException {
+        String cleanedSpeciesName = speciesName2.replaceAll("\\(.*\\)", "");
         String[] split = cleanedSpeciesName.split(" ");
         Taxon taxon = null;
 
@@ -54,10 +54,6 @@ public class TaxonFactory {
             taxon = createFamilyOrGenus(family, split[0]);
         }
         return taxon;
-    }
-
-    private String createName(String speciesName2) {
-        return speciesName2.replaceAll("\\(.*\\)", "");
     }
 
     private Taxon createFamilyOrGenus(Taxon family, String firstPart) throws TaxonFactoryException {
@@ -225,29 +221,6 @@ public class TaxonFactory {
     public Study findStudy(String title) {
         Node foundStudyNode = studies.get(Study.TITLE, title).getSingle();
         return foundStudyNode == null ? null : new Study(foundStudyNode);
-    }
-
-    public long totalNumberOfTaxons() {
-        return 0;
-    }
-
-    public long totalNumberOfSeasons() {
-        return 0;
-    }
-
-    public long totalNumberOfStudies() {
-        return 0;
-    }
-
-    public long totalNumberOfLocations() {
-        return 0;
-    }
-
-    public long countTaxonsWithName(String name) {
-        IndexHits<Node> hits = taxons.get("name", name);
-        int size = hits.size();
-        hits.close();
-        return size;
     }
 
     public Season findSeason(String seasonName) {

@@ -9,18 +9,18 @@ import static junit.framework.Assert.assertNull;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-public class TaxonFactoryTest extends GraphDBTestCase {
+public class NodeFactoryTest extends GraphDBTestCase {
 
-    TaxonFactory taxonFactory;
+    NodeFactory nodeFactory;
 
     @Before
     public void createFactory() {
-        taxonFactory = new TaxonFactory(getGraphDb());
+        nodeFactory = new NodeFactory(getGraphDb());
     }
 
     @Test
     public void createSpecies() throws TaxonFactoryException {
-        Taxon taxon = taxonFactory.create("bla bla", null);
+        Taxon taxon = nodeFactory.createTaxon("bla bla", null);
         assertEquals("Species", taxon.getType());
         assertEquals("bla bla", taxon.getName());
         assertEquals("bla", taxon.isPartOf().getProperty("name"));
@@ -44,16 +44,16 @@ public class TaxonFactoryTest extends GraphDBTestCase {
     }
 
     private void assertFamilyCorrectness(String expectedOutputName, String inputName) throws TaxonFactoryException {
-        taxonFactory.create(inputName, null);
-        Taxon taxon = taxonFactory.create(inputName, null);
+        nodeFactory.createTaxon(inputName, null);
+        Taxon taxon = nodeFactory.createTaxon(inputName, null);
         Assert.assertEquals(Taxon.FAMILY, taxon.getType());
         assertEquals(expectedOutputName, taxon.getName());
     }
 
     @Test
     public void createSpeciesWithFamily() throws TaxonFactoryException {
-        Taxon family = taxonFactory.getOrCreateFamily("theFam");
-        Taxon taxon = taxonFactory.create("bla bla", family);
+        Taxon family = nodeFactory.getOrCreateFamily("theFam");
+        Taxon taxon = nodeFactory.createTaxon("bla bla", family);
         Assert.assertEquals("Species", taxon.getType());
         assertEquals("bla bla", taxon.getName());
         Taxon genusTaxon = taxon.isPartOfTaxon();
@@ -76,7 +76,7 @@ public class TaxonFactoryTest extends GraphDBTestCase {
     }
 
     private void assertGenus(String speciesName) throws TaxonFactoryException {
-        Taxon taxon = taxonFactory.create(speciesName, null);
+        Taxon taxon = nodeFactory.createTaxon(speciesName, null);
         Taxon genus = taxon;
         assertEquals("Genus", genus.getType());
         assertEquals("bla", genus.getName());
@@ -84,7 +84,7 @@ public class TaxonFactoryTest extends GraphDBTestCase {
     }
 
     private void assertFamily(String speciesName) throws TaxonFactoryException {
-        Taxon family = taxonFactory.create(speciesName, null);
+        Taxon family = nodeFactory.createTaxon(speciesName, null);
         assertEquals("Family", family.getType());
         assertEquals("Blabae", family.getName());
     }
