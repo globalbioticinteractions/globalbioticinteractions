@@ -8,3 +8,7 @@ test-output/
 *.iws
 .idea/
 /data/
+
+ripple.log
+
+blueprints.log
