@@ -1,6 +1,5 @@
 -- open existing neo4j graph
-g = new Neo4jGraph('/Users/jorrit/dev/trophic/trophic-graph/data/graph.db/')
-g = new Neo4jGraph('/Users/jorrit/dev/trophic/trophic-graph/data/graph.db/')
+g = new Neo4jGraph('/Users/jorrit/dev/trophic/trophic-graph/data/')
 
 
 -- get vertex iterator by species name:
@@ -21,17 +20,21 @@ g.vertices.count()
 g.V.count()
 
 -- get me the all species is contained in at least two studies (not quite sure about this)
-study1_species = []
-shared_species = []
+studies = []
 
-studies[0].outE('COLLECTED').inV.outE('CLASSIFIED_AS').inV.uniqueObject.aggregate(study1_species)
-studies[0].outE('COLLECTED').inV.outE('ATE').inV.outE('CLASSIFIED_AS').inV.uniqueObject.aggregate(study1_species)
+g.V.out('COLLECTED').inE.outV.uniqueObject.aggregate(studies)
 
-studies[1].outE('COLLECTED').inV.outE('CLASSIFIED_AS').inV.uniqueObject.retain(study1_species).aggregate(shared_species)
-studies[1].outE('COLLECTED').inV.outE('ATE').inV.outE('CLASSIFIED_AS').inV.uniqueObject.retain(study1_species).aggregate(shared_species)
+study1_taxon = []
+shared_taxon = []
+
+studies[0].out('COLLECTED').out('CLASSIFIED_AS').uniqueObject.aggregate(study1_taxon)
+studies[0].out('COLLECTED').out('ATE').out('CLASSIFIED_AS').uniqueObject.aggregate(study1_taxon)
+
+studies[1].out('COLLECTED').out('CLASSIFIED_AS').uniqueObject.retain(study1_taxon).aggregate(shared_taxon)
+studies[1].out('COLLECTED').out('ATE').out('CLASSIFIED_AS').uniqueObject.retain(study1_taxon).aggregate(shared_taxon)
 
 -- result -- 
-gremlin> shared_species.scientificName
+gremlin> shared_taxon.name
 ==>Squilla empusa
 ==>Cynoscion arenarius
 ==>Polydactylus octonemus
@@ -39,11 +42,8 @@ gremlin> shared_species.scientificName
 ==>Micropogonias undulatus
 gremlin> 
 
-
-
-
-
-g.V.inE("CLASSIFIED_AS").outV.as('x').inE("COLLECTED").outV.uniqueObject.back('x').outE("CLASSIFIED_AS").inV.scientificName
+-- list all predators that were collected in both studies --
+g.V.in('CLASSIFIED_AS').as('x').in('COLLECTED').uniqueObject.back('x').out('CLASSIFIED_AS').name
 ==>Rhynchoconger flavus
 ==>Squilla empusa
 
