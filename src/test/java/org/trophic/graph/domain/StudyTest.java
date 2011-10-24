@@ -6,7 +6,7 @@ import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 import org.trophic.graph.data.GraphDBTestCase;
-import org.trophic.graph.data.TaxonFactory;
+import org.trophic.graph.data.NodeFactory;
 import org.trophic.graph.data.TaxonFactoryException;
 
 import static org.junit.Assert.*;
@@ -20,11 +20,11 @@ public class StudyTest extends GraphDBTestCase {
     public static final String WHITE_SHARK_FAMILY = "Lamnidae";
     public static final String NAME = "name";
 
-    private TaxonFactory factory;
+    private NodeFactory factory;
 
     @Before
     public void createFactory() {
-        factory = new TaxonFactory(getGraphDb());
+        factory = new NodeFactory(getGraphDb());
 
 
     }

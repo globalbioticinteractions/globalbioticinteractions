@@ -18,7 +18,7 @@ public class LengthParserUtil {
                     Double maxLengthInMm = Double.parseDouble(split[1]);
                     averageLengthInMm = (maxLengthInMm + minLengthInMm) / 2.0d;
                 } catch (NumberFormatException ex1) {
-                    throw new StudyImporterException("failed to create specimen length range [" + lengthRangeInMm + "]");
+                    throw new StudyImporterException("failed to createTaxon specimen length range [" + lengthRangeInMm + "]");
                 }
             }
         }
@@ -28,7 +28,7 @@ public class LengthParserUtil {
             try {
                 lengthInMm1 = Double.parseDouble(csvParser.getValueByLabel(columnToNormalizedTermMapper.get(StudyImporterImpl.LENGTH_IN_MM)));
             } catch (NumberFormatException ex) {
-                throw new StudyImporterException("failed to create specimen length [" + lengthInMm1 + "]");
+                throw new StudyImporterException("failed to createTaxon specimen length [" + lengthInMm1 + "]");
             }
             lengthInMm = lengthInMm1;
         }

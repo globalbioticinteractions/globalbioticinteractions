@@ -2,7 +2,6 @@ package org.trophic.graph.data;
 
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
@@ -13,20 +12,20 @@ import static junit.framework.Assert.*;
 
 public class StudyImporterImplTest extends GraphDBTestCase {
 
-    TaxonFactory taxonFactory;
+    NodeFactory nodeFactory;
 
     @Before
     public void createFactory() {
-        taxonFactory = new TaxonFactory(getGraphDb());
+        nodeFactory = new NodeFactory(getGraphDb());
     }
 
     @Test
     public void createFindLocation() {
-        Location location = taxonFactory.createLocation(1.2d, 1.4d, -1.0d);
-        taxonFactory.createLocation(2.2d, 1.4d, -1.0d);
-        taxonFactory.createLocation(1.2d, 2.4d, -1.0d);
+        Location location = nodeFactory.createLocation(1.2d, 1.4d, -1.0d);
+        nodeFactory.createLocation(2.2d, 1.4d, -1.0d);
+        nodeFactory.createLocation(1.2d, 2.4d, -1.0d);
         assertNotNull(location);
-        Location location1 = taxonFactory.findLocation(location.getLatitude(), location.getLongitude(), location.getAltitude());
+        Location location1 = nodeFactory.findLocation(location.getLatitude(), location.getLongitude(), location.getAltitude());
         assertNotNull(location1);
     }
 
@@ -40,26 +39,25 @@ public class StudyImporterImplTest extends GraphDBTestCase {
         StudyImporterImpl studyImporter = new StudyImporterImpl(new TestParserFactory(csvString));
         init(studyImporter);
 
-        assertEmpty();
-        Study study = studyImporter.importStudy();
+        studyImporter.importStudy();
         studyImporter.importStudy();
 
-        assertNotNull(taxonFactory.findTaxonOfType("Rhynchoconger flavus", Taxon.SPECIES));
-        assertNotNull(taxonFactory.findTaxonOfType("Rhynchoconger", Taxon.GENUS));
-        assertNotNull(taxonFactory.findTaxonOfType("Halieutichthys aculeatus", Taxon.SPECIES));
-        assertNotNull(taxonFactory.findTaxonOfType("Halieutichthys", Taxon.GENUS));
-        assertNotNull(taxonFactory.findTaxonOfType("Ampelisca", Taxon.GENUS));
-        assertNull(taxonFactory.findTaxonOfType("Ampelisca ", Taxon.GENUS));
+        assertNotNull(nodeFactory.findTaxonOfType("Rhynchoconger flavus", Taxon.SPECIES));
+        assertNotNull(nodeFactory.findTaxonOfType("Rhynchoconger", Taxon.GENUS));
+        assertNotNull(nodeFactory.findTaxonOfType("Halieutichthys aculeatus", Taxon.SPECIES));
+        assertNotNull(nodeFactory.findTaxonOfType("Halieutichthys", Taxon.GENUS));
+        assertNotNull(nodeFactory.findTaxonOfType("Ampelisca", Taxon.GENUS));
+        assertNull(nodeFactory.findTaxonOfType("Ampelisca ", Taxon.GENUS));
 
-        assertNotNull(taxonFactory.findStudy(StudyLibrary.MISSISSIPPI_ALABAMA));
-        assertNull(taxonFactory.findStudy(StudyLibrary.LAVACA_BAY));
+        assertNotNull(nodeFactory.findStudy(StudyLibrary.MISSISSIPPI_ALABAMA));
+        assertNull(nodeFactory.findStudy(StudyLibrary.LAVACA_BAY));
 
-        assertNotNull(taxonFactory.findLocation(3257617.25d, 348078.84d, -60.0d));
-        assertNotNull(taxonFactory.findLocation(3323087.25, 344445.31,  -20.0d));
+        assertNotNull(nodeFactory.findLocation(3257617.25d, 348078.84d, -60.0d));
+        assertNotNull(nodeFactory.findLocation(3323087.25, 344445.31,  -20.0d));
 
-        assertNotNull(taxonFactory.findSeason("summer"));
+        assertNotNull(nodeFactory.findSeason("summer"));
 
-        Study foundStudy = taxonFactory.findStudy(StudyLibrary.MISSISSIPPI_ALABAMA);
+        Study foundStudy = nodeFactory.findStudy(StudyLibrary.MISSISSIPPI_ALABAMA);
         assertNotNull(foundStudy);
         for (Relationship rel : foundStudy.getSpecimens()) {
             Node firstSpecimen = rel.getEndNode();
@@ -107,13 +105,6 @@ public class StudyImporterImplTest extends GraphDBTestCase {
         assertEquals(length, firstSpecimen.getProperty(Specimen.LENGTH_IN_MM));
     }
 
-    private void assertEmpty() {
-        assertEquals(0, taxonFactory.totalNumberOfTaxons());
-        assertEquals(0, taxonFactory.totalNumberOfStudies());
-        assertEquals(0, taxonFactory.totalNumberOfLocations());
-        assertEquals(0, taxonFactory.totalNumberOfSeasons());
-    }
-
     @Test
     public void createAndRPopulateStudyFromLavacaBay() throws StudyImporterException, TaxonFactoryException {
         String csvString =
@@ -125,28 +116,27 @@ public class StudyImporterImplTest extends GraphDBTestCase {
 
         init(studyImporter);
 
-        assertEmpty();
         Study study = studyImporter.importStudy(StudyLibrary.LAVACA_BAY);
 
-        assertNotNull(taxonFactory.findTaxonOfType("Sciaenidae", Taxon.FAMILY));
-        assertNotNull(taxonFactory.findTaxonOfType("Ariidae", Taxon.FAMILY));
-        assertNotNull(taxonFactory.findTaxonOfType("Sciaenops ocellatus", Taxon.SPECIES));
-        assertNotNull(taxonFactory.findTaxonOfType("Sciaenops", Taxon.GENUS));
-        assertNotNull(taxonFactory.findTaxonOfType("Arius felis", Taxon.SPECIES));
-        assertNotNull(taxonFactory.findTaxonOfType("Arius", Taxon.GENUS));
+        assertNotNull(nodeFactory.findTaxonOfType("Sciaenidae", Taxon.FAMILY));
+        assertNotNull(nodeFactory.findTaxonOfType("Ariidae", Taxon.FAMILY));
+        assertNotNull(nodeFactory.findTaxonOfType("Sciaenops ocellatus", Taxon.SPECIES));
+        assertNotNull(nodeFactory.findTaxonOfType("Sciaenops", Taxon.GENUS));
+        assertNotNull(nodeFactory.findTaxonOfType("Arius felis", Taxon.SPECIES));
+        assertNotNull(nodeFactory.findTaxonOfType("Arius", Taxon.GENUS));
 
-        assertNotNull(taxonFactory.findTaxonOfType("Acrididae", Taxon.FAMILY));
-        assertNotNull(taxonFactory.findTaxonOfType("Arius", Taxon.GENUS));
+        assertNotNull(nodeFactory.findTaxonOfType("Acrididae", Taxon.FAMILY));
+        assertNotNull(nodeFactory.findTaxonOfType("Arius", Taxon.GENUS));
 
-        assertNotNull(taxonFactory.findTaxonOfType("Aegathoa oculata", Taxon.SPECIES));
-        assertNotNull(taxonFactory.findTaxonOfType("Aegathoa", Taxon.GENUS));
+        assertNotNull(nodeFactory.findTaxonOfType("Aegathoa oculata", Taxon.SPECIES));
+        assertNotNull(nodeFactory.findTaxonOfType("Aegathoa", Taxon.GENUS));
 
-        assertNotNull(taxonFactory.findStudy(StudyLibrary.LAVACA_BAY));
+        assertNotNull(nodeFactory.findStudy(StudyLibrary.LAVACA_BAY));
 
-        assertNotNull(taxonFactory.findSeason("spring"));
-        assertNotNull(taxonFactory.findSeason("fall"));
+        assertNotNull(nodeFactory.findSeason("spring"));
+        assertNotNull(nodeFactory.findSeason("fall"));
 
-        Study foundStudy = taxonFactory.findStudy(StudyLibrary.LAVACA_BAY);
+        Study foundStudy = nodeFactory.findStudy(StudyLibrary.LAVACA_BAY);
         assertNotNull(foundStudy);
         for (Relationship rel : study.getSpecimens()) {
             Specimen specimen = new Specimen(rel.getEndNode());
@@ -198,7 +188,7 @@ public class StudyImporterImplTest extends GraphDBTestCase {
     }
 
     private void init(StudyImporterImpl studyImporter) {
-        studyImporter.setTaxonFactory(taxonFactory);
+        studyImporter.setNodeFactory(nodeFactory);
     }
 
 

@@ -19,7 +19,7 @@ public class StudyImporterImpl implements StudyImporter {
     public static final String PREDATOR_SPECIES = "predator species";
     public static final String PREDATOR_FAMILY = "predatorFamily";
 
-    private TaxonFactory taxonFactory;
+    private NodeFactory nodeFactory;
 
     private ParserFactory parserFactory;
 
@@ -60,7 +60,7 @@ public class StudyImporterImpl implements StudyImporter {
                 addNextRecordToStudy(csvParser, study, StudyLibrary.COLUMN_MAPPERS.get(studyResource), parser);
             }
         } catch (IOException e) {
-            throw new StudyImporterException("failed to create study [" + studyResource + "]", e);
+            throw new StudyImporterException("failed to createTaxon study [" + studyResource + "]", e);
         }
         return study;
     }
@@ -77,9 +77,9 @@ public class StudyImporterImpl implements StudyImporter {
         String familyName = csvParser.getValueByLabel(columnToNormalizedTermMapper.get(PREDATOR_FAMILY));
         Specimen predator = null;
         try {
-            predator = createAndClassifySpecimen(speciesName, taxonFactory.getOrCreateFamily(familyName));
+            predator = createAndClassifySpecimen(speciesName, nodeFactory.getOrCreateFamily(familyName));
         } catch (TaxonFactoryException e) {
-            throw new StudyImporterException("failed to create taxon", e);
+            throw new StudyImporterException("failed to createTaxon taxon", e);
         }
         predator.setLengthInMm(lengthParser.parseLengthInMm(csvParser));
 
@@ -92,17 +92,17 @@ public class StudyImporterImpl implements StudyImporter {
 
     private Season getOrCreateSeason(String seasonName) {
         String seasonNameLower = seasonName.toLowerCase().trim();
-        Season season = taxonFactory.findSeason(seasonNameLower);
+        Season season = nodeFactory.findSeason(seasonNameLower);
         if (null == season) {
-            season = taxonFactory.createSeason(seasonNameLower);
+            season = nodeFactory.createSeason(seasonNameLower);
         }
         return season;
     }
 
     private Study getOrCreateStudy(String title) {
-        Study study = taxonFactory.findStudy(title);
+        Study study = nodeFactory.findStudy(title);
         if (null == study) {
-            study = taxonFactory.createStudy(title);
+            study = nodeFactory.createStudy(title);
         }
         return study;
     }
@@ -117,7 +117,7 @@ public class StudyImporterImpl implements StudyImporter {
         if (latitude != null && longitude != null && altitude != null) {
             location = findLocation(latitude, longitude, altitude);
             if (null == location) {
-                location = taxonFactory.createLocation(latitude, longitude, altitude);
+                location = nodeFactory.createLocation(latitude, longitude, altitude);
             }
         }
         return location;
@@ -129,26 +129,26 @@ public class StudyImporterImpl implements StudyImporter {
     }
 
     private Location findLocation(Double latitude, Double longitude, Double altitude) {
-        return taxonFactory.findLocation(latitude, longitude, altitude);
+        return nodeFactory.findLocation(latitude, longitude, altitude);
     }
 
     private Specimen createAndClassifySpecimen(final String speciesName, Taxon family) throws StudyImporterException {
-        Specimen specimen = taxonFactory.createSpecimen();
+        Specimen specimen = nodeFactory.createSpecimen();
         String trimmedSpeciesName = StringUtils.trim(speciesName);
         try {
-            specimen.classifyAs(taxonFactory.create(trimmedSpeciesName, family));
+            specimen.classifyAs(nodeFactory.createTaxon(trimmedSpeciesName, family));
         } catch (TaxonFactoryException e) {
             throw new StudyImporterException("failed to classify specimen", e);
         }
         return specimen;
     }
 
-    public TaxonFactory getTaxonFactory() {
-        return taxonFactory;
+    public NodeFactory getNodeFactory() {
+        return nodeFactory;
     }
 
-    public void setTaxonFactory(TaxonFactory taxonFactory) {
-        this.taxonFactory = taxonFactory;
+    public void setNodeFactory(NodeFactory nodeFactory) {
+        this.nodeFactory = nodeFactory;
     }
 }
 

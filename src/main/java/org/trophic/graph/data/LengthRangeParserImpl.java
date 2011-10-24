@@ -31,7 +31,7 @@ public class LengthRangeParserImpl implements LengthParser {
             Double maxLengthInMm = Double.parseDouble(split[1]);
             averageLengthInMm = (maxLengthInMm + minLengthInMm) / 2.0d;
         } catch (NumberFormatException ex) {
-            throw new StudyImporterException("failed to create specimen length range [" + csvParser + "]");
+            throw new StudyImporterException("failed to createTaxon specimen length range [" + csvParser + "]");
         }
         return averageLengthInMm;
     }

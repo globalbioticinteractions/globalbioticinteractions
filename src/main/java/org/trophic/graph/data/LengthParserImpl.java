@@ -17,7 +17,7 @@ public class LengthParserImpl implements LengthParser {
         try {
             return valueByLabel == null ? null : Double.parseDouble(valueByLabel);
         } catch (NumberFormatException ex) {
-            throw new StudyImporterException("failed to create specimen length [" + lengthInMm + "]");
+            throw new StudyImporterException("failed to createTaxon specimen length [" + lengthInMm + "]");
         }
     }
 }
