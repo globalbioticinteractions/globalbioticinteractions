@@ -114,9 +114,8 @@ public class StudyImporterImplTest extends GraphDBTestCase {
         assertEquals(0, taxonFactory.totalNumberOfSeasons());
     }
 
-    @Ignore
     @Test
-    public void createAndPopulateStudyFromLavacaBay() throws StudyImporterException {
+    public void createAndRPopulateStudyFromLavacaBay() throws StudyImporterException, TaxonFactoryException {
         String csvString =
                 "\"Region\",\"Season\",\"Habitat\",\"Site\",\"Family\",\"Predator Species\",\"TL\",\"Prey Item Species\",\"Prey item\",\"Number\",\"Condition Index\",\"Volume\",\"Percent Content\",\"Prey Item Trophic Level\",\"Notes\"\n";
         csvString += "\"Lower\",\"Fall\",\"Marsh\",1,\"Sciaenidae\",\"Sciaenops ocellatus\",420,\"Acrididae spp. \",\"Acrididae \",1,\"III\",0.4,3.2520325203,2.5,\n";
@@ -129,17 +128,30 @@ public class StudyImporterImplTest extends GraphDBTestCase {
         assertEmpty();
         Study study = studyImporter.importStudy(StudyLibrary.LAVACA_BAY);
 
-        assertEquals(9, taxonFactory.totalNumberOfTaxons());
-        assertEquals(1, taxonFactory.totalNumberOfStudies());
-        assertEquals(0, taxonFactory.totalNumberOfLocations());
-        assertEquals(2, taxonFactory.totalNumberOfSeasons());
+        assertNotNull(taxonFactory.findTaxonOfType("Sciaenidae", Taxon.FAMILY));
+        assertNotNull(taxonFactory.findTaxonOfType("Ariidae", Taxon.FAMILY));
+        assertNotNull(taxonFactory.findTaxonOfType("Sciaenops ocellatus", Taxon.SPECIES));
+        assertNotNull(taxonFactory.findTaxonOfType("Sciaenops", Taxon.GENUS));
+        assertNotNull(taxonFactory.findTaxonOfType("Arius felis", Taxon.SPECIES));
+        assertNotNull(taxonFactory.findTaxonOfType("Arius", Taxon.GENUS));
+
+        assertNotNull(taxonFactory.findTaxonOfType("Acrididae", Taxon.FAMILY));
+        assertNotNull(taxonFactory.findTaxonOfType("Arius", Taxon.GENUS));
+
+        assertNotNull(taxonFactory.findTaxonOfType("Aegathoa oculata", Taxon.SPECIES));
+        assertNotNull(taxonFactory.findTaxonOfType("Aegathoa", Taxon.GENUS));
+
+        assertNotNull(taxonFactory.findStudy(StudyLibrary.LAVACA_BAY));
+
+        assertNotNull(taxonFactory.findSeason("spring"));
+        assertNotNull(taxonFactory.findSeason("fall"));
 
         Study foundStudy = taxonFactory.findStudy(StudyLibrary.LAVACA_BAY);
         assertNotNull(foundStudy);
         for (Relationship rel : study.getSpecimens()) {
             Specimen specimen = new Specimen(rel.getEndNode());
             for (Relationship ateRel : specimen.getStomachContents()) {
-                Taxon taxon = new Taxon(ateRel.getEndNode());
+                Taxon taxon = new Taxon(rel.getEndNode().getSingleRelationship(RelTypes.CLASSIFIED_AS, Direction.OUTGOING).getEndNode());
                 String scientificName = taxon.getName();
                 if ("Sciaenops ocellatus".equals(scientificName)) {
                     Taxon genus = new Taxon(taxon.isPartOf());
@@ -153,8 +165,6 @@ public class StudyImporterImplTest extends GraphDBTestCase {
                         Node endNode = containsRel.getEndNode().getSingleRelationship(RelTypes.CLASSIFIED_AS, Direction.OUTGOING).getEndNode();
                         Object name = endNode.getProperty("name");
                         assertEquals("Acrididae", name);
-                        Object familyName = endNode.getSingleRelationship(RelTypes.CLASSIFIED_AS, Direction.OUTGOING).getEndNode().getProperty("name");
-                        assertEquals("Acrididae", familyName);
                         count++;
                     }
                     assertEquals(1, count);

@@ -32,7 +32,9 @@ public class Specimen extends NodeBacked {
     }
 
     public void caughtIn(Location sampleLocation) {
-        createRelationshipTo(sampleLocation, RelTypes.COLLECTED_AT);
+        if (null != sampleLocation) {
+            createRelationshipTo(sampleLocation, RelTypes.COLLECTED_AT);
+        }
     }
 
     public Season getSeason() {

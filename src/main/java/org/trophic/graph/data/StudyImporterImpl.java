@@ -3,6 +3,7 @@ package org.trophic.graph.data;
 import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.lang3.StringUtils;
 import org.trophic.graph.domain.*;
+
 import java.io.IOException;
 import java.util.Map;
 
@@ -29,7 +30,6 @@ public class StudyImporterImpl implements StudyImporter {
     public StudyImporterImpl(ParserFactory parserFactory) {
         this.parserFactory = parserFactory;
     }
-
 
 
     @Override
