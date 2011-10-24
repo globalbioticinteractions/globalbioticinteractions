@@ -9,6 +9,7 @@ public class Season extends NodeBacked {
     public Season(Node node, String title) {
         this(node);
         getUnderlyingNode().setProperty(TITLE, title);
+        getUnderlyingNode().setProperty(TYPE, Season.class.getSimpleName());
     }
 
     public Season(Node node) {

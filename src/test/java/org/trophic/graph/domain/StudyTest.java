@@ -7,9 +7,10 @@ import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 import org.trophic.graph.data.GraphDBTestCase;
 import org.trophic.graph.data.NodeFactory;
-import org.trophic.graph.data.TaxonFactoryException;
+import org.trophic.graph.data.NodeFactoryException;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 import static org.trophic.graph.domain.RelTypes.PART_OF;
 
 public class StudyTest extends GraphDBTestCase {
@@ -25,12 +26,10 @@ public class StudyTest extends GraphDBTestCase {
     @Before
     public void createFactory() {
         factory = new NodeFactory(getGraphDb());
-
-
     }
 
     @Test
-    public void populateStudy() throws TaxonFactoryException {
+    public void populateStudy() throws NodeFactoryException {
         Study study = factory.createStudy("Our first study");
 
 

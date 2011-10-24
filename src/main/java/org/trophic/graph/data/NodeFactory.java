@@ -29,7 +29,7 @@ public class NodeFactory {
 
     }
 
-    public Taxon createTaxon(String speciesName2, Taxon family) throws TaxonFactoryException {
+    public Taxon createTaxon(String speciesName2, Taxon family) throws NodeFactoryException {
         String cleanedSpeciesName = speciesName2.replaceAll("\\(.*\\)", "");
         String[] split = cleanedSpeciesName.split(" ");
         Taxon taxon = null;
@@ -56,7 +56,7 @@ public class NodeFactory {
         return taxon;
     }
 
-    private Taxon createFamilyOrGenus(Taxon family, String firstPart) throws TaxonFactoryException {
+    private Taxon createFamilyOrGenus(Taxon family, String firstPart) throws NodeFactoryException {
         Taxon taxon;
         if (isFamilyName(firstPart)) {
             taxon = getOrCreateFamily(firstPart);
@@ -74,7 +74,7 @@ public class NodeFactory {
         return firstPart.endsWith("ae");
     }
 
-    public Taxon getOrCreateSpecies(Taxon genus, String speciesName) throws TaxonFactoryException {
+    public Taxon getOrCreateSpecies(Taxon genus, String speciesName) throws NodeFactoryException {
         Taxon species = findTaxonOfType(speciesName, Taxon.SPECIES);
         if (species == null) {
             Transaction transaction = graphDb.beginTx();
@@ -93,7 +93,7 @@ public class NodeFactory {
         return species;
     }
 
-    public Taxon getOrCreateGenus(String genusName) throws TaxonFactoryException {
+    public Taxon getOrCreateGenus(String genusName) throws NodeFactoryException {
         Taxon genus = findTaxonOfType(genusName, Taxon.GENUS);
         if (genus == null) {
             Transaction transaction = graphDb.beginTx();
@@ -110,7 +110,7 @@ public class NodeFactory {
         return genus;
     }
 
-    public Taxon getOrCreateFamily(final String familyName) throws TaxonFactoryException {
+    public Taxon getOrCreateFamily(final String familyName) throws NodeFactoryException {
         Taxon family = null;
         if (familyName != null) {
             String trimmedFamilyName = StringUtils.trim(familyName);
@@ -137,7 +137,7 @@ public class NodeFactory {
         taxons.add(node, Taxon.TYPE, taxon.getType());
     }
 
-    public Taxon findTaxonOfType(String taxonName, String type) throws TaxonFactoryException {
+    public Taxon findTaxonOfType(String taxonName, String type) throws NodeFactoryException {
         IndexHits<Node> matchingTaxons = taxons.query("name:\"" + taxonName + "\" AND type:" + type);
         Node matchingTaxon = matchingTaxons.getSingle();
         matchingTaxons.close();
@@ -195,7 +195,7 @@ public class NodeFactory {
         Transaction transaction = graphDb.beginTx();
         Specimen specimen;
         try {
-            specimen = new Specimen(graphDb.createNode());
+            specimen = new Specimen(graphDb.createNode(), null);
             transaction.success();
         } finally {
             transaction.finish();

@@ -30,14 +30,13 @@ public class StudyImporterImplTest extends GraphDBTestCase {
     }
 
     @Test
-    public void createAndPopulateStudyMississippiAlabama() throws StudyImporterException, TaxonFactoryException {
+    public void createAndPopulateStudyMississippiAlabama() throws StudyImporterException, NodeFactoryException {
         String csvString
                 = "\"Obs\",\"spcode\", \"sizecl\", \"cruise\", \"stcode\", \"numstom\", \"numfood\", \"pctfull\", \"predator famcode\", \"prey\", \"number\", \"season\", \"depth\", \"transect\", \"alphcode\", \"taxord\", \"station\", \"long\", \"lat\", \"time\", \"sizeclass\", \"predator\"\n";
         csvString += "1, 1, 16, 3, 2, 6, 6, 205.5, 1, \"Ampelisca sp. (abdita complex)  \", 1, \"Summer\", 60, \"Chandeleur Islands\", \"aabd\", 47.11, \"C2\", 348078.84, 3257617.25, 313, \"201-300\", \"Rhynchoconger flavus\"\n";
         csvString += "2, 11, 2, 1, 1, 20, 15, 592.5, 6, \"Ampelisca sp. (abdita complex)\", 1, \"Summer\", 20, \"Chandeleur Islands\", \"aabd\", 47.11, \"C1\", 344445.31, 3323087.25, 144, \"26-50\", \"Halieutichthys aculeatus\"\n";
 
-        StudyImporterImpl studyImporter = new StudyImporterImpl(new TestParserFactory(csvString));
-        init(studyImporter);
+        StudyImporterImpl studyImporter = new StudyImporterImpl(new TestParserFactory(csvString), nodeFactory);
 
         studyImporter.importStudy();
         studyImporter.importStudy();
@@ -106,15 +105,14 @@ public class StudyImporterImplTest extends GraphDBTestCase {
     }
 
     @Test
-    public void createAndRPopulateStudyFromLavacaBay() throws StudyImporterException, TaxonFactoryException {
+    public void createAndRPopulateStudyFromLavacaBay() throws StudyImporterException, NodeFactoryException {
         String csvString =
                 "\"Region\",\"Season\",\"Habitat\",\"Site\",\"Family\",\"Predator Species\",\"TL\",\"Prey Item Species\",\"Prey item\",\"Number\",\"Condition Index\",\"Volume\",\"Percent Content\",\"Prey Item Trophic Level\",\"Notes\"\n";
         csvString += "\"Lower\",\"Fall\",\"Marsh\",1,\"Sciaenidae\",\"Sciaenops ocellatus\",420,\"Acrididae spp. \",\"Acrididae \",1,\"III\",0.4,3.2520325203,2.5,\n";
         csvString += "\"Lower\",\"Spring\",\"Non-Veg \",1,\"Ariidae\",\"Arius felis\",176,\"Aegathoa oculata \",\"Aegathoa oculata\",4,\"I\",0.01,3.3333333333,2.1,\n";
-        StudyImporterImpl studyImporter = new StudyImporterImpl(new TestParserFactory(csvString));
+        StudyImporterImpl studyImporter = new StudyImporterImpl(new TestParserFactory(csvString), nodeFactory);
 
 
-        init(studyImporter);
 
         Study study = studyImporter.importStudy(StudyLibrary.LAVACA_BAY);
 
@@ -187,9 +185,6 @@ public class StudyImporterImplTest extends GraphDBTestCase {
         }
     }
 
-    private void init(StudyImporterImpl studyImporter) {
-        studyImporter.setNodeFactory(nodeFactory);
-    }
 
 
 }

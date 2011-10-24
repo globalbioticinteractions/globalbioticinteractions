@@ -11,6 +11,7 @@ public class Study extends NodeBacked {
     public Study(Node node, String title) {
 		this(node);
         getUnderlyingNode().setProperty(TITLE, title);
+        getUnderlyingNode().setProperty(TYPE, Study.class.getSimpleName());
 	}
 
     public Study(Node node) {

@@ -19,7 +19,7 @@ public class NodeFactoryTest extends GraphDBTestCase {
     }
 
     @Test
-    public void createSpecies() throws TaxonFactoryException {
+    public void createSpecies() throws NodeFactoryException {
         Taxon taxon = nodeFactory.createTaxon("bla bla", null);
         assertEquals("Species", taxon.getType());
         assertEquals("bla bla", taxon.getName());
@@ -27,23 +27,23 @@ public class NodeFactoryTest extends GraphDBTestCase {
     }
 
     @Test
-    public void createSpeciesTwice() throws TaxonFactoryException {
+    public void createSpeciesTwice() throws NodeFactoryException {
         String alphaeidae = "Alphaeidae";
         assertFamilyCorrectness(alphaeidae, alphaeidae);
     }
 
 
     @Test
-    public void createSpeciesParenthesis() throws TaxonFactoryException {
+    public void createSpeciesParenthesis() throws NodeFactoryException {
         assertFamilyCorrectness("Alphaeidae", "Alphaeidae (lar)");
     }
 
     @Test
-    public void createSpeciesCrypticDescription() throws TaxonFactoryException {
+    public void createSpeciesCrypticDescription() throws NodeFactoryException {
         assertFamilyCorrectness("Corophiidae", "Corophiidae Genus A");
     }
 
-    private void assertFamilyCorrectness(String expectedOutputName, String inputName) throws TaxonFactoryException {
+    private void assertFamilyCorrectness(String expectedOutputName, String inputName) throws NodeFactoryException {
         nodeFactory.createTaxon(inputName, null);
         Taxon taxon = nodeFactory.createTaxon(inputName, null);
         Assert.assertEquals(Taxon.FAMILY, taxon.getType());
@@ -51,7 +51,7 @@ public class NodeFactoryTest extends GraphDBTestCase {
     }
 
     @Test
-    public void createSpeciesWithFamily() throws TaxonFactoryException {
+    public void createSpeciesWithFamily() throws NodeFactoryException {
         Taxon family = nodeFactory.getOrCreateFamily("theFam");
         Taxon taxon = nodeFactory.createTaxon("bla bla", family);
         Assert.assertEquals("Species", taxon.getType());
@@ -62,20 +62,20 @@ public class NodeFactoryTest extends GraphDBTestCase {
     }
 
     @Test
-    public void createGenus() throws TaxonFactoryException {
+    public void createGenus() throws NodeFactoryException {
         assertGenus("bla sp.");
         assertGenus("bla spp.");
         assertGenus("bla spp. (bla bla)");
     }
 
     @Test
-    public void createFamily() throws TaxonFactoryException {
+    public void createFamily() throws NodeFactoryException {
         assertFamily("Blabae sp.");
         assertFamily("Blabae spp.");
         assertFamily("Blabae spp. (bla bla)");
     }
 
-    private void assertGenus(String speciesName) throws TaxonFactoryException {
+    private void assertGenus(String speciesName) throws NodeFactoryException {
         Taxon taxon = nodeFactory.createTaxon(speciesName, null);
         Taxon genus = taxon;
         assertEquals("Genus", genus.getType());
@@ -83,7 +83,7 @@ public class NodeFactoryTest extends GraphDBTestCase {
         assertNull(genus.isPartOf());
     }
 
-    private void assertFamily(String speciesName) throws TaxonFactoryException {
+    private void assertFamily(String speciesName) throws NodeFactoryException {
         Taxon family = nodeFactory.createTaxon(speciesName, null);
         assertEquals("Family", family.getType());
         assertEquals("Blabae", family.getName());

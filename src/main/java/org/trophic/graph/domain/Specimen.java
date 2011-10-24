@@ -13,9 +13,17 @@ public class Specimen extends NodeBacked {
         super(node);
     }
 
+    public Specimen(Node node, Double lengthInMm) {
+        this(node);
+        getUnderlyingNode().setProperty(TYPE, Specimen.class.getSimpleName());
+        if (null != lengthInMm) {
+            getUnderlyingNode().setProperty(LENGTH_IN_MM, lengthInMm);
+        }
+    }
+
     @Override
     public String toString() {
-        return String.format("[%s]", hashCode());
+        return String.format("[%s]", getUnderlyingNode().getProperty(TYPE));
     }
 
     public Iterable<Relationship> getStomachContents() {

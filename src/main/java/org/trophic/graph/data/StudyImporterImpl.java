@@ -27,8 +27,9 @@ public class StudyImporterImpl implements StudyImporter {
 
     }
 
-    public StudyImporterImpl(ParserFactory parserFactory) {
+    public StudyImporterImpl(ParserFactory parserFactory, NodeFactory nodeFactory) {
         this.parserFactory = parserFactory;
+        this.nodeFactory = nodeFactory;
     }
 
 
@@ -78,7 +79,7 @@ public class StudyImporterImpl implements StudyImporter {
         Specimen predator = null;
         try {
             predator = createAndClassifySpecimen(speciesName, nodeFactory.getOrCreateFamily(familyName));
-        } catch (TaxonFactoryException e) {
+        } catch (NodeFactoryException e) {
             throw new StudyImporterException("failed to createTaxon taxon", e);
         }
         predator.setLengthInMm(lengthParser.parseLengthInMm(csvParser));
@@ -137,19 +138,12 @@ public class StudyImporterImpl implements StudyImporter {
         String trimmedSpeciesName = StringUtils.trim(speciesName);
         try {
             specimen.classifyAs(nodeFactory.createTaxon(trimmedSpeciesName, family));
-        } catch (TaxonFactoryException e) {
+        } catch (NodeFactoryException e) {
             throw new StudyImporterException("failed to classify specimen", e);
         }
         return specimen;
     }
 
-    public NodeFactory getNodeFactory() {
-        return nodeFactory;
-    }
-
-    public void setNodeFactory(NodeFactory nodeFactory) {
-        this.nodeFactory = nodeFactory;
-    }
 }
 
 

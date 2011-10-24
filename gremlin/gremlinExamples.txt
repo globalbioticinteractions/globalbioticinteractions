@@ -1,12 +1,13 @@
 -- open existing neo4j graph
 g = new Neo4jGraph('/Users/jorrit/dev/trophic/trophic-graph/data/graph.db/')
+g = new Neo4jGraph('/Users/jorrit/dev/trophic/trophic-graph/data/graph.db/')
 
 
 -- get vertex iterator by species name:
-g.idx("Species").get('scientificName', 'Ampelisca agassizi') 
+g.idx("taxons").get('name', 'Ampelisca agassizi')
 
 -- get first node of iterator
-first = g.idx("Species").get('scientificName', 'Ampelisca agassizi').iterator().next()
+first = g.idx("taxons").get('name', 'Ampelisca agassizi').iterator().next()
 
 -- get studies associated with all predators eating 'Ampelisca agassizi'
 first.inE.outV.inE.outV.inE.outV.title
