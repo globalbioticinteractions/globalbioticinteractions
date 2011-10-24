@@ -15,7 +15,7 @@ import java.util.Set;
 
 public class TrophicImporter {
 
-    private String storeDir;
+    private String storeDir = "data";
 
     public static void main(final String[] commandLineArguments) throws StudyImporterException {
         new TrophicImporter().startImportStop(commandLineArguments);
