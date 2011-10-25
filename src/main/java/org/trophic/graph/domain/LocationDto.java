@@ -1,6 +1,6 @@
 package org.trophic.graph.domain;
 
-public class LocationPure {
+public class LocationDto {
 
 	private String id;
     private String name;
@@ -8,9 +8,9 @@ public class LocationPure {
 	private Double longitude;
 	private Double altitude;
 
-	public LocationPure() { }
+	public LocationDto() { }
 	
-	public LocationPure(String id, Double longitude, Double latitude, Double altitude) {
+	public LocationDto(String id, Double longitude, Double latitude, Double altitude) {
 		this.id = id;
 		this.setLongitude(longitude);
 		this.setLatitude(latitude);

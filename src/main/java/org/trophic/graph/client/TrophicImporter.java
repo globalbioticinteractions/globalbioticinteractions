@@ -3,14 +3,8 @@ package org.trophic.graph.client;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.kernel.EmbeddedGraphDatabase;
-import org.trophic.graph.data.NodeFactory;
-import org.trophic.graph.data.ParserFactoryImpl;
-import org.trophic.graph.data.StudyImporter;
-import org.trophic.graph.data.StudyImporterException;
-import org.trophic.graph.data.StudyImporterImpl;
-import org.trophic.graph.data.StudyLibrary;
+import org.trophic.graph.data.*;
 
-import java.io.File;
 import java.util.Set;
 
 public class TrophicImporter {

@@ -20,7 +20,6 @@ public class Location extends NodeBacked {
         getUnderlyingNode().setProperty(TYPE, Location.class.getSimpleName());
     }
 
-
     public Double getAltitude() {
         return (Double) getUnderlyingNode().getProperty(ALTITUDE);
     }
@@ -32,6 +31,5 @@ public class Location extends NodeBacked {
     public Double getLatitude() {
         return (Double) getUnderlyingNode().getProperty(LATITUDE);
     }
-
 
 }

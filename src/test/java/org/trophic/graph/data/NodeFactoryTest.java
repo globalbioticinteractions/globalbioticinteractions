@@ -7,7 +7,6 @@ import org.trophic.graph.domain.Taxon;
 
 import static junit.framework.Assert.assertNull;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 public class NodeFactoryTest extends GraphDBTestCase {
 

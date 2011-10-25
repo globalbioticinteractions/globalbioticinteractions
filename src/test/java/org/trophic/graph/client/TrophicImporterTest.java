@@ -2,7 +2,6 @@ package org.trophic.graph.client;
 
 import org.junit.Test;
 import org.neo4j.graphdb.GraphDatabaseService;
-import org.neo4j.graphdb.Node;
 import org.trophic.graph.data.StudyImporterException;
 
 import java.io.File;
