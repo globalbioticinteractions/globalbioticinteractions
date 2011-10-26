@@ -14,21 +14,21 @@ public class TrophicImporterTest {
 
     @Test
     public void importStudies() throws IOException, StudyImporterException {
-//        TrophicImporter trophicImporter = new TrophicImporter();
-//        File tempFile = File.createTempFile("neo4j", "dir");
-//        tempFile.deleteOnExit();
-//        GraphService.setStoreDir(tempFile.getAbsolutePath());
-//        trophicImporter.startImportStop(new String[]{});
-//
-//        GraphDatabaseService graphDatabaseService = null;
-//        try {
-//            graphDatabaseService = GraphService.getGraphService();
-//            assertNotNull(graphDatabaseService.getNodeById(1));
-//            assertNotNull(graphDatabaseService.getNodeById(200));
-//        } finally {
-//            if (graphDatabaseService != null) {
-//                graphDatabaseService.shutdown();
-//            }
-//        }
+        TrophicImporter trophicImporter = new TrophicImporter();
+        File tempFile = File.createTempFile("neo4j", "dir");
+        tempFile.deleteOnExit();
+        GraphService.setStoreDir(tempFile.getAbsolutePath());
+        trophicImporter.startImportStop(new String[]{});
+
+        GraphDatabaseService graphDatabaseService = null;
+        try {
+            graphDatabaseService = GraphService.getGraphService();
+            assertNotNull(graphDatabaseService.getNodeById(1));
+            assertNotNull(graphDatabaseService.getNodeById(200));
+        } finally {
+            if (graphDatabaseService != null) {
+                graphDatabaseService.shutdown();
+            }
+        }
     }
 }
