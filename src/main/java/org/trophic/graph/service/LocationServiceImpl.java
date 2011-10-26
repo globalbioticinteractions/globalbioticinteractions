@@ -14,7 +14,7 @@ public class LocationServiceImpl implements LocationService {
 	
 	@Override
 	public List<LocationDto> getStudyLocations() {
-        Map<Vertex, Integer> map = locationDao.getLocations();
+//        Map<Vertex, Integer> map = locationDao.getLocations();
         List<LocationDto> result = new ArrayList<LocationDto>();
 
         // TODO mapping

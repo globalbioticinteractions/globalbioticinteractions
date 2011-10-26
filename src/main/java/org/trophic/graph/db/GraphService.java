@@ -6,6 +6,7 @@ import org.neo4j.kernel.EmbeddedGraphDatabase;
 public abstract class GraphService {
 
     private static GraphDatabaseService graphService;
+    private static String storeDir = "data";
 
     public static GraphDatabaseService getGraphService(){
         if (graphService == null)
@@ -15,7 +16,7 @@ public abstract class GraphService {
 
     private static GraphDatabaseService startNeo4j() {
         System.out.println("neo4j starting...");
-        String storeDir = "data";
+
         graphService = new EmbeddedGraphDatabase(storeDir);
         Runtime.getRuntime().addShutdownHook(new Thread() {
             @Override
@@ -29,4 +30,7 @@ public abstract class GraphService {
         return graphService;
     }
 
+    public static void setStoreDir(String storeDir) {
+        GraphService.storeDir = storeDir;
+    }
 }
