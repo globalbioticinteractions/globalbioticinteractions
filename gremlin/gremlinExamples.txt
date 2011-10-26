@@ -1,7 +1,6 @@
 -- open existing neo4j graph
 g = new Neo4jGraph('/Users/jorrit/dev/trophic/trophic-graph/data/')
 
-
 -- get vertex iterator by species name:
 g.idx("taxons").get('name', 'Ampelisca agassizi')
 

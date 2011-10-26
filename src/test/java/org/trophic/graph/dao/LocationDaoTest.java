@@ -1,23 +1,21 @@
 package org.trophic.graph.dao;
 
 import org.junit.Test;
+import org.trophic.graph.domain.Location;
 import org.trophic.graph.factory.LocationFactory;
+
+import java.util.List;
 
 public class LocationDaoTest {
 
     @Test
-    public void init(){
+    public void test(){
 		System.out.println("Start Location DAO Test");
         LocationDao dao = LocationFactory.getLocationDao();
-        String hallo = dao.sayHallo();
-        assert hallo != null;
-        System.out.println(hallo);
-         dao.getLocations();
-//        assert map != null;
-//        assert map.size() > 0;
+        List<Location> locations = dao.getLocations();
+        assert locations != null;
+        assert locations.size() > 0;
 		System.out.println("Start Location DAO Test");
     }
-
-
 
 }
