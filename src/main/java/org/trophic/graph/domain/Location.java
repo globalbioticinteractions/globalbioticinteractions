@@ -32,4 +32,15 @@ public class Location extends NodeBacked {
         return (Double) getUnderlyingNode().getProperty(LATITUDE);
     }
 
+    @Override
+    public String toString() {
+        StringBuffer sb = new StringBuffer();
+        sb.append(" Lat: ");
+        sb.append(getLatitude());
+        sb.append(" Lng: ");
+        sb.append(getLongitude());
+        sb.append(" Alt: ");
+        sb.append(getAltitude());
+        return sb.toString();
+    }
 }

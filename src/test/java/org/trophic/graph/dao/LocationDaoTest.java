@@ -15,6 +15,9 @@ public class LocationDaoTest {
         List<Location> locations = dao.getLocations();
         assert locations != null;
         assert locations.size() > 0;
+        for (Location location : locations){
+            System.out.println("Location: " + location.toString());
+        }
 		System.out.println("Start Location DAO Test");
     }
 

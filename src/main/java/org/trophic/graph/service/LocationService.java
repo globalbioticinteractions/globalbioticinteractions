@@ -1,11 +1,11 @@
 package org.trophic.graph.service;
 
-import org.trophic.graph.domain.LocationDto;
+import org.trophic.graph.domain.Location;
 
 import java.util.List;
 
 public interface LocationService {
 	
-	List<LocationDto> getStudyLocations();
+	List<Location> getLocations();
 
 }

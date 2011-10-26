@@ -6,7 +6,7 @@ import org.neo4j.kernel.EmbeddedGraphDatabase;
 public abstract class GraphService {
 
     private static GraphDatabaseService graphService;
-    private static String storeDir = "data";
+    private static String storeDir = "/Users/reiz/workspace/trophic-graph/data";
 
     public static GraphDatabaseService getGraphService(){
         if (graphService == null)

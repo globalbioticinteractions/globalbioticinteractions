@@ -1,7 +1,10 @@
 package org.trophic.graph.dao;
 
 import com.tinkerpop.blueprints.pgm.Graph;
-import org.neo4j.graphdb.*;
+import org.neo4j.graphdb.GraphDatabaseService;
+import org.neo4j.graphdb.Node;
+import org.neo4j.graphdb.Transaction;
+import org.neo4j.graphdb.Traverser;
 import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.IndexHits;
 import org.trophic.graph.db.GraphService;
@@ -11,7 +14,7 @@ import org.trophic.graph.domain.RelTypes;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LocationDaoJava implements LocationDao {
+public class LocationDaoJava extends SuperDao implements LocationDao {
 
     @Override
     public List<Location> getLocations() {
@@ -22,41 +25,15 @@ public class LocationDaoJava implements LocationDao {
             Index<Node> index = graph.index().forNodes("studies");
             IndexHits<Node> studies = index.get("title", "mississippiAlabamaFishDiet.csv.gz");
             for (Node study: studies){
-                Traverser studyTraverser = study.traverse(
-                        Traverser.Order.BREADTH_FIRST,
-                        StopEvaluator.END_OF_GRAPH,
-                        ReturnableEvaluator.ALL_BUT_START_NODE,
-                        RelTypes.COLLECTED,
-                        Direction.OUTGOING);
+                Traverser studyTraverser = getTraverserWithRelType(study, RelTypes.COLLECTED);
                 while (studyTraverser.iterator().hasNext()){
-                    Node collectedSpecimen = (Node)studyTraverser.iterator().next();
-
-                    Traverser specimenTraverserOutCollectedAt = collectedSpecimen.traverse(
-                        Traverser.Order.BREADTH_FIRST,
-                        StopEvaluator.END_OF_GRAPH,
-                        ReturnableEvaluator.ALL_BUT_START_NODE,
-                        RelTypes.COLLECTED_AT,
-                        Direction.OUTGOING);
-                    while (specimenTraverserOutCollectedAt.iterator().hasNext()){
-                        Node collectedAtLocation = (Node)specimenTraverserOutCollectedAt.iterator().next();
-                        Double longitude = (Double) collectedAtLocation.getProperty(Location.LONGITUDE);
-                        Double latitude = (Double) collectedAtLocation.getProperty(Location.LATITUDE);
-                        Double altitude = (Double) collectedAtLocation.getProperty(Location.ALTITUDE);
-                        Location location = new Location(collectedAtLocation, longitude, latitude, altitude);
+                    Node collectedSpecimen = studyTraverser.iterator().next();
+                    Traverser locationTraverser = getTraverserWithRelType(collectedSpecimen, RelTypes.COLLECTED_AT);
+                    while (locationTraverser.iterator().hasNext()){
+                        Node collectedAtLocation = locationTraverser.iterator().next();
+                        Location location = createLocation(collectedAtLocation);
                         result.add(location);
                     }
-
-//                    Traverser specimenTraverserOutClassifiedAs = collectedSpecimen.traverse(
-//                        Traverser.Order.BREADTH_FIRST,
-//                        StopEvaluator.END_OF_GRAPH,
-//                        ReturnableEvaluator.ALL_BUT_START_NODE,
-//                        RelTypes.CLASSIFIED_AS,
-//                        Direction.OUTGOING);
-//                    while (specimenTraverserOutClassifiedAs.iterator().hasNext()){
-//                        Node classifiedAsName = (Node)specimenTraverserOutClassifiedAs.iterator().next();
-//
-//                    }
-
                 }
             }
         } finally {

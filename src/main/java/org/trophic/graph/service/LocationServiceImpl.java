@@ -1,33 +1,19 @@
 package org.trophic.graph.service;
 
-import com.tinkerpop.blueprints.pgm.Vertex;
 import org.trophic.graph.dao.LocationDao;
+import org.trophic.graph.domain.Location;
 import org.trophic.graph.domain.LocationDto;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class LocationServiceImpl implements LocationService {
 
     private LocationDao locationDao;
 	
 	@Override
-	public List<LocationDto> getStudyLocations() {
-//        Map<Vertex, Integer> map = locationDao.getLocations();
-        List<LocationDto> result = new ArrayList<LocationDto>();
-
-        // TODO mapping
-
-//        for (Location location : map){
-//            LocationDto dto = new LocationDto();
-//            dto.setAltitude(location.getAltitude());
-//            dto.setLongitude(location.getLongitude());
-//            dto.setLatitude(location.getLatitude());
-//            dto.setName("NA");
-//            dto.setId("Not Yet");
-//            result.add(dto);
-//        }
+	public List<Location> getLocations() {
+        List<Location> result = locationDao.getLocations();
 		return result;
 	}
 	
