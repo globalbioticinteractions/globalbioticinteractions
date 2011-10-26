@@ -4,7 +4,7 @@ import com.tinkerpop.blueprints.pgm.Graph
 import com.tinkerpop.blueprints.pgm.Vertex
 import com.tinkerpop.gremlin.Gremlin
 
-class LocationDaoImpl implements LocationDao {
+class LocationRepo  {
 
     private Graph graph;
 
@@ -20,6 +20,10 @@ class LocationDaoImpl implements LocationDao {
 
     public void setGraph(Graph graph){
         this.graph = graph
+    }
+
+    public String sayHallo(){
+        "Hallo!"
     }
 
 }

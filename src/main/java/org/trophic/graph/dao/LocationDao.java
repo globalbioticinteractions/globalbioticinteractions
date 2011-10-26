@@ -1,11 +1,16 @@
 package org.trophic.graph.dao;
 
-import com.tinkerpop.blueprints.pgm.Vertex;
+import com.tinkerpop.blueprints.pgm.Graph;
+import org.trophic.graph.domain.Location;
 
-import java.util.Map;
+import java.util.List;
 
 public interface LocationDao {
 
-    public Map<Vertex, Integer> getLocations();
+    List<Location> getLocations();
+
+    void setGraph(Graph graph);
+
+    public String sayHallo();
 
 }

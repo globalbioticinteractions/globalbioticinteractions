@@ -2,14 +2,7 @@ package org.trophic.graph.db;
 
 import com.tinkerpop.blueprints.pgm.impls.neo4j.Neo4jGraph;
 
-/**
- * Created by IntelliJ IDEA.
- * User: reiz
- * Date: 10/25/11
- * Time: 10:32 AM
- * To change this template use File | Settings | File Templates.
- */
-public abstract class Neo4JGraphDb {
+public abstract class Neo4JBluprintDb {
 
     private static Neo4jGraph graph;
 

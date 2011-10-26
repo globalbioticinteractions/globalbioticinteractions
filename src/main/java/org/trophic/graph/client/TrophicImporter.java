@@ -2,21 +2,19 @@ package org.trophic.graph.client;
 
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
-import org.neo4j.kernel.EmbeddedGraphDatabase;
 import org.trophic.graph.data.*;
+import org.trophic.graph.db.GraphService;
 
 import java.util.Set;
 
 public class TrophicImporter {
-
-    private String storeDir = "data";
 
     public static void main(final String[] commandLineArguments) throws StudyImporterException {
         new TrophicImporter().startImportStop(commandLineArguments);
     }
 
     public void startImportStop(String[] commandLineArguments) throws StudyImporterException {
-        final GraphDatabaseService graphService = startNeo4j();
+        final GraphDatabaseService graphService = GraphService.getGraphService();
         importStudies(graphService);
         int count = 0;
         for (Node node : graphService.getAllNodes()) {
@@ -50,23 +48,4 @@ public class TrophicImporter {
         System.out.println("study [" + studyName + "]");
     }
 
-    protected GraphDatabaseService startNeo4j() {
-        System.out.println("neo4j starting...");
-        storeDir = "data";
-        final GraphDatabaseService graphService = new EmbeddedGraphDatabase(storeDir);
-        Runtime.getRuntime().addShutdownHook(new Thread() {
-            @Override
-            public void run() {
-                System.out.println("neo4j stopping...");
-                graphService.shutdown();
-                System.out.println("neo4j stopped.");
-            }
-        });
-        System.out.println("neo4j started (" + ((EmbeddedGraphDatabase)graphService).getStoreDir() + ").");
-        return graphService;
-    }
-
-    public void setStoreDir(String storeDir) {
-        this.storeDir = storeDir;
-    }
 }
