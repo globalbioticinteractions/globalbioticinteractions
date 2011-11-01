@@ -6,6 +6,7 @@ import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.Transaction;
 
 public class NodeBacked {
+
     protected final static String TYPE = "type";
     private final Node underlyingNode;
 
