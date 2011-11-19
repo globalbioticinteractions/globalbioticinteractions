@@ -39,7 +39,6 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <neo4j.version>1.4.2</neo4j.version>
-        <!--<neo4j.version>1.5.M02</neo4j.version>-->
         <slf4j.version>1.5.10</slf4j.version>
         <org.slf4j-version>1.5.10</org.slf4j-version>
     </properties>
@@ -56,39 +55,6 @@
                     <target>1.6</target>
                 </configuration>
             </plugin>
-
-<<<<<<< HEAD
-			<!--<plugin>-->
-				<!--<groupId>org.codehaus.gmaven</groupId>-->
-	            <!--<artifactId>gmaven-plugin</artifactId>-->
-	            <!--<executions>-->
-	                <!--<execution>-->
-	                    <!--<goals>-->
-	                        <!--<goal>generateStubs</goal>-->
-	                        <!--<goal>compile</goal>-->
-	                        <!--<goal>generateTestStubs</goal>-->
-	                        <!--<goal>testCompile</goal>-->
-	                    <!--</goals>-->
-	                <!--</execution>-->
-	            <!--</executions>-->
-	        <!--</plugin>-->
-=======
-            <plugin>
-                <groupId>org.codehaus.gmaven</groupId>
-                <artifactId>gmaven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>generateStubs</goal>
-                            <goal>compile</goal>
-                            <goal>generateTestStubs</goal>
-                            <goal>testCompile</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
->>>>>>> fixed geo-coordinates - now valid lat-long combinations are produced.
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
@@ -258,31 +224,6 @@
             <artifactId>blueprints-neo4j-graph</artifactId>
             <version>1.0</version>
         </dependency>
-
-<<<<<<< HEAD
-        <!--<dependency>-->
-            <!--<groupId>org.codehaus.groovy</groupId>-->
-            <!--<artifactId>groovy-all</artifactId>-->
-            <!--<version>1.8.3</version>-->
-        <!--</dependency>-->
-		<!--<dependency>-->
-			<!--<groupId>org.codehaus.gmaven.runtime</groupId>-->
-			<!--<artifactId>gmaven-runtime-1.7</artifactId>-->
-			<!--<version>1.3</version>-->
-		<!--</dependency>-->
-=======
-        <dependency>
-            <groupId>org.codehaus.groovy</groupId>
-            <artifactId>groovy-all</artifactId>
-            <version>1.8.3</version>
-        </dependency>
-        <dependency>
-            <groupId>org.codehaus.gmaven.runtime</groupId>
-            <artifactId>gmaven-runtime-1.7</artifactId>
-            <version>1.3</version>
-        </dependency>
->>>>>>> fixed geo-coordinates - now valid lat-long combinations are produced.
-
 
         <dependency>
             <groupId>com.tinkerpop</groupId>
