@@ -18,11 +18,22 @@
             <url>http://mirrors.ibiblio.org/pub/mirrors/maven2/</url>
             <layout>default</layout>
         </repository>
-		<repository>
-		   <id>tinkerpop-repository</id>
-		   <name>TinkerPop Maven2 Repository</name>
-		   <url>http://tinkerpop.com/maven2</url>
-		</repository>
+        <repository>
+            <id>tinkerpop-repository</id>
+            <name>TinkerPop Maven2 Repository</name>
+            <url>http://tinkerpop.com/maven2</url>
+        </repository>
+        <repository>
+            <id>mygrid-repository</id>
+            <name>myGrid repository</name>
+            <url>http://www.mygrid.org.uk/maven/repository</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+        </repository>
     </repositories>
 
     <properties>
@@ -46,6 +57,7 @@
                 </configuration>
             </plugin>
 
+<<<<<<< HEAD
 			<!--<plugin>-->
 				<!--<groupId>org.codehaus.gmaven</groupId>-->
 	            <!--<artifactId>gmaven-plugin</artifactId>-->
@@ -60,6 +72,22 @@
 	                <!--</execution>-->
 	            <!--</executions>-->
 	        <!--</plugin>-->
+=======
+            <plugin>
+                <groupId>org.codehaus.gmaven</groupId>
+                <artifactId>gmaven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>generateStubs</goal>
+                            <goal>compile</goal>
+                            <goal>generateTestStubs</goal>
+                            <goal>testCompile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+>>>>>>> fixed geo-coordinates - now valid lat-long combinations are produced.
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -206,6 +234,12 @@
             <scope>test</scope>
         </dependency>
 
+        <dependency>
+            <groupId>uk.org.mygrid.resources.jcoord</groupId>
+            <artifactId>jcoord</artifactId>
+            <version>1.0</version>
+        </dependency>
+
         <!-- Graph Database Neo4J. NoSQL -->
         <dependency>
             <groupId>org.neo4j</groupId>
@@ -225,6 +259,7 @@
             <version>1.0</version>
         </dependency>
 
+<<<<<<< HEAD
         <!--<dependency>-->
             <!--<groupId>org.codehaus.groovy</groupId>-->
             <!--<artifactId>groovy-all</artifactId>-->
@@ -235,6 +270,18 @@
 			<!--<artifactId>gmaven-runtime-1.7</artifactId>-->
 			<!--<version>1.3</version>-->
 		<!--</dependency>-->
+=======
+        <dependency>
+            <groupId>org.codehaus.groovy</groupId>
+            <artifactId>groovy-all</artifactId>
+            <version>1.8.3</version>
+        </dependency>
+        <dependency>
+            <groupId>org.codehaus.gmaven.runtime</groupId>
+            <artifactId>gmaven-runtime-1.7</artifactId>
+            <version>1.3</version>
+        </dependency>
+>>>>>>> fixed geo-coordinates - now valid lat-long combinations are produced.
 
 
         <dependency>

@@ -3,14 +3,16 @@ package org.trophic.graph.data;
 import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.lang3.StringUtils;
 import org.trophic.graph.domain.*;
+import uk.me.jstott.jcoord.LatLng;
+import uk.me.jstott.jcoord.UTMRef;
 
 import java.io.IOException;
 import java.util.Map;
 
 public class StudyImporterImpl implements StudyImporter {
 
-    public static final String LATITUDE = "latitude";
-    public static final String LONGITUDE = "longitude";
+    public static final String NORTHING = "northing";
+    public static final String EASTING = "easting";
     public static final String DEPTH = "depth";
     public static final String LENGTH_RANGE_IN_MM = "lengthRangeInMm";
     public static final String LENGTH_IN_MM = "lengthInMm";
@@ -109,8 +111,18 @@ public class StudyImporterImpl implements StudyImporter {
     }
 
     private Location getOrCreateSampleLocation(LabeledCSVParser csvParser, Map<String, String> columnToNormalizedTermMapper) {
-        Double latitude = parseAsDouble(csvParser, columnToNormalizedTermMapper.get(LATITUDE));
-        Double longitude = parseAsDouble(csvParser, columnToNormalizedTermMapper.get(LONGITUDE));
+        Double northing = parseAsDouble(csvParser, columnToNormalizedTermMapper.get(NORTHING));
+        Double easting = parseAsDouble(csvParser, columnToNormalizedTermMapper.get(EASTING));
+
+        Double latitude = null;
+        Double longitude = null;
+        if (easting != null && northing != null) {
+            UTMRef utmRef = new UTMRef(easting, northing, 'R', 16);
+            LatLng latLng = utmRef.toLatLng();
+            latitude = latLng.getLat();
+            longitude = latLng.getLng();
+        }
+
         Double depth = parseAsDouble(csvParser, columnToNormalizedTermMapper.get(DEPTH));
         Double altitude = depth == null ? null : -depth;
 

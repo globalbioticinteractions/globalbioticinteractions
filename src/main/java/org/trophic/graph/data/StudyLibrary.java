@@ -9,8 +9,10 @@ public class StudyLibrary {
 
     public static final Map<String, Map<String, String>> COLUMN_MAPPERS = new HashMap<String, Map<String, String>>() {{
         put(MISSISSIPPI_ALABAMA, new HashMap<String, String>() {{
-            put(StudyImporterImpl.LATITUDE, "lat");
-            put(StudyImporterImpl.LONGITUDE, "long");
+            // note that lat / long combination is source data are northing/ easting UTM coordinates in
+            // latZone 'R' and longZone 16
+            put(StudyImporterImpl.NORTHING, "lat");
+            put(StudyImporterImpl.EASTING, "long");
             put(StudyImporterImpl.DEPTH, "depth");
             put(StudyImporterImpl.SEASON, "season");
             put(StudyImporterImpl.PREY_SPECIES, "prey");

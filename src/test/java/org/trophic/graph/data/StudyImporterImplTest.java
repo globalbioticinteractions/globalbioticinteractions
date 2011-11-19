@@ -7,11 +7,17 @@ import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 import org.trophic.graph.domain.*;
+import uk.me.jstott.jcoord.LatLng;
+import uk.me.jstott.jcoord.UTMRef;
 
 import static junit.framework.Assert.*;
 
 public class StudyImporterImplTest extends GraphDBTestCase {
 
+    public static final double LONG_1 = -88.56632567024258;
+    public static final double LAT_1 = 29.43874564840787;
+    public static final double LONG_2 = -88.61320102812385;
+    public static final double LAT_2 = 30.02893121980967;
     NodeFactory nodeFactory;
 
     @Before
@@ -27,6 +33,16 @@ public class StudyImporterImplTest extends GraphDBTestCase {
         assertNotNull(location);
         Location location1 = nodeFactory.findLocation(location.getLatitude(), location.getLongitude(), location.getAltitude());
         assertNotNull(location1);
+    }
+
+    @Test
+    public void convertLatLongIntoUMT() {
+        LatLng latLng = new LatLng(30.031055,-88.066406);
+        UTMRef utmRef = latLng.toUTMRef();
+        assertEquals(397176.66307791235, utmRef.getEasting());
+        assertEquals(3322705.434795696, utmRef.getNorthing());
+        assertEquals('R', utmRef.getLatZone());
+        assertEquals(16, utmRef.getLngZone());
     }
 
     @Test
@@ -51,8 +67,8 @@ public class StudyImporterImplTest extends GraphDBTestCase {
         assertNotNull(nodeFactory.findStudy(StudyLibrary.MISSISSIPPI_ALABAMA));
         assertNull(nodeFactory.findStudy(StudyLibrary.LAVACA_BAY));
 
-        assertNotNull(nodeFactory.findLocation(3257617.25d, 348078.84d, -60.0d));
-        assertNotNull(nodeFactory.findLocation(3323087.25, 344445.31,  -20.0d));
+        assertNotNull(nodeFactory.findLocation(LAT_1, LONG_1, -60.0d));
+        assertNotNull(nodeFactory.findLocation(LAT_2, LONG_2,  -20.0d));
 
         assertNotNull(nodeFactory.findSeason("summer"));
 
@@ -63,22 +79,16 @@ public class StudyImporterImplTest extends GraphDBTestCase {
             Node speciesNode = firstSpecimen.getSingleRelationship(RelTypes.CLASSIFIED_AS, Direction.OUTGOING).getEndNode();
             String scientificName = (String) speciesNode.getProperty("name");
             if ("Rhynchoconger flavus".equals(scientificName)) {
-                double longitude = 348078.84;
-                double lat = 3257617.25;
-                double alt = -60.0;
                 String seasonName = "summer";
                 String genusName = "Ampelisca";
 
                 double length = (201.0d + 300.0d) / 2.0d;
-                assertSpecimen(firstSpecimen, longitude, lat, alt, seasonName, genusName, length);
+                assertSpecimen(firstSpecimen, LONG_1, LAT_1, -60.0, seasonName, genusName, length);
             } else if ("Halieutichthys aculeatus".equals(scientificName)) {
-                double longitude = 344445.31;
-                double lat = 3323087.25;
-                double alt = -20.0;
                 String genusName = "Ampelisca";
                 String seasonName = "summer";
                 double length = (26.0d + 50.0d) / 2.0d;
-                assertSpecimen(firstSpecimen, longitude, lat, alt, seasonName, genusName, length);
+                assertSpecimen(firstSpecimen, LONG_2, LAT_2, -20.0, seasonName, genusName, length);
             } else {
                 fail("found predator with unexpected scientificName [" + scientificName + "]");
             }
