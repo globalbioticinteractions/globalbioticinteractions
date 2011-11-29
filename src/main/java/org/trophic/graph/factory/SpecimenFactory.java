@@ -29,7 +29,7 @@ public abstract class SpecimenFactory {
     public static SpecimenService getSpecimenService() throws Exception {
         if (specimentService == null){
             specimentService = new SpecimenServiceImpl();
-            ((SpecimenServiceImpl) specimentService).setLocationDao(getSpecimenDao());
+            ((SpecimenServiceImpl) specimentService).setSpecimenDao(getSpecimenDao());
         }
         return specimentService;
     }

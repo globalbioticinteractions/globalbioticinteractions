@@ -7,16 +7,16 @@ import java.util.List;
 
 public class SpecimenServiceImpl implements SpecimenService {
 
-    private SpecimenDao locationDao;
+    private SpecimenDao specimenDao;
 	
 	@Override
 	public List<SpecimenDto> getSpecimens() {
-        List<SpecimenDto> result = locationDao.getSpecimens(null);
+        List<SpecimenDto> result = specimenDao.getSpecimens(null);
 		return result;
 	}
 
-    public void setLocationDao(SpecimenDao locationDao) {
-        this.locationDao = locationDao;
+    public void setSpecimenDao(SpecimenDao specimenDao) {
+        this.specimenDao = specimenDao;
     }
 
 }
