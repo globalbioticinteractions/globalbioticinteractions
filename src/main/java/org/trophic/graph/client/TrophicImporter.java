@@ -28,7 +28,7 @@ public class TrophicImporter {
         graphService.shutdown();
     }
 
-    private void importStudies(GraphDatabaseService graphService) throws StudyImporterException {
+    public void importStudies(GraphDatabaseService graphService) throws StudyImporterException {
         StudyImporter studyImporter = createStudyImporter(graphService);
 
         Set<String> studies = StudyLibrary.COLUMN_MAPPERS.keySet();

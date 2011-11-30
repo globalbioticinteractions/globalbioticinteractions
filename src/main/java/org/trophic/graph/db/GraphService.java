@@ -9,12 +9,13 @@ public abstract class GraphService {
     private static String storeDir = "./data";
 
     public static GraphDatabaseService getGraphService(){
-        if (graphService == null)
+        if (graphService == null) {
             graphService = startNeo4j();
+        }
         return graphService;
     }
 
-    private static GraphDatabaseService startNeo4j() {
+    public static GraphDatabaseService startNeo4j() {
         System.out.println("neo4j starting...");
 
         graphService = new EmbeddedGraphDatabase(storeDir);

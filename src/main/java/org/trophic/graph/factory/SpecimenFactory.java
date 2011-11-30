@@ -2,6 +2,7 @@ package org.trophic.graph.factory;
 
 import org.trophic.graph.dao.SpecimenDao;
 import org.trophic.graph.dao.SpecimentDaoJava;
+import org.trophic.graph.db.GraphService;
 import org.trophic.graph.service.SpecimenService;
 import org.trophic.graph.service.SpecimenServiceImpl;
 
@@ -12,14 +13,14 @@ public abstract class SpecimenFactory {
 
     public static SpecimenDao getSpecimenDao() {
         if (specimenDao == null){
-            createLocationDaoJava();
+            createSpecimenDaoJava();
         }
         return specimenDao;
     }
 
-    private static void createLocationDaoJava(){
+    private static void createSpecimenDaoJava(){
         try{
-            SpecimentDaoJava dao = new SpecimentDaoJava();
+            SpecimentDaoJava dao = new SpecimentDaoJava(GraphService.getGraphService());
             specimenDao = dao;
         } catch (Exception ex) {
             ex.printStackTrace();
