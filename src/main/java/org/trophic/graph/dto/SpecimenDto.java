@@ -1,5 +1,8 @@
 package org.trophic.graph.dto;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class SpecimenDto {
 
     private long id;
@@ -9,6 +12,8 @@ public class SpecimenDto {
     private Double latitude;
     private Double altitude;
     private String season;
+    private String thumbnail;
+    private List<SpecimenDto> specimens;
 
     @Override
     public String toString() {
@@ -30,6 +35,28 @@ public class SpecimenDto {
         this.id = id;
     }
 
+    public List<SpecimenDto> getSpecimens() {
+        return specimens;
+    }
+
+    public void setSpecimens(List<SpecimenDto> specimens) {
+        this.specimens = specimens;
+    }
+
+    public String getThumbnail() {
+        return thumbnail;
+    }
+
+    public void setThumbnail(String thumbnail) {
+        this.thumbnail = thumbnail;
+    }
+
+    public void addSpecimen(SpecimenDto specimenDto){
+       if (this.specimens == null)
+           this.specimens = new ArrayList<SpecimenDto>();
+        this.specimens.add(specimenDto);
+    }
+
     public Double getLengthInMm() {
         return lengthInMm;
     }
@@ -44,6 +71,11 @@ public class SpecimenDto {
 
     public void setSpecies(String species) {
         this.species = species;
+    }
+
+    public Double getLongLat(){
+        Double longLat = longitude + latitude;
+        return longLat;
     }
 
     public Double getLongitude() {

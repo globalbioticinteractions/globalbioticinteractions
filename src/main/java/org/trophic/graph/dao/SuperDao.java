@@ -1,7 +1,6 @@
 package org.trophic.graph.dao;
 
 import org.neo4j.graphdb.*;
-import org.trophic.graph.data.StudyImporterImpl;
 import org.trophic.graph.domain.Location;
 import org.trophic.graph.domain.RelTypes;
 import org.trophic.graph.domain.Specimen;

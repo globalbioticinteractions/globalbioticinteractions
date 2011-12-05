@@ -8,4 +8,6 @@ public interface SpecimenService {
 	
 	List<SpecimenDto> getSpecimens();
 
+    List<SpecimenDto> getSpecimensByLocation(String latitude, String longitude);
+
 }

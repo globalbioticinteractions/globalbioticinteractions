@@ -8,4 +8,6 @@ public interface SpecimenDao {
 
     List<SpecimenDto> getSpecimens(String[] studies);
 
+    List<SpecimenDto> getSpecimensByLocation(String latitude, String longitude);
+
 }

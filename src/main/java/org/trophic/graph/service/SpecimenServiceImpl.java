@@ -15,6 +15,11 @@ public class SpecimenServiceImpl implements SpecimenService {
 		return result;
 	}
 
+    @Override
+    public List<SpecimenDto> getSpecimensByLocation(String latitude, String longitude) {
+        return specimenDao.getSpecimensByLocation(latitude, longitude);
+    }
+
     public void setSpecimenDao(SpecimenDao specimenDao) {
         this.specimenDao = specimenDao;
     }
