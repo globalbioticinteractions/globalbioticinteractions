@@ -45,7 +45,7 @@ public class SpecimentDaoJava extends SuperDao implements SpecimenDao {
                             map.put(specimenDto.getLongLat(), specimenDto);
                             result.add(specimenDto);
                         } else {
-                            speci.addSpecimen(specimenDto);
+                            speci.increaseCount();
                         }
                     }
                 }
@@ -81,10 +81,6 @@ public class SpecimentDaoJava extends SuperDao implements SpecimenDao {
 
                         latitude = ensureLength(latitude);
                         longitude = ensureLength(longitude);
-
-                        if (lat.startsWith("29.1245")){
-                            System.out.println("close");
-                        }
 
                         if (lat.equals(latitude) && lng.equals(longitude))
                             result.add(specimenDto);

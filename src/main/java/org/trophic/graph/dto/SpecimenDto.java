@@ -13,7 +13,7 @@ public class SpecimenDto {
     private Double altitude;
     private String season;
     private String thumbnail;
-    private List<SpecimenDto> specimens;
+    private int count = 0;
 
     @Override
     public String toString() {
@@ -35,14 +35,6 @@ public class SpecimenDto {
         this.id = id;
     }
 
-    public List<SpecimenDto> getSpecimens() {
-        return specimens;
-    }
-
-    public void setSpecimens(List<SpecimenDto> specimens) {
-        this.specimens = specimens;
-    }
-
     public String getThumbnail() {
         return thumbnail;
     }
@@ -51,10 +43,16 @@ public class SpecimenDto {
         this.thumbnail = thumbnail;
     }
 
-    public void addSpecimen(SpecimenDto specimenDto){
-       if (this.specimens == null)
-           this.specimens = new ArrayList<SpecimenDto>();
-        this.specimens.add(specimenDto);
+    public int getCount() {
+        return count;
+    }
+
+    public void setCount(int count) {
+        this.count = count;
+    }
+
+    public void increaseCount(){
+        this.count++;
     }
 
     public Double getLengthInMm() {

@@ -8,11 +8,13 @@ import java.util.List;
 public class SpecimenServiceImpl implements SpecimenService {
 
     private SpecimenDao specimenDao;
+    private List<SpecimenDto> specimens;
 	
 	@Override
 	public List<SpecimenDto> getSpecimens() {
-        List<SpecimenDto> result = specimenDao.getSpecimens(null);
-		return result;
+        if (specimens == null)
+            specimens = specimenDao.getSpecimens(null);
+		return specimens;
 	}
 
     @Override
