@@ -1,8 +1,5 @@
 package org.trophic.graph.dto;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class SpecimenDto {
 
     private long id;

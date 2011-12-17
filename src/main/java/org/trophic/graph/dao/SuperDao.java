@@ -33,6 +33,10 @@ public abstract class SuperDao {
         if (collectedSpecimen.hasProperty(Specimen.LENGTH_IN_MM)) {
             lengthInMm = (Double) collectedSpecimen.getProperty(Specimen.LENGTH_IN_MM);
         }
+        String thumbnail = null;
+        if (collectedSpecimen.hasProperty(Specimen.THUMBNAIL)){
+            thumbnail = (String) collectedSpecimen.getProperty(Specimen.THUMBNAIL);
+        }
         Relationship classifiedAs = collectedSpecimen.getSingleRelationship(RelTypes.CLASSIFIED_AS, Direction.OUTGOING);
         String taxonName = null;
         if (null != classifiedAs) {
@@ -60,6 +64,7 @@ public abstract class SuperDao {
         specimen.setLatitude(latitude);
         specimen.setSpecies(taxonName);
         specimen.setLengthInMm(lengthInMm);
+        specimen.setThumbnail(thumbnail);
         specimen.setId(collectedSpecimen.getId());
         return specimen;
     }

@@ -13,13 +13,28 @@ public class SpecimenServiceImpl implements SpecimenService {
 	@Override
 	public List<SpecimenDto> getSpecimens() {
         if (specimens == null)
-            specimens = specimenDao.getSpecimens(null);
+            specimens = specimenDao.getSpecimens();
 		return specimens;
 	}
 
     @Override
+    public List<SpecimenDto> getAllSpecimens() {
+        return specimenDao.getAllSpecimens();
+    }
+
+    @Override
     public List<SpecimenDto> getSpecimensByLocation(String latitude, String longitude) {
         return specimenDao.getSpecimensByLocation(latitude, longitude);
+    }
+
+    @Override
+    public void updateSpecimenWithThumbnail(SpecimenDto specimenDto) {
+        specimenDao.updateSpecimenWithThumbnail(specimenDto);
+    }
+
+    @Override
+    public SpecimenDto getSpecimenById(Long id) {
+        return specimenDao.getSpecimenById(id);
     }
 
     public void setSpecimenDao(SpecimenDao specimenDao) {

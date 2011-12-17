@@ -28,7 +28,7 @@ public class SpecimenDaoTest extends GraphDBTestCase {
         specimen.caughtIn(factory.createLocation(28.1, 21.2, -10.0));
 
         SpecimentDaoJava specimentDaoJava = new SpecimentDaoJava(getGraphDb());
-        List<SpecimenDto> specimens = specimentDaoJava.getSpecimens(null);
+        List<SpecimenDto> specimens = specimentDaoJava.getSpecimens();
 
         assertNotNull(specimens);
         assertEquals(specimens.size(), 1);

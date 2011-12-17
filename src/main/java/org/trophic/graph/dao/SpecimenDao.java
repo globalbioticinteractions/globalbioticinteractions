@@ -6,8 +6,16 @@ import java.util.List;
 
 public interface SpecimenDao {
 
-    List<SpecimenDto> getSpecimens(String[] studies);
+
+
+    List<SpecimenDto> getSpecimens();
+
+    List<SpecimenDto> getAllSpecimens();
 
     List<SpecimenDto> getSpecimensByLocation(String latitude, String longitude);
+
+    void updateSpecimenWithThumbnail(SpecimenDto specimenDto);
+
+    SpecimenDto getSpecimenById(Long id);
 
 }

@@ -8,6 +8,12 @@ public interface SpecimenService {
 	
 	List<SpecimenDto> getSpecimens();
 
+    List<SpecimenDto> getAllSpecimens();
+
     List<SpecimenDto> getSpecimensByLocation(String latitude, String longitude);
+
+    void updateSpecimenWithThumbnail(SpecimenDto specimenDto);
+
+    SpecimenDto getSpecimenById(Long id);
 
 }

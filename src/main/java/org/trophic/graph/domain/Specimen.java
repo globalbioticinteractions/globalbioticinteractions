@@ -8,6 +8,7 @@ import org.neo4j.graphdb.Transaction;
 public class Specimen extends NodeBacked {
 
     public static final String LENGTH_IN_MM = "lengthInMm";
+    public static final String THUMBNAIL = "thumbnail";
 
     public Specimen(Node node) {
         super(node);
