@@ -28,13 +28,13 @@ public class SpecimentDaoJava extends SuperDao implements SpecimenDao {
     public List<SpecimenDto> getSpecimens() {
         List<SpecimenDto> result = new ArrayList<SpecimenDto>();
         Transaction tx = graphService.beginTx();
-        try{
+        try {
             Index<Node> index = graphService.index().forNodes("studies");
-            for (String studyName: StudyLibrary.COLUMN_MAPPERS.keySet()){
+            for (String studyName : StudyLibrary.COLUMN_MAPPERS.keySet()) {
                 IndexHits<Node> studyIndexHit = index.get("title", studyName);
-                for (Node study: studyIndexHit){
+                for (Node study : studyIndexHit) {
                     Traverser studyTraverser = getTraverserWithRelType(study, RelTypes.COLLECTED);
-                    while (studyTraverser.iterator().hasNext()){
+                    while (studyTraverser.iterator().hasNext()) {
                         Node collectedSpecimen = studyTraverser.iterator().next();
                         SpecimenDto specimenDto = createSpecimen(collectedSpecimen);
 
@@ -61,13 +61,13 @@ public class SpecimentDaoJava extends SuperDao implements SpecimenDao {
     public List<SpecimenDto> getAllSpecimens() {
         List<SpecimenDto> result = new ArrayList<SpecimenDto>();
         Transaction tx = graphService.beginTx();
-        try{
+        try {
             Index<Node> index = graphService.index().forNodes("studies");
-            for (String studyName: StudyLibrary.COLUMN_MAPPERS.keySet()){
+            for (String studyName : StudyLibrary.COLUMN_MAPPERS.keySet()) {
                 IndexHits<Node> studyIndexHit = index.get("title", studyName);
-                for (Node study: studyIndexHit){
+                for (Node study : studyIndexHit) {
                     Traverser studyTraverser = getTraverserWithRelType(study, RelTypes.COLLECTED);
-                    while (studyTraverser.iterator().hasNext()){
+                    while (studyTraverser.iterator().hasNext()) {
                         Node collectedSpecimen = studyTraverser.iterator().next();
                         SpecimenDto specimenDto = createSpecimen(collectedSpecimen);
 
@@ -88,13 +88,13 @@ public class SpecimentDaoJava extends SuperDao implements SpecimenDao {
     public List<SpecimenDto> getSpecimensByLocation(String latitude, String longitude) {
         List<SpecimenDto> result = new ArrayList<SpecimenDto>();
         Transaction tx = graphService.beginTx();
-        try{
+        try {
             Index<Node> index = graphService.index().forNodes("studies");
-            for (String studyName: StudyLibrary.COLUMN_MAPPERS.keySet()){
+            for (String studyName : StudyLibrary.COLUMN_MAPPERS.keySet()) {
                 IndexHits<Node> studyIndexHit = index.get("title", studyName);
-                for (Node study: studyIndexHit){
+                for (Node study : studyIndexHit) {
                     Traverser studyTraverser = getTraverserWithRelType(study, RelTypes.COLLECTED);
-                    while (studyTraverser.iterator().hasNext()){
+                    while (studyTraverser.iterator().hasNext()) {
                         Node collectedSpecimen = studyTraverser.iterator().next();
                         SpecimenDto specimenDto = createSpecimen(collectedSpecimen);
 
@@ -115,8 +115,8 @@ public class SpecimentDaoJava extends SuperDao implements SpecimenDao {
                     }
                 }
             }
-        } catch (Exception ex){
-          ex.printStackTrace();
+        } catch (Exception ex) {
+            ex.printStackTrace();
         } finally {
             tx.finish();
         }
@@ -126,14 +126,15 @@ public class SpecimentDaoJava extends SuperDao implements SpecimenDao {
     @Override
     public void updateSpecimenWithThumbnail(SpecimenDto specimenDto) {
         if (specimenDto.getThumbnail() == null)
-            return ;
+            return;
 
         Transaction tx = graphService.beginTx();
-        try{
+        try {
             Node specimen = graphService.getNodeById(specimenDto.getId());
             specimen.setProperty(Specimen.THUMBNAIL, specimenDto.getThumbnail());
             System.out.println("ID: " + specimen.getId() + " set property thumbnail: " + specimenDto.getThumbnail());
-        } catch (Exception ex){
+            tx.success();
+        } catch (Exception ex) {
             ex.printStackTrace();
         } finally {
             tx.finish();
@@ -145,10 +146,10 @@ public class SpecimentDaoJava extends SuperDao implements SpecimenDao {
         SpecimenDto specimenDto = null;
 
         Transaction tx = graphService.beginTx();
-        try{
+        try {
             Node specimen = graphService.getNodeById(id);
             specimenDto = createSpecimen(specimen);
-        } catch (Exception ex){
+        } catch (Exception ex) {
             ex.printStackTrace();
         } finally {
             tx.finish();
@@ -156,7 +157,7 @@ public class SpecimentDaoJava extends SuperDao implements SpecimenDao {
         return specimenDto;
     }
 
-    private String ensureLength(String val){
+    private String ensureLength(String val) {
         int length = 14;
         if (val.length() > length)
             val = val.substring(0, length);
