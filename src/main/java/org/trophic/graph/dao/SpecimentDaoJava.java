@@ -156,8 +156,6 @@ public class SpecimentDaoJava extends SuperDao implements SpecimenDao {
         return specimenDto;
     }
 
-
-
     private String ensureLength(String val){
         int length = 14;
         if (val.length() > length)
