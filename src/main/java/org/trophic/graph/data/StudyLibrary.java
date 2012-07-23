@@ -4,6 +4,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class StudyLibrary {
+
+
+
+    public static enum Study {
+        MISSISSIPPI_ALABAMA,
+        LACAVA_BAY,
+        AKIN_MAD_ISLAND;
+    }
+    public static final String AKIN_MAD_ISLAND = "akinMadIsland";
     public static final String MISSISSIPPI_ALABAMA = "mississippiAlabamaFishDiet.csv.gz";
     public static final String LAVACA_BAY = "lavacaBayTrophicData.csv.gz";
 

@@ -6,5 +6,5 @@ public interface StudyImporter {
 
     Study importStudy() throws StudyImporterException;
 
-    Study importStudy(String studyTitle) throws StudyImporterException;
+    Study importStudy(String studyResource) throws StudyImporterException;
 }

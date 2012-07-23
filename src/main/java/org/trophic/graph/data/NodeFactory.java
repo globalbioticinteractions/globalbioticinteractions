@@ -218,6 +218,15 @@ public class NodeFactory {
         return study;
     }
 
+    public Study getOrCreateStudy(String title) {
+        Study study = findStudy(title);
+        if (null == study) {
+            study = createStudy(title);
+        }
+        return study;
+    }
+
+
     public Study findStudy(String title) {
         Node foundStudyNode = studies.get(Study.TITLE, title).getSingle();
         return foundStudyNode == null ? null : new Study(foundStudyNode);
@@ -229,4 +238,16 @@ public class NodeFactory {
         nodeIndexHits.close();
         return seasonHit == null ? null : new Season(seasonHit);
     }
+
+    public Location getOrCreateLocation(Double latitude, Double longitude, Double altitude) {
+        Location location = null;
+        if (latitude != null && longitude != null && altitude != null) {
+            location = findLocation(latitude, longitude, altitude);
+            if (null == location) {
+                location = createLocation(latitude, longitude, altitude);
+            }
+        }
+        return location;
+    }
+
 }

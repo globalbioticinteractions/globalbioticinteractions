@@ -18,12 +18,6 @@ public class StudyImporterImplTest extends GraphDBTestCase {
     public static final double LAT_1 = 29.43874564840787;
     public static final double LONG_2 = -88.61320102812385;
     public static final double LAT_2 = 30.02893121980967;
-    NodeFactory nodeFactory;
-
-    @Before
-    public void createFactory() {
-        nodeFactory = new NodeFactory(getGraphDb());
-    }
 
     @Test
     public void createFindLocation() {
@@ -99,9 +93,9 @@ public class StudyImporterImplTest extends GraphDBTestCase {
     private void assertSpecimen(Node firstSpecimen, double longitude, double lat, double alt, String seasonName, String genusName, double length) {
         Node locationNode = firstSpecimen.getSingleRelationship(RelTypes.COLLECTED_AT, Direction.OUTGOING).getEndNode();
         assertNotNull(locationNode);
-        assertEquals(longitude, locationNode.getProperty("longitude"));
-        assertEquals(lat, locationNode.getProperty("latitude"));
-        assertEquals(alt, locationNode.getProperty("altitude"));
+        assertEquals(longitude, locationNode.getProperty(Location.LONGITUDE));
+        assertEquals(alt, locationNode.getProperty(Location.ALTITUDE));
+        assertEquals(lat, locationNode.getProperty(Location.LATITUDE));
 
         Relationship stomachContents = firstSpecimen.getSingleRelationship(RelTypes.ATE, Direction.OUTGOING);
         Node taxonNode = stomachContents.getEndNode().getSingleRelationship(RelTypes.CLASSIFIED_AS, Direction.OUTGOING).getEndNode();

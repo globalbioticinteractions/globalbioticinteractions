@@ -10,9 +10,12 @@ public abstract class GraphDBTestCase {
 
     private GraphDatabaseService graphDb;
 
+    protected NodeFactory nodeFactory;
+
     @Before
     public void startGraphDb() throws IOException {
         graphDb = new org.neo4j.test.ImpermanentGraphDatabase();
+        nodeFactory = new NodeFactory(graphDb);
     }
 
     @After

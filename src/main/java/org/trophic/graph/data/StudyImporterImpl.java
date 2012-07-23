@@ -9,7 +9,7 @@ import uk.me.jstott.jcoord.UTMRef;
 import java.io.IOException;
 import java.util.Map;
 
-public class StudyImporterImpl implements StudyImporter {
+public class StudyImporterImpl extends BaseStudyImporter {
 
     public static final String NORTHING = "northing";
     public static final String EASTING = "easting";
@@ -21,19 +21,9 @@ public class StudyImporterImpl implements StudyImporter {
     public static final String PREDATOR_SPECIES = "predator species";
     public static final String PREDATOR_FAMILY = "predatorFamily";
 
-    private NodeFactory nodeFactory;
-
-    private ParserFactory parserFactory;
-
-    public StudyImporterImpl() {
-
-    }
-
     public StudyImporterImpl(ParserFactory parserFactory, NodeFactory nodeFactory) {
-        this.parserFactory = parserFactory;
-        this.nodeFactory = nodeFactory;
+        super(parserFactory, nodeFactory);
     }
-
 
     @Override
     public Study importStudy() throws StudyImporterException {
@@ -55,7 +45,7 @@ public class StudyImporterImpl implements StudyImporter {
     }
 
     private Study importStudy(ParserFactory parserFactory, String studyResource) throws StudyImporterException {
-        Study study = getOrCreateStudy(studyResource);
+        Study study = nodeFactory.getOrCreateStudy(studyResource);
         try {
             LabeledCSVParser csvParser = parserFactory.createParser(studyResource);
             LengthParser parser = new LengthParserFactory().createParser(study.getTitle());
@@ -102,14 +92,6 @@ public class StudyImporterImpl implements StudyImporter {
         return season;
     }
 
-    private Study getOrCreateStudy(String title) {
-        Study study = nodeFactory.findStudy(title);
-        if (null == study) {
-            study = nodeFactory.createStudy(title);
-        }
-        return study;
-    }
-
     private Location getOrCreateSampleLocation(LabeledCSVParser csvParser, Map<String, String> columnToNormalizedTermMapper) {
         Double northing = parseAsDouble(csvParser, columnToNormalizedTermMapper.get(NORTHING));
         Double easting = parseAsDouble(csvParser, columnToNormalizedTermMapper.get(EASTING));
@@ -125,16 +107,9 @@ public class StudyImporterImpl implements StudyImporter {
 
         Double depth = parseAsDouble(csvParser, columnToNormalizedTermMapper.get(DEPTH));
         Double altitude = depth == null ? null : -depth;
-
-        Location location = null;
-        if (latitude != null && longitude != null && altitude != null) {
-            location = findLocation(latitude, longitude, altitude);
-            if (null == location) {
-                location = nodeFactory.createLocation(latitude, longitude, altitude);
-            }
-        }
-        return location;
+        return nodeFactory.getOrCreateLocation(latitude, longitude, altitude);
     }
+
 
     private Double parseAsDouble(LabeledCSVParser csvParser, String stringValue) {
         String valueByLabel = csvParser.getValueByLabel(stringValue);
