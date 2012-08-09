@@ -14,6 +14,7 @@ import java.io.IOException;
 
 public class StudyImporterForAkin extends BaseStudyImporter {
     private static final Log LOG = LogFactory.getLog(StudyImporterForAkin.class);
+    public static final String AKIN_MAD_ISLAND = "akinMadIsland";
 
     public StudyImporterForAkin(ParserFactory parserFactory, NodeFactory nodeFactory) {
         super(parserFactory, nodeFactory);
@@ -161,11 +162,10 @@ public class StudyImporterForAkin extends BaseStudyImporter {
         return index;
     }
 
-    @Override
-    public Study importStudy(String studyResource) throws StudyImporterException {
+    private Study importStudy(String studyResource) throws StudyImporterException {
         Study study = null;
         try {
-            study = nodeFactory.getOrCreateStudy(StudyLibrary.AKIN_MAD_ISLAND);
+            study = nodeFactory.getOrCreateStudy(AKIN_MAD_ISLAND);
             String[][] siteInfo = loadSampleSiteLocations();
             importAkinStudyFile(siteInfo, studyResource, study);
         } catch (IOException e) {

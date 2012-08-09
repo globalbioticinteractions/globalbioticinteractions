@@ -14,7 +14,7 @@ public class StudyImporterFactory {
         if (StudyLibrary.Study.AKIN_MAD_ISLAND.equals(study)) {
             importer = new StudyImporterForAkin(parserFactory, nodeFactory);
         } else if (StudyLibrary.Study.LACAVA_BAY.equals(study) || StudyLibrary.Study.MISSISSIPPI_ALABAMA.equals(study)) {
-            importer = new StudyImporterImpl(parserFactory, nodeFactory);
+            importer = new StudyImporterImpl(parserFactory, nodeFactory, study);
         }
         return importer;
     }

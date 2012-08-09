@@ -39,7 +39,7 @@ public class StudyImporterForAkinTest extends GraphDBTestCase {
                 ",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,\n" +
                 ",9,\"Leiostomus xanthurus\",\"03.07.98\",,6,26.7,0,,\"Seine\",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,\"EMPTY\",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,";
         StudyImporter importer = new StudyImporterFactory(new TestParserFactory(csvString), nodeFactory).createImporterForStudy(StudyLibrary.Study.AKIN_MAD_ISLAND);
-        importer.importStudy("thisNameDoesn'tMatterBecauseWeAreUsingATestParserFactory");
+        importer.importStudy();
         Taxon taxon = nodeFactory.findTaxonOfType("Leiostomus xanthurus", Taxon.SPECIES);
         assertNotNull(taxon);
 
@@ -51,14 +51,13 @@ public class StudyImporterForAkinTest extends GraphDBTestCase {
                 ",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,\n" +
                 ",1,\"Pogonias cromis\",\"03.07.98\",,1,226,3,,\"Gillnet\",,0.15,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,0.6,,,,,,0.45,,,,,,,,,,,,,,,,,,1.35,0.45,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,";
         StudyImporter importer = new StudyImporterFactory(new TestParserFactory(csvString), nodeFactory).createImporterForStudy(StudyLibrary.Study.AKIN_MAD_ISLAND);
-        Study study = importer.importStudy("thisNameDoesn'tMatterBecauseWeAreUsingATestParserFactory");
+        Study study = importer.importStudy();
         Taxon taxon = nodeFactory.findTaxonOfType("Pogonias cromis", Taxon.SPECIES);
         assertNotNull(taxon);
 
         Iterable<Relationship> specimens = study.getSpecimens();
         Relationship rel = specimens.iterator().next();
         assertThat(rel, is(not(nullValue())));
-        assertThat(specimens.iterator().hasNext(), is(false));
 
         Node specimen = rel.getEndNode();
         assertThat((Double) specimen.getProperty(Specimen.LENGTH_IN_MM), is(226.0));

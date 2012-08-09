@@ -7,6 +7,7 @@ import uk.me.jstott.jcoord.LatLng;
 import uk.me.jstott.jcoord.UTMRef;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 
 public class StudyImporterImpl extends BaseStudyImporter {
@@ -21,23 +22,55 @@ public class StudyImporterImpl extends BaseStudyImporter {
     public static final String PREDATOR_SPECIES = "predator species";
     public static final String PREDATOR_FAMILY = "predatorFamily";
 
-    public StudyImporterImpl(ParserFactory parserFactory, NodeFactory nodeFactory) {
+    public static final Map<String, Map<String, String>> COLUMN_MAPPERS = new HashMap<String, Map<String, String>>() {{
+        put(MISSISSIPPI_ALABAMA_DATA_SOURCE, new HashMap<String, String>() {{
+            // note that lat / long combination is source data are northing/ easting UTM coordinates in
+            // latZone 'R' and longZone 16
+            put(NORTHING, "lat");
+            put(EASTING, "long");
+            put(DEPTH, "depth");
+            put(SEASON, "season");
+            put(PREY_SPECIES, "prey");
+            put(PREDATOR_SPECIES, "predator");
+            put(LENGTH_RANGE_IN_MM, "sizeclass");
+        }});
+        put(LAVACA_BAY_DATA_SOURCE, new HashMap<String, String>() {{
+            put(SEASON, "Season");
+            put(PREY_SPECIES, "Prey Item Species");
+            put(PREDATOR_SPECIES, "Predator Species");
+            put(LENGTH_IN_MM, "TL");
+            put(PREDATOR_FAMILY, "Family");
+        }});
+    }};
+    public static final String MISSISSIPPI_ALABAMA_DATA_SOURCE = "mississippiAlabamaFishDiet.csv.gz";
+    public static final String LAVACA_BAY_DATA_SOURCE = "lavacaBayTrophicData.csv.gz";
+    private StudyLibrary.Study study;
+
+    public StudyImporterImpl(ParserFactory parserFactory, NodeFactory nodeFactory, StudyLibrary.Study study) {
         super(parserFactory, nodeFactory);
+        this.study = study;
     }
 
     @Override
     public Study importStudy() throws StudyImporterException {
-        return importStudy(StudyLibrary.MISSISSIPPI_ALABAMA);
+        String dataSource = null;
+        if (StudyLibrary.Study.LACAVA_BAY.equals(study)) {
+            dataSource = LAVACA_BAY_DATA_SOURCE;
+        } else if (StudyLibrary.Study.MISSISSIPPI_ALABAMA.equals(study)) {
+            dataSource = MISSISSIPPI_ALABAMA_DATA_SOURCE;
+        } else {
+            throw new StudyImporterException("study [" + study + "] not supported by this importer");
+        }
+        return importStudy(dataSource);
     }
 
-    @Override
-    public Study importStudy(String studyResource) throws StudyImporterException {
+    private Study importStudy(String studyResource) throws StudyImporterException {
         return createAndPopulateStudy(parserFactory, studyResource);
     }
 
 
     private Study createAndPopulateStudy(ParserFactory parserFactory, String studyResource) throws StudyImporterException {
-        Map<String, String> columnMapper = StudyLibrary.COLUMN_MAPPERS.get(studyResource);
+        Map<String, String> columnMapper = COLUMN_MAPPERS.get(studyResource);
         if (null == columnMapper) {
             throw new StudyImporterException("no suitable column mapper found for [" + studyResource + "]");
         }
@@ -50,7 +83,7 @@ public class StudyImporterImpl extends BaseStudyImporter {
             LabeledCSVParser csvParser = parserFactory.createParser(studyResource);
             LengthParser parser = new LengthParserFactory().createParser(study.getTitle());
             while (csvParser.getLine() != null) {
-                addNextRecordToStudy(csvParser, study, StudyLibrary.COLUMN_MAPPERS.get(studyResource), parser);
+                addNextRecordToStudy(csvParser, study, COLUMN_MAPPERS.get(studyResource), parser);
             }
         } catch (IOException e) {
             throw new StudyImporterException("failed to createTaxon study [" + studyResource + "]", e);

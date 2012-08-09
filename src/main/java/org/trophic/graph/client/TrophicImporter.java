@@ -5,7 +5,7 @@ import org.neo4j.graphdb.Node;
 import org.trophic.graph.data.*;
 import org.trophic.graph.db.GraphService;
 
-import java.util.Set;
+import java.util.ArrayList;
 
 public class TrophicImporter {
 
@@ -29,23 +29,23 @@ public class TrophicImporter {
     }
 
     public void importStudies(GraphDatabaseService graphService) throws StudyImporterException {
-        StudyImporter studyImporter = createStudyImporter(graphService);
+        ArrayList<StudyLibrary.Study> studies = new ArrayList<StudyLibrary.Study>();
+        studies.add(StudyLibrary.Study.AKIN_MAD_ISLAND);
+        studies.add(StudyLibrary.Study.LACAVA_BAY);
+        studies.add(StudyLibrary.Study.MISSISSIPPI_ALABAMA);
 
-        Set<String> studies = StudyLibrary.COLUMN_MAPPERS.keySet();
-        for (String studyName : studies) {
-            importStudy(studyImporter, studyName);
+        for (StudyLibrary.Study study : studies) {
+            StudyImporter studyImporter = createStudyImporter(graphService, study);
+            System.out.println("study [" + study + "] importing ...");
+            studyImporter.importStudy();
+            System.out.println("study [" + study + "]");
         }
     }
 
-    private StudyImporter createStudyImporter(GraphDatabaseService graphService) {
+    private StudyImporter createStudyImporter(GraphDatabaseService graphService, StudyLibrary.Study study) throws StudyImporterException {
         NodeFactory factory = new NodeFactory(graphService);
-        return new StudyImporterImpl(new ParserFactoryImpl(), factory);
-    }
-
-    private static void importStudy(StudyImporter studyImporter, String studyName) throws StudyImporterException {
-        System.out.println("study [" + studyName + "] importing ...");
-        studyImporter.importStudy(studyName);
-        System.out.println("study [" + studyName + "]");
+        ParserFactory parserFactory = new ParserFactoryImpl();
+        return new StudyImporterFactory(parserFactory, factory).createImporterForStudy(study);
     }
 
 }

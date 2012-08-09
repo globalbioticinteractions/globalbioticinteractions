@@ -1,7 +1,6 @@
 package org.trophic.graph.data;
 
 
-import org.junit.Before;
 import org.junit.Test;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
@@ -46,7 +45,7 @@ public class StudyImporterImplTest extends GraphDBTestCase {
         csvString += "1, 1, 16, 3, 2, 6, 6, 205.5, 1, \"Ampelisca sp. (abdita complex)  \", 1, \"Summer\", 60, \"Chandeleur Islands\", \"aabd\", 47.11, \"C2\", 348078.84, 3257617.25, 313, \"201-300\", \"Rhynchoconger flavus\"\n";
         csvString += "2, 11, 2, 1, 1, 20, 15, 592.5, 6, \"Ampelisca sp. (abdita complex)\", 1, \"Summer\", 20, \"Chandeleur Islands\", \"aabd\", 47.11, \"C1\", 344445.31, 3323087.25, 144, \"26-50\", \"Halieutichthys aculeatus\"\n";
 
-        StudyImporterImpl studyImporter = new StudyImporterImpl(new TestParserFactory(csvString), nodeFactory);
+        StudyImporterImpl studyImporter = new StudyImporterImpl(new TestParserFactory(csvString), nodeFactory, StudyLibrary.Study.MISSISSIPPI_ALABAMA);
 
         studyImporter.importStudy();
         studyImporter.importStudy();
@@ -58,15 +57,15 @@ public class StudyImporterImplTest extends GraphDBTestCase {
         assertNotNull(nodeFactory.findTaxonOfType("Ampelisca", Taxon.GENUS));
         assertNull(nodeFactory.findTaxonOfType("Ampelisca ", Taxon.GENUS));
 
-        assertNotNull(nodeFactory.findStudy(StudyLibrary.MISSISSIPPI_ALABAMA));
-        assertNull(nodeFactory.findStudy(StudyLibrary.LAVACA_BAY));
+        assertNotNull(nodeFactory.findStudy(StudyImporterImpl.MISSISSIPPI_ALABAMA_DATA_SOURCE));
+        assertNull(nodeFactory.findStudy(StudyImporterImpl.LAVACA_BAY_DATA_SOURCE));
 
         assertNotNull(nodeFactory.findLocation(LAT_1, LONG_1, -60.0d));
         assertNotNull(nodeFactory.findLocation(LAT_2, LONG_2,  -20.0d));
 
         assertNotNull(nodeFactory.findSeason("summer"));
 
-        Study foundStudy = nodeFactory.findStudy(StudyLibrary.MISSISSIPPI_ALABAMA);
+        Study foundStudy = nodeFactory.findStudy(StudyImporterImpl.MISSISSIPPI_ALABAMA_DATA_SOURCE);
         assertNotNull(foundStudy);
         for (Relationship rel : foundStudy.getSpecimens()) {
             Node firstSpecimen = rel.getEndNode();
@@ -114,11 +113,10 @@ public class StudyImporterImplTest extends GraphDBTestCase {
                 "\"Region\",\"Season\",\"Habitat\",\"Site\",\"Family\",\"Predator Species\",\"TL\",\"Prey Item Species\",\"Prey item\",\"Number\",\"Condition Index\",\"Volume\",\"Percent Content\",\"Prey Item Trophic Level\",\"Notes\"\n";
         csvString += "\"Lower\",\"Fall\",\"Marsh\",1,\"Sciaenidae\",\"Sciaenops ocellatus\",420,\"Acrididae spp. \",\"Acrididae \",1,\"III\",0.4,3.2520325203,2.5,\n";
         csvString += "\"Lower\",\"Spring\",\"Non-Veg \",1,\"Ariidae\",\"Arius felis\",176,\"Aegathoa oculata \",\"Aegathoa oculata\",4,\"I\",0.01,3.3333333333,2.1,\n";
-        StudyImporterImpl studyImporter = new StudyImporterImpl(new TestParserFactory(csvString), nodeFactory);
+        StudyImporterImpl studyImporter = new StudyImporterImpl(new TestParserFactory(csvString), nodeFactory, StudyLibrary.Study.LACAVA_BAY);
 
 
-
-        Study study = studyImporter.importStudy(StudyLibrary.LAVACA_BAY);
+        Study study = studyImporter.importStudy();
 
         assertNotNull(nodeFactory.findTaxonOfType("Sciaenidae", Taxon.FAMILY));
         assertNotNull(nodeFactory.findTaxonOfType("Ariidae", Taxon.FAMILY));
@@ -133,12 +131,12 @@ public class StudyImporterImplTest extends GraphDBTestCase {
         assertNotNull(nodeFactory.findTaxonOfType("Aegathoa oculata", Taxon.SPECIES));
         assertNotNull(nodeFactory.findTaxonOfType("Aegathoa", Taxon.GENUS));
 
-        assertNotNull(nodeFactory.findStudy(StudyLibrary.LAVACA_BAY));
+        assertNotNull(nodeFactory.findStudy(StudyImporterImpl.LAVACA_BAY_DATA_SOURCE));
 
         assertNotNull(nodeFactory.findSeason("spring"));
         assertNotNull(nodeFactory.findSeason("fall"));
 
-        Study foundStudy = nodeFactory.findStudy(StudyLibrary.LAVACA_BAY);
+        Study foundStudy = nodeFactory.findStudy(StudyImporterImpl.LAVACA_BAY_DATA_SOURCE);
         assertNotNull(foundStudy);
         for (Relationship rel : study.getSpecimens()) {
             Specimen specimen = new Specimen(rel.getEndNode());
