@@ -140,7 +140,7 @@ public class StudyImporterForAkin extends BaseStudyImporter {
                 try {
                     specimen.setLengthInMm(Double.parseDouble(lengthInMm));
                 } catch (NumberFormatException ex) {
-                    throw new StudyImporterException("malformed length [" + lengthInMm + "] on line [" + parser.getLastLineNumber() + "]");
+                    LOG.warn("not setting specimen length, because [" + lengthInMm + "] on line [" + parser.getLastLineNumber() + "] is not a number.");
                 }
             }
             study.collected(specimen);

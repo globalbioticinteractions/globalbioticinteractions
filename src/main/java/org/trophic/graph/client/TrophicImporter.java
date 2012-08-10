@@ -4,7 +4,12 @@ import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.trophic.graph.data.*;
 import org.trophic.graph.db.GraphService;
+import org.trophic.graph.domain.Study;
 
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.util.ArrayList;
 
 public class TrophicImporter {
@@ -34,12 +39,26 @@ public class TrophicImporter {
         studies.add(StudyLibrary.Study.LACAVA_BAY);
         studies.add(StudyLibrary.Study.MISSISSIPPI_ALABAMA);
 
+        ArrayList<Study> importedStudies = new ArrayList<Study>();
+
         for (StudyLibrary.Study study : studies) {
             StudyImporter studyImporter = createStudyImporter(graphService, study);
             System.out.println("study [" + study + "] importing ...");
-            studyImporter.importStudy();
+            importedStudies.add(studyImporter.importStudy());
             System.out.println("study [" + study + "]");
         }
+
+        try {
+            Writer writer = new FileWriter("./export.csv", false);
+            for (Study importedStudy : importedStudies) {
+                new StudyExporterImpl().exportStudy(importedStudy, writer);
+            }
+            writer.flush();
+            writer.close();
+        } catch (IOException e) {
+            throw new StudyImporterException("failed to export result to csv file", e);
+        }
+
     }
 
     private StudyImporter createStudyImporter(GraphDatabaseService graphService, StudyLibrary.Study study) throws StudyImporterException {
