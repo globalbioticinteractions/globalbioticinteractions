@@ -8,6 +8,6 @@ import java.io.Writer;
 
 public interface StudyExporter {
 
-    public void exportStudy(Study study, Writer writer) throws IOException;
+    public void exportStudy(Study study, Writer writer, boolean includeHeader) throws IOException;
 
 }

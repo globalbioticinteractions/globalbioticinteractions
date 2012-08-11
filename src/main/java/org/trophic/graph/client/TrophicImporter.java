@@ -8,7 +8,6 @@ import org.trophic.graph.domain.Study;
 
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
 
@@ -51,7 +50,8 @@ public class TrophicImporter {
         try {
             Writer writer = new FileWriter("./export.csv", false);
             for (Study importedStudy : importedStudies) {
-                new StudyExporterImpl().exportStudy(importedStudy, writer);
+                boolean includeHeader = importedStudies.indexOf(importedStudy) == 0;
+                new StudyExporterImpl().exportStudy(importedStudy, writer, includeHeader);
             }
             writer.flush();
             writer.close();

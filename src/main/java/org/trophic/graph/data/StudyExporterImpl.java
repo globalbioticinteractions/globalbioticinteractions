@@ -15,8 +15,10 @@ import java.io.Writer;
 public class StudyExporterImpl implements StudyExporter {
 
     @Override
-    public void exportStudy(Study study, Writer writer) throws IOException {
-        writer.write("\"study\",\"predator\", \"length(mm)\",\"prey\", \"latitude\", \"longitude\", \"altitude\"");
+    public void exportStudy(Study study, Writer writer, boolean includeHeader) throws IOException {
+        if (includeHeader) {
+            writer.write("\"study\",\"predator\", \"length(mm)\",\"prey\", \"latitude\", \"longitude\", \"altitude\"");
+        }
         Iterable<Relationship> specimens = study.getSpecimens();
         for (Relationship relationship : specimens) {
             Node specimenNode = relationship.getEndNode();

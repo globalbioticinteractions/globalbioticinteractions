@@ -149,10 +149,6 @@ public class StudyImporterImpl extends BaseStudyImporter {
         return valueByLabel == null ? null : Double.parseDouble(valueByLabel);
     }
 
-    private Location findLocation(Double latitude, Double longitude, Double altitude) {
-        return nodeFactory.findLocation(latitude, longitude, altitude);
-    }
-
     private Specimen createAndClassifySpecimen(final String speciesName, Taxon family) throws StudyImporterException {
         Specimen specimen = nodeFactory.createSpecimen();
         String trimmedSpeciesName = StringUtils.trim(speciesName);

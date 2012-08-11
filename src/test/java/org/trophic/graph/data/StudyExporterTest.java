@@ -1,11 +1,7 @@
 package org.trophic.graph.data;
 
 import org.junit.Test;
-import org.neo4j.graphdb.Direction;
-import org.neo4j.graphdb.Node;
-import org.neo4j.graphdb.Relationship;
 import org.trophic.graph.domain.Location;
-import org.trophic.graph.domain.RelTypes;
 import org.trophic.graph.domain.Specimen;
 import org.trophic.graph.domain.Study;
 import org.trophic.graph.domain.Taxon;
@@ -30,7 +26,23 @@ public class StudyExporterTest extends GraphDBTestCase {
 
         StringWriter row = new StringWriter();
 
-        new StudyExporterImpl().exportStudy(myStudy1, row);
+        new StudyExporterImpl().exportStudy(myStudy1, row, true);
+
+        assertThat(row.getBuffer().toString(), equalTo(expected));
+    }
+
+    @Test
+    public void exportNoHeader() throws IOException, NodeFactoryException {
+        createTestData(null);
+        String expected = "";
+        expected += "\n\"myStudy\",\"Homo sapiens\",,\"Canis lupus\",123.0,345.9,-60.0";
+        expected += "\n\"myStudy\",\"Homo sapiens\",,\"Canis lupus\",123.0,345.9,-60.0";
+
+        Study myStudy1 = nodeFactory.findStudy("myStudy");
+
+        StringWriter row = new StringWriter();
+
+        new StudyExporterImpl().exportStudy(myStudy1, row, false);
 
         assertThat(row.getBuffer().toString(), equalTo(expected));
     }
@@ -50,7 +62,7 @@ public class StudyExporterTest extends GraphDBTestCase {
 
         StringWriter row = new StringWriter();
 
-        new StudyExporterImpl().exportStudy(myStudy1, row);
+        new StudyExporterImpl().exportStudy(myStudy1, row, true);
 
         assertThat(row.getBuffer().toString(), equalTo(expected));
 
