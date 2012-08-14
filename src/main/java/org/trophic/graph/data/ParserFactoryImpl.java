@@ -9,6 +9,7 @@ import java.util.zip.GZIPInputStream;
 
 public class ParserFactoryImpl implements ParserFactory {
 
+
     public LabeledCSVParser createParser(String studyResource) throws IOException {
         InputStream is = getClass().getResourceAsStream(studyResource);
         if (is == null) {

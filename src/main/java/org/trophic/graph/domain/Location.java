@@ -1,6 +1,10 @@
 package org.trophic.graph.domain;
 
+import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
+import org.neo4j.graphdb.Relationship;
+
+import javax.management.relation.RelationType;
 
 public class Location extends NodeBacked {
 
@@ -42,5 +46,9 @@ public class Location extends NodeBacked {
         sb.append(" Alt: ");
         sb.append(getAltitude());
         return sb.toString();
+    }
+
+    public Iterable<Relationship> getSpecimenCaughtHere() {
+        return getUnderlyingNode().getRelationships(RelTypes.COLLECTED_AT, Direction.INCOMING);
     }
 }

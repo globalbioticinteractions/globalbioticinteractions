@@ -15,6 +15,8 @@ public class StudyImporterFactory {
             importer = new StudyImporterForAkin(parserFactory, nodeFactory);
         } else if (StudyLibrary.Study.LACAVA_BAY.equals(study) || StudyLibrary.Study.MISSISSIPPI_ALABAMA.equals(study)) {
             importer = new StudyImporterImpl(parserFactory, nodeFactory, study);
+        } else if (StudyLibrary.Study.BLEWETT_CHARLOTTE_HARBOR_FL.equals(study)){
+            importer = new StudyImporterForSnook(parserFactory, nodeFactory);
         }
         return importer;
     }
