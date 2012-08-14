@@ -10,6 +10,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class TrophicImporter {
 
@@ -34,9 +35,8 @@ public class TrophicImporter {
 
     public void importStudies(GraphDatabaseService graphService) throws StudyImporterException {
         ArrayList<StudyLibrary.Study> studies = new ArrayList<StudyLibrary.Study>();
-        studies.add(StudyLibrary.Study.AKIN_MAD_ISLAND);
-        studies.add(StudyLibrary.Study.LACAVA_BAY);
-        studies.add(StudyLibrary.Study.MISSISSIPPI_ALABAMA);
+        StudyLibrary.Study[] availableStudies = StudyLibrary.Study.values();
+        studies.addAll(Arrays.asList(availableStudies));
 
         ArrayList<Study> importedStudies = new ArrayList<Study>();
 
