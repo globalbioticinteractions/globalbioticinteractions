@@ -69,6 +69,7 @@ public class StudyImporterForSnookTest extends GraphDBTestCase {
 
         StudyImporter importer = new StudyImporterFactory(testFactory, nodeFactory).createImporterForStudy(StudyLibrary.Study.BLEWETT_CHARLOTTE_HARBOR_FL);
         Study study = importer.importStudy();
+        assertThat(study.getTitle(), is("Blewett2000CharlotteHarborFL"));
 
         assertNotNull(study);
 
