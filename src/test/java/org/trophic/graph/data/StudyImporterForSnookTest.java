@@ -25,7 +25,14 @@ public class StudyImporterForSnookTest extends GraphDBTestCase {
     @Test
     public void importAll() throws StudyImporterException, NodeFactoryException {
         StudyImporter importer = new StudyImporterFactory(new ParserFactoryImpl(), nodeFactory).createImporterForStudy(StudyLibrary.Study.BLEWETT_CHARLOTTE_HARBOR_FL);
-        importer.importStudy();
+        Study study = importer.importStudy();
+        Iterable<Relationship> specimens = study.getSpecimens();
+        int count = 0;
+        for (Relationship specimen : specimens) {
+            count++;
+        }
+        assertThat(count, is(694));
+
 
         assertNotNull(nodeFactory.findTaxonOfType("Centropomus undecimalis", Taxon.SPECIES));
         assertNotNull(nodeFactory.findTaxonOfType("Cal sapidus", Taxon.SPECIES));

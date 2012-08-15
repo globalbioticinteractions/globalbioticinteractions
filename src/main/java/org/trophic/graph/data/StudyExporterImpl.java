@@ -28,20 +28,30 @@ public class StudyExporterImpl implements StudyExporter {
                 locationNode = relationship1.getEndNode();
             }
 
-            Iterable<Relationship> prey = specimenNode.getRelationships(Direction.OUTGOING, RelTypes.ATE);
-            for (Relationship relationship1 : prey) {
-                writer.write("\n");
-                addRowField(writer, study.getTitle());
-                addTaxonField(writer, specimenNode);
-                writePropertyValueOrEmpty(writer, specimenNode, Specimen.LENGTH_IN_MM);
-                Node preyNode = relationship1.getEndNode();
-                addTaxonField(writer, preyNode);
-                writePropertyValueOrEmpty(writer, locationNode, Location.LATITUDE);
-                writePropertyValueOrEmpty(writer, locationNode, Location.LONGITUDE);
-                writePropertyValueOrEmpty(writer, locationNode, Location.ALTITUDE, true);
+            Iterable<Relationship> ateRelationships = specimenNode.getRelationships(Direction.OUTGOING, RelTypes.ATE);
+            if (ateRelationships.iterator().hasNext()) {
+                for (Relationship ateRelationship : ateRelationships) {
+                    exportLine(study, writer, specimenNode, locationNode, ateRelationship);
+                }
+            } else {
+                // also write specimen with empty stomach
+                exportLine(study, writer, specimenNode, locationNode, null);
             }
 
         }
+    }
+
+    private void exportLine(Study study, Writer writer, Node specimenNode, Node locationNode, Relationship ateRelationship) throws IOException {
+        writer.write("\n");
+        addRowField(writer, study.getTitle());
+        addTaxonField(writer, specimenNode);
+        writePropertyValueOrEmpty(writer, specimenNode, Specimen.LENGTH_IN_MM);
+
+        Node preyNode = ateRelationship == null ? null : ateRelationship.getEndNode();
+        addTaxonField(writer, preyNode);
+        writePropertyValueOrEmpty(writer, locationNode, Location.LATITUDE);
+        writePropertyValueOrEmpty(writer, locationNode, Location.LONGITUDE);
+        writePropertyValueOrEmpty(writer, locationNode, Location.ALTITUDE, true);
     }
 
     private void writePropertyValueOrEmpty(Writer writer, Node node, String propertyName) throws IOException {
@@ -73,12 +83,14 @@ public class StudyExporterImpl implements StudyExporter {
     }
 
     private void addTaxonField(Writer writer, Node specimenNode) throws IOException {
-        String taxonString = "";
-        Iterable<Relationship> relationships = specimenNode.getRelationships(Direction.OUTGOING, RelTypes.CLASSIFIED_AS);
-        Relationship classifiedAs = relationships.iterator().next();
-        if (classifiedAs != null) {
-            Node taxonNode = classifiedAs.getEndNode();
-            taxonString = (String) taxonNode.getProperty(Taxon.NAME);
+        String taxonString = null;
+        if (specimenNode != null) {
+            Iterable<Relationship> relationships = specimenNode.getRelationships(Direction.OUTGOING, RelTypes.CLASSIFIED_AS);
+            Relationship classifiedAs = relationships.iterator().next();
+            if (classifiedAs != null) {
+                Node taxonNode = classifiedAs.getEndNode();
+                taxonString = (String) taxonNode.getProperty(Taxon.NAME);
+            }
         }
         addRowField(writer, taxonString);
     }

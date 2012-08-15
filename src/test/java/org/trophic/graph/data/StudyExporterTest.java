@@ -68,6 +68,26 @@ public class StudyExporterTest extends GraphDBTestCase {
 
     }
 
+    @Test
+    public void exportToCSVSpecimenEmptyStomach() throws NodeFactoryException, IOException {
+        Study myStudy = nodeFactory.createStudy("myStudy");
+        Specimen specimen = nodeFactory.createSpecimen();
+        myStudy.collected(specimen);
+        Taxon taxon = nodeFactory.createTaxon("Homo sapiens", null);
+        specimen.classifyAs(taxon);
+
+        StringWriter row = new StringWriter();
+
+        new StudyExporterImpl().exportStudy(myStudy, row, true);
+
+        String expected = "";
+        expected += "\"study\",\"predator\", \"length(mm)\",\"prey\", \"latitude\", \"longitude\", \"altitude\"";
+        expected += "\n\"myStudy\",\"Homo sapiens\",,,,,";
+
+
+        assertThat(row.getBuffer().toString(), equalTo(expected));
+    }
+
     private void createTestData(Double length) throws NodeFactoryException {
         Study myStudy = nodeFactory.createStudy("myStudy");
         Specimen specimen = nodeFactory.createSpecimen();
