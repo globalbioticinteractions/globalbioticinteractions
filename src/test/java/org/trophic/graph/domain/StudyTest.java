@@ -56,7 +56,7 @@ public class StudyTest extends GraphDBTestCase {
         shark.ate(goldFish);
         fuzzyShark.ate(goldFish);
 
-        Location bolinasBay = factory.createLocation(12.2d, 12.1d, -100.0d);
+        Location bolinasBay = factory.getOrCreateLocation(12.2d, 12.1d, -100.0d);
         shark.caughtIn(bolinasBay);
 
         Season winter = factory.createSeason("winter");

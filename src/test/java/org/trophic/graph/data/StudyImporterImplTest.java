@@ -20,9 +20,9 @@ public class StudyImporterImplTest extends GraphDBTestCase {
 
     @Test
     public void createFindLocation() {
-        Location location = nodeFactory.createLocation(1.2d, 1.4d, -1.0d);
-        nodeFactory.createLocation(2.2d, 1.4d, -1.0d);
-        nodeFactory.createLocation(1.2d, 2.4d, -1.0d);
+        Location location = nodeFactory.getOrCreateLocation(1.2d, 1.4d, -1.0d);
+        nodeFactory.getOrCreateLocation(2.2d, 1.4d, -1.0d);
+        nodeFactory.getOrCreateLocation(1.2d, 2.4d, -1.0d);
         assertNotNull(location);
         Location location1 = nodeFactory.findLocation(location.getLatitude(), location.getLongitude(), location.getAltitude());
         assertNotNull(location1);

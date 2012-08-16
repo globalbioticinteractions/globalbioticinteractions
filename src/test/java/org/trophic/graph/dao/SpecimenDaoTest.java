@@ -32,7 +32,7 @@ public class SpecimenDaoTest extends GraphDBTestCase {
         Study study = factory.createStudy(StudyImporterImpl.LAVACA_BAY_DATA_SOURCE);
         Specimen specimen = factory.createSpecimen();
         study.collected(specimen);
-        specimen.caughtIn(factory.createLocation(28.1, 21.2, -10.0));
+        specimen.caughtIn(factory.getOrCreateLocation(28.1, 21.2, -10.0));
 
         List<SpecimenDto> specimens = specimentDaoJava.getSpecimens();
 
@@ -51,7 +51,7 @@ public class SpecimenDaoTest extends GraphDBTestCase {
         study.collected(specimen);
         Double latitude = 29.4567;
         Double longitude = -14.488274;
-        specimen.caughtIn(factory.createLocation(latitude, longitude, -10.0));
+        specimen.caughtIn(factory.getOrCreateLocation(latitude, longitude, -10.0));
 
         List<SpecimenDto> specimens = specimentDaoJava.getSpecimensByLocation(String.valueOf(latitude), String.valueOf(longitude));
 
@@ -70,7 +70,7 @@ public class SpecimenDaoTest extends GraphDBTestCase {
         Study study = factory.createStudy(StudyImporterImpl.LAVACA_BAY_DATA_SOURCE);
         Specimen specimen = factory.createSpecimen();
         study.collected(specimen);
-        specimen.caughtIn(factory.createLocation(0.1, 0.1, -10.0));
+        specimen.caughtIn(factory.getOrCreateLocation(0.1, 0.1, -10.0));
 
         List<SpecimenDto> specimens = specimentDaoJava.getSpecimens();
 
@@ -89,7 +89,7 @@ public class SpecimenDaoTest extends GraphDBTestCase {
         Study study = factory.createStudy(StudyImporterImpl.LAVACA_BAY_DATA_SOURCE);
         Specimen specimen = factory.createSpecimen();
         study.collected(specimen);
-        Location location = factory.createLocation(0.1, 0.2, 0.3);
+        Location location = factory.getOrCreateLocation(0.1, 0.2, 0.3);
         specimen.caughtIn(location);
 
         specimens = specimentDaoJava.getSpecimensByLocation("0.1", "0.2");

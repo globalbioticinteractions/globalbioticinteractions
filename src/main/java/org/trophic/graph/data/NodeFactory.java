@@ -175,8 +175,8 @@ public class NodeFactory {
         return season;
     }
 
-    public Location createLocation(Double latitude, Double longitude, Double altitude) {
-        Transaction transaction = graphDb.beginTx();
+    private Location createLocation(Double latitude, Double longitude, Double altitude) {
+         Transaction transaction = graphDb.beginTx();
         Location location;
         try {
             Node node = graphDb.createNode();

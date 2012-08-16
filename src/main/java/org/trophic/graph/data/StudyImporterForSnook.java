@@ -48,7 +48,7 @@ public class StudyImporterForSnook extends BaseStudyImporter {
                     LOG.warn("blank value for longitude for line:" + locationParser.getLastLineNumber());
                 }
 
-                Location location = nodeFactory.createLocation(Double.parseDouble(latitude), Double.parseDouble(longitude), 0.0);
+                Location location = nodeFactory.getOrCreateLocation(Double.parseDouble(latitude), Double.parseDouble(longitude), 0.0);
                 locationMap.put(locationCode, location);
             }
 

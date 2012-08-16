@@ -103,7 +103,7 @@ public class StudyImporterForAkin extends BaseStudyImporter {
             throw new StudyImporterException("failed to parse longitude [" + longitudeString + "]");
         }
 
-        return nodeFactory.createLocation(latitude, longitude, altitude);
+        return nodeFactory.getOrCreateLocation(latitude, longitude, altitude);
     }
 
     private void addPrey(LabeledCSVParser parser, String[] header, String[] line, Specimen specimen) throws StudyImporterException, NodeFactoryException {
