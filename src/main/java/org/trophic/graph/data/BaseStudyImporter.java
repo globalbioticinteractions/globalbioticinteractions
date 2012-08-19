@@ -1,11 +1,10 @@
 package org.trophic.graph.data;
 
-public abstract class BaseStudyImporter implements StudyImporter {
-    protected NodeFactory nodeFactory;
+public abstract class BaseStudyImporter extends BaseImporter implements StudyImporter {
     protected ParserFactory parserFactory;
 
     public BaseStudyImporter(ParserFactory parserFactory, NodeFactory nodeFactory) {
+        super(nodeFactory);
         this.parserFactory = parserFactory;
-        this.nodeFactory = nodeFactory;
     }
 }

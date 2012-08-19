@@ -34,6 +34,11 @@
                 <enabled>true</enabled>
             </releases>
         </repository>
+        <repository>
+            <id>-berkeleybop</id>
+            <name>Berkeley Bop Repository</name>
+            <url>http://code.berkeleybop.org/maven/repository</url>
+        </repository>
     </repositories>
 
     <properties>
@@ -176,6 +181,12 @@
 
 
     <dependencies>
+
+        <dependency>
+            <groupId>org.bbop</groupId>
+            <artifactId>oboformat</artifactId>
+            <version>0.5.3</version>
+        </dependency>
 
         <!-- Bytecode manipulation -->
         <dependency>

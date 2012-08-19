@@ -20,9 +20,9 @@ public class NodeFactoryTest extends GraphDBTestCase {
     @Test
     public void createSpecies() throws NodeFactoryException {
         Taxon taxon = nodeFactory.createTaxon("bla bla", null);
-        assertEquals("Species", taxon.getType());
+        assertEquals(Taxon.SPECIES, taxon.getType());
         assertEquals("bla bla", taxon.getName());
-        assertEquals("bla", taxon.isPartOf().getProperty("name"));
+        assertEquals("bla", taxon.isA().getProperty("name"));
     }
 
     @Test
@@ -53,7 +53,7 @@ public class NodeFactoryTest extends GraphDBTestCase {
     public void createSpeciesWithFamily() throws NodeFactoryException {
         Taxon family = nodeFactory.getOrCreateFamily("theFam");
         Taxon taxon = nodeFactory.createTaxon("bla bla", family);
-        Assert.assertEquals("Species", taxon.getType());
+        Assert.assertEquals(Taxon.SPECIES, taxon.getType());
         assertEquals("bla bla", taxon.getName());
         Taxon genusTaxon = taxon.isPartOfTaxon();
         assertEquals("bla", genusTaxon.getName());
@@ -77,14 +77,14 @@ public class NodeFactoryTest extends GraphDBTestCase {
     private void assertGenus(String speciesName) throws NodeFactoryException {
         Taxon taxon = nodeFactory.createTaxon(speciesName, null);
         Taxon genus = taxon;
-        assertEquals("Genus", genus.getType());
+        assertEquals(Taxon.GENUS, genus.getType());
         assertEquals("bla", genus.getName());
-        assertNull(genus.isPartOf());
+        assertNull(genus.isA());
     }
 
     private void assertFamily(String speciesName) throws NodeFactoryException {
         Taxon family = nodeFactory.createTaxon(speciesName, null);
-        assertEquals("Family", family.getType());
+        assertEquals(Taxon.FAMILY, family.getType());
         assertEquals("Blabae", family.getName());
     }
 }

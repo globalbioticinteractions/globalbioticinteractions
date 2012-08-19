@@ -4,14 +4,15 @@ import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 
-import static org.trophic.graph.domain.RelTypes.PART_OF;
+import static org.trophic.graph.domain.RelTypes.IS_A;
 
 public class Taxon extends NodeBacked {
     public static final String NAME = "name";
     public static final String TYPE = "type";
-    public static final String SPECIES = "Species";
-    public static final String GENUS = "Genus";
-    public static final String FAMILY = "Family";
+    public static final String SPECIES = "species";
+    public static final String GENUS = "genus";
+    public static final String FAMILY = "family";
+    public static final String EXTERNAL_ID = "externalId";
 
     public Taxon(Node node) {
         super(node);
@@ -40,14 +41,22 @@ public class Taxon extends NodeBacked {
         getUnderlyingNode().setProperty(TYPE, type);
     }
 
+    public String getExternalId() {
+        return (String) getUnderlyingNode().getProperty(EXTERNAL_ID);
+    }
 
-    public Node isPartOf() {
-        Relationship singleRelationship = getUnderlyingNode().getSingleRelationship(PART_OF, Direction.OUTGOING);
+
+    public void setExternalId(String externalId) {
+        getUnderlyingNode().setProperty(EXTERNAL_ID, externalId);
+    }
+
+    public Node isA() {
+        Relationship singleRelationship = getUnderlyingNode().getSingleRelationship(IS_A, Direction.OUTGOING);
         return singleRelationship == null ? null : singleRelationship.getEndNode();
     }
 
     public Taxon isPartOfTaxon() {
-        return new Taxon(isPartOf());
+        return new Taxon(isA());
     }
 
 

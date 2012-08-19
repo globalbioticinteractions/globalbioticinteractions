@@ -11,7 +11,7 @@ import org.trophic.graph.data.NodeFactoryException;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
-import static org.trophic.graph.domain.RelTypes.PART_OF;
+import static org.trophic.graph.domain.RelTypes.IS_A;
 
 public class StudyTest extends GraphDBTestCase {
 
@@ -37,7 +37,7 @@ public class StudyTest extends GraphDBTestCase {
 
 
         Taxon genus2 = factory.getOrCreateGenus(CARCHARODON);
-        genus2.createRelationshipTo(family, PART_OF);
+        genus2.createRelationshipTo(family, IS_A);
         Taxon genus = genus2;
 
         Taxon greatWhiteSpecies = factory.getOrCreateSpecies(genus, CARCHARODON_CARCHARIAS);
@@ -80,9 +80,9 @@ public class StudyTest extends GraphDBTestCase {
                     Node endNode = next.getEndNode();
                     String speciesName = (String) endNode.getProperty("name");
                     assertEquals(CARCHARODON_CARCHARIAS, speciesName);
-                    Node genusNode = endNode.getSingleRelationship(RelTypes.PART_OF, Direction.OUTGOING).getEndNode();
+                    Node genusNode = endNode.getSingleRelationship(RelTypes.IS_A, Direction.OUTGOING).getEndNode();
                     assertEquals(CARCHARODON, genusNode.getProperty("name"));
-                    Node familyNode = genusNode.getSingleRelationship(RelTypes.PART_OF, Direction.OUTGOING).getEndNode();
+                    Node familyNode = genusNode.getSingleRelationship(RelTypes.IS_A, Direction.OUTGOING).getEndNode();
                     assertEquals(WHITE_SHARK_FAMILY, familyNode.getProperty(NAME));
                     assertEquals(new Double(-100.0d), specimen.getSampleLocation().getAltitude());
                     assertEquals(new Double(1.2d), specimen.getLengthInMm());

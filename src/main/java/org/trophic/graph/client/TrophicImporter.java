@@ -20,6 +20,7 @@ public class TrophicImporter {
 
     public void startImportStop(String[] commandLineArguments) throws StudyImporterException {
         final GraphDatabaseService graphService = GraphService.getGraphService();
+        importTaxonony(graphService);
         importStudies(graphService);
         int count = 0;
         for (Node node : graphService.getAllNodes()) {
@@ -31,6 +32,13 @@ public class TrophicImporter {
             count++;
         }
         graphService.shutdown();
+    }
+
+    private void importTaxonony(GraphDatabaseService graphService) throws StudyImporterException {
+        OboImporter importer = new OboImporter(new NodeFactory(graphService));
+        System.out.println("Taxonomy import starting...");
+        importer.doImport();
+        System.out.println("Taxonomy import complete.");
     }
 
     public void importStudies(GraphDatabaseService graphService) throws StudyImporterException {

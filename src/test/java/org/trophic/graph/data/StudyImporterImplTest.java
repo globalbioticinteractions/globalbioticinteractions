@@ -144,9 +144,9 @@ public class StudyImporterImplTest extends GraphDBTestCase {
                 Taxon taxon = new Taxon(rel.getEndNode().getSingleRelationship(RelTypes.CLASSIFIED_AS, Direction.OUTGOING).getEndNode());
                 String scientificName = taxon.getName();
                 if ("Sciaenops ocellatus".equals(scientificName)) {
-                    Taxon genus = new Taxon(taxon.isPartOf());
+                    Taxon genus = new Taxon(taxon.isA());
                     assertEquals("Sciaenops", genus.getName());
-                    assertEquals("Sciaenidae", new Taxon(genus.isPartOf()).getName());
+                    assertEquals("Sciaenidae", new Taxon(genus.isA()).getName());
                     Location sampleLocation = specimen.getSampleLocation();
                     assertNull(sampleLocation);
                     Iterable<Relationship> stomachContents = specimen.getStomachContents();
