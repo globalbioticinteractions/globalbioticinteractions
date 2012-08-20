@@ -9,6 +9,7 @@ public class OboParser {
     public static final String OBO_IS_A = "is_a: ";
     public static final String OBO_ID = "id: ";
     public static final String HAS_RANK = "property_value: has_rank NCBITaxon:";
+    public static final int MAX_TERMS = 798595;
 
     public void parse(BufferedReader bufferedReader, OboTermListener listener) throws IOException {
         OboTerm currentTerm = null;

@@ -2,6 +2,7 @@ package org.trophic.graph.db;
 
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.kernel.EmbeddedGraphDatabase;
+import org.neo4j.unsafe.batchinsert.BatchInserters;
 
 public abstract class GraphService {
 
@@ -13,6 +14,10 @@ public abstract class GraphService {
             graphService = startNeo4j();
         }
         return graphService;
+    }
+
+    public static GraphDatabaseService getBatchGraphService() {
+        return BatchInserters.batchDatabase(storeDir);
     }
 
     public static GraphDatabaseService startNeo4j() {

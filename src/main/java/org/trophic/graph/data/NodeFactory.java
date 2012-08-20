@@ -14,6 +14,10 @@ import static org.trophic.graph.domain.RelTypes.IS_A;
 
 public class NodeFactory {
 
+    public GraphDatabaseService getGraphDb() {
+        return graphDb;
+    }
+
     private GraphDatabaseService graphDb;
     private Index<Node> studies;
     private Index<Node> seasons;
@@ -29,14 +33,14 @@ public class NodeFactory {
 
     }
 
-    public Taxon createTaxon(String speciesName2, Taxon family) throws NodeFactoryException {
-        String cleanedSpeciesName = speciesName2.replaceAll("\\(.*\\)", "");
-        String[] split = cleanedSpeciesName.split(" ");
+    public Taxon createTaxon(String name, Taxon family) throws NodeFactoryException {
+        String cleanedName = TaxonUtil.clean(name);
+        String[] split = cleanedName.split(" ");
         Taxon taxon = null;
 
         if (split.length > 1) {
             String firstPart = split[0];
-            if (cleanedSpeciesName.contains("sp.") || cleanedSpeciesName.contains("spp.")) {
+            if (cleanedName.contains("sp.") || cleanedName.contains("spp.")) {
                 taxon = createFamilyOrGenus(family, firstPart);
             } else {
                 if (isFamilyName(firstPart)) {
@@ -46,8 +50,7 @@ public class NodeFactory {
                     if (family != null) {
                         genus.createRelationshipTo(family, IS_A);
                     }
-                    Taxon species = getOrCreateSpecies(genus, cleanedSpeciesName);
-                    taxon = species;
+                    taxon = getOrCreateSpecies(genus, cleanedName);
                 }
             }
         } else if (split.length == 1) {
@@ -77,9 +80,7 @@ public class NodeFactory {
     public Taxon getOrCreateSpecies(Taxon genus, String speciesName) throws NodeFactoryException {
         Taxon species = findTaxonOfType(speciesName, Taxon.SPECIES);
         if (species == null) {
-            String type = Taxon.SPECIES;
-            String name = speciesName;
-            species = createTaxonOfType(name, type);
+            species = createTaxonOfType(speciesName, Taxon.SPECIES);
         }
         if (null != genus) {
             species.createRelationshipTo(genus, IS_A);
@@ -100,10 +101,9 @@ public class NodeFactory {
     public Taxon getOrCreateFamily(final String familyName) throws NodeFactoryException {
         Taxon family = null;
         if (familyName != null) {
-            String trimmedFamilyName = StringUtils.trim(familyName);
-            Taxon foundFamily = findTaxonOfType(trimmedFamilyName, Taxon.FAMILY);
+            Taxon foundFamily = findTaxonOfType(familyName, Taxon.FAMILY);
             if (foundFamily == null) {
-                family = createTaxonOfType(trimmedFamilyName, Taxon.FAMILY);
+                family = createTaxonOfType(familyName, Taxon.FAMILY);
             } else {
                 family = foundFamily;
             }
@@ -111,13 +111,14 @@ public class NodeFactory {
         return family;
     }
 
-    private void addTaxonToIndex(Taxon taxon, String trimmedFamilyName, Node node) {
-        taxons.add(node, Taxon.NAME, trimmedFamilyName);
+    private void addTaxonToIndex(Taxon taxon, String taxonName, Node node) {
+        taxons.add(node, Taxon.NAME, taxonName);
         taxons.add(node, Taxon.TYPE, taxon.getType());
     }
 
     public Taxon findTaxonOfType(String taxonName, String type) throws NodeFactoryException {
-        IndexHits<Node> matchingTaxons = taxons.query("name:\"" + taxonName + "\" AND type:" + type);
+        String cleanedTaxonName = TaxonUtil.clean(taxonName);
+        IndexHits<Node> matchingTaxons = taxons.query("name:\"" + cleanedTaxonName + "\" AND type:" + type);
         Node matchingTaxon = matchingTaxons.getSingle();
         matchingTaxons.close();
         return matchingTaxon == null ? null : new Taxon(matchingTaxon);
@@ -237,16 +238,21 @@ public class NodeFactory {
         Taxon taxon;
         Transaction transaction = graphDb.beginTx();
         try {
-            Node node = graphDb.createNode();
-            taxon = new Taxon(node, name, type);
-            if (null != externalId) {
-                taxon.setExternalId(externalId);
-            }
-            addTaxonToIndex(taxon, name, node);
+            taxon = createTaxonNoTransaction(name, type, externalId);
             transaction.success();
         } finally {
             transaction.finish();
         }
+        return taxon;
+    }
+
+    public Taxon createTaxonNoTransaction(String name, String type, String externalId) {
+        Taxon taxon;Node node = graphDb.createNode();
+        taxon = new Taxon(node, TaxonUtil.clean(name), type);
+        if (null != externalId) {
+            taxon.setExternalId(externalId);
+        }
+        addTaxonToIndex(taxon, name, node);
         return taxon;
     }
 }

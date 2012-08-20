@@ -22,15 +22,6 @@ public class TrophicImporter {
         final GraphDatabaseService graphService = GraphService.getGraphService();
         importTaxonony(graphService);
         importStudies(graphService);
-        int count = 0;
-        for (Node node : graphService.getAllNodes()) {
-            System.out.print(count + ":{");
-            for (String key : node.getPropertyKeys()) {
-                System.out.println(key + "=" + node.getProperty(key));
-            }
-            System.out.println("}");
-            count++;
-        }
         graphService.shutdown();
     }
 

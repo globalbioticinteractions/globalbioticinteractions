@@ -6,9 +6,6 @@ import org.junit.Test;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.zip.GZIPInputStream;
 
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
@@ -44,7 +41,7 @@ public class OboParserTest {
         };
 
         new OboParser().parse(bufferedReader, listener);
-        assertThat("expected a certain amount of terms", getCounter(), is(798595));
+        assertThat("expected a certain amount of terms", getCounter(), is(OboParser.MAX_TERMS));
     }
 
 
