@@ -6,7 +6,11 @@ import org.junit.Test;
 import org.trophic.graph.domain.Taxon;
 
 import static junit.framework.Assert.assertNull;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
 
 public class NodeFactoryTest extends GraphDBTestCase {
 
@@ -73,6 +77,22 @@ public class NodeFactoryTest extends GraphDBTestCase {
         assertFamily("Blabae spp.");
         assertFamily("Blabae spp. (bla bla)");
     }
+
+    @Test
+    public void indexCleanTaxonNamesOnly() throws NodeFactoryException {
+        assertNotDirtyName("trailing spaces  ", "trailing spaces");
+        assertNotDirtyName("paren(thesis)", "paren");
+        assertNotDirtyName("stars--*", "stars");
+    }
+
+    private void assertNotDirtyName(String dirtyName, String cleanName) throws NodeFactoryException {
+        Taxon taxonOfType = nodeFactory.createTaxonOfType(dirtyName, Taxon.SPECIES);
+        String actualName = taxonOfType.getName();
+        assertThat(actualName, is(not(dirtyName)));
+        Taxon taxonOfType1 = nodeFactory.findTaxonOfType(cleanName, Taxon.SPECIES);
+        assertNotNull("should be able to lookup clean versions in index", taxonOfType1);
+    }
+
 
     private void assertGenus(String speciesName) throws NodeFactoryException {
         Taxon taxon = nodeFactory.createTaxon(speciesName, null);

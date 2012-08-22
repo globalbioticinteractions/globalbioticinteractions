@@ -1,6 +1,5 @@
 package org.trophic.graph.data;
 
-import org.apache.commons.lang3.StringUtils;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Transaction;
@@ -8,7 +7,11 @@ import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.IndexHits;
 import org.neo4j.index.lucene.QueryContext;
 import org.neo4j.index.lucene.ValueContext;
-import org.trophic.graph.domain.*;
+import org.trophic.graph.domain.Location;
+import org.trophic.graph.domain.Season;
+import org.trophic.graph.domain.Specimen;
+import org.trophic.graph.domain.Study;
+import org.trophic.graph.domain.Taxon;
 
 import static org.trophic.graph.domain.RelTypes.IS_A;
 
@@ -111,8 +114,8 @@ public class NodeFactory {
         return family;
     }
 
-    private void addTaxonToIndex(Taxon taxon, String taxonName, Node node) {
-        taxons.add(node, Taxon.NAME, taxonName);
+    private void addTaxonToIndex(Taxon taxon, Node node) {
+        taxons.add(node, Taxon.NAME, taxon.getName());
         taxons.add(node, Taxon.TYPE, taxon.getType());
     }
 
@@ -247,12 +250,14 @@ public class NodeFactory {
     }
 
     public Taxon createTaxonNoTransaction(String name, String type, String externalId) {
-        Taxon taxon;Node node = graphDb.createNode();
-        taxon = new Taxon(node, TaxonUtil.clean(name), type);
+        Taxon taxon;
+        Node node = graphDb.createNode();
+        String cleanName = TaxonUtil.clean(name);
+        taxon = new Taxon(node, cleanName, type);
         if (null != externalId) {
             taxon.setExternalId(externalId);
         }
-        addTaxonToIndex(taxon, name, node);
+        addTaxonToIndex(taxon, node);
         return taxon;
     }
 }

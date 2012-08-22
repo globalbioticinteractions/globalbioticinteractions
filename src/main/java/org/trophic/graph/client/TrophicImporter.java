@@ -1,16 +1,18 @@
 package org.trophic.graph.client;
 
+import org.apache.commons.lang3.time.StopWatch;
 import org.neo4j.graphdb.GraphDatabaseService;
-import org.neo4j.graphdb.Node;
 import org.trophic.graph.data.*;
 import org.trophic.graph.db.GraphService;
 import org.trophic.graph.domain.Study;
+import org.trophic.graph.worms.TaxonEnricher;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class TrophicImporter {
 
@@ -21,7 +23,20 @@ public class TrophicImporter {
     public void startImportStop(String[] commandLineArguments) throws StudyImporterException {
         final GraphDatabaseService graphService = GraphService.getGraphService();
         importTaxonony(graphService);
-        importStudies(graphService);
+        List<Study> studies = importStudies(graphService);
+        exportData(studies);
+
+        try {
+            StopWatch stopwatch = new StopWatch();
+            stopwatch.start();
+            System.out.println("Matching taxons against WoRMS starting...");
+            new TaxonEnricher(graphService).enrichTaxons();
+            stopwatch.stop();
+            System.out.println("Matching taxons against WoRMS complete. Total duration: [" + stopwatch.getTime()/(60.0*1000.0) + "] minutes");
+        } catch (IOException e) {
+            throw new StudyImporterException("enriching unmatched nodes failed", e);
+        }
+
         graphService.shutdown();
     }
 
@@ -32,7 +47,11 @@ public class TrophicImporter {
         System.out.println("Taxonomy import complete.");
     }
 
-    public void importStudies(GraphDatabaseService graphService) throws StudyImporterException {
+    public List<Study> importStudies(GraphDatabaseService graphService) throws StudyImporterException {
+        return importData(graphService);
+    }
+
+    private ArrayList<Study> importData(GraphDatabaseService graphService) throws StudyImporterException {
         ArrayList<StudyLibrary.Study> studies = new ArrayList<StudyLibrary.Study>();
         StudyLibrary.Study[] availableStudies = StudyLibrary.Study.values();
         studies.addAll(Arrays.asList(availableStudies));
@@ -45,19 +64,24 @@ public class TrophicImporter {
             importedStudies.add(studyImporter.importStudy());
             System.out.println("study [" + study + "]");
         }
+        return importedStudies;
+    }
 
+    private void exportData(List<Study> importedStudies) throws StudyImporterException {
         try {
-            Writer writer = new FileWriter("./export.csv", false);
+            String exportPath = "./export.csv";
+            FileWriter writer = new FileWriter(exportPath, false);
+            System.out.println("export data to [" + new File(exportPath).getAbsolutePath() + "] started...");
             for (Study importedStudy : importedStudies) {
                 boolean includeHeader = importedStudies.indexOf(importedStudy) == 0;
                 new StudyExporterImpl().exportStudy(importedStudy, writer, includeHeader);
             }
             writer.flush();
             writer.close();
+            System.out.println("export data to [" + new File(exportPath).getAbsolutePath() + "] complete.");
         } catch (IOException e) {
             throw new StudyImporterException("failed to export result to csv file", e);
         }
-
     }
 
     private StudyImporter createStudyImporter(GraphDatabaseService graphService, StudyLibrary.Study study) throws StudyImporterException {

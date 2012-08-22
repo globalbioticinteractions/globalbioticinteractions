@@ -10,7 +10,7 @@ public class TaxonUtilTest {
     @Test
     public void cleanName() {
         assertThat(TaxonUtil.clean("Blbua blas "), is("Blbua blas"));
-        assertThat(TaxonUtil.clean("Blbua  blas "), is("Blbua blas"));
+        assertThat(TaxonUtil.clean("Blbua  blas  "), is("Blbua blas"));
         assertThat(TaxonUtil.clean("Blbua  blas (akjhaskdjhf)"), is("Blbua blas"));
         assertThat(TaxonUtil.clean("  Blbua  blas (akjhaskdjhf)"), is("Blbua blas"));
     }

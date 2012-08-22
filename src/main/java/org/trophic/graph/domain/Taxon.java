@@ -42,7 +42,8 @@ public class Taxon extends NodeBacked {
     }
 
     public String getExternalId() {
-        return (String) getUnderlyingNode().getProperty(EXTERNAL_ID);
+        return getUnderlyingNode().hasProperty(EXTERNAL_ID) ?
+                (String) getUnderlyingNode().getProperty(EXTERNAL_ID) : null;
     }
 
 

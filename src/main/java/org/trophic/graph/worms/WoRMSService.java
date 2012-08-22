@@ -5,39 +5,28 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 
-import static org.hamcrest.CoreMatchers.nullValue;
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
+public class WoRMSService {
 
-public class WormsTest {
 
-    @Test
-    public void lookupExistingSpeciesTaxon() throws IOException {
-        String lsid = lookupLSID("Peprilus burti");
-        assertThat(lsid, is("urn:lsid:marinespecies.org:taxname:276560"));
+    public static final String RESPONSE_PREFIX = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><SOAP-ENV:Envelope SOAP-ENV:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\" xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:SOAP-ENC=\"http://schemas.xmlsoap.org/soap/encoding/\"><SOAP-ENV:Body><ns1:getAphiaIDResponse xmlns:ns1=\"http://tempuri.org/\"><return xsi:type=\"xsd:int\">";
+    private HttpClient httpClient;
+    public static final String RESPONSE_SUFFIX = "</return></ns1:getAphiaIDResponse></SOAP-ENV:Body></SOAP-ENV:Envelope>";
+
+    public WoRMSService() {
+        this.httpClient = new DefaultHttpClient();
     }
 
-    @Test
-    public void lookupExistingGenusTaxon() throws IOException {
-        String lsid = lookupLSID("Peprilus");
-        assertThat(lsid, is("urn:lsid:marinespecies.org:taxname:159825"));
+    public void shutdown() {
+        if (httpClient != null) {
+            httpClient.getConnectionManager().shutdown();
+        }
     }
 
-    @Test
-    public void lookupNonExistentTaxon() throws IOException {
-        String lsid = lookupLSID("Brutus blahblahi");
-        assertThat(lsid, is(nullValue()));
-
-    }
-
-    private String lookupLSID(String scientificName) throws IOException {
-        HttpClient httpClient = new DefaultHttpClient();
+    public String lookupLSIDByTaxonName(String scientificName) throws IOException {
         HttpPost post = new HttpPost("http://www.marinespecies.org/aphia.php?p=soap");
         post.setHeader("SOAPAction", "http://tempuri.org/getAphiaID");
         post.setHeader("Content-Type", "text/xml;charset=utf-8");
@@ -58,15 +47,13 @@ public class WormsTest {
 
         BasicResponseHandler responseHandler = new BasicResponseHandler();
         String response = httpClient.execute(post, responseHandler);
-        httpClient.getConnectionManager().shutdown();
 
-        String suffix = "</return></ns1:getAphiaIDResponse></SOAP-ENV:Body></SOAP-ENV:Envelope>";
         String prefix = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><SOAP-ENV:Envelope SOAP-ENV:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\" xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:SOAP-ENC=\"http://schemas.xmlsoap.org/soap/encoding/\"><SOAP-ENV:Body><ns1:getAphiaIDResponse xmlns:ns1=\"http://tempuri.org/\"><return xsi:type=\"xsd:int\">";
 
         String lsid = null;
-        if (response.startsWith(prefix) && response.endsWith(suffix)) {
-            String trimmed = response.replace(prefix, "");
-            trimmed = trimmed.replace(suffix, "");
+        if (response.startsWith(RESPONSE_PREFIX) && response.endsWith(RESPONSE_SUFFIX)) {
+            String trimmed = response.replace(RESPONSE_PREFIX, "");
+            trimmed = trimmed.replace(RESPONSE_SUFFIX, "");
             try {
                 Long aphiaId = Long.parseLong(trimmed);
                 lsid = "urn:lsid:marinespecies.org:taxname:" + aphiaId;
