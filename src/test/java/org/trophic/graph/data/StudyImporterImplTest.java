@@ -55,7 +55,7 @@ public class StudyImporterImplTest extends GraphDBTestCase {
         assertNotNull(nodeFactory.findTaxonOfType("Halieutichthys aculeatus", Taxon.SPECIES));
         assertNotNull(nodeFactory.findTaxonOfType("Halieutichthys", Taxon.GENUS));
         assertNotNull(nodeFactory.findTaxonOfType("Ampelisca", Taxon.GENUS));
-        assertNull(nodeFactory.findTaxonOfType("Ampelisca ", Taxon.GENUS));
+        assertNotNull(nodeFactory.findTaxonOfType("Ampelisca ", Taxon.GENUS));
 
         assertNotNull(nodeFactory.findStudy(StudyImporterImpl.MISSISSIPPI_ALABAMA_DATA_SOURCE));
         assertNull(nodeFactory.findStudy(StudyImporterImpl.LAVACA_BAY_DATA_SOURCE));

@@ -95,7 +95,7 @@ public class StudyImporterForSnookTest extends GraphDBTestCase {
         Node taxonNode = preyNode.getRelationships(RelTypes.CLASSIFIED_AS, Direction.OUTGOING).iterator().next().getEndNode();
         assertThat(taxonNode, is(not(nullValue())));
 
-        assertThat((String) taxonNode.getProperty(Taxon.NAME), is("Lag rhomboides"));
+        assertThat((String) taxonNode.getProperty(Taxon.NAME), is("Lagodon rhomboides"));
 
         next = specimens.iterator().next();
         predatorNode = next.getEndNode();

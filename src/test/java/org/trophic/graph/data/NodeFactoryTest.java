@@ -82,7 +82,7 @@ public class NodeFactoryTest extends GraphDBTestCase {
     public void indexCleanTaxonNamesOnly() throws NodeFactoryException {
         assertNotDirtyName("trailing spaces  ", "trailing spaces");
         assertNotDirtyName("paren(thesis)", "paren");
-        assertNotDirtyName("stars--*", "stars");
+        assertNotDirtyName("stars--*", "stars--");
     }
 
     private void assertNotDirtyName(String dirtyName, String cleanName) throws NodeFactoryException {
@@ -90,7 +90,8 @@ public class NodeFactoryTest extends GraphDBTestCase {
         String actualName = taxonOfType.getName();
         assertThat(actualName, is(not(dirtyName)));
         Taxon taxonOfType1 = nodeFactory.findTaxonOfType(cleanName, Taxon.SPECIES);
-        assertNotNull("should be able to lookup clean versions in index", taxonOfType1);
+        assertNotNull("should be able to lookup clean versions in index, " +
+                "expected to find [" + cleanName + "] for \"dirty nane\" [" + dirtyName + "]", taxonOfType1);
     }
 
 

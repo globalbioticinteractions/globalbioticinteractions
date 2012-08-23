@@ -71,10 +71,10 @@ public class StudyImporterForAkinTest extends GraphDBTestCase {
             preys.add(name);
         }
         assertThat(preys, hasItem("Sand"));
-        assertThat(preys, hasItem("Chironomidae larvae"));
-        assertThat(preys, hasItem("Amphipoda(Gammarus spp.)"));
-        assertThat(preys, hasItem("Unidentified insects"));
-        assertThat(preys, hasItem("Mollusks (Oyster)"));
+        assertThat(preys, hasItem("Chironomidae"));
+        assertThat(preys, hasItem("Amphipoda"));
+        assertThat(preys, hasItem("Insecta"));
+        assertThat(preys, hasItem("Mollusca"));
 
         Node locationNode = specimen.getSingleRelationship(RelTypes.COLLECTED_AT, Direction.OUTGOING).getEndNode();
         assertThat((Double) locationNode.getProperty(Location.LATITUDE), is(28.645202d));

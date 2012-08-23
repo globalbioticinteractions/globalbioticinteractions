@@ -1,0 +1,78 @@
+csv file with same name as this one was extracted from sheet "edited for Jorrit" from "Port Lavaca Waypoints Excel File.xls
+
+The email exchange below contains information on how to link the location information to the lavaca bay trophic data.
+
+---
+From: "Simons, James" <James.Simons@tamucc.edu>
+Subject: RE: updates list predator / prey taxa without match against NCBI and WoRMS
+Date: August 22, 2012 9:53:59 AM PDT
+To: jorrit poelen <jhpoelen@xs4all.nl>
+
+Yes, that is correct.
+
+jim
+
+From: jorrit poelen [mailto:jhpoelen@xs4all.nl]
+Sent: Wednesday, August 22, 2012 11:50 AM
+To: Simons, James
+Subject: Re: updates list predator / prey taxa without match against NCBI and WoRMS
+
+Thanks for the update.  If I understand it correctly, the combination of region, habitat and site identifies ties a collection point to a location.  If there are two matches for combination of region, habitat and site, then the mid-point should be used.
+
+For instance,
+
+from line 2, trophic data excel sheet:
+Lower  Fall      Marsh  1          Sciaenidae       Sciaenops ocellatus     420
+
+matches with two locations:
+LM1
+
+28.595267
+
+-96.477033
+
+Lower
+
+Marsh edge
+
+1
+
+LSG1
+
+28.596233
+
+-96.476483
+
+Lower
+
+Marsh edge
+
+1
+
+
+because the combination region-habitat-site, in this case, Lower-Marsh-1, has two matches.
+
+In this case the mid-point is taken, with would be:
+
+lat = avg({28.596233, 28.595267})
+and
+long = avg({-96.477033, -96.476483})
+
+Please let me know if this is correct.
+
+thx,
+-jorrit
+
+
+
+On Aug 22, 2012, at 8:55 AM, Simons, James wrote:
+
+
+Hi Jorrit,
+
+ I am attaching a file with the Lavaca Bay points.  It is in a tab labeled “Edited for Jorrit”.  You will see that for most of the sites there are two sets of coordinates.  Jenny pooled the data from those two , ie the two 1’s are pooled in the data set.  You could find the mid-point for those points.  Only for the Upper Non-veg and Marsh edge is this not an issue.  But this should enable you to get some coordinates to the data.
+
+ Let me know if you have any questions,
+
+Jim
+---"

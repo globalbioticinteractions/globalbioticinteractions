@@ -1,5 +1,7 @@
 package org.trophic.graph.data;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Transaction;
@@ -16,6 +18,10 @@ import org.trophic.graph.domain.Taxon;
 import static org.trophic.graph.domain.RelTypes.IS_A;
 
 public class NodeFactory {
+
+    private static final Log LOG = LogFactory.getLog(NodeFactory.class);
+
+    public static final TaxonNameNormalizer TAXON_NAME_NORMALIZER = new TaxonNameNormalizer();
 
     public GraphDatabaseService getGraphDb() {
         return graphDb;
@@ -37,7 +43,7 @@ public class NodeFactory {
     }
 
     public Taxon createTaxon(String name, Taxon family) throws NodeFactoryException {
-        String cleanedName = TaxonUtil.clean(name);
+        String cleanedName = TAXON_NAME_NORMALIZER.normalize(name);
         String[] split = cleanedName.split(" ");
         Taxon taxon = null;
 
@@ -120,7 +126,7 @@ public class NodeFactory {
     }
 
     public Taxon findTaxonOfType(String taxonName, String type) throws NodeFactoryException {
-        String cleanedTaxonName = TaxonUtil.clean(taxonName);
+        String cleanedTaxonName = TAXON_NAME_NORMALIZER.normalize(taxonName);
         IndexHits<Node> matchingTaxons = taxons.query("name:\"" + cleanedTaxonName + "\" AND type:" + type);
         Node matchingTaxon = matchingTaxons.getSingle();
         matchingTaxons.close();
@@ -252,8 +258,7 @@ public class NodeFactory {
     public Taxon createTaxonNoTransaction(String name, String type, String externalId) {
         Taxon taxon;
         Node node = graphDb.createNode();
-        String cleanName = TaxonUtil.clean(name);
-        taxon = new Taxon(node, cleanName, type);
+        taxon = new Taxon(node, TAXON_NAME_NORMALIZER.normalize(name), type);
         if (null != externalId) {
             taxon.setExternalId(externalId);
         }

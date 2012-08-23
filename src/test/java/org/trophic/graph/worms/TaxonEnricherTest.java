@@ -2,6 +2,7 @@ package org.trophic.graph.worms;
 
 import org.apache.commons.lang3.time.StopWatch;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.trophic.graph.dao.SpecimentDaoJava;
 import org.trophic.graph.data.GraphDBTestCase;
@@ -74,6 +75,7 @@ public class TaxonEnricherTest extends GraphDBTestCase {
         assertThat("failed to match [" + speciesName + "]", taxonOfType.getExternalId(), containsString("urn:lsid:marinespecies.org:taxname"));
     }
 
+    @Ignore
     @Test
     public void matchManyPredatorTaxons() throws IOException, NodeFactoryException {
 
@@ -91,6 +93,7 @@ public class TaxonEnricherTest extends GraphDBTestCase {
         assertThat("rate of term matching [" + rate + "] is less than 1 term/s", rate > 1.0, is(true));
     }
 
+    @Ignore
     @Test
     public void matchManyPreyTaxons() throws IOException, NodeFactoryException {
 
