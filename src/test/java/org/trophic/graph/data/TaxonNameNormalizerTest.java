@@ -16,5 +16,7 @@ public class TaxonNameNormalizerTest {
         assertThat(normalizer.normalize("  Blbua  blas (akjhaskdjhf)"), is("Blbua blas"));
         assertThat(normalizer.normalize("Aegathoa oculata¬†"), is("Aegathoa oculata"));
         assertThat(normalizer.normalize("Aegathoa oculata*"), is("Aegathoa oculata"));
+        assertThat(normalizer.normalize("Aegathoa oculata?"), is("Aegathoa oculata"));
+        assertThat(normalizer.normalize("Aegathoa oculata sp."), is("Aegathoa oculata sp."));
     }
 }
