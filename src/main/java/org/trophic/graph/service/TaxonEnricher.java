@@ -1,4 +1,4 @@
-package org.trophic.graph.worms;
+package org.trophic.graph.service;
 
 import org.apache.commons.lang3.time.StopWatch;
 import org.apache.commons.logging.Log;
@@ -12,7 +12,9 @@ import org.neo4j.helpers.collection.IteratorUtil;
 import org.trophic.graph.domain.Taxon;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 public class TaxonEnricher {
     private static final Log LOG = LogFactory.getLog(TaxonEnricher.class);
@@ -42,29 +44,46 @@ public class TaxonEnricher {
                 + "RETURN distinct taxon");
         Iterator<Node> taxon = result.columnAs("taxon");
         Iterable<Node> objectIterable = IteratorUtil.asIterable(taxon);
-        WoRMSService service = new WoRMSService();
+        List<LSIDLookupService> services = new ArrayList<LSIDLookupService>();
+        initServices(services);
         for (Node taxonNode : objectIterable) {
-            String taxonName = (String) taxonNode.getProperty(Taxon.NAME);
-            StopWatch stopwatch = new StopWatch();
-            stopwatch.start();
-            try {
-                String lsid = service.lookupLSIDByTaxonName(taxonName);
-                stopwatch.stop();
-                String responseTime = "(took " + stopwatch.getTime() + "ms)";
-                if (lsid == null) {
-                    LOG.info("no match found for [" + taxonName + "] in WoRMS " + responseTime);
-                } else {
-                    LOG.info("matched [" + taxonName + "] with LSID [" + lsid + "]" + responseTime);
-                    enrichNode(taxonNode, lsid);
+            for (LSIDLookupService service : services) {
+                String taxonName = (String) taxonNode.getProperty(Taxon.NAME);
+                StopWatch stopwatch = new StopWatch();
+                stopwatch.start();
+                try {
+                    String lsid = service.lookupLSIDByTaxonName(taxonName);
+                    stopwatch.stop();
+                    String responseTime = "(took " + stopwatch.getTime() + "ms)";
+                    String msg = "for [" + taxonName + "] with LSID [" + lsid + "] in [" + service.getClass().getSimpleName() + "] " + responseTime;
+                    if (lsid == null) {
+                        LOG.info("no match found " + msg);
+                    } else {
+                        LOG.info("found match " + msg);
+                        enrichNode(taxonNode, lsid);
+                        break;
+                    }
+                } catch (LSIDLookupServiceException ex) {
+                    LOG.warn("failed to find a match for [" + taxonName + "] in [" + service.getClass().getSimpleName() + "]", ex);
+                    shutdownServices(services);
+                    initServices(services);
                 }
-            } catch (IOException ex) {
-                LOG.warn("failed to find a match for [" + taxonName + "] in WoRMS", ex);
-                service.shutdown();
-                service = new WoRMSService();
             }
         }
+        shutdownServices(services);
 
-        service.shutdown();
+    }
+
+    private void initServices(List<LSIDLookupService> services) {
+        services.add(new WoRMSService());
+        services.add(new ITISService());
+    }
+
+    private void shutdownServices(List<LSIDLookupService> services) {
+        for (LSIDLookupService service : services) {
+            service.shutdown();
+        }
+        services.clear();
     }
 
     private void enrichNode(Node node, String lsid) {

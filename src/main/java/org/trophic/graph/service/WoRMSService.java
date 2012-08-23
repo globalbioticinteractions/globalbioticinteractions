@@ -1,32 +1,18 @@
-package org.trophic.graph.worms;
+package org.trophic.graph.service;
 
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.impl.client.BasicResponseHandler;
-import org.apache.http.impl.client.DefaultHttpClient;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 
-public class WoRMSService {
-
-
+public class WoRMSService extends BaseService implements LSIDLookupService {
     public static final String RESPONSE_PREFIX = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><SOAP-ENV:Envelope SOAP-ENV:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\" xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:SOAP-ENC=\"http://schemas.xmlsoap.org/soap/encoding/\"><SOAP-ENV:Body><ns1:getAphiaIDResponse xmlns:ns1=\"http://tempuri.org/\"><return xsi:type=\"xsd:int\">";
-    private HttpClient httpClient;
     public static final String RESPONSE_SUFFIX = "</return></ns1:getAphiaIDResponse></SOAP-ENV:Body></SOAP-ENV:Envelope>";
 
-    public WoRMSService() {
-        this.httpClient = new DefaultHttpClient();
-    }
-
-    public void shutdown() {
-        if (httpClient != null) {
-            httpClient.getConnectionManager().shutdown();
-        }
-    }
-
-    public String lookupLSIDByTaxonName(String scientificName) throws IOException {
+    public String lookupLSIDByTaxonName(String taxonName) throws LSIDLookupServiceException {
         HttpPost post = new HttpPost("http://www.marinespecies.org/aphia.php?p=soap");
         post.setHeader("SOAPAction", "http://tempuri.org/getAphiaID");
         post.setHeader("Content-Type", "text/xml;charset=utf-8");
@@ -38,17 +24,25 @@ public class WoRMSService {
         requestBody += "xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">";
         requestBody += "<soap:Body>";
         requestBody += "<getAphiaID xmlns=\"http://tempuri.org/\">";
-        requestBody = requestBody + "<scientificname>" + scientificName + "</scientificname>";
+        requestBody = requestBody + "<scientificname>" + taxonName + "</scientificname>";
         requestBody = requestBody + "<marine_only>false</marine_only>";
         requestBody += "</getAphiaID></soap:Body></soap:Envelope>";
 
-        InputStreamEntity catchEntity = new InputStreamEntity(new ByteArrayInputStream(requestBody.getBytes("UTF-8")), requestBody.getBytes().length);
+        InputStreamEntity catchEntity = null;
+        try {
+            catchEntity = new InputStreamEntity(new ByteArrayInputStream(requestBody.getBytes("UTF-8")), requestBody.getBytes().length);
+        } catch (UnsupportedEncodingException e) {
+            throw new LSIDLookupServiceException("problem creating request body for [" + post.getURI().toString() + "]", e);
+        }
         post.setEntity(catchEntity);
 
         BasicResponseHandler responseHandler = new BasicResponseHandler();
-        String response = httpClient.execute(post, responseHandler);
-
-        String prefix = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><SOAP-ENV:Envelope SOAP-ENV:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\" xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:SOAP-ENC=\"http://schemas.xmlsoap.org/soap/encoding/\"><SOAP-ENV:Body><ns1:getAphiaIDResponse xmlns:ns1=\"http://tempuri.org/\"><return xsi:type=\"xsd:int\">";
+        String response = null;
+        try {
+            response = httpClient.execute(post, responseHandler);
+        } catch (IOException e) {
+            throw new LSIDLookupServiceException("failed to connect to [" + post.getURI().toString() + "]", e);
+        }
 
         String lsid = null;
         if (response.startsWith(RESPONSE_PREFIX) && response.endsWith(RESPONSE_SUFFIX)) {
@@ -63,4 +57,5 @@ public class WoRMSService {
         }
         return lsid;
     }
+
 }

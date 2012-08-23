@@ -5,7 +5,7 @@ import org.neo4j.graphdb.GraphDatabaseService;
 import org.trophic.graph.data.*;
 import org.trophic.graph.db.GraphService;
 import org.trophic.graph.domain.Study;
-import org.trophic.graph.worms.TaxonEnricher;
+import org.trophic.graph.service.TaxonEnricher;
 
 import java.io.File;
 import java.io.FileWriter;

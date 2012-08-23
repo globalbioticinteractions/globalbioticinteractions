@@ -1,15 +1,15 @@
-package org.trophic.graph.worms;
+package org.trophic.graph.service;
 
 import org.apache.commons.lang3.time.StopWatch;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.trophic.graph.dao.SpecimentDaoJava;
 import org.trophic.graph.data.GraphDBTestCase;
 import org.trophic.graph.data.NodeFactoryException;
 import org.trophic.graph.domain.Specimen;
 import org.trophic.graph.domain.Study;
 import org.trophic.graph.domain.Taxon;
+import org.trophic.graph.service.TaxonEnricher;
 
 import java.io.IOException;
 
