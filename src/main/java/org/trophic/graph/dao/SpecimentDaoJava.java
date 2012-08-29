@@ -6,7 +6,7 @@ import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.Traverser;
 import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.IndexHits;
-import org.trophic.graph.data.StudyImporterImpl;
+import org.trophic.graph.data.StudyImporterForMississippiAlabama;
 import org.trophic.graph.domain.RelTypes;
 import org.trophic.graph.domain.Specimen;
 import org.trophic.graph.dto.SpecimenDto;
@@ -30,7 +30,7 @@ public class SpecimentDaoJava extends SuperDao implements SpecimenDao {
         Transaction tx = graphService.beginTx();
         try {
             Index<Node> index = graphService.index().forNodes("studies");
-            for (String studyName : StudyImporterImpl.COLUMN_MAPPERS.keySet()) {
+            for (String studyName : StudyImporterForMississippiAlabama.COLUMN_MAPPERS.keySet()) {
                 IndexHits<Node> studyIndexHit = index.get("title", studyName);
                 for (Node study : studyIndexHit) {
                     Traverser studyTraverser = getTraverserWithRelType(study, RelTypes.COLLECTED);
@@ -63,7 +63,7 @@ public class SpecimentDaoJava extends SuperDao implements SpecimenDao {
         Transaction tx = graphService.beginTx();
         try {
             Index<Node> index = graphService.index().forNodes("studies");
-            for (String studyName : StudyImporterImpl.COLUMN_MAPPERS.keySet()) {
+            for (String studyName : StudyImporterForMississippiAlabama.COLUMN_MAPPERS.keySet()) {
                 IndexHits<Node> studyIndexHit = index.get("title", studyName);
                 for (Node study : studyIndexHit) {
                     Traverser studyTraverser = getTraverserWithRelType(study, RelTypes.COLLECTED);
@@ -90,7 +90,7 @@ public class SpecimentDaoJava extends SuperDao implements SpecimenDao {
         Transaction tx = graphService.beginTx();
         try {
             Index<Node> index = graphService.index().forNodes("studies");
-            for (String studyName : StudyImporterImpl.COLUMN_MAPPERS.keySet()) {
+            for (String studyName : StudyImporterForMississippiAlabama.COLUMN_MAPPERS.keySet()) {
                 IndexHits<Node> studyIndexHit = index.get("title", studyName);
                 for (Node study : studyIndexHit) {
                     Traverser studyTraverser = getTraverserWithRelType(study, RelTypes.COLLECTED);

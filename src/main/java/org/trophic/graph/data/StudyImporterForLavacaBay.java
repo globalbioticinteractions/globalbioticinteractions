@@ -2,7 +2,11 @@ package org.trophic.graph.data;
 
 import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.lang3.StringUtils;
-import org.trophic.graph.domain.*;
+import org.trophic.graph.domain.Location;
+import org.trophic.graph.domain.Season;
+import org.trophic.graph.domain.Specimen;
+import org.trophic.graph.domain.Study;
+import org.trophic.graph.domain.Taxon;
 import uk.me.jstott.jcoord.LatLng;
 import uk.me.jstott.jcoord.UTMRef;
 
@@ -10,7 +14,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class StudyImporterImpl extends BaseStudyImporter {
+public class StudyImporterForLavacaBay extends BaseStudyImporter {
 
     public static final String NORTHING = "northing";
     public static final String EASTING = "easting";
@@ -46,7 +50,7 @@ public class StudyImporterImpl extends BaseStudyImporter {
     public static final String LAVACA_BAY_DATA_SOURCE = "lavacaBayTrophicData.csv.gz";
     private StudyLibrary.Study study;
 
-    public StudyImporterImpl(ParserFactory parserFactory, NodeFactory nodeFactory, StudyLibrary.Study study) {
+    public StudyImporterForLavacaBay(ParserFactory parserFactory, NodeFactory nodeFactory, StudyLibrary.Study study) {
         super(parserFactory, nodeFactory);
         this.study = study;
     }

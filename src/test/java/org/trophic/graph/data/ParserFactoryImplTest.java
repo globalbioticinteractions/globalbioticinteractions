@@ -29,7 +29,7 @@ public class ParserFactoryImplTest {
                                         createString())));
 
             }
-        }.createParser(StudyImporterImpl.MISSISSIPPI_ALABAMA_DATA_SOURCE);
+        }.createParser(StudyImporterForMississippiAlabama.MISSISSIPPI_ALABAMA_DATA_SOURCE);
 
         lcsvp.getLine();
         assertFirstLine(lcsvp);
@@ -42,7 +42,7 @@ public class ParserFactoryImplTest {
     public void parseCompressedDataSet() throws IOException {
         LabeledCSVParser labeledCSVParser = null;
         try {
-            labeledCSVParser = new ParserFactoryImpl().createParser(StudyImporterImpl.MISSISSIPPI_ALABAMA_DATA_SOURCE);
+            labeledCSVParser = new ParserFactoryImpl().createParser(StudyImporterForMississippiAlabama.MISSISSIPPI_ALABAMA_DATA_SOURCE);
             labeledCSVParser.getLine();
             assertFirstLine(labeledCSVParser);
             labeledCSVParser.getLine();

@@ -3,6 +3,7 @@ package org.trophic.graph.data;
 import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.trophic.graph.domain.Location;
 import org.trophic.graph.domain.Taxon;
 
 import static junit.framework.Assert.assertNull;
@@ -19,6 +20,16 @@ public class NodeFactoryTest extends GraphDBTestCase {
     @Before
     public void createFactory() {
         nodeFactory = new NodeFactory(getGraphDb());
+    }
+
+    @Test
+    public void createFindLocation() {
+        Location location = nodeFactory.getOrCreateLocation(1.2d, 1.4d, -1.0d);
+        nodeFactory.getOrCreateLocation(2.2d, 1.4d, -1.0d);
+        nodeFactory.getOrCreateLocation(1.2d, 2.4d, -1.0d);
+        Assert.assertNotNull(location);
+        Location location1 = nodeFactory.findLocation(location.getLatitude(), location.getLongitude(), location.getAltitude());
+        Assert.assertNotNull(location1);
     }
 
     @Test

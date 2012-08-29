@@ -20,13 +20,13 @@ public class StudyImporterFactoryTest {
     public void createImporterForMSAL() throws StudyImporterException {
         StudyImporter importerForStudy = new StudyImporterFactory(null, null).createImporterForStudy(StudyLibrary.Study.MISSISSIPPI_ALABAMA);
         assertThat(importerForStudy, is(not(nullValue())));
-        assertThat(importerForStudy, is(StudyImporterImpl.class));
+        assertThat(importerForStudy, is(StudyImporterForMississippiAlabama.class));
     }
 
     @Test
     public void createImporterForLavaca() throws StudyImporterException {
         StudyImporter importerForStudy = new StudyImporterFactory(null, null).createImporterForStudy(StudyLibrary.Study.LACAVA_BAY);
         assertThat(importerForStudy, is(not(nullValue())));
-        assertThat(importerForStudy, is(StudyImporterImpl.class));
+        assertThat(importerForStudy, is(StudyImporterForMississippiAlabama.class));
     }
 }

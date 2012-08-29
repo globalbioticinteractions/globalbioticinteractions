@@ -13,8 +13,10 @@ public class StudyImporterFactory {
         StudyImporter importer = null;
         if (StudyLibrary.Study.AKIN_MAD_ISLAND.equals(study)) {
             importer = new StudyImporterForAkin(parserFactory, nodeFactory);
-        } else if (StudyLibrary.Study.LACAVA_BAY.equals(study) || StudyLibrary.Study.MISSISSIPPI_ALABAMA.equals(study)) {
-            importer = new StudyImporterImpl(parserFactory, nodeFactory, study);
+        } else if (StudyLibrary.Study.MISSISSIPPI_ALABAMA.equals(study)) {
+            importer = new StudyImporterForMississippiAlabama(parserFactory, nodeFactory, study);
+        } else if (StudyLibrary.Study.LACAVA_BAY.equals(study)) {
+            importer = new StudyImporterForLavacaBay(parserFactory, nodeFactory, study);
         } else if (StudyLibrary.Study.BLEWETT_CHARLOTTE_HARBOR_FL.equals(study)){
             importer = new StudyImporterForSnook(parserFactory, nodeFactory);
         }

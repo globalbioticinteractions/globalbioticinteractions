@@ -5,7 +5,7 @@ import org.junit.Test;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.trophic.graph.data.GraphDBTestCase;
 import org.trophic.graph.data.NodeFactory;
-import org.trophic.graph.data.StudyImporterImpl;
+import org.trophic.graph.data.StudyImporterForMississippiAlabama;
 import org.trophic.graph.domain.Location;
 import org.trophic.graph.domain.Specimen;
 import org.trophic.graph.domain.Study;
@@ -29,7 +29,7 @@ public class SpecimenDaoTest extends GraphDBTestCase {
 
     @Test
     public void testSpecimenLocation() {
-        Study study = factory.createStudy(StudyImporterImpl.LAVACA_BAY_DATA_SOURCE);
+        Study study = factory.createStudy(StudyImporterForMississippiAlabama.LAVACA_BAY_DATA_SOURCE);
         Specimen specimen = factory.createSpecimen();
         study.collected(specimen);
         specimen.caughtIn(factory.getOrCreateLocation(28.1, 21.2, -10.0));
@@ -46,7 +46,7 @@ public class SpecimenDaoTest extends GraphDBTestCase {
 
     @Test
     public void testSpecimenFetchByLocation() {
-        Study study = factory.createStudy(StudyImporterImpl.LAVACA_BAY_DATA_SOURCE);
+        Study study = factory.createStudy(StudyImporterForMississippiAlabama.LAVACA_BAY_DATA_SOURCE);
         Specimen specimen = factory.createSpecimen();
         study.collected(specimen);
         Double latitude = 29.4567;
@@ -67,7 +67,7 @@ public class SpecimenDaoTest extends GraphDBTestCase {
     public void testSpecimenLocation2() throws Exception {
         assertEquals(0, specimentDaoJava.getSpecimens().size());
 
-        Study study = factory.createStudy(StudyImporterImpl.LAVACA_BAY_DATA_SOURCE);
+        Study study = factory.createStudy(StudyImporterForMississippiAlabama.LAVACA_BAY_DATA_SOURCE);
         Specimen specimen = factory.createSpecimen();
         study.collected(specimen);
         specimen.caughtIn(factory.getOrCreateLocation(0.1, 0.1, -10.0));
@@ -86,7 +86,7 @@ public class SpecimenDaoTest extends GraphDBTestCase {
 
         GraphDatabaseService graphDb = getGraphDb();
         NodeFactory factory = new NodeFactory(graphDb);
-        Study study = factory.createStudy(StudyImporterImpl.LAVACA_BAY_DATA_SOURCE);
+        Study study = factory.createStudy(StudyImporterForMississippiAlabama.LAVACA_BAY_DATA_SOURCE);
         Specimen specimen = factory.createSpecimen();
         study.collected(specimen);
         Location location = factory.getOrCreateLocation(0.1, 0.2, 0.3);
