@@ -27,6 +27,6 @@ public class StudyImporterFactoryTest {
     public void createImporterForLavaca() throws StudyImporterException {
         StudyImporter importerForStudy = new StudyImporterFactory(null, null).createImporterForStudy(StudyLibrary.Study.LACAVA_BAY);
         assertThat(importerForStudy, is(not(nullValue())));
-        assertThat(importerForStudy, is(StudyImporterForMississippiAlabama.class));
+        assertThat(importerForStudy, is(StudyImporterForLavacaBay.class));
     }
 }

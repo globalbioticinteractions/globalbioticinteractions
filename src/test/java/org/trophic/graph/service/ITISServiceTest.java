@@ -2,6 +2,7 @@ package org.trophic.graph.service;
 
 import org.junit.Test;
 
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
@@ -25,7 +26,7 @@ public class ITISServiceTest {
     @Test
     public void lookupValidCommonName() throws LSIDLookupServiceException {
         String lsid = lookupTerm("Common Snook");
-        assertThat(lsid, is("urn:lsid:itis.gov:itis_tsn:167648"));
+        assertThat(lsid, is(nullValue()));
 
     }
 

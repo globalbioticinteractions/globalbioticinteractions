@@ -18,7 +18,7 @@ public class ITISService extends BaseService implements LSIDLookupService {
         String lsid = null;
         URI uri = null;
         try {
-            uri = new URI("http", null, "www.itis.gov", 80, "/ITISWebService/services/ITISService/getITISTerms", "srchKey=" + taxonName, null);
+            uri = new URI("http", null, "www.itis.gov", 80, "/ITISWebService/services/ITISService/searchByScientificName", "srchKey=" + taxonName, null);
         } catch (URISyntaxException e) {
             throw new LSIDLookupServiceException("failed to create uri", e);
         }
@@ -32,7 +32,7 @@ public class ITISService extends BaseService implements LSIDLookupService {
         } catch (IOException e) {
             throw new LSIDLookupServiceException("failed to execute query to [ " + uri.toString() + "]", e);
         }
-        boolean isValid = response.contains("<ax21:nameUsage>valid</ax21:nameUsage>");
+        boolean isValid = response.contains("<ax21:combinedName>" + taxonName + "</ax21:combinedName>");
         if (isValid) {
             String[] split = response.split("<ax21:tsn>");
             if (split.length > 1) {
