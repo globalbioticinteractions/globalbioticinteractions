@@ -22,46 +22,27 @@ public class StudyImporterForMississippiAlabama extends BaseStudyImporter {
     public static final String PREDATOR_SPECIES = "predator species";
     public static final String PREDATOR_FAMILY = "predatorFamily";
 
-    public static final Map<String, Map<String, String>> COLUMN_MAPPERS = new HashMap<String, Map<String, String>>() {{
-        put(MISSISSIPPI_ALABAMA_DATA_SOURCE, new HashMap<String, String>() {{
-            // note that lat / long combination is source data are northing/ easting UTM coordinates in
-            // latZone 'R' and longZone 16
-            put(NORTHING, "lat");
-            put(EASTING, "long");
-            put(DEPTH, "depth");
-            put(SEASON, "season");
-            put(PREY_SPECIES, "prey");
-            put(PREDATOR_SPECIES, "predator");
-            put(LENGTH_RANGE_IN_MM, "sizeclass");
-        }});
-        put(LAVACA_BAY_DATA_SOURCE, new HashMap<String, String>() {{
-            put(SEASON, "Season");
-            put(PREY_SPECIES, "Prey Item Species");
-            put(PREDATOR_SPECIES, "Predator Species");
-            put(LENGTH_IN_MM, "TL");
-            put(PREDATOR_FAMILY, "Family");
-        }});
+    static final HashMap<String, String> COLUMN_MAPPER = new HashMap<String, String>() {{
+        // note that lat / long combination is source data are northing/ easting UTM coordinates in
+        // latZone 'R' and longZone 16
+        put(NORTHING, "lat");
+        put(EASTING, "long");
+        put(DEPTH, "depth");
+        put(SEASON, "season");
+        put(PREY_SPECIES, "prey");
+        put(PREDATOR_SPECIES, "predator");
+        put(LENGTH_RANGE_IN_MM, "sizeclass");
     }};
-    public static final String MISSISSIPPI_ALABAMA_DATA_SOURCE = "mississippiAlabamaFishDiet.csv.gz";
-    public static final String LAVACA_BAY_DATA_SOURCE = "lavacaBayTrophicData.csv.gz";
-    private StudyLibrary.Study study;
 
-    public StudyImporterForMississippiAlabama(ParserFactory parserFactory, NodeFactory nodeFactory, StudyLibrary.Study study) {
+    public static final String MISSISSIPPI_ALABAMA_DATA_SOURCE = "mississippiAlabamaFishDiet.csv.gz";
+
+    public StudyImporterForMississippiAlabama(ParserFactory parserFactory, NodeFactory nodeFactory) {
         super(parserFactory, nodeFactory);
-        this.study = study;
     }
 
     @Override
     public Study importStudy() throws StudyImporterException {
-        String dataSource = null;
-        if (StudyLibrary.Study.LACAVA_BAY.equals(study)) {
-            dataSource = LAVACA_BAY_DATA_SOURCE;
-        } else if (StudyLibrary.Study.MISSISSIPPI_ALABAMA.equals(study)) {
-            dataSource = MISSISSIPPI_ALABAMA_DATA_SOURCE;
-        } else {
-            throw new StudyImporterException("study [" + study + "] not supported by this importer");
-        }
-        return importStudy(dataSource);
+        return importStudy(MISSISSIPPI_ALABAMA_DATA_SOURCE);
     }
 
     private Study importStudy(String studyResource) throws StudyImporterException {
@@ -70,7 +51,7 @@ public class StudyImporterForMississippiAlabama extends BaseStudyImporter {
 
 
     private Study createAndPopulateStudy(ParserFactory parserFactory, String studyResource) throws StudyImporterException {
-        Map<String, String> columnMapper = COLUMN_MAPPERS.get(studyResource);
+        Map<String, String> columnMapper = COLUMN_MAPPER;
         if (null == columnMapper) {
             throw new StudyImporterException("no suitable column mapper found for [" + studyResource + "]");
         }
@@ -81,9 +62,10 @@ public class StudyImporterForMississippiAlabama extends BaseStudyImporter {
         Study study = nodeFactory.getOrCreateStudy(studyResource);
         try {
             LabeledCSVParser csvParser = parserFactory.createParser(studyResource);
-            LengthParser parser = new LengthParserFactory().createParser(study.getTitle());
+            Map<String, String> columnMapper = COLUMN_MAPPER;
+            LengthParser parser = new LengthRangeParserImpl(columnMapper.get(LENGTH_RANGE_IN_MM));
             while (csvParser.getLine() != null) {
-                addNextRecordToStudy(csvParser, study, COLUMN_MAPPERS.get(studyResource), parser);
+                addNextRecordToStudy(csvParser, study, COLUMN_MAPPER, parser);
             }
         } catch (IOException e) {
             throw new StudyImporterException("failed to createTaxon study [" + studyResource + "]", e);

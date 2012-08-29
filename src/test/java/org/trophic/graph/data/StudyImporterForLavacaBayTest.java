@@ -15,10 +15,6 @@ import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertNull;
 import static junit.framework.Assert.fail;
-import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.CoreMatchers.nullValue;
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
 
 public class StudyImporterForLavacaBayTest extends GraphDBTestCase {
 
@@ -46,12 +42,12 @@ public class StudyImporterForLavacaBayTest extends GraphDBTestCase {
         assertNotNull(nodeFactory.findTaxonOfType("Aegathoa oculata", Taxon.SPECIES));
         assertNotNull(nodeFactory.findTaxonOfType("Aegathoa", Taxon.GENUS));
 
-        assertNotNull(nodeFactory.findStudy(StudyImporterForMississippiAlabama.LAVACA_BAY_DATA_SOURCE));
+        assertNotNull(nodeFactory.findStudy(StudyImporterForLavacaBay.LAVACA_BAY_DATA_SOURCE));
 
         assertNotNull(nodeFactory.findSeason("spring"));
         assertNotNull(nodeFactory.findSeason("fall"));
 
-        Study foundStudy = nodeFactory.findStudy(StudyImporterForMississippiAlabama.LAVACA_BAY_DATA_SOURCE);
+        Study foundStudy = nodeFactory.findStudy(StudyImporterForLavacaBay.LAVACA_BAY_DATA_SOURCE);
         assertNotNull(foundStudy);
         for (Relationship rel : study.getSpecimens()) {
             Specimen specimen = new Specimen(rel.getEndNode());

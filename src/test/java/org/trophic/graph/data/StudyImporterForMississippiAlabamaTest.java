@@ -39,7 +39,7 @@ public class StudyImporterForMississippiAlabamaTest extends GraphDBTestCase {
         csvString += "1, 1, 16, 3, 2, 6, 6, 205.5, 1, \"Ampelisca sp. (abdita complex)  \", 1, \"Summer\", 60, \"Chandeleur Islands\", \"aabd\", 47.11, \"C2\", 348078.84, 3257617.25, 313, \"201-300\", \"Rhynchoconger flavus\"\n";
         csvString += "2, 11, 2, 1, 1, 20, 15, 592.5, 6, \"Ampelisca sp. (abdita complex)\", 1, \"Summer\", 20, \"Chandeleur Islands\", \"aabd\", 47.11, \"C1\", 344445.31, 3323087.25, 144, \"26-50\", \"Halieutichthys aculeatus\"\n";
 
-        StudyImporterForMississippiAlabama studyImporterFor = new StudyImporterForMississippiAlabama(new TestParserFactory(csvString), nodeFactory, StudyLibrary.Study.MISSISSIPPI_ALABAMA);
+        StudyImporterForMississippiAlabama studyImporterFor = new StudyImporterForMississippiAlabama(new TestParserFactory(csvString), nodeFactory);
 
         studyImporterFor.importStudy();
         studyImporterFor.importStudy();
@@ -52,7 +52,6 @@ public class StudyImporterForMississippiAlabamaTest extends GraphDBTestCase {
         assertNotNull(nodeFactory.findTaxonOfType("Ampelisca ", Taxon.GENUS));
 
         assertNotNull(nodeFactory.findStudy(StudyImporterForMississippiAlabama.MISSISSIPPI_ALABAMA_DATA_SOURCE));
-        assertNull(nodeFactory.findStudy(StudyImporterForMississippiAlabama.LAVACA_BAY_DATA_SOURCE));
 
         assertNotNull(nodeFactory.findLocation(LAT_1, LONG_1, -60.0d));
         assertNotNull(nodeFactory.findLocation(LAT_2, LONG_2,  -20.0d));
