@@ -54,4 +54,8 @@ public class NodeBacked {
         }
         return null;
     }
+
+    public long getNodeID() {
+        return getUnderlyingNode().getId();
+    }
 }

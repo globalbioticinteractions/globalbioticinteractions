@@ -179,9 +179,9 @@
     <dependencies>
 
         <dependency>
-            <groupId>org.bbop</groupId>
-            <artifactId>oboformat</artifactId>
-            <version>0.5.3</version>
+            <groupId>org.apache.jena</groupId>
+            <artifactId>jena-arq</artifactId>
+            <version>2.9.3</version>
         </dependency>
 
         <!-- Bytecode manipulation -->
