@@ -27,9 +27,12 @@ public class NodeFactoryTest extends GraphDBTestCase {
         Location location = nodeFactory.getOrCreateLocation(1.2d, 1.4d, -1.0d);
         nodeFactory.getOrCreateLocation(2.2d, 1.4d, -1.0d);
         nodeFactory.getOrCreateLocation(1.2d, 2.4d, -1.0d);
+        Location locationNoDepth = nodeFactory.getOrCreateLocation(1.5d, 2.8d, null);
         Assert.assertNotNull(location);
         Location location1 = nodeFactory.findLocation(location.getLatitude(), location.getLongitude(), location.getAltitude());
         Assert.assertNotNull(location1);
+        Location foundLocationNoDepth = nodeFactory.findLocation(locationNoDepth.getLatitude(), locationNoDepth.getLongitude(), null);
+        Assert.assertNotNull(foundLocationNoDepth);
     }
 
     @Test

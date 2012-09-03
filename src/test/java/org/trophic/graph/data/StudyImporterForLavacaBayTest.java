@@ -31,6 +31,7 @@ public class StudyImporterForLavacaBayTest extends GraphDBTestCase {
                 "\"Region\",\"Season\",\"Habitat\",\"Site\",\"Family\",\"Predator Species\",\"TL\",\"Prey Item Species\",\"Prey item\",\"Number\",\"Condition Index\",\"Volume\",\"Percent Content\",\"Prey Item Trophic Level\",\"Notes\"\n";
         csvString += "\"Lower\",\"Fall\",\"Marsh\",1,\"Sciaenidae\",\"Sciaenops ocellatus\",420,\"Acrididae spp. \",\"Acrididae \",1,\"III\",0.4,3.2520325203,2.5,\n";
         csvString += "\"Lower\",\"Spring\",\"Non-Veg \",1,\"Ariidae\",\"Arius felis\",176,\"Aegathoa oculata \",\"Aegathoa oculata\",4,\"I\",0.01,3.3333333333,2.1,\n";
+        csvString += "\"Upper\",\"Spring\",\"Reef\",2,\"Depth\",\"Missing depth\",176,\"Aegathoa oculata \",\"Aegathoa oculata\",4,\"I\",0.01,3.3333333333,2.1,\n";
 
         Map<String, String> contentMap = new HashMap<String, String>();
         String locationString = "\"Location\",\"Latitude\",\"Longitude\",,\"Region\",\"Habitat\",\"Site\"\n" +
@@ -132,9 +133,12 @@ public class StudyImporterForLavacaBayTest extends GraphDBTestCase {
                     assertEquals("spring", season.getTitle());
 
                     assertEquals(176.0d, specimen.getLengthInMm());
-
-
-                } else {
+                } else if ("Missing depth".equals(scientificName)) {
+                    Location location = specimen.getSampleLocation();
+                    assertThat(location, is(not(nullValue())));
+                    assertThat(location.getAltitude(), is(nullValue()));
+                }
+                else {
                     fail("unexpected scientificName of predator [" + scientificName + "]");
                 }
 

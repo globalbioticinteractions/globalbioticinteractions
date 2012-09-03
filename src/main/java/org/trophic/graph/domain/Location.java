@@ -18,14 +18,16 @@ public class Location extends NodeBacked {
 
     public Location(Node node, Double latitude, Double longitude, Double altitude) {
         this(node);
-        getUnderlyingNode().setProperty(ALTITUDE, altitude);
+        if (altitude != null) {
+            getUnderlyingNode().setProperty(ALTITUDE, altitude);
+        }
         getUnderlyingNode().setProperty(LATITUDE, latitude);
         getUnderlyingNode().setProperty(LONGITUDE, longitude);
         getUnderlyingNode().setProperty(TYPE, Location.class.getSimpleName());
     }
 
     public Double getAltitude() {
-        return (Double) getUnderlyingNode().getProperty(ALTITUDE);
+        return getUnderlyingNode().hasProperty(ALTITUDE) ? (Double) getUnderlyingNode().getProperty(ALTITUDE) : null;
     }
 
     public Double getLongitude() {

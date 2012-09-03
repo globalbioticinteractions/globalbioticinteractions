@@ -92,12 +92,12 @@ public class StudyImporterForLavacaBay extends BaseStudyImporter {
         Double depth = depthMap.get(createDepthId(seasonName, region, site, habitat));
         Location sampleLocation = null;
 
+        Double altitude = depth == null ? null : -depth;
         if (depth == null) {
             LOG.warn(createMsgPrefix(csvParser) + " failed to find depth for habitat, region, site and season: [" + createDepthId(seasonName, region, site, habitat) + "], skipping entry");
-        } else {
-            sampleLocation = nodeFactory.getOrCreateLocation(latLng1.getLat(), latLng1.getLng(), -depth);
-            prey.caughtIn(sampleLocation);
         }
+        sampleLocation = nodeFactory.getOrCreateLocation(latLng1.getLat(), latLng1.getLng(), altitude);
+        prey.caughtIn(sampleLocation);
         prey.caughtDuring(getOrCreateSeason(seasonName));
 
         String speciesName = csvParser.getValueByLabel(columnToNormalizedTermMapper.get(PREDATOR_SPECIES));

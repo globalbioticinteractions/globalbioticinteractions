@@ -139,8 +139,17 @@ public class NodeFactory {
         Node matchingLocation = null;
         for (Node node : matchingLocations) {
             Double foundLongitude = (Double) node.getProperty(Location.LONGITUDE);
-            Double foundAltitude = (Double) node.getProperty(Location.ALTITUDE);
-            if (longitude.equals(foundLongitude) && altitude.equals(foundAltitude)) {
+
+            boolean altitudeMatches = false;
+            if (node.hasProperty(Location.ALTITUDE) ) {
+                Double foundAltitude = (Double) node.getProperty(Location.ALTITUDE);
+                altitudeMatches = altitude.equals(foundAltitude);
+            } else if (null == altitude) {
+                // explicit null value matches
+                altitudeMatches = true;
+            }
+
+            if (longitude.equals(foundLongitude) && altitudeMatches) {
                 matchingLocation = node;
                 break;
             }
@@ -172,7 +181,9 @@ public class NodeFactory {
             location = new Location(node, latitude, longitude, altitude);
             locations.add(node, Location.LATITUDE, ValueContext.numeric(latitude));
             locations.add(node, Location.LONGITUDE, ValueContext.numeric(longitude));
-            locations.add(node, Location.ALTITUDE, ValueContext.numeric(altitude));
+            if (altitude != null) {
+                locations.add(node, Location.ALTITUDE, ValueContext.numeric(altitude));
+            }
             transaction.success();
         } finally {
             transaction.finish();
@@ -230,7 +241,7 @@ public class NodeFactory {
 
     public Location getOrCreateLocation(Double latitude, Double longitude, Double altitude) {
         Location location = null;
-        if (latitude != null && longitude != null && altitude != null) {
+        if (latitude != null && longitude != null) {
             location = findLocation(latitude, longitude, altitude);
             if (null == location) {
                 location = createLocation(latitude, longitude, altitude);
