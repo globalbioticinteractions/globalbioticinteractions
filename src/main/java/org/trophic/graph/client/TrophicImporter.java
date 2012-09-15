@@ -5,6 +5,7 @@ import org.neo4j.graphdb.GraphDatabaseService;
 import org.trophic.graph.data.*;
 import org.trophic.graph.db.GraphService;
 import org.trophic.graph.domain.Study;
+import org.trophic.graph.export.StudyExporterPredatorPrey;
 import org.trophic.graph.service.TaxonEnricher;
 
 import java.io.File;
@@ -69,19 +70,23 @@ public class TrophicImporter {
 
     private void exportData(List<Study> importedStudies) throws StudyImporterException {
         try {
-            String exportPath = "./export.csv";
-            FileWriter writer = new FileWriter(exportPath, false);
-            System.out.println("export data to [" + new File(exportPath).getAbsolutePath() + "] started...");
-            for (Study importedStudy : importedStudies) {
-                boolean includeHeader = importedStudies.indexOf(importedStudy) == 0;
-                new StudyExporterImpl().exportStudy(importedStudy, writer, includeHeader);
-            }
-            writer.flush();
-            writer.close();
-            System.out.println("export data to [" + new File(exportPath).getAbsolutePath() + "] complete.");
+            export(importedStudies, "./export.csv", new StudyExporterImpl());
+            export(importedStudies, "./exportPredatorTaxonPreyTaxon.csv", new StudyExporterPredatorPrey(GraphService.getGraphService()));
         } catch (IOException e) {
             throw new StudyImporterException("failed to export result to csv file", e);
         }
+    }
+
+    private void export(List<Study> importedStudies, String exportPath, StudyExporter studyExporter) throws IOException {
+        FileWriter writer = new FileWriter(exportPath, false);
+        System.out.println("export data to [" + new File(exportPath).getAbsolutePath() + "] started...");
+        for (Study importedStudy : importedStudies) {
+            boolean includeHeader = importedStudies.indexOf(importedStudy) == 0;
+            studyExporter.exportStudy(importedStudy, writer, includeHeader);
+        }
+        writer.flush();
+        writer.close();
+        System.out.println("export data to [" + new File(exportPath).getAbsolutePath() + "] complete.");
     }
 
     private StudyImporter createStudyImporter(GraphDatabaseService graphService, StudyLibrary.Study study) throws StudyImporterException {

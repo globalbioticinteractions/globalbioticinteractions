@@ -143,7 +143,7 @@ public class NodeFactory {
             boolean altitudeMatches = false;
             if (node.hasProperty(Location.ALTITUDE) ) {
                 Double foundAltitude = (Double) node.getProperty(Location.ALTITUDE);
-                altitudeMatches = altitude.equals(foundAltitude);
+                altitudeMatches = altitude != null && altitude.equals(foundAltitude);
             } else if (null == altitude) {
                 // explicit null value matches
                 altitudeMatches = true;
