@@ -27,7 +27,7 @@ public class Study extends NodeBacked {
 
 	}
 
-    public void collected(Specimen specimen) {
-        createRelationshipTo(specimen, RelTypes.COLLECTED);
+    public Relationship collected(Specimen specimen) {
+        return createRelationshipTo(specimen, RelTypes.COLLECTED);
     }
 }

@@ -14,7 +14,7 @@ public class NodeBacked {
         this.underlyingNode = node;
     }
 
-    protected Node getUnderlyingNode() {
+    public Node getUnderlyingNode() {
         return underlyingNode;
     }
 
@@ -30,19 +30,21 @@ public class NodeBacked {
                 underlyingNode.equals(((NodeBacked) o).getUnderlyingNode());
     }
 
-    public void createRelationshipTo(NodeBacked nodeBacked, RelTypes relType) {
+    public Relationship createRelationshipTo(NodeBacked nodeBacked, RelTypes relType) {
         Transaction tx = getUnderlyingNode().getGraphDatabase().beginTx();
+        Relationship rel = null;
         try {
             if (!this.equals(nodeBacked)) {
-                Relationship rel = getFirstIncomingRelationshipOfType(nodeBacked, relType);
+                rel = getFirstIncomingRelationshipOfType(nodeBacked, relType);
                 if (rel == null) {
-                    getUnderlyingNode().createRelationshipTo(nodeBacked.getUnderlyingNode(), relType);
+                    rel = getUnderlyingNode().createRelationshipTo(nodeBacked.getUnderlyingNode(), relType);
                 }
                 tx.success();
             }
         } finally {
             tx.finish();
         }
+        return rel;
     }
 
     private Relationship getFirstIncomingRelationshipOfType(NodeBacked otherTaxon, RelTypes relType) {

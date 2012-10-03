@@ -5,6 +5,8 @@ import org.neo4j.graphdb.GraphDatabaseService;
 import org.trophic.graph.data.*;
 import org.trophic.graph.db.GraphService;
 import org.trophic.graph.domain.Study;
+import org.trophic.graph.export.StudyExporter;
+import org.trophic.graph.export.StudyExporterImpl;
 import org.trophic.graph.export.StudyExporterPredatorPrey;
 import org.trophic.graph.service.TaxonEnricher;
 

@@ -8,7 +8,9 @@ import org.neo4j.graphdb.Transaction;
 public class Specimen extends NodeBacked {
 
     public static final String LENGTH_IN_MM = "lengthInMm";
-    public static final String THUMBNAIL = "thumbnail";
+    public static final String VOLUME_IN_ML = "volumeInMilliLiter";
+    public static final String STOMACH_VOLUME_ML = "stomachVolumeInMilliLiter";
+    public static final String DATE_IN_UNIX_EPOCH = "dateInUnixEpoch";
 
     public Specimen(Node node) {
         super(node);
@@ -71,6 +73,26 @@ public class Specimen extends NodeBacked {
         Transaction transaction = getUnderlyingNode().getGraphDatabase().beginTx();
         try {
             getUnderlyingNode().setProperty(LENGTH_IN_MM, aDouble);
+            transaction.success();
+        } finally {
+            transaction.finish();
+        }
+    }
+
+    public void setVolumeInMilliLiter(Double volumeInMm3) {
+        Transaction transaction = getUnderlyingNode().getGraphDatabase().beginTx();
+        try {
+            getUnderlyingNode().setProperty(VOLUME_IN_ML, volumeInMm3);
+            transaction.success();
+        } finally {
+            transaction.finish();
+        }
+    }
+
+    public void setStomachVolumeInMilliLiter(Double volumeInMilliLiter) {
+        Transaction transaction = getUnderlyingNode().getGraphDatabase().beginTx();
+        try {
+            getUnderlyingNode().setProperty(STOMACH_VOLUME_ML, volumeInMilliLiter);
             transaction.success();
         } finally {
             transaction.finish();

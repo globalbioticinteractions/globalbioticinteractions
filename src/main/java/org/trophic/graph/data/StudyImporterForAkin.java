@@ -5,12 +5,17 @@ import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.neo4j.graphdb.Relationship;
+import org.neo4j.graphdb.Transaction;
 import org.trophic.graph.domain.Location;
 import org.trophic.graph.domain.Specimen;
 import org.trophic.graph.domain.Study;
 import org.trophic.graph.domain.Taxon;
 
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class StudyImporterForAkin extends BaseStudyImporter {
     private static final Log LOG = LogFactory.getLog(StudyImporterForAkin.class);
@@ -45,7 +50,7 @@ public class StudyImporterForAkin extends BaseStudyImporter {
     }
 
     private boolean isValid(String[] line, String[] header, LabeledCSVParser parser, String[][] siteInfos) throws StudyImporterException {
-        int dateIndex = findIndexForColumnWithName("Date ", header);
+        int dateIndex = findIndexForColumnWithNameThrowOnMissing("Date ", header);
         String dateString = line[dateIndex];
         String[] siteInfo = findSiteInfo(header, line, siteInfos, parser);
         return !StringUtils.isBlank(dateString) && siteInfo != null;
@@ -71,7 +76,7 @@ public class StudyImporterForAkin extends BaseStudyImporter {
     }
 
     private String[] findSiteInfo(String[] header, String[] line, String[][] siteInfos, LabeledCSVParser parser) throws StudyImporterException {
-        int siteIndex = findIndexForColumnWithName("Site ", header);
+        int siteIndex = findIndexForColumnWithNameThrowOnMissing("Site ", header);
         String siteString = line[siteIndex];
         String[] siteInfo = null;
         for (int i = 0; i < siteInfos.length; i++) {
@@ -108,7 +113,7 @@ public class StudyImporterForAkin extends BaseStudyImporter {
     }
 
     private void addPrey(LabeledCSVParser parser, String[] header, String[] line, Specimen specimen) throws StudyImporterException, NodeFactoryException {
-        int firstPreyIndex = findIndexForColumnWithName("Detritus", header);
+        int firstPreyIndex = findIndexForColumnWithNameThrowOnMissing("Detritus", header);
         for (int i = firstPreyIndex; i < line.length; i++) {
             String preyVolumeString = line[i];
             String preySpeciesName = header[i];
@@ -117,6 +122,7 @@ public class StudyImporterForAkin extends BaseStudyImporter {
                     double volume = Double.parseDouble(preyVolumeString);
                     if (volume > 0) {
                         Specimen prey = nodeFactory.createSpecimen();
+                        prey.setVolumeInMilliLiter(volume);
                         prey.classifyAs(nodeFactory.getOrCreateSpecies(null, preySpeciesName));
                         specimen.ate(prey);
                     }
@@ -129,36 +135,82 @@ public class StudyImporterForAkin extends BaseStudyImporter {
 
     private Specimen addSpecimen(Study study, LabeledCSVParser parser, String[] header, String[] line) throws StudyImporterException, NodeFactoryException {
         Specimen specimen = null;
-        int speciesIndex = findIndexForColumnWithName("Fish Species", header);
+        int speciesIndex = findIndexForColumnWithNameThrowOnMissing("Fish Species", header);
         String speciesName = line[speciesIndex];
         if (speciesName != null && speciesName.length() > 0) {
             Taxon species = nodeFactory.getOrCreateSpecies(null, speciesName);
             specimen = nodeFactory.createSpecimen();
             specimen.classifyAs(species);
-            int lengthIndex = findIndexForColumnWithName("SL(mm)", header);
-            String lengthInMm = line[lengthIndex];
-            if (!StringUtils.isBlank(lengthInMm)) {
-                try {
-                    specimen.setLengthInMm(Double.parseDouble(lengthInMm));
-                } catch (NumberFormatException ex) {
-                    LOG.warn("not setting specimen length, because [" + lengthInMm + "] on line [" + parser.getLastLineNumber() + "] is not a number.");
-                }
-            }
-            study.collected(specimen);
+            addSpecimenLength(parser, header, line, specimen);
+            addStomachVolume(parser, header, line, specimen);
+            addCollectionDate(study, parser, header, line, specimen);
         }
         return specimen;
     }
 
-    private int findIndexForColumnWithName(String name, String[] header) throws StudyImporterException {
+    private void addCollectionDate(Study study, LabeledCSVParser parser, String[] header, String[] line, Specimen specimen) throws StudyImporterException {
+        Relationship collected = study.collected(specimen);
+        int dateIndex = findIndexForColumnWithNameThrowOnMissing("Date", header);
+        String dateString = line[dateIndex];
+        if (!StringUtils.isBlank(dateString)) {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("MM.dd.yy");
+            try {
+                Date date = dateFormat.parse(dateString);
+                Transaction tx = study.getUnderlyingNode().getGraphDatabase().beginTx();
+                try {
+                    collected.setProperty(Specimen.DATE_IN_UNIX_EPOCH, date.getTime());
+                    tx.success();
+                } finally {
+                    tx.finish();
+                }
+            } catch (ParseException e) {
+                LOG.warn("not setting collection date, because [" + dateString + "] on line [" + parser.getLastLineNumber() + "] could not be read as date.");
+            }
+        }
+    }
+
+    private void addSpecimenLength(LabeledCSVParser parser, String[] header, String[] line, Specimen specimen) throws StudyImporterException {
+        int lengthIndex = findIndexForColumnWithNameThrowOnMissing("SL(mm)", header);
+        String lengthInMm = line[lengthIndex];
+        if (!StringUtils.isBlank(lengthInMm)) {
+            try {
+                specimen.setLengthInMm(Double.parseDouble(lengthInMm));
+            } catch (NumberFormatException ex) {
+                LOG.warn("not setting specimen length, because [" + lengthInMm + "] on line [" + parser.getLastLineNumber() + "] is not a number.");
+            }
+        }
+    }
+
+    private void addStomachVolume(LabeledCSVParser parser, String[] header, String[] line, Specimen specimen) throws StudyImporterException {
+        int stomachVolumeMilliLiterIndex = findIndexForColumnWithName("Stomach volume", header);
+        if (stomachVolumeMilliLiterIndex == -1) {
+            stomachVolumeMilliLiterIndex = findIndexForColumnWithNameThrowOnMissing("volume of stomach", header);
+        }
+        String stomachVolumeString = line[stomachVolumeMilliLiterIndex];
+        if (!StringUtils.isBlank(stomachVolumeString)) {
+            try {
+                specimen.setStomachVolumeInMilliLiter(Double.parseDouble(stomachVolumeString));
+            } catch (NumberFormatException ex) {
+                LOG.warn("not setting specimen stomach volume, because [" + stomachVolumeString + "] on line [" + parser.getLastLineNumber() + "] is not a number.");
+            }
+        }
+    }
+
+    private int findIndexForColumnWithNameThrowOnMissing(String name, String[] header) throws StudyImporterException {
+        int index = findIndexForColumnWithName(name, header);
+        if (index == -1) {
+            throw new StudyImporterException("failed to find column with name [" + name + "]");
+        }
+        return index;
+    }
+
+    private int findIndexForColumnWithName(String name, String[] header) {
         int index = -1;
         for (int i = 0; i < header.length; i++) {
             if (header[i].trim().equals(name.trim())) {
                 index = i;
                 break;
             }
-        }
-        if (index == -1) {
-            throw new StudyImporterException("failed to find column with name [" + name + "]");
         }
         return index;
     }

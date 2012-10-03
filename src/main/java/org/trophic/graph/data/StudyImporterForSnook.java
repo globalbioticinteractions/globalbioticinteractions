@@ -47,14 +47,10 @@ public class StudyImporterForSnook extends BaseStudyImporter {
                 if (StringUtils.isBlank(longitude)) {
                     LOG.warn("blank value for longitude for line:" + locationParser.getLastLineNumber());
                 }
-
                 Location location = nodeFactory.getOrCreateLocation(Double.parseDouble(latitude), Double.parseDouble(longitude), 0.0);
                 locationMap.put(locationCode, location);
             }
-
-
             parsePredatorPreyInteraction(study, locationMap);
-
         } catch (IOException e) {
             throw new StudyImporterException("failed to read resource", e);
         } catch (NodeFactoryException e) {

@@ -1,4 +1,4 @@
-package org.trophic.graph.data;
+package org.trophic.graph.export;
 
 import org.trophic.graph.domain.Study;
 

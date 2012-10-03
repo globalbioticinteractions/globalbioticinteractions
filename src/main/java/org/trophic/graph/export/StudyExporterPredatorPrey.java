@@ -3,7 +3,6 @@ package org.trophic.graph.export;
 import org.neo4j.cypher.javacompat.ExecutionEngine;
 import org.neo4j.cypher.javacompat.ExecutionResult;
 import org.neo4j.graphdb.GraphDatabaseService;
-import org.trophic.graph.data.StudyExporter;
 import org.trophic.graph.domain.Study;
 
 import java.io.IOException;
