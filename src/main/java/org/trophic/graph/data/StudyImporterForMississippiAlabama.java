@@ -34,7 +34,7 @@ public class StudyImporterForMississippiAlabama extends BaseStudyImporter {
         put(LENGTH_RANGE_IN_MM, "sizeclass");
     }};
 
-    public static final String MISSISSIPPI_ALABAMA_DATA_SOURCE = "mississippiAlabamaFishDiet.csv.gz";
+    public static final String MISSISSIPPI_ALABAMA_DATA_SOURCE = "simons/mississippiAlabamaFishDiet.csv.gz";
 
     public StudyImporterForMississippiAlabama(ParserFactory parserFactory, NodeFactory nodeFactory) {
         super(parserFactory, nodeFactory);

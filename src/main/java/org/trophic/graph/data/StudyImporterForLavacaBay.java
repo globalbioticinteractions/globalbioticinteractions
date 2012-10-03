@@ -42,9 +42,9 @@ public class StudyImporterForLavacaBay extends BaseStudyImporter {
         }
     };
 
-    protected static final String LAVACA_BAY_DATA_SOURCE = "lavacaBayTrophicData.csv.gz";
-    protected static final String LAVACA_BAY_LOCATIONS = "lavacaBayLocations.csv";
-    protected static final String LAVACA_BAY_ENVIRONMENTAL = "lavacaBayEnvironmental.csv";
+    protected static final String LAVACA_BAY_DATA_SOURCE = "wrast/lavacaBayTrophicData.csv.gz";
+    protected static final String LAVACA_BAY_LOCATIONS = "wrast/lavacaBayLocations.csv";
+    protected static final String LAVACA_BAY_ENVIRONMENTAL = "wrast/lavacaBayEnvironmental.csv";
 
     private Map<String, LatLng> locationMap;
     private Map<String, Double> depthMap;

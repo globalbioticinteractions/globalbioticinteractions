@@ -27,11 +27,11 @@ public class StudyImporterForAkin extends BaseStudyImporter {
 
     @Override
     public Study importStudy() throws StudyImporterException {
-        importStudy("Senol akin (mad island) data edited-sheet1-WINTER.csv.gz");
-        importStudy("Senol akin (mad island) data edited-sheet2-SUMMER.csv.gz");
-        importStudy("Senol akin (mad island) data edited-sheet3-winter2.csv.gz");
-        importStudy("Senol akin (mad island) data edited-sheet4-summer2.csv.gz");
-        return importStudy("Senol akin (mad island) data edited-sheet5-winter3.csv.gz");
+        importStudy("akin/Senol akin (mad island) data edited-sheet1-WINTER.csv.gz");
+        importStudy("akin/Senol akin (mad island) data edited-sheet2-SUMMER.csv.gz");
+        importStudy("akin/Senol akin (mad island) data edited-sheet3-winter2.csv.gz");
+        importStudy("akin/Senol akin (mad island) data edited-sheet4-summer2.csv.gz");
+        return importStudy("akin/Senol akin (mad island) data edited-sheet5-winter3.csv.gz");
     }
 
     private Study importAkinStudyFile(String[][] siteInfos, String studyResource, Study study) throws IOException, StudyImporterException, NodeFactoryException {
@@ -71,7 +71,7 @@ public class StudyImporterForAkin extends BaseStudyImporter {
     }
 
     private String[][] loadSampleSiteLocations() throws IOException {
-        CSVParser csvParser = new CSVParser(getClass().getResourceAsStream("Akin2002Locations.csv"));
+        CSVParser csvParser = new CSVParser(getClass().getResourceAsStream("akin/Akin2002Locations.csv"));
         return csvParser.getAllValues();
     }
 

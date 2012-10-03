@@ -27,7 +27,7 @@ public class StudyImporterForSnook extends BaseStudyImporter {
         Study study = nodeFactory.createStudy("Blewett2000CharlotteHarborFL");
 
         try {
-            LabeledCSVParser locationParser = parserFactory.createParser("SnookDietData2000_02_Charlotte_Harbor_FL_Blewett_date_and_abiotic.csv.gz");
+            LabeledCSVParser locationParser = parserFactory.createParser("blewett/SnookDietData2000_02_Charlotte_Harbor_FL_Blewett_date_and_abiotic.csv.gz");
             Map<String, Location> locationMap = new HashMap<String, Location>();
             String[] header = locationParser.getLabels();
             String[] line = null;
@@ -62,7 +62,7 @@ public class StudyImporterForSnook extends BaseStudyImporter {
     }
 
     private void parsePredatorPreyInteraction(Study study, Map<String, Location> locationMap) throws IOException, NodeFactoryException {
-        LabeledCSVParser parser = parserFactory.createParser("SnookDietData2000_02_Charlotte_Harbor_FL_Blewett_numeric_abundance.csv.gz");
+        LabeledCSVParser parser = parserFactory.createParser("blewett/SnookDietData2000_02_Charlotte_Harbor_FL_Blewett_numeric_abundance.csv.gz");
         String[] header = parser.getLabels();
 
         String[] line = null;
