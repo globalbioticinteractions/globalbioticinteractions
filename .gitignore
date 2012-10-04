@@ -8,7 +8,6 @@ test-output/
 *.iws
 .idea/
 /data/
-
+.DS_Store
 ripple.log
-
 blueprints.log
