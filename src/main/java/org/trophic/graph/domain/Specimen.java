@@ -69,10 +69,10 @@ public class Specimen extends NodeBacked {
         createRelationshipTo(taxon, RelTypes.CLASSIFIED_AS);
     }
 
-    public void setLengthInMm(Double aDouble) {
+    public void setLengthInMm(Double lengthInMm) {
         Transaction transaction = getUnderlyingNode().getGraphDatabase().beginTx();
         try {
-            getUnderlyingNode().setProperty(LENGTH_IN_MM, aDouble);
+            getUnderlyingNode().setProperty(LENGTH_IN_MM, lengthInMm);
             transaction.success();
         } finally {
             transaction.finish();
