@@ -13,6 +13,8 @@ public class Taxon extends NodeBacked {
     public static final String GENUS = "genus";
     public static final String FAMILY = "family";
     public static final String EXTERNAL_ID = "externalId";
+    public static final String IMAGE_URL = "imageURL";
+    public static final String THUMBNAIL_URL = "thumbnailURL";
 
     public Taxon(Node node) {
         super(node);
@@ -60,5 +62,15 @@ public class Taxon extends NodeBacked {
         return new Taxon(isA());
     }
 
+
+    public String getThumbnailURL() {
+        return getUnderlyingNode().hasProperty(THUMBNAIL_URL) ?
+                (String) getUnderlyingNode().getProperty(THUMBNAIL_URL) : null;
+    }
+
+    public String getImageURL() {
+        return getUnderlyingNode().hasProperty(IMAGE_URL) ?
+                (String) getUnderlyingNode().getProperty(IMAGE_URL) : null;
+    }
 
 }

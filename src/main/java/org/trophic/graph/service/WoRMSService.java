@@ -11,6 +11,7 @@ import java.io.UnsupportedEncodingException;
 public class WoRMSService extends BaseService implements LSIDLookupService {
     public static final String RESPONSE_PREFIX = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><SOAP-ENV:Envelope SOAP-ENV:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\" xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:SOAP-ENC=\"http://schemas.xmlsoap.org/soap/encoding/\"><SOAP-ENV:Body><ns1:getAphiaIDResponse xmlns:ns1=\"http://tempuri.org/\"><return xsi:type=\"xsd:int\">";
     public static final String RESPONSE_SUFFIX = "</return></ns1:getAphiaIDResponse></SOAP-ENV:Body></SOAP-ENV:Envelope>";
+    public static final String URN_LSID_PREFIX = "urn:lsid:marinespecies.org:taxname:";
 
     public String lookupLSIDByTaxonName(String taxonName) throws LSIDLookupServiceException {
         HttpPost post = new HttpPost("http://www.marinespecies.org/aphia.php?p=soap");
@@ -50,7 +51,7 @@ public class WoRMSService extends BaseService implements LSIDLookupService {
             trimmed = trimmed.replace(RESPONSE_SUFFIX, "");
             try {
                 Long aphiaId = Long.parseLong(trimmed);
-                lsid = "urn:lsid:marinespecies.org:taxname:" + aphiaId;
+                lsid = URN_LSID_PREFIX + aphiaId;
             } catch (NumberFormatException ex) {
                 //ignore
             }

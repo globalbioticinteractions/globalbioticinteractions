@@ -15,6 +15,8 @@ import java.io.IOException;
 
 public class OboImporter extends BaseImporter {
 
+    public static final String URN_LSID_PREFIX = "NCBITaxon:";
+
     private static final Log LOG = LogFactory.getLog(OboImporter.class);
     public static final int SAMPLE_SIZE = 10000;
     private int counter;

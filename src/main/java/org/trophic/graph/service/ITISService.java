@@ -10,7 +10,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 public class ITISService extends BaseService implements LSIDLookupService {
-
+    public static final String URN_LSID_PREFIX = "urn:lsid:itis.gov:itis_tsn:";
 
     @Override
     public String lookupLSIDByTaxonName(String taxonName) throws LSIDLookupServiceException {
@@ -38,7 +38,7 @@ public class ITISService extends BaseService implements LSIDLookupService {
             if (split.length > 1) {
                 String[] anotherSplit = split[1].split("</ax21:tsn>");
                 if (split.length > 1) {
-                    lsid = "urn:lsid:itis.gov:itis_tsn:" + anotherSplit[0].trim();
+                    lsid = URN_LSID_PREFIX + anotherSplit[0].trim();
                 }
             }
         }

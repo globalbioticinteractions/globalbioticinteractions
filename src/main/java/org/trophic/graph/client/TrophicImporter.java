@@ -8,7 +8,8 @@ import org.trophic.graph.domain.Study;
 import org.trophic.graph.export.StudyExporter;
 import org.trophic.graph.export.StudyExporterImpl;
 import org.trophic.graph.export.StudyExporterPredatorPrey;
-import org.trophic.graph.service.TaxonEnricher;
+import org.trophic.graph.service.ExternalIdTaxonEnricher;
+import org.trophic.graph.service.TaxonImageEnricher;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -29,18 +30,28 @@ public class TrophicImporter {
         List<Study> studies = importStudies(graphService);
         exportData(studies);
 
+        matchAgainstExternalTaxonomies(graphService);
+
         try {
-            StopWatch stopwatch = new StopWatch();
-            stopwatch.start();
-            System.out.println("Matching taxons against WoRMS starting...");
-            new TaxonEnricher(graphService).enrichTaxons();
-            stopwatch.stop();
-            System.out.println("Matching taxons against WoRMS complete. Total duration: [" + stopwatch.getTime()/(60.0*1000.0) + "] minutes");
+            new TaxonImageEnricher(graphService).enrichTaxons();
         } catch (IOException e) {
-            throw new StudyImporterException("enriching unmatched nodes failed", e);
+            throw new StudyImporterException("failed to add image url information", e);
         }
 
         graphService.shutdown();
+    }
+
+    private void matchAgainstExternalTaxonomies(GraphDatabaseService graphService) throws StudyImporterException {
+        try {
+            StopWatch stopwatch = new StopWatch();
+            stopwatch.start();
+            System.out.println("Matching taxons against external taxonomies starting...");
+            new ExternalIdTaxonEnricher(graphService).enrichTaxons();
+            stopwatch.stop();
+            System.out.println("Matching taxons against external complete. Total duration: [" + stopwatch.getTime()/(60.0*1000.0) + "] minutes");
+        } catch (IOException e) {
+            throw new StudyImporterException("enriching unmatched nodes failed", e);
+        }
     }
 
     private void importTaxonony(GraphDatabaseService graphService) throws StudyImporterException {

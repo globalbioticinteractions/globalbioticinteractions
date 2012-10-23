@@ -9,7 +9,6 @@ import org.trophic.graph.data.NodeFactoryException;
 import org.trophic.graph.domain.Specimen;
 import org.trophic.graph.domain.Study;
 import org.trophic.graph.domain.Taxon;
-import org.trophic.graph.service.TaxonEnricher;
 
 import java.io.IOException;
 
@@ -17,7 +16,7 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.matchers.JUnitMatchers.containsString;
 
-public class TaxonEnricherTest extends GraphDBTestCase {
+public class ExternalIdTaxonEnricherTest extends GraphDBTestCase {
 
     private TaxonEnricher taxonEnricher;
 
@@ -31,7 +30,7 @@ public class TaxonEnricherTest extends GraphDBTestCase {
 
     @Before
     public void init() {
-        taxonEnricher = new TaxonEnricher(nodeFactory.getGraphDb());
+        taxonEnricher = new ExternalIdTaxonEnricher(nodeFactory.getGraphDb());
     }
 
     @Test
