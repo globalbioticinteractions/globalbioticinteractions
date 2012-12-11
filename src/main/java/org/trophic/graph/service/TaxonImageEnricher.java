@@ -83,6 +83,9 @@ public class TaxonImageEnricher extends BaseTaxonEnricher {
             if (taxonImage.getThumbnailURL() != null) {
                 node.setProperty(Taxon.THUMBNAIL_URL, taxonImage.getThumbnailURL());
             }
+            if (taxonImage.getEOLPageId() != null) {
+                node.setProperty(Taxon.EOL_PAGE_ID, taxonImage.getEOLPageId());
+            }
             transaction.success();
         } finally {
             transaction.finish();

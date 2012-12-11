@@ -14,7 +14,6 @@ import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
-import static org.junit.matchers.JUnitMatchers.containsString;
 
 public class TaxonImageEnricherTest extends GraphDBTestCase {
 
@@ -67,6 +66,7 @@ public class TaxonImageEnricherTest extends GraphDBTestCase {
         Taxon taxonOfType = nodeFactory.findTaxonOfType(speciesName, Taxon.SPECIES);
         assertThat("failed to match [" + speciesName + "]", taxonOfType.getImageURL(), is(not(nullValue())));
         assertThat("failed to match [" + speciesName + "]", taxonOfType.getThumbnailURL(), is(not(nullValue())));
+        assertThat("failed to match [" + speciesName + "]", taxonOfType.getEOLPageId(), is(not(nullValue())));
     }
 
 

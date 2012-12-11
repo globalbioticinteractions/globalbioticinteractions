@@ -15,6 +15,7 @@ public class Taxon extends NodeBacked {
     public static final String EXTERNAL_ID = "externalId";
     public static final String IMAGE_URL = "imageURL";
     public static final String THUMBNAIL_URL = "thumbnailURL";
+    public static final String EOL_PAGE_ID = "eolPageId";
 
     public Taxon(Node node) {
         super(node);
@@ -71,6 +72,11 @@ public class Taxon extends NodeBacked {
     public String getImageURL() {
         return getUnderlyingNode().hasProperty(IMAGE_URL) ?
                 (String) getUnderlyingNode().getProperty(IMAGE_URL) : null;
+    }
+
+    public String getEOLPageId() {
+        return getUnderlyingNode().hasProperty(EOL_PAGE_ID) ?
+                (String) getUnderlyingNode().getProperty(EOL_PAGE_ID) : null;
     }
 
 }

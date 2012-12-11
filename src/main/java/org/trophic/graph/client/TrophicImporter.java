@@ -85,6 +85,7 @@ public class TrophicImporter {
         try {
             export(importedStudies, "./export.csv", new StudyExporterImpl());
             export(importedStudies, "./exportPredatorTaxonPreyTaxon.csv", new StudyExporterPredatorPrey(GraphService.getGraphService()));
+            export(importedStudies, "./exportPredatorTaxonPreyTaxonInteractionTypeEOL.csv", new StudyExporterPredatorPrey(GraphService.getGraphService()));
         } catch (IOException e) {
             throw new StudyImporterException("failed to export result to csv file", e);
         }

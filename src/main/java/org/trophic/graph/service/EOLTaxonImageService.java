@@ -59,6 +59,7 @@ public class EOLTaxonImageService extends BaseService {
             if (200 == response.getStatusLine().getStatusCode()) {
                 taxonImage = new TaxonImage();
                 ObjectMapper mapper = new ObjectMapper();
+                taxonImage.setEOLPageId(eolPageId);
                 JsonNode array = mapper.readTree(responseString);
                 JsonNode eolMediaURL = array.findValue("eolMediaURL");
                 if (eolMediaURL != null) {

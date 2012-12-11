@@ -1,11 +1,11 @@
 package org.trophic.graph.domain;
 
-import java.net.URI;
-
 public class TaxonImage {
     private String thumbnailURL;
     private String imageURL;
     private String description;
+
+    private String EOLPageId;
 
     public void setDescription(String description) {
         this.description = description;
@@ -30,4 +30,13 @@ public class TaxonImage {
     public String getImageURL() {
         return this.imageURL;
     }
+
+    public void setEOLPageId(String EOLPageId) {
+        this.EOLPageId = EOLPageId;
+    }
+
+    public String getEOLPageId() {
+        return EOLPageId;
+    }
+
 }
