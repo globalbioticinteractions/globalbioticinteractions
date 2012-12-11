@@ -60,7 +60,7 @@ public class StudyExporterPredatorPreyEOLTest extends GraphDBTestCase {
         assertThat(writer.toString(), is(""));
     }
 
-@Test
+    @Test
     public void exportNoPredatorExternalIdNoPreyExternalId() throws NodeFactoryException, IOException {
         Study study = createStudy(null, null);
         StringWriter writer = new StringWriter();
@@ -82,8 +82,15 @@ public class StudyExporterPredatorPreyEOLTest extends GraphDBTestCase {
         preySpecimen.classifyAs(canisLupus);
         predatorSpecimen.ate(preySpecimen);
         study.collected(predatorSpecimen);
+
+        Specimen predatorSpecimen2 = nodeFactory.createSpecimen();
+        Taxon homoSapiens2 = nodeFactory.createTaxonOfType("Homo sapiens2", Taxon.SPECIES, "homoSapiensId2");
+        predatorSpecimen2.classifyAs(homoSapiens2);
+        addCanisLupus(predatorSpecimen2, "canisLupusId");
+        study.collected(predatorSpecimen2);
+
         StringWriter writer = new StringWriter();
         new StudyExporterPredatorPreyEOL(getGraphDb()).exportStudy(study, writer, true);
-        assertThat(writer.toString(), is("\"homoSapiensId\",\"canisLupusId2\",\"feeds on\"\n\"homoSapiensId\",\"canisLupusId\",\"feeds on\"\n"));
+        assertThat(writer.toString(), is("\"homoSapiensId\",\"canisLupusId2\",\"feeds on\"\n\"homoSapiensId2\",\"canisLupusId\",\"feeds on\"\n\"homoSapiensId\",\"canisLupusId\",\"feeds on\"\n"));
     }
 }
