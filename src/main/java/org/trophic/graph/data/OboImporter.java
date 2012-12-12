@@ -37,7 +37,7 @@ public class OboImporter extends BaseImporter {
         if (getCurrentTransaction() == null) {
             setCurrentTransaction(nodeFactory.getGraphDb().beginTx());
         }
-        nodeFactory.createTaxonNoTransaction(term.getName(), term.getRank(), term.getId());
+        nodeFactory.createTaxonNoTransaction(term.getName(), term.getId());
         count();
         if (getCounter() % SAMPLE_SIZE == 0) {
             getCurrentTransaction().success();

@@ -3,6 +3,7 @@ package org.trophic.graph.export;
 import org.junit.Test;
 import org.trophic.graph.data.GraphDBTestCase;
 import org.trophic.graph.data.NodeFactoryException;
+import org.trophic.graph.domain.RelTypes;
 import org.trophic.graph.domain.Specimen;
 import org.trophic.graph.domain.Study;
 import org.trophic.graph.domain.Taxon;
@@ -24,24 +25,24 @@ public class StudyExporterPredatorPreyEOLTest extends GraphDBTestCase {
         StringWriter writer = new StringWriter();
         new StudyExporterPredatorPreyEOL(getGraphDb()).exportStudy(study, writer, true);
 
-        assertThat(writer.toString(), is("\"sapiensId\",\"lupusId\",\"feeds on\"\n"));
+        assertThat(writer.toString(), is("\"sapiensId\",\"ATE\",\"lupusId\"\n"));
     }
 
-    private Study createStudy(String predatorExternalId, String preyExternalId) {
+    private Study createStudy(String predatorExternalId, String preyExternalId) throws NodeFactoryException {
         Study study = nodeFactory.createStudy("my study");
         Specimen predatorSpecimen = nodeFactory.createSpecimen();
-        Taxon homoSapiens = nodeFactory.createTaxonOfType("Homo sapiens", Taxon.SPECIES, predatorExternalId);
+        Taxon homoSapiens = nodeFactory.getOrCreateTaxon("Homo sapiens", predatorExternalId);
         predatorSpecimen.classifyAs(homoSapiens);
         addCanisLupus(predatorSpecimen, preyExternalId);
         study.collected(predatorSpecimen);
         return study;
     }
 
-    private void addCanisLupus(Specimen predatorSpecimen, String externalId) {
+    private void addCanisLupus(Specimen predatorSpecimen, String externalId) throws NodeFactoryException {
         Specimen preySpecimen = nodeFactory.createSpecimen();
-        Taxon canisLupus = nodeFactory.createTaxonOfType("Canis lupus", Taxon.SPECIES, externalId);
+        Taxon canisLupus = nodeFactory.getOrCreateTaxon("Canis lupus", externalId);
         preySpecimen.classifyAs(canisLupus);
-        predatorSpecimen.ate(preySpecimen);
+        predatorSpecimen.createRelationshipTo(preySpecimen, RelTypes.ATE);
     }
 
     @Test
@@ -73,24 +74,24 @@ public class StudyExporterPredatorPreyEOLTest extends GraphDBTestCase {
     public void exportOnePredatorTwoPrey() throws NodeFactoryException, IOException {
         Study study = nodeFactory.createStudy("my study");
         Specimen predatorSpecimen = nodeFactory.createSpecimen();
-        Taxon homoSapiens = nodeFactory.createTaxonOfType("Homo sapiens", Taxon.SPECIES, "homoSapiensId");
+        Taxon homoSapiens = nodeFactory.getOrCreateTaxon("Homo sapiens", "homoSapiensId");
         predatorSpecimen.classifyAs(homoSapiens);
         addCanisLupus(predatorSpecimen, "canisLupusId");
         addCanisLupus(predatorSpecimen, "canisLupusId");
         Specimen preySpecimen = nodeFactory.createSpecimen();
-        Taxon canisLupus = nodeFactory.createTaxonOfType("Canis lupus other", Taxon.SPECIES, "canisLupusId2");
+        Taxon canisLupus = nodeFactory.getOrCreateTaxon("Canis lupus other", "canisLupusId2");
         preySpecimen.classifyAs(canisLupus);
-        predatorSpecimen.ate(preySpecimen);
+        predatorSpecimen.createRelationshipTo(preySpecimen, RelTypes.ATE);
         study.collected(predatorSpecimen);
 
         Specimen predatorSpecimen2 = nodeFactory.createSpecimen();
-        Taxon homoSapiens2 = nodeFactory.createTaxonOfType("Homo sapiens2", Taxon.SPECIES, "homoSapiensId2");
+        Taxon homoSapiens2 = nodeFactory.getOrCreateTaxon("Homo sapiens2", "homoSapiensId2");
         predatorSpecimen2.classifyAs(homoSapiens2);
         addCanisLupus(predatorSpecimen2, "canisLupusId");
         study.collected(predatorSpecimen2);
 
         StringWriter writer = new StringWriter();
         new StudyExporterPredatorPreyEOL(getGraphDb()).exportStudy(study, writer, true);
-        assertThat(writer.toString(), is("\"homoSapiensId\",\"canisLupusId2\",\"feeds on\"\n\"homoSapiensId2\",\"canisLupusId\",\"feeds on\"\n\"homoSapiensId\",\"canisLupusId\",\"feeds on\"\n"));
+        assertThat(writer.toString(), is("\"homoSapiensId\",\"ATE\",\"canisLupusId2\"\n\"homoSapiensId2\",\"ATE\",\"canisLupusId\"\n\"homoSapiensId\",\"ATE\",\"canisLupusId\"\n"));
     }
 }

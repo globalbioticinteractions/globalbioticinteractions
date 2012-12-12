@@ -31,10 +31,10 @@ public class StudyImporterForAkinTest extends GraphDBTestCase {
         StudyImporter importer = new StudyImporterFactory(new ParserFactoryImpl(), nodeFactory).createImporterForStudy(StudyLibrary.Study.AKIN_MAD_ISLAND);
         importer.importStudy();
 
-        assertNotNull(nodeFactory.findTaxonOfType("Sciaenops ocellatus", Taxon.SPECIES));
-        assertNotNull(nodeFactory.findTaxonOfType("Paralichthys lethostigma", Taxon.SPECIES));
-        assertNotNull(nodeFactory.findTaxonOfType("Adinia xenica", Taxon.SPECIES));
-        assertNotNull(nodeFactory.findTaxonOfType("Citharichthys spilopterus", Taxon.SPECIES));
+        assertNotNull(nodeFactory.findTaxonOfType("Sciaenops ocellatus"));
+        assertNotNull(nodeFactory.findTaxonOfType("Paralichthys lethostigma"));
+        assertNotNull(nodeFactory.findTaxonOfType("Adinia xenica"));
+        assertNotNull(nodeFactory.findTaxonOfType("Citharichthys spilopterus"));
     }
 
 
@@ -45,7 +45,7 @@ public class StudyImporterForAkinTest extends GraphDBTestCase {
                 ",9,\"Leiostomus xanthurus\",\"03.07.98\",,6,26.7,0,,\"Seine\",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,\"EMPTY\",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,";
         StudyImporter importer = new StudyImporterFactory(new TestParserFactory(csvString), nodeFactory).createImporterForStudy(StudyLibrary.Study.AKIN_MAD_ISLAND);
         importer.importStudy();
-        Taxon taxon = nodeFactory.findTaxonOfType("Leiostomus xanthurus", Taxon.SPECIES);
+        Taxon taxon = nodeFactory.findTaxonOfType("Leiostomus xanthurus");
         assertNotNull(taxon);
 
     }
@@ -57,7 +57,7 @@ public class StudyImporterForAkinTest extends GraphDBTestCase {
                 ",1,\"Pogonias cromis\",\"03.07.98\",,1,226,3,,\"Gillnet\",,0.15,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,0.6,,,,,,0.45,,,,,,,,,,,,,,,,,,1.35,0.45,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,";
         StudyImporter importer = new StudyImporterFactory(new TestParserFactory(csvString), nodeFactory).createImporterForStudy(StudyLibrary.Study.AKIN_MAD_ISLAND);
         Study study = importer.importStudy();
-        Taxon taxon = nodeFactory.findTaxonOfType("Pogonias cromis", Taxon.SPECIES);
+        Taxon taxon = nodeFactory.findTaxonOfType("Pogonias cromis");
         assertNotNull(taxon);
 
         Iterable<Relationship> specimens = study.getSpecimens();

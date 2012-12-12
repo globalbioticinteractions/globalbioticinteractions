@@ -7,7 +7,8 @@ public class StudyLibrary {
         LACAVA_BAY,
         BLEWETT_CHARLOTTE_HARBOR_FL,
         AKIN_MAD_ISLAND,
-        BAREMORE_ANGEL_SHARK;
+        BAREMORE_ANGEL_SHARK,
+        BIO_INFO;
     }
 
 }

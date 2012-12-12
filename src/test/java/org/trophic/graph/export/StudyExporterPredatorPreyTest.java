@@ -27,19 +27,19 @@ public class StudyExporterPredatorPreyTest extends GraphDBTestCase {
         assertThat(writer.toString(), is("\"Homo sapiens\",\"Canis lupus\"\n"));
     }
 
-    private Study createStudy(String predatorExternalId, String preyExternalId) {
+    private Study createStudy(String predatorExternalId, String preyExternalId) throws NodeFactoryException {
         Study study = nodeFactory.createStudy("my study");
         Specimen predatorSpecimen = nodeFactory.createSpecimen();
-        Taxon homoSapiens = nodeFactory.createTaxonOfType("Homo sapiens", Taxon.SPECIES, predatorExternalId);
+        Taxon homoSapiens = nodeFactory.getOrCreateTaxon("Homo sapiens", predatorExternalId);
         predatorSpecimen.classifyAs(homoSapiens);
         addCanisLupus(predatorSpecimen, preyExternalId);
         study.collected(predatorSpecimen);
         return study;
     }
 
-    private void addCanisLupus(Specimen predatorSpecimen, String externalId) {
+    private void addCanisLupus(Specimen predatorSpecimen, String externalId) throws NodeFactoryException {
         Specimen preySpecimen = nodeFactory.createSpecimen();
-        Taxon canisLupus = nodeFactory.createTaxonOfType("Canis lupus", Taxon.SPECIES, externalId);
+        Taxon canisLupus = nodeFactory.getOrCreateTaxon("Canis lupus", externalId);
         preySpecimen.classifyAs(canisLupus);
         predatorSpecimen.ate(preySpecimen);
     }
@@ -73,7 +73,7 @@ public class StudyExporterPredatorPreyTest extends GraphDBTestCase {
     public void exportOnePredatorTwoPrey() throws NodeFactoryException, IOException {
         Study study = nodeFactory.createStudy("my study");
         Specimen predatorSpecimen = nodeFactory.createSpecimen();
-        Taxon homoSapiens = nodeFactory.createTaxonOfType("Homo sapiens", Taxon.SPECIES, "some external id");
+        Taxon homoSapiens = nodeFactory.getOrCreateTaxon("Homo sapiens", "some external id");
         predatorSpecimen.classifyAs(homoSapiens);
         addCanisLupus(predatorSpecimen, "some external id");
         addCanisLupus(predatorSpecimen, "some external id");

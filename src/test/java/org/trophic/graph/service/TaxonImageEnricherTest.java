@@ -36,26 +36,26 @@ public class TaxonImageEnricherTest extends GraphDBTestCase {
     }
 
     private void enrichPreyTaxon(String preyName, String externalId) throws IOException, NodeFactoryException {
-        Taxon taxon = nodeFactory.createTaxonOfType("blabla", Taxon.SPECIES);
+        Taxon taxon = nodeFactory.getOrCreateTaxon("blabla");
         Study study = nodeFactory.createStudy("bla");
         Specimen predator = nodeFactory.createSpecimen();
         predator.classifyAs(taxon);
 
         Specimen prey = nodeFactory.createSpecimen();
-        prey.classifyAs(nodeFactory.createTaxonOfType(preyName, Taxon.SPECIES, externalId));
+        prey.classifyAs(nodeFactory.getOrCreateTaxon(preyName, externalId));
         predator.ate(prey);
 
         study.collected(predator);
 
         taxonEnricher.enrichTaxons();
 
-        Taxon taxonOfType = nodeFactory.findTaxonOfType(preyName, Taxon.SPECIES);
+        Taxon taxonOfType = nodeFactory.findTaxonOfType(preyName);
         assertThat("failed to match [" + preyName + "]", taxonOfType.getImageURL(), is(not(nullValue())));
         assertThat("failed to match [" + preyName + "]", taxonOfType.getThumbnailURL(), is(not(nullValue())));
     }
 
     private void matchTaxon(String speciesName, String externalId) throws IOException, NodeFactoryException {
-        Taxon taxon = nodeFactory.createTaxonOfType(speciesName, Taxon.SPECIES, externalId);
+        Taxon taxon = nodeFactory.getOrCreateTaxon(speciesName, externalId);
         Study study = nodeFactory.createStudy("bla");
         Specimen specimen = nodeFactory.createSpecimen();
         specimen.classifyAs(taxon);
@@ -63,10 +63,9 @@ public class TaxonImageEnricherTest extends GraphDBTestCase {
 
         taxonEnricher.enrichTaxons();
 
-        Taxon taxonOfType = nodeFactory.findTaxonOfType(speciesName, Taxon.SPECIES);
+        Taxon taxonOfType = nodeFactory.findTaxonOfType(speciesName);
         assertThat("failed to match [" + speciesName + "]", taxonOfType.getImageURL(), is(not(nullValue())));
         assertThat("failed to match [" + speciesName + "]", taxonOfType.getThumbnailURL(), is(not(nullValue())));
-        assertThat("failed to match [" + speciesName + "]", taxonOfType.getEOLPageId(), is(not(nullValue())));
     }
 
 

@@ -34,9 +34,9 @@ public class StudyImporterForSnookTest extends GraphDBTestCase {
         assertThat(count, is(694));
 
 
-        assertNotNull(nodeFactory.findTaxonOfType("Centropomus undecimalis", Taxon.SPECIES));
-        assertNotNull(nodeFactory.findTaxonOfType("Cal sapidus", Taxon.SPECIES));
-        assertNotNull(nodeFactory.findTaxonOfType("Ort chrysoptera", Taxon.SPECIES));
+        assertNotNull(nodeFactory.findTaxonOfType("Centropomus undecimalis"));
+        assertNotNull(nodeFactory.findTaxonOfType("Cal sapidus"));
+        assertNotNull(nodeFactory.findTaxonOfType("Ort chrysoptera"));
     }
 
     @Test

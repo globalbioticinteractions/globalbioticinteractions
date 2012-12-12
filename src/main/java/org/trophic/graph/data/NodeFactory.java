@@ -87,9 +87,9 @@ public class NodeFactory {
     }
 
     public Taxon getOrCreateSpecies(Taxon genus, String speciesName) throws NodeFactoryException {
-        Taxon species = findTaxonOfType(speciesName, Taxon.SPECIES);
+        Taxon species = findTaxonOfType(speciesName);
         if (species == null) {
-            species = createTaxonOfType(speciesName, Taxon.SPECIES);
+            species = getOrCreateTaxon(speciesName);
         }
         if (null != genus) {
             species.createRelationshipTo(genus, IS_A);
@@ -99,9 +99,9 @@ public class NodeFactory {
 
 
     public Taxon getOrCreateGenus(String genusName) throws NodeFactoryException {
-        Taxon genus = findTaxonOfType(genusName, Taxon.GENUS);
+        Taxon genus = findTaxonOfType(genusName);
         if (genus == null) {
-            genus = createTaxonOfType(genusName, Taxon.GENUS);
+            genus = getOrCreateTaxon(genusName);
 
         }
         return genus;
@@ -110,9 +110,9 @@ public class NodeFactory {
     public Taxon getOrCreateFamily(final String familyName) throws NodeFactoryException {
         Taxon family = null;
         if (familyName != null) {
-            Taxon foundFamily = findTaxonOfType(familyName, Taxon.FAMILY);
+            Taxon foundFamily = findTaxonOfType(familyName);
             if (foundFamily == null) {
-                family = createTaxonOfType(familyName, Taxon.FAMILY);
+                family = getOrCreateTaxon(familyName);
             } else {
                 family = foundFamily;
             }
@@ -122,13 +122,24 @@ public class NodeFactory {
 
     private void addTaxonToIndex(Taxon taxon, Node node) {
         taxons.add(node, Taxon.NAME, taxon.getName());
-        taxons.add(node, Taxon.TYPE, taxon.getType());
     }
 
-    public Taxon findTaxonOfType(String taxonName, String type) throws NodeFactoryException {
+    public Taxon findTaxon(String taxonName) throws NodeFactoryException {
+        return findTaxonOfType(taxonName);
+    }
+
+    public Taxon findTaxonOfType(String taxonName) throws NodeFactoryException {
         String cleanedTaxonName = TAXON_NAME_NORMALIZER.normalize(taxonName);
-        IndexHits<Node> matchingTaxons = taxons.query("name:\"" + cleanedTaxonName + "\" AND type:" + type);
-        Node matchingTaxon = matchingTaxons.getSingle();
+        String query = "name:\"" + cleanedTaxonName + "\"";
+        IndexHits<Node> matchingTaxons = taxons.query(query);
+        Node matchingTaxon = null;
+        if (matchingTaxons.hasNext()) {
+            matchingTaxon = matchingTaxons.next();
+        }
+
+        if (matchingTaxons.hasNext()) {
+            LOG.error("found two or more instances of taxon with name [" + taxonName + "]");
+        }
         matchingTaxons.close();
         return matchingTaxon == null ? null : new Taxon(matchingTaxon);
     }
@@ -141,7 +152,7 @@ public class NodeFactory {
             Double foundLongitude = (Double) node.getProperty(Location.LONGITUDE);
 
             boolean altitudeMatches = false;
-            if (node.hasProperty(Location.ALTITUDE) ) {
+            if (node.hasProperty(Location.ALTITUDE)) {
                 Double foundAltitude = (Double) node.getProperty(Location.ALTITUDE);
                 altitudeMatches = altitude != null && altitude.equals(foundAltitude);
             } else if (null == altitude) {
@@ -250,26 +261,28 @@ public class NodeFactory {
         return location;
     }
 
-    public Taxon createTaxonOfType(String name, String rank) {
-        return createTaxonOfType(name, rank, null);
+    public Taxon getOrCreateTaxon(String name) throws NodeFactoryException {
+        return getOrCreateTaxon(name, null);
     }
 
-    public Taxon createTaxonOfType(String name, String type, String externalId) {
-        Taxon taxon;
-        Transaction transaction = graphDb.beginTx();
-        try {
-            taxon = createTaxonNoTransaction(name, type, externalId);
-            transaction.success();
-        } finally {
-            transaction.finish();
+    public Taxon getOrCreateTaxon(String name, String externalId) throws NodeFactoryException {
+        Taxon taxon = findTaxon(name);
+        if (taxon == null) {
+            Transaction transaction = graphDb.beginTx();
+            try {
+                taxon = createTaxonNoTransaction(name, externalId);
+                transaction.success();
+            } finally {
+                transaction.finish();
+            }
         }
         return taxon;
     }
 
-    public Taxon createTaxonNoTransaction(String name, String type, String externalId) {
+    public Taxon createTaxonNoTransaction(String name, String externalId) {
         Taxon taxon;
         Node node = graphDb.createNode();
-        taxon = new Taxon(node, TAXON_NAME_NORMALIZER.normalize(name), type);
+        taxon = new Taxon(node, TAXON_NAME_NORMALIZER.normalize(name));
         if (null != externalId) {
             taxon.setExternalId(externalId);
         }

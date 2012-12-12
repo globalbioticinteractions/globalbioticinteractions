@@ -13,6 +13,7 @@ import org.trophic.graph.domain.Taxon;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
@@ -36,37 +37,60 @@ public class ExternalIdTaxonEnricher extends BaseTaxonEnricher {
                 + "RETURN distinct taxon");
         Iterator<Node> taxon = result.columnAs("taxon");
         Iterable<Node> objectIterable = IteratorUtil.asIterable(taxon);
+        HashMap<Class, Integer> errorCounts = new HashMap<Class, Integer>();
         List<LSIDLookupService> services = new ArrayList<LSIDLookupService>();
         initServices(services);
         for (Node taxonNode : objectIterable) {
-            for (LSIDLookupService service : services) {
-                String taxonName = (String) taxonNode.getProperty(Taxon.NAME);
-                StopWatch stopwatch = new StopWatch();
-                stopwatch.start();
-                try {
-                    String lsid = service.lookupLSIDByTaxonName(taxonName);
-                    stopwatch.stop();
-                    String responseTime = "(took " + stopwatch.getTime() + "ms)";
-                    String msg = "for [" + taxonName + "] with LSID [" + lsid + "] in [" + service.getClass().getSimpleName() + "] " + responseTime;
-                    if (lsid == null) {
-                        LOG.info("no match found " + msg);
-                    } else {
-                        LOG.info("found match " + msg);
-                        enrichNode(taxonNode, lsid);
+            try {
+                for (LSIDLookupService service : services) {
+                    if (enrichedTaxonWithService(errorCounts, taxonNode, service)) {
                         break;
                     }
-                } catch (LSIDLookupServiceException ex) {
-                    LOG.warn("failed to find a match for [" + taxonName + "] in [" + service.getClass().getSimpleName() + "]", ex);
-                    shutdownServices(services);
-                    initServices(services);
                 }
+            } catch (LSIDLookupServiceException e) {
+                shutdownServices(services);
+                initServices(services);
             }
         }
         shutdownServices(services);
 
     }
 
+    private boolean enrichedTaxonWithService(HashMap<Class, Integer> errorCounts, Node taxonNode, LSIDLookupService service) throws LSIDLookupServiceException {
+        Integer errorCount = errorCounts.get(service.getClass());
+        if (errorCount != null && errorCount > 10) {
+            LOG.error("skipping taxon match against [" + service.getClass().toString() + "], error count [" + errorCount + "] too high.");
+        } else {
+            String taxonName = (String) taxonNode.getProperty(Taxon.NAME);
+            StopWatch stopwatch = new StopWatch();
+            stopwatch.start();
+            try {
+                String lsid = service.lookupLSIDByTaxonName(taxonName);
+                stopwatch.stop();
+                String responseTime = "(took " + stopwatch.getTime() + "ms)";
+                String msg = "for [" + taxonName + "] with LSID [" + lsid + "] in [" + service.getClass().getSimpleName() + "] " + responseTime;
+                if (lsid == null) {
+                    LOG.info("no match found " + msg);
+                } else {
+                    LOG.info("found match " + msg);
+                    enrichNode(taxonNode, lsid);
+                    return true;
+                }
+            } catch (LSIDLookupServiceException ex) {
+                LOG.warn("failed to find a match for [" + taxonName + "] in [" + service.getClass().getSimpleName() + "]", ex);
+                if (errorCounts.containsKey(service.getClass()) && errorCount != null) {
+                    errorCounts.put(service.getClass(), ++errorCount);
+                } else {
+                    errorCounts.put(service.getClass(), 0);
+                }
+                throw new LSIDLookupServiceException("re-throwing", ex);
+            }
+        }
+        return false;
+    }
+
     private void initServices(List<LSIDLookupService> services) {
+        services.add(new EOLService());
         services.add(new WoRMSService());
         services.add(new ITISService());
     }

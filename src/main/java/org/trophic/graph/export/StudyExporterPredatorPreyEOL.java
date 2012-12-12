@@ -23,17 +23,18 @@ public class StudyExporterPredatorPreyEOL implements StudyExporter {
         String query = "START study = node:studies('*:*') " +
                 "MATCH " +
                 "study-[:COLLECTED]->predator, " +
-                "predator-[:ATE]->prey-[:CLASSIFIED_AS]->preyTaxon " +
+                "predator-[rel:ATE|PREYS_UPON|PARASITE_OF|HAS_HOST|INTERACTS_WITH]->prey-[:CLASSIFIED_AS]->preyTaxon " +
                  "," +
                  "predator-[:CLASSIFIED_AS]-predatorTaxon " +
                 "WHERE has(predatorTaxon.externalId) AND has(preyTaxon.externalId) " +
-                "RETURN distinct predatorTaxon.externalId, preyTaxon.externalId";
+                "RETURN distinct predatorTaxon.externalId, type(rel) as relType, preyTaxon.externalId";
 
         ExecutionResult result = engine.execute(query);
         for (Map<String, Object> map : result) {
             writer.write("\"" + map.get("predatorTaxon.externalId") + "\",");
-            writer.write("\"" + map.get("preyTaxon.externalId") + "\",");
-            writer.write("\"feeds on\"\n");
+            writer.write("\"" + map.get("relType") + "\",");
+            writer.write("\"" + map.get("preyTaxon.externalId") + "\"\n");
+
         }
     }
 }

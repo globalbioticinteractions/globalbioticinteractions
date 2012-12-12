@@ -98,4 +98,8 @@ public class Specimen extends NodeBacked {
             transaction.finish();
         }
     }
+
+    public void interactsWith(Specimen recipientSpecimen, RelTypes relType) {
+        createRelationshipTo(recipientSpecimen, relType);
+    }
 }

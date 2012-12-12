@@ -1,5 +1,6 @@
 package org.trophic.graph.client;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.trophic.graph.data.GraphDBTestCase;
@@ -11,6 +12,7 @@ import static junit.framework.Assert.assertNotNull;
 
 public class TrophicImporterTest extends GraphDBTestCase {
 
+    @Ignore
     @Test
     public void importStudies() throws IOException, StudyImporterException {
         TrophicImporter trophicImporter = new TrophicImporter();

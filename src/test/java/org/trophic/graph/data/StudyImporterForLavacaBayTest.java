@@ -63,18 +63,18 @@ public class StudyImporterForLavacaBayTest extends GraphDBTestCase {
 
         Study study = studyImporterFor.importStudy();
 
-        assertNotNull(nodeFactory.findTaxonOfType("Sciaenidae", Taxon.FAMILY));
-        assertNotNull(nodeFactory.findTaxonOfType("Ariidae", Taxon.FAMILY));
-        assertNotNull(nodeFactory.findTaxonOfType("Sciaenops ocellatus", Taxon.SPECIES));
-        assertNotNull(nodeFactory.findTaxonOfType("Sciaenops", Taxon.GENUS));
-        assertNotNull(nodeFactory.findTaxonOfType("Arius felis", Taxon.SPECIES));
-        assertNotNull(nodeFactory.findTaxonOfType("Arius", Taxon.GENUS));
+        assertNotNull(nodeFactory.findTaxonOfType("Sciaenidae"));
+        assertNotNull(nodeFactory.findTaxonOfType("Ariidae"));
+        assertNotNull(nodeFactory.findTaxonOfType("Sciaenops ocellatus"));
+        assertNotNull(nodeFactory.findTaxonOfType("Sciaenops"));
+        assertNotNull(nodeFactory.findTaxonOfType("Arius felis"));
+        assertNotNull(nodeFactory.findTaxonOfType("Arius"));
 
-        assertNotNull(nodeFactory.findTaxonOfType("Acrididae", Taxon.FAMILY));
-        assertNotNull(nodeFactory.findTaxonOfType("Arius", Taxon.GENUS));
+        assertNotNull(nodeFactory.findTaxonOfType("Acrididae"));
+        assertNotNull(nodeFactory.findTaxonOfType("Arius"));
 
-        assertNotNull(nodeFactory.findTaxonOfType("Aegathoa oculata", Taxon.SPECIES));
-        assertNotNull(nodeFactory.findTaxonOfType("Aegathoa", Taxon.GENUS));
+        assertNotNull(nodeFactory.findTaxonOfType("Aegathoa oculata"));
+        assertNotNull(nodeFactory.findTaxonOfType("Aegathoa"));
 
         assertNotNull(nodeFactory.findStudy(StudyImporterForLavacaBay.LAVACA_BAY_DATA_SOURCE));
 

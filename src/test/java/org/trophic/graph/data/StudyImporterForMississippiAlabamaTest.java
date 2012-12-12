@@ -44,12 +44,12 @@ public class StudyImporterForMississippiAlabamaTest extends GraphDBTestCase {
         studyImporterFor.importStudy();
         studyImporterFor.importStudy();
 
-        assertNotNull(nodeFactory.findTaxonOfType("Rhynchoconger flavus", Taxon.SPECIES));
-        assertNotNull(nodeFactory.findTaxonOfType("Rhynchoconger", Taxon.GENUS));
-        assertNotNull(nodeFactory.findTaxonOfType("Halieutichthys aculeatus", Taxon.SPECIES));
-        assertNotNull(nodeFactory.findTaxonOfType("Halieutichthys", Taxon.GENUS));
-        assertNotNull(nodeFactory.findTaxonOfType("Ampelisca", Taxon.GENUS));
-        assertNotNull(nodeFactory.findTaxonOfType("Ampelisca ", Taxon.GENUS));
+        assertNotNull(nodeFactory.findTaxonOfType("Rhynchoconger flavus"));
+        assertNotNull(nodeFactory.findTaxonOfType("Rhynchoconger"));
+        assertNotNull(nodeFactory.findTaxonOfType("Halieutichthys aculeatus"));
+        assertNotNull(nodeFactory.findTaxonOfType("Halieutichthys"));
+        assertNotNull(nodeFactory.findTaxonOfType("Ampelisca"));
+        assertNotNull(nodeFactory.findTaxonOfType("Ampelisca "));
 
         assertNotNull(nodeFactory.findStudy(StudyImporterForMississippiAlabama.MISSISSIPPI_ALABAMA_DATA_SOURCE));
 

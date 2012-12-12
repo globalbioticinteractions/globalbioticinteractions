@@ -9,7 +9,6 @@ import org.trophic.graph.domain.Location;
 import org.trophic.graph.domain.RelTypes;
 import org.trophic.graph.domain.Specimen;
 import org.trophic.graph.domain.Study;
-import org.trophic.graph.domain.Taxon;
 
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
@@ -31,8 +30,8 @@ public class StudyImporterForBlaremoreTest extends GraphDBTestCase {
         StudyImporterForBlaremore studyImporterFor = new StudyImporterForBlaremore(new TestParserFactory(csvContent), nodeFactory);
 
         Study study = studyImporterFor.importStudy();
-        assertNotNull(nodeFactory.findTaxonOfType("Squatina dumeril", Taxon.SPECIES));
-        assertNotNull(nodeFactory.findTaxonOfType("Atlantic croaker", Taxon.SPECIES));
+        assertNotNull(nodeFactory.findTaxonOfType("Squatina dumeril"));
+        assertNotNull(nodeFactory.findTaxonOfType("Atlantic croaker"));
 
         Iterable<Relationship> collectedRels = study.getSpecimens();
         int totalRels = validateSpecimen(collectedRels);
@@ -45,7 +44,7 @@ public class StudyImporterForBlaremoreTest extends GraphDBTestCase {
         StudyImporterForBlaremore studyImporterFor = new StudyImporterForBlaremore(new ParserFactoryImpl(), nodeFactory);
 
         Study study = studyImporterFor.importStudy();
-        assertNotNull(nodeFactory.findTaxonOfType("Squatina dumeril", Taxon.SPECIES));
+        assertNotNull(nodeFactory.findTaxonOfType("Squatina dumeril"));
 
         Iterable<Relationship> collectedRels = study.getSpecimens();
         int totalRels = validateSpecimen(collectedRels);

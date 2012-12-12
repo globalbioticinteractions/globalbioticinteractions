@@ -38,7 +38,6 @@ public class NodeFactoryTest extends GraphDBTestCase {
     @Test
     public void createSpecies() throws NodeFactoryException {
         Taxon taxon = nodeFactory.createTaxon("bla bla", null);
-        assertEquals(Taxon.SPECIES, taxon.getType());
         assertEquals("bla bla", taxon.getName());
         assertEquals("bla", taxon.isA().getProperty("name"));
     }
@@ -63,7 +62,6 @@ public class NodeFactoryTest extends GraphDBTestCase {
     private void assertFamilyCorrectness(String expectedOutputName, String inputName) throws NodeFactoryException {
         nodeFactory.createTaxon(inputName, null);
         Taxon taxon = nodeFactory.createTaxon(inputName, null);
-        Assert.assertEquals(Taxon.FAMILY, taxon.getType());
         assertEquals(expectedOutputName, taxon.getName());
     }
 
@@ -71,7 +69,6 @@ public class NodeFactoryTest extends GraphDBTestCase {
     public void createSpeciesWithFamily() throws NodeFactoryException {
         Taxon family = nodeFactory.getOrCreateFamily("theFam");
         Taxon taxon = nodeFactory.createTaxon("bla bla", family);
-        Assert.assertEquals(Taxon.SPECIES, taxon.getType());
         assertEquals("bla bla", taxon.getName());
         Taxon genusTaxon = taxon.isPartOfTaxon();
         assertEquals("bla", genusTaxon.getName());
@@ -100,10 +97,10 @@ public class NodeFactoryTest extends GraphDBTestCase {
     }
 
     private void assertNotDirtyName(String dirtyName, String cleanName) throws NodeFactoryException {
-        Taxon taxonOfType = nodeFactory.createTaxonOfType(dirtyName, Taxon.SPECIES);
+        Taxon taxonOfType = nodeFactory.getOrCreateTaxon(dirtyName);
         String actualName = taxonOfType.getName();
         assertThat(actualName, is(not(dirtyName)));
-        Taxon taxonOfType1 = nodeFactory.findTaxonOfType(cleanName, Taxon.SPECIES);
+        Taxon taxonOfType1 = nodeFactory.findTaxonOfType(cleanName);
         assertNotNull("should be able to lookup clean versions in index, " +
                 "expected to find [" + cleanName + "] for \"dirty nane\" [" + dirtyName + "]", taxonOfType1);
     }
@@ -112,14 +109,12 @@ public class NodeFactoryTest extends GraphDBTestCase {
     private void assertGenus(String speciesName) throws NodeFactoryException {
         Taxon taxon = nodeFactory.createTaxon(speciesName, null);
         Taxon genus = taxon;
-        assertEquals(Taxon.GENUS, genus.getType());
         assertEquals("bla", genus.getName());
         assertNull(genus.isA());
     }
 
     private void assertFamily(String speciesName) throws NodeFactoryException {
         Taxon family = nodeFactory.createTaxon(speciesName, null);
-        assertEquals(Taxon.FAMILY, family.getType());
         assertEquals("Blabae", family.getName());
     }
 }

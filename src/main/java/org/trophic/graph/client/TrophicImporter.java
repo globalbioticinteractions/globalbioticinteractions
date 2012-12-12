@@ -8,6 +8,7 @@ import org.trophic.graph.domain.Study;
 import org.trophic.graph.export.StudyExporter;
 import org.trophic.graph.export.StudyExporterImpl;
 import org.trophic.graph.export.StudyExporterPredatorPrey;
+import org.trophic.graph.export.StudyExporterPredatorPreyEOL;
 import org.trophic.graph.service.ExternalIdTaxonEnricher;
 import org.trophic.graph.service.TaxonImageEnricher;
 
@@ -27,9 +28,17 @@ public class TrophicImporter {
     public void startImportStop(String[] commandLineArguments) throws StudyImporterException {
         final GraphDatabaseService graphService = GraphService.getGraphService();
         importTaxonony(graphService);
-        List<Study> studies = importStudies(graphService);
+
+        List<Study> studies = importData(graphService);
+
+        enrichData(graphService);
+
         exportData(studies);
 
+        graphService.shutdown();
+    }
+
+    private void enrichData(GraphDatabaseService graphService) throws StudyImporterException {
         matchAgainstExternalTaxonomies(graphService);
 
         try {
@@ -37,8 +46,6 @@ public class TrophicImporter {
         } catch (IOException e) {
             throw new StudyImporterException("failed to add image url information", e);
         }
-
-        graphService.shutdown();
     }
 
     private void matchAgainstExternalTaxonomies(GraphDatabaseService graphService) throws StudyImporterException {
@@ -48,7 +55,7 @@ public class TrophicImporter {
             System.out.println("Matching taxons against external taxonomies starting...");
             new ExternalIdTaxonEnricher(graphService).enrichTaxons();
             stopwatch.stop();
-            System.out.println("Matching taxons against external complete. Total duration: [" + stopwatch.getTime()/(60.0*1000.0) + "] minutes");
+            System.out.println("Matching taxons against external complete. Total duration: [" + stopwatch.getTime() / (60.0 * 1000.0) + "] minutes");
         } catch (IOException e) {
             throw new StudyImporterException("enriching unmatched nodes failed", e);
         }
@@ -85,7 +92,7 @@ public class TrophicImporter {
         try {
             export(importedStudies, "./export.csv", new StudyExporterImpl());
             export(importedStudies, "./exportPredatorTaxonPreyTaxon.csv", new StudyExporterPredatorPrey(GraphService.getGraphService()));
-            export(importedStudies, "./exportPredatorTaxonPreyTaxonInteractionTypeEOL.csv", new StudyExporterPredatorPrey(GraphService.getGraphService()));
+            export(importedStudies, "./exportPredatorTaxonPreyTaxonInteractionTypeEOL.csv", new StudyExporterPredatorPreyEOL(GraphService.getGraphService()));
         } catch (IOException e) {
             throw new StudyImporterException("failed to export result to csv file", e);
         }

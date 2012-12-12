@@ -53,6 +53,8 @@ public class TaxonImageEnricher extends BaseTaxonEnricher {
                     taxonomyProvider = TaxonomyProvider.ITIS;
                 } else if (externalId.startsWith(OboImporter.URN_LSID_PREFIX)) {
                     taxonomyProvider = TaxonomyProvider.NCBI;
+                } else if (externalId.startsWith(EOLTaxonImageService.EOL_LSID_PREFIX)) {
+                    taxonomyProvider = TaxonomyProvider.EOL;
                 } else {
                     throw new UnsupportedOperationException(("found unsupported external id [" + externalId + "]"));
                 }
@@ -84,7 +86,7 @@ public class TaxonImageEnricher extends BaseTaxonEnricher {
                 node.setProperty(Taxon.THUMBNAIL_URL, taxonImage.getThumbnailURL());
             }
             if (taxonImage.getEOLPageId() != null) {
-                node.setProperty(Taxon.EOL_PAGE_ID, taxonImage.getEOLPageId());
+                node.setProperty(Taxon.EXTERNAL_ID, EOLTaxonImageService.EOL_LSID_PREFIX + taxonImage.getEOLPageId());
             }
             transaction.success();
         } finally {

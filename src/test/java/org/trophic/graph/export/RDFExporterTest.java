@@ -74,7 +74,7 @@ public class RDFExporterTest extends GraphDBTestCase {
         interaction
                 .addProperty(model.createProperty(rdf + "type"), model.createResource("http://rs.tdwg.org/ontology/voc/TaxonOccurrenceInteraction"))
                 .addProperty(model.createProperty(tinter + "fromOccurance"), manSpecimen)
-                .addProperty(model.createProperty(tinter + "interactionCategory"), "PreysUpon")
+                .addProperty(model.createProperty(tinter + "interactionCategory"), model.createResource("http://rs.tdwg.org/ontology/voc/TaxonOccurrenceInteraction#PreysUpon"))
                 .addProperty(model.createProperty(tinter + "toOccurance"), dogSpecimen);
 
         // now write the model in XML form to a file

@@ -34,9 +34,8 @@ public class OboImporterTest extends GraphDBTestCase {
 
         new OboImporter(nodeFactory).importOboTerm(term);
 
-        Taxon species = nodeFactory.findTaxonOfType("Blabus blalba", "species");
+        Taxon species = nodeFactory.findTaxonOfType("Blabus blalba");
         assertThat(species.getName(), is("Blabus blalba"));
-        assertThat(species.getType(), is("species"));
     }
 
     @Test
@@ -49,8 +48,7 @@ public class OboImporterTest extends GraphDBTestCase {
 
         new OboImporter(nodeFactory).importOboTerm(term);
 
-        Taxon species = nodeFactory.findTaxonOfType("Blabus blalba", "species");
+        Taxon species = nodeFactory.findTaxonOfType("Blabus blalba");
         assertThat(species.getName(), is("Blabus blalba"));
-        assertThat(species.getType(), is("species"));
     }
 }

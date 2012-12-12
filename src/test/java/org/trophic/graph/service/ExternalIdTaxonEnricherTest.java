@@ -44,25 +44,25 @@ public class ExternalIdTaxonEnricherTest extends GraphDBTestCase {
     }
 
     private void enrichPreyTaxon(String preyName) throws IOException, NodeFactoryException {
-        Taxon taxon = nodeFactory.createTaxonOfType("blabla", Taxon.SPECIES);
+        Taxon taxon = nodeFactory.getOrCreateTaxon("blabla");
         Study study = nodeFactory.createStudy("bla");
         Specimen predator = nodeFactory.createSpecimen();
         predator.classifyAs(taxon);
 
         Specimen prey = nodeFactory.createSpecimen();
-        prey.classifyAs(nodeFactory.createTaxonOfType(preyName, Taxon.SPECIES));
+        prey.classifyAs(nodeFactory.getOrCreateTaxon(preyName));
         predator.ate(prey);
 
         study.collected(predator);
 
         taxonEnricher.enrichTaxons();
 
-        Taxon taxonOfType = nodeFactory.findTaxonOfType(preyName, Taxon.SPECIES);
-        assertThat("failed to match [" + preyName + "]", taxonOfType.getExternalId(), containsString("urn:lsid:marinespecies.org:taxname"));
+        Taxon taxonOfType = nodeFactory.findTaxonOfType(preyName);
+        assertThat("failed to match [" + preyName + "]", taxonOfType.getExternalId(), containsString(EOLTaxonImageService.EOL_LSID_PREFIX));
     }
 
     private void matchTaxon(String speciesName) throws IOException, NodeFactoryException {
-        Taxon taxon = nodeFactory.createTaxonOfType(speciesName, Taxon.SPECIES);
+        Taxon taxon = nodeFactory.getOrCreateTaxon(speciesName);
         Study study = nodeFactory.createStudy("bla");
         Specimen specimen = nodeFactory.createSpecimen();
         specimen.classifyAs(taxon);
@@ -70,8 +70,8 @@ public class ExternalIdTaxonEnricherTest extends GraphDBTestCase {
 
         taxonEnricher.enrichTaxons();
 
-        Taxon taxonOfType = nodeFactory.findTaxonOfType(speciesName, Taxon.SPECIES);
-        assertThat("failed to match [" + speciesName + "]", taxonOfType.getExternalId(), containsString("urn:lsid:marinespecies.org:taxname"));
+        Taxon taxonOfType = nodeFactory.findTaxonOfType(speciesName);
+        assertThat("failed to match [" + speciesName + "]", taxonOfType.getExternalId(), containsString(EOLTaxonImageService.EOL_LSID_PREFIX));
     }
 
     @Ignore

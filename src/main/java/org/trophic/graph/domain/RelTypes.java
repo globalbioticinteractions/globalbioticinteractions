@@ -8,5 +8,9 @@ public enum RelTypes implements RelationshipType {
     ATE,
     COLLECTED_AT,
     CAUGHT_DURING,
+    PREYS_UPON,
+    PARASITE_OF,
+    HAS_HOST,
+    INTERACTS_WITH,
     COLLECTED
 }
