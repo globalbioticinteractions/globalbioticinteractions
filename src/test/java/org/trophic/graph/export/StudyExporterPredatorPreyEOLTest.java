@@ -92,6 +92,6 @@ public class StudyExporterPredatorPreyEOLTest extends GraphDBTestCase {
 
         StringWriter writer = new StringWriter();
         new StudyExporterPredatorPreyEOL(getGraphDb()).exportStudy(study, writer, true);
-        assertThat(writer.toString(), is("\"homoSapiensId\",\"ATE\",\"canisLupusId2\"\n\"homoSapiensId2\",\"ATE\",\"canisLupusId\"\n\"homoSapiensId\",\"ATE\",\"canisLupusId\"\n"));
+        assertThat(writer.toString(), is("\"homoSapiensId\",\"ATE\",\"canisLupusId\"\n\"homoSapiensId2\",\"ATE\",\"canisLupusId\"\n\"homoSapiensId\",\"ATE\",\"canisLupusId2\"\n"));
     }
 }

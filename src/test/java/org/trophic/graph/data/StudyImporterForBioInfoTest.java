@@ -8,6 +8,7 @@ import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 import org.trophic.graph.domain.RelTypes;
 import org.trophic.graph.domain.Study;
+import org.trophic.graph.domain.Taxon;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -49,10 +50,18 @@ public class StudyImporterForBioInfoTest extends GraphDBTestCase {
         Study study = importer.importStudy();
 
         assertThat(study.getTitle(), is("BIO_INFO"));
-        assertNotNull(nodeFactory.findTaxon("Acer"));
-        assertNotNull(nodeFactory.findTaxon("Dasineura tympani"));
-        assertNotNull(nodeFactory.findTaxon("Phyllocoptes acericola"));
-        assertNotNull(nodeFactory.findTaxon("Aceria eriobia"));
+        Taxon acer = nodeFactory.findTaxon("Acer");
+        assertNotNull(acer);
+        assertThat(acer.getExternalId(), is("urn:lsid:bioinfo.org.uk:taxa:3011"));
+        Taxon taxon = nodeFactory.findTaxon("Dasineura tympani");
+        assertNotNull(taxon);
+        assertThat(taxon.getExternalId(), is("urn:lsid:bioinfo.org.uk:taxa:107544"));
+        Taxon taxon1 = nodeFactory.findTaxon("Phyllocoptes acericola");
+        assertNotNull(taxon1);
+        assertThat(taxon1.getExternalId(), is("urn:lsid:bioinfo.org.uk:taxa:43927"));
+        Taxon taxon2 = nodeFactory.findTaxon("Aceria eriobia");
+        assertNotNull(taxon2);
+        assertThat(taxon2.getExternalId(), is("urn:lsid:bioinfo.org.uk:taxa:32122"));
     }
 
     @Test
