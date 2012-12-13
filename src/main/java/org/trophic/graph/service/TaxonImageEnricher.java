@@ -46,34 +46,39 @@ public class TaxonImageEnricher extends BaseTaxonEnricher {
             StopWatch stopwatch = new StopWatch();
             stopwatch.start();
             try {
-                TaxonomyProvider taxonomyProvider;
-                if (externalId.startsWith(WoRMSService.URN_LSID_PREFIX)) {
-                    taxonomyProvider = TaxonomyProvider.WORMS;
-                } else if (externalId.startsWith(ITISService.URN_LSID_PREFIX)) {
-                    taxonomyProvider = TaxonomyProvider.ITIS;
-                } else if (externalId.startsWith(OboImporter.URN_LSID_PREFIX)) {
-                    taxonomyProvider = TaxonomyProvider.NCBI;
-                } else if (externalId.startsWith(EOLTaxonImageService.EOL_LSID_PREFIX)) {
-                    taxonomyProvider = TaxonomyProvider.EOL;
-                } else {
-                    throw new UnsupportedOperationException(("found unsupported external id [" + externalId + "]"));
-                }
-                int lastColon = externalId.lastIndexOf(":");
-                TaxonImage taxonImage = service.lookupImageURLs(taxonomyProvider, externalId.substring(lastColon + 1, externalId.length()));
-                stopwatch.stop();
-                String responseTime = "(took " + stopwatch.getTime() + "ms)";
-                String msg = "for [" + taxonName + "] with externalId [" + externalId + "] in [" + service.getClass().getSimpleName() + "] " + responseTime;
-                if (taxonImage == null) {
-                    LOG.info("no match found " + msg);
-                } else {
-                    LOG.info("found match " + msg);
-                    enrichNode(taxonNode, taxonImage);
+                TaxonomyProvider taxonomyProvider = lookupProvider(externalId);
+                if (taxonomyProvider != null) {
+                    int lastColon = externalId.lastIndexOf(":");
+                    TaxonImage taxonImage = service.lookupImageURLs(taxonomyProvider, externalId.substring(lastColon + 1, externalId.length()));
+                    stopwatch.stop();
+                    String responseTime = "(took " + stopwatch.getTime() + "ms)";
+                    String msg = "for [" + taxonName + "] with externalId [" + externalId + "] in [" + service.getClass().getSimpleName() + "] " + responseTime;
+                    if (taxonImage == null) {
+                        LOG.info("no match found " + msg);
+                    } else {
+                        LOG.info("found match " + msg);
+                        enrichNode(taxonNode, taxonImage);
+                    }
                 }
             } catch (IOException ex) {
                 LOG.warn("failed to find a match for [" + taxonName + "] in [" + service.getClass().getSimpleName() + "]", ex);
             }
         }
 
+    }
+
+    private TaxonomyProvider lookupProvider(String externalId) {
+        TaxonomyProvider taxonomyProvider = null;
+        if (externalId.startsWith(WoRMSService.URN_LSID_PREFIX)) {
+            taxonomyProvider = TaxonomyProvider.WORMS;
+        } else if (externalId.startsWith(ITISService.URN_LSID_PREFIX)) {
+            taxonomyProvider = TaxonomyProvider.ITIS;
+        } else if (externalId.startsWith(OboImporter.URN_LSID_PREFIX)) {
+            taxonomyProvider = TaxonomyProvider.NCBI;
+        } else if (externalId.startsWith(EOLTaxonImageService.EOL_LSID_PREFIX)) {
+            taxonomyProvider = TaxonomyProvider.EOL;
+        }
+        return taxonomyProvider;
     }
 
     private void enrichNode(Node node, TaxonImage taxonImage) {
