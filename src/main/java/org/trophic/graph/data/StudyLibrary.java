@@ -8,7 +8,8 @@ public class StudyLibrary {
         BLEWETT_CHARLOTTE_HARBOR_FL,
         AKIN_MAD_ISLAND,
         BAREMORE_ANGEL_SHARK,
-        BIO_INFO;
+        BIO_INFO,
+        JR_FERRER_PARIS;
     }
 
 }

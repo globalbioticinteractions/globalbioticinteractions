@@ -11,6 +11,7 @@ public class StudyImporterFactory {
 
     public StudyImporter createImporterForStudy(StudyLibrary.Study study) {
         StudyImporter importer = null;
+
         if (StudyLibrary.Study.AKIN_MAD_ISLAND.equals(study)) {
             importer = new StudyImporterForAkin(parserFactory, nodeFactory);
         } else if (StudyLibrary.Study.MISSISSIPPI_ALABAMA.equals(study)) {
@@ -23,6 +24,8 @@ public class StudyImporterFactory {
             importer = new StudyImporterForBlaremore(parserFactory, nodeFactory);
         } else if (StudyLibrary.Study.BIO_INFO.equals(study)) {
             importer = new StudyImporterForBioInfo(parserFactory, nodeFactory);
+        } else if (StudyLibrary.Study.JR_FERRER_PARIS.equals(study)) {
+            importer = new StudyImporterForJRFerrerParis(parserFactory, nodeFactory);
         }
         return importer;
     }
