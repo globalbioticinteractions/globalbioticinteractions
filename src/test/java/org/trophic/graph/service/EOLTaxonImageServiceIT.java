@@ -10,7 +10,7 @@ import java.net.URISyntaxException;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
-public class EOLTaxonImageServiceTest {
+public class EOLTaxonImageServiceIT {
 
     @Test
     public void imageLookupITIS() throws URISyntaxException, IOException {

@@ -6,7 +6,7 @@ import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
-public class EOLServiceTest {
+public class EOLServiceIT {
 
     @Test
     public void lookupByName() throws LSIDLookupServiceException {

@@ -7,7 +7,7 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 
-public class ITISServiceTest {
+public class ITISServiceIT {
 
     @Test
     public void lookupNonExistentTaxon() throws LSIDLookupServiceException {

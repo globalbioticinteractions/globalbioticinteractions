@@ -9,7 +9,7 @@ import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
-public class WoRMSServiceTest {
+public class WoRMSServiceIT {
 
     @Test
     public void lookupExistingSpeciesTaxon() throws LSIDLookupServiceException {

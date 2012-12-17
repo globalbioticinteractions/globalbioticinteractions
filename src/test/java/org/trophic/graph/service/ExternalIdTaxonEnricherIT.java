@@ -16,7 +16,7 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.matchers.JUnitMatchers.containsString;
 
-public class ExternalIdTaxonEnricherTest extends GraphDBTestCase {
+public class ExternalIdTaxonEnricherIT extends GraphDBTestCase {
 
     private TaxonEnricher taxonEnricher;
 
