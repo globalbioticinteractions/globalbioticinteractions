@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<archive xmlns="http://rs.tdwg.org/dwc/text/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://rs.tdwg.org/dwc/text/  http://services.eol.org/schema/dwca/tdwg_dwc_text.xsd">
+  <table encoding="UTF-8" fieldsTerminatedBy="\t" linesTerminatedBy="\n" ignoreHeaderLines="1" rowType="http://rs.tdwg.org/dwc/terms/Taxon">
+    <files>
+      <location>taxon.tab</location>
+    </files>
+    <field index="0" term="http://rs.tdwg.org/dwc/terms/taxonID"/>
+    <field index="1" term="http://rs.tdwg.org/dwc/terms/scientificName"/>
+    <field index="2" term="http://rs.tdwg.org/dwc/terms/nameAccordingTo"/>
+    <field index="3" term="http://rs.tdwg.org/dwc/terms/taxonRank"/>
+    <field index="4" term="http://rs.tdwg.org/dwc/terms/genus"/>
+    <field index="5" term="http://rs.tdwg.org/dwc/terms/specificEpithet"/>
+  </table>
+</archive>

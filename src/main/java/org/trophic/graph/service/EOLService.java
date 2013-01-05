@@ -17,7 +17,7 @@ public class EOLService extends BaseService implements LSIDLookupService {
     public String lookupLSIDByTaxonName(String taxonName) throws LSIDLookupServiceException {
         URI uri = null;
         try {
-            uri = new URI("http", null, "eol.org", 80, "/api/search/1.0/" + taxonName, "exact=1", null);
+            uri = new URI("http", null, "eol.org", 80, "/api/search/1.0/" + taxonName, "exact=true", null);
         } catch (URISyntaxException e) {
             throw new LSIDLookupServiceException("failed to create uri", e);
         }

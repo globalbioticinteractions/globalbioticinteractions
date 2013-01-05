@@ -1,0 +1,524 @@
+<?xml version="1.0"?>
+<rdf:RDF
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+    xmlns:owl="http://www.w3.org/2002/07/owl#"
+    xmlns="http://spire.umbc.edu/ontologies/SpireEcoConcepts.owl#"
+  xml:base="http://spire.umbc.edu/ontologies/SpireEcoConcepts.owl">
+  <owl:Ontology rdf:about=""/>
+  <owl:Class rdf:ID="Probability">
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >probability of some phenomenon</rdfs:comment>
+    <owl:equivalentClass>
+      <owl:Class>
+        <owl:oneOf rdf:parseType="Collection">
+          <Probability rdf:ID="High"/>
+          <Probability rdf:ID="Low"/>
+        </owl:oneOf>
+      </owl:Class>
+    </owl:equivalentClass>
+  </owl:Class>
+  <owl:Class rdf:ID="HypothesizedFoodWebLink">
+    <owl:disjointWith>
+      <owl:Class rdf:ID="ConfirmedFoodWebLink"/>
+    </owl:disjointWith>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:cardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:cardinality>
+        <owl:onProperty>
+          <owl:ObjectProperty rdf:ID="likelyhood"/>
+        </owl:onProperty>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Class rdf:ID="FoodWebLink"/>
+    </rdfs:subClassOf>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >food web link built based on researcher's assumtions</rdfs:comment>
+  </owl:Class>
+  <owl:Class rdf:about="#FoodWebLink">
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Food web link</rdfs:comment>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:cardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:cardinality>
+        <owl:onProperty>
+          <owl:ObjectProperty rdf:ID="prey"/>
+        </owl:onProperty>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:cardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:cardinality>
+        <owl:onProperty>
+          <owl:FunctionalProperty rdf:ID="predator"/>
+        </owl:onProperty>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:about="#ConfirmedFoodWebLink">
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:cardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:cardinality>
+        <owl:onProperty>
+          <owl:FunctionalProperty rdf:ID="prey_description"/>
+        </owl:onProperty>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty>
+          <owl:DatatypeProperty rdf:ID="predator_description"/>
+        </owl:onProperty>
+        <owl:cardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:cardinality>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <owl:disjointWith rdf:resource="#HypothesizedFoodWebLink"/>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >scientifically proven food web link</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="#FoodWebLink"/>
+  </owl:Class>
+  <owl:Class rdf:ID="Study">
+    <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Scientific study about taxons, food web links etc</rdfs:comment>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:minCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:minCardinality>
+        <owl:onProperty>
+          <owl:DatatypeProperty rdf:ID="titleAndAuthors"/>
+        </owl:onProperty>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:ID="Taxon">
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty>
+          <owl:FunctionalProperty rdf:ID="hasRank"/>
+        </owl:onProperty>
+        <owl:cardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:cardinality>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty>
+          <owl:DatatypeProperty rdf:ID="hasScientificName"/>
+        </owl:onProperty>
+        <owl:cardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:cardinality>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:ID="TaxonomicRank">
+    <owl:equivalentClass>
+      <owl:Class>
+        <owl:oneOf rdf:parseType="Collection">
+          <TaxonomicRank rdf:ID="Class"/>
+          <TaxonomicRank rdf:ID="Family"/>
+          <TaxonomicRank rdf:ID="Genus"/>
+          <TaxonomicRank rdf:ID="Infraclass"/>
+          <TaxonomicRank rdf:ID="Infraorder"/>
+          <TaxonomicRank rdf:ID="Kingdom"/>
+          <TaxonomicRank rdf:ID="Order"/>
+          <TaxonomicRank rdf:ID="Phylum"/>
+          <TaxonomicRank rdf:ID="Species"/>
+          <TaxonomicRank rdf:ID="Subclass"/>
+          <TaxonomicRank rdf:ID="Subfamily"/>
+          <TaxonomicRank rdf:ID="Subgenus"/>
+          <TaxonomicRank rdf:ID="Suborder"/>
+          <TaxonomicRank rdf:ID="Subphylum"/>
+          <TaxonomicRank rdf:ID="Subspecies"/>
+          <TaxonomicRank rdf:ID="Subtribe"/>
+          <TaxonomicRank rdf:ID="Superclass"/>
+          <TaxonomicRank rdf:ID="Superfamily"/>
+          <TaxonomicRank rdf:ID="Superorder"/>
+          <TaxonomicRank rdf:ID="Tribe"/>
+          <TaxonomicRank rdf:ID="Unknown"/>
+          <TaxonomicRank rdf:ID="Unspecified"/>
+        </owl:oneOf>
+      </owl:Class>
+    </owl:equivalentClass>
+  </owl:Class>
+  <owl:Class rdf:ID="Habitat"/>
+  <owl:ObjectProperty rdf:about="#likelyhood">
+    <rdfs:range rdf:resource="#Probability"/>
+    <rdfs:domain rdf:resource="#HypothesizedFoodWebLink"/>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:ID="similarFoodWebLink">
+    <rdfs:domain rdf:resource="#HypothesizedFoodWebLink"/>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >list of actual food web links confirmed by scientific studies which support the assumption of existence of a hypothesized link </rdfs:comment>
+    <rdfs:range rdf:resource="#ConfirmedFoodWebLink"/>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:ID="ofHabitat">
+    <rdfs:domain rdf:resource="#Study"/>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >habitat where the study was conducted</rdfs:comment>
+    <rdfs:range rdf:resource="#Habitat"/>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:about="#prey">
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Prey</rdfs:comment>
+    <rdfs:domain rdf:resource="#FoodWebLink"/>
+    <rdfs:range rdf:resource="#Taxon"/>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:ID="observedInStudy">
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >study where the given food web link has been observed </rdfs:comment>
+    <rdfs:range rdf:resource="#Study"/>
+    <rdfs:domain rdf:resource="#ConfirmedFoodWebLink"/>
+  </owl:ObjectProperty>
+  <owl:DatatypeProperty rdf:ID="county">
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >county of the state of the country where the study was conducted</rdfs:comment>
+    <rdfs:domain rdf:resource="#Study"/>
+  </owl:DatatypeProperty>
+  <owl:DatatypeProperty rdf:ID="hasCommonName">
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >common name of taxon</rdfs:comment>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    <rdfs:domain rdf:resource="#Taxon"/>
+  </owl:DatatypeProperty>
+  <owl:DatatypeProperty rdf:ID="country">
+    <rdfs:domain rdf:resource="#Study"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >counry where the study was conducted</rdfs:comment>
+  </owl:DatatypeProperty>
+  <owl:DatatypeProperty rdf:ID="hasName">
+    <rdfs:domain rdf:resource="#Habitat"/>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+  </owl:DatatypeProperty>
+  <owl:DatatypeProperty rdf:about="#predator_description">
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >predator name as it is described in the corresponding study ("entity name")</rdfs:comment>
+    <rdfs:domain rdf:resource="#ConfirmedFoodWebLink"/>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+  </owl:DatatypeProperty>
+  <owl:DatatypeProperty rdf:ID="locality">
+    <rdfs:domain rdf:resource="#Study"/>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >name of the locality where the study was conducted</rdfs:comment>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+  </owl:DatatypeProperty>
+  <owl:DatatypeProperty rdf:ID="publicationYear">
+    <rdfs:domain rdf:resource="#Study"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#gYear"/>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+  </owl:DatatypeProperty>
+  <owl:DatatypeProperty rdf:about="#hasScientificName">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+    <rdfs:domain rdf:resource="#Taxon"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >scientific (latin) name of taxon according to ITIS standard</rdfs:comment>
+  </owl:DatatypeProperty>
+  <owl:DatatypeProperty rdf:ID="state">
+    <rdfs:domain rdf:resource="#Study"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >state of a country where the study was conducted</rdfs:comment>
+  </owl:DatatypeProperty>
+  <owl:DatatypeProperty rdf:about="#titleAndAuthors">
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    <rdfs:domain rdf:resource="#Study"/>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >study name, authors, publication place</rdfs:comment>
+  </owl:DatatypeProperty>
+  <owl:FunctionalProperty rdf:about="#predator">
+    <rdfs:domain rdf:resource="#FoodWebLink"/>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Predator</rdfs:comment>
+    <rdfs:range rdf:resource="#Taxon"/>
+  </owl:FunctionalProperty>
+  <owl:FunctionalProperty rdf:about="#prey_description">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
+    <rdfs:domain rdf:resource="#ConfirmedFoodWebLink"/>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >prey name as it is described in the corresponding study ("entity name")</rdfs:comment>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+  </owl:FunctionalProperty>
+  <owl:FunctionalProperty rdf:about="#hasRank">
+    <rdfs:range rdf:resource="#TaxonomicRank"/>
+    <rdfs:domain rdf:resource="#Taxon"/>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+  </owl:FunctionalProperty>
+  <Habitat rdf:ID="Oceanic_vent">
+    <hasName rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Oceanic vent</hasName>
+  </Habitat>
+  <Habitat rdf:ID="Montane">
+    <hasName rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Montane</hasName>
+  </Habitat>
+  <Habitat rdf:ID="Abyssal">
+    <hasName rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Abyssal</hasName>
+  </Habitat>
+  <Habitat rdf:ID="Chaparral">
+    <hasName rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Chaparral</hasName>
+  </Habitat>
+  <Habitat rdf:ID="Tundra">
+    <hasName rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Tundra</hasName>
+  </Habitat>
+  <Habitat rdf:ID="Desert_or_dune">
+    <hasName rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Desert or dune</hasName>
+  </Habitat>
+  <Habitat rdf:ID="Rockpool">
+    <hasName rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Rockpool</hasName>
+  </Habitat>
+  <Habitat rdf:ID="Savannah_or_grassland">
+    <hasName rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Savannah or grassland</hasName>
+  </Habitat>
+  <Habitat rdf:ID="Intertidal">
+    <hasName rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Intertidal</hasName>
+  </Habitat>
+  <Habitat rdf:ID="Polar">
+    <hasName rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Polar</hasName>
+  </Habitat>
+  <HypothesizedFoodWebLink rdf:ID="h_Actinopterygii_and_Holothuroidea">
+    <similarFoodWebLink>
+      <ConfirmedFoodWebLink rdf:ID="c_215_8_41">
+        <predator_description rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+        >intermediate reef fish, carnivorous2</predator_description>
+        <observedInStudy>
+          <Study rdf:ID="s_215">
+            <country rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+            >Puerto Rico</country>
+            <titleAndAuthors rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+            >Opitz S (1996) Trophic interactions in Caribbean coral reefs. ICLARM Tech Rep 43, Manila, Philippines</titleAndAuthors>
+            <locality rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+            >Puerto Rico-Virgin Islands shelf</locality>
+            <publicationYear rdf:datatype="http://www.w3.org/2001/XMLSchema#gYear"
+            >1996</publicationYear>
+            <ofHabitat>
+              <Habitat rdf:ID="Reef">
+                <hasName rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+                >Reef</hasName>
+              </Habitat>
+            </ofHabitat>
+          </Study>
+        </observedInStudy>
+        <prey>
+          <Taxon rdf:ID="Holothuroidea">
+            <hasCommonName rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+            >sea cucumbers</hasCommonName>
+            <hasRank rdf:resource="#Class"/>
+            <hasScientificName rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+            >Holothuroidea</hasScientificName>
+          </Taxon>
+        </prey>
+        <prey_description rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+        >holothuroids/sipunculids/echiuroids/hemichordates</prey_description>
+        <predator>
+          <Taxon rdf:ID="Actinopterygii">
+            <hasCommonName rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+            >spiny rayed fishes</hasCommonName>
+            <hasScientificName rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+            >Actinopterygii</hasScientificName>
+            <hasCommonName rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+            >Ray-finned fishes</hasCommonName>
+            <hasCommonName rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+            >ray-finned fishes</hasCommonName>
+            <hasRank rdf:resource="#Class"/>
+          </Taxon>
+        </predator>
+      </ConfirmedFoodWebLink>
+    </similarFoodWebLink>
+    <similarFoodWebLink>
+      <ConfirmedFoodWebLink rdf:ID="c_215_6_41">
+        <prey rdf:resource="#Holothuroidea"/>
+        <observedInStudy rdf:resource="#s_215"/>
+        <predator rdf:resource="#Actinopterygii"/>
+        <predator_description rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+        >intermediate reef fish, carnivorous1</predator_description>
+        <prey_description rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+        >holothuroids/sipunculids/echiuroids/hemichordates</prey_description>
+      </ConfirmedFoodWebLink>
+    </similarFoodWebLink>
+    <prey rdf:resource="#Holothuroidea"/>
+    <likelyhood rdf:resource="#High"/>
+    <predator rdf:resource="#Actinopterygii"/>
+  </HypothesizedFoodWebLink>
+  <Habitat rdf:ID="Carrion_substrate">
+    <hasName rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Carrion substrate</hasName>
+  </Habitat>
+  <Habitat rdf:ID="Taiga">
+    <hasName rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Taiga</hasName>
+  </Habitat>
+  <Habitat rdf:ID="Temperate">
+    <hasName rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Temperate</hasName>
+  </Habitat>
+  <Habitat rdf:ID="Treeholes">
+    <hasName rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Treeholes</hasName>
+  </Habitat>
+  <Habitat rdf:ID="Suburban">
+    <hasName rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Suburban</hasName>
+  </Habitat>
+  <Habitat rdf:ID="Swamp">
+    <hasName rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Swamp</hasName>
+  </Habitat>
+  <Habitat rdf:ID="Tropical">
+    <hasName rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Tropical</hasName>
+  </Habitat>
+  <Habitat rdf:ID="Scrub_forest">
+    <hasName rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Scrub forest</hasName>
+  </Habitat>
+  <Habitat rdf:ID="Mudflat">
+    <hasName rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Mudflat</hasName>
+  </Habitat>
+  <Habitat rdf:ID="Marine">
+    <hasName rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Marine</hasName>
+  </Habitat>
+  <Habitat rdf:ID="Riparian">
+    <hasName rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Riparian</hasName>
+  </Habitat>
+  <Habitat rdf:ID="Estuarine">
+    <hasName rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Estuarine</hasName>
+  </Habitat>
+  <Habitat rdf:ID="Lake_or_pond">
+    <hasName rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Lake or pond</hasName>
+  </Habitat>
+  <Habitat rdf:ID="Pelagic">
+    <hasName rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Pelagic</hasName>
+  </Habitat>
+  <Habitat rdf:ID="Rocky_shore">
+    <hasName rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Rocky shore</hasName>
+  </Habitat>
+  <Habitat rdf:ID="Sublittoral">
+    <hasName rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Sublittoral</hasName>
+  </Habitat>
+  <Habitat rdf:ID="Brackish_water">
+    <hasName rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Brackish water</hasName>
+  </Habitat>
+  <Habitat rdf:ID="Marsh">
+    <hasName rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Marsh</hasName>
+  </Habitat>
+  <Habitat rdf:ID="Epipelagic_zone">
+    <hasName rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Epipelagic zone</hasName>
+  </Habitat>
+  <Habitat rdf:ID="Freshwater">
+    <hasName rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Freshwater</hasName>
+  </Habitat>
+  <Habitat rdf:ID="Coastal">
+    <hasName rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Coastal</hasName>
+  </Habitat>
+  <Habitat rdf:ID="Bog">
+    <hasName rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Bog</hasName>
+  </Habitat>
+  <Habitat rdf:ID="Ice_cap">
+    <hasName rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Ice cap</hasName>
+  </Habitat>
+  <Habitat rdf:ID="Forest">
+    <hasName rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Forest</hasName>
+  </Habitat>
+  <Habitat rdf:ID="Littoral">
+    <hasName rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Littoral</hasName>
+  </Habitat>
+  <Habitat rdf:ID="Soil">
+    <hasName rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Soil</hasName>
+  </Habitat>
+  <Habitat rdf:ID="Galls">
+    <hasName rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Galls</hasName>
+  </Habitat>
+  <Habitat rdf:ID="Benthic">
+    <hasName rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Benthic</hasName>
+  </Habitat>
+  <Habitat rdf:ID="Rainforest">
+    <hasName rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Rainforest</hasName>
+  </Habitat>
+  <Habitat rdf:ID="Temporary_pool">
+    <hasName rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Temporary pool</hasName>
+  </Habitat>
+  <Habitat rdf:ID="Heath">
+    <hasName rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Heath</hasName>
+  </Habitat>
+  <Habitat rdf:ID="Mesopelagic_zone">
+    <hasName rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Mesopelagic zone</hasName>
+  </Habitat>
+  <Habitat rdf:ID="Un_known">
+    <hasName rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Unknown</hasName>
+  </Habitat>
+  <Habitat rdf:ID="Dung">
+    <hasName rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Dung</hasName>
+  </Habitat>
+  <Habitat rdf:ID="Agricultural">
+    <hasName rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Agricultural</hasName>
+  </Habitat>
+  <Habitat rdf:ID="Plant_substrate">
+    <hasName rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Plant substrate</hasName>
+  </Habitat>
+  <Habitat rdf:ID="Terrestrial">
+    <hasName rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Terrestrial</hasName>
+  </Habitat>
+  <Habitat rdf:ID="Urban">
+    <hasName rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Urban</hasName>
+  </Habitat>
+  <Habitat rdf:ID="River">
+    <hasName rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >River</hasName>
+  </Habitat>
+</rdf:RDF>
+
+<!-- Created with Protege (with OWL Plugin 1.3, Build 225.4)  http://protege.stanford.edu -->
