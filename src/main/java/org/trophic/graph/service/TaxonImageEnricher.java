@@ -9,15 +9,13 @@ import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.helpers.collection.IteratorUtil;
-import org.trophic.graph.data.OboImporter;
 import org.trophic.graph.domain.Taxon;
 import org.trophic.graph.domain.TaxonImage;
 import org.trophic.graph.domain.TaxonomyProvider;
+import org.trophic.graph.obo.OboParser;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 
 public class TaxonImageEnricher extends BaseTaxonEnricher {
     private static final Log LOG = LogFactory.getLog(TaxonImageEnricher.class);
@@ -73,7 +71,7 @@ public class TaxonImageEnricher extends BaseTaxonEnricher {
             taxonomyProvider = TaxonomyProvider.WORMS;
         } else if (externalId.startsWith(ITISService.URN_LSID_PREFIX)) {
             taxonomyProvider = TaxonomyProvider.ITIS;
-        } else if (externalId.startsWith(OboImporter.URN_LSID_PREFIX)) {
+        } else if (externalId.startsWith(OboParser.URN_LSID_PREFIX)) {
             taxonomyProvider = TaxonomyProvider.NCBI;
         } else if (externalId.startsWith(EOLTaxonImageService.EOL_LSID_PREFIX)) {
             taxonomyProvider = TaxonomyProvider.EOL;

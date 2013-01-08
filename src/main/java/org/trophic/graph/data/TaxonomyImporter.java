@@ -3,33 +3,44 @@ package org.trophic.graph.data;
 import org.apache.commons.lang3.time.StopWatch;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Transaction;
-import org.neo4j.unsafe.batchinsert.BatchInserters;
 import org.trophic.graph.obo.OboParser;
-import org.trophic.graph.obo.OboTerm;
 import org.trophic.graph.obo.OboTermListener;
 import org.trophic.graph.obo.OboUtil;
+import org.trophic.graph.obo.TaxonParser;
+import org.trophic.graph.obo.TaxonTerm;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 
-public class OboImporter extends BaseImporter {
+public class TaxonomyImporter extends BaseImporter {
 
-    public static final String URN_LSID_PREFIX = "NCBITaxon:";
-
-    private static final Log LOG = LogFactory.getLog(OboImporter.class);
+    private static final Log LOG = LogFactory.getLog(TaxonomyImporter.class);
     public static final int SAMPLE_SIZE = 10000;
     private int counter;
     private StopWatch stopwatch;
     private Transaction currentTransaction;
 
-    public OboImporter(NodeFactory nodeFactory) {
+    private TaxonParser parser = new OboParser();
+
+    private TaxonReaderFactory taxonReaderFactory = new TaxonReaderFactory() {
+        @Override
+        public BufferedReader createReader() throws IOException {
+            return OboUtil.getDefaultBufferedReader();
+        }
+    };
+
+    public TaxonParser getParser() {
+        return parser;
+    }
+
+    public TaxonomyImporter(NodeFactory nodeFactory) {
         super(nodeFactory);
         stopwatch = new StopWatch();
         currentTransaction = null;
     }
 
-    public void importOboTerm(OboTerm term) throws StudyImporterException {
+    public void importOboTerm(TaxonTerm term) throws StudyImporterException {
         if (term.getId() == null) {
             throw new StudyImporterException("missing mandatory field id in term with name [" + term.getName() + "]");
         }
@@ -40,8 +51,10 @@ public class OboImporter extends BaseImporter {
         nodeFactory.createTaxonNoTransaction(term.getName(), term.getId());
         count();
         if (getCounter() % SAMPLE_SIZE == 0) {
-            getCurrentTransaction().success();
-            getCurrentTransaction().finish();
+            if (getCurrentTransaction() != null) {
+                getCurrentTransaction().success();
+                getCurrentTransaction().finish();
+            }
             StopWatch stopwatch = getStopwatch();
             stopwatch.stop();
             double avg = 1000.0 * SAMPLE_SIZE / (stopwatch.getTime() + 1);
@@ -54,7 +67,7 @@ public class OboImporter extends BaseImporter {
     }
 
     protected String formatProgressString(double avg) {
-        return String.format("%d (%.1f%%), %.1f terms/s", getCounter(), 100.0*(float) getCounter() / (float) OboParser.MAX_TERMS, avg);
+        return String.format("%d (%.1f%%), %.1f terms/s", getCounter(), 100.0 * (float) getCounter() / (float) OboParser.MAX_TERMS, avg);
     }
 
     private void count() {
@@ -62,17 +75,13 @@ public class OboImporter extends BaseImporter {
     }
 
     public void doImport() throws StudyImporterException {
-
-        GraphDatabaseService inserter = BatchInserters.batchDatabase("target/batchinserter-example");
-
-        OboParser parser = new OboParser();
         getStopwatch().reset();
         getStopwatch().start();
         setCounter(0);
         try {
-            parser.parse(OboUtil.getDefaultBufferedReader(), new OboTermListener() {
+            getParser().parse(taxonReaderFactory.createReader(), new OboTermListener() {
                 @Override
-                public void notifyTermWithRank(OboTerm term) {
+                public void notifyTermWithRank(TaxonTerm term) {
                     try {
                         importOboTerm(term);
                     } catch (StudyImporterException e) {

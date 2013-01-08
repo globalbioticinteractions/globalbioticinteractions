@@ -26,12 +26,12 @@ public class OboParserTest {
         OboTermListener listener = new OboTermListener() {
 
             @Override
-            public void notifyTermWithRank(OboTerm term) {
+            public void notifyTermWithRank(TaxonTerm term) {
                 if (getCounter() % 1000 == 0) {
                     LOG.info("got term with id: [" + term.getId() +
                             "], is_a: [" + term.getIsA() +
                             "], name: [" + term.getName() +
-                            "], rank: [" + term.getRank() +  "]");
+                            "], rank: [" + term.getRank() + "]");
                 }
                 assertThat(term.getId(), is(not(nullValue())));
                 assertThat(term.getName(), is(not(nullValue())));
@@ -43,8 +43,6 @@ public class OboParserTest {
         new OboParser().parse(bufferedReader, listener);
         assertThat("expected a certain amount of terms", getCounter(), is(OboParser.MAX_TERMS));
     }
-
-
 
 
     private void count() {

@@ -1,6 +1,6 @@
 package org.trophic.graph.obo;
 
-public class OboTerm {
+public class TaxonTerm {
     public void setRank(String rank) {
         this.rank = rank;
     }

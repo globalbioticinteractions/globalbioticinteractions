@@ -3,23 +3,25 @@ package org.trophic.graph.obo;
 import java.io.BufferedReader;
 import java.io.IOException;
 
-public class OboParser {
+public class OboParser implements TaxonParser {
 
     public static final String OBO_NAME = "name: ";
     public static final String OBO_IS_A = "is_a: ";
     public static final String OBO_ID = "id: ";
     public static final String HAS_RANK = "property_value: has_rank NCBITaxon:";
     public static final int MAX_TERMS = 798595;
+    public static final String URN_LSID_PREFIX = "NCBITaxon:";
 
+    @Override
     public void parse(BufferedReader bufferedReader, OboTermListener listener) throws IOException {
-        OboTerm currentTerm = null;
+        TaxonTerm currentTerm = null;
         String line;
         while ((line = bufferedReader.readLine()) != null) {
             if ("[Term]".equals(line)) {
                 if (currentTerm != null && currentTerm.getRank() != null) {
                     listener.notifyTermWithRank(currentTerm);
                 }
-                currentTerm = new OboTerm();
+                currentTerm = new TaxonTerm();
             }
 
             if (currentTerm != null) {
