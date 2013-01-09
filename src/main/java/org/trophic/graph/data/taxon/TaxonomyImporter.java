@@ -1,16 +1,13 @@
-package org.trophic.graph.data;
+package org.trophic.graph.data.taxon;
 
 import org.apache.commons.lang3.time.StopWatch;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.neo4j.graphdb.Transaction;
-import org.trophic.graph.obo.OboParser;
-import org.trophic.graph.obo.OboTermListener;
-import org.trophic.graph.obo.OboUtil;
-import org.trophic.graph.obo.TaxonParser;
-import org.trophic.graph.obo.TaxonTerm;
+import org.trophic.graph.data.BaseImporter;
+import org.trophic.graph.data.NodeFactory;
+import org.trophic.graph.data.StudyImporterException;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 
 public class TaxonomyImporter extends BaseImporter {
@@ -21,26 +18,27 @@ public class TaxonomyImporter extends BaseImporter {
     private StopWatch stopwatch;
     private Transaction currentTransaction;
 
-    private TaxonParser parser = new OboParser();
+    private TaxonParser parser;
 
-    private TaxonReaderFactory taxonReaderFactory = new TaxonReaderFactory() {
-        @Override
-        public BufferedReader createReader() throws IOException {
-            return OboUtil.getDefaultBufferedReader();
-        }
-    };
+    private TaxonReaderFactory taxonReaderFactory;
+
+    public TaxonomyImporter(NodeFactory nodeFactory) {
+        this(nodeFactory, new OboParser(), new OboTaxonReaderFactory());
+    }
+
+    public TaxonomyImporter(NodeFactory nodeFactory, TaxonParser taxonParser, TaxonReaderFactory taxonReaderFactory) {
+        super(nodeFactory);
+        this.parser = taxonParser;
+        this.taxonReaderFactory = taxonReaderFactory;
+        stopwatch = new StopWatch();
+        currentTransaction = null;
+    }
 
     public TaxonParser getParser() {
         return parser;
     }
 
-    public TaxonomyImporter(NodeFactory nodeFactory) {
-        super(nodeFactory);
-        stopwatch = new StopWatch();
-        currentTransaction = null;
-    }
-
-    public void importOboTerm(TaxonTerm term) throws StudyImporterException {
+    public void importTaxonTerm(TaxonTerm term) throws StudyImporterException {
         if (term.getId() == null) {
             throw new StudyImporterException("missing mandatory field id in term with name [" + term.getName() + "]");
         }
@@ -79,11 +77,11 @@ public class TaxonomyImporter extends BaseImporter {
         getStopwatch().start();
         setCounter(0);
         try {
-            getParser().parse(taxonReaderFactory.createReader(), new OboTermListener() {
+            getParser().parse(taxonReaderFactory.createReader(), new TaxonTermListener() {
                 @Override
-                public void notifyTermWithRank(TaxonTerm term) {
+                public void notifyTerm(TaxonTerm term) {
                     try {
-                        importOboTerm(term);
+                        importTaxonTerm(term);
                     } catch (StudyImporterException e) {
                         LOG.warn("failed to import term with id: [" + term.getId() + "]");
                     }
@@ -117,4 +115,5 @@ public class TaxonomyImporter extends BaseImporter {
     public void setCurrentTransaction(Transaction currentTransaction) {
         this.currentTransaction = currentTransaction;
     }
+
 }

@@ -1,6 +1,7 @@
-package org.trophic.graph.data;
+package org.trophic.graph.data.taxon;
 
 import org.junit.Test;
+import org.trophic.graph.data.taxon.TaxonNameNormalizer;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;

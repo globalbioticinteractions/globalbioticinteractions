@@ -9,11 +9,14 @@ import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.IndexHits;
 import org.neo4j.index.lucene.QueryContext;
 import org.neo4j.index.lucene.ValueContext;
+import org.trophic.graph.data.taxon.TaxonNameNormalizer;
 import org.trophic.graph.domain.Location;
 import org.trophic.graph.domain.Season;
 import org.trophic.graph.domain.Specimen;
 import org.trophic.graph.domain.Study;
 import org.trophic.graph.domain.Taxon;
+
+import java.util.ArrayList;
 
 import static org.trophic.graph.domain.RelTypes.IS_A;
 
@@ -133,15 +136,33 @@ public class NodeFactory {
         String query = "name:\"" + cleanedTaxonName + "\"";
         IndexHits<Node> matchingTaxons = taxons.query(query);
         Node matchingTaxon = null;
+        Taxon firstMatchingTaxon = null;
         if (matchingTaxons.hasNext()) {
             matchingTaxon = matchingTaxons.next();
+            firstMatchingTaxon = new Taxon(matchingTaxon);
         }
 
-        if (matchingTaxons.hasNext()) {
-            LOG.error("found two or more instances of taxon with name [" + taxonName + "]");
+        ArrayList<Taxon> duplicateTaxons = null;
+        while (matchingTaxons.hasNext()) {
+            if (duplicateTaxons == null) {
+                duplicateTaxons = new ArrayList<Taxon>();
+            }
+            duplicateTaxons.add(new Taxon(matchingTaxons.next()));
+        }
+        if (duplicateTaxons != null) {
+            StringBuffer buffer = new StringBuffer();
+            duplicateTaxons.add(firstMatchingTaxon);
+            for (Taxon duplicateTaxon : duplicateTaxons) {
+                buffer.append('{');
+                buffer.append(duplicateTaxon.getName());
+                buffer.append(':');
+                buffer.append(duplicateTaxon.getExternalId());
+                buffer.append('}');
+            }
+            LOG.warn("found duplicates for taxon with name [" + taxonName + "], using first only: " + buffer.toString());
         }
         matchingTaxons.close();
-        return matchingTaxon == null ? null : new Taxon(matchingTaxon);
+        return firstMatchingTaxon;
     }
 
     public Location findLocation(Double latitude, Double longitude, Double altitude) {

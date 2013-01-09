@@ -1,4 +1,4 @@
-package org.trophic.graph.obo;
+package org.trophic.graph.data.taxon;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -13,13 +13,13 @@ public class OboParser implements TaxonParser {
     public static final String URN_LSID_PREFIX = "NCBITaxon:";
 
     @Override
-    public void parse(BufferedReader bufferedReader, OboTermListener listener) throws IOException {
+    public void parse(BufferedReader bufferedReader, TaxonTermListener listener) throws IOException {
         TaxonTerm currentTerm = null;
         String line;
         while ((line = bufferedReader.readLine()) != null) {
             if ("[Term]".equals(line)) {
                 if (currentTerm != null && currentTerm.getRank() != null) {
-                    listener.notifyTermWithRank(currentTerm);
+                    listener.notifyTerm(currentTerm);
                 }
                 currentTerm = new TaxonTerm();
             }

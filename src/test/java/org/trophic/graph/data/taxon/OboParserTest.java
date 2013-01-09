@@ -1,4 +1,4 @@
-package org.trophic.graph.obo;
+package org.trophic.graph.data.taxon;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -20,13 +20,13 @@ public class OboParserTest {
 
     @Test
     public void oboImport() throws IOException {
-        BufferedReader bufferedReader = OboUtil.getDefaultBufferedReader();
+        BufferedReader bufferedReader = new OboTaxonReaderFactory().createReader();
         this.counter = 0;
 
-        OboTermListener listener = new OboTermListener() {
+        TaxonTermListener listener = new TaxonTermListener() {
 
             @Override
-            public void notifyTermWithRank(TaxonTerm term) {
+            public void notifyTerm(TaxonTerm term) {
                 if (getCounter() % 1000 == 0) {
                     LOG.info("got term with id: [" + term.getId() +
                             "], is_a: [" + term.getIsA() +

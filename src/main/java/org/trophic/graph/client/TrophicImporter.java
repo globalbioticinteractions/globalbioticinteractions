@@ -2,6 +2,8 @@ package org.trophic.graph.client;
 
 import org.apache.commons.lang3.time.StopWatch;
 import org.neo4j.graphdb.GraphDatabaseService;
+import org.trophic.graph.data.taxon.EOLTaxonParser;
+import org.trophic.graph.data.taxon.EOLTaxonReaderFactory;
 import org.trophic.graph.data.NodeFactory;
 import org.trophic.graph.data.ParserFactory;
 import org.trophic.graph.data.ParserFactoryImpl;
@@ -9,7 +11,7 @@ import org.trophic.graph.data.StudyImporter;
 import org.trophic.graph.data.StudyImporterException;
 import org.trophic.graph.data.StudyImporterFactory;
 import org.trophic.graph.data.StudyLibrary;
-import org.trophic.graph.data.TaxonomyImporter;
+import org.trophic.graph.data.taxon.TaxonomyImporter;
 import org.trophic.graph.db.GraphService;
 import org.trophic.graph.domain.Study;
 import org.trophic.graph.export.StudyExporter;
@@ -34,7 +36,7 @@ public class TrophicImporter {
 
     public void startImportStop() throws StudyImporterException {
         final GraphDatabaseService graphService = GraphService.getGraphService();
-        importTaxonony(graphService);
+        importTaxonomy(graphService);
 
         List<Study> studies = importData(graphService);
 
@@ -68,8 +70,8 @@ public class TrophicImporter {
         }
     }
 
-    private void importTaxonony(GraphDatabaseService graphService) throws StudyImporterException {
-        TaxonomyImporter importer = new TaxonomyImporter(new NodeFactory(graphService));
+    private void importTaxonomy(GraphDatabaseService graphService) throws StudyImporterException {
+        TaxonomyImporter importer = new TaxonomyImporter(new NodeFactory(graphService), new EOLTaxonParser(), new EOLTaxonReaderFactory());
         System.out.println("Taxonomy import starting...");
         importer.doImport();
         System.out.println("Taxonomy import complete.");

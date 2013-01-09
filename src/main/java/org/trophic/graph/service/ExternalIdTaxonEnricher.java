@@ -62,29 +62,38 @@ public class ExternalIdTaxonEnricher extends BaseTaxonEnricher {
             LOG.error("skipping taxon match against [" + service.getClass().toString() + "], error count [" + errorCount + "] too high.");
         } else {
             String taxonName = (String) taxonNode.getProperty(Taxon.NAME);
-            StopWatch stopwatch = new StopWatch();
-            stopwatch.start();
-            try {
-                String lsid = service.lookupLSIDByTaxonName(taxonName);
-                stopwatch.stop();
-                String responseTime = "(took " + stopwatch.getTime() + "ms)";
-                String msg = "for [" + taxonName + "] with LSID [" + lsid + "] in [" + service.getClass().getSimpleName() + "] " + responseTime;
-                if (lsid == null) {
-                    LOG.info("no match found " + msg);
-                } else {
-                    LOG.info("found match " + msg);
-                    enrichNode(taxonNode, lsid);
-                    return true;
-                }
-            } catch (LSIDLookupServiceException ex) {
-                LOG.warn("failed to find a match for [" + taxonName + "] in [" + service.getClass().getSimpleName() + "]", ex);
-                if (errorCounts.containsKey(service.getClass()) && errorCount != null) {
-                    errorCounts.put(service.getClass(), ++errorCount);
-                } else {
-                    errorCounts.put(service.getClass(), 0);
-                }
-                throw new LSIDLookupServiceException("re-throwing", ex);
+            if (taxonName.trim().length() < 2) {
+                LOG.warn("not matching invalid [" + taxonName + "]: name is too short");
+            } else {
+                if (lookupTaxon(errorCounts, taxonNode, service, errorCount, taxonName)) return true;
             }
+        }
+        return false;
+    }
+
+    private boolean lookupTaxon(HashMap<Class, Integer> errorCounts, Node taxonNode, LSIDLookupService service, Integer errorCount, String taxonName) throws LSIDLookupServiceException {
+        StopWatch stopwatch = new StopWatch();
+        stopwatch.start();
+        try {
+            String lsid = service.lookupLSIDByTaxonName(taxonName);
+            stopwatch.stop();
+            String responseTime = "(took " + stopwatch.getTime() + "ms)";
+            String msg = "for [" + taxonName + "] with LSID [" + lsid + "] in [" + service.getClass().getSimpleName() + "] " + responseTime;
+            if (lsid == null) {
+                LOG.info("no match found " + msg);
+            } else {
+                LOG.info("found match " + msg);
+                enrichNode(taxonNode, lsid);
+                return true;
+            }
+        } catch (LSIDLookupServiceException ex) {
+            LOG.warn("failed to find a match for [" + taxonName + "] in [" + service.getClass().getSimpleName() + "]", ex);
+            if (errorCounts.containsKey(service.getClass()) && errorCount != null) {
+                errorCounts.put(service.getClass(), ++errorCount);
+            } else {
+                errorCounts.put(service.getClass(), 0);
+            }
+            throw new LSIDLookupServiceException("re-throwing", ex);
         }
         return false;
     }

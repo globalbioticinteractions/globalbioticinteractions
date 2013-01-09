@@ -1,4 +1,4 @@
-package org.trophic.graph.obo;
+package org.trophic.graph.data.taxon;
 
 public class TaxonTerm {
     public void setRank(String rank) {

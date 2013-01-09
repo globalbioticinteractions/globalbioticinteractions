@@ -1,4 +1,4 @@
-package org.trophic.graph.obo;
+package org.trophic.graph.data.taxon;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -6,10 +6,11 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.zip.GZIPInputStream;
 
-public class OboUtil {
+public class EOLTaxonReaderFactory implements TaxonReaderFactory {
 
-    static public BufferedReader getDefaultBufferedReader() throws IOException {
-        InputStream resourceAsStream = OboUtil.class.getResourceAsStream("/org/obofoundry/ncbi_taxonomy.obo.gz");
+    @Override
+    public BufferedReader createReader() throws IOException {
+        InputStream resourceAsStream = getClass().getResourceAsStream("eol/taxon.tab.gz");
         GZIPInputStream gzipInputStream = new GZIPInputStream(resourceAsStream);
         return new BufferedReader(new InputStreamReader(gzipInputStream));
     }

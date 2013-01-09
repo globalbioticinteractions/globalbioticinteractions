@@ -1,4 +1,4 @@
-package org.trophic.graph.data;
+package org.trophic.graph.data.taxon;
 
 import java.io.BufferedReader;
 import java.io.IOException;

@@ -12,7 +12,7 @@ import org.neo4j.helpers.collection.IteratorUtil;
 import org.trophic.graph.domain.Taxon;
 import org.trophic.graph.domain.TaxonImage;
 import org.trophic.graph.domain.TaxonomyProvider;
-import org.trophic.graph.obo.OboParser;
+import org.trophic.graph.data.taxon.OboParser;
 
 import java.io.IOException;
 import java.util.Iterator;

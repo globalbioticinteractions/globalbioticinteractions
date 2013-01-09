@@ -1,4 +1,4 @@
-package org.trophic.graph.data;
+package org.trophic.graph.data.taxon;
 
 import com.Ostermiller.util.CSVParser;
 import com.Ostermiller.util.LabeledCSVParser;

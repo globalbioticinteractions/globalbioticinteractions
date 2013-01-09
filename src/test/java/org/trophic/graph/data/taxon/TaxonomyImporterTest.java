@@ -1,9 +1,10 @@
-package org.trophic.graph.data;
+package org.trophic.graph.data.taxon;
 
 import org.junit.Test;
+import org.trophic.graph.data.GraphDBTestCase;
+import org.trophic.graph.data.NodeFactoryException;
+import org.trophic.graph.data.StudyImporterException;
 import org.trophic.graph.domain.Taxon;
-import org.trophic.graph.obo.OboParser;
-import org.trophic.graph.obo.TaxonTerm;
 
 import java.io.IOException;
 
@@ -32,7 +33,7 @@ public class TaxonomyImporterTest extends GraphDBTestCase {
         term.setName("Blabus blalba");
         term.setRank("species");
 
-        new TaxonomyImporter(nodeFactory).importOboTerm(term);
+        new TaxonomyImporter(nodeFactory).importTaxonTerm(term);
 
         Taxon species = nodeFactory.findTaxonOfType("Blabus blalba");
         assertThat(species.getName(), is("Blabus blalba"));
@@ -46,7 +47,7 @@ public class TaxonomyImporterTest extends GraphDBTestCase {
         term.setRank("species");
         term.setId("id123");
 
-        new TaxonomyImporter(nodeFactory).importOboTerm(term);
+        new TaxonomyImporter(nodeFactory).importTaxonTerm(term);
 
         Taxon species = nodeFactory.findTaxonOfType("Blabus blalba");
         assertThat(species.getName(), is("Blabus blalba"));
