@@ -13,7 +13,7 @@ import java.io.IOException;
 public class TaxonomyImporter extends BaseImporter {
 
     private static final Log LOG = LogFactory.getLog(TaxonomyImporter.class);
-    public static final int SAMPLE_SIZE = 10000;
+    public static final int BATCH_TRANSACTION_SIZE = 10000;
     private int counter;
     private StopWatch stopwatch;
     private Transaction currentTransaction;
@@ -48,16 +48,16 @@ public class TaxonomyImporter extends BaseImporter {
         }
         nodeFactory.createTaxonNoTransaction(term.getName(), term.getId());
         count();
-        if (getCounter() % SAMPLE_SIZE == 0) {
+        if (getCounter() % BATCH_TRANSACTION_SIZE == 0) {
             if (getCurrentTransaction() != null) {
                 getCurrentTransaction().success();
                 getCurrentTransaction().finish();
             }
             StopWatch stopwatch = getStopwatch();
             stopwatch.stop();
-            double avg = 1000.0 * SAMPLE_SIZE / (stopwatch.getTime() + 1);
+            double avg = 1000.0 * BATCH_TRANSACTION_SIZE / (stopwatch.getTime() + 1);
             String format = formatProgressString(avg);
-            System.out.println(format);
+            LOG.info(format);
             stopwatch.reset();
             stopwatch.start();
             setCurrentTransaction(nodeFactory.getGraphDb().beginTx());
@@ -65,7 +65,7 @@ public class TaxonomyImporter extends BaseImporter {
     }
 
     protected String formatProgressString(double avg) {
-        return String.format("%d (%.1f%%), %.1f terms/s", getCounter(), 100.0 * (float) getCounter() / (float) OboParser.MAX_TERMS, avg);
+        return String.format("%d (%.1f%%), %.1f terms/s", getCounter(), 100.0 * (float) getCounter() / (float) getParser().getExpectedMaxTerms(), avg);
     }
 
     private void count() {

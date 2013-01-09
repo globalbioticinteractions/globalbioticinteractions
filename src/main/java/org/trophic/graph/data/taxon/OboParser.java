@@ -9,7 +9,6 @@ public class OboParser implements TaxonParser {
     public static final String OBO_IS_A = "is_a: ";
     public static final String OBO_ID = "id: ";
     public static final String HAS_RANK = "property_value: has_rank NCBITaxon:";
-    public static final int MAX_TERMS = 798595;
     public static final String URN_LSID_PREFIX = "NCBITaxon:";
 
     @Override
@@ -36,5 +35,10 @@ public class OboParser implements TaxonParser {
                 }
             }
         }
+    }
+
+    @Override
+    public int getExpectedMaxTerms() {
+        return 798595;
     }
 }

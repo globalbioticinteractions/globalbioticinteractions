@@ -127,6 +127,11 @@ public class NodeFactory {
         taxons.add(node, Taxon.NAME, taxon.getName());
     }
 
+    public void deleteTaxon(Taxon taxon) {
+        taxons.remove(taxon.getUnderlyingNode());
+
+    }
+
     public Taxon findTaxon(String taxonName) throws NodeFactoryException {
         return findTaxonOfType(taxonName);
     }

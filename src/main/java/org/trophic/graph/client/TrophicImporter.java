@@ -1,9 +1,9 @@
 package org.trophic.graph.client;
 
 import org.apache.commons.lang3.time.StopWatch;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.neo4j.graphdb.GraphDatabaseService;
-import org.trophic.graph.data.taxon.EOLTaxonParser;
-import org.trophic.graph.data.taxon.EOLTaxonReaderFactory;
 import org.trophic.graph.data.NodeFactory;
 import org.trophic.graph.data.ParserFactory;
 import org.trophic.graph.data.ParserFactoryImpl;
@@ -11,6 +11,8 @@ import org.trophic.graph.data.StudyImporter;
 import org.trophic.graph.data.StudyImporterException;
 import org.trophic.graph.data.StudyImporterFactory;
 import org.trophic.graph.data.StudyLibrary;
+import org.trophic.graph.data.taxon.EOLTaxonParser;
+import org.trophic.graph.data.taxon.EOLTaxonReaderFactory;
 import org.trophic.graph.data.taxon.TaxonomyImporter;
 import org.trophic.graph.db.GraphService;
 import org.trophic.graph.domain.Study;
@@ -20,6 +22,7 @@ import org.trophic.graph.export.StudyExporterPredatorPrey;
 import org.trophic.graph.export.StudyExporterPredatorPreyEOL;
 import org.trophic.graph.service.ExternalIdTaxonEnricher;
 import org.trophic.graph.service.TaxonImageEnricher;
+import org.trophic.graph.service.TaxonPrunerService;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -29,12 +32,13 @@ import java.util.Arrays;
 import java.util.List;
 
 public class TrophicImporter {
+    private static final Log LOG = LogFactory.getLog(TrophicImporter.class);
 
     public static void main(final String[] commandLineArguments) throws StudyImporterException {
-        new TrophicImporter().startImportStop();
+        new TrophicImporter().importExport();
     }
 
-    public void startImportStop() throws StudyImporterException {
+    public void importExport() throws StudyImporterException {
         final GraphDatabaseService graphService = GraphService.getGraphService();
         importTaxonomy(graphService);
 
@@ -42,16 +46,30 @@ public class TrophicImporter {
 
         enrichData(graphService);
 
+        pruneUnusedTaxons(graphService);
+
         exportData(studies);
 
         graphService.shutdown();
+    }
+
+    private void pruneUnusedTaxons(GraphDatabaseService graphService) {
+        try {
+            LOG.info("pruning unused taxa started...");
+            new TaxonPrunerService(graphService).process();
+            LOG.info("pruning unused taxa complete.");
+        } catch (IOException ex) {
+            LOG.warn("failed to prune some or all unused taxons", ex);
+        }
+
+
     }
 
     private void enrichData(GraphDatabaseService graphService) throws StudyImporterException {
         matchAgainstExternalTaxonomies(graphService);
 
         try {
-            new TaxonImageEnricher(graphService).enrichTaxons();
+            new TaxonImageEnricher(graphService).process();
         } catch (IOException e) {
             throw new StudyImporterException("failed to add image url information", e);
         }
@@ -61,10 +79,10 @@ public class TrophicImporter {
         try {
             StopWatch stopwatch = new StopWatch();
             stopwatch.start();
-            System.out.println("Matching taxons against external taxonomies starting...");
-            new ExternalIdTaxonEnricher(graphService).enrichTaxons();
+            LOG.info("Matching taxons against external taxonomies starting...");
+            new ExternalIdTaxonEnricher(graphService).process();
             stopwatch.stop();
-            System.out.println("Matching taxons against external complete. Total duration: [" + stopwatch.getTime() / (60.0 * 1000.0) + "] minutes");
+            LOG.info("Matching taxons against external complete. Total duration: [" + stopwatch.getTime() / (60.0 * 1000.0) + "] minutes");
         } catch (IOException e) {
             throw new StudyImporterException("enriching unmatched nodes failed", e);
         }
@@ -72,9 +90,9 @@ public class TrophicImporter {
 
     private void importTaxonomy(GraphDatabaseService graphService) throws StudyImporterException {
         TaxonomyImporter importer = new TaxonomyImporter(new NodeFactory(graphService), new EOLTaxonParser(), new EOLTaxonReaderFactory());
-        System.out.println("Taxonomy import starting...");
+        LOG.info("Taxonomy import starting...");
         importer.doImport();
-        System.out.println("Taxonomy import complete.");
+        LOG.info("Taxonomy import complete.");
     }
 
     public List<Study> importStudies(GraphDatabaseService graphService) throws StudyImporterException {
@@ -90,9 +108,9 @@ public class TrophicImporter {
 
         for (StudyLibrary.Study study : studies) {
             StudyImporter studyImporter = createStudyImporter(graphService, study);
-            System.out.println("study [" + study + "] importing ...");
+            LOG.info("study [" + study + "] importing ...");
             importedStudies.add(studyImporter.importStudy());
-            System.out.println("study [" + study + "]");
+            LOG.info("study [" + study + "]");
         }
         return importedStudies;
     }
@@ -109,14 +127,14 @@ public class TrophicImporter {
 
     private void export(List<Study> importedStudies, String exportPath, StudyExporter studyExporter) throws IOException {
         FileWriter writer = new FileWriter(exportPath, false);
-        System.out.println("export data to [" + new File(exportPath).getAbsolutePath() + "] started...");
+        LOG.info("export data to [" + new File(exportPath).getAbsolutePath() + "] started...");
         for (Study importedStudy : importedStudies) {
             boolean includeHeader = importedStudies.indexOf(importedStudy) == 0;
             studyExporter.exportStudy(importedStudy, writer, includeHeader);
         }
         writer.flush();
         writer.close();
-        System.out.println("export data to [" + new File(exportPath).getAbsolutePath() + "] complete.");
+        LOG.info("export data to [" + new File(exportPath).getAbsolutePath() + "] complete.");
     }
 
     private StudyImporter createStudyImporter(GraphDatabaseService graphService, StudyLibrary.Study study) throws StudyImporterException {

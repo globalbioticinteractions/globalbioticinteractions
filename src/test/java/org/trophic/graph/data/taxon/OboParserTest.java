@@ -40,8 +40,9 @@ public class OboParserTest {
             }
         };
 
-        new OboParser().parse(bufferedReader, listener);
-        assertThat("expected a certain amount of terms", getCounter(), is(OboParser.MAX_TERMS));
+        OboParser oboParser = new OboParser();
+        oboParser.parse(bufferedReader, listener);
+        assertThat("expected a certain amount of terms", getCounter(), is(oboParser.getExpectedMaxTerms()));
     }
 
 

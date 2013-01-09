@@ -21,7 +21,7 @@ public class TaxonomyImporterTest extends GraphDBTestCase {
 
         assertThat(s, is("123 (0.0%), 12.2 terms/s"));
 
-        taxonomyImporter.setCounter(OboParser.MAX_TERMS);
+        taxonomyImporter.setCounter(taxonomyImporter.getParser().getExpectedMaxTerms());
         s = taxonomyImporter.formatProgressString(12.2);
         assertThat(s, is("798595 (100.0%), 12.2 terms/s"));
     }

@@ -29,7 +29,7 @@ public class EOLTaxonParserTest {
         assertThat(taxonTerm.getName(), is("Animalia"));
         assertThat(terms.size(), is(10));
 
-        assertThat(listener.count, is(2474168));
+        assertThat(listener.count, is(taxonParser.getExpectedMaxTerms()));
 
     }
 

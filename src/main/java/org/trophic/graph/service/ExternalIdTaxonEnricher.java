@@ -17,7 +17,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
-public class ExternalIdTaxonEnricher extends BaseTaxonEnricher {
+public class ExternalIdTaxonEnricher extends TaxonEnricher {
     private static final Log LOG = LogFactory.getLog(ExternalIdTaxonEnricher.class);
 
     public ExternalIdTaxonEnricher(GraphDatabaseService graphDbService) {

@@ -18,7 +18,7 @@ import static org.junit.matchers.JUnitMatchers.containsString;
 
 public class ExternalIdTaxonEnricherIT extends GraphDBTestCase {
 
-    private TaxonEnricher taxonEnricher;
+    private TaxonProcessor taxonProcessor;
 
     public static final String[] TAXON_NAMES = new String[]{
             "Zalieutes mcgintyi",
@@ -30,7 +30,7 @@ public class ExternalIdTaxonEnricherIT extends GraphDBTestCase {
 
     @Before
     public void init() {
-        taxonEnricher = new ExternalIdTaxonEnricher(nodeFactory.getGraphDb());
+        taxonProcessor = new ExternalIdTaxonEnricher(nodeFactory.getGraphDb());
     }
 
     @Test
@@ -55,7 +55,7 @@ public class ExternalIdTaxonEnricherIT extends GraphDBTestCase {
 
         study.collected(predator);
 
-        taxonEnricher.enrichTaxons();
+        taxonProcessor.process();
 
         Taxon taxonOfType = nodeFactory.findTaxonOfType(preyName);
         assertThat("failed to match [" + preyName + "]", taxonOfType.getExternalId(), containsString(EOLTaxonImageService.EOL_LSID_PREFIX));
@@ -68,7 +68,7 @@ public class ExternalIdTaxonEnricherIT extends GraphDBTestCase {
         specimen.classifyAs(taxon);
         study.collected(specimen);
 
-        taxonEnricher.enrichTaxons();
+        taxonProcessor.process();
 
         Taxon taxonOfType = nodeFactory.findTaxonOfType(speciesName);
         assertThat("failed to match [" + speciesName + "]", taxonOfType.getExternalId(), containsString(EOLTaxonImageService.EOL_LSID_PREFIX));

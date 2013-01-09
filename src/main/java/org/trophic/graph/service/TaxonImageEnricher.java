@@ -17,7 +17,7 @@ import org.trophic.graph.data.taxon.OboParser;
 import java.io.IOException;
 import java.util.Iterator;
 
-public class TaxonImageEnricher extends BaseTaxonEnricher {
+public class TaxonImageEnricher extends TaxonEnricher {
     private static final Log LOG = LogFactory.getLog(TaxonImageEnricher.class);
 
     public TaxonImageEnricher(GraphDatabaseService graphDbService) {

@@ -21,4 +21,9 @@ public  class EOLTaxonParser implements TaxonParser {
         }
 
     }
+
+    @Override
+    public int getExpectedMaxTerms() {
+        return 2474168;
+    }
 }

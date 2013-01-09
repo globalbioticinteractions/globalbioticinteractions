@@ -17,11 +17,11 @@ import static org.junit.Assert.assertThat;
 
 public class TaxonImageEnricherIT extends GraphDBTestCase {
 
-    private TaxonEnricher taxonEnricher;
+    private TaxonProcessor taxonProcessor;
 
     @Before
     public void init() {
-        taxonEnricher = new TaxonImageEnricher(nodeFactory.getGraphDb());
+        taxonProcessor = new TaxonImageEnricher(nodeFactory.getGraphDb());
     }
 
     @Test
@@ -47,7 +47,7 @@ public class TaxonImageEnricherIT extends GraphDBTestCase {
 
         study.collected(predator);
 
-        taxonEnricher.enrichTaxons();
+        taxonProcessor.process();
 
         Taxon taxonOfType = nodeFactory.findTaxonOfType(preyName);
         assertThat("failed to match [" + preyName + "]", taxonOfType.getImageURL(), is(not(nullValue())));
@@ -61,7 +61,7 @@ public class TaxonImageEnricherIT extends GraphDBTestCase {
         specimen.classifyAs(taxon);
         study.collected(specimen);
 
-        taxonEnricher.enrichTaxons();
+        taxonProcessor.process();
 
         Taxon taxonOfType = nodeFactory.findTaxonOfType(speciesName);
         assertThat("failed to match [" + speciesName + "]", taxonOfType.getImageURL(), is(not(nullValue())));
