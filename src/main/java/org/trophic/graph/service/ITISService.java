@@ -14,7 +14,6 @@ public class ITISService extends BaseService implements LSIDLookupService {
 
     @Override
     public String lookupLSIDByTaxonName(String taxonName) throws LSIDLookupServiceException {
-
         String lsid = null;
         URI uri = null;
         try {

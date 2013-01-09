@@ -19,15 +19,16 @@ public class ITISServiceIT {
     @Test
     public void lookupExistentTaxon() throws LSIDLookupServiceException {
         assertThat(lookupTerm("Fundulus jenkinsi"), is("urn:lsid:itis.gov:itis_tsn:165653"));
-
-
     }
 
     @Test
     public void lookupValidCommonName() throws LSIDLookupServiceException {
-        String lsid = lookupTerm("Common Snook");
-        assertThat(lsid, is(nullValue()));
+        assertThat(lookupTerm("Common Snook"), is(nullValue()));
+    }
 
+    @Test
+    public void lookupNA() throws LSIDLookupServiceException {
+        assertThat(lookupTerm("NA"), is(nullValue()));
     }
 
     private String lookupTerm(String term) throws LSIDLookupServiceException {

@@ -30,5 +30,11 @@ public class WoRMSServiceIT {
 
     }
 
+    @Test
+    public void lookupNA() throws LSIDLookupServiceException {
+        String lsid = new WoRMSService().lookupLSIDByTaxonName("NA");
+        assertThat(lsid, is(nullValue()));
+    }
+
 
 }
