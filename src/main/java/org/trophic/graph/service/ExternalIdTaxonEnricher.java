@@ -27,7 +27,7 @@ public class ExternalIdTaxonEnricher extends TaxonEnricher {
     @Override
     protected void enrichTaxonUsingMatch(String matchString) throws IOException {
         ExecutionEngine engine = new ExecutionEngine(graphDbService);
-        String queryPrefix = "START study = node:studies('*:*') "
+        String queryPrefix = "START taxon = node:taxons('*:*') "
                 + "MATCH " + matchString
                 + "WHERE not(has(taxon.externalId)) ";
 
@@ -36,11 +36,11 @@ public class ExternalIdTaxonEnricher extends TaxonEnricher {
         ExecutionResult result = engine.execute(queryPrefix
                 + "RETURN distinct taxon");
         Iterator<Node> taxon = result.columnAs("taxon");
-        Iterable<Node> objectIterable = IteratorUtil.asIterable(taxon);
         HashMap<Class, Integer> errorCounts = new HashMap<Class, Integer>();
         List<LSIDLookupService> services = new ArrayList<LSIDLookupService>();
         initServices(services);
-        for (Node taxonNode : objectIterable) {
+        while (taxon.hasNext()) {
+            Node taxonNode = taxon.next();
             try {
                 for (LSIDLookupService service : services) {
                     if (enrichedTaxonWithService(errorCounts, taxonNode, service)) {
@@ -53,7 +53,6 @@ public class ExternalIdTaxonEnricher extends TaxonEnricher {
             }
         }
         shutdownServices(services);
-
     }
 
     private boolean enrichedTaxonWithService(HashMap<Class, Integer> errorCounts, Node taxonNode, LSIDLookupService service) throws LSIDLookupServiceException {

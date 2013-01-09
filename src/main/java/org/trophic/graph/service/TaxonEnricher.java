@@ -12,10 +12,7 @@ public abstract class TaxonEnricher extends BaseTaxonProcessor  {
 
     @Override
     public void process() throws IOException {
-        String predatorTaxons = "study-[:COLLECTED]->specimen-[:CLASSIFIED_AS]->taxon ";
-        enrichTaxonUsingMatch(predatorTaxons);
-        String preyTaxons = "study-[:COLLECTED]->predator-[:ATE]->prey-[:CLASSIFIED_AS]->taxon ";
-        enrichTaxonUsingMatch(preyTaxons);
+        enrichTaxonUsingMatch("taxon<-[:CLASSIFIED_AS]-specimen ");
     }
 
     protected abstract void enrichTaxonUsingMatch(String matchString) throws IOException;

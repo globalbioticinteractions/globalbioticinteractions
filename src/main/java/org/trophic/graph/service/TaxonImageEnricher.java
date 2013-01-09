@@ -27,18 +27,29 @@ public class TaxonImageEnricher extends TaxonEnricher {
     @Override
     protected void enrichTaxonUsingMatch(String matchString) throws IOException {
         ExecutionEngine engine = new ExecutionEngine(graphDbService);
-        String queryPrefix = "START study = node:studies('*:*') "
+        String queryPrefix = "START taxon = node:taxons('*:*') "
                 + "MATCH " + matchString
                 + "WHERE has(taxon.externalId) ";
 
         LOG.info("matching [" + matchString + "]...");
 
         ExecutionResult result = engine.execute(queryPrefix
+                + "RETURN count(distinct taxon) as totalTaxons");
+        Iterator<Long> totalAffectedTaxons = result.columnAs("totalTaxons");
+        Long totalTaxons = totalAffectedTaxons.next();
+
+
+        result = engine.execute(queryPrefix
                 + "RETURN distinct taxon");
         Iterator<Node> taxon = result.columnAs("taxon");
-        Iterable<Node> objectIterable = IteratorUtil.asIterable(taxon);
         EOLTaxonImageService service = new EOLTaxonImageService();
-        for (Node taxonNode : objectIterable) {
+        long count = 0;
+        while (taxon.hasNext()) {
+            Node taxonNode = taxon.next();
+            count++;
+            if (count % 10 == 0) {
+                LOG.info("Attempted to enrich taxon [" + count + "] out of [" + totalTaxons + "] with images");
+            }
             String taxonName = (String) taxonNode.getProperty(Taxon.NAME);
             String externalId = (String) taxonNode.getProperty(Taxon.EXTERNAL_ID);
             StopWatch stopwatch = new StopWatch();
@@ -58,6 +69,7 @@ public class TaxonImageEnricher extends TaxonEnricher {
                         enrichNode(taxonNode, taxonImage);
                     }
                 }
+
             } catch (IOException ex) {
                 LOG.warn("failed to find a match for [" + taxonName + "] in [" + service.getClass().getSimpleName() + "]", ex);
             }

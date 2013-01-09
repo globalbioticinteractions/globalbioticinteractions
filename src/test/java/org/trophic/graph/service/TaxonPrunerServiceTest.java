@@ -38,9 +38,9 @@ public class TaxonPrunerServiceTest extends GraphDBTestCase {
     }
 
     private void addTaxons() throws NodeFactoryException {
-        Taxon man = nodeFactory.createTaxon("Homo sapiens", null);
-        nodeFactory.createTaxon("Canis lupus", null);
-        nodeFactory.createTaxon("Canis lupus alces", null);
+        Taxon man = nodeFactory.getOrCreateTaxon("Homo sapiens", null);
+        nodeFactory.getOrCreateTaxon("Canis lupus", null);
+        nodeFactory.getOrCreateTaxon("Canis lupus alces", null);
 
         Specimen specimen = nodeFactory.createSpecimen();
         specimen.classifyAs(man);
