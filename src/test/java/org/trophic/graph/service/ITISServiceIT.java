@@ -1,5 +1,6 @@
 package org.trophic.graph.service;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.nullValue;
@@ -26,6 +27,7 @@ public class ITISServiceIT {
         assertThat(lookupTerm("Common Snook"), is(nullValue()));
     }
 
+    @Ignore
     @Test
     public void lookupNA() throws LSIDLookupServiceException {
         assertThat(lookupTerm("NA"), is(nullValue()));

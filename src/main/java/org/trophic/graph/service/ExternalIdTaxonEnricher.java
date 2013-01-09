@@ -101,7 +101,7 @@ public class ExternalIdTaxonEnricher extends BaseTaxonEnricher {
     private void initServices(List<LSIDLookupService> services) {
         services.add(new EOLService());
         services.add(new WoRMSService());
-        services.add(new ITISService());
+        //services.add(new ITISService());
     }
 
     private void shutdownServices(List<LSIDLookupService> services) {

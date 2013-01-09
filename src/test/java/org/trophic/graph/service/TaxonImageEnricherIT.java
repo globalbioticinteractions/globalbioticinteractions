@@ -26,13 +26,13 @@ public class TaxonImageEnricherIT extends GraphDBTestCase {
 
     @Test
     public void matchPredatorTaxon() throws NodeFactoryException, IOException {
-        matchTaxon("Some name", ITISService.URN_LSID_PREFIX + "165653");
+        matchTaxon("Some name", "urn:lsid:itis.gov:itis_tsn:" + "165653");
         matchTaxon("Some name2", "NCBITaxon:28806");
     }
 
     @Test
     public void matchPreyTaxon() throws IOException, NodeFactoryException {
-        enrichPreyTaxon("Some name", ITISService.URN_LSID_PREFIX + "165653");
+        enrichPreyTaxon("Some name", "urn:lsid:itis.gov:itis_tsn:" + "165653");
     }
 
     private void enrichPreyTaxon(String preyName, String externalId) throws IOException, NodeFactoryException {
