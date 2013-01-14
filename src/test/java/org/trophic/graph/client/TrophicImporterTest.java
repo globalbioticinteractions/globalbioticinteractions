@@ -5,6 +5,7 @@ import org.junit.Test;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.trophic.graph.data.GraphDBTestCase;
 import org.trophic.graph.data.StudyImporterException;
+import org.trophic.graph.data.taxon.TaxonLookupService;
 
 import java.io.IOException;
 
@@ -18,7 +19,17 @@ public class TrophicImporterTest extends GraphDBTestCase {
         TrophicImporter trophicImporter = new TrophicImporter();
 
         GraphDatabaseService graphService = getGraphDb();
-        trophicImporter.importStudies(graphService);
+        trophicImporter.importStudies(graphService, new TaxonLookupService() {
+            @Override
+            public long[] lookupTerms(String taxonName) throws IOException {
+                return new long[0];
+            }
+
+            @Override
+            public void destroy() {
+
+            }
+        });
 
         assertNotNull(graphService.getNodeById(1));
         assertNotNull(graphService.getNodeById(200));

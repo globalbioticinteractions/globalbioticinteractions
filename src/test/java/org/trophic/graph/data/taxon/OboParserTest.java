@@ -23,20 +23,27 @@ public class OboParserTest {
         BufferedReader bufferedReader = new OboTaxonReaderFactory().createReader();
         this.counter = 0;
 
-        TaxonTermListener listener = new TaxonTermListener() {
+        TaxonImportListener listener = new TaxonImportListener() {
 
             @Override
-            public void notifyTerm(TaxonTerm term) {
+            public void addTerm(String name, long id) {
                 if (getCounter() % 1000 == 0) {
-                    LOG.info("got term with id: [" + term.getId() +
-                            "], is_a: [" + term.getIsA() +
-                            "], name: [" + term.getName() +
-                            "], rank: [" + term.getRank() + "]");
+                    LOG.info("got term with id: [" + id +
+                            "], name: [" + name + "]");
                 }
-                assertThat(term.getId(), is(not(nullValue())));
-                assertThat(term.getName(), is(not(nullValue())));
-                assertThat(term.getRank(), is(not(nullValue())));
+                assertThat(name, is(not(nullValue())));
+                assertThat(id > 0, is(true));
                 count();
+            }
+
+            @Override
+            public void start() {
+
+            }
+
+            @Override
+            public void finish() {
+
             }
         };
 

@@ -8,6 +8,9 @@ import org.neo4j.graphdb.Relationship;
 import org.trophic.graph.data.GraphDBTestCase;
 import org.trophic.graph.data.NodeFactory;
 import org.trophic.graph.data.NodeFactoryException;
+import org.trophic.graph.data.taxon.TaxonLookupService;
+
+import java.io.IOException;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
@@ -25,7 +28,17 @@ public class StudyTest extends GraphDBTestCase {
 
     @Before
     public void createFactory() {
-        factory = new NodeFactory(getGraphDb());
+        factory = new NodeFactory(getGraphDb(), new TaxonLookupService() {
+            @Override
+            public long[] lookupTerms(String taxonName) throws IOException {
+                return new long[0];
+            }
+
+            @Override
+            public void destroy() {
+
+            }
+        });
     }
 
     @Test

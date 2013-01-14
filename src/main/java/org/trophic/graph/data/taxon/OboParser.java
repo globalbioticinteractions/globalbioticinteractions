@@ -12,20 +12,20 @@ public class OboParser implements TaxonParser {
     public static final String URN_LSID_PREFIX = "NCBITaxon:";
 
     @Override
-    public void parse(BufferedReader bufferedReader, TaxonTermListener listener) throws IOException {
+    public void parse(BufferedReader bufferedReader, TaxonImportListener listener) throws IOException {
         TaxonTerm currentTerm = null;
         String line;
         while ((line = bufferedReader.readLine()) != null) {
             if ("[Term]".equals(line)) {
                 if (currentTerm != null && currentTerm.getRank() != null) {
-                    listener.notifyTerm(currentTerm);
+                    listener.addTerm(currentTerm.getName(), Long.parseLong(currentTerm.getId()));
                 }
                 currentTerm = new TaxonTerm();
             }
 
             if (currentTerm != null) {
                 if (line.startsWith(OBO_ID)) {
-                    currentTerm.setId(line.substring(OBO_ID.length()));
+                    currentTerm.setId(line.substring(OBO_ID.length() + "NCBITaxon:".length()));
                 } else if (line.startsWith(OBO_IS_A)) {
                     currentTerm.setIsA(line.substring(OBO_IS_A.length()));
                 } else if (line.startsWith(OBO_NAME)) {

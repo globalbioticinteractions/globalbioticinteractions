@@ -7,8 +7,11 @@ import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.IndexHits;
+import org.neo4j.helpers.collection.MapUtil;
+import org.neo4j.index.impl.lucene.LuceneIndex;
 import org.neo4j.index.lucene.QueryContext;
 import org.neo4j.index.lucene.ValueContext;
+import org.trophic.graph.data.taxon.TaxonLookupService;
 import org.trophic.graph.data.taxon.TaxonNameNormalizer;
 import org.trophic.graph.domain.Location;
 import org.trophic.graph.domain.Season;
@@ -16,6 +19,7 @@ import org.trophic.graph.domain.Specimen;
 import org.trophic.graph.domain.Study;
 import org.trophic.graph.domain.Taxon;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 import static org.trophic.graph.domain.RelTypes.IS_A;
@@ -26,6 +30,7 @@ public class NodeFactory {
 
     public static final TaxonNameNormalizer TAXON_NAME_NORMALIZER = new TaxonNameNormalizer();
 
+
     public GraphDatabaseService getGraphDb() {
         return graphDb;
     }
@@ -35,14 +40,15 @@ public class NodeFactory {
     private Index<Node> seasons;
     private Index<Node> locations;
     private Index<Node> taxons;
+    private TaxonLookupService taxonLookupService;
 
-    public NodeFactory(GraphDatabaseService graphDb) {
+    public NodeFactory(GraphDatabaseService graphDb, TaxonLookupService taxonLookupService) {
         this.graphDb = graphDb;
         this.studies = graphDb.index().forNodes("studies");
         this.seasons = graphDb.index().forNodes("seasons");
         this.locations = graphDb.index().forNodes("locations");
+        this.taxonLookupService = taxonLookupService;
         this.taxons = graphDb.index().forNodes("taxons");
-
     }
 
     public Taxon createTaxon(String name, Taxon family) throws NodeFactoryException {
@@ -125,11 +131,6 @@ public class NodeFactory {
 
     private void addTaxonToIndex(Taxon taxon, Node node) {
         taxons.add(node, Taxon.NAME, taxon.getName());
-    }
-
-    public void deleteTaxon(Taxon taxon) {
-        taxons.remove(taxon.getUnderlyingNode());
-
     }
 
     public Taxon findTaxon(String taxonName) throws NodeFactoryException {
@@ -294,9 +295,23 @@ public class NodeFactory {
     public Taxon getOrCreateTaxon(String name, String externalId) throws NodeFactoryException {
         Taxon taxon = findTaxon(name);
         if (taxon == null) {
+            String externalId1 = externalId;
+            try {
+                long[] longs = taxonLookupService.lookupTerms(TAXON_NAME_NORMALIZER.normalize(name));
+                if (longs.length > 0) {
+                    // TODO should put EOL dependency in taxonLookupService
+                    externalId1 = "EOL:" + longs[0];
+                    if (longs.length > 1) {
+                        LOG.info("found at least one duplicate for taxon with name [" + name + "]: {" + longs[0] + "," + longs[1] + "} - using first.");
+                    }
+                }
+            } catch (IOException e) {
+                throw new NodeFactoryException("failed to lookup taxon", e);
+            }
+
             Transaction transaction = graphDb.beginTx();
             try {
-                taxon = createTaxonNoTransaction(name, externalId);
+                taxon = createTaxonNoTransaction(name, externalId1);
                 transaction.success();
             } finally {
                 transaction.finish();

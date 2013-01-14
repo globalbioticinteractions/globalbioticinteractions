@@ -3,8 +3,11 @@ package org.trophic.graph.data;
 import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.trophic.graph.data.taxon.TaxonLookupService;
 import org.trophic.graph.domain.Location;
 import org.trophic.graph.domain.Taxon;
+
+import java.io.IOException;
 
 import static junit.framework.Assert.assertNull;
 import static org.hamcrest.CoreMatchers.not;
@@ -19,7 +22,17 @@ public class NodeFactoryTest extends GraphDBTestCase {
 
     @Before
     public void createFactory() {
-        nodeFactory = new NodeFactory(getGraphDb());
+        nodeFactory = new NodeFactory(getGraphDb(), new TaxonLookupService() {
+            @Override
+            public long[] lookupTerms(String taxonName) throws IOException {
+                return new long[0];
+            }
+
+            @Override
+            public void destroy() {
+
+            }
+        });
     }
 
     @Test

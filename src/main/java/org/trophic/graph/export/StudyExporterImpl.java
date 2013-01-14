@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Iterator;
 
 public class StudyExporterImpl implements StudyExporter {
 
@@ -108,10 +109,13 @@ public class StudyExporterImpl implements StudyExporter {
         String taxonString = null;
         if (specimenNode != null) {
             Iterable<Relationship> relationships = specimenNode.getRelationships(Direction.OUTGOING, RelTypes.CLASSIFIED_AS);
-            Relationship classifiedAs = relationships.iterator().next();
-            if (classifiedAs != null) {
-                Node taxonNode = classifiedAs.getEndNode();
-                taxonString = (String) taxonNode.getProperty(Taxon.NAME);
+            Iterator<Relationship> iterator = relationships.iterator();
+            if (iterator.hasNext()) {
+                Relationship classifiedAs = iterator.next();
+                if (classifiedAs != null) {
+                    Node taxonNode = classifiedAs.getEndNode();
+                    taxonString = (String) taxonNode.getProperty(Taxon.NAME);
+                }
             }
         }
         addRowField(writer, taxonString);

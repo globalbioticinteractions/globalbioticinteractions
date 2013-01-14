@@ -7,19 +7,18 @@ import org.trophic.graph.service.EOLTaxonImageService;
 import java.io.BufferedReader;
 import java.io.IOException;
 
-public  class EOLTaxonParser implements TaxonParser {
+public class EOLTaxonParser implements TaxonParser {
+
     @Override
-    public void parse(BufferedReader reader, TaxonTermListener listener) throws IOException {
+    public void parse(BufferedReader reader, TaxonImportListener listener) throws IOException {
         LabeledCSVParser labeledCSVParser = new LabeledCSVParser(new CSVParser(reader));
         labeledCSVParser.changeDelimiter('\t');
+        listener.start();
         while (labeledCSVParser.getLine() != null) {
-            TaxonTerm term = new TaxonTerm();
-            term.setId(EOLTaxonImageService.EOL_LSID_PREFIX + labeledCSVParser.getValueByLabel("taxonID"));
-            term.setName(labeledCSVParser.getValueByLabel("scientificName"));
-            term.setRank(labeledCSVParser.getValueByLabel("taxonRank"));
-            listener.notifyTerm(term);
+            long taxonID = Long.parseLong(labeledCSVParser.getValueByLabel("taxonID"));
+            listener.addTerm(labeledCSVParser.getValueByLabel("scientificName"), taxonID);
         }
-
+        listener.finish();
     }
 
     @Override

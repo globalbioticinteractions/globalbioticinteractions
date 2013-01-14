@@ -13,6 +13,7 @@ import org.trophic.graph.data.StudyImporterFactory;
 import org.trophic.graph.data.StudyLibrary;
 import org.trophic.graph.data.taxon.EOLTaxonParser;
 import org.trophic.graph.data.taxon.EOLTaxonReaderFactory;
+import org.trophic.graph.data.taxon.TaxonLookupService;
 import org.trophic.graph.data.taxon.TaxonomyImporter;
 import org.trophic.graph.db.GraphService;
 import org.trophic.graph.domain.Study;
@@ -21,8 +22,6 @@ import org.trophic.graph.export.StudyExporterImpl;
 import org.trophic.graph.export.StudyExporterPredatorPrey;
 import org.trophic.graph.export.StudyExporterPredatorPreyEOL;
 import org.trophic.graph.service.ExternalIdTaxonEnricher;
-import org.trophic.graph.service.TaxonImageEnricher;
-import org.trophic.graph.service.TaxonPrunerService;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -40,39 +39,24 @@ public class TrophicImporter {
 
     public void importExport() throws StudyImporterException {
         final GraphDatabaseService graphService = GraphService.getGraphService();
-        importTaxonomy(graphService);
+        TaxonLookupService taxonLookupService = buildTaxonomyLookupService();
 
-        List<Study> studies = importData(graphService);
-
+        List<Study> studies = importData(graphService, taxonLookupService);
         enrichData(graphService);
-
-        pruneUnusedTaxons(graphService);
-
         exportData(studies);
 
+        taxonLookupService.destroy();
         graphService.shutdown();
-    }
-
-    private void pruneUnusedTaxons(GraphDatabaseService graphService) {
-        try {
-            LOG.info("pruning unused taxa started...");
-            new TaxonPrunerService(graphService).process();
-            LOG.info("pruning unused taxa complete.");
-        } catch (IOException ex) {
-            LOG.warn("failed to prune some or all unused taxons", ex);
-        }
-
-
     }
 
     private void enrichData(GraphDatabaseService graphService) throws StudyImporterException {
         matchAgainstExternalTaxonomies(graphService);
-
-        try {
+        // TODO image retrieval is very inefficient - need a better way to link to images.
+        /*try {
             new TaxonImageEnricher(graphService).process();
         } catch (IOException e) {
             throw new StudyImporterException("failed to add image url information", e);
-        }
+        }*/
     }
 
     private void matchAgainstExternalTaxonomies(GraphDatabaseService graphService) throws StudyImporterException {
@@ -88,18 +72,19 @@ public class TrophicImporter {
         }
     }
 
-    private void importTaxonomy(GraphDatabaseService graphService) throws StudyImporterException {
-        TaxonomyImporter importer = new TaxonomyImporter(new NodeFactory(graphService), new EOLTaxonParser(), new EOLTaxonReaderFactory());
+    private TaxonLookupService buildTaxonomyLookupService() throws StudyImporterException {
+        TaxonomyImporter importer = new TaxonomyImporter(new EOLTaxonParser(), new EOLTaxonReaderFactory());
         LOG.info("Taxonomy import starting...");
         importer.doImport();
         LOG.info("Taxonomy import complete.");
+        return importer.getTaxonLookupService();
     }
 
-    public List<Study> importStudies(GraphDatabaseService graphService) throws StudyImporterException {
-        return importData(graphService);
+    public List<Study> importStudies(GraphDatabaseService graphService, TaxonLookupService taxonLookupService) throws StudyImporterException {
+        return importData(graphService, taxonLookupService);
     }
 
-    private ArrayList<Study> importData(GraphDatabaseService graphService) throws StudyImporterException {
+    private ArrayList<Study> importData(GraphDatabaseService graphService, TaxonLookupService taxonLookupService) throws StudyImporterException {
         ArrayList<StudyLibrary.Study> studies = new ArrayList<StudyLibrary.Study>();
         StudyLibrary.Study[] availableStudies = StudyLibrary.Study.values();
         studies.addAll(Arrays.asList(availableStudies));
@@ -107,10 +92,10 @@ public class TrophicImporter {
         ArrayList<Study> importedStudies = new ArrayList<Study>();
 
         for (StudyLibrary.Study study : studies) {
-            StudyImporter studyImporter = createStudyImporter(graphService, study);
+            StudyImporter studyImporter = createStudyImporter(graphService, study, taxonLookupService);
             LOG.info("study [" + study + "] importing ...");
             importedStudies.add(studyImporter.importStudy());
-            LOG.info("study [" + study + "]");
+            LOG.info("study [" + study + "] imported.");
         }
         return importedStudies;
     }
@@ -137,8 +122,8 @@ public class TrophicImporter {
         LOG.info("export data to [" + new File(exportPath).getAbsolutePath() + "] complete.");
     }
 
-    private StudyImporter createStudyImporter(GraphDatabaseService graphService, StudyLibrary.Study study) throws StudyImporterException {
-        NodeFactory factory = new NodeFactory(graphService);
+    private StudyImporter createStudyImporter(GraphDatabaseService graphService, StudyLibrary.Study study, TaxonLookupService taxonLookupService) throws StudyImporterException {
+        NodeFactory factory = new NodeFactory(graphService, taxonLookupService);
         ParserFactory parserFactory = new ParserFactoryImpl();
         return new StudyImporterFactory(parserFactory, factory).createImporterForStudy(study);
     }

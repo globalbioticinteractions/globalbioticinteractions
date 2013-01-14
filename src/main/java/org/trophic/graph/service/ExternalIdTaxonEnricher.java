@@ -27,18 +27,27 @@ public class ExternalIdTaxonEnricher extends TaxonEnricher {
     @Override
     protected void enrichTaxonUsingMatch(String matchString) throws IOException {
         ExecutionEngine engine = new ExecutionEngine(graphDbService);
-        String queryPrefix = "START taxon = node:taxons('*:*') "
+        List<LSIDLookupService> services = new ArrayList<LSIDLookupService>();
+        initServices(services);
+
+        String queryPrefix = "START study = node:studies('*:*') "
                 + "MATCH " + matchString
                 + "WHERE not(has(taxon.externalId)) ";
 
         LOG.info("matching [" + matchString + "]...");
 
+        while (enrichWithExternalId(engine, services, queryPrefix) > 0) {
+        }
+        ;
+        shutdownServices(services);
+    }
+
+    private int enrichWithExternalId(ExecutionEngine engine, List<LSIDLookupService> services, String queryPrefix) {
         ExecutionResult result = engine.execute(queryPrefix
-                + "RETURN distinct taxon");
+                + "RETURN taxon LIMIT " + getBatchSize());
         Iterator<Node> taxon = result.columnAs("taxon");
         HashMap<Class, Integer> errorCounts = new HashMap<Class, Integer>();
-        List<LSIDLookupService> services = new ArrayList<LSIDLookupService>();
-        initServices(services);
+        int count = 0;
         while (taxon.hasNext()) {
             Node taxonNode = taxon.next();
             try {
@@ -47,12 +56,13 @@ public class ExternalIdTaxonEnricher extends TaxonEnricher {
                         break;
                     }
                 }
+                count++;
             } catch (LSIDLookupServiceException e) {
                 shutdownServices(services);
                 initServices(services);
             }
         }
-        shutdownServices(services);
+        return count;
     }
 
     private boolean enrichedTaxonWithService(HashMap<Class, Integer> errorCounts, Node taxonNode, LSIDLookupService service) throws LSIDLookupServiceException {
@@ -101,6 +111,17 @@ public class ExternalIdTaxonEnricher extends TaxonEnricher {
         services.add(new EOLService());
         services.add(new WoRMSService());
         //services.add(new ITISService());
+        services.add(new LSIDLookupService() {
+            @Override
+            public String lookupLSIDByTaxonName(String taxonName) throws LSIDLookupServiceException {
+                return "no:match";
+            }
+
+            @Override
+            public void shutdown() {
+
+            }
+        });
     }
 
     private void shutdownServices(List<LSIDLookupService> services) {
@@ -120,4 +141,7 @@ public class ExternalIdTaxonEnricher extends TaxonEnricher {
         }
     }
 
+    public int getBatchSize() {
+        return 100;
+    }
 }

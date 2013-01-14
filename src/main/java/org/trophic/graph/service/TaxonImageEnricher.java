@@ -27,9 +27,9 @@ public class TaxonImageEnricher extends TaxonEnricher {
     @Override
     protected void enrichTaxonUsingMatch(String matchString) throws IOException {
         ExecutionEngine engine = new ExecutionEngine(graphDbService);
-        String queryPrefix = "START taxon = node:taxons('*:*') "
+        String queryPrefix = "START study = node:studies('*:*') "
                 + "MATCH " + matchString
-                + "WHERE has(taxon.externalId) ";
+                + "WHERE has(taxon.externalId) and not(has(taxon.imageURL)) ";
 
         LOG.info("matching [" + matchString + "]...");
 
@@ -38,12 +38,20 @@ public class TaxonImageEnricher extends TaxonEnricher {
         Iterator<Long> totalAffectedTaxons = result.columnAs("totalTaxons");
         Long totalTaxons = totalAffectedTaxons.next();
 
+        while (enrichWithImageURLs(engine, queryPrefix, totalTaxons) > 0) {
+            // ignore
+        }
 
-        result = engine.execute(queryPrefix
-                + "RETURN distinct taxon");
-        Iterator<Node> taxon = result.columnAs("taxon");
+    }
+
+    private int enrichWithImageURLs(ExecutionEngine engine, String queryPrefix, Long totalTaxons) {
+        ExecutionResult result2 = engine.execute(queryPrefix
+                + "RETURN distinct taxon LIMIT " + getBatchSize());
+        Iterator<Node> taxon = result2.columnAs("taxon");
+
+
         EOLTaxonImageService service = new EOLTaxonImageService();
-        long count = 0;
+        int count = 0;
         while (taxon.hasNext()) {
             Node taxonNode = taxon.next();
             count++;
@@ -74,7 +82,7 @@ public class TaxonImageEnricher extends TaxonEnricher {
                 LOG.warn("failed to find a match for [" + taxonName + "] in [" + service.getClass().getSimpleName() + "]", ex);
             }
         }
-
+        return count;
     }
 
     private TaxonomyProvider lookupProvider(String externalId) {
@@ -94,12 +102,11 @@ public class TaxonImageEnricher extends TaxonEnricher {
     private void enrichNode(Node node, TaxonImage taxonImage) {
         Transaction transaction = graphDbService.beginTx();
         try {
-            if (taxonImage.getImageURL() != null) {
-                node.setProperty(Taxon.IMAGE_URL, taxonImage.getImageURL());
-            }
-            if (taxonImage.getThumbnailURL() != null) {
-                node.setProperty(Taxon.THUMBNAIL_URL, taxonImage.getThumbnailURL());
-            }
+            String imageUrl = taxonImage.getImageURL() == null ? "" : taxonImage.getImageURL();
+            node.setProperty(Taxon.IMAGE_URL, imageUrl);
+            String thumbnailUrl = taxonImage.getThumbnailURL() == null ? "" : taxonImage.getThumbnailURL();
+            node.setProperty(Taxon.THUMBNAIL_URL, thumbnailUrl);
+
             if (taxonImage.getEOLPageId() != null) {
                 node.setProperty(Taxon.EXTERNAL_ID, EOLTaxonImageService.EOL_LSID_PREFIX + taxonImage.getEOLPageId());
             }
@@ -109,4 +116,7 @@ public class TaxonImageEnricher extends TaxonEnricher {
         }
     }
 
+    public int getBatchSize() {
+        return 100;
+    }
 }

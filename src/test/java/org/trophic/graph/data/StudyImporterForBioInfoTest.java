@@ -52,16 +52,16 @@ public class StudyImporterForBioInfoTest extends GraphDBTestCase {
         assertThat(study.getTitle(), is("BIO_INFO"));
         Taxon acer = nodeFactory.findTaxon("Acer");
         assertNotNull(acer);
-        assertThat(acer.getExternalId(), is("urn:lsid:bioinfo.org.uk:taxa:3011"));
+        assertThat(acer.getExternalId(), is("bioinfo:3011"));
         Taxon taxon = nodeFactory.findTaxon("Dasineura tympani");
         assertNotNull(taxon);
-        assertThat(taxon.getExternalId(), is("urn:lsid:bioinfo.org.uk:taxa:107544"));
+        assertThat(taxon.getExternalId(), is("bioinfo:107544"));
         Taxon taxon1 = nodeFactory.findTaxon("Phyllocoptes acericola");
         assertNotNull(taxon1);
-        assertThat(taxon1.getExternalId(), is("urn:lsid:bioinfo.org.uk:taxa:43927"));
+        assertThat(taxon1.getExternalId(), is("bioinfo:43927"));
         Taxon taxon2 = nodeFactory.findTaxon("Aceria eriobia");
         assertNotNull(taxon2);
-        assertThat(taxon2.getExternalId(), is("urn:lsid:bioinfo.org.uk:taxa:32122"));
+        assertThat(taxon2.getExternalId(), is("bioinfo:32122"));
     }
 
     @Test

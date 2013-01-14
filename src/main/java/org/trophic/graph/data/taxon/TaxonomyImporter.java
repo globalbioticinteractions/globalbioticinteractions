@@ -3,65 +3,41 @@ package org.trophic.graph.data.taxon;
 import org.apache.commons.lang3.time.StopWatch;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.neo4j.graphdb.Transaction;
-import org.trophic.graph.data.BaseImporter;
 import org.trophic.graph.data.NodeFactory;
 import org.trophic.graph.data.StudyImporterException;
 
 import java.io.IOException;
 
-public class TaxonomyImporter extends BaseImporter {
+public class TaxonomyImporter  {
 
     private static final Log LOG = LogFactory.getLog(TaxonomyImporter.class);
     public static final int BATCH_TRANSACTION_SIZE = 10000;
     private int counter;
     private StopWatch stopwatch;
-    private Transaction currentTransaction;
 
     private TaxonParser parser;
 
     private TaxonReaderFactory taxonReaderFactory;
 
+    private final TaxonLookupServiceImpl taxonLookupService;
+
     public TaxonomyImporter(NodeFactory nodeFactory) {
-        this(nodeFactory, new OboParser(), new OboTaxonReaderFactory());
+        this(new OboParser(), new OboTaxonReaderFactory());
     }
 
-    public TaxonomyImporter(NodeFactory nodeFactory, TaxonParser taxonParser, TaxonReaderFactory taxonReaderFactory) {
-        super(nodeFactory);
+    public TaxonomyImporter(TaxonParser taxonParser, TaxonReaderFactory taxonReaderFactory) {
         this.parser = taxonParser;
         this.taxonReaderFactory = taxonReaderFactory;
+        this.taxonLookupService = new TaxonLookupServiceImpl();
         stopwatch = new StopWatch();
-        currentTransaction = null;
+    }
+
+    public TaxonLookupService getTaxonLookupService() {
+        return taxonLookupService;
     }
 
     public TaxonParser getParser() {
         return parser;
-    }
-
-    public void importTaxonTerm(TaxonTerm term) throws StudyImporterException {
-        if (term.getId() == null) {
-            throw new StudyImporterException("missing mandatory field id in term with name [" + term.getName() + "]");
-        }
-
-        if (getCurrentTransaction() == null) {
-            setCurrentTransaction(nodeFactory.getGraphDb().beginTx());
-        }
-        nodeFactory.createTaxonNoTransaction(term.getName(), term.getId());
-        count();
-        if (getCounter() % BATCH_TRANSACTION_SIZE == 0) {
-            if (getCurrentTransaction() != null) {
-                getCurrentTransaction().success();
-                getCurrentTransaction().finish();
-            }
-            StopWatch stopwatch = getStopwatch();
-            stopwatch.stop();
-            double avg = 1000.0 * BATCH_TRANSACTION_SIZE / (stopwatch.getTime() + 1);
-            String format = formatProgressString(avg);
-            LOG.info(format);
-            stopwatch.reset();
-            stopwatch.start();
-            setCurrentTransaction(nodeFactory.getGraphDb().beginTx());
-        }
     }
 
     protected String formatProgressString(double avg) {
@@ -77,22 +53,34 @@ public class TaxonomyImporter extends BaseImporter {
         getStopwatch().start();
         setCounter(0);
         try {
-            getParser().parse(taxonReaderFactory.createReader(), new TaxonTermListener() {
+            getParser().parse(taxonReaderFactory.createReader(), new TaxonImportListener() {
                 @Override
-                public void notifyTerm(TaxonTerm term) {
-                    try {
-                        importTaxonTerm(term);
-                    } catch (StudyImporterException e) {
-                        LOG.warn("failed to import term with id: [" + term.getId() + "]");
+                public void addTerm(String name, long id) {
+                    taxonLookupService.addTerm(name, id);
+                    count();
+                    if (getCounter() % BATCH_TRANSACTION_SIZE == 0) {
+                        StopWatch stopwatch = getStopwatch();
+                        stopwatch.stop();
+                        double avg = 1000.0 * BATCH_TRANSACTION_SIZE / (stopwatch.getTime() + 1);
+                        String format = formatProgressString(avg);
+                        LOG.info(format);
+                        stopwatch.reset();
+                        stopwatch.start();
                     }
+                }
+
+                @Override
+                public void start() {
+                    taxonLookupService.start();
+                }
+
+                @Override
+                public void finish() {
+                    taxonLookupService.finish();
                 }
             });
         } catch (IOException e) {
             throw new StudyImporterException("failed to import taxonomy", e);
-        } finally {
-            getCurrentTransaction().success();
-            getCurrentTransaction().finish();
-            setCurrentTransaction(null);
         }
     }
 
@@ -106,14 +94,6 @@ public class TaxonomyImporter extends BaseImporter {
 
     public StopWatch getStopwatch() {
         return stopwatch;
-    }
-
-    public Transaction getCurrentTransaction() {
-        return currentTransaction;
-    }
-
-    public void setCurrentTransaction(Transaction currentTransaction) {
-        this.currentTransaction = currentTransaction;
     }
 
 }
