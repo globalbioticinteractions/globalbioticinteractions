@@ -1,6 +1,7 @@
 package org.trophic.graph.db;
 
 import org.neo4j.graphdb.GraphDatabaseService;
+import org.neo4j.helpers.collection.MapUtil;
 import org.neo4j.kernel.EmbeddedGraphDatabase;
 import org.neo4j.unsafe.batchinsert.BatchInserters;
 
@@ -23,7 +24,7 @@ public abstract class GraphService {
     public static GraphDatabaseService startNeo4j() {
         System.out.println("neo4j starting...");
 
-        graphService = new EmbeddedGraphDatabase(storeDir);
+        graphService = new EmbeddedGraphDatabase(storeDir, MapUtil.stringMap("keep_logical_logs","1M size"));
         Runtime.getRuntime().addShutdownHook(new Thread() {
             @Override
             public void run() {

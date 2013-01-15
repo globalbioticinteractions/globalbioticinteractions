@@ -2,6 +2,7 @@ package org.trophic.graph.data.taxon;
 
 import com.Ostermiller.util.CSVParser;
 import com.Ostermiller.util.LabeledCSVParser;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -10,11 +11,16 @@ import java.util.Map;
 
 public class TaxonNameNormalizer {
 
-    private Map<String,String> corrections;
+    private Map<String, String> corrections;
 
     private static String clean(String name) {
         name = name.replaceAll("\\(.*\\)", "");
         name = name.replaceAll("[¬†*?]", "");
+        name = name.replaceAll("spp\\.$", "");
+        name = name.replaceAll("spp$", "");
+        name = name.replaceAll("sp\\.$", "");
+        name = name.replaceAll("^'", "");
+        name = name.replaceAll("'$", "");
         String trim = name.trim();
         return trim.replaceAll("(\\s+)", " ");
     }
@@ -28,6 +34,10 @@ public class TaxonNameNormalizer {
         if (suggestedReplacement != null) {
             cleanName = suggestedReplacement;
         }
+        if (StringUtils.isBlank(cleanName)) {
+            cleanName = "NomenNescio";
+        }
+
         return cleanName;
     }
 

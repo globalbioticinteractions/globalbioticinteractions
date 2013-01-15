@@ -1,5 +1,6 @@
 package org.trophic.graph.data;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.neo4j.graphdb.GraphDatabaseService;
@@ -321,9 +322,8 @@ public class NodeFactory {
     }
 
     public Taxon createTaxonNoTransaction(String name, String externalId) {
-        Taxon taxon;
         Node node = graphDb.createNode();
-        taxon = new Taxon(node, TAXON_NAME_NORMALIZER.normalize(name));
+        Taxon taxon = new Taxon(node, TAXON_NAME_NORMALIZER.normalize(name));
         if (null != externalId) {
             taxon.setExternalId(externalId);
         }

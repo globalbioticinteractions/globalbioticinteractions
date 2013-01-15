@@ -29,8 +29,7 @@ public class StudyImporterForJRFerrerParis extends BaseStudyImporter {
 
                 Taxon targetTaxon = createTaxon(parser, "Hostplant Name");
                 Specimen targetSpecimen = nodeFactory.createSpecimen();
-                study.collected(targetSpecimen);
-                instigatorSpecimen.classifyAs(targetTaxon);
+                targetSpecimen.classifyAs(targetTaxon);
                 instigatorSpecimen.ate(targetSpecimen);
             }
         } catch (IOException e) {

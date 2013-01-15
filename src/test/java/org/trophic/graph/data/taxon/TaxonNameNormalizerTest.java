@@ -18,8 +18,12 @@ public class TaxonNameNormalizerTest {
         assertThat(normalizer.normalize("Aegathoa oculata¬†"), is("Aegathoa oculata"));
         assertThat(normalizer.normalize("Aegathoa oculata*"), is("Aegathoa oculata"));
         assertThat(normalizer.normalize("Aegathoa oculata?"), is("Aegathoa oculata"));
-        assertThat(normalizer.normalize("Aegathoa oculata sp."), is("Aegathoa oculata sp."));
+        assertThat(normalizer.normalize("Aegathoa oculata sp."), is("Aegathoa oculata"));
+        assertThat(normalizer.normalize("Aegathoa oculata spp"), is("Aegathoa oculata"));
+        assertThat(normalizer.normalize("Aegathoa oculata spp."), is("Aegathoa oculata"));
         assertThat(normalizer.normalize("Taraxacum leptaleum"), is("Taraxacum leptaleum"));
-        assertThat(normalizer.normalize("NA"), is(""));
+        assertThat(normalizer.normalize("NA"), is("NomenNescio"));
+        assertThat(normalizer.normalize("NE"), is("NomenNescio"));
+        assertThat(normalizer.normalize("'Loranthus'"), is("Loranthus"));
     }
 }

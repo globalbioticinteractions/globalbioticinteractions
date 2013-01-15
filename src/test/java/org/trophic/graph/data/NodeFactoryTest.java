@@ -57,14 +57,14 @@ public class NodeFactoryTest extends GraphDBTestCase {
 
     @Test
     public void createSpeciesTwice() throws NodeFactoryException {
-        String alphaeidae = "Alphaeidae";
+        String alphaeidae = "Alpheidae";
         assertFamilyCorrectness(alphaeidae, alphaeidae);
     }
 
 
     @Test
     public void createSpeciesParenthesis() throws NodeFactoryException {
-        assertFamilyCorrectness("Alphaeidae", "Alphaeidae (lar)");
+        assertFamilyCorrectness("Alpheidae", "Alphaeidae (lar)");
     }
 
     @Test
