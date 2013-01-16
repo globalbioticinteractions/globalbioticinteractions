@@ -26,6 +26,8 @@ public class StudyImporterFactory {
             importer = new StudyImporterForBioInfo(parserFactory, nodeFactory);
         } else if (StudyLibrary.Study.JR_FERRER_PARIS.equals(study)) {
             importer = new StudyImporterForJRFerrerParis(parserFactory, nodeFactory);
+        } else if (StudyLibrary.Study.SPIRE.equals(study)) {
+            importer = new StudyImporterForSPIRE(null, nodeFactory);
         }
         return importer;
     }

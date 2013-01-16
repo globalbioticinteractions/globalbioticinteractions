@@ -9,7 +9,8 @@ public class StudyLibrary {
         AKIN_MAD_ISLAND,
         BAREMORE_ANGEL_SHARK,
         BIO_INFO,
-        JR_FERRER_PARIS;
+        JR_FERRER_PARIS,
+        SPIRE;
     }
 
 }

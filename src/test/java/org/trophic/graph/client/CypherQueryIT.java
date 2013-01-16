@@ -28,21 +28,27 @@ public class CypherQueryIT {
     @Test
     public void queryPredatorPreyRelationshipRemote() throws IOException {
         // queries live database
-        assertPredatorPrey(REMOTE_HOST);
+        assertPredatorPrey(REMOTE_HOST, "Syacium papillosum");
     }
 
     @Test
-        public void queryPredatorPreyRelationshipLocal() throws IOException {
-            // queries live database
-            assertPredatorPrey(LOCAL_HOST);
-        }
+    public void queryPredatorPreyRelationshipLocal() throws IOException {
+        // queries live database
+        assertPredatorPrey(LOCAL_HOST, "Syacium papillosum");
+    }
+
+    @Test
+    public void queryWhatDoWeEat() throws IOException {
+        assertPredatorPrey(LOCAL_HOST, "Homo sapiens");
+    }
 
 
-    private void assertPredatorPrey(String host) throws IOException {
+    private void assertPredatorPrey(String host, String predatorTaxon) throws IOException {
         String queryJson = "{ \"query\":\"" +
-                "START taxon = node:taxons(name=\\\"Syacium papillosum\\\") " +
+                "START taxon = node:taxons(name=\\\"" + predatorTaxon + "\\\") " +
                 "MATCH taxon<-[x:CLASSIFIED_AS]-predatorSpecimen-[:ATE]->preySpecimen-[:CLASSIFIED_AS]->preyTaxon " +
-                "RETURN distinct(preyTaxon.externalId)\"}";
+                "RETURN distinct(preyTaxon.name)\"}";
+
         String response = postJson(queryJson, host);
         assertThat(response, containsString("NCBITaxon:195649"));
         assertThat(response, containsString("data"));

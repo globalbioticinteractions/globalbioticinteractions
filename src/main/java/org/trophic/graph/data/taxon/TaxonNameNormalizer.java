@@ -21,6 +21,7 @@ public class TaxonNameNormalizer {
         name = name.replaceAll("sp\\.$", "");
         name = name.replaceAll("^'", "");
         name = name.replaceAll("'$", "");
+        name = name.replaceAll(" cf ", " ");
         String trim = name.trim();
         return trim.replaceAll("(\\s+)", " ");
     }

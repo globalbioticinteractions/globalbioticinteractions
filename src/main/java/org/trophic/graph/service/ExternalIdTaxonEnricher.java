@@ -37,6 +37,7 @@ public class ExternalIdTaxonEnricher extends TaxonEnricher {
         LOG.info("matching [" + matchString + "]...");
 
         while (enrichWithExternalId(engine, services, queryPrefix) > 0) {
+
         }
         ;
         shutdownServices(services);
