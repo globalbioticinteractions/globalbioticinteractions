@@ -153,18 +153,13 @@ public class StudyImporterForAkin extends BaseStudyImporter {
             SimpleDateFormat dateFormat = new SimpleDateFormat("MM.dd.yy");
             try {
                 Date date = dateFormat.parse(dateString);
-                Transaction tx = study.getUnderlyingNode().getGraphDatabase().beginTx();
-                try {
-                    collected.setProperty(Specimen.DATE_IN_UNIX_EPOCH, date.getTime());
-                    tx.success();
-                } finally {
-                    tx.finish();
-                }
+                nodeFactory.setUnixEpochProperty(collected, date);
             } catch (ParseException e) {
                 LOG.warn("not setting collection date, because [" + dateString + "] on line [" + parser.getLastLineNumber() + "] could not be read as date.");
             }
         }
     }
+
 
     private void addSpecimenLength(LabeledCSVParser parser, String[] header, String[] line, Specimen specimen) throws StudyImporterException {
         int lengthIndex = findIndexForColumnWithNameThrowOnMissing("SL(mm)", header);

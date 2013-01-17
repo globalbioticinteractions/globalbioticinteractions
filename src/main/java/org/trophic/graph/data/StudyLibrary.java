@@ -10,7 +10,7 @@ public class StudyLibrary {
         BAREMORE_ANGEL_SHARK,
         BIO_INFO,
         JR_FERRER_PARIS,
-        SPIRE;
+        SPIRE, ICES;
     }
 
 }

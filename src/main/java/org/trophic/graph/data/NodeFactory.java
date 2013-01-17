@@ -5,6 +5,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
+import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.IndexHits;
@@ -22,6 +23,7 @@ import org.trophic.graph.domain.Taxon;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 
 import static org.trophic.graph.domain.RelTypes.IS_A;
 
@@ -329,5 +331,17 @@ public class NodeFactory {
         }
         addTaxonToIndex(taxon, node);
         return taxon;
+    }
+
+    public void setUnixEpochProperty(Relationship rel, Date date) {
+        if (date != null) {
+            Transaction tx = rel.getGraphDatabase().beginTx();
+            try {
+                rel.setProperty(Specimen.DATE_IN_UNIX_EPOCH, date.getTime());
+                tx.success();
+            } finally {
+                tx.finish();
+            }
+        }
     }
 }

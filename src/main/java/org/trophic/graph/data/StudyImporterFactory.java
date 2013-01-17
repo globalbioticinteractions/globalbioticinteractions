@@ -28,6 +28,8 @@ public class StudyImporterFactory {
             importer = new StudyImporterForJRFerrerParis(parserFactory, nodeFactory);
         } else if (StudyLibrary.Study.SPIRE.equals(study)) {
             importer = new StudyImporterForSPIRE(null, nodeFactory);
+        } else if (StudyLibrary.Study.ICES.equals(study)) {
+            importer = new StudyImporterForICES(parserFactory, nodeFactory);
         }
         return importer;
     }

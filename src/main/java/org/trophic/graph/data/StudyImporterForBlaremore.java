@@ -83,43 +83,8 @@ public class StudyImporterForBlaremore extends BaseStudyImporter {
         return study;
     }
 
-    private void addPredatorPreyData(Study study, LabeledCSVParser parser, String[] line, Map<Integer, Specimen> specimenMap, Taxon angelSharkSpecies, Integer sharkId, String collectionDateString) throws StudyImporterException, NodeFactoryException {
-        Specimen predatorSpecimen = specimenMap.get(sharkId);
-        if (predatorSpecimen == null) {
-            predatorSpecimen = nodeFactory.createSpecimen();
-            Relationship collectedRel = study.collected(predatorSpecimen);
-
-            try {
-                addCollectionDate(collectionDateString, collectedRel);
-            } catch (ParseException ex) {
-                throw new StudyImporterException("failed to parse collection date at line [" + parser.getLastLineNumber() + "] in [" + DATA_SOURCE + "]", ex);
-            }
-        }
-        specimenMap.put(sharkId, predatorSpecimen);
-
-        predatorSpecimen.classifyAs(angelSharkSpecies);
-
-        String totalLengthInCm = line[3];
-        try {
-            Double lengthInMm = Double.parseDouble(totalLengthInCm) * 10.0;
-            predatorSpecimen.setLengthInMm(lengthInMm);
-        } catch (NumberFormatException ex) {
-            throw new StudyImporterException("failed to parse length [" + totalLengthInCm);
-        }
-        Specimen preySpecimen = nodeFactory.createSpecimen();
-        preySpecimen.classifyAs(nodeFactory.getOrCreateSpecies(null, line[7]));
-        predatorSpecimen.ate(preySpecimen);
-    }
-
     private void addCollectionDate(String s, Relationship collectedRel) throws ParseException {
         Date collectionDate = new SimpleDateFormat("MM/dd/yyyy").parse(s);
-
-        Transaction transaction = collectedRel.getGraphDatabase().beginTx();
-        try {
-            collectedRel.setProperty(Specimen.DATE_IN_UNIX_EPOCH, collectionDate.getTime());
-            transaction.success();
-        } finally {
-            transaction.finish();
-        }
+        nodeFactory.setUnixEpochProperty(collectedRel, collectionDate);
     }
 }

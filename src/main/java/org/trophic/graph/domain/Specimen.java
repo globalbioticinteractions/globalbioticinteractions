@@ -70,12 +70,14 @@ public class Specimen extends NodeBacked {
     }
 
     public void setLengthInMm(Double lengthInMm) {
-        Transaction transaction = getUnderlyingNode().getGraphDatabase().beginTx();
-        try {
-            getUnderlyingNode().setProperty(LENGTH_IN_MM, lengthInMm);
-            transaction.success();
-        } finally {
-            transaction.finish();
+        if (lengthInMm != null) {
+            Transaction transaction = getUnderlyingNode().getGraphDatabase().beginTx();
+            try {
+                getUnderlyingNode().setProperty(LENGTH_IN_MM, lengthInMm);
+                transaction.success();
+            } finally {
+                transaction.finish();
+            }
         }
     }
 
