@@ -2,10 +2,11 @@ package org.trophic.graph.data;
 
 import org.hamcrest.core.Is;
 import org.junit.Test;
-import org.neo4j.graphdb.Relationship;
 import org.trophic.graph.domain.Study;
 
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
 
 import static org.junit.Assert.assertThat;
 
@@ -19,6 +20,7 @@ public class StudyImporterForSPIRETest extends GraphDBTestCase {
         importer.importStudy();
 
         assertThat(listener.getCount(), Is.is(30196));
+        assertThat("number of unique countries changed since this test was written", listener.countries.size(), Is.is(50));
     }
 
 
@@ -28,10 +30,16 @@ public class StudyImporterForSPIRETest extends GraphDBTestCase {
         }
 
         private int count = 0;
+        Set<String> countries = new HashSet<String>();
 
         @Override
-        public void newLink(Study study, String predatorName, String preyName) {
+        public void newLink(Study study, String predatorName, String preyName, String country, String state, String locality) {
+            if (country != null) {
+                countries.add(country);
+            }
             count++;
         }
     }
+
+
 }

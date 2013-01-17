@@ -4,5 +4,5 @@ import org.trophic.graph.domain.Study;
 
 interface TrophicLinkListener {
 
-    public void newLink(Study study, String predatorName, String preyName);
+    public void newLink(Study study, String predatorName, String preyName, String country, String state, String locality);
 }
