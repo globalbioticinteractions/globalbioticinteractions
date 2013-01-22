@@ -24,6 +24,7 @@ public class CypherQueryIT {
 
     public static final String REMOTE_HOST = "http://ec2-50-112-48-206.us-west-2.compute.amazonaws.com";
     public static final String LOCAL_HOST = "http://localhost";
+    public static final String REMOTE_HOST_HUGE = "http://ec2-50-112-47-249.us-west-2.compute.amazonaws.com";
 
     @Test
     public void queryPredatorPreyRelationshipRemote() throws IOException {
@@ -42,6 +43,11 @@ public class CypherQueryIT {
         assertPredatorPrey(LOCAL_HOST, "Homo sapiens");
     }
 
+    @Test
+    public void queryWhatDoWeEatHugeAwsHost() throws IOException {
+        assertPredatorPrey(REMOTE_HOST_HUGE, "Homo sapiens");
+    }
+
 
     private void assertPredatorPrey(String host, String predatorTaxon) throws IOException {
         String queryJson = "{ \"query\":\"" +
@@ -52,6 +58,11 @@ public class CypherQueryIT {
         String response = postJson(queryJson, host);
         assertThat(response, containsString("NCBITaxon:195649"));
         assertThat(response, containsString("data"));
+    }
+
+    @Test
+    public void studyStatsRemoteHuge() throws IOException {
+        assertPredatorQuery(REMOTE_HOST_HUGE);
     }
 
     @Test
@@ -79,6 +90,12 @@ public class CypherQueryIT {
     public void studyPreyStatsRemote() throws IOException {
         assertPreyQuery(REMOTE_HOST);
     }
+
+    @Test
+    public void studyPreyStatsRemoteHuge() throws IOException {
+        assertPreyQuery(REMOTE_HOST_HUGE);
+    }
+
 
     @Test
     public void studyPreyStatsLocal() throws IOException {
