@@ -1,6 +1,5 @@
 package org.trophic.graph.data.taxon;
 
-import com.apple.eawt.AppEvent;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.Fieldable;
