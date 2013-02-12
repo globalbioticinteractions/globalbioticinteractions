@@ -30,7 +30,7 @@ public class Specimen extends NodeBacked {
     }
 
     public Iterable<Relationship> getStomachContents() {
-        return getUnderlyingNode().getRelationships(RelTypes.ATE, Direction.OUTGOING);
+        return getUnderlyingNode().getRelationships(InteractType.ATE, Direction.OUTGOING);
     }
 
     public Location getSampleLocation() {
@@ -39,7 +39,7 @@ public class Specimen extends NodeBacked {
     }
 
     public void ate(Specimen specimen) {
-        createRelationshipTo(specimen, RelTypes.ATE);
+        createRelationshipTo(specimen, InteractType.ATE);
     }
 
     public void caughtIn(Location sampleLocation) {

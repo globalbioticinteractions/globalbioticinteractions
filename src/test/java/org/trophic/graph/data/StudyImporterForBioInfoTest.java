@@ -6,6 +6,7 @@ import org.junit.Test;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
+import org.trophic.graph.domain.InteractType;
 import org.trophic.graph.domain.RelTypes;
 import org.trophic.graph.domain.Study;
 import org.trophic.graph.domain.Taxon;
@@ -127,7 +128,7 @@ public class StudyImporterForBioInfoTest extends GraphDBTestCase {
         List<Node> specimenList = new ArrayList<Node>();
         for (Relationship specimen : specimens) {
             assertThat(specimen.getEndNode().getSingleRelationship(RelTypes.CLASSIFIED_AS, Direction.OUTGOING), is(notNullValue()));
-            assertThat(specimen.getEndNode().getSingleRelationship(RelTypes.INTERACTS_WITH, Direction.BOTH), is(notNullValue()));
+            assertThat(specimen.getEndNode().getSingleRelationship(InteractType.INTERACTS_WITH, Direction.BOTH), is(notNullValue()));
             specimenList.add(specimen.getEndNode());
         }
 
@@ -146,10 +147,10 @@ public class StudyImporterForBioInfoTest extends GraphDBTestCase {
     public void trophicRelationsParser() throws IOException, StudyImporterException {
         Map<Long, RelTypes> relationsTypeMap = buildRelationsTypeMap();
 
-        assertThat(relationsTypeMap.get(43899L), is(RelTypes.PREYS_UPON));
-        assertThat(relationsTypeMap.get(43900L), is(RelTypes.PARASITE_OF));
-        assertThat(relationsTypeMap.get(43901L), is(RelTypes.HAS_HOST));
-        assertThat(relationsTypeMap.get(43902L), is(RelTypes.INTERACTS_WITH));
+        assertThat(relationsTypeMap.get(43899L), is(InteractType.PREYS_UPON));
+        assertThat(relationsTypeMap.get(43900L), is(InteractType.PARASITE_OF));
+        assertThat(relationsTypeMap.get(43901L), is(InteractType.HAS_HOST));
+        assertThat(relationsTypeMap.get(43902L), is(InteractType.INTERACTS_WITH));
     }
 
     private Map<Long, RelTypes> buildRelationsTypeMap() throws IOException, StudyImporterException {

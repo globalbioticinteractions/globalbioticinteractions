@@ -3,6 +3,7 @@ package org.trophic.graph.data;
 import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.trophic.graph.domain.InteractType;
 import org.trophic.graph.domain.RelTypes;
 import org.trophic.graph.domain.Specimen;
 import org.trophic.graph.domain.Study;
@@ -95,9 +96,9 @@ public class StudyImporterForBioInfo extends BaseStudyImporter implements StudyI
     protected Map<Long, RelTypes> createRelationsTypeMap(LabeledCSVParser labeledCSVParser) throws StudyImporterException {
         // Attempt to map Malcolms interations to http://vocabularies.gbif.org/vocabularies/Interaction
         Map<String, RelTypes> interactionMapping = new HashMap<String, RelTypes>();
-        interactionMapping.put("ectoparasitises", RelTypes.PARASITE_OF);
-        interactionMapping.put("is predator of", RelTypes.PREYS_UPON);
-        interactionMapping.put("is ectomycorrhizal with", RelTypes.HAS_HOST);
+        interactionMapping.put("ectoparasitises", InteractType.PARASITE_OF);
+        interactionMapping.put("is predator of", InteractType.PREYS_UPON);
+        interactionMapping.put("is ectomycorrhizal with", InteractType.HAS_HOST);
 
         Map<Long, RelTypes> relationsTypeMap = new HashMap<Long, RelTypes>();
         try {
@@ -106,7 +107,7 @@ public class StudyImporterForBioInfo extends BaseStudyImporter implements StudyI
                 String descriptionEnergyRecipient = labeledCSVParser.getValueByLabel(StudyImporterForBioInfo.ENERGY_RECIPIENT);
                 RelTypes relType = interactionMapping.get(descriptionEnergyRecipient);
                 if (trophicRelationId != null) {
-                    relType = relType == null ? RelTypes.INTERACTS_WITH : relType;
+                    relType = relType == null ? InteractType.INTERACTS_WITH : relType;
                     relationsTypeMap.put(trophicRelationId, relType);
                 }
             }

@@ -4,6 +4,7 @@ import org.junit.Test;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
+import org.trophic.graph.domain.InteractType;
 import org.trophic.graph.domain.Location;
 import org.trophic.graph.domain.RelTypes;
 import org.trophic.graph.domain.Specimen;
@@ -73,7 +74,7 @@ public class StudyImporterForAkinTest extends GraphDBTestCase {
         assertThat((Double) specimen.getProperty(Specimen.STOMACH_VOLUME_ML), is(3.0));
         Node speciesNode = specimen.getSingleRelationship(RelTypes.CLASSIFIED_AS, Direction.OUTGOING).getEndNode();
         assertThat((String) speciesNode.getProperty("name"), is("Pogonias cromis"));
-        Iterable<Relationship> ateRels = specimen.getRelationships(RelTypes.ATE, Direction.OUTGOING);
+        Iterable<Relationship> ateRels = specimen.getRelationships(InteractType.ATE, Direction.OUTGOING);
         Map<String, Map<String, Object>> preys = new HashMap<String, Map<String, Object>>();
         for (Relationship ateRel : ateRels) {
             Node preyNode = ateRel.getEndNode();

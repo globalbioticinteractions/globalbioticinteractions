@@ -7,6 +7,7 @@ import org.junit.Test;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
+import org.trophic.graph.domain.InteractType;
 import org.trophic.graph.domain.Location;
 import org.trophic.graph.domain.RelTypes;
 import org.trophic.graph.domain.Specimen;
@@ -76,7 +77,7 @@ public class StudyImporterForICESTest extends GraphDBTestCase {
             assertThat((Double) locationNode.getProperty(Location.LATITUDE), is(55.25));
             assertThat((Double) locationNode.getProperty(Location.LONGITUDE), is(8.5));
             predatorCollected++;
-            Iterable<Relationship> relationships = specimen.getRelationships(Direction.OUTGOING, RelTypes.ATE);
+            Iterable<Relationship> relationships = specimen.getRelationships(Direction.OUTGOING, InteractType.ATE);
             for (Relationship relationship : relationships) {
                 preyEaten++;
             }

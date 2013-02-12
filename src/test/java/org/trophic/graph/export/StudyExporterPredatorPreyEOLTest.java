@@ -3,7 +3,7 @@ package org.trophic.graph.export;
 import org.junit.Test;
 import org.trophic.graph.data.GraphDBTestCase;
 import org.trophic.graph.data.NodeFactoryException;
-import org.trophic.graph.domain.RelTypes;
+import org.trophic.graph.domain.InteractType;
 import org.trophic.graph.domain.Specimen;
 import org.trophic.graph.domain.Study;
 import org.trophic.graph.domain.Taxon;
@@ -42,7 +42,7 @@ public class StudyExporterPredatorPreyEOLTest extends GraphDBTestCase {
         Specimen preySpecimen = nodeFactory.createSpecimen();
         Taxon canisLupus = nodeFactory.getOrCreateTaxon("Canis lupus", externalId);
         preySpecimen.classifyAs(canisLupus);
-        predatorSpecimen.createRelationshipTo(preySpecimen, RelTypes.ATE);
+        predatorSpecimen.createRelationshipTo(preySpecimen, InteractType.ATE);
     }
 
     @Test
@@ -81,7 +81,7 @@ public class StudyExporterPredatorPreyEOLTest extends GraphDBTestCase {
         Specimen preySpecimen = nodeFactory.createSpecimen();
         Taxon canisLupus = nodeFactory.getOrCreateTaxon("Canis lupus other", "canisLupusId2");
         preySpecimen.classifyAs(canisLupus);
-        predatorSpecimen.createRelationshipTo(preySpecimen, RelTypes.ATE);
+        predatorSpecimen.createRelationshipTo(preySpecimen, InteractType.ATE);
         study.collected(predatorSpecimen);
 
         Specimen predatorSpecimen2 = nodeFactory.createSpecimen();

@@ -4,6 +4,7 @@ import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.PropertyContainer;
 import org.neo4j.graphdb.Relationship;
+import org.trophic.graph.domain.InteractType;
 import org.trophic.graph.domain.Location;
 import org.trophic.graph.domain.RelTypes;
 import org.trophic.graph.domain.Specimen;
@@ -33,7 +34,7 @@ public class StudyExporterImpl implements StudyExporter {
                 locationNode = relationship1.getEndNode();
             }
 
-            Iterable<Relationship> ateRelationships = specimenNode.getRelationships(Direction.OUTGOING, RelTypes.ATE);
+            Iterable<Relationship> ateRelationships = specimenNode.getRelationships(Direction.OUTGOING, InteractType.ATE);
             if (ateRelationships.iterator().hasNext()) {
                 for (Relationship ateRelationship : ateRelationships) {
                     exportLine(study, writer, specimenNode, locationNode, ateRelationship, collectedRel);

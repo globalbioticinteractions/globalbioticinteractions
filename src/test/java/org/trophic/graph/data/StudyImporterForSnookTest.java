@@ -5,6 +5,7 @@ import org.junit.Test;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
+import org.trophic.graph.domain.InteractType;
 import org.trophic.graph.domain.Location;
 import org.trophic.graph.domain.RelTypes;
 import org.trophic.graph.domain.Specimen;
@@ -88,7 +89,7 @@ public class StudyImporterForSnookTest extends GraphDBTestCase {
         Node predatorTaxonNode = predatorNode.getRelationships(RelTypes.CLASSIFIED_AS, Direction.OUTGOING).iterator().next().getEndNode();
         assertThat((String) predatorTaxonNode.getProperty(Taxon.NAME), is("Centropomus undecimalis"));
 
-        Iterable<Relationship> ate = predatorNode.getRelationships(RelTypes.ATE, Direction.OUTGOING);
+        Iterable<Relationship> ate = predatorNode.getRelationships(InteractType.ATE, Direction.OUTGOING);
         Node preyNode = ate.iterator().next().getEndNode();
         assertThat(preyNode, is(not(nullValue())));
 
@@ -101,7 +102,7 @@ public class StudyImporterForSnookTest extends GraphDBTestCase {
         predatorNode = next.getEndNode();
         assertThat((Double) predatorNode.getProperty(Specimen.LENGTH_IN_MM), is(548.0));
 
-        ate = predatorNode.getRelationships(RelTypes.ATE, Direction.OUTGOING);
+        ate = predatorNode.getRelationships(InteractType.ATE, Direction.OUTGOING);
         assertThat(ate.iterator().hasNext(), is(false));
 
         Location location = nodeFactory.findLocation(26.651833, -82.103833, 0.0);

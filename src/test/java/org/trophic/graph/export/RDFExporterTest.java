@@ -7,8 +7,8 @@ import org.junit.Test;
 import org.neo4j.graphdb.Relationship;
 import org.trophic.graph.data.GraphDBTestCase;
 import org.trophic.graph.data.NodeFactoryException;
+import org.trophic.graph.domain.InteractType;
 import org.trophic.graph.domain.Location;
-import org.trophic.graph.domain.RelTypes;
 import org.trophic.graph.domain.Specimen;
 import org.trophic.graph.domain.Study;
 import org.trophic.graph.domain.Taxon;
@@ -32,7 +32,7 @@ public class RDFExporterTest extends GraphDBTestCase {
         Specimen dog = nodeFactory.createSpecimen();
         Taxon dogSpecies = nodeFactory.getOrCreateSpecies(null, "Canis lupus");
         dog.classifyAs(dogSpecies);
-        Relationship preysUponRelationship = man.createRelationshipTo(dog, RelTypes.ATE);
+        Relationship preysUponRelationship = man.createRelationshipTo(dog, InteractType.ATE);
 
 
         // some definitions

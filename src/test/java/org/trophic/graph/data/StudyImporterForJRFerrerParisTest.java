@@ -5,6 +5,7 @@ import org.junit.Test;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
+import org.trophic.graph.domain.InteractType;
 import org.trophic.graph.domain.RelTypes;
 import org.trophic.graph.domain.Study;
 
@@ -48,7 +49,7 @@ public class StudyImporterForJRFerrerParisTest extends GraphDBTestCase {
         int totalRels = 0;
         for (Relationship collectedRel : collectedRels) {
             Node endNode = collectedRel.getEndNode();
-            Iterable<Relationship> relationships = endNode.getRelationships(Direction.OUTGOING, RelTypes.ATE);
+            Iterable<Relationship> relationships = endNode.getRelationships(Direction.OUTGOING, InteractType.ATE);
             assertThat(relationships.iterator().hasNext(), Is.is(true));
             Node targetSpecimen = relationships.iterator().next().getEndNode();
             Iterator<Relationship> targetClassificationRel = targetSpecimen.getRelationships(Direction.OUTGOING, RelTypes.CLASSIFIED_AS).iterator();

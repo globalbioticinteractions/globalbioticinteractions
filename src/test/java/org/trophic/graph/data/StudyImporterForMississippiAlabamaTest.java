@@ -89,7 +89,7 @@ public class StudyImporterForMississippiAlabamaTest extends GraphDBTestCase {
         assertEquals(alt, locationNode.getProperty(Location.ALTITUDE));
         assertEquals(lat, locationNode.getProperty(Location.LATITUDE));
 
-        Relationship stomachContents = firstSpecimen.getSingleRelationship(RelTypes.ATE, Direction.OUTGOING);
+        Relationship stomachContents = firstSpecimen.getSingleRelationship(InteractType.ATE, Direction.OUTGOING);
         Node taxonNode = stomachContents.getEndNode().getSingleRelationship(RelTypes.CLASSIFIED_AS, Direction.OUTGOING).getEndNode();
         assertEquals(genusName, taxonNode.getProperty("name"));
 
