@@ -4,6 +4,7 @@ import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.trophic.graph.domain.InteractType;
+import org.trophic.graph.domain.RelType;
 import org.trophic.graph.domain.RelTypes;
 import org.trophic.graph.domain.Specimen;
 import org.trophic.graph.domain.Study;
@@ -43,10 +44,10 @@ public class StudyImporterForBioInfo extends BaseStudyImporter implements StudyI
         return createRelations(createTaxa(), createRelationTypes(), relationsParser);
     }
 
-    private Map<Long, RelTypes> createRelationTypes() throws StudyImporterException {
+    private Map<Long, RelType> createRelationTypes() throws StudyImporterException {
         LOG.info("relationTypes being created...");
 
-        Map<Long, RelTypes> relationsTypeMap;
+        Map<Long, RelType> relationsTypeMap;
         try {
             LabeledCSVParser relationTypesParser = parserFactory.createParser(RELATION_TYPE_DATA_FILE);
             relationTypesParser.changeDelimiter('\t');
@@ -93,19 +94,19 @@ public class StudyImporterForBioInfo extends BaseStudyImporter implements StudyI
         return taxaMap;
     }
 
-    protected Map<Long, RelTypes> createRelationsTypeMap(LabeledCSVParser labeledCSVParser) throws StudyImporterException {
+    protected Map<Long, RelType> createRelationsTypeMap(LabeledCSVParser labeledCSVParser) throws StudyImporterException {
         // Attempt to map Malcolms interations to http://vocabularies.gbif.org/vocabularies/Interaction
-        Map<String, RelTypes> interactionMapping = new HashMap<String, RelTypes>();
+        Map<String, RelType> interactionMapping = new HashMap<String, RelType>();
         interactionMapping.put("ectoparasitises", InteractType.PARASITE_OF);
         interactionMapping.put("is predator of", InteractType.PREYS_UPON);
         interactionMapping.put("is ectomycorrhizal with", InteractType.HAS_HOST);
 
-        Map<Long, RelTypes> relationsTypeMap = new HashMap<Long, RelTypes>();
+        Map<Long, RelType> relationsTypeMap = new HashMap<Long, RelType>();
         try {
             while (labeledCSVParser.getLine() != null) {
                 Long trophicRelationId = labelAsLong(labeledCSVParser, StudyImporterForBioInfo.TROPHIC_REL_ID_2);
                 String descriptionEnergyRecipient = labeledCSVParser.getValueByLabel(StudyImporterForBioInfo.ENERGY_RECIPIENT);
-                RelTypes relType = interactionMapping.get(descriptionEnergyRecipient);
+                RelType relType = interactionMapping.get(descriptionEnergyRecipient);
                 if (trophicRelationId != null) {
                     relType = relType == null ? InteractType.INTERACTS_WITH : relType;
                     relationsTypeMap.put(trophicRelationId, relType);
@@ -117,7 +118,7 @@ public class StudyImporterForBioInfo extends BaseStudyImporter implements StudyI
         return relationsTypeMap;
     }
 
-    protected Study createRelations(Map<Long, String> taxaMap, Map<Long, RelTypes> relationsTypeMap, LabeledCSVParser labeledCSVParser) throws StudyImporterException {
+    protected Study createRelations(Map<Long, String> taxaMap, Map<Long, RelType> relationsTypeMap, LabeledCSVParser labeledCSVParser) throws StudyImporterException {
         LOG.info("relations being created...");
         String title = StudyLibrary.Study.BIO_INFO.toString();
         Study study = nodeFactory.findStudy(title);

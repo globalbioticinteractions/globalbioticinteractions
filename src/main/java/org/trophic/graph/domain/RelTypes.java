@@ -1,8 +1,6 @@
 package org.trophic.graph.domain;
 
-import org.neo4j.graphdb.RelationshipType;
-
-public enum RelTypes implements RelationshipType {
+public enum RelTypes implements RelType {
     CLASSIFIED_AS,
     IS_A,
     COLLECTED_AT,

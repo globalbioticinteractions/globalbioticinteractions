@@ -30,7 +30,7 @@ public class NodeBacked {
                 underlyingNode.equals(((NodeBacked) o).getUnderlyingNode());
     }
 
-    public Relationship createRelationshipTo(NodeBacked nodeBacked, RelTypes relType) {
+    public Relationship createRelationshipTo(NodeBacked nodeBacked, RelType relType) {
         Transaction tx = getUnderlyingNode().getGraphDatabase().beginTx();
         Relationship rel = null;
         try {
@@ -47,7 +47,7 @@ public class NodeBacked {
         return rel;
     }
 
-    private Relationship getFirstIncomingRelationshipOfType(NodeBacked otherTaxon, RelTypes relType) {
+    private Relationship getFirstIncomingRelationshipOfType(NodeBacked otherTaxon, RelType relType) {
         Node otherNode = otherTaxon.getUnderlyingNode();
         for (Relationship rel : getUnderlyingNode().getRelationships(Direction.INCOMING, relType)) {
             if (rel.getOtherNode(getUnderlyingNode()).equals(otherNode)) {

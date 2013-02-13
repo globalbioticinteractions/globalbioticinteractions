@@ -101,7 +101,7 @@ public class Specimen extends NodeBacked {
         }
     }
 
-    public void interactsWith(Specimen recipientSpecimen, RelTypes relType) {
+    public void interactsWith(Specimen recipientSpecimen, RelType relType) {
         createRelationshipTo(recipientSpecimen, relType);
     }
 }
