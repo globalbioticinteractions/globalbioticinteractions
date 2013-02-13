@@ -30,4 +30,20 @@ public class Study extends NodeBacked {
     public Relationship collected(Specimen specimen) {
         return createRelationshipTo(specimen, RelTypes.COLLECTED);
     }
+
+    public void setContributor(String contributor) {
+        getUnderlyingNode().setProperty("contributor", contributor);
+    }
+
+    public void setInstitution(String institution) {
+        getUnderlyingNode().setProperty("institution", institution);
+    }
+
+    public void setPeriod(String period) {
+        getUnderlyingNode().setProperty("period", period);
+    }
+
+    public void setDescription(String description) {
+        getUnderlyingNode().setProperty("description", description);
+    }
 }

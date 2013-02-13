@@ -35,7 +35,11 @@ public class StudyImporterForBlaremore extends BaseStudyImporter {
             LabeledCSVParser parser = parserFactory.createParser(DATA_SOURCE);
             String[] line = null;
 
-            study = nodeFactory.getOrCreateStudy(StudyLibrary.Study.BAREMORE_ANGEL_SHARK.toString());
+            study = nodeFactory.getOrCreateStudy(StudyLibrary.Study.BAREMORE_ANGEL_SHARK.toString(),
+                    "Ivy E. Baremore",
+                    "University of Florida, Department of Fisheries and Aquatic Sciences",
+                    "2005",
+                    "Prey Selection By The Atlantic Angel Shark Squatina Dumeril In The Northeastern Gulf Of Mexico.");
             Taxon angelSharkSpecies = nodeFactory.getOrCreateSpecies(null, "Squatina dumeril");
             Location collectionLocation = nodeFactory.getOrCreateLocation(29.219302, -87.06665, null);
 

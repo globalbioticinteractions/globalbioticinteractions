@@ -16,7 +16,11 @@ public class StudyImporterForJRFerrerParis extends BaseStudyImporter {
 
     @Override
     public Study importStudy() throws StudyImporterException {
-        Study study = nodeFactory.createStudy("JRFerrisParisButterflies");
+        Study study = nodeFactory.createStudy("JRFerrisParisButterflies",
+                "Jose R. Ferrer Paris",
+                "Centro de Estudios Botánicos y Agroforestales, Instituto Venezolano de Investigaciones Científicas; Kirstenbosch Research Center, South African National Biodiversity Institute",
+                "",
+                "Compilation of hostplant records for butterflies.");
         String studyResource = "/org/trophic/graph/data/jr_ferrer_paris/ExampleAssociations.csv";
         try {
             LabeledCSVParser parser = parserFactory.createParser(studyResource);

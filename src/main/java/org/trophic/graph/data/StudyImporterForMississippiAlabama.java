@@ -59,7 +59,11 @@ public class StudyImporterForMississippiAlabama extends BaseStudyImporter {
     }
 
     private Study importStudy(ParserFactory parserFactory, String studyResource) throws StudyImporterException {
-        Study study = nodeFactory.getOrCreateStudy(studyResource);
+        Study study = nodeFactory.getOrCreateStudy(studyResource,
+                "James D. Simons",
+                "Center for Coastal Studies, Texas A&M University - Corpus Christi",
+                "1987- 1990",
+                "Food habits and trophic structure of the demersal fish assemblages on the Mississippi-Alabama continental shelf.");
         try {
             LabeledCSVParser csvParser = parserFactory.createParser(studyResource);
             Map<String, String> columnMapper = COLUMN_MAPPER;

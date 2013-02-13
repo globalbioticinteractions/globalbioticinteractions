@@ -31,7 +31,11 @@ public class StudyImporterForRoopnarine extends BaseStudyImporter {
 
         Map<String, LatLng> resourceLocation = resourceLocationMap(suffix, prefix);
 
-        Study study = nodeFactory.createStudy(StudyLibrary.Study.ROOPNARINE.toString());
+        Study study = nodeFactory.createStudy(StudyLibrary.Study.ROOPNARINE.toString(),
+                "Peter D. Roopnarine and Rachel Hertog",
+                "Department of Invertebrate Zoology and Geology, California Academy of Sciences, San Francisco, CA 94118, USA",
+                "",
+                "<a href=\"http://www.hindawi.com/dpis/ecology/2013/857470/dataset/\">Detailed Food Web Networks of Three Greater Antillean Coral Reef Systems: The Cayman Islands, Cuba, and Jamaica</a>");
         for (Map.Entry<String, LatLng> resourceLatLngEntry : resourceLocation.entrySet()) {
             String studyResource = resourceLatLngEntry.getKey();
             LOG.info("import of [" + studyResource + "] started...");

@@ -22,7 +22,11 @@ public class StudyImporterForICES extends BaseStudyImporter {
     public Study importStudy() throws StudyImporterException {
         LabeledCSVParser parser = createParser();
 
-        Study study = nodeFactory.createStudy(StudyLibrary.Study.ICES.toString());
+        Study study = nodeFactory.createStudy(StudyLibrary.Study.ICES.toString(),
+                "<a href=\"http://ecosystemdata.ices.dk/stomachdata/\">ICES Stomach Dataset, ICES, Copenhagen</a>",
+                "International Council for the Exploration of the Sea (ICES); Institute for Marine Resources & Ecosystem Studies (IMARES)",
+                "1980- 1991",
+                "<a href=\"http://www.ices.dk/products/cooperative.asp\">ICES Cooperative Research Report No. 164</a>; <a href=\"http://ices.dk/products/cooperative.asp\">ICES Cooperative Research Report No. 219</a>");
         try {
             Specimen predatorSpecimen = null;
             String lastStomachId = null;

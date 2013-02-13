@@ -1,6 +1,5 @@
 package org.trophic.graph.data;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.neo4j.graphdb.GraphDatabaseService;
@@ -9,8 +8,6 @@ import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.IndexHits;
-import org.neo4j.helpers.collection.MapUtil;
-import org.neo4j.index.impl.lucene.LuceneIndex;
 import org.neo4j.index.lucene.QueryContext;
 import org.neo4j.index.lucene.ValueContext;
 import org.trophic.graph.data.taxon.TaxonLookupService;
@@ -245,11 +242,28 @@ public class NodeFactory {
     }
 
     public Study createStudy(String title) {
+        return createStudy(title, null, null, null, null);
+    }
+
+    public Study createStudy(String title, String contributor, String institution, String period, String description) {
         Transaction transaction = graphDb.beginTx();
         Study study;
         try {
             Node node = graphDb.createNode();
             study = new Study(node, title);
+            if (contributor != null) {
+                study.setContributor(contributor);
+            }
+            if (institution != null) {
+                study.setInstitution(institution);
+            }
+            if (period != null) {
+                study.setPeriod(period);
+            }
+            if (description != null) {
+                study.setDescription(description);
+            }
+
             studies.add(node, "title", title);
             transaction.success();
         } finally {
@@ -266,6 +280,14 @@ public class NodeFactory {
         }
         return study;
     }
+
+    public Study getOrCreateStudy(String title, String contributor, String institution, String period, String description) {
+            Study study = findStudy(title);
+            if (null == study) {
+                study = createStudy(title, contributor, institution, period, description);
+            }
+            return study;
+        }
 
 
     public Study findStudy(String title) {

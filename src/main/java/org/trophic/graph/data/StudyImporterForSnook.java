@@ -10,9 +10,7 @@ import org.trophic.graph.domain.Study;
 import org.trophic.graph.domain.Taxon;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class StudyImporterForSnook extends BaseStudyImporter {
@@ -24,7 +22,7 @@ public class StudyImporterForSnook extends BaseStudyImporter {
 
     @Override
     public Study importStudy() throws StudyImporterException {
-        Study study = nodeFactory.createStudy("Blewett2000CharlotteHarborFL");
+        Study study = nodeFactory.createStudy("Blewett2000CharlotteHarborFL", "David A. Blewett", "Fish and Wildlife Research Institute, Florida Fish and Wildlife Conservation Commission", "Mar 2000- Feb 2002", "Feeding Habits of Common Snook, Centropomus undecimalis, in Charlotte Harbor, Florida.");
 
         try {
             LabeledCSVParser locationParser = parserFactory.createParser("blewett/SnookDietData2000_02_Charlotte_Harbor_FL_Blewett_date_and_abiotic.csv.gz");
