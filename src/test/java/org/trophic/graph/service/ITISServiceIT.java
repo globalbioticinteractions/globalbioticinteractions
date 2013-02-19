@@ -17,8 +17,6 @@ public class ITISServiceIT {
 
     }
 
-    // TODO ITIS webservice have changed and no longer return ITIS TSN, email sent on Feb 12, 2013
-    @Ignore
     @Test
     public void lookupExistentTaxon() throws LSIDLookupServiceException {
         assertThat(lookupTerm("Fundulus jenkinsi"), is("urn:lsid:itis.gov:itis_tsn:165653"));
