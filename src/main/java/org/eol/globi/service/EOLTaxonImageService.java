@@ -53,7 +53,6 @@ public class EOLTaxonImageService extends BaseService {
                 String pageUrlString = "http://eol.org/api/data_objects/1.0/" + imageObjectId + ".json";
                 response = httpClient.execute(new HttpGet(pageUrlString));
                 responseString = EntityUtils.toString(response.getEntity());
-                LOG.info(responseString);
                 if (200 == response.getStatusLine().getStatusCode()) {
                     taxonImage = new TaxonImage();
                     taxonImage.setEOLPageId(eolPageId);
