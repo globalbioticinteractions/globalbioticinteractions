@@ -16,7 +16,7 @@ public class TaxonNameNormalizer {
     private static String clean(String name) {
         name = name.replaceAll("\\(.*\\)", "");
         name = name.replaceAll("[¬†*?]", "");
-        name = name.replaceAll("\\s(spp|sp)\\.*.*", "");
+        name = name.replaceAll("\\s(spp|sp)\\.*($|\\s.*)", "");
         name = name.replaceAll("^'", "");
         name = name.replaceAll("'$", "");
         name = name.replaceAll(" cf ", " ");
