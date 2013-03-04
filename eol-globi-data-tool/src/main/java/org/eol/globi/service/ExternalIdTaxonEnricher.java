@@ -18,6 +18,7 @@ import java.util.List;
 
 public class ExternalIdTaxonEnricher extends TaxonEnricher {
     private static final Log LOG = LogFactory.getLog(ExternalIdTaxonEnricher.class);
+    public static final String NO_MATCH = "no:match";
 
     public ExternalIdTaxonEnricher(GraphDatabaseService graphDbService) {
         super(graphDbService);
@@ -114,7 +115,7 @@ public class ExternalIdTaxonEnricher extends TaxonEnricher {
         services.add(new LSIDLookupService() {
             @Override
             public String lookupLSIDByTaxonName(String taxonName) throws LSIDLookupServiceException {
-                return "no:match";
+                return NO_MATCH;
             }
 
             @Override

@@ -8,7 +8,7 @@ import org.neo4j.unsafe.batchinsert.BatchInserters;
 public abstract class GraphService {
 
     private static GraphDatabaseService graphService;
-    private static String storeDir = "./data";
+    private static String storeDir = "./graph.db";
 
     public static GraphDatabaseService getGraphService(){
         if (graphService == null) {

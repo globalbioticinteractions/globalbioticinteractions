@@ -3,6 +3,7 @@ package org.eol.globi.client;
 import org.apache.commons.lang3.time.StopWatch;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.eol.globi.export.StudyExportUnmatchedTaxonsForStudies;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.eol.globi.data.NodeFactory;
 import org.eol.globi.data.ParserFactory;
@@ -102,9 +103,9 @@ public class TrophicImporter {
 
     private void exportData(List<Study> importedStudies) throws StudyImporterException {
         try {
+            export(importedStudies, "./unmatchedSourceTaxa.csv", new StudyExportUnmatchedTaxonsForStudies(GraphService.getGraphService()));
             export(importedStudies, "./export.csv", new StudyExporterImpl());
             export(importedStudies, "./exportPredatorTaxonPreyTaxon.csv", new StudyExporterPredatorPrey(GraphService.getGraphService()));
-            export(importedStudies, "./exportPredatorTaxonPreyTaxonInteractionTypeEOL.csv", new StudyExporterPredatorPreyEOL(GraphService.getGraphService()));
         } catch (IOException e) {
             throw new StudyImporterException("failed to export result to csv file", e);
         }
