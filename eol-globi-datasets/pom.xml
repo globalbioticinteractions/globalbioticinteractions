@@ -94,6 +94,26 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>wagon-maven-plugin</artifactId>
+                <version>1.0-beta-4</version>
+                <configuration>
+                    <serverId>aws-snapshot</serverId>
+                    <url>s3://globi/snapshot</url>
+                    <skip>${skipTests}</skip>
+                    <includes>**/*.csv,**/*.tar.gz</includes>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>upload-csv-exports</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>upload</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
 
         <extensions>
