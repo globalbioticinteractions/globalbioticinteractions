@@ -29,8 +29,8 @@ public class StudyExportUnmatchedTaxaForStudies implements StudyExporter {
         ExecutionResult result = engine.execute(query);
 
         if (includeHeader) {
-            writer.write("\"name of unmatched predator taxon\"");
-            writer.write(",\" study title in which predator was referenced\"\n");
+            writer.write("\"name of unmatched source taxon\"");
+            writer.write(",\"study title\"\n");
         }
 
         for (Map<String, Object> map : result) {

@@ -33,6 +33,7 @@ public class StudyExportUnmatchedTaxaForStudiesTest extends GraphDBTestCase {
 
         Taxon homoSapiens2 = nodeFactory.getOrCreateTaxon("Homo sapiens2", ExternalIdTaxonEnricher.NO_MATCH);
         addSpecimen(study, homoSapiens2);
+        homoSapiens2 = nodeFactory.createTaxon("Homo sapiens2", null);
         addSpecimen(study, homoSapiens2);
 
         Study study2 = nodeFactory.createStudy("my study2");
@@ -44,7 +45,7 @@ public class StudyExportUnmatchedTaxaForStudiesTest extends GraphDBTestCase {
 
         StringWriter writer = new StringWriter();
         new StudyExportUnmatchedTaxaForStudies(getGraphDb()).exportStudy(study, writer, true);
-        assertThat(writer.toString(), is("\"name of unmatched predator taxon\",\" study title in which predator was referenced\"" +
+        assertThat(writer.toString(), is("\"name of unmatched source taxon\",\"study\"" +
                 "\n\"Homo sapiens2\",\"my study\"\n" +
                 "\"Homo sapiens3\",\"my study\"\n" +
                 "\"Homo sapiens2\",\"my study2\"\n"));
