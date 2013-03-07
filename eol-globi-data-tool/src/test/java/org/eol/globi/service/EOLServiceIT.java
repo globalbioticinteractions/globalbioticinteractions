@@ -18,6 +18,11 @@ public class EOLServiceIT {
         assertThat(new EOLService().lookupLSIDByTaxonName("Puccinia caricina var. ribesii-pendulae"), is(nullValue()));
     }
 
+    @Test
+    public void lookupButterFlyOrHostFollowAlternate() throws LSIDLookupServiceException {
+        assertThat(new EOLService().lookupLSIDByTaxonName("Hesperocharis paranensis"), is("EOL:176594"));
+    }
+
 
 
 }
