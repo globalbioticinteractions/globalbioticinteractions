@@ -30,7 +30,7 @@ public class StudyExportUnmatchedTaxaForStudies implements StudyExporter {
 
         if (includeHeader) {
             writer.write("\"name of unmatched source taxon\"");
-            writer.write(",\"study title\"\n");
+            writer.write(",\"study\"\n");
         }
 
         for (Map<String, Object> map : result) {
