@@ -54,7 +54,7 @@
                 <version>1.2.1</version>
                 <executions>
                     <execution>
-                        <phase>generate-resources</phase>
+                        <phase>package</phase>
                         <goals>
                             <goal>exec</goal>
                         </goals>
@@ -106,7 +106,7 @@
                 </configuration>
                 <executions>
                     <execution>
-                        <id>upload-csv-exports</id>
+                        <id>upload-datasets</id>
                         <phase>package</phase>
                         <goals>
                             <goal>upload</goal>
