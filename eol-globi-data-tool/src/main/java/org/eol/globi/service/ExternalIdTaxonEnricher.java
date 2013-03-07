@@ -111,7 +111,7 @@ public class ExternalIdTaxonEnricher extends TaxonEnricher {
     private void initServices(List<LSIDLookupService> services) {
         services.add(new EOLService());
         services.add(new WoRMSService());
-        //services.add(new ITISService());
+        services.add(new ITISService());
         services.add(new LSIDLookupService() {
             @Override
             public String lookupLSIDByTaxonName(String taxonName) throws LSIDLookupServiceException {
