@@ -23,6 +23,11 @@ public class EOLServiceIT {
         assertThat(new EOLService().lookupLSIDByTaxonName("Hesperocharis paranensis"), is("EOL:176594"));
     }
 
+    @Test
+    public void lookupDeadRoots() throws LSIDLookupServiceException {
+        // TODO need to find a way to include only pages that have at least one external taxonomy
+        assertThat(new EOLService().lookupLSIDByTaxonName("Dead roots"), is("EOL:19665069"));
+    }
 
 
 }
