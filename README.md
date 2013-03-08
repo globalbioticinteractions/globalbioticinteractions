@@ -3,7 +3,7 @@ Welcome to the Global Biotic Interactions (globi) project.
 
 This mission of this project is to find efficient ways to normalize and integrate species interaction data
 to enable researchers and enthusiasts to answer questions like:
-which species does an Angel Shark ('''Squatina squatina''') eat in the Gulf of Mexico?
+which species does an Angel Shark ( _Squatina squatina_ ) eat in the Gulf of Mexico?
 Please see http://github.com/jhpoelen/eol-globi-data/wiki for more information.
 
 ## Tests

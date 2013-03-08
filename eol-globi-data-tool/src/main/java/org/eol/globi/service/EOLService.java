@@ -35,6 +35,7 @@ public class EOLService extends BaseService implements LSIDLookupService {
         String response = null;
         try {
             response = httpClient.execute(get, responseHandler);
+            System.out.println(response);
         } catch (HttpResponseException e) {
             if (e.getStatusCode() != 406 && e.getStatusCode() != 404) {
                 throw new LSIDLookupServiceException("failed to lookup [" + taxonName + "]", e);
