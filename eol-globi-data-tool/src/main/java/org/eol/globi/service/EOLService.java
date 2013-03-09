@@ -47,9 +47,10 @@ public class EOLService extends BaseService implements LSIDLookupService {
 
 
         String pageId = null;
-        // only match when there's one and only one result
+
         if (response != null) {
-            if (response.contains("totalResults>1<")) {
+            // pick first of non empty result, assuming that exact match parameter is yielding a valid result
+            if (!response.contains("totalResults>0<")) {
                 String[] strings = response.split("<entry>");
                 if (strings.length > 1) {
                     String[] anotherSplit = strings[1].split("<id>");
@@ -58,7 +59,7 @@ public class EOLService extends BaseService implements LSIDLookupService {
                         pageId = yetAnotherSplit.length > 1 ? yetAnotherSplit[0].trim() : null;
                     }
                 }
-            } else if (shouldFollowAlternate && response.contains("totalResults>0<")) {
+            } else if (shouldFollowAlternate) {
                 String[] alternates = response.split("<link rel=\"alternate\" href=\"");
                 if (alternates.length > 1) {
                     String[] urlSplit = alternates[1].split("\"");

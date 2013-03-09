@@ -26,7 +26,6 @@ public class TaxonNameNormalizerTest {
         assertThat(normalizer.normalize("NE"), is("NomenNescio"));
         assertThat(normalizer.normalize("'Loranthus'"), is("Loranthus"));
         assertThat(normalizer.normalize("Leptochela cf bermudensis"), is("Leptochela bermudensis"));
-        assertThat(normalizer.normalize("Verongia gigantea"), is("Verongula gigantea"));
         assertThat(normalizer.normalize("Bacteriastrum spp.          Bacteriastrum spp.          Bacteriastrum spp.          Bacteriastrum spp."), is("Bacteriastrum"));
 
     }
