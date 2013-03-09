@@ -273,14 +273,6 @@ public class NodeFactory {
         return study;
     }
 
-    public Study getOrCreateStudy(String title) {
-        Study study = findStudy(title);
-        if (null == study) {
-            study = createStudy(title);
-        }
-        return study;
-    }
-
     public Study getOrCreateStudy(String title, String contributor, String institution, String period, String description) {
             Study study = findStudy(title);
             if (null == study) {
@@ -321,8 +313,9 @@ public class NodeFactory {
         Taxon taxon = findTaxon(name);
         if (taxon == null) {
             String externalId1 = externalId;
+            String normalizedName = TAXON_NAME_NORMALIZER.normalize(name);
             try {
-                long[] longs = taxonLookupService.lookupTerms(TAXON_NAME_NORMALIZER.normalize(name));
+                long[] longs = taxonLookupService.lookupTerms(normalizedName);
                 if (longs.length > 0) {
                     // TODO should put EOL dependency in taxonLookupService
                     externalId1 = "EOL:" + longs[0];
@@ -336,7 +329,7 @@ public class NodeFactory {
 
             Transaction transaction = graphDb.beginTx();
             try {
-                taxon = createTaxonNoTransaction(name, externalId1);
+                taxon = createTaxonNoTransaction(normalizedName, externalId1);
                 transaction.success();
             } finally {
                 transaction.finish();
