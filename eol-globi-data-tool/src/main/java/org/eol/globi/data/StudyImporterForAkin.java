@@ -119,7 +119,7 @@ public class StudyImporterForAkin extends BaseStudyImporter {
                     if (volume > 0) {
                         Specimen prey = nodeFactory.createSpecimen();
                         prey.setVolumeInMilliLiter(volume);
-                        prey.classifyAs(nodeFactory.getOrCreateSpecies(null, preySpeciesName));
+                        prey.classifyAs(nodeFactory.getOrCreateTaxon(preySpeciesName));
                         specimen.ate(prey);
                     }
                 }
@@ -134,7 +134,7 @@ public class StudyImporterForAkin extends BaseStudyImporter {
         int speciesIndex = findIndexForColumnWithNameThrowOnMissing("Fish Species", header);
         String speciesName = line[speciesIndex];
         if (speciesName != null && speciesName.length() > 0) {
-            Taxon species = nodeFactory.getOrCreateSpecies(null, speciesName);
+            Taxon species = nodeFactory.getOrCreateTaxon(speciesName);
             specimen = nodeFactory.createSpecimen();
             specimen.classifyAs(species);
             addSpecimenLength(parser, header, line, specimen);

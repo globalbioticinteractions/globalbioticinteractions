@@ -22,7 +22,6 @@ public class StudyTest extends GraphDBTestCase {
     public static final String CARCHARODON_CARCHARIAS = CARCHARODON + " carcharias";
     public static final String CARASSIUS_AURATUS_AURATUS = "Carassius auratus auratus";
     public static final String WHITE_SHARK_FAMILY = "Lamnidae";
-    public static final String NAME = "name";
 
     private NodeFactory factory;
 
@@ -46,17 +45,17 @@ public class StudyTest extends GraphDBTestCase {
         Study study = factory.createStudy("Our first study");
 
 
-        Taxon family = factory.getOrCreateFamily(WHITE_SHARK_FAMILY);
+        Taxon family = factory.getOrCreateTaxon(WHITE_SHARK_FAMILY);
 
 
-        Taxon genus2 = factory.getOrCreateGenus(CARCHARODON);
+        Taxon genus2 = factory.getOrCreateTaxon(CARCHARODON);
         genus2.createRelationshipTo(family, IS_A);
         Taxon genus = genus2;
 
-        Taxon greatWhiteSpecies = factory.getOrCreateSpecies(genus, CARCHARODON_CARCHARIAS);
+        Taxon greatWhiteSpecies = factory.getOrCreateTaxon(CARCHARODON_CARCHARIAS);
 
 
-        Taxon goldFishSpecies = factory.getOrCreateSpecies(null, CARASSIUS_AURATUS_AURATUS);
+        Taxon goldFishSpecies = factory.getOrCreateTaxon(CARASSIUS_AURATUS_AURATUS);
 
         Specimen goldFish = factory.createSpecimen();
         goldFish.classifyAs(goldFishSpecies);
@@ -93,10 +92,6 @@ public class StudyTest extends GraphDBTestCase {
                     Node endNode = next.getEndNode();
                     String speciesName = (String) endNode.getProperty("name");
                     assertEquals(CARCHARODON_CARCHARIAS, speciesName);
-                    Node genusNode = endNode.getSingleRelationship(RelTypes.IS_A, Direction.OUTGOING).getEndNode();
-                    assertEquals(CARCHARODON, genusNode.getProperty("name"));
-                    Node familyNode = genusNode.getSingleRelationship(RelTypes.IS_A, Direction.OUTGOING).getEndNode();
-                    assertEquals(WHITE_SHARK_FAMILY, familyNode.getProperty(NAME));
                     assertEquals(new Double(-100.0d), specimen.getSampleLocation().getAltitude());
                     assertEquals(new Double(1.2d), specimen.getLengthInMm());
                 } else {

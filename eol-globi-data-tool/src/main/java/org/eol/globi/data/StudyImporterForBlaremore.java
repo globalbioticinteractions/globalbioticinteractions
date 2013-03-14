@@ -39,7 +39,7 @@ public class StudyImporterForBlaremore extends BaseStudyImporter {
                     "University of Florida, Department of Fisheries and Aquatic Sciences",
                     "2005",
                     "Prey Selection By The Atlantic Angel Shark Squatina Dumeril In The Northeastern Gulf Of Mexico.");
-            Taxon angelSharkSpecies = nodeFactory.getOrCreateSpecies(null, "Squatina dumeril");
+            Taxon angelSharkSpecies = nodeFactory.getOrCreateTaxon("Squatina dumeril");
             Location collectionLocation = nodeFactory.getOrCreateLocation(29.219302, -87.06665, null);
 
             Map<Integer, Specimen> specimenMap = new HashMap<Integer, Specimen>();
@@ -73,7 +73,7 @@ public class StudyImporterForBlaremore extends BaseStudyImporter {
                         throw new StudyImporterException("failed to parse length [" + totalLengthInCm);
                     }
                     Specimen preySpecimen = nodeFactory.createSpecimen();
-                    preySpecimen.classifyAs(nodeFactory.getOrCreateSpecies(null, line[7]));
+                    preySpecimen.classifyAs(nodeFactory.getOrCreateTaxon(line[7]));
                     predatorSpecimen.ate(preySpecimen);
                 }
             }

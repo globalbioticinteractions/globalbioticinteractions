@@ -50,15 +50,13 @@ public class NodeFactoryTest extends GraphDBTestCase {
 
     @Test
     public void createSpecies() throws NodeFactoryException {
-        Taxon taxon = nodeFactory.createTaxon("bla bla", null);
+        Taxon taxon = nodeFactory.getOrCreateTaxon("bla bla");
         assertEquals("bla bla", taxon.getName());
-        assertEquals("bla", taxon.isA().getProperty("name"));
     }
 
     @Test
     public void createSpeciesTwice() throws NodeFactoryException {
-        String alphaeidae = "Alpheidae";
-        assertFamilyCorrectness(alphaeidae, alphaeidae);
+        assertFamilyCorrectness("Alpheidae", "Alpheidae");
     }
 
 
@@ -73,19 +71,9 @@ public class NodeFactoryTest extends GraphDBTestCase {
     }
 
     private void assertFamilyCorrectness(String expectedOutputName, String inputName) throws NodeFactoryException {
-        nodeFactory.createTaxon(inputName, null);
-        Taxon taxon = nodeFactory.createTaxon(inputName, null);
+        nodeFactory.getOrCreateTaxon(inputName);
+        Taxon taxon = nodeFactory.getOrCreateTaxon(inputName);
         assertEquals(expectedOutputName, taxon.getName());
-    }
-
-    @Test
-    public void createSpeciesWithFamily() throws NodeFactoryException {
-        Taxon family = nodeFactory.getOrCreateFamily("theFam");
-        Taxon taxon = nodeFactory.createTaxon("bla bla", family);
-        assertEquals("bla bla", taxon.getName());
-        Taxon genusTaxon = taxon.isPartOfTaxon();
-        assertEquals("bla", genusTaxon.getName());
-        assertEquals("theFam", genusTaxon.isPartOfTaxon().getName());
     }
 
     @Test
@@ -120,14 +108,14 @@ public class NodeFactoryTest extends GraphDBTestCase {
 
 
     private void assertGenus(String speciesName) throws NodeFactoryException {
-        Taxon taxon = nodeFactory.createTaxon(speciesName, null);
+        Taxon taxon = nodeFactory.getOrCreateTaxon(speciesName);
         Taxon genus = taxon;
         assertEquals("bla", genus.getName());
         assertNull(genus.isA());
     }
 
     private void assertFamily(String speciesName) throws NodeFactoryException {
-        Taxon family = nodeFactory.createTaxon(speciesName, null);
+        Taxon family = nodeFactory.getOrCreateTaxon(speciesName);
         assertEquals("Blabae", family.getName());
     }
 }

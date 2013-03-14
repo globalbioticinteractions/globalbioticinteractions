@@ -1,14 +1,12 @@
 package org.eol.globi.data;
 
 import com.Ostermiller.util.LabeledCSVParser;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.Season;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
-import org.eol.globi.domain.Taxon;
 import uk.me.jstott.jcoord.LatLng;
 
 import java.io.IOException;
@@ -67,7 +65,7 @@ public class StudyImporterForLavacaBay extends BaseStudyImporter {
                 addNextRecordToStudy(csvParser, study, COLUMN_MAPPER, parser);
             }
         } catch (IOException e) {
-            throw new StudyImporterException("failed to createTaxon study [" + LAVACA_BAY_DATA_SOURCE + "]", e);
+            throw new StudyImporterException("failed to create study [" + LAVACA_BAY_DATA_SOURCE + "]", e);
         }
         return study;
     }
@@ -75,7 +73,7 @@ public class StudyImporterForLavacaBay extends BaseStudyImporter {
 
     private void addNextRecordToStudy(LabeledCSVParser csvParser, Study study, Map<String, String> columnToNormalizedTermMapper, LengthParser lengthParser) throws StudyImporterException {
         String seasonName = csvParser.getValueByLabel(columnToNormalizedTermMapper.get(SEASON));
-        Specimen prey = createAndClassifySpecimen(csvParser.getValueByLabel(columnToNormalizedTermMapper.get(PREY_SPECIES)), null);
+        Specimen prey = createAndClassifySpecimen(csvParser.getValueByLabel(columnToNormalizedTermMapper.get(PREY_SPECIES)));
 
         String habitat = csvParser.getValueByLabel(COLUMN_MAPPER.get(HABITAT));
         String site = csvParser.getValueByLabel(COLUMN_MAPPER.get(SITE));
@@ -94,24 +92,17 @@ public class StudyImporterForLavacaBay extends BaseStudyImporter {
         }
 
         Double depth = depthMap.get(createDepthId(seasonName, region, site, habitat));
-        Location sampleLocation = null;
 
         Double altitude = depth == null ? null : -depth;
         if (depth == null) {
             LOG.warn(createMsgPrefix(csvParser) + " failed to find depth for habitat, region, site and season: [" + createDepthId(seasonName, region, site, habitat) + "], skipping entry");
         }
-        sampleLocation = nodeFactory.getOrCreateLocation(latLng1.getLat(), latLng1.getLng(), altitude);
+        Location sampleLocation = nodeFactory.getOrCreateLocation(latLng1.getLat(), latLng1.getLng(), altitude);
         prey.caughtIn(sampleLocation);
         prey.caughtDuring(getOrCreateSeason(seasonName));
 
         String speciesName = csvParser.getValueByLabel(columnToNormalizedTermMapper.get(PREDATOR_SPECIES));
-        String familyName = csvParser.getValueByLabel(columnToNormalizedTermMapper.get(PREDATOR_FAMILY));
-        Specimen predator = null;
-        try {
-            predator = createAndClassifySpecimen(speciesName, nodeFactory.getOrCreateFamily(familyName));
-        } catch (NodeFactoryException e) {
-            throw new StudyImporterException("failed to createTaxon taxon", e);
-        }
+        Specimen predator = createAndClassifySpecimen(speciesName);
         predator.setLengthInMm(lengthParser.parseLengthInMm(csvParser));
 
         if (null != sampleLocation) {
@@ -260,17 +251,10 @@ public class StudyImporterForLavacaBay extends BaseStudyImporter {
         return habitateDef + regionDef + siteDef;
     }
 
-
-    private Double parseAsDouble(LabeledCSVParser csvParser, String stringValue) {
-        String valueByLabel = csvParser.getValueByLabel(stringValue);
-        return valueByLabel == null ? null : Double.parseDouble(valueByLabel);
-    }
-
-    private Specimen createAndClassifySpecimen(final String speciesName, Taxon family) throws StudyImporterException {
+    private Specimen createAndClassifySpecimen(final String speciesName) throws StudyImporterException {
         Specimen specimen = nodeFactory.createSpecimen();
-        String trimmedSpeciesName = StringUtils.trim(speciesName);
         try {
-            specimen.classifyAs(nodeFactory.createTaxon(trimmedSpeciesName, family));
+            specimen.classifyAs(nodeFactory.getOrCreateTaxon(speciesName));
         } catch (NodeFactoryException e) {
             throw new StudyImporterException("failed to classify specimen", e);
         }

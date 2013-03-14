@@ -61,20 +61,20 @@ public class StudyImporterForLavacaBayTest extends GraphDBTestCase {
 
         StudyImporterForLavacaBay studyImporterFor = new StudyImporterForLavacaBay(new TestParserFactory(contentMap), nodeFactory);
 
+
+
         Study study = studyImporterFor.importStudy();
 
-        assertNotNull(nodeFactory.findTaxonOfType("Sciaenidae"));
-        assertNotNull(nodeFactory.findTaxonOfType("Ariidae"));
         assertNotNull(nodeFactory.findTaxonOfType("Sciaenops ocellatus"));
-        assertNotNull(nodeFactory.findTaxonOfType("Sciaenops"));
         assertNotNull(nodeFactory.findTaxonOfType("Arius felis"));
-        assertNotNull(nodeFactory.findTaxonOfType("Arius"));
 
-        assertNotNull(nodeFactory.findTaxonOfType("Acrididae"));
-        assertNotNull(nodeFactory.findTaxonOfType("Arius"));
+        Taxon acrididaeSpp = nodeFactory.findTaxonOfType("Acrididae spp. ");
+        assertNotNull(acrididaeSpp);
+        Taxon acrididae = nodeFactory.findTaxonOfType("Acrididae");
+        assertNotNull(acrididae);
+        assertEquals(acrididae.getNodeID(), acrididaeSpp.getNodeID());
 
         assertNotNull(nodeFactory.findTaxonOfType("Aegathoa oculata"));
-        assertNotNull(nodeFactory.findTaxonOfType("Aegathoa"));
 
         assertNotNull(nodeFactory.findStudy(StudyImporterForLavacaBay.LAVACA_BAY_DATA_SOURCE));
 
@@ -89,10 +89,6 @@ public class StudyImporterForLavacaBayTest extends GraphDBTestCase {
                 Taxon taxon = new Taxon(rel.getEndNode().getSingleRelationship(RelTypes.CLASSIFIED_AS, Direction.OUTGOING).getEndNode());
                 String scientificName = taxon.getName();
                 if ("Sciaenops ocellatus".equals(scientificName)) {
-                    Taxon genus = new Taxon(taxon.isA());
-                    assertEquals("Sciaenops", genus.getName());
-                    assertEquals("Sciaenidae", new Taxon(genus.isA()).getName());
-
                     Location location = specimen.getSampleLocation();
                     assertThat(location, is(not(nullValue())));
                     assertThat(location.getLatitude(), is((28.595267 + 28.596233)/2.0));

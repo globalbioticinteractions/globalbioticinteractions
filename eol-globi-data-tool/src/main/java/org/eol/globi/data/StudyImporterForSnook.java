@@ -80,7 +80,7 @@ public class StudyImporterForSnook extends BaseStudyImporter {
             }
 
             String speciesName = "Centropomus undecimalis";
-            predatorSpecimen.classifyAs(nodeFactory.getOrCreateSpecies(null, speciesName));
+            predatorSpecimen.classifyAs(nodeFactory.getOrCreateTaxon(speciesName));
 
             String locationCode = line[0];
             if (locationCode != null) {
@@ -98,7 +98,7 @@ public class StudyImporterForSnook extends BaseStudyImporter {
                         try {
                             int preyCount = Integer.parseInt(preyCountString);
                             String preyName = header[i];
-                            Taxon preyTaxon = nodeFactory.getOrCreateSpecies(null, preyName);
+                            Taxon preyTaxon = nodeFactory.getOrCreateTaxon(preyName);
                             for (int j = 0; j < preyCount; j++) {
                                 Specimen preySpecimen = nodeFactory.createSpecimen();
                                 preySpecimen.classifyAs(preyTaxon);

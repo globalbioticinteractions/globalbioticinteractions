@@ -23,14 +23,14 @@ public class RDFExporterTest extends GraphDBTestCase {
         Specimen man = nodeFactory.createSpecimen();
         man.setLengthInMm(193.0 * 10);
 
-        Taxon manSpecies = nodeFactory.getOrCreateSpecies(null, "Homo sapiens");
+        Taxon manSpecies = nodeFactory.getOrCreateTaxon("Homo sapiens");
         man.classifyAs(manSpecies);
         Location sampleLocation = nodeFactory.getOrCreateLocation(40.714623, -74.006605, 0.0);
         man.caughtIn(sampleLocation);
         study.collected(man);
 
         Specimen dog = nodeFactory.createSpecimen();
-        Taxon dogSpecies = nodeFactory.getOrCreateSpecies(null, "Canis lupus");
+        Taxon dogSpecies = nodeFactory.getOrCreateTaxon("Canis lupus");
         dog.classifyAs(dogSpecies);
         Relationship preysUponRelationship = man.createRelationshipTo(dog, InteractType.ATE);
 

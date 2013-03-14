@@ -51,84 +51,6 @@ public class NodeFactory {
         this.taxons = graphDb.index().forNodes("taxons");
     }
 
-    public Taxon createTaxon(String name, Taxon family) throws NodeFactoryException {
-        String cleanedName = TAXON_NAME_NORMALIZER.normalize(name);
-        String[] split = cleanedName.split(" ");
-        Taxon taxon = null;
-
-        if (split.length > 1) {
-            String firstPart = split[0];
-            if (cleanedName.contains("sp.") || cleanedName.contains("spp.")) {
-                taxon = createFamilyOrGenus(family, firstPart);
-            } else {
-                if (isFamilyName(firstPart)) {
-                    taxon = getOrCreateFamily(firstPart);
-                } else {
-                    Taxon genus = getOrCreateGenus(firstPart);
-                    if (family != null) {
-                        genus.createRelationshipTo(family, IS_A);
-                    }
-                    taxon = getOrCreateSpecies(genus, cleanedName);
-                }
-            }
-        } else if (split.length == 1) {
-            taxon = createFamilyOrGenus(family, split[0]);
-        }
-        return taxon;
-    }
-
-    private Taxon createFamilyOrGenus(Taxon family, String firstPart) throws NodeFactoryException {
-        Taxon taxon;
-        if (isFamilyName(firstPart)) {
-            taxon = getOrCreateFamily(firstPart);
-        } else {
-            Taxon genus = getOrCreateGenus(firstPart);
-            if (family != null) {
-                genus.createRelationshipTo(family, IS_A);
-            }
-            taxon = genus;
-        }
-        return taxon;
-    }
-
-    private boolean isFamilyName(String firstPart) {
-        return firstPart.endsWith("ae");
-    }
-
-    public Taxon getOrCreateSpecies(Taxon genus, String speciesName) throws NodeFactoryException {
-        Taxon species = findTaxonOfType(speciesName);
-        if (species == null) {
-            species = getOrCreateTaxon(speciesName);
-        }
-        if (null != genus) {
-            species.createRelationshipTo(genus, IS_A);
-        }
-        return species;
-    }
-
-
-    public Taxon getOrCreateGenus(String genusName) throws NodeFactoryException {
-        Taxon genus = findTaxonOfType(genusName);
-        if (genus == null) {
-            genus = getOrCreateTaxon(genusName);
-
-        }
-        return genus;
-    }
-
-    public Taxon getOrCreateFamily(final String familyName) throws NodeFactoryException {
-        Taxon family = null;
-        if (familyName != null) {
-            Taxon foundFamily = findTaxonOfType(familyName);
-            if (foundFamily == null) {
-                family = getOrCreateTaxon(familyName);
-            } else {
-                family = foundFamily;
-            }
-        }
-        return family;
-    }
-
     private void addTaxonToIndex(Taxon taxon, Node node) {
         taxons.add(node, Taxon.NAME, taxon.getName());
     }
@@ -312,30 +234,33 @@ public class NodeFactory {
     public Taxon getOrCreateTaxon(String name, String externalId) throws NodeFactoryException {
         Taxon taxon = findTaxon(name);
         if (taxon == null) {
-            String externalId1 = externalId;
             String normalizedName = TAXON_NAME_NORMALIZER.normalize(name);
-            try {
-                long[] longs = taxonLookupService.lookupTerms(normalizedName);
-                if (longs.length > 0) {
-                    // TODO should put EOL dependency in taxonLookupService
-                    externalId1 = "EOL:" + longs[0];
-                    if (longs.length > 1) {
-                        LOG.info("found at least one duplicate for taxon with name [" + name + "]: {" + longs[0] + "," + longs[1] + "} - using first.");
-                    }
-                }
-            } catch (IOException e) {
-                throw new NodeFactoryException("failed to lookup taxon", e);
-            }
-
+            externalId = findExternalId(name, externalId, normalizedName);
             Transaction transaction = graphDb.beginTx();
             try {
-                taxon = createTaxonNoTransaction(normalizedName, externalId1);
+                taxon = createTaxonNoTransaction(normalizedName, externalId);
                 transaction.success();
             } finally {
                 transaction.finish();
             }
         }
         return taxon;
+    }
+
+    private String findExternalId(String name, String externalId1, String normalizedName) throws NodeFactoryException {
+        try {
+            long[] longs = taxonLookupService.lookupTerms(normalizedName);
+            if (longs.length > 0) {
+                // TODO should put EOL dependency in taxonLookupService
+                externalId1 = "EOL:" + longs[0];
+                if (longs.length > 1) {
+                    LOG.info("found at least one duplicate for taxon with name [" + name + "]: {" + longs[0] + "," + longs[1] + "} - using first.");
+                }
+            }
+        } catch (IOException e) {
+            throw new NodeFactoryException("failed to lookup taxon", e);
+        }
+        return externalId1;
     }
 
     public Taxon createTaxonNoTransaction(String name, String externalId) {

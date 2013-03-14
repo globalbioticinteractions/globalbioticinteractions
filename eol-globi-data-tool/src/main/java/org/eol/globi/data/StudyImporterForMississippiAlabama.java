@@ -1,7 +1,6 @@
 package org.eol.globi.data;
 
 import com.Ostermiller.util.LabeledCSVParser;
-import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.domain.*;
 import uk.me.jstott.jcoord.LatLng;
 import uk.me.jstott.jcoord.UTMRef;
@@ -79,20 +78,14 @@ public class StudyImporterForMississippiAlabama extends BaseStudyImporter {
 
     private void addNextRecordToStudy(LabeledCSVParser csvParser, Study study, Map<String, String> columnToNormalizedTermMapper, LengthParser lengthParser) throws StudyImporterException {
         String seasonName = csvParser.getValueByLabel(columnToNormalizedTermMapper.get(SEASON));
-        Specimen prey = createAndClassifySpecimen(csvParser.getValueByLabel(columnToNormalizedTermMapper.get(PREY_SPECIES)), null);
+        Specimen prey = createAndClassifySpecimen(csvParser.getValueByLabel(columnToNormalizedTermMapper.get(PREY_SPECIES)));
 
         Location sampleLocation = getOrCreateSampleLocation(csvParser, columnToNormalizedTermMapper);
         prey.caughtIn(sampleLocation);
         prey.caughtDuring(getOrCreateSeason(seasonName));
 
         String speciesName = csvParser.getValueByLabel(columnToNormalizedTermMapper.get(PREDATOR_SPECIES));
-        String familyName = csvParser.getValueByLabel(columnToNormalizedTermMapper.get(PREDATOR_FAMILY));
-        Specimen predator = null;
-        try {
-            predator = createAndClassifySpecimen(speciesName, nodeFactory.getOrCreateFamily(familyName));
-        } catch (NodeFactoryException e) {
-            throw new StudyImporterException("failed to createTaxon taxon", e);
-        }
+        Specimen predator = createAndClassifySpecimen(speciesName);
         predator.setLengthInMm(lengthParser.parseLengthInMm(csvParser));
 
         predator.caughtIn(sampleLocation);
@@ -135,11 +128,10 @@ public class StudyImporterForMississippiAlabama extends BaseStudyImporter {
         return valueByLabel == null ? null : Double.parseDouble(valueByLabel);
     }
 
-    private Specimen createAndClassifySpecimen(final String speciesName, Taxon family) throws StudyImporterException {
+    private Specimen createAndClassifySpecimen(final String speciesName) throws StudyImporterException {
         Specimen specimen = nodeFactory.createSpecimen();
-        String trimmedSpeciesName = StringUtils.trim(speciesName);
         try {
-            specimen.classifyAs(nodeFactory.createTaxon(trimmedSpeciesName, family));
+            specimen.classifyAs(nodeFactory.getOrCreateTaxon(speciesName));
         } catch (NodeFactoryException e) {
             throw new StudyImporterException("failed to classify specimen", e);
         }

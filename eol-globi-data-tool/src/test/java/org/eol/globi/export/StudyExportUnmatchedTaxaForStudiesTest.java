@@ -33,7 +33,7 @@ public class StudyExportUnmatchedTaxaForStudiesTest extends GraphDBTestCase {
 
         Taxon homoSapiens2 = nodeFactory.getOrCreateTaxon("Homo sapiens2", ExternalIdTaxonEnricher.NO_MATCH);
         addSpecimen(study, homoSapiens2);
-        homoSapiens2 = nodeFactory.createTaxon("Homo sapiens2", null);
+        homoSapiens2 = nodeFactory.getOrCreateTaxon("Homo sapiens2");
         addSpecimen(study, homoSapiens2);
 
         Study study2 = nodeFactory.createStudy("my study2");

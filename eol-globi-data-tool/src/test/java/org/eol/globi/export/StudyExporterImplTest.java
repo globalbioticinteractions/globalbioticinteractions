@@ -81,7 +81,7 @@ public class StudyExporterImplTest extends GraphDBTestCase {
         Study myStudy = nodeFactory.createStudy("myStudy");
         Specimen specimen = nodeFactory.createSpecimen();
         myStudy.collected(specimen);
-        Taxon taxon = nodeFactory.createTaxon("Homo sapiens", null);
+        Taxon taxon = nodeFactory.getOrCreateTaxon("Homo sapiens");
         specimen.classifyAs(taxon);
 
         StringWriter row = new StringWriter();
@@ -108,11 +108,11 @@ public class StudyExporterImplTest extends GraphDBTestCase {
         } finally {
             transaction.finish();
         }
-        Taxon taxon = nodeFactory.createTaxon("Homo sapiens", null);
+        Taxon taxon = nodeFactory.getOrCreateTaxon("Homo sapiens");
         specimen.classifyAs(taxon);
         Specimen otherSpecimen = nodeFactory.createSpecimen();
         otherSpecimen.setVolumeInMilliLiter(124.0);
-        Taxon wolf = nodeFactory.createTaxon("Canis lupus", null);
+        Taxon wolf = nodeFactory.getOrCreateTaxon("Canis lupus");
 
         otherSpecimen.classifyAs(wolf);
         specimen.ate(otherSpecimen);
