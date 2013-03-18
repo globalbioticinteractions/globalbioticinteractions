@@ -42,21 +42,11 @@ public class TrophicImporter {
         TaxonLookupService taxonLookupService = buildTaxonomyLookupService();
 
         List<Study> studies = importData(graphService, taxonLookupService);
-        enrichData(graphService);
+        matchAgainstExternalTaxonomies(graphService);
         exportData(studies);
 
         taxonLookupService.destroy();
         graphService.shutdown();
-    }
-
-    private void enrichData(GraphDatabaseService graphService) throws StudyImporterException {
-        matchAgainstExternalTaxonomies(graphService);
-        // TODO image retrieval is very inefficient - need a better way to link to images.
-        /*try {
-            new TaxonImageEnricher(graphService).process();
-        } catch (IOException e) {
-            throw new StudyImporterException("failed to add image url information", e);
-        }*/
     }
 
     private void matchAgainstExternalTaxonomies(GraphDatabaseService graphService) throws StudyImporterException {
