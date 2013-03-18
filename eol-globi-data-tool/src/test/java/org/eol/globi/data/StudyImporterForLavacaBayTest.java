@@ -70,6 +70,7 @@ public class StudyImporterForLavacaBayTest extends GraphDBTestCase {
 
         Taxon acrididaeSpp = nodeFactory.findTaxonOfType("Acrididae spp. ");
         assertNotNull(acrididaeSpp);
+        assertThat("Acrididae", is(acrididaeSpp.getName()));
         Taxon acrididae = nodeFactory.findTaxonOfType("Acrididae");
         assertNotNull(acrididae);
         assertEquals(acrididae.getNodeID(), acrididaeSpp.getNodeID());
@@ -141,6 +142,15 @@ public class StudyImporterForLavacaBayTest extends GraphDBTestCase {
             }
 
         }
+    }
+
+    @Test
+    public void testImportFullFile() throws StudyImporterException, NodeFactoryException {
+        StudyImporterForLavacaBay importer = new StudyImporterForLavacaBay(new ParserFactoryImpl(), nodeFactory);
+        importer.importStudy();
+        Taxon taxon = nodeFactory.getOrCreateTaxon("Pleocyemata spp.");
+        assertThat("Pleocyemata", is(taxon.getName()));
+        assertThat("Aegathoa oculata", is(nodeFactory.getOrCreateTaxon("Aegathoa oculata ").getName()));
     }
 
     @Test
