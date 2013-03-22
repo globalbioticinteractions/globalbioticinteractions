@@ -12,6 +12,7 @@ import org.eol.globi.domain.Taxon;
 
 import java.io.IOException;
 
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.matchers.JUnitMatchers.containsString;
@@ -43,8 +44,29 @@ public class ExternalIdTaxonEnricherIT extends GraphDBTestCase {
         enrichPreyTaxon("Syacium gunteri");
     }
 
+    @Test
+    public void matchNameTooShort() throws IOException, NodeFactoryException {
+        String predatorTaxonName = "blabla";
+        Taxon taxon = nodeFactory.getOrCreateTaxon(predatorTaxonName);
+        Study study = nodeFactory.createStudy("bla");
+        Specimen predator = nodeFactory.createSpecimen();
+        predator.classifyAs(taxon);
+
+        Specimen prey = nodeFactory.createSpecimen();
+        prey.classifyAs(nodeFactory.getOrCreateTaxon("G"));
+        predator.ate(prey);
+
+        study.collected(predator);
+
+        taxonProcessor.process();
+
+        Taxon taxonOfType = nodeFactory.findTaxonOfType("G");
+        assertThat(taxonOfType.getExternalId(), is(nullValue()));
+    }
+
     private void enrichPreyTaxon(String preyName) throws IOException, NodeFactoryException {
-        Taxon taxon = nodeFactory.getOrCreateTaxon("blabla");
+        String predatorTaxonName = "blabla";
+        Taxon taxon = nodeFactory.getOrCreateTaxon(predatorTaxonName);
         Study study = nodeFactory.createStudy("bla");
         Specimen predator = nodeFactory.createSpecimen();
         predator.classifyAs(taxon);
@@ -73,6 +95,7 @@ public class ExternalIdTaxonEnricherIT extends GraphDBTestCase {
         Taxon taxonOfType = nodeFactory.findTaxonOfType(speciesName);
         assertThat("failed to match [" + speciesName + "]", taxonOfType.getExternalId(), containsString(EOLTaxonImageService.EOL_LSID_PREFIX));
     }
+
 
     @Ignore
     @Test

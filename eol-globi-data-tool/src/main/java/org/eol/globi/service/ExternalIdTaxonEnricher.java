@@ -59,6 +59,7 @@ public class ExternalIdTaxonEnricher extends TaxonEnricher {
                 }
                 count++;
             } catch (LSIDLookupServiceException e) {
+                LOG.warn("problem with taxon lookup", e);
                 shutdownServices(services);
                 initServices(services);
             }
@@ -73,9 +74,11 @@ public class ExternalIdTaxonEnricher extends TaxonEnricher {
         } else {
             String taxonName = (String) taxonNode.getProperty(Taxon.NAME);
             if (taxonName.trim().length() < 2) {
-                LOG.warn("not matching invalid [" + taxonName + "]: name is too short");
+                throw new LSIDLookupServiceException("not matching invalid [" + taxonName + "]: name is too short");
             } else {
-                if (lookupTaxon(errorCounts, taxonNode, service, errorCount, taxonName)) return true;
+                if (lookupTaxon(errorCounts, taxonNode, service, errorCount, taxonName)) {
+                    return true;
+                }
             }
         }
         return false;
@@ -98,14 +101,18 @@ public class ExternalIdTaxonEnricher extends TaxonEnricher {
             }
         } catch (LSIDLookupServiceException ex) {
             LOG.warn("failed to find a match for [" + taxonName + "] in [" + service.getClass().getSimpleName() + "]", ex);
-            if (errorCounts.containsKey(service.getClass()) && errorCount != null) {
-                errorCounts.put(service.getClass(), ++errorCount);
-            } else {
-                errorCounts.put(service.getClass(), 0);
-            }
+            incrementErrorCount(errorCounts, service, errorCount);
             throw new LSIDLookupServiceException("re-throwing", ex);
         }
         return false;
+    }
+
+    private void incrementErrorCount(HashMap<Class, Integer> errorCounts, LSIDLookupService service, Integer errorCount) {
+        if (errorCounts.containsKey(service.getClass()) && errorCount != null) {
+            errorCounts.put(service.getClass(), ++errorCount);
+        } else {
+            errorCounts.put(service.getClass(), 0);
+        }
     }
 
     private void initServices(List<LSIDLookupService> services) {

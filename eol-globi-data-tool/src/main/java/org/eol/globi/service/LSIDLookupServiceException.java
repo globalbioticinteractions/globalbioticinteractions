@@ -4,4 +4,8 @@ public class LSIDLookupServiceException extends Throwable {
     public LSIDLookupServiceException(String msg, Throwable throwable) {
         super(msg, throwable);
     }
+
+    public LSIDLookupServiceException(String msg) {
+        super(msg);
+    }
 }
