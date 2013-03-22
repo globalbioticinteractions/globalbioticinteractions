@@ -9,13 +9,12 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-public class ITISService extends BaseService implements LSIDLookupService {
+public class ITISService extends BaseExternalIdService  {
     public static final String URN_LSID_PREFIX = "urn:lsid:itis.gov:itis_tsn:";
 
     @Override
     public String lookupLSIDByTaxonName(String taxonName) throws LSIDLookupServiceException {
-        String lsid = null;
-        URI uri = null;
+        URI uri;
         try {
             uri = new URI("http", null, "www.itis.gov", 80, "/ITISWebService/services/ITISService/searchByScientificName", "srchKey=" + taxonName, null);
         } catch (URISyntaxException e) {
@@ -31,6 +30,7 @@ public class ITISService extends BaseService implements LSIDLookupService {
         } catch (IOException e) {
             throw new LSIDLookupServiceException("failed to execute query to [ " + uri.toString() + "]", e);
         }
+        String lsid = null;
         boolean isValid = response.contains("<ax21:combinedName>" + taxonName + "</ax21:combinedName>");
         if (isValid) {
             String[] split = response.split("<ax21:tsn>");

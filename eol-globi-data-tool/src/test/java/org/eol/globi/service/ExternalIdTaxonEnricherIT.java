@@ -12,6 +12,7 @@ import org.eol.globi.domain.Taxon;
 
 import java.io.IOException;
 
+import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
@@ -53,7 +54,9 @@ public class ExternalIdTaxonEnricherIT extends GraphDBTestCase {
         predator.classifyAs(taxon);
 
         Specimen prey = nodeFactory.createSpecimen();
-        prey.classifyAs(nodeFactory.getOrCreateTaxon("G"));
+        Taxon g = nodeFactory.getOrCreateTaxon("G");
+        assertThat(g.getExternalId(), is(nullValue()));
+        prey.classifyAs(g);
         predator.ate(prey);
 
         study.collected(predator);
@@ -61,7 +64,7 @@ public class ExternalIdTaxonEnricherIT extends GraphDBTestCase {
         taxonProcessor.process();
 
         Taxon taxonOfType = nodeFactory.findTaxonOfType("G");
-        assertThat(taxonOfType.getExternalId(), is(nullValue()));
+        assertThat(taxonOfType.getExternalId(), is("no:match"));
     }
 
     private void enrichPreyTaxon(String preyName) throws IOException, NodeFactoryException {

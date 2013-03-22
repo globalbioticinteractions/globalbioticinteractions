@@ -73,12 +73,8 @@ public class ExternalIdTaxonEnricher extends TaxonEnricher {
             LOG.error("skipping taxon match against [" + service.getClass().toString() + "], error count [" + errorCount + "] too high.");
         } else {
             String taxonName = (String) taxonNode.getProperty(Taxon.NAME);
-            if (taxonName.trim().length() < 2) {
-                throw new LSIDLookupServiceException("not matching invalid [" + taxonName + "]: name is too short");
-            } else {
-                if (lookupTaxon(errorCounts, taxonNode, service, errorCount, taxonName)) {
-                    return true;
-                }
+            if (lookupTaxon(errorCounts, taxonNode, service, errorCount, taxonName)) {
+                return true;
             }
         }
         return false;
@@ -88,7 +84,7 @@ public class ExternalIdTaxonEnricher extends TaxonEnricher {
         StopWatch stopwatch = new StopWatch();
         stopwatch.start();
         try {
-            String lsid = service.lookupLSIDByTaxonName(taxonName);
+            String lsid = service.lookupExternalTaxonIdByName(taxonName);
             stopwatch.stop();
             String responseTime = "(took " + stopwatch.getTime() + "ms)";
             String msg = "for [" + taxonName + "] with LSID [" + lsid + "] in [" + service.getClass().getSimpleName() + "] " + responseTime;
@@ -121,7 +117,7 @@ public class ExternalIdTaxonEnricher extends TaxonEnricher {
         services.add(new ITISService());
         services.add(new LSIDLookupService() {
             @Override
-            public String lookupLSIDByTaxonName(String taxonName) throws LSIDLookupServiceException {
+            public String lookupExternalTaxonIdByName(String taxonName) throws LSIDLookupServiceException {
                 return NO_MATCH;
             }
 

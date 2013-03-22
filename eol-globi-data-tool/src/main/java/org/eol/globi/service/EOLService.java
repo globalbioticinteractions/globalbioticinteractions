@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-public class EOLService extends BaseService implements LSIDLookupService {
+public class EOLService extends BaseExternalIdService {
 
     @Override
     public String lookupLSIDByTaxonName(String taxonName) throws LSIDLookupServiceException {
