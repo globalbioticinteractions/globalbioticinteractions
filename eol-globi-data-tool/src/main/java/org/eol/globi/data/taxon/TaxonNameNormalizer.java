@@ -16,7 +16,6 @@ public class TaxonNameNormalizer {
 
     private static String clean(String name) {
         name = removePartsInParentheses(name);
-        // replace all kind of non character and non-numbers with ordinary whitespace
         name = keepOnlyLettersAndNumbers(name);
         name = name.replaceAll("\\s(spp|sp)\\.*($|\\s.*)", "");
         name = name.replaceAll(" cf ", " ");
