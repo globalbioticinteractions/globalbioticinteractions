@@ -13,10 +13,8 @@ import uk.me.jstott.jcoord.LatLng;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.zip.GZIPInputStream;
 
 public class StudyImporterForSPIRE extends BaseStudyImporter {
 
@@ -200,8 +198,7 @@ public class StudyImporterForSPIRE extends BaseStudyImporter {
 
     private Model buildModel() throws IOException {
         Model model = ModelFactory.createDefaultModel();
-        GZIPInputStream is = new GZIPInputStream(getClass().getResourceAsStream("spire/allFoodWebStudies.owl.gz"));
-        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
+        BufferedReader bufferedReader = FileUtils.getBufferedReaderUTF_8(getClass().getResourceAsStream("spire/allFoodWebStudies.owl.gz"));
         model.read(bufferedReader, null);
         return model;
     }

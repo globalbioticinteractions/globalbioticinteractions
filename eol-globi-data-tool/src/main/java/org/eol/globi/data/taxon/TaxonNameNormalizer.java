@@ -4,6 +4,7 @@ import com.Ostermiller.util.CSVParser;
 import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -42,7 +43,8 @@ public class TaxonNameNormalizer {
 
     private void doInit() {
         try {
-            InputStream is = getClass().getResourceAsStream("taxonNameCorrections.csv");
+            InputStream resourceAsStream = getClass().getResourceAsStream("taxonNameCorrections.csv");
+            BufferedReader is = org.eol.globi.data.FileUtils.getUncompressedBufferedReaderUTF_8(resourceAsStream);
             LabeledCSVParser labeledCSVParser = new LabeledCSVParser(new CSVParser(is));
             String[] line = null;
 

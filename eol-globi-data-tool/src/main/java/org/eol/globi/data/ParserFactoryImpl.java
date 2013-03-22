@@ -5,19 +5,23 @@ import com.Ostermiller.util.LabeledCSVParser;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.zip.GZIPInputStream;
+import java.io.Reader;
 
 public class ParserFactoryImpl implements ParserFactory {
 
     public LabeledCSVParser createParser(String studyResource) throws IOException {
+        Reader reader = null;
         InputStream is = getClass().getResourceAsStream(studyResource);
         if (is == null) {
             throw new IOException("failed to open study resource [" + studyResource + "]");
         }
+
         if (studyResource.endsWith(".gz")) {
-            is = new GZIPInputStream(is);
+            reader = FileUtils.getBufferedReaderUTF_8(is);
+        } else {
+            reader = FileUtils.getUncompressedBufferedReaderUTF_8(is);
         }
-        return new LabeledCSVParser(new CSVParser(is));
+        return new LabeledCSVParser(new CSVParser(reader));
     }
 
 }
