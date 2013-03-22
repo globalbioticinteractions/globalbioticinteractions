@@ -15,14 +15,26 @@ public class TaxonNameNormalizer {
     private Map<String, String> corrections;
 
     private static String clean(String name) {
-        name = name.replaceAll("\\(.*\\)", "");
-        name = name.replaceAll("[¬†*?]", "");
+        name = removePartsInParentheses(name);
+        // replace all kind of non character and non-numbers with ordinary whitespace
+        name = keepOnlyLettersAndNumbers(name);
         name = name.replaceAll("\\s(spp|sp)\\.*($|\\s.*)", "");
-        name = name.replaceAll("^'", "");
-        name = name.replaceAll("'$", "");
         name = name.replaceAll(" cf ", " ");
         String trim = name.trim();
+        return replaceMultipleWhiteSpacesWithSingleWhitespace(trim);
+    }
+
+    private static String replaceMultipleWhiteSpacesWithSingleWhitespace(String trim) {
         return trim.replaceAll("(\\s+)", " ");
+    }
+
+    private static String removePartsInParentheses(String name) {
+        return name.replaceAll("\\(.*\\)", "");
+    }
+
+    private static String keepOnlyLettersAndNumbers(String name) {
+        name = name.replaceAll("[^\\p{L}\\p{N}]", " ");
+        return name;
     }
 
     public String normalize(String taxonName) {

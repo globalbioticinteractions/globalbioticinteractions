@@ -28,6 +28,7 @@ public class TaxonNameNormalizerTest {
         assertThat(normalizer.normalize("Leptochela cf bermudensis"), is("Leptochela bermudensis"));
         assertThat(normalizer.normalize("Bacteriastrum spp.          Bacteriastrum spp.          Bacteriastrum spp.          Bacteriastrum spp."), is("Bacteriastrum"));
         assertThat(normalizer.normalize("Acrididae spp. "), is("Acrididae"));
+        assertThat(normalizer.normalize("Acrididae spp.�"), is("Acrididae"));
 
     }
 }
