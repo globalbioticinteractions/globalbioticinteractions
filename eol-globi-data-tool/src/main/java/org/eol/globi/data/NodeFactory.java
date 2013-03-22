@@ -75,8 +75,6 @@ public class NodeFactory {
             }
             duplicateTaxons.add(new Taxon(matchingTaxons.next()));
         }
-
-        Taxon firstMatchingWithExternalId = (null == firstMatchingTaxon || null == firstMatchingTaxon.getExternalId()) ? null : firstMatchingTaxon;
         if (duplicateTaxons != null) {
             StringBuffer buffer = new StringBuffer();
             duplicateTaxons.add(firstMatchingTaxon);
@@ -84,19 +82,10 @@ public class NodeFactory {
                 buffer.append('{');
                 buffer.append(duplicateTaxon.getName());
                 buffer.append(':');
-                String externalId = duplicateTaxon.getExternalId();
-                if (null == firstMatchingWithExternalId && null != externalId) {
-                    firstMatchingWithExternalId = duplicateTaxon;
-                }
-                buffer.append(externalId);
+                buffer.append(duplicateTaxon.getExternalId());
                 buffer.append('}');
             }
-            if (firstMatchingWithExternalId != null) {
-                firstMatchingTaxon = firstMatchingWithExternalId;
-            }
-
-            LOG.warn("found duplicates for taxon with name [" + taxonName + "], using first taxon with externalId or first taxon only: " + buffer.toString());
-            LOG.warn("select taxon with name [" + firstMatchingTaxon.getName() + "] and external id [" + firstMatchingTaxon.getExternalId() + "]" );
+            LOG.warn("found duplicates for taxon with name [" + taxonName + "], using first only: " + buffer.toString());
         }
         matchingTaxons.close();
         return firstMatchingTaxon;
@@ -244,7 +233,7 @@ public class NodeFactory {
         Taxon taxon = findTaxon(name);
         if (taxon == null) {
             String normalizedName = TAXON_NAME_NORMALIZER.normalize(name);
-            externalId = findExternalId(externalId, normalizedName);
+            externalId = findExternalId(name, externalId, normalizedName);
             Transaction transaction = graphDb.beginTx();
             try {
                 taxon = createTaxonNoTransaction(normalizedName, externalId);
@@ -256,22 +245,20 @@ public class NodeFactory {
         return taxon;
     }
 
-    private String findExternalId(String externalId1, String normalizedName) throws NodeFactoryException {
+    private String findExternalId(String name, String externalId1, String normalizedName) throws NodeFactoryException {
         try {
-            String externalId = null;
             long[] longs = taxonLookupService.lookupTerms(normalizedName);
             if (longs.length > 0) {
                 // TODO should put EOL dependency in taxonLookupService
-                externalId = "EOL:" + longs[0];
+                externalId1 = "EOL:" + longs[0];
                 if (longs.length > 1) {
-                    LOG.info("found at least one duplicate for taxon with name [" + normalizedName + "]: {" + longs[0] + "," + longs[1] + "} - using first.");
+                    LOG.info("found at least one duplicate for taxon with name [" + name + "]: {" + longs[0] + "," + longs[1] + "} - using first.");
                 }
             }
-            return externalId;
         } catch (IOException e) {
             throw new NodeFactoryException("failed to lookup taxon", e);
         }
-
+        return externalId1;
     }
 
     public Taxon createTaxonNoTransaction(String name, String externalId) {
