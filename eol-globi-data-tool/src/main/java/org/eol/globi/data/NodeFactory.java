@@ -1,7 +1,14 @@
 package org.eol.globi.data;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.lucene.index.Term;
+import org.apache.lucene.search.BooleanClause;
+import org.apache.lucene.search.BooleanQuery;
+import org.apache.lucene.search.FuzzyQuery;
+import org.apache.lucene.search.TermQuery;
+import org.apache.lucene.search.WildcardQuery;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
@@ -252,7 +259,7 @@ public class NodeFactory {
                 // TODO should put EOL dependency in taxonLookupService
                 externalId1 = "EOL:" + longs[0];
                 if (longs.length > 1) {
-                    LOG.info("found at least one duplicate for taxon with name [" + name + "]: {" + longs[0] + "," + longs[1] + "} - using first.");
+                    LOG.info("found at least one duplicate for taxon with name [" + name + "] normalized [" + normalizedName + "]: {" + longs[0] + "," + longs[1] + "} - using first.");
                 }
             }
         } catch (IOException e) {
@@ -281,5 +288,15 @@ public class NodeFactory {
                 tx.finish();
             }
         }
+    }
+
+    public IndexHits<Node> findCloseMatchesForTaxonName(String taxonName) {
+        String capitalizedName = StringUtils.capitalize(taxonName);
+        FuzzyQuery fuzzy = new FuzzyQuery(new Term("name", capitalizedName));
+        WildcardQuery wildcard = new WildcardQuery(new Term("name", capitalizedName + "*"));
+        BooleanQuery fuzzyAndWildcard = new BooleanQuery();
+        fuzzyAndWildcard.add(fuzzy, BooleanClause.Occur.SHOULD);
+        fuzzyAndWildcard.add(wildcard, BooleanClause.Occur.SHOULD);
+        return taxons.query(fuzzyAndWildcard);
     }
 }

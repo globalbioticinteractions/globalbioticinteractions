@@ -6,6 +6,8 @@ import org.junit.Test;
 import org.eol.globi.data.taxon.TaxonLookupService;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.Taxon;
+import org.neo4j.graphdb.Node;
+import org.neo4j.graphdb.index.IndexHits;
 
 import java.io.IOException;
 
@@ -68,6 +70,20 @@ public class NodeFactoryTest extends GraphDBTestCase {
     @Test
     public void createSpeciesCrypticDescription() throws NodeFactoryException {
         assertFamilyCorrectness("Corophiidae", "Corophiidae Genus A");
+    }
+
+    @Test
+    public void findCloseMatch() throws NodeFactoryException {
+        nodeFactory.getOrCreateTaxon("Homo sapiens");
+        IndexHits<Node> hits = nodeFactory.findCloseMatchesForTaxonName("Homo sapiens");
+        assertThat(hits.hasNext(), is(true));
+        hits.close();
+        hits = nodeFactory.findCloseMatchesForTaxonName("Homo saliens");
+        assertThat(hits.hasNext(), is(true));
+        hits = nodeFactory.findCloseMatchesForTaxonName("Homo");
+        assertThat(hits.hasNext(), is(true));
+        hits = nodeFactory.findCloseMatchesForTaxonName("homo sa");
+        assertThat(hits.hasNext(), is(true));
     }
 
     private void assertFamilyCorrectness(String expectedOutputName, String inputName) throws NodeFactoryException {
