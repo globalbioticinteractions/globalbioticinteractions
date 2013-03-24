@@ -53,10 +53,10 @@ public class TaxonomyImporter  {
         getStopwatch().start();
         setCounter(0);
         try {
-            getParser().parse(taxonReaderFactory.createReader(), new TaxonImportListener() {
+            getParser().parse(taxonReaderFactory.getReader(), new TaxonImportListener() {
                 @Override
-                public void addTerm(String name, long id) {
-                    taxonLookupService.addTerm(name, id);
+                public void addTerm(TaxonTerm term) {
+                    taxonLookupService.addTerm(term);
                     count();
                     if (getCounter() % BATCH_TRANSACTION_SIZE == 0) {
                         StopWatch stopwatch = getStopwatch();

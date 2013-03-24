@@ -16,13 +16,13 @@ public class EOLTaxonParserTest {
     @Test
     public void readLine() throws IOException {
         TaxonReaderFactory taxonReaderFactory = new EOLTaxonReaderFactory();
-        assertThat(taxonReaderFactory.createReader(), is(notNullValue()));
+        assertThat(taxonReaderFactory.getReader(), is(notNullValue()));
 
 
         TaxonParser taxonParser = new EOLTaxonParser();
         final List<TaxonTerm> terms = new ArrayList<TaxonTerm>();
         TestTaxonImportListener listener = new TestTaxonImportListener(terms);
-        taxonParser.parse(taxonReaderFactory.createReader(), listener);
+        taxonParser.parse(taxonReaderFactory.getReader(), listener);
 
         TaxonTerm taxonTerm = terms.get(0);
         assertThat(taxonTerm.getId(), is("1"));
@@ -43,12 +43,9 @@ public class EOLTaxonParserTest {
         }
 
         @Override
-        public void addTerm(String name, long id) {
+        public void addTerm(TaxonTerm term) {
             if (terms.size() < 10) {
-                TaxonTerm taxonTerm = new TaxonTerm();
-                taxonTerm.setName(name);
-                taxonTerm.setId(Long.toString(id));
-                terms.add(taxonTerm);
+                terms.add(term);
             }
             count++;
         }

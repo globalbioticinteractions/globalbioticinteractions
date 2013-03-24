@@ -20,19 +20,19 @@ public class OboParserTest {
 
     @Test
     public void oboImport() throws IOException {
-        BufferedReader bufferedReader = new OboTaxonReaderFactory().createReader();
+        BufferedReader bufferedReader = new OboTaxonReaderFactory().getReader();
         this.counter = 0;
 
         TaxonImportListener listener = new TaxonImportListener() {
 
             @Override
-            public void addTerm(String name, long id) {
+            public void addTerm(TaxonTerm term) {
                 if (getCounter() % 1000 == 0) {
-                    LOG.info("got term with id: [" + id +
-                            "], name: [" + name + "]");
+                    LOG.info("got term with id: [" + term.getId() +
+                            "], name: [" + term.getName() + "]");
                 }
-                assertThat(name, is(not(nullValue())));
-                assertThat(id > 0, is(true));
+                assertThat(term.getName(), is(not(nullValue())));
+                assertThat(Long.parseLong(term.getId()) > 0, is(true));
                 count();
             }
 

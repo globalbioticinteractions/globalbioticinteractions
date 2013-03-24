@@ -51,8 +51,8 @@ public class OutOfMemoryTest {
         }
         factory = new NodeFactory(graphDb, new TaxonLookupService() {
             @Override
-            public long[] lookupTerms(String taxonName) throws IOException {
-                return new long[0];
+            public String[] lookupTermIds(String taxonName) throws IOException {
+                return new String[0];
             }
 
             @Override
@@ -108,7 +108,7 @@ public class OutOfMemoryTest {
                 tx = graphDb.beginTx();
                 printProgress(maxTaxons, i);
             }
-            factory.createTaxonNoTransaction(i + "taxon", "externalId" + i);
+            factory.createTaxonNoTransaction(i + "taxon", "externalId" + i, null);
         }
         tx.success();
         tx.finish();

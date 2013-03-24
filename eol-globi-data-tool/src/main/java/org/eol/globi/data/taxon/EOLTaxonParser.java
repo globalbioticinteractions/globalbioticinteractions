@@ -14,8 +14,10 @@ public class EOLTaxonParser implements TaxonParser {
         labeledCSVParser.changeDelimiter('\t');
         listener.start();
         while (labeledCSVParser.getLine() != null) {
-            long taxonID = Long.parseLong(labeledCSVParser.getValueByLabel("taxonID"));
-            listener.addTerm(labeledCSVParser.getValueByLabel("scientificName"), taxonID);
+            TaxonTerm term = new TaxonTerm();
+            term.setName(labeledCSVParser.getValueByLabel("scientificName"));
+            term.setId(labeledCSVParser.getValueByLabel("taxonID"));
+            listener.addTerm(term);
         }
         listener.finish();
     }

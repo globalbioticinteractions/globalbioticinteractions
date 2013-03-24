@@ -42,7 +42,7 @@ public class TaxonImageEnricherIT extends GraphDBTestCase {
         predator.classifyAs(taxon);
 
         Specimen prey = nodeFactory.createSpecimen();
-        prey.classifyAs(nodeFactory.getOrCreateTaxon(preyName, externalId));
+        prey.classifyAs(nodeFactory.getOrCreateTaxon(preyName, externalId, null));
         predator.ate(prey);
 
         study.collected(predator);
@@ -55,7 +55,7 @@ public class TaxonImageEnricherIT extends GraphDBTestCase {
     }
 
     private void matchTaxon(String speciesName, String externalId) throws IOException, NodeFactoryException {
-        Taxon taxon = nodeFactory.getOrCreateTaxon(speciesName, externalId);
+        Taxon taxon = nodeFactory.getOrCreateTaxon(speciesName, externalId, null);
         Study study = nodeFactory.createStudy("bla");
         Specimen specimen = nodeFactory.createSpecimen();
         specimen.classifyAs(taxon);

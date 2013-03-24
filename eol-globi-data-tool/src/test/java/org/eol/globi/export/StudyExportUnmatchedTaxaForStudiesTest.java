@@ -21,17 +21,17 @@ public class StudyExportUnmatchedTaxaForStudiesTest extends GraphDBTestCase {
     public void exportOnePredatorTwoPrey() throws NodeFactoryException, IOException {
         Study study = nodeFactory.createStudy("my study");
         Specimen predatorSpecimen = nodeFactory.createSpecimen();
-        Taxon homoSapiens = nodeFactory.getOrCreateTaxon("Homo sapiens", "homoSapiensId");
+        Taxon homoSapiens = nodeFactory.getOrCreateTaxon("Homo sapiens", "homoSapiensId", null);
         predatorSpecimen.classifyAs(homoSapiens);
         addCanisLupus(predatorSpecimen, "canisLupusId");
         addCanisLupus(predatorSpecimen, "canisLupusId");
         Specimen preySpecimen = nodeFactory.createSpecimen();
-        Taxon canisLupus = nodeFactory.getOrCreateTaxon("Canis lupus other", ExternalIdTaxonEnricher.NO_MATCH);
+        Taxon canisLupus = nodeFactory.getOrCreateTaxon("Canis lupus other", ExternalIdTaxonEnricher.NO_MATCH, null);
         preySpecimen.classifyAs(canisLupus);
         predatorSpecimen.createRelationshipTo(preySpecimen, InteractType.ATE);
         study.collected(predatorSpecimen);
 
-        Taxon homoSapiens2 = nodeFactory.getOrCreateTaxon("Homo sapiens2", ExternalIdTaxonEnricher.NO_MATCH);
+        Taxon homoSapiens2 = nodeFactory.getOrCreateTaxon("Homo sapiens2", ExternalIdTaxonEnricher.NO_MATCH, null);
         addSpecimen(study, homoSapiens2);
         homoSapiens2 = nodeFactory.getOrCreateTaxon("Homo sapiens2");
         addSpecimen(study, homoSapiens2);
@@ -39,7 +39,7 @@ public class StudyExportUnmatchedTaxaForStudiesTest extends GraphDBTestCase {
         Study study2 = nodeFactory.createStudy("my study2");
         addSpecimen(study2, homoSapiens2);
 
-        Taxon homoSapiens3 = nodeFactory.getOrCreateTaxon("Homo sapiens3", ExternalIdTaxonEnricher.NO_MATCH);
+        Taxon homoSapiens3 = nodeFactory.getOrCreateTaxon("Homo sapiens3", ExternalIdTaxonEnricher.NO_MATCH, null);
         addSpecimen(study, homoSapiens3);
 
 
@@ -60,7 +60,7 @@ public class StudyExportUnmatchedTaxaForStudiesTest extends GraphDBTestCase {
 
     private void addCanisLupus(Specimen predatorSpecimen, String externalId) throws NodeFactoryException {
         Specimen preySpecimen = nodeFactory.createSpecimen();
-        Taxon canisLupus = nodeFactory.getOrCreateTaxon("Canis lupus", externalId);
+        Taxon canisLupus = nodeFactory.getOrCreateTaxon("Canis lupus", externalId, null);
         preySpecimen.classifyAs(canisLupus);
         predatorSpecimen.createRelationshipTo(preySpecimen, InteractType.ATE);
     }

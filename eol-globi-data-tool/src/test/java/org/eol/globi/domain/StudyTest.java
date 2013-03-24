@@ -29,8 +29,8 @@ public class StudyTest extends GraphDBTestCase {
     public void createFactory() {
         factory = new NodeFactory(getGraphDb(), new TaxonLookupService() {
             @Override
-            public long[] lookupTerms(String taxonName) throws IOException {
-                return new long[0];
+            public String[] lookupTermIds(String taxonName) throws IOException {
+                return new String[0];
             }
 
             @Override

@@ -6,8 +6,10 @@ import java.io.BufferedReader;
 import java.io.IOException;
 
 public class OboTaxonReaderFactory implements TaxonReaderFactory {
+
     @Override
-    public BufferedReader createReader() throws IOException {
+    public BufferedReader getReader() throws IOException {
         return FileUtils.getBufferedReaderUTF_8(getClass().getResourceAsStream("/org/obofoundry/ncbi_taxonomy.obo.gz"));
     }
+
 }

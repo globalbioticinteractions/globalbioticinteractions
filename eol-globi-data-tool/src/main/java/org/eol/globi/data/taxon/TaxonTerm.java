@@ -1,6 +1,18 @@
 package org.eol.globi.data.taxon;
 
 public class TaxonTerm {
+    private String rankPath;
+
+    public TaxonTerm(String name, String id) {
+        this.name = name;
+        this.id = id;
+
+    }
+
+    public TaxonTerm() {
+
+    }
+
     public void setRank(String rank) {
         this.rank = rank;
     }
@@ -37,5 +49,13 @@ public class TaxonTerm {
 
     public String getRank() {
         return this.rank;
+    }
+
+    public String getRankPath() {
+        return rankPath;
+    }
+
+    public void setRankPath(String rankPath) {
+        this.rankPath = rankPath;
     }
 }

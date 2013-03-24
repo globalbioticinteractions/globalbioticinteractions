@@ -7,6 +7,7 @@ import org.eol.globi.data.taxon.TaxonLookupService;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.Taxon;
 import org.neo4j.graphdb.Node;
+import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.index.IndexHits;
 
 import java.io.IOException;
@@ -26,8 +27,8 @@ public class NodeFactoryTest extends GraphDBTestCase {
     public void createFactory() {
         nodeFactory = new NodeFactory(getGraphDb(), new TaxonLookupService() {
             @Override
-            public long[] lookupTerms(String taxonName) throws IOException {
-                return new long[0];
+            public String[] lookupTermIds(String taxonName) throws IOException {
+                return new String[0];
             }
 
             @Override
@@ -70,6 +71,30 @@ public class NodeFactoryTest extends GraphDBTestCase {
     @Test
     public void createSpeciesCrypticDescription() throws NodeFactoryException {
         assertFamilyCorrectness("Corophiidae", "Corophiidae Genus A");
+    }
+
+    @Test
+    public void findCloseMatchForTaxonPath() throws NodeFactoryException {
+        Taxon homoSapiens = nodeFactory.getOrCreateTaxon("Homo sapiens", null, "Animalia Mammalia");
+        Transaction transaction = homoSapiens.getUnderlyingNode().getGraphDatabase().beginTx();
+        transaction.success();
+        transaction.finish();
+        nodeFactory.getOrCreateTaxon("Homo erectus");
+        assertMatch("Mammalia");
+        assertMatch("Mammali");
+        assertMatch("mammali");
+        assertMatch("inmalia");
+        IndexHits<Node> hits = nodeFactory.findCloseMatchesForTaxonPath("il");
+        assertThat(hits.hasNext(), is(false));
+    }
+
+    private void assertMatch(String taxonRankOfClassName) {
+        IndexHits<Node> hits = nodeFactory.findCloseMatchesForTaxonPath(taxonRankOfClassName);
+        assertThat(hits.hasNext(), is(true));
+        Node firstHit = hits.next();
+        assertThat((String)firstHit.getProperty(Taxon.NAME), is("Homo sapiens"));
+        assertThat((String)firstHit.getProperty(Taxon.PATH), is("Animalia Mammalia"));
+        assertThat(hits.hasNext(), is(false));
     }
 
     @Test

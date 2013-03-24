@@ -21,8 +21,8 @@ public class TrophicImporterTest extends GraphDBTestCase {
         GraphDatabaseService graphService = getGraphDb();
         trophicImporter.importStudies(graphService, new TaxonLookupService() {
             @Override
-            public long[] lookupTerms(String taxonName) throws IOException {
-                return new long[0];
+            public String[] lookupTermIds(String taxonName) throws IOException {
+                return new String[0];
             }
 
             @Override

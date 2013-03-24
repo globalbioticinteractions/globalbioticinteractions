@@ -39,7 +39,7 @@ public class TrophicImporter {
 
     public void importExport() throws StudyImporterException {
         final GraphDatabaseService graphService = GraphService.getGraphService();
-        TaxonLookupService taxonLookupService = buildTaxonomyLookupService();
+        TaxonLookupService taxonLookupService = buildEOLTaxonLookupService();
 
         List<Study> studies = importData(graphService, taxonLookupService);
         matchAgainstExternalTaxonomies(graphService);
@@ -62,7 +62,7 @@ public class TrophicImporter {
         }
     }
 
-    private TaxonLookupService buildTaxonomyLookupService() throws StudyImporterException {
+    private TaxonLookupService buildEOLTaxonLookupService() throws StudyImporterException {
         TaxonomyImporter importer = new TaxonomyImporter(new EOLTaxonParser(), new EOLTaxonReaderFactory());
         LOG.info("Taxonomy import starting...");
         importer.doImport();

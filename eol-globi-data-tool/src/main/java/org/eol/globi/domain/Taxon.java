@@ -14,6 +14,7 @@ public class Taxon extends NodeBacked {
     public static final String EXTERNAL_ID = "externalId";
     public static final String IMAGE_URL = "imageURL";
     public static final String THUMBNAIL_URL = "thumbnailURL";
+    public static final String PATH = "path";
 
     public Taxon(Node node) {
         super(node);
@@ -62,4 +63,12 @@ public class Taxon extends NodeBacked {
                 (String) getUnderlyingNode().getProperty(IMAGE_URL) : null;
     }
 
+    public String getPath() {
+        return getUnderlyingNode().hasProperty(PATH) ?
+                                (String) getUnderlyingNode().getProperty(PATH) : "";
+    }
+
+    public void setPath(String path) {
+        getUnderlyingNode().setProperty(PATH, path);
+    }
 }

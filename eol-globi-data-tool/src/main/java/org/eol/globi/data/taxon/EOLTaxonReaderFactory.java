@@ -8,7 +8,7 @@ import java.io.IOException;
 public class EOLTaxonReaderFactory implements TaxonReaderFactory {
 
     @Override
-    public BufferedReader createReader() throws IOException {
+    public BufferedReader getReader() throws IOException {
         return FileUtils.getBufferedReaderUTF_8(getClass().getResourceAsStream("eol/taxon.tab.gz"));
     }
 }

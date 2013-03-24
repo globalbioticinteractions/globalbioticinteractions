@@ -24,7 +24,8 @@ public class TaxonLookupServiceImpl implements TaxonImportListener, TaxonLookupS
 
     public static final String FIELD_ID = "id";
     public static final String FIELD_NAME = "name";
-    public static final String INDEX_PATH = "target/taxon";
+    private static final String FIELD_RANK_PATH = "rank_path";
+
     private Directory indexDir;
     private IndexWriter indexWriter;
     private IndexSearcher indexSearcher;
@@ -39,22 +40,25 @@ public class TaxonLookupServiceImpl implements TaxonImportListener, TaxonLookupS
     }
 
     @Override
-    public void addTerm(String name, long id) {
+    public void addTerm(TaxonTerm taxonTerm) {
         if (hasStarted()) {
             Document doc = new Document();
-            doc.add(new Field(FIELD_NAME, name, Field.Store.YES, Field.Index.NOT_ANALYZED_NO_NORMS));
-            doc.add(new NumericField(FIELD_ID, Field.Store.YES, false).setLongValue(id));
+
+            doc.add(new Field(FIELD_NAME, taxonTerm.getName(), Field.Store.YES, Field.Index.NOT_ANALYZED_NO_NORMS));
+            doc.add(new Field(FIELD_ID, taxonTerm.getId(), Field.Store.YES, Field.Index.NOT_ANALYZED_NO_NORMS));
+            String rankPath = taxonTerm.getRankPath();
+            doc.add(new Field(FIELD_RANK_PATH, null == rankPath ? " " : rankPath, Field.Store.YES, Field.Index.NOT_ANALYZED_NO_NORMS));
             try {
                 indexWriter.addDocument(doc);
             } catch (IOException e) {
-                throw new RuntimeException("failed to add document for term with name [" + name + "]");
+                throw new RuntimeException("failed to add document for term with name [" + taxonTerm.getName() + "]");
             }
         }
     }
 
     @Override
-    public long[] lookupTerms(String taxonName) throws IOException {
-        long[] ids = new long[0];
+    public String[] lookupTermIds(String taxonName) throws IOException {
+        String[] ids = new String[0];
         if (indexSearcher != null) {
             PhraseQuery query = new PhraseQuery();
             query.add(new Term("name", taxonName));
@@ -62,14 +66,13 @@ public class TaxonLookupServiceImpl implements TaxonImportListener, TaxonLookupS
             TopDocs docs = indexSearcher.search(query, maxHits);
 
             if (docs.totalHits > 0) {
-                ids = new long[docs.totalHits];
+                ids = new String[docs.totalHits];
                 for (int i = 0; i < docs.totalHits && i < maxHits; i++) {
                     ScoreDoc scoreDoc = docs.scoreDocs[i];
                     Document foundDoc = indexSearcher.doc(scoreDoc.doc);
                     Fieldable field = foundDoc.getFieldable(FIELD_ID);
                     if (field != null) {
-                        NumericField field1 = (NumericField) field;
-                        ids[i] = field1.getNumericValue().longValue();
+                        ids[i] = ((Field) field).stringValue();
                     }
                 }
             }

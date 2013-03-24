@@ -17,14 +17,14 @@ public class TaxonLookupServiceImplTest {
 
         TaxonImportListener listener = taxonLookupServiceImpl;
         listener.start();
-        listener.addTerm("Homo sapiens", 1234L);
-        listener.addTerm("Prefix Homo sapiens suffix", 12346L);
+        listener.addTerm(new TaxonTerm("Homo sapiens", "1234"));
+        listener.addTerm(new TaxonTerm("Prefix Homo sapiens suffix", "12346"));
         listener.finish();
 
-        long[] ids = taxonLookupServiceImpl.lookupTerms("Homo sapiens");
+        String[] ids = taxonLookupServiceImpl.lookupTermIds("Homo sapiens");
 
         assertThat(ids.length, Is.is(1));
-        assertThat(ids[0], Is.is(1234L));
+        assertThat(ids[0], Is.is("1234"));
 
         taxonLookupServiceImpl.destroy();
     }

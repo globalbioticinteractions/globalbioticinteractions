@@ -158,7 +158,7 @@ public class StudyImporterForBioInfo extends BaseStudyImporter implements StudyI
         }
         Taxon taxon = null;
         try {
-            taxon = nodeFactory.getOrCreateTaxon(scientificName, "bioinfo:" + taxonId);
+            taxon = nodeFactory.getOrCreateTaxon(scientificName, "bioinfo:" + taxonId, null);
         } catch (NodeFactoryException e) {
             throw new StudyImporterException("failed to create taxon with scientific name [" + scientificName + "]", e);
         }

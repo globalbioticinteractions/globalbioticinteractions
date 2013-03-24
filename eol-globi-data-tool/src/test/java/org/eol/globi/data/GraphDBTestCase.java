@@ -18,8 +18,8 @@ public abstract class GraphDBTestCase {
         graphDb = new org.neo4j.test.ImpermanentGraphDatabase();
         nodeFactory = new NodeFactory(graphDb, new TaxonLookupService() {
             @Override
-            public long[] lookupTerms(String taxonName) throws IOException {
-                return new long[0];
+            public String[] lookupTermIds(String taxonName) throws IOException {
+                return new String[0];
             }
 
             @Override

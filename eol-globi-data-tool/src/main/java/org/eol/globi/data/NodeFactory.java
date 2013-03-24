@@ -7,7 +7,7 @@ import org.apache.lucene.index.Term;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.FuzzyQuery;
-import org.apache.lucene.search.TermQuery;
+import org.apache.lucene.search.Query;
 import org.apache.lucene.search.WildcardQuery;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
@@ -15,6 +15,8 @@ import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.IndexHits;
+import org.neo4j.graphdb.index.IndexManager;
+import org.neo4j.helpers.collection.MapUtil;
 import org.neo4j.index.lucene.QueryContext;
 import org.neo4j.index.lucene.ValueContext;
 import org.eol.globi.data.taxon.TaxonLookupService;
@@ -28,6 +30,7 @@ import org.eol.globi.domain.Taxon;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class NodeFactory {
 
@@ -35,16 +38,19 @@ public class NodeFactory {
 
     public static final TaxonNameNormalizer TAXON_NAME_NORMALIZER = new TaxonNameNormalizer();
 
-
     public GraphDatabaseService getGraphDb() {
         return graphDb;
     }
 
     private GraphDatabaseService graphDb;
-    private Index<Node> studies;
-    private Index<Node> seasons;
-    private Index<Node> locations;
-    private Index<Node> taxons;
+
+
+    private final Index<Node> studies;
+
+    private final Index<Node> seasons;
+    private final Index<Node> locations;
+    private final Index<Node> taxons;
+    private final Index<Node> taxonPaths;
     private TaxonLookupService taxonLookupService;
 
     public NodeFactory(GraphDatabaseService graphDb, TaxonLookupService taxonLookupService) {
@@ -54,10 +60,12 @@ public class NodeFactory {
         this.locations = graphDb.index().forNodes("locations");
         this.taxonLookupService = taxonLookupService;
         this.taxons = graphDb.index().forNodes("taxons");
+        this.taxonPaths = graphDb.index().forNodes("taxonpaths", MapUtil.stringMap(IndexManager.PROVIDER, "lucene", "type", "fulltext"));
     }
 
     private void addTaxonToIndex(Taxon taxon, Node node) {
         taxons.add(node, Taxon.NAME, taxon.getName());
+        taxonPaths.add(node, Taxon.PATH, taxon.getPath());
     }
 
     public Taxon findTaxon(String taxonName) throws NodeFactoryException {
@@ -201,12 +209,12 @@ public class NodeFactory {
     }
 
     public Study getOrCreateStudy(String title, String contributor, String institution, String period, String description) {
-            Study study = findStudy(title);
-            if (null == study) {
-                study = createStudy(title, contributor, institution, period, description);
-            }
-            return study;
+        Study study = findStudy(title);
+        if (null == study) {
+            study = createStudy(title, contributor, institution, period, description);
         }
+        return study;
+    }
 
 
     public Study findStudy(String title) {
@@ -233,17 +241,17 @@ public class NodeFactory {
     }
 
     public Taxon getOrCreateTaxon(String name) throws NodeFactoryException {
-        return getOrCreateTaxon(name, null);
+        return getOrCreateTaxon(name, null, null);
     }
 
-    public Taxon getOrCreateTaxon(String name, String externalId) throws NodeFactoryException {
+    public Taxon getOrCreateTaxon(String name, String externalId, String path) throws NodeFactoryException {
         Taxon taxon = findTaxon(name);
         if (taxon == null) {
             String normalizedName = TAXON_NAME_NORMALIZER.normalize(name);
             externalId = findExternalId(name, externalId, normalizedName);
             Transaction transaction = graphDb.beginTx();
             try {
-                taxon = createTaxonNoTransaction(normalizedName, externalId);
+                taxon = createTaxonNoTransaction(normalizedName, externalId, path);
                 transaction.success();
             } finally {
                 transaction.finish();
@@ -254,12 +262,12 @@ public class NodeFactory {
 
     private String findExternalId(String name, String externalId1, String normalizedName) throws NodeFactoryException {
         try {
-            long[] longs = taxonLookupService.lookupTerms(normalizedName);
-            if (longs.length > 0) {
+            String[] ids = taxonLookupService.lookupTermIds(normalizedName);
+            if (ids.length > 0) {
                 // TODO should put EOL dependency in taxonLookupService
-                externalId1 = "EOL:" + longs[0];
-                if (longs.length > 1) {
-                    LOG.info("found at least one duplicate for taxon with name [" + name + "] normalized [" + normalizedName + "]: {" + longs[0] + "," + longs[1] + "} - using first.");
+                externalId1 = "EOL:" + ids[0];
+                if (ids.length > 1) {
+                    LOG.info("found at least one duplicate for taxon with name [" + name + "] normalized [" + normalizedName + "]: {" + ids[0] + "," + ids[1] + "} - using first.");
                 }
             }
         } catch (IOException e) {
@@ -268,11 +276,14 @@ public class NodeFactory {
         return externalId1;
     }
 
-    public Taxon createTaxonNoTransaction(String name, String externalId) {
+    public Taxon createTaxonNoTransaction(String name, String externalId, String path) {
         Node node = graphDb.createNode();
         Taxon taxon = new Taxon(node, TAXON_NAME_NORMALIZER.normalize(name));
         if (null != externalId) {
             taxon.setExternalId(externalId);
+        }
+        if (null != path) {
+            taxon.setPath(path);
         }
         addTaxonToIndex(taxon, node);
         return taxon;
@@ -291,12 +302,26 @@ public class NodeFactory {
     }
 
     public IndexHits<Node> findCloseMatchesForTaxonName(String taxonName) {
-        String capitalizedName = StringUtils.capitalize(taxonName);
-        FuzzyQuery fuzzy = new FuzzyQuery(new Term("name", capitalizedName));
-        WildcardQuery wildcard = new WildcardQuery(new Term("name", capitalizedName + "*"));
+        return query(taxonName, Taxon.NAME, taxons);
+    }
+
+    public IndexHits<Node> findCloseMatchesForTaxonPath(String taxonPath) {
+        return query(taxonPath, Taxon.PATH, taxonPaths);
+    }
+
+    private IndexHits<Node> query(String taxonName, String name, Index<Node> taxonIndex) {
+        String capitalizedValue = StringUtils.capitalize(taxonName);
+        List<Query> list = new ArrayList<Query>();
+        addQueriesForProperty(capitalizedValue, name, list);
         BooleanQuery fuzzyAndWildcard = new BooleanQuery();
-        fuzzyAndWildcard.add(fuzzy, BooleanClause.Occur.SHOULD);
-        fuzzyAndWildcard.add(wildcard, BooleanClause.Occur.SHOULD);
-        return taxons.query(fuzzyAndWildcard);
+        for (Query query : list) {
+            fuzzyAndWildcard.add(query, BooleanClause.Occur.SHOULD);
+        }
+        return taxonIndex.query(fuzzyAndWildcard);
+    }
+
+    private void addQueriesForProperty(String capitalizedValue, String propertyName, List<Query> list) {
+        list.add(new FuzzyQuery(new Term(propertyName, capitalizedValue)));
+        list.add(new WildcardQuery(new Term(propertyName, capitalizedValue + "*")));
     }
 }

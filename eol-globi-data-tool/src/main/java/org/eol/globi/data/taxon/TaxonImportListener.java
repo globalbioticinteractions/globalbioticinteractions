@@ -1,7 +1,7 @@
 package org.eol.globi.data.taxon;
 
 public interface TaxonImportListener {
-    void addTerm(String name, long id);
+    void addTerm(TaxonTerm term);
 
     void start();
 

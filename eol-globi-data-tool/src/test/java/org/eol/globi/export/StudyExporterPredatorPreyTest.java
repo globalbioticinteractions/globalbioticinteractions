@@ -30,7 +30,7 @@ public class StudyExporterPredatorPreyTest extends GraphDBTestCase {
     private Study createStudy(String predatorExternalId, String preyExternalId) throws NodeFactoryException {
         Study study = nodeFactory.createStudy("my study");
         Specimen predatorSpecimen = nodeFactory.createSpecimen();
-        Taxon homoSapiens = nodeFactory.getOrCreateTaxon("Homo sapiens", predatorExternalId);
+        Taxon homoSapiens = nodeFactory.getOrCreateTaxon("Homo sapiens", predatorExternalId, null);
         predatorSpecimen.classifyAs(homoSapiens);
         addCanisLupus(predatorSpecimen, preyExternalId);
         study.collected(predatorSpecimen);
@@ -39,7 +39,7 @@ public class StudyExporterPredatorPreyTest extends GraphDBTestCase {
 
     private void addCanisLupus(Specimen predatorSpecimen, String externalId) throws NodeFactoryException {
         Specimen preySpecimen = nodeFactory.createSpecimen();
-        Taxon canisLupus = nodeFactory.getOrCreateTaxon("Canis lupus", externalId);
+        Taxon canisLupus = nodeFactory.getOrCreateTaxon("Canis lupus", externalId, null);
         preySpecimen.classifyAs(canisLupus);
         predatorSpecimen.ate(preySpecimen);
     }
@@ -73,7 +73,7 @@ public class StudyExporterPredatorPreyTest extends GraphDBTestCase {
     public void exportOnePredatorTwoPrey() throws NodeFactoryException, IOException {
         Study study = nodeFactory.createStudy("my study");
         Specimen predatorSpecimen = nodeFactory.createSpecimen();
-        Taxon homoSapiens = nodeFactory.getOrCreateTaxon("Homo sapiens", "some external id");
+        Taxon homoSapiens = nodeFactory.getOrCreateTaxon("Homo sapiens", "some external id", null);
         predatorSpecimen.classifyAs(homoSapiens);
         addCanisLupus(predatorSpecimen, "some external id");
         addCanisLupus(predatorSpecimen, "some external id");

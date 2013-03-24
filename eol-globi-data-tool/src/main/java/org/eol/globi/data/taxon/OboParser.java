@@ -18,7 +18,7 @@ public class OboParser implements TaxonParser {
         while ((line = bufferedReader.readLine()) != null) {
             if ("[Term]".equals(line)) {
                 if (currentTerm != null && currentTerm.getRank() != null) {
-                    listener.addTerm(currentTerm.getName(), Long.parseLong(currentTerm.getId()));
+                    listener.addTerm(currentTerm);
                 }
                 currentTerm = new TaxonTerm();
             }
