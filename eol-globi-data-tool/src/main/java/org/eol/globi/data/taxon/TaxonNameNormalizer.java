@@ -50,7 +50,7 @@ public class TaxonNameNormalizer {
             cleanName = "NomenNescio";
         }
 
-        return cleanName;
+        return cleanName.trim();
     }
 
     private void doInit() {

@@ -15,7 +15,6 @@ import java.util.List;
 
 public class TaxonPropertyEnricherImpl implements TaxonPropertyEnricher {
     private static final Log LOG = LogFactory.getLog(TaxonPropertyEnricherImpl.class);
-    public static final String NO_MATCH = "no:match";
     private final List<TaxonPropertyLookupService> services = new ArrayList<TaxonPropertyLookupService>();
     private final HashMap<Class, Integer> errorCounts = new HashMap<Class, Integer>();
     public static final String[] PROPERTY_NAMES = new String[]{Taxon.EXTERNAL_ID, Taxon.PATH};
@@ -26,7 +25,26 @@ public class TaxonPropertyEnricherImpl implements TaxonPropertyEnricher {
     }
 
     @Override
-    public void enrich(Taxon taxon) throws IOException {
+    public boolean enrich(Taxon taxon) throws IOException {
+        boolean didEnrichAtLeastOneProperty = false;
+        if (isEnriched(taxon)) {
+            LOG.warn("taxon [" + taxon.getName() + "] already has properties [" + PROPERTY_NAMES + "]");
+        } else {
+            didEnrichAtLeastOneProperty = doEnrichment(taxon, didEnrichAtLeastOneProperty);
+        }
+        return didEnrichAtLeastOneProperty;
+    }
+
+    private boolean isEnriched(Taxon taxon) {
+        boolean hasAllProperties = true;
+        Node underlyingNode = taxon.getUnderlyingNode();
+        for (String propertyName : PROPERTY_NAMES) {
+            hasAllProperties = hasAllProperties && underlyingNode.hasProperty(propertyName);
+        }
+        return hasAllProperties;
+    }
+
+    private boolean doEnrichment(Taxon taxon, boolean didEnrichAtLeastOneProperty) {
         if (services.size() == 0) {
             initServices();
         }
@@ -37,6 +55,7 @@ public class TaxonPropertyEnricherImpl implements TaxonPropertyEnricher {
                 for (TaxonPropertyLookupService service : services) {
                     if (service.canLookupProperty(propertyName)) {
                         if (enrichTaxonWithPropertyValue(errorCounts, taxonNode, service, propertyName)) {
+                            didEnrichAtLeastOneProperty = true;
                             break;
                         }
                     }
@@ -47,7 +66,7 @@ public class TaxonPropertyEnricherImpl implements TaxonPropertyEnricher {
             shutdownServices();
             initServices();
         }
-
+        return didEnrichAtLeastOneProperty;
     }
 
     private boolean enrichTaxonWithPropertyValue(HashMap<Class, Integer> errorCounts, Node taxonNode, TaxonPropertyLookupService service, String propertyName1) throws TaxonPropertyLookupServiceException {
@@ -107,7 +126,7 @@ public class TaxonPropertyEnricherImpl implements TaxonPropertyEnricher {
         services.add(new WoRMSService());
         services.add(new ITISService());
         services.add(new GulfBaseService());
-        services.add(new NullExternalIdService());
+        services.add(new NoMatchService());
     }
 
     private void shutdownServices() {
@@ -127,20 +146,4 @@ public class TaxonPropertyEnricherImpl implements TaxonPropertyEnricher {
         }
     }
 
-    private static class NullExternalIdService implements TaxonPropertyLookupService {
-        @Override
-        public String lookupPropertyValueByTaxonName(String taxonName, String propertyName) throws TaxonPropertyLookupServiceException {
-            return NO_MATCH;
-        }
-
-        @Override
-        public void shutdown() {
-
-        }
-
-        @Override
-        public boolean canLookupProperty(String propertyName) {
-            return Taxon.EXTERNAL_ID.equals(propertyName);
-        }
-    }
 }

@@ -10,7 +10,7 @@ public class TaxonomyImporterTest extends GraphDBTestCase {
 
     @Test
     public void stringFormat() {
-        TaxonomyImporter taxonomyImporter = new TaxonomyImporter();
+        TaxonomyImporter taxonomyImporter = new TaxonomyImporter(new OboParser(), new SingleResourceTaxonReaderFactory("/org/obofoundry/ncbi_taxonomy.obo.gz"));
         taxonomyImporter.setCounter(123);
         String s = taxonomyImporter.formatProgressString(12.2);
 

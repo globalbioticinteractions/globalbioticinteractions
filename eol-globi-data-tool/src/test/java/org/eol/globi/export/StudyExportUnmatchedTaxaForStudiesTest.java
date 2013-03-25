@@ -6,8 +6,7 @@ import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.Taxon;
-import org.eol.globi.service.TaxonPropertyEnricherImpl;
-import org.eol.globi.service.TaxonPropertyEnricherImpl;
+import org.eol.globi.service.NoMatchService;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -27,12 +26,12 @@ public class StudyExportUnmatchedTaxaForStudiesTest extends GraphDBTestCase {
         addCanisLupus(predatorSpecimen, "canisLupusId");
         addCanisLupus(predatorSpecimen, "canisLupusId");
         Specimen preySpecimen = nodeFactory.createSpecimen();
-        Taxon canisLupus = nodeFactory.getOrCreateTaxon("Canis lupus other", TaxonPropertyEnricherImpl.NO_MATCH, null);
+        Taxon canisLupus = nodeFactory.getOrCreateTaxon("Canis lupus other", NoMatchService.NO_MATCH, null);
         preySpecimen.classifyAs(canisLupus);
         predatorSpecimen.createRelationshipTo(preySpecimen, InteractType.ATE);
         study.collected(predatorSpecimen);
 
-        Taxon homoSapiens2 = nodeFactory.getOrCreateTaxon("Homo sapiens2", TaxonPropertyEnricherImpl.NO_MATCH, null);
+        Taxon homoSapiens2 = nodeFactory.getOrCreateTaxon("Homo sapiens2", NoMatchService.NO_MATCH, null);
         addSpecimen(study, homoSapiens2);
         homoSapiens2 = nodeFactory.getOrCreateTaxon("Homo sapiens2");
         addSpecimen(study, homoSapiens2);
@@ -40,7 +39,7 @@ public class StudyExportUnmatchedTaxaForStudiesTest extends GraphDBTestCase {
         Study study2 = nodeFactory.createStudy("my study2");
         addSpecimen(study2, homoSapiens2);
 
-        Taxon homoSapiens3 = nodeFactory.getOrCreateTaxon("Homo sapiens3", TaxonPropertyEnricherImpl.NO_MATCH, null);
+        Taxon homoSapiens3 = nodeFactory.getOrCreateTaxon("Homo sapiens3", NoMatchService.NO_MATCH, null);
         addSpecimen(study, homoSapiens3);
 
 

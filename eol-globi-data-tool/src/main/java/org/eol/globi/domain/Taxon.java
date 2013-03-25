@@ -8,12 +8,7 @@ import static org.eol.globi.domain.RelTypes.IS_A;
 
 public class Taxon extends NodeBacked {
     public static final String NAME = "name";
-    public static final String SPECIES = "species";
-    public static final String GENUS = "genus";
-    public static final String FAMILY = "family";
     public static final String EXTERNAL_ID = "externalId";
-    public static final String IMAGE_URL = "imageURL";
-    public static final String THUMBNAIL_URL = "thumbnailURL";
     public static final String PATH = "path";
 
     public Taxon(Node node) {
@@ -40,7 +35,9 @@ public class Taxon extends NodeBacked {
 
 
     public void setExternalId(String externalId) {
-        getUnderlyingNode().setProperty(EXTERNAL_ID, externalId);
+        if (externalId != null) {
+            getUnderlyingNode().setProperty(EXTERNAL_ID, externalId);
+        }
     }
 
     public Node isA() {
@@ -48,27 +45,14 @@ public class Taxon extends NodeBacked {
         return singleRelationship == null ? null : singleRelationship.getEndNode();
     }
 
-    public Taxon isPartOfTaxon() {
-        return new Taxon(isA());
-    }
-
-
-    public String getThumbnailURL() {
-        return getUnderlyingNode().hasProperty(THUMBNAIL_URL) ?
-                (String) getUnderlyingNode().getProperty(THUMBNAIL_URL) : null;
-    }
-
-    public String getImageURL() {
-        return getUnderlyingNode().hasProperty(IMAGE_URL) ?
-                (String) getUnderlyingNode().getProperty(IMAGE_URL) : null;
-    }
-
     public String getPath() {
         return getUnderlyingNode().hasProperty(PATH) ?
-                                (String) getUnderlyingNode().getProperty(PATH) : "";
+                (String) getUnderlyingNode().getProperty(PATH) : "";
     }
 
     public void setPath(String path) {
-        getUnderlyingNode().setProperty(PATH, path);
+        if (path != null) {
+            getUnderlyingNode().setProperty(PATH, path);
+        }
     }
 }

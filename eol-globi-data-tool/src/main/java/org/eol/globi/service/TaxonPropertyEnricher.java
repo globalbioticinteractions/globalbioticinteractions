@@ -5,5 +5,5 @@ import org.eol.globi.domain.Taxon;
 import java.io.IOException;
 
 public interface TaxonPropertyEnricher {
-    void enrich(Taxon taxon) throws IOException;
+    boolean enrich(Taxon taxon) throws IOException;
 }

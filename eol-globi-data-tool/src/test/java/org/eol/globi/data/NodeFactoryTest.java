@@ -1,11 +1,9 @@
 package org.eol.globi.data;
 
 import junit.framework.Assert;
-import org.eol.globi.data.taxon.TaxonTerm;
 import org.eol.globi.service.TaxonPropertyEnricher;
 import org.junit.Before;
 import org.junit.Test;
-import org.eol.globi.data.taxon.TaxonLookupService;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.Taxon;
 import org.neo4j.graphdb.Node;
@@ -27,12 +25,33 @@ public class NodeFactoryTest extends GraphDBTestCase {
 
     @Before
     public void createFactory() {
-        nodeFactory = new NodeFactory(getGraphDb(),new TaxonPropertyEnricher() {
+        nodeFactory = new NodeFactory(getGraphDb(), new TaxonPropertyEnricher() {
             @Override
-            public void enrich(Taxon taxon) throws IOException {
-
+            public boolean enrich(Taxon taxon) throws IOException {
+                return false;
             }
         });
+    }
+
+    @Test
+    public void ensureThatEnrichedPropertiesAreIndexed() throws NodeFactoryException {
+        nodeFactory = new NodeFactory(getGraphDb(), new TaxonPropertyEnricher() {
+            @Override
+            public boolean enrich(Taxon taxon) throws IOException {
+                taxon.setPath("myPath");
+                taxon.setExternalId("anExternalId");
+                return false;
+            }
+        });
+
+        assertEnrichedPropertiesSet(nodeFactory.getOrCreateTaxon("some name"));
+        assertEnrichedPropertiesSet(nodeFactory.findTaxon("some name"));
+    }
+
+    private void assertEnrichedPropertiesSet(Taxon aTaxon) {
+        assertThat(aTaxon.getPath(), is("myPath"));
+        assertThat(aTaxon.getName(), is("some name"));
+        assertThat(aTaxon.getExternalId(), is("anExternalId"));
     }
 
     @Test
@@ -89,8 +108,8 @@ public class NodeFactoryTest extends GraphDBTestCase {
         IndexHits<Node> hits = nodeFactory.findCloseMatchesForTaxonPath(taxonRankOfClassName);
         assertThat(hits.hasNext(), is(true));
         Node firstHit = hits.next();
-        assertThat((String)firstHit.getProperty(Taxon.NAME), is("Homo sapiens"));
-        assertThat((String)firstHit.getProperty(Taxon.PATH), is("Animalia Mammalia"));
+        assertThat((String) firstHit.getProperty(Taxon.NAME), is("Homo sapiens"));
+        assertThat((String) firstHit.getProperty(Taxon.PATH), is("Animalia Mammalia"));
         assertThat(hits.hasNext(), is(false));
     }
 

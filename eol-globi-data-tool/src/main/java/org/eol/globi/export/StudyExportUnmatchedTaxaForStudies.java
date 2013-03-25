@@ -1,8 +1,7 @@
 package org.eol.globi.export;
 
 import org.eol.globi.domain.Study;
-import org.eol.globi.service.TaxonPropertyEnricherImpl;
-import org.eol.globi.service.TaxonPropertyEnricherImpl;
+import org.eol.globi.service.NoMatchService;
 import org.neo4j.cypher.javacompat.ExecutionEngine;
 import org.neo4j.cypher.javacompat.ExecutionResult;
 import org.neo4j.graphdb.GraphDatabaseService;
@@ -24,7 +23,7 @@ public class StudyExportUnmatchedTaxaForStudies implements StudyExporter {
         ExecutionEngine engine = new ExecutionEngine(graphDbService);
         String query = "START study = node:studies(\"*:*\") " +
                 "MATCH study-[:COLLECTED]->specimen-[:CLASSIFIED_AS]->taxon " +
-                "WHERE taxon.externalId = \"" + TaxonPropertyEnricherImpl.NO_MATCH + "\" " +
+                "WHERE taxon.externalId = \"" + NoMatchService.NO_MATCH + "\" " +
                 "RETURN distinct taxon.name, study.title";
 
         ExecutionResult result = engine.execute(query);

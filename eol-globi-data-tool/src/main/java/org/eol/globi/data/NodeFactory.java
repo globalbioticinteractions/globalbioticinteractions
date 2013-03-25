@@ -9,10 +9,13 @@ import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.FuzzyQuery;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.WildcardQuery;
-import org.eol.globi.data.taxon.TaxonTerm;
+import org.eol.globi.data.taxon.TaxonNameNormalizer;
+import org.eol.globi.domain.Location;
+import org.eol.globi.domain.Season;
+import org.eol.globi.domain.Specimen;
+import org.eol.globi.domain.Study;
+import org.eol.globi.domain.Taxon;
 import org.eol.globi.service.TaxonPropertyEnricher;
-import org.eol.globi.service.TaxonPropertyEnricherImpl;
-import org.eol.globi.service.TaxonPropertyEnricherImpl;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
@@ -23,13 +26,6 @@ import org.neo4j.graphdb.index.IndexManager;
 import org.neo4j.helpers.collection.MapUtil;
 import org.neo4j.index.lucene.QueryContext;
 import org.neo4j.index.lucene.ValueContext;
-import org.eol.globi.data.taxon.TaxonLookupService;
-import org.eol.globi.data.taxon.TaxonNameNormalizer;
-import org.eol.globi.domain.Location;
-import org.eol.globi.domain.Season;
-import org.eol.globi.domain.Specimen;
-import org.eol.globi.domain.Study;
-import org.eol.globi.domain.Taxon;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -68,9 +64,9 @@ public class NodeFactory {
         this.taxonPaths = graphDb.index().forNodes("taxonpaths", MapUtil.stringMap(IndexManager.PROVIDER, "lucene", "type", "fulltext"));
     }
 
-    private void addTaxonToIndex(Taxon taxon, Node node) {
-        taxons.add(node, Taxon.NAME, taxon.getName());
-        taxonPaths.add(node, Taxon.PATH, taxon.getPath());
+    private void addTaxonToIndex(Taxon taxon) {
+        taxons.add(taxon.getUnderlyingNode(), Taxon.NAME, taxon.getName());
+        taxonPaths.add(taxon.getUnderlyingNode(), Taxon.PATH, taxon.getPath());
     }
 
     public Taxon findTaxon(String taxonName) throws NodeFactoryException {
@@ -255,8 +251,11 @@ public class NodeFactory {
             String normalizedName = TAXON_NAME_NORMALIZER.normalize(name);
             Transaction transaction = graphDb.beginTx();
             try {
-                taxon = createTaxonNoTransaction(normalizedName, externalId, path);
+                taxon = new Taxon(graphDb.createNode(), normalizedName);
+                taxon.setExternalId(externalId);
+                taxon.setPath(path);
                 taxonEnricher.enrich(taxon);
+                addTaxonToIndex(taxon);
                 transaction.success();
             } catch (IOException e) {
                 transaction.failure();
@@ -266,6 +265,7 @@ public class NodeFactory {
         }
         return taxon;
     }
+
     public Taxon createTaxonNoTransaction(String name, String externalId, String path) {
         Node node = graphDb.createNode();
         Taxon taxon = new Taxon(node, TAXON_NAME_NORMALIZER.normalize(name));
@@ -275,7 +275,7 @@ public class NodeFactory {
         if (null != path) {
             taxon.setPath(path);
         }
-        addTaxonToIndex(taxon, node);
+        addTaxonToIndex(taxon);
         return taxon;
     }
 

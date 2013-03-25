@@ -1,12 +1,10 @@
 package org.eol.globi.data;
 
-import org.eol.globi.data.taxon.TaxonTerm;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.service.TaxonPropertyEnricher;
 import org.junit.After;
 import org.junit.Before;
 import org.neo4j.graphdb.GraphDatabaseService;
-import org.eol.globi.data.taxon.TaxonLookupService;
 
 import java.io.IOException;
 
@@ -22,8 +20,9 @@ public abstract class GraphDBTestCase {
         nodeFactory = new NodeFactory(graphDb, new TaxonPropertyEnricher() {
 
             @Override
-            public void enrich(Taxon taxon) throws IOException {
+            public boolean enrich(Taxon taxon) throws IOException {
 
+                return false;
             }
         });
     }

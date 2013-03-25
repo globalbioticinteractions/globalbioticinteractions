@@ -1,5 +1,7 @@
 package org.eol.globi.data.taxon;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.Fieldable;
@@ -20,6 +22,7 @@ import java.io.File;
 import java.io.IOException;
 
 public class TaxonLookupServiceImpl implements TaxonImportListener, TaxonLookupService {
+    private static final Log LOG = LogFactory.getLog(TaxonLookupServiceImpl.class);
 
     public static final String FIELD_ID = "id";
     public static final String FIELD_NAME = "name";
@@ -42,11 +45,12 @@ public class TaxonLookupServiceImpl implements TaxonImportListener, TaxonLookupS
     public void addTerm(TaxonTerm taxonTerm) {
         if (hasStarted()) {
             Document doc = new Document();
-
             doc.add(new Field(FIELD_NAME, taxonTerm.getName(), Field.Store.YES, Field.Index.NOT_ANALYZED_NO_NORMS));
             doc.add(new Field(FIELD_ID, taxonTerm.getId(), Field.Store.YES, Field.Index.NOT_ANALYZED_NO_NORMS));
             String rankPath = taxonTerm.getRankPath();
-            doc.add(new Field(FIELD_RANK_PATH, null == rankPath ? " " : rankPath, Field.Store.YES, Field.Index.NOT_ANALYZED_NO_NORMS));
+            if (rankPath != null) {
+                doc.add(new Field(FIELD_RANK_PATH, rankPath, Field.Store.YES, Field.Index.NOT_ANALYZED_NO_NORMS));
+            }
             try {
                 indexWriter.addDocument(doc);
             } catch (IOException e) {
@@ -117,7 +121,8 @@ public class TaxonLookupServiceImpl implements TaxonImportListener, TaxonLookupS
     public void start() {
         try {
             if (indexDir == null) {
-                indexPath = new File(System.getProperty("java.io.tmpdir") + "/taxon" + System.currentTimeMillis() % 100);
+                indexPath = new File(System.getProperty("java.io.tmpdir") + "/taxon" + System.currentTimeMillis());
+                LOG.info("creating index directory at [" + indexPath + "]");
                 indexDir = new SimpleFSDirectory(indexPath);
             }
             IndexWriterConfig config = new IndexWriterConfig(Version.LUCENE_35, null);

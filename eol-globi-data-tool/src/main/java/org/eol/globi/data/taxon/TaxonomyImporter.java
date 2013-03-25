@@ -11,8 +11,8 @@ import java.io.IOException;
 import java.util.Map;
 
 public class TaxonomyImporter {
-
     private static final Log LOG = LogFactory.getLog(TaxonomyImporter.class);
+
     public static final int BATCH_TRANSACTION_SIZE = 10000;
     private int counter;
     private StopWatch stopwatch;
@@ -22,10 +22,6 @@ public class TaxonomyImporter {
     private TaxonReaderFactory taxonReaderFactory;
 
     private final TaxonLookupServiceImpl taxonLookupService;
-
-    public TaxonomyImporter() {
-        this(new OboParser(), new SingleResourceTaxonReaderFactory("/org/obofoundry/ncbi_taxonomy.obo.gz"));
-    }
 
     public TaxonomyImporter(TaxonParser taxonParser, TaxonReaderFactory taxonReaderFactory) {
         this.parser = taxonParser;

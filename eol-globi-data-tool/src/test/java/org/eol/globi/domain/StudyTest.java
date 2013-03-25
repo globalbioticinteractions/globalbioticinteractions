@@ -1,6 +1,5 @@
 package org.eol.globi.domain;
 
-import org.eol.globi.data.taxon.TaxonTerm;
 import org.eol.globi.service.TaxonPropertyEnricher;
 import org.junit.Before;
 import org.junit.Test;
@@ -10,7 +9,6 @@ import org.neo4j.graphdb.Relationship;
 import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.NodeFactory;
 import org.eol.globi.data.NodeFactoryException;
-import org.eol.globi.data.taxon.TaxonLookupService;
 
 import java.io.IOException;
 
@@ -31,8 +29,9 @@ public class StudyTest extends GraphDBTestCase {
     public void createFactory() {
         factory = new NodeFactory(getGraphDb(), new TaxonPropertyEnricher() {
             @Override
-            public void enrich(Taxon taxon) throws IOException {
+            public boolean enrich(Taxon taxon) throws IOException {
 
+                return false;
             }
         });
     }

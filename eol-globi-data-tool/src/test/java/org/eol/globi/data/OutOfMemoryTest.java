@@ -1,6 +1,5 @@
 package org.eol.globi.data;
 
-import org.eol.globi.data.taxon.TaxonTerm;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.service.TaxonPropertyEnricher;
 import org.hamcrest.core.Is;
@@ -16,7 +15,6 @@ import org.neo4j.helpers.collection.MapUtil;
 import org.neo4j.kernel.EmbeddedGraphDatabase;
 import org.neo4j.kernel.configuration.Config;
 import org.neo4j.kernel.impl.util.FileUtils;
-import org.eol.globi.data.taxon.TaxonLookupService;
 
 import java.io.File;
 import java.io.IOException;
@@ -54,8 +52,9 @@ public class OutOfMemoryTest {
         }
         factory = new NodeFactory(graphDb, new TaxonPropertyEnricher() {
             @Override
-            public void enrich(Taxon taxon) throws IOException {
+            public boolean enrich(Taxon taxon) throws IOException {
 
+                return false;
             }
         });
         System.out.println(getMemMsg());
