@@ -6,9 +6,12 @@ import org.apache.commons.logging.LogFactory;
 import org.eol.globi.data.NodeFactory;
 import org.eol.globi.data.StudyImporterException;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 
-public class TaxonomyImporter  {
+public class TaxonomyImporter {
 
     private static final Log LOG = LogFactory.getLog(TaxonomyImporter.class);
     public static final int BATCH_TRANSACTION_SIZE = 10000;
@@ -53,35 +56,46 @@ public class TaxonomyImporter  {
         getStopwatch().start();
         setCounter(0);
         try {
-            getParser().parse(taxonReaderFactory.getReader(), new TaxonImportListener() {
-                @Override
-                public void addTerm(TaxonTerm term) {
-                    taxonLookupService.addTerm(term);
-                    count();
-                    if (getCounter() % BATCH_TRANSACTION_SIZE == 0) {
-                        StopWatch stopwatch = getStopwatch();
-                        stopwatch.stop();
-                        double avg = 1000.0 * BATCH_TRANSACTION_SIZE / (stopwatch.getTime() + 1);
-                        String format = formatProgressString(avg);
-                        LOG.info(format);
-                        stopwatch.reset();
-                        stopwatch.start();
-                    }
+            Map<String, BufferedReader> allReaders = taxonReaderFactory.getAllReaders();
+            for (Map.Entry<String, BufferedReader> entry : allReaders.entrySet()) {
+                try {
+                    parse(entry.getValue());
+                } catch (IOException ex) {
+                    throw new IOException("failed to read from [" + entry.getKey() + "]");
                 }
-
-                @Override
-                public void start() {
-                    taxonLookupService.start();
-                }
-
-                @Override
-                public void finish() {
-                    taxonLookupService.finish();
-                }
-            });
+            }
         } catch (IOException e) {
             throw new StudyImporterException("failed to import taxonomy", e);
         }
+    }
+
+    private void parse(BufferedReader reader) throws IOException {
+        getParser().parse(reader, new TaxonImportListener() {
+            @Override
+            public void addTerm(TaxonTerm term) {
+                taxonLookupService.addTerm(term);
+                count();
+                if (getCounter() % BATCH_TRANSACTION_SIZE == 0) {
+                    StopWatch stopwatch = getStopwatch();
+                    stopwatch.stop();
+                    double avg = 1000.0 * BATCH_TRANSACTION_SIZE / (stopwatch.getTime() + 1);
+                    String format = formatProgressString(avg);
+                    LOG.info(format);
+                    stopwatch.reset();
+                    stopwatch.start();
+                }
+            }
+
+            @Override
+            public void start() {
+                taxonLookupService.start();
+            }
+
+            @Override
+            public void finish() {
+                taxonLookupService.finish();
+            }
+        });
     }
 
     public int getCounter() {

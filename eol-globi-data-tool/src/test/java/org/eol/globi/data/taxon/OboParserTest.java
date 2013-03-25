@@ -20,7 +20,7 @@ public class OboParserTest {
 
     @Test
     public void oboImport() throws IOException {
-        BufferedReader bufferedReader = new OboTaxonReaderFactory().getReader();
+        BufferedReader bufferedReader = new OboTaxonReaderFactory().getFirstReader();
         this.counter = 0;
 
         TaxonImportListener listener = new TaxonImportListener() {

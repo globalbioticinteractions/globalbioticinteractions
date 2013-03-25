@@ -1,24 +1,43 @@
 package org.eol.globi.data.taxon;
 
+import org.eol.globi.data.FileUtils;
+
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 public class GulfBaseTaxonReaderFactory implements TaxonReaderFactory {
     private static final String[] DATA_FILES = {
-                "Acanthocephala_O.csv", "Chaetognatha.csv", "Gastrotricha.csv", "Pinophyta.csv",
-                "Acoelomorpha.csv", "Chlorophyta.csv", "Gnathostomulida.csv", "Platyhelminthes.csv",
-                "Annelida_O.csv", "Chordata_O.csv", "Hemichordata.csv", "Polypodiophyta.csv",
-                "Arthropoda_O.csv", "Cnidaria.csv", "Kinorhyncha.csv", "Porifera_O.csv",
-                "Ascomycota_O.csv", "Ctenophora.csv", "Loricifera.csv", "Priapulida.csv",
-                "Bacillariophyta.csv", "Dicyemida.csv", "Magnoliophyta.csv", "Rhodophyta.csv",
-                "Basidiomycota.csv", "Echinodermata.csv", "Mollusca.csv", "Rotifera_O.csv",
-                "Brachiopoda.csv", "Echiura.csv", "Nematoda.csv", "Tardigrada.csv",
-                "Bryophyta.csv", "Entoprocta.csv", "Nemertea.csv",
-                "Bryozoa.csv", "Foraminifera.csv", "Phoronida.csv"};
+            "Acanthocephala_O.csv.gz", "Chaetognatha.csv.gz", "Gastrotricha.csv.gz", "Pinophyta.csv.gz",
+            "Acoelomorpha.csv.gz", "Chlorophyta.csv.gz", "Gnathostomulida.csv.gz", "Platyhelminthes.csv.gz",
+            "Annelida_O.csv.gz", "Chordata_O.csv.gz", "Hemichordata.csv.gz", "Polypodiophyta.csv.gz",
+            "Arthropoda_O.csv.gz", "Cnidaria.csv.gz", "Kinorhyncha.csv.gz", "Porifera_O.csv.gz",
+            "Ascomycota_O.csv.gz", "Ctenophora.csv.gz", "Loricifera.csv.gz", "Priapulida.csv.gz",
+            "Bacillariophyta.csv.gz", "Dicyemida.csv.gz", "Magnoliophyta.csv.gz", "Rhodophyta.csv.gz",
+            "Basidiomycota.csv.gz", "Echinodermata.csv.gz", "Mollusca.csv.gz", "Rotifera_O.csv.gz",
+            "Brachiopoda.csv.gz", "Echiura.csv.gz", "Nematoda.csv.gz", "Tardigrada.csv.gz",
+            "Bryophyta.csv.gz", "Entoprocta.csv.gz", "Nemertea.csv.gz",
+            "Bryozoa.csv.gz", "Foraminifera.csv.gz", "Phoronida.csv.gz"};
 
 
     @Override
-    public BufferedReader getReader() throws IOException {
+    public BufferedReader getFirstReader() throws IOException {
         return null;
+    }
+
+    @Override
+    public Map<String, BufferedReader> getAllReaders() throws IOException {
+        Map<String, BufferedReader> readers = new HashMap<String, BufferedReader>();
+        for (String filename : DATA_FILES) {
+            String resourceName = "gulfbase/" + filename;
+            InputStream resourceAsStream = getClass().getResourceAsStream(resourceName);
+            if (null == resourceAsStream) {
+                throw new IOException("failed to open resource with name [" + resourceName + "]");
+            }
+            readers.put(resourceName, FileUtils.getBufferedReaderUTF_8(resourceAsStream));
+        }
+        return readers;
     }
 }
