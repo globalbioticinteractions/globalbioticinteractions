@@ -16,7 +16,7 @@ public class EOLTaxonParserTest {
     @Test
     public void readLine() throws IOException {
         TaxonReaderFactory taxonReaderFactory = new EOLTaxonReaderFactory();
-        assertThat(taxonReaderFactory.getFirstReader(), is(notNullValue()));
+        assertThat(taxonReaderFactory.getAllReaders().get(0), is(notNullValue()));
 
 
         TaxonParser taxonParser = new EOLTaxonParser();

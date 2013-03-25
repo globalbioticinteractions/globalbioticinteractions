@@ -22,8 +22,7 @@ public class GulfBaseTaxonReaderFactory implements TaxonReaderFactory {
             "Bryozoa.csv.gz", "Foraminifera.csv.gz", "Phoronida.csv.gz"};
 
 
-    @Override
-    public BufferedReader getFirstReader() throws IOException {
+    private BufferedReader getFirstReader() throws IOException {
         return null;
     }
 
