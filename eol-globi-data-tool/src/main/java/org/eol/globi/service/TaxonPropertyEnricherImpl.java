@@ -100,12 +100,13 @@ public class TaxonPropertyEnricherImpl implements TaxonPropertyEnricher {
     private boolean lookupAndSetProperty(Node taxonNode, TaxonPropertyLookupService service, String taxonName, StopWatch stopwatch, String propertyName) throws TaxonPropertyLookupServiceException {
         String propertyValue = service.lookupPropertyValueByTaxonName(taxonName, propertyName);
         stopwatch.stop();
-        String responseTime = "(took " + stopwatch.getTime() + "ms)";
-        String msg = "for [" + taxonName + "] with " + propertyName + " [" + propertyValue + "] in [" + service.getClass().getSimpleName() + "] " + responseTime;
-        if (propertyValue == null) {
-            LOG.info("no match found " + msg);
-        } else {
-            LOG.info("found match " + msg);
+        if (stopwatch.getTime() > 3000) {
+            String responseTime = "(took " + stopwatch.getTime() + "ms) for [" + service.getClass().getSimpleName() + "]";
+            String msg = "slow query for [" + taxonName + "] with " + propertyName + " [" + propertyValue + "] in [" + service.getClass().getSimpleName() + "] " + responseTime;
+            LOG.warn(msg);
+        }
+
+        if (propertyValue != null) {
             setProperty(taxonNode, propertyName, propertyValue);
             return true;
         }
