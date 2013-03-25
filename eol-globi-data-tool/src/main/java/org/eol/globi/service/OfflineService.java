@@ -11,7 +11,7 @@ import org.eol.globi.domain.Taxon;
 import java.io.IOException;
 
 public abstract class OfflineService implements TaxonPropertyLookupService {
-    private static final Log LOG = LogFactory.getLog(GulfBaseService.class);
+    private static final Log LOG = LogFactory.getLog(OfflineService.class);
     private TaxonLookupService taxonLookupService;
 
     @Override
@@ -28,7 +28,7 @@ public abstract class OfflineService implements TaxonPropertyLookupService {
             TaxonTerm[] taxonTerms = taxonLookupService.lookupTermsByName(taxonName);
             TaxonTerm first = taxonTerms.length == 0 ? null : taxonTerms[0];
             if (taxonTerms.length > 1) {
-                LOG.warn("found more than one matches for name [" + taxonName + "], choosing first one with id [" + first.getId() + "]");
+                LOG.warn("found more than one matches for name [" + taxonName + "] in [" + getServiceName() + "], choosing first one with id [" + first.getId() + "]");
             }
             String value = null;
             if (first != null) {
@@ -36,22 +36,26 @@ public abstract class OfflineService implements TaxonPropertyLookupService {
             }
             return value;
         } catch (IOException e) {
-            throw new TaxonPropertyLookupServiceException("lookup for property with name [" + propertyName + "] failed.", e);
+            throw new TaxonPropertyLookupServiceException("lookup for property with name [" + propertyName + "] failed for [" + getServiceName() +"].", e);
         }
+    }
+
+    protected String getServiceName() {
+        return getClass().getSimpleName();
     }
 
     protected abstract String getValueForPropertyName(String propertyName, TaxonTerm first);
 
     private void lazyInit() throws TaxonPropertyLookupServiceException {
-        LOG.info("lazy init of taxonomy index started...");
+        LOG.info("lazy init of taxonomy index [" + getServiceName() + "] started...");
         TaxonomyImporter importer = createTaxonomyImporter();
         try {
             importer.doImport();
         } catch (StudyImporterException e) {
-            throw new TaxonPropertyLookupServiceException("failed to build index", e);
+            throw new TaxonPropertyLookupServiceException("failed to build index for [" + getServiceName() + "]", e);
         }
         taxonLookupService = importer.getTaxonLookupService();
-        LOG.info("lazy init of taxonomy index done.");
+        LOG.info("lazy init of taxonomy index [" + getServiceName() + "] done.");
     }
 
     protected abstract TaxonomyImporter createTaxonomyImporter();
