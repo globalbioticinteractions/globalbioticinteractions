@@ -21,10 +21,10 @@ public class TaxonLookupServiceImplTest {
         listener.addTerm(new TaxonTerm("Prefix Homo sapiens suffix", "12346"));
         listener.finish();
 
-        String[] ids = taxonLookupServiceImpl.lookupTermIds("Homo sapiens");
+        TaxonTerm[] ids = taxonLookupServiceImpl.lookupTermsByName("Homo sapiens");
 
         assertThat(ids.length, Is.is(1));
-        assertThat(ids[0], Is.is("1234"));
+        assertThat(ids[0].getId(), Is.is("1234"));
 
         taxonLookupServiceImpl.destroy();
     }

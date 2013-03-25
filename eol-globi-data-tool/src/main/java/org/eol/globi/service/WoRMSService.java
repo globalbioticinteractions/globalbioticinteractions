@@ -13,7 +13,7 @@ public class WoRMSService extends BaseExternalIdService  {
     public static final String RESPONSE_SUFFIX = "</return></ns1:getAphiaIDResponse></SOAP-ENV:Body></SOAP-ENV:Envelope>";
     public static final String URN_LSID_PREFIX = "urn:lsid:marinespecies.org:taxname:";
 
-    public String lookupLSIDByTaxonName(String taxonName) throws LSIDLookupServiceException {
+    public String lookupLSIDByTaxonName(String taxonName) throws TaxonPropertyLookupServiceException {
         HttpPost post = new HttpPost("http://www.marinespecies.org/aphia.php?p=soap");
         post.setHeader("SOAPAction", "http://tempuri.org/getAphiaID");
         post.setHeader("Content-Type", "text/xml;charset=utf-8");
@@ -33,7 +33,7 @@ public class WoRMSService extends BaseExternalIdService  {
         try {
             catchEntity = new InputStreamEntity(new ByteArrayInputStream(requestBody.getBytes("UTF-8")), requestBody.getBytes().length);
         } catch (UnsupportedEncodingException e) {
-            throw new LSIDLookupServiceException("problem creating request body for [" + post.getURI().toString() + "]", e);
+            throw new TaxonPropertyLookupServiceException("problem creating request body for [" + post.getURI().toString() + "]", e);
         }
         post.setEntity(catchEntity);
 
@@ -42,7 +42,7 @@ public class WoRMSService extends BaseExternalIdService  {
         try {
             response = httpClient.execute(post, responseHandler);
         } catch (IOException e) {
-            throw new LSIDLookupServiceException("failed to connect to [" + post.getURI().toString() + "]", e);
+            throw new TaxonPropertyLookupServiceException("failed to connect to [" + post.getURI().toString() + "]", e);
         }
 
         String lsid = null;

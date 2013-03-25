@@ -11,29 +11,29 @@ import static org.junit.Assert.assertThat;
 public class ITISServiceIT {
 
     @Test
-    public void lookupNonExistentTaxon() throws LSIDLookupServiceException {
+    public void lookupNonExistentTaxon() throws TaxonPropertyLookupServiceException {
         String term = "Bregmacerous contori";
         assertNull(lookupTerm(term));
 
     }
 
     @Test
-    public void lookupExistentTaxon() throws LSIDLookupServiceException {
+    public void lookupExistentTaxon() throws TaxonPropertyLookupServiceException {
         assertThat(lookupTerm("Fundulus jenkinsi"), is("urn:lsid:itis.gov:itis_tsn:165653"));
     }
 
     @Test
-    public void lookupValidCommonName() throws LSIDLookupServiceException {
+    public void lookupValidCommonName() throws TaxonPropertyLookupServiceException {
         assertThat(lookupTerm("Common Snook"), is(nullValue()));
     }
 
     @Ignore
     @Test
-    public void lookupNA() throws LSIDLookupServiceException {
+    public void lookupNA() throws TaxonPropertyLookupServiceException {
         assertThat(lookupTerm("NA"), is(nullValue()));
     }
 
-    private String lookupTerm(String term) throws LSIDLookupServiceException {
+    private String lookupTerm(String term) throws TaxonPropertyLookupServiceException {
         return new ITISService().lookupLSIDByTaxonName(term);
     }
 

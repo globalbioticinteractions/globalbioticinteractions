@@ -13,7 +13,7 @@ import org.eol.globi.domain.TaxonomyProvider;
 
 import java.io.IOException;
 
-public class EOLTaxonImageService extends BaseService {
+public class EOLTaxonImageService extends BaseHttpClientService {
     private static final Log LOG = LogFactory.getLog(EOLTaxonImageService.class);
 
     // eol doesn't have a lsid prefix that I know of

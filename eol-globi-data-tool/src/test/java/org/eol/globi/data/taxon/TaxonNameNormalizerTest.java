@@ -28,7 +28,13 @@ public class TaxonNameNormalizerTest {
         assertThat(normalizer.normalize("Leptochela cf bermudensis"), is("Leptochela bermudensis"));
         assertThat(normalizer.normalize("Bacteriastrum spp.          Bacteriastrum spp.          Bacteriastrum spp.          Bacteriastrum spp."), is("Bacteriastrum"));
         assertThat(normalizer.normalize("Acrididae spp. "), is("Acrididae"));
-        assertThat(normalizer.normalize("Acrididae spp.�"), is("Acrididae"));
+    }
 
+    @Test
+    public void taxonNameTooShort() {
+        TaxonNameNormalizer normalizer = new TaxonNameNormalizer();
+        assertThat(normalizer.normalize("G"), is("NomenNescio"));
+        assertThat(normalizer.normalize("H"), is("NomenNescio"));
+        assertThat(normalizer.normalize("HH"), is("HH"));
     }
 }

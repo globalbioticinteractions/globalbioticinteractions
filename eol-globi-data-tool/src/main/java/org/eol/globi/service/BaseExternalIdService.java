@@ -2,11 +2,13 @@ package org.eol.globi.service;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.eol.globi.domain.Taxon;
 
-public abstract class BaseExternalIdService extends BaseService implements LSIDLookupService {
-    private static final Log LOG = LogFactory.getLog(BaseService.class);
+public abstract class BaseExternalIdService extends BaseHttpClientService implements TaxonPropertyLookupService {
+    private static final Log LOG = LogFactory.getLog(BaseHttpClientService.class);
 
-    public String lookupExternalTaxonIdByName(String taxonName) throws LSIDLookupServiceException {
+    @Override
+    public String lookupPropertyValueByTaxonName(String taxonName, String propertyName) throws TaxonPropertyLookupServiceException {
         String externalId = null;
         if (taxonName.trim().length() < 2) {
             LOG.warn("taxon name [" + taxonName + "] too short");
@@ -16,6 +18,13 @@ public abstract class BaseExternalIdService extends BaseService implements LSIDL
         return externalId;
     }
 
-    public abstract String lookupLSIDByTaxonName(String taxonName) throws LSIDLookupServiceException;
+    @Override
+    public boolean canLookupProperty(String propertyName) {
+        return Taxon.EXTERNAL_ID.equals(propertyName);
+    }
+
+    public abstract String lookupLSIDByTaxonName(String taxonName) throws TaxonPropertyLookupServiceException;
+
+
 
 }

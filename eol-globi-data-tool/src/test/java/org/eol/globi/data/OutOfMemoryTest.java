@@ -1,5 +1,8 @@
 package org.eol.globi.data;
 
+import org.eol.globi.data.taxon.TaxonTerm;
+import org.eol.globi.domain.Taxon;
+import org.eol.globi.service.TaxonPropertyEnricher;
 import org.hamcrest.core.Is;
 import org.junit.After;
 import org.junit.Before;
@@ -25,7 +28,7 @@ import static org.junit.Assert.assertThat;
 
 /**
  * Tests limits of neo4j / cypher / lucene
- *
+ * <p/>
  * Current understanding - cypher does not handle streaming results very well.
  * It seems to load an entire result set into memory prior to returning it.
  */
@@ -49,14 +52,9 @@ public class OutOfMemoryTest {
         for (String s : params.keySet()) {
             System.out.println("[" + s + "]=[" + params.get(s) + "]");
         }
-        factory = new NodeFactory(graphDb, new TaxonLookupService() {
+        factory = new NodeFactory(graphDb, new TaxonPropertyEnricher() {
             @Override
-            public String[] lookupTermIds(String taxonName) throws IOException {
-                return new String[0];
-            }
-
-            @Override
-            public void destroy() {
+            public void enrich(Taxon taxon) throws IOException {
 
             }
         });

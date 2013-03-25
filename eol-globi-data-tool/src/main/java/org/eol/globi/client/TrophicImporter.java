@@ -1,10 +1,10 @@
 package org.eol.globi.client;
 
-import org.apache.commons.lang3.time.StopWatch;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.eol.globi.data.taxon.SingleResourceTaxonReaderFactory;
 import org.eol.globi.export.StudyExportUnmatchedTaxaForStudies;
+import org.eol.globi.service.TaxonPropertyEnricher;
+import org.eol.globi.service.TaxonPropertyEnricherImpl;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.eol.globi.data.NodeFactory;
 import org.eol.globi.data.ParserFactory;
@@ -13,15 +13,11 @@ import org.eol.globi.data.StudyImporter;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.data.StudyImporterFactory;
 import org.eol.globi.data.StudyLibrary;
-import org.eol.globi.data.taxon.EOLTaxonParser;
-import org.eol.globi.data.taxon.TaxonLookupService;
-import org.eol.globi.data.taxon.TaxonomyImporter;
 import org.eol.globi.db.GraphService;
 import org.eol.globi.domain.Study;
 import org.eol.globi.export.StudyExporter;
 import org.eol.globi.export.StudyExporterImpl;
 import org.eol.globi.export.StudyExporterPredatorPrey;
-import org.eol.globi.service.ExternalIdTaxonEnricher;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -39,42 +35,18 @@ public class TrophicImporter {
 
     public void importExport() throws StudyImporterException {
         final GraphDatabaseService graphService = GraphService.getGraphService();
-        TaxonLookupService taxonLookupService = buildEOLTaxonLookupService();
-
-        List<Study> studies = importData(graphService, taxonLookupService);
-        matchAgainstExternalTaxonomies(graphService);
+        TaxonPropertyEnricherImpl taxonEnricher = new TaxonPropertyEnricherImpl(graphService);
+        List<Study> studies = importData(graphService, taxonEnricher);
         exportData(studies);
-
-        taxonLookupService.destroy();
         graphService.shutdown();
     }
 
-    private void matchAgainstExternalTaxonomies(GraphDatabaseService graphService) throws StudyImporterException {
-        try {
-            StopWatch stopwatch = new StopWatch();
-            stopwatch.start();
-            LOG.info("Matching taxons against external taxonomies starting...");
-            new ExternalIdTaxonEnricher(graphService).process();
-            stopwatch.stop();
-            LOG.info("Matching taxons against external complete. Total duration: [" + stopwatch.getTime() / (60.0 * 1000.0) + "] minutes");
-        } catch (IOException e) {
-            throw new StudyImporterException("enriching unmatched nodes failed", e);
-        }
+
+    public List<Study> importStudies(GraphDatabaseService graphService, TaxonPropertyEnricher taxonEnricher) throws StudyImporterException {
+        return importData(graphService, taxonEnricher);
     }
 
-    private TaxonLookupService buildEOLTaxonLookupService() throws StudyImporterException {
-        TaxonomyImporter importer = new TaxonomyImporter(new EOLTaxonParser(), new SingleResourceTaxonReaderFactory("eol/taxon.tab.gz"));
-        LOG.info("Taxonomy import starting...");
-        importer.doImport();
-        LOG.info("Taxonomy import complete.");
-        return importer.getTaxonLookupService();
-    }
-
-    public List<Study> importStudies(GraphDatabaseService graphService, TaxonLookupService taxonLookupService) throws StudyImporterException {
-        return importData(graphService, taxonLookupService);
-    }
-
-    private ArrayList<Study> importData(GraphDatabaseService graphService, TaxonLookupService taxonLookupService) throws StudyImporterException {
+    private ArrayList<Study> importData(GraphDatabaseService graphService, TaxonPropertyEnricher taxonEnricher) throws StudyImporterException {
         ArrayList<StudyLibrary.Study> studies = new ArrayList<StudyLibrary.Study>();
         StudyLibrary.Study[] availableStudies = StudyLibrary.Study.values();
         studies.addAll(Arrays.asList(availableStudies));
@@ -82,7 +54,7 @@ public class TrophicImporter {
         ArrayList<Study> importedStudies = new ArrayList<Study>();
 
         for (StudyLibrary.Study study : studies) {
-            StudyImporter studyImporter = createStudyImporter(graphService, study, taxonLookupService);
+            StudyImporter studyImporter = createStudyImporter(graphService, study, taxonEnricher);
             LOG.info("study [" + study + "] importing ...");
             importedStudies.add(studyImporter.importStudy());
             LOG.info("study [" + study + "] imported.");
@@ -112,8 +84,8 @@ public class TrophicImporter {
         LOG.info("export data to [" + new File(exportPath).getAbsolutePath() + "] complete.");
     }
 
-    private StudyImporter createStudyImporter(GraphDatabaseService graphService, StudyLibrary.Study study, TaxonLookupService taxonLookupService) throws StudyImporterException {
-        NodeFactory factory = new NodeFactory(graphService, taxonLookupService);
+    private StudyImporter createStudyImporter(GraphDatabaseService graphService, StudyLibrary.Study study, TaxonPropertyEnricher taxonEnricher) throws StudyImporterException {
+        NodeFactory factory = new NodeFactory(graphService, taxonEnricher);
         ParserFactory parserFactory = new ParserFactoryImpl();
         return new StudyImporterFactory(parserFactory, factory).createImporterForStudy(study);
     }

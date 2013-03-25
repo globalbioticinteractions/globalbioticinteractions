@@ -14,20 +14,20 @@ import java.net.URISyntaxException;
 public class EOLService extends BaseExternalIdService {
 
     @Override
-    public String lookupLSIDByTaxonName(String taxonName) throws LSIDLookupServiceException {
+    public String lookupLSIDByTaxonName(String taxonName) throws TaxonPropertyLookupServiceException {
         String pageId;
 
         try {
             URI uri = new URI("http", null, "eol.org", 80, "/api/search/1.0/" + taxonName, "exact=true", null);
             pageId = getPageId(taxonName, uri, true);
         } catch (URISyntaxException e) {
-            throw new LSIDLookupServiceException("failed to create uri", e);
+            throw new TaxonPropertyLookupServiceException("failed to create uri", e);
         }
 
         return pageId == null ? null : EOLTaxonImageService.EOL_LSID_PREFIX + pageId;
     }
 
-    private String getPageId(String taxonName, URI uri, boolean shouldFollowAlternate) throws LSIDLookupServiceException, URISyntaxException {
+    private String getPageId(String taxonName, URI uri, boolean shouldFollowAlternate) throws TaxonPropertyLookupServiceException, URISyntaxException {
         HttpGet get = new HttpGet(uri);
 
         BasicResponseHandler responseHandler = new BasicResponseHandler();
@@ -37,12 +37,12 @@ public class EOLService extends BaseExternalIdService {
             response = httpClient.execute(get, responseHandler);
         } catch (HttpResponseException e) {
             if (e.getStatusCode() != 406 && e.getStatusCode() != 404) {
-                throw new LSIDLookupServiceException("failed to lookup [" + taxonName + "]", e);
+                throw new TaxonPropertyLookupServiceException("failed to lookup [" + taxonName + "]", e);
             }
         } catch (ClientProtocolException e) {
-            throw new LSIDLookupServiceException("failed to lookup [" + taxonName + "]", e);
+            throw new TaxonPropertyLookupServiceException("failed to lookup [" + taxonName + "]", e);
         } catch (IOException e) {
-            throw new LSIDLookupServiceException("failed to lookup [" + taxonName + "]", e);
+            throw new TaxonPropertyLookupServiceException("failed to lookup [" + taxonName + "]", e);
         }
 
 

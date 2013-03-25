@@ -13,12 +13,12 @@ public class ITISService extends BaseExternalIdService  {
     public static final String URN_LSID_PREFIX = "urn:lsid:itis.gov:itis_tsn:";
 
     @Override
-    public String lookupLSIDByTaxonName(String taxonName) throws LSIDLookupServiceException {
+    public String lookupLSIDByTaxonName(String taxonName) throws TaxonPropertyLookupServiceException {
         URI uri;
         try {
             uri = new URI("http", null, "www.itis.gov", 80, "/ITISWebService/services/ITISService/searchByScientificName", "srchKey=" + taxonName, null);
         } catch (URISyntaxException e) {
-            throw new LSIDLookupServiceException("failed to create uri", e);
+            throw new TaxonPropertyLookupServiceException("failed to create uri", e);
         }
         HttpGet get = new HttpGet(uri);
 
@@ -28,7 +28,7 @@ public class ITISService extends BaseExternalIdService  {
         try {
             response = httpClient.execute(get, responseHandler);
         } catch (IOException e) {
-            throw new LSIDLookupServiceException("failed to execute query to [ " + uri.toString() + "]", e);
+            throw new TaxonPropertyLookupServiceException("failed to execute query to [ " + uri.toString() + "]", e);
         }
         String lsid = null;
         boolean isValid = response.contains("<ax21:combinedName>" + taxonName + "</ax21:combinedName>");

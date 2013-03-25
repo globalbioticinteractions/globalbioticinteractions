@@ -23,7 +23,7 @@ public class TaxonomyImporter {
 
     private final TaxonLookupServiceImpl taxonLookupService;
 
-    public TaxonomyImporter(NodeFactory nodeFactory) {
+    public TaxonomyImporter() {
         this(new OboParser(), new SingleResourceTaxonReaderFactory("/org/obofoundry/ncbi_taxonomy.obo.gz"));
     }
 

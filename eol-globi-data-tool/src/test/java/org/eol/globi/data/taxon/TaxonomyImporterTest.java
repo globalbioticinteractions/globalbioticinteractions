@@ -10,7 +10,7 @@ public class TaxonomyImporterTest extends GraphDBTestCase {
 
     @Test
     public void stringFormat() {
-        TaxonomyImporter taxonomyImporter = new TaxonomyImporter(nodeFactory);
+        TaxonomyImporter taxonomyImporter = new TaxonomyImporter();
         taxonomyImporter.setCounter(123);
         String s = taxonomyImporter.formatProgressString(12.2);
 

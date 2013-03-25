@@ -9,6 +9,10 @@ import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.FuzzyQuery;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.WildcardQuery;
+import org.eol.globi.data.taxon.TaxonTerm;
+import org.eol.globi.service.TaxonPropertyEnricher;
+import org.eol.globi.service.TaxonPropertyEnricherImpl;
+import org.eol.globi.service.TaxonPropertyEnricherImpl;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
@@ -37,6 +41,7 @@ public class NodeFactory {
     private static final Log LOG = LogFactory.getLog(NodeFactory.class);
 
     public static final TaxonNameNormalizer TAXON_NAME_NORMALIZER = new TaxonNameNormalizer();
+    private final TaxonPropertyEnricher taxonEnricher;
 
     public GraphDatabaseService getGraphDb() {
         return graphDb;
@@ -51,14 +56,14 @@ public class NodeFactory {
     private final Index<Node> locations;
     private final Index<Node> taxons;
     private final Index<Node> taxonPaths;
-    private TaxonLookupService taxonLookupService;
 
-    public NodeFactory(GraphDatabaseService graphDb, TaxonLookupService taxonLookupService) {
+    public NodeFactory(GraphDatabaseService graphDb, TaxonPropertyEnricher taxonEnricher) {
         this.graphDb = graphDb;
+        this.taxonEnricher = taxonEnricher;
+
         this.studies = graphDb.index().forNodes("studies");
         this.seasons = graphDb.index().forNodes("seasons");
         this.locations = graphDb.index().forNodes("locations");
-        this.taxonLookupService = taxonLookupService;
         this.taxons = graphDb.index().forNodes("taxons");
         this.taxonPaths = graphDb.index().forNodes("taxonpaths", MapUtil.stringMap(IndexManager.PROVIDER, "lucene", "type", "fulltext"));
     }
@@ -248,34 +253,19 @@ public class NodeFactory {
         Taxon taxon = findTaxon(name);
         if (taxon == null) {
             String normalizedName = TAXON_NAME_NORMALIZER.normalize(name);
-            externalId = findExternalId(name, externalId, normalizedName);
             Transaction transaction = graphDb.beginTx();
             try {
                 taxon = createTaxonNoTransaction(normalizedName, externalId, path);
+                taxonEnricher.enrich(taxon);
                 transaction.success();
+            } catch (IOException e) {
+                transaction.failure();
             } finally {
                 transaction.finish();
             }
         }
         return taxon;
     }
-
-    private String findExternalId(String name, String externalId1, String normalizedName) throws NodeFactoryException {
-        try {
-            String[] ids = taxonLookupService.lookupTermIds(normalizedName);
-            if (ids.length > 0) {
-                // TODO should put EOL dependency in taxonLookupService
-                externalId1 = "EOL:" + ids[0];
-                if (ids.length > 1) {
-                    LOG.info("found at least one duplicate for taxon with name [" + name + "] normalized [" + normalizedName + "]: {" + ids[0] + "," + ids[1] + "} - using first.");
-                }
-            }
-        } catch (IOException e) {
-            throw new NodeFactoryException("failed to lookup taxon", e);
-        }
-        return externalId1;
-    }
-
     public Taxon createTaxonNoTransaction(String name, String externalId, String path) {
         Node node = graphDb.createNode();
         Taxon taxon = new Taxon(node, TAXON_NAME_NORMALIZER.normalize(name));

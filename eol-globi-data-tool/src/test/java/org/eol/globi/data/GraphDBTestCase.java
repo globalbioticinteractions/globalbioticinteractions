@@ -1,5 +1,8 @@
 package org.eol.globi.data;
 
+import org.eol.globi.data.taxon.TaxonTerm;
+import org.eol.globi.domain.Taxon;
+import org.eol.globi.service.TaxonPropertyEnricher;
 import org.junit.After;
 import org.junit.Before;
 import org.neo4j.graphdb.GraphDatabaseService;
@@ -16,14 +19,10 @@ public abstract class GraphDBTestCase {
     @Before
     public void startGraphDb() throws IOException {
         graphDb = new org.neo4j.test.ImpermanentGraphDatabase();
-        nodeFactory = new NodeFactory(graphDb, new TaxonLookupService() {
-            @Override
-            public String[] lookupTermIds(String taxonName) throws IOException {
-                return new String[0];
-            }
+        nodeFactory = new NodeFactory(graphDb, new TaxonPropertyEnricher() {
 
             @Override
-            public void destroy() {
+            public void enrich(Taxon taxon) throws IOException {
 
             }
         });

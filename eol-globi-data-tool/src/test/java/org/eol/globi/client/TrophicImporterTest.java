@@ -1,11 +1,13 @@
 package org.eol.globi.client;
 
+import org.eol.globi.domain.Taxon;
+import org.eol.globi.service.TaxonPropertyEnricher;
+import org.eol.globi.service.TaxonPropertyEnricherImpl;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.StudyImporterException;
-import org.eol.globi.data.taxon.TaxonLookupService;
 
 import java.io.IOException;
 
@@ -19,14 +21,9 @@ public class TrophicImporterTest extends GraphDBTestCase {
         TrophicImporter trophicImporter = new TrophicImporter();
 
         GraphDatabaseService graphService = getGraphDb();
-        trophicImporter.importStudies(graphService, new TaxonLookupService() {
+        trophicImporter.importStudies(graphService, new TaxonPropertyEnricher() {
             @Override
-            public String[] lookupTermIds(String taxonName) throws IOException {
-                return new String[0];
-            }
-
-            @Override
-            public void destroy() {
+            public void enrich(Taxon taxon) throws IOException {
 
             }
         });

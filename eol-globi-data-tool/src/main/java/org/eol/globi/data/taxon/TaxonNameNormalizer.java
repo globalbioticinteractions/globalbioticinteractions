@@ -19,6 +19,7 @@ public class TaxonNameNormalizer {
         name = keepOnlyLettersAndNumbers(name);
         name = name.replaceAll("\\s(spp|sp)\\.*($|\\s.*)", "");
         name = name.replaceAll(" cf ", " ");
+        name = name.replaceAll("^\\w$","");
         String trim = name.trim();
         return replaceMultipleWhiteSpacesWithSingleWhitespace(trim);
     }

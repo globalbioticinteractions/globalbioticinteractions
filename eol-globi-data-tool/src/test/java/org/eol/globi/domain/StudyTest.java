@@ -1,5 +1,7 @@
 package org.eol.globi.domain;
 
+import org.eol.globi.data.taxon.TaxonTerm;
+import org.eol.globi.service.TaxonPropertyEnricher;
 import org.junit.Before;
 import org.junit.Test;
 import org.neo4j.graphdb.Direction;
@@ -27,14 +29,9 @@ public class StudyTest extends GraphDBTestCase {
 
     @Before
     public void createFactory() {
-        factory = new NodeFactory(getGraphDb(), new TaxonLookupService() {
+        factory = new NodeFactory(getGraphDb(), new TaxonPropertyEnricher() {
             @Override
-            public String[] lookupTermIds(String taxonName) throws IOException {
-                return new String[0];
-            }
-
-            @Override
-            public void destroy() {
+            public void enrich(Taxon taxon) throws IOException {
 
             }
         });

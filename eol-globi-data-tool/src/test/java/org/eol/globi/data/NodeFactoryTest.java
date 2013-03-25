@@ -1,6 +1,8 @@
 package org.eol.globi.data;
 
 import junit.framework.Assert;
+import org.eol.globi.data.taxon.TaxonTerm;
+import org.eol.globi.service.TaxonPropertyEnricher;
 import org.junit.Before;
 import org.junit.Test;
 import org.eol.globi.data.taxon.TaxonLookupService;
@@ -25,14 +27,9 @@ public class NodeFactoryTest extends GraphDBTestCase {
 
     @Before
     public void createFactory() {
-        nodeFactory = new NodeFactory(getGraphDb(), new TaxonLookupService() {
+        nodeFactory = new NodeFactory(getGraphDb(),new TaxonPropertyEnricher() {
             @Override
-            public String[] lookupTermIds(String taxonName) throws IOException {
-                return new String[0];
-            }
-
-            @Override
-            public void destroy() {
+            public void enrich(Taxon taxon) throws IOException {
 
             }
         });

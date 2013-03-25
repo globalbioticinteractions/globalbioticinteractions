@@ -3,7 +3,6 @@ package org.eol.globi.data.taxon;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.Fieldable;
-import org.apache.lucene.document.NumericField;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
@@ -57,27 +56,37 @@ public class TaxonLookupServiceImpl implements TaxonImportListener, TaxonLookupS
     }
 
     @Override
-    public String[] lookupTermIds(String taxonName) throws IOException {
-        String[] ids = new String[0];
+    public TaxonTerm[] lookupTermsByName(String taxonName) throws IOException {
+        TaxonTerm[] terms = new TaxonTerm[0];
         if (indexSearcher != null) {
             PhraseQuery query = new PhraseQuery();
-            query.add(new Term("name", taxonName));
+            query.add(new Term(FIELD_NAME, taxonName));
             int maxHits = 3;
             TopDocs docs = indexSearcher.search(query, maxHits);
 
             if (docs.totalHits > 0) {
-                ids = new String[docs.totalHits];
+                terms = new TaxonTerm[docs.totalHits];
                 for (int i = 0; i < docs.totalHits && i < maxHits; i++) {
                     ScoreDoc scoreDoc = docs.scoreDocs[i];
                     Document foundDoc = indexSearcher.doc(scoreDoc.doc);
-                    Fieldable field = foundDoc.getFieldable(FIELD_ID);
-                    if (field != null) {
-                        ids[i] = ((Field) field).stringValue();
+                    TaxonTerm term = new TaxonTerm();
+                    Fieldable idField = foundDoc.getFieldable(FIELD_ID);
+                    if (idField != null) {
+                        term.setId(idField.stringValue());
                     }
+                    Fieldable rankPathField = foundDoc.getFieldable(FIELD_RANK_PATH);
+                    if (rankPathField != null) {
+                        term.setRankPath(rankPathField.stringValue());
+                    }
+                    Fieldable fieldName = foundDoc.getFieldable(FIELD_NAME);
+                    if (fieldName != null) {
+                        term.setName(fieldName.stringValue());
+                    }
+                    terms[i] = term;
                 }
             }
         }
-        return ids;
+        return terms;
     }
 
     @Override

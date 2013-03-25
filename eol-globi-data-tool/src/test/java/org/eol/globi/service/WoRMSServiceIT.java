@@ -9,26 +9,26 @@ import static org.junit.Assert.assertThat;
 public class WoRMSServiceIT {
 
     @Test
-    public void lookupExistingSpeciesTaxon() throws LSIDLookupServiceException {
+    public void lookupExistingSpeciesTaxon() throws TaxonPropertyLookupServiceException {
         String lsid = new WoRMSService().lookupLSIDByTaxonName("Peprilus burti");
         assertThat(lsid, is("urn:lsid:marinespecies.org:taxname:276560"));
     }
 
     @Test
-    public void lookupExistingGenusTaxon() throws LSIDLookupServiceException {
+    public void lookupExistingGenusTaxon() throws TaxonPropertyLookupServiceException {
         String lsid = new WoRMSService().lookupLSIDByTaxonName("Peprilus");
         assertThat(lsid, is("urn:lsid:marinespecies.org:taxname:159825"));
     }
 
     @Test
-    public void lookupNonExistentTaxon() throws LSIDLookupServiceException {
+    public void lookupNonExistentTaxon() throws TaxonPropertyLookupServiceException {
         String lsid = new WoRMSService().lookupLSIDByTaxonName("Brutus blahblahi");
         assertThat(lsid, is(nullValue()));
 
     }
 
     @Test
-    public void lookupNA() throws LSIDLookupServiceException {
+    public void lookupNA() throws TaxonPropertyLookupServiceException {
         String lsid = new WoRMSService().lookupLSIDByTaxonName("NA");
         assertThat(lsid, is(nullValue()));
     }

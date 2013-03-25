@@ -9,7 +9,7 @@ import static org.junit.Assert.assertThat;
 public class EOLServiceIT {
 
     @Test
-    public void lookupByName() throws LSIDLookupServiceException {
+    public void lookupByName() throws TaxonPropertyLookupServiceException {
         assertThat(lookupPageIdByScientificName("Homo sapiens"), is("EOL:327955"));
         assertThat(lookupPageIdByScientificName("Puccinia caricina var. ribesii-pendulae"), is(nullValue()));
         assertThat(lookupPageIdByScientificName("Hesperocharis paranensis"), is("EOL:176594"));
@@ -19,7 +19,7 @@ public class EOLServiceIT {
     }
 
     @Test
-    public void lookupByNameYieldsMoreThanOneMatches() throws LSIDLookupServiceException {
+    public void lookupByNameYieldsMoreThanOneMatches() throws TaxonPropertyLookupServiceException {
         // this species has two matches  http://eol.org/27383107 and http://eol.org/209714, first is picked
         assertThat(lookupPageIdByScientificName("Copadichromis insularis"), is("EOL:27383107"));
 
@@ -40,12 +40,12 @@ public class EOLServiceIT {
     }
 
     @Test
-    public void lookupByNameYieldsNoMatches() throws LSIDLookupServiceException {
+    public void lookupByNameYieldsNoMatches() throws TaxonPropertyLookupServiceException {
         assertThat(lookupPageIdByScientificName("Clio acicula"), is(nullValue()));
         assertThat(lookupPageIdByScientificName("Aegires oritzi"), is(nullValue()));
     }
 
-    private String lookupPageIdByScientificName(String taxonName) throws LSIDLookupServiceException {
+    private String lookupPageIdByScientificName(String taxonName) throws TaxonPropertyLookupServiceException {
         return new EOLService().lookupLSIDByTaxonName(taxonName);
     }
 

@@ -3,11 +3,11 @@ package org.eol.globi.service;
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
 
-public abstract class BaseService {
+public abstract class BaseHttpClientService {
 
     protected HttpClient httpClient;
 
-    public BaseService() {
+    public BaseHttpClientService() {
         this.httpClient = new DefaultHttpClient();
     }
 
