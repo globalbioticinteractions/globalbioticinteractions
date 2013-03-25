@@ -20,7 +20,7 @@ public class OboParserTest {
 
     @Test
     public void oboImport() throws IOException {
-        BufferedReader bufferedReader = new OboTaxonReaderFactory().getAllReaders().get(0);
+        BufferedReader reader = new SingleResourceTaxonReaderFactory("/org/obofoundry/ncbi_taxonomy.obo.gz").getAllReaders().values().iterator().next();
         this.counter = 0;
 
         TaxonImportListener listener = new TaxonImportListener() {
@@ -48,7 +48,7 @@ public class OboParserTest {
         };
 
         OboParser oboParser = new OboParser();
-        oboParser.parse(bufferedReader, listener);
+        oboParser.parse(reader, listener);
         assertThat("expected a certain amount of terms", getCounter(), is(oboParser.getExpectedMaxTerms()));
     }
 

@@ -2,9 +2,11 @@ package org.eol.globi.data.taxon;
 
 import org.junit.Test;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.Is.is;
@@ -15,14 +17,16 @@ public class EOLTaxonParserTest {
 
     @Test
     public void readLine() throws IOException {
-        TaxonReaderFactory taxonReaderFactory = new EOLTaxonReaderFactory();
-        assertThat(taxonReaderFactory.getAllReaders().get(0), is(notNullValue()));
+        TaxonReaderFactory taxonReaderFactory = new SingleResourceTaxonReaderFactory("eol/taxon.tab.gz");
+        Map<String, BufferedReader> allReaders = taxonReaderFactory.getAllReaders();
+        BufferedReader firstReader = allReaders.entrySet().iterator().next().getValue();
+        assertThat(firstReader, is(notNullValue()));
 
 
         TaxonParser taxonParser = new EOLTaxonParser();
         final List<TaxonTerm> terms = new ArrayList<TaxonTerm>();
         TestTaxonImportListener listener = new TestTaxonImportListener(terms);
-        taxonParser.parse(taxonReaderFactory.getFirstReader(), listener);
+        taxonParser.parse(firstReader, listener);
 
         TaxonTerm taxonTerm = terms.get(0);
         assertThat(taxonTerm.getId(), is("1"));

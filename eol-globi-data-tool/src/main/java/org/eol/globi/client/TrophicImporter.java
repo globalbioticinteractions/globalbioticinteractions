@@ -3,6 +3,7 @@ package org.eol.globi.client;
 import org.apache.commons.lang3.time.StopWatch;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.eol.globi.data.taxon.SingleResourceTaxonReaderFactory;
 import org.eol.globi.export.StudyExportUnmatchedTaxaForStudies;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.eol.globi.data.NodeFactory;
@@ -13,7 +14,6 @@ import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.data.StudyImporterFactory;
 import org.eol.globi.data.StudyLibrary;
 import org.eol.globi.data.taxon.EOLTaxonParser;
-import org.eol.globi.data.taxon.EOLTaxonReaderFactory;
 import org.eol.globi.data.taxon.TaxonLookupService;
 import org.eol.globi.data.taxon.TaxonomyImporter;
 import org.eol.globi.db.GraphService;
@@ -63,7 +63,7 @@ public class TrophicImporter {
     }
 
     private TaxonLookupService buildEOLTaxonLookupService() throws StudyImporterException {
-        TaxonomyImporter importer = new TaxonomyImporter(new EOLTaxonParser(), new EOLTaxonReaderFactory());
+        TaxonomyImporter importer = new TaxonomyImporter(new EOLTaxonParser(), new SingleResourceTaxonReaderFactory("eol/taxon.tab.gz"));
         LOG.info("Taxonomy import starting...");
         importer.doImport();
         LOG.info("Taxonomy import complete.");

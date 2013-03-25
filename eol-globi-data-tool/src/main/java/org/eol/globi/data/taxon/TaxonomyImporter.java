@@ -8,7 +8,6 @@ import org.eol.globi.data.StudyImporterException;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.util.List;
 import java.util.Map;
 
 public class TaxonomyImporter {
@@ -25,7 +24,7 @@ public class TaxonomyImporter {
     private final TaxonLookupServiceImpl taxonLookupService;
 
     public TaxonomyImporter(NodeFactory nodeFactory) {
-        this(new OboParser(), new OboTaxonReaderFactory());
+        this(new OboParser(), new SingleResourceTaxonReaderFactory("/org/obofoundry/ncbi_taxonomy.obo.gz"));
     }
 
     public TaxonomyImporter(TaxonParser taxonParser, TaxonReaderFactory taxonReaderFactory) {
