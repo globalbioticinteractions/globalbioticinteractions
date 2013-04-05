@@ -26,14 +26,10 @@ public class StudyImporterForJRFerrerParis extends BaseStudyImporter {
             LabeledCSVParser parser = parserFactory.createParser(studyResource);
 
             while (parser.getLine() != null) {
-                Taxon instigatorTaxon = createTaxon(parser, "Lepidoptera Name");
-                Specimen instigatorSpecimen = nodeFactory.createSpecimen();
-                instigatorSpecimen.classifyAs(instigatorTaxon);
+                Specimen instigatorSpecimen = nodeFactory.createSpecimen(createTaxon(parser, "Lepidoptera Name"));
                 study.collected(instigatorSpecimen);
 
-                Taxon targetTaxon = createTaxon(parser, "Hostplant Name");
-                Specimen targetSpecimen = nodeFactory.createSpecimen();
-                targetSpecimen.classifyAs(targetTaxon);
+                Specimen targetSpecimen = nodeFactory.createSpecimen(createTaxon(parser, "Hostplant Name"));
                 instigatorSpecimen.ate(targetSpecimen);
             }
         } catch (IOException e) {

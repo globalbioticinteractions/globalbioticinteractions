@@ -121,16 +121,12 @@ public class StudyImporterForRoopnarine extends BaseStudyImporter {
             throw new StudyImporterException("no species available for guild number [" + predatorGuildNumber + "]");
         }
         for (String predatorTaxa : predatorTaxaList) {
-            Taxon predatorTaxon = nodeFactory.getOrCreateTaxon(predatorTaxa);
             // TODO - here's where the specimen model doesn't fit nicely - need a way to distinguish inferred relationships from direct observations
-            Specimen predatorSpecimen = nodeFactory.createSpecimen();
+            Specimen predatorSpecimen = nodeFactory.createSpecimen(predatorTaxa);
             predatorSpecimenList.add(predatorSpecimen);
-            predatorSpecimen.classifyAs(predatorTaxon);
             for (Taxon preyTaxon : preyTaxonList) {
-                Specimen preySpecimen = nodeFactory.createSpecimen();
-                preySpecimen.classifyAs(preyTaxon);
+                Specimen preySpecimen = nodeFactory.createSpecimen(preyTaxon);
                 predatorSpecimen.ate(preySpecimen);
-
             }
         }
         return predatorSpecimenList;

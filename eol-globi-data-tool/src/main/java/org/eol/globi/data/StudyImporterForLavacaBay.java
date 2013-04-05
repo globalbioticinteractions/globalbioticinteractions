@@ -252,13 +252,11 @@ public class StudyImporterForLavacaBay extends BaseStudyImporter {
     }
 
     private Specimen createAndClassifySpecimen(final String speciesName) throws StudyImporterException {
-        Specimen specimen = nodeFactory.createSpecimen();
         try {
-            specimen.classifyAs(nodeFactory.getOrCreateTaxon(speciesName));
+            return nodeFactory.createSpecimen(speciesName);
         } catch (NodeFactoryException e) {
-            throw new StudyImporterException("failed to classify specimen", e);
+            throw new StudyImporterException("failed to classify specimen with name [" + speciesName + "]", e);
         }
-        return specimen;
     }
 
 }

@@ -40,26 +40,12 @@ public class StudyTest extends GraphDBTestCase {
     public void populateStudy() throws NodeFactoryException {
         Study study = factory.createStudy("Our first study");
 
-
-        Taxon family = factory.getOrCreateTaxon(WHITE_SHARK_FAMILY);
-
-
-        Taxon genus2 = factory.getOrCreateTaxon(CARCHARODON);
-        genus2.createRelationshipTo(family, IS_A);
-        Taxon genus = genus2;
-
         Taxon greatWhiteSpecies = factory.getOrCreateTaxon(CARCHARODON_CARCHARIAS);
 
+        Specimen goldFish = factory.createSpecimen(CARASSIUS_AURATUS_AURATUS);
 
-        Taxon goldFishSpecies = factory.getOrCreateTaxon(CARASSIUS_AURATUS_AURATUS);
-
-        Specimen goldFish = factory.createSpecimen();
-        goldFish.classifyAs(goldFishSpecies);
-
-        Specimen shark = factory.createSpecimen();
-        shark.classifyAs(greatWhiteSpecies);
-        Specimen fuzzyShark = factory.createSpecimen();
-        fuzzyShark.classifyAs(genus);
+        Specimen shark = factory.createSpecimen(CARCHARODON_CARCHARIAS);
+        Specimen fuzzyShark = factory.createSpecimen(CARCHARODON);
 
         shark.ate(goldFish);
         fuzzyShark.ate(goldFish);

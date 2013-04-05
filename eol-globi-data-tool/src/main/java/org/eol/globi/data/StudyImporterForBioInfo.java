@@ -156,15 +156,12 @@ public class StudyImporterForBioInfo extends BaseStudyImporter implements StudyI
         if (scientificName == null) {
             throw new StudyImporterException("failed to find scientific name for taxonId [" + taxonId + "] at line [" + labeledCSVParser.getLastLineNumber() + "]");
         }
-        Taxon taxon = null;
         try {
-            taxon = nodeFactory.getOrCreateTaxon(scientificName, "bioinfo:" + taxonId, null);
+            Taxon taxon = nodeFactory.getOrCreateTaxon(scientificName, "bioinfo:" + taxonId, null);
+            return nodeFactory.createSpecimen(taxon);
         } catch (NodeFactoryException e) {
             throw new StudyImporterException("failed to create taxon with scientific name [" + scientificName + "]", e);
         }
-        Specimen specimen = nodeFactory.createSpecimen();
-        specimen.classifyAs(taxon);
-        return specimen;
     }
 
     private Long labelAsLong(LabeledCSVParser labeledCSVParser, String trophicRelId2) {

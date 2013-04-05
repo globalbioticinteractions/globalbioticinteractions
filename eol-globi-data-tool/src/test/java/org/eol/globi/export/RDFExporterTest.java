@@ -20,18 +20,14 @@ public class RDFExporterTest extends GraphDBTestCase {
 
         Study study = nodeFactory.createStudy("A Study");
 
-        Specimen man = nodeFactory.createSpecimen();
+        Specimen man = nodeFactory.createSpecimen("Homo sapiens");
         man.setLengthInMm(193.0 * 10);
 
-        Taxon manSpecies = nodeFactory.getOrCreateTaxon("Homo sapiens");
-        man.classifyAs(manSpecies);
         Location sampleLocation = nodeFactory.getOrCreateLocation(40.714623, -74.006605, 0.0);
         man.caughtIn(sampleLocation);
         study.collected(man);
 
-        Specimen dog = nodeFactory.createSpecimen();
-        Taxon dogSpecies = nodeFactory.getOrCreateTaxon("Canis lupus");
-        dog.classifyAs(dogSpecies);
+        Specimen dog = nodeFactory.createSpecimen("Canis lupus");
         Relationship preysUponRelationship = man.createRelationshipTo(dog, InteractType.ATE);
 
 
@@ -60,7 +56,7 @@ public class RDFExporterTest extends GraphDBTestCase {
 
         Resource dogSpecimen = model.createResource(entityPrefix + dog.getNodeID())
                 .addProperty(model.createProperty(tn + "rank"), model.createResource(tn + "Species"))
-                .addProperty(model.createProperty(tn + "nameComplete"), dogSpecies.getName())
+                .addProperty(model.createProperty(tn + "nameComplete"), "Canis lupus")
                 .addProperty(model.createProperty(rdf + "type"), specimenResource);
 
 

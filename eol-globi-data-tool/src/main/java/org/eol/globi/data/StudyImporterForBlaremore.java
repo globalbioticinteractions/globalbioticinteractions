@@ -39,7 +39,6 @@ public class StudyImporterForBlaremore extends BaseStudyImporter {
                     "University of Florida, Department of Fisheries and Aquatic Sciences",
                     "2005",
                     "Prey Selection By The Atlantic Angel Shark Squatina Dumeril In The Northeastern Gulf Of Mexico.");
-            Taxon angelSharkSpecies = nodeFactory.getOrCreateTaxon("Squatina dumeril");
             Location collectionLocation = nodeFactory.getOrCreateLocation(29.219302, -87.06665, null);
 
             Map<Integer, Specimen> specimenMap = new HashMap<Integer, Specimen>();
@@ -52,7 +51,7 @@ public class StudyImporterForBlaremore extends BaseStudyImporter {
                 } else {
                     Specimen predatorSpecimen = specimenMap.get(sharkId);
                     if (predatorSpecimen == null) {
-                        predatorSpecimen = nodeFactory.createSpecimen();
+                        predatorSpecimen = nodeFactory.createSpecimen("Squatina dumeril");
                         predatorSpecimen.caughtIn(collectionLocation);
                         Relationship collectedRel = study.collected(predatorSpecimen);
                         try {
@@ -63,8 +62,6 @@ public class StudyImporterForBlaremore extends BaseStudyImporter {
                     }
                     specimenMap.put(sharkId, predatorSpecimen);
 
-                    predatorSpecimen.classifyAs(angelSharkSpecies);
-
                     String totalLengthInCm = line[3];
                     try {
                         Double lengthInMm = Double.parseDouble(totalLengthInCm) * 10.0;
@@ -72,8 +69,8 @@ public class StudyImporterForBlaremore extends BaseStudyImporter {
                     } catch (NumberFormatException ex) {
                         throw new StudyImporterException("failed to parse length [" + totalLengthInCm);
                     }
-                    Specimen preySpecimen = nodeFactory.createSpecimen();
-                    preySpecimen.classifyAs(nodeFactory.getOrCreateTaxon(line[7]));
+                    String preySpeciesDescription = line[7];
+                    Specimen preySpecimen = nodeFactory.createSpecimen(preySpeciesDescription);
                     predatorSpecimen.ate(preySpecimen);
                 }
             }

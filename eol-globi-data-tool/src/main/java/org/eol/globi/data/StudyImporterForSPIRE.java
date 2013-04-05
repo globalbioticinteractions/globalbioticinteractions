@@ -189,9 +189,7 @@ public class StudyImporterForSPIRE extends BaseStudyImporter {
 
     private Specimen createSpecimen(String taxonName) throws NodeFactoryException {
         taxonName = taxonName.replaceAll("_", " ");
-        Taxon predatorTaxon = nodeFactory.getOrCreateTaxon(taxonName);
-        Specimen predator = nodeFactory.createSpecimen();
-        predator.classifyAs(predatorTaxon);
+        Specimen predator = nodeFactory.createSpecimen(taxonName);
         return predator;
     }
 

@@ -59,11 +59,10 @@ public class StudyImporterForICES extends BaseStudyImporter {
 
     private Specimen addPredator(LabeledCSVParser parser, Study study) throws NodeFactoryException, StudyImporterException {
         Specimen predatorSpecimen;
-        predatorSpecimen = nodeFactory.createSpecimen();
+        predatorSpecimen = nodeFactory.createSpecimen(parser.getValueByLabel("Predator"));
         predatorSpecimen.setLengthInMm(parseDoubleField(parser, "Predator (mean) Lengh"));
 
         addLocation(parser, predatorSpecimen);
-        classifyPredator(parser, predatorSpecimen);
         addCollectedAt(parser, study, predatorSpecimen);
         return predatorSpecimen;
     }
@@ -76,12 +75,6 @@ public class StudyImporterForICES extends BaseStudyImporter {
             throw new StudyImporterException("failed to access datasource", e);
         }
         return parser;
-    }
-
-    private void classifyPredator(LabeledCSVParser parser, Specimen predatorSpecimen) throws NodeFactoryException {
-        String predatorName = parser.getValueByLabel("Predator");
-        Taxon predatorTaxon = nodeFactory.getOrCreateTaxon(predatorName);
-        predatorSpecimen.classifyAs(predatorTaxon);
     }
 
     private void addCollectedAt(LabeledCSVParser parser, Study study, Specimen predatorSpecimen) throws StudyImporterException {
@@ -103,12 +96,8 @@ public class StudyImporterForICES extends BaseStudyImporter {
     }
 
     private void atePrey(Specimen predatorSpecimen, String preyName) throws NodeFactoryException {
-        Taxon preyTaxon = nodeFactory.getOrCreateTaxon(preyName);
-        if (preyTaxon != null) {
-            Specimen preySpecimen = nodeFactory.createSpecimen();
-            preySpecimen.classifyAs(preyTaxon);
-            predatorSpecimen.ate(preySpecimen);
-        }
+        Specimen preySpecimen = nodeFactory.createSpecimen(preyName);
+        predatorSpecimen.ate(preySpecimen);
     }
 
     private Double parseDoubleField(LabeledCSVParser parser, String name) {

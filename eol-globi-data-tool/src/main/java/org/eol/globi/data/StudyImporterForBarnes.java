@@ -43,9 +43,7 @@ public class StudyImporterForBarnes extends BaseStudyImporter {
 
     private void importLine(LabeledCSVParser parser, Study study) throws StudyImporterException {
         try {
-            Taxon predatorTaxon = nodeFactory.getOrCreateTaxon(parser.getValueByLabel("Predator"));
-            Specimen predator = nodeFactory.createSpecimen();
-            predator.classifyAs(predatorTaxon);
+            Specimen predator = nodeFactory.createSpecimen(parser.getValueByLabel("Predator"));
 
             Double latitude = parseDegrees(parser.getValueByLabel("Latitude"));
             Double longitude = parseDegrees(parser.getValueByLabel("Longitude"));
@@ -54,9 +52,7 @@ public class StudyImporterForBarnes extends BaseStudyImporter {
             Location location = nodeFactory.getOrCreateLocation(latitude, longitude, altitudeInMeters);
             predator.caughtIn(location);
 
-            Specimen prey = nodeFactory.createSpecimen();
-            Taxon preyTaxon = nodeFactory.getOrCreateTaxon(parser.getValueByLabel("Prey"));
-            prey.classifyAs(preyTaxon);
+            Specimen prey = nodeFactory.createSpecimen(parser.getValueByLabel("Prey"));
 
             predator.ate(prey);
 

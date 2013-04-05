@@ -1,6 +1,7 @@
 package org.eol.globi.data;
 
 import junit.framework.Assert;
+import org.eol.globi.domain.Specimen;
 import org.eol.globi.service.TaxonPropertyEnricher;
 import org.junit.Before;
 import org.junit.Test;
@@ -14,6 +15,7 @@ import java.io.IOException;
 
 import static junit.framework.Assert.assertNull;
 import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -152,6 +154,16 @@ public class NodeFactoryTest extends GraphDBTestCase {
         assertNotDirtyName("trailing spaces  ", "trailing spaces");
         assertNotDirtyName("paren(thesis)", "paren");
         assertNotDirtyName("stars--*", "stars--");
+    }
+
+    @Test
+    public void describeAndClassifySpecimen() throws NodeFactoryException {
+        Specimen specimen = nodeFactory.createSpecimen();
+        specimen.setOriginalTaxonDescription("some taxon (bla)");
+
+        assertThat(specimen.getOriginalTaxonDescription(), is("some taxon (bla)"));
+        assertThat("original taxon descriptions are not indexed", nodeFactory.findTaxon("some taxon"), is(nullValue()));
+
     }
 
     private void assertNotDirtyName(String dirtyName, String cleanName) throws NodeFactoryException {

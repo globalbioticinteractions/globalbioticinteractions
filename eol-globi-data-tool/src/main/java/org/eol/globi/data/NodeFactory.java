@@ -165,17 +165,30 @@ public class NodeFactory {
         return location;
     }
 
+    public Specimen createSpecimen(String specimenTaxonDescription) throws NodeFactoryException {
+        Taxon taxon = getOrCreateTaxon(specimenTaxonDescription);
+        return createSpecimen(taxon);
+    }
+
     public Specimen createSpecimen() {
+        return createSpecimen((Taxon)null);
+    }
+
+    public Specimen createSpecimen(Taxon taxon) {
         Transaction transaction = graphDb.beginTx();
         Specimen specimen;
         try {
             specimen = new Specimen(graphDb.createNode(), null);
+            if (taxon != null) {
+                specimen.classifyAs(taxon);
+            }
             transaction.success();
         } finally {
             transaction.finish();
         }
         return specimen;
     }
+
 
     public Study createStudy(String title) {
         return createStudy(title, null, null, null, null);
@@ -314,4 +327,6 @@ public class NodeFactory {
         list.add(new FuzzyQuery(new Term(propertyName, capitalizedValue)));
         list.add(new WildcardQuery(new Term(propertyName, capitalizedValue + "*")));
     }
+
+
 }

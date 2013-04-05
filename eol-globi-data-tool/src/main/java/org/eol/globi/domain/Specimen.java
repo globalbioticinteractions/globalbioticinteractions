@@ -104,4 +104,20 @@ public class Specimen extends NodeBacked {
     public void interactsWith(Specimen recipientSpecimen, RelType relType) {
         createRelationshipTo(recipientSpecimen, relType);
     }
+
+    public String getOriginalTaxonDescription() {
+        Relationship singleRelationship = getUnderlyingNode().getSingleRelationship(RelTypes.ORIGINALLY_DESCRIBED_AS, Direction.OUTGOING);
+        return singleRelationship == null ? null : new Taxon(singleRelationship.getEndNode()).getName();
+    }
+
+    public void setOriginalTaxonDescription(String taxonName) {
+        Transaction transaction = getUnderlyingNode().getGraphDatabase().beginTx();
+        try {
+            Taxon taxon = new Taxon(getUnderlyingNode().getGraphDatabase().createNode(), taxonName);
+            createRelationshipTo(taxon, RelTypes.ORIGINALLY_DESCRIBED_AS);
+            transaction.success();
+        } finally {
+            transaction.finish();
+        }
+    }
 }

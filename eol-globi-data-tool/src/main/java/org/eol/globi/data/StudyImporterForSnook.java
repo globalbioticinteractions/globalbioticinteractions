@@ -71,16 +71,13 @@ public class StudyImporterForSnook extends BaseStudyImporter {
             }
 
             String length = line[2];
-            Specimen predatorSpecimen = nodeFactory.createSpecimen();
+            Specimen predatorSpecimen = nodeFactory.createSpecimen("Centropomus undecimalis");
             study.collected(predatorSpecimen);
             try {
                 predatorSpecimen.setLengthInMm(Double.parseDouble(length));
             } catch (NumberFormatException ex) {
                 LOG.warn("found malformed length in line:" + parser.lastLineNumber() + " [" + StringUtils.join(line, ",") + "]");
             }
-
-            String speciesName = "Centropomus undecimalis";
-            predatorSpecimen.classifyAs(nodeFactory.getOrCreateTaxon(speciesName));
 
             String locationCode = line[0];
             if (locationCode != null) {
@@ -98,10 +95,8 @@ public class StudyImporterForSnook extends BaseStudyImporter {
                         try {
                             int preyCount = Integer.parseInt(preyCountString);
                             String preyName = header[i];
-                            Taxon preyTaxon = nodeFactory.getOrCreateTaxon(preyName);
                             for (int j = 0; j < preyCount; j++) {
-                                Specimen preySpecimen = nodeFactory.createSpecimen();
-                                preySpecimen.classifyAs(preyTaxon);
+                                Specimen preySpecimen = nodeFactory.createSpecimen(preyName);
                                 predatorSpecimen.ate(preySpecimen);
                             }
                         } catch (NumberFormatException e) {

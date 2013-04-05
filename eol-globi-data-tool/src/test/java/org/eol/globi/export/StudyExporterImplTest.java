@@ -79,10 +79,8 @@ public class StudyExporterImplTest extends GraphDBTestCase {
     @Test
     public void exportToCSVSpecimenEmptyStomach() throws NodeFactoryException, IOException {
         Study myStudy = nodeFactory.createStudy("myStudy");
-        Specimen specimen = nodeFactory.createSpecimen();
+        Specimen specimen = nodeFactory.createSpecimen("Homo sapiens");
         myStudy.collected(specimen);
-        Taxon taxon = nodeFactory.getOrCreateTaxon("Homo sapiens");
-        specimen.classifyAs(taxon);
 
         StringWriter row = new StringWriter();
 
@@ -98,7 +96,7 @@ public class StudyExporterImplTest extends GraphDBTestCase {
 
     private void createTestData(Double length) throws NodeFactoryException, ParseException {
         Study myStudy = nodeFactory.createStudy("myStudy");
-        Specimen specimen = nodeFactory.createSpecimen();
+        Specimen specimen = nodeFactory.createSpecimen("Homo sapiens");
         specimen.setStomachVolumeInMilliLiter(666.0);
         Relationship collected = myStudy.collected(specimen);
         Transaction transaction = myStudy.getUnderlyingNode().getGraphDatabase().beginTx();
@@ -108,13 +106,9 @@ public class StudyExporterImplTest extends GraphDBTestCase {
         } finally {
             transaction.finish();
         }
-        Taxon taxon = nodeFactory.getOrCreateTaxon("Homo sapiens");
-        specimen.classifyAs(taxon);
-        Specimen otherSpecimen = nodeFactory.createSpecimen();
+        Specimen otherSpecimen = nodeFactory.createSpecimen("Canis lupus");
         otherSpecimen.setVolumeInMilliLiter(124.0);
-        Taxon wolf = nodeFactory.getOrCreateTaxon("Canis lupus");
 
-        otherSpecimen.classifyAs(wolf);
         specimen.ate(otherSpecimen);
         specimen.ate(otherSpecimen);
         if (null != length) {
