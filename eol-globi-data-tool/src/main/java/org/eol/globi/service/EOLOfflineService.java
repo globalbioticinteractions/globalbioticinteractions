@@ -22,7 +22,7 @@ public class EOLOfflineService extends OfflineService {
     protected String getValueForPropertyName(String propertyName, TaxonTerm term) {
         String value = null;
         if (Taxon.EXTERNAL_ID.equals(propertyName)) {
-            value = "EOL:" + term.getId();
+            value = EOLTaxonImageService.EOL_LSID_PREFIX + term.getId();
         }
         return value;
     }

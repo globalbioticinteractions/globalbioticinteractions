@@ -13,7 +13,13 @@ public abstract class BaseExternalIdService extends BaseHttpClientService implem
         if (taxonName.trim().length() < 2) {
             LOG.warn("taxon name [" + taxonName + "] too short");
         } else {
-            externalId = lookupLSIDByTaxonName(taxonName);
+            try {
+                externalId = lookupLSIDByTaxonName(taxonName);
+            } catch (TaxonPropertyLookupServiceException e) {
+                shutdown();
+
+                throw e;
+            }
         }
         return externalId;
     }
@@ -24,7 +30,6 @@ public abstract class BaseExternalIdService extends BaseHttpClientService implem
     }
 
     public abstract String lookupLSIDByTaxonName(String taxonName) throws TaxonPropertyLookupServiceException;
-
 
 
 }

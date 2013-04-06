@@ -1,9 +1,7 @@
 package org.eol.globi.service;
 
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.BasicResponseHandler;
-import org.apache.http.impl.client.DefaultHttpClient;
 
 import java.io.IOException;
 import java.net.URI;
@@ -23,10 +21,9 @@ public class ITISService extends BaseExternalIdService  {
         HttpGet get = new HttpGet(uri);
 
         BasicResponseHandler responseHandler = new BasicResponseHandler();
-        HttpClient httpClient = new DefaultHttpClient();
-        String response = null;
+        String response;
         try {
-            response = httpClient.execute(get, responseHandler);
+            response = getHttpClient().execute(get, responseHandler);
         } catch (IOException e) {
             throw new TaxonPropertyLookupServiceException("failed to execute query to [ " + uri.toString() + "]", e);
         }

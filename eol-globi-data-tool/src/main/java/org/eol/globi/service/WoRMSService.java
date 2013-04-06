@@ -38,9 +38,9 @@ public class WoRMSService extends BaseExternalIdService  {
         post.setEntity(catchEntity);
 
         BasicResponseHandler responseHandler = new BasicResponseHandler();
-        String response = null;
+        String response;
         try {
-            response = httpClient.execute(post, responseHandler);
+            response = getHttpClient().execute(post, responseHandler);
         } catch (IOException e) {
             throw new TaxonPropertyLookupServiceException("failed to connect to [" + post.getURI().toString() + "]", e);
         }

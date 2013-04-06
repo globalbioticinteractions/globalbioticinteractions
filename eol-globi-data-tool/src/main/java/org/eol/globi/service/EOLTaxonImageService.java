@@ -51,7 +51,7 @@ public class EOLTaxonImageService extends BaseHttpClientService {
 
             if (null != imageObjectId) {
                 String pageUrlString = "http://eol.org/api/data_objects/1.0/" + imageObjectId + ".json";
-                response = httpClient.execute(new HttpGet(pageUrlString));
+                response = getHttpClient().execute(new HttpGet(pageUrlString));
                 responseString = EntityUtils.toString(response.getEntity());
                 if (200 == response.getStatusLine().getStatusCode()) {
                     taxonImage = new TaxonImage();
@@ -67,7 +67,7 @@ public class EOLTaxonImageService extends BaseHttpClientService {
         HttpResponse response;
         String responseString;
         String pageUrlString = "http://eol.org/api/pages/1.0/" + eolPageId + ".json?common_names=0&details=0&images=1&videos=0&text=0";
-        response = httpClient.execute(new HttpGet(pageUrlString));
+        response = getHttpClient().execute(new HttpGet(pageUrlString));
         responseString = EntityUtils.toString(response.getEntity());
         if (200 == response.getStatusLine().getStatusCode()) {
             ObjectMapper mapper = new ObjectMapper();
@@ -101,7 +101,7 @@ public class EOLTaxonImageService extends BaseHttpClientService {
     private String lookupEOLPageId(String taxonId, String eolPageId, String eolProviderId) throws IOException {
         String urlString = "http://eol.org/api/search_by_provider/1.0/" + taxonId + ".json?hierarchy_id=" + eolProviderId;
         HttpGet get = new HttpGet(urlString);
-        HttpResponse response = httpClient.execute(get);
+        HttpResponse response = getHttpClient().execute(get);
 
         String responseString = EntityUtils.toString(response.getEntity());
 

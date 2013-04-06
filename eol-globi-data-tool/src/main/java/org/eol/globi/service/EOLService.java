@@ -5,13 +5,13 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.HttpResponseException;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.BasicResponseHandler;
-import org.apache.http.impl.client.DefaultHttpClient;
 
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
 public class EOLService extends BaseExternalIdService {
+
 
     @Override
     public String lookupLSIDByTaxonName(String taxonName) throws TaxonPropertyLookupServiceException {
@@ -31,7 +31,8 @@ public class EOLService extends BaseExternalIdService {
         HttpGet get = new HttpGet(uri);
 
         BasicResponseHandler responseHandler = new BasicResponseHandler();
-        HttpClient httpClient = new DefaultHttpClient();
+
+        HttpClient httpClient = getHttpClient();
         String response = null;
         try {
             response = httpClient.execute(get, responseHandler);
@@ -76,8 +77,4 @@ public class EOLService extends BaseExternalIdService {
         return pageId;
     }
 
-    @Override
-    public void shutdown() {
-
-    }
 }
