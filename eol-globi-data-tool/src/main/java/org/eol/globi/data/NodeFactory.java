@@ -166,15 +166,18 @@ public class NodeFactory {
     }
 
     public Specimen createSpecimen(String specimenTaxonDescription) throws NodeFactoryException {
-        Taxon taxon = getOrCreateTaxon(specimenTaxonDescription);
-        return createSpecimen(taxon);
+        return createSpecimen(specimenTaxonDescription, null);
     }
 
-    public Specimen createSpecimen() {
-        return createSpecimen((Taxon)null);
-    }
+    public Specimen createSpecimen(String specimenTaxonDescription, String taxonExternalId) throws NodeFactoryException {
+            Taxon taxon = getOrCreateTaxon(specimenTaxonDescription, taxonExternalId, null);
+            Specimen specimen = createSpecimen(taxon);
+            specimen.setOriginalTaxonDescription(specimenTaxonDescription);
+            return specimen;
+        }
 
-    public Specimen createSpecimen(Taxon taxon) {
+
+    private Specimen createSpecimen(Taxon taxon) {
         Transaction transaction = graphDb.beginTx();
         Specimen specimen;
         try {

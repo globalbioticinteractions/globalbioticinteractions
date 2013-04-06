@@ -2,6 +2,7 @@ package org.eol.globi.data;
 
 import com.Ostermiller.util.LabeledCSVParser;
 import org.hamcrest.core.Is;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
@@ -74,6 +75,7 @@ public class StudyImporterForRoopnarineTest extends GraphDBTestCase {
         assertThat(totalRels, Is.is(21));
     }
 
+    @Ignore ("roopnarine imports eats more memory that other study imports")
     @Test
     public void importAll() throws StudyImporterException, NodeFactoryException {
         StudyImporterForRoopnarine studyImporterFor = new StudyImporterForRoopnarine(new ParserFactoryImpl(), nodeFactory);

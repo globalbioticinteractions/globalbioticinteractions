@@ -26,11 +26,22 @@ public class StudyImporterForJRFerrerParis extends BaseStudyImporter {
             LabeledCSVParser parser = parserFactory.createParser(studyResource);
 
             while (parser.getLine() != null) {
-                Specimen instigatorSpecimen = nodeFactory.createSpecimen(createTaxon(parser, "Lepidoptera Name"));
-                study.collected(instigatorSpecimen);
+                Specimen instigatorSpecimen = null;
+                try {
+                    instigatorSpecimen = nodeFactory.createSpecimen(createTaxon(parser, "Lepidoptera Name"));
+                    study.collected(instigatorSpecimen);
 
-                Specimen targetSpecimen = nodeFactory.createSpecimen(createTaxon(parser, "Hostplant Name"));
-                instigatorSpecimen.ate(targetSpecimen);
+                } catch (NodeFactoryException e) {
+                    throw new StudyImporterException("failed to create instigator specimen", e);
+                }
+
+                Specimen targetSpecimen = null;
+                try {
+                    targetSpecimen = nodeFactory.createSpecimen(createTaxon(parser, "Hostplant Name"));
+                    instigatorSpecimen.ate(targetSpecimen);
+                } catch (NodeFactoryException e) {
+                    throw new StudyImporterException("failed to create target specimen", e);
+                }
             }
         } catch (IOException e) {
             throw new StudyImporterException("failed to access resource [" + studyResource + "]");
@@ -39,16 +50,13 @@ public class StudyImporterForJRFerrerParis extends BaseStudyImporter {
         return study;
     }
 
-    private Taxon createTaxon(LabeledCSVParser parser, String taxonLabel) throws StudyImporterException {
+    private String createTaxon(LabeledCSVParser parser, String taxonLabel) throws StudyImporterException {
         String instigatorScientificName = parser.getValueByLabel(taxonLabel);
         if (StringUtils.isBlank(instigatorScientificName)) {
             throw new StudyImporterException("found missing instigator scientific name at line [" + parser.getLastLineNumber() + "]");
         } else {
-            try {
-                return nodeFactory.getOrCreateTaxon(StringUtils.trim(instigatorScientificName));
-            } catch (NodeFactoryException e) {
-                throw new StudyImporterException("failed to find/create taxon with name [" + instigatorScientificName + "]");
-            }
+            return StringUtils.trim(instigatorScientificName);
+
         }
     }
 }

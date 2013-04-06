@@ -30,16 +30,14 @@ public class StudyExporterPredatorPreyEOLTest extends GraphDBTestCase {
 
     private Study createStudy(String predatorExternalId, String preyExternalId) throws NodeFactoryException {
         Study study = nodeFactory.createStudy("my study");
-        Taxon homoSapiens = nodeFactory.getOrCreateTaxon("Homo sapiens", predatorExternalId, null);
-        Specimen predatorSpecimen = nodeFactory.createSpecimen(homoSapiens);
+        Specimen predatorSpecimen = nodeFactory.createSpecimen("Homo sapiens", predatorExternalId);
         addCanisLupus(predatorSpecimen, preyExternalId);
         study.collected(predatorSpecimen);
         return study;
     }
 
     private void addCanisLupus(Specimen predatorSpecimen, String externalId) throws NodeFactoryException {
-        Taxon canisLupus = nodeFactory.getOrCreateTaxon("Canis lupus", externalId, null);
-        Specimen preySpecimen = nodeFactory.createSpecimen(canisLupus);
+        Specimen preySpecimen = nodeFactory.createSpecimen("Canis lupus", externalId);
         predatorSpecimen.createRelationshipTo(preySpecimen, InteractType.ATE);
     }
 
@@ -71,17 +69,14 @@ public class StudyExporterPredatorPreyEOLTest extends GraphDBTestCase {
     @Test
     public void exportOnePredatorTwoPrey() throws NodeFactoryException, IOException {
         Study study = nodeFactory.createStudy("my study");
-        Taxon homoSapiens = nodeFactory.getOrCreateTaxon("Homo sapiens", "homoSapiensId", null);
-        Specimen predatorSpecimen = nodeFactory.createSpecimen(homoSapiens);
+        Specimen predatorSpecimen = nodeFactory.createSpecimen("Homo sapiens", "homoSapiensId");
         addCanisLupus(predatorSpecimen, "canisLupusId");
         addCanisLupus(predatorSpecimen, "canisLupusId");
-        Taxon canisLupus = nodeFactory.getOrCreateTaxon("Canis lupus other", "canisLupusId2", null);
-        Specimen preySpecimen = nodeFactory.createSpecimen(canisLupus);
+        Specimen preySpecimen = nodeFactory.createSpecimen("Canis lupus other", "canisLupusId2");
         predatorSpecimen.createRelationshipTo(preySpecimen, InteractType.ATE);
         study.collected(predatorSpecimen);
 
-        Taxon homoSapiens2 = nodeFactory.getOrCreateTaxon("Homo sapiens2", "homoSapiensId2", null);
-        Specimen predatorSpecimen2 = nodeFactory.createSpecimen(homoSapiens2);
+        Specimen predatorSpecimen2 = nodeFactory.createSpecimen("Homo sapiens2", "homoSapiensId2");
         addCanisLupus(predatorSpecimen2, "canisLupusId");
         study.collected(predatorSpecimen2);
 

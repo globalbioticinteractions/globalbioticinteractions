@@ -20,25 +20,28 @@ public class StudyExportUnmatchedTaxaForStudiesTest extends GraphDBTestCase {
     @Test
     public void exportOnePredatorTwoPrey() throws NodeFactoryException, IOException {
         Study study = nodeFactory.createStudy("my study");
-        Taxon homoSapiens = nodeFactory.getOrCreateTaxon("Homo sapiens", "homoSapiensId", null);
-        Specimen predatorSpecimen = nodeFactory.createSpecimen(homoSapiens);
+        Specimen predatorSpecimen = nodeFactory.createSpecimen("Homo sapiens", "homoSapiensId");
         addCanisLupus(predatorSpecimen, "canisLupusId");
         addCanisLupus(predatorSpecimen, "canisLupusId");
-        Taxon canisLupus = nodeFactory.getOrCreateTaxon("Canis lupus other", NoMatchService.NO_MATCH, null);
-        Specimen preySpecimen = nodeFactory.createSpecimen(canisLupus);
+        Specimen preySpecimen = nodeFactory.createSpecimen("Canis lupus other", NoMatchService.NO_MATCH);
         predatorSpecimen.createRelationshipTo(preySpecimen, InteractType.ATE);
         study.collected(predatorSpecimen);
 
-        Taxon homoSapiens2 = nodeFactory.getOrCreateTaxon("Homo sapiens2", NoMatchService.NO_MATCH, null);
-        addSpecimen(study, homoSapiens2);
-        homoSapiens2 = nodeFactory.getOrCreateTaxon("Homo sapiens2");
-        addSpecimen(study, homoSapiens2);
+        Specimen predatorSpecimen23 = nodeFactory.createSpecimen("Homo sapiens2", NoMatchService.NO_MATCH);
+        addCanisLupus(predatorSpecimen23, "canisLupusId");
+        study.collected(predatorSpecimen23);
+        Specimen predatorSpecimen22 = nodeFactory.createSpecimen("Homo sapiens2");
+        addCanisLupus(predatorSpecimen22, "canisLupusId");
+        study.collected(predatorSpecimen22);
 
         Study study2 = nodeFactory.createStudy("my study2");
-        addSpecimen(study2, homoSapiens2);
+        Specimen predatorSpecimen21 = nodeFactory.createSpecimen("Homo sapiens2");
+        addCanisLupus(predatorSpecimen21, "canisLupusId");
+        study2.collected(predatorSpecimen21);
 
-        Taxon homoSapiens3 = nodeFactory.getOrCreateTaxon("Homo sapiens3", NoMatchService.NO_MATCH, null);
-        addSpecimen(study, homoSapiens3);
+        Specimen predatorSpecimen2 = nodeFactory.createSpecimen("Homo sapiens3", NoMatchService.NO_MATCH);
+        addCanisLupus(predatorSpecimen2, "canisLupusId");
+        study.collected(predatorSpecimen2);
 
 
         StringWriter writer = new StringWriter();
@@ -49,15 +52,8 @@ public class StudyExportUnmatchedTaxaForStudiesTest extends GraphDBTestCase {
                 "\"Homo sapiens2\",\"my study2\"\n"));
     }
 
-    private void addSpecimen(Study study, Taxon homoSapiens2) throws NodeFactoryException {
-        Specimen predatorSpecimen2 = nodeFactory.createSpecimen(homoSapiens2);
-        addCanisLupus(predatorSpecimen2, "canisLupusId");
-        study.collected(predatorSpecimen2);
-    }
-
     private void addCanisLupus(Specimen predatorSpecimen, String externalId) throws NodeFactoryException {
-        Taxon canisLupus = nodeFactory.getOrCreateTaxon("Canis lupus", externalId, null);
-        Specimen preySpecimen = nodeFactory.createSpecimen(canisLupus);
+        Specimen preySpecimen = nodeFactory.createSpecimen("Canis lupus", externalId);
         predatorSpecimen.createRelationshipTo(preySpecimen, InteractType.ATE);
     }
 

@@ -156,14 +156,12 @@ public class NodeFactoryTest extends GraphDBTestCase {
         assertNotDirtyName("stars--*", "stars--");
     }
 
+
     @Test
-    public void describeAndClassifySpecimen() throws NodeFactoryException {
-        Specimen specimen = nodeFactory.createSpecimen();
-        specimen.setOriginalTaxonDescription("some taxon (bla)");
-
+    public void describeAndClassifySpecimenImplicit() throws NodeFactoryException {
+        Specimen specimen = nodeFactory.createSpecimen("some taxon (bla)");
         assertThat(specimen.getOriginalTaxonDescription(), is("some taxon (bla)"));
-        assertThat("original taxon descriptions are not indexed", nodeFactory.findTaxon("some taxon"), is(nullValue()));
-
+        assertThat("original taxon descriptions are not indexed", nodeFactory.findTaxon("some taxon (bla)").getName(), is(not("some taxon (bla)")));
     }
 
     private void assertNotDirtyName(String dirtyName, String cleanName) throws NodeFactoryException {
