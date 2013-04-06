@@ -66,7 +66,7 @@ public class StudyImporterForLavacaBayTest extends GraphDBTestCase {
         Study study = studyImporterFor.importStudy();
 
         assertNotNull(nodeFactory.findTaxonOfType("Sciaenops ocellatus"));
-        assertNotNull(nodeFactory.findTaxonOfType("Arius felis"));
+        assertNotNull(nodeFactory.findTaxonOfType("Ariopsis felis"));
 
         Taxon acrididaeSpp = nodeFactory.findTaxonOfType("Acrididae spp. ");
         assertNotNull(acrididaeSpp);
@@ -110,7 +110,7 @@ public class StudyImporterForLavacaBayTest extends GraphDBTestCase {
                     assertEquals(420.0d, specimen.getLengthInMm());
 
 
-                } else if ("Arius felis".equals(scientificName)) {
+                } else if ("Ariopsis felis".equals(scientificName)) {
                     Location location = specimen.getSampleLocation();
                     assertThat(location, is(not(nullValue())));
                     assertThat(location.getLatitude(), is((28.608417 + 28.607217)/2.0));
