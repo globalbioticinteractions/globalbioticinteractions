@@ -32,8 +32,10 @@ public class StudyImporterFactory {
             importer = new StudyImporterForICES(parserFactory, nodeFactory);
         } else if (StudyLibrary.Study.ROOPNARINE.equals(study)) {
             importer = new StudyImporterForRoopnarine(parserFactory, nodeFactory);
-        }else if (StudyLibrary.Study.BARNES.equals(study)) {
+        } else if (StudyLibrary.Study.BARNES.equals(study)) {
             importer = new StudyImporterForBarnes(parserFactory, nodeFactory);
+        } else if (StudyLibrary.Study.COOK.equals(study)) {
+            importer = new StudyImporterForCook(parserFactory, nodeFactory);
         }
         return importer;
     }
