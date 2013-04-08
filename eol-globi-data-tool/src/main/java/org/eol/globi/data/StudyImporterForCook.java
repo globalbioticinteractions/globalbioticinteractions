@@ -16,7 +16,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class StudyImporterForCook extends BaseStudyImporter {
-    private static final Log LOG = LogFactory.getLog(StudyImporterForCook.class);
     private static final String DATASET_RESOURCE_NAME = "cook/cook_atlantic_croaker_data.csv";
 
 
@@ -26,7 +25,7 @@ public class StudyImporterForCook extends BaseStudyImporter {
 
     @Override
     public Study importStudy() throws StudyImporterException {
-        LabeledCSVParser parser = null;
+        LabeledCSVParser parser;
         try {
             parser = parserFactory.createParser(DATASET_RESOURCE_NAME);
         } catch (IOException e) {
@@ -56,27 +55,8 @@ public class StudyImporterForCook extends BaseStudyImporter {
 
                     String[] isoCols = {"Iso 1", "Iso 2", "Iso 3", "Iso 4 ", "Iso 5"};
                     for (String isoCol : isoCols) {
-                        try {
-                            String valueByLabel = parser.getValueByLabel(isoCol);
-                            boolean parasiteDetected = !"0".equals(valueByLabel);
-                            boolean lengthAvailable = parasiteDetected && !"NA".equals(valueByLabel);
-
-                            if (parasiteDetected) {
-                                Specimen parasite = nodeFactory.createSpecimen("Cymothoa excisa");
-                                if (lengthAvailable) {
-                                    double parasiteLengthCm = Double.parseDouble(valueByLabel);
-                                    parasite.setLengthInMm(parasiteLengthCm * 10.0);
-                                }
-                                parasite.createRelationshipTo(host, InteractType.PARASITE_OF);
-                                Relationship collected1 = study.collected(parasite);
-                                nodeFactory.setUnixEpochProperty(collected1, collectionDate);
-                            }
-                        } catch (NumberFormatException ex) {
-                            // ignore
-                        }
+                        addParasites(parser, study, sampleLocation, host, collectionDate, isoCol);
                     }
-
-
                 }
             } catch (IOException e) {
                 throw new StudyImporterException("failed to parse [" + DATASET_RESOURCE_NAME + "]", e);
@@ -88,5 +68,27 @@ public class StudyImporterForCook extends BaseStudyImporter {
             throw new StudyImporterException("failed to create host and parasite taxons", e);
         }
         return study;
+    }
+
+    private void addParasites(LabeledCSVParser parser, Study study, Location sampleLocation, Specimen host, Date collectionDate, String isoCol) throws NodeFactoryException {
+        try {
+            String valueByLabel = parser.getValueByLabel(isoCol);
+            boolean parasiteDetected = !"0".equals(valueByLabel);
+            boolean lengthAvailable = parasiteDetected && !"NA".equals(valueByLabel);
+
+            if (parasiteDetected) {
+                Specimen parasite = nodeFactory.createSpecimen("Cymothoa excisa");
+                parasite.caughtIn(sampleLocation);
+                if (lengthAvailable) {
+                    double parasiteLengthCm = Double.parseDouble(valueByLabel);
+                    parasite.setLengthInMm(parasiteLengthCm * 10.0);
+                }
+                parasite.createRelationshipTo(host, InteractType.PARASITE_OF);
+                Relationship collected1 = study.collected(parasite);
+                nodeFactory.setUnixEpochProperty(collected1, collectionDate);
+            }
+        } catch (NumberFormatException ex) {
+            // ignore
+        }
     }
 }
