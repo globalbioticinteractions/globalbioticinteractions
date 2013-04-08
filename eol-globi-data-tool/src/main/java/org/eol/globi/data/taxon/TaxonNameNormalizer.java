@@ -15,6 +15,7 @@ public class TaxonNameNormalizer {
     private Map<String, String> corrections;
 
     private static String clean(String name) {
+        name = name.replaceAll("<quotes>", "");
         name = removePartsInParentheses(name);
         name = keepOnlyLettersAndNumbers(name);
         name = name.replaceAll("\\s(spp|sp)\\.*($|\\s.*)", "");
@@ -58,7 +59,7 @@ public class TaxonNameNormalizer {
             InputStream resourceAsStream = getClass().getResourceAsStream("taxonNameCorrections.csv");
             BufferedReader is = org.eol.globi.data.FileUtils.getUncompressedBufferedReaderUTF_8(resourceAsStream);
             LabeledCSVParser labeledCSVParser = new LabeledCSVParser(new CSVParser(is));
-            String[] line = null;
+            String[] line;
 
             corrections = new HashMap<String, String>();
             while ((line = labeledCSVParser.getLine()) != null) {
