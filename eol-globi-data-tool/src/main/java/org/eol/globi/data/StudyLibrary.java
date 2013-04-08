@@ -13,7 +13,8 @@ public class StudyLibrary {
         JR_FERRER_PARIS,
         SPIRE,
         ICES,
-        BARNES;
+        BARNES,
+        COOK;
     }
 
 }
