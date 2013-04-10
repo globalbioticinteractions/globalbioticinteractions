@@ -2,6 +2,7 @@ package org.eol.globi.client;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.eol.globi.export.InteractionsExporter;
 import org.eol.globi.export.StudyExportUnmatchedTaxaForStudies;
 import org.eol.globi.service.TaxonPropertyEnricher;
 import org.eol.globi.service.TaxonPropertyEnricherImpl;
@@ -16,7 +17,6 @@ import org.eol.globi.data.StudyLibrary;
 import org.eol.globi.db.GraphService;
 import org.eol.globi.domain.Study;
 import org.eol.globi.export.StudyExporter;
-import org.eol.globi.export.StudyExporterImpl;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -64,7 +64,7 @@ public class TrophicImporter {
     private void exportData(List<Study> importedStudies) throws StudyImporterException {
         try {
             export(importedStudies, "./unmatchedSourceTaxa.csv", new StudyExportUnmatchedTaxaForStudies(GraphService.getGraphService()));
-            export(importedStudies, "./interactions.csv", new StudyExporterImpl());
+            export(importedStudies, "./interactions.csv", new InteractionsExporter());
         } catch (IOException e) {
             throw new StudyImporterException("failed to export result to csv file", e);
         }

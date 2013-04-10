@@ -17,7 +17,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 
-public class StudyExporterImpl implements StudyExporter {
+public class InteractionsExporter implements StudyExporter {
 
     @Override
     public void exportStudy(Study study, Writer writer, boolean includeHeader) throws IOException {
@@ -39,9 +39,6 @@ public class StudyExporterImpl implements StudyExporter {
                 for (Relationship interactRel : interactRelationships) {
                     exportLine(study, writer, specimenNode, locationNode, interactRel, collectedRel);
                 }
-            } else {
-                // also write specimen with empty stomach
-                exportLine(study, writer, specimenNode, locationNode, null, collectedRel);
             }
 
         }

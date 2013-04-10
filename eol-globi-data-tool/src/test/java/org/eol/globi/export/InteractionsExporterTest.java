@@ -8,7 +8,6 @@ import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
-import org.eol.globi.domain.Taxon;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -18,7 +17,7 @@ import java.text.SimpleDateFormat;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
 
-public class StudyExporterImplTest extends GraphDBTestCase {
+public class InteractionsExporterTest extends GraphDBTestCase {
 
     @Test
     public void exportMissingLength() throws IOException, NodeFactoryException, ParseException {
@@ -31,7 +30,7 @@ public class StudyExporterImplTest extends GraphDBTestCase {
 
         StringWriter row = new StringWriter();
 
-        new StudyExporterImpl().exportStudy(myStudy1, row, true);
+        new InteractionsExporter().exportStudy(myStudy1, row, true);
 
         assertThat(row.getBuffer().toString(), equalTo(expected));
     }
@@ -53,7 +52,7 @@ public class StudyExporterImplTest extends GraphDBTestCase {
 
         StringWriter row = new StringWriter();
 
-        new StudyExporterImpl().exportStudy(myStudy1, row, false);
+        new InteractionsExporter().exportStudy(myStudy1, row, false);
 
         assertThat(row.getBuffer().toString(), equalTo(expected));
     }
@@ -70,26 +69,24 @@ public class StudyExporterImplTest extends GraphDBTestCase {
 
         StringWriter row = new StringWriter();
 
-        new StudyExporterImpl().exportStudy(myStudy1, row, true);
+        new InteractionsExporter().exportStudy(myStudy1, row, true);
 
         assertThat(row.getBuffer().toString(), equalTo(expected));
 
     }
 
     @Test
-    public void exportToCSVSpecimenEmptyStomach() throws NodeFactoryException, IOException {
+    public void dontExportToCSVSpecimenEmptyStomach() throws NodeFactoryException, IOException {
         Study myStudy = nodeFactory.createStudy("myStudy");
         Specimen specimen = nodeFactory.createSpecimen("Homo sapiens");
         myStudy.collected(specimen);
 
         StringWriter row = new StringWriter();
 
-        new StudyExporterImpl().exportStudy(myStudy, row, true);
+        new InteractionsExporter().exportStudy(myStudy, row, true);
 
         String expected = "";
         expected += getExpectedHeader();
-        expected += "\n\"myStudy\",\"Homo sapiens\",,,,,,,,,,";
-
 
         assertThat(row.getBuffer().toString(), equalTo(expected));
     }
