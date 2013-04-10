@@ -34,7 +34,7 @@ public class TaxonNameNormalizer {
     }
 
     private static String keepOnlyLettersAndNumbers(String name) {
-        name = name.replaceAll("[^\\p{L}\\p{N}]", " ");
+        name = name.replaceAll("[^\\p{L}\\p{N}-\\.]", " ");
         return name;
     }
 

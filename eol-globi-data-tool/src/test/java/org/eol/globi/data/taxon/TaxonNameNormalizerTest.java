@@ -29,6 +29,8 @@ public class TaxonNameNormalizerTest {
         assertThat(normalizer.normalize("Bacteriastrum spp.          Bacteriastrum spp.          Bacteriastrum spp.          Bacteriastrum spp."), is("Bacteriastrum"));
         assertThat(normalizer.normalize("Acrididae spp. "), is("Acrididae"));
         assertThat(normalizer.normalize("<quotes>Chenopodiaceae<quotes>"), is("Chenopodiaceae"));
+        assertThat(normalizer.normalize("Mycosphaerella filipendulae-denudatae"), is("Mycosphaerella filipendulae-denudatae"));
+        assertThat(normalizer.normalize("Puccinia dioicae var. dioicae"), is("Puccinia dioicae var. dioicae"));
     }
 
     @Test
