@@ -56,4 +56,13 @@ public class StudyExportUnmatchedTaxaForStudiesTest extends GraphDBTestCase {
         predatorSpecimen.createRelationshipTo(preySpecimen, InteractType.ATE);
     }
 
+    @Test
+    public void darwinCoreMetaTable() throws IOException {
+        StudyExportUnmatchedTaxaForStudies exporter = new StudyExportUnmatchedTaxaForStudies(getGraphDb());
+        StringWriter writer = new StringWriter();
+        exporter.exportDarwinCoreMetaTable(writer, "unmatched.csv");
+        String expectedMetaTable = StudyExportUnmatchedTaxaForStudies.META_TABLE_PREFIX + "unmatched.csv" + StudyExportUnmatchedTaxaForStudies.META_TABLE_SUFFIX;
+        assertThat(writer.toString(), is(expectedMetaTable));
+    }
+
 }

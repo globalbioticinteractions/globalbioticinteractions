@@ -63,20 +63,36 @@ public class TrophicImporter {
 
     private void exportData(List<Study> importedStudies) throws StudyImporterException {
         try {
-            export(importedStudies, "./unmatchedSourceTaxa.csv", new StudyExportUnmatchedTaxaForStudies(GraphService.getGraphService()));
-            export(importedStudies, "./interactions.csv", new InteractionsExporter());
+            FileWriter darwinCoreMeta = writeMetaHeader();
+            export(importedStudies, "./unmatchedSourceTaxa.csv", new StudyExportUnmatchedTaxaForStudies(GraphService.getGraphService()), darwinCoreMeta);
+            export(importedStudies, "./interactions.csv", new InteractionsExporter(), darwinCoreMeta);
+            writeMetaFooter(darwinCoreMeta);
         } catch (IOException e) {
             throw new StudyImporterException("failed to export result to csv file", e);
         }
     }
 
-    private void export(List<Study> importedStudies, String exportPath, StudyExporter studyExporter) throws IOException {
+    private void writeMetaFooter(FileWriter darwinCoreMeta) throws IOException {
+        darwinCoreMeta.write("</archive>");
+        darwinCoreMeta.flush();
+        darwinCoreMeta.close();
+    }
+
+    private FileWriter writeMetaHeader() throws IOException {
+        FileWriter darwinCoreMeta = new FileWriter("./meta.xml", false);
+        darwinCoreMeta.write("<?xml version=\"1.0\"?>\n" +
+                "<archive xmlns=\"http://rs.tdwg.org/dwc/text/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://rs.tdwg.org/dwc/text/  http://services.eol.org/schema/dwca/tdwg_dwc_text.xsd\">\n");
+        return darwinCoreMeta;
+    }
+
+    private void export(List<Study> importedStudies, String exportPath, StudyExporter studyExporter, FileWriter darwinCoreMeta) throws IOException {
         FileWriter writer = new FileWriter(exportPath, false);
         LOG.info("export data to [" + new File(exportPath).getAbsolutePath() + "] started...");
         for (Study importedStudy : importedStudies) {
             boolean includeHeader = importedStudies.indexOf(importedStudy) == 0;
             studyExporter.exportStudy(importedStudy, writer, includeHeader);
         }
+        studyExporter.exportDarwinCoreMetaTable(darwinCoreMeta, exportPath);
         writer.flush();
         writer.close();
         LOG.info("export data to [" + new File(exportPath).getAbsolutePath() + "] complete.");

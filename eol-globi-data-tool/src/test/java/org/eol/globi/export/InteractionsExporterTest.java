@@ -15,6 +15,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
 public class InteractionsExporterTest extends GraphDBTestCase {
@@ -116,5 +117,14 @@ public class InteractionsExporterTest extends GraphDBTestCase {
         specimen.caughtIn(location);
     }
 
+
+    @Test
+    public void darwinCoreMetaTable() throws IOException {
+        InteractionsExporter exporter = new InteractionsExporter();
+        StringWriter writer = new StringWriter();
+        exporter.exportDarwinCoreMetaTable(writer, "testtest.csv");
+
+        assertThat(writer.toString(), is(InteractionsExporter.META_TABLE_PREFIX + "testtest.csv" + InteractionsExporter.META_TABLE_SUFFIX));
+    }
 
 }

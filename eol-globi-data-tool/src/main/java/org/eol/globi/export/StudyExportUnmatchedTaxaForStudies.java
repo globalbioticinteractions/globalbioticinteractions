@@ -10,8 +10,17 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.Map;
 
-public class StudyExportUnmatchedTaxaForStudies implements StudyExporter {
+public class StudyExportUnmatchedTaxaForStudies extends BaseExporter {
 
+    public static final String META_TABLE_SUFFIX = "</location>\n" +
+            "    </files>\n" +
+            "    <field index=\"0\" term=\"http://rs.tdwg.org/dwc/terms/collectionID\"/>\n" +
+            "    <field index=\"1\" term=\"http://rs.tdwg.org/dwc/terms/scientificName\"/>\n" +
+            "  </table>\n";
+
+    public static final String META_TABLE_PREFIX = "<table encoding=\"UTF-8\" fieldsTerminatedBy=\",\" linesTerminatedBy=\"\\n\" ignoreHeaderLines=\"1\" rowType=\"http://rs.tdwg.org/dwc/terms/text/DarwinRecord\">\n" +
+            "    <files>\n" +
+            "      <location>";
     private GraphDatabaseService graphDbService;
 
     public StudyExportUnmatchedTaxaForStudies(GraphDatabaseService graphDatabaseService) {
@@ -37,5 +46,15 @@ public class StudyExportUnmatchedTaxaForStudies implements StudyExporter {
             writer.write("\"" + map.get("taxon.name") + "\",");
             writer.write("\"" + map.get("study.title") + "\"\n");
         }
+    }
+
+    @Override
+    protected String getMetaTablePrefix() {
+        return META_TABLE_PREFIX;
+    }
+
+    @Override
+    protected String getMetaTableSuffix() {
+        return META_TABLE_SUFFIX;
     }
 }

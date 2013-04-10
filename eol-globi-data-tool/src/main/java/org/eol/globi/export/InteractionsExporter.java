@@ -17,7 +17,26 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 
-public class InteractionsExporter implements StudyExporter {
+public class InteractionsExporter extends BaseExporter {
+
+    public static final String META_TABLE_SUFFIX = "</location>\n" +
+            "    </files>\n" +
+            "    <field index=\"0\" term=\"http://rs.tdwg.org/dwc/terms/collectionID\"/>\n" +
+            "    <field index=\"1\" term=\"http://rs.tdwg.org/dwc/terms/scientificName\"/>\n" +
+            "    <field index=\"2\" term=\"http://rs.tdwg.org/dwc/terms/taxonID\"/>\n" +
+            "    <field index=\"3\" term=\"http://rs.tdwg.org/dwc/terms/relationshipOfResource\"/>\n" +
+            "    <field index=\"4\" term=\"http://rs.tdwg.org/dwc/terms/scientificName\"/>\n" +
+            "    <field index=\"5\" term=\"http://rs.tdwg.org/dwc/terms/taxonID\"/>\n" +
+            "    <field index=\"6\" term=\"http://rs.tdwg.org/dwc/terms/decimalLatitude\"/>\n" +
+            "    <field index=\"7\" term=\"http://rs.tdwg.org/dwc/terms/decimalLongitude\"/>\n" +
+            "    <field index=\"8\" term=\"http://rs.tdwg.org/dwc/terms/verbatimElevation\"/>\n" +
+            "    <field index=\"9\" term=\"http://rs.tdwg.org/dwc/terms/year\"/>\n" +
+            "    <field index=\"10\" term=\"http://rs.tdwg.org/dwc/terms/month\"/>\n" +
+            "    <field index=\"11\" term=\"http://rs.tdwg.org/dwc/terms/day\"/>\n" +
+            "  </table>\n";
+    public static final String META_TABLE_PREFIX = "<table encoding=\"UTF-8\" fieldsTerminatedBy=\",\" linesTerminatedBy=\"\\n\" ignoreHeaderLines=\"1\" rowType=\"http://rs.tdwg.org/dwc/terms/DarwinRecord\">\n" +
+            "    <files>\n" +
+            "      <location>";
 
     @Override
     public void exportStudy(Study study, Writer writer, boolean includeHeader) throws IOException {
@@ -42,6 +61,16 @@ public class InteractionsExporter implements StudyExporter {
             }
 
         }
+    }
+
+    @Override
+    protected String getMetaTableSuffix() {
+        return META_TABLE_SUFFIX;
+    }
+
+    @Override
+    protected String getMetaTablePrefix() {
+        return META_TABLE_PREFIX;
     }
 
     private void exportLine(Study study, Writer writer, Node predatorNode, Node locationNode, Relationship ateRelationship, Relationship collectedRelationship) throws IOException {

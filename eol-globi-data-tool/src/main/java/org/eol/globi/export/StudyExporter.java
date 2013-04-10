@@ -9,4 +9,6 @@ public interface StudyExporter {
 
     public void exportStudy(Study study, Writer writer, boolean includeHeader) throws IOException;
 
+    public void exportDarwinCoreMetaTable(Writer writer, String s) throws IOException;
+
 }
