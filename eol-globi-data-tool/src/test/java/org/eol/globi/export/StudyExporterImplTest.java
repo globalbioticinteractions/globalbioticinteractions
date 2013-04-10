@@ -24,8 +24,8 @@ public class StudyExporterImplTest extends GraphDBTestCase {
     public void exportMissingLength() throws IOException, NodeFactoryException, ParseException {
         createTestData(null);
         String expected = getExpectedHeader();
-        expected += "\n\"myStudy\",\"Homo sapiens\",,\"Canis lupus\",123.0,345.9,-60.0,666.0,124.0,1992,3,30";
-        expected += "\n\"myStudy\",\"Homo sapiens\",,\"Canis lupus\",123.0,345.9,-60.0,666.0,124.0,1992,3,30";
+        expected += "\n\"myStudy\",\"Homo sapiens\",,\"ATE\",\"Canis lupus\",,123.0,345.9,-60.0,1992,3,30";
+        expected += "\n\"myStudy\",\"Homo sapiens\",,\"ATE\",\"Canis lupus\",,123.0,345.9,-60.0,1992,3,30";
 
         Study myStudy1 = nodeFactory.findStudy("myStudy");
 
@@ -38,7 +38,7 @@ public class StudyExporterImplTest extends GraphDBTestCase {
 
     private String getExpectedHeader() {
         String expected = "";
-        expected += "\"study\",\"predator\", \"length(mm)\",\"prey\", \"latitude\", \"longitude\", \"altitude\",\"total predator stomach volume (ml)\",\"prey volume in stomach (ml)\", \"collection year\",\"collection month\",\"collection day of month\"";
+        expected += "\"study\",\"sourceTaxonName\",\"sourceTaxonId\",\"interactType\",\"targetTaxonName\",\"targetTaxonId\",\"latitude\",\"longitude\",\"altitude\",\"collection year\",\"collection month\",\"collection day of month\"";
         return expected;
     }
 
@@ -46,8 +46,8 @@ public class StudyExporterImplTest extends GraphDBTestCase {
     public void exportNoHeader() throws IOException, NodeFactoryException, ParseException {
         createTestData(null);
         String expected = "";
-        expected += "\n\"myStudy\",\"Homo sapiens\",,\"Canis lupus\",123.0,345.9,-60.0,666.0,124.0,1992,3,30";
-        expected += "\n\"myStudy\",\"Homo sapiens\",,\"Canis lupus\",123.0,345.9,-60.0,666.0,124.0,1992,3,30";
+        expected += "\n\"myStudy\",\"Homo sapiens\",,\"ATE\",\"Canis lupus\",,123.0,345.9,-60.0,1992,3,30";
+        expected += "\n\"myStudy\",\"Homo sapiens\",,\"ATE\",\"Canis lupus\",,123.0,345.9,-60.0,1992,3,30";
 
         Study myStudy1 = nodeFactory.findStudy("myStudy");
 
@@ -63,8 +63,8 @@ public class StudyExporterImplTest extends GraphDBTestCase {
         createTestData(123.0);
         String expected = "";
         expected += getExpectedHeader();
-        expected += "\n\"myStudy\",\"Homo sapiens\",123.0,\"Canis lupus\",123.0,345.9,-60.0,666.0,124.0,1992,3,30";
-        expected += "\n\"myStudy\",\"Homo sapiens\",123.0,\"Canis lupus\",123.0,345.9,-60.0,666.0,124.0,1992,3,30";
+        expected += "\n\"myStudy\",\"Homo sapiens\",,\"ATE\",\"Canis lupus\",,123.0,345.9,-60.0,1992,3,30";
+        expected += "\n\"myStudy\",\"Homo sapiens\",,\"ATE\",\"Canis lupus\",,123.0,345.9,-60.0,1992,3,30";
 
         Study myStudy1 = nodeFactory.findStudy("myStudy");
 

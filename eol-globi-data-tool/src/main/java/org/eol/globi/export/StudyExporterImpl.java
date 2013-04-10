@@ -22,8 +22,8 @@ public class StudyExporterImpl implements StudyExporter {
     @Override
     public void exportStudy(Study study, Writer writer, boolean includeHeader) throws IOException {
         if (includeHeader) {
-            writer.write("\"study\",\"predator\", \"length(mm)\",\"prey\", \"latitude\", \"longitude\", \"altitude\"");
-            writer.write(",\"total predator stomach volume (ml)\",\"prey volume in stomach (ml)\", \"collection year\",\"collection month\",\"collection day of month\"");
+            writer.write("\"study\",\"sourceTaxonName\",\"sourceTaxonId\",\"interactType\",\"targetTaxonName\",\"targetTaxonId\",\"latitude\",\"longitude\",\"altitude\"");
+            writer.write(",\"collection year\",\"collection month\",\"collection day of month\"");
         }
         Iterable<Relationship> specimens = study.getSpecimens();
         for (Relationship collectedRel : specimens) {
@@ -34,10 +34,10 @@ public class StudyExporterImpl implements StudyExporter {
                 locationNode = relationship1.getEndNode();
             }
 
-            Iterable<Relationship> ateRelationships = specimenNode.getRelationships(Direction.OUTGOING, InteractType.ATE);
-            if (ateRelationships.iterator().hasNext()) {
-                for (Relationship ateRelationship : ateRelationships) {
-                    exportLine(study, writer, specimenNode, locationNode, ateRelationship, collectedRel);
+            Iterable<Relationship> interactRelationships = specimenNode.getRelationships(Direction.OUTGOING, InteractType.ATE, InteractType.HAS_HOST, InteractType.INTERACTS_WITH, InteractType.PARASITE_OF, InteractType.PREYS_UPON);
+            if (interactRelationships.iterator().hasNext()) {
+                for (Relationship interactRel : interactRelationships) {
+                    exportLine(study, writer, specimenNode, locationNode, interactRel, collectedRel);
                 }
             } else {
                 // also write specimen with empty stomach
@@ -51,15 +51,13 @@ public class StudyExporterImpl implements StudyExporter {
         writer.write("\n");
         addRowField(writer, study.getTitle());
         addTaxonField(writer, predatorNode);
-        writePropertyValueOrEmpty(writer, predatorNode, Specimen.LENGTH_IN_MM);
+        addRowField(writer,  ateRelationship == null ? null : ateRelationship.getType().name());
 
         Node preyNode = ateRelationship == null ? null : ateRelationship.getEndNode();
         addTaxonField(writer, preyNode);
         writePropertyValueOrEmpty(writer, locationNode, Location.LATITUDE);
         writePropertyValueOrEmpty(writer, locationNode, Location.LONGITUDE);
         writePropertyValueOrEmpty(writer, locationNode, Location.ALTITUDE);
-        writePropertyValueOrEmpty(writer, predatorNode, Specimen.STOMACH_VOLUME_ML);
-        writePropertyValueOrEmpty(writer, preyNode, Specimen.VOLUME_IN_ML);
 
         writeCollectionDate(writer, collectedRelationship);
     }
@@ -108,6 +106,7 @@ public class StudyExporterImpl implements StudyExporter {
 
     private void addTaxonField(Writer writer, Node specimenNode) throws IOException {
         String taxonString = null;
+        String taxonId = null;
         if (specimenNode != null) {
             Iterable<Relationship> relationships = specimenNode.getRelationships(Direction.OUTGOING, RelTypes.CLASSIFIED_AS);
             Iterator<Relationship> iterator = relationships.iterator();
@@ -116,10 +115,15 @@ public class StudyExporterImpl implements StudyExporter {
                 if (classifiedAs != null) {
                     Node taxonNode = classifiedAs.getEndNode();
                     taxonString = (String) taxonNode.getProperty(Taxon.NAME);
+                    if (taxonNode.hasProperty(Taxon.EXTERNAL_ID)) {
+                        taxonId = (String) taxonNode.getProperty(Taxon.EXTERNAL_ID);
+                    }
+
                 }
             }
         }
         addRowField(writer, taxonString);
+        addRowField(writer, taxonId);
     }
 
     private void addRowField(Writer writer, Object taxonString) throws IOException {
