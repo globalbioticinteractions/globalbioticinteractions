@@ -12,13 +12,13 @@ import java.util.Map;
 
 public class StudyExportUnmatchedTaxaForStudies extends BaseExporter {
 
-    public static final String META_TABLE_SUFFIX = "</location>\n" +
+    private static final String META_TABLE_SUFFIX = "</location>\n" +
             "    </files>\n" +
             "    <field index=\"0\" term=\"http://rs.tdwg.org/dwc/terms/collectionID\"/>\n" +
             "    <field index=\"1\" term=\"http://rs.tdwg.org/dwc/terms/scientificName\"/>\n" +
             "  </table>\n";
 
-    public static final String META_TABLE_PREFIX = "<table encoding=\"UTF-8\" fieldsTerminatedBy=\",\" linesTerminatedBy=\"\\n\" ignoreHeaderLines=\"1\" rowType=\"http://rs.tdwg.org/dwc/terms/text/DarwinRecord\">\n" +
+    private static final String META_TABLE_PREFIX = "<table encoding=\"UTF-8\" fieldsTerminatedBy=\",\" linesTerminatedBy=\"\\n\" ignoreHeaderLines=\"1\" rowType=\"http://rs.tdwg.org/dwc/terms/text/DarwinRecord\">\n" +
             "    <files>\n" +
             "      <location>";
     private GraphDatabaseService graphDbService;

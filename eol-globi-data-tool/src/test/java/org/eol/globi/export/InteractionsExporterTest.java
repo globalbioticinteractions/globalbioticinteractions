@@ -124,7 +124,7 @@ public class InteractionsExporterTest extends GraphDBTestCase {
         StringWriter writer = new StringWriter();
         exporter.exportDarwinCoreMetaTable(writer, "testtest.csv");
 
-        assertThat(writer.toString(), is(InteractionsExporter.META_TABLE_PREFIX + "testtest.csv" + InteractionsExporter.META_TABLE_SUFFIX));
+        assertThat(writer.toString(), is(exporter.getMetaTablePrefix() + "testtest.csv" + exporter.getMetaTableSuffix()));
     }
 
 }

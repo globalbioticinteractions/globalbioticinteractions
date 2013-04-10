@@ -61,7 +61,7 @@ public class StudyExportUnmatchedTaxaForStudiesTest extends GraphDBTestCase {
         StudyExportUnmatchedTaxaForStudies exporter = new StudyExportUnmatchedTaxaForStudies(getGraphDb());
         StringWriter writer = new StringWriter();
         exporter.exportDarwinCoreMetaTable(writer, "unmatched.csv");
-        String expectedMetaTable = StudyExportUnmatchedTaxaForStudies.META_TABLE_PREFIX + "unmatched.csv" + StudyExportUnmatchedTaxaForStudies.META_TABLE_SUFFIX;
+        String expectedMetaTable = exporter.getMetaTablePrefix() + "unmatched.csv" + exporter.getMetaTableSuffix();
         assertThat(writer.toString(), is(expectedMetaTable));
     }
 
