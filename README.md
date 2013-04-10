@@ -1,4 +1,4 @@
-Welcome to the Global Biotic Interactions (globi) project.
+Welcome to the Global Biotic Interactions (GloBI) project.
 ======================================
 
 This mission of this project is to find efficient ways to normalize and integrate species interaction data
