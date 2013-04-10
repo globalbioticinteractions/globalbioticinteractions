@@ -48,8 +48,7 @@ public class StudyExportUnmatchedTaxaForStudiesTest extends GraphDBTestCase {
         new StudyExportUnmatchedTaxaForStudies(getGraphDb()).exportStudy(study, writer, true);
         assertThat(writer.toString(), is("\"name of unmatched source taxon\",\"study\"" +
                 "\n\"Homo sapiens2\",\"my study\"\n" +
-                "\"Homo sapiens3\",\"my study\"\n" +
-                "\"Homo sapiens2\",\"my study2\"\n"));
+                "\"Homo sapiens3\",\"my study\"\n"));
     }
 
     private void addCanisLupus(Specimen predatorSpecimen, String externalId) throws NodeFactoryException {

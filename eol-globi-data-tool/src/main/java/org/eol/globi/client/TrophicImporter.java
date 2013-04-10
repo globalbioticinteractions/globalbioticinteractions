@@ -17,7 +17,6 @@ import org.eol.globi.db.GraphService;
 import org.eol.globi.domain.Study;
 import org.eol.globi.export.StudyExporter;
 import org.eol.globi.export.StudyExporterImpl;
-import org.eol.globi.export.StudyExporterPredatorPrey;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -65,8 +64,7 @@ public class TrophicImporter {
     private void exportData(List<Study> importedStudies) throws StudyImporterException {
         try {
             export(importedStudies, "./unmatchedSourceTaxa.csv", new StudyExportUnmatchedTaxaForStudies(GraphService.getGraphService()));
-            export(importedStudies, "./export.csv", new StudyExporterImpl());
-            export(importedStudies, "./exportPredatorTaxonPreyTaxon.csv", new StudyExporterPredatorPrey(GraphService.getGraphService()));
+            export(importedStudies, "./interactions.csv", new StudyExporterImpl());
         } catch (IOException e) {
             throw new StudyImporterException("failed to export result to csv file", e);
         }

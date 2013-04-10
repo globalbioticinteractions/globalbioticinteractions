@@ -21,7 +21,7 @@ public class StudyExportUnmatchedTaxaForStudies implements StudyExporter {
     @Override
     public void exportStudy(Study study, Writer writer, boolean includeHeader) throws IOException {
         ExecutionEngine engine = new ExecutionEngine(graphDbService);
-        String query = "START study = node:studies(\"*:*\") " +
+        String query = "START study = node:studies(title=\"" + study.getTitle() + "\") " +
                 "MATCH study-[:COLLECTED]->specimen-[:CLASSIFIED_AS]->taxon " +
                 "WHERE taxon.externalId = \"" + NoMatchService.NO_MATCH + "\" " +
                 "RETURN distinct taxon.name, study.title";
