@@ -1,0 +1,5 @@
+REF_ID,FIELD_PRES_METH_TYPE,FIELD_PRES_CHEM,FIELD_CHEM_PCT,FIELD_PRES_PHYS_METH,FIELD_PRES_NOTES,LAB_PRES_METH_TYPE,LAB_PRES_CHEM,LAB_CHEM_PCT,LAB_PRES_PHYS_METH,LAB_PRES_NOTES,COLL_METHOD,GEAR_NOTES,COLL_NOTES,DIET_ANALYSIS_METHODS,DIET_NOTES
+16r,chemical,formalin,10,NA,In seawater.,NA,NA,NA,NA,NA,trawl,"20 foot unlined otter trawl, 1.5 inch stretched mesh.",Towing time was approximately 20 minutes at each station.,NA,NA
+24d,physical,NA,,freezer,NA,NA,NA,NA,NA,NA,trawl,"12.2 meter semiballon, rigged with tickler chain, 2.4 m by 1.0 m wooden doors.",Towed at 3 knots. All trawls made at night.,NA,NA
+17b,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,hook and line,NA,"It is assumed that fishes used for stomach content analysis were collected by the charter boat sports fishery in the Gulf of Mexico north of Tampa, but specifically around Panama City and Destin, FL. This is the location of the king mackerel fishery from May to October, which is the time period (spring and summer) that the author indicates the stomachs were collected.",NA,NA
+61b,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,hook and line,NA,Collected at 1971 Texas International Fishing Tournament,NA,NA

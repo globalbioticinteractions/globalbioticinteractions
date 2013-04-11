@@ -15,8 +15,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class StudyImporterForLavacaBay extends BaseStudyImporter {
-    private static final Log LOG = LogFactory.getLog(StudyImporterForLavacaBay.class);
+public class StudyImporterForWrast extends BaseStudyImporter {
+    private static final Log LOG = LogFactory.getLog(StudyImporterForWrast.class);
 
     public static final String LENGTH_IN_MM = "lengthInMm";
     public static final String SEASON = "season";
@@ -47,7 +47,7 @@ public class StudyImporterForLavacaBay extends BaseStudyImporter {
     private Map<String, LatLng> locationMap;
     private Map<String, Double> depthMap;
 
-    public StudyImporterForLavacaBay(ParserFactory parserFactory, NodeFactory nodeFactory) {
+    public StudyImporterForWrast(ParserFactory parserFactory, NodeFactory nodeFactory) {
         super(parserFactory, nodeFactory);
     }
 

@@ -4,9 +4,9 @@ public class StudyLibrary {
 
     public static enum Study {
         ROOPNARINE,
-        MISSISSIPPI_ALABAMA,
-        LACAVA_BAY,
-        BLEWETT_CHARLOTTE_HARBOR_FL,
+        SIMONS,
+        WRAST,
+        BLEWETT,
         AKIN_MAD_ISLAND,
         BAREMORE_ANGEL_SHARK,
         BIO_INFO,
@@ -14,7 +14,8 @@ public class StudyLibrary {
         SPIRE,
         ICES,
         BARNES,
-        COOK;
+        COOK,
+        GOMEXSI;
     }
 
 }

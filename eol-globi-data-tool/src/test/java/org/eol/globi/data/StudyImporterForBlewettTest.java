@@ -21,11 +21,11 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
-public class StudyImporterForSnookTest extends GraphDBTestCase {
+public class StudyImporterForBlewettTest extends GraphDBTestCase {
 
     @Test
     public void importAll() throws StudyImporterException, NodeFactoryException {
-        StudyImporter importer = new StudyImporterFactory(new ParserFactoryImpl(), nodeFactory).createImporterForStudy(StudyLibrary.Study.BLEWETT_CHARLOTTE_HARBOR_FL);
+        StudyImporter importer = new StudyImporterFactory(new ParserFactoryImpl(), nodeFactory).createImporterForStudy(StudyLibrary.Study.BLEWETT);
         Study study = importer.importStudy();
         Iterable<Relationship> specimens = study.getSpecimens();
         int count = 0;
@@ -75,7 +75,7 @@ public class StudyImporterForSnookTest extends GraphDBTestCase {
             }
         };
 
-        StudyImporter importer = new StudyImporterFactory(testFactory, nodeFactory).createImporterForStudy(StudyLibrary.Study.BLEWETT_CHARLOTTE_HARBOR_FL);
+        StudyImporter importer = new StudyImporterFactory(testFactory, nodeFactory).createImporterForStudy(StudyLibrary.Study.BLEWETT);
         Study study = importer.importStudy();
         assertThat(study.getTitle(), is("Blewett2000CharlotteHarborFL"));
 

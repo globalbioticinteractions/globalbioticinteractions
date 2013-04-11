@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class StudyImporterForMississippiAlabama extends BaseStudyImporter {
+public class StudyImporterForSimons extends BaseStudyImporter {
 
     public static final String NORTHING = "northing";
     public static final String EASTING = "easting";
@@ -19,7 +19,6 @@ public class StudyImporterForMississippiAlabama extends BaseStudyImporter {
     public static final String SEASON = "season";
     public static final String PREY_SPECIES = "prey species";
     public static final String PREDATOR_SPECIES = "predator species";
-    public static final String PREDATOR_FAMILY = "predatorFamily";
 
     static final HashMap<String, String> COLUMN_MAPPER = new HashMap<String, String>() {{
         // note that lat / long combination is source data are northing/ easting UTM coordinates in
@@ -33,9 +32,9 @@ public class StudyImporterForMississippiAlabama extends BaseStudyImporter {
         put(LENGTH_RANGE_IN_MM, "sizeclass");
     }};
 
-    public static final String MISSISSIPPI_ALABAMA_DATA_SOURCE = "simons/mississippiAlabamaFishDiet.csv.gz";
+    protected static final String MISSISSIPPI_ALABAMA_DATA_SOURCE = "simons/mississippiAlabamaFishDiet.csv.gz";
 
-    public StudyImporterForMississippiAlabama(ParserFactory parserFactory, NodeFactory nodeFactory) {
+    public StudyImporterForSimons(ParserFactory parserFactory, NodeFactory nodeFactory) {
         super(parserFactory, nodeFactory);
     }
 
@@ -58,7 +57,7 @@ public class StudyImporterForMississippiAlabama extends BaseStudyImporter {
     }
 
     private Study importStudy(ParserFactory parserFactory, String studyResource) throws StudyImporterException {
-        Study study = nodeFactory.getOrCreateStudy(studyResource,
+        Study study = nodeFactory.getOrCreateStudy(StudyLibrary.Study.SIMONS.toString(),
                 "James D. Simons",
                 "Center for Coastal Studies, Texas A&M University - Corpus Christi",
                 "1987- 1990",

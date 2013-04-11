@@ -11,7 +11,7 @@ import static org.junit.Assert.assertThat;
 public class StudyImporterFactoryTest {
 
     @Test
-    public void checkStudyImporters() {
+    public void checkStudyImporters() throws StudyImporterException {
         StudyLibrary.Study[] values = StudyLibrary.Study.values();
         for (StudyLibrary.Study value : values) {
             assertThat("no studyimport for [" + value.toString() + "] found", new StudyImporterFactory(null, null).createImporterForStudy(value), is(notNullValue()));

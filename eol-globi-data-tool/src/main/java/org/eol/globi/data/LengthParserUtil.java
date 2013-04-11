@@ -8,7 +8,7 @@ public class LengthParserUtil {
     public static Double parseLengthInMm(LengthParser parser, LabeledCSVParser csvParser, Map<String, String> columnToNormalizedTermMapper) throws StudyImporterException {
 
         parser.parseLengthInMm(csvParser);
-        String lengthRangeInMm = csvParser.getValueByLabel(columnToNormalizedTermMapper.get(StudyImporterForMississippiAlabama.LENGTH_RANGE_IN_MM));
+        String lengthRangeInMm = csvParser.getValueByLabel(columnToNormalizedTermMapper.get(StudyImporterForSimons.LENGTH_RANGE_IN_MM));
         Double averageLengthInMm = null;
         if (null != lengthRangeInMm) {
             String[] split = lengthRangeInMm.split("-");
@@ -26,7 +26,7 @@ public class LengthParserUtil {
         if (null == lengthInMm) {
             Double lengthInMm1 = null;
             try {
-                lengthInMm1 = Double.parseDouble(csvParser.getValueByLabel(columnToNormalizedTermMapper.get(StudyImporterForMississippiAlabama.LENGTH_IN_MM)));
+                lengthInMm1 = Double.parseDouble(csvParser.getValueByLabel(columnToNormalizedTermMapper.get(StudyImporterForSimons.LENGTH_IN_MM)));
             } catch (NumberFormatException ex) {
                 throw new StudyImporterException("failed to createTaxon specimen length [" + lengthInMm1 + "]");
             }

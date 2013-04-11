@@ -12,10 +12,10 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class StudyImporterForSnook extends BaseStudyImporter {
-    private static final Log LOG = LogFactory.getLog(StudyImporterForSnook.class);
+public class StudyImporterForBlewett extends BaseStudyImporter {
+    private static final Log LOG = LogFactory.getLog(StudyImporterForBlewett.class);
 
-    public StudyImporterForSnook(ParserFactory parserFactory, NodeFactory nodeFactory) {
+    public StudyImporterForBlewett(ParserFactory parserFactory, NodeFactory nodeFactory) {
         super(parserFactory, nodeFactory);
     }
 

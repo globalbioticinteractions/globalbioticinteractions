@@ -23,7 +23,7 @@ import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
-public class StudyImporterForLavacaBayTest extends GraphDBTestCase {
+public class StudyImporterForWrastTest extends GraphDBTestCase {
 
     @Test
     public void createAndPopulateStudyFromLavacaBay() throws StudyImporterException, NodeFactoryException {
@@ -55,11 +55,11 @@ public class StudyImporterForLavacaBayTest extends GraphDBTestCase {
                 "4/27/2007,\"Spring\",\"L\",\"R\",2,22.4,22.3,75,23.1,18.1,10.4,9.1,\"NW\",98,\"No\",2,23.77,23.77,23.77,,,,7.01,6.82,6.915,15.04,15.04,15.04,0.38\n" +
                 "4/27/2007,\"Spring\",\"L\",\"NV\",1,22.4,22.3,75,23.1,18.1,10.4,9.1,\"NW\",98,\"No\",2,23.85,23.85,23.85,,,,6.96,6.81,6.885,14.65,14.65,14.65,0.48\n" +
                 "4/27/2007,\"Spring\",\"L\",\"NV\",2,22.4,22.3,75,23.1,18.1,10.4,9.1,\"NW\",98,\"No\",1.8,23.78,23.78,23.78,,,,6.87,6.65,6.76,15.11,15.18,15.145,0.45";
-        contentMap.put(StudyImporterForLavacaBay.LAVACA_BAY_LOCATIONS, locationString);
-        contentMap.put(StudyImporterForLavacaBay.LAVACA_BAY_DATA_SOURCE, csvString);
-        contentMap.put(StudyImporterForLavacaBay.LAVACA_BAY_ENVIRONMENTAL, envString);
+        contentMap.put(StudyImporterForWrast.LAVACA_BAY_LOCATIONS, locationString);
+        contentMap.put(StudyImporterForWrast.LAVACA_BAY_DATA_SOURCE, csvString);
+        contentMap.put(StudyImporterForWrast.LAVACA_BAY_ENVIRONMENTAL, envString);
 
-        StudyImporterForLavacaBay studyImporterFor = new StudyImporterForLavacaBay(new TestParserFactory(contentMap), nodeFactory);
+        StudyImporterForWrast studyImporterFor = new StudyImporterForWrast(new TestParserFactory(contentMap), nodeFactory);
 
 
 
@@ -77,12 +77,12 @@ public class StudyImporterForLavacaBayTest extends GraphDBTestCase {
 
         assertNotNull(nodeFactory.findTaxonOfType("Aegathoa oculata"));
 
-        assertNotNull(nodeFactory.findStudy(StudyImporterForLavacaBay.LAVACA_BAY_DATA_SOURCE));
+        assertNotNull(nodeFactory.findStudy(StudyImporterForWrast.LAVACA_BAY_DATA_SOURCE));
 
         assertNotNull(nodeFactory.findSeason("spring"));
         assertNotNull(nodeFactory.findSeason("fall"));
 
-        Study foundStudy = nodeFactory.findStudy(StudyImporterForLavacaBay.LAVACA_BAY_DATA_SOURCE);
+        Study foundStudy = nodeFactory.findStudy(StudyImporterForWrast.LAVACA_BAY_DATA_SOURCE);
         assertNotNull(foundStudy);
         for (Relationship rel : study.getSpecimens()) {
             Specimen specimen = new Specimen(rel.getEndNode());
@@ -146,7 +146,7 @@ public class StudyImporterForLavacaBayTest extends GraphDBTestCase {
 
     @Test
     public void testImportFullFile() throws StudyImporterException, NodeFactoryException {
-        StudyImporterForLavacaBay importer = new StudyImporterForLavacaBay(new ParserFactoryImpl(), nodeFactory);
+        StudyImporterForWrast importer = new StudyImporterForWrast(new ParserFactoryImpl(), nodeFactory);
         importer.importStudy();
         Taxon taxon = nodeFactory.getOrCreateTaxon("Pleocyemata spp.");
         assertThat("Pleocyemata", is(taxon.getName()));
@@ -155,17 +155,17 @@ public class StudyImporterForLavacaBayTest extends GraphDBTestCase {
 
     @Test
     public void depthId() {
-        String depthId = StudyImporterForLavacaBay.createDepthId("Summer", "Upper", "1", "Marsh");
+        String depthId = StudyImporterForWrast.createDepthId("Summer", "Upper", "1", "Marsh");
         assertThat(depthId, is("MarshUpper1Summer"));
-        depthId = StudyImporterForLavacaBay.createDepthId("Summer", "U", "1", "M");
+        depthId = StudyImporterForWrast.createDepthId("Summer", "U", "1", "M");
         assertThat(depthId, is("MarshUpper1Summer"));
-        depthId = StudyImporterForLavacaBay.createDepthId("Summer", "U", "1", "Non-Veg ");
+        depthId = StudyImporterForWrast.createDepthId("Summer", "U", "1", "Non-Veg ");
         assertThat(depthId, is("Non-VegUpper1Summer"));
-        depthId = StudyImporterForLavacaBay.createDepthId("Summer", "U", "1", "Non-Veg ");
+        depthId = StudyImporterForWrast.createDepthId("Summer", "U", "1", "Non-Veg ");
         assertThat(depthId, is("Non-VegUpper1Summer"));
-        depthId = StudyImporterForLavacaBay.createDepthId("Summer", "U", "1", "NV ");
+        depthId = StudyImporterForWrast.createDepthId("Summer", "U", "1", "NV ");
         assertThat(depthId, is("Non-VegUpper1Summer"));
-        depthId = StudyImporterForLavacaBay.createDepthId("Summer", "U", "1", "R");
+        depthId = StudyImporterForWrast.createDepthId("Summer", "U", "1", "R");
         assertThat(depthId, is("ReefUpper1Summer"));
     }
 }
