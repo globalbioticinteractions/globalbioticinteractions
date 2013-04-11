@@ -27,6 +27,7 @@ public class TaxonNameNormalizer {
         name = name.replaceAll(" varietas ", " var. ");
         name = name.replaceAll("^\\w$","");
         name = name.replaceAll("ü", "ue");
+        name = name.replaceAll("ë", "e");
         String trim = name.trim();
         return replaceMultipleWhiteSpacesWithSingleWhitespace(trim);
     }

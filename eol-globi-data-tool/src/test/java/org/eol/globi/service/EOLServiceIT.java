@@ -15,6 +15,8 @@ public class EOLServiceIT {
         assertThat(lookupPageIdByScientificName("Hesperocharis paranensis"), is("EOL:176594"));
         // TODO need to find a way to include only pages that have at least one external taxonomy
         assertThat(lookupPageIdByScientificName("Dead roots"), is("EOL:19665069"));
+        assertThat(lookupPageIdByScientificName("Prunella (Bot)"), is("EOL:70879"));
+        assertThat(lookupPageIdByScientificName("Prunella (Bird)"), is("EOL:77930"));
 
     }
 

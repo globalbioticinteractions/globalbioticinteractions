@@ -43,6 +43,7 @@ public class TaxonNameNormalizerTest {
         assertThat(normalizer.normalize("S enflata"), is("Sagitta enflata"));
 
         assertThat(normalizer.normalize("Aneugmenus fürstenbergensis"), is("Aneugmenus fuerstenbergensis"));
+        assertThat(normalizer.normalize("Xanthorhoë"), is("Xanthorhoe"));
     }
 
     @Test
