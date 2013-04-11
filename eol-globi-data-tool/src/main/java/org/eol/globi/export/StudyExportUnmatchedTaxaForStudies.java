@@ -14,8 +14,9 @@ public class StudyExportUnmatchedTaxaForStudies extends BaseExporter {
 
     private static final String META_TABLE_SUFFIX = "</location>\n" +
             "    </files>\n" +
-            "    <field index=\"0\" term=\"http://rs.tdwg.org/dwc/terms/collectionID\"/>\n" +
+            "    <field index=\"0\" term=\"http://rs.tdwg.org/dwc/terms/scientificName\"/>\n" +
             "    <field index=\"1\" term=\"http://rs.tdwg.org/dwc/terms/scientificName\"/>\n" +
+            "    <field index=\"2\" term=\"http://rs.tdwg.org/dwc/terms/collectionID\"/>\n" +
             "  </table>\n";
 
     private static final String META_TABLE_PREFIX = "<table encoding=\"UTF-8\" fieldsTerminatedBy=\",\" linesTerminatedBy=\"\\n\" ignoreHeaderLines=\"1\" rowType=\"http://rs.tdwg.org/dwc/terms/text/DarwinRecord\">\n" +
@@ -31,18 +32,20 @@ public class StudyExportUnmatchedTaxaForStudies extends BaseExporter {
     public void exportStudy(Study study, Writer writer, boolean includeHeader) throws IOException {
         ExecutionEngine engine = new ExecutionEngine(graphDbService);
         String query = "START study = node:studies(title=\"" + study.getTitle() + "\") " +
-                "MATCH study-[:COLLECTED]->specimen-[:CLASSIFIED_AS]->taxon " +
+                "MATCH study-[:COLLECTED]->specimen-[:CLASSIFIED_AS]->taxon, specimen-[:ORIGINALLY_DESCRIBED_AS]->description " +
                 "WHERE taxon.externalId = \"" + NoMatchService.NO_MATCH + "\" " +
-                "RETURN distinct taxon.name, study.title";
+                "RETURN distinct description.name, taxon.name, study.title";
 
         ExecutionResult result = engine.execute(query);
 
         if (includeHeader) {
-            writer.write("\"name of unmatched source taxon\"");
+            writer.write("\"original source taxon name\"");
+            writer.write(",\"unmatched normalized source taxon name\"");
             writer.write(",\"study\"\n");
         }
 
         for (Map<String, Object> map : result) {
+            writer.write("\"" + map.get("description.name") + "\",");
             writer.write("\"" + map.get("taxon.name") + "\",");
             writer.write("\"" + map.get("study.title") + "\"\n");
         }
