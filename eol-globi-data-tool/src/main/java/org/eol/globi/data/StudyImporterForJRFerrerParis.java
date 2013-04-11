@@ -4,7 +4,6 @@ import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
-import org.eol.globi.domain.Taxon;
 
 import java.io.IOException;
 
@@ -23,7 +22,7 @@ public class StudyImporterForJRFerrerParis extends BaseStudyImporter {
                 "Compilation of hostplant records for butterflies.");
         String studyResource = "jr_ferrer_paris/ExampleAssociations.csv";
         try {
-            LabeledCSVParser parser = parserFactory.createParser(studyResource);
+            LabeledCSVParser parser = parserFactory.createParser(studyResource, CharsetConstant.UTF8);
 
             while (parser.getLine() != null) {
                 Specimen instigatorSpecimen = null;

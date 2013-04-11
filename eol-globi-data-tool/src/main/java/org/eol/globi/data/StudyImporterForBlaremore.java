@@ -7,7 +7,6 @@ import org.neo4j.graphdb.Relationship;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
-import org.eol.globi.domain.Taxon;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -31,7 +30,7 @@ public class StudyImporterForBlaremore extends BaseStudyImporter {
     public Study importStudy() throws StudyImporterException {
         Study study = null;
         try {
-            LabeledCSVParser parser = parserFactory.createParser(DATA_SOURCE);
+            LabeledCSVParser parser = parserFactory.createParser(DATA_SOURCE, CharsetConstant.UTF8);
             String[] line = null;
 
             study = nodeFactory.getOrCreateStudy(StudyLibrary.Study.BAREMORE_ANGEL_SHARK.toString(),

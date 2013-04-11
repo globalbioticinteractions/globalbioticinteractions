@@ -9,7 +9,7 @@ import java.io.Reader;
 
 public class ParserFactoryImpl implements ParserFactory {
 
-    public LabeledCSVParser createParser(String studyResource) throws IOException {
+    public LabeledCSVParser createParser(String studyResource, String characterEncoding) throws IOException {
         Reader reader = null;
         InputStream is = getClass().getResourceAsStream(studyResource);
         if (is == null) {
@@ -17,9 +17,9 @@ public class ParserFactoryImpl implements ParserFactory {
         }
 
         if (studyResource.endsWith(".gz")) {
-            reader = FileUtils.getBufferedReaderUTF_8(is);
+            reader = FileUtils.getBufferedReader(is, characterEncoding);
         } else {
-            reader = FileUtils.getUncompressedBufferedReaderUTF_8(is);
+            reader = FileUtils.getUncompressedBufferedReader(is, characterEncoding);
         }
         return new LabeledCSVParser(new CSVParser(reader));
     }

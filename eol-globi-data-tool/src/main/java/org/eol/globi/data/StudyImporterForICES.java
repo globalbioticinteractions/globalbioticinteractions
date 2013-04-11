@@ -6,7 +6,6 @@ import org.neo4j.graphdb.Relationship;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
-import org.eol.globi.domain.Taxon;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -70,7 +69,7 @@ public class StudyImporterForICES extends BaseStudyImporter {
     private LabeledCSVParser createParser() throws StudyImporterException {
         LabeledCSVParser parser = null;
         try {
-            parser = parserFactory.createParser("ices/StomachDataSet.csv.gz");
+            parser = parserFactory.createParser("ices/StomachDataSet.csv.gz", CharsetConstant.UTF8);
         } catch (IOException e) {
             throw new StudyImporterException("failed to access datasource", e);
         }

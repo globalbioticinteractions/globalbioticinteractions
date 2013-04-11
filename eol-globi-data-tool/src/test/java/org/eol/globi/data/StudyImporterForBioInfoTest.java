@@ -41,12 +41,12 @@ public class StudyImporterForBioInfoTest extends GraphDBTestCase {
     @Test
     public void importAll() throws StudyImporterException, NodeFactoryException {
         StudyImporter importer = new StudyImporterFactory(new ParserFactoryImpl(), nodeFactory).createImporterForStudy(StudyLibrary.Study.BIO_INFO);
-        // limit the nubmer of line to be imported to make test runs reasonably fast
+        // limit the number of line to be imported to make test runs reasonably fast
         importer.setImportFilter(new ImportFilter() {
 
             @Override
             public boolean shouldImportRecord(Long recordNumber) {
-                return recordNumber < 500;
+                return recordNumber < 500 || recordNumber == 4585;
             }
         });
         Study study = importer.importStudy();
@@ -64,6 +64,10 @@ public class StudyImporterForBioInfoTest extends GraphDBTestCase {
         Taxon taxon2 = nodeFactory.findTaxon("Aceria eriobia");
         assertNotNull(taxon2);
         assertThat(taxon2.getExternalId(), is("bioinfo:32122"));
+
+        // relation record number: 4585
+        taxon2 = nodeFactory.findTaxon("Aneugmenus fürstenbergensis");
+        assertNotNull(taxon2);
     }
 
     @Test
@@ -142,16 +146,14 @@ public class StudyImporterForBioInfoTest extends GraphDBTestCase {
     }
 
 
-
-
     @Test
     public void trophicRelationsParser() throws IOException, StudyImporterException {
         Map<Long, RelType> relationsTypeMap = buildRelationsTypeMap();
 
-        assertThat(relationsTypeMap.get(43899L), is((RelType)InteractType.PREYS_UPON));
-        assertThat(relationsTypeMap.get(43900L), is((RelType)InteractType.PARASITE_OF));
-        assertThat(relationsTypeMap.get(43901L), is((RelType)InteractType.HAS_HOST));
-        assertThat(relationsTypeMap.get(43902L), is((RelType)InteractType.INTERACTS_WITH));
+        assertThat(relationsTypeMap.get(43899L), is((RelType) InteractType.PREYS_UPON));
+        assertThat(relationsTypeMap.get(43900L), is((RelType) InteractType.PARASITE_OF));
+        assertThat(relationsTypeMap.get(43901L), is((RelType) InteractType.HAS_HOST));
+        assertThat(relationsTypeMap.get(43902L), is((RelType) InteractType.INTERACTS_WITH));
     }
 
     private Map<Long, RelType> buildRelationsTypeMap() throws IOException, StudyImporterException {

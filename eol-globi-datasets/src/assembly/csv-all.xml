@@ -13,6 +13,7 @@
             <outputDirectory>csv-all</outputDirectory>
             <includes>
                 <include>**/*.csv</include>
+                <include>**/*.xml</include>
             </includes>
         </fileSet>
     </fileSets>

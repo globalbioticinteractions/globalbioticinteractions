@@ -64,7 +64,7 @@ public class StudyImporterForMississippiAlabama extends BaseStudyImporter {
                 "1987- 1990",
                 "Food habits and trophic structure of the demersal fish assemblages on the Mississippi-Alabama continental shelf.");
         try {
-            LabeledCSVParser csvParser = parserFactory.createParser(studyResource);
+            LabeledCSVParser csvParser = parserFactory.createParser(studyResource, CharsetConstant.UTF8);
             Map<String, String> columnMapper = COLUMN_MAPPER;
             LengthParser parser = new LengthRangeParserImpl(columnMapper.get(LENGTH_RANGE_IN_MM));
             while (csvParser.getLine() != null) {

@@ -18,7 +18,7 @@ public class LengthRangeParserImplTest {
     }
 
     private LabeledCSVParser initParser() throws IOException {
-        LabeledCSVParser csvParser = new TestParserFactory("\"johnny\"\n123-146\n324-345\n").createParser("aStudy");
+        LabeledCSVParser csvParser = new TestParserFactory("\"johnny\"\n123-146\n324-345\n").createParser("aStudy", "UTF-8");
         csvParser.getLine();
         return csvParser;
     }
@@ -33,7 +33,7 @@ public class LengthRangeParserImplTest {
     @Test(expected = StudyImporterException.class)
     public void parseLengthMalformed() throws IOException, StudyImporterException {
         LengthRangeParserImpl parser = new LengthRangeParserImpl("johnny");
-        LabeledCSVParser csvParser = new TestParserFactory("johnny\nAINTRIGHT\n324\n").createParser("aStudy");
+        LabeledCSVParser csvParser = new TestParserFactory("johnny\nAINTRIGHT\n324\n").createParser("aStudy", "UTF-8");
         csvParser.getLine();
         parser.parseLengthInMm(csvParser);
     }

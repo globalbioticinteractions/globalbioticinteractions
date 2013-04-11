@@ -6,7 +6,6 @@ import org.apache.commons.logging.LogFactory;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
-import org.eol.globi.domain.Taxon;
 
 import java.io.IOException;
 
@@ -22,7 +21,7 @@ public class StudyImporterForBarnes extends BaseStudyImporter {
     public Study importStudy() throws StudyImporterException {
         LabeledCSVParser parser = null;
         try {
-            parser = parserFactory.createParser("barnes/Predator_and_prey_body_sizes_in_marine_food_webs_vsn3.tsv.gz");
+            parser = parserFactory.createParser("barnes/Predator_and_prey_body_sizes_in_marine_food_webs_vsn3.tsv.gz", CharsetConstant.UTF8);
         } catch (IOException e) {
             throw new StudyImporterException("failed to read resource", e);
         }

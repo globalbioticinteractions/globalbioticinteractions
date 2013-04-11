@@ -64,12 +64,12 @@ public class StudyImporterForSnookTest extends GraphDBTestCase {
 
         ParserFactory testFactory = new ParserFactory() {
             @Override
-            public LabeledCSVParser createParser(String studyResource) throws IOException {
+            public LabeledCSVParser createParser(String studyResource, String characterEncoding) throws IOException {
                 LabeledCSVParser parser = null;
                 if (studyResource.contains("abundance")) {
-                    parser = preyPredatorFactory.createParser(studyResource);
+                    parser = preyPredatorFactory.createParser(studyResource, characterEncoding);
                 } else {
-                    parser = dateLocationFactory.createParser(studyResource);
+                    parser = dateLocationFactory.createParser(studyResource, characterEncoding);
                 }
                 return parser;
             }

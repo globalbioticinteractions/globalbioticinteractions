@@ -5,7 +5,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
-import org.eol.globi.domain.Taxon;
 import uk.me.jstott.jcoord.LatLng;
 
 import java.io.IOException;
@@ -65,7 +64,7 @@ public class StudyImporterForRoopnarine extends BaseStudyImporter {
 
     private List<Specimen> importTrophicInteractions(String trophicGuildLookup, Map<Integer, List<String>> trophicGuildNumberToSpeciesMap, String studyResource) throws StudyImporterException {
         try {
-            LabeledCSVParser parser = parserFactory.createParser(studyResource);
+            LabeledCSVParser parser = parserFactory.createParser(studyResource, CharsetConstant.UTF8);
             List<Specimen> predatorSpecimen = new ArrayList<Specimen>();
             while (parser.getLine() != null) {
                 List<String> preyTaxonList = importPreyList(trophicGuildNumberToSpeciesMap, parser);
@@ -87,7 +86,7 @@ public class StudyImporterForRoopnarine extends BaseStudyImporter {
     private Map<Integer, List<String>> buildGuildLookup(String trophicGuildLookup) throws StudyImporterException {
         final Map<Integer, List<String>> trophicGuildNumberToSpeciesMap = new HashMap<Integer, List<String>>();
         try {
-            LabeledCSVParser parser = parserFactory.createParser(trophicGuildLookup);
+            LabeledCSVParser parser = parserFactory.createParser(trophicGuildLookup, CharsetConstant.UTF8);
             while (parser.getLine() != null) {
                 Integer guildNumber = parseGuildNumber(trophicGuildLookup, parser);
 

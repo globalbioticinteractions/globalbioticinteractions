@@ -7,7 +7,6 @@ import org.apache.commons.logging.LogFactory;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
-import org.eol.globi.domain.Taxon;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -25,7 +24,7 @@ public class StudyImporterForSnook extends BaseStudyImporter {
         Study study = nodeFactory.createStudy("Blewett2000CharlotteHarborFL", "David A. Blewett", "Fish and Wildlife Research Institute, Florida Fish and Wildlife Conservation Commission", "Mar 2000- Feb 2002", "Feeding Habits of Common Snook, Centropomus undecimalis, in Charlotte Harbor, Florida.");
 
         try {
-            LabeledCSVParser locationParser = parserFactory.createParser("blewett/SnookDietData2000_02_Charlotte_Harbor_FL_Blewett_date_and_abiotic.csv.gz");
+            LabeledCSVParser locationParser = parserFactory.createParser("blewett/SnookDietData2000_02_Charlotte_Harbor_FL_Blewett_date_and_abiotic.csv.gz", CharsetConstant.UTF8);
             Map<String, Location> locationMap = new HashMap<String, Location>();
             String[] header = locationParser.getLabels();
             String[] line = null;
@@ -60,7 +59,7 @@ public class StudyImporterForSnook extends BaseStudyImporter {
     }
 
     private void parsePredatorPreyInteraction(Study study, Map<String, Location> locationMap) throws IOException, NodeFactoryException {
-        LabeledCSVParser parser = parserFactory.createParser("blewett/SnookDietData2000_02_Charlotte_Harbor_FL_Blewett_numeric_abundance.csv.gz");
+        LabeledCSVParser parser = parserFactory.createParser("blewett/SnookDietData2000_02_Charlotte_Harbor_FL_Blewett_numeric_abundance.csv.gz", CharsetConstant.UTF8);
         String[] header = parser.getLabels();
 
         String[] line = null;

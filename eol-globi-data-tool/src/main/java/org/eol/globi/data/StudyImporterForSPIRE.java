@@ -8,7 +8,6 @@ import com.hp.hpl.jena.rdf.model.Statement;
 import com.hp.hpl.jena.rdf.model.StmtIterator;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
-import org.eol.globi.domain.Taxon;
 import uk.me.jstott.jcoord.LatLng;
 
 import java.io.BufferedReader;
@@ -196,7 +195,7 @@ public class StudyImporterForSPIRE extends BaseStudyImporter {
 
     private Model buildModel() throws IOException {
         Model model = ModelFactory.createDefaultModel();
-        BufferedReader bufferedReader = FileUtils.getBufferedReaderUTF_8(getClass().getResourceAsStream("spire/allFoodWebStudies.owl.gz"));
+        BufferedReader bufferedReader = FileUtils.getBufferedReader(getClass().getResourceAsStream("spire/allFoodWebStudies.owl.gz"), CharsetConstant.UTF8);
         model.read(bufferedReader, null);
         return model;
     }

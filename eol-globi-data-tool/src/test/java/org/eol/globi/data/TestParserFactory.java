@@ -21,7 +21,7 @@ public class TestParserFactory implements ParserFactory {
         this.map = resourceMapper;
     }
 
-    public LabeledCSVParser createParser(String studyResource) throws IOException {
+    public LabeledCSVParser createParser(String studyResource, String characterEncoding) throws IOException {
         String content = csvString;
         if (content == null) {
             content = map.get(studyResource);

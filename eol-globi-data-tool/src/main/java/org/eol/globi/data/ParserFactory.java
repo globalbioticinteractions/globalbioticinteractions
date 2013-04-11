@@ -6,6 +6,6 @@ import java.io.IOException;
 
 public interface ParserFactory {
 
-    LabeledCSVParser createParser(String studyResource) throws IOException;
+    LabeledCSVParser createParser(String studyResource, String characterEncoding) throws IOException;
 
 }

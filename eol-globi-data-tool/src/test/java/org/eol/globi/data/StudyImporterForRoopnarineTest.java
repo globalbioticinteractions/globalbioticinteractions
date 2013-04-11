@@ -53,14 +53,14 @@ public class StudyImporterForRoopnarineTest extends GraphDBTestCase {
 
         StudyImporterForRoopnarine importer = new StudyImporterForRoopnarine(new ParserFactory() {
             @Override
-            public LabeledCSVParser createParser(String studyResource) throws IOException {
+            public LabeledCSVParser createParser(String studyResource, String characterEncoding) throws IOException {
                 ParserFactory factory;
                 if (studyResource.contains("4.csv")) {
                     factory = new TestParserFactory(trophicGuildsToSpeciesLookup);
                 } else {
                     factory = new TestParserFactory(trophicInteractions);
                 }
-                return factory.createParser("");
+                return factory.createParser("", characterEncoding);
             }
         }, nodeFactory);
 

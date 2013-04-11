@@ -1,5 +1,6 @@
 package org.eol.globi.data.taxon;
 
+import org.eol.globi.data.CharsetConstant;
 import org.eol.globi.data.FileUtils;
 
 import java.io.BufferedReader;
@@ -35,7 +36,7 @@ public class GulfBaseTaxonReaderFactory implements TaxonReaderFactory {
             if (null == resourceAsStream) {
                 throw new IOException("failed to open resource with name [" + resourceName + "]");
             }
-            readers.put(resourceName, FileUtils.getBufferedReaderUTF_8(resourceAsStream));
+            readers.put(resourceName, FileUtils.getBufferedReader(resourceAsStream, CharsetConstant.UTF8));
         }
         return readers;
     }

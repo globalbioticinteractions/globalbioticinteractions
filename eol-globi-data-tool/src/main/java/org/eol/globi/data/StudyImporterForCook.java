@@ -1,13 +1,10 @@
 package org.eol.globi.data;
 
 import com.Ostermiller.util.LabeledCSVParser;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
-import org.eol.globi.domain.Taxon;
 import org.neo4j.graphdb.Relationship;
 
 import java.io.IOException;
@@ -27,7 +24,7 @@ public class StudyImporterForCook extends BaseStudyImporter {
     public Study importStudy() throws StudyImporterException {
         LabeledCSVParser parser;
         try {
-            parser = parserFactory.createParser(DATASET_RESOURCE_NAME);
+            parser = parserFactory.createParser(DATASET_RESOURCE_NAME, CharsetConstant.UTF8);
         } catch (IOException e) {
             throw new StudyImporterException("failed to read resource", e);
         }

@@ -9,7 +9,6 @@ import org.neo4j.graphdb.Relationship;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
-import org.eol.globi.domain.Taxon;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -31,7 +30,7 @@ public class StudyImporterForAkin extends BaseStudyImporter {
     }
 
     private Study importAkinStudyFile(String[][] siteInfos, String studyResource, Study study) throws IOException, StudyImporterException, NodeFactoryException {
-        LabeledCSVParser parser = parserFactory.createParser(studyResource);
+        LabeledCSVParser parser = parserFactory.createParser(studyResource, CharsetConstant.UTF8);
         String[] header = parser.getLabels();
         String[] line = null;
 

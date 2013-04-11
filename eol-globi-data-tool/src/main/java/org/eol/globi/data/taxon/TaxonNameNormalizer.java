@@ -3,6 +3,7 @@ package org.eol.globi.data.taxon;
 import com.Ostermiller.util.CSVParser;
 import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.lang3.StringUtils;
+import org.eol.globi.data.CharsetConstant;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -16,11 +17,16 @@ public class TaxonNameNormalizer {
 
     private static String clean(String name) {
         name = name.replaceAll("<quotes>", "");
+        name = name.replaceAll("\\s.*/.*($|\\s)", "");
         name = removePartsInParentheses(name);
         name = keepOnlyLettersAndNumbers(name);
         name = name.replaceAll("\\s(spp|sp)\\.*($|\\s.*)", "");
-        name = name.replaceAll(" cf ", " ");
+        name = name.replaceAll(" cf .*", " ");
+        name = name.replaceAll(" var ", " var. ");
+        name = name.replaceAll(" variety ", " var. ");
+        name = name.replaceAll(" varietas ", " var. ");
         name = name.replaceAll("^\\w$","");
+        name = name.replaceAll("ü", "ue");
         String trim = name.trim();
         return replaceMultipleWhiteSpacesWithSingleWhitespace(trim);
     }
@@ -57,7 +63,7 @@ public class TaxonNameNormalizer {
     private void doInit() {
         try {
             InputStream resourceAsStream = getClass().getResourceAsStream("taxonNameCorrections.csv");
-            BufferedReader is = org.eol.globi.data.FileUtils.getUncompressedBufferedReaderUTF_8(resourceAsStream);
+            BufferedReader is = org.eol.globi.data.FileUtils.getUncompressedBufferedReader(resourceAsStream, CharsetConstant.UTF8);
             LabeledCSVParser labeledCSVParser = new LabeledCSVParser(new CSVParser(is));
             String[] line;
 

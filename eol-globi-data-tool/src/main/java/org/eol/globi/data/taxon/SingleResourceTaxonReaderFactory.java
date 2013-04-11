@@ -1,5 +1,6 @@
 package org.eol.globi.data.taxon;
 
+import org.eol.globi.data.CharsetConstant;
 import org.eol.globi.data.FileUtils;
 
 import java.io.BufferedReader;
@@ -21,7 +22,7 @@ public class SingleResourceTaxonReaderFactory implements TaxonReaderFactory {
         if (null == is) {
             throw new IOException("failed to find [" + resourceName + "]");
         }
-        return FileUtils.getBufferedReaderUTF_8(is);
+        return FileUtils.getBufferedReader(is, CharsetConstant.UTF8);
     }
 
     @Override

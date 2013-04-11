@@ -59,7 +59,7 @@ public class StudyImporterForLavacaBay extends BaseStudyImporter {
                 "July 2006- April 2007",
                 "Spatiotemporal And Habitat-Mediated Food Web Dynamics in Lavaca Bay, Texas.");
         try {
-            LabeledCSVParser csvParser = parserFactory.createParser(LAVACA_BAY_DATA_SOURCE);
+            LabeledCSVParser csvParser = parserFactory.createParser(LAVACA_BAY_DATA_SOURCE, CharsetConstant.UTF8);
             LengthParser parser = new LengthParserImpl(COLUMN_MAPPER.get(LENGTH_IN_MM));
             while (csvParser.getLine() != null) {
                 addNextRecordToStudy(csvParser, study, COLUMN_MAPPER, parser);
@@ -117,7 +117,7 @@ public class StudyImporterForLavacaBay extends BaseStudyImporter {
     private Map<String, Double> createDepthMap() throws StudyImporterException {
         Map<String, Double> depthMap;
         try {
-            LabeledCSVParser depthParser = parserFactory.createParser(LAVACA_BAY_ENVIRONMENTAL);
+            LabeledCSVParser depthParser = parserFactory.createParser(LAVACA_BAY_ENVIRONMENTAL, CharsetConstant.UTF8);
             depthMap = new HashMap<String, Double>();
             while (depthParser.getLine() != null) {
                 String seasonDepth = depthParser.getValueByLabel("Season");
@@ -183,7 +183,7 @@ public class StudyImporterForLavacaBay extends BaseStudyImporter {
 
         LabeledCSVParser parser = null;
         try {
-            parser = parserFactory.createParser(LAVACA_BAY_LOCATIONS);
+            parser = parserFactory.createParser(LAVACA_BAY_LOCATIONS, CharsetConstant.UTF8);
             while (parser.getLine() != null) {
                 String habitateDef = parser.getValueByLabel(COLUMN_MAPPER.get(HABITAT));
                 if ("Marsh edge".equals(habitateDef)) {

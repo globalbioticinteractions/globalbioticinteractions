@@ -25,12 +25,23 @@ public class TaxonNameNormalizerTest {
         assertThat(normalizer.normalize("NA"), is("NomenNescio"));
         assertThat(normalizer.normalize("NE"), is("NomenNescio"));
         assertThat(normalizer.normalize("'Loranthus'"), is("Loranthus"));
-        assertThat(normalizer.normalize("Leptochela cf bermudensis"), is("Leptochela bermudensis"));
         assertThat(normalizer.normalize("Bacteriastrum spp.          Bacteriastrum spp.          Bacteriastrum spp.          Bacteriastrum spp."), is("Bacteriastrum"));
         assertThat(normalizer.normalize("Acrididae spp. "), is("Acrididae"));
         assertThat(normalizer.normalize("<quotes>Chenopodiaceae<quotes>"), is("Chenopodiaceae"));
+
         assertThat(normalizer.normalize("Mycosphaerella filipendulae-denudatae"), is("Mycosphaerella filipendulae-denudatae"));
+
         assertThat(normalizer.normalize("Puccinia dioicae var. dioicae"), is("Puccinia dioicae var. dioicae"));
+        assertThat(normalizer.normalize("Puccinia dioicae var dioicae"), is("Puccinia dioicae var. dioicae"));
+        assertThat(normalizer.normalize("Puccinia dioicae variety dioicae"), is("Puccinia dioicae var. dioicae"));
+        assertThat(normalizer.normalize("Puccinia dioicae varietas dioicae"), is("Puccinia dioicae var. dioicae"));
+
+        assertThat(normalizer.normalize("Archips podana/operana"), is("Archips"));
+
+        assertThat(normalizer.normalize("Leptochela cf bermudensis"), is("Leptochela"));
+
+        assertThat(normalizer.normalize("S enflata"), is("Sagitta enflata"));
+        assertThat(normalizer.normalize("Aneugmenus fürstenbergensis"), is("Aneugmenus fuerstenbergensis"));
     }
 
     @Test
