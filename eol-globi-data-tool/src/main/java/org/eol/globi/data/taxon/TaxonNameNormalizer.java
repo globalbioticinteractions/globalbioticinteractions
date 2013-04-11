@@ -37,11 +37,14 @@ public class TaxonNameNormalizer {
     }
 
     private static String removePartsInParentheses(String name) {
-        return name.replaceAll("\\(.*\\)", "");
+        if (!name.matches(".*\\((bot\\.|bot|Bot|Bot\\.|Zool\\.|zoo)\\)")) {
+            name = name.replaceAll("\\(.*\\)", "");
+        }
+        return name;
     }
 
     private static String keepOnlyLettersAndNumbers(String name) {
-        name = name.replaceAll("[^\\p{L}\\p{N}-\\.]", " ");
+        name = name.replaceAll("[^\\p{L}\\p{N}-\\.\\(\\)]", " ");
         return name;
     }
 

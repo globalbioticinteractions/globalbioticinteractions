@@ -44,6 +44,16 @@ public class TaxonNameNormalizerTest {
 
         assertThat(normalizer.normalize("Aneugmenus fürstenbergensis"), is("Aneugmenus fuerstenbergensis"));
         assertThat(normalizer.normalize("Xanthorhoë"), is("Xanthorhoe"));
+
+        // Malcolm Storey technique to distinguish duplicate genus names in taxonomies.
+        assertThat(normalizer.normalize("Ammophila (Bot.)"), is("Ammophila (Bot.)"));
+        assertThat(normalizer.normalize("Ammophila (Zool.)"), is("Ammophila (Zool.)"));
+        assertThat(normalizer.normalize("Ammophila (zoo)"), is("Ammophila (zoo)"));
+        assertThat(normalizer.normalize("Ammophila (bot)"), is("Ammophila (bot)"));
+        assertThat(normalizer.normalize("Ammophila (bot.)"), is("Ammophila (bot.)"));
+        assertThat(normalizer.normalize("Ammophila (Bot)"), is("Ammophila (Bot)"));
+        assertThat(normalizer.normalize("Ammophila (blah)"), is("Ammophila"));
+
     }
 
     @Test
