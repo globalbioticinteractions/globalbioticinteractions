@@ -17,9 +17,7 @@ public class EOLServiceIT {
         assertThat(lookupPageIdByScientificName("Dead roots"), is("EOL:19665069"));
         assertThat(lookupPageIdByScientificName("Prunella (Bot)"), is("EOL:70879"));
         assertThat(lookupPageIdByScientificName("Prunella (Bird)"), is("EOL:77930"));
-        assertThat(lookupPageIdByScientificName("Salix cinerea x phylicifolia"), is("EOL:584272"));
-
-
+        assertThat(lookupPageIdByScientificName("Pseudobaeospora dichroa"), is("EOL:584272"));
     }
 
     /** Regarding multiple symbol in taxonomic names:
@@ -44,6 +42,7 @@ public class EOLServiceIT {
 
     @Test
     public void multiplySymbolNotSupportedByEOL() throws TaxonPropertyLookupServiceException {
+        assertThat(lookupPageIdByScientificName("Salix cinerea x phylicifolia"), is("EOL:584272"));
         assertThat(lookupPageIdByScientificName("Salix cinerea \u00D7 phylicifolia"), is(nullValue()));
         assertThat(lookupPageIdByScientificName("Salix cinerea × phylicifolia"), is(nullValue()));
 
