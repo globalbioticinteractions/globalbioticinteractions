@@ -17,7 +17,7 @@ public class EOLServiceIT {
         assertThat(lookupPageIdByScientificName("Dead roots"), is("EOL:19665069"));
         assertThat(lookupPageIdByScientificName("Prunella (Bot)"), is("EOL:70879"));
         assertThat(lookupPageIdByScientificName("Prunella (Bird)"), is("EOL:77930"));
-        assertThat(lookupPageIdByScientificName("Pseudobaeospora dichroa"), is("EOL:584272"));
+        assertThat(lookupPageIdByScientificName("Pseudobaeospora dichroa"), is("EOL:1001400"));
     }
 
     /** Regarding multiple symbol in taxonomic names:
