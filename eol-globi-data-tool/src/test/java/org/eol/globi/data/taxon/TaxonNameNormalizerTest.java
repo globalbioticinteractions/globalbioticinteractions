@@ -66,6 +66,22 @@ public class TaxonNameNormalizerTest {
         assertThat(normalizer.normalize("Ammophila (Bot)"), is("Ammophila (Bot)"));
         assertThat(normalizer.normalize("Ammophila (blah)"), is("Ammophila"));
 
+
+    }
+
+    /**
+     * In scientific names of hybrids (e.g. Erysimum decumbens x perofskianum, http://eol.org/pages/5145889),
+     *  the \u00D7 or × (multiply) symbol should be used. However, most data sources simply use lower case "x",
+     *  and don't support the × symbol is their name matching methods.
+     */
+
+    @Test
+    public void replaceMultiplyOrXByLowerCaseX() {
+        TaxonNameNormalizer normalizer = new TaxonNameNormalizer();
+        assertThat(normalizer.normalize("Genus species1 x species2"), is("Genus species1 x species2"));
+        assertThat(normalizer.normalize("Genus species1 \u00D7 species2"), is("Genus species1 x species2"));
+        assertThat(normalizer.normalize("Genus species1 × species2"), is("Genus species1 x species2"));
+        assertThat(normalizer.normalize("Genus species1 X species2"), is("Genus species1 x species2"));
     }
 
     @Test

@@ -17,6 +17,35 @@ public class EOLServiceIT {
         assertThat(lookupPageIdByScientificName("Dead roots"), is("EOL:19665069"));
         assertThat(lookupPageIdByScientificName("Prunella (Bot)"), is("EOL:70879"));
         assertThat(lookupPageIdByScientificName("Prunella (Bird)"), is("EOL:77930"));
+        assertThat(lookupPageIdByScientificName("Salix cinerea x phylicifolia"), is("EOL:584272"));
+
+
+    }
+
+    /** Regarding multiple symbol in taxonomic names:
+     *
+     * From: 	Malcolm Storey <malcolm.storey321@btinternet.com>
+     	Subject: 	RE: question about taxonomy name normalization
+     	Date: 	April 12, 2013 4:24:11 AM PDT
+     	To: 	jorrit poelen <jhpoelen@xs4all.nl>
+
+     And another thing!
+
+     The "x" in hybrids, whether "Genus species1 x species2" or "Genus
+     xHybridName" is strictly not the letter "x". It's the multiply symbol:
+     HTML: &times;
+     http://www.fileformat.info/info/unicode/char/d7/index.htm
+
+     But of course you'll equally receive it as "x".
+
+     Malcolm
+     * @throws TaxonPropertyLookupServiceException
+     */
+
+    @Test
+    public void multiplySymbolNotSupportedByEOL() throws TaxonPropertyLookupServiceException {
+        assertThat(lookupPageIdByScientificName("Salix cinerea \u00D7 phylicifolia"), is(nullValue()));
+        assertThat(lookupPageIdByScientificName("Salix cinerea × phylicifolia"), is(nullValue()));
 
     }
 
