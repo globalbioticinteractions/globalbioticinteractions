@@ -25,6 +25,10 @@ public class TaxonNameNormalizer {
         name = name.replaceAll(" var ", " var. ");
         name = name.replaceAll(" variety ", " var. ");
         name = name.replaceAll(" varietas ", " var. ");
+        name = name.replaceAll(" ssp ", " ssp. ");
+        name = name.replaceAll(" subsp ", " ssp. ");
+        name = name.replaceAll(" subsp. ", " ssp. ");
+        name = name.replaceAll(" subspecies ", " ssp. ");
         name = name.replaceAll("^\\w$","");
         name = name.replaceAll("ü", "ue");
         name = name.replaceAll("ë", "e");

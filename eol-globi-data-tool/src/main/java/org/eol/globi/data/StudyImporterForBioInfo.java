@@ -34,7 +34,7 @@ public class StudyImporterForBioInfo extends BaseStudyImporter implements StudyI
     public Study importStudy() throws StudyImporterException {
         LabeledCSVParser relationsParser = null;
         try {
-            relationsParser = parserFactory.createParser(RELATIONS_DATA_FILE, CharsetConstant.CHARSET_MAC_ROMAN);
+            relationsParser = parserFactory.createParser(RELATIONS_DATA_FILE, CharsetConstant.UTF8);
             relationsParser.changeDelimiter('\t');
         } catch (IOException e1) {
             throw new StudyImporterException("problem reading trophic relations file [" + RELATIONS_DATA_FILE + "]", e1);
@@ -47,7 +47,7 @@ public class StudyImporterForBioInfo extends BaseStudyImporter implements StudyI
 
         Map<Long, RelType> relationsTypeMap;
         try {
-            LabeledCSVParser relationTypesParser = parserFactory.createParser(RELATION_TYPE_DATA_FILE, CharsetConstant.CHARSET_MAC_ROMAN);
+            LabeledCSVParser relationTypesParser = parserFactory.createParser(RELATION_TYPE_DATA_FILE, CharsetConstant.UTF8);
             relationTypesParser.changeDelimiter('\t');
             relationsTypeMap = createRelationsTypeMap(relationTypesParser);
         } catch (IOException e1) {
@@ -61,7 +61,7 @@ public class StudyImporterForBioInfo extends BaseStudyImporter implements StudyI
         LOG.info("taxa map being created...");
         Map<Long, String> taxaMap;
         try {
-            LabeledCSVParser taxaParser = parserFactory.createParser(TAXA_DATA_FILE, CharsetConstant.CHARSET_MAC_ROMAN);
+            LabeledCSVParser taxaParser = parserFactory.createParser(TAXA_DATA_FILE, CharsetConstant.UTF8);
             taxaParser.changeDelimiter('\t');
             taxaMap = createTaxaMap(taxaParser);
         } catch (IOException e) {

@@ -36,6 +36,18 @@ public class TaxonNameNormalizerTest {
         assertThat(normalizer.normalize("Puccinia dioicae variety dioicae"), is("Puccinia dioicae var. dioicae"));
         assertThat(normalizer.normalize("Puccinia dioicae varietas dioicae"), is("Puccinia dioicae var. dioicae"));
 
+        assertThat(normalizer.normalize("Aegathoa oculata ssp. fred"), is("Aegathoa oculata ssp. fred"));
+        assertThat(normalizer.normalize("Aegathoa oculata ssp fred"), is("Aegathoa oculata ssp. fred"));
+        assertThat(normalizer.normalize("Aegathoa oculata subsp fred"), is("Aegathoa oculata ssp. fred"));
+        assertThat(normalizer.normalize("Aegathoa oculata subsp. fred"), is("Aegathoa oculata ssp. fred"));
+        assertThat(normalizer.normalize("Aegathoa oculata subspecies fred"), is("Aegathoa oculata ssp. fred"));
+
+        //assertThat(normalizer.normalize("Armeria 'Bees Ruby'"), is("Armeria 'Bees Ruby'"));
+
+        assertThat(normalizer.normalize("Rubus fruticosus agg."), is("Rubus fruticosus agg."));
+
+        assertThat(normalizer.normalize("Limonia (Dicranomyia) chorea"), is("Limonia chorea"));
+
         assertThat(normalizer.normalize("Archips podana/operana"), is("Archips"));
 
         assertThat(normalizer.normalize("Leptochela cf bermudensis"), is("Leptochela"));
