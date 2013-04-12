@@ -81,7 +81,9 @@ public class TaxonNameNormalizerTest {
         assertThat(normalizer.normalize("Genus species1 x species2"), is("Genus species1 x species2"));
         assertThat(normalizer.normalize("Genus species1 \u00D7 species2"), is("Genus species1 x species2"));
         assertThat(normalizer.normalize("Genus species1 × species2"), is("Genus species1 x species2"));
+        assertThat(normalizer.normalize("Genus species1 ×hybridName"), is("Genus species1 xhybridName"));
         assertThat(normalizer.normalize("Genus species1 X species2"), is("Genus species1 x species2"));
+        assertThat(normalizer.normalize("Genus species1 XhybridName"), is("Genus species1 xhybridName"));
     }
 
     @Test

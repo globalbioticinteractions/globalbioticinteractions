@@ -18,8 +18,8 @@ public class TaxonNameNormalizer {
     private static String clean(String name) {
         name = name.replaceAll("<quotes>", "");
         name = name.replaceAll("\\s.*/.*($|\\s)", "");
-        name = name.replaceAll("\\s×\\s", " x ");
-        name = name.replaceAll("\\sX\\s", " x ");
+        name = name.replaceAll("\\s×", " x");
+        name = name.replaceAll("\\sX", " x");
         name = removePartsInParentheses(name);
         name = keepOnlyLettersAndNumbers(name);
         name = name.replaceAll("\\s(spp|sp)\\.*($|\\s.*)", "");
