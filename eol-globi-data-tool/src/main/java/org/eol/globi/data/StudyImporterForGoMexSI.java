@@ -21,7 +21,11 @@ public class StudyImporterForGoMexSI extends BaseStudyImporter {
     @Override
     public Study importStudy() throws StudyImporterException {
 
-        Study study = nodeFactory.createStudy(StudyImporterFactory.Study.GOMEXSI.toString());
+        Study study = nodeFactory.createStudy(StudyImporterFactory.Study.GOMEXSI.toString(),
+                "James D. Simons",
+                "Center for Coastal Studies, Texas A&M University - Corpus Christi, United States",
+                "",
+                "<a href=\"http://www.ingentaconnect.com/content/umrsmas/bullmar/2013/00000089/00000001/art00009\">Building a Fisheries Trophic Interaction Database for Management and Modeling Research in the Gulf of Mexico Large Marine Ecosystem.</a>");
 
         Map<String, Specimen> predatorIdToPredatorSpecimen = new HashMap<String, Specimen>();
         Map<String, Specimen> predatorIdToPreySpecimen = new HashMap<String, Specimen>();
