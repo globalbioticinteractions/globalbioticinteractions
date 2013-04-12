@@ -24,7 +24,7 @@ public class StudyImporterForRobledo extends BaseStudyImporter {
                 , "Carlos García-Robledo",
                 "Department of Botany, National Museum of Natural History, Smithsonian Institution, Washington, D.C., United States of America; Department of Entomology, National Museum of Natural History, Smithsonian Institution, Washington, D.C., United States of America",
                 "Oct 2008- Feb 2011",
-                "Tropical Plant–Herbivore Networks: Reconstructing Species Interactions Using DNA Barcodes");
+                "<a href=\"http://www.plosone.org/article/info%3Adoi%2F10.1371%2Fjournal.pone.0052967\">Tropical Plant–Herbivore Networks: Reconstructing Species Interactions Using DNA Barcodes</a>");
 
         Map<String, String> abrLookup = buildPlantLookup();
 
