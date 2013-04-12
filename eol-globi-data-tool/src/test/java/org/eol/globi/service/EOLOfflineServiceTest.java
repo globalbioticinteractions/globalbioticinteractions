@@ -16,7 +16,7 @@ public class EOLOfflineServiceTest {
         assertFalse(service.canLookupProperty(Taxon.PATH));
         assertTrue(service.canLookupProperty(Taxon.EXTERNAL_ID));
 
-        assertThat(service.lookupPropertyValueByTaxonName("Homo sapiens", Taxon.EXTERNAL_ID), is("327955"));
+        assertThat(service.lookupPropertyValueByTaxonName("Homo sapiens", Taxon.EXTERNAL_ID), is("EOL:327955"));
     }
 
 

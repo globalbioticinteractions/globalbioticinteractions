@@ -24,10 +24,10 @@ public class EOLServiceIT {
 
     /** Regarding multiple symbol in taxonomic names:
      *
-     * From: 	Malcolm Storey <malcolm.storey321@btinternet.com>
+     * From: 	xxx
      	Subject: 	RE: question about taxonomy name normalization
      	Date: 	April 12, 2013 4:24:11 AM PDT
-     	To: 	jorrit poelen <jhpoelen@xs4all.nl>
+     	To: 	xxx
 
      And another thing!
 
