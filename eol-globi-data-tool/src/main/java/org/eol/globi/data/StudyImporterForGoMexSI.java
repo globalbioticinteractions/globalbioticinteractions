@@ -21,7 +21,7 @@ public class StudyImporterForGoMexSI extends BaseStudyImporter {
     @Override
     public Study importStudy() throws StudyImporterException {
 
-        Study study = nodeFactory.createStudy(StudyLibrary.Study.GOMEXSI.toString());
+        Study study = nodeFactory.createStudy(StudyImporterFactory.Study.GOMEXSI.toString());
 
         Map<String, Specimen> predatorIdToPredatorSpecimen = new HashMap<String, Specimen>();
         Map<String, Specimen> predatorIdToPreySpecimen = new HashMap<String, Specimen>();

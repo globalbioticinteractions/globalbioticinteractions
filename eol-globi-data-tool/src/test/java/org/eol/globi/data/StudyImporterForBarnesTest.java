@@ -45,17 +45,17 @@ public class StudyImporterForBarnesTest extends GraphDBTestCase {
 
     @Test
     public void parseLongitudeLatitude() {
-        assertThat(StudyImporterForBarnes.parseDegrees("29º40'N"), is(29.0 + 40.0 / 60.0));
-        assertThat(StudyImporterForBarnes.parseDegrees("85º10'W"), is(-(85.0 + 10.0 / 60.0)));
-        Double actual = StudyImporterForBarnes.parseDegrees("85º10'11''E");
+        assertThat(LocationUtil.parseDegrees("29º40'N"), is(29.0 + 40.0 / 60.0));
+        assertThat(LocationUtil.parseDegrees("85º10'W"), is(-(85.0 + 10.0 / 60.0)));
+        Double actual = LocationUtil.parseDegrees("85º10'11''E");
         assertThat(String.format("%.2f", actual), is(String.format("%.2f", (85.0 + 10.0 / 60.0 + 11.0 / 3600.0))));
-        Double actual1 = StudyImporterForBarnes.parseDegrees("29º40'01''S");
+        Double actual1 = LocationUtil.parseDegrees("29º40'01''S");
         assertThat(String.format("%.2f", actual1), is(String.format("%.2f", -(29.0 + 40.0 / 60.0 + 1.0 / 3600.0))));
     }
 
     @Test(expected = NumberFormatException.class)
     public void throwMalformedLocation() {
-        StudyImporterForBarnes.parseDegrees("85º'10'W");
+        LocationUtil.parseDegrees("85º'10'W");
 
     }
 

@@ -33,7 +33,7 @@ public class StudyImporterForBlaremore extends BaseStudyImporter {
             LabeledCSVParser parser = parserFactory.createParser(DATA_SOURCE, CharsetConstant.UTF8);
             String[] line = null;
 
-            study = nodeFactory.getOrCreateStudy(StudyLibrary.Study.BAREMORE_ANGEL_SHARK.toString(),
+            study = nodeFactory.getOrCreateStudy(StudyImporterFactory.Study.BAREMORE_ANGEL_SHARK.toString(),
                     "Ivy E. Baremore",
                     "University of Florida, Department of Fisheries and Aquatic Sciences",
                     "2005",

@@ -29,12 +29,12 @@ public class StudyImporterForCook extends BaseStudyImporter {
             throw new StudyImporterException("failed to read resource", e);
         }
 
-        Study study = nodeFactory.getOrCreateStudy(StudyLibrary.Study.COOK.toString(), "Colt W. Cook", "Department of Marine Science, The University of Texas at Austin, USA", "", "<a href=\"http://repositories.lib.utexas.edu/handle/2152/ETD-UT-2012-08-6285\">The early life history and reproductive biology of Cymothoa excisa, a marine isopod parasitizing Atlantic croaker, (Micropogonias undulatus), along the Texas coast.</a>");
+        Study study = nodeFactory.getOrCreateStudy(StudyImporterFactory.Study.COOK.toString(), "Colt W. Cook", "Department of Marine Science, The University of Texas at Austin, USA", "", "<a href=\"http://repositories.lib.utexas.edu/handle/2152/ETD-UT-2012-08-6285\">The early life history and reproductive biology of Cymothoa excisa, a marine isopod parasitizing Atlantic croaker, (Micropogonias undulatus), along the Texas coast.</a>");
 
         try {
 
-            Double latitude = StudyImporterForBarnes.parseDegrees("27º51'N");
-            Double longitude = StudyImporterForBarnes.parseDegrees("97º8'W");
+            Double latitude = LocationUtil.parseDegrees("27º51'N");
+            Double longitude = LocationUtil.parseDegrees("97º8'W");
 
             Location sampleLocation = nodeFactory.getOrCreateLocation(latitude, longitude, -3.0);
 

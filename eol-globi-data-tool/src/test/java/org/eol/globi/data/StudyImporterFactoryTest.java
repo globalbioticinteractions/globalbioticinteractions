@@ -12,8 +12,8 @@ public class StudyImporterFactoryTest {
 
     @Test
     public void checkStudyImporters() throws StudyImporterException {
-        StudyLibrary.Study[] values = StudyLibrary.Study.values();
-        for (StudyLibrary.Study value : values) {
+        StudyImporterFactory.Study[] values = StudyImporterFactory.Study.values();
+        for (StudyImporterFactory.Study value : values) {
             assertThat("no studyimport for [" + value.toString() + "] found", new StudyImporterFactory(null, null).createImporterForStudy(value), is(notNullValue()));
         }
     }

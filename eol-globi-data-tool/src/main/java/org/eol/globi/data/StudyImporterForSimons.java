@@ -57,7 +57,7 @@ public class StudyImporterForSimons extends BaseStudyImporter {
     }
 
     private Study importStudy(ParserFactory parserFactory, String studyResource) throws StudyImporterException {
-        Study study = nodeFactory.getOrCreateStudy(StudyLibrary.Study.SIMONS.toString(),
+        Study study = nodeFactory.getOrCreateStudy(StudyImporterFactory.Study.SIMONS.toString(),
                 "James D. Simons",
                 "Center for Coastal Studies, Texas A&M University - Corpus Christi",
                 "1987- 1990",

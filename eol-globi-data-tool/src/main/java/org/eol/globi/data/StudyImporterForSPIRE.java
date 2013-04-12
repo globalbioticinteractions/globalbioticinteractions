@@ -111,7 +111,7 @@ public class StudyImporterForSPIRE extends BaseStudyImporter {
 
         Map<String, LatLng> stringLatLngMap = buildGEOLookup();
 
-        final Study study = nodeFactory.createStudy(StudyLibrary.Study.SPIRE.toString(),
+        final Study study = nodeFactory.createStudy(StudyImporterFactory.Study.SPIRE.toString(),
                 "Joel Sachs",
                 "Dept. of Computer Science and Electrical Engineering, University of Maryland Baltimore County, Baltimore, MD, USA.",
                 "",

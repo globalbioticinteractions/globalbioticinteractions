@@ -13,7 +13,6 @@ import org.eol.globi.data.ParserFactoryImpl;
 import org.eol.globi.data.StudyImporter;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.data.StudyImporterFactory;
-import org.eol.globi.data.StudyLibrary;
 import org.eol.globi.db.GraphService;
 import org.eol.globi.domain.Study;
 import org.eol.globi.export.StudyExporter;
@@ -46,13 +45,13 @@ public class TrophicImporter {
     }
 
     private ArrayList<Study> importData(GraphDatabaseService graphService, TaxonPropertyEnricher taxonEnricher) throws StudyImporterException {
-        ArrayList<StudyLibrary.Study> studies = new ArrayList<StudyLibrary.Study>();
-        StudyLibrary.Study[] availableStudies = StudyLibrary.Study.values();
+        ArrayList<StudyImporterFactory.Study> studies = new ArrayList<StudyImporterFactory.Study>();
+        StudyImporterFactory.Study[] availableStudies = StudyImporterFactory.Study.values();
         studies.addAll(Arrays.asList(availableStudies));
 
         ArrayList<Study> importedStudies = new ArrayList<Study>();
 
-        for (StudyLibrary.Study study : studies) {
+        for (StudyImporterFactory.Study study : studies) {
             StudyImporter studyImporter = createStudyImporter(graphService, study, taxonEnricher);
             LOG.info("study [" + study + "] importing ...");
             importedStudies.add(studyImporter.importStudy());
@@ -98,7 +97,7 @@ public class TrophicImporter {
         LOG.info("export data to [" + new File(exportPath).getAbsolutePath() + "] complete.");
     }
 
-    private StudyImporter createStudyImporter(GraphDatabaseService graphService, StudyLibrary.Study study, TaxonPropertyEnricher taxonEnricher) throws StudyImporterException {
+    private StudyImporter createStudyImporter(GraphDatabaseService graphService, StudyImporterFactory.Study study, TaxonPropertyEnricher taxonEnricher) throws StudyImporterException {
         NodeFactory factory = new NodeFactory(graphService, taxonEnricher);
         ParserFactory parserFactory = new ParserFactoryImpl();
         return new StudyImporterFactory(parserFactory, factory).createImporterForStudy(study);

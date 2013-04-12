@@ -118,7 +118,7 @@ public class StudyImporterForBioInfo extends BaseStudyImporter implements StudyI
 
     protected Study createRelations(Map<Long, String> taxaMap, Map<Long, RelType> relationsTypeMap, LabeledCSVParser labeledCSVParser) throws StudyImporterException {
         LOG.info("relations being created...");
-        String title = StudyLibrary.Study.BIO_INFO.toString();
+        String title = StudyImporterFactory.Study.BIO_INFO.toString();
 
         Study study = nodeFactory.getOrCreateStudy(title,
                 "Malcolm Storey",

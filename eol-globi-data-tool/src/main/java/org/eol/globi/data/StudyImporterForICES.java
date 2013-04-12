@@ -21,7 +21,7 @@ public class StudyImporterForICES extends BaseStudyImporter {
     public Study importStudy() throws StudyImporterException {
         LabeledCSVParser parser = createParser();
 
-        Study study = nodeFactory.createStudy(StudyLibrary.Study.ICES.toString(),
+        Study study = nodeFactory.createStudy(StudyImporterFactory.Study.ICES.toString(),
                 "<a href=\"http://ecosystemdata.ices.dk/stomachdata/\">ICES Stomach Dataset, ICES, Copenhagen</a>",
                 "International Council for the Exploration of the Sea (ICES); Institute for Marine Resources & Ecosystem Studies (IMARES)",
                 "1980- 1991",

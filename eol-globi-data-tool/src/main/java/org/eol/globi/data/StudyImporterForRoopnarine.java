@@ -30,7 +30,7 @@ public class StudyImporterForRoopnarine extends BaseStudyImporter {
 
         Map<String, LatLng> resourceLocation = resourceLocationMap(suffix, prefix);
 
-        Study study = nodeFactory.createStudy(StudyLibrary.Study.ROOPNARINE.toString(),
+        Study study = nodeFactory.createStudy(StudyImporterFactory.Study.ROOPNARINE.toString(),
                 "Peter D. Roopnarine and Rachel Hertog",
                 "Department of Invertebrate Zoology and Geology, California Academy of Sciences, San Francisco, CA 94118, USA",
                 "",
