@@ -18,7 +18,6 @@
     </properties>
 
     <dependencies>
-
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
@@ -46,7 +45,6 @@
             <artifactId>jackson-mapper-asl</artifactId>
             <version>1.7.2</version>
         </dependency>
-
     </dependencies>
 
 </project>
