@@ -54,12 +54,13 @@ public class CypherProxyController {
         query = addLocationClausesIfNecessary(latitude, longitude, query);
         query += "RETURN distinct(preyTaxon.name) as preyName\", " +
                 "\"params\":" + buildParams(scientificName, latitude, longitude) + "}";
+        System.out.println(query);
         return query;
     }
 
     private String addLocationClausesIfNecessary(Double latitude, Double longitude, String query) {
         if (latitude != null && longitude != null) {
-            query += " , predator-[:CAUGHT_AT]->location ";
+            query += " , predator-[:COLLECTED_AT]->location ";
             query += " WHERE location is not null" +
                     " AND location.latitude = {latitude}" +
                     " AND location.longitude = {longitude} ";
