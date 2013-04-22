@@ -7,7 +7,6 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -44,17 +43,13 @@ public class CypherProxyController {
     public String findPreyOf(@PathVariable("scientificName") String scientificName,
                              @RequestParam(value = "lat", required = false) Double latitude,
                              @RequestParam(value = "lng", required = false) Double longitude) throws IOException {
-        String query = buildInteractionQuery(scientificName, latitude, longitude, "predatorTaxon");
-        return execute(query);
-    }
-
-    private String buildInteractionQuery(String scientificName, Double latitude, Double longitude, String predatorTaxon) {
-        String query = "{\"query\":\"START " + predatorTaxon + " = node:taxons(name={scientificName}) " +
+        String query1 = "{\"query\":\"START predatorTaxon = node:taxons(name={scientificName}) " +
                 "MATCH predatorTaxon<-[:CLASSIFIED_AS]-predator-[:ATE]->prey-[:CLASSIFIED_AS]->preyTaxon ";
-        query = addLocationClausesIfNecessary(latitude, longitude, query);
-        query += "RETURN distinct(preyTaxon.name) as preyName\", " +
+        query1 = addLocationClausesIfNecessary(latitude, longitude, query1);
+        query1 += "RETURN distinct(preyTaxon.name) as preyName\", " +
                 "\"params\":" + buildParams(scientificName, latitude, longitude) + "}";
-        return query;
+        String query = query1;
+        return execute(query);
     }
 
     private String addLocationClausesIfNecessary(Double latitude, Double longitude, String query) {
@@ -92,7 +87,12 @@ public class CypherProxyController {
     public String findPredatorsOf(@PathVariable("scientificName") String scientificName,
                                   @RequestParam(value = "lat", required = false) Double latitude,
                                   @RequestParam(value = "lng", required = false) Double longitude) throws IOException {
-        String query = buildInteractionQuery(scientificName, latitude, longitude, "preyTaxon");
+        String query1 = "{\"query\":\"START preyTaxon" + " = node:taxons(name={scientificName}) " +
+                "MATCH predatorTaxon<-[:CLASSIFIED_AS]-predator-[:ATE]->prey-[:CLASSIFIED_AS]->preyTaxon ";
+        query1 = addLocationClausesIfNecessary(latitude, longitude, query1);
+        query1 += "RETURN distinct(predatorTaxon.name) as predatorName\", " +
+                "\"params\":" + buildParams(scientificName, latitude, longitude) + "}";
+        String query = query1;
         return execute(query);
     }
 
