@@ -216,7 +216,7 @@ public class CypherProxyController {
         return url == null ? "{}" : "{\"url\":\"" + url + "\"}";
     }
 
-    @RequestMapping(value = "/findExternalUrlForTaxon/{externalId}", method = RequestMethod.GET)
+    @RequestMapping(value = "/findExternalUrlForExternalId/{externalId}", method = RequestMethod.GET)
     @ResponseBody
     public String findExternalLinkForExternalId(@PathVariable("externalId") String externalId) {
         String url = null;
