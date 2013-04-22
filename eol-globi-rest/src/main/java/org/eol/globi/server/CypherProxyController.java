@@ -4,6 +4,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.eol.globi.domain.TaxonomyProvider;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -200,21 +201,42 @@ public class CypherProxyController {
 
         String result = execute(query);
 
-        Map<String, String> idURLPrefixMap = new HashMap<String, String>() {{
-            put("EOL:", "http://eol.org/pages/");
-            put("BioGoMx:", "http://gulfbase.org/biogomx/biospecies.php?species=");
-        }};
-
         String url = null;
-
-        for (Map.Entry<String, String> stringStringEntry : idURLPrefixMap.entrySet()) {
+        for (Map.Entry<String, String> stringStringEntry : getURLPrefixMap().entrySet()) {
             url = getUrl(result, stringStringEntry.getKey(), stringStringEntry.getValue());
             if (url != null) {
                 break;
             }
 
         }
+        return buildJsonUrl(url);
+    }
+
+    private String buildJsonUrl(String url) {
         return url == null ? "{}" : "{\"url\":\"" + url + "\"}";
+    }
+
+    @RequestMapping(value = "/findExternalUrlForTaxon/{externalId}", method = RequestMethod.GET)
+    @ResponseBody
+    public String findExternalLinkForExternalId(@PathVariable("externalId") String externalId) {
+        String url = null;
+        for (Map.Entry<String, String> idPrefixToUrlPrefix : getURLPrefixMap().entrySet()) {
+            if (externalId.startsWith(idPrefixToUrlPrefix.getKey())) {
+                url = idPrefixToUrlPrefix.getValue() + externalId.replaceAll(idPrefixToUrlPrefix.getKey(), "");
+            }
+            if (url != null) {
+                break;
+            }
+
+        }
+        return buildJsonUrl(url);
+    }
+
+    private Map<String, String> getURLPrefixMap() {
+        return new HashMap<String, String>() {{
+                put(TaxonomyProvider.ID_PREFIX_EOL, "http://eol.org/pages/");
+                put(TaxonomyProvider.ID_PREFIX_GULFBASE, "http://gulfbase.org/biogomx/biospecies.php?species=");
+            }};
     }
 
     private String getUrl(String result, String externalIdPrefix, String urlPrefix) {
