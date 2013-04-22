@@ -368,6 +368,8 @@
                                     <outputDirectory>${project.build.directory}/data</outputDirectory>
                                 </artifactItem>
                             </artifactItems>
+                            <!-- don't install the data when skipping the tests, for http://travis-ci.org integration -->
+                            <skip>${skipTests}</skip>
                         </configuration>
                     </execution>
                 </executions>
