@@ -79,7 +79,7 @@ public class CypherProxyController {
         return findPreyObservationsOf(predatorName);
     }
 
-    @RequestMapping(value = "/{predatorName}/" + INTERACTION_PREYS_ON, params = INCLUDE_OBSERVATIONS_TRUE, method = RequestMethod.GET)
+    @RequestMapping(value = "/{predatorName}/" + INTERACTION_PREYS_ON, params = {INCLUDE_OBSERVATIONS_TRUE}, method = RequestMethod.GET)
     @ResponseBody
     public String findPreyObservationsOf(@PathVariable("predatorName") String predatorName) throws IOException {
         String query = "{\"query\":\"START predatorTaxon = node:taxons(name={predatorName}) " +
@@ -96,7 +96,7 @@ public class CypherProxyController {
         return findPredatorObservationsOf(preyName);
     }
 
-    @RequestMapping(value = "/{preyName}/" + INTERACTION_PREYED_UPON_BY, params= INCLUDE_OBSERVATIONS_TRUE, method = RequestMethod.GET)
+    @RequestMapping(value = "/{preyName}/" + INTERACTION_PREYED_UPON_BY, params = {INCLUDE_OBSERVATIONS_TRUE}, method = RequestMethod.GET)
     @ResponseBody
     public String findPredatorObservationsOf(@PathVariable("preyName") String preyName) throws IOException {
         String query = "{\"query\":\"START preyTaxon = node:taxons(name={preyName}) " +

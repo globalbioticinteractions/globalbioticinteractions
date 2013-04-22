@@ -14,7 +14,22 @@
     <modules>
         <module>eol-globi-data-tool</module>
         <module>eol-globi-datasets</module>
-        <module>eol-globi-rest</module>
+        <!-- excluded for now due to travis-ci.org failures -->
+        <!--<module>eol-globi-rest</module>-->
     </modules>
+
+    <profiles>
+        <profile>
+            <id>travis-ci.org</id>
+            <activation>
+                <os>
+                    <family>mac</family>
+                </os>
+            </activation>
+            <modules>
+                <module>eol-globi-rest</module>
+            </modules>
+        </profile>
+    </profiles>
 
 </project>
