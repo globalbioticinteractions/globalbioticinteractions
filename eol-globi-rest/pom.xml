@@ -3,6 +3,13 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <artifactId>eol-globi-parent</artifactId>
+        <groupId>org.eol</groupId>
+        <version>1.0-SNAPSHOT</version>
+        <relativePath>../eol-globi-parent/pom.xml</relativePath>
+    </parent>
+
 
     <groupId>org.eol</groupId>
     <artifactId>eol-globi-rest</artifactId>
@@ -25,9 +32,6 @@
         <commons-dbcp.version>1.4</commons-dbcp.version>
         <javassist.version>3.9.0.GA</javassist.version>
         <cglib.version>2.2</cglib.version>
-
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     </properties>
 
     <dependencies>
@@ -283,25 +287,13 @@
             <version>2.1</version>
         </dependency>
 
-        <!-- test dependencies -->
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.8.1</version>
-            <scope>test</scope>
-        </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
             <version>${spring.version}</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-core</artifactId>
-            <version>1.9.0</version>
-            <scope>test</scope>
-        </dependency>
+
     </dependencies>
 
     <build>

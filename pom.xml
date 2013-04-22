@@ -8,10 +8,9 @@
     <artifactId>eol-globi-data</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
-    <name>EOL GloBI data project - contains a tool to import datasets and a module to generate export of aggregated,
-        normalized and enriched datasets.
-    </name>
+    <name>EOL's GloBI Project - normalize, aggregate and interface with species interaction data.</name>
     <modules>
+        <module>eol-globi-parent</module>
         <module>eol-globi-data-tool</module>
         <module>eol-globi-datasets</module>
         <module>eol-globi-lib</module>

@@ -97,7 +97,6 @@ public class CypherProxyController {
         query = addLocationClausesIfNecessary(latitude, longitude, query);
         query += "RETURN predatorTaxon.externalId, predatorTaxon.name as predatorName, type(interactionType), preyTaxon.externalId, preyTaxon.name as preyTaxon\", " +
                 "\"params\":" + buildParams(null, latitude, longitude) + "}";
-        System.out.println(query);
         return execute(query);
     }
 

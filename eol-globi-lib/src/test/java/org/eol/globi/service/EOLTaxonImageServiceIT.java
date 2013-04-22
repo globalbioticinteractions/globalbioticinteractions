@@ -12,9 +12,10 @@ import static org.junit.Assert.assertThat;
 
 public class EOLTaxonImageServiceIT {
 
+    private EOLTaxonImageService serviceTaxon = new EOLTaxonImageService();
+
     @Test
     public void imageLookupITIS() throws URISyntaxException, IOException {
-        EOLTaxonImageService serviceTaxon = new EOLTaxonImageService();
         assertITISImage(serviceTaxon.lookupImageURLs(TaxonomyProvider.ITIS, "165653"));
         assertITISImage(serviceTaxon.lookupImageForExternalId(TaxonomyProvider.ID_PREFIX_ITIS  + "165653"));
     }
@@ -27,7 +28,6 @@ public class EOLTaxonImageServiceIT {
 
     @Test
     public void imageLookupNCBI() throws URISyntaxException, IOException {
-        EOLTaxonImageService serviceTaxon = new EOLTaxonImageService();
         TaxonImage taxonImage = serviceTaxon.lookupImageURLs(TaxonomyProvider.NCBI, "28806");
         assertThat(taxonImage.getThumbnailURL(), is("http://media.eol.org/content/2012/06/15/09/03561_98_68.jpg"));
         assertThat(taxonImage.getImageURL(), is("http://media.eol.org/content/2012/06/15/09/03561_orig.jpg"));
@@ -36,7 +36,6 @@ public class EOLTaxonImageServiceIT {
 
     @Test
     public void imageLookupWoRMS() throws URISyntaxException, IOException {
-        EOLTaxonImageService serviceTaxon = new EOLTaxonImageService();
         assertWoRMSImage(serviceTaxon.lookupImageURLs(TaxonomyProvider.WORMS, "276287"));
         assertWoRMSImage(serviceTaxon.lookupImageForExternalId(TaxonomyProvider.ID_PREFIX_WORMS + "276287"));
     }
@@ -49,7 +48,6 @@ public class EOLTaxonImageServiceIT {
 
     @Test
     public void imageLookupEOL() throws URISyntaxException, IOException {
-        EOLTaxonImageService serviceTaxon = new EOLTaxonImageService();
         assertEOLImage(serviceTaxon.lookupImageURLs(TaxonomyProvider.EOL, "EOL:276287"));
         assertEOLImage(serviceTaxon.lookupImageForExternalId(TaxonomyProvider.ID_PREFIX_EOL + "276287"));
     }
