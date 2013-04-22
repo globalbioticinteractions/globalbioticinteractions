@@ -21,8 +21,36 @@ public class CypherProxyControllerIT {
     }
 
     @Test
-    public void listPreyForPredator() throws IOException {
+    public void oldListPreyForPredator() throws IOException {
         String uri = getURLPrefix() + "predator/Homo%20sapiens/listPrey";
+        String response = HttpClient.httpGet(uri);
+        assertThat(response, is(not(nullValue())));
+    }
+
+    @Test
+    public void listPreyForPredator() throws IOException {
+        String uri = getURLPrefix() + "Homo%20sapiens/preysOn";
+        String response = HttpClient.httpGet(uri);
+        assertThat(response, is(not(nullValue())));
+    }
+
+    @Test
+    public void listPreyForPredatorObservations() throws IOException {
+        String uri = getURLPrefix() + "Homo%20sapiens/preysOn?includeObservations=true";
+        String response = HttpClient.httpGet(uri);
+        assertThat(response, is(not(nullValue())));
+    }
+
+    @Test
+    public void listPredatorForPrey() throws IOException {
+        String uri = getURLPrefix() + "Homo%20sapiens/preyedUponBy";
+        String response = HttpClient.httpGet(uri);
+        assertThat(response, is(not(nullValue())));
+    }
+
+    @Test
+    public void listPredatorForPreyObservations() throws IOException {
+        String uri = getURLPrefix() + "Homo%20sapiens/preyedUponBy?includeObservations=true";
         String response = HttpClient.httpGet(uri);
         assertThat(response, is(not(nullValue())));
     }

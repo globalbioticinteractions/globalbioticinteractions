@@ -24,6 +24,11 @@ public class CypherProxyController {
                     "(predator)<-[collected_rel:COLLECTED]-(study) " +
                     "WHERE location is not null ";
 
+    public static final String INCLUDE_OBSERVATIONS_TRUE = "includeObservations=true";
+
+    public static final String INTERACTION_PREYS_ON = "preysOn";
+    public static final String INTERACTION_PREYED_UPON_BY = "preyedUponBy";
+
 
     @RequestMapping(value = "/predator/{scientificName}/listPrey", method = RequestMethod.GET)
     @ResponseBody
@@ -32,7 +37,7 @@ public class CypherProxyController {
         return findPreyOf(scientificName);
     }
 
-    @RequestMapping(value = "/{scientificName}/preysOn", method = RequestMethod.GET)
+    @RequestMapping(value = "/{scientificName}/" + INTERACTION_PREYS_ON, method = RequestMethod.GET)
     @ResponseBody
     public String findPreyOf(@PathVariable("scientificName") String scientificName) throws IOException {
         String query = "{\"query\":\"START predatorTaxon = node:taxons(name={predatorName}) " +
@@ -48,7 +53,7 @@ public class CypherProxyController {
         return findPredatorsOf(scientificName);
     }
 
-    @RequestMapping(value = "/{scientificName}/preyedUponBy", method = RequestMethod.GET)
+    @RequestMapping(value = "/{scientificName}/" + INTERACTION_PREYED_UPON_BY, method = RequestMethod.GET)
     @ResponseBody
     public String findPredatorsOf(@PathVariable("scientificName") String scientificName) throws IOException {
         String query = "{\"query\":\"START preyTaxon = node:taxons(name={preyName}) " +
@@ -69,6 +74,13 @@ public class CypherProxyController {
 
     @RequestMapping(value = "/predator/{predatorName}/listPreyObservations", method = RequestMethod.GET)
     @ResponseBody
+    @Deprecated
+    public String oldFindPreyObservationsOf(@PathVariable("predatorName") String predatorName) throws IOException {
+        return findPreyObservationsOf(predatorName);
+    }
+
+    @RequestMapping(value = "/{predatorName}/" + INTERACTION_PREYS_ON, params = INCLUDE_OBSERVATIONS_TRUE, method = RequestMethod.GET)
+    @ResponseBody
     public String findPreyObservationsOf(@PathVariable("predatorName") String predatorName) throws IOException {
         String query = "{\"query\":\"START predatorTaxon = node:taxons(name={predatorName}) " +
                 OBSERVATION_MATCH +
@@ -78,6 +90,13 @@ public class CypherProxyController {
     }
 
     @RequestMapping(value = "/prey/{preyName}/listPredatorObservations", method = RequestMethod.GET)
+    @ResponseBody
+    @Deprecated
+    public String oldFindPredatorObservationsOf(@PathVariable("preyName") String preyName) throws IOException {
+        return findPredatorObservationsOf(preyName);
+    }
+
+    @RequestMapping(value = "/{preyName}/" + INTERACTION_PREYED_UPON_BY, params= INCLUDE_OBSERVATIONS_TRUE, method = RequestMethod.GET)
     @ResponseBody
     public String findPredatorObservationsOf(@PathVariable("preyName") String preyName) throws IOException {
         String query = "{\"query\":\"START preyTaxon = node:taxons(name={preyName}) " +
