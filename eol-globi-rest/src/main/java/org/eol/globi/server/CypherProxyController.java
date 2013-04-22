@@ -54,7 +54,6 @@ public class CypherProxyController {
         query = addLocationClausesIfNecessary(latitude, longitude, query);
         query += "RETURN distinct(preyTaxon.name) as preyName\", " +
                 "\"params\":" + buildParams(scientificName, latitude, longitude) + "}";
-        System.out.println(query);
         return query;
     }
 
