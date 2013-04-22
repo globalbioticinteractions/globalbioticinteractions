@@ -18,13 +18,31 @@ public class CypherProxyControllerTest {
 
     @Test
     public void findPrey() throws IOException, URISyntaxException {
-        String list = new CypherProxyController().findPreyOf("Homo sapiens");
+        String list = new CypherProxyController().findPreyOf("Homo sapiens", null, null);
+        assertThat(list, Is.is(notNullValue()));
+    }
+
+    @Test
+    public void findPreyAtLocation() throws IOException, URISyntaxException {
+        String list = new CypherProxyController().findPreyOf("Homo sapiens", 12.0d, 12.0d);
+        assertThat(list, Is.is(notNullValue()));
+    }
+
+    @Test
+    public void findPreyAtLocationNoLongitude() throws IOException, URISyntaxException {
+        String list = new CypherProxyController().findPreyOf("Homo sapiens", 12.0d, null);
+        assertThat(list, Is.is(notNullValue()));
+    }
+
+    @Test
+    public void findPreyAtLocationNoLatitude() throws IOException, URISyntaxException {
+        String list = new CypherProxyController().findPreyOf("Homo sapiens", null, 12.0d);
         assertThat(list, Is.is(notNullValue()));
     }
 
     @Test
     public void findPredator() throws IOException, URISyntaxException {
-        String list = new CypherProxyController().findPredatorsOf("Hemiramphus brasiliensis");
+        String list = new CypherProxyController().findPredatorsOf("Hemiramphus brasiliensis", null, null);
         assertThat(list, Is.is(notNullValue()));
     }
 

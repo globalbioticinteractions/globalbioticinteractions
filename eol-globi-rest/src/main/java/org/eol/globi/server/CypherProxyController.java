@@ -9,6 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.io.IOException;
@@ -34,31 +35,59 @@ public class CypherProxyController {
     @ResponseBody
     @Deprecated
     public String oldFindPreyOf(@PathVariable("scientificName") String scientificName) throws IOException {
-        return findPreyOf(scientificName);
+        return findPreyOf(scientificName, null, null);
     }
 
     @RequestMapping(value = "/{scientificName}/" + INTERACTION_PREYS_ON, method = RequestMethod.GET)
     @ResponseBody
-    public String findPreyOf(@PathVariable("scientificName") String scientificName) throws IOException {
-        String query = "{\"query\":\"START predatorTaxon = node:taxons(name={predatorName}) " +
-                "MATCH predatorTaxon<-[:CLASSIFIED_AS]-predator-[:ATE]->prey-[:CLASSIFIED_AS]->preyTaxon " +
-                "RETURN distinct(preyTaxon.name) as preyName\", \"params\": { \"predatorName\" : \"" + scientificName + "\" } }";
+    public String findPreyOf(@PathVariable("scientificName") String scientificName, @RequestParam("lat") Double latitude, @RequestParam("lng") Double longitude) throws IOException {
+        String query = buildInteractionQuery(scientificName, latitude, longitude, "predatorTaxon");
         return execute(query);
+    }
+
+    private String buildInteractionQuery(String scientificName, Double latitude, Double longitude, String predatorTaxon) {
+        String query = "{\"query\":\"START " + predatorTaxon + " = node:taxons(name={scientificName}) " +
+                "MATCH predatorTaxon<-[:CLASSIFIED_AS]-predator-[:ATE]->prey-[:CLASSIFIED_AS]->preyTaxon ";
+        query = addLocationClausesIfNecessary(latitude, longitude, query);
+        query += "RETURN distinct(preyTaxon.name) as preyName\", " +
+                "\"params\":" + buildParams(scientificName, latitude, longitude) + "}";
+        return query;
+    }
+
+    private String addLocationClausesIfNecessary(Double latitude, Double longitude, String query) {
+        if (latitude != null && longitude != null) {
+            query += " , predator-[:CAUGHT_AT]->location ";
+            query += " WHERE location is not null" +
+                    " AND location.latitude = {latitude}" +
+                    " AND location.longitude = {longitude} ";
+        }
+        return query;
+    }
+
+    private String buildParams(String scientificName, Double latitude, Double longitude) {
+        String params = "{\"scientificName\":\"" + scientificName + "\"";
+
+
+        if (latitude != null && longitude != null) {
+            params += ",\"latitude\":" + latitude.toString();
+            params += ",\"longitude\":" + longitude.toString();
+        }
+
+        params += "}";
+        return params;
     }
 
     @RequestMapping(value = "/prey/{scientificName}/listPredators", method = RequestMethod.GET)
     @ResponseBody
     @Deprecated
     public String oldFindPredatorsOf(@PathVariable("scientificName") String scientificName) throws IOException {
-        return findPredatorsOf(scientificName);
+        return findPredatorsOf(scientificName, null, null);
     }
 
     @RequestMapping(value = "/{scientificName}/" + INTERACTION_PREYED_UPON_BY, method = RequestMethod.GET)
     @ResponseBody
-    public String findPredatorsOf(@PathVariable("scientificName") String scientificName) throws IOException {
-        String query = "{\"query\":\"START preyTaxon = node:taxons(name={preyName}) " +
-                "MATCH predatorTaxon<-[:CLASSIFIED_AS]-predator-[:ATE]->prey-[:CLASSIFIED_AS]->preyTaxon " +
-                "RETURN distinct(predatorTaxon.name) as predatorName\", \"params\": { \"preyName\" : \"" + scientificName + "\" } }";
+    public String findPredatorsOf(@PathVariable("scientificName") String scientificName, @RequestParam("lat") Double latitude, @RequestParam("lng") Double longitude) throws IOException {
+        String query = buildInteractionQuery(scientificName, latitude, longitude, "preyTaxon");
         return execute(query);
     }
 
