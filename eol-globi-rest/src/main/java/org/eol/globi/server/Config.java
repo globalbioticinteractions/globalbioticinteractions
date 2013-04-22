@@ -26,7 +26,7 @@ public class Config {
     }
 
     @Bean(destroyMethod = "shutdown")
-    public static EmbeddedGraphDatabase graphDb(@Value("${storeDir:target/graph.db.test}") final String storeDir) {
+    public EmbeddedGraphDatabase graphDb(@Value("${storeDir:target/graph.db.test}") final String storeDir) {
         return new EmbeddedGraphDatabase(storeDir, new HashMap<String, String>() {
             {
                 put("read_only", "false");
@@ -36,7 +36,7 @@ public class Config {
 
     @Bean
     @Autowired
-    public static EhCacheCacheManager cacheManager(EhCacheManagerFactoryBean cacheFactory) {
+    public EhCacheCacheManager cacheManager(EhCacheManagerFactoryBean cacheFactory) {
         EhCacheCacheManager ehCacheCacheManager = new EhCacheCacheManager();
         ehCacheCacheManager.setCacheManager(cacheFactory.getObject());
         return ehCacheCacheManager;
@@ -44,7 +44,7 @@ public class Config {
 
     @Bean
     @Autowired
-    public static EhCacheManagerFactoryBean cacheFactory(@Value("classpath:/ehcache.xml") Resource ehCacheConfig) {
+    public EhCacheManagerFactoryBean cacheFactory(@Value("classpath:/ehcache.xml") Resource ehCacheConfig) {
         EhCacheManagerFactoryBean ehCacheManagerFactoryBean = new EhCacheManagerFactoryBean();
         ehCacheManagerFactoryBean.setConfigLocation(ehCacheConfig);
         return ehCacheManagerFactoryBean;

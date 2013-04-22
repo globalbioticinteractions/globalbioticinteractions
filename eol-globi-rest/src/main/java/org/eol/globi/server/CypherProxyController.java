@@ -7,6 +7,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -38,9 +39,11 @@ public class CypherProxyController {
         return findPreyOf(scientificName, null, null);
     }
 
-    @RequestMapping(value = "/{scientificName}/" + INTERACTION_PREYS_ON, method = RequestMethod.GET)
+    @RequestMapping(value = "/taxon/{scientificName}/" + INTERACTION_PREYS_ON, method = RequestMethod.GET)
     @ResponseBody
-    public String findPreyOf(@PathVariable("scientificName") String scientificName, @RequestParam("lat") Double latitude, @RequestParam("lng") Double longitude) throws IOException {
+    public String findPreyOf(@PathVariable("scientificName") String scientificName,
+                             @RequestParam(value = "lat", required = false) Double latitude,
+                             @RequestParam(value = "lng", required = false) Double longitude) throws IOException {
         String query = buildInteractionQuery(scientificName, latitude, longitude, "predatorTaxon");
         return execute(query);
     }
@@ -84,9 +87,11 @@ public class CypherProxyController {
         return findPredatorsOf(scientificName, null, null);
     }
 
-    @RequestMapping(value = "/{scientificName}/" + INTERACTION_PREYED_UPON_BY, method = RequestMethod.GET)
+    @RequestMapping(value = "/taxon/{scientificName}/" + INTERACTION_PREYED_UPON_BY, method = RequestMethod.GET)
     @ResponseBody
-    public String findPredatorsOf(@PathVariable("scientificName") String scientificName, @RequestParam("lat") Double latitude, @RequestParam("lng") Double longitude) throws IOException {
+    public String findPredatorsOf(@PathVariable("scientificName") String scientificName,
+                                  @RequestParam(value = "lat", required = false) Double latitude,
+                                  @RequestParam(value = "lng", required = false) Double longitude) throws IOException {
         String query = buildInteractionQuery(scientificName, latitude, longitude, "preyTaxon");
         return execute(query);
     }
@@ -108,7 +113,7 @@ public class CypherProxyController {
         return findPreyObservationsOf(predatorName);
     }
 
-    @RequestMapping(value = "/{predatorName}/" + INTERACTION_PREYS_ON, params = {INCLUDE_OBSERVATIONS_TRUE}, method = RequestMethod.GET)
+    @RequestMapping(value = "/taxon/{predatorName}/" + INTERACTION_PREYS_ON, params = {INCLUDE_OBSERVATIONS_TRUE}, method = RequestMethod.GET)
     @ResponseBody
     public String findPreyObservationsOf(@PathVariable("predatorName") String predatorName) throws IOException {
         String query = "{\"query\":\"START predatorTaxon = node:taxons(name={predatorName}) " +
@@ -125,7 +130,7 @@ public class CypherProxyController {
         return findPredatorObservationsOf(preyName);
     }
 
-    @RequestMapping(value = "/{preyName}/" + INTERACTION_PREYED_UPON_BY, params = {INCLUDE_OBSERVATIONS_TRUE}, method = RequestMethod.GET)
+    @RequestMapping(value = "/taxon/{preyName}/" + INTERACTION_PREYED_UPON_BY, params = {INCLUDE_OBSERVATIONS_TRUE}, method = RequestMethod.GET)
     @ResponseBody
     public String findPredatorObservationsOf(@PathVariable("preyName") String preyName) throws IOException {
         String query = "{\"query\":\"START preyTaxon = node:taxons(name={preyName}) " +
@@ -134,6 +139,14 @@ public class CypherProxyController {
                 ", \"params\": { \"preyName\" : \"" + preyName + "\" } }";
         return execute(query);
     }
+
+    @RequestMapping(value = "/locations", method = RequestMethod.GET)
+    @ResponseBody
+    @Cacheable(value = "locationCache")
+    public String locations() throws IOException {
+        return execute("{\"query\":\"START location = node:locations('*:*') RETURN location.latitude, location.longitude\"}");
+    }
+
 
     @RequestMapping(value = "/contributors", method = RequestMethod.GET)
     @ResponseBody

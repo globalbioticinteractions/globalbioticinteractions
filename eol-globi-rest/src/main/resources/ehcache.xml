@@ -11,5 +11,6 @@
         <persistence strategy="localTempSwap"/>
     </defaultCache>
 
-    <cache name="contributorCache"  maxEntriesLocalHeap = "1"/>
+    <cache name="contributorCache" maxEntriesLocalHeap="1"/>
+    <cache name="locationCache" maxEntriesLocalHeap="1"/>
 </ehcache>

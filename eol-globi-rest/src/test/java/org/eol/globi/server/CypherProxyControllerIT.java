@@ -29,28 +29,57 @@ public class CypherProxyControllerIT {
 
     @Test
     public void listPreyForPredator() throws IOException {
-        String uri = getURLPrefix() + "Homo%20sapiens/preysOn";
+        String uri = getURLPrefix() + "taxon/Homo%20sapiens/preysOn";
+        String response = HttpClient.httpGet(uri);
+        assertThat(response, is(not(nullValue())));
+    }
+
+    @Test
+    public void listPreyForPredatorLocation() throws IOException {
+        String uri = getURLPrefix() + "taxon/Homo%20sapiens/preysOn?lat=12.4&lng=54.4";
         String response = HttpClient.httpGet(uri);
         assertThat(response, is(not(nullValue())));
     }
 
     @Test
     public void listPreyForPredatorObservations() throws IOException {
-        String uri = getURLPrefix() + "Homo%20sapiens/preysOn?includeObservations=true";
+        String uri = getURLPrefix() + "taxon/Homo%20sapiens/preysOn?includeObservations=true";
+        String response = HttpClient.httpGet(uri);
+        assertThat(response, is(not(nullValue())));
+    }
+
+    @Test
+    public void listPreyForPredatorObservationsLocation() throws IOException {
+        String uri = getURLPrefix() + "taxon/Homo%20sapiens/preysOn?includeObservations=true&lat=12.4&lng=34.2";
         String response = HttpClient.httpGet(uri);
         assertThat(response, is(not(nullValue())));
     }
 
     @Test
     public void listPredatorForPrey() throws IOException {
-        String uri = getURLPrefix() + "Homo%20sapiens/preyedUponBy";
+        String uri = getURLPrefix() + "taxon/Homo%20sapiens/preyedUponBy";
+        String response = HttpClient.httpGet(uri);
+        assertThat(response, is(not(nullValue())));
+    }
+
+    @Test
+    public void listPredatorForPreyLocation() throws IOException {
+        String uri = getURLPrefix() + "taxon/Homo%20sapiens/preyedUponBy?lat=12.3&lng=23.2";
         String response = HttpClient.httpGet(uri);
         assertThat(response, is(not(nullValue())));
     }
 
     @Test
     public void listPredatorForPreyObservations() throws IOException {
-        String uri = getURLPrefix() + "Homo%20sapiens/preyedUponBy?includeObservations=true";
+        String uri = getURLPrefix() + "taxon/Homo%20sapiens/preyedUponBy?includeObservations=true";
+        String response = HttpClient.httpGet(uri);
+        assertThat(response, is(not(nullValue())));
+    }
+    @Test
+
+
+    public void listPredatorForPreyObservationsLocation() throws IOException {
+        String uri = getURLPrefix() + "taxon/Homo%20sapiens/preyedUponBy?includeObservations=true&lat=12.3&lng=12.5";
         String response = HttpClient.httpGet(uri);
         assertThat(response, is(not(nullValue())));
     }
