@@ -15,7 +15,11 @@ public class EOLTaxonImageServiceIT {
     @Test
     public void imageLookupITIS() throws URISyntaxException, IOException {
         EOLTaxonImageService serviceTaxon = new EOLTaxonImageService();
-        TaxonImage taxonImage = serviceTaxon.lookupImageURLs(TaxonomyProvider.ITIS, "165653");
+        assertITISImage(serviceTaxon.lookupImageURLs(TaxonomyProvider.ITIS, "165653"));
+        assertITISImage(serviceTaxon.lookupImageForExternalId(TaxonomyProvider.ID_PREFIX_ITIS  + "165653"));
+    }
+
+    private void assertITISImage(TaxonImage taxonImage) {
         assertThat(taxonImage.getThumbnailURL(), is("http://media.eol.org/content/2012/06/14/21/89792_98_68.jpg"));
         assertThat(taxonImage.getImageURL(), is("http://media.eol.org/content/2012/06/14/21/89792_orig.jpg"));
         assertThat(taxonImage.getEOLPageId(), is("207614"));
@@ -33,9 +37,26 @@ public class EOLTaxonImageServiceIT {
     @Test
     public void imageLookupWoRMS() throws URISyntaxException, IOException {
         EOLTaxonImageService serviceTaxon = new EOLTaxonImageService();
-        TaxonImage taxonImage = serviceTaxon.lookupImageURLs(TaxonomyProvider.WORMS, "276287");
+        assertWoRMSImage(serviceTaxon.lookupImageURLs(TaxonomyProvider.WORMS, "276287"));
+        assertWoRMSImage(serviceTaxon.lookupImageForExternalId(TaxonomyProvider.ID_PREFIX_WORMS + "276287"));
+    }
+
+    private void assertWoRMSImage(TaxonImage taxonImage) {
         assertThat(taxonImage.getThumbnailURL(), is("http://media.eol.org/content/2009/11/17/11/81513_98_68.jpg"));
         assertThat(taxonImage.getImageURL(), is("http://media.eol.org/content/2009/11/17/11/81513_orig.jpg"));
         assertThat(taxonImage.getEOLPageId(), is("210779"));
+    }
+
+    @Test
+    public void imageLookupEOL() throws URISyntaxException, IOException {
+        EOLTaxonImageService serviceTaxon = new EOLTaxonImageService();
+        assertEOLImage(serviceTaxon.lookupImageURLs(TaxonomyProvider.EOL, "EOL:276287"));
+        assertEOLImage(serviceTaxon.lookupImageForExternalId(TaxonomyProvider.ID_PREFIX_EOL + "276287"));
+    }
+
+    private void assertEOLImage(TaxonImage taxonImage) {
+        assertThat(taxonImage.getThumbnailURL(), is("http://media.eol.org/content/2011/12/13/21/66989_98_68.jpg"));
+        assertThat(taxonImage.getImageURL(), is("http://media.eol.org/content/2011/12/13/21/66989_orig.jpg"));
+        assertThat(taxonImage.getEOLPageId(), is("276287"));
     }
 }

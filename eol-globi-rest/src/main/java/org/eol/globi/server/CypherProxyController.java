@@ -87,12 +87,11 @@ public class CypherProxyController {
     public String findPredatorsOf(@PathVariable("scientificName") String scientificName,
                                   @RequestParam(value = "lat", required = false) Double latitude,
                                   @RequestParam(value = "lng", required = false) Double longitude) throws IOException {
-        String query1 = "{\"query\":\"START preyTaxon" + " = node:taxons(name={scientificName}) " +
+        String query = "{\"query\":\"START preyTaxon" + " = node:taxons(name={scientificName}) " +
                 "MATCH predatorTaxon<-[:CLASSIFIED_AS]-predator-[:ATE]->prey-[:CLASSIFIED_AS]->preyTaxon ";
-        query1 = addLocationClausesIfNecessary(latitude, longitude, query1);
-        query1 += "RETURN distinct(predatorTaxon.name) as predatorName\", " +
+        query = addLocationClausesIfNecessary(latitude, longitude, query);
+        query += "RETURN distinct(predatorTaxon.name) as predatorName\", " +
                 "\"params\":" + buildParams(scientificName, latitude, longitude) + "}";
-        String query = query1;
         return execute(query);
     }
 

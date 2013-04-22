@@ -1,18 +1,12 @@
 package org.eol.globi.service;
 
 import org.apache.commons.lang3.time.StopWatch;
+import org.eol.globi.domain.TaxonomyProvider;
 import org.junit.AfterClass;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.eol.globi.data.GraphDBTestCase;
-import org.eol.globi.data.NodeFactoryException;
-import org.eol.globi.domain.Specimen;
-import org.eol.globi.domain.Study;
 import org.eol.globi.domain.Taxon;
-
-import java.io.IOException;
 
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
@@ -64,7 +58,7 @@ public class EOLOfflineServiceIT {
 
     private void matchTaxon(String speciesName) throws TaxonPropertyLookupServiceException {
         String externalId = eolOfflineService.lookupPropertyValueByTaxonName(speciesName, Taxon.EXTERNAL_ID);
-        assertThat("failed to match [" + speciesName + "]", externalId, containsString(EOLTaxonImageService.EOL_LSID_PREFIX));
+        assertThat("failed to match [" + speciesName + "]", externalId, containsString(TaxonomyProvider.ID_PREFIX_EOL));
     }
 
 

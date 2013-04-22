@@ -3,17 +3,7 @@ package org.eol.globi.domain;
 public class TaxonImage {
     private String thumbnailURL;
     private String imageURL;
-    private String description;
-
     private String EOLPageId;
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getDescription() {
-        return description;
-    }
 
     public void setThumbnailURL(String thumbnailURL) {
         this.thumbnailURL = thumbnailURL;

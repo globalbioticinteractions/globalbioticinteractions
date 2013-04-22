@@ -7,8 +7,6 @@
     <groupId>org.eol</groupId>
     <artifactId>eol-globi-data-tool</artifactId>
     <version>1.0-SNAPSHOT</version>
-    <packaging>jar</packaging>
-
     <name>EOL's Global Biotic Interaction Data Import/Export Tool</name>
 
     <properties>
@@ -18,6 +16,12 @@
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>eol-globi-lib</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
         <dependency>
             <groupId>org.apache.jena</groupId>
             <artifactId>jena-core</artifactId>
@@ -65,13 +69,6 @@
             <groupId>org.neo4j</groupId>
             <artifactId>neo4j</artifactId>
             <version>${neo4j.version}</version>
-        </dependency>
-
-        <!-- JSON Mapper -->
-        <dependency>
-            <groupId>org.codehaus.jackson</groupId>
-            <artifactId>jackson-mapper-asl</artifactId>
-            <version>1.7.2</version>
         </dependency>
 
         <!-- CVS Parsing, base 64 encoding and more -->

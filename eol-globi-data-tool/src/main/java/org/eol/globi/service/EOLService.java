@@ -5,6 +5,7 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.HttpResponseException;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.BasicResponseHandler;
+import org.eol.globi.domain.TaxonomyProvider;
 
 import java.io.IOException;
 import java.net.URI;
@@ -24,7 +25,7 @@ public class EOLService extends BaseExternalIdService {
             throw new TaxonPropertyLookupServiceException("failed to create uri", e);
         }
 
-        return pageId == null ? null : EOLTaxonImageService.EOL_LSID_PREFIX + pageId;
+        return pageId == null ? null : TaxonomyProvider.ID_PREFIX_EOL + pageId;
     }
 
     private String getPageId(String taxonName, URI uri, boolean shouldFollowAlternate) throws TaxonPropertyLookupServiceException, URISyntaxException {

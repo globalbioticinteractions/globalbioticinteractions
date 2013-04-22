@@ -14,6 +14,7 @@
     <modules>
         <module>eol-globi-data-tool</module>
         <module>eol-globi-datasets</module>
+        <module>eol-globi-lib</module>
         <!-- excluded for now due to travis-ci.org failures -->
         <!--<module>eol-globi-rest</module>-->
     </modules>

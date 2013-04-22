@@ -25,14 +25,18 @@
         <commons-dbcp.version>1.4</commons-dbcp.version>
         <javassist.version>3.9.0.GA</javassist.version>
         <cglib.version>2.2</cglib.version>
-        <jackson.version>1.7.1</jackson.version>
-        <httpcomponents.version>4.1.2</httpcomponents.version>
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>eol-globi-lib</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>servlet-api</artifactId>
@@ -271,17 +275,6 @@
             <artifactId>mail</artifactId>
             <version>1.4</version>
             <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient</artifactId>
-            <version>${httpcomponents.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpmime</artifactId>
-            <version>${httpcomponents.version}</version>
         </dependency>
 
         <dependency>

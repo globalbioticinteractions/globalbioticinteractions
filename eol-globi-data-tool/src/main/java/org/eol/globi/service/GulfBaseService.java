@@ -5,6 +5,7 @@ import org.eol.globi.data.taxon.GulfBaseTaxonReaderFactory;
 import org.eol.globi.data.taxon.TaxonTerm;
 import org.eol.globi.data.taxon.TaxonomyImporter;
 import org.eol.globi.domain.Taxon;
+import org.eol.globi.domain.TaxonomyProvider;
 
 public class GulfBaseService extends OfflineService {
 
@@ -22,7 +23,7 @@ public class GulfBaseService extends OfflineService {
     protected String getValueForPropertyName(String propertyName, TaxonTerm term) {
         String value = null;
         if (Taxon.EXTERNAL_ID.equals(propertyName)) {
-            value = "BioGoMx:" + term.getId();
+            value = TaxonomyProvider.ID_PREFIX_GULFBASE + term.getId();
         } else if (Taxon.PATH.equals(propertyName)) {
             value = term.getRankPath();
         }

@@ -5,6 +5,7 @@ import org.eol.globi.data.taxon.SingleResourceTaxonReaderFactory;
 import org.eol.globi.data.taxon.TaxonTerm;
 import org.eol.globi.data.taxon.TaxonomyImporter;
 import org.eol.globi.domain.Taxon;
+import org.eol.globi.domain.TaxonomyProvider;
 
 public class EOLOfflineService extends OfflineService {
 
@@ -22,7 +23,7 @@ public class EOLOfflineService extends OfflineService {
     protected String getValueForPropertyName(String propertyName, TaxonTerm term) {
         String value = null;
         if (Taxon.EXTERNAL_ID.equals(propertyName)) {
-            value = EOLTaxonImageService.EOL_LSID_PREFIX + term.getId();
+            value = TaxonomyProvider.ID_PREFIX_EOL + term.getId();
         }
         return value;
     }

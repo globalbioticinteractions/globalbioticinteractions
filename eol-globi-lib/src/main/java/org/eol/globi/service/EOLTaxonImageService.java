@@ -16,8 +16,19 @@ import java.io.IOException;
 public class EOLTaxonImageService extends BaseHttpClientService {
     private static final Log LOG = LogFactory.getLog(EOLTaxonImageService.class);
 
-    // eol doesn't have a lsid prefix that I know of
-    public static final String EOL_LSID_PREFIX = "EOL:";
+    public TaxonImage lookupImageForExternalId(String externalId) throws IOException {
+        TaxonImage image = null;
+        if (externalId == null) {
+            LOG.warn("cannot lookup image for null externalId");
+        } else if (externalId.startsWith(TaxonomyProvider.ID_PREFIX_EOL)) {
+            image = lookupImageURLs(TaxonomyProvider.EOL, externalId.replace(TaxonomyProvider.ID_PREFIX_EOL, ""));
+        } else if (externalId.startsWith(TaxonomyProvider.ID_PREFIX_WORMS)) {
+            image = lookupImageURLs(TaxonomyProvider.WORMS, externalId.replace(TaxonomyProvider.ID_PREFIX_WORMS, ""));
+        } else if (externalId.startsWith(TaxonomyProvider.ID_PREFIX_ITIS)) {
+            image = lookupImageURLs(TaxonomyProvider.ITIS, externalId.replace(TaxonomyProvider.ID_PREFIX_ITIS, ""));
+        }
+        return image;
+    }
 
     public TaxonImage lookupImageURLs(TaxonomyProvider provider, String taxonId) throws IOException {
         TaxonImage taxonImage = null;
@@ -32,7 +43,7 @@ public class EOLTaxonImageService extends BaseHttpClientService {
             eolProviderId = "123";
         } else if (TaxonomyProvider.EOL.equals(provider)) {
             // no need to lookup, because the page id is already in the taxon id
-            eolPageId = taxonId.replace(EOLTaxonImageService.EOL_LSID_PREFIX, "");
+            eolPageId = taxonId.replace(TaxonomyProvider.ID_PREFIX_EOL, "");
         } else {
             throw new UnsupportedOperationException("unsupported taxonomy provider [" + provider + "]");
         }
@@ -56,7 +67,7 @@ public class EOLTaxonImageService extends BaseHttpClientService {
                 if (200 == response.getStatusLine().getStatusCode()) {
                     taxonImage = new TaxonImage();
                     taxonImage.setEOLPageId(eolPageId);
-                    enrichTaxonWIthImageInfo(taxonImage, responseString);
+                    enrichTaxonWithImageInfo(taxonImage, responseString);
                 }
             }
         }
@@ -84,7 +95,7 @@ public class EOLTaxonImageService extends BaseHttpClientService {
         return imageObjectId;
     }
 
-    protected void enrichTaxonWIthImageInfo(TaxonImage taxonImage, String responseString) throws IOException {
+    protected void enrichTaxonWithImageInfo(TaxonImage taxonImage, String responseString) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         JsonNode array = mapper.readTree(responseString);
         JsonNode eolMediaURL = array.findValue("eolMediaURL");
@@ -105,7 +116,6 @@ public class EOLTaxonImageService extends BaseHttpClientService {
 
         String responseString = EntityUtils.toString(response.getEntity());
 
-        LOG.info(responseString);
         if (200 == response.getStatusLine().getStatusCode()) {
             ObjectMapper mapper = new ObjectMapper();
             JsonNode jsonNode = mapper.readTree(responseString);
