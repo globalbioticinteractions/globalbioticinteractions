@@ -63,11 +63,17 @@ public class CypherProxyController {
     }
 
     private String buildParams(String scientificName, Double latitude, Double longitude) {
-        String params = "{\"scientificName\":\"" + scientificName + "\"";
+        String params = "{";
 
+        if (scientificName != null) {
+            params += "\"scientificName\":\"" + scientificName + "\"";
+        }
 
         if (latitude != null && longitude != null) {
-            params += ",\"latitude\":" + latitude.toString();
+            if (scientificName != null) {
+                params += ",";
+            }
+            params += "\"latitude\":" + latitude.toString();
             params += ",\"longitude\":" + longitude.toString();
         }
 
@@ -81,6 +87,24 @@ public class CypherProxyController {
     public String oldFindPredatorsOf(@PathVariable("scientificName") String scientificName) throws IOException {
         return findPredatorsOf(scientificName, null, null);
     }
+
+    @RequestMapping(value = "/interaction", method = RequestMethod.GET)
+    @ResponseBody
+    public String findInteractions(@RequestParam("lat") Double latitude,
+                                   @RequestParam("lng") Double longitude) throws IOException {
+        String query = "{\"query\":\"START location" + " = node:locations('*:*') " +
+                "MATCH predatorTaxon<-[:CLASSIFIED_AS]-predator-[interactionType:" + allInteractionTypes() + "]->prey-[:CLASSIFIED_AS]->preyTaxon ";
+        query = addLocationClausesIfNecessary(latitude, longitude, query);
+        query += "RETURN predatorTaxon.externalId, predatorTaxon.name as predatorName, type(interactionType), preyTaxon.externalId, preyTaxon.name as preyTaxon\", " +
+                "\"params\":" + buildParams(null, latitude, longitude) + "}";
+        System.out.println(query);
+        return execute(query);
+    }
+
+    private String allInteractionTypes() {
+        return "PREYS_UPON|PARASITE_OF|HAS_HOST|INTERACTS_WITH|ATE";
+    }
+
 
     @RequestMapping(value = "/taxon/{scientificName}/" + INTERACTION_PREYED_UPON_BY, method = RequestMethod.GET)
     @ResponseBody

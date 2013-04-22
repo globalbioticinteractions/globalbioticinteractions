@@ -10,6 +10,7 @@ import java.net.URISyntaxException;
 
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
+import static org.junit.matchers.JUnitMatchers.containsString;
 
 public class CypherProxyControllerTest {
 
@@ -74,6 +75,12 @@ public class CypherProxyControllerTest {
     public void findExternalLinkForTaxonWithName() throws IOException {
         String externalLink = new CypherProxyController().findExternalLinkForTaxonWithName("Homo sapiens");
         assertThat(externalLink, Is.is("{\"url\":\"http://eol.org/pages/327955\"}"));
+    }
+
+    @Test
+    public void findInteractions() throws IOException {
+        String externalLink = new CypherProxyController().findInteractions(18.24829d, -66.49989d);
+        assertThat(externalLink, containsString("ATE"));
     }
 
 }
