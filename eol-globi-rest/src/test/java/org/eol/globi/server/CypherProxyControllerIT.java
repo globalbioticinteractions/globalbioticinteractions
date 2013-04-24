@@ -75,13 +75,19 @@ public class CypherProxyControllerIT {
         String response = HttpClient.httpGet(uri);
         assertThat(response, is(not(nullValue())));
     }
+
     @Test
-
-
-    public void listPredatorForPreyObservationsLocation() throws IOException {
-        String uri = getURLPrefix() + "taxon/Homo%20sapiens/preyedUponBy?includeObservations=true&lat=12.3&lng=12.5";
+    public void listPreyObservationsLocation() throws IOException {
+        String uri = getURLPrefix() + "taxon/Homo%20sapiens/preysOn?includeObservations=true&lat=12.3&lng=12.5";
         String response = HttpClient.httpGet(uri);
         assertThat(response, is(not(nullValue())));
+    }
+
+    @Test
+    public void listPreyObservationsSearchBox() throws IOException {
+        String uri = getURLPrefix() + "taxon/Ariopsis%20felis/preysOn?includeObservations=true&nw_lat=29.3&nw_lng=-97.0&se_lat=26.3&se_lng=96.1";
+        String response = HttpClient.httpGet(uri);
+        assertThat(response, containsString("Hymenoptera"));
     }
 
     @Test

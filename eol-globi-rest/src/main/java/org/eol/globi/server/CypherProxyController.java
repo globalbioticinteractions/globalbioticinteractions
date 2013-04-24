@@ -1,5 +1,7 @@
 package org.eol.globi.server;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.BasicResponseHandler;
@@ -10,21 +12,19 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 @Controller
 public class CypherProxyController {
-
     public static final String OBSERVATION_MATCH =
             "MATCH (predatorTaxon)<-[:CLASSIFIED_AS]-(predator)-[:ATE]->(prey)-[:CLASSIFIED_AS]->(preyTaxon)," +
-                    "(predator)-[:COLLECTED_AT]->(location)," +
-                    "(predator)<-[collected_rel:COLLECTED]-(study) " +
-                    "WHERE location is not null ";
+                    "(predator)-[:COLLECTED_AT]->(loc)," +
+                    "(predator)<-[collected_rel:COLLECTED]-(study) ";
 
     public static final String INCLUDE_OBSERVATIONS_TRUE = "includeObservations=true";
 
@@ -35,47 +35,33 @@ public class CypherProxyController {
     @RequestMapping(value = "/predator/{scientificName}/listPrey", method = RequestMethod.GET)
     @ResponseBody
     @Deprecated
-    public String oldFindPreyOf(@PathVariable("scientificName") String scientificName) throws IOException {
-        return findPreyOf(scientificName, null, null);
+    public String oldFindPreyOf(HttpServletRequest request, @PathVariable("scientificName") String scientificName) throws IOException {
+        return findPreyOf(request, scientificName);
     }
 
     @RequestMapping(value = "/taxon/{scientificName}/" + INTERACTION_PREYS_ON, method = RequestMethod.GET)
     @ResponseBody
-    public String findPreyOf(@PathVariable("scientificName") String scientificName,
-                             @RequestParam(value = "lat", required = false) Double latitude,
-                             @RequestParam(value = "lng", required = false) Double longitude) throws IOException {
+    public String findPreyOf(HttpServletRequest request, @PathVariable("scientificName") String scientificName) throws IOException {
         String query1 = "{\"query\":\"START predatorTaxon = node:taxons(name={scientificName}) " +
                 "MATCH predatorTaxon<-[:CLASSIFIED_AS]-predator-[:ATE]->prey-[:CLASSIFIED_AS]->preyTaxon ";
-        query1 = addLocationClausesIfNecessary(latitude, longitude, query1);
+        query1 = addLocationClausesIfNecessary(request, query1);
         query1 += "RETURN distinct(preyTaxon.name) as preyName\", " +
-                "\"params\":" + buildParams(scientificName, latitude, longitude) + "}";
+                "\"params\":" + buildParams(scientificName) + "}";
         String query = query1;
         return execute(query);
     }
 
-    private String addLocationClausesIfNecessary(Double latitude, Double longitude, String query) {
-        if (latitude != null && longitude != null) {
-            query += " , predator-[:COLLECTED_AT]->location ";
-            query += " WHERE location is not null" +
-                    " AND location.latitude = {latitude}" +
-                    " AND location.longitude = {longitude} ";
-        }
+    private String addLocationClausesIfNecessary(HttpServletRequest request, String query) {
+        query += " , predator-[:COLLECTED_AT]->loc ";
+        query += request == null ? "" : RequestHelper.buildCypherSpatialWhereClause(request.getParameterMap());
         return query;
     }
 
-    private String buildParams(String scientificName, Double latitude, Double longitude) {
+    private String buildParams(String scientificName) {
         String params = "{";
 
         if (scientificName != null) {
             params += "\"scientificName\":\"" + scientificName + "\"";
-        }
-
-        if (latitude != null && longitude != null) {
-            if (scientificName != null) {
-                params += ",";
-            }
-            params += "\"latitude\":" + latitude.toString();
-            params += ",\"longitude\":" + longitude.toString();
         }
 
         params += "}";
@@ -85,19 +71,18 @@ public class CypherProxyController {
     @RequestMapping(value = "/prey/{scientificName}/listPredators", method = RequestMethod.GET)
     @ResponseBody
     @Deprecated
-    public String oldFindPredatorsOf(@PathVariable("scientificName") String scientificName) throws IOException {
-        return findPredatorsOf(scientificName, null, null);
+    public String oldFindPredatorsOf(HttpServletRequest request, @PathVariable("scientificName") String scientificName) throws IOException {
+        return findPredatorsOf(request, scientificName);
     }
 
     @RequestMapping(value = "/interaction", method = RequestMethod.GET)
     @ResponseBody
-    public String findInteractions(@RequestParam("lat") Double latitude,
-                                   @RequestParam("lng") Double longitude) throws IOException {
-        String query = "{\"query\":\"START location" + " = node:locations('*:*') " +
+    public String findInteractions(HttpServletRequest request) throws IOException {
+        String query = "{\"query\":\"START loc" + " = node:locations('*:*') " +
                 "MATCH predatorTaxon<-[:CLASSIFIED_AS]-predator-[interactionType:" + allInteractionTypes() + "]->prey-[:CLASSIFIED_AS]->preyTaxon ";
-        query = addLocationClausesIfNecessary(latitude, longitude, query);
+        query = addLocationClausesIfNecessary(request, query);
         query += "RETURN predatorTaxon.externalId, predatorTaxon.name as predatorName, type(interactionType), preyTaxon.externalId, preyTaxon.name as preyTaxon\", " +
-                "\"params\":" + buildParams(null, latitude, longitude) + "}";
+                "\"params\":" + buildParams(null) + "}";
         return execute(query);
     }
 
@@ -108,14 +93,12 @@ public class CypherProxyController {
 
     @RequestMapping(value = "/taxon/{scientificName}/" + INTERACTION_PREYED_UPON_BY, method = RequestMethod.GET)
     @ResponseBody
-    public String findPredatorsOf(@PathVariable("scientificName") String scientificName,
-                                  @RequestParam(value = "lat", required = false) Double latitude,
-                                  @RequestParam(value = "lng", required = false) Double longitude) throws IOException {
+    public String findPredatorsOf(HttpServletRequest request, @PathVariable("scientificName") String scientificName) throws IOException {
         String query = "{\"query\":\"START preyTaxon" + " = node:taxons(name={scientificName}) " +
                 "MATCH predatorTaxon<-[:CLASSIFIED_AS]-predator-[:ATE]->prey-[:CLASSIFIED_AS]->preyTaxon ";
-        query = addLocationClausesIfNecessary(latitude, longitude, query);
+        query = addLocationClausesIfNecessary(request, query);
         query += "RETURN distinct(predatorTaxon.name) as predatorName\", " +
-                "\"params\":" + buildParams(scientificName, latitude, longitude) + "}";
+                "\"params\":" + buildParams(scientificName) + "}";
         return execute(query);
     }
 
@@ -132,16 +115,17 @@ public class CypherProxyController {
     @RequestMapping(value = "/predator/{predatorName}/listPreyObservations", method = RequestMethod.GET)
     @ResponseBody
     @Deprecated
-    public String oldFindPreyObservationsOf(@PathVariable("predatorName") String predatorName) throws IOException {
-        return findPreyObservationsOf(predatorName);
+    public String oldFindPreyObservationsOf(HttpServletRequest request, @PathVariable("predatorName") String predatorName) throws IOException {
+        return findPreyObservationsOf(request, predatorName);
     }
 
     @RequestMapping(value = "/taxon/{predatorName}/" + INTERACTION_PREYS_ON, params = {INCLUDE_OBSERVATIONS_TRUE}, method = RequestMethod.GET)
     @ResponseBody
-    public String findPreyObservationsOf(@PathVariable("predatorName") String predatorName) throws IOException {
+    public String findPreyObservationsOf(HttpServletRequest request, @PathVariable("predatorName") String predatorName) throws IOException {
         String query = "{\"query\":\"START predatorTaxon = node:taxons(name={predatorName}) " +
                 OBSERVATION_MATCH +
-                " RETURN preyTaxon.name as preyName, location.latitude as latitude, location.longitude as longitude, location.altitude? as altitude, study.contributor as contributor, collected_rel.dateInUnixEpoch? as collection_time_in_unix_epoch\"" +
+                getSpatialWhereClause(request) +
+                " RETURN preyTaxon.name as preyName, loc.latitude as latitude, loc.longitude as longitude, loc.altitude? as altitude, study.contributor as contributor, collected_rel.dateInUnixEpoch? as collection_time_in_unix_epoch\"" +
                 ", \"params\": { \"predatorName\" : \"" + predatorName + "\" } }";
         return execute(query);
     }
@@ -149,25 +133,30 @@ public class CypherProxyController {
     @RequestMapping(value = "/prey/{preyName}/listPredatorObservations", method = RequestMethod.GET)
     @ResponseBody
     @Deprecated
-    public String oldFindPredatorObservationsOf(@PathVariable("preyName") String preyName) throws IOException {
-        return findPredatorObservationsOf(preyName);
+    public String oldFindPredatorObservationsOf(HttpServletRequest request, @PathVariable("preyName") String preyName) throws IOException {
+        return findPredatorObservationsOf(request, preyName);
     }
 
     @RequestMapping(value = "/taxon/{preyName}/" + INTERACTION_PREYED_UPON_BY, params = {INCLUDE_OBSERVATIONS_TRUE}, method = RequestMethod.GET)
     @ResponseBody
-    public String findPredatorObservationsOf(@PathVariable("preyName") String preyName) throws IOException {
+    public String findPredatorObservationsOf(HttpServletRequest request, @PathVariable("preyName") String preyName) throws IOException {
         String query = "{\"query\":\"START preyTaxon = node:taxons(name={preyName}) " +
                 OBSERVATION_MATCH +
-                " RETURN predatorTaxon.name as predatorName, location.latitude as latitude, location.longitude as longitude, location.altitude? as altitude, study.contributor as contributor, collected_rel.dateInUnixEpoch? as collection_time_in_unix_epoch\"" +
+                getSpatialWhereClause(request) +
+                " RETURN predatorTaxon.name as predatorName, loc.latitude as latitude, loc.longitude as longitude, loc.altitude? as altitude, study.contributor as contributor, collected_rel.dateInUnixEpoch? as collection_time_in_unix_epoch\"" +
                 ", \"params\": { \"preyName\" : \"" + preyName + "\" } }";
         return execute(query);
+    }
+
+    private String getSpatialWhereClause(HttpServletRequest request) {
+        return request == null ? "" : RequestHelper.buildCypherSpatialWhereClause(request.getParameterMap());
     }
 
     @RequestMapping(value = "/locations", method = RequestMethod.GET)
     @ResponseBody
     @Cacheable(value = "locationCache")
     public String locations() throws IOException {
-        return execute("{\"query\":\"START location = node:locations('*:*') RETURN location.latitude, location.longitude\"}");
+        return execute("{\"query\":\"START loc = node:locations('*:*') RETURN loc.latitude, loc.longitude\"}");
     }
 
 
@@ -234,9 +223,9 @@ public class CypherProxyController {
 
     private Map<String, String> getURLPrefixMap() {
         return new HashMap<String, String>() {{
-                put(TaxonomyProvider.ID_PREFIX_EOL, "http://eol.org/pages/");
-                put(TaxonomyProvider.ID_PREFIX_GULFBASE, "http://gulfbase.org/biogomx/biospecies.php?species=");
-            }};
+            put(TaxonomyProvider.ID_PREFIX_EOL, "http://eol.org/pages/");
+            put(TaxonomyProvider.ID_PREFIX_GULFBASE, "http://gulfbase.org/biogomx/biospecies.php?species=");
+        }};
     }
 
     private String getUrl(String result, String externalIdPrefix, String urlPrefix) {

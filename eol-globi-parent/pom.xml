@@ -52,6 +52,32 @@
         </extensions>
     </build>
 
+    <repositories>
+        <repository>
+            <id>ibiblio.org</id>
+            <name>ibiblio Repository for Maven 2</name>
+            <url>http://mirrors.ibiblio.org/pub/mirrors/maven2/</url>
+            <layout>default</layout>
+        </repository>
+        <repository>
+            <id>mygrid-repository</id>
+            <name>myGrid repository</name>
+            <url>http://www.mygrid.org.uk/maven/repository</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+        </repository>
+        <repository>
+            <id>-berkeleybop</id>
+            <name>Berkeley Bop Repository</name>
+            <url>http://code.berkeleybop.org/maven/repository</url>
+        </repository>
+    </repositories>
+
+
     <!-- see http://github.com/SpringSource/aws-maven -->
     <distributionManagement>
         <repository>
