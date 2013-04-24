@@ -221,6 +221,17 @@ public class CypherProxyController {
         return buildJsonUrl(url);
     }
 
+    @RequestMapping(value = "/shortestPathsBetweenTaxon/{startTaxon}/andTaxon/{endTaxon}", method = RequestMethod.GET)
+    @ResponseBody
+    public String findShortestPaths(@PathVariable("startTaxon") String startTaxon, @PathVariable("endTaxon") String endTaxon) throws IOException {
+        String query = "{\"query\":\"START startNode = node:taxons(name={startTaxon}),endNode = node:taxons(name={endTaxon}) " +
+                "MATCH p = allShortestPaths(startNode-[:" + allInteractionTypes() + "|CLASSIFIED_AS*..100]-endNode) " +
+                "RETURN extract(n in (filter(x in nodes(p) : has(x.name))) : " +
+                "coalesce(n.name?)) as shortestPaths " +
+                "LIMIT 10\",\"params\":{\"startTaxon\": \"" + startTaxon + "\", \"endTaxon\":\"" + endTaxon + "\"}}";
+        return execute(query);
+    }
+
     private Map<String, String> getURLPrefixMap() {
         return new HashMap<String, String>() {{
             put(TaxonomyProvider.ID_PREFIX_EOL, "http://eol.org/pages/");

@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.HashMap;
 
+import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.junit.matchers.JUnitMatchers.containsString;
@@ -24,13 +25,13 @@ public class CypherProxyControllerTest {
     @Test
     public void findPrey() throws IOException, URISyntaxException {
         String list = new CypherProxyController().findPreyOf(null, "Homo sapiens");
-        assertThat(list, Is.is(notNullValue()));
+        assertThat(list, is(notNullValue()));
     }
 
     @Test
     public void findPreyAtLocation() throws IOException, URISyntaxException {
         String list = new CypherProxyController().findPreyOf(getRequest(), "Homo sapiens");
-        assertThat(list, Is.is(notNullValue()));
+        assertThat(list, is(notNullValue()));
     }
 
     private HttpServletRequest getRequest() {
@@ -47,55 +48,61 @@ public class CypherProxyControllerTest {
     @Test
     public void findPreyAtLocationNoLongitude() throws IOException, URISyntaxException {
         String list = new CypherProxyController().findPreyOf(null, "Homo sapiens");
-        assertThat(list, Is.is(notNullValue()));
+        assertThat(list, is(notNullValue()));
     }
 
     @Test
     public void findPreyAtLocationNoLatitude() throws IOException, URISyntaxException {
         String list = new CypherProxyController().findPreyOf(null, "Homo sapiens");
-        assertThat(list, Is.is(notNullValue()));
+        assertThat(list, is(notNullValue()));
     }
 
     @Test
     public void findPredator() throws IOException, URISyntaxException {
         String list = new CypherProxyController().findPredatorsOf(null, "Hemiramphus brasiliensis");
-        assertThat(list, Is.is(notNullValue()));
+        assertThat(list, is(notNullValue()));
     }
 
 
     @Test
     public void findPredatorObservations() throws IOException, URISyntaxException {
         String list = new CypherProxyController().findPreyObservationsOf(null, "Ariopsis felis");
-        assertThat(list, Is.is(notNullValue()));
+        assertThat(list, is(notNullValue()));
         list = new CypherProxyController().findPreyObservationsOf(null, "Rattus rattus");
-        assertThat(list, Is.is(notNullValue()));
+        assertThat(list, is(notNullValue()));
     }
 
     @Test
     public void findPreyObservations() throws IOException, URISyntaxException {
         String list = new CypherProxyController().findPredatorObservationsOf(null, "Rattus rattus");
-        assertThat(list, Is.is(notNullValue()));
+        assertThat(list, is(notNullValue()));
 
         list = new CypherProxyController().findPredatorObservationsOf(null, "Ariopsis felis");
-        assertThat(list, Is.is(notNullValue()));
+        assertThat(list, is(notNullValue()));
     }
 
     @Test
     public void findTaxon() throws IOException, URISyntaxException {
         String list = new CypherProxyController().findTaxon("Homo sap");
-        assertThat(list, Is.is(notNullValue()));
+        assertThat(list, is(notNullValue()));
     }
 
     @Test
     public void findExternalLinkForTaxonWithName() throws IOException {
         String externalLink = new CypherProxyController().findExternalLinkForTaxonWithName("Homo sapiens");
-        assertThat(externalLink, Is.is("{\"url\":\"http://eol.org/pages/327955\"}"));
+        assertThat(externalLink, is("{\"url\":\"http://eol.org/pages/327955\"}"));
     }
 
     @Test
     public void findInteractions() throws IOException {
         String externalLink = new CypherProxyController().findInteractions(getRequest());
         assertThat(externalLink, containsString("ATE"));
+    }
+
+    @Test
+    public void findShortestPaths() throws IOException {
+        String externalLink = new CypherProxyController().findShortestPaths("Homo sapiens", "Rattus rattus");
+        assertThat(externalLink, containsString("Rattus rattus"));
     }
 
 }
