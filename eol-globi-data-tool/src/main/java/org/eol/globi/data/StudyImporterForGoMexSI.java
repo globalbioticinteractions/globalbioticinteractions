@@ -6,6 +6,7 @@ import org.apache.commons.logging.LogFactory;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
+import org.neo4j.graphdb.Transaction;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -22,38 +23,75 @@ public class StudyImporterForGoMexSI extends BaseStudyImporter {
 
     @Override
     public Study importStudy() throws StudyImporterException {
+        Map<String, List<String>> predatorIdToPredatorNames = new HashMap<String, List<String>>();
+        Map<String, List<String>> predatorIdToPreyNames = new HashMap<String, List<String>>();
+        Map<String, Study> referenceIdToStudy = new HashMap<String, Study>();
+        addSpecimen(predatorIdToPredatorNames, "gomexsi/Predators.csv", "PRED_SCI_NAME");
+        addSpecimen(predatorIdToPreyNames, "gomexsi/Prey.csv", "DATABASE_PREY_NAME");
+        addReferences(referenceIdToStudy);
+        addObservations(predatorIdToPredatorNames, referenceIdToStudy, predatorIdToPreyNames);
 
-        Study study = nodeFactory.createStudy(StudyImporterFactory.Study.GOMEXSI.toString(),
+        // figure out a way to introduce the separation of study and reference.
+        return nodeFactory.createStudy(StudyImporterFactory.Study.GOMEXSI.toString(),
                 "James D. Simons",
                 "Center for Coastal Studies, Texas A&M University - Corpus Christi, United States",
                 "",
                 "<a href=\"http://www.ingentaconnect.com/content/umrsmas/bullmar/2013/00000089/00000001/art00009\">Building a Fisheries Trophic Interaction Database for Management and Modeling Research in the Gulf of Mexico Large Marine Ecosystem.</a>");
-
-        Map<String, List<Specimen>> predatorIdToPredatorSpecimen = new HashMap<String, List<Specimen>>();
-        Map<String, List<Specimen>> predatorIdToPreySpecimen = new HashMap<String, List<Specimen>>();
-        addSpecimen(predatorIdToPredatorSpecimen, "gomexsi/Predators.csv", "PRED_SCI_NAME");
-        addSpecimen(predatorIdToPreySpecimen, "gomexsi/Prey.csv", "DATABASE_PREY_NAME");
-
-        for (Map.Entry<String, List<Specimen>> predatorIdPredatorSpecimen : predatorIdToPredatorSpecimen.entrySet()) {
-            List<Specimen> predatorSpecimens = predatorIdPredatorSpecimen.getValue();
-            for (Specimen predatorSpecimen : predatorSpecimens) {
-                study.collected(predatorSpecimen);
-                List<Specimen> preySpecimens = predatorIdToPreySpecimen.get(predatorIdPredatorSpecimen.getKey());
-                if (preySpecimens != null) {
-                    for (Specimen preySpecimen : preySpecimens) {
-                        predatorSpecimen.ate(preySpecimen);
-                    }
-                }
-            }
-
-        }
-
-        addLocations(predatorIdToPredatorSpecimen);
-
-        return study;
     }
 
-    private void addLocations(Map<String, List<Specimen>> predatorIdToPredatorSpecimen) throws StudyImporterException {
+    private void addReferences(Map<String, Study> referenceIdToStudy) throws StudyImporterException {
+        String referenceResource = "gomexsi/References.csv";
+        try {
+            LabeledCSVParser parser = parserFactory.createParser(referenceResource, CharsetConstant.UTF8);
+            while (parser.getLine() != null) {
+                String refId = getMandatoryValue(referenceResource, parser, "REF_ID");
+                String lastName = getMandatoryValue(referenceResource, parser, "AUTH_L_NAME");
+                String firstName = getMandatoryValue(referenceResource, parser, "AUTH_F_NAME");
+                Study study = referenceIdToStudy.get(refId);
+                if (study == null) {
+                    addNewStudy(referenceIdToStudy, referenceResource, parser, refId, lastName, firstName);
+                } else {
+                    updateContributorList(lastName, firstName, study);
+                }
+
+            }
+        } catch (IOException e) {
+            throw new StudyImporterException("failed to open resource [" + referenceResource + "]", e);
+        }
+    }
+
+    private void updateContributorList(String lastName, String firstName, Study study) {
+        Transaction transaction = nodeFactory.getGraphDb().beginTx();
+        try {
+            String contributor = study.getContributor();
+            study.setContributor(contributor + ", " + firstName + " " + lastName);
+            transaction.success();
+        } finally {
+            transaction.finish();
+        }
+    }
+
+    private void addNewStudy(Map<String, Study> referenceIdToStudy, String referenceResource, LabeledCSVParser parser, String refId, String lastName, String firstName) throws StudyImporterException {
+        Study study;
+        String refTag = getMandatoryValue(referenceResource, parser, "REF_TAG");
+        String description = getMandatoryValue(referenceResource, parser, "TITLE_REF");
+        String publicationYear = getMandatoryValue(referenceResource, parser, "YEAR_PUB");
+        String institution = getMandatoryValue(referenceResource, parser, "UNIV_NAME");
+        institution += getMandatoryValue(referenceResource, parser, "UNIV_CITY");
+        institution += getMandatoryValue(referenceResource, parser, "UNIV_STATE");
+        institution = getMandatoryValue(referenceResource, parser, "UNIV_COUNTRY");
+        study = nodeFactory.getOrCreateStudy(refTag, firstName + " " + lastName, institution, "", description);
+        Transaction transaction = nodeFactory.getGraphDb().beginTx();
+        try {
+            study.setPublicationYear(publicationYear);
+            transaction.success();
+        } finally {
+            transaction.finish();
+        }
+        referenceIdToStudy.put(refId, study);
+    }
+
+    private void addObservations(Map<String, List<String>> predatorIdToPredatorSpecimen, Map<String, Study> refIdToStudyMap, Map<String, List<String>> predatorIdToPreySpecimen) throws StudyImporterException {
         String locationResource = "gomexsi/Locations.csv";
         try {
             LabeledCSVParser parser = parserFactory.createParser(locationResource, CharsetConstant.UTF8);
@@ -64,12 +102,35 @@ public class StudyImporterForGoMexSI extends BaseStudyImporter {
                 Double longitude = getMandatoryDoubleValue(locationResource, parser, "LOC_CENTR_LONG");
                 Double depth = getMandatoryDoubleValue(locationResource, parser, "MN_DEP_SAMP");
                 Location location = nodeFactory.getOrCreateLocation(latitude, longitude, depth == null ? null : -depth);
-                List<Specimen> specimens = predatorIdToPredatorSpecimen.get(refId + specimenId);
-                if (specimens == null) {
+                String predatorId = refId + specimenId;
+                List<String> predatorNames = predatorIdToPredatorSpecimen.get(predatorId);
+                if (predatorNames == null) {
                     LOG.warn("failed to lookup location for predator [" + refId + ":" + specimenId + "] from [" + locationResource + ":" + parser.getLastLineNumber() + "]");
                 } else {
-                    for (Specimen specimen : specimens) {
-                        specimen.caughtIn(location);
+                    for (String predatorName : predatorNames) {
+                        Specimen predatorSpecimen = null;
+                        try {
+                            predatorSpecimen = nodeFactory.createSpecimen(predatorName);
+                            predatorSpecimen.caughtIn(location);
+                            Study study = refIdToStudyMap.get(refId);
+                            if (study != null) {
+                                study.collected(predatorSpecimen);
+                            } else {
+                                LOG.warn("failed to find study for ref id [" + refId + "] on related to observation location in [" + locationResource + ":" + parser.getLastLineNumber() + "]");
+                            }
+                        } catch (NodeFactoryException e) {
+                            throw new StudyImporterException("failed to create specimen for [" + predatorName + "]");
+                        }
+                        List<String> preyNames = predatorIdToPreySpecimen.get(predatorId);
+                        if (preyNames != null) {
+                            for (String preyName : preyNames) {
+                                try {
+                                    predatorSpecimen.ate(nodeFactory.createSpecimen(preyName));
+                                } catch (NodeFactoryException e) {
+                                    throw new StudyImporterException("failed to create specimen for [" + preyName + "]");
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -87,26 +148,23 @@ public class StudyImporterForGoMexSI extends BaseStudyImporter {
         }
     }
 
-    private void addSpecimen(Map<String, List<Specimen>> specimenMap, String datafile, String scientificNameLabel) throws StudyImporterException {
+    private void addSpecimen(Map<String, List<String>> specimenMap, String datafile, String scientificNameLabel) throws StudyImporterException {
         try {
             LabeledCSVParser parser = parserFactory.createParser(datafile, CharsetConstant.UTF8);
             while (parser.getLine() != null) {
                 String refId = getMandatoryValue(datafile, parser, "REF_ID");
                 String specimenId = getMandatoryValue(datafile, parser, "PRED_ID");
                 String scientificName = getMandatoryValue(datafile, parser, scientificNameLabel);
-                Specimen specimen = nodeFactory.createSpecimen(scientificName);
                 String predatorUID = refId + specimenId;
-                List<Specimen> specimenList = specimenMap.get(predatorUID);
-                if (specimenList == null) {
-                    specimenList = new ArrayList<Specimen>();
+                List<String> nameLists = specimenMap.get(predatorUID);
+                if (nameLists == null) {
+                    nameLists = new ArrayList<String>();
                 }
-                specimenList.add(specimen);
-                specimenMap.put(predatorUID, specimenList);
+                nameLists.add(scientificName);
+                specimenMap.put(predatorUID, nameLists);
             }
         } catch (IOException e) {
             throw new StudyImporterException("failed to open resource [" + datafile + "]", e);
-        } catch (NodeFactoryException e) {
-            throw new StudyImporterException("failed to create specimen", e);
         }
     }
 
