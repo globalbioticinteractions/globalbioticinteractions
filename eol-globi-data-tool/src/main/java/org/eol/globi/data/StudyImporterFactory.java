@@ -1,15 +1,9 @@
 package org.eol.globi.data;
 
-import net.sf.cglib.core.CollectionUtils;
-
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class StudyImporterFactory {
 
@@ -38,7 +32,7 @@ public class StudyImporterFactory {
         this.nodeFactory = nodeFactory;
     }
 
-    public StudyImporter createImporterForStudy(Class<StudyImporter> clazz) throws StudyImporterException {
+    public StudyImporter instantiateImporter(Class<StudyImporter> clazz) throws StudyImporterException {
         try {
             Constructor<StudyImporter> constructor = clazz.getConstructor(ParserFactory.class, NodeFactory.class);
             return constructor.newInstance(parserFactory, nodeFactory);

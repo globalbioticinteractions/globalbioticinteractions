@@ -40,7 +40,7 @@ public class StudyImporterForBioInfoTest extends GraphDBTestCase {
 
     @Test
     public void importAll() throws StudyImporterException, NodeFactoryException {
-        StudyImporter importer = new StudyImporterFactory(new ParserFactoryImpl(), nodeFactory).createImporterForStudy((Class)StudyImporterForBioInfo.class);
+        StudyImporter importer = new StudyImporterFactory(new ParserFactoryImpl(), nodeFactory).instantiateImporter((Class) StudyImporterForBioInfo.class);
         // limit the number of line to be imported to make test runs reasonably fast
         importer.setImportFilter(new ImportFilter() {
 

@@ -106,7 +106,7 @@ public class TrophicImporter {
     private StudyImporter createStudyImporter(GraphDatabaseService graphService, Class<StudyImporter> studyImporter, TaxonPropertyEnricher taxonEnricher) throws StudyImporterException {
         NodeFactory factory = new NodeFactory(graphService, taxonEnricher);
         ParserFactory parserFactory = new ParserFactoryImpl();
-        return new StudyImporterFactory(parserFactory, factory).createImporterForStudy(studyImporter);
+        return new StudyImporterFactory(parserFactory, factory).instantiateImporter(studyImporter);
     }
 
 }

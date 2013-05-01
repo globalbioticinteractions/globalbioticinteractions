@@ -13,7 +13,7 @@ public class StudyImporterFactoryTest {
     @Test
     public void checkStudyImporters() throws StudyImporterException {
         for (Class importer : StudyImporterFactory.IMPORTERS) {
-            assertThat("failed to instantiate [" + importer.getSimpleName() + "] found", new StudyImporterFactory(null, null).createImporterForStudy(importer), is(notNullValue()));
+            assertThat("failed to instantiate [" + importer.getSimpleName() + "] found", new StudyImporterFactory(null, null).instantiateImporter(importer), is(notNullValue()));
         }
     }
 
