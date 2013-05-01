@@ -82,7 +82,7 @@ public class StudyImporterForGoMexSITest extends GraphDBTestCase {
 
         assertNotNull(nodeFactory.findLocation(29.346953, -92.980614, -13.641));
 
-        assertNotNull(nodeFactory.findStudy(StudyImporterFactory.Study.GOMEXSI.toString()));
+        assertNotNull(nodeFactory.findStudy("GoMexSI"));
     }
 
 

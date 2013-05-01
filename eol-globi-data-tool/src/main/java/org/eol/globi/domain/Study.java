@@ -40,7 +40,9 @@ public class Study extends NodeBacked {
     }
 
     private void setProperty(String name, String value) {
-        getUnderlyingNode().setProperty(name, value);
+        if (value != null) {
+            getUnderlyingNode().setProperty(name, value);
+        }
     }
 
     public String getContributor() {

@@ -12,9 +12,8 @@ public class StudyImporterFactoryTest {
 
     @Test
     public void checkStudyImporters() throws StudyImporterException {
-        StudyImporterFactory.Study[] values = StudyImporterFactory.Study.values();
-        for (StudyImporterFactory.Study value : values) {
-            assertThat("no studyimport for [" + value.toString() + "] found", new StudyImporterFactory(null, null).createImporterForStudy(value), is(notNullValue()));
+        for (Class importer : StudyImporterFactory.IMPORTERS) {
+            assertThat("failed to instantiate [" + importer.getSimpleName() + "] found", new StudyImporterFactory(null, null).createImporterForStudy(importer), is(notNullValue()));
         }
     }
 

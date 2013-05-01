@@ -25,7 +25,7 @@ public class StudyImporterForBlewettTest extends GraphDBTestCase {
 
     @Test
     public void importAll() throws StudyImporterException, NodeFactoryException {
-        StudyImporter importer = new StudyImporterFactory(new ParserFactoryImpl(), nodeFactory).createImporterForStudy(StudyImporterFactory.Study.BLEWETT);
+        StudyImporter importer = new StudyImporterFactory(new ParserFactoryImpl(), nodeFactory).createImporterForStudy((Class)StudyImporterForBlewett.class);
         Study study = importer.importStudy();
         Iterable<Relationship> specimens = study.getSpecimens();
         int count = 0;
@@ -75,10 +75,8 @@ public class StudyImporterForBlewettTest extends GraphDBTestCase {
             }
         };
 
-        StudyImporter importer = new StudyImporterFactory(testFactory, nodeFactory).createImporterForStudy(StudyImporterFactory.Study.BLEWETT);
+        StudyImporter importer = new StudyImporterFactory(testFactory, nodeFactory).createImporterForStudy((Class)StudyImporterForBlewett.class);
         Study study = importer.importStudy();
-        assertThat(study.getTitle(), is("Blewett2000CharlotteHarborFL"));
-
         assertNotNull(study);
 
         Iterable<Relationship> specimens = study.getSpecimens();

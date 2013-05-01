@@ -16,12 +16,14 @@ import org.eol.globi.data.StudyImporterFactory;
 import org.eol.globi.db.GraphService;
 import org.eol.globi.domain.Study;
 import org.eol.globi.export.StudyExporter;
+import org.neo4j.graphdb.Node;
+import org.neo4j.graphdb.index.Index;
+import org.neo4j.graphdb.index.IndexHits;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class TrophicImporter {
@@ -34,41 +36,45 @@ public class TrophicImporter {
     public void importExport() throws StudyImporterException {
         final GraphDatabaseService graphService = GraphService.getGraphService();
         TaxonPropertyEnricherImpl taxonEnricher = new TaxonPropertyEnricherImpl(graphService);
-        List<Study> studies = importData(graphService, taxonEnricher);
-        exportData(studies);
+        importData(graphService, taxonEnricher);
+
+        exportData(graphService);
         graphService.shutdown();
     }
 
-
-    public List<Study> importStudies(GraphDatabaseService graphService, TaxonPropertyEnricher taxonEnricher) throws StudyImporterException {
-        return importData(graphService, taxonEnricher);
-    }
-
-    private ArrayList<Study> importData(GraphDatabaseService graphService, TaxonPropertyEnricher taxonEnricher) throws StudyImporterException {
-        ArrayList<StudyImporterFactory.Study> studies = new ArrayList<StudyImporterFactory.Study>();
-        StudyImporterFactory.Study[] availableStudies = StudyImporterFactory.Study.values();
-        studies.addAll(Arrays.asList(availableStudies));
-
-        ArrayList<Study> importedStudies = new ArrayList<Study>();
-
-        for (StudyImporterFactory.Study study : studies) {
-            StudyImporter studyImporter = createStudyImporter(graphService, study, taxonEnricher);
-            LOG.info("study [" + study + "] importing ...");
-            importedStudies.add(studyImporter.importStudy());
-            LOG.info("study [" + study + "] imported.");
-        }
-        return importedStudies;
-    }
-
-    private void exportData(List<Study> importedStudies) throws StudyImporterException {
+    private void exportData(GraphDatabaseService graphService) throws StudyImporterException {
+        List<Study> studies = findAllStudies(graphService);
         try {
             FileWriter darwinCoreMeta = writeMetaHeader();
-            export(importedStudies, "./unmatchedSourceTaxa.csv", new StudyExportUnmatchedTaxaForStudies(GraphService.getGraphService()), darwinCoreMeta);
-            export(importedStudies, "./interactions.csv", new InteractionsExporter(), darwinCoreMeta);
+            export(studies, "./unmatchedSourceTaxa.csv", new StudyExportUnmatchedTaxaForStudies(GraphService.getGraphService()), darwinCoreMeta);
+            export(studies, "./interactions.csv", new InteractionsExporter(), darwinCoreMeta);
             writeMetaFooter(darwinCoreMeta);
         } catch (IOException e) {
             throw new StudyImporterException("failed to export result to csv file", e);
         }
+    }
+
+    protected List<Study> findAllStudies(GraphDatabaseService graphService) {
+        List<Study> studies = new ArrayList<Study>();
+        Index<Node> studyIndex = graphService.index().forNodes("studies");
+        IndexHits<Node> hits = studyIndex.query("title", "*");
+        for (Node hit : hits) {
+            studies.add(new Study(hit));
+        }
+        return studies;
+    }
+
+    private void importData(GraphDatabaseService graphService, TaxonPropertyEnricher taxonEnricher) throws StudyImporterException {
+        for (Class importer : StudyImporterFactory.getAvailableImporters()) {
+            importData(graphService, taxonEnricher, importer);
+        }
+    }
+
+    protected void importData(GraphDatabaseService graphService, TaxonPropertyEnricher taxonEnricher, Class importer) throws StudyImporterException {
+        StudyImporter studyImporter = createStudyImporter(graphService, importer, taxonEnricher);
+        LOG.info("[" + importer + "] importing ...");
+        studyImporter.importStudy();
+        LOG.info("[" + importer + "] imported.");
     }
 
     private void writeMetaFooter(FileWriter darwinCoreMeta) throws IOException {
@@ -97,10 +103,10 @@ public class TrophicImporter {
         LOG.info("export data to [" + new File(exportPath).getAbsolutePath() + "] complete.");
     }
 
-    private StudyImporter createStudyImporter(GraphDatabaseService graphService, StudyImporterFactory.Study study, TaxonPropertyEnricher taxonEnricher) throws StudyImporterException {
+    private StudyImporter createStudyImporter(GraphDatabaseService graphService, Class<StudyImporter> studyImporter, TaxonPropertyEnricher taxonEnricher) throws StudyImporterException {
         NodeFactory factory = new NodeFactory(graphService, taxonEnricher);
         ParserFactory parserFactory = new ParserFactoryImpl();
-        return new StudyImporterFactory(parserFactory, factory).createImporterForStudy(study);
+        return new StudyImporterFactory(parserFactory, factory).createImporterForStudy(studyImporter);
     }
 
 }

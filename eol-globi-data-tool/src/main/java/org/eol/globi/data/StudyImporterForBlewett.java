@@ -21,7 +21,7 @@ public class StudyImporterForBlewett extends BaseStudyImporter {
 
     @Override
     public Study importStudy() throws StudyImporterException {
-        Study study = nodeFactory.createStudy("Blewett2000CharlotteHarborFL", "David A. Blewett", "Fish and Wildlife Research Institute, Florida Fish and Wildlife Conservation Commission", "Mar 2000- Feb 2002", "Feeding Habits of Common Snook, Centropomus undecimalis, in Charlotte Harbor, Florida.");
+        Study study = nodeFactory.createStudy("Blewett 2006", "David A. Blewett", "Fish and Wildlife Research Institute, Florida Fish and Wildlife Conservation Commission", "Mar 2000- Feb 2002", "Feeding Habits of Common Snook, Centropomus undecimalis, in Charlotte Harbor, Florida.", "2006");
 
         try {
             LabeledCSVParser locationParser = parserFactory.createParser("blewett/SnookDietData2000_02_Charlotte_Harbor_FL_Blewett_date_and_abiotic.csv.gz", CharsetConstant.UTF8);

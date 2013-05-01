@@ -109,13 +109,13 @@ public class StudyImporterForSPIRE extends BaseStudyImporter {
             throw new StudyImporterException("failed to import SPIRE", e);
         }
 
-        Map<String, LatLng> stringLatLngMap = buildGEOLookup();
+        buildGEOLookup();
 
-        final Study study = nodeFactory.createStudy(StudyImporterFactory.Study.SPIRE.toString(),
+        final Study study = nodeFactory.createStudy("SPIRE",
                 "Joel Sachs",
                 "Dept. of Computer Science and Electrical Engineering, University of Maryland Baltimore County, Baltimore, MD, USA.",
                 "",
-                "Semantic Prototypes in Research Ecoinformatics (SPIRE).");
+                "Semantic Prototypes in Research Ecoinformatics (SPIRE).", null);
 
         ResIterator resIterator = model.listSubjects();
         while (resIterator.hasNext()) {

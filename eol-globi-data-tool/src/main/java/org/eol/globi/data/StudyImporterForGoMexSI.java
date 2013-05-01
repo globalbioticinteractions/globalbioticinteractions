@@ -31,12 +31,12 @@ public class StudyImporterForGoMexSI extends BaseStudyImporter {
         addReferences(referenceIdToStudy);
         addObservations(predatorIdToPredatorNames, referenceIdToStudy, predatorIdToPreyNames);
 
-        // figure out a way to introduce the separation of study and reference.
-        return nodeFactory.createStudy(StudyImporterFactory.Study.GOMEXSI.toString(),
+        // TODO figure out a way to introduce the separation of study and reference.
+        return nodeFactory.createStudy("GoMexSI",
                 "James D. Simons",
                 "Center for Coastal Studies, Texas A&M University - Corpus Christi, United States",
                 "",
-                "<a href=\"http://www.ingentaconnect.com/content/umrsmas/bullmar/2013/00000089/00000001/art00009\">Building a Fisheries Trophic Interaction Database for Management and Modeling Research in the Gulf of Mexico Large Marine Ecosystem.</a>");
+                "<a href=\"http://www.ingentaconnect.com/content/umrsmas/bullmar/2013/00000089/00000001/art00009\">Building a Fisheries Trophic Interaction Database for Management and Modeling Research in the Gulf of Mexico Large Marine Ecosystem.</a>", null);
     }
 
     private void addReferences(Map<String, Study> referenceIdToStudy) throws StudyImporterException {
@@ -80,7 +80,7 @@ public class StudyImporterForGoMexSI extends BaseStudyImporter {
         institution += getMandatoryValue(referenceResource, parser, "UNIV_CITY");
         institution += getMandatoryValue(referenceResource, parser, "UNIV_STATE");
         institution = getMandatoryValue(referenceResource, parser, "UNIV_COUNTRY");
-        study = nodeFactory.getOrCreateStudy(refTag, firstName + " " + lastName, institution, "", description);
+        study = nodeFactory.getOrCreateStudy(refTag, firstName + " " + lastName, institution, "", description, null);
         Transaction transaction = nodeFactory.getGraphDb().beginTx();
         try {
             study.setPublicationYear(publicationYear);

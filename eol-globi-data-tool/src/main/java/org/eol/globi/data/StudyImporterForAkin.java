@@ -205,10 +205,10 @@ public class StudyImporterForAkin extends BaseStudyImporter {
     private Study importStudy(String studyResource) throws StudyImporterException {
         Study study = null;
         try {
-            study = nodeFactory.getOrCreateStudy(AKIN_MAD_ISLAND, "Senol Akin",
+            study = nodeFactory.getOrCreateStudy("Akin et al 2006", "Senol Akin",
                     "Section of Ecology, Evolutionary Biology and Systematics, Department of Wildlife and Fisheries Sciences, Texas A&M University",
                     "Mar 1998- Aug 1999",
-                    "<a href=\"http://link.springer.com/article/10.1007%2FBF02784282\">Seasonal Variation in Food Web Composition and Structure in a Temperate Tidal Estuary.</a>");
+                    "<a href=\"http://link.springer.com/article/10.1007%2FBF02784282\">Seasonal Variation in Food Web Composition and Structure in a Temperate Tidal Estuary.</a>", "2006");
             String[][] siteInfo = loadSampleSiteLocations();
             importAkinStudyFile(siteInfo, studyResource, study);
         } catch (IOException e) {
