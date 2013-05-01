@@ -32,7 +32,7 @@ public class StudyImporterForSimons extends BaseStudyImporter {
         put(LENGTH_RANGE_IN_MM, "sizeclass");
     }};
 
-    protected static final String MISSISSIPPI_ALABAMA_DATA_SOURCE = "simons/mississippiAlabamaFishDiet.csv.gz";
+    protected static final String MISSISSIPPI_ALABAMA_DATA_SOURCE = "simons/mississippiAlabamaFishDiet.csv";
 
     public StudyImporterForSimons(ParserFactory parserFactory, NodeFactory nodeFactory) {
         super(parserFactory, nodeFactory);
