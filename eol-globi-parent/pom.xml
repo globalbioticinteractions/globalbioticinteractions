@@ -75,6 +75,11 @@
             <name>Berkeley Bop Repository</name>
             <url>http://code.berkeleybop.org/maven/repository</url>
         </repository>
+        <repository>
+            <id>-globi-snapshot</id>
+            <name>GloBI snaphotsy</name>
+            <url>https://s3.amazonaws.com/globi/snapshot</url>
+        </repository>
     </repositories>
 
 

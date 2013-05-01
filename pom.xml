@@ -11,23 +11,17 @@
     <name>EOL's GloBI Project - normalize, aggregate and interface with species interaction data.</name>
     <modules>
         <module>eol-globi-parent</module>
-        <module>eol-globi-data-tool</module>
-        <module>eol-globi-datasets</module>
         <module>eol-globi-lib</module>
-        <!-- excluded for now due to travis-ci.org failures -->
-        <!--<module>eol-globi-rest</module>-->
+        <module>eol-globi-data-tool</module>
+        <module>eol-globi-rest</module>
     </modules>
 
     <profiles>
         <profile>
-            <id>travis-ci.org</id>
-            <activation>
-                <os>
-                    <family>mac</family>
-                </os>
-            </activation>
+            <id>generate-datasets</id>
             <modules>
-                <module>eol-globi-rest</module>
+                <!-- generating datasets takes a while and snapshots are should be available on s3 -->
+                <module>eol-globi-datasets</module>
             </modules>
         </profile>
     </profiles>

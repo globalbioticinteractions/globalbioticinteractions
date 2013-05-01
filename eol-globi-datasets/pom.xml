@@ -20,6 +20,7 @@
             <version>${project.version}</version>
         </dependency>
     </dependencies>
+
     <build>
         <plugins>
             <plugin>
@@ -76,11 +77,11 @@
                     <serverId>aws-snapshot</serverId>
                     <url>s3://globi/snapshot</url>
                     <skip>${skipTests}</skip>
-                    <includes>**/*.csv,**/*.tar.gz</includes>
+                    <includes>**/unmatchedSourceTaxa.csv</includes>
                 </configuration>
                 <executions>
                     <execution>
-                        <id>upload-datasets</id>
+                        <id>upload-reports</id>
                         <phase>package</phase>
                         <goals>
                             <goal>upload</goal>
