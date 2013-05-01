@@ -36,6 +36,8 @@
                     </execution>
                 </executions>
                 <configuration>
+                    <!-- ensure that this doesn't run on travis -->
+                    <skip>${skipTests}</skip>
                     <executable>java</executable>
                     <arguments>
                         <argument>-Xmx2G</argument>
@@ -50,6 +52,7 @@
                 <artifactId>maven-assembly-plugin</artifactId>
                 <version>2.4</version>
                 <configuration>
+                    <!-- ensure that this doesn't run on travis -->
                     <descriptors>
                         <descriptor>src/assembly/neo4j-graph-db.xml</descriptor>
                         <descriptor>src/assembly/csv-all.xml</descriptor>
@@ -72,6 +75,7 @@
                 <configuration>
                     <serverId>aws-snapshot</serverId>
                     <url>s3://globi/snapshot</url>
+                    <skip>${skipTests}</skip>
                     <includes>**/unmatchedSourceTaxa.csv</includes>
                 </configuration>
                 <executions>
