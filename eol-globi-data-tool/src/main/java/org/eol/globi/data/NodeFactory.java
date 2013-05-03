@@ -194,28 +194,20 @@ public class NodeFactory {
 
 
     public Study createStudy(String title) {
-        return createStudy(title, null, null, null, null);
+        return createStudy(title, null, null, null, null, null);
     }
 
-    public Study createStudy(String title, String contributor, String institution, String period, String description) {
+    public Study createStudy(String title, String contributor, String institution, String period, String description, String publicationYear) {
         Transaction transaction = graphDb.beginTx();
         Study study;
         try {
             Node node = graphDb.createNode();
             study = new Study(node, title);
-            if (contributor != null) {
-                study.setContributor(contributor);
-            }
-            if (institution != null) {
-                study.setInstitution(institution);
-            }
-            if (period != null) {
-                study.setPeriod(period);
-            }
-            if (description != null) {
-                study.setDescription(description);
-            }
-
+            study.setContributor(contributor);
+            study.setInstitution(institution);
+            study.setPeriod(period);
+            study.setDescription(description);
+            study.setPublicationYear(publicationYear);
             studies.add(node, "title", title);
             transaction.success();
         } finally {
@@ -225,10 +217,10 @@ public class NodeFactory {
         return study;
     }
 
-    public Study getOrCreateStudy(String title, String contributor, String institution, String period, String description) {
+    public Study getOrCreateStudy(String title, String contributor, String institution, String period, String description, String publicationYear) {
         Study study = findStudy(title);
         if (null == study) {
-            study = createStudy(title, contributor, institution, period, description);
+            study = createStudy(title, contributor, institution, period, description, publicationYear);
         }
         return study;
     }

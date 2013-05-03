@@ -118,13 +118,11 @@ public class StudyImporterForBioInfo extends BaseStudyImporter implements StudyI
 
     protected Study createRelations(Map<Long, String> taxaMap, Map<Long, RelType> relationsTypeMap, LabeledCSVParser labeledCSVParser) throws StudyImporterException {
         LOG.info("relations being created...");
-        String title = StudyImporterFactory.Study.BIO_INFO.toString();
-
-        Study study = nodeFactory.getOrCreateStudy(title,
+        Study study = nodeFactory.getOrCreateStudy("BIO_INFO",
                 "Malcolm Storey",
                 "http://bioinfo.org.uk",
                 "",
-                "Food webs and species interactions in the Biodiversity of UK and Ireland.");
+                "Food webs and species interactions in the Biodiversity of UK and Ireland.", null);
         try {
             long count = 0;
             while (labeledCSVParser.getLine() != null) {

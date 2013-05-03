@@ -48,14 +48,14 @@ public class StudyImporterForSimonsTest extends GraphDBTestCase {
         assertNotNull(nodeFactory.findTaxonOfType("Halieutichthys aculeatus"));
         assertNotNull(nodeFactory.findTaxonOfType("Ampelisca"));
 
-        assertNotNull(nodeFactory.findStudy(StudyImporterFactory.Study.SIMONS.toString()));
+        assertNotNull(nodeFactory.findStudy("Simons 1997"));
 
         assertNotNull(nodeFactory.findLocation(LAT_1, LONG_1, -60.0d));
         assertNotNull(nodeFactory.findLocation(LAT_2, LONG_2,  -20.0d));
 
         assertNotNull(nodeFactory.findSeason("summer"));
 
-        Study foundStudy = nodeFactory.findStudy(StudyImporterFactory.Study.SIMONS.toString());
+        Study foundStudy = nodeFactory.findStudy("Simons 1997");
         assertNotNull(foundStudy);
         for (Relationship rel : foundStudy.getSpecimens()) {
             Node firstSpecimen = rel.getEndNode();

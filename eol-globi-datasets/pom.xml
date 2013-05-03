@@ -20,6 +20,7 @@
             <version>${project.version}</version>
         </dependency>
     </dependencies>
+
     <build>
         <plugins>
             <plugin>
@@ -52,7 +53,6 @@
                 <version>2.4</version>
                 <configuration>
                     <!-- ensure that this doesn't run on travis -->
-                    <skipAssembly>${skipTests}</skipAssembly>
                     <descriptors>
                         <descriptor>src/assembly/neo4j-graph-db.xml</descriptor>
                         <descriptor>src/assembly/csv-all.xml</descriptor>
@@ -76,11 +76,11 @@
                     <serverId>aws-snapshot</serverId>
                     <url>s3://globi/snapshot</url>
                     <skip>${skipTests}</skip>
-                    <includes>**/*.csv,**/*.tar.gz</includes>
+                    <includes>**/unmatchedSourceTaxa.csv</includes>
                 </configuration>
                 <executions>
                     <execution>
-                        <id>upload-datasets</id>
+                        <id>upload-reports</id>
                         <phase>package</phase>
                         <goals>
                             <goal>upload</goal>

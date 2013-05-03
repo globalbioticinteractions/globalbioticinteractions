@@ -125,7 +125,7 @@ public class CypherProxyController {
         String query = "{\"query\":\"START predatorTaxon = node:taxons(name={predatorName}) " +
                 OBSERVATION_MATCH +
                 getSpatialWhereClause(request) +
-                " RETURN preyTaxon.name as preyName, loc.latitude as latitude, loc.longitude as longitude, loc.altitude? as altitude, study.contributor as contributor, collected_rel.dateInUnixEpoch? as collection_time_in_unix_epoch, ID(predator) as tmp_and_unique_specimen_id\"" +
+                " RETURN preyTaxon.name as preyName, loc.latitude as latitude, loc.longitude as longitude, loc.altitude? as altitude, study.title, collected_rel.dateInUnixEpoch? as collection_time_in_unix_epoch, ID(predator) as tmp_and_unique_specimen_id\"" +
                 ", \"params\": { \"predatorName\" : \"" + predatorName + "\" } }";
         return execute(query);
     }
@@ -143,7 +143,7 @@ public class CypherProxyController {
         String query = "{\"query\":\"START preyTaxon = node:taxons(name={preyName}) " +
                 OBSERVATION_MATCH +
                 getSpatialWhereClause(request) +
-                " RETURN predatorTaxon.name as predatorName, loc.latitude as latitude, loc.longitude as longitude, loc.altitude? as altitude, study.contributor as contributor, collected_rel.dateInUnixEpoch? as collection_time_in_unix_epoch, ID(predator) as tmp_unique_specimen_id\"" +
+                " RETURN predatorTaxon.name as predatorName, loc.latitude as latitude, loc.longitude as longitude, loc.altitude? as altitude, study.title, collected_rel.dateInUnixEpoch? as collection_time_in_unix_epoch, ID(predator) as tmp_unique_specimen_id\"" +
                 ", \"params\": { \"preyName\" : \"" + preyName + "\" } }";
         return execute(query);
     }

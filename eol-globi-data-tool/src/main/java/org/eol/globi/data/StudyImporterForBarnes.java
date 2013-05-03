@@ -27,7 +27,7 @@ public class StudyImporterForBarnes extends BaseStudyImporter {
         }
         parser.changeDelimiter('\t');
 
-        Study study = nodeFactory.getOrCreateStudy(StudyImporterFactory.Study.BARNES.toString(), "C. Barnes et al.", "Centre for Environment, Fisheries and Aquaculture Science, Lowestoft, Suffolk, NR33 0HT  UK", "", "<a href=\"http://www.esapubs.org/Archive/ecol/E089/051/\">Predator and prey body sizes in marine food webs.</a>");
+        Study study = nodeFactory.getOrCreateStudy("Barnes 2008", "C. Barnes et al.", "Centre for Environment, Fisheries and Aquaculture Science, Lowestoft, Suffolk, NR33 0HT  UK", "", "<a href=\"http://www.esapubs.org/Archive/ecol/E089/051/\">Predator and prey body sizes in marine food webs.</a>", "2008");
         try {
             while (parser.getLine() != null) {
                 if (importFilter.shouldImportRecord((long)parser.getLastLineNumber())) {

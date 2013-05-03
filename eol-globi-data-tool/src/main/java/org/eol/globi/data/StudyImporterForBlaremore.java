@@ -33,11 +33,11 @@ public class StudyImporterForBlaremore extends BaseStudyImporter {
             LabeledCSVParser parser = parserFactory.createParser(DATA_SOURCE, CharsetConstant.UTF8);
             String[] line = null;
 
-            study = nodeFactory.getOrCreateStudy(StudyImporterFactory.Study.BAREMORE_ANGEL_SHARK.toString(),
+            study = nodeFactory.getOrCreateStudy("Blaremore 2010",
                     "Ivy E. Baremore",
                     "University of Florida, Department of Fisheries and Aquatic Sciences",
                     "2005",
-                    "Prey Selection By The Atlantic Angel Shark Squatina Dumeril In The Northeastern Gulf Of Mexico.");
+                    "Prey Selection By The Atlantic Angel Shark Squatina Dumeril In The Northeastern Gulf Of Mexico.", "2010");
             Location collectionLocation = nodeFactory.getOrCreateLocation(29.219302, -87.06665, null);
 
             Map<Integer, Specimen> specimenMap = new HashMap<Integer, Specimen>();

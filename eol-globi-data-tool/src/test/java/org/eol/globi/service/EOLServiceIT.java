@@ -51,7 +51,7 @@ public class EOLServiceIT {
     @Test
     public void lookupByNameYieldsMoreThanOneMatches() throws TaxonPropertyLookupServiceException {
         // this species has two matches  http://eol.org/27383107 and http://eol.org/209714, first is picked
-        assertThat(lookupPageIdByScientificName("Copadichromis insularis"), is("EOL:27383107"));
+        assertThat(lookupPageIdByScientificName("Copadichromis insularis"), is("EOL:209714"));
 
         // below matches both http://eol.org/4443282 and http://eol.org/310363, but first is picked
         assertThat(lookupPageIdByScientificName("Spilogale putorius gracilis"), is("EOL:4443282"));

@@ -19,7 +19,7 @@ public class StudyImporterForJRFerrerParis extends BaseStudyImporter {
                 "Jose R. Ferrer Paris",
                 "Centro de Estudios Botánicos y Agroforestales, Instituto Venezolano de Investigaciones Científicas; Kirstenbosch Research Center, South African National Biodiversity Institute",
                 "",
-                "Compilation of hostplant records for butterflies.");
+                "Compilation of hostplant records for butterflies.", null);
         String studyResource = "jr_ferrer_paris/ExampleAssociations.csv";
         try {
             LabeledCSVParser parser = parserFactory.createParser(studyResource, CharsetConstant.UTF8);

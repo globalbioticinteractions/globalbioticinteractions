@@ -53,11 +53,11 @@ public class StudyImporterForWrast extends BaseStudyImporter {
 
     @Override
     public Study importStudy() throws StudyImporterException {
-        Study study = nodeFactory.getOrCreateStudy(LAVACA_BAY_DATA_SOURCE,
+        Study study = nodeFactory.getOrCreateStudy("Wrast 2008",
                 "Jenny L. Wrast",
                 "Department of Life Sciences Texas A&M University-Corpus Christi",
                 "July 2006- April 2007",
-                "Spatiotemporal And Habitat-Mediated Food Web Dynamics in Lavaca Bay, Texas.");
+                "Spatiotemporal And Habitat-Mediated Food Web Dynamics in Lavaca Bay, Texas.", "2008");
         try {
             LabeledCSVParser csvParser = parserFactory.createParser(LAVACA_BAY_DATA_SOURCE, CharsetConstant.UTF8);
             LengthParser parser = new LengthParserImpl(COLUMN_MAPPER.get(LENGTH_IN_MM));
