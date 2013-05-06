@@ -1,5 +1,6 @@
 package org.eol.globi.domain;
 
+import org.eol.globi.data.LifeStage;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
@@ -11,6 +12,7 @@ public class Specimen extends NodeBacked {
     public static final String VOLUME_IN_ML = "volumeInMilliLiter";
     public static final String STOMACH_VOLUME_ML = "stomachVolumeInMilliLiter";
     public static final String DATE_IN_UNIX_EPOCH = "dateInUnixEpoch";
+    public static final String LIFE_STAGE = "lifeStage";
 
     public Specimen(Node node) {
         super(node);
@@ -92,9 +94,13 @@ public class Specimen extends NodeBacked {
     }
 
     public void setStomachVolumeInMilliLiter(Double volumeInMilliLiter) {
+        setPropertyWithTx(STOMACH_VOLUME_ML, volumeInMilliLiter);
+    }
+
+    private void setPropertyWithTx(String propertyName, Object propertyValue) {
         Transaction transaction = getUnderlyingNode().getGraphDatabase().beginTx();
         try {
-            getUnderlyingNode().setProperty(STOMACH_VOLUME_ML, volumeInMilliLiter);
+            getUnderlyingNode().setProperty(propertyName, propertyValue);
             transaction.success();
         } finally {
             transaction.finish();
@@ -120,4 +126,11 @@ public class Specimen extends NodeBacked {
             transaction.finish();
         }
     }
+
+    public void setLifeStage(LifeStage lifeStage) {
+        if (lifeStage != null) {
+            setPropertyWithTx(Specimen.LIFE_STAGE, lifeStage.name());
+        }
+    }
+
 }

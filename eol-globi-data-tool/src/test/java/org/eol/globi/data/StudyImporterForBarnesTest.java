@@ -1,6 +1,12 @@
 package org.eol.globi.data;
 
+import org.eol.globi.domain.RelTypes;
+import org.eol.globi.domain.Specimen;
+import org.eol.globi.domain.Taxon;
 import org.junit.Test;
+import org.neo4j.graphdb.Direction;
+import org.neo4j.graphdb.Node;
+import org.neo4j.graphdb.Relationship;
 
 import java.io.IOException;
 
@@ -37,7 +43,14 @@ public class StudyImporterForBarnesTest extends GraphDBTestCase {
         StudyImporterForBarnes importer = new StudyImporterForBarnes(new TestParserFactory(firstFourLines), nodeFactory);
         importer.importStudy();
 
-        assertThat(nodeFactory.findTaxon("Zeus faber"), is(notNullValue()));
+        Taxon taxon = nodeFactory.findTaxon("Zeus faber");
+        Iterable<Relationship> relationships = taxon.getUnderlyingNode().getRelationships(Direction.INCOMING, RelTypes.CLASSIFIED_AS);
+        for (Relationship relationship : relationships) {
+            Node predatorSpecimenNode = relationship.getStartNode();
+            assertThat((String) predatorSpecimenNode.getProperty(Specimen.LIFE_STAGE), is(LifeStage.ADULT.name()));
+
+        }
+        assertThat(taxon, is(notNullValue()));
         assertThat(nodeFactory.findTaxon("Rhizoprionodon terraenovae"), is(notNullValue()));
         assertThat("missing location", nodeFactory.findLocation(38.0, 23.0, -75.0), is(notNullValue()));
 

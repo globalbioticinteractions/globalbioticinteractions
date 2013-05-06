@@ -39,7 +39,7 @@ public class Study extends NodeBacked {
         setProperty(CONTRIBUTOR, contributor);
     }
 
-    private void setProperty(String name, String value) {
+    protected void setProperty(String name, String value) {
         if (value != null) {
             getUnderlyingNode().setProperty(name, value);
         }
