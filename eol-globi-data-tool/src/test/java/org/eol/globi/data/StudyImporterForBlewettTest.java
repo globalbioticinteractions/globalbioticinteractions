@@ -67,6 +67,8 @@ public class StudyImporterForBlewettTest extends GraphDBTestCase {
                 "\"CHM000152\",2,556,,,1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,";
 
         String dateLocationString = "\"Collection #\",\"Longitude\",\"Latitude\",\"Time\",\"Date\",\"Temperature\",\"Salinity\"\n" +
+                "\"CHD01101502\",-82.1625,26.72,10:55:00,1-Mar-00,22.4,33.8\n" +
+                "\"CHD01102504\",-82.1625,26.72,10:55:00,1-Mar-00,22.4,33.8\n" +
                 "\"CHM000151\",-82.1625,26.72,10:55:00,1-Mar-00,22.4,33.8\n" +
                 "\"CHM000152\",-82.103833,26.651833,12:40:00,1-Mar-00,24.8,30.3\n" +
                 "\"CHM000153\",-82.087333,26.644833,13:40:00,1-Mar-00,25.1,30.1\n" +
@@ -101,7 +103,7 @@ public class StudyImporterForBlewettTest extends GraphDBTestCase {
         Relationship collectedRel = collectedRels.iterator().next();
         Date unixEpochProperty = nodeFactory.getUnixEpochProperty(collectedRel);
         assertThat(unixEpochProperty, is(not(nullValue())));
-        assertThat(unixEpochProperty.getTime(), is(1234L));
+        assertThat(StudyImporterForBlewett.dateToString(unixEpochProperty), is("01-Mar-00 10:55:00 Central Standard Time"));
 
         Node predatorNode = collectedRel.getEndNode();
         assertThat((Double) predatorNode.getProperty(Specimen.LENGTH_IN_MM), is(549.0));
