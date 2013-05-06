@@ -65,6 +65,7 @@ public class TaxonNameNormalizerTest {
         assertThat(normalizer.normalize("Ammophila (bot.)"), is("Ammophila (bot.)"));
         assertThat(normalizer.normalize("Ammophila (Bot)"), is("Ammophila (Bot)"));
         assertThat(normalizer.normalize("Ammophila (blah)"), is("Ammophila"));
+        assertThat(normalizer.normalize("Cal sapidus"), is("Callinectes sapidus"));
 
 
     }

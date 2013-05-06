@@ -19,6 +19,7 @@ import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 
 public class StudyImporterForBlewettTest extends GraphDBTestCase {
@@ -36,7 +37,9 @@ public class StudyImporterForBlewettTest extends GraphDBTestCase {
 
 
         assertNotNull(nodeFactory.findTaxonOfType("Centropomus undecimalis"));
-        assertNotNull(nodeFactory.findTaxonOfType("Cal sapidus"));
+        Taxon taxonOfType = nodeFactory.findTaxonOfType("Cal sapidus");
+        assertThat(taxonOfType.getName(), is("Callinectes sapidus"));
+        assertNotNull(nodeFactory.findTaxonOfType("Callinectes sapidus"));
         assertNotNull(nodeFactory.findTaxonOfType("Ort chrysoptera"));
     }
 
