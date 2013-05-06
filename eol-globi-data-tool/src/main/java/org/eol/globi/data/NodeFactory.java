@@ -299,6 +299,18 @@ public class NodeFactory {
         }
     }
 
+    public Date getUnixEpochProperty(Relationship rel) {
+        Date date = null;
+        if (rel != null) {
+            if (rel.hasProperty(Specimen.DATE_IN_UNIX_EPOCH)) {
+                Long unixEpoch = (Long)rel.getProperty(Specimen.DATE_IN_UNIX_EPOCH);
+                date = new Date(unixEpoch);
+            }
+
+        }
+        return date;
+    }
+
     public IndexHits<Node> findCloseMatchesForTaxonName(String taxonName) {
         return query(taxonName, Taxon.NAME, taxons);
     }

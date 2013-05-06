@@ -13,6 +13,7 @@ import org.eol.globi.domain.Study;
 import org.eol.globi.domain.Taxon;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.Iterator;
 
 import static org.hamcrest.CoreMatchers.not;
@@ -82,9 +83,14 @@ public class StudyImporterForBlewettTest extends GraphDBTestCase {
         Study study = importer.importStudy();
         assertNotNull(study);
 
-        Iterable<Relationship> specimens = study.getSpecimens();
-        Relationship next = specimens.iterator().next();
-        Node predatorNode = next.getEndNode();
+        Iterable<Relationship> collectedRels = study.getSpecimens();
+
+        Relationship collectedRel = collectedRels.iterator().next();
+//        Date unixEpochProperty = nodeFactory.getUnixEpochProperty(collectedRel);
+//        assertThat(unixEpochProperty, is(not(nullValue())));
+//        assertThat(unixEpochProperty.getTime(), is(1234L));
+
+        Node predatorNode = collectedRel.getEndNode();
         assertThat((Double) predatorNode.getProperty(Specimen.LENGTH_IN_MM), is(549.0));
 
         Node predatorTaxonNode = predatorNode.getRelationships(RelTypes.CLASSIFIED_AS, Direction.OUTGOING).iterator().next().getEndNode();
@@ -99,8 +105,8 @@ public class StudyImporterForBlewettTest extends GraphDBTestCase {
 
         assertThat((String) taxonNode.getProperty(Taxon.NAME), is("Lagodon rhomboides"));
 
-        next = specimens.iterator().next();
-        predatorNode = next.getEndNode();
+        collectedRel = collectedRels.iterator().next();
+        predatorNode = collectedRel.getEndNode();
         assertThat((Double) predatorNode.getProperty(Specimen.LENGTH_IN_MM), is(548.0));
 
         ate = predatorNode.getRelationships(InteractType.ATE, Direction.OUTGOING);
