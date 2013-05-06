@@ -13,8 +13,11 @@ import org.eol.globi.domain.Study;
 import org.eol.globi.domain.Taxon;
 
 import java.io.IOException;
+import java.text.ParseException;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.TimeZone;
 
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
@@ -24,6 +27,15 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 
 public class StudyImporterForBlewettTest extends GraphDBTestCase {
+
+    @Test
+    public void parseDateTime() throws ParseException {
+        Date date = StudyImporterForBlewett.parseDateString("1-Mar-00 10:55:00");
+        Calendar instance = Calendar.getInstance();
+        instance.setTime(date);
+        assertThat(instance.get(Calendar.YEAR), is(2000));
+        assertThat(StudyImporterForBlewett.dateToString(date), is("01-Mar-00 10:55:00 Central Standard Time"));
+    }
 
     @Test
     public void importAll() throws StudyImporterException, NodeFactoryException {
@@ -86,9 +98,9 @@ public class StudyImporterForBlewettTest extends GraphDBTestCase {
         Iterable<Relationship> collectedRels = study.getSpecimens();
 
         Relationship collectedRel = collectedRels.iterator().next();
-//        Date unixEpochProperty = nodeFactory.getUnixEpochProperty(collectedRel);
-//        assertThat(unixEpochProperty, is(not(nullValue())));
-//        assertThat(unixEpochProperty.getTime(), is(1234L));
+        Date unixEpochProperty = nodeFactory.getUnixEpochProperty(collectedRel);
+        assertThat(unixEpochProperty, is(not(nullValue())));
+        assertThat(unixEpochProperty.getTime(), is(1234L));
 
         Node predatorNode = collectedRel.getEndNode();
         assertThat((Double) predatorNode.getProperty(Specimen.LENGTH_IN_MM), is(549.0));
