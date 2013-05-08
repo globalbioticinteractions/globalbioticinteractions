@@ -76,7 +76,7 @@
                     <serverId>aws-snapshot</serverId>
                     <url>s3://globi/snapshot</url>
                     <skip>${skipTests}</skip>
-                    <includes>**/unmatchedSourceTaxa.csv</includes>
+                    <includes>**/unmatchedSourceTaxa.csv,*.tar.gz</includes>
                 </configuration>
                 <executions>
                     <execution>
