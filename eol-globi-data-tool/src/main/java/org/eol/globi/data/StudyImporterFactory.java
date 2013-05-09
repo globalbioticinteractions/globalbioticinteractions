@@ -33,24 +33,12 @@ public class StudyImporterFactory {
     }
 
     public StudyImporter instantiateImporter(Class<StudyImporter> clazz) throws StudyImporterException {
-        StudyImporter importer = null;
         try {
-            Constructor<?>[] constructors = clazz.getDeclaredConstructors();
-            for (Constructor<?> constructor : constructors) {
-                Class<?>[] parameterTypes = constructor.getParameterTypes();
-                if (parameterTypes.length == 2 && parameterTypes[0] == ParserFactory.class && parameterTypes[1] == NodeFactory.class) {
-                    Constructor<StudyImporter> aConstructor = clazz.getConstructor(ParserFactory.class, NodeFactory.class);
-                    importer = aConstructor.newInstance(parserFactory, nodeFactory);
-                }
-            }
-            if (importer != null) {
-                importer = clazz.newInstance();
-            }
-
+            Constructor<StudyImporter> aConstructor = clazz.getConstructor(ParserFactory.class, NodeFactory.class);
+            return aConstructor.newInstance(parserFactory, nodeFactory);
         } catch (Exception ex) {
             throw new StudyImporterException("failed to create study importer for [" + clazz.toString() + "]", ex);
         }
-        return importer;
     }
 
 
