@@ -22,6 +22,7 @@ public class StudyImporterFactory {
         add(StudyImporterForCook.class);
         add(StudyImporterForGoMexSI.class);
         add(StudyImporterForRobledo.class);
+        add(StudyImporterForINaturalist.class);
     }});
 
     private NodeFactory nodeFactory;

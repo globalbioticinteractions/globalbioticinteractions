@@ -2,6 +2,9 @@ package org.eol.globi.data;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.domain.InteractType;
@@ -24,12 +27,40 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
 
     @Override
     public Study importStudy() throws StudyImporterException {
-        InputStream resourceAsStream = getClass().getResourceAsStream("inaturalist/sample_inaturalist_response.json");
-
         Study study = nodeFactory.getOrCreateStudy("iNaturalist", "Ken-ichi Kueda", "http://inaturalist.org", "", "iNaturalist is a place where you can record what you see in nature, meet other nature lovers, and learn about the natural world. ", "");
-
-        parseJSON(resourceAsStream, study);
+        retrieveDataParseResults(study);
         return study;
+    }
+
+    private int retrieveDataParseResults(Study study) throws StudyImporterException {
+        int totalInteractions = 0;
+        DefaultHttpClient defaultHttpClient = new DefaultHttpClient();
+        try {
+            int previousResultCount;
+            int pageNumber = 1;
+            do {
+                String uri = "http://www.inaturalist.org/observation_field_values.json?type=taxon&page=" + pageNumber + "&per_page=100&license=any";
+                HttpGet get = new HttpGet(uri);
+                get.addHeader("accept", "application/json");
+                try {
+                    HttpResponse response = defaultHttpClient.execute(get);
+                    if (response.getStatusLine().getStatusCode() != 200) {
+                        throw new StudyImporterException("failed to execute query to [ " + uri + "]: status code [" + response.getStatusLine().getStatusCode() + "]");
+                    }
+                    previousResultCount = parseJSON(response.getEntity().getContent(), study);
+                    pageNumber++;
+                    totalInteractions += previousResultCount;
+                    LOG.info("importing [" + pageNumber + "] total [" + totalInteractions + "]");
+
+                } catch (IOException e) {
+                    throw new StudyImporterException("failed to execute query to [ " + uri + "]", e);
+                }
+
+            } while (previousResultCount > 0);
+        } finally {
+            defaultHttpClient.getConnectionManager().shutdown();
+        }
+        return totalInteractions;
     }
 
     protected int parseJSON(InputStream resourceAsStream, Study study) throws StudyImporterException {
@@ -62,7 +93,7 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
         JsonNode sourceTaxon = jsonNode.get("taxon");
         JsonNode sourceTaxonNode = sourceTaxon.get("name");
         if (sourceTaxonNode == null) {
-            LOG.warn("skipping interaction with missing source taxon name [" + sourceTaxon + "]");
+            LOG.warn("skipping interaction with missing source taxon name for observation [" + jsonNode.get("observation_id") + "]");
         } else {
             String sourceTaxonName = sourceTaxonNode.getTextValue();
 

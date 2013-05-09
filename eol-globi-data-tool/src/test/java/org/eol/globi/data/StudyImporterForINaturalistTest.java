@@ -22,6 +22,7 @@ import org.neo4j.graphdb.Relationship;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 
 import static org.hamcrest.CoreMatchers.any;
@@ -38,53 +39,21 @@ public class StudyImporterForINaturalistTest extends GraphDBTestCase {
     @Before
     public void setup() {
         importer = new StudyImporterForINaturalist(null, nodeFactory);
-
     }
 
     @Test
     public void importUsingINatAPI() throws StudyImporterException, TaxonPropertyLookupServiceException {
-        Study testStudy = nodeFactory.createStudy("testing");
-
-        int pageNumber = 1;
-        int totalInteractions = 0;
-        DefaultHttpClient defaultHttpClient = new DefaultHttpClient();
-        int previousResultCount;
-        do {
-            String uri = "http://www.inaturalist.org/observation_field_values.json?type=taxon&page=" + pageNumber + "&per_page=100&license=any";
-            HttpGet get = new HttpGet(uri);
-            get.addHeader("accept", "application/json");
-            try {
-                HttpResponse response = defaultHttpClient.execute(get);
-                if (response.getStatusLine().getStatusCode() != 200) {
-                    throw new StudyImporterException("failed to execute query to [ " + uri + "]: status code [" + response.getStatusLine().getStatusCode() + "]");
-                }
-                previousResultCount = importer.parseJSON(response.getEntity().getContent(), testStudy);
-                pageNumber++;
-                totalInteractions+= previousResultCount;
-                LOG.info("importing [" + pageNumber + "] total [" + totalInteractions + "]");
-
-            } catch (IOException e) {
-                throw new StudyImporterException("failed to execute query to [ " + uri + "]", e);
-            }
-
-        } while (previousResultCount > 0);
-
-        assertThat(totalInteractions > 150, is(true));
-
+        Study study = importer.importStudy();
+        assertThat(study.getContributor(), is("Ken-ichi Kueda"));
+        assertThat(countSpecimen(study) > 150, is(true));
     }
-
 
     @Test
     public void importTestResponse() throws IOException, NodeFactoryException, StudyImporterException {
+        Study study = nodeFactory.createStudy("testing123");
+        importer.parseJSON(getClass().getResourceAsStream("inaturalist/sample_inaturalist_response.json"), study);
 
-        Study study = importer.importStudy();
-
-        Iterable<Relationship> specimens = study.getSpecimens();
-        int count = 0;
-        for (Relationship specimen : specimens) {
-            count++;
-        }
-        assertThat(count, is(30));
+        assertThat(countSpecimen(study), is(30));
 
         Taxon sourceTaxonNode = nodeFactory.findTaxon("Crepidula fornicata");
 
@@ -107,8 +76,16 @@ public class StudyImporterForINaturalistTest extends GraphDBTestCase {
             Relationship collectedRel = predatorSpecimen.getSingleRelationship(RelTypes.COLLECTED, Direction.INCOMING);
             assertThat((Long) collectedRel.getProperty(Specimen.DATE_IN_UNIX_EPOCH), is(any(Long.class)));
 
-            assertThat((String) collectedRel.getStartNode().getProperty(Study.CONTRIBUTOR), is("Ken-ichi Kueda"));
         }
+    }
+
+    private int countSpecimen(Study study) {
+        Iterable<Relationship> specimens = study.getSpecimens();
+        int count = 0;
+        for (Relationship specimen : specimens) {
+            count++;
+        }
+        return count;
     }
 
 }
