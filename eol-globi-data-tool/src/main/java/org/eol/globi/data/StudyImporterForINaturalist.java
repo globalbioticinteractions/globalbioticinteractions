@@ -10,10 +10,13 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
+import org.eol.globi.domain.Taxon;
+import org.eol.globi.domain.TaxonomyProvider;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.format.ISODateTimeFormat;
 import org.neo4j.graphdb.Relationship;
+import org.neo4j.graphdb.Transaction;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -92,17 +95,19 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
     private void parseSingleInteractions(Study study, JsonNode jsonNode) throws NodeFactoryException, StudyImporterException {
         JsonNode sourceTaxon = jsonNode.get("taxon");
         JsonNode sourceTaxonNode = sourceTaxon.get("name");
+        long observationId = jsonNode.get("observation_id").getLongValue();
         if (sourceTaxonNode == null) {
-            LOG.warn("skipping interaction with missing source taxon name for observation [" + jsonNode.get("observation_id") + "]");
+            LOG.warn("skipping interaction with missing source taxon name for observation [" + observationId + "]");
         } else {
             String sourceTaxonName = sourceTaxonNode.getTextValue();
+            Specimen sourceSpecimen = nodeFactory.createSpecimen(sourceTaxonName);
+            sourceSpecimen.setExternalId(TaxonomyProvider.ID_PREFIX_INATURALIST + observationId);
 
             JsonNode observationField = jsonNode.get("observation_field");
             String interactionDataType = observationField.get("datatype").getTextValue();
             String interactionType = observationField.get("name").getTextValue();
 
             JsonNode observation = jsonNode.get("observation");
-            Specimen sourceSpecimen = nodeFactory.createSpecimen(sourceTaxonName);
             String latitudeString = observation.get("latitude").getTextValue();
             String longitudeString = observation.get("longitude").getTextValue();
             if (latitudeString != null && longitudeString != null) {

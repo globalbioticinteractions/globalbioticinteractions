@@ -7,6 +7,7 @@ public enum TaxonomyProvider {
     EOL;
 
     public static final String ID_PREFIX_EOL = "EOL:";
+    public static final String ID_PREFIX_INATURALIST = "INAT:";
     public static final String ID_PREFIX_WORMS = "urn:lsid:marinespecies.org:taxname:";
     public static final String ID_PREFIX_ITIS = "urn:lsid:itis.gov:itis_tsn:";
     public static final String ID_PREFIX_GULFBASE = "BioGoMx:";

@@ -12,6 +12,7 @@ import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.Taxon;
+import org.eol.globi.domain.TaxonomyProvider;
 import org.eol.globi.service.TaxonPropertyLookupServiceException;
 import org.junit.Before;
 import org.junit.Test;
@@ -30,6 +31,7 @@ import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
+import static org.junit.matchers.JUnitMatchers.containsString;
 
 public class StudyImporterForINaturalistTest extends GraphDBTestCase {
     private static final Log LOG = LogFactory.getLog(StudyImporterForINaturalistTest.class);
@@ -61,6 +63,8 @@ public class StudyImporterForINaturalistTest extends GraphDBTestCase {
         Iterable<Relationship> relationships = sourceTaxonNode.getUnderlyingNode().getRelationships(Direction.INCOMING, RelTypes.CLASSIFIED_AS);
         for (Relationship relationship : relationships) {
             Node predatorSpecimen = relationship.getStartNode();
+
+            assertThat(new Specimen(predatorSpecimen).getExternalId(), containsString(TaxonomyProvider.ID_PREFIX_INATURALIST));
             Relationship ateRel = predatorSpecimen.getSingleRelationship(InteractType.ATE, Direction.OUTGOING);
             Node preySpecimen = ateRel.getEndNode();
             assertThat(preySpecimen, is(not(nullValue())));

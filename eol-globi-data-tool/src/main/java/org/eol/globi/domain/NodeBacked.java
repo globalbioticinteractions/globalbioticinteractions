@@ -60,4 +60,18 @@ public class NodeBacked {
     public long getNodeID() {
         return getUnderlyingNode().getId();
     }
+
+    protected void setPropertyWithTx(String propertyName, Object propertyValue) {
+        Transaction transaction = getUnderlyingNode().getGraphDatabase().beginTx();
+        try {
+            getUnderlyingNode().setProperty(propertyName, propertyValue);
+            transaction.success();
+        } finally {
+            transaction.finish();
+        }
+    }
+
+    protected Object getPropertyValueOrNull(String propertyName) {
+        return getUnderlyingNode().hasProperty(propertyName) ? getUnderlyingNode().getProperty(propertyName) : null;
+    }
 }

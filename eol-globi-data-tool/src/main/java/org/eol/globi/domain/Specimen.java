@@ -73,39 +73,19 @@ public class Specimen extends NodeBacked {
 
     public void setLengthInMm(Double lengthInMm) {
         if (lengthInMm != null) {
-            Transaction transaction = getUnderlyingNode().getGraphDatabase().beginTx();
-            try {
-                getUnderlyingNode().setProperty(LENGTH_IN_MM, lengthInMm);
-                transaction.success();
-            } finally {
-                transaction.finish();
-            }
+            setPropertyWithTx(LENGTH_IN_MM, lengthInMm);
         }
     }
 
     public void setVolumeInMilliLiter(Double volumeInMm3) {
-        Transaction transaction = getUnderlyingNode().getGraphDatabase().beginTx();
-        try {
-            getUnderlyingNode().setProperty(VOLUME_IN_ML, volumeInMm3);
-            transaction.success();
-        } finally {
-            transaction.finish();
-        }
+        setPropertyWithTx(VOLUME_IN_ML, volumeInMm3);
     }
 
     public void setStomachVolumeInMilliLiter(Double volumeInMilliLiter) {
         setPropertyWithTx(STOMACH_VOLUME_ML, volumeInMilliLiter);
     }
 
-    private void setPropertyWithTx(String propertyName, Object propertyValue) {
-        Transaction transaction = getUnderlyingNode().getGraphDatabase().beginTx();
-        try {
-            getUnderlyingNode().setProperty(propertyName, propertyValue);
-            transaction.success();
-        } finally {
-            transaction.finish();
-        }
-    }
+
 
     public void interactsWith(Specimen recipientSpecimen, RelType relType) {
         createRelationshipTo(recipientSpecimen, relType);
@@ -131,6 +111,16 @@ public class Specimen extends NodeBacked {
         if (lifeStage != null) {
             setPropertyWithTx(Specimen.LIFE_STAGE, lifeStage.name());
         }
+    }
+
+    public void setExternalId(String externalId) {
+        setPropertyWithTx(Taxon.EXTERNAL_ID, externalId);
+    }
+
+    public String getExternalId() {
+        String propertyName = Taxon.EXTERNAL_ID;
+        Object propertyValueOrNull = getPropertyValueOrNull(propertyName);
+        return propertyValueOrNull == null ? null : (String) propertyValueOrNull;
     }
 
 }
