@@ -1,22 +1,28 @@
 package org.eol.globi.data;
 
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.ObjectMapper;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.BasicResponseHandler;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.Taxon;
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
-import org.joda.time.format.ISODateTimeFormat;
+import org.eol.globi.service.TaxonPropertyLookupServiceException;
+import org.junit.Before;
 import org.junit.Test;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
+import java.io.InputStreamReader;
 
 import static org.hamcrest.CoreMatchers.any;
 import static org.hamcrest.CoreMatchers.not;
@@ -25,34 +31,62 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
 public class StudyImporterForINaturalistTest extends GraphDBTestCase {
+    private static final Log LOG = LogFactory.getLog(StudyImporterForINaturalistTest.class);
+
+    private StudyImporterForINaturalist importer;
+
+    @Before
+    public void setup() {
+        importer = new StudyImporterForINaturalist(null, nodeFactory);
+
+    }
+
+    @Test
+    public void importUsingINatAPI() throws StudyImporterException, TaxonPropertyLookupServiceException {
+        Study testStudy = nodeFactory.createStudy("testing");
+
+        int pageNumber = 1;
+        int totalInteractions = 0;
+        DefaultHttpClient defaultHttpClient = new DefaultHttpClient();
+        int previousResultCount;
+        do {
+            String uri = "http://www.inaturalist.org/observation_field_values.json?type=taxon&page=" + pageNumber + "&per_page=100&license=any";
+            HttpGet get = new HttpGet(uri);
+            get.addHeader("accept", "application/json");
+            try {
+                HttpResponse response = defaultHttpClient.execute(get);
+                if (response.getStatusLine().getStatusCode() != 200) {
+                    throw new StudyImporterException("failed to execute query to [ " + uri + "]: status code [" + response.getStatusLine().getStatusCode() + "]");
+                }
+                previousResultCount = importer.parseJSON(response.getEntity().getContent(), testStudy);
+                pageNumber++;
+                totalInteractions+= previousResultCount;
+                LOG.info("importing [" + pageNumber + "] total [" + totalInteractions + "]");
+
+            } catch (IOException e) {
+                throw new StudyImporterException("failed to execute query to [ " + uri + "]", e);
+            }
+
+        } while (previousResultCount > 0);
+
+        assertThat(totalInteractions > 150, is(true));
+
+    }
 
 
     @Test
     public void importTestResponse() throws IOException, NodeFactoryException, StudyImporterException {
-        StudyImporterForINaturalist importer = new StudyImporterForINaturalist();
 
-        Study study = nodeFactory.getOrCreateStudy("iNaturalist", "Ken-ichi Kueda", "http://inaturalist.org", "", "iNaturalist is a place where you can record what you see in nature, meet other nature lovers, and learn about the natural world. ", "");
-
-        InputStream resourceAsStream = getClass().getResourceAsStream("inaturalist/sample_inaturalist_response.json");
-        ObjectMapper mapper = new ObjectMapper();
-        assertThat(resourceAsStream, is(not(nullValue())));
-        JsonNode array = mapper.readTree(resourceAsStream);
-        if (!array.isArray()) {
-            throw new StudyImporterException("expected json array, but found object");
-        }
-        for (int i = 0; i < array.size(); i++) {
-            parseSingleInteractions(study, array.get(i));
-        }
+        Study study = importer.importStudy();
 
         Iterable<Relationship> specimens = study.getSpecimens();
         int count = 0;
         for (Relationship specimen : specimens) {
             count++;
         }
-        assertThat(array.size(), is(count));
+        assertThat(count, is(30));
 
         Taxon sourceTaxonNode = nodeFactory.findTaxon("Crepidula fornicata");
-
 
         assertThat(sourceTaxonNode, is(not(nullValue())));
         Iterable<Relationship> relationships = sourceTaxonNode.getUnderlyingNode().getRelationships(Direction.INCOMING, RelTypes.CLASSIFIED_AS);
@@ -77,47 +111,4 @@ public class StudyImporterForINaturalistTest extends GraphDBTestCase {
         }
     }
 
-    private void parseSingleInteractions(Study study, JsonNode jsonNode) throws NodeFactoryException, StudyImporterException {
-        JsonNode sourceTaxon = jsonNode.get("taxon");
-        String sourceTaxonName = sourceTaxon.get("name").getTextValue();
-
-        JsonNode observationField = jsonNode.get("observation_field");
-        String interactionDataType = observationField.get("datatype").getTextValue();
-        String interactionType = observationField.get("name").getTextValue();
-
-        JsonNode observation = jsonNode.get("observation");
-        Specimen sourceSpecimen = nodeFactory.createSpecimen(sourceTaxonName);
-        String latitudeString = observation.get("latitude").getTextValue();
-        String longitudeString = observation.get("longitude").getTextValue();
-        if (latitudeString != null && longitudeString != null) {
-            double latitude = Double.parseDouble(latitudeString);
-            double longitude = Double.parseDouble(longitudeString);
-            sourceSpecimen.caughtIn(nodeFactory.getOrCreateLocation(latitude, longitude, null));
-        }
-
-        String timeObservedAtUtc = observation.get("time_observed_at_utc").getTextValue();
-        timeObservedAtUtc = timeObservedAtUtc == null ? observation.get("observed_on").getTextValue() : timeObservedAtUtc;
-        if (timeObservedAtUtc == null) {
-            throw new StudyImporterException("failed to retrieve observation time for [" + sourceTaxonName + "]");
-        }
-        DateTime dateTime = parseUTCDateTime(timeObservedAtUtc);
-        nodeFactory.setUnixEpochProperty(study.collected(sourceSpecimen), dateTime.toDate());
-        JsonNode targetTaxon = observation.get("taxon");
-        String targetTaxonName = targetTaxon.get("name").getTextValue();
-        if (!"taxon".equals(interactionDataType)) {
-            throw new StudyImporterException("expected [taxon] as observation_type datatype, but found [" + interactionDataType + "]");
-        }
-
-        if ("Eating".equals(interactionType)) {
-            sourceSpecimen.ate(nodeFactory.createSpecimen(targetTaxonName));
-        } else if ("Host".equals(interactionType)) {
-            sourceSpecimen.interactsWith(nodeFactory.createSpecimen(targetTaxonName), InteractType.HOST_OF);
-        } else {
-            throw new StudyImporterException("found unsupported interactionType [" + interactionType + "]");
-        }
-    }
-
-    private DateTime parseUTCDateTime(String timeObservedAtUtc) {
-        return ISODateTimeFormat.dateTimeParser().parseDateTime(timeObservedAtUtc).withZone(DateTimeZone.UTC);
-    }
 }
