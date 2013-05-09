@@ -1,5 +1,6 @@
 package org.eol.globi.export;
 
+import org.eol.globi.domain.NodeBacked;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.PropertyContainer;
@@ -141,8 +142,8 @@ public class InteractionsExporter extends BaseExporter {
                 if (classifiedAs != null) {
                     Node taxonNode = classifiedAs.getEndNode();
                     taxonString = (String) taxonNode.getProperty(Taxon.NAME);
-                    if (taxonNode.hasProperty(Taxon.EXTERNAL_ID)) {
-                        taxonId = (String) taxonNode.getProperty(Taxon.EXTERNAL_ID);
+                    if (taxonNode.hasProperty(NodeBacked.EXTERNAL_ID)) {
+                        taxonId = (String) taxonNode.getProperty(NodeBacked.EXTERNAL_ID);
                     }
 
                 }

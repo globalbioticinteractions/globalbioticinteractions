@@ -3,6 +3,7 @@ package org.eol.globi.service;
 import org.apache.commons.lang3.time.StopWatch;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.eol.globi.domain.NodeBacked;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Transaction;
@@ -17,7 +18,7 @@ public class TaxonPropertyEnricherImpl implements TaxonPropertyEnricher {
     private static final Log LOG = LogFactory.getLog(TaxonPropertyEnricherImpl.class);
     private final List<TaxonPropertyLookupService> services = new ArrayList<TaxonPropertyLookupService>();
     private final HashMap<Class, Integer> errorCounts = new HashMap<Class, Integer>();
-    public static final String[] PROPERTY_NAMES = new String[]{Taxon.EXTERNAL_ID, Taxon.PATH};
+    public static final String[] PROPERTY_NAMES = new String[]{NodeBacked.EXTERNAL_ID, Taxon.PATH};
     private final GraphDatabaseService graphDbService;
 
     public TaxonPropertyEnricherImpl(GraphDatabaseService graphDbService) {

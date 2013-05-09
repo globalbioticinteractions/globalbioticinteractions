@@ -4,7 +4,7 @@ import org.eol.globi.data.taxon.EOLTaxonParser;
 import org.eol.globi.data.taxon.SingleResourceTaxonReaderFactory;
 import org.eol.globi.data.taxon.TaxonTerm;
 import org.eol.globi.data.taxon.TaxonomyImporter;
-import org.eol.globi.domain.Taxon;
+import org.eol.globi.domain.NodeBacked;
 import org.eol.globi.domain.TaxonomyProvider;
 
 public class EOLOfflineService extends OfflineService {
@@ -16,13 +16,13 @@ public class EOLOfflineService extends OfflineService {
 
     @Override
     public boolean canLookupProperty(String propertyName) {
-        return Taxon.EXTERNAL_ID.equals(propertyName);
+        return NodeBacked.EXTERNAL_ID.equals(propertyName);
     }
 
     @Override
     protected String getValueForPropertyName(String propertyName, TaxonTerm term) {
         String value = null;
-        if (Taxon.EXTERNAL_ID.equals(propertyName)) {
+        if (NodeBacked.EXTERNAL_ID.equals(propertyName)) {
             value = TaxonomyProvider.ID_PREFIX_EOL + term.getId();
         }
         return value;

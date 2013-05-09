@@ -1,5 +1,6 @@
 package org.eol.globi.service;
 
+import org.eol.globi.domain.NodeBacked;
 import org.eol.globi.domain.Taxon;
 import org.junit.Test;
 
@@ -19,8 +20,8 @@ public class GulfBaseServiceTest {
     @Test
     public void lookupExternalId() throws TaxonPropertyLookupServiceException {
         OfflineService service = new GulfBaseService();
-        assertThat(service.canLookupProperty(Taxon.EXTERNAL_ID), is(true));
-        assertThat(service.lookupPropertyValueByTaxonName("Haplognathia rosea", Taxon.EXTERNAL_ID), is("BioGoMx:Spp-26-0003"));
-        assertThat(service.lookupPropertyValueByTaxonName("Ariopsis felis", Taxon.EXTERNAL_ID), is("BioGoMx:Spp-75-0281"));
+        assertThat(service.canLookupProperty(NodeBacked.EXTERNAL_ID), is(true));
+        assertThat(service.lookupPropertyValueByTaxonName("Haplognathia rosea", NodeBacked.EXTERNAL_ID), is("BioGoMx:Spp-26-0003"));
+        assertThat(service.lookupPropertyValueByTaxonName("Ariopsis felis", NodeBacked.EXTERNAL_ID), is("BioGoMx:Spp-75-0281"));
     }
 }

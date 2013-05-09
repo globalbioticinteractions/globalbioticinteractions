@@ -113,14 +113,4 @@ public class Specimen extends NodeBacked {
         }
     }
 
-    public void setExternalId(String externalId) {
-        setPropertyWithTx(Taxon.EXTERNAL_ID, externalId);
-    }
-
-    public String getExternalId() {
-        String propertyName = Taxon.EXTERNAL_ID;
-        Object propertyValueOrNull = getPropertyValueOrNull(propertyName);
-        return propertyValueOrNull == null ? null : (String) propertyValueOrNull;
-    }
-
 }

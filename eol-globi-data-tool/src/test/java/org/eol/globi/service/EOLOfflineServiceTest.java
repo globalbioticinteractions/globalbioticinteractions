@@ -1,5 +1,6 @@
 package org.eol.globi.service;
 
+import org.eol.globi.domain.NodeBacked;
 import org.eol.globi.domain.Taxon;
 import org.junit.Test;
 
@@ -14,8 +15,8 @@ public class EOLOfflineServiceTest {
     public void canLookup() throws TaxonPropertyLookupServiceException {
         EOLOfflineService service = new EOLOfflineService();
         assertFalse(service.canLookupProperty(Taxon.PATH));
-        assertTrue(service.canLookupProperty(Taxon.EXTERNAL_ID));
-        assertThat(service.lookupPropertyValueByTaxonName("Homo sapiens", Taxon.EXTERNAL_ID), is("EOL:327955"));
+        assertTrue(service.canLookupProperty(NodeBacked.EXTERNAL_ID));
+        assertThat(service.lookupPropertyValueByTaxonName("Homo sapiens", NodeBacked.EXTERNAL_ID), is("EOL:327955"));
     }
 
 

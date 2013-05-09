@@ -2,7 +2,7 @@ package org.eol.globi.service;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.eol.globi.domain.Taxon;
+import org.eol.globi.domain.NodeBacked;
 
 public abstract class BaseExternalIdService extends BaseHttpClientService implements TaxonPropertyLookupService {
     private static final Log LOG = LogFactory.getLog(BaseHttpClientService.class);
@@ -26,7 +26,7 @@ public abstract class BaseExternalIdService extends BaseHttpClientService implem
 
     @Override
     public boolean canLookupProperty(String propertyName) {
-        return Taxon.EXTERNAL_ID.equals(propertyName);
+        return NodeBacked.EXTERNAL_ID.equals(propertyName);
     }
 
     public abstract String lookupLSIDByTaxonName(String taxonName) throws TaxonPropertyLookupServiceException;

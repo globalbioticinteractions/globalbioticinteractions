@@ -8,7 +8,6 @@ import static org.eol.globi.domain.RelTypes.IS_A;
 
 public class Taxon extends NodeBacked {
     public static final String NAME = "name";
-    public static final String EXTERNAL_ID = "externalId";
     public static final String PATH = "path";
 
     public Taxon(Node node) {
@@ -26,18 +25,6 @@ public class Taxon extends NodeBacked {
 
     public void setName(String name) {
         getUnderlyingNode().setProperty(NAME, name);
-    }
-
-    public String getExternalId() {
-        return getUnderlyingNode().hasProperty(EXTERNAL_ID) ?
-                (String) getUnderlyingNode().getProperty(EXTERNAL_ID) : null;
-    }
-
-
-    public void setExternalId(String externalId) {
-        if (externalId != null) {
-            getUnderlyingNode().setProperty(EXTERNAL_ID, externalId);
-        }
     }
 
     public Node isA() {
