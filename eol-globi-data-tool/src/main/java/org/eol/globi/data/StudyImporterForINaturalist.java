@@ -64,11 +64,11 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
         return totalInteractions;
     }
 
-    protected int parseJSON(InputStream resourceAsStream, Study study) throws StudyImporterException {
+    protected int parseJSON(InputStream retargetAsStream, Study study) throws StudyImporterException {
         ObjectMapper mapper = new ObjectMapper();
         JsonNode array = null;
         try {
-            array = mapper.readTree(resourceAsStream);
+            array = mapper.readTree(retargetAsStream);
         } catch (IOException e) {
             throw new StudyImporterException("error parsing inaturalist json", e);
         }
@@ -91,14 +91,14 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
     }
 
     private void parseSingleInteractions(Study study, JsonNode jsonNode) throws NodeFactoryException, StudyImporterException {
-        JsonNode sourceTaxon = jsonNode.get("taxon");
-        JsonNode sourceTaxonNode = sourceTaxon.get("name");
+        JsonNode targetTaxon = jsonNode.get("taxon");
+        JsonNode targetTaxonNode = targetTaxon.get("name");
         long observationId = jsonNode.get("observation_id").getLongValue();
-        if (sourceTaxonNode == null) {
-            LOG.warn("skipping interaction with missing source taxon name for observation [" + observationId + "]");
+        if (targetTaxonNode == null) {
+            LOG.warn("skipping interaction with missing target taxon name for observation [" + observationId + "]");
         } else {
-            String sourceTaxonName = sourceTaxonNode.getTextValue();
-            Specimen sourceSpecimen = nodeFactory.createSpecimen(sourceTaxonName);
+            String targetTaxonName = targetTaxonNode.getTextValue();
+            Specimen targetSpecimen = nodeFactory.createSpecimen(targetTaxonName);
 
 
             JsonNode observationField = jsonNode.get("observation_field");
@@ -111,26 +111,26 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
             if (latitudeString != null && longitudeString != null) {
                 double latitude = Double.parseDouble(latitudeString);
                 double longitude = Double.parseDouble(longitudeString);
-                sourceSpecimen.caughtIn(nodeFactory.getOrCreateLocation(latitude, longitude, null));
+                targetSpecimen.caughtIn(nodeFactory.getOrCreateLocation(latitude, longitude, null));
             }
 
-            JsonNode targetTaxon = observation.get("taxon");
-            if (targetTaxon == null) {
-                LOG.warn("cannot create interaction with missing target taxon name for observation with id [" + observation.get("id") + "]");
+            JsonNode sourceTaxon = observation.get("taxon");
+            if (sourceTaxon == null) {
+                LOG.warn("cannot create interaction with missing source taxon name for observation with id [" + observation.get("id") + "]");
             } else {
-                JsonNode targetTaxonNameNode = targetTaxon.get("name");
-                String targetTaxonName = targetTaxonNameNode.getTextValue();
+                JsonNode sourceTaxonNameNode = sourceTaxon.get("name");
+                String sourceTaxonName = sourceTaxonNameNode.getTextValue();
                 if (!"taxon".equals(interactionDataType)) {
                     throw new StudyImporterException("expected [taxon] as observation_type datatype, but found [" + interactionDataType + "]");
                 }
-                Specimen targetSpecimen = nodeFactory.createSpecimen(targetTaxonName);
-                targetSpecimen.setExternalId(TaxonomyProvider.ID_PREFIX_INATURALIST + observationId);
-                Relationship collectedRel = study.collected(targetSpecimen);
+                Specimen sourceSpecimen = nodeFactory.createSpecimen(sourceTaxonName);
+                sourceSpecimen.setExternalId(TaxonomyProvider.ID_PREFIX_INATURALIST + observationId);
+                Relationship collectedRel = study.collected(sourceSpecimen);
 
                 String timeObservedAtUtc = observation.get("time_observed_at_utc").getTextValue();
                 timeObservedAtUtc = timeObservedAtUtc == null ? observation.get("observed_on").getTextValue() : timeObservedAtUtc;
                 if (timeObservedAtUtc == null) {
-                    LOG.warn("failed to retrieve observation time for [" + sourceTaxonName + "]");
+                    LOG.warn("failed to retrieve observation time for [" + targetTaxonName + "]");
                 } else {
                     DateTime dateTime = parseUTCDateTime(timeObservedAtUtc);
                     nodeFactory.setUnixEpochProperty(collectedRel, dateTime.toDate());
@@ -153,7 +153,7 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
                     throw new StudyImporterException("found unsupported interactionType [" + interactionType + "]");
                 }
                 if (type != null) {
-                    targetSpecimen.interactsWith(sourceSpecimen, type);
+                    sourceSpecimen.interactsWith(targetSpecimen, type);
                 }
             }
         }
