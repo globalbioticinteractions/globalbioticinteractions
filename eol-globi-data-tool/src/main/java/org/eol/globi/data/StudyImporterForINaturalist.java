@@ -140,7 +140,7 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
                 if ("Eating".equals(interactionType)) {
                     type = InteractType.ATE;
                 } else if ("Host".equals(interactionType)) {
-                    type = InteractType.HOST_OF;
+                    type = InteractType.HAS_HOST;
                 } else if ("Flower species".equals(interactionType)) {
                     type = InteractType.POLLINATES;
                 } else if ("Perching on".equals(interactionType)) {
