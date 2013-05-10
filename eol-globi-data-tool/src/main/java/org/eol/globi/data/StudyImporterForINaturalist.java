@@ -152,7 +152,9 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
                 } else {
                     throw new StudyImporterException("found unsupported interactionType [" + interactionType + "]");
                 }
-                targetSpecimen.interactsWith(sourceSpecimen, type);
+                if (type != null) {
+                    targetSpecimen.interactsWith(sourceSpecimen, type);
+                }
             }
         }
 
