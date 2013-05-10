@@ -57,7 +57,7 @@ public class StudyImporterForINaturalistTest extends GraphDBTestCase {
 
         assertThat(countSpecimen(study), is(30));
 
-        Taxon sourceTaxonNode = nodeFactory.findTaxon("Crepidula fornicata");
+        Taxon sourceTaxonNode = nodeFactory.findTaxon("Arenaria interpres");
 
         assertThat(sourceTaxonNode, is(not(nullValue())));
         Iterable<Relationship> relationships = sourceTaxonNode.getUnderlyingNode().getRelationships(Direction.INCOMING, RelTypes.CLASSIFIED_AS);

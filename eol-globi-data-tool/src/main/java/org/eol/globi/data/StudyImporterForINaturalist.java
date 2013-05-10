@@ -10,13 +10,11 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
-import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonomyProvider;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.format.ISODateTimeFormat;
 import org.neo4j.graphdb.Relationship;
-import org.neo4j.graphdb.Transaction;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -101,7 +99,7 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
         } else {
             String sourceTaxonName = sourceTaxonNode.getTextValue();
             Specimen sourceSpecimen = nodeFactory.createSpecimen(sourceTaxonName);
-            sourceSpecimen.setExternalId(TaxonomyProvider.ID_PREFIX_INATURALIST + observationId);
+
 
             JsonNode observationField = jsonNode.get("observation_field");
             String interactionDataType = observationField.get("datatype").getTextValue();
@@ -116,16 +114,6 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
                 sourceSpecimen.caughtIn(nodeFactory.getOrCreateLocation(latitude, longitude, null));
             }
 
-            Relationship collectedRel = study.collected(sourceSpecimen);
-
-            String timeObservedAtUtc = observation.get("time_observed_at_utc").getTextValue();
-            timeObservedAtUtc = timeObservedAtUtc == null ? observation.get("observed_on").getTextValue() : timeObservedAtUtc;
-            if (timeObservedAtUtc == null) {
-                LOG.warn("failed to retrieve observation time for [" + sourceTaxonName + "]");
-            } else {
-                DateTime dateTime = parseUTCDateTime(timeObservedAtUtc);
-                nodeFactory.setUnixEpochProperty(collectedRel, dateTime.toDate());
-            }
             JsonNode targetTaxon = observation.get("taxon");
             if (targetTaxon == null) {
                 LOG.warn("cannot create interaction with missing target taxon name for observation with id [" + observation.get("id") + "]");
@@ -135,23 +123,36 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
                 if (!"taxon".equals(interactionDataType)) {
                     throw new StudyImporterException("expected [taxon] as observation_type datatype, but found [" + interactionDataType + "]");
                 }
+                Specimen targetSpecimen = nodeFactory.createSpecimen(targetTaxonName);
+                targetSpecimen.setExternalId(TaxonomyProvider.ID_PREFIX_INATURALIST + observationId);
+                Relationship collectedRel = study.collected(targetSpecimen);
 
+                String timeObservedAtUtc = observation.get("time_observed_at_utc").getTextValue();
+                timeObservedAtUtc = timeObservedAtUtc == null ? observation.get("observed_on").getTextValue() : timeObservedAtUtc;
+                if (timeObservedAtUtc == null) {
+                    LOG.warn("failed to retrieve observation time for [" + sourceTaxonName + "]");
+                } else {
+                    DateTime dateTime = parseUTCDateTime(timeObservedAtUtc);
+                    nodeFactory.setUnixEpochProperty(collectedRel, dateTime.toDate());
+                }
 
+                InteractType type = null;
                 if ("Eating".equals(interactionType)) {
-                    sourceSpecimen.ate(nodeFactory.createSpecimen(targetTaxonName));
+                    type = InteractType.ATE;
                 } else if ("Host".equals(interactionType)) {
-                    sourceSpecimen.interactsWith(nodeFactory.createSpecimen(targetTaxonName), InteractType.HOST_OF);
+                    type = InteractType.HOST_OF;
                 } else if ("Flower species".equals(interactionType)) {
-                    sourceSpecimen.interactsWith(nodeFactory.createSpecimen(targetTaxonName), InteractType.POLLINATES);
+                    type = InteractType.POLLINATES;
                 } else if ("Perching on".equals(interactionType)) {
-                    sourceSpecimen.interactsWith(nodeFactory.createSpecimen(targetTaxonName), InteractType.PERCHING_ON);
+                    type = InteractType.PERCHING_ON;
                 } else if ("Pollinating".equals(interactionType)) {
-                    sourceSpecimen.interactsWith(nodeFactory.createSpecimen(targetTaxonName), InteractType.POLLINATES);
+                    type = InteractType.POLLINATES;
                 } else if ("Other Species in Group".equals(interactionType)) {
                     LOG.warn("interactionType [" + interactionDataType + "] not supported");
                 } else {
                     throw new StudyImporterException("found unsupported interactionType [" + interactionType + "]");
                 }
+                targetSpecimen.interactsWith(sourceSpecimen, type);
             }
         }
 
