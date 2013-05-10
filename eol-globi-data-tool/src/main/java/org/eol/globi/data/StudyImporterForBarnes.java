@@ -43,7 +43,7 @@ public class StudyImporterForBarnes extends BaseStudyImporter {
     private void importLine(LabeledCSVParser parser, Study study) throws StudyImporterException {
         try {
             Specimen predator = nodeFactory.createSpecimen(parser.getValueByLabel("Predator"));
-            predator.setLifeStage(nodeFactory.findLifeStageByName(parser.getValueByLabel("Predator lifestage")));
+            addLifeStage(parser, predator);
 
             Double latitude = LocationUtil.parseDegrees(parser.getValueByLabel("Latitude"));
             Double longitude = LocationUtil.parseDegrees(parser.getValueByLabel("Longitude"));
@@ -62,6 +62,17 @@ public class StudyImporterForBarnes extends BaseStudyImporter {
         } catch (NumberFormatException e) {
             LOG.warn("skipping record, found malformed field at line [" + parser.lastLineNumber() + "]", e);
         }
+    }
+
+    private void addLifeStage(LabeledCSVParser parser, Specimen predator) {
+        String lifeStageString = parser.getValueByLabel("Predator lifestage");
+        LifeStage stage = null;
+        if ("adult".equalsIgnoreCase(lifeStageString)) {
+            stage = LifeStage.ADULT;
+        } else if ("juvenile".equalsIgnoreCase(lifeStageString)) {
+            stage = LifeStage.JUVENILE;
+        }
+        predator.setLifeStage(stage);
     }
 
 }

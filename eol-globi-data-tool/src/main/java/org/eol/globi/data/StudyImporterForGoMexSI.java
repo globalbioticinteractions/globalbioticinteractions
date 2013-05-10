@@ -111,6 +111,7 @@ public class StudyImporterForGoMexSI extends BaseStudyImporter {
                         Specimen predatorSpecimen = null;
                         try {
                             predatorSpecimen = nodeFactory.createSpecimen(predatorName);
+                            predatorSpecimen.setExternalId(predatorId);
                             predatorSpecimen.caughtIn(location);
                             Study study = refIdToStudyMap.get(refId);
                             if (study != null) {

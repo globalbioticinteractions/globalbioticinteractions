@@ -336,13 +336,4 @@ public class NodeFactory {
     }
 
 
-    public LifeStage findLifeStageByName(String lifeStageString) {
-        LifeStage stage = null;
-        if ("adult".equalsIgnoreCase(lifeStageString)) {
-            stage = LifeStage.ADULT;
-        } else if ("juvenile".equalsIgnoreCase(lifeStageString)) {
-            stage = LifeStage.JUVENILE;
-        }
-        return stage;
-    }
 }
