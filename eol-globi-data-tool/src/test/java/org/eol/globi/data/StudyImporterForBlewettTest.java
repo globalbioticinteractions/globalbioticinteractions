@@ -106,6 +106,7 @@ public class StudyImporterForBlewettTest extends GraphDBTestCase {
         assertThat(StudyImporterForBlewett.dateToString(unixEpochProperty), is("01-Mar-00 10:55:00 Central Standard Time"));
 
         Node predatorNode = collectedRel.getEndNode();
+        assertThat((String)predatorNode.getProperty(Specimen.LIFE_STAGE), is(LifeStage.ADULT.name()));
         assertThat((Double) predatorNode.getProperty(Specimen.LENGTH_IN_MM), is(549.0));
 
         Node predatorTaxonNode = predatorNode.getRelationships(RelTypes.CLASSIFIED_AS, Direction.OUTGOING).iterator().next().getEndNode();

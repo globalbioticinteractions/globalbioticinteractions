@@ -29,7 +29,7 @@ public class StudyImporterForBlewett extends BaseStudyImporter {
 
     @Override
     public Study importStudy() throws StudyImporterException {
-        Study study = nodeFactory.createStudy("Blewett 2006", "David A. Blewett", "Fish and Wildlife Research Institute, Florida Fish and Wildlife Conservation Commission", "Mar 2000- Feb 2002", "Feeding Habits of Common Snook, Centropomus undecimalis, in Charlotte Harbor, Florida.", "2006");
+        Study study = nodeFactory.createStudy("Blewett 2006", "David A. Blewett", "Fish and Wildlife Research Institute, Florida Fish and Wildlife Conservation Commission", "Mar 2000- Feb 2002", "<a href=\"http://research.myfwc.com/engine/download_redirection_process.asp?file=06blewett_0718.pdf&objid=50963&dltype=publication\">Feeding Habits of Common Snook, Centropomus undecimalis, in Charlotte Harbor, Florida</a>.", "2006");
 
         try {
             Map<String, Location> collectionLocationMap = new HashMap<String, Location>();
@@ -119,6 +119,7 @@ public class StudyImporterForBlewett extends BaseStudyImporter {
 
     private Specimen addPredator(Study study, Map<String, Location> locationMap, LabeledCSVParser parser, String[] line, Map<String, Date> collectionTimeMap) throws NodeFactoryException {
         Specimen predatorSpecimen = nodeFactory.createSpecimen("Centropomus undecimalis");
+        predatorSpecimen.setLifeStage(LifeStage.ADULT);
         Relationship collectedRel = study.collected(predatorSpecimen);
         try {
             String length = parser.getValueByLabel("Standard Length");
