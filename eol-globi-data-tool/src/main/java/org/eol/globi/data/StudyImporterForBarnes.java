@@ -19,9 +19,9 @@ public class StudyImporterForBarnes extends BaseStudyImporter {
 
     @Override
     public Study importStudy() throws StudyImporterException {
-        LabeledCSVParser parser = null;
+        LabeledCSVParser parser;
         try {
-            parser = parserFactory.createParser("barnes/Predator_and_prey_body_sizes_in_marine_food_webs_vsn3.tsv.gz", CharsetConstant.UTF8);
+            parser = parserFactory.createParser("barnes/Predator_and_prey_body_sizes_in_marine_food_webs_vsn3.tsv", CharsetConstant.UTF8);
         } catch (IOException e) {
             throw new StudyImporterException("failed to read resource", e);
         }
