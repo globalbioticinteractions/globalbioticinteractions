@@ -188,8 +188,21 @@ public class StudyImporterForSPIRE extends BaseStudyImporter {
 
     private Specimen createSpecimen(String taxonName) throws NodeFactoryException {
         taxonName = taxonName.replaceAll("_", " ");
-        Specimen predator = nodeFactory.createSpecimen(taxonName);
-        return predator;
+        Specimen specimen = nodeFactory.createSpecimen(taxonName);
+        if (taxonName.contains("adult")) {
+            specimen.setLifeStage(LifeStage.ADULT);
+        } else if (taxonName.contains("juvenile")) {
+            specimen.setLifeStage(LifeStage.JUVENILE);
+        } else if (taxonName.contains(" egg")) {
+            specimen.setLifeStage(LifeStage.JUVENILE);
+        } else if (taxonName.contains("larvae")) {
+            specimen.setLifeStage(LifeStage.LARVA);
+        } else if (taxonName.contains("immature")) {
+            specimen.setLifeStage(LifeStage.IMMATURE);
+        }else if (taxonName.contains("nymphs")) {
+            specimen.setLifeStage(LifeStage.NYMPH);
+        }
+        return specimen;
     }
 
 
