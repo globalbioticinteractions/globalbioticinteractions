@@ -1,21 +1,16 @@
 package org.eol.globi.data;
 
 
-import org.apache.commons.lang3.ArrayUtils;
-import org.apache.lucene.util.CollectionUtil;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.Taxon;
-import org.hamcrest.core.Is;
-import org.junit.Assert;
 import org.junit.Test;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 
 import static junit.framework.Assert.assertNotNull;

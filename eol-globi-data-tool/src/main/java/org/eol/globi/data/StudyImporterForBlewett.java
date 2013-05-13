@@ -47,7 +47,7 @@ public class StudyImporterForBlewett extends BaseStudyImporter {
     }
 
     private void buildLocationTimeMaps(Map<String, Location> collectionLocationMap, Map<String, Date> collectionTimeMap) throws IOException, StudyImporterException {
-        LabeledCSVParser locationParser = parserFactory.createParser("blewett/SnookDietData2000_02_Charlotte_Harbor_FL_Blewett_date_and_abiotic.csv.gz", CharsetConstant.UTF8);
+        LabeledCSVParser locationParser = parserFactory.createParser("blewett/SnookDietData2000_02_Charlotte_Harbor_FL_Blewett_date_and_abiotic.csv", CharsetConstant.UTF8);
         String[] line;
         while ((line = locationParser.getLine()) != null) {
             if (line.length < 3) {
@@ -104,7 +104,7 @@ public class StudyImporterForBlewett extends BaseStudyImporter {
     }
 
     private void parsePredatorPreyInteraction(Study study, Map<String, Location> locationMap, Map<String, Date> collectionTimeMap) throws IOException, NodeFactoryException {
-        LabeledCSVParser parser = parserFactory.createParser("blewett/SnookDietData2000_02_Charlotte_Harbor_FL_Blewett_numeric_abundance.csv.gz", CharsetConstant.UTF8);
+        LabeledCSVParser parser = parserFactory.createParser("blewett/SnookDietData2000_02_Charlotte_Harbor_FL_Blewett_numeric_abundance.csv", CharsetConstant.UTF8);
         String[] header = parser.getLabels();
 
         String[] line;

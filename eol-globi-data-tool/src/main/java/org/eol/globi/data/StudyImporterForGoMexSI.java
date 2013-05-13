@@ -156,6 +156,7 @@ public class StudyImporterForGoMexSI extends BaseStudyImporter {
                 String refId = getMandatoryValue(datafile, parser, "REF_ID");
                 String specimenId = getMandatoryValue(datafile, parser, "PRED_ID");
                 String scientificName = getMandatoryValue(datafile, parser, scientificNameLabel);
+                LifeStage stage = getLifeStage(parser);
                 String predatorUID = refId + specimenId;
                 List<String> nameLists = specimenMap.get(predatorUID);
                 if (nameLists == null) {
@@ -167,6 +168,29 @@ public class StudyImporterForGoMexSI extends BaseStudyImporter {
         } catch (IOException e) {
             throw new StudyImporterException("failed to open resource [" + datafile + "]", e);
         }
+    }
+
+    private LifeStage getLifeStage(LabeledCSVParser parser) throws StudyImporterException {
+        LifeStage lifeStage = null;
+        String lifeStageString = parser.getValueByLabel("LIFE_HIST_STAGE");
+        Map<String, LifeStage> lifeStageMap = new HashMap<String, LifeStage>() {
+            {
+                put("adult", LifeStage.ADULT);
+                put("nd", LifeStage.UNKNOWN);
+                put("na", LifeStage.UNKNOWN);
+                put("NA", LifeStage.UNKNOWN);
+                put("zoea", LifeStage.ZOEA);
+                put("larvae", LifeStage.LARVA);
+                put("eggs", LifeStage.EGG);
+            }
+        };
+        if (lifeStageString != null && lifeStageString.trim().length() > 0) {
+            lifeStage = lifeStageMap.get(lifeStageString);
+            if (lifeStage == null) {
+                throw new StudyImporterException("failed to parse life history stage, found unsupported stage [" + lifeStageString + "]");
+            }
+        }
+        return lifeStage;
     }
 
     private String getMandatoryValue(String datafile, LabeledCSVParser parser, String label) throws StudyImporterException {
