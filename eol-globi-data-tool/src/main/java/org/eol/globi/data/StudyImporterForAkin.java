@@ -17,7 +17,6 @@ import java.util.Date;
 
 public class StudyImporterForAkin extends BaseStudyImporter {
     private static final Log LOG = LogFactory.getLog(StudyImporterForAkin.class);
-    public static final String AKIN_MAD_ISLAND = "akinMadIsland";
 
     public StudyImporterForAkin(ParserFactory parserFactory, NodeFactory nodeFactory) {
         super(parserFactory, nodeFactory);
@@ -25,14 +24,14 @@ public class StudyImporterForAkin extends BaseStudyImporter {
 
     @Override
     public Study importStudy() throws StudyImporterException {
-        importStudy("akin/Senol akin (mad island) data edited-sheet3-winter2.csv.gz");
-        return importStudy("akin/Senol akin (mad island) data edited-sheet4-summer2.csv.gz");
+        importStudy("akin/Senol akin (mad island) data edited-sheet3-winter2.csv");
+        return importStudy("akin/Senol akin (mad island) data edited-sheet4-summer2.csv");
     }
 
     private Study importAkinStudyFile(String[][] siteInfos, String studyResource, Study study) throws IOException, StudyImporterException, NodeFactoryException {
         LabeledCSVParser parser = parserFactory.createParser(studyResource, CharsetConstant.UTF8);
         String[] header = parser.getLabels();
-        String[] line = null;
+        String[] line;
 
         while ((line = parser.getLine()) != null) {
             if (isValid(line, header, parser, siteInfos)) {
@@ -84,12 +83,10 @@ public class StudyImporterForAkin extends BaseStudyImporter {
     }
 
     private Location parseLocation(String[] siteInfo) throws StudyImporterException, IOException {
-
-
-        Double longitude = null;
-        Double latitude = null;
+        Double longitude;
+        Double latitude;
         // TODO note that this study was taken in shallow water ~ 0.7m, probably better to include a depth range?
-        Double altitude = 0d;
+        Double altitude = 0.7d;
 
         String latitudeString = siteInfo[7];
         try {
@@ -112,11 +109,13 @@ public class StudyImporterForAkin extends BaseStudyImporter {
         for (int i = firstPreyIndex; i < line.length; i++) {
             String preyVolumeString = line[i];
             String preySpeciesName = header[i];
+
             try {
                 if (preyVolumeString.trim().length() > 0) {
                     double volume = Double.parseDouble(preyVolumeString);
                     if (volume > 0) {
                         Specimen prey = nodeFactory.createSpecimen(preySpeciesName);
+                        prey.setLifeStage(parseLifeStage(preySpeciesName));
                         prey.setVolumeInMilliLiter(volume);
                         specimen.ate(prey);
                     }
@@ -125,6 +124,18 @@ public class StudyImporterForAkin extends BaseStudyImporter {
                 throw new StudyImporterException("failed to parse volume of prey [" + preySpeciesName + "] in stomach [" + preyVolumeString + "] on line [" + parser.getLastLineNumber() + "]");
             }
         }
+    }
+
+    protected static LifeStage parseLifeStage(String preySpeciesName) {
+        LifeStage lifeStage = null;
+        if (preySpeciesName.contains(" larvae")) {
+            lifeStage = LifeStage.LARVA;
+        } else if (preySpeciesName.contains(" egg")) {
+            lifeStage = LifeStage.EGG;
+        } else if (preySpeciesName.contains(" zoea")) {
+            lifeStage = LifeStage.ZOEA;
+        }
+        return lifeStage;
     }
 
     private Specimen addSpecimen(Study study, LabeledCSVParser parser, String[] header, String[] line) throws StudyImporterException, NodeFactoryException {

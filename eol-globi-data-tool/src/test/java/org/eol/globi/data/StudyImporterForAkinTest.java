@@ -38,6 +38,15 @@ public class StudyImporterForAkinTest extends GraphDBTestCase {
         assertNotNull(nodeFactory.findTaxonOfType("Citharichthys spilopterus"));
     }
 
+    @Test
+    public void parseLifeStage() {
+        assertThat(StudyImporterForAkin.parseLifeStage("something egg"), is(LifeStage.EGG));
+        assertThat(StudyImporterForAkin.parseLifeStage("something eggs"), is(LifeStage.EGG));
+        assertThat(StudyImporterForAkin.parseLifeStage("something larvae"), is(LifeStage.LARVA));
+        assertThat(StudyImporterForAkin.parseLifeStage("something zoea"), is(LifeStage.ZOEA));
+    }
+
+
 
     @Test
     public void importMappingIssue() throws StudyImporterException, NodeFactoryException {
