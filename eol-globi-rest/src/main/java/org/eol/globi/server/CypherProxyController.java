@@ -1,7 +1,5 @@
 package org.eol.globi.server;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.BasicResponseHandler;
@@ -30,14 +28,14 @@ public class CypherProxyController {
 
     public static final String INTERACTION_PREYS_ON = "preysOn";
     public static final String INTERACTION_PREYED_UPON_BY = "preyedUponBy";
-
-
-    @RequestMapping(value = "/predator/{scientificName}/listPrey", method = RequestMethod.GET)
-    @ResponseBody
-    @Deprecated
-    public String oldFindPreyOf(HttpServletRequest request, @PathVariable("scientificName") String scientificName) throws IOException {
-        return findPreyOf(request, scientificName);
-    }
+    public static final String DEFAULT_RETURN_LIST = "loc.latitude as latitude," +
+            "loc.longitude as longitude," +
+            "loc.altitude? as altitude," +
+            "study.title," +
+            "collected_rel.dateInUnixEpoch? as collection_time_in_unix_epoch," +
+            "ID(predator) as tmp_and_unique_specimen_id," +
+            "predator.lifeStage? as predator_life_stage," +
+            "prey.lifeStage? as prey_life_stage\"";
 
     @RequestMapping(value = "/taxon/{scientificName}/" + INTERACTION_PREYS_ON, method = RequestMethod.GET)
     @ResponseBody
@@ -66,13 +64,6 @@ public class CypherProxyController {
 
         params += "}";
         return params;
-    }
-
-    @RequestMapping(value = "/prey/{scientificName}/listPredators", method = RequestMethod.GET)
-    @ResponseBody
-    @Deprecated
-    public String oldFindPredatorsOf(HttpServletRequest request, @PathVariable("scientificName") String scientificName) throws IOException {
-        return findPredatorsOf(request, scientificName);
     }
 
     @RequestMapping(value = "/interaction", method = RequestMethod.GET)
@@ -112,29 +103,16 @@ public class CypherProxyController {
         return execute(query);
     }
 
-    @RequestMapping(value = "/predator/{predatorName}/listPreyObservations", method = RequestMethod.GET)
-    @ResponseBody
-    @Deprecated
-    public String oldFindPreyObservationsOf(HttpServletRequest request, @PathVariable("predatorName") String predatorName) throws IOException {
-        return findPreyObservationsOf(request, predatorName);
-    }
-
     @RequestMapping(value = "/taxon/{predatorName}/" + INTERACTION_PREYS_ON, params = {INCLUDE_OBSERVATIONS_TRUE}, method = RequestMethod.GET)
     @ResponseBody
     public String findPreyObservationsOf(HttpServletRequest request, @PathVariable("predatorName") String predatorName) throws IOException {
         String query = "{\"query\":\"START predatorTaxon = node:taxons(name={predatorName}) " +
                 OBSERVATION_MATCH +
                 getSpatialWhereClause(request) +
-                " RETURN preyTaxon.name as preyName, loc.latitude as latitude, loc.longitude as longitude, loc.altitude? as altitude, study.title, collected_rel.dateInUnixEpoch? as collection_time_in_unix_epoch, ID(predator) as tmp_and_unique_specimen_id\"" +
+                " RETURN preyTaxon.name as preyName, " +
+                DEFAULT_RETURN_LIST +
                 ", \"params\": { \"predatorName\" : \"" + predatorName + "\" } }";
         return execute(query);
-    }
-
-    @RequestMapping(value = "/prey/{preyName}/listPredatorObservations", method = RequestMethod.GET)
-    @ResponseBody
-    @Deprecated
-    public String oldFindPredatorObservationsOf(HttpServletRequest request, @PathVariable("preyName") String preyName) throws IOException {
-        return findPredatorObservationsOf(request, preyName);
     }
 
     @RequestMapping(value = "/taxon/{preyName}/" + INTERACTION_PREYED_UPON_BY, params = {INCLUDE_OBSERVATIONS_TRUE}, method = RequestMethod.GET)
@@ -143,7 +121,8 @@ public class CypherProxyController {
         String query = "{\"query\":\"START preyTaxon = node:taxons(name={preyName}) " +
                 OBSERVATION_MATCH +
                 getSpatialWhereClause(request) +
-                " RETURN predatorTaxon.name as predatorName, loc.latitude as latitude, loc.longitude as longitude, loc.altitude? as altitude, study.title, collected_rel.dateInUnixEpoch? as collection_time_in_unix_epoch, ID(predator) as tmp_unique_specimen_id\"" +
+                " RETURN predatorTaxon.name as predatorName, " +
+                DEFAULT_RETURN_LIST +
                 ", \"params\": { \"preyName\" : \"" + preyName + "\" } }";
         return execute(query);
     }
