@@ -17,23 +17,23 @@ import java.util.Map;
 
 import static org.apache.commons.lang3.StringUtils.*;
 
-public class StudyImporterForBlaremore extends BaseStudyImporter {
-    private static final Log LOG = LogFactory.getLog(StudyImporterForBlaremore.class);
+public class StudyImporterForBaremore extends BaseStudyImporter {
+    private static final Log LOG = LogFactory.getLog(StudyImporterForBaremore.class);
     private static final String DATA_SOURCE = "baremore/ANGELSHARK_DIET_DATAREQUEST_10012012.csv";
 
 
-    public StudyImporterForBlaremore(ParserFactory parserFactory, NodeFactory nodeFactory) {
+    public StudyImporterForBaremore(ParserFactory parserFactory, NodeFactory nodeFactory) {
         super(parserFactory, nodeFactory);
     }
 
     @Override
     public Study importStudy() throws StudyImporterException {
-        Study study = null;
+        Study study;
         try {
             LabeledCSVParser parser = parserFactory.createParser(DATA_SOURCE, CharsetConstant.UTF8);
-            String[] line = null;
+            String[] line;
 
-            study = nodeFactory.getOrCreateStudy("Blaremore 2010",
+            study = nodeFactory.getOrCreateStudy("Baremore 2010",
                     "Ivy E. Baremore",
                     "University of Florida, Department of Fisheries and Aquatic Sciences",
                     "2005",
@@ -52,6 +52,8 @@ public class StudyImporterForBlaremore extends BaseStudyImporter {
                     if (predatorSpecimen == null) {
                         predatorSpecimen = nodeFactory.createSpecimen("Squatina dumeril");
                         predatorSpecimen.caughtIn(collectionLocation);
+                        addLifeStage(parser, predatorSpecimen);
+
                         Relationship collectedRel = study.collected(predatorSpecimen);
                         try {
                             addCollectionDate(collectionDateString, collectedRel);
@@ -80,6 +82,31 @@ public class StudyImporterForBlaremore extends BaseStudyImporter {
         }
 
         return study;
+    }
+
+    private void addLifeStage(LabeledCSVParser parser, Specimen predatorSpecimen) throws StudyImporterException {
+        String lifeStageString = parser.getValueByLabel("Mat State");
+        LifeStage lifeStage;
+        if ("Juv".equals(lifeStageString)) {
+            lifeStage = LifeStage.JUVENILE;
+        } else if ("Mat".equals(lifeStageString)) {
+            lifeStage = LifeStage.ADULT;
+        } else if ("Mat?".equals(lifeStageString)) {
+            lifeStage = LifeStage.PROBABLY_ADULT;
+        } else if ("Trans".equals(lifeStageString)) {
+            lifeStage = LifeStage.TRANS;
+        } else if ("Trans/Juv".equals(lifeStageString)) {
+            lifeStage = LifeStage.TRANS_OR_JUVENILE;
+        } else if ("Yoy/Juv".equals(lifeStageString)) {
+            lifeStage = LifeStage.YOUNG_OF_THE_YEAR_OR_JUVENILE;
+        } else if ("Yoy".equals(lifeStageString) || "YOY".equals(lifeStageString)) {
+            lifeStage = LifeStage.YOUNG_OF_THE_YEAR;
+        } else if ("Neo".equals(lifeStageString)) {
+            lifeStage = LifeStage.NEO;
+        } else {
+            throw new StudyImporterException("unsupported lifeStage [" + lifeStageString + "] on line [" + parser.getLastLineNumber() + "]");
+        }
+        predatorSpecimen.setLifeStage(lifeStage);
     }
 
     private void addCollectionDate(String s, Relationship collectedRel) throws ParseException {

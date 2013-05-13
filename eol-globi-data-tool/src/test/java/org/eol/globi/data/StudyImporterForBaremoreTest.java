@@ -1,6 +1,7 @@
 package org.eol.globi.data;
 
 import org.hamcrest.core.Is;
+import org.junit.Assert;
 import org.junit.Test;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
@@ -15,7 +16,7 @@ import static junit.framework.Assert.assertTrue;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
-public class StudyImporterForBlaremoreTest extends GraphDBTestCase {
+public class StudyImporterForBaremoreTest extends GraphDBTestCase {
 
     @Test
     public void importLine() throws StudyImporterException, NodeFactoryException {
@@ -27,7 +28,7 @@ public class StudyImporterForBlaremoreTest extends GraphDBTestCase {
                 "402,12/16/2003,\"Dependent\",97,,\"Mat\",\"ATCR\",\"Atlantic croaker\",1,1,,,,120,,,,,51.88,60,\n" +
                 "402,12/16/2003,\"Dependent\",97,,\"Mat\",\"ATCR\",\"Atlantic croaker\",2,1,,,,,,,,,6.28,90,\"W/ otos\"";
 
-        StudyImporterForBlaremore studyImporterFor = new StudyImporterForBlaremore(new TestParserFactory(csvContent), nodeFactory);
+        StudyImporterForBaremore studyImporterFor = new StudyImporterForBaremore(new TestParserFactory(csvContent), nodeFactory);
 
         Study study = studyImporterFor.importStudy();
         assertNotNull(nodeFactory.findTaxonOfType("Squatina dumeril"));
@@ -41,7 +42,7 @@ public class StudyImporterForBlaremoreTest extends GraphDBTestCase {
 
     @Test
     public void importAll() throws StudyImporterException, NodeFactoryException {
-        StudyImporterForBlaremore studyImporterFor = new StudyImporterForBlaremore(new ParserFactoryImpl(), nodeFactory);
+        StudyImporterForBaremore studyImporterFor = new StudyImporterForBaremore(new ParserFactoryImpl(), nodeFactory);
 
         Study study = studyImporterFor.importStudy();
         assertNotNull(nodeFactory.findTaxonOfType("Squatina dumeril"));
@@ -60,6 +61,7 @@ public class StudyImporterForBlaremoreTest extends GraphDBTestCase {
             Node specimen = rel.getEndNode();
             assertNotNull(specimen);
             assertTrue(specimen.hasProperty(Specimen.LENGTH_IN_MM));
+            assertTrue(specimen.hasProperty(Specimen.LIFE_STAGE));
             Relationship collectedAtRelationship = specimen.getSingleRelationship(RelTypes.COLLECTED_AT, Direction.OUTGOING);
             assertNotNull(collectedAtRelationship);
             Node locationNode = collectedAtRelationship.getEndNode();

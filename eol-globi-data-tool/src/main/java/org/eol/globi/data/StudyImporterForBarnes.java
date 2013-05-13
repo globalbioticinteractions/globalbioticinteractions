@@ -30,7 +30,7 @@ public class StudyImporterForBarnes extends BaseStudyImporter {
         Study study = nodeFactory.getOrCreateStudy("Barnes 2008", "C. Barnes et al.", "Centre for Environment, Fisheries and Aquaculture Science, Lowestoft, Suffolk, NR33 0HT  UK", "", "<a href=\"http://www.esapubs.org/Archive/ecol/E089/051/\">Predator and prey body sizes in marine food webs.</a>", "2008");
         try {
             while (parser.getLine() != null) {
-                if (importFilter.shouldImportRecord((long)parser.getLastLineNumber())) {
+                if (importFilter.shouldImportRecord((long) parser.getLastLineNumber())) {
                     importLine(parser, study);
                 }
             }
@@ -64,13 +64,25 @@ public class StudyImporterForBarnes extends BaseStudyImporter {
         }
     }
 
-    private void addLifeStage(LabeledCSVParser parser, Specimen predator) {
+    private void addLifeStage(LabeledCSVParser parser, Specimen predator) throws StudyImporterException {
         String lifeStageString = parser.getValueByLabel("Predator lifestage");
         LifeStage stage = null;
         if ("adult".equalsIgnoreCase(lifeStageString)) {
             stage = LifeStage.ADULT;
         } else if ("juvenile".equalsIgnoreCase(lifeStageString)) {
             stage = LifeStage.JUVENILE;
+        } else if ("larva".equalsIgnoreCase(lifeStageString)) {
+            stage = LifeStage.LARVA;
+        } else if ("larva / juvenile".equalsIgnoreCase(lifeStageString)) {
+            stage = LifeStage.LARVA_OR_JUVENILE;
+        } else if ("postlarva/juvenile".equalsIgnoreCase(lifeStageString)) {
+            stage = LifeStage.POSTLARVA_OR_JUVENILE;
+        } else if ("postlarva".equalsIgnoreCase(lifeStageString)) {
+            stage = LifeStage.POSTLARVA;
+        } else {
+            if (lifeStageString != null) {
+                throw new StudyImporterException("unsupported life stage [" + lifeStageString + "] on line [" + parser.getLastLineNumber() + "]");
+            }
         }
         predator.setLifeStage(stage);
     }

@@ -13,7 +13,7 @@ public class StudyImporterFactory {
         add(StudyImporterForWrast.class);
         add(StudyImporterForBlewett.class);
         add(StudyImporterForAkin.class);
-        add(StudyImporterForBlaremore.class);
+        add(StudyImporterForBaremore.class);
         add(StudyImporterForBioInfo.class);
         add(StudyImporterForJRFerrerParis.class);
         add(StudyImporterForSPIRE.class);
