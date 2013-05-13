@@ -11,20 +11,28 @@ import org.eol.globi.domain.Study;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 public class StudyImporterForBioInfo extends BaseStudyImporter implements StudyImporter {
     private static final Log LOG = LogFactory.getLog(StudyImporterForBioInfo.class);
 
-    public static final String TAXON_ID = "Taxon_id";
-    public static final String LATIN_80 = "Latin80";
-    public static final String DONOR_TAX_ID = "DonorTax_id";
-    public static final String RECIP_TAX_ID = "RecipTax_id";
-    public static final String TROPHIC_REL_ID = "TrophicRel_Id";
-    public static final String TROPHIC_REL_ID_2 = "TrophicRel_id";
-    public static final String ENERGY_RECIPIENT = "EnergyRecipient";
     public static final String TAXA_DATA_FILE = "bioinfo.org.uk/Taxa.txt.gz";
     public static final String RELATION_TYPE_DATA_FILE = "bioinfo.org.uk/TrophicRelations.txt.gz";
     public static final String RELATIONS_DATA_FILE = "bioinfo.org.uk/Relations.txt.gz";
+    public static final Map<String, LifeStage> LIFE_STAGE_MAP = new HashMap<String, LifeStage>() {{
+        put("mycelium", LifeStage.MYCELIUM);
+        put("larva", LifeStage.LARVA);
+        put("aecium", LifeStage.AECIUM);
+        put("pycnium", LifeStage.PYCNIUM);
+        put("sporangium", LifeStage.SPORANGIUM);
+        put("uredium", LifeStage.UREDIUM);
+        put("caterpillar", LifeStage.CATERPILLAR);
+        put("adult", LifeStage.ADULT);
+        put("egg", LifeStage.EGG);
+        put("nymph", LifeStage.NYMPH);
+        put("telium", LifeStage.TELIUM);
+        put("anamorph", LifeStage.ANAMORPH);
+    }};
 
     public StudyImporterForBioInfo(ParserFactory parserFactory, NodeFactory nodeFactory) {
         super(parserFactory, nodeFactory);
@@ -76,11 +84,11 @@ public class StudyImporterForBioInfo extends BaseStudyImporter implements StudyI
 
         try {
             while (taxaParser.getLine() != null) {
-                Long taxonId = labelAsLong(taxaParser, StudyImporterForBioInfo.TAXON_ID);
+                Long taxonId = labelAsLong(taxaParser, "Taxon_id");
                 if (taxonId == null) {
                     throw new StudyImporterException("failed to parse taxa at line [" + taxaParser.getLastLineNumber() + "]");
                 }
-                String taxonScientificName = taxaParser.getValueByLabel(StudyImporterForBioInfo.LATIN_80);
+                String taxonScientificName = taxaParser.getValueByLabel("Latin80");
                 if (taxonScientificName == null || taxonScientificName.trim().length() == 0) {
                     throw new StudyImporterException("found missing or empty scientific taxa name at line [" + taxaParser.getLastLineNumber() + "]");
                 }
@@ -102,8 +110,8 @@ public class StudyImporterForBioInfo extends BaseStudyImporter implements StudyI
         Map<Long, RelType> relationsTypeMap = new HashMap<Long, RelType>();
         try {
             while (labeledCSVParser.getLine() != null) {
-                Long trophicRelationId = labelAsLong(labeledCSVParser, StudyImporterForBioInfo.TROPHIC_REL_ID_2);
-                String descriptionEnergyRecipient = labeledCSVParser.getValueByLabel(StudyImporterForBioInfo.ENERGY_RECIPIENT);
+                Long trophicRelationId = labelAsLong(labeledCSVParser, "TrophicRel_id");
+                String descriptionEnergyRecipient = labeledCSVParser.getValueByLabel("EnergyRecipient");
                 RelType relType = interactionMapping.get(descriptionEnergyRecipient);
                 if (trophicRelationId != null) {
                     relType = relType == null ? InteractType.INTERACTS_WITH : relType;
@@ -116,7 +124,7 @@ public class StudyImporterForBioInfo extends BaseStudyImporter implements StudyI
         return relationsTypeMap;
     }
 
-    protected Study createRelations(Map<Long, String> taxaMap, Map<Long, RelType> relationsTypeMap, LabeledCSVParser labeledCSVParser) throws StudyImporterException {
+    protected Study createRelations(Map<Long, String> taxaMap, Map<Long, RelType> relationsTypeMap, LabeledCSVParser parser) throws StudyImporterException {
         LOG.info("relations being created...");
         Study study = nodeFactory.getOrCreateStudy("BIO_INFO",
                 "Malcolm Storey",
@@ -125,18 +133,20 @@ public class StudyImporterForBioInfo extends BaseStudyImporter implements StudyI
                 "Food webs and species interactions in the Biodiversity of UK and Ireland.", null);
         try {
             long count = 0;
-            while (labeledCSVParser.getLine() != null) {
+            while (parser.getLine() != null) {
                 count++;
                 if (count % 1000 == 0) {
                     LOG.info("[" + count + "] relations created.");
                 }
 
                 if (importFilter.shouldImportRecord(count)) {
-                    Specimen donorSpecimen = createSpecimen(labeledCSVParser, taxaMap, StudyImporterForBioInfo.DONOR_TAX_ID);
+                    Specimen donorSpecimen = createSpecimen(parser, taxaMap, "DonorTax_id");
+                    addLifeStage(parser, donorSpecimen, "DonorStage");
                     study.collected(donorSpecimen);
-                    Specimen recipientSpecimen = createSpecimen(labeledCSVParser, taxaMap, StudyImporterForBioInfo.RECIP_TAX_ID);
+                    Specimen recipientSpecimen = createSpecimen(parser, taxaMap, "RecipTax_id");
+                    addLifeStage(parser, recipientSpecimen, "RecipStage");
                     study.collected(recipientSpecimen);
-                    donorSpecimen.interactsWith(recipientSpecimen, relationsTypeMap.get(labelAsLong(labeledCSVParser, StudyImporterForBioInfo.TROPHIC_REL_ID)));
+                    donorSpecimen.interactsWith(recipientSpecimen, relationsTypeMap.get(labelAsLong(parser, "TrophicRel_Id")));
                 }
 
             }
@@ -145,6 +155,30 @@ public class StudyImporterForBioInfo extends BaseStudyImporter implements StudyI
         }
         LOG.info("relations created.");
         return study;
+    }
+
+    private void addLifeStage(LabeledCSVParser parser, Specimen donorSpecimen, String stageColumnName) throws StudyImporterException {
+        LifeStage lifeStage = null;
+        String donorLifeStage = parser.getValueByLabel(stageColumnName);
+        if (donorLifeStage != null && donorLifeStage.trim().length() > 0) {
+            lifeStage = parseLifeStage(donorLifeStage);
+            if (lifeStage == null) {
+                throw new StudyImporterException("failed to map stage [" + donorLifeStage + "] on line [" + parser.getLastLineNumber() + "]");
+            }
+        }
+        donorSpecimen.setLifeStage(lifeStage);
+    }
+
+    private LifeStage parseLifeStage(String lifeStageString) {
+        LifeStage lifeStage = null;
+        Set<Map.Entry<String,LifeStage>> entries = LIFE_STAGE_MAP.entrySet();
+        for (Map.Entry<String, LifeStage> entry : entries) {
+            if (lifeStageString.contains(entry.getKey())) {
+                lifeStage = entry.getValue();
+                break;
+            }
+        }
+        return lifeStage == null ? LifeStage.UNCLASSIFIED : lifeStage;
     }
 
     private Specimen createSpecimen(LabeledCSVParser labeledCSVParser, Map<Long, String> taxaMap, String taxonIdString) throws StudyImporterException {
