@@ -40,7 +40,7 @@ public class StudyImporterForWrast extends BaseStudyImporter {
         }
     };
 
-    protected static final String LAVACA_BAY_DATA_SOURCE = "wrast/lavacaBayTrophicData.csv.gz";
+    protected static final String LAVACA_BAY_DATA_SOURCE = "wrast/lavacaBayTrophicData.csv";
     protected static final String LAVACA_BAY_LOCATIONS = "wrast/lavacaBayLocations.csv";
     protected static final String LAVACA_BAY_ENVIRONMENTAL = "wrast/lavacaBayEnvironmental.csv";
 
