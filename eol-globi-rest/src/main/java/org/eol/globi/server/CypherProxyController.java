@@ -4,6 +4,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.eol.globi.util.InteractUtil;
 import org.eol.globi.domain.TaxonomyProvider;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Controller;
@@ -70,15 +71,11 @@ public class CypherProxyController {
     @ResponseBody
     public String findInteractions(HttpServletRequest request) throws IOException {
         String query = "{\"query\":\"START loc" + " = node:locations('*:*') " +
-                "MATCH predatorTaxon<-[:CLASSIFIED_AS]-predator-[interactionType:" + allInteractionTypes() + "]->prey-[:CLASSIFIED_AS]->preyTaxon ";
+                "MATCH predatorTaxon<-[:CLASSIFIED_AS]-predator-[interactionType:" + InteractUtil.allInteractionsCypherClause() + "]->prey-[:CLASSIFIED_AS]->preyTaxon ";
         query = addLocationClausesIfNecessary(request, query);
         query += "RETURN predatorTaxon.externalId, predatorTaxon.name as predatorName, type(interactionType), preyTaxon.externalId, preyTaxon.name as preyTaxon\", " +
                 "\"params\":" + buildParams(null) + "}";
         return execute(query);
-    }
-
-    private String allInteractionTypes() {
-        return "PREYS_UPON|PARASITE_OF|HAS_HOST|INTERACTS_WITH|ATE";
     }
 
 
@@ -144,7 +141,7 @@ public class CypherProxyController {
     @Cacheable(value = "contributorCache")
     public String contributors() throws IOException {
         String query = "{\"query\":\"START study=node:studies('*:*')" +
-                " MATCH study-[:COLLECTED]->sourceSpecimen-[interact:ATE|PREYS_UPON|PARASITE_OF|HAS_HOST|INTERACTS_WITH]->prey-[:CLASSIFIED_AS]->targetTaxon, sourceSpecimen-[:CLASSIFIED_AS]->sourceTaxon " +
+                " MATCH study-[:COLLECTED]->sourceSpecimen-[interact:" + InteractUtil.allInteractionsCypherClause() + "]->prey-[:CLASSIFIED_AS]->targetTaxon, sourceSpecimen-[:CLASSIFIED_AS]->sourceTaxon " +
                 " RETURN study.institution, study.period, study.description, study.contributor, count(interact), count(distinct(sourceTaxon)), count(distinct(targetTaxon))\", \"params\": { } }";
         return execute(query);
     }
@@ -204,7 +201,7 @@ public class CypherProxyController {
     @ResponseBody
     public String findShortestPaths(@PathVariable("startTaxon") String startTaxon, @PathVariable("endTaxon") String endTaxon) throws IOException {
         String query = "{\"query\":\"START startNode = node:taxons(name={startTaxon}),endNode = node:taxons(name={endTaxon}) " +
-                "MATCH p = allShortestPaths(startNode-[:" + allInteractionTypes() + "|CLASSIFIED_AS*..100]-endNode) " +
+                "MATCH p = allShortestPaths(startNode-[:" + InteractUtil.allInteractionsCypherClause() + "|CLASSIFIED_AS*..100]-endNode) " +
                 "RETURN extract(n in (filter(x in nodes(p) : has(x.name))) : " +
                 "coalesce(n.name?)) as shortestPaths " +
                 "LIMIT 10\",\"params\":{\"startTaxon\": \"" + startTaxon + "\", \"endTaxon\":\"" + endTaxon + "\"}}";

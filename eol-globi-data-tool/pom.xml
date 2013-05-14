@@ -12,10 +12,6 @@
     <artifactId>eol-globi-data-tool</artifactId>
     <name>EOL's Global Biotic Interaction Data Import/Export Tool</name>
 
-    <properties>
-        <neo4j.version>1.9.M03</neo4j.version>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
@@ -43,11 +39,6 @@
             <version>${neo4j.version}</version>
             <type>test-jar</type>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.neo4j</groupId>
-            <artifactId>neo4j</artifactId>
-            <version>${neo4j.version}</version>
         </dependency>
 
         <!-- CVS Parsing, base 64 encoding and more -->

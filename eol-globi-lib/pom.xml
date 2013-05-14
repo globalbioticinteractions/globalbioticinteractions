@@ -52,6 +52,12 @@
             <version>1.0</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.neo4j</groupId>
+            <artifactId>neo4j</artifactId>
+            <version>${neo4j.version}</version>
+        </dependency>
+
     </dependencies>
 
 </project>

@@ -3,7 +3,8 @@ package org.eol.globi.client;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eol.globi.export.InteractionsExporter;
-import org.eol.globi.export.StudyExportUnmatchedTaxaForStudies;
+import org.eol.globi.export.StudyExportUnmatchedSourceTaxaForStudies;
+import org.eol.globi.export.StudyExportUnmatchedTargetTaxaForStudies;
 import org.eol.globi.service.TaxonPropertyEnricher;
 import org.eol.globi.service.TaxonPropertyEnricherImpl;
 import org.neo4j.graphdb.GraphDatabaseService;
@@ -46,7 +47,8 @@ public class TrophicImporter {
         List<Study> studies = findAllStudies(graphService);
         try {
             FileWriter darwinCoreMeta = writeMetaHeader();
-            export(studies, "./unmatchedSourceTaxa.csv", new StudyExportUnmatchedTaxaForStudies(GraphService.getGraphService()), darwinCoreMeta);
+            export(studies, "./unmatchedSourceTaxa.csv", new StudyExportUnmatchedSourceTaxaForStudies(GraphService.getGraphService()), darwinCoreMeta);
+            export(studies, "./unmatchedTargetTaxa.csv", new StudyExportUnmatchedTargetTaxaForStudies(GraphService.getGraphService()), darwinCoreMeta);
             export(studies, "./interactions.csv", new InteractionsExporter(), darwinCoreMeta);
             writeMetaFooter(darwinCoreMeta);
         } catch (IOException e) {

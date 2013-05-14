@@ -78,12 +78,6 @@
         </dependency>
 
         <dependency>
-            <groupId>org.neo4j</groupId>
-            <artifactId>neo4j</artifactId>
-            <version>1.9.RC1</version>
-        </dependency>
-
-        <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-core</artifactId>
             <version>${spring.version}</version>
@@ -408,8 +402,6 @@
                         <properties>
                             <cargo.hostname>trophicgraph.com</cargo.hostname>
                             <cargo.servlet.port>8082</cargo.servlet.port>
-                            <cargo.remote.username>someusername</cargo.remote.username>
-                            <cargo.remote.password>somepassword</cargo.remote.password>
                         </properties>
                     </configuration>
 

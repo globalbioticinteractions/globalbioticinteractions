@@ -5,7 +5,6 @@ import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
-import org.eol.globi.domain.Taxon;
 import org.eol.globi.service.NoMatchService;
 import org.junit.Test;
 
@@ -15,7 +14,7 @@ import java.io.StringWriter;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
-public class StudyExportUnmatchedTaxaForStudiesTest extends GraphDBTestCase {
+public class StudyExportUnmatchedSourceTaxaForStudiesTest extends GraphDBTestCase {
 
     @Test
     public void exportOnePredatorTwoPrey() throws NodeFactoryException, IOException {
@@ -45,11 +44,17 @@ public class StudyExportUnmatchedTaxaForStudiesTest extends GraphDBTestCase {
 
 
         StringWriter writer = new StringWriter();
-        new StudyExportUnmatchedTaxaForStudies(getGraphDb()).exportStudy(study, writer, true);
+        new StudyExportUnmatchedSourceTaxaForStudies(getGraphDb()).exportStudy(study, writer, true);
         assertThat(writer.toString(), is("\"original source taxon name\",\"unmatched normalized source taxon name\",\"study\"\n" +
                 "\"Homo sapiens3 (blah)\",\"Homo sapiens3\",\"my study\"\n" +
                 "\"Homo sapiens2 (bla)\",\"Homo sapiens2\",\"my study\"\n"
         ));
+
+        writer = new StringWriter();
+        new StudyExportUnmatchedTargetTaxaForStudies(getGraphDb()).exportStudy(study, writer, true);
+                assertThat(writer.toString(), is("\"original target taxon name\",\"unmatched normalized target taxon name\",\"study\"\n" +
+                        "\"Canis lupus other\",\"Canis lupus other\",\"my study\"\n"
+                ));
     }
 
     private void addCanisLupus(Specimen predatorSpecimen, String externalId) throws NodeFactoryException {
@@ -59,7 +64,7 @@ public class StudyExportUnmatchedTaxaForStudiesTest extends GraphDBTestCase {
 
     @Test
     public void darwinCoreMetaTable() throws IOException {
-        StudyExportUnmatchedTaxaForStudies exporter = new StudyExportUnmatchedTaxaForStudies(getGraphDb());
+        StudyExportUnmatchedTaxaForStudies exporter = new StudyExportUnmatchedSourceTaxaForStudies(getGraphDb());
         StringWriter writer = new StringWriter();
         exporter.exportDarwinCoreMetaTable(writer, "unmatched.csv");
         String expectedMetaTable = exporter.getMetaTablePrefix() + "unmatched.csv" + exporter.getMetaTableSuffix();
