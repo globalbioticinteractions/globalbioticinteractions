@@ -44,6 +44,12 @@
             <version>${project.version}</version>
             <classifier>neo4j-graph-db</classifier>
             <type>tar.gz</type>
+            <exclusions>
+                <exclusion>
+                    <artifactId>eol-globi-data-tool</artifactId>
+                    <groupId>${project.groupId}</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
@@ -414,6 +420,42 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.cargo</groupId>
+                <artifactId>cargo-maven2-plugin</artifactId>
+                <version>1.4.0</version>
+                <configuration>
+                    <container>
+                        <containerId>jetty8x</containerId>
+                        <type>remote</type>
+                    </container>
+
+                    <configuration>
+                        <type>runtime</type>
+                        <properties>
+                            <cargo.hostname>trophicgraph.com</cargo.hostname>
+                            <cargo.servlet.port>8082</cargo.servlet.port>
+                            <cargo.remote.username>someusername</cargo.remote.username>
+                            <cargo.remote.password>somepassword</cargo.remote.password>
+                        </properties>
+                    </configuration>
+
+                    <deployer>
+                        <type>remote</type>
+                    </deployer>
+
+                    <deployables>
+                        <deployable>
+                            <groupId>${project.groupId}</groupId>
+                            <artifactId>${project.artifactId}</artifactId>
+                            <type>war</type>
+                            <properties>
+                                <context>/</context>
+                            </properties>
+                        </deployable>
+                    </deployables>
+                </configuration>
             </plugin>
         </plugins>
 
