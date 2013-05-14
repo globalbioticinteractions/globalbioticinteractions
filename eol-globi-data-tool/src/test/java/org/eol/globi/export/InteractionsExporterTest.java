@@ -1,5 +1,6 @@
 package org.eol.globi.export;
 
+import org.eol.globi.data.LifeStage;
 import org.junit.Test;
 import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.Transaction;
@@ -24,8 +25,8 @@ public class InteractionsExporterTest extends GraphDBTestCase {
     public void exportMissingLength() throws IOException, NodeFactoryException, ParseException {
         createTestData(null);
         String expected = getExpectedHeader();
-        expected += "\n\"myStudy\",\"Homo sapiens\",,\"ATE\",\"Canis lupus\",,123.0,345.9,-60.0,1992,3,30";
-        expected += "\n\"myStudy\",\"Homo sapiens\",,\"ATE\",\"Canis lupus\",,123.0,345.9,-60.0,1992,3,30";
+        expected += "\n\"myStudy\",\"Homo sapiens\",\"JUVENILE\",,\"ATE\",\"Canis lupus\",,,123.0,345.9,-60.0,1992,3,30";
+        expected += "\n\"myStudy\",\"Homo sapiens\",\"JUVENILE\",,\"ATE\",\"Canis lupus\",,,123.0,345.9,-60.0,1992,3,30";
 
         Study myStudy1 = nodeFactory.findStudy("myStudy");
 
@@ -38,7 +39,7 @@ public class InteractionsExporterTest extends GraphDBTestCase {
 
     private String getExpectedHeader() {
         String expected = "";
-        expected += "\"study\",\"sourceTaxonName\",\"sourceTaxonId\",\"interactType\",\"targetTaxonName\",\"targetTaxonId\",\"latitude\",\"longitude\",\"altitude\",\"collection year\",\"collection month\",\"collection day of month\"";
+        expected += "\"study\",\"sourceTaxonName\",\"sourceLifeStage\",\"sourceTaxonId\",\"interactType\",\"targetTaxonName\",\"targetLifeStage\",\"targetTaxonId\",\"latitude\",\"longitude\",\"altitude\",\"collection year\",\"collection month\",\"collection day of month\"";
         return expected;
     }
 
@@ -46,8 +47,8 @@ public class InteractionsExporterTest extends GraphDBTestCase {
     public void exportNoHeader() throws IOException, NodeFactoryException, ParseException {
         createTestData(null);
         String expected = "";
-        expected += "\n\"myStudy\",\"Homo sapiens\",,\"ATE\",\"Canis lupus\",,123.0,345.9,-60.0,1992,3,30";
-        expected += "\n\"myStudy\",\"Homo sapiens\",,\"ATE\",\"Canis lupus\",,123.0,345.9,-60.0,1992,3,30";
+        expected += "\n\"myStudy\",\"Homo sapiens\",\"JUVENILE\",,\"ATE\",\"Canis lupus\",,,123.0,345.9,-60.0,1992,3,30";
+        expected += "\n\"myStudy\",\"Homo sapiens\",\"JUVENILE\",,\"ATE\",\"Canis lupus\",,,123.0,345.9,-60.0,1992,3,30";
 
         Study myStudy1 = nodeFactory.findStudy("myStudy");
 
@@ -63,8 +64,8 @@ public class InteractionsExporterTest extends GraphDBTestCase {
         createTestData(123.0);
         String expected = "";
         expected += getExpectedHeader();
-        expected += "\n\"myStudy\",\"Homo sapiens\",,\"ATE\",\"Canis lupus\",,123.0,345.9,-60.0,1992,3,30";
-        expected += "\n\"myStudy\",\"Homo sapiens\",,\"ATE\",\"Canis lupus\",,123.0,345.9,-60.0,1992,3,30";
+        expected += "\n\"myStudy\",\"Homo sapiens\",\"JUVENILE\",,\"ATE\",\"Canis lupus\",,,123.0,345.9,-60.0,1992,3,30";
+        expected += "\n\"myStudy\",\"Homo sapiens\",\"JUVENILE\",,\"ATE\",\"Canis lupus\",,,123.0,345.9,-60.0,1992,3,30";
 
         Study myStudy1 = nodeFactory.findStudy("myStudy");
 
@@ -96,6 +97,7 @@ public class InteractionsExporterTest extends GraphDBTestCase {
         Study myStudy = nodeFactory.createStudy("myStudy");
         Specimen specimen = nodeFactory.createSpecimen("Homo sapiens");
         specimen.setStomachVolumeInMilliLiter(666.0);
+        specimen.setLifeStage(LifeStage.JUVENILE);
         Relationship collected = myStudy.collected(specimen);
         Transaction transaction = myStudy.getUnderlyingNode().getGraphDatabase().beginTx();
         try {
