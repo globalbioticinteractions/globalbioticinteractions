@@ -20,11 +20,6 @@
         <aspectj.version>1.6.11</aspectj.version>
         <jetty.version>8.1.9.v20130131</jetty.version>
         <slf4j.version>1.6.1</slf4j.version>
-        <hibernate.version>3.6.4.Final</hibernate.version>
-        <hibernate.validator.version>4.1.0.Final</hibernate.validator.version>
-        <jdbc.driver.groupId>postgresql</jdbc.driver.groupId>
-        <jdbc.driver.artifactId>postgresql</jdbc.driver.artifactId>
-        <jdbc.driver.version>8.4-702.jdbc3</jdbc.driver.version>
         <javax.validation.version>1.0.0.GA</javax.validation.version>
         <commons-dbcp.version>1.4</commons-dbcp.version>
         <javassist.version>3.9.0.GA</javassist.version>
@@ -142,32 +137,6 @@
             <artifactId>aspectjweaver</artifactId>
             <version>${aspectj.version}</version>
         </dependency>
-
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-core</artifactId>
-            <version>${hibernate.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-envers</artifactId>
-            <version>${hibernate.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-entitymanager</artifactId>
-            <version>${hibernate.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>cglib</groupId>
-                    <artifactId>cglib</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>dom4j</groupId>
-                    <artifactId>dom4j</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
         <dependency>
             <groupId>org.hibernate.javax.persistence</groupId>
             <artifactId>hibernate-jpa-2.0-api</artifactId>
@@ -177,21 +146,6 @@
             <groupId>jaxen</groupId>
             <artifactId>jaxen</artifactId>
             <version>1.1.1</version>
-        </dependency>
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-validator</artifactId>
-            <version>${hibernate.validator.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>javax.xml.bind</groupId>
-                    <artifactId>jaxb-api</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>com.sun.xml.bind</groupId>
-                    <artifactId>jaxb-impl</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>javax.validation</groupId>
@@ -279,11 +233,6 @@
                     <artifactId>xml-apis</artifactId>
                 </exclusion>
             </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>${jdbc.driver.groupId}</groupId>
-            <artifactId>${jdbc.driver.artifactId}</artifactId>
-            <version>${jdbc.driver.version}</version>
         </dependency>
         <dependency>
             <groupId>javax.mail</groupId>
