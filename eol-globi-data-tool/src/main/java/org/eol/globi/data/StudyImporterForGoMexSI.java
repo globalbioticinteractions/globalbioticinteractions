@@ -3,9 +3,12 @@ package org.eol.globi.data;
 import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.eol.globi.domain.BodyPart;
 import org.eol.globi.domain.Location;
+import org.eol.globi.domain.PhysiologicalState;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
+import org.eol.globi.domain.Taxon;
 import org.neo4j.graphdb.Transaction;
 
 import java.io.IOException;
@@ -23,11 +26,26 @@ public class StudyImporterForGoMexSI extends BaseStudyImporter {
 
     @Override
     public Study importStudy() throws StudyImporterException {
-        Map<String, List<String>> predatorIdToPredatorNames = new HashMap<String, List<String>>();
-        Map<String, List<String>> predatorIdToPreyNames = new HashMap<String, List<String>>();
+        final Map<String, Map<String, String>> predatorIdToPredatorNames = new HashMap<String, Map<String, String>>();
+        final Map<String, List<Map<String, String>>> predatorIdToPreyNames = new HashMap<String, List<Map<String, String>>>();
         Map<String, Study> referenceIdToStudy = new HashMap<String, Study>();
-        addSpecimen(predatorIdToPredatorNames, "gomexsi/Predators.csv", "PRED_SCI_NAME");
-        addSpecimen(predatorIdToPreyNames, "gomexsi/Prey.csv", "DATABASE_PREY_NAME");
+        addSpecimen("gomexsi/Predators.csv", "PRED_SCI_NAME", new ParseEventHandler() {
+            @Override
+            public void onSpecimen(String predatorUID, Map<String, String> properties) {
+                predatorIdToPredatorNames.put(predatorUID, properties);
+            }
+        });
+        addSpecimen("gomexsi/Prey.csv", "DATABASE_PREY_NAME", new ParseEventHandler() {
+            @Override
+            public void onSpecimen(String predatorUID, Map<String, String> properties) {
+                List<Map<String, String>> preyList = predatorIdToPreyNames.get(predatorUID);
+                if (preyList == null) {
+                    preyList = new ArrayList<Map<String, String>>();
+                    predatorIdToPreyNames.put(predatorUID, preyList);
+                }
+                preyList.add(properties);
+            }
+        });
         addReferences(referenceIdToStudy);
         addObservations(predatorIdToPredatorNames, referenceIdToStudy, predatorIdToPreyNames);
 
@@ -91,7 +109,7 @@ public class StudyImporterForGoMexSI extends BaseStudyImporter {
         referenceIdToStudy.put(refId, study);
     }
 
-    private void addObservations(Map<String, List<String>> predatorIdToPredatorSpecimen, Map<String, Study> refIdToStudyMap, Map<String, List<String>> predatorIdToPreySpecimen) throws StudyImporterException {
+    private void addObservations(Map<String, Map<String, String>> predatorIdToPredatorSpecimen, Map<String, Study> refIdToStudyMap, Map<String, List<Map<String, String>>> predatorUIToPreyLists) throws StudyImporterException {
         String locationResource = "gomexsi/Locations.csv";
         try {
             LabeledCSVParser parser = parserFactory.createParser(locationResource, CharsetConstant.UTF8);
@@ -103,41 +121,88 @@ public class StudyImporterForGoMexSI extends BaseStudyImporter {
                 Double depth = getMandatoryDoubleValue(locationResource, parser, "MN_DEP_SAMP");
                 Location location = nodeFactory.getOrCreateLocation(latitude, longitude, depth == null ? null : -depth);
                 String predatorId = refId + specimenId;
-                List<String> predatorNames = predatorIdToPredatorSpecimen.get(predatorId);
-                if (predatorNames == null) {
+                Map<String, String> predatorProperties = predatorIdToPredatorSpecimen.get(predatorId);
+                if (predatorProperties == null) {
                     LOG.warn("failed to lookup location for predator [" + refId + ":" + specimenId + "] from [" + locationResource + ":" + parser.getLastLineNumber() + "]");
                 } else {
-                    for (String predatorName : predatorNames) {
-                        Specimen predatorSpecimen = null;
-                        try {
-                            predatorSpecimen = nodeFactory.createSpecimen(predatorName);
-                            predatorSpecimen.setExternalId(predatorId);
-                            predatorSpecimen.caughtIn(location);
-                            Study study = refIdToStudyMap.get(refId);
-                            if (study != null) {
-                                study.collected(predatorSpecimen);
-                            } else {
-                                LOG.warn("failed to find study for ref id [" + refId + "] on related to observation location in [" + locationResource + ":" + parser.getLastLineNumber() + "]");
-                            }
-                        } catch (NodeFactoryException e) {
-                            throw new StudyImporterException("failed to create specimen for [" + predatorName + "]");
+                    try {
+                        Specimen predatorSpecimen = createSpecimen(predatorProperties);
+                        predatorSpecimen.setExternalId(predatorId);
+                        predatorSpecimen.caughtIn(location);
+                        Study study = refIdToStudyMap.get(refId);
+                        if (study != null) {
+                            study.collected(predatorSpecimen);
+                        } else {
+                            LOG.warn("failed to find study for ref id [" + refId + "] on related to observation location in [" + locationResource + ":" + parser.getLastLineNumber() + "]");
                         }
-                        List<String> preyNames = predatorIdToPreySpecimen.get(predatorId);
-                        if (preyNames != null) {
-                            for (String preyName : preyNames) {
-                                try {
-                                    predatorSpecimen.ate(nodeFactory.createSpecimen(preyName));
-                                } catch (NodeFactoryException e) {
-                                    throw new StudyImporterException("failed to create specimen for [" + preyName + "]");
+
+                        List<Map<String, String>> preyList = predatorUIToPreyLists.get(predatorId);
+                        if (preyList == null) {
+                            LOG.warn("no prey for predator with id [" + predatorId + "]");
+                        } else {
+                            for (Map<String, String> preyProperties : preyList) {
+                                if (preyProperties != null) {
+                                    try {
+                                        predatorSpecimen.ate(createSpecimen(preyProperties));
+                                    } catch (NodeFactoryException e) {
+                                        throw new StudyImporterException("failed to create specimen for [" + predatorProperties + "]");
+                                    }
                                 }
                             }
                         }
+
+                    } catch (NodeFactoryException e) {
+                        throw new StudyImporterException("failed to create specimen for location on line [" + parser.getLastLineNumber() + "]");
                     }
                 }
             }
         } catch (IOException e) {
             throw new StudyImporterException("failed to open resource [" + locationResource + "]", e);
         }
+    }
+
+    private Specimen createSpecimen(Map<String, String> properties) throws NodeFactoryException, StudyImporterException {
+        Specimen specimen = nodeFactory.createSpecimen(properties.get(Taxon.NAME));
+        specimen.setLifeStage(getLifeStage(properties.get(Specimen.LIFE_STAGE)));
+        specimen.setPhysiologicalState(getPhysiologicalStage(properties.get(Specimen.PHYSIOLOGICAL_STATE)));
+        specimen.setBodyPart(getBodyPart(properties.get(Specimen.BODY_PART)));
+        return specimen;
+    }
+
+    private BodyPart getBodyPart(String bodyPartName) throws StudyImporterException {
+        BodyPart bodyPart = null;
+        Map<String, BodyPart> bodyPartMap = new HashMap<String, BodyPart>() {
+            {
+                put("NA", BodyPart.UNKNOWN);
+                put("scales", BodyPart.SCALES);
+                put("bone", BodyPart.BONE);
+            }
+        };
+        if (bodyPartName != null && bodyPartName.trim().length() > 0) {
+            bodyPart = bodyPartMap.get(bodyPartName);
+            if (bodyPart == null) {
+                throw new StudyImporterException("failed to parse body part, found unsupported stage [" + bodyPartName + "]");
+            }
+        }
+        return bodyPart;
+    }
+
+    private PhysiologicalState getPhysiologicalStage(String physiologicalStateName) throws StudyImporterException {
+        PhysiologicalState physiologicalState = null;
+        Map<String, PhysiologicalState> physiologicalStateMap = new HashMap<String, PhysiologicalState>() {
+            {
+                put("NA", PhysiologicalState.UNKNOWN);
+                put("remains", PhysiologicalState.REMAINS);
+                put("digestate", PhysiologicalState.DIGESTATE);
+            }
+        };
+        if (physiologicalStateName != null && physiologicalStateName.trim().length() > 0) {
+            physiologicalState = physiologicalStateMap.get(physiologicalStateName);
+            if (physiologicalState == null) {
+                throw new StudyImporterException("failed to parse physiological state, found unsupported stage [" + physiologicalStateName + "]");
+            }
+        }
+        return physiologicalState;
     }
 
     private Double getMandatoryDoubleValue(String locationResource, LabeledCSVParser parser, String label) throws StudyImporterException {
@@ -149,30 +214,28 @@ public class StudyImporterForGoMexSI extends BaseStudyImporter {
         }
     }
 
-    private void addSpecimen(Map<String, List<String>> specimenMap, String datafile, String scientificNameLabel) throws StudyImporterException {
+    private void addSpecimen(String datafile, String scientificNameLabel, ParseEventHandler specimenListener) throws StudyImporterException {
         try {
             LabeledCSVParser parser = parserFactory.createParser(datafile, CharsetConstant.UTF8);
             while (parser.getLine() != null) {
                 String refId = getMandatoryValue(datafile, parser, "REF_ID");
                 String specimenId = getMandatoryValue(datafile, parser, "PRED_ID");
                 String scientificName = getMandatoryValue(datafile, parser, scientificNameLabel);
-                LifeStage stage = getLifeStage(parser);
                 String predatorUID = refId + specimenId;
-                List<String> nameLists = specimenMap.get(predatorUID);
-                if (nameLists == null) {
-                    nameLists = new ArrayList<String>();
-                }
-                nameLists.add(scientificName);
-                specimenMap.put(predatorUID, nameLists);
+                Map<String, String> properties = new HashMap<String, String>();
+                properties.put(Taxon.NAME, scientificName);
+                properties.put(Specimen.LIFE_STAGE, parser.getValueByLabel("LIFE_HIST_STAGE"));
+                properties.put(Specimen.PHYSIOLOGICAL_STATE, parser.getValueByLabel("PHYSIOLOG_STATE"));
+                properties.put(Specimen.BODY_PART, parser.getValueByLabel("PREY_PARTS"));
+                specimenListener.onSpecimen(predatorUID, properties);
             }
         } catch (IOException e) {
             throw new StudyImporterException("failed to open resource [" + datafile + "]", e);
         }
     }
 
-    private LifeStage getLifeStage(LabeledCSVParser parser) throws StudyImporterException {
+    private LifeStage getLifeStage(String lifeStageString) throws StudyImporterException {
         LifeStage lifeStage = null;
-        String lifeStageString = parser.getValueByLabel("LIFE_HIST_STAGE");
         Map<String, LifeStage> lifeStageMap = new HashMap<String, LifeStage>() {
             {
                 put("adult", LifeStage.ADULT);

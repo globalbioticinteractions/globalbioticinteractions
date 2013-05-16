@@ -9,6 +9,7 @@ import org.junit.Test;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
+import org.neo4j.graphdb.index.Index;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +29,9 @@ public class StudyImporterForGoMexSITest extends GraphDBTestCase {
         importer.importStudy();
 
         Study study = nodeFactory.findStudy("Divita et al 1983");
+
+        assertSpecimenProperties(study);
+
         assertNotNull(study);
         assertThat(study.getTitle(), is("Divita et al 1983"));
         assertThat(study.getContributor(), is("Regina Divita, Mischelle Creel, Peter Sheridan"));
@@ -61,7 +65,7 @@ public class StudyImporterForGoMexSITest extends GraphDBTestCase {
 
             Relationship collectedBy = predatorSpecimen.getSingleRelationship(RelTypes.COLLECTED, Direction.INCOMING);
             assertThat(collectedBy, is(notNullValue()));
-            String title = (String)collectedBy.getStartNode().getProperty("title");
+            String title = (String) collectedBy.getStartNode().getProperty("title");
             titles.add(title);
         }
 
@@ -78,6 +82,29 @@ public class StudyImporterForGoMexSITest extends GraphDBTestCase {
         assertNotNull(nodeFactory.findLocation(29.346953, -92.980614, -13.641));
 
         assertNotNull(nodeFactory.findStudy("GoMexSI"));
+    }
+
+    private void assertSpecimenProperties(Study study) {
+        Index<Node> taxa = getGraphDb().index().forNodes("taxons");
+        boolean detectedAtLeastOneLifeState = false;
+        boolean detectedAtLeastOnePhysiologicalState = false;
+        boolean detectedAtLeastOnePreyBodyPart = false;
+
+        assertThat(taxa, is(notNullValue()));
+
+        for (Node taxonNode : taxa.query("name", "*")) {
+            Iterable<Relationship> classifiedAs = taxonNode.getRelationships(Direction.INCOMING, RelTypes.CLASSIFIED_AS);
+            for (Relationship classifiedA : classifiedAs) {
+                Node specimenNode = classifiedA.getStartNode();
+                detectedAtLeastOneLifeState |= specimenNode.hasProperty(Specimen.LIFE_STAGE);
+                detectedAtLeastOnePhysiologicalState |= specimenNode.hasProperty(Specimen.PHYSIOLOGICAL_STATE);
+                detectedAtLeastOnePreyBodyPart |= specimenNode.hasProperty(Specimen.BODY_PART);
+            }
+        }
+
+        assertThat(detectedAtLeastOneLifeState, is(true));
+        assertThat(detectedAtLeastOnePhysiologicalState, is(true));
+        assertThat(detectedAtLeastOnePreyBodyPart, is(true));
     }
 
 

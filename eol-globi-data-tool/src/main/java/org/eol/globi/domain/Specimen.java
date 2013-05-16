@@ -13,6 +13,8 @@ public class Specimen extends NodeBacked {
     public static final String STOMACH_VOLUME_ML = "stomachVolumeInMilliLiter";
     public static final String DATE_IN_UNIX_EPOCH = "dateInUnixEpoch";
     public static final String LIFE_STAGE = "lifeStage";
+    public static final String PHYSIOLOGICAL_STATE = "physiologicalState";
+    public static final String BODY_PART = "bodyPart";
 
     public Specimen(Node node) {
         super(node);
@@ -86,7 +88,6 @@ public class Specimen extends NodeBacked {
     }
 
 
-
     public void interactsWith(Specimen recipientSpecimen, RelType relType) {
         createRelationshipTo(recipientSpecimen, relType);
     }
@@ -113,4 +114,15 @@ public class Specimen extends NodeBacked {
         }
     }
 
+    public void setPhysiologicalState(PhysiologicalState physiologicalStage) {
+        if (physiologicalStage != null) {
+            setPropertyWithTx(Specimen.PHYSIOLOGICAL_STATE, physiologicalStage.name());
+        }
+    }
+
+    public void setBodyPart(BodyPart bodyPart) {
+        if (bodyPart != null) {
+            setPropertyWithTx(Specimen.BODY_PART, bodyPart.name());
+        }
+    }
 }
