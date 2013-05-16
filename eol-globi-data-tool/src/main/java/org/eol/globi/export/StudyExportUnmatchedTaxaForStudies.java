@@ -39,8 +39,6 @@ public abstract class StudyExportUnmatchedTaxaForStudies extends BaseExporter {
         query.append(NoMatchService.NO_MATCH);
         query.append("\" RETURN distinct description.name, taxon.name, study.title");
 
-        System.out.println(query.toString());
-
         ExecutionResult result = engine.execute(query.toString());
 
         if (includeHeader) {

@@ -60,7 +60,7 @@ public class StudyImporterForAkin extends BaseStudyImporter {
                 specimen.caughtIn(location);
             }
         } catch (StudyImporterException ex) {
-            System.out.println("[" + studyResource + "]: " + ex.getMessage());
+            LOG.warn("[" + studyResource + "]", ex);
         }
     }
 
