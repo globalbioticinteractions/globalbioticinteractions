@@ -1,6 +1,7 @@
 package org.eol.globi.export;
 
 import org.eol.globi.domain.Study;
+import org.eol.globi.service.NoMatchService;
 import org.neo4j.cypher.javacompat.ExecutionEngine;
 import org.neo4j.cypher.javacompat.ExecutionResult;
 import org.neo4j.graphdb.GraphDatabaseService;
@@ -28,9 +29,19 @@ public abstract class StudyExportUnmatchedTaxaForStudies extends BaseExporter {
     @Override
     public void exportStudy(Study study, Writer writer, boolean includeHeader) throws IOException {
         ExecutionEngine engine = new ExecutionEngine(graphDbService);
-        String query = getQueryString(study);
 
-        ExecutionResult result = engine.execute(query);
+        StringBuilder query = new StringBuilder();
+        query.append("START study = node:studies(title=\"");
+        query.append(study.getTitle());
+        query.append("\") ");
+        query.append(getQueryString(study));
+        query.append("WHERE not(has(taxon.externalId)) or taxon.externalId = \"");
+        query.append(NoMatchService.NO_MATCH);
+        query.append("\" RETURN distinct description.name, taxon.name, study.title");
+
+        System.out.println(query.toString());
+
+        ExecutionResult result = engine.execute(query.toString());
 
         if (includeHeader) {
             writeHeader(writer, getTaxonLabel());

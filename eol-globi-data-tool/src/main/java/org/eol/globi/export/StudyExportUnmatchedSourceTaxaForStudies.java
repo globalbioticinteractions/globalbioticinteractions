@@ -15,10 +15,8 @@ public class StudyExportUnmatchedSourceTaxaForStudies extends StudyExportUnmatch
     }
 
     protected String getQueryString(Study study) {
-        return "START study = node:studies(title=\"" + study.getTitle() + "\") " +
-                    "MATCH study-[:COLLECTED]->specimen-[:CLASSIFIED_AS]->taxon, specimen-[:ORIGINALLY_DESCRIBED_AS]->description " +
-                    "WHERE taxon.externalId = \"" + NoMatchService.NO_MATCH + "\" " +
-                    "RETURN distinct description.name, taxon.name, study.title";
+        return "MATCH study-[:COLLECTED]->specimen-[:CLASSIFIED_AS]->taxon, " +
+                "specimen-[:ORIGINALLY_DESCRIBED_AS]->description ";
     }
 
     @Override
