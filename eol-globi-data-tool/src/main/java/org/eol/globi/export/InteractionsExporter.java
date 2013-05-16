@@ -25,17 +25,21 @@ public class InteractionsExporter extends BaseExporter {
             "    <field index=\"0\" term=\"http://rs.tdwg.org/dwc/terms/collectionID\"/>\n" +
             "    <field index=\"1\" term=\"http://rs.tdwg.org/dwc/terms/scientificName\"/>\n" +
             "    <field index=\"2\" term=\"http://rs.tdwg.org/dwc/terms/lifeStage\"/>\n" +
-            "    <field index=\"3\" term=\"http://rs.tdwg.org/dwc/terms/taxonID\"/>\n" +
-            "    <field index=\"4\" term=\"http://rs.tdwg.org/dwc/terms/relationshipOfResource\"/>\n" +
-            "    <field index=\"5\" term=\"http://rs.tdwg.org/dwc/terms/scientificName\"/>\n" +
-            "    <field index=\"6\" term=\"http://rs.tdwg.org/dwc/terms/lifeStage\"/>\n" +
-            "    <field index=\"7\" term=\"http://rs.tdwg.org/dwc/terms/taxonID\"/>\n" +
-            "    <field index=\"8\" term=\"http://rs.tdwg.org/dwc/terms/decimalLatitude\"/>\n" +
-            "    <field index=\"9\" term=\"http://rs.tdwg.org/dwc/terms/decimalLongitude\"/>\n" +
-            "    <field index=\"10\" term=\"http://rs.tdwg.org/dwc/terms/verbatimElevation\"/>\n" +
-            "    <field index=\"11\" term=\"http://rs.tdwg.org/dwc/terms/year\"/>\n" +
-            "    <field index=\"12\" term=\"http://rs.tdwg.org/dwc/terms/month\"/>\n" +
-            "    <field index=\"13\" term=\"http://rs.tdwg.org/dwc/terms/day\"/>\n" +
+            "    <field index=\"3\" term=\"http://rs.tdwg.org/dwc/terms/physiologicalState\"/>\n" +
+            "    <field index=\"4\" term=\"http://rs.tdwg.org/dwc/terms/bodyPart\"/>\n" +
+            "    <field index=\"5\" term=\"http://rs.tdwg.org/dwc/terms/taxonID\"/>\n" +
+            "    <field index=\"6\" term=\"http://rs.tdwg.org/dwc/terms/relationshipOfResource\"/>\n" +
+            "    <field index=\"7\" term=\"http://rs.tdwg.org/dwc/terms/scientificName\"/>\n" +
+            "    <field index=\"8\" term=\"http://rs.tdwg.org/dwc/terms/lifeStage\"/>\n" +
+            "    <field index=\"9\" term=\"http://rs.tdwg.org/dwc/terms/physiologicalState\"/>\n" +
+            "    <field index=\"10\" term=\"http://rs.tdwg.org/dwc/terms/bodyPart\"/>\n" +
+            "    <field index=\"11\" term=\"http://rs.tdwg.org/dwc/terms/taxonID\"/>\n" +
+            "    <field index=\"12\" term=\"http://rs.tdwg.org/dwc/terms/decimalLatitude\"/>\n" +
+            "    <field index=\"13\" term=\"http://rs.tdwg.org/dwc/terms/decimalLongitude\"/>\n" +
+            "    <field index=\"14\" term=\"http://rs.tdwg.org/dwc/terms/verbatimElevation\"/>\n" +
+            "    <field index=\"15\" term=\"http://rs.tdwg.org/dwc/terms/year\"/>\n" +
+            "    <field index=\"16\" term=\"http://rs.tdwg.org/dwc/terms/month\"/>\n" +
+            "    <field index=\"17\" term=\"http://rs.tdwg.org/dwc/terms/day\"/>\n" +
             "  </table>\n";
     private static final String META_TABLE_PREFIX = "<table encoding=\"UTF-8\" fieldsTerminatedBy=\",\" linesTerminatedBy=\"\\n\" ignoreHeaderLines=\"1\" rowType=\"http://rs.tdwg.org/dwc/terms/DarwinRecord\">\n" +
             "    <files>\n" +
@@ -44,7 +48,7 @@ public class InteractionsExporter extends BaseExporter {
     @Override
     public void exportStudy(Study study, Writer writer, boolean includeHeader) throws IOException {
         if (includeHeader) {
-            writer.write("\"study\",\"sourceTaxonName\",\"sourceLifeStage\",\"sourceTaxonId\",\"interactType\",\"targetTaxonName\",\"targetLifeStage\",\"targetTaxonId\",\"latitude\",\"longitude\",\"altitude\"");
+            writer.write("\"study\",\"sourceTaxonName\",\"sourceLifeStage\",\"sourcePhysiologicalState\",\"sourceBodyPart\",\"sourceTaxonId\",\"interactType\",\"targetTaxonName\",\"targetLifeStage\",\"targetPhysiologicalState\",\"targetBodyPart\",\"targetTaxonId\",\"latitude\",\"longitude\",\"altitude\"");
             writer.write(",\"collection year\",\"collection month\",\"collection day of month\"");
         }
         Iterable<Relationship> specimens = study.getSpecimens();
@@ -80,7 +84,7 @@ public class InteractionsExporter extends BaseExporter {
         writer.write("\n");
         addRowField(writer, study.getTitle());
         addTaxonField(writer, predatorNode);
-        addRowField(writer,  ateRelationship == null ? null : ateRelationship.getType().name());
+        addRowField(writer, ateRelationship == null ? null : ateRelationship.getType().name());
 
         Node preyNode = ateRelationship == null ? null : ateRelationship.getEndNode();
         addTaxonField(writer, preyNode);
@@ -89,6 +93,8 @@ public class InteractionsExporter extends BaseExporter {
         writePropertyValueOrEmpty(writer, locationNode, Location.ALTITUDE);
 
         writeCollectionDate(writer, collectedRelationship);
+
+
     }
 
     private void writeCollectionDate(Writer writer, Relationship collectedRelationship) throws IOException {
@@ -153,6 +159,8 @@ public class InteractionsExporter extends BaseExporter {
         }
         addRowField(writer, taxonString);
         writePropertyValueOrEmpty(writer, specimenNode, Specimen.LIFE_STAGE);
+        writePropertyValueOrEmpty(writer, specimenNode, Specimen.PHYSIOLOGICAL_STATE);
+        writePropertyValueOrEmpty(writer, specimenNode, Specimen.BODY_PART);
         addRowField(writer, taxonId);
     }
 

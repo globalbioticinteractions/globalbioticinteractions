@@ -36,7 +36,11 @@ public class CypherProxyController {
             "collected_rel.dateInUnixEpoch? as collection_time_in_unix_epoch," +
             "ID(predator) as tmp_and_unique_specimen_id," +
             "predator.lifeStage? as predator_life_stage," +
-            "prey.lifeStage? as prey_life_stage\"";
+            "prey.lifeStage? as prey_life_stage\"" +
+            "predator.bodyPart? as predator_body_part," +
+            "prey.bodyPart? as prey_body_part\"" +
+            "predator.physiologicalState? as predator_physiological_state," +
+            "prey.physiologicalState? as prey_physiological_state\"";
 
     @RequestMapping(value = "/taxon/{scientificName}/" + INTERACTION_PREYS_ON, method = RequestMethod.GET)
     @ResponseBody

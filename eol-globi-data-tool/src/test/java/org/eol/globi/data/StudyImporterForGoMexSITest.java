@@ -30,7 +30,7 @@ public class StudyImporterForGoMexSITest extends GraphDBTestCase {
 
         Study study = nodeFactory.findStudy("Divita et al 1983");
 
-        assertSpecimenProperties(study);
+        assertSpecimenProperties();
 
         assertNotNull(study);
         assertThat(study.getTitle(), is("Divita et al 1983"));
@@ -84,7 +84,7 @@ public class StudyImporterForGoMexSITest extends GraphDBTestCase {
         assertNotNull(nodeFactory.findStudy("GoMexSI"));
     }
 
-    private void assertSpecimenProperties(Study study) {
+    private void assertSpecimenProperties() {
         Index<Node> taxa = getGraphDb().index().forNodes("taxons");
         boolean detectedAtLeastOneLifeState = false;
         boolean detectedAtLeastOnePhysiologicalState = false;
