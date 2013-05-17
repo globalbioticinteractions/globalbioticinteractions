@@ -151,7 +151,7 @@ public class StudyImporterForBioInfoTest extends GraphDBTestCase {
         Map<Long, RelType> relationsTypeMap = buildRelationsTypeMap();
 
         assertThat(relationsTypeMap.get(43899L), is((RelType) InteractType.PREYS_UPON));
-        assertThat(relationsTypeMap.get(43900L), is((RelType) InteractType.PARASITE_OF));
+        assertThat(relationsTypeMap.get(43900L), is((RelType) InteractType.HOST_OF));
         assertThat(relationsTypeMap.get(43901L), is((RelType) InteractType.HAS_HOST));
         assertThat(relationsTypeMap.get(43902L), is((RelType) InteractType.INTERACTS_WITH));
     }
