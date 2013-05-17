@@ -101,7 +101,7 @@ public class StudyImporterForBioInfo extends BaseStudyImporter implements StudyI
     }
 
     protected Map<Long, RelType> createRelationsTypeMap(LabeledCSVParser labeledCSVParser) throws StudyImporterException {
-        // Attempt to map Malcolms interations to http://vocabularies.gbif.org/vocabularies/Interaction
+        // Attempt to map Malcolms interactions to http://vocabularies.gbif.org/vocabularies/Interaction
         Map<String, RelType> interactionMapping = new HashMap<String, RelType>();
         interactionMapping.put("ectoparasitises", InteractType.HOST_OF);
         interactionMapping.put("is predator of", InteractType.PREYS_UPON);
