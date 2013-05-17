@@ -40,7 +40,7 @@ public class StudyImporterForBioInfo extends BaseStudyImporter implements StudyI
 
     @Override
     public Study importStudy() throws StudyImporterException {
-        LabeledCSVParser relationsParser = null;
+        LabeledCSVParser relationsParser;
         try {
             relationsParser = parserFactory.createParser(RELATIONS_DATA_FILE, CharsetConstant.UTF8);
             relationsParser.changeDelimiter('\t');
@@ -103,7 +103,7 @@ public class StudyImporterForBioInfo extends BaseStudyImporter implements StudyI
     protected Map<Long, RelType> createRelationsTypeMap(LabeledCSVParser labeledCSVParser) throws StudyImporterException {
         // Attempt to map Malcolms interations to http://vocabularies.gbif.org/vocabularies/Interaction
         Map<String, RelType> interactionMapping = new HashMap<String, RelType>();
-        interactionMapping.put("ectoparasitises", InteractType.PARASITE_OF);
+        interactionMapping.put("ectoparasitises", InteractType.HOST_OF);
         interactionMapping.put("is predator of", InteractType.PREYS_UPON);
         interactionMapping.put("is ectomycorrhizal with", InteractType.HAS_HOST);
 
