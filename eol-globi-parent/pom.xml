@@ -77,6 +77,11 @@
             <url>http://code.berkeleybop.org/maven/repository</url>
         </repository>
         <repository>
+            <id>-neo4j</id>
+            <name>neo4j maven repo</name>
+            <url>http://m2.neo4j.org/</url>
+        </repository>
+        <repository>
             <id>-globi-snapshot</id>
             <name>GloBI snaphotsy</name>
             <url>https://s3.amazonaws.com/globi/snapshot</url>

@@ -28,7 +28,6 @@
             <artifactId>commons-io</artifactId>
             <version>2.1</version>
         </dependency>
-
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
@@ -39,25 +38,26 @@
             <artifactId>httpmime</artifactId>
             <version>${httpcomponents.version}</version>
         </dependency>
-
         <dependency>
             <groupId>org.codehaus.jackson</groupId>
             <artifactId>jackson-mapper-asl</artifactId>
             <version>1.7.2</version>
         </dependency>
-
         <dependency>
             <groupId>uk.org.mygrid.resources.jcoord</groupId>
             <artifactId>jcoord</artifactId>
             <version>1.0</version>
         </dependency>
-
         <dependency>
             <groupId>org.neo4j</groupId>
             <artifactId>neo4j</artifactId>
             <version>${neo4j.version}</version>
         </dependency>
-
+        <dependency>
+            <groupId>org.neo4j</groupId>
+            <artifactId>neo4j-spatial</artifactId>
+            <version>0.11-SNAPSHOT</version>
+        </dependency>
     </dependencies>
 
 </project>

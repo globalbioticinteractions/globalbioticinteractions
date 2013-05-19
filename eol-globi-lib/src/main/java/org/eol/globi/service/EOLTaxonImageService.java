@@ -4,6 +4,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -62,12 +63,17 @@ public class EOLTaxonImageService extends BaseHttpClientService {
 
             if (null != imageObjectId) {
                 String pageUrlString = "http://eol.org/api/data_objects/1.0/" + imageObjectId + ".json";
-                response = getHttpClient().execute(new HttpGet(pageUrlString));
-                responseString = EntityUtils.toString(response.getEntity());
-                if (200 == response.getStatusLine().getStatusCode()) {
-                    taxonImage = new TaxonImage();
-                    taxonImage.setEOLPageId(eolPageId);
-                    enrichTaxonWithImageInfo(taxonImage, responseString);
+                DefaultHttpClient httpClient = new DefaultHttpClient();
+                try {
+                    response = httpClient.execute(new HttpGet(pageUrlString));
+                    responseString = EntityUtils.toString(response.getEntity());
+                    if (200 == response.getStatusLine().getStatusCode()) {
+                        taxonImage = new TaxonImage();
+                        taxonImage.setEOLPageId(eolPageId);
+                        enrichTaxonWithImageInfo(taxonImage, responseString);
+                    }
+                } finally {
+                    httpClient.getConnectionManager().shutdown();
                 }
             }
         }
@@ -78,19 +84,24 @@ public class EOLTaxonImageService extends BaseHttpClientService {
         HttpResponse response;
         String responseString;
         String pageUrlString = "http://eol.org/api/pages/1.0/" + eolPageId + ".json?common_names=0&details=0&images=1&videos=0&text=0";
-        response = getHttpClient().execute(new HttpGet(pageUrlString));
-        responseString = EntityUtils.toString(response.getEntity());
-        if (200 == response.getStatusLine().getStatusCode()) {
-            ObjectMapper mapper = new ObjectMapper();
-            JsonNode array = mapper.readTree(responseString);
-            JsonNode dataObjects = array.findValue("dataObjects");
-            if (dataObjects != null && dataObjects.size() > 0) {
-                JsonNode dataObject = dataObjects.get(0);
-                if (dataObject.has("identifier")) {
-                    imageObjectId = dataObject.get("identifier").getValueAsText();
+        DefaultHttpClient httpClient = new DefaultHttpClient();
+        try {
+            response = httpClient.execute(new HttpGet(pageUrlString));
+            responseString = EntityUtils.toString(response.getEntity());
+            if (200 == response.getStatusLine().getStatusCode()) {
+                ObjectMapper mapper = new ObjectMapper();
+                JsonNode array = mapper.readTree(responseString);
+                JsonNode dataObjects = array.findValue("dataObjects");
+                if (dataObjects != null && dataObjects.size() > 0) {
+                    JsonNode dataObject = dataObjects.get(0);
+                    if (dataObject.has("identifier")) {
+                        imageObjectId = dataObject.get("identifier").getValueAsText();
+                    }
                 }
-            }
 
+            }
+        } finally {
+            httpClient.getConnectionManager().shutdown();
         }
         return imageObjectId;
     }
@@ -112,21 +123,26 @@ public class EOLTaxonImageService extends BaseHttpClientService {
     private String lookupEOLPageId(String taxonId, String eolPageId, String eolProviderId) throws IOException {
         String urlString = "http://eol.org/api/search_by_provider/1.0/" + taxonId + ".json?hierarchy_id=" + eolProviderId;
         HttpGet get = new HttpGet(urlString);
-        HttpResponse response = getHttpClient().execute(get);
+        DefaultHttpClient httpClient = new DefaultHttpClient();
+        try {
+            HttpResponse response = httpClient.execute(get);
 
-        String responseString = EntityUtils.toString(response.getEntity());
+            String responseString = EntityUtils.toString(response.getEntity());
 
-        if (200 == response.getStatusLine().getStatusCode()) {
-            ObjectMapper mapper = new ObjectMapper();
-            JsonNode jsonNode = mapper.readTree(responseString);
-            if (jsonNode.isArray()) {
-                ArrayNode arrayNode = (ArrayNode) jsonNode;
-                if (arrayNode.size() > 0) {
-                    JsonNode firstNode = arrayNode.get(0);
-                    JsonNode eol_page_id = firstNode.get("eol_page_id");
-                    eolPageId = eol_page_id.getValueAsText();
+            if (200 == response.getStatusLine().getStatusCode()) {
+                ObjectMapper mapper = new ObjectMapper();
+                JsonNode jsonNode = mapper.readTree(responseString);
+                if (jsonNode.isArray()) {
+                    ArrayNode arrayNode = (ArrayNode) jsonNode;
+                    if (arrayNode.size() > 0) {
+                        JsonNode firstNode = arrayNode.get(0);
+                        JsonNode eol_page_id = firstNode.get("eol_page_id");
+                        eolPageId = eol_page_id.getValueAsText();
+                    }
                 }
             }
+        } finally {
+            httpClient.getConnectionManager().shutdown();
         }
         return eolPageId;
     }
