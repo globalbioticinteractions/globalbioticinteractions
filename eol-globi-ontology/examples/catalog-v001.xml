@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<catalog prefer="public" xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog">
+  <uri id="User Entered Import Resolution"  name="http://eol.org/globi/ontology" uri="../globi.owl"/>
+  <uri id="User Entered Import Resolution"  name="http://eol.org/globi/examples/savanna" uri="savanna.ttl"/>
+  <uri id="User Entered Import Resolution"  name="http://eol.org/globi/examples/predator" uri="predator.ttl"/>
+  <uri id="User Entered Import Resolution"  name="http://eol.org/globi/examples/lion-cubs" uri="lion-cubs.ttl"/>
+  <group id="Folder Repository, directory=, recursive=false, Auto-Update=false, version=2" prefer="public" xml:base=""/>
+</catalog>
