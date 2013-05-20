@@ -1,0 +1,182 @@
+Prefix: xsd: <http://www.w3.org/2001/XMLSchema#>
+Prefix: owl: <http://www.w3.org/2002/07/owl#>
+Prefix: : <http://eol.org/globi/>
+Prefix: obo: <http://purl.obolibrary.org/obo/>
+Prefix: dc: <http://purl.org/dc/elements/1.1/>
+Prefix: xml: <http://www.w3.org/XML/1998/namespace>
+Prefix: rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+Prefix: dc: <http://purl.org/dc/elements/1.1/>
+Prefix: rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+Prefix: scv: <http://purl.org/NET/scovo#>
+Prefix: definition: <http://purl.obolibrary.org/obo/IAO_0000115>
+Prefix: synonym: <http://purl.obolibrary.org/obo/IAO_0000118>
+
+Ontology: <http://eol.org/globi/ontology.owl>
+
+ObjectProperty: :part-of
+ObjectProperty: :has-part
+  InverseOf: :part-of
+
+ObjectProperty: :has-participant
+  Annotations: rdfs:comment "Connects a process (such as an interaction or interaction) to a material entity such as an organism"
+
+ObjectProperty: :participates-in
+  InverseOf: :has-participant
+
+ObjectProperty: :occurs-in
+  Annotations: rdfs:comment "Connects a process (such as an interaction or interaction) to a material entity that contains all the particpants of the process. This could be expansive (e.g. ocean) or restricted."
+
+ObjectProperty: :has-agent
+  Annotations: rdfs:comment "The process is seen from the perspective of this participant. The agent is not necessarily the instigator"
+  SubPropertyOf: :has-participant
+ObjectProperty: :agent-in
+  InverseOf: :has-agent
+
+ObjectProperty: :has-patient
+  Annotations: rdfs:comment "The converse of has-agent. The process is seen to be acting upon participant. Can also be thought of as the 'victim', or the 'star'"
+  SubPropertyOf: :has-participant
+ObjectProperty: :patient-in
+  InverseOf: :has-patient
+
+ObjectProperty: :interacts-with
+  Annotations: rdfs:comment "This property is inferred between participants"
+  SubPropertyChain: :participates-in o :has-participant
+
+ObjectProperty: :interacts-with-patient
+  SubPropertyChain: :agent-in o :has-patient
+
+ObjectProperty: :interacts-with-agent
+  SubPropertyChain: :has-patient o :agent-in
+
+ObjectProperty: :taxonomically-interacts-with
+  SubPropertyChain: inverse(:has-taxon) o :interacts-with o :has-taxon
+ObjectProperty: :taxonomically-interacts-with-inferred
+  SubPropertyChain: inverse(:has-taxon-inferred) o :interacts-with o :has-taxon-inferred
+
+ObjectProperty: :has-participating-taxon
+  SubPropertyChain: :has-participant o :has-taxon
+ObjectProperty: :has-participating-taxon-inferred
+  SubPropertyChain: :has-participant o :has-taxon-inferred
+
+ObjectProperty: :reciprocal-of
+
+ObjectProperty: :has-stage
+  Domain: :organism
+  Range: :stage
+
+ObjectProperty: :has-taxon-inferred
+  SubPropertyChain: :has-taxon o :subtaxon-of
+  Domain: :organism
+  Range: :taxon
+ObjectProperty: :has-taxon
+  SubPropertyOf: :has-taxon-inferred
+  Domain: :organism
+  Range: :taxon
+
+ObjectProperty: :has-observation
+  Range: :observation
+
+ObjectProperty: :subtaxon-of
+  Domain: :taxon
+  Range: :taxon
+  Characteristics: Transitive
+
+
+Class: :material-entity
+Class: :occurrent
+
+Class: :taxon
+Class: :role
+
+Class: :interactor-role
+  EquivalentTo: :role and :participates-in some :interaction
+
+Class: :observer-role
+  EquivalentTo: :role and :participates-in some :observation
+
+Class: :biome
+  SubClassOf: :material-entity
+
+Class: :organism
+  SubClassOf: :material-entity
+
+Class: :inanimate-object
+  SubClassOf: :material-entity
+  DisjointWith: :organism
+
+Class: :male-organism
+  SubClassOf: :organism
+Class: :female-organism
+  SubClassOf: :organism
+
+Class: :stage
+  SubClassOf: :occurrent
+
+Class: :interaction
+  SubClassOf: :occurrent
+
+Class: :observation
+  SubClassOf: :occurrent
+
+Class: :biotic-interaction
+  EquivalentTo: :interaction and :has-participant min 2 :organism
+
+Class: :semibiotic-interaction
+  EquivalentTo: :interaction and :has-participant exactly 1 :organism and :has-participant min 1 :inanimate-object
+
+Class: :polarized-interaction
+  SubClassOf: :interaction
+
+Class: :mutualist-interaction
+  Annotations: rdfs:comment "A interaction performed by any of the equal participants in a mutualist interaction"
+  SubClassOf: :interaction
+  DisjointWith: :polarized-interaction
+
+Class: :instigator-interaction
+  Annotations: rdfs:comment "A interaction performed by the participant playing the instigator role"
+  SubClassOf: :polarized-interaction
+
+Class: :victim-interaction
+  Annotations: rdfs:comment "A interaction performed by the participant playing the victim role"
+  SubClassOf: :polarized-interaction
+  DisjointWith: :instigator-interaction
+
+Class: :predator-interaction
+  Annotations: rdfs:comment "The actions of the predator participant in a predator-prey interaction"
+  SubClassOf: :instigator-interaction
+
+Class: :predator-role
+  EquivalentTo: :role and :agent-in some :predator-interaction
+
+
+Class: :pollination-interaction
+  Annotations: rdfs:comment "The actions of the pollinator participant in an instance of pollination"
+  SubClassOf: :instigator-interaction
+
+Class: :prey-interaction
+  Annotations: rdfs:comment "The actions of the prey participant in a predator-prey interaction"
+  SubClassOf: :victim-interaction
+  EquivalentTo: :reciprocal-of some :predator-interaction
+
+Class: :playing-interaction
+  Annotations: rdfs:comment "The actions of either of the mutual participants in a playing interaction"
+  SubClassOf: :mutualist-interaction
+
+Class: :parasitism-interaction
+  Annotations: rdfs:comment "The actions of the parasite participant in a parasite-host interaction"
+  SubClassOf: :instigator-interaction
+
+Class: :mating-interaction
+  Annotations: rdfs:comment "The actions of either participant in a mating between two individuals"
+  SubClassOf: :polarized-interaction
+
+Class: :male-mating-interaction
+  Annotations: rdfs:comment "A mating behavior in which the organism is a male"
+  EquivalentTo: :mating-interaction and :has-agent some :male-organism
+  EquivalentTo: :reciprocal-of some :female-mating-interaction
+
+Class: :female-mating-interaction
+  Annotations: rdfs:comment "A mating behavior in which the organism is a female"
+  EquivalentTo: :mating-interaction and :has-agent some :female-organism
+  EquivalentTo: :reciprocal-of some :male-mating-interaction
+
