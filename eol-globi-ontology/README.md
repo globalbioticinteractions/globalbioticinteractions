@@ -1,8 +1,47 @@
+# EOL-Globi-Ontology
 
-## Interactions
+This describes the OWL model used for EOL-Globi - globi.owl
 
-Interactions are treated as biological processes. We reuse parts of
-the Gene Ontology biological process hierarchy for interactions
+Status: Draft
+
+## Goals
+
+To produce an OWL model representing inter-organism or inter-taxon
+interactions within Globi to allow
+
+ * publication of EOL-Globi on the linked data cloud
+ * use of OWL reasoners to validate and perform complex queries on EOL Globi data
+
+## Contents of this project
+
+ * globi.owl - an OWL ontology modeling various kinds of interactions
+ * examples/ - examples in turtle format of particular animals engaging in interactions
+
+## Model
+
+### Reference
+
+We are taking Malcolm Storey's documentation on interactions as a reference.
+
+### Ontology Reuse
+
+globi.owl will reuse classes and relations from other bio-ontologies,
+in particular:
+
+ * Interaction processes from the Gene Ontology (GO)
+ * Environments and biomes from the environment ontology (ENVO)
+ * Taxa from NCBITaxon and other ontologization of taxonomic resources
+ * Taxonomic ranks from the OBO taxrank ontology
+ * Relations from the OBO Relations Ontology (RO)
+ * Life cycle stages from UBERON
+ * Body parts from UBERON
+ * Observations and speciments from IAO, OBO and OBOE
+ * Behaviors from NBO
+
+### Interactions
+
+Interactions are treated as biological processes. We will reuse parts
+of the Gene Ontology biological process hierarchy for interactions
 between organisms.
 
 We make biotic interaction a generalization of GO:0051704 !
@@ -12,32 +51,17 @@ interactions (not covered in GO).
 Note that GO biological processes are typically modeled from the
 perspective of one organism. Is this always the instigator?
 
-## Polarity
+### Polarity
 
-In OWL it is generally undesirable to have proliferation of
-relationship types. However, we can model the polarity as *roles* -
-e.g. predator role and prey role.
+Interactions may be polarized or unpolarized. In a polarized
+interaction, there is at least one participant who is deemed the
+"agent", and one who is deemed the "patient". In an unpolarized
+interaction, participants are equal in their roles.
 
- predator-prey interaction <
-  has_participant some (organism and has_role some predator)
-  and
-  has_participant some (organism and has_role some prey)
+An interaction is always represented from the perspective of one
+participant.
 
-alternately, these could be seen as individual processes
-
- pp-interaction
-  has_part some predation-behavior
-  has_part some prey-behavior
-
-predation process SubClassOf instigator process
-
-playing-dead SubClassOf prey-behavior
-
-instigator-in some pp-interaction SubClassOf ...
-
-Two processes coincident in time, each from an individual perspective
-
-## Taxa vs organisms
+### Taxa vs organisms
 
 Instance-level:
 
@@ -46,12 +70,6 @@ Instance-level:
 
 Lion SubClassOf capable_of predator-prey-interaction and has_patient some impala
 
-## Sequences of interactions
+### Sequences of interactions
 
 Ethograms
-
-## Other ontologies
-
- * NBO
- * GO
- * Uberon
