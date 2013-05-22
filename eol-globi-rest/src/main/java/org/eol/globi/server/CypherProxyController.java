@@ -4,8 +4,8 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.eol.globi.util.InteractUtil;
 import org.eol.globi.domain.TaxonomyProvider;
+import org.eol.globi.util.InteractUtil;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,6 +20,7 @@ import java.util.Map;
 
 @Controller
 public class CypherProxyController {
+
     public static final String OBSERVATION_MATCH =
             "MATCH (predatorTaxon)<-[:CLASSIFIED_AS]-(predator)-[:ATE]->(prey)-[:CLASSIFIED_AS]->(preyTaxon)," +
                     "(predator)-[:COLLECTED_AT]->(loc)," +
@@ -42,18 +43,6 @@ public class CypherProxyController {
             "predator.physiologicalState? as predator_physiological_state," +
             "prey.physiologicalState? as prey_physiological_state\"";
 
-    @RequestMapping(value = "/taxon/{scientificName}/" + INTERACTION_PREYS_ON, method = RequestMethod.GET)
-    @ResponseBody
-    public String findPreyOf(HttpServletRequest request, @PathVariable("scientificName") String scientificName) throws IOException {
-        String query1 = "{\"query\":\"START predatorTaxon = node:taxons(name={scientificName}) " +
-                "MATCH predatorTaxon<-[:CLASSIFIED_AS]-predator-[:ATE]->prey-[:CLASSIFIED_AS]->preyTaxon ";
-        query1 = addLocationClausesIfNecessary(request, query1);
-        query1 += "RETURN distinct(preyTaxon.name) as preyName\", " +
-                "\"params\":" + buildParams(scientificName) + "}";
-        String query = query1;
-        return execute(query);
-    }
-
     private String addLocationClausesIfNecessary(HttpServletRequest request, String query) {
         query += " , predator-[:COLLECTED_AT]->loc ";
         query += request == null ? "" : RequestHelper.buildCypherSpatialWhereClause(request.getParameterMap());
@@ -71,7 +60,7 @@ public class CypherProxyController {
         return params;
     }
 
-    @RequestMapping(value = "/interaction", method = RequestMethod.GET)
+    @RequestMapping(value = "/interaction", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
     public String findInteractions(HttpServletRequest request) throws IOException {
         String query = "{\"query\":\"START loc" + " = node:locations('*:*') " +
@@ -82,8 +71,20 @@ public class CypherProxyController {
         return execute(query);
     }
 
+    @RequestMapping(value = "/taxon/{scientificName}/" + INTERACTION_PREYS_ON, method = RequestMethod.GET, produces = "application/json", headers = "content-type=*/*")
+    @ResponseBody
+    public String findPreyOf(HttpServletRequest request, @PathVariable("scientificName") String scientificName) throws IOException {
+        String query1 = "{\"query\":\"START predatorTaxon = node:taxons(name={scientificName}) " +
+                "MATCH predatorTaxon<-[:CLASSIFIED_AS]-predator-[:ATE]->prey-[:CLASSIFIED_AS]->preyTaxon ";
+        query1 = addLocationClausesIfNecessary(request, query1);
+        query1 += "RETURN distinct(preyTaxon.name) as preyName\", " +
+                "\"params\":" + buildParams(scientificName) + "}";
+        String query = query1;
+        return execute(query);
+    }
 
-    @RequestMapping(value = "/taxon/{scientificName}/" + INTERACTION_PREYED_UPON_BY, method = RequestMethod.GET)
+
+    @RequestMapping(value = "/taxon/{scientificName}/" + INTERACTION_PREYED_UPON_BY, method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
     public String findPredatorsOf(HttpServletRequest request, @PathVariable("scientificName") String scientificName) throws IOException {
         String query = "{\"query\":\"START preyTaxon" + " = node:taxons(name={scientificName}) " +
@@ -94,7 +95,7 @@ public class CypherProxyController {
         return execute(query);
     }
 
-    @RequestMapping(value = "/findTaxon/{taxonName}", method = RequestMethod.GET)
+    @RequestMapping(value = "/findTaxon/{taxonName}", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
     public String findTaxon(@PathVariable("taxonName") String taxonName) throws IOException {
         String query = "{\"query\":\"START taxon = node:taxons('*:*') " +
@@ -104,7 +105,7 @@ public class CypherProxyController {
         return execute(query);
     }
 
-    @RequestMapping(value = "/taxon/{predatorName}/" + INTERACTION_PREYS_ON, params = {INCLUDE_OBSERVATIONS_TRUE}, method = RequestMethod.GET)
+    @RequestMapping(value = "/taxon/{predatorName}/" + INTERACTION_PREYS_ON, params = {INCLUDE_OBSERVATIONS_TRUE}, method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
     public String findPreyObservationsOf(HttpServletRequest request, @PathVariable("predatorName") String predatorName) throws IOException {
         String query = "{\"query\":\"START predatorTaxon = node:taxons(name={predatorName}) " +
@@ -116,7 +117,7 @@ public class CypherProxyController {
         return execute(query);
     }
 
-    @RequestMapping(value = "/taxon/{preyName}/" + INTERACTION_PREYED_UPON_BY, params = {INCLUDE_OBSERVATIONS_TRUE}, method = RequestMethod.GET)
+    @RequestMapping(value = "/taxon/{preyName}/" + INTERACTION_PREYED_UPON_BY, params = {INCLUDE_OBSERVATIONS_TRUE}, method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
     public String findPredatorObservationsOf(HttpServletRequest request, @PathVariable("preyName") String preyName) throws IOException {
         String query = "{\"query\":\"START preyTaxon = node:taxons(name={preyName}) " +
@@ -132,7 +133,7 @@ public class CypherProxyController {
         return request == null ? "" : RequestHelper.buildCypherSpatialWhereClause(request.getParameterMap());
     }
 
-    @RequestMapping(value = "/locations", method = RequestMethod.GET)
+    @RequestMapping(value = "/locations", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
     @Cacheable(value = "locationCache")
     public String locations() throws IOException {
@@ -140,7 +141,7 @@ public class CypherProxyController {
     }
 
 
-    @RequestMapping(value = "/contributors", method = RequestMethod.GET)
+    @RequestMapping(value = "/contributors", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
     @Cacheable(value = "contributorCache")
     public String contributors() throws IOException {
@@ -157,18 +158,15 @@ public class CypherProxyController {
         HttpClient.addJsonHeaders(httpPost);
         httpPost.setEntity(new StringEntity(query));
         BasicResponseHandler responseHandler = new BasicResponseHandler();
-        return httpclient.execute(httpPost, responseHandler);
+        String response = httpclient.execute(httpPost, responseHandler);
+        return response;
     }
 
 
-    @RequestMapping(value = "/findExternalUrlForTaxon/{taxonName}", method = RequestMethod.GET)
+    @RequestMapping(value = "/findExternalUrlForTaxon/{taxonName}", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
     public String findExternalLinkForTaxonWithName(@PathVariable("taxonName") String taxonName) throws IOException {
-        String query = "{\"query\":\"START taxon = node:taxons(name={taxonName}) " +
-                " RETURN taxon.externalId\"" +
-                ", \"params\": { \"taxonName\" : \"" + taxonName + "\" } }";
-
-        String result = execute(query);
+        String result = findExternalIdForTaxon(taxonName);
 
         String url = null;
         for (Map.Entry<String, String> stringStringEntry : getURLPrefixMap().entrySet()) {
@@ -181,11 +179,21 @@ public class CypherProxyController {
         return buildJsonUrl(url);
     }
 
+    @RequestMapping(value = "/findExternalIdForTaxon/{taxonName}", method = RequestMethod.GET, produces = "application/json")
+    @ResponseBody
+    public String findExternalIdForTaxon(String taxonName) throws IOException {
+        String query = "{\"query\":\"START taxon = node:taxons(name={taxonName}) " +
+                " RETURN taxon.externalId as externalId\"" +
+                ", \"params\": { \"taxonName\" : \"" + taxonName + "\" } }";
+
+        return execute(query);
+    }
+
     private String buildJsonUrl(String url) {
         return url == null ? "{}" : "{\"url\":\"" + url + "\"}";
     }
 
-    @RequestMapping(value = "/findExternalUrlForExternalId/{externalId}", method = RequestMethod.GET)
+    @RequestMapping(value = "/findExternalUrlForExternalId/{externalId}", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
     public String findExternalLinkForExternalId(@PathVariable("externalId") String externalId) {
         String url = null;
@@ -201,7 +209,7 @@ public class CypherProxyController {
         return buildJsonUrl(url);
     }
 
-    @RequestMapping(value = "/shortestPathsBetweenTaxon/{startTaxon}/andTaxon/{endTaxon}", method = RequestMethod.GET)
+    @RequestMapping(value = "/shortestPathsBetweenTaxon/{startTaxon}/andTaxon/{endTaxon}", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
     public String findShortestPaths(@PathVariable("startTaxon") String startTaxon, @PathVariable("endTaxon") String endTaxon) throws IOException {
         String query = "{\"query\":\"START startNode = node:taxons(name={startTaxon}),endNode = node:taxons(name={endTaxon}) " +
@@ -224,9 +232,9 @@ public class CypherProxyController {
         if (result.contains(externalIdPrefix)) {
             String[] split = result.split(externalIdPrefix);
             if (split.length > 1) {
-                String[] eolId = split[1].split("\"");
-                if (eolId.length > 1) {
-                    url = urlPrefix + eolId[0];
+                String[] externalIdParts = split[1].split("\"");
+                if (externalIdParts.length > 1) {
+                    url = urlPrefix + externalIdParts[0];
                 }
             }
         }
