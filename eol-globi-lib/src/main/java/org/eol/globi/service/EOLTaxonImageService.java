@@ -1,5 +1,7 @@
 package org.eol.globi.service;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.text.WordUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.HttpResponse;
@@ -113,7 +115,11 @@ public class EOLTaxonImageService extends BaseHttpClientService {
                         if (commonNameNode.has("eol_preferred") && commonNameNode.has("language")) {
                             String language = commonNameNode.get("language").getTextValue();
                             if ("en".equals(language) && commonNameNode.has("vernacularName")) {
-                                pageInfo.setCommonName(commonNameNode.get("vernacularName").getTextValue());
+                                String vernacularName = commonNameNode.get("vernacularName").getTextValue();
+                                String commonName = vernacularName.replaceAll("\\(.*\\)", "");
+                                String capitalize = WordUtils.capitalize(commonName);
+
+                                pageInfo.setCommonName(capitalize.replaceAll("\\sAnd\\s", " and "));
                                 break;
                             }
                         }

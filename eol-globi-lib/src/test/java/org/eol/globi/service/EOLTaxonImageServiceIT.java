@@ -26,7 +26,7 @@ public class EOLTaxonImageServiceIT {
         assertThat(taxonImage.getEOLPageId(), is("207614"));
         assertThat(taxonImage.getInfoURL(), is("http://eol.org/pages/207614"));
         assertThat(taxonImage.getScientificName(), is("Fundulus jenkinsi"));
-        assertThat(taxonImage.getCommonName(), is("topminnows"));
+        assertThat(taxonImage.getCommonName(), is("Topminnows"));
     }
 
     @Test
@@ -37,7 +37,7 @@ public class EOLTaxonImageServiceIT {
         assertThat(taxonImage.getEOLPageId(), is("205157"));
         assertThat(taxonImage.getInfoURL(), is("http://eol.org/pages/205157"));
         assertThat(taxonImage.getScientificName(), is("Centropomus undecimalis"));
-        assertThat(taxonImage.getCommonName(), is("common snook"));
+        assertThat(taxonImage.getCommonName(), is("Common Snook"));
     }
 
     @Test
@@ -52,7 +52,7 @@ public class EOLTaxonImageServiceIT {
         assertThat(taxonImage.getEOLPageId(), is("210779"));
         assertThat(taxonImage.getInfoURL(), is("http://eol.org/pages/210779"));
         assertThat(taxonImage.getScientificName(), is("Prionotus paralatus"));
-        assertThat(taxonImage.getCommonName(), is("Mexican searobin"));
+        assertThat(taxonImage.getCommonName(), is("Mexican Searobin"));
     }
 
     @Test
@@ -67,7 +67,7 @@ public class EOLTaxonImageServiceIT {
         assertThat(taxonImage.getEOLPageId(), is("1045608"));
         assertThat(taxonImage.getInfoURL(), is("http://eol.org/pages/1045608"));
         assertThat(taxonImage.getScientificName(), is("Apis mellifera"));
-        assertThat(taxonImage.getCommonName(), is("European honey bee"));
+        assertThat(taxonImage.getCommonName(), is("European Honey Bee"));
     }
 
     @Test
@@ -79,7 +79,7 @@ public class EOLTaxonImageServiceIT {
     private void assertEOLImage2(TaxonImage taxonImage) {
         assertThat(taxonImage.getEOLPageId(), is("2215"));
         assertThat(taxonImage.getInfoURL(), is("http://eol.org/pages/2215"));
-        assertThat(taxonImage.getCommonName(), is("mussels and clams"));
+        assertThat(taxonImage.getCommonName(), is("Mussels and Clams"));
         assertThat(taxonImage.getScientificName(), is("Bivalvia"));
     }
 }
