@@ -4,7 +4,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.eol.globi.domain.TaxonomyProvider;
+import org.eol.globi.util.ExternalIdUtil;
 import org.eol.globi.util.InteractUtil;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Controller;
@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 
 @Controller
@@ -158,8 +157,7 @@ public class CypherProxyController {
         HttpClient.addJsonHeaders(httpPost);
         httpPost.setEntity(new StringEntity(query));
         BasicResponseHandler responseHandler = new BasicResponseHandler();
-        String response = httpclient.execute(httpPost, responseHandler);
-        return response;
+        return httpclient.execute(httpPost, responseHandler);
     }
 
 
@@ -169,7 +167,7 @@ public class CypherProxyController {
         String result = findExternalIdForTaxon(taxonName);
 
         String url = null;
-        for (Map.Entry<String, String> stringStringEntry : getURLPrefixMap().entrySet()) {
+        for (Map.Entry<String, String> stringStringEntry : ExternalIdUtil.getURLPrefixMap().entrySet()) {
             url = getUrl(result, stringStringEntry.getKey(), stringStringEntry.getValue());
             if (url != null) {
                 break;
@@ -196,17 +194,7 @@ public class CypherProxyController {
     @RequestMapping(value = "/findExternalUrlForExternalId/{externalId}", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
     public String findExternalLinkForExternalId(@PathVariable("externalId") String externalId) {
-        String url = null;
-        for (Map.Entry<String, String> idPrefixToUrlPrefix : getURLPrefixMap().entrySet()) {
-            if (externalId.startsWith(idPrefixToUrlPrefix.getKey())) {
-                url = idPrefixToUrlPrefix.getValue() + externalId.replaceAll(idPrefixToUrlPrefix.getKey(), "");
-            }
-            if (url != null) {
-                break;
-            }
-
-        }
-        return buildJsonUrl(url);
+        return buildJsonUrl(ExternalIdUtil.infoURLForExternalId(externalId));
     }
 
     @RequestMapping(value = "/shortestPathsBetweenTaxon/{startTaxon}/andTaxon/{endTaxon}", method = RequestMethod.GET, produces = "application/json")
@@ -218,13 +206,6 @@ public class CypherProxyController {
                 "coalesce(n.name?)) as shortestPaths " +
                 "LIMIT 10\",\"params\":{\"startTaxon\": \"" + startTaxon + "\", \"endTaxon\":\"" + endTaxon + "\"}}";
         return execute(query);
-    }
-
-    private Map<String, String> getURLPrefixMap() {
-        return new HashMap<String, String>() {{
-            put(TaxonomyProvider.ID_PREFIX_EOL, "http://eol.org/pages/");
-            put(TaxonomyProvider.ID_PREFIX_GULFBASE, "http://gulfbase.org/biogomx/biospecies.php?species=");
-        }};
     }
 
     private String getUrl(String result, String externalIdPrefix, String urlPrefix) {

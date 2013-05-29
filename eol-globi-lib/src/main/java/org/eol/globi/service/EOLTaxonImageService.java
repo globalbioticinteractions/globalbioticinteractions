@@ -5,12 +5,14 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ArrayNode;
 import org.eol.globi.domain.TaxonImage;
 import org.eol.globi.domain.TaxonomyProvider;
+import org.eol.globi.util.ExternalIdUtil;
 
 import java.io.IOException;
 
@@ -56,20 +58,22 @@ public class EOLTaxonImageService extends BaseHttpClientService {
         HttpResponse response;
         String responseString;
 
-        String imageObjectId = null;
+        PageInfo pageInfo;
 
         if (null != eolPageId) {
-            imageObjectId = getImageObjectId(eolPageId, imageObjectId);
+            pageInfo = getPageInfo(eolPageId);
 
-            if (null != imageObjectId) {
-                String pageUrlString = "http://eol.org/api/data_objects/1.0/" + imageObjectId + ".json";
+            if (null != pageInfo) {
+                String pageUrlString = "http://eol.org/api/data_objects/1.0/" + pageInfo.getImageObjectId() + ".json";
                 DefaultHttpClient httpClient = new DefaultHttpClient();
                 try {
                     response = httpClient.execute(new HttpGet(pageUrlString));
                     responseString = EntityUtils.toString(response.getEntity());
                     if (200 == response.getStatusLine().getStatusCode()) {
                         taxonImage = new TaxonImage();
+                        taxonImage.setInfoURL(ExternalIdUtil.infoURLForExternalId(TaxonomyProvider.ID_PREFIX_EOL + eolPageId));
                         taxonImage.setEOLPageId(eolPageId);
+                        taxonImage.setCommonName(pageInfo.getCommonName());
                         enrichTaxonWithImageInfo(taxonImage, responseString);
                     }
                 } finally {
@@ -80,14 +84,17 @@ public class EOLTaxonImageService extends BaseHttpClientService {
         return taxonImage;
     }
 
-    private String getImageObjectId(String eolPageId, String imageObjectId) throws IOException {
+    private PageInfo getPageInfo(String eolPageId) throws IOException {
         HttpResponse response;
+        PageInfo pageInfo = new PageInfo();
         String responseString;
-        String pageUrlString = "http://eol.org/api/pages/1.0/" + eolPageId + ".json?common_names=0&details=0&images=1&videos=0&text=0";
+        String pageUrlString = "http://eol.org/api/pages/1.0/" + eolPageId + ".json?images=1&videos=0&sounds=0&maps=0&text=0&iucn=false&subjects=overview&licenses=all&details=false&common_names=true&references=false&vetted=0&cache_ttl=";
+
         DefaultHttpClient httpClient = new DefaultHttpClient();
         try {
-            response = httpClient.execute(new HttpGet(pageUrlString));
-            responseString = EntityUtils.toString(response.getEntity());
+            HttpGet request = new HttpGet(pageUrlString);
+            response = httpClient.execute(request);
+            responseString = EntityUtils.toString(response.getEntity(), HTTP.UTF_8);
             if (200 == response.getStatusLine().getStatusCode()) {
                 ObjectMapper mapper = new ObjectMapper();
                 JsonNode array = mapper.readTree(responseString);
@@ -95,7 +102,20 @@ public class EOLTaxonImageService extends BaseHttpClientService {
                 if (dataObjects != null && dataObjects.size() > 0) {
                     JsonNode dataObject = dataObjects.get(0);
                     if (dataObject.has("identifier")) {
-                        imageObjectId = dataObject.get("identifier").getValueAsText();
+                        pageInfo.setImageObjectId(dataObject.get("identifier").getValueAsText());
+                    }
+                }
+                JsonNode commonNames = array.findValue("vernacularNames");
+                if (commonNames != null && commonNames.size() > 0) {
+                    for (int i = 0; i < commonNames.size(); i++) {
+                        JsonNode commonNameNode = commonNames.get(i);
+                        if (commonNameNode.has("eol_preferred") && commonNameNode.has("language")) {
+                            String language = commonNameNode.get("language").getTextValue();
+                            if ("en".equals(language) && commonNameNode.has("vernacularName")) {
+                                pageInfo.setCommonName(commonNameNode.get("vernacularName").getTextValue());
+                                break;
+                            }
+                        }
                     }
                 }
 
@@ -103,7 +123,7 @@ public class EOLTaxonImageService extends BaseHttpClientService {
         } finally {
             httpClient.getConnectionManager().shutdown();
         }
-        return imageObjectId;
+        return pageInfo;
     }
 
     protected void enrichTaxonWithImageInfo(TaxonImage taxonImage, String responseString) throws IOException {
@@ -118,10 +138,21 @@ public class EOLTaxonImageService extends BaseHttpClientService {
         if (eolThumbnailURL != null) {
             taxonImage.setThumbnailURL(eolThumbnailURL.getValueAsText());
         }
+
+        JsonNode taxonConceptsNode = array.findValue("taxonConcepts");
+        if (taxonConceptsNode != null && taxonConceptsNode.size() > 0) {
+            for (int i=0; i<taxonConceptsNode.size(); i++) {
+                JsonNode taxonConcept = taxonConceptsNode.get(i);
+                if (taxonConcept.has("canonicalForm")) {
+                    taxonImage.setScientificName(taxonConcept.get("canonicalForm").getTextValue());
+                    break;
+                }
+            }
+        }
     }
 
     private String lookupEOLPageId(String taxonId, String eolPageId, String eolProviderId) throws IOException {
-        String urlString = "http://eol.org/api/search_by_provider/1.0/" + taxonId + ".json?hierarchy_id=" + eolProviderId;
+        String urlString = "http://eol.org/api/search_by_provider/1.0/" + taxonId + ".json?hierarchy_id=" + eolProviderId + "&cache_ttl=3600";
         HttpGet get = new HttpGet(urlString);
         DefaultHttpClient httpClient = new DefaultHttpClient();
         try {
@@ -147,4 +178,26 @@ public class EOLTaxonImageService extends BaseHttpClientService {
         return eolPageId;
     }
 
+    private class PageInfo {
+        private String imageObjectId;
+        private String commonName;
+
+        public void setImageObjectId(String imageObjectId) {
+            this.imageObjectId = imageObjectId;
+        }
+
+        public String getImageObjectId() {
+            return imageObjectId;
+        }
+
+        public void setCommonName(String commonName) {
+            this.commonName = commonName;
+        }
+
+        public String getCommonName() {
+            return commonName;
+        }
+
+
+    }
 }

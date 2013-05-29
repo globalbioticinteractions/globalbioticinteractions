@@ -17,13 +17,16 @@ public class EOLTaxonImageServiceIT {
     @Test
     public void imageLookupITIS() throws URISyntaxException, IOException {
         assertITISImage(serviceTaxon.lookupImageURLs(TaxonomyProvider.ITIS, "165653"));
-        assertITISImage(serviceTaxon.lookupImageForExternalId(TaxonomyProvider.ID_PREFIX_ITIS  + "165653"));
+        assertITISImage(serviceTaxon.lookupImageForExternalId(TaxonomyProvider.ID_PREFIX_ITIS + "165653"));
     }
 
     private void assertITISImage(TaxonImage taxonImage) {
         assertThat(taxonImage.getThumbnailURL(), is("http://media.eol.org/content/2012/06/14/21/89792_98_68.jpg"));
         assertThat(taxonImage.getImageURL(), is("http://media.eol.org/content/2012/06/14/21/89792_orig.jpg"));
         assertThat(taxonImage.getEOLPageId(), is("207614"));
+        assertThat(taxonImage.getInfoURL(), is("http://eol.org/pages/207614"));
+        assertThat(taxonImage.getScientificName(), is("Fundulus jenkinsi"));
+        assertThat(taxonImage.getCommonName(), is("topminnows"));
     }
 
     @Test
@@ -32,6 +35,9 @@ public class EOLTaxonImageServiceIT {
         assertThat(taxonImage.getThumbnailURL(), is("http://media.eol.org/content/2012/06/15/09/03561_98_68.jpg"));
         assertThat(taxonImage.getImageURL(), is("http://media.eol.org/content/2012/06/15/09/03561_orig.jpg"));
         assertThat(taxonImage.getEOLPageId(), is("205157"));
+        assertThat(taxonImage.getInfoURL(), is("http://eol.org/pages/205157"));
+        assertThat(taxonImage.getScientificName(), is("Centropomus undecimalis"));
+        assertThat(taxonImage.getCommonName(), is("common snook"));
     }
 
     @Test
@@ -44,17 +50,23 @@ public class EOLTaxonImageServiceIT {
         assertThat(taxonImage.getThumbnailURL(), is("http://media.eol.org/content/2009/11/17/11/81513_98_68.jpg"));
         assertThat(taxonImage.getImageURL(), is("http://media.eol.org/content/2009/11/17/11/81513_orig.jpg"));
         assertThat(taxonImage.getEOLPageId(), is("210779"));
+        assertThat(taxonImage.getInfoURL(), is("http://eol.org/pages/210779"));
+        assertThat(taxonImage.getScientificName(), is("Prionotus paralatus"));
+        assertThat(taxonImage.getCommonName(), is("Mexican searobin"));
     }
 
     @Test
     public void imageLookupEOL() throws URISyntaxException, IOException {
-        assertEOLImage(serviceTaxon.lookupImageURLs(TaxonomyProvider.EOL, "EOL:276287"));
-        assertEOLImage(serviceTaxon.lookupImageForExternalId(TaxonomyProvider.ID_PREFIX_EOL + "276287"));
+        assertEOLImage(serviceTaxon.lookupImageURLs(TaxonomyProvider.EOL, "1045608"));
+        assertEOLImage(serviceTaxon.lookupImageForExternalId(TaxonomyProvider.ID_PREFIX_EOL + "1045608"));
     }
 
     private void assertEOLImage(TaxonImage taxonImage) {
-        assertThat(taxonImage.getThumbnailURL(), is("http://media.eol.org/content/2011/12/13/21/66989_98_68.jpg"));
-        assertThat(taxonImage.getImageURL(), is("http://media.eol.org/content/2011/12/13/21/66989_orig.jpg"));
-        assertThat(taxonImage.getEOLPageId(), is("276287"));
+        assertThat(taxonImage.getThumbnailURL(), is("http://media.eol.org/content/2013/02/03/12/43681_98_68.jpg"));
+        assertThat(taxonImage.getImageURL(), is("http://media.eol.org/content/2013/02/03/12/43681_orig.jpg"));
+        assertThat(taxonImage.getEOLPageId(), is("1045608"));
+        assertThat(taxonImage.getInfoURL(), is("http://eol.org/pages/1045608"));
+        assertThat(taxonImage.getScientificName(), is("Apis mellifera"));
+        assertThat(taxonImage.getCommonName(), is("European honey bee"));
     }
 }
