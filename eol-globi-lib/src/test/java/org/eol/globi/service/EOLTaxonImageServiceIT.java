@@ -69,4 +69,17 @@ public class EOLTaxonImageServiceIT {
         assertThat(taxonImage.getScientificName(), is("Apis mellifera"));
         assertThat(taxonImage.getCommonName(), is("European honey bee"));
     }
+
+    @Test
+    public void imageLookupEOL2() throws URISyntaxException, IOException {
+        assertEOLImage2(serviceTaxon.lookupImageURLs(TaxonomyProvider.EOL, "2215"));
+        assertEOLImage2(serviceTaxon.lookupImageForExternalId(TaxonomyProvider.ID_PREFIX_EOL + "2215"));
+    }
+
+    private void assertEOLImage2(TaxonImage taxonImage) {
+        assertThat(taxonImage.getEOLPageId(), is("2215"));
+        assertThat(taxonImage.getInfoURL(), is("http://eol.org/pages/2215"));
+        assertThat(taxonImage.getCommonName(), is("mussels and clams"));
+        assertThat(taxonImage.getScientificName(), is("Bivalvia"));
+    }
 }

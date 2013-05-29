@@ -74,6 +74,7 @@ public class EOLTaxonImageService extends BaseHttpClientService {
                         taxonImage.setInfoURL(ExternalIdUtil.infoURLForExternalId(TaxonomyProvider.ID_PREFIX_EOL + eolPageId));
                         taxonImage.setEOLPageId(eolPageId);
                         taxonImage.setCommonName(pageInfo.getCommonName());
+                        taxonImage.setScientificName(pageInfo.getScientificName());
                         enrichTaxonWithImageInfo(taxonImage, responseString);
                     }
                 } finally {
@@ -119,6 +120,17 @@ public class EOLTaxonImageService extends BaseHttpClientService {
                     }
                 }
 
+                JsonNode taxonConceptsNode = array.findValue("taxonConcepts");
+                if (taxonConceptsNode != null && taxonConceptsNode.size() > 0) {
+                    for (int i = 0; i < taxonConceptsNode.size(); i++) {
+                        JsonNode taxonConcept = taxonConceptsNode.get(i);
+                        if (taxonConcept.has("canonicalForm")) {
+                            pageInfo.setScientificName(taxonConcept.get("canonicalForm").getTextValue());
+                            break;
+                        }
+                    }
+                }
+
             }
         } finally {
             httpClient.getConnectionManager().shutdown();
@@ -137,17 +149,6 @@ public class EOLTaxonImageService extends BaseHttpClientService {
         JsonNode eolThumbnailURL = array.findValue("eolThumbnailURL");
         if (eolThumbnailURL != null) {
             taxonImage.setThumbnailURL(eolThumbnailURL.getValueAsText());
-        }
-
-        JsonNode taxonConceptsNode = array.findValue("taxonConcepts");
-        if (taxonConceptsNode != null && taxonConceptsNode.size() > 0) {
-            for (int i=0; i<taxonConceptsNode.size(); i++) {
-                JsonNode taxonConcept = taxonConceptsNode.get(i);
-                if (taxonConcept.has("canonicalForm")) {
-                    taxonImage.setScientificName(taxonConcept.get("canonicalForm").getTextValue());
-                    break;
-                }
-            }
         }
     }
 
@@ -181,6 +182,7 @@ public class EOLTaxonImageService extends BaseHttpClientService {
     private class PageInfo {
         private String imageObjectId;
         private String commonName;
+        private String scientificName;
 
         public void setImageObjectId(String imageObjectId) {
             this.imageObjectId = imageObjectId;
@@ -199,5 +201,12 @@ public class EOLTaxonImageService extends BaseHttpClientService {
         }
 
 
+        public void setScientificName(String scientificName) {
+            this.scientificName = scientificName;
+        }
+
+        public String getScientificName() {
+            return scientificName;
+        }
     }
 }
