@@ -29,7 +29,7 @@ public class SearchService {
     public static final String PATH = "path";
 
     @Autowired
-    EmbeddedGraphDatabase graphDb;
+    private EmbeddedGraphDatabase graphDb;
 
     @RequestMapping(value = "/findCloseMatchesForTaxon/{taxonName}", method = RequestMethod.GET)
     @ResponseBody
