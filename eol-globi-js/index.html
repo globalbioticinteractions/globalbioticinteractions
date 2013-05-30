@@ -26,55 +26,6 @@
 	<script src="globi.js" charset="utf-8"></script>
 	<script type="text/javascript" charset="utf-8">	
 
-	var url_prefix = "http://trophicgraph.com:8080";
-
-	function add_taxon_info(scientific_name, div_id) {
-		img_callback = function(error, json) {
-			if (!error) {
-				if (json.thumbnailURL) {
-					img_div = d3.select(div_id)
-					.append("span");
-
-					table = img_div.append("table");
-
-					if (json.commonName && json.scientificName && json.infoURL) {
-						table.append("tr").append("td")
-						.append("img")
-						.attr("src", json.thumbnailURL);
-
-						table.append("tr").append("td")
-						.text(json.commonName);
-
-						table.append("tr").append("td")
-						.append("a")
-						.attr("href", json.infoURL)
-						.html("<i>" + json.scientificName + "</i>");
-					}	
-				} 
-			} 
-		};
-		d3.json(url_prefix + "/imagesForName/" + encodeURIComponent(scientific_name), img_callback);
-	}
-
-	function view_interactions(div_id, interaction_type, source_target_name, interaction_description) {
-		var uri = url_prefix + "/taxon/" + encodeURIComponent(source_target_name) + "/" + interaction_type;
-
-		d3.json(uri, function(error, json) {
-			if (!error) {
-				var html_text = "<b>" + interaction_description + "</b>";
-				if (json.data && json.data.length == 0) {
-					html_text += " <b> nothing</b>";
-				}
-				d3.select(div_id).html(html_text);
-				for (var i = 0; json.data && i <  json.data.length; i++) {
-					add_taxon_info(json.data[i], div_id);
-				};				
-			}
-		});
-	};
-
-	
-
 	window.onload = function() {
 		reload_view();
 		
@@ -82,10 +33,10 @@
 
 	function load_view(taxon_name) {
 		d3.selectAll(".globi").selectAll("span").remove();
-		add_taxon_info(taxon_name, "#globi-target-taxon");
-		add_taxon_info(taxon_name, "#globi-source-taxon");
-		view_interactions("#globi-prey", "preysOn", taxon_name, " eats ");
-		view_interactions("#globi-predator", "preyedUponBy", taxon_name, " eaten by ");
+		globi.add_taxon_info(taxon_name, "#globi-target-taxon");
+		globi.add_taxon_info(taxon_name, "#globi-source-taxon");
+		globi.view_interactions("#globi-prey", "preysOn", taxon_name, " eats ");
+		globi.view_interactions("#globi-predator", "preyedUponBy", taxon_name, " eaten by ");
 	}
 
 	function reload_view() {
