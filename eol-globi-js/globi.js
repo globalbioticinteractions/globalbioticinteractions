@@ -4,27 +4,37 @@ globi = function() {
 	};
 	var url_prefix = "http://trophicgraph.com:8080";
 
-	globi.add_taxon_info = function(scientific_name, div_id) {
+	globi.add_taxon_info = function(scientific_name, div_id, on_click_scientific_name_callback) {
 		img_callback = function(error, json) {
 			if (!error) {
 				if (json.thumbnailURL) {
 					img_div = d3.select(div_id)
-					.append("span");
+					.append("span")
 
 					table = img_div.append("table");
 
 					if (json.commonName && json.scientificName && json.infoURL) {
+						if (on_click_scientific_name_callback) {
+							img_div
+							.on("click", function(d) {
+								on_click_scientific_name_callback(json.scientificName);
+							});
+						}
+
 						table.append("tr").append("td")
 						.append("img")
 						.attr("src", json.thumbnailURL);
 
 						table.append("tr").append("td")
-						.text(json.commonName);
-
-						table.append("tr").append("td")
+						.text(json.commonName)
 						.append("a")
 						.attr("href", json.infoURL)
-						.html("<i>" + json.scientificName + "</i>");
+						.attr("target", "_blank")
+						.text(" >");
+						
+
+						scientific_name_td = table.append("tr").append("td")
+						scientific_name_td.html("<i>" + json.scientificName + "</i>");
 					}	
 				} 
 			} 
@@ -32,7 +42,7 @@ globi = function() {
 		d3.json(url_prefix + "/imagesForName/" + encodeURIComponent(scientific_name), img_callback);
 	};
 
-	globi.view_interactions = function(div_id, interaction_type, source_target_name, interaction_description) {
+	globi.view_interactions = function(div_id, interaction_type, source_target_name, interaction_description, on_click_scientific_name_callback) {
 		var uri = url_prefix + "/taxon/" + encodeURIComponent(source_target_name) + "/" + interaction_type;
 
 		d3.json(uri, function(error, json) {
@@ -43,7 +53,7 @@ globi = function() {
 				}
 				d3.select(div_id).html(html_text);
 				for (var i = 0; json.data && i <  json.data.length; i++) {
-					globi.add_taxon_info(json.data[i], div_id);
+					globi.add_taxon_info(json.data[i], div_id, on_click_scientific_name_callback);
 				};				
 			}
 		});
