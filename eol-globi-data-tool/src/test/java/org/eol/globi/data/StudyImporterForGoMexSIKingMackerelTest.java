@@ -60,8 +60,6 @@ public class StudyImporterForGoMexSIKingMackerelTest extends GraphDBTestCase {
             }
             count++;
 
-            assertThat(predator.getSampleLocation(), is(notNullValue()));
-
             Relationship collectedBy = predatorSpecimen.getSingleRelationship(RelTypes.COLLECTED, Direction.INCOMING);
             assertThat(collectedBy, is(notNullValue()));
             String title = (String) collectedBy.getStartNode().getProperty("title");
@@ -73,12 +71,10 @@ public class StudyImporterForGoMexSIKingMackerelTest extends GraphDBTestCase {
         assertThat(preyList, hasItem("Triglidae"));
         assertThat(preyList, hasItem("Sparidae"));
 
-        assertThat(titles, hasItem("Beaumariage 1973"));
-        assertThat(titles, hasItem("Blanton et al 1972"));
+        assertThat(titles, hasItem("Boschung 1957"));
+        assertThat(titles, hasItem("Miles 1949"));
 
         assertNotNull(taxon);
-
-        assertNotNull(nodeFactory.findLocation(29.346953, -92.980614, -13.641));
 
         assertNotNull(nodeFactory.findStudy("GoMexSI"));
     }
