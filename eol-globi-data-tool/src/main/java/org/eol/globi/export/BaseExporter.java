@@ -15,6 +15,5 @@ public abstract class BaseExporter implements StudyExporter {
         writer.write(getMetaTablePrefix());
         writer.write(filename);
         writer.write(getMetaTableSuffix());
-
     }
 }

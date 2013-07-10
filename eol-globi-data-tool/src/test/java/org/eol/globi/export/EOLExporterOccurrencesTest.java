@@ -1,16 +1,16 @@
 package org.eol.globi.export;
 
+import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.LifeStage;
+import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.domain.BodyPart;
+import org.eol.globi.domain.Location;
 import org.eol.globi.domain.PhysiologicalState;
+import org.eol.globi.domain.Specimen;
+import org.eol.globi.domain.Study;
 import org.junit.Test;
 import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.Transaction;
-import org.eol.globi.data.GraphDBTestCase;
-import org.eol.globi.data.NodeFactoryException;
-import org.eol.globi.domain.Location;
-import org.eol.globi.domain.Specimen;
-import org.eol.globi.domain.Study;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -21,45 +21,51 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
-public class InteractionsExporterTest extends GraphDBTestCase {
+public class EOLExporterOccurrencesTest extends GraphDBTestCase {
 
     @Test
     public void exportMissingLength() throws IOException, NodeFactoryException, ParseException {
         createTestData(null);
         String expected = getExpectedHeader();
-        expected += "\n\"myStudy\",\"Homo sapiens\",\"JUVENILE\",\"DIGESTATE\",\"BONE\",,\"ATE\",\"Canis lupus\",,,,,123.0,345.9,-60.0,1992,3,30";
-        expected += "\n\"myStudy\",\"Homo sapiens\",\"JUVENILE\",\"DIGESTATE\",\"BONE\",,\"ATE\",\"Canis lupus\",,,,,123.0,345.9,-60.0,1992,3,30";
+        expected += getExpectedData();
 
         Study myStudy1 = nodeFactory.findStudy("myStudy");
 
         StringWriter row = new StringWriter();
 
-        new InteractionsExporter().exportStudy(myStudy1, row, true);
+        exportOccurrences().exportStudy(myStudy1, row, true);
 
-        assertThat(row.getBuffer().toString(), equalTo(expected));
+        assertThat(row.getBuffer().toString().trim(), equalTo(expected.trim()));
+    }
+
+    private String getExpectedData() {
+        return "\nglobi:3,EOL:327955,,JUVENILE,DIGESTATE,BONE,,,,,,,,,,123.0,345.9,,-60.0,,,,1992-03-30T08:00:00Z,myStudy" +
+                "\nglobi:6,EOL:328607,,,,,,,,,,,,,,123.0,345.9,,-60.0,,,,1992-03-30T08:00:00Z,myStudy" +
+                "\nglobi:8,EOL:328607,,,,,,,,,,,,,,123.0,345.9,,-60.0,,,,1992-03-30T08:00:00Z,myStudy";
     }
 
     private String getExpectedHeader() {
-        String expected = "";
-        expected += "\"study\",\"sourceTaxonName\",\"sourceLifeStage\",\"sourcePhysiologicalState\",\"sourceBodyPart\",\"sourceTaxonId\",\"interactType\",\"targetTaxonName\",\"targetLifeStage\",\"targetPhysiologicalState\",\"targetBodyPart\",\"targetTaxonId\",\"latitude\",\"longitude\",\"altitude\",\"collection year\",\"collection month\",\"collection day of month\"";
-        return expected;
+        String header = "\"occurrenceID\",\"taxonID\",\"sex\",\"lifeStage\",\"physiologicalState\",\"bodyPart\",\"reproductiveCondition\",\"behavior\",\"establishmentMeans\",\"occurrenceRemarks\",\"individualCount\",\"preparations\",\"fieldNotes\",\"samplingProtocol\",\"samplingEffort\",\"decimalLatitude\",\"decimalLongitude\",\"depth\",\"altitude\",\"locality\",\"identifiedBy\",\"dateIdentified\",\"eventDate\",\"eventID\"" +
+                "\n\"http://rs.tdwg.org/dwc/terms/occurrenceID\",\"http://rs.tdwg.org/dwc/terms/taxonID\",\"http://rs.tdwg.org/dwc/terms/sex\",\"http://rs.tdwg.org/dwc/terms/lifeStage\",\"http:/eol.org/globi/terms/physiologicalState\",\"http:/eol.org/globi/terms/bodyPart\",\"http://rs.tdwg.org/dwc/terms/reproductiveCondition\",\"http://rs.tdwg.org/dwc/terms/behavior\",\"http://rs.tdwg.org/dwc/terms/establishmentMeans\",\"http://rs.tdwg.org/dwc/terms/occurrenceRemarks\",\"http://rs.tdwg.org/dwc/terms/individualCount\",\"http://rs.tdwg.org/dwc/terms/preparations\",\"http://rs.tdwg.org/dwc/terms/fieldNotes\",\"http://rs.tdwg.org/dwc/terms/samplingProtocol\",\"http://rs.tdwg.org/dwc/terms/samplingEffort\",\"http://rs.tdwg.org/dwc/terms/decimalLatitude\",\"http://rs.tdwg.org/dwc/terms/decimalLongitude\",\"http://eol.org/globi/depth\",\"http://eol.org/globi/altitude\",\"http://rs.tdwg.org/dwc/terms/locality\",\"http://rs.tdwg.org/dwc/terms/identifiedBy\",\"http://rs.tdwg.org/dwc/terms/dateIdentified\",\"http://rs.tdwg.org/dwc/terms/eventDate\",\"http://rs.tdwg.org/dwc/terms/eventID\"";
+        return header;
     }
 
     @Test
     public void exportNoHeader() throws IOException, NodeFactoryException, ParseException {
         createTestData(null);
-        String expected = "";
-
-        expected += "\n\"myStudy\",\"Homo sapiens\",\"JUVENILE\",\"DIGESTATE\",\"BONE\",,\"ATE\",\"Canis lupus\",,,,,123.0,345.9,-60.0,1992,3,30";
-        expected += "\n\"myStudy\",\"Homo sapiens\",\"JUVENILE\",\"DIGESTATE\",\"BONE\",,\"ATE\",\"Canis lupus\",,,,,123.0,345.9,-60.0,1992,3,30";
+        String expected = getExpectedData();
 
         Study myStudy1 = nodeFactory.findStudy("myStudy");
 
         StringWriter row = new StringWriter();
 
-        new InteractionsExporter().exportStudy(myStudy1, row, false);
+        exportOccurrences().exportStudy(myStudy1, row, false);
 
         assertThat(row.getBuffer().toString(), equalTo(expected));
+    }
+
+    private EOLExporterOccurrences exportOccurrences() {
+        return new EOLExporterOccurrences();
     }
 
     @Test
@@ -67,14 +73,13 @@ public class InteractionsExporterTest extends GraphDBTestCase {
         createTestData(123.0);
         String expected = "";
         expected += getExpectedHeader();
-        expected += "\n\"myStudy\",\"Homo sapiens\",\"JUVENILE\",\"DIGESTATE\",\"BONE\",,\"ATE\",\"Canis lupus\",,,,,123.0,345.9,-60.0,1992,3,30";
-        expected += "\n\"myStudy\",\"Homo sapiens\",\"JUVENILE\",\"DIGESTATE\",\"BONE\",,\"ATE\",\"Canis lupus\",,,,,123.0,345.9,-60.0,1992,3,30";
+        expected += getExpectedData();
 
         Study myStudy1 = nodeFactory.findStudy("myStudy");
 
         StringWriter row = new StringWriter();
 
-        new InteractionsExporter().exportStudy(myStudy1, row, true);
+        exportOccurrences().exportStudy(myStudy1, row, true);
 
         assertThat(row.getBuffer().toString(), equalTo(expected));
 
@@ -88,17 +93,18 @@ public class InteractionsExporterTest extends GraphDBTestCase {
 
         StringWriter row = new StringWriter();
 
-        new InteractionsExporter().exportStudy(myStudy, row, true);
+        exportOccurrences().exportStudy(myStudy, row, true);
 
         String expected = "";
         expected += getExpectedHeader();
+        expected += "\nglobi:3,,,,,,,,,,,,,,,,,,,,,,,myStudy";
 
         assertThat(row.getBuffer().toString(), equalTo(expected));
     }
 
     private void createTestData(Double length) throws NodeFactoryException, ParseException {
         Study myStudy = nodeFactory.createStudy("myStudy");
-        Specimen specimen = nodeFactory.createSpecimen("Homo sapiens");
+        Specimen specimen = nodeFactory.createSpecimen("Homo sapiens", "EOL:327955");
         specimen.setStomachVolumeInMilliLiter(666.0);
         specimen.setLifeStage(LifeStage.JUVENILE);
         specimen.setPhysiologicalState(PhysiologicalState.DIGESTATE);
@@ -111,11 +117,8 @@ public class InteractionsExporterTest extends GraphDBTestCase {
         } finally {
             transaction.finish();
         }
-        Specimen otherSpecimen = nodeFactory.createSpecimen("Canis lupus");
-        otherSpecimen.setVolumeInMilliLiter(124.0);
-
-        specimen.ate(otherSpecimen);
-        specimen.ate(otherSpecimen);
+        eatWolf(specimen);
+        eatWolf(specimen);
         if (null != length) {
             specimen.setLengthInMm(length);
         }
@@ -124,10 +127,17 @@ public class InteractionsExporterTest extends GraphDBTestCase {
         specimen.caughtIn(location);
     }
 
+    private Specimen eatWolf(Specimen specimen) throws NodeFactoryException {
+        Specimen otherSpecimen = nodeFactory.createSpecimen("Canis lupus", "EOL:328607");
+        otherSpecimen.setVolumeInMilliLiter(124.0);
+        specimen.ate(otherSpecimen);
+        return otherSpecimen;
+    }
+
 
     @Test
     public void darwinCoreMetaTable() throws IOException {
-        InteractionsExporter exporter = new InteractionsExporter();
+        EOLExporterOccurrences exporter = exportOccurrences();
         StringWriter writer = new StringWriter();
         exporter.exportDarwinCoreMetaTable(writer, "testtest.csv");
 
