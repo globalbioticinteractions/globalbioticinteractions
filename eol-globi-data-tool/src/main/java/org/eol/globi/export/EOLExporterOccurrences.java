@@ -2,7 +2,6 @@ package org.eol.globi.export;
 
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.Location;
-import org.eol.globi.domain.NodeBacked;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
@@ -14,7 +13,6 @@ import org.neo4j.graphdb.Relationship;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 public class EOLExporterOccurrences extends EOLExporterBase {

@@ -39,8 +39,8 @@ public abstract class GraphDBTestCase {
         return graphDb;
     }
 
-    protected Date getUTCTestTime() {
+    protected long getUTCTestTime() {
         Calendar calendar = DatatypeConverter.parseDateTime("1992-03-30T08:00:00Z");
-        return calendar.getTime();
+        return calendar.getTime().getTime();
     }
 }
