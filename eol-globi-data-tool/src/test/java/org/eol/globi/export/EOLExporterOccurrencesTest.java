@@ -39,9 +39,9 @@ public class EOLExporterOccurrencesTest extends GraphDBTestCase {
     }
 
     private String getExpectedData() {
-        return "\nglobi:3,EOL:327955,,JUVENILE,DIGESTATE,BONE,,,,,,,,,,123.0,345.9,,-60.0,,,,1992-03-30T08:00:00Z,myStudy" +
-                "\nglobi:6,EOL:328607,,,,,,,,,,,,,,123.0,345.9,,-60.0,,,,1992-03-30T08:00:00Z,myStudy" +
-                "\nglobi:8,EOL:328607,,,,,,,,,,,,,,123.0,345.9,,-60.0,,,,1992-03-30T08:00:00Z,myStudy";
+        return "\nglobi:occur:3,EOL:327955,,JUVENILE,DIGESTATE,BONE,,,,,,,,,,123.0,345.9,,-60.0,,,,1992-03-30T08:00:00Z,myStudy" +
+                "\nglobi:occur:6,EOL:328607,,,,,,,,,,,,,,123.0,345.9,,-60.0,,,,1992-03-30T08:00:00Z,myStudy" +
+                "\nglobi:occur:8,EOL:328607,,,,,,,,,,,,,,123.0,345.9,,-60.0,,,,1992-03-30T08:00:00Z,myStudy";
     }
 
     private String getExpectedHeader() {
@@ -97,7 +97,7 @@ public class EOLExporterOccurrencesTest extends GraphDBTestCase {
 
         String expected = "";
         expected += getExpectedHeader();
-        expected += "\nglobi:3,,,,,,,,,,,,,,,,,,,,,,,myStudy";
+        expected += "\nglobi:occur:3,,,,,,,,,,,,,,,,,,,,,,,myStudy";
 
         assertThat(row.getBuffer().toString(), equalTo(expected));
     }
