@@ -12,10 +12,12 @@ import org.junit.Test;
 import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.Transaction;
 
+import javax.xml.bind.DatatypeConverter;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.core.Is.is;
@@ -52,7 +54,7 @@ public class EOLExporterMeasurementOrFactTest extends GraphDBTestCase {
         Relationship collected = myStudy.collected(specimen);
         Transaction transaction = myStudy.getUnderlyingNode().getGraphDatabase().beginTx();
         try {
-            collected.setProperty(Specimen.DATE_IN_UNIX_EPOCH, new SimpleDateFormat("yyyy.MM.dd").parse("1992.03.30").getTime());
+            collected.setProperty(Specimen.DATE_IN_UNIX_EPOCH, getUTCTestTime());
             transaction.success();
         } finally {
             transaction.finish();

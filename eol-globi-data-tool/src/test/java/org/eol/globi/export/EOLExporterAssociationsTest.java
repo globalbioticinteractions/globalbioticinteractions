@@ -50,7 +50,7 @@ public class EOLExporterAssociationsTest extends GraphDBTestCase {
         Relationship collected = myStudy.collected(specimen);
         Transaction transaction = myStudy.getUnderlyingNode().getGraphDatabase().beginTx();
         try {
-            collected.setProperty(Specimen.DATE_IN_UNIX_EPOCH, new SimpleDateFormat("yyyy.MM.dd").parse("1992.03.30").getTime());
+            collected.setProperty(Specimen.DATE_IN_UNIX_EPOCH, getUTCTestTime());
             transaction.success();
         } finally {
             transaction.finish();
