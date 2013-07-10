@@ -30,11 +30,7 @@ public class StudyImporterForICESTest extends GraphDBTestCase {
         studyImporterFor.setImportFilter(new ImportFilter() {
             @Override
             public boolean shouldImportRecord(Long recordNumber) {
-                boolean shouldImport = recordNumber % 1000 == 0;
-                if (shouldImport) {
-                    LOG.info("importing record [" + recordNumber + "]");
-                }
-                return shouldImport;
+                return recordNumber % 1000 == 0;
             }
         });
         Study study = studyImporterFor.importStudy();

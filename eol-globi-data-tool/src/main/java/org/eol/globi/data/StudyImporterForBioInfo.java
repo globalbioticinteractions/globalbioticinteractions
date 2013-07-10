@@ -134,11 +134,6 @@ public class StudyImporterForBioInfo extends BaseStudyImporter implements StudyI
         try {
             long count = 0;
             while (parser.getLine() != null) {
-                count++;
-                if (count % 1000 == 0) {
-                    LOG.info("[" + count + "] relations created.");
-                }
-
                 if (importFilter.shouldImportRecord(count)) {
                     Specimen donorSpecimen = createSpecimen(parser, taxaMap, "DonorTax_id");
                     addLifeStage(parser, donorSpecimen, "DonorStage");
