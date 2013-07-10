@@ -24,7 +24,6 @@ public abstract class GraphDBTestCase {
 
             @Override
             public boolean enrich(Taxon taxon) throws IOException {
-
                 return false;
             }
         });
