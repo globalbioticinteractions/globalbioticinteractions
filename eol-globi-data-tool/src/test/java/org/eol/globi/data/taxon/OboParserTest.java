@@ -27,10 +27,6 @@ public class OboParserTest {
 
             @Override
             public void addTerm(TaxonTerm term) {
-                if (getCounter() % 1000 == 0) {
-                    LOG.info("got term with id: [" + term.getId() +
-                            "], name: [" + term.getName() + "]");
-                }
                 assertThat(term.getName(), is(not(nullValue())));
                 assertThat(Long.parseLong(term.getId()) > 0, is(true));
                 count();
