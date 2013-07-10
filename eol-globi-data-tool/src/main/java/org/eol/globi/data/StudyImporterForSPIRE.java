@@ -199,7 +199,7 @@ public class StudyImporterForSPIRE extends BaseStudyImporter {
             specimen.setLifeStage(LifeStage.LARVA);
         } else if (taxonName.contains("immature")) {
             specimen.setLifeStage(LifeStage.IMMATURE);
-        }else if (taxonName.contains("nymphs")) {
+        } else if (taxonName.contains("nymphs")) {
             specimen.setLifeStage(LifeStage.NYMPH);
         }
         return specimen;

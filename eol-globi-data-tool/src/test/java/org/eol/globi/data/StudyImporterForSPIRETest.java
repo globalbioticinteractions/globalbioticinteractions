@@ -1,5 +1,6 @@
 package org.eol.globi.data;
 
+import com.hp.hpl.jena.rdf.model.impl.RDFDefaultErrorHandler;
 import org.hamcrest.core.Is;
 import org.junit.Test;
 import org.eol.globi.domain.Study;
@@ -14,6 +15,7 @@ public class StudyImporterForSPIRETest extends GraphDBTestCase {
 
     @Test
     public void importStudy() throws IOException, StudyImporterException {
+        RDFDefaultErrorHandler.silent = true;
         StudyImporterForSPIRE importer = new StudyImporterForSPIRE(null, nodeFactory);
         TestTrophicLinkListener listener = new TestTrophicLinkListener();
         importer.setTrophicLinkListener(listener);
