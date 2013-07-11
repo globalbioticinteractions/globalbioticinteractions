@@ -28,6 +28,9 @@ public class StudyImporterForGoMexSIKingMackerelTest extends GraphDBTestCase {
 
         importer.importStudy();
 
+        Study milesStudy = nodeFactory.findStudy("Miles 1949");
+        assertThat(milesStudy.getInstitution(), is("University of Houston, Houston, Texas, United States"));
+
         Study study = nodeFactory.findStudy("Christmas et al 1974");
 
         assertSpecimenProperties();
@@ -36,7 +39,7 @@ public class StudyImporterForGoMexSIKingMackerelTest extends GraphDBTestCase {
         assertThat(study.getTitle(), is("Christmas et al 1974"));
         assertThat(study.getContributor(), is("J Christmas, Allison Perry, Richard Waller"));
         assertThat(study.getPublicationYear(), is("1974"));
-        assertThat(study.getInstitution(), is("NA"));
+        assertThat(study.getInstitution(), is(""));
         assertThat(study.getDescription(), is("Investigations of coastal pelagic fishes"));
 
         assertNotNull(nodeFactory.findTaxonOfType("Chloroscombrus chrysurus"));

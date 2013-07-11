@@ -1,6 +1,7 @@
 package org.eol.globi.data;
 
 import com.Ostermiller.util.LabeledCSVParser;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eol.globi.domain.BodyPart;
@@ -100,11 +101,26 @@ public abstract class StudyImporterForGoMexSIBase extends BaseStudyImporter {
         String refTag = getMandatoryValue(referenceResource, parser, "REF_TAG");
         String description = getMandatoryValue(referenceResource, parser, "TITLE_REF");
         String publicationYear = getMandatoryValue(referenceResource, parser, "YEAR_PUB");
-        String institution = getMandatoryValue(referenceResource, parser, "UNIV_NAME");
-        institution += getMandatoryValue(referenceResource, parser, "UNIV_CITY");
-        institution += getMandatoryValue(referenceResource, parser, "UNIV_STATE");
-        institution = getMandatoryValue(referenceResource, parser, "UNIV_COUNTRY");
-        study = nodeFactory.getOrCreateStudy(refTag, firstName + " " + lastName, institution, "", description, null);
+        String universityName = getMandatoryValue(referenceResource, parser, "UNIV_NAME");
+        String universityCity = getMandatoryValue(referenceResource, parser, "UNIV_CITY");
+
+        String universityState = getMandatoryValue(referenceResource, parser, "UNIV_STATE");
+
+        String universityCountry = getMandatoryValue(referenceResource, parser, "UNIV_COUNTRY");
+        StringBuilder institution = new StringBuilder();
+        if (StringUtils.isNotBlank(universityName)
+                && StringUtils.isNotBlank(universityCity)
+                && StringUtils.isNotBlank(universityState)
+                && StringUtils.isNotBlank(universityCountry)) {
+            institution.append(universityName);
+            institution.append(", ");
+            institution.append(universityCity);
+            institution.append(", ");
+            institution.append(universityState);
+            institution.append(", ");
+            institution.append(universityCountry);
+        }
+        study = nodeFactory.getOrCreateStudy(refTag, firstName + " " + lastName, institution.toString(), "", description, null);
         Transaction transaction = nodeFactory.getGraphDb().beginTx();
         try {
             study.setPublicationYear(publicationYear);
@@ -220,7 +236,7 @@ public abstract class StudyImporterForGoMexSIBase extends BaseStudyImporter {
     private Double getMandatoryDoubleValue(String locationResource, LabeledCSVParser parser, String label) throws StudyImporterException {
         String lat = getMandatoryValue(locationResource, parser, label);
         try {
-            return "NA".equals(lat) ? null : Double.parseDouble(lat);
+            return "NA".equals(lat) || lat == null || lat.trim().length() == 0 ? null : Double.parseDouble(lat);
         } catch (NumberFormatException ex) {
             throw new StudyImporterException("failed to parse [" + label + "] value [" + lat + "] at line [" + parser.getLastLineNumber() + "]", ex);
         }
@@ -283,6 +299,6 @@ public abstract class StudyImporterForGoMexSIBase extends BaseStudyImporter {
         if (value == null) {
             throw new StudyImporterException("missing mandatory column [" + label + "] in [" + datafile + "]:[" + parser.getLastLineNumber() + "]");
         }
-        return value;
+        return "NA".equals(value) ? "" : value;
     }
 }
