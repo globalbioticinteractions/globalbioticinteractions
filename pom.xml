@@ -24,6 +24,13 @@
                 <module>eol-globi-datasets</module>
             </modules>
         </profile>
+        <profile>
+            <id>rdf</id>
+            <modules>
+                <!-- generating datasets takes a while and snapshots are should be available on s3 -->
+                <module>eol-globi-rdf</module>
+            </modules>
+        </profile>
     </profiles>
 
 </project>

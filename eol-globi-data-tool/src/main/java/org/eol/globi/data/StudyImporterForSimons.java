@@ -34,6 +34,9 @@ public class StudyImporterForSimons extends BaseStudyImporter {
 
     protected static final String MISSISSIPPI_ALABAMA_DATA_SOURCE = "simons/mississippiAlabamaFishDiet.csv";
 
+    private final HashMap<String, Specimen> predatorSpecimenMap = new HashMap<String, Specimen>();
+    ;
+
     public StudyImporterForSimons(ParserFactory parserFactory, NodeFactory nodeFactory) {
         super(parserFactory, nodeFactory);
     }
@@ -49,6 +52,7 @@ public class StudyImporterForSimons extends BaseStudyImporter {
 
 
     private Study createAndPopulateStudy(ParserFactory parserFactory, String studyResource) throws StudyImporterException {
+        getPredatorSpecimenMap().clear();
         Map<String, String> columnMapper = COLUMN_MAPPER;
         if (null == columnMapper) {
             throw new StudyImporterException("no suitable column mapper found for [" + studyResource + "]");
@@ -84,14 +88,29 @@ public class StudyImporterForSimons extends BaseStudyImporter {
         prey.caughtDuring(getOrCreateSeason(seasonName));
 
         String speciesName = csvParser.getValueByLabel(columnToNormalizedTermMapper.get(PREDATOR_SPECIES));
-        Specimen predator = createAndClassifySpecimen(speciesName);
-        predator.setLengthInMm(lengthParser.parseLengthInMm(csvParser));
 
-        predator.caughtIn(sampleLocation);
+        // see https://github.com/jhpoelen/gomexsi/issues/41
+        String occurrenceId = csvParser.getValueByLabel("spcode")
+                + csvParser.getValueByLabel("sizecl")
+                + csvParser.getValueByLabel("cruise")
+                + csvParser.getValueByLabel("stcode");
+        Map<String, Specimen> predatorMap = getPredatorSpecimenMap();
+        Specimen predator = predatorMap.get(occurrenceId);
+        if (predator == null) {
+            predator = createAndClassifySpecimen(speciesName);
+            study.collected(predator);
+            predator.setLengthInMm(lengthParser.parseLengthInMm(csvParser));
+            predator.caughtDuring(getOrCreateSeason(seasonName));
+            predator.caughtIn(sampleLocation);
+            predatorMap.put(occurrenceId, predator);
+        }
+
         predator.ate(prey);
-        predator.caughtDuring(getOrCreateSeason(seasonName));
-        study.collected(predator);
 
+    }
+
+    private HashMap<String, Specimen> getPredatorSpecimenMap() {
+        return predatorSpecimenMap;
     }
 
     private Season getOrCreateSeason(String seasonName) {
