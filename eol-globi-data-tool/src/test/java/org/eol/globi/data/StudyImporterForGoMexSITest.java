@@ -36,7 +36,7 @@ public class StudyImporterForGoMexSITest extends GraphDBTestCase {
         assertThat(study.getTitle(), is("Divita et al 1983"));
         assertThat(study.getContributor(), is("Regina Divita, Mischelle Creel, Peter Sheridan"));
         assertThat(study.getPublicationYear(), is("1983"));
-        assertThat(study.getInstitution(), is("NA"));
+        assertThat(study.getInstitution(), is(""));
         assertThat(study.getDescription(), is("Foods of coastal fishes during brown shrimp Penaeus aztecus, migration from Texas estuaries (June - July 1981). "));
         assertNotNull(nodeFactory.findStudy("Beaumariage 1973"));
 
