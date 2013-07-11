@@ -1,5 +1,7 @@
 package org.eol.globi.service;
 
+import org.eol.globi.domain.Taxon;
+import org.hamcrest.core.Is;
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.nullValue;
@@ -20,24 +22,27 @@ public class EOLServiceIT {
         assertThat(lookupPageIdByScientificName("Pseudobaeospora dichroa"), is("EOL:1001400"));
     }
 
-    /** Regarding multiple symbol in taxonomic names:
-     *
+    /**
+     * Regarding multiple symbol in taxonomic names:
+     * <p/>
      * From: 	xxx
-     	Subject: 	RE: question about taxonomy name normalization
-     	Date: 	April 12, 2013 4:24:11 AM PDT
-     	To: 	xxx
-
-     And another thing!
-
-     The "x" in hybrids, whether "Genus species1 x species2" or "Genus
-     xHybridName" is strictly not the letter "x". It's the multiply symbol:
-     HTML: &times;
-     http://www.fileformat.info/info/unicode/char/d7/index.htm
-
-     But of course you'll equally receive it as "x".
-
-     Malcolm
+     * Subject: 	RE: question about taxonomy name normalization
+     * Date: 	April 12, 2013 4:24:11 AM PDT
+     * To: 	xxx
+     * <p/>
+     * And another thing!
+     * <p/>
+     * The "x" in hybrids, whether "Genus species1 x species2" or "Genus
+     * xHybridName" is strictly not the letter "x". It's the multiply symbol:
+     * HTML: &times;
+     * http://www.fileformat.info/info/unicode/char/d7/index.htm
+     * <p/>
+     * But of course you'll equally receive it as "x".
+     * <p/>
+     * Malcolm
+     *
      * @throws TaxonPropertyLookupServiceException
+     *
      */
 
     @Test
@@ -77,6 +82,19 @@ public class EOLServiceIT {
 
     private String lookupPageIdByScientificName(String taxonName) throws TaxonPropertyLookupServiceException {
         return new EOLService().lookupLSIDByTaxonName(taxonName);
+    }
+
+    @Test
+    public void lookupTaxonPathByLSID() throws TaxonPropertyLookupServiceException {
+        String rank = new EOLService().lookupTaxonPathByLSID("EOL:1045608");
+        assertThat(rank, Is.is("Animalia Arthropoda Insecta Hymenoptera Apoidea Apidae Apis"));
+    }
+
+    @Test
+    public void lookupTaxonPathByScientificName() throws TaxonPropertyLookupServiceException {
+        String taxonRank = new EOLService().lookupPropertyValueByTaxonName("Homo sapiens", Taxon.PATH);
+        assertThat(taxonRank, Is.is("Animalia Chordata Vertebrata Mammalia Theria Eutheria Primates Hominidae Homo"
+        ));
     }
 
 }
