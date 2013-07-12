@@ -73,12 +73,11 @@ public class CypherProxyController {
     @RequestMapping(value = "/taxon/{scientificName}/" + INTERACTION_PREYS_ON, method = RequestMethod.GET, produces = "application/json", headers = "content-type=*/*")
     @ResponseBody
     public String findPreyOf(HttpServletRequest request, @PathVariable("scientificName") String scientificName) throws IOException {
-        String query1 = "{\"query\":\"START predatorTaxon = node:taxons(name={scientificName}) " +
+        String query = "{\"query\":\"START predatorTaxon = node:taxons(name={scientificName}) " +
                 "MATCH predatorTaxon<-[:CLASSIFIED_AS]-predator-[:ATE]->prey-[:CLASSIFIED_AS]->preyTaxon ";
-        query1 = addLocationClausesIfNecessary(request, query1);
-        query1 += "RETURN distinct(preyTaxon.name) as preyName\", " +
+        query = addLocationClausesIfNecessary(request, query);
+        query += "RETURN distinct(preyTaxon.name) as preyName\", " +
                 "\"params\":" + buildParams(scientificName) + "}";
-        String query = query1;
         return execute(query);
     }
 
