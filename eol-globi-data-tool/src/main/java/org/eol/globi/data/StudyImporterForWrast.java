@@ -26,26 +26,29 @@ public class StudyImporterForWrast extends BaseStudyImporter {
     private static final String REGION = "region";
     private static final String HABITAT = "habitat";
     private static final String SITE = "site";
+    private static final String PREDATOR_SPECIMEN_ID = "specimenId";
 
     static final HashMap<String, String> COLUMN_MAPPER = new HashMap<String, String>() {
         {
             put(SEASON, "Season");
-            put(PREY_SPECIES, "Prey Item Species");
+            put(PREY_SPECIES, "Prey item");
             put(PREDATOR_SPECIES, "Predator Species");
-            put(LENGTH_IN_MM, "TL");
+            put(LENGTH_IN_MM, "TL (mm)");
             put(PREDATOR_FAMILY, "Family");
             put(REGION, "Region");
             put(HABITAT, "Habitat");
             put(SITE, "Site");
+            put(PREDATOR_SPECIMEN_ID, "Call #");
         }
     };
 
-    protected static final String LAVACA_BAY_DATA_SOURCE = "wrast/lavacaBayTrophicData.csv";
+    protected static final String LAVACA_BAY_DATA_SOURCE = "wrast/Wrast Thesis Raw Data gut content.csv";
     protected static final String LAVACA_BAY_LOCATIONS = "wrast/lavacaBayLocations.csv";
     protected static final String LAVACA_BAY_ENVIRONMENTAL = "wrast/lavacaBayEnvironmental.csv";
 
     private Map<String, LatLng> locationMap;
     private Map<String, Double> depthMap;
+    private final HashMap<String, Specimen> predatorSpecimenMap = new HashMap<String, Specimen>();
 
     public StudyImporterForWrast(ParserFactory parserFactory, NodeFactory nodeFactory) {
         super(parserFactory, nodeFactory);
@@ -61,11 +64,14 @@ public class StudyImporterForWrast extends BaseStudyImporter {
         try {
             LabeledCSVParser csvParser = parserFactory.createParser(LAVACA_BAY_DATA_SOURCE, CharsetConstant.UTF8);
             LengthParser parser = new LengthParserImpl(COLUMN_MAPPER.get(LENGTH_IN_MM));
+            getPredatorSpecimenMap().clear();
             while (csvParser.getLine() != null) {
                 addNextRecordToStudy(csvParser, study, COLUMN_MAPPER, parser);
             }
         } catch (IOException e) {
             throw new StudyImporterException("failed to create study [" + LAVACA_BAY_DATA_SOURCE + "]", e);
+        } finally {
+            getPredatorSpecimenMap().clear();
         }
         return study;
     }
@@ -73,45 +79,67 @@ public class StudyImporterForWrast extends BaseStudyImporter {
 
     private void addNextRecordToStudy(LabeledCSVParser csvParser, Study study, Map<String, String> columnToNormalizedTermMapper, LengthParser lengthParser) throws StudyImporterException {
         String seasonName = csvParser.getValueByLabel(columnToNormalizedTermMapper.get(SEASON));
-        Specimen prey = createAndClassifySpecimen(csvParser.getValueByLabel(columnToNormalizedTermMapper.get(PREY_SPECIES)));
+        String preyItem = csvParser.getValueByLabel(columnToNormalizedTermMapper.get(PREY_SPECIES));
+        if (preyItem == null) {
+            LOG.warn("no prey name for line [" + csvParser.getLastLineNumber() + "]");
+        } else {
+            Specimen prey = createAndClassifySpecimen(preyItem);
 
-        String habitat = csvParser.getValueByLabel(COLUMN_MAPPER.get(HABITAT));
-        String site = csvParser.getValueByLabel(COLUMN_MAPPER.get(SITE));
-        String region = csvParser.getValueByLabel(COLUMN_MAPPER.get(REGION));
-        String sampleLocationId = createLocationId(habitat, region, site);
+            String habitat = csvParser.getValueByLabel(COLUMN_MAPPER.get(HABITAT));
+            String site = csvParser.getValueByLabel(COLUMN_MAPPER.get(SITE));
+            String region = csvParser.getValueByLabel(COLUMN_MAPPER.get(REGION));
+            String sampleLocationId = createLocationId(habitat, region, site);
 
-        Map<String, LatLng> averageLocations = getLocationMap();
+            Map<String, LatLng> averageLocations = getLocationMap();
 
-        LatLng latLng1 = averageLocations.get(sampleLocationId);
-        if (latLng1 == null) {
-            throw new StudyImporterException("no location information for [" + sampleLocationId + "]");
+            LatLng latLng1 = averageLocations.get(sampleLocationId);
+            if (latLng1 == null) {
+                throw new StudyImporterException("no location information for [" + sampleLocationId + "] on line [" + csvParser.getLastLineNumber() + "] found in [" + averageLocations + "]");
+            }
+
+            if (depthMap == null) {
+                depthMap = createDepthMap();
+            }
+
+            Double depth = depthMap.get(createDepthId(seasonName, region, site, habitat));
+
+            Double altitude = depth == null ? null : -depth;
+            if (depth == null) {
+                LOG.warn(createMsgPrefix(csvParser) + " failed to find depth for habitat, region, site and season: [" + createDepthId(seasonName, region, site, habitat) + "], skipping entry");
+            }
+
+            Location sampleLocation = nodeFactory.getOrCreateLocation(latLng1.getLat(), latLng1.getLng(), altitude);
+            prey.caughtIn(sampleLocation);
+            prey.caughtDuring(getOrCreateSeason(seasonName));
+
+            String speciesName = csvParser.getValueByLabel(columnToNormalizedTermMapper.get(PREDATOR_SPECIES));
+            String predatorId = csvParser.getValueByLabel(columnToNormalizedTermMapper.get(PREDATOR_SPECIMEN_ID));
+            Map<String, Specimen> predatorMap = getPredatorSpecimenMap();
+            Specimen predator = predatorMap.get(predatorId);
+            if (predator == null) {
+                predator = addPredatorSpecimen(csvParser, study, lengthParser, seasonName, sampleLocation, speciesName, predatorId, predatorMap);
+            }
+
+            predator.ate(prey);
         }
+    }
 
-        if (depthMap == null) {
-            depthMap = createDepthMap();
-        }
-
-        Double depth = depthMap.get(createDepthId(seasonName, region, site, habitat));
-
-        Double altitude = depth == null ? null : -depth;
-        if (depth == null) {
-            LOG.warn(createMsgPrefix(csvParser) + " failed to find depth for habitat, region, site and season: [" + createDepthId(seasonName, region, site, habitat) + "], skipping entry");
-        }
-        Location sampleLocation = nodeFactory.getOrCreateLocation(latLng1.getLat(), latLng1.getLng(), altitude);
-        prey.caughtIn(sampleLocation);
-        prey.caughtDuring(getOrCreateSeason(seasonName));
-
-        String speciesName = csvParser.getValueByLabel(columnToNormalizedTermMapper.get(PREDATOR_SPECIES));
-        Specimen predator = createAndClassifySpecimen(speciesName);
+    private Specimen addPredatorSpecimen(LabeledCSVParser csvParser, Study study, LengthParser lengthParser, String seasonName, Location sampleLocation, String speciesName, String predatorId, Map<String, Specimen> predatorMap) throws StudyImporterException {
+        Specimen predator;
+        predator = createAndClassifySpecimen(speciesName);
+        predatorMap.put(predatorId, predator);
         predator.setLengthInMm(lengthParser.parseLengthInMm(csvParser));
 
         if (null != sampleLocation) {
             predator.caughtIn(sampleLocation);
         }
-        predator.ate(prey);
         predator.caughtDuring(getOrCreateSeason(seasonName));
         study.collected(predator);
+        return predator;
+    }
 
+    private HashMap<String, Specimen> getPredatorSpecimenMap() {
+        return predatorSpecimenMap;
     }
 
     private Map<String, Double> createDepthMap() throws StudyImporterException {
@@ -159,7 +187,7 @@ public class StudyImporterForWrast extends BaseStudyImporter {
         } else if ("NV".equals(habitat)) {
             habitat = "Non-Veg";
         }
-        return habitat + region + site + seasonString;
+        return createLocationId(habitat, region, site) + seasonString;
     }
 
     private Season getOrCreateSeason(String seasonName) {
@@ -186,9 +214,6 @@ public class StudyImporterForWrast extends BaseStudyImporter {
             parser = parserFactory.createParser(LAVACA_BAY_LOCATIONS, CharsetConstant.UTF8);
             while (parser.getLine() != null) {
                 String habitateDef = parser.getValueByLabel(COLUMN_MAPPER.get(HABITAT));
-                if ("Marsh edge".equals(habitateDef)) {
-                    habitateDef = "Marsh";
-                }
                 String regionDef = parser.getValueByLabel(COLUMN_MAPPER.get(REGION));
                 String siteDef = parser.getValueByLabel(COLUMN_MAPPER.get(SITE));
                 String latitude = parser.getValueByLabel("Latitude");
@@ -247,8 +272,11 @@ public class StudyImporterForWrast extends BaseStudyImporter {
         return "in [" + LAVACA_BAY_LOCATIONS + ":" + parser.getLastLineNumber() + "]:";
     }
 
-    private String createLocationId(String habitateDef, String regionDef, String siteDef) {
-        return habitateDef + regionDef + siteDef;
+    private static String createLocationId(String habitateDef, String regionDef, String siteDef) {
+        if ("Marsh edge".equals(habitateDef)) {
+            habitateDef = "Marsh";
+        }
+        return habitateDef.trim() + regionDef.trim() + siteDef.trim();
     }
 
     private Specimen createAndClassifySpecimen(final String speciesName) throws StudyImporterException {

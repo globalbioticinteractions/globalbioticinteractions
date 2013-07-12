@@ -27,10 +27,10 @@ public class StudyImporterForWrastTest extends GraphDBTestCase {
     @Test
     public void createAndPopulateStudyFromLavacaBay() throws StudyImporterException, NodeFactoryException {
         String csvString =
-                "\"Region\",\"Season\",\"Habitat\",\"Site\",\"Family\",\"Predator Species\",\"TL\",\"Prey Item Species\",\"Prey item\",\"Number\",\"Condition Index\",\"Volume\",\"Percent Content\",\"Prey Item Trophic Level\",\"Notes\"\n";
-        csvString += "\"Lower\",\"Fall\",\"Marsh\",1,\"Sciaenidae\",\"Sciaenops ocellatus\",420,\"Acrididae spp. \",\"Acrididae \",1,\"III\",0.4,3.2520325203,2.5,\n";
-        csvString += "\"Lower\",\"Spring\",\"Non-Veg \",1,\"Ariidae\",\"Arius felis\",176,\"Aegathoa oculata \",\"Aegathoa oculata\",4,\"I\",0.01,3.3333333333,2.1,\n";
-        csvString += "\"Upper\",\"Spring\",\"Reef\",2,\"Depth\",\"Missing depth\",176,\"Aegathoa oculata \",\"Aegathoa oculata\",4,\"I\",0.01,3.3333333333,2.1,\n";
+                "\"Region\",\"Season\",\"Habitat\",\"Site\",\"Family\",\"Predator Species\",\"TL (mm)\",\"Prey Item Species\",\"Prey item\",\"Number\",\"Condition Index\",\"Volume\",\"Percent Content\",\"Prey Item Trophic Level\",\"Notes\",\"Call #\"\n";
+        csvString += "\"Lower\",\"Fall\",\"Marsh\",1,\"Sciaenidae\",\"Sciaenops ocellatus\",420,\"Acrididae spp. \",\"Acrididae \",1,\"III\",0.4,3.2520325203,2.5,,1\n";
+        csvString += "\"Lower\",\"Spring\",\"Non-Veg \",1,\"Ariidae\",\"Arius felis\",176,\"Aegathoa oculata \",\"Aegathoa oculata\",4,\"I\",0.01,3.3333333333,2.1,,2\n";
+        csvString += "\"Upper\",\"Spring\",\"Reef\",2,\"Depth\",\"Missing depth\",176,\"Aegathoa oculata \",\"Aegathoa oculata\",4,\"I\",0.01,3.3333333333,2.1,,2\n";
 
         Map<String, String> contentMap = new HashMap<String, String>();
         String locationString = "\"Location\",\"Latitude\",\"Longitude\",,\"Region\",\"Habitat\",\"Site\"\n" +
@@ -63,6 +63,14 @@ public class StudyImporterForWrastTest extends GraphDBTestCase {
 
 
         Study study = studyImporterFor.importStudy();
+
+        int specimenCount = 0;
+        for (Relationship specimen : study.getSpecimens()) {
+            specimenCount++;
+        }
+
+        assertThat(specimenCount, is(2));
+
 
         assertNotNull(nodeFactory.findTaxonOfType("Sciaenops ocellatus"));
         assertNotNull(nodeFactory.findTaxonOfType("Ariopsis felis"));
@@ -121,7 +129,7 @@ public class StudyImporterForWrastTest extends GraphDBTestCase {
                         assertEquals("Aegathoa oculata", name);
                         count++;
                     }
-                    assertEquals(1, count);
+                    assertEquals(2, count);
 
                     Season season = specimen.getSeason();
                     assertEquals("spring", season.getTitle());

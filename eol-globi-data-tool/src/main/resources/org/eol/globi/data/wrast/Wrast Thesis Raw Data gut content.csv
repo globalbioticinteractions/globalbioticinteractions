@@ -1,0 +1,997 @@
+Season,Month,Day,Year,Region,Habitat,Site,Predator Family,Predator Species,TL (mm),Call #,Stomach Fullness Index,Prey Item Phylum (Division),Prey Item Class,Prey Item Order, Prey Item Family,Prey item,Number,Condition Index,Volume (ml??),Percent Content
+Summer,7,25,2006,Upper,Marsh edge,1,Ariidae,Arius felis,225,1,2,Arthropoda,Malacostraca,Decapoda,Callianassidae,Callianassidae,2,I,1.0000,29.41
+Summer,7,25,2006,Upper,Marsh edge,1,Ariidae,Arius felis,225,1,2,Arthropoda,Malacostraca,Decapoda,,Crab parts,1,III,1.0000,29.41
+Summer,7,25,2006,Upper,Marsh edge,1,Ariidae,Arius felis,225,1,2,,,,,Digestate,1,IV,1.2000,35.29
+Summer,7,25,2006,Upper,Marsh edge,1,Ariidae,Arius felis,225,1,2,Vertebrata,Actinopterygii,,,Fish scale,1,III,0.0200,0.59
+Summer,7,25,2006,Upper,Marsh edge,1,Ariidae,Arius felis,225,1,2,Mollusca,Gastropoda,,,Gastropod operculum,2,III,0.0300,0.88
+Summer,7,25,2006,Upper,Marsh edge,1,Ariidae,Arius felis,225,1,2,Arthropoda,Insecta,Hymenoptera,,Hymenoptera ,1,III,0.1000,2.94
+Summer,7,25,2006,Upper,Marsh edge ,1,Ariidae,Arius felis,225,1,2,Mollusca,Bivalvia,Mytiloida,Mytilidae,Ischadium recurvum�,1,I,0.0500,1.47
+Summer,7,25,2006,Upper,Marsh edge,1,Ariidae,Arius felis,167,2,2,Arthropoda,Malacostraca,Decapoda,Portunidae,Callinectes sapidus,4,I,0.5000,43.44
+Summer,7,25,2006,Upper,Marsh edge,1,Ariidae,Arius felis,167,2,2,,,,,Digestate,1,IV,0.0750,6.52
+Summer,7,25,2006,Upper,Marsh edge,1,Ariidae,Arius felis,167,2,2,,,,,Eggs,34,I,0.1000,8.69
+Summer,7,25,2006,Upper,Marsh edge,1,Ariidae,Arius felis,167,2,2,Arthropoda,Malacostraca,Amphipoda,Ischyroceridae�,Erichtonius brasiliensis,4,I,0.0040,0.35
+Summer,7,25,2006,Upper,Marsh edge,1,Ariidae,Arius felis,167,2,2,Arthropoda,Insecta,Hymenoptera,,Hymenoptera ,1,III,0.0200,1.74
+Summer,7,25,2006,Upper,Marsh edge,1,Ariidae,Arius felis,167,2,2,Arthropoda,Malacostraca,Decapoda,,Larval shrimp,1,I,0.0010,0.09
+Summer,7,25,2006,Upper,Marsh edge,1,Ariidae,Arius felis,167,2,2,Arthropoda,Malacostraca,Decapoda,Palaemonidae,Palaemonetes vulgaris,2,I,0.4000,34.75
+Summer,7,25,2006,Upper,Marsh edge,1,Ariidae,Arius felis,167,2,2,Chrodata,,,,Parasite,2,I,0.0010,0.09
+Summer,7,25,2006,Upper,Marsh edge,1,Ariidae,Arius felis,167,2,2,Arthropoda,Malacostraca,Decapoda,Xanthidae,Xanthidae,1,I,0.0500,4.34
+Summer,7,25,2006,Upper,Marsh edge,1,Ariidae,Arius felis,297,3,1,Arthropoda,Malacostraca,Decapoda,Callianassidae,Callianassidae,3,I,0.6000,33.13
+Summer,7,25,2006,Upper,Marsh edge,1,Ariidae,Arius felis,297,3,1,,,,,Digestate,1,IV,1.2000,66.26
+Summer,7,25,2006,Upper,Marsh edge,1,Ariidae,Arius felis,297,3,1,Arthropoda,Malacostraca,Amphipoda,Ischyroceridae�,Erichtonius brasiliensis,1,I,0.0010,0.06
+Summer,7,25,2006,Upper,Marsh edge,1,Ariidae,Arius felis,297,3,1,Mollusca,Gastropoda,,,Gastropod operculum,1,III,0.0010,0.06
+Summer,7,25,2006,Upper,Marsh edge,1,Ariidae,Arius felis,297,3,1,Arthropoda,Malacostraca,Mysida,,Mysidae,1,I,0.0010,0.06
+Summer,7,25,2006,Upper,Marsh edge,1,Ariidae,Arius felis,297,3,1,Chrodata,,,,Parasite,8,I,0.0080,0.44
+Summer,7,25,2006,Upper,Marsh edge,1,Ariidae,Arius felis,276,4,2,Arthropoda,Malacostraca,Decapoda,Callianassidae,Callianassidae,2,I,4.5000,66.95
+Summer,7,25,2006,Upper,Marsh edge,1,Ariidae,Arius felis,276,4,2,,,,,Digestate,1,IV,2.2000,32.73
+Summer,7,25,2006,Upper,Marsh edge,1,Ariidae,Arius felis,276,4,2,Chrodata,,,,Parasite,10,I,0.0200,0.30
+Summer,7,25,2006,Upper,Marsh edge,1,Ariidae,Arius felis,276,4,2,Annelida,Polychaeta,Canalipalpata,Pectinariidae,Pectinariidae ,1,III,0.0010,0.01
+Summer,7,25,2006,Upper,Marsh edge,1,Ariidae,Arius felis,214,5,2,Arthropoda,Malacostraca,Decapoda,Callianassidae,Callianassidae claw,2,II,0.2000,15.33
+Summer,7,25,2006,Upper,Marsh edge,1,Ariidae,Arius felis,214,5,2,Arthropoda,Malacostraca,Decapoda,,Decapod legs,2,III,0.8000,61.30
+Summer,7,25,2006,Upper,Marsh edge,1,Ariidae,Arius felis,214,5,2,,,,,Digestate,1,IV,0.2000,15.33
+Summer,7,25,2006,Upper,Marsh edge,1,Ariidae,Arius felis,214,5,2,Vertebrata,Actinopterygii,,,Fish scale,1,III,0.0040,0.31
+Summer,7,25,2006,Upper,Marsh edge,1,Ariidae,Arius felis,214,5,2,Arthropoda,Malacostraca,Decapoda,Panopeidae�,Neopanope texana,1,I,0.1000,7.66
+Summer,7,25,2006,Upper,Marsh edge,1,Ariidae,Arius felis,214,5,2,Chrodata,,,,Parasite,2,I,0.0010,0.08
+Summer,7,25,2006,Upper,Marsh edge,1,Polynemidae,Polydactylus octonemus,203,6,1,Arthropoda,Malacostraca,Mysida,,Mysidae,11,I,0.0400,7.41
+Summer,7,25,2006,Upper,Marsh edge,1,Polynemidae,Polydactylus octonemus,203,6,1,Arthropoda,Malacostraca,Decapoda,Peneaidae,Penaeid shrimp,3,I,0.5000,92.59
+Summer,7,25,2006,Upper,Marsh edge,2,Ariidae,Arius felis,294,7,2,Arthropoda,Malacostraca,Decapoda,Callianassidae,Callianassidae claw,1,II,0.5000,17.12
+Summer,7,25,2006,Upper,Marsh edge,2,Ariidae,Arius felis,294,7,2,,,,,Digestate,1,IV,2.0000,68.47
+Summer,7,25,2006,Upper,Marsh edge,2,Ariidae,Arius felis,294,7,2,Vertebrata,Actinopterygii,,,Fish parts,1,II,0.4000,13.69
+Summer,7,25,2006,Upper,Marsh edge,2,Ariidae,Arius felis,294,7,2,Arthropoda,Malacostraca,Mysida,,Mysidae,4,II,0.0010,0.03
+Summer,7,25,2006,Upper,Marsh edge,2,Ariidae,Arius felis,294,7,2,Chrodata,,,,Parasite,25,I,0.0200,0.68
+Summer,7,25,2006,Upper,Marsh edge,2,Ariidae,Arius felis,239,8,1,Arthropoda,Malacostraca,Decapoda,Callianassidae,Callianassidae,1,I,0.3000,37.31
+Summer,7,25,2006,Upper,Marsh edge,2,Ariidae,Arius felis,239,8,1,,,,,Digestate,1,IV,0.5000,62.19
+Summer,7,25,2006,Upper,Marsh edge,2,Ariidae,Arius felis,239,8,1,Vertebrata,Actinopterygii,,,Fish scale,1,III,0.0010,0.12
+Summer,7,25,2006,Upper,Marsh edge,2,Ariidae,Arius felis,239,8,1,Mollusca,Gastropoda,,,Gastropod operculum,1,III,0.0010,0.12
+Summer,7,25,2006,Upper,Marsh edge,2,Ariidae,Arius felis,239,8,1,Chrodata,,,,Parasite,5,I,0.0020,0.25
+Summer,7,25,2006,Upper,Marsh edge,2,Ariidae,Arius felis,200,9,2,Arthropoda,Malacostraca,Decapoda,Callianassidae,Callianassidae,2,II,1.2000,70.51
+Summer,7,25,2006,Upper,Marsh edge,2,Ariidae,Arius felis,200,9,2,,,,,Digestate,1,IV,0.4000,23.50
+Summer,7,25,2006,Upper,Marsh edge,2,Ariidae,Arius felis,200,9,2,Arthropoda,Malacostraca,Mysida,,Mysidae,1,II,0.0010,0.06
+Summer,7,25,2006,Upper,Marsh edge,2,Ariidae,Arius felis,200,9,2,Chrodata,,,,Parasite,1,I,0.0010,0.06
+Summer,7,25,2006,Upper,Marsh edge,2,Ariidae,Arius felis,200,9,2,Annelida,Polychaeta,Canalipalpata,Terebellidae ,Terebellidae ,1,I,0.1000,5.88
+Summer,7,25,2006,Upper,Marsh edge,2,Ariidae,Arius felis,283,10,1,Arthropoda,Malacostraca,Decapoda,,Crab parts,1,III,0.4000,33.28
+Summer,7,25,2006,Upper,Marsh edge,2,Ariidae,Arius felis,283,10,1,Magnoliophyta,Liliopsida,Najadales,Cymodoceaceae,Halodule beaudettei�root,1,IV,0.0010,0.08
+Summer,7,25,2006,Upper,Marsh edge,2,Ariidae,Arius felis,283,10,1,Chrodata,,,,Parasite,1,I,0.0010,0.08
+Summer,7,25,2006,Upper,Marsh edge,2,Ariidae,Arius felis,283,10,1,Arthropoda,Malacostraca,Decapoda,Ocypodidae,Uca spp.,1,I,0.8000,66.56
+Summer,7,25,2006,Upper,Marsh edge,2,Sciaenidae,Cynoscion nebulosus,258,11,3,Arthropoda,Malacostraca,Decapoda,Peneaidae,Litopenaeus setiferus�,5,I,1.3000,76.47
+Summer,7,25,2006,Upper,Marsh edge,2,Sciaenidae,Cynoscion nebulosus,258,11,3,Arthropoda,Malacostraca,Decapoda,Peneaidae,Penaeid shrimp,7,II,0.4000,23.53
+Summer,7,25,2006,Upper,Marsh edge,2,Sciaenidae,Cynoscion nebulosus,261,12,2,Vertebrata,Actinopterygii,Clupeiformes,Clupeidae,Brevoortia patronus,1,II,0.2000,42.55
+Summer,7,25,2006,Upper,Marsh edge,2,Sciaenidae,Cynoscion nebulosus,261,12,2,Arthropoda,Malacostraca,Decapoda,Portunidae,Callinectes sapidus,1,I,0.0500,10.64
+Summer,7,25,2006,Upper,Marsh edge,2,Sciaenidae,Cynoscion nebulosus,261,12,2,,,,,Digestate,1,IV,0.0700,14.89
+Summer,7,25,2006,Upper,Marsh edge,2,Sciaenidae,Cynoscion nebulosus,261,12,2,Arthropoda,Malacostraca,Decapoda,Peneaidae,Penaeid shrimp,1,I,0.1500,31.91
+Summer,7,25,2006,Upper,Marsh edge,2,Sciaenidae,Cynoscion nebulosus,260,13,3,Arthropoda,Malacostraca,Decapoda,Peneaidae,Litopenaeus setiferus�,15,I,2.2000,100.00
+Summer,7,25,2006,Upper,Marsh edge,2,Ariidae,Arius felis,365,14,4,Arthropoda,Malacostraca,Decapoda,Callianassidae,Callianassidae,7,I,5.9000,36.36
+Summer,7,25,2006,Upper,Marsh edge,2,Ariidae,Arius felis,365,14,4,Arthropoda,Malacostraca,Decapoda,Portunidae,Callinectes sapidus,5,I,7.0000,43.14
+Summer,7,25,2006,Upper,Marsh edge,2,Ariidae,Arius felis,365,14,4,,,,,Digestate,1,IV,3.0000,18.49
+Summer,7,25,2006,Upper,Marsh edge,2,Ariidae,Arius felis,365,14,4,Vertebrata,Actinopterygii,,,Fish Eyeball,1,III,0.0080,0.05
+Summer,7,25,2006,Upper,Marsh edge,2,Ariidae,Arius felis,365,14,4,Chrodata,,,,Parasite,11,I,0.0200,0.12
+Summer,7,25,2006,Upper,Marsh edge,2,Ariidae,Arius felis,365,14,4,Plantae,,,,Wood,1,IV,0.3000,1.85
+Summer,7,25,2006,Upper,Non-Veg ,1,Ariidae,Bagre marinus,609,15,1,,,,,Digestate,1,IV,4.0000,98.16
+Summer,7,25,2006,Upper,Non-Veg ,1,Ariidae,Bagre marinus,609,15,1,Mollusca,Bivalvia,Mytiloida,Mytilidae,Ischadium recurvum�,1,III,0.0750,1.84
+Summer,7,25,2006,Upper,Non-Veg ,1,Ariidae,Bagre marinus,497,16,2,Vertebrata,Actinopterygii,Clupeiformes,Clupeidae,Brevoortia patronus,1,II,3.1000,26.72
+Summer,7,25,2006,Upper,Non-Veg ,1,Ariidae,Bagre marinus,497,16,2,,,,,Digestate,1,IV,3.0000,25.86
+Summer,7,25,2006,Upper,Non-Veg ,1,Ariidae,Bagre marinus,497,16,2,Vertebrata,Actinopterygii,,,Fish scale,6,III,0.5000,4.31
+Summer,7,25,2006,Upper,Non-Veg ,1,Ariidae,Bagre marinus,497,16,2,Arthropoda,Malacostraca,Decapoda,Menippidae,Menippe adina,1,I,5.0000,43.10
+Summer,7,25,2006,Upper,Non-Veg ,1,Ariidae,Bagre marinus,480,17,1,,,,,Digestate,1,IV,1.6000,100.00
+Summer,7,25,2006,Upper,Non-Veg ,1,Ariidae,Bagre marinus,394,18,1,,,,,Digestate,1,IV,0.8000,44.44
+Summer,7,25,2006,Upper,Non-Veg ,1,Ariidae,Bagre marinus,394,18,1,Vertebrata,Actinopterygii,,,Fish bone,2,III,1.0000,55.56
+Summer,7,25,2006,Upper,Non-Veg ,1,Ariidae,Bagre marinus,265,19,1,,,,,Digestate,1,IV,1.0000,100.00
+Summer,7,25,2006,Upper,Non-Veg ,1,Clupeidae,Brevoortia patronus,287,20,1,Plantae,,,,Detritus,1,IV,0.0020,100.00
+Summer,7,25,2006,Upper,Non-Veg ,1,Clupeidae,Brevoortia patronus,197,21,2,Plantae,,,,Detritus,1,IV,0.0200,100.00
+Summer,7,25,2006,Upper,Non-Veg ,1,Clupeidae,Brevoortia patronus,321,22,1,Plantae,,,,Detritus,1,IV,0.0100,100.00
+Summer,7,25,2006,Upper,Non-Veg ,1,Clupeidae,Brevoortia patronus,159,23,1,Plantae,,,,Detritus,1,IV,0.0200,100.00
+Summer,7,25,2006,Upper,Non-Veg ,1,Clupeidae,Brevoortia patronus,174,24,2,Plantae,,,,Detritus,1,IV,0.0200,100.00
+Summer,7,25,2006,Upper,Non-Veg ,1,Scombridae,Scomberomorus maculatus,539,25,0,,,,,Empty,0,NA,0.0000,0.00
+Summer,7,25,2006,Upper,Non-Veg ,2,Ariidae,Bagre marinus,235,26,3,,,,,Digestate,1,IV,0.3000,56.60
+Summer,7,25,2006,Upper,Non-Veg ,2,Ariidae,Bagre marinus,235,26,3,Vertebrata,Actinopterygii,,,Fish bone,1,III,0.1500,28.30
+Summer,7,25,2006,Upper,Non-Veg ,2,Ariidae,Bagre marinus,235,26,3,Arthropoda,insecta,,,Insect parts,1,III,0.0800,15.09
+Summer,7,25,2006,Upper,Non-Veg ,2,Ariidae,Bagre marinus,252,27,1,,,,,Digestate,1,IV,0.5000,71.33
+Summer,7,25,2006,Upper,Non-Veg ,2,Ariidae,Bagre marinus,252,27,1,Arthropoda,Malacostraca,Decapoda,Menippidae,Menippe adina,1,III,0.2000,28.53
+Summer,7,25,2006,Upper,Non-Veg ,2,Ariidae,Bagre marinus,252,27,1,Vertebrata,Actinopterygii,,,Otolith,2,III,0.0010,0.14
+Summer,7,25,2006,Upper,Non-Veg ,2,Ariidae,Arius felis,392,28,1,Arthropoda,Malacostraca,Decapoda,,Crab parts,1,III,0.3000,13.04
+Summer,7,25,2006,Upper,Non-Veg ,2,Ariidae,Arius felis,392,28,1,,,,,Digestate,1,IV,0.8000,34.78
+Summer,7,25,2006,Upper,Non-Veg ,2,Ariidae,Arius felis,392,28,1,Arthropoda,Malacostraca,Decapoda,Menippidae,Menippe adina,1,I,1.2000,52.17
+Summer,7,25,2006,Upper,Non-Veg ,2,Ariidae,Arius felis,239,29,1,,,,,Digestate,1,IV,0.2000,80.00
+Summer,7,25,2006,Upper,Non-Veg ,2,Ariidae,Arius felis,239,29,1,Mollusca,Gastropoda,,,Gastropod operculum,1,III,0.0500,20.00
+Summer,7,25,2006,Upper,Non-Veg ,2,Clupeidae,Brevoortia patronus,171,30,1,Plantae,,,,Detritus,1,IV,0.0100,100.00
+Summer,7,25,2006,Upper,Non-Veg ,2,Ariidae,Bagre marinus,609,31,1,Arthropoda,Malacostraca,Decapoda,Portunidae,Callinectes sapidus,1,I,8.0000,77.90
+Summer,7,25,2006,Upper,Non-Veg ,2,Ariidae,Bagre marinus,609,31,1,Arthropoda,Malacostraca,Decapoda,,Crab parts,1,III,0.6500,6.33
+Summer,7,25,2006,Upper,Non-Veg ,2,Ariidae,Bagre marinus,609,31,1,,,,,Digestate,1,IV,1.6000,15.58
+Summer,7,25,2006,Upper,Non-Veg ,2,Ariidae,Bagre marinus,609,31,1,Vertebrata,Actinopterygii,,,Fish Eyeball,2,III,0.0200,0.19
+Summer,7,25,2006,Upper,Non-Veg ,2,Clupeidae,Brevoortia patronus,204,32,1,Plantae,,,,Detritus,1,IV,0.0400,100.00
+Summer,7,25,2006,Upper,Non-Veg ,2,Clupeidae,Brevoortia patronus,216,33,1,Plantae,,,,Detritus,1,IV,0.0300,100.00
+Summer,7,25,2006,Upper,Non-Veg ,2,Ariidae,Bagre marinus,539,34,2,Arthropoda,Malacostraca,Decapoda,,Decapod carapace,1,III,0.5000,6.74
+Summer,7,25,2006,Upper,Non-Veg ,2,Ariidae,Bagre marinus,539,34,2,,,,,Digestate,1,IV,4.9000,66.04
+Summer,7,25,2006,Upper,Non-Veg ,2,Ariidae,Bagre marinus,539,34,2,Vertebrata,Actinopterygii,,,Fish Eyeball,3,III,0.0200,0.27
+Summer,7,25,2006,Upper,Non-Veg ,2,Ariidae,Bagre marinus,539,34,2,Vertebrata,Actinopterygii,,,Fish bone,1,III,2.0000,26.95
+Summer,7,25,2006,Upper,Non-Veg ,2,Clupeidae,Brevoortia patronus,337,35,2,Plantae,,,,Detritus,1,IV,0.0500,100.00
+Summer,7,25,2006,Upper,Non-Veg ,2,Elopidae,Elops saurus,348,36,1,,,,,Digestate,1,IV,0.3500,100.00
+Summer,7,25,2006,Upper,Non-Veg ,2,Ariidae,Arius felis,274,37,2,Arthropoda,Malacostraca,Decapoda,,Crab parts,1,II,0.2500,50.00
+Summer,7,25,2006,Upper,Non-Veg ,2,Ariidae,Arius felis,274,37,2,,,,,Digestate,1,IV,0.2000,40.00
+Summer,7,25,2006,Upper,Non-Veg ,2,Ariidae,Arius felis,274,37,2,Mollusca,Bivalvia,Ostreoida,Ostreidae,Oyster shell hash,1,IV,0.0500,10.00
+Summer,7,25,2006,Upper,Non-Veg ,2,Ariidae,Arius felis,272,38,1,Arthropoda,Malacostraca,Decapoda,Alpheidae,Alpheus heterochaelis,1,I,0.2000,28.57
+Summer,7,25,2006,Upper,Non-Veg ,2,Ariidae,Arius felis,272,38,1,,,,,Digestate,1,IV,0.5000,71.43
+Summer,7,25,2006,Upper,Non-Veg ,2,Ariidae,Arius felis,231,39,2,Plantae,,,,Algae,1,IV,0.2000,37.04
+Summer,7,25,2006,Upper,Non-Veg ,2,Ariidae,Arius felis,231,39,2,Arthropoda,Malacostraca,Decapoda,Alpheidae,Alpheus heterochaelis claws,2,III,0.0200,3.70
+Summer,7,25,2006,Upper,Non-Veg ,2,Ariidae,Arius felis,231,39,2,,,,,Digestate,1,IV,0.3000,55.56
+Summer,7,25,2006,Upper,Non-Veg ,2,Ariidae,Arius felis,231,39,2,Arthropoda,Malacostraca,Decapoda,Xanthidae,Xanthidae,1,I,0.0200,3.70
+Summer,7,25,2006,Upper,Non-Veg ,2,Clupeidae,Brevoortia patronus,173,40,1,Plantae,,,,Detritus,1,IV,0.0100,100.00
+Summer,7,25,2006,Upper,Reef,1,Stromateidae,Peprilus paru,166,41,1,,,,,Digestate,1,IV,0.0500,100.00
+Summer,7,25,2006,Upper,Reef,1,Ariidae,Arius felis,320,42,1,,,,,Digestate,1,IV,0.1500,100.00
+Summer,7,25,2006,Upper,Reef,1,Ariidae,Arius felis,222,43,3,,,,,Digestate,1,IV,0.0100,0.46
+Summer,7,25,2006,Upper,Reef,1,Ariidae,Arius felis,222,43,3,Arthropoda,Malacostraca,Decapoda,Menippidae,Menippe adina,2,I,0.4000,18.52
+Summer,7,25,2006,Upper,Reef,1,Ariidae,Arius felis,222,43,3,Arthropoda,Malacostraca,Decapoda,Panopeidae�,Neopanope texana,9,I,1.5500,71.76
+Summer,7,25,2006,Upper,Reef,1,Ariidae,Arius felis,222,43,3,Mollusca,Bivalvia,Ostreoida,Ostreidae,Oyster shell hash,2,IV,0.1000,4.63
+Summer,7,25,2006,Upper,Reef,1,Ariidae,Arius felis,222,43,3,Arthropoda,Malacostraca,Decapoda,Palaemonidae,Palaemonetes vulgaris,1,I,0.1000,4.63
+Summer,7,25,2006,Upper,Reef,1,Ariidae,Arius felis,203,44,3,,,,,Digestate,1,IV,0.3000,19.35
+Summer,7,25,2006,Upper,Reef,1,Ariidae,Arius felis,203,44,3,Arthropoda,Malacostraca,Decapoda,Menippidae,Menippe adina,3,I,0.4000,25.81
+Summer,7,25,2006,Upper,Reef,1,Ariidae,Arius felis,203,44,3,Arthropoda,Malacostraca,Decapoda,Panopeidae�,Neopanope texana,7,I,0.5500,35.48
+Summer,7,25,2006,Upper,Reef,1,Ariidae,Arius felis,203,44,3,Arthropoda,Malacostraca,Decapoda,Xanthidae,Xanthidae,11,II,0.3000,19.35
+Summer,7,25,2006,Upper,Reef,1,Ariidae,Arius felis,152,45,1,,,,,Digestate,1,IV,0.0200,100.00
+Summer,7,25,2006,Upper,Reef,1,Ariidae,Arius felis,278,46,4,Arthropoda,Malacostraca,Decapoda,,Decapod,1,III,1.5000,40.98
+Summer,7,25,2006,Upper,Reef,1,Ariidae,Arius felis,278,46,4,,,,,Digestate,1,IV,0.1500,4.10
+Summer,7,25,2006,Upper,Reef,1,Ariidae,Arius felis,278,46,4,Chrodata,,,,Parasite,1,I,0.0100,0.27
+Summer,7,25,2006,Upper,Reef,1,Ariidae,Arius felis,278,46,4,Arthropoda,Malacostraca,Stomatopoda,Squillidae,Squilla empusa,1,I,2.0000,54.64
+Summer,7,25,2006,Upper,Reef,1,Ariidae,Bagre marinus,221,47,2,Arthropoda,Malacostraca,Decapoda,,Decapod legs,2,I,0.7000,90.91
+Summer,7,25,2006,Upper,Reef,1,Ariidae,Bagre marinus,221,47,2,,,,,Digestate,1,IV,0.0700,9.09
+Summer,7,25,2006,Upper,Reef,1,Ariidae,Bagre marinus,231,48,1,,,,,Digestate,1,IV,0.0500,46.30
+Summer,7,25,2006,Upper,Reef,1,Ariidae,Bagre marinus,231,48,1,Arthropoda,Malacostraca,Decapoda,Menippidae,Menippe adina claw,1,I,0.0500,46.30
+Summer,7,25,2006,Upper,Reef,1,Ariidae,Bagre marinus,231,48,1,Arthropoda,Malacostraca,Mysida,,Mysidae,1,I,0.0080,7.41
+Summer,7,25,2006,Upper,Reef,1,Ariidae,Bagre marinus,552,49,3,Vertebrata,Actinopterygii,Clupeiformes,Clupeidae,Brevoortia patronus,1,II,17.0000,68.00
+Summer,7,25,2006,Upper,Reef,1,Ariidae,Bagre marinus,552,49,3,,,,,Digestate,1,IV,8.0000,32.00
+Summer,7,25,2006,Upper,Reef,1,Ariidae,Bagre marinus,502,50,2,,,,,Digestate,1,IV,7.0000,96.81
+Summer,7,25,2006,Upper,Reef,1,Ariidae,Bagre marinus,502,50,2,Vertebrata,Actinopterygii,,,Fish bone,1,III,0.0500,0.69
+Summer,7,25,2006,Upper,Reef,1,Ariidae,Bagre marinus,502,50,2,Vertebrata,Actinopterygii,,,Fish Tissue,1,II,0.1800,2.49
+Summer,7,25,2006,Upper,Reef,1,Ariidae,Bagre marinus,502,50,2,Vertebrata,Actinopterygii,,,Otolith,1,III,0.0010,0.01
+Summer,7,25,2006,Upper,Reef,1,Clupeidae,Brevoortia patronus,157,51,2,Plantae,,,,Detritus,1,IV,0.0100,100.00
+Summer,7,25,2006,Upper,Reef,1,Clupeidae,Brevoortia patronus,184,52,2,Plantae,,,,Detritus,1,IV,0.0200,100.00
+Summer,7,25,2006,Upper,Reef,1,Clupeidae,Brevoortia patronus,165,53,1,Plantae,,,,Detritus,1,IV,0.0080,100.00
+Summer,7,25,2006,Upper,Reef,1,Clupeidae,Brevoortia patronus,185,54,1,Plantae,,,,Detritus,1,IV,0.0200,100.00
+Summer,7,25,2006,Upper,Reef,1,Clupeidae,Brevoortia patronus,168,55,1,Plantae,,,,Detritus,1,IV,0.0200,100.00
+Summer,7,25,2006,Upper,Reef,2,Ariidae,Arius felis,220,56,2,,,,,Digestate,1,IV,0.4000,55.56
+Summer,7,25,2006,Upper,Reef,2,Ariidae,Arius felis,220,56,2,Mollusca,Gastropoda,,,Gastropod operculum,1,III,0.0200,2.78
+Summer,7,25,2006,Upper,Reef,2,Ariidae,Arius felis,220,56,2,Arthropoda,Malacostraca,Decapoda,Menippidae,Menippe adina,2,II,0.3000,41.67
+Summer,7,25,2006,Upper,Reef,2,Ariidae,Arius felis,214,57,3,Arthropoda,Malacostraca,Decapoda,,Crab,4,II,0.4000,18.60
+Summer,7,25,2006,Upper,Reef,2,Ariidae,Arius felis,214,57,3,,,,,Digestate,1,IV,1.0000,46.51
+Summer,7,25,2006,Upper,Reef,2,Ariidae,Arius felis,214,57,3,Arthropoda,Malacostraca,Decapoda,Menippidae,Menippe adina,2,I,0.2000,9.30
+Summer,7,25,2006,Upper,Reef,2,Ariidae,Arius felis,214,57,3,Arthropoda,Malacostraca,Decapoda,Panopeidae�,Neopanope texana,2,I,0.4000,18.60
+Summer,7,25,2006,Upper,Reef,2,Ariidae,Arius felis,214,57,3,Arthropoda,Malacostraca,Decapoda,Porcellanidae,Petrolithes armatus,2,I,0.1500,6.98
+Summer,7,25,2006,Upper,Reef,2,Ariidae,Bagre marinus,593,58,3,Arthropoda,Malacostraca,Decapoda,Portunidae,Callinectes sapidus,1,I,10.0000,52.63
+Summer,7,25,2006,Upper,Reef,2,Ariidae,Bagre marinus,593,58,3,,,,,Digestate,1,IV,7.0000,36.84
+Summer,7,25,2006,Upper,Reef,2,Ariidae,Bagre marinus,593,58,3,Vertebrata,Actinopterygii,,,Fish bone,2,III,2.0000,10.53
+Summer,7,25,2006,Upper,Reef,2,Ariidae,Arius felis,216,59,3,,,,,Digestate,1,IV,0.0150,4.11
+Summer,7,25,2006,Upper,Reef,2,Ariidae,Arius felis,216,59,3,Arthropoda,Malacostraca,Decapoda,Menippidae,Menippe adina,1,I,0.3500,95.89
+Summer,7,25,2006,Upper,Reef,2,Ariidae,Arius felis,233,60,4,,,,,Digestate,1,IV,0.2000,12.90
+Summer,7,25,2006,Upper,Reef,2,Ariidae,Arius felis,233,60,4,Arthropoda,Malacostraca,Decapoda,Menippidae,Menippe adina,4,I,0.6000,38.71
+Summer,7,25,2006,Upper,Reef,2,Ariidae,Arius felis,233,60,4,Arthropoda,Malacostraca,Decapoda,Panopeidae�,Neopanope texana,6,I,0.7000,45.16
+Summer,7,25,2006,Upper,Reef,2,Ariidae,Arius felis,233,60,4,Mollusca,Bivalvia,Ostreoida,Ostreidae,Oyster shell hash,1,IV,0.0500,3.23
+Summer,7,25,2006,Upper,Reef,2,Ariidae,Bagre marinus,625,61,2,Arthropoda,Malacostraca,Decapoda,,Crab claw,1,III,0.1000,1.41
+Summer,7,25,2006,Upper,Reef,2,Ariidae,Bagre marinus,625,61,2,,,,,Digestate,1,IV,7.0000,98.59
+Summer,7,25,2006,Upper,Reef,2,Ariidae,Arius felis,238,62,2,Arthropoda,Malacostraca,Decapoda,Alpheidae,Alpheus heterochaelis,1,III,0.1000,8.70
+Summer,7,25,2006,Upper,Reef,2,Ariidae,Arius felis,238,62,2,Arthropoda,Malacostraca,Decapoda,,Crab claw,2,III,0.1000,8.70
+Summer,7,25,2006,Upper,Reef,2,Ariidae,Arius felis,238,62,2,,,,,Digestate,1,IV,0.9000,78.26
+Summer,7,25,2006,Upper,Reef,2,Ariidae,Arius felis,238,62,2,Mollusca,Bivalvia,Ostreoida,Ostreidae,Oyster shell hash,1,IV,0.0500,4.35
+Summer,7,25,2006,Upper,Reef,2,Sciaenidae,Cynoscion arenarius,238,63,2,Vertebrata,Actinopterygii,,,Fish Tissue,1,II,0.0500,50.00
+Summer,7,25,2006,Upper,Reef,2,Sciaenidae,Cynoscion arenarius,238,63,2,Arthropoda,Malacostraca,Decapoda,Peneaidae,Penaeid shrimp,1,I,0.0500,50.00
+Summer,7,25,2006,Upper,Reef,2,Carangidae ,Caranx hippos,147,64,0,,,,,Empty,0,NA,0.0000,0.00
+Summer,7,25,2006,Upper,Reef,2,Carangidae ,Caranx hippos,153,65,1,Arthropoda,Malacostraca,Isopoda,Cymothoidae,Aegathoa oculata,1,I,0.0500,33.33
+Summer,7,25,2006,Upper,Reef,2,Carangidae ,Caranx hippos,153,65,1,Vertebrata,Actinopterygii,,,Fish Tissue,1,II,0.1000,66.67
+Summer,7,25,2006,Upper,Reef,2,Ariidae,Bagre marinus,262,66,4,Arthropoda,Malacostraca,Decapoda,Portunidae,Callinectes sapidus,1,I,0.0500,2.86
+Summer,7,25,2006,Upper,Reef,2,Ariidae,Bagre marinus,262,66,4,Arthropoda,Malacostraca,Decapoda,,Crab claw,1,I,1.5000,85.71
+Summer,7,25,2006,Upper,Reef,2,Ariidae,Bagre marinus,262,66,4,,,,,Digestate,1,IV,0.2000,11.43
+Summer,7,25,2006,Upper,Reef,2,Ariidae,Bagre marinus,232,67,3,,,,,Digestate,1,IV,0.7500,30.24
+Summer,7,25,2006,Upper,Reef,2,Ariidae,Bagre marinus,232,67,3,Vertebrata,Actinopterygii,,,Fish Eyeball,2,II,0.0300,1.21
+Summer,7,25,2006,Upper,Reef,2,Ariidae,Bagre marinus,232,67,3,Arthropoda,Malacostraca,Decapoda,Menippidae,Menippe adina,2,I,1.6000,64.52
+Summer,7,25,2006,Upper,Reef,2,Ariidae,Bagre marinus,232,67,3,Mollusca,Cephalopoda,,,Squid beak,1,III,0.0300,1.21
+Summer,7,25,2006,Upper,Reef,2,Ariidae,Bagre marinus,232,67,3,Vertebrata,Actinopterygii,Gasterosteiformes,Sygnathidae,Sygnathus spp.,1,I,0.0700,2.82
+Summer,7,25,2006,Upper,Reef,2,Ariidae,Bagre marinus,460,68,4,Arthropoda,Malacostraca,Decapoda,Portunidae,Callinectes sapidus,1,I,2.0000,16.26
+Summer,7,25,2006,Upper,Reef,2,Ariidae,Bagre marinus,460,68,4,,,,,Digestate,1,IV,7.7000,62.60
+Summer,7,25,2006,Upper,Reef,2,Ariidae,Bagre marinus,460,68,4,Vertebrata,Actinopterygii,,,Fish Eyeball,4,II,0.2000,1.63
+Summer,7,25,2006,Upper,Reef,2,Ariidae,Bagre marinus,460,68,4,Vertebrata,Actinopterygii,,,Fish bone,1,III,0.5000,4.07
+Summer,7,25,2006,Upper,Reef,2,Ariidae,Bagre marinus,460,68,4,Vertebrata,Actinopterygii,,,Fish Tissue,1,II,1.7000,13.82
+Summer,7,25,2006,Upper,Reef,2,Ariidae,Bagre marinus,460,68,4,Vertebrata,Actinopterygii,,,Otolith,2,III,0.1000,0.81
+Summer,7,25,2006,Upper,Reef,2,Ariidae,Bagre marinus,460,68,4,Vertebrata,Actinopterygii,Gasterosteiformes,Sygnathidae,Sygnathus spp.,1,I,0.1000,0.81
+Summer,7,25,2006,Upper,Reef,2,Clupeidae,Brevoortia patronus,236,69,4,Plantae,,,,Detritus,1,IV,0.2000,100.00
+Summer,7,25,2006,Upper,Reef,2,Clupeidae,Brevoortia patronus,181,70,3,Plantae,,,,Detritus,1,IV,0.1000,100.00
+Summer,7,25,2006,Upper,Reef,2,Clupeidae,Brevoortia patronus,168,71,3,Plantae,,,,Detritus,1,IV,0.0500,100.00
+Summer,7,24,2006,Lower,Marsh edge,1,Ariidae,Arius felis,352,72,1,,,,,Digestate,1,IV,0.3000,100.00
+Summer,7,24,2006,Lower,Marsh edge,1,Mugilidae,Mugil cephalus,250,73,2,Plantae,,,,Detritus,1,IV,0.5000,100.00
+Summer,7,24,2006,Lower,Marsh edge,1,Carangidae ,Caranx hippos,141,74,3,,,,,Digestate,1,IV,0.2000,20.00
+Summer,7,24,2006,Lower,Marsh edge,1,Carangidae ,Caranx hippos,141,74,3,Vertebrata,Actinopterygii,,,Fish Tissue,1,II,0.3000,30.00
+Summer,7,24,2006,Lower,Marsh edge,1,Carangidae ,Caranx hippos,141,74,3,Arthropoda,Malacostraca,Decapoda,Peneaidae,Penaeid shrimp,3,I,0.5000,50.00
+Summer,7,24,2006,Lower,Marsh edge,1,Sciaenidae,Cynoscion nebulosus,293,75,2,Arthropoda,Malacostraca,Decapoda,Portunidae,Callinectes sapidus,1,I,0.2000,50.00
+Summer,7,24,2006,Lower,Marsh edge,1,Sciaenidae,Cynoscion nebulosus,293,75,2,Arthropoda,Malacostraca,Decapoda,Palaemonidae,Palaemonetes vulgaris,2,I,0.2000,50.00
+Summer,7,24,2006,Lower,Marsh edge,1,Ariidae,Arius felis,295,76,2,Arthropoda,Malacostraca,Decapoda,Alpheidae,Alpheus heterochaelis,1,I,0.2000,7.38
+Summer,7,24,2006,Lower,Marsh edge,1,Ariidae,Arius felis,295,76,2,,,,,Digestate,1,IV,0.4000,14.76
+Summer,7,24,2006,Lower,Marsh edge,1,Ariidae,Arius felis,295,76,2,Magnoliophyta,Liliopsida,Najadales,Cymodoceaceae,Halodule beaudettei�,1,IV,0.1000,3.69
+Summer,7,24,2006,Lower,Marsh edge,1,Ariidae,Arius felis,295,76,2,Arthropoda,Malacostraca,Decapoda,Panopeidae�,Neopanope texana,7,II,2.0000,73.80
+Summer,7,24,2006,Lower,Marsh edge,1,Ariidae,Arius felis,295,76,2,Mollusca,,,,Shell Hash,1,IV,0.0100,0.37
+Summer,7,24,2006,Lower,Non-Veg ,1,Sphyrnidae,Sphyrna tiburo,629,77,4,Arthropoda,Malacostraca,Decapoda,Portunidae,Callinectes sapidus,8,I,24.0000,82.33
+Summer,7,24,2006,Lower,Non-Veg ,1,Sphyrnidae,Sphyrna tiburo,629,77,4,,,,,Digestate,1,IV,5.0000,17.15
+Summer,7,24,2006,Lower,Non-Veg ,1,Sphyrnidae,Sphyrna tiburo,629,77,4,Magnoliophyta,Liliopsida,Najadales,Cymodoceaceae,Halodule beaudettei�,1,IV,0.0500,0.17
+Summer,7,24,2006,Lower,Non-Veg ,1,Sphyrnidae,Sphyrna tiburo,629,77,4,Chrodata,,,,Parasite,1,I,0.1000,0.34
+Summer,7,24,2006,Lower,Non-Veg ,1,Sphyrnidae,Sphyrna tiburo,600,78,4,Arthropoda,Malacostraca,Decapoda,Portunidae,Callinectes sapidus,7,I,22.0000,95.03
+Summer,7,24,2006,Lower,Non-Veg ,1,Sphyrnidae,Sphyrna tiburo,600,78,4,,,,,Digestate,1,IV,0.8000,3.46
+Summer,7,24,2006,Lower,Non-Veg ,1,Sphyrnidae,Sphyrna tiburo,600,78,4,Mollusca,Gastropoda,,,Gastropod,1,I,0.1000,0.43
+Summer,7,24,2006,Lower,Non-Veg ,1,Sphyrnidae,Sphyrna tiburo,600,78,4,Magnoliophyta,Liliopsida,Najadales,Cymodoceaceae,Halodule beaudettei�,1,IV,0.1000,0.43
+Summer,7,24,2006,Lower,Non-Veg ,1,Sphyrnidae,Sphyrna tiburo,600,78,4,Mollusca,Bivalvia,Ostreoida,Ostreidae,Oyster shell hash,1,IV,0.1000,0.43
+Summer,7,24,2006,Lower,Non-Veg ,1,Sphyrnidae,Sphyrna tiburo,600,78,4,Chrodata,,,,Parasite,1,I,0.0500,0.22
+Summer,7,24,2006,Lower,Non-Veg ,1,Clupeidae,Brevoortia patronus,161,79,1,Plantae,,,,Detritus,1,IV,0.0100,100.00
+Summer,7,24,2006,Lower,Non-Veg ,1,Ariidae,Bagre marinus,218,80,1,Arthropoda,Malacostraca,Isopoda,Cymothoidae,Aegathoa oculata,1,I,0.0100,0.17
+Summer,7,24,2006,Lower,Non-Veg ,1,Ariidae,Bagre marinus,218,80,1,Arthropoda,Malacostraca,Decapoda,Portunidae,Callinectes sapidus,1,II,4.0000,66.45
+Summer,7,24,2006,Lower,Non-Veg ,1,Ariidae,Bagre marinus,218,80,1,,,,,Digestate,1,IV,2.0000,33.22
+Summer,7,24,2006,Lower,Non-Veg ,1,Ariidae,Bagre marinus,218,80,1,Arthropoda,Malacostraca,Decapoda,,Larval shrimp,22,I,0.0100,0.17
+Summer,7,24,2006,Lower,Non-Veg ,1,Ariidae,Bagre marinus,224,81,2,Arthropoda,Malacostraca,Decapoda,,Brachyuran larvae,21,III,0.0300,2.89
+Summer,7,24,2006,Lower,Non-Veg ,1,Ariidae,Bagre marinus,224,81,2,Arthropoda,Malacostraca,Isopoda,Idoteidae,Erichsonella,1,I,0.0080,0.77
+Summer,7,24,2006,Lower,Non-Veg ,1,Ariidae,Bagre marinus,224,81,2,Arthropoda,Malacostraca,Decapoda,,Larval shrimp,1102,III,1.0000,96.34
+Summer,7,24,2006,Lower,Non-Veg ,1,Ariidae,Bagre marinus,223,82,2,Arthropoda,Malacostraca,Decapoda,,Brachyuran larvae,40,I,0.0500,4.54
+Summer,7,24,2006,Lower,Non-Veg ,1,Ariidae,Bagre marinus,223,82,2,Arthropoda,Malacostraca,Decapoda,Callianassidae,Callianassidae,1,I,0.0010,0.09
+Summer,7,24,2006,Lower,Non-Veg ,1,Ariidae,Bagre marinus,223,82,2,Arthropoda,Malacostraca,Decapoda,,Decapod carapace,1,III,0.0500,4.54
+Summer,7,24,2006,Lower,Non-Veg ,1,Ariidae,Bagre marinus,223,82,2,Arthropoda,Malacostraca,Decapoda,,Larval shrimp,2340,I,1.0000,90.83
+Summer,7,24,2006,Lower,Non-Veg ,1,Ariidae,Bagre marinus,213,83,1,,,,,Digestate,1,IV,2.0000,99.21
+Summer,7,24,2006,Lower,Non-Veg ,1,Ariidae,Bagre marinus,213,83,1,Arthropoda,Malacostraca,Decapoda,,Larval shrimp,8,I,0.0080,0.40
+Summer,7,24,2006,Lower,Non-Veg ,1,Ariidae,Bagre marinus,213,83,1,,,,,Monofilament,1,IV,0.0080,0.40
+Summer,7,24,2006,Lower,Non-Veg ,1,Ariidae,Bagre marinus,224,84,2,Arthropoda,Malacostraca,Decapoda,,Brachyuran larvae,10,I,0.0050,0.08
+Summer,7,24,2006,Lower,Non-Veg ,1,Ariidae,Bagre marinus,224,84,2,Arthropoda,Malacostraca,Decapoda,,Decapod carapace,1,III,0.0150,0.25
+Summer,7,24,2006,Lower,Non-Veg ,1,Ariidae,Bagre marinus,224,84,2,,,,,Digestate,1,IV,6.0000,98.18
+Summer,7,24,2006,Lower,Non-Veg ,1,Ariidae,Bagre marinus,224,84,2,Arthropoda,Insecta,Hymenoptera,,Hymenoptera ,1,I,0.0800,1.31
+Summer,7,24,2006,Lower,Non-Veg ,1,Ariidae,Bagre marinus,224,84,2,Arthropoda,Malacostraca,Decapoda,,Larval shrimp,28,I,0.0100,0.16
+Summer,7,24,2006,Lower,Non-Veg ,1,Ariidae,Bagre marinus,224,84,2,Mollusca,,,,Shell Hash,1,IV,0.0010,0.02
+Summer,7,24,2006,Lower,Non-Veg ,1,Clupeidae,Brevoortia patronus,163,85,1,Plantae,,,,Detritus,1,IV,0.0200,100.00
+Summer,7,24,2006,Lower,Non-Veg ,1,Clupeidae,Brevoortia patronus,164,86,1,Plantae,,,,Detritus,1,IV,0.0100,100.00
+Summer,7,24,2006,Lower,Non-Veg ,1,Clupeidae,Brevoortia patronus,160,87,1,Plantae,,,,Detritus,1,IV,0.0200,100.00
+Summer,7,24,2006,Lower,Non-Veg ,1,Clupeidae,Brevoortia patronus,159,88,1,Plantae,,,,Detritus,1,IV,0.0080,100.00
+Summer,7,24,2006,Lower,Non-Veg ,1,Carangidae ,Caranx hippos,148,89,1,,,,,Digestate,1,IV,1.0000,99.50
+Summer,7,24,2006,Lower,Non-Veg ,1,Carangidae ,Caranx hippos,148,89,1,Vertebrata,Actinopterygii,,,Fish bone,1,IV,0.0050,0.50
+Summer,7,24,2006,Lower,Non-Veg ,1,Carangidae ,Caranx hippos,155,90,2,,,,,Digestate,1,IV,1.0000,90.91
+Summer,7,24,2006,Lower,Non-Veg ,1,Carangidae ,Caranx hippos,155,90,2,Vertebrata,Actinopterygii,,,Fish bone,1,IV,0.1000,9.09
+Summer,7,24,2006,Lower,Non-Veg ,1,Sciaenidae,Cynoscion nebulosus,266,91,0,,,,,Empty,0,NA,0.0000,0.00
+Summer,7,24,2006,Lower,Non-Veg ,1,Sciaenidae,Cynoscion nebulosus,254,92,1,Arthropoda,Malacostraca,Decapoda,Dendrobranchiata�,Shrimp torso,1,III,2.1000,100.00
+Summer,7,24,2006,Lower,Non-Veg ,1,Sciaenidae,Menticirrhus littoralis,230,93,0,,,,,Empty,0,NA,0.0000,0.00
+Summer,7,24,2006,Lower,Non-Veg ,1,Sciaenidae,Menticirrhus littoralis,231,94,1,Vertebrata,Actinopterygii,,,Fish scale,1,III,0.0100,4.76
+Summer,7,24,2006,Lower,Non-Veg ,1,Sciaenidae,Menticirrhus littoralis,231,94,1,Arthropoda,Malacostraca,Decapoda,Sergestidae,Sergestidae,2,I,0.1000,47.62
+Summer,7,24,2006,Lower,Non-Veg ,1,Sciaenidae,Menticirrhus littoralis,231,94,1,Nemertea,,,,Nemertean,1,II,0.1000,47.62
+Summer,7,24,2006,Lower,Non-Veg ,1,Sciaenidae,Menticirrhus littoralis,215,95,3,,,,,Digestate,1,IV,0.3000,28.57
+Summer,7,24,2006,Lower,Non-Veg ,1,Sciaenidae,Menticirrhus littoralis,215,95,3,Vertebrata,Actinopterygii,,,Fish Tissue,1,II,0.1000,9.52
+Summer,7,24,2006,Lower,Non-Veg ,1,Sciaenidae,Menticirrhus littoralis,215,95,3,Arthropoda,Malacostraca,Decapoda,Peneaidae,Penaeid shrimp,1,I,0.6500,61.90
+Summer,7,24,2006,Lower,Non-Veg ,2,Stromateidae,Peprilus paru,213,96,1,,,,,Digestate,1,IV,0.1000,100.00
+Summer,7,24,2006,Lower,Non-Veg ,2,Carcharhinidae,Carcharhinus limbatus,435,97,1,Vertebrata,Actinopterygii,Anguilliformes�,,Anguilliformes,1,I,0.1000,50.00
+Summer,7,24,2006,Lower,Non-Veg ,2,Carcharhinidae,Carcharhinus limbatus,435,97,1,Vertebrata,Actinopterygii,Aulopiformes,Synodontidae,Synodus foetens�,1,I,0.1000,50.00
+Summer,7,24,2006,Lower,Non-Veg ,2,Carcharhinidae,Carcharhinus limbatus,407,98,0,,,,,Empty,0,NA,0.0000,0.00
+Summer,7,24,2006,Lower,Non-Veg ,2,Clupeidae,Brevoortia patronus,163,99,1,Plantae,,,,Detritus,1,IV,0.0050,100.00
+Summer,7,24,2006,Lower,Non-Veg ,2,Ariidae,Bagre marinus,387,100,1,,,,,Digestate,1,IV,1.0000,100.00
+Summer,7,24,2006,Lower,Non-Veg ,2,Clupeidae,Brevoortia patronus,159,101,2,Plantae,,,,Detritus,1,IV,0.0100,100.00
+Summer,7,24,2006,Lower,Non-Veg ,2,Clupeidae,Brevoortia patronus,187,102,2,Plantae,,,,Detritus,1,IV,0.0300,100.00
+Summer,7,24,2006,Lower,Non-Veg ,2,Clupeidae,Brevoortia patronus,167,103,1,Plantae,,,,Detritus,1,IV,0.0100,100.00
+Summer,7,24,2006,Lower,Non-Veg ,2,Clupeidae,Brevoortia patronus,148,104,1,Plantae,,,,Detritus,1,IV,0.0100,100.00
+Summer,7,24,2006,Lower,Non-Veg ,2,Ariidae,Bagre marinus,243,105,1,,,,,Digestate,1,IV,1.2000,87.53
+Summer,7,24,2006,Lower,Non-Veg ,2,Ariidae,Bagre marinus,243,105,1,Vertebrata,Actinopterygii,,,Fish Eyeball,1,III,0.0010,0.07
+Summer,7,24,2006,Lower,Non-Veg ,2,Ariidae,Bagre marinus,243,105,1,Vertebrata,Actinopterygii,,,Fish bone,1,IV,0.1000,7.29
+Summer,7,24,2006,Lower,Non-Veg ,2,Ariidae,Bagre marinus,243,105,1,Arthropoda,Insecta,Hymenoptera,,Hymenoptera ,1,III,0.0200,1.46
+Summer,7,24,2006,Lower,Non-Veg ,2,Ariidae,Bagre marinus,243,105,1,Vertebrata,Actinopterygii,,,Otolith,2,III,0.0500,3.65
+Summer,7,24,2006,Lower,Non-Veg ,2,Ariidae,Bagre marinus,207,106,1,,,,,Digestate,1,IV,0.0100,50.00
+Summer,7,24,2006,Lower,Non-Veg ,2,Ariidae,Bagre marinus,207,106,1,Arthropoda,Malacostraca,Decapoda,Dendrobranchiata�,Shrimp,1,II,0.0100,50.00
+Summer,7,24,2006,Lower,Non-Veg ,2,Ariidae,Bagre marinus,530,107,0,,,,,Fish hook,1,IV,0.5000,100.00
+Summer,7,24,2006,Lower,Non-Veg ,2,Ariidae,Bagre marinus,461,108,1,,,,,Digestate,1,IV,1.4000,100.00
+Summer,7,24,2006,Lower,Reef,1,Sciaenidae,Cynoscion nebulosus,438,109,1,Vertebrata,Actinopterygii,Clupeiformes,Clupeidae,Brevoortia patronus,1,II,1.0000,50.00
+Summer,7,24,2006,Lower,Reef,1,Sciaenidae,Cynoscion nebulosus,438,109,1,,,,,Digestate,1,IV,1.0000,50.00
+Summer,7,24,2006,Lower,Reef,1,Ariidae,Bagre marinus,216,110,4,Arthropoda,Malacostraca,Decapoda,Menippidae,Menippe adina,1,II,4.5000,100.00
+Summer,7,24,2006,Lower,Reef,1,Sphyrnidae,Sphyrna tiburo,605,111,3,Arthropoda,Malacostraca,Decapoda,Portunidae,Callinectes sapidus,14,I,26.5000,88.48
+Summer,7,24,2006,Lower,Reef,1,Sphyrnidae,Sphyrna tiburo,605,111,3,,,,,Digestate,1,IV,3.0000,10.02
+Summer,7,24,2006,Lower,Reef,1,Sphyrnidae,Sphyrna tiburo,605,111,3,Magnoliophyta,Liliopsida,Najadales,Cymodoceaceae,Halodule beaudettei�,1,IV,0.0500,0.17
+Summer,7,24,2006,Lower,Reef,1,Sphyrnidae,Sphyrna tiburo,605,111,3,Vertebrata,Actinopterygii,,,Otolith,1,III,0.0500,0.17
+Summer,7,24,2006,Lower,Reef,1,Sphyrnidae,Sphyrna tiburo,605,111,3,Chrodata,,,,Parasite,1,I,0.0500,0.17
+Summer,7,24,2006,Lower,Reef,1,Sphyrnidae,Sphyrna tiburo,605,111,3,Magnoliophyta,Liliopsida,Cyperales,Poaceae,Spartina alterniflora�,1,IV,0.3000,1.00
+Summer,7,24,2006,Lower,Reef,1,Clupeidae,Brevoortia patronus,164,112,0,,,,,Empty,0,NA,0.0000,0.00
+Summer,7,24,2006,Lower,Reef,1,Clupeidae,Brevoortia patronus,166,113,2,Plantae,,,,Detritus,1,IV,0.0200,100.00
+Summer,7,24,2006,Lower,Reef,1,Carangidae ,Caranx hippos,146,114,1,Arthropoda,Malacostraca,Isopoda,Cymothoidae,Aegathoa oculata,1,I,0.0200,4.76
+Summer,7,24,2006,Lower,Reef,1,Carangidae ,Caranx hippos,146,114,1,,,,,Digestate,1,IV,0.2000,47.62
+Summer,7,24,2006,Lower,Reef,1,Carangidae ,Caranx hippos,146,114,1,Vertebrata,Actinopterygii,,,Fish Tissue,1,II,0.2000,47.62
+Summer,7,24,2006,Lower,Reef,1,Carangidae ,Caranx hippos,175,115,3,Arthropoda,Malacostraca,Decapoda,,Crab parts,1,III,0.0500,2.86
+Summer,7,24,2006,Lower,Reef,1,Carangidae ,Caranx hippos,175,115,3,,,,,Digestate,1,IV,0.1000,5.71
+Summer,7,24,2006,Lower,Reef,1,Carangidae ,Caranx hippos,175,115,3,Vertebrata,Actinopterygii,Perciformes,Gobiidae,Goby,4,I,1.0000,57.14
+Summer,7,24,2006,Lower,Reef,1,Carangidae ,Caranx hippos,175,115,3,Arthropoda,Malacostraca,Decapoda,Peneaidae,Penaeid shrimp,1,I,0.6000,34.29
+Summer,7,24,2006,Lower,Reef,1,Sciaenidae,Cynoscion nebulosus,440,116,3,,,,,Digestate,1,IV,0.2000,2.94
+Summer,7,24,2006,Lower,Reef,1,Sciaenidae,Cynoscion nebulosus,440,116,3,Vertebrata,Actinopterygii,,,Fish,1,II,6.6000,97.06
+Summer,7,24,2006,Lower,Reef,1,Clupeidae,Brevoortia patronus,146,117,2,Plantae,,,,Detritus,1,IV,0.0080,100.00
+Summer,7,24,2006,Lower,Reef,1,Clupeidae,Brevoortia patronus,165,118,1,Plantae,,,,Detritus,1,IV,0.0200,100.00
+Summer,7,24,2006,Lower,Reef,1,Clupeidae,Brevoortia patronus,164,119,1,Plantae,,,,Detritus,1,IV,0.0010,100.00
+Summer,7,24,2006,Lower,Reef,1,Ariidae,Bagre marinus,209,120,1,Arthropoda,Malacostraca,Decapoda,Menippidae,Menippe adina,1,II,0.6000,100.00
+Summer,7,24,2006,Lower,Reef,1,Ariidae,Bagre marinus,238,121,1,Arthropoda,Malacostraca,Decapoda,,Brachyuran larvae,6,I,0.0010,0.07
+Summer,7,24,2006,Lower,Reef,1,Ariidae,Bagre marinus,238,121,1,Arthropoda,Malacostraca,Decapoda,,Crab claw,2,III,0.1500,10.63
+Summer,7,24,2006,Lower,Reef,1,Ariidae,Bagre marinus,238,121,1,,,,,Digestate,1,IV,0.1000,7.09
+Summer,7,24,2006,Lower,Reef,1,Ariidae,Bagre marinus,238,121,1,Arthropoda,Malacostraca,Decapoda,,Larval shrimp,428,I,0.8600,60.95
+Summer,7,24,2006,Lower,Reef,1,Ariidae,Bagre marinus,238,121,1,Magnoliophyta,Liliopsida,Cyperales,Poaceae,Spartina alterniflora�,1,IV,0.3000,21.26
+Summer,7,24,2006,Lower,Reef,1,Ariidae,Bagre marinus,500,122,1,,,,,Digestate,1,IV,1.0000,100.00
+Summer,7,24,2006,Lower,Reef,1,Ariidae,Bagre marinus,446,123,1,,,,,Digestate,1,IV,1.3000,100.00
+Summer,7,24,2006,Lower,Reef,2,Clupeidae,Brevoortia patronus,162,124,2,Plantae,,,,Detritus,1,IV,0.0100,100.00
+Summer,7,24,2006,Lower,Reef,2,Sciaenidae,Cynoscion arenarius,272,125,2,,,,,Digestate,1,IV,0.2500,100.00
+Summer,7,24,2006,Lower,Reef,2,Sciaenidae,Micropogonias undulatus,176,126,2,Mollusca,Bivalvia,,,Bivalve,1,II,0.0500,7.69
+Summer,7,24,2006,Lower,Reef,2,Sciaenidae,Micropogonias undulatus,176,126,2,,,,,Digestate,1,IV,0.2000,30.77
+Summer,7,24,2006,Lower,Reef,2,Sciaenidae,Micropogonias undulatus,176,126,2,Arthropoda,Malacostraca,Decapoda,Menippidae,Menippe adina,2,II,0.3500,53.85
+Summer,7,24,2006,Lower,Reef,2,Sciaenidae,Micropogonias undulatus,176,126,2,Mollusca,Bivalvia,Ostreoida,Ostreidae,Oyster shell hash,1,IV,0.0500,7.69
+Summer,7,24,2006,Lower,Reef,2,Ariidae,Bagre marinus,570,127,2,Vertebrata,Actinopterygii,Anguilliformes�,,Anguilliformes,1,I,1.2000,6.47
+Summer,7,24,2006,Lower,Reef,2,Ariidae,Bagre marinus,570,127,2,Arthropoda,Malacostraca,Decapoda,Portunidae,Callinectes sapidus,1,II,1.0000,5.39
+Summer,7,24,2006,Lower,Reef,2,Ariidae,Bagre marinus,570,127,2,,,,,Digestate,1,IV,16.0000,86.25
+Summer,7,24,2006,Lower,Reef,2,Ariidae,Bagre marinus,570,127,2,Vertebrata,Actinopterygii,,,Fish skull,2,III,0.0500,0.27
+Summer,7,24,2006,Lower,Reef,2,Ariidae,Bagre marinus,570,127,2,Chrodata,,,,Parasite,1,I,0.1000,0.54
+Summer,7,24,2006,Lower,Reef,2,Ariidae,Bagre marinus,570,127,2,Vertebrata,Actinopterygii,Gasterosteiformes,Sygnathidae,Sygnathus spp.,1,II,0.2000,1.08
+Summer,7,24,2006,Lower,Reef,2,Ariidae,Bagre marinus,460,128,1,Arthropoda,Malacostraca,Decapoda,,Crab,1,II,0.2500,4.76
+Summer,7,24,2006,Lower,Reef,2,Ariidae,Bagre marinus,460,128,1,,,,,Digestate,1,IV,5.0000,95.24
+Summer,7,24,2006,Lower,Reef,2,Sciaenidae,Cynoscion nebulosus,231,129,3,,,,,Digestate,1,IV,0.4000,21.05
+Summer,7,24,2006,Lower,Reef,2,Sciaenidae,Cynoscion nebulosus,231,129,3,Arthropoda,Malacostraca,Decapoda,Peneaidae,Penaeid shrimp,4,II,1.5000,78.95
+Summer,7,24,2006,Lower,Reef,2,Sciaenidae,Cynoscion arenarius,295,130,0,,,,,Empty,0,NA,0.0000,0.00
+Summer,7,24,2006,Lower,Reef,2,Sciaenidae,Cynoscion arenarius,247,131,0,,,,,Empty,0,NA,0.0000,0.00
+Summer,7,24,2006,Lower,Reef,2,Sciaenidae,Micropogonias undulatus,175,132,1,Mollusca,Bivalvia,,,Bivalve,1,I,0.0100,8.33
+Summer,7,24,2006,Lower,Reef,2,Sciaenidae,Micropogonias undulatus,175,132,1,Vertebrata,Actinopterygii,,,Ctenoid scale,1,IV,0.0050,4.17
+Summer,7,24,2006,Lower,Reef,2,Sciaenidae,Micropogonias undulatus,175,132,1,,,,,Digestate,1,IV,0.1000,83.33
+Summer,7,24,2006,Lower,Reef,2,Sciaenidae,Micropogonias undulatus,175,132,1,Mollusca,Bivalvia,Ostreoida,Ostreidae,Oyster shell hash,1,IV,0.0050,4.17
+Summer,7,24,2006,Lower,Reef,2,Sciaenidae,Cynoscion arenarius,340,133,2,Mollusca,Bivalvia,,,Bivalve,1,II,0.1000,5.21
+Summer,7,24,2006,Lower,Reef,2,Sciaenidae,Cynoscion arenarius,340,133,2,,,,,Digestate,1,IV,0.7700,40.10
+Summer,7,24,2006,Lower,Reef,2,Sciaenidae,Cynoscion arenarius,340,133,2,Vertebrata,Actinopterygii,,,Fish Eyeball,1,III,0.1000,5.21
+Summer,7,24,2006,Lower,Reef,2,Sciaenidae,Cynoscion arenarius,340,133,2,Chrodata,,,,Parasite,1,I,0.0500,2.60
+Summer,7,24,2006,Lower,Reef,2,Sciaenidae,Cynoscion arenarius,340,133,2,Arthropoda,Malacostraca,Stomatopoda,Squillidae,Squilla empusa,1,II,0.9000,46.88
+Summer,7,24,2006,Lower,Reef,2,Sciaenidae,Cynoscion arenarius,297,134,0,,,,,Empty,0,NA,0.0000,0.00
+Summer,7,24,2006,Lower,Reef,2,Sciaenidae,Micropogonias undulatus,174,135,3,,,,,Digestate,1,IV,0.1000,11.11
+Summer,7,24,2006,Lower,Reef,2,Sciaenidae,Micropogonias undulatus,174,135,3,Arthropoda,Malacostraca,Decapoda,Peneaidae,Penaeid shrimp,1,I,0.6000,66.67
+Summer,7,24,2006,Lower,Reef,2,Sciaenidae,Micropogonias undulatus,174,135,3,Annelida,Polychaeta,,,Polycheate,1,I,0.2000,22.22
+Summer,7,24,2006,Lower,Reef,2,Ariidae,Bagre marinus,234,136,1,,,,,Digestate,1,IV,0.3000,100.00
+Summer,7,24,2006,Lower,Reef,2,Sphyrnidae,Sphyrna tiburo,652,137,4,Arthropoda,Malacostraca,Decapoda,Portunidae,Callinectes sapidus,7,I,21.0000,75.95
+Summer,7,24,2006,Lower,Reef,2,Sphyrnidae,Sphyrna tiburo,652,137,4,,,,,Digestate,1,IV,6.5000,23.51
+Summer,7,24,2006,Lower,Reef,2,Sphyrnidae,Sphyrna tiburo,652,137,4,Chrodata,,,,Parasite,1,I,0.1500,0.54
+Summer,7,24,2006,Lower,Reef,2,Carcharhinidae,Carcharhinus limbatus,436,138,4,Arthropoda,Malacostraca,Decapoda,Peneaidae,Litopenaeus setiferus�,1,I,15.5000,100.00
+Summer,7,24,2006,Lower,Reef,2,Ariidae,Bagre marinus,600,139,2,Arthropoda,Malacostraca,Decapoda,Portunidae,Callinectes sapidus,1,I,5.0000,37.59
+Summer,7,24,2006,Lower,Reef,2,Ariidae,Bagre marinus,600,139,2,,,,,Digestate,1,IV,8.0000,60.15
+Summer,7,24,2006,Lower,Reef,2,Ariidae,Bagre marinus,600,139,2,Arthropoda,Malacostraca,Decapoda,Menippidae,Menippe adina,1,I,0.3000,2.26
+Summer,7,24,2006,Lower,Reef,2,Clupeidae,Brevoortia patronus,162,140,3,Plantae,,,,Detritus,1,IV,0.0200,100.00
+Summer,7,24,2006,Lower,Reef,2,Clupeidae,Brevoortia patronus,162,141,1,Plantae,,,,Detritus,1,IV,0.0100,100.00
+Summer,7,24,2006,Lower,Reef,2,Carcharhinidae,Carcharhinus limbatus,606,142,2,Vertebrata,Actinopterygii,Clupeiformes,Clupeidae,Brevoortia patronus,1,II,2.5000,96.15
+Summer,7,24,2006,Lower,Reef,2,Carcharhinidae,Carcharhinus limbatus,606,142,2,,,,,Digestate,1,IV,0.1000,3.85
+Summer,7,24,2006,Lower,Reef,2,Clupeidae,Brevoortia patronus,161,143,1,Plantae,,,,Detritus,1,IV,0.0050,100.00
+Summer,7,24,2006,Lower,Reef,2,Clupeidae,Brevoortia patronus,173,144,3,Plantae,,,,Detritus,1,IV,0.0200,100.00
+Summer,7,24,2006,Lower,Reef,2,Ariidae,Bagre marinus,480,145,3,,,,,Digestate,1,IV,5.0000,40.00
+Summer,7,24,2006,Lower,Reef,2,Ariidae,Bagre marinus,480,145,3,Vertebrata,Actinopterygii,Siluriformes,Ictaluridae,Ictalurid,1,I,7.5000,60.00
+Fall,10,26,2006,Upper,Marsh edge,1,Sparidae,Archosargus probatocephalus,241,146,1,,,,,Digestate,1,IV,0.2000,100.00
+Fall,10,26,2006,Upper,Marsh edge,1,Sciaenidae,Pogonias cromis,296,147,1,,,,,Digestate,1,IV,0.6000,100.00
+Fall,10,26,2006,Upper,Marsh edge,1,Ariidae,Arius felis,249,148,2,Arthropoda,Malacostraca,Decapoda,Portunidae,Callinectes sapidus,2,I,0.1000,4.74
+Fall,10,26,2006,Upper,Marsh edge,1,Ariidae,Arius felis,249,148,2,Arthropoda,Malacostraca,Decapoda,,Crab parts,1,III,0.6000,28.46
+Fall,10,26,2006,Upper,Marsh edge,1,Ariidae,Arius felis,249,148,2,,,,,Digestate,1,IV,1.3000,61.67
+Fall,10,26,2006,Upper,Marsh edge,1,Ariidae,Arius felis,249,148,2,Arthropoda,Malacostraca,Amphipoda,Ischyroceridae�,Erichtonius brasiliensis,4,I,0.0080,0.38
+Fall,10,26,2006,Upper,Marsh edge,1,Ariidae,Arius felis,249,148,2,Vertebrata,Actinopterygii,,,Fish scale,6,III,0.0200,0.95
+Fall,10,26,2006,Upper,Marsh edge,1,Ariidae,Arius felis,249,148,2,Nemertea,,,,Nemertean,3,II,0.0800,3.80
+Fall,10,26,2006,Upper,Marsh edge,1,Sciaenidae,Menticirrhus littoralis,215,149,1,Arthropoda,Malacostraca,Decapoda,Palaemonidae,Palaemonetes vulgaris,1,I,0.0500,50.00
+Fall,10,26,2006,Upper,Marsh edge,1,Sciaenidae,Menticirrhus littoralis,215,149,1,Chrodata,Appendicularia,,,Tunicata,1,I,0.0500,50.00
+Fall,10,26,2006,Upper,Marsh edge,1,Sciaenidae,Cynoscion nebulosus,265,150,1,Arthropoda,Malacostraca,Decapoda,Peneaidae,Penaeid shrimp,1,I,0.4000,100.00
+Fall,10,26,2006,Upper,Marsh edge,2,Mugilidae,Mugil cephalus,430,151,0,,,,,Empty,0,NA,0.0000,0.00
+Fall,10,26,2006,Upper,Marsh edge,2,Sciaenidae,Menticirrhus littoralis,203,152,1,,,,,Digestate,1,IV,0.1000,100.00
+Fall,10,26,2006,Upper,Marsh edge,2,Ariidae,Arius felis,210,153,3,Arthropoda,Arachnida,Araneae,,Araneae,1,I,0.0500,5.56
+Fall,10,26,2006,Upper,Marsh edge,2,Ariidae,Arius felis,210,153,3,Arthropoda,Malacostraca,Decapoda,Portunidae,Callinectes sapidus,1,III,0.1000,11.11
+Fall,10,26,2006,Upper,Marsh edge,2,Ariidae,Arius felis,210,153,3,,,,,Digestate,1,IV,0.3000,33.33
+Fall,10,26,2006,Upper,Marsh edge,2,Ariidae,Arius felis,210,153,3,Vertebrata,Actinopterygii,,,Fish scale,1,III,0.1000,11.11
+Fall,10,26,2006,Upper,Marsh edge,2,Ariidae,Arius felis,210,153,3,Mollusca,Gastropoda,,,Gastropod operculum,6,III,0.0100,1.11
+Fall,10,26,2006,Upper,Marsh edge,2,Ariidae,Arius felis,210,153,3,Arthropoda,insecta,,,Insect parts,2,III,0.0200,2.22
+Fall,10,26,2006,Upper,Marsh edge,2,Ariidae,Arius felis,210,153,3,Arthropoda,Malacostraca,Mysida,,Mysidae,1,I,0.0200,2.22
+Fall,10,26,2006,Upper,Marsh edge,2,Ariidae,Arius felis,210,153,3,Arthropoda,Malacostraca,Decapoda,Panopeidae�,Neopanope texana,2,I,0.3000,33.33
+Fall,10,26,2006,Upper,Marsh edge,2,Ariidae,Arius felis,260,154,3,Arthropoda,Malacostraca,Decapoda,Portunidae,Callinectes sapidus,2,I,0.5000,40.98
+Fall,10,26,2006,Upper,Marsh edge,2,Ariidae,Arius felis,260,154,3,,,,,Digestate,1,IV,0.3000,24.59
+Fall,10,26,2006,Upper,Marsh edge,2,Ariidae,Arius felis,260,154,3,Vertebrata,Actinopterygii,,,Fish scale,13,III,0.4000,32.79
+Fall,10,26,2006,Upper,Marsh edge,2,Ariidae,Arius felis,260,154,3,Mollusca,Gastropoda,,,Gastropod operculum,4,III,0.0100,0.82
+Fall,10,26,2006,Upper,Marsh edge,2,Ariidae,Arius felis,260,154,3,Arthropoda,insecta,,,Insect parts,1,III,0.0100,0.82
+Fall,10,26,2006,Upper,Marsh edge,2,Sciaenidae,Sciaenops ocellatus,426,155,1,Vertebrata,Actinopterygii,,,Fish,1,II,1.2000,100.00
+Fall,10,26,2006,Upper,Marsh edge,2,Sciaenidae,Sciaenops ocellatus,479,156,0,,,,,Empty,0,NA,0.0000,0.00
+Fall,10,26,2006,Upper,Non-Veg ,1,Polynemidae,Polydactylus octonemus,181,157,1,Plantae,,,,Detritus,1,IV,0.0100,100.00
+Fall,10,26,2006,Upper,Non-Veg ,1,Polynemidae,Polydactylus octonemus,167,158,0,,,,,Empty,0,NA,0.0000,0.00
+Fall,10,26,2006,Upper,Non-Veg ,1,Polynemidae,Polydactylus octonemus,193,159,1,Plantae,,,,Detritus,1,IV,0.0200,100.00
+Fall,10,26,2006,Upper,Non-Veg ,1,Polynemidae,Polydactylus octonemus,174,160,1,Plantae,,,,Detritus,1,IV,0.0080,100.00
+Fall,10,26,2006,Upper,Non-Veg ,1,Polynemidae,Polydactylus octonemus,180,161,0,,,,,Empty,0,NA,0.0000,0.00
+Fall,10,26,2006,Upper,Non-Veg ,1,Clupeidae,Brevoortia patronus,155,162,2,Plantae,,,,Detritus,1,IV,0.0300,100.00
+Fall,10,26,2006,Upper,Non-Veg ,1,Clupeidae,Brevoortia patronus,157,163,1,Plantae,,,,Detritus,1,IV,0.0200,100.00
+Fall,10,26,2006,Upper,Non-Veg ,1,Clupeidae,Brevoortia patronus,160,164,2,Plantae,,,,Detritus,1,IV,0.0300,100.00
+Fall,10,26,2006,Upper,Non-Veg ,1,Ariidae,Arius felis,244,165,2,Arthropoda,Malacostraca,Decapoda,Portunidae,Callinectes sapidus,1,I,0.8000,98.77
+Fall,10,26,2006,Upper,Non-Veg ,1,Ariidae,Arius felis,244,165,2,Vertebrata,Actinopterygii,,,Fish scale,2,III,0.0100,1.23
+Fall,10,26,2006,Upper,Non-Veg ,1,Ariidae,Arius felis,232,166,1,,,,,Digestate,1,IV,0.0080,10.00
+Fall,10,26,2006,Upper,Non-Veg ,1,Ariidae,Bagre marinus,509,167,3,,,,,Digestate,1,IV,0.1000,1.92
+Fall,10,26,2006,Upper,Non-Veg ,1,Ariidae,Bagre marinus,509,167,3,Vertebrata,Actinopterygii,,,Fish Tissue,1,II,1.5000,28.85
+Fall,10,26,2006,Upper,Non-Veg ,1,Ariidae,Bagre marinus,509,167,3,Mollusca,Gastropoda,,,Gastropod operculum,2,III,0.1000,1.92
+Fall,10,26,2006,Upper,Non-Veg ,1,Ariidae,Bagre marinus,509,167,3,Vertebrata,Actinopterygii,Siluriformes,Ictaluridae,Ictalurid,1,III,3.5000,67.31
+Fall,10,26,2006,Upper,Non-Veg ,1,Ariidae,Bagre marinus,553,168,0,,,,,Empty,0,NA,0.0000,0.00
+Fall,10,26,2006,Upper,Non-Veg ,1,Clupeidae,Brevoortia patronus,162,169,2,Plantae,,,,Detritus,1,IV,0.0300,100.00
+Fall,10,26,2006,Upper,Non-Veg ,1,Sciaenidae,Leiostomus xanthurus,149,170,0,,,,,Empty,0,NA,0.0000,0.00
+Fall,10,26,2006,Upper,Non-Veg ,1,Sciaenidae,Leiostomus xanthurus,159,171,2,,,,,Digestate,1,IV,0.0300,100.00
+Fall,10,26,2006,Upper,Non-Veg ,1,Sciaenidae,Leiostomus xanthurus,155,172,1,,,,,Digestate,1,IV,0.0100,100.00
+Fall,10,26,2006,Upper,Non-Veg ,1,Sciaenidae,Leiostomus xanthurus,163,173,2,,,,,Digestate,1,IV,0.0400,100.00
+Fall,10,26,2006,Upper,Non-Veg ,1,Clupeidae,Brevoortia patronus,164,174,3,Plantae,,,,Detritus,1,IV,0.0300,100.00
+Fall,10,26,2006,Upper,Non-Veg ,1,Sciaenidae,Leiostomus xanthurus,197,175,1,,,,,Digestate,1,IV,0.0300,100.00
+Fall,10,26,2006,Upper,Non-Veg ,2,Ariidae,Arius felis,165,176,2,Arthropoda,Malacostraca,Decapoda,,Crab,1,II,0.0500,32.26
+Fall,10,26,2006,Upper,Non-Veg ,2,Ariidae,Arius felis,165,176,2,,,,,Digestate,1,IV,0.0500,32.26
+Fall,10,26,2006,Upper,Non-Veg ,2,Ariidae,Arius felis,165,176,2,Vertebrata,Actinopterygii,,,Fish scale,14,III,0.0500,32.26
+Fall,10,26,2006,Upper,Non-Veg ,2,Ariidae,Arius felis,165,176,2,Annelida,Polychaeta,,,Polycheate tube,2,II,0.0050,3.23
+Fall,10,26,2006,Upper,Non-Veg ,2,Ariidae,Arius felis,267,177,3,,,,,Digestate,1,IV,2.5000,32.24
+Fall,10,26,2006,Upper,Non-Veg ,2,Ariidae,Arius felis,267,177,3,Vertebrata,Actinopterygii,,,Fish bone,1,III,0.1500,1.93
+Fall,10,26,2006,Upper,Non-Veg ,2,Ariidae,Arius felis,267,177,3,Arthropoda,Malacostraca,Decapoda,Menippidae,Menippe adina,1,II,5.0000,64.47
+Fall,10,26,2006,Upper,Non-Veg ,2,Ariidae,Arius felis,267,177,3,Mollusca,,,,Shell Hash,1,IV,0.0050,0.06
+Fall,10,26,2006,Upper,Non-Veg ,2,Ariidae,Arius felis,267,177,3,Vertebrata,Actinopterygii,,,Fish Fin Ray,4,III,0.1000,1.29
+Fall,10,26,2006,Upper,Non-Veg ,2,Sciaenidae,Leiostomus xanthurus,165,178,0,,,,,Empty,0,NA,0.0000,0.00
+Fall,10,26,2006,Upper,Non-Veg ,2,Sciaenidae,Leiostomus xanthurus,174,179,0,,,,,Empty,0,NA,0.0000,0.00
+Fall,10,26,2006,Upper,Non-Veg ,2,Sciaenidae,Leiostomus xanthurus,167,180,1,Plantae,,,,Detrital sediment,1,IV,0.0020,100.00
+Fall,10,26,2006,Upper,Non-Veg ,2,Polynemidae,Polydactylus octonemus,192,181,0,,,,,Empty,0,NA,0.0000,0.00
+Fall,10,26,2006,Upper,Non-Veg ,2,Polynemidae,Polydactylus octonemus,195,182,0,,,,,Empty,0,NA,0.0000,0.00
+Fall,10,26,2006,Upper,Non-Veg ,2,Polynemidae,Polydactylus octonemus,168,183,0,,,,,Empty,0,NA,0.0000,0.00
+Fall,10,26,2006,Upper,Non-Veg ,2,Polynemidae,Polydactylus octonemus,190,184,0,,,,,Empty,0,NA,0.0000,0.00
+Fall,10,26,2006,Upper,Non-Veg ,2,Polynemidae,Polydactylus octonemus,194,185,0,,,,,Empty,0,NA,0.0000,0.00
+Fall,10,26,2006,Upper,Reef,1,Clupeidae,Brevoortia patronus,161,186,1,Plantae,,,,Detritus,1,IV,0.0080,100.00
+Fall,10,26,2006,Upper,Reef,1,Clupeidae,Brevoortia patronus,172,187,1,Plantae,,,,Detritus,1,IV,0.0200,100.00
+Fall,10,26,2006,Upper,Reef,1,Clupeidae,Brevoortia patronus,322,188,2,Plantae,,,,Detritus,1,IV,0.0400,100.00
+Fall,10,26,2006,Upper,Reef,1,Clupeidae,Brevoortia patronus,183,189,1,Plantae,,,,Detritus,1,IV,0.0200,100.00
+Fall,10,26,2006,Upper,Reef,1,Polynemidae,Polydactylus octonemus,184,190,0,,,,,Empty,0,NA,0.0000,0.00
+Fall,10,26,2006,Upper,Reef,1,Ariidae,Arius felis,221,191,1,Arthropoda,Malacostraca,Decapoda,,Decapod legs,2,II,0.0200,25.00
+Fall,10,26,2006,Upper,Reef,1,Ariidae,Arius felis,221,191,1,,,,,Digestate,1,IV,0.0400,50.00
+Fall,10,26,2006,Upper,Reef,1,Ariidae,Arius felis,221,191,1,Vertebrata,Actinopterygii,,,Fish scale,13,III,0.0100,12.50
+Fall,10,26,2006,Upper,Reef,1,Ariidae,Arius felis,221,191,1,Mollusca,,,,Shell Hash,1,IV,0.0100,12.50
+Fall,10,26,2006,Upper,Reef,1,Clupeidae,Brevoortia patronus,174,192,2,Plantae,,,,Detritus,1,IV,0.0200,100.00
+Fall,10,26,2006,Upper,Reef,1,Sciaenidae,Menticirrhus littoralis,239,193,3,Arthropoda,Malacostraca,Decapoda,Portunidae,Callinectes sapidus,1,I,0.5000,38.46
+Fall,10,26,2006,Upper,Reef,1,Sciaenidae,Menticirrhus littoralis,239,193,3,Arthropoda,Malacostraca,Decapoda,,Crab parts,1,III,0.4000,30.77
+Fall,10,26,2006,Upper,Reef,1,Sciaenidae,Menticirrhus littoralis,239,193,3,Arthropoda,Malacostraca,Decapoda,Menippidae,Menippe adina,1,I,0.2500,19.23
+Fall,10,26,2006,Upper,Reef,1,Sciaenidae,Menticirrhus littoralis,239,193,3,Arthropoda,Malacostraca,Decapoda,Peneaidae,Penaeid shrimp,2,II,0.1000,7.69
+Fall,10,26,2006,Upper,Reef,1,Sciaenidae,Menticirrhus littoralis,239,193,3,Nemertea,,,,Nemertean,1,II,0.0500,3.85
+Fall,10,26,2006,Upper,Reef,1,Sciaenidae,Leiostomus xanthurus,193,194,0,,,,,Empty,0,NA,0.0000,0.00
+Fall,10,26,2006,Upper,Reef,1,Sciaenidae,Leiostomus xanthurus,157,195,1,,,,,Digestate,1,IV,0.0100,100.00
+Fall,10,26,2006,Upper,Reef,1,Ariidae,Bagre marinus,506,196,2,Vertebrata,Actinopterygii,Clupeiformes,Clupeidae,Brevoortia patronus,1,II,1.0000,16.39
+Fall,10,26,2006,Upper,Reef,1,Ariidae,Bagre marinus,506,196,2,,,,,Digestate,1,IV,5.0000,81.97
+Fall,10,26,2006,Upper,Reef,1,Ariidae,Bagre marinus,506,196,2,Arthropoda,Malacostraca,Decapoda,Peneaidae,Penaeid shrimp,1,II,0.0500,0.82
+Fall,10,26,2006,Upper,Reef,1,Ariidae,Bagre marinus,506,196,2,Vertebrata,Actinopterygii,Gasterosteiformes,Sygnathidae,Sygnathus spp.,2,II,0.0500,0.82
+Fall,10,26,2006,Upper,Reef,1,Polynemidae,Polydactylus octonemus,192,197,4,Plantae,,,,Sandy detritus,1,IV,0.0500,100.00
+Fall,10,26,2006,Upper,Reef,1,Ariidae,Arius felis,252,198,2,Arthropoda,Malacostraca,Decapoda,Menippidae,Menippe adina,1,III,1.5000,55.56
+Fall,10,26,2006,Upper,Reef,1,Ariidae,Arius felis,252,198,2,Arthropoda,Malacostraca,Decapoda,Xanthidae,Xanthidae,1,III,1.2000,44.44
+Fall,10,26,2006,Upper,Reef,1,Polynemidae,Polydactylus octonemus,187,199,1,Plantae,,,,Detritus,1,IV,0.0080,100.00
+Fall,10,26,2006,Upper,Reef,1,Polynemidae,Polydactylus octonemus,187,199.1,0,,,,,Empty,0,NA,0.0000,0.00
+Fall,10,26,2006,Upper,Reef,2,Clupeidae,Brevoortia patronus,160,200,3,Plantae,,,,Detritus,1,IV,0.0080,100.00
+Fall,10,26,2006,Upper,Reef,2,Polynemidae,Polydactylus octonemus,180,201,1,Plantae,,,,Sandy detritus,1,IV,0.0010,100.00
+Fall,10,26,2006,Upper,Reef,2,Polynemidae,Polydactylus octonemus,173,202,0,,,,,Empty,0,NA,0.0000,0.00
+Fall,10,26,2006,Upper,Reef,2,Polynemidae,Polydactylus octonemus,167,203,0,,,,,Empty,0,NA,0.0000,0.00
+Fall,10,26,2006,Upper,Reef,2,Polynemidae,Polydactylus octonemus,193,204,1,Plantae,,,,Sandy detritus,1,IV,0.0010,100.00
+Fall,10,26,2006,Upper,Reef,2,Sciaenidae,Leiostomus xanthurus,165,205,1,,,,,Digestate,1,IV,0.0020,100.00
+Fall,10,26,2006,Upper,Reef,2,Sciaenidae,Leiostomus xanthurus,161,206,1,,,,,Digestate,1,IV,0.0010,100.00
+Fall,10,26,2006,Upper,Reef,2,Sciaenidae,Leiostomus xanthurus,152,207,1,,,,,Digestate,1,IV,0.0010,100.00
+Fall,10,26,2006,Upper,Reef,2,Sciaenidae,Bairdiella chrysoura,175,208,1,,,,,Digestate,1,IV,0.0100,100.00
+Fall,10,26,2006,Upper,Reef,2,Ariidae,Arius felis,215,209,2,Arthropoda,Malacostraca,Decapoda,,Crab parts,1,II,0.1500,53.38
+Fall,10,26,2006,Upper,Reef,2,Ariidae,Arius felis,215,209,2,,,,,Digestate,1,IV,0.1000,35.59
+Fall,10,26,2006,Upper,Reef,2,Ariidae,Arius felis,215,209,2,Arthropoda,Insecta,Diptera,,Diptera ,1,II,0.0010,0.36
+Fall,10,26,2006,Upper,Reef,2,Ariidae,Arius felis,215,209,2,Vertebrata,Actinopterygii,,,Fish Eyeball,1,III,0.0100,3.56
+Fall,10,26,2006,Upper,Reef,2,Ariidae,Arius felis,215,209,2,Arthropoda,Malacostraca,Decapoda,Menippidae,Menippe adina,1,III,0.0200,7.12
+Fall,10,26,2006,Upper,Reef,2,Ariidae,Arius felis,216,210,0,,,,,Empty,0,NA,0.0000,0.00
+Fall,10,26,2006,Upper,Reef,2,Ariidae,Arius felis,224,211,2,Arthropoda,Malacostraca,Decapoda,,Crab claw,1,III,0.0010,0.29
+Fall,10,26,2006,Upper,Reef,2,Ariidae,Arius felis,224,211,2,,,,,Digestate,1,IV,0.2000,57.80
+Fall,10,26,2006,Upper,Reef,2,Ariidae,Arius felis,224,211,2,Arthropoda,Maxilliopoda,Poecilostomatoida,Ergasilidae,Ergasilus sp.,1,I,0.0050,1.45
+Fall,10,26,2006,Upper,Reef,2,Ariidae,Arius felis,224,211,2,Vertebrata,Actinopterygii,,,Fish scale,8,III,0.0500,14.45
+Fall,10,26,2006,Upper,Reef,2,Ariidae,Arius felis,224,211,2,Arthropoda,Malacostraca,Decapoda,Menippidae,Menippe adina,1,III,0.0800,23.12
+Fall,10,26,2006,Upper,Reef,2,Ariidae,Arius felis,224,211,2,Mollusca,,,,Shell Hash,5,IV,0.0100,2.89
+Fall,10,27,2006,Lower,Marsh edge,1,Sciaenidae,Menticirrhus littoralis,236,212,3,Arthropoda,Malacostraca,Decapoda,Peneaidae,Penaeid shrimp,3,I,6.5000,100.00
+Fall,10,27,2006,Lower,Marsh edge,1,Sciaenidae,Menticirrhus littoralis,262,213,1,Vertebrata,Actinopterygii,,,Fish Tissue,1,II,0.1500,17.65
+Fall,10,27,2006,Lower,Marsh edge,1,Sciaenidae,Menticirrhus littoralis,262,213,1,Magnoliophyta,Liliopsida,Najadales,Cymodoceaceae,Halodule beaudettei�,1,IV,0.1000,11.76
+Fall,10,27,2006,Lower,Marsh edge,1,Sciaenidae,Menticirrhus littoralis,262,213,1,Arthropoda,Malacostraca,Decapoda,Menippidae,Menippe adina,1,III,0.4000,47.06
+Fall,10,27,2006,Lower,Marsh edge,1,Sciaenidae,Menticirrhus littoralis,262,213,1,Arthropoda,Malacostraca,Decapoda,Palaemonidae,Palaemonetes vulgaris,1,II,0.2000,23.53
+Fall,10,27,2006,Lower,Marsh edge,1,Sciaenidae,Pogonias cromis,312,214,1,Magnoliophyta,Liliopsida,Najadales,Cymodoceaceae,Halodule beaudettei�,1,IV,0.0100,100.00
+Fall,10,27,2006,Lower,Marsh edge,1,Sciaenidae,Pogonias cromis,370,215,1,Arthropoda,Malacostraca,Decapoda,,Anomura,1,II,0.0100,1.96
+Fall,10,27,2006,Lower,Marsh edge,1,Sciaenidae,Pogonias cromis,370,215,1,,,,,Digestate,1,IV,0.1000,19.57
+Fall,10,27,2006,Lower,Marsh edge,1,Sciaenidae,Pogonias cromis,370,215,1,Arthropoda,Malacostraca,Amphipoda,Ischyroceridae�,Erichtonius brasiliensis,10,I,0.1000,19.57
+Fall,10,27,2006,Lower,Marsh edge,1,Sciaenidae,Pogonias cromis,370,215,1,Vertebrata,Actinopterygii,,,Fish Tissue,1,II,0.2000,39.14
+Fall,10,27,2006,Lower,Marsh edge,1,Sciaenidae,Pogonias cromis,370,215,1,Annelida,Polychaeta,,,Polycheate,1,II,0.0500,9.78
+Fall,10,27,2006,Lower,Marsh edge,1,Sciaenidae,Pogonias cromis,370,215,1,Mollusca,,,,Shell Hash,1,IV,0.0500,9.78
+Fall,10,27,2006,Lower,Marsh edge,1,Sciaenidae,Pogonias cromis,370,215,1,Arthropoda,Malacostraca,Decapoda,Xanthidae,Xanthidae,1,II,0.0010,0.20
+Fall,10,27,2006,Lower,Marsh edge,1,Sciaenidae,Bairdiella chrysoura,182,216,3,Arthropoda,Malacostraca,Mysida,,Mysidae,10,II,0.0500,5.88
+Fall,10,27,2006,Lower,Marsh edge,1,Sciaenidae,Bairdiella chrysoura,182,216,3,Arthropoda,Malacostraca,Decapoda,Peneaidae,Penaeid shrimp,2,I,0.8000,94.12
+Fall,10,27,2006,Lower,Marsh edge,1,Sciaenidae,Bairdiella chrysoura,196,217,3,Arthropoda,Malacostraca,Isopoda,Cymothoidae,Aegathoa oculata,1,II,0.0100,0.79
+Fall,10,27,2006,Lower,Marsh edge,1,Sciaenidae,Bairdiella chrysoura,196,217,3,Magnoliophyta,Liliopsida,Najadales,Cymodoceaceae,Halodule beaudettei�,1,IV,0.0100,0.79
+Fall,10,27,2006,Lower,Marsh edge,1,Sciaenidae,Bairdiella chrysoura,196,217,3,Arthropoda,Malacostraca,Decapoda,Palaemonidae,Palaemonetes vulgaris,2,I,0.2500,19.69
+Fall,10,27,2006,Lower,Marsh edge,1,Sciaenidae,Bairdiella chrysoura,196,217,3,Arthropoda,Malacostraca,Decapoda,Peneaidae,Penaeid shrimp,4,I,1.0000,78.74
+Fall,10,27,2006,Lower,Marsh edge,1,Sciaenidae,Bairdiella chrysoura,183,218,2,,,,,Digestate,1,IV,0.0500,83.33
+Fall,10,27,2006,Lower,Marsh edge,1,Sciaenidae,Bairdiella chrysoura,183,218,2,Arthropoda,Malacostraca,Isopoda,Idoteidae,Erichsonella,1,I,0.0100,16.67
+Fall,10,27,2006,Lower,Marsh edge,1,Sciaenidae,Sciaenops ocellatus,420,219,4,Arthropoda,,,,Acrididae�,1,III,0.4000,3.25
+Fall,10,27,2006,Lower,Marsh edge,1,Sciaenidae,Sciaenops ocellatus,420,219,4,Arthropoda,Malacostraca,Decapoda,Portunidae,Callinectes sapidus,2,I,8.0000,65.04
+Fall,10,27,2006,Lower,Marsh edge,1,Sciaenidae,Sciaenops ocellatus,420,219,4,,,,,Digestate,1,IV,0.4000,3.25
+Fall,10,27,2006,Lower,Marsh edge,1,Sciaenidae,Sciaenops ocellatus,420,219,4,Vertebrata,Actinopterygii,,,Fish tissue (otoliths),1,II,3.5000,28.46
+Fall,10,27,2006,Lower,Marsh edge,1,Sparidae,Archosargus probatocephalus,252,220,3,Magnoliophyta,Liliopsida,Najadales,Cymodoceaceae,Halodule beaudettei�,1,IV,1.0000,100.00
+Fall,10,27,2006,Lower,Marsh edge,1,Sparidae,Archosargus probatocephalus,402,221,2,Rhodophyta,Rhodophyceae,,,Rhodophyta,1,IV,0.5000,100.00
+Fall,10,27,2006,Lower,Marsh edge,1,Sparidae,Archosargus probatocephalus,402,222,2,Magnoliophyta,Liliopsida,Najadales,Cymodoceaceae,Halodule beaudettei�,1,IV,0.0100,100.00
+Fall,10,27,2006,Lower,Marsh edge,1,Sparidae,Archosargus probatocephalus,379,223,3,Magnoliophyta,Liliopsida,Najadales,Cymodoceaceae,Halodule beaudettei�,1,IV,0.2000,1.57
+Fall,10,27,2006,Lower,Marsh edge,1,Sparidae,Archosargus probatocephalus,379,223,3,Rhodophyta,Rhodophyceae,,,Rhodophyta,1,IV,12.5000,98.43
+Fall,10,27,2006,Lower,Marsh edge,2,Sciaenidae,Sciaenops ocellatus,424,224,0,,,,,Empty,0,NA,0.0000,0.00
+Fall,10,27,2006,Lower,Marsh edge,2,Sciaenidae,Sciaenops ocellatus,355,225,4,Arthropoda,Malacostraca,Decapoda,Alpheidae,Alpheus heterochaelis,2,I,1.3000,23.09
+Fall,10,27,2006,Lower,Marsh edge,2,Sciaenidae,Sciaenops ocellatus,355,225,4,Arthropoda,Malacostraca,Decapoda,Portunidae,Callinectes sapidus,1,I,3.5000,62.17
+Fall,10,27,2006,Lower,Marsh edge,2,Sciaenidae,Sciaenops ocellatus,355,225,4,,,,,Digestate,1,IV,0.5000,8.88
+Fall,10,27,2006,Lower,Marsh edge,2,Sciaenidae,Sciaenops ocellatus,355,225,4,Magnoliophyta,Liliopsida,Najadales,Cymodoceaceae,Halodule beaudettei�,1,IV,0.0800,1.42
+Fall,10,27,2006,Lower,Marsh edge,2,Sciaenidae,Sciaenops ocellatus,355,225,4,Arthropoda,Malacostraca,Decapoda,Palaemonidae,Palaemonetes vulgaris,2,I,0.2000,3.55
+Fall,10,27,2006,Lower,Marsh edge,2,Sciaenidae,Sciaenops ocellatus,355,225,4,Annelida,Polychaeta,,,Polycheate tube,1,II,0.0500,0.89
+Fall,10,27,2006,Lower,Marsh edge,2,Sciaenidae,Pogonias cromis,322,226,1,Arthropoda,Malacostraca,Amphipoda,Ampeliscidae,Ampelisca spp.,4,I,0.0080,3.36
+Fall,10,27,2006,Lower,Marsh edge,2,Sciaenidae,Pogonias cromis,322,226,1,,,,,Digestate,1,IV,0.2000,84.03
+Fall,10,27,2006,Lower,Marsh edge,2,Sciaenidae,Pogonias cromis,322,226,1,Magnoliophyta,Liliopsida,Najadales,Cymodoceaceae,Halodule beaudettei�,1,IV,0.0300,12.61
+Fall,10,27,2006,Lower,Marsh edge,2,Sciaenidae,Pogonias cromis,306,227,2,Arthropoda,Malacostraca,Amphipoda,Ampeliscidae,Ampelisca spp.,2,I,0.0100,1.45
+Fall,10,27,2006,Lower,Marsh edge,2,Sciaenidae,Pogonias cromis,306,227,2,,,,,Digestate,1,IV,0.6000,86.96
+Fall,10,27,2006,Lower,Marsh edge,2,Sciaenidae,Pogonias cromis,306,227,2,Arthropoda,Malacostraca,Decapoda,Xanthidae,Xanthidae,1,I,0.0800,11.59
+Fall,10,27,2006,Lower,Marsh edge,2,Sparidae,Archosargus probatocephalus,252,228,1,Magnoliophyta,Liliopsida,Najadales,Cymodoceaceae,Halodule beaudettei�,1,IV,0.4000,100.00
+Fall,10,27,2006,Lower,Marsh edge,2,Sciaenidae,Leiostomus xanthurus,170,229,1,,,,,Digestate,1,IV,0.0100,66.67
+Fall,10,27,2006,Lower,Marsh edge,2,Sciaenidae,Leiostomus xanthurus,170,229,1,Magnoliophyta,Liliopsida,Najadales,Cymodoceaceae,Halodule beaudettei�,1,IV,0.0050,33.33
+Fall,10,27,2006,Lower,Marsh edge,2,Sparidae,Archosargus probatocephalus,502,230,0,,,,,Empty,0,NA,0.0000,0.00
+Fall,10,27,2006,Lower,Marsh edge,2,Sparidae,Archosargus probatocephalus,235,231,1,Magnoliophyta,Liliopsida,Najadales,Cymodoceaceae,Halodule beaudettei�,1,IV,4.0000,50.00
+Fall,10,27,2006,Lower,Marsh edge,2,Sparidae,Archosargus probatocephalus,235,231,1,Rhodophyta,Rhodophyceae,,,Rhodophyta,1,IV,4.0000,50.00
+Fall,10,27,2006,Lower,Non-Veg ,1,Sparidae,Lagodon rhomboides,126,232,1,,,,,Digestate,1,IV,0.0500,50.00
+Fall,10,27,2006,Lower,Non-Veg ,1,Sparidae,Lagodon rhomboides,126,232,1,Magnoliophyta,Liliopsida,Najadales,Cymodoceaceae,Halodule beaudettei�,1,IV,0.0500,50.00
+Fall,10,27,2006,Lower,Non-Veg ,1,Stromateidae,Peprilus paru,76,233,2,,,,,Digestate,1,IV,0.2000,100.00
+Fall,10,27,2006,Lower,Non-Veg ,1,Sciaenidae,Leiostomus xanthurus,152,234,0,,,,,Empty,0,NA,0.0000,0.00
+Fall,10,27,2006,Lower,Non-Veg ,1,Sciaenidae,Leiostomus xanthurus,150,235,0,,,,,Empty,0,NA,0.0000,0.00
+Fall,10,27,2006,Lower,Non-Veg ,1,Sciaenidae,Leiostomus xanthurus,159,236,0,,,,,Empty,0,NA,0.0000,0.00
+Fall,10,27,2006,Lower,Non-Veg ,1,Sciaenidae,Leiostomus xanthurus,153,237,1,,,,,Digestate,1,IV,0.0200,100.00
+Fall,10,27,2006,Lower,Non-Veg ,1,Sciaenidae,Leiostomus xanthurus,152,238,1,,,,,Digestate,1,IV,0.0200,100.00
+Fall,10,27,2006,Lower,Non-Veg ,1,Sciaenidae,Leiostomus xanthurus,195,239,1,,,,,Digestate,1,IV,0.0200,66.67
+Fall,10,27,2006,Lower,Non-Veg ,1,Sciaenidae,Leiostomus xanthurus,195,239,1,Annelida,Polychaeta,Aciculata,Glyceridae,Glyceridae ,1,I,0.0100,33.33
+Fall,10,27,2006,Lower,Non-Veg ,1,Sciaenidae,Leiostomus xanthurus,160,240,1,,,,,Digestate,1,IV,0.0100,100.00
+Fall,10,27,2006,Lower,Non-Veg ,1,Sciaenidae,Leiostomus xanthurus,140,241,0,,,,,Empty,0,NA,0.0000,0.00
+Fall,10,27,2006,Lower,Non-Veg ,1,Sciaenidae,Leiostomus xanthurus,191,242,1,Annelida,Polychaeta,Canalipalpata,Ampharetidae�,Ampharetidae,2,I,0.2000,100.00
+Fall,10,27,2006,Lower,Non-Veg ,1,Sciaenidae,Leiostomus xanthurus,175,243,0,,,,,Empty,0,NA,0.0000,0.00
+Fall,10,27,2006,Lower,Non-Veg ,1,Ariidae,Bagre marinus,415,244,3,Arthropoda,Malacostraca,Decapoda,Portunidae,Callinectes sapidus,1,I,1.0000,12.15
+Fall,10,27,2006,Lower,Non-Veg ,1,Ariidae,Bagre marinus,415,244,3,,,,,Digestate,1,IV,1.2000,14.58
+Fall,10,27,2006,Lower,Non-Veg ,1,Ariidae,Bagre marinus,415,244,3,Vertebrata,Actinopterygii,,,Fish Eyeball,4,III,0.0200,0.24
+Fall,10,27,2006,Lower,Non-Veg ,1,Ariidae,Bagre marinus,415,244,3,Vertebrata,Actinopterygii,,,Fish Tissue,1,II,2.0000,24.30
+Fall,10,27,2006,Lower,Non-Veg ,1,Ariidae,Bagre marinus,415,244,3,Mollusca,Gastropoda,,,Gastropod,1,IV,0.0100,0.12
+Fall,10,27,2006,Lower,Non-Veg ,1,Ariidae,Bagre marinus,415,244,3,Arthropoda,Malacostraca,Decapoda,Peneaidae,Grooved penaeid,1,I,4.0000,48.59
+Fall,10,27,2006,Lower,Non-Veg ,1,Ariidae,Bagre marinus,415,244,3,Mollusca,Cephalopoda,,,Squid beak,1,III,0.0020,0.02
+Fall,10,27,2006,Lower,Non-Veg ,1,Sciaenidae,Menticirrhus littoralis,221,245,1,,,,,Digestate,1,IV,0.1000,23.81
+Fall,10,27,2006,Lower,Non-Veg ,1,Sciaenidae,Menticirrhus littoralis,221,245,1,Annelida,Polychaeta,Aciculata,Eunicidae ,Eunicidae ,1,II,0.3000,71.43
+Fall,10,27,2006,Lower,Non-Veg ,1,Sciaenidae,Menticirrhus littoralis,221,245,1,Magnoliophyta,Liliopsida,Najadales,Cymodoceaceae,Halodule beaudettei�,1,IV,0.0200,4.76
+Fall,10,27,2006,Lower,Non-Veg ,1,Sciaenidae,Cynoscion arenarius,268,246,1,,,,,Digestate,1,IV,0.5000,29.41
+Fall,10,27,2006,Lower,Non-Veg ,1,Sciaenidae,Cynoscion arenarius,268,246,1,Vertebrata,Actinopterygii,,,Fish Tissue,6,II,1.0000,58.82
+Fall,10,27,2006,Lower,Non-Veg ,1,Sciaenidae,Cynoscion arenarius,268,246,1,Arthropoda,Malacostraca,Decapoda,Hippolytidae,Tozeuma carolinense�,1,I,0.2000,11.76
+Fall,10,27,2006,Lower,Non-Veg ,1,Clupeidae,Brevoortia patronus,159,247,3,Plantae,,,,Detritus,1,IV,0.0500,100.00
+Fall,10,27,2006,Lower,Non-Veg ,1,Clupeidae,Brevoortia patronus,164,248,3,Plantae,,,,Detritus,1,IV,0.0500,100.00
+Fall,10,27,2006,Lower,Non-Veg ,1,Clupeidae,Brevoortia patronus,163,249,2,Plantae,,,,Detritus,1,IV,0.0300,100.00
+Fall,10,27,2006,Lower,Non-Veg ,1,Clupeidae,Brevoortia patronus,157,250,2,Plantae,,,,Detritus,1,IV,0.0200,100.00
+Fall,10,27,2006,Lower,Non-Veg ,1,Clupeidae,Brevoortia patronus,152,251,3,Plantae,,,,Detritus,1,IV,0.0600,100.00
+Fall,10,27,2006,Lower,Non-Veg ,1,Polynemidae,Polydactylus octonemus,184,252,1,Plantae,,,,Detritus,1,IV,0.0200,100.00
+Fall,10,27,2006,Lower,Non-Veg ,1,Polynemidae,Polydactylus octonemus,170,253,2,Plantae,,,,Detritus,1,IV,0.0300,100.00
+Fall,10,27,2006,Lower,Non-Veg ,1,Polynemidae,Polydactylus octonemus,181,254,2,Plantae,,,,Detritus,1,IV,0.0200,100.00
+Fall,10,27,2006,Lower,Non-Veg ,1,Polynemidae,Polydactylus octonemus,191,255,2,Plantae,,,,Detritus,1,IV,0.0300,100.00
+Fall,10,27,2006,Lower,Non-Veg ,1,Polynemidae,Polydactylus octonemus,186,256,2,Plantae,,,,Detritus,1,IV,0.0500,100.00
+Fall,10,27,2006,Lower,Non-Veg ,2,Sciaenidae,Cynoscion arenarius,368,257,2,Vertebrata,Actinopterygii,,,Fish Tissue,2,II,1.0000,100.00
+Fall,10,27,2006,Lower,Non-Veg ,2,Sciaenidae,Cynoscion arenarius,371,258,2,Arthropoda,Malacostraca,Decapoda,Peneaidae,Penaeid shrimp,1,II,0.4000,100.00
+Fall,10,27,2006,Lower,Non-Veg ,2,Sciaenidae,Leiostomus xanthurus,159,259,1,,,,,Digestate,1,IV,0.0100,100.00
+Fall,10,27,2006,Lower,Non-Veg ,2,Clupeidae,Brevoortia patronus,174,260,2,Plantae,,,,Detritus,1,IV,0.0200,100.00
+Fall,10,27,2006,Lower,Non-Veg ,2,Clupeidae,Brevoortia patronus,168,261,2,Plantae,,,,Detritus,1,IV,0.0200,100.00
+Fall,10,27,2006,Lower,Non-Veg ,2,Clupeidae,Brevoortia patronus,237,262,2,Plantae,,,,Detritus,1,IV,0.0800,100.00
+Fall,10,27,2006,Lower,Non-Veg ,2,Sciaenidae,Menticirrhus littoralis,217,263,2,,,,,Digestate,1,IV,1.5000,100.00
+Fall,10,27,2006,Lower,Non-Veg ,2,Sciaenidae,Menticirrhus littoralis,228,264,2,,,,,Digestate,1,IV,2.4000,96.77
+Fall,10,27,2006,Lower,Non-Veg ,2,Sciaenidae,Menticirrhus littoralis,228,264,2,Mollusca,Bivalvia,Ostreoida,Ostreidae,Oyster shell hash,1,IV,0.0800,3.23
+Fall,10,27,2006,Lower,Non-Veg ,2,Sciaenidae,Menticirrhus littoralis,213,265,2,,,,,Digestate,1,IV,1.1000,73.33
+Fall,10,27,2006,Lower,Non-Veg ,2,Sciaenidae,Menticirrhus littoralis,213,265,2,Arthropoda,Malacostraca,Decapoda,Dendrobranchiata�,Shrimp telson,1,II,0.1000,6.67
+Fall,10,27,2006,Lower,Non-Veg ,2,Sciaenidae,Menticirrhus littoralis,213,265,2,Vertebrata,Actinopterygii,Gasterosteiformes,Sygnathidae,Sygnathus spp.,1,I,0.3000,20.00
+Fall,10,27,2006,Lower,Non-Veg ,2,Sciaenidae,Menticirrhus littoralis,206,266,2,Annelida,Polychaeta,Aciculata,Glyceridae,Glyceridae ,2,II,1.3000,100.00
+Fall,10,27,2006,Lower,Non-Veg ,2,Sciaenidae,Menticirrhus littoralis,209,267,2,,,,,Digestate,1,IV,1.0000,83.33
+Fall,10,27,2006,Lower,Non-Veg ,2,Sciaenidae,Menticirrhus littoralis,209,267,2,Annelida,Polychaeta,,,Polycheate,2,II,0.2000,16.67
+Fall,10,27,2006,Lower,Non-Veg ,2,Sciaenidae,Menticirrhus littoralis,241,268,1,,,,,Digestate,1,IV,0.1000,55.56
+Fall,10,27,2006,Lower,Non-Veg ,2,Sciaenidae,Menticirrhus littoralis,241,268,1,Magnoliophyta,Liliopsida,Najadales,Cymodoceaceae,Halodule beaudettei�root,1,IV,0.0800,44.44
+Fall,10,27,2006,Lower,Non-Veg ,2,Sciaenidae,Menticirrhus littoralis,215,269,2,,,,,Digestate,1,IV,0.2200,100.00
+Fall,10,27,2006,Lower,Non-Veg ,2,Sciaenidae,Menticirrhus littoralis,230,270,1,,,,,Digestate,1,IV,0.2000,66.67
+Fall,10,27,2006,Lower,Non-Veg ,2,Sciaenidae,Menticirrhus littoralis,230,270,1,Annelida,Polychaeta,,,Polycheate,1,II,0.1000,33.33
+Fall,10,27,2006,Lower,Non-Veg ,2,Sciaenidae,Menticirrhus littoralis,200,271,1,,,,,Digestate,1,IV,0.3000,100.00
+Fall,10,27,2006,Lower,Non-Veg ,2,Sciaenidae,Menticirrhus littoralis,273,272,3,,,,,Digestate,1,IV,1.3000,50.00
+Fall,10,27,2006,Lower,Non-Veg ,2,Sciaenidae,Menticirrhus littoralis,273,272,3,Annelida,Polychaeta,,,Polycheate,2,II,0.5000,19.23
+Fall,10,27,2006,Lower,Non-Veg ,2,Sciaenidae,Menticirrhus littoralis,273,272,3,Vertebrata,Actinopterygii,Gasterosteiformes,Sygnathidae,Sygnathus spp.,1,I,0.7000,26.92
+Fall,10,27,2006,Lower,Non-Veg ,2,Sciaenidae,Menticirrhus littoralis,273,272,3,Nemertea,,,,Nemertean,1,II,0.1000,3.85
+Fall,10,27,2006,Lower,Non-Veg ,2,Polynemidae,Polydactylus octonemus,179,273,0,,,,,Empty,0,NA,0.0000,0.00
+Fall,10,27,2006,Lower,Non-Veg ,2,Clupeidae,Brevoortia patronus,152,274,2,Plantae,,,,Detritus,1,IV,0.0500,100.00
+Fall,10,27,2006,Lower,Reef,1,Ariidae,Bagre marinus,546,275,2,,,,,Digestate,1,IV,1.2000,22.73
+Fall,10,27,2006,Lower,Reef,1,Ariidae,Bagre marinus,546,275,2,Vertebrata,Actinopterygii,,,Fish bone,1,III,0.0800,1.52
+Fall,10,27,2006,Lower,Reef,1,Ariidae,Bagre marinus,546,275,2,Arthropoda,Malacostraca,Decapoda,Peneaidae,Penaeid shrimp,3,II,4.0000,75.76
+Fall,10,27,2006,Lower,Reef,1,Sciaenidae,Cynoscion arenarius,225,276,4,Vertebrata,Actinopterygii,,,Fish Tissue,1,I,2.6000,100.00
+Fall,10,27,2006,Lower,Reef,1,Ariidae,Bagre marinus,510,277,1,Vertebrata,Actinopterygii,Anguilliformes�,,Anguilliformes,1,I,1.0000,76.92
+Fall,10,27,2006,Lower,Reef,1,Ariidae,Bagre marinus,510,277,1,Arthropoda,Malacostraca,Decapoda,,Decapod carapace,1,III,0.1000,7.69
+Fall,10,27,2006,Lower,Reef,1,Ariidae,Bagre marinus,510,277,1,,,,,Digestate,1,IV,0.2000,15.38
+Fall,10,27,2006,Lower,Reef,1,Clupeidae,Brevoortia patronus,203,278,3,Plantae,,,,Detritus,1,IV,0.0400,100.00
+Fall,10,27,2006,Lower,Reef,1,Ariidae,Bagre marinus,406,279,5,Arthropoda,Malacostraca,Decapoda,Portunidae,Callinectes sapidus,1,I,1.0000,3.85
+Fall,10,27,2006,Lower,Reef,1,Ariidae,Bagre marinus,406,279,5,Vertebrata,Actinopterygii,,,Fish,1,II,25.0000,96.15
+Fall,10,27,2006,Lower,Reef,1,Ariidae,Bagre marinus,496,280,2,,,,,Digestate,1,IV,5.0000,82.78
+Fall,10,27,2006,Lower,Reef,1,Ariidae,Bagre marinus,496,280,2,Vertebrata,Actinopterygii,,,Fish Eyeball,6,III,0.4000,6.62
+Fall,10,27,2006,Lower,Reef,1,Ariidae,Bagre marinus,496,280,2,Vertebrata,Actinopterygii,,,Otolith,2,III,0.0400,0.66
+Fall,10,27,2006,Lower,Reef,1,Ariidae,Bagre marinus,496,280,2,Arthropoda,Malacostraca,Decapoda,Peneaidae,Penaeid shrimp,1,II,0.6000,9.93
+Fall,10,27,2006,Lower,Reef,1,Sciaenidae,Leiostomus xanthurus,185,281,1,,,,,Digestate,1,IV,0.0200,100.00
+Fall,10,27,2006,Lower,Reef,1,Sciaenidae,Leiostomus xanthurus,179,282,1,,,,,Digestate,1,IV,0.0100,100.00
+Fall,10,27,2006,Lower,Reef,1,Clupeidae,Brevoortia patronus,192,283,2,Plantae,,,,Detritus,1,IV,0.0500,100.00
+Fall,10,27,2006,Lower,Reef,1,Clupeidae,Brevoortia patronus,161,284,1,Plantae,,,,Detritus,1,IV,0.0400,100.00
+Fall,10,27,2006,Lower,Reef,1,Clupeidae,Brevoortia patronus,175,285,3,Plantae,,,,Detritus,1,IV,0.0400,100.00
+Fall,10,27,2006,Lower,Reef,1,Clupeidae,Brevoortia patronus,178,286,2,Plantae,,,,Detritus,1,IV,0.0800,100.00
+Fall,10,27,2006,Lower,Reef,1,Polynemidae,Polydactylus octonemus,185,287,0,,,,,Empty,0,NA,0.0000,0.00
+Fall,10,27,2006,Lower,Reef,1,Sciaenidae,Cynoscion arenarius,315,288,0,,,,,Empty,0,NA,0.0000,0.00
+Fall,10,27,2006,Lower,Reef,1,Sciaenidae,Cynoscion arenarius,220,289,1,,,,,Digestate,1,IV,0.2000,36.36
+Fall,10,27,2006,Lower,Reef,1,Sciaenidae,Cynoscion arenarius,220,289,1,Vertebrata,Actinopterygii,,,Fish Tissue,3,II,0.3500,63.64
+Fall,10,27,2006,Lower,Reef,1,Sciaenidae,Cynoscion arenarius,287,290,2,Arthropoda,Malacostraca,Decapoda,Peneaidae,Penaeid shrimp,2,I,0.6000,100.00
+Fall,10,27,2006,Lower,Reef,1,Sciaenidae,Cynoscion nebulosus,296,291,2,Vertebrata,Actinopterygii,,,Fish Tissue,1,II,1.2000,96.00
+Fall,10,27,2006,Lower,Reef,1,Sciaenidae,Cynoscion nebulosus,296,291,2,Arthropoda,Malacostraca,Decapoda,Peneaidae,Penaeid shrimp,1,II,0.0500,4.00
+Fall,10,27,2006,Lower,Reef,2,Ariidae,Bagre marinus,540,292,5,Vertebrata,Actinopterygii,Clupeiformes,Clupeidae,Brevoortia patronus,1,I,54.0000,85.57
+Fall,10,27,2006,Lower,Reef,2,Ariidae,Bagre marinus,540,292,5,Arthropoda,Malacostraca,Decapoda,,Crab,1,III,2.5000,3.96
+Fall,10,27,2006,Lower,Reef,2,Ariidae,Bagre marinus,540,292,5,,,,,Digestate,1,IV,4.0000,6.34
+Fall,10,27,2006,Lower,Reef,2,Ariidae,Bagre marinus,540,292,5,Vertebrata,Actinopterygii,,,Fish bone,1,IV,2.0000,3.17
+Fall,10,27,2006,Lower,Reef,2,Ariidae,Bagre marinus,540,292,5,Magnoliophyta,Liliopsida,Najadales,Cymodoceaceae,Halodule beaudettei�,1,IV,0.4000,0.63
+Fall,10,27,2006,Lower,Reef,2,Ariidae,Bagre marinus,540,292,5,Vertebrata,Actinopterygii,,,Otolith,2,III,0.2000,0.32
+Fall,10,27,2006,Lower,Reef,2,Ariidae,Bagre marinus,540,292,5,,,,,Red string,1,IV,0.0050,0.01
+Fall,10,27,2006,Lower,Reef,2,Ariidae,Bagre marinus,445,293,5,Vertebrata,Actinopterygii,Clupeiformes,Clupeidae,Brevoortia patronus,1,I,50.0000,89.13
+Fall,10,27,2006,Lower,Reef,2,Ariidae,Bagre marinus,445,293,5,Arthropoda,Malacostraca,Decapoda,Portunidae,Callinectes sapidus,5,I,5.0000,8.91
+Fall,10,27,2006,Lower,Reef,2,Ariidae,Bagre marinus,445,293,5,,,,,Digestate,1,IV,0.7000,1.25
+Fall,10,27,2006,Lower,Reef,2,Ariidae,Bagre marinus,445,293,5,Arthropoda,Malacostraca,Decapoda,Peneaidae,Grooved penaeid,1,I,0.4000,0.71
+Fall,10,27,2006,Lower,Reef,2,Sciaenidae,Menticirrhus littoralis,212,294,2,,,,,Digestate,1,IV,0.5000,86.21
+Fall,10,27,2006,Lower,Reef,2,Sciaenidae,Menticirrhus littoralis,212,294,2,Mollusca,Gastropoda,,,Gastropod,1,IV,0.0800,13.79
+Fall,10,27,2006,Lower,Reef,2,Sciaenidae,Menticirrhus littoralis,204,295,2,,,,,Digestate,1,IV,0.7000,54.69
+Fall,10,27,2006,Lower,Reef,2,Sciaenidae,Menticirrhus littoralis,204,295,2,Annelida,Polychaeta,Aciculata,Glyceridae,Glyceridae ,1,I,0.5000,39.06
+Fall,10,27,2006,Lower,Reef,2,Sciaenidae,Menticirrhus littoralis,204,295,2,Arthropoda,Malacostraca,Decapoda,Panopeidae�,Neopanope texana,1,III,0.0800,6.25
+Fall,10,27,2006,Lower,Reef,2,Sciaenidae,Menticirrhus littoralis,242,296,1,,,,,Digestate,1,IV,0.2000,38.46
+Fall,10,27,2006,Lower,Reef,2,Sciaenidae,Menticirrhus littoralis,242,296,1,Vertebrata,Actinopterygii,,,Fish Tissue,1,II,0.3000,57.69
+Fall,10,27,2006,Lower,Reef,2,Sciaenidae,Menticirrhus littoralis,242,296,1,Mollusca,,,,Shell Hash,1,IV,0.0200,3.85
+Fall,10,27,2006,Lower,Reef,2,Sciaenidae,Menticirrhus littoralis,221,297,0,,,,,Empty,0,NA,0.0000,0.00
+Fall,10,27,2006,Lower,Reef,2,Sciaenidae,Menticirrhus littoralis,201,298,2,,,,,Digestate,1,IV,1.2000,63.16
+Fall,10,27,2006,Lower,Reef,2,Sciaenidae,Menticirrhus littoralis,201,298,2,Arthropoda,Malacostraca,Decapoda,Peneaidae,Penaeid shrimp,1,I,0.2000,10.53
+Fall,10,27,2006,Lower,Reef,2,Sciaenidae,Menticirrhus littoralis,201,298,2,Annelida,Polychaeta,,,Polycheate,1,II,0.5000,26.32
+Fall,10,27,2006,Lower,Reef,2,Sciaenidae,Menticirrhus littoralis,197,299,2,,,,,Digestate,1,IV,0.6000,92.31
+Fall,10,27,2006,Lower,Reef,2,Sciaenidae,Menticirrhus littoralis,197,299,2,Annelida,Polychaeta,,,Polycheate,1,II,0.0500,7.69
+Fall,10,27,2006,Lower,Reef,2,Sciaenidae,Menticirrhus littoralis,200,300,1,,,,,Digestate,1,IV,0.4000,83.33
+Fall,10,27,2006,Lower,Reef,2,Sciaenidae,Menticirrhus littoralis,200,300,1,Annelida,Polychaeta,,,Polycheate,1,II,0.0800,16.67
+Fall,10,27,2006,Lower,Reef,2,Sciaenidae,Menticirrhus littoralis,219,301,3,Vertebrata,Actinopterygii,Anguilliformes�,,Anguilliformes,1,I,0.8000,27.59
+Fall,10,27,2006,Lower,Reef,2,Sciaenidae,Menticirrhus littoralis,219,301,3,,,,,Digestate,1,IV,2.0000,68.97
+Fall,10,27,2006,Lower,Reef,2,Sciaenidae,Menticirrhus littoralis,219,301,3,Vertebrata,Actinopterygii,,,Fish Tissue,1,II,0.1000,3.45
+Fall,10,27,2006,Lower,Reef,2,Sciaenidae,Menticirrhus littoralis,225,302,1,,,,,Digestate,1,IV,0.7000,70.00
+Fall,10,27,2006,Lower,Reef,2,Sciaenidae,Menticirrhus littoralis,225,302,1,Nemertea,,,,Nemertean,1,II,0.3000,30.00
+Fall,10,27,2006,Lower,Reef,2,Sciaenidae,Menticirrhus littoralis,220,303,2,Arthropoda,Malacostraca,Decapoda,Portunidae,Callinectes sapidus,1,I,0.2000,19.61
+Fall,10,27,2006,Lower,Reef,2,Sciaenidae,Menticirrhus littoralis,220,303,2,,,,,Digestate,1,IV,0.3000,29.41
+Fall,10,27,2006,Lower,Reef,2,Sciaenidae,Menticirrhus littoralis,220,303,2,Annelida,Polychaeta,Aciculata,Glyceridae,Glyceridae ,2,I,0.5000,49.02
+Fall,10,27,2006,Lower,Reef,2,Sciaenidae,Menticirrhus littoralis,220,303,2,Magnoliophyta,Liliopsida,Najadales,Cymodoceaceae,Halodule beaudettei�,1,IV,0.0200,1.96
+Fall,10,27,2006,Lower,Reef,2,Sciaenidae,Leiostomus xanthurus,189,304,0,,,,,Empty,0,NA,0.0000,0.00
+Fall,10,27,2006,Lower,Reef,2,Sciaenidae,Leiostomus xanthurus,187,305,0,,,,,Empty,0,NA,0.0000,0.00
+Fall,10,27,2006,Lower,Reef,2,Sciaenidae,Leiostomus xanthurus,195,306,0,,,,,Empty,0,NA,0.0000,0.00
+Fall,10,27,2006,Lower,Reef,2,Sciaenidae,Leiostomus xanthurus,183,307,1,,,,,Digestate,1,IV,0.0400,100.00
+Fall,10,27,2006,Lower,Reef,2,Sciaenidae,Leiostomus xanthurus,188,308,1,,,,,Digestate,1,IV,0.0200,100.00
+Fall,10,27,2006,Lower,Reef,2,Sciaenidae,Leiostomus xanthurus,180,309,1,,,,,Digestate,1,IV,0.0100,100.00
+Fall,10,27,2006,Lower,Reef,2,Sciaenidae,Leiostomus xanthurus,178,310,1,,,,,Digestate,1,IV,0.0050,100.00
+Fall,10,27,2006,Lower,Reef,2,Sciaenidae,Leiostomus xanthurus,195,311,0,,,,,Empty,0,NA,0.0000,0.00
+Fall,10,27,2006,Lower,Reef,2,Sciaenidae,Leiostomus xanthurus,196,312,0,,,,,Empty,0,NA,0.0000,0.00
+Fall,10,27,2006,Lower,Reef,2,Sciaenidae,Leiostomus xanthurus,186,313,0,,,,,Empty,0,NA,0.0000,0.00
+Fall,10,27,2006,Lower,Reef,2,Sciaenidae,Cynoscion arenarius,314,314,0,,,,,Empty,0,NA,0.0000,0.00
+Fall,10,27,2006,Lower,Reef,2,Sciaenidae,Cynoscion arenarius,315,315,0,,,,,Empty,0,NA,0.0000,0.00
+Fall,10,27,2006,Lower,Reef,2,Haemulidae,Orthopristis chrysoptera,163,316,1,,,,,Digestate,1,IV,0.0200,100.00
+Fall,10,27,2006,Lower,Reef,2,Polynemidae,Polydactylus octonemus,177,317,0,,,,,Empty,0,NA,0.0000,0.00
+Fall,10,27,2006,Lower,Reef,2,Polynemidae,Polydactylus octonemus,176,318,1,Plantae,,,,Detritus,1,IV,1.0000,100.00
+Fall,10,27,2006,Lower,Reef,2,Polynemidae,Polydactylus octonemus,176,319,0,,,,,Empty,0,NA,0.0000,0.00
+Fall,10,27,2006,Lower,Reef,2,Polynemidae,Polydactylus octonemus,180,320,0,,,,,Empty,0,NA,0.0000,0.00
+Fall,10,27,2006,Lower,Reef,2,Clupeidae,Brevoortia patronus,170,321,2,Plantae,,,,Detritus,1,IV,0.0200,100.00
+Fall,10,27,2006,Lower,Reef,2,Clupeidae,Brevoortia patronus,157,322,2,Plantae,,,,Detritus,1,IV,0.0200,100.00
+Fall,10,27,2006,Lower,Reef,2,Clupeidae,Brevoortia patronus,161,323,2,Plantae,,,,Detritus,1,IV,0.0200,100.00
+Fall,10,27,2006,Lower,Reef,2,Clupeidae,Brevoortia patronus,222,324,2,Plantae,,,,Detritus,1,IV,0.0300,100.00
+Fall,10,27,2006,Lower,Reef,2,Clupeidae,Brevoortia patronus,156,325,2,Plantae,,,,Detritus,1,IV,0.0200,100.00
+Winter,2,16,2007,Upper,Non-Veg ,1,Clupeidae,Brevoortia patronus,169,326,1,Plantae,,,,Detritus,1,IV,0.0100,100.00
+Winter,2,16,2007,Upper,Non-Veg ,1,Clupeidae,Brevoortia patronus,150,327,1,Plantae,,,,Detritus,1,IV,0.0100,100.00
+Winter,2,16,2007,Upper,Non-Veg ,1,Sciaenidae,Bairdiella chrysoura,171,328,3,,,,,Digestate,1,IV,0.2000,40.00
+Winter,2,16,2007,Upper,Non-Veg ,1,Sciaenidae,Bairdiella chrysoura,171,328,3,Arthropoda,Malacostraca,Decapoda,Palaemonidae,Palaemonetes vulgaris,1,I,0.3000,60.00
+Winter,2,16,2007,Upper,Non-Veg ,1,Clupeidae,Brevoortia patronus,146,329,3,Plantae,,,,Detritus,1,IV,0.0200,100.00
+Winter,2,16,2007,Upper,Non-Veg ,1,Clupeidae,Brevoortia patronus,170,330,2,Plantae,,,,Detritus,1,IV,0.0200,100.00
+Winter,2,16,2007,Upper,Non-Veg ,1,Clupeidae,Brevoortia patronus,171,331,2,Plantae,,,,Detritus,1,IV,0.0300,100.00
+Winter,2,16,2007,Upper,Non-Veg ,2,Sciaenidae,Bairdiella chrysoura,181,332,1,Vertebrata,Actinopterygii,,,Fish Tissue,1,II,0.1000,100.00
+Winter,2,16,2007,Upper,Reef,1,Clupeidae,Brevoortia patronus,150,333,2,Plantae,,,,Detritus,1,IV,0.0200,100.00
+Winter,2,16,2007,Upper,Reef,2,Clupeidae,Brevoortia patronus,166,334,2,Plantae,,,,Detritus,1,IV,0.0400,100.00
+Winter,2,16,2007,Upper,Reef,2,Clupeidae,Brevoortia patronus,160,335,1,Plantae,,,,Detritus,1,IV,0.0100,100.00
+Winter,2,16,2007,Upper,Reef,2,Clupeidae,Brevoortia patronus,157,336,1,Plantae,,,,Detritus,1,IV,0.0080,100.00
+Winter,2,16,2007,Lower,Non-Veg ,1,Clupeidae,Brevoortia patronus,180,337,1,Plantae,,,,Detritus,1,IV,0.0050,100.00
+Winter,2,16,2007,Lower,Non-Veg ,1,Polynemidae,Polydactylus octonemus,187,338,1,Plantae,,,,Detritus,1,IV,0.0300,100.00
+Winter,2,16,2007,Lower,Reef,1,Polynemidae,Polydactylus octonemus,165,339,0,,,,,Empty,0,NA,0.0000,0.00
+Winter,2,16,2007,Lower,Reef,2,Clupeidae,Brevoortia patronus,178,340,1,Plantae,,,,Detritus,1,IV,0.0200,100.00
+Winter,2,16,2007,Lower,Reef,2,Clupeidae,Brevoortia patronus,173,341,0,,,,,Empty,0,NA,0.0000,0.00
+Winter,2,16,2007,Lower,Reef,2,Sciaenidae,Leiostomus xanthurus,160,342,1,,,,,Digestate,1,IV,0.0800,100.00
+Spring,4,28,2007,Upper,Marsh edge,1,Sciaenidae,Sciaenops ocellatus,568,343,2,Arthropoda,Malacostraca,Decapoda,Callianassidae,Callianassidae,2,I,3.7000,100.00
+Spring,4,28,2007,Upper,Marsh edge,1,Mugilidae,Mugil cephalus,264,344,2,Plantae,,,,Detritus,1,IV,1.0000,100.00
+Spring,4,28,2007,Upper,Marsh edge,1,Mugilidae,Mugil cephalus,213,345,1,Plantae,,,,Detritus,1,IV,0.0100,100.00
+Spring,4,28,2007,Upper,Marsh edge,1,Mugilidae,Mugil cephalus,224,346,3,Plantae,,,,Detritus,1,IV,0.0800,100.00
+Spring,4,28,2007,Upper,Marsh edge,1,Clupeidae,Brevoortia patronus,136,347,0,,,,,Empty,0,NA,0.0000,0.00
+Spring,4,28,2007,Upper,Marsh edge,1,Clupeidae,Brevoortia patronus,163,348,2,Plantae,,,,Detritus,1,IV,0.0500,100.00
+Spring,4,28,2007,Upper,Marsh edge,1,Clupeidae,Brevoortia patronus,161,349,1,Plantae,,,,Detritus,1,IV,0.0300,100.00
+Spring,4,28,2007,Upper,Marsh edge,1,Clupeidae,Brevoortia patronus,160,350,1,Plantae,,,,Detritus,1,IV,0.0100,100.00
+Spring,4,28,2007,Upper,Marsh edge,1,Clupeidae,Brevoortia patronus,161,351,1,Plantae,,,,Detritus,1,IV,0.0200,100.00
+Spring,4,28,2007,Upper,Marsh edge,2,Pomatomidae,Pomatomus saltatrix,183,352,0,,,,,Empty,0,NA,0.0000,0.00
+Spring,4,28,2007,Upper,Marsh edge,2,Ariidae,Arius felis,287,353,3,Arthropoda,Malacostraca,Decapoda,Callianassidae,Callianassidae,3,I,2.6000,92.86
+Spring,4,28,2007,Upper,Marsh edge,2,Ariidae,Arius felis,287,353,3,Mollusca,Gastropoda,,,Gastropod operculum,1,III,0.2000,7.14
+Spring,4,28,2007,Upper,Marsh edge,2,Dasyatidae,Dasyatis sabina,137,354,3,Arthropoda,Malacostraca,Amphipoda�,,Amphipod,195,I,0.8000,37.74
+Spring,4,28,2007,Upper,Marsh edge,2,Dasyatidae,Dasyatis sabina,137,354,3,,,,,Digestate,1,IV,0.8000,37.74
+Spring,4,28,2007,Upper,Marsh edge,2,Dasyatidae,Dasyatis sabina,137,354,3,Arthropoda,Malacostraca,Mysida,,Mysidae,16,I,0.5100,24.06
+Spring,4,28,2007,Upper,Marsh edge,2,Dasyatidae,Dasyatis sabina,137,354,3,Phaeophyta,Phaeophyceae,Fucales,Sargassaceae,Sargassum natans air bladder,1,IV,0.0100,0.47
+Spring,4,28,2007,Upper,Marsh edge,2,Sciaenidae,Pogonias cromis,357,355,1,,,,,Digestate,1,IV,0.2000,48.78
+Spring,4,28,2007,Upper,Marsh edge,2,Sciaenidae,Pogonias cromis,357,355,1,Mollusca,Bivalvia,Veneroidea,Pharidae,Ensis minor,1,III,0.2000,48.78
+Spring,4,28,2007,Upper,Marsh edge,2,Sciaenidae,Pogonias cromis,357,355,1,Mollusca,Gastropoda,,,Gastropod,1,IV,0.0100,2.44
+Spring,4,28,2007,Upper,Marsh edge,2,Clupeidae,Brevoortia patronus,147,356,2,Plantae,,,,Detritus,1,IV,0.0300,100.00
+Spring,4,28,2007,Upper,Marsh edge,2,Clupeidae,Brevoortia patronus,148,357,0,,,,,Empty,0,NA,0.0000,0.00
+Spring,4,28,2007,Upper,Marsh edge,2,Clupeidae,Brevoortia patronus,150,358,2,Plantae,,,,Detritus,1,IV,0.0400,100.00
+Spring,4,28,2007,Upper,Marsh edge,2,Clupeidae,Brevoortia patronus,151,359,2,Plantae,,,,Detritus,1,IV,0.0300,100.00
+Spring,4,28,2007,Upper,Marsh edge,2,Clupeidae,Brevoortia patronus,172,360,2,Plantae,,,,Detritus,1,IV,0.0500,100.00
+Spring,4,28,2007,Upper,Non-Veg ,1,Clupeidae,Brevoortia patronus,155,361,1,Plantae,,,,Detritus,1,IV,0.0100,100.00
+Spring,4,28,2007,Upper,Non-Veg ,1,Clupeidae,Brevoortia patronus,224,362,2,Plantae,,,,Detritus,1,IV,0.0500,100.00
+Spring,4,28,2007,Upper,Non-Veg ,1,Clupeidae,Brevoortia patronus,199,363,1,Plantae,,,,Detritus,1,IV,0.0400,100.00
+Spring,4,28,2007,Upper,Non-Veg ,1,Clupeidae,Brevoortia patronus,177,364,2,Plantae,,,,Detritus,1,IV,0.0600,100.00
+Spring,4,28,2007,Upper,Non-Veg ,1,Clupeidae,Brevoortia patronus,162,365,1,Plantae,,,,Detritus,1,IV,0.0300,100.00
+Spring,4,28,2007,Upper,Non-Veg ,1,Ariidae,Arius felis,275,366,1,Arthropoda,Malacostraca,Decapoda,,Decapod carapace,1,III,0.2000,22.47
+Spring,4,28,2007,Upper,Non-Veg ,1,Ariidae,Arius felis,275,366,1,,,,,Digestate,1,IV,0.6000,67.42
+Spring,4,28,2007,Upper,Non-Veg ,1,Ariidae,Arius felis,275,366,1,Vertebrata,Actinopterygii,,,Fish bone,2,III,0.0200,2.25
+Spring,4,28,2007,Upper,Non-Veg ,1,Ariidae,Arius felis,275,366,1,Mollusca,,,,Shell Hash,1,IV,0.0700,7.87
+Spring,4,28,2007,Upper,Non-Veg ,1,Ariidae,Arius felis,237,367,2,,,,,Digestate,1,IV,0.5000,95.79
+Spring,4,28,2007,Upper,Non-Veg ,1,Ariidae,Arius felis,237,367,2,Vertebrata,Actinopterygii,,,Otolith,2,III,0.0200,3.83
+Spring,4,28,2007,Upper,Non-Veg ,1,Ariidae,Arius felis,237,367,2,Mollusca,,,,Shell Hash,1,IV,0.0020,0.38
+Spring,4,28,2007,Upper,Non-Veg ,1,Ariidae,Arius felis,268,368,2,Arthropoda,Malacostraca,Decapoda,Callianassidae,Callianassidae,1,I,0.3000,23.44
+Spring,4,28,2007,Upper,Non-Veg ,1,Ariidae,Arius felis,268,368,2,Arthropoda,Malacostraca,Decapoda,Portunidae,Callinectes sapidus,1,II,0.1000,7.81
+Spring,4,28,2007,Upper,Non-Veg ,1,Ariidae,Arius felis,268,368,2,,,,,Digestate,1,IV,0.8000,62.50
+Spring,4,28,2007,Upper,Non-Veg ,1,Ariidae,Arius felis,268,368,2,Mollusca,,,,Shell Hash,3,IV,0.0800,6.25
+Spring,4,28,2007,Upper,Non-Veg ,1,Ariidae,Arius felis,157,369,1,,,,,Digestate,1,IV,0.1000,83.33
+Spring,4,28,2007,Upper,Non-Veg ,1,Ariidae,Arius felis,157,369,1,Arthropoda,Insecta,Hymenoptera,,Hymenoptera ,1,III,0.0200,16.67
+Spring,4,28,2007,Upper,Non-Veg ,1,Ariidae,Arius felis,189,370,1,,,,,Digestate,1,IV,0.2000,100.00
+Spring,4,28,2007,Upper,Non-Veg ,1,Ariidae,Arius felis,217,371,1,,,,,Digestate,1,IV,0.1000,100.00
+Spring,4,28,2007,Upper,Non-Veg ,1,Ariidae,Bagre marinus,459,372,3,Vertebrata,Actinopterygii,Anguilliformes�,,Anguilliformes,1,I,1.5000,40.11
+Spring,4,28,2007,Upper,Non-Veg ,1,Ariidae,Bagre marinus,459,372,3,,,,,Digestate,1,IV,2.0000,53.48
+Spring,4,28,2007,Upper,Non-Veg ,1,Ariidae,Bagre marinus,459,372,3,Vertebrata,Actinopterygii,,,Fish Eyeball,2,II,0.0200,0.53
+Spring,4,28,2007,Upper,Non-Veg ,1,Ariidae,Bagre marinus,459,372,3,Vertebrata,Actinopterygii,,,Fish Tissue,1,II,0.2000,5.35
+Spring,4,28,2007,Upper,Non-Veg ,1,Ariidae,Bagre marinus,459,372,3,Vertebrata,Actinopterygii,,,Otolith,1,III,0.0200,0.53
+Spring,4,28,2007,Upper,Non-Veg ,1,Ariidae,Bagre marinus,485,372.1,5,,,,,Digestate,1,IV,4.5000,8.26
+Spring,4,28,2007,Upper,Non-Veg ,1,Ariidae,Bagre marinus,485,372.1,5,Vertebrata,Actinopterygii,Siluriformes,Ictaluridae,Ictalurid,3,I,50.0000,91.74
+Spring,4,28,2007,Upper,Non-Veg ,1,Ariidae,Bagre marinus,533,373,1,,,,,Digestate,1,IV,1.3000,83.87
+Spring,4,28,2007,Upper,Non-Veg ,1,Ariidae,Bagre marinus,533,373,1,Vertebrata,Actinopterygii,,,Fish Eyeball,8,III,0.1000,6.45
+Spring,4,28,2007,Upper,Non-Veg ,1,Ariidae,Bagre marinus,533,373,1,Vertebrata,Actinopterygii,,,Otolith,6,III,0.1000,6.45
+Spring,4,28,2007,Upper,Non-Veg ,1,Ariidae,Bagre marinus,533,373,1,Chrodata,,,,Parasite,1,I,0.0500,3.23
+Spring,4,28,2007,Upper,Non-Veg ,1,Ariidae,Bagre marinus,405,374,1,Arthropoda,Malacostraca,Isopoda,Cymothoidae,Aegathoa oculata,1,I,0.1000,33.33
+Spring,4,28,2007,Upper,Non-Veg ,1,Ariidae,Bagre marinus,405,374,1,,,,,Digestate,1,IV,0.1000,33.33
+Spring,4,28,2007,Upper,Non-Veg ,1,Ariidae,Bagre marinus,405,374,1,Vertebrata,Actinopterygii,,,Fish Tissue,1,II,0.1000,33.33
+Spring,4,28,2007,Upper,Non-Veg ,1,Ariidae,Bagre marinus,545,375,4,Arthropoda,Malacostraca,Decapoda,,Decapod carapace,1,III,0.2000,1.63
+Spring,4,28,2007,Upper,Non-Veg ,1,Ariidae,Bagre marinus,545,375,4,,,,,Digestate,1,IV,8.0000,65.31
+Spring,4,28,2007,Upper,Non-Veg ,1,Ariidae,Bagre marinus,545,375,4,Vertebrata,Actinopterygii,,,Fish Eyeball,5,III,0.2000,1.63
+Spring,4,28,2007,Upper,Non-Veg ,1,Ariidae,Bagre marinus,545,375,4,Vertebrata,Actinopterygii,,,Fish Tissue,2,II,3.5000,28.57
+Spring,4,28,2007,Upper,Non-Veg ,1,Ariidae,Bagre marinus,545,375,4,Vertebrata,Actinopterygii,,,Otolith,1,III,0.2000,1.63
+Spring,4,28,2007,Upper,Non-Veg ,1,Ariidae,Bagre marinus,545,375,4,Chrodata,,,,Parasite,2,I,0.0500,0.41
+Spring,4,28,2007,Upper,Non-Veg ,1,Ariidae,Bagre marinus,545,375,4,Mollusca,,,,Shell Hash,1,IV,0.1000,0.82
+Spring,4,28,2007,Upper,Non-Veg ,1,Ariidae,Bagre marinus,591,376,4,Arthropoda,Malacostraca,Decapoda,Portunidae,Callinectes sapidus,1,I,10.0000,28.72
+Spring,4,28,2007,Upper,Non-Veg ,1,Ariidae,Bagre marinus,591,376,4,,,,,Digestate,1,IV,6.5000,18.67
+Spring,4,28,2007,Upper,Non-Veg ,1,Ariidae,Bagre marinus,591,376,4,Vertebrata,Actinopterygii,,,Fish bone,1,IV,18.0000,51.69
+Spring,4,28,2007,Upper,Non-Veg ,1,Ariidae,Bagre marinus,591,376,4,Vertebrata,Actinopterygii,,,Otolith,8,III,0.3000,0.86
+Spring,4,28,2007,Upper,Non-Veg ,1,Ariidae,Bagre marinus,591,376,4,Mollusca,,,,Shell Hash,1,IV,0.0200,0.06
+Spring,4,28,2007,Upper,Non-Veg ,2,Clupeidae,Brevoortia patronus,177,377,2,Plantae,,,,Detritus,1,IV,0.0400,100.00
+Spring,4,28,2007,Upper,Non-Veg ,2,Clupeidae,Brevoortia patronus,155,378,2,Plantae,,,,Detritus,1,IV,0.0300,100.00
+Spring,4,28,2007,Upper,Non-Veg ,2,Clupeidae,Brevoortia patronus,166,379,2,Plantae,,,,Detritus,1,IV,0.0400,100.00
+Spring,4,28,2007,Upper,Non-Veg ,2,Clupeidae,Brevoortia patronus,179,380,2,Plantae,,,,Detritus,1,IV,0.0300,100.00
+Spring,4,28,2007,Upper,Non-Veg ,2,Clupeidae,Brevoortia patronus,160,381,2,Plantae,,,,Detritus,1,IV,0.0400,100.00
+Spring,4,28,2007,Upper,Non-Veg ,2,Sciaenidae,Bairdiella chrysoura,170,382,3,Vertebrata,Actinopterygii,Clupeiformes,Clupeidae,Brevoortia patronus,2,II,0.8000,100.00
+Spring,4,28,2007,Upper,Non-Veg ,2,Ariidae,Arius felis,234,383,2,,,,,Digestate,1,IV,0.2000,98.52
+Spring,4,28,2007,Upper,Non-Veg ,2,Ariidae,Arius felis,234,383,2,Mollusca,,,,Shell Hash,1,IV,0.0030,1.48
+Spring,4,28,2007,Upper,Non-Veg ,2,Ariidae,Arius felis,200,384,2,,,,,Digestate,1,IV,0.2000,100.00
+Spring,4,28,2007,Upper,Non-Veg ,2,Ariidae,Bagre marinus,590,385,4,Arthropoda,Malacostraca,Decapoda,Portunidae,Callinectes sapidus,1,I,12.5000,93.28
+Spring,4,28,2007,Upper,Non-Veg ,2,Ariidae,Bagre marinus,590,385,4,,,,,Digestate,1,IV,0.8000,5.97
+Spring,4,28,2007,Upper,Non-Veg ,2,Ariidae,Bagre marinus,590,385,4,Vertebrata,Actinopterygii,,,Fish bone,1,III,0.1000,0.75
+Spring,4,28,2007,Upper,Non-Veg ,2,Ariidae,Bagre marinus,451,386,3,,,,,Digestate,1,IV,3.5000,97.77
+Spring,4,28,2007,Upper,Non-Veg ,2,Ariidae,Bagre marinus,451,386,3,Vertebrata,Actinopterygii,,,Fish Eyeball,2,III,0.0800,2.23
+Spring,4,28,2007,Upper,Non-Veg ,2,Ariidae,Bagre marinus,460,387,2,Vertebrata,Actinopterygii,Clupeiformes,Clupeidae,Brevoortia patronus,3,II,0.7000,52.63
+Spring,4,28,2007,Upper,Non-Veg ,2,Ariidae,Bagre marinus,460,387,2,,,,,Digestate,1,IV,0.6000,45.11
+Spring,4,28,2007,Upper,Non-Veg ,2,Ariidae,Bagre marinus,460,387,2,Vertebrata,Actinopterygii,,,Otolith,1,III,0.0300,2.26
+Spring,4,28,2007,Upper,Non-Veg ,2,Ariidae,Bagre marinus,445,388,2,,,,,Digestate,1,IV,0.4000,33.33
+Spring,4,28,2007,Upper,Non-Veg ,2,Ariidae,Bagre marinus,445,388,2,Arthropoda,Malacostraca,Decapoda,Peneaidae,Penaeid shrimp,1,II,0.8000,66.67
+Spring,4,28,2007,Upper,Reef,1,Clupeidae,Brevoortia patronus,150,389,0,,,,,Empty,0,NA,0.0000,0.00
+Spring,4,28,2007,Upper,Reef,1,Clupeidae,Brevoortia patronus,154,390,1,Plantae,,,,Detritus,1,IV,0.0200,100.00
+Spring,4,28,2007,Upper,Reef,1,Clupeidae,Brevoortia patronus,150,391,1,Plantae,,,,Detritus,1,IV,0.0080,100.00
+Spring,4,28,2007,Upper,Reef,1,Clupeidae,Brevoortia patronus,355,392,1,Plantae,,,,Detritus,1,IV,0.0600,5.00
+Spring,4,28,2007,Upper,Reef,1,Clupeidae,Brevoortia patronus,147,393,1,Plantae,,,,Detritus,1,IV,0.0020,100.00
+Spring,4,28,2007,Upper,Reef,1,Sciaenidae,Leiostomus xanthurus,173,394,0,,,,,Empty,0,NA,0.0000,0.00
+Spring,4,28,2007,Upper,Reef,1,Sciaenidae,Menticirrhus littoralis,270,395,2,Arthropoda,Malacostraca,Decapoda,Portunidae,Callinectes sapidus,3,I,2.5000,81.17
+Spring,4,28,2007,Upper,Reef,1,Sciaenidae,Menticirrhus littoralis,270,395,2,,,,,Digestate,1,IV,0.0800,2.60
+Spring,4,28,2007,Upper,Reef,1,Sciaenidae,Menticirrhus littoralis,270,395,2,Annelida,Polychaeta,,,Polycheate,1,I,0.5000,16.23
+Spring,4,28,2007,Upper,Reef,1,Sciaenidae,Cynoscion nebulosus,465,396,0,,,,,Empty,0,NA,0.0000,0.00
+Spring,4,28,2007,Upper,Reef,1,Ariidae,Arius felis,236,397,1,,,,,Digestate,1,IV,0.6000,68.89
+Spring,4,28,2007,Upper,Reef,1,Ariidae,Arius felis,236,397,1,Arthropoda,insecta,,,Insect wings,3,III,0.0010,0.11
+Spring,4,28,2007,Upper,Reef,1,Ariidae,Arius felis,236,397,1,Mollusca,,,,Shell Hash,2,IV,0.0700,8.04
+Spring,4,28,2007,Upper,Reef,1,Ariidae,Arius felis,236,397,1,Arthropoda,Malacostraca,Decapoda,Dendrobranchiata�,Shrimp,2,II,0.2000,22.96
+Spring,4,28,2007,Upper,Reef,1,Ariidae,Arius felis,214,398,2,Arthropoda,Malacostraca,Decapoda,Portunidae,Callinectes sapidus,1,I,0.6000,51.28
+Spring,4,28,2007,Upper,Reef,1,Ariidae,Arius felis,214,398,2,,,,,Digestate,1,IV,0.2000,17.09
+Spring,4,28,2007,Upper,Reef,1,Ariidae,Arius felis,214,398,2,Vertebrata,Actinopterygii,,,Fish scale,1,III,0.0100,0.85
+Spring,4,28,2007,Upper,Reef,1,Ariidae,Arius felis,214,398,2,Vertebrata,Actinopterygii,,,Fish Tissue,1,II,0.3000,25.64
+Spring,4,28,2007,Upper,Reef,1,Ariidae,Arius felis,214,398,2,Arthropoda,Insecta,Hymenoptera,,Hymenoptera ,1,III,0.0100,0.85
+Spring,4,28,2007,Upper,Reef,1,Ariidae,Arius felis,214,398,2,Vertebrata,Actinopterygii,,,Pharangeal tooth,1,III,0.0500,4.27
+Spring,4,28,2007,Upper,Reef,1,Ariidae,Arius felis,282,399,1,,,,,Digestate,1,IV,0.6000,85.71
+Spring,4,28,2007,Upper,Reef,1,Ariidae,Arius felis,282,399,1,Mollusca,,,,Shell Hash,1,IV,0.1000,14.29
+Spring,4,28,2007,Upper,Reef,1,Ariidae,Arius felis,238,400,1,,,,,Digestate,1,IV,0.4000,100.00
+Spring,4,28,2007,Upper,Reef,1,Ariidae,Arius felis,213,401,1,,,,,Digestate,1,IV,0.2000,68.97
+Spring,4,28,2007,Upper,Reef,1,Ariidae,Arius felis,213,401,1,Arthropoda,Malacostraca,Amphipoda,Ischyroceridae�,Erichtonius brasiliensis,6,I,0.0400,13.79
+Spring,4,28,2007,Upper,Reef,1,Ariidae,Arius felis,213,401,1,Arthropoda,Insecta,Hymenoptera,,Hymenoptera ,1,II,0.0500,17.24
+Spring,4,28,2007,Upper,Reef,1,Ariidae,Bagre marinus,523,402,4,Mollusca,Bivalvia,,,Bivalve,1,IV,0.0400,0.38
+Spring,4,28,2007,Upper,Reef,1,Ariidae,Bagre marinus,523,402,4,Arthropoda,Malacostraca,Decapoda,Portunidae,Callinectes sapidus,2,I,8.0000,75.33
+Spring,4,28,2007,Upper,Reef,1,Ariidae,Bagre marinus,523,402,4,,,,,Digestate,1,IV,2.5000,23.54
+Spring,4,28,2007,Upper,Reef,1,Ariidae,Bagre marinus,523,402,4,Vertebrata,Actinopterygii,,,Fish Eyeball,2,III,0.0400,0.38
+Spring,4,28,2007,Upper,Reef,1,Ariidae,Bagre marinus,523,402,4,Vertebrata,Actinopterygii,,,Otolith,3,III,0.0400,0.38
+Spring,4,28,2007,Upper,Reef,1,Ariidae,Bagre marinus,427,403,4,Arthropoda,Malacostraca,Decapoda,,Crab,1,III,0.2000,2.63
+Spring,4,28,2007,Upper,Reef,1,Ariidae,Bagre marinus,427,403,4,,,,,Digestate,1,IV,0.6000,7.89
+Spring,4,28,2007,Upper,Reef,1,Ariidae,Bagre marinus,427,403,4,Vertebrata,Actinopterygii,,,Fish,1,II,0.5000,6.58
+Spring,4,28,2007,Upper,Reef,1,Ariidae,Bagre marinus,427,403,4,Vertebrata,Actinopterygii,Siluriformes,Ictaluridae,Ictalurid,1,II,6.0000,78.95
+Spring,4,28,2007,Upper,Reef,1,Ariidae,Bagre marinus,427,403,4,Arthropoda,Malacostraca,Decapoda,Panopeidae�,Neopanope texana,1,I,0.3000,3.95
+Spring,4,28,2007,Upper,Reef,1,Ariidae,Bagre marinus,564,404,3,Arthropoda,Malacostraca,Decapoda,,Decapod carapace,1,III,0.6000,11.65
+Spring,4,28,2007,Upper,Reef,1,Ariidae,Bagre marinus,564,404,3,,,,,Digestate,1,IV,4.5000,87.38
+Spring,4,28,2007,Upper,Reef,1,Ariidae,Bagre marinus,564,404,3,Chrodata,,,,Parasite,5,I,0.0500,0.97
+Spring,4,28,2007,Upper,Reef,1,Ariidae,Bagre marinus,442,405,2,,,,,Digestate,1,IV,1.2000,75.00
+Spring,4,28,2007,Upper,Reef,1,Ariidae,Bagre marinus,442,405,2,Arthropoda,Malacostraca,Decapoda,Menippidae,Menippe adina,1,I,0.4000,25.00
+Spring,4,28,2007,Upper,Reef,2,Clupeidae,Brevoortia patronus,186,406,2,Plantae,,,,Detritus,1,IV,0.0300,100.00
+Spring,4,28,2007,Upper,Reef,2,Clupeidae,Brevoortia patronus,149,407,2,Plantae,,,,Detritus,1,IV,0.0300,100.00
+Spring,4,28,2007,Upper,Reef,2,Clupeidae,Brevoortia patronus,164,408,1,Plantae,,,,Detritus,1,IV,0.0200,100.00
+Spring,4,28,2007,Upper,Reef,2,Clupeidae,Brevoortia patronus,146,409,1,Plantae,,,,Detritus,1,IV,0.0300,100.00
+Spring,4,28,2007,Upper,Reef,2,Clupeidae,Brevoortia patronus,170,410,1,Plantae,,,,Detritus,1,IV,0.0200,100.00
+Spring,4,28,2007,Upper,Reef,2,Sciaenidae,Bairdiella chrysoura,174,411,3,Arthropoda,Malacostraca,Decapoda,Peneaidae,Penaeid shrimp,1,I,0.7000,100.00
+Spring,4,28,2007,Upper,Reef,2,Ariidae,Bagre marinus,574,412,1,,,,,Digestate,1,IV,0.6000,55.56
+Spring,4,28,2007,Upper,Reef,2,Ariidae,Bagre marinus,574,412,1,Vertebrata,Actinopterygii,,,Fish bone,1,IV,0.4000,37.04
+Spring,4,28,2007,Upper,Reef,2,Ariidae,Bagre marinus,574,412,1,Vertebrata,Actinopterygii,,,Otolith,1,III,0.0800,7.41
+Spring,4,28,2007,Upper,Reef,2,Ariidae,Bagre marinus,457,413,3,Arthropoda,Malacostraca,Decapoda,Portunidae,Callinectes sapidus,1,I,10.0000,71.94
+Spring,4,28,2007,Upper,Reef,2,Ariidae,Bagre marinus,457,413,3,,,,,Digestate,1,IV,2.0000,14.39
+Spring,4,28,2007,Upper,Reef,2,Ariidae,Bagre marinus,457,413,3,Vertebrata,Actinopterygii,,,Fish Tissue,1,II,1.2000,8.63
+Spring,4,28,2007,Upper,Reef,2,Ariidae,Bagre marinus,457,413,3,Vertebrata,Actinopterygii,Perciformes,Gobisocidae,Gobiesox spp.,1,II,0.3000,2.16
+Spring,4,28,2007,Upper,Reef,2,Ariidae,Bagre marinus,457,413,3,Vertebrata,Actinopterygii,Gasterosteiformes,Sygnathidae,Sygnathus spp.,2,III,0.4000,2.88
+Spring,4,28,2007,Upper,Reef,2,Ariidae,Bagre marinus,515,414,3,Arthropoda,Malacostraca,Decapoda,Portunidae,Callinectes sapidus,1,I,2.5000,62.19
+Spring,4,28,2007,Upper,Reef,2,Ariidae,Bagre marinus,515,414,3,,,,,Digestate,1,IV,0.2000,4.98
+Spring,4,28,2007,Upper,Reef,2,Ariidae,Bagre marinus,515,414,3,Vertebrata,Actinopterygii,,,Fish bone,1,IV,0.7000,17.41
+Spring,4,28,2007,Upper,Reef,2,Ariidae,Bagre marinus,515,414,3,Chrodata,,,,Parasite,1,I,0.0200,0.50
+Spring,4,28,2007,Upper,Reef,2,Ariidae,Bagre marinus,515,414,3,Vertebrata,Actinopterygii,Gasterosteiformes,Sygnathidae,Sygnathus spp.,2,I,0.6000,14.93
+Spring,4,28,2007,Lower,Non-Veg ,1,Polynemidae,Polydactylus octonemus,192,415,1,Plantae,,,,Detrital sediment,1,IV,0.0200,100.00
+Spring,4,28,2007,Lower,Non-Veg ,1,Sciaenidae,Cynoscion nebulosus,221,416,3,Arthropoda,Malacostraca,Decapoda,Peneaidae,Farfantepenaeus aztecus�,1,I,2.5000,100.00
+Spring,4,28,2007,Lower,Non-Veg ,1,Sciaenidae,Menticirrhus littoralis,270,417,1,,,,,Digestate,1,IV,0.2000,71.43
+Spring,4,28,2007,Lower,Non-Veg ,1,Sciaenidae,Menticirrhus littoralis,270,417,1,Magnoliophyta,Liliopsida,Najadales,Cymodoceaceae,Halodule beaudettei�,1,IV,0.0400,14.29
+Spring,4,28,2007,Lower,Non-Veg ,1,Sciaenidae,Menticirrhus littoralis,270,417,1,Magnoliophyta,Liliopsida,Cyperales,Poaceae,Spartina alterniflora�,1,IV,0.0400,14.29
+Spring,4,28,2007,Lower,Non-Veg ,1,Sciaenidae,Menticirrhus littoralis,247,418,2,Mollusca,Bivalvia,,,Bivalve,1,III,0.8000,100.00
+Spring,4,28,2007,Lower,Non-Veg ,1,Ariidae,Arius felis,212,419,1,,,,,Digestate,1,IV,0.1000,45.45
+Spring,4,28,2007,Lower,Non-Veg ,1,Ariidae,Arius felis,212,419,1,Vertebrata,Actinopterygii,,,Fish Eyeball,3,III,0.0200,9.09
+Spring,4,28,2007,Lower,Non-Veg ,1,Ariidae,Arius felis,212,419,1,Arthropoda,Insecta,Hymenoptera,,Hymenoptera ,3,I,0.1000,45.45
+Spring,4,28,2007,Lower,Non-Veg ,1,Ariidae,Arius felis,285,420,1,Vertebrata,Actinopterygii,Clupeiformes,Clupeidae,Brevoortia patronus,1,II,0.6000,66.67
+Spring,4,28,2007,Lower,Non-Veg ,1,Ariidae,Arius felis,285,420,1,,,,,Digestate,1,IV,0.1000,11.11
+Spring,4,28,2007,Lower,Non-Veg ,1,Ariidae,Arius felis,285,420,1,Vertebrata,Actinopterygii,,,Fish tissue/bone,1,II,0.2000,22.22
+Spring,4,28,2007,Lower,Non-Veg ,1,Ariidae,Arius felis,227,421,2,Arthropoda,Malacostraca,Amphipoda,Ampeliscidae,Ampelisca spp.,17,I,0.0400,9.76
+Spring,4,28,2007,Lower,Non-Veg ,1,Ariidae,Arius felis,227,421,2,,,,,Digestate,1,IV,0.1800,43.90
+Spring,4,28,2007,Lower,Non-Veg ,1,Ariidae,Arius felis,227,421,2,,,,,Eggs,30,I,0.1500,36.59
+Spring,4,28,2007,Lower,Non-Veg ,1,Ariidae,Arius felis,227,421,2,Mollusca,,,,Shell Hash,1,IV,0.0400,9.76
+Spring,4,28,2007,Lower,Non-Veg ,1,Ariidae,Arius felis,224,422,2,Arthropoda,Malacostraca,Amphipoda,Ampeliscidae,Ampelisca spp.,2,I,0.0050,0.88
+Spring,4,28,2007,Lower,Non-Veg ,1,Ariidae,Arius felis,224,422,2,,,,,Digestate,1,IV,0.4500,79.51
+Spring,4,28,2007,Lower,Non-Veg ,1,Ariidae,Arius felis,224,422,2,,,,,Eggs,1,I,0.0200,3.53
+Spring,4,28,2007,Lower,Non-Veg ,1,Ariidae,Arius felis,224,422,2,Vertebrata,Actinopterygii,,,Fish bone,1,IV,0.0080,1.41
+Spring,4,28,2007,Lower,Non-Veg ,1,Ariidae,Arius felis,224,422,2,Vertebrata,Actinopterygii,,,Fish scale,3,III,0.0080,1.41
+Spring,4,28,2007,Lower,Non-Veg ,1,Ariidae,Arius felis,224,422,2,Arthropoda,Insecta,Hymenoptera,,Hymenoptera ,1,I,0.0300,5.30
+Spring,4,28,2007,Lower,Non-Veg ,1,Ariidae,Arius felis,224,422,2,Arthropoda,Malacostraca,Isopoda,,Isopod,2,I,0.0050,0.88
+Spring,4,28,2007,Lower,Non-Veg ,1,Ariidae,Arius felis,224,422,2,Annelida,Polychaeta,,,Polycheate,1,II,0.0300,5.30
+Spring,4,28,2007,Lower,Non-Veg ,1,Ariidae,Arius felis,224,422,2,Mollusca,,,,Shell Hash,1,IV,0.0100,1.77
+Spring,4,28,2007,Lower,Non-Veg ,1,Ariidae,Arius felis,176,423,2,Arthropoda,Malacostraca,Isopoda,Cymothoidae,Aegathoa oculata,4,I,0.0100,3.33
+Spring,4,28,2007,Lower,Non-Veg ,1,Ariidae,Arius felis,176,423,2,Arthropoda,Malacostraca,Decapoda,,Decapod legs,1,II,0.0100,3.33
+Spring,4,28,2007,Lower,Non-Veg ,1,Ariidae,Arius felis,176,423,2,,,,,Digestate,1,IV,0.1500,50.00
+Spring,4,28,2007,Lower,Non-Veg ,1,Ariidae,Arius felis,176,423,2,,,,,Eggs,4,I,0.0100,3.33
+Spring,4,28,2007,Lower,Non-Veg ,1,Ariidae,Arius felis,176,423,2,Annelida,Polychaeta,Canalipalpata,Pectinariidae,Pectinariidae ,1,II,0.0200,6.67
+Spring,4,28,2007,Lower,Non-Veg ,1,Ariidae,Arius felis,176,423,2,Mollusca,,,,Shell Hash,1,IV,0.1000,33.33
+Spring,4,28,2007,Lower,Non-Veg ,1,Ariidae,Arius felis,212,424,2,Arthropoda,Malacostraca,Amphipoda�,,Amphipod,4,I,0.0100,0.75
+Spring,4,28,2007,Lower,Non-Veg ,1,Ariidae,Arius felis,212,424,2,,,,,Digestate,1,IV,0.5000,37.59
+Spring,4,28,2007,Lower,Non-Veg ,1,Ariidae,Arius felis,212,424,2,Nemertea,,,,Nemertean,10,II,0.8000,60.15
+Spring,4,28,2007,Lower,Non-Veg ,1,Ariidae,Arius felis,212,424,2,Mollusca,,,,Shell Hash,1,IV,0.0200,1.50
+Spring,4,28,2007,Lower,Non-Veg ,1,Ariidae,Arius felis,237,425,2,Arthropoda,Malacostraca,Amphipoda�,,Amphipod,57,I,0.0400,10.81
+Spring,4,28,2007,Lower,Non-Veg ,1,Ariidae,Arius felis,237,425,2,,,,,Digestate,1,IV,0.1500,40.54
+Spring,4,28,2007,Lower,Non-Veg ,1,Ariidae,Arius felis,237,425,2,,,,,Eggs,2,I,0.0400,10.81
+Spring,4,28,2007,Lower,Non-Veg ,1,Ariidae,Arius felis,237,425,2,Arthropoda,Malacostraca,Isopoda,,Isopod,4,I,0.0100,2.70
+Spring,4,28,2007,Lower,Non-Veg ,1,Ariidae,Arius felis,237,425,2,Annelida,Polychaeta,,,Polycheate,1,II,0.0400,10.81
+Spring,4,28,2007,Lower,Non-Veg ,1,Ariidae,Arius felis,237,425,2,Mollusca,,,,Shell Hash,1,IV,0.0400,10.81
+Spring,4,28,2007,Lower,Non-Veg ,1,Ariidae,Arius felis,237,425,2,Arthropoda,Malacostraca,Decapoda,Xanthidae,Xanthidae,1,I,0.0500,13.51
+Spring,4,28,2007,Lower,Non-Veg ,1,Ariidae,Arius felis,227,426,1,Arthropoda,Malacostraca,Amphipoda,Ampeliscidae,Ampelisca spp.,3,I,0.0010,0.55
+Spring,4,28,2007,Lower,Non-Veg ,1,Ariidae,Arius felis,227,426,1,,,,,Digestate,1,IV,0.0500,27.47
+Spring,4,28,2007,Lower,Non-Veg ,1,Ariidae,Arius felis,227,426,1,Arthropoda,Malacostraca,Isopoda,,Isopod,1,I,0.0010,0.55
+Spring,4,28,2007,Lower,Non-Veg ,1,Ariidae,Arius felis,227,426,1,Nemertea,,,,Nemertean,3,I,0.1000,54.95
+Spring,4,28,2007,Lower,Non-Veg ,1,Ariidae,Arius felis,227,426,1,Mollusca,,,,Shell Hash,1,IV,0.0300,16.48
+Spring,4,28,2007,Lower,Non-Veg ,1,Ariidae,Arius felis,205,427,1,Arthropoda,Malacostraca,Amphipoda�,,Amphipod,2,I,0.0010,1.41
+Spring,4,28,2007,Lower,Non-Veg ,1,Ariidae,Arius felis,205,427,1,,,,,Digestate,1,IV,0.0500,70.42
+Spring,4,28,2007,Lower,Non-Veg ,1,Ariidae,Arius felis,205,427,1,,,,,Eggs,1,I,0.0100,14.08
+Spring,4,28,2007,Lower,Non-Veg ,1,Ariidae,Arius felis,205,427,1,Vertebrata,Actinopterygii,,,Fish scale,1,III,0.0080,11.27
+Spring,4,28,2007,Lower,Non-Veg ,1,Ariidae,Arius felis,205,427,1,Arthropoda,Malacostraca,Isopoda,,Isopod,1,I,0.0010,1.41
+Spring,4,28,2007,Lower,Non-Veg ,1,Ariidae,Arius felis,205,427,1,Annelida,Polychaeta,Canalipalpata,Pectinariidae,Pectinariidae ,2,III,0.0010,1.41
+Spring,4,28,2007,Lower,Non-Veg ,1,Ariidae,Arius felis,215,428,1,,,,,Digestate,1,IV,0.0800,100.00
+Spring,4,28,2007,Lower,Non-Veg ,1,Ariidae,Bagre marinus,290,429,2,,,,,Digestate,1,IV,0.1500,9.09
+Spring,4,28,2007,Lower,Non-Veg ,1,Ariidae,Bagre marinus,290,429,2,Vertebrata,Actinopterygii,,,Fish Tissue,2,II,1.3000,78.79
+Spring,4,28,2007,Lower,Non-Veg ,1,Ariidae,Bagre marinus,290,429,2,Arthropoda,Malacostraca,Decapoda,Dendrobranchiata�,Shrimp parts,1,III,0.2000,12.12
+Spring,4,28,2007,Lower,Non-Veg ,1,Ariidae,Bagre marinus,295,430,2,Vertebrata,Actinopterygii,Clupeiformes,Clupeidae,Brevoortia patronus,1,II,0.4000,32.26
+Spring,4,28,2007,Lower,Non-Veg ,1,Ariidae,Bagre marinus,295,430,2,,,,,Digestate,1,IV,0.8000,64.52
+Spring,4,28,2007,Lower,Non-Veg ,1,Ariidae,Bagre marinus,295,430,2,Vertebrata,Actinopterygii,,,Fish Eyeball,5,III,0.0100,0.81
+Spring,4,28,2007,Lower,Non-Veg ,1,Ariidae,Bagre marinus,295,430,2,Vertebrata,Actinopterygii,,,Fish scale,1,III,0.0300,2.42
+Spring,4,28,2007,Lower,Non-Veg ,1,Ariidae,Bagre marinus,524,431,2,Arthropoda,Malacostraca,Decapoda,Portunidae,Callinectes sapidus,1,III,4.0000,39.92
+Spring,4,28,2007,Lower,Non-Veg ,1,Ariidae,Bagre marinus,524,431,2,,,,,Digestate,1,IV,6.0000,59.88
+Spring,4,28,2007,Lower,Non-Veg ,1,Ariidae,Bagre marinus,524,431,2,Chrodata,,,,Parasite,1,I,0.0200,0.20
+Spring,4,28,2007,Lower,Non-Veg ,1,Ariidae,Bagre marinus,430,432,3,Arthropoda,Malacostraca,Decapoda,Portunidae,Callinectes sapidus,1,I,2.5000,45.45
+Spring,4,28,2007,Lower,Non-Veg ,1,Ariidae,Bagre marinus,430,432,3,Arthropoda,Malacostraca,Decapoda,Dendrobranchiata�,Shrimp carapace,1,III,3.0000,54.55
+Spring,4,28,2007,Lower,Non-Veg ,1,Ariidae,Bagre marinus,404,433,1,,,,,Digestate,1,IV,0.1000,99.01
+Spring,4,28,2007,Lower,Non-Veg ,1,Ariidae,Bagre marinus,404,433,1,Chrodata,,,,Parasite,1,I,0.0010,0.99
+Spring,4,28,2007,Lower,Non-Veg ,1,Ariidae,Bagre marinus,297,434,2,Arthropoda,Malacostraca,Decapoda,,Crab claw,1,III,0.0300,0.57
+Spring,4,28,2007,Lower,Non-Veg ,1,Ariidae,Bagre marinus,297,434,2,,,,,Digestate,1,IV,2.4000,45.45
+Spring,4,28,2007,Lower,Non-Veg ,1,Ariidae,Bagre marinus,297,434,2,Vertebrata,Actinopterygii,,,Fish Eyeball,14,III,0.0500,0.95
+Spring,4,28,2007,Lower,Non-Veg ,1,Ariidae,Bagre marinus,297,434,2,Vertebrata,Actinopterygii,,,Fish Tissue,1,II,2.8000,53.03
+Spring,4,28,2007,Lower,Non-Veg ,2,Clupeidae,Brevoortia patronus,152,435,1,Plantae,,,,Detritus,1,IV,0.0080,100.00
+Spring,4,28,2007,Lower,Non-Veg ,2,Clupeidae,Brevoortia patronus,180,436,2,Plantae,,,,Detritus,1,IV,0.0200,100.00
+Spring,4,28,2007,Lower,Non-Veg ,2,Clupeidae,Brevoortia patronus,164,437,2,Plantae,,,,Detritus,1,IV,0.0200,100.00
+Spring,4,28,2007,Lower,Non-Veg ,2,Clupeidae,Brevoortia patronus,175,438,2,Plantae,,,,Detritus,1,IV,0.0200,100.00
+Spring,4,28,2007,Lower,Non-Veg ,2,Clupeidae,Brevoortia patronus,160,439,1,Plantae,,,,Detritus,1,IV,0.0060,100.00
+Spring,4,28,2007,Lower,Non-Veg ,2,Sciaenidae,Menticirrhus littoralis,202,440,0,,,,,Empty,0,NA,0.0000,0.00
+Spring,4,28,2007,Lower,Non-Veg ,2,Sciaenidae,Menticirrhus littoralis,245,441,1,Arthropoda,Malacostraca,Decapoda,Portunidae,Callinectes sapidus,1,II,0.1000,100.00
+Spring,4,28,2007,Lower,Non-Veg ,2,Sciaenidae,Menticirrhus littoralis,230,442,1,,,,,Digestate,1,IV,0.1000,92.59
+Spring,4,28,2007,Lower,Non-Veg ,2,Sciaenidae,Menticirrhus littoralis,230,442,1,Annelida,Polychaeta,Canalipalpata,Pectinariidae,Pectinariidae ,1,III,0.0080,7.41
+Spring,4,28,2007,Lower,Non-Veg ,2,Ariidae,Arius felis,235,443,2,Arthropoda,Malacostraca,Amphipoda�,,Amphipod,3,I,0.0010,0.12
+Spring,4,28,2007,Lower,Non-Veg ,2,Ariidae,Arius felis,235,443,2,Arthropoda,Malacostraca,Decapoda,,Crab claw,2,II,0.3000,37.45
+Spring,4,28,2007,Lower,Non-Veg ,2,Ariidae,Arius felis,235,443,2,,,,,Digestate,1,IV,0.1000,12.48
+Spring,4,28,2007,Lower,Non-Veg ,2,Ariidae,Arius felis,235,443,2,Nemertea,,,,Nemertean,1,I,0.4000,49.94
+Spring,4,28,2007,Lower,Non-Veg ,2,Ariidae,Arius felis,326,444,1,Arthropoda,Malacostraca,Decapoda,,Crab,1,III,0.1000,8.70
+Spring,4,28,2007,Lower,Non-Veg ,2,Ariidae,Arius felis,326,444,1,,,,,Digestate,1,IV,0.8000,69.57
+Spring,4,28,2007,Lower,Non-Veg ,2,Ariidae,Arius felis,326,444,1,Mollusca,,,,Shell Hash,1,IV,0.0500,4.35
+Spring,4,28,2007,Lower,Non-Veg ,2,Ariidae,Arius felis,326,444,1,Vertebrata,Actinopterygii,Gasterosteiformes,Sygnathidae,Sygnathus spp.,1,II,0.2000,17.39
+Spring,4,28,2007,Lower,Non-Veg ,2,Ariidae,Arius felis,380,445,2,Vertebrata,Actinopterygii,Anguilliformes�,,Anguilliformes,3,I,1.5000,76.92
+Spring,4,28,2007,Lower,Non-Veg ,2,Ariidae,Arius felis,380,445,2,,,,,Digestate,1,IV,0.3000,15.38
+Spring,4,28,2007,Lower,Non-Veg ,2,Ariidae,Arius felis,380,445,2,Annelida,Polychaeta,Canalipalpata,Pectinariidae,Pectinariidae ,1,I,0.0500,2.56
+Spring,4,28,2007,Lower,Non-Veg ,2,Ariidae,Arius felis,380,445,2,Vertebrata,Actinopterygii,Gasterosteiformes,Sygnathidae,Sygnathus spp.,1,II,0.1000,5.13
+Spring,4,28,2007,Lower,Reef,1,Clupeidae,Brevoortia patronus,330,446,0,,,,,Empty,0,NA,0.0000,0.00
+Spring,4,28,2007,Lower,Reef,1,Clupeidae,Brevoortia patronus,160,447,2,Plantae,,,,Detritus,1,IV,0.0300,100.00
+Spring,4,28,2007,Lower,Reef,1,Clupeidae,Brevoortia patronus,165,448,2,Plantae,,,,Detritus,1,IV,0.0300,100.00
+Spring,4,28,2007,Lower,Reef,1,Sciaenidae,Menticirrhus littoralis,243,449,2,Arthropoda,Malacostraca,Decapoda,Menippidae,Menippe adina,1,I,0.7000,100.00
+Spring,4,28,2007,Lower,Reef,1,Scombridae,Scomberomorus maculatus,560,450,1,,,,,Digestate,1,IV,0.4000,65.57
+Spring,4,28,2007,Lower,Reef,1,Scombridae,Scomberomorus maculatus,560,450,1,Vertebrata,Actinopterygii,,,Fish Eyeball,3,III,0.0100,1.64
+Spring,4,28,2007,Lower,Reef,1,Scombridae,Scomberomorus maculatus,560,450,1,Vertebrata,Actinopterygii,,,Fish Tissue,1,II,0.2000,32.79
+Spring,4,28,2007,Lower,Reef,1,Ariidae,Arius felis,239,451,1,Arthropoda,Malacostraca,Decapoda,,Decapod legs,2,II,0.0800,34.78
+Spring,4,28,2007,Lower,Reef,1,Ariidae,Arius felis,239,451,1,,,,,Digestate,1,IV,0.1000,43.48
+Spring,4,28,2007,Lower,Reef,1,Ariidae,Arius felis,239,451,1,Mollusca,,,,Shell Hash,1,IV,0.0500,21.74
+Spring,4,28,2007,Lower,Reef,1,Ariidae,Arius felis,229,452,2,,,,,Digestate,1,IV,0.3000,41.10
+Spring,4,28,2007,Lower,Reef,1,Ariidae,Arius felis,229,452,2,Arthropoda,Insecta,Hymenoptera,,Hymenoptera ,1,III,0.0300,4.11
+Spring,4,28,2007,Lower,Reef,1,Ariidae,Arius felis,229,452,2,Arthropoda,Malacostraca,Decapoda,Menippidae,Menippe adina,3,II,0.4000,54.79
+Spring,4,28,2007,Lower,Reef,1,Ariidae,Arius felis,240,453,1,,,,,Digestate,1,IV,0.1000,58.82
+Spring,4,28,2007,Lower,Reef,1,Ariidae,Arius felis,240,453,1,Mollusca,,,,Shell Hash,1,IV,0.0700,41.18
+Spring,4,28,2007,Lower,Reef,1,Ariidae,Arius felis,242,454,1,Arthropoda,Malacostraca,Amphipoda�,,Amphipod,3,I,0.0100,0.83
+Spring,4,28,2007,Lower,Reef,1,Ariidae,Arius felis,242,454,1,Mollusca,Bivalvia,Veneroidea,Pharidae,Ensis minor,1,II,1.2000,99.17
+Spring,4,28,2007,Lower,Reef,1,Ariidae,Arius felis,230,455,0,,,,,Empty,0,NA,0.0000,0.00
+Spring,4,28,2007,Lower,Reef,1,Ariidae,Arius felis,240,456,3,,,,,Digestate,1,IV,0.3000,35.29
+Spring,4,28,2007,Lower,Reef,1,Ariidae,Arius felis,240,456,3,Vertebrata,Actinopterygii,,,Fish Tissue,1,II,0.5000,58.82
+Spring,4,28,2007,Lower,Reef,1,Ariidae,Arius felis,240,456,3,Arthropoda,Insecta,Hymenoptera,,Hymenoptera ,1,III,0.0100,1.18
+Spring,4,28,2007,Lower,Reef,1,Ariidae,Arius felis,240,456,3,Mollusca,,,,Shell Hash,1,IV,0.0400,4.71
+Spring,4,28,2007,Lower,Reef,1,Ariidae,Bagre marinus,259,457,2,Vertebrata,Actinopterygii,Clupeiformes,Clupeidae,Brevoortia patronus,1,II,0.6000,25.53
+Spring,4,28,2007,Lower,Reef,1,Ariidae,Bagre marinus,259,457,2,,,,,Digestate,1,IV,1.7000,72.34
+Spring,4,28,2007,Lower,Reef,1,Ariidae,Bagre marinus,259,457,2,Vertebrata,Actinopterygii,,,Fish Eyeball,10,III,0.0500,2.13
+Spring,4,28,2007,Lower,Reef,1,Ariidae,Bagre marinus,397,458,0,,,,,Empty,0,NA,0.0000,0.00
+Spring,4,28,2007,Lower,Reef,1,Ariidae,Bagre marinus,410,459,2,Vertebrata,Actinopterygii,Clupeiformes,Clupeidae,Brevoortia patronus,4,II,1.1000,25.00
+Spring,4,28,2007,Lower,Reef,1,Ariidae,Bagre marinus,410,459,2,,,,,Digestate,1,IV,3.3000,75.00
+Spring,4,28,2007,Lower,Reef,1,Ariidae,Bagre marinus,531,460,2,,,,,Digestate,1,IV,0.6500,67.71
+Spring,4,28,2007,Lower,Reef,1,Ariidae,Bagre marinus,531,460,2,Vertebrata,Actinopterygii,,,Fish Tissue,1,II,0.3000,31.25
+Spring,4,28,2007,Lower,Reef,1,Ariidae,Bagre marinus,531,460,2,Chrodata,,,,Parasite,3,I,0.0100,1.04
+Spring,4,28,2007,Lower,Reef,1,Ariidae,Bagre marinus,443,461,2,,,,,Digestate,1,IV,0.9000,88.24
+Spring,4,28,2007,Lower,Reef,1,Ariidae,Bagre marinus,443,461,2,Vertebrata,Actinopterygii,,,Fish Tissue,1,II,0.1000,9.80
+Spring,4,28,2007,Lower,Reef,1,Ariidae,Bagre marinus,443,461,2,Vertebrata,Actinopterygii,,,Otolith,2,III,0.0200,1.96
+Spring,4,28,2007,Lower,Reef,1,Ariidae,Bagre marinus,400,462,1,,,,,Digestate,1,IV,0.0800,28.57
+Spring,4,28,2007,Lower,Reef,1,Ariidae,Bagre marinus,400,462,1,Arthropoda,Malacostraca,Decapoda,Dendrobranchiata�,Shrimp parts,1,III,0.2000,71.43
+Spring,4,28,2007,Lower,Reef,2,Clupeidae,Brevoortia patronus,169,463,2,Plantae,,,,Detritus,1,IV,0.0200,100.00
+Spring,4,28,2007,Lower,Reef,2,Clupeidae,Brevoortia patronus,203,464,2,Plantae,,,,Detritus,1,IV,0.0300,100.00
+Spring,4,28,2007,Lower,Reef,2,Clupeidae,Brevoortia patronus,155,465,1,Plantae,,,,Detritus,1,IV,0.0010,100.00
+Spring,4,28,2007,Lower,Reef,2,Clupeidae,Brevoortia patronus,165,466,2,Plantae,,,,Detritus,1,IV,0.0200,100.00
+Spring,4,28,2007,Lower,Reef,2,Clupeidae,Brevoortia patronus,170,467,2,Plantae,,,,Detritus,1,IV,0.0300,100.00
+Spring,4,28,2007,Lower,Reef,2,Polynemidae,Polydactylus octonemus,155,468,0,,,,,Empty,0,NA,0.0000,0.00
+Spring,4,28,2007,Lower,Reef,2,Sciaenidae,Menticirrhus littoralis,233,469,0,,,,,Empty,0,NA,0.0000,0.00
+Spring,4,28,2007,Lower,Reef,2,Scombridae,Scomberomorus maculatus,534,470,1,,,,,Digestate,1,IV,0.0800,80.00
+Spring,4,28,2007,Lower,Reef,2,Scombridae,Scomberomorus maculatus,534,470,1,Vertebrata,Actinopterygii,,,Fish Eyeball,2,III,0.0200,20.00
+Spring,4,28,2007,Lower,Reef,2,Scombridae,Scomberomorus maculatus,551,471,3,Vertebrata,Actinopterygii,,,Fish Tissue,2,II,3.0000,100.00
+Spring,4,28,2007,Lower,Reef,2,Sciaenidae,Cynoscion arenarius,216,472,2,Vertebrata,Actinopterygii,Clupeiformes,Clupeidae,Brevoortia patronus,2,II,0.3500,77.78
+Spring,4,28,2007,Lower,Reef,2,Sciaenidae,Cynoscion arenarius,216,472,2,,,,,Digestate,1,IV,0.1000,22.22
+Spring,4,28,2007,Lower,Reef,2,Sciaenidae,Cynoscion arenarius,227,473,2,,,,,Digestate,1,IV,0.2000,33.33
+Spring,4,28,2007,Lower,Reef,2,Sciaenidae,Cynoscion arenarius,227,473,2,Vertebrata,Actinopterygii,,,Fish Tissue,1,II,0.4000,66.67
+Spring,4,28,2007,Lower,Reef,2,Ariidae,Arius felis,220,474,0,,,,,Empty,0,NA,0.0000,0.00
+Spring,4,28,2007,Lower,Reef,2,Ariidae,Arius felis,357,475,1,,,,,Digestate,1,IV,0.3000,88.24
+Spring,4,28,2007,Lower,Reef,2,Ariidae,Arius felis,357,475,1,Annelida,Polychaeta,,,Polycheate,1,II,0.0400,11.76
+Spring,4,28,2007,Lower,Reef,2,Ariidae,Arius felis,402,476,2,Arthropoda,Malacostraca,Decapoda,,Crab claw,1,II,0.2000,18.18
+Spring,4,28,2007,Lower,Reef,2,Ariidae,Arius felis,402,476,2,,,,,Digestate,1,IV,0.8000,72.73
+Spring,4,28,2007,Lower,Reef,2,Ariidae,Arius felis,402,476,2,Vertebrata,Actinopterygii,Gasterosteiformes,Sygnathidae,Sygnathus spp.,2,III,0.1000,9.09
+Spring,4,28,2007,Lower,Reef,2,Ariidae,Bagre marinus,280,477,2,Vertebrata,Actinopterygii,Clupeiformes,Clupeidae,Brevoortia patronus,1,II,0.3000,37.50
+Spring,4,28,2007,Lower,Reef,2,Ariidae,Bagre marinus,280,477,2,,,,,Digestate,1,IV,0.5000,62.50
+Spring,4,28,2007,Lower,Reef,2,Ariidae,Bagre marinus,381,478,2,,,,,Digestate,1,IV,1.8000,85.71
+Spring,4,28,2007,Lower,Reef,2,Ariidae,Bagre marinus,381,478,2,Vertebrata,Actinopterygii,,,Fish Tissue,1,II,0.3000,14.29
+Spring,4,28,2007,Lower,Reef,2,Ariidae,Bagre marinus,440,479,2,,,,,Digestate,1,IV,1.8000,77.25
+Spring,4,28,2007,Lower,Reef,2,Ariidae,Bagre marinus,440,479,2,Vertebrata,Actinopterygii,,,Fish bone,1,III,0.4000,17.17
+Spring,4,28,2007,Lower,Reef,2,Ariidae,Bagre marinus,440,479,2,Mollusca,Gastropoda,,,Gastropod operculum,1,III,0.0100,0.43
+Spring,4,28,2007,Lower,Reef,2,Ariidae,Bagre marinus,440,479,2,Chrodata,,,,Parasite,1,I,0.0200,0.86
+Spring,4,28,2007,Lower,Reef,2,Ariidae,Bagre marinus,440,479,2,Arthropoda,Malacostraca,Decapoda,Dendrobranchiata�,Shrimp,1,I,0.1000,4.29
+Spring,4,28,2007,Lower,Reef,2,Ariidae,Bagre marinus,533,480,2,Arthropoda,Malacostraca,Decapoda,Portunidae,Callinectes sapidus,1,II,0.5000,13.89
+Spring,4,28,2007,Lower,Reef,2,Ariidae,Bagre marinus,533,480,2,,,,,Digestate,1,IV,1.7000,47.22
+Spring,4,28,2007,Lower,Reef,2,Ariidae,Bagre marinus,533,480,2,Vertebrata,Actinopterygii,,,Fish Tissue,1,II,0.4000,11.11
+Spring,4,28,2007,Lower,Reef,2,Ariidae,Bagre marinus,533,480,2,Arthropoda,Malacostraca,Decapoda,Dendrobranchiata�,Shrimp,1,II,1.0000,27.78
+Spring,4,28,2007,Lower,Reef,2,Ariidae,Bagre marinus,466,481,3,Vertebrata,Actinopterygii,Clupeiformes,Clupeidae,Brevoortia patronus,2,I,4.0000,71.43
+Spring,4,28,2007,Lower,Reef,2,Ariidae,Bagre marinus,466,481,3,,,,,Digestate,1,IV,1.4000,25.00
+Spring,4,28,2007,Lower,Reef,2,Ariidae,Bagre marinus,466,481,3,Vertebrata,Actinopterygii,Gasterosteiformes,Sygnathidae,Sygnathus spp.,1,III,0.2000,3.57
