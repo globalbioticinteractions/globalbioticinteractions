@@ -28,7 +28,7 @@ public class EOLService extends BaseExternalIdService {
 
         try {
             URI uri = new URI("http", null, "eol.org", 80, "/api/search/1.0/" + taxonName, "exact=true", null);
-            pageId = getPageId(taxonName, uri, true);
+            pageId = getPageId(uri, true);
         } catch (URISyntaxException e) {
             throw new TaxonPropertyLookupServiceException("failed to create uri", e);
         }
@@ -42,7 +42,7 @@ public class EOLService extends BaseExternalIdService {
         if (lsid != null && lsid.startsWith(TaxonomyProvider.ID_PREFIX_EOL)) {
             Long pageId = Long.parseLong(lsid.replace(TaxonomyProvider.ID_PREFIX_EOL, ""));
             try {
-                path = getRanks(lsid, pageId);
+                path = getRanks(pageId);
             } catch (URISyntaxException e) {
                 throw new TaxonPropertyLookupServiceException("failed to create uri", e);
             } catch (JsonProcessingException e) {
@@ -54,19 +54,19 @@ public class EOLService extends BaseExternalIdService {
         return path;
     }
 
-    private String getRanks(String lsid, Long pageId) throws URISyntaxException, TaxonPropertyLookupServiceException, IOException {
+    private String getRanks(Long pageId) throws URISyntaxException, TaxonPropertyLookupServiceException, IOException {
         StringBuilder ranks = new StringBuilder();
         URI uri = new URI("http", null, "eol.org", 80, "/api/pages/1.0/" + pageId, ".json?images=1&videos=0&sounds=0&maps=0&text=0&iucn=false&subjects=overview&licenses=all&details=false&common_names=true&synonyms=false&references=false&format=json", null);
-        String response = getResponse(lsid, uri);
+        String response = getResponse(uri);
         if (response != null) {
-            addRanks(lsid, ranks, response);
+            addRanks(ranks, response);
         }
 
         String s = ranks.toString();
         return s.isEmpty() ? null : s;
     }
 
-    private void addRanks(String lsid, StringBuilder ranks, String response) throws IOException, URISyntaxException, TaxonPropertyLookupServiceException {
+    private void addRanks(StringBuilder ranks, String response) throws IOException, URISyntaxException, TaxonPropertyLookupServiceException {
         ObjectMapper mapper = new ObjectMapper();
         JsonNode node = mapper.readTree(response);
 
@@ -79,16 +79,18 @@ public class EOLService extends BaseExternalIdService {
             }
             ;
         }
-        addRanks(lsid, firstConceptId, ranks);
+        if (firstConceptId != null) {
+            addRanks(firstConceptId, ranks);
+        }
     }
 
-    private void addRanks(String lsid, String firstConceptId, StringBuilder ranks) throws URISyntaxException, TaxonPropertyLookupServiceException, IOException {
+    private void addRanks(String firstConceptId, StringBuilder ranks) throws URISyntaxException, TaxonPropertyLookupServiceException, IOException {
         URI uri;
         String response;
         ObjectMapper mapper;
         JsonNode node;
         uri = new URI("http", null, "eol.org", 80, "/api/hierarchy_entries/1.0/" + firstConceptId, ".json?common_names=false&synonyms=false&format=json", null);
-        response = getResponse(lsid, uri);
+        response = getResponse(uri);
         if (response != null) {
             mapper = new ObjectMapper();
             node = mapper.readTree(response);
@@ -108,8 +110,8 @@ public class EOLService extends BaseExternalIdService {
         }
     }
 
-    private String getPageId(String taxonName, URI uri, boolean shouldFollowAlternate) throws TaxonPropertyLookupServiceException, URISyntaxException {
-        String response = getResponse(taxonName, uri);
+    private String getPageId(URI uri, boolean shouldFollowAlternate) throws TaxonPropertyLookupServiceException, URISyntaxException {
+        String response = getResponse(uri);
 
 
         String pageId = null;
@@ -132,7 +134,7 @@ public class EOLService extends BaseExternalIdService {
                     if (urlSplit.length > 1) {
                         String alternateUrlString = urlSplit[0];
                         URI alternateUri = new URI(alternateUrlString);
-                        pageId = getPageId(taxonName, alternateUri, false);
+                        pageId = getPageId(alternateUri, false);
                     }
 
                 }
@@ -142,7 +144,7 @@ public class EOLService extends BaseExternalIdService {
         return pageId;
     }
 
-    private String getResponse(String queryValue, URI uri) throws TaxonPropertyLookupServiceException {
+    private String getResponse(URI uri) throws TaxonPropertyLookupServiceException {
         HttpGet get = new HttpGet(uri);
 
         BasicResponseHandler responseHandler = new BasicResponseHandler();
@@ -153,12 +155,12 @@ public class EOLService extends BaseExternalIdService {
             response = httpClient.execute(get, responseHandler);
         } catch (HttpResponseException e) {
             if (e.getStatusCode() != 406 && e.getStatusCode() != 404) {
-                throw new TaxonPropertyLookupServiceException("failed to lookup [" + queryValue + "]", e);
+                throw new TaxonPropertyLookupServiceException("failed to lookup [" + uri.toString() + "]", e);
             }
         } catch (ClientProtocolException e) {
-            throw new TaxonPropertyLookupServiceException("failed to lookup [" + queryValue + "]", e);
+            throw new TaxonPropertyLookupServiceException("failed to lookup [" + uri.toString() + "]", e);
         } catch (IOException e) {
-            throw new TaxonPropertyLookupServiceException("failed to lookup [" + queryValue + "]", e);
+            throw new TaxonPropertyLookupServiceException("failed to lookup [" + uri.toString() + "]", e);
         }
         return response;
     }

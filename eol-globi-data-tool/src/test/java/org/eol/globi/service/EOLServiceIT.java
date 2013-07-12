@@ -91,6 +91,12 @@ public class EOLServiceIT {
     }
 
     @Test
+    public void lookupTaxonPathByLSIDForPageWithoutClassification() throws TaxonPropertyLookupServiceException {
+        String rank = new EOLService().lookupTaxonPathByLSID("EOL:13644436");
+        assertThat(rank, Is.is(nullValue()));
+    }
+
+    @Test
     public void lookupTaxonPathByScientificName() throws TaxonPropertyLookupServiceException {
         String taxonRank = new EOLService().lookupPropertyValueByTaxonName("Homo sapiens", Taxon.PATH);
         assertThat(taxonRank, Is.is("Animalia Chordata Vertebrata Mammalia Theria Eutheria Primates Hominidae Homo"
