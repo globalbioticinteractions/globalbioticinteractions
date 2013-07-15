@@ -42,10 +42,11 @@ public class CypherProxyController {
             "predator.physiologicalState? as predator_physiological_state," +
             "prey.physiologicalState? as prey_physiological_state\"";
 
-    private String addLocationClausesIfNecessary(HttpServletRequest request, String query) {
-        query += " , predator-[:COLLECTED_AT]->loc ";
-        query += request == null ? "" : RequestHelper.buildCypherSpatialWhereClause(request.getParameterMap());
-        return query;
+    public static final String INTERACTION_MATCH = "MATCH predatorTaxon<-[:CLASSIFIED_AS]-predator-[:ATE]->prey-[:CLASSIFIED_AS]->preyTaxon ";
+
+    private void addLocationClausesIfNecessary(HttpServletRequest request, StringBuilder query) {
+        query.append(" , predator-[:COLLECTED_AT]->loc ");
+        query.append(request == null ? "" : RequestHelper.buildCypherSpatialWhereClause(request.getParameterMap()));
     }
 
     private String buildParams(String scientificName) {
@@ -59,38 +60,67 @@ public class CypherProxyController {
         return params;
     }
 
+    @RequestMapping(value = "/interactionTypes", method = RequestMethod.GET, produces = "application/json")
+    @ResponseBody
+    public String getInteractionTypes(HttpServletRequest request) throws IOException {
+        return "[ \"" + INTERACTION_PREYS_ON + "\"," + INTERACTION_PREYED_UPON_BY + "\"]";
+    }
+
     @RequestMapping(value = "/interaction", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
     public String findInteractions(HttpServletRequest request) throws IOException {
-        String query = "{\"query\":\"START loc" + " = node:locations('*:*') " +
-                "MATCH predatorTaxon<-[:CLASSIFIED_AS]-predator-[interactionType:" + InteractUtil.allInteractionsCypherClause() + "]->prey-[:CLASSIFIED_AS]->preyTaxon ";
-        query = addLocationClausesIfNecessary(request, query);
-        query += "RETURN predatorTaxon.externalId, predatorTaxon.name as predatorName, type(interactionType), preyTaxon.externalId, preyTaxon.name as preyTaxon\", " +
-                "\"params\":" + buildParams(null) + "}";
-        return execute(query);
+        StringBuilder query = new StringBuilder();
+        query.append("{\"query\":\"START loc" + " = node:locations('*:*') " +
+                "MATCH predatorTaxon<-[:CLASSIFIED_AS]-predator-[interactionType:" + InteractUtil.allInteractionsCypherClause() + "]->prey-[:CLASSIFIED_AS]->preyTaxon ");
+        addLocationClausesIfNecessary(request, query);
+        query.append("RETURN predatorTaxon.externalId, predatorTaxon.name as predatorName, type(interactionType), preyTaxon.externalId, preyTaxon.name as preyTaxon\", " +
+                "\"params\":" + buildParams(null) + "}");
+        return execute(query.toString());
     }
 
-    @RequestMapping(value = "/taxon/{scientificName}/" + INTERACTION_PREYS_ON, method = RequestMethod.GET, produces = "application/json", headers = "content-type=*/*")
+    @RequestMapping(value = "/taxon/{sourceTaxonName}/{interactionType}", method = RequestMethod.GET, produces = "application/json", headers = "content-type=*/*")
     @ResponseBody
-    public String findPreyOf(HttpServletRequest request, @PathVariable("scientificName") String scientificName) throws IOException {
-        String query = "{\"query\":\"START predatorTaxon = node:taxons(name={scientificName}) " +
-                "MATCH predatorTaxon<-[:CLASSIFIED_AS]-predator-[:ATE]->prey-[:CLASSIFIED_AS]->preyTaxon ";
-        query = addLocationClausesIfNecessary(request, query);
-        query += "RETURN distinct(preyTaxon.name) as preyName\", " +
-                "\"params\":" + buildParams(scientificName) + "}";
-        return execute(query);
+    public String findPreyOf(HttpServletRequest request,
+                             @PathVariable("sourceTaxonName") String sourceTaxonName,
+                             @PathVariable("interactionType") String interactionType) throws IOException {
+        return findDistinctTargetTaxonNames(request, sourceTaxonName, interactionType, null);
     }
 
 
-    @RequestMapping(value = "/taxon/{scientificName}/" + INTERACTION_PREYED_UPON_BY, method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = "/taxon/{sourceTaxonName}/{interactionType}/{targetTaxonName}", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
-    public String findPredatorsOf(HttpServletRequest request, @PathVariable("scientificName") String scientificName) throws IOException {
-        String query = "{\"query\":\"START preyTaxon" + " = node:taxons(name={scientificName}) " +
-                "MATCH predatorTaxon<-[:CLASSIFIED_AS]-predator-[:ATE]->prey-[:CLASSIFIED_AS]->preyTaxon ";
-        query = addLocationClausesIfNecessary(request, query);
-        query += "RETURN distinct(predatorTaxon.name) as predatorName\", " +
-                "\"params\":" + buildParams(scientificName) + "}";
-        return execute(query);
+    public String findDistinctTargetTaxonNames(HttpServletRequest request,
+                                               @PathVariable("sourceTaxonName") String sourceTaxonName,
+                                               @PathVariable("interactionType") String interactionType,
+                                               @PathVariable("targetTaxonName") String targetTaxonName) throws IOException {
+
+        StringBuilder query = new StringBuilder();
+        if (INTERACTION_PREYS_ON.equals(interactionType)) {
+            query.append("{\"query\":\"START ").append(getTaxonSelector(sourceTaxonName, targetTaxonName))
+                    .append(" ")
+                    .append(INTERACTION_MATCH);
+                    addLocationClausesIfNecessary(request, query);
+                    query.append("RETURN distinct(preyTaxon.name) as preyName\", ")
+                    .append("\"params\":{")
+                    .append(getParams(sourceTaxonName, targetTaxonName))
+                    .append("}}");
+        } else if (INTERACTION_PREYED_UPON_BY.equals(interactionType)) {
+            // "preyedUponBy is inverted interaction of "preysOn"
+            query.append("{\"query\":\"START ").append(getTaxonSelector(targetTaxonName, sourceTaxonName))
+                    .append(" ")
+                    .append(INTERACTION_MATCH);
+                    addLocationClausesIfNecessary(request, query);
+                    query.append("RETURN distinct(preyTaxon.name) as preyName\", ")
+                    .append("\"params\":{")
+                    .append(getParams(targetTaxonName, sourceTaxonName))
+                    .append("}}");
+        }
+
+        if (query.length() == 0) {
+            throw new IllegalArgumentException("unsupported interaction type [" + interactionType + "]");
+        }
+
+        return execute(query.toString());
     }
 
     @RequestMapping(value = "/findTaxon/{taxonName}", method = RequestMethod.GET, produces = "application/json")
@@ -273,4 +303,5 @@ public class CypherProxyController {
         }
         return url;
     }
+
 }

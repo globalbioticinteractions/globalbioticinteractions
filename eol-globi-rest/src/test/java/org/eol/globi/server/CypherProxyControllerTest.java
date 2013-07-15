@@ -18,13 +18,13 @@ public class CypherProxyControllerTest {
 
     @Test
     public void findPrey() throws IOException, URISyntaxException {
-        String list = new CypherProxyController().findPreyOf(null, "Homo sapiens");
+        String list = new CypherProxyController().findDistinctTargetTaxonNames(null, "Homo sapiens", CypherProxyController.INTERACTION_PREYS_ON, null);
         assertThat(list, is(notNullValue()));
     }
 
     @Test
     public void findPreyAtLocation() throws IOException, URISyntaxException {
-        String list = new CypherProxyController().findPreyOf(getRequest(), "Homo sapiens");
+        String list = new CypherProxyController().findDistinctTargetTaxonNames(getRequest(), "Homo sapiens", CypherProxyController.INTERACTION_PREYS_ON, null);
         assertThat(list, is(notNullValue()));
     }
 
@@ -41,19 +41,25 @@ public class CypherProxyControllerTest {
 
     @Test
     public void findPreyAtLocationNoLongitude() throws IOException, URISyntaxException {
-        String list = new CypherProxyController().findPreyOf(null, "Homo sapiens");
+        String list = new CypherProxyController().findDistinctTargetTaxonNames(null, "Homo sapiens", CypherProxyController.INTERACTION_PREYS_ON, null);
         assertThat(list, is(notNullValue()));
     }
 
     @Test
     public void findPreyAtLocationNoLatitude() throws IOException, URISyntaxException {
-        String list = new CypherProxyController().findPreyOf(null, "Homo sapiens");
+        String list = new CypherProxyController().findDistinctTargetTaxonNames(null, "Homo sapiens", CypherProxyController.INTERACTION_PREYS_ON, null);
         assertThat(list, is(notNullValue()));
     }
 
     @Test
     public void findPredator() throws IOException, URISyntaxException {
-        String list = new CypherProxyController().findPredatorsOf(null, "Hemiramphus brasiliensis");
+        String list = new CypherProxyController().findDistinctTargetTaxonNames(null, null, CypherProxyController.INTERACTION_PREYS_ON, "Hemiramphus brasiliensis");
+        assertThat(list, is(notNullValue()));
+    }
+
+    @Test
+    public void findTargetsForSource() throws IOException, URISyntaxException {
+        String list = new CypherProxyController().findDistinctTargetTaxonNames(null, "Homo sapiens", CypherProxyController.INTERACTION_PREYS_ON, "Hemiramphus brasiliensis");
         assertThat(list, is(notNullValue()));
     }
 
