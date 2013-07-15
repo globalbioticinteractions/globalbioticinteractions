@@ -1,8 +1,5 @@
 package org.eol.globi.server;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.hamcrest.core.Is;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -18,9 +15,6 @@ import static org.junit.matchers.JUnitMatchers.containsString;
 import static org.mockito.Mockito.when;
 
 public class CypherProxyControllerTest {
-
-    private static Log LOG = LogFactory.getLog(CypherProxyControllerTest.class);
-
 
     @Test
     public void findPrey() throws IOException, URISyntaxException {
@@ -66,18 +60,28 @@ public class CypherProxyControllerTest {
 
     @Test
     public void findPredatorObservations() throws IOException, URISyntaxException {
-        String list = new CypherProxyController().findPreyObservationsOf(null, "Ariopsis felis");
+        String list = new CypherProxyController().findObservationsOf(null, "Ariopsis felis", CypherProxyController.INTERACTION_PREYS_ON);
         assertThat(list, is(notNullValue()));
-        list = new CypherProxyController().findPreyObservationsOf(null, "Rattus rattus");
+        list = new CypherProxyController().findObservationsOf(null, "Rattus rattus", CypherProxyController.INTERACTION_PREYS_ON);
         assertThat(list, is(notNullValue()));
     }
 
     @Test
     public void findPreyObservations() throws IOException, URISyntaxException {
-        String list = new CypherProxyController().findPredatorObservationsOf(null, "Rattus rattus");
+        String list = new CypherProxyController().findObservationsOf(null, "Rattus rattus", CypherProxyController.INTERACTION_PREYED_UPON_BY);
         assertThat(list, is(notNullValue()));
 
-        list = new CypherProxyController().findPredatorObservationsOf(null, "Ariopsis felis");
+        list = new CypherProxyController().findObservationsOf(null, "Ariopsis felis", CypherProxyController.INTERACTION_PREYED_UPON_BY);
+        assertThat(list, is(notNullValue()));
+    }
+
+
+    @Test
+    public void findPredatorPreyObservations() throws IOException, URISyntaxException {
+        String list = new CypherProxyController().findObservationsOf(null, "Rattus rattus", CypherProxyController.INTERACTION_PREYED_UPON_BY, "Homo sapiens");
+        assertThat(list, is(notNullValue()));
+
+        list = new CypherProxyController().findObservationsOf(null, "Ariopsis felis", CypherProxyController.INTERACTION_PREYS_ON, "Rattus rattus");
         assertThat(list, is(notNullValue()));
     }
 

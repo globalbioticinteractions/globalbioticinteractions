@@ -103,29 +103,82 @@ public class CypherProxyController {
         return execute(query);
     }
 
-    @RequestMapping(value = "/taxon/{predatorName}/" + INTERACTION_PREYS_ON, params = {INCLUDE_OBSERVATIONS_TRUE}, method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = "/taxon/{sourceTaxonName}/{interactionType}/{targetTaxonName}", params = {INCLUDE_OBSERVATIONS_TRUE}, method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
-    public String findPreyObservationsOf(HttpServletRequest request, @PathVariable("predatorName") String predatorName) throws IOException {
-        String query = "{\"query\":\"START predatorTaxon = node:taxons(name={predatorName}) " +
-                OBSERVATION_MATCH +
-                getSpatialWhereClause(request) +
-                " RETURN preyTaxon.name as preyName, " +
-                DEFAULT_RETURN_LIST +
-                ", \"params\": { \"predatorName\" : \"" + predatorName + "\" } }";
+    public String findObservationsOf(HttpServletRequest request,
+                                     @PathVariable("sourceTaxonName") String sourceTaxonName,
+                                     @PathVariable("interactionType") String interactionType,
+                                     @PathVariable("targetTaxonName") String targetTaxonName)
+            throws IOException {
+        String query = null;
+
+        if (INTERACTION_PREYS_ON.equals(interactionType)) {
+            query = "{\"query\":\"START " + getTaxonSelector(sourceTaxonName, targetTaxonName) +
+                    OBSERVATION_MATCH +
+                    getSpatialWhereClause(request) +
+                    " RETURN preyTaxon.name as preyName, " +
+                    DEFAULT_RETURN_LIST +
+                    ", \"params\": { " + getParams(sourceTaxonName, targetTaxonName) + " } }";
+        } else if (INTERACTION_PREYED_UPON_BY.equals(interactionType)) {
+            // note that "preyedUponBy" is interpreted as an inverted "preysOn" relationship
+            query = "{\"query\":\"START " + getTaxonSelector(targetTaxonName, sourceTaxonName) +
+                    OBSERVATION_MATCH +
+                    getSpatialWhereClause(request) +
+                    " RETURN predatorTaxon.name as predatorName, " +
+                    DEFAULT_RETURN_LIST +
+                    ", \"params\": { " + getParams(targetTaxonName, sourceTaxonName) + " } }";
+        }
+        if (query == null) {
+            throw new IllegalArgumentException("unsupported interaction type [" + interactionType + "]");
+        }
+
         return execute(query);
     }
 
-    @RequestMapping(value = "/taxon/{preyName}/" + INTERACTION_PREYED_UPON_BY, params = {INCLUDE_OBSERVATIONS_TRUE}, method = RequestMethod.GET, produces = "application/json")
-    @ResponseBody
-    public String findPredatorObservationsOf(HttpServletRequest request, @PathVariable("preyName") String preyName) throws IOException {
-        String query = "{\"query\":\"START preyTaxon = node:taxons(name={preyName}) " +
-                OBSERVATION_MATCH +
-                getSpatialWhereClause(request) +
-                " RETURN predatorTaxon.name as predatorName, " +
-                DEFAULT_RETURN_LIST +
-                ", \"params\": { \"preyName\" : \"" + preyName + "\" } }";
-        return execute(query);
+    private String getParams(String sourceTaxonName, String targetTaxonName) {
+        final String sourceTaxonNameParam = "\"predatorName\" : \"" + sourceTaxonName + "\"";
+        final String targetTaxonNameParam = "\"preyName\" : \"" + targetTaxonName + "\"";
+        StringBuilder builder = new StringBuilder();
+        if (sourceTaxonName != null) {
+            builder.append(sourceTaxonNameParam);
+        }
+        if (targetTaxonName != null) {
+            if (sourceTaxonName != null) {
+                builder.append(", ");
+            }
+
+            builder.append(targetTaxonNameParam);
+        }
+
+        return builder.toString();
     }
+
+    private String getTaxonSelector(String sourceTaxonName, String targetTaxonName) {
+        final String sourceTaxonSelector = "predatorTaxon = node:taxons(name={predatorName})";
+        final String targetTaxonSelector = "preyTaxon = node:taxons(name={preyName})";
+        StringBuilder builder = new StringBuilder();
+        if (sourceTaxonName != null) {
+            builder.append(sourceTaxonSelector);
+        }
+        if (targetTaxonName != null) {
+            if (sourceTaxonName != null) {
+                builder.append(", ");
+            }
+            builder.append(targetTaxonSelector);
+        }
+
+        return builder.toString();
+    }
+
+
+    @RequestMapping(value = "/taxon/{sourceTaxonName}/{interactionType}", params = {INCLUDE_OBSERVATIONS_TRUE}, method = RequestMethod.GET, produces = "application/json")
+    @ResponseBody
+    public String findObservationsOf(HttpServletRequest request,
+                                     @PathVariable("sourceTaxonName") String sourceTaxonName,
+                                     @PathVariable("interactionType") String interactionType) throws IOException {
+        return findObservationsOf(request, sourceTaxonName, interactionType, null);
+    }
+
 
     private String getSpatialWhereClause(HttpServletRequest request) {
         return request == null ? "" : RequestHelper.buildCypherSpatialWhereClause(request.getParameterMap());
