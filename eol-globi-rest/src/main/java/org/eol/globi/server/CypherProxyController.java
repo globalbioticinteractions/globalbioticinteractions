@@ -63,7 +63,7 @@ public class CypherProxyController {
     @RequestMapping(value = "/interactionTypes", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
     public String getInteractionTypes(HttpServletRequest request) throws IOException {
-        return "[ \"" + INTERACTION_PREYS_ON + "\"," + INTERACTION_PREYED_UPON_BY + "\"]";
+        return "[ \"" + INTERACTION_PREYS_ON + "\",\"" + INTERACTION_PREYED_UPON_BY + "\"]";
     }
 
     @RequestMapping(value = "/interaction", method = RequestMethod.GET, produces = "application/json")
