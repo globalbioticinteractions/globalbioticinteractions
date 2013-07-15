@@ -42,6 +42,13 @@ public class CypherProxyControllerIT {
     }
 
     @Test
+    public void listPreyForPredatorObservations2() throws IOException {
+        String uri = getURLPrefix() + "taxon/Homo%20sapiens/preysOn/Rattus%20rattus?includeObservations=true";
+        String response = HttpClient.httpGet(uri);
+        assertThat(response, is(not(nullValue())));
+    }
+
+    @Test
     public void listPreyForPredatorObservationsLocation() throws IOException {
         String uri = getURLPrefix() + "taxon/Homo%20sapiens/preysOn?includeObservations=true&lat=12.4&lng=34.2";
         String response = HttpClient.httpGet(uri);
