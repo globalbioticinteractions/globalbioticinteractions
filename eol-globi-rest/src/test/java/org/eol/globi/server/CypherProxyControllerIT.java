@@ -57,9 +57,9 @@ public class CypherProxyControllerIT {
 
     @Test
     public void listPredatorForPrey() throws IOException {
-        String uri = getURLPrefix() + "taxon/Homo%20sapiens/preyedUponBy";
+        String uri = getURLPrefix() + "taxon/Foraminifera/preyedUponBy";
         String response = HttpClient.httpGet(uri);
-        assertThat(response, is(not(nullValue())));
+        assertThat(response, containsString("Syacium gunteri"));
     }
 
     @Test

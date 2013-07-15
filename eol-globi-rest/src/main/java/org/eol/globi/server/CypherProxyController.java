@@ -110,7 +110,7 @@ public class CypherProxyController {
                     .append(" ")
                     .append(INTERACTION_MATCH);
                     addLocationClausesIfNecessary(request, query);
-                    query.append("RETURN distinct(preyTaxon.name) as preyName\", ")
+                    query.append("RETURN distinct(predatorTaxon.name) as preyName\", ")
                     .append("\"params\":{")
                     .append(getParams(targetTaxonName, sourceTaxonName))
                     .append("}}");
