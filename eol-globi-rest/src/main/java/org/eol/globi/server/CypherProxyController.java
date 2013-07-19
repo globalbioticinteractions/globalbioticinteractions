@@ -49,9 +49,9 @@ public class CypherProxyController {
 
     private static final Map<String, String> EMPTY_PARAMS = new HashMap<String, String>();
 
-    private void addLocationClausesIfNecessary(HttpServletRequest request, StringBuilder query) {
+    private void addLocationClausesIfNecessary(StringBuilder query, Map parameterMap) {
         query.append(" , predator-[:COLLECTED_AT]->loc ");
-        query.append(request == null ? "" : RequestHelper.buildCypherSpatialWhereClause(request.getParameterMap()));
+        query.append(parameterMap == null ? "" : RequestHelper.buildCypherSpatialWhereClause(parameterMap));
     }
 
     private Map<String, String> buildParams(String scientificName) {
@@ -75,7 +75,7 @@ public class CypherProxyController {
         StringBuilder query = new StringBuilder();
         query.append("START loc = node:locations('*:*') " +
                 "MATCH predatorTaxon<-[:CLASSIFIED_AS]-predator-[interactionType:" + InteractUtil.allInteractionsCypherClause() + "]->prey-[:CLASSIFIED_AS]->preyTaxon ");
-        addLocationClausesIfNecessary(request, query);
+        addLocationClausesIfNecessary(query, request.getParameterMap());
         query.append("RETURN predatorTaxon.externalId, predatorTaxon.name as predatorName, type(interactionType), preyTaxon.externalId, preyTaxon.name as preyTaxon");
         return execute(query.toString());
     }
@@ -85,24 +85,19 @@ public class CypherProxyController {
     public String findPreyOf(HttpServletRequest request,
                              @PathVariable("sourceTaxonName") String sourceTaxonName,
                              @PathVariable("interactionType") String interactionType) throws IOException {
-        return findDistinctTargetTaxonNames(request, sourceTaxonName, interactionType, null);
+        Map parameterMap = request == null ? null : request.getParameterMap();
+        return findDistinctTaxonInteractions(sourceTaxonName, interactionType, null, parameterMap);
     }
 
 
-    @RequestMapping(value = "/taxon/{sourceTaxonName}/{interactionType}/{targetTaxonName}", method = RequestMethod.GET, produces = "application/json")
-    @ResponseBody
-    public String findDistinctTargetTaxonNames(HttpServletRequest request,
-                                               @PathVariable("sourceTaxonName") String sourceTaxonName,
-                                               @PathVariable("interactionType") String interactionType,
-                                               @PathVariable("targetTaxonName") String targetTaxonName) throws IOException {
-
+    public String findDistinctTaxonInteractions(String sourceTaxonName, String interactionType, String targetTaxonName, Map parameterMap) throws IOException {
         StringBuilder query = new StringBuilder();
         Map<String, String> params = EMPTY_PARAMS;
         if (INTERACTION_PREYS_ON.equals(interactionType)) {
             query.append("START ").append(getTaxonSelector(sourceTaxonName, targetTaxonName))
                     .append(" ")
                     .append(INTERACTION_MATCH);
-            addLocationClausesIfNecessary(request, query);
+            addLocationClausesIfNecessary(query, parameterMap);
             query.append("RETURN distinct(preyTaxon.name) as preyName");
             params = getParams(sourceTaxonName, targetTaxonName);
         } else if (INTERACTION_PREYED_UPON_BY.equals(interactionType)) {
@@ -110,7 +105,7 @@ public class CypherProxyController {
             query.append("START ").append(getTaxonSelector(targetTaxonName, sourceTaxonName))
                     .append(" ")
                     .append(INTERACTION_MATCH);
-            addLocationClausesIfNecessary(request, query);
+            addLocationClausesIfNecessary(query, parameterMap);
             query.append("RETURN distinct(predatorTaxon.name) as preyName");
             params = getParams(targetTaxonName, sourceTaxonName);
         }
@@ -132,7 +127,7 @@ public class CypherProxyController {
         return execute(query);
     }
 
-    @RequestMapping(value = "/taxon/{sourceTaxonName}/{interactionType}/{targetTaxonName}", params = {INCLUDE_OBSERVATIONS_TRUE}, method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = "/taxon/{sourceTaxonName}/{interactionType}/{targetTaxonName}", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
     public String findObservationsOf(HttpServletRequest request,
                                      @PathVariable("sourceTaxonName") String sourceTaxonName,
@@ -140,13 +135,27 @@ public class CypherProxyController {
                                      @PathVariable("targetTaxonName") String targetTaxonName)
             throws IOException {
         String query = null;
+        Map parameterMap = request == null ? null : request.getParameterMap();
 
+        String includeObservations = parameterMap == null ? null : request.getParameter("includeObservations");
+        String result;
+        if ("true".equalsIgnoreCase(includeObservations)) {
+            result = findObservationsForInteraction(sourceTaxonName, interactionType, targetTaxonName, parameterMap);
+        } else {
+            result = findDistinctTaxonInteractions(sourceTaxonName, interactionType, targetTaxonName, parameterMap);
+        }
 
+        return result;
+    }
+
+    private String findObservationsForInteraction(String sourceTaxonName, String interactionType, String targetTaxonName, Map parameterMap) throws IOException {
         Map<String, String> params = EMPTY_PARAMS;
+        String query = null;
+
         if (INTERACTION_PREYS_ON.equals(interactionType)) {
             query = "START " + getTaxonSelector(sourceTaxonName, targetTaxonName) +
                     OBSERVATION_MATCH +
-                    getSpatialWhereClause(request) +
+                    getSpatialWhereClause(parameterMap) +
                     " RETURN preyTaxon.name as preyName, " +
                     DEFAULT_RETURN_LIST;
             params = getParams(sourceTaxonName, targetTaxonName);
@@ -154,7 +163,7 @@ public class CypherProxyController {
             // note that "preyedUponBy" is interpreted as an inverted "preysOn" relationship
             query = "START " + getTaxonSelector(targetTaxonName, sourceTaxonName) +
                     OBSERVATION_MATCH +
-                    getSpatialWhereClause(request) +
+                    getSpatialWhereClause(parameterMap) +
                     " RETURN predatorTaxon.name as predatorName, " +
                     DEFAULT_RETURN_LIST;
             params = getParams(targetTaxonName, sourceTaxonName);
@@ -163,7 +172,6 @@ public class CypherProxyController {
             throw new IllegalArgumentException("unsupported interaction type [" + interactionType + "]");
         }
 
-         ;
         return execute(query, params);
     }
 
@@ -220,8 +228,8 @@ public class CypherProxyController {
     }
 
 
-    private String getSpatialWhereClause(HttpServletRequest request) {
-        return request == null ? "" : RequestHelper.buildCypherSpatialWhereClause(request.getParameterMap());
+    private String getSpatialWhereClause(Map parameterMap) {
+        return parameterMap == null ? "" : RequestHelper.buildCypherSpatialWhereClause(parameterMap);
     }
 
     @RequestMapping(value = "/locations", method = RequestMethod.GET, produces = "application/json")
