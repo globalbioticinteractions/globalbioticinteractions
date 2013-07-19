@@ -7,6 +7,7 @@ import java.io.IOException;
 
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNot.not;
+import static org.hamcrest.core.IsNull.notNullValue;
 import static org.hamcrest.core.IsNull.nullValue;
 import static org.junit.Assert.assertThat;
 import static org.junit.matchers.JUnitMatchers.containsString;
@@ -32,6 +33,14 @@ public class CypherProxyControllerIT {
         String uri = getURLPrefix() + "taxon/Homo%20sapiens/preysOn?lat=12.4&lng=54.4";
         String response = HttpClient.httpGet(uri);
         assertThat(response, is(not(nullValue())));
+    }
+
+    @Test
+    public void listPreyForPredatorLocationCSV() throws IOException {
+        String uri = getURLPrefix() + "taxon/Homo%20sapiens/preysOn?lat=12.4&lng=54.4&type=csv";
+        String response = HttpClient.httpGet(uri);
+        assertThat(response, not(containsString("columns")));
+        assertThat(response, is("bla"));
     }
 
     @Test
