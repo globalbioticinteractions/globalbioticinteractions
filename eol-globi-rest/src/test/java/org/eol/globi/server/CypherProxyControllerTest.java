@@ -40,6 +40,7 @@ public class CypherProxyControllerTest {
         return request;
     }
 
+
     @Test
     public void findPreyAtLocationNoLongitude() throws IOException, URISyntaxException {
         String list = new CypherProxyController().findPreyOf(null, "Homo sapiens", CypherProxyController.INTERACTION_PREYS_ON);
@@ -112,7 +113,7 @@ public class CypherProxyControllerTest {
 
     @Test
     public void findShortestPaths() throws IOException {
-        String externalLink = new CypherProxyController().findShortestPaths("Homo sapiens", "Rattus rattus").execute(null);
+        String externalLink = new CypherProxyController().findShortestPaths(null, "Homo sapiens", "Rattus rattus");
         assertThat(externalLink, containsString("Rattus rattus"));
     }
 

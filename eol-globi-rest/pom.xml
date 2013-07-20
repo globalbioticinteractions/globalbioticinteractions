@@ -387,40 +387,6 @@
                     </execution>
                 </executions>
             </plugin>
-            <plugin>
-                <groupId>org.codehaus.cargo</groupId>
-                <artifactId>cargo-maven2-plugin</artifactId>
-                <version>1.4.0</version>
-                <configuration>
-                    <container>
-                        <containerId>jetty8x</containerId>
-                        <type>remote</type>
-                    </container>
-
-                    <configuration>
-                        <type>runtime</type>
-                        <properties>
-                            <cargo.hostname>trophicgraph.com</cargo.hostname>
-                            <cargo.servlet.port>8082</cargo.servlet.port>
-                        </properties>
-                    </configuration>
-
-                    <deployer>
-                        <type>remote</type>
-                    </deployer>
-
-                    <deployables>
-                        <deployable>
-                            <groupId>${project.groupId}</groupId>
-                            <artifactId>${project.artifactId}</artifactId>
-                            <type>war</type>
-                            <properties>
-                                <context>/</context>
-                            </properties>
-                        </deployable>
-                    </deployables>
-                </configuration>
-            </plugin>
         </plugins>
 
         <extensions>

@@ -1,15 +1,15 @@
 package org.eol.globi.server;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.util.ExternalIdUtil;
 import org.eol.globi.util.InteractUtil;
-import org.neo4j.cypher.javacompat.ExecutionEngine;
-import org.neo4j.cypher.javacompat.ExecutionResult;
-import org.neo4j.kernel.EmbeddedGraphDatabase;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,8 +19,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -28,15 +26,10 @@ import java.util.Map;
 @Controller
 public class CypherProxyController {
 
-    @Autowired
-    private EmbeddedGraphDatabase graphDb;
-
     public static final String OBSERVATION_MATCH =
             "MATCH (predatorTaxon)<-[:CLASSIFIED_AS]-(predator)-[:ATE]->(prey)-[:CLASSIFIED_AS]->(preyTaxon)," +
                     "(predator)-[:COLLECTED_AT]->(loc)," +
                     "(predator)<-[collected_rel:COLLECTED]-(study) ";
-
-    public static final String INCLUDE_OBSERVATIONS_TRUE = "includeObservations=true";
 
     public static final String INTERACTION_PREYS_ON = "preysOn";
     public static final String INTERACTION_PREYED_UPON_BY = "preyedUponBy";
@@ -63,22 +56,13 @@ public class CypherProxyController {
         query.append(parameterMap == null ? "" : RequestHelper.buildCypherSpatialWhereClause(parameterMap));
     }
 
-    private Map<String, String> buildParams(String scientificName) {
-        Map<String, String> params = new HashMap<String, String>();
-        if (scientificName != null) {
-            params.put("scientificName", scientificName);
-        }
-
-        return params;
-    }
-
     @RequestMapping(value = "/interactionTypes", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
-    public String getInteractionTypes(HttpServletRequest request) throws IOException {
+    public String getInteractionTypes() throws IOException {
         return "[ \"" + INTERACTION_PREYS_ON + "\",\"" + INTERACTION_PREYED_UPON_BY + "\"]";
     }
 
-    @RequestMapping(value = "/interaction", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = "/interaction", method = RequestMethod.GET)
     @ResponseBody
     public String findInteractions(HttpServletRequest request) throws IOException {
         StringBuilder query = new StringBuilder();
@@ -86,20 +70,27 @@ public class CypherProxyController {
                 "MATCH predatorTaxon<-[:CLASSIFIED_AS]-predator-[interactionType:" + InteractUtil.allInteractionsCypherClause() + "]->prey-[:CLASSIFIED_AS]->preyTaxon ");
         addLocationClausesIfNecessary(query, request.getParameterMap());
         query.append("RETURN predatorTaxon.externalId, predatorTaxon.name as predatorName, type(interactionType), preyTaxon.externalId, preyTaxon.name as preyTaxon");
-        return new QueryExecutor(query.toString(), null).execute(request);
+        return new CypherQueryExecutor(query.toString(), null).execute(request);
     }
 
-    @RequestMapping(value = "/taxon/{sourceTaxonName}/{interactionType}", method = RequestMethod.GET, produces = "application/json", headers = "content-type=*/*")
+    @RequestMapping(value = "/taxon/{sourceTaxonName}/{interactionType}", method = RequestMethod.GET, headers = "content-type=*/*")
     @ResponseBody
     public String findPreyOf(HttpServletRequest request,
                              @PathVariable("sourceTaxonName") String sourceTaxonName,
                              @PathVariable("interactionType") String interactionType) throws IOException {
         Map parameterMap = request == null ? null : request.getParameterMap();
-        return findDistinctTaxonInteractions(sourceTaxonName, interactionType, null, parameterMap).execute(request);
+        CypherQueryExecutor executor;
+        if (shouldIncludeObservations(request, parameterMap)) {
+            executor = findObservationsForInteraction(sourceTaxonName, interactionType, null, parameterMap);
+        } else {
+            executor = findDistinctTaxonInteractions(sourceTaxonName, interactionType, null, parameterMap);
+        }
+
+        return executor.execute(request);
     }
 
 
-    public QueryExecutor findDistinctTaxonInteractions(String sourceTaxonName, String interactionType, String targetTaxonName, Map parameterMap) throws IOException {
+    public CypherQueryExecutor findDistinctTaxonInteractions(String sourceTaxonName, String interactionType, String targetTaxonName, Map parameterMap) throws IOException {
         StringBuilder query = new StringBuilder();
         Map<String, String> params = EMPTY_PARAMS;
         if (INTERACTION_PREYS_ON.equals(interactionType)) {
@@ -123,31 +114,30 @@ public class CypherProxyController {
             throw new IllegalArgumentException("unsupported interaction type [" + interactionType + "]");
         }
 
-        return new QueryExecutor(query.toString(), params);
+        return new CypherQueryExecutor(query.toString(), params);
     }
 
-    @RequestMapping(value = "/findTaxon/{taxonName}", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = "/findTaxon/{taxonName}", method = RequestMethod.GET)
     @ResponseBody
     public String findTaxon(HttpServletRequest request, @PathVariable("taxonName") String taxonName) throws IOException {
         String query = "START taxon = node:taxons('*:*') " +
                 "WHERE taxon.name =~ '" + taxonName + ".*'" +
                 "RETURN distinct(taxon.name) " +
                 "LIMIT 15";
-        return new QueryExecutor(query, null).execute(request);
+        return new CypherQueryExecutor(query, null).execute(request);
     }
 
-    @RequestMapping(value = "/taxon/{sourceTaxonName}/{interactionType}/{targetTaxonName}", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = "/taxon/{sourceTaxonName}/{interactionType}/{targetTaxonName}", method = RequestMethod.GET)
     @ResponseBody
     public String findObservationsOf(HttpServletRequest request,
                                      @PathVariable("sourceTaxonName") String sourceTaxonName,
                                      @PathVariable("interactionType") String interactionType,
                                      @PathVariable("targetTaxonName") String targetTaxonName)
             throws IOException {
+        CypherQueryExecutor result;
         Map parameterMap = request == null ? null : request.getParameterMap();
 
-        String includeObservations = parameterMap == null ? null : request.getParameter("includeObservations");
-        QueryExecutor result;
-        if ("true".equalsIgnoreCase(includeObservations)) {
+        if (shouldIncludeObservations(request, parameterMap)) {
             result = findObservationsForInteraction(sourceTaxonName, interactionType, targetTaxonName, parameterMap);
         } else {
             result = findDistinctTaxonInteractions(sourceTaxonName, interactionType, targetTaxonName, parameterMap);
@@ -156,7 +146,12 @@ public class CypherProxyController {
         return result.execute(request);
     }
 
-    private QueryExecutor findObservationsForInteraction(String sourceTaxonName, String interactionType, String targetTaxonName, Map parameterMap) throws IOException {
+    private boolean shouldIncludeObservations(HttpServletRequest request, Map parameterMap) {
+        String includeObservations = parameterMap == null ? null : request.getParameter("includeObservations");
+        return "true".equalsIgnoreCase(includeObservations);
+    }
+
+    private CypherQueryExecutor findObservationsForInteraction(String sourceTaxonName, String interactionType, String targetTaxonName, Map parameterMap) throws IOException {
         Map<String, String> query_params = EMPTY_PARAMS;
         String query = null;
 
@@ -180,7 +175,7 @@ public class CypherProxyController {
             throw new IllegalArgumentException("unsupported interaction type [" + interactionType + "]");
         }
 
-        return new QueryExecutor(query, query_params);
+        return new CypherQueryExecutor(query, query_params);
     }
 
     private Map<String, String> getParams(String sourceTaxonName, String targetTaxonName) {
@@ -233,11 +228,9 @@ public class CypherProxyController {
     }
 
 
-    @RequestMapping(value = "/taxon/{sourceTaxonName}/{interactionType}", params = {INCLUDE_OBSERVATIONS_TRUE}, method = RequestMethod.GET, produces = "application/json")
-    @ResponseBody
     public String findObservationsOf(HttpServletRequest request,
-                                     @PathVariable("sourceTaxonName") String sourceTaxonName,
-                                     @PathVariable("interactionType") String interactionType) throws IOException {
+                                     String sourceTaxonName,
+                                     String interactionType) throws IOException {
         return findObservationsOf(request, sourceTaxonName, interactionType, null);
     }
 
@@ -246,22 +239,22 @@ public class CypherProxyController {
         return parameterMap == null ? "" : RequestHelper.buildCypherSpatialWhereClause(parameterMap);
     }
 
-    @RequestMapping(value = "/locations", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = "/locations", method = RequestMethod.GET)
     @ResponseBody
     @Cacheable(value = "locationCache")
     public String locations(HttpServletRequest request) throws IOException {
-        return new QueryExecutor("START loc = node:locations('*:*') RETURN loc.latitude, loc.longitude", null).execute(request);
+        return new CypherQueryExecutor("START loc = node:locations('*:*') RETURN loc.latitude, loc.longitude", null).execute(request);
     }
 
 
     @RequestMapping(value = "/contributors", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
     @Cacheable(value = "contributorCache")
-    public String contributors(HttpServletRequest request) throws IOException {
+    public String contributors() throws IOException {
         String cypherQuery = "START study=node:studies('*:*')" +
                 " MATCH study-[:COLLECTED]->sourceSpecimen-[interact:" + InteractUtil.allInteractionsCypherClause() + "]->prey-[:CLASSIFIED_AS]->targetTaxon, sourceSpecimen-[:CLASSIFIED_AS]->sourceTaxon " +
                 " RETURN study.institution, study.period, study.description, study.contributor, count(interact), count(distinct(sourceTaxon)), count(distinct(targetTaxon))";
-        return new QueryExecutor(cypherQuery, EMPTY_PARAMS).execute(request);
+        return new CypherQueryExecutor(cypherQuery, EMPTY_PARAMS).execute(null);
     }
 
 
@@ -281,13 +274,13 @@ public class CypherProxyController {
         return buildJsonUrl(url);
     }
 
-    @RequestMapping(value = "/findExternalIdForTaxon/{taxonName}", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = "/findExternalIdForTaxon/{taxonName}", method = RequestMethod.GET)
     @ResponseBody
     public String findExternalIdForTaxon(HttpServletRequest request, @PathVariable("taxonName") final String taxonName) throws IOException {
         String query = "START taxon = node:taxons(name={taxonName}) " +
                 " RETURN taxon.externalId as externalId";
 
-        return new QueryExecutor(query, new HashMap<String, String>() {{
+        return new CypherQueryExecutor(query, new HashMap<String, String>() {{
             put("taxonName", taxonName);
         }}).execute(request);
     }
@@ -302,19 +295,20 @@ public class CypherProxyController {
         return buildJsonUrl(ExternalIdUtil.infoURLForExternalId(externalId));
     }
 
-    @RequestMapping(value = "/shortestPathsBetweenTaxon/{startTaxon}/andTaxon/{endTaxon}", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = "/shortestPathsBetweenTaxon/{startTaxon}/andTaxon/{endTaxon}", method = RequestMethod.GET)
     @ResponseBody
-    public QueryExecutor findShortestPaths(@PathVariable("startTaxon") final String startTaxon, @PathVariable("endTaxon") final String endTaxon) throws IOException {
+    public String findShortestPaths(HttpServletRequest request, @PathVariable("startTaxon") final String startTaxon,
+                                                 @PathVariable("endTaxon") final String endTaxon) throws IOException {
         String query = "START startNode = node:taxons(name={startTaxon}),endNode = node:taxons(name={endTaxon}) " +
                 "MATCH p = allShortestPaths(startNode-[:" + InteractUtil.allInteractionsCypherClause() + "|CLASSIFIED_AS*..100]-endNode) " +
                 "RETURN extract(n in (filter(x in nodes(p) : has(x.name))) : " +
                 "coalesce(n.name?)) as shortestPaths " +
                 "LIMIT 10";
 
-        return new QueryExecutor(query, new HashMap<String, String>() {{
+        return new CypherQueryExecutor(query, new HashMap<String, String>() {{
             put("startTaxon", startTaxon);
             put("endTaxon", endTaxon);
-        }});
+        }}).execute(request);
     }
 
     private String getUrl(String result, String externalIdPrefix, String urlPrefix) {
@@ -332,11 +326,11 @@ public class CypherProxyController {
     }
 
 
-    public class QueryExecutor {
+    public class CypherQueryExecutor {
         private final String query;
         private final Map<String, String> params;
 
-        public QueryExecutor(String query, Map<String, String> query_params) {
+        public CypherQueryExecutor(String query, Map<String, String> query_params) {
             this.query = query;
             this.params = query_params;
         }
@@ -347,7 +341,7 @@ public class CypherProxyController {
             if (type == null || "json".equalsIgnoreCase(type)) {
                 result = executeRemote();
             } else if ("csv".equalsIgnoreCase(type)) {
-                result = executeLocal();
+                result = executeAndTranformToCSV();
             } else {
                 throw new IOException("found unsupported return format type request for [" + type + "]");
             }
@@ -355,55 +349,59 @@ public class CypherProxyController {
         }
 
         private String executeRemote() throws IOException {
-            String result;
             org.apache.http.client.HttpClient httpclient = new DefaultHttpClient();
             HttpPost httpPost = new HttpPost("http://46.4.36.142:7474/db/data/cypher");
             HttpClient.addJsonHeaders(httpPost);
             httpPost.setEntity(new StringEntity(wrapQuery(query, params)));
             BasicResponseHandler responseHandler = new BasicResponseHandler();
-            result = httpclient.execute(httpPost, responseHandler);
-            return result;
+            return httpclient.execute(httpPost, responseHandler);
         }
 
-        private String executeLocal() {
-            String result;ExecutionEngine engine = new ExecutionEngine(graphDb);
-            Map<String, Object> map = new HashMap<String, Object>();
-            map.putAll(params);
-            ExecutionResult results = engine.execute(query, map);
-            boolean wroteHeader = false;
+        private String executeAndTranformToCSV() throws IOException {
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode jsonNode = mapper.readTree(executeRemote());
             StringBuilder resultBuilder = new StringBuilder();
-            ArrayList<String> header = new ArrayList<String>();
-            for (Map<String, Object> resultEntry : results) {
-                if (!wroteHeader) {
-                    header.addAll(resultEntry.keySet());
-                    writeHeader(resultBuilder, header);
-                    wroteHeader = true;
-                }
-
-                Iterator<String> headerFields = header.iterator();
-                while (headerFields.hasNext()) {
-                    resultBuilder.append('\"');
-                    resultBuilder.append(resultEntry.get(headerFields.next()));
-                    resultBuilder.append('\"');
-                    if (headerFields.hasNext()) {
-                        resultBuilder.append(',');
-                    }
-                }
-            }
-            result = resultBuilder.toString();
-            return result;
+            writeArray(jsonNode, resultBuilder, "columns");
+            writeArray(jsonNode, resultBuilder, "data");
+            return resultBuilder.toString();
         }
 
-        private void writeHeader(StringBuilder resultBuilder, ArrayList<String> header) {
-            Iterator<String> iterator = header.iterator();
-            while (iterator.hasNext()) {
-                resultBuilder.append("\"");
-                resultBuilder.append(iterator.next());
-                resultBuilder.append("\"");
-                if (iterator.hasNext()) {
-                    resultBuilder.append(",");
-                }
+        private void writeArray(JsonNode jsonNode, StringBuilder resultBuilder, String arrayName) {
+            JsonNode array = jsonNode.get(arrayName);
+            if (array.isArray()) {
+                writeArray(resultBuilder, array);
+            }
+        }
 
+        private void writeArray(StringBuilder resultBuilder, JsonNode array) {
+            Iterator<JsonNode> iterator = array.iterator();
+            while (iterator.hasNext()) {
+                appendValue(resultBuilder, iterator);
+            }
+        }
+
+
+        private void appendValue(StringBuilder resultBuilder, Iterator<JsonNode> iterator) {
+            JsonNode node = iterator.next();
+            if (node.isArray()) {
+                writeArray(resultBuilder, node);
+            } else {
+                writeObject(resultBuilder, iterator, node);
+            }
+        }
+
+        private void writeObject(StringBuilder resultBuilder, Iterator<JsonNode> iterator, JsonNode node) {
+            if (node.isTextual()) {
+                resultBuilder.append("\"");
+            }
+            resultBuilder.append(node.getValueAsText());
+            if (node.isTextual()) {
+                resultBuilder.append("\"");
+            }
+            if (iterator.hasNext()) {
+                resultBuilder.append(",");
+            } else {
+                resultBuilder.append("\n");
             }
         }
 

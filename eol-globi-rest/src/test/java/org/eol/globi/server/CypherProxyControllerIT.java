@@ -37,10 +37,18 @@ public class CypherProxyControllerIT {
 
     @Test
     public void listPreyForPredatorLocationCSV() throws IOException {
-        String uri = getURLPrefix() + "taxon/Homo%20sapiens/preysOn?lat=12.4&lng=54.4&type=csv";
+        assertCSV(getURLPrefix() + "taxon/Homo%20sapiens/preysOn?type=csv&lat=12.4&lng=54.4");
+    }
+
+    @Test
+    public void listPreyForPredatorCSV() throws IOException {
+        assertCSV(getURLPrefix() + "taxon/Homo%20sapiens/preysOn?type=csv");
+    }
+
+    private void assertCSV(String uri) throws IOException {
         String response = HttpClient.httpGet(uri);
         assertThat(response, not(containsString("columns")));
-        assertThat(response, is("bla"));
+        assertThat(response, containsString("\"preyName\""));
     }
 
     @Test
@@ -83,6 +91,15 @@ public class CypherProxyControllerIT {
         String uri = getURLPrefix() + "taxon/Homo%20sapiens/preyedUponBy?includeObservations=true";
         String response = HttpClient.httpGet(uri);
         assertThat(response, is(not(nullValue())));
+    }
+
+    @Test
+    public void listPredatorForPreyObservationsCSV() throws IOException {
+        String uri = getURLPrefix() + "taxon/Rattus%20rattus/preyedUponBy?includeObservations=true&type=csv";
+        String response = HttpClient.httpGet(uri);
+        assertThat(response, not(containsString("columns")));
+        assertThat(response, containsString("predatorName"));
+        assertThat(response, containsString("latitude"));
     }
 
     @Test
