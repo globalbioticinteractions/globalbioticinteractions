@@ -162,7 +162,7 @@ public class CypherProxyController {
                     getSpatialWhereClause(parameterMap) +
                     " RETURN preyTaxon.name as preyName, " +
                     DEFAULT_RETURN_LIST +
-                    ",predator.name as predatorName," +
+                    ",predatorTaxon.name as predatorName," +
                     "\"" + interactionType + "\" as interaction_type";
             query_params = getParams(sourceTaxonName, targetTaxonName);
         } else if (INTERACTION_PREYED_UPON_BY.equals(interactionType)) {
@@ -172,7 +172,7 @@ public class CypherProxyController {
                     getSpatialWhereClause(parameterMap) +
                     " RETURN predatorTaxon.name as predatorName, " +
                     DEFAULT_RETURN_LIST +
-                    ",preyName.name as preyName" +
+                    ",preyTaxon.name as preyName" +
                     ",\"" + interactionType + "\" as interaction_type"
             ;
             query_params = getParams(targetTaxonName, sourceTaxonName);
