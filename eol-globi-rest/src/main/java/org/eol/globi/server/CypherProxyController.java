@@ -1,7 +1,5 @@
 package org.eol.globi.server;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.BasicResponseHandler;
@@ -33,18 +31,6 @@ public class CypherProxyController {
 
     public static final String INTERACTION_PREYS_ON = "preysOn";
     public static final String INTERACTION_PREYED_UPON_BY = "preyedUponBy";
-    public static final String DEFAULT_RETURN_LIST = "loc.latitude as latitude," +
-            "loc.longitude as longitude," +
-            "loc.altitude? as altitude," +
-            "study.title," +
-            "collected_rel.dateInUnixEpoch? as collection_time_in_unix_epoch," +
-            "ID(predator) as tmp_and_unique_specimen_id," +
-            "predator.lifeStage? as predator_life_stage," +
-            "prey.lifeStage? as prey_life_stage," +
-            "predator.bodyPart? as predator_body_part," +
-            "prey.bodyPart? as prey_body_part," +
-            "predator.physiologicalState? as predator_physiological_state," +
-            "prey.physiologicalState? as prey_physiological_state";
 
     public static final String INTERACTION_MATCH = "MATCH predatorTaxon<-[:CLASSIFIED_AS]-predator-[:ATE]->prey-[:CLASSIFIED_AS]->preyTaxon ";
     public static final String JSON_CYPHER_WRAPPER_PREFIX = "{\"query\":\"";
@@ -66,8 +52,10 @@ public class CypherProxyController {
     @ResponseBody
     public String findInteractions(HttpServletRequest request) throws IOException {
         StringBuilder query = new StringBuilder();
-        query.append("START loc = node:locations('*:*') " +
-                "MATCH predatorTaxon<-[:CLASSIFIED_AS]-predator-[interactionType:" + InteractUtil.allInteractionsCypherClause() + "]->prey-[:CLASSIFIED_AS]->preyTaxon ");
+        query.append("START loc = node:locations('*:*') ")
+                .append("MATCH predatorTaxon<-[:CLASSIFIED_AS]-predator-[interactionType:")
+                .append(InteractUtil.allInteractionsCypherClause())
+                .append("]->prey-[:CLASSIFIED_AS]->preyTaxon ");
         addLocationClausesIfNecessary(query, request.getParameterMap());
         query.append("RETURN predatorTaxon.externalId, predatorTaxon.name as predatorName, type(interactionType), preyTaxon.externalId, preyTaxon.name as preyTaxon");
         return new CypherQueryExecutor(query.toString(), null).execute(request);
@@ -154,13 +142,28 @@ public class CypherProxyController {
     private CypherQueryExecutor findObservationsForInteraction(String sourceTaxonName, String interactionType, String targetTaxonName, Map parameterMap) throws IOException {
         Map<String, String> query_params = EMPTY_PARAMS;
         String query = null;
+        final String DEFAULT_RETURN_LIST = "loc.latitude as latitude," +
+                "loc.longitude as longitude," +
+                "loc.altitude? as altitude," +
+                "study.title," +
+                "collected_rel.dateInUnixEpoch? as collection_time_in_unix_epoch," +
+                "ID(predator) as tmp_and_unique_specimen_id," +
+                "predator.lifeStage? as predator_life_stage," +
+                "prey.lifeStage? as prey_life_stage," +
+                "predator.bodyPart? as predator_body_part," +
+                "prey.bodyPart? as prey_body_part," +
+                "predator.physiologicalState? as predator_physiological_state," +
+                "prey.physiologicalState? as prey_physiological_state";
+
 
         if (INTERACTION_PREYS_ON.equals(interactionType)) {
             query = "START " + getTaxonSelector(sourceTaxonName, targetTaxonName) +
                     OBSERVATION_MATCH +
                     getSpatialWhereClause(parameterMap) +
                     " RETURN preyTaxon.name as preyName, " +
-                    DEFAULT_RETURN_LIST;
+                    DEFAULT_RETURN_LIST +
+                    ",predator.name as predatorName," +
+                    "\"" + interactionType + "\" as interaction_type";
             query_params = getParams(sourceTaxonName, targetTaxonName);
         } else if (INTERACTION_PREYED_UPON_BY.equals(interactionType)) {
             // note that "preyedUponBy" is interpreted as an inverted "preysOn" relationship
@@ -168,7 +171,10 @@ public class CypherProxyController {
                     OBSERVATION_MATCH +
                     getSpatialWhereClause(parameterMap) +
                     " RETURN predatorTaxon.name as predatorName, " +
-                    DEFAULT_RETURN_LIST;
+                    DEFAULT_RETURN_LIST +
+                    ",preyName.name as preyName" +
+                    ",\"" + interactionType + "\" as interaction_type"
+            ;
             query_params = getParams(targetTaxonName, sourceTaxonName);
         }
         if (query == null) {
@@ -298,7 +304,7 @@ public class CypherProxyController {
     @RequestMapping(value = "/shortestPathsBetweenTaxon/{startTaxon}/andTaxon/{endTaxon}", method = RequestMethod.GET)
     @ResponseBody
     public String findShortestPaths(HttpServletRequest request, @PathVariable("startTaxon") final String startTaxon,
-                                                 @PathVariable("endTaxon") final String endTaxon) throws IOException {
+                                    @PathVariable("endTaxon") final String endTaxon) throws IOException {
         String query = "START startNode = node:taxons(name={startTaxon}),endNode = node:taxons(name={endTaxon}) " +
                 "MATCH p = allShortestPaths(startNode-[:" + InteractUtil.allInteractionsCypherClause() + "|CLASSIFIED_AS*..100]-endNode) " +
                 "RETURN extract(n in (filter(x in nodes(p) : has(x.name))) : " +
@@ -341,7 +347,7 @@ public class CypherProxyController {
             if (type == null || "json".equalsIgnoreCase(type)) {
                 result = executeRemote();
             } else if ("csv".equalsIgnoreCase(type)) {
-                result = executeAndTranformToCSV();
+                result = executeAndTransformToCSV();
             } else {
                 throw new IOException("found unsupported return format type request for [" + type + "]");
             }
@@ -349,15 +355,15 @@ public class CypherProxyController {
         }
 
         private String executeRemote() throws IOException {
-            org.apache.http.client.HttpClient httpclient = new DefaultHttpClient();
+            org.apache.http.client.HttpClient httpClient = new DefaultHttpClient();
             HttpPost httpPost = new HttpPost("http://46.4.36.142:7474/db/data/cypher");
             HttpClient.addJsonHeaders(httpPost);
             httpPost.setEntity(new StringEntity(wrapQuery(query, params)));
             BasicResponseHandler responseHandler = new BasicResponseHandler();
-            return httpclient.execute(httpPost, responseHandler);
+            return httpClient.execute(httpPost, responseHandler);
         }
 
-        private String executeAndTranformToCSV() throws IOException {
+        private String executeAndTransformToCSV() throws IOException {
             ObjectMapper mapper = new ObjectMapper();
             JsonNode jsonNode = mapper.readTree(executeRemote());
             StringBuilder resultBuilder = new StringBuilder();
