@@ -11,17 +11,7 @@ import java.io.Writer;
 import java.util.HashMap;
 import java.util.Map;
 
-public class EOLExporterAssociations extends EOLExporterBase {
-
-    protected String[] getFields() {
-        return new String[]{
-                EOLDictionary.ASSOCIATION_ID,
-                EOLDictionary.OCCURRENCE_ID,
-                EOLDictionary.ASSOCIATION_TYPE,
-                EOLDictionary.TARGET_OCCURRENCE_ID,
-                EOLDictionary.SOURCE
-        };
-    }
+public class EOLExporterAssociations extends EOLExporterAssociationsBase {
 
     @Override
     public void doExportStudy(Study study, Writer writer, boolean includeHeader) throws IOException {

@@ -2,53 +2,22 @@ package org.eol.globi.export;
 
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.Location;
+import org.eol.globi.domain.NodeBacked;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
+import org.eol.globi.domain.Taxon;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
-import org.neo4j.graphdb.PropertyContainer;
 import org.neo4j.graphdb.Relationship;
 
 import java.io.IOException;
 import java.io.Writer;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
-public class EOLExporterOccurrences extends EOLExporterBase {
-
-    protected String[] getFields() {
-        return new String[]{
-                EOLDictionary.OCCURRENCE_ID,
-                EOLDictionary.TAXON_ID,
-                EOLDictionary.SEX,
-                EOLDictionary.LIFE_STAGE,
-                // TODO reuse term physiological state from existing ontology
-                EOLDictionary.PHYSIOLOGICAL_STATE,
-                // TODO reuse term body part from existing ontology
-                EOLDictionary.BODY_PART,
-                EOLDictionary.REPRODUCTIVE_CONDITION,
-                EOLDictionary.BEHAVIOR,
-                EOLDictionary.ESTABLISHMENT_MEANS,
-                EOLDictionary.OCCURRENCE_REMARKS,
-                EOLDictionary.INDIVIDUAL_COUNT,
-                EOLDictionary.PREPARATIONS,
-                EOLDictionary.FIELD_NOTES,
-                EOLDictionary.SAMPLING_PROTOCOL,
-                EOLDictionary.SAMPLING_EFFORT,
-                EOLDictionary.DECIMAL_LATITUDE,
-                EOLDictionary.DECIMAL_LONGITUDE,
-                // TODO reuse term depth from existing ontology
-                EOLDictionary.DEPTH,
-                // TODO reuse term depth from existing ontology
-                EOLDictionary.ALTITUDE,
-                EOLDictionary.LOCALITY,
-                EOLDictionary.IDENTIFIED_BY,
-                EOLDictionary.DATE_IDENTIFIED,
-                EOLDictionary.EVENT_DATE,
-                EOLDictionary.EVENT_ID
-        };
-    }
+public class EOLExporterOccurrences extends EOLExporterOccurrencesBase {
 
     @Override
     public void doExportStudy(Study study, Writer writer, boolean includeHeader) throws IOException {
@@ -79,9 +48,30 @@ public class EOLExporterOccurrences extends EOLExporterBase {
     }
 
     private void addOccurrenceProperties(Node locationNode, Relationship collectedRelationship, Map<String, String> properties, Node specimenNode, Study study) throws IOException {
-        addTaxonInfo(properties, specimenNode);
+        if (specimenNode != null) {
+            Iterable<Relationship> relationships = specimenNode.getRelationships(Direction.OUTGOING, RelTypes.CLASSIFIED_AS);
+            Iterator<Relationship> iterator = relationships.iterator();
+            if (iterator.hasNext()) {
+                Relationship classifiedAs = iterator.next();
+                if (classifiedAs != null) {
+                    Node taxonNode = classifiedAs.getEndNode();
+                    if (taxonNode.hasProperty(NodeBacked.EXTERNAL_ID)) {
+                        String taxonId = (String) taxonNode.getProperty(NodeBacked.EXTERNAL_ID);
+                        if (taxonId != null) {
+                            properties.put(EOLDictionary.TAXON_ID, taxonId);
+                        }
+                    }
+                    if (taxonNode.hasProperty(Taxon.NAME)) {
+                        String taxonName = (String) taxonNode.getProperty(Taxon.NAME);
+                        if (taxonName != null) {
+                            properties.put(EOLDictionary.SCIENTIFIC_NAME, taxonName);
+                        }
+                    }
+                }
+            }
+        }
 
-        addOccurrenceId(properties, specimenNode);
+        properties.put(EOLDictionary.OCCURRENCE_ID, "globi:occur:" + specimenNode.getId());
         addProperty(properties, specimenNode, Specimen.LIFE_STAGE, EOLDictionary.LIFE_STAGE);
         addProperty(properties, specimenNode, Specimen.PHYSIOLOGICAL_STATE, EOLDictionary.PHYSIOLOGICAL_STATE);
         addProperty(properties, specimenNode, Specimen.BODY_PART, EOLDictionary.BODY_PART);
@@ -91,12 +81,6 @@ public class EOLExporterOccurrences extends EOLExporterBase {
         addProperty(properties, study.getUnderlyingNode(), Study.TITLE, EOLDictionary.EVENT_ID);
 
         addCollectionDate(properties, collectedRelationship, EOLDictionary.EVENT_DATE);
-    }
-
-    private void addProperty(Map<String, String> writer, PropertyContainer node, String propertyName, String fieldName) throws IOException {
-        if (node != null && node.hasProperty(propertyName)) {
-            writer.put(fieldName, node.getProperty(propertyName).toString());
-        }
     }
 
 }

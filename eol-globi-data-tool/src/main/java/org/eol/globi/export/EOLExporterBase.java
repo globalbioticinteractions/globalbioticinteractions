@@ -1,23 +1,30 @@
 package org.eol.globi.export;
 
-import org.eol.globi.domain.NodeBacked;
-import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
-import org.eol.globi.domain.Taxon;
-import org.neo4j.graphdb.Direction;
-import org.neo4j.graphdb.Node;
+import org.neo4j.graphdb.PropertyContainer;
 import org.neo4j.graphdb.Relationship;
 
 import java.io.IOException;
 import java.io.Writer;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.TimeZone;
 
 public abstract class EOLExporterBase extends BaseExporter {
+
+    protected static String getQueryForDistinctTargetTaxaForPreyBySourceTaxa(Study study) {
+        return "START study = node:studies(title='" + study.getTitle() + "') " +
+                "MATCH predatorTaxon<-[:CLASSIFIED_AS]-predator-[interaction:ATE]->prey-[:CLASSIFIED_AS]->preyTaxon, study-[:COLLECTED]->predator " +
+                "RETURN distinct(predatorTaxon) as predatorTaxon, count(distinct(predator)), interaction, collect(distinct(preyTaxon)) as preyTaxa, count(distinct(prey)), study";
+    }
+
+    protected static void addProperty(Map<String, String> properties, PropertyContainer node, String propertyName, String fieldName) throws IOException {
+        if (node != null && node.hasProperty(propertyName)) {
+            properties.put(fieldName, node.getProperty(propertyName).toString());
+        }
+    }
 
     protected abstract String[] getFields();
 
@@ -94,10 +101,6 @@ public abstract class EOLExporterBase extends BaseExporter {
     }
 
 
-    protected void addOccurrenceId(Map<String, String> properties, Node specimenNode) {
-        properties.put(EOLDictionary.OCCURRENCE_ID, "globi:occur:" + specimenNode.getId());
-    }
-
     protected void addCollectionDate(Map<String, String> writer, Relationship collectedRelationship, String datePropertyName) throws IOException {
         Calendar instance;
         if (collectedRelationship.hasProperty(Specimen.DATE_IN_UNIX_EPOCH)) {
@@ -110,28 +113,4 @@ public abstract class EOLExporterBase extends BaseExporter {
 
     }
 
-    protected void addTaxonInfo(Map<String, String> properties, Node specimenNode) {
-        if (specimenNode != null) {
-            Iterable<Relationship> relationships = specimenNode.getRelationships(Direction.OUTGOING, RelTypes.CLASSIFIED_AS);
-            Iterator<Relationship> iterator = relationships.iterator();
-            if (iterator.hasNext()) {
-                Relationship classifiedAs = iterator.next();
-                if (classifiedAs != null) {
-                    Node taxonNode = classifiedAs.getEndNode();
-                    if (taxonNode.hasProperty(NodeBacked.EXTERNAL_ID)) {
-                        String taxonId = (String) taxonNode.getProperty(NodeBacked.EXTERNAL_ID);
-                        if (taxonId != null) {
-                            properties.put(EOLDictionary.TAXON_ID, taxonId);
-                        }
-                    }
-                    if (taxonNode.hasProperty(Taxon.NAME)) {
-                        String taxonName = (String) taxonNode.getProperty(Taxon.NAME);
-                        if (taxonName != null) {
-                            properties.put(EOLDictionary.SCIENTIFIC_NAME, taxonName);
-                        }
-                    }
-                }
-            }
-        }
-    }
 }

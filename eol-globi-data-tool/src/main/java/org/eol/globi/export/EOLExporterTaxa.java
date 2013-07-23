@@ -1,8 +1,10 @@
 package org.eol.globi.export;
 
 import org.eol.globi.domain.InteractType;
-import org.eol.globi.domain.Specimen;
+import org.eol.globi.domain.NodeBacked;
+import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Study;
+import org.eol.globi.domain.Taxon;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
@@ -10,6 +12,7 @@ import org.neo4j.graphdb.Relationship;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 public class EOLExporterTaxa extends EOLExporterBase {
@@ -62,7 +65,28 @@ public class EOLExporterTaxa extends EOLExporterBase {
     }
 
     private void addTaxa(Map<String, String> taxa, Map<String, String> properties, Node specimenNode) {
-        addTaxonInfo(properties, specimenNode);
+        if (specimenNode != null) {
+            Iterable<Relationship> relationships = specimenNode.getRelationships(Direction.OUTGOING, RelTypes.CLASSIFIED_AS);
+            Iterator<Relationship> iterator = relationships.iterator();
+            if (iterator.hasNext()) {
+                Relationship classifiedAs = iterator.next();
+                if (classifiedAs != null) {
+                    Node taxonNode = classifiedAs.getEndNode();
+                    if (taxonNode.hasProperty(NodeBacked.EXTERNAL_ID)) {
+                        String taxonId1 = (String) taxonNode.getProperty(NodeBacked.EXTERNAL_ID);
+                        if (taxonId1 != null) {
+                            properties.put(EOLDictionary.TAXON_ID, taxonId1);
+                        }
+                    }
+                    if (taxonNode.hasProperty(Taxon.NAME)) {
+                        String taxonName = (String) taxonNode.getProperty(Taxon.NAME);
+                        if (taxonName != null) {
+                            properties.put(EOLDictionary.SCIENTIFIC_NAME, taxonName);
+                        }
+                    }
+                }
+            }
+        }
         String scientificName = properties.get(EOLDictionary.SCIENTIFIC_NAME);
         String taxonId = properties.get(EOLDictionary.TAXON_ID);
         if (taxonId != null && scientificName != null) {
