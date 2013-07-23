@@ -2,6 +2,7 @@ package org.eol.globi.export;
 
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
+import org.eol.globi.util.InteractUtil;
 import org.neo4j.graphdb.PropertyContainer;
 import org.neo4j.graphdb.Relationship;
 
@@ -14,10 +15,17 @@ import java.util.TimeZone;
 
 public abstract class EOLExporterBase extends BaseExporter {
 
+    public static final String QUERY_PARAM_SOURCE_TAXON = "predatorTaxon";
+    public static final String QUERY_PARAM_TARGET_TAXA = "preyTaxa";
+    public static final String QUERY_PARAM_INTERACTION_TYPE = "interactionType";
+
     protected static String getQueryForDistinctTargetTaxaForPreyBySourceTaxa(Study study) {
         return "START study = node:studies(title='" + study.getTitle() + "') " +
-                "MATCH predatorTaxon<-[:CLASSIFIED_AS]-predator-[interaction:ATE]->prey-[:CLASSIFIED_AS]->preyTaxon, study-[:COLLECTED]->predator " +
-                "RETURN distinct(predatorTaxon) as predatorTaxon, count(distinct(predator)), interaction, collect(distinct(preyTaxon)) as preyTaxa, count(distinct(prey)), study";
+                "MATCH study-[:COLLECTED]->sourceSpecimen-[:CLASSIFIED_AS]->sourceTaxon, " +
+                "sourceSpecimen-[r:" + InteractUtil.allInteractionsCypherClause() + "]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon  " +
+                "RETURN distinct(sourceTaxon) as " + QUERY_PARAM_SOURCE_TAXON +
+                ", type(r) as " + QUERY_PARAM_INTERACTION_TYPE +
+                ", collect(distinct(targetTaxon)) as " + QUERY_PARAM_TARGET_TAXA;
     }
 
     protected static void addProperty(Map<String, String> properties, PropertyContainer node, String propertyName, String fieldName) throws IOException {

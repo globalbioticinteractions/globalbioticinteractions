@@ -12,7 +12,7 @@ import java.io.Writer;
 import java.util.HashMap;
 import java.util.Map;
 
-public class EOLExporterAssociationsAggregate extends EOLExporterAssociationsBase {
+public class EOLExporterAssociationAggregates extends EOLExporterAssociationsBase {
 
     @Override
     public void doExportStudy(Study study, Writer writer, boolean includeHeader) throws IOException {
@@ -25,14 +25,11 @@ public class EOLExporterAssociationsAggregate extends EOLExporterAssociationsBas
     }
 
     private void populateRow(Study study, Writer writer, Map<String, String> properties, Map<String, Object> result) throws IOException {
-        Node predatorTaxon = (Node) result.get("predatorTaxon");
-        JavaConversions.SeqWrapper<Node> preyTaxa = (JavaConversions.SeqWrapper<Node>) result.get("preyTaxa");
-        Relationship relationship = (Relationship) result.get("interaction");
+        Node predatorTaxon = (Node) result.get(QUERY_PARAM_SOURCE_TAXON);
+        JavaConversions.SeqWrapper<Node> preyTaxa = (JavaConversions.SeqWrapper<Node>) result.get(QUERY_PARAM_TARGET_TAXA);
+        String relationshipType = (String) result.get(QUERY_PARAM_INTERACTION_TYPE);
 
-        int counter = 0;
         for (Node preyTaxon : preyTaxa) {
-            counter += 1;
-            String relationshipType = relationship.getType().name();
             String assocId = study.getUnderlyingNode().getId() + "-" + predatorTaxon.getId() + "-" + relationshipType + "-" + preyTaxon.getId();
             properties.put(EOLDictionary.ASSOCIATION_ID, "globi:assoc:" + assocId);
             String sourceOccurrenceId = study.getUnderlyingNode().getId() + "-" + predatorTaxon.getId() + "-" + relationshipType;
@@ -43,7 +40,6 @@ public class EOLExporterAssociationsAggregate extends EOLExporterAssociationsBas
             writeProperties(writer, properties);
             properties.clear();
         }
-        System.out.println("number of prey items [" + counter + "]");
     }
 
 }

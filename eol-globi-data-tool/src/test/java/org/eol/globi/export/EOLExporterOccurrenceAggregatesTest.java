@@ -8,7 +8,6 @@ import org.eol.globi.domain.Location;
 import org.eol.globi.domain.PhysiologicalState;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.Transaction;
@@ -20,20 +19,17 @@ import java.text.ParseException;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
 
-public class EOLExporterOccurrencesAggregateTest extends GraphDBTestCase {
+public class EOLExporterOccurrenceAggregatesTest extends GraphDBTestCase {
 
     private String getExpectedData() {
-        return "\nglobi:occur:1-2-5-5,EOL:327955,,,,,,,,,,,,,,,,,,,,,,myStudy\n" +
-                "globi:occur:1-2-5,EOL:328607,,,,,,,,,,,,,,,,,,,,,,myStudy\n" +
-                "globi:occur:1-2-8-5,EOL:327955,,,,,,,,,,,,,,,,,,,,,,myStudy\n" +
-                "globi:occur:1-2-8,EOL:328607,,,,,,,,,,,,,,,,,,,,,,myStudy";
+        return "\nglobi:occur:1-2-ATE-5,EOL:327955,,,,,,,,,,,,,,,,,,,,,,myStudy\n" +
+                "globi:occur:1-2-ATE,EOL:328607,,,,,,,,,,,,,,,,,,,,,,myStudy";
     }
 
     private EOLExporterOccurrencesBase exportOccurrences() {
-        return new EOLExporterOccurrencesAggregate();
+        return new EOLExporterOccurrenceAggregates();
     }
 
-    @Ignore
     @Test
     public void exportToCSVNoHeader() throws NodeFactoryException, IOException, ParseException {
         createTestData(123.0);

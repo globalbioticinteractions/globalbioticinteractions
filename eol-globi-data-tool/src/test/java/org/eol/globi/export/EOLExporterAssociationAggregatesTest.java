@@ -8,7 +8,6 @@ import org.eol.globi.domain.Location;
 import org.eol.globi.domain.PhysiologicalState;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.Transaction;
@@ -21,9 +20,8 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
-public class EOLExporterAssociationsAggregateTest extends GraphDBTestCase {
+public class EOLExporterAssociationAggregatesTest extends GraphDBTestCase {
 
-    @Ignore
     @Test
     public void exportCSVNoHeader() throws IOException, NodeFactoryException, ParseException {
         String[] studyTitles = {"myStudy1", "myStudy2"};
@@ -32,10 +30,10 @@ public class EOLExporterAssociationsAggregateTest extends GraphDBTestCase {
             createTestData(null, studyTitle);
         }
 
-        String expected = "\nglobi:assoc:1-2-5-5,globi:occur:source:1-2-5,ATE,globi:occur:target:1-2-5-5,myStudy1" +
-                "\nglobi:assoc:1-2-6-5,globi:occur:source:1-2-6,ATE,globi:occur:target:1-2-6-5,myStudy2";
+        String expected = "\nglobi:assoc:1-2-ATE-5,globi:occur:source:1-2-ATE,ATE,globi:occur:target:1-2-ATE-5,myStudy1" +
+                "\nglobi:assoc:9-2-ATE-5,globi:occur:source:9-2-ATE,ATE,globi:occur:target:9-2-ATE-5,myStudy2";
 
-        EOLExporterAssociationsAggregate exporter = new EOLExporterAssociationsAggregate();
+        EOLExporterAssociationAggregates exporter = new EOLExporterAssociationAggregates();
         StringWriter row = new StringWriter();
         for (String studyTitle : studyTitles) {
             Study myStudy1 = nodeFactory.findStudy(studyTitle);
