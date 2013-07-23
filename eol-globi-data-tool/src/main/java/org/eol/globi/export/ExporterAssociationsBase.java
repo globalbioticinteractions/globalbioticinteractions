@@ -1,6 +1,6 @@
 package org.eol.globi.export;
 
-public abstract class EOLExporterAssociationsBase extends EOLExporterBase {
+public abstract class ExporterAssociationsBase extends ExporterBase {
     protected String[] getFields() {
         return new String[]{
                 EOLDictionary.ASSOCIATION_ID,

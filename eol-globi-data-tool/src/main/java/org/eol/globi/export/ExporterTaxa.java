@@ -15,7 +15,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-public class EOLExporterTaxa extends EOLExporterBase {
+public class ExporterTaxa extends ExporterBase {
 
     protected String[] getFields() {
         return new String[]{

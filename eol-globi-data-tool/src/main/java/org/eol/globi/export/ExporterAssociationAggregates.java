@@ -4,7 +4,6 @@ import org.eol.globi.domain.Study;
 import org.neo4j.cypher.javacompat.ExecutionEngine;
 import org.neo4j.cypher.javacompat.ExecutionResult;
 import org.neo4j.graphdb.Node;
-import org.neo4j.graphdb.Relationship;
 import scala.collection.JavaConversions;
 
 import java.io.IOException;
@@ -12,7 +11,7 @@ import java.io.Writer;
 import java.util.HashMap;
 import java.util.Map;
 
-public class EOLExporterAssociationAggregates extends EOLExporterAssociationsBase {
+public class ExporterAssociationAggregates extends ExporterAssociationsBase {
 
     @Override
     public void doExportStudy(Study study, Writer writer, boolean includeHeader) throws IOException {

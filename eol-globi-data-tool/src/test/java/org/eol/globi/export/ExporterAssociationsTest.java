@@ -1,16 +1,16 @@
 package org.eol.globi.export;
 
-import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.LifeStage;
-import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.domain.BodyPart;
-import org.eol.globi.domain.Location;
 import org.eol.globi.domain.PhysiologicalState;
-import org.eol.globi.domain.Specimen;
-import org.eol.globi.domain.Study;
 import org.junit.Test;
 import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.Transaction;
+import org.eol.globi.data.GraphDBTestCase;
+import org.eol.globi.data.NodeFactoryException;
+import org.eol.globi.domain.Location;
+import org.eol.globi.domain.Specimen;
+import org.eol.globi.domain.Study;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -20,32 +20,27 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
-public class EOLExporterAssociationAggregatesTest extends GraphDBTestCase {
+public class ExporterAssociationsTest extends GraphDBTestCase {
 
     @Test
-    public void exportCSVNoHeader() throws IOException, NodeFactoryException, ParseException {
-        String[] studyTitles = {"myStudy1", "myStudy2"};
+    public void exportMissingLength() throws IOException, NodeFactoryException, ParseException {
+        createTestData(null);
 
-        for (String studyTitle : studyTitles) {
-            createTestData(null, studyTitle);
-        }
+        String expected = "\nglobi:assoc:5,globi:occur:source:3,ATE,globi:occur:target:6,myStudy" +
+        "\nglobi:assoc:6,globi:occur:source:3,ATE,globi:occur:target:6,myStudy";
 
-        String expected = "\nglobi:assoc:1-2-ATE-5,globi:occur:source:1-2-ATE,ATE,globi:occur:target:1-2-ATE-5,myStudy1" +
-                "\nglobi:assoc:9-2-ATE-5,globi:occur:source:9-2-ATE,ATE,globi:occur:target:9-2-ATE-5,myStudy2";
 
-        EOLExporterAssociationAggregates exporter = new EOLExporterAssociationAggregates();
+        Study myStudy1 = nodeFactory.findStudy("myStudy");
+
         StringWriter row = new StringWriter();
-        for (String studyTitle : studyTitles) {
-            Study myStudy1 = nodeFactory.findStudy(studyTitle);
-            exporter.exportStudy(myStudy1, row, false);
-        }
 
+        new ExporterAssociations().exportStudy(myStudy1, row, false);
 
         assertThat(row.getBuffer().toString(), equalTo(expected));
     }
 
-    private void createTestData(Double length, String studyTitle) throws NodeFactoryException, ParseException {
-        Study myStudy = nodeFactory.createStudy(studyTitle);
+    private void createTestData(Double length) throws NodeFactoryException, ParseException {
+        Study myStudy = nodeFactory.createStudy("myStudy");
         Specimen specimen = nodeFactory.createSpecimen("Homo sapiens");
         specimen.setStomachVolumeInMilliLiter(666.0);
         specimen.setLifeStage(LifeStage.JUVENILE);
@@ -70,6 +65,16 @@ public class EOLExporterAssociationAggregatesTest extends GraphDBTestCase {
 
         Location location = nodeFactory.getOrCreateLocation(123.0, 345.9, -60.0);
         specimen.caughtIn(location);
+    }
+
+
+    @Test
+    public void darwinCoreMetaTable() throws IOException {
+        ExporterAssociations exporter = new ExporterAssociations();
+        StringWriter writer = new StringWriter();
+        exporter.exportDarwinCoreMetaTable(writer, "testtest.csv");
+
+        assertThat(writer.toString(), is(exporter.getMetaTablePrefix() + "testtest.csv" + exporter.getMetaTableSuffix()));
     }
 
 }

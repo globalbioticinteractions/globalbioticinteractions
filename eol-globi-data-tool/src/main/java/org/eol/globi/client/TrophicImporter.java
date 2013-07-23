@@ -2,12 +2,12 @@ package org.eol.globi.client;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.eol.globi.export.EOLExporterAssociationAggregates;
-import org.eol.globi.export.EOLExporterAssociations;
-import org.eol.globi.export.EOLExporterMeasurementOrFact;
-import org.eol.globi.export.EOLExporterOccurrenceAggregates;
-import org.eol.globi.export.EOLExporterOccurrences;
-import org.eol.globi.export.EOLExporterTaxa;
+import org.eol.globi.export.ExporterAssociationAggregates;
+import org.eol.globi.export.ExporterAssociations;
+import org.eol.globi.export.ExporterMeasurementOrFact;
+import org.eol.globi.export.ExporterOccurrenceAggregates;
+import org.eol.globi.export.ExporterOccurrences;
+import org.eol.globi.export.ExporterTaxa;
 import org.eol.globi.export.StudyExportUnmatchedSourceTaxaForStudies;
 import org.eol.globi.export.StudyExportUnmatchedTargetTaxaForStudies;
 import org.eol.globi.service.TaxonPropertyEnricher;
@@ -54,12 +54,12 @@ public class TrophicImporter {
             FileWriter darwinCoreMeta = writeMetaHeader();
             export(studies, "./unmatchedSourceTaxa.csv", new StudyExportUnmatchedSourceTaxaForStudies(GraphService.getGraphService()), darwinCoreMeta);
             export(studies, "./unmatchedTargetTaxa.csv", new StudyExportUnmatchedTargetTaxaForStudies(GraphService.getGraphService()), darwinCoreMeta);
-            export(studies, "./associations.csv", new EOLExporterAssociations(), darwinCoreMeta);
-            export(studies, "./associationAggregates.csv", new EOLExporterAssociationAggregates(), darwinCoreMeta);
-            export(studies, "./occurrences.csv", new EOLExporterOccurrences(), darwinCoreMeta);
-            export(studies, "./occurrenceAggregates.csv", new EOLExporterOccurrenceAggregates(), darwinCoreMeta);
-            export(studies, "./taxa.csv", new EOLExporterTaxa(), darwinCoreMeta);
-            export(studies, "./measurementOrFact.csv", new EOLExporterMeasurementOrFact(), darwinCoreMeta);
+            export(studies, "./associations.csv", new ExporterAssociations(), darwinCoreMeta);
+            export(studies, "./associationAggregates.csv", new ExporterAssociationAggregates(), darwinCoreMeta);
+            export(studies, "./occurrences.csv", new ExporterOccurrences(), darwinCoreMeta);
+            export(studies, "./occurrenceAggregates.csv", new ExporterOccurrenceAggregates(), darwinCoreMeta);
+            export(studies, "./taxa.csv", new ExporterTaxa(), darwinCoreMeta);
+            export(studies, "./measurementOrFact.csv", new ExporterMeasurementOrFact(), darwinCoreMeta);
             writeMetaFooter(darwinCoreMeta);
         } catch (IOException e) {
             throw new StudyImporterException("failed to export result to csv file", e);

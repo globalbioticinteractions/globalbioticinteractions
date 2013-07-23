@@ -17,7 +17,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-public class EOLExporterOccurrences extends EOLExporterOccurrencesBase {
+public class ExporterOccurrences extends ExporterOccurrencesBase {
 
     @Override
     public void doExportStudy(Study study, Writer writer, boolean includeHeader) throws IOException {

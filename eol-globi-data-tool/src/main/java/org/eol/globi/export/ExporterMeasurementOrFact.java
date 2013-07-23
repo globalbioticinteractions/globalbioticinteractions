@@ -12,7 +12,7 @@ import java.io.Writer;
 import java.util.HashMap;
 import java.util.Map;
 
-public class EOLExporterMeasurementOrFact extends EOLExporterBase {
+public class ExporterMeasurementOrFact extends ExporterBase {
 
     protected String[] getFields() {
         return new String[]{

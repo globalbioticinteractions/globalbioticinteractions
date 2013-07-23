@@ -15,13 +15,12 @@ import org.neo4j.graphdb.Transaction;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
-public class EOLExporterOccurrencesTest extends GraphDBTestCase {
+public class ExporterOccurrencesTest extends GraphDBTestCase {
 
     @Test
     public void exportMissingLength() throws IOException, NodeFactoryException, ParseException {
@@ -64,8 +63,8 @@ public class EOLExporterOccurrencesTest extends GraphDBTestCase {
         assertThat(row.getBuffer().toString(), equalTo(expected));
     }
 
-    private EOLExporterOccurrences exportOccurrences() {
-        return new EOLExporterOccurrences();
+    private ExporterOccurrences exportOccurrences() {
+        return new ExporterOccurrences();
     }
 
     @Test
@@ -137,7 +136,7 @@ public class EOLExporterOccurrencesTest extends GraphDBTestCase {
 
     @Test
     public void darwinCoreMetaTable() throws IOException {
-        EOLExporterOccurrences exporter = exportOccurrences();
+        ExporterOccurrences exporter = exportOccurrences();
         StringWriter writer = new StringWriter();
         exporter.exportDarwinCoreMetaTable(writer, "testtest.csv");
 

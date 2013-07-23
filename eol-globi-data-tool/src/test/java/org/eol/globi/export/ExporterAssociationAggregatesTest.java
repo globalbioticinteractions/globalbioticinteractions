@@ -15,34 +15,38 @@ import org.neo4j.graphdb.Transaction;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
-public class EOLExporterTaxaTest extends GraphDBTestCase {
+public class ExporterAssociationAggregatesTest extends GraphDBTestCase {
 
     @Test
-    public void exportMissingLength() throws IOException, NodeFactoryException, ParseException {
-        createTestData(null);
+    public void exportCSVNoHeader() throws IOException, NodeFactoryException, ParseException {
+        String[] studyTitles = {"myStudy1", "myStudy2"};
 
-        String expected =
-                "\nEOL:123,Canis lupus,,,,,,,,,,,,,\nEOL:45634,Homo sapiens,,,,,,,,,,,,,";
+        for (String studyTitle : studyTitles) {
+            createTestData(null, studyTitle);
+        }
 
+        String expected = "\nglobi:assoc:1-2-ATE-5,globi:occur:source:1-2-ATE,ATE,globi:occur:target:1-2-ATE-5,myStudy1" +
+                "\nglobi:assoc:9-2-ATE-5,globi:occur:source:9-2-ATE,ATE,globi:occur:target:9-2-ATE-5,myStudy2";
 
-        Study myStudy1 = nodeFactory.findStudy("myStudy");
-
+        ExporterAssociationAggregates exporter = new ExporterAssociationAggregates();
         StringWriter row = new StringWriter();
+        for (String studyTitle : studyTitles) {
+            Study myStudy1 = nodeFactory.findStudy(studyTitle);
+            exporter.exportStudy(myStudy1, row, false);
+        }
 
-        new EOLExporterTaxa().exportStudy(myStudy1, row, false);
 
         assertThat(row.getBuffer().toString(), equalTo(expected));
     }
 
-    private void createTestData(Double length) throws NodeFactoryException, ParseException {
-        Study myStudy = nodeFactory.createStudy("myStudy");
-        Specimen specimen = nodeFactory.createSpecimen("Homo sapiens", "EOL:45634");
+    private void createTestData(Double length, String studyTitle) throws NodeFactoryException, ParseException {
+        Study myStudy = nodeFactory.createStudy(studyTitle);
+        Specimen specimen = nodeFactory.createSpecimen("Homo sapiens");
         specimen.setStomachVolumeInMilliLiter(666.0);
         specimen.setLifeStage(LifeStage.JUVENILE);
         specimen.setPhysiologicalState(PhysiologicalState.DIGESTATE);
@@ -55,13 +59,10 @@ public class EOLExporterTaxaTest extends GraphDBTestCase {
         } finally {
             transaction.finish();
         }
-        Specimen otherSpecimen = nodeFactory.createSpecimen("Canis lupus", "EOL:123");
+        Specimen otherSpecimen = nodeFactory.createSpecimen("Canis lupus");
         otherSpecimen.setVolumeInMilliLiter(124.0);
 
         specimen.ate(otherSpecimen);
-
-        otherSpecimen = nodeFactory.createSpecimen("Canis lupus", "EOL:123");
-        otherSpecimen.setVolumeInMilliLiter(18.0);
         specimen.ate(otherSpecimen);
         if (null != length) {
             specimen.setLengthInMm(length);
@@ -69,16 +70,6 @@ public class EOLExporterTaxaTest extends GraphDBTestCase {
 
         Location location = nodeFactory.getOrCreateLocation(123.0, 345.9, -60.0);
         specimen.caughtIn(location);
-    }
-
-
-    @Test
-    public void darwinCoreMetaTable() throws IOException {
-        EOLExporterTaxa exporter = new EOLExporterTaxa();
-        StringWriter writer = new StringWriter();
-        exporter.exportDarwinCoreMetaTable(writer, "testtest.csv");
-
-        assertThat(writer.toString(), is(exporter.getMetaTablePrefix() + "testtest.csv" + exporter.getMetaTableSuffix()));
     }
 
 }

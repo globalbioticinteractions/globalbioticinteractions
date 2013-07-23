@@ -1,6 +1,6 @@
 package org.eol.globi.export;
 
-public abstract class EOLExporterOccurrencesBase extends EOLExporterBase {
+public abstract class ExporterOccurrencesBase extends ExporterBase {
     protected String[] getFields() {
         return new String[]{
                 EOLDictionary.OCCURRENCE_ID,

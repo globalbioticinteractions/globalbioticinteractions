@@ -13,7 +13,7 @@ import java.util.Date;
 import java.util.Map;
 import java.util.TimeZone;
 
-public abstract class EOLExporterBase extends BaseExporter {
+public abstract class ExporterBase extends BaseExporter {
 
     public static final String QUERY_PARAM_SOURCE_TAXON = "predatorTaxon";
     public static final String QUERY_PARAM_TARGET_TAXA = "preyTaxa";
