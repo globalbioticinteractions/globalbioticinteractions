@@ -162,8 +162,8 @@ public class CypherProxyController {
                     getSpatialWhereClause(parameterMap) +
                     " RETURN preyTaxon.name as preyName, " +
                     DEFAULT_RETURN_LIST +
-                    ",predatorTaxon.name as predatorName," +
-                    "\"" + interactionType + "\" as interaction_type";
+                    ",predatorTaxon.name as predatorName" +
+                    ",'" + interactionType + "' as interaction_type";
             query_params = getParams(sourceTaxonName, targetTaxonName);
         } else if (INTERACTION_PREYED_UPON_BY.equals(interactionType)) {
             // note that "preyedUponBy" is interpreted as an inverted "preysOn" relationship
@@ -173,7 +173,7 @@ public class CypherProxyController {
                     " RETURN predatorTaxon.name as predatorName, " +
                     DEFAULT_RETURN_LIST +
                     ",preyTaxon.name as preyName" +
-                    ",\"" + interactionType + "\" as interaction_type"
+                    ",'" + interactionType + "' as interaction_type"
             ;
             query_params = getParams(targetTaxonName, sourceTaxonName);
         }
