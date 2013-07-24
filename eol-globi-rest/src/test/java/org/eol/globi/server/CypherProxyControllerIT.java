@@ -5,6 +5,7 @@ import org.junit.Test;
 
 import java.io.IOException;
 
+import static org.hamcrest.core.AnyOf.anyOf;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNot.not;
 import static org.hamcrest.core.IsNull.nullValue;
@@ -47,7 +48,8 @@ public class CypherProxyControllerIT {
     private void assertCSV(String uri) throws IOException {
         String response = HttpClient.httpGet(uri);
         assertThat(response, not(containsString("columns")));
-        assertThat(response, containsString("\"preyName\""));
+        assertThat(response, anyOf(containsString("\"" + ResultFields.SOURCE_TAXON_NAME + "\""),
+                containsString("\"" + ResultFields.TARGET_TAXON_NAME + "\"")));
     }
 
     @Test
