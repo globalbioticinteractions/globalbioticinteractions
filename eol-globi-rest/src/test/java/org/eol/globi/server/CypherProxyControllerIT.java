@@ -99,10 +99,10 @@ public class CypherProxyControllerIT {
         String uri = getURLPrefix() + "taxon/Rattus%20rattus/preyedUponBy?includeObservations=true&type=csv";
         String response = HttpClient.httpGet(uri);
         assertThat(response, not(containsString("columns")));
-        assertThat(response, containsString("predatorName"));
-        assertThat(response, containsString("preyName"));
-        assertThat(response, containsString("interaction_type"));
-        assertThat(response, containsString("latitude"));
+        assertThat(response, anyOf(containsString(ResultFields.SOURCE_TAXON_NAME),
+                containsString(ResultFields.TARGET_TAXON_NAME),
+                containsString(ResultFields.INTERACTION_TYPE),
+                containsString(ResultFields.LATITUDE)));
     }
 
     @Test
