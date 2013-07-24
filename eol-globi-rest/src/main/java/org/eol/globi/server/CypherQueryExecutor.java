@@ -87,23 +87,21 @@ public class CypherQueryExecutor {
         if (node.isArray()) {
             writeArray(resultBuilder, node);
         } else {
-            writeObject(resultBuilder, iterator, node);
+            writeObject(resultBuilder, node, iterator.hasNext());
         }
     }
 
-    private void writeObject(StringBuilder resultBuilder, Iterator<JsonNode> iterator, JsonNode node) {
-        if (node.isTextual()) {
-            resultBuilder.append("\"");
+    private void writeObject(StringBuilder resultBuilder, JsonNode node, boolean hasNext) {
+        if (!node.isNull()) {
+            if (node.isTextual()) {
+                resultBuilder.append("\"");
+            }
+            resultBuilder.append(node.getValueAsText());
+            if (node.isTextual()) {
+                resultBuilder.append("\"");
+            }
         }
-        resultBuilder.append(node.getValueAsText());
-        if (node.isTextual()) {
-            resultBuilder.append("\"");
-        }
-        if (iterator.hasNext()) {
-            resultBuilder.append(",");
-        } else {
-            resultBuilder.append("\n");
-        }
+        resultBuilder.append(hasNext ? "," : "\n");
     }
 
     private String wrapQuery(String cypherQuery, Map<String, String> params) {

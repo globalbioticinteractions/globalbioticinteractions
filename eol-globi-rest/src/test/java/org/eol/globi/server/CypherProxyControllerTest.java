@@ -88,7 +88,7 @@ public class CypherProxyControllerTest {
         when(request.getParameter("includeObservations")).thenReturn("true");
 
         String list = new CypherProxyController().findObservationsOf(request, "Ariopsis felis", CypherProxyController.INTERACTION_PREYS_ON);
-        assertThat(list, containsString("\"latitude\",\"longitude\""));
+        assertThat(list, allOf(containsString("\"latitude\",\"longitude\""), not(containsString(",null,"))));
     }
 
     @Test
