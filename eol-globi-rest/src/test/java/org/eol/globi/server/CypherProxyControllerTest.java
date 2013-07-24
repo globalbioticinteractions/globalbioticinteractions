@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.HashMap;
 
+import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
@@ -97,7 +98,7 @@ public class CypherProxyControllerTest {
         when(request.getParameter("includeObservations")).thenReturn("true");
 
         String list = new CypherProxyController().findObservationsOf(request, "Ariopsis felis", CypherProxyController.INTERACTION_PREYS_ON);
-        assertThat(list, containsString("stuff"));
+        assertThat(list, allOf(containsString("\"source\":"), containsString("\"target\":"), containsString("\"type\":\"preysOn\"")));
     }
 
     @Test
