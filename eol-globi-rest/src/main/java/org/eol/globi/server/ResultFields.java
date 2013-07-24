@@ -9,4 +9,6 @@ public class ResultFields {
     public static final String COLLECTION_TIME_IN_UNIX_EPOCH = "collection_time_in_unix_epoch";
     public static final String STUDY_TITLE = "study_title";
     public static final String INTERACTION_TYPE = "interaction_type";
+    public static final String TARGET_TAXON_NAME = "target_taxon_name";
+    public static final String SOURCE_TAXON_NAME = "source_taxon_name";
 }

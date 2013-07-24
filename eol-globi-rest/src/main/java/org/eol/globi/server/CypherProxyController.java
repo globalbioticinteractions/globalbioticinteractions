@@ -153,9 +153,9 @@ public class CypherProxyController {
             query = "START " + getTaxonSelector(sourceTaxonName, targetTaxonName) + " " +
                     OBSERVATION_MATCH +
                     getSpatialWhereClause(parameterMap) +
-                    " RETURN preyTaxon.name as " + ResultFields.PREY_NAME + ", " +
+                    " RETURN preyTaxon.name as " + ResultFields.TARGET_TAXON_NAME + ", " +
                     DEFAULT_RETURN_LIST +
-                    ",predatorTaxon.name as " + ResultFields.PREDATOR_NAME +
+                    ",predatorTaxon.name as " + ResultFields.SOURCE_TAXON_NAME +
                     ",'" + interactionType + "' as " + ResultFields.INTERACTION_TYPE;
             query_params = getParams(sourceTaxonName, targetTaxonName);
         } else if (INTERACTION_PREYED_UPON_BY.equals(interactionType)) {
@@ -163,9 +163,9 @@ public class CypherProxyController {
             query = "START " + getTaxonSelector(targetTaxonName, sourceTaxonName) + " " +
                     OBSERVATION_MATCH +
                     getSpatialWhereClause(parameterMap) +
-                    " RETURN predatorTaxon.name as " + ResultFields.PREDATOR_NAME + ", " +
+                    " RETURN predatorTaxon.name as " + ResultFields.TARGET_TAXON_NAME + ", " +
                     DEFAULT_RETURN_LIST +
-                    ",preyTaxon.name as " + ResultFields.PREY_NAME +
+                    ",preyTaxon.name as " + ResultFields.SOURCE_TAXON_NAME +
                     ",'" + interactionType + "' as " + ResultFields.INTERACTION_TYPE;
             ;
             query_params = getParams(targetTaxonName, sourceTaxonName);
