@@ -4,6 +4,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.codehaus.jackson.JsonFactory;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.util.ExternalIdUtil;
@@ -142,11 +143,11 @@ public class CypherProxyController {
     private CypherQueryExecutor findObservationsForInteraction(String sourceTaxonName, String interactionType, String targetTaxonName, Map parameterMap) throws IOException {
         Map<String, String> query_params = EMPTY_PARAMS;
         String query = null;
-        final String DEFAULT_RETURN_LIST = "loc.latitude as latitude," +
-                "loc.longitude as longitude," +
-                "loc.altitude? as altitude," +
-                "study.title," +
-                "collected_rel.dateInUnixEpoch? as collection_time_in_unix_epoch," +
+        final String DEFAULT_RETURN_LIST = "loc.latitude as " + ResultFields.LATITUDE + "," +
+                "loc.longitude as " + ResultFields.LONGITUDE + "," +
+                "loc.altitude? as " + ResultFields.ALTITUDE + "," +
+                "study.title as " + ResultFields.STUDY_TITLE + "," +
+                "collected_rel.dateInUnixEpoch? as " + ResultFields.COLLECTION_TIME_IN_UNIX_EPOCH + "," +
                 "ID(predator) as tmp_and_unique_specimen_id," +
                 "predator.lifeStage? as predator_life_stage," +
                 "prey.lifeStage? as prey_life_stage," +
@@ -160,20 +161,20 @@ public class CypherProxyController {
             query = "START " + getTaxonSelector(sourceTaxonName, targetTaxonName) +
                     OBSERVATION_MATCH +
                     getSpatialWhereClause(parameterMap) +
-                    " RETURN preyTaxon.name as preyName, " +
+                    " RETURN preyTaxon.name as " + ResultFields.PREY_NAME + ", " +
                     DEFAULT_RETURN_LIST +
-                    ",predatorTaxon.name as predatorName" +
-                    ",'" + interactionType + "' as interaction_type";
+                    ",predatorTaxon.name as " + ResultFields.PREDATOR_NAME +
+                    ",'" + interactionType + "' as " + ResultFields.INTERACTION_TYPE;
             query_params = getParams(sourceTaxonName, targetTaxonName);
         } else if (INTERACTION_PREYED_UPON_BY.equals(interactionType)) {
             // note that "preyedUponBy" is interpreted as an inverted "preysOn" relationship
             query = "START " + getTaxonSelector(targetTaxonName, sourceTaxonName) +
                     OBSERVATION_MATCH +
                     getSpatialWhereClause(parameterMap) +
-                    " RETURN predatorTaxon.name as predatorName, " +
+                    " RETURN predatorTaxon.name as " + ResultFields.PREDATOR_NAME + ", " +
                     DEFAULT_RETURN_LIST +
-                    ",preyTaxon.name as preyName" +
-                    ",'" + interactionType + "' as interaction_type"
+                    ",preyTaxon.name as " + ResultFields.PREY_NAME +
+                    ",'" + interactionType + "' as " + ResultFields.INTERACTION_TYPE;
             ;
             query_params = getParams(targetTaxonName, sourceTaxonName);
         }
@@ -187,11 +188,11 @@ public class CypherProxyController {
     private Map<String, String> getParams(String sourceTaxonName, String targetTaxonName) {
         Map<String, String> paramMap = new HashMap<String, String>();
         if (sourceTaxonName != null) {
-            paramMap.put("predatorName", sourceTaxonName);
+            paramMap.put(ResultFields.PREDATOR_NAME, sourceTaxonName);
         }
 
         if (targetTaxonName != null) {
-            paramMap.put("preyName", targetTaxonName);
+            paramMap.put(ResultFields.PREY_NAME, targetTaxonName);
         }
         return paramMap;
     }
@@ -217,8 +218,8 @@ public class CypherProxyController {
     }
 
     private String getTaxonSelector(String sourceTaxonName, String targetTaxonName) {
-        final String sourceTaxonSelector = "predatorTaxon = node:taxons(name={predatorName})";
-        final String targetTaxonSelector = "preyTaxon = node:taxons(name={preyName})";
+        final String sourceTaxonSelector = "predatorTaxon = node:taxons(name={" + ResultFields.PREDATOR_NAME + "})";
+        final String targetTaxonSelector = "preyTaxon = node:taxons(name={" + ResultFields.PREY_NAME + "})";
         StringBuilder builder = new StringBuilder();
         if (sourceTaxonName != null) {
             builder.append(sourceTaxonSelector);
@@ -348,10 +349,17 @@ public class CypherProxyController {
                 result = executeRemote();
             } else if ("csv".equalsIgnoreCase(type)) {
                 result = executeAndTransformToCSV();
+            } else if ("json.v2".equalsIgnoreCase(type)) {
+                result = executeAndTransformToJSONv2();
             } else {
                 throw new IOException("found unsupported return format type request for [" + type + "]");
             }
             return result;
+        }
+
+        private String executeAndTransformToJSONv2() throws IOException {
+            JsonNode jsonNode = execute();
+            return CypherResultFormatter.format(jsonNode);
         }
 
         private String executeRemote() throws IOException {
@@ -364,12 +372,16 @@ public class CypherProxyController {
         }
 
         private String executeAndTransformToCSV() throws IOException {
-            ObjectMapper mapper = new ObjectMapper();
-            JsonNode jsonNode = mapper.readTree(executeRemote());
+            JsonNode jsonNode = execute();
             StringBuilder resultBuilder = new StringBuilder();
             writeArray(jsonNode, resultBuilder, "columns");
             writeArray(jsonNode, resultBuilder, "data");
             return resultBuilder.toString();
+        }
+
+        private JsonNode execute() throws IOException {
+            ObjectMapper mapper = new ObjectMapper();
+            return mapper.readTree(executeRemote());
         }
 
         private void writeArray(JsonNode jsonNode, StringBuilder resultBuilder, String arrayName) {

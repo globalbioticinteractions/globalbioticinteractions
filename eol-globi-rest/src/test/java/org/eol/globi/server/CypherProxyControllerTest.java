@@ -75,11 +75,41 @@ public class CypherProxyControllerTest {
     }
 
     @Test
+    public void findPredatorObservationsCSV() throws IOException, URISyntaxException {
+        HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
+        when(request.getParameterMap()).thenReturn(new HashMap<String, String>() {
+            {
+                put("includeObservations", "true");
+                put("type", "csv");
+            }
+        });
+        when(request.getParameter("type")).thenReturn("csv");
+        when(request.getParameter("includeObservations")).thenReturn("true");
+
+        String list = new CypherProxyController().findObservationsOf(request, "Ariopsis felis", CypherProxyController.INTERACTION_PREYS_ON);
+        assertThat(list, containsString("\"latitude\",\"longitude\""));
+    }
+
+    @Test
+    public void findPredatorObservationsJSONv2() throws IOException, URISyntaxException {
+        HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
+        when(request.getParameter("type")).thenReturn("json.v2");
+        when(request.getParameter("includeObservations")).thenReturn("true");
+
+        String list = new CypherProxyController().findObservationsOf(request, "Ariopsis felis", CypherProxyController.INTERACTION_PREYS_ON);
+        assertThat(list, containsString("stuff"));
+    }
+
+    @Test
     public void findPreyObservations() throws IOException, URISyntaxException {
-        String list = new CypherProxyController().findObservationsOf(null, "Rattus rattus", CypherProxyController.INTERACTION_PREYED_UPON_BY);
+        HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
+        when(request.getParameter("includeObservations")).thenReturn("true");
+
+
+        String list = new CypherProxyController().findObservationsOf(request, "Rattus rattus", CypherProxyController.INTERACTION_PREYED_UPON_BY);
         assertThat(list, is(notNullValue()));
 
-        list = new CypherProxyController().findObservationsOf(null, "Ariopsis felis", CypherProxyController.INTERACTION_PREYED_UPON_BY);
+        list = new CypherProxyController().findObservationsOf(request, "Ariopsis felis", CypherProxyController.INTERACTION_PREYED_UPON_BY);
         assertThat(list, is(notNullValue()));
     }
 
