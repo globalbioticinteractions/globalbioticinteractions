@@ -98,6 +98,19 @@ public class CypherProxyControllerTest {
         when(request.getParameter("includeObservations")).thenReturn("true");
 
         String list = new CypherProxyController().findObservationsOf(request, "Ariopsis felis", CypherProxyController.INTERACTION_PREYS_ON);
+        assertThat(list, allOf(containsString("\"source\":"),
+                containsString("\"target\":"),
+                containsString("\"latitude\":"),
+                containsString("\"longitude\":"),
+                containsString("\"type\":\"preysOn\"")));
+    }
+
+    @Test
+    public void findPreyOfJSONv2() throws IOException, URISyntaxException {
+        HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
+        when(request.getParameter("type")).thenReturn("json.v2");
+
+        String list = new CypherProxyController().findPreyOf(request, "Ariopsis felis", CypherProxyController.INTERACTION_PREYS_ON);
         assertThat(list, allOf(containsString("\"source\":"), containsString("\"target\":"), containsString("\"type\":\"preysOn\"")));
     }
 

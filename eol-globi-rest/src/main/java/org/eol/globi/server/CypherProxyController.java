@@ -79,7 +79,7 @@ public class CypherProxyController {
                     .append(" ")
                     .append(INTERACTION_MATCH);
             addLocationClausesIfNecessary(query, parameterMap);
-            query.append("RETURN distinct(preyTaxon.name) as preyName");
+            query.append("RETURN predatorTaxon.name as " + ResultFields.SOURCE_TAXON_NAME + ", '" + interactionType + "' as " + ResultFields.INTERACTION_TYPE + ", collect(distinct(preyTaxon.name)) as " + ResultFields.TARGET_TAXON_NAME);
             params = getParams(sourceTaxonName, targetTaxonName);
         } else if (INTERACTION_PREYED_UPON_BY.equals(interactionType)) {
             // "preyedUponBy is inverted interaction of "preysOn"
@@ -87,7 +87,7 @@ public class CypherProxyController {
                     .append(" ")
                     .append(INTERACTION_MATCH);
             addLocationClausesIfNecessary(query, parameterMap);
-            query.append("RETURN distinct(predatorTaxon.name) as preyName");
+            query.append("RETURN preyTaxon.name as " + ResultFields.SOURCE_TAXON_NAME + ", '" + interactionType + "' as " + ResultFields.INTERACTION_TYPE + ", collect(distinct(predatorTaxon.name)) as " + ResultFields.TARGET_TAXON_NAME);
             params = getParams(targetTaxonName, sourceTaxonName);
         }
 
