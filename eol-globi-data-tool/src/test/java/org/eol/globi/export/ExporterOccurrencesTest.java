@@ -87,7 +87,7 @@ public class ExporterOccurrencesTest extends GraphDBTestCase {
     @Test
     public void dontExportToCSVSpecimenEmptyStomach() throws NodeFactoryException, IOException {
         Study myStudy = nodeFactory.createStudy("myStudy");
-        Specimen specimen = nodeFactory.createSpecimen("Homo sapiens");
+        Specimen specimen = nodeFactory.createSpecimen("Homo sapiens", "EOL:123");
         myStudy.collected(specimen);
 
         StringWriter row = new StringWriter();
@@ -96,7 +96,7 @@ public class ExporterOccurrencesTest extends GraphDBTestCase {
 
         String expected = "";
         expected += getExpectedHeader();
-        expected += "\nglobi:occur:3,,,,,,,,,,,,,,,,,,,,,,,myStudy";
+        expected += "\nglobi:occur:3,EOL:123,,,,,,,,,,,,,,,,,,,,,,myStudy";
 
         assertThat(row.getBuffer().toString(), equalTo(expected));
     }
