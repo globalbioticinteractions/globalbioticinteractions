@@ -3,6 +3,7 @@ package org.eol.globi.export;
 import org.eol.globi.data.LifeStage;
 import org.eol.globi.domain.BodyPart;
 import org.eol.globi.domain.PhysiologicalState;
+import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.junit.Test;
 import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.Transaction;
@@ -41,7 +42,7 @@ public class ExporterAssociationsTest extends GraphDBTestCase {
 
     private void createTestData(Double length) throws NodeFactoryException, ParseException {
         Study myStudy = nodeFactory.createStudy("myStudy");
-        Specimen specimen = nodeFactory.createSpecimen("Homo sapiens");
+        Specimen specimen = nodeFactory.createSpecimen("Homo sapiens", "EOL:123");
         specimen.setStomachVolumeInMilliLiter(666.0);
         specimen.setLifeStage(LifeStage.JUVENILE);
         specimen.setPhysiologicalState(PhysiologicalState.DIGESTATE);
@@ -54,17 +55,22 @@ public class ExporterAssociationsTest extends GraphDBTestCase {
         } finally {
             transaction.finish();
         }
-        Specimen otherSpecimen = nodeFactory.createSpecimen("Canis lupus");
-        otherSpecimen.setVolumeInMilliLiter(124.0);
-
-        specimen.ate(otherSpecimen);
-        specimen.ate(otherSpecimen);
+        eats(specimen, "Canis lupus", "EOL:456");
+        eats(specimen, "Felis whateverus", PropertyAndValueDictionary.NO_MATCH);
         if (null != length) {
             specimen.setLengthInMm(length);
         }
 
         Location location = nodeFactory.getOrCreateLocation(123.0, 345.9, -60.0);
         specimen.caughtIn(location);
+    }
+
+    private void eats(Specimen specimen, String scientificName, String taxonExternalId) throws NodeFactoryException {
+        Specimen otherSpecimen = nodeFactory.createSpecimen(scientificName, taxonExternalId);
+        otherSpecimen.setVolumeInMilliLiter(124.0);
+
+        specimen.ate(otherSpecimen);
+        specimen.ate(otherSpecimen);
     }
 
 

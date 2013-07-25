@@ -24,26 +24,33 @@ public class ExporterOccurrences extends ExporterOccurrencesBase {
         Iterable<Relationship> specimens = study.getSpecimens();
         for (Relationship collectedRel : specimens) {
             Node specimenNode = collectedRel.getEndNode();
-            Iterable<Relationship> collectedAt = specimenNode.getRelationships(Direction.OUTGOING, RelTypes.COLLECTED_AT);
-            Node locationNode = null;
-            for (Relationship relationship1 : collectedAt) {
-                locationNode = relationship1.getEndNode();
+            if (isSpecimenClassified(specimenNode)) {
+                handleSpecimen(study, writer, collectedRel, specimenNode);
             }
+        }
+    }
 
-            Map<String, String> properties = new HashMap<String, String>();
-            addOccurrenceProperties(locationNode, collectedRel, properties, specimenNode, study);
-            writeProperties(writer, properties);
+    private void handleSpecimen(Study study, Writer writer, Relationship collectedRel, Node specimenNode) throws IOException {
+        Iterable<Relationship> collectedAt = specimenNode.getRelationships(Direction.OUTGOING, RelTypes.COLLECTED_AT);
+        Node locationNode = null;
+        for (Relationship relationship1 : collectedAt) {
+            locationNode = relationship1.getEndNode();
+        }
 
-            Iterable<Relationship> interactRelationships = specimenNode.getRelationships(Direction.OUTGOING, InteractType.ATE, InteractType.HAS_HOST, InteractType.INTERACTS_WITH, InteractType.PARASITE_OF, InteractType.PREYS_UPON);
-            if (interactRelationships.iterator().hasNext()) {
-                for (Relationship interactRel : interactRelationships) {
-                    properties = new HashMap<String, String>();
-                    Node preyNode = interactRel == null ? null : interactRel.getEndNode();
+        Map<String, String> properties = new HashMap<String, String>();
+        addOccurrenceProperties(locationNode, collectedRel, properties, specimenNode, study);
+        writeProperties(writer, properties);
+
+        Iterable<Relationship> interactRelationships = specimenNode.getRelationships(Direction.OUTGOING, InteractType.ATE, InteractType.HAS_HOST, InteractType.INTERACTS_WITH, InteractType.PARASITE_OF, InteractType.PREYS_UPON);
+        if (interactRelationships.iterator().hasNext()) {
+            for (Relationship interactRel : interactRelationships) {
+                properties = new HashMap<String, String>();
+                Node preyNode = interactRel == null ? null : interactRel.getEndNode();
+                if (isSpecimenClassified(preyNode)) {
                     addOccurrenceProperties(locationNode, collectedRel, properties, preyNode, study);
                     writeProperties(writer, properties);
                 }
             }
-
         }
     }
 

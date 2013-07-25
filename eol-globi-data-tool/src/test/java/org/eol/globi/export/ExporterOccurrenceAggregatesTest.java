@@ -6,6 +6,7 @@ import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.domain.BodyPart;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.PhysiologicalState;
+import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.hamcrest.core.Is;
@@ -24,12 +25,12 @@ public class ExporterOccurrenceAggregatesTest extends GraphDBTestCase {
 
     private String getExpectedData() {
         return "\n" +
+                "globi:occur:1-23-ATE,EOL:123,,,,,,,,,,,,,,,,,,,,,,myStudy\n" +
+                "globi:occur:1-23-ATE-5,EOL:555,,,,,,,,,,,,,,,,,,,,,,myStudy\n" +
+                "globi:occur:1-23-ATE-8,EOL:666,,,,,,,,,,,,,,,,,,,,,,myStudy\n" +
                 "globi:occur:1-2-ATE,EOL:333,,,,,,,,,,,,,,,,,,,,,,myStudy\n" +
                 "globi:occur:1-2-ATE-5,EOL:555,,,,,,,,,,,,,,,,,,,,,,myStudy\n" +
-                "globi:occur:1-2-ATE-8,EOL:666,,,,,,,,,,,,,,,,,,,,,,myStudy\n" +
-                "globi:occur:1-18-ATE,EOL:123,,,,,,,,,,,,,,,,,,,,,,myStudy\n" +
-                "globi:occur:1-18-ATE-5,EOL:555,,,,,,,,,,,,,,,,,,,,,,myStudy\n" +
-                "globi:occur:1-18-ATE-8,EOL:666,,,,,,,,,,,,,,,,,,,,,,myStudy";
+                "globi:occur:1-2-ATE-8,EOL:666,,,,,,,,,,,,,,,,,,,,,,myStudy";
     }
 
     private ExporterOccurrencesBase exportOccurrences() {
@@ -64,12 +65,14 @@ public class ExporterOccurrenceAggregatesTest extends GraphDBTestCase {
         specimenEatCatAndDog(length, myStudy, "Homo sapiens", "EOL:333");
         specimenEatCatAndDog(length, myStudy, "Homo erectus", "EOL:123");
         specimenEatCatAndDog(length, myStudy, "Homo erectus", "EOL:123");
+        specimenEatCatAndDog(length, myStudy, "Blo blaaus", PropertyAndValueDictionary.NO_MATCH);
     }
 
     private void specimenEatCatAndDog(Double length, Study myStudy, String scientificName, String externalId) throws NodeFactoryException {
         Specimen specimen = collectSpecimen(myStudy, scientificName, externalId);
         eatPrey(specimen, "Canis lupus", "EOL:555");
         eatPrey(specimen, "Felis domesticus", "EOL:666");
+        eatPrey(specimen, "Blah blahuuuu", PropertyAndValueDictionary.NO_MATCH);
         if (null != length) {
             specimen.setLengthInMm(length);
         }

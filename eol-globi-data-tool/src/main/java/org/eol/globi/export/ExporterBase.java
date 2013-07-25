@@ -1,8 +1,11 @@
 package org.eol.globi.export;
 
+import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
+import org.eol.globi.domain.Taxon;
 import org.eol.globi.util.InteractUtil;
+import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.PropertyContainer;
 import org.neo4j.graphdb.Relationship;
 
@@ -23,6 +26,8 @@ public abstract class ExporterBase extends BaseExporter {
         return "START study = node:studies(title='" + study.getTitle() + "') " +
                 "MATCH study-[:COLLECTED]->sourceSpecimen-[:CLASSIFIED_AS]->sourceTaxon, " +
                 "sourceSpecimen-[r:" + InteractUtil.allInteractionsCypherClause() + "]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon  " +
+                "WHERE sourceTaxon.externalId? <> '" + PropertyAndValueDictionary.NO_MATCH +
+                "' AND targetTaxon.externalId? <> '" + PropertyAndValueDictionary.NO_MATCH + "' " +
                 "RETURN distinct(sourceTaxon) as " + QUERY_PARAM_SOURCE_TAXON +
                 ", type(r) as " + QUERY_PARAM_INTERACTION_TYPE +
                 ", collect(distinct(targetTaxon)) as " + QUERY_PARAM_TARGET_TAXA;

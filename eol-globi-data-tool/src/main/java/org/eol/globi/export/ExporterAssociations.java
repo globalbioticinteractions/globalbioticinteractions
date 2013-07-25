@@ -20,20 +20,35 @@ public class ExporterAssociations extends ExporterAssociationsBase {
         Iterable<Relationship> specimens = study.getSpecimens();
         for (Relationship collectedRel : specimens) {
             Node specimenNode = collectedRel.getEndNode();
+            if (isSpecimenClassified(specimenNode)) {
+                handleSpecimen(study, writer, properties, specimenNode);
+            }
+        }
+    }
 
-            Iterable<Relationship> interactRelationships = specimenNode.getRelationships(Direction.OUTGOING, InteractType.values());
-            if (interactRelationships.iterator().hasNext()) {
-                for (Relationship interactRel : interactRelationships) {
-                    properties.put(EOLDictionary.ASSOCIATION_ID, "globi:assoc:" + interactRel.getId());
-                    properties.put(EOLDictionary.OCCURRENCE_ID, "globi:occur:source:" + specimenNode.getId());
-                    properties.put(EOLDictionary.TARGET_OCCURRENCE_ID, "globi:occur:target:" + interactRel.getEndNode().getId());
-                    properties.put(EOLDictionary.ASSOCIATION_TYPE, interactRel.getType().name());
-                    properties.put(EOLDictionary.SOURCE, study.getTitle());
-                    writeProperties(writer, properties);
-                    properties.clear();
+    private void handleSpecimen(Study study, Writer writer, Map<String, String> properties, Node specimenNode) throws IOException {
+        Iterable<Relationship> interactRelationships = specimenNode.getRelationships(Direction.OUTGOING, InteractType.values());
+        if (interactRelationships.iterator().hasNext()) {
+            for (Relationship interactRel : interactRelationships) {
+                Node targetSpecimen = interactRel.getEndNode();
+
+                if (isSpecimenClassified(targetSpecimen)) {
+                    writeRow(study, writer, properties, specimenNode, interactRel, targetSpecimen);
                 }
             }
         }
+    }
+
+    private void writeRow(Study study, Writer writer, Map<String, String> properties, Node specimenNode, Relationship interactRel, Node targetSpecimen) throws IOException {
+        properties.put(EOLDictionary.ASSOCIATION_ID, "globi:assoc:" + interactRel.getId());
+        properties.put(EOLDictionary.OCCURRENCE_ID, "globi:occur:source:" + specimenNode.getId());
+
+
+        properties.put(EOLDictionary.TARGET_OCCURRENCE_ID, "globi:occur:target:" + targetSpecimen.getId());
+        properties.put(EOLDictionary.ASSOCIATION_TYPE, interactRel.getType().name());
+        properties.put(EOLDictionary.SOURCE, study.getTitle());
+        writeProperties(writer, properties);
+        properties.clear();
     }
 
 }
