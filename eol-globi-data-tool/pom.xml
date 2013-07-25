@@ -20,9 +20,21 @@
         </dependency>
 
         <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>eol-globi-ontology</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
             <groupId>org.apache.jena</groupId>
             <artifactId>jena-core</artifactId>
             <version>2.7.3</version>
+        </dependency>
+
+        <dependency>
+            <groupId>net.sourceforge.owlapi</groupId>
+            <artifactId>owlapi-apibinding</artifactId>
+            <version>3.4.4</version>
         </dependency>
 
         <!-- Bytecode manipulation -->

@@ -12,6 +12,7 @@
     <modules>
         <module>eol-globi-parent</module>
         <module>eol-globi-lib</module>
+        <module>eol-globi-ontology</module>
         <module>eol-globi-data-tool</module>
         <module>eol-globi-rest</module>
     </modules>
