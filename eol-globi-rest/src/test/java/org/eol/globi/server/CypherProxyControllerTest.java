@@ -1,5 +1,6 @@
 package org.eol.globi.server;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -73,6 +74,23 @@ public class CypherProxyControllerTest {
         assertThat(list, is(notNullValue()));
         list = new CypherProxyController().findObservationsOf(null, "Rattus rattus", CypherProxyController.INTERACTION_PREYS_ON);
         assertThat(list, is(notNullValue()));
+    }
+
+    @Test
+    public void findPredatorDistinctCSV() throws IOException, URISyntaxException {
+        HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
+        when(request.getParameter("type")).thenReturn("csv");
+
+        String list = new CypherProxyController().findPreyOf(request, "Ariopsis felis", CypherProxyController.INTERACTION_PREYS_ON);
+        String[] rows = list.split("\n");
+        String[] rows_no_header = ArrayUtils.remove(rows, 0);
+        assertThat(rows_no_header.length > 0, is(true));
+
+        for (String row : rows_no_header) {
+            String[] columns = row.split("\",");
+            assertThat(columns[0], is("\"Ariopsis felis"));
+            assertThat(columns.length, is(3));
+        }
     }
 
     @Test
