@@ -15,8 +15,8 @@ import java.util.TimeZone;
 
 public abstract class ExporterBase extends BaseExporter {
 
-    public static final String QUERY_PARAM_SOURCE_TAXON = "predatorTaxon";
-    public static final String QUERY_PARAM_TARGET_TAXA = "preyTaxa";
+    public static final String QUERY_PARAM_SOURCE_TAXON = "sourceTaxon";
+    public static final String QUERY_PARAM_TARGET_TAXA = "targetTaxa";
     public static final String QUERY_PARAM_INTERACTION_TYPE = "interactionType";
 
     protected static String getQueryForDistinctTargetTaxaForPreyBySourceTaxa(Study study) {

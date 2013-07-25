@@ -8,6 +8,7 @@ import org.eol.globi.domain.Location;
 import org.eol.globi.domain.PhysiologicalState;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
+import org.hamcrest.core.Is;
 import org.junit.Test;
 import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.Transaction;
@@ -22,8 +23,13 @@ import static org.junit.Assert.assertThat;
 public class ExporterOccurrenceAggregatesTest extends GraphDBTestCase {
 
     private String getExpectedData() {
-        return "\nglobi:occur:1-2-ATE-5,EOL:327955,,,,,,,,,,,,,,,,,,,,,,myStudy\n" +
-                "globi:occur:1-2-ATE,EOL:328607,,,,,,,,,,,,,,,,,,,,,,myStudy";
+        return "\n" +
+                "globi:occur:1-2-ATE,EOL:333,,,,,,,,,,,,,,,,,,,,,,myStudy\n" +
+                "globi:occur:1-2-ATE-5,EOL:555,,,,,,,,,,,,,,,,,,,,,,myStudy\n" +
+                "globi:occur:1-2-ATE-8,EOL:666,,,,,,,,,,,,,,,,,,,,,,myStudy\n" +
+                "globi:occur:1-18-ATE,EOL:123,,,,,,,,,,,,,,,,,,,,,,myStudy\n" +
+                "globi:occur:1-18-ATE-5,EOL:555,,,,,,,,,,,,,,,,,,,,,,myStudy\n" +
+                "globi:occur:1-18-ATE-8,EOL:666,,,,,,,,,,,,,,,,,,,,,,myStudy";
     }
 
     private ExporterOccurrencesBase exportOccurrences() {
@@ -33,8 +39,7 @@ public class ExporterOccurrenceAggregatesTest extends GraphDBTestCase {
     @Test
     public void exportToCSVNoHeader() throws NodeFactoryException, IOException, ParseException {
         createTestData(123.0);
-        String expected = "";
-        expected += getExpectedData();
+
 
         Study myStudy1 = nodeFactory.findStudy("myStudy");
 
@@ -42,14 +47,39 @@ public class ExporterOccurrenceAggregatesTest extends GraphDBTestCase {
 
         exportOccurrences().exportStudy(myStudy1, row, false);
 
-        assertThat(row.getBuffer().toString(), equalTo(expected));
+        String expectedData = getExpectedData();
+
+        int linesPerHeader = 1;
+        int numberOfExpectedDistinctSourceTargetInteractions = 6;
+        String actualData = row.getBuffer().toString();
+        assertThat(actualData, equalTo(expectedData));
+        assertThat(actualData.split("\n").length, Is.is(linesPerHeader + numberOfExpectedDistinctSourceTargetInteractions));
 
     }
 
 
     private void createTestData(Double length) throws NodeFactoryException, ParseException {
         Study myStudy = nodeFactory.createStudy("myStudy");
-        Specimen specimen = nodeFactory.createSpecimen("Homo sapiens", "EOL:327955");
+        specimenEatCatAndDog(length, myStudy, "Homo sapiens", "EOL:333");
+        specimenEatCatAndDog(length, myStudy, "Homo sapiens", "EOL:333");
+        specimenEatCatAndDog(length, myStudy, "Homo erectus", "EOL:123");
+        specimenEatCatAndDog(length, myStudy, "Homo erectus", "EOL:123");
+    }
+
+    private void specimenEatCatAndDog(Double length, Study myStudy, String scientificName, String externalId) throws NodeFactoryException {
+        Specimen specimen = collectSpecimen(myStudy, scientificName, externalId);
+        eatPrey(specimen, "Canis lupus", "EOL:555");
+        eatPrey(specimen, "Felis domesticus", "EOL:666");
+        if (null != length) {
+            specimen.setLengthInMm(length);
+        }
+
+        Location location = nodeFactory.getOrCreateLocation(123.0, 345.9, -60.0);
+        specimen.caughtIn(location);
+    }
+
+    private Specimen collectSpecimen(Study myStudy, String scientificName, String externalId) throws NodeFactoryException {
+        Specimen specimen = nodeFactory.createSpecimen(scientificName, externalId);
         specimen.setStomachVolumeInMilliLiter(666.0);
         specimen.setLifeStage(LifeStage.JUVENILE);
         specimen.setPhysiologicalState(PhysiologicalState.DIGESTATE);
@@ -62,18 +92,11 @@ public class ExporterOccurrenceAggregatesTest extends GraphDBTestCase {
         } finally {
             transaction.finish();
         }
-        eatWolf(specimen);
-        eatWolf(specimen);
-        if (null != length) {
-            specimen.setLengthInMm(length);
-        }
-
-        Location location = nodeFactory.getOrCreateLocation(123.0, 345.9, -60.0);
-        specimen.caughtIn(location);
+        return specimen;
     }
 
-    private Specimen eatWolf(Specimen specimen) throws NodeFactoryException {
-        Specimen otherSpecimen = nodeFactory.createSpecimen("Canis lupus", "EOL:328607");
+    private Specimen eatPrey(Specimen specimen, String scientificName, String externalId) throws NodeFactoryException {
+        Specimen otherSpecimen = nodeFactory.createSpecimen(scientificName, externalId);
         otherSpecimen.setVolumeInMilliLiter(124.0);
         specimen.ate(otherSpecimen);
         return otherSpecimen;

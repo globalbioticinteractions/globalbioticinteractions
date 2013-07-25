@@ -24,17 +24,17 @@ public class ExporterAssociationAggregates extends ExporterAssociationsBase {
     }
 
     private void populateRow(Study study, Writer writer, Map<String, String> properties, Map<String, Object> result) throws IOException {
-        Node predatorTaxon = (Node) result.get(QUERY_PARAM_SOURCE_TAXON);
-        JavaConversions.SeqWrapper<Node> preyTaxa = (JavaConversions.SeqWrapper<Node>) result.get(QUERY_PARAM_TARGET_TAXA);
-        String relationshipType = (String) result.get(QUERY_PARAM_INTERACTION_TYPE);
+        Node sourceTaxon = (Node) result.get(QUERY_PARAM_SOURCE_TAXON);
+        JavaConversions.SeqWrapper<Node> targetTaxa = (JavaConversions.SeqWrapper<Node>) result.get(QUERY_PARAM_TARGET_TAXA);
+        String interactionType = (String) result.get(QUERY_PARAM_INTERACTION_TYPE);
 
-        for (Node preyTaxon : preyTaxa) {
-            String assocId = study.getUnderlyingNode().getId() + "-" + predatorTaxon.getId() + "-" + relationshipType + "-" + preyTaxon.getId();
-            properties.put(EOLDictionary.ASSOCIATION_ID, "globi:assoc:" + assocId);
-            String sourceOccurrenceId = study.getUnderlyingNode().getId() + "-" + predatorTaxon.getId() + "-" + relationshipType;
+        for (Node preyTaxon : targetTaxa) {
+            String sourceOccurrenceId = study.getUnderlyingNode().getId() + "-" + sourceTaxon.getId() + "-" + interactionType;
+            String assocIdAndTargetOccurrenceIdId = sourceOccurrenceId + "-" + preyTaxon.getId();
+            properties.put(EOLDictionary.ASSOCIATION_ID, "globi:assoc:" + assocIdAndTargetOccurrenceIdId);
             properties.put(EOLDictionary.OCCURRENCE_ID, "globi:occur:source:" + sourceOccurrenceId);
-            properties.put(EOLDictionary.TARGET_OCCURRENCE_ID, "globi:occur:target:" + assocId);
-            properties.put(EOLDictionary.ASSOCIATION_TYPE, relationshipType);
+            properties.put(EOLDictionary.TARGET_OCCURRENCE_ID, "globi:occur:target:" + assocIdAndTargetOccurrenceIdId);
+            properties.put(EOLDictionary.ASSOCIATION_TYPE, interactionType);
             properties.put(EOLDictionary.SOURCE, study.getTitle());
             writeProperties(writer, properties);
             properties.clear();

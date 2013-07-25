@@ -24,15 +24,16 @@ public class ExporterOccurrenceAggregates extends ExporterOccurrencesBase {
     }
 
     private void populateRow(Study study, Writer writer, Map<String, String> properties, Map<String, Object> result) throws IOException {
-        Node predatorTaxon = (Node) result.get(QUERY_PARAM_SOURCE_TAXON);
-        JavaConversions.SeqWrapper<Node> preyTaxa = (JavaConversions.SeqWrapper<Node>) result.get(QUERY_PARAM_TARGET_TAXA);
+        Node sourceTaxon = (Node) result.get(QUERY_PARAM_SOURCE_TAXON);
+        JavaConversions.SeqWrapper<Node> targetTaxa = (JavaConversions.SeqWrapper<Node>) result.get(QUERY_PARAM_TARGET_TAXA);
         String relationshipType = (String) result.get(QUERY_PARAM_INTERACTION_TYPE);
 
-        for (Node preyTaxon : preyTaxa) {
-            String sourceOccurrenceId = study.getUnderlyingNode().getId() + "-" + predatorTaxon.getId() + "-" + relationshipType + "-" + preyTaxon.getId();
-            writeRow(study, writer, properties, predatorTaxon, sourceOccurrenceId);
-            String targetOccurrenceId = study.getUnderlyingNode().getId() + "-" + predatorTaxon.getId() + "-" + relationshipType;
-            writeRow(study, writer, properties, preyTaxon, targetOccurrenceId);
+        String sourceOccurrenceId = study.getUnderlyingNode().getId() + "-" + sourceTaxon.getId() + "-" + relationshipType;
+        writeRow(study, writer, properties, sourceTaxon, sourceOccurrenceId);
+
+        for (Node targetTaxon : targetTaxa) {
+            String targetOccurrenceId = sourceOccurrenceId + "-" + targetTaxon.getId();
+            writeRow(study, writer, properties, targetTaxon, targetOccurrenceId);
         }
     }
 
