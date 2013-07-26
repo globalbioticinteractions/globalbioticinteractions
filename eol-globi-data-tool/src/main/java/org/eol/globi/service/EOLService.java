@@ -1,5 +1,7 @@
 package org.eol.globi.service;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.HttpResponseException;
@@ -17,6 +19,8 @@ import java.net.URISyntaxException;
 
 public class EOLService extends BaseExternalIdService {
 
+    private static final Log LOG = LogFactory.getLog(EOLService.class);
+
     @Override
     public boolean canLookupProperty(String propertyName) {
         return super.canLookupProperty(propertyName) || Taxon.PATH.equals(propertyName);
@@ -24,7 +28,7 @@ public class EOLService extends BaseExternalIdService {
 
     @Override
     public String lookupLSIDByTaxonName(String taxonName) throws TaxonPropertyLookupServiceException {
-        String pageId;
+        Long pageId;
 
         try {
             URI uri = new URI("http", null, "eol.org", 80, "/api/search/1.0/" + taxonName, "exact=true", null);
@@ -110,23 +114,17 @@ public class EOLService extends BaseExternalIdService {
         }
     }
 
-    private String getPageId(URI uri, boolean shouldFollowAlternate) throws TaxonPropertyLookupServiceException, URISyntaxException {
+    private Long getPageId(URI uri, boolean shouldFollowAlternate) throws TaxonPropertyLookupServiceException, URISyntaxException {
         String response = getResponse(uri);
 
 
-        String pageId = null;
+        Long smallestPageId = null;
 
         if (response != null) {
             // pick first of non empty result, assuming that exact match parameter is yielding a valid result
             if (!response.contains("totalResults>0<")) {
-                String[] strings = response.split("<entry>");
-                if (strings.length > 1) {
-                    String[] anotherSplit = strings[1].split("<id>");
-                    if (anotherSplit.length > 1) {
-                        String[] yetAnotherSplit = anotherSplit[1].split("</id>");
-                        pageId = yetAnotherSplit.length > 1 ? yetAnotherSplit[0].trim() : null;
-                    }
-                }
+                smallestPageId = findSmallestPageId(response);
+
             } else if (shouldFollowAlternate) {
                 String[] alternates = response.split("<link rel=\"alternate\" href=\"");
                 if (alternates.length > 1) {
@@ -134,14 +132,14 @@ public class EOLService extends BaseExternalIdService {
                     if (urlSplit.length > 1) {
                         String alternateUrlString = urlSplit[0];
                         URI alternateUri = new URI(alternateUrlString);
-                        pageId = getPageId(alternateUri, false);
+                        smallestPageId = getPageId(alternateUri, false);
                     }
 
                 }
 
             }
         }
-        return pageId;
+        return smallestPageId;
     }
 
     private String getResponse(URI uri) throws TaxonPropertyLookupServiceException {
@@ -165,4 +163,20 @@ public class EOLService extends BaseExternalIdService {
         return response;
     }
 
+    protected Long findSmallestPageId(String response) {
+        Long smallestPageId = null;
+        String[] entries = response.split("<entry>");
+        for (int i = 1; i < entries.length; i++) {
+            String[] anotherSplit = entries[i].split("<id>");
+            if (anotherSplit.length > 1) {
+                String[] yetAnotherSplit = anotherSplit[1].split("</id>");
+                String pageId = yetAnotherSplit.length > 1 ? yetAnotherSplit[0].trim() : null;
+                if (pageId != null) {
+                    long pageIdNumber = Long.parseLong(pageId);
+                    smallestPageId = (smallestPageId == null || smallestPageId > pageIdNumber) ? pageIdNumber : smallestPageId;
+                }
+            }
+        }
+        return smallestPageId;
+    }
 }
