@@ -18,20 +18,20 @@ import java.util.Map;
 public class CypherProxyController {
 
     public static final String OBSERVATION_MATCH =
-            "MATCH (predatorTaxon)<-[:CLASSIFIED_AS]-(predator)-[:ATE]->(prey)-[:CLASSIFIED_AS]->(preyTaxon)," +
-                    "(predator)-[:COLLECTED_AT]->(loc)," +
-                    "(predator)<-[collected_rel:COLLECTED]-(study) ";
+            "MATCH (sourceTaxon)<-[:CLASSIFIED_AS]-(sourceSpecimen)-[:ATE]->(targetSpecimen)-[:CLASSIFIED_AS]->(targetTaxon)," +
+                    "(sourceSpecimen)-[:COLLECTED_AT]->(loc)," +
+                    "(sourceSpecimen)<-[collected_rel:COLLECTED]-(study) ";
 
     public static final String INTERACTION_PREYS_ON = "preysOn";
     public static final String INTERACTION_PREYED_UPON_BY = "preyedUponBy";
 
-    public static final String INTERACTION_MATCH = "MATCH predatorTaxon<-[:CLASSIFIED_AS]-predator-[:ATE]->prey-[:CLASSIFIED_AS]->preyTaxon ";
+    public static final String INTERACTION_MATCH = "MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen-[:ATE]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon ";
     public static final String JSON_CYPHER_WRAPPER_PREFIX = "{\"query\":\"";
 
     private static final Map<String, String> EMPTY_PARAMS = new HashMap<String, String>();
 
     private void addLocationClausesIfNecessary(StringBuilder query, Map parameterMap) {
-        query.append(" , predator-[:COLLECTED_AT]->loc ");
+        query.append(" , sourceSpecimen-[:COLLECTED_AT]->loc ");
         query.append(parameterMap == null ? "" : RequestHelper.buildCypherSpatialWhereClause(parameterMap));
     }
 
@@ -46,11 +46,15 @@ public class CypherProxyController {
     public String findInteractions(HttpServletRequest request) throws IOException {
         StringBuilder query = new StringBuilder();
         query.append("START loc = node:locations('*:*') ")
-                .append("MATCH predatorTaxon<-[:CLASSIFIED_AS]-predator-[interactionType:")
+                .append("MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen-[interactionType:")
                 .append(InteractUtil.allInteractionsCypherClause())
-                .append("]->prey-[:CLASSIFIED_AS]->preyTaxon ");
+                .append("]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon ");
         addLocationClausesIfNecessary(query, request.getParameterMap());
-        query.append("RETURN predatorTaxon.externalId, predatorTaxon.name as predatorName, type(interactionType), preyTaxon.externalId, preyTaxon.name as preyTaxon");
+        query.append("RETURN sourceTaxon.externalId as ").append(ResultFields.SOURCE_TAXON_EXTERNAL_ID)
+                .append(",sourceTaxon.name as ").append(ResultFields.SOURCE_TAXON_NAME)
+                .append(",type(interactionType) as ").append(ResultFields.INTERACTION_TYPE)
+                .append(",targetTaxon.externalId as ").append(ResultFields.TARGET_TAXON_EXTERNAL_ID)
+                .append(",targetTaxon.name as ").append(ResultFields.TARGET_TAXON_NAME);
         return new CypherQueryExecutor(query.toString(), null).execute(request);
     }
 
@@ -79,7 +83,7 @@ public class CypherProxyController {
                     .append(" ")
                     .append(INTERACTION_MATCH);
             addLocationClausesIfNecessary(query, parameterMap);
-            query.append("RETURN predatorTaxon.name as " + ResultFields.SOURCE_TAXON_NAME + ", '" + interactionType + "' as " + ResultFields.INTERACTION_TYPE + ", collect(distinct(preyTaxon.name)) as " + ResultFields.TARGET_TAXON_NAME);
+            query.append("RETURN sourceTaxon.name as " + ResultFields.SOURCE_TAXON_NAME + ", '" + interactionType + "' as " + ResultFields.INTERACTION_TYPE + ", collect(distinct(targetTaxon.name)) as " + ResultFields.TARGET_TAXON_NAME);
             params = getParams(sourceTaxonName, targetTaxonName);
         } else if (INTERACTION_PREYED_UPON_BY.equals(interactionType)) {
             // "preyedUponBy is inverted interaction of "preysOn"
@@ -87,7 +91,7 @@ public class CypherProxyController {
                     .append(" ")
                     .append(INTERACTION_MATCH);
             addLocationClausesIfNecessary(query, parameterMap);
-            query.append("RETURN preyTaxon.name as " + ResultFields.SOURCE_TAXON_NAME + ", '" + interactionType + "' as " + ResultFields.INTERACTION_TYPE + ", collect(distinct(predatorTaxon.name)) as " + ResultFields.TARGET_TAXON_NAME);
+            query.append("RETURN targetTaxon.name as " + ResultFields.SOURCE_TAXON_NAME + ", '" + interactionType + "' as " + ResultFields.INTERACTION_TYPE + ", collect(distinct(sourceTaxon.name)) as " + ResultFields.TARGET_TAXON_NAME);
             params = getParams(targetTaxonName, sourceTaxonName);
         }
 
@@ -134,64 +138,73 @@ public class CypherProxyController {
 
     private CypherQueryExecutor findObservationsForInteraction(String sourceTaxonName, String interactionType, String targetTaxonName, Map parameterMap) throws IOException {
         Map<String, String> query_params = EMPTY_PARAMS;
-        String query = null;
-        final String DEFAULT_RETURN_LIST = "loc.latitude as " + ResultFields.LATITUDE + "," +
-                "loc.longitude as " + ResultFields.LONGITUDE + "," +
-                "loc.altitude? as " + ResultFields.ALTITUDE + "," +
-                "study.title as " + ResultFields.STUDY_TITLE + "," +
-                "collected_rel.dateInUnixEpoch? as " + ResultFields.COLLECTION_TIME_IN_UNIX_EPOCH + "," +
-                "ID(predator) as tmp_and_unique_specimen_id," +
-                "predator.lifeStage? as predator_life_stage," +
-                "prey.lifeStage? as prey_life_stage," +
-                "predator.bodyPart? as predator_body_part," +
-                "prey.bodyPart? as prey_body_part," +
-                "predator.physiologicalState? as predator_physiological_state," +
-                "prey.physiologicalState? as prey_physiological_state";
+        StringBuilder query = new StringBuilder();
+        boolean isInvertedInteraction = INTERACTION_PREYED_UPON_BY.equals(interactionType);
+
+        String predatorPrefix = isInvertedInteraction ? ResultFields.PREFIX_SOURCE_SPECIMEN : ResultFields.PREFIX_TARGET_SPECIMEN;
+        String preyPrefix = isInvertedInteraction ? ResultFields.PREFIX_TARGET_SPECIMEN : ResultFields.PREFIX_SOURCE_SPECIMEN;
+
+        final StringBuilder returnClause = new StringBuilder();
+        returnClause.append("loc.latitude as ").append(ResultFields.LATITUDE)
+                .append(",loc.longitude as ").append(ResultFields.LONGITUDE)
+                .append(",loc.altitude? as ").append(ResultFields.ALTITUDE)
+                .append(",study.title as ").append(ResultFields.STUDY_TITLE)
+                .append(",collected_rel.dateInUnixEpoch? as ").append(ResultFields.COLLECTION_TIME_IN_UNIX_EPOCH)
+                .append(",ID(sourceSpecimen) as tmp_and_unique_")
+                .append(predatorPrefix).append("_id,")
+                .append("ID(targetSpecimen) as tmp_and_unique_")
+                .append(preyPrefix).append("_id,")
+                .append("sourceSpecimen.lifeStage? as ").append(predatorPrefix).append(ResultFields.SUFFIX_LIFE_STAGE).append(",")
+                .append("targetSpecimen.lifeStage? as ").append(preyPrefix).append(ResultFields.SUFFIX_LIFE_STAGE).append(",")
+                .append("sourceSpecimen.bodyPart? as ").append(predatorPrefix).append(ResultFields.SUFFIX_BODY_PART).append(",")
+                .append("targetSpecimen.bodyPart? as ").append(preyPrefix).append(ResultFields.SUFFIX_BODY_PART).append(",")
+                .append("sourceSpecimen.physiologicalState? as ").append(predatorPrefix).append(ResultFields.SUFFIX_PHYSIOLOGICAL_STATE).append(",")
+                .append("targetSpecimen.physiologicalState? as ").append(preyPrefix).append(ResultFields.SUFFIX_PHYSIOLOGICAL_STATE);
 
 
         if (INTERACTION_PREYS_ON.equals(interactionType)) {
-            query = "START " + getTaxonSelector(sourceTaxonName, targetTaxonName) + " " +
-                    OBSERVATION_MATCH +
-                    getSpatialWhereClause(parameterMap) +
-                    " RETURN preyTaxon.name as " + ResultFields.TARGET_TAXON_NAME + ", " +
-                    DEFAULT_RETURN_LIST +
-                    ",predatorTaxon.name as " + ResultFields.SOURCE_TAXON_NAME +
-                    ",'" + interactionType + "' as " + ResultFields.INTERACTION_TYPE;
+            query.append("START ").append(getTaxonSelector(sourceTaxonName, targetTaxonName)).append(" ")
+                    .append(OBSERVATION_MATCH)
+                    .append(getSpatialWhereClause(parameterMap))
+                    .append(" RETURN ")
+                    .append("sourceTaxon.name as ").append(ResultFields.SOURCE_TAXON_NAME)
+                    .append(",'").append(interactionType).append("' as ").append(ResultFields.INTERACTION_TYPE)
+                    .append(",targetTaxon.name as ").append(ResultFields.TARGET_TAXON_NAME).append(", ")
+                    .append(returnClause);
             query_params = getParams(sourceTaxonName, targetTaxonName);
-        } else if (INTERACTION_PREYED_UPON_BY.equals(interactionType)) {
+        } else if (isInvertedInteraction) {
             // note that "preyedUponBy" is interpreted as an inverted "preysOn" relationship
-            query = "START " + getTaxonSelector(targetTaxonName, sourceTaxonName) + " " +
-                    OBSERVATION_MATCH +
-                    getSpatialWhereClause(parameterMap) +
-                    " RETURN predatorTaxon.name as " + ResultFields.TARGET_TAXON_NAME + ", " +
-                    DEFAULT_RETURN_LIST +
-                    ",preyTaxon.name as " + ResultFields.SOURCE_TAXON_NAME +
-                    ",'" + interactionType + "' as " + ResultFields.INTERACTION_TYPE;
-            ;
+            query.append("START ").append(getTaxonSelector(targetTaxonName, sourceTaxonName)).append(" ")
+                    .append(OBSERVATION_MATCH)
+                    .append(getSpatialWhereClause(parameterMap))
+                    .append(" RETURN ")
+                    .append("targetTaxon.name as ").append(ResultFields.SOURCE_TAXON_NAME)
+                    .append(",'").append(interactionType).append("' as ").append(ResultFields.INTERACTION_TYPE)
+                    .append(",sourceTaxon.name as ").append(ResultFields.TARGET_TAXON_NAME).append(", ")
+                    .append(returnClause);
             query_params = getParams(targetTaxonName, sourceTaxonName);
-        }
-        if (query == null) {
+        } else {
             throw new IllegalArgumentException("unsupported interaction type [" + interactionType + "]");
         }
 
-        return new CypherQueryExecutor(query, query_params);
+        return new CypherQueryExecutor(query.toString(), query_params);
     }
 
     private Map<String, String> getParams(String sourceTaxonName, String targetTaxonName) {
         Map<String, String> paramMap = new HashMap<String, String>();
         if (sourceTaxonName != null) {
-            paramMap.put(ResultFields.PREDATOR_NAME, sourceTaxonName);
+            paramMap.put(ResultFields.SOURCE_TAXON_NAME, sourceTaxonName);
         }
 
         if (targetTaxonName != null) {
-            paramMap.put(ResultFields.PREY_NAME, targetTaxonName);
+            paramMap.put(ResultFields.TARGET_TAXON_NAME, targetTaxonName);
         }
         return paramMap;
     }
 
     private String getTaxonSelector(String sourceTaxonName, String targetTaxonName) {
-        final String sourceTaxonSelector = "predatorTaxon = node:taxons(name={" + ResultFields.PREDATOR_NAME + "})";
-        final String targetTaxonSelector = "preyTaxon = node:taxons(name={" + ResultFields.PREY_NAME + "})";
+        final String sourceTaxonSelector = "sourceTaxon = node:taxons(name={" + ResultFields.SOURCE_TAXON_NAME + "})";
+        final String targetTaxonSelector = "targetTaxon = node:taxons(name={" + ResultFields.TARGET_TAXON_NAME + "})";
         StringBuilder builder = new StringBuilder();
         if (sourceTaxonName != null) {
             builder.append(sourceTaxonSelector);
@@ -231,7 +244,7 @@ public class CypherProxyController {
     @Cacheable(value = "contributorCache")
     public String contributors() throws IOException {
         String cypherQuery = "START study=node:studies('*:*')" +
-                " MATCH study-[:COLLECTED]->sourceSpecimen-[interact:" + InteractUtil.allInteractionsCypherClause() + "]->prey-[:CLASSIFIED_AS]->targetTaxon, sourceSpecimen-[:CLASSIFIED_AS]->sourceTaxon " +
+                " MATCH study-[:COLLECTED]->sourceSpecimen-[interact:" + InteractUtil.allInteractionsCypherClause() + "]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon, sourceSpecimen-[:CLASSIFIED_AS]->sourceTaxon " +
                 " RETURN study.institution, study.period, study.description, study.contributor, count(interact), count(distinct(sourceTaxon)), count(distinct(targetTaxon))";
         return new CypherQueryExecutor(cypherQuery, EMPTY_PARAMS).execute(null);
     }
