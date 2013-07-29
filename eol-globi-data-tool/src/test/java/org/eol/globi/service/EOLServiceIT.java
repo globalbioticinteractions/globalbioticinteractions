@@ -147,7 +147,7 @@ public class EOLServiceIT {
     @Test
     public void lookupTaxonPathByLSID() throws TaxonPropertyLookupServiceException {
         String rank = new EOLService().lookupTaxonPathByLSID("EOL:1045608");
-        assertThat(rank, Is.is("Animalia Arthropoda Insecta Hymenoptera Apoidea Apidae Apis"));
+        assertThat(rank, Is.is("Animalia Arthropoda Insecta Hymenoptera Apoidea Apidae Apis Apis mellifera"));
     }
 
     @Test
@@ -159,7 +159,7 @@ public class EOLServiceIT {
     @Test
     public void lookupTaxonPathByScientificName() throws TaxonPropertyLookupServiceException {
         String taxonRank = new EOLService().lookupPropertyValueByTaxonName("Homo sapiens", Taxon.PATH);
-        assertThat(taxonRank, Is.is("Animalia Chordata Vertebrata Mammalia Theria Eutheria Primates Hominidae Homo"
+        assertThat(taxonRank, Is.is("Animalia Chordata Vertebrata Mammalia Theria Eutheria Primates Hominidae Homo Homo sapiens"
         ));
     }
 

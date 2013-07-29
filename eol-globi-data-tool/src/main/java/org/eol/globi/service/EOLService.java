@@ -1,5 +1,6 @@
 package org.eol.globi.service;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.client.ClientProtocolException;
@@ -96,22 +97,39 @@ public class EOLService extends BaseExternalIdService {
         uri = new URI("http", null, "eol.org", 80, "/api/hierarchy_entries/1.0/" + firstConceptId, ".json?common_names=false&synonyms=false&format=json", null);
         response = getResponse(uri);
         if (response != null) {
-            mapper = new ObjectMapper();
-            node = mapper.readTree(response);
-            JsonNode ancestors = node.get("ancestors");
-
-            boolean isFirst = true;
-            for (JsonNode ancestor : ancestors) {
-                if (ancestor.has("scientificName")) {
-                    if (!isFirst) {
-                        ranks.append(" ");
-                    }
-                    String scientificName = ancestor.get("scientificName").getTextValue();
-                    ranks.append(scientificName.split(" ")[0]);
-                    isFirst = false;
-                }
-            }
+            parseResponse(ranks, response);
         }
+    }
+
+    protected void parseResponse(StringBuilder ranks, String response) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode node = mapper.readTree(response);
+        JsonNode ancestors = node.get("ancestors");
+
+        boolean isFirst = true;
+        for (JsonNode ancestor : ancestors) {
+            isFirst = parseTaxonNode(ranks, isFirst, ancestor);
+        }
+
+        parseTaxonNode(ranks, isFirst, node);
+    }
+
+    private boolean parseTaxonNode(StringBuilder ranks, boolean first, JsonNode ancestor) {
+        if (ancestor.has("scientificName")) {
+            if (!first) {
+                ranks.append(" ");
+            }
+            String scientificName = ancestor.get("scientificName").getTextValue();
+            String[] split = scientificName.split(" ");
+            ranks.append(split[0]);
+            if (split.length > 1 && ancestor.has("taxonRank") && "Species".equals(ancestor.get("taxonRank").getTextValue())) {
+                ranks.append(" ");
+                ranks.append(split[1]);
+            }
+
+            first = false;
+        }
+        return first;
     }
 
     private Long getPageId(URI uri, boolean shouldFollowAlternate) throws TaxonPropertyLookupServiceException, URISyntaxException {
