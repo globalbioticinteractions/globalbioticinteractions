@@ -25,20 +25,20 @@ public class ExporterOccurrenceAggregates extends ExporterOccurrencesBase {
 
     private void populateRow(Study study, Writer writer, Map<String, String> properties, Map<String, Object> result) throws IOException {
         Node sourceTaxon = (Node) result.get(QUERY_PARAM_SOURCE_TAXON);
-        JavaConversions.SeqWrapper<Node> targetTaxa = (JavaConversions.SeqWrapper<Node>) result.get(QUERY_PARAM_TARGET_TAXA);
         String relationshipType = (String) result.get(QUERY_PARAM_INTERACTION_TYPE);
 
         String sourceOccurrenceId = study.getUnderlyingNode().getId() + "-" + sourceTaxon.getId() + "-" + relationshipType;
-        writeRow(study, writer, properties, sourceTaxon, sourceOccurrenceId);
+        writeRow(study, writer, properties, sourceTaxon, "globi:occur:source:" + sourceOccurrenceId);
 
+        JavaConversions.SeqWrapper<Node> targetTaxa = (JavaConversions.SeqWrapper<Node>) result.get(QUERY_PARAM_TARGET_TAXA);
         for (Node targetTaxon : targetTaxa) {
             String targetOccurrenceId = sourceOccurrenceId + "-" + targetTaxon.getId();
-            writeRow(study, writer, properties, targetTaxon, targetOccurrenceId);
+            writeRow(study, writer, properties, targetTaxon, "globi:occur:target:" + targetOccurrenceId);
         }
     }
 
-    private void writeRow(Study study, Writer writer, Map<String, String> properties, Node taxon, String occurrenceId) throws IOException {
-        properties.put(EOLDictionary.OCCURRENCE_ID, "globi:occur:" + occurrenceId);
+    private void writeRow(Study study, Writer writer, Map<String, String> properties, Node taxon, String idPrefix) throws IOException {
+        properties.put(EOLDictionary.OCCURRENCE_ID, idPrefix);
         properties.put(EOLDictionary.TAXON_ID, (String) taxon.getProperty("externalId"));
         addProperty(properties, study.getUnderlyingNode(), Study.TITLE, EOLDictionary.EVENT_ID);
         writeProperties(writer, properties);
