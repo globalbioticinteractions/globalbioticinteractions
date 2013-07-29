@@ -1,8 +1,5 @@
 package org.eol.globi.service;
 
-import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.HttpResponseException;
@@ -19,8 +16,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 public class EOLService extends BaseExternalIdService {
-
-    private static final Log LOG = LogFactory.getLog(EOLService.class);
 
     @Override
     public boolean canLookupProperty(String propertyName) {
