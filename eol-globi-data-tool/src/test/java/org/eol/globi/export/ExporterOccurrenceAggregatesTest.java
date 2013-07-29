@@ -65,6 +65,8 @@ public class ExporterOccurrenceAggregatesTest extends GraphDBTestCase {
         specimenEatCatAndDog(length, myStudy, "Homo sapiens", "EOL:333");
         specimenEatCatAndDog(length, myStudy, "Homo erectus", "EOL:123");
         specimenEatCatAndDog(length, myStudy, "Homo erectus", "EOL:123");
+        specimenEatCatAndDog(length, nodeFactory.createStudy("yourStudy"), "Homo erectus", "EOL:888");
+        specimenEatCatAndDog(length, nodeFactory.createStudy("yourStudy2"), "Homo erectus", "EOL:888");
         specimenEatCatAndDog(length, myStudy, "Blo blaaus", PropertyAndValueDictionary.NO_MATCH);
     }
 
