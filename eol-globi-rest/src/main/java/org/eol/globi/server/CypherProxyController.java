@@ -52,9 +52,11 @@ public class CypherProxyController {
         addLocationClausesIfNecessary(query, request.getParameterMap());
         query.append("RETURN sourceTaxon.externalId as ").append(ResultFields.SOURCE_TAXON_EXTERNAL_ID)
                 .append(",sourceTaxon.name as ").append(ResultFields.SOURCE_TAXON_NAME)
+                .append(",sourceTaxon.path as ").append(ResultFields.SOURCE_TAXON_PATH)
                 .append(",type(interactionType) as ").append(ResultFields.INTERACTION_TYPE)
                 .append(",targetTaxon.externalId as ").append(ResultFields.TARGET_TAXON_EXTERNAL_ID)
-                .append(",targetTaxon.name as ").append(ResultFields.TARGET_TAXON_NAME);
+                .append(",targetTaxon.name as ").append(ResultFields.TARGET_TAXON_NAME)
+                .append(",targetTaxon.path as ").append(ResultFields.TARGET_TAXON_PATH);
         return new CypherQueryExecutor(query.toString(), null).execute(request);
     }
 

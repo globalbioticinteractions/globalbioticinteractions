@@ -171,6 +171,8 @@ public class CypherProxyControllerTest {
     public void findInteractions() throws IOException {
         String externalLink = new CypherProxyController().findInteractions(getLocationRequest());
         assertThat(externalLink, containsString("ATE"));
+        assertThat(externalLink, containsString(ResultFields.SOURCE_TAXON_PATH));
+        assertThat(externalLink, containsString(ResultFields.TARGET_TAXON_PATH));
     }
 
     @Test
