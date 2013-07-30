@@ -45,11 +45,15 @@ public class CypherResultFormatter {
                 parseRow(columnNames, row, interaction, sourceTaxon, targetTaxon, targetTaxa, i);
             }
 
-            for (Map<String, String> aTargetTaxon : targetTaxa) {
-                Map<String, Object> anotherInteraction = new HashMap<String, Object>();
-                interactions.add(anotherInteraction);
-                anotherInteraction.putAll(interaction);
-                anotherInteraction.put("target", aTargetTaxon);
+            if (targetTaxa.size() > 0) {
+                for (Map<String, String> aTargetTaxon : targetTaxa) {
+                    Map<String, Object> anotherInteraction = new HashMap<String, Object>();
+                    interactions.add(anotherInteraction);
+                    anotherInteraction.putAll(interaction);
+                    anotherInteraction.put("target", aTargetTaxon);
+                }
+            } else {
+                interactions.add(interaction);
             }
         }
 
@@ -59,22 +63,30 @@ public class CypherResultFormatter {
 
     private static void parseRow(List<String> columnNames, JsonNode row, Map<String, Object> interaction, Map<String, String> sourceTaxon, Map<String, String> targetTaxon, List<Map<String, String>> targetTaxa, int i) {
         String colName = columnNames.get(i);
-        JsonNode value = row.get(i);
+        final JsonNode value = row.get(i);
         if (ResultFields.INTERACTION_TYPE.equals(colName)) {
             interaction.put("type", value.getValueAsText());
         } else if (ResultFields.SOURCE_TAXON_NAME.equals(colName)) {
             if (value.isTextual()) {
                 sourceTaxon.put("name", value.getValueAsText());
             }
+        } else if (ResultFields.SOURCE_TAXON_PATH.equals(colName)) {
+            if (value.isTextual()) {
+                sourceTaxon.put("path", value.getValueAsText());
+            }
         } else if (ResultFields.TARGET_TAXON_NAME.equals(colName)) {
             if (value.isTextual()) {
-                addTargetTaxon(targetTaxa, value);
+                targetTaxon.put("name", value.getValueAsText());
             } else if (value.isArray()) {
                 for (final JsonNode name : value) {
                     if (name.isTextual()) {
                         addTargetTaxon(targetTaxa, name);
                     }
                 }
+            }
+        } else if (ResultFields.TARGET_TAXON_PATH.equals(colName)) {
+            if (value.isTextual()) {
+                targetTaxon.put("path", value.getValueAsText());
             }
         } else if (ResultFields.LATITUDE.equals(colName)) {
             if (value.isNumber()) {
