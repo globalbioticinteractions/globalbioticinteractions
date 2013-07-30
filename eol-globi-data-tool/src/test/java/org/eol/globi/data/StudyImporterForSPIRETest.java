@@ -1,7 +1,9 @@
 package org.eol.globi.data;
 
+import com.healthmarketscience.jackcess.Column;
 import com.healthmarketscience.jackcess.Database;
 import com.healthmarketscience.jackcess.JetFormat;
+import com.healthmarketscience.jackcess.Table;
 import com.hp.hpl.jena.rdf.model.impl.RDFDefaultErrorHandler;
 import org.apache.commons.collections.CollectionUtils;
 import org.hamcrest.core.Is;
@@ -13,11 +15,14 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
 public class StudyImporterForSPIRETest extends GraphDBTestCase {
@@ -55,6 +60,11 @@ public class StudyImporterForSPIRETest extends GraphDBTestCase {
         assertThat(actualTableNames.size(), is(not(0)));
         assertThat("expected tables names [" + tableNames + "] to be present",
                 CollectionUtils.subtract(expectedSet, actualTableNames).size(), is(0));
+
+        Table studies = db.getTable("studies");
+        for (Map<String, Object> study : studies) {
+            assertNotNull(study.get("reference"));
+        }
     }
 
     @Test
