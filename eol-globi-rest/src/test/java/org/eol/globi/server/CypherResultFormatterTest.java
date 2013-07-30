@@ -77,12 +77,14 @@ public class CypherResultFormatterTest {
             if (count == 0) {
                 assertThat(taxon.get("name").getValueAsText(), is("Todus mexicanus"));
                 assertThat(taxon.get("path").getValueAsText(), is("Animalia Chordata Aves Coraciiformes Todidae Todus"));
+                assertThat(taxon.get("id").getValueAsText(), is("EOL:917146"));
             }
 
             taxon = assertNodePropertiesExist(interaction, "target");
             if (count == 0) {
                 assertThat(taxon.get("name").getValueAsText(), is("Coleoptera"));
                 assertThat(taxon.get("path").getValueAsText(), is("Animalia Arthropoda Insecta"));
+                assertThat(taxon.get("id").getValueAsText(), is("EOL:345"));
             }
 
 
@@ -95,6 +97,7 @@ public class CypherResultFormatterTest {
         JsonNode taxon = interaction.get(nodeLabel);
         assertThat(taxon.has("name"), is(true));
         assertThat(taxon.has("path"), is(true));
+        assertThat(taxon.has("id"), is(true));
         return taxon;
     }
 }

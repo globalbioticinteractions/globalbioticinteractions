@@ -74,6 +74,10 @@ public class CypherResultFormatter {
             if (value.isTextual()) {
                 sourceTaxon.put("path", value.getValueAsText());
             }
+        } else if (ResultFields.SOURCE_TAXON_EXTERNAL_ID.equals(colName)) {
+            if (value.isTextual()) {
+                sourceTaxon.put("id", value.getValueAsText());
+            }
         } else if (ResultFields.TARGET_TAXON_NAME.equals(colName)) {
             if (value.isTextual()) {
                 targetTaxon.put("name", value.getValueAsText());
@@ -87,6 +91,10 @@ public class CypherResultFormatter {
         } else if (ResultFields.TARGET_TAXON_PATH.equals(colName)) {
             if (value.isTextual()) {
                 targetTaxon.put("path", value.getValueAsText());
+            }
+        } else if (ResultFields.TARGET_TAXON_EXTERNAL_ID.equals(colName)) {
+            if (value.isTextual()) {
+                targetTaxon.put("id", value.getValueAsText());
             }
         } else if (ResultFields.LATITUDE.equals(colName)) {
             if (value.isNumber()) {
