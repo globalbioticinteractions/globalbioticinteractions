@@ -86,7 +86,7 @@ public class StudyImporterForAkin extends BaseStudyImporter {
         Double longitude;
         Double latitude;
         // TODO note that this study was taken in shallow water ~ 0.7m, probably better to include a depth range?
-        Double altitude = 0.7d;
+        Double altitude = -0.7d;
 
         String latitudeString = siteInfo[7];
         try {

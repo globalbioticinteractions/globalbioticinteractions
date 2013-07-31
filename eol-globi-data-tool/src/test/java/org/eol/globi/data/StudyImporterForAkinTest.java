@@ -78,12 +78,16 @@ public class StudyImporterForAkinTest extends GraphDBTestCase {
         Date expectedDate = formatter.parse("1998-03-07");
         assertThat((Long)rel.getProperty(Specimen.DATE_IN_UNIX_EPOCH), is(expectedDate.getTime()));
 
-        Node specimen = rel.getEndNode();
-        assertThat((Double) specimen.getProperty(Specimen.LENGTH_IN_MM), is(226.0));
-        assertThat((Double) specimen.getProperty(Specimen.STOMACH_VOLUME_ML), is(3.0));
-        Node speciesNode = specimen.getSingleRelationship(RelTypes.CLASSIFIED_AS, Direction.OUTGOING).getEndNode();
+        Node specimenNode = rel.getEndNode();
+        assertThat((Double) specimenNode.getProperty(Specimen.LENGTH_IN_MM), is(226.0));
+        assertThat((Double) specimenNode.getProperty(Specimen.STOMACH_VOLUME_ML), is(3.0));
+
+        Specimen specimen = new Specimen(specimenNode);
+        assertThat(specimen.getSampleLocation().getAltitude(), is(-0.7));
+
+        Node speciesNode = specimenNode.getSingleRelationship(RelTypes.CLASSIFIED_AS, Direction.OUTGOING).getEndNode();
         assertThat((String) speciesNode.getProperty("name"), is("Pogonias cromis"));
-        Iterable<Relationship> ateRels = specimen.getRelationships(InteractType.ATE, Direction.OUTGOING);
+        Iterable<Relationship> ateRels = specimenNode.getRelationships(InteractType.ATE, Direction.OUTGOING);
         Map<String, Map<String, Object>> preys = new HashMap<String, Map<String, Object>>();
         for (Relationship ateRel : ateRels) {
             Node preyNode = ateRel.getEndNode();
@@ -118,7 +122,7 @@ public class StudyImporterForAkinTest extends GraphDBTestCase {
         assertThat((String) mollusca.get("name"), is("Mollusca"));
         assertThat((Double) mollusca.get(Specimen.VOLUME_IN_ML), is(0.45d));
 
-        Node locationNode = specimen.getSingleRelationship(RelTypes.COLLECTED_AT, Direction.OUTGOING).getEndNode();
+        Node locationNode = specimenNode.getSingleRelationship(RelTypes.COLLECTED_AT, Direction.OUTGOING).getEndNode();
         assertThat((Double) locationNode.getProperty(Location.LATITUDE), is(28.645202d));
         assertThat((Double) locationNode.getProperty(Location.LONGITUDE), is(-96.099923d));
     }
