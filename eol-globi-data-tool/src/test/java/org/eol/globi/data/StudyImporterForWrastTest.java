@@ -11,6 +11,9 @@ import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,12 +28,12 @@ import static org.junit.Assert.assertThat;
 public class StudyImporterForWrastTest extends GraphDBTestCase {
 
     @Test
-    public void createAndPopulateStudyFromLavacaBay() throws StudyImporterException, NodeFactoryException {
+    public void createAndPopulateStudyFromLavacaBay() throws StudyImporterException, NodeFactoryException, ParseException {
         String csvString =
-                "\"Region\",\"Season\",\"Habitat\",\"Site\",\"Family\",\"Predator Species\",\"TL (mm)\",\"Prey Item Species\",\"Prey item\",\"Number\",\"Condition Index\",\"Volume\",\"Percent Content\",\"Prey Item Trophic Level\",\"Notes\",\"Call #\"\n";
-        csvString += "\"Lower\",\"Fall\",\"Marsh\",1,\"Sciaenidae\",\"Sciaenops ocellatus\",420,\"Acrididae spp. \",\"Acrididae \",1,\"III\",0.4,3.2520325203,2.5,,1\n";
-        csvString += "\"Lower\",\"Spring\",\"Non-Veg \",1,\"Ariidae\",\"Arius felis\",176,\"Aegathoa oculata \",\"Aegathoa oculata\",4,\"I\",0.01,3.3333333333,2.1,,2\n";
-        csvString += "\"Upper\",\"Spring\",\"Reef\",2,\"Depth\",\"Missing depth\",176,\"Aegathoa oculata \",\"Aegathoa oculata\",4,\"I\",0.01,3.3333333333,2.1,,2\n";
+                "\"Month\",\"Day\",\"Year\",\"Region\",\"Season\",\"Habitat\",\"Site\",\"Family\",\"Predator Species\",\"TL (mm)\",\"Prey Item Species\",\"Prey item\",\"Number\",\"Condition Index\",\"Volume\",\"Percent Content\",\"Prey Item Trophic Level\",\"Notes\",\"Call #\"\n";
+        csvString += "7,24,2001,\"Lower\",\"Fall\",\"Marsh\",1,\"Sciaenidae\",\"Sciaenops ocellatus\",420,\"Acrididae spp. \",\"Acrididae \",1,\"III\",0.4,3.2520325203,2.5,,1\n";
+        csvString += "7,25,2001,\"Lower\",\"Spring\",\"Non-Veg \",1,\"Ariidae\",\"Arius felis\",176,\"Aegathoa oculata \",\"Aegathoa oculata\",4,\"I\",0.01,3.3333333333,2.1,,2\n";
+        csvString += "7,26,2001,\"Upper\",\"Spring\",\"Reef\",2,\"Depth\",\"Missing depth\",176,\"Aegathoa oculata \",\"Aegathoa oculata\",4,\"I\",0.01,3.3333333333,2.1,,2\n";
 
         Map<String, String> contentMap = new HashMap<String, String>();
         String locationString = "\"Location\",\"Latitude\",\"Longitude\",,\"Region\",\"Habitat\",\"Site\"\n" +
@@ -90,7 +93,14 @@ public class StudyImporterForWrastTest extends GraphDBTestCase {
         Study foundStudy = nodeFactory.findStudy("Wrast 2008");
         assertNotNull(foundStudy);
         for (Relationship rel : study.getSpecimens()) {
+            Date unixEpochProperty = nodeFactory.getUnixEpochProperty(rel);
+            SimpleDateFormat simpleDateFormat = StudyImporterForWrast.getSimpleDateFormat();
+            Date endDate = simpleDateFormat.parse("7/27/2001");
+            Date startDate = simpleDateFormat.parse("7/23/2001");
+            assertThat(unixEpochProperty.before(endDate), is(true));
+            assertThat(unixEpochProperty.after(startDate), is(true));
             Specimen specimen = new Specimen(rel.getEndNode());
+
             for (Relationship ateRel : specimen.getStomachContents()) {
                 Taxon taxon = new Taxon(rel.getEndNode().getSingleRelationship(RelTypes.CLASSIFIED_AS, Direction.OUTGOING).getEndNode());
                 String scientificName = taxon.getName();

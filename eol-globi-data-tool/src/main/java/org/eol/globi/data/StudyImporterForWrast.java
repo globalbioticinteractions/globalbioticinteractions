@@ -1,19 +1,25 @@
 package org.eol.globi.data;
 
 import com.Ostermiller.util.LabeledCSVParser;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.Season;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
+import org.neo4j.graphdb.Relationship;
 import uk.me.jstott.jcoord.LatLng;
 
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 
 public class StudyImporterForWrast extends BaseStudyImporter {
     private static final Log LOG = LogFactory.getLog(StudyImporterForWrast.class);
@@ -27,6 +33,9 @@ public class StudyImporterForWrast extends BaseStudyImporter {
     private static final String HABITAT = "habitat";
     private static final String SITE = "site";
     private static final String PREDATOR_SPECIMEN_ID = "specimenId";
+    private static final String MONTH = "Month";
+    private static final String DAY = "Day";
+    private static final String YEAR = "Year";
 
     static final HashMap<String, String> COLUMN_MAPPER = new HashMap<String, String>() {
         {
@@ -39,6 +48,9 @@ public class StudyImporterForWrast extends BaseStudyImporter {
             put(HABITAT, "Habitat");
             put(SITE, "Site");
             put(PREDATOR_SPECIMEN_ID, "Call #");
+            put(MONTH, "Month");
+            put(DAY, "Day");
+            put(YEAR, "Year");
         }
     };
 
@@ -46,12 +58,19 @@ public class StudyImporterForWrast extends BaseStudyImporter {
     protected static final String LAVACA_BAY_LOCATIONS = "wrast/lavacaBayLocations.csv";
     protected static final String LAVACA_BAY_ENVIRONMENTAL = "wrast/lavacaBayEnvironmental.csv";
 
+
     private Map<String, LatLng> locationMap;
     private Map<String, Double> depthMap;
     private final HashMap<String, Specimen> predatorSpecimenMap = new HashMap<String, Specimen>();
 
     public StudyImporterForWrast(ParserFactory parserFactory, NodeFactory nodeFactory) {
         super(parserFactory, nodeFactory);
+    }
+
+    protected static SimpleDateFormat getSimpleDateFormat() {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM/dd/yy");
+        simpleDateFormat.setTimeZone(TimeZone.getTimeZone("US/Central"));
+        return simpleDateFormat;
     }
 
     @Override
@@ -134,8 +153,25 @@ public class StudyImporterForWrast extends BaseStudyImporter {
             predator.caughtIn(sampleLocation);
         }
         predator.caughtDuring(getOrCreateSeason(seasonName));
-        study.collected(predator);
+        Relationship collectedRel = study.collected(predator);
+        addCollectionDate(csvParser, collectedRel);
+
         return predator;
+    }
+
+    private void addCollectionDate(LabeledCSVParser csvParser, Relationship collectedRel) {
+        String dayString = csvParser.getValueByLabel(COLUMN_MAPPER.get(DAY));
+        String monthString = csvParser.getValueByLabel(COLUMN_MAPPER.get(MONTH));
+        String yearString = csvParser.getValueByLabel(COLUMN_MAPPER.get(YEAR));
+        if (StringUtils.isNotBlank(dayString) && StringUtils.isNotBlank(monthString) && StringUtils.isNotBlank(yearString)) {
+            String dateString = monthString + "/" + dayString + "/" + yearString;
+            try {
+                Date collectionDate = getSimpleDateFormat().parse(dateString);
+                nodeFactory.setUnixEpochProperty(collectedRel, collectionDate);
+            } catch (ParseException e) {
+                LOG.warn("failed to parse [" + dateString + "]", e);
+            }
+        }
     }
 
     private HashMap<String, Specimen> getPredatorSpecimenMap() {
