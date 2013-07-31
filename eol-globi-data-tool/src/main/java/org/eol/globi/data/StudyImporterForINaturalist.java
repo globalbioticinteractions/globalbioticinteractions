@@ -106,13 +106,6 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
             String interactionType = observationField.get("name").getTextValue();
 
             JsonNode observation = jsonNode.get("observation");
-            String latitudeString = observation.get("latitude").getTextValue();
-            String longitudeString = observation.get("longitude").getTextValue();
-            if (latitudeString != null && longitudeString != null) {
-                double latitude = Double.parseDouble(latitudeString);
-                double longitude = Double.parseDouble(longitudeString);
-                targetSpecimen.caughtIn(nodeFactory.getOrCreateLocation(latitude, longitude, null));
-            }
 
             JsonNode sourceTaxon = observation.get("taxon");
             if (sourceTaxon == null) {
@@ -125,6 +118,15 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
                 }
                 Specimen sourceSpecimen = nodeFactory.createSpecimen(sourceTaxonName);
                 sourceSpecimen.setExternalId(TaxonomyProvider.ID_PREFIX_INATURALIST + observationId);
+
+                String latitudeString = observation.get("latitude").getTextValue();
+                String longitudeString = observation.get("longitude").getTextValue();
+                if (latitudeString != null && longitudeString != null) {
+                    double latitude = Double.parseDouble(latitudeString);
+                    double longitude = Double.parseDouble(longitudeString);
+                    sourceSpecimen.caughtIn(nodeFactory.getOrCreateLocation(latitude, longitude, null));
+                }
+
                 Relationship collectedRel = study.collected(sourceSpecimen);
 
                 String timeObservedAtUtc = observation.get("time_observed_at_utc").getTextValue();

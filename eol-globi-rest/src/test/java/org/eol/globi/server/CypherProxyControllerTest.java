@@ -42,6 +42,19 @@ public class CypherProxyControllerTest {
         return request;
     }
 
+    private HttpServletRequest getLocationBoxRequest() {
+        HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
+        when(request.getParameterMap()).thenReturn(new HashMap<String, String[]>() {
+            {
+                put("nw_lat", new String[]{"18.34"});
+                put("nw_lng", new String[]{"-66.50"});
+                put("se_lat", new String[]{"18.14"});
+                put("se_lng", new String[]{"-66.48"});
+            }
+        });
+        return request;
+    }
+
 
     @Test
     public void findPreyAtLocationNoLongitude() throws IOException, URISyntaxException {
@@ -170,6 +183,14 @@ public class CypherProxyControllerTest {
     @Test
     public void findInteractions() throws IOException {
         String externalLink = new CypherProxyController().findInteractions(getLocationRequest());
+        assertThat(externalLink, containsString("ATE"));
+        assertThat(externalLink, containsString(ResultFields.SOURCE_TAXON_PATH));
+        assertThat(externalLink, containsString(ResultFields.TARGET_TAXON_PATH));
+    }
+
+    @Test
+    public void findInteractionsBox() throws IOException {
+        String externalLink = new CypherProxyController().findInteractions(getLocationBoxRequest());
         assertThat(externalLink, containsString("ATE"));
         assertThat(externalLink, containsString(ResultFields.SOURCE_TAXON_PATH));
         assertThat(externalLink, containsString(ResultFields.TARGET_TAXON_PATH));
