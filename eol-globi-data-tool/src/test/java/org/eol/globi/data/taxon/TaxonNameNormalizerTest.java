@@ -67,7 +67,7 @@ public class TaxonNameNormalizerTest {
         assertThat(normalizer.normalize("Ammophila (blah)"), is("Ammophila"));
         assertThat(normalizer.normalize("Cal sapidus"), is("Callinectes sapidus"));
 
-        assertThat(normalizer.normalize("Bivalvia Genus A"), is("Bivalva"));
+        assertThat(normalizer.normalize("Bivalvia Genus A"), is("Bivalvia"));
 
 
     }
