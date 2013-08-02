@@ -1,18 +1,21 @@
 package org.eol.globi.export;
 
 import java.io.IOException;
-import java.io.StringWriter;
 import java.io.Writer;
 import java.util.UUID;
 
 import org.apache.commons.io.output.WriterOutputStream;
 import org.coode.owlapi.turtle.TurtleOntologyFormat;
+import org.eol.globi.domain.InteractType;
+import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Study;
+import org.neo4j.graphdb.Direction;
+import org.neo4j.graphdb.Node;
+import org.neo4j.graphdb.Relationship;
+import org.neo4j.graphdb.RelationshipType;
 import org.semanticweb.owlapi.apibinding.OWLManager;
-import org.semanticweb.owlapi.io.RDFXMLOntologyFormat;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLAnnotationProperty;
-import org.semanticweb.owlapi.model.OWLAnnotationValue;
 import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLDataFactory;
@@ -24,26 +27,56 @@ import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.semanticweb.owlapi.model.OWLOntologyFormat;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
-import org.semanticweb.owlapi.model.OWLOntologyManagerFactory;
 import org.semanticweb.owlapi.model.OWLOntologyStorageException;
 import org.semanticweb.owlapi.vocab.OWLRDFVocabulary;
 
 public class GlobiOWLExporter extends BaseExporter {
 
 	OWLOntology dataOntology;
-	
-	
+
+
 
 	public GlobiOWLExporter() throws OWLOntologyCreationException {
 		super();
 		OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
-		
+
 		dataOntology = manager.createOntology();
 	}
 
 	@Override
 	public void exportStudy(Study study, Writer writer, boolean includeHeader)
 			throws IOException {		
+
+		OWLNamedIndividual studyInd = getNodeTaxonAsOWLIndividual(study.getUnderlyingNode());
+
+		String contrib = study.getContributor(); // TODO
+
+		for (Relationship r : study.getSpecimens()) {
+			Node agentNode = r.getEndNode();
+			OWLNamedIndividual i = nodeToIndividual(agentNode);
+			setTaxon(i, getNodeTaxonAsOWLIndividual(agentNode));
+			// we assume that the specimen is always the agent
+			for (Relationship ixnR : agentNode.getRelationships(Direction.OUTGOING, InteractType.ATE)) {
+				Node receiverNode = ixnR.getEndNode();
+				RelationshipType rt = r.getType();
+				OWLNamedIndividual j = nodeToIndividual(receiverNode); 
+				setTaxon(j, getNodeTaxonAsOWLIndividual(receiverNode));
+				OWLNamedIndividual ixn = getOWLDataFactory().getOWLNamedIndividual(getIRI("individuals/"+r.getId()));
+				OWLClass interactionType = this.getInteractionType(ixnR.getType());
+				addOrganismPairInteraction(i, j, interactionType, ixn, false);
+			}
+		}
+	}
+
+	public OWLNamedIndividual getNodeTaxonAsOWLIndividual(Node n) {
+		Node speciesNode = n.getSingleRelationship(RelTypes.CLASSIFIED_AS, Direction.OUTGOING).getEndNode();
+		return nodeToIndividual(speciesNode);
+	}
+
+	private OWLNamedIndividual nodeToIndividual(Node sn) {
+		// is this OK?
+		IRI iri = getIRI("individuals/"+sn.getId());
+		return getOWLDataFactory().getOWLNamedIndividual(iri);
 	}
 
 	@Override
@@ -72,7 +105,7 @@ public class GlobiOWLExporter extends BaseExporter {
 				dataOntology,
 				axiom);
 	}
-	
+
 	public void addFact(OWLNamedIndividual i, OWLObjectProperty p, OWLNamedIndividual j) {
 		addAxiom(getOWLDataFactory().getOWLObjectPropertyAssertionAxiom(p, i, j));
 	}
@@ -250,7 +283,7 @@ public class GlobiOWLExporter extends BaseExporter {
 		IRI iri = getIRI(shortName);
 		return this.getOWLDataFactory().getOWLObjectProperty(iri);
 	}
-	
+
 
 	public OWLClass getOWLClass(String shortName) {
 		IRI iri = getIRI(shortName);
@@ -261,7 +294,7 @@ public class GlobiOWLExporter extends BaseExporter {
 		// TODO - less dumb way
 		return IRI.create("http://eol.org/globi/"+shortName);
 	}
-	
+
 	private IRI getOBOIRI(String clsId) {
 		// TODO - use constant
 		return IRI.create("http://purl.obolibrary.org/obo/"+clsId);
@@ -314,7 +347,7 @@ public class GlobiOWLExporter extends BaseExporter {
 		}
 		addFact(interaction, agentRelation, i);
 		addFact(interaction, receiverRelation, j);
-		
+
 		if (isTaxonLevel) {
 			addRdfType(i, this.getOWLClass("taxon"));
 			addRdfType(j, this.getOWLClass("taxon"));
@@ -323,7 +356,7 @@ public class GlobiOWLExporter extends BaseExporter {
 			addRdfType(i, this.getOWLClass("organism"));
 			addRdfType(j, this.getOWLClass("organism"));
 		}
-		
+
 		return interaction;
 	}
 
@@ -350,11 +383,10 @@ public class GlobiOWLExporter extends BaseExporter {
 	 */
 	public OWLNamedIndividual addOrganismPairPredatorInteraction(OWLNamedIndividual i,
 			OWLNamedIndividual j) {
-		return addOrganismPairInteraction(i, j, this.getInteractionType("predator-interaction"));
-
+		return addOrganismPairInteraction(i, j, getInteractionType(InteractType.ATE));
 	}
 
-	
+
 
 	public void addLocation(OWLNamedIndividual i, OWLClass locType) {
 		// we assume i is an interaction - a different relation must be used for material entities
@@ -397,16 +429,25 @@ public class GlobiOWLExporter extends BaseExporter {
 
 	// TODO - implement this. Fake stub for now
 	private IRI resolveTaxonIRI(String string) {
-
 		return getIRI(string); // TODO !!!
 	}
-	
+
 	/**
-	 * @param typeName - e.g. predator-interaction
+	 * @param typeName - from the study model
+	 * 
+	 * TODO - this is highly incomplete!
+	 * 
 	 * @return
 	 */
-	public OWLClass getInteractionType(String t) {
-		IRI iri = getIRI(t); // TODO
+	public OWLClass getInteractionType(RelationshipType relationshipType) {
+		String shortName = null;
+		if (relationshipType.equals(InteractType.ATE)) {
+			shortName = "predator-interaction";
+		}
+		if (shortName == null) {
+			shortName = relationshipType.toString(); // TODO
+		}
+		IRI iri = getIRI(shortName); // TODO
 		return getOWLDataFactory().getOWLClass(iri);
 	}
 
@@ -415,7 +456,7 @@ public class GlobiOWLExporter extends BaseExporter {
 		return getOWLDataFactory().getOWLClass(iri);
 	}
 
-	
+
 
 
 
