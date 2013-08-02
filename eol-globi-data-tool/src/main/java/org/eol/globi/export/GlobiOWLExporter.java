@@ -69,8 +69,9 @@ public class GlobiOWLExporter extends BaseExporter {
 	 */
 	public void addFact(OWLNamedIndividual i,
 			OWLObjectProperty p, OWLClass c) {
-		// TODO Auto-generated method stub
-		
+		OWLNamedIndividual skolem = this.genIndividual(p.getIRI(), i.getIRI());
+		addFact(i,p,skolem);
+		addRdfType(skolem, c);
 	}
 	
 	public void addRdfType(OWLNamedIndividual i, OWLClass c) {
@@ -79,11 +80,47 @@ public class GlobiOWLExporter extends BaseExporter {
 				this.getOWLDataFactory().getOWLClassAssertionAxiom(c, i));
 	}
 	
+	/**
+	 * Generates a new individual with a random ID.
+	 * 
+	 * @see {genIndividual(Object... args)}
+	 * @return
+	 */
 	private OWLNamedIndividual genIndividual() {
 		UUID uuid = UUID.randomUUID();
 		return getOWLDataFactory().getOWLNamedIndividual(getIRI("individuals/"+uuid.toString()));
 	}
 	
+	/**
+	 * Generates a skolemized Individual
+	 * 
+	 * For example, if we have an individual fido-the-dog, and an OWL Class Assertion axiom:
+	 * 
+	 *  Individual: fido-the-dog Types: located-in some Kennel
+	 *  
+	 * We know he is located in some Kennel, but we don't have a name (ID) for his kennel.
+	 * 
+	 * We could use an anon class (blank node, aka existential variable) but these are unpopular
+	 * in the linked data community. Better is to use a UUID, but this can be ugly, and
+	 * it means successive runs are not deterministic.
+	 * 
+	 *  An alternate approach is to use a skolemized individual. The basic idea is that
+	 *  we do not know the name of fido's kennel, but we can use "location-of-fido-the-dog"
+	 *  as a unique identifier.
+	 *  
+	 *  (OK, so this gets into temporal modeling issues, here we assume fido-the-dog is really
+	 *  some time-slice of the actual fido-the-dog-spacetime-worm)
+	 * 
+	 * The argument list here corresponds to the skolem function. Ideally we would pass
+	 * locationOf(fido), but rather than force the complexity of introducing a term object
+	 * we just break this into tokens, it is up to the caller to ensure uniqueness. E.g
+	 *  'location-of', 'fido'
+	 *  Or
+	 *   'location-of', 'fido', 'today' 
+	 * 
+	 * @param args
+	 * @return new individual
+	 */
 	private OWLNamedIndividual genIndividual(Object... args) {
 		String local = "";
 		for (Object a : args) {
