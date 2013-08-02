@@ -6,21 +6,40 @@ import java.io.Writer;
 import java.util.UUID;
 
 import org.apache.commons.io.output.WriterOutputStream;
+import org.coode.owlapi.turtle.TurtleOntologyFormat;
 import org.eol.globi.domain.Study;
+import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.io.RDFXMLOntologyFormat;
 import org.semanticweb.owlapi.model.IRI;
+import org.semanticweb.owlapi.model.OWLAnnotationProperty;
+import org.semanticweb.owlapi.model.OWLAnnotationValue;
+import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLDataFactory;
+import org.semanticweb.owlapi.model.OWLDataProperty;
+import org.semanticweb.owlapi.model.OWLLiteral;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.semanticweb.owlapi.model.OWLOntology;
+import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.semanticweb.owlapi.model.OWLOntologyFormat;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
+import org.semanticweb.owlapi.model.OWLOntologyManagerFactory;
 import org.semanticweb.owlapi.model.OWLOntologyStorageException;
+import org.semanticweb.owlapi.vocab.OWLRDFVocabulary;
 
 public class GlobiOWLExporter extends BaseExporter {
-	
+
 	OWLOntology dataOntology;
+	
+	
+
+	public GlobiOWLExporter() throws OWLOntologyCreationException {
+		super();
+		OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
+		
+		dataOntology = manager.createOntology();
+	}
 
 	@Override
 	public void exportStudy(Study study, Writer writer, boolean includeHeader)
@@ -38,20 +57,57 @@ public class GlobiOWLExporter extends BaseExporter {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
 	public OWLDataFactory getOWLDataFactory() {
 		return getOWLOntologyManager().getOWLDataFactory();
 	}
 	public OWLOntologyManager getOWLOntologyManager() {
 		return dataOntology.getOWLOntologyManager();
 	}
-	
-	public void addFact(OWLNamedIndividual i, OWLObjectProperty p, OWLNamedIndividual j) {
+
+	private void addAxiom(OWLAxiom axiom) {
+		if (dataOntology.containsAxiom(axiom, true))
+			return;
 		getOWLOntologyManager().addAxiom(
 				dataOntology,
-				this.getOWLDataFactory().getOWLObjectPropertyAssertionAxiom(p, i, j));
+				axiom);
 	}
 	
+	public void addFact(OWLNamedIndividual i, OWLObjectProperty p, OWLNamedIndividual j) {
+		addAxiom(getOWLDataFactory().getOWLObjectPropertyAssertionAxiom(p, i, j));
+	}
+
+	/**
+	 * Adds a triple <i p label>, where p is an annotation property and label is a literal.
+	 * 
+	 * Note that OWL2 forces a strict separation of annotation, data and object properties
+	 * 
+	 * @param i
+	 * @param p
+	 * @param label
+	 */
+	public void addFact(OWLNamedIndividual i, OWLAnnotationProperty p,
+			String label) {
+
+		OWLLiteral lit = getOWLDataFactory().getOWLLiteral(label);
+		addAxiom(getOWLDataFactory().getOWLAnnotationAssertionAxiom(p, i.getIRI(), lit));		
+	}
+
+	/**
+	 * Adds a triple <i p label>, where p is an annotation property and label is a literal.
+	 * 
+	 * Note that OWL2 forces a strict separation of annotation, data and object properties
+	 * 
+	 * @param i
+	 * @param p
+	 * @param label
+	 */
+	public void addFact(OWLNamedIndividual i, OWLDataProperty p,
+			String label) {
+
+		OWLLiteral lit = getOWLDataFactory().getOWLLiteral(label);
+		addAxiom(getOWLDataFactory().getOWLDataPropertyAssertionAxiom(p, i, lit));		
+	}
 	/**
 	 * Adds a fact with semantics
 	 * Individual: i Types: p some c
@@ -69,17 +125,22 @@ public class GlobiOWLExporter extends BaseExporter {
 	 */
 	public void addFact(OWLNamedIndividual i,
 			OWLObjectProperty p, OWLClass c) {
-		OWLNamedIndividual skolem = this.genIndividual(p.getIRI(), i.getIRI());
+		OWLNamedIndividual skolem = this.genIndividual(p.getIRI(), "of", i.getIRI());
 		addFact(i,p,skolem);
 		addRdfType(skolem, c);
 	}
-	
+
+
+
+	/**
+	 * Adds a ClassAssertion axiom (rdf:type triple)
+	 * @param i
+	 * @param c
+	 */
 	public void addRdfType(OWLNamedIndividual i, OWLClass c) {
-		getOWLOntologyManager().addAxiom(
-				dataOntology,
-				this.getOWLDataFactory().getOWLClassAssertionAxiom(c, i));
+		addAxiom(this.getOWLDataFactory().getOWLClassAssertionAxiom(c, i));
 	}
-	
+
 	/**
 	 * Generates a new individual with a random ID.
 	 * 
@@ -90,7 +151,7 @@ public class GlobiOWLExporter extends BaseExporter {
 		UUID uuid = UUID.randomUUID();
 		return getOWLDataFactory().getOWLNamedIndividual(getIRI("individuals/"+uuid.toString()));
 	}
-	
+
 	/**
 	 * Generates a skolemized Individual
 	 * 
@@ -126,26 +187,84 @@ public class GlobiOWLExporter extends BaseExporter {
 		for (Object a : args) {
 			// TODO - make this more robust to different kinds of URIs
 			String tok = a.toString().replaceAll(".*/", "");
-			local = local + tok;
+			local = local + tok + "-";
 		}
 		return getOWLDataFactory().getOWLNamedIndividual(getIRI(local));
 	}
 
 
+	/**
+	 * Generates an individual organism (e.g. clarence-the-tiger)
+	 * 
+	 * @param taxon
+	 * @return
+	 */
 	public OWLNamedIndividual genOrganism(OWLNamedIndividual taxon) {
 		OWLNamedIndividual i = genIndividual();
-		
+		setTaxon(i, taxon);
 		return i;
 	}
-	
+
+	public OWLNamedIndividual genOrganism(String label, OWLNamedIndividual taxon) {
+		OWLNamedIndividual i = genIndividual();
+		setLabel(i, label);
+		setTaxon(i, taxon);
+		return i;
+	}
+
+
+	/**
+	 * Adds a triple
+	 * 
+	 * <i rdfs:label label>
+	 * 
+	 * @param i
+	 * @param label
+	 */
+	public void setLabel(OWLNamedIndividual i, String label) {
+		addFact(i, 
+				getOWLDataFactory().getOWLAnnotationProperty(OWLRDFVocabulary.RDFS_LABEL.getIRI()), 
+				label);
+
+	}
+
+
+
+	/**
+	 * Sets the taxon of an individual organism
+	 * 
+	 * Generates a triple of the form:
+	 * 
+	 * <tommy-the-cat, has-taxon, Felis-cattus>
+	 * 
+	 *  Note we treat taxa as individuals
+	 * 
+	 * @param i
+	 * @param taxon
+	 */
+	public void setTaxon(OWLNamedIndividual i, OWLNamedIndividual taxon) {
+		addFact(i, getOWLObjectProperty("has-taxon"), taxon);
+	}
+
 	public OWLObjectProperty getOWLObjectProperty(String shortName) {
 		IRI iri = getIRI(shortName);
 		return this.getOWLDataFactory().getOWLObjectProperty(iri);
+	}
+	
+
+	public OWLClass getOWLClass(String shortName) {
+		IRI iri = getIRI(shortName);
+		return this.getOWLDataFactory().getOWLClass(iri);
 	}
 
 	private IRI getIRI(String shortName) {
 		// TODO - less dumb way
 		return IRI.create("http://eol.org/globi/"+shortName);
+	}
+	
+	private IRI getOBOIRI(String clsId) {
+		// TODO - use constant
+		return IRI.create("http://purl.obolibrary.org/obo/"+clsId);
 	}
 
 	/**
@@ -167,7 +286,7 @@ public class GlobiOWLExporter extends BaseExporter {
 		}
 		boolean isSymmetric = false;
 		addRdfType(interaction, interactionType);
-		
+
 		// if the interaction is symmetrical, both relations = has-participant
 		// is isTaxonLevel = true, we use has-participating-taxon
 		OWLObjectProperty agentRelation = null;
@@ -192,19 +311,58 @@ public class GlobiOWLExporter extends BaseExporter {
 				agentRelation = getOWLObjectProperty("has-agent");
 				receiverRelation = getOWLObjectProperty("has-receiver");				
 			}
-			
 		}
 		addFact(interaction, agentRelation, i);
 		addFact(interaction, receiverRelation, j);
+		
+		if (isTaxonLevel) {
+			addRdfType(i, this.getOWLClass("taxon"));
+			addRdfType(j, this.getOWLClass("taxon"));
+		}
+		else {
+			addRdfType(i, this.getOWLClass("organism"));
+			addRdfType(j, this.getOWLClass("organism"));
+		}
+		
 		return interaction;
 	}
-	
-	public void addLocation(OWLNamedIndividual i, OWLClass locType) {
-		addFact(i, getOWLObjectProperty("occurs-in"), locType);
+
+
+	/**
+	 * Convenience method
+	 * 
+	 * @param i
+	 * @param j
+	 * @param interactionType
+	 * @return
+	 */
+	public OWLNamedIndividual addOrganismPairInteraction(OWLNamedIndividual i, OWLNamedIndividual j, 
+			OWLClass interactionType) {
+		return addOrganismPairInteraction(i, j, interactionType, null, false);
 	}
-	
+
+	/**
+	 * Convenience method
+	 * 
+	 * @param i
+	 * @param j
+	 * @return 
+	 */
+	public OWLNamedIndividual addOrganismPairPredatorInteraction(OWLNamedIndividual i,
+			OWLNamedIndividual j) {
+		return addOrganismPairInteraction(i, j, this.getInteractionType("predator-interaction"));
+
+	}
 
 	
+
+	public void addLocation(OWLNamedIndividual i, OWLClass locType) {
+		// we assume i is an interaction - a different relation must be used for material entities
+		addFact(i, getOWLObjectProperty("occurs-in"), locType);
+	}
+
+
+
 
 	/**
 	 * Used for describing generalized interactions at the level of species or taxa
@@ -221,14 +379,44 @@ public class GlobiOWLExporter extends BaseExporter {
 		// model same way as individuals for now
 		return addOrganismPairInteraction(i, j, interactionType, interaction, true);		
 	}
-	
+
 	public OWLNamedIndividual addTaxon(String name) {
 		return null;		
 	}
 
 	public void exportDataOntolog(Writer w) throws OWLOntologyStorageException {
-		OWLOntologyFormat fmt = new RDFXMLOntologyFormat();
+		OWLOntologyFormat fmt = new TurtleOntologyFormat();
 		this.getOWLOntologyManager().saveOntology(dataOntology, fmt, new WriterOutputStream(w));
 	}
+
+	public OWLNamedIndividual resolveTaxon(String string) {
+
+		IRI iri = resolveTaxonIRI(string);
+		return getOWLDataFactory().getOWLNamedIndividual(iri);
+	}
+
+	// TODO - implement this. Fake stub for now
+	private IRI resolveTaxonIRI(String string) {
+
+		return getIRI(string); // TODO !!!
+	}
+	
+	/**
+	 * @param typeName - e.g. predator-interaction
+	 * @return
+	 */
+	public OWLClass getInteractionType(String t) {
+		IRI iri = getIRI(t); // TODO
+		return getOWLDataFactory().getOWLClass(iri);
+	}
+
+	public OWLClass getLocationType(String clsId) {
+		IRI iri = getOBOIRI(clsId);
+		return getOWLDataFactory().getOWLClass(iri);
+	}
+
+	
+
+
 
 }
