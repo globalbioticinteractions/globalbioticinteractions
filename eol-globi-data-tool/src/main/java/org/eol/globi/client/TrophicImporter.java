@@ -8,6 +8,7 @@ import org.eol.globi.export.ExporterMeasurementOrFact;
 import org.eol.globi.export.ExporterOccurrenceAggregates;
 import org.eol.globi.export.ExporterOccurrences;
 import org.eol.globi.export.ExporterTaxa;
+import org.eol.globi.export.GlobiOWLExporter;
 import org.eol.globi.export.StudyExportUnmatchedSourceTaxaForStudies;
 import org.eol.globi.export.StudyExportUnmatchedTargetTaxaForStudies;
 import org.eol.globi.service.TaxonPropertyEnricher;
@@ -25,6 +26,7 @@ import org.eol.globi.export.StudyExporter;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.IndexHits;
+import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -63,6 +65,14 @@ public class TrophicImporter {
             writeMetaFooter(darwinCoreMeta);
         } catch (IOException e) {
             throw new StudyImporterException("failed to export result to csv file", e);
+        }
+
+        try {
+            export(studies, "./globi.owl", new GlobiOWLExporter(), null);
+        } catch (OWLOntologyCreationException e) {
+            throw new StudyImporterException("failed to export as owl", e);
+        } catch (IOException e) {
+            throw new StudyImporterException("failed to export as owl", e);
         }
     }
 

@@ -51,7 +51,7 @@ public class ExporterMeasurementOrFactTest extends GraphDBTestCase {
         Relationship collected = myStudy.collected(specimen);
         Transaction transaction = myStudy.getUnderlyingNode().getGraphDatabase().beginTx();
         try {
-            collected.setProperty(Specimen.DATE_IN_UNIX_EPOCH, getUTCTestTime());
+            collected.setProperty(Specimen.DATE_IN_UNIX_EPOCH, ExportTestUtil.utcTestTime());
             transaction.success();
         } finally {
             transaction.finish();

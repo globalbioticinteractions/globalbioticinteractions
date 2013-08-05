@@ -1,15 +1,13 @@
 package org.eol.globi.data;
 
 import org.eol.globi.domain.Taxon;
+import org.eol.globi.export.ExportTestUtil;
 import org.eol.globi.service.TaxonPropertyEnricher;
 import org.junit.After;
 import org.junit.Before;
 import org.neo4j.graphdb.GraphDatabaseService;
 
-import javax.xml.bind.DatatypeConverter;
 import java.io.IOException;
-import java.util.Calendar;
-import java.util.Date;
 
 public abstract class GraphDBTestCase {
 
@@ -38,8 +36,4 @@ public abstract class GraphDBTestCase {
         return graphDb;
     }
 
-    protected long getUTCTestTime() {
-        Calendar calendar = DatatypeConverter.parseDateTime("1992-03-30T08:00:00Z");
-        return calendar.getTime().getTime();
-    }
 }
