@@ -2,6 +2,7 @@ package org.eol.globi.client;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.eol.globi.export.DarwinCoreExporter;
 import org.eol.globi.export.ExporterAssociationAggregates;
 import org.eol.globi.export.ExporterAssociations;
 import org.eol.globi.export.ExporterMeasurementOrFact;
@@ -52,6 +53,21 @@ public class TrophicImporter {
 
     private void exportData(GraphDatabaseService graphService) throws StudyImporterException {
         List<Study> studies = findAllStudies(graphService);
+        exportDarwinCoreArchive(studies);
+        exportDataOntology(studies);
+    }
+
+    private void exportDataOntology(List<Study> studies) throws StudyImporterException {
+        try {
+            export(studies, "./globi.owl", new GlobiOWLExporter());
+        } catch (OWLOntologyCreationException e) {
+            throw new StudyImporterException("failed to export as owl", e);
+        } catch (IOException e) {
+            throw new StudyImporterException("failed to export as owl", e);
+        }
+    }
+
+    private void exportDarwinCoreArchive(List<Study> studies) throws StudyImporterException {
         try {
             FileWriter darwinCoreMeta = writeMetaHeader();
             export(studies, "./unmatchedSourceTaxa.csv", new StudyExportUnmatchedSourceTaxaForStudies(GraphService.getGraphService()), darwinCoreMeta);
@@ -65,14 +81,6 @@ public class TrophicImporter {
             writeMetaFooter(darwinCoreMeta);
         } catch (IOException e) {
             throw new StudyImporterException("failed to export result to csv file", e);
-        }
-
-        try {
-            export(studies, "./globi.owl", new GlobiOWLExporter(), null);
-        } catch (OWLOntologyCreationException e) {
-            throw new StudyImporterException("failed to export as owl", e);
-        } catch (IOException e) {
-            throw new StudyImporterException("failed to export as owl", e);
         }
     }
 
@@ -112,18 +120,25 @@ public class TrophicImporter {
         return darwinCoreMeta;
     }
 
-    private void export(List<Study> importedStudies, String exportPath, StudyExporter studyExporter, FileWriter darwinCoreMeta) throws IOException {
+    private void export(List<Study> importedStudies, String exportPath, DarwinCoreExporter studyExporter, FileWriter darwinCoreMeta) throws IOException {
+        export(importedStudies, exportPath, studyExporter);
+        LOG.info("darwin core meta file writing... ");
+        studyExporter.exportDarwinCoreMetaTable(darwinCoreMeta, exportPath);
+        LOG.info("darwin core meta file written. ");
+    }
+
+    private void export(List<Study> importedStudies, String exportPath, StudyExporter studyExporter) throws IOException {
         FileWriter writer = new FileWriter(exportPath, false);
         LOG.info("export data to [" + new File(exportPath).getAbsolutePath() + "] started...");
         for (Study importedStudy : importedStudies) {
             boolean includeHeader = importedStudies.indexOf(importedStudy) == 0;
             studyExporter.exportStudy(importedStudy, writer, includeHeader);
         }
-        studyExporter.exportDarwinCoreMetaTable(darwinCoreMeta, exportPath);
         writer.flush();
         writer.close();
         LOG.info("export data to [" + new File(exportPath).getAbsolutePath() + "] complete.");
     }
+
 
     private StudyImporter createStudyImporter(GraphDatabaseService graphService, Class<StudyImporter> studyImporter, TaxonPropertyEnricher taxonEnricher) throws StudyImporterException {
         NodeFactory factory = new NodeFactory(graphService, taxonEnricher);

@@ -3,9 +3,7 @@ package org.eol.globi.export;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
-import org.eol.globi.domain.Taxon;
 import org.eol.globi.util.InteractUtil;
-import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.PropertyContainer;
 import org.neo4j.graphdb.Relationship;
 
@@ -16,7 +14,7 @@ import java.util.Date;
 import java.util.Map;
 import java.util.TimeZone;
 
-public abstract class ExporterBase extends BaseExporter {
+public abstract class ExporterBase extends DarwinCoreExporter {
 
     public static final String QUERY_PARAM_SOURCE_TAXON = "sourceTaxon";
     public static final String QUERY_PARAM_TARGET_TAXA = "targetTaxa";

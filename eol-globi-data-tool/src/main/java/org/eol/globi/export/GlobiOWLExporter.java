@@ -30,7 +30,7 @@ import org.semanticweb.owlapi.model.OWLOntologyManager;
 import org.semanticweb.owlapi.model.OWLOntologyStorageException;
 import org.semanticweb.owlapi.vocab.OWLRDFVocabulary;
 
-public class GlobiOWLExporter extends BaseExporter {
+public class GlobiOWLExporter implements StudyExporter {
 
     OWLOntology dataOntology;
 
@@ -45,10 +45,6 @@ public class GlobiOWLExporter extends BaseExporter {
     @Override
     public void exportStudy(Study study, Writer writer, boolean includeHeader)
             throws IOException {
-
-        OWLNamedIndividual studyInd = getNodeTaxonAsOWLIndividual(study.getUnderlyingNode());
-
-        String contrib = study.getContributor(); // TODO
 
         for (Relationship r : study.getSpecimens()) {
             Node agentNode = r.getEndNode();
@@ -81,18 +77,6 @@ public class GlobiOWLExporter extends BaseExporter {
         // is this OK?
         IRI iri = getIRI("individuals/" + sn.getId());
         return getOWLDataFactory().getOWLNamedIndividual(iri);
-    }
-
-    @Override
-    protected String getMetaTablePrefix() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    protected String getMetaTableSuffix() {
-        // TODO Auto-generated method stub
-        return null;
     }
 
     public OWLDataFactory getOWLDataFactory() {
@@ -159,8 +143,8 @@ public class GlobiOWLExporter extends BaseExporter {
      * Currently the skolem option is chosen
      *
      * @param i
-     * @param owlObjectProperty
-     * @param locType
+     * @param p
+     * @param c
      */
     public void addFact(OWLNamedIndividual i,
                         OWLObjectProperty p, OWLClass c) {
@@ -431,7 +415,7 @@ public class GlobiOWLExporter extends BaseExporter {
     }
 
     /**
-     * @param typeName - from the study model
+     * @param relationshipType - from the study model
      *                 <p/>
      *                 TODO - this is highly incomplete!
      * @return

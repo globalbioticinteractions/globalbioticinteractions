@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.Map;
 
-public abstract class StudyExportUnmatchedTaxaForStudies extends BaseExporter {
+public abstract class StudyExportUnmatchedTaxaForStudies extends DarwinCoreExporter {
     private static final String META_TABLE_SUFFIX = "</location>\n" +
             "    </files>\n" +
             "    <field index=\"0\" term=\"http://rs.tdwg.org/dwc/terms/scientificName\"/>\n" +

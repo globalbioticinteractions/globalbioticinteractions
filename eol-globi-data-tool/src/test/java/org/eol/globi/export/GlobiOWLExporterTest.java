@@ -18,12 +18,18 @@ public class GlobiOWLExporterTest extends GraphDBTestCase {
 
     @Test
     public void simpleExport() throws NodeFactoryException, ParseException, OWLOntologyCreationException, IOException {
-        Study study = ExportTestUtil.createTestData(nodeFactory);
 
         GlobiOWLExporter exporter = new GlobiOWLExporter();
         StringWriter writer = new StringWriter();
-        exporter.exportStudy(study, writer, false);
+        Study study = ExportTestUtil.createTestData(nodeFactory);
+        exporter.exportStudy(study, writer, true);
         assertThat(writer.toString(), containsString("@prefix"));
+
+        StringWriter anotherWriter = new StringWriter();
+        exporter.exportStudy(study, anotherWriter, true);
+
+        assertThat("expecting that two seperate exports of same study yields same result",
+                writer.toString().length(), Is.is(anotherWriter.toString().length()));
     }
 
 

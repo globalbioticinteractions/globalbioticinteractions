@@ -10,7 +10,7 @@ import org.neo4j.graphdb.Relationship;
 import java.io.IOException;
 import java.io.Writer;
 
-public abstract class BaseExporter implements StudyExporter {
+public abstract class DarwinCoreExporter implements StudyExporter {
 
 
     protected static boolean isSpecimenClassified(Node specimenNode) {
@@ -30,7 +30,6 @@ public abstract class BaseExporter implements StudyExporter {
 
     protected abstract String getMetaTableSuffix();
 
-    @Override
     public void exportDarwinCoreMetaTable(Writer writer, String filename) throws IOException {
         writer.write(getMetaTablePrefix());
         writer.write(filename);
