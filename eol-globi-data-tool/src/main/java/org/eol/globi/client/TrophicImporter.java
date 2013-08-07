@@ -29,11 +29,16 @@ import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.IndexHits;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.zip.GZIPOutputStream;
 
 public class TrophicImporter {
     private static final Log LOG = LogFactory.getLog(TrophicImporter.class);
@@ -59,7 +64,7 @@ public class TrophicImporter {
 
     private void exportDataOntology(List<Study> studies) throws StudyImporterException {
         try {
-            export(studies, "./globi.owl", new GlobiOWLExporter());
+            export(studies, "./globi.owl.gz", new GlobiOWLExporter());
         } catch (OWLOntologyCreationException e) {
             throw new StudyImporterException("failed to export as owl", e);
         } catch (IOException e) {
@@ -128,7 +133,11 @@ public class TrophicImporter {
     }
 
     private void export(List<Study> importedStudies, String exportPath, StudyExporter studyExporter) throws IOException {
-        FileWriter writer = new FileWriter(exportPath, false);
+        OutputStream fos = new BufferedOutputStream(new FileOutputStream(exportPath));
+        if (exportPath.endsWith(".gz")) {
+            fos = new GZIPOutputStream(fos);
+        }
+        OutputStreamWriter writer = new OutputStreamWriter(fos, "UTF-8");
         LOG.info("export data to [" + new File(exportPath).getAbsolutePath() + "] started...");
         for (Study importedStudy : importedStudies) {
             boolean includeHeader = importedStudies.indexOf(importedStudy) == 0;
