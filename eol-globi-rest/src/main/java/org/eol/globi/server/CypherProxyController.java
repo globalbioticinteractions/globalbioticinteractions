@@ -143,8 +143,8 @@ public class CypherProxyController {
         StringBuilder query = new StringBuilder();
         boolean isInvertedInteraction = INTERACTION_PREYED_UPON_BY.equals(interactionType);
 
-        String predatorPrefix = isInvertedInteraction ? ResultFields.PREFIX_SOURCE_SPECIMEN : ResultFields.PREFIX_TARGET_SPECIMEN;
-        String preyPrefix = isInvertedInteraction ? ResultFields.PREFIX_TARGET_SPECIMEN : ResultFields.PREFIX_SOURCE_SPECIMEN;
+        String predatorPrefix = isInvertedInteraction ? ResultFields.PREFIX_TARGET_SPECIMEN : ResultFields.PREFIX_SOURCE_SPECIMEN ;
+        String preyPrefix = isInvertedInteraction ? ResultFields.PREFIX_SOURCE_SPECIMEN : ResultFields.PREFIX_TARGET_SPECIMEN;
 
         final StringBuilder returnClause = new StringBuilder();
         returnClause.append("loc.latitude as ").append(ResultFields.LATITUDE)
