@@ -13,6 +13,7 @@
             <outputDirectory>owl</outputDirectory>
             <includes>
                 <include>**/*.owl</include>
+                <include>**/*.owl.gz</include>
             </includes>
         </fileSet>
     </fileSets>
