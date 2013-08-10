@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.Set;
 
 import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertNotNull;
@@ -31,9 +32,15 @@ import static org.junit.internal.matchers.StringContains.containsString;
 
 public class StudyImporterForSPIRETest extends GraphDBTestCase {
 
-    @Test(expected = StudyImporterException.class)
+    @Test
     public void parseIllegalTitle() throws StudyImporterException {
-        StudyImporterForSPIRE.parseTitlesAndAuthors("this is not right", new HashMap<String, String>());
+        HashMap<String, String> properties = new HashMap<String, String>();
+        StudyImporterForSPIRE.parseTitlesAndAuthors("this is really not supported, and is unformatted", properties);
+        assertThat(properties.get(Study.PUBLICATION_YEAR), is(nullValue()));
+        assertThat(properties.get(Study.CONTRIBUTOR), is("this is reall..."));
+        assertThat(properties.get(Study.TITLE), is("this is reall..."));
+        assertThat(properties.get(Study.DESCRIPTION), is("this is really not supported, and is unformatted"));
+
     }
 
     @Test

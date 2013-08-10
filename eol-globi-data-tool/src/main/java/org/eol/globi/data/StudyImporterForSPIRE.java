@@ -45,7 +45,7 @@ public class StudyImporterForSPIRE extends BaseStudyImporter {
         super(parserFactory, nodeFactory);
     }
 
-    protected static void parseTitlesAndAuthors(String titlesAndAuthors, Map<String, String> properties) throws StudyImporterException {
+    protected static void parseTitlesAndAuthors(String titlesAndAuthors, Map<String, String> properties)  {
         if (titlesAndAuthors.contains(KNOX)) {
             properties.put(Study.PUBLICATION_YEAR, "1970");
             properties.put(Study.TITLE, "Knox 1970");
@@ -122,16 +122,22 @@ public class StudyImporterForSPIRE extends BaseStudyImporter {
             properties.put(Study.DESCRIPTION, "An ecological study of a Hawaiian mangrove swamp. In: Estuaries, G. H. Lauff, Ed. (AAAS Publication 83, Washington, DC, 1967), pp. 420-431, from p. 429.");
             properties.put(Study.CONTRIBUTOR, "B. C. Patten and 40 co-authors");
         } else {
-            parseGenericTitlesAndAuthors(titlesAndAuthors, properties);
-            if (properties.containsKey(Study.PUBLICATION_YEAR)) {
-                try {
-                    Long.parseLong(properties.get(Study.PUBLICATION_YEAR));
-                } catch (NumberFormatException ex) {
+            try {
+                Long.parseLong(properties.get(Study.PUBLICATION_YEAR));
+                parseGenericTitlesAndAuthors(titlesAndAuthors, properties);
+                if (properties.containsKey(Study.PUBLICATION_YEAR)) {
+                } else {
+                    LOG.warn("failed to parse [" + titlesAndAuthors + "], using unformatted values instaed");
                     addUnformattedFields(titlesAndAuthors, properties);
                 }
-            } else {
+            } catch (NumberFormatException ex) {
+                LOG.warn("failed to parse [" + titlesAndAuthors + "], using unformatted values instaed");
+                addUnformattedFields(titlesAndAuthors, properties);
+            } catch (StudyImporterException ex) {
+                LOG.warn("failed to parse [" + titlesAndAuthors + "], using unformatted values instaed");
                 addUnformattedFields(titlesAndAuthors, properties);
             }
+
         }
 
 
@@ -139,7 +145,8 @@ public class StudyImporterForSPIRE extends BaseStudyImporter {
 
     private static void addUnformattedFields(String titlesAndAuthors, Map<String, String> properties) {
         properties.clear();
-        properties.put(Study.TITLE, titlesAndAuthors);
+        properties.put(Study.TITLE, StringUtils.abbreviate(titlesAndAuthors, 16));
+        properties.put(Study.CONTRIBUTOR, StringUtils.abbreviate(titlesAndAuthors, 16));
         properties.put(Study.DESCRIPTION, titlesAndAuthors);
     }
 
@@ -173,7 +180,11 @@ public class StudyImporterForSPIRE extends BaseStudyImporter {
                     i = titlesAndAuthors.indexOf(",");
                     if (i > 0 && (i + 1) < titlesAndAuthors.length()) {
                         j = titlesAndAuthors.substring(i + 1).indexOf(".");
-                        parseTitlesAndAuthors(titlesAndAuthors, properties, i, i + j + 1, ",");
+                        if (j > -1) {
+                            parseTitlesAndAuthors(titlesAndAuthors, properties, i, i + j + 1, ",");
+                        } else {
+                            throw new StudyImporterException("failed to import study for [" + titlesAndAuthors + "]");
+                        }
                     }
                 }
             }
