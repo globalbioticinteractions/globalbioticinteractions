@@ -1,6 +1,6 @@
 package org.eol.globi.data;
 
-public class StudyImporterException extends Throwable {
+public class StudyImporterException extends Exception {
     public StudyImporterException(String msg) {
         super(msg);
     }

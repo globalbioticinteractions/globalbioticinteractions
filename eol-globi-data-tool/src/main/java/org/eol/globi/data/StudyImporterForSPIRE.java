@@ -123,18 +123,11 @@ public class StudyImporterForSPIRE extends BaseStudyImporter {
             properties.put(Study.CONTRIBUTOR, "B. C. Patten and 40 co-authors");
         } else {
             try {
-                Long.parseLong(properties.get(Study.PUBLICATION_YEAR));
                 parseGenericTitlesAndAuthors(titlesAndAuthors, properties);
                 if (properties.containsKey(Study.PUBLICATION_YEAR)) {
-                } else {
-                    LOG.warn("failed to parse [" + titlesAndAuthors + "], using unformatted values instaed");
-                    addUnformattedFields(titlesAndAuthors, properties);
+                    Long.parseLong(properties.get(Study.PUBLICATION_YEAR));
                 }
-            } catch (NumberFormatException ex) {
-                LOG.warn("failed to parse [" + titlesAndAuthors + "], using unformatted values instaed");
-                addUnformattedFields(titlesAndAuthors, properties);
-            } catch (StudyImporterException ex) {
-                LOG.warn("failed to parse [" + titlesAndAuthors + "], using unformatted values instaed");
+            } catch (Exception ex) {
                 addUnformattedFields(titlesAndAuthors, properties);
             }
 
