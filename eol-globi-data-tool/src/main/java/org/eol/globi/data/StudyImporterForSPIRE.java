@@ -43,7 +43,6 @@ public class StudyImporterForSPIRE extends BaseStudyImporter {
     }
 
     protected static void parseTitlesAndAuthors(String titlesAndAuthors, Map<String, String> properties) {
-        properties.clear();
         String titlesAndAuthors1 = titlesAndAuthors.replace("\n", "");
         String shortened = StringUtils.abbreviate(titlesAndAuthors1.
                 replaceAll("(\\w(\\. )+)", "").trim(), 24);
@@ -135,11 +134,12 @@ public class StudyImporterForSPIRE extends BaseStudyImporter {
 
         buildGEOLookup();
 
-        Map<String, String> properties = new HashMap<String, String>();
+
         ResIterator resIterator = model.listSubjects();
+        Map<String, String> properties = new HashMap<String, String>();
         while (resIterator.hasNext()) {
-            Resource resource = resIterator.next();
             properties.clear();
+            Resource resource = resIterator.next();
             StmtIterator stmtIterator = resource.listProperties();
             while (stmtIterator.hasNext()) {
                 Statement statement = stmtIterator.next();

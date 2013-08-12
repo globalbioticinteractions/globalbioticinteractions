@@ -153,7 +153,9 @@ public class StudyImporterForSPIRETest extends GraphDBTestCase {
         importer.setTrophicLinkListener(listener);
         importer.importStudy();
 
-        assertThat(listener.getCount() > 30000, is(true));
+        assertThat(listener.countries.size(), is(50));
+
+        assertThat(listener.getCount(), is(30196));
     }
 
 
