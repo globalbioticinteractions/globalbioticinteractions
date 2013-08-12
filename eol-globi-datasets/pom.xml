@@ -56,7 +56,8 @@
                     <descriptors>
                         <descriptor>src/assembly/neo4j-graph-db.xml</descriptor>
                         <descriptor>src/assembly/darwin-core.xml</descriptor>
-                        <descriptor>src/assembly/owl.xml</descriptor>
+                        <!-- disabling automated owl export for now . . . 500 MB per dump causes bandwidth issues -->
+                        <!--descriptor>src/assembly/owl.xml</descriptor-->
                     </descriptors>
                 </configuration>
                 <executions>
