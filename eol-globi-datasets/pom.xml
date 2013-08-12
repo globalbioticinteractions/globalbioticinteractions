@@ -43,7 +43,7 @@
                         <argument>-Xmx2G</argument>
                         <argument>-classpath</argument>
                         <classpath/>
-                        <argument>org.eol.globi.client.TrophicImporter</argument>
+                        <argument>org.eol.globi.tool.Normalizer</argument>
                     </arguments>
                     <workingDirectory>${project.build.directory}/data</workingDirectory>
                 </configuration>

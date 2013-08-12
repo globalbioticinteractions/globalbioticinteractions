@@ -1,4 +1,4 @@
-package org.eol.globi.client;
+package org.eol.globi.tool;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -40,11 +40,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.GZIPOutputStream;
 
-public class TrophicImporter {
-    private static final Log LOG = LogFactory.getLog(TrophicImporter.class);
+public class Normalizer {
+    private static final Log LOG = LogFactory.getLog(Normalizer.class);
 
     public static void main(final String[] commandLineArguments) throws StudyImporterException {
-        new TrophicImporter().importExport();
+        new Normalizer().importExport();
     }
 
     public void importExport() throws StudyImporterException {

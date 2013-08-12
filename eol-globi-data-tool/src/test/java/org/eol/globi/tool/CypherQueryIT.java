@@ -1,4 +1,4 @@
-package org.eol.globi.client;
+package org.eol.globi.tool;
 
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
