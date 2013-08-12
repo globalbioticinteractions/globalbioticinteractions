@@ -36,9 +36,9 @@ public class StudyImporterForSPIRETest extends GraphDBTestCase {
     public void parseIllegalTitle() throws StudyImporterException {
         HashMap<String, String> properties = new HashMap<String, String>();
         StudyImporterForSPIRE.parseTitlesAndAuthors("this is really not supported, and is unformatted", properties);
-        assertThat(properties.get(Study.PUBLICATION_YEAR), is(nullValue()));
-        assertThat(properties.get(Study.CONTRIBUTOR), is("this is reall..."));
-        assertThat(properties.get(Study.TITLE), is("this is reall..."));
+        assertThat(properties.get(Study.PUBLICATION_YEAR), is(""));
+        assertThat(properties.get(Study.CONTRIBUTOR), is(""));
+        assertThat(properties.get(Study.TITLE), is("this is really not su...e9154c16f07ad2470849d90a8a0b9dab"));
         assertThat(properties.get(Study.DESCRIPTION), is("this is really not supported, and is unformatted"));
 
     }
@@ -48,60 +48,30 @@ public class StudyImporterForSPIRETest extends GraphDBTestCase {
         Map<String, String> properties = new HashMap<String, String>();
         String titlesAndAuthors = "G. A. Knox, Antarctic marine ecosystems. In: Antarctic Ecology, M. W. Holdgate, Ed. (Academic Press, New York, 1970) 1:69-96, from p. 87.";
         StudyImporterForSPIRE.parseTitlesAndAuthors(titlesAndAuthors, properties);
-        assertThat(properties.get(Study.PUBLICATION_YEAR), is("1970"));
-        assertThat(properties.get(Study.TITLE), is("Knox 1970"));
-        assertThat(properties.get(Study.DESCRIPTION), containsString("Antarctic marine ecosystems. In: Antarctic Ecology, M. W. Holdgate, Ed. (Academic Press, New York, 1970) 1:69-96, from p. 87."));
-        assertThat(properties.get(Study.CONTRIBUTOR), is("G. A. Knox"));
+        assertThat(properties.get(Study.DESCRIPTION), is("G. A. Knox, Antarctic marine ecosystems. In: Antarctic Ecology, M. W. Holdgate, Ed. (Academic Press, New York, 1970) 1:69-96, from p. 87."));
+        assertThat(properties.get(Study.PUBLICATION_YEAR), is(""));
+        assertThat(properties.get(Study.TITLE), is("Knox, Antarctic marin...984ae066666743823ac7b57da0e01f2d"));
+        assertThat(properties.get(Study.CONTRIBUTOR), is(""));
     }
 
     @Test
     public void parseAnotherYetOtherTitlesAndAuthorsFormat() throws StudyImporterException {
         Map<String, String> properties = new HashMap<String, String>();
         StudyImporterForSPIRE.parseTitlesAndAuthors("B. A. Hawkins and R. D. Goeden, 1984.  Organization of a parasitoid community associated with a complex of galls on Atriplex spp. in southern California.  Ecol. Entomol. 9:271-292, from p. 274.", properties);
-        assertThat(properties.get(Study.PUBLICATION_YEAR), is("1984"));
-        assertThat(properties.get(Study.TITLE), is("B. A. Hawkins and R. D. Goeden 1984"));
-        assertThat(properties.get(Study.DESCRIPTION), containsString("Organization of a parasitoid community associated with a complex of galls on Atriplex spp. in southern California.  Ecol. Entomol. 9:271-292, from p. 274."));
-        assertThat(properties.get(Study.CONTRIBUTOR), is("B. A. Hawkins and R. D. Goeden"));
+        assertThat(properties.get(Study.PUBLICATION_YEAR), is(""));
+        assertThat(properties.get(Study.TITLE), is("Hawkins and Goeden, 1...fcebc21f82937fa4ab9f77a0ecbd62e3"));
+        assertThat(properties.get(Study.DESCRIPTION), is("B. A. Hawkins and R. D. Goeden, 1984.  Organization of a parasitoid community associated with a complex of galls on Atriplex spp. in southern California.  Ecol. Entomol. 9:271-292, from p. 274."));
+        assertThat(properties.get(Study.CONTRIBUTOR), is(""));
     }
 
     @Test
     public void parseYetOtherTitlesAndAuthorsFormat() throws StudyImporterException {
         Map<String, String> properties = new HashMap<String, String>();
         StudyImporterForSPIRE.parseTitlesAndAuthors("Townsend, CR, Thompson, RM, McIntosh, AR, Kilroy, C, Edwards, ED, Scarsbrook, MR. 1998.  Disturbance, resource supply and food-web architecture in streams.  Ecology Letters 1:200-209.", properties);
-        assertThat(properties.get(Study.TITLE), is("Townsend et al. 1998"));
-        assertThat(properties.get(Study.PUBLICATION_YEAR), is("1998"));
-        assertThat(properties.get(Study.DESCRIPTION), containsString("Disturbance, resource supply and food-web architecture in streams.  Ecology Letters 1:200-209."));
-        assertThat(properties.get(Study.CONTRIBUTOR), is("Townsend, CR, Thompson, RM, McIntosh, AR, Kilroy, C, Edwards, ED, Scarsbrook, MR"));
-    }
-
-    @Test
-    public void parseOtherTitlesAndAuthorsFormat() throws StudyImporterException {
-        Map<String, String> properties = new HashMap<String, String>();
-        StudyImporterForSPIRE.parseTitlesAndAuthors("Huxham M, Beany S, Raffaelli D (1996) Do parasites reduce the chances of triangulation in a real food web? Oikos 76:284", properties);
-        assertThat(properties.get(Study.TITLE), is("Huxham et al. 1996"));
-        assertThat(properties.get(Study.PUBLICATION_YEAR), is("1996"));
-        assertThat(properties.get(Study.DESCRIPTION), containsString("Do parasites reduce the chances of triangulation in a real food web? Oikos 76:284"));
-        assertThat(properties.get(Study.CONTRIBUTOR), is("Huxham M, Beany S, Raffaelli D"));
-    }
-
-    @Test
-    public void parseTitlesAndAuthors() throws StudyImporterException {
-        String reference = "R. J. Rosenthal, W. D. Clarke, P. K. Dayton, Ecology and natural history of a stand of giant kelp, Macrocystis pyrifera, off Del Mar, California.  Fish. Bull.  (Dublin) 72(3):670-684, from p. 683 (1974).";
-        Map<String, String> properties = new HashMap<String, String>();
-        StudyImporterForSPIRE.parseTitlesAndAuthors(reference, properties);
-        assertThat(properties.get(Study.TITLE), is("Rosenthal et al. 1974"));
-        assertThat(properties.get(Study.PUBLICATION_YEAR), is("1974"));
-        assertThat(properties.get(Study.CONTRIBUTOR), is("R. J. Rosenthal, W. D. Clarke, P. K. Dayton"));
-        assertThat(properties.get(Study.DESCRIPTION), is("Ecology and natural history of a stand of giant kelp, Macrocystis pyrifera, off Del Mar, California.  Fish. Bull.  (Dublin) 72(3):670-684, from p. 683 (1974)."));
-
-        String rawString = "K. Paviour-Smith, The biotic community of a salt meadow in New Zealand, Trans. R. Soc. N.Z. 83(3):525-554, from p. 542 (1956).";
-        properties = new HashMap<String, String>();
-
-        StudyImporterForSPIRE.parseTitlesAndAuthors(rawString, properties);
-        assertThat(properties.get(Study.TITLE), is("Paviour-Smith 1956"));
-        assertThat(properties.get(Study.PUBLICATION_YEAR), is("1956"));
-        assertThat(properties.get(Study.CONTRIBUTOR), is("K. Paviour-Smith"));
-        assertThat(properties.get(Study.DESCRIPTION), is("The biotic community of a salt meadow in New Zealand, Trans. R. Soc. N.Z. 83(3):525-554, from p. 542 (1956)."));
+        assertThat(properties.get(Study.TITLE), is("Townsend, CR, Thompso...db61dcc043a135ac2fa8b440e11165e3"));
+        assertThat(properties.get(Study.PUBLICATION_YEAR), is(""));
+        assertThat(properties.get(Study.DESCRIPTION), is("Townsend, CR, Thompson, RM, McIntosh, AR, Kilroy, C, Edwards, ED, Scarsbrook, MR. 1998.  Disturbance, resource supply and food-web architecture in streams.  Ecology Letters 1:200-209."));
+        assertThat(properties.get(Study.CONTRIBUTOR), is(""));
     }
 
     @Test
