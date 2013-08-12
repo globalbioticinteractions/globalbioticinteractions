@@ -247,7 +247,7 @@ public class CypherProxyController {
     public String contributors() throws IOException {
         String cypherQuery = "START study=node:studies('*:*')" +
                 " MATCH study-[:COLLECTED]->sourceSpecimen-[interact:" + InteractUtil.allInteractionsCypherClause() + "]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon, sourceSpecimen-[:CLASSIFIED_AS]->sourceTaxon " +
-                " RETURN study.institution, study.period, study.description, study.contributor, count(interact), count(distinct(sourceTaxon)), count(distinct(targetTaxon))";
+                " RETURN study.institution?, study.period?, study.description, study.contributor, count(interact), count(distinct(sourceTaxon)), count(distinct(targetTaxon))";
         return new CypherQueryExecutor(cypherQuery, EMPTY_PARAMS).execute(null);
     }
 
