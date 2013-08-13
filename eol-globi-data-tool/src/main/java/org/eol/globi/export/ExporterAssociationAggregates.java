@@ -35,7 +35,7 @@ public class ExporterAssociationAggregates extends ExporterAssociationsBase {
             properties.put(EOLDictionary.OCCURRENCE_ID, "globi:occur:source:" + sourceOccurrenceId);
             properties.put(EOLDictionary.TARGET_OCCURRENCE_ID, "globi:occur:target:" + assocIdAndTargetOccurrenceIdId);
             properties.put(EOLDictionary.ASSOCIATION_TYPE, interactionType);
-            properties.put(EOLDictionary.SOURCE, study.getTitle());
+            addStudyInfo(study, properties);
             writeProperties(writer, properties);
             properties.clear();
         }

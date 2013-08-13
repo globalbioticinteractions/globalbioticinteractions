@@ -30,8 +30,8 @@ public class ExporterAssociationAggregatesTest extends GraphDBTestCase {
             createTestData(null, studyTitle);
         }
 
-        String expected = "\nglobi:assoc:1-2-ATE-5,globi:occur:source:1-2-ATE,ATE,globi:occur:target:1-2-ATE-5,myStudy1" +
-                "\nglobi:assoc:9-2-ATE-5,globi:occur:source:9-2-ATE,ATE,globi:occur:target:9-2-ATE-5,myStudy2";
+        String expected = "\nglobi:assoc:1-2-ATE-5,globi:occur:source:1-2-ATE,ATE,globi:occur:target:1-2-ATE-5,data source description,globi:ref:1" +
+                "\nglobi:assoc:9-2-ATE-5,globi:occur:source:9-2-ATE,ATE,globi:occur:target:9-2-ATE-5,data source description,globi:ref:9";
 
         ExporterAssociationAggregates exporter = new ExporterAssociationAggregates();
         StringWriter row = new StringWriter();
@@ -45,7 +45,7 @@ public class ExporterAssociationAggregatesTest extends GraphDBTestCase {
     }
 
     private void createTestData(Double length, String studyTitle) throws NodeFactoryException, ParseException {
-        Study myStudy = nodeFactory.createStudy(studyTitle);
+        Study myStudy = nodeFactory.getOrCreateStudy(studyTitle, "contributor", "inst", "per", "description", "pubYear", "data source description");
         Specimen specimen = nodeFactory.createSpecimen("Homo sapiens");
         specimen.setStomachVolumeInMilliLiter(666.0);
         specimen.setLifeStage(LifeStage.JUVENILE);
