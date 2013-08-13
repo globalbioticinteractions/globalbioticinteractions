@@ -20,6 +20,7 @@ import java.util.Map;
 
 public abstract class StudyImporterForGoMexSIBase extends BaseStudyImporter {
     private static final Log LOG = LogFactory.getLog(StudyImporterForGoMexSIBase.class);
+    public static final String GOMEXSI_URL = "http://gomexsi.tamucc.edu";
 
     public StudyImporterForGoMexSIBase(ParserFactory parserFactory, NodeFactory nodeFactory) {
         super(parserFactory, nodeFactory);
@@ -51,11 +52,13 @@ public abstract class StudyImporterForGoMexSIBase extends BaseStudyImporter {
         addObservations(predatorIdToPredatorNames, referenceIdToStudy, predatorIdToPreyNames);
 
         // TODO figure out a way to introduce the separation of study and reference.
-        return nodeFactory.createStudy("GoMexSI",
+        return nodeFactory.getOrCreateStudy("GoMexSI",
                 "James D. Simons",
                 "Center for Coastal Studies, Texas A&M University - Corpus Christi, United States",
                 "",
-                "<a href=\"http://www.ingentaconnect.com/content/umrsmas/bullmar/2013/00000089/00000001/art00009\">Building a Fisheries Trophic Interaction Database for Management and Modeling Research in the Gulf of Mexico Large Marine Ecosystem.</a>", null);
+                "<a href=\"http://www.ingentaconnect.com/content/umrsmas/bullmar/2013/00000089/00000001/art00009\">Building a Fisheries Trophic Interaction Database for Management and Modeling Research in the Gulf of Mexico Large Marine Ecosystem.</a>"
+                , null
+                , "http://gomexsi.tamucc.edu");
     }
 
     protected abstract String getPreyResourcePath();
@@ -120,7 +123,9 @@ public abstract class StudyImporterForGoMexSIBase extends BaseStudyImporter {
             institution.append(", ");
             institution.append(universityCountry);
         }
-        study = nodeFactory.getOrCreateStudy(refTag, firstName + " " + lastName, institution.toString(), "", description, null);
+        study = nodeFactory.getOrCreateStudy(refTag, firstName + " " + lastName, institution.toString(), "", description
+                , publicationYear
+                , GOMEXSI_URL);
         Transaction transaction = nodeFactory.getGraphDb().beginTx();
         try {
             study.setPublicationYear(publicationYear);

@@ -33,6 +33,7 @@ public class StudyImporterForBioInfo extends BaseStudyImporter implements StudyI
         put("telium", LifeStage.TELIUM);
         put("anamorph", LifeStage.ANAMORPH);
     }};
+    public static final String BIOINFO_URL = "http://bioinfo.org.uk";
 
     public StudyImporterForBioInfo(ParserFactory parserFactory, NodeFactory nodeFactory) {
         super(parserFactory, nodeFactory);
@@ -128,9 +129,9 @@ public class StudyImporterForBioInfo extends BaseStudyImporter implements StudyI
         LOG.info("relations being created...");
         Study study = nodeFactory.getOrCreateStudy("BIO_INFO",
                 "Malcolm Storey",
-                "http://bioinfo.org.uk",
+                BIOINFO_URL,
                 "",
-                "Food webs and species interactions in the Biodiversity of UK and Ireland.", null);
+                "Food webs and species interactions in the Biodiversity of UK and Ireland.", null, "http://bioinfo.org.uk");
         try {
             long count = 0;
             while (parser.getLine() != null) {

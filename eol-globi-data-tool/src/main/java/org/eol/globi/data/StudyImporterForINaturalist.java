@@ -21,6 +21,7 @@ import java.io.InputStream;
 
 public class StudyImporterForINaturalist extends BaseStudyImporter {
     private static final Log LOG = LogFactory.getLog(StudyImporterForINaturalist.class);
+    public static final String INATURALIST_URL = "http://inaturalist.org";
 
     public StudyImporterForINaturalist(ParserFactory parserFactory, NodeFactory nodeFactory) {
         super(parserFactory, nodeFactory);
@@ -28,7 +29,7 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
 
     @Override
     public Study importStudy() throws StudyImporterException {
-        Study study = nodeFactory.getOrCreateStudy("iNaturalist", "Ken-ichi Kueda", "http://inaturalist.org", "", "iNaturalist is a place where you can record what you see in nature, meet other nature lovers, and learn about the natural world. ", "");
+        Study study = nodeFactory.getOrCreateStudy("iNaturalist", "Ken-ichi Kueda", INATURALIST_URL, "", "iNaturalist is a place where you can record what you see in nature, meet other nature lovers, and learn about the natural world. ", "", INATURALIST_URL);
         retrieveDataParseResults(study);
         return study;
     }

@@ -16,7 +16,6 @@ public class ExporterAssociations extends ExporterAssociationsBase {
     @Override
     public void doExportStudy(Study study, Writer writer, boolean includeHeader) throws IOException {
         Map<String, String> properties = new HashMap<String, String>();
-
         Iterable<Relationship> specimens = study.getSpecimens();
         for (Relationship collectedRel : specimens) {
             Node specimenNode = collectedRel.getEndNode();
@@ -46,7 +45,8 @@ public class ExporterAssociations extends ExporterAssociationsBase {
 
         properties.put(EOLDictionary.TARGET_OCCURRENCE_ID, "globi:occur:target:" + targetSpecimen.getId());
         properties.put(EOLDictionary.ASSOCIATION_TYPE, interactRel.getType().name());
-        properties.put(EOLDictionary.SOURCE, study.getTitle());
+        properties.put(EOLDictionary.SOURCE, study.getSource());
+        properties.put(EOLDictionary.REFERENCE_ID, "globi:ref:" + study.getNodeID());
         writeProperties(writer, properties);
         properties.clear();
     }

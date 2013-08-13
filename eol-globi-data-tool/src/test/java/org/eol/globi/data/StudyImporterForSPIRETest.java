@@ -156,6 +156,14 @@ public class StudyImporterForSPIRETest extends GraphDBTestCase {
         assertThat(listener.countries.size(), is(50));
 
         assertThat(listener.getCount(), is(30196));
+
+        for (String description : listener.descriptions) {
+            assertThat(description, not(containsString("http://spire.umbc.edu/ontologies/SpireEcoConcepts.owl#")));
+        }
+
+        for (String title : listener.titles) {
+            assertThat(title, not(containsString("http://spire.umbc.edu/")));
+        }
     }
 
 
@@ -166,11 +174,19 @@ public class StudyImporterForSPIRETest extends GraphDBTestCase {
 
         private int count = 0;
         Set<String> countries = new HashSet<String>();
+        Set<String> descriptions = new HashSet<String>();
+        Set<String> titles = new HashSet<String>();
 
         @Override
         public void newLink(Map<String, String> properties) {
             if (properties.containsKey(StudyImporterForSPIRE.COUNTRY)) {
                 countries.add(properties.get(StudyImporterForSPIRE.COUNTRY));
+            }
+            if (properties.containsKey(Study.DESCRIPTION)) {
+                descriptions.add(properties.get(Study.DESCRIPTION));
+            }
+            if (properties.containsKey(Study.TITLE)) {
+                titles.add(properties.get(Study.TITLE));
             }
             count++;
         }

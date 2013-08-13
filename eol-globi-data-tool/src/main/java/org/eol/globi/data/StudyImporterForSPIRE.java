@@ -163,17 +163,17 @@ public class StudyImporterForSPIRE extends BaseStudyImporter {
         return null;
     }
 
-    private void parseStudyInfo(Map<String, String> properties, Statement next1) throws StudyImporterException {
-        StmtIterator stmtIterator1 = next1.getObject().asResource().listProperties();
-        while (stmtIterator1.hasNext()) {
-            Statement next2 = stmtIterator1.next();
-            String localName = next2.getPredicate().getLocalName();
+    private void parseStudyInfo(Map<String, String> properties, Statement observedInStudy) throws StudyImporterException {
+        StmtIterator studyProperties = observedInStudy.getObject().asResource().listProperties();
+        while (studyProperties.hasNext()) {
+            Statement studyProperty = studyProperties.next();
+            String localName = studyProperty.getPredicate().getLocalName();
             if ("locality".equals(localName)) {
-                parseLocalityInfo(properties, getTrimmedObject(next2));
+                parseLocalityInfo(properties, getTrimmedObject(studyProperty));
             } else if (OF_HABITAT.equals(localName)) {
-                properties.put(localName, getTrimmedObject(next1));
+                properties.put(localName, getTrimmedObject(studyProperty));
             } else if ("titleAndAuthors".equals(localName)) {
-                parseTitlesAndAuthors(getTrimmedObject(next1), properties);
+                parseTitlesAndAuthors(getTrimmedObject(studyProperty), properties);
             }
         }
     }
@@ -199,7 +199,7 @@ public class StudyImporterForSPIRE extends BaseStudyImporter {
             try {
                 Study study = nodeFactory.getOrCreateStudy(properties.get(Study.TITLE),
                         properties.get(Study.CONTRIBUTOR),
-                        null, null, properties.get(Study.DESCRIPTION), properties.get(Study.PUBLICATION_YEAR));
+                        null, null, properties.get(Study.DESCRIPTION), properties.get(Study.PUBLICATION_YEAR), "SPIRE");
                 Specimen predator = createSpecimen(properties.get(PREDATOR_NAME));
                 LatLng latLng = geoLookup.get(COUNTRY);
                 if (latLng != null) {

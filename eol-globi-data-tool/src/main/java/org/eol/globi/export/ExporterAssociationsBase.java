@@ -7,7 +7,8 @@ public abstract class ExporterAssociationsBase extends ExporterBase {
                 EOLDictionary.OCCURRENCE_ID,
                 EOLDictionary.ASSOCIATION_TYPE,
                 EOLDictionary.TARGET_OCCURRENCE_ID,
-                EOLDictionary.SOURCE
+                EOLDictionary.SOURCE,
+                EOLDictionary.REFERENCE_ID
         };
     }
 }

@@ -8,6 +8,7 @@ import org.eol.globi.export.ExporterAssociations;
 import org.eol.globi.export.ExporterMeasurementOrFact;
 import org.eol.globi.export.ExporterOccurrenceAggregates;
 import org.eol.globi.export.ExporterOccurrences;
+import org.eol.globi.export.ExporterReferences;
 import org.eol.globi.export.ExporterTaxa;
 import org.eol.globi.export.GlobiOWLExporter;
 import org.eol.globi.export.StudyExportUnmatchedSourceTaxaForStudies;
@@ -44,14 +45,13 @@ public class Normalizer {
     private static final Log LOG = LogFactory.getLog(Normalizer.class);
 
     public static void main(final String[] commandLineArguments) throws StudyImporterException {
-        new Normalizer().importExport();
+        new Normalizer().normalize();
     }
 
-    public void importExport() throws StudyImporterException {
+    public void normalize() throws StudyImporterException {
         final GraphDatabaseService graphService = GraphService.getGraphService();
         TaxonPropertyEnricherImpl taxonEnricher = new TaxonPropertyEnricherImpl(graphService);
         importData(graphService, taxonEnricher);
-
         exportData(graphService);
         graphService.shutdown();
     }
@@ -80,6 +80,7 @@ public class Normalizer {
             export(studies, "./associations.csv", new ExporterAssociations(), darwinCoreMeta);
             export(studies, "./associationAggregates.csv", new ExporterAssociationAggregates(), darwinCoreMeta);
             export(studies, "./occurrences.csv", new ExporterOccurrences(), darwinCoreMeta);
+            export(studies, "./references.csv", new ExporterReferences(), darwinCoreMeta);
             export(studies, "./occurrenceAggregates.csv", new ExporterOccurrenceAggregates(), darwinCoreMeta);
             export(studies, "./taxa.csv", new ExporterTaxa(), darwinCoreMeta);
             export(studies, "./measurementOrFact.csv", new ExporterMeasurementOrFact(), darwinCoreMeta);

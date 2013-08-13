@@ -27,8 +27,8 @@ public class ExporterAssociationsTest extends GraphDBTestCase {
     public void exportMissingLength() throws IOException, NodeFactoryException, ParseException {
         createTestData(null);
 
-        String expected = "\nglobi:assoc:5,globi:occur:source:3,ATE,globi:occur:target:6,myStudy" +
-        "\nglobi:assoc:6,globi:occur:source:3,ATE,globi:occur:target:6,myStudy";
+        String expected = "\nglobi:assoc:5,globi:occur:source:3,ATE,globi:occur:target:6,myStudy,globi:ref:1" +
+        "\nglobi:assoc:6,globi:occur:source:3,ATE,globi:occur:target:6,myStudy,globi:ref:1";
 
 
         Study myStudy1 = nodeFactory.findStudy("myStudy");
