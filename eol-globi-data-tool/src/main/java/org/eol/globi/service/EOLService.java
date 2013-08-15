@@ -12,8 +12,11 @@ import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonomyProvider;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 
 public class EOLService extends BaseExternalIdService {
 
@@ -27,13 +30,16 @@ public class EOLService extends BaseExternalIdService {
         Long pageId;
 
         try {
-            URI uri = new URI("http", null, "eol.org", 80, "/api/search/1.0/" + taxonName, "exact=true", null);
-            pageId = getPageId(uri, true);
+            pageId = getPageId(taxonName, true);
         } catch (URISyntaxException e) {
             throw new TaxonPropertyLookupServiceException("failed to create uri", e);
         }
 
         return pageId == null ? null : TaxonomyProvider.ID_PREFIX_EOL + pageId;
+    }
+
+    private URI createSearchURI(String taxonName) throws URISyntaxException {
+        return new URI("http", null, "eol.org", 80, "/api/search/1.0/" + taxonName, "exact=true", null);
     }
 
     @Override
@@ -87,8 +93,6 @@ public class EOLService extends BaseExternalIdService {
     private void addRanks(String firstConceptId, StringBuilder ranks) throws URISyntaxException, TaxonPropertyLookupServiceException, IOException {
         URI uri;
         String response;
-        ObjectMapper mapper;
-        JsonNode node;
         uri = new URI("http", null, "eol.org", 80, "/api/hierarchy_entries/1.0/" + firstConceptId, ".json?common_names=false&synonyms=false&format=json", null);
         response = getResponse(uri);
         if (response != null) {
@@ -127,7 +131,8 @@ public class EOLService extends BaseExternalIdService {
         return first;
     }
 
-    private Long getPageId(URI uri, boolean shouldFollowAlternate) throws TaxonPropertyLookupServiceException, URISyntaxException {
+    private Long getPageId(String taxonName, boolean shouldFollowAlternate) throws TaxonPropertyLookupServiceException, URISyntaxException {
+        URI uri = createSearchURI(taxonName);
         String response = getResponse(uri);
 
 
@@ -139,13 +144,21 @@ public class EOLService extends BaseExternalIdService {
                 smallestPageId = findSmallestPageId(response);
 
             } else if (shouldFollowAlternate) {
-                String[] alternates = response.split("<link rel=\"alternate\" href=\"");
+                String[] alternates = response.split("<link rel=\"alternate\" href=\"http://eol.org/api/search/1.0/");
                 if (alternates.length > 1) {
                     String[] urlSplit = alternates[1].split("\"");
                     if (urlSplit.length > 1) {
-                        String alternateUrlString = urlSplit[0];
-                        URI alternateUri = new URI(alternateUrlString);
-                        smallestPageId = getPageId(alternateUri, false);
+                        String alternateTaxonName = urlSplit[0];
+                        try {
+                            String decodedName = URLDecoder.decode(alternateTaxonName, "UTF-8");
+                            decodedName = decodedName.replace("/", "");
+                            if (!decodedName.equals(taxonName)) {
+                                smallestPageId = getPageId(decodedName, false);
+                            }
+                        } catch (UnsupportedEncodingException e) {
+                            throw new TaxonPropertyLookupServiceException("failed to decode [" + alternateTaxonName + "]", e);
+                        }
+
                     }
 
                 }

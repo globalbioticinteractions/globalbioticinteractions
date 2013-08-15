@@ -20,6 +20,7 @@ public class EOLServiceIT {
         assertThat(lookupPageIdByScientificName("Prunella (Bot)"), is("EOL:70879"));
         assertThat(lookupPageIdByScientificName("Prunella (Bird)"), is("EOL:77930"));
         assertThat(lookupPageIdByScientificName("Pseudobaeospora dichroa"), is("EOL:1001400"));
+        assertThat(lookupPageIdByScientificName("Fish hook"), is("EOL:392537"));
     }
 
     /**
