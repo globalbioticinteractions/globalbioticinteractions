@@ -1,5 +1,7 @@
 package org.eol.globi.export;
 
+import com.Ostermiller.util.CSVPrint;
+import com.Ostermiller.util.CSVPrinter;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
@@ -9,8 +11,10 @@ import org.neo4j.graphdb.Relationship;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
 
@@ -101,14 +105,20 @@ public abstract class ExporterBase extends DarwinCoreExporter {
     protected void writeProperties(Writer writer, Map<String, String> properties) throws IOException {
         writer.write("\n");
         String[] fields = getFields();
+        writeProperties(writer, properties, fields);
+    }
+
+    protected static void writeProperties(Writer writer, Map<String, String> properties, String[] fields) throws IOException {
+        CSVPrinter csvPrinter = new CSVPrinter(writer);
+        String values[] = new String[fields.length];
         for (int i = 0; i < fields.length; i++) {
             if (properties.containsKey(fields[i])) {
-                writer.write(properties.get(fields[i]));
-            }
-            if (i < (fields.length - 1)) {
-                writer.write(",");
+                values[i] = (properties.get(fields[i]));
+            } else {
+                values[i] = ("");
             }
         }
+        csvPrinter.write(values);
     }
 
 
