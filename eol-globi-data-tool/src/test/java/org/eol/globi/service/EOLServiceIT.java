@@ -47,7 +47,6 @@ public class EOLServiceIT {
 
     @Test
     public void multiplySymbolNotSupportedByEOL() throws TaxonPropertyLookupServiceException {
-        assertThat(lookupPageIdByScientificName("Salix cinerea x phylicifolia"), is("EOL:584272"));
         assertThat(lookupPageIdByScientificName("Salix cinerea \u00D7 phylicifolia"), is(nullValue()));
         assertThat(lookupPageIdByScientificName("Salix cinerea × phylicifolia"), is(nullValue()));
 
@@ -67,9 +66,7 @@ public class EOLServiceIT {
         assertThat(lookupPageIdByScientificName("Catasticta hegemon"), is("EOL:173526"));
         assertThat(lookupPageIdByScientificName("Theridion ovatum"), is("EOL:1187291"));
         assertThat(lookupPageIdByScientificName("Cambarus propinquus"), is("EOL:4260550"));
-        assertThat(lookupPageIdByScientificName("Zoanthus flosmarinus"), is("EOL:200757"));
         assertThat(lookupPageIdByScientificName("Vellidae"), is("EOL:644"));
-        assertThat(lookupPageIdByScientificName("Mylothris spica"), is("EOL:178231"));
         assertThat(lookupPageIdByScientificName("Mylothris rueppellii"), is("EOL:180170"));
 
     }
