@@ -194,15 +194,18 @@ public class StudyImporterForSPIRE extends BaseStudyImporter {
         }
     }
 
-    private void importTrophicLink(Map<String, String> properties) {
+    protected void importTrophicLink(Map<String, String> properties) {
         if (properties.containsKey(Study.TITLE)) {
             try {
                 Study study = nodeFactory.getOrCreateStudy(properties.get(Study.TITLE),
                         properties.get(Study.CONTRIBUTOR),
                         null, null, properties.get(Study.DESCRIPTION), properties.get(Study.PUBLICATION_YEAR), "SPIRE");
                 Specimen predator = createSpecimen(properties.get(PREDATOR_NAME));
-                LatLng latLng = geoLookup.get(COUNTRY);
-                if (latLng != null) {
+                String country = properties.get(COUNTRY);
+                LatLng latLng = geoLookup.get(country);
+                if (latLng == null) {
+                    LOG.warn("failed to find location for county [" + country + "]");
+                } else {
                     predator.caughtIn(nodeFactory.getOrCreateLocation(latLng.getLat(), latLng.getLng(), null));
                 }
                 study.collected(predator);

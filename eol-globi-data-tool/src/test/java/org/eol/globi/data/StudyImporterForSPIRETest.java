@@ -6,8 +6,13 @@ import com.healthmarketscience.jackcess.JetFormat;
 import com.healthmarketscience.jackcess.Table;
 import com.hp.hpl.jena.rdf.model.impl.RDFDefaultErrorHandler;
 import org.apache.commons.collections.CollectionUtils;
+import org.eol.globi.domain.RelTypes;
+import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
+import org.eol.globi.domain.Taxon;
 import org.junit.Test;
+import org.neo4j.graphdb.Direction;
+import org.neo4j.graphdb.Relationship;
 
 import java.io.File;
 import java.io.IOException;
@@ -143,6 +148,29 @@ public class StudyImporterForSPIRETest extends GraphDBTestCase {
         }
 
         assertThat(actualColumnNames, is(expectedColumnNames));
+    }
+
+    @Test
+    public void importSingleLink() throws NodeFactoryException {
+        StudyImporterForSPIRE studyImporterForSPIRE = new StudyImporterForSPIRE(null, nodeFactory);
+        HashMap<String, String> properties = new HashMap<String, String>();
+        properties.put(Study.TITLE, "the study of men eating dogs");
+        properties.put(StudyImporterForSPIRE.PREY_NAME, "dog");
+        properties.put(StudyImporterForSPIRE.PREDATOR_NAME, "man");
+        properties.put(StudyImporterForSPIRE.COUNTRY, "USA");
+        studyImporterForSPIRE.importTrophicLink(properties);
+
+        Taxon dog = nodeFactory.findTaxon("dog");
+        assertThat(dog, is(notNullValue()));
+        Taxon man = nodeFactory.findTaxon("man");
+        assertThat(man, is(notNullValue()));
+        Iterable<Relationship> specimenRels = man.getUnderlyingNode().getRelationships(Direction.INCOMING, RelTypes.CLASSIFIED_AS);
+        for (Relationship specimenRel : specimenRels) {
+            Specimen specimen = new Specimen(specimenRel.getStartNode());
+            assertThat(specimen.getSampleLocation().getLatitude(), is(39.76));
+            assertThat(specimen.getSampleLocation().getLongitude(), is(-98.5));
+        }
+
     }
 
     @Test
