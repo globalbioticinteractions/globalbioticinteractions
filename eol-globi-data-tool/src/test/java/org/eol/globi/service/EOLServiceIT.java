@@ -20,7 +20,6 @@ public class EOLServiceIT {
         assertThat(lookupPageIdByScientificName("Prunella (Bot)"), is("EOL:70879"));
         assertThat(lookupPageIdByScientificName("Prunella (Bird)"), is("EOL:77930"));
         assertThat(lookupPageIdByScientificName("Pseudobaeospora dichroa"), is("EOL:1001400"));
-        assertThat(lookupPageIdByScientificName("Fish hook"), is("EOL:392537"));
     }
 
     /**
@@ -79,6 +78,7 @@ public class EOLServiceIT {
     public void lookupByNameYieldsNoMatches() throws TaxonPropertyLookupServiceException {
         assertThat(lookupPageIdByScientificName("Clio acicula"), is(nullValue()));
         assertThat(lookupPageIdByScientificName("Aegires oritzi"), is(nullValue()));
+        assertThat(lookupPageIdByScientificName("Fish hook"), is(nullValue()));
     }
 
     private String lookupPageIdByScientificName(String taxonName) throws TaxonPropertyLookupServiceException {
