@@ -12,8 +12,10 @@ public class EOLServiceIT {
 
     @Test
     public void lookupByName() throws TaxonPropertyLookupServiceException {
+        assertThat(lookupPageIdByScientificName("Hygrocybe pratensis var. pallida"), is("EOL:6676627"));
+
         assertThat(lookupPageIdByScientificName("Homo sapiens"), is("EOL:327955"));
-        assertThat(lookupPageIdByScientificName("Puccinia caricina var. ribesii-pendulae"), is(nullValue()));
+        assertThat(lookupPageIdByScientificName("Puccinia caricina var. ribesii-pendulae"), is("EOL:6776658"));
         assertThat(lookupPageIdByScientificName("Hesperocharis paranensis"), is("EOL:176594"));
         // TODO need to find a way to include only pages that have at least one external taxonomy
         assertThat(lookupPageIdByScientificName("Dead roots"), is("EOL:19665069"));

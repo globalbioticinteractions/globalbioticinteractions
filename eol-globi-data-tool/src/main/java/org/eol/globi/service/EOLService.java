@@ -13,8 +13,10 @@ import org.eol.globi.domain.TaxonomyProvider;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 
@@ -33,13 +35,17 @@ public class EOLService extends BaseExternalIdService {
             pageId = getPageId(taxonName, true);
         } catch (URISyntaxException e) {
             throw new TaxonPropertyLookupServiceException("failed to create uri", e);
+        } catch (MalformedURLException e) {
+            throw new TaxonPropertyLookupServiceException("failed to create uri", e);
         }
 
         return pageId == null ? null : TaxonomyProvider.ID_PREFIX_EOL + pageId;
     }
 
-    private URI createSearchURI(String taxonName) throws URISyntaxException {
-        return new URI("http", null, "eol.org", 80, "/api/search/1.0/" + taxonName, "exact=true", null);
+    private URI createSearchURI(String taxonName) throws URISyntaxException, MalformedURLException {
+        return new URL("http://eol.org/api/search/1.0.xml?q="
+                + taxonName.replace(" ", "+")
+                + "&exact=true").toURI();
     }
 
     @Override
@@ -131,7 +137,7 @@ public class EOLService extends BaseExternalIdService {
         return first;
     }
 
-    private Long getPageId(String taxonName, boolean shouldFollowAlternate) throws TaxonPropertyLookupServiceException, URISyntaxException {
+    private Long getPageId(String taxonName, boolean shouldFollowAlternate) throws TaxonPropertyLookupServiceException, URISyntaxException, MalformedURLException {
         URI uri = createSearchURI(taxonName);
         String response = getResponse(uri);
 
