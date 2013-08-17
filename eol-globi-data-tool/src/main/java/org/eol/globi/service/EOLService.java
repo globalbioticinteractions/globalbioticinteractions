@@ -16,9 +16,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.net.URLDecoder;
-import java.net.URLEncoder;
 
 public class EOLService extends BaseExternalIdService {
 
@@ -42,10 +40,9 @@ public class EOLService extends BaseExternalIdService {
         return pageId == null ? null : TaxonomyProvider.ID_PREFIX_EOL + pageId;
     }
 
-    private URI createSearchURI(String taxonName) throws URISyntaxException, MalformedURLException {
-        return new URL("http://eol.org/api/search/1.0.xml?q="
-                + taxonName.replaceAll("\\s", "+")
-                + "&exact=true").toURI();
+    private URI createSearchURI(String taxonName) throws URISyntaxException {
+        String query = "q=" + taxonName.replaceAll("\\s", "+") + "&exact=true";
+        return new URI("http", null, "eol.org", 80, "/api/search/1.0.xml", query, null);
     }
 
     @Override
