@@ -1,6 +1,7 @@
 package org.eol.globi.export;
 
 import org.eol.globi.domain.Study;
+import org.eol.globi.domain.Taxon;
 import org.neo4j.cypher.javacompat.ExecutionEngine;
 import org.neo4j.cypher.javacompat.ExecutionResult;
 import org.neo4j.graphdb.Node;
@@ -25,22 +26,23 @@ public class ExporterOccurrenceAggregates extends ExporterOccurrencesBase {
     }
 
     private void populateRow(Study study, Writer writer, Map<String, Object> result, Map<String, String> properties) throws IOException {
-        Node sourceTaxon = (Node) result.get(QUERY_PARAM_SOURCE_TAXON);
+        Taxon sourceTaxon = new Taxon((Node) result.get(QUERY_PARAM_SOURCE_TAXON));
         String relationshipType = (String) result.get(QUERY_PARAM_INTERACTION_TYPE);
 
-        String sourceOccurrenceId = study.getUnderlyingNode().getId() + "-" + sourceTaxon.getId() + "-" + relationshipType;
+        String sourceOccurrenceId = study.getUnderlyingNode().getId() + "-" + sourceTaxon.getNodeID() + "-" + relationshipType;
         writeRow(study, writer, properties, sourceTaxon, "globi:occur:source:" + sourceOccurrenceId);
 
         JavaConversions.SeqWrapper<Node> targetTaxa = (JavaConversions.SeqWrapper<Node>) result.get(QUERY_PARAM_TARGET_TAXA);
         for (Node targetTaxon : targetTaxa) {
-            String targetOccurrenceId = sourceOccurrenceId + "-" + targetTaxon.getId();
-            writeRow(study, writer, properties, targetTaxon, "globi:occur:target:" + targetOccurrenceId);
+            Taxon taxon = new Taxon(targetTaxon);
+            String targetOccurrenceId = sourceOccurrenceId + "-" + taxon.getNodeID();
+            writeRow(study, writer, properties, taxon, "globi:occur:target:" + targetOccurrenceId);
         }
     }
 
-    private void writeRow(Study study, Writer writer, Map<String, String> properties, Node taxon, String idPrefix) throws IOException {
+    private void writeRow(Study study, Writer writer, Map<String, String> properties, Taxon taxon, String idPrefix) throws IOException {
         properties.put(EOLDictionary.OCCURRENCE_ID, idPrefix);
-        properties.put(EOLDictionary.TAXON_ID, (String) taxon.getProperty("externalId"));
+        properties.put(EOLDictionary.TAXON_ID, taxon.getExternalId());
         addProperty(properties, study.getUnderlyingNode(), Study.TITLE, EOLDictionary.EVENT_ID);
         writeProperties(writer, properties);
         properties.clear();

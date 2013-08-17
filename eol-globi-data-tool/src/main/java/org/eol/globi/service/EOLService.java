@@ -44,7 +44,7 @@ public class EOLService extends BaseExternalIdService {
 
     private URI createSearchURI(String taxonName) throws URISyntaxException, MalformedURLException {
         return new URL("http://eol.org/api/search/1.0.xml?q="
-                + taxonName.replace(" ", "+")
+                + taxonName.replaceAll("\\s", "+")
                 + "&exact=true").toURI();
     }
 
