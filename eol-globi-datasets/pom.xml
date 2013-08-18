@@ -78,9 +78,7 @@
                     <serverId>aws-snapshot</serverId>
                     <url>s3://globi/snapshot</url>
                     <skip>${skipTests}</skip>
-                    <includes>**/*Taxa.csv</includes>
-                    <includes>**/*darwin*.tar.gz</includes>
-                    <includes>**/*neo4j*.tar.gz</includes>
+                    <includes>**/*Taxa.csv,**/*darwin*.tar.gz,**/*neo4j*.tar.gz</includes>
                 </configuration>
                 <executions>
                     <execution>
