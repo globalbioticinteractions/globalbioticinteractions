@@ -56,8 +56,6 @@
                     <descriptors>
                         <descriptor>src/assembly/neo4j-graph-db.xml</descriptor>
                         <descriptor>src/assembly/darwin-core.xml</descriptor>
-                        <!-- disabling automated owl export for now . . . 500 MB per dump causes bandwidth issues -->
-                        <descriptor>src/assembly/ttl.xml</descriptor>
                     </descriptors>
                 </configuration>
                 <executions>
@@ -92,4 +90,33 @@
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <!-- datasets in this profile are especially large and should probably excluded from daily upload to repo to preserve bandwidth and storage -->
+            <id>big-exports</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-assembly-plugin</artifactId>
+                        <version>2.4</version>
+                        <configuration>
+                            <descriptors>
+                                <descriptor>src/assembly/ttl.xml</descriptor>
+                            </descriptors>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>make-assembly</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>single</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
