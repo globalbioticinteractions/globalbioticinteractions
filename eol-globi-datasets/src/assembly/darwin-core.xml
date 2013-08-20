@@ -7,10 +7,12 @@
         <format>tar.gz</format>
     </formats>
 
+    <includeBaseDirectory>false</includeBaseDirectory>
+
     <fileSets>
         <fileSet>
             <directory>${project.build.directory}/data/</directory>
-            <outputDirectory>darwin-core</outputDirectory>
+            <outputDirectory>/</outputDirectory>
             <includes>
                 <include>**/*.csv</include>
                 <include>**/*.xml</include>

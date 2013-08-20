@@ -64,7 +64,7 @@ public class Normalizer {
 
     private void exportDataOntology(List<Study> studies) throws StudyImporterException {
         try {
-            export(studies, "./globi.owl.gz", new GlobiOWLExporter());
+            export(studies, "./globi.ttl.gz", new GlobiOWLExporter());
         } catch (OWLOntologyCreationException e) {
             throw new StudyImporterException("failed to export as owl", e);
         } catch (IOException e) {

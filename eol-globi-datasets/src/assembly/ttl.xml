@@ -2,18 +2,21 @@
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2 http://maven.apache.org/xsd/assembly-1.1.2.xsd">
 
-    <id>owl</id>
+    <id>ttl</id>
     <formats>
         <format>tar.gz</format>
     </formats>
 
+    <includeBaseDirectory>false</includeBaseDirectory>
+
     <fileSets>
+
         <fileSet>
             <directory>${project.build.directory}/data/</directory>
-            <outputDirectory>owl</outputDirectory>
+            <outputDirectory>/</outputDirectory>
             <includes>
-                <include>**/*.owl</include>
-                <include>**/*.owl.gz</include>
+                <include>**/*.ttl</include>
+                <include>**/*.ttl.gz</include>
             </includes>
         </fileSet>
     </fileSets>

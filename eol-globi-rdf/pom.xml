@@ -14,12 +14,74 @@
 
     <name>EOL's Global Biotic Interaction RDF Store</name>
 
-    <dependencies>
-        <dependency>
-            <groupId>org.apache.jena</groupId>
-            <artifactId>jena-fuseki</artifactId>
-            <version>0.2.7</version>
-        </dependency>
-    </dependencies>
 
+    <properties>
+        <fuseki.version>0.2.7</fuseki.version>
+        <fuseki.artifactId>jena-fuseki</fuseki.artifactId>
+        <fuseki.dir>${project.build.directory}/${fuseki.artifactId}-${fuseki.version}</fuseki.dir>
+    </properties>
+
+    <build>
+        <resources>
+            <resource>
+                <includes>
+                    <include>**/*.ttl</include>
+                </includes>
+                <directory>src/main/resources</directory>
+                <targetPath>${fuseki.dir}</targetPath>
+            </resource>
+        </resources>
+
+        <plugins>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>2.4</version>
+                <executions>
+                    <execution>
+                        <id>install-globi-ttl</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>${project.groupId}</groupId>
+                                    <artifactId>eol-globi-datasets</artifactId>
+                                    <version>${project.version}</version>
+                                    <classifier>ttl</classifier>
+                                    <type>tar.gz</type>
+                                    <outputDirectory>${fuseki.dir}/Data</outputDirectory>
+                                </artifactItem>
+                            </artifactItems>
+                            <!-- no need to install the data when skipping the tests -->
+                            <skip>${skipTests}</skip>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>install-fuseki-server</id>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>org.apache.jena</groupId>
+                                    <artifactId>${fuseki.artifactId}</artifactId>
+                                    <classifier>distribution</classifier>
+                                    <type>tar.gz</type>
+                                    <version>${fuseki.version}</version>
+                                    <outputDirectory>${project.build.directory}</outputDirectory>
+                                </artifactItem>
+                            </artifactItems>
+                            <!-- no need to install the data when skipping the tests -->
+                            <skip>${skipTests}</skip>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 </project>

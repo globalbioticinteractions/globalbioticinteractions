@@ -1,0 +1,65 @@
+# Licensed under the terms of http://www.apache.org/licenses/LICENSE-2.0
+
+## Basic Fuseki configuation file.
+## 
+## See also config-tdb.ttl for TDB specific examples.
+## See also config-examples.ttl for commented examples.
+
+@prefix :        <#> .
+@prefix fuseki:  <http://jena.apache.org/fuseki#> .
+@prefix rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+
+@prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix tdb:     <http://jena.hpl.hp.com/2008/tdb#> .
+@prefix ja:      <http://jena.hpl.hp.com/2005/11/Assembler#> .
+
+[] rdf:type fuseki:Server ;
+   # Timeout - server-wide default: milliseconds.
+   # Format 1: "1000" -- 1 second timeout
+   # Format 2: "10000,60000" -- 10s timeout to first result, then 60s timeout for the rest of query.
+   # See java doc for ARQ.queryTimeout
+   # ja:context [ ja:cxtName "arq:queryTimeout" ;  ja:cxtValue "10000" ] ;
+
+   # ja:loadClass "your.code.Class" ;
+
+   fuseki:services (
+     <#BookService>
+     <#GloBIService>
+   ) .
+
+## Read-only access to a small books database.
+
+<#BookService> rdf:type fuseki:Service ;
+    fuseki:name                     "books" ;    # http://host:port/books
+    fuseki:serviceQuery             "query" ;    # SPARQL query service
+    fuseki:serviceReadGraphStore    "get" ;      # SPARQL Graph store protocol (read only)
+    fuseki:dataset                   <#books> ;
+    # Configuration
+    .
+
+<#books>    rdf:type ja:RDFDataset ;
+    rdfs:label "Books" ;
+    ja:defaultGraph
+      [ rdfs:label "books.ttl" ;
+        a ja:MemoryModel ;
+        ja:content [ja:externalContent <file:Data/books.ttl> ] ;
+      ] ;
+    .
+
+## Read-only access to GloBI data.
+
+<#GloBIService> rdf:type fuseki:Service ;
+    fuseki:name                     "globi" ;
+    fuseki:serviceQuery             "query" ;
+    fuseki:serviceReadGraphStore    "get" ;
+    fuseki:dataset                   <#globi> ;
+    .
+    
+<#globi>    rdf:type ja:RDFDataset ;
+    rdfs:label "GloBI" ;
+    ja:defaultGraph 
+      [ rdfs:label "globi.ttl.gz" ;
+        a ja:MemoryModel ;
+        ja:content [ja:externalContent <file:Data/globi.ttl.gz> ] ;
+      ] ;
+    .
