@@ -51,6 +51,7 @@
 <#GloBIService> rdf:type fuseki:Service ;
     fuseki:name                     "globi" ;
     fuseki:serviceQuery             "query" ;
+    fuseki:serviceQuery             "sparql" ;
     fuseki:serviceReadGraphStore    "get" ;
     fuseki:dataset                   <#globi> ;
     .

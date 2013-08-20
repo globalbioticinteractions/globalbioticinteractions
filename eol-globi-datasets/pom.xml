@@ -52,15 +52,16 @@
                 <artifactId>maven-assembly-plugin</artifactId>
                 <version>2.4</version>
                 <configuration>
-                    <!-- ensure that this doesn't run on travis -->
                     <descriptors>
                         <descriptor>src/assembly/neo4j-graph-db.xml</descriptor>
                         <descriptor>src/assembly/darwin-core.xml</descriptor>
+                        <descriptor>src/assembly/ttl.xml</descriptor>
                     </descriptors>
                 </configuration>
                 <executions>
                     <execution>
                         <id>make-assembly</id>
+                        <!-- ensure that this doesn't run on travis -->
                         <phase>package</phase>
                         <goals>
                             <goal>single</goal>
@@ -76,7 +77,7 @@
                     <serverId>aws-snapshot</serverId>
                     <url>s3://globi/snapshot</url>
                     <skip>${skipTests}</skip>
-                    <includes>**/*Taxa.csv,**/*darwin*.tar.gz,**/*neo4j*.tar.gz</includes>
+                    <includes>**/*Taxa.csv,**/*darwin*.tar.gz,**/*neo4j*.tar.gz, **/*.ttl*.tar.gz</includes>
                 </configuration>
                 <executions>
                     <execution>
@@ -91,32 +92,4 @@
         </plugins>
     </build>
 
-    <profiles>
-        <profile>
-            <!-- datasets in this profile are especially large and should probably excluded from daily upload to repo to preserve bandwidth and storage -->
-            <id>big-exports</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <artifactId>maven-assembly-plugin</artifactId>
-                        <version>2.4</version>
-                        <configuration>
-                            <descriptors>
-                                <descriptor>src/assembly/ttl.xml</descriptor>
-                            </descriptors>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <id>make-assembly</id>
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>single</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
 </project>
