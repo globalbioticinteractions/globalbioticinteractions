@@ -84,10 +84,10 @@ public class CypherProxyController {
         if (paramObject instanceof String[]) {
             String[] names = (String[]) paramObject;
             for (String name : names) {
-                taxonNames.add("path:" + name);
+                taxonNames.add("path:(" + name + ")");
             }
         } else if (paramObject instanceof String) {
-            taxonNames.add("path:" + paramObject);
+            taxonNames.add("path:(" + paramObject + ")");
         }
 
         return StringUtils.join(taxonNames, " OR ");

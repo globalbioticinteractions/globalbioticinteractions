@@ -208,7 +208,7 @@ public class CypherProxyControllerTest {
         HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
         when(request.getParameterMap()).thenReturn(new HashMap<String, String[]>() {
             {
-                put("sourceTaxon", new String[]{"Mammalia", "Mammalia"});
+                put("sourceTaxon", new String[]{"Mammalia", "Herpestes auropunctatus"});
                 put("targetTaxon", new String[]{"Reptilia"});
                 put("nw_lat", new String[]{"18.34"});
                 put("nw_lng", new String[]{"-66.50"});
