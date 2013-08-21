@@ -23,28 +23,8 @@
    # ja:loadClass "your.code.Class" ;
 
    fuseki:services (
-     <#BookService>
      <#GloBIService>
    ) .
-
-## Read-only access to a small books database.
-
-<#BookService> rdf:type fuseki:Service ;
-    fuseki:name                     "books" ;    # http://host:port/books
-    fuseki:serviceQuery             "query" ;    # SPARQL query service
-    fuseki:serviceReadGraphStore    "get" ;      # SPARQL Graph store protocol (read only)
-    fuseki:dataset                   <#books> ;
-    # Configuration
-    .
-
-<#books>    rdf:type ja:RDFDataset ;
-    rdfs:label "Books" ;
-    ja:defaultGraph
-      [ rdfs:label "books.ttl" ;
-        a ja:MemoryModel ;
-        ja:content [ja:externalContent <file:Data/books.ttl> ] ;
-      ] ;
-    .
 
 ## Read-only access to GloBI data.
 
