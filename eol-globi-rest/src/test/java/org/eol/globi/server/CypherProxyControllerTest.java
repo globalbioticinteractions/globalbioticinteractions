@@ -203,4 +203,25 @@ public class CypherProxyControllerTest {
         assertThat(externalLink, containsString("Rattus rattus"));
     }
 
+    @Test
+    public void findInteractionForSourceAndTargetTaxa() throws IOException {
+        HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
+        when(request.getParameterMap()).thenReturn(new HashMap<String, String[]>() {
+            {
+                put("sourceTaxa", new String[]{"Mammalia", "Mammalia"});
+                put("targetTaxa", new String[]{"Reptilia"});
+                put("nw_lat", new String[]{"18.34"});
+                put("nw_lng", new String[]{"-66.50"});
+                put("se_lat", new String[]{"18.14"});
+                put("se_lng", new String[]{"-66.48"});
+            }
+        });
+        String externalLink = new CypherProxyController().findInteractions(request);
+        assertThat(externalLink, not(containsString("Secernentia nematodes")));
+        assertThat(externalLink, containsString("Herpestes auropunctatus"));
+        assertThat(externalLink, containsString("Reptilia"));
+        assertThat(externalLink, containsString(ResultFields.SOURCE_TAXON_PATH));
+        assertThat(externalLink, containsString(ResultFields.TARGET_TAXON_PATH));
+    }
+
 }

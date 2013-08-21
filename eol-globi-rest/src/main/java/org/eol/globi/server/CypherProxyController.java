@@ -1,5 +1,6 @@
 package org.eol.globi.server;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.util.ExternalIdUtil;
 import org.eol.globi.util.InteractUtil;
 import org.springframework.cache.annotation.Cacheable;
@@ -11,7 +12,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -29,6 +32,8 @@ public class CypherProxyController {
     public static final String JSON_CYPHER_WRAPPER_PREFIX = "{\"query\":\"";
 
     private static final Map<String, String> EMPTY_PARAMS = new HashMap<String, String>();
+    public static final String SOURCE_TAXON_HTTP_PARAM_NAME = "sourceTaxon";
+    public static final String TARGET_TAXON_HTTP_PARAM_NAME = "targetTaxon";
 
     private void addLocationClausesIfNecessary(StringBuilder query, Map parameterMap) {
         query.append(" , sourceSpecimen-[:COLLECTED_AT]->loc ");
@@ -45,11 +50,14 @@ public class CypherProxyController {
     @ResponseBody
     public String findInteractions(HttpServletRequest request) throws IOException {
         StringBuilder query = new StringBuilder();
-        query.append("START loc = node:locations('*:*') ")
-                .append("MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen-[interactionType:")
+        query.append("START loc = node:locations('*:*') ");
+        addTaxonStartClausesIfNecessary(query, request.getParameterMap());
+
+        query.append(" MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen-[interactionType:")
                 .append(InteractUtil.allInteractionsCypherClause())
                 .append("]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon ");
         addLocationClausesIfNecessary(query, request.getParameterMap());
+
         query.append("RETURN sourceTaxon.externalId as ").append(ResultFields.SOURCE_TAXON_EXTERNAL_ID)
                 .append(",sourceTaxon.name as ").append(ResultFields.SOURCE_TAXON_NAME)
                 .append(",sourceTaxon.path as ").append(ResultFields.SOURCE_TAXON_PATH)
@@ -58,6 +66,31 @@ public class CypherProxyController {
                 .append(",targetTaxon.name as ").append(ResultFields.TARGET_TAXON_NAME)
                 .append(",targetTaxon.path as ").append(ResultFields.TARGET_TAXON_PATH);
         return new CypherQueryExecutor(query.toString(), null).execute(request);
+    }
+
+    private void addTaxonStartClausesIfNecessary(StringBuilder query, Map parameterMap) {
+        if (parameterMap.containsKey(SOURCE_TAXON_HTTP_PARAM_NAME)) {
+            String luceneQuery = buildLuceneQuery(parameterMap.get(SOURCE_TAXON_HTTP_PARAM_NAME));
+            query.append(", sourceTaxon = node:taxonpaths(\'" + luceneQuery + "\')");
+        }
+        if (parameterMap.containsKey(TARGET_TAXON_HTTP_PARAM_NAME)) {
+            String luceneQuery = buildLuceneQuery(parameterMap.get(TARGET_TAXON_HTTP_PARAM_NAME));
+            query.append(", targetTaxon = node:taxonpaths(\'" + luceneQuery + "\')");
+        }
+    }
+
+    private String buildLuceneQuery(Object paramObject) {
+        List<String> taxonNames = new ArrayList<String>();
+        if (paramObject instanceof String[]) {
+            String[] names = (String[]) paramObject;
+            for (String name : names) {
+                taxonNames.add("path:" + name);
+            }
+        } else if (paramObject instanceof String) {
+            taxonNames.add("path:" + paramObject);
+        }
+
+        return StringUtils.join(taxonNames, " OR ");
     }
 
     @RequestMapping(value = "/taxon/{sourceTaxonName}/{interactionType}", method = RequestMethod.GET, headers = "content-type=*/*")
@@ -143,7 +176,7 @@ public class CypherProxyController {
         StringBuilder query = new StringBuilder();
         boolean isInvertedInteraction = INTERACTION_PREYED_UPON_BY.equals(interactionType);
 
-        String predatorPrefix = isInvertedInteraction ? ResultFields.PREFIX_TARGET_SPECIMEN : ResultFields.PREFIX_SOURCE_SPECIMEN ;
+        String predatorPrefix = isInvertedInteraction ? ResultFields.PREFIX_TARGET_SPECIMEN : ResultFields.PREFIX_SOURCE_SPECIMEN;
         String preyPrefix = isInvertedInteraction ? ResultFields.PREFIX_SOURCE_SPECIMEN : ResultFields.PREFIX_TARGET_SPECIMEN;
 
         final StringBuilder returnClause = new StringBuilder();
