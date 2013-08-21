@@ -64,17 +64,7 @@ public class Normalizer {
 
     private void exportDataOntology(List<Study> studies) throws StudyImporterException {
         try {
-            // TODO for now, using only single study for ttl export.
-            // after sparql endpoint deployment / infrastructure is complete, we can focus on adding more studies
-            Study selectedStudy = studies.size() > 0 ? studies.get(0) : null;
-            for (Study study : studies) {
-                selectedStudy = "Simons 1997".equals(study.getTitle()) ? study : selectedStudy;
-            }
-            List<Study> singleStudy = new ArrayList<Study>();
-            if (selectedStudy != null) {
-                singleStudy.add(selectedStudy);
-            }
-            export(singleStudy, "./globi.ttl.gz", new GlobiOWLExporter());
+            export(studies, "./globi.ttl.gz", new GlobiOWLExporter());
         } catch (OWLOntologyCreationException e) {
             throw new StudyImporterException("failed to export as owl", e);
         } catch (IOException e) {
