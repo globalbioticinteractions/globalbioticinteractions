@@ -74,7 +74,7 @@ public class Normalizer {
             if (selectedStudy != null) {
                 singleStudy.add(selectedStudy);
             }
-            export(studies, "./globi.ttl.gz", new GlobiOWLExporter());
+            export(singleStudy, "./globi.ttl.gz", new GlobiOWLExporter());
         } catch (OWLOntologyCreationException e) {
             throw new StudyImporterException("failed to export as owl", e);
         } catch (IOException e) {
