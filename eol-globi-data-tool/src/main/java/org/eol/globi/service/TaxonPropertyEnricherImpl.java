@@ -51,22 +51,23 @@ public class TaxonPropertyEnricherImpl implements TaxonPropertyEnricher {
         }
 
         Node taxonNode = taxon.getUnderlyingNode();
-        try {
-            for (String propertyName : PROPERTY_NAMES) {
-                for (TaxonPropertyLookupService service : services) {
-                    if (service.canLookupProperty(propertyName)) {
+
+        for (String propertyName : PROPERTY_NAMES) {
+            for (TaxonPropertyLookupService service : services) {
+                if (service.canLookupProperty(propertyName)) {
+                    try {
                         if (enrichTaxonWithPropertyValue(errorCounts, taxonNode, service, propertyName)) {
                             didEnrichAtLeastOneProperty = true;
                             break;
                         }
+                    } catch (TaxonPropertyLookupServiceException e) {
+                        LOG.warn("problem with taxon lookup", e);
+                        service.shutdown();
                     }
                 }
             }
-        } catch (TaxonPropertyLookupServiceException e) {
-            LOG.warn("problem with taxon lookup", e);
-            shutdownServices();
-            initServices();
         }
+
         return didEnrichAtLeastOneProperty;
     }
 
