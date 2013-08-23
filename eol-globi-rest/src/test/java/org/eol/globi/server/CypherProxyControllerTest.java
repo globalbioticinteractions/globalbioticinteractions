@@ -26,6 +26,14 @@ public class CypherProxyControllerTest {
     }
 
     @Test
+    public void findThunnusPrey() throws IOException, URISyntaxException {
+        // see https://github.com/jhpoelen/eol-globi-data/issues/11
+        String list = new CypherProxyController().findPreyOf(null, "Thunnus", CypherProxyController.INTERACTION_PREYS_ON);
+        assertThat(list, containsString("Thunnus alalunga"));
+        assertThat(list, containsString("Thunnus albacares"));
+    }
+
+    @Test
     public void findPreyAtLocation() throws IOException, URISyntaxException {
         String list = new CypherProxyController().findPreyOf(getLocationRequest(), "Homo sapiens", CypherProxyController.INTERACTION_PREYS_ON);
         assertThat(list, is(notNullValue()));

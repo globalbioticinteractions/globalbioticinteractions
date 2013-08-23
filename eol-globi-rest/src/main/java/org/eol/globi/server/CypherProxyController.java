@@ -84,10 +84,10 @@ public class CypherProxyController {
         if (paramObject instanceof String[]) {
             String[] names = (String[]) paramObject;
             for (String name : names) {
-                taxonNames.add("path:(" + name + ")");
+                taxonNames.add(lucenePathQuery(name));
             }
         } else if (paramObject instanceof String) {
-            taxonNames.add("path:(" + paramObject + ")");
+            taxonNames.add(lucenePathQuery((String)paramObject));
         }
 
         return StringUtils.join(taxonNames, " OR ");
@@ -172,7 +172,7 @@ public class CypherProxyController {
     }
 
     private CypherQueryExecutor findObservationsForInteraction(String sourceTaxonName, String interactionType, String targetTaxonName, Map parameterMap) throws IOException {
-        Map<String, String> query_params = EMPTY_PARAMS;
+        Map<String, String> query_params;
         StringBuilder query = new StringBuilder();
         boolean isInvertedInteraction = INTERACTION_PREYED_UPON_BY.equals(interactionType);
 
@@ -228,18 +228,22 @@ public class CypherProxyController {
     private Map<String, String> getParams(String sourceTaxonName, String targetTaxonName) {
         Map<String, String> paramMap = new HashMap<String, String>();
         if (sourceTaxonName != null) {
-            paramMap.put(ResultFields.SOURCE_TAXON_NAME, sourceTaxonName);
+            paramMap.put(ResultFields.SOURCE_TAXON_NAME, lucenePathQuery(sourceTaxonName));
         }
 
         if (targetTaxonName != null) {
-            paramMap.put(ResultFields.TARGET_TAXON_NAME, targetTaxonName);
+            paramMap.put(ResultFields.TARGET_TAXON_NAME, lucenePathQuery(targetTaxonName));
         }
         return paramMap;
     }
 
+    private String lucenePathQuery(String targetTaxonName) {
+        return "path:\\\"" + targetTaxonName + "\\\"";
+    }
+
     private String getTaxonSelector(String sourceTaxonName, String targetTaxonName) {
-        final String sourceTaxonSelector = "sourceTaxon = node:taxons(name={" + ResultFields.SOURCE_TAXON_NAME + "})";
-        final String targetTaxonSelector = "targetTaxon = node:taxons(name={" + ResultFields.TARGET_TAXON_NAME + "})";
+        final String sourceTaxonSelector = "sourceTaxon = " + getTaxonPathSelector(ResultFields.SOURCE_TAXON_NAME);
+        final String targetTaxonSelector = "targetTaxon = " + getTaxonPathSelector(ResultFields.TARGET_TAXON_NAME);
         StringBuilder builder = new StringBuilder();
         if (sourceTaxonName != null) {
             builder.append(sourceTaxonSelector);
@@ -252,6 +256,10 @@ public class CypherProxyController {
         }
 
         return builder.toString();
+    }
+
+    private String getTaxonPathSelector(String taxonParamName) {
+        return "node:taxonpaths({" + taxonParamName + "})";
     }
 
 
