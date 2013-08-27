@@ -8,7 +8,7 @@
     <artifactId>eol-globi-data</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
-    <name>EOL's GloBI Project - normalize, aggregate and interface with species interaction data.</name>
+    <name>EOL's GloBI Project - normalize, aggregate and export spatial-temporal species interaction data.</name>
     <modules>
         <module>eol-globi-parent</module>
         <module>eol-globi-lib</module>
