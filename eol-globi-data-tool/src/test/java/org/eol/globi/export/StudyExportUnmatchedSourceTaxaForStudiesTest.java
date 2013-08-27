@@ -46,8 +46,8 @@ public class StudyExportUnmatchedSourceTaxaForStudiesTest extends GraphDBTestCas
         StringWriter writer = new StringWriter();
         new StudyExportUnmatchedSourceTaxaForStudies(getGraphDb()).exportStudy(study, writer, true);
         assertThat(writer.toString(), is("\"original source taxon name\",\"unmatched normalized source taxon name\",\"study\"\n" +
-                "\"Homo sapiens3 (blah)\",\"Homo sapiens3\",\"my study\"\n" +
-                "\"Homo sapiens2 (bla)\",\"Homo sapiens2\",\"my study\"\n"
+                "\"Homo sapiens2 (bla)\",\"Homo sapiens2\",\"my study\"\n" +
+                "\"Homo sapiens3 (blah)\",\"Homo sapiens3\",\"my study\"\n"
         ));
 
         writer = new StringWriter();

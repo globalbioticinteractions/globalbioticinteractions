@@ -25,12 +25,13 @@ public class ExporterOccurrenceAggregatesTest extends GraphDBTestCase {
 
     private String getExpectedData() {
         return "\n" +
-                "globi:occur:source:1-23-ATE,EOL:123,,,,,,,,,,,,,,,,,,,,,,myStudy\n" +
-                "globi:occur:target:1-23-ATE-5,EOL:555,,,,,,,,,,,,,,,,,,,,,,myStudy\n" +
-                "globi:occur:target:1-23-ATE-8,EOL:666,,,,,,,,,,,,,,,,,,,,,,myStudy\n" +
                 "globi:occur:source:1-2-ATE,EOL:333,,,,,,,,,,,,,,,,,,,,,,myStudy\n" +
                 "globi:occur:target:1-2-ATE-5,EOL:555,,,,,,,,,,,,,,,,,,,,,,myStudy\n" +
-                "globi:occur:target:1-2-ATE-8,EOL:666,,,,,,,,,,,,,,,,,,,,,,myStudy";
+                "globi:occur:target:1-2-ATE-8,EOL:666,,,,,,,,,,,,,,,,,,,,,,myStudy\n" +
+                "globi:occur:source:1-23-ATE,EOL:123,,,,,,,,,,,,,,,,,,,,,,myStudy\n" +
+                "globi:occur:target:1-23-ATE-5,EOL:555,,,,,,,,,,,,,,,,,,,,,,myStudy\n" +
+                "globi:occur:target:1-23-ATE-8,EOL:666,,,,,,,,,,,,,,,,,,,,,,myStudy"
+                ;
     }
 
     private ExporterOccurrencesBase exportOccurrences() {
