@@ -5,6 +5,7 @@ import org.neo4j.cypher.javacompat.ExecutionEngine;
 import org.neo4j.cypher.javacompat.ExecutionResult;
 import org.neo4j.graphdb.Node;
 import scala.collection.JavaConversions;
+import scala.collection.convert.Wrappers;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -25,7 +26,7 @@ public class ExporterAssociationAggregates extends ExporterAssociationsBase {
 
     private void populateRow(Study study, Writer writer, Map<String, String> properties, Map<String, Object> result) throws IOException {
         Node sourceTaxon = (Node) result.get(QUERY_PARAM_SOURCE_TAXON);
-        JavaConversions.SeqWrapper<Node> targetTaxa = (JavaConversions.SeqWrapper<Node>) result.get(QUERY_PARAM_TARGET_TAXA);
+        Wrappers.SeqWrapper<Node> targetTaxa = (Wrappers.SeqWrapper) result.get(QUERY_PARAM_TARGET_TAXA);
         String interactionType = (String) result.get(QUERY_PARAM_INTERACTION_TYPE);
 
         for (Node preyTaxon : targetTaxa) {

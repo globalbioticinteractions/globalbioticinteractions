@@ -6,6 +6,7 @@ import org.neo4j.cypher.javacompat.ExecutionEngine;
 import org.neo4j.cypher.javacompat.ExecutionResult;
 import org.neo4j.graphdb.Node;
 import scala.collection.JavaConversions;
+import scala.collection.convert.Wrappers;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -32,7 +33,7 @@ public class ExporterOccurrenceAggregates extends ExporterOccurrencesBase {
         String sourceOccurrenceId = study.getUnderlyingNode().getId() + "-" + sourceTaxon.getNodeID() + "-" + relationshipType;
         writeRow(study, writer, properties, sourceTaxon, "globi:occur:source:" + sourceOccurrenceId);
 
-        JavaConversions.SeqWrapper<Node> targetTaxa = (JavaConversions.SeqWrapper<Node>) result.get(QUERY_PARAM_TARGET_TAXA);
+        Wrappers.SeqWrapper<Node> targetTaxa = (Wrappers.SeqWrapper<Node>) result.get(QUERY_PARAM_TARGET_TAXA);
         for (Node targetTaxon : targetTaxa) {
             Taxon taxon = new Taxon(targetTaxon);
             String targetOccurrenceId = sourceOccurrenceId + "-" + taxon.getNodeID();
