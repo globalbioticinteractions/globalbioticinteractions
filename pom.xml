@@ -16,6 +16,10 @@
         <module>eol-globi-rest</module>
     </modules>
 
+    <properties>
+        <test_prop>2.5</test_prop>
+    </properties>
+
     <profiles>
         <profile>
             <id>generate-datasets</id>
