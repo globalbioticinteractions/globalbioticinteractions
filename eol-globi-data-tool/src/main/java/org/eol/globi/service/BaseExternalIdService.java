@@ -27,6 +27,11 @@ public abstract class BaseExternalIdService extends BaseHttpClientService implem
                 String lsid = lookupLSIDByTaxonName(taxonName);
                 if (lsid != null) {
                     propertyValue = lookupTaxonPathByLSID(lsid);
+                    // append synonyms in path whenever available using "|" separator with suffix to enable search
+                    // see https://github.com/jhpoelen/eol-globi-data/issues/12
+                    if (!propertyValue.endsWith(taxonName)) {
+                        propertyValue += " | " + taxonName;
+                    }
                 }
             } catch (TaxonPropertyLookupServiceException e) {
                 shutdown();
