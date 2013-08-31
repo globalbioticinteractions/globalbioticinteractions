@@ -1,5 +1,6 @@
 package org.eol.globi.service;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eol.globi.domain.NodeBacked;
@@ -24,12 +25,12 @@ public abstract class BaseExternalIdService extends BaseHttpClientService implem
             }
         } else if (Taxon.PATH.equals(propertyName)) {
             try {
-                String lsid = lookupLSIDByTaxonName(taxonName);
-                if (lsid != null) {
-                    propertyValue = lookupTaxonPathByLSID(lsid);
+                String lsId = lookupLSIDByTaxonName(taxonName);
+                if (lsId != null) {
+                    propertyValue = lookupTaxonPathByLSID(lsId);
                     // append synonyms in path whenever available using "|" separator with suffix to enable search
                     // see https://github.com/jhpoelen/eol-globi-data/issues/12
-                    if (!propertyValue.endsWith(taxonName)) {
+                    if (!StringUtils.endsWith(propertyValue, taxonName)) {
                         propertyValue += " | " + taxonName;
                     }
                 }
