@@ -182,7 +182,7 @@ public class EOLService extends BaseExternalIdService {
             response = httpClient.execute(get, responseHandler);
         } catch (HttpResponseException e) {
             if (e.getStatusCode() != 406 && e.getStatusCode() != 404) {
-                throw new TaxonPropertyLookupServiceException("failed to lookup [" + uri.toString() + "]", e);
+                throw new TaxonPropertyLookupServiceException("failed to lookup [" + uri.toString() + "]: http status [" + e.getStatusCode() + "]   ", e);
             }
         } catch (ClientProtocolException e) {
             throw new TaxonPropertyLookupServiceException("failed to lookup [" + uri.toString() + "]", e);
