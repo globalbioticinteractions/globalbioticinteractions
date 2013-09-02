@@ -330,8 +330,6 @@
                                     <outputDirectory>${project.build.directory}/data</outputDirectory>
                                 </artifactItem>
                             </artifactItems>
-                            <!-- no need to install the data when skipping the tests -->
-                            <skip>${skipTests}</skip>
                         </configuration>
                     </execution>
                 </executions>
