@@ -49,14 +49,20 @@ public class CypherProxyController {
     @RequestMapping(value = "/interaction", method = RequestMethod.GET)
     @ResponseBody
     public String findInteractions(HttpServletRequest request) throws IOException {
+        Map parameterMap = request.getParameterMap();
+        String query = buildInteractionQuery(parameterMap);
+        return new CypherQueryExecutor(query, null).execute(request);
+    }
+
+    protected String buildInteractionQuery(Map parameterMap) {
         StringBuilder query = new StringBuilder();
         query.append("START loc = node:locations('*:*') ");
-        addTaxonStartClausesIfNecessary(query, request.getParameterMap());
+        addTaxonStartClausesIfNecessary(query, parameterMap);
 
         query.append(" MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen-[interactionType:")
                 .append(InteractUtil.allInteractionsCypherClause())
                 .append("]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon ");
-        addLocationClausesIfNecessary(query, request.getParameterMap());
+        addLocationClausesIfNecessary(query, parameterMap);
 
         query.append("RETURN sourceTaxon.externalId as ").append(ResultFields.SOURCE_TAXON_EXTERNAL_ID)
                 .append(",sourceTaxon.name as ").append(ResultFields.SOURCE_TAXON_NAME)
@@ -65,7 +71,7 @@ public class CypherProxyController {
                 .append(",targetTaxon.externalId as ").append(ResultFields.TARGET_TAXON_EXTERNAL_ID)
                 .append(",targetTaxon.name as ").append(ResultFields.TARGET_TAXON_NAME)
                 .append(",targetTaxon.path as ").append(ResultFields.TARGET_TAXON_PATH);
-        return new CypherQueryExecutor(query.toString(), null).execute(request);
+        return query.toString();
     }
 
     private void addTaxonStartClausesIfNecessary(StringBuilder query, Map parameterMap) {
