@@ -11,6 +11,8 @@ public class Study extends NodeBacked {
     public static final String INSTITUTION = "institution";
     public static final String DESCRIPTION = "description";
     public static final String PUBLICATION_YEAR = "publicationYear";
+    public static final String PERIOD = "period";
+    private static final String SOURCE = "source";
 
     public Study(Node node, String title) {
         this(node);
@@ -54,7 +56,7 @@ public class Study extends NodeBacked {
     }
 
     public void setPeriod(String period) {
-        setProperty("period", period);
+        setProperty(PERIOD, period);
     }
 
     public void setDescription(String description) {
@@ -85,5 +87,13 @@ public class Study extends NodeBacked {
 
     public void setPublicationYear(String publicationYear) {
         setProperty(PUBLICATION_YEAR, publicationYear);
+    }
+
+    public String getSource() {
+        return getProperty(SOURCE);
+    }
+
+    public void setSource(String source) {
+        setProperty(SOURCE, source);
     }
 }

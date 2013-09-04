@@ -1,6 +1,7 @@
 package org.eol.globi.data;
 
 import org.eol.globi.domain.Taxon;
+import org.eol.globi.export.ExportTestUtil;
 import org.eol.globi.service.TaxonPropertyEnricher;
 import org.junit.After;
 import org.junit.Before;
@@ -21,7 +22,6 @@ public abstract class GraphDBTestCase {
 
             @Override
             public boolean enrich(Taxon taxon) throws IOException {
-
                 return false;
             }
         });

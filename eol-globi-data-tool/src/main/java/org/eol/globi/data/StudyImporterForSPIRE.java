@@ -1,11 +1,15 @@
 package org.eol.globi.data;
 
+import com.Ostermiller.util.MD5;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.ResIterator;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.Statement;
 import com.hp.hpl.jena.rdf.model.StmtIterator;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import uk.me.jstott.jcoord.LatLng;
@@ -16,20 +20,39 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class StudyImporterForSPIRE extends BaseStudyImporter {
+    private static final Log LOG = LogFactory.getLog(StudyImporterForSPIRE.class);
 
-
+    public static final String OF_HABITAT = "ofHabitat";
+    public static final String COUNTRY = "Country";
+    public static final String STATE = "State";
+    public static final String LOCALITY = "Locality";
+    public static final String PREDATOR_NAME = "predator";
+    public static final String PREY_NAME = "prey";
     private Map<String, LatLng> geoLookup = buildGEOLookup();
 
     private TrophicLinkListener trophicLinkListener = new TrophicLinkListener() {
         @Override
-        public void newLink(Study study, String predatorName, String preyName, String country, String state, String locality) {
-            importTrophicLink(study, predatorName, preyName, geoLookup.get(country));
+        public void newLink(Map<String, String> properties) {
+            importTrophicLink(properties);
         }
     };
 
 
     public StudyImporterForSPIRE(ParserFactory parserFactory, NodeFactory nodeFactory) {
         super(parserFactory, nodeFactory);
+    }
+
+    protected static void parseTitlesAndAuthors(String titlesAndAuthors, Map<String, String> properties) {
+        String titlesAndAuthors1 = titlesAndAuthors.replace("\n", "");
+        String shortened = StringUtils.abbreviate(titlesAndAuthors1.
+                replaceAll("(\\w(\\. )+)", "").trim(), 24);
+
+        properties.put(Study.TITLE, shortened + MD5.getHashString(titlesAndAuthors1));
+        properties.put(Study.CONTRIBUTOR, "");
+        properties.put(Study.INSTITUTION, "");
+        properties.put(Study.PERIOD, "");
+        properties.put(Study.PUBLICATION_YEAR, "");
+        properties.put(Study.DESCRIPTION, titlesAndAuthors1);
     }
 
     public TrophicLinkListener getTrophicLinkListener() {
@@ -102,7 +125,7 @@ public class StudyImporterForSPIRE extends BaseStudyImporter {
 
     @Override
     public Study importStudy() throws StudyImporterException {
-        Model model = null;
+        Model model;
         try {
             model = buildModel();
         } catch (IOException e) {
@@ -111,78 +134,88 @@ public class StudyImporterForSPIRE extends BaseStudyImporter {
 
         buildGEOLookup();
 
-        final Study study = nodeFactory.createStudy("SPIRE",
-                "Joel Sachs",
-                "Dept. of Computer Science and Electrical Engineering, University of Maryland Baltimore County, Baltimore, MD, USA.",
-                "",
-                "Semantic Prototypes in Research Ecoinformatics (SPIRE).", null);
 
         ResIterator resIterator = model.listSubjects();
+        Map<String, String> properties = new HashMap<String, String>();
         while (resIterator.hasNext()) {
-            Resource next = resIterator.next();
-            String predatorName = null;
-            String preyName = null;
-            String locality = null;
-            String country = null;
-            String state = null;
-            StmtIterator stmtIterator = next.listProperties();
+            properties.clear();
+            Resource resource = resIterator.next();
+            StmtIterator stmtIterator = resource.listProperties();
             while (stmtIterator.hasNext()) {
-                Statement next1 = stmtIterator.next();
-                String ln = next1.getPredicate().getLocalName();
-                if ("predator".equals(ln)) {
-                    predatorName = getTrimmedObject(next1);
-                } else if ("prey".equals(ln)) {
-                    preyName = getTrimmedObject(next1);
+                Statement statement = stmtIterator.next();
+                String ln = statement.getPredicate().getLocalName();
+                if (PREDATOR_NAME.equals(ln)) {
+                    properties.put(ln, getTrimmedObject(statement));
+                } else if (PREY_NAME.equals(ln)) {
+                    properties.put(ln, getTrimmedObject(statement));
                 } else if ("observedInStudy".equals(ln)) {
-                    StmtIterator stmtIterator1 = next1.getObject().asResource().listProperties();
-                    while (stmtIterator1.hasNext()) {
-                        Statement next2 = stmtIterator1.next();
-                        String localName = next2.getPredicate().getLocalName();
-                        if ("locality".equals(localName)) {
-                            String localityString = getTrimmedObject(next2);
-                            localityString = localityString.replaceAll("\\^\\^http://www.w3.org/2001/XMLSchema#string", "");
-                            String[] split = localityString.split(";");
-                            for (String s : split) {
-                                String[] split1 = s.split(":");
-                                if (split1.length > 1) {
-                                    String key = split1[0].trim();
-                                    String value = split1[1].trim();
-                                    if ("Country".equals(key)) {
-                                        country = value;
-                                    } else if ("State".equals(key)) {
-                                        state = value;
-                                    } else if ("Locality".equals(key)) {
-                                        locality = value;
-                                    } else {
-                                        throw new StudyImporterException("unsupported locality key [" + key + "]");
-                                    }
-                                }
-                            }
-                        } else if ("ofHabitat".equals(localName)) {
-                            // habitat
-                        }
-                    }
+                    parseStudyInfo(properties, statement);
                 }
             }
-            if (predatorName != null && preyName != null && getTrophicLinkListener() != null) {
-                getTrophicLinkListener().newLink(study, predatorName, preyName, country, state, locality);
+            if (properties.containsKey(PREDATOR_NAME)
+                    && properties.containsKey(PREY_NAME)
+                    && getTrophicLinkListener() != null) {
+                getTrophicLinkListener().newLink(properties);
             }
         }
 
-        return study;
+        // should probably retire this . . .
+        return null;
     }
 
-    private void importTrophicLink(Study study, String predatorName, String preyName, LatLng latLng) {
-        try {
-            Specimen predator = createSpecimen(predatorName);
-            if (latLng != null) {
-                predator.caughtIn(nodeFactory.getOrCreateLocation(latLng.getLat(), latLng.getLng(), null));
+    private void parseStudyInfo(Map<String, String> properties, Statement observedInStudy) throws StudyImporterException {
+        StmtIterator studyProperties = observedInStudy.getObject().asResource().listProperties();
+        while (studyProperties.hasNext()) {
+            Statement studyProperty = studyProperties.next();
+            String localName = studyProperty.getPredicate().getLocalName();
+            if ("locality".equals(localName)) {
+                parseLocalityInfo(properties, getTrimmedObject(studyProperty));
+            } else if (OF_HABITAT.equals(localName)) {
+                properties.put(localName, getTrimmedObject(studyProperty));
+            } else if ("titleAndAuthors".equals(localName)) {
+                parseTitlesAndAuthors(getTrimmedObject(studyProperty), properties);
             }
-            study.collected(predator);
-            Specimen prey = createSpecimen(preyName);
-            predator.ate(prey);
-        } catch (NodeFactoryException e) {
+        }
+    }
 
+    private void parseLocalityInfo(Map<String, String> properties, String localityString) throws StudyImporterException {
+        String[] split = localityString.split(";");
+        for (String s : split) {
+            String[] split1 = s.split(":");
+            if (split1.length > 1) {
+                String key = split1[0].trim();
+                String value = split1[1].trim();
+                if (COUNTRY.equals(key) || STATE.equals(key) || LOCALITY.equals(key)) {
+                    properties.put(key, value);
+                } else {
+                    throw new StudyImporterException("unsupported locality key [" + key + "]");
+                }
+            }
+        }
+    }
+
+    protected void importTrophicLink(Map<String, String> properties) {
+        if (properties.containsKey(Study.TITLE)) {
+            try {
+                Study study = nodeFactory.getOrCreateStudy(properties.get(Study.TITLE),
+                        properties.get(Study.CONTRIBUTOR),
+                        null, null, properties.get(Study.DESCRIPTION), properties.get(Study.PUBLICATION_YEAR), "SPIRE");
+                Specimen predator = createSpecimen(properties.get(PREDATOR_NAME));
+                String country = properties.get(COUNTRY);
+                LatLng latLng = geoLookup.get(country);
+                if (latLng == null) {
+                    LOG.warn("failed to find location for county [" + country + "]");
+                } else {
+                    predator.caughtIn(nodeFactory.getOrCreateLocation(latLng.getLat(), latLng.getLng(), null));
+                }
+                study.collected(predator);
+                Specimen prey = createSpecimen(properties.get(PREY_NAME));
+                predator.ate(prey);
+            } catch (NodeFactoryException e) {
+                LOG.warn("failed to import trophic link with properties [" + properties + "]");
+            }
+        } else {
+            LOG.warn("skipping trophic link: missing study title for trophic link properties [" + properties + "]");
         }
     }
 
@@ -199,7 +232,7 @@ public class StudyImporterForSPIRE extends BaseStudyImporter {
             specimen.setLifeStage(LifeStage.LARVA);
         } else if (taxonName.contains("immature")) {
             specimen.setLifeStage(LifeStage.IMMATURE);
-        }else if (taxonName.contains("nymphs")) {
+        } else if (taxonName.contains("nymphs")) {
             specimen.setLifeStage(LifeStage.NYMPH);
         }
         return specimen;
@@ -208,12 +241,13 @@ public class StudyImporterForSPIRE extends BaseStudyImporter {
 
     private Model buildModel() throws IOException {
         Model model = ModelFactory.createDefaultModel();
-        BufferedReader bufferedReader = FileUtils.getBufferedReader(getClass().getResourceAsStream("spire/allFoodWebStudies.owl.gz"), CharsetConstant.UTF8);
+        BufferedReader bufferedReader = FileUtils.getUncompressedBufferedReader(getClass().getResourceAsStream("spire/allFoodWebStudies.owl"), CharsetConstant.UTF8);
         model.read(bufferedReader, null);
         return model;
     }
 
     private String getTrimmedObject(Statement next1) {
-        return next1.getObject().toString().replaceAll("http://spire.umbc.edu/ethan/", "");
+        String s = next1.getObject().toString().replaceAll("http://spire.umbc.edu/ethan/", "");
+        return s.replaceAll("\\^\\^http://www.w3.org/2001/XMLSchema#string", "");
     }
 }

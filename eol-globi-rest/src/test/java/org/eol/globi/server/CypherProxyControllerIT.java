@@ -5,6 +5,7 @@ import org.junit.Test;
 
 import java.io.IOException;
 
+import static org.hamcrest.core.AnyOf.anyOf;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNot.not;
 import static org.hamcrest.core.IsNull.nullValue;
@@ -35,8 +36,32 @@ public class CypherProxyControllerIT {
     }
 
     @Test
+    public void listPreyForPredatorLocationCSV() throws IOException {
+        assertCSV(getURLPrefix() + "taxon/Homo%20sapiens/preysOn?type=csv&lat=12.4&lng=54.4");
+    }
+
+    @Test
+    public void listPreyForPredatorCSV() throws IOException {
+        assertCSV(getURLPrefix() + "taxon/Homo%20sapiens/preysOn?type=csv");
+    }
+
+    private void assertCSV(String uri) throws IOException {
+        String response = HttpClient.httpGet(uri);
+        assertThat(response, not(containsString("columns")));
+        assertThat(response, anyOf(containsString("\"" + ResultFields.SOURCE_TAXON_NAME + "\""),
+                containsString("\"" + ResultFields.TARGET_TAXON_NAME + "\"")));
+    }
+
+    @Test
     public void listPreyForPredatorObservations() throws IOException {
         String uri = getURLPrefix() + "taxon/Homo%20sapiens/preysOn?includeObservations=true";
+        String response = HttpClient.httpGet(uri);
+        assertThat(response, is(not(nullValue())));
+    }
+
+    @Test
+    public void listPreyForPredatorObservations2() throws IOException {
+        String uri = getURLPrefix() + "taxon/Homo%20sapiens/preysOn/Rattus%20rattus?includeObservations=true";
         String response = HttpClient.httpGet(uri);
         assertThat(response, is(not(nullValue())));
     }
@@ -50,9 +75,9 @@ public class CypherProxyControllerIT {
 
     @Test
     public void listPredatorForPrey() throws IOException {
-        String uri = getURLPrefix() + "taxon/Homo%20sapiens/preyedUponBy";
+        String uri = getURLPrefix() + "taxon/Foraminifera/preyedUponBy";
         String response = HttpClient.httpGet(uri);
-        assertThat(response, is(not(nullValue())));
+        assertThat(response, containsString("preyedUponBy"));
     }
 
     @Test
@@ -67,6 +92,17 @@ public class CypherProxyControllerIT {
         String uri = getURLPrefix() + "taxon/Homo%20sapiens/preyedUponBy?includeObservations=true";
         String response = HttpClient.httpGet(uri);
         assertThat(response, is(not(nullValue())));
+    }
+
+    @Test
+    public void listPredatorForPreyObservationsCSV() throws IOException {
+        String uri = getURLPrefix() + "taxon/Rattus%20rattus/preyedUponBy?includeObservations=true&type=csv";
+        String response = HttpClient.httpGet(uri);
+        assertThat(response, not(containsString("columns")));
+        assertThat(response, anyOf(containsString(ResultFields.SOURCE_TAXON_NAME),
+                containsString(ResultFields.TARGET_TAXON_NAME),
+                containsString(ResultFields.INTERACTION_TYPE),
+                containsString(ResultFields.LATITUDE)));
     }
 
     @Test

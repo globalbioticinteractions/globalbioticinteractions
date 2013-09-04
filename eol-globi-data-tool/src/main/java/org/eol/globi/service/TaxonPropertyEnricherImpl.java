@@ -51,22 +51,23 @@ public class TaxonPropertyEnricherImpl implements TaxonPropertyEnricher {
         }
 
         Node taxonNode = taxon.getUnderlyingNode();
-        try {
-            for (String propertyName : PROPERTY_NAMES) {
-                for (TaxonPropertyLookupService service : services) {
-                    if (service.canLookupProperty(propertyName)) {
+
+        for (String propertyName : PROPERTY_NAMES) {
+            for (TaxonPropertyLookupService service : services) {
+                if (service.canLookupProperty(propertyName)) {
+                    try {
                         if (enrichTaxonWithPropertyValue(errorCounts, taxonNode, service, propertyName)) {
                             didEnrichAtLeastOneProperty = true;
                             break;
                         }
+                    } catch (TaxonPropertyLookupServiceException e) {
+                        LOG.warn("problem with taxon lookup", e);
+                        service.shutdown();
                     }
                 }
             }
-        } catch (TaxonPropertyLookupServiceException e) {
-            LOG.warn("problem with taxon lookup", e);
-            shutdownServices();
-            initServices();
         }
+
         return didEnrichAtLeastOneProperty;
     }
 
@@ -90,12 +91,17 @@ public class TaxonPropertyEnricherImpl implements TaxonPropertyEnricher {
             if (lookupAndSetProperty(taxonNode, service, taxonName, stopwatch, propertyName)) {
                 return true;
             }
+            resetErrorCount(errorCounts, service);
         } catch (TaxonPropertyLookupServiceException ex) {
             LOG.warn("failed to find a match for [" + taxonName + "] in [" + service.getClass().getSimpleName() + "]", ex);
             incrementErrorCount(errorCounts, service, errorCount);
             throw new TaxonPropertyLookupServiceException("re-throwing", ex);
         }
         return false;
+    }
+
+    private void resetErrorCount(HashMap<Class, Integer> errorCounts, TaxonPropertyLookupService service) {
+        errorCounts.put(service.getClass(), 0);
     }
 
     private boolean lookupAndSetProperty(Node taxonNode, TaxonPropertyLookupService service, String taxonName, StopWatch stopwatch, String propertyName) throws TaxonPropertyLookupServiceException {
@@ -118,7 +124,7 @@ public class TaxonPropertyEnricherImpl implements TaxonPropertyEnricher {
         if (errorCounts.containsKey(service.getClass()) && errorCount != null) {
             errorCounts.put(service.getClass(), ++errorCount);
         } else {
-            errorCounts.put(service.getClass(), 0);
+            resetErrorCount(errorCounts, service);
         }
     }
 

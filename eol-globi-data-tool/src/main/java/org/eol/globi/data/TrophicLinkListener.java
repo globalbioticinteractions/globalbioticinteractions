@@ -1,8 +1,8 @@
 package org.eol.globi.data;
 
-import org.eol.globi.domain.Study;
+import java.util.Map;
 
 interface TrophicLinkListener {
 
-    public void newLink(Study study, String predatorName, String preyName, String country, String state, String locality);
+    public void newLink(Map<String, String> properties);
 }

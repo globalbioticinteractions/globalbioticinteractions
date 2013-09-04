@@ -1,7 +1,7 @@
 package org.eol.globi.export;
 
+import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Study;
-import org.eol.globi.service.NoMatchService;
 import org.neo4j.cypher.javacompat.ExecutionEngine;
 import org.neo4j.cypher.javacompat.ExecutionResult;
 import org.neo4j.graphdb.GraphDatabaseService;
@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.Map;
 
-public abstract class StudyExportUnmatchedTaxaForStudies extends BaseExporter {
+public abstract class StudyExportUnmatchedTaxaForStudies extends DarwinCoreExporter {
     private static final String META_TABLE_SUFFIX = "</location>\n" +
             "    </files>\n" +
             "    <field index=\"0\" term=\"http://rs.tdwg.org/dwc/terms/scientificName\"/>\n" +
@@ -36,7 +36,7 @@ public abstract class StudyExportUnmatchedTaxaForStudies extends BaseExporter {
         query.append("\") ");
         query.append(getQueryString(study));
         query.append("WHERE not(has(taxon.externalId)) or taxon.externalId = \"");
-        query.append(NoMatchService.NO_MATCH);
+        query.append(PropertyAndValueDictionary.NO_MATCH);
         query.append("\" RETURN distinct description.name, taxon.name, study.title");
 
         ExecutionResult result = engine.execute(query.toString());

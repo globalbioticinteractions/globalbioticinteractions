@@ -13,7 +13,7 @@ import java.util.Map;
 public class TaxonomyImporter {
     private static final Log LOG = LogFactory.getLog(TaxonomyImporter.class);
 
-    public static final int BATCH_TRANSACTION_SIZE = 10000;
+    public static final int BATCH_TRANSACTION_SIZE = 250000;
     private int counter;
     private StopWatch stopwatch;
 

@@ -3,9 +3,9 @@ package org.eol.globi.export;
 import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.domain.InteractType;
+import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
-import org.eol.globi.service.NoMatchService;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -22,11 +22,11 @@ public class StudyExportUnmatchedSourceTaxaForStudiesTest extends GraphDBTestCas
         Specimen predatorSpecimen = nodeFactory.createSpecimen("Homo sapiens", "homoSapiensId");
         addCanisLupus(predatorSpecimen, "canisLupusId");
         addCanisLupus(predatorSpecimen, "canisLupusId");
-        Specimen preySpecimen = nodeFactory.createSpecimen("Canis lupus other", NoMatchService.NO_MATCH);
+        Specimen preySpecimen = nodeFactory.createSpecimen("Canis lupus other", PropertyAndValueDictionary.NO_MATCH);
         predatorSpecimen.createRelationshipTo(preySpecimen, InteractType.ATE);
         study.collected(predatorSpecimen);
 
-        Specimen predatorSpecimen23 = nodeFactory.createSpecimen("Homo sapiens2 (bla)", NoMatchService.NO_MATCH);
+        Specimen predatorSpecimen23 = nodeFactory.createSpecimen("Homo sapiens2 (bla)", PropertyAndValueDictionary.NO_MATCH);
         addCanisLupus(predatorSpecimen23, "canisLupusId");
         study.collected(predatorSpecimen23);
         Specimen predatorSpecimen22 = nodeFactory.createSpecimen("Homo sapiens2 (bla)");
@@ -38,7 +38,7 @@ public class StudyExportUnmatchedSourceTaxaForStudiesTest extends GraphDBTestCas
         addCanisLupus(predatorSpecimen21, "canisLupusId");
         study2.collected(predatorSpecimen21);
 
-        Specimen predatorSpecimen2 = nodeFactory.createSpecimen("Homo sapiens3 (blah)", NoMatchService.NO_MATCH);
+        Specimen predatorSpecimen2 = nodeFactory.createSpecimen("Homo sapiens3 (blah)", PropertyAndValueDictionary.NO_MATCH);
         addCanisLupus(predatorSpecimen2, "canisLupusId");
         study.collected(predatorSpecimen2);
 
@@ -46,8 +46,8 @@ public class StudyExportUnmatchedSourceTaxaForStudiesTest extends GraphDBTestCas
         StringWriter writer = new StringWriter();
         new StudyExportUnmatchedSourceTaxaForStudies(getGraphDb()).exportStudy(study, writer, true);
         assertThat(writer.toString(), is("\"original source taxon name\",\"unmatched normalized source taxon name\",\"study\"\n" +
-                "\"Homo sapiens3 (blah)\",\"Homo sapiens3\",\"my study\"\n" +
-                "\"Homo sapiens2 (bla)\",\"Homo sapiens2\",\"my study\"\n"
+                "\"Homo sapiens2 (bla)\",\"Homo sapiens2\",\"my study\"\n" +
+                "\"Homo sapiens3 (blah)\",\"Homo sapiens3\",\"my study\"\n"
         ));
 
         writer = new StringWriter();

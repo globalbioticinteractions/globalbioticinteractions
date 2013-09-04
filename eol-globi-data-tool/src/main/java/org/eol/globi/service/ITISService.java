@@ -40,4 +40,9 @@ public class ITISService extends BaseExternalIdService  {
         }
         return lsid;
     }
+
+    @Override
+    public String lookupTaxonPathByLSID(String lsid) throws TaxonPropertyLookupServiceException {
+        return null;
+    }
 }

@@ -26,5 +26,10 @@ public enum LifeStage {
     CATERPILLAR,
     UNKNOWN,
     IMMATURE,
+    LARVA_OR_POSTLARVA,
+    MEGALOPA,
+    CYPRIS,
+    NAUPLII,
+    COPEPODITE,
     ADULT
 }

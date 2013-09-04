@@ -21,6 +21,7 @@ import java.io.InputStream;
 
 public class StudyImporterForINaturalist extends BaseStudyImporter {
     private static final Log LOG = LogFactory.getLog(StudyImporterForINaturalist.class);
+    public static final String INATURALIST_URL = "http://inaturalist.org";
 
     public StudyImporterForINaturalist(ParserFactory parserFactory, NodeFactory nodeFactory) {
         super(parserFactory, nodeFactory);
@@ -28,7 +29,7 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
 
     @Override
     public Study importStudy() throws StudyImporterException {
-        Study study = nodeFactory.getOrCreateStudy("iNaturalist", "Ken-ichi Kueda", "http://inaturalist.org", "", "iNaturalist is a place where you can record what you see in nature, meet other nature lovers, and learn about the natural world. ", "");
+        Study study = nodeFactory.getOrCreateStudy("iNaturalist", "Ken-ichi Kueda", INATURALIST_URL, "", "iNaturalist is a place where you can record what you see in nature, meet other nature lovers, and learn about the natural world. ", "", INATURALIST_URL);
         retrieveDataParseResults(study);
         return study;
     }
@@ -106,13 +107,6 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
             String interactionType = observationField.get("name").getTextValue();
 
             JsonNode observation = jsonNode.get("observation");
-            String latitudeString = observation.get("latitude").getTextValue();
-            String longitudeString = observation.get("longitude").getTextValue();
-            if (latitudeString != null && longitudeString != null) {
-                double latitude = Double.parseDouble(latitudeString);
-                double longitude = Double.parseDouble(longitudeString);
-                targetSpecimen.caughtIn(nodeFactory.getOrCreateLocation(latitude, longitude, null));
-            }
 
             JsonNode sourceTaxon = observation.get("taxon");
             if (sourceTaxon == null) {
@@ -125,6 +119,15 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
                 }
                 Specimen sourceSpecimen = nodeFactory.createSpecimen(sourceTaxonName);
                 sourceSpecimen.setExternalId(TaxonomyProvider.ID_PREFIX_INATURALIST + observationId);
+
+                String latitudeString = observation.get("latitude").getTextValue();
+                String longitudeString = observation.get("longitude").getTextValue();
+                if (latitudeString != null && longitudeString != null) {
+                    double latitude = Double.parseDouble(latitudeString);
+                    double longitude = Double.parseDouble(longitudeString);
+                    sourceSpecimen.caughtIn(nodeFactory.getOrCreateLocation(latitude, longitude, null));
+                }
+
                 Relationship collectedRel = study.collected(sourceSpecimen);
 
                 String timeObservedAtUtc = observation.get("time_observed_at_utc").getTextValue();
@@ -148,6 +151,10 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
                 } else if ("Pollinating".equals(interactionType)) {
                     type = InteractType.POLLINATES;
                 } else if ("Other Species in Group".equals(interactionType)) {
+                    LOG.warn("interactionType [" + interactionDataType + "] not supported");
+                } else if ("Butterfly & Moth Host Plant".equals(interactionType)) {
+                    LOG.warn("interactionType [" + interactionDataType + "] not supported");
+                } else if ("Butterfly & Moth Nectar Plant".equals(interactionType)) {
                     LOG.warn("interactionType [" + interactionDataType + "] not supported");
                 } else {
                     throw new StudyImporterException("found unsupported interactionType [" + interactionType + "]");

@@ -30,7 +30,7 @@ public class RequestHelperTest {
         assertThat(points.get(0).getLng(), Is.is(12.1d));
 
         String clause = RequestHelper.buildCypherSpatialWhereClause(points);
-        assertThat(clause, Is.is("WHERE loc is not null AND loc.latitude = 12.2" +
+        assertThat(clause.trim(), Is.is("WHERE loc is not null AND loc.latitude = 12.2" +
                 " AND loc.longitude = 12.1"));
     }
 
@@ -61,7 +61,7 @@ public class RequestHelperTest {
         assertThat(points.get(1).getLng(), Is.is(20d));
 
         String clause = RequestHelper.buildCypherSpatialWhereClause(points);
-        assertThat(clause,
+        assertThat(clause.trim(),
                 Is.is("WHERE loc is not null AND loc.latitude < 10.0" +
                         " AND loc.longitude > -20.0" +
                         " AND loc.latitude > -10.0" +

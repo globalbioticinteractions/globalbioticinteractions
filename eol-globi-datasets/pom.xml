@@ -43,7 +43,7 @@
                         <argument>-Xmx2G</argument>
                         <argument>-classpath</argument>
                         <classpath/>
-                        <argument>org.eol.globi.client.TrophicImporter</argument>
+                        <argument>org.eol.globi.tool.Normalizer</argument>
                     </arguments>
                     <workingDirectory>${project.build.directory}/data</workingDirectory>
                 </configuration>
@@ -52,15 +52,16 @@
                 <artifactId>maven-assembly-plugin</artifactId>
                 <version>2.4</version>
                 <configuration>
-                    <!-- ensure that this doesn't run on travis -->
                     <descriptors>
                         <descriptor>src/assembly/neo4j-graph-db.xml</descriptor>
-                        <descriptor>src/assembly/csv-all.xml</descriptor>
+                        <descriptor>src/assembly/darwin-core.xml</descriptor>
+                        <!-- excluding bulky data exports such at ttl archive to save bandwidth / storage fees -->
                     </descriptors>
                 </configuration>
                 <executions>
                     <execution>
                         <id>make-assembly</id>
+                        <!-- ensure that this doesn't run on travis -->
                         <phase>package</phase>
                         <goals>
                             <goal>single</goal>
@@ -76,12 +77,12 @@
                     <serverId>aws-snapshot</serverId>
                     <url>s3://globi/snapshot</url>
                     <skip>${skipTests}</skip>
-                    <includes>**/*Taxa.csv,**/*.gz</includes>
+                    <includes>**/*Taxa.csv,**/*.tar.gz</includes>
                 </configuration>
                 <executions>
                     <execution>
-                        <id>upload-reports</id>
-                        <phase>package</phase>
+                        <id>upload-datasets</id>
+                        <phase>install</phase>
                         <goals>
                             <goal>upload</goal>
                         </goals>
@@ -90,4 +91,36 @@
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>include-big-datasets</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-assembly-plugin</artifactId>
+                        <version>2.4</version>
+                        <configuration>
+                            <descriptors>
+                                <descriptor>src/assembly/neo4j-graph-db.xml</descriptor>
+                                <descriptor>src/assembly/darwin-core.xml</descriptor>
+                                <descriptor>src/assembly/ttl.xml</descriptor>
+                            </descriptors>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>make-assembly</id>
+                                <!-- ensure that this doesn't run on travis -->
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>single</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
 </project>

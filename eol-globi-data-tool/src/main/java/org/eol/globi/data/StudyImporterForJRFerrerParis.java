@@ -15,11 +15,13 @@ public class StudyImporterForJRFerrerParis extends BaseStudyImporter {
 
     @Override
     public Study importStudy() throws StudyImporterException {
-        Study study = nodeFactory.createStudy("JRFerrisParisButterflies",
+        Study study = nodeFactory.getOrCreateStudy("JRFerrisParisButterflies",
                 "Jose R. Ferrer Paris",
                 "Centro de Estudios Botánicos y Agroforestales, Instituto Venezolano de Investigaciones Científicas; Kirstenbosch Research Center, South African National Biodiversity Institute",
                 "",
-                "Compilation of hostplant records for butterflies.", null);
+                "Compilation of hostplant records for butterflies."
+                , null
+                ,"Jose R. Ferrer Paris");
         String studyResource = "jr_ferrer_paris/ExampleAssociations.csv";
         try {
             LabeledCSVParser parser = parserFactory.createParser(studyResource, CharsetConstant.UTF8);

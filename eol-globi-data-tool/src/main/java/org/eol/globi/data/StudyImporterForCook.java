@@ -29,7 +29,7 @@ public class StudyImporterForCook extends BaseStudyImporter {
             throw new StudyImporterException("failed to read resource", e);
         }
 
-        Study study = nodeFactory.getOrCreateStudy("Cook 2012", "Colt W. Cook", "Department of Marine Science, The University of Texas at Austin, USA", "", "<a href=\"http://repositories.lib.utexas.edu/handle/2152/ETD-UT-2012-08-6285\">The early life history and reproductive biology of Cymothoa excisa, a marine isopod parasitizing Atlantic croaker, (Micropogonias undulatus), along the Texas coast.</a>", "2012");
+        Study study = nodeFactory.getOrCreateStudy("Cook 2012", "Colt W. Cook", "Department of Marine Science, The University of Texas at Austin, USA", "", "<a href=\"http://repositories.lib.utexas.edu/handle/2152/ETD-UT-2012-08-6285\">The early life history and reproductive biology of Cymothoa excisa, a marine isopod parasitizing Atlantic croaker, (Micropogonias undulatus), along the Texas coast.</a>", "2012", "Colt W. Cook");
 
         try {
 

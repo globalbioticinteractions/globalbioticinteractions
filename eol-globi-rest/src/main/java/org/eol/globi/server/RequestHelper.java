@@ -71,6 +71,6 @@ public class RequestHelper {
             builder.append(" AND loc.longitude < ");
             builder.append(points.get(1).getLng());
         }
-        return builder.toString();
+        return builder.append(" ").toString();
     }
 }

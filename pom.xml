@@ -8,10 +8,11 @@
     <artifactId>eol-globi-data</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
-    <name>EOL's GloBI Project - normalize, aggregate and interface with species interaction data.</name>
+    <name>EOL's GloBI Project - normalize, aggregate and export spatial-temporal species interaction data.</name>
     <modules>
         <module>eol-globi-parent</module>
         <module>eol-globi-lib</module>
+        <module>eol-globi-ontology</module>
         <module>eol-globi-data-tool</module>
         <module>eol-globi-rest</module>
     </modules>
@@ -24,8 +25,13 @@
         <profile>
             <id>generate-datasets</id>
             <modules>
-                <!-- generating datasets takes a while and snapshots are should be available on s3 -->
                 <module>eol-globi-datasets</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>rdf</id>
+            <modules>
+                <module>eol-globi-rdf</module>
             </modules>
         </profile>
     </profiles>

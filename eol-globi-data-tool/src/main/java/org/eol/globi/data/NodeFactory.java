@@ -194,15 +194,16 @@ public class NodeFactory {
 
 
     public Study createStudy(String title) {
-        return createStudy(title, null, null, null, null, null);
+        return createStudy(title, null, null, null, null, null, null);
     }
 
-    public Study createStudy(String title, String contributor, String institution, String period, String description, String publicationYear) {
+    private Study createStudy(String title, String contributor, String institution, String period, String description, String publicationYear, String source) {
         Transaction transaction = graphDb.beginTx();
         Study study;
         try {
             Node node = graphDb.createNode();
             study = new Study(node, title);
+            study.setSource(source);
             study.setContributor(contributor);
             study.setInstitution(institution);
             study.setPeriod(period);
@@ -217,10 +218,10 @@ public class NodeFactory {
         return study;
     }
 
-    public Study getOrCreateStudy(String title, String contributor, String institution, String period, String description, String publicationYear) {
+    public Study getOrCreateStudy(String title, String contributor, String institution, String period, String description, String publicationYear, String source) {
         Study study = findStudy(title);
         if (null == study) {
-            study = createStudy(title, contributor, institution, period, description, publicationYear);
+            study = createStudy(title, contributor, institution, period, description, publicationYear, source);
         }
         return study;
     }
