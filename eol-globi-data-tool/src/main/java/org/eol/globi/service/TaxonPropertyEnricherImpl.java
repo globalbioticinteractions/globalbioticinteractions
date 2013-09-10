@@ -1,5 +1,6 @@
 package org.eol.globi.service;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eol.globi.domain.NodeBacked;
@@ -42,9 +43,11 @@ public class TaxonPropertyEnricherImpl implements TaxonPropertyEnricher {
 
     private boolean needsEnriching(Taxon taxon) {
         boolean needsEnriching = false;
-        Node underlyingNode = taxon.getUnderlyingNode();
-        for (String propertyName : PROPERTIES.keySet()) {
-            needsEnriching = needsEnriching || !underlyingNode.hasProperty(propertyName);
+        if (StringUtils.isNotBlank(taxon.getName()) && taxon.getName().length() > 1) {
+            Node underlyingNode = taxon.getUnderlyingNode();
+            for (String propertyName : PROPERTIES.keySet()) {
+                needsEnriching = needsEnriching || !underlyingNode.hasProperty(propertyName);
+            }
         }
         return needsEnriching;
     }
@@ -68,7 +71,9 @@ public class TaxonPropertyEnricherImpl implements TaxonPropertyEnricher {
         return didEnrichAtLeastOneProperty;
     }
 
-    private boolean enrichTaxonWithPropertyValue(HashMap<Class, Integer> errorCounts, Node taxonNode, TaxonPropertyLookupService service, Map<String, String> properties) throws TaxonPropertyLookupServiceException {
+    private boolean enrichTaxonWithPropertyValue(HashMap<Class, Integer> errorCounts, Node
+            taxonNode, TaxonPropertyLookupService service, Map<String, String> properties) throws
+            TaxonPropertyLookupServiceException {
         Integer errorCount = errorCounts.get(service.getClass());
         if (errorCount != null && errorCount > 10) {
             LOG.error("skipping taxon match against [" + service.getClass().toString() + "], error count [" + errorCount + "] too high.");
@@ -80,7 +85,8 @@ public class TaxonPropertyEnricherImpl implements TaxonPropertyEnricher {
         return false;
     }
 
-    private boolean enrichTaxon(HashMap<Class, Integer> errorCounts, Node taxonNode, TaxonPropertyLookupService service, Integer errorCount, Map<String, String> properties) throws TaxonPropertyLookupServiceException {
+    private boolean enrichTaxon(HashMap<Class, Integer> errorCounts, Node taxonNode, TaxonPropertyLookupService
+            service, Integer errorCount, Map<String, String> properties) throws TaxonPropertyLookupServiceException {
         String taxonName = (String) taxonNode.getProperty(Taxon.NAME);
         try {
             if (lookupAndSetProperties(taxonNode, service, taxonName, properties)) {
@@ -99,7 +105,8 @@ public class TaxonPropertyEnricherImpl implements TaxonPropertyEnricher {
         errorCounts.put(service.getClass(), 0);
     }
 
-    private boolean lookupAndSetProperties(Node taxonNode, TaxonPropertyLookupService service, String taxonName, Map<String, String> properties) throws TaxonPropertyLookupServiceException {
+    private boolean lookupAndSetProperties(Node taxonNode, TaxonPropertyLookupService service, String
+            taxonName, Map<String, String> properties) throws TaxonPropertyLookupServiceException {
         service.lookupPropertiesByName(taxonName, properties);
         return properties != null && setProperties(taxonNode, properties);
     }
@@ -122,7 +129,8 @@ public class TaxonPropertyEnricherImpl implements TaxonPropertyEnricher {
         return enrichedAtLeastOneProperty;
     }
 
-    private void incrementErrorCount(HashMap<Class, Integer> errorCounts, TaxonPropertyLookupService service, Integer errorCount) {
+    private void incrementErrorCount(HashMap<Class, Integer> errorCounts, TaxonPropertyLookupService
+            service, Integer errorCount) {
         if (errorCounts.containsKey(service.getClass()) && errorCount != null) {
             errorCounts.put(service.getClass(), ++errorCount);
         } else {

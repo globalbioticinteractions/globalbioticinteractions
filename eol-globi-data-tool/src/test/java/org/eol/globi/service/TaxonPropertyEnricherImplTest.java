@@ -79,8 +79,6 @@ public class TaxonPropertyEnricherImplTest extends GraphDBTestCase {
         TaxonPropertyLookupService serviceA = Mockito.mock(TaxonPropertyLookupService.class);
         TaxonPropertyLookupService serviceB = Mockito.mock(TaxonPropertyLookupService.class);
         Map<String, String> properties = enrich("H", serviceA, serviceB);
-        verify(serviceA).lookupPropertiesByName(anyString(), eq(properties));
-        verify(serviceB).lookupPropertiesByName(anyString(), eq(properties));
         verify(serviceA, never()).lookupPropertiesByName(anyString(), eq(properties));
         verify(serviceB, never()).lookupPropertiesByName(anyString(), eq(properties));
 
