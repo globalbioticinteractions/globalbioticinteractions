@@ -63,9 +63,6 @@ public class TaxonNameNormalizer {
         if (suggestedReplacement != null) {
             cleanName = suggestedReplacement;
         }
-        if (StringUtils.isBlank(cleanName)) {
-            cleanName = "NomenNescio";
-        }
 
         return cleanName.trim();
     }

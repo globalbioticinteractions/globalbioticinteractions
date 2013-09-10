@@ -1,6 +1,5 @@
 package org.eol.globi.service;
 
-import org.apache.commons.lang3.time.StopWatch;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eol.globi.domain.NodeBacked;
@@ -35,19 +34,19 @@ public class TaxonPropertyEnricherImpl implements TaxonPropertyEnricher {
     @Override
     public boolean enrich(Taxon taxon) throws IOException {
         boolean didEnrichAtLeastOneProperty = false;
-        if (!isEnriched(taxon)) {
+        if (needsEnriching(taxon)) {
             didEnrichAtLeastOneProperty = doEnrichment(taxon, didEnrichAtLeastOneProperty);
         }
         return didEnrichAtLeastOneProperty;
     }
 
-    private boolean isEnriched(Taxon taxon) {
-        boolean hasAllProperties = true;
+    private boolean needsEnriching(Taxon taxon) {
+        boolean needsEnriching = false;
         Node underlyingNode = taxon.getUnderlyingNode();
         for (String propertyName : PROPERTIES.keySet()) {
-            hasAllProperties = hasAllProperties && underlyingNode.hasProperty(propertyName);
+            needsEnriching = needsEnriching || !underlyingNode.hasProperty(propertyName);
         }
-        return hasAllProperties;
+        return needsEnriching;
     }
 
     private boolean doEnrichment(Taxon taxon, boolean didEnrichAtLeastOneProperty) {

@@ -17,48 +17,58 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLDecoder;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
-public class EOLService extends BaseTaxonIdService {
+public class EOLService extends BaseHttpClientService implements TaxonPropertyLookupService {
+
+    private final List<String> supportedProperties = new ArrayList<String>() {
+        {
+            add(Taxon.EXTERNAL_ID);
+            add(Taxon.PATH);
+        }
+    };
+
+    @Override
+    public void lookupPropertiesByName(String taxonName, Map<String, String> properties) throws TaxonPropertyLookupServiceException {
+        Long id = null;
+        if (properties.containsKey(Taxon.EXTERNAL_ID) || properties.containsKey(Taxon.PATH)) {
+            id = getPageId(taxonName, true);
+            if (id != null) {
+                properties.put(Taxon.EXTERNAL_ID, TaxonomyProvider.ID_PREFIX_EOL + id.toString());
+            }
+        }
+
+        if (id != null && properties.containsKey(Taxon.PATH)) {
+            String path = getPath(id);
+            if (path != null) {
+                properties.put(Taxon.PATH, path);
+            }
+        }
+    }
 
     @Override
     public boolean canLookupProperty(String propertyName) {
-        return super.canLookupProperty(propertyName) || Taxon.PATH.equals(propertyName);
+        return supportedProperties.contains(propertyName);
     }
 
-    @Override
-    public String lookupIdByName(String taxonName) throws TaxonPropertyLookupServiceException {
-        Long pageId;
-
-        try {
-            pageId = getPageId(taxonName, true);
-        } catch (URISyntaxException e) {
-            throw new TaxonPropertyLookupServiceException("failed to create uri", e);
-        } catch (MalformedURLException e) {
-            throw new TaxonPropertyLookupServiceException("failed to create uri", e);
-        }
-
-        return pageId == null ? null : TaxonomyProvider.ID_PREFIX_EOL + pageId;
-    }
 
     private URI createSearchURI(String taxonName) throws URISyntaxException {
         String query = "q=" + taxonName.replaceAll("\\s", "+") + "&exact=true";
         return new URI("http", null, "eol.org", 80, "/api/search/1.0.xml", query, null);
     }
 
-    @Override
-    public String lookupTaxonPathByLSID(String lsid) throws TaxonPropertyLookupServiceException {
-        String path = null;
-        if (lsid != null && lsid.startsWith(TaxonomyProvider.ID_PREFIX_EOL)) {
-            Long pageId = Long.parseLong(lsid.replace(TaxonomyProvider.ID_PREFIX_EOL, ""));
-            try {
-                path = getRanks(pageId);
-            } catch (URISyntaxException e) {
-                throw new TaxonPropertyLookupServiceException("failed to create uri", e);
-            } catch (JsonProcessingException e) {
-                throw new TaxonPropertyLookupServiceException("failed to parse response", e);
-            } catch (IOException e) {
-                throw new TaxonPropertyLookupServiceException("failed to get response", e);
-            }
+    protected String getPath(Long pageId) throws TaxonPropertyLookupServiceException {
+        String path;
+        try {
+            path = getRanks(pageId);
+        } catch (URISyntaxException e) {
+            throw new TaxonPropertyLookupServiceException("failed to create uri", e);
+        } catch (JsonProcessingException e) {
+            throw new TaxonPropertyLookupServiceException("failed to parse response", e);
+        } catch (IOException e) {
+            throw new TaxonPropertyLookupServiceException("failed to get response", e);
         }
         return path;
     }
@@ -134,41 +144,47 @@ public class EOLService extends BaseTaxonIdService {
         return first;
     }
 
-    private Long getPageId(String taxonName, boolean shouldFollowAlternate) throws TaxonPropertyLookupServiceException, URISyntaxException, MalformedURLException {
-        URI uri = createSearchURI(taxonName);
-        String response = getResponse(uri);
+    protected Long getPageId(String taxonName, boolean shouldFollowAlternate) throws TaxonPropertyLookupServiceException {
+        try {
+
+            URI uri = createSearchURI(taxonName);
+            String response = getResponse(uri);
 
 
-        Long smallestPageId = null;
+            Long smallestPageId = null;
 
-        if (response != null) {
-            // pick first of non empty result, assuming that exact match parameter is yielding a valid result
-            if (!response.contains("totalResults>0<")) {
-                smallestPageId = findSmallestPageId(response);
+            if (response != null) {
+                // pick first of non empty result, assuming that exact match parameter is yielding a valid result
+                if (!response.contains("totalResults>0<")) {
+                    smallestPageId = findSmallestPageId(response);
 
-            } else if (shouldFollowAlternate) {
-                String[] alternates = response.split("<link rel=\"alternate\" href=\"http://eol.org/api/search/1.0/");
-                if (alternates.length > 1) {
-                    String[] urlSplit = alternates[1].split("\"");
-                    if (urlSplit.length > 1) {
-                        String alternateTaxonName = urlSplit[0];
-                        try {
-                            String decodedName = URLDecoder.decode(alternateTaxonName, "UTF-8");
-                            decodedName = decodedName.replace("/", "");
-                            if (!decodedName.equals(taxonName)) {
-                                smallestPageId = getPageId(decodedName, false);
+                } else if (shouldFollowAlternate) {
+                    String[] alternates = response.split("<link rel=\"alternate\" href=\"http://eol.org/api/search/1.0/");
+                    if (alternates.length > 1) {
+                        String[] urlSplit = alternates[1].split("\"");
+                        if (urlSplit.length > 1) {
+                            String alternateTaxonName = urlSplit[0];
+                            try {
+                                String decodedName = URLDecoder.decode(alternateTaxonName, "UTF-8");
+                                decodedName = decodedName.replace("/", "");
+                                if (!decodedName.equals(taxonName)) {
+                                    smallestPageId = getPageId(decodedName, false);
+                                }
+                            } catch (UnsupportedEncodingException e) {
+                                throw new TaxonPropertyLookupServiceException("failed to decode [" + alternateTaxonName + "]", e);
                             }
-                        } catch (UnsupportedEncodingException e) {
-                            throw new TaxonPropertyLookupServiceException("failed to decode [" + alternateTaxonName + "]", e);
+
                         }
 
                     }
 
                 }
-
             }
+            return smallestPageId;
+        } catch (URISyntaxException e) {
+            throw new TaxonPropertyLookupServiceException("failed to fetch pageid for [" + taxonName + "]", e);
         }
-        return smallestPageId;
+
     }
 
     private String getResponse(URI uri) throws TaxonPropertyLookupServiceException {

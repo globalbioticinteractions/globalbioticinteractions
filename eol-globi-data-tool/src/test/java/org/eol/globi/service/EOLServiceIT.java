@@ -4,6 +4,8 @@ import org.eol.globi.domain.Taxon;
 import org.hamcrest.core.Is;
 import org.junit.Test;
 
+import java.util.HashMap;
+
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
@@ -81,7 +83,11 @@ public class EOLServiceIT {
     }
 
     private String lookupPageIdByScientificName(String taxonName) throws TaxonPropertyLookupServiceException {
-        return new EOLService().lookupIdByName(taxonName);
+        HashMap<String, String> properties = new HashMap<String, String>() {{
+            put(Taxon.EXTERNAL_ID, null);
+        }};
+        new EOLService().lookupPropertiesByName(taxonName, properties);
+        return properties.get(Taxon.EXTERNAL_ID);
     }
 
     @Test
@@ -146,21 +152,46 @@ public class EOLServiceIT {
 
     @Test
     public void lookupTaxonPathByLSID() throws TaxonPropertyLookupServiceException {
-        String rank = new EOLService().lookupTaxonPathByLSID("EOL:1045608");
+        String rank = new EOLService().getPath(1045608L);
         assertThat(rank, Is.is("Animalia Arthropoda Insecta Hymenoptera Apoidea Apidae Apis Apis mellifera"));
     }
 
     @Test
     public void lookupTaxonPathByLSIDForPageWithoutClassification() throws TaxonPropertyLookupServiceException {
-        String rank = new EOLService().lookupTaxonPathByLSID("EOL:13644436");
+        String rank = new EOLService().getPath(13644436L);
         assertThat(rank, Is.is(nullValue()));
     }
 
     @Test
     public void lookupTaxonPathByScientificName() throws TaxonPropertyLookupServiceException {
-        String taxonRank = new EOLService().lookupPropertyValueByTaxonName("Homo sapiens", Taxon.PATH);
-        assertThat(taxonRank, Is.is("Animalia Chordata Vertebrata Mammalia Theria Eutheria Primates Hominidae Homo Homo sapiens"
-        ));
+        HashMap<String, String> properties = new HashMap<String, String>() {{
+            put(Taxon.PATH, null);
+        }};
+        new EOLService().lookupPropertiesByName("Homo sapiens", properties);
+        assertThat(properties.get(Taxon.PATH), Is.is("Animalia Chordata Vertebrata Mammalia Theria Eutheria Primates Hominidae Homo Homo sapiens"));
+
+    }
+
+    @Test
+    public void lookupExternalIdByScientificName() throws TaxonPropertyLookupServiceException {
+        HashMap<String, String> properties = new HashMap<String, String>() {{
+            put(Taxon.EXTERNAL_ID, null);
+        }};
+        new EOLService().lookupPropertiesByName("Homo sapiens", properties);
+        assertThat(properties.get(Taxon.EXTERNAL_ID), Is.is("EOL:327955"));
+        assertThat(properties.containsKey(Taxon.PATH), Is.is(false));
+
+    }
+    @Test
+    public void lookupExternalIdAndPathByScientificName() throws TaxonPropertyLookupServiceException {
+        HashMap<String, String> properties = new HashMap<String, String>() {{
+            put(Taxon.EXTERNAL_ID, null);
+            put(Taxon.PATH, null);
+        }};
+        new EOLService().lookupPropertiesByName("Homo sapiens", properties);
+        assertThat(properties.get(Taxon.EXTERNAL_ID), Is.is("EOL:327955"));
+        assertThat(properties.get(Taxon.PATH), Is.is("Animalia Chordata Vertebrata Mammalia Theria Eutheria Primates Hominidae Homo Homo sapiens"));
+
     }
 
 }

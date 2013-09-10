@@ -60,7 +60,7 @@ public class WoRMSService extends BaseTaxonIdService {
     }
 
     @Override
-    public String lookupTaxonPathByLSID(String lsid) throws TaxonPropertyLookupServiceException {
+    public String lookupTaxonPathById(String id) throws TaxonPropertyLookupServiceException {
         return null;
     }
 }

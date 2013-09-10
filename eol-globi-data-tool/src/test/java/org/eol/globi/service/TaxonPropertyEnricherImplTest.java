@@ -20,6 +20,7 @@ import static org.mockito.Matchers.anyList;
 import static org.mockito.Matchers.anyMap;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -40,9 +41,17 @@ public class TaxonPropertyEnricherImplTest extends GraphDBTestCase {
 
     @Test
     public void enrichTwoService() throws NodeFactoryException, IOException, TaxonPropertyLookupServiceException {
+        TaxonPropertyLookupService serviceA = Mockito.mock(TaxonPropertyLookupService.class);
+        TaxonPropertyLookupService serviceB = Mockito.mock(TaxonPropertyLookupService.class);
+        Map<String, String> properties = enrich("Homo sapiens", serviceA, serviceB);
+        verify(serviceA).lookupPropertiesByName(anyString(), eq(properties));
+        verify(serviceB).lookupPropertiesByName(anyString(), eq(properties));
+
+    }
+
+    private Map<String, String> enrich(String taxonName, TaxonPropertyLookupService serviceA, TaxonPropertyLookupService serviceB) throws IOException {
         TaxonPropertyEnricherImpl enricher = new TaxonPropertyEnricherImpl(getGraphDb());
         List<TaxonPropertyLookupService> list = new ArrayList<TaxonPropertyLookupService>();
-        TaxonPropertyLookupService serviceA = Mockito.mock(TaxonPropertyLookupService.class);
         list.add(serviceA);
         Map<String, String> properties = new HashMap<String, String>() {
             {
@@ -52,7 +61,6 @@ public class TaxonPropertyEnricherImplTest extends GraphDBTestCase {
         };
         when(serviceA.canLookupProperty(anyString())).thenReturn(true);
 
-        TaxonPropertyLookupService serviceB = Mockito.mock(TaxonPropertyLookupService.class);
         list.add(serviceB);
 
         when(serviceB.canLookupProperty(anyString())).thenReturn(true);
@@ -60,11 +68,21 @@ public class TaxonPropertyEnricherImplTest extends GraphDBTestCase {
 
         Transaction transaction = getGraphDb().beginTx();
         Taxon taxon = new Taxon(getGraphDb().createNode());
-        taxon.setName("Homo sapiens");
+        taxon.setName(taxonName);
         transaction.success();
         enricher.enrich(taxon);
+        return properties;
+    }
+
+    @Test
+    public void noEnrichmentNameTooShort() throws NodeFactoryException, IOException, TaxonPropertyLookupServiceException {
+        TaxonPropertyLookupService serviceA = Mockito.mock(TaxonPropertyLookupService.class);
+        TaxonPropertyLookupService serviceB = Mockito.mock(TaxonPropertyLookupService.class);
+        Map<String, String> properties = enrich("H", serviceA, serviceB);
         verify(serviceA).lookupPropertiesByName(anyString(), eq(properties));
         verify(serviceB).lookupPropertiesByName(anyString(), eq(properties));
+        verify(serviceA, never()).lookupPropertiesByName(anyString(), eq(properties));
+        verify(serviceB, never()).lookupPropertiesByName(anyString(), eq(properties));
 
     }
 

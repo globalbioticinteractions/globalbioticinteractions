@@ -6,8 +6,6 @@ import org.apache.commons.logging.LogFactory;
 import org.eol.globi.domain.NodeBacked;
 import org.eol.globi.domain.Taxon;
 
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public abstract class BaseTaxonIdService extends BaseHttpClientService implements TaxonPropertyLookupService {
@@ -30,7 +28,7 @@ public abstract class BaseTaxonIdService extends BaseHttpClientService implement
             try {
                 String lsId = lookupIdByName(taxonName);
                 if (lsId != null) {
-                    propertyValue = lookupTaxonPathByLSID(lsId);
+                    propertyValue = lookupTaxonPathById(lsId);
                     // append synonyms in path whenever available using "|" separator with suffix to enable search
                     // see https://github.com/jhpoelen/eol-globi-data/issues/12
                     if (!StringUtils.endsWith(propertyValue, taxonName)) {
@@ -63,6 +61,6 @@ public abstract class BaseTaxonIdService extends BaseHttpClientService implement
 
     public abstract String lookupIdByName(String taxonName) throws TaxonPropertyLookupServiceException;
 
-    public abstract String lookupTaxonPathByLSID(String lsid) throws TaxonPropertyLookupServiceException;
+    public abstract String lookupTaxonPathById(String id) throws TaxonPropertyLookupServiceException;
 
 }
