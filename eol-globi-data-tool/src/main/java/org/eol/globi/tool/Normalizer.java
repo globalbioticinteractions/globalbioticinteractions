@@ -14,7 +14,7 @@ import org.eol.globi.export.GlobiOWLExporter;
 import org.eol.globi.export.StudyExportUnmatchedSourceTaxaForStudies;
 import org.eol.globi.export.StudyExportUnmatchedTargetTaxaForStudies;
 import org.eol.globi.service.TaxonPropertyEnricher;
-import org.eol.globi.service.TaxonPropertyEnricherImpl;
+import org.eol.globi.service.TaxonPropertyEnricherFactory;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.eol.globi.data.NodeFactory;
 import org.eol.globi.data.ParserFactory;
@@ -50,8 +50,7 @@ public class Normalizer {
 
     public void normalize() throws StudyImporterException {
         final GraphDatabaseService graphService = GraphService.getGraphService();
-        TaxonPropertyEnricherImpl taxonEnricher = new TaxonPropertyEnricherImpl(graphService);
-        importData(graphService, taxonEnricher);
+        importData(graphService, TaxonPropertyEnricherFactory.createTaxonEnricher(graphService));
         exportData(graphService);
         graphService.shutdown();
     }

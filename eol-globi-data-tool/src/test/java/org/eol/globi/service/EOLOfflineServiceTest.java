@@ -6,6 +6,7 @@ import org.junit.Test;
 
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
@@ -15,9 +16,10 @@ public class EOLOfflineServiceTest {
     public void canLookup() throws TaxonPropertyLookupServiceException {
         EOLOfflineService service = new EOLOfflineService();
         assertFalse(service.canLookupProperty(Taxon.PATH));
+        assertThat(service.lookupPropertyValueByTaxonName("Homo sapiens", Taxon.PATH), is(nullValue()));
+
         assertTrue(service.canLookupProperty(NodeBacked.EXTERNAL_ID));
         assertThat(service.lookupPropertyValueByTaxonName("Homo sapiens", NodeBacked.EXTERNAL_ID), is("EOL:327955"));
     }
-
 
 }

@@ -9,11 +9,11 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
-public class WoRMSService extends BaseExternalIdService  {
+public class WoRMSService extends BaseTaxonIdService {
     public static final String RESPONSE_PREFIX = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><SOAP-ENV:Envelope SOAP-ENV:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\" xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:SOAP-ENC=\"http://schemas.xmlsoap.org/soap/encoding/\"><SOAP-ENV:Body><ns1:getAphiaIDResponse xmlns:ns1=\"http://tempuri.org/\"><return xsi:type=\"xsd:int\">";
     public static final String RESPONSE_SUFFIX = "</return></ns1:getAphiaIDResponse></SOAP-ENV:Body></SOAP-ENV:Envelope>";
 
-    public String lookupLSIDByTaxonName(String taxonName) throws TaxonPropertyLookupServiceException {
+    public String lookupIdByName(String taxonName) throws TaxonPropertyLookupServiceException {
         HttpPost post = new HttpPost("http://www.marinespecies.org/aphia.php?p=soap");
         post.setHeader("SOAPAction", "http://tempuri.org/getAphiaID");
         post.setHeader("Content-Type", "text/xml;charset=utf-8");
@@ -40,23 +40,23 @@ public class WoRMSService extends BaseExternalIdService  {
         BasicResponseHandler responseHandler = new BasicResponseHandler();
         String response;
         try {
-            response = getHttpClient().execute(post, responseHandler);
+            response = execute(post, responseHandler);
         } catch (IOException e) {
             throw new TaxonPropertyLookupServiceException("failed to connect to [" + post.getURI().toString() + "]", e);
         }
 
-        String lsid = null;
+        String id = null;
         if (response.startsWith(RESPONSE_PREFIX) && response.endsWith(RESPONSE_SUFFIX)) {
             String trimmed = response.replace(RESPONSE_PREFIX, "");
             trimmed = trimmed.replace(RESPONSE_SUFFIX, "");
             try {
                 Long aphiaId = Long.parseLong(trimmed);
-                lsid = TaxonomyProvider.ID_PREFIX_WORMS + aphiaId;
+                id = TaxonomyProvider.ID_PREFIX_WORMS + aphiaId;
             } catch (NumberFormatException ex) {
                 //ignore
             }
         }
-        return lsid;
+        return id;
     }
 
     @Override

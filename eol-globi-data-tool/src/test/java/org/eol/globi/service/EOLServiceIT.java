@@ -81,7 +81,7 @@ public class EOLServiceIT {
     }
 
     private String lookupPageIdByScientificName(String taxonName) throws TaxonPropertyLookupServiceException {
-        return new EOLService().lookupLSIDByTaxonName(taxonName);
+        return new EOLService().lookupIdByName(taxonName);
     }
 
     @Test

@@ -18,7 +18,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLDecoder;
 
-public class EOLService extends BaseExternalIdService {
+public class EOLService extends BaseTaxonIdService {
 
     @Override
     public boolean canLookupProperty(String propertyName) {
@@ -26,7 +26,7 @@ public class EOLService extends BaseExternalIdService {
     }
 
     @Override
-    public String lookupLSIDByTaxonName(String taxonName) throws TaxonPropertyLookupServiceException {
+    public String lookupIdByName(String taxonName) throws TaxonPropertyLookupServiceException {
         Long pageId;
 
         try {
@@ -55,9 +55,9 @@ public class EOLService extends BaseExternalIdService {
             } catch (URISyntaxException e) {
                 throw new TaxonPropertyLookupServiceException("failed to create uri", e);
             } catch (JsonProcessingException e) {
-                throw new TaxonPropertyLookupServiceException("failed to parse json", e);
+                throw new TaxonPropertyLookupServiceException("failed to parse response", e);
             } catch (IOException e) {
-                throw new TaxonPropertyLookupServiceException("failed to parse json", e);
+                throw new TaxonPropertyLookupServiceException("failed to get response", e);
             }
         }
         return path;
@@ -173,13 +173,10 @@ public class EOLService extends BaseExternalIdService {
 
     private String getResponse(URI uri) throws TaxonPropertyLookupServiceException {
         HttpGet get = new HttpGet(uri);
-
         BasicResponseHandler responseHandler = new BasicResponseHandler();
-
-        HttpClient httpClient = getHttpClient();
         String response = null;
         try {
-            response = httpClient.execute(get, responseHandler);
+            response = execute(get, responseHandler);
         } catch (HttpResponseException e) {
             if (e.getStatusCode() != 406 && e.getStatusCode() != 404) {
                 throw new TaxonPropertyLookupServiceException("failed to lookup [" + uri.toString() + "]: http status [" + e.getStatusCode() + "]   ", e);

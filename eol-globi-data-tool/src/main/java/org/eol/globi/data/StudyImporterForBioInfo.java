@@ -133,7 +133,7 @@ public class StudyImporterForBioInfo extends BaseStudyImporter implements StudyI
                 "",
                 "Food webs and species interactions in the Biodiversity of UK and Ireland.", null, "http://bioinfo.org.uk");
         try {
-            long count = 0;
+            long count = 1;
             while (parser.getLine() != null) {
                 if (importFilter.shouldImportRecord(count)) {
                     Specimen donorSpecimen = createSpecimen(parser, taxaMap, "DonorTax_id");
@@ -143,8 +143,9 @@ public class StudyImporterForBioInfo extends BaseStudyImporter implements StudyI
                     addLifeStage(parser, recipientSpecimen, "RecipStage");
                     study.collected(recipientSpecimen);
                     donorSpecimen.interactsWith(recipientSpecimen, relationsTypeMap.get(labelAsLong(parser, "TrophicRel_Id")));
-                }
 
+                }
+                count++;
             }
         } catch (IOException e1) {
             throw new StudyImporterException("problem reading trophic relations data", e1);

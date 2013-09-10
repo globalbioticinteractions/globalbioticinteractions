@@ -34,7 +34,7 @@ public class ITISServiceIT {
     }
 
     private String lookupTerm(String term) throws TaxonPropertyLookupServiceException {
-        return new ITISService().lookupLSIDByTaxonName(term);
+        return new ITISService().lookupIdByName(term);
     }
 
 

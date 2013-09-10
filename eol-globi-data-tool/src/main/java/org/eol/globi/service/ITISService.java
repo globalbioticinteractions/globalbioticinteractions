@@ -8,10 +8,10 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-public class ITISService extends BaseExternalIdService  {
+public class ITISService extends BaseTaxonIdService {
 
     @Override
-    public String lookupLSIDByTaxonName(String taxonName) throws TaxonPropertyLookupServiceException {
+    public String lookupIdByName(String taxonName) throws TaxonPropertyLookupServiceException {
         URI uri;
         try {
             uri = new URI("http", null, "www.itis.gov", 80, "/ITISWebService/services/ITISService/searchByScientificName", "srchKey=" + taxonName, null);
@@ -23,7 +23,7 @@ public class ITISService extends BaseExternalIdService  {
         BasicResponseHandler responseHandler = new BasicResponseHandler();
         String response;
         try {
-            response = getHttpClient().execute(get, responseHandler);
+            response = execute(get, responseHandler);
         } catch (IOException e) {
             throw new TaxonPropertyLookupServiceException("failed to execute query to [ " + uri.toString() + "]", e);
         }

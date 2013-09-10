@@ -6,37 +6,45 @@ import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.data.taxon.TaxonLookupService;
 import org.eol.globi.data.taxon.TaxonTerm;
 import org.eol.globi.data.taxon.TaxonomyImporter;
-import org.eol.globi.domain.Taxon;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public abstract class OfflineService implements TaxonPropertyLookupService {
     private static final Log LOG = LogFactory.getLog(OfflineService.class);
     private TaxonLookupService taxonLookupService;
 
     @Override
-    public String lookupPropertyValueByTaxonName(String taxonName, String propertyName) throws TaxonPropertyLookupServiceException {
-        if (canLookupProperty(propertyName)) {
-            if (null == taxonLookupService) {
-                lazyInit();
+    public void lookupPropertiesByName(String taxonName, Map<String, String> properties) throws TaxonPropertyLookupServiceException {
+        for (String propertyName : properties.keySet()) {
+            if (canLookupProperty(propertyName) && properties.get(propertyName) == null) {
+                lookupProperty(taxonName, properties, propertyName);
             }
-        } else {
-            throw new TaxonPropertyLookupServiceException("lookup for property with name [" + propertyName + "] not supported.");
         }
+    }
 
+    private void lookupProperty(String taxonName, Map<String, String> properties, String propertyName) throws TaxonPropertyLookupServiceException {
+        if (null == taxonLookupService) {
+            lazyInit();
+        }
         try {
             TaxonTerm[] taxonTerms = taxonLookupService.lookupTermsByName(taxonName);
             TaxonTerm first = taxonTerms.length == 0 ? null : taxonTerms[0];
             if (taxonTerms.length > 1) {
                 LOG.warn("found more than one matches for name [" + taxonName + "] in [" + getServiceName() + "], choosing first one with id [" + first.getId() + "]");
             }
-            String value = null;
+            String propertyValue = null;
             if (first != null) {
-                value = getValueForPropertyName(propertyName, first);
+                propertyValue = getValueForPropertyName(propertyName, first);
             }
-            return value;
+            if (propertyValue != null) {
+                properties.put(propertyName, propertyValue);
+            }
         } catch (IOException e) {
-            throw new TaxonPropertyLookupServiceException("lookup for property with name [" + propertyName + "] failed for [" + getServiceName() +"].", e);
+            throw new TaxonPropertyLookupServiceException("lookup for property with name [" + propertyName + "] failed for [" + getServiceName() + "].", e);
         }
     }
 
@@ -68,5 +76,13 @@ public abstract class OfflineService implements TaxonPropertyLookupService {
         if (taxonLookupService != null) {
             taxonLookupService.destroy();
         }
+    }
+
+    public String lookupPropertyValueByTaxonName(String taxonName, final String propertyName) throws TaxonPropertyLookupServiceException {
+        HashMap<String, String> properties = new HashMap<String, String>() {{
+            put(propertyName, null);
+        }};
+        lookupPropertiesByName(taxonName, properties);
+        return properties.get(propertyName);
     }
 }

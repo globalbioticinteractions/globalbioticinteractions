@@ -3,60 +3,70 @@ package org.eol.globi.service;
 import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.domain.Taxon;
-import org.junit.Before;
-import org.junit.BeforeClass;
+import org.hamcrest.core.Is;
 import org.junit.Test;
+import org.mockito.Mockito;
+import org.neo4j.graphdb.Transaction;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.IsNot.not;
 import static org.junit.Assert.assertThat;
-import static org.junit.internal.matchers.StringContains.containsString;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyList;
+import static org.mockito.Matchers.anyMap;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class TaxonPropertyEnricherImplTest extends GraphDBTestCase {
 
-    private TaxonPropertyEnricherImpl enricher;
-
-    @Before
-    public void start() {
-        enricher = new TaxonPropertyEnricherImpl(getGraphDb());
-    }
-
-
     @Test
-    public void enrichTwoTaxons() throws NodeFactoryException, IOException {
-        enricher = new TaxonPropertyEnricherImpl(getGraphDb());
-
-        Taxon taxon = nodeFactory.getOrCreateTaxon("Homo sapiens");
+    public void enrichNoServices() throws NodeFactoryException, IOException {
+        List<TaxonPropertyLookupService> list = new ArrayList<TaxonPropertyLookupService>();
+        TaxonPropertyEnricherImpl enricher = new TaxonPropertyEnricherImpl(getGraphDb());
+        enricher.setServices(list);
+        Transaction transaction = getGraphDb().beginTx();
+        Taxon taxon = new Taxon(getGraphDb().createNode());
+        taxon.setName("Homo sapiens");
+        transaction.success();
         enricher.enrich(taxon);
-        assertThat(taxon.getExternalId(), is("EOL:327955"));
-        assertThat(taxon.getPath(), is(not("no:match")));
-
-
-        taxon = nodeFactory.getOrCreateTaxon("Ariopsis felis");
-        enricher.enrich(taxon);
-        assertThat(taxon.getExternalId(), is("EOL:223038"));
-        assertThat(taxon.getPath(), is(not("no:match")));
-
-        Taxon sameTaxon = nodeFactory.getOrCreateTaxon("Ariopsis felis");
-        assertThat(taxon.getNodeID(), is(sameTaxon.getNodeID()));
-
-        taxon = nodeFactory.getOrCreateTaxon("Pitar fulminatus");
-        enricher.enrich(taxon);
-        assertThat(taxon.getExternalId(), is("EOL:448962"));
-        assertThat(taxon.getPath(), is(not("no:match")));
-
-        assertThat(enricher.enrich(taxon), is(false));
+        assertThat(taxon.getName(), Is.is("Homo sapiens"));
     }
 
     @Test
-    // see https://github.com/jhpoelen/eol-globi-data/issues/12
-    public void foraminifera() throws IOException, NodeFactoryException {
-        Taxon taxon = nodeFactory.getOrCreateTaxon("Foraminifera");
+    public void enrichTwoService() throws NodeFactoryException, IOException, TaxonPropertyLookupServiceException {
+        TaxonPropertyEnricherImpl enricher = new TaxonPropertyEnricherImpl(getGraphDb());
+        List<TaxonPropertyLookupService> list = new ArrayList<TaxonPropertyLookupService>();
+        TaxonPropertyLookupService serviceA = Mockito.mock(TaxonPropertyLookupService.class);
+        list.add(serviceA);
+        Map<String, String> properties = new HashMap<String, String>() {
+            {
+                put(Taxon.EXTERNAL_ID, null);
+                put(Taxon.PATH, null);
+            }
+        };
+        when(serviceA.canLookupProperty(anyString())).thenReturn(true);
+
+        TaxonPropertyLookupService serviceB = Mockito.mock(TaxonPropertyLookupService.class);
+        list.add(serviceB);
+
+        when(serviceB.canLookupProperty(anyString())).thenReturn(true);
+        enricher.setServices(list);
+
+        Transaction transaction = getGraphDb().beginTx();
+        Taxon taxon = new Taxon(getGraphDb().createNode());
+        taxon.setName("Homo sapiens");
+        transaction.success();
         enricher.enrich(taxon);
-        assertThat(taxon.getExternalId(), is("EOL:4888"));
-        assertThat(taxon.getName(), is("Foraminifera"));
-        assertThat(taxon.getPath(), containsString(" | Foraminifera"));
+        verify(serviceA).lookupPropertiesByName(anyString(), eq(properties));
+        verify(serviceB).lookupPropertiesByName(anyString(), eq(properties));
+
     }
+
+
 }

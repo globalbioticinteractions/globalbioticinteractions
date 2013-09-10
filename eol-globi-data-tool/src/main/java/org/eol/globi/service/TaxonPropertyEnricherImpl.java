@@ -13,12 +13,19 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class TaxonPropertyEnricherImpl implements TaxonPropertyEnricher {
     private static final Log LOG = LogFactory.getLog(TaxonPropertyEnricherImpl.class);
+
     private final List<TaxonPropertyLookupService> services = new ArrayList<TaxonPropertyLookupService>();
     private final HashMap<Class, Integer> errorCounts = new HashMap<Class, Integer>();
-    public static final String[] PROPERTY_NAMES = new String[]{NodeBacked.EXTERNAL_ID, Taxon.PATH};
+
+    public static final Map<String, String> PROPERTIES = new HashMap<String, String>() {{
+        put(NodeBacked.EXTERNAL_ID, null);
+        put(Taxon.PATH, null);
+    }};
+
     private final GraphDatabaseService graphDbService;
 
     public TaxonPropertyEnricherImpl(GraphDatabaseService graphDbService) {
@@ -28,9 +35,7 @@ public class TaxonPropertyEnricherImpl implements TaxonPropertyEnricher {
     @Override
     public boolean enrich(Taxon taxon) throws IOException {
         boolean didEnrichAtLeastOneProperty = false;
-        if (isEnriched(taxon)) {
-            LOG.warn("taxon [" + taxon.getName() + "] already has properties [" + PROPERTY_NAMES + "]");
-        } else {
+        if (!isEnriched(taxon)) {
             didEnrichAtLeastOneProperty = doEnrichment(taxon, didEnrichAtLeastOneProperty);
         }
         return didEnrichAtLeastOneProperty;
@@ -39,56 +44,47 @@ public class TaxonPropertyEnricherImpl implements TaxonPropertyEnricher {
     private boolean isEnriched(Taxon taxon) {
         boolean hasAllProperties = true;
         Node underlyingNode = taxon.getUnderlyingNode();
-        for (String propertyName : PROPERTY_NAMES) {
+        for (String propertyName : PROPERTIES.keySet()) {
             hasAllProperties = hasAllProperties && underlyingNode.hasProperty(propertyName);
         }
         return hasAllProperties;
     }
 
     private boolean doEnrichment(Taxon taxon, boolean didEnrichAtLeastOneProperty) {
-        if (services.size() == 0) {
-            initServices();
-        }
-
         Node taxonNode = taxon.getUnderlyingNode();
 
-        for (String propertyName : PROPERTY_NAMES) {
-            for (TaxonPropertyLookupService service : services) {
-                if (service.canLookupProperty(propertyName)) {
-                    try {
-                        if (enrichTaxonWithPropertyValue(errorCounts, taxonNode, service, propertyName)) {
-                            didEnrichAtLeastOneProperty = true;
-                            break;
-                        }
-                    } catch (TaxonPropertyLookupServiceException e) {
-                        LOG.warn("problem with taxon lookup", e);
-                        service.shutdown();
-                    }
+        Map<String, String> properties = new HashMap<String, String>(PROPERTIES);
+        for (TaxonPropertyLookupService service : services) {
+            try {
+                if (enrichTaxonWithPropertyValue(errorCounts, taxonNode, service, properties)) {
+                    didEnrichAtLeastOneProperty = true;
+                    break;
                 }
+            } catch (TaxonPropertyLookupServiceException e) {
+                LOG.warn("problem with taxon lookup", e);
+                service.shutdown();
             }
         }
 
         return didEnrichAtLeastOneProperty;
     }
 
-    private boolean enrichTaxonWithPropertyValue(HashMap<Class, Integer> errorCounts, Node taxonNode, TaxonPropertyLookupService service, String propertyName1) throws TaxonPropertyLookupServiceException {
+    private boolean enrichTaxonWithPropertyValue(HashMap<Class, Integer> errorCounts, Node taxonNode, TaxonPropertyLookupService service, Map<String, String> properties) throws TaxonPropertyLookupServiceException {
         Integer errorCount = errorCounts.get(service.getClass());
         if (errorCount != null && errorCount > 10) {
             LOG.error("skipping taxon match against [" + service.getClass().toString() + "], error count [" + errorCount + "] too high.");
         } else {
-            if (enrichTaxon(errorCounts, taxonNode, service, errorCount, propertyName1)) {
+            if (enrichTaxon(errorCounts, taxonNode, service, errorCount, properties)) {
                 return true;
             }
         }
         return false;
     }
 
-    private boolean enrichTaxon(HashMap<Class, Integer> errorCounts, Node taxonNode, TaxonPropertyLookupService service, Integer errorCount, String propertyName) throws TaxonPropertyLookupServiceException {
+    private boolean enrichTaxon(HashMap<Class, Integer> errorCounts, Node taxonNode, TaxonPropertyLookupService service, Integer errorCount, Map<String, String> properties) throws TaxonPropertyLookupServiceException {
         String taxonName = (String) taxonNode.getProperty(Taxon.NAME);
         try {
-            StopWatch stopwatch = new StopWatch();
-            stopwatch.start();
-            if (lookupAndSetProperty(taxonNode, service, taxonName, stopwatch, propertyName)) {
+            if (lookupAndSetProperties(taxonNode, service, taxonName, properties)) {
                 return true;
             }
             resetErrorCount(errorCounts, service);
@@ -104,20 +100,27 @@ public class TaxonPropertyEnricherImpl implements TaxonPropertyEnricher {
         errorCounts.put(service.getClass(), 0);
     }
 
-    private boolean lookupAndSetProperty(Node taxonNode, TaxonPropertyLookupService service, String taxonName, StopWatch stopwatch, String propertyName) throws TaxonPropertyLookupServiceException {
-        String propertyValue = service.lookupPropertyValueByTaxonName(taxonName, propertyName);
-        stopwatch.stop();
-        if (stopwatch.getTime() > 3000) {
-            String responseTime = "(took " + stopwatch.getTime() + "ms) for [" + service.getClass().getSimpleName() + "]";
-            String msg = "slow query for [" + taxonName + "] with " + propertyName + " [" + propertyValue + "] in [" + service.getClass().getSimpleName() + "] " + responseTime;
-            LOG.warn(msg);
-        }
+    private boolean lookupAndSetProperties(Node taxonNode, TaxonPropertyLookupService service, String taxonName, Map<String, String> properties) throws TaxonPropertyLookupServiceException {
+        service.lookupPropertiesByName(taxonName, properties);
+        return properties != null && setProperties(taxonNode, properties);
+    }
 
-        if (propertyValue != null) {
-            setProperty(taxonNode, propertyName, propertyValue);
-            return true;
+    private boolean setProperties(Node taxonNode, Map<String, String> properties) {
+        boolean enrichedAtLeastOneProperty = false;
+        Transaction transaction = graphDbService.beginTx();
+        try {
+            for (Map.Entry<String, String> property : properties.entrySet()) {
+                if (property.getValue() != null) {
+                    taxonNode.setProperty(property.getKey(), property.getValue());
+                    enrichedAtLeastOneProperty = true;
+                }
+            }
+            transaction.success();
+
+        } finally {
+            transaction.finish();
         }
-        return false;
+        return enrichedAtLeastOneProperty;
     }
 
     private void incrementErrorCount(HashMap<Class, Integer> errorCounts, TaxonPropertyLookupService service, Integer errorCount) {
@@ -128,15 +131,6 @@ public class TaxonPropertyEnricherImpl implements TaxonPropertyEnricher {
         }
     }
 
-    private void initServices() {
-        services.add(new EOLOfflineService());
-        services.add(new EOLService());
-        services.add(new WoRMSService());
-        services.add(new ITISService());
-        services.add(new GulfBaseService());
-        services.add(new NoMatchService());
-    }
-
     private void shutdownServices() {
         for (TaxonPropertyLookupService service : services) {
             service.shutdown();
@@ -144,14 +138,8 @@ public class TaxonPropertyEnricherImpl implements TaxonPropertyEnricher {
         services.clear();
     }
 
-    private void setProperty(Node node, String propertyName, String propertyValue) {
-        Transaction transaction = graphDbService.beginTx();
-        try {
-            node.setProperty(propertyName, propertyValue);
-            transaction.success();
-        } finally {
-            transaction.finish();
-        }
+    public void setServices(List<TaxonPropertyLookupService> services) {
+        shutdownServices();
+        this.services.addAll(services);
     }
-
 }

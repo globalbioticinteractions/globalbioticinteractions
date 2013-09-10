@@ -1,7 +1,9 @@
 package org.eol.globi.service;
 
+import java.util.Map;
+
 public interface TaxonPropertyLookupService {
-    String lookupPropertyValueByTaxonName(String taxonName, String propertyName) throws TaxonPropertyLookupServiceException;
+    void lookupPropertiesByName(String taxonName, Map<String, String> properties) throws TaxonPropertyLookupServiceException;
 
     boolean canLookupProperty(String propertyName);
 
