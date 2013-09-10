@@ -96,6 +96,7 @@
     <build>
         <plugins>
             <plugin>
+                <!-- TODO @reiz replace version with non-snapshot version -->
                 <groupId>versioneye</groupId>
                 <artifactId>versioneye-maven-plugin</artifactId>
                 <version>1.0.0-SNAPSHOT</version>
