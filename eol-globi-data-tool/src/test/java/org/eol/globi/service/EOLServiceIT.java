@@ -205,7 +205,7 @@ public class EOLServiceIT {
         }};
         new EOLService().lookupPropertiesByName("Homo sapiens", properties);
         assertThat(properties.get(Taxon.COMMON_NAMES), Is.is(not("bla bla")));
-        assertThat(properties.get(Taxon.PATH), Is.is("bla bla2"));
+        assertThat(properties.get(Taxon.PATH), containsString("bla bla2"));
         assertThat(properties.get(Taxon.EXTERNAL_ID), Is.is("bla bla3"));
 
     }
