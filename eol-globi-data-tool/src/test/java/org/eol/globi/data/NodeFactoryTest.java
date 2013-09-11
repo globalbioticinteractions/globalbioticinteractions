@@ -20,9 +20,12 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
+import static org.junit.internal.matchers.IsCollectionContaining.hasItem;
 
 public class NodeFactoryTest extends GraphDBTestCase {
 
+    public static final String EXPECTED_PATH = "kingdom" + CharsetConstant.SEPARATOR + "phylum" + CharsetConstant.SEPARATOR + "etc" + CharsetConstant.SEPARATOR;
+    public static final String EXPECTED_COMMON_NAMES = "some german name @de" + CharsetConstant.SEPARATOR + "some english name @en" + CharsetConstant.SEPARATOR;
     NodeFactory nodeFactory;
 
     @Before
@@ -40,18 +43,49 @@ public class NodeFactoryTest extends GraphDBTestCase {
         nodeFactory = new NodeFactory(getGraphDb(), new TaxonPropertyEnricher() {
             @Override
             public boolean enrich(Taxon taxon) throws IOException {
-                taxon.setPath("myPath");
+                taxon.setPath(EXPECTED_PATH);
                 taxon.setExternalId("anExternalId");
+                taxon.setCommonNames(EXPECTED_COMMON_NAMES);
                 return false;
             }
         });
 
+        assertThat(getGraphDb().index().existsForNodes("taxonCommonNames"), is(true));
+        assertThat(getGraphDb().index().existsForNodes("taxons"), is(true));
+        assertThat(getGraphDb().index().existsForNodes("taxonpaths"), is(true));
+        assertThat(getGraphDb().index().existsForNodes("taxonNameSuggestions"), is(true));
+        assertThat(getGraphDb().index().existsForNodes("thisDoesnoTExist"), is(false));
+
         assertEnrichedPropertiesSet(nodeFactory.getOrCreateTaxon("some name"));
         assertEnrichedPropertiesSet(nodeFactory.findTaxon("some name"));
+        IndexHits<Node> hits = nodeFactory.findTaxaByPath("etc");
+        assertThat(hits.size(), is(1));
+        assertEnrichedPropertiesSet(new Taxon(hits.getSingle()));
+        hits = nodeFactory.findTaxaByCommonName("some german name");
+        assertThat(hits.size(), is(1));
+        assertEnrichedPropertiesSet(new Taxon(hits.getSingle()));
+
+        hits = nodeFactory.suggestTaxaByName("kingdom");
+        assertThat(hits.size(), is(1));
+        assertEnrichedPropertiesSet(new Taxon(hits.getSingle()));
+
+        hits = nodeFactory.suggestTaxaByName("phylum");
+        assertThat(hits.size(), is(1));
+        assertEnrichedPropertiesSet(new Taxon(hits.getSingle()));
+
+        hits = nodeFactory.suggestTaxaByName("some");
+        assertThat(hits.size(), is(1));
+        assertEnrichedPropertiesSet(new Taxon(hits.getSingle()));
+
+        hits = nodeFactory.suggestTaxaByName("german");
+        assertThat(hits.size(), is(1));
+        assertEnrichedPropertiesSet(new Taxon(hits.getSingle()));
+
     }
 
     private void assertEnrichedPropertiesSet(Taxon aTaxon) {
-        assertThat(aTaxon.getPath(), is("myPath"));
+        assertThat(aTaxon.getPath(), is(EXPECTED_PATH));
+        assertThat(aTaxon.getCommonNames(), is(EXPECTED_COMMON_NAMES));
         assertThat(aTaxon.getName(), is("some name"));
         assertThat(aTaxon.getExternalId(), is("anExternalId"));
     }

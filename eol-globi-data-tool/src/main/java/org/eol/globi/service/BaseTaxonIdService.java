@@ -3,6 +3,7 @@ package org.eol.globi.service;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.eol.globi.data.CharsetConstant;
 import org.eol.globi.domain.NodeBacked;
 import org.eol.globi.domain.Taxon;
 
@@ -32,7 +33,7 @@ public abstract class BaseTaxonIdService extends BaseHttpClientService implement
                     // append synonyms in path whenever available using "|" separator with suffix to enable search
                     // see https://github.com/jhpoelen/eol-globi-data/issues/12
                     if (!StringUtils.endsWith(propertyValue, taxonName)) {
-                        propertyValue += " | " + taxonName;
+                        propertyValue += CharsetConstant.SEPARATOR + taxonName;
                     }
                 }
             } catch (TaxonPropertyLookupServiceException e) {
@@ -51,12 +52,6 @@ public abstract class BaseTaxonIdService extends BaseHttpClientService implement
                 properties.put(propertyName, propertyValue);
             }
         }
-    }
-
-
-    @Override
-    public boolean canLookupProperty(String propertyName) {
-        return NodeBacked.EXTERNAL_ID.equals(propertyName);
     }
 
     public abstract String lookupIdByName(String taxonName) throws TaxonPropertyLookupServiceException;

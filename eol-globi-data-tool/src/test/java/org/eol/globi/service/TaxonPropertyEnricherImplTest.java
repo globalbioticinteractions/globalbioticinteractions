@@ -59,11 +59,7 @@ public class TaxonPropertyEnricherImplTest extends GraphDBTestCase {
                 put(Taxon.PATH, null);
             }
         };
-        when(serviceA.canLookupProperty(anyString())).thenReturn(true);
-
         list.add(serviceB);
-
-        when(serviceB.canLookupProperty(anyString())).thenReturn(true);
         enricher.setServices(list);
 
         Transaction transaction = getGraphDb().beginTx();

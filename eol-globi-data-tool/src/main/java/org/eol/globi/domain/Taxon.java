@@ -9,6 +9,7 @@ import static org.eol.globi.domain.RelTypes.IS_A;
 public class Taxon extends NodeBacked {
     public static final String NAME = "name";
     public static final String PATH = "path";
+    public static final String COMMON_NAMES = "commonNames";
 
     public Taxon(Node node) {
         super(node);
@@ -40,6 +41,17 @@ public class Taxon extends NodeBacked {
     public void setPath(String path) {
         if (path != null) {
             getUnderlyingNode().setProperty(PATH, path);
+        }
+    }
+
+    public String getCommonNames() {
+        return getUnderlyingNode().hasProperty(COMMON_NAMES) ?
+                (String) getUnderlyingNode().getProperty(COMMON_NAMES) : "";
+    }
+
+    public void setCommonNames(String commonNames) {
+        if (commonNames != null) {
+            getUnderlyingNode().setProperty(COMMON_NAMES, commonNames);
         }
     }
 }

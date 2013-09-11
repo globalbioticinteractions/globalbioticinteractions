@@ -1,5 +1,6 @@
 package org.eol.globi.service;
 
+import org.eol.globi.data.CharsetConstant;
 import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.domain.Taxon;
@@ -56,6 +57,6 @@ public class TaxonPropertyEnricherImplIT extends GraphDBTestCase {
         enricher.enrich(taxon);
         assertThat(taxon.getExternalId(), is("EOL:4888"));
         assertThat(taxon.getName(), is("Foraminifera"));
-        assertThat(taxon.getPath(), containsString(" | Foraminifera"));
+        assertThat(taxon.getPath(), containsString(CharsetConstant.SEPARATOR + "Foraminifera"));
     }
 }

@@ -1,19 +1,19 @@
 package org.eol.globi.service;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.HttpResponseException;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.JsonProcessingException;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.eol.globi.data.CharsetConstant;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonomyProvider;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLDecoder;
@@ -33,36 +33,28 @@ public class EOLService extends BaseHttpClientService implements TaxonPropertyLo
     @Override
     public void lookupPropertiesByName(String taxonName, Map<String, String> properties) throws TaxonPropertyLookupServiceException {
         Long id = null;
-        if (properties.containsKey(Taxon.EXTERNAL_ID) || properties.containsKey(Taxon.PATH)) {
+        if (properties.get(Taxon.EXTERNAL_ID) == null
+                || properties.get(Taxon.PATH) == null
+                || properties.get(Taxon.COMMON_NAMES) == null) {
             id = getPageId(taxonName, true);
-            if (id != null) {
+            if (id != null && properties.get(Taxon.EXTERNAL_ID) == null) {
                 properties.put(Taxon.EXTERNAL_ID, TaxonomyProvider.ID_PREFIX_EOL + id.toString());
             }
         }
 
-        if (id != null && properties.containsKey(Taxon.PATH)) {
-            String path = getPath(id);
-            if (path != null) {
-                properties.put(Taxon.PATH, path);
-            }
+        if (properties.get(Taxon.PATH) == null || properties.get(Taxon.COMMON_NAMES) == null) {
+            addPath(id, properties);
         }
     }
-
-    @Override
-    public boolean canLookupProperty(String propertyName) {
-        return supportedProperties.contains(propertyName);
-    }
-
 
     private URI createSearchURI(String taxonName) throws URISyntaxException {
         String query = "q=" + taxonName.replaceAll("\\s", "+") + "&exact=true";
         return new URI("http", null, "eol.org", 80, "/api/search/1.0.xml", query, null);
     }
 
-    protected String getPath(Long pageId) throws TaxonPropertyLookupServiceException {
-        String path;
+    protected void addPath(Long pageId, Map<String, String> properties) throws TaxonPropertyLookupServiceException {
         try {
-            path = getRanks(pageId);
+            getRanks(pageId, properties);
         } catch (URISyntaxException e) {
             throw new TaxonPropertyLookupServiceException("failed to create uri", e);
         } catch (JsonProcessingException e) {
@@ -70,19 +62,50 @@ public class EOLService extends BaseHttpClientService implements TaxonPropertyLo
         } catch (IOException e) {
             throw new TaxonPropertyLookupServiceException("failed to get response", e);
         }
-        return path;
     }
 
-    private String getRanks(Long pageId) throws URISyntaxException, TaxonPropertyLookupServiceException, IOException {
-        StringBuilder ranks = new StringBuilder();
+    private void getRanks(Long pageId, Map<String, String> properties) throws URISyntaxException, TaxonPropertyLookupServiceException, IOException {
         URI uri = new URI("http", null, "eol.org", 80, "/api/pages/1.0/" + pageId, ".json?images=1&videos=0&sounds=0&maps=0&text=0&iucn=false&subjects=overview&licenses=all&details=false&common_names=true&synonyms=false&references=false&format=json", null);
         String response = getResponse(uri);
         if (response != null) {
-            addRanks(ranks, response);
+            if (properties.get(Taxon.PATH) == null) {
+                StringBuilder ranks = new StringBuilder();
+                addRanks(ranks, response);
+                if (ranks.length() > 0) {
+                    properties.put(Taxon.PATH, ranks.toString());
+                }
+            }
+
+            if (properties.get(Taxon.COMMON_NAMES) == null) {
+                StringBuilder commonNames = new StringBuilder();
+                addCommonNames(commonNames, response);
+                if (commonNames.length() > 0) {
+                    properties.put(Taxon.COMMON_NAMES, commonNames.toString());
+                }
+            }
+        }
+    }
+
+    private void addCommonNames(StringBuilder commonNames, String response) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode node = mapper.readTree(response);
+
+        JsonNode vernacularNames = node.get("vernacularNames");
+        for (JsonNode vernacularName : vernacularNames) {
+            if (vernacularName.has("eol_preferred")) {
+                String languageCode = vernacularName.get("language").getValueAsText();
+                String commonName = vernacularName.get("vernacularName").getValueAsText();
+                if (StringUtils.isNotBlank(languageCode) && StringUtils.isNotBlank(commonName)) {
+                    commonNames.append(commonName);
+                    commonNames.append(" @");
+                    commonNames.append(languageCode);
+                    commonNames.append(CharsetConstant.SEPARATOR);
+                }
+
+            }
         }
 
-        String s = ranks.toString();
-        return s.isEmpty() ? null : s;
+
     }
 
     private void addRanks(StringBuilder ranks, String response) throws IOException, URISyntaxException, TaxonPropertyLookupServiceException {
@@ -129,7 +152,7 @@ public class EOLService extends BaseHttpClientService implements TaxonPropertyLo
     private boolean parseTaxonNode(StringBuilder ranks, boolean first, JsonNode ancestor) {
         if (ancestor.has("scientificName")) {
             if (!first) {
-                ranks.append(" ");
+                ranks.append(CharsetConstant.SEPARATOR);
             }
             String scientificName = ancestor.get("scientificName").getTextValue();
             String[] split = scientificName.split(" ");

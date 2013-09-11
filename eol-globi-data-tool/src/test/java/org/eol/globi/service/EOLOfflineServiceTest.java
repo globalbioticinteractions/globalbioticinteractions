@@ -15,10 +15,7 @@ public class EOLOfflineServiceTest {
     @Test
     public void canLookup() throws TaxonPropertyLookupServiceException {
         EOLOfflineService service = new EOLOfflineService();
-        assertFalse(service.canLookupProperty(Taxon.PATH));
         assertThat(service.lookupPropertyValueByTaxonName("Homo sapiens", Taxon.PATH), is(nullValue()));
-
-        assertTrue(service.canLookupProperty(NodeBacked.EXTERNAL_ID));
         assertThat(service.lookupPropertyValueByTaxonName("Homo sapiens", NodeBacked.EXTERNAL_ID), is("EOL:327955"));
     }
 

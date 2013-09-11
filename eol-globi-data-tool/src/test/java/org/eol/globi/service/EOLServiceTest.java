@@ -1,5 +1,6 @@
 package org.eol.globi.service;
 
+import org.eol.globi.data.CharsetConstant;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -16,7 +17,14 @@ public class EOLServiceTest {
         StringBuilder ranks = new StringBuilder();
         new EOLService().parseResponse(ranks, response);
 
-        assertThat(ranks.toString(), is("Animalia Arthropoda Insecta Hymenoptera Apoidea Apidae Apis Apis mellifera"));
+        assertThat(ranks.toString(), is("Animalia" + CharsetConstant.SEPARATOR
+                + "Arthropoda" + CharsetConstant.SEPARATOR
+                + "Insecta" + CharsetConstant.SEPARATOR
+                + "Hymenoptera" + CharsetConstant.SEPARATOR
+                + "Apoidea" + CharsetConstant.SEPARATOR
+                + "Apidae" + CharsetConstant.SEPARATOR
+                + "Apis" + CharsetConstant.SEPARATOR
+                + "Apis mellifera"));
 
     }
 

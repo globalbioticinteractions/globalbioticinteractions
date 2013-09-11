@@ -51,7 +51,9 @@ public class NodeFactory {
     private final Index<Node> seasons;
     private final Index<Node> locations;
     private final Index<Node> taxons;
+    private final Index<Node> taxonNameSuggestions;
     private final Index<Node> taxonPaths;
+    private final Index<Node> taxonCommonNames;
 
     public NodeFactory(GraphDatabaseService graphDb, TaxonPropertyEnricher taxonEnricher) {
         this.graphDb = graphDb;
@@ -61,12 +63,34 @@ public class NodeFactory {
         this.seasons = graphDb.index().forNodes("seasons");
         this.locations = graphDb.index().forNodes("locations");
         this.taxons = graphDb.index().forNodes("taxons");
+        this.taxonNameSuggestions = graphDb.index().forNodes("taxonNameSuggestions");
         this.taxonPaths = graphDb.index().forNodes("taxonpaths", MapUtil.stringMap(IndexManager.PROVIDER, "lucene", "type", "fulltext"));
+        this.taxonCommonNames = graphDb.index().forNodes("taxonCommonNames", MapUtil.stringMap(IndexManager.PROVIDER, "lucene", "type", "fulltext"));
     }
 
     private void addTaxonToIndex(Taxon taxon) {
         taxons.add(taxon.getUnderlyingNode(), Taxon.NAME, taxon.getName());
         taxonPaths.add(taxon.getUnderlyingNode(), Taxon.PATH, taxon.getPath());
+
+        String commonNames = taxon.getCommonNames();
+        if (StringUtils.isNotBlank(commonNames)) {
+            taxonCommonNames.add(taxon.getUnderlyingNode(), Taxon.COMMON_NAMES, commonNames);
+            String[] commonNameArray = commonNames.split(CharsetConstant.SEPARATOR);
+            for (String commonName : commonNameArray) {
+                taxonNameSuggestions.add(taxon.getUnderlyingNode(), Taxon.NAME, commonName);
+            }
+        }
+
+        String path = taxon.getPath();
+        if (StringUtils.isNotBlank(path)) {
+            taxonCommonNames.add(taxon.getUnderlyingNode(), Taxon.PATH, path);
+            String[] pathElementArray = path.split(CharsetConstant.SEPARATOR);
+            for (String pathElement : pathElementArray) {
+                taxonNameSuggestions.add(taxon.getUnderlyingNode(), Taxon.NAME, pathElement);
+            }
+        }
+
+        taxonNameSuggestions.add(taxon.getUnderlyingNode(), Taxon.NAME, taxon.getCommonNames());
     }
 
     public Taxon findTaxon(String taxonName) throws NodeFactoryException {
@@ -77,7 +101,7 @@ public class NodeFactory {
         String cleanedTaxonName = TAXON_NAME_NORMALIZER.normalize(taxonName);
         String query = "name:\"" + cleanedTaxonName + "\"";
         IndexHits<Node> matchingTaxons = taxons.query(query);
-        Node matchingTaxon = null;
+        Node matchingTaxon;
         Taxon firstMatchingTaxon = null;
         if (matchingTaxons.hasNext()) {
             matchingTaxon = matchingTaxons.next();
@@ -337,4 +361,15 @@ public class NodeFactory {
     }
 
 
+    public IndexHits<Node> findTaxaByPath(String wholeOrPartialPath) {
+        return taxonPaths.query("path:\"" + wholeOrPartialPath + "\"");
+    }
+
+    public IndexHits<Node> findTaxaByCommonName(String wholeOrPartialName) {
+        return taxonCommonNames.query("commonNames:\"" + wholeOrPartialName + "\"");
+    }
+
+    public IndexHits<Node> suggestTaxaByName(String wholeOrPartialScientificOrCommonName) {
+        return taxonNameSuggestions.query("name:\"" + wholeOrPartialScientificOrCommonName + "\"");
+    }
 }

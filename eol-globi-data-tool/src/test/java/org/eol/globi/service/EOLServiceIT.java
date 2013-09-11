@@ -1,16 +1,30 @@
 package org.eol.globi.service;
 
+import org.eol.globi.data.CharsetConstant;
 import org.eol.globi.domain.Taxon;
 import org.hamcrest.core.Is;
 import org.junit.Test;
 
 import java.util.HashMap;
 
+import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
+import static org.junit.internal.matchers.StringContains.containsString;
 
 public class EOLServiceIT {
+
+    public static final String HOMO_SAPIENS_PATH = "Animalia" + CharsetConstant.SEPARATOR +
+            "Chordata" + CharsetConstant.SEPARATOR +
+            "Vertebrata" + CharsetConstant.SEPARATOR +
+            "Mammalia" + CharsetConstant.SEPARATOR +
+            "Theria" + CharsetConstant.SEPARATOR +
+            "Eutheria" + CharsetConstant.SEPARATOR +
+            "Primates" + CharsetConstant.SEPARATOR +
+            "Hominidae" + CharsetConstant.SEPARATOR +
+            "Homo" + CharsetConstant.SEPARATOR +
+            "Homo sapiens";
 
     @Test
     public void lookupByName() throws TaxonPropertyLookupServiceException {
@@ -152,14 +166,50 @@ public class EOLServiceIT {
 
     @Test
     public void lookupTaxonPathByLSID() throws TaxonPropertyLookupServiceException {
-        String rank = new EOLService().getPath(1045608L);
-        assertThat(rank, Is.is("Animalia Arthropoda Insecta Hymenoptera Apoidea Apidae Apis Apis mellifera"));
+        HashMap<String, String> properties = new HashMap<String, String>();
+        new EOLService().addPath(1045608L, properties);
+        assertThat(properties.get(Taxon.PATH), Is.is("Animalia" + CharsetConstant.SEPARATOR
+                + "Arthropoda" + CharsetConstant.SEPARATOR
+                + "Insecta" + CharsetConstant.SEPARATOR
+                + "Hymenoptera" + CharsetConstant.SEPARATOR
+                + "Apoidea" + CharsetConstant.SEPARATOR
+                + "Apidae" + CharsetConstant.SEPARATOR
+                + "Apis" + CharsetConstant.SEPARATOR
+                + "Apis mellifera"));
     }
 
     @Test
     public void lookupTaxonPathByLSIDForPageWithoutClassification() throws TaxonPropertyLookupServiceException {
-        String rank = new EOLService().getPath(13644436L);
-        assertThat(rank, Is.is(nullValue()));
+        HashMap<String, String> properties = new HashMap<String, String>();
+        new EOLService().addPath(13644436L, properties);
+        assertThat(properties.get(Taxon.PATH), Is.is(nullValue()));
+    }
+
+    @Test
+    public void lookupTaxonPathByScientificNameAlreadySet() throws TaxonPropertyLookupServiceException {
+        HashMap<String, String> properties = new HashMap<String, String>() {{
+            put(Taxon.COMMON_NAMES, "bla bla");
+            put(Taxon.PATH, "bla bla2");
+            put(Taxon.EXTERNAL_ID, "bla bla3");
+        }};
+        new EOLService().lookupPropertiesByName("Homo sapiens", properties);
+        assertThat(properties.get(Taxon.COMMON_NAMES), Is.is("bla bla"));
+        assertThat(properties.get(Taxon.PATH), Is.is("bla bla2"));
+        assertThat(properties.get(Taxon.EXTERNAL_ID), Is.is("bla bla3"));
+
+    }
+
+    @Test
+    public void lookupCommonNamesOnly() throws TaxonPropertyLookupServiceException {
+        HashMap<String, String> properties = new HashMap<String, String>() {{
+            put(Taxon.PATH, "bla bla2");
+            put(Taxon.EXTERNAL_ID, "bla bla3");
+        }};
+        new EOLService().lookupPropertiesByName("Homo sapiens", properties);
+        assertThat(properties.get(Taxon.COMMON_NAMES), Is.is(not("bla bla")));
+        assertThat(properties.get(Taxon.PATH), Is.is("bla bla2"));
+        assertThat(properties.get(Taxon.EXTERNAL_ID), Is.is("bla bla3"));
+
     }
 
     @Test
@@ -168,7 +218,7 @@ public class EOLServiceIT {
             put(Taxon.PATH, null);
         }};
         new EOLService().lookupPropertiesByName("Homo sapiens", properties);
-        assertThat(properties.get(Taxon.PATH), Is.is("Animalia Chordata Vertebrata Mammalia Theria Eutheria Primates Hominidae Homo Homo sapiens"));
+        assertThat(properties.get(Taxon.PATH), Is.is(HOMO_SAPIENS_PATH));
 
     }
 
@@ -179,9 +229,9 @@ public class EOLServiceIT {
         }};
         new EOLService().lookupPropertiesByName("Homo sapiens", properties);
         assertThat(properties.get(Taxon.EXTERNAL_ID), Is.is("EOL:327955"));
-        assertThat(properties.containsKey(Taxon.PATH), Is.is(false));
-
+        assertThat(properties.get(Taxon.PATH), Is.is(HOMO_SAPIENS_PATH));
     }
+
     @Test
     public void lookupExternalIdAndPathByScientificName() throws TaxonPropertyLookupServiceException {
         HashMap<String, String> properties = new HashMap<String, String>() {{
@@ -189,8 +239,30 @@ public class EOLServiceIT {
             put(Taxon.PATH, null);
         }};
         new EOLService().lookupPropertiesByName("Homo sapiens", properties);
-        assertThat(properties.get(Taxon.EXTERNAL_ID), Is.is("EOL:327955"));
-        assertThat(properties.get(Taxon.PATH), Is.is("Animalia Chordata Vertebrata Mammalia Theria Eutheria Primates Hominidae Homo Homo sapiens"));
+        assertThat(properties.get(Taxon.EXTERNAL_ID), Is.is("EOL:328447"));
+        assertThat(properties.get(Taxon.PATH), Is.is(HOMO_SAPIENS_PATH));
+
+    }
+
+    @Test
+    public void lookupCommonNamesByScientificName() throws TaxonPropertyLookupServiceException {
+        HashMap<String, String> properties = new HashMap<String, String>();
+        new EOLService().lookupPropertiesByName("Rattus rattus", properties);
+        assertThat(properties.get(Taxon.EXTERNAL_ID), Is.is("EOL:328447"));
+        assertThat(properties.get(Taxon.PATH), Is.is("Animalia" + CharsetConstant.SEPARATOR +
+                "Chordata" + CharsetConstant.SEPARATOR +
+                "Mammalia" + CharsetConstant.SEPARATOR +
+                "Rodentia" + CharsetConstant.SEPARATOR +
+                "Muridae" + CharsetConstant.SEPARATOR +
+                "Rattus" + CharsetConstant.SEPARATOR +
+                "Rattus rattus"));
+        String commonNames = properties.get(Taxon.COMMON_NAMES);
+        String expected = "Huisrot @af" + CharsetConstant.SEPARATOR + "جرذ المنزل @ar" + CharsetConstant.SEPARATOR + "Hausratte @de" + CharsetConstant.SEPARATOR + "black rat @en" + CharsetConstant.SEPARATOR + "Rata negra @es" + CharsetConstant.SEPARATOR + "rat noir @fr" + CharsetConstant.SEPARATOR + "Чёрная крыса @ru" + CharsetConstant.SEPARATOR + "家鼠 @zh" + CharsetConstant.SEPARATOR + "屋顶鼠 @zh-Hans" + CharsetConstant.SEPARATOR + "";
+        String[] names = expected.split(CharsetConstant.SEPARATOR);
+        for (String name : names) {
+            assertThat(commonNames, containsString(name));
+        }
+
 
     }
 

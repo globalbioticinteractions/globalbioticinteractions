@@ -20,7 +20,7 @@ public abstract class OfflineService implements TaxonPropertyLookupService {
     @Override
     public void lookupPropertiesByName(String taxonName, Map<String, String> properties) throws TaxonPropertyLookupServiceException {
         for (String propertyName : properties.keySet()) {
-            if (canLookupProperty(propertyName) && properties.get(propertyName) == null) {
+            if (properties.get(propertyName) == null) {
                 lookupProperty(taxonName, properties, propertyName);
             }
         }
@@ -67,9 +67,6 @@ public abstract class OfflineService implements TaxonPropertyLookupService {
     }
 
     protected abstract TaxonomyImporter createTaxonomyImporter();
-
-    @Override
-    public abstract boolean canLookupProperty(String propertyName);
 
     @Override
     public void shutdown() {

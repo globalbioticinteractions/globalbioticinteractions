@@ -12,7 +12,6 @@ public class GulfBaseServiceTest {
     @Test
     public void lookupRankPath() throws TaxonPropertyLookupServiceException {
         OfflineService service = new GulfBaseService();
-        assertThat(service.canLookupProperty(Taxon.PATH), is(true));
         assertThat(service.lookupPropertyValueByTaxonName("Haplognathia rosea", Taxon.PATH), is("Animalia Gnathostomulida Filospermoidea Haplognathiidae Haplognathia"));
         assertThat(service.lookupPropertyValueByTaxonName("Ariopsis felis", Taxon.PATH), is("Animalia Chordata Vertebrata Actinopterygii Siluriformes Ariidae Ariopsis"));
     }
@@ -20,7 +19,6 @@ public class GulfBaseServiceTest {
     @Test
     public void lookupExternalId() throws TaxonPropertyLookupServiceException {
         OfflineService service = new GulfBaseService();
-        assertThat(service.canLookupProperty(NodeBacked.EXTERNAL_ID), is(true));
         assertThat(service.lookupPropertyValueByTaxonName("Haplognathia rosea", NodeBacked.EXTERNAL_ID), is("BioGoMx:Spp-26-0003"));
         assertThat(service.lookupPropertyValueByTaxonName("Ariopsis felis", NodeBacked.EXTERNAL_ID), is("BioGoMx:Spp-75-0281"));
     }

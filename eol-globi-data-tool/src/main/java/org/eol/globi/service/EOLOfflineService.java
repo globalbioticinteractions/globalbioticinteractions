@@ -15,11 +15,6 @@ public class EOLOfflineService extends OfflineService {
     }
 
     @Override
-    public boolean canLookupProperty(String propertyName) {
-        return NodeBacked.EXTERNAL_ID.equals(propertyName);
-    }
-
-    @Override
     protected String getValueForPropertyName(String propertyName, TaxonTerm term) {
         String value = null;
         if (NodeBacked.EXTERNAL_ID.equals(propertyName)) {
