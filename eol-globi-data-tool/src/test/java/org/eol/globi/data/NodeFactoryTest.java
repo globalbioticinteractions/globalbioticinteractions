@@ -81,6 +81,9 @@ public class NodeFactoryTest extends GraphDBTestCase {
         assertThat(hits.size(), is(1));
         assertEnrichedPropertiesSet(new Taxon(hits.getSingle()));
 
+        hits = nodeFactory.suggestTaxaByName("@de");
+        assertThat(hits.size(), is(1));
+        assertEnrichedPropertiesSet(new Taxon(hits.getSingle()));
     }
 
     private void assertEnrichedPropertiesSet(Taxon aTaxon) {
