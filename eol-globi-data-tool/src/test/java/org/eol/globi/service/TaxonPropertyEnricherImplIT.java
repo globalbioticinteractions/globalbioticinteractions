@@ -2,6 +2,7 @@ package org.eol.globi.service;
 
 import org.eol.globi.data.CharsetConstant;
 import org.eol.globi.data.GraphDBTestCase;
+import org.eol.globi.data.NodeFactory;
 import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.domain.Taxon;
 import org.junit.Before;
@@ -21,15 +22,13 @@ public class TaxonPropertyEnricherImplIT extends GraphDBTestCase {
     @Before
     public void start() {
         enricher = TaxonPropertyEnricherFactory.createTaxonEnricher(getGraphDb());
+        nodeFactory = new NodeFactory(getGraphDb(), enricher);
     }
 
 
     @Test
     public void enrichTwoTaxons() throws NodeFactoryException, IOException {
-        enricher = TaxonPropertyEnricherFactory.createTaxonEnricher(getGraphDb());
-
         Taxon taxon = nodeFactory.getOrCreateTaxon("Homo sapiens");
-        enricher.enrich(taxon);
         assertThat(taxon.getExternalId(), is("EOL:327955"));
         assertThat(taxon.getPath(), is(not("no:match")));
 

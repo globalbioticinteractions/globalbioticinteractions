@@ -45,6 +45,11 @@ public class EOLService extends BaseHttpClientService implements TaxonPropertyLo
         if (id != null) {
             if (properties.get(Taxon.PATH) == null || properties.get(Taxon.COMMON_NAMES) == null) {
                 addPath(id, properties);
+                String path = properties.get(Taxon.PATH);
+                if (StringUtils.isNotBlank(path) && !path.contains(taxonName)) {
+                    // add synonym
+                    properties.put(Taxon.PATH, path + CharsetConstant.SEPARATOR + taxonName);
+                }
             }
         }
     }
