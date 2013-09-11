@@ -97,9 +97,7 @@ public class EOLServiceIT {
     }
 
     private String lookupPageIdByScientificName(String taxonName) throws TaxonPropertyLookupServiceException {
-        HashMap<String, String> properties = new HashMap<String, String>() {{
-            put(Taxon.EXTERNAL_ID, null);
-        }};
+        HashMap<String, String> properties = new HashMap<String, String>();
         new EOLService().lookupPropertiesByName(taxonName, properties);
         return properties.get(Taxon.EXTERNAL_ID);
     }
@@ -214,9 +212,7 @@ public class EOLServiceIT {
 
     @Test
     public void lookupTaxonPathByScientificName() throws TaxonPropertyLookupServiceException {
-        HashMap<String, String> properties = new HashMap<String, String>() {{
-            put(Taxon.PATH, null);
-        }};
+        HashMap<String, String> properties = new HashMap<String, String>();
         new EOLService().lookupPropertiesByName("Homo sapiens", properties);
         assertThat(properties.get(Taxon.PATH), Is.is(HOMO_SAPIENS_PATH));
 
@@ -224,9 +220,7 @@ public class EOLServiceIT {
 
     @Test
     public void lookupExternalIdByScientificName() throws TaxonPropertyLookupServiceException {
-        HashMap<String, String> properties = new HashMap<String, String>() {{
-            put(Taxon.EXTERNAL_ID, null);
-        }};
+        HashMap<String, String> properties = new HashMap<String, String>();
         new EOLService().lookupPropertiesByName("Homo sapiens", properties);
         assertThat(properties.get(Taxon.EXTERNAL_ID), Is.is("EOL:327955"));
         assertThat(properties.get(Taxon.PATH), Is.is(HOMO_SAPIENS_PATH));
@@ -234,12 +228,9 @@ public class EOLServiceIT {
 
     @Test
     public void lookupExternalIdAndPathByScientificName() throws TaxonPropertyLookupServiceException {
-        HashMap<String, String> properties = new HashMap<String, String>() {{
-            put(Taxon.EXTERNAL_ID, null);
-            put(Taxon.PATH, null);
-        }};
+        HashMap<String, String> properties = new HashMap<String, String>();
         new EOLService().lookupPropertiesByName("Homo sapiens", properties);
-        assertThat(properties.get(Taxon.EXTERNAL_ID), Is.is("EOL:328447"));
+        assertThat(properties.get(Taxon.EXTERNAL_ID), Is.is("EOL:327955"));
         assertThat(properties.get(Taxon.PATH), Is.is(HOMO_SAPIENS_PATH));
 
     }

@@ -44,9 +44,8 @@ public class TaxonPropertyEnricherImplTest extends GraphDBTestCase {
         TaxonPropertyLookupService serviceA = Mockito.mock(TaxonPropertyLookupService.class);
         TaxonPropertyLookupService serviceB = Mockito.mock(TaxonPropertyLookupService.class);
         Map<String, String> properties = enrich("Homo sapiens", serviceA, serviceB);
-        verify(serviceA).lookupPropertiesByName(anyString(), eq(properties));
-        verify(serviceB).lookupPropertiesByName(anyString(), eq(properties));
-
+        verify(serviceA).lookupPropertiesByName(eq("Homo sapiens"), eq(properties));
+        verify(serviceB).lookupPropertiesByName(eq("Homo sapiens"), eq(properties));
     }
 
     private Map<String, String> enrich(String taxonName, TaxonPropertyLookupService serviceA, TaxonPropertyLookupService serviceB) throws IOException {
@@ -54,10 +53,6 @@ public class TaxonPropertyEnricherImplTest extends GraphDBTestCase {
         List<TaxonPropertyLookupService> list = new ArrayList<TaxonPropertyLookupService>();
         list.add(serviceA);
         Map<String, String> properties = new HashMap<String, String>() {
-            {
-                put(Taxon.EXTERNAL_ID, null);
-                put(Taxon.PATH, null);
-            }
         };
         list.add(serviceB);
         enricher.setServices(list);
@@ -69,16 +64,5 @@ public class TaxonPropertyEnricherImplTest extends GraphDBTestCase {
         enricher.enrich(taxon);
         return properties;
     }
-
-    @Test
-    public void noEnrichmentNameTooShort() throws NodeFactoryException, IOException, TaxonPropertyLookupServiceException {
-        TaxonPropertyLookupService serviceA = Mockito.mock(TaxonPropertyLookupService.class);
-        TaxonPropertyLookupService serviceB = Mockito.mock(TaxonPropertyLookupService.class);
-        Map<String, String> properties = enrich("H", serviceA, serviceB);
-        verify(serviceA, never()).lookupPropertiesByName(anyString(), eq(properties));
-        verify(serviceB, never()).lookupPropertiesByName(anyString(), eq(properties));
-
-    }
-
 
 }

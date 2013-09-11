@@ -32,8 +32,7 @@ public class NodeFactoryTest extends GraphDBTestCase {
     public void createFactory() {
         nodeFactory = new NodeFactory(getGraphDb(), new TaxonPropertyEnricher() {
             @Override
-            public boolean enrich(Taxon taxon) throws IOException {
-                return false;
+            public void enrich(Taxon taxon) throws IOException {
             }
         });
     }
@@ -42,11 +41,10 @@ public class NodeFactoryTest extends GraphDBTestCase {
     public void ensureThatEnrichedPropertiesAreIndexed() throws NodeFactoryException {
         nodeFactory = new NodeFactory(getGraphDb(), new TaxonPropertyEnricher() {
             @Override
-            public boolean enrich(Taxon taxon) throws IOException {
+            public void enrich(Taxon taxon) throws IOException {
                 taxon.setPath(EXPECTED_PATH);
                 taxon.setExternalId("anExternalId");
                 taxon.setCommonNames(EXPECTED_COMMON_NAMES);
-                return false;
             }
         });
 

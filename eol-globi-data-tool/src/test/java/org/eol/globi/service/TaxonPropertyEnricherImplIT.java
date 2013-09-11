@@ -35,7 +35,6 @@ public class TaxonPropertyEnricherImplIT extends GraphDBTestCase {
 
 
         taxon = nodeFactory.getOrCreateTaxon("Ariopsis felis");
-        enricher.enrich(taxon);
         assertThat(taxon.getExternalId(), is("EOL:223038"));
         assertThat(taxon.getPath(), is(not("no:match")));
 
@@ -43,18 +42,14 @@ public class TaxonPropertyEnricherImplIT extends GraphDBTestCase {
         assertThat(taxon.getNodeID(), is(sameTaxon.getNodeID()));
 
         taxon = nodeFactory.getOrCreateTaxon("Pitar fulminatus");
-        enricher.enrich(taxon);
         assertThat(taxon.getExternalId(), is("EOL:448962"));
         assertThat(taxon.getPath(), is(not("no:match")));
-
-        assertThat(enricher.enrich(taxon), is(false));
     }
 
     @Test
     // see https://github.com/jhpoelen/eol-globi-data/issues/12
     public void foraminifera() throws IOException, NodeFactoryException {
         Taxon taxon = nodeFactory.getOrCreateTaxon("Foraminifera");
-        enricher.enrich(taxon);
         assertThat(taxon.getExternalId(), is("EOL:4888"));
         assertThat(taxon.getName(), is("Foraminifera"));
         assertThat(taxon.getPath(), containsString(CharsetConstant.SEPARATOR + "Foraminifera"));

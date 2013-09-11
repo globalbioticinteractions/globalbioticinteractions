@@ -25,8 +25,7 @@ public class NormalizerTest extends GraphDBTestCase {
         GraphDatabaseService graphService = getGraphDb();
         dataNormalizationTool.importData(graphService, new TaxonPropertyEnricher() {
             @Override
-            public boolean enrich(Taxon taxon) throws IOException {
-                return false;
+            public void enrich(Taxon taxon) throws IOException {
             }
         }, StudyImporterForSimons.class);
 

@@ -42,8 +42,10 @@ public class EOLService extends BaseHttpClientService implements TaxonPropertyLo
             }
         }
 
-        if (properties.get(Taxon.PATH) == null || properties.get(Taxon.COMMON_NAMES) == null) {
-            addPath(id, properties);
+        if (id != null) {
+            if (properties.get(Taxon.PATH) == null || properties.get(Taxon.COMMON_NAMES) == null) {
+                addPath(id, properties);
+            }
         }
     }
 
@@ -169,11 +171,8 @@ public class EOLService extends BaseHttpClientService implements TaxonPropertyLo
 
     protected Long getPageId(String taxonName, boolean shouldFollowAlternate) throws TaxonPropertyLookupServiceException {
         try {
-
             URI uri = createSearchURI(taxonName);
             String response = getResponse(uri);
-
-
             Long smallestPageId = null;
 
             if (response != null) {

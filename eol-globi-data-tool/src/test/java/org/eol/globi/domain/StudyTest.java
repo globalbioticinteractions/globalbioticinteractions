@@ -14,7 +14,6 @@ import java.io.IOException;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
-import static org.eol.globi.domain.RelTypes.IS_A;
 
 public class StudyTest extends GraphDBTestCase {
 
@@ -29,9 +28,7 @@ public class StudyTest extends GraphDBTestCase {
     public void createFactory() {
         factory = new NodeFactory(getGraphDb(), new TaxonPropertyEnricher() {
             @Override
-            public boolean enrich(Taxon taxon) throws IOException {
-
-                return false;
+            public void enrich(Taxon taxon) throws IOException {
             }
         });
     }
