@@ -27,21 +27,26 @@ public class SearchService {
 
     public static final String NAME = "name";
     public static final String PATH = "path";
+    public static final String COMMON_NAMES = "commonNames";
 
     @Autowired
     private EmbeddedGraphDatabase graphDb;
 
-    @RequestMapping(value = "/findCloseMatchesForTaxon/{taxonName}", method = RequestMethod.GET)
+    @RequestMapping(value = "/findCloseMatchesForTaxon/{taxonName}", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String findCloseMatchesForTaxon(@PathVariable("taxonName") String taxonName) throws IOException {
+    public String findCloseMatchesForCommonAndScientificNames(@PathVariable("taxonName") String taxonName) throws IOException {
         StringBuffer buffer = new StringBuffer();
-        addCloseMatches(taxonName, buffer, NAME);
-        return "{\"columns\":[\"(taxon.name)\"],\"data\":[" + buffer.toString() + "]}";
+        int hits = addCloseMatches(taxonName, buffer, NAME, "taxonNameSuggestions", 0);
+        addCloseMatches(taxonName, buffer, NAME, "taxons", hits);
+        return generateCypherLikeResponse(buffer);
     }
 
-    private void addCloseMatches(String taxonName, StringBuffer buffer, String matchProperty) {
-        int hitCount = 0;
-        IndexHits<Node> query = query(taxonName, matchProperty, graphDb.index().forNodes("taxons"));
+    private String generateCypherLikeResponse(StringBuffer buffer) {
+        return "{\"columns\":[\"(taxon.name)\", \"(taxon.commonNames)\", \"(taxon.path)\"],\"data\":[" + buffer.toString() + "]}";
+    }
+
+    private int addCloseMatches(String taxonName, StringBuffer buffer, String matchProperty, String indexName, int hitCount) {
+        IndexHits<Node> query = query(taxonName, matchProperty, graphDb.index().forNodes(indexName));
         while (query.hasNext() && hitCount < 15) {
             if (hitCount > 0) {
                 buffer.append(",");
@@ -50,12 +55,17 @@ public class SearchService {
             if (node.hasProperty(NAME)) {
                 buffer.append("[\"");
                 buffer.append((String) node.getProperty(NAME));
+                buffer.append("\",\"");
+                buffer.append(node.hasProperty(COMMON_NAMES) ? (String) node.getProperty(COMMON_NAMES) : "");
+                buffer.append("\",\"");
+                buffer.append(node.hasProperty(PATH) ? (String) node.getProperty(PATH) : "");
                 buffer.append("\"]");
                 hitCount++;
             }
 
         }
         query.close();
+        return hitCount;
     }
 
     private IndexHits<Node> query(String taxonName, String name, Index<Node> taxonIndex) {

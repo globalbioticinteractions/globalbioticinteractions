@@ -8,7 +8,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import java.io.IOException;
 
 public class HttpClient {
-    protected static final String APPLICATION_JSON = "application/json";
+    protected static final String APPLICATION_JSON = "application/json;charset=UTF-8";
 
     public static String httpGet(String uri) throws IOException {
         org.apache.http.client.HttpClient httpclient = new DefaultHttpClient();
