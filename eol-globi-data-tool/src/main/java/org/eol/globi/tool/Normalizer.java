@@ -25,9 +25,6 @@ import org.eol.globi.data.StudyImporterFactory;
 import org.eol.globi.db.GraphService;
 import org.eol.globi.domain.Study;
 import org.eol.globi.export.StudyExporter;
-import org.neo4j.graphdb.Node;
-import org.neo4j.graphdb.index.Index;
-import org.neo4j.graphdb.index.IndexHits;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 
 import java.io.BufferedOutputStream;
@@ -37,7 +34,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.GZIPOutputStream;
 
@@ -56,7 +52,7 @@ public class Normalizer {
     }
 
     private void exportData(GraphDatabaseService graphService) throws StudyImporterException {
-        List<Study> studies = findAllStudies(graphService);
+        List<Study> studies = NodeFactory.findAllStudies(graphService);
         exportDarwinCoreArchive(studies);
         exportDataOntology(studies);
     }
@@ -87,16 +83,6 @@ public class Normalizer {
         } catch (IOException e) {
             throw new StudyImporterException("failed to export result to csv file", e);
         }
-    }
-
-    protected List<Study> findAllStudies(GraphDatabaseService graphService) {
-        List<Study> studies = new ArrayList<Study>();
-        Index<Node> studyIndex = graphService.index().forNodes("studies");
-        IndexHits<Node> hits = studyIndex.query("title", "*");
-        for (Node hit : hits) {
-            studies.add(new Study(hit));
-        }
-        return studies;
     }
 
     private void importData(GraphDatabaseService graphService, TaxonPropertyEnricher taxonEnricher) throws StudyImporterException {

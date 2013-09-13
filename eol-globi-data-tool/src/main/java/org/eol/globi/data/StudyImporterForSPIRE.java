@@ -137,7 +137,8 @@ public class StudyImporterForSPIRE extends BaseStudyImporter {
 
         ResIterator resIterator = model.listSubjects();
         Map<String, String> properties = new HashMap<String, String>();
-        while (resIterator.hasNext()) {
+        Long subjectCounter = 0L;
+        while (resIterator.hasNext() && getImportFilter().shouldImportRecord(subjectCounter)) {
             properties.clear();
             Resource resource = resIterator.next();
             StmtIterator stmtIterator = resource.listProperties();
@@ -157,6 +158,7 @@ public class StudyImporterForSPIRE extends BaseStudyImporter {
                     && getTrophicLinkListener() != null) {
                 getTrophicLinkListener().newLink(properties);
             }
+            subjectCounter++;
         }
 
         // should probably retire this . . .
@@ -249,5 +251,9 @@ public class StudyImporterForSPIRE extends BaseStudyImporter {
     private String getTrimmedObject(Statement next1) {
         String s = next1.getObject().toString().replaceAll("http://spire.umbc.edu/ethan/", "");
         return s.replaceAll("\\^\\^http://www.w3.org/2001/XMLSchema#string", "");
+    }
+
+    public ImportFilter getImportFilter() {
+        return importFilter;
     }
 }

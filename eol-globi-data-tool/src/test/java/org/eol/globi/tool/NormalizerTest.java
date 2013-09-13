@@ -1,6 +1,7 @@
 package org.eol.globi.tool;
 
 import org.eol.globi.data.GraphDBTestCase;
+import org.eol.globi.data.NodeFactory;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.data.StudyImporterForSimons;
 import org.eol.globi.domain.Study;
@@ -29,7 +30,7 @@ public class NormalizerTest extends GraphDBTestCase {
             }
         }, StudyImporterForSimons.class);
 
-        List<Study> allStudies = dataNormalizationTool.findAllStudies(graphService);
+        List<Study> allStudies = NodeFactory.findAllStudies(graphService);
         assertThat(allStudies.size(), Is.is(1));
         assertThat(allStudies.get(0).getTitle(), Is.is("Simons 1997"));
 

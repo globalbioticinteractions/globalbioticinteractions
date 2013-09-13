@@ -1,5 +1,5 @@
 package org.eol.globi.data;
 
-interface ImportFilter {
+public interface ImportFilter {
     boolean shouldImportRecord(Long recordNumber);
 }

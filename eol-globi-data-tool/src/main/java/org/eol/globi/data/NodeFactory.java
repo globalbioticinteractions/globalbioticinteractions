@@ -39,6 +39,7 @@ public class NodeFactory {
     public static final TaxonNameNormalizer TAXON_NAME_NORMALIZER = new TaxonNameNormalizer();
     private final TaxonPropertyEnricher taxonEnricher;
 
+
     public GraphDatabaseService getGraphDb() {
         return graphDb;
     }
@@ -67,6 +68,17 @@ public class NodeFactory {
         this.taxonPaths = graphDb.index().forNodes("taxonpaths", MapUtil.stringMap(IndexManager.PROVIDER, "lucene", "type", "fulltext"));
         this.taxonCommonNames = graphDb.index().forNodes("taxonCommonNames", MapUtil.stringMap(IndexManager.PROVIDER, "lucene", "type", "fulltext"));
     }
+
+    public static List<Study> findAllStudies(GraphDatabaseService graphService) {
+        List<Study> studies = new ArrayList<Study>();
+        Index<Node> studyIndex = graphService.index().forNodes("studies");
+        IndexHits<Node> hits = studyIndex.query("title", "*");
+        for (Node hit : hits) {
+            studies.add(new Study(hit));
+        }
+        return studies;
+    }
+
 
     private void addTaxonToIndex(Taxon taxon) {
         taxons.add(taxon.getUnderlyingNode(), Taxon.NAME, taxon.getName());
@@ -328,7 +340,7 @@ public class NodeFactory {
         Date date = null;
         if (rel != null) {
             if (rel.hasProperty(Specimen.DATE_IN_UNIX_EPOCH)) {
-                Long unixEpoch = (Long)rel.getProperty(Specimen.DATE_IN_UNIX_EPOCH);
+                Long unixEpoch = (Long) rel.getProperty(Specimen.DATE_IN_UNIX_EPOCH);
                 date = new Date(unixEpoch);
             }
 
