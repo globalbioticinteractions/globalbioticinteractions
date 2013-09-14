@@ -16,7 +16,7 @@ import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.service.ENVOService;
 import org.eol.globi.service.ENVOServiceImpl;
-import org.eol.globi.service.ENVOServiceException;
+import org.eol.globi.service.EnvoServiceException;
 import org.eol.globi.service.EnvoTerm;
 import uk.me.jstott.jcoord.LatLng;
 
@@ -227,7 +227,7 @@ public class StudyImporterForSPIRE extends BaseStudyImporter {
                                 Environment environment = nodeFactory.getOrCreateEnvironment(envoTerm.getId(), envoTerm.getName());
                                 location.addEnvironment(environment);
                             }
-                        } catch (ENVOServiceException e) {
+                        } catch (EnvoServiceException e) {
                             LOG.warn("unexpected problem during lookup environment for habitat [" + habitat + "]", e);
                         }
 

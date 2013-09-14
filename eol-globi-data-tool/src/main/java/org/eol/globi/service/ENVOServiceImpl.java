@@ -22,7 +22,7 @@ public class ENVOServiceImpl extends BaseHttpClientService implements ENVOServic
     private static final List<EnvoTerm> EMPTY_LIST = new ArrayList<EnvoTerm>();
 
     @Override
-    public List<EnvoTerm> lookupBySPIREHabitat(String name) throws ENVOServiceException {
+    public List<EnvoTerm> lookupBySPIREHabitat(String name) throws EnvoServiceException {
         String uri = "http://purl.obolibrary.org/obo/envo/mappings/spire-mapping.txt";
         if (spireLookup == null) {
             buildMapping(uri);
@@ -31,7 +31,7 @@ public class ENVOServiceImpl extends BaseHttpClientService implements ENVOServic
         return envoTerms == null ? EMPTY_LIST : envoTerms;
     }
 
-    private void buildMapping(String uri) throws ENVOServiceException {
+    private void buildMapping(String uri) throws EnvoServiceException {
         spireLookup = new HashMap<String, List<EnvoTerm>>();
         LOG.info("ENVO data populating with [" + uri + "]...");
         HttpGet get = new HttpGet(uri);
@@ -59,7 +59,7 @@ public class ENVOServiceImpl extends BaseHttpClientService implements ENVOServic
             }
             LOG.info("ENVO data populated.");
         } catch (IOException ex) {
-            throw new ENVOServiceException("cannot map ENVO to SPIRE term: failed to retrieve or parse [" + uri + "]", ex);
+            throw new EnvoServiceException("cannot map ENVO to SPIRE term: failed to retrieve or parse [" + uri + "]", ex);
         }
     }
 }

@@ -7,10 +7,10 @@ import java.util.List;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
-public class ENVOServiceIT {
+public class ENVOServiceImplIT {
 
     @Test
-    public void lookupTerm() throws ENVOServiceException {
+    public void lookupTerm() throws EnvoServiceException {
         ENVOService service = new ENVOServiceImpl();
         List<EnvoTerm> envoTerms = service.lookupBySPIREHabitat("Dung");
         assertThat(envoTerms.size(), is(1));
