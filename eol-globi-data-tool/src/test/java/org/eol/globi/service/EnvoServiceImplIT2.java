@@ -7,14 +7,14 @@ import java.util.List;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
-public class ENVOServiceImplIT {
+public class EnvoServiceImplIT2 {
 
     @Test
     public void lookupTerm() throws EnvoServiceException {
-        EnvoService2 service = new EnvoServiceImpl2();
-        List<EnvoTerm2> envoTerms = service.lookupBySPIREHabitat("Dung");
+        EnvoService service = new EnvoServiceImpl();
+        List<EnvoTerm> envoTerms = service.lookupBySPIREHabitat("Dung");
         assertThat(envoTerms.size(), is(1));
-        EnvoTerm2 envoTerm = envoTerms.get(0);
+        EnvoTerm envoTerm = envoTerms.get(0);
         assertThat(envoTerm.getName(), is("feces"));
         assertThat(envoTerm.getId(), is("ENVO:00002003"));
 

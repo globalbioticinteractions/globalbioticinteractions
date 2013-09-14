@@ -14,10 +14,10 @@ import org.eol.globi.domain.Environment;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
-import org.eol.globi.service.EnvoService2;
-import org.eol.globi.service.EnvoServiceImpl2;
+import org.eol.globi.service.EnvoService;
+import org.eol.globi.service.EnvoServiceImpl;
 import org.eol.globi.service.EnvoServiceException;
-import org.eol.globi.service.EnvoTerm2;
+import org.eol.globi.service.EnvoTerm;
 import uk.me.jstott.jcoord.LatLng;
 
 import java.io.BufferedReader;
@@ -44,7 +44,7 @@ public class StudyImporterForSPIRE extends BaseStudyImporter {
         }
     };
 
-    private EnvoService2 envoService = new EnvoServiceImpl2();
+    private EnvoService envoService = new EnvoServiceImpl();
 
 
     public StudyImporterForSPIRE(ParserFactory parserFactory, NodeFactory nodeFactory) {
@@ -222,8 +222,8 @@ public class StudyImporterForSPIRE extends BaseStudyImporter {
                     String habitat = properties.get(OF_HABITAT);
                     if (StringUtils.isNotBlank(habitat)) {
                         try {
-                            List<EnvoTerm2> envoTerms = envoService.lookupBySPIREHabitat(habitat);
-                            for (EnvoTerm2 envoTerm : envoTerms) {
+                            List<EnvoTerm> envoTerms = envoService.lookupBySPIREHabitat(habitat);
+                            for (EnvoTerm envoTerm : envoTerms) {
                                 Environment environment = nodeFactory.getOrCreateEnvironment(envoTerm.getId(), envoTerm.getName());
                                 location.addEnvironment(environment);
                             }
@@ -281,7 +281,7 @@ public class StudyImporterForSPIRE extends BaseStudyImporter {
         return importFilter;
     }
 
-    public void setEnvoService(EnvoService2 envoService) {
+    public void setEnvoService(EnvoService envoService) {
         this.envoService = envoService;
     }
 }

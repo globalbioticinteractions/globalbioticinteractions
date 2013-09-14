@@ -11,9 +11,9 @@ import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.Taxon;
-import org.eol.globi.service.EnvoService2;
+import org.eol.globi.service.EnvoService;
 import org.eol.globi.service.EnvoServiceException;
-import org.eol.globi.service.EnvoTerm2;
+import org.eol.globi.service.EnvoTerm;
 import org.junit.Test;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Relationship;
@@ -190,12 +190,12 @@ public class StudyImporterForSPIRETest extends GraphDBTestCase {
 
     private StudyImporterForSPIRE createImporter() {
         StudyImporterForSPIRE studyImporterForSPIRE = new StudyImporterForSPIRE(null, nodeFactory);
-        studyImporterForSPIRE.setEnvoService(new EnvoService2() {
+        studyImporterForSPIRE.setEnvoService(new EnvoService() {
 
             @Override
-            public List<EnvoTerm2> lookupBySPIREHabitat(String name) throws EnvoServiceException {
-                ArrayList<EnvoTerm2> envoTerms = new ArrayList<EnvoTerm2>();
-                envoTerms.add(new EnvoTerm2("envo externalid", "envo name")) ;
+            public List<EnvoTerm> lookupBySPIREHabitat(String name) throws EnvoServiceException {
+                ArrayList<EnvoTerm> envoTerms = new ArrayList<EnvoTerm>();
+                envoTerms.add(new EnvoTerm("envo externalid", "envo name")) ;
                 return envoTerms;
             }
         });
