@@ -1,5 +1,6 @@
 package org.eol.globi.export;
 
+import org.apache.commons.io.FileUtils;
 import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.ImportFilter;
 import org.eol.globi.data.NodeFactory;
@@ -10,12 +11,13 @@ import org.junit.Test;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.semanticweb.owlapi.model.OWLOntologyStorageException;
 
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
-import java.io.StringWriter;
+import java.io.Writer;
 import java.util.List;
 
-import static org.junit.Assert.assertThat;
-import static org.junit.internal.matchers.StringContains.containsString;
+import static org.junit.Assert.assertTrue;
 
 public class GlobiOWLExporterIT extends GraphDBTestCase {
 
@@ -30,13 +32,18 @@ public class GlobiOWLExporterIT extends GraphDBTestCase {
         });
         importer.importStudy();
         List<Study> studies = NodeFactory.findAllStudies(getGraphDb());
-        StringWriter writer = new StringWriter();
+
+        FileUtils.forceMkdir(new File("target"));
+        String tgt = "target/spire-as-globi.ttl";
+        Writer writer = new FileWriter(tgt);
         GlobiOWLExporter globiOWLExporter = new GlobiOWLExporter();
         for (Study study : studies) {
             globiOWLExporter.exportStudy(study, writer, true);
         }
-        assertThat(writer.toString(), containsString("has-agent"));
+        writer.flush();
+        writer.close();
 
+        assertTrue(new File(tgt).exists());
     }
 
 
