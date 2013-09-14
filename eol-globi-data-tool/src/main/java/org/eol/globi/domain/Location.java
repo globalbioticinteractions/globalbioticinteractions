@@ -4,6 +4,9 @@ import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Location extends NodeBacked {
 
     public static final String LONGITUDE = "longitude";
@@ -50,5 +53,29 @@ public class Location extends NodeBacked {
 
     public Iterable<Relationship> getSpecimenCaughtHere() {
         return getUnderlyingNode().getRelationships(RelTypes.COLLECTED_AT, Direction.INCOMING);
+    }
+
+    public void addEnvironment(Environment environment) {
+        boolean needsAssociation = true;
+        Iterable<Relationship> relationships = getUnderlyingNode().getRelationships(RelTypes.HAS_ENVIRONMENT, Direction.OUTGOING);
+        for (Relationship relationship : relationships) {
+            if (relationship.getEndNode().getId() == environment.getNodeID()) {
+                needsAssociation = false;
+                break;
+            }
+        }
+        if (needsAssociation) {
+            createRelationshipTo(environment, RelTypes.HAS_ENVIRONMENT);
+        }
+    }
+
+    public List<Environment> getEnvironments() {
+        Iterable<Relationship> relationships = getUnderlyingNode().getRelationships(RelTypes.HAS_ENVIRONMENT, Direction.OUTGOING);
+        List<Environment> environments = new ArrayList<Environment>();
+        for (Relationship relationship : relationships) {
+            environments.add(new Environment(relationship.getEndNode()));
+        }
+        return environments;
+
     }
 }

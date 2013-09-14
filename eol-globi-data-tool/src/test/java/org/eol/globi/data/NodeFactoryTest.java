@@ -1,6 +1,7 @@
 package org.eol.globi.data;
 
 import junit.framework.Assert;
+import org.eol.globi.domain.Environment;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.service.TaxonPropertyEnricher;
 import org.junit.Before;
@@ -17,6 +18,7 @@ import static junit.framework.Assert.assertNull;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
@@ -102,6 +104,30 @@ public class NodeFactoryTest extends GraphDBTestCase {
         Assert.assertNotNull(location1);
         Location foundLocationNoDepth = nodeFactory.findLocation(locationNoDepth.getLatitude(), locationNoDepth.getLongitude(), null);
         Assert.assertNotNull(foundLocationNoDepth);
+    }
+
+    @Test
+    public void createAndFindEnvironment() {
+        Environment environment = nodeFactory.getOrCreateEnvironment("BLA:123", "this");
+        nodeFactory.getOrCreateEnvironment("BLA:123", "this");
+        Environment foundEnvironment = nodeFactory.findEnvironment("this");
+        assertThat(foundEnvironment, is(notNullValue()));
+
+        assertThat(environment.getNodeID(), is(foundEnvironment.getNodeID()));
+        assertThat(environment.getName(), is("this"));
+        assertThat(environment.getExternalId(), is("BLA:123"));
+
+        Location location = nodeFactory.getOrCreateLocation(123.2, 123.1, null);
+        assertThat(location.getEnvironments().size(), is(0));
+        location.addEnvironment(environment);
+        assertThat(location.getEnvironments().size(), is(1));
+
+        // don't add environment that has already been associated
+        location.addEnvironment(environment);
+        assertThat(location.getEnvironments().size(), is(1));
+
+        location.addEnvironment(nodeFactory.getOrCreateEnvironment("BLA:124", "that"));
+        assertThat(location.getEnvironments().size(), is(2));
     }
 
     @Test

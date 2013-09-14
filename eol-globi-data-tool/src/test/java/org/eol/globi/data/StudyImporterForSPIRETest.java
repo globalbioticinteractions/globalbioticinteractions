@@ -6,10 +6,14 @@ import com.healthmarketscience.jackcess.JetFormat;
 import com.healthmarketscience.jackcess.Table;
 import com.hp.hpl.jena.rdf.model.impl.RDFDefaultErrorHandler;
 import org.apache.commons.collections.CollectionUtils;
+import org.eol.globi.domain.Environment;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.Taxon;
+import org.eol.globi.service.ENVOService;
+import org.eol.globi.service.ENVOServiceException;
+import org.eol.globi.service.ENVOTerm;
 import org.junit.Test;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Relationship;
@@ -33,6 +37,7 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
+import static org.junit.internal.matchers.IsCollectionContaining.hasItem;
 import static org.junit.internal.matchers.StringContains.containsString;
 
 public class StudyImporterForSPIRETest extends GraphDBTestCase {
@@ -152,12 +157,13 @@ public class StudyImporterForSPIRETest extends GraphDBTestCase {
 
     @Test
     public void importSingleLink() throws NodeFactoryException {
-        StudyImporterForSPIRE studyImporterForSPIRE = new StudyImporterForSPIRE(null, nodeFactory);
+        StudyImporterForSPIRE studyImporterForSPIRE = createImporter();
         HashMap<String, String> properties = new HashMap<String, String>();
         properties.put(Study.TITLE, "the study of men eating dogs");
         properties.put(StudyImporterForSPIRE.PREY_NAME, "dog");
         properties.put(StudyImporterForSPIRE.PREDATOR_NAME, "man");
         properties.put(StudyImporterForSPIRE.COUNTRY, "USA");
+        properties.put(StudyImporterForSPIRE.OF_HABITAT, "Oceanic_vent");
         studyImporterForSPIRE.importTrophicLink(properties);
 
         Taxon dog = nodeFactory.findTaxon("dog");
@@ -165,18 +171,41 @@ public class StudyImporterForSPIRETest extends GraphDBTestCase {
         Taxon man = nodeFactory.findTaxon("man");
         assertThat(man, is(notNullValue()));
         Iterable<Relationship> specimenRels = man.getUnderlyingNode().getRelationships(Direction.INCOMING, RelTypes.CLASSIFIED_AS);
+
+        int count = 0;
         for (Relationship specimenRel : specimenRels) {
+            count++;
             Specimen specimen = new Specimen(specimenRel.getStartNode());
             assertThat(specimen.getSampleLocation().getLatitude(), is(39.76));
             assertThat(specimen.getSampleLocation().getLongitude(), is(-98.5));
-        }
 
+            List<Environment> environments = specimen.getSampleLocation().getEnvironments();
+            assertThat(environments.size(), is(1));
+            Environment environment = environments.get(0);
+            assertThat(environment.getExternalId(), is("envo externalid"));
+            assertThat(environment.getName(), is("envo name"));
+        }
+        assertThat(count, is(1));
+    }
+
+    private StudyImporterForSPIRE createImporter() {
+        StudyImporterForSPIRE studyImporterForSPIRE = new StudyImporterForSPIRE(null, nodeFactory);
+        studyImporterForSPIRE.setEnvoService(new ENVOService() {
+
+            @Override
+            public List<ENVOTerm> lookupBySPIREHabitat(String name) throws ENVOServiceException {
+                ArrayList<ENVOTerm> envoTerms = new ArrayList<ENVOTerm>();
+                envoTerms.add(new ENVOTerm("envo externalid", "envo name")) ;
+                return envoTerms;
+            }
+        });
+        return studyImporterForSPIRE;
     }
 
     @Test
     public void importStudy() throws IOException, StudyImporterException {
         RDFDefaultErrorHandler.silent = true;
-        StudyImporterForSPIRE importer = new StudyImporterForSPIRE(null, nodeFactory);
+        StudyImporterForSPIRE importer = createImporter();
         TestTrophicLinkListener listener = new TestTrophicLinkListener();
         importer.setTrophicLinkListener(listener);
         importer.importStudy();

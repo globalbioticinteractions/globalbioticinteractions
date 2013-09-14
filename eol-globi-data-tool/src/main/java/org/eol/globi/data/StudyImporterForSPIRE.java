@@ -10,13 +10,20 @@ import com.hp.hpl.jena.rdf.model.StmtIterator;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.eol.globi.domain.Environment;
+import org.eol.globi.domain.Location;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
+import org.eol.globi.service.ENVOService;
+import org.eol.globi.service.ENVOServiceImpl;
+import org.eol.globi.service.ENVOServiceException;
+import org.eol.globi.service.ENVOTerm;
 import uk.me.jstott.jcoord.LatLng;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class StudyImporterForSPIRE extends BaseStudyImporter {
@@ -36,6 +43,8 @@ public class StudyImporterForSPIRE extends BaseStudyImporter {
             importTrophicLink(properties);
         }
     };
+
+    private ENVOService envoService = new ENVOServiceImpl();
 
 
     public StudyImporterForSPIRE(ParserFactory parserFactory, NodeFactory nodeFactory) {
@@ -208,7 +217,22 @@ public class StudyImporterForSPIRE extends BaseStudyImporter {
                 if (latLng == null) {
                     LOG.warn("failed to find location for county [" + country + "]");
                 } else {
-                    predator.caughtIn(nodeFactory.getOrCreateLocation(latLng.getLat(), latLng.getLng(), null));
+                    Location location = nodeFactory.getOrCreateLocation(latLng.getLat(), latLng.getLng(), null);
+                    predator.caughtIn(location);
+                    String habitat = properties.get(OF_HABITAT);
+                    if (StringUtils.isNotBlank(habitat)) {
+                        try {
+                            List<ENVOTerm> envoTerms = envoService.lookupBySPIREHabitat(habitat);
+                            for (ENVOTerm envoTerm : envoTerms) {
+                                Environment environment = nodeFactory.getOrCreateEnvironment(envoTerm.getId(), envoTerm.getName());
+                                location.addEnvironment(environment);
+                            }
+                        } catch (ENVOServiceException e) {
+                            LOG.warn("unexpected problem during lookup environment for habitat [" + habitat + "]", e);
+                        }
+
+                    }
+
                 }
                 study.collected(predator);
                 Specimen prey = createSpecimen(properties.get(PREY_NAME));
@@ -255,5 +279,9 @@ public class StudyImporterForSPIRE extends BaseStudyImporter {
 
     public ImportFilter getImportFilter() {
         return importFilter;
+    }
+
+    public void setEnvoService(ENVOService envoService) {
+        this.envoService = envoService;
     }
 }

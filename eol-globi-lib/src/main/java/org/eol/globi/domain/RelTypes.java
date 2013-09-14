@@ -7,5 +7,6 @@ public enum RelTypes implements RelType {
     CAUGHT_DURING,
     NORMALIZED_AS,
     ORIGINALLY_DESCRIBED_AS,
+    HAS_ENVIRONMENT,
     COLLECTED
 }

@@ -10,7 +10,9 @@ import org.apache.lucene.search.FuzzyQuery;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.WildcardQuery;
 import org.eol.globi.data.taxon.TaxonNameNormalizer;
+import org.eol.globi.domain.Environment;
 import org.eol.globi.domain.Location;
+import org.eol.globi.domain.NamedNode;
 import org.eol.globi.domain.Season;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
@@ -38,19 +40,12 @@ public class NodeFactory {
 
     public static final TaxonNameNormalizer TAXON_NAME_NORMALIZER = new TaxonNameNormalizer();
     private final TaxonPropertyEnricher taxonEnricher;
-
-
-    public GraphDatabaseService getGraphDb() {
-        return graphDb;
-    }
-
     private GraphDatabaseService graphDb;
 
-
     private final Index<Node> studies;
-
     private final Index<Node> seasons;
     private final Index<Node> locations;
+    private final Index<Node> environments;
     private final Index<Node> taxons;
     private final Index<Node> taxonNameSuggestions;
     private final Index<Node> taxonPaths;
@@ -63,6 +58,7 @@ public class NodeFactory {
         this.studies = graphDb.index().forNodes("studies");
         this.seasons = graphDb.index().forNodes("seasons");
         this.locations = graphDb.index().forNodes("locations");
+        this.environments = graphDb.index().forNodes("environments");
         this.taxons = graphDb.index().forNodes("taxons");
         this.taxonNameSuggestions = graphDb.index().forNodes("taxonNameSuggestions");
         this.taxonPaths = graphDb.index().forNodes("taxonpaths", MapUtil.stringMap(IndexManager.PROVIDER, "lucene", "type", "fulltext"));
@@ -79,6 +75,9 @@ public class NodeFactory {
         return studies;
     }
 
+    public GraphDatabaseService getGraphDb() {
+        return graphDb;
+    }
 
     private void addTaxonToIndex(Taxon taxon) {
         taxons.add(taxon.getUnderlyingNode(), Taxon.NAME, taxon.getName());
@@ -384,4 +383,31 @@ public class NodeFactory {
     public IndexHits<Node> suggestTaxaByName(String wholeOrPartialScientificOrCommonName) {
         return taxonNameSuggestions.query("name:\"" + wholeOrPartialScientificOrCommonName + "\"");
     }
+
+    public Environment getOrCreateEnvironment(String externalId, String name) {
+        Environment environment = findEnvironment(name);
+        if (environment == null) {
+            Transaction transaction = graphDb.beginTx();
+            environment = new Environment(graphDb.createNode(), name, externalId);
+            environments.add(environment.getUnderlyingNode(), NamedNode.NAME, name);
+            transaction.success();
+            transaction.finish();
+        }
+        return environment;
+    }
+
+    public Environment findEnvironment(String name) {
+        String query = "name:\"" + name + "\"";
+        IndexHits<Node> matches = environments.query(query);
+        Node matchingTaxon;
+        Environment firstMatchingEnvironment = null;
+        if (matches.hasNext()) {
+            matchingTaxon = matches.next();
+            firstMatchingEnvironment = new Environment(matchingTaxon);
+        }
+
+        matches.close();
+        return firstMatchingEnvironment;
+    }
 }
+

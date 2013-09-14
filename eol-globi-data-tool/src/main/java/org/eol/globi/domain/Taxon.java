@@ -6,8 +6,7 @@ import org.neo4j.graphdb.Relationship;
 
 import static org.eol.globi.domain.RelTypes.IS_A;
 
-public class Taxon extends NodeBacked {
-    public static final String NAME = "name";
+public class Taxon extends NamedNode {
     public static final String PATH = "path";
     public static final String COMMON_NAMES = "commonNames";
 
@@ -18,14 +17,6 @@ public class Taxon extends NodeBacked {
     public Taxon(Node node, String name) {
         this(node);
         setName(name);
-    }
-
-    public String getName() {
-        return (String) getUnderlyingNode().getProperty(NAME);
-    }
-
-    public void setName(String name) {
-        getUnderlyingNode().setProperty(NAME, name);
     }
 
     public Node isA() {
