@@ -7,7 +7,7 @@ import java.util.List;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
-public class EnvoServiceImplIT2 {
+public class EnvoServiceImplIT {
 
     @Test
     public void lookupTerm() throws EnvoServiceException {
