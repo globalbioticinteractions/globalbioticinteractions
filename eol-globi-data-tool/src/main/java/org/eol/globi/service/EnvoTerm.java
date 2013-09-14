@@ -1,10 +1,10 @@
 package org.eol.globi.service;
 
-public class ENVOTerm {
+public class EnvoTerm {
     private String name;
     private String id;
 
-    public ENVOTerm(String id, String name) {
+    public EnvoTerm(String id, String name) {
         this.id = id;
         this.name = name;
     }

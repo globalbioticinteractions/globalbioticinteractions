@@ -12,9 +12,9 @@ public class ENVOServiceIT {
     @Test
     public void lookupTerm() throws ENVOServiceException {
         ENVOService service = new ENVOServiceImpl();
-        List<ENVOTerm> envoTerms = service.lookupBySPIREHabitat("Dung");
+        List<EnvoTerm> envoTerms = service.lookupBySPIREHabitat("Dung");
         assertThat(envoTerms.size(), is(1));
-        ENVOTerm envoTerm = envoTerms.get(0);
+        EnvoTerm envoTerm = envoTerms.get(0);
         assertThat(envoTerm.getName(), is("feces"));
         assertThat(envoTerm.getId(), is("ENVO:00002003"));
 

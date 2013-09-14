@@ -17,22 +17,22 @@ import java.util.Map;
 public class ENVOServiceImpl extends BaseHttpClientService implements ENVOService {
     private static final Log LOG = LogFactory.getLog(ENVOServiceImpl.class);
 
-    private Map<String, List<ENVOTerm>> spireLookup = null;
+    private Map<String, List<EnvoTerm>> spireLookup = null;
 
-    private static final List<ENVOTerm> EMPTY_LIST = new ArrayList<ENVOTerm>();
+    private static final List<EnvoTerm> EMPTY_LIST = new ArrayList<EnvoTerm>();
 
     @Override
-    public List<ENVOTerm> lookupBySPIREHabitat(String name) throws ENVOServiceException {
-        String uri = "http://envo.googlecode.com/svn/trunk/src/envo/mappings/spire-mapping.txt";
+    public List<EnvoTerm> lookupBySPIREHabitat(String name) throws ENVOServiceException {
+        String uri = "http://purl.obolibrary.org/obo/envo/mappings/spire-mapping.txt";
         if (spireLookup == null) {
             buildMapping(uri);
         }
-        List<ENVOTerm> envoTerms = spireLookup.get(name);
+        List<EnvoTerm> envoTerms = spireLookup.get(name);
         return envoTerms == null ? EMPTY_LIST : envoTerms;
     }
 
     private void buildMapping(String uri) throws ENVOServiceException {
-        spireLookup = new HashMap<String, List<ENVOTerm>>();
+        spireLookup = new HashMap<String, List<EnvoTerm>>();
         LOG.info("ENVO data populating with [" + uri + "]...");
         HttpGet get = new HttpGet(uri);
         BasicResponseHandler responseHandler = new BasicResponseHandler();
@@ -49,12 +49,12 @@ public class ENVOServiceImpl extends BaseHttpClientService implements ENVOServic
                 if (StringUtils.isNotBlank(spireName)
                         && StringUtils.isNotBlank(envoId)
                         && StringUtils.isNotBlank(envoName)) {
-                    List<ENVOTerm> envoTerms = spireLookup.get(spireName);
+                    List<EnvoTerm> envoTerms = spireLookup.get(spireName);
                     if (envoTerms == null) {
-                        envoTerms = new ArrayList<ENVOTerm>();
+                        envoTerms = new ArrayList<EnvoTerm>();
                         spireLookup.put(spireName, envoTerms);
                     }
-                    envoTerms.add(new ENVOTerm(envoId, envoName));
+                    envoTerms.add(new EnvoTerm(envoId, envoName));
                 }
             }
             LOG.info("ENVO data populated.");

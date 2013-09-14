@@ -13,7 +13,7 @@ import org.eol.globi.domain.Study;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.service.ENVOService;
 import org.eol.globi.service.ENVOServiceException;
-import org.eol.globi.service.ENVOTerm;
+import org.eol.globi.service.EnvoTerm;
 import org.junit.Test;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Relationship;
@@ -193,9 +193,9 @@ public class StudyImporterForSPIRETest extends GraphDBTestCase {
         studyImporterForSPIRE.setEnvoService(new ENVOService() {
 
             @Override
-            public List<ENVOTerm> lookupBySPIREHabitat(String name) throws ENVOServiceException {
-                ArrayList<ENVOTerm> envoTerms = new ArrayList<ENVOTerm>();
-                envoTerms.add(new ENVOTerm("envo externalid", "envo name")) ;
+            public List<EnvoTerm> lookupBySPIREHabitat(String name) throws ENVOServiceException {
+                ArrayList<EnvoTerm> envoTerms = new ArrayList<EnvoTerm>();
+                envoTerms.add(new EnvoTerm("envo externalid", "envo name")) ;
                 return envoTerms;
             }
         });
