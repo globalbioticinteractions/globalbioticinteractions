@@ -11,10 +11,10 @@ public class ENVOServiceImplIT {
 
     @Test
     public void lookupTerm() throws EnvoServiceException {
-        ENVOService service = new ENVOServiceImpl();
-        List<EnvoTerm> envoTerms = service.lookupBySPIREHabitat("Dung");
+        EnvoService2 service = new EnvoServiceImpl2();
+        List<EnvoTerm2> envoTerms = service.lookupBySPIREHabitat("Dung");
         assertThat(envoTerms.size(), is(1));
-        EnvoTerm envoTerm = envoTerms.get(0);
+        EnvoTerm2 envoTerm = envoTerms.get(0);
         assertThat(envoTerm.getName(), is("feces"));
         assertThat(envoTerm.getId(), is("ENVO:00002003"));
 
