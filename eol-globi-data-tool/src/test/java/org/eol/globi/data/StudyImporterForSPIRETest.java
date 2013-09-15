@@ -164,7 +164,8 @@ public class StudyImporterForSPIRETest extends GraphDBTestCase {
 
     @Test
     public void importSingleLinkNoHabitatMatch() throws NodeFactoryException {
-        assertSingleImport("some unmapped spire habitat", PropertyAndValueDictionary.NO_MATCH, "some unmapped spire habitat");
+        String unmappedHabitat = "some unmapped spire habitat";
+        assertSingleImport("some unmapped spire habitat", "SPIRE:" + unmappedHabitat, unmappedHabitat);
     }
 
     private void assertSingleImport(String spireHabitat, String envoId, String envoLabel) throws NodeFactoryException {

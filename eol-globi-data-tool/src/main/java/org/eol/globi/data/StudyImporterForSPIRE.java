@@ -228,7 +228,7 @@ public class StudyImporterForSPIRE extends BaseStudyImporter {
                                 addEnvironment(location, envoTerm.getId(), envoTerm.getName());
                             }
                             if (envoTerms.size() == 0) {
-                                addEnvironment(location, PropertyAndValueDictionary.NO_MATCH, habitat);
+                                addEnvironment(location, "SPIRE:" + habitat, habitat);
                             }
                         } catch (EnvoServiceException e) {
                             LOG.warn("unexpected problem during lookup environment for habitat [" + habitat + "]", e);
