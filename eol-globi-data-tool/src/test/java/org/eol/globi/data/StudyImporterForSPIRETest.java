@@ -7,6 +7,7 @@ import com.healthmarketscience.jackcess.Table;
 import com.hp.hpl.jena.rdf.model.impl.RDFDefaultErrorHandler;
 import org.apache.commons.collections.CollectionUtils;
 import org.eol.globi.domain.Environment;
+import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
@@ -157,13 +158,23 @@ public class StudyImporterForSPIRETest extends GraphDBTestCase {
 
     @Test
     public void importSingleLink() throws NodeFactoryException {
+        assertSingleImport("some spire habitat", "envo externalid", "envo name");
+
+    }
+
+    @Test
+    public void importSingleLinkNoHabitatMatch() throws NodeFactoryException {
+        assertSingleImport("some unmapped spire habitat", PropertyAndValueDictionary.NO_MATCH, "some unmapped spire habitat");
+    }
+
+    private void assertSingleImport(String spireHabitat, String envoId, String envoLabel) throws NodeFactoryException {
         StudyImporterForSPIRE studyImporterForSPIRE = createImporter();
         HashMap<String, String> properties = new HashMap<String, String>();
         properties.put(Study.TITLE, "the study of men eating dogs");
         properties.put(StudyImporterForSPIRE.PREY_NAME, "dog");
         properties.put(StudyImporterForSPIRE.PREDATOR_NAME, "man");
         properties.put(StudyImporterForSPIRE.COUNTRY, "USA");
-        properties.put(StudyImporterForSPIRE.OF_HABITAT, "Oceanic_vent");
+        properties.put(StudyImporterForSPIRE.OF_HABITAT, spireHabitat);
         studyImporterForSPIRE.importTrophicLink(properties);
 
         Taxon dog = nodeFactory.findTaxon("dog");
@@ -182,8 +193,8 @@ public class StudyImporterForSPIRETest extends GraphDBTestCase {
             List<Environment> environments = specimen.getSampleLocation().getEnvironments();
             assertThat(environments.size(), is(1));
             Environment environment = environments.get(0);
-            assertThat(environment.getExternalId(), is("envo externalid"));
-            assertThat(environment.getName(), is("envo name"));
+            assertThat(environment.getExternalId(), is(envoId));
+            assertThat(environment.getName(), is(envoLabel));
         }
         assertThat(count, is(1));
     }
@@ -195,7 +206,9 @@ public class StudyImporterForSPIRETest extends GraphDBTestCase {
             @Override
             public List<EnvoTerm> lookupBySPIREHabitat(String name) throws EnvoServiceException {
                 ArrayList<EnvoTerm> envoTerms = new ArrayList<EnvoTerm>();
-                envoTerms.add(new EnvoTerm("envo externalid", "envo name")) ;
+                if ("some spire habitat".equals(name)) {
+                    envoTerms.add(new EnvoTerm("envo externalid", "envo name"));
+                }
                 return envoTerms;
             }
         });
@@ -221,6 +234,12 @@ public class StudyImporterForSPIRETest extends GraphDBTestCase {
         for (String title : listener.titles) {
             assertThat(title, not(containsString("http://spire.umbc.edu/")));
         }
+
+        for (String envo : listener.environments) {
+            assertThat(envo, not(containsString("http://spire.umbc.edu/ontologies/SpireEcoConcepts.owl#")));
+        }
+
+        assertThat(listener.environments, hasItem("Galls"));
     }
 
 
@@ -233,6 +252,7 @@ public class StudyImporterForSPIRETest extends GraphDBTestCase {
         Set<String> countries = new HashSet<String>();
         Set<String> descriptions = new HashSet<String>();
         Set<String> titles = new HashSet<String>();
+        List<String> environments = new ArrayList<String>();
 
         @Override
         public void newLink(Map<String, String> properties) {
@@ -244,6 +264,13 @@ public class StudyImporterForSPIRETest extends GraphDBTestCase {
             }
             if (properties.containsKey(Study.TITLE)) {
                 titles.add(properties.get(Study.TITLE));
+            }
+
+            if (properties.containsKey(Study.TITLE)) {
+                titles.add(properties.get(Study.TITLE));
+            }
+            if (properties.containsKey(StudyImporterForSPIRE.OF_HABITAT)) {
+                environments.add(properties.get(StudyImporterForSPIRE.OF_HABITAT));
             }
             count++;
         }

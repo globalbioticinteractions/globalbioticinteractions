@@ -12,6 +12,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eol.globi.domain.Environment;
 import org.eol.globi.domain.Location;
+import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.service.EnvoService;
@@ -224,8 +225,10 @@ public class StudyImporterForSPIRE extends BaseStudyImporter {
                         try {
                             List<EnvoTerm> envoTerms = envoService.lookupBySPIREHabitat(habitat);
                             for (EnvoTerm envoTerm : envoTerms) {
-                                Environment environment = nodeFactory.getOrCreateEnvironment(envoTerm.getId(), envoTerm.getName());
-                                location.addEnvironment(environment);
+                                addEnvironment(location, envoTerm.getId(), envoTerm.getName());
+                            }
+                            if (envoTerms.size() == 0) {
+                                addEnvironment(location, PropertyAndValueDictionary.NO_MATCH, habitat);
                             }
                         } catch (EnvoServiceException e) {
                             LOG.warn("unexpected problem during lookup environment for habitat [" + habitat + "]", e);
@@ -243,6 +246,11 @@ public class StudyImporterForSPIRE extends BaseStudyImporter {
         } else {
             LOG.warn("skipping trophic link: missing study title for trophic link properties [" + properties + "]");
         }
+    }
+
+    private void addEnvironment(Location location, String id, String name) {
+        Environment environment = nodeFactory.getOrCreateEnvironment(id, name);
+        location.addEnvironment(environment);
     }
 
     private Specimen createSpecimen(String taxonName) throws NodeFactoryException {
@@ -274,6 +282,7 @@ public class StudyImporterForSPIRE extends BaseStudyImporter {
 
     private String getTrimmedObject(Statement next1) {
         String s = next1.getObject().toString().replaceAll("http://spire.umbc.edu/ethan/", "");
+        s = s.replace("http://spire.umbc.edu/ontologies/SpireEcoConcepts.owl#", "");
         return s.replaceAll("\\^\\^http://www.w3.org/2001/XMLSchema#string", "");
     }
 
