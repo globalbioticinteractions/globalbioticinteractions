@@ -17,18 +17,9 @@ import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLDecoder;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 public class EOLService extends BaseHttpClientService implements TaxonPropertyLookupService {
-
-    private final List<String> supportedProperties = new ArrayList<String>() {
-        {
-            add(Taxon.EXTERNAL_ID);
-            add(Taxon.PATH);
-        }
-    };
 
     @Override
     public void lookupPropertiesByName(String taxonName, Map<String, String> properties) throws TaxonPropertyLookupServiceException {
