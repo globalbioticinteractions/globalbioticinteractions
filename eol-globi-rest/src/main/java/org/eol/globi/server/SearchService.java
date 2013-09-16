@@ -69,7 +69,7 @@ public class SearchService {
     }
 
     private IndexHits<Node> query(String taxonName, String name, Index<Node> taxonIndex) {
-        String capitalizedValue = StringUtils.capitalize(taxonName);
+        String capitalizedValue = StringUtils.lowerCase(taxonName);
         List<Query> list = new ArrayList<Query>();
         addQueriesForProperty(capitalizedValue, name, list);
         BooleanQuery fuzzyAndWildcard = new BooleanQuery();

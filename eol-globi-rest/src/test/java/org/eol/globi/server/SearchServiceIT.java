@@ -26,8 +26,6 @@ public class SearchServiceIT extends ITBase {
         String uri = getURLPrefix() + "findCloseMatchesForTaxon/vos";
         String response = HttpClient.httpGet(uri);
         assertThat(response.startsWith("{" + COLUMN_PREFIX), is(true));
-        assertThat(response, containsString("Vulpes vulpes"));
-        assertThat(response, containsString("Vos"));
         assertThat(response, containsString("vos"));
     }
 
@@ -58,6 +56,22 @@ public class SearchServiceIT extends ITBase {
         String uri = getURLPrefix() + "findCloseMatchesForTaxon/Ariidae";
         String response = HttpClient.httpGet(uri);
         assertThat(response, containsString("海鲇科"));
+    }
+
+    @Test
+    public void findCloseMatchesLowerCase() throws IOException {
+        String uri = getURLPrefix() + "findCloseMatchesForTaxon/King%20mackerel";
+        String response = HttpClient.httpGet(uri);
+        assertThat(response, containsString("Scomberomorus cavalla"));
+        assertThat(response, containsString("mackerel"));
+    }
+
+    @Test
+    public void findCloseMatchesUpperCase() throws IOException {
+        String uri = getURLPrefix() + "findCloseMatchesForTaxon/King%20Mackerel";
+        String response = HttpClient.httpGet(uri);
+        assertThat(response, containsString("Scomberomorus cavalla"));
+        assertThat(response, containsString("mackerel"));
     }
 
 }
