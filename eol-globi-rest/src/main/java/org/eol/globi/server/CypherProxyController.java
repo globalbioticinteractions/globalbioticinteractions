@@ -43,7 +43,8 @@ public class CypherProxyController {
     @RequestMapping(value = "/interactionTypes", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
     public String getInteractionTypes() throws IOException {
-        return "[ \"" + INTERACTION_PREYS_ON + "\",\"" + INTERACTION_PREYED_UPON_BY + "\"]";
+        return "{ \"" + INTERACTION_PREYS_ON + "\": {\"source\":\"predator\",\"target\":\"prey\"}" +
+                ",\"" + INTERACTION_PREYED_UPON_BY + "\": {\"source\": \"prey\", \"target\":\"predator\"}}";
     }
 
     @RequestMapping(value = "/interaction", method = RequestMethod.GET)
@@ -93,7 +94,7 @@ public class CypherProxyController {
                 taxonNames.add(lucenePathQuery(name));
             }
         } else if (paramObject instanceof String) {
-            taxonNames.add(lucenePathQuery((String)paramObject));
+            taxonNames.add(lucenePathQuery((String) paramObject));
         }
 
         return StringUtils.join(taxonNames, " OR ");

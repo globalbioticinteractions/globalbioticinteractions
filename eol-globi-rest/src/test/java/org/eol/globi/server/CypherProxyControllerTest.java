@@ -1,6 +1,8 @@
 package org.eol.globi.server;
 
 import org.apache.commons.lang3.ArrayUtils;
+import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -227,5 +229,17 @@ public class CypherProxyControllerTest {
         String expectedQuery = "START loc = node:locations('*:*') , sourceTaxon = node:taxonpaths('path:\\\"Mammalia\\\"'), targetTaxon = node:taxonpaths('path:\\\"Reptilia\\\"') MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen-[interactionType:PREYS_UPON|PARASITE_OF|HAS_HOST|INTERACTS_WITH|HOST_OF|POLLINATES|PERCHING_ON|ATE]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon  , sourceSpecimen-[:COLLECTED_AT]->loc WHERE loc is not null AND loc.latitude < 18.34 AND loc.longitude > -66.5 AND loc.latitude > 18.14 AND loc.longitude < -66.48 RETURN sourceTaxon.externalId? as source_taxon_external_id,sourceTaxon.name as source_taxon_name,sourceTaxon.path? as source_taxon_path,type(interactionType) as interaction_type,targetTaxon.externalId? as target_taxon_external_id,targetTaxon.name as target_taxon_name,targetTaxon.path? as target_taxon_path";
         assertThat(query, is(expectedQuery));
     }
+
+    @Test
+    public void findSupportedInteractionTypes() throws IOException {
+        String interactionTypes = new CypherProxyController().getInteractionTypes();
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode jsonNode = mapper.readTree(interactionTypes);
+        for (JsonNode interactionType : jsonNode) {
+            assertThat(interactionType.has("source"), is(true));
+            assertThat(interactionType.has("target"), is(true));
+        }
+    }
+
 
 }
