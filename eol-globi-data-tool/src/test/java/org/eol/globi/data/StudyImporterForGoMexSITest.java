@@ -61,8 +61,6 @@ public class StudyImporterForGoMexSITest extends GraphDBTestCase {
             }
             count++;
 
-            assertThat(predator.getSampleLocation(), is(notNullValue()));
-
             Relationship collectedBy = predatorSpecimen.getSingleRelationship(RelTypes.COLLECTED, Direction.INCOMING);
             assertThat(collectedBy, is(notNullValue()));
             String title = (String) collectedBy.getStartNode().getProperty("title");
@@ -89,6 +87,7 @@ public class StudyImporterForGoMexSITest extends GraphDBTestCase {
         boolean detectedAtLeastOneLifeState = false;
         boolean detectedAtLeastOnePhysiologicalState = false;
         boolean detectedAtLeastOnePreyBodyPart = false;
+        boolean detectedAtLeastOneLocation = false;
 
         assertThat(taxa, is(notNullValue()));
 
@@ -99,12 +98,17 @@ public class StudyImporterForGoMexSITest extends GraphDBTestCase {
                 detectedAtLeastOneLifeState |= specimenNode.hasProperty(Specimen.LIFE_STAGE);
                 detectedAtLeastOnePhysiologicalState |= specimenNode.hasProperty(Specimen.PHYSIOLOGICAL_STATE);
                 detectedAtLeastOnePreyBodyPart |= specimenNode.hasProperty(Specimen.BODY_PART);
+
+                if (specimenNode.hasRelationship(Direction.INCOMING, RelTypes.COLLECTED)) {
+                    detectedAtLeastOneLocation = true;
+                }
             }
         }
 
         assertThat(detectedAtLeastOneLifeState, is(true));
         assertThat(detectedAtLeastOnePhysiologicalState, is(true));
         assertThat(detectedAtLeastOnePreyBodyPart, is(true));
+        assertThat(detectedAtLeastOneLocation, is(true));
     }
 
 
