@@ -4,12 +4,14 @@ import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.eol.globi.domain.BodyPart;
 import org.eol.globi.domain.Location;
-import org.eol.globi.domain.PhysiologicalState;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.Taxon;
+import org.eol.globi.service.BodyPartLookupService;
+import org.eol.globi.service.LifeStageLookupService;
+import org.eol.globi.service.LookupServiceException;
+import org.eol.globi.service.PhysiologicalStateLookupService;
 import org.neo4j.graphdb.Transaction;
 
 import java.io.IOException;
@@ -240,62 +242,14 @@ public class StudyImporterForGoMexSI extends BaseStudyImporter {
 
     private Specimen createSpecimen(Map<String, String> properties) throws NodeFactoryException, StudyImporterException {
         Specimen specimen = nodeFactory.createSpecimen(properties.get(Taxon.NAME));
-        specimen.setLifeStage(getLifeStage(properties.get(Specimen.LIFE_STAGE)));
-        specimen.setPhysiologicalState(getPhysiologicalStage(properties.get(Specimen.PHYSIOLOGICAL_STATE)));
-        specimen.setBodyPart(getBodyPart(properties.get(Specimen.BODY_PART)));
+        try {
+            specimen.setLifeStage(new LifeStageLookupService().lookup(properties.get(Specimen.LIFE_STAGE)));
+            specimen.setPhysiologicalState(new PhysiologicalStateLookupService().lookup(properties.get(Specimen.PHYSIOLOGICAL_STATE)));
+            specimen.setBodyPart(new BodyPartLookupService().lookup(properties.get(Specimen.BODY_PART)));
+        } catch (LookupServiceException ex) {
+            throw new StudyImporterException(ex);
+        }
         return specimen;
-    }
-
-    private BodyPart getBodyPart(String bodyPartName) throws StudyImporterException {
-        BodyPart bodyPart = null;
-        Map<String, BodyPart> bodyPartMap = new HashMap<String, BodyPart>() {
-            {
-                put("NA", BodyPart.UNKNOWN);
-                put("parts", BodyPart.UNKNOWN);
-                put("pieces", BodyPart.UNKNOWN);
-                put("fragments", BodyPart.UNKNOWN);
-                put("scales", BodyPart.SCALES);
-                put("scale(s)", BodyPart.SCALES);
-                put("bone", BodyPart.BONE);
-                put("tube", BodyPart.TUBE);
-                put("spine", BodyPart.SPINE);
-                put("pollen grain", BodyPart.POLLEN_GRAIN);
-                put("opercula", BodyPart.OPERCULUM);
-                put("caudal spines", BodyPart.CAUDAL_SPINE);
-                put("shell", BodyPart.SHELL);
-                put("needles", BodyPart.NEEDLE);
-                put("seed pod", BodyPart.SEED_POD);
-                put("kernels", BodyPart.KERNEL);
-                put("wood", BodyPart.WOOD);
-                put("feather", BodyPart.FEATHER);
-            }
-        };
-        if (bodyPartName != null && bodyPartName.trim().length() > 0) {
-            bodyPart = bodyPartMap.get(bodyPartName);
-            if (bodyPart == null) {
-                String msg = "failed to parse body part, found unsupported body part [" + bodyPartName + "]";
-                throw new StudyImporterException(msg);
-            }
-        }
-        return bodyPart;
-    }
-
-    private PhysiologicalState getPhysiologicalStage(String physiologicalStateName) throws StudyImporterException {
-        PhysiologicalState physiologicalState = null;
-        Map<String, PhysiologicalState> physiologicalStateMap = new HashMap<String, PhysiologicalState>() {
-            {
-                put("NA", PhysiologicalState.UNKNOWN);
-                put("remains", PhysiologicalState.REMAINS);
-                put("digestate", PhysiologicalState.DIGESTATE);
-            }
-        };
-        if (physiologicalStateName != null && physiologicalStateName.trim().length() > 0) {
-            physiologicalState = physiologicalStateMap.get(physiologicalStateName);
-            if (physiologicalState == null) {
-                throw new StudyImporterException("failed to parse physiological state, found unsupported stage [" + physiologicalStateName + "]");
-            }
-        }
-        return physiologicalState;
     }
 
     private Double getMandatoryDoubleValue(String locationResource, LabeledCSVParser parser, String label) throws StudyImporterException {
@@ -333,59 +287,7 @@ public class StudyImporterForGoMexSI extends BaseStudyImporter {
         }
     }
 
-    private LifeStage getLifeStage(String lifeStageString) throws StudyImporterException {
-        LifeStage lifeStage = null;
-        Map<String, LifeStage> lifeStageMap = new HashMap<String, LifeStage>() {
-            {
-                put("adult", LifeStage.ADULT);
-                put("adults", LifeStage.ADULT);
-                put("a", LifeStage.ADULT);
-                put("juvenile", LifeStage.JUVENILE);
-                put("juvenile?", LifeStage.JUVENILE);
-                put("j", LifeStage.JUVENILE);
-                put("nd", LifeStage.UNKNOWN);
-                put("na", LifeStage.UNKNOWN);
-                put("zoea", LifeStage.ZOEA);
-                put("larvae", LifeStage.LARVA);
-                put("larval", LifeStage.LARVA);
-                put("post larvae", LifeStage.POSTLARVA);
-                put("post-larvae", LifeStage.POSTLARVA);
-                put("l/pl", LifeStage.LARVA_OR_POSTLARVA);
-                put("larvae/post larvae", LifeStage.LARVA_OR_POSTLARVA);
-                put("megalopa", LifeStage.MEGALOPA);
-                put("cypris", LifeStage.CYPRIS);
-                put("cyp", LifeStage.CYPRIS);
-                put("egg", LifeStage.EGG);
-                put("eggs", LifeStage.EGG);
-                put("nauplii", LifeStage.NAUPLII);
-                put("copepodite", LifeStage.COPEPODITE);
-                put("copepodites", LifeStage.COPEPODITE);
-                put("copepedites", LifeStage.COPEPODITE);
-                put("glaucothoe", LifeStage.GLAUCOTHOE);
-                put("veligers", LifeStage.VELIGER);
-                put("newborn", LifeStage.NEWBORN);
-
-            }
-        };
-        if (lifeStageString != null && lifeStageString.trim().length() > 0) {
-            lifeStage = lifeStageMap.get(lifeStageString.toLowerCase());
-            if (lifeStage == null) {
-                String msg = "failed to parse life history stage, found unsupported stage [" + lifeStageString + "]";
-                throw new StudyImporterException(msg);
-            }
-        }
-        return lifeStage;
-    }
-
     private String getMandatoryValue(String datafile, LabeledCSVParser parser, String label) throws StudyImporterException {
-        String value = parser.getValueByLabel(label);
-        if (value == null) {
-            throw new StudyImporterException("missing mandatory column [" + label + "] in [" + datafile + "]:[" + parser.getLastLineNumber() + "]");
-        }
-        return "NA".equals(value) ? "" : value;
-    }
-
-    private String getOptionalValue(String datafile, LabeledCSVParser parser, String label) throws StudyImporterException {
         String value = parser.getValueByLabel(label);
         if (value == null) {
             throw new StudyImporterException("missing mandatory column [" + label + "] in [" + datafile + "]:[" + parser.getLastLineNumber() + "]");
