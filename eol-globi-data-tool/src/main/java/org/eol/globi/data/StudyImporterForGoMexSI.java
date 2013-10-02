@@ -22,6 +22,9 @@ public class StudyImporterForGoMexSI extends BaseStudyImporter {
 
     public static final String GOMEXSI_URL = "http://gomexsi.tamucc.edu";
     private static final Log LOG = LogFactory.getLog(StudyImporterForGoMexSI.class);
+    public static final String STOMACH_COUNT_TOTAL = "stomachCountTotal";
+    public static final String STOMACH_COUNT_WITH_FOOD = "stomachCountWithFood";
+    public static final String STOMACH_COUNT_WITHOUT_FOOD = "stomachCountWithoutFood";
 
     public StudyImporterForGoMexSI(ParserFactory parserFactory, NodeFactory nodeFactory) {
         super(parserFactory, nodeFactory);
@@ -185,9 +188,8 @@ public class StudyImporterForGoMexSI extends BaseStudyImporter {
                         }
 
                         List<Map<String, String>> preyList = predatorUIToPreyLists.get(predatorId);
-                        if (preyList == null) {
-                            LOG.warn("no prey for predator with id [" + predatorId + "]");
-                        } else {
+                        checkStomachDataConsistency(predatorId, predatorProperties, preyList);
+                        if (preyList != null) {
                             for (Map<String, String> preyProperties : preyList) {
                                 if (preyProperties != null) {
                                     try {
@@ -204,9 +206,36 @@ public class StudyImporterForGoMexSI extends BaseStudyImporter {
                     }
                 }
             }
-        } catch (IOException e) {
+        } catch (
+                IOException e
+                )
+
+        {
             throw new StudyImporterException("failed to open resource [" + locationResource + "]", e);
         }
+
+    }
+
+    private void checkStomachDataConsistency(String predatorId, Map<String, String> predatorProperties, List<Map<String, String>> preyList) {
+        Integer total = getValueOrNull(predatorProperties, STOMACH_COUNT_TOTAL);
+        Integer withoutFood = getValueOrNull(predatorProperties, STOMACH_COUNT_WITHOUT_FOOD);
+        Integer withFood = getValueOrNull(predatorProperties, STOMACH_COUNT_WITH_FOOD);
+        if (total != null && withoutFood != null) {
+            if (preyList == null || preyList.size() == 0) {
+                if (!total.equals(withoutFood)) {
+                    LOG.warn("no prey for predator with id [" + predatorId + "], but found [" + withFood + "] stomachs with food");
+                }
+            } else {
+                if (total.equals(withoutFood)) {
+                    LOG.warn("found prey for predator with id [" + predatorId + "], but found only stomachs without food");
+                }
+            }
+        }
+    }
+
+    private Integer getValueOrNull(Map<String, String> predatorProperties, String label) {
+        String stomachCountString = predatorProperties.get(label);
+        return "NA".equals(stomachCountString) ? null : Integer.parseInt(stomachCountString);
     }
 
     private Specimen createSpecimen(Map<String, String> properties) throws NodeFactoryException, StudyImporterException {
@@ -270,11 +299,11 @@ public class StudyImporterForGoMexSI extends BaseStudyImporter {
     }
 
     private Double getMandatoryDoubleValue(String locationResource, LabeledCSVParser parser, String label) throws StudyImporterException {
-        String lat = getMandatoryValue(locationResource, parser, label);
+        String value = getMandatoryValue(locationResource, parser, label);
         try {
-            return "NA".equals(lat) || lat == null || lat.trim().length() == 0 ? null : Double.parseDouble(lat);
+            return "NA".equals(value) || value == null || value.trim().length() == 0 ? null : Double.parseDouble(value);
         } catch (NumberFormatException ex) {
-            throw new StudyImporterException("failed to parse [" + label + "] value [" + lat + "] at line [" + parser.getLastLineNumber() + "]", ex);
+            throw new StudyImporterException("failed to parse [" + label + "] value [" + value + "] at line [" + parser.getLastLineNumber() + "]", ex);
         }
     }
 
@@ -284,6 +313,9 @@ public class StudyImporterForGoMexSI extends BaseStudyImporter {
             while (parser.getLine() != null) {
                 String refId = getMandatoryValue(datafile, parser, "REF_ID");
                 String specimenId = getMandatoryValue(datafile, parser, "PRED_ID");
+                String stomachCountWithoutFood = parser.getValueByLabel("TOT_WO_FD");
+                String stomachCountWithFood = parser.getValueByLabel("TOT_W_FD");
+                String stomachCountTotal = parser.getValueByLabel("TOT_PRED_STOM_EXAM");
                 String scientificName = getMandatoryValue(datafile, parser, scientificNameLabel);
                 String predatorUID = refId + specimenId;
                 Map<String, String> properties = new HashMap<String, String>();
@@ -291,6 +323,9 @@ public class StudyImporterForGoMexSI extends BaseStudyImporter {
                 properties.put(Specimen.LIFE_STAGE, parser.getValueByLabel("LIFE_HIST_STAGE"));
                 properties.put(Specimen.PHYSIOLOGICAL_STATE, parser.getValueByLabel("PHYSIOLOG_STATE"));
                 properties.put(Specimen.BODY_PART, parser.getValueByLabel("PREY_PARTS"));
+                properties.put(STOMACH_COUNT_TOTAL, stomachCountTotal);
+                properties.put(STOMACH_COUNT_WITH_FOOD, stomachCountWithFood);
+                properties.put(STOMACH_COUNT_WITHOUT_FOOD, stomachCountWithoutFood);
                 specimenListener.onSpecimen(predatorUID, properties);
             }
         } catch (IOException e) {
@@ -343,6 +378,14 @@ public class StudyImporterForGoMexSI extends BaseStudyImporter {
     }
 
     private String getMandatoryValue(String datafile, LabeledCSVParser parser, String label) throws StudyImporterException {
+        String value = parser.getValueByLabel(label);
+        if (value == null) {
+            throw new StudyImporterException("missing mandatory column [" + label + "] in [" + datafile + "]:[" + parser.getLastLineNumber() + "]");
+        }
+        return "NA".equals(value) ? "" : value;
+    }
+
+    private String getOptionalValue(String datafile, LabeledCSVParser parser, String label) throws StudyImporterException {
         String value = parser.getValueByLabel(label);
         if (value == null) {
             throw new StudyImporterException("missing mandatory column [" + label + "] in [" + datafile + "]:[" + parser.getLastLineNumber() + "]");
