@@ -35,7 +35,7 @@ public class StudyImporterForBlewett extends BaseStudyImporter {
                 , "Mar 2000- Feb 2002"
                 , "<a href=\"http://research.myfwc.com/engine/download_redirection_process.asp?file=06blewett_0718.pdf&objid=50963&dltype=publication\">Feeding Habits of Common Snook, Centropomus undecimalis, in Charlotte Harbor, Florida</a>."
                 , "2006"
-                , StudyImporterForGoMexSIBase.GOMEXSI_URL);
+                , StudyImporterForGoMexSI.GOMEXSI_URL);
 
         try {
             Map<String, Location> collectionLocationMap = new HashMap<String, Location>();

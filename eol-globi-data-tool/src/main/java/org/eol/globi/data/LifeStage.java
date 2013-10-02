@@ -31,5 +31,5 @@ public enum LifeStage {
     CYPRIS,
     NAUPLII,
     COPEPODITE,
-    ADULT
+    GLAUCOTHOE, VELIGER, NEWBORN, ADULT
 }

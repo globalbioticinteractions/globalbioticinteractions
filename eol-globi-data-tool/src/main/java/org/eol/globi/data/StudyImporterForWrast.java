@@ -79,7 +79,7 @@ public class StudyImporterForWrast extends BaseStudyImporter {
                 "Jenny L. Wrast",
                 "Department of Life Sciences Texas A&M University-Corpus Christi",
                 "July 2006- April 2007",
-                "Spatiotemporal And Habitat-Mediated Food Web Dynamics in Lavaca Bay, Texas.", "2008", StudyImporterForGoMexSIBase.GOMEXSI_URL);
+                "Spatiotemporal And Habitat-Mediated Food Web Dynamics in Lavaca Bay, Texas.", "2008", StudyImporterForGoMexSI.GOMEXSI_URL);
         try {
             LabeledCSVParser csvParser = parserFactory.createParser(LAVACA_BAY_DATA_SOURCE, CharsetConstant.UTF8);
             LengthParser parser = new LengthParserImpl(COLUMN_MAPPER.get(LENGTH_IN_MM));

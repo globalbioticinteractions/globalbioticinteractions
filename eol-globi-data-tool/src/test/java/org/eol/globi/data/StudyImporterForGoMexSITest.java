@@ -18,6 +18,7 @@ import static junit.framework.Assert.assertNotNull;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
+import static org.junit.internal.matchers.StringContains.containsString;
 import static org.junit.matchers.JUnitMatchers.hasItem;
 
 public class StudyImporterForGoMexSITest extends GraphDBTestCase {
