@@ -35,6 +35,7 @@ public class StudyImporterForGoMexSITest extends GraphDBTestCase {
 
         assertNotNull(study);
         assertThat(study.getTitle(), is("Divita et al 1983"));
+        assertThat(study.getExternalId(), is("GAME:2689"));
         assertThat(study.getContributor(), is("Regina Divita, Mischelle Creel, Peter Sheridan"));
         assertThat(study.getPublicationYear(), is("1983"));
         assertThat(study.getInstitution(), is(""));

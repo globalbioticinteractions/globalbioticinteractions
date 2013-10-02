@@ -117,6 +117,7 @@ public class StudyImporterForGoMexSI extends BaseStudyImporter {
     private void addNewStudy(Map<String, Study> referenceIdToStudy, String referenceResource, LabeledCSVParser parser, String refId, String lastName, String firstName) throws StudyImporterException {
         Study study;
         String refTag = getMandatoryValue(referenceResource, parser, "REF_TAG");
+        String externalId = getMandatoryValue(referenceResource, parser, "GAME_ID");
         String description = getMandatoryValue(referenceResource, parser, "TITLE_REF");
         String publicationYear = getMandatoryValue(referenceResource, parser, "YEAR_PUB");
         String universityName = getMandatoryValue(referenceResource, parser, "UNIV_NAME");
@@ -144,6 +145,7 @@ public class StudyImporterForGoMexSI extends BaseStudyImporter {
         Transaction transaction = nodeFactory.getGraphDb().beginTx();
         try {
             study.setPublicationYear(publicationYear);
+            study.setExternalId("GAME:" + externalId);
             transaction.success();
         } finally {
             transaction.finish();
