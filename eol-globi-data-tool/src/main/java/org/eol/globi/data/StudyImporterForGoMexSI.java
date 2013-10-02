@@ -8,6 +8,7 @@ import org.eol.globi.domain.Location;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.Taxon;
+import org.eol.globi.domain.TaxonomyProvider;
 import org.eol.globi.service.BodyPartLookupService;
 import org.eol.globi.service.LifeStageLookupService;
 import org.eol.globi.service.LookupServiceException;
@@ -150,7 +151,7 @@ public class StudyImporterForGoMexSI extends BaseStudyImporter {
         Transaction transaction = nodeFactory.getGraphDb().beginTx();
         try {
             study.setPublicationYear(publicationYear);
-            study.setExternalId("GAME:" + externalId);
+            study.setExternalId(TaxonomyProvider.ID_PREFIX_GAME + externalId);
             transaction.success();
         } finally {
             transaction.finish();

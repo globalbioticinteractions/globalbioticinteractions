@@ -11,4 +11,5 @@ public enum TaxonomyProvider {
     public static final String ID_PREFIX_WORMS = "urn:lsid:marinespecies.org:taxname:";
     public static final String ID_PREFIX_ITIS = "urn:lsid:itis.gov:itis_tsn:";
     public static final String ID_PREFIX_GULFBASE = "BioGoMx:";
+    public static final String ID_PREFIX_GAME = "GAME:";
 }

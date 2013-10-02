@@ -24,6 +24,7 @@ public class ExternalIdUtil {
         return new HashMap<String, String>() {{
             put(TaxonomyProvider.ID_PREFIX_EOL, "http://eol.org/pages/");
             put(TaxonomyProvider.ID_PREFIX_GULFBASE, "http://gulfbase.org/biogomx/biospecies.php?species=");
+            put(TaxonomyProvider.ID_PREFIX_GAME, "http://research.myfwc.com/game/Survey.aspx?id=");
         }};
     }
 }

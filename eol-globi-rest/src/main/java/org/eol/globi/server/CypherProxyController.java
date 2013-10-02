@@ -304,16 +304,26 @@ public class CypherProxyController {
     @ResponseBody
     public String findExternalLinkForTaxonWithName(HttpServletRequest request, @PathVariable("taxonName") String taxonName) throws IOException {
         String result = findExternalIdForTaxon(request, taxonName);
+        return getUrlFromExternalId(result);
+    }
 
-        String url = null;
+    private String getUrlFromExternalId(String result) {
+        String urlString = null;
         for (Map.Entry<String, String> stringStringEntry : ExternalIdUtil.getURLPrefixMap().entrySet()) {
-            url = getUrl(result, stringStringEntry.getKey(), stringStringEntry.getValue());
-            if (url != null) {
+            urlString = getUrl(result, stringStringEntry.getKey(), stringStringEntry.getValue());
+            if (urlString != null && urlString.startsWith("http")) {
                 break;
             }
 
         }
-        return buildJsonUrl(url);
+        return buildJsonUrl(urlString);
+    }
+
+    @RequestMapping(value = "/findExternalUrlForStudy/{studyTitle}", method = RequestMethod.GET, produces = "application/json")
+    @ResponseBody
+    public String findExternalLinkForStudyWithTitle(HttpServletRequest request, @PathVariable("studyTitle") String taxonName) throws IOException {
+        String result = findExternalIdForStudy(request, taxonName);
+        return getUrlFromExternalId(result);
     }
 
     @RequestMapping(value = "/findExternalIdForTaxon/{taxonName}", method = RequestMethod.GET)
@@ -327,8 +337,19 @@ public class CypherProxyController {
         }}).execute(request);
     }
 
+    @RequestMapping(value = "/findExternalIdForStudy/{studyTitle}", method = RequestMethod.GET)
+    @ResponseBody
+    public String findExternalIdForStudy(HttpServletRequest request, @PathVariable("studyTitle") final String studyTitle) throws IOException {
+        String query = "START study = node:studies(title={studyTitle}) " +
+                " RETURN study.externalId? as study";
+
+        return new CypherQueryExecutor(query, new HashMap<String, String>() {{
+            put("studyTitle", studyTitle);
+        }}).execute(request);
+    }
+
     private String buildJsonUrl(String url) {
-        return url == null ? "{}" : "{\"url\":\"" + url + "\"}";
+        return StringUtils.isBlank(url) ? "{}" : "{\"url\":\"" + url + "\"}";
     }
 
     @RequestMapping(value = "/findExternalUrlForExternalId/{externalId}", method = RequestMethod.GET, produces = "application/json")
