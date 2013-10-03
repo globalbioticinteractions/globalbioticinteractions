@@ -1,8 +1,4 @@
 REF_ID,FIELD_PRES_METH_TYPE,FIELD_PRES_CHEM,FIELD_CHEM_PCT,FIELD_PRES_PHYS_METH,FIELD_PRES_NOTES,LAB_PRES_METH_TYPE,LAB_PRES_CHEM,LAB_CHEM_PCT,LAB_PRES_PHYS_METH,LAB_PRES_NOTES,COLL_METHOD,GEAR_NOTES,COLL_NOTES,DIET_ANALYSIS_METHODS,DIET_NOTES
-16r,chemical,formalin,10,NA,In seawater.,NA,NA,NA,NA,NA,trawl,"20 foot unlined otter trawl, 1.5 inch stretched mesh.",Towing time was approximately 20 minutes at each station.,NA,NA
-24d,physical,NA,,freezer,NA,NA,NA,NA,NA,NA,trawl,"12.2 meter semiballon, rigged with tickler chain, 2.4 m by 1.0 m wooden doors.",Towed at 3 knots. All trawls made at night.,NA,NA
-17b,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,hook and line,NA,"It is assumed that fishes used for stomach content analysis were collected by the charter boat sports fishery in the Gulf of Mexico north of Tampa, but specifically around Panama City and Destin, FL. This is the location of the king mackerel fishery from May to October, which is the time period (spring and summer) that the author indicates the stomachs were collected.",NA,NA
-61b,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,hook and line,NA,Collected at 1971 Texas International Fishing Tournament,NA,NA
 41b,hook and line,NA,Collected at 1955 Alabama Deep Sea Fishing Rodeo,chemical,formalin,10,NA,NA,NA,NA,NA,NA,NA,NA,NA,,,,,,
 41b,shrimp trawl,otter trawl,Collected at 1955 Alabama Deep Sea Fishing Rodeo,chemical,formalin,10,NA,NA,NA,NA,NA,NA,NA,NA,NA,,,,,,
 40c,hook and line,NA,NA,preserved (method not specified),NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,,,,,,
@@ -57,64 +53,63 @@ REF_ID,FIELD_PRES_METH_TYPE,FIELD_PRES_CHEM,FIELD_CHEM_PCT,FIELD_PRES_PHYS_METH,
 15s,una red de apertura,con mallas de 505 um y diametro de boca de 75 cm,NA,chemical,formalin,4,NA,NA,NA,NA,NA,NA,NA,NA,NA,,,,,,
 12c,bag seine,15 by 1.8 m constructed of 9.6 mm stretch mesh netting,NA,chemical,formalin,20,NA,NA,chemical,isopropyl alcohol,75,NA,NA,NA,NA,,,,,,
 12c,cast net,1.5 m constructed of 12.7 mm stretch mesh netting,NA,chemical,formalin,20,NA,NA,chemical,isopropyl alcohol,75,NA,NA,NA,NA,,,,,,
-16r,chemical,formalin,10,NA,In seawater.,NA,NA,NA,NA,NA,trawl,"20 foot unlined otter trawl, 1.5 inch stretched mesh.",Towing time was approximately 20 minutes at each station.,NA,NA
-24d,physical,NA,NA,freezer,NA,NA,NA,NA,NA,NA,trawl,"12.2 meter semiballon, rigged with tickler chain, 2.4 m by 1.0 m wooden doors.",Towed at 3 knots. All trawls made at night.,NA,NA
-17b,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,hook and line,NA,"It is assumed that fishes used for stomach content analysis were collected by the charter boat sports fishery in the Gulf of Mexico north of Tampa, but specifically around Panama City and Destin, FL. This is the location of the king mackerel fishery from May to October, which is the time period (spring and summer) that the author indicates the stomachs were collected.",NA,NA
-61b,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,hook and line,NA,Collected at 1971 Texas International Fishing Tournament,NA,NA
+16r,trawl,"20 foot unlined otter trawl, 1.5 inch stretched mesh.",Towing time was approximately 20 minutes at each station.,chemical,formalin,10,NA,In seawater.,NA,NA,NA,NA,NA,NA,NA
+24d,trawl,"12.2 meter semiballon, rigged with tickler chain, 2.4 m by 1.0 m wooden doors.",Towed at 3 knots. All trawls made at night.,physical,NA,NA,freezer,NA,NA,NA,NA,NA,NA,NA,NA
+17b,hook and line,NA,"It is assumed that fishes used for stomach content analysis were collected by the charter boat sports fishery in the Gulf of Mexico north of Tampa, but specifically around Panama City and Destin, FL. This is the location of the king mackerel fishery from May to October, which is the time period (spring and summer) that the author indicates the stomachs were collected.",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+61b,hook and line,NA,Collected at 1971 Texas International Fishing Tournament,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
 16b,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
 16b,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
-47b,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,trout lines,NA,NA,NA,NA
-47b,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,rod and reel,NA,NA,NA,NA
-47b,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Stretched gill nets,"3, 4  and 5 in",NA,NA,NA
-47b,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Creel catch,Catch done by sports fisherman and commercial fisherman,NA,NA,NA
-46b,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Purse Seine,"Seine Net is 16,000 meshes long and 1,000 meshes wide.  Completed, the net is 1,125 ft (342.9 m) long and 85 ft (25.908 m) deep",NA,NA,NA
+47b,trout lines,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+47b,rod and reel,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+47b,Stretched gill nets,"3, 4  and 5 in",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+47b,Creel catch,Catch done by sports fisherman and commercial fisherman,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+46b,Purse Seine,"Seine Net is 16,000 meshes long and 1,000 meshes wide.  Completed, the net is 1,125 ft (342.9 m) long and 85 ft (25.908 m) deep",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
 43c,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
 43c,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
-22g,chemical,formaldehyde buffered with sodium borate (pH > 8.0),5,NA,NA,NA,NA,NA,NA,NA,multiple opening/closing net and environmental sensing system - MOCNESS,"MOCNESS was equipped with 1.0 by 1.4 m, 505 µm mesh nitex nets with 0.25 by 0.35 m, 67 µm mesh nets nested within. Larvae collected at 0600, 1200, 1800, 2400 h local time.",NA,NA,NA
-22g,chemical,formaldehyde buffered with sodium borate (pH > 8.0),5,NA,NA,NA,NA,NA,NA,NA,multiple opening/closing net and environmental sensing system - MOCNESS,"MOCNESS was equipped with 1.0 by 1.4 m, 505 µm mesh nitex nets with 0.25 by 0.35 m, 67 µm mesh nets nested within. Larvae collected at 0600, 1200, 1800, 2400 h local time.",NA,NA,NA
-22g,chemical,formaldehyde buffered with sodium borate (pH > 8.0),5,NA,NA,NA,NA,NA,NA,NA,multiple opening/closing net and environmental sensing system - MOCNESS,"MOCNESS was equipped with 1.0 by 1.4 m, 505 µm mesh nitex nets with 0.25 by 0.35 m, 67 µm mesh nets nested within. Larvae collected at 0600, 1200, 1800, 2400 h local time.",NA,NA,NA
-11m,chemical,formalin,10,NA,NA,NA,NA,NA,NA,NA,NA,Stomachs and gonads were placed in labeled cloth bags or cheesecloth.,NA,NA,NA
-11m,chemical,formalin,10,NA,NA,NA,NA,NA,NA,NA,recreational hook and line,Stomachs and gonads were placed in labeled cloth bags or cheesecloth.,NA,NA,NA
-11m,chemical,formalin,10,NA,NA,NA,NA,NA,NA,NA,commercial haul seines,Stomachs and gonads were placed in labeled cloth bags or cheesecloth.,NA,NA,NA
-11m,chemical,formalin,10,NA,NA,NA,NA,NA,NA,NA,recreational hook and line,Stomachs and gonads were placed in labeled cloth bags or cheesecloth.,NA,NA,NA
-11m,chemical,formalin,10,NA,NA,NA,NA,NA,NA,NA,commercial haul seines,Stomachs and gonads were placed in labeled cloth bags or cheesecloth.,NA,NA,NA
-7m,chemical,formalin,10,NA,NA,NA,NA,NA,NA,NA,collected from local charter boats in port,Stomachs and gonads were placed in labeled cloth bags or cheesecloth.,NA,NA,NA
-7m,chemical,formalin,10,NA,NA,NA,NA,NA,NA,NA,collected from local charter boats in port,Stomachs and gonads were placed in labeled cloth bags or cheesecloth.,NA,NA,NA
+22g,multiple opening/closing net and environmental sensing system - MOCNESS,"MOCNESS was equipped with 1.0 by 1.4 m, 505 µm mesh nitex nets with 0.25 by 0.35 m, 67 µm mesh nets nested within. Larvae collected at 0600, 1200, 1800, 2400 h local time.",NA,chemical,formaldehyde buffered with sodium borate (pH > 8.0),5,NA,NA,NA,NA,NA,NA,NA,NA,NA
+22g,multiple opening/closing net and environmental sensing system - MOCNESS,"MOCNESS was equipped with 1.0 by 1.4 m, 505 µm mesh nitex nets with 0.25 by 0.35 m, 67 µm mesh nets nested within. Larvae collected at 0600, 1200, 1800, 2400 h local time.",NA,chemical,formaldehyde buffered with sodium borate (pH > 8.0),5,NA,NA,NA,NA,NA,NA,NA,NA,NA
+22g,multiple opening/closing net and environmental sensing system - MOCNESS,"MOCNESS was equipped with 1.0 by 1.4 m, 505 µm mesh nitex nets with 0.25 by 0.35 m, 67 µm mesh nets nested within. Larvae collected at 0600, 1200, 1800, 2400 h local time.",NA,chemical,formaldehyde buffered with sodium borate (pH > 8.0),5,NA,NA,NA,NA,NA,NA,NA,NA,NA
+11m,NA,Stomachs and gonads were placed in labeled cloth bags or cheesecloth.,NA,chemical,formalin,10,NA,NA,NA,NA,NA,NA,NA,NA,NA
+11m,recreational hook and line,Stomachs and gonads were placed in labeled cloth bags or cheesecloth.,NA,chemical,formalin,10,NA,NA,NA,NA,NA,NA,NA,NA,NA
+11m,commercial haul seines,Stomachs and gonads were placed in labeled cloth bags or cheesecloth.,NA,chemical,formalin,10,NA,NA,NA,NA,NA,NA,NA,NA,NA
+11m,recreational hook and line,Stomachs and gonads were placed in labeled cloth bags or cheesecloth.,NA,chemical,formalin,10,NA,NA,NA,NA,NA,NA,NA,NA,NA
+11m,commercial haul seines,Stomachs and gonads were placed in labeled cloth bags or cheesecloth.,NA,chemical,formalin,10,NA,NA,NA,NA,NA,NA,NA,NA,NA
+7m,collected from local charter boats in port,Stomachs and gonads were placed in labeled cloth bags or cheesecloth.,NA,chemical,formalin,10,NA,NA,NA,NA,NA,NA,NA,NA,NA
+7m,collected from local charter boats in port,Stomachs and gonads were placed in labeled cloth bags or cheesecloth.,NA,chemical,formalin,10,NA,NA,NA,NA,NA,NA,NA,NA,NA
 48s,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
-61s,chemical,formalin,5,NA,buffered,NA,NA,NA,NA,NA,multiple opening/closing net and environmental sensing system - MOCNESS,"MOCNESS was equipped with 1.0 by 1.4 m, 505 µm mesh nitex nets with 0.25 by 0.35 m, 67 µmmesh nets nested within. Larvae collected at 0600, 1200, 1800, 2400 h local time.",NA,NA,NA
-61s,chemical,formalin,5,NA,buffered,NA,NA,NA,NA,NA,multiple opening/closing net and environmental sensing system - MOCNESS,"MOCNESS was equipped with 1.0 by 1.4 m, 505 µm mesh nitex nets with 0.25 by 0.35 m, 67 µmmesh nets nested within. Larvae collected at 0600, 1200, 1800, 2400 h local time.",NA,NA,NA
-28f,physical,NA,NA,freezer,NA,NA,NA,NA,NA,NA,spear,NA,NA,NA,NA
-28f,chemical,formalin,NA,NA,NA,NA,NA,NA,NA,NA,spear,NA,NA,NA,NA
-28f,physical,NA,NA,freezer,NA,NA,NA,NA,NA,NA,slurp gun,NA,NA,NA,NA
-28f,chemical,formalin,NA,NA,NA,NA,NA,NA,NA,NA,slurp gun,NA,NA,NA,NA
-28f,physical,NA,NA,freezer,NA,NA,NA,NA,NA,NA,hook and line,NA,NA,NA,NA
-28f,chemical,formalin,NA,NA,NA,NA,NA,NA,NA,NA,hook and line,NA,NA,NA,NA
-28f,physical,NA,NA,NA,NA,NA,NA,NA,NA,NA,trapping blennies in barnacle shells,NA,NA,NA,NA
-28f,chemical,formalin,NA,NA,NA,NA,NA,NA,NA,NA,trapping blennies in barnacle shells,NA,NA,NA,NA
-36c,chemical,formalin,5,NA,NA,NA,NA,NA,NA,NA,multiple opening/closing net and environmental sensing system - MOCNESS,"Three stations were occupied, one each at the 18, 91, and 183m isobaths along three transects (off Cape San Blas, FL; off the Mississippi Delta, LA; and off Galveston Bay, TX).",NA,NA,NA
-36c,chemical,ethanol,70,NA,NA,NA,NA,NA,NA,NA,multiple opening/closing net and environmental sensing system - MOCNESS,"Three stations were occupied, one each at the 18, 91, and 183m isobaths along three transects (off Cape San Blas, FL; off the Mississippi Delta, LA; and off Galveston Bay, TX).",NA,NA,NA
-36c,chemical,formalin,5,NA,NA,NA,NA,NA,NA,NA,multiple opening/closing net and environmental sensing system - MOCNESS,"Three stations were occupied, one each at the 18, 91, and 183m isobaths along three transects (off Cape San Blas, FL; off the Mississippi Delta, LA; and off Galveston Bay, TX).",NA,NA,NA
-36c,chemical,ethanol,70,NA,NA,NA,NA,NA,NA,NA,multiple opening/closing net and environmental sensing system - MOCNESS,"Three stations were occupied, one each at the 18, 91, and 183m isobaths along three transects (off Cape San Blas, FL; off the Mississippi Delta, LA; and off Galveston Bay, TX).",NA,NA,NA
-36c,chemical,formalin,5,NA,NA,NA,NA,NA,NA,NA,multiple opening/closing net and environmental sensing system - MOCNESS,"Three stations were occupied, one each at the 18, 91, and 183m isobaths along three transects (off Cape San Blas, FL; off the Mississippi Delta, LA; and off Galveston Bay, TX).",NA,NA,NA
-36c,chemical,ethanol,70,NA,NA,NA,NA,NA,NA,NA,multiple opening/closing net and environmental sensing system - MOCNESS,"Three stations were occupied, one each at the 18, 91, and 183m isobaths along three transects (off Cape San Blas, FL; off the Mississippi Delta, LA; and off Galveston Bay, TX).",NA,NA,NA
-28c,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,stomach-content analysis were performed using drum that were caught by local fishermen and those turned in at rodeos along the Mississippi Gulf coast.,NA,NA,NA
-16m,chemical,formalin,10,NA,NA,NA,NA,NA,NA,NA,gill net,"3 boats used - 16ft airdrive powered by a 250hp Lycoming aircraft engine for extremely shallow areas, 16ft fiberglass boat powered by a 60hp outboard motor for deeper areas, 16ft flat-bottom skiff powered by 50hp outboard motor.  5000 ft of gill nets ranged  in length between 100 and 300 feet with mesh sizes of 4, 5, and 7 inch stretch.",NA,NA,NA
-16m,chemical,formalin,10,NA,NA,NA,NA,NA,NA,NA,trammel nets,2 occasions with 600 ft trammel net.,NA,NA,NA
-17r,NA,NA,NA,NA,Stomaches were preserved for later identification,NA,NA,NA,NA,NA,Trammel nets,200 yard trammel net used,NA,NA,NA
-17r,NA,NA,NA,NA,Stomaches were preserved for later identification,NA,NA,NA,NA,NA,Trawl,"Because of size selectivity of the trammel net (fish 6.0 inches or larger in length), additional sampling of smaller fish and crustaceans were collected by a 16' otter trawl and a 6' bobbinet were used. ",NA,NA,NA
+61s,multiple opening/closing net and environmental sensing system - MOCNESS,"MOCNESS was equipped with 1.0 by 1.4 m, 505 µm mesh nitex nets with 0.25 by 0.35 m, 67 µmmesh nets nested within. Larvae collected at 0600, 1200, 1800, 2400 h local time.",NA,chemical,formalin,5,NA,buffered,NA,NA,NA,NA,NA,NA,NA
+61s,multiple opening/closing net and environmental sensing system - MOCNESS,"MOCNESS was equipped with 1.0 by 1.4 m, 505 µm mesh nitex nets with 0.25 by 0.35 m, 67 µmmesh nets nested within. Larvae collected at 0600, 1200, 1800, 2400 h local time.",NA,chemical,formalin,5,NA,buffered,NA,NA,NA,NA,NA,NA,NA
+28f,spear,NA,NA,physical,NA,NA,freezer,NA,NA,NA,NA,NA,NA,NA,NA
+28f,spear,NA,NA,chemical,formalin,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+28f,slurp gun,NA,NA,physical,NA,NA,freezer,NA,NA,NA,NA,NA,NA,NA,NA
+28f,slurp gun,NA,NA,chemical,formalin,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+28f,hook and line,NA,NA,physical,NA,NA,freezer,NA,NA,NA,NA,NA,NA,NA,NA
+28f,hook and line,NA,NA,chemical,formalin,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+28f,trapping blennies in barnacle shells,NA,NA,physical,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+28f,trapping blennies in barnacle shells,NA,NA,chemical,formalin,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+36c,multiple opening/closing net and environmental sensing system - MOCNESS,"Three stations were occupied, one each at the 18, 91, and 183m isobaths along three transects (off Cape San Blas, FL; off the Mississippi Delta, LA; and off Galveston Bay, TX).",NA,chemical,formalin,5,NA,NA,NA,NA,NA,NA,NA,NA,NA
+36c,multiple opening/closing net and environmental sensing system - MOCNESS,"Three stations were occupied, one each at the 18, 91, and 183m isobaths along three transects (off Cape San Blas, FL; off the Mississippi Delta, LA; and off Galveston Bay, TX).",NA,chemical,ethanol,70,NA,NA,NA,NA,NA,NA,NA,NA,NA
+36c,multiple opening/closing net and environmental sensing system - MOCNESS,"Three stations were occupied, one each at the 18, 91, and 183m isobaths along three transects (off Cape San Blas, FL; off the Mississippi Delta, LA; and off Galveston Bay, TX).",NA,chemical,formalin,5,NA,NA,NA,NA,NA,NA,NA,NA,NA
+36c,multiple opening/closing net and environmental sensing system - MOCNESS,"Three stations were occupied, one each at the 18, 91, and 183m isobaths along three transects (off Cape San Blas, FL; off the Mississippi Delta, LA; and off Galveston Bay, TX).",NA,chemical,ethanol,70,NA,NA,NA,NA,NA,NA,NA,NA,NA
+36c,multiple opening/closing net and environmental sensing system - MOCNESS,"Three stations were occupied, one each at the 18, 91, and 183m isobaths along three transects (off Cape San Blas, FL; off the Mississippi Delta, LA; and off Galveston Bay, TX).",NA,chemical,formalin,5,NA,NA,NA,NA,NA,NA,NA,NA,NA
+36c,multiple opening/closing net and environmental sensing system - MOCNESS,"Three stations were occupied, one each at the 18, 91, and 183m isobaths along three transects (off Cape San Blas, FL; off the Mississippi Delta, LA; and off Galveston Bay, TX).",NA,chemical,ethanol,70,NA,NA,NA,NA,NA,NA,NA,NA,NA
+28c,NA,stomach-content analysis were performed using drum that were caught by local fishermen and those turned in at rodeos along the Mississippi Gulf coast.,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+16m,gill net,"3 boats used - 16ft airdrive powered by a 250hp Lycoming aircraft engine for extremely shallow areas, 16ft fiberglass boat powered by a 60hp outboard motor for deeper areas, 16ft flat-bottom skiff powered by 50hp outboard motor.  5000 ft of gill nets ranged  in length between 100 and 300 feet with mesh sizes of 4, 5, and 7 inch stretch.",NA,chemical,formalin,10,NA,NA,NA,NA,NA,NA,NA,NA,NA
+16m,trammel nets,2 occasions with 600 ft trammel net.,NA,chemical,formalin,10,NA,NA,NA,NA,NA,NA,NA,NA,NA
+17r,Trammel nets,200 yard trammel net used,NA,NA,NA,NA,NA,Stomaches were preserved for later identification,NA,NA,NA,NA,NA,NA,NA
+17r,Trawl,"Because of size selectivity of the trammel net (fish 6.0 inches or larger in length), additional sampling of smaller fish and crustaceans were collected by a 16' otter trawl and a 6' bobbinet were used. ",NA,NA,NA,NA,NA,Stomaches were preserved for later identification,NA,NA,NA,NA,NA,NA,NA
 18c,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
 18c,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
 18c,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
 18c,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
 18c,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
-30p,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Trawl,10 foot and 12 foot shrimp crawl,NA,NA,NA
-30p,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Bag Seine,"20 foot, 60 foot and 100 foot bag seine",NA,NA,NA
-30p,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Bar Seine,6 foot,NA,NA,NA
-30p,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Trammel nets,1200 foot trammel net,NA,NA,NA
-30p,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Gill net,1500 foot gill net,NA,NA,NA
-30p,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Beach seine ,900 foot beach seine,NA,NA,NA
-30p,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Rod and reel,NA,NA,NA,NA
-30p,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Plankton net,NA,NA,NA,NA
-20d,physical,NA,NA,ice,NA,NA,NA,NA,NA,NA,trawl,"Fishes were collected from the Clear Lake area and its tributaries with a 3m otter  trawl. A 6mm bar mesh cover was used over the cod end or the trawl during some of the sampling to capture post larval fish, many of which were less than 15mm in length. The larger bar of mesh of the trawl  19mm and 13 mm in the body and length . The larger bar of mesh of trawl, 19 mm and 13mm in the body and cod end, respectively, permitted many of the smaller fish to escape when the cover was not used.",NA,NA,NA
-20d,physical,NA,NA,ice,NA,NA,NA,NA,NA,NA,trawl,"Fishes were collected from the Clear Lake area and its tributaries with a 3m otter  trawl. A 6mm bar mesh cover was used over the cod end or the trawl during some of the sampling to capture post larval fish, many of which were less than 15mm in length. The larger bar of mesh of the trawl  19mm and 13 mm in the body and length . The larger bar of mesh of trawl, 19 mm and 13mm in the body and cod end, respectively, permitted many of the smaller fish to escape when the cover was not used.",NA,NA,NA
-20d,physical,NA,NA,ice,NA,NA,NA,NA,NA,NA,trawl,"Fishes were collected from the Clear Lake area and its tributaries with a 3m otter  trawl. A 6mm bar mesh cover was used over the cod end or the trawl during some of the sampling to capture post larval fish, many of which were less than 15mm in length. The larger bar of mesh of the trawl  19mm and 13 mm in the body and length . The larger bar of mesh of trawl, 19 mm and 13mm in the body and cod end, respectively, permitted many of the smaller fish to escape when the cover was not used.",NA,NA,NA
+30p,Trawl,10 foot and 12 foot shrimp crawl,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+30p,Bag Seine,"20 foot, 60 foot and 100 foot bag seine",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+30p,Bar Seine,6 foot,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+30p,Trammel nets,1200 foot trammel net,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+30p,Gill net,1500 foot gill net,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+30p,Beach seine ,900 foot beach seine,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+30p,Rod and reel,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+30p,Plankton net,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+20d,trawl,"Fishes were collected from the Clear Lake area and its tributaries with a 3m otter  trawl. A 6mm bar mesh cover was used over the cod end or the trawl during some of the sampling to capture post larval fish, many of which were less than 15mm in length. The larger bar of mesh of the trawl  19mm and 13 mm in the body and length . The larger bar of mesh of trawl, 19 mm and 13mm in the body and cod end, respectively, permitted many of the smaller fish to escape when the cover was not used.",NA,physical,NA,NA,ice,NA,NA,NA,NA,NA,NA,NA,NA
+20d,trawl,"Fishes were collected from the Clear Lake area and its tributaries with a 3m otter  trawl. A 6mm bar mesh cover was used over the cod end or the trawl during some of the sampling to capture post larval fish, many of which were less than 15mm in length. The larger bar of mesh of the trawl  19mm and 13 mm in the body and length . The larger bar of mesh of trawl, 19 mm and 13mm in the body and cod end, respectively, permitted many of the smaller fish to escape when the cover was not used.",NA,physical,NA,NA,ice,NA,NA,NA,NA,NA,NA,NA,NA
