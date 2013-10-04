@@ -240,13 +240,11 @@ public class EOLServiceIT {
         HashMap<String, String> properties = new HashMap<String, String>();
         new EOLService().lookupPropertiesByName("Rattus rattus", properties);
         assertThat(properties.get(Taxon.EXTERNAL_ID), Is.is("EOL:328447"));
-        assertThat(properties.get(Taxon.PATH), Is.is("Animalia" + CharsetConstant.SEPARATOR +
-                "Chordata" + CharsetConstant.SEPARATOR +
-                "Mammalia" + CharsetConstant.SEPARATOR +
-                "Rodentia" + CharsetConstant.SEPARATOR +
-                "Muridae" + CharsetConstant.SEPARATOR +
-                "Rattus" + CharsetConstant.SEPARATOR +
-                "Rattus rattus"));
+        assertThat(properties.get(Taxon.PATH), containsString("Animalia" + CharsetConstant.SEPARATOR));
+        assertThat(properties.get(Taxon.PATH), containsString("Chordata" + CharsetConstant.SEPARATOR));
+        assertThat(properties.get(Taxon.PATH), containsString("Mammalia" + CharsetConstant.SEPARATOR));
+        assertThat(properties.get(Taxon.PATH), containsString("Rodentia" + CharsetConstant.SEPARATOR));
+        assertThat(properties.get(Taxon.PATH), containsString("Rattus" + CharsetConstant.SEPARATOR + "Rattus rattus"));
         String commonNames = properties.get(Taxon.COMMON_NAMES);
         String expected = "Huisrot @af" + CharsetConstant.SEPARATOR + "جرذ المنزل @ar" + CharsetConstant.SEPARATOR + "Hausratte @de" + CharsetConstant.SEPARATOR + "black rat @en" + CharsetConstant.SEPARATOR + "Rata negra @es" + CharsetConstant.SEPARATOR + "rat noir @fr" + CharsetConstant.SEPARATOR + "Чёрная крыса @ru" + CharsetConstant.SEPARATOR + "家鼠 @zh" + CharsetConstant.SEPARATOR + "屋顶鼠 @zh-Hans" + CharsetConstant.SEPARATOR + "";
         String[] names = expected.split(CharsetConstant.SEPARATOR);

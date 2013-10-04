@@ -127,7 +127,7 @@ public class EOLService extends BaseHttpClientService implements TaxonPropertyLo
     private void addRanks(String firstConceptId, StringBuilder ranks) throws URISyntaxException, TaxonPropertyLookupServiceException, IOException {
         URI uri;
         String response;
-        uri = new URI("http", null, "eol.org", 80, "/api/hierarchy_entries/1.0/" + firstConceptId, ".json?common_names=false&synonyms=false&format=json", null);
+        uri = new URI("http", null, "eol.org", 80, "/api/hierarchy_entries/1.0/" + firstConceptId + ".json", "?common_names=false&synonyms=false&format=json", null);
         response = getResponse(uri);
         if (response != null) {
             parseResponse(ranks, response);
