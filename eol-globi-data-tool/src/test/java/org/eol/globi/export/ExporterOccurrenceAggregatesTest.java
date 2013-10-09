@@ -9,6 +9,7 @@ import org.eol.globi.domain.PhysiologicalState;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
+import org.eol.globi.service.EnvoTerm;
 import org.hamcrest.core.Is;
 import org.junit.Test;
 import org.neo4j.graphdb.Relationship;
@@ -87,9 +88,9 @@ public class ExporterOccurrenceAggregatesTest extends GraphDBTestCase {
     private Specimen collectSpecimen(Study myStudy, String scientificName, String externalId) throws NodeFactoryException {
         Specimen specimen = nodeFactory.createSpecimen(scientificName, externalId);
         specimen.setStomachVolumeInMilliLiter(666.0);
-        specimen.setLifeStage(LifeStage.JUVENILE);
-        specimen.setPhysiologicalState(PhysiologicalState.DIGESTATE);
-        specimen.setBodyPart(BodyPart.BONE);
+        specimen.setLifeStage(new EnvoTerm("GLOBI:JUVENILE", "JUVENILE"));
+        specimen.setPhysiologicalState(new EnvoTerm("GLOBI:DIGESTATE", "DIGESTATE"));
+        specimen.setBodyPart(new EnvoTerm("GLOBI:BONE", "BONE"));
         Relationship collected = myStudy.collected(specimen);
         Transaction transaction = myStudy.getUnderlyingNode().getGraphDatabase().beginTx();
         try {

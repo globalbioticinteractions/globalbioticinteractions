@@ -205,7 +205,7 @@ public class StudyImporterForSPIRETest extends GraphDBTestCase {
         studyImporterForSPIRE.setEnvoService(new EnvoService() {
 
             @Override
-            public List<EnvoTerm> lookupBySPIREHabitat(String name) throws EnvoServiceException {
+            public List<EnvoTerm> lookupTermByName(String name) throws EnvoServiceException {
                 ArrayList<EnvoTerm> envoTerms = new ArrayList<EnvoTerm>();
                 if ("some spire habitat".equals(name)) {
                     envoTerms.add(new EnvoTerm("envo externalid", "envo name"));

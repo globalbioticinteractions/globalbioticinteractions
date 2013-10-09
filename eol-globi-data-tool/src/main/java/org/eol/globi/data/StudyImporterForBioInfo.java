@@ -7,11 +7,15 @@ import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.RelType;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
+import org.eol.globi.service.EnvoService;
+import org.eol.globi.service.EnvoServiceException;
+import org.eol.globi.service.EnvoTerm;
+import org.eol.globi.service.UberonLookupService;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 public class StudyImporterForBioInfo extends BaseStudyImporter implements StudyImporter {
     private static final Log LOG = LogFactory.getLog(StudyImporterForBioInfo.class);
@@ -19,20 +23,9 @@ public class StudyImporterForBioInfo extends BaseStudyImporter implements StudyI
     public static final String TAXA_DATA_FILE = "bioinfo.org.uk/Taxa.txt.gz";
     public static final String RELATION_TYPE_DATA_FILE = "bioinfo.org.uk/TrophicRelations.txt.gz";
     public static final String RELATIONS_DATA_FILE = "bioinfo.org.uk/Relations.txt.gz";
-    public static final Map<String, LifeStage> LIFE_STAGE_MAP = new HashMap<String, LifeStage>() {{
-        put("mycelium", LifeStage.MYCELIUM);
-        put("larva", LifeStage.LARVA);
-        put("aecium", LifeStage.AECIUM);
-        put("pycnium", LifeStage.PYCNIUM);
-        put("sporangium", LifeStage.SPORANGIUM);
-        put("uredium", LifeStage.UREDIUM);
-        put("caterpillar", LifeStage.CATERPILLAR);
-        put("adult", LifeStage.ADULT);
-        put("egg", LifeStage.EGG);
-        put("nymph", LifeStage.NYMPH);
-        put("telium", LifeStage.TELIUM);
-        put("anamorph", LifeStage.ANAMORPH);
-    }};
+
+    public EnvoService termLookupService = new UberonLookupService();
+
     public static final String BIOINFO_URL = "http://bioinfo.org.uk";
 
     public StudyImporterForBioInfo(ParserFactory parserFactory, NodeFactory nodeFactory) {
@@ -155,7 +148,7 @@ public class StudyImporterForBioInfo extends BaseStudyImporter implements StudyI
     }
 
     private void addLifeStage(LabeledCSVParser parser, Specimen donorSpecimen, String stageColumnName) throws StudyImporterException {
-        LifeStage lifeStage = null;
+        List<EnvoTerm> lifeStage = null;
         String donorLifeStage = parser.getValueByLabel(stageColumnName);
         if (donorLifeStage != null && donorLifeStage.trim().length() > 0) {
             lifeStage = parseLifeStage(donorLifeStage);
@@ -166,16 +159,18 @@ public class StudyImporterForBioInfo extends BaseStudyImporter implements StudyI
         donorSpecimen.setLifeStage(lifeStage);
     }
 
-    private LifeStage parseLifeStage(String lifeStageString) {
-        LifeStage lifeStage = null;
-        Set<Map.Entry<String,LifeStage>> entries = LIFE_STAGE_MAP.entrySet();
-        for (Map.Entry<String, LifeStage> entry : entries) {
-            if (lifeStageString.contains(entry.getKey())) {
-                lifeStage = entry.getValue();
-                break;
+    private List<EnvoTerm> parseLifeStage(String lifeStageString) throws StudyImporterException {
+        try {
+            List<EnvoTerm> envoTerms = termLookupService.lookupTermByName(lifeStageString);
+            if (envoTerms.size() > 0) {
+            } else {
+                LOG.warn("failed to map life stage [" + lifeStageString + "]");
             }
+            return envoTerms;
+        } catch (EnvoServiceException e) {
+            throw new StudyImporterException("failed to lookup lifestage [" + lifeStageString + "]");
         }
-        return lifeStage == null ? LifeStage.UNCLASSIFIED : lifeStage;
+
     }
 
     private Specimen createSpecimen(LabeledCSVParser labeledCSVParser, Map<Long, String> taxaMap, String taxonIdString) throws StudyImporterException {

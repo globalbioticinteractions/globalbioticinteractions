@@ -7,6 +7,9 @@ import org.apache.commons.logging.LogFactory;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
+import org.eol.globi.service.EnvoService;
+import org.eol.globi.service.EnvoServiceException;
+import org.eol.globi.service.UberonLookupService;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormat;
@@ -22,6 +25,8 @@ import java.util.Map;
 public class StudyImporterForBlewett extends BaseStudyImporter {
     private static final Log LOG = LogFactory.getLog(StudyImporterForBlewett.class);
     public static final String COLLECTION_NO = "Collection #";
+
+    private EnvoService termLookupService = new UberonLookupService();
 
     public StudyImporterForBlewett(ParserFactory parserFactory, NodeFactory nodeFactory) {
         super(parserFactory, nodeFactory);
@@ -46,8 +51,9 @@ public class StudyImporterForBlewett extends BaseStudyImporter {
             throw new StudyImporterException("failed to read resource", e);
         } catch (NodeFactoryException e) {
             throw new StudyImporterException("failed to create taxon", e);
+        } catch (EnvoServiceException e) {
+            throw new StudyImporterException("failed to map terms", e);
         }
-
 
         return study;
     }
@@ -109,7 +115,7 @@ public class StudyImporterForBlewett extends BaseStudyImporter {
         return fmtDateTime.print(dateTime);
     }
 
-    private void parsePredatorPreyInteraction(Study study, Map<String, Location> locationMap, Map<String, Date> collectionTimeMap) throws IOException, NodeFactoryException {
+    private void parsePredatorPreyInteraction(Study study, Map<String, Location> locationMap, Map<String, Date> collectionTimeMap) throws IOException, NodeFactoryException, EnvoServiceException {
         LabeledCSVParser parser = parserFactory.createParser("blewett/SnookDietData2000_02_Charlotte_Harbor_FL_Blewett_numeric_abundance.csv", CharsetConstant.UTF8);
         String[] header = parser.getLabels();
 
@@ -123,9 +129,10 @@ public class StudyImporterForBlewett extends BaseStudyImporter {
         }
     }
 
-    private Specimen addPredator(Study study, Map<String, Location> locationMap, LabeledCSVParser parser, String[] line, Map<String, Date> collectionTimeMap) throws NodeFactoryException {
+    private Specimen addPredator(Study study, Map<String, Location> locationMap, LabeledCSVParser parser, String[] line, Map<String, Date> collectionTimeMap) throws NodeFactoryException, EnvoServiceException {
         Specimen predatorSpecimen = nodeFactory.createSpecimen("Centropomus undecimalis");
-        predatorSpecimen.setLifeStage(LifeStage.ADULT);
+
+        predatorSpecimen.setLifeStage(termLookupService.lookupTermByName("adult"));
         Relationship collectedRel = study.collected(predatorSpecimen);
         try {
             String length = parser.getValueByLabel("Standard Length");

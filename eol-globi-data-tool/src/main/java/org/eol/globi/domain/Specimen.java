@@ -1,10 +1,13 @@
 package org.eol.globi.domain;
 
 import org.eol.globi.data.LifeStage;
+import org.eol.globi.service.EnvoTerm;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.Transaction;
+
+import java.util.List;
 
 public class Specimen extends NodeBacked {
 
@@ -108,21 +111,33 @@ public class Specimen extends NodeBacked {
         }
     }
 
-    public void setLifeStage(LifeStage lifeStage) {
-        if (lifeStage != null) {
-            setPropertyWithTx(Specimen.LIFE_STAGE, lifeStage.name());
+    public void setLifeStage(List<EnvoTerm> lifeStages) {
+        if (lifeStages != null && lifeStages.size() > 0) {
+            setLifeStage(lifeStages.get(0));
         }
     }
 
-    public void setPhysiologicalState(PhysiologicalState physiologicalStage) {
-        if (physiologicalStage != null) {
-            setPropertyWithTx(Specimen.PHYSIOLOGICAL_STATE, physiologicalStage.name());
+    public void setLifeStage(EnvoTerm lifeStage) {
+        setPropertyWithTx(Specimen.LIFE_STAGE, lifeStage.getName());
+    }
+
+    public void setPhysiologicalState(List<EnvoTerm> physiologicalStages) {
+        if (physiologicalStages != null && physiologicalStages.size() > 0) {
+            setPhysiologicalState(physiologicalStages.get(0));
         }
     }
 
-    public void setBodyPart(BodyPart bodyPart) {
-        if (bodyPart != null) {
-            setPropertyWithTx(Specimen.BODY_PART, bodyPart.name());
+    public void setBodyPart(List<EnvoTerm> bodyParts) {
+        if (bodyParts != null && bodyParts.size() > 0) {
+            setBodyPart(bodyParts.get(0));
         }
+    }
+
+    public void setPhysiologicalState(EnvoTerm physiologicalState) {
+        setPropertyWithTx(Specimen.PHYSIOLOGICAL_STATE, physiologicalState.getName());
+    }
+
+    public void setBodyPart(EnvoTerm bodyPart) {
+        setPropertyWithTx(Specimen.BODY_PART, bodyPart.getName());
     }
 }

@@ -9,10 +9,9 @@ import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonomyProvider;
-import org.eol.globi.service.BodyPartLookupService;
-import org.eol.globi.service.LifeStageLookupService;
-import org.eol.globi.service.LookupServiceException;
-import org.eol.globi.service.PhysiologicalStateLookupService;
+import org.eol.globi.service.UberonLookupService;
+import org.eol.globi.service.EnvoServiceException;
+import org.eol.globi.service.EnvoTerm;
 import org.neo4j.graphdb.Transaction;
 
 import java.io.IOException;
@@ -22,12 +21,13 @@ import java.util.List;
 import java.util.Map;
 
 public class StudyImporterForGoMexSI extends BaseStudyImporter {
+    private static final Log LOG = LogFactory.getLog(StudyImporterForGoMexSI.class);
 
     public static final String GOMEXSI_URL = "http://gomexsi.tamucc.edu";
-    private static final Log LOG = LogFactory.getLog(StudyImporterForGoMexSI.class);
     public static final String STOMACH_COUNT_TOTAL = "stomachCountTotal";
     public static final String STOMACH_COUNT_WITH_FOOD = "stomachCountWithFood";
     public static final String STOMACH_COUNT_WITHOUT_FOOD = "stomachCountWithoutFood";
+    private UberonLookupService uberonLookupService = new UberonLookupService();
 
     public StudyImporterForGoMexSI(ParserFactory parserFactory, NodeFactory nodeFactory) {
         super(parserFactory, nodeFactory);
@@ -243,14 +243,37 @@ public class StudyImporterForGoMexSI extends BaseStudyImporter {
 
     private Specimen createSpecimen(Map<String, String> properties) throws NodeFactoryException, StudyImporterException {
         Specimen specimen = nodeFactory.createSpecimen(properties.get(Taxon.NAME));
-        try {
-            specimen.setLifeStage(new LifeStageLookupService().lookup(properties.get(Specimen.LIFE_STAGE)));
-            specimen.setPhysiologicalState(new PhysiologicalStateLookupService().lookup(properties.get(Specimen.PHYSIOLOGICAL_STATE)));
-            specimen.setBodyPart(new BodyPartLookupService().lookup(properties.get(Specimen.BODY_PART)));
-        } catch (LookupServiceException ex) {
-            throw new StudyImporterException(ex);
-        }
+        addLifeStage(properties, specimen);
+        addPhysiologicalState(properties, specimen);
+        addBodyPart(properties, specimen);
         return specimen;
+    }
+
+    private void addLifeStage(Map<String, String> properties, Specimen specimen) throws StudyImporterException {
+        try {
+            List<EnvoTerm> envoTerms = uberonLookupService.lookupTermByName(properties.get(Specimen.LIFE_STAGE));
+            specimen.setLifeStage(envoTerms);
+        } catch (EnvoServiceException e) {
+            throw new StudyImporterException("failed to map life stage", e);
+        }
+    }
+
+    private void addPhysiologicalState(Map<String, String> properties, Specimen specimen) throws StudyImporterException {
+        try {
+            List<EnvoTerm> envoTerms = uberonLookupService.lookupTermByName(properties.get(Specimen.PHYSIOLOGICAL_STATE));
+            specimen.setPhysiologicalState(envoTerms);
+        } catch (EnvoServiceException e) {
+            throw new StudyImporterException("failed to map life stage", e);
+        }
+    }
+
+    private void addBodyPart(Map<String, String> properties, Specimen specimen) throws StudyImporterException {
+        try {
+            List<EnvoTerm> envoTerms = uberonLookupService.lookupTermByName(properties.get(Specimen.BODY_PART));
+            specimen.setBodyPart(envoTerms);
+        } catch (EnvoServiceException e) {
+            throw new StudyImporterException("failed to map body part", e);
+        }
     }
 
     private Double getMandatoryDoubleValue(String locationResource, LabeledCSVParser parser, String label) throws StudyImporterException {

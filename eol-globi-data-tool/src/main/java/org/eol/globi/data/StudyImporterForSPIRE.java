@@ -12,13 +12,13 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eol.globi.domain.Environment;
 import org.eol.globi.domain.Location;
-import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.service.EnvoService;
 import org.eol.globi.service.EnvoServiceImpl;
 import org.eol.globi.service.EnvoServiceException;
 import org.eol.globi.service.EnvoTerm;
+import org.eol.globi.service.UberonLookupService;
 import uk.me.jstott.jcoord.LatLng;
 
 import java.io.BufferedReader;
@@ -46,6 +46,8 @@ public class StudyImporterForSPIRE extends BaseStudyImporter {
     };
 
     private EnvoService envoService = new EnvoServiceImpl();
+
+    private UberonLookupService uberonLookupService = new UberonLookupService();
 
 
     public StudyImporterForSPIRE(ParserFactory parserFactory, NodeFactory nodeFactory) {
@@ -223,7 +225,7 @@ public class StudyImporterForSPIRE extends BaseStudyImporter {
                     String habitat = properties.get(OF_HABITAT);
                     if (StringUtils.isNotBlank(habitat)) {
                         try {
-                            List<EnvoTerm> envoTerms = envoService.lookupBySPIREHabitat(habitat);
+                            List<EnvoTerm> envoTerms = envoService.lookupTermByName(habitat);
                             for (EnvoTerm envoTerm : envoTerms) {
                                 addEnvironment(location, envoTerm.getId(), envoTerm.getName());
                             }
@@ -241,7 +243,9 @@ public class StudyImporterForSPIRE extends BaseStudyImporter {
                 Specimen prey = createSpecimen(properties.get(PREY_NAME));
                 predator.ate(prey);
             } catch (NodeFactoryException e) {
-                LOG.warn("failed to import trophic link with properties [" + properties + "]");
+                LOG.warn("failed to import trophic link with properties [" + properties + "]", e);
+            } catch (EnvoServiceException e) {
+                LOG.warn("failed to import trophic link with properties [" + properties + "]", e);
             }
         } else {
             LOG.warn("skipping trophic link: missing study title for trophic link properties [" + properties + "]");
@@ -253,22 +257,27 @@ public class StudyImporterForSPIRE extends BaseStudyImporter {
         location.addEnvironment(environment);
     }
 
-    private Specimen createSpecimen(String taxonName) throws NodeFactoryException {
+    private Specimen createSpecimen(String taxonName) throws NodeFactoryException, EnvoServiceException {
         taxonName = taxonName.replaceAll("_", " ");
         Specimen specimen = nodeFactory.createSpecimen(taxonName);
+
+        List<EnvoTerm> terms = null;
         if (taxonName.contains("adult")) {
-            specimen.setLifeStage(LifeStage.ADULT);
+            terms = uberonLookupService.lookupTermByName("adult");
         } else if (taxonName.contains("juvenile")) {
-            specimen.setLifeStage(LifeStage.JUVENILE);
+            terms = uberonLookupService.lookupTermByName("juvenile");
         } else if (taxonName.contains(" egg")) {
-            specimen.setLifeStage(LifeStage.JUVENILE);
+            terms = uberonLookupService.lookupTermByName("egg");
         } else if (taxonName.contains("larvae")) {
-            specimen.setLifeStage(LifeStage.LARVA);
+            terms = uberonLookupService.lookupTermByName("larvae");
         } else if (taxonName.contains("immature")) {
-            specimen.setLifeStage(LifeStage.IMMATURE);
+            terms = uberonLookupService.lookupTermByName("immature");
         } else if (taxonName.contains("nymphs")) {
-            specimen.setLifeStage(LifeStage.NYMPH);
+            terms = uberonLookupService.lookupTermByName("nymphs");
+            specimen.setLifeStage(terms);
         }
+
+
         return specimen;
     }
 

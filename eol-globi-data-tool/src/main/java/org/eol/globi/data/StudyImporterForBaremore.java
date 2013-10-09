@@ -3,6 +3,10 @@ package org.eol.globi.data;
 import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.eol.globi.service.EnvoService;
+import org.eol.globi.service.EnvoServiceException;
+import org.eol.globi.service.EnvoTerm;
+import org.eol.globi.service.UberonLookupService;
 import org.neo4j.graphdb.Relationship;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.Specimen;
@@ -13,6 +17,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.apache.commons.lang3.StringUtils.*;
@@ -20,6 +25,8 @@ import static org.apache.commons.lang3.StringUtils.*;
 public class StudyImporterForBaremore extends BaseStudyImporter {
     private static final Log LOG = LogFactory.getLog(StudyImporterForBaremore.class);
     private static final String DATA_SOURCE = "baremore/ANGELSHARK_DIET_DATAREQUEST_10012012.csv";
+
+    private EnvoService termLookupService = new UberonLookupService();
 
 
     public StudyImporterForBaremore(ParserFactory parserFactory, NodeFactory nodeFactory) {
@@ -86,27 +93,15 @@ public class StudyImporterForBaremore extends BaseStudyImporter {
 
     private void addLifeStage(LabeledCSVParser parser, Specimen predatorSpecimen) throws StudyImporterException {
         String lifeStageString = parser.getValueByLabel("Mat State");
-        LifeStage lifeStage;
-        if ("Juv".equals(lifeStageString)) {
-            lifeStage = LifeStage.JUVENILE;
-        } else if ("Mat".equals(lifeStageString)) {
-            lifeStage = LifeStage.ADULT;
-        } else if ("Mat?".equals(lifeStageString)) {
-            lifeStage = LifeStage.PROBABLY_ADULT;
-        } else if ("Trans".equals(lifeStageString)) {
-            lifeStage = LifeStage.TRANS;
-        } else if ("Trans/Juv".equals(lifeStageString)) {
-            lifeStage = LifeStage.TRANS_OR_JUVENILE;
-        } else if ("Yoy/Juv".equals(lifeStageString)) {
-            lifeStage = LifeStage.YOUNG_OF_THE_YEAR_OR_JUVENILE;
-        } else if ("Yoy".equals(lifeStageString) || "YOY".equals(lifeStageString)) {
-            lifeStage = LifeStage.YOUNG_OF_THE_YEAR;
-        } else if ("Neo".equals(lifeStageString)) {
-            lifeStage = LifeStage.NEO;
-        } else {
-            throw new StudyImporterException("unsupported lifeStage [" + lifeStageString + "] on line [" + parser.getLastLineNumber() + "]");
+        try {
+            List<EnvoTerm> lifeStages = termLookupService.lookupTermByName(lifeStageString);
+            if (lifeStages.size() == 0) {
+                throw new StudyImporterException("unsupported lifeStage [" + lifeStageString + "] on line [" + parser.getLastLineNumber() + "]");
+            }
+            predatorSpecimen.setLifeStage(lifeStages);
+        } catch (EnvoServiceException e) {
+            throw new StudyImporterException("failed ot map life stage string [" + lifeStageString + "]", e);
         }
-        predatorSpecimen.setLifeStage(lifeStage);
     }
 
     private void addCollectionDate(String s, Relationship collectedRel) throws ParseException {

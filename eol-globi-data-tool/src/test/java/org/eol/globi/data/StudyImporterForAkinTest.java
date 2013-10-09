@@ -1,15 +1,17 @@
 package org.eol.globi.data;
 
-import org.junit.Test;
-import org.neo4j.graphdb.Direction;
-import org.neo4j.graphdb.Node;
-import org.neo4j.graphdb.Relationship;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.Taxon;
+import org.eol.globi.service.EnvoServiceException;
+import org.eol.globi.service.UberonLookupService;
+import org.junit.Test;
+import org.neo4j.graphdb.Direction;
+import org.neo4j.graphdb.Node;
+import org.neo4j.graphdb.Relationship;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -23,7 +25,6 @@ import static org.hamcrest.core.IsNull.notNullValue;
 import static org.hamcrest.core.IsNull.nullValue;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
-import static org.junit.internal.matchers.IsCollectionContaining.hasItem;
 
 public class StudyImporterForAkinTest extends GraphDBTestCase {
 
@@ -39,14 +40,13 @@ public class StudyImporterForAkinTest extends GraphDBTestCase {
     }
 
     @Test
-    public void parseLifeStage() {
-        assertThat(StudyImporterForAkin.parseLifeStage("something egg"), is(LifeStage.EGG));
-        assertThat(StudyImporterForAkin.parseLifeStage("something eggs"), is(LifeStage.EGG));
-        assertThat(StudyImporterForAkin.parseLifeStage("something larvae"), is(LifeStage.LARVA));
-        assertThat(StudyImporterForAkin.parseLifeStage("something zoea"), is(LifeStage.ZOEA));
+    public void parseLifeStage() throws EnvoServiceException {
+        UberonLookupService service = new UberonLookupService();
+        assertThat(StudyImporterForAkin.parseLifeStage(service, "something egg").get(0).getId(), is("GLOBI:EGG"));
+        assertThat(StudyImporterForAkin.parseLifeStage(service, "something eggs").get(0).getId(), is("GLOBI:EGG"));
+        assertThat(StudyImporterForAkin.parseLifeStage(service, "something larvae").get(0).getId(), is("GLOBI:LARVA"));
+        assertThat(StudyImporterForAkin.parseLifeStage(service, "something zoea").get(0).getId(), is("GLOBI:ZOEA"));
     }
-
-
 
     @Test
     public void importMappingIssue() throws StudyImporterException, NodeFactoryException {

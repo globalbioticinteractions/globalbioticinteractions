@@ -5,6 +5,10 @@ import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.eol.globi.service.EnvoService;
+import org.eol.globi.service.EnvoServiceException;
+import org.eol.globi.service.EnvoTerm;
+import org.eol.globi.service.UberonLookupService;
 import org.neo4j.graphdb.Relationship;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.Specimen;
@@ -13,10 +17,14 @@ import org.eol.globi.domain.Study;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
 public class StudyImporterForAkin extends BaseStudyImporter {
     private static final Log LOG = LogFactory.getLog(StudyImporterForAkin.class);
+
+    private UberonLookupService uberonLookupService = new UberonLookupService();
 
     public StudyImporterForAkin(ParserFactory parserFactory, NodeFactory nodeFactory) {
         super(parserFactory, nodeFactory);
@@ -115,27 +123,29 @@ public class StudyImporterForAkin extends BaseStudyImporter {
                     double volume = Double.parseDouble(preyVolumeString);
                     if (volume > 0) {
                         Specimen prey = nodeFactory.createSpecimen(preySpeciesName);
-                        prey.setLifeStage(parseLifeStage(preySpeciesName));
+                        prey.setLifeStage(parseLifeStage(uberonLookupService, preySpeciesName));
                         prey.setVolumeInMilliLiter(volume);
                         specimen.ate(prey);
                     }
                 }
             } catch (NumberFormatException ex) {
                 throw new StudyImporterException("failed to parse volume of prey [" + preySpeciesName + "] in stomach [" + preyVolumeString + "] on line [" + parser.getLastLineNumber() + "]");
+            } catch (EnvoServiceException e) {
+                throw new StudyImporterException("failed to parse life stage of prey [" + preySpeciesName + "] in stomach [" + preyVolumeString + "] on line [" + parser.getLastLineNumber() + "]");
             }
         }
     }
 
-    protected static LifeStage parseLifeStage(String preySpeciesName) {
-        LifeStage lifeStage = null;
+    protected static List<EnvoTerm> parseLifeStage(EnvoService service, String preySpeciesName) throws EnvoServiceException {
+        List<EnvoTerm> terms = Collections.EMPTY_LIST;
         if (preySpeciesName.contains(" larvae")) {
-            lifeStage = LifeStage.LARVA;
+            terms = service.lookupTermByName("larvae");
         } else if (preySpeciesName.contains(" egg")) {
-            lifeStage = LifeStage.EGG;
+            terms = service.lookupTermByName("egg");
         } else if (preySpeciesName.contains(" zoea")) {
-            lifeStage = LifeStage.ZOEA;
+            terms = service.lookupTermByName("zoea");
         }
-        return lifeStage;
+        return terms;
     }
 
     private Specimen addSpecimen(Study study, LabeledCSVParser parser, String[] header, String[] line) throws StudyImporterException, NodeFactoryException {

@@ -12,13 +12,13 @@ public class EnvoServiceImplIT {
     @Test
     public void lookupTerm() throws EnvoServiceException {
         EnvoService service = new EnvoServiceImpl();
-        List<EnvoTerm> envoTerms = service.lookupBySPIREHabitat("Dung");
+        List<EnvoTerm> envoTerms = service.lookupTermByName("Dung");
         assertThat(envoTerms.size(), is(1));
         EnvoTerm envoTerm = envoTerms.get(0);
         assertThat(envoTerm.getName(), is("feces"));
         assertThat(envoTerm.getId(), is("ENVO:00002003"));
 
-        envoTerms = service.lookupBySPIREHabitat("Savannah_or_grassland");
+        envoTerms = service.lookupTermByName("Savannah_or_grassland");
         assertThat(envoTerms.size(), is(2));
         envoTerm = envoTerms.get(0);
         assertThat(envoTerm.getName(), is("grassland biome"));
@@ -28,7 +28,7 @@ public class EnvoServiceImplIT {
         assertThat(envoTerm.getName(), is("savanna biome"));
         assertThat(envoTerm.getId(), is("ENVO:01000178"));
 
-        envoTerms = service.lookupBySPIREHabitat("this ain't no SPIRE habitat");
+        envoTerms = service.lookupTermByName("this ain't no SPIRE habitat");
         assertThat(envoTerms.size(), is(0));
 
     }
