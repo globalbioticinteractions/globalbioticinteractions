@@ -4,6 +4,9 @@ import junit.framework.Assert;
 import org.eol.globi.domain.Environment;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.service.TaxonPropertyEnricher;
+import org.eol.globi.service.Term;
+import org.eol.globi.service.TermLookupService;
+import org.eol.globi.service.TermLookupServiceException;
 import org.junit.Before;
 import org.junit.Test;
 import org.eol.globi.domain.Location;
@@ -13,6 +16,8 @@ import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.index.IndexHits;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import static junit.framework.Assert.assertNull;
 import static org.hamcrest.CoreMatchers.not;
@@ -28,16 +33,6 @@ public class NodeFactoryTest extends GraphDBTestCase {
 
     public static final String EXPECTED_PATH = "kingdom" + CharsetConstant.SEPARATOR + "phylum" + CharsetConstant.SEPARATOR + "etc" + CharsetConstant.SEPARATOR;
     public static final String EXPECTED_COMMON_NAMES = "some german name @de" + CharsetConstant.SEPARATOR + "some english name @en" + CharsetConstant.SEPARATOR;
-    NodeFactory nodeFactory;
-
-    @Before
-    public void createFactory() {
-        nodeFactory = new NodeFactory(getGraphDb(), new TaxonPropertyEnricher() {
-            @Override
-            public void enrich(Taxon taxon) throws IOException {
-            }
-        });
-    }
 
     @Test
     public void ensureThatEnrichedPropertiesAreIndexed() throws NodeFactoryException {
@@ -107,27 +102,30 @@ public class NodeFactoryTest extends GraphDBTestCase {
     }
 
     @Test
-    public void createAndFindEnvironment() {
-        Environment environment = nodeFactory.getOrCreateEnvironment("BLA:123", "this");
-        nodeFactory.getOrCreateEnvironment("BLA:123", "this");
+    public void createAndFindEnvironment() throws NodeFactoryException {
+        Location location = nodeFactory.getOrCreateLocation(0.0, 1.0, 2.0);
+        nodeFactory.enrichLocationWithEnvironment(location, "BLA:123", "this");
+        nodeFactory.enrichLocationWithEnvironment(location, "BLA:123", "this");
         Environment foundEnvironment = nodeFactory.findEnvironment("this");
         assertThat(foundEnvironment, is(notNullValue()));
 
+        List<Environment> environments = location.getEnvironments();
+        assertThat(environments.size(), is(1));
+        Environment environment = environments.get(0);
         assertThat(environment.getNodeID(), is(foundEnvironment.getNodeID()));
         assertThat(environment.getName(), is("this"));
-        assertThat(environment.getExternalId(), is("BLA:123"));
 
-        Location location = nodeFactory.getOrCreateLocation(123.2, 123.1, null);
-        assertThat(location.getEnvironments().size(), is(0));
-        location.addEnvironment(environment);
-        assertThat(location.getEnvironments().size(), is(1));
+        Location anotherLocation = nodeFactory.getOrCreateLocation(123.2, 123.1, null);
+        assertThat(anotherLocation.getEnvironments().size(), is(0));
+        anotherLocation.addEnvironment(environment);
+        assertThat(anotherLocation.getEnvironments().size(), is(1));
 
         // don't add environment that has already been associated
-        location.addEnvironment(environment);
-        assertThat(location.getEnvironments().size(), is(1));
+        anotherLocation.addEnvironment(environment);
+        assertThat(anotherLocation.getEnvironments().size(), is(1));
 
-        location.addEnvironment(nodeFactory.getOrCreateEnvironment("BLA:124", "that"));
-        assertThat(location.getEnvironments().size(), is(2));
+        nodeFactory.enrichLocationWithEnvironment(anotherLocation, "BLA:124", "that");
+        assertThat(anotherLocation.getEnvironments().size(), is(2));
     }
 
     @Test
@@ -246,4 +244,5 @@ public class NodeFactoryTest extends GraphDBTestCase {
         Taxon family = nodeFactory.getOrCreateTaxon(speciesName);
         assertEquals("Blabae", family.getName());
     }
+
 }

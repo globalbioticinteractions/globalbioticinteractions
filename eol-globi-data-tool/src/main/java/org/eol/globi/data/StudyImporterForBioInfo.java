@@ -7,9 +7,9 @@ import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.RelType;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
-import org.eol.globi.service.EnvoService;
-import org.eol.globi.service.EnvoServiceException;
-import org.eol.globi.service.EnvoTerm;
+import org.eol.globi.service.TermLookupService;
+import org.eol.globi.service.TermLookupServiceException;
+import org.eol.globi.service.Term;
 import org.eol.globi.service.UberonLookupService;
 
 import java.io.IOException;
@@ -24,7 +24,7 @@ public class StudyImporterForBioInfo extends BaseStudyImporter implements StudyI
     public static final String RELATION_TYPE_DATA_FILE = "bioinfo.org.uk/TrophicRelations.txt.gz";
     public static final String RELATIONS_DATA_FILE = "bioinfo.org.uk/Relations.txt.gz";
 
-    public EnvoService termLookupService = new UberonLookupService();
+    public TermLookupService termLookupService = new UberonLookupService();
 
     public static final String BIOINFO_URL = "http://bioinfo.org.uk";
 
@@ -148,7 +148,7 @@ public class StudyImporterForBioInfo extends BaseStudyImporter implements StudyI
     }
 
     private void addLifeStage(LabeledCSVParser parser, Specimen donorSpecimen, String stageColumnName) throws StudyImporterException {
-        List<EnvoTerm> lifeStage = null;
+        List<Term> lifeStage = null;
         String donorLifeStage = parser.getValueByLabel(stageColumnName);
         if (donorLifeStage != null && donorLifeStage.trim().length() > 0) {
             lifeStage = parseLifeStage(donorLifeStage);
@@ -159,15 +159,15 @@ public class StudyImporterForBioInfo extends BaseStudyImporter implements StudyI
         donorSpecimen.setLifeStage(lifeStage);
     }
 
-    private List<EnvoTerm> parseLifeStage(String lifeStageString) throws StudyImporterException {
+    private List<Term> parseLifeStage(String lifeStageString) throws StudyImporterException {
         try {
-            List<EnvoTerm> envoTerms = termLookupService.lookupTermByName(lifeStageString);
-            if (envoTerms.size() > 0) {
+            List<Term> terms = termLookupService.lookupTermByName(lifeStageString);
+            if (terms.size() > 0) {
             } else {
                 LOG.warn("failed to map life stage [" + lifeStageString + "]");
             }
-            return envoTerms;
-        } catch (EnvoServiceException e) {
+            return terms;
+        } catch (TermLookupServiceException e) {
             throw new StudyImporterException("failed to lookup lifestage [" + lifeStageString + "]");
         }
 

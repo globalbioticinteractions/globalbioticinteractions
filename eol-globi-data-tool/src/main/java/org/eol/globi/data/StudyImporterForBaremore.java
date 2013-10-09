@@ -3,9 +3,9 @@ package org.eol.globi.data;
 import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.eol.globi.service.EnvoService;
-import org.eol.globi.service.EnvoServiceException;
-import org.eol.globi.service.EnvoTerm;
+import org.eol.globi.service.TermLookupService;
+import org.eol.globi.service.TermLookupServiceException;
+import org.eol.globi.service.Term;
 import org.eol.globi.service.UberonLookupService;
 import org.neo4j.graphdb.Relationship;
 import org.eol.globi.domain.Location;
@@ -26,7 +26,7 @@ public class StudyImporterForBaremore extends BaseStudyImporter {
     private static final Log LOG = LogFactory.getLog(StudyImporterForBaremore.class);
     private static final String DATA_SOURCE = "baremore/ANGELSHARK_DIET_DATAREQUEST_10012012.csv";
 
-    private EnvoService termLookupService = new UberonLookupService();
+    private TermLookupService termLookupService = new UberonLookupService();
 
 
     public StudyImporterForBaremore(ParserFactory parserFactory, NodeFactory nodeFactory) {
@@ -94,12 +94,12 @@ public class StudyImporterForBaremore extends BaseStudyImporter {
     private void addLifeStage(LabeledCSVParser parser, Specimen predatorSpecimen) throws StudyImporterException {
         String lifeStageString = parser.getValueByLabel("Mat State");
         try {
-            List<EnvoTerm> lifeStages = termLookupService.lookupTermByName(lifeStageString);
+            List<Term> lifeStages = termLookupService.lookupTermByName(lifeStageString);
             if (lifeStages.size() == 0) {
                 throw new StudyImporterException("unsupported lifeStage [" + lifeStageString + "] on line [" + parser.getLastLineNumber() + "]");
             }
             predatorSpecimen.setLifeStage(lifeStages);
-        } catch (EnvoServiceException e) {
+        } catch (TermLookupServiceException e) {
             throw new StudyImporterException("failed ot map life stage string [" + lifeStageString + "]", e);
         }
     }

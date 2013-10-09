@@ -2,11 +2,16 @@ package org.eol.globi.data;
 
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.service.TaxonPropertyEnricher;
+import org.eol.globi.service.Term;
+import org.eol.globi.service.TermLookupService;
+import org.eol.globi.service.TermLookupServiceException;
 import org.junit.After;
 import org.junit.Before;
 import org.neo4j.graphdb.GraphDatabaseService;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class GraphDBTestCase {
 
@@ -24,6 +29,9 @@ public abstract class GraphDBTestCase {
 
             }
         });
+        nodeFactory.setEnvoLookupService(new TestTermLookupService());
+        nodeFactory.setTermLookupService(new TestTermLookupService());
+
     }
 
     @After
@@ -33,6 +41,15 @@ public abstract class GraphDBTestCase {
 
     protected GraphDatabaseService getGraphDb() {
         return graphDb;
+    }
+
+    private static class TestTermLookupService implements TermLookupService {
+        @Override
+        public List<Term> lookupTermByName(final String name) throws TermLookupServiceException {
+            return new ArrayList<Term>() {{
+                add(new Term("TEST:" + name, name));
+            }};
+        }
     }
 
 }

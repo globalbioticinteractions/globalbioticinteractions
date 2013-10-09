@@ -10,21 +10,17 @@ import com.hp.hpl.jena.rdf.model.StmtIterator;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.eol.globi.domain.Environment;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
-import org.eol.globi.service.EnvoService;
-import org.eol.globi.service.EnvoServiceImpl;
-import org.eol.globi.service.EnvoServiceException;
-import org.eol.globi.service.EnvoTerm;
-import org.eol.globi.service.UberonLookupService;
+import org.eol.globi.service.EnvoLookupService;
+import org.eol.globi.service.Term;
+import org.eol.globi.service.TermLookupService;
 import uk.me.jstott.jcoord.LatLng;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class StudyImporterForSPIRE extends BaseStudyImporter {
@@ -44,11 +40,6 @@ public class StudyImporterForSPIRE extends BaseStudyImporter {
             importTrophicLink(properties);
         }
     };
-
-    private EnvoService envoService = new EnvoServiceImpl();
-
-    private UberonLookupService uberonLookupService = new UberonLookupService();
-
 
     public StudyImporterForSPIRE(ParserFactory parserFactory, NodeFactory nodeFactory) {
         super(parserFactory, nodeFactory);
@@ -224,18 +215,7 @@ public class StudyImporterForSPIRE extends BaseStudyImporter {
                     predator.caughtIn(location);
                     String habitat = properties.get(OF_HABITAT);
                     if (StringUtils.isNotBlank(habitat)) {
-                        try {
-                            List<EnvoTerm> envoTerms = envoService.lookupTermByName(habitat);
-                            for (EnvoTerm envoTerm : envoTerms) {
-                                addEnvironment(location, envoTerm.getId(), envoTerm.getName());
-                            }
-                            if (envoTerms.size() == 0) {
-                                addEnvironment(location, "SPIRE:" + habitat, habitat);
-                            }
-                        } catch (EnvoServiceException e) {
-                            LOG.warn("unexpected problem during lookup environment for habitat [" + habitat + "]", e);
-                        }
-
+                        addEnvironment(location, "SPIRE:" + habitat, habitat);
                     }
 
                 }
@@ -244,41 +224,42 @@ public class StudyImporterForSPIRE extends BaseStudyImporter {
                 predator.ate(prey);
             } catch (NodeFactoryException e) {
                 LOG.warn("failed to import trophic link with properties [" + properties + "]", e);
-            } catch (EnvoServiceException e) {
-                LOG.warn("failed to import trophic link with properties [" + properties + "]", e);
             }
         } else {
             LOG.warn("skipping trophic link: missing study title for trophic link properties [" + properties + "]");
         }
     }
 
-    private void addEnvironment(Location location, String id, String name) {
-        Environment environment = nodeFactory.getOrCreateEnvironment(id, name);
-        location.addEnvironment(environment);
+    private void addEnvironment(Location location, String id, String name) throws NodeFactoryException {
+        nodeFactory.enrichLocationWithEnvironment(location, id, name);
     }
 
-    private Specimen createSpecimen(String taxonName) throws NodeFactoryException, EnvoServiceException {
+    private Specimen createSpecimen(String taxonName) throws NodeFactoryException {
         taxonName = taxonName.replaceAll("_", " ");
         Specimen specimen = nodeFactory.createSpecimen(taxonName);
 
-        List<EnvoTerm> terms = null;
         if (taxonName.contains("adult")) {
-            terms = uberonLookupService.lookupTermByName("adult");
+            addLifeStage(specimen, "adult");
         } else if (taxonName.contains("juvenile")) {
-            terms = uberonLookupService.lookupTermByName("juvenile");
+            addLifeStage(specimen, "juvenile");
         } else if (taxonName.contains(" egg")) {
-            terms = uberonLookupService.lookupTermByName("egg");
+            addLifeStage(specimen, "egg");
         } else if (taxonName.contains("larvae")) {
-            terms = uberonLookupService.lookupTermByName("larvae");
+            addLifeStage(specimen, "larvae");
         } else if (taxonName.contains("immature")) {
-            terms = uberonLookupService.lookupTermByName("immature");
+            addLifeStage(specimen, "immature");
         } else if (taxonName.contains("nymphs")) {
-            terms = uberonLookupService.lookupTermByName("nymphs");
-            specimen.setLifeStage(terms);
+            addLifeStage(specimen, "nymphs");
         }
 
 
         return specimen;
+    }
+
+    private void addLifeStage(Specimen specimen, String name) throws NodeFactoryException {
+        Term terms;
+        terms = nodeFactory.getOrCreateLifeStage("SPIRE:" + name, name);
+        specimen.setLifeStage(terms);
     }
 
 
@@ -299,7 +280,4 @@ public class StudyImporterForSPIRE extends BaseStudyImporter {
         return importFilter;
     }
 
-    public void setEnvoService(EnvoService envoService) {
-        this.envoService = envoService;
-    }
 }

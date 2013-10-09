@@ -7,14 +7,13 @@ import com.healthmarketscience.jackcess.Table;
 import com.hp.hpl.jena.rdf.model.impl.RDFDefaultErrorHandler;
 import org.apache.commons.collections.CollectionUtils;
 import org.eol.globi.domain.Environment;
-import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.Taxon;
-import org.eol.globi.service.EnvoService;
-import org.eol.globi.service.EnvoServiceException;
-import org.eol.globi.service.EnvoTerm;
+import org.eol.globi.service.TermLookupService;
+import org.eol.globi.service.TermLookupServiceException;
+import org.eol.globi.service.Term;
 import org.junit.Test;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Relationship;
@@ -158,14 +157,8 @@ public class StudyImporterForSPIRETest extends GraphDBTestCase {
 
     @Test
     public void importSingleLink() throws NodeFactoryException {
-        assertSingleImport("some spire habitat", "envo externalid", "envo name");
+        assertSingleImport("habitat", "TEST:habitat", "habitat");
 
-    }
-
-    @Test
-    public void importSingleLinkNoHabitatMatch() throws NodeFactoryException {
-        String unmappedHabitat = "some unmapped spire habitat";
-        assertSingleImport("some unmapped spire habitat", "SPIRE:" + unmappedHabitat, unmappedHabitat);
     }
 
     private void assertSingleImport(String spireHabitat, String envoId, String envoLabel) throws NodeFactoryException {
@@ -201,19 +194,7 @@ public class StudyImporterForSPIRETest extends GraphDBTestCase {
     }
 
     private StudyImporterForSPIRE createImporter() {
-        StudyImporterForSPIRE studyImporterForSPIRE = new StudyImporterForSPIRE(null, nodeFactory);
-        studyImporterForSPIRE.setEnvoService(new EnvoService() {
-
-            @Override
-            public List<EnvoTerm> lookupTermByName(String name) throws EnvoServiceException {
-                ArrayList<EnvoTerm> envoTerms = new ArrayList<EnvoTerm>();
-                if ("some spire habitat".equals(name)) {
-                    envoTerms.add(new EnvoTerm("envo externalid", "envo name"));
-                }
-                return envoTerms;
-            }
-        });
-        return studyImporterForSPIRE;
+        return new StudyImporterForSPIRE(null, nodeFactory);
     }
 
     @Test

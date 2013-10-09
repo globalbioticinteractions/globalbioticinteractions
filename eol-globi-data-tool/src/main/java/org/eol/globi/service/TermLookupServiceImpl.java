@@ -5,8 +5,6 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.BasicResponseHandler;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -18,25 +16,26 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class EnvoServiceImpl extends BaseHttpClientService implements EnvoService {
-    private static final Log LOG = LogFactory.getLog(EnvoServiceImpl.class);
+public abstract class TermLookupServiceImpl extends BaseHttpClientService implements TermLookupService {
+    private static final Log LOG = LogFactory.getLog(TermLookupServiceImpl.class);
 
-    private Map<String, List<EnvoTerm>> mapping = null;
+    private Map<String, List<Term>> mapping = null;
 
-    private static final List<EnvoTerm> EMPTY_LIST = Collections.emptyList();
-    private String mappingURI = "http://purl.obolibrary.org/obo/envo/mappings/spire-mapping.txt";
+    private static final List<Term> EMPTY_LIST = Collections.emptyList();
+
+    public abstract String getMappingURI();
 
     @Override
-    public List<EnvoTerm> lookupTermByName(String name) throws EnvoServiceException {
+    public List<Term> lookupTermByName(String name) throws TermLookupServiceException {
         if (mapping == null) {
             buildMapping(getMappingURI());
         }
-        List<EnvoTerm> envoTerms = mapping.get(name);
-        return envoTerms == null ? EMPTY_LIST : envoTerms;
+        List<Term> terms = mapping.get(name);
+        return terms == null ? new ArrayList<Term>() : terms;
     }
 
-    private void buildMapping(String uri) throws EnvoServiceException {
-        mapping = new HashMap<String, List<EnvoTerm>>();
+    private void buildMapping(String uri) throws TermLookupServiceException {
+        mapping = new HashMap<String, List<Term>>();
         LOG.info("term mapping populating with [" + uri + "]...");
         try {
             String response = IOUtils.toString(new URI(uri));
@@ -53,29 +52,21 @@ public class EnvoServiceImpl extends BaseHttpClientService implements EnvoServic
                     if (StringUtils.isNotBlank(spireName)
                             && StringUtils.isNotBlank(envoId)
                             && StringUtils.isNotBlank(envoName)) {
-                        List<EnvoTerm> envoTerms = mapping.get(spireName);
-                        if (envoTerms == null) {
-                            envoTerms = new ArrayList<EnvoTerm>();
-                            mapping.put(spireName, envoTerms);
+                        List<Term> terms = mapping.get(spireName);
+                        if (terms == null) {
+                            terms = new ArrayList<Term>();
+                            mapping.put(spireName, terms);
                         }
-                        envoTerms.add(new EnvoTerm(envoId, envoName));
+                        terms.add(new Term(envoId, envoName));
                     }
                 }
             }
             LOG.info("term mapping populated.");
         } catch (IOException e) {
-            throw new EnvoServiceException("failed to retrieve mapping from [" + uri + "]", e);
+            throw new TermLookupServiceException("failed to retrieve mapping from [" + uri + "]", e);
         } catch (URISyntaxException e) {
-            throw new EnvoServiceException("failed to retrieve mapping from [" + uri + "]", e);
+            throw new TermLookupServiceException("failed to retrieve mapping from [" + uri + "]", e);
         }
-    }
-
-    public void setMappingURI(String mappingURI) {
-        this.mappingURI = mappingURI;
-    }
-
-    protected String getMappingURI() {
-        return mappingURI;
     }
 
 }

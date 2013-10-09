@@ -1,15 +1,12 @@
 package org.eol.globi.export;
 
 import org.eol.globi.data.GraphDBTestCase;
-import org.eol.globi.data.LifeStage;
 import org.eol.globi.data.NodeFactoryException;
-import org.eol.globi.domain.BodyPart;
 import org.eol.globi.domain.Location;
-import org.eol.globi.domain.PhysiologicalState;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
-import org.eol.globi.service.EnvoTerm;
+import org.eol.globi.service.Term;
 import org.hamcrest.core.Is;
 import org.junit.Test;
 import org.neo4j.graphdb.Relationship;
@@ -88,9 +85,9 @@ public class ExporterOccurrenceAggregatesTest extends GraphDBTestCase {
     private Specimen collectSpecimen(Study myStudy, String scientificName, String externalId) throws NodeFactoryException {
         Specimen specimen = nodeFactory.createSpecimen(scientificName, externalId);
         specimen.setStomachVolumeInMilliLiter(666.0);
-        specimen.setLifeStage(new EnvoTerm("GLOBI:JUVENILE", "JUVENILE"));
-        specimen.setPhysiologicalState(new EnvoTerm("GLOBI:DIGESTATE", "DIGESTATE"));
-        specimen.setBodyPart(new EnvoTerm("GLOBI:BONE", "BONE"));
+        specimen.setLifeStage(new Term("GLOBI:JUVENILE", "JUVENILE"));
+        specimen.setPhysiologicalState(new Term("GLOBI:DIGESTATE", "DIGESTATE"));
+        specimen.setBodyPart(new Term("GLOBI:BONE", "BONE"));
         Relationship collected = myStudy.collected(specimen);
         Transaction transaction = myStudy.getUnderlyingNode().getGraphDatabase().beginTx();
         try {

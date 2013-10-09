@@ -1,10 +1,7 @@
 package org.eol.globi.export;
 
-import org.eol.globi.data.LifeStage;
-import org.eol.globi.domain.BodyPart;
-import org.eol.globi.domain.PhysiologicalState;
 import org.eol.globi.domain.PropertyAndValueDictionary;
-import org.eol.globi.service.EnvoTerm;
+import org.eol.globi.service.Term;
 import org.junit.Test;
 import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.Transaction;
@@ -45,9 +42,9 @@ public class ExporterAssociationsTest extends GraphDBTestCase {
         Study myStudy = nodeFactory.getOrCreateStudy("myStudy", "contributor", "institute", "period", "description", "pubYear", "data source description");
         Specimen specimen = nodeFactory.createSpecimen("Homo sapiens", "EOL:123");
         specimen.setStomachVolumeInMilliLiter(666.0);
-        specimen.setLifeStage(new EnvoTerm("GLOBI:JUVENILE", "JUVENILE"));
-        specimen.setPhysiologicalState(new EnvoTerm("GLOBI:DIGESTATE", "DIGESTATE"));
-        specimen.setBodyPart(new EnvoTerm("GLOBI:BONE", "BONE"));
+        specimen.setLifeStage(new Term("GLOBI:JUVENILE", "JUVENILE"));
+        specimen.setPhysiologicalState(new Term("GLOBI:DIGESTATE", "DIGESTATE"));
+        specimen.setBodyPart(new Term("GLOBI:BONE", "BONE"));
         Relationship collected = myStudy.collected(specimen);
         Transaction transaction = myStudy.getUnderlyingNode().getGraphDatabase().beginTx();
         try {

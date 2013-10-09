@@ -8,7 +8,7 @@ public class Environment extends NamedNode {
         super(node);
     }
 
-    public Environment(Node node, String name, String externalId) {
+    public Environment(Node node, String externalId, String name) {
         super(node);
         setName(name);
         setExternalId(externalId);

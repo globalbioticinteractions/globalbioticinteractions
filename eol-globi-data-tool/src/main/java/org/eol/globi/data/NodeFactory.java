@@ -13,11 +13,16 @@ import org.eol.globi.data.taxon.TaxonNameNormalizer;
 import org.eol.globi.domain.Environment;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.NamedNode;
+import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Season;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.Taxon;
+import org.eol.globi.service.EnvoLookupService;
 import org.eol.globi.service.TaxonPropertyEnricher;
+import org.eol.globi.service.TermLookupService;
+import org.eol.globi.service.TermLookupServiceException;
+import org.eol.globi.service.UberonLookupService;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
@@ -50,11 +55,17 @@ public class NodeFactory {
     private final Index<Node> taxonNameSuggestions;
     private final Index<Node> taxonPaths;
     private final Index<Node> taxonCommonNames;
+    public static final org.eol.globi.service.Term NO_MATCH_TERM = new org.eol.globi.service.Term(PropertyAndValueDictionary.NO_MATCH, PropertyAndValueDictionary.NO_MATCH);
+
+    private TermLookupService termLookupService;
+
+    private TermLookupService envoLookupService;
 
     public NodeFactory(GraphDatabaseService graphDb, TaxonPropertyEnricher taxonEnricher) {
         this.graphDb = graphDb;
         this.taxonEnricher = taxonEnricher;
-
+        this.termLookupService = new UberonLookupService();
+        this.envoLookupService = new EnvoLookupService();
         this.studies = graphDb.index().forNodes("studies");
         this.seasons = graphDb.index().forNodes("seasons");
         this.locations = graphDb.index().forNodes("locations");
@@ -384,30 +395,77 @@ public class NodeFactory {
         return taxonNameSuggestions.query("name:\"" + wholeOrPartialScientificOrCommonName + "\"");
     }
 
-    public Environment getOrCreateEnvironment(String externalId, String name) {
-        Environment environment = findEnvironment(name);
-        if (environment == null) {
-            Transaction transaction = graphDb.beginTx();
-            environment = new Environment(graphDb.createNode(), name, externalId);
-            environments.add(environment.getUnderlyingNode(), NamedNode.NAME, name);
-            transaction.success();
-            transaction.finish();
+    public void enrichLocationWithEnvironment(Location location, String externalId, String name) throws NodeFactoryException {
+        List<org.eol.globi.service.Term> terms;
+        try {
+            terms = envoLookupService.lookupTermByName(name);
+            if (terms.size() == 0) {
+                terms.add(new org.eol.globi.service.Term(externalId, name));
+            }
+        } catch (TermLookupServiceException e) {
+            throw new NodeFactoryException("failed to lookup environment [" + name + "]");
         }
-        return environment;
+
+        for (org.eol.globi.service.Term term : terms) {
+            Environment environment = findEnvironment(term.getName());
+            if (environment == null) {
+                Transaction transaction = graphDb.beginTx();
+                environment = new Environment(graphDb.createNode(), term.getId(), term.getName());
+                environments.add(environment.getUnderlyingNode(), NamedNode.NAME, name);
+                transaction.success();
+                transaction.finish();
+            }
+            location.addEnvironment(environment);
+        }
     }
 
     public Environment findEnvironment(String name) {
         String query = "name:\"" + name + "\"";
         IndexHits<Node> matches = environments.query(query);
-        Node matchingTaxon;
+        Node matchingEnvironment;
         Environment firstMatchingEnvironment = null;
         if (matches.hasNext()) {
-            matchingTaxon = matches.next();
-            firstMatchingEnvironment = new Environment(matchingTaxon);
+            matchingEnvironment = matches.next();
+            firstMatchingEnvironment = new Environment(matchingEnvironment);
         }
 
         matches.close();
         return firstMatchingEnvironment;
     }
+
+    public org.eol.globi.service.Term getOrCreateBodyPart(String externalId, String name) throws NodeFactoryException {
+        return matchTerm(externalId, name);
+    }
+
+    public org.eol.globi.service.Term getOrCreatePhysiologicalState(String externalId, String name) throws NodeFactoryException {
+        return matchTerm(externalId, name);
+    }
+
+    public org.eol.globi.service.Term getOrCreateLifeStage(String externalId, String name) throws NodeFactoryException {
+        return matchTerm(externalId, name);
+    }
+
+    private org.eol.globi.service.Term matchTerm(String externalId, String name) throws NodeFactoryException {
+        try {
+            List<org.eol.globi.service.Term> terms = getTermLookupService().lookupTermByName(name);
+            return terms.size() == 0 ? NO_MATCH_TERM : terms.get(0);
+        } catch (TermLookupServiceException e) {
+            throw new NodeFactoryException("failed to lookup term [" + externalId + "]:[" + name + "]");
+        }
+    }
+
+    public TermLookupService getTermLookupService() {
+        return termLookupService;
+    }
+
+    public void setEnvoLookupService(TermLookupService envoLookupService) {
+        this.envoLookupService = envoLookupService;
+    }
+
+    public void setTermLookupService(TermLookupService termLookupService) {
+        this.termLookupService = termLookupService;
+    }
+
+
 }
 

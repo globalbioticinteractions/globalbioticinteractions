@@ -6,19 +6,18 @@ import org.apache.commons.logging.LogFactory;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
-import org.eol.globi.service.EnvoService;
-import org.eol.globi.service.EnvoServiceException;
-import org.eol.globi.service.EnvoTerm;
+import org.eol.globi.service.TermLookupService;
+import org.eol.globi.service.TermLookupServiceException;
+import org.eol.globi.service.Term;
 import org.eol.globi.service.UberonLookupService;
 
 import java.io.IOException;
-import java.util.Collections;
 import java.util.List;
 
 public class StudyImporterForBarnes extends BaseStudyImporter {
     private static final Log LOG = LogFactory.getLog(StudyImporterForBarnes.class);
 
-    private EnvoService termService = new UberonLookupService();
+    private TermLookupService termService = new UberonLookupService();
 
     public StudyImporterForBarnes(ParserFactory parserFactory, NodeFactory nodeFactory) {
         super(parserFactory, nodeFactory);
@@ -74,12 +73,12 @@ public class StudyImporterForBarnes extends BaseStudyImporter {
     private void addLifeStage(LabeledCSVParser parser, Specimen predator) throws StudyImporterException {
         String lifeStageString = parser.getValueByLabel("Predator lifestage");
         try {
-            List<EnvoTerm> terms = termService.lookupTermByName(lifeStageString);
+            List<Term> terms = termService.lookupTermByName(lifeStageString);
             if (terms.size() == 0) {
                 throw new StudyImporterException("unsupported life stage [" + lifeStageString + "] on line [" + parser.getLastLineNumber() + "]");
             }
             predator.setLifeStage(terms);
-        } catch (EnvoServiceException e) {
+        } catch (TermLookupServiceException e) {
             throw new StudyImporterException(("failed to map life stage [" + lifeStageString + "]"));
         }
     }

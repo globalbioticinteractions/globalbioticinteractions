@@ -9,9 +9,9 @@ import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonomyProvider;
+import org.eol.globi.service.TermLookupServiceException;
 import org.eol.globi.service.UberonLookupService;
-import org.eol.globi.service.EnvoServiceException;
-import org.eol.globi.service.EnvoTerm;
+import org.eol.globi.service.Term;
 import org.neo4j.graphdb.Transaction;
 
 import java.io.IOException;
@@ -27,7 +27,7 @@ public class StudyImporterForGoMexSI extends BaseStudyImporter {
     public static final String STOMACH_COUNT_TOTAL = "stomachCountTotal";
     public static final String STOMACH_COUNT_WITH_FOOD = "stomachCountWithFood";
     public static final String STOMACH_COUNT_WITHOUT_FOOD = "stomachCountWithoutFood";
-    private UberonLookupService uberonLookupService = new UberonLookupService();
+    public static final String GOMEXSI_NAMESPACE = "GOMEXSI:";
 
     public StudyImporterForGoMexSI(ParserFactory parserFactory, NodeFactory nodeFactory) {
         super(parserFactory, nodeFactory);
@@ -251,27 +251,30 @@ public class StudyImporterForGoMexSI extends BaseStudyImporter {
 
     private void addLifeStage(Map<String, String> properties, Specimen specimen) throws StudyImporterException {
         try {
-            List<EnvoTerm> envoTerms = uberonLookupService.lookupTermByName(properties.get(Specimen.LIFE_STAGE));
-            specimen.setLifeStage(envoTerms);
-        } catch (EnvoServiceException e) {
+            String lifeStageName = properties.get(Specimen.LIFE_STAGE);
+            Term term = nodeFactory.getOrCreateLifeStage(GOMEXSI_NAMESPACE + lifeStageName, lifeStageName);
+            specimen.setLifeStage(term);
+        } catch (NodeFactoryException e) {
             throw new StudyImporterException("failed to map life stage", e);
         }
     }
 
     private void addPhysiologicalState(Map<String, String> properties, Specimen specimen) throws StudyImporterException {
         try {
-            List<EnvoTerm> envoTerms = uberonLookupService.lookupTermByName(properties.get(Specimen.PHYSIOLOGICAL_STATE));
-            specimen.setPhysiologicalState(envoTerms);
-        } catch (EnvoServiceException e) {
+            String name = properties.get(Specimen.PHYSIOLOGICAL_STATE);
+            Term term = nodeFactory.getOrCreatePhysiologicalState(GOMEXSI_NAMESPACE + name, name);
+            specimen.setPhysiologicalState(term);
+        } catch (NodeFactoryException e) {
             throw new StudyImporterException("failed to map life stage", e);
         }
     }
 
     private void addBodyPart(Map<String, String> properties, Specimen specimen) throws StudyImporterException {
         try {
-            List<EnvoTerm> envoTerms = uberonLookupService.lookupTermByName(properties.get(Specimen.BODY_PART));
-            specimen.setBodyPart(envoTerms);
-        } catch (EnvoServiceException e) {
+            String name = properties.get(Specimen.BODY_PART);
+            Term term = nodeFactory.getOrCreateBodyPart(GOMEXSI_NAMESPACE + name, name);
+            specimen.setBodyPart(term);
+        } catch (NodeFactoryException e) {
             throw new StudyImporterException("failed to map body part", e);
         }
     }

@@ -6,7 +6,7 @@ import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.Taxon;
-import org.eol.globi.service.EnvoServiceException;
+import org.eol.globi.service.TermLookupServiceException;
 import org.eol.globi.service.UberonLookupService;
 import org.junit.Test;
 import org.neo4j.graphdb.Direction;
@@ -40,7 +40,7 @@ public class StudyImporterForAkinTest extends GraphDBTestCase {
     }
 
     @Test
-    public void parseLifeStage() throws EnvoServiceException {
+    public void parseLifeStage() throws TermLookupServiceException {
         UberonLookupService service = new UberonLookupService();
         assertThat(StudyImporterForAkin.parseLifeStage(service, "something egg").get(0).getId(), is("GLOBI:EGG"));
         assertThat(StudyImporterForAkin.parseLifeStage(service, "something eggs").get(0).getId(), is("GLOBI:EGG"));
