@@ -292,21 +292,21 @@ public class CypherProxyController {
     @RequestMapping(value = "/contributors", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
     @Cacheable(value = "contributorCache")
-    public String contributors(HttpServletRequest request) throws IOException {
+    public String contributors() throws IOException {
         String cypherQuery = "START study=node:studies('*:*')" +
                 " MATCH study-[:COLLECTED]->sourceSpecimen-[interact:" + InteractUtil.allInteractionsCypherClause() + "]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon, sourceSpecimen-[:CLASSIFIED_AS]->sourceTaxon " +
                 " RETURN study.institution?, study.period?, study.description, study.contributor, count(interact), count(distinct(sourceTaxon)), count(distinct(targetTaxon)), study.title";
-        return new CypherQueryExecutor(cypherQuery, EMPTY_PARAMS).execute(request);
+        return new CypherQueryExecutor(cypherQuery, EMPTY_PARAMS).execute(null);
     }
 
     @RequestMapping(value = "/info", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
     @Cacheable(value = "infoCache")
-    public String info(HttpServletRequest request) throws IOException {
+    public String info() throws IOException {
         String cypherQuery = "START study=node:studies('*:*')" +
                 " MATCH study-[:COLLECTED]->sourceSpecimen-[interact:" + InteractUtil.allInteractionsCypherClause() + "]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon, sourceSpecimen-[:CLASSIFIED_AS]->sourceTaxon " +
                 " RETURN count(distinct(study.title)) as `number of studies`, count(interact) as `number of interactions`, count(distinct(sourceTaxon)) as `number of distinct source taxa (e.g. predators)`, count(distinct(targetTaxon)) as `number of distinct target taxa (e.g. prey)`";
-        return new CypherQueryExecutor(cypherQuery, EMPTY_PARAMS).execute(request);
+        return new CypherQueryExecutor(cypherQuery, EMPTY_PARAMS).executeAndTransformToJSONv2();
     }
 
 

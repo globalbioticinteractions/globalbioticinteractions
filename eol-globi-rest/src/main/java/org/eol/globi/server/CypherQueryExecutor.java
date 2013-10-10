@@ -42,7 +42,7 @@ public class CypherQueryExecutor {
         return result;
     }
 
-    private String executeAndTransformToJSONv2() throws IOException {
+    public String executeAndTransformToJSONv2() throws IOException {
         JsonNode jsonNode = execute();
         return CypherResultFormatter.format(jsonNode);
     }
