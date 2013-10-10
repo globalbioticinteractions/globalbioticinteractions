@@ -12,5 +12,6 @@
     </defaultCache>
 
     <cache name="contributorCache" maxEntriesLocalHeap="1"/>
+    <cache name="infoCache" maxEntriesLocalHeap="1"/>
     <cache name="locationCache" maxEntriesLocalHeap="1"/>
 </ehcache>
