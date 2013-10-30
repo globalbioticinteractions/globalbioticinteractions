@@ -2,33 +2,33 @@ GOMEXSI:NA	NA	GLOBI:UNKNOWN	UNKNOWN
 GOMEXSI:parts	parts	GLOBI:UNKNOWN	UNKNOWN
 GOMEXSI:pieces	parts	GLOBI:UNKNOWN	UNKNOWN
 GOMEXSI:fragments	fragments	GLOBI:UNKNOWN	UNKNOWN
-GOMEXSI:scales	scales	GLOBI:SCALES	SCALES
-GOMEXSI:scale(s)	scale(s)	GLOBI:SCALES	SCALES
-GOMEXSI:bone	bone	GLOBI:BONE	BONE
+GOMEXSI:scales	scales	UBERON:0002542	scale
+GOMEXSI:scale(s)	scale(s)	UBERON:0002542	scale
+GOMEXSI:bone	bone	UBERON:0002481  bone tissue
 GOMEXSI:tube	tube	GLOBI:TUBE	TUBE
 GOMEXSI:spine	spine	GLOBI:SPINE	SPINE
 GOMEXSI:pollen_grain	pollen grain	GLOBI:POLLEN_GRAIN	POLLEN_GRAIN
 GOMEXSI:opercula	opercula	GLOBI:OPERCULUM	OPERCULUM
 GOMEXSI:caudal_spines	caudal_spines	GLOBI:CAUDAL_SPINE	CAUDAL_SPINE
-GOMEXSI:shell	shell	GLOBI:SHELL	SHELL
+GOMEXSI:shell	shell	UBERON:0006612	shell
 GOMEXSI:needles	needles	GLOBI:NEEDLE	NEEDLE
 GOMEXSI:seed_pod	seed pod	GLOBI:SEED_POD	SEED_POD
 GOMEXSI:kernels	kernels	GLOBI:KERNEL	KERNEL
 GOMEXSI:wood	wood	GLOBI:WOOD	WOOD
-GOMEXSI:feather	feather	GLOBI:FEATHER	FEATHER
+GOMEXSI:feather	feather	UBERON:0000022	feather
 GOMEXSI:remains	remains	GLOBI:REMAINS	REMAINS
 GOMEXSI:digestate	digestate	GLOBI:DIGESTATE	DIGESTATE
-GOMEXSI:adult	adult	GLOBI:ADULT	ADULT
-GOMEXSI:adults	adults	GLOBI:ADULT	ADULT
-GOMEXSI:a	a	GLOBI:ADULT	ADULT
-GOMEXSI:juvenile	juvenile	GLOBI:JUVENILE	JUVENILE
-GOMEXSI:juvenile?	juvenile	GLOBI:JUVENILE	JUVENILE
-GOMEXSI:j	j	GLOBI:JUVENILE	 JUVENILE
+GOMEXSI:adult	adult	UBERON:0000113	post-juvenile adult stage
+GOMEXSI:adults	adults	UBERON:0000113	post-juvenile adult stage
+GOMEXSI:a	a	UBERON:0000113	post-juvenile adult stage
+GOMEXSI:juvenile	juvenile	UBERON:0000112	juvenile stage
+GOMEXSI:juvenile?	juvenile	UBERON:0000112	juvenile stage
+GOMEXSI:j	j	UBERON:0000112	juvenile stage
 GOMEXSI:nd	nd	GLOBI:UNKNOWN	UNKOWN
 GOMEXSI:na	na	GLOBI:UNKNOWN	UNKOWN
-GOMEXSI:zoea	zoea	GLOBI:ZOEA	ZOEA
-GOMEXSI:larvae	larvae	GLOBI:LARVA	LARVA
-GOMEXSI:larval	larval	GLOBI:LARVA	LARVA
+GOMEXSI:zoea	zoea	UBERON:0000069	larval stage
+GOMEXSI:larvae	larvae	UBERON:0000069	larval stage
+GOMEXSI:larval	larval	UBERON:0000069	larval stage
 GOMEXSI:post larvae	post larvae	GLOBI:POSTLARVA	POSTLARVA
 GOMEXSI:post-larvae	post-larvae	GLOBI:POSTLARVA	GLOBI:POSTLARVA
 GOMEXSI:l/pl	l/pl	GLOBI:LARVA_OR_POSTLARVA	LARVA_OR_POSTLARVA
@@ -36,8 +36,8 @@ GOMEXSI:larvae/post larvae	larvae/post larvae	GLOBI:LARVA_OR_POSTLARVA	LARVA_OR_
 GOMEXSI:megalopa	megalopa	GLOBI:MEGALOPA	MEGALOPA
 GOMEXSI:cypris	cypris	GLOBI:CYPRIS	CYPRIS
 GOMEXSI:cyp	cyp	GLOBI:CYPRIS	CYPRIS
-GOMEXSI:egg	egg	GLOBI:EGG	EGG
-GOMEXSI:eggs	egg	GLOBI:EGG	EGG
+GOMEXSI:egg	egg	GO:0009792	embryo development ending in birth or egg hatching
+GOMEXSI:eggs	egg	GO:0009792	embryo development ending in birth or egg hatching
 GOMEXSI:nauplii	nauplii	GLOBI:NAUPLII	NAUPLII
 GOMEXSI:copepodite	copepodite	GLOBI:COPEPODITE	COPEPODITE
 GOMEXSI:copepodites	copepodites	GLOBI:COPEPODITE	COPEPODITE
@@ -46,27 +46,27 @@ GOMEXSI:glaucothoe	glaucothoe	GLOBI:GLAUCOTHOE	GLAUCOTHOE
 GOMEXSI:veligers	veligers	GLOBI:VELIGER	VELIGER
 GOMEXSI:newborn	newborn	GLOBI:NEWBORN	NEWBORN
 BIO_INFO:mycelium	mycelium	GLOBI:MYCELIUM	MYCELIUM
-BIO_INFO:larva	larva	GLOBI:LARVA	LARVA
+BIO_INFO:larva	larva	UBERON:0000069	larval stage
 BIO_INFO:aecium	aecium	GLOBI:AECIUM	AECIUM
 BIO_INFO:pycnium	pycnium	GLOBI:PYCNIUM	PYCNIUM
 BIO_INFO:sporangium	sporangium	GLOBI:SPORANGIUM	SPORANGIUM
 BIO_INFO:uredium	uredium	GLOBI:UREDIUM	UREDIUM
-BIO_INFO:caterpillar	caterpillar	GLOBI:CATERPILLAR	CATERPILLAR
-BIO_INFO:adult	adult	GLOBI:ADULT	ADULT
-BIO_INFO:egg	egg	GLOBI:EGG	EGG
-BIO_INFO:nymph	nymph	GLOBI:NYMPH	NYMPH
+BIO_INFO:caterpillar	caterpillar	UBERON:0000069	larval stage
+BIO_INFO:adult	adult	UBERON:0000113	post-juvenile adult stage
+BIO_INFO:egg	egg	GO:0009792	embryo development ending in birth or egg hatching
+BIO_INFO:nymph	nymph	UBERON:0014405	nymph stage
 BIO_INFO:telium	telium	GLOBI:TELIUM	TELIUM
 BIO_INFO:anamorph	anamorph	GLOBI:ANAMORPH	ANAMORPH
 BARNES:postlarva	postlarva	GLOBI:POSTLARVA	POSTLARVA
 BARNES:postlarva/juvenile	postlarva/juvenile	GLOBI:POSTLARVA_OR_JUVENILE	POSTLARVA_OR_JUVENILE
 BARNES:larva / juvenile	larva / juvenile	GLOBI:LARVA_OR_JUVENILE	LARVA_OR_JUVENILE
-BARNES:larva	larva	GLOBI:LARVA	LARVA
-BARNES:juvenile	juvenile	GLOBI:JUVENILE	JUVENILE
-BARNES:adult	adult	GLOBI:ADULT	ADULT
-BARNES:Adult	Adult	GLOBI:ADULT	ADULT
-BAREMORE:Juv	Juv	GLOBI:JUVENILE	JUVENILE
-BAREMORE:Mat	Mat	GLOBI:ADULT	ADULT
-BAREMORE:Mat?	Mat?	GLOBI:PROBABLY_ADULT	PROBABLY_ADULT
+BARNES:larva	larva	UBERON:0000069	larval stage
+BARNES:juvenile	juvenile	UBERON:0000112	juvenile stage
+BARNES:adult	adult	UBERON:0000113	post-juvenile adult stage
+BARNES:Adult	Adult	UBERON:0000113	post-juvenile adult stage
+BAREMORE:Juv	Juv	UBERON:0000112	juvenile stage
+BAREMORE:Mat	Mat	UBERON:0000113	post-juvenile adult stage
+BAREMORE:Mat?	Mat?	UBERON:0000113	post-juvenile adult stage
 BAREMORE:Trans	Trans	GLOBI:TRANS	TRANS
 BAREMORE:Trans/Juv	Trans/Juv	GLOBI:TRANS_OR_JUVENILE	TRANS_OR_JUVENILE
 BAREMORE:Yoy/Juv	Yoy/Juv	GLOBI:YOUNG_OF_THE_YEAR_OR_JUVENILE	YOUNG_OF_THE_YEAR_OR_JUVENILE
