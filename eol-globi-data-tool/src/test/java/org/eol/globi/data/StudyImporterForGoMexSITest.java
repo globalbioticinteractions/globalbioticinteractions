@@ -104,9 +104,9 @@ public class StudyImporterForGoMexSITest extends GraphDBTestCase {
             Iterable<Relationship> classifiedAs = taxonNode.getRelationships(Direction.INCOMING, RelTypes.CLASSIFIED_AS);
             for (Relationship classifiedA : classifiedAs) {
                 Node specimenNode = classifiedA.getStartNode();
-                detectedAtLeastOneLifeState |= specimenNode.hasProperty(Specimen.LIFE_STAGE);
-                detectedAtLeastOnePhysiologicalState |= specimenNode.hasProperty(Specimen.PHYSIOLOGICAL_STATE);
-                detectedAtLeastOnePreyBodyPart |= specimenNode.hasProperty(Specimen.BODY_PART);
+                detectedAtLeastOneLifeState |= specimenNode.hasProperty(Specimen.LIFE_STAGE_LABEL);
+                detectedAtLeastOnePhysiologicalState |= specimenNode.hasProperty(Specimen.PHYSIOLOGICAL_STATE_LABEL);
+                detectedAtLeastOnePreyBodyPart |= specimenNode.hasProperty(Specimen.BODY_PART_LABEL);
 
                 if (specimenNode.hasRelationship(Direction.INCOMING, RelTypes.COLLECTED)) {
                     detectedAtLeastOneLocation = true;

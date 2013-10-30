@@ -14,9 +14,12 @@ public class Specimen extends NodeBacked {
     public static final String VOLUME_IN_ML = "volumeInMilliLiter";
     public static final String STOMACH_VOLUME_ML = "stomachVolumeInMilliLiter";
     public static final String DATE_IN_UNIX_EPOCH = "dateInUnixEpoch";
-    public static final String LIFE_STAGE = "lifeStage";
-    public static final String PHYSIOLOGICAL_STATE = "physiologicalState";
-    public static final String BODY_PART = "bodyPart";
+    public static final String LIFE_STAGE_LABEL = "lifeStageLabel";
+    public static final String LIFE_STAGE_ID = "lifeStageId";
+    public static final String PHYSIOLOGICAL_STATE_LABEL = "physiologicalStateLabel";
+    private static final String PHYSIOLOGICAL_STATE_ID = "physiologicalStateId";
+    public static final String BODY_PART_LABEL = "bodyPartLabel";
+    public static final String BODY_PART_ID = "bodyPartId";
 
     public Specimen(Node node) {
         super(node);
@@ -117,14 +120,17 @@ public class Specimen extends NodeBacked {
     }
 
     public void setLifeStage(Term lifeStage) {
-        setPropertyWithTx(Specimen.LIFE_STAGE, lifeStage.getName());
+        setPropertyWithTx(Specimen.LIFE_STAGE_LABEL, lifeStage.getName());
+        setPropertyWithTx(Specimen.LIFE_STAGE_ID, lifeStage.getId());
     }
 
     public void setPhysiologicalState(Term physiologicalState) {
-        setPropertyWithTx(Specimen.PHYSIOLOGICAL_STATE, physiologicalState.getName());
+        setPropertyWithTx(Specimen.PHYSIOLOGICAL_STATE_LABEL, physiologicalState.getName());
+        setPropertyWithTx(Specimen.PHYSIOLOGICAL_STATE_ID, physiologicalState.getId());
     }
 
     public void setBodyPart(Term bodyPart) {
-        setPropertyWithTx(Specimen.BODY_PART, bodyPart.getName());
+        setPropertyWithTx(Specimen.BODY_PART_LABEL, bodyPart.getName());
+        setPropertyWithTx(Specimen.BODY_PART_ID, bodyPart.getId());
     }
 }

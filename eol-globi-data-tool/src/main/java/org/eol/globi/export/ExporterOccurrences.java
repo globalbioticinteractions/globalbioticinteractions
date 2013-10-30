@@ -79,9 +79,9 @@ public class ExporterOccurrences extends ExporterOccurrencesBase {
         }
 
         properties.put(EOLDictionary.OCCURRENCE_ID, "globi:occur:" + specimenNode.getId());
-        addProperty(properties, specimenNode, Specimen.LIFE_STAGE, EOLDictionary.LIFE_STAGE);
-        addProperty(properties, specimenNode, Specimen.PHYSIOLOGICAL_STATE, EOLDictionary.PHYSIOLOGICAL_STATE);
-        addProperty(properties, specimenNode, Specimen.BODY_PART, EOLDictionary.BODY_PART);
+        addProperty(properties, specimenNode, Specimen.LIFE_STAGE_LABEL, EOLDictionary.LIFE_STAGE);
+        addProperty(properties, specimenNode, Specimen.PHYSIOLOGICAL_STATE_LABEL, EOLDictionary.PHYSIOLOGICAL_STATE);
+        addProperty(properties, specimenNode, Specimen.BODY_PART_LABEL, EOLDictionary.BODY_PART);
         addProperty(properties, locationNode, Location.LATITUDE, EOLDictionary.DECIMAL_LATITUDE);
         addProperty(properties, locationNode, Location.LONGITUDE, EOLDictionary.DECIMAL_LONGITUDE);
         addProperty(properties, locationNode, Location.ALTITUDE, EOLDictionary.ALTITUDE);

@@ -265,7 +265,7 @@ public class StudyImporterForGoMexSI extends BaseStudyImporter {
 
     private void addLifeStage(Map<String, String> properties, Specimen specimen) throws StudyImporterException {
         try {
-            String lifeStageName = properties.get(Specimen.LIFE_STAGE);
+            String lifeStageName = properties.get(Specimen.LIFE_STAGE_LABEL);
             Term term = nodeFactory.getOrCreateLifeStage(GOMEXSI_NAMESPACE + lifeStageName, lifeStageName);
             specimen.setLifeStage(term);
         } catch (NodeFactoryException e) {
@@ -275,7 +275,7 @@ public class StudyImporterForGoMexSI extends BaseStudyImporter {
 
     private void addPhysiologicalState(Map<String, String> properties, Specimen specimen) throws StudyImporterException {
         try {
-            String name = properties.get(Specimen.PHYSIOLOGICAL_STATE);
+            String name = properties.get(Specimen.PHYSIOLOGICAL_STATE_LABEL);
             Term term = nodeFactory.getOrCreatePhysiologicalState(GOMEXSI_NAMESPACE + name, name);
             specimen.setPhysiologicalState(term);
         } catch (NodeFactoryException e) {
@@ -285,7 +285,7 @@ public class StudyImporterForGoMexSI extends BaseStudyImporter {
 
     private void addBodyPart(Map<String, String> properties, Specimen specimen) throws StudyImporterException {
         try {
-            String name = properties.get(Specimen.BODY_PART);
+            String name = properties.get(Specimen.BODY_PART_LABEL);
             Term term = nodeFactory.getOrCreateBodyPart(GOMEXSI_NAMESPACE + name, name);
             specimen.setBodyPart(term);
         } catch (NodeFactoryException e) {
@@ -315,9 +315,9 @@ public class StudyImporterForGoMexSI extends BaseStudyImporter {
                 String predatorUID = refId + specimenId;
                 Map<String, String> properties = new HashMap<String, String>();
                 properties.put(Taxon.NAME, scientificName);
-                properties.put(Specimen.LIFE_STAGE, parser.getValueByLabel("LIFE_HIST_STAGE"));
-                properties.put(Specimen.PHYSIOLOGICAL_STATE, parser.getValueByLabel("PHYSIOLOG_STATE"));
-                properties.put(Specimen.BODY_PART, parser.getValueByLabel("PREY_PARTS"));
+                properties.put(Specimen.LIFE_STAGE_LABEL, parser.getValueByLabel("LIFE_HIST_STAGE"));
+                properties.put(Specimen.PHYSIOLOGICAL_STATE_LABEL, parser.getValueByLabel("PHYSIOLOG_STATE"));
+                properties.put(Specimen.BODY_PART_LABEL, parser.getValueByLabel("PREY_PARTS"));
                 properties.put(STOMACH_COUNT_TOTAL, stomachCountTotal);
                 properties.put(STOMACH_COUNT_WITH_FOOD, stomachCountWithFood);
                 properties.put(STOMACH_COUNT_WITHOUT_FOOD, stomachCountWithoutFood);

@@ -1,7 +1,6 @@
 package org.eol.globi.data;
 
 import org.hamcrest.core.Is;
-import org.junit.Assert;
 import org.junit.Test;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
@@ -61,7 +60,7 @@ public class StudyImporterForBaremoreTest extends GraphDBTestCase {
             Node specimen = rel.getEndNode();
             assertNotNull(specimen);
             assertTrue(specimen.hasProperty(Specimen.LENGTH_IN_MM));
-            assertTrue(specimen.hasProperty(Specimen.LIFE_STAGE));
+            assertTrue(specimen.hasProperty(Specimen.LIFE_STAGE_LABEL));
             Relationship collectedAtRelationship = specimen.getSingleRelationship(RelTypes.COLLECTED_AT, Direction.OUTGOING);
             assertNotNull(collectedAtRelationship);
             Node locationNode = collectedAtRelationship.getEndNode();

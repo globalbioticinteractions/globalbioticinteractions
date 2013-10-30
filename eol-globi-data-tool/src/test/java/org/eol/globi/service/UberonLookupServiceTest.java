@@ -15,8 +15,8 @@ public class UberonLookupServiceTest {
     public void bodyPartMapping() throws TermLookupServiceException {
         List<Term> scales = uberonLookupService.lookupTermByName("scales");
         assertThat(scales.size(), is(1));
-        assertThat(scales.get(0).getId(), is("GLOBI:SCALES"));
-        assertThat(scales.get(0).getName(), is("SCALES"));
+        assertThat(scales.get(0).getId(), is("UBERON:0002542"));
+        assertThat(scales.get(0).getName(), is("scale"));
     }
 
     @Test

@@ -47,7 +47,8 @@ public class StudyImporterForBarnesTest extends GraphDBTestCase {
         Iterable<Relationship> relationships = taxon.getUnderlyingNode().getRelationships(Direction.INCOMING, RelTypes.CLASSIFIED_AS);
         for (Relationship relationship : relationships) {
             Node predatorSpecimenNode = relationship.getStartNode();
-            assertThat((String) predatorSpecimenNode.getProperty(Specimen.LIFE_STAGE), is(LifeStage.ADULT.name()));
+            assertThat((String) predatorSpecimenNode.getProperty(Specimen.LIFE_STAGE_LABEL), is("post-juvenile adult stage"));
+            assertThat((String) predatorSpecimenNode.getProperty(Specimen.LIFE_STAGE_ID), is("UBERON:0000113"));
 
         }
         assertThat(taxon, is(notNullValue()));
