@@ -33,4 +33,11 @@ public class EnvoLookupServiceIT {
 
     }
 
+    @Test
+    public void CMECShabitats() throws TermLookupServiceException {
+        TermLookupService service = new EnvoLookupService();
+        List<Term> terms = service.lookupTermByName("Marine Nearshore Subtidal");
+        assertThat(terms.size(), is(0));
+    }
+
 }

@@ -13,9 +13,7 @@ import org.apache.commons.logging.LogFactory;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
-import org.eol.globi.service.EnvoLookupService;
 import org.eol.globi.service.Term;
-import org.eol.globi.service.TermLookupService;
 import uk.me.jstott.jcoord.LatLng;
 
 import java.io.BufferedReader;
@@ -231,7 +229,7 @@ public class StudyImporterForSPIRE extends BaseStudyImporter {
     }
 
     private void addEnvironment(Location location, String id, String name) throws NodeFactoryException {
-        nodeFactory.enrichLocationWithEnvironment(location, id, name);
+        nodeFactory.getOrCreateEnvironments(location, id, name);
     }
 
     private Specimen createSpecimen(String taxonName) throws NodeFactoryException {

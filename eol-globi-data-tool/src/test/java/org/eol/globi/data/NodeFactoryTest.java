@@ -4,10 +4,6 @@ import junit.framework.Assert;
 import org.eol.globi.domain.Environment;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.service.TaxonPropertyEnricher;
-import org.eol.globi.service.Term;
-import org.eol.globi.service.TermLookupService;
-import org.eol.globi.service.TermLookupServiceException;
-import org.junit.Before;
 import org.junit.Test;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.Taxon;
@@ -16,7 +12,6 @@ import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.index.IndexHits;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import static junit.framework.Assert.assertNull;
@@ -104,8 +99,8 @@ public class NodeFactoryTest extends GraphDBTestCase {
     @Test
     public void createAndFindEnvironment() throws NodeFactoryException {
         Location location = nodeFactory.getOrCreateLocation(0.0, 1.0, 2.0);
-        nodeFactory.enrichLocationWithEnvironment(location, "BLA:123", "this");
-        nodeFactory.enrichLocationWithEnvironment(location, "BLA:123", "this");
+        nodeFactory.getOrCreateEnvironments(location, "BLA:123", "this");
+        nodeFactory.getOrCreateEnvironments(location, "BLA:123", "this");
         Environment foundEnvironment = nodeFactory.findEnvironment("this");
         assertThat(foundEnvironment, is(notNullValue()));
 
@@ -124,7 +119,7 @@ public class NodeFactoryTest extends GraphDBTestCase {
         anotherLocation.addEnvironment(environment);
         assertThat(anotherLocation.getEnvironments().size(), is(1));
 
-        nodeFactory.enrichLocationWithEnvironment(anotherLocation, "BLA:124", "that");
+        nodeFactory.getOrCreateEnvironments(anotherLocation, "BLA:124", "that");
         assertThat(anotherLocation.getEnvironments().size(), is(2));
     }
 

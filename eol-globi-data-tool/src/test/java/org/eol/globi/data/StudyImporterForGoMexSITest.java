@@ -1,6 +1,8 @@
 package org.eol.globi.data;
 
 
+import org.eol.globi.domain.Environment;
+import org.eol.globi.domain.Location;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
@@ -15,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static junit.framework.Assert.assertNotNull;
+import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
@@ -78,7 +81,12 @@ public class StudyImporterForGoMexSITest extends GraphDBTestCase {
 
         assertNotNull(taxon);
 
-        assertNotNull(nodeFactory.findLocation(29.346953, -92.980614, -13.641));
+        Location location = nodeFactory.findLocation(29.346953, -92.980614, -13.641);
+        assertNotNull(location);
+        List<Environment> environments = location.getEnvironments();
+        assertThat(environments.size(), not(is(0)));
+        assertThat(environments.get(0).getExternalId(), is("TEST:Marine Nearshore Subtidal"));
+        assertThat(environments.get(0).getName(), is("Marine Nearshore Subtidal"));
 
         assertNotNull(nodeFactory.findStudy("GoMexSI"));
     }

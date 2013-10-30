@@ -395,7 +395,7 @@ public class NodeFactory {
         return taxonNameSuggestions.query("name:\"" + wholeOrPartialScientificOrCommonName + "\"");
     }
 
-    public void enrichLocationWithEnvironment(Location location, String externalId, String name) throws NodeFactoryException {
+    public List<Environment> getOrCreateEnvironments(Location location, String externalId, String name) throws NodeFactoryException {
         List<org.eol.globi.service.Term> terms;
         try {
             terms = envoLookupService.lookupTermByName(name);
@@ -406,6 +406,7 @@ public class NodeFactory {
             throw new NodeFactoryException("failed to lookup environment [" + name + "]");
         }
 
+        List<Environment> normalizedEnvironments = new ArrayList<Environment>();
         for (org.eol.globi.service.Term term : terms) {
             Environment environment = findEnvironment(term.getName());
             if (environment == null) {
@@ -416,7 +417,9 @@ public class NodeFactory {
                 transaction.finish();
             }
             location.addEnvironment(environment);
+            normalizedEnvironments.add(environment);
         }
+        return normalizedEnvironments;
     }
 
     public Environment findEnvironment(String name) {

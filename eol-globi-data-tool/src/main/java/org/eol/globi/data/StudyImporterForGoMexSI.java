@@ -9,8 +9,6 @@ import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonomyProvider;
-import org.eol.globi.service.TermLookupServiceException;
-import org.eol.globi.service.UberonLookupService;
 import org.eol.globi.service.Term;
 import org.neo4j.graphdb.Transaction;
 
@@ -169,7 +167,23 @@ public class StudyImporterForGoMexSI extends BaseStudyImporter {
                 Double latitude = getMandatoryDoubleValue(locationResource, parser, "LOC_CENTR_LAT");
                 Double longitude = getMandatoryDoubleValue(locationResource, parser, "LOC_CENTR_LONG");
                 Double depth = getMandatoryDoubleValue(locationResource, parser, "MN_DEP_SAMP");
+                String habitatSystem = getMandatoryValue(locationResource, parser, "HAB_SYSTEM");
+                String habitatSubsystem = getMandatoryValue(locationResource, parser, "HAB_SUBSYSTEM");
+                String habitatTidalZone = getMandatoryValue(locationResource, parser, "TIDAL_ZONE");
+
                 Location location = nodeFactory.getOrCreateLocation(latitude, longitude, depth == null ? null : -depth);
+                if (location == null) {
+                    LOG.warn("failed to find location for [" + latitude + "], longitude" + " [" + longitude + "] in [" + locationResource + ":" + parser.getLastLineNumber() + "]");
+                } else {
+                    String cmecsId = "CMECS:" + habitatSystem + "_" + habitatSubsystem + "_" + habitatTidalZone;
+                    String cmecsLabel = habitatSystem + " " + habitatSubsystem + " " + habitatTidalZone;
+                    try {
+                        nodeFactory.getOrCreateEnvironments(location, cmecsId, cmecsLabel);
+                    } catch (NodeFactoryException e) {
+                        throw new StudyImporterException("failed to normalized enviroment [" + cmecsId + "]");
+                    }
+                }
+
                 String predatorId = refId + specimenId;
                 Map<String, String> predatorProperties = predatorIdToPredatorSpecimen.get(predatorId);
                 if (predatorProperties == null) {

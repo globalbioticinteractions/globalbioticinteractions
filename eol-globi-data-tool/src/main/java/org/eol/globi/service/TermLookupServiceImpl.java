@@ -21,8 +21,6 @@ public abstract class TermLookupServiceImpl extends BaseHttpClientService implem
 
     private Map<String, List<Term>> mapping = null;
 
-    private static final List<Term> EMPTY_LIST = Collections.emptyList();
-
     public abstract String getMappingURI();
 
     @Override
