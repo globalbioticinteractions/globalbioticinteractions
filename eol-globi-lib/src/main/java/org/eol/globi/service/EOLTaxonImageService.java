@@ -1,6 +1,5 @@
 package org.eol.globi.service;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.WordUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -57,31 +56,16 @@ public class EOLTaxonImageService extends BaseHttpClientService {
             eolPageId = lookupEOLPageId(taxonId, eolPageId, eolProviderId);
         }
 
-        HttpResponse response;
-        String responseString;
-
-        PageInfo pageInfo;
-
         if (null != eolPageId) {
-            pageInfo = getPageInfo(eolPageId);
-
+            PageInfo pageInfo = getPageInfo(eolPageId);
             if (null != pageInfo) {
-                String pageUrlString = "http://eol.org/api/data_objects/1.0/" + pageInfo.getImageObjectId() + ".json";
-                DefaultHttpClient httpClient = new DefaultHttpClient();
-                try {
-                    response = httpClient.execute(new HttpGet(pageUrlString));
-                    responseString = EntityUtils.toString(response.getEntity());
-                    if (200 == response.getStatusLine().getStatusCode()) {
-                        taxonImage = new TaxonImage();
-                        taxonImage.setInfoURL(ExternalIdUtil.infoURLForExternalId(TaxonomyProvider.ID_PREFIX_EOL + eolPageId));
-                        taxonImage.setEOLPageId(eolPageId);
-                        taxonImage.setCommonName(pageInfo.getCommonName());
-                        taxonImage.setScientificName(pageInfo.getScientificName());
-                        enrichTaxonWithImageInfo(taxonImage, responseString);
-                    }
-                } finally {
-                    httpClient.getConnectionManager().shutdown();
-                }
+                taxonImage = new TaxonImage();
+                taxonImage.setInfoURL(ExternalIdUtil.infoURLForExternalId(TaxonomyProvider.ID_PREFIX_EOL + eolPageId));
+                taxonImage.setEOLPageId(eolPageId);
+                taxonImage.setCommonName(pageInfo.getCommonName());
+                taxonImage.setScientificName(pageInfo.getScientificName());
+                taxonImage.setThumbnailURL(pageInfo.getThumbnailURL());
+                taxonImage.setImageURL(pageInfo.getImageURL());
             }
         }
         return taxonImage;
@@ -91,7 +75,7 @@ public class EOLTaxonImageService extends BaseHttpClientService {
         HttpResponse response;
         PageInfo pageInfo = new PageInfo();
         String responseString;
-        String pageUrlString = "http://eol.org/api/pages/1.0/" + eolPageId + ".json?images=1&videos=0&sounds=0&maps=0&text=0&iucn=false&subjects=overview&licenses=all&details=false&common_names=true&references=false&vetted=0&cache_ttl=";
+        String pageUrlString = "http://eol.org/api/pages/1.0/" + eolPageId + ".json?images=1&videos=0&sounds=0&maps=0&text=0&iucn=false&subjects=overview&licenses=all&details=true&common_names=true&references=false&vetted=0&cache_ttl=";
 
         DefaultHttpClient httpClient = new DefaultHttpClient();
         try {
@@ -102,12 +86,21 @@ public class EOLTaxonImageService extends BaseHttpClientService {
                 ObjectMapper mapper = new ObjectMapper();
                 JsonNode array = mapper.readTree(responseString);
                 JsonNode dataObjects = array.findValue("dataObjects");
-                if (dataObjects != null && dataObjects.size() > 0) {
-                    JsonNode dataObject = dataObjects.get(0);
-                    if (dataObject.has("identifier")) {
+                for (JsonNode dataObject : dataObjects) {
+                    String dataType = dataObject.has("dataType") ? dataObject.get("dataType").getValueAsText() : "";
+                    if ("http://purl.org/dc/dcmitype/StillImage".equals(dataType)) {
                         pageInfo.setImageObjectId(dataObject.get("identifier").getValueAsText());
+                        if (dataObject.has("eolMediaURL")) {
+                            pageInfo.setImageURL(dataObject.get("eolMediaURL").getValueAsText());
+                        }
+                        if (dataObject.has("eolThumbnailURL")) {
+                            pageInfo.setThumbnailURL(dataObject.get("eolThumbnailURL").getValueAsText());
+                        }
+
+                        break;
                     }
                 }
+
                 JsonNode commonNames = array.findValue("vernacularNames");
                 if (commonNames != null && commonNames.size() > 0) {
                     for (int i = 0; i < commonNames.size(); i++) {
@@ -189,6 +182,8 @@ public class EOLTaxonImageService extends BaseHttpClientService {
         private String imageObjectId;
         private String commonName;
         private String scientificName;
+        private String imageURL;
+        private String thumbnailURL;
 
         public void setImageObjectId(String imageObjectId) {
             this.imageObjectId = imageObjectId;
@@ -213,6 +208,22 @@ public class EOLTaxonImageService extends BaseHttpClientService {
 
         public String getScientificName() {
             return scientificName;
+        }
+
+        public void setImageURL(String imageURL) {
+            this.imageURL = imageURL;
+        }
+
+        public String getImageURL() {
+            return imageURL;
+        }
+
+        public void setThumbnailURL(String thumbnailURL) {
+            this.thumbnailURL = thumbnailURL;
+        }
+
+        public String getThumbnailURL() {
+            return thumbnailURL;
         }
     }
 }

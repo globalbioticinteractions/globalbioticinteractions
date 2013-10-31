@@ -9,6 +9,7 @@ import java.net.URISyntaxException;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
+import static org.junit.matchers.JUnitMatchers.containsString;
 
 public class EOLTaxonImageServiceIT {
 
@@ -21,8 +22,8 @@ public class EOLTaxonImageServiceIT {
     }
 
     private void assertITISImage(TaxonImage taxonImage) {
-        assertThat(taxonImage.getThumbnailURL(), is("http://media.eol.org/content/2012/06/14/21/89792_98_68.jpg"));
-        assertThat(taxonImage.getImageURL(), is("http://media.eol.org/content/2012/06/14/21/89792_orig.jpg"));
+        assertThat(taxonImage.getThumbnailURL(), containsString(".jpg"));
+        assertThat(taxonImage.getImageURL(), containsString(".jpg"));
         assertThat(taxonImage.getEOLPageId(), is("207614"));
         assertThat(taxonImage.getInfoURL(), is("http://eol.org/pages/207614"));
         assertThat(taxonImage.getScientificName(), is("Fundulus jenkinsi"));
@@ -62,8 +63,8 @@ public class EOLTaxonImageServiceIT {
     }
 
     private void assertEOLImage(TaxonImage taxonImage) {
-        assertThat(taxonImage.getThumbnailURL(), is("http://media.eol.org/content/2013/02/03/12/43681_98_68.jpg"));
-        assertThat(taxonImage.getImageURL(), is("http://media.eol.org/content/2013/02/03/12/43681_orig.jpg"));
+        assertThat(taxonImage.getThumbnailURL(), containsString(".jpg"));
+        assertThat(taxonImage.getImageURL(), containsString(".jpg"));
         assertThat(taxonImage.getEOLPageId(), is("1045608"));
         assertThat(taxonImage.getInfoURL(), is("http://eol.org/pages/1045608"));
         assertThat(taxonImage.getScientificName(), is("Apis mellifera"));
