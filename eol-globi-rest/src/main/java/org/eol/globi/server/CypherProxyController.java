@@ -193,7 +193,7 @@ public class CypherProxyController {
         returnClause.append("loc." + Location.LATITUDE + " as ").append(ResultFields.LATITUDE)
                 .append(",loc." + Location.LONGITUDE + " as ").append(ResultFields.LONGITUDE)
                 .append(",loc." + Location.ALTITUDE + "? as ").append(ResultFields.ALTITUDE)
-                .append(",study." + Study.TITLE + " as").append(ResultFields.STUDY_TITLE)
+                .append(",study." + Study.TITLE + " as ").append(ResultFields.STUDY_TITLE)
                 .append(",collected_rel.dateInUnixEpoch? as ").append(ResultFields.COLLECTION_TIME_IN_UNIX_EPOCH)
                 .append(",ID(sourceSpecimen) as tmp_and_unique_")
                 .append(predatorPrefix).append("_id,")
@@ -201,7 +201,7 @@ public class CypherProxyController {
                 .append(preyPrefix).append("_id,")
                 .append("sourceSpecimen." + Specimen.LIFE_STAGE_LABEL + "? as ").append(predatorPrefix).append(ResultFields.SUFFIX_LIFE_STAGE).append(",")
                 .append("targetSpecimen." + Specimen.LIFE_STAGE_LABEL + "? as ").append(preyPrefix).append(ResultFields.SUFFIX_LIFE_STAGE).append(",")
-                .append("sourceSpecimen" + Specimen.BODY_PART_LABEL + "? as ").append(predatorPrefix).append(ResultFields.SUFFIX_BODY_PART).append(",")
+                .append("sourceSpecimen." + Specimen.BODY_PART_LABEL + "? as ").append(predatorPrefix).append(ResultFields.SUFFIX_BODY_PART).append(",")
                 .append("targetSpecimen." + Specimen.BODY_PART_LABEL + "? as ").append(preyPrefix).append(ResultFields.SUFFIX_BODY_PART).append(",")
                 .append("sourceSpecimen." + Specimen.PHYSIOLOGICAL_STATE_LABEL + "? as ").append(predatorPrefix).append(ResultFields.SUFFIX_PHYSIOLOGICAL_STATE).append(",")
                 .append("targetSpecimen." + Specimen.PHYSIOLOGICAL_STATE_LABEL + "? as ").append(preyPrefix).append(ResultFields.SUFFIX_PHYSIOLOGICAL_STATE);
