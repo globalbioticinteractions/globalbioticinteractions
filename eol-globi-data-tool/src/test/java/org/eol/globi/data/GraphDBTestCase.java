@@ -2,7 +2,7 @@ package org.eol.globi.data;
 
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.service.TaxonPropertyEnricher;
-import org.eol.globi.service.Term;
+import org.eol.globi.domain.Term;
 import org.eol.globi.service.TermLookupService;
 import org.eol.globi.service.TermLookupServiceException;
 import org.junit.After;

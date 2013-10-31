@@ -1,5 +1,6 @@
 package org.eol.globi.service;
 
+import org.eol.globi.domain.Term;
 import org.junit.Test;
 
 import java.util.List;

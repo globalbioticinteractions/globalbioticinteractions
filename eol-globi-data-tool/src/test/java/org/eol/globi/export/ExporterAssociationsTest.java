@@ -1,7 +1,7 @@
 package org.eol.globi.export;
 
 import org.eol.globi.domain.PropertyAndValueDictionary;
-import org.eol.globi.service.Term;
+import org.eol.globi.domain.Term;
 import org.junit.Test;
 import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.Transaction;

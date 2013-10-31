@@ -55,7 +55,7 @@ public class NodeFactory {
     private final Index<Node> taxonNameSuggestions;
     private final Index<Node> taxonPaths;
     private final Index<Node> taxonCommonNames;
-    public static final org.eol.globi.service.Term NO_MATCH_TERM = new org.eol.globi.service.Term(PropertyAndValueDictionary.NO_MATCH, PropertyAndValueDictionary.NO_MATCH);
+    public static final org.eol.globi.domain.Term NO_MATCH_TERM = new org.eol.globi.domain.Term(PropertyAndValueDictionary.NO_MATCH, PropertyAndValueDictionary.NO_MATCH);
 
     private TermLookupService termLookupService;
 
@@ -396,18 +396,18 @@ public class NodeFactory {
     }
 
     public List<Environment> getOrCreateEnvironments(Location location, String externalId, String name) throws NodeFactoryException {
-        List<org.eol.globi.service.Term> terms;
+        List<org.eol.globi.domain.Term> terms;
         try {
             terms = envoLookupService.lookupTermByName(name);
             if (terms.size() == 0) {
-                terms.add(new org.eol.globi.service.Term(externalId, name));
+                terms.add(new org.eol.globi.domain.Term(externalId, name));
             }
         } catch (TermLookupServiceException e) {
             throw new NodeFactoryException("failed to lookup environment [" + name + "]");
         }
 
         List<Environment> normalizedEnvironments = new ArrayList<Environment>();
-        for (org.eol.globi.service.Term term : terms) {
+        for (org.eol.globi.domain.Term term : terms) {
             Environment environment = findEnvironment(term.getName());
             if (environment == null) {
                 Transaction transaction = graphDb.beginTx();
@@ -436,21 +436,21 @@ public class NodeFactory {
         return firstMatchingEnvironment;
     }
 
-    public org.eol.globi.service.Term getOrCreateBodyPart(String externalId, String name) throws NodeFactoryException {
+    public org.eol.globi.domain.Term getOrCreateBodyPart(String externalId, String name) throws NodeFactoryException {
         return matchTerm(externalId, name);
     }
 
-    public org.eol.globi.service.Term getOrCreatePhysiologicalState(String externalId, String name) throws NodeFactoryException {
+    public org.eol.globi.domain.Term getOrCreatePhysiologicalState(String externalId, String name) throws NodeFactoryException {
         return matchTerm(externalId, name);
     }
 
-    public org.eol.globi.service.Term getOrCreateLifeStage(String externalId, String name) throws NodeFactoryException {
+    public org.eol.globi.domain.Term getOrCreateLifeStage(String externalId, String name) throws NodeFactoryException {
         return matchTerm(externalId, name);
     }
 
-    private org.eol.globi.service.Term matchTerm(String externalId, String name) throws NodeFactoryException {
+    private org.eol.globi.domain.Term matchTerm(String externalId, String name) throws NodeFactoryException {
         try {
-            List<org.eol.globi.service.Term> terms = getTermLookupService().lookupTermByName(name);
+            List<org.eol.globi.domain.Term> terms = getTermLookupService().lookupTermByName(name);
             return terms.size() == 0 ? NO_MATCH_TERM : terms.get(0);
         } catch (TermLookupServiceException e) {
             throw new NodeFactoryException("failed to lookup term [" + externalId + "]:[" + name + "]");

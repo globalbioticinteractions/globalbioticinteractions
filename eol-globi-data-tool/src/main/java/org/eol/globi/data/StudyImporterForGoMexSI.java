@@ -9,7 +9,7 @@ import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonomyProvider;
-import org.eol.globi.service.Term;
+import org.eol.globi.domain.Term;
 import org.neo4j.graphdb.Transaction;
 
 import java.io.IOException;

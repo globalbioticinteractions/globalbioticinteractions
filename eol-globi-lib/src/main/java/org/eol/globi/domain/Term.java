@@ -1,4 +1,4 @@
-package org.eol.globi.service;
+package org.eol.globi.domain;
 
 public class Term {
     private String name;

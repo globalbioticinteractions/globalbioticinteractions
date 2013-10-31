@@ -1,6 +1,9 @@
 package org.eol.globi.server;
 
 import org.apache.commons.lang3.StringUtils;
+import org.eol.globi.domain.Location;
+import org.eol.globi.domain.Specimen;
+import org.eol.globi.domain.Study;
 import org.eol.globi.util.ExternalIdUtil;
 import org.eol.globi.util.InteractUtil;
 import org.springframework.cache.annotation.Cacheable;
@@ -175,7 +178,7 @@ public class CypherProxyController {
 
     private boolean shouldIncludeObservations(HttpServletRequest request, Map parameterMap) {
         String includeObservations = parameterMap == null ? null : request.getParameter("includeObservations");
-        return "true".equalsIgnoreCase(includeObservations);
+        return "true" .equalsIgnoreCase(includeObservations);
     }
 
     private CypherQueryExecutor findObservationsForInteraction(String sourceTaxonName, String interactionType, String targetTaxonName, Map parameterMap) throws IOException {
@@ -187,21 +190,21 @@ public class CypherProxyController {
         String preyPrefix = isInvertedInteraction ? ResultFields.PREFIX_SOURCE_SPECIMEN : ResultFields.PREFIX_TARGET_SPECIMEN;
 
         final StringBuilder returnClause = new StringBuilder();
-        returnClause.append("loc.latitude as ").append(ResultFields.LATITUDE)
-                .append(",loc.longitude as ").append(ResultFields.LONGITUDE)
-                .append(",loc.altitude? as ").append(ResultFields.ALTITUDE)
-                .append(",study.title as ").append(ResultFields.STUDY_TITLE)
+        returnClause.append("loc." + Location.LATITUDE + " as ").append(ResultFields.LATITUDE)
+                .append(",loc." + Location.LONGITUDE + " as ").append(ResultFields.LONGITUDE)
+                .append(",loc." + Location.ALTITUDE + "? as ").append(ResultFields.ALTITUDE)
+                .append(",study." + Study.TITLE + " as").append(ResultFields.STUDY_TITLE)
                 .append(",collected_rel.dateInUnixEpoch? as ").append(ResultFields.COLLECTION_TIME_IN_UNIX_EPOCH)
                 .append(",ID(sourceSpecimen) as tmp_and_unique_")
                 .append(predatorPrefix).append("_id,")
                 .append("ID(targetSpecimen) as tmp_and_unique_")
                 .append(preyPrefix).append("_id,")
-                .append("sourceSpecimen.lifeStage? as ").append(predatorPrefix).append(ResultFields.SUFFIX_LIFE_STAGE).append(",")
-                .append("targetSpecimen.lifeStage? as ").append(preyPrefix).append(ResultFields.SUFFIX_LIFE_STAGE).append(",")
-                .append("sourceSpecimen.bodyPart? as ").append(predatorPrefix).append(ResultFields.SUFFIX_BODY_PART).append(",")
-                .append("targetSpecimen.bodyPart? as ").append(preyPrefix).append(ResultFields.SUFFIX_BODY_PART).append(",")
-                .append("sourceSpecimen.physiologicalState? as ").append(predatorPrefix).append(ResultFields.SUFFIX_PHYSIOLOGICAL_STATE).append(",")
-                .append("targetSpecimen.physiologicalState? as ").append(preyPrefix).append(ResultFields.SUFFIX_PHYSIOLOGICAL_STATE);
+                .append("sourceSpecimen." + Specimen.LIFE_STAGE_LABEL + "? as ").append(predatorPrefix).append(ResultFields.SUFFIX_LIFE_STAGE).append(",")
+                .append("targetSpecimen." + Specimen.LIFE_STAGE_LABEL + "? as ").append(preyPrefix).append(ResultFields.SUFFIX_LIFE_STAGE).append(",")
+                .append("sourceSpecimen" + Specimen.BODY_PART_LABEL + "? as ").append(predatorPrefix).append(ResultFields.SUFFIX_BODY_PART).append(",")
+                .append("targetSpecimen." + Specimen.BODY_PART_LABEL + "? as ").append(preyPrefix).append(ResultFields.SUFFIX_BODY_PART).append(",")
+                .append("sourceSpecimen." + Specimen.PHYSIOLOGICAL_STATE_LABEL + "? as ").append(predatorPrefix).append(ResultFields.SUFFIX_PHYSIOLOGICAL_STATE).append(",")
+                .append("targetSpecimen." + Specimen.PHYSIOLOGICAL_STATE_LABEL + "? as ").append(preyPrefix).append(ResultFields.SUFFIX_PHYSIOLOGICAL_STATE);
 
 
         if (INTERACTION_PREYS_ON.equals(interactionType)) {

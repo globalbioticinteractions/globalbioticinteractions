@@ -6,7 +6,7 @@ import org.eol.globi.domain.Location;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
-import org.eol.globi.service.Term;
+import org.eol.globi.domain.Term;
 import org.hamcrest.core.Is;
 import org.junit.Test;
 import org.neo4j.graphdb.Relationship;
