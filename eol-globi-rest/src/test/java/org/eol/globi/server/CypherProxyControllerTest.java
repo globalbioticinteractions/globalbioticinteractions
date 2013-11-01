@@ -13,6 +13,7 @@ import java.util.HashMap;
 
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
@@ -252,6 +253,38 @@ public class CypherProxyControllerTest {
             assertThat(interactionType.has("source"), is(true));
             assertThat(interactionType.has("target"), is(true));
         }
+    }
+
+    @Test
+    public void sources() throws IOException {
+        String studies = new CypherProxyController().sources();
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode jsonNode = mapper.readTree(studies);
+        assertThat(jsonNode.has("data"), is(true));
+        JsonNode data = jsonNode.get("data");
+        assertThat(data.get(0).size()> 0, is(true));
+        assertThat(data.get(0).get(0).getValueAsText(), not(is(nullValue())));
+    }
+
+
+    @Test
+    public void info() throws IOException {
+        String studies = new CypherProxyController().info(null);
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode jsonNode = mapper.readTree(studies);
+        assertThat(jsonNode.has("data"), is(true));
+        JsonNode data = jsonNode.get("data");
+        assertThat(data.get(0).get(0).getValueAsInt() > 0, is(true));
+    }
+
+    @Test
+    public void infoBySource() throws IOException {
+        String studies = new CypherProxyController().info("http://gomexsi.tamucc.edu");
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode jsonNode = mapper.readTree(studies);
+        assertThat(jsonNode.has("data"), is(true));
+        JsonNode data = jsonNode.get("data");
+        assertThat(data.get(0).get(0).getValueAsInt() > 0, is(true));
     }
 
 

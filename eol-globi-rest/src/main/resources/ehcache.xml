@@ -2,7 +2,7 @@
 <ehcache>
     <diskStore path="java.io.tmpdir"/>
     <defaultCache
-            maxElementsInMemory="10"
+            maxElementsInMemory="500"
             eternal="false"
             timeToLiveSeconds="86400"
             maxElementsOnDisk="10"
@@ -11,7 +11,7 @@
         <persistence strategy="localTempSwap"/>
     </defaultCache>
 
-    <cache name="contributorCache" maxEntriesLocalHeap="1"/>
-    <cache name="infoCache" maxEntriesLocalHeap="1"/>
-    <cache name="locationCache" maxEntriesLocalHeap="1"/>
+    <cache name="contributorCache" maxEntriesLocalHeap="50"/>
+    <cache name="infoCache" maxEntriesLocalHeap="50"/>
+    <cache name="locationCache" maxEntriesLocalHeap="50"/>
 </ehcache>

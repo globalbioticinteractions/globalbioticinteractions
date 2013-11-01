@@ -178,7 +178,7 @@ public class CypherProxyController {
 
     private boolean shouldIncludeObservations(HttpServletRequest request, Map parameterMap) {
         String includeObservations = parameterMap == null ? null : request.getParameter("includeObservations");
-        return "true" .equalsIgnoreCase(includeObservations);
+        return "true".equalsIgnoreCase(includeObservations);
     }
 
     private CypherQueryExecutor findObservationsForInteraction(String sourceTaxonName, String interactionType, String targetTaxonName, Map parameterMap) throws IOException {
@@ -295,21 +295,40 @@ public class CypherProxyController {
     @RequestMapping(value = "/contributors", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
     @Cacheable(value = "contributorCache")
-    public String contributors() throws IOException {
+    public String contributors(@PathVariable("source") final String source) throws IOException {
+        String whereClause = StringUtils.isBlank(source) ? "" : " WHERE study.source = {source}";
+        Map<String, String> params = StringUtils.isBlank(source) ? EMPTY_PARAMS : new HashMap<String, String>() {{
+            put("source", source);
+        }};
         String cypherQuery = "START study=node:studies('*:*')" +
                 " MATCH study-[:COLLECTED]->sourceSpecimen-[interact:" + InteractUtil.allInteractionsCypherClause() + "]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon, sourceSpecimen-[:CLASSIFIED_AS]->sourceTaxon " +
+                whereClause +
                 " RETURN study.institution?, study.period?, study.description, study.contributor, count(interact), count(distinct(sourceTaxon)), count(distinct(targetTaxon)), study.title";
-        return new CypherQueryExecutor(cypherQuery, EMPTY_PARAMS).execute(null);
+        return new CypherQueryExecutor(cypherQuery, params).execute(null);
     }
 
-    @RequestMapping(value = "/info", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = "/info/{source}", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
     @Cacheable(value = "infoCache")
-    public String info() throws IOException {
+    public String info(@PathVariable("source") final String source) throws IOException {
+        String whereClause = StringUtils.isBlank(source) ? "" : " WHERE study.source = {source}";
+        Map<String, String> params = StringUtils.isBlank(source) ? EMPTY_PARAMS : new HashMap<String, String>() {{
+            put("source", source);
+        }};
         String cypherQuery = "START study=node:studies('*:*')" +
                 " MATCH study-[:COLLECTED]->sourceSpecimen-[interact:" + InteractUtil.allInteractionsCypherClause() + "]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon, sourceSpecimen-[:CLASSIFIED_AS]->sourceTaxon " +
-                " RETURN count(distinct(study.title)) as `number of studies`, count(interact) as `number of interactions`, count(distinct(sourceTaxon)) as `number of distinct source taxa (e.g. predators)`, count(distinct(targetTaxon)) as `number of distinct target taxa (e.g. prey)`";
-        return new CypherQueryExecutor(cypherQuery, EMPTY_PARAMS).execute(null);
+                whereClause +
+                " RETURN count(distinct(study)) as `number of studies`, count(interact) as `number of interactions`, count(distinct(sourceTaxon)) as `number of distinct source taxa (e.g. predators)`, count(distinct(targetTaxon)) as `number of distinct target taxa (e.g. prey)`";
+        return new CypherQueryExecutor(cypherQuery, params).execute(null);
+    }
+
+    @RequestMapping(value = "/sources", method = RequestMethod.GET, produces = "application/json")
+    @ResponseBody
+    public String sources() throws IOException {
+        String cypherQuery = "START study=node:studies('*:*')" +
+                " RETURN distinct(study.source)";
+        CypherQueryExecutor cypherQueryExecutor = new CypherQueryExecutor(cypherQuery, EMPTY_PARAMS);
+        return cypherQueryExecutor.execute(null);
     }
 
 
