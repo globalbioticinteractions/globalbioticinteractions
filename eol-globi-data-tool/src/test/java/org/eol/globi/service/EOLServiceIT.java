@@ -33,8 +33,8 @@ public class EOLServiceIT {
         assertThat(lookupPageIdByScientificName("Homo sapiens"), is("EOL:327955"));
         assertThat(lookupPageIdByScientificName("Puccinia caricina var. ribesii-pendulae"), is("EOL:6776658"));
         assertThat(lookupPageIdByScientificName("Hesperocharis paranensis"), is("EOL:176594"));
-        // TODO need to find a way to include only pages that have at least one external taxonomy
-        assertThat(lookupPageIdByScientificName("Dead roots"), is("EOL:19665069"));
+
+        assertThat(lookupPageIdByScientificName("Dead roots"), is(nullValue()));
         assertThat(lookupPageIdByScientificName("Prunella (Bot)"), is("EOL:70879"));
         assertThat(lookupPageIdByScientificName("Prunella (Bird)"), is("EOL:77930"));
         assertThat(lookupPageIdByScientificName("Pseudobaeospora dichroa"), is("EOL:1001400"));
@@ -83,7 +83,7 @@ public class EOLServiceIT {
         assertThat(lookupPageIdByScientificName("Ecdyonuridae"), is("EOL:2762776"));
         assertThat(lookupPageIdByScientificName("Catasticta hegemon"), is("EOL:173526"));
         assertThat(lookupPageIdByScientificName("Theridion ovatum"), is("EOL:1187291"));
-        assertThat(lookupPageIdByScientificName("Cambarus propinquus"), is("EOL:4260550"));
+        assertThat(lookupPageIdByScientificName("Cambarus propinquus"), is(nullValue()));
         assertThat(lookupPageIdByScientificName("Vellidae"), is("EOL:644"));
         assertThat(lookupPageIdByScientificName("Mylothris rueppellii"), is("EOL:180170"));
 
@@ -204,9 +204,9 @@ public class EOLServiceIT {
             put(Taxon.EXTERNAL_ID, "bla bla3");
         }};
         new EOLService().lookupPropertiesByName("Homo sapiens", properties);
-        assertThat(properties.get(Taxon.COMMON_NAMES), Is.is(not("bla bla")));
-        assertThat(properties.get(Taxon.PATH), containsString("bla bla2"));
-        assertThat(properties.get(Taxon.EXTERNAL_ID), Is.is("bla bla3"));
+        assertThat(properties.get(Taxon.COMMON_NAMES), containsString("Human"));
+        assertThat(properties.get(Taxon.PATH), containsString("Animalia"));
+        assertThat(properties.get(Taxon.EXTERNAL_ID), Is.is("EOL:327955"));
 
     }
 
@@ -232,6 +232,15 @@ public class EOLServiceIT {
         new EOLService().lookupPropertiesByName("Homo sapiens", properties);
         assertThat(properties.get(Taxon.EXTERNAL_ID), Is.is("EOL:327955"));
         assertThat(properties.get(Taxon.PATH), Is.is(HOMO_SAPIENS_PATH));
+
+    }
+
+    @Test
+    public void lookupExternalIdAndPathByNonScientificName() throws TaxonPropertyLookupServiceException {
+        HashMap<String, String> properties = new HashMap<String, String>();
+        new EOLService().lookupPropertiesByName("Other suspension feeders", properties);
+        assertThat(properties.get(Taxon.EXTERNAL_ID), Is.is(nullValue()));
+        assertThat(properties.get(Taxon.PATH), Is.is(nullValue()));
 
     }
 

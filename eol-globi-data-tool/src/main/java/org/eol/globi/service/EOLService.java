@@ -28,18 +28,21 @@ public class EOLService extends BaseHttpClientService implements TaxonPropertyLo
                 || properties.get(Taxon.PATH) == null
                 || properties.get(Taxon.COMMON_NAMES) == null) {
             id = getPageId(taxonName, true);
-            if (id != null && properties.get(Taxon.EXTERNAL_ID) == null) {
-                properties.put(Taxon.EXTERNAL_ID, TaxonomyProvider.ID_PREFIX_EOL + id.toString());
-            }
         }
 
         if (id != null) {
             if (properties.get(Taxon.PATH) == null || properties.get(Taxon.COMMON_NAMES) == null) {
                 addPath(id, properties);
                 String path = properties.get(Taxon.PATH);
-                if (StringUtils.isNotBlank(path) && !path.contains(taxonName)) {
-                    // add synonym
-                    properties.put(Taxon.PATH, path + CharsetConstant.SEPARATOR + taxonName);
+
+                if (StringUtils.isBlank(path)) {
+                    properties.clear();
+                } else {
+                    properties.put(Taxon.EXTERNAL_ID, TaxonomyProvider.ID_PREFIX_EOL + id.toString());
+                    if (!path.contains(taxonName)) {
+                        // add synonym
+                        properties.put(Taxon.PATH, path + CharsetConstant.SEPARATOR + taxonName);
+                    }
                 }
             }
         }
@@ -66,20 +69,16 @@ public class EOLService extends BaseHttpClientService implements TaxonPropertyLo
         URI uri = new URI("http", null, "eol.org", 80, "/api/pages/1.0/" + pageId + ".json", "images=1&videos=0&sounds=0&maps=0&text=0&iucn=false&subjects=overview&licenses=all&details=false&common_names=true&synonyms=false&references=false&format=json", null);
         String response = getResponse(uri);
         if (response != null) {
-            if (properties.get(Taxon.PATH) == null) {
-                StringBuilder ranks = new StringBuilder();
-                addRanks(ranks, response);
-                if (ranks.length() > 0) {
-                    properties.put(Taxon.PATH, ranks.toString());
-                }
+            StringBuilder ranks = new StringBuilder();
+            addRanks(ranks, response);
+            if (ranks.length() > 0) {
+                properties.put(Taxon.PATH, ranks.toString());
             }
 
-            if (properties.get(Taxon.COMMON_NAMES) == null) {
-                StringBuilder commonNames = new StringBuilder();
-                addCommonNames(commonNames, response);
-                if (commonNames.length() > 0) {
-                    properties.put(Taxon.COMMON_NAMES, commonNames.toString());
-                }
+            StringBuilder commonNames = new StringBuilder();
+            addCommonNames(commonNames, response);
+            if (commonNames.length() > 0) {
+                properties.put(Taxon.COMMON_NAMES, commonNames.toString());
             }
         }
     }
