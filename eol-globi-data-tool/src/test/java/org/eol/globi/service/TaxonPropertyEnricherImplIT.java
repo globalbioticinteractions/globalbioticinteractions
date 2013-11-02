@@ -59,24 +59,24 @@ public class TaxonPropertyEnricherImplIT extends GraphDBTestCase {
     @Test
     public void chromatomyiaScabiosae() throws IOException, NodeFactoryException {
         Taxon taxon = nodeFactory.getOrCreateTaxon("Chromatomyia scabiosae");
-        assertThat(taxon.getName(), is("Chromatomyia scabiosae"));
-        assertThat(taxon.getPath(), is(""));
-        assertThat(taxon.getExternalId(), is(nullValue()));
+        assertThat(taxon.getName(), is(PropertyAndValueDictionary.NO_MATCH));
+        assertThat(taxon.getPath(), is(PropertyAndValueDictionary.NO_MATCH));
+        assertThat(taxon.getExternalId(), is(PropertyAndValueDictionary.NO_MATCH));
     }
 
     @Test
     public void otherSuspensionFeeders() throws IOException, NodeFactoryException {
         Taxon taxon = nodeFactory.getOrCreateTaxon("Other suspension feeders");
-        assertThat(taxon.getName(), is("Other suspension feeders"));
-        assertThat(taxon.getPath(), is(""));
-        assertThat(taxon.getExternalId(), is(nullValue()));
+        assertThat(taxon.getExternalId(), is(PropertyAndValueDictionary.NO_MATCH));
+        assertThat(taxon.getName(), is(PropertyAndValueDictionary.NO_MATCH));
+        assertThat(taxon.getPath(), is(PropertyAndValueDictionary.NO_MATCH));
     }
 
     @Test
     public void sediment() throws IOException, NodeFactoryException {
         Taxon taxon = nodeFactory.getOrCreateTaxon("Sediment");
-        assertThat(taxon.getName(), is("Sediment"));
-        assertThat(taxon.getPath(), is(""));
-        assertThat(taxon.getExternalId(), is(nullValue()));
+        assertThat(taxon.getExternalId(), is(PropertyAndValueDictionary.NO_MATCH));
+        assertThat(taxon.getName(), is(PropertyAndValueDictionary.NO_MATCH));
+        assertThat(taxon.getPath(), is(PropertyAndValueDictionary.NO_MATCH));
     }
 }

@@ -1,5 +1,6 @@
 package org.eol.globi.service;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.neo4j.graphdb.GraphDatabaseService;
@@ -33,14 +34,25 @@ public class TaxonPropertyEnricherImpl implements TaxonPropertyEnricher {
     private void doEnrichment(Taxon taxon) {
         Node taxonNode = taxon.getUnderlyingNode();
         Map<String, String> properties = new HashMap<String, String>();
+        String propertyName[] = new String[]{Taxon.PATH, Taxon.EXTERNAL_ID};
+        properties.put(Taxon.NAME, null);
+        properties.put(Taxon.EXTERNAL_ID, null);
+        properties.put(Taxon.PATH, null);
+        properties.put(Taxon.COMMON_NAMES, null);
         for (TaxonPropertyLookupService service : services) {
             try {
                 enrichTaxonWithPropertyValue(errorCounts, taxonNode, service, properties);
+                boolean isComplete = true;
+                for (String name : propertyName) {
+                    isComplete = isComplete && StringUtils.isNotBlank(properties.get(name));
+                }
+                if (isComplete) {
+                    break;
+                }
             } catch (TaxonPropertyLookupServiceException e) {
                 LOG.warn("problem with taxon lookup", e);
                 service.shutdown();
             }
-            properties.clear();
         }
     }
 
