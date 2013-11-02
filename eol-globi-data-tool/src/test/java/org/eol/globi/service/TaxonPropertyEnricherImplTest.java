@@ -52,8 +52,12 @@ public class TaxonPropertyEnricherImplTest extends GraphDBTestCase {
         TaxonPropertyEnricherImpl enricher = new TaxonPropertyEnricherImpl(getGraphDb());
         List<TaxonPropertyLookupService> list = new ArrayList<TaxonPropertyLookupService>();
         list.add(serviceA);
-        Map<String, String> properties = new HashMap<String, String>() {
-        };
+        Map<String, String> properties = new HashMap<String, String>() {{
+            put(Taxon.NAME,null);
+            put(Taxon.COMMON_NAMES, null);
+            put(Taxon.PATH, null);
+            put(Taxon.EXTERNAL_ID, null);
+        }};
         list.add(serviceB);
         enricher.setServices(list);
 
