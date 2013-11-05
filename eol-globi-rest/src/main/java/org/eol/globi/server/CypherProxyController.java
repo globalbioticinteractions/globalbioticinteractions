@@ -296,7 +296,7 @@ public class CypherProxyController {
     @RequestMapping(value = "/contributors", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
     @Cacheable(value = "contributorCache")
-    public String contributors(@RequestParam final String source) throws IOException {
+    public String contributors(@RequestParam(required = false) final String source) throws IOException {
         String whereClause = StringUtils.isBlank(source) ? "" : " WHERE study.source = {source}";
         Map<String, String> params = StringUtils.isBlank(source) ? EMPTY_PARAMS : new HashMap<String, String>() {{
             put("source", source);
@@ -311,7 +311,7 @@ public class CypherProxyController {
     @RequestMapping(value = "/info", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
     @Cacheable(value = "infoCache")
-    public String info(@RequestParam final String source) throws IOException {
+    public String info(@RequestParam(required = false) final String source) throws IOException {
         String whereClause = StringUtils.isBlank(source) ? "" : " WHERE study.source = {source}";
         Map<String, String> params = StringUtils.isBlank(source) ? EMPTY_PARAMS : new HashMap<String, String>() {{
             put("source", source);
@@ -325,6 +325,7 @@ public class CypherProxyController {
 
     @RequestMapping(value = "/sources", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
+    @Cacheable(value = "sourcesCache")
     public String sources() throws IOException {
         String cypherQuery = "START study=node:studies('*:*')" +
                 " RETURN distinct(study.source)";

@@ -13,5 +13,6 @@
 
     <cache name="contributorCache" maxEntriesLocalHeap="50"/>
     <cache name="infoCache" maxEntriesLocalHeap="50"/>
+    <cache name="sourcesCache" maxEntriesLocalHeap="50"/>
     <cache name="locationCache" maxEntriesLocalHeap="50"/>
 </ehcache>
