@@ -11,6 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
@@ -295,7 +296,7 @@ public class CypherProxyController {
     @RequestMapping(value = "/contributors", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
     @Cacheable(value = "contributorCache")
-    public String contributors(@PathVariable("source") final String source) throws IOException {
+    public String contributors(@RequestParam final String source) throws IOException {
         String whereClause = StringUtils.isBlank(source) ? "" : " WHERE study.source = {source}";
         Map<String, String> params = StringUtils.isBlank(source) ? EMPTY_PARAMS : new HashMap<String, String>() {{
             put("source", source);
@@ -307,10 +308,10 @@ public class CypherProxyController {
         return new CypherQueryExecutor(cypherQuery, params).execute(null);
     }
 
-    @RequestMapping(value = "/info/{source}", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = "/info", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
     @Cacheable(value = "infoCache")
-    public String info(@PathVariable("source") final String source) throws IOException {
+    public String info(@RequestParam final String source) throws IOException {
         String whereClause = StringUtils.isBlank(source) ? "" : " WHERE study.source = {source}";
         Map<String, String> params = StringUtils.isBlank(source) ? EMPTY_PARAMS : new HashMap<String, String>() {{
             put("source", source);
