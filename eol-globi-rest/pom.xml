@@ -343,6 +343,13 @@
                     <stopKey>foo</stopKey>
                     <stopPort>9999</stopPort>
                     <skip>${skipTests}</skip>
+                    <systemProperties>
+                        <systemProperty>
+                            <key>storeDir</key>
+                            <value>${project.build.directory}/data/eol-globi-datasets-1.0-SNAPSHOT/graph.db/
+                            </value>
+                        </systemProperty>
+                    </systemProperties>
                 </configuration>
                 <executions>
                     <execution>
@@ -352,15 +359,7 @@
                             <goal>start</goal>
                         </goals>
                         <configuration>
-                            <scanIntervalSeconds>0</scanIntervalSeconds>
                             <daemon>true</daemon>
-                            <systemProperties>
-                                <systemProperty>
-                                    <key>storeDir</key>
-                                    <value>${project.build.directory}/data/eol-globi-datasets-1.0-SNAPSHOT/graph.db/
-                                    </value>
-                                </systemProperty>
-                            </systemProperties>
                         </configuration>
                     </execution>
                     <execution>
