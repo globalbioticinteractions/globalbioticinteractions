@@ -34,8 +34,6 @@ import static org.junit.Assert.assertThat;
 import static org.junit.matchers.JUnitMatchers.containsString;
 
 public class StudyImporterForINaturalistTest extends GraphDBTestCase {
-    private static final Log LOG = LogFactory.getLog(StudyImporterForINaturalistTest.class);
-
     private StudyImporterForINaturalist importer;
 
     @Before

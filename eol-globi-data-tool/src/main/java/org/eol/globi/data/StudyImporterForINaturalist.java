@@ -151,11 +151,13 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
                 } else if ("Pollinating".equals(interactionType)) {
                     type = InteractType.POLLINATES;
                 } else if ("Other Species in Group".equals(interactionType)) {
-                    LOG.warn("interactionType [" + interactionDataType + "] not supported");
+                    type = InteractType.INTERACTS_WITH;
                 } else if ("Butterfly & Moth Host Plant".equals(interactionType)) {
-                    LOG.warn("interactionType [" + interactionDataType + "] not supported");
+                    type = InteractType.INTERACTS_WITH;
                 } else if ("Butterfly & Moth Nectar Plant".equals(interactionType)) {
-                    LOG.warn("interactionType [" + interactionDataType + "] not supported");
+                    type = InteractType.INTERACTS_WITH;
+                } else if ("Gall Inducer".equals(interactionType)) {
+                    type = InteractType.INTERACTS_WITH;
                 } else {
                     throw new StudyImporterException("found unsupported interactionType [" + interactionType + "]");
                 }
