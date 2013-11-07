@@ -1,5 +1,6 @@
 package org.eol.globi.service;
 
+import org.apache.commons.lang3.time.StopWatch;
 import org.eol.globi.data.CharsetConstant;
 import org.eol.globi.domain.Taxon;
 import org.hamcrest.core.Is;
@@ -10,6 +11,7 @@ import java.util.HashMap;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.junit.internal.matchers.StringContains.containsString;
 
@@ -90,6 +92,43 @@ public class EOLServiceIT {
     }
 
     @Test
+    public void enrichUsingPreExistingEOLPageId() throws TaxonPropertyLookupServiceException {
+        EOLService eolService = new EOLService();
+        //warm up
+        HashMap<String, String> properties = new HashMap<String, String>();
+        eolService.lookupPropertiesByName("Homo sapiens", properties);
+
+        properties = new HashMap<String, String>();
+        StopWatch stopWatch = new StopWatch();
+        stopWatch.start();
+        eolService.lookupPropertiesByName("Homo sapiens", properties);
+        stopWatch.stop();
+        long durationFullLookup = stopWatch.getTime();
+        assertThat(properties.get(Taxon.COMMON_NAMES), is(notNullValue()));
+        assertThat(properties.get(Taxon.PATH), is(notNullValue()));
+        assertThat(properties.get(Taxon.EXTERNAL_ID), is(notNullValue()));
+        final String externalId = properties.get(Taxon.EXTERNAL_ID);
+
+        HashMap<String, String> enrichedProperties = new HashMap<String, String>() {{
+            put(Taxon.EXTERNAL_ID, externalId);
+        }};
+
+        stopWatch.reset();
+        stopWatch.start();
+        eolService.lookupPropertiesByName("Homo sapiens", enrichedProperties);
+        stopWatch.stop();
+
+        long durationNonPageIdLookup = stopWatch.getTime();
+
+        assertThat("expected full lookup [" + durationFullLookup + "] ms, to be slower than partial lookup [" + durationNonPageIdLookup + "] ms",
+                durationNonPageIdLookup < durationFullLookup, is(true));
+
+        assertThat(properties.get(Taxon.COMMON_NAMES), is(notNullValue()));
+        assertThat(properties.get(Taxon.PATH), is(notNullValue()));
+        assertThat(properties.get(Taxon.EXTERNAL_ID), is(notNullValue()));
+    }
+
+    @Test
     public void lookupByNameYieldsNoMatches() throws TaxonPropertyLookupServiceException {
         assertThat(lookupPageIdByScientificName("Clio acicula"), is(nullValue()));
         assertThat(lookupPageIdByScientificName("Aegires oritzi"), is(nullValue()));
@@ -104,7 +143,6 @@ public class EOLServiceIT {
 
     @Test
     public void parsePageIdEnsureLowestIsSelected() {
-
         String response = pageFeedResponsePrefix();
         response += biggerPageId();
         response += smallerPageId();
@@ -165,7 +203,7 @@ public class EOLServiceIT {
     @Test
     public void lookupTaxonPathByLSID() throws TaxonPropertyLookupServiceException {
         HashMap<String, String> properties = new HashMap<String, String>();
-        new EOLService().addPath(1045608L, properties);
+        new EOLService().addPathAndCommonNames(1045608L, properties);
         assertThat(properties.get(Taxon.PATH), Is.is("Animalia" + CharsetConstant.SEPARATOR
                 + "Arthropoda" + CharsetConstant.SEPARATOR
                 + "Insecta" + CharsetConstant.SEPARATOR
@@ -179,7 +217,7 @@ public class EOLServiceIT {
     @Test
     public void lookupTaxonPathByLSIDForPageWithoutClassification() throws TaxonPropertyLookupServiceException {
         HashMap<String, String> properties = new HashMap<String, String>();
-        new EOLService().addPath(13644436L, properties);
+        new EOLService().addPathAndCommonNames(13644436L, properties);
         assertThat(properties.get(Taxon.PATH), Is.is(nullValue()));
     }
 

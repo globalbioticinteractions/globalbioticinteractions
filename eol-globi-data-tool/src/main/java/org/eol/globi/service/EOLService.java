@@ -9,6 +9,7 @@ import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.JsonProcessingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.data.CharsetConstant;
+import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonomyProvider;
 
@@ -24,15 +25,24 @@ public class EOLService extends BaseHttpClientService implements TaxonPropertyLo
     @Override
     public void lookupPropertiesByName(String taxonName, Map<String, String> properties) throws TaxonPropertyLookupServiceException {
         Long id = null;
-        if (properties.get(Taxon.EXTERNAL_ID) == null
-                || properties.get(Taxon.PATH) == null
-                || properties.get(Taxon.COMMON_NAMES) == null) {
+        String externalId = properties.get(Taxon.EXTERNAL_ID);
+        if (externalId == null) {
             id = getPageId(taxonName, true);
+        } else if (properties.get(Taxon.PATH) == null || properties.get(Taxon.COMMON_NAMES) == null) {
+            if (externalId.startsWith(TaxonomyProvider.ID_PREFIX_EOL)) {
+                String eolPageIdString = externalId.replaceFirst(TaxonomyProvider.ID_PREFIX_EOL, "");
+                try {
+                    id = Long.parseLong(eolPageIdString);
+                } catch (NumberFormatException ex) {
+                    throw new TaxonPropertyLookupServiceException("failed to parse eol id [" + eolPageIdString + "]");
+                }
+            }
         }
+
 
         if (id != null) {
             if (properties.get(Taxon.PATH) == null || properties.get(Taxon.COMMON_NAMES) == null) {
-                addPath(id, properties);
+                addPathAndCommonNames(id, properties);
                 String path = properties.get(Taxon.PATH);
 
                 if (StringUtils.isBlank(path)) {
@@ -56,7 +66,7 @@ public class EOLService extends BaseHttpClientService implements TaxonPropertyLo
         return new URI("http", null, "eol.org", 80, "/api/search/1.0.xml", query, null);
     }
 
-    protected void addPath(Long pageId, Map<String, String> properties) throws TaxonPropertyLookupServiceException {
+    protected void addPathAndCommonNames(Long pageId, Map<String, String> properties) throws TaxonPropertyLookupServiceException {
         try {
             getRanks(pageId, properties);
         } catch (URISyntaxException e) {
