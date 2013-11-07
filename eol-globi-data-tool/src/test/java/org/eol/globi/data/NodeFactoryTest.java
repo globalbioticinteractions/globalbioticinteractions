@@ -1,6 +1,9 @@
 package org.eol.globi.data;
 
 import junit.framework.Assert;
+import org.apache.lucene.index.Term;
+import org.apache.lucene.search.Query;
+import org.apache.lucene.search.TermQuery;
 import org.eol.globi.domain.Environment;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.service.TaxonPropertyEnricher;
@@ -9,6 +12,7 @@ import org.eol.globi.domain.Location;
 import org.eol.globi.domain.Taxon;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Transaction;
+import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.IndexHits;
 
 import java.io.IOException;
@@ -26,15 +30,54 @@ import static org.junit.internal.matchers.IsCollectionContaining.hasItem;
 
 public class NodeFactoryTest extends GraphDBTestCase {
 
-    public static final String EXPECTED_PATH = "kingdom" + CharsetConstant.SEPARATOR + "phylum" + CharsetConstant.SEPARATOR + "etc" + CharsetConstant.SEPARATOR;
     public static final String EXPECTED_COMMON_NAMES = "some german name @de" + CharsetConstant.SEPARATOR + "some english name @en" + CharsetConstant.SEPARATOR;
+
+    @Test
+    public void findByStringWithWhitespaces() throws NodeFactoryException {
+        nodeFactory = new NodeFactory(getGraphDb(), new TaxonPropertyEnricher() {
+            @Override
+            public void enrich(Taxon taxon) throws IOException {
+                taxon.setPath("kingdom" + CharsetConstant.SEPARATOR + "phylum" + CharsetConstant.SEPARATOR + "Homo sapiens" + CharsetConstant.SEPARATOR);
+                taxon.setExternalId("anExternalId");
+                taxon.setCommonNames(EXPECTED_COMMON_NAMES);
+            }
+        });
+        nodeFactory.getOrCreateTaxon("Homo sapiens");
+
+        assertThat(nodeFactory.getGraphDb().index().existsForNodes("taxonNameSuggestions"), is(true));
+        Index<Node> index = nodeFactory.getGraphDb().index().forNodes("taxonNameSuggestions");
+        Query query = new TermQuery(new Term("name", "name"));
+        IndexHits<Node> hits = index.query(query);
+        assertThat(hits.size(), is(1));
+
+        hits = index.query("name", "s nme~");
+        assertThat(hits.size(), is(1));
+
+        hits = index.query("name", "geRman~");
+        assertThat(hits.size(), is(1));
+
+        hits = index.query("name:geRman~ AND name:som~");
+        assertThat(hits.size(), is(1));
+
+        hits = index.query("name:hmo~ AND name:SApiens~");
+        assertThat(hits.size(), is(1));
+
+        hits = index.query("name:hmo~ AND name:sapiens~");
+        assertThat(hits.size(), is(1));
+
+        // queries are case sensitive . . . should all be lower cased.
+        hits = index.query("name:HMO~ AND name:saPIENS~");
+        assertThat(hits.size(), is(0));
+
+
+    }
 
     @Test
     public void ensureThatEnrichedPropertiesAreIndexed() throws NodeFactoryException {
         nodeFactory = new NodeFactory(getGraphDb(), new TaxonPropertyEnricher() {
             @Override
             public void enrich(Taxon taxon) throws IOException {
-                taxon.setPath(EXPECTED_PATH);
+                taxon.setPath("kingdom" + CharsetConstant.SEPARATOR + "phylum" + CharsetConstant.SEPARATOR + "etc" + CharsetConstant.SEPARATOR);
                 taxon.setExternalId("anExternalId");
                 taxon.setCommonNames(EXPECTED_COMMON_NAMES);
             }
@@ -77,7 +120,7 @@ public class NodeFactoryTest extends GraphDBTestCase {
     }
 
     private void assertEnrichedPropertiesSet(Taxon aTaxon) {
-        assertThat(aTaxon.getPath(), is(EXPECTED_PATH));
+        assertThat(aTaxon.getPath(), is("kingdom" + CharsetConstant.SEPARATOR + "phylum" + CharsetConstant.SEPARATOR + "etc" + CharsetConstant.SEPARATOR));
         assertThat(aTaxon.getCommonNames(), is(EXPECTED_COMMON_NAMES));
         assertThat(aTaxon.getName(), is("some name"));
         assertThat(aTaxon.getExternalId(), is("anExternalId"));

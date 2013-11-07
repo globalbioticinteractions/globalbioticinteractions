@@ -1,12 +1,8 @@
 package org.eol.globi.server;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.lucene.index.Term;
-import org.apache.lucene.search.BooleanClause;
-import org.apache.lucene.search.BooleanQuery;
-import org.apache.lucene.search.FuzzyQuery;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.WildcardQuery;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.IndexHits;
@@ -19,11 +15,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 @Controller
 public class SearchService {
+    private static final Log LOG = LogFactory.getLog(SearchService.class);
 
     public static final String NAME = "name";
     public static final String PATH = "path";
@@ -36,8 +31,7 @@ public class SearchService {
     @ResponseBody
     public String findCloseMatchesForCommonAndScientificNames(@PathVariable("taxonName") String taxonName) throws IOException {
         StringBuffer buffer = new StringBuffer();
-        int hits = addCloseMatches(taxonName, buffer, NAME, "taxonNameSuggestions", 0);
-        addCloseMatches(taxonName, buffer, NAME, "taxons", hits);
+        addCloseMatches(taxonName, buffer, NAME, "taxonNameSuggestions", 0);
         return generateCypherLikeResponse(buffer);
     }
 
@@ -69,19 +63,20 @@ public class SearchService {
     }
 
     private IndexHits<Node> query(String taxonName, String name, Index<Node> taxonIndex) {
-        String capitalizedValue = StringUtils.lowerCase(taxonName);
-        List<Query> list = new ArrayList<Query>();
-        addQueriesForProperty(capitalizedValue, name, list);
-        BooleanQuery fuzzyAndWildcard = new BooleanQuery();
-        for (Query query : list) {
-            fuzzyAndWildcard.add(query, BooleanClause.Occur.SHOULD);
+        StringBuilder builder = new StringBuilder();
+        String[] split = StringUtils.split(taxonName, " ");
+        for (int i = 0; i < split.length; i++) {
+            builder.append(name);
+            builder.append(":");
+            String part = split[i];
+            builder.append(part.toLowerCase());
+            builder.append((part.length() < 3) ? "*" : "~");
+            if (i < (split.length - 1)) {
+                builder.append(" AND ");
+            }
         }
-        return taxonIndex.query(fuzzyAndWildcard);
-    }
-
-    private void addQueriesForProperty(String capitalizedValue, String propertyName, List<Query> list) {
-        list.add(new FuzzyQuery(new Term(propertyName, capitalizedValue)));
-        list.add(new WildcardQuery(new Term(propertyName, capitalizedValue + "*")));
-
+        String queryString = builder.toString();
+        LOG.info("query: [" + queryString + "]");
+        return taxonIndex.query(queryString);
     }
 }

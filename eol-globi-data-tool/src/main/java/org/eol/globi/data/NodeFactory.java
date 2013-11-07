@@ -90,7 +90,7 @@ public class NodeFactory {
         return graphDb;
     }
 
-    private void addTaxonToIndex(Taxon taxon) {
+    private void addToIndeces(Taxon taxon) {
         taxons.add(taxon.getUnderlyingNode(), Taxon.NAME, taxon.getName());
         taxonPaths.add(taxon.getUnderlyingNode(), Taxon.PATH, taxon.getPath());
 
@@ -99,7 +99,7 @@ public class NodeFactory {
             taxonCommonNames.add(taxon.getUnderlyingNode(), Taxon.COMMON_NAMES, commonNames);
             String[] commonNameArray = commonNames.split(CharsetConstant.SEPARATOR);
             for (String commonName : commonNameArray) {
-                taxonNameSuggestions.add(taxon.getUnderlyingNode(), Taxon.NAME, commonName);
+                taxonNameSuggestions.add(taxon.getUnderlyingNode(), Taxon.NAME, StringUtils.lowerCase(commonName));
             }
         }
 
@@ -108,11 +108,9 @@ public class NodeFactory {
             taxonCommonNames.add(taxon.getUnderlyingNode(), Taxon.PATH, path);
             String[] pathElementArray = path.split(CharsetConstant.SEPARATOR);
             for (String pathElement : pathElementArray) {
-                taxonNameSuggestions.add(taxon.getUnderlyingNode(), Taxon.NAME, pathElement);
+                taxonNameSuggestions.add(taxon.getUnderlyingNode(), Taxon.NAME, StringUtils.lowerCase(pathElement));
             }
         }
-
-        taxonNameSuggestions.add(taxon.getUnderlyingNode(), Taxon.NAME, taxon.getCommonNames());
     }
 
     public Taxon findTaxon(String taxonName) throws NodeFactoryException {
@@ -310,7 +308,7 @@ public class NodeFactory {
                 taxon.setExternalId(externalId);
                 taxon.setPath(path);
                 taxonEnricher.enrich(taxon);
-                addTaxonToIndex(taxon);
+                addToIndeces(taxon);
                 transaction.success();
             } catch (IOException e) {
                 transaction.failure();
@@ -330,7 +328,7 @@ public class NodeFactory {
         if (null != path) {
             taxon.setPath(path);
         }
-        addTaxonToIndex(taxon);
+        addToIndeces(taxon);
         return taxon;
     }
 
