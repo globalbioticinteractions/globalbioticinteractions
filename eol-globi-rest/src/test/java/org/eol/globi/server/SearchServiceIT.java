@@ -15,34 +15,27 @@ public class SearchServiceIT extends ITBase {
 
     @Test
     public void findCloseMatchesTypo() throws IOException {
-        String uri = getURLPrefix() + "findCloseMatchesForTaxon/Homo%20SApient";
-        String response = HttpClient.httpGet(uri);
-        assertThat(response.startsWith("{" + COLUMN_PREFIX), is(true));
-        assertThat(response, containsString("Homo sapiens"));
-        assertThat(response, containsString("human"));
+        assertHuman("Homo%20SApient");
     }
 
     @Test
     public void findCloseMatchesTypo2() throws IOException {
-        String uri = getURLPrefix() + "findCloseMatchesForTaxon/Homo%20SApientz";
-        String response = HttpClient.httpGet(uri);
-        assertThat(response.startsWith("{" + COLUMN_PREFIX), is(true));
-        assertThat(response, containsString("Homo sapiens"));
-        assertThat(response, containsString("human"));
+        assertHuman("Homo%20SApientz");
     }
 
     @Test
     public void findCloseMatchesPartial() throws IOException {
-        String uri = getURLPrefix() + "findCloseMatchesForTaxon/Homo%20sa";
-        String response = HttpClient.httpGet(uri);
-        assertThat(response.startsWith("{" + COLUMN_PREFIX), is(true));
-        assertThat(response, containsString("Homo sapiens"));
-        assertThat(response, containsString("man"));
+        assertHuman("Homo%20sa");
+        assertHuman("Homo%20sapi");
     }
 
     @Test
     public void findCloseMatchesShortPartial() throws IOException {
-        String uri = getURLPrefix() + "findCloseMatchesForTaxon/Homo%20s";
+        assertHuman("Homo%20s");
+    }
+
+    private void assertHuman(String searchTerm) throws IOException {
+        String uri = getURLPrefix() + "findCloseMatchesForTaxon/" + searchTerm;
         String response = HttpClient.httpGet(uri);
         assertThat(response.startsWith("{" + COLUMN_PREFIX), is(true));
         assertThat(response, containsString("Homo sapiens"));
@@ -52,11 +45,7 @@ public class SearchServiceIT extends ITBase {
     @Test
     @Ignore(value="should work after ensuring that lower case terms are indexed")
     public void findCloseMatchesShortPartial2() throws IOException {
-        String uri = getURLPrefix() + "findCloseMatchesForTaxon/h%20s";
-        String response = HttpClient.httpGet(uri);
-        assertThat(response.startsWith("{" + COLUMN_PREFIX), is(true));
-        assertThat(response, containsString("Homo sapiens"));
-        assertThat(response, containsString("man"));
+        assertHuman("h%20s");
     }
 
     @Test

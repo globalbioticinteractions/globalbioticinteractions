@@ -66,11 +66,16 @@ public class SearchService {
         StringBuilder builder = new StringBuilder();
         String[] split = StringUtils.split(taxonName, " ");
         for (int i = 0; i < split.length; i++) {
+            builder.append("(");
             builder.append(name);
             builder.append(":");
             String part = split[i];
             builder.append(part.toLowerCase());
-            builder.append((part.length() < 3) ? "*" : "~");
+            builder.append("* OR " );
+            builder.append(name);
+            builder.append(":");
+            builder.append(part.toLowerCase());
+            builder.append("~)");
             if (i < (split.length - 1)) {
                 builder.append(" AND ");
             }
