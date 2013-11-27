@@ -40,6 +40,7 @@ public class NodeFactoryTest extends GraphDBTestCase {
                 taxon.setPath("kingdom" + CharsetConstant.SEPARATOR + "phylum" + CharsetConstant.SEPARATOR + "Homo sapiens" + CharsetConstant.SEPARATOR);
                 taxon.setExternalId("anExternalId");
                 taxon.setCommonNames(EXPECTED_COMMON_NAMES);
+                taxon.setName("this is the actual name");
             }
         });
         nodeFactory.getOrCreateTaxon("Homo sapiens");

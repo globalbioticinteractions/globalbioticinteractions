@@ -53,6 +53,10 @@ public class StudyImporterForSPIRE extends BaseStudyImporter {
         properties.put(Study.INSTITUTION, "");
         properties.put(Study.PERIOD, "");
         properties.put(Study.PUBLICATION_YEAR, "");
+        // see https://github.com/jhpoelen/eol-globi-data/issues/28
+        if ("Animal Diversity Web".equals(titlesAndAuthors1)) {
+            titlesAndAuthors1 = "Myers, P., R. Espinosa, C. S. Parr, T. Jones, G. S. Hammond, and T. A. Dewey. 2013. The Animal Diversity Web (online). Accessed at http://animaldiversity.org.";
+        }
         properties.put(Study.DESCRIPTION, titlesAndAuthors1);
     }
 

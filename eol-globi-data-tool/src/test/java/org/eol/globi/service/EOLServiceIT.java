@@ -30,6 +30,7 @@ public class EOLServiceIT {
 
     @Test
     public void lookupByName() throws TaxonPropertyLookupServiceException {
+        assertThat(lookupPageIdByScientificName("Catfish"), is("EOL:204346"));
         assertThat(lookupPageIdByScientificName("Hygrocybe pratensis var. pallida"), is("EOL:6676627"));
 
         assertThat(lookupPageIdByScientificName("Homo sapiens"), is("EOL:327955"));
@@ -40,6 +41,7 @@ public class EOLServiceIT {
         assertThat(lookupPageIdByScientificName("Prunella (Bot)"), is("EOL:70879"));
         assertThat(lookupPageIdByScientificName("Prunella (Bird)"), is("EOL:77930"));
         assertThat(lookupPageIdByScientificName("Pseudobaeospora dichroa"), is("EOL:1001400"));
+
     }
 
     /**
