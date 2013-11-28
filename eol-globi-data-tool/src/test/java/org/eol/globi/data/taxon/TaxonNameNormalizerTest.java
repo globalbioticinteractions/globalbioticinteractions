@@ -22,6 +22,8 @@ public class TaxonNameNormalizerTest {
         assertThat(normalizer.normalize("Aegathoa oculata spp."), is("Aegathoa oculata"));
         assertThat(normalizer.normalize("Aegathoa oculata spp. Aegathoa oculata spp. Aegathoa oculata spp."), is("Aegathoa oculata"));
         assertThat(normalizer.normalize("Taraxacum leptaleum"), is("Taraxacum leptaleum"));
+        assertThat(normalizer.normalize(""), is("no name"));
+        assertThat(normalizer.normalize("a"), is("no name"));
         assertThat(normalizer.normalize("NA"), is("no name"));
         assertThat(normalizer.normalize("NE"), is("no name"));
         assertThat(normalizer.normalize("'Loranthus'"), is("Loranthus"));
@@ -92,8 +94,8 @@ public class TaxonNameNormalizerTest {
     @Test
     public void taxonNameTooShort() {
         TaxonNameNormalizer normalizer = new TaxonNameNormalizer();
-        assertThat(normalizer.normalize("G"), is(""));
-        assertThat(normalizer.normalize("H"), is(""));
+        assertThat(normalizer.normalize("G"), is("no name"));
+        assertThat(normalizer.normalize("H"), is("no name"));
         assertThat(normalizer.normalize("HH"), is("HH"));
     }
 }

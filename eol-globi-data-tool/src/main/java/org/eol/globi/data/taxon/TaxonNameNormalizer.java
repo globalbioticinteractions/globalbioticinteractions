@@ -60,14 +60,17 @@ public class TaxonNameNormalizer {
 
     public String normalize(String taxonName) {
         String cleanName = clean(taxonName);
-        if (!isInitialized()) {
-            doInit();
+        if (cleanName.length() < 2) {
+            cleanName = "no name";
+        } else {
+            if (!isInitialized()) {
+                doInit();
+            }
+            String suggestedReplacement = corrections.get(cleanName);
+            if (suggestedReplacement != null) {
+                cleanName = suggestedReplacement;
+            }
         }
-        String suggestedReplacement = corrections.get(cleanName);
-        if (suggestedReplacement != null) {
-            cleanName = suggestedReplacement;
-        }
-
         return cleanName.trim();
     }
 

@@ -224,12 +224,7 @@ public class NodeFactory {
     }
 
     public Specimen createSpecimen(String specimenTaxonDescription, String taxonExternalId) throws NodeFactoryException {
-        Taxon taxon;
-        if (StringUtils.isBlank(specimenTaxonDescription) && specimenTaxonDescription.length() < 2) {
-            taxon = getOrCreateTaxon("no name");
-        } else {
-            taxon = getOrCreateTaxon(specimenTaxonDescription, taxonExternalId, null);
-        }
+        Taxon taxon = getOrCreateTaxon(specimenTaxonDescription, taxonExternalId, null);
         Specimen specimen = createSpecimen(taxon);
         specimen.setOriginalTaxonDescription(specimenTaxonDescription);
         return specimen;
