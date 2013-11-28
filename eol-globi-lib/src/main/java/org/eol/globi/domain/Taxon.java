@@ -26,7 +26,7 @@ public class Taxon extends NamedNode {
 
     public String getPath() {
         return getUnderlyingNode().hasProperty(PATH) ?
-                (String) getUnderlyingNode().getProperty(PATH) : "";
+                (String) getUnderlyingNode().getProperty(PATH) : null;
     }
 
     public void setPath(String path) {
@@ -37,7 +37,7 @@ public class Taxon extends NamedNode {
 
     public String getCommonNames() {
         return getUnderlyingNode().hasProperty(COMMON_NAMES) ?
-                (String) getUnderlyingNode().getProperty(COMMON_NAMES) : "";
+                (String) getUnderlyingNode().getProperty(COMMON_NAMES) : null;
     }
 
     public void setCommonNames(String commonNames) {

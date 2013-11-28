@@ -1,11 +1,14 @@
 package org.eol.globi.data;
 
 import org.eol.globi.domain.Taxon;
+import org.eol.globi.service.TaxonPropertyEnricher;
+import org.eol.globi.service.TaxonPropertyEnricherFactory;
 import org.eol.globi.service.TaxonPropertyEnricherImpl;
 import org.junit.Test;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.index.IndexHits;
 
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
@@ -19,7 +22,24 @@ public class NodeFactoryIT extends GraphDBTestCase {
         taxon = factory.getOrCreateTaxon("fish");
         assertThat(taxon.getName(), is("Actinopterygii"));
 
-        IndexHits<Node> hits = factory.findCloseMatchesForTaxonName("fish");
+        assertZeroHits(factory, "fish");
+    }
+
+    @Test
+    public void createNoMatch() throws NodeFactoryException {
+        TaxonPropertyEnricher taxonEnricher = TaxonPropertyEnricherFactory.createTaxonEnricher(getGraphDb());
+        NodeFactory factory = new NodeFactory(getGraphDb(), taxonEnricher);
+        Taxon taxon = factory.getOrCreateTaxon("Santa Claus meets Superman");
+        assertThat(taxon.getName(), is("Santa Claus meets Superman"));
+        assertThat(taxon.getExternalId(), is("no:match"));
+        assertThat(taxon.getPath(), is(nullValue()));
+        assertThat(taxon.getCommonNames(), is(nullValue()));
+
+        assertZeroHits(factory, "no:match");
+    }
+
+    private void assertZeroHits(NodeFactory factory, String taxonName) {
+        IndexHits<Node> hits = factory.findCloseMatchesForTaxonName(taxonName);
         assertThat(hits.size(), is(0));
     }
 }

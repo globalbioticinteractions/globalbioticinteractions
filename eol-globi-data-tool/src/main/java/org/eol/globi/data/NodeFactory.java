@@ -91,24 +91,34 @@ public class NodeFactory {
     }
 
     private void addToIndeces(Taxon taxon) {
-        taxons.add(taxon.getUnderlyingNode(), Taxon.NAME, taxon.getName());
-        taxonPaths.add(taxon.getUnderlyingNode(), Taxon.PATH, taxon.getPath());
+        // only index taxa with external id
+        if (StringUtils.isNotBlank(taxon.getName())) {
+            taxons.add(taxon.getUnderlyingNode(), Taxon.NAME, taxon.getName());
+            indexCommonNames(taxon);
+            indexTaxonPath(taxon);
+        }
 
+    }
+
+    private void indexTaxonPath(Taxon taxon) {
+        String path = taxon.getPath();
+        if (StringUtils.isNotBlank(path)) {
+            taxonPaths.add(taxon.getUnderlyingNode(), Taxon.PATH, path);
+            taxonCommonNames.add(taxon.getUnderlyingNode(), Taxon.PATH, path);
+            String[] pathElementArray = path.split(CharsetConstant.SEPARATOR);
+            for (String pathElement : pathElementArray) {
+                taxonNameSuggestions.add(taxon.getUnderlyingNode(), Taxon.NAME, StringUtils.lowerCase(pathElement));
+            }
+        }
+    }
+
+    private void indexCommonNames(Taxon taxon) {
         String commonNames = taxon.getCommonNames();
         if (StringUtils.isNotBlank(commonNames)) {
             taxonCommonNames.add(taxon.getUnderlyingNode(), Taxon.COMMON_NAMES, commonNames);
             String[] commonNameArray = commonNames.split(CharsetConstant.SEPARATOR);
             for (String commonName : commonNameArray) {
                 taxonNameSuggestions.add(taxon.getUnderlyingNode(), Taxon.NAME, StringUtils.lowerCase(commonName));
-            }
-        }
-
-        String path = taxon.getPath();
-        if (StringUtils.isNotBlank(path)) {
-            taxonCommonNames.add(taxon.getUnderlyingNode(), Taxon.PATH, path);
-            String[] pathElementArray = path.split(CharsetConstant.SEPARATOR);
-            for (String pathElement : pathElementArray) {
-                taxonNameSuggestions.add(taxon.getUnderlyingNode(), Taxon.NAME, StringUtils.lowerCase(pathElement));
             }
         }
     }

@@ -35,10 +35,10 @@ public class TaxonPropertyEnricherImpl implements TaxonPropertyEnricher {
         Node taxonNode = taxon.getUnderlyingNode();
         Map<String, String> properties = new HashMap<String, String>();
         String propertyName[] = new String[]{Taxon.PATH, Taxon.EXTERNAL_ID};
-        properties.put(Taxon.NAME, null);
-        properties.put(Taxon.EXTERNAL_ID, null);
-        properties.put(Taxon.PATH, null);
-        properties.put(Taxon.COMMON_NAMES, null);
+        properties.put(Taxon.NAME, taxon.getName());
+        properties.put(Taxon.EXTERNAL_ID, taxon.getExternalId());
+        properties.put(Taxon.PATH, taxon.getPath());
+        properties.put(Taxon.COMMON_NAMES, taxon.getCommonNames());
         for (TaxonPropertyLookupService service : services) {
             try {
                 enrichTaxonWithPropertyValue(errorCounts, taxonNode, service, properties);
