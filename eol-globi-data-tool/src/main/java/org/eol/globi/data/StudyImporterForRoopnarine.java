@@ -1,6 +1,7 @@
 package org.eol.globi.data;
 
 import com.Ostermiller.util.LabeledCSVParser;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eol.globi.domain.Specimen;
@@ -123,11 +124,19 @@ public class StudyImporterForRoopnarine extends BaseStudyImporter {
         }
         for (String predatorTaxa : predatorTaxaList) {
             // TODO - here's where the specimen model doesn't fit nicely - need a way to distinguish inferred relationships from direct observations
-            Specimen predatorSpecimen = nodeFactory.createSpecimen(predatorTaxa);
-            predatorSpecimenList.add(predatorSpecimen);
-            for (String preyTaxonName : preyTaxonList) {
-                Specimen preySpecimen = nodeFactory.createSpecimen(preyTaxonName);
-                predatorSpecimen.ate(preySpecimen);
+            if (StringUtils.isBlank(predatorTaxa)) {
+                LOG.info("found blank predator name on line [" + parser.lastLineNumber() + "]");
+            } else {
+                Specimen predatorSpecimen = nodeFactory.createSpecimen(predatorTaxa);
+                predatorSpecimenList.add(predatorSpecimen);
+                for (String preyTaxonName : preyTaxonList) {
+                    if (StringUtils.isBlank(preyTaxonName)) {
+                        LOG.info("found blank prey name for predator [" + predatorTaxa + "] on line [" + parser.lastLineNumber() + "]");
+                    } else {
+                        Specimen preySpecimen = nodeFactory.createSpecimen(preyTaxonName);
+                        predatorSpecimen.ate(preySpecimen);
+                    }
+                }
             }
         }
         return predatorSpecimenList;

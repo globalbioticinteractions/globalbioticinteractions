@@ -1,6 +1,7 @@
 package org.eol.globi.data;
 
 import com.Ostermiller.util.LabeledCSVParser;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eol.globi.domain.Location;
@@ -48,21 +49,29 @@ public class StudyImporterForBarnes extends BaseStudyImporter {
 
     private void importLine(LabeledCSVParser parser, Study study) throws StudyImporterException {
         try {
-            Specimen predator = nodeFactory.createSpecimen(parser.getValueByLabel("Predator"));
-            addLifeStage(parser, predator);
+            String predatorName = parser.getValueByLabel("Predator");
+            if (StringUtils.isBlank(predatorName)) {
+                LOG.warn("found empty predator name on line [" + parser.lastLineNumber() + "]");
+            } else {
+                Specimen predator = nodeFactory.createSpecimen(predatorName);
+                addLifeStage(parser, predator);
 
-            Double latitude = LocationUtil.parseDegrees(parser.getValueByLabel("Latitude"));
-            Double longitude = LocationUtil.parseDegrees(parser.getValueByLabel("Longitude"));
-            String depth = parser.getValueByLabel("Depth");
-            Double altitudeInMeters = -1.0 * Double.parseDouble(depth);
-            Location location = nodeFactory.getOrCreateLocation(latitude, longitude, altitudeInMeters);
-            predator.caughtIn(location);
+                Double latitude = LocationUtil.parseDegrees(parser.getValueByLabel("Latitude"));
+                Double longitude = LocationUtil.parseDegrees(parser.getValueByLabel("Longitude"));
+                String depth = parser.getValueByLabel("Depth");
+                Double altitudeInMeters = -1.0 * Double.parseDouble(depth);
+                Location location = nodeFactory.getOrCreateLocation(latitude, longitude, altitudeInMeters);
+                predator.caughtIn(location);
 
-            Specimen prey = nodeFactory.createSpecimen(parser.getValueByLabel("Prey"));
-
-            predator.ate(prey);
-
-            study.collected(predator);
+                String preyName = parser.getValueByLabel("Prey");
+                if (StringUtils.isBlank(preyName)) {
+                  LOG.warn("found empty prey name on line [" + parser.lastLineNumber() + "]");
+                } else {
+                    Specimen prey = nodeFactory.createSpecimen(preyName);
+                    predator.ate(prey);
+                }
+                study.collected(predator);
+            }
         } catch (NodeFactoryException e) {
             throw new StudyImporterException("problem creating nodes at line [" + parser.lastLineNumber() + "]", e);
         } catch (NumberFormatException e) {
