@@ -4,7 +4,7 @@ GOMEXSI:pieces	parts	GLOBI:UNKNOWN	UNKNOWN
 GOMEXSI:fragments	fragments	GLOBI:UNKNOWN	UNKNOWN
 GOMEXSI:scales	scales	UBERON:0002542	scale
 GOMEXSI:scale(s)	scale(s)	UBERON:0002542	scale
-GOMEXSI:bone	bone	UBERON:0002481  bone tissue
+GOMEXSI:bone	bone	UBERON:0002481	bone tissue
 GOMEXSI:tube	tube	GLOBI:TUBE	TUBE
 GOMEXSI:spine	spine	GLOBI:SPINE	SPINE
 GOMEXSI:pollen_grain	pollen grain	GLOBI:POLLEN_GRAIN	POLLEN_GRAIN
