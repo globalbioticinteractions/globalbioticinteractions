@@ -5,6 +5,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Term;
 
 import java.io.IOException;
@@ -24,12 +25,14 @@ public abstract class TermLookupServiceImpl extends BaseHttpClientService implem
     public abstract String getMappingURI();
 
     @Override
-    public List<Term> lookupTermByName(String name) throws TermLookupServiceException {
+    public List<Term> lookupTermByName(final String name) throws TermLookupServiceException {
         if (mapping == null) {
             buildMapping(getMappingURI());
         }
         List<Term> terms = mapping.get(name);
-        return terms == null ? new ArrayList<Term>() : terms;
+        return terms == null ? new ArrayList<Term>() {{
+            add(new Term(PropertyAndValueDictionary.NO_MATCH, name));
+        }} : terms;
     }
 
     private void buildMapping(String uri) throws TermLookupServiceException {

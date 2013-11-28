@@ -30,7 +30,12 @@ public class EnvoLookupServiceIT {
         assertThat(term.getId(), is("ENVO:01000178"));
 
         terms = service.lookupTermByName("this ain't no SPIRE habitat");
-        assertThat(terms.size(), is(0));
+        assertThat(terms.size(), is(1));
+
+        term = terms.get(0);
+        assertThat(term.getName(), is("this ain't no SPIRE habitat"));
+        assertThat(term.getId(), is("no:match"));
+
 
     }
 
@@ -38,7 +43,11 @@ public class EnvoLookupServiceIT {
     public void CMECShabitats() throws TermLookupServiceException {
         TermLookupService service = new EnvoLookupService();
         List<Term> terms = service.lookupTermByName("Marine Nearshore Subtidal");
-        assertThat(terms.size(), is(0));
+        assertThat(terms.size(), is(1));
+
+        Term term = terms.get(0);
+        assertThat(term.getName(), is("Marine Nearshore Subtidal"));
+        assertThat(term.getId(), is("no:match"));
     }
 
 }

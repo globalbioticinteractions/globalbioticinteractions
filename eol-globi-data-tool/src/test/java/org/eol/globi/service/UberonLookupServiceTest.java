@@ -35,4 +35,12 @@ public class UberonLookupServiceTest {
         assertThat(scales.get(0).getId(), is("GLOBI:NEWBORN"));
         assertThat(scales.get(0).getName(), is("NEWBORN"));
     }
+
+    @Test
+    public void donaldDuck() throws TermLookupServiceException {
+        List<Term> scales = uberonLookupService.lookupTermByName("donald duck");
+        assertThat(scales.size(), is(1));
+        assertThat(scales.get(0).getId(), is("no:match"));
+        assertThat(scales.get(0).getName(), is("donald duck"));
+    }
 }
