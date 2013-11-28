@@ -38,6 +38,13 @@ public class NodeFactoryIT extends GraphDBTestCase {
         assertZeroHits(factory, "no:match");
     }
 
+    @Test(expected = NodeFactoryException.class)
+    public void nameTooShort() throws NodeFactoryException {
+        TaxonPropertyEnricher taxonEnricher = TaxonPropertyEnricherFactory.createTaxonEnricher(getGraphDb());
+        NodeFactory factory = new NodeFactory(getGraphDb(), taxonEnricher);
+        factory.getOrCreateTaxon("");
+    }
+
     private void assertZeroHits(NodeFactory factory, String taxonName) {
         IndexHits<Node> hits = factory.findCloseMatchesForTaxonName(taxonName);
         assertThat(hits.size(), is(0));

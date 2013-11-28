@@ -309,6 +309,9 @@ public class NodeFactory {
     }
 
     public Taxon getOrCreateTaxon(String name, String externalId, String path) throws NodeFactoryException {
+        if (StringUtils.length(name) < 2) {
+            throw new NodeFactoryException("taxon name [" + name + "] must contains more than 1 character");
+        }
         Taxon taxon = findTaxon(name);
         if (taxon == null) {
             String normalizedName = TAXON_NAME_NORMALIZER.normalize(name);
