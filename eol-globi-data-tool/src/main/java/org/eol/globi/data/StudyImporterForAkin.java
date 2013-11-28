@@ -52,7 +52,7 @@ public class StudyImporterForAkin extends BaseStudyImporter {
         int dateIndex = findIndexForColumnWithNameThrowOnMissing("Date ", header);
         String dateString = line[dateIndex];
         String[] siteInfo = findSiteInfo(header, line, siteInfos, parser);
-        return !StringUtils.isBlank(dateString) && siteInfo != null;
+        return StringUtils.isNotBlank(dateString) && siteInfo != null;
     }
 
 
@@ -112,24 +112,24 @@ public class StudyImporterForAkin extends BaseStudyImporter {
     private void addPrey(LabeledCSVParser parser, String[] header, String[] line, Specimen specimen) throws StudyImporterException, NodeFactoryException {
         int firstPreyIndex = findIndexForColumnWithNameThrowOnMissing("Detritus", header);
         for (int i = firstPreyIndex; i < line.length; i++) {
-            String preyVolumeString = line[i];
             String preySpeciesName = header[i];
-
-            try {
-                if (preyVolumeString.trim().length() > 0) {
-                    double volume = Double.parseDouble(preyVolumeString);
-                    if (volume > 0) {
-                        Specimen prey = nodeFactory.createSpecimen(preySpeciesName);
-
-                        prey.setLifeStage(parseLifeStage(nodeFactory.getTermLookupService(), preySpeciesName));
-                        prey.setVolumeInMilliLiter(volume);
-                        specimen.ate(prey);
+            if (StringUtils.isNotBlank(preySpeciesName)) {
+                String preyVolumeString = line[i];
+                try {
+                    if (StringUtils.isNotBlank(preyVolumeString)) {
+                        double volume = Double.parseDouble(preyVolumeString);
+                        if (volume > 0) {
+                            Specimen prey = nodeFactory.createSpecimen(preySpeciesName);
+                            prey.setLifeStage(parseLifeStage(nodeFactory.getTermLookupService(), preySpeciesName));
+                            prey.setVolumeInMilliLiter(volume);
+                            specimen.ate(prey);
+                        }
                     }
+                } catch (NumberFormatException ex) {
+                    throw new StudyImporterException("failed to parse volume of prey [" + preySpeciesName + "] in stomach [" + preyVolumeString + "] on line [" + parser.getLastLineNumber() + "]");
+                } catch (TermLookupServiceException e) {
+                    throw new StudyImporterException("failed to parse life stage of prey [" + preySpeciesName + "] in stomach [" + preyVolumeString + "] on line [" + parser.getLastLineNumber() + "]");
                 }
-            } catch (NumberFormatException ex) {
-                throw new StudyImporterException("failed to parse volume of prey [" + preySpeciesName + "] in stomach [" + preyVolumeString + "] on line [" + parser.getLastLineNumber() + "]");
-            } catch (TermLookupServiceException e) {
-                throw new StudyImporterException("failed to parse life stage of prey [" + preySpeciesName + "] in stomach [" + preyVolumeString + "] on line [" + parser.getLastLineNumber() + "]");
             }
         }
     }
@@ -150,11 +150,13 @@ public class StudyImporterForAkin extends BaseStudyImporter {
         Specimen specimen = null;
         int speciesIndex = findIndexForColumnWithNameThrowOnMissing("Fish Species", header);
         String speciesName = line[speciesIndex];
-        if (speciesName != null && speciesName.length() > 0) {
+        if (StringUtils.isNotBlank(speciesName)) {
             specimen = nodeFactory.createSpecimen(speciesName);
             addSpecimenLength(parser, header, line, specimen);
             addStomachVolume(parser, header, line, specimen);
             addCollectionDate(study, parser, header, line, specimen);
+        } else {
+            LOG.warn("found blank species name on line [" + parser.lastLineNumber() + "]");
         }
         return specimen;
     }

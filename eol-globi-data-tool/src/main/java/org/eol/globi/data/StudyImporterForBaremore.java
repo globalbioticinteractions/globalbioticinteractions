@@ -1,6 +1,7 @@
 package org.eol.globi.data;
 
 import com.Ostermiller.util.LabeledCSVParser;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eol.globi.service.TermLookupService;
@@ -78,8 +79,12 @@ public class StudyImporterForBaremore extends BaseStudyImporter {
                         throw new StudyImporterException("failed to parse length [" + totalLengthInCm);
                     }
                     String preySpeciesDescription = line[7];
-                    Specimen preySpecimen = nodeFactory.createSpecimen(preySpeciesDescription);
-                    predatorSpecimen.ate(preySpecimen);
+                    if (StringUtils.isBlank(preySpeciesDescription)) {
+                        LOG.info("found blank prey species description [" + preySpeciesDescription + "] on line [" + parser.lastLineNumber() + "]");
+                    } else {
+                        Specimen preySpecimen = nodeFactory.createSpecimen(preySpeciesDescription);
+                        predatorSpecimen.ate(preySpecimen);
+                    }
                 }
             }
         } catch (IOException e) {
