@@ -226,7 +226,7 @@ public class NodeFactory {
     public Specimen createSpecimen(String specimenTaxonDescription, String taxonExternalId) throws NodeFactoryException {
         Taxon taxon;
         if (StringUtils.isBlank(specimenTaxonDescription) && specimenTaxonDescription.length() < 2) {
-            taxon = getOrCreateTaxon("empty");
+            taxon = getOrCreateTaxon("no name");
         } else {
             taxon = getOrCreateTaxon(specimenTaxonDescription, taxonExternalId, null);
         }

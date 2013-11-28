@@ -3,6 +3,8 @@ package org.eol.globi.data.taxon;
 import com.Ostermiller.util.CSVParser;
 import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.eol.globi.data.CharsetConstant;
 
 import java.io.BufferedReader;
@@ -12,6 +14,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class TaxonNameNormalizer {
+
+    private static final Log LOG = LogFactory.getLog(TaxonNameNormalizer.class);
 
     private Map<String, String> corrections;
 
@@ -31,7 +35,7 @@ public class TaxonNameNormalizer {
         name = name.replaceAll(" subsp ", " ssp. ");
         name = name.replaceAll(" subsp. ", " ssp. ");
         name = name.replaceAll(" subspecies ", " ssp. ");
-        name = name.replaceAll("^\\w$","");
+        name = name.replaceAll("^\\w$", "");
         name = name.replaceAll("ü", "ue");
         name = name.replaceAll("ë", "e");
         String trim = name.trim();
@@ -77,7 +81,12 @@ public class TaxonNameNormalizer {
             corrections = new HashMap<String, String>();
             while ((line = labeledCSVParser.getLine()) != null) {
                 if (line.length > 1) {
-                    corrections.put(line[0], line[1]);
+                    String original = line[0];
+                    String correction = line[1];
+                    if (StringUtils.isBlank(correction) || correction.trim().length() < 2) {
+                        throw new RuntimeException("found invalid blank or single character conversion for [" + original + "]");
+                    }
+                    corrections.put(original, correction);
                 }
             }
         } catch (IOException e) {
