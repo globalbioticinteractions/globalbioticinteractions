@@ -10,6 +10,7 @@ import org.neo4j.graphdb.index.IndexHits;
 
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
 
 public class NodeFactoryIT extends GraphDBTestCase {
@@ -34,6 +35,19 @@ public class NodeFactoryIT extends GraphDBTestCase {
         assertThat(taxon.getExternalId(), is("no:match"));
         assertThat(taxon.getPath(), is(nullValue()));
         assertThat(taxon.getCommonNames(), is(nullValue()));
+
+        assertZeroHits(factory, "no:match");
+    }
+
+    @Test
+    public void createHomoSapiens() throws NodeFactoryException {
+        TaxonPropertyEnricher taxonEnricher = TaxonPropertyEnricherFactory.createTaxonEnricher(getGraphDb());
+        NodeFactory factory = new NodeFactory(getGraphDb(), taxonEnricher);
+        Taxon taxon = factory.getOrCreateTaxon("Homo sapiens");
+        assertThat(taxon.getName(), is("Homo sapiens"));
+        assertThat(taxon.getExternalId(), is("EOL:327955"));
+        assertThat(taxon.getPath(), is(notNullValue()));
+        assertThat(taxon.getCommonNames(), is(notNullValue()));
 
         assertZeroHits(factory, "no:match");
     }
