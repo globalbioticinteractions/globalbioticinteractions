@@ -32,7 +32,7 @@ public abstract class BaseTaxonIdService extends BaseHttpClientService implement
                     propertyValue = lookupTaxonPathById(lsId);
                     // append synonyms in path whenever available using "|" separator with suffix to enable search
                     // see https://github.com/jhpoelen/eol-globi-data/issues/12
-                    if (!StringUtils.endsWith(propertyValue, taxonName)) {
+                    if (StringUtils.isNotBlank(propertyValue) && !StringUtils.endsWith(propertyValue, taxonName)) {
                         propertyValue += CharsetConstant.SEPARATOR + taxonName;
                     }
                 }

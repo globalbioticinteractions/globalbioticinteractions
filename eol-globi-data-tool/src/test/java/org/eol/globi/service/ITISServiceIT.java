@@ -1,5 +1,6 @@
 package org.eol.globi.service;
 
+import org.eol.globi.domain.Taxon;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -19,7 +20,22 @@ public class ITISServiceIT {
 
     @Test
     public void lookupExistentTaxon() throws TaxonPropertyLookupServiceException {
-        assertThat(lookupTerm("Fundulus jenkinsi"), is("urn:lsid:itis.gov:itis_tsn:165653"));
+        String actual = lookupTerm("Fundulus jenkinsi");
+        assertThat(actual, is("urn:lsid:itis.gov:itis_tsn:165653"));
+    }
+
+    @Test
+    public void lookupPathByExistingTaxon() throws TaxonPropertyLookupServiceException {
+        ITISService itisService = new ITISService();
+        String s = itisService.lookupPropertyValueByTaxonName("Fundulus jenkinsi", Taxon.PATH);
+        assertThat(s, is (nullValue()));
+    }
+
+    @Test
+    public void lookupPathByNonExistingTaxon() throws TaxonPropertyLookupServiceException {
+        ITISService itisService = new ITISService();
+        String s = itisService.lookupPropertyValueByTaxonName("donald duck", Taxon.PATH);
+        assertThat(s, is (nullValue()));
     }
 
     @Test
