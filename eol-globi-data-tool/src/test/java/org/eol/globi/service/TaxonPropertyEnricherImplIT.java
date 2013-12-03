@@ -30,7 +30,11 @@ public class TaxonPropertyEnricherImplIT extends GraphDBTestCase {
 
     @Test
     public void enrichTwoTaxons() throws NodeFactoryException, IOException {
-        Taxon taxon = nodeFactory.getOrCreateTaxon("Homo sapiens");
+        Taxon taxon = nodeFactory.getOrCreateTaxon("Homo sapiens", "blabla", null);
+        assertThat(taxon.getExternalId(), is("EOL:327955"));
+        assertThat(taxon.getPath(), containsString("Animalia"));
+
+        taxon = nodeFactory.getOrCreateTaxon("Homo sapiens");
         assertThat(taxon.getExternalId(), is("EOL:327955"));
         assertThat(taxon.getPath(), containsString("Animalia"));
 

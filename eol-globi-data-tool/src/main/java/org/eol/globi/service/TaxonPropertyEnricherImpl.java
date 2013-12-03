@@ -34,7 +34,6 @@ public class TaxonPropertyEnricherImpl implements TaxonPropertyEnricher {
     private void doEnrichment(Taxon taxon) {
         Node taxonNode = taxon.getUnderlyingNode();
         Map<String, String> properties = new HashMap<String, String>();
-        String propertyName[] = new String[]{Taxon.PATH, Taxon.EXTERNAL_ID};
         properties.put(Taxon.NAME, taxon.getName());
         properties.put(Taxon.EXTERNAL_ID, taxon.getExternalId());
         properties.put(Taxon.PATH, taxon.getPath());
@@ -42,11 +41,7 @@ public class TaxonPropertyEnricherImpl implements TaxonPropertyEnricher {
         for (TaxonPropertyLookupService service : services) {
             try {
                 enrichTaxonWithPropertyValue(errorCounts, taxonNode, service, properties);
-                boolean isComplete = true;
-                for (String name : propertyName) {
-                    isComplete = isComplete && StringUtils.isNotBlank(properties.get(name));
-                }
-                if (isComplete) {
+                if (StringUtils.isNotBlank(taxon.getPath()) && StringUtils.isNotBlank(taxon.getExternalId())) {
                     break;
                 }
             } catch (TaxonPropertyLookupServiceException e) {

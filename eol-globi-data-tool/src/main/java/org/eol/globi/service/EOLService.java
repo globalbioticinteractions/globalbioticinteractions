@@ -26,19 +26,23 @@ public class EOLService extends BaseHttpClientService implements TaxonPropertyLo
     public void lookupPropertiesByName(String taxonName, Map<String, String> properties) throws TaxonPropertyLookupServiceException {
         Long id = null;
         String externalId = properties.get(Taxon.EXTERNAL_ID);
-        if (externalId == null) {
-            id = getPageId(taxonName, true);
-        } else if (properties.get(Taxon.PATH) == null || properties.get(Taxon.COMMON_NAMES) == null) {
-            if (externalId.startsWith(TaxonomyProvider.ID_PREFIX_EOL)) {
-                String eolPageIdString = externalId.replaceFirst(TaxonomyProvider.ID_PREFIX_EOL, "");
-                try {
-                    id = Long.parseLong(eolPageIdString);
-                } catch (NumberFormatException ex) {
-                    throw new TaxonPropertyLookupServiceException("failed to parse eol id [" + eolPageIdString + "]");
+
+        if (needsEnrichment(properties)) {
+            if (StringUtils.isNotBlank(externalId)) {
+                if (externalId.startsWith(TaxonomyProvider.ID_PREFIX_EOL)) {
+                    String eolPageIdString = externalId.replaceFirst(TaxonomyProvider.ID_PREFIX_EOL, "");
+                    try {
+                        id = Long.parseLong(eolPageIdString);
+                    } catch (NumberFormatException ex) {
+                        throw new TaxonPropertyLookupServiceException("failed to parse eol id [" + eolPageIdString + "]");
+                    }
                 }
             }
         }
 
+        if (null == id) {
+            id = getPageId(taxonName, true);
+        }
 
         if (id != null) {
             if (properties.get(Taxon.PATH) == null || properties.get(Taxon.COMMON_NAMES) == null) {
@@ -59,6 +63,11 @@ public class EOLService extends BaseHttpClientService implements TaxonPropertyLo
                 }
             }
         }
+    }
+
+    private boolean needsEnrichment(Map<String, String> properties) {
+        return StringUtils.isBlank(properties.get(Taxon.PATH))
+                || StringUtils.isBlank(properties.get(Taxon.COMMON_NAMES));
     }
 
     private URI createSearchURI(String taxonName) throws URISyntaxException {

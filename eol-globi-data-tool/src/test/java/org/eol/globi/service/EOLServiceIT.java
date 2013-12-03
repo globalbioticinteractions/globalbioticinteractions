@@ -19,10 +19,7 @@ public class EOLServiceIT {
 
     public static final String HOMO_SAPIENS_PATH = "Animalia" + CharsetConstant.SEPARATOR +
             "Chordata" + CharsetConstant.SEPARATOR +
-            "Vertebrata" + CharsetConstant.SEPARATOR +
             "Mammalia" + CharsetConstant.SEPARATOR +
-            "Theria" + CharsetConstant.SEPARATOR +
-            "Eutheria" + CharsetConstant.SEPARATOR +
             "Primates" + CharsetConstant.SEPARATOR +
             "Hominidae" + CharsetConstant.SEPARATOR +
             "Homo" + CharsetConstant.SEPARATOR +
@@ -135,6 +132,24 @@ public class EOLServiceIT {
         assertThat(lookupPageIdByScientificName("Clio acicula"), is(nullValue()));
         assertThat(lookupPageIdByScientificName("Aegires oritzi"), is(nullValue()));
         assertThat(lookupPageIdByScientificName("Fish hook"), is(nullValue()));
+    }
+
+    @Test
+    public void lookupNoneEOLExternalId() throws TaxonPropertyLookupServiceException {
+        HashMap<String, String> properties = new HashMap<String, String>();
+        properties.put(Taxon.EXTERNAL_ID, "foo:bar");
+        new EOLService().lookupPropertiesByName("Homo sapiens", properties);
+        assertThat(properties.get(Taxon.EXTERNAL_ID), not(is("foo:bar")));
+
+    }
+
+    @Test
+    public void lookupNoneEOLExternalId2() throws TaxonPropertyLookupServiceException {
+        HashMap<String, String> properties = new HashMap<String, String>();
+        properties.put(Taxon.EXTERNAL_ID, "foo:bar");
+        new EOLService().lookupPropertiesByName("Prunella vulgaris", properties);
+        assertThat(properties.get(Taxon.EXTERNAL_ID), is("foo:bar"));
+
     }
 
     private String lookupPageIdByScientificName(String taxonName) throws TaxonPropertyLookupServiceException {
