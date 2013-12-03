@@ -3,6 +3,7 @@ package org.eol.globi.server;
 import org.apache.commons.lang3.ArrayUtils;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -185,6 +186,7 @@ public class CypherProxyControllerTest {
         assertThat(list, is(notNullValue()));
     }
 
+    @Ignore(value = "this assumes an externally running system")
     @Test
     public void findExternalLinkForTaxonWithName() throws IOException {
         String externalLink = new CypherProxyController().findExternalLinkForTaxonWithName(null, "Homo sapiens");

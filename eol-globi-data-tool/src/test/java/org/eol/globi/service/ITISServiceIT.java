@@ -28,6 +28,7 @@ public class ITISServiceIT {
     public void lookupPathByExistingTaxon() throws TaxonPropertyLookupServiceException {
         ITISService itisService = new ITISService();
         String s = itisService.lookupPropertyValueByTaxonName("Fundulus jenkinsi", Taxon.PATH);
+        // note that ITISService doesn't support path lookup (yet)
         assertThat(s, is (nullValue()));
     }
 
