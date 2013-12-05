@@ -52,7 +52,6 @@ public class StudyImporterForSPIRE extends BaseStudyImporter {
         properties.put(Study.CONTRIBUTOR, "");
         properties.put(Study.INSTITUTION, "");
         properties.put(Study.PERIOD, "");
-        properties.put(Study.PUBLICATION_YEAR, "");
         // see https://github.com/jhpoelen/eol-globi-data/issues/28
         if ("Animal Diversity Web".equals(titlesAndAuthors1)) {
             titlesAndAuthors1 = "Myers, P., R. Espinosa, C. S. Parr, T. Jones, G. S. Hammond, and T. A. Dewey. 2013. The Animal Diversity Web (online). Accessed at http://animaldiversity.org.";
@@ -177,6 +176,11 @@ public class StudyImporterForSPIRE extends BaseStudyImporter {
             String localName = studyProperty.getPredicate().getLocalName();
             if ("locality".equals(localName)) {
                 parseLocalityInfo(properties, getTrimmedObject(studyProperty));
+            } else if ("publicationYear".equals(localName)) {
+                String year = studyProperty.getString();
+                if (StringUtils.isNotBlank(year)) {
+                    properties.put(Study.PUBLICATION_YEAR, year.trim());
+                }
             } else if (OF_HABITAT.equals(localName)) {
                 properties.put(localName, getTrimmedObject(studyProperty));
             } else if ("titleAndAuthors".equals(localName)) {

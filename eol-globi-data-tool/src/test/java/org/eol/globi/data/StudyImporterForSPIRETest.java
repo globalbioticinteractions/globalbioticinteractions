@@ -206,19 +206,10 @@ public class StudyImporterForSPIRETest extends GraphDBTestCase {
 
         assertThat(listener.getCount(), is(30196));
 
-        for (String description : listener.descriptions) {
-            assertThat(description, not(containsString("http://spire.umbc.edu/ontologies/SpireEcoConcepts.owl#")));
-        }
-
-        for (String title : listener.titles) {
-            assertThat(title, not(containsString("http://spire.umbc.edu/")));
-        }
-
-        for (String envo : listener.environments) {
-            assertThat(envo, not(containsString("http://spire.umbc.edu/ontologies/SpireEcoConcepts.owl#")));
-        }
-
-        assertThat(listener.environments, hasItem("Galls"));
+        assertThat(listener.descriptions, not(hasItem("http://spire.umbc.edu/ontologies/SpireEcoConcepts.owl#")));
+        assertThat(listener.titles, not(hasItem("http://spire.umbc.edu/")));
+        assertThat(listener.environments, not(hasItem("http://spire.umbc.edu/ontologies/SpireEcoConcepts.owl#")));
+        assertThat(listener.publicationYears, hasItem("1996"));
     }
 
 
@@ -232,6 +223,7 @@ public class StudyImporterForSPIRETest extends GraphDBTestCase {
         Set<String> descriptions = new HashSet<String>();
         Set<String> titles = new HashSet<String>();
         List<String> environments = new ArrayList<String>();
+        List<String> publicationYears = new ArrayList<String>();
 
         @Override
         public void newLink(Map<String, String> properties) {
@@ -250,6 +242,9 @@ public class StudyImporterForSPIRETest extends GraphDBTestCase {
             }
             if (properties.containsKey(StudyImporterForSPIRE.OF_HABITAT)) {
                 environments.add(properties.get(StudyImporterForSPIRE.OF_HABITAT));
+            }
+            if (properties.containsKey(Study.PUBLICATION_YEAR)) {
+                publicationYears.add(properties.get(Study.PUBLICATION_YEAR));
             }
             count++;
         }
