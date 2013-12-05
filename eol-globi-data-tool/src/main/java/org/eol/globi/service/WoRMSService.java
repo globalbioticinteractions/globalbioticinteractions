@@ -1,10 +1,18 @@
 package org.eol.globi.service;
 
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.eol.globi.domain.TaxonomyProvider;
+import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
 
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathFactory;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -14,36 +22,10 @@ public class WoRMSService extends BaseTaxonIdService {
     public static final String RESPONSE_SUFFIX = "</return></ns1:getAphiaIDResponse></SOAP-ENV:Body></SOAP-ENV:Envelope>";
 
     public String lookupIdByName(String taxonName) throws TaxonPropertyLookupServiceException {
-        HttpPost post = new HttpPost("http://www.marinespecies.org/aphia.php?p=soap");
-        post.setHeader("SOAPAction", "http://tempuri.org/getAphiaID");
-        post.setHeader("Content-Type", "text/xml;charset=utf-8");
 
-        String requestBody = "<?xml version=\"1.0\" ?>";
-        requestBody += "<soap:Envelope ";
-        requestBody += "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" ";
-        requestBody += "xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" ";
-        requestBody += "xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">";
-        requestBody += "<soap:Body>";
-        requestBody += "<getAphiaID xmlns=\"http://tempuri.org/\">";
-        requestBody = requestBody + "<scientificname>" + taxonName + "</scientificname>";
-        requestBody = requestBody + "<marine_only>false</marine_only>";
-        requestBody += "</getAphiaID></soap:Body></soap:Envelope>";
+        String response = getResponse("getAphiaID", "scientificname", taxonName);
 
-        InputStreamEntity catchEntity = null;
-        try {
-            catchEntity = new InputStreamEntity(new ByteArrayInputStream(requestBody.getBytes("UTF-8")), requestBody.getBytes().length);
-        } catch (UnsupportedEncodingException e) {
-            throw new TaxonPropertyLookupServiceException("problem creating request body for [" + post.getURI().toString() + "]", e);
-        }
-        post.setEntity(catchEntity);
-
-        BasicResponseHandler responseHandler = new BasicResponseHandler();
-        String response;
-        try {
-            response = execute(post, responseHandler);
-        } catch (IOException e) {
-            throw new TaxonPropertyLookupServiceException("failed to connect to [" + post.getURI().toString() + "]", e);
-        }
+        System.out.println(response);
 
         String id = null;
         if (response.startsWith(RESPONSE_PREFIX) && response.endsWith(RESPONSE_SUFFIX)) {
@@ -59,8 +41,47 @@ public class WoRMSService extends BaseTaxonIdService {
         return id;
     }
 
+    private String getResponse(String methodName, String paramName, String paramValue) throws TaxonPropertyLookupServiceException {
+        HttpPost post = new HttpPost("http://www.marinespecies.org/aphia.php?p=soap");
+        post.setHeader("SOAPAction", "http://tempuri.org/getAphiaID");
+        post.setHeader("Content-Type", "text/xml;charset=utf-8");
+        String requestBody = "<?xml version=\"1.0\" ?>";
+        requestBody += "<soap:Envelope ";
+        requestBody += "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" ";
+        requestBody += "xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" ";
+        requestBody += "xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">";
+        requestBody += "<soap:Body>";
+        requestBody += "<" + methodName + " xmlns=\"http://tempuri.org/\">";
+        requestBody = requestBody + "<" + paramName + ">" + paramValue + "</" + paramName + ">";
+        requestBody = requestBody + "<marine_only>false</marine_only>";
+        requestBody += "</" + methodName + "></soap:Body></soap:Envelope>";
+
+        InputStreamEntity catchEntity;
+        try {
+            catchEntity = new InputStreamEntity(new ByteArrayInputStream(requestBody.getBytes("UTF-8")), requestBody.getBytes().length);
+        } catch (UnsupportedEncodingException e) {
+            throw new TaxonPropertyLookupServiceException("problem creating request body for [" + post.getURI().toString() + "]", e);
+        }
+        post.setEntity(catchEntity);
+
+        BasicResponseHandler responseHandler = new BasicResponseHandler();
+        String response;
+        try {
+            response = execute(post, responseHandler);
+        } catch (IOException e) {
+            throw new TaxonPropertyLookupServiceException("failed to connect to [" + post.getURI().toString() + "]", e);
+        }
+        return response;
+    }
+
     @Override
     public String lookupTaxonPathById(String id) throws TaxonPropertyLookupServiceException {
-        return null;
+        String path = null;
+        if (StringUtils.startsWith(id, TaxonomyProvider.ID_PREFIX_WORMS)) {
+            String response = getResponse("getAphiaClassificationByID", "AphiaID", id.replace(TaxonomyProvider.ID_PREFIX_WORMS, ""));
+            path = ServiceUtil.extractPath(response, "scientificname");
+        }
+
+        return StringUtils.isBlank(path) ? null : path;
     }
 }
