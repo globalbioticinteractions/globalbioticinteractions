@@ -43,7 +43,6 @@ public class StudyImporterForSPIRETest extends GraphDBTestCase {
     public void parseIllegalTitle() throws StudyImporterException {
         HashMap<String, String> properties = new HashMap<String, String>();
         StudyImporterForSPIRE.parseTitlesAndAuthors("this is really not supported, and is unformatted", properties);
-        assertThat(properties.get(Study.PUBLICATION_YEAR), is(""));
         assertThat(properties.get(Study.CONTRIBUTOR), is(""));
         assertThat(properties.get(Study.TITLE), is("this is really not su...e9154c16f07ad2470849d90a8a0b9dab"));
         assertThat(properties.get(Study.DESCRIPTION), is("this is really not supported, and is unformatted"));
@@ -56,7 +55,6 @@ public class StudyImporterForSPIRETest extends GraphDBTestCase {
         String titlesAndAuthors = "G. A. Knox, Antarctic marine ecosystems. In: Antarctic Ecology, M. W. Holdgate, Ed. (Academic Press, New York, 1970) 1:69-96, from p. 87.";
         StudyImporterForSPIRE.parseTitlesAndAuthors(titlesAndAuthors, properties);
         assertThat(properties.get(Study.DESCRIPTION), is("G. A. Knox, Antarctic marine ecosystems. In: Antarctic Ecology, M. W. Holdgate, Ed. (Academic Press, New York, 1970) 1:69-96, from p. 87."));
-        assertThat(properties.get(Study.PUBLICATION_YEAR), is(""));
         assertThat(properties.get(Study.TITLE), is("Knox, Antarctic marin...984ae066666743823ac7b57da0e01f2d"));
         assertThat(properties.get(Study.CONTRIBUTOR), is(""));
     }
@@ -65,7 +63,6 @@ public class StudyImporterForSPIRETest extends GraphDBTestCase {
     public void parseAnotherYetOtherTitlesAndAuthorsFormat() throws StudyImporterException {
         Map<String, String> properties = new HashMap<String, String>();
         StudyImporterForSPIRE.parseTitlesAndAuthors("B. A. Hawkins and R. D. Goeden, 1984.  Organization of a parasitoid community associated with a complex of galls on Atriplex spp. in southern California.  Ecol. Entomol. 9:271-292, from p. 274.", properties);
-        assertThat(properties.get(Study.PUBLICATION_YEAR), is(""));
         assertThat(properties.get(Study.TITLE), is("Hawkins and Goeden, 1...fcebc21f82937fa4ab9f77a0ecbd62e3"));
         assertThat(properties.get(Study.DESCRIPTION), is("B. A. Hawkins and R. D. Goeden, 1984.  Organization of a parasitoid community associated with a complex of galls on Atriplex spp. in southern California.  Ecol. Entomol. 9:271-292, from p. 274."));
         assertThat(properties.get(Study.CONTRIBUTOR), is(""));
@@ -76,7 +73,6 @@ public class StudyImporterForSPIRETest extends GraphDBTestCase {
         Map<String, String> properties = new HashMap<String, String>();
         StudyImporterForSPIRE.parseTitlesAndAuthors("Townsend, CR, Thompson, RM, McIntosh, AR, Kilroy, C, Edwards, ED, Scarsbrook, MR. 1998.  Disturbance, resource supply and food-web architecture in streams.  Ecology Letters 1:200-209.", properties);
         assertThat(properties.get(Study.TITLE), is("Townsend, CR, Thompso...db61dcc043a135ac2fa8b440e11165e3"));
-        assertThat(properties.get(Study.PUBLICATION_YEAR), is(""));
         assertThat(properties.get(Study.DESCRIPTION), is("Townsend, CR, Thompson, RM, McIntosh, AR, Kilroy, C, Edwards, ED, Scarsbrook, MR. 1998.  Disturbance, resource supply and food-web architecture in streams.  Ecology Letters 1:200-209."));
         assertThat(properties.get(Study.CONTRIBUTOR), is(""));
     }
