@@ -15,7 +15,21 @@ public class ExporterReferences extends ExporterBase {
 
     @Override
     protected String[] getFields() {
-        return new String[]{IDENTIFIER, "http://eol.org/schema/reference/publicationType", FULL_REFERENCE, "http://eol.org/schema/reference/primaryTitle", "http://purl.org/dc/terms/title", "http://purl.org/ontology/bibo/pages", "http://purl.org/ontology/bibo/pageStart", "http://purl.org/ontology/bibo/pageEnd", "http://purl.org/ontology/bibo/volume", "http://purl.org/ontology/bibo/edition", "http://purl.org/dc/terms/publisher", "http://purl.org/ontology/bibo/authorList", "http://purl.org/ontology/bibo/editorList", "http://purl.org/dc/terms/created", "http://purl.org/dc/terms/language", "http://purl.org/ontology/bibo/uri", "http://purl.org/ontology/bibo/doi", "http://schemas.talis.com/2005/address/schema#localityName"};
+        return new String[]{IDENTIFIER, "http://eol.org/schema/reference/publicationType",
+                FULL_REFERENCE, "http://eol.org/schema/reference/primaryTitle",
+                "http://purl.org/dc/terms/title", "http://purl.org/ontology/bibo/pages",
+                "http://purl.org/ontology/bibo/pageStart",
+                "http://purl.org/ontology/bibo/pageEnd",
+                "http://purl.org/ontology/bibo/volume",
+                "http://purl.org/ontology/bibo/edition",
+                "http://purl.org/dc/terms/publisher",
+                "http://purl.org/ontology/bibo/authorList",
+                "http://purl.org/ontology/bibo/editorList",
+                "http://purl.org/dc/terms/created",
+                "http://purl.org/dc/terms/language",
+                "http://purl.org/ontology/bibo/uri",
+                "http://purl.org/ontology/bibo/doi",
+                "http://schemas.talis.com/2005/address/schema#localityName"};
     }
 
     @Override
