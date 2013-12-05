@@ -6,8 +6,10 @@ import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
+import static org.junit.matchers.JUnitMatchers.containsString;
 
 public class ITISServiceIT {
 
@@ -28,8 +30,8 @@ public class ITISServiceIT {
     public void lookupPathByExistingTaxon() throws TaxonPropertyLookupServiceException {
         ITISService itisService = new ITISService();
         String s = itisService.lookupPropertyValueByTaxonName("Fundulus jenkinsi", Taxon.PATH);
-        // note that ITISService doesn't support path lookup (yet)
-        assertThat(s, is (nullValue()));
+        assertThat(s, is(notNullValue()));
+        assertThat(s, containsString("Animalia"));
     }
 
     @Test

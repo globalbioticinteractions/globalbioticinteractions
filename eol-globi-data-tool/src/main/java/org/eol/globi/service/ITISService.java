@@ -1,32 +1,38 @@
 package org.eol.globi.service;
 
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.eol.globi.domain.TaxonomyProvider;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ITISService extends BaseTaxonIdService {
 
+    private static final Log LOG = LogFactory.getLog(ITISService.class);
+
     @Override
     public String lookupIdByName(String taxonName) throws TaxonPropertyLookupServiceException {
-        URI uri;
-        try {
-            uri = new URI("http", null, "www.itis.gov", 80, "/ITISWebService/services/ITISService/searchByScientificName", "srchKey=" + taxonName, null);
-        } catch (URISyntaxException e) {
-            throw new TaxonPropertyLookupServiceException("failed to create uri", e);
-        }
-        HttpGet get = new HttpGet(uri);
 
-        BasicResponseHandler responseHandler = new BasicResponseHandler();
-        String response;
-        try {
-            response = execute(get, responseHandler);
-        } catch (IOException e) {
-            throw new TaxonPropertyLookupServiceException("failed to execute query to [ " + uri.toString() + "]", e);
-        }
+        String response = getResponse("searchByScientificName", "srchKey=" + taxonName);
         String lsid = null;
         boolean isValid = response.contains("<ax21:combinedName>" + taxonName + "</ax21:combinedName>");
         if (isValid) {
@@ -41,8 +47,61 @@ public class ITISService extends BaseTaxonIdService {
         return lsid;
     }
 
+    private String getResponse(String methodName, String queryString) throws TaxonPropertyLookupServiceException {
+        URI uri;
+        try {
+            uri = new URI("http", null, "www.itis.gov", 80, "/ITISWebService/services/ITISService/" + methodName, queryString, null);
+        } catch (URISyntaxException e) {
+            throw new TaxonPropertyLookupServiceException("failed to create uri", e);
+        }
+        HttpGet get = new HttpGet(uri);
+
+        BasicResponseHandler responseHandler = new BasicResponseHandler();
+        String response;
+        try {
+            response = execute(get, responseHandler);
+        } catch (IOException e) {
+            throw new TaxonPropertyLookupServiceException("failed to execute query to [ " + uri.toString() + "]", e);
+        }
+        return response;
+    }
+
     @Override
     public String lookupTaxonPathById(String id) throws TaxonPropertyLookupServiceException {
+        if (StringUtils.isNotBlank(id) && id.startsWith(TaxonomyProvider.ID_PREFIX_ITIS)) {
+            String tsn = id.replace(TaxonomyProvider.ID_PREFIX_ITIS, "");
+            String fullHierarchy = getResponse("getFullHierarchyFromTSN", "tsn=" + tsn);
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            Document doc;
+            try {
+                doc = factory.newDocumentBuilder().parse(IOUtils.toInputStream(fullHierarchy, "UTF-8"));
+                XPathFactory xPathfactory = XPathFactory.newInstance();
+                XPath xpath = xPathfactory.newXPath();
+                Object result = xpath.compile("//*[local-name() = 'taxonName']").evaluate(doc, XPathConstants.NODESET);
+                List<String> ranks = new ArrayList<String>();
+                NodeList nodes = (NodeList) result;
+                for (int i = 0; i < nodes.getLength(); i++) {
+                    Node item = nodes.item(i);
+                    Node firstChild = item.getFirstChild();
+                    if (null != firstChild) {
+                        String nodeValue = firstChild.getNodeValue();
+                        if (StringUtils.isNotBlank(nodeValue)) {
+                            ranks.add(nodeValue);
+                        }
+                    }
+                }
+                return StringUtils.join(ranks, " | ");
+            } catch (ParserConfigurationException e) {
+                LOG.warn("problem", e);
+            } catch (XPathExpressionException e) {
+                LOG.warn("problem", e);
+            } catch (SAXException e) {
+                LOG.warn("problem", e);
+            } catch (IOException e) {
+                LOG.warn("problem", e);
+            }
+        }
+
         return null;
     }
 }
