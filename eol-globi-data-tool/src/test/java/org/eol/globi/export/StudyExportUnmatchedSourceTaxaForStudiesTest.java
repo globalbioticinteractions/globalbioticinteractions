@@ -44,14 +44,14 @@ public class StudyExportUnmatchedSourceTaxaForStudiesTest extends GraphDBTestCas
 
 
         StringWriter writer = new StringWriter();
-        new StudyExportUnmatchedSourceTaxaForStudies(getGraphDb()).exportStudy(study, writer, true);
+        new StudyExportUnmatchedSourceTaxaForStudies().exportStudy(study, writer, true);
         assertThat(writer.toString(), is("\"original source taxon name\",\"unmatched normalized source taxon name\",\"study\"\n" +
                 "\"Homo sapiens2 (bla)\",\"Homo sapiens2\",\"my study\"\n" +
                 "\"Homo sapiens3 (blah)\",\"Homo sapiens3\",\"my study\"\n"
         ));
 
         writer = new StringWriter();
-        new StudyExportUnmatchedTargetTaxaForStudies(getGraphDb()).exportStudy(study, writer, true);
+        new StudyExportUnmatchedTargetTaxaForStudies().exportStudy(study, writer, true);
                 assertThat(writer.toString(), is("\"original target taxon name\",\"unmatched normalized target taxon name\",\"study\"\n" +
                         "\"Canis lupus other\",\"Canis lupus other\",\"my study\"\n"
                 ));
@@ -64,7 +64,7 @@ public class StudyExportUnmatchedSourceTaxaForStudiesTest extends GraphDBTestCas
 
     @Test
     public void darwinCoreMetaTable() throws IOException {
-        StudyExportUnmatchedTaxaForStudies exporter = new StudyExportUnmatchedSourceTaxaForStudies(getGraphDb());
+        StudyExportUnmatchedTaxaForStudies exporter = new StudyExportUnmatchedSourceTaxaForStudies();
         StringWriter writer = new StringWriter();
         exporter.exportDarwinCoreMetaTable(writer, "unmatched.csv");
         String expectedMetaTable = exporter.getMetaTablePrefix() + "unmatched.csv" + exporter.getMetaTableSuffix();

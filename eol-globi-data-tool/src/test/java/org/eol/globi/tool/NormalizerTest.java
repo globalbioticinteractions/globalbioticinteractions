@@ -1,5 +1,6 @@
 package org.eol.globi.tool;
 
+import org.apache.commons.io.FileUtils;
 import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.NodeFactory;
 import org.eol.globi.data.StudyImporterException;
@@ -11,6 +12,7 @@ import org.hamcrest.core.Is;
 import org.junit.Test;
 import org.neo4j.graphdb.GraphDatabaseService;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
@@ -36,6 +38,24 @@ public class NormalizerTest extends GraphDBTestCase {
 
         assertNotNull(graphService.getNodeById(1));
         assertNotNull(graphService.getNodeById(200));
+    }
+
+    @Test
+    public void doSingleImportExport() throws IOException, StudyImporterException {
+        Normalizer dataNormalizationTool = new Normalizer();
+
+        GraphDatabaseService graphService = getGraphDb();
+        dataNormalizationTool.importData(graphService, new TaxonPropertyEnricher() {
+            @Override
+            public void enrich(Taxon taxon) throws IOException {
+                taxon.setExternalId("test-taxon:" + taxon.getNodeID());
+            }
+        }, StudyImporterForSimons.class);
+
+
+        String baseDir = "./target/normalizer-test/";
+        FileUtils.deleteQuietly(new File(baseDir));
+        dataNormalizationTool.exportData(graphService, baseDir);
     }
 
 }

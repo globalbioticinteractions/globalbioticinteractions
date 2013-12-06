@@ -6,7 +6,5 @@ import java.io.IOException;
 import java.io.Writer;
 
 public interface StudyExporter {
-
-    public void exportStudy(Study study, Writer writer, boolean includeHeader) throws IOException;
-
+    void exportStudy(Study study, Writer writer, boolean includeHeader) throws IOException;
 }

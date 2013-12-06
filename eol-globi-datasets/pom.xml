@@ -55,6 +55,7 @@
                     <descriptors>
                         <descriptor>src/assembly/neo4j-graph-db.xml</descriptor>
                         <descriptor>src/assembly/darwin-core.xml</descriptor>
+                        <descriptor>src/assembly/darwin-core-aggregated.xml</descriptor>
                         <!-- excluding bulky data exports such at ttl archive to save bandwidth / storage fees -->
                     </descriptors>
                 </configuration>

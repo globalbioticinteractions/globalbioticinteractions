@@ -1,13 +1,16 @@
 package org.eol.globi.tool;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eol.globi.export.DarwinCoreExporter;
 import org.eol.globi.export.ExporterAssociationAggregates;
 import org.eol.globi.export.ExporterAssociations;
+import org.eol.globi.export.ExporterAssociationsBase;
 import org.eol.globi.export.ExporterMeasurementOrFact;
 import org.eol.globi.export.ExporterOccurrenceAggregates;
 import org.eol.globi.export.ExporterOccurrences;
+import org.eol.globi.export.ExporterOccurrencesBase;
 import org.eol.globi.export.ExporterReferences;
 import org.eol.globi.export.ExporterTaxa;
 import org.eol.globi.export.GlobiOWLExporter;
@@ -45,21 +48,33 @@ public class Normalizer {
     }
 
     public void normalize() throws StudyImporterException {
-        final GraphDatabaseService graphService = GraphService.getGraphService();
+        normalize("./");
+    }
+
+    public void normalize(String baseDir) throws StudyImporterException {
+        final GraphDatabaseService graphService = GraphService.getGraphService(baseDir);
         importData(graphService, TaxonPropertyEnricherFactory.createTaxonEnricher(graphService));
-        exportData(graphService);
+        exportData(graphService, baseDir);
         graphService.shutdown();
     }
 
-    private void exportData(GraphDatabaseService graphService) throws StudyImporterException {
+
+    protected void exportData(GraphDatabaseService graphService, String baseDir) throws StudyImporterException {
         List<Study> studies = NodeFactory.findAllStudies(graphService);
-        exportDarwinCoreArchive(studies);
-        exportDataOntology(studies);
+        exportDarwinCoreArchive(studies,
+                new ExporterAssociationAggregates(),
+                new ExporterOccurrenceAggregates(),
+                baseDir + "aggregatedByStudy/");
+        exportDarwinCoreArchive(studies,
+                new ExporterAssociations(),
+                new ExporterOccurrences(),
+                baseDir + "all/");
+        exportDataOntology(studies, baseDir);
     }
 
-    private void exportDataOntology(List<Study> studies) throws StudyImporterException {
+    private void exportDataOntology(List<Study> studies, String baseDir) throws StudyImporterException {
         try {
-            export(studies, "./globi.ttl.gz", new GlobiOWLExporter());
+            export(studies, baseDir + "globi.ttl.gz", new GlobiOWLExporter());
         } catch (OWLOntologyCreationException e) {
             throw new StudyImporterException("failed to export as owl", e);
         } catch (IOException e) {
@@ -67,18 +82,17 @@ public class Normalizer {
         }
     }
 
-    private void exportDarwinCoreArchive(List<Study> studies) throws StudyImporterException {
+    private void exportDarwinCoreArchive(List<Study> studies, ExporterAssociationsBase associationExporter, ExporterOccurrencesBase occurrenceExporter, String pathPrefix) throws StudyImporterException {
         try {
-            FileWriter darwinCoreMeta = writeMetaHeader();
-            export(studies, "./unmatchedSourceTaxa.csv", new StudyExportUnmatchedSourceTaxaForStudies(GraphService.getGraphService()), darwinCoreMeta);
-            export(studies, "./unmatchedTargetTaxa.csv", new StudyExportUnmatchedTargetTaxaForStudies(GraphService.getGraphService()), darwinCoreMeta);
-            export(studies, "./associations.csv", new ExporterAssociations(), darwinCoreMeta);
-            export(studies, "./associationAggregates.csv", new ExporterAssociationAggregates(), darwinCoreMeta);
-            export(studies, "./occurrences.csv", new ExporterOccurrences(), darwinCoreMeta);
-            export(studies, "./references.csv", new ExporterReferences(), darwinCoreMeta);
-            export(studies, "./occurrenceAggregates.csv", new ExporterOccurrenceAggregates(), darwinCoreMeta);
-            export(studies, "./taxa.csv", new ExporterTaxa(), darwinCoreMeta);
-            export(studies, "./measurementOrFact.csv", new ExporterMeasurementOrFact(), darwinCoreMeta);
+            FileUtils.forceMkdir(new File(pathPrefix));
+            FileWriter darwinCoreMeta = writeMetaHeader(pathPrefix);
+            export(studies, pathPrefix + "unmatchedSourceTaxa.csv", new StudyExportUnmatchedSourceTaxaForStudies(), darwinCoreMeta);
+            export(studies, pathPrefix + "unmatchedTargetTaxa.csv", new StudyExportUnmatchedTargetTaxaForStudies(), darwinCoreMeta);
+            export(studies, pathPrefix + "association.csv", associationExporter, darwinCoreMeta);
+            export(studies, pathPrefix + "occurrence.csv", occurrenceExporter, darwinCoreMeta);
+            export(studies, pathPrefix + "references.csv", new ExporterReferences(), darwinCoreMeta);
+            export(studies, pathPrefix + "taxa.csv", new ExporterTaxa(), darwinCoreMeta);
+            export(studies, pathPrefix + "measurementOrFact.csv", new ExporterMeasurementOrFact(), darwinCoreMeta);
             writeMetaFooter(darwinCoreMeta);
         } catch (IOException e) {
             throw new StudyImporterException("failed to export result to csv file", e);
@@ -104,8 +118,8 @@ public class Normalizer {
         darwinCoreMeta.close();
     }
 
-    private FileWriter writeMetaHeader() throws IOException {
-        FileWriter darwinCoreMeta = new FileWriter("./meta.xml", false);
+    private FileWriter writeMetaHeader(String pathPrefix) throws IOException {
+        FileWriter darwinCoreMeta = new FileWriter(pathPrefix + "meta.xml", false);
         darwinCoreMeta.write("<?xml version=\"1.0\"?>\n" +
                 "<archive xmlns=\"http://rs.tdwg.org/dwc/text/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://rs.tdwg.org/dwc/text/  http://services.eol.org/schema/dwca/tdwg_dwc_text.xsd\">\n");
         return darwinCoreMeta;

@@ -10,10 +10,6 @@ import java.util.Map;
 
 public class StudyExportUnmatchedSourceTaxaForStudies extends StudyExportUnmatchedTaxaForStudies {
 
-    public StudyExportUnmatchedSourceTaxaForStudies(GraphDatabaseService graphDatabaseService) {
-        super(graphDatabaseService);
-    }
-
     protected String getQueryString(Study study) {
         return "MATCH study-[:COLLECTED]->specimen-[:CLASSIFIED_AS]->taxon, " +
                 "specimen-[:ORIGINALLY_DESCRIBED_AS]->description ";

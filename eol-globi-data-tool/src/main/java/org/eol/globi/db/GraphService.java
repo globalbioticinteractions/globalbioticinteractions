@@ -8,23 +8,19 @@ import org.neo4j.unsafe.batchinsert.BatchInserters;
 public abstract class GraphService {
 
     private static GraphDatabaseService graphService;
-    private static String storeDir = "./graph.db";
+    private static String storeDir = "graph.db";
 
-    public static GraphDatabaseService getGraphService(){
+    public static GraphDatabaseService getGraphService(String baseDir) {
         if (graphService == null) {
-            graphService = startNeo4j();
+            graphService = startNeo4j(baseDir);
         }
         return graphService;
     }
 
-    public static GraphDatabaseService getBatchGraphService() {
-        return BatchInserters.batchDatabase(storeDir);
-    }
-
-    public static GraphDatabaseService startNeo4j() {
+    public static GraphDatabaseService startNeo4j(String baseDir) {
         System.out.println("neo4j starting...");
 
-        graphService = new EmbeddedGraphDatabase(storeDir, MapUtil.stringMap("keep_logical_logs","1M size"));
+        graphService = new EmbeddedGraphDatabase(baseDir + storeDir, MapUtil.stringMap("keep_logical_logs", "1M size"));
         Runtime.getRuntime().addShutdownHook(new Thread() {
             @Override
             public void run() {
@@ -33,7 +29,7 @@ public abstract class GraphService {
                 System.out.println("neo4j stopped.");
             }
         });
-        System.out.println("neo4j started (" + ((EmbeddedGraphDatabase)graphService).getStoreDir() + ").");
+        System.out.println("neo4j started (" + ((EmbeddedGraphDatabase) graphService).getStoreDir() + ").");
         return graphService;
     }
 

@@ -20,15 +20,10 @@ public abstract class StudyExportUnmatchedTaxaForStudies extends DarwinCoreExpor
     private static final String META_TABLE_PREFIX = "<table encoding=\"UTF-8\" fieldsTerminatedBy=\",\" linesTerminatedBy=\"\\n\" ignoreHeaderLines=\"1\" rowType=\"http://rs.tdwg.org/dwc/terms/text/DarwinRecord\">\n" +
             "    <files>\n" +
             "      <location>";
-    protected GraphDatabaseService graphDbService;
-
-    public StudyExportUnmatchedTaxaForStudies(GraphDatabaseService graphDatabaseService) {
-        this.graphDbService = graphDatabaseService;
-    }
 
     @Override
     public void exportStudy(Study study, Writer writer, boolean includeHeader) throws IOException {
-        ExecutionEngine engine = new ExecutionEngine(graphDbService);
+        ExecutionEngine engine = new ExecutionEngine(study.getUnderlyingNode().getGraphDatabase());
 
         StringBuilder query = new StringBuilder();
         query.append("START study = node:studies(title=\"");
