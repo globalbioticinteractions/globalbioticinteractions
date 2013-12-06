@@ -13,4 +13,5 @@ public enum TaxonomyProvider {
     public static final String ID_PREFIX_GULFBASE = "BioGoMx:";
     public static final String ID_PREFIX_GAME = "GAME:";
     public static final String ID_PREFIX_USKI = "UKSI:";
+    public static final String BIO_INFO = "bioinfo:";
 }

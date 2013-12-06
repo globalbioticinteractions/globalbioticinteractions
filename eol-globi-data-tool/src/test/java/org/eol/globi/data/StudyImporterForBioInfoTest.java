@@ -2,7 +2,12 @@ package org.eol.globi.data;
 
 import com.Ostermiller.util.CSVParser;
 import com.Ostermiller.util.LabeledCSVParser;
+import org.eol.globi.domain.PropertyAndValueDictionary;
+import org.eol.globi.domain.Specimen;
+import org.eol.globi.domain.TaxonomyProvider;
 import org.junit.Test;
+import org.neo4j.cypher.javacompat.ExecutionEngine;
+import org.neo4j.cypher.javacompat.ExecutionResult;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
@@ -24,6 +29,7 @@ import static org.hamcrest.core.IsNull.notNullValue;
 import static org.hamcrest.core.IsNull.nullValue;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
+import static org.junit.matchers.JUnitMatchers.containsString;
 
 public class StudyImporterForBioInfoTest extends GraphDBTestCase {
 
@@ -50,6 +56,21 @@ public class StudyImporterForBioInfoTest extends GraphDBTestCase {
             }
         });
         Study study = importer.importStudy();
+
+        Iterable<Relationship> collectedRels = study.getSpecimens();
+        for (Relationship collectedRel : collectedRels) {
+            Specimen specimen = new Specimen(collectedRel.getEndNode());
+            String externalId = specimen.getExternalId();
+            assertThat(externalId, is(notNullValue()));
+            assertThat(externalId, containsString(TaxonomyProvider.BIO_INFO + "rel:"));
+        }
+
+        ExecutionEngine engine = new ExecutionEngine(getGraphDb());
+        ExecutionResult result = engine.execute("START taxon = node:taxons('*:*') MATCH taxon<-[:CLASSIFIED_AS]-specimen-[r]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon RETURN taxon.name + ' ' + lower(type(r)) + ' ' + targetTaxon.name");
+        assertThat(result.dumpToString(), containsString("Lilioceris lilii ate Lilium"));
+        assertThat(result.dumpToString(), containsString("Puccinia impatientis parasite_of Impatiens capensis"));
+        assertThat(result.dumpToString(), containsString("Paroxyna misella ate Centaurea nigra"));
+        assertThat(result.dumpToString(), containsString("Puccinia calthae parasite_of Caltha palustris"));
 
         assertThat(study.getTitle(), is("BIO_INFO"));
         Taxon acer = nodeFactory.findTaxon("Acer");
@@ -137,7 +158,7 @@ public class StudyImporterForBioInfoTest extends GraphDBTestCase {
             specimenList.add(specimen.getEndNode());
         }
 
-        assertThat(specimenList.size(), is(18));
+        assertThat(specimenList.size(), is(9));
         assertThat(specimenList.get(0).getSingleRelationship(RelTypes.CLASSIFIED_AS, Direction.OUTGOING), is(notNullValue()));
         assertThat(specimenList.get(1).getSingleRelationship(RelTypes.CLASSIFIED_AS, Direction.OUTGOING), is(notNullValue()));
 
@@ -151,8 +172,8 @@ public class StudyImporterForBioInfoTest extends GraphDBTestCase {
         Map<Long, RelType> relationsTypeMap = buildRelationsTypeMap();
 
         assertThat(relationsTypeMap.get(43899L), is((RelType) InteractType.PREYS_UPON));
-        assertThat(relationsTypeMap.get(43900L), is((RelType) InteractType.HOST_OF));
-        assertThat(relationsTypeMap.get(43901L), is((RelType) InteractType.HAS_HOST));
+        assertThat(relationsTypeMap.get(43900L), is((RelType) InteractType.PARASITE_OF));
+        assertThat(relationsTypeMap.get(43901L), is((RelType) InteractType.INTERACTS_WITH));
         assertThat(relationsTypeMap.get(43902L), is((RelType) InteractType.INTERACTS_WITH));
     }
 

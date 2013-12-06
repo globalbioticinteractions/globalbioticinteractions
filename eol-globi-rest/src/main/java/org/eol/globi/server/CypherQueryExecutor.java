@@ -139,10 +139,6 @@ public class CypherQueryExecutor {
         resultBuilder.append(hasNext ? "," : "\n");
     }
 
-    private boolean hasArrayCells(List<String> arrayCell) {
-        return arrayCell == null;
-    }
-
     private String writeToCSVCellValue(JsonNode cell) {
         StringBuilder builder = new StringBuilder();
         writeAsCSVCell(builder, cell);

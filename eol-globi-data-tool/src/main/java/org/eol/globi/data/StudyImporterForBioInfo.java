@@ -7,6 +7,7 @@ import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.RelType;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
+import org.eol.globi.domain.TaxonomyProvider;
 import org.eol.globi.service.TermLookupService;
 import org.eol.globi.service.TermLookupServiceException;
 import org.eol.globi.domain.Term;
@@ -97,9 +98,18 @@ public class StudyImporterForBioInfo extends BaseStudyImporter implements StudyI
     protected Map<Long, RelType> createRelationsTypeMap(LabeledCSVParser labeledCSVParser) throws StudyImporterException {
         // Attempt to map Malcolms interactions to http://vocabularies.gbif.org/vocabularies/Interaction
         Map<String, RelType> interactionMapping = new HashMap<String, RelType>();
-        interactionMapping.put("ectoparasitises", InteractType.HOST_OF);
+        interactionMapping.put("ectoparasitises", InteractType.PARASITE_OF);
+        interactionMapping.put("endoparasitises", InteractType.PARASITE_OF);
+        interactionMapping.put("parasitises", InteractType.PARASITE_OF);
+        interactionMapping.put("is ectoparasitoid of", InteractType.PARASITE_OF);
+        interactionMapping.put("is parasitoid of", InteractType.PARASITE_OF);
+        interactionMapping.put("parasitises", InteractType.PARASITE_OF);
+        interactionMapping.put("pollenates or fertilises", InteractType.POLLINATES);
+        interactionMapping.put("feeds on dead", InteractType.ATE);
+        interactionMapping.put("grazes on", InteractType.ATE);
+        interactionMapping.put("feeds on", InteractType.ATE);
         interactionMapping.put("is predator of", InteractType.PREYS_UPON);
-        interactionMapping.put("is ectomycorrhizal with", InteractType.HAS_HOST);
+        interactionMapping.put("is ectomycorrhizal with", InteractType.INTERACTS_WITH);
 
         Map<Long, RelType> relationsTypeMap = new HashMap<Long, RelType>();
         try {
@@ -131,12 +141,10 @@ public class StudyImporterForBioInfo extends BaseStudyImporter implements StudyI
                 if (importFilter.shouldImportRecord(count)) {
                     Specimen donorSpecimen = createSpecimen(parser, taxaMap, "DonorTax_id");
                     addLifeStage(parser, donorSpecimen, "DonorStage");
-                    study.collected(donorSpecimen);
                     Specimen recipientSpecimen = createSpecimen(parser, taxaMap, "RecipTax_id");
                     addLifeStage(parser, recipientSpecimen, "RecipStage");
                     study.collected(recipientSpecimen);
-                    donorSpecimen.interactsWith(recipientSpecimen, relationsTypeMap.get(labelAsLong(parser, "TrophicRel_Id")));
-
+                    recipientSpecimen.interactsWith(donorSpecimen, relationsTypeMap.get(labelAsLong(parser, "TrophicRel_Id")));
                 }
                 count++;
             }
@@ -180,7 +188,9 @@ public class StudyImporterForBioInfo extends BaseStudyImporter implements StudyI
             throw new StudyImporterException("failed to find scientific name for taxonId [" + taxonId + "] at line [" + labeledCSVParser.getLastLineNumber() + "]");
         }
         try {
-            return nodeFactory.createSpecimen(scientificName, "bioinfo:" + taxonId);
+            Specimen specimen = nodeFactory.createSpecimen(scientificName, TaxonomyProvider.BIO_INFO + taxonId);
+            specimen.setExternalId(TaxonomyProvider.BIO_INFO + "rel:" + labeledCSVParser.lastLineNumber());
+            return specimen;
         } catch (NodeFactoryException e) {
             throw new StudyImporterException("failed to create taxon with scientific name [" + scientificName + "]", e);
         }
