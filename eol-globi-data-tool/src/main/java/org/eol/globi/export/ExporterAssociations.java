@@ -39,7 +39,6 @@ public class ExporterAssociations extends ExporterAssociationsBase {
     }
 
     private void writeRow(Study study, Writer writer, Map<String, String> properties, Node specimenNode, Relationship interactRel, Node targetSpecimen) throws IOException {
-
         properties.put(EOLDictionary.ASSOCIATION_TYPE, getEOLTermFor(interactRel.getType().name()));
         properties.put(EOLDictionary.ASSOCIATION_ID, "globi:assoc:" + interactRel.getId());
         properties.put(EOLDictionary.OCCURRENCE_ID, "globi:occur:source:" + specimenNode.getId());

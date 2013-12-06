@@ -18,17 +18,17 @@ public abstract class ExporterAssociationsBase extends ExporterBase {
         };
     }
 
-    public static final String DEFAULT_INTERACT_TYPE = "/interactsWith";
+    public static final String DEFAULT_INTERACT_TYPE = "http://eol.org/schema/terms/interactsWith";
     private static final Map<String, String> GLOBI_EOL_INTERACT_MAP = new HashMap<String, String>() {
         {
-            put(InteractType.ATE.name(), "/eats");
+            put(InteractType.ATE.name(), "http://eol.org/schema/terms/eats");
             put(InteractType.INTERACTS_WITH.name(), DEFAULT_INTERACT_TYPE);
-            put(InteractType.HOST_OF.name(), "/hosts");
-            put(InteractType.PREYS_UPON.name(), "/preysUpon");
-            put(InteractType.HAS_HOST.name(), "/hasHost");
-            put(InteractType.POLLINATES.name(), "/pollinates");
-            put(InteractType.PERCHING_ON.name(), "/isFoundOn");
-            put(InteractType.PARASITE_OF.name(), "/parasitizes");
+            put(InteractType.HOST_OF.name(), "http://eol.org/schema/terms/hosts");
+            put(InteractType.PREYS_UPON.name(), "http://eol.org/schema/terms/preysUpon");
+            put(InteractType.HAS_HOST.name(), "http://eol.org/schema/terms/hasHost");
+            put(InteractType.POLLINATES.name(), "http://eol.org/schema/terms/pollinates");
+            put(InteractType.PERCHING_ON.name(), "http://eol.org/schema/terms/isFoundOn");
+            put(InteractType.PARASITE_OF.name(), "http://eol.org/schema/terms/parasitizes");
         }
     };
 
