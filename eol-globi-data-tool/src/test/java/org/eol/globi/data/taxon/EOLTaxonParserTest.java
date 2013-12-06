@@ -55,6 +55,11 @@ public class EOLTaxonParserTest {
         }
 
         @Override
+        public void addTerm(String name, TaxonTerm term) {
+
+        }
+
+        @Override
         public void start() {
 
         }

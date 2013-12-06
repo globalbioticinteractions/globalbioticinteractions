@@ -27,6 +27,7 @@ public class TaxonLookupServiceImpl implements TaxonImportListener, TaxonLookupS
     public static final String FIELD_ID = "id";
     public static final String FIELD_NAME = "name";
     private static final String FIELD_RANK_PATH = "rank_path";
+    private static final String FIELD_RECOMMENDED_NAME = "recommended_name";
 
     private Directory indexDir;
     private IndexWriter indexWriter;
@@ -43,20 +44,26 @@ public class TaxonLookupServiceImpl implements TaxonImportListener, TaxonLookupS
 
     @Override
     public void addTerm(TaxonTerm taxonTerm) {
+         addTerm(taxonTerm.getName(), taxonTerm);
+    }
+
+    @Override
+    public void addTerm(String name, TaxonTerm taxonTerm) {
         if (hasStarted()) {
-            Document doc = new Document();
-            doc.add(new Field(FIELD_NAME, taxonTerm.getName(), Field.Store.YES, Field.Index.NOT_ANALYZED_NO_NORMS));
-            doc.add(new Field(FIELD_ID, taxonTerm.getId(), Field.Store.YES, Field.Index.NOT_ANALYZED_NO_NORMS));
-            String rankPath = taxonTerm.getRankPath();
-            if (rankPath != null) {
-                doc.add(new Field(FIELD_RANK_PATH, rankPath, Field.Store.YES, Field.Index.NOT_ANALYZED_NO_NORMS));
-            }
-            try {
-                indexWriter.addDocument(doc);
-            } catch (IOException e) {
-                throw new RuntimeException("failed to add document for term with name [" + taxonTerm.getName() + "]");
-            }
-        }
+                    Document doc = new Document();
+                    doc.add(new Field(FIELD_NAME, name, Field.Store.YES, Field.Index.NOT_ANALYZED_NO_NORMS));
+                    doc.add(new Field(FIELD_RECOMMENDED_NAME, taxonTerm.getName(), Field.Store.YES, Field.Index.NOT_ANALYZED_NO_NORMS));
+                    doc.add(new Field(FIELD_ID, taxonTerm.getId(), Field.Store.YES, Field.Index.NOT_ANALYZED_NO_NORMS));
+                    String rankPath = taxonTerm.getRankPath();
+                    if (rankPath != null) {
+                        doc.add(new Field(FIELD_RANK_PATH, rankPath, Field.Store.YES, Field.Index.NOT_ANALYZED_NO_NORMS));
+                    }
+                    try {
+                        indexWriter.addDocument(doc);
+                    } catch (IOException e) {
+                        throw new RuntimeException("failed to add document for term with name [" + taxonTerm.getName() + "]");
+                    }
+                }
     }
 
     @Override
@@ -82,7 +89,7 @@ public class TaxonLookupServiceImpl implements TaxonImportListener, TaxonLookupS
                     if (rankPathField != null) {
                         term.setRankPath(rankPathField.stringValue());
                     }
-                    Fieldable fieldName = foundDoc.getFieldable(FIELD_NAME);
+                    Fieldable fieldName = foundDoc.getFieldable(FIELD_RECOMMENDED_NAME);
                     if (fieldName != null) {
                         term.setName(fieldName.stringValue());
                     }

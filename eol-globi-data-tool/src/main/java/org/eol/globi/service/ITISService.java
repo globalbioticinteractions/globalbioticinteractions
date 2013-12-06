@@ -13,8 +13,6 @@ import java.net.URISyntaxException;
 
 public class ITISService extends BaseTaxonIdService {
 
-    private static final Log LOG = LogFactory.getLog(ITISService.class);
-
     @Override
     public String lookupIdByName(String taxonName) throws TaxonPropertyLookupServiceException {
 

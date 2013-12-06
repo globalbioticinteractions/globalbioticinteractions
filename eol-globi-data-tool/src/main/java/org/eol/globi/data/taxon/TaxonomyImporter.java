@@ -82,6 +82,11 @@ public class TaxonomyImporter {
             }
 
             @Override
+            public void addTerm(String name, TaxonTerm term) {
+
+            }
+
+            @Override
             public void start() {
                 taxonLookupService.start();
             }
