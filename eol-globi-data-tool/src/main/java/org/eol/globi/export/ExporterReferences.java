@@ -39,12 +39,16 @@ public class ExporterReferences extends ExporterBase {
     @Override
     protected void doExportStudy(Study study, Writer writer, boolean includeHeader) throws IOException {
         Map<String, String> properties = new HashMap<String, String>();
-        properties.put(IDENTIFIER, "globi:ref:" + study.getNodeID());
-        properties.put(FULL_REFERENCE, compileReference(study));
+        properties.put(IDENTIFIER, referenceIdForStudy(study));
+        properties.put(FULL_REFERENCE, referenceForStudy(study));
         writeProperties(writer, properties);
     }
 
-    private String compileReference(Study study) {
+    public static String referenceIdForStudy(Study study) {
+        return "globi:ref:" + study.getNodeID();
+    }
+
+    private String referenceForStudy(Study study) {
         StringBuilder reference = new StringBuilder();
         String contributor = study.getContributor();
         reference.append(StringUtils.isBlank(contributor) ? "" : contributor + " ");

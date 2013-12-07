@@ -33,7 +33,6 @@ public class ExporterMeasurementOrFact extends ExporterBase {
                 EOLDictionary.SOURCE,
                 EOLDictionary.BIBLIOGRAPHIC_CITATION,
                 EOLDictionary.CONTRIBUTOR,
-                // TODO include reference id in measurement export
                 EOLDictionary.REFERENCE_ID
         };
     }
@@ -97,5 +96,6 @@ public class ExporterMeasurementOrFact extends ExporterBase {
         properties.put(EOLDictionary.CONTRIBUTOR, study.getContributor());
         addCollectionDate(properties, collectedRel, EOLDictionary.MEASUREMENT_DETERMINED_DATE);
         properties.put(EOLDictionary.OCCURRENCE_ID, "globi:occur:" + specimenNode.getId());
+        properties.put(EOLDictionary.REFERENCE_ID, ExporterReferences.referenceIdForStudy(study));
     }
 }

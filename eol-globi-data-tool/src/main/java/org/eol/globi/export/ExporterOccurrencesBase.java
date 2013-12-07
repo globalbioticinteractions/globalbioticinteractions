@@ -31,7 +31,6 @@ public abstract class ExporterOccurrencesBase extends ExporterBase {
                 "http://rs.tdwg.org/dwc/terms/verbatimLatitude",
                 "http://rs.tdwg.org/dwc/terms/verbatimLongitude",
                 EOLDictionary.VERBATIM_ELEVATION,
-
                 // TODO reuse term physiological state from existing ontology
                 EOLDictionary.PHYSIOLOGICAL_STATE,
                 // TODO reuse term body part from existing ontology

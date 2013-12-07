@@ -25,9 +25,9 @@ public class ExporterMeasurementOrFactTest extends GraphDBTestCase {
         createTestData(null);
 
         String expected =
-                "\nglobi:occur:stomach_volume:3,globi:occur:3,yes,,,stomach volume,666.0,http://purl.obolibrary.org/obo/UO_0000098,,,1992-03-30T08:00:00Z,,,,myStudy,,,"
-                        + "\nglobi:occur:volume:6,globi:occur:6,yes,,,volume,124.0,http://purl.obolibrary.org/obo/UO_0000098,,,1992-03-30T08:00:00Z,,,,myStudy,,,"
-                        + "\nglobi:occur:volume:8,globi:occur:8,yes,,,volume,18.0,http://purl.obolibrary.org/obo/UO_0000098,,,1992-03-30T08:00:00Z,,,,myStudy,,,";
+                "\nglobi:occur:stomach_volume:3,globi:occur:3,yes,,,stomach volume,666.0,http://purl.obolibrary.org/obo/UO_0000098,,,1992-03-30T08:00:00Z,,,,myStudy,,,globi:ref:1"
+                        + "\nglobi:occur:volume:6,globi:occur:6,yes,,,volume,124.0,http://purl.obolibrary.org/obo/UO_0000098,,,1992-03-30T08:00:00Z,,,,myStudy,,,globi:ref:1"
+                        + "\nglobi:occur:volume:8,globi:occur:8,yes,,,volume,18.0,http://purl.obolibrary.org/obo/UO_0000098,,,1992-03-30T08:00:00Z,,,,myStudy,,,globi:ref:1";
 
 
         Study myStudy1 = nodeFactory.findStudy("myStudy");
