@@ -55,4 +55,8 @@ public class EOLDictionary {
     public static final String REFERENCE_ID = "http://eol.org/schema/reference/referenceID";
     public static final String SCIENTIFIC_NAME = "http://rs.tdwg.org/dwc/terms/scientificName";
     public static final String PARENT_NAME_USAGE_ID = "http://rs.tdwg.org/dwc/terms/parentNameUsageID";
+    public static final String VERBATIM_ELEVATION = "http://rs.tdwg.org/dwc/terms/verbatimElevation";
+    public static final String CATALOG_NUMBER = "http://rs.tdwg.org/dwc/terms/catalogNumber";
+    public static final String COLLECTION_CODE = "http://rs.tdwg.org/dwc/terms/collectionCode";
+    public static final String INSTITUTION_CODE = "http://rs.tdwg.org/dwc/terms/institutionCode";
 }
