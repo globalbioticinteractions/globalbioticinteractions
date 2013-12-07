@@ -20,17 +20,21 @@ public class ExporterMeasurementOrFact extends ExporterBase {
                 EOLDictionary.OCCURRENCE_ID,
                 EOLDictionary.MEASUREMENT_OF_TAXON,
                 EOLDictionary.ASSOCIATION_ID,
+                "http://eol.org/schema/parentMeasurementID",
                 EOLDictionary.MEASUREMENT_TYPE,
                 EOLDictionary.MEASUREMENT_VALUE,
                 EOLDictionary.MEASUREMENT_UNIT,
                 EOLDictionary.MEASUREMENT_ACCURACY,
+                "http://eol.org/schema/terms/statisticalMethod",
                 EOLDictionary.MEASUREMENT_DETERMINED_DATE,
                 EOLDictionary.MEASUREMENT_DETERMINED_BY,
                 EOLDictionary.MEASUREMENT_METHOD,
                 EOLDictionary.MEASUREMENT_REMARKS,
                 EOLDictionary.SOURCE,
                 EOLDictionary.BIBLIOGRAPHIC_CITATION,
-                EOLDictionary.CONTRIBUTOR
+                EOLDictionary.CONTRIBUTOR,
+                // TODO include reference id in measurement export
+                EOLDictionary.REFERENCE_ID
         };
     }
 

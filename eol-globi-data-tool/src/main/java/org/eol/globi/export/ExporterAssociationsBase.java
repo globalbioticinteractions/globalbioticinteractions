@@ -13,7 +13,13 @@ public abstract class ExporterAssociationsBase extends ExporterBase {
                 EOLDictionary.OCCURRENCE_ID,
                 EOLDictionary.ASSOCIATION_TYPE,
                 EOLDictionary.TARGET_OCCURRENCE_ID,
+                EOLDictionary.MEASUREMENT_DETERMINED_DATE,
+                EOLDictionary.MEASUREMENT_DETERMINED_BY,
+                EOLDictionary.MEASUREMENT_METHOD,
+                EOLDictionary.MEASUREMENT_REMARKS,
                 EOLDictionary.SOURCE,
+                EOLDictionary.BIBLIOGRAPHIC_CITATION,
+                EOLDictionary.CONTRIBUTOR,
                 EOLDictionary.REFERENCE_ID
         };
     }

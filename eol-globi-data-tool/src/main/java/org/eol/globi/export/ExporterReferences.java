@@ -15,9 +15,13 @@ public class ExporterReferences extends ExporterBase {
 
     @Override
     protected String[] getFields() {
-        return new String[]{IDENTIFIER, "http://eol.org/schema/reference/publicationType",
-                FULL_REFERENCE, "http://eol.org/schema/reference/primaryTitle",
-                "http://purl.org/dc/terms/title", "http://purl.org/ontology/bibo/pages",
+        return new String[]{
+                IDENTIFIER,
+                "http://eol.org/schema/reference/publicationType",
+                FULL_REFERENCE,
+                "http://eol.org/schema/reference/primaryTitle",
+                "http://purl.org/dc/terms/title",
+                "http://purl.org/ontology/bibo/pages",
                 "http://purl.org/ontology/bibo/pageStart",
                 "http://purl.org/ontology/bibo/pageEnd",
                 "http://purl.org/ontology/bibo/volume",

@@ -36,14 +36,44 @@ public class ExporterOccurrencesTest extends GraphDBTestCase {
     }
 
     private String getExpectedData() {
-        return "\nglobi:occur:3,EOL:327955,,JUVENILE,DIGESTATE,BONE,,,,,,,,,,123.0,345.9,,-60.0,,,,1992-03-30T08:00:00Z,myStudy" +
-                "\nglobi:occur:6,EOL:328607,,,,,,,,,,,,,,123.0,345.9,,-60.0,,,,1992-03-30T08:00:00Z,myStudy" +
-                "\nglobi:occur:8,EOL:328607,,,,,,,,,,,,,,123.0,345.9,,-60.0,,,,1992-03-30T08:00:00Z,myStudy";
+        return "\nglobi:occur:3,EOL:327955,myStudy,,,,,JUVENILE,,,,,,,,,,,,1992-03-30T08:00:00Z,,,123.0,345.9,,,,DIGESTATE,BONE,,-60.0" +
+               "\nglobi:occur:6,EOL:328607,myStudy,,,,,,,,,,,,,,,,,1992-03-30T08:00:00Z,,,123.0,345.9,,,,,,,-60.0" +
+               "\nglobi:occur:8,EOL:328607,myStudy,,,,,,,,,,,,,,,,,1992-03-30T08:00:00Z,,,123.0,345.9,,,,,,,-60.0";
     }
 
     private String getExpectedHeader() {
-        String header = "\"occurrenceID\",\"taxonID\",\"sex\",\"lifeStage\",\"physiologicalState\",\"bodyPart\",\"reproductiveCondition\",\"behavior\",\"establishmentMeans\",\"occurrenceRemarks\",\"individualCount\",\"preparations\",\"fieldNotes\",\"samplingProtocol\",\"samplingEffort\",\"decimalLatitude\",\"decimalLongitude\",\"depth\",\"altitude\",\"locality\",\"identifiedBy\",\"dateIdentified\",\"eventDate\",\"eventID\"" +
-                "\n\"http://rs.tdwg.org/dwc/terms/occurrenceID\",\"http://rs.tdwg.org/dwc/terms/taxonID\",\"http://rs.tdwg.org/dwc/terms/sex\",\"http://rs.tdwg.org/dwc/terms/lifeStage\",\"http:/eol.org/globi/terms/physiologicalState\",\"http:/eol.org/globi/terms/bodyPart\",\"http://rs.tdwg.org/dwc/terms/reproductiveCondition\",\"http://rs.tdwg.org/dwc/terms/behavior\",\"http://rs.tdwg.org/dwc/terms/establishmentMeans\",\"http://rs.tdwg.org/dwc/terms/occurrenceRemarks\",\"http://rs.tdwg.org/dwc/terms/individualCount\",\"http://rs.tdwg.org/dwc/terms/preparations\",\"http://rs.tdwg.org/dwc/terms/fieldNotes\",\"http://rs.tdwg.org/dwc/terms/samplingProtocol\",\"http://rs.tdwg.org/dwc/terms/samplingEffort\",\"http://rs.tdwg.org/dwc/terms/decimalLatitude\",\"http://rs.tdwg.org/dwc/terms/decimalLongitude\",\"http://eol.org/globi/depth\",\"http://eol.org/globi/altitude\",\"http://rs.tdwg.org/dwc/terms/locality\",\"http://rs.tdwg.org/dwc/terms/identifiedBy\",\"http://rs.tdwg.org/dwc/terms/dateIdentified\",\"http://rs.tdwg.org/dwc/terms/eventDate\",\"http://rs.tdwg.org/dwc/terms/eventID\"";
+        String header = "\"occurrenceID\",\"taxonID\",\"eventID\",\"institutionCode\",\"collectionCode\",\"catalogNumber\",\"sex\",\"lifeStage\",\"reproductiveCondition\",\"behavior\",\"establishmentMeans\",\"occurrenceRemarks\",\"individualCount\",\"preparations\",\"fieldNotes\",\"samplingProtocol\",\"samplingEffort\",\"identifiedBy\",\"dateIdentified\",\"eventDate\",\"modified\",\"locality\",\"decimalLatitude\",\"decimalLongitude\",\"verbatimLatitude\",\"verbatimLongitude\",\"verbatimElevation\",\"physiologicalState\",\"bodyPart\",\"depth\",\"altitude\"" +
+                "\n\"http://rs.tdwg.org/dwc/terms/occurrenceID\"," +
+                "\"http://rs.tdwg.org/dwc/terms/taxonID\"," +
+                "\"http://rs.tdwg.org/dwc/terms/eventID\"," +
+                "\"http://rs.tdwg.org/dwc/terms/institutionCode\"," +
+                "\"http://rs.tdwg.org/dwc/terms/collectionCode\"," +
+                "\"http://rs.tdwg.org/dwc/terms/catalogNumber\"," +
+                "\"http://rs.tdwg.org/dwc/terms/sex\"," +
+                "\"http://rs.tdwg.org/dwc/terms/lifeStage\"," +
+                "\"http://rs.tdwg.org/dwc/terms/reproductiveCondition\"," +
+                "\"http://rs.tdwg.org/dwc/terms/behavior\"," +
+                "\"http://rs.tdwg.org/dwc/terms/establishmentMeans\"," +
+                "\"http://rs.tdwg.org/dwc/terms/occurrenceRemarks\"," +
+                "\"http://rs.tdwg.org/dwc/terms/individualCount\"," +
+                "\"http://rs.tdwg.org/dwc/terms/preparations\"," +
+                "\"http://rs.tdwg.org/dwc/terms/fieldNotes\"," +
+                "\"http://rs.tdwg.org/dwc/terms/samplingProtocol\"," +
+                "\"http://rs.tdwg.org/dwc/terms/samplingEffort\"," +
+                "\"http://rs.tdwg.org/dwc/terms/identifiedBy\"," +
+                "\"http://rs.tdwg.org/dwc/terms/dateIdentified\"," +
+                "\"http://rs.tdwg.org/dwc/terms/eventDate\"," +
+                "\"http://purl.org/dc/terms/modified\"," +
+                "\"http://rs.tdwg.org/dwc/terms/locality\"," +
+                "\"http://rs.tdwg.org/dwc/terms/decimalLatitude\"," +
+                "\"http://rs.tdwg.org/dwc/terms/decimalLongitude\"," +
+                "\"http://rs.tdwg.org/dwc/terms/verbatimLatitude\"," +
+                "\"http://rs.tdwg.org/dwc/terms/verbatimLongitude\"," +
+                "\"http://rs.tdwg.org/dwc/terms/verbatimElevation\"," +
+                "\"http:/eol.org/globi/terms/physiologicalState\"," +
+                "\"http:/eol.org/globi/terms/bodyPart\"," +
+                "\"http://eol.org/globi/depth\"," +
+                "\"http://eol.org/globi/altitude\"";
         return header;
     }
 
@@ -94,7 +124,7 @@ public class ExporterOccurrencesTest extends GraphDBTestCase {
 
         String expected = "";
         expected += getExpectedHeader();
-        expected += "\nglobi:occur:3,EOL:123,,,,,,,,,,,,,,,,,,,,,,myStudy";
+        expected += "\nglobi:occur:3,EOL:123,myStudy,,,,,,,,,,,,,,,,,,,,,,,,,,,,";
 
         assertThat(row.getBuffer().toString(), equalTo(expected));
     }
