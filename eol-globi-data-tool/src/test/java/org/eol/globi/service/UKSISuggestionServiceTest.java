@@ -47,6 +47,11 @@ public class UKSISuggestionServiceTest {
     }
 
     @Test
+    public void noSuggestion() {
+        assertThat(uksiSuggestionService.suggest("Yogi the Bear"), is("Yogi the Bear"));
+    }
+
+    @Test
     public void lookupNameNoCorrectionNotPresent() throws TaxonPropertyLookupServiceException {
         HashMap<String, String> properties = new HashMap<String, String>();
         uksiSuggestionService.lookupPropertiesByName("Yogi the Bear", properties);
