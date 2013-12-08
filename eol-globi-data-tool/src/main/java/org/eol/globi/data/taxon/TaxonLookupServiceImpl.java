@@ -153,7 +153,6 @@ public class TaxonLookupServiceImpl implements TaxonImportListener, TaxonLookupS
 
     }
 
-
     public File getIndexPath() {
         return indexPath;
     }
