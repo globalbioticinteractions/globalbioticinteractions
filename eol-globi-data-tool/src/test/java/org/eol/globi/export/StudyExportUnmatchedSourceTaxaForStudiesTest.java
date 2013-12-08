@@ -6,6 +6,7 @@ import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
+import org.eol.globi.domain.Taxon;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -19,7 +20,9 @@ public class StudyExportUnmatchedSourceTaxaForStudiesTest extends GraphDBTestCas
     @Test
     public void exportOnePredatorTwoPrey() throws NodeFactoryException, IOException {
         Study study = nodeFactory.createStudy("my study");
+        nodeFactory.getOrCreateTaxon("Homo sapiens", "homoSapiensId", "one two three");
         Specimen predatorSpecimen = nodeFactory.createSpecimen("Homo sapiens", "homoSapiensId");
+        nodeFactory.getOrCreateTaxon("Canis lupus", "canisLupusId", "four five six");
         addCanisLupus(predatorSpecimen, "canisLupusId");
         addCanisLupus(predatorSpecimen, "canisLupusId");
         Specimen preySpecimen = nodeFactory.createSpecimen("Canis lupus other", PropertyAndValueDictionary.NO_MATCH);
@@ -45,15 +48,15 @@ public class StudyExportUnmatchedSourceTaxaForStudiesTest extends GraphDBTestCas
 
         StringWriter writer = new StringWriter();
         new StudyExportUnmatchedSourceTaxaForStudies().exportStudy(study, writer, true);
-        assertThat(writer.toString(), is("\"original source taxon name\",\"unmatched normalized source taxon name\",\"study\"\n" +
-                "\"Homo sapiens2 (bla)\",\"Homo sapiens2\",\"my study\"\n" +
-                "\"Homo sapiens3 (blah)\",\"Homo sapiens3\",\"my study\"\n"
+        assertThat(writer.toString(), is("\"original source taxon name\",\"unmatched normalized source external id\",\"unmatched normalized source taxon name\",\"study\"\n" +
+                "\"Homo sapiens2 (bla)\",,\"Homo sapiens2\",\"my study\"\n" +
+                "\"Homo sapiens3 (blah)\",,\"Homo sapiens3\",\"my study\"\n"
         ));
 
         writer = new StringWriter();
         new StudyExportUnmatchedTargetTaxaForStudies().exportStudy(study, writer, true);
-                assertThat(writer.toString(), is("\"original target taxon name\",\"unmatched normalized target taxon name\",\"study\"\n" +
-                        "\"Canis lupus other\",\"Canis lupus other\",\"my study\"\n"
+                assertThat(writer.toString(), is("\"original target taxon name\",\"unmatched normalized target external id\",\"unmatched normalized target taxon name\",\"study\"\n" +
+                        "\"Canis lupus other\",,\"Canis lupus other\",\"my study\"\n"
                 ));
     }
 

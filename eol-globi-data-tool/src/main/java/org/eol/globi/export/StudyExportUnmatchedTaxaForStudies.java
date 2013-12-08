@@ -13,9 +13,10 @@ import java.util.Map;
 public abstract class StudyExportUnmatchedTaxaForStudies extends DarwinCoreExporter {
     private static final String META_TABLE_SUFFIX = "</location>\n" +
             "    </files>\n" +
-            "    <field index=\"0\" term=\"http://rs.tdwg.org/dwc/terms/scientificName\"/>\n" +
-            "    <field index=\"1\" term=\"http://rs.tdwg.org/dwc/terms/scientificName\"/>\n" +
-            "    <field index=\"2\" term=\"http://rs.tdwg.org/dwc/terms/collectionID\"/>\n" +
+            "    <field index=\"0\" term=\"" + EOLDictionary.SCIENTIFIC_NAME + "\"/>\n" +
+            "    <field index=\"1\" term=\"" + EOLDictionary.TAXON_ID + "\"/>\n" +
+            "    <field index=\"1\" term=\"" + EOLDictionary.SCIENTIFIC_NAME + "\"/>\n" +
+            "    <field index=\"2\" term=\"" + EOLDictionary.COLLECTION_CODE + "\"/>\n" +
             "  </table>\n";
     private static final String META_TABLE_PREFIX = "<table encoding=\"UTF-8\" fieldsTerminatedBy=\",\" linesTerminatedBy=\"\\n\" ignoreHeaderLines=\"1\" rowType=\"http://rs.tdwg.org/dwc/terms/text/DarwinRecord\">\n" +
             "    <files>\n" +
@@ -30,9 +31,8 @@ public abstract class StudyExportUnmatchedTaxaForStudies extends DarwinCoreExpor
         query.append(study.getTitle());
         query.append("\") ");
         query.append(getQueryString(study));
-        query.append("WHERE not(has(taxon.externalId)) or taxon.externalId = \"");
-        query.append(PropertyAndValueDictionary.NO_MATCH);
-        query.append("\" RETURN distinct description.name, taxon.name, study.title");
+        query.append("WHERE not(has(taxon.path))");
+        query.append(" RETURN distinct description.name, taxon.externalId?, taxon.name, study.title");
 
         ExecutionResult result = engine.execute(query.toString());
 
@@ -51,12 +51,16 @@ public abstract class StudyExportUnmatchedTaxaForStudies extends DarwinCoreExpor
 
     protected void writeRow(Writer writer, Map<String, Object> map) throws IOException {
         writer.write("\"" + map.get("description.name") + "\",");
+        Object externalId = map.get("taxon.externalId");
+        writer.write((externalId == null ? "" : ("\"" + externalId + "\"")));
+        writer.write(",");
         writer.write("\"" + map.get("taxon.name") + "\",");
         writer.write("\"" + map.get("study.title") + "\"\n");
     }
 
     protected void writeHeader(Writer writer, String taxonLabel) throws IOException {
         writer.write("\"original " + taxonLabel + " taxon name\"");
+        writer.write(",\"unmatched normalized " + taxonLabel + " external id\"");
         writer.write(",\"unmatched normalized " + taxonLabel + " taxon name\"");
         writer.write(",\"study\"\n");
     }
