@@ -98,4 +98,10 @@ public class TaxonNameNormalizerTest {
         assertThat(normalizer.normalize("H"), is("no name"));
         assertThat(normalizer.normalize("HH"), is("HH"));
     }
+
+    @Test
+    public void taxonNameUSKI() {
+        TaxonNameNormalizer normalizer = new TaxonNameNormalizer();
+        assertThat(normalizer.normalize("Scypha raphanus"), is("Sycon raphanus"));
+    }
 }

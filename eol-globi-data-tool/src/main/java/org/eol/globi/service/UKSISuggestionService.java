@@ -3,6 +3,7 @@ package org.eol.globi.service;
 import com.healthmarketscience.jackcess.Database;
 import com.healthmarketscience.jackcess.Table;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eol.globi.data.taxon.TaxonLookupServiceImpl;
@@ -17,13 +18,36 @@ import java.io.InputStream;
 import java.util.Map;
 import java.util.zip.GZIPInputStream;
 
-public class UKSIService implements TaxonPropertyLookupService {
-    private static final Log LOG = LogFactory.getLog(UKSIService.class);
+public class UKSISuggestionService implements TaxonPropertyLookupService, NameSuggestor {
+    private static final Log LOG = LogFactory.getLog(UKSISuggestionService.class);
 
     private TaxonLookupServiceImpl service;
 
     @Override
+    public String suggest(String name) {
+        String suggestion = null;
+        try {
+            TaxonTerm match = findMatch(name);
+            suggestion = match == null ? name : match.getName();
+        } catch (TaxonPropertyLookupServiceException e) {
+            LOG.warn("failed to find suggestion for name [" + name + "]", e);
+        }
+        return suggestion;
+    }
+
+    @Override
     public void lookupPropertiesByName(String taxonName, Map<String, String> properties) throws TaxonPropertyLookupServiceException {
+        TaxonTerm match = findMatch(taxonName);
+
+        if (match != null) {
+            properties.put(Taxon.NAME, match.getName());
+            properties.put(Taxon.EXTERNAL_ID, match.getId());
+        }
+
+    }
+
+    private TaxonTerm findMatch(String taxonName) throws TaxonPropertyLookupServiceException {
+        TaxonTerm match = null;
         if (service == null) {
             doInit();
         }
@@ -33,13 +57,12 @@ public class UKSIService implements TaxonPropertyLookupService {
                 LOG.info("found more than 1 term for [" + taxonName + "], picking first");
             }
             if (taxonTerms.length > 0) {
-                TaxonTerm match = taxonTerms[0];
-                properties.put(Taxon.NAME, match.getName());
-                properties.put(Taxon.EXTERNAL_ID, match.getId());
+                match = taxonTerms[0];
             }
         } catch (IOException e) {
             throw new TaxonPropertyLookupServiceException("failed to lookup [" + taxonName + "]", e);
         }
+        return match;
     }
 
     @Override
@@ -51,7 +74,7 @@ public class UKSIService implements TaxonPropertyLookupService {
     }
 
     private void doInit() throws TaxonPropertyLookupServiceException {
-        LOG.info("[" + UKSIService.class.getSimpleName() + "] instantiating...");
+        LOG.info("[" + UKSISuggestionService.class.getSimpleName() + "] instantiating...");
         service = new TaxonLookupServiceImpl();
         service.start();
         try {
@@ -73,10 +96,11 @@ public class UKSIService implements TaxonPropertyLookupService {
                 service.addTerm(taxonName.toString(), taxonTerm);
             }
         } catch (IOException e) {
-            LOG.warn("[" + UKSIService.class.getSimpleName() + "] instantiation failed.");
+            LOG.warn("[" + UKSISuggestionService.class.getSimpleName() + "] instantiation failed.");
             throw new TaxonPropertyLookupServiceException("failed to created index", e);
         }
         service.finish();
-        LOG.info("[" + UKSIService.class.getSimpleName() + "] instantiated.");
+        LOG.info("[" + UKSISuggestionService.class.getSimpleName() + "] instantiated.");
     }
+
 }

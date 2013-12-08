@@ -10,7 +10,6 @@ public class TaxonPropertyEnricherFactory {
         TaxonPropertyEnricherImpl taxonEnricher = new TaxonPropertyEnricherImpl(graphService);
         List<TaxonPropertyLookupService> services = new ArrayList<TaxonPropertyLookupService>() {
             {
-                add(new UKSIService());
                 add(new EOLOfflineService());
                 add(new EOLService());
                 add(new WoRMSService());
