@@ -10,7 +10,7 @@ import java.io.Reader;
 public class ParserFactoryImpl implements ParserFactory {
 
     public LabeledCSVParser createParser(String studyResource, String characterEncoding) throws IOException {
-        Reader reader = null;
+        Reader reader;
         InputStream is = getClass().getResourceAsStream(studyResource);
         if (is == null) {
             throw new IOException("failed to open study resource [" + studyResource + "]");
