@@ -54,12 +54,9 @@ public class UKSISuggestionService implements TaxonPropertyLookupService, NameSu
         try {
             TaxonTerm[] taxonTerms = service.lookupTermsByName(taxonName);
             if (taxonTerms.length > 0) {
+                // pick the first one
                 match = taxonTerms[0];
             }
-            if (taxonTerms.length > 1) {
-                LOG.info("found more than 1 term for [" + taxonName + "], picking first [" + match.getName() + "]");
-            }
-
         } catch (IOException e) {
             throw new TaxonPropertyLookupServiceException("failed to lookup [" + taxonName + "]", e);
         }
