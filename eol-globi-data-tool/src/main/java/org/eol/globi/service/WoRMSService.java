@@ -1,18 +1,11 @@
 package org.eol.globi.service;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.eol.globi.domain.TaxonomyProvider;
-import org.w3c.dom.Document;
-import org.xml.sax.SAXException;
 
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathFactory;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -22,11 +15,7 @@ public class WoRMSService extends BaseTaxonIdService {
     public static final String RESPONSE_SUFFIX = "</return></ns1:getAphiaIDResponse></SOAP-ENV:Body></SOAP-ENV:Envelope>";
 
     public String lookupIdByName(String taxonName) throws TaxonPropertyLookupServiceException {
-
         String response = getResponse("getAphiaID", "scientificname", taxonName);
-
-        System.out.println(response);
-
         String id = null;
         if (response.startsWith(RESPONSE_PREFIX) && response.endsWith(RESPONSE_SUFFIX)) {
             String trimmed = response.replace(RESPONSE_PREFIX, "");
