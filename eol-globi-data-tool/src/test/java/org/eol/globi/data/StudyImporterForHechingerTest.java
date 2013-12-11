@@ -27,12 +27,15 @@ public class StudyImporterForHechingerTest extends GraphDBTestCase{
         }
 
         ExecutionEngine engine = new ExecutionEngine(getGraphDb());
-        ExecutionResult result = engine.execute("START resourceTaxon = node:taxons(name='Suaeda')" +
-                " MATCH taxon<-[:CLASSIFIED_AS]-specimen-[r]->resourceSpecimen-[:CLASSIFIED_AS]-resourceTaxon" +
-                " RETURN taxon.name, specimen.lifeStage?, type(r), resourceTaxon.name, resourceSpecimen.lifeStage?");
+        String query = "START resourceTaxon = node:taxons(name='Suaeda')" +
+                " MATCH taxon<-[:CLASSIFIED_AS]-specimen-[r]->resourceSpecimen-[:CLASSIFIED_AS]-resourceTaxon, specimen-[:COLLECTED_AT]->location" +
+                " RETURN taxon.name, specimen.lifeStage?, type(r), resourceTaxon.name, resourceSpecimen.lifeStage?, location.latitude as lat, location.longitude as lng";
+        System.out.println(query);
+        ExecutionResult result = engine.execute(query);
 
         assertThat(result.dumpToString(), containsString("Anas acuta"));
         assertThat(result.dumpToString(), containsString("Aythya affinis"));
+        assertThat(result.dumpToString(), containsString("30.378207 | -115.938835 |"));
 
         assertThat(count, is(13966));
 
