@@ -99,9 +99,13 @@ public class Normalizer {
         }
     }
 
-    private void importData(GraphDatabaseService graphService, TaxonPropertyEnricher taxonEnricher) throws StudyImporterException {
+    private void importData(GraphDatabaseService graphService, TaxonPropertyEnricher taxonEnricher)  {
         for (Class importer : StudyImporterFactory.getAvailableImporters()) {
-            importData(graphService, taxonEnricher, importer);
+            try {
+                importData(graphService, taxonEnricher, importer);
+            } catch (StudyImporterException e) {
+                LOG.error("problem encountered while importing [" + importer.getName() + "]", e);
+            }
         }
     }
 
