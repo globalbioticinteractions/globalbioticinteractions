@@ -1,8 +1,9 @@
 package org.eol.globi.data;
 
-import org.eol.globi.domain.RelType;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Study;
+import org.neo4j.graphdb.Relationship;
+import org.neo4j.graphdb.Transaction;
 
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
@@ -61,7 +62,13 @@ public class StudyImporterFactory {
 
                 private void createMsg(Study study, String message, Level warning) {
                     LogMessage msg = nodeFactory.createLogMessage(warning, message);
-                    study.createRelationshipTo(msg, RelTypes.HAS_LOG_MESSAGE);
+                    Transaction tx = study.getUnderlyingNode().getGraphDatabase().beginTx();
+                    try {
+                        study.getUnderlyingNode().createRelationshipTo(msg.getUnderlyingNode(), RelTypes.HAS_LOG_MESSAGE);
+                        tx.success();
+                    } finally {
+                        tx.finish();
+                    }
                 }
             });
             return studyImporter;
