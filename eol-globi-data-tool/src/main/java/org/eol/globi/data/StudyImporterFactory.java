@@ -61,13 +61,15 @@ public class StudyImporterFactory {
                 }
 
                 private void createMsg(Study study, String message, Level warning) {
-                    LogMessage msg = nodeFactory.createLogMessage(warning, message);
-                    Transaction tx = study.getUnderlyingNode().getGraphDatabase().beginTx();
-                    try {
-                        study.getUnderlyingNode().createRelationshipTo(msg.getUnderlyingNode(), RelTypes.HAS_LOG_MESSAGE);
-                        tx.success();
-                    } finally {
-                        tx.finish();
+                    if (null != study) {
+                        LogMessage msg = nodeFactory.createLogMessage(warning, message);
+                        Transaction tx = study.getUnderlyingNode().getGraphDatabase().beginTx();
+                        try {
+                            study.getUnderlyingNode().createRelationshipTo(msg.getUnderlyingNode(), RelTypes.HAS_LOG_MESSAGE);
+                            tx.success();
+                        } finally {
+                            tx.finish();
+                        }
                     }
                 }
             });
