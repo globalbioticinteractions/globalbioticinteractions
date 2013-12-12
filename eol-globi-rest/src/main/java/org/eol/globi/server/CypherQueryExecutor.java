@@ -2,10 +2,6 @@ package org.eol.globi.server;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.BasicResponseHandler;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 
@@ -48,12 +44,9 @@ public class CypherQueryExecutor {
     }
 
     private String executeRemote() throws IOException {
-        org.apache.http.client.HttpClient httpClient = new DefaultHttpClient();
-        HttpPost httpPost = new HttpPost("http://46.4.36.142:7474/db/data/cypher");
-        HttpClient.addJsonHeaders(httpPost);
-        httpPost.setEntity(new StringEntity(wrapQuery(query, params)));
-        BasicResponseHandler responseHandler = new BasicResponseHandler();
-        return httpClient.execute(httpPost, responseHandler);
+        String query1 = query;
+        Map<String, String> params1 = params;
+        return CypherUtil.executeCypherQuery(query1, params1);
     }
 
     private String executeAndTransformToCSV() throws IOException {
@@ -187,33 +180,6 @@ public class CypherQueryExecutor {
             resultBuilder.append(node.getValueAsText());
             if (node.isTextual()) {
                 resultBuilder.append("\"");
-            }
-        }
-    }
-
-    private String wrapQuery(String cypherQuery, Map<String, String> params) {
-        String query = CypherProxyController.JSON_CYPHER_WRAPPER_PREFIX;
-        query += cypherQuery;
-        query += " \", \"params\": {" + buildJSONParamList(params) + " } }";
-        return query;
-    }
-
-    private String buildJSONParamList(Map<String, String> paramMap) {
-        StringBuilder builder = new StringBuilder();
-        if (paramMap != null) {
-            populateParams(paramMap, builder);
-        }
-        return builder.toString();
-    }
-
-    private void populateParams(Map<String, String> paramMap, StringBuilder builder) {
-        Iterator<Map.Entry<String, String>> iterator = paramMap.entrySet().iterator();
-        while (iterator.hasNext()) {
-            Map.Entry<String, String> param = iterator.next();
-            String jsonParam = "\"" + param.getKey() + "\" : \"" + param.getValue() + "\"";
-            builder.append(jsonParam);
-            if (iterator.hasNext()) {
-                builder.append(", ");
             }
         }
     }

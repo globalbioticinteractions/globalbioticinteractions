@@ -33,7 +33,6 @@ public class CypherProxyController {
     public static final String INTERACTION_PREYED_UPON_BY = "preyedUponBy";
 
     public static final String INTERACTION_MATCH = "MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen-[:ATE]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon ";
-    public static final String JSON_CYPHER_WRAPPER_PREFIX = "{\"query\":\"";
 
     private static final Map<String, String> EMPTY_PARAMS = new HashMap<String, String>();
     public static final String SOURCE_TAXON_HTTP_PARAM_NAME = "sourceTaxon";
