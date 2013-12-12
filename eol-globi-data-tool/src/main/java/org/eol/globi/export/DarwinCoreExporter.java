@@ -32,6 +32,7 @@ public abstract class DarwinCoreExporter implements StudyExporter {
 
     public void exportDarwinCoreMetaTable(Writer writer, String filename) throws IOException {
         writer.write(getMetaTablePrefix());
+        writer.write("./");
         writer.write(filename);
         writer.write(getMetaTableSuffix());
     }
