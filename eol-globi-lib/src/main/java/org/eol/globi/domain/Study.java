@@ -14,6 +14,7 @@ public class Study extends NodeBacked {
     public static final String PERIOD = "period";
     private static final String SOURCE = "source";
     public static final String CITATION = "citation";
+    private static final String DOI = "doi";
 
     public Study(Node node, String title) {
         this(node);
@@ -99,11 +100,11 @@ public class Study extends NodeBacked {
     }
 
     public void setDOI(String doi) {
-        setExternalId(doi);
+        setPropertyWithTx(DOI, doi);
     }
 
     public String getDOI() {
-        return getExternalId();
+        return getProperty(DOI);
     }
 
     public void setCitation(String citation) {
