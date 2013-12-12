@@ -43,37 +43,7 @@ public class StudyImporterFactory {
     public StudyImporter instantiateImporter(Class<StudyImporter> clazz) throws StudyImporterException {
         try {
             Constructor<StudyImporter> aConstructor = clazz.getConstructor(ParserFactory.class, NodeFactory.class);
-            StudyImporter studyImporter = aConstructor.newInstance(parserFactory, nodeFactory);
-            studyImporter.setLogger(new ImportLogger() {
-                @Override
-                public void warn(Study study, String message) {
-                    createMsg(study, message, Level.WARNING);
-                }
-
-                @Override
-                public void info(Study study, String message) {
-                    createMsg(study, message, Level.INFO);
-                }
-
-                @Override
-                public void severe(Study study, String message) {
-                    createMsg(study, message, Level.SEVERE);
-                }
-
-                private void createMsg(Study study, String message, Level warning) {
-                    if (null != study) {
-                        LogMessage msg = nodeFactory.createLogMessage(warning, message);
-                        Transaction tx = study.getUnderlyingNode().getGraphDatabase().beginTx();
-                        try {
-                            study.getUnderlyingNode().createRelationshipTo(msg.getUnderlyingNode(), RelTypes.HAS_LOG_MESSAGE);
-                            tx.success();
-                        } finally {
-                            tx.finish();
-                        }
-                    }
-                }
-            });
-            return studyImporter;
+            return aConstructor.newInstance(parserFactory, nodeFactory);
         } catch (Exception ex) {
             throw new StudyImporterException("failed to create study importer for [" + clazz.toString() + "]", ex);
         }
