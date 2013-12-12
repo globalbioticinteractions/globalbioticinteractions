@@ -96,4 +96,12 @@ public class Study extends NodeBacked {
     public void setSource(String source) {
         setProperty(SOURCE, source);
     }
+
+    public void setDOI(String doi) {
+        setExternalId(doi);
+    }
+
+    public String getDOI() {
+        return getExternalId();
+    }
 }

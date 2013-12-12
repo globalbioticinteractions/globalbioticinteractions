@@ -18,6 +18,7 @@ import org.eol.globi.domain.Season;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.Taxon;
+import org.eol.globi.service.DOIResolver;
 import org.eol.globi.service.EnvoLookupService;
 import org.eol.globi.service.TaxonPropertyEnricher;
 import org.eol.globi.service.TermLookupService;
@@ -60,6 +61,8 @@ public class NodeFactory {
     private TermLookupService termLookupService;
 
     private TermLookupService envoLookupService;
+
+    private DOIResolver doiResolver;
 
     public NodeFactory(GraphDatabaseService graphDb, TaxonPropertyEnricher taxonEnricher) {
         this.graphDb = graphDb;
@@ -263,6 +266,17 @@ public class NodeFactory {
             study.setPeriod(period);
             study.setDescription(description);
             study.setPublicationYear(publicationYear);
+            if (doiResolver != null) {
+                String reference = (contributor == null ? "" : (contributor + " ")) + description;
+                try {
+                    String doi = doiResolver.findDOIForReference(reference);
+                    if (doi != null) {
+                        study.setDOI(doi);
+                    }
+                } catch (IOException e) {
+                    LOG.warn("failed to lookup doi for [" + reference + "]");
+                }
+            }
             studies.add(node, "title", title);
             transaction.success();
         } finally {
@@ -481,5 +495,8 @@ public class NodeFactory {
     }
 
 
+    public void setDoiResolver(DOIResolver doiResolver) {
+        this.doiResolver = doiResolver;
+    }
 }
 

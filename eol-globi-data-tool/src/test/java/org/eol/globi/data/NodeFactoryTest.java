@@ -6,6 +6,8 @@ import org.apache.lucene.search.Query;
 import org.apache.lucene.search.TermQuery;
 import org.eol.globi.domain.Environment;
 import org.eol.globi.domain.Specimen;
+import org.eol.globi.domain.Study;
+import org.eol.globi.service.DOIResolver;
 import org.eol.globi.service.TaxonPropertyEnricher;
 import org.junit.Test;
 import org.eol.globi.domain.Location;
@@ -225,6 +227,29 @@ public class NodeFactoryTest extends GraphDBTestCase {
         assertThat(hits.hasNext(), is(true));
         hits = nodeFactory.findCloseMatchesForTaxonName("homo sa");
         assertThat(hits.hasNext(), is(true));
+    }
+
+    @Test
+    public void addDOIToStudy() {
+        nodeFactory.setDoiResolver(new DOIResolver() {
+            @Override
+            public String findDOIForReference(String reference) throws IOException {
+                return "doi:1234";
+            }
+        });
+        Study study = nodeFactory.getOrCreateStudy("my title", "my contr", null, null, "some description", null, null);
+        assertThat(study.getDOI(), is("doi:1234"));
+
+        nodeFactory.setDoiResolver(new DOIResolver() {
+            @Override
+            public String findDOIForReference(String reference) throws IOException {
+                throw new IOException("kaboom!");
+            }
+        });
+        study = nodeFactory.getOrCreateStudy("my other title", "my contr", null, null, "some description", null, null);
+        assertThat(study.getDOI(), is(nullValue()));
+
+
     }
 
     private void assertFamilyCorrectness(String expectedOutputName, String inputName) throws NodeFactoryException {
