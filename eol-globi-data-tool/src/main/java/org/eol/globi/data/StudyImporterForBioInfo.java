@@ -31,13 +31,7 @@ public class StudyImporterForBioInfo extends BaseStudyImporter implements StudyI
 
     @Override
     public Study importStudy() throws StudyImporterException {
-        Study study = nodeFactory.getOrCreateStudy("BIO_INFO",
-                "Malcolm Storey",
-                BIOINFO_URL,
-                "",
-                "Food webs and species interactions in the Biodiversity of UK and Ireland.", null, "http://bioinfo.org.uk");
-        study.setCitation("Storey M. Food Webs and Species Interactions in the Biodiversity of UK and Ireland (Online). 2013. Available from " + BIOINFO_URL + ".");
-        study.setExternalId(BIOINFO_URL);
+        Study study = createStudy();
 
         LabeledCSVParser relationsParser;
         try {
@@ -47,6 +41,17 @@ public class StudyImporterForBioInfo extends BaseStudyImporter implements StudyI
             throw new StudyImporterException("problem reading trophic relations file [" + RELATIONS_DATA_FILE + "]", e1);
         }
         return createRelations(createTaxa(study), createRelationTypes(study), relationsParser, study);
+    }
+
+    protected Study createStudy() {
+        Study study = nodeFactory.getOrCreateStudy("BIO_INFO",
+                "Malcolm Storey",
+                BIOINFO_URL,
+                "",
+                "Food webs and species interactions in the Biodiversity of UK and Ireland.", null, "http://bioinfo.org.uk");
+        study.setCitation("Storey M. Food Webs and Species Interactions in the Biodiversity of UK and Ireland (Online). 2013. Available from " + BIOINFO_URL + ".");
+        study.setExternalId(BIOINFO_URL);
+        return study;
     }
 
     private Map<Long, RelType> createRelationTypes(Study study) throws StudyImporterException {

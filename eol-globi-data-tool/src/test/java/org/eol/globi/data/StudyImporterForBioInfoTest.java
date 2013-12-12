@@ -145,7 +145,9 @@ public class StudyImporterForBioInfoTest extends GraphDBTestCase {
 
         LabeledCSVParser labeledCSVParser = createParser(relationsString);
 
-        Study study = new StudyImporterForBioInfo(new ParserFactoryImpl(), nodeFactory).createRelations(taxaMap, relationsTypeMap, labeledCSVParser, null);
+        StudyImporterForBioInfo importer = new StudyImporterForBioInfo(new ParserFactoryImpl(), nodeFactory);
+        Study study = importer.createStudy();
+        importer.createRelations(taxaMap, relationsTypeMap, labeledCSVParser, study);
 
         Study study1 = nodeFactory.findStudy(study.getTitle());
         assertThat(study1, is(notNullValue()));
