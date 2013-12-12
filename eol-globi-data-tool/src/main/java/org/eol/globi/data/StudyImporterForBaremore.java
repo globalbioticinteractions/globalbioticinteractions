@@ -2,16 +2,14 @@ package org.eol.globi.data;
 
 import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.eol.globi.service.TermLookupService;
-import org.eol.globi.service.TermLookupServiceException;
-import org.eol.globi.domain.Term;
-import org.eol.globi.service.UberonLookupService;
-import org.neo4j.graphdb.Relationship;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
+import org.eol.globi.domain.Term;
+import org.eol.globi.service.TermLookupService;
+import org.eol.globi.service.TermLookupServiceException;
+import org.eol.globi.service.UberonLookupService;
+import org.neo4j.graphdb.Relationship;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -21,10 +19,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.apache.commons.lang3.StringUtils.*;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 public class StudyImporterForBaremore extends BaseStudyImporter {
-    private static final Log LOG = LogFactory.getLog(StudyImporterForBaremore.class);
     private static final String DATA_SOURCE = "baremore/ANGELSHARK_DIET_DATAREQUEST_10012012.csv";
 
     private TermLookupService termLookupService = new UberonLookupService();
@@ -54,7 +51,7 @@ public class StudyImporterForBaremore extends BaseStudyImporter {
                 Integer sharkId = Integer.parseInt(line[0]);
                 String collectionDateString = line[1];
                 if (isBlank(collectionDateString)) {
-                    LOG.warn("line [" + parser.getLastLineNumber() + "] in [" + DATA_SOURCE + "]: missing collection date");
+                    getLogger().warn(study, "line [" + parser.getLastLineNumber() + "] in [" + DATA_SOURCE + "]: missing collection date");
                 } else {
                     Specimen predatorSpecimen = specimenMap.get(sharkId);
                     if (predatorSpecimen == null) {
@@ -80,7 +77,7 @@ public class StudyImporterForBaremore extends BaseStudyImporter {
                     }
                     String preySpeciesDescription = line[7];
                     if (StringUtils.isBlank(preySpeciesDescription)) {
-                        LOG.info("found blank prey species description [" + preySpeciesDescription + "] on line [" + parser.lastLineNumber() + "]");
+                        getLogger().info(study, "found blank prey species description [" + preySpeciesDescription + "] on line [" + parser.lastLineNumber() + "]");
                     } else {
                         Specimen preySpecimen = nodeFactory.createSpecimen(preySpeciesDescription);
                         predatorSpecimen.ate(preySpecimen);

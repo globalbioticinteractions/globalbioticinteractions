@@ -1,7 +1,5 @@
 package org.eol.globi.data;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -20,7 +18,6 @@ import java.io.IOException;
 import java.io.InputStream;
 
 public class StudyImporterForINaturalist extends BaseStudyImporter {
-    private static final Log LOG = LogFactory.getLog(StudyImporterForINaturalist.class);
     public static final String INATURALIST_URL = "http://inaturalist.org";
 
     public StudyImporterForINaturalist(ParserFactory parserFactory, NodeFactory nodeFactory) {
@@ -52,7 +49,7 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
                     previousResultCount = parseJSON(response.getEntity().getContent(), study);
                     pageNumber++;
                     totalInteractions += previousResultCount;
-                    LOG.info("importing [" + pageNumber + "] total [" + totalInteractions + "]");
+                    getLogger().info(study, "importing [" + pageNumber + "] total [" + totalInteractions + "]");
 
                 } catch (IOException e) {
                     throw new StudyImporterException("failed to execute query to [ " + uri + "]", e);
@@ -87,7 +84,7 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
     }
 
     @Override
-    public void setImportFilter(ImportFilter importFilter) {
+    public void setFilter(ImportFilter importFilter) {
 
     }
 
@@ -96,7 +93,7 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
         JsonNode targetTaxonNode = targetTaxon.get("name");
         long observationId = jsonNode.get("observation_id").getLongValue();
         if (targetTaxonNode == null) {
-            LOG.warn("skipping interaction with missing target taxon name for observation [" + observationId + "]");
+            getLogger().warn(study, "skipping interaction with missing target taxon name for observation [" + observationId + "]");
         } else {
             String targetTaxonName = targetTaxonNode.getTextValue();
             Specimen targetSpecimen = nodeFactory.createSpecimen(targetTaxonName);
@@ -110,7 +107,7 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
 
             JsonNode sourceTaxon = observation.get("taxon");
             if (sourceTaxon == null) {
-                LOG.warn("cannot create interaction with missing source taxon name for observation with id [" + observation.get("id") + "]");
+                getLogger().warn(study, "cannot create interaction with missing source taxon name for observation with id [" + observation.get("id") + "]");
             } else {
                 JsonNode sourceTaxonNameNode = sourceTaxon.get("name");
                 String sourceTaxonName = sourceTaxonNameNode.getTextValue();
@@ -133,7 +130,7 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
                 String timeObservedAtUtc = observation.get("time_observed_at_utc").getTextValue();
                 timeObservedAtUtc = timeObservedAtUtc == null ? observation.get("observed_on").getTextValue() : timeObservedAtUtc;
                 if (timeObservedAtUtc == null) {
-                    LOG.warn("failed to retrieve observation time for [" + targetTaxonName + "]");
+                    getLogger().warn(study, "failed to retrieve observation time for [" + targetTaxonName + "]");
                 } else {
                     DateTime dateTime = parseUTCDateTime(timeObservedAtUtc);
                     nodeFactory.setUnixEpochProperty(collectedRel, dateTime.toDate());

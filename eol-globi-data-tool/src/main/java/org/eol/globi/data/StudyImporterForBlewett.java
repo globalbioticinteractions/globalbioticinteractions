@@ -2,8 +2,6 @@ package org.eol.globi.data;
 
 import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
@@ -23,7 +21,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class StudyImporterForBlewett extends BaseStudyImporter {
-    private static final Log LOG = LogFactory.getLog(StudyImporterForBlewett.class);
     public static final String COLLECTION_NO = "Collection #";
 
     private TermLookupService termLookupService = new UberonLookupService();
@@ -47,7 +44,7 @@ public class StudyImporterForBlewett extends BaseStudyImporter {
         try {
             Map<String, Location> collectionLocationMap = new HashMap<String, Location>();
             Map<String, Date> collectionTimeMap = new HashMap<String, Date>();
-            buildLocationTimeMaps(collectionLocationMap, collectionTimeMap);
+            buildLocationTimeMaps(collectionLocationMap, collectionTimeMap, study);
             parsePredatorPreyInteraction(study, collectionLocationMap, collectionTimeMap);
         } catch (IOException e) {
             throw new StudyImporterException("failed to read resource", e);
@@ -60,36 +57,36 @@ public class StudyImporterForBlewett extends BaseStudyImporter {
         return study;
     }
 
-    private void buildLocationTimeMaps(Map<String, Location> collectionLocationMap, Map<String, Date> collectionTimeMap) throws IOException, StudyImporterException {
+    private void buildLocationTimeMaps(Map<String, Location> collectionLocationMap, Map<String, Date> collectionTimeMap, Study study) throws IOException, StudyImporterException {
         LabeledCSVParser locationParser = parserFactory.createParser("blewett/SnookDietData2000_02_Charlotte_Harbor_FL_Blewett_date_and_abiotic.csv", CharsetConstant.UTF8);
         String[] line;
         while ((line = locationParser.getLine()) != null) {
             if (line.length < 3) {
-                LOG.warn("line:" + locationParser.getLastLineNumber() + " [" + StringUtils.join(line, ",") + "] has missing location information");
+                getLogger().warn(study, "line:" + locationParser.getLastLineNumber() + " [" + StringUtils.join(line, ",") + "] has missing location information");
             }
             String collectionCode = locationParser.getValueByLabel(COLLECTION_NO);
             if (StringUtils.isBlank(collectionCode)) {
-                LOG.warn("blank location code for line: [" + locationParser.getLastLineNumber() + "]");
+                getLogger().warn(study, "blank location code for line: [" + locationParser.getLastLineNumber() + "]");
             }
             String latitude = locationParser.getValueByLabel("Latitude");
             if (StringUtils.isBlank(latitude)) {
-                LOG.warn("blank value for lattitude for line: [" + locationParser.getLastLineNumber() + "]");
+                getLogger().warn(study, "blank value for lattitude for line: [" + locationParser.getLastLineNumber() + "]");
             }
             String longitude = locationParser.getValueByLabel("Longitude");
             if (StringUtils.isBlank(longitude)) {
-                LOG.warn("blank value for longitude for line: [" + locationParser.getLastLineNumber() + "]");
+                getLogger().warn(study, "blank value for longitude for line: [" + locationParser.getLastLineNumber() + "]");
             }
             Location location = nodeFactory.getOrCreateLocation(Double.parseDouble(latitude), Double.parseDouble(longitude), 0.0);
             collectionLocationMap.put(collectionCode, location);
 
             String timeString = locationParser.getValueByLabel("Time");
             if (StringUtils.isBlank(timeString)) {
-                LOG.warn("blank value for time for line: [" + locationParser.getLastLineNumber() + "]");
+                getLogger().warn(study, "blank value for time for line: [" + locationParser.getLastLineNumber() + "]");
             }
 
             String dateString = locationParser.getValueByLabel("Date");
             if (StringUtils.isBlank(dateString)) {
-                LOG.warn("blank value for date for line: [" + locationParser.getLastLineNumber() + "]");
+                getLogger().warn(study, "blank value for date for line: [" + locationParser.getLastLineNumber() + "]");
             }
 
             String dateTimeString =  dateString + " " + timeString;
@@ -127,7 +124,7 @@ public class StudyImporterForBlewett extends BaseStudyImporter {
                 break;
             }
             Specimen predatorSpecimen = addPredator(study, locationMap, parser, line, collectionTimeMap);
-            addPreyForPredator(header, line, predatorSpecimen);
+            addPreyForPredator(header, line, predatorSpecimen, study);
         }
     }
 
@@ -140,7 +137,7 @@ public class StudyImporterForBlewett extends BaseStudyImporter {
             String length = parser.getValueByLabel("Standard Length");
             predatorSpecimen.setLengthInMm(Double.parseDouble(length));
         } catch (NumberFormatException ex) {
-            LOG.warn("found malformed length in line:" + parser.lastLineNumber() + " [" + StringUtils.join(line, ",") + "]");
+            getLogger().warn(study, "found malformed length in line:" + parser.lastLineNumber() + " [" + StringUtils.join(line, ",") + "]");
         }
 
         String collectionCode = parser.getValueByLabel(COLLECTION_NO);
@@ -159,7 +156,7 @@ public class StudyImporterForBlewett extends BaseStudyImporter {
         return predatorSpecimen;
     }
 
-    private void addPreyForPredator(String[] header, String[] line, Specimen predatorSpecimen) throws NodeFactoryException {
+    private void addPreyForPredator(String[] header, String[] line, Specimen predatorSpecimen, Study study) throws NodeFactoryException {
         int preyColumn = 4;
         for (int i = preyColumn; i < header.length; i++) {
             if (i < line.length) {
@@ -173,7 +170,7 @@ public class StudyImporterForBlewett extends BaseStudyImporter {
                             predatorSpecimen.ate(preySpecimen);
                         }
                     } catch (NumberFormatException e) {
-                        LOG.warn("failed to parse prey count line/column:");
+                        getLogger().warn(study, "failed to parse prey count line/column:");
                     }
                 }
             }

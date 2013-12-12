@@ -6,5 +6,7 @@ public interface StudyImporter {
 
     Study importStudy() throws StudyImporterException;
 
-    void setImportFilter(ImportFilter importFilter);
+    void setFilter(ImportFilter importFilter);
+
+    void setLogger(ImportLogger importLogger);
 }

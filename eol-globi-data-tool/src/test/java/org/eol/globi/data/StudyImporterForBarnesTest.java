@@ -76,7 +76,7 @@ public class StudyImporterForBarnesTest extends GraphDBTestCase {
     @Test
     public void importOnceInAWhile() throws StudyImporterException {
         StudyImporterForBarnes studyImporterForBarnes = new StudyImporterForBarnes(new ParserFactoryImpl(), nodeFactory);
-        studyImporterForBarnes.setImportFilter(new ImportFilter() {
+        studyImporterForBarnes.setFilter(new ImportFilter() {
             @Override
             public boolean shouldImportRecord(Long recordNumber) {
                 return recordNumber % 50 == 0;

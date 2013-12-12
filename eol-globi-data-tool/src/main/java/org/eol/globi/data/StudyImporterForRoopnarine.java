@@ -2,8 +2,6 @@ package org.eol.globi.data;
 
 import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import uk.me.jstott.jcoord.LatLng;
@@ -15,8 +13,6 @@ import java.util.List;
 import java.util.Map;
 
 public class StudyImporterForRoopnarine extends BaseStudyImporter {
-
-    private static final Log LOG = LogFactory.getLog(StudyImporterForRoopnarine.class);
 
     public StudyImporterForRoopnarine(ParserFactory parserFactory, NodeFactory nodeFactory) {
         super(parserFactory, nodeFactory);
@@ -40,15 +36,15 @@ public class StudyImporterForRoopnarine extends BaseStudyImporter {
                 , "http://www.hindawi.com/dpis/ecology/2013/857470/dataset/");
         for (Map.Entry<String, LatLng> resourceLatLngEntry : resourceLocation.entrySet()) {
             String studyResource = resourceLatLngEntry.getKey();
-            LOG.info("import of [" + studyResource + "] started...");
-            List<Specimen> predatorSpecimen = importTrophicInteractions(trophicGuildLookup, trophicGuildNumberToSpeciesMap, studyResource);
+            getLogger().info(study, "import of [" + studyResource + "] started...");
+            List<Specimen> predatorSpecimen = importTrophicInteractions(trophicGuildLookup, trophicGuildNumberToSpeciesMap, studyResource, study);
             for (Specimen predator : predatorSpecimen) {
                 study.collected(predator);
                 LatLng latLng = resourceLatLngEntry.getValue();
                 // TODO - depth is not encoded here
                 predator.caughtIn(nodeFactory.getOrCreateLocation(latLng.getLat(), latLng.getLng(), 0.0));
             }
-            LOG.info("import of [" + studyResource + "] done.");
+            getLogger().info(study, "import of [" + studyResource + "] done.");
         }
         return study;
     }
@@ -65,14 +61,14 @@ public class StudyImporterForRoopnarine extends BaseStudyImporter {
         return resourceLocation;
     }
 
-    private List<Specimen> importTrophicInteractions(String trophicGuildLookup, Map<Integer, List<String>> trophicGuildNumberToSpeciesMap, String studyResource) throws StudyImporterException {
+    private List<Specimen> importTrophicInteractions(String trophicGuildLookup, Map<Integer, List<String>> trophicGuildNumberToSpeciesMap, String studyResource, Study study) throws StudyImporterException {
         try {
             LabeledCSVParser parser = parserFactory.createParser(studyResource, CharsetConstant.UTF8);
             List<Specimen> predatorSpecimen = new ArrayList<Specimen>();
             while (parser.getLine() != null) {
-                List<String> preyTaxonList = importPreyList(trophicGuildNumberToSpeciesMap, parser);
+                List<String> preyTaxonList = importPreyList(trophicGuildNumberToSpeciesMap, parser, study);
                 if (preyTaxonList.size() > 0) {
-                    predatorSpecimen.addAll(importPredatorSpecimen(trophicGuildLookup, trophicGuildNumberToSpeciesMap, parser, preyTaxonList));
+                    predatorSpecimen.addAll(importPredatorSpecimen(trophicGuildLookup, trophicGuildNumberToSpeciesMap, parser, preyTaxonList, study));
                 }
             }
             return predatorSpecimen;
@@ -115,7 +111,7 @@ public class StudyImporterForRoopnarine extends BaseStudyImporter {
         return trophicGuildNumberToSpeciesMap;
     }
 
-    private List<Specimen> importPredatorSpecimen(String trophicGuildLookup, Map<Integer, List<String>> trophicGuildNumberToSpeciesMap, LabeledCSVParser parser, List<String> preyTaxonList) throws StudyImporterException, NodeFactoryException {
+    private List<Specimen> importPredatorSpecimen(String trophicGuildLookup, Map<Integer, List<String>> trophicGuildNumberToSpeciesMap, LabeledCSVParser parser, List<String> preyTaxonList, Study study) throws StudyImporterException, NodeFactoryException {
         Integer predatorGuildNumber = parseGuildNumber(trophicGuildLookup, parser);
         List<Specimen> predatorSpecimenList = new ArrayList<Specimen>();
         List<String> predatorTaxaList = trophicGuildNumberToSpeciesMap.get(predatorGuildNumber);
@@ -125,13 +121,13 @@ public class StudyImporterForRoopnarine extends BaseStudyImporter {
         for (String predatorTaxa : predatorTaxaList) {
             // TODO - here's where the specimen model doesn't fit nicely - need a way to distinguish inferred relationships from direct observations
             if (StringUtils.isBlank(predatorTaxa)) {
-                LOG.info("found blank predator name on line [" + parser.lastLineNumber() + "]");
+                getLogger().info(study, "found blank predator name on line [" + parser.lastLineNumber() + "]");
             } else {
                 Specimen predatorSpecimen = nodeFactory.createSpecimen(predatorTaxa);
                 predatorSpecimenList.add(predatorSpecimen);
                 for (String preyTaxonName : preyTaxonList) {
                     if (StringUtils.isBlank(preyTaxonName)) {
-                        LOG.info("found blank prey name for predator [" + predatorTaxa + "] on line [" + parser.lastLineNumber() + "]");
+                        getLogger().info(study, "found blank prey name for predator [" + predatorTaxa + "] on line [" + parser.lastLineNumber() + "]");
                     } else {
                         Specimen preySpecimen = nodeFactory.createSpecimen(preyTaxonName);
                         predatorSpecimen.ate(preySpecimen);
@@ -142,7 +138,7 @@ public class StudyImporterForRoopnarine extends BaseStudyImporter {
         return predatorSpecimenList;
     }
 
-    private List<String> importPreyList(Map<Integer, List<String>> trophicGuildNumberToSpeciesMap, LabeledCSVParser parser) throws NodeFactoryException, StudyImporterException {
+    private List<String> importPreyList(Map<Integer, List<String>> trophicGuildNumberToSpeciesMap, LabeledCSVParser parser, Study study) throws NodeFactoryException, StudyImporterException {
         String preyList = parser.getValueByLabel("Prey");
         // see README
         preyList = preyList.replace("20.22", "20, 22");
@@ -163,7 +159,7 @@ public class StudyImporterForRoopnarine extends BaseStudyImporter {
                 try {
                     Integer preyGuildNumber = Integer.parseInt(trim);
                     if (preyGuildNumber == 0) {
-                        LOG.warn("ignoring prey with guild number 0 on line [" + parser.lastLineNumber() + "]");
+                        getLogger().warn(study, "ignoring prey with guild number 0 on line [" + parser.lastLineNumber() + "]");
                     } else {
                         addPreyTaxa(trophicGuildNumberToSpeciesMap, parser, preyTaxonList, preyGuildNumberString, preyGuildNumber);
                     }

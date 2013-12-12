@@ -8,8 +8,6 @@ import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.Statement;
 import com.hp.hpl.jena.rdf.model.StmtIterator;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
@@ -22,7 +20,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class StudyImporterForSPIRE extends BaseStudyImporter {
-    private static final Log LOG = LogFactory.getLog(StudyImporterForSPIRE.class);
 
     public static final String OF_HABITAT = "ofHabitat";
     public static final String COUNTRY = "Country";
@@ -209,15 +206,16 @@ public class StudyImporterForSPIRE extends BaseStudyImporter {
 
     protected void importTrophicLink(Map<String, String> properties) {
         if (properties.containsKey(Study.TITLE)) {
+            Study study = nodeFactory.getOrCreateStudy(properties.get(Study.TITLE),
+                    properties.get(Study.CONTRIBUTOR),
+                    null, null, properties.get(Study.DESCRIPTION), properties.get(Study.PUBLICATION_YEAR), "SPIRE");
+
             try {
-                Study study = nodeFactory.getOrCreateStudy(properties.get(Study.TITLE),
-                        properties.get(Study.CONTRIBUTOR),
-                        null, null, properties.get(Study.DESCRIPTION), properties.get(Study.PUBLICATION_YEAR), "SPIRE");
                 Specimen predator = createSpecimen(properties.get(PREDATOR_NAME));
                 String country = properties.get(COUNTRY);
                 LatLng latLng = geoLookup.get(country);
                 if (latLng == null) {
-                    LOG.warn("failed to find location for county [" + country + "]");
+                    getLogger().warn(study, "failed to find location for county [" + country + "]");
                 } else {
                     Location location = nodeFactory.getOrCreateLocation(latLng.getLat(), latLng.getLng(), null);
                     predator.caughtIn(location);
@@ -231,10 +229,8 @@ public class StudyImporterForSPIRE extends BaseStudyImporter {
                 Specimen prey = createSpecimen(properties.get(PREY_NAME));
                 predator.ate(prey);
             } catch (NodeFactoryException e) {
-                LOG.warn("failed to import trophic link with properties [" + properties + "]", e);
+                getLogger().warn(study, "failed to import trophic link with properties [" + properties + "]: " +  e.getMessage());
             }
-        } else {
-            LOG.warn("skipping trophic link: missing study title for trophic link properties [" + properties + "]");
         }
     }
 

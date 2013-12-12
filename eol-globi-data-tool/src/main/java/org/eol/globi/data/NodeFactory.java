@@ -39,6 +39,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
 
 public class NodeFactory {
 
@@ -498,6 +499,11 @@ public class NodeFactory {
 
     public void setDoiResolver(DOIResolver doiResolver) {
         this.doiResolver = doiResolver;
+    }
+
+    public LogMessage createLogMessage(Level level, String message) {
+        LogMessage msg = new LogMessage(getGraphDb().createNode(), message, level);
+        return msg;
     }
 }
 

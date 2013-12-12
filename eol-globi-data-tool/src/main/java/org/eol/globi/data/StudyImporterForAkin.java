@@ -21,7 +21,6 @@ import java.util.Date;
 import java.util.List;
 
 public class StudyImporterForAkin extends BaseStudyImporter {
-    private static final Log LOG = LogFactory.getLog(StudyImporterForAkin.class);
 
     public StudyImporterForAkin(ParserFactory parserFactory, NodeFactory nodeFactory) {
         super(parserFactory, nodeFactory);
@@ -42,7 +41,7 @@ public class StudyImporterForAkin extends BaseStudyImporter {
             if (isValid(line, header, parser, siteInfos)) {
                 parseLine(siteInfos, studyResource, study, parser, header, line);
             } else {
-                LOG.warn("[" + studyResource + "," + parser.lastLineNumber() + "]: skipping line, missing mandatory date or site field in line [" + StringUtils.join(line, ",") + "]");
+                getLogger().warn(study, "[" + studyResource + "," + parser.lastLineNumber() + "]: skipping line, missing mandatory date or site field in line [" + StringUtils.join(line, ",") + "]");
             }
         }
         return study;
@@ -65,7 +64,7 @@ public class StudyImporterForAkin extends BaseStudyImporter {
                 specimen.caughtIn(location);
             }
         } catch (StudyImporterException ex) {
-            LOG.warn("[" + studyResource + "]", ex);
+            getLogger().warn(study, "[" + studyResource + "]:" + ex.getMessage());
         }
     }
 
@@ -152,16 +151,16 @@ public class StudyImporterForAkin extends BaseStudyImporter {
         String speciesName = line[speciesIndex];
         if (StringUtils.isNotBlank(speciesName)) {
             specimen = nodeFactory.createSpecimen(speciesName);
-            addSpecimenLength(parser, header, line, specimen);
-            addStomachVolume(parser, header, line, specimen);
-            addCollectionDate(study, parser, header, line, specimen);
+            addSpecimenLength(parser, header, line, specimen, study);
+            addStomachVolume(parser, header, line, specimen, study);
+            addCollectionDate(study, parser, header, line, specimen, study);
         } else {
-            LOG.warn("found blank species name on line [" + parser.lastLineNumber() + "]");
+            getLogger().warn(study, "found blank species name on line [" + parser.lastLineNumber() + "]");
         }
         return specimen;
     }
 
-    private void addCollectionDate(Study study, LabeledCSVParser parser, String[] header, String[] line, Specimen specimen) throws StudyImporterException {
+    private void addCollectionDate(Study study, LabeledCSVParser parser, String[] header, String[] line, Specimen specimen, Study study1) throws StudyImporterException {
         Relationship collected = study.collected(specimen);
         int dateIndex = findIndexForColumnWithNameThrowOnMissing("Date", header);
         String dateString = line[dateIndex];
@@ -171,25 +170,25 @@ public class StudyImporterForAkin extends BaseStudyImporter {
                 Date date = dateFormat.parse(dateString);
                 nodeFactory.setUnixEpochProperty(collected, date);
             } catch (ParseException e) {
-                LOG.warn("not setting collection date, because [" + dateString + "] on line [" + parser.getLastLineNumber() + "] could not be read as date.");
+                getLogger().warn(study, "not setting collection date, because [" + dateString + "] on line [" + parser.getLastLineNumber() + "] could not be read as date.");
             }
         }
     }
 
 
-    private void addSpecimenLength(LabeledCSVParser parser, String[] header, String[] line, Specimen specimen) throws StudyImporterException {
+    private void addSpecimenLength(LabeledCSVParser parser, String[] header, String[] line, Specimen specimen, Study study) throws StudyImporterException {
         int lengthIndex = findIndexForColumnWithNameThrowOnMissing("SL(mm)", header);
         String lengthInMm = line[lengthIndex];
         if (!StringUtils.isBlank(lengthInMm)) {
             try {
                 specimen.setLengthInMm(Double.parseDouble(lengthInMm));
             } catch (NumberFormatException ex) {
-                LOG.warn("not setting specimen length, because [" + lengthInMm + "] on line [" + parser.getLastLineNumber() + "] is not a number.");
+                getLogger().warn(study, "not setting specimen length, because [" + lengthInMm + "] on line [" + parser.getLastLineNumber() + "] is not a number.");
             }
         }
     }
 
-    private void addStomachVolume(LabeledCSVParser parser, String[] header, String[] line, Specimen specimen) throws StudyImporterException {
+    private void addStomachVolume(LabeledCSVParser parser, String[] header, String[] line, Specimen specimen, Study study) throws StudyImporterException {
         int stomachVolumeMilliLiterIndex = findIndexForColumnWithName("Stomach volume", header);
         if (stomachVolumeMilliLiterIndex == -1) {
             stomachVolumeMilliLiterIndex = findIndexForColumnWithNameThrowOnMissing("volume of stomach", header);
@@ -199,7 +198,7 @@ public class StudyImporterForAkin extends BaseStudyImporter {
             try {
                 specimen.setStomachVolumeInMilliLiter(Double.parseDouble(stomachVolumeString));
             } catch (NumberFormatException ex) {
-                LOG.warn("not setting specimen stomach volume, because [" + stomachVolumeString + "] on line [" + parser.getLastLineNumber() + "] is not a number.");
+                getLogger().warn(study, "not setting specimen stomach volume, because [" + stomachVolumeString + "] on line [" + parser.getLastLineNumber() + "] is not a number.");
             }
         }
     }

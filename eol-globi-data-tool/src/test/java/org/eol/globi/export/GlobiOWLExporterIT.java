@@ -24,7 +24,7 @@ public class GlobiOWLExporterIT extends GraphDBTestCase {
     @Test
     public void importSPIREExportTTL() throws OWLOntologyCreationException, OWLOntologyStorageException, IOException, StudyImporterException {
         StudyImporterForSPIRE importer = new StudyImporterForSPIRE(null, nodeFactory);
-        importer.setImportFilter(new ImportFilter() {
+        importer.setFilter(new ImportFilter() {
             @Override
             public boolean shouldImportRecord(Long recordNumber) {
                 return recordNumber < 100;

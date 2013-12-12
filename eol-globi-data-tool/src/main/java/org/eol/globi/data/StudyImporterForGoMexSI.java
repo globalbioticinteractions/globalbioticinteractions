@@ -19,8 +19,6 @@ import java.util.List;
 import java.util.Map;
 
 public class StudyImporterForGoMexSI extends BaseStudyImporter {
-    private static final Log LOG = LogFactory.getLog(StudyImporterForGoMexSI.class);
-
     public static final String GOMEXSI_URL = "http://gomexsi.tamucc.edu";
     public static final String STOMACH_COUNT_TOTAL = "stomachCountTotal";
     public static final String STOMACH_COUNT_WITH_FOOD = "stomachCountWithFood";
@@ -53,6 +51,13 @@ public class StudyImporterForGoMexSI extends BaseStudyImporter {
 
     @Override
     public Study importStudy() throws StudyImporterException {
+        Study study = nodeFactory.getOrCreateStudy("GoMexSI",
+                "James D. Simons",
+                "Center for Coastal Studies, Texas A&M University - Corpus Christi, United States",
+                "",
+                "<a href=\"http://www.ingentaconnect.com/content/umrsmas/bullmar/2013/00000089/00000001/art00009\">Building a Fisheries Trophic Interaction Database for Management and Modeling Research in the Gulf of Mexico Large Marine Ecosystem.</a>"
+                , null
+                , GOMEXSI_URL);
         final Map<String, Map<String, String>> predatorIdToPredatorNames = new HashMap<String, Map<String, String>>();
         final Map<String, List<Map<String, String>>> predatorIdToPreyNames = new HashMap<String, List<Map<String, String>>>();
         Map<String, Study> referenceIdToStudy = new HashMap<String, Study>();
@@ -74,16 +79,11 @@ public class StudyImporterForGoMexSI extends BaseStudyImporter {
             }
         });
         addReferences(referenceIdToStudy);
-        addObservations(predatorIdToPredatorNames, referenceIdToStudy, predatorIdToPreyNames);
+        addObservations(predatorIdToPredatorNames, referenceIdToStudy, predatorIdToPreyNames, study);
 
         // TODO figure out a way to introduce the separation of study and reference.
-        return nodeFactory.getOrCreateStudy("GoMexSI",
-                "James D. Simons",
-                "Center for Coastal Studies, Texas A&M University - Corpus Christi, United States",
-                "",
-                "<a href=\"http://www.ingentaconnect.com/content/umrsmas/bullmar/2013/00000089/00000001/art00009\">Building a Fisheries Trophic Interaction Database for Management and Modeling Research in the Gulf of Mexico Large Marine Ecosystem.</a>"
-                , null
-                , GOMEXSI_URL);
+
+        return study;
     }
 
     private void addReferences(Map<String, Study> referenceIdToStudy) throws StudyImporterException {
@@ -157,7 +157,7 @@ public class StudyImporterForGoMexSI extends BaseStudyImporter {
         referenceIdToStudy.put(refId, study);
     }
 
-    private void addObservations(Map<String, Map<String, String>> predatorIdToPredatorSpecimen, Map<String, Study> refIdToStudyMap, Map<String, List<Map<String, String>>> predatorUIToPreyLists) throws StudyImporterException {
+    private void addObservations(Map<String, Map<String, String>> predatorIdToPredatorSpecimen, Map<String, Study> refIdToStudyMap, Map<String, List<Map<String, String>>> predatorUIToPreyLists, Study metaStudy) throws StudyImporterException {
         String locationResource = getLocationsResourcePath();
         try {
             LabeledCSVParser parser = parserFactory.createParser(locationResource, CharsetConstant.UTF8);
@@ -173,7 +173,7 @@ public class StudyImporterForGoMexSI extends BaseStudyImporter {
 
                 Location location = nodeFactory.getOrCreateLocation(latitude, longitude, depth == null ? null : -depth);
                 if (location == null) {
-                    LOG.warn("failed to find location for [" + latitude + "], longitude" + " [" + longitude + "] in [" + locationResource + ":" + parser.getLastLineNumber() + "]");
+                    getLogger().warn(metaStudy, "failed to find location for [" + latitude + "], longitude" + " [" + longitude + "] in [" + locationResource + ":" + parser.getLastLineNumber() + "]");
                 } else {
                     String cmecsId = "CMECS:" + habitatSystem + "_" + habitatSubsystem + "_" + habitatTidalZone;
                     String cmecsLabel = habitatSystem + " " + habitatSubsystem + " " + habitatTidalZone;
@@ -187,13 +187,13 @@ public class StudyImporterForGoMexSI extends BaseStudyImporter {
                 String predatorId = refId + specimenId;
                 Map<String, String> predatorProperties = predatorIdToPredatorSpecimen.get(predatorId);
                 if (predatorProperties == null) {
-                    LOG.warn("failed to lookup location for predator [" + refId + ":" + specimenId + "] from [" + locationResource + ":" + parser.getLastLineNumber() + "]");
+                    getLogger().warn(metaStudy, "failed to lookup location for predator [" + refId + ":" + specimenId + "] from [" + locationResource + ":" + parser.getLastLineNumber() + "]");
                 } else {
                     try {
                         Specimen predatorSpecimen = createSpecimen(predatorProperties);
                         predatorSpecimen.setExternalId(predatorId);
                         if (location == null) {
-                            LOG.warn("no location for predator with id [" + predatorSpecimen.getExternalId() + "]");
+                            getLogger().warn(metaStudy, "no location for predator with id [" + predatorSpecimen.getExternalId() + "]");
                         } else {
                             predatorSpecimen.caughtIn(location);
                         }
@@ -201,11 +201,11 @@ public class StudyImporterForGoMexSI extends BaseStudyImporter {
                         if (study != null) {
                             study.collected(predatorSpecimen);
                         } else {
-                            LOG.warn("failed to find study for ref id [" + refId + "] on related to observation location in [" + locationResource + ":" + parser.getLastLineNumber() + "]");
+                            getLogger().warn(metaStudy, "failed to find study for ref id [" + refId + "] on related to observation location in [" + locationResource + ":" + parser.getLastLineNumber() + "]");
                         }
 
                         List<Map<String, String>> preyList = predatorUIToPreyLists.get(predatorId);
-                        checkStomachDataConsistency(predatorId, predatorProperties, preyList);
+                        checkStomachDataConsistency(predatorId, predatorProperties, preyList, metaStudy);
                         if (preyList != null) {
                             for (Map<String, String> preyProperties : preyList) {
                                 if (preyProperties != null) {
@@ -233,18 +233,18 @@ public class StudyImporterForGoMexSI extends BaseStudyImporter {
 
     }
 
-    private void checkStomachDataConsistency(String predatorId, Map<String, String> predatorProperties, List<Map<String, String>> preyList) {
+    private void checkStomachDataConsistency(String predatorId, Map<String, String> predatorProperties, List<Map<String, String>> preyList, Study metaStudy) {
         Integer total = getValueOrNull(predatorProperties, STOMACH_COUNT_TOTAL);
         Integer withoutFood = getValueOrNull(predatorProperties, STOMACH_COUNT_WITHOUT_FOOD);
         Integer withFood = getValueOrNull(predatorProperties, STOMACH_COUNT_WITH_FOOD);
         if (total != null && withoutFood != null) {
             if (preyList == null || preyList.size() == 0) {
                 if (!total.equals(withoutFood)) {
-                    LOG.warn("no prey for predator with id [" + predatorId + "], but found [" + withFood + "] stomachs with food");
+                    getLogger().warn(metaStudy, "no prey for predator with id [" + predatorId + "], but found [" + withFood + "] stomachs with food");
                 }
             } else {
                 if (total.equals(withoutFood)) {
-                    LOG.warn("found prey for predator with id [" + predatorId + "], but found only stomachs without food");
+                    getLogger().warn(metaStudy, "found prey for predator with id [" + predatorId + "], but found only stomachs without food");
                 }
             }
         }

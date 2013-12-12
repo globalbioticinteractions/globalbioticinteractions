@@ -2,8 +2,6 @@ package org.eol.globi.data;
 
 import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.Season;
 import org.eol.globi.domain.Specimen;
@@ -22,7 +20,6 @@ import java.util.Map;
 import java.util.TimeZone;
 
 public class StudyImporterForWrast extends BaseStudyImporter {
-    private static final Log LOG = LogFactory.getLog(StudyImporterForWrast.class);
 
     public static final String LENGTH_IN_MM = "lengthInMm";
     public static final String SEASON = "season";
@@ -102,7 +99,7 @@ public class StudyImporterForWrast extends BaseStudyImporter {
         String seasonName = csvParser.getValueByLabel(columnToNormalizedTermMapper.get(SEASON));
         String preyItem = csvParser.getValueByLabel(columnToNormalizedTermMapper.get(PREY_SPECIES));
         if (preyItem == null) {
-            LOG.warn("no prey name for line [" + csvParser.getLastLineNumber() + "]");
+            getLogger().warn(study, "no prey name for line [" + csvParser.getLastLineNumber() + "]");
         } else {
             Specimen prey = createAndClassifySpecimen(preyItem);
 
@@ -119,14 +116,14 @@ public class StudyImporterForWrast extends BaseStudyImporter {
             }
 
             if (depthMap == null) {
-                depthMap = createDepthMap();
+                depthMap = createDepthMap(study);
             }
 
             Double depth = depthMap.get(createDepthId(seasonName, region, site, habitat));
 
             Double altitude = depth == null ? null : -depth;
             if (depth == null) {
-                LOG.warn(createMsgPrefix(csvParser) + " failed to find depth for habitat, region, site and season: [" + createDepthId(seasonName, region, site, habitat) + "], skipping entry");
+                getLogger().warn(study, createMsgPrefix(csvParser) + " failed to find depth for habitat, region, site and season: [" + createDepthId(seasonName, region, site, habitat) + "], skipping entry");
             }
 
             Location sampleLocation = nodeFactory.getOrCreateLocation(latLng1.getLat(), latLng1.getLng(), altitude);
@@ -156,12 +153,12 @@ public class StudyImporterForWrast extends BaseStudyImporter {
         }
         predator.caughtDuring(getOrCreateSeason(seasonName));
         Relationship collectedRel = study.collected(predator);
-        addCollectionDate(csvParser, collectedRel);
+        addCollectionDate(csvParser, collectedRel, study);
 
         return predator;
     }
 
-    private void addCollectionDate(LabeledCSVParser csvParser, Relationship collectedRel) {
+    private void addCollectionDate(LabeledCSVParser csvParser, Relationship collectedRel, Study study) {
         String dayString = csvParser.getValueByLabel(COLUMN_MAPPER.get(DAY));
         String monthString = csvParser.getValueByLabel(COLUMN_MAPPER.get(MONTH));
         String yearString = csvParser.getValueByLabel(COLUMN_MAPPER.get(YEAR));
@@ -171,7 +168,7 @@ public class StudyImporterForWrast extends BaseStudyImporter {
                 Date collectionDate = getSimpleDateFormat().parse(dateString);
                 nodeFactory.setUnixEpochProperty(collectedRel, collectionDate);
             } catch (ParseException e) {
-                LOG.warn("failed to parse [" + dateString + "]", e);
+                getLogger().warn(study, "failed to parse [" + dateString + "]: " + e.getMessage());
             }
         }
     }
@@ -180,7 +177,7 @@ public class StudyImporterForWrast extends BaseStudyImporter {
         return predatorSpecimenMap;
     }
 
-    private Map<String, Double> createDepthMap() throws StudyImporterException {
+    private Map<String, Double> createDepthMap(Study study) throws StudyImporterException {
         Map<String, Double> depthMap;
         try {
             LabeledCSVParser depthParser = parserFactory.createParser(LAVACA_BAY_ENVIRONMENTAL, CharsetConstant.UTF8);
@@ -196,7 +193,7 @@ public class StudyImporterForWrast extends BaseStudyImporter {
                     try {
                         depthMap.put(depthId, Double.parseDouble(depthString));
                     } catch (NumberFormatException ex) {
-                        LOG.warn(createMsgPrefix(depthParser) + "failed to parse depth for depthId [" + depthId + "], skipping entry");
+                        getLogger().warn(study, createMsgPrefix(depthParser) + "failed to parse depth for depthId [" + depthId + "], skipping entry");
                     }
                 } else {
                     throw new StudyImporterException(createMsgPrefix(depthParser) + " found duplicate entries for unique combination of season,region,site and habitat: [" + seasonDepth + ", " + regionDepth + ", " + siteDepth + ", " + seasonDepth);

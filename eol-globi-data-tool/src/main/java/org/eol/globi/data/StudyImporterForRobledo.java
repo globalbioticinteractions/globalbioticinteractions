@@ -1,8 +1,6 @@
 package org.eol.globi.data;
 
 import com.Ostermiller.util.LabeledCSVParser;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
@@ -12,7 +10,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class StudyImporterForRobledo extends BaseStudyImporter {
-    private static final Log LOG = LogFactory.getLog(StudyImporterForRobledo.class);
 
     public StudyImporterForRobledo(ParserFactory parserFactory, NodeFactory nodeFactory) {
         super(parserFactory, nodeFactory);
@@ -54,7 +51,7 @@ public class StudyImporterForRobledo extends BaseStudyImporter {
                             predator.ate(nodeFactory.createSpecimen(plantScientificName));
                         }
                     } catch (NumberFormatException ex) {
-                        LOG.warn("malformed or no value [" + valueByLabel + "] found for [" + plantScientificName + "(" + plantAbbreviation + ")" + "] and beetle [" + beetleScientificName + "] could be found in [" + studyResource + ":" + parser.lastLineNumber() + "]");
+                        getLogger().warn(study, "malformed or no value [" + valueByLabel + "] found for [" + plantScientificName + "(" + plantAbbreviation + ")" + "] and beetle [" + beetleScientificName + "] could be found in [" + studyResource + ":" + parser.lastLineNumber() + "]");
                     }
                 }
             }

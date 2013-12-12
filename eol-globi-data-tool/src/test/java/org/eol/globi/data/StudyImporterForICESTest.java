@@ -27,7 +27,7 @@ public class StudyImporterForICESTest extends GraphDBTestCase {
     @Test
     public void importOneEveryThousandLines() throws StudyImporterException {
         StudyImporterForICES studyImporterFor = new StudyImporterForICES(new ParserFactoryImpl(), nodeFactory);
-        studyImporterFor.setImportFilter(new ImportFilter() {
+        studyImporterFor.setFilter(new ImportFilter() {
             @Override
             public boolean shouldImportRecord(Long recordNumber) {
                 return recordNumber % 1000 == 0;

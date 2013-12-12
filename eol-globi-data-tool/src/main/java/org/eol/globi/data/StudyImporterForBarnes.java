@@ -16,8 +16,6 @@ import java.io.IOException;
 import java.util.List;
 
 public class StudyImporterForBarnes extends BaseStudyImporter {
-    private static final Log LOG = LogFactory.getLog(StudyImporterForBarnes.class);
-
     private TermLookupService termService = new UberonLookupService();
 
     public StudyImporterForBarnes(ParserFactory parserFactory, NodeFactory nodeFactory) {
@@ -54,7 +52,7 @@ public class StudyImporterForBarnes extends BaseStudyImporter {
         try {
             String predatorName = parser.getValueByLabel("Predator");
             if (StringUtils.isBlank(predatorName)) {
-                LOG.warn("found empty predator name on line [" + parser.lastLineNumber() + "]");
+                getLogger().warn(study, "found empty predator name on line [" + parser.lastLineNumber() + "]");
             } else {
                 Specimen predator = nodeFactory.createSpecimen(predatorName);
                 addLifeStage(parser, predator);
@@ -68,7 +66,7 @@ public class StudyImporterForBarnes extends BaseStudyImporter {
 
                 String preyName = parser.getValueByLabel("Prey");
                 if (StringUtils.isBlank(preyName)) {
-                  LOG.warn("found empty prey name on line [" + parser.lastLineNumber() + "]");
+                  getLogger().warn(study, "found empty prey name on line [" + parser.lastLineNumber() + "]");
                 } else {
                     Specimen prey = nodeFactory.createSpecimen(preyName);
                     predator.ate(prey);
@@ -78,7 +76,8 @@ public class StudyImporterForBarnes extends BaseStudyImporter {
         } catch (NodeFactoryException e) {
             throw new StudyImporterException("problem creating nodes at line [" + parser.lastLineNumber() + "]", e);
         } catch (NumberFormatException e) {
-            LOG.warn("skipping record, found malformed field at line [" + parser.lastLineNumber() + "]", e);
+            String message = "skipping record, found malformed field at line [" + parser.lastLineNumber() + "]: ";
+            getLogger().warn(study, message + e.getMessage());
         }
     }
 

@@ -2,7 +2,6 @@ package org.eol.globi.data;
 
 import com.Ostermiller.util.CSVParser;
 import com.Ostermiller.util.LabeledCSVParser;
-import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.TaxonomyProvider;
 import org.junit.Test;
@@ -48,7 +47,7 @@ public class StudyImporterForBioInfoTest extends GraphDBTestCase {
     public void importAll() throws StudyImporterException, NodeFactoryException {
         StudyImporter importer = new StudyImporterFactory(new ParserFactoryImpl(), nodeFactory).instantiateImporter((Class) StudyImporterForBioInfo.class);
         // limit the number of line to be imported to make test runs reasonably fast
-        importer.setImportFilter(new ImportFilter() {
+        importer.setFilter(new ImportFilter() {
 
             @Override
             public boolean shouldImportRecord(Long recordNumber) {
@@ -146,7 +145,7 @@ public class StudyImporterForBioInfoTest extends GraphDBTestCase {
 
         LabeledCSVParser labeledCSVParser = createParser(relationsString);
 
-        Study study = new StudyImporterForBioInfo(new ParserFactoryImpl(), nodeFactory).createRelations(taxaMap, relationsTypeMap, labeledCSVParser);
+        Study study = new StudyImporterForBioInfo(new ParserFactoryImpl(), nodeFactory).createRelations(taxaMap, relationsTypeMap, labeledCSVParser, study);
 
         Study study1 = nodeFactory.findStudy(study.getTitle());
         assertThat(study1, is(notNullValue()));
