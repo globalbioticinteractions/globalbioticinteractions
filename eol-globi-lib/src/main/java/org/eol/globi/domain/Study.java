@@ -1,5 +1,6 @@
 package org.eol.globi.domain;
 
+import org.apache.commons.lang3.StringUtils;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
@@ -104,7 +105,8 @@ public class Study extends NodeBacked {
     }
 
     public String getDOI() {
-        return getProperty(DOI);
+        String value = getProperty(DOI);
+        return StringUtils.isBlank(value) ? null : value;
     }
 
     public void setCitation(String citation) {
