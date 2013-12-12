@@ -1,10 +1,8 @@
 package org.eol.globi.export;
 
-import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Study;
 import org.neo4j.cypher.javacompat.ExecutionEngine;
 import org.neo4j.cypher.javacompat.ExecutionResult;
-import org.neo4j.graphdb.GraphDatabaseService;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -15,8 +13,8 @@ public abstract class StudyExportUnmatchedTaxaForStudies extends DarwinCoreExpor
             "    </files>\n" +
             "    <field index=\"0\" term=\"" + EOLDictionary.SCIENTIFIC_NAME + "\"/>\n" +
             "    <field index=\"1\" term=\"" + EOLDictionary.TAXON_ID + "\"/>\n" +
-            "    <field index=\"1\" term=\"" + EOLDictionary.SCIENTIFIC_NAME + "\"/>\n" +
-            "    <field index=\"2\" term=\"" + EOLDictionary.COLLECTION_CODE + "\"/>\n" +
+            "    <field index=\"2\" term=\"" + EOLDictionary.SCIENTIFIC_NAME + "\"/>\n" +
+            "    <field index=\"3\" term=\"" + EOLDictionary.COLLECTION_CODE + "\"/>\n" +
             "  </table>\n";
     private static final String META_TABLE_PREFIX = "<table encoding=\"UTF-8\" fieldsTerminatedBy=\",\" linesTerminatedBy=\"\\n\" ignoreHeaderLines=\"1\" rowType=\"http://rs.tdwg.org/dwc/terms/text/DarwinRecord\">\n" +
             "    <files>\n" +

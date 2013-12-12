@@ -87,13 +87,13 @@ public class Normalizer {
         try {
             FileUtils.forceMkdir(new File(pathPrefix));
             FileWriter darwinCoreMeta = writeMetaHeader(pathPrefix);
-            export(studies, pathPrefix + "unmatchedSourceTaxa.csv", new StudyExportUnmatchedSourceTaxaForStudies(), darwinCoreMeta);
-            export(studies, pathPrefix + "unmatchedTargetTaxa.csv", new StudyExportUnmatchedTargetTaxaForStudies(), darwinCoreMeta);
-            export(studies, pathPrefix + "association.csv", associationExporter, darwinCoreMeta);
-            export(studies, pathPrefix + "occurrence.csv", occurrenceExporter, darwinCoreMeta);
-            export(studies, pathPrefix + "references.csv", new ExporterReferences(), darwinCoreMeta);
-            export(studies, pathPrefix + "taxa.csv", new ExporterTaxa(), darwinCoreMeta);
-            export(studies, pathPrefix + "measurementOrFact.csv", new ExporterMeasurementOrFact(), darwinCoreMeta);
+            export(studies, pathPrefix, "unmatchedSourceTaxa.csv", new StudyExportUnmatchedSourceTaxaForStudies(), darwinCoreMeta);
+            export(studies, pathPrefix, "unmatchedTargetTaxa.csv", new StudyExportUnmatchedTargetTaxaForStudies(), darwinCoreMeta);
+            export(studies, pathPrefix, "association.csv", associationExporter, darwinCoreMeta);
+            export(studies, pathPrefix, "occurrence.csv", occurrenceExporter, darwinCoreMeta);
+            export(studies, pathPrefix, "references.csv", new ExporterReferences(), darwinCoreMeta);
+            export(studies, pathPrefix, "taxa.csv", new ExporterTaxa(), darwinCoreMeta);
+            export(studies, pathPrefix, "measurementOrFact.csv", new ExporterMeasurementOrFact(), darwinCoreMeta);
             writeMetaFooter(darwinCoreMeta);
         } catch (IOException e) {
             throw new StudyImporterException("failed to export result to csv file", e);
@@ -130,10 +130,10 @@ public class Normalizer {
         return darwinCoreMeta;
     }
 
-    private void export(List<Study> importedStudies, String exportPath, DarwinCoreExporter studyExporter, FileWriter darwinCoreMeta) throws IOException {
-        export(importedStudies, exportPath, studyExporter);
+    private void export(List<Study> importedStudies, String exportPath, String filename, DarwinCoreExporter studyExporter, FileWriter darwinCoreMeta) throws IOException {
+        export(importedStudies, exportPath + filename, studyExporter);
         LOG.info("darwin core meta file writing... ");
-        studyExporter.exportDarwinCoreMetaTable(darwinCoreMeta, exportPath);
+        studyExporter.exportDarwinCoreMetaTable(darwinCoreMeta, filename);
         LOG.info("darwin core meta file written. ");
     }
 
