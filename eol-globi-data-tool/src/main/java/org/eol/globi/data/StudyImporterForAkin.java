@@ -224,12 +224,14 @@ public class StudyImporterForAkin extends BaseStudyImporter {
     }
 
     private Study importStudy(String studyResource) throws StudyImporterException {
-        Study study = null;
+        Study study;
         try {
             study = nodeFactory.getOrCreateStudy("Akin et al 2006", "Senol Akin",
                     "Section of Ecology, Evolutionary Biology and Systematics, Department of Wildlife and Fisheries Sciences, Texas A&M University",
                     "Mar 1998- Aug 1999",
-                    "<a href=\"http://link.springer.com/article/10.1007%2FBF02784282\">Seasonal Variation in Food Web Composition and Structure in a Temperate Tidal Estuary.</a>", "2006", StudyImporterForGoMexSI.GOMEXSI_URL);
+                    "S. Akin, K. O. Winemiller, Seasonal variation in food web composition and structure in a temperate tidal estuary, Estuaries and Coasts" +
+                            "; August 2006, Volume 29, Issue 4, pp 552-567", "2006", StudyImporterForGoMexSI.GOMEXSI_URL);
+            study.setDOI("http://dx.doi.org/10.1007/BF02784282");
             String[][] siteInfo = loadSampleSiteLocations();
             importAkinStudyFile(siteInfo, studyResource, study);
         } catch (IOException e) {

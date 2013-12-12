@@ -55,6 +55,8 @@ public class StudyImporterForSPIRE extends BaseStudyImporter {
         // see https://github.com/jhpoelen/eol-globi-data/issues/28
         if ("Animal Diversity Web".equals(titlesAndAuthors1)) {
             titlesAndAuthors1 = "Myers, P., R. Espinosa, C. S. Parr, T. Jones, G. S. Hammond, and T. A. Dewey. 2013. The Animal Diversity Web (online). Accessed at http://animaldiversity.org.";
+        } else if ("K. H. Mann, R. H. Britton, A. Kowalczewski, T. J. Lack, C. P. Mathews and I. McDonald, Productivity and energy flow at all trophic levels in the River Thames, England. In: Productivity Problems of Freshwaters, Z. Kajak and A.  Hillbricht-Ilkowska, Eds. (P".equals(titlesAndAuthors1)) {
+            titlesAndAuthors1 = "Mann KH, Britton RH, Kowalczewski A, Lack TJ, Mathews CP, McDonald I (1972) Productivity and energy flow at all trophic levels in the River Thames, England. In: Kajak Z, Hillbricht-Ilkowska A (eds) Productivity problems of freshwaters. Polish Scientific, Warsaw, pp 579-596";
         }
         properties.put(Study.DESCRIPTION, titlesAndAuthors1);
     }

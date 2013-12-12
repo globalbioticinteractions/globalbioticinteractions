@@ -38,10 +38,12 @@ public class StudyImporterForBlewett extends BaseStudyImporter {
                 "David A. Blewett",
                 "Fish and Wildlife Research Institute, Florida Fish and Wildlife Conservation Commission"
                 , "Mar 2000- Feb 2002"
-                , "<a href=\"http://research.myfwc.com/engine/download_redirection_process.asp?file=06blewett_0718.pdf&objid=50963&dltype=publication\">Feeding Habits of Common Snook, Centropomus undecimalis, in Charlotte Harbor, Florida</a>."
+                , "Blewett DA, Hensley RA, and Stevens PW, Feeding Habits of Common Snook, Centropomus Undecimalis, in Charlotte Harbor, Florida, Gulf and Caribbean Research Vol 18, 1–13, 2006"
                 , "2006"
                 , StudyImporterForGoMexSI.GOMEXSI_URL);
 
+        study.setCitation("Blewett DA, Hensley RA, and Stevens PW, Feeding Habits of Common Snook, Centropomus Undecimalis, in Charlotte Harbor, Florida, Gulf and Caribbean Research Vol 18, 1–13, 2006");
+        study.setExternalId("http://research.myfwc.com/engine/download_redirection_process.asp?file=06blewett_0718.pdf&objid=50963&dltype=publication");
         try {
             Map<String, Location> collectionLocationMap = new HashMap<String, Location>();
             Map<String, Date> collectionTimeMap = new HashMap<String, Date>();

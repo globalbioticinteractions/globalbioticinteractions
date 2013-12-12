@@ -135,6 +135,8 @@ public class StudyImporterForBioInfo extends BaseStudyImporter implements StudyI
                 BIOINFO_URL,
                 "",
                 "Food webs and species interactions in the Biodiversity of UK and Ireland.", null, "http://bioinfo.org.uk");
+        study.setCitation("Storey M. Food Webs and Species Interactions in the Biodiversity of UK and Ireland (Online). 2013. Available from " + BIOINFO_URL + ".");
+        study.setExternalId(BIOINFO_URL);
         try {
             long count = 1;
             while (parser.getLine() != null) {

@@ -13,6 +13,7 @@ public class Study extends NodeBacked {
     public static final String PUBLICATION_YEAR = "publicationYear";
     public static final String PERIOD = "period";
     private static final String SOURCE = "source";
+    public static final String CITATION = "citation";
 
     public Study(Node node, String title) {
         this(node);
@@ -103,5 +104,13 @@ public class Study extends NodeBacked {
 
     public String getDOI() {
         return getExternalId();
+    }
+
+    public void setCitation(String citation) {
+        setPropertyWithTx(CITATION, citation);
+    }
+
+    public String getCitation() {
+        return getUnderlyingNode().hasProperty(CITATION) ? getProperty(CITATION) : null;
     }
 }

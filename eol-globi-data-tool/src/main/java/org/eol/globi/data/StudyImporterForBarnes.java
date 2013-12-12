@@ -34,7 +34,10 @@ public class StudyImporterForBarnes extends BaseStudyImporter {
         }
         parser.changeDelimiter('\t');
 
-        Study study = nodeFactory.getOrCreateStudy("Barnes 2008", "C. Barnes et al.", "Centre for Environment, Fisheries and Aquaculture Science, Lowestoft, Suffolk, NR33 0HT  UK", "", "<a href=\"http://www.esapubs.org/Archive/ecol/E089/051/\">Predator and prey body sizes in marine food webs.</a>", "2008", StudyImporterForGoMexSI.GOMEXSI_URL);
+        Study study = nodeFactory.getOrCreateStudy("Barnes 2008", "C. Barnes et al.", "Centre for Environment, Fisheries and Aquaculture Science, Lowestoft, Suffolk, NR33 0HT  UK", "", "C. Barnes, D. M. Bethea, R. D. Brodeur, J. Spitz, V. Ridoux, C. Pusineri, B. C. Chase, M. E. Hunsicker, F. Juanes, A. Kellermann, J. Lancaster, F. Ménard, F.-X. Bard, P. Munk, J. K. Pinnegar, F. S. Scharf, R. A. Rountree, K. I. Stergiou, C. Sassa, A. Sabates, and S. Jennings. 2008. Predator and prey body sizes in marine food webs. Ecology 89:881."
+                , "2008", StudyImporterForGoMexSI.GOMEXSI_URL);
+        study.setCitation("Barnes C, Bethea DM, Brodeur RD, Spitz J, Ridoux V, Pusineri C, Chase BC, Hunsicker ME, Juanes F, Kellermann A, Lancaster J, Ménard F, Bard FX, Munk P, Pinnegar JK, Scharf FS, Rountree RA, Stergiou KI, Sassa C, Sabates A, Jennings S. Predator and prey body sizes in marine food webs. 2008. Ecology 89:881.");
+        study.setExternalId("http://www.esapubs.org/Archive/ecol/E089/051/");
         try {
             while (parser.getLine() != null) {
                 if (importFilter.shouldImportRecord((long) parser.getLastLineNumber())) {

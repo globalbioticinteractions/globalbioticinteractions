@@ -4,6 +4,8 @@ import java.io.IOException;
 
 public interface DOIResolver {
 
-    public String findDOIForReference(final String reference) throws IOException;
+    String findDOIForReference(final String reference) throws IOException;
+
+    String findCitationForDOI(final String doi) throws IOException;
 
 }

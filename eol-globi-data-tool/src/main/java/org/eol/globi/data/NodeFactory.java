@@ -272,6 +272,7 @@ public class NodeFactory {
                     String doi = doiResolver.findDOIForReference(reference);
                     if (doi != null) {
                         study.setDOI(doi);
+                        study.setCitation(doiResolver.findCitationForDOI(doi));
                     }
                 } catch (IOException e) {
                     LOG.warn("failed to lookup doi for [" + reference + "]");

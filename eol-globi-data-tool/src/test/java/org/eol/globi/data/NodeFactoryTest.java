@@ -236,18 +236,30 @@ public class NodeFactoryTest extends GraphDBTestCase {
             public String findDOIForReference(String reference) throws IOException {
                 return "doi:1234";
             }
+
+            @Override
+            public String findCitationForDOI(String doi) throws IOException {
+                return "my citation";
+            }
         });
         Study study = nodeFactory.getOrCreateStudy("my title", "my contr", null, null, "some description", null, null);
         assertThat(study.getDOI(), is("doi:1234"));
+        assertThat(study.getCitation(), is("my citation"));
 
         nodeFactory.setDoiResolver(new DOIResolver() {
             @Override
             public String findDOIForReference(String reference) throws IOException {
                 throw new IOException("kaboom!");
             }
+
+            @Override
+            public String findCitationForDOI(String doi) throws IOException {
+                throw new IOException("kaboom!");
+            }
         });
         study = nodeFactory.getOrCreateStudy("my other title", "my contr", null, null, "some description", null, null);
         assertThat(study.getDOI(), is(nullValue()));
+        assertThat(study.getCitation(), is(nullValue()));
 
 
     }
