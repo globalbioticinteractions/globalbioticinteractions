@@ -108,6 +108,9 @@ public class Study extends NodeBacked {
 
     public void setDOI(String doi) {
         setPropertyWithTx(DOI, doi);
+        if (getExternalId() == null) {
+            setExternalId(doi);
+        }
     }
 
     public String getDOI() {

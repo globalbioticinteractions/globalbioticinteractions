@@ -25,6 +25,7 @@ public class ExternalIdUtil {
             put(TaxonomyProvider.ID_PREFIX_EOL, "http://eol.org/pages/");
             put(TaxonomyProvider.ID_PREFIX_GULFBASE, "http://gulfbase.org/biogomx/biospecies.php?species=");
             put(TaxonomyProvider.ID_PREFIX_GAME, "http://research.myfwc.com/game/Survey.aspx?id=");
+            put(TaxonomyProvider.ID_PREFIX_HTTP, TaxonomyProvider.ID_PREFIX_HTTP);
         }};
     }
 }

@@ -244,6 +244,7 @@ public class NodeFactoryTest extends GraphDBTestCase {
         });
         Study study = nodeFactory.getOrCreateStudy("my title", "my contr", null, null, "some description", null, null);
         assertThat(study.getDOI(), is("doi:1234"));
+        assertThat(study.getExternalId(), is("doi:1234"));
         assertThat(study.getCitation(), is("my citation"));
 
         nodeFactory.setDoiResolver(new DOIResolver() {
@@ -258,8 +259,9 @@ public class NodeFactoryTest extends GraphDBTestCase {
             }
         });
         study = nodeFactory.getOrCreateStudy("my other title", "my contr", null, null, "some description", null, null);
-        assertThat(study.getDOI(), is(nullValue()));
-        assertThat(study.getCitation(), is(nullValue()));
+        assertThat(study.getDOI(), nullValue());
+        assertThat(study.getExternalId(), nullValue());
+        assertThat(study.getCitation(), nullValue());
 
 
     }

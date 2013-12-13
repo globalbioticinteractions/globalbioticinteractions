@@ -20,7 +20,6 @@ public class StudyTest extends GraphDBTestCase {
     public static final String CARCHARODON = "Carcharodon";
     public static final String CARCHARODON_CARCHARIAS = CARCHARODON + " carcharias";
     public static final String CARASSIUS_AURATUS_AURATUS = "Carassius auratus auratus";
-    public static final String WHITE_SHARK_FAMILY = "Lamnidae";
 
     private NodeFactory factory;
 
@@ -37,7 +36,7 @@ public class StudyTest extends GraphDBTestCase {
     public void populateStudy() throws NodeFactoryException {
         Study study = factory.createStudy("Our first study");
 
-        Taxon greatWhiteSpecies = factory.getOrCreateTaxon(CARCHARODON_CARCHARIAS);
+        factory.getOrCreateTaxon(CARCHARODON_CARCHARIAS);
 
         Specimen goldFish = factory.createSpecimen(CARASSIUS_AURATUS_AURATUS);
 
