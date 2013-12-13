@@ -28,6 +28,7 @@ public class StudyImporterForICES extends BaseStudyImporter {
                 "<a href=\"http://www.ices.dk/products/cooperative.asp\">ICES Cooperative Research Report No. 164</a>; <a href=\"http://ices.dk/products/cooperative.asp\">ICES Cooperative Research Report No. 219</a>"
                 , null
                 , "http://www.ices.dk/products/cooperative.asp");
+        study.setExternalId("http://ecosystemdata.ices.dk/stomachdata/");
         try {
             Specimen predatorSpecimen = null;
             String lastStomachId = null;

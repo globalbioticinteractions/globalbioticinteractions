@@ -27,6 +27,7 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
     @Override
     public Study importStudy() throws StudyImporterException {
         Study study = nodeFactory.getOrCreateStudy("iNaturalist", "Ken-ichi Kueda", INATURALIST_URL, "", "iNaturalist is a place where you can record what you see in nature, meet other nature lovers, and learn about the natural world. ", "", INATURALIST_URL);
+        study.setExternalId(INATURALIST_URL);
         retrieveDataParseResults(study);
         return study;
     }
