@@ -3,9 +3,6 @@ package org.eol.globi.tool;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.eol.globi.data.ImportLogger;
-import org.eol.globi.data.LogMessage;
-import org.eol.globi.domain.RelTypes;
 import org.eol.globi.export.DarwinCoreExporter;
 import org.eol.globi.export.ExporterAssociationAggregates;
 import org.eol.globi.export.ExporterAssociations;
@@ -32,7 +29,6 @@ import org.eol.globi.data.StudyImporterFactory;
 import org.eol.globi.db.GraphService;
 import org.eol.globi.domain.Study;
 import org.eol.globi.export.StudyExporter;
-import org.neo4j.graphdb.Transaction;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 
 import java.io.BufferedOutputStream;
@@ -43,7 +39,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.util.List;
-import java.util.logging.Level;
 import java.util.zip.GZIPOutputStream;
 
 public class Normalizer {
@@ -164,35 +159,7 @@ public class Normalizer {
         factory.setDoiResolver(new DOIResolverImpl());
         ParserFactory parserFactory = new ParserFactoryImpl();
         StudyImporter importer = new StudyImporterFactory(parserFactory, factory).instantiateImporter(studyImporter);
-        importer.setLogger(new ImportLogger() {
-            @Override
-            public void warn(Study study, String message) {
-                createMsg(study, message, Level.WARNING);
-            }
-
-            @Override
-            public void info(Study study, String message) {
-                createMsg(study, message, Level.INFO);
-            }
-
-            @Override
-            public void severe(Study study, String message) {
-                createMsg(study, message, Level.SEVERE);
-            }
-
-            private void createMsg(Study study, String message, Level warning) {
-                if (null != study) {
-                    LogMessage msg = factory.createLogMessage(warning, message);
-                    Transaction tx = study.getUnderlyingNode().getGraphDatabase().beginTx();
-                    try {
-                        study.getUnderlyingNode().createRelationshipTo(msg.getUnderlyingNode(), RelTypes.HAS_LOG_MESSAGE);
-                        tx.success();
-                    } finally {
-                        tx.finish();
-                    }
-                }
-            }
-        });
+        importer.setLogger(new StudyImportLogger(factory));
         return importer;
     }
 

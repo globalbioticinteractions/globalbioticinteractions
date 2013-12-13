@@ -31,11 +31,14 @@ public class UKSISuggestionServiceTest {
     @Test
     public void lookupNameWithSuggestion() throws TaxonPropertyLookupServiceException {
         assertThat(uksiSuggestionService.suggest("Stellaria apetala"), is("Stellaria pallida"));
+        assertThat(uksiSuggestionService.suggest("Bombus"), is("Bombus"));
+        assertThat(uksiSuggestionService.suggest("Actinopterygii"), is("Actinopterygii"));
+        assertThat(uksiSuggestionService.suggest("Fish"), is("Pisces"));
     }
 
     @Test
     public void lookupNameWithSuggestions2() throws TaxonPropertyLookupServiceException {
-        assertThat(uksiSuggestionService.suggest("Bombus"), is("Bombus"));
+
     }
 
     @Test

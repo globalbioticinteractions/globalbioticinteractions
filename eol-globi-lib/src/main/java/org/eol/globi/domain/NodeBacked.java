@@ -78,6 +78,10 @@ public class NodeBacked {
         return getUnderlyingNode().hasProperty(propertyName) ? getUnderlyingNode().getProperty(propertyName) : null;
     }
 
+    protected String getPropertyStringValueOrNull(String propertyName) {
+        return getUnderlyingNode().hasProperty(propertyName) ? (String) getUnderlyingNode().getProperty(propertyName) : null;
+    }
+
     public void setExternalId(String externalId) {
         setPropertyWithTx(NodeBacked.EXTERNAL_ID, externalId);
     }

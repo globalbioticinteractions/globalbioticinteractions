@@ -14,6 +14,7 @@ import org.eol.globi.domain.Environment;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.NamedNode;
 import org.eol.globi.domain.PropertyAndValueDictionary;
+import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Season;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
@@ -501,9 +502,5 @@ public class NodeFactory {
         this.doiResolver = doiResolver;
     }
 
-    public LogMessage createLogMessage(Level level, String message) {
-        LogMessage msg = new LogMessage(getGraphDb().createNode(), message, level);
-        return msg;
-    }
 }
 

@@ -1,5 +1,7 @@
 package org.eol.globi.data;
 
+import org.eol.globi.domain.LogMessage;
+import org.eol.globi.domain.Study;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.service.TaxonPropertyEnricher;
 import org.eol.globi.service.TaxonPropertyEnricherFactory;
@@ -7,6 +9,9 @@ import org.eol.globi.service.TaxonPropertyEnricherImpl;
 import org.junit.Test;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.index.IndexHits;
+
+import java.util.List;
+import java.util.logging.Level;
 
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.Is.is;
@@ -16,14 +21,24 @@ import static org.junit.Assert.assertThat;
 public class NodeFactoryIT extends GraphDBTestCase {
 
     @Test
+    public void createLogMessage() {
+        Study bla = nodeFactory.createStudy("bla");
+        bla.appendLogMessage("one two three", Level.INFO);
+        List<LogMessage> logMessages = bla.getLogMessages();
+        assertThat(logMessages.size(), is(1));
+        assertThat(logMessages.get(0).getMessage(), is("one two three"));
+        assertThat(logMessages.get(0).getLevel(), is("INFO"));
+
+    }
+
+    @Test
     public void createTaxonFish() throws NodeFactoryException {
-        NodeFactory factory = new NodeFactory(getGraphDb(), new TaxonPropertyEnricherImpl(getGraphDb()));
-        Taxon taxon = factory.getOrCreateTaxon("Fish");
+        Taxon taxon = nodeFactory.getOrCreateTaxon("Fish");
         assertThat(taxon.getName(), is("Actinopterygii"));
-        taxon = factory.getOrCreateTaxon("fish");
+        taxon = nodeFactory.getOrCreateTaxon("Fish");
         assertThat(taxon.getName(), is("Actinopterygii"));
 
-        assertZeroHits(factory, "fish");
+        assertZeroHits(nodeFactory, "fish");
     }
 
     @Test

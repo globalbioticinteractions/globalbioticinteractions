@@ -2,8 +2,14 @@ package org.eol.globi.domain;
 
 import org.apache.commons.lang3.StringUtils;
 import org.neo4j.graphdb.Direction;
+import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
+import org.neo4j.graphdb.Transaction;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Level;
 
 public class Study extends NodeBacked {
 
@@ -116,4 +122,26 @@ public class Study extends NodeBacked {
     public String getCitation() {
         return getUnderlyingNode().hasProperty(CITATION) ? getProperty(CITATION) : null;
     }
+
+    public void appendLogMessage(String message, Level warning) {
+        GraphDatabaseService graphDb = getUnderlyingNode().getGraphDatabase();
+        Transaction tx = graphDb.beginTx();
+        try {
+            LogMessage msg = new LogMessage(graphDb.createNode(), message, warning);
+            getUnderlyingNode().createRelationshipTo(msg.getUnderlyingNode(), RelTypes.HAS_LOG_MESSAGE);
+            tx.success();
+        } finally {
+            tx.finish();
+        }
+    }
+
+    public List<LogMessage> getLogMessages() {
+        Iterable<Relationship> rels = getUnderlyingNode().getRelationships(RelTypes.HAS_LOG_MESSAGE, Direction.OUTGOING);
+        List<LogMessage> msgs = new ArrayList<LogMessage>();
+        for (Relationship rel : rels) {
+            msgs.add(new LogMessage(rel.getEndNode()));
+        }
+        return msgs;
+    }
+
 }
