@@ -8,14 +8,15 @@ import java.util.Map;
 public class ExternalIdUtil {
     public static String infoURLForExternalId(String externalId) {
         String url = null;
-        for (Map.Entry<String, String> idPrefixToUrlPrefix : getURLPrefixMap().entrySet()) {
-            if (externalId.startsWith(idPrefixToUrlPrefix.getKey())) {
-                url = idPrefixToUrlPrefix.getValue() + externalId.replaceAll(idPrefixToUrlPrefix.getKey(), "");
+        if (externalId != null) {
+            for (Map.Entry<String, String> idPrefixToUrlPrefix : getURLPrefixMap().entrySet()) {
+                if (externalId.startsWith(idPrefixToUrlPrefix.getKey())) {
+                    url = idPrefixToUrlPrefix.getValue() + externalId.replaceAll(idPrefixToUrlPrefix.getKey(), "");
+                }
+                if (url != null) {
+                    break;
+                }
             }
-            if (url != null) {
-                break;
-            }
-
         }
         return url;
     }

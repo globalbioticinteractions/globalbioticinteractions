@@ -18,6 +18,8 @@ public class ExporterReferencesTest extends GraphDBTestCase {
     @Test
     public void exportReference() throws IOException, NodeFactoryException, ParseException {
         Study myStudy = nodeFactory.getOrCreateStudy("myStudy", "John Doe", "institution", null, "description study 1", "1927", "a source");
+        myStudy.setDOI("doi:1234");
+        myStudy.setExternalId("GAME:444");
         StringWriter row = new StringWriter();
 
         new ExporterReferences().exportStudy(myStudy, row, true);
@@ -47,7 +49,7 @@ public class ExporterReferencesTest extends GraphDBTestCase {
     }
 
     private String getExpectedRow() {
-        return "globi:ref:1,,John Doe (1927) description study 1,,,,,,,,,,,,,,,";
+        return "globi:ref:1,,John Doe (1927) description study 1,,,,,,,,,,,,,http://research.myfwc.com/game/Survey.aspx?id=444,doi:1234,";
     }
 
     @Test

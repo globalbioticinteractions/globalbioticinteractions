@@ -2,6 +2,7 @@ package org.eol.globi.export;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.domain.Study;
+import org.eol.globi.util.ExternalIdUtil;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -12,6 +13,8 @@ public class ExporterReferences extends ExporterBase {
 
     public static final String IDENTIFIER = "http://purl.org/dc/terms/identifier";
     public static final String FULL_REFERENCE = "http://eol.org/schema/reference/full_reference";
+    public static final String DOI = "http://purl.org/ontology/bibo/doi";
+    public static final String URI = "http://purl.org/ontology/bibo/uri";
 
     @Override
     protected String[] getFields() {
@@ -31,8 +34,8 @@ public class ExporterReferences extends ExporterBase {
                 "http://purl.org/ontology/bibo/editorList",
                 "http://purl.org/dc/terms/created",
                 "http://purl.org/dc/terms/language",
-                "http://purl.org/ontology/bibo/uri",
-                "http://purl.org/ontology/bibo/doi",
+                URI,
+                DOI,
                 "http://schemas.talis.com/2005/address/schema#localityName"};
     }
 
@@ -41,6 +44,8 @@ public class ExporterReferences extends ExporterBase {
         Map<String, String> properties = new HashMap<String, String>();
         properties.put(IDENTIFIER, referenceIdForStudy(study));
         properties.put(FULL_REFERENCE, referenceForStudy(study));
+        properties.put(DOI, study.getDOI());
+        properties.put(URI, ExternalIdUtil.infoURLForExternalId(study.getExternalId()));
         writeProperties(writer, properties);
     }
 
