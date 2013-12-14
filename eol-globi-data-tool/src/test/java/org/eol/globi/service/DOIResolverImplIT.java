@@ -34,5 +34,11 @@ public class DOIResolverImplIT {
         assertThat(citationForDOI, is("García-Robledo C, Erickson DL, Staines CL, Erwin TL, Kress WJ. Tropical Plant–Herbivore Networks: Reconstructing Species Interactions Using DNA Barcodes Heil M, editor. PLoS ONE [Internet]. 2013 January 8;8(1):e52967. Available from: http://dx.doi.org/10.1371/journal.pone.0052967"));
     }
 
+    @Test
+    public void findMalformedCitationWithMalformedDOIURL() throws IOException {
+        String citationForDOI = new DOIResolverImpl().findCitationForDOI("this ain't no uRL");
+        assertThat(citationForDOI, nullValue());
+    }
+
 
 }

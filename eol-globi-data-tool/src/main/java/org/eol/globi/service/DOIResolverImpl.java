@@ -1,6 +1,8 @@
 package org.eol.globi.service;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
@@ -13,6 +15,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class DOIResolverImpl implements DOIResolver {
+    private static final Log LOG = LogFactory.getLog(DOIResolverImpl.class);
+
     public String findDOIForReference(final String reference) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
 
@@ -42,11 +46,15 @@ public class DOIResolverImpl implements DOIResolver {
     public String findCitationForDOI(String doi) throws IOException {
         String citation = null;
         if (StringUtils.isNotBlank(doi)) {
+            try {
             HttpGet request = new HttpGet(doi);
             request.setHeader("Accept", "text/x-bibliography; style=cse");
             citation = new DefaultHttpClient().execute(request, new BasicResponseHandler());
             if (StringUtils.isNotBlank(citation)) {
                 citation = citation.replaceFirst("^1\\. ", "");
+            }
+            } catch (IllegalArgumentException ex) {
+                LOG.warn("potientially malformed doi found [" + doi + "]", ex);
             }
         }
         return citation;
