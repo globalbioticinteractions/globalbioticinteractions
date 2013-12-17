@@ -1,6 +1,8 @@
 package org.eol.globi.data;
 
+import org.eol.globi.data.taxon.CorrectionService;
 import org.eol.globi.domain.Taxon;
+import org.eol.globi.service.DOIResolver;
 import org.eol.globi.service.TaxonPropertyEnricher;
 import org.eol.globi.domain.Term;
 import org.eol.globi.service.TermLookupService;
@@ -31,6 +33,23 @@ public abstract class GraphDBTestCase {
         });
         nodeFactory.setEnvoLookupService(new TestTermLookupService());
         nodeFactory.setTermLookupService(new TestTermLookupService());
+        nodeFactory.setCorrectionService(new CorrectionService() {
+            @Override
+            public String correct(String taxonName) {
+                return taxonName;
+            }
+        });
+        nodeFactory.setDoiResolver(new DOIResolver() {
+            @Override
+            public String findDOIForReference(String reference) throws IOException {
+                return "doi:" + reference;
+            }
+
+            @Override
+            public String findCitationForDOI(String doi) throws IOException {
+                return "citation:" + doi;
+            }
+        });
 
     }
 

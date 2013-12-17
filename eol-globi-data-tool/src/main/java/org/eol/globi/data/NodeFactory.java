@@ -9,12 +9,12 @@ import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.FuzzyQuery;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.WildcardQuery;
-import org.eol.globi.data.taxon.TaxonNameNormalizer;
+import org.eol.globi.data.taxon.CorrectionService;
+import org.eol.globi.data.taxon.TaxonNameCorrector;
 import org.eol.globi.domain.Environment;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.NamedNode;
 import org.eol.globi.domain.PropertyAndValueDictionary;
-import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Season;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
@@ -40,13 +40,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.logging.Level;
 
 public class NodeFactory {
 
     private static final Log LOG = LogFactory.getLog(NodeFactory.class);
 
-    public static final TaxonNameNormalizer TAXON_NAME_NORMALIZER = new TaxonNameNormalizer();
     private final TaxonPropertyEnricher taxonEnricher;
     private GraphDatabaseService graphDb;
 
@@ -61,8 +59,9 @@ public class NodeFactory {
     public static final org.eol.globi.domain.Term NO_MATCH_TERM = new org.eol.globi.domain.Term(PropertyAndValueDictionary.NO_MATCH, PropertyAndValueDictionary.NO_MATCH);
 
     private TermLookupService termLookupService;
-
     private TermLookupService envoLookupService;
+    private CorrectionService correctionService;
+
 
     private DOIResolver doiResolver;
 
@@ -71,6 +70,7 @@ public class NodeFactory {
         this.taxonEnricher = taxonEnricher;
         this.termLookupService = new UberonLookupService();
         this.envoLookupService = new EnvoLookupService();
+        this.correctionService = new TaxonNameCorrector();
         this.studies = graphDb.index().forNodes("studies");
         this.seasons = graphDb.index().forNodes("seasons");
         this.locations = graphDb.index().forNodes("locations");
@@ -102,7 +102,6 @@ public class NodeFactory {
             indexCommonNames(taxon);
             indexTaxonPath(taxon);
         }
-
     }
 
     private void indexTaxonPath(Taxon taxon) {
@@ -133,22 +132,22 @@ public class NodeFactory {
     }
 
     public Taxon findTaxonOfType(String taxonName) throws NodeFactoryException {
-        String cleanedTaxonName = TAXON_NAME_NORMALIZER.normalize(taxonName);
+        String cleanedTaxonName = correctionService.correct(taxonName);
         String query = "name:\"" + cleanedTaxonName + "\"";
-        IndexHits<Node> matchingTaxons = taxons.query(query);
+        IndexHits<Node> matchingTaxa = taxons.query(query);
         Node matchingTaxon;
         Taxon firstMatchingTaxon = null;
-        if (matchingTaxons.hasNext()) {
-            matchingTaxon = matchingTaxons.next();
+        if (matchingTaxa.hasNext()) {
+            matchingTaxon = matchingTaxa.next();
             firstMatchingTaxon = new Taxon(matchingTaxon);
         }
 
         ArrayList<Taxon> duplicateTaxons = null;
-        while (matchingTaxons.hasNext()) {
+        while (matchingTaxa.hasNext()) {
             if (duplicateTaxons == null) {
                 duplicateTaxons = new ArrayList<Taxon>();
             }
-            duplicateTaxons.add(new Taxon(matchingTaxons.next()));
+            duplicateTaxons.add(new Taxon(matchingTaxa.next()));
         }
         if (duplicateTaxons != null) {
             StringBuffer buffer = new StringBuffer();
@@ -162,7 +161,7 @@ public class NodeFactory {
             }
             LOG.warn("found duplicates for taxon with name [" + taxonName + "], using first only: " + buffer.toString());
         }
-        matchingTaxons.close();
+        matchingTaxa.close();
         return firstMatchingTaxon;
     }
 
@@ -331,7 +330,7 @@ public class NodeFactory {
         }
         Taxon taxon = findTaxon(name);
         if (taxon == null) {
-            String normalizedName = TAXON_NAME_NORMALIZER.normalize(name);
+            String normalizedName = correctionService.correct(name);
             Transaction transaction = graphDb.beginTx();
             try {
                 taxon = new Taxon(graphDb.createNode(), normalizedName);
@@ -351,7 +350,7 @@ public class NodeFactory {
 
     public Taxon createTaxonNoTransaction(String name, String externalId, String path) {
         Node node = graphDb.createNode();
-        Taxon taxon = new Taxon(node, TAXON_NAME_NORMALIZER.normalize(name));
+        Taxon taxon = new Taxon(node, correctionService.correct(name));
         if (null != externalId) {
             taxon.setExternalId(externalId);
         }
@@ -497,10 +496,14 @@ public class NodeFactory {
         this.termLookupService = termLookupService;
     }
 
-
     public void setDoiResolver(DOIResolver doiResolver) {
         this.doiResolver = doiResolver;
     }
+
+    public void setCorrectionService(CorrectionService correctionService) {
+        this.correctionService = correctionService;
+    }
+
 
 }
 

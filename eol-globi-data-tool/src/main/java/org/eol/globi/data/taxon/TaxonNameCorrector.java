@@ -17,9 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class TaxonNameNormalizer {
-
-    private static final Log LOG = LogFactory.getLog(TaxonNameNormalizer.class);
+public class TaxonNameCorrector implements CorrectionService {
 
     private List<NameSuggestor> suggestors = null;
 
@@ -62,7 +60,8 @@ public class TaxonNameNormalizer {
         return name;
     }
 
-    public String normalize(String taxonName) {
+    @Override
+    public String correct(String taxonName) {
         if (suggestors == null) {
             suggestors = new ArrayList<NameSuggestor>() {
                 {
