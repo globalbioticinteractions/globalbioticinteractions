@@ -6,11 +6,9 @@ import org.apache.commons.logging.LogFactory;
 import org.eol.globi.export.DarwinCoreExporter;
 import org.eol.globi.export.ExporterAssociationAggregates;
 import org.eol.globi.export.ExporterAssociations;
-import org.eol.globi.export.ExporterAssociationsBase;
 import org.eol.globi.export.ExporterMeasurementOrFact;
 import org.eol.globi.export.ExporterOccurrenceAggregates;
 import org.eol.globi.export.ExporterOccurrences;
-import org.eol.globi.export.ExporterOccurrencesBase;
 import org.eol.globi.export.ExporterReferences;
 import org.eol.globi.export.ExporterTaxa;
 import org.eol.globi.export.GlobiOWLExporter;
@@ -38,7 +36,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.zip.GZIPOutputStream;
 
 public class Normalizer {
@@ -62,15 +62,43 @@ public class Normalizer {
 
     protected void exportData(GraphDatabaseService graphService, String baseDir) throws StudyImporterException {
         List<Study> studies = NodeFactory.findAllStudies(graphService);
-        exportDarwinCoreArchive(studies,
-                new ExporterAssociationAggregates(),
-                new ExporterOccurrenceAggregates(),
-                baseDir + "aggregatedByStudy/");
-        exportDarwinCoreArchive(studies,
-                new ExporterAssociations(),
-                new ExporterOccurrences(),
-                baseDir + "all/");
+        exportUnmatchedTaxa(studies);
+        exportDarwinCoreAggregatedByStudy(baseDir, studies);
+        exportDarwinCoreAll(baseDir, studies);
         exportDataOntology(studies, baseDir);
+    }
+
+    private void exportUnmatchedTaxa(List<Study> studies) throws StudyImporterException {
+        try {
+            export(studies, "unmatchedSourceTaxa.csv", new StudyExportUnmatchedSourceTaxaForStudies());
+            export(studies, "unmatchedTargetTaxa.csv", new StudyExportUnmatchedTargetTaxaForStudies());
+        } catch (IOException e) {
+            throw new StudyImporterException("failed to export unmatched source taxa", e);
+        }
+    }
+
+    private void exportDarwinCoreAggregatedByStudy(String baseDir, List<Study> studies) throws StudyImporterException {
+        exportDarwinCoreArchive(studies,
+                baseDir + "aggregatedByStudy/", new HashMap<String, DarwinCoreExporter>() {
+                    {
+                        put("association.csv", new ExporterAssociationAggregates());
+                        put("occurrence.csv", new ExporterOccurrenceAggregates());
+                        put("references.csv", new ExporterReferences());
+                        put("taxa.csv", new ExporterTaxa());
+                    }
+                });
+    }
+
+    private void exportDarwinCoreAll(String baseDir, List<Study> studies) throws StudyImporterException {
+        exportDarwinCoreArchive(studies, baseDir + "all/", new HashMap<String, DarwinCoreExporter>() {
+            {
+                put("association.csv", new ExporterAssociations());
+                put("occurrence.csv", new ExporterOccurrences());
+                put("references.csv", new ExporterReferences());
+                put("taxa.csv", new ExporterTaxa());
+                put("measurementOrFact.csv", new ExporterMeasurementOrFact());
+            }
+        });
     }
 
     private void exportDataOntology(List<Study> studies, String baseDir) throws StudyImporterException {
@@ -83,17 +111,13 @@ public class Normalizer {
         }
     }
 
-    private void exportDarwinCoreArchive(List<Study> studies, ExporterAssociationsBase associationExporter, ExporterOccurrencesBase occurrenceExporter, String pathPrefix) throws StudyImporterException {
+    private void exportDarwinCoreArchive(List<Study> studies, String pathPrefix, Map<String, DarwinCoreExporter> exporters) throws StudyImporterException {
         try {
             FileUtils.forceMkdir(new File(pathPrefix));
             FileWriter darwinCoreMeta = writeMetaHeader(pathPrefix);
-            export(studies, pathPrefix, "unmatchedSourceTaxa.csv", new StudyExportUnmatchedSourceTaxaForStudies(), darwinCoreMeta);
-            export(studies, pathPrefix, "unmatchedTargetTaxa.csv", new StudyExportUnmatchedTargetTaxaForStudies(), darwinCoreMeta);
-            export(studies, pathPrefix, "association.csv", associationExporter, darwinCoreMeta);
-            export(studies, pathPrefix, "occurrence.csv", occurrenceExporter, darwinCoreMeta);
-            export(studies, pathPrefix, "references.csv", new ExporterReferences(), darwinCoreMeta);
-            export(studies, pathPrefix, "taxa.csv", new ExporterTaxa(), darwinCoreMeta);
-            export(studies, pathPrefix, "measurementOrFact.csv", new ExporterMeasurementOrFact(), darwinCoreMeta);
+            for (Map.Entry<String, DarwinCoreExporter> exporter : exporters.entrySet()) {
+                export(studies, pathPrefix, exporter.getKey(), exporter.getValue(), darwinCoreMeta);
+            }
             writeMetaFooter(darwinCoreMeta);
         } catch (IOException e) {
             throw new StudyImporterException("failed to export result to csv file", e);

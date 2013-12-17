@@ -6,7 +6,6 @@ public abstract class ExporterOccurrencesBase extends ExporterBase {
         return new String[]{
                 EOLDictionary.OCCURRENCE_ID,
                 EOLDictionary.TAXON_ID,
-                EOLDictionary.EVENT_ID,
                 EOLDictionary.INSTITUTION_CODE,
                 EOLDictionary.COLLECTION_CODE,
                 EOLDictionary.CATALOG_NUMBER,

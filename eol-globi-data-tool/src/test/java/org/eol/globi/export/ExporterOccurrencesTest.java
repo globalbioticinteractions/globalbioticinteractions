@@ -36,16 +36,15 @@ public class ExporterOccurrencesTest extends GraphDBTestCase {
     }
 
     private String getExpectedData() {
-        return "\nglobi:occur:3,EOL:327955,myStudy,,,,,JUVENILE,,,,,,,,,,,,1992-03-30T08:00:00Z,,,123.0,345.9,,,-60.0 m,DIGESTATE,BONE" +
-               "\nglobi:occur:6,EOL:328607,myStudy,,,,,,,,,,,,,,,,,1992-03-30T08:00:00Z,,,123.0,345.9,,,-60.0 m,," +
-               "\nglobi:occur:8,EOL:328607,myStudy,,,,,,,,,,,,,,,,,1992-03-30T08:00:00Z,,,123.0,345.9,,,-60.0 m,,";
+        return "\nglobi:occur:3,EOL:327955,,,,,JUVENILE,,,,,,,,,,,,1992-03-30T08:00:00Z,,,123.0,345.9,,,-60.0 m,DIGESTATE,BONE" +
+               "\nglobi:occur:6,EOL:328607,,,,,,,,,,,,,,,,,1992-03-30T08:00:00Z,,,123.0,345.9,,,-60.0 m,," +
+               "\nglobi:occur:8,EOL:328607,,,,,,,,,,,,,,,,,1992-03-30T08:00:00Z,,,123.0,345.9,,,-60.0 m,,";
     }
 
     private String getExpectedHeader() {
-        String header = "\"occurrenceID\",\"taxonID\",\"eventID\",\"institutionCode\",\"collectionCode\",\"catalogNumber\",\"sex\",\"lifeStage\",\"reproductiveCondition\",\"behavior\",\"establishmentMeans\",\"occurrenceRemarks\",\"individualCount\",\"preparations\",\"fieldNotes\",\"samplingProtocol\",\"samplingEffort\",\"identifiedBy\",\"dateIdentified\",\"eventDate\",\"modified\",\"locality\",\"decimalLatitude\",\"decimalLongitude\",\"verbatimLatitude\",\"verbatimLongitude\",\"verbatimElevation\",\"physiologicalState\",\"bodyPart\"" +
+        String header = "\"occurrenceID\",\"taxonID\",\"institutionCode\",\"collectionCode\",\"catalogNumber\",\"sex\",\"lifeStage\",\"reproductiveCondition\",\"behavior\",\"establishmentMeans\",\"occurrenceRemarks\",\"individualCount\",\"preparations\",\"fieldNotes\",\"samplingProtocol\",\"samplingEffort\",\"identifiedBy\",\"dateIdentified\",\"eventDate\",\"modified\",\"locality\",\"decimalLatitude\",\"decimalLongitude\",\"verbatimLatitude\",\"verbatimLongitude\",\"verbatimElevation\",\"physiologicalState\",\"bodyPart\"" +
                 "\n\"http://rs.tdwg.org/dwc/terms/occurrenceID\"," +
                 "\"http://rs.tdwg.org/dwc/terms/taxonID\"," +
-                "\"http://rs.tdwg.org/dwc/terms/eventID\"," +
                 "\"http://rs.tdwg.org/dwc/terms/institutionCode\"," +
                 "\"http://rs.tdwg.org/dwc/terms/collectionCode\"," +
                 "\"http://rs.tdwg.org/dwc/terms/catalogNumber\"," +
@@ -122,7 +121,7 @@ public class ExporterOccurrencesTest extends GraphDBTestCase {
 
         String expected = "";
         expected += getExpectedHeader();
-        expected += "\nglobi:occur:3,EOL:123,myStudy,,,,,,,,,,,,,,,,,,,,,,,,,,";
+        expected += "\nglobi:occur:3,EOL:123,,,,,,,,,,,,,,,,,,,,,,,,,,";
 
         assertThat(row.getBuffer().toString(), equalTo(expected));
     }
