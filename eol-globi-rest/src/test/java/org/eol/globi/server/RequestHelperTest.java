@@ -53,6 +53,10 @@ public class RequestHelperTest {
         paramMap.put("nw_lng", new String[]{"-20"});
         paramMap.put("se_lat", new String[]{"-10"});
         paramMap.put("se_lng", new String[]{"20"});
+        assertLocationQuery(paramMap);
+    }
+
+    private void assertLocationQuery(Map<String, String[]> paramMap) {
         List<LatLng> points = RequestHelper.parseSpatialSearchParams(paramMap);
         assertThat(points.size(), Is.is(2));
         assertThat(points.get(0).getLat(), Is.is(10d));
@@ -70,8 +74,74 @@ public class RequestHelperTest {
 
     @Test
     public void buildCypherSpatialQueryClause() {
+        /**
+         * from http://www.opensearch.org/Specifications/OpenSearch/Extensions/Geo/1.0/Draft_2
+         * and https://github.com/jhpoelen/eol-globi-data/issues/10
+         *           N <---
+         *                  |
+         *
+         *    W             E
+         *
+         *    |             ^
+         *    |             |
+         *      ---> S -----
+         *
+         * assuming that four points make a rectangle
+         */
+        Map<String, String[]> paramMap = new HashMap<String, String[]>() {
+            {
+                put("bbox", new String[]{"-20,-10,20,10"});
+            }
+        };
+        assertLocationQuery(paramMap);
+    }
 
+    @Test
+    public void buildCypherSpatialQueryClausePoint() {
+        /**
+         * from http://www.opensearch.org/Specifications/OpenSearch/Extensions/Geo/1.0/Draft_2
+         */
+        Map<String, String[]> paramMap = new HashMap<String, String[]>() {
+            {
+                put("g", new String[]{"POINT(10.0 12.4)"});
+            }
+        };
+        List<LatLng> points = RequestHelper.parseSpatialSearchParams(paramMap);
+        assertThat(points.size(), Is.is(1));
+        assertThat(points.get(0).getLat(), Is.is(10.0));
+        assertThat(points.get(0).getLng(), Is.is(12.4d));
 
+        String clause = RequestHelper.buildCypherSpatialWhereClause(points);
+        assertThat(clause.trim(),
+                Is.is("WHERE loc is not null AND loc.latitude = 10.0" +
+                        " AND loc.longitude = 12.4"));
+    }
+
+    @Test(expected = NumberFormatException.class)
+    public void buildInvalidPointGeometry() {
+        RequestHelper.parseSpatialSearchParams(new HashMap<String, String[]>() {
+            {
+                put("g", new String[]{"POINT(bla blah)"});
+            }
+        });
+    }
+
+    @Test
+    public void invalidBoundingBoxParams() {
+        RequestHelper.parseSpatialSearchParams(new HashMap<String, String[]>() {
+            {
+                put("bbox", new String[]{"this ain't no bounding box"});
+            }
+        });
+    }
+
+    @Test(expected = NumberFormatException.class)
+    public void invalidBadCoordinatesBoundingBoxParams() {
+        RequestHelper.parseSpatialSearchParams(new HashMap<String, String[]>() {
+            {
+                put("bbox", new String[]{"a,b,c,d"});
+            }
+        });
     }
 
 }

@@ -1,6 +1,7 @@
 package org.eol.globi.server;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import uk.me.jstott.jcoord.LatLng;
 
 import java.util.ArrayList;
@@ -24,14 +25,70 @@ public class RequestHelper {
             add("lng");
         }
     };
+    public static final String BOUNDING_BOX_PARAMETER_NAME = "bbox";
+    public static final String GEOMETRY_PARAMETER = "g";
 
     public static List<LatLng> parseSpatialSearchParams(Map<String, String[]> parameterMap) {
         ArrayList<LatLng> latLngs = new ArrayList<LatLng>();
-        addPoints(parameterMap, latLngs, POINT_PARAM);
-        if (latLngs.size() == 0) {
+
+        addBoundingBox(parameterMap, latLngs);
+        if (hasNoSpatialParams(latLngs)) {
+            addPointGeometry(parameterMap, latLngs);
+        }
+
+        if (hasNoSpatialParams(latLngs)) {
+            addPoints(parameterMap, latLngs, POINT_PARAM);
+        }
+
+        if (hasNoSpatialParams(latLngs)) {
             addPoints(parameterMap, latLngs, SQUARE_PARAMS);
         }
         return latLngs;
+    }
+
+    private static void addPointGeometry(Map<String, String[]> parameterMap, ArrayList<LatLng> latLngs) {
+        if (parameterMap.containsKey(GEOMETRY_PARAMETER)) {
+            String[] geometries = parameterMap.get(GEOMETRY_PARAMETER);
+            if (geometries.length > 0) {
+                String geometry = geometries[0];
+                if (geometry.startsWith("POINT")) {
+                    geometry = geometry.replace("POINT", "");
+                    geometry = geometry.replace("(", "");
+                    geometry = geometry.replace(")", "");
+                    String[] split = StringUtils.split(geometry);
+                    if (split.length == 2) {
+                        try {
+                            latLngs.add(new LatLng(Double.parseDouble(split[0]), Double.parseDouble(split[1])));
+                        } catch (NumberFormatException ex) {
+                            throw new NumberFormatException("malformed geometry parameter found, expected something like [...&g=POINT(12.2 23.2)...], but got [...&g=" + geometry + "...]");
+                        }
+                    }
+
+                }
+            }
+        }
+    }
+
+    private static boolean hasNoSpatialParams(ArrayList<LatLng> latLngs) {
+        return latLngs.size() == 0;
+    }
+
+    private static void addBoundingBox(Map<String, String[]> parameterMap, ArrayList<LatLng> latLngs) {
+        if (parameterMap.containsKey(BOUNDING_BOX_PARAMETER_NAME)) {
+            String[] bboxes = parameterMap.get(BOUNDING_BOX_PARAMETER_NAME);
+            if (bboxes.length > 0) {
+                String points = bboxes[0];
+                String[] split = StringUtils.split(points, ",");
+                if (split.length == 4) {
+                    try {
+                        latLngs.add(new LatLng(Double.parseDouble(split[3]), Double.parseDouble(split[0])));
+                        latLngs.add(new LatLng(Double.parseDouble(split[1]), Double.parseDouble(split[2])));
+                    } catch (NumberFormatException ex) {
+                        throw new NumberFormatException("failed to parse bbox query: [" + points + "]");
+                    }
+                }
+            }
+        }
     }
 
     private static void addPoints(Map<String, String[]> parameterMap, ArrayList<LatLng> latLngs, List<String> pointParam) {

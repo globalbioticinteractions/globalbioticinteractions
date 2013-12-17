@@ -47,14 +47,14 @@ public class DOIResolverImpl implements DOIResolver {
         String citation = null;
         if (StringUtils.isNotBlank(doi)) {
             try {
-            HttpGet request = new HttpGet(doi);
-            request.setHeader("Accept", "text/x-bibliography; style=cse");
-            citation = new DefaultHttpClient().execute(request, new BasicResponseHandler());
-            if (StringUtils.isNotBlank(citation)) {
-                citation = citation.replaceFirst("^1\\. ", "");
-            }
+                HttpGet request = new HttpGet(doi);
+                request.setHeader("Accept", "text/x-bibliography; style=cse");
+                citation = new DefaultHttpClient().execute(request, new BasicResponseHandler());
+                if (StringUtils.isNotBlank(citation)) {
+                    citation = citation.replaceFirst("^1\\. ", "");
+                }
             } catch (IllegalArgumentException ex) {
-                LOG.warn("potientially malformed doi found [" + doi + "]", ex);
+                LOG.warn("potentially malformed doi found [" + doi + "]", ex);
             }
         }
         return citation;

@@ -12,7 +12,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class StudyImporterForCook extends BaseStudyImporter {
+public class 'StudyImporterForCook extends BaseStudyImporter {
     private static final String DATASET_RESOURCE_NAME = "cook/cook_atlantic_croaker_data.csv";
 
     public StudyImporterForCook(ParserFactory parserFactory, NodeFactory nodeFactory) {

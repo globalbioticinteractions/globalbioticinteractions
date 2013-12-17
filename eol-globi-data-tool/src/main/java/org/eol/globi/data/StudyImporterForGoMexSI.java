@@ -149,7 +149,9 @@ public class StudyImporterForGoMexSI extends BaseStudyImporter {
         Transaction transaction = nodeFactory.getGraphDb().beginTx();
         try {
             study.setPublicationYear(publicationYear);
-            study.setExternalId(TaxonomyProvider.ID_PREFIX_GAME + externalId);
+            if (StringUtils.isNotBlank(externalId)) {
+                study.setExternalId(TaxonomyProvider.ID_PREFIX_GAME + externalId);
+            }
             transaction.success();
         } finally {
             transaction.finish();
