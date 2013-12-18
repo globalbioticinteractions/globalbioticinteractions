@@ -62,7 +62,6 @@ public class NodeFactory {
     private TermLookupService envoLookupService;
     private CorrectionService correctionService;
 
-
     private DOIResolver doiResolver;
 
     public NodeFactory(GraphDatabaseService graphDb, TaxonPropertyEnricher taxonEnricher) {
@@ -268,7 +267,8 @@ public class NodeFactory {
             study.setDescription(description);
             study.setPublicationYear(publicationYear);
             if (doiResolver != null) {
-                String reference = (contributor == null ? "" : (contributor + " ")) + description;
+                String prefix = StringUtils.isBlank(contributor) ? "" : (contributor + " ");
+                String reference = StringUtils.isBlank(description) ? "" : (prefix + description);
                 try {
                     String doi = doiResolver.findDOIForReference(reference);
                     if (doi != null) {

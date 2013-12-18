@@ -51,8 +51,7 @@ public class StudyImporterForBlewettTest extends GraphDBTestCase {
 
         assertNotNull(nodeFactory.findTaxonOfType("Centropomus undecimalis"));
         Taxon taxonOfType = nodeFactory.findTaxonOfType("Cal sapidus");
-        assertThat(taxonOfType.getName(), is("Callinectes sapidus"));
-        assertNotNull(nodeFactory.findTaxonOfType("Callinectes sapidus"));
+        assertThat(taxonOfType.getName(), is("Cal sapidus"));
         assertNotNull(nodeFactory.findTaxonOfType("Ort chrysoptera"));
     }
 
@@ -119,7 +118,7 @@ public class StudyImporterForBlewettTest extends GraphDBTestCase {
         Node taxonNode = preyNode.getRelationships(RelTypes.CLASSIFIED_AS, Direction.OUTGOING).iterator().next().getEndNode();
         assertThat(taxonNode, is(not(nullValue())));
 
-        assertThat((String) taxonNode.getProperty(Taxon.NAME), is("Lagodon rhomboides"));
+        assertThat((String) taxonNode.getProperty(Taxon.NAME), is("Lag rhomboides"));
 
         collectedRel = collectedRels.iterator().next();
         predatorNode = collectedRel.getEndNode();

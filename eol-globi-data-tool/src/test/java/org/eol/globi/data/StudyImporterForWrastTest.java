@@ -163,9 +163,6 @@ public class StudyImporterForWrastTest extends GraphDBTestCase {
     public void testImportFullFile() throws StudyImporterException, NodeFactoryException {
         StudyImporterForWrast importer = new StudyImporterForWrast(new ParserFactoryImpl(), nodeFactory);
         importer.importStudy();
-        Taxon taxon = nodeFactory.getOrCreateTaxon("Pleocyemata spp.");
-        assertThat("Pleocyemata", is(taxon.getName()));
-        assertThat("Aegathoa oculata", is(nodeFactory.getOrCreateTaxon("Aegathoa oculata ").getName()));
     }
 
     @Test

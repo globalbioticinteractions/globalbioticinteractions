@@ -1,5 +1,6 @@
 package org.eol.globi.data;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.data.taxon.CorrectionService;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.service.DOIResolver;
@@ -42,12 +43,12 @@ public abstract class GraphDBTestCase {
         nodeFactory.setDoiResolver(new DOIResolver() {
             @Override
             public String findDOIForReference(String reference) throws IOException {
-                return "doi:" + reference;
+                return StringUtils.isBlank(reference) ? null : "doi:" + reference;
             }
 
             @Override
             public String findCitationForDOI(String doi) throws IOException {
-                return "citation:" + doi;
+                return StringUtils.isBlank(doi) ? null : "citation:" + doi;
             }
         });
 

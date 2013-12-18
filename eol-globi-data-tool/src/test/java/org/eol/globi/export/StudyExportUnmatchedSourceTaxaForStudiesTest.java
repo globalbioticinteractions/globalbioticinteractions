@@ -29,19 +29,19 @@ public class StudyExportUnmatchedSourceTaxaForStudiesTest extends GraphDBTestCas
         predatorSpecimen.createRelationshipTo(preySpecimen, InteractType.ATE);
         study.collected(predatorSpecimen);
 
-        Specimen predatorSpecimen23 = nodeFactory.createSpecimen("Homo sapiens2 (bla)", PropertyAndValueDictionary.NO_MATCH);
+        Specimen predatorSpecimen23 = nodeFactory.createSpecimen("Homo sapiens2", PropertyAndValueDictionary.NO_MATCH);
         addCanisLupus(predatorSpecimen23, "canisLupusId");
         study.collected(predatorSpecimen23);
-        Specimen predatorSpecimen22 = nodeFactory.createSpecimen("Homo sapiens2 (bla)");
+        Specimen predatorSpecimen22 = nodeFactory.createSpecimen("Homo sapiens2");
         addCanisLupus(predatorSpecimen22, "canisLupusId");
         study.collected(predatorSpecimen22);
 
         Study study2 = nodeFactory.createStudy("my study2");
-        Specimen predatorSpecimen21 = nodeFactory.createSpecimen("Homo sapiens2 (bla)");
+        Specimen predatorSpecimen21 = nodeFactory.createSpecimen("Homo sapiens2");
         addCanisLupus(predatorSpecimen21, "canisLupusId");
         study2.collected(predatorSpecimen21);
 
-        Specimen predatorSpecimen2 = nodeFactory.createSpecimen("Homo sapiens3 (blah)", PropertyAndValueDictionary.NO_MATCH);
+        Specimen predatorSpecimen2 = nodeFactory.createSpecimen("Homo sapiens3", PropertyAndValueDictionary.NO_MATCH);
         addCanisLupus(predatorSpecimen2, "canisLupusId");
         study.collected(predatorSpecimen2);
 

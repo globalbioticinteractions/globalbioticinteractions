@@ -4,6 +4,7 @@ import junit.framework.Assert;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.TermQuery;
+import org.eol.globi.data.taxon.CorrectionService;
 import org.eol.globi.domain.Environment;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
@@ -176,22 +177,6 @@ public class NodeFactoryTest extends GraphDBTestCase {
     }
 
     @Test
-    public void createSpeciesTwice() throws NodeFactoryException {
-        assertFamilyCorrectness("Alpheidae", "Alpheidae");
-    }
-
-
-    @Test
-    public void createSpeciesParenthesis() throws NodeFactoryException {
-        assertFamilyCorrectness("Alpheidae", "Alphaeidae (lar)");
-    }
-
-    @Test
-    public void createSpeciesCrypticDescription() throws NodeFactoryException {
-        assertFamilyCorrectness("Corophiidae", "Corophiidae Genus A");
-    }
-
-    @Test
     public void findCloseMatchForTaxonPath() throws NodeFactoryException {
         Taxon homoSapiens = nodeFactory.getOrCreateTaxon("Homo sapiens", null, "Animalia Mammalia");
         Transaction transaction = homoSapiens.getUnderlyingNode().getGraphDatabase().beginTx();
@@ -266,61 +251,39 @@ public class NodeFactoryTest extends GraphDBTestCase {
 
     }
 
-    private void assertFamilyCorrectness(String expectedOutputName, String inputName) throws NodeFactoryException {
-        nodeFactory.getOrCreateTaxon(inputName);
-        Taxon taxon = nodeFactory.getOrCreateTaxon(inputName);
-        assertEquals(expectedOutputName, taxon.getName());
-    }
-
     @Test
-    public void createGenus() throws NodeFactoryException {
-        assertGenus("bla sp.");
-        assertGenus("bla spp.");
-        assertGenus("bla spp. (bla bla)");
-    }
+    public void ensureCorrectedIndexing() throws NodeFactoryException {
+        nodeFactory.setCorrectionService(new CorrectionService() {
+            @Override
+            public String correct(String taxonName) {
+                String corrected = taxonName;
+                if (!taxonName.endsWith("corrected")) {
+                    corrected = taxonName + " corrected";
+                }
+                return corrected;
+            }
+        });
+        Taxon taxon = nodeFactory.getOrCreateTaxon("bla");
+        assertEquals("bla corrected", taxon.getName());
 
-    @Test
-    public void createFamily() throws NodeFactoryException {
-        assertFamily("Blabae sp.");
-        assertFamily("Blabae spp.");
-        assertFamily("Blabae spp. (bla bla)");
-    }
+        Taxon bla = nodeFactory.findTaxonOfType("bla");
+        assertThat(bla.getName(), is("bla corrected"));
 
-    @Test
-    public void indexCleanTaxonNamesOnly() throws NodeFactoryException {
-        assertNotDirtyName("trailing spaces  ", "trailing spaces");
-        assertNotDirtyName("paren(thesis)", "paren");
-        assertNotDirtyName("stars--*", "stars--");
+        Taxon taxonMatch = nodeFactory.findTaxonOfType("bla corrected");
+        assertThat(taxonMatch.getName(), is("bla corrected"));
     }
-
 
     @Test
     public void describeAndClassifySpecimenImplicit() throws NodeFactoryException {
-        Specimen specimen = nodeFactory.createSpecimen("some taxon (bla)");
-        assertThat(specimen.getOriginalTaxonDescription(), is("some taxon (bla)"));
-        assertThat("original taxon descriptions are not indexed", nodeFactory.findTaxon("some taxon (bla)").getName(), is(not("some taxon (bla)")));
-    }
-
-    private void assertNotDirtyName(String dirtyName, String cleanName) throws NodeFactoryException {
-        Taxon taxonOfType = nodeFactory.getOrCreateTaxon(dirtyName);
-        String actualName = taxonOfType.getName();
-        assertThat(actualName, is(not(dirtyName)));
-        Taxon taxonOfType1 = nodeFactory.findTaxonOfType(cleanName);
-        assertNotNull("should be able to lookup clean versions in index, " +
-                "expected to find [" + cleanName + "] for \"dirty nane\" [" + dirtyName + "]", taxonOfType1);
-    }
-
-
-    private void assertGenus(String speciesName) throws NodeFactoryException {
-        Taxon taxon = nodeFactory.getOrCreateTaxon(speciesName);
-        Taxon genus = taxon;
-        assertEquals("bla", genus.getName());
-        assertNull(genus.isA());
-    }
-
-    private void assertFamily(String speciesName) throws NodeFactoryException {
-        Taxon family = nodeFactory.getOrCreateTaxon(speciesName);
-        assertEquals("Blabae", family.getName());
+        nodeFactory.setCorrectionService(new CorrectionService() {
+            @Override
+            public String correct(String taxonName) {
+                return taxonName + " corrected";
+            }
+        });
+        Specimen specimen = nodeFactory.createSpecimen("mickey");
+        assertThat(specimen.getOriginalTaxonDescription(), is("mickey"));
+        assertThat("original taxon descriptions are not indexed", nodeFactory.findTaxon("mickey").getName(), is(not("mickey")));
     }
 
 }

@@ -102,24 +102,24 @@ public class StudyImporterForAkinTest extends GraphDBTestCase {
         assertThat(sand, is(notNullValue()));
         assertThat((String) sand.get("name"), is("Sand"));
         assertThat((Double) sand.get(Specimen.VOLUME_IN_ML), is(0.15d));
-        Map<String, Object> chironomidae = preys.get("Chironomidae");
+        Map<String, Object> chironomidae = preys.get("Chironomidae larvae");
         assertThat(chironomidae, is(notNullValue()));
-        assertThat((String) chironomidae.get("name"), is("Chironomidae"));
+        assertThat((String) chironomidae.get("name"), is("Chironomidae larvae"));
         assertThat((Double) chironomidae.get(Specimen.VOLUME_IN_ML), is(0.6d));
 
-        Map<String, Object> amphipoda = preys.get("Amphipoda");
+        Map<String, Object> amphipoda = preys.get("Amphipoda(Gammarus spp.)");
         assertThat(amphipoda, is(notNullValue()));
-        assertThat((String) amphipoda.get("name"), is("Amphipoda"));
+        assertThat((String) amphipoda.get("name"), is("Amphipoda(Gammarus spp.)"));
         assertThat((Double) amphipoda.get(Specimen.VOLUME_IN_ML), is(0.45d));
 
-        Map<String, Object> insecta = preys.get("Insecta");
+        Map<String, Object> insecta = preys.get("Unidentified insects");
         assertThat(insecta, is(notNullValue()));
-        assertThat((String) insecta.get("name"), is("Insecta"));
+        assertThat((String) insecta.get("name"), is("Unidentified insects"));
         assertThat((Double) insecta.get(Specimen.VOLUME_IN_ML), is(1.35d));
 
-        Map<String, Object> mollusca = preys.get("Mollusca");
+        Map<String, Object> mollusca = preys.get("Mollusks (Oyster)");
         assertThat(mollusca, is(notNullValue()));
-        assertThat((String) mollusca.get("name"), is("Mollusca"));
+        assertThat((String) mollusca.get("name"), is("Mollusks (Oyster)"));
         assertThat((Double) mollusca.get(Specimen.VOLUME_IN_ML), is(0.45d));
 
         Node locationNode = specimenNode.getSingleRelationship(RelTypes.COLLECTED_AT, Direction.OUTGOING).getEndNode();

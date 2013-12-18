@@ -43,7 +43,6 @@ public class StudyImporterForJRFerrerParisTest extends GraphDBTestCase {
 
         Study study = studyImporterFor.importStudy();
         assertNotNull(nodeFactory.findTaxonOfType("Hesperocharis anguitia"));
-        assertNotNull(nodeFactory.findTaxonOfType("?Loranthus? spp.?"));
 
         Iterable<Relationship> collectedRels = study.getSpecimens();
         int totalRels = 0;
