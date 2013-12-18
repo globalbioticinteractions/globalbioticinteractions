@@ -76,14 +76,7 @@ public class StudyImporterForWrastTest extends GraphDBTestCase {
 
 
         assertNotNull(nodeFactory.findTaxonOfType("Sciaenops ocellatus"));
-        assertNotNull(nodeFactory.findTaxonOfType("Ariopsis felis"));
-
-        Taxon acrididaeSpp = nodeFactory.findTaxonOfType("Acrididae spp. ");
-        assertNotNull(acrididaeSpp);
-        assertThat("Acrididae", is(acrididaeSpp.getName()));
-        Taxon acrididae = nodeFactory.findTaxonOfType("Acrididae");
-        assertNotNull(acrididae);
-        assertEquals(acrididae.getNodeID(), acrididaeSpp.getNodeID());
+        assertNotNull(nodeFactory.findTaxonOfType("Arius felis"));
 
         assertNotNull(nodeFactory.findTaxonOfType("Aegathoa oculata"));
 
@@ -116,7 +109,8 @@ public class StudyImporterForWrastTest extends GraphDBTestCase {
                     for (Relationship containsRel : stomachContents) {
                         Node endNode = containsRel.getEndNode().getSingleRelationship(RelTypes.CLASSIFIED_AS, Direction.OUTGOING).getEndNode();
                         Object name = endNode.getProperty("name");
-                        assertEquals("Acrididae", name);
+                        String name1 = (String) name;
+                        assertThat(name1.replaceAll("\\W", ""), is("Acrididae"));
                         count++;
                     }
                     assertEquals(1, count);
@@ -125,7 +119,7 @@ public class StudyImporterForWrastTest extends GraphDBTestCase {
                     assertEquals(420.0d, specimen.getLengthInMm());
 
 
-                } else if ("Ariopsis felis".equals(scientificName)) {
+                } else if ("Arius felis".equals(scientificName)) {
                     Location location = specimen.getSampleLocation();
                     assertThat(location, is(not(nullValue())));
                     assertThat(location.getLatitude(), is((28.608417 + 28.607217)/2.0));

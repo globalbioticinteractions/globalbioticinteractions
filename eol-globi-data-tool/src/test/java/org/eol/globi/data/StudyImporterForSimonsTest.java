@@ -18,6 +18,8 @@ import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
+import static org.junit.internal.matchers.StringContains.containsString;
+import static org.junit.matchers.JUnitMatchers.hasItem;
 
 public class StudyImporterForSimonsTest extends GraphDBTestCase {
 
@@ -40,7 +42,7 @@ public class StudyImporterForSimonsTest extends GraphDBTestCase {
     public void createAndPopulateStudy() throws StudyImporterException, NodeFactoryException {
         String csvString
                 = "\"Obs\",\"spcode\", \"sizecl\", \"cruise\", \"stcode\", \"numstom\", \"numfood\", \"pctfull\", \"predator famcode\", \"prey\", \"number\", \"season\", \"depth\", \"transect\", \"alphcode\", \"taxord\", \"station\", \"long\", \"lat\", \"time\", \"sizeclass\", \"predator\"\n";
-        csvString += "1, 1, 16, 3, 2, 6, 6, 205.5, 1, \"Ampelisca sp. (abdita complex)  \", 1, \"Summer\", 60, \"Chandeleur Islands\", \"aabd\", 47.11, \"C2\", 348078.84, 3257617.25, 313, \"201-300\", \"Rhynchoconger flavus\"\n";
+        csvString += "1, 1, 16, 3, 2, 6, 6, 205.5, 1, \"Ampelisca sp. (abdita complex)\", 1, \"Summer\", 60, \"Chandeleur Islands\", \"aabd\", 47.11, \"C2\", 348078.84, 3257617.25, 313, \"201-300\", \"Rhynchoconger flavus\"\n";
         csvString += "1, 1, 16, 3, 2, 6, 6, 205.5, 1, \"Ampelisca agassizi\", 1, \"Summer\", 60, \"Chandeleur Islands\", \"aabd\", 47.11, \"C2\", 348078.84, 3257617.25, 313, \"201-300\", \"Rhynchoconger flavus\"\n";
         csvString += "2, 11, 2, 1, 1, 20, 15, 592.5, 6, \"Ampelisca sp. (abdita complex)\", 1, \"Summer\", 20, \"Chandeleur Islands\", \"aabd\", 47.11, \"C1\", 344445.31, 3323087.25, 144, \"26-50\", \"Halieutichthys aculeatus\"\n";
 
@@ -51,7 +53,7 @@ public class StudyImporterForSimonsTest extends GraphDBTestCase {
 
         assertNotNull(nodeFactory.findTaxonOfType("Rhynchoconger flavus"));
         assertNotNull(nodeFactory.findTaxonOfType("Halieutichthys aculeatus"));
-        assertNotNull(nodeFactory.findTaxonOfType("Ampelisca"));
+        assertNotNull(nodeFactory.findTaxonOfType("Ampelisca sp. (abdita complex)"));
 
         assertNotNull(nodeFactory.findStudy("Simons 1997"));
 
@@ -68,7 +70,7 @@ public class StudyImporterForSimonsTest extends GraphDBTestCase {
             String scientificName = (String) speciesNode.getProperty("name");
             if ("Rhynchoconger flavus".equals(scientificName)) {
                 String seasonName = "summer";
-                String genusName = "Ampelisca";
+                String genusName = "Ampelisca sp. (abdita complex)";
 
                 double length = (201.0d + 300.0d) / 2.0d;
                 assertSpecimen(specimen, LONG_1, LAT_1, -60.0, seasonName, genusName, length);
@@ -79,11 +81,11 @@ public class StudyImporterForSimonsTest extends GraphDBTestCase {
                     Node preyTaxonNode = ateRel.getEndNode().getRelationships(Direction.OUTGOING, RelTypes.CLASSIFIED_AS).iterator().next().getEndNode();
                     preyNames.add(preyTaxonNode.getProperty(Taxon.NAME).toString());
                 }
-                assertThat(preyNames.contains("Ampelisca"), Is.is(true));
+                assertThat(preyNames, hasItem("Ampelisca sp. (abdita complex)"));
                 assertThat(preyNames.contains("Ampelisca agassizi"), Is.is(true));
                 assertThat(preyNames.size(), Is.is(2));
             } else if ("Halieutichthys aculeatus".equals(scientificName)) {
-                String genusName = "Ampelisca";
+                String genusName = "Ampelisca sp. (abdita complex)";
                 String seasonName = "summer";
                 double length = (26.0d + 50.0d) / 2.0d;
                 assertSpecimen(specimen, LONG_2, LAT_2, -20.0, seasonName, genusName, length);
@@ -103,7 +105,7 @@ public class StudyImporterForSimonsTest extends GraphDBTestCase {
 
         Relationship stomachContents = firstSpecimen.getRelationships(InteractType.ATE, Direction.OUTGOING).iterator().next();
         Node taxonNode = stomachContents.getEndNode().getSingleRelationship(RelTypes.CLASSIFIED_AS, Direction.OUTGOING).getEndNode();
-        assertEquals(genusName, taxonNode.getProperty("name"));
+        assertThat((String)taxonNode.getProperty("name"), is(genusName));
 
         Node endNode = firstSpecimen.getSingleRelationship(RelTypes.CAUGHT_DURING, Direction.OUTGOING).getEndNode();
         String season = (String) endNode.getProperty("title");
