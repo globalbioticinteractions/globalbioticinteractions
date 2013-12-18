@@ -33,8 +33,8 @@ public class StudyImporterForHechingerTest extends GraphDBTestCase{
         System.out.println(query);
         ExecutionResult result = engine.execute(query);
 
-        assertThat(result.dumpToString(), containsString("Anas acuta"));
-        assertThat(result.dumpToString(), containsString("Aythya affinis"));
+        assertThat(result.dumpToString(), containsString("Lesser Scaup"));
+        assertThat(result.dumpToString(), containsString("Northern Pintail"));
         assertThat(result.dumpToString(), containsString("30.378207 | -115.938835 |"));
 
         assertThat(count, is(13966));

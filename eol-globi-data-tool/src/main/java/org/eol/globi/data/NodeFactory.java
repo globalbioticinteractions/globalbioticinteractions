@@ -132,7 +132,7 @@ public class NodeFactory {
 
     public Taxon findTaxonOfType(String taxonName) throws NodeFactoryException {
         String cleanedTaxonName = correctionService.correct(taxonName);
-        String query = "name:\"" + cleanedTaxonName + "\"";
+        String query = "name:\"" + cleanedTaxonName.replace("\"", "") + "\"";
         IndexHits<Node> matchingTaxa = taxons.query(query);
         Node matchingTaxon;
         Taxon firstMatchingTaxon = null;
