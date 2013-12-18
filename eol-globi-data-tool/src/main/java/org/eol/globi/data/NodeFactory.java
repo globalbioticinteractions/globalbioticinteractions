@@ -4,6 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.index.Term;
+import org.apache.lucene.queryParser.QueryParser;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.FuzzyQuery;
@@ -132,7 +133,7 @@ public class NodeFactory {
 
     public Taxon findTaxonOfType(String taxonName) throws NodeFactoryException {
         String cleanedTaxonName = correctionService.correct(taxonName);
-        String query = "name:\"" + cleanedTaxonName.replace("\"", "") + "\"";
+        String query = "name:\"" + QueryParser.escape(cleanedTaxonName) + "\"";
         IndexHits<Node> matchingTaxa = taxons.query(query);
         Node matchingTaxon;
         Taxon firstMatchingTaxon = null;
