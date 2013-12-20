@@ -3,6 +3,7 @@ package org.eol.globi.service;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
@@ -12,6 +13,8 @@ import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 
 public class DOIResolverImpl implements DOIResolver {
@@ -47,7 +50,8 @@ public class DOIResolverImpl implements DOIResolver {
         String citation = null;
         if (StringUtils.isNotBlank(doi)) {
             try {
-                HttpGet request = new HttpGet(doi);
+                URI uri = new URI("http", doi.replace("http:", ""), null);
+                HttpGet request = new HttpGet(uri);
                 request.setHeader("Accept", "text/x-bibliography; style=cse");
                 citation = new DefaultHttpClient().execute(request, new BasicResponseHandler());
                 if (StringUtils.isNotBlank(citation)) {
@@ -55,6 +59,10 @@ public class DOIResolverImpl implements DOIResolver {
                 }
             } catch (IllegalArgumentException ex) {
                 LOG.warn("potentially malformed doi found [" + doi + "]", ex);
+            } catch (URISyntaxException e) {
+                LOG.warn("potentially malformed doi found [" + doi + "]", e);
+            } catch (ClientProtocolException e) {
+                LOG.warn("potentially malformed doi found [" + doi + "]", e);
             }
         }
         return citation;

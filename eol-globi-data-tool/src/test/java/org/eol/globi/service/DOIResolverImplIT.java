@@ -29,6 +29,12 @@ public class DOIResolverImplIT {
     }
 
     @Test
+    public void findCitationForDOIEscaped() throws IOException {
+        String citationForDOI = new DOIResolverImpl().findCitationForDOI("http://dx.doi.org/10.1577/1548-8659(1973)102<511:fhojmf>2.0.co;2");
+        assertThat(citationForDOI, is("Carr WES, Adams CA. Food Habits of Juvenile Marine Fishes Occupying Seagrass Beds in the Estuarine Zone near Crystal River, Florida. Transactions of the American Fisheries Society [Internet]. 1973 July;102(3):511-540. Available from: http://dx.doi.org/10.1577/1548-8659(1973)102<511:FHOJMF>2.0.CO;2"));
+    }
+
+    @Test
     public void findCitationForDOI2() throws IOException {
         String citationForDOI = new DOIResolverImpl().findCitationForDOI("http://dx.doi.org/10.1371/journal.pone.0052967");
         assertThat(citationForDOI, is("García-Robledo C, Erickson DL, Staines CL, Erwin TL, Kress WJ. Tropical Plant–Herbivore Networks: Reconstructing Species Interactions Using DNA Barcodes Heil M, editor. PLoS ONE [Internet]. 2013 January 8;8(1):e52967. Available from: http://dx.doi.org/10.1371/journal.pone.0052967"));
