@@ -19,6 +19,8 @@ import java.util.List;
 import java.util.Map;
 
 public class StudyImporterForGoMexSI extends BaseStudyImporter {
+    private static final Log LOG = LogFactory.getLog(StudyImporterForGoMexSI.class);
+
     public static final String GOMEXSI_URL = "http://gomexsi.tamucc.edu";
     public static final String STOMACH_COUNT_TOTAL = "stomachCountTotal";
     public static final String STOMACH_COUNT_WITH_FOOD = "stomachCountWithFood";
@@ -182,7 +184,7 @@ public class StudyImporterForGoMexSI extends BaseStudyImporter {
                     try {
                         nodeFactory.getOrCreateEnvironments(location, cmecsId, cmecsLabel);
                     } catch (NodeFactoryException e) {
-                        throw new StudyImporterException("failed to normalized enviroment [" + cmecsId + "]");
+                        LOG.warn("failed to normalize environment [" + cmecsId + "]", e);
                     }
                 }
 

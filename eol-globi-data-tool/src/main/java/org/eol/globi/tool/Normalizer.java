@@ -62,16 +62,17 @@ public class Normalizer {
 
     protected void exportData(GraphDatabaseService graphService, String baseDir) throws StudyImporterException {
         List<Study> studies = NodeFactory.findAllStudies(graphService);
-        exportUnmatchedTaxa(studies);
+        exportUnmatchedTaxa(studies, baseDir);
         exportDarwinCoreAggregatedByStudy(baseDir, studies);
         exportDarwinCoreAll(baseDir, studies);
         exportDataOntology(studies, baseDir);
     }
 
-    private void exportUnmatchedTaxa(List<Study> studies) throws StudyImporterException {
+    private void exportUnmatchedTaxa(List<Study> studies, String baseDir) throws StudyImporterException {
         try {
-            export(studies, "unmatchedSourceTaxa.csv", new StudyExportUnmatchedSourceTaxaForStudies());
-            export(studies, "unmatchedTargetTaxa.csv", new StudyExportUnmatchedTargetTaxaForStudies());
+            FileUtils.forceMkdir(new File(baseDir));
+            export(studies, baseDir + "unmatchedSourceTaxa.csv", new StudyExportUnmatchedSourceTaxaForStudies());
+            export(studies, baseDir + "unmatchedTargetTaxa.csv", new StudyExportUnmatchedTargetTaxaForStudies());
         } catch (IOException e) {
             throw new StudyImporterException("failed to export unmatched source taxa", e);
         }
