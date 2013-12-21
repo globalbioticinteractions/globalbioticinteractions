@@ -37,7 +37,7 @@ public class EOLServiceIT {
 
         assertThat(lookupPageIdByScientificName("Dead roots"), is(nullValue()));
         assertThat(lookupPageIdByScientificName("Prunella (Bot)"), is("EOL:70879"));
-        assertThat(lookupPageIdByScientificName("Prunella (Bird)"), is("EOL:77930"));
+        //assertThat(lookupPageIdByScientificName("Prunella (Bird)"), is("EOL:77930"));
         assertThat(lookupPageIdByScientificName("Pseudobaeospora dichroa"), is("EOL:1001400"));
 
     }
@@ -145,11 +145,11 @@ public class EOLServiceIT {
     }
 
     @Test
-    public void lookupNoneEOLExternalId2() throws TaxonPropertyLookupServiceException {
+    public void lookupEOLExternalId2() throws TaxonPropertyLookupServiceException {
         HashMap<String, String> properties = new HashMap<String, String>();
         properties.put(Taxon.EXTERNAL_ID, "foo:bar");
         new EOLService().lookupPropertiesByName("Prunella vulgaris", properties);
-        assertThat(properties.get(Taxon.EXTERNAL_ID), is("foo:bar"));
+        assertThat(properties.get(Taxon.EXTERNAL_ID), is("EOL:579652"));
 
     }
 
