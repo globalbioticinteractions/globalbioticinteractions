@@ -272,8 +272,8 @@ public class EOLServiceIT {
             put(Taxon.EXTERNAL_ID, "bla bla3");
         }};
         new EOLService().lookupPropertiesByName("Todarodes pacificus", properties);
-        assertThat(properties.get(Taxon.EXTERNAL_ID), Is.is("EOL:327955"));
-        assertThat(properties.get(Taxon.COMMON_NAMES), containsString("Human"));
+        assertThat(properties.get(Taxon.EXTERNAL_ID), Is.is("EOL:590939"));
+        assertThat(properties.get(Taxon.COMMON_NAMES), containsString("flying squid"));
         assertThat(properties.get(Taxon.PATH), containsString("Animalia"));
     }
 
@@ -282,7 +282,6 @@ public class EOLServiceIT {
         HashMap<String, String> properties = new HashMap<String, String>();
         new EOLService().lookupPropertiesByName("Homo sapiens", properties);
         assertThat(properties.get(Taxon.PATH), Is.is(HOMO_SAPIENS_PATH));
-
     }
 
     @Test
