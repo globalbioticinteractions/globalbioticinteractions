@@ -263,7 +263,18 @@ public class EOLServiceIT {
         assertThat(properties.get(Taxon.COMMON_NAMES), containsString("Human"));
         assertThat(properties.get(Taxon.PATH), containsString("Animalia"));
         assertThat(properties.get(Taxon.EXTERNAL_ID), Is.is("EOL:327955"));
+    }
 
+    @Test
+    public void lookupToads() throws TaxonPropertyLookupServiceException {
+        HashMap<String, String> properties = new HashMap<String, String>() {{
+            put(Taxon.PATH, "bla bla2");
+            put(Taxon.EXTERNAL_ID, "bla bla3");
+        }};
+        new EOLService().lookupPropertiesByName("Todarodes pacificus", properties);
+        assertThat(properties.get(Taxon.EXTERNAL_ID), Is.is("EOL:327955"));
+        assertThat(properties.get(Taxon.COMMON_NAMES), containsString("Human"));
+        assertThat(properties.get(Taxon.PATH), containsString("Animalia"));
     }
 
     @Test

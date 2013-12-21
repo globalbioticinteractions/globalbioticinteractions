@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 
 import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.junit.matchers.JUnitMatchers.containsString;
 
@@ -45,6 +46,12 @@ public class EOLTaxonImageServiceIT {
     public void imageLookupWoRMS() throws URISyntaxException, IOException {
         assertWoRMSImage(serviceTaxon.lookupImageURLs(TaxonomyProvider.WORMS, "276287"));
         assertWoRMSImage(serviceTaxon.lookupImageForExternalId(TaxonomyProvider.ID_PREFIX_WORMS + "276287"));
+    }
+
+    @Test
+    public void imageLookupWoRMSNoEOLPageId() throws IOException {
+        TaxonImage taxonImage = serviceTaxon.lookupImageForExternalId(TaxonomyProvider.ID_PREFIX_WORMS + "585857");
+        assertThat(taxonImage.getInfoURL(), notNullValue());
     }
 
     private void assertWoRMSImage(TaxonImage taxonImage) {

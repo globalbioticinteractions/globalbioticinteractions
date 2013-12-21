@@ -1,5 +1,6 @@
 package org.eol.globi.service;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.WordUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -31,6 +32,14 @@ public class EOLTaxonImageService extends BaseHttpClientService {
         } else if (externalId.startsWith(TaxonomyProvider.ID_PREFIX_ITIS)) {
             image = lookupImageURLs(TaxonomyProvider.ITIS, externalId.replace(TaxonomyProvider.ID_PREFIX_ITIS, ""));
         }
+
+        if (image == null) {
+            String infoURL = ExternalIdUtil.infoURLForExternalId(externalId);
+            if (StringUtils.isNotBlank(infoURL)) {
+                image = new TaxonImage();
+                image.setInfoURL(infoURL);
+            }
+        }
         return image;
     }
 
@@ -60,7 +69,8 @@ public class EOLTaxonImageService extends BaseHttpClientService {
             PageInfo pageInfo = getPageInfo(eolPageId);
             if (null != pageInfo) {
                 taxonImage = new TaxonImage();
-                taxonImage.setInfoURL(ExternalIdUtil.infoURLForExternalId(TaxonomyProvider.ID_PREFIX_EOL + eolPageId));
+                String infoURL = ExternalIdUtil.infoURLForExternalId(provider + eolPageId);
+                taxonImage.setInfoURL(infoURL);
                 taxonImage.setEOLPageId(eolPageId);
                 taxonImage.setCommonName(pageInfo.getCommonName());
                 taxonImage.setScientificName(pageInfo.getScientificName());
