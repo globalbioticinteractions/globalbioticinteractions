@@ -9,8 +9,12 @@ public class HttpUtil {
     public static final int FIVE_MINUTES_IN_MS = 5 * 60 * 1000;
 
     public static HttpClient createHttpClient() {
+        return createHttpClient(FIVE_MINUTES_IN_MS);
+    }
+
+    public static HttpClient createHttpClient(int soTimeoutMs) {
         DefaultHttpClient httpClient = new DefaultHttpClient();
-        HttpConnectionParams.setSoTimeout(httpClient.getParams(), FIVE_MINUTES_IN_MS);
+        HttpConnectionParams.setSoTimeout(httpClient.getParams(), soTimeoutMs);
         return httpClient;
     }
 }
