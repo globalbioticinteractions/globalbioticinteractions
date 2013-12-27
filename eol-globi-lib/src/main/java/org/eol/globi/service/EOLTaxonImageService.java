@@ -89,7 +89,7 @@ public class EOLTaxonImageService extends BaseHttpClientService {
         String responseString;
         String pageUrlString = "http://eol.org/api/pages/1.0/" + eolPageId + ".json?images=1&videos=0&sounds=0&maps=0&text=0&iucn=false&subjects=overview&licenses=all&details=true&common_names=true&references=false&vetted=0&cache_ttl=";
 
-        DefaultHttpClient httpClient = HttpUtil.createHttpClient();
+        HttpClient httpClient = HttpUtil.createHttpClient();
         try {
             HttpGet request = new HttpGet(pageUrlString);
             response = httpClient.execute(request);
