@@ -7,6 +7,7 @@ import org.eol.globi.domain.TaxonomyProvider;
 import java.io.IOException;
 import java.net.URISyntaxException;
 
+import static org.hamcrest.Matchers.endsWith;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
@@ -34,8 +35,8 @@ public class EOLTaxonImageServiceIT {
     @Test
     public void imageLookupNCBI() throws URISyntaxException, IOException {
         TaxonImage taxonImage = serviceTaxon.lookupImageURLs(TaxonomyProvider.NCBI, "28806");
-        assertThat(taxonImage.getThumbnailURL(), is("http://media.eol.org/content/2012/06/15/09/03561_98_68.jpg"));
-        assertThat(taxonImage.getImageURL(), is("http://media.eol.org/content/2012/06/15/09/03561_orig.jpg"));
+        assertThat(taxonImage.getThumbnailURL(), endsWith(".jpg"));
+        assertThat(taxonImage.getImageURL(), endsWith(".jpg"));
         assertThat(taxonImage.getEOLPageId(), is("205157"));
         assertThat(taxonImage.getInfoURL(), is("http://eol.org/pages/205157"));
         assertThat(taxonImage.getScientificName(), is("Centropomus undecimalis"));

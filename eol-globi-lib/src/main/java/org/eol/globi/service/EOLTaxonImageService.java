@@ -71,7 +71,7 @@ public class EOLTaxonImageService extends BaseHttpClientService {
             PageInfo pageInfo = getPageInfo(eolPageId);
             if (null != pageInfo) {
                 taxonImage = new TaxonImage();
-                String infoURL = ExternalIdUtil.infoURLForExternalId(provider + eolPageId);
+                String infoURL = ExternalIdUtil.infoURLForExternalId(TaxonomyProvider.EOL.getIdPrefix() + eolPageId);
                 taxonImage.setInfoURL(infoURL);
                 taxonImage.setEOLPageId(eolPageId);
                 taxonImage.setCommonName(pageInfo.getCommonName());
