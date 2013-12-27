@@ -4,6 +4,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.eol.globi.util.HttpUtil;
 
 import java.io.IOException;
 import java.util.Iterator;
@@ -11,12 +12,11 @@ import java.util.Map;
 
 public class CypherUtil {
     public static String executeCypherQuery(String query1, Map<String, String> params1) throws IOException {
-        org.apache.http.client.HttpClient httpClient = new DefaultHttpClient();
         HttpPost httpPost = new HttpPost("http://46.4.36.142:7474/db/data/cypher");
         HttpClient.addJsonHeaders(httpPost);
         httpPost.setEntity(new StringEntity(wrapQuery(query1, params1)));
         BasicResponseHandler responseHandler = new BasicResponseHandler();
-        return httpClient.execute(httpPost, responseHandler);
+        return HttpUtil.createHttpClient().execute(httpPost, responseHandler);
     }
 
     private static String wrapQuery(String cypherQuery, Map<String, String> params) {

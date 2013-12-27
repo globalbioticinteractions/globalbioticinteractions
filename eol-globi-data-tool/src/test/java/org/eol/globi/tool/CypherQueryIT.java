@@ -5,6 +5,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.eol.globi.util.HttpUtil;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -119,10 +120,6 @@ public class CypherQueryIT {
         post.setHeader("Accept", "application/json");
         post.setEntity(new StringEntity(queryJson));
 
-        BasicResponseHandler responseHandler = new BasicResponseHandler();
-        HttpClient httpClient = new DefaultHttpClient();
-        String response = null;
-        response = httpClient.execute(post, responseHandler);
-        return response;
+        return HttpUtil.createHttpClient().execute(post, new BasicResponseHandler());
     }
 }

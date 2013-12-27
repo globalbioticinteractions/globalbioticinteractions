@@ -11,6 +11,7 @@ import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.eol.globi.util.HttpUtil;
 
 import java.io.IOException;
 import java.net.URI;
@@ -31,7 +32,7 @@ public class DOIResolverImpl implements DOIResolver {
         post.setEntity(entity);
 
         BasicResponseHandler handler = new BasicResponseHandler();
-        String response = new DefaultHttpClient().execute(post, handler);
+        String response = HttpUtil.createHttpClient().execute(post, handler);
         JsonNode jsonNode = mapper.readTree(response);
         JsonNode results = jsonNode.get("results");
         String doi = null;
@@ -53,7 +54,7 @@ public class DOIResolverImpl implements DOIResolver {
                 URI uri = new URI("http", doi.replace("http:", ""), null);
                 HttpGet request = new HttpGet(uri);
                 request.setHeader("Accept", "text/x-bibliography; style=cse");
-                citation = new DefaultHttpClient().execute(request, new BasicResponseHandler());
+                citation = HttpUtil.createHttpClient().execute(request, new BasicResponseHandler());
                 if (StringUtils.isNotBlank(citation)) {
                     citation = citation.replaceFirst("^1\\. ", "");
                 }

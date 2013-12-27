@@ -5,6 +5,7 @@ import org.apache.commons.lang3.text.WordUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.protocol.HTTP;
@@ -15,6 +16,7 @@ import org.codehaus.jackson.node.ArrayNode;
 import org.eol.globi.domain.TaxonImage;
 import org.eol.globi.domain.TaxonomyProvider;
 import org.eol.globi.util.ExternalIdUtil;
+import org.eol.globi.util.HttpUtil;
 
 import java.io.IOException;
 
@@ -87,7 +89,7 @@ public class EOLTaxonImageService extends BaseHttpClientService {
         String responseString;
         String pageUrlString = "http://eol.org/api/pages/1.0/" + eolPageId + ".json?images=1&videos=0&sounds=0&maps=0&text=0&iucn=false&subjects=overview&licenses=all&details=true&common_names=true&references=false&vetted=0&cache_ttl=";
 
-        DefaultHttpClient httpClient = new DefaultHttpClient();
+        DefaultHttpClient httpClient = HttpUtil.createHttpClient();
         try {
             HttpGet request = new HttpGet(pageUrlString);
             response = httpClient.execute(request);
@@ -164,9 +166,8 @@ public class EOLTaxonImageService extends BaseHttpClientService {
     private String lookupEOLPageId(String taxonId, String eolPageId, String eolProviderId) throws IOException {
         String urlString = "http://eol.org/api/search_by_provider/1.0/" + taxonId + ".json?hierarchy_id=" + eolProviderId + "&cache_ttl=3600";
         HttpGet get = new HttpGet(urlString);
-        DefaultHttpClient httpClient = new DefaultHttpClient();
         try {
-            HttpResponse response = httpClient.execute(get);
+            HttpResponse response = HttpUtil.createHttpClient().execute(get);
 
             String responseString = EntityUtils.toString(response.getEntity());
 
@@ -183,7 +184,7 @@ public class EOLTaxonImageService extends BaseHttpClientService {
                 }
             }
         } finally {
-            httpClient.getConnectionManager().shutdown();
+            HttpUtil.createHttpClient().getConnectionManager().shutdown();
         }
         return eolPageId;
     }

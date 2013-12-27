@@ -1,14 +1,15 @@
 package org.eol.globi.data;
 
 import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.TaxonomyProvider;
+import org.eol.globi.util.HttpUtil;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.format.ISODateTimeFormat;
@@ -34,7 +35,7 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
 
     private int retrieveDataParseResults(Study study) throws StudyImporterException {
         int totalInteractions = 0;
-        DefaultHttpClient defaultHttpClient = new DefaultHttpClient();
+        HttpClient defaultHttpClient = HttpUtil.createHttpClient();
         try {
             int previousResultCount;
             int pageNumber = 1;

@@ -7,6 +7,7 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.eol.globi.util.HttpUtil;
 
 import java.io.IOException;
 
@@ -17,7 +18,7 @@ public abstract class BaseHttpClientService {
     private HttpClient httpClient;
 
     public BaseHttpClientService() {
-        this.httpClient = new DefaultHttpClient();
+        this.httpClient = HttpUtil.createHttpClient();
     }
 
     public void shutdown() {
@@ -29,7 +30,7 @@ public abstract class BaseHttpClientService {
 
     private HttpClient getHttpClient() {
         if (httpClient == null) {
-            this.httpClient = new DefaultHttpClient();
+            this.httpClient = HttpUtil.createHttpClient();
         }
         return httpClient;
     }

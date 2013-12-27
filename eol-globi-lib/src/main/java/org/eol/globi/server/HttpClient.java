@@ -4,6 +4,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.eol.globi.util.HttpUtil;
 
 import java.io.IOException;
 
@@ -11,11 +12,9 @@ public class HttpClient {
     protected static final String APPLICATION_JSON = "application/json;charset=UTF-8";
 
     public static String httpGet(String uri) throws IOException {
-        org.apache.http.client.HttpClient httpclient = new DefaultHttpClient();
         HttpGet httpGet = new HttpGet(uri);
         addJsonHeaders(httpGet);
-        BasicResponseHandler responseHandler = new BasicResponseHandler();
-        return httpclient.execute(httpGet, responseHandler);
+        return HttpUtil.createHttpClient().execute(httpGet, new BasicResponseHandler());
     }
 
     public static void addJsonHeaders(HttpRequestBase httpGet) {
