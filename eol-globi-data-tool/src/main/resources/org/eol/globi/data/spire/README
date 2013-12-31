@@ -5,6 +5,6 @@ SpireEcoConcepts.owl - contains ontologies used to model interaction data
 
 allFoodWebStudies.owl - actual interaction data
 
-econetvis.mdb - original microsoft access database, allFoodWebStudies.owl is derived from this.
+econetvis.mdb - original microsoft access database of the Animal Diversity Web, parts of allFoodWebStudies.owl are derived from this.
 
 See http://www.cs.umd.edu/hcil/biodiversity/ for more information.

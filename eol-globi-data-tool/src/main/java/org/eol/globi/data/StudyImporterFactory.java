@@ -14,6 +14,7 @@ import java.util.logging.Level;
 public class StudyImporterFactory {
 
     private static final Collection<Class> IMPORTERS = Collections.unmodifiableCollection(new ArrayList<Class>() {{
+        add(StudyImporterForLifeWatchGreece.class);
         add(StudyImporterForHechinger.class);
         add(StudyImporterForRoopnarine.class);
         add(StudyImporterForSimons.class);
