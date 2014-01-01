@@ -48,6 +48,8 @@ public class StudyImporterForLifeWatchGreeceTest extends GraphDBTestCase {
 
         Set<String> taxa = new HashSet<String>();
 
+        int totalPredatorPreyRelationships = 0;
+
         for (Study study : studies) {
             assertThat(study.getDescription(), is(notNullValue()));
             assertThat(study.getTitle(), containsString("greece"));
@@ -57,11 +59,13 @@ public class StudyImporterForLifeWatchGreeceTest extends GraphDBTestCase {
                 Specimen predatorSpecimen = new Specimen(collectedRel.getEndNode());
                 Iterable<Relationship> prey = predatorSpecimen.getStomachContents();
                 for (Relationship ateRel : prey) {
+                    totalPredatorPreyRelationships++;
                     addTaxonNameForSpecimenNode(taxa, ateRel.getEndNode());
                 }
             }
         }
         assertThat(taxa.size(), is(178));
+        assertThat(totalPredatorPreyRelationships, is(793));
         assertThat(taxa.contains("Aves"), is(true));
     }
 
