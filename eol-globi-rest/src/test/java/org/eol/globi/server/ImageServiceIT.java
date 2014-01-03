@@ -1,5 +1,6 @@
 package org.eol.globi.server;
 
+import org.apache.http.client.HttpResponseException;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -20,6 +21,20 @@ public class ImageServiceIT extends ITBase {
     @Test
     public void imagesForName() throws IOException {
         String uri = getURLPrefix() + "imagesForName/Homo%20sapiens";
+        String response = HttpClient.httpGet(uri);
+        assertThat(response, is(notNullValue()));
+    }
+
+    @Test
+    public void imagesForNames() throws IOException {
+        String uri = getURLPrefix() + "imagesForNames?name=Homo%20sapiens&name=Ariopsis%20felis";
+        String response = HttpClient.httpGet(uri);
+        assertThat(response, is(notNullValue()));
+    }
+
+    @Test(expected = HttpResponseException.class)
+    public void imagesForNamesNoParams() throws IOException {
+        String uri = getURLPrefix() + "imagesForNames";
         String response = HttpClient.httpGet(uri);
         assertThat(response, is(notNullValue()));
     }
