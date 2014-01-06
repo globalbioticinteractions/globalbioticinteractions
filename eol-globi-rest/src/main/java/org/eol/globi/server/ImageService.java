@@ -42,7 +42,7 @@ public class ImageService {
 
     @RequestMapping(value = "/imagesForNames", method = RequestMethod.GET)
     @ResponseBody
-    public List<TaxonImage> findImageForNames(@RequestParam(value="name") String[] names) throws IOException {
+    public List<TaxonImage> findImagesForNames(@RequestParam(value="name") String[] names) throws IOException {
         List<TaxonImage> images = new ArrayList<TaxonImage>();
         for (String name : names) {
             TaxonImage image = findTaxonImagesForTaxonWithName(name);

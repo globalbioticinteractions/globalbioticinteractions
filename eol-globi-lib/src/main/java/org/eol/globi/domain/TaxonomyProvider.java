@@ -4,7 +4,8 @@ public enum TaxonomyProvider {
     ITIS("urn:lsid:itis.gov:itis_tsn:"),
     WORMS("urn:lsid:marinespecies.org:taxname:"),
     NCBI("ncbi:"),
-    EOL("EOL:");
+    EOL("EOL:"),
+    ENVO("ENVO:");
 
     private final String idPrefix;
 
@@ -20,6 +21,7 @@ public enum TaxonomyProvider {
     public static final String ID_PREFIX_INATURALIST = "INAT:";
     public static final String ID_PREFIX_WORMS = WORMS.getIdPrefix();
     public static final String ID_PREFIX_ITIS = ITIS.getIdPrefix();
+    public static final String ID_PREFIX_ENVO = ENVO.getIdPrefix();
     public static final String ID_PREFIX_GULFBASE = "BioGoMx:";
     public static final String ID_PREFIX_GAME = "GAME:";
     public static final String ID_PREFIX_HTTP = "http://";

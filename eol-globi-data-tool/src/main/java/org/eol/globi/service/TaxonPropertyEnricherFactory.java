@@ -11,6 +11,7 @@ public class TaxonPropertyEnricherFactory {
         List<TaxonPropertyLookupService> services = new ArrayList<TaxonPropertyLookupService>() {
             {
                 add(new EOLOfflineService());
+                add(new EnvoService());
                 add(new EOLService());
                 add(new WoRMSService());
                 add(new ITISService());
