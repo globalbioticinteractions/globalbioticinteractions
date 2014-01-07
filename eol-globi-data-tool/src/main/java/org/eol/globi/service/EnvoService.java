@@ -21,6 +21,7 @@ public class EnvoService extends BaseTaxonIdService {
         put("detritus", ORGANIC_MATERIAL);
         put("organic detritus", ORGANIC_MATERIAL);
         put("organic matter", ORGANIC_MATERIAL);
+        put("Unidentified remains", ORGANIC_MATERIAL);
         put("suspended organic matter   ", ORGANIC_MATERIAL);
         put("dissolved organic carbon", ORGANIC_MATERIAL);
         put("organic matter in mud", ORGANIC_MATERIAL);
