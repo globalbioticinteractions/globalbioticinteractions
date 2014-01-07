@@ -9,17 +9,17 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.neo4j.cypher.javacompat.ExecutionEngine;
 import org.neo4j.cypher.javacompat.ExecutionResult;
+import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Transaction;
+import org.neo4j.graphdb.factory.GraphDatabaseBuilder;
+import org.neo4j.graphdb.factory.GraphDatabaseFactory;
 import org.neo4j.helpers.collection.MapUtil;
-import org.neo4j.kernel.EmbeddedGraphDatabase;
-import org.neo4j.kernel.configuration.Config;
 import org.neo4j.kernel.impl.util.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
-import java.util.Map;
 
 import static org.junit.Assert.assertThat;
 
@@ -32,7 +32,7 @@ import static org.junit.Assert.assertThat;
  */
 public class OutOfMemoryTest {
 
-    private EmbeddedGraphDatabase graphDb;
+    private GraphDatabaseService graphDb;
     private String storeDir;
     private NodeFactory factory;
     public static final long MAX_TAXONS = 1000 * 1000;
@@ -40,16 +40,13 @@ public class OutOfMemoryTest {
     @Before
     public void start() {
         storeDir = "target/testing" + System.currentTimeMillis();
-        graphDb = new EmbeddedGraphDatabase(storeDir,
-                MapUtil.stringMap("use_memory_mapped_buffers", "false",
-                        "dump_configuration", "true",
-                        "lucene_searcher_cache_size", "100"
-                ));
-        Config config = graphDb.getConfig();
-        Map<String, String> params = config.getParams();
-        for (String s : params.keySet()) {
-            System.out.println("[" + s + "]=[" + params.get(s) + "]");
-        }
+        GraphDatabaseBuilder graphDatabaseBuilder = new GraphDatabaseFactory().newEmbeddedDatabaseBuilder(baseDir + storeDir);
+        graphDatabaseBuilder.setConfig(MapUtil.stringMap("use_memory_mapped_buffers", "false",
+                "dump_configuration", "true",
+                "lucene_searcher_cache_size", "100"
+        ));
+        graphDb = graphDatabaseBuilder.newGraphDatabase();
+
         factory = new NodeFactory(graphDb, new TaxonPropertyEnricher() {
             @Override
             public void enrich(Taxon taxon) throws IOException {

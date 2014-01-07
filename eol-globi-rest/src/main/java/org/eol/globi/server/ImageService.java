@@ -2,9 +2,9 @@ package org.eol.globi.server;
 
 import org.eol.globi.domain.TaxonImage;
 import org.eol.globi.service.EOLTaxonImageService;
+import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.index.IndexHits;
-import org.neo4j.kernel.EmbeddedGraphDatabase;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +23,7 @@ public class ImageService {
     private EOLTaxonImageService service = new EOLTaxonImageService();
 
     @Autowired
-    private EmbeddedGraphDatabase graphDb;
+    private GraphDatabaseService graphDb;
 
     @RequestMapping(value = "/imagesForName/{scientificName}", method = RequestMethod.GET)
     @ResponseBody

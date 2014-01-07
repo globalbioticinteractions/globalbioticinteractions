@@ -1,17 +1,17 @@
 package org.eol.globi.server;
 
-import org.neo4j.kernel.EmbeddedGraphDatabase;
+import org.neo4j.graphdb.GraphDatabaseService;
+import org.neo4j.graphdb.factory.GraphDatabaseBuilder;
+import org.neo4j.graphdb.factory.GraphDatabaseFactory;
+import org.neo4j.helpers.collection.MapUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
 import org.springframework.cache.ehcache.EhCacheCacheManager;
 import org.springframework.cache.ehcache.EhCacheManagerFactoryBean;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
-
-import java.util.HashMap;
 
 @Configuration
 public class Config {
@@ -26,12 +26,10 @@ public class Config {
     }
 
     @Bean(destroyMethod = "shutdown")
-    public EmbeddedGraphDatabase graphDb(@Value("${storeDir:target/graph.db.test}") final String storeDir) {
-        return new EmbeddedGraphDatabase(storeDir, new HashMap<String, String>() {
-            {
-                put("read_only", "false");
-            }
-        });
+    public GraphDatabaseService graphDb(@Value("${storeDir:target/graph.db.test}") final String storeDir) {
+        GraphDatabaseBuilder graphDatabaseBuilder = new GraphDatabaseFactory().newEmbeddedDatabaseBuilder(baseDir + storeDir);
+        graphDatabaseBuilder.setConfig(MapUtil.stringMap("read_only", "false"));
+        return graphDatabaseBuilder.newGraphDatabase();
     }
 
     @Bean

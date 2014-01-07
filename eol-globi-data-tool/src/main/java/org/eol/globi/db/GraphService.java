@@ -1,9 +1,9 @@
 package org.eol.globi.db;
 
 import org.neo4j.graphdb.GraphDatabaseService;
+import org.neo4j.graphdb.factory.GraphDatabaseBuilder;
+import org.neo4j.graphdb.factory.GraphDatabaseFactory;
 import org.neo4j.helpers.collection.MapUtil;
-import org.neo4j.kernel.EmbeddedGraphDatabase;
-import org.neo4j.unsafe.batchinsert.BatchInserters;
 
 public abstract class GraphService {
 
@@ -20,7 +20,10 @@ public abstract class GraphService {
     public static GraphDatabaseService startNeo4j(String baseDir) {
         System.out.println("neo4j starting...");
 
-        graphService = new EmbeddedGraphDatabase(baseDir + storeDir, MapUtil.stringMap("keep_logical_logs", "1M size"));
+        String storePath = baseDir + storeDir;
+        GraphDatabaseBuilder graphDatabaseBuilder = new GraphDatabaseFactory().newEmbeddedDatabaseBuilder(storePath);
+        graphDatabaseBuilder.setConfig(MapUtil.stringMap("keep_logical_logs", "1M size"));
+        graphService = graphDatabaseBuilder.newGraphDatabase();
         Runtime.getRuntime().addShutdownHook(new Thread() {
             @Override
             public void run() {
@@ -29,7 +32,7 @@ public abstract class GraphService {
                 System.out.println("neo4j stopped.");
             }
         });
-        System.out.println("neo4j started (" + ((EmbeddedGraphDatabase) graphService).getStoreDir() + ").");
+        System.out.println("neo4j started (" + storePath + ").");
         return graphService;
     }
 
