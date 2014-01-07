@@ -40,7 +40,7 @@ public class OutOfMemoryTest {
     @Before
     public void start() {
         storeDir = "target/testing" + System.currentTimeMillis();
-        GraphDatabaseBuilder graphDatabaseBuilder = new GraphDatabaseFactory().newEmbeddedDatabaseBuilder(baseDir + storeDir);
+        GraphDatabaseBuilder graphDatabaseBuilder = new GraphDatabaseFactory().newEmbeddedDatabaseBuilder(storeDir);
         graphDatabaseBuilder.setConfig(MapUtil.stringMap("use_memory_mapped_buffers", "false",
                 "dump_configuration", "true",
                 "lucene_searcher_cache_size", "100"

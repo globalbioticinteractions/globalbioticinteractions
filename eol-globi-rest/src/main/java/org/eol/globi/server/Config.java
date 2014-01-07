@@ -27,7 +27,7 @@ public class Config {
 
     @Bean(destroyMethod = "shutdown")
     public GraphDatabaseService graphDb(@Value("${storeDir:target/graph.db.test}") final String storeDir) {
-        GraphDatabaseBuilder graphDatabaseBuilder = new GraphDatabaseFactory().newEmbeddedDatabaseBuilder(baseDir + storeDir);
+        GraphDatabaseBuilder graphDatabaseBuilder = new GraphDatabaseFactory().newEmbeddedDatabaseBuilder(storeDir);
         graphDatabaseBuilder.setConfig(MapUtil.stringMap("read_only", "false"));
         return graphDatabaseBuilder.newGraphDatabase();
     }
