@@ -11,6 +11,7 @@ import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.Taxon;
+import org.eol.globi.domain.Term;
 import org.junit.Test;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Relationship;
@@ -35,7 +36,6 @@ import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.internal.matchers.IsCollectionContaining.hasItem;
-import static org.junit.internal.matchers.StringContains.containsString;
 
 public class StudyImporterForSPIRETest extends GraphDBTestCase {
 
@@ -198,7 +198,171 @@ public class StudyImporterForSPIRETest extends GraphDBTestCase {
         importer.setTrophicLinkListener(listener);
         importer.importStudy();
 
-        assertThat(listener.countries.size(), is(50));
+        // TODO revisit mappings to GAZ:00000448 (geographic location)
+        Map<String, Term> gazMap = new HashMap<String, Term>() {{
+            put("Country: New Zealand;   State: Otago;   Locality: Catlins, Craggy Tor catchment", new Term("GAZ:00146864", "The Catlins"));
+            put("Country: Scotland", new Term("GAZ:00002639", "Scotland"));
+            put("Country: USA;   State: Georgia", new Term("GAZ:00002611", "State of Georgia"));
+            put("Country: USA;   State: Iowa", new Term("GAZ:00004438", "State of Iowa"));
+            put("Country: Southern Ocean", new Term("GAZ:00000373", "Southern Ocean"));
+            put("Country: USA", new Term("GAZ:00002459", "United States of America"));
+            put("Country: USA;   State: Iowa;   Locality: Mississippi River", new Term("GAZ:00000448", "geographic location"));
+            put("Country: Japan", new Term("GAZ:00002747", "Japan"));
+            put("Country: Malaysia;   Locality: W. Malaysia", new Term("GAZ:00003902", "Malaysia"));
+            put("Country: Chile;   Locality: central Chile", new Term("GAZ:00002825", "Chile"));
+            put("Country: USA;   State: New Mexico;   Locality: Aden Crater", new Term("GAZ:00004427", "State of New Mexico"));
+            put("Country: USA;   State: Alaska;   Locality: Torch Bay", new Term("GAZ:00002521", "State of Alaska"));
+            put("Country: USA;   State: Pennsylvania", new Term("GAZ:00002542", " Commonwealth of Pennsylvania"));
+            put("Country: Costa Rica", new Term("GAZ:00002901", "Costa Rica"));
+            put("Country: Pacific", new Term("GAZ:00000360", "Pacific Ocean"));
+            put("Country: USA;   State: California;   Locality: Cabrillo Point", new Term("GAZ:00002461", "State of California"));
+            put("Country: USA;   State: Texas", new Term("GAZ:00002580", "State of Texas"));
+            put("Country: Portugal", new Term("GAZ:00004125", "Autonomous Region (Portugal)"));
+            put("Country: USA;   Locality: Northeastern US contintental shelf", new Term("GAZ:00002459", "United States of America"));
+            put("Country: Sri Lanka", new Term("GAZ:00003924", "Sri Lanka"));
+            put("Country: USA;   State: Maine;   Locality: Troy", new Term("GAZ:00002602", "State of Maine"));
+            put("Country: New Zealand", new Term("GAZ:00000469", "New Zealand"));
+            put("Country: USA;   State: Maine;   Locality: Gulf of Maine", new Term("GAZ:00002876", "Gulf of Maine"));
+            put("Country: New Zealand;   State: Otago;   Locality: Dempster's Stream, Taieri River, 3 O'Clock catchment", new Term("GAZ:00004767", "Otago Region"));
+            put("Country: Panama;   Locality: Gatun Lake", new Term("GAZ:00000448", "geographic location"));
+            put("Country: USA;   State: Maryland;   Locality: Chesapeake Bay", new Term("GAZ:00002604", "Chesapeake Bay"));
+            put("Country: India;   Locality: Cochin", new Term("GAZ:00002839", "India"));
+            put("Country: Ethiopia;   Locality: Lake Abaya", new Term("GAZ:00041560", "Lake Abaya"));
+            put("Country: unknown;   State: Black Sea", new Term("GAZ:00008171", "Black Sea"));
+            put("Country: St. Martin;   Locality: Caribbean", new Term("GAZ:00044587", "Saint-Martin Island"));
+            put("Country: USA;   State: Yellowstone", new Term("GAZ:00002534", "Yellowstone National Park"));
+            put("Country: Scotland;   Locality: Loch Leven", new Term("GAZ:00002639", "Scotland"));
+            put("Country: New Zealand;   State: Otago;   Locality: Sutton Stream, Taieri River, Sutton catchment", new Term("GAZ:00004767", "Otago Region"));
+            put("Country: USA;   State: Alaska;   Locality: Barrow", new Term("GAZ:00198344", "City Of Barrow"));
+            put("Country: Malawi;   Locality: Lake Nyasa", new Term("GAZ:00000058", "Lake Malawi"));
+            put("Country: USA;   State: Alaska;   Locality: Aleutian Islands", new Term("GAZ:00005858", "Aleutian Islands"));
+            put("Country: USA;   State: California;   Locality: Southern California", new Term("GAZ:00168979", "Southern California"));
+            put("Country: Canada;   State: Manitoba", new Term("GAZ:00002571", "Province of Manitoba"));
+            put("Country: USA;   State: Maine", new Term("GAZ:00002602", "State Of Maine"));
+            put("Country: Polynesia", new Term("GAZ:00005861", "Polynesia"));
+            put("Country: South Africa", new Term("GAZ:00000553", "South Africa"));
+            put("Country: New Zealand;   State: Otago;   Locality: Berwick, Meggatburn", new Term("GAZ:00004767", "Otago Region"));
+            put("Country: New Zealand;   State: Otago;   Locality: Venlaw, Mimihau catchment", new Term("GAZ:00004767", "Otago Region"));
+            put("Country: USA;   State: Montana", new Term("GAZ:00002606", "State of Montana"));
+            put("Country: UK;   State: Yorkshire;   Locality: Aire,  Nidd & Wharfe Rivers", new Term("GAZ:00003688", "Yorkshire and the Humber"));
+            put("Country: Hong Kong", new Term("GAZ:00003203", "Hong Kong"));
+            put("Country: Pacific;   State: Bay of Panama", new Term("GAZ:00047280", "Panama Bay"));
+            put("Country: Netherlands;   State: Wadden Sea;   Locality: Ems estuary", new Term("GAZ:00008137", "Wadden See"));
+            put("Country: New Zealand;   State: Otago;   Locality: North Col, Silver catchment", new Term("GAZ:00004767", "Otago Region"));
+            put("Country: USA;   State: North Carolina", new Term("GAZ:00000448", "geographic location"));
+            put("Country: USA;   State: Washington", new Term("GAZ:00000448", "geographic location"));
+            put("Country: USA;   State: Alaska", new Term("GAZ:00000448", "geographic location"));
+            put("Country: USA;   State: Hawaii", new Term("GAZ:00000448", "geographic location"));
+            put("Country: Uganda;   Locality: Lake George", new Term("GAZ:00000448", "geographic location"));
+            put("Country: Costa Rica;   State: Guanacaste", new Term("GAZ:00000448", "geographic location"));
+            put("Country: USA;   State: Massachusetts;   Locality: Cape Ann", new Term("GAZ:00000448", "geographic location"));
+            put("Country: USA;   State: Maine;   Locality: Martins", new Term("GAZ:00000448", "geographic location"));
+            put("Country: USA;   State: New York", new Term("GAZ:00000448", "geographic location"));
+            put("Country: General;   Locality: General", new Term("GAZ:00000448", "geographic location"));
+            put("Country: New Zealand;   State: Otago;   Locality: Stony, Sutton catchment", new Term("GAZ:00000448", "geographic location"));
+            put("Country: Tibet", new Term("GAZ:00000448", "geographic location"));
+            put("Country: USA;   State: Texas;   Locality: Franklin Mtns", new Term("GAZ:00000448", "geographic location"));
+            put("Country: Russia", new Term("GAZ:00000448", "geographic location"));
+            put("Country: New Zealand;   State: Otago;   Locality: Broad, Lee catchment", new Term("GAZ:00000448", "geographic location"));
+            put("Country: Africa;   Locality: Lake McIlwaine", new Term("GAZ:00000448", "geographic location"));
+            put("Country: England;   State: River Medway", new Term("GAZ:00000448", "geographic location"));
+            put("Country: South Africa;   Locality: Southwest coast", new Term("GAZ:00000448", "geographic location"));
+            put("Country: USA;   State: Kentucky", new Term("GAZ:00000448", "geographic location"));
+            put("Country: USA;   State: Washington;   Locality: Cape Flattery", new Term("GAZ:00000448", "geographic location"));
+            put("Country: USA;   State: New Jersey", new Term("GAZ:00000448", "geographic location"));
+            put("Country: India;   Locality: Rajasthan Desert", new Term("GAZ:00000448", "geographic location"));
+            put("Country: England", new Term("GAZ:00000448", "geographic location"));
+            put("Country: Austria;   Locality: Hafner Lake", new Term("GAZ:00000448", "geographic location"));
+            put("Country: USA;   State:  NE USA", new Term("GAZ:00000448", "geographic location"));
+            put("Country: England;   Locality: Sheffield", new Term("GAZ:00000448", "geographic location"));
+            put("Country: Uganda", new Term("GAZ:00000448", "geographic location"));
+            put("Country: USA;   State:  California;   Locality: Monterey Bay", new Term("GAZ:00000448", "geographic location"));
+            put("Country: Germany", new Term("GAZ:00000448", "geographic location"));
+            put("Country: England;   Locality: Skipwith Pond", new Term("GAZ:00000448", "geographic location"));
+            put("Country: USA;   State: Wisconsin;   Locality: Little Rock Lake", new Term("GAZ:00000448", "geographic location"));
+            put("Country: USA;   State: California;   Locality: Coachella Valley", new Term("GAZ:00000448", "geographic location"));
+            put("Country: Arctic", new Term("GAZ:00000448", "geographic location"));
+            put("Country: USA;   State: Michigan", new Term("GAZ:00003152", "State of Michigan"));
+            put("Country: Mexico;   State: Guerrero", new Term("GAZ:00010927", "State of Guerrero"));
+            put("Country: Norway;   State: Spitsbergen", new Term("GAZ:00005397", "Spitzbergen"));
+            put("Country: USA;   State: Kentucky;   Locality: Station 1", new Term("GAZ:00004440", "Commonwealth of Kentucky"));
+            put("Country: New Zealand;   State: Otago;   Locality: Kye Burn", new Term("GAZ:00000448", "geographic location"));
+            put("Country: New Zealand;   State: Otago;   Locality: Little Kye, Kye Burn catchment", new Term("GAZ:00000448", "geographic location"));
+            put("Country: USA;   State: North Carolina;   Locality: Pamlico", new Term("GAZ:00000448", "geographic location"));
+            put("Country: Antarctic", new Term("GAZ:00000448", "geographic location"));
+            put("Country: USA;   State: Arizona", new Term("GAZ:00000448", "geographic location"));
+            put("Country: England;   Locality: Lancaster", new Term("GAZ:00000448", "geographic location"));
+            put("Country: USA;   State: Florida;   Locality: Everglades", new Term("GAZ:00082878", "Everglades"));
+            put("Country: Barbados", new Term("GAZ:00001251", "Barbados"));
+            put("Country: USA;   State: New York;   Locality: Bridge Brook", new Term("GAZ:00000448", "geographic location"));
+            put("Country: England;   Locality: Oxshott Heath", new Term("GAZ:00000448", "geographic location"));
+            put("Country: New Zealand;   State: Otago;   Locality: Blackrock, Lee catchment", new Term("GAZ:00000448", "geographic location"));
+            put("Country: Canada;   State: Ontario", new Term("GAZ:00000448", "geographic location"));
+            put("Country: Puerto Rico;   Locality: El Verde", new Term("GAZ:00000448", "geographic location"));
+            put("Country: Quebec", new Term("GAZ:00000448", "geographic location"));
+            put("Country: Ireland", new Term("GAZ:00000448", "geographic location"));
+            put("Country: Wales;   Locality: Dee River", new Term("GAZ:00000448", "geographic location"));
+            put("Country: Marshall Islands", new Term("GAZ:00006470", "Republic of the Marshall Islands"));
+            put("Country: New Zealand;   State: South Island;   Locality: Canton Creek, Taieri River, Lee catchment", new Term("GAZ:00000448", "geographic location"));
+            put("Country: Seychelles", new Term("GAZ:00006922", "The Seychelles"));
+            put("Country: Namibia;   Locality: Namib Desert", new Term("GAZ:00007516", "Namib Desert"));
+            put("Country: USA;   State: Rhode Island", new Term("GAZ:00000448", "geographic location"));
+            put("Country: USA;   State: Idaho-Utah;   Locality: Deep Creek", new Term("GAZ:00000448", "geographic location"));
+            put("Country: Malawi", new Term("GAZ:00000448", "geographic location"));
+            put("Country: Malaysia", new Term("GAZ:00000448", "geographic location"));
+            put("Country: Europe;   State: Central Europe", new Term("GAZ:00000448", "geographic location"));
+            put("Country: USA;   State: Florida", new Term("GAZ:00002888", "State of Florida"));
+            put("Country: Norway;   State: Oppland;   Locality: Ovre Heimdalsvatn Lake", new Term("GAZ:00000448", "geographic location"));
+            put("Country: Austria;   Locality: Vorderer Finstertaler Lake", new Term("GAZ:00000448", "geographic location"));
+            put("Country: Canada;   Locality: high Arctic", new Term("GAZ:00000448", "geographic location"));
+            put("Country: unknown", new Term("GAZ:00000448", "geographic location"));
+            put("Country: Peru", new Term("GAZ:00000448", "geographic location"));
+            put("Country: USA;   State: New England", new Term("GAZ:00000448", "geographic location"));
+            put("Country: Great Britain", new Term("GAZ:00000448", "geographic location"));
+            put("Country: New Zealand;   State: Otago;   Locality: German, Kye Burn catchment", new Term("GAZ:00000448", "geographic location"));
+            put("Country: USA;   State: Colorado", new Term("GAZ:00000448", "geographic location"));
+            put("Country: USA;   State: Texas;   Locality: Hueco Tanks", new Term("GAZ:00000448", "geographic location"));
+            put("Country: Canada;   State: Ontario;   Locality: Mad River", new Term("GAZ:00000448", "geographic location"));
+            put("Country: Wales;   Locality: River Rheidol", new Term("GAZ:00000448", "geographic location"));
+            put("Country: Costa Rica;   State: de Osa", new Term("GAZ:00000448", "geographic location"));
+            put("Country: Finland", new Term("GAZ:00000448", "geographic location"));
+            put("Country: Africa;   Locality: Crocodile Creek,  Lake Nyasa", new Term("GAZ:00000058", "Lake Malawi"));
+            put("Country: USA;   State: Florida;   Locality: South Florida", new Term("GAZ:00000448", "geographic location"));
+            put("Country: USA;   State: Illinois", new Term("GAZ:00003142", "State of Illinois"));
+            put("Country: Puerto Rico;   Locality: Puerto Rico-Virgin Islands shelf", new Term("GAZ:00002822","Puerto Rico"));
+            put("Country: England;   Locality: River Thames", new Term("GAZ:00007824", "River Thames"));
+            put("Country: Madagascar", new Term("GAZ:00006934", "Madagascar"));
+            put("Country: USA;   State: New Mexico;   Locality: White Sands", new Term("GAZ:00000448", "geographic location"));
+            put("Country: England;   Locality: River Cam", new Term("GAZ:00000448", "geographic location"));
+            put("Country: Australia", new Term("GAZ:00000448", "geographic location"));
+            put("Country: USA;   State: North Carolina;   Locality: Coweeta", new Term("GAZ:00000448", "geographic location"));
+            put("Country: Scotland;   Locality: Ythan estuary", new Term("GAZ:00000448", "geographic location"));
+            put("Country: Wales;   Locality: River Clydach", new Term("GAZ:00000448", "geographic location"));
+            put("Country: USA;   State: Texas;   Locality: Hueco Mountains", new Term("GAZ:00002580", "State of Texas"));
+            put("Country: Wales", new Term("GAZ:00002640", "Wales"));
+            put("Country: USA;   State: Arizona;   Locality: Sonora Desert", new Term("GAZ:00006847", "Sonoran Desert"));
+            put("Country: England;   Locality: Silwood Park", new Term("GAZ:00052254", "Silwood Park"));
+            put("Country: Austria;   Locality: Neusiedler Lake", new Term("GAZ:00000448", "geographic location"));
+            put("Country: New Zealand;   State: Otago;   Locality: Narrowdale catchment", new Term("GAZ:00000448", "geographic location"));
+            put("Country: USA;   State: California", new Term("GAZ:00002461", "State of California"));
+            put("Country: England;   State: Oxfordshire;   Locality: Wytham Wood", new Term("GAZ:00052249", "Wytham Woods"));
+            put("Country: USA;   State: Michigan;   Locality: Tuesday Lake", new Term("GAZ:00003152", "State of Michigan"));
+            put("Country: USA;   State: Alabama", new Term("GAZ:00006881", "State of Alabama"));
+            put("Country: New Zealand;   State: Otago;   Locality: Healy Stream, Taieri River, Kye Burn catchment", new Term("GAZ:00000448", "geographic location"));
+            put("Country: USA;   State: New York;   Locality: Long Island", new Term("GAZ:00002584", "Long Island"));
+            put("Country: Venezuela", new Term("GAZ:00002931", "Venezuela"));
+            put("Country: New Zealand;   State: Otago;   Locality: Akatore, Akatore catchment", new Term("GAZ:00000448", "geographic location"));
+        }};
+
+        int hit = 0;
+        for (String locality : listener.localities) {
+            if (gazMap.containsKey(locality) && gazMap.get(locality).getId().startsWith("GAZ:")) {
+                hit++;
+            } else {
+                System.out.println("put(\"" + locality + "\", new Term(\"externalid\", \"name\"));");
+            }
+        }
+        assertThat(hit, is(listener.localities.size()));
 
         assertThat(listener.getCount(), is(30196));
 
@@ -215,7 +379,7 @@ public class StudyImporterForSPIRETest extends GraphDBTestCase {
         }
 
         private int count = 0;
-        Set<String> countries = new HashSet<String>();
+        Set<String> localities = new HashSet<String>();
         Set<String> descriptions = new HashSet<String>();
         Set<String> titles = new HashSet<String>();
         List<String> environments = new ArrayList<String>();
@@ -223,9 +387,10 @@ public class StudyImporterForSPIRETest extends GraphDBTestCase {
 
         @Override
         public void newLink(Map<String, String> properties) {
-            if (properties.containsKey(StudyImporterForSPIRE.COUNTRY)) {
-                countries.add(properties.get(StudyImporterForSPIRE.COUNTRY));
+            if (properties.containsKey(StudyImporterForSPIRE.LOCALITY_ORIGINAL)) {
+                localities.add(properties.get(StudyImporterForSPIRE.LOCALITY_ORIGINAL));
             }
+
             if (properties.containsKey(Study.DESCRIPTION)) {
                 descriptions.add(properties.get(Study.DESCRIPTION));
             }

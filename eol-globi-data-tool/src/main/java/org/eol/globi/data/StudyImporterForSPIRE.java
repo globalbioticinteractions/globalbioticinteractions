@@ -27,6 +27,7 @@ public class StudyImporterForSPIRE extends BaseStudyImporter {
     public static final String LOCALITY = "Locality";
     public static final String PREDATOR_NAME = "predator";
     public static final String PREY_NAME = "prey";
+    public static final String LOCALITY_ORIGINAL = "localityOriginal";
     private Map<String, LatLng> geoLookup = buildGEOLookup();
 
     private TrophicLinkListener trophicLinkListener = new TrophicLinkListener() {
@@ -190,6 +191,7 @@ public class StudyImporterForSPIRE extends BaseStudyImporter {
 
     private void parseLocalityInfo(Map<String, String> properties, String localityString) throws StudyImporterException {
         String[] split = localityString.split(";");
+        properties.put(LOCALITY_ORIGINAL, localityString);
         for (String s : split) {
             String[] split1 = s.split(":");
             if (split1.length > 1) {
