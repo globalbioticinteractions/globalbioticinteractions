@@ -24,7 +24,9 @@ Copepoda nauplii,Copepoda,,,,,,
 Unid fish,Actinopterygii,,,,,,
 Menidia berylina,Menidia beryllina,,,,,,
 Cyprinodon varieagatus,Cyprinodon variegatus,,,,,,
-Polycheate,Polycheata,,,,,,
+Polycheate,Polychaeta,,,,,,typo
+Polycheate worm,Polychaeta,,,,,,provided scientific term
+Polycheate tube,Polychaeta,,,,,,provided scientific term
 Citharichtys macrops,Citharichthys macrops,,,,,,
 Lei xanthurus,Leiostomus xanthurus,,,,,,
 Molluks,Mollusca,,,,,,
@@ -318,9 +320,9 @@ Ctenophore medusae tissue, Ctenophora,,,tissue,medusae,Simons 1997,
 Cyclopoid copepoda, Cyclopoida,,,,,Akin et al 2006,
 Cyclopoid copepodite, Cyclopoida,,,,copepodite,Barnes 2008,
 Decapod carapace, Decapoda,,,carapace,,Wrast 2008,
-Decapod legs, Decapoda,,,legs,,Wrast 2008,
-Decapod zoea, Decapoda,,,,zoea,Barnes 2008,
-Decopoda larvae, Decopoda,,,,larvae,Akin et al 2006,
+Decapod legs,Decapoda,,,legs,,Wrast 2008,
+Decapod zoea,Decapoda,,,,zoea,Barnes 2008,
+Decopoda larvae,Decapoda,,,,larvae,Akin et al 2006,
 Diptera midges(pupa), Diptera,,,,midges,Akin et al 2006,
 Emiliani huxleyi, Emiliania huxleyi,,,,,Roopnarine et al 2013,according to WoRMS; is Coccolithus huxleyi in ITIS
 Erichtonius brasiliensis, Erichthonius brasiliensis,,,,,Wrast 2008,
@@ -909,7 +911,9 @@ Mycosphaerella alchemilae,Mycosphaerella alchemillae,,,,,BIO_INFO,Found at:  htt
 Orthopristes chrysopterus,Orthopristis chrysoptera,,,,,Miles 1949,Found at:  http://www.itis.gov/servlet/SingleRpt/SingleRpt?search_topic=TSN&search_value=169077
 fish,Actinopterygii,,,,,,
 Fish,Actinopterygii,,,,,,
+fish eggs,Actinopterygii,,,,,,
 Fish scale,Actinopterygii,,,,,,
+Fish tissue,Actinopterygii,,,,,,
 Decapod,Decapoda,,,,,,
 Amphipod,Amphipoda,,,,,,
 Decopoda,Decapoda,,,,,,
@@ -924,5 +928,12 @@ emergent plants,Plantae,,,,,,
 Scomberomorous cavalla,Scomberomorus cavalla,,,,,,assuming typo
 Scomberomorous maculatus,Scomberomorus maculatus,,,,,,assuming typo
 Decapoa,Decapoda,,,,,,assuming typo
-Canis familiaris,Canis lupus familiaris,,,,,,added genus to match with ITIS
+Canis lupus ssp. familiaris,Canis lupus familiaris,,,,,,added genus to match with ITIS
 diatoms in sand,Bacillariophyta,,,,,,diatoms are Bacillariophyta according to ITIS
+Rocks,rock,,,,,,matching to ENVO ontology term
+amphipod,Amphipoda,,,,,,completed full scientific term using https://en.wikipedia.org/wiki/Amphipoda
+suspended organic matter,organic material,,,,,,suggest to use ENVO term label
+POM,organic material,,,,,,assumed to be acronym for particulate organic matter
+dissolved organic matter,organic material,,,,,,assumed to be acronym for particulate organic matter
+Cyclopoidea,Cyclopoida,,,,,,typo
+amphipod,Amphipoda,,,,,,replaced with scientific name using https://en.wikipedia.org/wiki/Amphipoda
