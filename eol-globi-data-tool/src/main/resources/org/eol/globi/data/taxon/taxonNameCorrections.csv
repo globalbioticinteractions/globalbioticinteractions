@@ -937,3 +937,8 @@ POM,organic material,,,,,,assumed to be acronym for particulate organic matter
 dissolved organic matter,organic material,,,,,,assumed to be acronym for particulate organic matter
 Cyclopoidea,Cyclopoida,,,,,,typo
 amphipod,Amphipoda,,,,,,replaced with scientific name using https://en.wikipedia.org/wiki/Amphipoda
+nematode larva,Nematode,,,,larvae,Hechinger 2011,replaced with scientific name using https://en.wikipedia.org/wiki/Nematode
+tetraphyllidean larva,Tetraphyllidea,,,,larvae,Hechinger 2011,replaced with scientific name using https://en.wikipedia.org/wiki/Tetraphyllidea
+tetraphyllidean,Tetraphyllidea,,,,,Hechinger 2011,replaced with scientific name using https://en.wikipedia.org/wiki/Tetraphyllidea
+Tetraphyllidae,Tetraphyllidea,,,,,,assumed typo
+Exogene,Exogone,,,,,,assumed typo genus exists in WoRMS
