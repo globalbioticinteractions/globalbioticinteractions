@@ -44,7 +44,6 @@ public class ExporterReferencesTest extends GraphDBTestCase {
 
     private String getExpectedData() {
         return "\"identifier\",\"publicationType\",\"full_reference\",\"primaryTitle\",\"title\",\"pages\",\"pageStart\",\"pageEnd\",\"volume\",\"edition\",\"publisher\",\"authorList\",\"editorList\",\"created\",\"language\",\"uri\",\"doi\",\"schema#localityName\""
-                + "\n\"http://purl.org/dc/terms/identifier\",\"http://eol.org/schema/reference/publicationType\",\"http://eol.org/schema/reference/full_reference\",\"http://eol.org/schema/reference/primaryTitle\",\"http://purl.org/dc/terms/title\",\"http://purl.org/ontology/bibo/pages\",\"http://purl.org/ontology/bibo/pageStart\",\"http://purl.org/ontology/bibo/pageEnd\",\"http://purl.org/ontology/bibo/volume\",\"http://purl.org/ontology/bibo/edition\",\"http://purl.org/dc/terms/publisher\",\"http://purl.org/ontology/bibo/authorList\",\"http://purl.org/ontology/bibo/editorList\",\"http://purl.org/dc/terms/created\",\"http://purl.org/dc/terms/language\",\"http://purl.org/ontology/bibo/uri\",\"http://purl.org/ontology/bibo/doi\",\"http://schemas.talis.com/2005/address/schema#localityName\""
                 + "\n" + getExpectedRow();
     }
 

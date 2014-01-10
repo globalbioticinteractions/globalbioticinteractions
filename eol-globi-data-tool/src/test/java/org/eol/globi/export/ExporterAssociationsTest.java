@@ -22,7 +22,7 @@ import static org.junit.Assert.assertThat;
 public class ExporterAssociationsTest extends GraphDBTestCase {
 
     @Test
-    public void exportWithHeader() throws IOException, NodeFactoryException, ParseException {
+    public void exportWithoutHeader() throws IOException, NodeFactoryException, ParseException {
         createTestData(null);
 
         String expected = "\nglobi:assoc:5,globi:occur:source:3,http://eol.org/schema/terms/eats,globi:occur:target:6,,,,,data source description,,,globi:ref:1" +

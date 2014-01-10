@@ -42,36 +42,7 @@ public class ExporterOccurrencesTest extends GraphDBTestCase {
     }
 
     private String getExpectedHeader() {
-        String header = "\"occurrenceID\",\"taxonID\",\"institutionCode\",\"collectionCode\",\"catalogNumber\",\"sex\",\"lifeStage\",\"reproductiveCondition\",\"behavior\",\"establishmentMeans\",\"occurrenceRemarks\",\"individualCount\",\"preparations\",\"fieldNotes\",\"samplingProtocol\",\"samplingEffort\",\"identifiedBy\",\"dateIdentified\",\"eventDate\",\"modified\",\"locality\",\"decimalLatitude\",\"decimalLongitude\",\"verbatimLatitude\",\"verbatimLongitude\",\"verbatimElevation\",\"physiologicalState\",\"bodyPart\"" +
-                "\n\"http://rs.tdwg.org/dwc/terms/occurrenceID\"," +
-                "\"http://rs.tdwg.org/dwc/terms/taxonID\"," +
-                "\"http://rs.tdwg.org/dwc/terms/institutionCode\"," +
-                "\"http://rs.tdwg.org/dwc/terms/collectionCode\"," +
-                "\"http://rs.tdwg.org/dwc/terms/catalogNumber\"," +
-                "\"http://rs.tdwg.org/dwc/terms/sex\"," +
-                "\"http://rs.tdwg.org/dwc/terms/lifeStage\"," +
-                "\"http://rs.tdwg.org/dwc/terms/reproductiveCondition\"," +
-                "\"http://rs.tdwg.org/dwc/terms/behavior\"," +
-                "\"http://rs.tdwg.org/dwc/terms/establishmentMeans\"," +
-                "\"http://rs.tdwg.org/dwc/terms/occurrenceRemarks\"," +
-                "\"http://rs.tdwg.org/dwc/terms/individualCount\"," +
-                "\"http://rs.tdwg.org/dwc/terms/preparations\"," +
-                "\"http://rs.tdwg.org/dwc/terms/fieldNotes\"," +
-                "\"http://rs.tdwg.org/dwc/terms/samplingProtocol\"," +
-                "\"http://rs.tdwg.org/dwc/terms/samplingEffort\"," +
-                "\"http://rs.tdwg.org/dwc/terms/identifiedBy\"," +
-                "\"http://rs.tdwg.org/dwc/terms/dateIdentified\"," +
-                "\"http://rs.tdwg.org/dwc/terms/eventDate\"," +
-                "\"http://purl.org/dc/terms/modified\"," +
-                "\"http://rs.tdwg.org/dwc/terms/locality\"," +
-                "\"http://rs.tdwg.org/dwc/terms/decimalLatitude\"," +
-                "\"http://rs.tdwg.org/dwc/terms/decimalLongitude\"," +
-                "\"http://rs.tdwg.org/dwc/terms/verbatimLatitude\"," +
-                "\"http://rs.tdwg.org/dwc/terms/verbatimLongitude\"," +
-                "\"http://rs.tdwg.org/dwc/terms/verbatimElevation\"," +
-                "\"http:/eol.org/globi/terms/physiologicalState\"," +
-                "\"http:/eol.org/globi/terms/bodyPart\"";
-        return header;
+        return "\"occurrenceID\",\"taxonID\",\"institutionCode\",\"collectionCode\",\"catalogNumber\",\"sex\",\"lifeStage\",\"reproductiveCondition\",\"behavior\",\"establishmentMeans\",\"occurrenceRemarks\",\"individualCount\",\"preparations\",\"fieldNotes\",\"samplingProtocol\",\"samplingEffort\",\"identifiedBy\",\"dateIdentified\",\"eventDate\",\"modified\",\"locality\",\"decimalLatitude\",\"decimalLongitude\",\"verbatimLatitude\",\"verbatimLongitude\",\"verbatimElevation\",\"physiologicalState\",\"bodyPart\"";
     }
 
     @Test

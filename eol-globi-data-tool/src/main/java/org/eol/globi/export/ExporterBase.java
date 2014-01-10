@@ -60,12 +60,6 @@ public abstract class ExporterBase extends DarwinCoreExporter {
             String fieldSuffix = index > 0 ? field.substring(index + 1) : field;
             writeHeaderField(writer, fields, i, fieldSuffix);
         }
-
-        writer.write("\n");
-        for (int i = 0; i < fields.length; i++) {
-            String field = fields[i];
-            writeHeaderField(writer, fields, i, field);
-        }
     }
 
     private void writeHeaderField(Writer writer, String[] fields, int i, String field) throws IOException {
