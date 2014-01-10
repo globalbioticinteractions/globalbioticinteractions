@@ -318,7 +318,7 @@ public class CypherProxyController {
         String cypherQuery = "START study=node:studies('*:*')" +
                 " MATCH study-[:COLLECTED]->sourceSpecimen-[interact:" + InteractUtil.allInteractionsCypherClause() + "]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon, sourceSpecimen-[:CLASSIFIED_AS]->sourceTaxon " +
                 whereClause +
-                " RETURN count(distinct(study)) as `number of studies`, count(interact) as `number of interactions`, count(distinct(sourceTaxon)) as `number of distinct source taxa (e.g. predators)`, count(distinct(targetTaxon)) as `number of distinct target taxa (e.g. prey)`";
+                " RETURN count(distinct(study)) as `number of studies`, count(interact) as `number of interactions`, count(distinct(sourceTaxon)) as `number of distinct source taxa (e.g. predators)`, count(distinct(targetTaxon)) as `number of distinct target taxa (e.g. prey)`, count(distinct(study.source)) as `number of distinct study sources";
         return new CypherQueryExecutor(cypherQuery, params).execute(null);
     }
 
