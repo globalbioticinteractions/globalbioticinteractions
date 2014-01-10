@@ -12,41 +12,41 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
 
-public class GeoNamesServiceTest {
+public class GeoNamesServiceImplTest {
 
     @Test
     public void retrievePointForSpireLocalityAndCache() throws IOException {
-        GeoNamesService geoNamesService = new GeoNamesService();
+        GeoNamesService geoNamesServiceImpl = new GeoNamesServiceImpl();
         StopWatch watch = new StopWatch();
         watch.start();
-        assertVenezuela(geoNamesService);
+        assertVenezuela(geoNamesServiceImpl);
         watch.stop();
         long firstDurationMs = watch.getTime();
 
         watch.reset();
 
         watch.start();
-                assertVenezuela(geoNamesService);
-                watch.stop();
+        assertVenezuela(geoNamesServiceImpl);
+        watch.stop();
         long secondDurationMs = watch.getTime();
         assertThat("first request should be much slower than second due to caching", firstDurationMs, is(greaterThan(10 * secondDurationMs)));
     }
 
-    private void assertVenezuela(GeoNamesService geoNamesService) throws IOException {
-        LatLng point = geoNamesService.findLatLngForSPIRELocality("Country: Venezuela");
+    private void assertVenezuela(GeoNamesService geoNamesServiceImpl) throws IOException {
+        LatLng point = geoNamesServiceImpl.findLatLngForSPIRELocality("Country: Venezuela");
         assertThat(point, is(notNullValue()));
     }
 
     @Test
     public void retrievePointForNonExistingSpireLocality() throws IOException {
-        LatLng point = new GeoNamesService().findLatLngForSPIRELocality("Blabla: mickey mouse");
+        LatLng point = new GeoNamesServiceImpl().findLatLngForSPIRELocality("Blabla: mickey mouse");
         assertThat(point, is(nullValue()));
     }
 
     @Test
     public void retrieveAnyGeoNamesId() throws IOException {
         // Half Moon Bay, http://www.geonames.org/2164089/half-moon-bay.html
-        LatLng point = new GeoNamesService().findLatLng(2164089L);
+        LatLng point = new GeoNamesServiceImpl().findLatLng(2164089L);
         assertThat(point, is(notNullValue()));
     }
 }

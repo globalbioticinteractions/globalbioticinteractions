@@ -13,6 +13,7 @@ import org.eol.globi.domain.Study;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.Term;
 import org.eol.globi.service.GeoNamesService;
+import org.eol.globi.service.GeoNamesServiceImpl;
 import org.junit.Test;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Relationship;
@@ -161,7 +162,7 @@ public class StudyImporterForSPIRETest extends GraphDBTestCase {
         properties.put(Study.TITLE, "the study of men eating dogs");
         properties.put(StudyImporterForSPIRE.PREY_NAME, "dog");
         properties.put(StudyImporterForSPIRE.PREDATOR_NAME, "man");
-        properties.put(StudyImporterForSPIRE.COUNTRY, "USA");
+        properties.put(StudyImporterForSPIRE.LOCALITY_ORIGINAL, "something");
         properties.put(StudyImporterForSPIRE.OF_HABITAT, spireHabitat);
         studyImporterForSPIRE.importTrophicLink(properties);
 
@@ -175,8 +176,8 @@ public class StudyImporterForSPIRETest extends GraphDBTestCase {
         for (Relationship specimenRel : specimenRels) {
             count++;
             Specimen specimen = new Specimen(specimenRel.getStartNode());
-            assertThat(specimen.getSampleLocation().getLatitude(), is(39.76));
-            assertThat(specimen.getSampleLocation().getLongitude(), is(-98.5));
+            assertThat(specimen.getSampleLocation().getLatitude(), is(1.0));
+            assertThat(specimen.getSampleLocation().getLongitude(), is(2.0));
 
             List<Environment> environments = specimen.getSampleLocation().getEnvironments();
             assertThat(environments.size(), is(1));
@@ -188,7 +189,25 @@ public class StudyImporterForSPIRETest extends GraphDBTestCase {
     }
 
     private StudyImporterForSPIRE createImporter() {
-        return new StudyImporterForSPIRE(null, nodeFactory);
+        StudyImporterForSPIRE studyImporterForSPIRE = new StudyImporterForSPIRE(null, nodeFactory);
+        studyImporterForSPIRE.setGeoNamesService(new GeoNamesService() {
+
+            @Override
+            public boolean hasPositionsForSPIRELocality(String spireLocality) {
+                return "something".equals(spireLocality);
+            }
+
+            @Override
+            public LatLng findLatLngForSPIRELocality(String spireLocality) throws IOException {
+                return hasPositionsForSPIRELocality(spireLocality) ? new LatLng(1.0, 2.0) : null;
+            }
+
+            @Override
+            public LatLng findLatLng(Long id) throws IOException {
+                return null;
+            }
+        });
+        return studyImporterForSPIRE;
     }
 
     @Test
@@ -199,6 +218,21 @@ public class StudyImporterForSPIRETest extends GraphDBTestCase {
         importer.setTrophicLinkListener(listener);
         importer.importStudy();
 
+        assertGAZMapping(listener);
+
+        GeoNamesServiceImpl geoNamesServiceImpl = new GeoNamesServiceImpl();
+        for (String locality : listener.localities) {
+            assertThat(geoNamesServiceImpl.hasPositionsForSPIRELocality(locality), is(true));
+        }
+        assertThat(listener.getCount(), is(30196));
+
+        assertThat(listener.descriptions, not(hasItem("http://spire.umbc.edu/ontologies/SpireEcoConcepts.owl#")));
+        assertThat(listener.titles, not(hasItem("http://spire.umbc.edu/")));
+        assertThat(listener.environments, not(hasItem("http://spire.umbc.edu/ontologies/SpireEcoConcepts.owl#")));
+        assertThat(listener.publicationYears, hasItem("1996"));
+    }
+
+    private void assertGAZMapping(TestTrophicLinkListener listener) {
         Map<String, Term> gazMap = new HashMap<String, Term>() {{
             put("Country: New Zealand;   State: Otago;   Locality: Catlins, Craggy Tor catchment", new Term("GAZ:00146864", "The Catlins"));
             put("Country: Scotland", new Term("GAZ:00002639", "Scotland"));
@@ -363,30 +397,6 @@ public class StudyImporterForSPIRETest extends GraphDBTestCase {
             }
         }
         assertThat(gazHit, is(listener.localities.size()));
-
-
-        int geoHit = 0;
-
-        Map<String, LatLng> localeToPoint = new HashMap<String, LatLng>();
-        GeoNamesService geoNamesService = new GeoNamesService();
-        for (String locality : listener.localities) {
-            LatLng point = geoNamesService.findLatLngForSPIRELocality(locality);
-            if (point == null) {
-                System.out.println("no mapping for spire locality [" + locality + "]");
-            } else {
-                geoHit++;
-                localeToPoint.put(locality, point);
-            }
-        }
-        assertThat(geoHit, is(listener.localities.size()));
-        assertThat(localeToPoint.size(), is(listener.localities.size()));
-
-        assertThat(listener.getCount(), is(30196));
-
-        assertThat(listener.descriptions, not(hasItem("http://spire.umbc.edu/ontologies/SpireEcoConcepts.owl#")));
-        assertThat(listener.titles, not(hasItem("http://spire.umbc.edu/")));
-        assertThat(listener.environments, not(hasItem("http://spire.umbc.edu/ontologies/SpireEcoConcepts.owl#")));
-        assertThat(listener.publicationYears, hasItem("1996"));
     }
 
 

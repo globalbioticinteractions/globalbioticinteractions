@@ -13,6 +13,7 @@ import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.Term;
 import org.eol.globi.service.GeoNamesService;
+import org.eol.globi.service.GeoNamesServiceImpl;
 import uk.me.jstott.jcoord.LatLng;
 
 import java.io.BufferedReader;
@@ -29,7 +30,6 @@ public class StudyImporterForSPIRE extends BaseStudyImporter {
     public static final String PREDATOR_NAME = "predator";
     public static final String PREY_NAME = "prey";
     public static final String LOCALITY_ORIGINAL = "localityOriginal";
-    private Map<String, LatLng> geoLookup = buildGEOLookup();
 
     private TrophicLinkListener trophicLinkListener = new TrophicLinkListener() {
         @Override
@@ -37,6 +37,8 @@ public class StudyImporterForSPIRE extends BaseStudyImporter {
             importTrophicLink(properties);
         }
     };
+
+    private GeoNamesService geoNamesService = new GeoNamesServiceImpl();
 
     public StudyImporterForSPIRE(ParserFactory parserFactory, NodeFactory nodeFactory) {
         super(parserFactory, nodeFactory);
@@ -69,65 +71,6 @@ public class StudyImporterForSPIRE extends BaseStudyImporter {
     }
 
 
-    private Map<String, LatLng> buildGEOLookup() {
-        Map<String, LatLng> geo = new HashMap<String, LatLng>();
-        addGeo("Portugal", 39.5, -8, geo);
-        addGeo("Southern Ocean", -60, 90, geo);
-        addGeo("Hong Kong", 22.28552, 114.15769, geo);
-        addGeo("Costa Rica", 10, -84, geo);
-        addGeo("Europe", 48.69096, 9.14062, geo);
-        addGeo("Chile", -30, -71, geo);
-        addGeo("Sri Lanka", 7, 81, geo);
-        addGeo("India", 20, 77, geo);
-        addGeo("Puerto Rico", 18.24829, -66.49989, geo);
-        addGeo("Namibia", -22, 17, geo);
-        addGeo("Arctic", -90, 0, geo);
-        addGeo("Panama", 9, -80, geo);
-        addGeo("UK", 54.75844, -2.69531, geo);
-        addGeo("Great Britain", 54.75844, -2.69531, geo);
-        addGeo("Wales", 52.5, -3.5, geo);
-        addGeo("Scotland", 56, -4, geo);
-        addGeo("Mexico", 23, -102, geo);
-        addGeo("Canada", 60.10867, -113.64258, geo);
-        addGeo("Venezuela", 8, -66, geo);
-        addGeo("Africa", 7.1881, 21.09375, geo);
-        addGeo("Marshall Islands", 7.113, 171.236, geo);
-        addGeo("Madagascar", -20, 47, geo);
-        addGeo("Quebec", 52.00017, -71.99907, geo);
-        addGeo("Ireland", 53, -8, geo);
-        addGeo("Barbados", 13.16667, -59.53333, geo);
-        addGeo("England", 52.16045, -0.70312, geo);
-        addGeo("Antarctic", -90, 0, geo);
-        addGeo("Ethiopia", 8, 38, geo);
-        addGeo("Malaysia", 2.5, 112.5, geo);
-        addGeo("Pacific", 0, 180, geo);
-        addGeo("St. Martin", 18.06667, -63.06667, geo);
-        addGeo("Tibet", 32, 90, geo);
-        addGeo("Peru", -10, -76, geo);
-        addGeo("Australia", -25, 135, geo);
-        addGeo("South Africa", -29, 24, geo);
-        addGeo("Malawi", -13.5, 34, geo);
-        addGeo("Netherlands", 52.5, 5.75, geo);
-        addGeo("Finland", 64, 26, geo);
-        addGeo("Seychelles", -4.58333, 55.66667, geo);
-        addGeo("Uganda", 2, 33, geo);
-        addGeo("Austria", 47.33333, 13.33333, geo);
-        addGeo("USA", 39.76, -98.5, geo);
-        addGeo("Russia", 60, 100, geo);
-        addGeo("Polynesia", -17.6859, -143.87695, geo);
-        addGeo("Germany", 51.5, 10.5, geo);
-        addGeo("Norway", 62, 10, geo);
-        addGeo("Japan", 35.68536, 139.75309, geo);
-        addGeo("New Zealand", -42, 174, geo);
-        return geo;
-    }
-
-    private void addGeo(String country, double lat, double lng, Map<String, LatLng> geo) {
-        geo.put(country, new LatLng(lat, lng));
-
-    }
-
-
     @Override
     public Study importStudy() throws StudyImporterException {
         Model model;
@@ -136,9 +79,6 @@ public class StudyImporterForSPIRE extends BaseStudyImporter {
         } catch (IOException e) {
             throw new StudyImporterException("failed to import SPIRE", e);
         }
-
-        buildGEOLookup();
-
 
         ResIterator resIterator = model.listSubjects();
         Map<String, String> properties = new HashMap<String, String>();
@@ -216,7 +156,7 @@ public class StudyImporterForSPIRE extends BaseStudyImporter {
             try {
                 Specimen predator = createSpecimen(properties.get(PREDATOR_NAME));
                 String locality = properties.get(LOCALITY_ORIGINAL);
-                LatLng latLng = new GeoNamesService().findLatLngForSPIRELocality(locality);
+                LatLng latLng = getGeoNamesService().findLatLngForSPIRELocality(locality);
                 if (latLng == null) {
                     getLogger().warn(study, "failed to find location for county [" + locality + "]");
                 } else {
@@ -226,15 +166,14 @@ public class StudyImporterForSPIRE extends BaseStudyImporter {
                     if (StringUtils.isNotBlank(habitat)) {
                         addEnvironment(location, "SPIRE:" + habitat, habitat);
                     }
-
                 }
                 study.collected(predator);
                 Specimen prey = createSpecimen(properties.get(PREY_NAME));
                 predator.ate(prey);
             } catch (NodeFactoryException e) {
-                getLogger().warn(study, "failed to import trophic link with properties [" + properties + "]: " +  e.getMessage());
+                getLogger().warn(study, "failed to import trophic link with properties [" + properties + "]: " + e.getMessage());
             } catch (IOException e) {
-                getLogger().warn(study, "failed to import trophic link with properties [" + properties + "]: " +  e.getMessage());
+                getLogger().warn(study, "failed to import trophic link with properties [" + properties + "]: " + e.getMessage());
             }
         }
     }
@@ -289,4 +228,11 @@ public class StudyImporterForSPIRE extends BaseStudyImporter {
         return importFilter;
     }
 
+    public void setGeoNamesService(GeoNamesService geoNamesService) {
+        this.geoNamesService = geoNamesService;
+    }
+
+    public GeoNamesService getGeoNamesService() {
+        return geoNamesService;
+    }
 }
