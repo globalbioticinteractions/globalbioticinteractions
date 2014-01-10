@@ -12,6 +12,7 @@ import org.eol.globi.domain.Location;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.Term;
+import org.eol.globi.service.GeoNamesService;
 import uk.me.jstott.jcoord.LatLng;
 
 import java.io.BufferedReader;
@@ -214,10 +215,10 @@ public class StudyImporterForSPIRE extends BaseStudyImporter {
 
             try {
                 Specimen predator = createSpecimen(properties.get(PREDATOR_NAME));
-                String country = properties.get(COUNTRY);
-                LatLng latLng = geoLookup.get(country);
+                String locality = properties.get(LOCALITY_ORIGINAL);
+                LatLng latLng = new GeoNamesService().findLatLngForSPIRELocality(locality);
                 if (latLng == null) {
-                    getLogger().warn(study, "failed to find location for county [" + country + "]");
+                    getLogger().warn(study, "failed to find location for county [" + locality + "]");
                 } else {
                     Location location = nodeFactory.getOrCreateLocation(latLng.getLat(), latLng.getLng(), null);
                     predator.caughtIn(location);
@@ -231,6 +232,8 @@ public class StudyImporterForSPIRE extends BaseStudyImporter {
                 Specimen prey = createSpecimen(properties.get(PREY_NAME));
                 predator.ate(prey);
             } catch (NodeFactoryException e) {
+                getLogger().warn(study, "failed to import trophic link with properties [" + properties + "]: " +  e.getMessage());
+            } catch (IOException e) {
                 getLogger().warn(study, "failed to import trophic link with properties [" + properties + "]: " +  e.getMessage());
             }
         }

@@ -5,6 +5,7 @@ public enum TaxonomyProvider {
     WORMS("urn:lsid:marinespecies.org:taxname:"),
     NCBI("ncbi:"),
     EOL("EOL:"),
+    GEONAMES("GEO:"),
     ENVO("ENVO:");
 
     private final String idPrefix;
