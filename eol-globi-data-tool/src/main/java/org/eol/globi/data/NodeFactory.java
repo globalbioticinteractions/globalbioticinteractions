@@ -300,7 +300,9 @@ public class NodeFactory {
         doi = doiResolver.findDOIForReference(reference);
         return doi;
     }
-
+    public Study getOrCreateStudy(String title, String contributor, String institution, String period, String description, String publicationYear, String source) {
+        return getOrCreateStudy(title, contributor, institution, period, description,publicationYear, source, null);
+    }
     public Study getOrCreateStudy(String title, String contributor, String institution, String period, String description, String publicationYear, String source, String doi) {
         Study study = findStudy(title);
         if (null == study) {

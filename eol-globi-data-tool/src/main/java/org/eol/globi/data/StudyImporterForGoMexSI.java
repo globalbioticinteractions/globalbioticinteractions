@@ -59,7 +59,7 @@ public class StudyImporterForGoMexSI extends BaseStudyImporter {
                 "",
                 "<a href=\"http://www.ingentaconnect.com/content/umrsmas/bullmar/2013/00000089/00000001/art00009\">Building a Fisheries Trophic Interaction Database for Management and Modeling Research in the Gulf of Mexico Large Marine Ecosystem.</a>"
                 , null
-                , GOMEXSI_URL);
+                , GOMEXSI_URL, null);
         final Map<String, Map<String, String>> predatorIdToPredatorNames = new HashMap<String, Map<String, String>>();
         final Map<String, List<Map<String, String>>> predatorIdToPreyNames = new HashMap<String, List<Map<String, String>>>();
         Map<String, Study> referenceIdToStudy = new HashMap<String, Study>();
@@ -147,7 +147,7 @@ public class StudyImporterForGoMexSI extends BaseStudyImporter {
         }
         study = nodeFactory.getOrCreateStudy(refTag, firstName + " " + lastName, institution.toString(), "", description
                 , publicationYear
-                , GOMEXSI_URL);
+                , GOMEXSI_URL, null);
         Transaction transaction = nodeFactory.getGraphDb().beginTx();
         try {
             study.setPublicationYear(publicationYear);
