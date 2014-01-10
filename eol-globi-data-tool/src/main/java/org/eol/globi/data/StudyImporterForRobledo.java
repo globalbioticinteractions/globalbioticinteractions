@@ -18,9 +18,9 @@ public class StudyImporterForRobledo extends BaseStudyImporter {
     @Override
     public Study importStudy() throws StudyImporterException {
         Study study = nodeFactory.getOrCreateStudy("García-Robledo et al 2013"
-                , "Carlos García-Robledo",
-                "Department of Botany, National Museum of Natural History, Smithsonian Institution, Washington, D.C., United States of America; Department of Entomology, National Museum of Natural History, Smithsonian Institution, Washington, D.C., United States of America",
-                "Oct 2008- Feb 2011",
+                , "",
+                "",
+                "",
                 "García-Robledo C, Erickson DL, Staines CL, Erwin TL, Kress WJ. Tropical Plant–Herbivore Networks: Reconstructing Species Interactions Using DNA Barcodes Heil M, editor. PLoS ONE [Internet]. 2013 January 8;8(1):e52967. Available from: http://dx.doi.org/10.1371/journal.pone.0052967"
                 , "2013"
                 , "http://www.plosone.org/article/info%3Adoi%2F10.1371%2Fjournal.pone.0052967");

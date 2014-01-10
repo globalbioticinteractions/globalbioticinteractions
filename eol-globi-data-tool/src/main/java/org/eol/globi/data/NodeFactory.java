@@ -252,10 +252,10 @@ public class NodeFactory {
 
 
     public Study createStudy(String title) {
-        return createStudy(title, null, null, null, null, null, null);
+        return createStudy(title, null, null, null, null, null, null, null);
     }
 
-    private Study createStudy(String title, String contributor, String institution, String period, String description, String publicationYear, String source) {
+    private Study createStudy(String title, String contributor, String institution, String period, String description, String publicationYear, String source, String doi) {
         Transaction transaction = graphDb.beginTx();
         Study study;
         try {
@@ -268,16 +268,17 @@ public class NodeFactory {
             study.setDescription(description);
             study.setPublicationYear(publicationYear);
             if (doiResolver != null) {
-                String prefix = StringUtils.isBlank(contributor) ? "" : (contributor + " ");
-                String reference = StringUtils.isBlank(description) ? "" : (prefix + description);
                 try {
-                    String doi = doiResolver.findDOIForReference(reference);
-                    if (doi != null) {
+                    if (StringUtils.isBlank(doi)) {
+                        doi = findDOIUsingReference(contributor, description, publicationYear);
+                    }
+
+                    if (StringUtils.isNotBlank(doi)) {
                         study.setDOI(doi);
                         study.setCitation(doiResolver.findCitationForDOI(doi));
                     }
                 } catch (IOException e) {
-                    LOG.warn("failed to lookup doi for [" + reference + "]");
+                    LOG.warn("failed to lookup doi for [" + title + "]");
                 }
             }
             studies.add(node, "title", title);
@@ -289,10 +290,21 @@ public class NodeFactory {
         return study;
     }
 
-    public Study getOrCreateStudy(String title, String contributor, String institution, String period, String description, String publicationYear, String source) {
+    private String findDOIUsingReference(String contributor, String description, String publicationYear) throws IOException {
+        String doi;
+        String prefix = StringUtils.isBlank(contributor) ? "" : (contributor + " ");
+        String reference = StringUtils.isBlank(description) ? "" : (prefix + description);
+        if (StringUtils.isNotBlank(publicationYear)) {
+            reference = reference + " " + publicationYear;
+        }
+        doi = doiResolver.findDOIForReference(reference);
+        return doi;
+    }
+
+    public Study getOrCreateStudy(String title, String contributor, String institution, String period, String description, String publicationYear, String source, String doi) {
         Study study = findStudy(title);
         if (null == study) {
-            study = createStudy(title, contributor, institution, period, description, publicationYear, source);
+            study = createStudy(title, contributor, institution, period, description, publicationYear, source, doi);
         }
         return study;
     }
