@@ -9,7 +9,7 @@ import java.util.Map;
 public class NoMatchService implements TaxonPropertyLookupService {
 
     @Override
-    public void lookupPropertiesByName(String taxonName, Map<String, String> properties) throws TaxonPropertyLookupServiceException {
+    public void lookupPropertiesByName(String name, Map<String, String> properties) throws TaxonPropertyLookupServiceException {
         if (properties.containsKey(Taxon.EXTERNAL_ID)) {
             String value = properties.get(Taxon.EXTERNAL_ID);
             if (StringUtils.isBlank(value)) {

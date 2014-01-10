@@ -38,6 +38,11 @@ public class ExporterMeasurementOrFact extends ExporterBase {
     }
 
     @Override
+    protected String getRowType() {
+        return "http://eol.org/schema/reference/MeasurementOrFact";
+    }
+
+    @Override
     public void doExportStudy(Study study, Writer writer, boolean includeHeader) throws IOException {
         Map<String, String> properties = new HashMap<String, String>();
 

@@ -40,6 +40,11 @@ public class ExporterReferences extends ExporterBase {
     }
 
     @Override
+    protected String getRowType() {
+        return "http://eol.org/schema/reference/Reference";
+    }
+
+    @Override
     protected void doExportStudy(Study study, Writer writer, boolean includeHeader) throws IOException {
         Map<String, String> properties = new HashMap<String, String>();
         properties.put(IDENTIFIER, referenceIdForStudy(study));

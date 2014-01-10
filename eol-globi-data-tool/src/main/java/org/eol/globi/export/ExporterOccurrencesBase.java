@@ -36,4 +36,9 @@ public abstract class ExporterOccurrencesBase extends ExporterBase {
                 EOLDictionary.BODY_PART,
         };
     }
+
+    @Override
+    protected String getRowType() {
+        return "http://rs.tdwg.org/dwc/terms/Occurrence";
+    }
 }

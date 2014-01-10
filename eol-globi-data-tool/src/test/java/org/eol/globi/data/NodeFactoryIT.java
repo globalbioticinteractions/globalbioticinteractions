@@ -1,5 +1,7 @@
 package org.eol.globi.data;
 
+import org.apache.commons.lang3.StringUtils;
+import org.eol.globi.data.taxon.CorrectionService;
 import org.eol.globi.domain.LogMessage;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.Taxon;
@@ -32,6 +34,13 @@ public class NodeFactoryIT extends GraphDBTestCase {
 
     @Test
     public void createTaxonFish() throws NodeFactoryException {
+        nodeFactory.setCorrectionService(new CorrectionService() {
+            @Override
+            public String correct(String taxonName) {
+                return StringUtils.equals("Fish",taxonName) ? "Actinopterygii" : taxonName;
+            }
+        });
+
         Taxon taxon = nodeFactory.getOrCreateTaxon("Fish");
         assertThat(taxon.getName(), is("Actinopterygii"));
         taxon = nodeFactory.getOrCreateTaxon("Fish");

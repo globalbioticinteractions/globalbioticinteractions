@@ -1,6 +1,5 @@
 package org.eol.globi.export;
 
-import com.Ostermiller.util.CSVPrint;
 import com.Ostermiller.util.CSVPrinter;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Specimen;
@@ -11,10 +10,8 @@ import org.neo4j.graphdb.Relationship;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
 
@@ -42,6 +39,8 @@ public abstract class ExporterBase extends DarwinCoreExporter {
     }
 
     protected abstract String[] getFields();
+
+    protected abstract String getRowType();
 
     protected abstract void doExportStudy(Study study, Writer writer, boolean includeHeader) throws IOException;
 
@@ -91,7 +90,7 @@ public abstract class ExporterBase extends DarwinCoreExporter {
 
     @Override
     protected String getMetaTablePrefix() {
-        return "<table encoding=\"UTF-8\" fieldsTerminatedBy=\",\" linesTerminatedBy=\"\\n\" ignoreHeaderLines=\"1\" rowType=\"http://rs.tdwg.org/dwc/terms/DarwinRecord\">\n" +
+        return "<table encoding=\"UTF-8\" fieldsTerminatedBy=\",\" linesTerminatedBy=\"\\n\" fieldsEnclosedBy=\"&quot;\" ignoreHeaderLines=\"1\" rowType=\"" + getRowType() + "\">\n" +
                 "    <files>\n" +
                 "      <location>";
     }

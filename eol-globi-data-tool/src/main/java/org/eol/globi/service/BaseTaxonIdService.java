@@ -45,9 +45,9 @@ public abstract class BaseTaxonIdService extends BaseHttpClientService implement
     }
 
     @Override
-    public void lookupPropertiesByName(String taxonName, Map<String, String> properties) throws TaxonPropertyLookupServiceException {
+    public void lookupPropertiesByName(String name, Map<String, String> properties) throws TaxonPropertyLookupServiceException {
         for (String propertyName : properties.keySet()) {
-            String propertyValue = lookupPropertyValueByTaxonName(taxonName, propertyName);
+            String propertyValue = lookupPropertyValueByTaxonName(name, propertyName);
             if (propertyValue != null) {
                 properties.put(propertyName, propertyValue);
             }

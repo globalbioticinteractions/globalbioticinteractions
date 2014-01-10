@@ -27,19 +27,43 @@ public class EOLServiceIT {
 
     @Test
     public void lookupByName() throws TaxonPropertyLookupServiceException {
-        assertThat(lookupPageIdByScientificName("Actinopterygii"), is("EOL:1905"));
-        assertThat(lookupPageIdByScientificName("Catfish"), is("EOL:204346"));
-        assertThat(lookupPageIdByScientificName("Hygrocybe pratensis var. pallida"), is("EOL:6676627"));
+        assertThat(lookupPageIdByName("Actinopterygii"), is("EOL:1905"));
+        assertThat(lookupPageIdByName("Catfish"), is("EOL:204346"));
+        assertThat(lookupPageIdByName("Hygrocybe pratensis var. pallida"), is("EOL:6676627"));
 
-        assertThat(lookupPageIdByScientificName("Homo sapiens"), is("EOL:327955"));
-        assertThat(lookupPageIdByScientificName("Puccinia caricina var. ribesii-pendulae"), is("EOL:6776658"));
-        assertThat(lookupPageIdByScientificName("Hesperocharis paranensis"), is("EOL:176594"));
+        assertThat(lookupPageIdByName("Homo sapiens"), is("EOL:327955"));
+        assertThat(lookupPageIdByName("Puccinia caricina var. ribesii-pendulae"), is("EOL:6776658"));
+        assertThat(lookupPageIdByName("Hesperocharis paranensis"), is("EOL:176594"));
 
-        assertThat(lookupPageIdByScientificName("Dead roots"), is(nullValue()));
-        assertThat(lookupPageIdByScientificName("Prunella (Bot)"), is("EOL:70879"));
+        assertThat(lookupPageIdByName("Dead roots"), is(nullValue()));
+        assertThat(lookupPageIdByName("Prunella (Bot)"), is("EOL:70879"));
         //assertThat(lookupPageIdByScientificName("Prunella (Bird)"), is("EOL:77930"));
-        assertThat(lookupPageIdByScientificName("Pseudobaeospora dichroa"), is("EOL:1001400"));
+        assertThat(lookupPageIdByName("Pseudobaeospora dichroa"), is("EOL:1001400"));
+    }
 
+    @Test
+    public void lookupBySquatLobster() throws TaxonPropertyLookupServiceException {
+        HashMap<String, String> properties = new HashMap<String, String>();
+        new EOLService().lookupPropertiesByName("Squat lobster", properties);
+        assertThat(properties.get(Taxon.EXTERNAL_ID), is("EOL:315099"));
+        assertThat(properties.get(Taxon.NAME), is("Munidopsis albatrossae"));
+    }
+
+    @Test
+    public void lookupPickleweed() throws TaxonPropertyLookupServiceException {
+        HashMap<String, String> properties = new HashMap<String, String>();
+        new EOLService().lookupPropertiesByName("Pickleweed", properties);
+        assertThat(properties.get(Taxon.EXTERNAL_ID), is("EOL:61812"));
+        assertThat(properties.get(Taxon.NAME), is("Salicornia"));
+
+    }
+
+    @Test
+    public void lookupHake() throws TaxonPropertyLookupServiceException {
+        HashMap<String, String> properties = new HashMap<String, String>();
+        new EOLService().lookupPropertiesByName("Hake", properties);
+        assertThat(properties.get(Taxon.EXTERNAL_ID), is("EOL:205098"));
+        assertThat(properties.get(Taxon.NAME), is("Merluccius bilinearis"));
     }
 
     /**
@@ -67,27 +91,27 @@ public class EOLServiceIT {
 
     @Test
     public void multiplySymbolNotSupportedByEOL() throws TaxonPropertyLookupServiceException {
-        assertThat(lookupPageIdByScientificName("Salix cinerea \u00D7 phylicifolia"), is(nullValue()));
-        assertThat(lookupPageIdByScientificName("Salix cinerea × phylicifolia"), is(nullValue()));
+        assertThat(lookupPageIdByName("Salix cinerea \u00D7 phylicifolia"), is(nullValue()));
+        assertThat(lookupPageIdByName("Salix cinerea × phylicifolia"), is(nullValue()));
 
     }
 
     @Test
     public void lookupByNameYieldsMoreThanOneMatches() throws TaxonPropertyLookupServiceException {
         // this species has two matches  http://eol.org/27383107 and http://eol.org/209714, first is picked
-        assertThat(lookupPageIdByScientificName("Copadichromis insularis"), is("EOL:209714"));
+        assertThat(lookupPageIdByName("Copadichromis insularis"), is("EOL:209714"));
 
         // below matches both http://eol.org/4443282 and http://eol.org/310363, but first is picked
-        assertThat(lookupPageIdByScientificName("Spilogale putorius gracilis"), is("EOL:310363"));
+        assertThat(lookupPageIdByName("Spilogale putorius gracilis"), is("EOL:310363"));
 
         // etc
-        assertThat(lookupPageIdByScientificName("Crocethia alba"), is("EOL:1049518"));
-        assertThat(lookupPageIdByScientificName("Ecdyonuridae"), is("EOL:2762776"));
-        assertThat(lookupPageIdByScientificName("Catasticta hegemon"), is("EOL:173526"));
-        assertThat(lookupPageIdByScientificName("Theridion ovatum"), is("EOL:1187291"));
-        assertThat(lookupPageIdByScientificName("Cambarus propinquus"), is(nullValue()));
-        assertThat(lookupPageIdByScientificName("Vellidae"), is("EOL:644"));
-        assertThat(lookupPageIdByScientificName("Mylothris rueppellii"), is("EOL:180170"));
+        assertThat(lookupPageIdByName("Crocethia alba"), is("EOL:1049518"));
+        assertThat(lookupPageIdByName("Ecdyonuridae"), is("EOL:2762776"));
+        assertThat(lookupPageIdByName("Catasticta hegemon"), is("EOL:173526"));
+        assertThat(lookupPageIdByName("Theridion ovatum"), is("EOL:1187291"));
+        assertThat(lookupPageIdByName("Cambarus propinquus"), is(nullValue()));
+        assertThat(lookupPageIdByName("Vellidae"), is("EOL:644"));
+        assertThat(lookupPageIdByName("Mylothris rueppellii"), is("EOL:180170"));
 
     }
 
@@ -130,9 +154,9 @@ public class EOLServiceIT {
 
     @Test
     public void lookupByNameYieldsNoMatches() throws TaxonPropertyLookupServiceException {
-        assertThat(lookupPageIdByScientificName("Clio acicula"), is(nullValue()));
-        assertThat(lookupPageIdByScientificName("Aegires oritzi"), is(nullValue()));
-        assertThat(lookupPageIdByScientificName("Fish hook"), is(nullValue()));
+        assertThat(lookupPageIdByName("Clio acicula"), is(nullValue()));
+        assertThat(lookupPageIdByName("Aegires oritzi"), is(nullValue()));
+        assertThat(lookupPageIdByName("Fish hook"), is(nullValue()));
     }
 
     @Test
@@ -153,7 +177,7 @@ public class EOLServiceIT {
 
     }
 
-    private String lookupPageIdByScientificName(String taxonName) throws TaxonPropertyLookupServiceException {
+    private String lookupPageIdByName(String taxonName) throws TaxonPropertyLookupServiceException {
         HashMap<String, String> properties = new HashMap<String, String>();
         new EOLService().lookupPropertiesByName(taxonName, properties);
         return properties.get(Taxon.EXTERNAL_ID);

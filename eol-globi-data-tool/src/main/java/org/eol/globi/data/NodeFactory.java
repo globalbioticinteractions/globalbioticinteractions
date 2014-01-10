@@ -95,10 +95,13 @@ public class NodeFactory {
         return graphDb;
     }
 
-    private void addToIndeces(Taxon taxon) {
-        // only index taxa with external id
-        if (StringUtils.isNotBlank(taxon.getName())) {
-            taxons.add(taxon.getUnderlyingNode(), Taxon.NAME, taxon.getName());
+    private void addToIndeces(Taxon taxon, String correctedName) {
+        String canonicalName = taxon.getName();
+        if (StringUtils.isNotBlank(canonicalName)) {
+            taxons.add(taxon.getUnderlyingNode(), Taxon.NAME, canonicalName);
+            if (!StringUtils.equals(canonicalName, correctedName)) {
+                taxons.add(taxon.getUnderlyingNode(), Taxon.NAME, correctedName);
+            }
             indexCommonNames(taxon);
             indexTaxonPath(taxon);
         }
@@ -300,9 +303,11 @@ public class NodeFactory {
         doi = doiResolver.findDOIForReference(reference);
         return doi;
     }
+
     public Study getOrCreateStudy(String title, String contributor, String institution, String period, String description, String publicationYear, String source) {
-        return getOrCreateStudy(title, contributor, institution, period, description,publicationYear, source, null);
+        return getOrCreateStudy(title, contributor, institution, period, description, publicationYear, source, null);
     }
+
     public Study getOrCreateStudy(String title, String contributor, String institution, String period, String description, String publicationYear, String source, String doi) {
         Study study = findStudy(title);
         if (null == study) {
@@ -345,14 +350,14 @@ public class NodeFactory {
         }
         Taxon taxon = findTaxon(name);
         if (taxon == null) {
-            String normalizedName = correctionService.correct(name);
+            String correctedName = correctionService.correct(name);
             Transaction transaction = graphDb.beginTx();
             try {
-                taxon = new Taxon(graphDb.createNode(), normalizedName);
+                taxon = new Taxon(graphDb.createNode(), correctedName);
                 taxon.setExternalId(externalId);
                 taxon.setPath(path);
                 taxonEnricher.enrich(taxon);
-                addToIndeces(taxon);
+                addToIndeces(taxon, correctedName);
                 transaction.success();
             } catch (IOException e) {
                 transaction.failure();
@@ -372,7 +377,7 @@ public class NodeFactory {
         if (null != path) {
             taxon.setPath(path);
         }
-        addToIndeces(taxon);
+        addToIndeces(taxon, name);
         return taxon;
     }
 

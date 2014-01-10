@@ -55,7 +55,7 @@ public class TaxonPropertyEnricherImplTest extends GraphDBTestCase {
     public void enrichTwoServiceFirstIncomplete() throws NodeFactoryException, IOException, TaxonPropertyLookupServiceException {
         TaxonPropertyLookupService serviceA = new TaxonPropertyLookupService() {
             @Override
-            public void lookupPropertiesByName(String taxonName, Map<String, String> properties) throws TaxonPropertyLookupServiceException {
+            public void lookupPropertiesByName(String name, Map<String, String> properties) throws TaxonPropertyLookupServiceException {
                 properties.put(Taxon.EXTERNAL_ID, "FIRST:123");
             }
 
@@ -66,7 +66,7 @@ public class TaxonPropertyEnricherImplTest extends GraphDBTestCase {
         };
         TaxonPropertyLookupService serviceB = new TaxonPropertyLookupService() {
             @Override
-            public void lookupPropertiesByName(String taxonName, Map<String, String> properties) throws TaxonPropertyLookupServiceException {
+            public void lookupPropertiesByName(String name, Map<String, String> properties) throws TaxonPropertyLookupServiceException {
                 properties.put(Taxon.PATH, "one | two | three");
             }
 
@@ -85,7 +85,7 @@ public class TaxonPropertyEnricherImplTest extends GraphDBTestCase {
     public void enrichTwoServiceFirstComplete() throws NodeFactoryException, IOException, TaxonPropertyLookupServiceException {
         TaxonPropertyLookupService serviceA = new TaxonPropertyLookupService() {
             @Override
-            public void lookupPropertiesByName(String taxonName, Map<String, String> properties) throws TaxonPropertyLookupServiceException {
+            public void lookupPropertiesByName(String name, Map<String, String> properties) throws TaxonPropertyLookupServiceException {
                 properties.put(Taxon.EXTERNAL_ID, "FIRST:123");
                 properties.put(Taxon.PATH, "one | two | three");
                 properties.put(Taxon.COMMON_NAMES, "four | five | six");

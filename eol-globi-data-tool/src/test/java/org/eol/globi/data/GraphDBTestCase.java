@@ -11,6 +11,8 @@ import org.eol.globi.service.TermLookupServiceException;
 import org.junit.After;
 import org.junit.Before;
 import org.neo4j.graphdb.GraphDatabaseService;
+import org.neo4j.graphdb.factory.GraphDatabaseFactory;
+import org.neo4j.test.TestGraphDatabaseFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -24,7 +26,7 @@ public abstract class GraphDBTestCase {
 
     @Before
     public void startGraphDb() throws IOException {
-        graphDb = new org.neo4j.test.ImpermanentGraphDatabase();
+        graphDb = new TestGraphDatabaseFactory().newImpermanentDatabase();
         nodeFactory = new NodeFactory(graphDb, new TaxonPropertyEnricher() {
 
             @Override

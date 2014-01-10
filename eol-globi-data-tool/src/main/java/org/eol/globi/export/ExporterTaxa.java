@@ -38,6 +38,11 @@ public class ExporterTaxa extends ExporterBase {
     }
 
     @Override
+    protected String getRowType() {
+        return "http://rs.tdwg.org/dwc/terms/Taxon";
+    }
+
+    @Override
     public void doExportStudy(Study study, Writer writer, boolean includeHeader) throws IOException {
         Map<String, String> taxa = new HashMap<String, String>();
         Map<String, String> properties = new HashMap<String, String>();

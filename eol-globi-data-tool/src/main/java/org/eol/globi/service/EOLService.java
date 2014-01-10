@@ -9,7 +9,6 @@ import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.JsonProcessingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.data.CharsetConstant;
-import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonomyProvider;
 
@@ -23,7 +22,7 @@ import java.util.Map;
 public class EOLService extends BaseHttpClientService implements TaxonPropertyLookupService {
 
     @Override
-    public void lookupPropertiesByName(String taxonName, Map<String, String> properties) throws TaxonPropertyLookupServiceException {
+    public void lookupPropertiesByName(String name, Map<String, String> properties) throws TaxonPropertyLookupServiceException {
         Long id = null;
         String externalId = properties.get(Taxon.EXTERNAL_ID);
 
@@ -41,7 +40,7 @@ public class EOLService extends BaseHttpClientService implements TaxonPropertyLo
         }
 
         if (null == id) {
-            id = getPageId(taxonName, true);
+            id = getPageId(name, true);
         }
 
         if (id != null) {
@@ -56,9 +55,9 @@ public class EOLService extends BaseHttpClientService implements TaxonPropertyLo
                     properties.put(Taxon.PATH, null);
                 } else {
                     properties.put(Taxon.EXTERNAL_ID, TaxonomyProvider.ID_PREFIX_EOL + id.toString());
-                    if (!path.contains(taxonName)) {
+                    if (!path.contains(name)) {
                         // add synonym
-                        properties.put(Taxon.PATH, path + CharsetConstant.SEPARATOR + taxonName);
+                        properties.put(Taxon.PATH, path + CharsetConstant.SEPARATOR + name);
                     }
                 }
             }
@@ -90,18 +89,40 @@ public class EOLService extends BaseHttpClientService implements TaxonPropertyLo
     private void getRanks(Long pageId, Map<String, String> properties) throws URISyntaxException, TaxonPropertyLookupServiceException, IOException {
         URI uri = new URI("http", null, "eol.org", 80, "/api/pages/1.0/" + pageId + ".json", "images=1&videos=0&sounds=0&maps=0&text=0&iucn=false&subjects=overview&licenses=all&details=false&common_names=true&synonyms=false&references=false&format=json", null);
         String response = getResponse(uri);
+        System.out.println(response);
         if (response != null) {
             StringBuilder ranks = new StringBuilder();
-            addRanks(ranks, response);
-            if (ranks.length() > 0) {
-                properties.put(Taxon.PATH, ranks.toString());
-            }
+            addCanonicalNamesAndRanks(properties, response, ranks);
 
             StringBuilder commonNames = new StringBuilder();
             addCommonNames(commonNames, response);
             if (commonNames.length() > 0) {
                 properties.put(Taxon.COMMON_NAMES, commonNames.toString());
             }
+        }
+    }
+
+    private void addCanonicalNamesAndRanks(Map<String, String> properties, String response, StringBuilder ranks) throws IOException, URISyntaxException, TaxonPropertyLookupServiceException {
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode node = mapper.readTree(response);
+
+        JsonNode taxonConcepts = node.get("taxonConcepts");
+        String firstConceptId = null;
+        for (JsonNode taxonConcept : taxonConcepts) {
+            if (taxonConcept.has("identifier")) {
+                firstConceptId = taxonConcept.get("identifier").getValueAsText();
+                if (taxonConcept.has("canonicalForm")) {
+                    properties.put(Taxon.NAME, taxonConcept.get("canonicalForm").getValueAsText());
+                }
+                break;
+            }
+            ;
+        }
+        if (firstConceptId != null) {
+            addRanks(firstConceptId, ranks);
+        }
+        if (ranks.length() > 0) {
+            properties.put(Taxon.PATH, ranks.toString());
         }
     }
 
@@ -125,24 +146,6 @@ public class EOLService extends BaseHttpClientService implements TaxonPropertyLo
         }
 
 
-    }
-
-    private void addRanks(StringBuilder ranks, String response) throws IOException, URISyntaxException, TaxonPropertyLookupServiceException {
-        ObjectMapper mapper = new ObjectMapper();
-        JsonNode node = mapper.readTree(response);
-
-        JsonNode taxonConcepts = node.get("taxonConcepts");
-        String firstConceptId = null;
-        for (JsonNode taxonConcept : taxonConcepts) {
-            if (taxonConcept.has("identifier")) {
-                firstConceptId = taxonConcept.get("identifier").getValueAsText();
-                break;
-            }
-            ;
-        }
-        if (firstConceptId != null) {
-            addRanks(firstConceptId, ranks);
-        }
     }
 
     private void addRanks(String firstConceptId, StringBuilder ranks) throws URISyntaxException, TaxonPropertyLookupServiceException, IOException {

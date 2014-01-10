@@ -24,6 +24,11 @@ public abstract class ExporterAssociationsBase extends ExporterBase {
         };
     }
 
+    @Override
+    protected String getRowType() {
+        return "http://eol.org/schema/Association";
+    }
+
     public static final String DEFAULT_INTERACT_TYPE = "http://eol.org/schema/terms/interactsWith";
     private static final Map<String, String> GLOBI_EOL_INTERACT_MAP = new HashMap<String, String>() {
         {
