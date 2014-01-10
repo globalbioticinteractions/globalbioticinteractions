@@ -33,7 +33,7 @@ public class StudyImporterForINaturalistTest extends GraphDBTestCase {
     @Test
     public void importUsingINatAPI() throws StudyImporterException, TaxonPropertyLookupServiceException {
         Study study = importer.importStudy();
-        assertThat(study.getContributor(), is("Ken-ichi Kueda"));
+        assertThat(study.getContributor(), is(""));
         assertThat(countSpecimen(study) > 150, is(true));
     }
 
