@@ -77,7 +77,7 @@ public class StudyImporterForWrast extends BaseStudyImporter {
                 "Department of Life Sciences Texas A&M University-Corpus Christi",
                 "July 2006- April 2007",
                 "Spatiotemporal And Habitat-mediated Food Web Dynamics in Lavaca Bay, Texas.", "2008", StudyImporterForGoMexSI.GOMEXSI_URL);
-        study.setCitation("Wrast JL. Spatiotemporal And Habitat-mediated Food Web Dynamics in Lavaca Bay, Texas. 2008. Master Thesis.");
+        study.setCitationWithTx("Wrast JL. Spatiotemporal And Habitat-mediated Food Web Dynamics in Lavaca Bay, Texas. 2008. Master Thesis.");
         study.setExternalId("http://www.fisheries.tamucc.edu/people_files/FINAL%20WRAST%20THESIS.pdf");
         try {
             LabeledCSVParser csvParser = parserFactory.createParser(LAVACA_BAY_DATA_SOURCE, CharsetConstant.UTF8);

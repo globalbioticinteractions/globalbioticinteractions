@@ -3,8 +3,6 @@ package org.eol.globi.data;
 import com.Ostermiller.util.CSVParser;
 import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.eol.globi.service.TermLookupService;
 import org.eol.globi.service.TermLookupServiceException;
 import org.eol.globi.domain.Term;
@@ -230,7 +228,7 @@ public class StudyImporterForAkin extends BaseStudyImporter {
                     "Mar 1998- Aug 1999",
                     "S. Akin, K. O. Winemiller, Seasonal variation in food web composition and structure in a temperate tidal estuary, Estuaries and Coasts" +
                             "; August 2006, Volume 29, Issue 4, pp 552-567", "2006", StudyImporterForGoMexSI.GOMEXSI_URL, null);
-            study.setDOI("http://dx.doi.org/10.1007/BF02784282");
+            study.setDOIWithTx("http://dx.doi.org/10.1007/BF02784282");
             String[][] siteInfo = loadSampleSiteLocations();
             importAkinStudyFile(siteInfo, studyResource, study);
         } catch (IOException e) {

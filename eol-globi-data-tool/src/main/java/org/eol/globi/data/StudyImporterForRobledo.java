@@ -24,7 +24,7 @@ public class StudyImporterForRobledo extends BaseStudyImporter {
                 "García-Robledo C, Erickson DL, Staines CL, Erwin TL, Kress WJ. Tropical Plant–Herbivore Networks: Reconstructing Species Interactions Using DNA Barcodes Heil M, editor. PLoS ONE [Internet]. 2013 January 8;8(1):e52967. Available from: http://dx.doi.org/10.1371/journal.pone.0052967"
                 , "2013"
                 , "http://www.plosone.org/article/info%3Adoi%2F10.1371%2Fjournal.pone.0052967");
-        study.setDOI("http://dx.doi.org/10.1371/journal.pone.0052967");
+        study.setDOIWithTx("http://dx.doi.org/10.1371/journal.pone.0052967");
         Map<String, String> abrLookup = buildPlantLookup();
 
         // spatial location from: http://www.ots.ac.cr/index.php?option=com_content&task=view&id=163&Itemid=348

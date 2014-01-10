@@ -33,6 +33,13 @@ public class NodeFactoryIT extends GraphDBTestCase {
     }
 
     @Test
+    public void createStudy() {
+        Study study = nodeFactory.getOrCreateStudy("bla", null, null, null, "descr", null, "source", "http://dx.doi.org/10.1111/j.1469-7998.1966.tb02907.x");
+        assertThat(study.getDOI(), is("http://dx.doi.org/10.1111/j.1469-7998.1966.tb02907.x"));
+        assertThat(study.getCitation(), is("citation:http://dx.doi.org/10.1111/j.1469-7998.1966.tb02907.x"));
+    }
+
+    @Test
     public void createTaxonFish() throws NodeFactoryException {
         nodeFactory.setCorrectionService(new CorrectionService() {
             @Override

@@ -39,7 +39,7 @@ public class StudyImporterForBlewett extends BaseStudyImporter {
                 , "2006"
                 , StudyImporterForGoMexSI.GOMEXSI_URL);
 
-        study.setCitation("Blewett DA, Hensley RA, and Stevens PW, Feeding Habits of Common Snook, Centropomus Undecimalis, in Charlotte Harbor, Florida, Gulf and Caribbean Research Vol 18, 1–13, 2006");
+        study.setCitationWithTx("Blewett DA, Hensley RA, and Stevens PW, Feeding Habits of Common Snook, Centropomus Undecimalis, in Charlotte Harbor, Florida, Gulf and Caribbean Research Vol 18, 1–13, 2006");
         study.setExternalId("http://research.myfwc.com/engine/download_redirection_process.asp?file=06blewett_0718.pdf&objid=50963&dltype=publication");
         try {
             Map<String, Location> collectionLocationMap = new HashMap<String, Location>();

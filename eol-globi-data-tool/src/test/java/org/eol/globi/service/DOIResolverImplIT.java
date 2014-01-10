@@ -39,6 +39,11 @@ public class DOIResolverImplIT {
         String citationForDOI = new DOIResolverImpl().findCitationForDOI("http://dx.doi.org/10.1371/journal.pone.0052967");
         assertThat(citationForDOI, is("García-Robledo C, Erickson DL, Staines CL, Erwin TL, Kress WJ. Tropical Plant–Herbivore Networks: Reconstructing Species Interactions Using DNA Barcodes Heil M, editor. PLoS ONE [Internet]. 2013 January 8;8(1):e52967. Available from: http://dx.doi.org/10.1371/journal.pone.0052967"));
     }
+@Test
+    public void findCitationForDOI3() throws IOException {
+        String citationForDOI = new DOIResolverImpl().findCitationForDOI("http://dx.doi.org/10.2307/177149");
+        assertThat(citationForDOI, is("Yodzis P. DIFFUSE EFFECTS IN FOOD WEBS. Ecology [Internet]. 2000 January;81(1):261-266. Available from: http://dx.doi.org/10.1890/0012-9658(2000)081[0261:DEIFW]2.0.CO;2"));
+    }
 
     @Test
     public void findMalformedCitationWithMalformedDOIURL() throws IOException {
