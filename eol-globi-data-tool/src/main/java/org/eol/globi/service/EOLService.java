@@ -89,7 +89,6 @@ public class EOLService extends BaseHttpClientService implements TaxonPropertyLo
     private void getRanks(Long pageId, Map<String, String> properties) throws URISyntaxException, TaxonPropertyLookupServiceException, IOException {
         URI uri = new URI("http", null, "eol.org", 80, "/api/pages/1.0/" + pageId + ".json", "images=1&videos=0&sounds=0&maps=0&text=0&iucn=false&subjects=overview&licenses=all&details=false&common_names=true&synonyms=false&references=false&format=json", null);
         String response = getResponse(uri);
-        System.out.println(response);
         if (response != null) {
             StringBuilder ranks = new StringBuilder();
             addCanonicalNamesAndRanks(properties, response, ranks);
