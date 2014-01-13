@@ -18,11 +18,11 @@ public class StudyImporterForJRFerrerParis extends BaseStudyImporter {
     public Study importStudy() throws StudyImporterException {
         Study study = nodeFactory.getOrCreateStudy("JRFerrisParisButterflies",
                 "Jose R. Ferrer Paris",
-                "Centro de Estudios Botánicos y Agroforestales, Instituto Venezolano de Investigaciones Científicas; Kirstenbosch Research Center, South African National Biodiversity Institute",
                 "",
-                "Compilation of hostplant records for butterflies."
+                "",
+                "Ferrer-Paris JR, Sánchez-Mercado AY, Lozano C, Zambrano L, Soto J, Baettig J, Ortega P, Leal M. Using web-content for the assessment of macroecological patterns in butterfly-hostplant associations at a global scale. March 2013 - January 2014. Unpublished results."
                 , null
-                , "Jose R. Ferrer Paris");
+                , "http://papilionoidea.myspecies.info/");
         String studyResource = "jr_ferrer_paris/CompiledButterflyHostPlantRecords_JRFP.csv";
         try {
             LabeledCSVParser parser = parserFactory.createParser(studyResource, CharsetConstant.UTF8);
