@@ -12,8 +12,8 @@
         <relativePath>../eol-globi-parent/pom.xml</relativePath>
     </parent>
 
-    <artifactId>eol-globi-topo</artifactId>
-    <name>EOL's Global Biotic Interactions Topology Library</name>
+    <artifactId>eol-globi-geo</artifactId>
+    <name>EOL's Global Biotic Interactions Geographic Library</name>
 
     <properties>
         <shapefiles.dir>${project.build.testOutputDirectory}</shapefiles.dir>
@@ -36,21 +36,21 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.eol.globi.topo</groupId>
+            <groupId>org.eol.globi.geo</groupId>
             <artifactId>teow-tnc</artifactId>
             <version>20140115</version>
             <type>zip</type>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.eol.globi.topo</groupId>
+            <groupId>org.eol.globi.geo</groupId>
             <artifactId>feow-tnc</artifactId>
             <version>20140115</version>
             <type>zip</type>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.eol.globi.topo</groupId>
+            <groupId>org.eol.globi.geo</groupId>
             <artifactId>meow-tnc</artifactId>
             <version>20140115</version>
             <type>zip</type>
@@ -74,14 +74,14 @@
                         <configuration>
                             <artifactItems>
                                 <artifactItem>
-                                    <groupId>org.eol.globi.topo</groupId>
+                                    <groupId>org.eol.globi.geo</groupId>
                                     <artifactId>feow-tnc</artifactId>
                                     <version>20140115</version>
                                     <type>zip</type>
                                     <overWrite>false</overWrite>
                                     <outputDirectory>${shapefiles.dir}/feow-tnc</outputDirectory>
                                 </artifactItem><artifactItem>
-                                    <groupId>org.eol.globi.topo</groupId>
+                                    <groupId>org.eol.globi.geo</groupId>
                                     <artifactId>teow-tnc</artifactId>
                                     <version>20140115</version>
                                     <type>zip</type>
@@ -89,7 +89,7 @@
                                     <outputDirectory>${shapefiles.dir}/teow-tnc</outputDirectory>
                                 </artifactItem>
                                 <artifactItem>
-                                    <groupId>org.eol.globi.topo</groupId>
+                                    <groupId>org.eol.globi.geo</groupId>
                                     <artifactId>meow-tnc</artifactId>
                                     <version>20140115</version>
                                     <type>zip</type>
