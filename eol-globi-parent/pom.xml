@@ -26,9 +26,9 @@
         </dependency>
 
         <dependency>
-        	<groupId>org.hamcrest</groupId>
-        	<artifactId>hamcrest-all</artifactId>
-        	<version>1.3</version>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-all</artifactId>
+            <version>1.3</version>
             <scope>test</scope>
         </dependency>
 
@@ -122,8 +122,13 @@
         </repository>
         <repository>
             <id>-globi-snapshot</id>
-            <name>GloBI snaphotsy</name>
+            <name>GloBI snaphots</name>
             <url>https://s3.amazonaws.com/globi/snapshot</url>
+        </repository>
+        <repository>
+            <id>-globi-thirdparty-datasets</id>
+            <name>GloBI Thirdparty Datasets</name>
+            <url>https://s3.amazonaws.com/globi/thirdparty-datasets</url>
         </repository>
     </repositories>
 

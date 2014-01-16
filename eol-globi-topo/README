@@ -1,0 +1,26 @@
+To enable automated testing and easy deployment, we've (temporarily) packaged the shape files from http://maps.tnc.org/gis_data.html is a maven repository:
+
+artifacts are:
+
+<dependency>
+	<groupId>org.eol.globi.topo</groupId>
+	<artifactId>teow</artifactId>
+	<version>20140115</version>
+	<type>zip</type>
+</dependency>
+
+
+<dependency>
+	<groupId>org.eol.globi.topo</groupId>
+	<artifactId>feow</artifactId>
+	<version>20140115</version>
+	<type>zip</type>
+</dependency>
+
+
+<dependency>
+	<groupId>org.eol.globi.topo</groupId>
+	<artifactId>meow</artifactId>
+	<version>20140115</version>
+	<type>zip</type>
+</dependency>
