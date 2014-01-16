@@ -13,7 +13,6 @@ import static org.junit.Assert.assertThat;
 
 public class EcoRegionsServiceTest {
 
-
     @Test
     public void isMarineRegionInNorthernCalifornia() throws EcoRegionFinderException {
         Map<String, String> props = findEcoRegionProperties(pointInSanFranciscoBay(), new EcoRegionFinderFactory().createEcoRegionFinder(EcoRegionType.Marine));
