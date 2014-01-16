@@ -40,21 +40,18 @@
             <artifactId>teow-tnc</artifactId>
             <version>20140115</version>
             <type>zip</type>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.eol.globi.geo</groupId>
             <artifactId>feow-tnc</artifactId>
             <version>20140115</version>
             <type>zip</type>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.eol.globi.geo</groupId>
             <artifactId>meow-tnc</artifactId>
             <version>20140115</version>
             <type>zip</type>
-            <scope>test</scope>
         </dependency>
     </dependencies>
 

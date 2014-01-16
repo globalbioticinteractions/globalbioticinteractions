@@ -13,16 +13,64 @@
 
     <name>EOL's Global Biotic Interaction Datasets</name>
 
+    <properties>
+        <shapefiles.dir>${project.build.directory}/shapefiles</shapefiles.dir>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>eol-globi-data-tool</artifactId>
             <version>${project.version}</version>
         </dependency>
+
     </dependencies>
 
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>2.8</version>
+                <executions>
+                    <execution>
+                        <id>unpack</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>org.eol.globi.geo</groupId>
+                                    <artifactId>feow-tnc</artifactId>
+                                    <version>20140115</version>
+                                    <type>zip</type>
+                                    <overWrite>false</overWrite>
+                                    <outputDirectory>${shapefiles.dir}/feow-tnc</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.eol.globi.geo</groupId>
+                                    <artifactId>teow-tnc</artifactId>
+                                    <version>20140115</version>
+                                    <type>zip</type>
+                                    <overWrite>false</overWrite>
+                                    <outputDirectory>${shapefiles.dir}/teow-tnc</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.eol.globi.geo</groupId>
+                                    <artifactId>meow-tnc</artifactId>
+                                    <version>20140115</version>
+                                    <type>zip</type>
+                                    <overWrite>false</overWrite>
+                                    <outputDirectory>${shapefiles.dir}/meow-tnc</outputDirectory>
+                                </artifactItem>
+                            </artifactItems>
+                            <outputDirectory>${project.build.directory}</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
@@ -42,6 +90,7 @@
                     <arguments>
                         <argument>-Xmx2G</argument>
                         <argument>-classpath</argument>
+                        <argument>-Dshapefiles.dir=${shapefiles.dir}</argument>
                         <classpath/>
                         <argument>org.eol.globi.tool.Normalizer</argument>
                     </arguments>
