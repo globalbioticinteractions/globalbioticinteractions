@@ -14,6 +14,19 @@ import static org.junit.Assert.assertThat;
 public class EcoRegionsServiceTest {
 
     @Test
+    public void fourDifferentEcoRegionsGulfOfMexico() throws EcoRegionFinderException {
+        EcoRegionFinder finder = new EcoRegionFinderFactory().createEcoRegionFinder(EcoRegionType.Marine);
+        Map<String, String> ecoRegion70 = finder.findEcoRegion(26.863281, -82.756349);
+        assertThat(ecoRegion70.get("ECOREGION"), is("Floridian"));
+        Map<String, String> ecoRegion43 = finder.findEcoRegion(29.190533,-92.556153);
+        assertThat(ecoRegion43.get("ECOREGION"), is("Northern Gulf of Mexico"));
+        Map<String, String> ecoRegion60 = finder.findEcoRegion(20.179724,-92.380372);
+        assertThat(ecoRegion60.get("ECOREGION"), is("Southern Gulf of Mexico"));
+        Map<String, String> ecoRegion65 = finder.findEcoRegion(23.241346,-83.327638);
+        assertThat(ecoRegion65.get("ECOREGION"), is("Greater Antilles"));
+    }
+
+    @Test
     public void isMarineRegionInNorthernCalifornia() throws EcoRegionFinderException {
         Map<String, String> props = findEcoRegionProperties(pointInSanFranciscoBay(), new EcoRegionFinderFactory().createEcoRegionFinder(EcoRegionType.Marine));
         assertThat(props.toString(), is("{ALT_CODE=53, ECOREGION=Northern California, ECO_CODE=25058, ECO_CODE_X=58, Lat_Zone=Temperate, PROVINCE=Cold Temperate Northeast Pacific, PROV_CODE=10, REALM=Temperate Northern Pacific, RLM_CODE=3}"));
@@ -40,7 +53,8 @@ public class EcoRegionsServiceTest {
     @Test
     public void isMarineRegionInGulfOfMexico() throws EcoRegionFinderException {
         // for some reason the coordinate system is lng, lat.
-        findEcoRegionProperties(pointInGulfOfMexico(), new EcoRegionFinderFactory().createEcoRegionFinder(EcoRegionType.Marine));
+        Map<String, String> props = findEcoRegionProperties(pointInGulfOfMexico(), new EcoRegionFinderFactory().createEcoRegionFinder(EcoRegionType.Marine));
+        assertThat(props.toString(), is("bla"));
     }
 
 
