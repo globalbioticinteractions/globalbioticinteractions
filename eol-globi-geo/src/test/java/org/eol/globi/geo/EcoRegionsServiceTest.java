@@ -54,7 +54,7 @@ public class EcoRegionsServiceTest {
     public void isMarineRegionInGulfOfMexico() throws EcoRegionFinderException {
         // for some reason the coordinate system is lng, lat.
         Map<String, String> props = findEcoRegionProperties(pointInGulfOfMexico(), new EcoRegionFinderFactory().createEcoRegionFinder(EcoRegionType.Marine));
-        assertThat(props.toString(), is("bla"));
+        assertThat(props.get("ECOREGION"), is("Northern Gulf of Mexico"));
     }
 
 
