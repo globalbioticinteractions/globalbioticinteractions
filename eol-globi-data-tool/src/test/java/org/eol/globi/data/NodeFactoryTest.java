@@ -177,6 +177,35 @@ public class NodeFactoryTest extends GraphDBTestCase {
     }
 
     @Test
+    public void createSpeciesMatchHigherOrder() throws NodeFactoryException {
+        nodeFactory = new NodeFactory(getGraphDb(), new TaxonPropertyEnricher() {
+            @Override
+            public void enrich(Taxon taxon) throws IOException {
+                if ("bla".equals(taxon.getName())) {
+                    taxon.setPath("a path");
+                    taxon.setExternalId("anExternalId");
+                    taxon.setCommonNames(EXPECTED_COMMON_NAMES);
+                }
+            }
+        });
+
+        Taxon taxon = nodeFactory.getOrCreateTaxon("bla bla");
+        assertEquals("bla", taxon.getName());
+        assertEquals("a path", taxon.getPath());
+        assertEquals("anExternalId", taxon.getExternalId());
+
+        taxon = nodeFactory.getOrCreateTaxon("bla bla boo");
+        assertEquals("bla", taxon.getName());
+        assertEquals("a path", taxon.getPath());
+        assertEquals("anExternalId", taxon.getExternalId());
+
+        taxon = nodeFactory.getOrCreateTaxon("boo bla");
+        assertEquals("boo bla", taxon.getName());
+        assertNull(taxon.getPath());
+        assertNull(taxon.getExternalId());
+    }
+
+    @Test
     public void findCloseMatchForTaxonPath() throws NodeFactoryException {
         Taxon homoSapiens = nodeFactory.getOrCreateTaxon("Homo sapiens", null, "Animalia Mammalia");
         Transaction transaction = homoSapiens.getUnderlyingNode().getGraphDatabase().beginTx();

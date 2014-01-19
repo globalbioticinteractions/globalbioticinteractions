@@ -1,5 +1,6 @@
 package org.eol.globi.data;
 
+import org.apache.commons.collections.ListUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -22,6 +23,7 @@ import org.eol.globi.domain.Study;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.service.DOIResolver;
 import org.eol.globi.service.EnvoLookupService;
+import org.eol.globi.service.TaxonMatchValidator;
 import org.eol.globi.service.TaxonPropertyEnricher;
 import org.eol.globi.service.TermLookupService;
 import org.eol.globi.service.TermLookupServiceException;
@@ -356,7 +358,27 @@ public class NodeFactory {
                 taxon = new Taxon(graphDb.createNode(), correctedName);
                 taxon.setExternalId(externalId);
                 taxon.setPath(path);
-                taxonEnricher.enrich(taxon);
+                boolean shouldContinue;
+                do {
+                    taxonEnricher.enrich(taxon);
+                    shouldContinue = !TaxonMatchValidator.hasMatch(taxon);
+                    if (shouldContinue) {
+                        String[] nameParts = StringUtils.split(taxon.getName());
+                        if (nameParts.length > 1) {
+                            taxon.setName(nameParts[0]);
+                        } else if (nameParts.length > 2) {
+                            taxon.setName(nameParts[0].trim() + " " + nameParts[1].trim());
+                        } else {
+                            shouldContinue = false;
+                        }
+                    }
+
+                } while (shouldContinue);
+
+                if (!TaxonMatchValidator.hasMatch(taxon)) {
+                    taxon.setName(correctedName);
+                }
+
                 addToIndeces(taxon, correctedName);
                 transaction.success();
             } catch (IOException e) {

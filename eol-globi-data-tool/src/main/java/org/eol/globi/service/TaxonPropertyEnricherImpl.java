@@ -1,6 +1,5 @@
 package org.eol.globi.service;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.neo4j.graphdb.GraphDatabaseService;
@@ -41,7 +40,7 @@ public class TaxonPropertyEnricherImpl implements TaxonPropertyEnricher {
         for (TaxonPropertyLookupService service : services) {
             try {
                 enrichTaxonWithPropertyValue(errorCounts, taxonNode, service, properties);
-                if (StringUtils.isNotBlank(taxon.getPath()) && StringUtils.isNotBlank(taxon.getExternalId())) {
+                if (TaxonMatchValidator.hasMatch(taxon)) {
                     break;
                 }
             } catch (TaxonPropertyLookupServiceException e) {
