@@ -11,7 +11,7 @@ import static junit.framework.Assert.assertNull;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
-public class EcoRegionsServiceTest {
+public class EcoRegionFinderImplTest {
 
     @Test
     public void fourDifferentEcoRegionsGulfOfMexico() throws EcoRegionFinderException {
