@@ -16,8 +16,6 @@ import java.util.Map;
 
 public class StudyImporterForRaymond extends BaseStudyImporter {
 
-    public static final String DIET_DATA_URL = "http://esapubs.org/archive/ecol/E092/097/diet.csv";
-
     public StudyImporterForRaymond(ParserFactory parserFactory, NodeFactory nodeFactory) {
         super(parserFactory, nodeFactory);
     }
@@ -37,7 +35,7 @@ public class StudyImporterForRaymond extends BaseStudyImporter {
             }
 
             LabeledCSVParser dietParser = new LabeledCSVParser(new CSVParser(new FileInputStream(dietFile)));
-            while(dietParser.getLine() != null) {
+            while (dietParser.getLine() != null) {
                 dietParser.getValueByLabel("SOURCE_ID");
                 dietParser.getValueByLabel("PREDATOR_NAME");
                 dietParser.getValueByLabel("PREDATOR_LIFE_STAGE");
@@ -60,27 +58,27 @@ public class StudyImporterForRaymond extends BaseStudyImporter {
                 dietParser.getValueByLabel("PREY_NAME");
                 dietParser.getValueByLabel("PREY_LIFE_STAGE");
             }
-
-
         } catch (IOException e) {
-            throw new StudyImporterException("faile to retreive [" + DIET_DATA_URL + "]", e);
+            throw new StudyImporterException("failed to import [" + getClass().getSimpleName() + "]", e);
         }
-
-
         return null;
     }
 
-    private File download(String prefix, String dataUrl) throws IOException {
-        File tmpFile = File.createTempFile(prefix, ".csv");
-        FileOutputStream os = new FileOutputStream(tmpFile);
-        System.out.print("[" + tmpFile.getAbsolutePath() + "] downloading...");
-        InputStream is = new URL(dataUrl).openStream();
-        IOUtils.copy(is, os);
-        IOUtils.closeQuietly(is);
-        IOUtils.closeQuietly(os);
-        if (tmpFile.exists()) {
-            System.out.print("[" + tmpFile.getAbsolutePath() + "] downloaded.");
+    private File download(String prefix, String dataUrl) throws StudyImporterException {
+        try {
+            File tmpFile = File.createTempFile(prefix, ".csv");
+            FileOutputStream os = new FileOutputStream(tmpFile);
+            System.out.print("[" + tmpFile.getAbsolutePath() + "] downloading...");
+            InputStream is = new URL(dataUrl).openStream();
+            IOUtils.copy(is, os);
+            IOUtils.closeQuietly(is);
+            IOUtils.closeQuietly(os);
+            if (tmpFile.exists()) {
+                System.out.print("[" + tmpFile.getAbsolutePath() + "] downloaded.");
+            }
+            return tmpFile;
+        } catch (IOException e) {
+            throw new StudyImporterException("failed to donwload [" + dataUrl + "]", e);
         }
-        return tmpFile;
     }
 }
