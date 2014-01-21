@@ -89,8 +89,8 @@
                     <executable>java</executable>
                     <arguments>
                         <argument>-Xmx2G</argument>
-                        <argument>-classpath</argument>
                         <argument>-Dshapefiles.dir=${shapefiles.dir}</argument>
+                        <argument>-classpath</argument>
                         <classpath/>
                         <argument>org.eol.globi.tool.Normalizer</argument>
                     </arguments>
