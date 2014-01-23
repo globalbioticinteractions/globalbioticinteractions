@@ -14,6 +14,7 @@ import org.neo4j.graphdb.Transaction;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +27,12 @@ public class StudyImporterForGoMexSI extends BaseStudyImporter {
     public static final String STOMACH_COUNT_WITH_FOOD = "stomachCountWithFood";
     public static final String STOMACH_COUNT_WITHOUT_FOOD = "stomachCountWithoutFood";
     public static final String GOMEXSI_NAMESPACE = "GOMEXSI:";
+
+    public static final Collection KNOWN_INVALID_DOUBLE_STRINGS = new ArrayList<String>() {{
+        add("NA");
+        add("> .001");
+        add("TR");
+    }};
 
     public StudyImporterForGoMexSI(ParserFactory parserFactory, NodeFactory nodeFactory) {
         super(parserFactory, nodeFactory);
@@ -227,20 +234,16 @@ public class StudyImporterForGoMexSI extends BaseStudyImporter {
                     }
                 }
             }
-        } catch (
-                IOException e
-                )
-
-        {
+        } catch (IOException e) {
             throw new StudyImporterException("failed to open resource [" + locationResource + "]", e);
         }
 
     }
 
     private void checkStomachDataConsistency(String predatorId, Map<String, String> predatorProperties, List<Map<String, String>> preyList, Study metaStudy) {
-        Integer total = getValueOrNull(predatorProperties, STOMACH_COUNT_TOTAL);
-        Integer withoutFood = getValueOrNull(predatorProperties, STOMACH_COUNT_WITHOUT_FOOD);
-        Integer withFood = getValueOrNull(predatorProperties, STOMACH_COUNT_WITH_FOOD);
+        Integer total = integerValueOrNull(predatorProperties, STOMACH_COUNT_TOTAL);
+        Integer withoutFood = integerValueOrNull(predatorProperties, STOMACH_COUNT_WITHOUT_FOOD);
+        Integer withFood = integerValueOrNull(predatorProperties, STOMACH_COUNT_WITH_FOOD);
         if (total != null && withoutFood != null) {
             if (preyList == null || preyList.size() == 0) {
                 if (!total.equals(withoutFood)) {
@@ -254,13 +257,22 @@ public class StudyImporterForGoMexSI extends BaseStudyImporter {
         }
     }
 
-    private Integer getValueOrNull(Map<String, String> predatorProperties, String label) {
-        String stomachCountString = predatorProperties.get(label);
-        return "NA".equals(stomachCountString) ? null : Integer.parseInt(stomachCountString);
+    private Integer integerValueOrNull(Map<String, String> props, String key) {
+        String value = props.get(key);
+        return value == null || "NA".equals(value) ? null : Integer.parseInt(value);
+    }
+
+    private Double doubleValueOrNull(Map<String, String> props, String key) throws StudyImporterException {
+        String value = props.get(key);
+        return value == null || KNOWN_INVALID_DOUBLE_STRINGS.contains(value) ? null : Double.parseDouble(value);
     }
 
     private Specimen createSpecimen(Map<String, String> properties) throws NodeFactoryException, StudyImporterException {
         Specimen specimen = nodeFactory.createSpecimen(properties.get(Taxon.NAME));
+        specimen.setLengthInMm(doubleValueOrNull(properties, Specimen.LENGTH_IN_MM));
+        specimen.setFrequencyOfOccurrence(doubleValueOrNull(properties, Specimen.FREQUENCY_OF_OCCURRENCE));
+        specimen.setTotalCount(integerValueOrNull(properties, Specimen.TOTAL_COUNT));
+        specimen.setTotalVolumeInMl(doubleValueOrNull(properties, Specimen.TOTAL_VOLUME_IN_ML));
         addLifeStage(properties, specimen);
         addPhysiologicalState(properties, specimen);
         addBodyPart(properties, specimen);
@@ -310,25 +322,35 @@ public class StudyImporterForGoMexSI extends BaseStudyImporter {
         try {
             LabeledCSVParser parser = parserFactory.createParser(datafile, CharsetConstant.UTF8);
             while (parser.getLine() != null) {
+                Map<String, String> properties = new HashMap<String, String>();
+                addOptionalProperty(parser, "TOT_WO_FD", STOMACH_COUNT_WITHOUT_FOOD, properties);
+                addOptionalProperty(parser, "TOT_W_FD", STOMACH_COUNT_WITH_FOOD, properties);
+                addOptionalProperty(parser, "TOT_PRED_STOM_EXAM", STOMACH_COUNT_TOTAL, properties);
+                addOptionalProperty(parser, "MN_LEN", Specimen.LENGTH_IN_MM, properties);
+                addOptionalProperty(parser, "LIFE_HIST_STAGE", Specimen.LIFE_STAGE_LABEL, properties);
+                addOptionalProperty(parser, "PHYSIOLOG_STATE", Specimen.PHYSIOLOGICAL_STATE_LABEL, properties);
+                addOptionalProperty(parser, "PREY_PARTS", Specimen.BODY_PART_LABEL, properties);
+                addOptionalProperty(parser, "N_CONS", Specimen.TOTAL_COUNT, properties);
+                addOptionalProperty(parser, "VOL_CONS", Specimen.TOTAL_VOLUME_IN_ML, properties);
+                addOptionalProperty(parser, "FREQ_OCC", Specimen.FREQUENCY_OF_OCCURRENCE, properties);
+                properties.put(Taxon.NAME, getMandatoryValue(datafile, parser, scientificNameLabel));
+
                 String refId = getMandatoryValue(datafile, parser, "REF_ID");
                 String specimenId = getMandatoryValue(datafile, parser, "PRED_ID");
-                String stomachCountWithoutFood = parser.getValueByLabel("TOT_WO_FD");
-                String stomachCountWithFood = parser.getValueByLabel("TOT_W_FD");
-                String stomachCountTotal = parser.getValueByLabel("TOT_PRED_STOM_EXAM");
-                String scientificName = getMandatoryValue(datafile, parser, scientificNameLabel);
                 String predatorUID = refId + specimenId;
-                Map<String, String> properties = new HashMap<String, String>();
-                properties.put(Taxon.NAME, scientificName);
-                properties.put(Specimen.LIFE_STAGE_LABEL, parser.getValueByLabel("LIFE_HIST_STAGE"));
-                properties.put(Specimen.PHYSIOLOGICAL_STATE_LABEL, parser.getValueByLabel("PHYSIOLOG_STATE"));
-                properties.put(Specimen.BODY_PART_LABEL, parser.getValueByLabel("PREY_PARTS"));
-                properties.put(STOMACH_COUNT_TOTAL, stomachCountTotal);
-                properties.put(STOMACH_COUNT_WITH_FOOD, stomachCountWithFood);
-                properties.put(STOMACH_COUNT_WITHOUT_FOOD, stomachCountWithoutFood);
+
                 specimenListener.onSpecimen(predatorUID, properties);
             }
         } catch (IOException e) {
             throw new StudyImporterException("failed to open resource [" + datafile + "]", e);
+        }
+    }
+
+    private void addOptionalProperty(LabeledCSVParser parser, String label, String normalizedName, Map<String, String> properties) {
+        String value = parser.getValueByLabel(label);
+        value = value == null || "NA".equalsIgnoreCase(value) ? null : value;
+        if (value != null) {
+            properties.put(normalizedName, value);
         }
     }
 

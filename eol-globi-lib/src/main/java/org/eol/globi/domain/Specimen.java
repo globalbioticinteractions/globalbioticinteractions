@@ -19,6 +19,9 @@ public class Specimen extends NodeBacked {
     private static final String PHYSIOLOGICAL_STATE_ID = "physiologicalStateId";
     public static final String BODY_PART_LABEL = "bodyPartLabel";
     public static final String BODY_PART_ID = "bodyPartId";
+    public static final String TOTAL_COUNT = "totalNumberConsumed";
+    public static final String TOTAL_VOLUME_IN_ML = "totalVolumeInMl";
+    public static final String FREQUENCY_OF_OCCURRENCE = "frequencyOfOccurrence";
 
     public Specimen(Node node) {
         super(node);
@@ -131,5 +134,19 @@ public class Specimen extends NodeBacked {
     public void setBodyPart(Term bodyPart) {
         setPropertyWithTx(Specimen.BODY_PART_LABEL, bodyPart.getName());
         setPropertyWithTx(Specimen.BODY_PART_ID, bodyPart.getId());
+    }
+
+    public void setFrequencyOfOccurrence(Double frequencyOfOccurrence) {
+        setPropertyWithTx(Specimen.FREQUENCY_OF_OCCURRENCE, frequencyOfOccurrence);
+    }
+
+    public void setTotalCount(Integer totalCount) {
+        setPropertyWithTx(Specimen.TOTAL_COUNT, totalCount);
+    }
+
+
+    public void setTotalVolumeInMl(Double totalVolumeInMl) {
+        setPropertyWithTx(Specimen.TOTAL_VOLUME_IN_ML, totalVolumeInMl);
+
     }
 }

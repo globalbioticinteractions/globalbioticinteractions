@@ -204,8 +204,10 @@ public class CypherProxyController {
                 .append("sourceSpecimen." + Specimen.BODY_PART_LABEL + "? as ").append(predatorPrefix).append(ResultFields.SUFFIX_BODY_PART).append(",")
                 .append("targetSpecimen." + Specimen.BODY_PART_LABEL + "? as ").append(preyPrefix).append(ResultFields.SUFFIX_BODY_PART).append(",")
                 .append("sourceSpecimen." + Specimen.PHYSIOLOGICAL_STATE_LABEL + "? as ").append(predatorPrefix).append(ResultFields.SUFFIX_PHYSIOLOGICAL_STATE).append(",")
-                .append("targetSpecimen." + Specimen.PHYSIOLOGICAL_STATE_LABEL + "? as ").append(preyPrefix).append(ResultFields.SUFFIX_PHYSIOLOGICAL_STATE);
-
+                .append("targetSpecimen." + Specimen.PHYSIOLOGICAL_STATE_LABEL + "? as ").append(preyPrefix).append(ResultFields.SUFFIX_PHYSIOLOGICAL_STATE).append(",")
+                .append("targetSpecimen." + Specimen.TOTAL_COUNT + "? as ").append(preyPrefix).append("total_count").append(",")
+                .append("targetSpecimen." + Specimen.TOTAL_VOLUME_IN_ML + "? as ").append(preyPrefix).append("total_volume_ml").append(",")
+                .append("targetSpecimen." + Specimen.FREQUENCY_OF_OCCURRENCE + "? as ").append(preyPrefix).append("frequency_of_occurrence");
 
         if (INTERACTION_PREYS_ON.equals(interactionType)) {
             query.append("START ").append(getTaxonSelector(sourceTaxonName, targetTaxonName)).append(" ")

@@ -96,7 +96,11 @@ public class StudyImporterForGoMexSITest extends GraphDBTestCase {
         boolean detectedAtLeastOneLifeState = false;
         boolean detectedAtLeastOnePhysiologicalState = false;
         boolean detectedAtLeastOnePreyBodyPart = false;
+        boolean detectedAtLeastOneBodyLength = false;
         boolean detectedAtLeastOneLocation = false;
+        boolean detectedAtLeastOneFrequencyOfOccurrence = false;
+        boolean detectedAtLeastOneTotalNumberConsumed = false;
+        boolean detectedAtLeastOneTotalVolume = false;
 
         assertThat(taxa, is(notNullValue()));
 
@@ -107,6 +111,10 @@ public class StudyImporterForGoMexSITest extends GraphDBTestCase {
                 detectedAtLeastOneLifeState |= specimenNode.hasProperty(Specimen.LIFE_STAGE_LABEL);
                 detectedAtLeastOnePhysiologicalState |= specimenNode.hasProperty(Specimen.PHYSIOLOGICAL_STATE_LABEL);
                 detectedAtLeastOnePreyBodyPart |= specimenNode.hasProperty(Specimen.BODY_PART_LABEL);
+                detectedAtLeastOneBodyLength |= specimenNode.hasProperty(Specimen.LENGTH_IN_MM);
+                detectedAtLeastOneFrequencyOfOccurrence |= specimenNode.hasProperty(Specimen.FREQUENCY_OF_OCCURRENCE);
+                detectedAtLeastOneTotalNumberConsumed |= specimenNode.hasProperty(Specimen.TOTAL_COUNT);
+                detectedAtLeastOneTotalVolume |= specimenNode.hasProperty(Specimen.TOTAL_VOLUME_IN_ML);
 
                 if (specimenNode.hasRelationship(Direction.INCOMING, RelTypes.COLLECTED)) {
                     detectedAtLeastOneLocation = true;
@@ -118,6 +126,10 @@ public class StudyImporterForGoMexSITest extends GraphDBTestCase {
         assertThat(detectedAtLeastOnePhysiologicalState, is(true));
         assertThat(detectedAtLeastOnePreyBodyPart, is(true));
         assertThat(detectedAtLeastOneLocation, is(true));
+        assertThat(detectedAtLeastOneBodyLength, is(true));
+        assertThat(detectedAtLeastOneFrequencyOfOccurrence, is(true));
+        assertThat(detectedAtLeastOneTotalNumberConsumed, is(true));
+        assertThat(detectedAtLeastOneTotalVolume, is(true));
     }
 
 
