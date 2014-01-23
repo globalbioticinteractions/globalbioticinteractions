@@ -138,8 +138,8 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
                     nodeFactory.setUnixEpochProperty(collectedRel, dateTime.toDate());
                 }
 
-                InteractType type = null;
-                if ("Eating".equals(interactionType)) {
+                InteractType type;
+                if ("Eating".equals(interactionType) || "With the prey".equals(interactionType)) {
                     type = InteractType.ATE;
                 } else if ("Host".equals(interactionType)) {
                     type = InteractType.HAS_HOST;

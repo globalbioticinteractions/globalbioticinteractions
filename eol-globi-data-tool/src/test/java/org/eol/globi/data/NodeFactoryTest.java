@@ -147,6 +147,7 @@ public class NodeFactoryTest extends GraphDBTestCase {
     public void createAndFindEnvironment() throws NodeFactoryException {
         Location location = nodeFactory.getOrCreateLocation(0.0, 1.0, 2.0);
         List<Environment> first = nodeFactory.getOrCreateEnvironments(location, "BLA:123", "this and that");
+        location = nodeFactory.getOrCreateLocation(0.0, 1.0, 2.0);
         List<Environment> second = nodeFactory.getOrCreateEnvironments(location, "BLA:123", "this and that");
         assertThat(first.size(), is(second.size()));
         assertThat(first.get(0).getNodeID(), is(second.get(0).getNodeID()));
