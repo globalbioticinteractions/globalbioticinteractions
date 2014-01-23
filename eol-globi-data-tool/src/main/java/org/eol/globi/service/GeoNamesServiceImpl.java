@@ -17,6 +17,7 @@ import static org.eol.globi.domain.TaxonomyProvider.GEONAMES;
 
 public class GeoNamesServiceImpl implements GeoNamesService {
 
+    public static final Term GEO_TERM_EARTH = new Term("GEO:6295630", "Earth");
     private Map<String, Term> SPIRE_TO_GEO_NAMES_MAP = new HashMap<String, Term>() {{
         put("Country: New Zealand;   State: Otago;   Locality: Catlins, Craggy Tor catchment", new Term("GEO:6612109", "Otago"));
         put("Country: Scotland", new Term("GEO:2638360", "Scotland"));
@@ -79,7 +80,7 @@ public class GeoNamesServiceImpl implements GeoNamesService {
         put("Country: USA;   State: Massachusetts;   Locality: Cape Ann", new Term("GEO:4929094", "Cape Ann"));
         put("Country: USA;   State: Maine;   Locality: Martins", new Term("GEO:4971068", "State of Maine"));
         put("Country: USA;   State: New York", new Term("GEO:5128638", "State of New York"));
-        put("Country: General;   Locality: General", new Term("GEO:6295630", "Earth"));
+        put("Country: General;   Locality: General", GEO_TERM_EARTH);
         put("Country: New Zealand;   State: Otago;   Locality: Stony, Sutton catchment", new Term("GEO:6612109", "Otago"));
         put("Country: Tibet", new Term("GEO:1279685", "Tibet Autonomous Region"));
         put("Country: USA;   State: Texas;   Locality: Franklin Mtns", new Term("GEO:5521842", "Franklin Mountains"));
@@ -193,7 +194,8 @@ public class GeoNamesServiceImpl implements GeoNamesService {
     private LatLng retrievePointForLocality(String spireLocality) throws IOException {
         LatLng point = null;
         Term term = SPIRE_TO_GEO_NAMES_MAP.get(spireLocality);
-        if (term != null) {
+        // see https://github.com/jhpoelen/eol-globi-data/issues/39
+        if (term != null && !term.equals(GEO_TERM_EARTH)) {
             String idString = term.getId();
             if (SPIRE_TO_GEO_NAMES_MAP.containsKey(spireLocality) && idString.startsWith(GEONAMES.getIdPrefix())) {
                 Long id = Long.parseLong(idString.replaceFirst(GEONAMES.getIdPrefix(), ""));

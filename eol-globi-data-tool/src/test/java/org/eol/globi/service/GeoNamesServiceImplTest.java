@@ -6,6 +6,7 @@ import uk.me.jstott.jcoord.LatLng;
 
 import java.io.IOException;
 
+import static junit.framework.Assert.assertNull;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.core.Is.is;
@@ -35,6 +36,19 @@ public class GeoNamesServiceImplTest {
     private void assertVenezuela(GeoNamesService geoNamesServiceImpl) throws IOException {
         LatLng point = geoNamesServiceImpl.findLatLngForSPIRELocality("Country: Venezuela");
         assertThat(point, is(notNullValue()));
+    }
+
+    @Test
+    public void assertPacific() throws IOException {
+        LatLng point = new GeoNamesServiceImpl().findLatLngForSPIRELocality("Country: Pacific");
+        assertThat(point.getLat(), is(0.0));
+        assertThat(point.getLng(), is(180.0));
+    }
+
+    @Test
+    public void assertEarth() throws IOException {
+        LatLng point = new GeoNamesServiceImpl().findLatLngForSPIRELocality("Country: General;   Locality: General");
+        assertNull(point);
     }
 
     @Test
