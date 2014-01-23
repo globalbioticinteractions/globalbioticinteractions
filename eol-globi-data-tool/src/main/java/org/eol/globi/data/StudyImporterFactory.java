@@ -1,19 +1,14 @@
 package org.eol.globi.data;
 
-import org.eol.globi.domain.RelTypes;
-import org.eol.globi.domain.Study;
-import org.neo4j.graphdb.Relationship;
-import org.neo4j.graphdb.Transaction;
-
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.logging.Level;
 
 public class StudyImporterFactory {
 
     private static final Collection<Class> IMPORTERS = Collections.unmodifiableCollection(new ArrayList<Class>() {{
+        add(StudyImporterForRaymond.class);
         add(StudyImporterForLifeWatchGreece.class);
         add(StudyImporterForHechinger.class);
         add(StudyImporterForRoopnarine.class);

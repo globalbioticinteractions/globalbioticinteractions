@@ -1,7 +1,5 @@
 package org.eol.globi.geo;
 
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
 import org.junit.Test;
 
@@ -34,13 +32,13 @@ public class EcoRegionFinderImplTest {
 
     @Test
     public void isFreshWaterRegionInNorthernCalifornia() throws EcoRegionFinderException {
-        Map<String, String> props = findEcoRegionProperties(getPoint(37.880815, -122.142677), new EcoRegionFinderFactory().createEcoRegionFinder(EcoRegionType.Freshwater));
+        Map<String, String> props = findEcoRegionProperties(GeoUtil.getPoint(37.880815, -122.142677), new EcoRegionFinderFactory().createEcoRegionFinder(EcoRegionType.Freshwater));
         assertThat(props.toString(), is("{ECOREGION=Sacramento - San Joaquin, ECO_ID=125, ECO_ID_U=30125, MHT_NO=5, MHT_TXT=temperate coastal rivers, OLD_ID=6}"));
     }
 
     @Test
     public void isFreshWaterRegionNetherlands() throws EcoRegionFinderException {
-        Map<String, String> props = findEcoRegionProperties(getPoint(52.57635, 5.282593), new EcoRegionFinderFactory().createEcoRegionFinder(EcoRegionType.Freshwater));
+        Map<String, String> props = findEcoRegionProperties(GeoUtil.getPoint(52.57635, 5.282593), new EcoRegionFinderFactory().createEcoRegionFinder(EcoRegionType.Freshwater));
         assertThat(props.toString(), is("{ECOREGION=Central & Western Europe, ECO_ID=404, ECO_ID_U=30404, MHT_NO=7, MHT_TXT=temperate floodplain rivers and wetlands, OLD_ID=306}"));
     }
 
@@ -60,7 +58,7 @@ public class EcoRegionFinderImplTest {
 
     @Test
     public void terrestrialMinnesota() throws EcoRegionFinderException {
-        Point pointInMinnesota = getPoint(44.4626988695, -93.1504054967);
+        Point pointInMinnesota = GeoUtil.getPoint(44.4626988695, -93.1504054967);
         Map<String, String> props = findEcoRegionProperties(pointInMinnesota, new EcoRegionFinderFactory().createEcoRegionFinder(EcoRegionType.Terrestrial));
         assertThat(props.toString(), is("{CLS_CODE=1046, ECODE_NAME=NA0415. Prairie-Forest Border, ECO_CODE=NA0415, ECO_ID_U=17020, ECO_NAME=Prairie-Forest Border, ECO_NOTES=, ECO_NUM=15, ER_DATE_U=1/1/2001, ER_RATION=NA / D. Dorfman/ECO2001, ER_UPDATE=Original, RealmMHT=NA4, SOURCEDATA=Bailey, R, modified by TNC. 2004. Ecoregions of th, WWF_MHTNAM=Temperate Broadleaf and Mixed Forests, WWF_MHTNUM=4, WWF_REALM=NA, WWF_REALM2=Nearctic}"));
 
@@ -94,23 +92,19 @@ public class EcoRegionFinderImplTest {
     }
 
     private Point pointInSanFranciscoBay() {
-        return getPoint(37.689254, -122.295799);
+        return GeoUtil.getPoint(37.689254, -122.295799);
     }
 
     private Point pointInOffTheCoastOfSanFranciscoBay() {
-        return getPoint(37.51844, -123.839722);
-    }
-
-    private Point getPoint(double lat, double lng) {
-        return new GeometryFactory().createPoint(new Coordinate(lng, lat));
+        return GeoUtil.getPoint(37.51844, -123.839722);
     }
 
     private Point pointInSacramento() {
-        return getPoint(38.608286, -121.455689);
+        return GeoUtil.getPoint(38.608286, -121.455689);
     }
 
     private Point pointInGulfOfMexico() {
-        return getPoint(27.547242, -96.815186);
+        return GeoUtil.getPoint(27.547242, -96.815186);
     }
 
 }

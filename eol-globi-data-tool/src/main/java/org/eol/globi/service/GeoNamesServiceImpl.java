@@ -18,7 +18,7 @@ import static org.eol.globi.domain.TaxonomyProvider.GEONAMES;
 public class GeoNamesServiceImpl implements GeoNamesService {
 
     public static final Term GEO_TERM_EARTH = new Term("GEO:6295630", "Earth");
-    private Map<String, Term> SPIRE_TO_GEO_NAMES_MAP = new HashMap<String, Term>() {{
+    private static Map<String, Term> SPIRE_TO_GEO_NAMES_MAP = new HashMap<String, Term>() {{
         put("Country: New Zealand;   State: Otago;   Locality: Catlins, Craggy Tor catchment", new Term("GEO:6612109", "Otago"));
         put("Country: Scotland", new Term("GEO:2638360", "Scotland"));
         put("Country: USA;   State: Georgia", new Term("GEO:4197000", "State of Georgia"));
@@ -174,21 +174,49 @@ public class GeoNamesServiceImpl implements GeoNamesService {
         put("Country: USA;   State: New York;   Locality: Long Island", new Term("GEO:5125123", "Long Island"));
         put("Country: Venezuela", new Term("GEO:3625428", "Venezuela"));
         put("Country: New Zealand;   State: Otago;   Locality: Akatore, Akatore catchment", new Term("GEO:2194057", "Akatore"));
+        put("Kerguelen Island", new Term("GEO:", "Kerguelen Island"));
+        put("Antarctic continental slope & oceanic areas", new Term("GEO:2208337", "Campbell Escarpment"));
+        put("South Georgia", new Term("GEO:3426222", "South Sandwich Islands"));
+        put("Iles Kerguelen", new Term("GEO:1546556", "Îles Kerguelen"));
+        put("Scotia Sea", new Term("GEO:3426293", "Scotia Sea"));
+        put("Adjacent to Vestfold Hills", new Term("GEO:6627488", "Vestfold Hills"));
+        put("Antarctic Peninsula", new Term("GEO:6632680", "Antarctic Peninsula"));
+        put("Prydz Bay", new Term("GEO:6623681", "Prydz Bay"));
+        put("Ross Sea", new Term("GEO:4036625", "Ross Sea"));
+        put("Not described.", GEO_TERM_EARTH);
+        put("New Zealand", new Term("GEO:2186224", "New Zealand"));
+        put("Crozet Island", new Term("GEO:936338", "Îles Crozet"));
+        put("Weddell Sea", new Term("GEO:4036624", "Weddell Sea"));
+        put("South Orkney Islands", new Term("GEO:6625763", "South Orkney Islands"));
+        put("Iles Crozets",  new Term("GEO:936338", "Îles Crozet"));
+        put("Southern ocean", new Term("GEO:4036776", "Southern Ocean"));
+        put("Kerguelen Islands", new Term("GEO:1546556", "Îles Kerguelen"));
+        put("Prince Edward Islands", new Term("GEO:7778803", "Prince Edward Island"));
+        put("Marion Island", new Term("GEO:7778802", "Marion Island"));
+        put("South Indian Ocean", new Term("GEO:4036667", "South Indian Basin"));
+        put("Crozet Island waters",  new Term("GEO:936338", "Îles Crozet"));
+        put("southern Weddell Sea",  new Term("GEO:4036624", "Weddell Sea"));
+        put("Heard Island", new Term("GEO:1547315", "Heard Island"));
+        put("Terra Nova Bay", new Term("GEO:6626583", "Terra Nova Bay"));
+        put("Straits of Magellan", new Term("GEO:3845265", "Strait of Magellan"));
+        put("Antarctic and subantarctic waters", new Term("GEO:6632710", "Antarctic"));
+        put("Antarctic waters", new Term("GEO:6632710", "Antarctic"));
+        put("McMurdo Sound", new Term("GEO:6637890", "McMurdo Sound"));
     }};
     private Map<String, LatLng> pointCache = new ConcurrentHashMap<String, LatLng>();
 
     @Override
-    public boolean hasPositionsForSPIRELocality(String spireLocality) {
-        return spireLocality != null && SPIRE_TO_GEO_NAMES_MAP.containsKey(spireLocality);
+    public boolean hasPositionForLocality(String locality) {
+        return locality != null && SPIRE_TO_GEO_NAMES_MAP.containsKey(locality);
     }
 
     @Override
-    public LatLng findLatLngForSPIRELocality(String spireLocality) throws IOException {
+    public LatLng findPointForLocality(String locality) throws IOException {
         LatLng point = null;
-        if (hasPositionsForSPIRELocality(spireLocality)) {
-            point = pointCache.get(spireLocality);
+        if (hasPositionForLocality(locality)) {
+            point = pointCache.get(locality);
         }
-        return point == null ? retrievePointForLocality(spireLocality) : point;
+        return point == null ? retrievePointForLocality(locality) : point;
     }
 
     private LatLng retrievePointForLocality(String spireLocality) throws IOException {

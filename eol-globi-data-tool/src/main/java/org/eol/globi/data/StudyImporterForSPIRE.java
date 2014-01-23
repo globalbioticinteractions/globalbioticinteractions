@@ -38,8 +38,6 @@ public class StudyImporterForSPIRE extends BaseStudyImporter {
         }
     };
 
-    private GeoNamesService geoNamesService = new GeoNamesServiceImpl();
-
     public StudyImporterForSPIRE(ParserFactory parserFactory, NodeFactory nodeFactory) {
         super(parserFactory, nodeFactory);
     }
@@ -156,7 +154,7 @@ public class StudyImporterForSPIRE extends BaseStudyImporter {
             try {
                 Specimen predator = createSpecimen(properties.get(PREDATOR_NAME));
                 String locality = properties.get(LOCALITY_ORIGINAL);
-                LatLng latLng = getGeoNamesService().findLatLngForSPIRELocality(locality);
+                LatLng latLng = getGeoNamesService().findPointForLocality(locality);
                 if (latLng == null) {
                     getLogger().warn(study, "failed to find location for county [" + locality + "]");
                 } else {
@@ -228,11 +226,4 @@ public class StudyImporterForSPIRE extends BaseStudyImporter {
         return importFilter;
     }
 
-    public void setGeoNamesService(GeoNamesService geoNamesService) {
-        this.geoNamesService = geoNamesService;
-    }
-
-    public GeoNamesService getGeoNamesService() {
-        return geoNamesService;
-    }
 }

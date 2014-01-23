@@ -34,26 +34,26 @@ public class GeoNamesServiceImplTest {
     }
 
     private void assertVenezuela(GeoNamesService geoNamesServiceImpl) throws IOException {
-        LatLng point = geoNamesServiceImpl.findLatLngForSPIRELocality("Country: Venezuela");
+        LatLng point = geoNamesServiceImpl.findPointForLocality("Country: Venezuela");
         assertThat(point, is(notNullValue()));
     }
 
     @Test
     public void assertPacific() throws IOException {
-        LatLng point = new GeoNamesServiceImpl().findLatLngForSPIRELocality("Country: Pacific");
+        LatLng point = new GeoNamesServiceImpl().findPointForLocality("Country: Pacific");
         assertThat(point.getLat(), is(0.0));
         assertThat(point.getLng(), is(180.0));
     }
 
     @Test
     public void assertEarth() throws IOException {
-        LatLng point = new GeoNamesServiceImpl().findLatLngForSPIRELocality("Country: General;   Locality: General");
+        LatLng point = new GeoNamesServiceImpl().findPointForLocality("Country: General;   Locality: General");
         assertNull(point);
     }
 
     @Test
     public void retrievePointForNonExistingSpireLocality() throws IOException {
-        LatLng point = new GeoNamesServiceImpl().findLatLngForSPIRELocality("Blabla: mickey mouse");
+        LatLng point = new GeoNamesServiceImpl().findPointForLocality("Blabla: mickey mouse");
         assertThat(point, is(nullValue()));
     }
 

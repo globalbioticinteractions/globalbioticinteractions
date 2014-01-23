@@ -2,21 +2,86 @@ package org.eol.globi.data;
 
 import com.Ostermiller.util.CSVParser;
 import com.Ostermiller.util.LabeledCSVParser;
+import org.eol.globi.service.GeoNamesService;
+import org.eol.globi.service.GeoNamesServiceImpl;
 import org.junit.Test;
+import uk.me.jstott.jcoord.LatLng;
 
 import java.io.IOException;
 import java.io.StringReader;
+import java.util.Collection;
+import java.util.HashSet;
+
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertThat;
 
 public class StudyImporterForRaymondTest extends GraphDBTestCase {
 
     @Test
-    public void importStudy() throws StudyImporterException {
-        StudyImporter importer = new StudyImporterForRaymond(new ParserFactoryImpl(), nodeFactory);
-        importer.importStudy();
+    public void calculateCentroidOfPoint() {
+        double left = -61.66666667;
+        double right = -61.66666667;
+        double bottom = -63.95;
+        double top = -63.95;
+        LatLng latLng = StudyImporterForRaymond.calculateCentroidOfBBox(left, top, right, bottom);
+        assertThat(latLng.getLat(), is(-61.66666667));
+        assertThat(latLng.getLng(), is(-63.95));
     }
 
     @Test
-    public void importPartialStudy() throws IOException {
+    public void calculateCentroid() {
+        double left = -3;
+        double right = -2;
+        double top = -2;
+        double bottom = -4;
+        LatLng latLng = StudyImporterForRaymond.calculateCentroidOfBBox(left, top, right, bottom);
+        assertThat(latLng.getLat(), is(-2.5));
+        assertThat(latLng.getLng(), is(-3.0));
+    }
+
+    @Test
+    public void importStudy() throws StudyImporterException {
+        StudyImporterForRaymond importer = new StudyImporterForRaymond(new ParserFactoryImpl(), nodeFactory);
+        importer.setGeoNamesService(new GeoNamesService() {
+            @Override
+            public boolean hasPositionForLocality(String spireLocality) {
+                return true;
+            }
+
+            @Override
+            public LatLng findPointForLocality(String spireLocality) throws IOException {
+                return new LatLng(0, 0);
+            }
+
+            @Override
+            public LatLng findLatLng(Long id) throws IOException {
+                return new LatLng(0, 0);
+            }
+        });
+        importer.importStudy();
+
+        importer.setGeoNamesService(new GeoNamesServiceImpl());
+
+        Collection<String> unmappedLocations = new HashSet<String>();
+        for (String location : importer.getLocations()) {
+            if (!importer.getGeoNamesService().hasPositionForLocality(location)) {
+                unmappedLocations.add(location);
+            }
+        }
+
+        assertThat(unmappedLocations,
+                containsInAnyOrder("Not described",
+                        "South African waters",
+                        "Ocean location",
+                        "subantarctic waters",
+                        "oceanic habitat in Southern Ocean. 68� 07\u0019 S & 70�13\u0019 S",
+                        "Subantarctic Pacific Ocean"));
+    }
+
+
+    @Test
+    public void importPartialStudy() throws IOException, StudyImporterException {
         StudyImporterForRaymond importer = new StudyImporterForRaymond(new ParserFactoryImpl(), nodeFactory);
         LabeledCSVParser dietParser = new LabeledCSVParser(new CSVParser(new StringReader(firstFewLinesOfDiet())));
         LabeledCSVParser sourcesParser = new LabeledCSVParser(new CSVParser(new StringReader(firstFewLinesOfSourcesAlteredToFitDietDataSample())));
@@ -35,6 +100,7 @@ public class StudyImporterForRaymondTest extends GraphDBTestCase {
         return "SOURCE_ID,DETAILS,NOTES,DATE_CREATED\n" +
                 "2,\"Hopkins, T.L. (1985) Food web of an Antarctic midwater ecosystem. Marine Biology 89:197-212\",\"The diets of 93 species of plankton and micronekton taken in the upper 1000m of Croker Passage (Gerlache Strait) in the austral fall, 1983, were examined and the principal features of the food web were characterized.\",14/01/2008 9:15\n" +
                 "3,\"Hopkins, T.L., Ainley, D.G., Torres, J.J., and Lancraft, T.M. (1993) Trophic structure in open waters of the marginal ice zone in the Scotia-Weddell confluence region during spring (1983). Polar Biology 13:389-397\",\"The structure of the food web was investigated in open waters adjacent to the marginal ice zone in the southern Scotia Sea in spring 1983. ... Most zooplankton were omnivorous, feeding on phytoplankton, protozoans, and in some cases, small metazoans (copepods). Only two species were found to be exclusively herbivorous: Calanoides acutus and Rhincalanus gigas. Micronekton were carnivores with copepods being the dominant prey in all their diets. The midwater fish Electrona antarctica was the dominant food item in seven of the nine seabird speeies examined. Cephalopods, midwater decapod shrimps and carrion were also important in the diets of a few seabird species. Comparison (eluster analysis) of diets in spring with other seasons (winter, fall) indicated that over half the speeies examined (18 of 31) had similar diets in all seasons tested.\",14/01/2008 9:16\n" +
-                "4,\"Hopkins, T.L. (1987) Midwater food web in McMurdo Sound, Ross Sea, Antarctica. Marine Biology 96:93-106\",\"The trophic structure of the midwater ecosystem of McMurdo Sound, Ross Sea, Antarctica in February, 1983 was examined through diet analysis of 35 species of zooplankton and micronekton. Ten feeding groups were suggested through cluster analysis. The two largest clusters consisted of small-particle grazers and omnivore generalists; the eight remaining clusters were of carnivores specializing on one or several types of metazoan prey. Diet composition often shifted with ontogeny and though exceptions occurred, diet diversity usually increased either during early growth or throughout development. Comparison with a krill-dominated area along the Antarctic Penisula (Croker Passage) indicated that species common to the two areas occupied approximately the same trophic position. Biomass in McMurdo Sound was much lower than in Croker Passage and large-sized particle grazers such as krill and salps were trophically less dominant in McMurdo Sound. [truncated]\",14/01/2008 9:17";
+                "4,\"Hopkins, T.L. (1987) Midwater food web in McMurdo Sound, Ross Sea, Antarctica. Marine Biology 96:93-106\",\"The trophic structure of the midwater ecosystem of McMurdo Sound, Ross Sea, Antarctica in February, 1983 was examined through diet analysis of 35 species of zooplankton and micronekton. Ten feeding groups were suggested through cluster analysis. The two largest clusters consisted of small-particle grazers and omnivore generalists; the eight remaining clusters were of carnivores specializing on one or several types of metazoan prey. Diet composition often shifted with ontogeny and though exceptions occurred, diet diversity usually increased either during early growth or throughout development. Comparison with a krill-dominated area along the Antarctic Penisula (Croker Passage) indicated that species common to the two areas occupied approximately the same trophic position. Biomass in McMurdo Sound was much lower than in Croker Passage and large-sized particle grazers such as krill and salps were trophically less dominant in McMurdo Sound. [truncated]\",14/01/2008 9:17\n" +
+                "17,\"Oresland, V. (1995) Winter population structure and feeding of the chaetognath Eukrohnia hamata and the copopod Euchaeta antarctica in Gerlache Strait, Antarctic Peninsula. Marine Ecology Progress Series 119:77-86\",\"ABSTRACT: Eukrohnia hamata and Euchaeta antarctica are 2 dominant macrozooplankton predators in the Southern Ocean. Zooplankton samples were taken at 3 stations during July and August 1992, in waters west of the Antarctic Peninsula. E. hamata constituted up to 97 % of all chaetognaths by number and up to 20% of net zooplankton by wet weight. E. hamata breeds at a low intensity and E. antarctica breeds at a high intensity during midwinter. Gut content analyses showed that Metridia gerlachei and the small copepods Oncaea spp. and Microcalanus pygmaeus were the main prey in both species. Estimated feeding rates between 0.3 and 0.5 copepods d-1 in E. hamata and the number of prey items found in the stomach of E. antarctica (Stages CV and CVI) indicated a feeding intensity during winter that was no less than earlier summer estimates. Rough estimates of daily predation impact showed that E. hamata could eat up to 0.2% of prey standing stock by number. It is suggested that the accumulative predation impact during winter by E. hamata and other carnivorous zooplankton may be large, especially since there was little evidence of prey reproduction that could counteract such a predation impact. About 1 % of the E. hamata population was parasitized or decapitated by a small ectoparasitic polychaete. At 2 stations, 8 and 16% of all E. hamata were infected by a cercoid cestode larvae of the order Pseudophyllidea. E. hamata may therefore be an important transport host for cestodes that infect Antarctic vertebrates.\",14/01/2008 11:43";
     }
 }
