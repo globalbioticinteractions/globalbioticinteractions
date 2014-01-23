@@ -491,7 +491,7 @@ public class NodeFactory {
         return normalizedEnvironments;
     }
 
-    public Environment findEnvironment(String name) {
+    protected Environment findEnvironment(String name) {
         String query = "name:\"" + name + "\"";
         IndexHits<Node> matches = environments.query(query);
         Node matchingEnvironment;
