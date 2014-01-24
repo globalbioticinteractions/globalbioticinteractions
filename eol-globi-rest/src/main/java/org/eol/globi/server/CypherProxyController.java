@@ -75,6 +75,9 @@ public class CypherProxyController {
                 .append(",targetTaxon.externalId? as ").append(ResultFields.TARGET_TAXON_EXTERNAL_ID)
                 .append(",targetTaxon.name as ").append(ResultFields.TARGET_TAXON_NAME)
                 .append(",targetTaxon.path? as ").append(ResultFields.TARGET_TAXON_PATH);
+
+        // fix quick before introducing smarter way to chunk the results
+        query.append(" LIMIT 1024");
         return query.toString();
     }
 

@@ -1,6 +1,5 @@
 package org.eol.globi.server;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.codehaus.jackson.JsonNode;
@@ -19,7 +18,7 @@ public class CypherQueryExecutor {
     private final Map<String, String> params;
 
     public CypherQueryExecutor(String query, Map<String, String> queryParams) {
-        this.query = StringUtils.contains(query, " LIMIT ") ? query : query + " LIMIT 512";
+        this.query = query;
         this.params = queryParams;
     }
 
