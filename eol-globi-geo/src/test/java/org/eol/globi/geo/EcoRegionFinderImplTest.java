@@ -77,14 +77,15 @@ public class EcoRegionFinderImplTest {
 
     @Test
     public void terrestrialMinnesota() throws EcoRegionFinderException {
-        Point pointInMinnesota = GeoUtil.getPoint(44.4626988695, -93.1504054967);
         EcoRegionFinder finder = new EcoRegionFinderFactory().createEcoRegionFinder(EcoRegionType.Terrestrial);
+        Point pointInMinnesota = GeoUtil.getPoint(44.4626988695, -93.1504054967);
+        Map<String, String> props = findEcoRegionProperties(pointInMinnesota, finder);
+        assertThat(props.toString(), is("{CLS_CODE=1046, ECODE_NAME=NA0415. Prairie-Forest Border, ECO_CODE=NA0415, ECO_ID_U=17020, ECO_NAME=Prairie-Forest Border, ECO_NOTES=, ECO_NUM=15, ER_DATE_U=1/1/2001, ER_RATION=NA / D. Dorfman/ECO2001, ER_UPDATE=Original, RealmMHT=NA4, SOURCEDATA=Bailey, R, modified by TNC. 2004. Ecoregions of th, WWF_MHTNAM=Temperate Broadleaf and Mixed Forests, WWF_MHTNUM=4, WWF_REALM=NA, WWF_REALM2=Nearctic}"));
+
         EcoRegion ecoRegion = finder.findEcoRegion(44.4626988695, -93.1504054967);
         assertThat(ecoRegion.getName(), is("Prairie-Forest Border"));
         assertThat(ecoRegion.getId(), is("TEOW:17020"));
         assertThat(ecoRegion.getPath(), is("Prairie-Forest Border | Temperate Broadleaf and Mixed Forests | Nearctic"));
-        Map<String, String> props = findEcoRegionProperties(pointInMinnesota, finder);
-        assertThat(props.toString(), is("{CLS_CODE=1046, ECODE_NAME=NA0415. Prairie-Forest Border, ECO_CODE=NA0415, ECO_ID_U=17020, ECO_NAME=Prairie-Forest Border, ECO_NOTES=, ECO_NUM=15, ER_DATE_U=1/1/2001, ER_RATION=NA / D. Dorfman/ECO2001, ER_UPDATE=Original, RealmMHT=NA4, SOURCEDATA=Bailey, R, modified by TNC. 2004. Ecoregions of th, WWF_MHTNAM=Temperate Broadleaf and Mixed Forests, WWF_MHTNUM=4, WWF_REALM=NA, WWF_REALM2=Nearctic}"));
 
     }
 

@@ -75,7 +75,7 @@ public class EcoRegionFinderImpl implements EcoRegionFinder {
     @Override
     public EcoRegion findEcoRegion(double lat, double lng) throws EcoRegionFinderException {
         Map<String, String> props = findEcoRegion(new GeometryFactory().createPoint(new Coordinate(lng, lat)));
-        return props == null || props.containsKey(config.idLabel) ? null : createEcoRegion(props);
+        return props == null || !props.containsKey(config.idLabel) ? null : createEcoRegion(props);
     }
 
     private EcoRegion createEcoRegion(Map<String, String> props) {
