@@ -4,6 +4,7 @@ import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
+import org.apache.commons.lang3.StringUtils;
 import org.geotools.data.FileDataStore;
 import org.geotools.data.FileDataStoreFinder;
 import org.geotools.data.simple.SimpleFeatureCollection;
@@ -14,17 +15,17 @@ import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
 
 import java.io.IOException;
-import java.net.URL;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
 public class EcoRegionFinderImpl implements EcoRegionFinder {
 
-    private final URL dataStoreURL;
+    private final EcoRegionFinderConfig config;
 
-    public EcoRegionFinderImpl(URL dataStoreURL) {
-        this.dataStoreURL = dataStoreURL;
+    public EcoRegionFinderImpl(EcoRegionFinderConfig config) {
+        this.config = config;
+
     }
 
     public Map<String, String> findEcoRegion(Point point) throws EcoRegionFinderException {
@@ -32,11 +33,11 @@ public class EcoRegionFinderImpl implements EcoRegionFinder {
         FileDataStore store;
         SimpleFeatureCollection featureCollection;
         try {
-            store = FileDataStoreFinder.getDataStore(getDataStoreURL());
+            store = FileDataStoreFinder.getDataStore(config.shapeFileURL);
             SimpleFeatureSource featureSource = store.getFeatureSource();
             featureCollection = featureSource.getFeatures();
         } catch (IOException e) {
-            throw new EcoRegionFinderException("failed to load data store from url [" + getDataStoreURL().toExternalForm() + "]", e);
+            throw new EcoRegionFinderException("failed to load data store from url [" + config.shapeFileURL.toExternalForm() + "]", e);
         }
 
         SimpleFeatureIterator features = featureCollection.features();
@@ -72,11 +73,29 @@ public class EcoRegionFinderImpl implements EcoRegionFinder {
     }
 
     @Override
-    public Map<String, String> findEcoRegion(double lat, double lng) throws EcoRegionFinderException {
-        return findEcoRegion(new GeometryFactory().createPoint(new Coordinate(lng, lat)));
+    public EcoRegion findEcoRegion(double lat, double lng) throws EcoRegionFinderException {
+        Map<String, String> props = findEcoRegion(new GeometryFactory().createPoint(new Coordinate(lng, lat)));
+
+        EcoRegion ecoRegion = new EcoRegion();
+        ecoRegion.setId(config.namespace + ":" + props.get(config.idLabel));
+        ecoRegion.setName(props.get(config.nameLabel));
+
+        StringBuilder path = new StringBuilder();
+        for (String label : config.pathLabels) {
+            if (path.length() > 0) {
+                path.append(" | ");
+            }
+            if (props.containsKey(label)) {
+                String value = props.get(label);
+                if (StringUtils.isNotBlank(value)) {
+                    path.append(value);
+                }
+
+            }
+        }
+        ecoRegion.setPath(path.toString());
+
+        return ecoRegion;
     }
 
-    public URL getDataStoreURL() {
-        return dataStoreURL;
-    }
 }
