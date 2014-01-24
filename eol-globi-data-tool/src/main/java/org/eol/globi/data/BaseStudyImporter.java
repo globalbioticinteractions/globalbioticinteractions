@@ -21,17 +21,17 @@ public abstract class BaseStudyImporter extends BaseImporter implements StudyImp
     private ImportLogger importLogger = new ImportLogger() {
         @Override
         public void warn(Study study, String message) {
-            LOG.warn("import logger says: [" + message + "]");
+
         }
 
         @Override
         public void info(Study study, String message) {
-            LOG.info("import logger says: [" + message + "]");
+
         }
 
         @Override
         public void severe(Study study, String message) {
-            LOG.error("import logger says: [" + message + "]");
+
         }
     };
 
