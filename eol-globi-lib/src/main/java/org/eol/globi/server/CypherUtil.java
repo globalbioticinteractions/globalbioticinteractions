@@ -11,10 +11,10 @@ import java.util.Iterator;
 import java.util.Map;
 
 public class CypherUtil {
-    public static String executeCypherQuery(String query1, Map<String, String> params1) throws IOException {
+    public static String executeCypherQuery(String query, Map<String, String> params) throws IOException {
         HttpPost httpPost = new HttpPost("http://46.4.36.142:7474/db/data/cypher");
         HttpClient.addJsonHeaders(httpPost);
-        httpPost.setEntity(new StringEntity(wrapQuery(query1, params1)));
+        httpPost.setEntity(new StringEntity(wrapQuery(query, params)));
         BasicResponseHandler responseHandler = new BasicResponseHandler();
         return HttpUtil.createHttpClient().execute(httpPost, responseHandler);
     }

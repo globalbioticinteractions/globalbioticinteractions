@@ -44,9 +44,7 @@ public class CypherQueryExecutor {
     }
 
     private String executeRemote() throws IOException {
-        String query1 = query;
-        Map<String, String> params1 = params;
-        return CypherUtil.executeCypherQuery(query1, params1);
+        return CypherUtil.executeCypherQuery(query, params);
     }
 
     private String executeAndTransformToCSV() throws IOException {
