@@ -157,8 +157,10 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
                     type = InteractType.INTERACTS_WITH;
                 } else if ("Gall Inducer".equals(interactionType)) {
                     type = InteractType.INTERACTS_WITH;
+                } else if ("Insect Nectar Plant".equals(interactionType)) {
+                    type = InteractType.INTERACTS_WITH;
                 } else {
-                    throw new StudyImporterException("found unsupported interactionType [" + interactionType + "]");
+                    throw new StudyImporterException("found unsupported interactionType [" + interactionType + "] for observation [" + observationId + "]");
                 }
                 if (type != null) {
                     sourceSpecimen.interactsWith(targetSpecimen, type);
