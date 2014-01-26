@@ -33,11 +33,6 @@ public class StudyImporterForJRFerrerParisTest extends GraphDBTestCase {
             count++;
         }
         assertTrue(count > 0);
-
-        List<LogMessage> logMessages = study.getLogMessages();
-        for (LogMessage logMessage : logMessages) {
-            LOG.info(logMessage.getLevel() + ":" + logMessage.getMessage());
-        }
     }
 
     @Test

@@ -115,10 +115,6 @@ public class StudyImporterForGoMexSITest extends GraphDBTestCase {
                 detectedAtLeastOneFrequencyOfOccurrence |= specimenNode.hasProperty(Specimen.FREQUENCY_OF_OCCURRENCE);
                 detectedAtLeastOneTotalNumberConsumed |= specimenNode.hasProperty(Specimen.TOTAL_COUNT);
                 detectedAtLeastOneTotalVolume |= specimenNode.hasProperty(Specimen.TOTAL_VOLUME_IN_ML);
-                if (detectedAtLeastOneTotalVolume) {
-                    System.out.println(taxonNode.getProperty("name"));
-                }
-
                 if (specimenNode.hasRelationship(Direction.INCOMING, RelTypes.COLLECTED)) {
                     detectedAtLeastOneLocation = true;
                 }
