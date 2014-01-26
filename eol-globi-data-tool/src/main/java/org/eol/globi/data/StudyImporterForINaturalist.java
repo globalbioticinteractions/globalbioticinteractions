@@ -17,9 +17,26 @@ import org.neo4j.graphdb.Relationship;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 public class StudyImporterForINaturalist extends BaseStudyImporter {
     public static final String INATURALIST_URL = "http://inaturalist.org";
+
+    private static final Map<String, InteractType> TYPE_MAPPING = new HashMap<String, InteractType>() {{
+        put("Eating", InteractType.ATE);
+        put("With the prey", InteractType.ATE);
+        put("Host", InteractType.HAS_HOST);
+        put("Flower species", InteractType.POLLINATES);
+        put("Perching on", InteractType.PERCHING_ON);
+        put("Pollinating", InteractType.POLLINATES);
+        put("Other Species in Group", InteractType.INTERACTS_WITH);
+        put("Pollinating", InteractType.POLLINATES);
+        put("Butterfly & Moth Host Plant", InteractType.INTERACTS_WITH);
+        put("Butterfly & Moth Nectar Plant", InteractType.INTERACTS_WITH);
+        put("Gall Inducer", InteractType.INTERACTS_WITH);
+        put("Insect Nectar Plant", InteractType.INTERACTS_WITH);
+    }};
 
     public StudyImporterForINaturalist(ParserFactory parserFactory, NodeFactory nodeFactory) {
         super(parserFactory, nodeFactory);
@@ -138,33 +155,11 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
                     nodeFactory.setUnixEpochProperty(collectedRel, dateTime.toDate());
                 }
 
-                InteractType type;
-                if ("Eating".equals(interactionType) || "With the prey".equals(interactionType)) {
-                    type = InteractType.ATE;
-                } else if ("Host".equals(interactionType)) {
-                    type = InteractType.HAS_HOST;
-                } else if ("Flower species".equals(interactionType)) {
-                    type = InteractType.POLLINATES;
-                } else if ("Perching on".equals(interactionType)) {
-                    type = InteractType.PERCHING_ON;
-                } else if ("Pollinating".equals(interactionType)) {
-                    type = InteractType.POLLINATES;
-                } else if ("Other Species in Group".equals(interactionType)) {
-                    type = InteractType.INTERACTS_WITH;
-                } else if ("Butterfly & Moth Host Plant".equals(interactionType)) {
-                    type = InteractType.INTERACTS_WITH;
-                } else if ("Butterfly & Moth Nectar Plant".equals(interactionType)) {
-                    type = InteractType.INTERACTS_WITH;
-                } else if ("Gall Inducer".equals(interactionType)) {
-                    type = InteractType.INTERACTS_WITH;
-                } else if ("Insect Nectar Plant".equals(interactionType)) {
-                    type = InteractType.INTERACTS_WITH;
-                } else {
+                InteractType type = TYPE_MAPPING.get(interactionType);
+                if (type == null) {
                     throw new StudyImporterException("found unsupported interactionType [" + interactionType + "] for observation [" + observationId + "]");
                 }
-                if (type != null) {
-                    sourceSpecimen.interactsWith(targetSpecimen, type);
-                }
+                sourceSpecimen.interactsWith(targetSpecimen, type);
             }
         }
 
