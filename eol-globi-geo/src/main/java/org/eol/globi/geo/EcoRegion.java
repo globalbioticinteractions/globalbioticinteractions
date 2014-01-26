@@ -4,6 +4,7 @@ public class EcoRegion {
     private String id;
     private String path;
     private String name;
+    private String geometry;
 
     public void setId(String id) {
         this.id = id;
@@ -27,5 +28,13 @@ public class EcoRegion {
 
     public String getName() {
         return name;
+    }
+
+    public String getGeometry() {
+        return geometry;
+    }
+
+    public void setGeometry(String geometry) {
+        this.geometry = geometry;
     }
 }

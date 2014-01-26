@@ -33,11 +33,11 @@ public class EcoRegionFinderImpl implements EcoRegionFinder {
         FileDataStore store;
         SimpleFeatureCollection featureCollection;
         try {
-            store = FileDataStoreFinder.getDataStore(config.shapeFileURL);
+            store = FileDataStoreFinder.getDataStore(config.getShapeFileURL());
             SimpleFeatureSource featureSource = store.getFeatureSource();
             featureCollection = featureSource.getFeatures();
         } catch (IOException e) {
-            throw new EcoRegionFinderException("failed to load data store from url [" + config.shapeFileURL.toExternalForm() + "]", e);
+            throw new EcoRegionFinderException("failed to load data store from url [" + config.getShapeFileURL().toExternalForm() + "]", e);
         }
 
         SimpleFeatureIterator features = featureCollection.features();
@@ -59,9 +59,7 @@ public class EcoRegionFinderImpl implements EcoRegionFinder {
                             } else {
                                 value = value.toString();
                             }
-                            if (!"the_geom".equals(attributeDescriptor.getLocalName())) {
-                                map.put(attributeDescriptor.getLocalName(), value.toString());
-                            }
+                            map.put(attributeDescriptor.getLocalName(), value.toString());
                         }
                     }
                     break;
@@ -75,17 +73,18 @@ public class EcoRegionFinderImpl implements EcoRegionFinder {
     @Override
     public EcoRegion findEcoRegion(double lat, double lng) throws EcoRegionFinderException {
         Map<String, String> props = findEcoRegion(new GeometryFactory().createPoint(new Coordinate(lng, lat)));
-        return props == null || !props.containsKey(config.idLabel) ? null : createEcoRegion(props);
+        return props == null || !props.containsKey(config.getIdLabel()) ? null : createEcoRegion(props);
     }
 
     private EcoRegion createEcoRegion(Map<String, String> props) {
         EcoRegion ecoRegion;
         ecoRegion = new EcoRegion();
-        ecoRegion.setId(config.namespace + ":" + props.get(config.idLabel));
-        ecoRegion.setName(props.get(config.nameLabel));
+        ecoRegion.setId(config.getNamespace() + ":" + props.get(config.getIdLabel()));
+        ecoRegion.setName(props.get(config.getNameLabel()));
+        ecoRegion.setGeometry(props.get(config.getGeometryLabel()));
 
         StringBuilder path = new StringBuilder();
-        for (String label : config.pathLabels) {
+        for (String label : config.getPathLabels()) {
             if (path.length() > 0) {
                 path.append(" | ");
             }
