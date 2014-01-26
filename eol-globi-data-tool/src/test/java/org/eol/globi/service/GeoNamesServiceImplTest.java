@@ -63,4 +63,16 @@ public class GeoNamesServiceImplTest {
         LatLng point = new GeoNamesServiceImpl().findLatLng(2164089L);
         assertThat(point, is(notNullValue()));
     }
+
+    @Test
+    public void findPointForLocalitys() throws IOException {
+        LatLng point = new GeoNamesServiceImpl().findPointForLocality("Kerguelen Island");
+        assertThat(point, is(notNullValue()));
+    }
+
+    @Test
+    public void parseGeoIdInvalidId () {
+        assertThat(GeoNamesServiceImpl.parseGeoId("bla", "GEO:"), is(nullValue()));
+
+    }
 }

@@ -176,7 +176,7 @@ public class StudyImporterForGoMexSI extends BaseStudyImporter {
                 String refId = getMandatoryValue(locationResource, parser, "REF_ID");
                 String specimenId = getMandatoryValue(locationResource, parser, "PRED_ID");
                 Double latitude = getMandatoryDoubleValue(locationResource, parser, "LOC_CENTR_LAT");
-                Double longitude = getMandatoryDoubleValue(locationResource, parser, "LOC_CENTR_LONG");
+                Double longitude = getMandatoryDoubleValue(locationResource, parser, "   ");
                 Double depth = getMandatoryDoubleValue(locationResource, parser, "MN_DEP_SAMP");
                 String habitatSystem = getMandatoryValue(locationResource, parser, "HAB_SYSTEM");
                 String habitatSubsystem = getMandatoryValue(locationResource, parser, "HAB_SUBSYSTEM");

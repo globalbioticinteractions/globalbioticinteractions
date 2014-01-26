@@ -1,5 +1,8 @@
 package org.eol.globi.service;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.codehaus.jackson.JsonNode;
@@ -16,9 +19,11 @@ import java.util.concurrent.ConcurrentHashMap;
 import static org.eol.globi.domain.TaxonomyProvider.GEONAMES;
 
 public class GeoNamesServiceImpl implements GeoNamesService {
+    private static final Log LOG = LogFactory.getLog(GeoNamesServiceImpl.class);
 
     public static final Term GEO_TERM_EARTH = new Term("GEO:6295630", "Earth");
-    private static Map<String, Term> SPIRE_TO_GEO_NAMES_MAP = new HashMap<String, Term>() {{
+
+    private static Map<String, Term> LOCALE_TO_GEONAMES = new HashMap<String, Term>() {{
         put("Country: New Zealand;   State: Otago;   Locality: Catlins, Craggy Tor catchment", new Term("GEO:6612109", "Otago"));
         put("Country: Scotland", new Term("GEO:2638360", "Scotland"));
         put("Country: USA;   State: Georgia", new Term("GEO:4197000", "State of Georgia"));
@@ -174,7 +179,7 @@ public class GeoNamesServiceImpl implements GeoNamesService {
         put("Country: USA;   State: New York;   Locality: Long Island", new Term("GEO:5125123", "Long Island"));
         put("Country: Venezuela", new Term("GEO:3625428", "Venezuela"));
         put("Country: New Zealand;   State: Otago;   Locality: Akatore, Akatore catchment", new Term("GEO:2194057", "Akatore"));
-        put("Kerguelen Island", new Term("GEO:", "Kerguelen Island"));
+        put("Kerguelen Island", new Term("GEO:1546557", "Île Kerguelen"));
         put("Antarctic continental slope & oceanic areas", new Term("GEO:2208337", "Campbell Escarpment"));
         put("South Georgia", new Term("GEO:3426222", "South Sandwich Islands"));
         put("Iles Kerguelen", new Term("GEO:1546556", "Îles Kerguelen"));
@@ -188,14 +193,14 @@ public class GeoNamesServiceImpl implements GeoNamesService {
         put("Crozet Island", new Term("GEO:936338", "Îles Crozet"));
         put("Weddell Sea", new Term("GEO:4036624", "Weddell Sea"));
         put("South Orkney Islands", new Term("GEO:6625763", "South Orkney Islands"));
-        put("Iles Crozets",  new Term("GEO:936338", "Îles Crozet"));
+        put("Iles Crozets", new Term("GEO:936338", "Îles Crozet"));
         put("Southern ocean", new Term("GEO:4036776", "Southern Ocean"));
         put("Kerguelen Islands", new Term("GEO:1546556", "Îles Kerguelen"));
         put("Prince Edward Islands", new Term("GEO:7778803", "Prince Edward Island"));
         put("Marion Island", new Term("GEO:7778802", "Marion Island"));
         put("South Indian Ocean", new Term("GEO:4036667", "South Indian Basin"));
-        put("Crozet Island waters",  new Term("GEO:936338", "Îles Crozet"));
-        put("southern Weddell Sea",  new Term("GEO:4036624", "Weddell Sea"));
+        put("Crozet Island waters", new Term("GEO:936338", "Îles Crozet"));
+        put("southern Weddell Sea", new Term("GEO:4036624", "Weddell Sea"));
         put("Heard Island", new Term("GEO:1547315", "Heard Island"));
         put("Terra Nova Bay", new Term("GEO:6626583", "Terra Nova Bay"));
         put("Straits of Magellan", new Term("GEO:3845265", "Strait of Magellan"));
@@ -207,7 +212,7 @@ public class GeoNamesServiceImpl implements GeoNamesService {
 
     @Override
     public boolean hasPositionForLocality(String locality) {
-        return locality != null && SPIRE_TO_GEO_NAMES_MAP.containsKey(locality);
+        return locality != null && LOCALE_TO_GEONAMES.containsKey(locality);
     }
 
     @Override
@@ -219,22 +224,35 @@ public class GeoNamesServiceImpl implements GeoNamesService {
         return point == null ? retrievePointForLocality(locality) : point;
     }
 
-    private LatLng retrievePointForLocality(String spireLocality) throws IOException {
+    private LatLng retrievePointForLocality(String locality) throws IOException {
         LatLng point = null;
-        Term term = SPIRE_TO_GEO_NAMES_MAP.get(spireLocality);
+        Term term = LOCALE_TO_GEONAMES.get(locality);
         // see https://github.com/jhpoelen/eol-globi-data/issues/39
         if (term != null && !term.equals(GEO_TERM_EARTH)) {
             String idString = term.getId();
-            if (SPIRE_TO_GEO_NAMES_MAP.containsKey(spireLocality) && idString.startsWith(GEONAMES.getIdPrefix())) {
-                Long id = Long.parseLong(idString.replaceFirst(GEONAMES.getIdPrefix(), ""));
+            if (LOCALE_TO_GEONAMES.containsKey(locality) && idString.startsWith(GEONAMES.getIdPrefix())) {
+                Long id = parseGeoId(locality, idString);
                 point = findLatLng(id);
                 if (point != null) {
-                    pointCache.put(spireLocality, point);
+                    pointCache.put(locality, point);
                 }
             }
         }
 
         return point;
+    }
+
+    protected static Long parseGeoId(String locality, String idString) {
+        String s = idString.replaceFirst(GEONAMES.getIdPrefix(), "");
+        Long id = null;
+        if (StringUtils.isNotBlank(s)) {
+            try {
+                id = Long.parseLong(s);
+            } catch (NumberFormatException ex) {
+                LOG.warn("failed to parse geo id[" + idString + "] for locality [" + locality + "]");
+            }
+        }
+        return id;
     }
 
     @Override
