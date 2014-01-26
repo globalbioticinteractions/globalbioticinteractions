@@ -3,7 +3,6 @@ package org.eol.globi.server;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.BasicResponseHandler;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.eol.globi.util.HttpUtil;
 
 import java.io.IOException;

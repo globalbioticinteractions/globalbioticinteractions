@@ -1,8 +1,7 @@
 package org.eol.globi.export;
 
-import org.eol.globi.util.InteractUtil;
 import org.eol.globi.domain.Study;
-import org.neo4j.graphdb.GraphDatabaseService;
+import org.eol.globi.util.InteractUtil;
 
 public class StudyExportUnmatchedTargetTaxaForStudies extends StudyExportUnmatchedTaxaForStudies {
 

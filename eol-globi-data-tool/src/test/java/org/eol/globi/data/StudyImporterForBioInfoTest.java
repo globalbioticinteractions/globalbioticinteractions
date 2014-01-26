@@ -2,7 +2,12 @@ package org.eol.globi.data;
 
 import com.Ostermiller.util.CSVParser;
 import com.Ostermiller.util.LabeledCSVParser;
+import org.eol.globi.domain.InteractType;
+import org.eol.globi.domain.RelType;
+import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Specimen;
+import org.eol.globi.domain.Study;
+import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonomyProvider;
 import org.junit.Test;
 import org.neo4j.cypher.javacompat.ExecutionEngine;
@@ -10,11 +15,6 @@ import org.neo4j.cypher.javacompat.ExecutionResult;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
-import org.eol.globi.domain.InteractType;
-import org.eol.globi.domain.RelType;
-import org.eol.globi.domain.RelTypes;
-import org.eol.globi.domain.Study;
-import org.eol.globi.domain.Taxon;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Map;
 
 import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.IsNot.not;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.hamcrest.core.IsNull.nullValue;
 import static org.junit.Assert.assertNotNull;

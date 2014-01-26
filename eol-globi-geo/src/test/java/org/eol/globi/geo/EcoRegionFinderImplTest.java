@@ -1,8 +1,6 @@
 package org.eol.globi.geo;
 
 import com.vividsolutions.jts.geom.Point;
-import org.apache.commons.lang3.StringUtils;
-import org.eol.globi.domain.Term;
 import org.junit.Test;
 
 import java.util.Map;

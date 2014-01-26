@@ -1,15 +1,15 @@
 package org.eol.globi.data;
 
 import com.Ostermiller.util.LabeledCSVParser;
+import org.eol.globi.domain.Location;
+import org.eol.globi.domain.RelTypes;
+import org.eol.globi.domain.Study;
 import org.hamcrest.core.Is;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
-import org.eol.globi.domain.Location;
-import org.eol.globi.domain.RelTypes;
-import org.eol.globi.domain.Study;
 
 import java.io.IOException;
 

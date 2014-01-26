@@ -2,10 +2,10 @@ package org.eol.globi.service;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.eol.globi.domain.Taxon;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Transaction;
-import org.eol.globi.domain.Taxon;
 
 import java.io.IOException;
 import java.util.ArrayList;

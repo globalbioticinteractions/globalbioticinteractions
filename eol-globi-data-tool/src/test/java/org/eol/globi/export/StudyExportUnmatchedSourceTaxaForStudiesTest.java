@@ -6,7 +6,6 @@ import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
-import org.eol.globi.domain.Taxon;
 import org.junit.Test;
 
 import java.io.IOException;

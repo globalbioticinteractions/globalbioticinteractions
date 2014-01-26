@@ -4,8 +4,6 @@ import org.eol.globi.domain.NodeBacked;
 import org.eol.globi.domain.Taxon;
 import org.junit.Test;
 
-import static junit.framework.Assert.assertFalse;
-import static junit.framework.Assert.assertTrue;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;

@@ -3,7 +3,6 @@ package org.eol.globi.data.taxon;
 import org.apache.commons.lang3.time.StopWatch;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.eol.globi.data.NodeFactory;
 import org.eol.globi.data.StudyImporterException;
 
 import java.io.BufferedReader;

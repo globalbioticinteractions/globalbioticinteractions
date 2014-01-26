@@ -4,20 +4,8 @@ import com.healthmarketscience.jackcess.Column;
 import com.healthmarketscience.jackcess.Database;
 import com.healthmarketscience.jackcess.JetFormat;
 import com.healthmarketscience.jackcess.Table;
-import com.hp.hpl.jena.rdf.model.impl.RDFDefaultErrorHandler;
 import org.apache.commons.collections.CollectionUtils;
-import org.eol.globi.domain.Environment;
-import org.eol.globi.domain.RelTypes;
-import org.eol.globi.domain.Specimen;
-import org.eol.globi.domain.Study;
-import org.eol.globi.domain.Taxon;
-import org.eol.globi.domain.Term;
-import org.eol.globi.service.GeoNamesService;
-import org.eol.globi.service.GeoNamesServiceImpl;
 import org.junit.Test;
-import org.neo4j.graphdb.Direction;
-import org.neo4j.graphdb.Relationship;
-import uk.me.jstott.jcoord.LatLng;
 
 import java.io.File;
 import java.io.IOException;
@@ -26,7 +14,6 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -37,7 +24,6 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
-import static org.junit.internal.matchers.IsCollectionContaining.hasItem;
 
 /**
  * Note that Animal Diversity Web data tested below is currently assumed to be part of SPIRE.

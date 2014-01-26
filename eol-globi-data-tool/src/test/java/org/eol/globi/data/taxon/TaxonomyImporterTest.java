@@ -1,7 +1,7 @@
 package org.eol.globi.data.taxon;
 
-import org.junit.Test;
 import org.eol.globi.data.GraphDBTestCase;
+import org.junit.Test;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;

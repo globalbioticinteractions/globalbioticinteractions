@@ -12,8 +12,6 @@ import org.eol.globi.domain.Location;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.Term;
-import org.eol.globi.service.GeoNamesService;
-import org.eol.globi.service.GeoNamesServiceImpl;
 import uk.me.jstott.jcoord.LatLng;
 
 import java.io.BufferedReader;

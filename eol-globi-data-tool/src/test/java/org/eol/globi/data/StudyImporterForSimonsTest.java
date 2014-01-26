@@ -1,24 +1,28 @@
 package org.eol.globi.data;
 
 
+import org.eol.globi.domain.InteractType;
+import org.eol.globi.domain.Location;
+import org.eol.globi.domain.RelTypes;
+import org.eol.globi.domain.Specimen;
+import org.eol.globi.domain.Study;
+import org.eol.globi.domain.Taxon;
 import org.hamcrest.core.Is;
 import org.junit.Test;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
-import org.eol.globi.domain.*;
 import uk.me.jstott.jcoord.LatLng;
 import uk.me.jstott.jcoord.UTMRef;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static junit.framework.Assert.*;
-import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.CoreMatchers.nullValue;
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.fail;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
-import static org.junit.internal.matchers.StringContains.containsString;
 import static org.junit.matchers.JUnitMatchers.hasItem;
 
 public class StudyImporterForSimonsTest extends GraphDBTestCase {

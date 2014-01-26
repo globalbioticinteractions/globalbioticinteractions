@@ -1,19 +1,15 @@
 package org.eol.globi.data;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.eol.globi.domain.LogMessage;
+import org.eol.globi.domain.InteractType;
+import org.eol.globi.domain.RelTypes;
+import org.eol.globi.domain.Study;
 import org.hamcrest.core.Is;
 import org.junit.Test;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
-import org.eol.globi.domain.InteractType;
-import org.eol.globi.domain.RelTypes;
-import org.eol.globi.domain.Study;
 
 import java.util.Iterator;
-import java.util.List;
 
 import static junit.framework.Assert.assertNotNull;
 import static org.hamcrest.core.IsNull.notNullValue;
@@ -21,8 +17,6 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 public class StudyImporterForJRFerrerParisTest extends GraphDBTestCase {
-    private static final Log LOG = LogFactory.getLog(StudyImporterForJRFerrerParis.class);
-
     @Test
     public void testFullImport() throws StudyImporterException {
         StudyImporterForJRFerrerParis studyImporterForJRFerrerParis = new StudyImporterForJRFerrerParis(new ParserFactoryImpl(), nodeFactory);

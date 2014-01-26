@@ -3,8 +3,6 @@ package org.eol.globi.data.taxon;
 import com.Ostermiller.util.CSVParser;
 import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.eol.globi.data.CharsetConstant;
 import org.eol.globi.service.NameSuggestor;
 import org.eol.globi.service.UKSISuggestionService;

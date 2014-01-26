@@ -3,15 +3,14 @@ package org.eol.globi.data;
 import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.data.taxon.CorrectionService;
 import org.eol.globi.domain.Taxon;
+import org.eol.globi.domain.Term;
 import org.eol.globi.service.DOIResolver;
 import org.eol.globi.service.TaxonPropertyEnricher;
-import org.eol.globi.domain.Term;
 import org.eol.globi.service.TermLookupService;
 import org.eol.globi.service.TermLookupServiceException;
 import org.junit.After;
 import org.junit.Before;
 import org.neo4j.graphdb.GraphDatabaseService;
-import org.neo4j.graphdb.factory.GraphDatabaseFactory;
 import org.neo4j.test.TestGraphDatabaseFactory;
 
 import java.io.IOException;

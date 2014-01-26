@@ -3,13 +3,13 @@ package org.eol.globi.data;
 import com.Ostermiller.util.CSVParser;
 import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.lang3.StringUtils;
-import org.eol.globi.service.TermLookupService;
-import org.eol.globi.service.TermLookupServiceException;
-import org.eol.globi.domain.Term;
-import org.neo4j.graphdb.Relationship;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
+import org.eol.globi.domain.Term;
+import org.eol.globi.service.TermLookupService;
+import org.eol.globi.service.TermLookupServiceException;
+import org.neo4j.graphdb.Relationship;
 
 import java.io.IOException;
 import java.text.ParseException;

@@ -1,10 +1,8 @@
 package org.eol.globi.tool;
 
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.BasicResponseHandler;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.eol.globi.util.HttpUtil;
 import org.junit.Ignore;
 import org.junit.Test;

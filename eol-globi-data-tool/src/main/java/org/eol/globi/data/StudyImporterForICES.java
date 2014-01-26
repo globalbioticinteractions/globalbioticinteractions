@@ -2,10 +2,10 @@ package org.eol.globi.data;
 
 import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.lang3.StringUtils;
-import org.neo4j.graphdb.Relationship;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
+import org.neo4j.graphdb.Relationship;
 
 import java.io.IOException;
 import java.text.ParseException;

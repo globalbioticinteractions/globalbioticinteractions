@@ -6,13 +6,13 @@ import org.apache.lucene.search.Query;
 import org.apache.lucene.search.TermQuery;
 import org.eol.globi.data.taxon.CorrectionService;
 import org.eol.globi.domain.Environment;
+import org.eol.globi.domain.Location;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
+import org.eol.globi.domain.Taxon;
 import org.eol.globi.service.DOIResolver;
 import org.eol.globi.service.TaxonPropertyEnricher;
 import org.junit.Test;
-import org.eol.globi.domain.Location;
-import org.eol.globi.domain.Taxon;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.index.Index;
@@ -27,9 +27,7 @@ import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
-import static org.junit.internal.matchers.IsCollectionContaining.hasItem;
 
 public class NodeFactoryTest extends GraphDBTestCase {
 

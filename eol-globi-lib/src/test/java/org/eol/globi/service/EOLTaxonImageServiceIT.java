@@ -1,8 +1,8 @@
 package org.eol.globi.service;
 
-import org.junit.Test;
 import org.eol.globi.domain.TaxonImage;
 import org.eol.globi.domain.TaxonomyProvider;
+import org.junit.Test;
 
 import java.io.IOException;
 import java.net.URISyntaxException;

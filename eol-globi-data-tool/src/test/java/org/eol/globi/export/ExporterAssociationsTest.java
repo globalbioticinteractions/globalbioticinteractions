@@ -1,15 +1,15 @@
 package org.eol.globi.export;
 
+import org.eol.globi.data.GraphDBTestCase;
+import org.eol.globi.data.NodeFactoryException;
+import org.eol.globi.domain.Location;
 import org.eol.globi.domain.PropertyAndValueDictionary;
+import org.eol.globi.domain.Specimen;
+import org.eol.globi.domain.Study;
 import org.eol.globi.domain.Term;
 import org.junit.Test;
 import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.Transaction;
-import org.eol.globi.data.GraphDBTestCase;
-import org.eol.globi.data.NodeFactoryException;
-import org.eol.globi.domain.Location;
-import org.eol.globi.domain.Specimen;
-import org.eol.globi.domain.Study;
 
 import java.io.IOException;
 import java.io.StringWriter;

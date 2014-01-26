@@ -8,9 +8,7 @@ import org.eol.globi.data.taxon.TaxonTerm;
 import org.eol.globi.data.taxon.TaxonomyImporter;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public abstract class OfflineService implements TaxonPropertyLookupService {

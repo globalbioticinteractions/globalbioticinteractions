@@ -14,7 +14,6 @@ import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.domain.Study;
 import org.eol.globi.export.ExportTestUtil;
 import org.eol.globi.export.GlobiOWLExporter;
-import org.hamcrest.core.Is;
 import org.junit.Test;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 

@@ -4,13 +4,13 @@ package org.eol.globi.data;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
-import static org.hamcrest.core.IsNull.notNullValue;
-import static org.hamcrest.core.Is.is;
 import org.junit.Test;
 import org.neo4j.graphdb.Relationship;
 
-import static org.junit.Assert.assertThat;
 import static junit.framework.Assert.assertNotNull;
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsNull.notNullValue;
+import static org.junit.Assert.assertThat;
 
 public class StudyImporterForRobledoTest extends GraphDBTestCase {
 

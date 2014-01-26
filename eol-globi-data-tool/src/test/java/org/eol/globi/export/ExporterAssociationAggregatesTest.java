@@ -15,7 +15,6 @@ import java.io.StringWriter;
 import java.text.ParseException;
 
 import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
 public class ExporterAssociationAggregatesTest extends GraphDBTestCase {

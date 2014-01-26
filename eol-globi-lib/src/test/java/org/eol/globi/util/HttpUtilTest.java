@@ -1,13 +1,8 @@
 package org.eol.globi.util;
 
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.params.HttpConnectionParams;
 import org.junit.Test;
-
-import java.io.IOException;
-import java.net.SocketTimeoutException;
 
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.core.Is.is;

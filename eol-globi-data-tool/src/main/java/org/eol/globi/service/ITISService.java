@@ -1,8 +1,6 @@
 package org.eol.globi.service;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.eol.globi.domain.TaxonomyProvider;
