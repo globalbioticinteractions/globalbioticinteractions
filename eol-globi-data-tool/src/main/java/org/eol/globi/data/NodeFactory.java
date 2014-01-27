@@ -530,14 +530,21 @@ public class NodeFactory {
     }
 
     public List<EcoRegion> getOrCreateEcoRegions(Location location) throws NodeFactoryException {
-        List<EcoRegion> associatedEcoRegions = null;
-        if (null == getEcoRegions(location.getUnderlyingNode())) {
+        List<EcoRegion> associatedEcoRegions = getEcoRegions(location.getUnderlyingNode());
+        if (null == associatedEcoRegions) {
             associatedEcoRegions = new ArrayList<EcoRegion>();
+            List<EcoRegion> ecoRegionsToBeIndexed = new ArrayList<EcoRegion>();
             try {
                 EcoRegionFinder finder = getEcoRegionFinder();
                 Collection<EcoRegion> ecoRegions = finder.findEcoRegion(location.getLatitude(), location.getLongitude());
-                if (ecoRegions != null) {
-                    associatedEcoRegions.addAll(ecoRegions);
+                for (EcoRegion ecoRegion : ecoRegions) {
+                    String query = "name:\"" + ecoRegion.getName() + "\"";
+                    IndexHits<Node> hits = this.ecoRegions.query(query);
+                    if (!hits.hasNext()) {
+                        ecoRegionsToBeIndexed.add(ecoRegion);
+                    }
+                    hits.close();
+                    associatedEcoRegions.add(ecoRegion);
                 }
             } catch (EcoRegionFinderException e) {
                 throw new NodeFactoryException("problem finding eco region for location (lat,lng):(" + location.getLatitude() + "," + location.getLongitude() + ")");
@@ -545,21 +552,8 @@ public class NodeFactory {
 
             Transaction tx = graphDb.beginTx();
             try {
-                for (EcoRegion ecoRegion : associatedEcoRegions) {
-                    Node node = graphDb.createNode();
-                    node.setProperty(NamedNode.NAME, ecoRegion.getName());
-                    node.setProperty(NamedNode.EXTERNAL_ID, ecoRegion.getId());
-                    node.setProperty("path", ecoRegion.getPath());
-                    node.setProperty("geometry", ecoRegion.getGeometry());
-                    location.getUnderlyingNode().createRelationshipTo(node, RelTypes.IN_ECO_REGION);
-                    ecoRegions.add(node, NamedNode.NAME, ecoRegion.getName());
-                    ecoRegionPaths.add(node, "path", ecoRegion.getPath());
-                    ecoRegionSuggestions.add(node, NamedNode.NAME, StringUtils.lowerCase(ecoRegion.getName()));
-                    if (StringUtils.isNotBlank(ecoRegion.getPath())) {
-                        for (String part : ecoRegion.getPath().split(CharsetConstant.SEPARATOR)) {
-                            ecoRegionSuggestions.add(node, NamedNode.NAME, StringUtils.lowerCase(part));
-                        }
-                    }
+                for (EcoRegion ecoRegion : ecoRegionsToBeIndexed) {
+                    addAndIndexEcoRegion(location, ecoRegion);
                 }
                 tx.success();
             } finally {
@@ -568,6 +562,23 @@ public class NodeFactory {
 
         }
         return associatedEcoRegions;
+    }
+
+    private void addAndIndexEcoRegion(Location location, EcoRegion ecoRegion) {
+        Node node = graphDb.createNode();
+        node.setProperty(NamedNode.NAME, ecoRegion.getName());
+        node.setProperty(NamedNode.EXTERNAL_ID, ecoRegion.getId());
+        node.setProperty("path", ecoRegion.getPath());
+        node.setProperty("geometry", ecoRegion.getGeometry());
+        location.getUnderlyingNode().createRelationshipTo(node, RelTypes.IN_ECO_REGION);
+        ecoRegions.add(node, NamedNode.NAME, ecoRegion.getName());
+        ecoRegionPaths.add(node, "path", ecoRegion.getPath());
+        ecoRegionSuggestions.add(node, NamedNode.NAME, StringUtils.lowerCase(ecoRegion.getName()));
+        if (StringUtils.isNotBlank(ecoRegion.getPath())) {
+            for (String part : ecoRegion.getPath().split(CharsetConstant.SEPARATOR)) {
+                ecoRegionSuggestions.add(node, NamedNode.NAME, StringUtils.lowerCase(part));
+            }
+        }
     }
 
     protected Environment findEnvironment(String name) {

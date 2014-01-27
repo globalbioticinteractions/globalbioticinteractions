@@ -325,6 +325,8 @@ public class NodeFactoryTest extends GraphDBTestCase {
     @Test
     public void createEcoRegion() throws NodeFactoryException {
         Location locationInSanFranciscoBay = nodeFactory.getOrCreateLocation(37.689254, -122.295799, null);
+        // ensure that no duplicate node are created ...
+        nodeFactory.getOrCreateLocation(37.689255, -122.295798, null);
         List<EcoRegion> ecoRegions = nodeFactory.getOrCreateEcoRegions(locationInSanFranciscoBay);
         assertThat(ecoRegions.size(), not(is(0)));
         EcoRegion ecoRegion = ecoRegions.get(0);
