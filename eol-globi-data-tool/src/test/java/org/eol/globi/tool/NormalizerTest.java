@@ -27,6 +27,26 @@ public class NormalizerTest extends GraphDBTestCase {
 
     @Test
     public void doSingleImport() throws IOException, StudyImporterException {
+        Normalizer dataNormalizationTool = createNormalizer();
+
+        dataNormalizationTool.importData(getGraphDb(), new TaxonPropertyEnricher() {
+            @Override
+            public void enrich(Taxon taxon) throws IOException {
+            }
+        }, StudyImporterForSimons.class);
+
+
+        GraphDatabaseService graphService = getGraphDb();
+
+        List<Study> allStudies = NodeFactory.findAllStudies(graphService);
+        assertThat(allStudies.size(), Is.is(1));
+        assertThat(allStudies.get(0).getTitle(), Is.is("Simons 1997"));
+
+        assertNotNull(graphService.getNodeById(1));
+        assertNotNull(graphService.getNodeById(200));
+    }
+
+    private Normalizer createNormalizer() {
         Normalizer dataNormalizationTool = new Normalizer();
 
         dataNormalizationTool.setEcoRegionFinderFactory(new EcoRegionFinderFactory() {
@@ -41,26 +61,12 @@ public class NormalizerTest extends GraphDBTestCase {
                 return new ArrayList<EcoRegionFinder>();
             }
         });
-
-        GraphDatabaseService graphService = getGraphDb();
-        dataNormalizationTool.importData(graphService, new TaxonPropertyEnricher() {
-            @Override
-            public void enrich(Taxon taxon) throws IOException {
-            }
-        }, StudyImporterForSimons.class);
-
-
-        List<Study> allStudies = NodeFactory.findAllStudies(graphService);
-        assertThat(allStudies.size(), Is.is(1));
-        assertThat(allStudies.get(0).getTitle(), Is.is("Simons 1997"));
-
-        assertNotNull(graphService.getNodeById(1));
-        assertNotNull(graphService.getNodeById(200));
+        return dataNormalizationTool;
     }
 
     @Test
     public void doSingleImportExport() throws IOException, StudyImporterException {
-        Normalizer dataNormalizationTool = new Normalizer();
+        Normalizer dataNormalizationTool = createNormalizer();
 
         GraphDatabaseService graphService = getGraphDb();
         dataNormalizationTool.importData(graphService, new TaxonPropertyEnricher() {
