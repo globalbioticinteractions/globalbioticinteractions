@@ -28,7 +28,7 @@ public class ExporterAssociationAggregatesTest extends GraphDBTestCase {
         }
 
         String expected = "\nglobi:assoc:1-2-ATE-5,globi:occur:source:1-2-ATE,http://eol.org/schema/terms/eats,globi:occur:target:1-2-ATE-5,,,,,data source description,,,globi:ref:1" +
-                "\nglobi:assoc:9-2-ATE-5,globi:occur:source:9-2-ATE,http://eol.org/schema/terms/eats,globi:occur:target:9-2-ATE-5,,,,,data source description,,,globi:ref:9";
+                "\nglobi:assoc:10-2-ATE-5,globi:occur:source:10-2-ATE,http://eol.org/schema/terms/eats,globi:occur:target:10-2-ATE-5,,,,,data source description,,,globi:ref:10";
 
         ExporterAssociationAggregates exporter = new ExporterAssociationAggregates();
         StringWriter row = new StringWriter();

@@ -536,12 +536,14 @@ public class NodeFactory {
             List<EcoRegion> ecoRegionsToBeIndexed = new ArrayList<EcoRegion>();
             try {
                 EcoRegionFinder finder = getEcoRegionFinder();
-                Collection<EcoRegion> ecoRegions = finder.findEcoRegion(location.getLatitude(), location.getLongitude());
-                for (EcoRegion ecoRegion : ecoRegions) {
-                    if (isNewEcoRegion(ecoRegion)) {
-                        ecoRegionsToBeIndexed.add(ecoRegion);
+                if (finder != null) {
+                    Collection<EcoRegion> ecoRegions = finder.findEcoRegion(location.getLatitude(), location.getLongitude());
+                    for (EcoRegion ecoRegion : ecoRegions) {
+                        if (isNewEcoRegion(ecoRegion)) {
+                            ecoRegionsToBeIndexed.add(ecoRegion);
+                        }
+                        associatedEcoRegions.add(ecoRegion);
                     }
-                    associatedEcoRegions.add(ecoRegion);
                 }
             } catch (EcoRegionFinderException e) {
                 throw new NodeFactoryException("problem finding eco region for location (lat,lng):(" + location.getLatitude() + "," + location.getLongitude() + ")");
