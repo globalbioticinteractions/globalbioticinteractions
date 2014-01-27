@@ -15,9 +15,9 @@ import java.util.Map;
 public class ExporterOccurrenceAggregates extends ExporterOccurrencesBase {
 
     @Override
-    public void doExportStudy(Study study, Writer writer, boolean includeHeader) throws IOException {
+    public void doExportStudy(final Study study, Writer writer, boolean includeHeader) throws IOException {
         ExecutionEngine engine = new ExecutionEngine(study.getUnderlyingNode().getGraphDatabase());
-        ExecutionResult results = engine.execute(getQueryForDistinctTargetTaxaForPreyBySourceTaxa(study));
+        ExecutionResult results = executeQueryForDistinctTargetTaxaForPreyByStudy(engine, study.getTitle());
 
         HashMap<String, String> properties = new HashMap<String, String>();
         for (Map<String, Object> result : results) {

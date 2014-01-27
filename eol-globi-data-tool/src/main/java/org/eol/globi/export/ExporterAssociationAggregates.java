@@ -16,7 +16,7 @@ public class ExporterAssociationAggregates extends ExporterAssociationsBase {
     @Override
     public void doExportStudy(Study study, Writer writer, boolean includeHeader) throws IOException {
         ExecutionEngine engine = new ExecutionEngine(study.getUnderlyingNode().getGraphDatabase());
-        ExecutionResult results = engine.execute(getQueryForDistinctTargetTaxaForPreyBySourceTaxa(study));
+        ExecutionResult results = executeQueryForDistinctTargetTaxaForPreyByStudy(engine, study.getTitle());
         Map<String, String> properties = new HashMap<String, String>();
         for (Map<String, Object> result : results) {
             populateRow(study, writer, properties, result);

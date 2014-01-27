@@ -5,6 +5,8 @@ import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.util.InteractUtil;
+import org.neo4j.cypher.javacompat.ExecutionEngine;
+import org.neo4j.cypher.javacompat.ExecutionResult;
 import org.neo4j.graphdb.PropertyContainer;
 import org.neo4j.graphdb.Relationship;
 
@@ -12,6 +14,7 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.TimeZone;
 
@@ -21,8 +24,16 @@ public abstract class ExporterBase extends DarwinCoreExporter {
     public static final String QUERY_PARAM_TARGET_TAXA = "targetTaxa";
     public static final String QUERY_PARAM_INTERACTION_TYPE = "interactionType";
 
-    protected static String getQueryForDistinctTargetTaxaForPreyBySourceTaxa(Study study) {
-        return "START study = node:studies(title='" + study.getTitle() + "') " +
+    protected static ExecutionResult executeQueryForDistinctTargetTaxaForPreyByStudy(ExecutionEngine engine, final String title) {
+        return engine.execute(getQueryForDistinctTargetTaxaForPreyBySourceTaxa(), new HashMap<String, Object>() {
+            {
+                put("studyTitle", title);
+            }
+        });
+    }
+
+    private static String getQueryForDistinctTargetTaxaForPreyBySourceTaxa() {
+        return "START study = node:studies(title={studyTitle}) " +
                 "MATCH study-[:COLLECTED]->sourceSpecimen-[:CLASSIFIED_AS]->sourceTaxon, " +
                 "sourceSpecimen-[r:" + InteractUtil.allInteractionsCypherClause() + "]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon  " +
                 "WHERE sourceTaxon.externalId? <> '" + PropertyAndValueDictionary.NO_MATCH +
