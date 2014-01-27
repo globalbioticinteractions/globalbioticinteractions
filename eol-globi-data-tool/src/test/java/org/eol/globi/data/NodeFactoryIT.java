@@ -47,7 +47,7 @@ public class NodeFactoryIT extends GraphDBTestCase {
         nodeFactory.setCorrectionService(new CorrectionService() {
             @Override
             public String correct(String taxonName) {
-                return StringUtils.equals("Fish",taxonName) ? "Actinopterygii" : taxonName;
+                return StringUtils.equals("Fish", taxonName) ? "Actinopterygii" : taxonName;
             }
         });
 
@@ -70,6 +70,18 @@ public class NodeFactoryIT extends GraphDBTestCase {
         assertThat(taxon.getCommonNames(), is(nullValue()));
 
         assertZeroHits(factory, "no:match");
+    }
+
+    @Test
+    public void noDuplicatesOnSynomyms() throws NodeFactoryException {
+        TaxonPropertyEnricher taxonEnricher = TaxonPropertyEnricherFactory.createTaxonEnricher(getGraphDb());
+        NodeFactory factory = new NodeFactory(getGraphDb(), taxonEnricher);
+        Taxon first = factory.getOrCreateTaxon("Galeichthys felis");
+        Taxon second = factory.getOrCreateTaxon("Ariopsis felis");
+        Taxon third = factory.getOrCreateTaxon("Arius felis");
+        assertThat(first.getNodeID(), is(second.getNodeID()));
+        assertThat(third.getNodeID(), is(second.getNodeID()));
+        assertThat(third.getPath(), is("Animalia | Chordata | Actinopterygii | Siluriformes | Ariidae | Ariopsis | Ariopsis felis | Galeichthys felis"));
     }
 
     @Test

@@ -169,19 +169,20 @@ public class NodeFactory {
             }
             duplicateTaxons.add(new Taxon(matchingTaxa.next()));
         }
+        matchingTaxa.close();
+
         if (duplicateTaxons != null) {
-            StringBuffer buffer = new StringBuffer();
+            StringBuilder builder = new StringBuilder();
             duplicateTaxons.add(firstMatchingTaxon);
             for (Taxon duplicateTaxon : duplicateTaxons) {
-                buffer.append('{');
-                buffer.append(duplicateTaxon.getName());
-                buffer.append(':');
-                buffer.append(duplicateTaxon.getExternalId());
-                buffer.append('}');
+                builder.append('{');
+                builder.append(duplicateTaxon.getName());
+                builder.append(':');
+                builder.append(duplicateTaxon.getExternalId());
+                builder.append('}');
             }
-            LOG.warn("found duplicates for taxon with name [" + taxonName + "], using first only: " + buffer.toString());
+            LOG.warn("found duplicates for taxon with name [" + taxonName + "], using first only: " + builder.toString());
         }
-        matchingTaxa.close();
         return firstMatchingTaxon;
     }
 
