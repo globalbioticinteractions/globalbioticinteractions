@@ -23,7 +23,10 @@ import org.eol.globi.export.GlobiOWLExporter;
 import org.eol.globi.export.StudyExportUnmatchedSourceTaxaForStudies;
 import org.eol.globi.export.StudyExportUnmatchedTargetTaxaForStudies;
 import org.eol.globi.export.StudyExporter;
+import org.eol.globi.geo.EcoRegionFinderFactory;
+import org.eol.globi.geo.EcoRegionFinderFactoryImpl;
 import org.eol.globi.service.DOIResolverImpl;
+import org.eol.globi.service.EcoRegionFinderProxy;
 import org.eol.globi.service.TaxonPropertyEnricher;
 import org.eol.globi.service.TaxonPropertyEnricherFactory;
 import org.neo4j.graphdb.GraphDatabaseService;
@@ -43,6 +46,8 @@ import java.util.zip.GZIPOutputStream;
 
 public class Normalizer {
     private static final Log LOG = LogFactory.getLog(Normalizer.class);
+
+    private EcoRegionFinderFactory ecoRegionFinderFactory = new EcoRegionFinderFactoryImpl();
 
     public static void main(final String[] commandLineArguments) throws StudyImporterException {
         new Normalizer().normalize();
@@ -81,13 +86,13 @@ public class Normalizer {
     private void exportDarwinCoreAggregatedByStudy(String baseDir, List<Study> studies) throws StudyImporterException {
         exportDarwinCoreArchive(studies,
                 baseDir + "aggregatedByStudy/", new HashMap<String, DarwinCoreExporter>() {
-                    {
-                        put("association.csv", new ExporterAssociationAggregates());
-                        put("occurrence.csv", new ExporterOccurrenceAggregates());
-                        put("references.csv", new ExporterReferences());
-                        put("taxa.csv", new ExporterTaxa());
-                    }
-                });
+            {
+                put("association.csv", new ExporterAssociationAggregates());
+                put("occurrence.csv", new ExporterOccurrenceAggregates());
+                put("references.csv", new ExporterReferences());
+                put("taxa.csv", new ExporterTaxa());
+            }
+        });
     }
 
     private void exportDarwinCoreAll(String baseDir, List<Study> studies) throws StudyImporterException {
@@ -181,11 +186,20 @@ public class Normalizer {
 
     private StudyImporter createStudyImporter(GraphDatabaseService graphService, Class<StudyImporter> studyImporter, TaxonPropertyEnricher taxonEnricher) throws StudyImporterException {
         final NodeFactory factory = new NodeFactory(graphService, taxonEnricher);
+        factory.setEcoRegionFinder(new EcoRegionFinderProxy(getEcoRegionFinderFactory()));
         factory.setDoiResolver(new DOIResolverImpl());
         ParserFactory parserFactory = new ParserFactoryImpl();
         StudyImporter importer = new StudyImporterFactory(parserFactory, factory).instantiateImporter(studyImporter);
         importer.setLogger(new StudyImportLogger(factory));
         return importer;
+    }
+
+    public void setEcoRegionFinderFactory(EcoRegionFinderFactory ecoRegionFinderFactory) {
+        this.ecoRegionFinderFactory = ecoRegionFinderFactory;
+    }
+
+    public EcoRegionFinderFactory getEcoRegionFinderFactory() {
+        return ecoRegionFinderFactory;
     }
 
 }

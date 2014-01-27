@@ -2,9 +2,11 @@ package org.eol.globi.data;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.data.taxon.CorrectionService;
+import org.eol.globi.domain.Location;
 import org.eol.globi.domain.LogMessage;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.Taxon;
+import org.eol.globi.geo.EcoRegion;
 import org.eol.globi.service.TaxonPropertyEnricher;
 import org.eol.globi.service.TaxonPropertyEnricherFactory;
 import org.junit.Test;
@@ -18,6 +20,7 @@ import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
+import static org.mockito.AdditionalMatchers.not;
 
 public class NodeFactoryIT extends GraphDBTestCase {
 

@@ -7,13 +7,19 @@ import org.apache.lucene.search.TermQuery;
 import org.eol.globi.data.taxon.CorrectionService;
 import org.eol.globi.domain.Environment;
 import org.eol.globi.domain.Location;
+import org.eol.globi.domain.NamedNode;
+import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.Taxon;
+import org.eol.globi.geo.EcoRegion;
 import org.eol.globi.service.DOIResolver;
 import org.eol.globi.service.TaxonPropertyEnricher;
 import org.junit.Test;
+import org.mockito.AdditionalMatchers;
+import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
+import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.IndexHits;
@@ -315,5 +321,50 @@ public class NodeFactoryTest extends GraphDBTestCase {
         assertThat(specimen.getOriginalTaxonDescription(), is("mickey"));
         assertThat("original taxon descriptions are not indexed", nodeFactory.findTaxon("mickey").getName(), is(not("mickey")));
     }
+
+    @Test
+    public void createEcoRegion() throws NodeFactoryException {
+        Location locationInSanFranciscoBay = nodeFactory.getOrCreateLocation(37.689254, -122.295799, null);
+        List<EcoRegion> ecoRegions = nodeFactory.getOrCreateEcoRegions(locationInSanFranciscoBay);
+        assertThat(ecoRegions.size(), not(is(0)));
+        EcoRegion ecoRegion = ecoRegions.get(0);
+        assertThat(ecoRegion.getName(), is("some eco region"));
+        assertEcoRegions(locationInSanFranciscoBay);
+        nodeFactory.getOrCreateEcoRegions(locationInSanFranciscoBay);
+        assertEcoRegions(locationInSanFranciscoBay);
+
+        IndexHits<Node> hits = nodeFactory.findCloseMatchesForEcoRegion("some elo egion");
+        assertThat(hits.size(), is(1));
+        assertThat((String) hits.iterator().next().getProperty(NamedNode.NAME), is("some eco region"));
+
+        hits = nodeFactory.findCloseMatchesForEcoRegion("mickey mouse goes shopping");
+        assertThat(hits.size(), is(0));
+        hits = nodeFactory.findCloseMatchesForEcoRegionPath("mickey mouse goes shopping");
+        assertThat(hits.size(), is(0));
+
+        hits = nodeFactory.findCloseMatchesForEcoRegionPath("path");
+        assertThat(hits.size(), is(1));
+        hits = nodeFactory.findCloseMatchesForEcoRegionPath("some");
+        assertThat(hits.size(), is(1));
+
+        hits = nodeFactory.suggestEcoRegionByName("some eco region");
+        assertThat(hits.size(), is(1));
+        hits = nodeFactory.suggestEcoRegionByName("path");
+        assertThat(hits.size(), is(1));
+
+    }
+
+    private void assertEcoRegions(Location locationInSanFranciscoBay) {
+        Iterable<Relationship> relationships = locationInSanFranciscoBay.getUnderlyingNode().getRelationships(Direction.OUTGOING, RelTypes.IN_ECO_REGION);
+        int count = 0;
+        for (Relationship relationship : relationships) {
+            Node associatedEcoRegion = relationship.getEndNode();
+            assertThat((String) associatedEcoRegion.getProperty("name"), is("some eco region"));
+            count++;
+        }
+
+        assertThat(count, is(1));
+    }
+
 
 }

@@ -15,6 +15,8 @@ import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -71,9 +73,11 @@ public class EcoRegionFinderImpl implements EcoRegionFinder {
     }
 
     @Override
-    public EcoRegion findEcoRegion(double lat, double lng) throws EcoRegionFinderException {
-        Map<String, String> props = findEcoRegion(new GeometryFactory().createPoint(new Coordinate(lng, lat)));
-        return props == null || !props.containsKey(config.getIdLabel()) ? null : createEcoRegion(props);
+    public Collection<EcoRegion> findEcoRegion(double lat, double lng) throws EcoRegionFinderException {
+        final Map<String, String> props = findEcoRegion(new GeometryFactory().createPoint(new Coordinate(lng, lat)));
+        return props == null || !props.containsKey(config.getIdLabel()) ? null : new ArrayList<EcoRegion>() {{
+            add(createEcoRegion(props));
+        }};
     }
 
     private EcoRegion createEcoRegion(Map<String, String> props) {

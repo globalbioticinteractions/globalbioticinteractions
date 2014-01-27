@@ -4,6 +4,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.data.taxon.CorrectionService;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.Term;
+import org.eol.globi.geo.EcoRegion;
+import org.eol.globi.geo.EcoRegionFinder;
+import org.eol.globi.geo.EcoRegionFinderException;
 import org.eol.globi.service.DOIResolver;
 import org.eol.globi.service.TaxonPropertyEnricher;
 import org.eol.globi.service.TermLookupService;
@@ -15,6 +18,7 @@ import org.neo4j.test.TestGraphDatabaseFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public abstract class GraphDBTestCase {
@@ -31,6 +35,20 @@ public abstract class GraphDBTestCase {
             @Override
             public void enrich(Taxon taxon) throws IOException {
 
+            }
+        });
+        nodeFactory.setEcoRegionFinder(new EcoRegionFinder() {
+
+            @Override
+            public Collection<EcoRegion> findEcoRegion(double lat, double lng) throws EcoRegionFinderException {
+                final EcoRegion ecoRegion = new EcoRegion();
+                ecoRegion.setName("some eco region");
+                ecoRegion.setPath("some | eco | region | path");
+                ecoRegion.setId("some:id");
+                ecoRegion.setGeometry("POINT(0,0)");
+                return new ArrayList<EcoRegion>() {{
+                    add(ecoRegion);
+                }};
             }
         });
         nodeFactory.setEnvoLookupService(new TestTermLookupService());

@@ -9,6 +9,13 @@
 
     <name>EOL's Global Biotic Interaction Ontology</name>
 
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.build.resourceEncoding>UTF-8</project.build.resourceEncoding>
+        <project.build.testResourceEncoding>UTF-8</project.build.testResourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    </properties>
+
     <build>
         <resources>
             <resource>

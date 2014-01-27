@@ -1,5 +1,6 @@
 package org.eol.globi.domain;
 
+import org.eol.globi.util.NodeUtil;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
@@ -79,7 +80,8 @@ public class NodeBacked {
     }
 
     protected String getPropertyStringValueOrNull(String propertyName) {
-        return getUnderlyingNode().hasProperty(propertyName) ? (String) getUnderlyingNode().getProperty(propertyName) : null;
+        Node node = getUnderlyingNode();
+        return NodeUtil.getPropertyStringValueOrNull(node, propertyName);
     }
 
     public void setExternalId(String externalId) {

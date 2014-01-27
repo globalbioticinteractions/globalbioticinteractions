@@ -7,6 +7,9 @@ import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.data.StudyImporterForSimons;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.Taxon;
+import org.eol.globi.geo.EcoRegionFinder;
+import org.eol.globi.geo.EcoRegionFinderFactory;
+import org.eol.globi.geo.EcoRegionType;
 import org.eol.globi.service.TaxonPropertyEnricher;
 import org.hamcrest.core.Is;
 import org.junit.Test;
@@ -14,6 +17,7 @@ import org.neo4j.graphdb.GraphDatabaseService;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import static junit.framework.Assert.assertNotNull;
@@ -25,12 +29,26 @@ public class NormalizerTest extends GraphDBTestCase {
     public void doSingleImport() throws IOException, StudyImporterException {
         Normalizer dataNormalizationTool = new Normalizer();
 
+        dataNormalizationTool.setEcoRegionFinderFactory(new EcoRegionFinderFactory() {
+
+            @Override
+            public EcoRegionFinder createEcoRegionFinder(EcoRegionType type) {
+                return null;
+            }
+
+            @Override
+            public List<EcoRegionFinder> createAll() {
+                return new ArrayList<EcoRegionFinder>();
+            }
+        });
+
         GraphDatabaseService graphService = getGraphDb();
         dataNormalizationTool.importData(graphService, new TaxonPropertyEnricher() {
             @Override
             public void enrich(Taxon taxon) throws IOException {
             }
         }, StudyImporterForSimons.class);
+
 
         List<Study> allStudies = NodeFactory.findAllStudies(graphService);
         assertThat(allStudies.size(), Is.is(1));
