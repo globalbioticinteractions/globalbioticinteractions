@@ -538,12 +538,9 @@ public class NodeFactory {
                 EcoRegionFinder finder = getEcoRegionFinder();
                 Collection<EcoRegion> ecoRegions = finder.findEcoRegion(location.getLatitude(), location.getLongitude());
                 for (EcoRegion ecoRegion : ecoRegions) {
-                    String query = "name:\"" + ecoRegion.getName() + "\"";
-                    IndexHits<Node> hits = this.ecoRegions.query(query);
-                    if (!hits.hasNext()) {
+                    if (isNewEcoRegion(ecoRegion)) {
                         ecoRegionsToBeIndexed.add(ecoRegion);
                     }
-                    hits.close();
                     associatedEcoRegions.add(ecoRegion);
                 }
             } catch (EcoRegionFinderException e) {
@@ -562,6 +559,14 @@ public class NodeFactory {
 
         }
         return associatedEcoRegions;
+    }
+
+    private boolean isNewEcoRegion(EcoRegion ecoRegion) {
+        String query = "name:\"" + ecoRegion.getName() + "\"";
+        IndexHits<Node> hits = this.ecoRegions.query(query);
+        boolean newEcoRegion = !hits.hasNext();
+        hits.close();
+        return newEcoRegion;
     }
 
     private void addAndIndexEcoRegion(Location location, EcoRegion ecoRegion) {
