@@ -22,7 +22,9 @@ public class EcoRegionFinderFactoryImplTest {
 
     @After
     public void reloadProps() {
-        if (StringUtils.isNotBlank(oldPropertyValue)) {
+        if (StringUtils.isBlank(oldPropertyValue)) {
+            System.clearProperty(SHAPEFILES_DIR);
+        } else {
             System.setProperty(SHAPEFILES_DIR, oldPropertyValue);
         }
     }
@@ -36,7 +38,7 @@ public class EcoRegionFinderFactoryImplTest {
         }
     }
 
-    @Test(expected = RuntimeException.class)
+    @Test(expected = Exception.class)
     public void checkDataSourcesUsingSystemPropertyIncorrect() throws EcoRegionFinderException {
         System.setProperty(SHAPEFILES_DIR, "/thisdoesnotexistatall");
         for (EcoRegionType ecoRegionType : EcoRegionType.values()) {
