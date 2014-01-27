@@ -11,6 +11,7 @@ import java.util.Collection;
 import java.util.List;
 
 public class EcoRegionFinderProxy implements EcoRegionFinder {
+    public static final ArrayList<EcoRegion> EMPTY_REGIONS = new ArrayList<EcoRegion>();
     private final EcoRegionFinderFactory factory;
     public List<EcoRegionFinder> finders;
 
@@ -33,6 +34,6 @@ public class EcoRegionFinderProxy implements EcoRegionFinder {
                 }
             }
         }
-        return regions;
+        return regions == null ? EMPTY_REGIONS : regions;
     }
 }
