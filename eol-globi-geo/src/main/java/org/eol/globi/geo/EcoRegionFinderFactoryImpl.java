@@ -25,7 +25,7 @@ public class EcoRegionFinderFactoryImpl implements EcoRegionFinderFactory {
     public List<EcoRegionFinder> createAll() {
         List<EcoRegionFinder> finders = new ArrayList<EcoRegionFinder>();
         for (EcoRegionType ecoRegionType : EcoRegionType.values()) {
-            finders.add(new EcoRegionFinderFactoryImpl().createEcoRegionFinder(ecoRegionType));
+            finders.add(createEcoRegionFinder(ecoRegionType));
         }
         return finders;
     }
