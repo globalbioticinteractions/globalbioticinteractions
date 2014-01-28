@@ -3,7 +3,7 @@ package org.eol.globi.data;
 
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
-import org.eol.globi.domain.Taxon;
+import org.eol.globi.domain.TaxonNode;
 import org.junit.Test;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
@@ -71,7 +71,7 @@ public class StudyImporterForLifeWatchGreeceTest extends GraphDBTestCase {
         Specimen predatorSpecimen = new Specimen(startNode);
         Iterable<Relationship> classifications = predatorSpecimen.getClassifications();
         for (Relationship classification : classifications) {
-            taxa.add(new Taxon(classification.getEndNode()).getName());
+            taxa.add(new TaxonNode(classification.getEndNode()).getName());
         }
     }
 

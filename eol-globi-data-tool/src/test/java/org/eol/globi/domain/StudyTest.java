@@ -10,8 +10,6 @@ import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 
-import java.io.IOException;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
@@ -27,7 +25,7 @@ public class StudyTest extends GraphDBTestCase {
     public void createFactory() {
         factory = new NodeFactory(getGraphDb(), new TaxonPropertyEnricher() {
             @Override
-            public void enrich(Taxon taxon) throws IOException {
+            public void enrich(Taxon taxon) {
             }
         });
     }

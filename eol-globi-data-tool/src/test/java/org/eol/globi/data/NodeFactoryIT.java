@@ -2,11 +2,9 @@ package org.eol.globi.data;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.data.taxon.CorrectionService;
-import org.eol.globi.domain.Location;
 import org.eol.globi.domain.LogMessage;
 import org.eol.globi.domain.Study;
-import org.eol.globi.domain.Taxon;
-import org.eol.globi.geo.EcoRegion;
+import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.service.TaxonPropertyEnricher;
 import org.eol.globi.service.TaxonPropertyEnricherFactory;
 import org.junit.Test;
@@ -51,7 +49,7 @@ public class NodeFactoryIT extends GraphDBTestCase {
             }
         });
 
-        Taxon taxon = nodeFactory.getOrCreateTaxon("Fish");
+        TaxonNode taxon = nodeFactory.getOrCreateTaxon("Fish");
         assertThat(taxon.getName(), is("Actinopterygii"));
         taxon = nodeFactory.getOrCreateTaxon("Fish");
         assertThat(taxon.getName(), is("Actinopterygii"));
@@ -63,7 +61,7 @@ public class NodeFactoryIT extends GraphDBTestCase {
     public void createNoMatch() throws NodeFactoryException {
         TaxonPropertyEnricher taxonEnricher = TaxonPropertyEnricherFactory.createTaxonEnricher(getGraphDb());
         NodeFactory factory = new NodeFactory(getGraphDb(), taxonEnricher);
-        Taxon taxon = factory.getOrCreateTaxon("Santa Claus meets Superman");
+        TaxonNode taxon = factory.getOrCreateTaxon("Santa Claus meets Superman");
         assertThat(taxon.getName(), is("Santa Claus meets Superman"));
         assertThat(taxon.getExternalId(), is("no:match"));
         assertThat(taxon.getPath(), is(nullValue()));
@@ -76,19 +74,29 @@ public class NodeFactoryIT extends GraphDBTestCase {
     public void noDuplicatesOnSynomyms() throws NodeFactoryException {
         TaxonPropertyEnricher taxonEnricher = TaxonPropertyEnricherFactory.createTaxonEnricher(getGraphDb());
         NodeFactory factory = new NodeFactory(getGraphDb(), taxonEnricher);
-        Taxon first = factory.getOrCreateTaxon("Galeichthys felis");
-        Taxon second = factory.getOrCreateTaxon("Ariopsis felis");
-        Taxon third = factory.getOrCreateTaxon("Arius felis");
+        TaxonNode first = factory.getOrCreateTaxon("Galeichthys felis");
+        TaxonNode second = factory.getOrCreateTaxon("Ariopsis felis");
+        TaxonNode third = factory.getOrCreateTaxon("Arius felis");
         assertThat(first.getNodeID(), is(second.getNodeID()));
         assertThat(third.getNodeID(), is(second.getNodeID()));
         assertThat(third.getPath(), is("Animalia | Chordata | Actinopterygii | Siluriformes | Ariidae | Ariopsis | Ariopsis felis | Galeichthys felis"));
     }
 
     @Test
+    public void noDuplicatesOnChoppingNames() throws NodeFactoryException {
+        TaxonPropertyEnricher taxonEnricher = TaxonPropertyEnricherFactory.createTaxonEnricher(getGraphDb());
+        NodeFactory factory = new NodeFactory(getGraphDb(), taxonEnricher);
+        TaxonNode first = factory.getOrCreateTaxon("Ariopsis felis");
+        TaxonNode second = factory.getOrCreateTaxon("Ariopsis felis something");
+        assertThat(first.getExternalId(), is(second.getExternalId()));
+        assertThat(first.getNodeID(), is(second.getNodeID()));
+    }
+
+    @Test
     public void createHomoSapiens() throws NodeFactoryException {
         TaxonPropertyEnricher taxonEnricher = TaxonPropertyEnricherFactory.createTaxonEnricher(getGraphDb());
         NodeFactory factory = new NodeFactory(getGraphDb(), taxonEnricher);
-        Taxon taxon = factory.getOrCreateTaxon("Homo sapiens");
+        TaxonNode taxon = factory.getOrCreateTaxon("Homo sapiens");
         assertThat(taxon.getName(), is("Homo sapiens"));
         assertThat(taxon.getExternalId(), is("EOL:327955"));
         assertThat(taxon.getPath(), is(notNullValue()));

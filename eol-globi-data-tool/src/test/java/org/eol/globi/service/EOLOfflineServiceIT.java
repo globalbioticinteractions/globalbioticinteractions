@@ -1,7 +1,7 @@
 package org.eol.globi.service;
 
 import org.apache.commons.lang3.time.StopWatch;
-import org.eol.globi.domain.NodeBacked;
+import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.TaxonomyProvider;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -47,7 +47,7 @@ public class EOLOfflineServiceIT {
 
     @Test
     public void matchNameTooShort() throws TaxonPropertyLookupServiceException {
-        String externalId = eolOfflineService.lookupPropertyValueByTaxonName("G", NodeBacked.EXTERNAL_ID);
+        String externalId = eolOfflineService.lookupPropertyValueByTaxonName("G", PropertyAndValueDictionary.EXTERNAL_ID);
         assertThat(externalId, is(nullValue()));
     }
 
@@ -56,7 +56,7 @@ public class EOLOfflineServiceIT {
     }
 
     private void matchTaxon(String speciesName) throws TaxonPropertyLookupServiceException {
-        String externalId = eolOfflineService.lookupPropertyValueByTaxonName(speciesName, NodeBacked.EXTERNAL_ID);
+        String externalId = eolOfflineService.lookupPropertyValueByTaxonName(speciesName, PropertyAndValueDictionary.EXTERNAL_ID);
         assertThat("failed to match [" + speciesName + "]", externalId, containsString(TaxonomyProvider.ID_PREFIX_EOL));
     }
 

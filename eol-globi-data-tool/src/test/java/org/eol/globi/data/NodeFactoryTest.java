@@ -7,16 +7,16 @@ import org.apache.lucene.search.TermQuery;
 import org.eol.globi.data.taxon.CorrectionService;
 import org.eol.globi.domain.Environment;
 import org.eol.globi.domain.Location;
-import org.eol.globi.domain.NamedNode;
+import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.Taxon;
+import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.geo.EcoRegion;
 import org.eol.globi.service.DOIResolver;
 import org.eol.globi.service.TaxonPropertyEnricher;
 import org.junit.Test;
-import org.mockito.AdditionalMatchers;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
@@ -43,7 +43,7 @@ public class NodeFactoryTest extends GraphDBTestCase {
     public void findByStringWithWhitespaces() throws NodeFactoryException {
         nodeFactory = new NodeFactory(getGraphDb(), new TaxonPropertyEnricher() {
             @Override
-            public void enrich(Taxon taxon) throws IOException {
+            public void enrich(Taxon taxon) {
                 taxon.setPath("kingdom" + CharsetConstant.SEPARATOR + "phylum" + CharsetConstant.SEPARATOR + "Homo sapiens" + CharsetConstant.SEPARATOR);
                 taxon.setExternalId("anExternalId");
                 taxon.setCommonNames(EXPECTED_COMMON_NAMES);
@@ -84,7 +84,7 @@ public class NodeFactoryTest extends GraphDBTestCase {
     public void ensureThatEnrichedPropertiesAreIndexed() throws NodeFactoryException {
         nodeFactory = new NodeFactory(getGraphDb(), new TaxonPropertyEnricher() {
             @Override
-            public void enrich(Taxon taxon) throws IOException {
+            public void enrich(Taxon taxon) {
                 taxon.setPath("kingdom" + CharsetConstant.SEPARATOR + "phylum" + CharsetConstant.SEPARATOR + "etc" + CharsetConstant.SEPARATOR);
                 taxon.setExternalId("anExternalId");
                 taxon.setCommonNames(EXPECTED_COMMON_NAMES);
@@ -101,33 +101,33 @@ public class NodeFactoryTest extends GraphDBTestCase {
         assertEnrichedPropertiesSet(nodeFactory.findTaxon("some name"));
         IndexHits<Node> hits = nodeFactory.findTaxaByPath("etc");
         assertThat(hits.size(), is(1));
-        assertEnrichedPropertiesSet(new Taxon(hits.getSingle()));
+        assertEnrichedPropertiesSet(new TaxonNode(hits.getSingle()));
         hits = nodeFactory.findTaxaByCommonName("some german name");
         assertThat(hits.size(), is(1));
-        assertEnrichedPropertiesSet(new Taxon(hits.getSingle()));
+        assertEnrichedPropertiesSet(new TaxonNode(hits.getSingle()));
 
         hits = nodeFactory.suggestTaxaByName("kingdom");
         assertThat(hits.size(), is(1));
-        assertEnrichedPropertiesSet(new Taxon(hits.getSingle()));
+        assertEnrichedPropertiesSet(new TaxonNode(hits.getSingle()));
 
         hits = nodeFactory.suggestTaxaByName("phylum");
         assertThat(hits.size(), is(1));
-        assertEnrichedPropertiesSet(new Taxon(hits.getSingle()));
+        assertEnrichedPropertiesSet(new TaxonNode(hits.getSingle()));
 
         hits = nodeFactory.suggestTaxaByName("some");
         assertThat(hits.size(), is(1));
-        assertEnrichedPropertiesSet(new Taxon(hits.getSingle()));
+        assertEnrichedPropertiesSet(new TaxonNode(hits.getSingle()));
 
         hits = nodeFactory.suggestTaxaByName("german");
         assertThat(hits.size(), is(1));
-        assertEnrichedPropertiesSet(new Taxon(hits.getSingle()));
+        assertEnrichedPropertiesSet(new TaxonNode(hits.getSingle()));
 
         hits = nodeFactory.suggestTaxaByName("@de");
         assertThat(hits.size(), is(1));
-        assertEnrichedPropertiesSet(new Taxon(hits.getSingle()));
+        assertEnrichedPropertiesSet(new TaxonNode(hits.getSingle()));
     }
 
-    private void assertEnrichedPropertiesSet(Taxon aTaxon) {
+    private void assertEnrichedPropertiesSet(TaxonNode aTaxon) {
         assertThat(aTaxon.getPath(), is("kingdom" + CharsetConstant.SEPARATOR + "phylum" + CharsetConstant.SEPARATOR + "etc" + CharsetConstant.SEPARATOR));
         assertThat(aTaxon.getCommonNames(), is(EXPECTED_COMMON_NAMES));
         assertThat(aTaxon.getName(), is("some name"));
@@ -178,8 +178,9 @@ public class NodeFactoryTest extends GraphDBTestCase {
     }
 
     @Test
-    public void createSpecies() throws NodeFactoryException {
-        Taxon taxon = nodeFactory.getOrCreateTaxon("bla bla");
+    public void createTaxon() throws NodeFactoryException {
+        TaxonNode taxon = nodeFactory.getOrCreateTaxon("bla bla");
+        assertThat(taxon, is(notNullValue()));
         assertEquals("bla bla", taxon.getName());
     }
 
@@ -187,7 +188,7 @@ public class NodeFactoryTest extends GraphDBTestCase {
     public void createSpeciesMatchHigherOrder() throws NodeFactoryException {
         nodeFactory = new NodeFactory(getGraphDb(), new TaxonPropertyEnricher() {
             @Override
-            public void enrich(Taxon taxon) throws IOException {
+            public void enrich(Taxon taxon) {
                 if ("bla".equals(taxon.getName())) {
                     taxon.setPath("a path");
                     taxon.setExternalId("anExternalId");
@@ -196,7 +197,7 @@ public class NodeFactoryTest extends GraphDBTestCase {
             }
         });
 
-        Taxon taxon = nodeFactory.getOrCreateTaxon("bla bla");
+        TaxonNode taxon = nodeFactory.getOrCreateTaxon("bla bla");
         assertEquals("bla", taxon.getName());
         assertEquals("a path", taxon.getPath());
         assertEquals("anExternalId", taxon.getExternalId());
@@ -214,7 +215,7 @@ public class NodeFactoryTest extends GraphDBTestCase {
 
     @Test
     public void findCloseMatchForTaxonPath() throws NodeFactoryException {
-        Taxon homoSapiens = nodeFactory.getOrCreateTaxon("Homo sapiens", null, "Animalia Mammalia");
+        TaxonNode homoSapiens = nodeFactory.getOrCreateTaxon("Homo sapiens", null, "Animalia Mammalia");
         Transaction transaction = homoSapiens.getUnderlyingNode().getGraphDatabase().beginTx();
         transaction.success();
         transaction.finish();
@@ -231,8 +232,8 @@ public class NodeFactoryTest extends GraphDBTestCase {
         IndexHits<Node> hits = nodeFactory.findCloseMatchesForTaxonPath(taxonRankOfClassName);
         assertThat(hits.hasNext(), is(true));
         Node firstHit = hits.next();
-        assertThat((String) firstHit.getProperty(Taxon.NAME), is("Homo sapiens"));
-        assertThat((String) firstHit.getProperty(Taxon.PATH), is("Animalia Mammalia"));
+        assertThat((String) firstHit.getProperty(PropertyAndValueDictionary.NAME), is("Homo sapiens"));
+        assertThat((String) firstHit.getProperty(PropertyAndValueDictionary.PATH), is("Animalia Mammalia"));
         assertThat(hits.hasNext(), is(false));
     }
 
@@ -299,13 +300,13 @@ public class NodeFactoryTest extends GraphDBTestCase {
                 return corrected;
             }
         });
-        Taxon taxon = nodeFactory.getOrCreateTaxon("bla");
+        TaxonNode taxon = nodeFactory.getOrCreateTaxon("bla");
         assertEquals("bla corrected", taxon.getName());
 
-        Taxon bla = nodeFactory.findTaxonOfType("bla");
+        TaxonNode bla = nodeFactory.findTaxonOfType("bla");
         assertThat(bla.getName(), is("bla corrected"));
 
-        Taxon taxonMatch = nodeFactory.findTaxonOfType("bla corrected");
+        TaxonNode taxonMatch = nodeFactory.findTaxonOfType("bla corrected");
         assertThat(taxonMatch.getName(), is("bla corrected"));
     }
 
@@ -337,7 +338,7 @@ public class NodeFactoryTest extends GraphDBTestCase {
 
         IndexHits<Node> hits = nodeFactory.findCloseMatchesForEcoRegion("some elo egion");
         assertThat(hits.size(), is(1));
-        assertThat((String) hits.iterator().next().getProperty(NamedNode.NAME), is("some eco region"));
+        assertThat((String) hits.iterator().next().getProperty(PropertyAndValueDictionary.NAME), is("some eco region"));
 
         hits = nodeFactory.findCloseMatchesForEcoRegion("mickey mouse goes shopping");
         assertThat(hits.size(), is(0));

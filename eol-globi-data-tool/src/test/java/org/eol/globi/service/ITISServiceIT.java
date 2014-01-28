@@ -1,6 +1,6 @@
 package org.eol.globi.service;
 
-import org.eol.globi.domain.Taxon;
+import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -29,7 +29,7 @@ public class ITISServiceIT {
     @Test
     public void lookupPathByExistingTaxon() throws TaxonPropertyLookupServiceException {
         ITISService itisService = new ITISService();
-        String s = itisService.lookupPropertyValueByTaxonName("Fundulus jenkinsi", Taxon.PATH);
+        String s = itisService.lookupPropertyValueByTaxonName("Fundulus jenkinsi", PropertyAndValueDictionary.PATH);
         assertThat(s, is(notNullValue()));
         assertThat(s, containsString("Animalia"));
     }
@@ -37,7 +37,7 @@ public class ITISServiceIT {
     @Test
     public void lookupPathByNonExistingTaxon() throws TaxonPropertyLookupServiceException {
         ITISService itisService = new ITISService();
-        String s = itisService.lookupPropertyValueByTaxonName("donald duck", Taxon.PATH);
+        String s = itisService.lookupPropertyValueByTaxonName("donald duck", PropertyAndValueDictionary.PATH);
         assertThat(s, is (nullValue()));
     }
 

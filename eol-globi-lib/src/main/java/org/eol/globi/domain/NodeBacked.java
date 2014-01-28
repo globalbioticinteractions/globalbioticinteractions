@@ -8,8 +8,6 @@ import org.neo4j.graphdb.Transaction;
 
 public class NodeBacked {
 
-    public static final String EXTERNAL_ID = "externalId";
-    protected final static String TYPE = "type";
     private final Node underlyingNode;
 
     public NodeBacked(Node node) {
@@ -85,11 +83,11 @@ public class NodeBacked {
     }
 
     public void setExternalId(String externalId) {
-        setPropertyWithTx(NodeBacked.EXTERNAL_ID, externalId);
+        setPropertyWithTx(PropertyAndValueDictionary.EXTERNAL_ID, externalId);
     }
 
     public String getExternalId() {
-        String propertyName = NodeBacked.EXTERNAL_ID;
+        String propertyName = PropertyAndValueDictionary.EXTERNAL_ID;
         Object propertyValueOrNull = getPropertyValueOrNull(propertyName);
         return propertyValueOrNull == null ? null : (String) propertyValueOrNull;
     }

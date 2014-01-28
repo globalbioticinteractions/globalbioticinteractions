@@ -2,7 +2,7 @@ package org.eol.globi.data;
 
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Specimen;
-import org.eol.globi.domain.Taxon;
+import org.eol.globi.domain.TaxonNode;
 import org.junit.Test;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
@@ -43,7 +43,7 @@ public class StudyImporterForBarnesTest extends GraphDBTestCase {
         StudyImporterForBarnes importer = new StudyImporterForBarnes(new TestParserFactory(firstFourLines), nodeFactory);
         importer.importStudy();
 
-        Taxon taxon = nodeFactory.findTaxon("Zeus faber");
+        TaxonNode taxon = nodeFactory.findTaxon("Zeus faber");
         Iterable<Relationship> relationships = taxon.getUnderlyingNode().getRelationships(Direction.INCOMING, RelTypes.CLASSIFIED_AS);
         for (Relationship relationship : relationships) {
             Node predatorSpecimenNode = relationship.getStartNode();

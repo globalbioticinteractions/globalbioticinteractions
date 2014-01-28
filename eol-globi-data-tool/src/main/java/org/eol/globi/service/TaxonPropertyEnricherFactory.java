@@ -7,7 +7,7 @@ import java.util.List;
 
 public class TaxonPropertyEnricherFactory {
     public static TaxonPropertyEnricher createTaxonEnricher(GraphDatabaseService graphService) {
-        TaxonPropertyEnricherImpl taxonEnricher = new TaxonPropertyEnricherImpl(graphService);
+        TaxonPropertyEnricherImpl taxonEnricher = new TaxonPropertyEnricherImpl();
         List<TaxonPropertyLookupService> services = new ArrayList<TaxonPropertyLookupService>() {
             {
                 add(new EOLOfflineService());

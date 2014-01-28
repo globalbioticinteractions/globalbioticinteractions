@@ -3,10 +3,10 @@ package org.eol.globi.data;
 
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.Location;
+import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
-import org.eol.globi.domain.Taxon;
 import org.hamcrest.core.Is;
 import org.junit.Test;
 import org.neo4j.graphdb.Direction;
@@ -83,7 +83,7 @@ public class StudyImporterForSimonsTest extends GraphDBTestCase {
 
                 for (Relationship ateRel : ateRelationships) {
                     Node preyTaxonNode = ateRel.getEndNode().getRelationships(Direction.OUTGOING, RelTypes.CLASSIFIED_AS).iterator().next().getEndNode();
-                    preyNames.add(preyTaxonNode.getProperty(Taxon.NAME).toString());
+                    preyNames.add(preyTaxonNode.getProperty(PropertyAndValueDictionary.NAME).toString());
                 }
                 assertThat(preyNames, hasItem("Ampelisca sp. (abdita complex)"));
                 assertThat(preyNames.contains("Ampelisca agassizi"), Is.is(true));

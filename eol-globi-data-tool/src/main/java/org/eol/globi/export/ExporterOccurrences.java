@@ -2,11 +2,10 @@ package org.eol.globi.export;
 
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.Location;
-import org.eol.globi.domain.NodeBacked;
+import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
-import org.eol.globi.domain.Taxon;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
@@ -62,14 +61,14 @@ public class ExporterOccurrences extends ExporterOccurrencesBase {
                 Relationship classifiedAs = iterator.next();
                 if (classifiedAs != null) {
                     Node taxonNode = classifiedAs.getEndNode();
-                    if (taxonNode.hasProperty(NodeBacked.EXTERNAL_ID)) {
-                        String taxonId = (String) taxonNode.getProperty(NodeBacked.EXTERNAL_ID);
+                    if (taxonNode.hasProperty(PropertyAndValueDictionary.EXTERNAL_ID)) {
+                        String taxonId = (String) taxonNode.getProperty(PropertyAndValueDictionary.EXTERNAL_ID);
                         if (taxonId != null) {
                             properties.put(EOLDictionary.TAXON_ID, taxonId);
                         }
                     }
-                    if (taxonNode.hasProperty(Taxon.NAME)) {
-                        String taxonName = (String) taxonNode.getProperty(Taxon.NAME);
+                    if (taxonNode.hasProperty(PropertyAndValueDictionary.NAME)) {
+                        String taxonName = (String) taxonNode.getProperty(PropertyAndValueDictionary.NAME);
                         if (taxonName != null) {
                             properties.put(EOLDictionary.SCIENTIFIC_NAME, taxonName);
                         }

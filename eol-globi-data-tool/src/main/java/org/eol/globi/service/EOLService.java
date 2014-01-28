@@ -9,7 +9,7 @@ import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.JsonProcessingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.data.CharsetConstant;
-import org.eol.globi.domain.Taxon;
+import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.TaxonomyProvider;
 
 import java.io.IOException;
@@ -24,7 +24,7 @@ public class EOLService extends BaseHttpClientService implements TaxonPropertyLo
     @Override
     public void lookupPropertiesByName(String name, Map<String, String> properties) throws TaxonPropertyLookupServiceException {
         Long id = null;
-        String externalId = properties.get(Taxon.EXTERNAL_ID);
+        String externalId = properties.get(PropertyAndValueDictionary.EXTERNAL_ID);
 
         if (needsEnrichment(properties)) {
             if (StringUtils.isNotBlank(externalId)) {
@@ -44,20 +44,20 @@ public class EOLService extends BaseHttpClientService implements TaxonPropertyLo
         }
 
         if (id != null) {
-            if (properties.get(Taxon.PATH) == null || properties.get(Taxon.COMMON_NAMES) == null) {
+            if (properties.get(PropertyAndValueDictionary.PATH) == null || properties.get(PropertyAndValueDictionary.COMMON_NAMES) == null) {
                 addPathAndCommonNames(id, properties);
-                String path = properties.get(Taxon.PATH);
+                String path = properties.get(PropertyAndValueDictionary.PATH);
 
                 if (StringUtils.isBlank(path)) {
-                    properties.put(Taxon.NAME, null);
-                    properties.put(Taxon.COMMON_NAMES, null);
-                    properties.put(Taxon.EXTERNAL_ID, null);
-                    properties.put(Taxon.PATH, null);
+                    properties.put(PropertyAndValueDictionary.NAME, null);
+                    properties.put(PropertyAndValueDictionary.COMMON_NAMES, null);
+                    properties.put(PropertyAndValueDictionary.EXTERNAL_ID, null);
+                    properties.put(PropertyAndValueDictionary.PATH, null);
                 } else {
-                    properties.put(Taxon.EXTERNAL_ID, TaxonomyProvider.ID_PREFIX_EOL + id.toString());
+                    properties.put(PropertyAndValueDictionary.EXTERNAL_ID, TaxonomyProvider.ID_PREFIX_EOL + id.toString());
                     if (!path.contains(name)) {
                         // add synonym
-                        properties.put(Taxon.PATH, path + CharsetConstant.SEPARATOR + name);
+                        properties.put(PropertyAndValueDictionary.PATH, path + CharsetConstant.SEPARATOR + name);
                     }
                 }
             }
@@ -65,8 +65,8 @@ public class EOLService extends BaseHttpClientService implements TaxonPropertyLo
     }
 
     private boolean needsEnrichment(Map<String, String> properties) {
-        return StringUtils.isBlank(properties.get(Taxon.PATH))
-                || StringUtils.isBlank(properties.get(Taxon.COMMON_NAMES));
+        return StringUtils.isBlank(properties.get(PropertyAndValueDictionary.PATH))
+                || StringUtils.isBlank(properties.get(PropertyAndValueDictionary.COMMON_NAMES));
     }
 
     private URI createSearchURI(String taxonName) throws URISyntaxException {
@@ -96,7 +96,7 @@ public class EOLService extends BaseHttpClientService implements TaxonPropertyLo
             StringBuilder commonNames = new StringBuilder();
             addCommonNames(commonNames, response);
             if (commonNames.length() > 0) {
-                properties.put(Taxon.COMMON_NAMES, commonNames.toString());
+                properties.put(PropertyAndValueDictionary.COMMON_NAMES, commonNames.toString());
             }
         }
     }
@@ -111,7 +111,7 @@ public class EOLService extends BaseHttpClientService implements TaxonPropertyLo
             if (taxonConcept.has("identifier")) {
                 firstConceptId = taxonConcept.get("identifier").getValueAsText();
                 if (taxonConcept.has("canonicalForm")) {
-                    properties.put(Taxon.NAME, taxonConcept.get("canonicalForm").getValueAsText());
+                    properties.put(PropertyAndValueDictionary.NAME, taxonConcept.get("canonicalForm").getValueAsText());
                 }
                 break;
             }
@@ -121,7 +121,7 @@ public class EOLService extends BaseHttpClientService implements TaxonPropertyLo
             addRanks(firstConceptId, ranks);
         }
         if (ranks.length() > 0) {
-            properties.put(Taxon.PATH, ranks.toString());
+            properties.put(PropertyAndValueDictionary.PATH, ranks.toString());
         }
     }
 

@@ -1,7 +1,6 @@
 package org.eol.globi.service;
 
-import org.eol.globi.domain.NodeBacked;
-import org.eol.globi.domain.Taxon;
+import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.nullValue;
@@ -13,9 +12,9 @@ public class EOLOfflineServiceTest {
     @Test
     public void canLookup() throws TaxonPropertyLookupServiceException {
         EOLOfflineService service = new EOLOfflineService();
-        assertThat(service.lookupPropertyValueByTaxonName("Todarodes pacificus", NodeBacked.EXTERNAL_ID), is("EOL:590939"));
-        assertThat(service.lookupPropertyValueByTaxonName("Homo sapiens", Taxon.PATH), is(nullValue()));
-        assertThat(service.lookupPropertyValueByTaxonName("Homo sapiens", NodeBacked.EXTERNAL_ID), is("EOL:327955"));
+        assertThat(service.lookupPropertyValueByTaxonName("Todarodes pacificus", PropertyAndValueDictionary.EXTERNAL_ID), is("EOL:590939"));
+        assertThat(service.lookupPropertyValueByTaxonName("Homo sapiens", PropertyAndValueDictionary.PATH), is(nullValue()));
+        assertThat(service.lookupPropertyValueByTaxonName("Homo sapiens", PropertyAndValueDictionary.EXTERNAL_ID), is("EOL:327955"));
     }
 
 }

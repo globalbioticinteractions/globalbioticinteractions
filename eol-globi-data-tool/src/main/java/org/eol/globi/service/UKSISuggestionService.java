@@ -7,7 +7,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eol.globi.data.taxon.TaxonLookupServiceImpl;
 import org.eol.globi.data.taxon.TaxonTerm;
-import org.eol.globi.domain.Taxon;
+import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.TaxonomyProvider;
 
 import java.io.File;
@@ -39,8 +39,8 @@ public class UKSISuggestionService implements TaxonPropertyLookupService, NameSu
         TaxonTerm match = findMatch(name);
 
         if (match != null) {
-            properties.put(Taxon.NAME, match.getName());
-            properties.put(Taxon.EXTERNAL_ID, match.getId());
+            properties.put(PropertyAndValueDictionary.NAME, match.getName());
+            properties.put(PropertyAndValueDictionary.EXTERNAL_ID, match.getId());
         }
 
     }

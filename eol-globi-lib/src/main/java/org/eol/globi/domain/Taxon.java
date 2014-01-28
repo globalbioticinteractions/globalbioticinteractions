@@ -1,48 +1,19 @@
 package org.eol.globi.domain;
 
-import org.neo4j.graphdb.Direction;
-import org.neo4j.graphdb.Node;
-import org.neo4j.graphdb.Relationship;
+public interface Taxon {
+    String getPath();
 
-import static org.eol.globi.domain.RelTypes.IS_A;
+    void setPath(String path);
 
-public class Taxon extends NamedNode {
-    public static final String PATH = "path";
-    public static final String COMMON_NAMES = "commonNames";
+    String getCommonNames();
 
-    public Taxon(Node node) {
-        super(node);
-    }
+    void setCommonNames(String commonNames);
 
-    public Taxon(Node node, String name) {
-        this(node);
-        setName(name);
-    }
+    String getName();
 
-    public Node isA() {
-        Relationship singleRelationship = getUnderlyingNode().getSingleRelationship(IS_A, Direction.OUTGOING);
-        return singleRelationship == null ? null : singleRelationship.getEndNode();
-    }
+    void setName(String name);
 
-    public String getPath() {
-        return getUnderlyingNode().hasProperty(PATH) ?
-                (String) getUnderlyingNode().getProperty(PATH) : null;
-    }
+    String getExternalId();
 
-    public void setPath(String path) {
-        if (path != null) {
-            getUnderlyingNode().setProperty(PATH, path);
-        }
-    }
-
-    public String getCommonNames() {
-        return getUnderlyingNode().hasProperty(COMMON_NAMES) ?
-                (String) getUnderlyingNode().getProperty(COMMON_NAMES) : null;
-    }
-
-    public void setCommonNames(String commonNames) {
-        if (commonNames != null) {
-            getUnderlyingNode().setProperty(COMMON_NAMES, commonNames);
-        }
-    }
+    void setExternalId(String externalId);
 }

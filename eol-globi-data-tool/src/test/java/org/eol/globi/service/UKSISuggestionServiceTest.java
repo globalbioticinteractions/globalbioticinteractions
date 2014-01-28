@@ -1,6 +1,6 @@
 package org.eol.globi.service;
 
-import org.eol.globi.domain.Taxon;
+import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -23,8 +23,8 @@ public class UKSISuggestionServiceTest {
     public void lookupNameWithCorrection() throws TaxonPropertyLookupServiceException {
         HashMap<String, String> properties = new HashMap<String, String>();
         uksiSuggestionService.lookupPropertiesByName("Stellaria apetala", properties);
-        assertThat(properties.get(Taxon.NAME), is("Stellaria pallida"));
-        assertThat(properties.get(Taxon.EXTERNAL_ID), is("UKSI:NBNSYS0000157226"));
+        assertThat(properties.get(PropertyAndValueDictionary.NAME), is("Stellaria pallida"));
+        assertThat(properties.get(PropertyAndValueDictionary.EXTERNAL_ID), is("UKSI:NBNSYS0000157226"));
     }
 
     @Test
@@ -44,8 +44,8 @@ public class UKSISuggestionServiceTest {
     public void lookupNameNoCorrectionButPresent() throws TaxonPropertyLookupServiceException {
         HashMap<String, String> properties = new HashMap<String, String>();
         uksiSuggestionService.lookupPropertiesByName("Serpulidae", properties);
-        assertThat(properties.get(Taxon.NAME), is("Serpulidae"));
-        assertThat(properties.get(Taxon.EXTERNAL_ID), is("UKSI:NBNSYS0000177931"));
+        assertThat(properties.get(PropertyAndValueDictionary.NAME), is("Serpulidae"));
+        assertThat(properties.get(PropertyAndValueDictionary.EXTERNAL_ID), is("UKSI:NBNSYS0000177931"));
     }
 
     @Test
@@ -57,8 +57,8 @@ public class UKSISuggestionServiceTest {
     public void lookupNameNoCorrectionNotPresent() throws TaxonPropertyLookupServiceException {
         HashMap<String, String> properties = new HashMap<String, String>();
         uksiSuggestionService.lookupPropertiesByName("Yogi the Bear", properties);
-        assertThat(properties.get(Taxon.NAME), is(nullValue()));
-        assertThat(properties.get(Taxon.EXTERNAL_ID), is(nullValue()));
+        assertThat(properties.get(PropertyAndValueDictionary.NAME), is(nullValue()));
+        assertThat(properties.get(PropertyAndValueDictionary.EXTERNAL_ID), is(nullValue()));
     }
 
 }

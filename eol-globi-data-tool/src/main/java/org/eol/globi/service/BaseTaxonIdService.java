@@ -4,8 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eol.globi.data.CharsetConstant;
-import org.eol.globi.domain.NodeBacked;
-import org.eol.globi.domain.Taxon;
+import org.eol.globi.domain.PropertyAndValueDictionary;
 
 import java.util.Map;
 
@@ -14,7 +13,7 @@ public abstract class BaseTaxonIdService extends BaseHttpClientService implement
 
     protected String lookupPropertyValueByTaxonName(String taxonName, String propertyName) throws TaxonPropertyLookupServiceException {
         String propertyValue = null;
-        if (NodeBacked.EXTERNAL_ID.equals(propertyName)) {
+        if (PropertyAndValueDictionary.EXTERNAL_ID.equals(propertyName)) {
             if (taxonName.trim().length() < 2) {
                 LOG.warn("taxon name [" + taxonName + "] too short");
             } else {
@@ -25,7 +24,7 @@ public abstract class BaseTaxonIdService extends BaseHttpClientService implement
                     throw e;
                 }
             }
-        } else if (Taxon.PATH.equals(propertyName)) {
+        } else if (PropertyAndValueDictionary.PATH.equals(propertyName)) {
             try {
                 String lsId = lookupIdByName(taxonName);
                 if (lsId != null) {

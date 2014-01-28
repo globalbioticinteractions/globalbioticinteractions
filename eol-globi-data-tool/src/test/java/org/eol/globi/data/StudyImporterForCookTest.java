@@ -4,7 +4,7 @@ import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
-import org.eol.globi.domain.Taxon;
+import org.eol.globi.domain.TaxonNode;
 import org.junit.Test;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
@@ -30,9 +30,9 @@ public class StudyImporterForCookTest extends GraphDBTestCase {
         StudyImporterForCook importer = new StudyImporterForCook(new TestParserFactory(firstFiveLines), nodeFactory);
         Study study = importer.importStudy();
 
-        Taxon hostTaxon = nodeFactory.findTaxon("Micropogonias undulatus");
+        TaxonNode hostTaxon = nodeFactory.findTaxon("Micropogonias undulatus");
         assertThat(hostTaxon, is(notNullValue()));
-        Taxon parasiteTaxon = nodeFactory.findTaxon("Cymothoa excisa");
+        TaxonNode parasiteTaxon = nodeFactory.findTaxon("Cymothoa excisa");
         assertThat(parasiteTaxon, is(notNullValue()));
         assertThat("missing location", nodeFactory.findLocation(27.85, -(97.0 + 8.0 / 60.0), -3.0), is(notNullValue()));
 

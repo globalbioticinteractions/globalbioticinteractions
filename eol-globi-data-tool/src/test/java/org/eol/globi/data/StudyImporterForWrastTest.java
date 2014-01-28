@@ -5,7 +5,7 @@ import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Season;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
-import org.eol.globi.domain.Taxon;
+import org.eol.globi.domain.TaxonNode;
 import org.junit.Test;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
@@ -95,7 +95,7 @@ public class StudyImporterForWrastTest extends GraphDBTestCase {
             Specimen specimen = new Specimen(rel.getEndNode());
 
             for (Relationship ateRel : specimen.getStomachContents()) {
-                Taxon taxon = new Taxon(rel.getEndNode().getSingleRelationship(RelTypes.CLASSIFIED_AS, Direction.OUTGOING).getEndNode());
+                TaxonNode taxon = new TaxonNode(rel.getEndNode().getSingleRelationship(RelTypes.CLASSIFIED_AS, Direction.OUTGOING).getEndNode());
                 String scientificName = taxon.getName();
                 if ("Sciaenops ocellatus".equals(scientificName)) {
                     Location location = specimen.getSampleLocation();

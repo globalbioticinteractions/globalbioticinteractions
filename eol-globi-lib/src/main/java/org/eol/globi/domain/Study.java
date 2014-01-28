@@ -26,7 +26,7 @@ public class Study extends NodeBacked {
     public Study(Node node, String title) {
         this(node);
         setProperty(TITLE, title);
-        setProperty(TYPE, Study.class.getSimpleName());
+        setProperty(PropertyAndValueDictionary.TYPE, Study.class.getSimpleName());
     }
 
     public Study(Node node) {

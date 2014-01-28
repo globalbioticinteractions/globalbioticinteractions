@@ -1,7 +1,7 @@
 package org.eol.globi.export;
 
 import org.eol.globi.domain.Study;
-import org.eol.globi.domain.Taxon;
+import org.eol.globi.domain.TaxonNode;
 import org.neo4j.cypher.javacompat.ExecutionEngine;
 import org.neo4j.cypher.javacompat.ExecutionResult;
 import org.neo4j.graphdb.Node;
@@ -26,7 +26,7 @@ public class ExporterOccurrenceAggregates extends ExporterOccurrencesBase {
     }
 
     private void populateRow(Study study, Writer writer, Map<String, Object> result, Map<String, String> properties) throws IOException {
-        Taxon sourceTaxon = new Taxon((Node) result.get(QUERY_PARAM_SOURCE_TAXON));
+        TaxonNode sourceTaxon = new TaxonNode((Node) result.get(QUERY_PARAM_SOURCE_TAXON));
         String relationshipType = (String) result.get(QUERY_PARAM_INTERACTION_TYPE);
 
         String sourceOccurrenceId = study.getUnderlyingNode().getId() + "-" + sourceTaxon.getNodeID() + "-" + relationshipType;
@@ -34,13 +34,13 @@ public class ExporterOccurrenceAggregates extends ExporterOccurrencesBase {
 
         Wrappers.SeqWrapper<Node> targetTaxa = (Wrappers.SeqWrapper<Node>) result.get(QUERY_PARAM_TARGET_TAXA);
         for (Node targetTaxon : targetTaxa) {
-            Taxon taxon = new Taxon(targetTaxon);
+            TaxonNode taxon = new TaxonNode(targetTaxon);
             String targetOccurrenceId = sourceOccurrenceId + "-" + taxon.getNodeID();
             writeRow(writer, properties, taxon, "globi:occur:target:" + targetOccurrenceId);
         }
     }
 
-    private void writeRow(Writer writer, Map<String, String> properties, Taxon taxon, String idPrefix) throws IOException {
+    private void writeRow(Writer writer, Map<String, String> properties, TaxonNode taxon, String idPrefix) throws IOException {
         properties.put(EOLDictionary.OCCURRENCE_ID, idPrefix);
         properties.put(EOLDictionary.TAXON_ID, taxon.getExternalId());
         writeProperties(writer, properties);

@@ -3,10 +3,11 @@ package org.eol.globi.data;
 import com.Ostermiller.util.LabeledCSVParser;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.Location;
+import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
-import org.eol.globi.domain.Taxon;
+import org.eol.globi.domain.TaxonNode;
 import org.junit.Test;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
@@ -49,7 +50,7 @@ public class StudyImporterForBlewettTest extends GraphDBTestCase {
 
 
         assertNotNull(nodeFactory.findTaxonOfType("Centropomus undecimalis"));
-        Taxon taxonOfType = nodeFactory.findTaxonOfType("Cal sapidus");
+        TaxonNode taxonOfType = nodeFactory.findTaxonOfType("Cal sapidus");
         assertThat(taxonOfType.getName(), is("Cal sapidus"));
         assertNotNull(nodeFactory.findTaxonOfType("Ort chrysoptera"));
     }
@@ -108,7 +109,7 @@ public class StudyImporterForBlewettTest extends GraphDBTestCase {
         assertThat((Double) predatorNode.getProperty(Specimen.LENGTH_IN_MM), is(549.0));
 
         Node predatorTaxonNode = predatorNode.getRelationships(RelTypes.CLASSIFIED_AS, Direction.OUTGOING).iterator().next().getEndNode();
-        assertThat((String) predatorTaxonNode.getProperty(Taxon.NAME), is("Centropomus undecimalis"));
+        assertThat((String) predatorTaxonNode.getProperty(PropertyAndValueDictionary.NAME), is("Centropomus undecimalis"));
 
         Iterable<Relationship> ate = predatorNode.getRelationships(InteractType.ATE, Direction.OUTGOING);
         Node preyNode = ate.iterator().next().getEndNode();
@@ -117,7 +118,7 @@ public class StudyImporterForBlewettTest extends GraphDBTestCase {
         Node taxonNode = preyNode.getRelationships(RelTypes.CLASSIFIED_AS, Direction.OUTGOING).iterator().next().getEndNode();
         assertThat(taxonNode, is(not(nullValue())));
 
-        assertThat((String) taxonNode.getProperty(Taxon.NAME), is("Lag rhomboides"));
+        assertThat((String) taxonNode.getProperty(PropertyAndValueDictionary.NAME), is("Lag rhomboides"));
 
         collectedRel = collectedRels.iterator().next();
         predatorNode = collectedRel.getEndNode();

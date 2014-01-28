@@ -4,7 +4,7 @@ import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
-import org.eol.globi.domain.Taxon;
+import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.domain.TaxonomyProvider;
 import org.eol.globi.service.TaxonPropertyLookupServiceException;
 import org.junit.Before;
@@ -45,7 +45,7 @@ public class StudyImporterForINaturalistTest extends GraphDBTestCase {
         assertThat(countSpecimen(study), is(30));
 
 
-        Taxon sourceTaxonNode = nodeFactory.findTaxon("Arenaria interpres");
+        TaxonNode sourceTaxonNode = nodeFactory.findTaxon("Arenaria interpres");
 
         assertThat(sourceTaxonNode, is(not(nullValue())));
         Iterable<Relationship> relationships = sourceTaxonNode.getUnderlyingNode().getRelationships(Direction.INCOMING, RelTypes.CLASSIFIED_AS);

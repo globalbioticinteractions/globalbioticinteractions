@@ -2,12 +2,9 @@ package org.eol.globi.service;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Taxon;
-import org.neo4j.graphdb.GraphDatabaseService;
-import org.neo4j.graphdb.Node;
-import org.neo4j.graphdb.Transaction;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -19,27 +16,20 @@ public class TaxonPropertyEnricherImpl implements TaxonPropertyEnricher {
     private final List<TaxonPropertyLookupService> services = new ArrayList<TaxonPropertyLookupService>();
     private final HashMap<Class, Integer> errorCounts = new HashMap<Class, Integer>();
 
-    private final GraphDatabaseService graphDbService;
-
-    public TaxonPropertyEnricherImpl(GraphDatabaseService graphDbService) {
-        this.graphDbService = graphDbService;
-    }
-
     @Override
-    public void enrich(Taxon taxon) throws IOException {
+    public void enrich(Taxon taxon) {
         doEnrichment(taxon);
     }
 
     private void doEnrichment(Taxon taxon) {
-        Node taxonNode = taxon.getUnderlyingNode();
         Map<String, String> properties = new HashMap<String, String>();
-        properties.put(Taxon.NAME, taxon.getName());
-        properties.put(Taxon.EXTERNAL_ID, taxon.getExternalId());
-        properties.put(Taxon.PATH, taxon.getPath());
-        properties.put(Taxon.COMMON_NAMES, taxon.getCommonNames());
+        properties.put(PropertyAndValueDictionary.NAME, taxon.getName());
+        properties.put(PropertyAndValueDictionary.EXTERNAL_ID, taxon.getExternalId());
+        properties.put(PropertyAndValueDictionary.PATH, taxon.getPath());
+        properties.put(PropertyAndValueDictionary.COMMON_NAMES, taxon.getCommonNames());
         for (TaxonPropertyLookupService service : services) {
             try {
-                enrichTaxonWithPropertyValue(errorCounts, taxonNode, service, properties);
+                enrichTaxonWithPropertyValue(errorCounts, taxon, service, properties);
                 if (TaxonMatchValidator.hasMatch(taxon)) {
                     break;
                 }
@@ -50,22 +40,22 @@ public class TaxonPropertyEnricherImpl implements TaxonPropertyEnricher {
         }
     }
 
-    private void enrichTaxonWithPropertyValue(HashMap<Class, Integer> errorCounts, Node
-            taxonNode, TaxonPropertyLookupService service, Map<String, String> properties) throws
+    private void enrichTaxonWithPropertyValue(HashMap<Class, Integer> errorCounts, Taxon
+            taxon, TaxonPropertyLookupService service, Map<String, String> properties) throws
             TaxonPropertyLookupServiceException {
         Integer errorCount = errorCounts.get(service.getClass());
         if (errorCount != null && errorCount > 10) {
             LOG.error("skipping taxon match against [" + service.getClass().toString() + "], error count [" + errorCount + "] too high.");
         } else {
-            enrichTaxon(errorCounts, taxonNode, service, errorCount, properties);
+            enrichTaxon(errorCounts, taxon, service, errorCount, properties);
         }
     }
 
-    private void enrichTaxon(HashMap<Class, Integer> errorCounts, Node taxonNode, TaxonPropertyLookupService
+    private void enrichTaxon(HashMap<Class, Integer> errorCounts, Taxon taxon, TaxonPropertyLookupService
             service, Integer errorCount, Map<String, String> properties) throws TaxonPropertyLookupServiceException {
-        String taxonName = (String) taxonNode.getProperty(Taxon.NAME);
+        String taxonName = taxon.getName();
         try {
-            lookupAndSetProperties(taxonNode, service, taxonName, properties);
+            lookupAndSetProperties(taxon, service, taxonName, properties);
             resetErrorCount(errorCounts, service);
         } catch (TaxonPropertyLookupServiceException ex) {
             LOG.warn("failed to find a match for [" + taxonName + "] in [" + service.getClass().getSimpleName() + "]", ex);
@@ -78,27 +68,32 @@ public class TaxonPropertyEnricherImpl implements TaxonPropertyEnricher {
         errorCounts.put(service.getClass(), 0);
     }
 
-    private void lookupAndSetProperties(Node taxonNode, TaxonPropertyLookupService service, String
+    private void lookupAndSetProperties(Taxon taxon, TaxonPropertyLookupService service, String
             taxonName, Map<String, String> properties) throws TaxonPropertyLookupServiceException {
         service.lookupPropertiesByName(taxonName, properties);
         if (properties.size() > 0) {
-            setProperties(taxonNode, properties);
+            setProperties(taxon, properties);
         }
     }
 
-    private boolean setProperties(Node taxonNode, Map<String, String> properties) {
+    private boolean setProperties(Taxon taxon, Map<String, String> properties) {
         boolean enrichedAtLeastOneProperty = false;
-        Transaction transaction = graphDbService.beginTx();
-        try {
-            for (Map.Entry<String, String> property : properties.entrySet()) {
-                if (property.getValue() != null) {
-                    taxonNode.setProperty(property.getKey(), property.getValue());
-                    enrichedAtLeastOneProperty = true;
+        for (Map.Entry<String, String> property : properties.entrySet()) {
+            if (property.getValue() != null) {
+                enrichedAtLeastOneProperty = false;
+                if (PropertyAndValueDictionary.NAME.equals(property.getKey())) {
+                    taxon.setName(property.getValue());
+                } else if (PropertyAndValueDictionary.COMMON_NAMES.equals(property.getKey())) {
+                    taxon.setCommonNames(property.getValue());
+                } else if (PropertyAndValueDictionary.PATH.equals(property.getKey())) {
+                    taxon.setPath(property.getValue());
+                } else if (PropertyAndValueDictionary.EXTERNAL_ID.equals(property.getKey())) {
+                    taxon.setExternalId(property.getValue());
+                } else {
+                    enrichedAtLeastOneProperty = false;
                 }
+
             }
-            transaction.success();
-        } finally {
-            transaction.finish();
         }
         return enrichedAtLeastOneProperty;
     }

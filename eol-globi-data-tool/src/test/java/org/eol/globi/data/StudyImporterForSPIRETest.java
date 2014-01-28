@@ -5,7 +5,7 @@ import org.eol.globi.domain.Environment;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
-import org.eol.globi.domain.Taxon;
+import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.domain.Term;
 import org.eol.globi.service.GeoNamesService;
 import org.eol.globi.service.GeoNamesServiceImpl;
@@ -84,9 +84,9 @@ public class StudyImporterForSPIRETest extends GraphDBTestCase {
         properties.put(StudyImporterForSPIRE.OF_HABITAT, spireHabitat);
         studyImporterForSPIRE.importTrophicLink(properties);
 
-        Taxon dog = nodeFactory.findTaxon("dog");
+        TaxonNode dog = nodeFactory.findTaxon("dog");
         assertThat(dog, is(notNullValue()));
-        Taxon man = nodeFactory.findTaxon("man");
+        TaxonNode man = nodeFactory.findTaxon("man");
         assertThat(man, is(notNullValue()));
         Iterable<Relationship> specimenRels = man.getUnderlyingNode().getRelationships(Direction.INCOMING, RelTypes.CLASSIFIED_AS);
 

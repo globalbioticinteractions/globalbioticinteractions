@@ -5,9 +5,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eol.globi.domain.Location;
+import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
-import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonomyProvider;
 import org.eol.globi.domain.Term;
 import org.neo4j.graphdb.Transaction;
@@ -268,7 +268,7 @@ public class StudyImporterForGoMexSI extends BaseStudyImporter {
     }
 
     private Specimen createSpecimen(Map<String, String> properties) throws NodeFactoryException, StudyImporterException {
-        Specimen specimen = nodeFactory.createSpecimen(properties.get(Taxon.NAME));
+        Specimen specimen = nodeFactory.createSpecimen(properties.get(PropertyAndValueDictionary.NAME));
         specimen.setLengthInMm(doubleValueOrNull(properties, Specimen.LENGTH_IN_MM));
         specimen.setFrequencyOfOccurrence(doubleValueOrNull(properties, Specimen.FREQUENCY_OF_OCCURRENCE));
         specimen.setTotalCount(integerValueOrNull(properties, Specimen.TOTAL_COUNT));
@@ -333,7 +333,7 @@ public class StudyImporterForGoMexSI extends BaseStudyImporter {
                 addOptionalProperty(parser, "N_CONS", Specimen.TOTAL_COUNT, properties);
                 addOptionalProperty(parser, "VOL_CONS", Specimen.TOTAL_VOLUME_IN_ML, properties);
                 addOptionalProperty(parser, "FREQ_OCC", Specimen.FREQUENCY_OF_OCCURRENCE, properties);
-                properties.put(Taxon.NAME, getMandatoryValue(datafile, parser, scientificNameLabel));
+                properties.put(PropertyAndValueDictionary.NAME, getMandatoryValue(datafile, parser, scientificNameLabel));
 
                 String refId = getMandatoryValue(datafile, parser, "REF_ID");
                 String specimenId = getMandatoryValue(datafile, parser, "PRED_ID");

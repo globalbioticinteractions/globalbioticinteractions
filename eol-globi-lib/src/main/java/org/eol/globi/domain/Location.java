@@ -24,7 +24,7 @@ public class Location extends NodeBacked {
         }
         getUnderlyingNode().setProperty(LATITUDE, latitude);
         getUnderlyingNode().setProperty(LONGITUDE, longitude);
-        getUnderlyingNode().setProperty(TYPE, Location.class.getSimpleName());
+        getUnderlyingNode().setProperty(PropertyAndValueDictionary.TYPE, Location.class.getSimpleName());
     }
 
     public Double getAltitude() {

@@ -7,7 +7,7 @@ import org.eol.globi.domain.RelType;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
-import org.eol.globi.domain.Taxon;
+import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.domain.TaxonomyProvider;
 import org.junit.Test;
 import org.neo4j.cypher.javacompat.ExecutionEngine;
@@ -71,16 +71,16 @@ public class StudyImporterForBioInfoTest extends GraphDBTestCase {
         assertThat(result.dumpToString(), containsString("Puccinia calthae parasite_of Caltha palustris"));
 
         assertThat(study.getTitle(), is("BIO_INFO"));
-        Taxon acer = nodeFactory.findTaxon("Acer");
+        TaxonNode acer = nodeFactory.findTaxon("Acer");
         assertNotNull(acer);
         assertThat(acer.getExternalId(), is("bioinfo:3011"));
-        Taxon taxon = nodeFactory.findTaxon("Dasineura tympani");
+        TaxonNode taxon = nodeFactory.findTaxon("Dasineura tympani");
         assertNotNull(taxon);
         assertThat(taxon.getExternalId(), is("bioinfo:107544"));
-        Taxon taxon1 = nodeFactory.findTaxon("Phyllocoptes acericola");
+        TaxonNode taxon1 = nodeFactory.findTaxon("Phyllocoptes acericola");
         assertNotNull(taxon1);
         assertThat(taxon1.getExternalId(), is("bioinfo:43927"));
-        Taxon taxon2 = nodeFactory.findTaxon("Aceria eriobia");
+        TaxonNode taxon2 = nodeFactory.findTaxon("Aceria eriobia");
         assertNotNull(taxon2);
         assertThat(taxon2.getExternalId(), is("bioinfo:32122"));
 

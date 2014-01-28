@@ -49,7 +49,7 @@ public class OutOfMemoryTest {
 
         factory = new NodeFactory(graphDb, new TaxonPropertyEnricher() {
             @Override
-            public void enrich(Taxon taxon) throws IOException {
+            public void enrich(Taxon taxon) {
             }
         });
         System.out.println(getMemMsg());

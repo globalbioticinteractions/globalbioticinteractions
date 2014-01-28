@@ -14,14 +14,14 @@ import org.eol.globi.data.taxon.CorrectionService;
 import org.eol.globi.data.taxon.TaxonNameCorrector;
 import org.eol.globi.domain.Environment;
 import org.eol.globi.domain.Location;
-import org.eol.globi.domain.NamedNode;
-import org.eol.globi.domain.NodeBacked;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Season;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.Taxon;
+import org.eol.globi.domain.TaxonImpl;
+import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.geo.EcoRegion;
 import org.eol.globi.geo.EcoRegionFinder;
 import org.eol.globi.geo.EcoRegionFinderException;
@@ -112,69 +112,66 @@ public class NodeFactory {
         return graphDb;
     }
 
-    private void addToIndeces(Taxon taxon, String correctedName) {
-        String canonicalName = taxon.getName();
-        if (StringUtils.isNotBlank(canonicalName)) {
-            taxons.add(taxon.getUnderlyingNode(), Taxon.NAME, canonicalName);
-            if (!StringUtils.equals(canonicalName, correctedName)) {
-                taxons.add(taxon.getUnderlyingNode(), Taxon.NAME, correctedName);
-            }
+    private void addToIndeces(TaxonNode taxon) {
+        String name = taxon.getName();
+        if (StringUtils.isNotBlank(name)) {
+            taxons.add(taxon.getUnderlyingNode(), PropertyAndValueDictionary.NAME, name);
             indexCommonNames(taxon);
             indexTaxonPath(taxon);
         }
     }
 
-    private void indexTaxonPath(Taxon taxon) {
+    private void indexTaxonPath(TaxonNode taxon) {
         String path = taxon.getPath();
         if (StringUtils.isNotBlank(path)) {
-            taxonPaths.add(taxon.getUnderlyingNode(), Taxon.PATH, path);
-            taxonCommonNames.add(taxon.getUnderlyingNode(), Taxon.PATH, path);
+            taxonPaths.add(taxon.getUnderlyingNode(), PropertyAndValueDictionary.PATH, path);
+            taxonCommonNames.add(taxon.getUnderlyingNode(), PropertyAndValueDictionary.PATH, path);
             String[] pathElementArray = path.split(CharsetConstant.SEPARATOR);
             for (String pathElement : pathElementArray) {
-                taxonNameSuggestions.add(taxon.getUnderlyingNode(), Taxon.NAME, StringUtils.lowerCase(pathElement));
+                taxonNameSuggestions.add(taxon.getUnderlyingNode(), PropertyAndValueDictionary.NAME, StringUtils.lowerCase(pathElement));
             }
         }
     }
 
-    private void indexCommonNames(Taxon taxon) {
+    private void indexCommonNames(TaxonNode taxon) {
         String commonNames = taxon.getCommonNames();
         if (StringUtils.isNotBlank(commonNames)) {
-            taxonCommonNames.add(taxon.getUnderlyingNode(), Taxon.COMMON_NAMES, commonNames);
+            taxonCommonNames.add(taxon.getUnderlyingNode(), PropertyAndValueDictionary.COMMON_NAMES, commonNames);
             String[] commonNameArray = commonNames.split(CharsetConstant.SEPARATOR);
             for (String commonName : commonNameArray) {
-                taxonNameSuggestions.add(taxon.getUnderlyingNode(), Taxon.NAME, StringUtils.lowerCase(commonName));
+                taxonNameSuggestions.add(taxon.getUnderlyingNode(), PropertyAndValueDictionary.NAME, StringUtils.lowerCase(commonName));
             }
         }
     }
 
-    public Taxon findTaxon(String taxonName) throws NodeFactoryException {
+    public TaxonNode findTaxon(String taxonName) throws NodeFactoryException {
         return findTaxonOfType(taxonName);
     }
 
-    public Taxon findTaxonOfType(String taxonName) throws NodeFactoryException {
+    public TaxonNode findTaxonOfType(String taxonName) throws NodeFactoryException {
         String cleanedTaxonName = correctionService.correct(taxonName);
         String query = "name:\"" + QueryParser.escape(cleanedTaxonName) + "\"";
         IndexHits<Node> matchingTaxa = taxons.query(query);
         Node matchingTaxon;
-        Taxon firstMatchingTaxon = null;
+        TaxonNode firstMatchingTaxon = null;
         if (matchingTaxa.hasNext()) {
             matchingTaxon = matchingTaxa.next();
-            firstMatchingTaxon = new Taxon(matchingTaxon);
+            firstMatchingTaxon = new TaxonNode(matchingTaxon);
         }
 
-        ArrayList<Taxon> duplicateTaxons = null;
+        ArrayList<TaxonNode> duplicateTaxons = null;
         while (matchingTaxa.hasNext()) {
             if (duplicateTaxons == null) {
-                duplicateTaxons = new ArrayList<Taxon>();
+                duplicateTaxons = new ArrayList<TaxonNode>();
             }
-            duplicateTaxons.add(new Taxon(matchingTaxa.next()));
+            duplicateTaxons.add(new TaxonNode(matchingTaxa.next()));
         }
         matchingTaxa.close();
 
         if (duplicateTaxons != null) {
             StringBuilder builder = new StringBuilder();
             duplicateTaxons.add(firstMatchingTaxon);
-            for (Taxon duplicateTaxon : duplicateTaxons) {
+            for (TaxonNode duplicateTaxon : duplicateTaxons) {
                 builder.append('{');
                 builder.append(duplicateTaxon.getName());
                 builder.append(':');
@@ -249,14 +246,14 @@ public class NodeFactory {
     }
 
     public Specimen createSpecimen(String specimenTaxonDescription, String taxonExternalId) throws NodeFactoryException {
-        Taxon taxon = getOrCreateTaxon(specimenTaxonDescription, taxonExternalId, null);
+        TaxonNode taxon = getOrCreateTaxon(specimenTaxonDescription, taxonExternalId, null);
         Specimen specimen = createSpecimen(taxon);
         specimen.setOriginalTaxonDescription(specimenTaxonDescription);
         return specimen;
     }
 
 
-    private Specimen createSpecimen(Taxon taxon) {
+    private Specimen createSpecimen(TaxonNode taxon) {
         Transaction transaction = graphDb.beginTx();
         Specimen specimen;
         try {
@@ -302,7 +299,7 @@ public class NodeFactory {
                     LOG.warn("failed to lookup doi for [" + title + "]");
                 }
             }
-            studies.add(node, "title", title);
+            studies.add(node, Study.TITLE, title);
             transaction.success();
         } finally {
             transaction.finish();
@@ -363,64 +360,86 @@ public class NodeFactory {
         return location;
     }
 
-    public Taxon getOrCreateTaxon(String name) throws NodeFactoryException {
+    public TaxonNode getOrCreateTaxon(String name) throws NodeFactoryException {
         return getOrCreateTaxon(name, null, null);
     }
 
-    public Taxon getOrCreateTaxon(String name, String externalId, String path) throws NodeFactoryException {
+    public TaxonNode getOrCreateTaxon(String name, String externalId, String path) throws NodeFactoryException {
         if (StringUtils.length(name) < 2) {
             throw new NodeFactoryException("taxon name [" + name + "] must contains more than 1 character");
         }
-        Taxon taxon = findTaxon(name);
-        if (taxon == null) {
-            String correctedName = correctionService.correct(name);
-            Transaction transaction = graphDb.beginTx();
-            try {
-                taxon = new Taxon(graphDb.createNode(), correctedName);
-                taxon.setExternalId(externalId);
-                taxon.setPath(path);
-                boolean shouldContinue;
-                do {
-                    taxonEnricher.enrich(taxon);
-                    shouldContinue = !TaxonMatchValidator.hasMatch(taxon);
-                    if (shouldContinue) {
-                        String[] nameParts = StringUtils.split(taxon.getName());
-                        if (nameParts.length > 1) {
-                            taxon.setName(nameParts[0]);
-                        } else if (nameParts.length > 2) {
-                            taxon.setName(nameParts[0].trim() + " " + nameParts[1].trim());
-                        } else {
-                            shouldContinue = false;
-                        }
-                    }
-
-                } while (shouldContinue);
-
-                if (!TaxonMatchValidator.hasMatch(taxon)) {
-                    taxon.setName(correctedName);
-                }
-
-                addToIndeces(taxon, correctedName);
-                transaction.success();
-            } catch (IOException e) {
-                transaction.failure();
-            } finally {
-                transaction.finish();
-            }
-        }
-        return taxon;
+        TaxonNode taxon = findTaxon(name);
+        return taxon == null ? createTaxon(name, externalId, path) : taxon;
     }
 
-    public Taxon createTaxonNoTransaction(String name, String externalId, String path) {
+    private TaxonNode createTaxon(String name, String externalId, String path) throws NodeFactoryException {
+        String correctedName = correctionService.correct(name);
+
+        Taxon taxon = new TaxonImpl();
+        taxon.setName(correctedName);
+        taxon.setExternalId(externalId);
+        taxon.setPath(path);
+
+        TaxonNode taxonNode = null;
+
+        boolean shouldContinue;
+        do {
+            taxonEnricher.enrich(taxon);
+            shouldContinue = !TaxonMatchValidator.hasMatch(taxon);
+            if (shouldContinue) {
+                String taxonName = taxon.getName();
+                String truncatedName = NodeUtil.truncateTaxonName(taxonName);
+                if (StringUtils.isBlank(truncatedName)) {
+                    shouldContinue = false;
+                } else {
+                    taxonNode = findTaxon(truncatedName);
+                    if (taxonNode == null) {
+                        taxon.setName(truncatedName);
+                        taxon.setCommonNames(null);
+                        taxon.setPath(null);
+                        taxon.setExternalId(null);
+                    } else {
+                        shouldContinue = false;
+                    }
+                }
+            }
+        } while (shouldContinue);
+
+        if (!TaxonMatchValidator.hasMatch(taxon)) {
+            taxon.setName(correctedName);
+            taxon.setExternalId(externalId);
+            taxon.setPath(path);
+        }
+
+        return taxonNode == null ? addTaxon(taxon) : taxonNode;
+    }
+
+    private TaxonNode addTaxon(Taxon taxon) {
+        TaxonNode taxonNode = null;
+        Transaction transaction = graphDb.beginTx();
+        try {
+            taxonNode = new TaxonNode(graphDb.createNode(), taxon.getName());
+            taxonNode.setExternalId(taxon.getExternalId());
+            taxonNode.setPath(taxon.getPath());
+            taxonNode.setCommonNames(taxon.getCommonNames());
+            addToIndeces(taxonNode);
+            transaction.success();
+        } finally {
+            transaction.finish();
+        }
+        return taxonNode;
+    }
+
+    protected TaxonNode createTaxonNoTransaction(String name, String externalId, String path) {
         Node node = graphDb.createNode();
-        Taxon taxon = new Taxon(node, correctionService.correct(name));
+        TaxonNode taxon = new TaxonNode(node, correctionService.correct(name));
         if (null != externalId) {
             taxon.setExternalId(externalId);
         }
         if (null != path) {
             taxon.setPath(path);
         }
-        addToIndeces(taxon, name);
+        addToIndeces(taxon);
         return taxon;
     }
 
@@ -449,11 +468,11 @@ public class NodeFactory {
     }
 
     public IndexHits<Node> findCloseMatchesForTaxonName(String taxonName) {
-        return query(taxonName, Taxon.NAME, taxons);
+        return query(taxonName, PropertyAndValueDictionary.NAME, taxons);
     }
 
     public IndexHits<Node> findCloseMatchesForTaxonPath(String taxonPath) {
-        return query(taxonPath, Taxon.PATH, taxonPaths);
+        return query(taxonPath, PropertyAndValueDictionary.PATH, taxonPaths);
     }
 
     private IndexHits<Node> query(String taxonName, String name, Index<Node> taxonIndex) {
@@ -502,7 +521,7 @@ public class NodeFactory {
             if (environment == null) {
                 Transaction transaction = graphDb.beginTx();
                 environment = new Environment(graphDb.createNode(), term.getId(), term.getName());
-                environments.add(environment.getUnderlyingNode(), NamedNode.NAME, name);
+                environments.add(environment.getUnderlyingNode(), PropertyAndValueDictionary.NAME, name);
                 transaction.success();
                 transaction.finish();
             }
@@ -519,8 +538,8 @@ public class NodeFactory {
             Node ecoRegionNode = relationship.getEndNode();
             EcoRegion ecoRegion = new EcoRegion();
             ecoRegion.setGeometry(NodeUtil.getPropertyStringValueOrNull(ecoRegionNode, "geometry"));
-            ecoRegion.setName(NodeUtil.getPropertyStringValueOrNull(ecoRegionNode, NamedNode.NAME));
-            ecoRegion.setId(NodeUtil.getPropertyStringValueOrNull(ecoRegionNode, NodeBacked.EXTERNAL_ID));
+            ecoRegion.setName(NodeUtil.getPropertyStringValueOrNull(ecoRegionNode, PropertyAndValueDictionary.NAME));
+            ecoRegion.setId(NodeUtil.getPropertyStringValueOrNull(ecoRegionNode, PropertyAndValueDictionary.EXTERNAL_ID));
             ecoRegion.setPath(NodeUtil.getPropertyStringValueOrNull(ecoRegionNode, "path"));
             if (ecoRegions == null) {
                 ecoRegions = new ArrayList<EcoRegion>();
@@ -574,17 +593,17 @@ public class NodeFactory {
 
     private void addAndIndexEcoRegion(Location location, EcoRegion ecoRegion) {
         Node node = graphDb.createNode();
-        node.setProperty(NamedNode.NAME, ecoRegion.getName());
-        node.setProperty(NamedNode.EXTERNAL_ID, ecoRegion.getId());
+        node.setProperty(PropertyAndValueDictionary.NAME, ecoRegion.getName());
+        node.setProperty(PropertyAndValueDictionary.EXTERNAL_ID, ecoRegion.getId());
         node.setProperty("path", ecoRegion.getPath());
         node.setProperty("geometry", ecoRegion.getGeometry());
         location.getUnderlyingNode().createRelationshipTo(node, RelTypes.IN_ECO_REGION);
-        ecoRegions.add(node, NamedNode.NAME, ecoRegion.getName());
+        ecoRegions.add(node, PropertyAndValueDictionary.NAME, ecoRegion.getName());
         ecoRegionPaths.add(node, "path", ecoRegion.getPath());
-        ecoRegionSuggestions.add(node, NamedNode.NAME, StringUtils.lowerCase(ecoRegion.getName()));
+        ecoRegionSuggestions.add(node, PropertyAndValueDictionary.NAME, StringUtils.lowerCase(ecoRegion.getName()));
         if (StringUtils.isNotBlank(ecoRegion.getPath())) {
             for (String part : ecoRegion.getPath().split(CharsetConstant.SEPARATOR)) {
-                ecoRegionSuggestions.add(node, NamedNode.NAME, StringUtils.lowerCase(part));
+                ecoRegionSuggestions.add(node, PropertyAndValueDictionary.NAME, StringUtils.lowerCase(part));
             }
         }
     }
@@ -654,11 +673,11 @@ public class NodeFactory {
     }
 
     public IndexHits<Node> findCloseMatchesForEcoRegion(String ecoRegionName) {
-        return query(ecoRegionName, Taxon.NAME, ecoRegions);
+        return query(ecoRegionName, PropertyAndValueDictionary.NAME, ecoRegions);
     }
 
     public IndexHits<Node> findCloseMatchesForEcoRegionPath(String ecoRegionPath) {
-        return query(ecoRegionPath, Taxon.PATH, ecoRegionPaths);
+        return query(ecoRegionPath, PropertyAndValueDictionary.PATH, ecoRegionPaths);
     }
 
     public IndexHits<Node> suggestEcoRegionByName(String wholeOrPartialEcoRegionNameOrPath) {

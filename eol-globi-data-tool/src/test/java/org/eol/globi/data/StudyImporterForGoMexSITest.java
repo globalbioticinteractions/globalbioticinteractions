@@ -6,7 +6,7 @@ import org.eol.globi.domain.Location;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
-import org.eol.globi.domain.Taxon;
+import org.eol.globi.domain.TaxonNode;
 import org.junit.Test;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
@@ -50,7 +50,7 @@ public class StudyImporterForGoMexSITest extends GraphDBTestCase {
         assertNotNull(nodeFactory.findTaxonOfType("Amphipoda"));
         assertNotNull(nodeFactory.findTaxonOfType("Crustacea"));
 
-        Taxon taxon = nodeFactory.findTaxonOfType("Scomberomorus cavalla");
+        TaxonNode taxon = nodeFactory.findTaxonOfType("Scomberomorus cavalla");
         List<String> preyList = new ArrayList<String>();
         final List<String> titles = new ArrayList<String>();
         Iterable<Relationship> classifiedAsRels = taxon.getUnderlyingNode().getRelationships(Direction.INCOMING, RelTypes.CLASSIFIED_AS);
