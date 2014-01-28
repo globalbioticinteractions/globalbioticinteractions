@@ -1,6 +1,7 @@
 package org.eol.globi.export;
 
 import org.eol.globi.data.GraphDBTestCase;
+import org.eol.globi.data.NodeFactory;
 import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.PropertyAndValueDictionary;
@@ -20,7 +21,7 @@ public class StudyExportUnmatchedSourceTaxaForStudiesTest extends GraphDBTestCas
 
     @Test
     public void exportOnePredatorTwoPrey() throws NodeFactoryException, IOException {
-        nodeFactory.setTaxonEnricher(new TaxonPropertyEnricher() {
+        nodeFactory = new NodeFactory(getGraphDb(), new TaxonPropertyEnricher() {
             @Override
             public void enrich(Taxon taxon) {
                 if ("Homo sapiens".equals(taxon.getName())) {

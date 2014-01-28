@@ -209,8 +209,8 @@ public class NodeFactoryTest extends GraphDBTestCase {
 
         taxon = nodeFactory.getOrCreateTaxon("boo bla");
         assertEquals("boo bla", taxon.getName());
+        assertThat(taxon.getExternalId(), is(PropertyAndValueDictionary.NO_MATCH));
         assertNull(taxon.getPath());
-        assertNull(taxon.getExternalId());
     }
 
     @Test

@@ -59,7 +59,7 @@ public class NodeFactoryIT extends GraphDBTestCase {
 
     @Test
     public void createNoMatch() throws NodeFactoryException {
-        TaxonPropertyEnricher taxonEnricher = TaxonPropertyEnricherFactory.createTaxonEnricher(getGraphDb());
+        TaxonPropertyEnricher taxonEnricher = TaxonPropertyEnricherFactory.createTaxonEnricher();
         NodeFactory factory = new NodeFactory(getGraphDb(), taxonEnricher);
         TaxonNode taxon = factory.getOrCreateTaxon("Santa Claus meets Superman");
         assertThat(taxon.getName(), is("Santa Claus meets Superman"));
@@ -72,7 +72,7 @@ public class NodeFactoryIT extends GraphDBTestCase {
 
     @Test
     public void noDuplicatesOnSynomyms() throws NodeFactoryException {
-        TaxonPropertyEnricher taxonEnricher = TaxonPropertyEnricherFactory.createTaxonEnricher(getGraphDb());
+        TaxonPropertyEnricher taxonEnricher = TaxonPropertyEnricherFactory.createTaxonEnricher();
         NodeFactory factory = new NodeFactory(getGraphDb(), taxonEnricher);
         TaxonNode first = factory.getOrCreateTaxon("Galeichthys felis");
         TaxonNode second = factory.getOrCreateTaxon("Ariopsis felis");
@@ -84,7 +84,7 @@ public class NodeFactoryIT extends GraphDBTestCase {
 
     @Test
     public void noDuplicatesOnChoppingNames() throws NodeFactoryException {
-        TaxonPropertyEnricher taxonEnricher = TaxonPropertyEnricherFactory.createTaxonEnricher(getGraphDb());
+        TaxonPropertyEnricher taxonEnricher = TaxonPropertyEnricherFactory.createTaxonEnricher();
         NodeFactory factory = new NodeFactory(getGraphDb(), taxonEnricher);
         TaxonNode first = factory.getOrCreateTaxon("Ariopsis felis");
         TaxonNode second = factory.getOrCreateTaxon("Ariopsis felis something");
@@ -94,7 +94,7 @@ public class NodeFactoryIT extends GraphDBTestCase {
 
     @Test
     public void createHomoSapiens() throws NodeFactoryException {
-        TaxonPropertyEnricher taxonEnricher = TaxonPropertyEnricherFactory.createTaxonEnricher(getGraphDb());
+        TaxonPropertyEnricher taxonEnricher = TaxonPropertyEnricherFactory.createTaxonEnricher();
         NodeFactory factory = new NodeFactory(getGraphDb(), taxonEnricher);
         TaxonNode taxon = factory.getOrCreateTaxon("Homo sapiens");
         assertThat(taxon.getName(), is("Homo sapiens"));
@@ -107,7 +107,7 @@ public class NodeFactoryIT extends GraphDBTestCase {
 
     @Test(expected = NodeFactoryException.class)
     public void nameTooShort() throws NodeFactoryException {
-        TaxonPropertyEnricher taxonEnricher = TaxonPropertyEnricherFactory.createTaxonEnricher(getGraphDb());
+        TaxonPropertyEnricher taxonEnricher = TaxonPropertyEnricherFactory.createTaxonEnricher();
         NodeFactory factory = new NodeFactory(getGraphDb(), taxonEnricher);
         factory.getOrCreateTaxon("");
     }

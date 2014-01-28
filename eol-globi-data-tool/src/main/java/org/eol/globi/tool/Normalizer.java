@@ -59,7 +59,7 @@ public class Normalizer {
 
     public void normalize(String baseDir) throws StudyImporterException {
         final GraphDatabaseService graphService = GraphService.getGraphService(baseDir);
-        importData(graphService, TaxonPropertyEnricherFactory.createTaxonEnricher(graphService));
+        importData(graphService, TaxonPropertyEnricherFactory.createTaxonEnricher());
         exportData(graphService, baseDir);
         graphService.shutdown();
     }

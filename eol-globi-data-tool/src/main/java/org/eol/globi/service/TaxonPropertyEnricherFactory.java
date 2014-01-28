@@ -1,12 +1,10 @@
 package org.eol.globi.service;
 
-import org.neo4j.graphdb.GraphDatabaseService;
-
 import java.util.ArrayList;
 import java.util.List;
 
 public class TaxonPropertyEnricherFactory {
-    public static TaxonPropertyEnricher createTaxonEnricher(GraphDatabaseService graphService) {
+    public static TaxonPropertyEnricher createTaxonEnricher() {
         TaxonPropertyEnricherImpl taxonEnricher = new TaxonPropertyEnricherImpl();
         List<TaxonPropertyLookupService> services = new ArrayList<TaxonPropertyLookupService>() {
             {
@@ -16,8 +14,6 @@ public class TaxonPropertyEnricherFactory {
                 add(new WoRMSService());
                 add(new ITISService());
                 add(new GulfBaseService());
-                add(new NoMatchService());
-
             }
         };
         taxonEnricher.setServices(services);
