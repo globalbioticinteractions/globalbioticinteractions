@@ -1,21 +1,19 @@
 package org.eol.globi.geo;
 
-import java.net.URL;
-
 public class EcoRegionFinderConfig {
-    private URL shapeFileURL;
+    private String shapeFilePath;
     private String nameLabel;
     private String idLabel;
     private String[] pathLabels;
     private String namespace;
     private String geometryLabel;
 
-    public URL getShapeFileURL() {
-        return shapeFileURL;
+    public String getShapeFilePath() {
+        return shapeFilePath;
     }
 
-    public void setShapeFileURL(URL shapeFileURL) {
-        this.shapeFileURL = shapeFileURL;
+    public void setShapeFilePath(String shapeFilePath) {
+        this.shapeFilePath = shapeFilePath;
     }
 
     public String getNameLabel() {

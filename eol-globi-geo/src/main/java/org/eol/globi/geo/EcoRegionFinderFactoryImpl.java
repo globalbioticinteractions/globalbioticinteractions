@@ -1,12 +1,5 @@
 package org.eol.globi.geo;
 
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import java.io.File;
-import java.net.URI;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -14,11 +7,10 @@ import java.util.Map;
 
 public class EcoRegionFinderFactoryImpl implements EcoRegionFinderFactory {
 
-    private static final Log LOG = LogFactory.getLog(EcoRegionFinderFactoryImpl.class);
-
     @Override
     public EcoRegionFinder createEcoRegionFinder(EcoRegionType type) {
-        return new EcoRegionFinderImpl(getUrlTypeMap().get(type));
+        Map<EcoRegionType, EcoRegionFinderConfig> urlTypeMap = getUrlTypeMap();
+        return new EcoRegionFinderImpl(urlTypeMap.get(type));
     }
 
     @Override
@@ -36,7 +28,7 @@ public class EcoRegionFinderFactoryImpl implements EcoRegionFinderFactory {
             // http://maps.tnc.org/files/metadata/TerrEcos.xml
             // http://maps.tnc.org/files/shp/terr-ecoregions-TNC.zip
             EcoRegionFinderConfig config = new EcoRegionFinderConfig();
-            config.setShapeFileURL(getDataStoreURLForShapeFile("/teow-tnc/tnc_terr_ecoregions.shp"));
+            config.setShapeFilePath("/teow-tnc/tnc_terr_ecoregions.shp");
             config.setNameLabel("ECO_NAME");
             config.setIdLabel("ECO_ID_U");
             config.setNamespace("TEOW");
@@ -48,7 +40,7 @@ public class EcoRegionFinderFactoryImpl implements EcoRegionFinderFactory {
             // Marine Ecosystems of the World (MEOW) http://maps.tnc.org/files/metadata/MEOW.xml
             // http://maps.tnc.org/files/shp/MEOW-TNC.zip
             config = new EcoRegionFinderConfig();
-            config.setShapeFileURL(getDataStoreURLForShapeFile("/meow-tnc/meow_ecos.shp"));
+            config.setShapeFilePath("/meow-tnc/meow_ecos.shp");
             config.setNameLabel("ECOREGION");
             config.setIdLabel("ECO_CODE");
             config.setNamespace("MEOW");
@@ -60,7 +52,7 @@ public class EcoRegionFinderFactoryImpl implements EcoRegionFinderFactory {
             // http://maps.tnc.org/files/metadata/FEOW.xml
             // http://maps.tnc.org/files/shp/FEOW-TNC.zip
             config = new EcoRegionFinderConfig();
-            config.setShapeFileURL(getDataStoreURLForShapeFile("/feow-tnc/FEOWv1_TNC.shp"));
+            config.setShapeFilePath("/feow-tnc/FEOWv1_TNC.shp");
             config.setNameLabel("ECOREGION");
             config.setIdLabel("ECO_ID_U");
             config.setNamespace("FEOW");
@@ -68,24 +60,5 @@ public class EcoRegionFinderFactoryImpl implements EcoRegionFinderFactory {
             config.setGeometryLabel("the_geom");
             put(EcoRegionType.Freshwater, config);
         }};
-    }
-
-    private URL getDataStoreURLForShapeFile(String shapeFile) {
-        URI resourceURI = null;
-        try {
-            String shapeFileDir = System.getProperty("shapefiles.dir");
-            if (StringUtils.isNotBlank(shapeFileDir)) {
-                File file = new File(shapeFileDir + shapeFile);
-                resourceURI = file.toURI();
-            }
-
-            if (null == resourceURI) {
-                resourceURI = EcoRegionFinderFactoryImpl.class.getResource(shapeFile).toURI();
-            }
-            LOG.info("attempting to use using shapefile at [" + resourceURI.toString() + "]");
-            return resourceURI.toURL();
-        } catch (Exception e) {
-            throw new RuntimeException("failed to find [" + shapeFile + "] ... did you run mvn install on the commandline to install shapefiles?");
-        }
     }
 }
