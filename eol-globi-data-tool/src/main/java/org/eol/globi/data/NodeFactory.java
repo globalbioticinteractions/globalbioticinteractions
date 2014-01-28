@@ -291,7 +291,6 @@ public class NodeFactory implements TaxonService {
     @Override
     public TaxonNode getOrCreateTaxon(String name, String externalId, String path) throws NodeFactoryException {
         return taxonService.getOrCreateTaxon(name, externalId, path);
-
     }
 
     public void setUnixEpochProperty(Relationship rel, Date date) {

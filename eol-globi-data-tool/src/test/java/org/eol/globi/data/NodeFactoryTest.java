@@ -37,103 +37,6 @@ import static org.junit.Assert.assertThat;
 
 public class NodeFactoryTest extends GraphDBTestCase {
 
-    public static final String EXPECTED_COMMON_NAMES = "some german name @de" + CharsetConstant.SEPARATOR + "some english name @en" + CharsetConstant.SEPARATOR;
-
-    @Test
-    public void findByStringWithWhitespaces() throws NodeFactoryException {
-        nodeFactory = new NodeFactory(getGraphDb(), new TaxonPropertyEnricher() {
-            @Override
-            public void enrich(Taxon taxon) {
-                taxon.setPath("kingdom" + CharsetConstant.SEPARATOR + "phylum" + CharsetConstant.SEPARATOR + "Homo sapiens" + CharsetConstant.SEPARATOR);
-                taxon.setExternalId("anExternalId");
-                taxon.setCommonNames(EXPECTED_COMMON_NAMES);
-                taxon.setName("this is the actual name");
-            }
-        });
-        nodeFactory.getOrCreateTaxon("Homo sapiens");
-
-        assertThat(nodeFactory.getGraphDb().index().existsForNodes("taxonNameSuggestions"), is(true));
-        Index<Node> index = nodeFactory.getGraphDb().index().forNodes("taxonNameSuggestions");
-        Query query = new TermQuery(new Term("name", "name"));
-        IndexHits<Node> hits = index.query(query);
-        assertThat(hits.size(), is(1));
-
-        hits = index.query("name", "s nme~");
-        assertThat(hits.size(), is(1));
-
-        hits = index.query("name", "geRman~");
-        assertThat(hits.size(), is(1));
-
-        hits = index.query("name:geRman~ AND name:som~");
-        assertThat(hits.size(), is(1));
-
-        hits = index.query("name:hmo~ AND name:SApiens~");
-        assertThat(hits.size(), is(1));
-
-        hits = index.query("name:hmo~ AND name:sapiens~");
-        assertThat(hits.size(), is(1));
-
-        // queries are case sensitive . . . should all be lower cased.
-        hits = index.query("name:HMO~ AND name:saPIENS~");
-        assertThat(hits.size(), is(0));
-
-
-    }
-
-    @Test
-    public void ensureThatEnrichedPropertiesAreIndexed() throws NodeFactoryException {
-        nodeFactory = new NodeFactory(getGraphDb(), new TaxonPropertyEnricher() {
-            @Override
-            public void enrich(Taxon taxon) {
-                taxon.setPath("kingdom" + CharsetConstant.SEPARATOR + "phylum" + CharsetConstant.SEPARATOR + "etc" + CharsetConstant.SEPARATOR);
-                taxon.setExternalId("anExternalId");
-                taxon.setCommonNames(EXPECTED_COMMON_NAMES);
-            }
-        });
-
-        assertThat(getGraphDb().index().existsForNodes("taxonCommonNames"), is(true));
-        assertThat(getGraphDb().index().existsForNodes("taxons"), is(true));
-        assertThat(getGraphDb().index().existsForNodes("taxonpaths"), is(true));
-        assertThat(getGraphDb().index().existsForNodes("taxonNameSuggestions"), is(true));
-        assertThat(getGraphDb().index().existsForNodes("thisDoesnoTExist"), is(false));
-
-        assertEnrichedPropertiesSet(nodeFactory.getOrCreateTaxon("some name"));
-        assertEnrichedPropertiesSet(nodeFactory.findTaxon("some name"));
-        IndexHits<Node> hits = nodeFactory.findTaxaByPath("etc");
-        assertThat(hits.size(), is(1));
-        assertEnrichedPropertiesSet(new TaxonNode(hits.getSingle()));
-        hits = nodeFactory.findTaxaByCommonName("some german name");
-        assertThat(hits.size(), is(1));
-        assertEnrichedPropertiesSet(new TaxonNode(hits.getSingle()));
-
-        hits = nodeFactory.suggestTaxaByName("kingdom");
-        assertThat(hits.size(), is(1));
-        assertEnrichedPropertiesSet(new TaxonNode(hits.getSingle()));
-
-        hits = nodeFactory.suggestTaxaByName("phylum");
-        assertThat(hits.size(), is(1));
-        assertEnrichedPropertiesSet(new TaxonNode(hits.getSingle()));
-
-        hits = nodeFactory.suggestTaxaByName("some");
-        assertThat(hits.size(), is(1));
-        assertEnrichedPropertiesSet(new TaxonNode(hits.getSingle()));
-
-        hits = nodeFactory.suggestTaxaByName("german");
-        assertThat(hits.size(), is(1));
-        assertEnrichedPropertiesSet(new TaxonNode(hits.getSingle()));
-
-        hits = nodeFactory.suggestTaxaByName("@de");
-        assertThat(hits.size(), is(1));
-        assertEnrichedPropertiesSet(new TaxonNode(hits.getSingle()));
-    }
-
-    private void assertEnrichedPropertiesSet(TaxonNode aTaxon) {
-        assertThat(aTaxon.getPath(), is("kingdom" + CharsetConstant.SEPARATOR + "phylum" + CharsetConstant.SEPARATOR + "etc" + CharsetConstant.SEPARATOR));
-        assertThat(aTaxon.getCommonNames(), is(EXPECTED_COMMON_NAMES));
-        assertThat(aTaxon.getName(), is("some name"));
-        assertThat(aTaxon.getExternalId(), is("anExternalId"));
-    }
-
     @Test
     public void createFindLocation() {
         Location location = nodeFactory.getOrCreateLocation(1.2d, 1.4d, -1.0d);
@@ -177,79 +80,7 @@ public class NodeFactoryTest extends GraphDBTestCase {
         assertThat(anotherLocation.getEnvironments().size(), is(2));
     }
 
-    @Test
-    public void createTaxon() throws NodeFactoryException {
-        TaxonNode taxon = nodeFactory.getOrCreateTaxon("bla bla");
-        assertThat(taxon, is(notNullValue()));
-        assertEquals("bla bla", taxon.getName());
-    }
 
-    @Test
-    public void createSpeciesMatchHigherOrder() throws NodeFactoryException {
-        nodeFactory = new NodeFactory(getGraphDb(), new TaxonPropertyEnricher() {
-            @Override
-            public void enrich(Taxon taxon) {
-                if ("bla".equals(taxon.getName())) {
-                    taxon.setPath("a path");
-                    taxon.setExternalId("anExternalId");
-                    taxon.setCommonNames(EXPECTED_COMMON_NAMES);
-                }
-            }
-        });
-
-        TaxonNode taxon = nodeFactory.getOrCreateTaxon("bla bla");
-        assertEquals("bla", taxon.getName());
-        assertEquals("a path", taxon.getPath());
-        assertEquals("anExternalId", taxon.getExternalId());
-
-        taxon = nodeFactory.getOrCreateTaxon("bla bla boo");
-        assertEquals("bla", taxon.getName());
-        assertEquals("a path", taxon.getPath());
-        assertEquals("anExternalId", taxon.getExternalId());
-
-        taxon = nodeFactory.getOrCreateTaxon("boo bla");
-        assertEquals("boo bla", taxon.getName());
-        assertThat(taxon.getExternalId(), is(PropertyAndValueDictionary.NO_MATCH));
-        assertNull(taxon.getPath());
-    }
-
-    @Test
-    public void findCloseMatchForTaxonPath() throws NodeFactoryException {
-        TaxonNode homoSapiens = nodeFactory.getOrCreateTaxon("Homo sapiens", null, "Animalia Mammalia");
-        Transaction transaction = homoSapiens.getUnderlyingNode().getGraphDatabase().beginTx();
-        transaction.success();
-        transaction.finish();
-        nodeFactory.getOrCreateTaxon("Homo erectus");
-        assertMatch("Mammalia");
-        assertMatch("Mammali");
-        assertMatch("mammali");
-        assertMatch("inmalia");
-        IndexHits<Node> hits = nodeFactory.findCloseMatchesForTaxonPath("il");
-        assertThat(hits.hasNext(), is(false));
-    }
-
-    private void assertMatch(String taxonRankOfClassName) {
-        IndexHits<Node> hits = nodeFactory.findCloseMatchesForTaxonPath(taxonRankOfClassName);
-        assertThat(hits.hasNext(), is(true));
-        Node firstHit = hits.next();
-        assertThat((String) firstHit.getProperty(PropertyAndValueDictionary.NAME), is("Homo sapiens"));
-        assertThat((String) firstHit.getProperty(PropertyAndValueDictionary.PATH), is("Animalia Mammalia"));
-        assertThat(hits.hasNext(), is(false));
-    }
-
-    @Test
-    public void findCloseMatch() throws NodeFactoryException {
-        nodeFactory.getOrCreateTaxon("Homo sapiens");
-        IndexHits<Node> hits = nodeFactory.findCloseMatchesForTaxonName("Homo sapiens");
-        assertThat(hits.hasNext(), is(true));
-        hits.close();
-        hits = nodeFactory.findCloseMatchesForTaxonName("Homo saliens");
-        assertThat(hits.hasNext(), is(true));
-        hits = nodeFactory.findCloseMatchesForTaxonName("Homo");
-        assertThat(hits.hasNext(), is(true));
-        hits = nodeFactory.findCloseMatchesForTaxonName("homo sa");
-        assertThat(hits.hasNext(), is(true));
-    }
 
     @Test
     public void addDOIToStudy() {
@@ -286,28 +117,6 @@ public class NodeFactoryTest extends GraphDBTestCase {
         assertThat(study.getCitation(), nullValue());
 
 
-    }
-
-    @Test
-    public void ensureCorrectedIndexing() throws NodeFactoryException {
-        nodeFactory.setCorrectionService(new CorrectionService() {
-            @Override
-            public String correct(String taxonName) {
-                String corrected = taxonName;
-                if (!taxonName.endsWith("corrected")) {
-                    corrected = taxonName + " corrected";
-                }
-                return corrected;
-            }
-        });
-        TaxonNode taxon = nodeFactory.getOrCreateTaxon("bla");
-        assertEquals("bla corrected", taxon.getName());
-
-        TaxonNode bla = nodeFactory.findTaxonOfType("bla");
-        assertThat(bla.getName(), is("bla corrected"));
-
-        TaxonNode taxonMatch = nodeFactory.findTaxonOfType("bla corrected");
-        assertThat(taxonMatch.getName(), is("bla corrected"));
     }
 
     @Test
