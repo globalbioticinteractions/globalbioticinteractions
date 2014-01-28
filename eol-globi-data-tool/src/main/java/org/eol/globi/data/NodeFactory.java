@@ -387,8 +387,7 @@ public class NodeFactory {
             taxonEnricher.enrich(taxon);
             shouldContinue = !TaxonMatchValidator.hasMatch(taxon);
             if (shouldContinue) {
-                String taxonName = taxon.getName();
-                String truncatedName = NodeUtil.truncateTaxonName(taxonName);
+                String truncatedName = NodeUtil.truncateTaxonName(taxon.getName());
                 if (StringUtils.isBlank(truncatedName)) {
                     shouldContinue = false;
                 } else {
