@@ -27,7 +27,7 @@ public class EcoRegionFinderProxy implements EcoRegionFinder {
         Collection<EcoRegion> regions = null;
         for (EcoRegionFinder finder : finders) {
             Collection<EcoRegion> ecoRegion = finder.findEcoRegion(lat, lng);
-            if (ecoRegion.size() > 0 && regions == null) {
+            if (ecoRegion != null && ecoRegion.size() > 0 && regions == null) {
                 regions = new ArrayList<EcoRegion>();
                 for (EcoRegion region : ecoRegion) {
                     regions.add(region);
