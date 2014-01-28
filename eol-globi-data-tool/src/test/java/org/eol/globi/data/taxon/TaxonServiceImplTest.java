@@ -157,21 +157,24 @@ public class TaxonServiceImplTest extends GraphDBTestCase {
 
     @Test
     public void findCloseMatchForTaxonPath() throws NodeFactoryException {
-        TaxonNode homoSapiens = nodeFactory.getOrCreateTaxon("Homo sapiens", null, "Animalia Mammalia");
-        Transaction transaction = homoSapiens.getUnderlyingNode().getGraphDatabase().beginTx();
-        transaction.success();
-        transaction.finish();
-        nodeFactory.getOrCreateTaxon("Homo erectus");
+        taxonService.setEnricher(new TaxonPropertyEnricher() {
+            @Override
+            public void enrich(Taxon taxon) {
+
+            }
+        });
+        taxonService.getOrCreateTaxon("Homo sapiens", "someid", "Animalia Mammalia");
+        taxonService.getOrCreateTaxon("Homo erectus", null, null);
         assertMatch("Mammalia");
         assertMatch("Mammali");
         assertMatch("mammali");
         assertMatch("inmalia");
-        IndexHits<Node> hits = nodeFactory.findCloseMatchesForTaxonPath("il");
+        IndexHits<Node> hits = taxonService.findCloseMatchesForTaxonPath("il");
         assertThat(hits.hasNext(), is(false));
     }
 
     private void assertMatch(String taxonRankOfClassName) {
-        IndexHits<Node> hits = nodeFactory.findCloseMatchesForTaxonPath(taxonRankOfClassName);
+        IndexHits<Node> hits = taxonService.findCloseMatchesForTaxonPath(taxonRankOfClassName);
         assertThat(hits.hasNext(), is(true));
         Node firstHit = hits.next();
         assertThat((String) firstHit.getProperty(PropertyAndValueDictionary.NAME), is("Homo sapiens"));
@@ -181,21 +184,21 @@ public class TaxonServiceImplTest extends GraphDBTestCase {
 
     @Test
     public void findCloseMatch() throws NodeFactoryException {
-        nodeFactory.getOrCreateTaxon("Homo sapiens");
-        IndexHits<Node> hits = nodeFactory.findCloseMatchesForTaxonName("Homo sapiens");
+        taxonService.getOrCreateTaxon("Homo sapiens", null, null);
+        IndexHits<Node> hits = taxonService.findCloseMatchesForTaxonName("Homo sapiens");
         assertThat(hits.hasNext(), is(true));
         hits.close();
-        hits = nodeFactory.findCloseMatchesForTaxonName("Homo saliens");
+        hits = taxonService.findCloseMatchesForTaxonName("Homo saliens");
         assertThat(hits.hasNext(), is(true));
-        hits = nodeFactory.findCloseMatchesForTaxonName("Homo");
+        hits = taxonService.findCloseMatchesForTaxonName("Homo");
         assertThat(hits.hasNext(), is(true));
-        hits = nodeFactory.findCloseMatchesForTaxonName("homo sa");
+        hits = taxonService.findCloseMatchesForTaxonName("homo sa");
         assertThat(hits.hasNext(), is(true));
     }
 
     @Test
     public void ensureCorrectedIndexing() throws NodeFactoryException {
-        nodeFactory.setCorrectionService(new CorrectionService() {
+        taxonService.setCorrector(new CorrectionService() {
             @Override
             public String correct(String taxonName) {
                 String corrected = taxonName;
@@ -205,13 +208,13 @@ public class TaxonServiceImplTest extends GraphDBTestCase {
                 return corrected;
             }
         });
-        TaxonNode taxon = nodeFactory.getOrCreateTaxon("bla");
+        TaxonNode taxon = taxonService.getOrCreateTaxon("bla", null, null);
         assertEquals("bla corrected", taxon.getName());
 
-        TaxonNode bla = nodeFactory.findTaxonOfType("bla");
+        TaxonNode bla = taxonService.findTaxon("bla");
         assertThat(bla.getName(), is("bla corrected"));
 
-        TaxonNode taxonMatch = nodeFactory.findTaxonOfType("bla corrected");
+        TaxonNode taxonMatch = taxonService.findTaxon("bla corrected");
         assertThat(taxonMatch.getName(), is("bla corrected"));
     }
 

@@ -1,11 +1,15 @@
 package org.eol.globi.export;
 
 import org.eol.globi.data.GraphDBTestCase;
+import org.eol.globi.data.NodeFactory;
 import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
+import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.Term;
+import org.eol.globi.service.TaxonPropertyEnricher;
+import org.junit.Before;
 import org.junit.Test;
 import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.Transaction;
@@ -19,6 +23,18 @@ import static org.junit.Assert.assertThat;
 
 public class ExporterAssociationAggregatesTest extends GraphDBTestCase {
 
+    @Before
+    public void setEnricher() {
+        nodeFactory = new NodeFactory(getGraphDb(), new TaxonPropertyEnricher() {
+
+            @Override
+            public void enrich(Taxon taxon) {
+                taxon.setExternalId(taxon.getName() + "id");
+                taxon.setPath(taxon.getName() + "path");
+            }
+        });
+    }
+
     @Test
     public void exportCSVNoHeader() throws IOException, NodeFactoryException, ParseException {
         String[] studyTitles = {"myStudy1", "myStudy2"};
@@ -28,7 +44,7 @@ public class ExporterAssociationAggregatesTest extends GraphDBTestCase {
         }
 
         String expected = "\nglobi:assoc:1-2-ATE-5,globi:occur:source:1-2-ATE,http://eol.org/schema/terms/eats,globi:occur:target:1-2-ATE-5,,,,,data source description,,,globi:ref:1" +
-                "\nglobi:assoc:10-2-ATE-5,globi:occur:source:10-2-ATE,http://eol.org/schema/terms/eats,globi:occur:target:10-2-ATE-5,,,,,data source description,,,globi:ref:10";
+                "\nglobi:assoc:9-2-ATE-5,globi:occur:source:9-2-ATE,http://eol.org/schema/terms/eats,globi:occur:target:9-2-ATE-5,,,,,data source description,,,globi:ref:9";
 
         ExporterAssociationAggregates exporter = new ExporterAssociationAggregates();
         StringWriter row = new StringWriter();

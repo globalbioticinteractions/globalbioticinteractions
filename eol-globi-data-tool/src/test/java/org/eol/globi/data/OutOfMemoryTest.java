@@ -1,5 +1,7 @@
 package org.eol.globi.data;
 
+import org.eol.globi.data.taxon.CorrectionService;
+import org.eol.globi.data.taxon.TaxonServiceImpl;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.service.TaxonPropertyEnricher;
 import org.hamcrest.core.Is;
@@ -34,7 +36,7 @@ public class OutOfMemoryTest {
 
     private GraphDatabaseService graphDb;
     private String storeDir;
-    private NodeFactory factory;
+    private TaxonServiceImpl factory;
     public static final long MAX_TAXONS = 1000 * 1000;
 
     @Before
@@ -47,11 +49,17 @@ public class OutOfMemoryTest {
         ));
         graphDb = graphDatabaseBuilder.newGraphDatabase();
 
-        factory = new NodeFactory(graphDb, new TaxonPropertyEnricher() {
+
+        factory = new TaxonServiceImpl(new TaxonPropertyEnricher() {
             @Override
             public void enrich(Taxon taxon) {
             }
-        });
+        }, new CorrectionService() {
+            @Override
+            public String correct(String taxonName) {
+                return null;
+            }
+        }, graphDb);
         System.out.println(getMemMsg());
         assertThat(countAllNodes(1), Is.is(1L));
     }
@@ -91,7 +99,7 @@ public class OutOfMemoryTest {
         assertThat(count, Is.is(MAX_TAXONS + 1));
     }
 
-    private void insertTaxons(NodeFactory factory, long maxTaxons) {
+    private void insertTaxons(TaxonServiceImpl factory, long maxTaxons) {
         Transaction tx = graphDb.beginTx();
         for (long i = 0; i < maxTaxons; i++) {
             if (i % 5000 == 0) {

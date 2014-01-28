@@ -43,7 +43,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
-public class NodeFactory implements TaxonService {
+public class NodeFactory {
 
     private static final Log LOG = LogFactory.getLog(NodeFactory.class);
     public static final org.eol.globi.domain.Term NO_MATCH_TERM = new org.eol.globi.domain.Term(PropertyAndValueDictionary.NO_MATCH, PropertyAndValueDictionary.NO_MATCH);
@@ -96,15 +96,20 @@ public class NodeFactory implements TaxonService {
         return graphDb;
     }
 
-    @Override
     public TaxonNode findTaxon(String taxonName) throws NodeFactoryException {
         return findTaxonOfType(taxonName);
     }
 
     public TaxonNode findTaxonOfType(String taxonName) throws NodeFactoryException {
+        return this.taxonService.findTaxon(taxonName);
+    }
 
-        TaxonService taxonService = this.taxonService;
-        return taxonService.findTaxon(taxonName);
+    public TaxonNode getOrCreateTaxon(String name) throws NodeFactoryException {
+        return getOrCreateTaxon(name, null, null);
+    }
+
+    public TaxonNode getOrCreateTaxon(String name, String externalId, String path) throws NodeFactoryException {
+        return taxonService.getOrCreateTaxon(name, externalId, path);
     }
 
     public Location findLocation(Double latitude, Double longitude, Double altitude) {
@@ -165,14 +170,14 @@ public class NodeFactory implements TaxonService {
         return location;
     }
 
-    public Specimen createSpecimen(String specimenTaxonDescription) throws NodeFactoryException {
-        return createSpecimen(specimenTaxonDescription, null);
+    public Specimen createSpecimen(String taxonName) throws NodeFactoryException {
+        return createSpecimen(taxonName, null);
     }
 
-    public Specimen createSpecimen(String specimenTaxonDescription, String taxonExternalId) throws NodeFactoryException {
-        TaxonNode taxon = getOrCreateTaxon(specimenTaxonDescription, taxonExternalId, null);
+    public Specimen createSpecimen(String taxonName, String taxonExternalId) throws NodeFactoryException {
+        TaxonNode taxon = getOrCreateTaxon(taxonName, taxonExternalId, null);
         Specimen specimen = createSpecimen(taxon);
-        specimen.setOriginalTaxonDescription(specimenTaxonDescription);
+        specimen.setOriginalTaxonDescription(taxonName);
         return specimen;
     }
 
@@ -282,15 +287,6 @@ public class NodeFactory implements TaxonService {
             }
         }
         return location;
-    }
-
-    public TaxonNode getOrCreateTaxon(String name) throws NodeFactoryException {
-        return getOrCreateTaxon(name, null, null);
-    }
-
-    @Override
-    public TaxonNode getOrCreateTaxon(String name, String externalId, String path) throws NodeFactoryException {
-        return taxonService.getOrCreateTaxon(name, externalId, path);
     }
 
     public void setUnixEpochProperty(Relationship rel, Date date) {
@@ -496,31 +492,6 @@ public class NodeFactory implements TaxonService {
     public IndexHits<Node> suggestEcoRegionByName(String wholeOrPartialEcoRegionNameOrPath) {
         return ecoRegionSuggestions.query("name:\"" + wholeOrPartialEcoRegionNameOrPath + "\"");
     }
-
-    protected TaxonNode createTaxonNoTransaction(String name, String externalId, String path) {
-        return taxonService.createTaxonNoTransaction(name, externalId, path);
-    }
-
-    public IndexHits<Node> findCloseMatchesForTaxonName(String taxonName) {
-        return taxonService.findCloseMatchesForTaxonName(taxonName);
-    }
-
-    public IndexHits<Node> findCloseMatchesForTaxonPath(String taxonPath) {
-        return taxonService.findCloseMatchesForTaxonPath(taxonPath);
-    }
-
-    public IndexHits<Node> findTaxaByPath(String wholeOrPartialPath) {
-        return taxonService.findTaxaByPath(wholeOrPartialPath);
-    }
-
-    public IndexHits<Node> findTaxaByCommonName(String wholeOrPartialName) {
-        return taxonService.findTaxaByCommonName(wholeOrPartialName);
-    }
-
-    public IndexHits<Node> suggestTaxaByName(String wholeOrPartialScientificOrCommonName) {
-        return taxonService.suggestTaxaByName(wholeOrPartialScientificOrCommonName);
-    }
-
 
 }
 
