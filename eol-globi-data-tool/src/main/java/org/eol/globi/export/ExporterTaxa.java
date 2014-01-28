@@ -1,19 +1,13 @@
 package org.eol.globi.export;
 
-import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.PropertyAndValueDictionary;
-import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Study;
 import org.neo4j.cypher.javacompat.ExecutionEngine;
 import org.neo4j.cypher.javacompat.ExecutionResult;
-import org.neo4j.graphdb.Direction;
-import org.neo4j.graphdb.Node;
-import org.neo4j.graphdb.Relationship;
 
 import java.io.IOException;
 import java.io.Writer;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 public class ExporterTaxa extends ExporterBase {
@@ -46,7 +40,9 @@ public class ExporterTaxa extends ExporterBase {
     @Override
     public void doExportStudy(Study study, Writer writer, boolean includeHeader) throws IOException {
         ExecutionEngine engine = new ExecutionEngine(study.getUnderlyingNode().getGraphDatabase());
-        ExecutionResult results = engine.execute("START taxon = node:taxons('*:*') RETURN distinct(taxon), taxon.name as scientificName, taxon.externalId as taxonId");
+        ExecutionResult results = engine.execute("START taxon = node:taxons('*:*') " +
+                "WHERE has(taxon.externalId) AND taxon.externalId <> '" + PropertyAndValueDictionary.NO_MATCH + "' " +
+                "RETURN distinct(taxon), taxon.name as scientificName, taxon.externalId as taxonId");
 
         Map<String, String> properties = new HashMap<String, String>();
         for (Map<String, Object> result : results) {

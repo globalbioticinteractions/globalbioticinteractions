@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.text.ParseException;
 
+import static org.hamcrest.Matchers.not;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.matchers.JUnitMatchers.containsString;
@@ -20,6 +21,7 @@ public class ExporterTaxaTest extends GraphDBTestCase {
         ExportTestUtil.createTestData(null, nodeFactory);
         nodeFactory.getOrCreateTaxon("Canis lupus", "EOL:123", null);
         nodeFactory.getOrCreateTaxon("Canis", "EOL:126", null);
+        nodeFactory.getOrCreateTaxon("ThemFishes", "no:match", null);
 
         Study myStudy1 = nodeFactory.findStudy("myStudy");
 
@@ -31,6 +33,7 @@ public class ExporterTaxaTest extends GraphDBTestCase {
         assertThat(actual, containsString("EOL:123,Canis lupus,,,,,,,,,,,,,"));
         assertThat(actual, containsString("EOL:45634,Homo sapiens,,,,,,,,,,,,,"));
         assertThat(actual, containsString("EOL:126,Canis,,,,,,,,,,,,,"));
+        assertThat(actual, not(containsString("no:match,ThemFishes,,,,,,,,,,,,,")));
     }
 
 
