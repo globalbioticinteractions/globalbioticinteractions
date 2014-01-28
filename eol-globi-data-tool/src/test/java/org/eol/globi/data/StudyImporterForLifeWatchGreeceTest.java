@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Set;
 
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
@@ -62,9 +63,8 @@ public class StudyImporterForLifeWatchGreeceTest extends GraphDBTestCase {
                 }
             }
         }
-        assertThat(taxa.size(), is(178));
-        assertThat(totalPredatorPreyRelationships, is(793));
         assertThat(taxa.contains("Aves"), is(true));
+        assertThat(totalPredatorPreyRelationships, is(793));
     }
 
     private void addTaxonNameForSpecimenNode(Set<String> taxa, Node startNode) {

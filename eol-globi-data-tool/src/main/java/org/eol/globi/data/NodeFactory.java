@@ -55,7 +55,6 @@ public class NodeFactory {
 
     private static final Log LOG = LogFactory.getLog(NodeFactory.class);
 
-    private final TaxonPropertyEnricher taxonEnricher;
     private GraphDatabaseService graphDb;
 
     private final Index<Node> studies;
@@ -71,6 +70,7 @@ public class NodeFactory {
     private final Index<Node> taxonCommonNames;
     public static final org.eol.globi.domain.Term NO_MATCH_TERM = new org.eol.globi.domain.Term(PropertyAndValueDictionary.NO_MATCH, PropertyAndValueDictionary.NO_MATCH);
 
+    private TaxonPropertyEnricher taxonEnricher;
     private TermLookupService termLookupService;
     private TermLookupService envoLookupService;
     private CorrectionService correctionService;
@@ -683,6 +683,9 @@ public class NodeFactory {
         return ecoRegionSuggestions.query("name:\"" + wholeOrPartialEcoRegionNameOrPath + "\"");
     }
 
+    public void setTaxonEnricher(TaxonPropertyEnricher enricher) {
+        this.taxonEnricher = enricher;
+    }
 
 }
 

@@ -6,6 +6,8 @@ import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
+import org.eol.globi.domain.Taxon;
+import org.eol.globi.service.TaxonPropertyEnricher;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -18,30 +20,42 @@ public class StudyExportUnmatchedSourceTaxaForStudiesTest extends GraphDBTestCas
 
     @Test
     public void exportOnePredatorTwoPrey() throws NodeFactoryException, IOException {
+        nodeFactory.setTaxonEnricher(new TaxonPropertyEnricher() {
+            @Override
+            public void enrich(Taxon taxon) {
+                if ("Homo sapiens".equals(taxon.getName())) {
+                    taxon.setExternalId("homoSapiensId");
+                    taxon.setPath("one two three");
+                } else if ("Canis lupus".equals(taxon.getName())) {
+                    taxon.setExternalId("canisLupusId");
+                    taxon.setPath("four five six");
+                }
+            }
+        });
         Study study = nodeFactory.createStudy("my study");
-        nodeFactory.getOrCreateTaxon("Homo sapiens", "homoSapiensId", "one two three");
-        Specimen predatorSpecimen = nodeFactory.createSpecimen("Homo sapiens", "homoSapiensId");
-        nodeFactory.getOrCreateTaxon("Canis lupus", "canisLupusId", "four five six");
-        addCanisLupus(predatorSpecimen, "canisLupusId");
-        addCanisLupus(predatorSpecimen, "canisLupusId");
-        Specimen preySpecimen = nodeFactory.createSpecimen("Canis lupus other", PropertyAndValueDictionary.NO_MATCH);
+        nodeFactory.getOrCreateTaxon("Homo sapiens");
+        Specimen predatorSpecimen = nodeFactory.createSpecimen("Homo sapiens");
+        nodeFactory.getOrCreateTaxon("Canis lupus");
+        addCanisLupus(predatorSpecimen);
+        addCanisLupus(predatorSpecimen);
+        Specimen preySpecimen = nodeFactory.createSpecimen("Caniz");
         predatorSpecimen.createRelationshipTo(preySpecimen, InteractType.ATE);
         study.collected(predatorSpecimen);
 
-        Specimen predatorSpecimen23 = nodeFactory.createSpecimen("Homo sapiens2", PropertyAndValueDictionary.NO_MATCH);
-        addCanisLupus(predatorSpecimen23, "canisLupusId");
+        Specimen predatorSpecimen23 = nodeFactory.createSpecimen("Homo sapiens2");
+        addCanisLupus(predatorSpecimen23);
         study.collected(predatorSpecimen23);
         Specimen predatorSpecimen22 = nodeFactory.createSpecimen("Homo sapiens2");
-        addCanisLupus(predatorSpecimen22, "canisLupusId");
+        addCanisLupus(predatorSpecimen22);
         study.collected(predatorSpecimen22);
 
         Study study2 = nodeFactory.createStudy("my study2");
         Specimen predatorSpecimen21 = nodeFactory.createSpecimen("Homo sapiens2");
-        addCanisLupus(predatorSpecimen21, "canisLupusId");
+        addCanisLupus(predatorSpecimen21);
         study2.collected(predatorSpecimen21);
 
         Specimen predatorSpecimen2 = nodeFactory.createSpecimen("Homo sapiens3", PropertyAndValueDictionary.NO_MATCH);
-        addCanisLupus(predatorSpecimen2, "canisLupusId");
+        addCanisLupus(predatorSpecimen2);
         study.collected(predatorSpecimen2);
 
 
@@ -55,12 +69,12 @@ public class StudyExportUnmatchedSourceTaxaForStudiesTest extends GraphDBTestCas
         writer = new StringWriter();
         new StudyExportUnmatchedTargetTaxaForStudies().exportStudy(study, writer, true);
                 assertThat(writer.toString(), is("\"original target taxon name\",\"unmatched normalized target external id\",\"unmatched normalized target taxon name\",\"study\"\n" +
-                        "\"Canis lupus other\",,\"Canis lupus other\",\"my study\"\n"
+                        "\"Caniz\",,\"Caniz\",\"my study\"\n"
                 ));
     }
 
-    private void addCanisLupus(Specimen predatorSpecimen, String externalId) throws NodeFactoryException {
-        Specimen preySpecimen = nodeFactory.createSpecimen("Canis lupus", externalId);
+    private void addCanisLupus(Specimen predatorSpecimen) throws NodeFactoryException {
+        Specimen preySpecimen = nodeFactory.createSpecimen("Canis lupus");
         predatorSpecimen.createRelationshipTo(preySpecimen, InteractType.ATE);
     }
 
