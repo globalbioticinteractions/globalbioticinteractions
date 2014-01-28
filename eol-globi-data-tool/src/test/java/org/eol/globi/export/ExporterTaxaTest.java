@@ -9,19 +9,17 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.text.ParseException;
 
-import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
+import static org.junit.matchers.JUnitMatchers.containsString;
 
 public class ExporterTaxaTest extends GraphDBTestCase {
 
     @Test
     public void exportMissingLength() throws IOException, NodeFactoryException, ParseException {
         ExportTestUtil.createTestData(null, nodeFactory);
-
-        String expected =
-                "\nEOL:123,Canis lupus,,,,,,,,,,,,,\nEOL:45634,Homo sapiens,,,,,,,,,,,,,";
-
+        nodeFactory.getOrCreateTaxon("Canis lupus", "EOL:123", null);
+        nodeFactory.getOrCreateTaxon("Canis", "EOL:126", null);
 
         Study myStudy1 = nodeFactory.findStudy("myStudy");
 
@@ -29,7 +27,10 @@ public class ExporterTaxaTest extends GraphDBTestCase {
 
         new ExporterTaxa().exportStudy(myStudy1, row, false);
 
-        assertThat(row.getBuffer().toString(), equalTo(expected));
+        String actual = row.getBuffer().toString();
+        assertThat(actual, containsString("EOL:123,Canis lupus,,,,,,,,,,,,,"));
+        assertThat(actual, containsString("EOL:45634,Homo sapiens,,,,,,,,,,,,,"));
+        assertThat(actual, containsString("EOL:126,Canis,,,,,,,,,,,,,"));
     }
 
 

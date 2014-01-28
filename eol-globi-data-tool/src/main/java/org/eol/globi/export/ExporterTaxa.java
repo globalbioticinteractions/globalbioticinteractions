@@ -4,6 +4,8 @@ import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Study;
+import org.neo4j.cypher.javacompat.ExecutionEngine;
+import org.neo4j.cypher.javacompat.ExecutionResult;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
@@ -43,60 +45,17 @@ public class ExporterTaxa extends ExporterBase {
 
     @Override
     public void doExportStudy(Study study, Writer writer, boolean includeHeader) throws IOException {
-        Map<String, String> taxa = new HashMap<String, String>();
+        ExecutionEngine engine = new ExecutionEngine(study.getUnderlyingNode().getGraphDatabase());
+        ExecutionResult results = engine.execute("START taxon = node:taxons('*:*') RETURN distinct(taxon), taxon.name as scientificName, taxon.externalId as taxonId");
+
         Map<String, String> properties = new HashMap<String, String>();
-
-        Iterable<Relationship> specimens = study.getSpecimens();
-        for (Relationship collectedRel : specimens) {
-            Node specimenNode = collectedRel.getEndNode();
-            addTaxa(taxa, properties, specimenNode);
-
-            Iterable<Relationship> interactRelationships = specimenNode.getRelationships(Direction.OUTGOING, InteractType.values());
-            if (interactRelationships.iterator().hasNext()) {
-                for (Relationship interactRel : interactRelationships) {
-                    addTaxa(taxa, properties, interactRel.getEndNode());
-                }
-            }
-        }
-
-        for (Map.Entry<String, String> idName : taxa.entrySet()) {
-            properties.put(EOLDictionary.TAXON_ID, idName.getKey());
-            properties.put(EOLDictionary.SCIENTIFIC_NAME, idName.getValue());
+        for (Map<String, Object> result : results) {
+            properties.put(EOLDictionary.TAXON_ID, (String) result.get("taxonId"));
+            properties.put(EOLDictionary.SCIENTIFIC_NAME, (String) result.get("scientificName"));
             writeProperties(writer, properties);
             properties.clear();
         }
-
     }
 
-    private void addTaxa(Map<String, String> taxa, Map<String, String> properties, Node specimenNode) {
-        if (specimenNode != null) {
-            Iterable<Relationship> relationships = specimenNode.getRelationships(Direction.OUTGOING, RelTypes.CLASSIFIED_AS);
-            Iterator<Relationship> iterator = relationships.iterator();
-            if (iterator.hasNext()) {
-                Relationship classifiedAs = iterator.next();
-                if (classifiedAs != null) {
-                    Node taxonNode = classifiedAs.getEndNode();
-                    if (taxonNode.hasProperty(PropertyAndValueDictionary.EXTERNAL_ID)) {
-                        String taxonId1 = (String) taxonNode.getProperty(PropertyAndValueDictionary.EXTERNAL_ID);
-                        if (taxonId1 != null) {
-                            properties.put(EOLDictionary.TAXON_ID, taxonId1);
-                        }
-                    }
-                    if (taxonNode.hasProperty(PropertyAndValueDictionary.NAME)) {
-                        String taxonName = (String) taxonNode.getProperty(PropertyAndValueDictionary.NAME);
-                        if (taxonName != null) {
-                            properties.put(EOLDictionary.SCIENTIFIC_NAME, taxonName);
-                        }
-                    }
-                }
-            }
-        }
-        String scientificName = properties.get(EOLDictionary.SCIENTIFIC_NAME);
-        String taxonId = properties.get(EOLDictionary.TAXON_ID);
-        if (taxonId != null && scientificName != null) {
-            taxa.put(taxonId, scientificName);
-        }
-        properties.clear();
-    }
 
 }
