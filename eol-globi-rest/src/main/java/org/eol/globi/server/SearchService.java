@@ -40,12 +40,12 @@ public class SearchService {
     }
 
     private int addCloseMatches(String taxonName, StringBuffer buffer, String matchProperty, String indexName, int hitCount) {
-        IndexHits<Node> query = query(taxonName, matchProperty, graphDb.index().forNodes(indexName));
-        while (query.hasNext() && hitCount < 15) {
+        IndexHits<Node> hits = query(taxonName, matchProperty, graphDb.index().forNodes(indexName));
+        while (hits.hasNext() && hitCount < 15) {
             if (hitCount > 0) {
                 buffer.append(",");
             }
-            Node node = query.next();
+            Node node = hits.next();
             if (node.hasProperty(NAME)) {
                 buffer.append("[\"");
                 buffer.append((String) node.getProperty(NAME));
@@ -58,7 +58,7 @@ public class SearchService {
             }
 
         }
-        query.close();
+        hits.close();
         return hitCount;
     }
 
