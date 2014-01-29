@@ -144,7 +144,7 @@ public class EcoRegionFinderImpl implements EcoRegionFinder {
             if (null == resourceURI) {
                 resourceURI = EcoRegionFinderFactoryImpl.class.getResource(shapeFile).toURI();
             }
-            LOG.info("attempting to use using shapefile at [" + resourceURI.toString() + "]");
+            LOG.info("using shapefile at [" + resourceURI.toString() + "]");
             return resourceURI.toURL();
         } catch (Exception e) {
             throw new RuntimeException("failed to find [" + shapeFile + "] ... did you run mvn install on the commandline to install shapefiles?");
