@@ -27,13 +27,22 @@ public class ExporterTaxaTest extends GraphDBTestCase {
 
         StringWriter row = new StringWriter();
 
-        new ExporterTaxa().exportStudy(myStudy1, row, false);
+        new ExporterTaxa().exportStudy(myStudy1, row, true);
 
         String actual = row.getBuffer().toString();
         assertThat(actual, containsString("EOL:123,Canis lupus,,,,,,,,,,,,,"));
         assertThat(actual, containsString("EOL:45634,Homo sapiens,,,,,,,,,,,,,"));
         assertThat(actual, containsString("EOL:126,Canis,,,,,,,,,,,,,"));
         assertThat(actual, not(containsString("no:match,ThemFishes,,,,,,,,,,,,,")));
+
+        row = new StringWriter();
+
+        assertThatNoTaxaAreExportedOnMissingHeader(myStudy1, row);
+    }
+
+    private void assertThatNoTaxaAreExportedOnMissingHeader(Study myStudy1, StringWriter row) throws IOException {
+        new ExporterTaxa().exportStudy(myStudy1, row, false);
+        assertThat(row.getBuffer().toString(), is(""));
     }
 
 

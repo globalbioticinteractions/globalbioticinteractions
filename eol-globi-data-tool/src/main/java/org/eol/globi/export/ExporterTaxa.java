@@ -4,6 +4,7 @@ import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Study;
 import org.neo4j.cypher.javacompat.ExecutionEngine;
 import org.neo4j.cypher.javacompat.ExecutionResult;
+import org.neo4j.graphdb.GraphDatabaseService;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -39,7 +40,14 @@ public class ExporterTaxa extends ExporterBase {
 
     @Override
     public void doExportStudy(Study study, Writer writer, boolean includeHeader) throws IOException {
-        ExecutionEngine engine = new ExecutionEngine(study.getUnderlyingNode().getGraphDatabase());
+        if (includeHeader) {
+            // only write the taxa once, because they are unique across studies...
+            exportAllDistinctTaxa(writer, study.getUnderlyingNode().getGraphDatabase());
+        }
+    }
+
+    private void exportAllDistinctTaxa(Writer writer, GraphDatabaseService graphDatabase) throws IOException {
+        ExecutionEngine engine = new ExecutionEngine(graphDatabase);
         ExecutionResult results = engine.execute("START taxon = node:taxons('*:*') " +
                 "WHERE has(taxon.externalId) AND taxon.externalId <> '" + PropertyAndValueDictionary.NO_MATCH + "' " +
                 "RETURN distinct(taxon), taxon.name as scientificName, taxon.externalId as taxonId");
