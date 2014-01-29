@@ -24,8 +24,6 @@ import org.neo4j.helpers.collection.MapUtil;
 import java.util.ArrayList;
 
 public class TaxonServiceImpl implements TaxonService {
-    private final Log LOG = LogFactory.getLog(TaxonServiceImpl.class);
-
     private final GraphDatabaseService graphDbService;
     private final Index<Node> taxons;
     private final Index<Node> taxonNameSuggestions;
@@ -64,28 +62,12 @@ public class TaxonServiceImpl implements TaxonService {
             matchingTaxon = matchingTaxa.next();
             firstMatchingTaxon = new TaxonNode(matchingTaxon);
         }
-
-        ArrayList<TaxonNode> duplicateTaxons = null;
-        while (matchingTaxa.hasNext()) {
-            if (duplicateTaxons == null) {
-                duplicateTaxons = new ArrayList<TaxonNode>();
-            }
-            duplicateTaxons.add(new TaxonNode(matchingTaxa.next()));
+        if (matchingTaxa.hasNext()) {
+            throw new NodeFactoryException("found duplicate taxon for [" + taxonName + "] (original name: [" + taxonName + "]");
         }
         matchingTaxa.close();
 
-        if (duplicateTaxons != null) {
-            StringBuilder builder = new StringBuilder();
-            duplicateTaxons.add(firstMatchingTaxon);
-            for (TaxonNode duplicateTaxon : duplicateTaxons) {
-                builder.append('{');
-                builder.append(duplicateTaxon.getName());
-                builder.append(':');
-                builder.append(duplicateTaxon.getExternalId());
-                builder.append('}');
-            }
-            LOG.warn("found duplicates for taxon with name [" + taxonName + "], using first only: " + builder.toString());
-        }
+
         return firstMatchingTaxon;
     }
 
@@ -98,36 +80,32 @@ public class TaxonServiceImpl implements TaxonService {
         taxon.setPath(path);
 
         TaxonNode taxonNode = null;
-
-        boolean shouldContinue;
-        do {
+        while (taxonNode == null) {
             enricher.enrich(taxon);
-            shouldContinue = !TaxonMatchValidator.hasMatch(taxon);
-            if (shouldContinue) {
-                String truncatedName = NodeUtil.truncateTaxonName(taxon.getName());
-                if (StringUtils.isBlank(truncatedName)) {
-                    shouldContinue = false;
+            taxonNode = findTaxon(taxon.getName());
+            if (taxonNode == null) {
+                if (TaxonMatchValidator.hasMatch(taxon)) {
+                    taxonNode = addTaxon(taxon);
                 } else {
-                    taxonNode = findTaxon(truncatedName);
-                    if (taxonNode == null) {
-                        taxon.setName(truncatedName);
-                        taxon.setCommonNames(null);
-                        taxon.setPath(null);
-                        taxon.setExternalId(null);
+                    String truncatedName = NodeUtil.truncateTaxonName(taxon.getName());
+                    if (truncatedName == null || StringUtils.length(truncatedName) < 3) {
+                        taxonNode = addNoMatchTaxon(externalId, path, correctedName);
                     } else {
-                        shouldContinue = false;
+                        taxon = new TaxonImpl();
+                        taxon.setName(truncatedName);
                     }
                 }
             }
-        } while (shouldContinue);
-
-        if (!TaxonMatchValidator.hasMatch(taxon)) {
-            taxon.setName(correctedName);
-            taxon.setExternalId(StringUtils.isBlank(externalId) ? PropertyAndValueDictionary.NO_MATCH : externalId);
-            taxon.setPath(path);
         }
+        return taxonNode;
+    }
 
-        return taxonNode == null ? addTaxon(taxon) : taxonNode;
+    private TaxonNode addNoMatchTaxon(String externalId, String path, String correctedName) {
+        Taxon noMatchTaxon = new TaxonImpl();
+        noMatchTaxon.setName(correctedName);
+        noMatchTaxon.setExternalId(StringUtils.isBlank(externalId) ? PropertyAndValueDictionary.NO_MATCH : externalId);
+        noMatchTaxon.setPath(path);
+        return addTaxon(noMatchTaxon);
     }
 
     private TaxonNode addTaxon(Taxon taxon) {

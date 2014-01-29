@@ -16,4 +16,5 @@ public interface Taxon {
     String getExternalId();
 
     void setExternalId(String externalId);
+
 }

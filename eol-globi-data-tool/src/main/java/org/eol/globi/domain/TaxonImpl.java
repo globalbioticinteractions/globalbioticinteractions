@@ -1,5 +1,7 @@
 package org.eol.globi.domain;
 
+import java.util.Collection;
+
 public class TaxonImpl implements Taxon {
     private String name;
     private String path;
@@ -45,4 +47,5 @@ public class TaxonImpl implements Taxon {
     public void setExternalId(String externalId) {
         this.externalId = externalId;
     }
+
 }
