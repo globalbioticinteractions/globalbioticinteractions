@@ -71,12 +71,7 @@ public class StudyImporterForRaymond extends BaseStudyImporter {
 
     private void parseDietObservation(LabeledCSVParser dietParser, Study study) throws StudyImporterException {
         try {
-            String predatorName = dietParser.getValueByLabel("PREDATOR_NAME");
-            Specimen predator = nodeFactory.createSpecimen(predatorName);
-
-            String label = "PREDATOR_LIFE_STAGE";
-            String predatorLifeStage = dietParser.getValueByLabel(label);
-            predator.setLifeStage(nodeFactory.getOrCreateLifeStage("RAYMOND:" + predatorLifeStage, predatorLifeStage));
+            Specimen predator = getSpecimen(dietParser, "PREDATOR_NAME", "PREDATOR_LIFE_STAGE");
 
             Relationship collected = study.collected(predator);
             parseCollectionDate(dietParser, collected);
@@ -89,11 +84,19 @@ public class StudyImporterForRaymond extends BaseStudyImporter {
 
             predator.caughtIn(parseLocation(dietParser, study));
 
-            dietParser.getValueByLabel("PREY_NAME");
-            dietParser.getValueByLabel("PREY_LIFE_STAGE");
+            Specimen prey = getSpecimen(dietParser, "PREY_NAME", "PREY_LIFE_STAGE");
+            predator.ate(prey);
         } catch (NodeFactoryException e) {
             throw new StudyImporterException("failed to import data", e);
         }
+    }
+
+    private Specimen getSpecimen(LabeledCSVParser dietParser, String nameLabel, String lifeStageLabel) throws NodeFactoryException {
+        String predatorName = dietParser.getValueByLabel(nameLabel);
+        Specimen predator = nodeFactory.createSpecimen(predatorName);
+        String predatorLifeStage = dietParser.getValueByLabel(lifeStageLabel);
+        predator.setLifeStage(nodeFactory.getOrCreateLifeStage("RAYMOND:" + predatorLifeStage, predatorLifeStage));
+        return predator;
     }
 
     private void parseCollectionDate(LabeledCSVParser dietParser, Relationship collected) throws StudyImporterException {
