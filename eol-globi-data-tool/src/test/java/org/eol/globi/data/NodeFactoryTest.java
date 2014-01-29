@@ -1,9 +1,6 @@
 package org.eol.globi.data;
 
 import junit.framework.Assert;
-import org.apache.lucene.index.Term;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.TermQuery;
 import org.eol.globi.data.taxon.CorrectionService;
 import org.eol.globi.domain.Environment;
 import org.eol.globi.domain.Location;
@@ -11,17 +8,12 @@ import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
-import org.eol.globi.domain.Taxon;
-import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.geo.EcoRegion;
 import org.eol.globi.service.DOIResolver;
-import org.eol.globi.service.TaxonPropertyEnricher;
 import org.junit.Test;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
-import org.neo4j.graphdb.Transaction;
-import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.IndexHits;
 
 import java.io.IOException;
@@ -81,7 +73,6 @@ public class NodeFactoryTest extends GraphDBTestCase {
     }
 
 
-
     @Test
     public void addDOIToStudy() {
         nodeFactory.setDoiResolver(new DOIResolver() {
@@ -134,16 +125,20 @@ public class NodeFactoryTest extends GraphDBTestCase {
 
     @Test
     public void createEcoRegion() throws NodeFactoryException {
-        Location locationInSanFranciscoBay = nodeFactory.getOrCreateLocation(37.689254, -122.295799, null);
+        Location locationA = nodeFactory.getOrCreateLocation(37.689254, -122.295799, null);
         // ensure that no duplicate node are created ...
         nodeFactory.getOrCreateLocation(37.689255, -122.295798, null);
-        List<EcoRegion> ecoRegions = nodeFactory.getOrCreateEcoRegions(locationInSanFranciscoBay);
+        List<EcoRegion> ecoRegions = nodeFactory.enrichLocationWithEcoRegions(locationA);
         assertThat(ecoRegions.size(), not(is(0)));
         EcoRegion ecoRegion = ecoRegions.get(0);
         assertThat(ecoRegion.getName(), is("some eco region"));
-        assertEcoRegions(locationInSanFranciscoBay);
-        nodeFactory.getOrCreateEcoRegions(locationInSanFranciscoBay);
-        assertEcoRegions(locationInSanFranciscoBay);
+        assertEcoRegions(locationA);
+        nodeFactory.enrichLocationWithEcoRegions(locationA);
+        assertEcoRegions(locationA);
+
+        // check that multiple locations are associated to single eco region
+        Location locationB = nodeFactory.getOrCreateLocation(37.689255, -122.295799, null);
+        assertEcoRegions(locationB);
 
         IndexHits<Node> hits = nodeFactory.findCloseMatchesForEcoRegion("some elo egion");
         assertThat(hits.size(), is(1));

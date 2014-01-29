@@ -137,7 +137,7 @@ public class EcoRegionFinderImplTest {
         assertNull(findEcoRegionProperties(pointInOffTheCoastOfSanFranciscoBay(), new EcoRegionFinderFactoryImpl().createEcoRegionFinder(EcoRegionType.Terrestrial)));
     }
 
-    public Map<String, String> findEcoRegionProperties(Point point, EcoRegionFinder finder) throws EcoRegionFinderException {
+    private Map<String, String> findEcoRegionProperties(Point point, EcoRegionFinder finder) throws EcoRegionFinderException {
         return ((EcoRegionFinderImpl) finder).findEcoRegion(point);
     }
 

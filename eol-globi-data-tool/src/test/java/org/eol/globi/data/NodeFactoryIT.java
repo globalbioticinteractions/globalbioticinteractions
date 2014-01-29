@@ -1,24 +1,14 @@
 package org.eol.globi.data;
 
-import org.apache.commons.lang3.StringUtils;
-import org.eol.globi.data.taxon.CorrectionService;
 import org.eol.globi.domain.LogMessage;
 import org.eol.globi.domain.Study;
-import org.eol.globi.domain.TaxonNode;
-import org.eol.globi.service.TaxonPropertyEnricher;
-import org.eol.globi.service.TaxonPropertyEnricherFactory;
 import org.junit.Test;
-import org.neo4j.graphdb.Node;
-import org.neo4j.graphdb.index.IndexHits;
 
 import java.util.List;
 import java.util.logging.Level;
 
-import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
-import static org.mockito.AdditionalMatchers.not;
 
 public class NodeFactoryIT extends GraphDBTestCase {
 
