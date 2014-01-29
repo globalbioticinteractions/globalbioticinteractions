@@ -2,9 +2,7 @@ package org.eol.globi.data.taxon;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.data.GraphDBTestCase;
-import org.eol.globi.data.NodeFactory;
 import org.eol.globi.data.NodeFactoryException;
-import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.service.TaxonPropertyEnricher;
 import org.eol.globi.service.TaxonPropertyEnricherFactory;
@@ -26,17 +24,12 @@ public class TaxonServiceImplIT extends GraphDBTestCase {
 
     @BeforeClass
     public static void initEnricher() {
-        taxonEnricher =  TaxonPropertyEnricherFactory.createTaxonEnricher();
+        taxonEnricher = TaxonPropertyEnricherFactory.createTaxonEnricher();
     }
 
     @Before
     public void init() {
-        this.taxonService = new TaxonServiceImpl(new TaxonPropertyEnricher() {
-            @Override
-            public void enrich(Taxon taxon) {
-
-            }
-        }, new CorrectionService() {
+        this.taxonService = new TaxonServiceImpl(taxonEnricher, new CorrectionService() {
             @Override
             public String correct(String taxonName) {
                 return taxonName;
@@ -75,10 +68,9 @@ public class TaxonServiceImplIT extends GraphDBTestCase {
 
     @Test
     public void noDuplicatesOnSynomyms() throws NodeFactoryException {
-        NodeFactory factory = new NodeFactory(getGraphDb(), taxonEnricher);
-        TaxonNode first = factory.getOrCreateTaxon("Galeichthys felis");
-        TaxonNode second = factory.getOrCreateTaxon("Ariopsis felis");
-        TaxonNode third = factory.getOrCreateTaxon("Arius felis");
+        TaxonNode first = taxonService.getOrCreateTaxon("Galeichthys felis", null, null);
+        TaxonNode second = taxonService.getOrCreateTaxon("Ariopsis felis", null, null);
+        TaxonNode third = taxonService.getOrCreateTaxon("Arius felis", null, null);
         assertThat(first.getNodeID(), is(second.getNodeID()));
         assertThat(third.getNodeID(), is(second.getNodeID()));
         assertThat(third.getPath(), is("Animalia | Chordata | Actinopterygii | Siluriformes | Ariidae | Ariopsis | Ariopsis felis | Galeichthys felis"));
@@ -86,26 +78,24 @@ public class TaxonServiceImplIT extends GraphDBTestCase {
 
     @Test
     public void noDuplicatesOnChoppingNames() throws NodeFactoryException {
-        NodeFactory factory = new NodeFactory(getGraphDb(), taxonEnricher);
-        TaxonNode first = factory.getOrCreateTaxon("Ariopsis felis");
-        TaxonNode second = factory.getOrCreateTaxon("Ariopsis felis something");
+        TaxonNode first = taxonService.getOrCreateTaxon("Ariopsis felis", null, null);
+        TaxonNode second = taxonService.getOrCreateTaxon("Ariopsis felis something", null, null);
         assertThat(first.getExternalId(), is(second.getExternalId()));
         assertThat(first.getNodeID(), is(second.getNodeID()));
     }
 
     @Test
     public void noDuplicatesOnAlternateNames() throws NodeFactoryException {
-        NodeFactory factory = new NodeFactory(getGraphDb(), taxonEnricher);
-        TaxonNode first = factory.getOrCreateTaxon("Cliona caribbaea");
-        TaxonNode second = factory.getOrCreateTaxon("Cliona langae");
+        TaxonNode first = taxonService.getOrCreateTaxon("Cliona caribbaea", null, null);
+        TaxonNode second = taxonService.getOrCreateTaxon("Cliona langae", null, null);
         assertThat(first.getExternalId(), is(second.getExternalId()));
+        assertThat(first.getPath(), is(second.getPath()));
         assertThat(first.getNodeID(), is(second.getNodeID()));
     }
 
     @Test
     public void createHomoSapiens() throws NodeFactoryException {
-        NodeFactory factory = new NodeFactory(getGraphDb(), taxonEnricher);
-        TaxonNode taxon = factory.getOrCreateTaxon("Homo sapiens");
+        TaxonNode taxon = taxonService.getOrCreateTaxon("Homo sapiens", null, null);
         assertThat(taxon.getName(), is("Homo sapiens"));
         assertThat(taxon.getExternalId(), is("EOL:327955"));
         assertThat(taxon.getPath(), is(notNullValue()));
@@ -116,8 +106,7 @@ public class TaxonServiceImplIT extends GraphDBTestCase {
 
     @Test(expected = NodeFactoryException.class)
     public void nameTooShort() throws NodeFactoryException {
-        NodeFactory factory = new NodeFactory(getGraphDb(), taxonEnricher);
-        factory.getOrCreateTaxon("");
+        taxonService.getOrCreateTaxon("", null, null);
     }
 
     private void assertZeroHits(TaxonServiceImpl taxonService, String taxonName) {
