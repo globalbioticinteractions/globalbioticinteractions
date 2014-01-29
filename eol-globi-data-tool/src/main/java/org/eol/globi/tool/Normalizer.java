@@ -23,6 +23,7 @@ import org.eol.globi.export.GlobiOWLExporter;
 import org.eol.globi.export.StudyExportUnmatchedSourceTaxaForStudies;
 import org.eol.globi.export.StudyExportUnmatchedTargetTaxaForStudies;
 import org.eol.globi.export.StudyExporter;
+import org.eol.globi.geo.EcoRegionFinder;
 import org.eol.globi.geo.EcoRegionFinderFactory;
 import org.eol.globi.geo.EcoRegionFinderFactoryImpl;
 import org.eol.globi.service.DOIResolverImpl;
@@ -47,7 +48,7 @@ import java.util.zip.GZIPOutputStream;
 public class Normalizer {
     private static final Log LOG = LogFactory.getLog(Normalizer.class);
 
-    private EcoRegionFinderFactory ecoRegionFinderFactory = new EcoRegionFinderFactoryImpl();
+    private EcoRegionFinder ecoRegionFinder = null;
 
     public static void main(final String[] commandLineArguments) throws StudyImporterException {
         new Normalizer().normalize();
@@ -57,11 +58,23 @@ public class Normalizer {
         normalize("./");
     }
 
+    private EcoRegionFinder getEcoRegionFinder() {
+        if (null == ecoRegionFinder) {
+            ecoRegionFinder = new EcoRegionFinderProxy(new EcoRegionFinderFactoryImpl());
+        }
+        return ecoRegionFinder;
+    }
+
+    public void setEcoRegionFinder(EcoRegionFinder finder) {
+        this.ecoRegionFinder = finder;
+    }
+
     public void normalize(String baseDir) throws StudyImporterException {
         final GraphDatabaseService graphService = GraphService.getGraphService(baseDir);
         importData(graphService, TaxonPropertyEnricherFactory.createTaxonEnricher());
         exportData(graphService, baseDir);
         graphService.shutdown();
+        ecoRegionFinder.shutdown();
     }
 
 
@@ -186,20 +199,12 @@ public class Normalizer {
 
     private StudyImporter createStudyImporter(GraphDatabaseService graphService, Class<StudyImporter> studyImporter, TaxonPropertyEnricher taxonEnricher) throws StudyImporterException {
         final NodeFactory factory = new NodeFactory(graphService, taxonEnricher);
-        factory.setEcoRegionFinder(new EcoRegionFinderProxy(getEcoRegionFinderFactory()));
+        factory.setEcoRegionFinder(getEcoRegionFinder());
         factory.setDoiResolver(new DOIResolverImpl());
         ParserFactory parserFactory = new ParserFactoryImpl();
         StudyImporter importer = new StudyImporterFactory(parserFactory, factory).instantiateImporter(studyImporter);
         importer.setLogger(new StudyImportLogger(factory));
         return importer;
-    }
-
-    public void setEcoRegionFinderFactory(EcoRegionFinderFactory ecoRegionFinderFactory) {
-        this.ecoRegionFinderFactory = ecoRegionFinderFactory;
-    }
-
-    public EcoRegionFinderFactory getEcoRegionFinderFactory() {
-        return ecoRegionFinderFactory;
     }
 
 }

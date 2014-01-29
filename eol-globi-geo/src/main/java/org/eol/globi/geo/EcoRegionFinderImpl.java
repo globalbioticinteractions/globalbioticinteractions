@@ -31,24 +31,29 @@ public class EcoRegionFinderImpl implements EcoRegionFinder {
     private static final Log LOG = LogFactory.getLog(EcoRegionFinder.class);
 
     private final EcoRegionFinderConfig config;
+    private FileDataStore store = null;
 
     public EcoRegionFinderImpl(EcoRegionFinderConfig config) {
         this.config = config;
-
     }
 
     public Map<String, String> findEcoRegion(Point point) throws EcoRegionFinderException {
-        FileDataStore store = null;
-        URL dataStoreURL = getDataStoreURLForShapeFile(config.getShapeFilePath());
+        lazyLoadStore();
         try {
-            store = FileDataStoreFinder.getDataStore(dataStoreURL);
             SimpleFeatureSource featureSource = store.getFeatureSource();
             return getFeatureProperties(point, featureSource.getFeatures());
         } catch (IOException e) {
-            throw new EcoRegionFinderException("failed to load data store from url [" + dataStoreURL.toExternalForm() + "]", e);
-        } finally {
-            if (null != store) {
-                store.dispose();
+            throw new EcoRegionFinderException("lookup feature for point [" + point.toText() + "] from shapefile at [" + config.getShapeFilePath() + "]", e);
+        }
+    }
+
+    private void lazyLoadStore() throws EcoRegionFinderException {
+        if (store == null) {
+            URL dataStoreURL = getDataStoreURLForShapeFile(config.getShapeFilePath());
+            try {
+                store = FileDataStoreFinder.getDataStore(dataStoreURL);
+            } catch (IOException e) {
+                throw new EcoRegionFinderException("failed to load data store from url [" + dataStoreURL.toExternalForm() + "]", e);
             }
         }
     }
@@ -94,6 +99,13 @@ public class EcoRegionFinderImpl implements EcoRegionFinder {
         return props == null || !props.containsKey(config.getIdLabel()) ? null : new ArrayList<EcoRegion>() {{
             add(createEcoRegion(props));
         }};
+    }
+
+    @Override
+    public void shutdown() {
+        if (store != null) {
+            store.dispose();
+        }
     }
 
     private EcoRegion createEcoRegion(Map<String, String> props) {

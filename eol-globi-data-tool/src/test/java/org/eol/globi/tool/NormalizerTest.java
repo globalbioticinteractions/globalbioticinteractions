@@ -7,9 +7,9 @@ import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.data.StudyImporterForSimons;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.Taxon;
+import org.eol.globi.geo.EcoRegion;
 import org.eol.globi.geo.EcoRegionFinder;
-import org.eol.globi.geo.EcoRegionFinderFactory;
-import org.eol.globi.geo.EcoRegionType;
+import org.eol.globi.geo.EcoRegionFinderException;
 import org.eol.globi.service.TaxonPropertyEnricher;
 import org.hamcrest.core.Is;
 import org.junit.Test;
@@ -18,6 +18,7 @@ import org.neo4j.graphdb.GraphDatabaseService;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import static junit.framework.Assert.assertNotNull;
@@ -48,17 +49,22 @@ public class NormalizerTest extends GraphDBTestCase {
 
     private Normalizer createNormalizer() {
         Normalizer dataNormalizationTool = new Normalizer();
-
-        dataNormalizationTool.setEcoRegionFinderFactory(new EcoRegionFinderFactory() {
-
+        dataNormalizationTool.setEcoRegionFinder(new EcoRegionFinder() {
             @Override
-            public EcoRegionFinder createEcoRegionFinder(EcoRegionType type) {
-                return null;
+            public Collection<EcoRegion> findEcoRegion(double lat, double lng) throws EcoRegionFinderException {
+                final EcoRegion ecoRegion = new EcoRegion();
+                ecoRegion.setName("some name");
+                ecoRegion.setPath("some | path");
+                ecoRegion.setId("someId");
+                ecoRegion.setGeometry("POINT(1,2)");
+                return new ArrayList<EcoRegion>() {{
+                    add(ecoRegion);
+                }};
             }
 
             @Override
-            public List<EcoRegionFinder> createAll() {
-                return new ArrayList<EcoRegionFinder>();
+            public void shutdown() {
+
             }
         });
         return dataNormalizationTool;

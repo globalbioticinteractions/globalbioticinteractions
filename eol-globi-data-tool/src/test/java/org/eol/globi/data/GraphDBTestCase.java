@@ -50,6 +50,11 @@ public abstract class GraphDBTestCase {
                     add(ecoRegion);
                 }};
             }
+
+            @Override
+            public void shutdown() {
+
+            }
         });
         nodeFactory.setEnvoLookupService(new TestTermLookupService());
         nodeFactory.setTermLookupService(new TestTermLookupService());

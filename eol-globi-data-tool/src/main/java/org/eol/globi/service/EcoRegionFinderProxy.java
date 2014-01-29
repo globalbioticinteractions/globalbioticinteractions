@@ -36,4 +36,13 @@ public class EcoRegionFinderProxy implements EcoRegionFinder {
         }
         return regions == null ? EMPTY_REGIONS : regions;
     }
+
+    @Override
+    public void shutdown() {
+        if (finders != null) {
+            for (EcoRegionFinder finder : finders) {
+                finder.shutdown();
+            }
+        }
+    }
 }
