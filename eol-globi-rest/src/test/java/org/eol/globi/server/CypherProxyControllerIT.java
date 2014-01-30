@@ -9,6 +9,7 @@ import java.io.IOException;
 import static org.hamcrest.core.AnyOf.anyOf;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNot.not;
+import static org.hamcrest.core.IsNull.notNullValue;
 import static org.hamcrest.core.IsNull.nullValue;
 import static org.junit.Assert.assertThat;
 import static org.junit.matchers.JUnitMatchers.containsString;
@@ -104,6 +105,13 @@ public class CypherProxyControllerIT {
                 containsString(ResultFields.TARGET_TAXON_NAME),
                 containsString(ResultFields.INTERACTION_TYPE),
                 containsString(ResultFields.LATITUDE)));
+    }
+
+    @Test
+    public void interactionDOT() throws IOException {
+        String uri = getURLPrefix() + "interaction?type=dot";
+        String response = HttpClient.httpGet(uri);
+        assertThat(response, is(notNullValue()));
     }
 
     @Test

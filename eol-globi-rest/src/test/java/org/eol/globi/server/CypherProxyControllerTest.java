@@ -264,7 +264,7 @@ public class CypherProxyControllerTest {
         JsonNode jsonNode = mapper.readTree(studies);
         assertThat(jsonNode.has("data"), is(true));
         JsonNode data = jsonNode.get("data");
-        assertThat(data.get(0).size()> 0, is(true));
+        assertThat(data.get(0).size() > 0, is(true));
         assertThat(data.get(0).get(0).getValueAsText(), not(is(nullValue())));
     }
 

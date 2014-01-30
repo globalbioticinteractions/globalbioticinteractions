@@ -10,7 +10,7 @@ public class ResultFields {
     public static final String INTERACTION_TYPE = "interaction_type";
 
     public static final String TARGET_TAXON_NAME = "target_taxon_name";
-    public static final Object TARGET_TAXON_EXTERNAL_ID = "target_taxon_external_id";
+    public static final String TARGET_TAXON_EXTERNAL_ID = "target_taxon_external_id";
     public static final String TARGET_TAXON_PATH  = "target_taxon_path";
 
     public static final String SOURCE_TAXON_NAME = "source_taxon_name";

@@ -6,6 +6,8 @@ import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.util.ExternalIdUtil;
 import org.eol.globi.util.InteractUtil;
+import org.neo4j.graphdb.GraphDatabaseService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,6 +25,9 @@ import java.util.Map;
 
 @Controller
 public class CypherProxyController {
+
+    @Autowired
+    private GraphDatabaseService graphDb;
 
     public static final String OBSERVATION_MATCH =
             "MATCH (sourceTaxon)<-[:CLASSIFIED_AS]-(sourceSpecimen)-[:ATE]->(targetSpecimen)-[:CLASSIFIED_AS]->(targetTaxon)," +
@@ -77,7 +82,7 @@ public class CypherProxyController {
                 .append(",targetTaxon.path? as ").append(ResultFields.TARGET_TAXON_PATH);
 
         // fix quick before introducing smarter way to chunk the results
-        query.append(" LIMIT 512");
+        query.append(" LIMIT 256");
         return query.toString();
     }
 
@@ -257,16 +262,16 @@ public class CypherProxyController {
     }
 
     private String getTaxonSelector(String sourceTaxonName, String targetTaxonName) {
-        final String sourceTaxonSelector = "sourceTaxon = " + getTaxonPathSelector(ResultFields.SOURCE_TAXON_NAME);
-        final String targetTaxonSelector = "targetTaxon = " + getTaxonPathSelector(ResultFields.TARGET_TAXON_NAME);
         StringBuilder builder = new StringBuilder();
         if (sourceTaxonName != null) {
+            final String sourceTaxonSelector = "sourceTaxon = " + getTaxonPathSelector(ResultFields.SOURCE_TAXON_NAME);
             builder.append(sourceTaxonSelector);
         }
         if (targetTaxonName != null) {
             if (sourceTaxonName != null) {
                 builder.append(", ");
             }
+            final String targetTaxonSelector = "targetTaxon = " + getTaxonPathSelector(ResultFields.TARGET_TAXON_NAME);
             builder.append(targetTaxonSelector);
         }
 
