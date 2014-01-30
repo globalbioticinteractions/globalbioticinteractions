@@ -1,5 +1,6 @@
 package org.eol.globi.server;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.Specimen;
@@ -27,17 +28,6 @@ public class CypherQueryBuilder {
     public static void addLocationClausesIfNecessary(StringBuilder query, Map parameterMap) {
         query.append(" , sourceSpecimen-[:COLLECTED_AT]->loc ");
         query.append(parameterMap == null ? "" : RequestHelper.buildCypherSpatialWhereClause(parameterMap));
-    }
-
-    public static void addTaxonStartClausesIfNecessary(StringBuilder query, Map parameterMap) {
-        if (parameterMap.containsKey(SOURCE_TAXON_HTTP_PARAM_NAME)) {
-            String luceneQuery = buildLuceneQuery(parameterMap.get(SOURCE_TAXON_HTTP_PARAM_NAME));
-            query.append(", sourceTaxon = node:taxonpaths(\'" + luceneQuery + "\')");
-        }
-        if (parameterMap.containsKey(TARGET_TAXON_HTTP_PARAM_NAME)) {
-            String luceneQuery = buildLuceneQuery(parameterMap.get(TARGET_TAXON_HTTP_PARAM_NAME));
-            query.append(", targetTaxon = node:taxonpaths(\'" + luceneQuery + "\')");
-        }
     }
 
     public static String buildLuceneQuery(Object paramObject) {
@@ -261,15 +251,23 @@ public class CypherQueryBuilder {
         return new CypherQuery(cypherQuery, EMPTY_PARAMS);
     }
 
-    public CypherQuery buildInteractionQuery(Map parameterMap) {
+    public static CypherQuery buildInteractionQuery(Map parameterMap) {
         StringBuilder query = new StringBuilder();
         query.append("START loc = node:locations('*:*') ");
-        addTaxonStartClausesIfNecessary(query, parameterMap);
 
         query.append(" MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen-[interactionType:")
                 .append(InteractUtil.allInteractionsCypherClause())
                 .append("]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon ");
-        addLocationClausesIfNecessary(query, parameterMap);
+        query.append(" , sourceSpecimen-[:COLLECTED_AT]->loc ");
+        boolean hasWhereClause = false;
+        if (parameterMap != null) {
+            String whereClause = RequestHelper.buildCypherSpatialWhereClause(parameterMap);
+            hasWhereClause = whereClause != null;
+            query.append(whereClause);
+        }
+
+        hasWhereClause = appendTaxonFilter(parameterMap, query, hasWhereClause, "sourceTaxon", SOURCE_TAXON_HTTP_PARAM_NAME);
+        appendTaxonFilter(parameterMap, query, hasWhereClause, "targetTaxon", TARGET_TAXON_HTTP_PARAM_NAME);
 
         query.append("RETURN sourceTaxon.externalId? as ").append(ResultFields.SOURCE_TAXON_EXTERNAL_ID)
                 .append(",sourceTaxon.name as ").append(ResultFields.SOURCE_TAXON_NAME)
@@ -283,6 +281,38 @@ public class CypherQueryBuilder {
         query.append(" ");
         query.append(DEFAULT_LIMIT_CLAUSE);
         return new CypherQuery(query.toString());
+    }
+
+    private static boolean appendTaxonFilter(Map parameterMap, StringBuilder query, boolean hasWhereClause, String taxonLabel, String sourceTaxonKey) {
+        List<String> taxa = collectTaxa(parameterMap, sourceTaxonKey);
+        if (taxa != null && taxa.size() > 0) {
+            if (hasWhereClause) {
+                query.append(" AND ");
+            } else {
+                query.append(" WHERE ");
+                hasWhereClause = true;
+            }
+            query.append("has(" + taxonLabel + ".path) AND " + taxonLabel + ".path =~ '(.*(");
+            query.append(StringUtils.join(taxa, "|"));
+            query.append(").*)' ");
+        }
+        return hasWhereClause;
+    }
+
+    private static List<String> collectTaxa(Map parameterMap, String taxonSearchKey) {
+        List<String> taxa = null;
+        if (parameterMap.containsKey(taxonSearchKey)) {
+            taxa = new ArrayList<String>();
+            Object paramObject = parameterMap.get(taxonSearchKey);
+            if (paramObject instanceof String[]) {
+                for (String elem : (String[]) paramObject) {
+                    taxa.add(elem);
+                }
+            } else if (paramObject instanceof String) {
+                taxa.add((String) paramObject);
+            }
+        }
+        return taxa;
     }
 
 

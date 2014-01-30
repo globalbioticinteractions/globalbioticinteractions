@@ -22,8 +22,6 @@ public class CypherProxyController {
     @Autowired
     private GraphDatabaseService graphDb;
 
-    private final CypherQueryBuilder cypherQueryBuilder = new CypherQueryBuilder();
-
     @RequestMapping(value = "/interactionTypes", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
     public String getInteractionTypes() throws IOException {
@@ -35,7 +33,7 @@ public class CypherProxyController {
     @ResponseBody
     public String findInteractions(HttpServletRequest request) throws IOException {
         Map parameterMap = request.getParameterMap();
-        CypherQuery query = cypherQueryBuilder.buildInteractionQuery(parameterMap);
+        CypherQuery query = CypherQueryBuilder.buildInteractionQuery(parameterMap);
         return new CypherQueryExecutor(query.getQuery(), query.getParams()).execute(request);
     }
 
