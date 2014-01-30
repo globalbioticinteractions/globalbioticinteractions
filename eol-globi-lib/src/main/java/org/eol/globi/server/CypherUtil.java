@@ -10,18 +10,18 @@ import java.util.Iterator;
 import java.util.Map;
 
 public class CypherUtil {
-    public static String executeCypherQuery(String query, Map<String, String> params) throws IOException {
+    public static String executeCypherQuery(CypherQuery query) throws IOException {
         HttpPost httpPost = new HttpPost("http://46.4.36.142:7474/db/data/cypher");
         HttpClient.addJsonHeaders(httpPost);
-        httpPost.setEntity(new StringEntity(wrapQuery(query, params)));
+        httpPost.setEntity(new StringEntity(wrapQuery(query)));
         BasicResponseHandler responseHandler = new BasicResponseHandler();
         return HttpUtil.createHttpClient().execute(httpPost, responseHandler);
     }
 
-    private static String wrapQuery(String cypherQuery, Map<String, String> params) {
+    private static String wrapQuery(CypherQuery cypherQuery) {
         String query = "{\"query\":\"";
-        query += cypherQuery;
-        query += " \", \"params\": {" + buildJSONParamList(params) + " } }";
+        query += cypherQuery.getQuery();
+        query += " \", \"params\": {" + buildJSONParamList(cypherQuery.getParams()) + " } }";
         return query;
     }
 

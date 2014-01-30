@@ -11,22 +11,18 @@ import java.util.Map;
 
 public class CypherQueryExecutor {
     private static final Log LOG = LogFactory.getLog(CypherQueryExecutor.class);
-    private final String query;
-    private final Map<String, String> params;
+    private final CypherQuery cypherQuery;
 
     public CypherQueryExecutor(String query, Map<String, String> queryParams) {
-        this.query = query;
-        this.params = queryParams;
+        this(new CypherQuery(query, queryParams));
     }
 
     public CypherQueryExecutor(CypherQuery cypherQuery) {
-        this.query = cypherQuery.getQuery();
-        this.params = cypherQuery.getParams();
-
+        this.cypherQuery = cypherQuery;
     }
 
     public String execute(HttpServletRequest request) throws IOException {
-        LOG.info("executing query: [" + query + "] with params [" + params + "]");
+        LOG.info("executing query: [" + cypherQuery.getQuery() + "] with params [" + cypherQuery.getParams() + "]");
         String type = request == null ? "json" : request.getParameter("type");
         ResultFormatter formatter = new ResultFormatterFactory().create(type);
         if (formatter == null) {
@@ -37,7 +33,7 @@ public class CypherQueryExecutor {
     }
 
     private String executeRemote() throws IOException {
-        return CypherUtil.executeCypherQuery(query, params);
+        return CypherUtil.executeCypherQuery(cypherQuery);
     }
 
 
