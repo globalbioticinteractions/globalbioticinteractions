@@ -1,11 +1,7 @@
 package org.eol.globi.server;
 
 import org.apache.commons.lang3.StringUtils;
-import org.eol.globi.domain.Location;
-import org.eol.globi.domain.Specimen;
-import org.eol.globi.domain.Study;
 import org.eol.globi.util.ExternalIdUtil;
-import org.eol.globi.util.InteractUtil;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
@@ -18,9 +14,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -29,86 +22,21 @@ public class CypherProxyController {
     @Autowired
     private GraphDatabaseService graphDb;
 
-    public static final String OBSERVATION_MATCH =
-            "MATCH (sourceTaxon)<-[:CLASSIFIED_AS]-(sourceSpecimen)-[:ATE]->(targetSpecimen)-[:CLASSIFIED_AS]->(targetTaxon)," +
-                    "(sourceSpecimen)-[:COLLECTED_AT]->(loc)," +
-                    "(sourceSpecimen)<-[collected_rel:COLLECTED]-(study) ";
-
-    public static final String INTERACTION_PREYS_ON = "preysOn";
-    public static final String INTERACTION_PREYED_UPON_BY = "preyedUponBy";
-
-    public static final String INTERACTION_MATCH = "MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen-[:ATE]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon ";
-
-    private static final Map<String, String> EMPTY_PARAMS = new HashMap<String, String>();
-    public static final String SOURCE_TAXON_HTTP_PARAM_NAME = "sourceTaxon";
-    public static final String TARGET_TAXON_HTTP_PARAM_NAME = "targetTaxon";
-
-    private void addLocationClausesIfNecessary(StringBuilder query, Map parameterMap) {
-        query.append(" , sourceSpecimen-[:COLLECTED_AT]->loc ");
-        query.append(parameterMap == null ? "" : RequestHelper.buildCypherSpatialWhereClause(parameterMap));
-    }
+    private final CypherQueryBuilder cypherQueryBuilder = new CypherQueryBuilder();
 
     @RequestMapping(value = "/interactionTypes", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
     public String getInteractionTypes() throws IOException {
-        return "{ \"" + INTERACTION_PREYS_ON + "\":{\"source\":\"predator\",\"target\":\"prey\"}" +
-                ",\"" + INTERACTION_PREYED_UPON_BY + "\":{\"source\":\"prey\",\"target\":\"predator\"}}";
+        return "{ \"" + CypherQueryBuilder.INTERACTION_PREYS_ON + "\":{\"source\":\"predator\",\"target\":\"prey\"}" +
+                ",\"" + CypherQueryBuilder.INTERACTION_PREYED_UPON_BY + "\":{\"source\":\"prey\",\"target\":\"predator\"}}";
     }
 
     @RequestMapping(value = "/interaction", method = RequestMethod.GET)
     @ResponseBody
     public String findInteractions(HttpServletRequest request) throws IOException {
         Map parameterMap = request.getParameterMap();
-        String query = buildInteractionQuery(parameterMap);
-        return new CypherQueryExecutor(query, null).execute(request);
-    }
-
-    protected String buildInteractionQuery(Map parameterMap) {
-        StringBuilder query = new StringBuilder();
-        query.append("START loc = node:locations('*:*') ");
-        addTaxonStartClausesIfNecessary(query, parameterMap);
-
-        query.append(" MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen-[interactionType:")
-                .append(InteractUtil.allInteractionsCypherClause())
-                .append("]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon ");
-        addLocationClausesIfNecessary(query, parameterMap);
-
-        query.append("RETURN sourceTaxon.externalId? as ").append(ResultFields.SOURCE_TAXON_EXTERNAL_ID)
-                .append(",sourceTaxon.name as ").append(ResultFields.SOURCE_TAXON_NAME)
-                .append(",sourceTaxon.path? as ").append(ResultFields.SOURCE_TAXON_PATH)
-                .append(",type(interactionType) as ").append(ResultFields.INTERACTION_TYPE)
-                .append(",targetTaxon.externalId? as ").append(ResultFields.TARGET_TAXON_EXTERNAL_ID)
-                .append(",targetTaxon.name as ").append(ResultFields.TARGET_TAXON_NAME)
-                .append(",targetTaxon.path? as ").append(ResultFields.TARGET_TAXON_PATH);
-
-        // fix quick before introducing smarter way to chunk the results
-        query.append(" LIMIT 256");
-        return query.toString();
-    }
-
-    private void addTaxonStartClausesIfNecessary(StringBuilder query, Map parameterMap) {
-        if (parameterMap.containsKey(SOURCE_TAXON_HTTP_PARAM_NAME)) {
-            String luceneQuery = buildLuceneQuery(parameterMap.get(SOURCE_TAXON_HTTP_PARAM_NAME));
-            query.append(", sourceTaxon = node:taxonpaths(\'" + luceneQuery + "\')");
-        }
-        if (parameterMap.containsKey(TARGET_TAXON_HTTP_PARAM_NAME)) {
-            String luceneQuery = buildLuceneQuery(parameterMap.get(TARGET_TAXON_HTTP_PARAM_NAME));
-            query.append(", targetTaxon = node:taxonpaths(\'" + luceneQuery + "\')");
-        }
-    }
-
-    private String buildLuceneQuery(Object paramObject) {
-        List<String> taxonNames = new ArrayList<String>();
-        if (paramObject instanceof String[]) {
-            String[] names = (String[]) paramObject;
-            for (String name : names) {
-                taxonNames.add(lucenePathQuery(name));
-            }
-        } else if (paramObject instanceof String) {
-            taxonNames.add(lucenePathQuery((String) paramObject));
-        }
-
-        return StringUtils.join(taxonNames, " OR ");
+        CypherQuery query = cypherQueryBuilder.buildInteractionQuery(parameterMap);
+        return new CypherQueryExecutor(query.getQuery(), query.getParams()).execute(request);
     }
 
     @RequestMapping(value = "/taxon/{sourceTaxonName}/{interactionType}", method = RequestMethod.GET, headers = "content-type=*/*")
@@ -129,40 +57,15 @@ public class CypherProxyController {
 
 
     public CypherQueryExecutor findDistinctTaxonInteractions(String sourceTaxonName, String interactionType, String targetTaxonName, Map parameterMap) throws IOException {
-        StringBuilder query = new StringBuilder();
-        Map<String, String> params = EMPTY_PARAMS;
-        if (INTERACTION_PREYS_ON.equals(interactionType)) {
-            query.append("START ").append(getTaxonSelector(sourceTaxonName, targetTaxonName))
-                    .append(" ")
-                    .append(INTERACTION_MATCH);
-            addLocationClausesIfNecessary(query, parameterMap);
-            query.append("RETURN sourceTaxon.name as " + ResultFields.SOURCE_TAXON_NAME + ", '" + interactionType + "' as " + ResultFields.INTERACTION_TYPE + ", collect(distinct(targetTaxon.name)) as " + ResultFields.TARGET_TAXON_NAME);
-            params = getParams(sourceTaxonName, targetTaxonName);
-        } else if (INTERACTION_PREYED_UPON_BY.equals(interactionType)) {
-            // "preyedUponBy is inverted interaction of "preysOn"
-            query.append("START ").append(getTaxonSelector(targetTaxonName, sourceTaxonName))
-                    .append(" ")
-                    .append(INTERACTION_MATCH);
-            addLocationClausesIfNecessary(query, parameterMap);
-            query.append("RETURN targetTaxon.name as " + ResultFields.SOURCE_TAXON_NAME + ", '" + interactionType + "' as " + ResultFields.INTERACTION_TYPE + ", collect(distinct(sourceTaxon.name)) as " + ResultFields.TARGET_TAXON_NAME);
-            params = getParams(targetTaxonName, sourceTaxonName);
-        }
-
-        if (query.length() == 0) {
-            throw new IllegalArgumentException("unsupported interaction type [" + interactionType + "]");
-        }
-
-        return new CypherQueryExecutor(query.toString(), params);
+        CypherQuery cypherQuery = CypherQueryBuilder.distinctInteractions(sourceTaxonName, interactionType, targetTaxonName, parameterMap);
+        return new CypherQueryExecutor(cypherQuery);
     }
 
     @RequestMapping(value = "/findTaxon/{taxonName}", method = RequestMethod.GET)
     @ResponseBody
     public String findTaxon(HttpServletRequest request, @PathVariable("taxonName") String taxonName) throws IOException {
-        String query = "START taxon = node:taxons('*:*') " +
-                "WHERE taxon.name =~ '" + taxonName + ".*'" +
-                "RETURN distinct(taxon.name) " +
-                "LIMIT 15";
-        return new CypherQueryExecutor(query, null).execute(request);
+        CypherQuery cypherQuery = CypherQueryBuilder.findTaxon(taxonName);
+        return new CypherQueryExecutor(cypherQuery).execute(request);
     }
 
     @RequestMapping(value = "/taxon/{sourceTaxonName}/{interactionType}/{targetTaxonName}", method = RequestMethod.GET)
@@ -190,96 +93,8 @@ public class CypherProxyController {
     }
 
     private CypherQueryExecutor findObservationsForInteraction(String sourceTaxonName, String interactionType, String targetTaxonName, Map parameterMap) throws IOException {
-        Map<String, String> query_params;
-        StringBuilder query = new StringBuilder();
-        boolean isInvertedInteraction = INTERACTION_PREYED_UPON_BY.equals(interactionType);
-
-        String predatorPrefix = isInvertedInteraction ? ResultFields.PREFIX_TARGET_SPECIMEN : ResultFields.PREFIX_SOURCE_SPECIMEN;
-        String preyPrefix = isInvertedInteraction ? ResultFields.PREFIX_SOURCE_SPECIMEN : ResultFields.PREFIX_TARGET_SPECIMEN;
-
-        final StringBuilder returnClause = new StringBuilder();
-        returnClause.append("loc." + Location.LATITUDE + " as ").append(ResultFields.LATITUDE)
-                .append(",loc." + Location.LONGITUDE + " as ").append(ResultFields.LONGITUDE)
-                .append(",loc." + Location.ALTITUDE + "? as ").append(ResultFields.ALTITUDE)
-                .append(",study." + Study.TITLE + " as ").append(ResultFields.STUDY_TITLE)
-                .append(",collected_rel.dateInUnixEpoch? as ").append(ResultFields.COLLECTION_TIME_IN_UNIX_EPOCH)
-                .append(",ID(sourceSpecimen) as tmp_and_unique_")
-                .append(predatorPrefix).append("_id,")
-                .append("ID(targetSpecimen) as tmp_and_unique_")
-                .append(preyPrefix).append("_id,")
-                .append("sourceSpecimen." + Specimen.LIFE_STAGE_LABEL + "? as ").append(predatorPrefix).append(ResultFields.SUFFIX_LIFE_STAGE).append(",")
-                .append("targetSpecimen." + Specimen.LIFE_STAGE_LABEL + "? as ").append(preyPrefix).append(ResultFields.SUFFIX_LIFE_STAGE).append(",")
-                .append("sourceSpecimen." + Specimen.BODY_PART_LABEL + "? as ").append(predatorPrefix).append(ResultFields.SUFFIX_BODY_PART).append(",")
-                .append("targetSpecimen." + Specimen.BODY_PART_LABEL + "? as ").append(preyPrefix).append(ResultFields.SUFFIX_BODY_PART).append(",")
-                .append("sourceSpecimen." + Specimen.PHYSIOLOGICAL_STATE_LABEL + "? as ").append(predatorPrefix).append(ResultFields.SUFFIX_PHYSIOLOGICAL_STATE).append(",")
-                .append("targetSpecimen." + Specimen.PHYSIOLOGICAL_STATE_LABEL + "? as ").append(preyPrefix).append(ResultFields.SUFFIX_PHYSIOLOGICAL_STATE).append(",")
-                .append("targetSpecimen." + Specimen.TOTAL_COUNT + "? as ").append(preyPrefix).append("_total_count").append(",")
-                .append("targetSpecimen." + Specimen.TOTAL_VOLUME_IN_ML + "? as ").append(preyPrefix).append("_total_volume_ml").append(",")
-                .append("targetSpecimen." + Specimen.FREQUENCY_OF_OCCURRENCE + "? as ").append(preyPrefix).append("_frequency_of_occurrence");
-
-        if (INTERACTION_PREYS_ON.equals(interactionType)) {
-            query.append("START ").append(getTaxonSelector(sourceTaxonName, targetTaxonName)).append(" ")
-                    .append(OBSERVATION_MATCH)
-                    .append(getSpatialWhereClause(parameterMap))
-                    .append(" RETURN ")
-                    .append("sourceTaxon.name as ").append(ResultFields.SOURCE_TAXON_NAME)
-                    .append(",'").append(interactionType).append("' as ").append(ResultFields.INTERACTION_TYPE)
-                    .append(",targetTaxon.name as ").append(ResultFields.TARGET_TAXON_NAME).append(", ")
-                    .append(returnClause);
-            query_params = getParams(sourceTaxonName, targetTaxonName);
-        } else if (isInvertedInteraction) {
-            // note that "preyedUponBy" is interpreted as an inverted "preysOn" relationship
-            query.append("START ").append(getTaxonSelector(targetTaxonName, sourceTaxonName)).append(" ")
-                    .append(OBSERVATION_MATCH)
-                    .append(getSpatialWhereClause(parameterMap))
-                    .append(" RETURN ")
-                    .append("targetTaxon.name as ").append(ResultFields.SOURCE_TAXON_NAME)
-                    .append(",'").append(interactionType).append("' as ").append(ResultFields.INTERACTION_TYPE)
-                    .append(",sourceTaxon.name as ").append(ResultFields.TARGET_TAXON_NAME).append(", ")
-                    .append(returnClause);
-            query_params = getParams(targetTaxonName, sourceTaxonName);
-        } else {
-            throw new IllegalArgumentException("unsupported interaction type [" + interactionType + "]");
-        }
-
-        return new CypherQueryExecutor(query.toString(), query_params);
-    }
-
-    private Map<String, String> getParams(String sourceTaxonName, String targetTaxonName) {
-        Map<String, String> paramMap = new HashMap<String, String>();
-        if (sourceTaxonName != null) {
-            paramMap.put(ResultFields.SOURCE_TAXON_NAME, lucenePathQuery(sourceTaxonName));
-        }
-
-        if (targetTaxonName != null) {
-            paramMap.put(ResultFields.TARGET_TAXON_NAME, lucenePathQuery(targetTaxonName));
-        }
-        return paramMap;
-    }
-
-    private String lucenePathQuery(String targetTaxonName) {
-        return "path:\\\"" + targetTaxonName + "\\\"";
-    }
-
-    private String getTaxonSelector(String sourceTaxonName, String targetTaxonName) {
-        StringBuilder builder = new StringBuilder();
-        if (sourceTaxonName != null) {
-            final String sourceTaxonSelector = "sourceTaxon = " + getTaxonPathSelector(ResultFields.SOURCE_TAXON_NAME);
-            builder.append(sourceTaxonSelector);
-        }
-        if (targetTaxonName != null) {
-            if (sourceTaxonName != null) {
-                builder.append(", ");
-            }
-            final String targetTaxonSelector = "targetTaxon = " + getTaxonPathSelector(ResultFields.TARGET_TAXON_NAME);
-            builder.append(targetTaxonSelector);
-        }
-
-        return builder.toString();
-    }
-
-    private String getTaxonPathSelector(String taxonParamName) {
-        return "node:taxonpaths({" + taxonParamName + "})";
+        CypherQuery cypherQuery = CypherQueryBuilder.interactionObservations(sourceTaxonName, interactionType, targetTaxonName, parameterMap);
+        return new CypherQueryExecutor(cypherQuery.getQuery(), cypherQuery.getParams());
     }
 
 
@@ -289,57 +104,32 @@ public class CypherProxyController {
         return findObservationsOf(request, sourceTaxonName, interactionType, null);
     }
 
-
-    private String getSpatialWhereClause(Map parameterMap) {
-        return parameterMap == null ? "" : RequestHelper.buildCypherSpatialWhereClause(parameterMap);
-    }
-
     @RequestMapping(value = "/locations", method = RequestMethod.GET)
     @ResponseBody
     @Cacheable(value = "locationCache")
     public String locations(HttpServletRequest request) throws IOException {
-        return new CypherQueryExecutor("START loc = node:locations('*:*') RETURN loc.latitude, loc.longitude", null).execute(request);
+        return new CypherQueryExecutor(CypherQueryBuilder.locations()).execute(request);
     }
-
 
     @RequestMapping(value = "/contributors", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
     @Cacheable(value = "contributorCache")
     public String contributors(@RequestParam(required = false) final String source) throws IOException {
-        String whereClause = StringUtils.isBlank(source) ? "" : " WHERE study.source = {source}";
-        Map<String, String> params = StringUtils.isBlank(source) ? EMPTY_PARAMS : new HashMap<String, String>() {{
-            put("source", source);
-        }};
-        String cypherQuery = "START study=node:studies('*:*')" +
-                " MATCH study-[:COLLECTED]->sourceSpecimen-[interact:" + InteractUtil.allInteractionsCypherClause() + "]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon, sourceSpecimen-[:CLASSIFIED_AS]->sourceTaxon " +
-                whereClause +
-                " RETURN study.institution?, study.period?, study.description, study.contributor?, count(interact), count(distinct(sourceTaxon)), count(distinct(targetTaxon)), study.title, study.citation?, study.doi?, study.source";
-        return new CypherQueryExecutor(cypherQuery, params).execute(null);
+        return new CypherQueryExecutor(CypherQueryBuilder.references(source)).execute(null);
     }
 
     @RequestMapping(value = "/info", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
     @Cacheable(value = "infoCache")
     public String info(@RequestParam(required = false) final String source) throws IOException {
-        String whereClause = StringUtils.isBlank(source) ? "" : " WHERE study.source = {source}";
-        Map<String, String> params = StringUtils.isBlank(source) ? EMPTY_PARAMS : new HashMap<String, String>() {{
-            put("source", source);
-        }};
-        String cypherQuery = "START study=node:studies('*:*')" +
-                " MATCH study-[:COLLECTED]->sourceSpecimen-[interact:" + InteractUtil.allInteractionsCypherClause() + "]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon, sourceSpecimen-[:CLASSIFIED_AS]->sourceTaxon " +
-                whereClause +
-                " RETURN count(distinct(study)) as `number of studies`, count(interact) as `number of interactions`, count(distinct(sourceTaxon)) as `number of distinct source taxa (e.g. predators)`, count(distinct(targetTaxon)) as `number of distinct target taxa (e.g. prey)`, count(distinct(study.source)) as `number of distinct study sources`";
-        return new CypherQueryExecutor(cypherQuery, params).execute(null);
+        return new CypherQueryExecutor(CypherQueryBuilder.stats(source)).execute(null);
     }
 
     @RequestMapping(value = "/sources", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
     @Cacheable(value = "sourcesCache")
     public String sources() throws IOException {
-        String cypherQuery = "START study=node:studies('*:*')" +
-                " RETURN distinct(study.source)";
-        CypherQueryExecutor cypherQueryExecutor = new CypherQueryExecutor(cypherQuery, EMPTY_PARAMS);
-        return cypherQueryExecutor.execute(null);
+        return new CypherQueryExecutor(CypherQueryBuilder.sourcesQuery()).execute(null);
     }
 
 
@@ -372,23 +162,15 @@ public class CypherProxyController {
     @RequestMapping(value = "/findExternalIdForTaxon/{taxonName}", method = RequestMethod.GET)
     @ResponseBody
     public String findExternalIdForTaxon(HttpServletRequest request, @PathVariable("taxonName") final String taxonName) throws IOException {
-        String query = "START taxon = node:taxons(name={taxonName}) " +
-                " RETURN taxon.externalId? as externalId";
-
-        return new CypherQueryExecutor(query, new HashMap<String, String>() {{
-            put("taxonName", taxonName);
-        }}).execute(request);
+        CypherQuery cypherQuery = CypherQueryBuilder.externalIdForTaxon(taxonName);
+        return new CypherQueryExecutor(cypherQuery).execute(request);
     }
 
     @RequestMapping(value = "/findExternalIdForStudy/{studyTitle}", method = RequestMethod.GET)
     @ResponseBody
     public String findExternalIdForStudy(HttpServletRequest request, @PathVariable("studyTitle") final String studyTitle) throws IOException {
-        String query = "START study = node:studies(title={studyTitle}) " +
-                " RETURN study.externalId? as study";
-
-        return new CypherQueryExecutor(query, new HashMap<String, String>() {{
-            put("studyTitle", studyTitle);
-        }}).execute(request);
+        CypherQuery cypherQuery = CypherQueryBuilder.externalIdForStudy(studyTitle);
+        return new CypherQueryExecutor(cypherQuery).execute(request);
     }
 
     private String buildJsonUrl(String url) {
@@ -405,16 +187,9 @@ public class CypherProxyController {
     @ResponseBody
     public String findShortestPaths(HttpServletRequest request, @PathVariable("startTaxon") final String startTaxon,
                                     @PathVariable("endTaxon") final String endTaxon) throws IOException {
-        String query = "START startNode = node:taxons(name={startTaxon}),endNode = node:taxons(name={endTaxon}) " +
-                "MATCH p = allShortestPaths(startNode-[:" + InteractUtil.allInteractionsCypherClause() + "|CLASSIFIED_AS*..100]-endNode) " +
-                "RETURN extract(n in (filter(x in nodes(p) : has(x.name))) : " +
-                "coalesce(n.name?)) as shortestPaths " +
-                "LIMIT 10";
+        CypherQuery cypherQuery = CypherQueryBuilder.shortestPathQuery(startTaxon, endTaxon);
 
-        return new CypherQueryExecutor(query, new HashMap<String, String>() {{
-            put("startTaxon", startTaxon);
-            put("endTaxon", endTaxon);
-        }}).execute(request);
+        return new CypherQueryExecutor(cypherQuery).execute(request);
     }
 
     private String getUrl(String result, String externalIdPrefix, String urlPrefix) {

@@ -9,9 +9,19 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class CypherResultFormatter {
+public class ResultFormatterJSONv2 implements ResultFormatter {
 
-    public static String format(JsonNode jsonNode) throws IOException {
+    @Override
+    public String format(String result) throws ResultFormattingException {
+        try {
+            JsonNode jsonNode = CypherQueryExecutor.parse(result);
+            return format(jsonNode);
+        } catch (IOException e) {
+            throw new ResultFormattingException("failed to format result", e);
+        }
+    }
+
+    private String format(JsonNode jsonNode) throws IOException {
         List<String> columnNames = new ArrayList<String>();
 
         JsonNode columns = jsonNode.get("columns");
@@ -61,7 +71,7 @@ public class CypherResultFormatter {
         return mapper.writeValueAsString(interactions);
     }
 
-    private static void parseRow(List<String> columnNames, JsonNode row, Map<String, Object> interaction, Map<String, String> sourceTaxon, Map<String, String> targetTaxon, List<Map<String, String>> targetTaxa, int i) {
+    private void parseRow(List<String> columnNames, JsonNode row, Map<String, Object> interaction, Map<String, String> sourceTaxon, Map<String, String> targetTaxon, List<Map<String, String>> targetTaxa, int i) {
         String colName = columnNames.get(i);
         final JsonNode value = row.get(i);
         if (ResultFields.INTERACTION_TYPE.equals(colName)) {
@@ -117,7 +127,7 @@ public class CypherResultFormatter {
         }
     }
 
-    private static void addTargetTaxon(List<Map<String, String>> targetTaxa, final JsonNode name) {
+    private void addTargetTaxon(List<Map<String, String>> targetTaxa, final JsonNode name) {
         targetTaxa.add(new HashMap<String, String>() {{
             put("name", name.getValueAsText());
         }});

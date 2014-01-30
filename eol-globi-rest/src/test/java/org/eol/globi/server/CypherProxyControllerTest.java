@@ -25,21 +25,21 @@ public class CypherProxyControllerTest {
 
     @Test
     public void findPrey() throws IOException, URISyntaxException {
-        String list = new CypherProxyController().findPreyOf(null, "Homo sapiens", CypherProxyController.INTERACTION_PREYS_ON);
+        String list = new CypherProxyController().findPreyOf(null, "Homo sapiens", CypherQueryBuilder.INTERACTION_PREYS_ON);
         assertThat(list, is(notNullValue()));
     }
 
     @Test
     public void findThunnusPrey() throws IOException, URISyntaxException {
         // see https://github.com/jhpoelen/eol-globi-data/issues/11
-        String list = new CypherProxyController().findPreyOf(null, "Thunnus", CypherProxyController.INTERACTION_PREYS_ON);
+        String list = new CypherProxyController().findPreyOf(null, "Thunnus", CypherQueryBuilder.INTERACTION_PREYS_ON);
         assertThat(list, containsString("Thunnus alalunga"));
         assertThat(list, containsString("Thunnus albacares"));
     }
 
     @Test
     public void findPreyAtLocation() throws IOException, URISyntaxException {
-        String list = new CypherProxyController().findPreyOf(getLocationRequest(), "Homo sapiens", CypherProxyController.INTERACTION_PREYS_ON);
+        String list = new CypherProxyController().findPreyOf(getLocationRequest(), "Homo sapiens", CypherQueryBuilder.INTERACTION_PREYS_ON);
         assertThat(list, is(notNullValue()));
     }
 
@@ -70,34 +70,34 @@ public class CypherProxyControllerTest {
 
     @Test
     public void findPreyAtLocationNoLongitude() throws IOException, URISyntaxException {
-        String list = new CypherProxyController().findPreyOf(null, "Homo sapiens", CypherProxyController.INTERACTION_PREYS_ON);
+        String list = new CypherProxyController().findPreyOf(null, "Homo sapiens", CypherQueryBuilder.INTERACTION_PREYS_ON);
         assertThat(list, is(notNullValue()));
     }
 
     @Test
     public void findPreyAtLocationNoLatitude() throws IOException, URISyntaxException {
-        String list = new CypherProxyController().findPreyOf(null, "Homo sapiens", CypherProxyController.INTERACTION_PREYS_ON);
+        String list = new CypherProxyController().findPreyOf(null, "Homo sapiens", CypherQueryBuilder.INTERACTION_PREYS_ON);
         assertThat(list, is(notNullValue()));
     }
 
     @Test
     public void findPredator() throws IOException, URISyntaxException {
-        String list = new CypherProxyController().findDistinctTaxonInteractions(null, CypherProxyController.INTERACTION_PREYS_ON, "Hemiramphus brasiliensis", null).execute(null);
+        String list = new CypherProxyController().findDistinctTaxonInteractions(null, CypherQueryBuilder.INTERACTION_PREYS_ON, "Hemiramphus brasiliensis", null).execute(null);
         assertThat(list, is(notNullValue()));
     }
 
     @Test
     public void findTargetsForSource() throws IOException, URISyntaxException {
-        String list = new CypherProxyController().findDistinctTaxonInteractions("Homo sapiens", CypherProxyController.INTERACTION_PREYS_ON, "Hemiramphus brasiliensis", null).execute(null);
+        String list = new CypherProxyController().findDistinctTaxonInteractions("Homo sapiens", CypherQueryBuilder.INTERACTION_PREYS_ON, "Hemiramphus brasiliensis", null).execute(null);
         assertThat(list, is(notNullValue()));
     }
 
 
     @Test
     public void findPredatorObservations() throws IOException, URISyntaxException {
-        String list = new CypherProxyController().findObservationsOf(null, "Ariopsis felis", CypherProxyController.INTERACTION_PREYS_ON);
+        String list = new CypherProxyController().findObservationsOf(null, "Ariopsis felis", CypherQueryBuilder.INTERACTION_PREYS_ON);
         assertThat(list, is(notNullValue()));
-        list = new CypherProxyController().findObservationsOf(null, "Rattus rattus", CypherProxyController.INTERACTION_PREYS_ON);
+        list = new CypherProxyController().findObservationsOf(null, "Rattus rattus", CypherQueryBuilder.INTERACTION_PREYS_ON);
         assertThat(list, is(notNullValue()));
     }
 
@@ -106,7 +106,7 @@ public class CypherProxyControllerTest {
         HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
         when(request.getParameter("type")).thenReturn("csv");
 
-        String list = new CypherProxyController().findPreyOf(request, "Ariopsis felis", CypherProxyController.INTERACTION_PREYS_ON);
+        String list = new CypherProxyController().findPreyOf(request, "Ariopsis felis", CypherQueryBuilder.INTERACTION_PREYS_ON);
         String[] rows = list.split("\n");
         String[] rows_no_header = ArrayUtils.remove(rows, 0);
         assertThat(rows_no_header.length > 0, is(true));
@@ -130,7 +130,7 @@ public class CypherProxyControllerTest {
         when(request.getParameter("type")).thenReturn("csv");
         when(request.getParameter("includeObservations")).thenReturn("true");
 
-        String list = new CypherProxyController().findObservationsOf(request, "Ariopsis felis", CypherProxyController.INTERACTION_PREYS_ON);
+        String list = new CypherProxyController().findObservationsOf(request, "Ariopsis felis", CypherQueryBuilder.INTERACTION_PREYS_ON);
         assertThat(list, allOf(containsString("\"latitude\",\"longitude\""), not(containsString(",null,"))));
     }
 
@@ -140,7 +140,7 @@ public class CypherProxyControllerTest {
         when(request.getParameter("type")).thenReturn("json.v2");
         when(request.getParameter("includeObservations")).thenReturn("true");
 
-        String list = new CypherProxyController().findObservationsOf(request, "Ariopsis felis", CypherProxyController.INTERACTION_PREYS_ON);
+        String list = new CypherProxyController().findObservationsOf(request, "Ariopsis felis", CypherQueryBuilder.INTERACTION_PREYS_ON);
         assertThat(list, allOf(containsString("\"source\":"),
                 containsString("\"target\":"),
                 containsString("\"latitude\":"),
@@ -153,7 +153,7 @@ public class CypherProxyControllerTest {
         HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
         when(request.getParameter("type")).thenReturn("json.v2");
 
-        String list = new CypherProxyController().findPreyOf(request, "Ariopsis felis", CypherProxyController.INTERACTION_PREYS_ON);
+        String list = new CypherProxyController().findPreyOf(request, "Ariopsis felis", CypherQueryBuilder.INTERACTION_PREYS_ON);
         assertThat(list, allOf(containsString("\"source\":"), containsString("\"target\":"), containsString("\"type\":\"preysOn\"")));
     }
 
@@ -163,20 +163,20 @@ public class CypherProxyControllerTest {
         when(request.getParameter("includeObservations")).thenReturn("true");
 
 
-        String list = new CypherProxyController().findObservationsOf(request, "Rattus rattus", CypherProxyController.INTERACTION_PREYED_UPON_BY);
+        String list = new CypherProxyController().findObservationsOf(request, "Rattus rattus", CypherQueryBuilder.INTERACTION_PREYED_UPON_BY);
         assertThat(list, is(notNullValue()));
 
-        list = new CypherProxyController().findObservationsOf(request, "Ariopsis felis", CypherProxyController.INTERACTION_PREYED_UPON_BY);
+        list = new CypherProxyController().findObservationsOf(request, "Ariopsis felis", CypherQueryBuilder.INTERACTION_PREYED_UPON_BY);
         assertThat(list, is(notNullValue()));
     }
 
 
     @Test
     public void findPredatorPreyObservations() throws IOException, URISyntaxException {
-        String list = new CypherProxyController().findObservationsOf(null, "Rattus rattus", CypherProxyController.INTERACTION_PREYED_UPON_BY, "Homo sapiens");
+        String list = new CypherProxyController().findObservationsOf(null, "Rattus rattus", CypherQueryBuilder.INTERACTION_PREYED_UPON_BY, "Homo sapiens");
         assertThat(list, is(notNullValue()));
 
-        list = new CypherProxyController().findObservationsOf(null, "Ariopsis felis", CypherProxyController.INTERACTION_PREYS_ON, "Rattus rattus");
+        list = new CypherProxyController().findObservationsOf(null, "Ariopsis felis", CypherQueryBuilder.INTERACTION_PREYS_ON, "Rattus rattus");
         assertThat(list, is(notNullValue()));
     }
 
@@ -241,8 +241,8 @@ public class CypherProxyControllerTest {
                 put("se_lng", new String[]{"-66.48"});
             }
         };
-        String query = new CypherProxyController().buildInteractionQuery(params);
-        String expectedQuery = "START loc = node:locations('*:*') , sourceTaxon = node:taxonpaths('path:\\\"Mammalia\\\"'), targetTaxon = node:taxonpaths('path:\\\"Reptilia\\\"') MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen-[interactionType:PREYS_UPON|PARASITE_OF|HAS_HOST|INTERACTS_WITH|HOST_OF|POLLINATES|PERCHING_ON|ATE]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon  , sourceSpecimen-[:COLLECTED_AT]->loc WHERE loc is not null AND loc.latitude < 18.34 AND loc.longitude > -66.5 AND loc.latitude > 18.14 AND loc.longitude < -66.48 RETURN sourceTaxon.externalId? as source_taxon_external_id,sourceTaxon.name as source_taxon_name,sourceTaxon.path? as source_taxon_path,type(interactionType) as interaction_type,targetTaxon.externalId? as target_taxon_external_id,targetTaxon.name as target_taxon_name,targetTaxon.path? as target_taxon_path LIMIT 512";
+        String query = new CypherQueryBuilder().buildInteractionQuery(params);
+        String expectedQuery = "START loc = node:locations('*:*') , sourceTaxon = node:taxonpaths('path:\\\"Mammalia\\\"'), targetTaxon = node:taxonpaths('path:\\\"Reptilia\\\"') MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen-[interactionType:PREYS_UPON|PARASITE_OF|HAS_HOST|INTERACTS_WITH|HOST_OF|POLLINATES|PERCHING_ON|ATE]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon  , sourceSpecimen-[:COLLECTED_AT]->loc WHERE loc is not null AND loc.latitude < 18.34 AND loc.longitude > -66.5 AND loc.latitude > 18.14 AND loc.longitude < -66.48 RETURN sourceTaxon.externalId? as source_taxon_external_id,sourceTaxon.name as source_taxon_name,sourceTaxon.path? as source_taxon_path,type(interactionType) as interaction_type,targetTaxon.externalId? as target_taxon_external_id,targetTaxon.name as target_taxon_name,targetTaxon.path? as target_taxon_path " + CypherQueryBuilder.DEFAULT_LIMIT_CLAUSE;
         assertThat(query, is(expectedQuery));
     }
 
