@@ -1,8 +1,6 @@
 package org.eol.globi.data.taxon;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.queryParser.QueryParser;
 import org.eol.globi.data.CharsetConstant;
 import org.eol.globi.data.NodeFactoryException;
@@ -20,8 +18,6 @@ import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.IndexHits;
 import org.neo4j.graphdb.index.IndexManager;
 import org.neo4j.helpers.collection.MapUtil;
-
-import java.util.ArrayList;
 
 public class TaxonServiceImpl implements TaxonService {
     private final GraphDatabaseService graphDbService;
@@ -95,9 +91,25 @@ public class TaxonServiceImpl implements TaxonService {
                         taxon.setName(truncatedName);
                     }
                 }
+            } else {
+                if (!StringUtils.equals(correctedName, taxonNode.getName())) {
+                    addAltenateNameToIndex(taxonNode, correctedName);
+                }
             }
         }
         return taxonNode;
+    }
+
+    private void addAltenateNameToIndex(TaxonNode taxonNode, String alternateName) {
+        Transaction tx = taxonNode.getUnderlyingNode().getGraphDatabase().beginTx();
+        try {
+            if (StringUtils.isNotBlank(alternateName)) {
+                taxons.add(taxonNode.getUnderlyingNode(), PropertyAndValueDictionary.NAME, alternateName);
+            }
+            tx.success();
+        } finally {
+            tx.finish();
+        }
     }
 
     private TaxonNode addNoMatchTaxon(String externalId, String path, String correctedName) {
@@ -116,7 +128,7 @@ public class TaxonServiceImpl implements TaxonService {
             taxonNode.setExternalId(taxon.getExternalId());
             taxonNode.setPath(taxon.getPath());
             taxonNode.setCommonNames(taxon.getCommonNames());
-            addToIndeces(taxonNode);
+            addToIndeces(taxonNode, taxon.getName());
             transaction.success();
         } finally {
             transaction.finish();
@@ -133,7 +145,7 @@ public class TaxonServiceImpl implements TaxonService {
         if (null != path) {
             taxon.setPath(path);
         }
-        addToIndeces(taxon);
+        addToIndeces(taxon, taxon.getName());
         return taxon;
     }
 
@@ -165,10 +177,9 @@ public class TaxonServiceImpl implements TaxonService {
         return taxonNameSuggestions.query("name:\"" + wholeOrPartialScientificOrCommonName + "\"");
     }
 
-    private void addToIndeces(TaxonNode taxon) {
-        String name = taxon.getName();
-        if (StringUtils.isNotBlank(name)) {
-            taxons.add(taxon.getUnderlyingNode(), PropertyAndValueDictionary.NAME, name);
+    private void addToIndeces(TaxonNode taxon, String indexedName) {
+        if (StringUtils.isNotBlank(indexedName)) {
+            taxons.add(taxon.getUnderlyingNode(), PropertyAndValueDictionary.NAME, indexedName);
             indexCommonNames(taxon);
             indexTaxonPath(taxon);
         }

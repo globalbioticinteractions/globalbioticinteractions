@@ -32,7 +32,6 @@ public class ExporterTaxaTest extends GraphDBTestCase {
         String actual = row.getBuffer().toString();
         assertThat(actual, containsString("EOL:123,Canis lupus,,,,,,,,,,,,,"));
         assertThat(actual, containsString("EOL:45634,Homo sapiens,,,,,,,,,,,,,"));
-        assertThat(actual, containsString("EOL:126,Canis,,,,,,,,,,,,,"));
         assertThat(actual, not(containsString("no:match,ThemFishes,,,,,,,,,,,,,")));
 
         row = new StringWriter();

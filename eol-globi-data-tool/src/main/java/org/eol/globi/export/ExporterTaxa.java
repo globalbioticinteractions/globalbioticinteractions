@@ -49,6 +49,7 @@ public class ExporterTaxa extends ExporterBase {
     private void exportAllDistinctTaxa(Writer writer, GraphDatabaseService graphDatabase) throws IOException {
         ExecutionEngine engine = new ExecutionEngine(graphDatabase);
         ExecutionResult results = engine.execute("START taxon = node:taxons('*:*') " +
+                "MATCH taxon<-[:CLASSIFIED_AS]-specimen " +
                 "WHERE has(taxon.externalId) AND taxon.externalId <> '" + PropertyAndValueDictionary.NO_MATCH + "' " +
                 "RETURN distinct(taxon), taxon.name as scientificName, taxon.externalId as taxonId");
 

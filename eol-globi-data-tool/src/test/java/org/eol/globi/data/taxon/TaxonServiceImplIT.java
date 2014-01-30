@@ -82,6 +82,7 @@ public class TaxonServiceImplIT extends GraphDBTestCase {
         TaxonNode second = taxonService.getOrCreateTaxon("Ariopsis felis something", null, null);
         assertThat(first.getExternalId(), is(second.getExternalId()));
         assertThat(first.getNodeID(), is(second.getNodeID()));
+        assertThat(taxonService.findTaxon("Ariopsis felis something").getNodeID(), is(second.getNodeID()));
     }
 
     @Test
@@ -91,6 +92,11 @@ public class TaxonServiceImplIT extends GraphDBTestCase {
         assertThat(first.getExternalId(), is(second.getExternalId()));
         assertThat(first.getPath(), is(second.getPath()));
         assertThat(first.getNodeID(), is(second.getNodeID()));
+
+        TaxonNode taxon = taxonService.findTaxon("Cliona langae");
+        assertThat(taxon, is(notNullValue()));
+        assertThat(first.getExternalId(), is(second.getExternalId()));
+        assertThat(taxon.getNodeID(), is(first.getNodeID()));
     }
 
     @Test
