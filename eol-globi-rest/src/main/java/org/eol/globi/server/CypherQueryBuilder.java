@@ -1,6 +1,5 @@
 package org.eol.globi.server;
 
-import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.Specimen;
@@ -28,20 +27,6 @@ public class CypherQueryBuilder {
     public static void addLocationClausesIfNecessary(StringBuilder query, Map parameterMap) {
         query.append(" , sourceSpecimen-[:COLLECTED_AT]->loc ");
         query.append(parameterMap == null ? "" : RequestHelper.buildCypherSpatialWhereClause(parameterMap));
-    }
-
-    public static String buildLuceneQuery(Object paramObject) {
-        List<String> taxonNames = new ArrayList<String>();
-        if (paramObject instanceof String[]) {
-            String[] names = (String[]) paramObject;
-            for (String name : names) {
-                taxonNames.add(lucenePathQuery(name));
-            }
-        } else if (paramObject instanceof String) {
-            taxonNames.add(lucenePathQuery((String) paramObject));
-        }
-
-        return StringUtils.join(taxonNames, " OR ");
     }
 
     public static String lucenePathQuery(String targetTaxonName) {
@@ -226,7 +211,7 @@ public class CypherQueryBuilder {
                     .append(" ")
                     .append(INTERACTION_MATCH);
             addLocationClausesIfNecessary(query, parameterMap);
-            query.append("RETURN sourceTaxon.name as " + ResultFields.SOURCE_TAXON_NAME + ", '" + interactionType + "' as " + ResultFields.INTERACTION_TYPE + ", collect(distinct(targetTaxon.name)) as " + ResultFields.TARGET_TAXON_NAME);
+            query.append("RETURN sourceTaxon.name as ").append(ResultFields.SOURCE_TAXON_NAME).append(", '").append(interactionType).append("' as ").append(ResultFields.INTERACTION_TYPE).append(", collect(distinct(targetTaxon.name)) as ").append(ResultFields.TARGET_TAXON_NAME);
             params = getParams(sourceTaxonName, targetTaxonName);
         } else if (INTERACTION_PREYED_UPON_BY.equals(interactionType)) {
             // "preyedUponBy is inverted interaction of "preysOn"
@@ -234,7 +219,7 @@ public class CypherQueryBuilder {
                     .append(" ")
                     .append(INTERACTION_MATCH);
             addLocationClausesIfNecessary(query, parameterMap);
-            query.append("RETURN targetTaxon.name as " + ResultFields.SOURCE_TAXON_NAME + ", '" + interactionType + "' as " + ResultFields.INTERACTION_TYPE + ", collect(distinct(sourceTaxon.name)) as " + ResultFields.TARGET_TAXON_NAME);
+            query.append("RETURN targetTaxon.name as ").append(ResultFields.SOURCE_TAXON_NAME).append(", '").append(interactionType).append("' as ").append(ResultFields.INTERACTION_TYPE).append(", collect(distinct(sourceTaxon.name)) as ").append(ResultFields.TARGET_TAXON_NAME);
             params = getParams(targetTaxonName, sourceTaxonName);
         }
 
