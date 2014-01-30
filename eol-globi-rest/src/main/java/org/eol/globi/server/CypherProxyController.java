@@ -2,8 +2,6 @@ package org.eol.globi.server;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.util.ExternalIdUtil;
-import org.neo4j.graphdb.GraphDatabaseService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,9 +16,6 @@ import java.util.Map;
 
 @Controller
 public class CypherProxyController {
-
-    @Autowired
-    private GraphDatabaseService graphDb;
 
     @RequestMapping(value = "/interactionTypes", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
