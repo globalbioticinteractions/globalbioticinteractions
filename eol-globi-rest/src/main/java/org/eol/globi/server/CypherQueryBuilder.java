@@ -42,24 +42,24 @@ public class CypherQueryBuilder {
         String preyPrefix = isInvertedInteraction ? ResultFields.PREFIX_SOURCE_SPECIMEN : ResultFields.PREFIX_TARGET_SPECIMEN;
 
         final StringBuilder returnClause = new StringBuilder();
-        returnClause.append("loc." + Location.LATITUDE + " as ").append(ResultFields.LATITUDE)
-                .append(",loc." + Location.LONGITUDE + " as ").append(ResultFields.LONGITUDE)
-                .append(",loc." + Location.ALTITUDE + "? as ").append(ResultFields.ALTITUDE)
-                .append(",study." + Study.TITLE + " as ").append(ResultFields.STUDY_TITLE)
+        returnClause.append("loc.").append(Location.LATITUDE).append(" as ").append(ResultFields.LATITUDE)
+                .append(",loc.").append(Location.LONGITUDE).append(" as ").append(ResultFields.LONGITUDE)
+                .append(",loc.").append(Location.ALTITUDE).append("? as ").append(ResultFields.ALTITUDE)
+                .append(",study.").append(Study.TITLE).append(" as ").append(ResultFields.STUDY_TITLE)
                 .append(",collected_rel.dateInUnixEpoch? as ").append(ResultFields.COLLECTION_TIME_IN_UNIX_EPOCH)
                 .append(",ID(sourceSpecimen) as tmp_and_unique_")
                 .append(predatorPrefix).append("_id,")
                 .append("ID(targetSpecimen) as tmp_and_unique_")
                 .append(preyPrefix).append("_id,")
-                .append("sourceSpecimen." + Specimen.LIFE_STAGE_LABEL + "? as ").append(predatorPrefix).append(ResultFields.SUFFIX_LIFE_STAGE).append(",")
-                .append("targetSpecimen." + Specimen.LIFE_STAGE_LABEL + "? as ").append(preyPrefix).append(ResultFields.SUFFIX_LIFE_STAGE).append(",")
-                .append("sourceSpecimen." + Specimen.BODY_PART_LABEL + "? as ").append(predatorPrefix).append(ResultFields.SUFFIX_BODY_PART).append(",")
-                .append("targetSpecimen." + Specimen.BODY_PART_LABEL + "? as ").append(preyPrefix).append(ResultFields.SUFFIX_BODY_PART).append(",")
-                .append("sourceSpecimen." + Specimen.PHYSIOLOGICAL_STATE_LABEL + "? as ").append(predatorPrefix).append(ResultFields.SUFFIX_PHYSIOLOGICAL_STATE).append(",")
-                .append("targetSpecimen." + Specimen.PHYSIOLOGICAL_STATE_LABEL + "? as ").append(preyPrefix).append(ResultFields.SUFFIX_PHYSIOLOGICAL_STATE).append(",")
-                .append("targetSpecimen." + Specimen.TOTAL_COUNT + "? as ").append(preyPrefix).append("_total_count").append(",")
-                .append("targetSpecimen." + Specimen.TOTAL_VOLUME_IN_ML + "? as ").append(preyPrefix).append("_total_volume_ml").append(",")
-                .append("targetSpecimen." + Specimen.FREQUENCY_OF_OCCURRENCE + "? as ").append(preyPrefix).append("_frequency_of_occurrence");
+                .append("sourceSpecimen.").append(Specimen.LIFE_STAGE_LABEL).append("? as ").append(predatorPrefix).append(ResultFields.SUFFIX_LIFE_STAGE).append(",")
+                .append("targetSpecimen.").append(Specimen.LIFE_STAGE_LABEL).append("? as ").append(preyPrefix).append(ResultFields.SUFFIX_LIFE_STAGE).append(",")
+                .append("sourceSpecimen.").append(Specimen.BODY_PART_LABEL).append("? as ").append(predatorPrefix).append(ResultFields.SUFFIX_BODY_PART).append(",")
+                .append("targetSpecimen.").append(Specimen.BODY_PART_LABEL).append("? as ").append(preyPrefix).append(ResultFields.SUFFIX_BODY_PART).append(",")
+                .append("sourceSpecimen.").append(Specimen.PHYSIOLOGICAL_STATE_LABEL).append("? as ").append(predatorPrefix).append(ResultFields.SUFFIX_PHYSIOLOGICAL_STATE).append(",")
+                .append("targetSpecimen.").append(Specimen.PHYSIOLOGICAL_STATE_LABEL).append("? as ").append(preyPrefix).append(ResultFields.SUFFIX_PHYSIOLOGICAL_STATE).append(",")
+                .append("targetSpecimen.").append(Specimen.TOTAL_COUNT).append("? as ").append(preyPrefix).append("_total_count").append(",")
+                .append("targetSpecimen.").append(Specimen.TOTAL_VOLUME_IN_ML).append("? as ").append(preyPrefix).append("_total_volume_ml").append(",")
+                .append("targetSpecimen.").append(Specimen.FREQUENCY_OF_OCCURRENCE).append("? as ").append(preyPrefix).append("_frequency_of_occurrence");
 
         if (INTERACTION_PREYS_ON.equals(interactionType)) {
             query.append("START ").append(getTaxonSelector(sourceTaxonName, targetTaxonName)).append(" ")
