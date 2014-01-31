@@ -3,9 +3,12 @@ package org.eol.globi.service;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
 
 public class DOIResolverImplIT {
@@ -51,5 +54,10 @@ public class DOIResolverImplIT {
         assertThat(citationForDOI, nullValue());
     }
 
+    @Test
+    public void findCitationForDOIWithUnescapeChars() throws IOException, URISyntaxException {
+        String citationForDOI = new DOIResolverImpl().findCitationForDOI("http://dx.doi.org/10.1642/0004-8038(2005)122[1182:baemfa]2.0.co;2");
+        assertThat(citationForDOI, is(notNullValue()));
+    }
 
 }

@@ -50,7 +50,24 @@ public class DOIResolverImpl implements DOIResolver {
         String citation = null;
         if (StringUtils.isNotBlank(doi)) {
             try {
-                URI uri = new URI("http", doi.replace("http:", ""), null);
+                URI uri;
+                if (StringUtils.startsWith(doi, "http://")) {
+                    String[] parts = StringUtils.replace(doi, "http://", "").split("/");
+                    String host = parts[0];
+                    String path = null;
+                    if (parts.length > 1) {
+                        StringBuilder builder = new StringBuilder();
+                        for (int i=1; i<parts.length; i++) {
+                            builder.append("/");
+                            builder.append(parts[i]);
+                        }
+                        path = builder.toString();
+                    }
+
+                    uri = new URI("http", host, path, null);
+                } else {
+                    uri = new URI("http", doi.replace("http:", ""), null);
+                }
                 HttpGet request = new HttpGet(uri);
                 request.setHeader("Accept", "text/x-bibliography; style=cse");
                 citation = HttpUtil.createHttpClient().execute(request, new BasicResponseHandler());
