@@ -59,7 +59,7 @@ public class TaxonServiceImpl implements TaxonService {
             firstMatchingTaxon = new TaxonNode(matchingTaxon);
         }
         if (matchingTaxa.hasNext()) {
-            throw new NodeFactoryException("found duplicate taxon for [" + taxonName + "] (original name: [" + taxonName + "]");
+            throw new NodeFactoryException("found duplicate taxon for [" + cleanedTaxonName + "] (original name: [" + taxonName + "])");
         }
         matchingTaxa.close();
 

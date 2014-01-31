@@ -67,6 +67,19 @@ public class TaxonServiceImplIT extends GraphDBTestCase {
     }
 
     @Test
+    public void checkBugDuplicateEntryBioInfo() throws NodeFactoryException {
+        // this name was causing problem end of Jan 2014 in BioInfo dataset:
+        // Caused by: org.eol.globi.data.NodeFactoryException: found duplicate taxon for [Exidia plana] (original name: [Exid
+        // ia plana]).
+        String taxonName = "Exidia plana";
+        assertThat(taxonService.findTaxon(taxonName), is(nullValue()));
+        taxonService.getOrCreateTaxon(taxonName, null, null);
+        taxonService.getOrCreateTaxon(taxonName + " bla", null, null);
+        taxonService.getOrCreateTaxon("Exidia nigricans", null, null);
+        assertThat(taxonService.findTaxon(taxonName), is(notNullValue()));
+    }
+
+    @Test
     public void noDuplicatesOnSynomyms() throws NodeFactoryException {
         TaxonNode first = taxonService.getOrCreateTaxon("Galeichthys felis", null, null);
         TaxonNode second = taxonService.getOrCreateTaxon("Ariopsis felis", null, null);
