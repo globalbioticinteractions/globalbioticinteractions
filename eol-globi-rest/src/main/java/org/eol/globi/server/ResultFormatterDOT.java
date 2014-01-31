@@ -43,17 +43,31 @@ public class ResultFormatterDOT implements ResultFormatter {
             JsonNode type = row.get(nameIndex.get(ResultFields.INTERACTION_TYPE));
             if (sourceTaxon != null && targetTaxon != null && type != null) {
                 String sourceId = getSafeLabel(sourceTaxon.getTextValue());
-                String targetId = getSafeLabel(targetTaxon.getTextValue());
-                builder.append(sourceId);
-                builder.append("->");
-                builder.append(targetId);
-                builder.append("[label=\"");
-                builder.append(type.getTextValue());
-                builder.append("\"];\n");
+                if (targetTaxon.isArray()) {
+                    for (JsonNode targetTaxonItem : targetTaxon) {
+                        appendEdge(builder, targetTaxonItem, type, sourceId);
+                    }
+                } else {
+                    appendEdge(builder, targetTaxon, type, sourceId);
+                }
             }
         }
         dotSuffix(builder);
         return builder.toString();
+    }
+
+    private void appendEdge(StringBuilder builder, JsonNode targetTaxon, JsonNode type, String sourceId) {
+        String targetId = getSafeLabel(targetTaxon.getTextValue());
+        appendEdge(builder, type, sourceId, targetId);
+    }
+
+    private void appendEdge(StringBuilder builder, JsonNode type, String sourceId, String targetId) {
+        builder.append(sourceId);
+        builder.append("->");
+        builder.append(targetId);
+        builder.append("[label=\"");
+        builder.append(type.getTextValue());
+        builder.append("\"];\n");
     }
 
     private void dotSuffix(StringBuilder builder) {
