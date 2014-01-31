@@ -35,13 +35,12 @@
     fuseki:serviceReadGraphStore    "get" ;
     fuseki:dataset                   <#globi> ;
     .
-
-# loading from /var/cache dir for now. . . file is getting huge
+    
 <#globi>    rdf:type ja:RDFDataset ;
     rdfs:label "GloBI" ;
     ja:defaultGraph 
       [ rdfs:label "globi.ttl.gz" ;
         a ja:MemoryModel ;
-        ja:content [ja:externalContent <file:/var/cache/globi/globi.ttl.gz> ] ;
+        ja:content [ja:externalContent <file:Data/globi.ttl.gz> ] ;
       ] ;
     .
