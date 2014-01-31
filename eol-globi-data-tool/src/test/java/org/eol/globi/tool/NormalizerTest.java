@@ -30,11 +30,12 @@ public class NormalizerTest extends GraphDBTestCase {
     public void doSingleImport() throws IOException, StudyImporterException {
         Normalizer dataNormalizationTool = createNormalizer();
 
-        dataNormalizationTool.importData(getGraphDb(), new TaxonPropertyEnricher() {
+        final TaxonPropertyEnricher taxonEnricher = new TaxonPropertyEnricher() {
             @Override
             public void enrich(Taxon taxon) {
             }
-        }, StudyImporterForSimons.class);
+        };
+        dataNormalizationTool.importData(StudyImporterForSimons.class, new NodeFactory(getGraphDb(), taxonEnricher));
 
 
         GraphDatabaseService graphService = getGraphDb();
@@ -75,12 +76,13 @@ public class NormalizerTest extends GraphDBTestCase {
         Normalizer dataNormalizationTool = createNormalizer();
 
         GraphDatabaseService graphService = getGraphDb();
-        dataNormalizationTool.importData(graphService, new TaxonPropertyEnricher() {
+        final TaxonPropertyEnricher taxonEnricher = new TaxonPropertyEnricher() {
             @Override
             public void enrich(Taxon taxon) {
                 taxon.setExternalId("test-taxon:" + System.currentTimeMillis());
             }
-        }, StudyImporterForSimons.class);
+        };
+        dataNormalizationTool.importData(StudyImporterForSimons.class, new NodeFactory(graphService, taxonEnricher));
 
 
         String baseDir = "./target/normalizer-test/";

@@ -24,11 +24,9 @@ import org.eol.globi.export.StudyExportUnmatchedSourceTaxaForStudies;
 import org.eol.globi.export.StudyExportUnmatchedTargetTaxaForStudies;
 import org.eol.globi.export.StudyExporter;
 import org.eol.globi.geo.EcoRegionFinder;
-import org.eol.globi.geo.EcoRegionFinderFactory;
 import org.eol.globi.geo.EcoRegionFinderFactoryImpl;
 import org.eol.globi.service.DOIResolverImpl;
 import org.eol.globi.service.EcoRegionFinderProxy;
-import org.eol.globi.service.TaxonPropertyEnricher;
 import org.eol.globi.service.TaxonPropertyEnricherFactory;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
@@ -71,7 +69,7 @@ public class Normalizer {
 
     public void normalize(String baseDir) throws StudyImporterException {
         final GraphDatabaseService graphService = GraphService.getGraphService(baseDir);
-        importData(graphService, TaxonPropertyEnricherFactory.createTaxonEnricher());
+        importData(graphService);
         exportData(graphService, baseDir);
         graphService.shutdown();
         ecoRegionFinder.shutdown();
@@ -143,18 +141,19 @@ public class Normalizer {
         }
     }
 
-    private void importData(GraphDatabaseService graphService, TaxonPropertyEnricher taxonEnricher) {
+    private void importData(GraphDatabaseService graphService) {
+        NodeFactory factory = new NodeFactory(graphService, TaxonPropertyEnricherFactory.createTaxonEnricher());
         for (Class importer : StudyImporterFactory.getAvailableImporters()) {
             try {
-                importData(graphService, taxonEnricher, importer);
+                importData(importer, factory);
             } catch (StudyImporterException e) {
                 LOG.error("problem encountered while importing [" + importer.getName() + "]", e);
             }
         }
     }
 
-    protected void importData(GraphDatabaseService graphService, TaxonPropertyEnricher taxonEnricher, Class importer) throws StudyImporterException {
-        StudyImporter studyImporter = createStudyImporter(graphService, importer, taxonEnricher);
+    protected void importData(Class importer, NodeFactory factory) throws StudyImporterException {
+        StudyImporter studyImporter = createStudyImporter(importer, factory);
         LOG.info("[" + importer + "] importing ...");
         studyImporter.importStudy();
         LOG.info("[" + importer + "] imported.");
@@ -197,8 +196,7 @@ public class Normalizer {
     }
 
 
-    private StudyImporter createStudyImporter(GraphDatabaseService graphService, Class<StudyImporter> studyImporter, TaxonPropertyEnricher taxonEnricher) throws StudyImporterException {
-        final NodeFactory factory = new NodeFactory(graphService, taxonEnricher);
+    private StudyImporter createStudyImporter(Class<StudyImporter> studyImporter, NodeFactory factory) throws StudyImporterException {
         factory.setEcoRegionFinder(getEcoRegionFinder());
         factory.setDoiResolver(new DOIResolverImpl());
         ParserFactory parserFactory = new ParserFactoryImpl();
