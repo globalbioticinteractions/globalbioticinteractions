@@ -69,14 +69,26 @@ public class TaxonServiceImplIT extends GraphDBTestCase {
     @Test
     public void checkBugDuplicateEntryBioInfo() throws NodeFactoryException {
         // this name was causing problem end of Jan 2014 in BioInfo dataset:
-        // Caused by: org.eol.globi.data.NodeFactoryException: found duplicate taxon for [Exidia plana] (original name: [Exid
-        // ia plana]).
+        // Caused by: org.eol.globi.data.NodeFactoryException: found duplicate taxon for [Exidia plana] (original name: [Exidia plana]).
+        taxonService.setCorrector(new TaxonNameCorrector());
         String taxonName = "Exidia plana";
         assertThat(taxonService.findTaxon(taxonName), is(nullValue()));
         taxonService.getOrCreateTaxon(taxonName, null, null);
         taxonService.getOrCreateTaxon(taxonName + " bla", null, null);
         taxonService.getOrCreateTaxon("Exidia nigricans", null, null);
         assertThat(taxonService.findTaxon(taxonName), is(notNullValue()));
+    }
+
+    @Test
+    public void checkBugDuplicateEntryFerrerParis() throws NodeFactoryException {
+        // this name was causing problem end of Jan 2014 in BioInfo dataset:
+        // Caused by: org.eol.globi.data.NodeFactoryException: found duplicate taxon for [Exidia glandulosa] (original name: [Exidia plana])
+        taxonService.setCorrector(new TaxonNameCorrector());
+        taxonService.getOrCreateTaxon("Exidia glandulosa", null, null);
+        assertThat(taxonService.findTaxon("Exidia plana"), is(nullValue()));
+        taxonService.getOrCreateTaxon("Exidia plana", null, null);
+        taxonService.getOrCreateTaxon("Exidia plana" + " bla", null, null);
+        assertThat(taxonService.findTaxon("Exidia plana"), is(notNullValue()));
     }
 
     @Test
@@ -119,7 +131,6 @@ public class TaxonServiceImplIT extends GraphDBTestCase {
         assertThat(taxon.getExternalId(), is("EOL:327955"));
         assertThat(taxon.getPath(), is(notNullValue()));
         assertThat(taxon.getCommonNames(), is(notNullValue()));
-
         assertZeroHits(taxonService, "no:match");
     }
 

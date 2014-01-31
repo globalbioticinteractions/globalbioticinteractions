@@ -63,7 +63,6 @@ public class TaxonServiceImpl implements TaxonService {
         }
         matchingTaxa.close();
 
-
         return firstMatchingTaxon;
     }
 
