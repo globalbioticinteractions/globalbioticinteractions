@@ -180,12 +180,6 @@ public class CypherProxyControllerTest {
         assertThat(list, is(notNullValue()));
     }
 
-    @Test
-    public void findTaxon() throws IOException, URISyntaxException {
-        String list = new CypherProxyController().findTaxon(null, "Homo sap");
-        assertThat(list, is(notNullValue()));
-    }
-
     @Ignore(value = "this assumes an externally running system")
     @Test
     public void findExternalLinkForTaxonWithName() throws IOException {

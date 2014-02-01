@@ -71,6 +71,14 @@ public class CypherQueryBuilderTest {
     }
 
     @Test
+    public void findInteractionNoParams() throws IOException {
+        String expectedQuery = "START sourceTaxon = node:taxonpaths({source_taxon_name}) MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen-[interactionType:PREYS_UPON|PARASITE_OF|HAS_HOST|INTERACTS_WITH|HOST_OF|POLLINATES|PERCHING_ON|ATE]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon RETURN sourceTaxon.externalId? as source_taxon_external_id,sourceTaxon.name as source_taxon_name,sourceTaxon.path? as source_taxon_path,type(interactionType) as interaction_type,targetTaxon.externalId? as target_taxon_external_id,targetTaxon.name as target_taxon_name,targetTaxon.path? as target_taxon_path";
+        CypherQuery query = CypherQueryBuilder.buildInteractionQuery(new HashMap<String, String[]>());
+        assertThat(query.getQuery(), is(expectedQuery));
+        assertThat(query.getParams().toString(), is("{source_taxon_name=path:\\\"Homo sapiens\\\"}"));
+    }
+
+    @Test
     public void findPreysOnWithLocation() throws IOException {
         HashMap<String, String[]> params = new HashMap<String, String[]>() {
             {

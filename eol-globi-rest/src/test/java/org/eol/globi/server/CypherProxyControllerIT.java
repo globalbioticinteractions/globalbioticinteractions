@@ -129,13 +129,6 @@ public class CypherProxyControllerIT {
     }
 
     @Test
-    public void findTaxonUsingPartialString() throws IOException {
-        String uri = getURLPrefix() + "findTaxon/Homo%20sap";
-        String response = HttpClient.httpGet(uri);
-        assertThat(response, containsString("Homo sapiens"));
-    }
-
-    @Test
     public void findExternalUrl() throws IOException {
         String uri = getURLPrefix() + "findExternalUrlForTaxon/Homo%20sapiens";
         String response = HttpClient.httpGet(uri);
@@ -165,7 +158,7 @@ public class CypherProxyControllerIT {
 
     @Test
     public void listInfoSPIRE() throws IOException {
-        long responseTimeForFirstCall = timedSourcesRequest("SPIRE");
+            long responseTimeForFirstCall = timedSourcesRequest("SPIRE");
         long responseTimeForSecondCall = timedSourcesRequest("SPIRE");
         assertThat("expected second call to be two orders of magnitude smaller due to caching, but found response time of second call to be [" + responseTimeForSecondCall + "] ms", responseTimeForSecondCall < (responseTimeForFirstCall / 100), is(true));
     }

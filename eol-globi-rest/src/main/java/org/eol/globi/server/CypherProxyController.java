@@ -54,13 +54,6 @@ public class CypherProxyController {
         return new CypherQueryExecutor(cypherQuery);
     }
 
-    @RequestMapping(value = "/findTaxon/{taxonName}", method = RequestMethod.GET)
-    @ResponseBody
-    public String findTaxon(HttpServletRequest request, @PathVariable("taxonName") String taxonName) throws IOException {
-        CypherQuery cypherQuery = CypherQueryBuilder.findTaxon(taxonName);
-        return new CypherQueryExecutor(cypherQuery).execute(request);
-    }
-
     @RequestMapping(value = "/taxon/{sourceTaxonName}/{interactionType}/{targetTaxonName}", method = RequestMethod.GET)
     @ResponseBody
     public String findObservationsOf(HttpServletRequest request,

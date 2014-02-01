@@ -3,7 +3,7 @@ package org.eol.globi.server;
 import java.util.Map;
 
 public class CypherQuery {
-    private final String query;
+    private String query;
 
     private final Map<String, String> params;
 

@@ -1,18 +1,23 @@
 package org.eol.globi.server;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.util.InteractUtil;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class CypherQueryBuilder {
+    private static final Log LOG = LogFactory.getLog(CypherQueryBuilder.class);
+
     public static final String SOURCE_TAXON_HTTP_PARAM_NAME = "sourceTaxon";
     public static final String TARGET_TAXON_HTTP_PARAM_NAME = "targetTaxon";
     public static final String OBSERVATION_MATCH =
@@ -231,14 +236,6 @@ public class CypherQueryBuilder {
         return new CypherQuery(query);
     }
 
-    public static CypherQuery findTaxon(String taxonName) {
-        String query = "START taxon = node:taxons('*:*') " +
-                "WHERE taxon.name =~ '" + taxonName + ".*'" +
-                "RETURN distinct(taxon.name) " +
-                "LIMIT 15";
-        return new CypherQuery(query);
-    }
-
     public static CypherQuery distinctInteractions(String sourceTaxonName, String interactionType, String targetTaxonName, Map parameterMap) {
         StringBuilder query = new StringBuilder();
         Map<String, String> params = EMPTY_PARAMS;
@@ -278,6 +275,11 @@ public class CypherQueryBuilder {
         boolean spatialSearch = RequestHelper.isSpatialSearch(parameterMap);
         List<String> sourceTaxaSelectors = collectTaxa(parameterMap, SOURCE_TAXON_HTTP_PARAM_NAME);
         List<String> targetTaxaSelectors = collectTaxa(parameterMap, TARGET_TAXON_HTTP_PARAM_NAME);
+        if (noSearchCriteria(spatialSearch, sourceTaxaSelectors, targetTaxaSelectors)) {
+            // sensible default
+            sourceTaxaSelectors.add("Homo sapiens");
+        }
+
         StringBuilder query = new StringBuilder();
         query.append("START");
         if (spatialSearch) {
@@ -322,6 +324,10 @@ public class CypherQueryBuilder {
         return new CypherQuery(query.toString(), params);
     }
 
+    private static boolean noSearchCriteria(boolean spatialSearch, List<String> sourceTaxaSelectors, List<String> targetTaxaSelectors) {
+        return !spatialSearch && sourceTaxaSelectors.size() == 0 && targetTaxaSelectors.size() == 0;
+    }
+
     private static boolean appendTaxonFilter(StringBuilder query, boolean hasWhereClause, String taxonLabel, List<String> taxonNames) {
         if (taxonNames.size() > 0) {
             if (hasWhereClause) {
@@ -353,4 +359,24 @@ public class CypherQueryBuilder {
     }
 
 
+    public static CypherQuery createPagedQuery(HttpServletRequest request, CypherQuery query) {
+        long offset = getValueOrDefault(request, "offset", 0L);
+        long limit = getValueOrDefault(request, "limit", 1024L);
+        return new CypherQuery(query.getQuery() + " SKIP " + offset + " LIMIT " + limit, query.getParams());
+    }
+
+    private static long getValueOrDefault(HttpServletRequest request, String paramName, long defaultValue) {
+        long offset = defaultValue;
+        if (request != null) {
+            String offsetValue = request.getParameter(paramName);
+            if (org.apache.commons.lang.StringUtils.isNotBlank(offsetValue)) {
+                try {
+                    offset = Long.parseLong(offsetValue);
+                } catch (NumberFormatException ex) {
+                    LOG.warn("malformed " + paramName + " found [" + offsetValue + "]", ex);
+                }
+            }
+        }
+        return offset;
+    }
 }
