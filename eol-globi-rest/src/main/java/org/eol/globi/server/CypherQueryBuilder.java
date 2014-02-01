@@ -17,10 +17,10 @@ public class CypherQueryBuilder {
     public static final String SOURCE_TAXON_HTTP_PARAM_NAME = "sourceTaxon";
     public static final String TARGET_TAXON_HTTP_PARAM_NAME = "targetTaxon";
     public static final String OBSERVATION_MATCH =
-            "MATCH (sourceTaxon)<-[:CLASSIFIED_AS]-(sourceSpecimen)-[" + preysOn() + "]->(targetSpecimen)-[:CLASSIFIED_AS]->(targetTaxon)," +
+            "MATCH (sourceTaxon)<-[:CLASSIFIED_AS]-(sourceSpecimen)-[:" + preysOn() + "]->(targetSpecimen)-[:CLASSIFIED_AS]->(targetTaxon)," +
                     "(sourceSpecimen)-[:COLLECTED_AT]->(loc)," +
                     "(sourceSpecimen)<-[collected_rel:COLLECTED]-(study) ";
-    public static final String INTERACTION_MATCH = "MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen-[" + preysOn() + "]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon ";
+    public static final String INTERACTION_MATCH = "MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen-[:" + preysOn() + "]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon ";
 
     private static String preysOn() {
         return InteractType.ATE + "|" + InteractType.PREYS_UPON;
