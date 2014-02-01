@@ -28,6 +28,11 @@ public class RequestHelper {
     public static final String BOUNDING_BOX_PARAMETER_NAME = "bbox";
     public static final String GEOMETRY_PARAMETER = "g";
 
+    public static boolean isSpatialSearch(Map<String, String[]> parameterMap) {
+        List<LatLng> latLngs = parseSpatialSearchParams(parameterMap);
+        return latLngs.size() == 1 || latLngs.size() == 2;
+    }
+
     public static List<LatLng> parseSpatialSearchParams(Map<String, String[]> parameterMap) {
         ArrayList<LatLng> latLngs = new ArrayList<LatLng>();
 
@@ -106,28 +111,30 @@ public class RequestHelper {
         }
     }
 
-    public static String buildCypherSpatialWhereClause(Map<String, String[]> paramMap) {
-        return buildCypherSpatialWhereClause(RequestHelper.parseSpatialSearchParams(paramMap));
+    public static void appendSpatialClauses(Map<String, String[]> paramMap, StringBuilder query) {
+        buildCypherSpatialWhereClause(RequestHelper.parseSpatialSearchParams(paramMap), query);
     }
 
-    public static String buildCypherSpatialWhereClause(List<LatLng> points) {
-        StringBuilder builder = new StringBuilder();
-        builder.append("WHERE loc is not null ");
-        if (points.size() == 1) {
-            builder.append("AND loc.latitude = ");
-            builder.append(points.get(0).getLat());
-            builder.append(" AND loc.longitude = ");
-            builder.append(points.get(0).getLng());
-        } else if (points.size() == 2) {
-            builder.append("AND loc.latitude < ");
-            builder.append(points.get(0).getLat());
-            builder.append(" AND loc.longitude > ");
-            builder.append(points.get(0).getLng());
-            builder.append(" AND loc.latitude > ");
-            builder.append(points.get(1).getLat());
-            builder.append(" AND loc.longitude < ");
-            builder.append(points.get(1).getLng());
+    public static void buildCypherSpatialWhereClause(List<LatLng> points, StringBuilder query) {
+        if (points.size() == 1 || points.size() == 2) {
+            query.append(", sourceSpecimen-[:COLLECTED_AT]->loc ");
+            query.append("WHERE loc is not null");
         }
-        return builder.append(" ").toString();
+
+        if (points.size() == 1) {
+            query.append(" AND loc.latitude = ");
+            query.append(points.get(0).getLat());
+            query.append(" AND loc.longitude = ");
+            query.append(points.get(0).getLng());
+        } else if (points.size() == 2) {
+            query.append(" AND loc.latitude < ");
+            query.append(points.get(0).getLat());
+            query.append(" AND loc.longitude > ");
+            query.append(points.get(0).getLng());
+            query.append(" AND loc.latitude > ");
+            query.append(points.get(1).getLat());
+            query.append(" AND loc.longitude < ");
+            query.append(points.get(1).getLng());
+        }
     }
 }

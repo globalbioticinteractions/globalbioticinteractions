@@ -29,8 +29,9 @@ public class RequestHelperTest {
         assertThat(points.get(0).getLat(), Is.is(12.2d));
         assertThat(points.get(0).getLng(), Is.is(12.1d));
 
-        String clause = RequestHelper.buildCypherSpatialWhereClause(points);
-        assertThat(clause.trim(), Is.is("WHERE loc is not null AND loc.latitude = 12.2" +
+        StringBuilder clause = new StringBuilder();
+        RequestHelper.buildCypherSpatialWhereClause(points, clause);
+        assertThat(clause.toString().trim(), Is.is(", sourceSpecimen-[:COLLECTED_AT]->loc WHERE loc is not null AND loc.latitude = 12.2" +
                 " AND loc.longitude = 12.1"));
     }
 
@@ -64,9 +65,10 @@ public class RequestHelperTest {
         assertThat(points.get(1).getLat(), Is.is(-10d));
         assertThat(points.get(1).getLng(), Is.is(20d));
 
-        String clause = RequestHelper.buildCypherSpatialWhereClause(points);
-        assertThat(clause.trim(),
-                Is.is("WHERE loc is not null AND loc.latitude < 10.0" +
+        StringBuilder clause = new StringBuilder();
+         RequestHelper.buildCypherSpatialWhereClause(points, clause);
+        assertThat(clause.toString().trim(),
+                Is.is(", sourceSpecimen-[:COLLECTED_AT]->loc WHERE loc is not null AND loc.latitude < 10.0" +
                         " AND loc.longitude > -20.0" +
                         " AND loc.latitude > -10.0" +
                         " AND loc.longitude < 20.0"));
@@ -111,9 +113,10 @@ public class RequestHelperTest {
         assertThat(points.get(0).getLat(), Is.is(10.0));
         assertThat(points.get(0).getLng(), Is.is(12.4d));
 
-        String clause = RequestHelper.buildCypherSpatialWhereClause(points);
-        assertThat(clause.trim(),
-                Is.is("WHERE loc is not null AND loc.latitude = 10.0" +
+        StringBuilder clause = new StringBuilder();
+        RequestHelper.buildCypherSpatialWhereClause(points, clause);
+        assertThat(clause.toString().trim(),
+                Is.is(", sourceSpecimen-[:COLLECTED_AT]->loc WHERE loc is not null AND loc.latitude = 10.0" +
                         " AND loc.longitude = 12.4"));
     }
 
