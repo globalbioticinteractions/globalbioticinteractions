@@ -1,10 +1,13 @@
 package org.eol.globi.server;
 
+import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.IOException;
 
+import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.internal.matchers.StringContains.containsString;
@@ -43,7 +46,7 @@ public class SearchServiceIT extends ITBase {
     }
 
     @Test
-    @Ignore(value="should work after ensuring that lower case terms are indexed")
+    @Ignore(value = "should work after ensuring that lower case terms are indexed")
     public void findCloseMatchesShortPartial2() throws IOException {
         assertHuman("h%20s");
     }
@@ -99,6 +102,16 @@ public class SearchServiceIT extends ITBase {
         String response = HttpClient.httpGet(uri);
         assertThat(response, containsString("Scomberomorus cavalla"));
         assertThat(response, containsString("king mackeral"));
+    }
+
+    @Ignore("see issue #40")
+    @Test
+    public void ensureSingleMatch() throws IOException {
+        String uri = getURLPrefix() + "findCloseMatchesForTaxon/Ariopsis%20felis";
+        String response = HttpClient.httpGet(uri);
+        JsonNode jsonNode = new ObjectMapper().readTree(response);
+        assertThat(jsonNode.get("data").get(0).get(0).getTextValue(), is("Ariopsis felis"));
+        assertThat(jsonNode.get("data").size(), is(1));
     }
 
 }
