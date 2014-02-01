@@ -1,6 +1,7 @@
 package org.eol.globi.server;
 
 import org.apache.commons.lang3.StringUtils;
+import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
@@ -16,10 +17,15 @@ public class CypherQueryBuilder {
     public static final String SOURCE_TAXON_HTTP_PARAM_NAME = "sourceTaxon";
     public static final String TARGET_TAXON_HTTP_PARAM_NAME = "targetTaxon";
     public static final String OBSERVATION_MATCH =
-            "MATCH (sourceTaxon)<-[:CLASSIFIED_AS]-(sourceSpecimen)-[:ATE]->(targetSpecimen)-[:CLASSIFIED_AS]->(targetTaxon)," +
+            "MATCH (sourceTaxon)<-[:CLASSIFIED_AS]-(sourceSpecimen)-[" + preysOn() + "]->(targetSpecimen)-[:CLASSIFIED_AS]->(targetTaxon)," +
                     "(sourceSpecimen)-[:COLLECTED_AT]->(loc)," +
                     "(sourceSpecimen)<-[collected_rel:COLLECTED]-(study) ";
-    public static final String INTERACTION_MATCH = "MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen-[:ATE]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon ";
+    public static final String INTERACTION_MATCH = "MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen-[" + preysOn() + "]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon ";
+
+    private static String preysOn() {
+        return InteractType.ATE + "|" + InteractType.PREYS_UPON;
+    }
+
     public static final String INTERACTION_PREYS_ON = "preysOn";
     public static final String INTERACTION_PREYED_UPON_BY = "preyedUponBy";
     static final Map<String, String> EMPTY_PARAMS = new HashMap<String, String>();

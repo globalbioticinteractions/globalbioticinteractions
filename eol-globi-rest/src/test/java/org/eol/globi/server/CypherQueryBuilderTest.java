@@ -1,11 +1,9 @@
 package org.eol.globi.server;
 
-import org.hamcrest.Matcher;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.Map;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
