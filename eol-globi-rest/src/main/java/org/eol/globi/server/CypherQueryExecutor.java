@@ -1,5 +1,7 @@
 package org.eol.globi.server;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.codehaus.jackson.JsonNode;
@@ -22,7 +24,14 @@ public class CypherQueryExecutor {
     }
 
     public String execute(HttpServletRequest request) throws IOException {
-        LOG.info("executing query: [" + cypherQuery.getQuery() + "] with params [" + cypherQuery.getParams() + "]");
+        long offset = getValueOrDefault(request, "offset", 0L);
+        cypherQuery.getParams().put("skip", Long.toString(offset));
+        long limit = getValueOrDefault(request, "limit", 1024L);
+        cypherQuery.getParams().put("limit", Long.toString(limit));
+
+        String pagedQuery = cypherQuery.getQuery() + " SKIP {skip} LIMIT {limit}";
+
+        LOG.info("executing query: [" + pagedQuery + "] with params [" + cypherQuery.getParams() + "]");
         String type = request == null ? "json" : request.getParameter("type");
         ResultFormatter formatter = new ResultFormatterFactory().create(type);
         if (formatter == null) {
@@ -30,6 +39,19 @@ public class CypherQueryExecutor {
         } else {
             return formatter.format(executeRemote());
         }
+    }
+
+    private long getValueOrDefault(HttpServletRequest request, String paramName, long defaultValue) {
+        String offsetValue = request.getParameter(paramName);
+        long offset = defaultValue;
+        if (StringUtils.isNotBlank(offsetValue)) {
+            try {
+                offset = Long.parseLong(offsetValue);
+            } catch(NumberFormatException ex) {
+                LOG.warn("malformed " + paramName + " found [" + offsetValue + "]", ex);
+            }
+        }
+        return offset;
     }
 
     private String executeRemote() throws IOException {

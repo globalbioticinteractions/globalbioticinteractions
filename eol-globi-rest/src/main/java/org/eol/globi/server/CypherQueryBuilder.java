@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.Map;
 
 public class CypherQueryBuilder {
-    public static final String DEFAULT_LIMIT_CLAUSE = "LIMIT 512";
     public static final String SOURCE_TAXON_HTTP_PARAM_NAME = "sourceTaxon";
     public static final String TARGET_TAXON_HTTP_PARAM_NAME = "targetTaxon";
     public static final String OBSERVATION_MATCH =
@@ -316,9 +315,6 @@ public class CypherQueryBuilder {
                 .append(",targetTaxon.name as ").append(ResultFields.TARGET_TAXON_NAME)
                 .append(",targetTaxon.path? as ").append(ResultFields.TARGET_TAXON_PATH);
 
-        // fix quick before introducing smarter way to chunk the results
-        query.append(" ");
-        query.append(DEFAULT_LIMIT_CLAUSE);
         Map<String, String> params = null;
         if (!spatialSearch) {
             params = getParams(sourceTaxaSelectors, targetTaxaSelectors);

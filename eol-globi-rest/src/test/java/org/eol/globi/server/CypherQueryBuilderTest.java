@@ -21,7 +21,7 @@ public class CypherQueryBuilderTest {
             }
         };
 
-        String expectedQuery = "START loc = node:locations('*:*') MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen-[interactionType:PREYS_UPON|PARASITE_OF|HAS_HOST|INTERACTS_WITH|HOST_OF|POLLINATES|PERCHING_ON|ATE]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon, sourceSpecimen-[:COLLECTED_AT]->loc WHERE loc is not null AND loc.latitude < 23.32 AND loc.longitude > -67.87 AND loc.latitude > 12.79 AND loc.longitude < -57.08 AND has(sourceTaxon.path) AND sourceTaxon.path =~ '(.*(Actinopterygii|Chordata).*)' AND has(targetTaxon.path) AND targetTaxon.path =~ '(.*(Arthropoda).*)' RETURN sourceTaxon.externalId? as source_taxon_external_id,sourceTaxon.name as source_taxon_name,sourceTaxon.path? as source_taxon_path,type(interactionType) as interaction_type,targetTaxon.externalId? as target_taxon_external_id,targetTaxon.name as target_taxon_name,targetTaxon.path? as target_taxon_path LIMIT 512";
+        String expectedQuery = "START loc = node:locations('*:*') MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen-[interactionType:PREYS_UPON|PARASITE_OF|HAS_HOST|INTERACTS_WITH|HOST_OF|POLLINATES|PERCHING_ON|ATE]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon, sourceSpecimen-[:COLLECTED_AT]->loc WHERE loc is not null AND loc.latitude < 23.32 AND loc.longitude > -67.87 AND loc.latitude > 12.79 AND loc.longitude < -57.08 AND has(sourceTaxon.path) AND sourceTaxon.path =~ '(.*(Actinopterygii|Chordata).*)' AND has(targetTaxon.path) AND targetTaxon.path =~ '(.*(Arthropoda).*)' RETURN sourceTaxon.externalId? as source_taxon_external_id,sourceTaxon.name as source_taxon_name,sourceTaxon.path? as source_taxon_path,type(interactionType) as interaction_type,targetTaxon.externalId? as target_taxon_external_id,targetTaxon.name as target_taxon_name,targetTaxon.path? as target_taxon_path";
         CypherQuery query = CypherQueryBuilder.buildInteractionQuery(params);
         assertThat(query.getQuery(), is(expectedQuery));
         assertThat(query.getParams(), is(nullValue()));
@@ -36,7 +36,7 @@ public class CypherQueryBuilderTest {
             }
         };
 
-        String expectedQuery = "START sourceTaxon = node:taxonpaths({source_taxon_name}) MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen-[interactionType:PREYS_UPON|PARASITE_OF|HAS_HOST|INTERACTS_WITH|HOST_OF|POLLINATES|PERCHING_ON|ATE]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon WHERE has(targetTaxon.path) AND targetTaxon.path =~ '(.*(Arthropoda).*)' RETURN sourceTaxon.externalId? as source_taxon_external_id,sourceTaxon.name as source_taxon_name,sourceTaxon.path? as source_taxon_path,type(interactionType) as interaction_type,targetTaxon.externalId? as target_taxon_external_id,targetTaxon.name as target_taxon_name,targetTaxon.path? as target_taxon_path LIMIT 512";
+        String expectedQuery = "START sourceTaxon = node:taxonpaths({source_taxon_name}) MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen-[interactionType:PREYS_UPON|PARASITE_OF|HAS_HOST|INTERACTS_WITH|HOST_OF|POLLINATES|PERCHING_ON|ATE]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon WHERE has(targetTaxon.path) AND targetTaxon.path =~ '(.*(Arthropoda).*)' RETURN sourceTaxon.externalId? as source_taxon_external_id,sourceTaxon.name as source_taxon_name,sourceTaxon.path? as source_taxon_path,type(interactionType) as interaction_type,targetTaxon.externalId? as target_taxon_external_id,targetTaxon.name as target_taxon_name,targetTaxon.path? as target_taxon_path";
         CypherQuery query = CypherQueryBuilder.buildInteractionQuery(params);
         assertThat(query.getQuery(), is(expectedQuery));
         assertThat(query.getParams().toString(), is("{source_taxon_name=path:\\\"Actinopterygii\\\" OR path:\\\"Chordata\\\", target_taxon_name=path:\\\"Arthropoda\\\"}"));
@@ -50,7 +50,7 @@ public class CypherQueryBuilderTest {
             }
         };
 
-        String expectedQuery = "START targetTaxon = node:taxonpaths({target_taxon_name}) MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen-[interactionType:PREYS_UPON|PARASITE_OF|HAS_HOST|INTERACTS_WITH|HOST_OF|POLLINATES|PERCHING_ON|ATE]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon RETURN sourceTaxon.externalId? as source_taxon_external_id,sourceTaxon.name as source_taxon_name,sourceTaxon.path? as source_taxon_path,type(interactionType) as interaction_type,targetTaxon.externalId? as target_taxon_external_id,targetTaxon.name as target_taxon_name,targetTaxon.path? as target_taxon_path LIMIT 512";
+        String expectedQuery = "START targetTaxon = node:taxonpaths({target_taxon_name}) MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen-[interactionType:PREYS_UPON|PARASITE_OF|HAS_HOST|INTERACTS_WITH|HOST_OF|POLLINATES|PERCHING_ON|ATE]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon RETURN sourceTaxon.externalId? as source_taxon_external_id,sourceTaxon.name as source_taxon_name,sourceTaxon.path? as source_taxon_path,type(interactionType) as interaction_type,targetTaxon.externalId? as target_taxon_external_id,targetTaxon.name as target_taxon_name,targetTaxon.path? as target_taxon_path";
         CypherQuery query = CypherQueryBuilder.buildInteractionQuery(params);
         assertThat(query.getQuery(), is(expectedQuery));
         assertThat(query.getParams().toString(), is("{target_taxon_name=path:\\\"Arthropoda\\\"}"));
@@ -64,7 +64,7 @@ public class CypherQueryBuilderTest {
             }
         };
 
-        String expectedQuery = "START sourceTaxon = node:taxonpaths({source_taxon_name}) MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen-[interactionType:PREYS_UPON|PARASITE_OF|HAS_HOST|INTERACTS_WITH|HOST_OF|POLLINATES|PERCHING_ON|ATE]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon RETURN sourceTaxon.externalId? as source_taxon_external_id,sourceTaxon.name as source_taxon_name,sourceTaxon.path? as source_taxon_path,type(interactionType) as interaction_type,targetTaxon.externalId? as target_taxon_external_id,targetTaxon.name as target_taxon_name,targetTaxon.path? as target_taxon_path LIMIT 512";
+        String expectedQuery = "START sourceTaxon = node:taxonpaths({source_taxon_name}) MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen-[interactionType:PREYS_UPON|PARASITE_OF|HAS_HOST|INTERACTS_WITH|HOST_OF|POLLINATES|PERCHING_ON|ATE]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon RETURN sourceTaxon.externalId? as source_taxon_external_id,sourceTaxon.name as source_taxon_name,sourceTaxon.path? as source_taxon_path,type(interactionType) as interaction_type,targetTaxon.externalId? as target_taxon_external_id,targetTaxon.name as target_taxon_name,targetTaxon.path? as target_taxon_path";
         CypherQuery query = CypherQueryBuilder.buildInteractionQuery(params);
         assertThat(query.getQuery(), is(expectedQuery));
         assertThat(query.getParams().toString(), is("{source_taxon_name=path:\\\"Actinopterygii\\\" OR path:\\\"Chordata\\\"}"));
