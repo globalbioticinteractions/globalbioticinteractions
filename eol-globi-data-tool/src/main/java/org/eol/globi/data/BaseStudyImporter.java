@@ -1,13 +1,10 @@
 package org.eol.globi.data;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.eol.globi.domain.Study;
 import org.eol.globi.service.GeoNamesService;
 import org.eol.globi.service.GeoNamesServiceImpl;
 
 public abstract class BaseStudyImporter extends BaseImporter implements StudyImporter {
-    private final Log LOG = LogFactory.getLog(BaseStudyImporter.class);
     protected ParserFactory parserFactory;
     protected ImportFilter importFilter = new ImportFilter() {
         @Override

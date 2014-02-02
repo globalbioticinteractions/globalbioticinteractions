@@ -1,7 +1,5 @@
 package org.eol.globi.data;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.RelTypes;
@@ -22,8 +20,6 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
 public class StudyImporterForICESTest extends GraphDBTestCase {
-    private static final Log LOG = LogFactory.getLog(StudyImporterForICESTest.class);
-
     @Test
     public void importOneEveryThousandLines() throws StudyImporterException {
         StudyImporterForICES studyImporterFor = new StudyImporterForICES(new ParserFactoryImpl(), nodeFactory);
