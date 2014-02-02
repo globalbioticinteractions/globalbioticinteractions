@@ -91,7 +91,11 @@ public class StudyImporterForFWDP extends BaseStudyImporter {
                 } catch (IllegalArgumentException ex) {
                     getLogger().warn(study, "found illegal date time on line [" + parser.lastLineNumber() + "]: " + ex.getMessage());
                 }
-                addLocation(parser, predatorSpecimen);
+                try {
+                    addLocation(parser, predatorSpecimen);
+                } catch (NumberFormatException ex) {
+                    getLogger().warn(study, "found illegal location line [" + parser.lastLineNumber() + "]: " + ex.getMessage());
+                }
                 String lengthCm = parser.getValueByLabel("PDLEN");
                 if (StringUtils.isNotBlank(lengthCm)) {
                     predatorSpecimen.setLengthInMm(new Double(lengthCm) * 10.0);
@@ -107,7 +111,10 @@ public class StudyImporterForFWDP extends BaseStudyImporter {
     private void addLocation(LabeledCSVParser parser, Specimen instigatorSpecimen) {
         String latString = parser.getValueByLabel("declat");
         String lngString = parser.getValueByLabel("declon");
-        Location loc = nodeFactory.getOrCreateLocation(new Double(latString), new Double(lngString), null);
+        Double lng = new Double(lngString);
+        Double lat = new Double(latString);
+        // note that the minus sign for longitude was apparently omitted
+        Location loc = nodeFactory.getOrCreateLocation(lat, -1.0 * lng, null);
         instigatorSpecimen.caughtIn(loc);
     }
 

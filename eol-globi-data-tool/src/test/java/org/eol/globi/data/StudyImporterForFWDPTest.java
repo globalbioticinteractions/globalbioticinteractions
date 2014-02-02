@@ -2,9 +2,14 @@ package org.eol.globi.data;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.eol.globi.domain.Location;
+import org.eol.globi.domain.Specimen;
+import org.eol.globi.domain.Study;
 import org.joda.time.DateTime;
 import org.junit.Test;
+import org.neo4j.graphdb.Relationship;
 
+import static junit.framework.Assert.assertNotNull;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
@@ -23,7 +28,16 @@ public class StudyImporterForFWDPTest extends GraphDBTestCase {
             }
         });
         LOG.info("test import started... importing every 100th record");
-        studyImporter.importStudy();
+        Study study = studyImporter.importStudy();
+        Iterable<Relationship> collected = study.getSpecimens();
+        for (Relationship coll : collected) {
+            Specimen specimen = new Specimen(coll.getEndNode());
+            Location sampleLocation = specimen.getSampleLocation();
+            assertNotNull(sampleLocation);
+            assertThat(sampleLocation.getLatitude() > 0, is(true));
+            assertThat(sampleLocation.getLongitude() < 0, is(true));
+        }
+
         LOG.info("test import done.");
     }
 
