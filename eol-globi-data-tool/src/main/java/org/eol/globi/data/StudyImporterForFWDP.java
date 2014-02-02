@@ -89,7 +89,7 @@ public class StudyImporterForFWDP extends BaseStudyImporter {
                 try {
                     addDateTime(parser, collected);
                 } catch (IllegalArgumentException ex) {
-                    LOG.warn("found illegal date time on line [" + parser.lastLineNumber() + "]");
+                    getLogger().warn(study, "found illegal date time on line [" + parser.lastLineNumber() + "]: " + ex.getMessage());
                 }
                 addLocation(parser, predatorSpecimen);
                 String lengthCm = parser.getValueByLabel("PDLEN");
@@ -134,8 +134,7 @@ public class StudyImporterForFWDP extends BaseStudyImporter {
         dateTimeString.append("-").append(month);
         dateTimeString.append("-").append(day);
         dateTimeString.append("T").append(StringUtils.isBlank(hourOfDay) ? "00" : hourOfDay);
-        String minuteOfHour = minute;
-        dateTimeString.append(":").append(StringUtils.isBlank(minuteOfHour) ? "00" : minuteOfHour);
+        dateTimeString.append(":").append(StringUtils.isBlank(minute) ? "00" : minute);
         dateTimeString.append(":00Z");
         dateTime = DATE_TIME_FORMATTER.parseDateTime(dateTimeString.toString());
         return dateTime;
