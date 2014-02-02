@@ -2,8 +2,10 @@ package org.eol.globi.data;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.joda.time.DateTime;
 import org.junit.Test;
 
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
@@ -23,6 +25,24 @@ public class StudyImporterForFWDPTest extends GraphDBTestCase {
         LOG.info("test import started... importing every 100th record");
         studyImporter.importStudy();
         LOG.info("test import done.");
+    }
+
+    @Test
+    public void parseDateTimeInvalid() {
+        DateTime dateTime = StudyImporterForFWDP.parseDateTime(null, null, null, null, null);
+        assertThat(dateTime,is(nullValue()));
+    }
+
+    @Test
+    public void parseDateTimeValid() {
+        DateTime dateTime = StudyImporterForFWDP.parseDateTime("1992", "12", "12", null, null);
+        assertThat(dateTime,is(notNullValue()));
+    }
+
+    @Test (expected = org.joda.time.IllegalFieldValueException.class)
+    public void parseDateTimeInvalid2() {
+        DateTime dateTime = StudyImporterForFWDP.parseDateTime("1992", "12", "48", null, null);
+        assertThat(dateTime,is(nullValue()));
     }
 
     @Test

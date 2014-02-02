@@ -2,10 +2,13 @@ package org.eol.globi.data;
 
 import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.joda.time.DateTime;
+import org.joda.time.IllegalFieldValueException;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
 import org.neo4j.graphdb.Node;
@@ -18,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 public class StudyImporterForFWDP extends BaseStudyImporter {
+    private static final Log LOG = LogFactory.getLog(StudyImporterForFWDP.class);
 
     public static final DateTimeFormatter DATE_TIME_FORMATTER = ISODateTimeFormat.dateTimeParser();
 
@@ -31,7 +35,7 @@ public class StudyImporterForFWDP extends BaseStudyImporter {
                 "Brian Smith",
                 "",
                 "",
-                "Food Habits Database of Food Web Dynamics Program, Northeast Fisheries Science Center, National Oceanic and Atmospheric Administration."
+                "Food Habits Database of Food Web Dynamics Program, Northeast Fisheries Science Center, National Oceanic and Atmospheric Administration (NOAA)."
                 , null
                 , "http://www.nefsc.noaa.gov/femad/pbio/fwdp/");
         String studyResource = "fwdp/NEshelf_diet.csv.gz";
@@ -41,7 +45,7 @@ public class StudyImporterForFWDP extends BaseStudyImporter {
             LabeledCSVParser parser = parserFactory.createParser(studyResource, CharsetConstant.UTF8);
             while (parser.getLine() != null) {
                 int lastLineNumber = parser.getLastLineNumber();
-                if (importFilter.shouldImportRecord((long)lastLineNumber)) {
+                if (importFilter.shouldImportRecord((long) lastLineNumber)) {
                     Specimen predatorSpecimen = getPredatorSpecimen(study, predatorSpecimenMap, parser);
                     associatePreySpecimen(parser, predatorSpecimen);
                 }
@@ -82,7 +86,11 @@ public class StudyImporterForFWDP extends BaseStudyImporter {
                 String predator = createTaxon(parser, "pdscinam");
                 predatorSpecimen = nodeFactory.createSpecimen(predator);
                 Relationship collected = study.collected(predatorSpecimen);
-                addDateTime(parser, collected);
+                try {
+                    addDateTime(parser, collected);
+                } catch (IllegalFieldValueException ex) {
+                    LOG.warn("found illegal date time on line [" + parser.lastLineNumber() + "]");
+                }
                 addLocation(parser, predatorSpecimen);
                 String lengthCm = parser.getValueByLabel("PDLEN");
                 if (StringUtils.isNotBlank(lengthCm)) {
@@ -104,17 +112,33 @@ public class StudyImporterForFWDP extends BaseStudyImporter {
     }
 
     private void addDateTime(LabeledCSVParser parser, Relationship collected) {
+        String year = parser.getValueByLabel("year");
+        String month = parser.getValueByLabel("month");
+        String day = parser.getValueByLabel("day");
+        DateTime catchDateTime = parseDateTime(year, month, day, parser.getValueByLabel("hour"), parser.getValueByLabel("minute"));
+        nodeFactory.setUnixEpochProperty(collected, catchDateTime.toDate());
+    }
+
+    protected static DateTime parseDateTime(String year, String month, String day, String hourOfDay, String minute) {
+        DateTime dateTime = null;
+        if (StringUtils.isNotBlank(year) && StringUtils.isNotBlank(month) && StringUtils.isNotBlank(day)) {
+            dateTime = parseDateTimeString(year, month, day, hourOfDay, minute);
+        }
+        return dateTime;
+    }
+
+    private static DateTime parseDateTimeString(String year, String month, String day, String hourOfDay, String minute) {
+        DateTime dateTime;
         StringBuilder dateTimeString = new StringBuilder();
-        dateTimeString.append(parser.getValueByLabel("year"));
-        dateTimeString.append("-").append(parser.getValueByLabel("month"));
-        dateTimeString.append("-").append(parser.getValueByLabel("day"));
-        String hourOfDay = parser.getValueByLabel("hour");
+        dateTimeString.append(year);
+        dateTimeString.append("-").append(month);
+        dateTimeString.append("-").append(day);
         dateTimeString.append("T").append(StringUtils.isBlank(hourOfDay) ? "00" : hourOfDay);
-        String minuteOfHour = parser.getValueByLabel("minute");
+        String minuteOfHour = minute;
         dateTimeString.append(":").append(StringUtils.isBlank(minuteOfHour) ? "00" : minuteOfHour);
         dateTimeString.append(":00Z");
-        DateTime catchDateTime = DATE_TIME_FORMATTER.parseDateTime(dateTimeString.toString());
-        nodeFactory.setUnixEpochProperty(collected, catchDateTime.toDate());
+        dateTime = DATE_TIME_FORMATTER.parseDateTime(dateTimeString.toString());
+        return dateTime;
     }
 
     private String createTaxon(LabeledCSVParser parser, String taxonLabel) throws StudyImporterException {
