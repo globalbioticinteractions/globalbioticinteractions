@@ -88,7 +88,7 @@ public class StudyImporterForFWDP extends BaseStudyImporter {
                 Relationship collected = study.collected(predatorSpecimen);
                 try {
                     addDateTime(parser, collected);
-                } catch (IllegalFieldValueException ex) {
+                } catch (IllegalArgumentException ex) {
                     LOG.warn("found illegal date time on line [" + parser.lastLineNumber() + "]");
                 }
                 addLocation(parser, predatorSpecimen);

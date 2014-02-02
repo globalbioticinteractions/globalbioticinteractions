@@ -45,6 +45,12 @@ public class StudyImporterForFWDPTest extends GraphDBTestCase {
         assertThat(dateTime,is(nullValue()));
     }
 
+    @Test (expected = java.lang.IllegalArgumentException.class)
+    public void parseDateTimeInvalid3() {
+        DateTime dateTime = StudyImporterForFWDP.parseDateTime(".", ".", ".", null, null);
+        assertThat(dateTime,is(nullValue()));
+    }
+
     @Test
     public void importAFewLines() throws StudyImporterException, NodeFactoryException {
         String aFewLines= "Obs,PYNAM,PYABBR,ANALCAT,ANALSCI,COLLCAT,COLLSCI,STATION,PDSEX,PDLEN,PDID,PDWGT,FHDAT,cruise6,svspp,sizecat,pdgutw,pdgutv,STRATUM,SETDEPTH,SURFTEMP,BOTTEMP,BEGLAT,BEGLON,hour,minute,month,day,year,PURCODE,SEASON,yr2block,yr3block,yr5block,decade,geoarea,declat,declon,CATWGT,CATNUM,NUMLEN,PYNUM,pyamtw,pyamtv,pdscinam,pdcomnam\n" +
