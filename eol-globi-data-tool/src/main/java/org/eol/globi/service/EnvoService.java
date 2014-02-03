@@ -29,7 +29,7 @@ public class EnvoService extends BaseTaxonIdService {
         put("animal dung", FECES);
         put("bovine or equine dung", FECES);
         put("rock", ROCK);
-        put("organic matter", FECES);
+        put("organic matter", ORGANIC_MATERIAL);
         put("wood", WOOD);
         put("rotting wood", WOOD);
         put("sediment POC", SEDIMENT);
