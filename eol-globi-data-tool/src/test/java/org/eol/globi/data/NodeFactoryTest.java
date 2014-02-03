@@ -1,6 +1,7 @@
 package org.eol.globi.data;
 
 import junit.framework.Assert;
+import org.apache.commons.lang.StringUtils;
 import org.eol.globi.data.taxon.CorrectionService;
 import org.eol.globi.domain.Environment;
 import org.eol.globi.domain.Location;
@@ -8,8 +9,11 @@ import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
+import org.eol.globi.domain.Term;
 import org.eol.globi.geo.EcoRegion;
 import org.eol.globi.service.DOIResolver;
+import org.eol.globi.service.TermLookupService;
+import org.eol.globi.service.TermLookupServiceException;
 import org.junit.Test;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
@@ -17,6 +21,7 @@ import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.index.IndexHits;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import static junit.framework.Assert.assertNull;
@@ -44,20 +49,28 @@ public class NodeFactoryTest extends GraphDBTestCase {
 
     @Test
     public void createAndFindEnvironment() throws NodeFactoryException {
+        nodeFactory.setEnvoLookupService(new TermLookupService() {
+            @Override
+            public List<Term> lookupTermByName(String name) throws TermLookupServiceException {
+                ArrayList<Term> terms = new ArrayList<Term>();
+                terms.add(new Term("NS:" + name, StringUtils.replace(name, " ", "_")));
+                return terms;
+            }
+        });
         Location location = nodeFactory.getOrCreateLocation(0.0, 1.0, 2.0);
         List<Environment> first = nodeFactory.getOrCreateEnvironments(location, "BLA:123", "this and that");
         location = nodeFactory.getOrCreateLocation(0.0, 1.0, 2.0);
         List<Environment> second = nodeFactory.getOrCreateEnvironments(location, "BLA:123", "this and that");
         assertThat(first.size(), is(second.size()));
         assertThat(first.get(0).getNodeID(), is(second.get(0).getNodeID()));
-        Environment foundEnvironment = nodeFactory.findEnvironment("this and that");
+        Environment foundEnvironment = nodeFactory.findEnvironment("this_and_that");
         assertThat(foundEnvironment, is(notNullValue()));
 
         List<Environment> environments = location.getEnvironments();
         assertThat(environments.size(), is(1));
         Environment environment = environments.get(0);
         assertThat(environment.getNodeID(), is(foundEnvironment.getNodeID()));
-        assertThat(environment.getName(), is("this and that"));
+        assertThat(environment.getName(), is("this_and_that"));
 
         Location anotherLocation = nodeFactory.getOrCreateLocation(123.2, 123.1, null);
         assertThat(anotherLocation.getEnvironments().size(), is(0));

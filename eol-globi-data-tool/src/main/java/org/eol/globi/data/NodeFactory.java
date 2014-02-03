@@ -328,10 +328,13 @@ public class NodeFactory {
             Environment environment = findEnvironment(term.getName());
             if (environment == null) {
                 Transaction transaction = graphDb.beginTx();
-                environment = new Environment(graphDb.createNode(), term.getId(), term.getName());
-                environments.add(environment.getUnderlyingNode(), PropertyAndValueDictionary.NAME, name);
-                transaction.success();
-                transaction.finish();
+                try {
+                    environment = new Environment(graphDb.createNode(), term.getId(), term.getName());
+                    environments.add(environment.getUnderlyingNode(), PropertyAndValueDictionary.NAME, term.getName());
+                    transaction.success();
+                } finally {
+                    transaction.finish();
+                }
             }
             location.addEnvironment(environment);
             normalizedEnvironments.add(environment);
@@ -423,13 +426,10 @@ public class NodeFactory {
     protected Environment findEnvironment(String name) {
         String query = "name:\"" + name + "\"";
         IndexHits<Node> matches = environments.query(query);
-        Node matchingEnvironment;
         Environment firstMatchingEnvironment = null;
         if (matches.hasNext()) {
-            matchingEnvironment = matches.next();
-            firstMatchingEnvironment = new Environment(matchingEnvironment);
+            firstMatchingEnvironment = new Environment(matches.next());
         }
-
         matches.close();
         return firstMatchingEnvironment;
     }
