@@ -28,6 +28,7 @@ public class StudyImporterForSPIRE extends BaseStudyImporter {
     public static final String PREDATOR_NAME = "predator";
     public static final String PREY_NAME = "prey";
     public static final String LOCALITY_ORIGINAL = "localityOriginal";
+    public static final String SOURCE_SPIRE = "SPIRE";
 
     private TrophicLinkListener trophicLinkListener = new TrophicLinkListener() {
         @Override
@@ -147,7 +148,7 @@ public class StudyImporterForSPIRE extends BaseStudyImporter {
         if (properties.containsKey(Study.TITLE)) {
             Study study = nodeFactory.getOrCreateStudy(properties.get(Study.TITLE),
                     properties.get(Study.CONTRIBUTOR),
-                    null, null, properties.get(Study.DESCRIPTION), properties.get(Study.PUBLICATION_YEAR), "SPIRE");
+                    null, null, properties.get(Study.DESCRIPTION), properties.get(Study.PUBLICATION_YEAR), SOURCE_SPIRE);
 
             try {
                 Specimen predator = createSpecimen(properties.get(PREDATOR_NAME));

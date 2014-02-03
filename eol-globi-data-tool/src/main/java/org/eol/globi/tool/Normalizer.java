@@ -9,6 +9,7 @@ import org.eol.globi.data.ParserFactoryImpl;
 import org.eol.globi.data.StudyImporter;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.data.StudyImporterFactory;
+import org.eol.globi.data.StudyImporterForSPIRE;
 import org.eol.globi.db.GraphService;
 import org.eol.globi.domain.Study;
 import org.eol.globi.export.DarwinCoreExporter;
@@ -38,6 +39,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -120,7 +122,14 @@ public class Normalizer {
 
     private void exportDataOntology(List<Study> studies, String baseDir) throws StudyImporterException {
         try {
-            export(studies, baseDir + "globi.ttl.gz", new GlobiOWLExporter());
+            // only exporting SPIRE studies to ttl for purposes of testing the globi ontology
+            List<Study> spireStudies = new ArrayList<Study>();
+            for (Study study : studies) {
+                if (study.getSource().contains(StudyImporterForSPIRE.SOURCE_SPIRE)) {
+                    spireStudies.add(study);
+                }
+            }
+            export(spireStudies, baseDir + "globi.ttl.gz", new GlobiOWLExporter());
         } catch (OWLOntologyCreationException e) {
             throw new StudyImporterException("failed to export as owl", e);
         } catch (IOException e) {
