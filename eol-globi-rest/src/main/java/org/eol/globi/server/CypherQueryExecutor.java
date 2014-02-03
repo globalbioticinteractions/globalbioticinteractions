@@ -22,12 +22,20 @@ public class CypherQueryExecutor {
     }
 
     public String execute(HttpServletRequest request) throws IOException {
+        return execute(request, true);
+    }
+
+    public String execute(HttpServletRequest request, boolean enablePaging) throws IOException {
         String type = request == null ? "json" : request.getParameter("type");
         ResultFormatter formatter = new ResultFormatterFactory().create(type);
         if (formatter == null) {
             throw new IOException("found unsupported return format type request for [" + type + "]");
         } else {
-            return formatter.format(executeRemote(CypherQueryBuilder.createPagedQuery(request, cypherQuery)));
+            CypherQuery queryToBeExecuted = cypherQuery;
+            if (enablePaging) {
+                queryToBeExecuted = CypherQueryBuilder.createPagedQuery(request, cypherQuery);
+            }
+            return formatter.format(executeRemote(queryToBeExecuted));
         }
     }
 

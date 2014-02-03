@@ -94,7 +94,7 @@ public class CypherProxyController {
     @ResponseBody
     @Cacheable(value = "locationCache")
     public String locations(HttpServletRequest request) throws IOException {
-        return new CypherQueryExecutor(CypherQueryBuilder.locations()).execute(request);
+        return new CypherQueryExecutor(CypherQueryBuilder.locations()).execute(request, false);
     }
 
     @RequestMapping(value = "/contributors", method = RequestMethod.GET, produces = "application/json")
