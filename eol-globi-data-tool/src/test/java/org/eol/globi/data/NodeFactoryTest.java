@@ -71,6 +71,7 @@ public class NodeFactoryTest extends GraphDBTestCase {
         Environment environment = environments.get(0);
         assertThat(environment.getNodeID(), is(foundEnvironment.getNodeID()));
         assertThat(environment.getName(), is("this_and_that"));
+        assertThat(environment.getExternalId(), is("NS:this and that"));
 
         Location anotherLocation = nodeFactory.getOrCreateLocation(123.2, 123.1, null);
         assertThat(anotherLocation.getEnvironments().size(), is(0));
