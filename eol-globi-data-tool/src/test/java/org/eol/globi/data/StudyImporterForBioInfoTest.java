@@ -3,6 +3,7 @@ package org.eol.globi.data;
 import com.Ostermiller.util.CSVParser;
 import com.Ostermiller.util.LabeledCSVParser;
 import org.eol.globi.domain.InteractType;
+import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.RelType;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Specimen;
@@ -73,17 +74,16 @@ public class StudyImporterForBioInfoTest extends GraphDBTestCase {
         assertThat(study.getTitle(), is("BIO_INFO"));
         TaxonNode acer = nodeFactory.findTaxon("Acer");
         assertNotNull(acer);
-        assertThat(acer.getExternalId(), is("bioinfo:3011"));
+        assertThat(acer.getExternalId(), is(PropertyAndValueDictionary.NO_MATCH));
         TaxonNode taxon = nodeFactory.findTaxon("Dasineura tympani");
         assertNotNull(taxon);
-        assertThat(taxon.getExternalId(), is("bioinfo:107544"));
+        assertThat(taxon.getExternalId(), is(PropertyAndValueDictionary.NO_MATCH));
         TaxonNode taxon1 = nodeFactory.findTaxon("Phyllocoptes acericola");
         assertNotNull(taxon1);
-        assertThat(taxon1.getExternalId(), is("bioinfo:43927"));
+        assertThat(taxon1.getExternalId(), is(PropertyAndValueDictionary.NO_MATCH));
         TaxonNode taxon2 = nodeFactory.findTaxon("Aceria eriobia");
         assertNotNull(taxon2);
-        assertThat(taxon2.getExternalId(), is("bioinfo:32122"));
-
+        assertThat(taxon2.getExternalId(), is(PropertyAndValueDictionary.NO_MATCH));
         // relation record number: 4585
         taxon2 = nodeFactory.findTaxon("Aneugmenus fürstenbergensis");
         assertNotNull(taxon2);

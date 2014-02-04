@@ -192,7 +192,7 @@ public class StudyImporterForBioInfo extends BaseStudyImporter implements StudyI
             throw new StudyImporterException("failed to find scientific name for taxonId [" + taxonId + "] at line [" + labeledCSVParser.getLastLineNumber() + "]");
         }
         try {
-            Specimen specimen = nodeFactory.createSpecimen(scientificName, TaxonomyProvider.BIO_INFO + taxonId);
+            Specimen specimen = nodeFactory.createSpecimen(scientificName);
             specimen.setExternalId(TaxonomyProvider.BIO_INFO + "rel:" + labeledCSVParser.lastLineNumber());
             return specimen;
         } catch (NodeFactoryException e) {
