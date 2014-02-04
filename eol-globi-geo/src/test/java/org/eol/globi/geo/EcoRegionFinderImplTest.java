@@ -86,6 +86,15 @@ public class EcoRegionFinderImplTest {
         Map<String, String> props = findEcoRegionProperties(GeoUtil.getPoint(52.57635, 5.282593), new EcoRegionFinderFactoryImpl().createEcoRegionFinder(EcoRegionType.Freshwater));
         assertThat(props.toString(), containsString("ECOREGION=Central & Western Europe, ECO_ID=404, ECO_ID_U=30404, MHT_NO=7, MHT_TXT=temperate floodplain rivers and wetlands, OLD_ID=306"));
     }
+@Test
+    public void isFreshwaterRegionLagoGatun() throws EcoRegionFinderException {
+    EcoRegionFinder finder = new EcoRegionFinderFactoryImpl().createEcoRegionFinder(EcoRegionType.Freshwater);
+    Collection<EcoRegion> ecoRegion = finder.findEcoRegion(9.2, -79.91667);
+    assertThat(ecoRegion.size(), is(1));
+    assertThat(ecoRegion.iterator().next().getName(), is("Chagres"));
+    Map<String, String> props = findEcoRegionProperties(GeoUtil.getPoint(9.2, -79.91667), new EcoRegionFinderFactoryImpl().createEcoRegionFinder(EcoRegionType.Freshwater));
+        assertThat(props.toString(), containsString("ECOREGION=Chagres, ECO_ID=209, ECO_ID_U=30209, MHT_NO=8, MHT_TXT=tropical and subtropical coastal rivers, OLD_ID=121"));
+    }
 
     @Test
     public void isMarineRegionInSacramento() throws EcoRegionFinderException {

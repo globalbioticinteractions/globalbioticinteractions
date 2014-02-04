@@ -8,33 +8,33 @@ import org.eol.globi.geo.EcoRegionFinderFactoryImpl;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class EcoRegionFinderProxy implements EcoRegionFinder {
     public static final ArrayList<EcoRegion> EMPTY_REGIONS = new ArrayList<EcoRegion>();
-    private final EcoRegionFinderFactory factory;
-    public List<EcoRegionFinder> finders;
+    public final List<EcoRegionFinder> finders;
 
-    public EcoRegionFinderProxy(EcoRegionFinderFactory factory) {
-        this.factory = factory;
+    public EcoRegionFinderProxy(List<EcoRegionFinder> finders) {
+        this.finders = finders;
     }
 
     @Override
     public Collection<EcoRegion> findEcoRegion(double lat, double lng) throws EcoRegionFinderException {
-        if (finders == null) {
-            finders = factory.createAll();
-        }
-        Collection<EcoRegion> regions = null;
+        Map<String, EcoRegion> regions = null;
         for (EcoRegionFinder finder : finders) {
             Collection<EcoRegion> ecoRegion = finder.findEcoRegion(lat, lng);
-            if (ecoRegion != null && ecoRegion.size() > 0 && regions == null) {
-                regions = new ArrayList<EcoRegion>();
+            if (ecoRegion != null) {
                 for (EcoRegion region : ecoRegion) {
-                    regions.add(region);
+                    if (regions == null) {
+                        regions = new HashMap<String, EcoRegion>();
+                    }
+                    regions.put(region.getId(), region);
                 }
             }
         }
-        return regions == null ? EMPTY_REGIONS : regions;
+        return regions == null ? EMPTY_REGIONS : regions.values();
     }
 
     @Override

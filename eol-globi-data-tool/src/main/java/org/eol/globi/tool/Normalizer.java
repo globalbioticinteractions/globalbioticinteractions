@@ -60,7 +60,7 @@ public class Normalizer {
 
     private EcoRegionFinder getEcoRegionFinder() {
         if (null == ecoRegionFinder) {
-            ecoRegionFinder = new EcoRegionFinderProxy(new EcoRegionFinderFactoryImpl());
+            ecoRegionFinder = new EcoRegionFinderProxy(new EcoRegionFinderFactoryImpl().createAll());
         }
         return ecoRegionFinder;
     }
