@@ -22,6 +22,7 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 
 public class TaxonServiceImplTest extends GraphDBTestCase {
     public static final String EXPECTED_COMMON_NAMES = "some german name @de" + CharsetConstant.SEPARATOR + "some english name @en" + CharsetConstant.SEPARATOR;
@@ -216,6 +217,39 @@ public class TaxonServiceImplTest extends GraphDBTestCase {
 
         TaxonNode taxonMatch = taxonService.findTaxon("bla corrected");
         assertThat(taxonMatch.getName(), is("bla corrected"));
+    }
+
+    @Test
+    public void synonymsAddedToIndexOnce() throws NodeFactoryException {
+        taxonService.setEnricher(new TaxonPropertyEnricher() {
+            private boolean firstTime = true;
+
+            @Override
+            public void enrich(Taxon taxon) {
+                if ("not pref".equals(taxon.getName())) {
+                    if (!firstTime) {
+                        fail("should already have indexed [" + taxon.getName() + "]...");
+                    }
+                    taxon.setName("preferred");
+                    taxon.setExternalId("bla:123");
+                    taxon.setPath("one | two | three");
+                    firstTime = false;
+                }
+            }
+        });
+        TaxonNode first = taxonService.getOrCreateTaxon("not pref", null, null);
+        assertThat(first.getName(), is("preferred"));
+        assertThat(first.getPath(), is("one | two | three"));
+        TaxonNode second = taxonService.getOrCreateTaxon("not pref", null, null);
+        assertThat(second.getNodeID(), is(first.getNodeID()));
+
+        TaxonNode third = taxonService.getOrCreateTaxon("not pref", null, null);
+        assertThat(third.getNodeID(), is(first.getNodeID()));
+
+        TaxonNode foundTaxon = taxonService.findTaxon("not pref");
+        assertThat(foundTaxon.getNodeID(), is(first.getNodeID()));
+        foundTaxon = taxonService.findTaxon("preferred");
+        assertThat(foundTaxon.getNodeID(), is(first.getNodeID()));
     }
 
     private TaxonServiceImpl createTaxonService() {

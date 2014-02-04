@@ -80,7 +80,7 @@ public class TaxonServiceImpl implements TaxonService {
             taxonNode = findTaxon(taxon.getName());
             if (taxonNode == null) {
                 if (TaxonMatchValidator.hasMatch(taxon)) {
-                    taxonNode = addTaxon(taxon);
+                    taxonNode = createAndIndexTaxon(taxon, correctedName);
                 } else {
                     String truncatedName = NodeUtil.truncateTaxonName(taxon.getName());
                     if (truncatedName == null || StringUtils.length(truncatedName) < 3) {
@@ -90,25 +90,9 @@ public class TaxonServiceImpl implements TaxonService {
                         taxon.setName(truncatedName);
                     }
                 }
-            } else {
-                if (!StringUtils.equals(correctedName, taxonNode.getName())) {
-                    addAltenateNameToIndex(taxonNode, correctedName);
-                }
             }
         }
         return taxonNode;
-    }
-
-    private void addAltenateNameToIndex(TaxonNode taxonNode, String alternateName) {
-        Transaction tx = taxonNode.getUnderlyingNode().getGraphDatabase().beginTx();
-        try {
-            if (StringUtils.isNotBlank(alternateName)) {
-                taxons.add(taxonNode.getUnderlyingNode(), PropertyAndValueDictionary.NAME, alternateName);
-            }
-            tx.success();
-        } finally {
-            tx.finish();
-        }
     }
 
     private TaxonNode addNoMatchTaxon(String externalId, String path, String correctedName) {
@@ -116,10 +100,10 @@ public class TaxonServiceImpl implements TaxonService {
         noMatchTaxon.setName(correctedName);
         noMatchTaxon.setExternalId(StringUtils.isBlank(externalId) ? PropertyAndValueDictionary.NO_MATCH : externalId);
         noMatchTaxon.setPath(path);
-        return addTaxon(noMatchTaxon);
+        return createAndIndexTaxon(noMatchTaxon, correctedName);
     }
 
-    private TaxonNode addTaxon(Taxon taxon) {
+    private TaxonNode createAndIndexTaxon(Taxon taxon, String correctedName) {
         TaxonNode taxonNode = null;
         Transaction transaction = graphDbService.beginTx();
         try {
@@ -127,6 +111,11 @@ public class TaxonServiceImpl implements TaxonService {
             taxonNode.setExternalId(taxon.getExternalId());
             taxonNode.setPath(taxon.getPath());
             taxonNode.setCommonNames(taxon.getCommonNames());
+            if (!StringUtils.equals(taxon.getName(), correctedName)) {
+                if (StringUtils.isNotBlank(correctedName)) {
+                    taxons.add(taxonNode.getUnderlyingNode(), PropertyAndValueDictionary.NAME, correctedName);
+                }
+            }
             addToIndeces(taxonNode, taxon.getName());
             transaction.success();
         } finally {
@@ -188,7 +177,6 @@ public class TaxonServiceImpl implements TaxonService {
         String path = taxon.getPath();
         if (StringUtils.isNotBlank(path)) {
             taxonPaths.add(taxon.getUnderlyingNode(), PropertyAndValueDictionary.PATH, path);
-            taxonCommonNames.add(taxon.getUnderlyingNode(), PropertyAndValueDictionary.PATH, path);
             String[] pathElementArray = path.split(CharsetConstant.SEPARATOR);
             for (String pathElement : pathElementArray) {
                 taxonNameSuggestions.add(taxon.getUnderlyingNode(), PropertyAndValueDictionary.NAME, StringUtils.lowerCase(pathElement));
