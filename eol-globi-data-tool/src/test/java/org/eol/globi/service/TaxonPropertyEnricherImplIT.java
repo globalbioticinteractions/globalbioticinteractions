@@ -5,14 +5,17 @@ import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.NodeFactory;
 import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.domain.PropertyAndValueDictionary;
+import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.TaxonNode;
 import org.junit.Before;
 import org.junit.Test;
+import org.neo4j.graphdb.Relationship;
 
 import java.io.IOException;
 
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNot.not;
+import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.junit.internal.matchers.StringContains.containsString;
 
@@ -81,5 +84,21 @@ public class TaxonPropertyEnricherImplIT extends GraphDBTestCase {
         assertThat(taxon.getExternalId(), is(PropertyAndValueDictionary.NO_MATCH));
         assertThat(taxon.getName(), is(PropertyAndValueDictionary.NO_MATCH));
         assertThat(taxon.getPath(), is(PropertyAndValueDictionary.NO_MATCH));
+    }
+
+    @Test
+    public void noNameButExternalId() throws NodeFactoryException {
+        Specimen specimen = nodeFactory.createSpecimen("no name", "EOL:223038");
+        assertThat(specimen, is(notNullValue()));
+        Iterable<Relationship> classifications = specimen.getClassifications();
+        int count = 0;
+        for (Relationship classification : classifications) {
+            TaxonNode taxonNode = new TaxonNode(classification.getEndNode());
+            assertThat(taxonNode.getName(), is("Ariopsis felis"));
+            assertThat(taxonNode.getPath(), is("Animalia | Chordata | Actinopterygii | Siluriformes | Ariidae | Ariopsis | Ariopsis felis | no name"));
+            assertThat(taxonNode.getExternalId(), is("EOL:223038"));
+            count++;
+        }
+        assertThat(count, is(1));
     }
 }

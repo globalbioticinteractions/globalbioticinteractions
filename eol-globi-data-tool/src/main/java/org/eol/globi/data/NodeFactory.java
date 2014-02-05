@@ -247,10 +247,12 @@ public class NodeFactory {
         return doi;
     }
 
+    @Deprecated
     public Study getOrCreateStudy(String title, String contributor, String institution, String period, String description, String publicationYear, String source) {
         return getOrCreateStudy(title, contributor, institution, period, description, publicationYear, source, null);
     }
 
+    @Deprecated
     public Study getOrCreateStudy(String title, String contributor, String institution, String period, String description, String publicationYear, String source, String doi) {
         Study study = findStudy(title);
         if (null == study) {
@@ -259,6 +261,9 @@ public class NodeFactory {
         return study;
     }
 
+    public Study getOrCreateStudy(String title, String source, String doi) {
+        return getOrCreateStudy(title, null, null, null, null, null, source, doi);
+    }
 
     public Study findStudy(String title) {
         Node foundStudyNode = studies.get(Study.TITLE, title).getSingle();
