@@ -101,4 +101,5 @@ public class TaxonPropertyEnricherImplIT extends GraphDBTestCase {
         }
         assertThat(count, is(1));
     }
+
 }

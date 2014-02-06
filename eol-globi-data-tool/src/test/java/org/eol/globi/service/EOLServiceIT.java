@@ -42,6 +42,11 @@ public class EOLServiceIT {
     }
 
     @Test
+    public void algae() throws TaxonPropertyLookupServiceException {
+        assertThat(lookupPageIdByName("Algae"), is("bla"));
+    }
+
+    @Test
     public void lookupBySquatLobster() throws TaxonPropertyLookupServiceException {
         HashMap<String, String> properties = new HashMap<String, String>();
         new EOLService().lookupPropertiesByName("Squat lobster", properties);

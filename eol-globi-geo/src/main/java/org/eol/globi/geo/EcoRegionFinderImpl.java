@@ -58,7 +58,7 @@ public class EcoRegionFinderImpl implements EcoRegionFinder {
         }
     }
 
-    private Map<String, String> getFeatureProperties(Point point, SimpleFeatureCollection featureCollection) {
+    public static Map<String, String> getFeatureProperties(Point point, SimpleFeatureCollection featureCollection) {
         Map<String, String> map = null;
         SimpleFeatureIterator features = featureCollection.features();
         try {
@@ -75,7 +75,9 @@ public class EcoRegionFinderImpl implements EcoRegionFinder {
                             String localName = attributeDescriptor.getLocalName();
                             Object value = feature.getAttribute(localName);
                             if (value != null) {
-                                if (value instanceof Number) {
+                                if (value instanceof Double) {
+                                    value = Double.toString((Double)value);
+                                } else if (value instanceof Number) {
                                     value = Integer.toString(((Number) value).intValue());
                                 } else {
                                     value = value.toString();
@@ -95,7 +97,7 @@ public class EcoRegionFinderImpl implements EcoRegionFinder {
 
     @Override
     public Collection<EcoRegion> findEcoRegion(double lat, double lng) throws EcoRegionFinderException {
-        final Map<String, String> props = findEcoRegion(new GeometryFactory().createPoint(new Coordinate(lng, lat)));
+        final Map<String, String> props = findEcoRegion(GeoUtil.getPoint(lat, lng));
         return props == null || !props.containsKey(config.getIdLabel()) ? null : new ArrayList<EcoRegion>() {{
             add(createEcoRegion(props));
         }};

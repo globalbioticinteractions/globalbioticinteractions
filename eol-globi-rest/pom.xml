@@ -29,7 +29,7 @@
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>eol-globi-lib</artifactId>
+            <artifactId>eol-globi-geo</artifactId>
             <version>${project.version}</version>
         </dependency>
 
