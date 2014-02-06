@@ -44,24 +44,29 @@ public class DietNicheWidthController {
         int numberOfPreyAcrossAllSpecimen = countDistinctPreyTaxa(executionEngine, createStartClause(consumerTaxonName));
         Collection<String> consumerTaxa = getDistinctConsumerTaxa(executionEngine, createStartClause(consumerTaxonName));
         if (numberOfPreyAcrossAllSpecimen > 1) {
-            writeHeader(outputStream);
-            boolean isFirst = true;
-            for (String consumerName : consumerTaxa) {
-                String query = findPreyForConsumerSpecimenQuery(executionEngine, createStartClause(consumerName));
-                LOG.info("niche width for [" + consumerName + "] executing...");
-                ExecutionResult results = executionEngine.execute(query.toString());
-                LOG.info("niche width for [" + consumerName + "] getting results...");
+            calculateDietNicheWidth(outputStream, executionEngine, numberOfPreyAcrossAllSpecimen, consumerTaxa);
+        }
+    }
 
-                for (Map<String, Object> result : results) {
-                    if (!isFirst) {
-                        IOUtils.write("\n", outputStream, "UTF-8");
-                    }
-                    inferNicheWidthDiversityAndWrite(result, outputStream, numberOfPreyAcrossAllSpecimen, new TaxonRichnessLookup());
-                    isFirst = false;
+    private void calculateDietNicheWidth(OutputStream outputStream, ExecutionEngine executionEngine, int numberOfPreyAcrossAllSpecimen, Collection<String> consumerTaxa) throws IOException {
+        writeHeader(outputStream);
+        boolean isFirst = true;
+        TaxonRichnessLookup taxonRichnessLookup = new TaxonRichnessLookup();
+        for (String consumerName : consumerTaxa) {
+            String query = findPreyForConsumerSpecimenQuery(executionEngine, createStartClause(consumerName));
+            LOG.info("niche width for [" + consumerName + "] executing...");
+            ExecutionResult results = executionEngine.execute(query.toString());
+            LOG.info("niche width for [" + consumerName + "] getting results...");
+
+            for (Map<String, Object> result : results) {
+                if (!isFirst) {
+                    IOUtils.write("\n", outputStream, "UTF-8");
                 }
-                LOG.info("niche width for [" + consumerName + "] done.");
-
+                inferNicheWidthDiversityAndWrite(result, outputStream, numberOfPreyAcrossAllSpecimen, taxonRichnessLookup);
+                isFirst = false;
             }
+            LOG.info("niche width for [" + consumerName + "] done.");
+
         }
     }
 
@@ -74,6 +79,7 @@ public class DietNicheWidthController {
         query.append(startClause);
         query.append(" MATCH study-[:COLLECTED]->consumerSpecimen-[:COLLECTED_AT]->loc, consumerTaxon<-[:CLASSIFIED_AS]-consumerSpecimen-[:ATE|PREYS_ON]->preySpecimen-[:CLASSIFIED_AS]->preyTaxon");
         query.append(" RETURN id(study) as studyId, id(consumerSpecimen) as consumerSpecimenId, consumerTaxon.name as consumerName, count(distinct(preyTaxon.name)) as numberOfDistinctPreyItems, loc.latitude as lat, loc.longitude as lng");
+        query.append(" LIMIT 50");
         return query.toString();
     }
 

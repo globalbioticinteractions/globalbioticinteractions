@@ -1,6 +1,7 @@
 package org.eol.globi.geo;
 
 import com.vividsolutions.jts.geom.Point;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.Collection;
@@ -45,6 +46,7 @@ public class EcoRegionFinderImplTest {
         return ecoRegion70.iterator().next();
     }
 
+    @Ignore
     @Test
     public void isMarineRegionInNorthernCalifornia() throws EcoRegionFinderException {
         EcoRegionFinder ecoRegionFinder = new EcoRegionFinderFactoryImpl().createEcoRegionFinder(EcoRegionType.Marine);
@@ -59,13 +61,14 @@ public class EcoRegionFinderImplTest {
         assertThat(props, is(nullValue()));
     }
 
+    @Ignore
     @Test
     public void isMarineRegionInFloridian() throws EcoRegionFinderException {
         EcoRegionFinder ecoRegionFinder = new EcoRegionFinderFactoryImpl().createEcoRegionFinder(EcoRegionType.Marine);
         Map<String, String> props = findEcoRegionProperties(GeoUtil.getPoint(26.745505, -82.346064), ecoRegionFinder);
         String floridian = "{ALT_CODE=69, ECOREGION=Floridian, ECO_CODE=20070, ECO_CODE_X=70, Lat_Zone=Tropical, PROVINCE=Tropical Northwestern Atlantic, PROV_CODE=12, REALM=Tropical Atlantic, RLM_CODE=4, the_geom=MULTIPOLYGON (((-81.97706952087646 28.83336952737858, -80.77849861602755 28.466459669724088, -80.76191777620318 28.467735118802977, -79.82453358957105 28.539841565711924, -79.82241088740966 28.51540194637522, -79.74152951534188 27.58417856440542, -79.74152951354324 27.58417824064952, -79.73863762664615 26.997957641791288, -79.77310650144142 26.318409653827587, -79.78697652566473 26.27073533040624, -79.81755665556295 26.165624700316926, -79.8236849407408 25.927508588692717, -79.8267414845082 25.80874578794709, -79.82674148810548 25.808745639558992, -79.82674160231937 25.80874526364238, -79.83626217425854 25.777389044913207, -79.94758757372796 25.410736337601122, -79.98535851979517 25.286336877756185, -79.9853586043314 25.28633659806701, -80.02443353406619 24.994058033918748, -80.02443359881738 24.994057548284843, -80.02443521759704 24.9940554762469, -80.36445235093379 24.558743551967268, -80.36445461542661 24.55874065255307, -80.36617163342055 24.55747949190254, -80.732751592775 24.288224176948063, -80.73275362344418 24.288222684972823, -80.73276416889428 24.288221866589822, -80.75976743607725 24.2861265469856, -80.88022124822237 24.276779926409972, -81.20688447824836 24.25143247565893, -81.23396112111567 24.249331462446946, -81.27364235487687 24.24625239515933, -81.29371753023116 24.244694660586617, -81.2937201616474 24.244694373702885, -81.34834189793185 24.238743081395683, -81.3537713181621 24.238151520854615, -81.3984812144721 24.233280169513762, -81.4007028906201 24.23303810709706, -81.42707347306424 24.23016490901108, -81.55776565012684 24.21947866013926, -81.77560596204114 24.23218355871427, -81.79106181655669 24.233084976163923, -81.83464845695414 24.23562703938211, -81.8346576426294 24.235627575378032, -82.17080742863806 24.254745405345034, -82.18868655852225 24.255762244481843, -82.19689483436025 24.25622907355404, -82.19692263690081 24.25623065456216, -82.19692655794483 24.25623049178489, -82.51501822740181 24.243039940428275, -82.53829859456243 24.242074555102022, -82.5383049536685 24.242075090198625, -82.55688126766745 24.24363711903402, -82.92442668069663 24.27454294919704, -82.92443466667623 24.274543620990585, -82.92548101077023 24.2747241769751, -83.05909292763243 24.297780140806367, -83.08244471355272 24.301809706043343, -83.09255641885494 24.30640568947547, -83.68441471103279 24.57541775310949, -83.83221863638448 24.642597751713424, -83.83222056632957 24.642598628552435, -83.898704529253 24.676706703443415, -84.04847223217439 24.753541133573947, -84.10497653724917 24.782529199978967, -84.27933747989766 24.87198055430565, -85.51109055634709 25.659653555909415, -85.5552940651068 25.73763174289752, -85.59601562739692 25.8129236729705, -85.68466097424738 25.944268277588378, -85.8100225953491 26.20987961702184, -85.85537560223821 26.356290547408832, -85.6686436019425 28.138539567015016, -85.66719195769161 28.152395254246528, -85.65982263149573 28.222734173639083, -85.65982259372419 28.222734530669925, -85.65971972477388 28.222722910530024, -85.65971962315052 28.22272289883881, -83.4404921474108 27.97203001864642, -82.84775150790699 27.905071647164675, -82.80517128889994 27.95046954011559, -82.70911835869447 28.052878608627566, -82.70887542213671 28.053137620566588, -81.97706952087646 28.83336952737858)))}";
         assertThat(props.toString(), is(floridian));
-        props = findEcoRegionProperties(GeoUtil.getPoint(26.798667,-82.149), ecoRegionFinder);
+        props = findEcoRegionProperties(GeoUtil.getPoint(26.798667, -82.149), ecoRegionFinder);
         assertThat(props.toString(), is(floridian));
     }
 
@@ -86,22 +89,25 @@ public class EcoRegionFinderImplTest {
         Map<String, String> props = findEcoRegionProperties(GeoUtil.getPoint(52.57635, 5.282593), new EcoRegionFinderFactoryImpl().createEcoRegionFinder(EcoRegionType.Freshwater));
         assertThat(props.toString(), containsString("ECOREGION=Central & Western Europe, ECO_ID=404, ECO_ID_U=30404, MHT_NO=7, MHT_TXT=temperate floodplain rivers and wetlands, OLD_ID=306"));
     }
-@Test
+
+    @Test
     public void isFreshwaterRegionLagoGatun() throws EcoRegionFinderException {
-    EcoRegionFinder finder = new EcoRegionFinderFactoryImpl().createEcoRegionFinder(EcoRegionType.Freshwater);
-    Collection<EcoRegion> ecoRegion = finder.findEcoRegion(9.2, -79.91667);
-    assertThat(ecoRegion.size(), is(1));
-    assertThat(ecoRegion.iterator().next().getName(), is("Chagres"));
-    Map<String, String> props = findEcoRegionProperties(GeoUtil.getPoint(9.2, -79.91667), new EcoRegionFinderFactoryImpl().createEcoRegionFinder(EcoRegionType.Freshwater));
+        EcoRegionFinder finder = new EcoRegionFinderFactoryImpl().createEcoRegionFinder(EcoRegionType.Freshwater);
+        Collection<EcoRegion> ecoRegion = finder.findEcoRegion(9.2, -79.91667);
+        assertThat(ecoRegion.size(), is(1));
+        assertThat(ecoRegion.iterator().next().getName(), is("Chagres"));
+        Map<String, String> props = findEcoRegionProperties(GeoUtil.getPoint(9.2, -79.91667), new EcoRegionFinderFactoryImpl().createEcoRegionFinder(EcoRegionType.Freshwater));
         assertThat(props.toString(), containsString("ECOREGION=Chagres, ECO_ID=209, ECO_ID_U=30209, MHT_NO=8, MHT_TXT=tropical and subtropical coastal rivers, OLD_ID=121"));
     }
 
+    @Ignore
     @Test
     public void isMarineRegionInSacramento() throws EcoRegionFinderException {
         Map<String, String> props = findEcoRegionProperties(pointInSacramento(), new EcoRegionFinderFactoryImpl().createEcoRegionFinder(EcoRegionType.Marine));
         assertThat(props.toString(), containsString("ALT_CODE=53, ECOREGION=Northern California, ECO_CODE=25058, ECO_CODE_X=58, Lat_Zone=Temperate, PROVINCE=Cold Temperate Northeast Pacific, PROV_CODE=10, REALM=Temperate Northern Pacific, RLM_CODE=3"));
     }
 
+    @Ignore
     @Test
     public void isMarineRegionInGulfOfMexico() throws EcoRegionFinderException {
         // for some reason the coordinate system is lng, lat.
