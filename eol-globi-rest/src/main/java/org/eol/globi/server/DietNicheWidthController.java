@@ -54,7 +54,7 @@ public class DietNicheWidthController {
         boolean isFirst = true;
         TaxonRichnessLookup taxonRichnessLookup = new TaxonRichnessLookup();
         for (String consumerName : consumerTaxa) {
-            String query = findPreyForConsumerSpecimenQuery(executionEngine, createStartClause(consumerName));
+            String query = findPreyForConsumerSpecimenQuery(executionEngine, "START consumerTaxon = node:taxons('name:\"" + consumerName + "\"')");
             LOG.info("niche width for [" + consumerName + "] executing...");
             ExecutionResult results = executionEngine.execute(query);
             LOG.info("niche width for [" + consumerName + "] getting results...");
