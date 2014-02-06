@@ -114,7 +114,7 @@ public class DietNicheWidthController {
         IOUtils.write(nicheWidth.toString(), outputStream, "UTF-8");
         writeSeparator(outputStream);
         Double richness = taxonRichnessLookup.lookupRichness(lat, lng);
-        IOUtils.write(richness.toString(), outputStream, "UTF-8");
+        IOUtils.write(richness == null ? "" : richness.toString(), outputStream, "UTF-8");
         outputStream.flush();
     }
 
