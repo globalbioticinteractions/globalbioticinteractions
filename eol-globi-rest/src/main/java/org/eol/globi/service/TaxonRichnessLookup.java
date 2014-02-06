@@ -18,7 +18,10 @@ public class TaxonRichnessLookup {
         lazyInit();
         SimpleFeatureSource features = dataStore.getFeatureSource();
         Map<String, String> featureProperties = EcoRegionFinderImpl.getFeatureProperties(GeoUtil.getPoint(latitude, longitude), features.getFeatures());
-        String allNorm = featureProperties.get("AllNorm");
+        String allNorm = null;
+        if (featureProperties != null) {
+            allNorm = featureProperties.get("AllNorm");
+        }
         return StringUtils.isBlank(allNorm) ? null : new Double(allNorm);
     }
 

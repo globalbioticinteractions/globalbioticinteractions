@@ -7,6 +7,7 @@ import org.eol.globi.service.TaxonRichnessLookup;
 import org.neo4j.cypher.javacompat.ExecutionEngine;
 import org.neo4j.cypher.javacompat.ExecutionResult;
 import org.neo4j.graphdb.GraphDatabaseService;
+import org.neo4j.graphdb.ResourceIterator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,6 +18,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -28,7 +30,6 @@ public class DietNicheWidthController {
 
     @Autowired
     private GraphDatabaseService graphDb;
-
 
     @RequestMapping(value = "/dietNicheWidth/{consumerTaxonName}", method = RequestMethod.GET)
     public void calculateDietaryNicheWidth(@PathVariable("consumerTaxonName") String consumerTaxonName, HttpServletResponse response) throws IOException {
@@ -55,16 +56,18 @@ public class DietNicheWidthController {
         for (String consumerName : consumerTaxa) {
             String query = findPreyForConsumerSpecimenQuery(executionEngine, createStartClause(consumerName));
             LOG.info("niche width for [" + consumerName + "] executing...");
-            ExecutionResult results = executionEngine.execute(query.toString());
+            ExecutionResult results = executionEngine.execute(query);
             LOG.info("niche width for [" + consumerName + "] getting results...");
-
-            for (Map<String, Object> result : results) {
+            ResourceIterator<Map<String, Object>> iterator = results.iterator();
+            while (iterator.hasNext()) {
+                Map<String, Object> result = iterator.next();
                 if (!isFirst) {
                     IOUtils.write("\n", outputStream, "UTF-8");
                 }
                 inferNicheWidthDiversityAndWrite(result, outputStream, numberOfPreyAcrossAllSpecimen, taxonRichnessLookup);
                 isFirst = false;
             }
+            iterator.close();
             LOG.info("niche width for [" + consumerName + "] done.");
 
         }
@@ -79,7 +82,6 @@ public class DietNicheWidthController {
         query.append(startClause);
         query.append(" MATCH study-[:COLLECTED]->consumerSpecimen-[:COLLECTED_AT]->loc, consumerTaxon<-[:CLASSIFIED_AS]-consumerSpecimen-[:ATE|PREYS_ON]->preySpecimen-[:CLASSIFIED_AS]->preyTaxon");
         query.append(" RETURN id(study) as studyId, id(consumerSpecimen) as consumerSpecimenId, consumerTaxon.name as consumerName, count(distinct(preyTaxon.name)) as numberOfDistinctPreyItems, loc.latitude as lat, loc.longitude as lng");
-        query.append(" LIMIT 50");
         return query.toString();
     }
 
@@ -90,7 +92,10 @@ public class DietNicheWidthController {
     }
 
     private void inferNicheWidthDiversityAndWrite(Map<String, Object> result, OutputStream outputStream, int numberOfPreyAcrossAllSpecimen, TaxonRichnessLookup taxonRichnessLookup) throws IOException {
-        IOUtils.write(result.get("studyId").toString(), outputStream, "UTF-8");
+        Long studyId = (Long)result.get("studyId");
+        Map<Long, Integer> counterMap = new HashMap<Long, Integer>();
+        Integer integer = counterMap.get(studyId);
+        IOUtils.write(studyId.toString(), outputStream, "UTF-8");
         writeSeparator(outputStream);
         IOUtils.write(result.get("consumerSpecimenId").toString(), outputStream, "UTF-8");
         writeSeparator(outputStream);
@@ -110,6 +115,7 @@ public class DietNicheWidthController {
         writeSeparator(outputStream);
         Double richness = taxonRichnessLookup.lookupRichness(lat, lng);
         IOUtils.write(richness.toString(), outputStream, "UTF-8");
+        outputStream.flush();
     }
 
     private void writeSeparator(OutputStream outputStream) throws IOException {
@@ -129,9 +135,12 @@ public class DietNicheWidthController {
         LOG.info("query [" + query + "] executing...");
         ExecutionResult results = executionEngine.execute(query.toString());
         HashSet<String> names = new HashSet<String>();
-        for (Map<String, Object> result : results) {
-            names.add((String)result.get("preyName"));
+        ResourceIterator<Map<String, Object>> iterator = results.iterator();
+        while (iterator.hasNext()) {
+            Map<String, Object> result = iterator.next();
+            names.add((String) result.get("preyName"));
         }
+        iterator.close();
         LOG.info("query [" + query + "] done.");
         return names.size();
     }
@@ -141,10 +150,13 @@ public class DietNicheWidthController {
         query.append(" RETURN consumerTaxon.name as consumerName");
         LOG.info("query [" + query + "] executing...");
         ExecutionResult results = executionEngine.execute(query.toString());
+        ResourceIterator<Map<String, Object>> iterator = results.iterator();
         Set<String> names = new HashSet<String>();
-        for (Map<String, Object> result : results) {
+        while (iterator.hasNext()) {
+            Map<String, Object> result = iterator.next();
             names.add((String) result.get("consumerName"));
         }
+        iterator.close();
         LOG.info("query [" + query + "] done.");
         return names;
     }
