@@ -75,9 +75,7 @@ public class EcoRegionFinderImpl implements EcoRegionFinder {
                             String localName = attributeDescriptor.getLocalName();
                             Object value = feature.getAttribute(localName);
                             if (value != null) {
-                                if (value instanceof Double) {
-                                    value = Double.toString((Double)value);
-                                } else if (value instanceof Number) {
+                                if (value instanceof Number) {
                                     value = Integer.toString(((Number) value).intValue());
                                 } else {
                                     value = value.toString();

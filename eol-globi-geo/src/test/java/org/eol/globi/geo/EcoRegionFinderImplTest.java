@@ -46,7 +46,6 @@ public class EcoRegionFinderImplTest {
         return ecoRegion70.iterator().next();
     }
 
-    @Ignore
     @Test
     public void isMarineRegionInNorthernCalifornia() throws EcoRegionFinderException {
         EcoRegionFinder ecoRegionFinder = new EcoRegionFinderFactoryImpl().createEcoRegionFinder(EcoRegionType.Marine);
@@ -61,7 +60,6 @@ public class EcoRegionFinderImplTest {
         assertThat(props, is(nullValue()));
     }
 
-    @Ignore
     @Test
     public void isMarineRegionInFloridian() throws EcoRegionFinderException {
         EcoRegionFinder ecoRegionFinder = new EcoRegionFinderFactoryImpl().createEcoRegionFinder(EcoRegionType.Marine);
@@ -100,14 +98,12 @@ public class EcoRegionFinderImplTest {
         assertThat(props.toString(), containsString("ECOREGION=Chagres, ECO_ID=209, ECO_ID_U=30209, MHT_NO=8, MHT_TXT=tropical and subtropical coastal rivers, OLD_ID=121"));
     }
 
-    @Ignore
     @Test
     public void isMarineRegionInSacramento() throws EcoRegionFinderException {
         Map<String, String> props = findEcoRegionProperties(pointInSacramento(), new EcoRegionFinderFactoryImpl().createEcoRegionFinder(EcoRegionType.Marine));
         assertThat(props.toString(), containsString("ALT_CODE=53, ECOREGION=Northern California, ECO_CODE=25058, ECO_CODE_X=58, Lat_Zone=Temperate, PROVINCE=Cold Temperate Northeast Pacific, PROV_CODE=10, REALM=Temperate Northern Pacific, RLM_CODE=3"));
     }
 
-    @Ignore
     @Test
     public void isMarineRegionInGulfOfMexico() throws EcoRegionFinderException {
         // for some reason the coordinate system is lng, lat.
