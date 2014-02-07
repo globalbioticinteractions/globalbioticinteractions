@@ -1,6 +1,5 @@
 package org.eol.globi.service;
 
-import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.geo.EcoRegionFinderImpl;
 import org.eol.globi.geo.GeoUtil;
 import org.geotools.data.FileDataStore;
@@ -17,12 +16,12 @@ public class TaxonRichnessLookup {
     public Double lookupRichness(double latitude, double longitude) throws IOException {
         lazyInit();
         SimpleFeatureSource features = dataStore.getFeatureSource();
-        Map<String, String> featureProperties = EcoRegionFinderImpl.getFeatureProperties(GeoUtil.getPoint(latitude, longitude), features.getFeatures());
-        String allNorm = null;
+        Map<String, Object> featureProperties = EcoRegionFinderImpl.getFeatureProperties(GeoUtil.getPoint(latitude, longitude), features.getFeatures());
+        Double allNorm = null;
         if (featureProperties != null) {
-            allNorm = featureProperties.get("AllNorm");
+            allNorm = (Double)featureProperties.get("AllNorm");
         }
-        return StringUtils.isBlank(allNorm) ? null : new Double(allNorm);
+        return allNorm;
     }
 
     private void lazyInit() throws IOException {

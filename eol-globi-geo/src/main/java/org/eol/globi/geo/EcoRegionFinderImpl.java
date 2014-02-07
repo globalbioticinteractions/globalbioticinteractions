@@ -3,6 +3,7 @@ package org.eol.globi.geo;
 import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.geotools.data.FileDataStore;
@@ -35,7 +36,7 @@ public class EcoRegionFinderImpl implements EcoRegionFinder {
         this.config = config;
     }
 
-    public Map<String, String> findEcoRegion(Point point) throws EcoRegionFinderException {
+    public Map<String, Object> findEcoRegion(Point point) throws EcoRegionFinderException {
         lazyLoadStore();
         try {
             SimpleFeatureSource featureSource = store.getFeatureSource();
@@ -56,8 +57,8 @@ public class EcoRegionFinderImpl implements EcoRegionFinder {
         }
     }
 
-    public static Map<String, String> getFeatureProperties(Point point, SimpleFeatureCollection featureCollection) {
-        Map<String, String> map = null;
+    public static Map<String, Object> getFeatureProperties(Point point, SimpleFeatureCollection featureCollection) {
+        Map<String, Object> map = null;
         SimpleFeatureIterator features = featureCollection.features();
         try {
             while (features.hasNext()) {
@@ -66,23 +67,14 @@ public class EcoRegionFinderImpl implements EcoRegionFinder {
                 if (defaultGeometry instanceof MultiPolygon) {
                     MultiPolygon polygon = (MultiPolygon) defaultGeometry;
                     if (polygon.contains(point)) {
-                        map = new TreeMap<String, String>();
+                        map = new TreeMap<String, Object>();
                         SimpleFeatureType featureType = feature.getFeatureType();
                         List<AttributeDescriptor> attributeDescriptors = featureType.getAttributeDescriptors();
                         for (AttributeDescriptor attributeDescriptor : attributeDescriptors) {
                             String localName = attributeDescriptor.getLocalName();
                             Object value = feature.getAttribute(localName);
                             if (value != null) {
-                                if (value instanceof Double) {
-                                    value = Double.toString(((Double) value).doubleValue());
-                                } else if (value instanceof Integer) {
-                                    value = Integer.toString(((Number) value).intValue());
-                                } else if (value instanceof Number) {
-                                    value = Integer.toString(((Number) value).intValue());
-                                } else {
-                                    value = value.toString();
-                                }
-                                map.put(attributeDescriptor.getLocalName(), value.toString());
+                                map.put(attributeDescriptor.getLocalName(), value);
                             }
                         }
                         break;
@@ -97,7 +89,7 @@ public class EcoRegionFinderImpl implements EcoRegionFinder {
 
     @Override
     public Collection<EcoRegion> findEcoRegion(double lat, double lng) throws EcoRegionFinderException {
-        final Map<String, String> props = findEcoRegion(GeoUtil.getPoint(lat, lng));
+        final Map<String, Object> props = findEcoRegion(GeoUtil.getPoint(lat, lng));
         return props == null || !props.containsKey(config.getIdLabel()) ? null : new ArrayList<EcoRegion>() {{
             add(createEcoRegion(props));
         }};
@@ -110,12 +102,18 @@ public class EcoRegionFinderImpl implements EcoRegionFinder {
         }
     }
 
-    private EcoRegion createEcoRegion(Map<String, String> props) {
+    private EcoRegion createEcoRegion(Map<String, Object> props) {
         EcoRegion ecoRegion;
         ecoRegion = new EcoRegion();
-        ecoRegion.setId(config.getNamespace() + ":" + props.get(config.getIdLabel()));
-        ecoRegion.setName(props.get(config.getNameLabel()));
-        ecoRegion.setGeometry(props.get(config.getGeometryLabel()));
+        Object obj = props.get(config.getIdLabel());
+        if (obj instanceof Number) {
+            obj = Integer.toString(((Number) obj).intValue());
+        } else {
+            obj = obj.toString();
+        }
+        ecoRegion.setId(config.getNamespace() + ":" + obj);
+        ecoRegion.setName((String) props.get(config.getNameLabel()));
+        ecoRegion.setGeometry(props.get(config.getGeometryLabel()).toString());
 
         StringBuilder path = new StringBuilder();
         for (String label : config.getPathLabels()) {
@@ -123,7 +121,7 @@ public class EcoRegionFinderImpl implements EcoRegionFinder {
                 path.append(" | ");
             }
             if (props.containsKey(label)) {
-                String value = props.get(label);
+                String value = props.get(label).toString();
                 if (StringUtils.isNotBlank(value)) {
                     path.append(value);
                 }
