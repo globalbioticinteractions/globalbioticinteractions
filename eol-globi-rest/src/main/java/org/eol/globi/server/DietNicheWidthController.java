@@ -55,9 +55,9 @@ public class DietNicheWidthController {
         TaxonRichnessLookup taxonRichnessLookup = new TaxonRichnessLookup();
         for (String consumerName : consumerTaxa) {
             String query = findPreyForConsumerSpecimenQuery(executionEngine, "START consumerTaxon = node:taxons('name:\"" + consumerName + "\"')");
-            LOG.info("niche width for [" + consumerName + "] executing...");
+            LOG.info("niche width query for [" + query + "] executing...");
             ExecutionResult results = executionEngine.execute(query);
-            LOG.info("niche width for [" + consumerName + "] getting results...");
+            LOG.info("niche width query done.");
             ResourceIterator<Map<String, Object>> iterator = results.iterator();
             while (iterator.hasNext()) {
                 Map<String, Object> result = iterator.next();
