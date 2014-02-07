@@ -52,6 +52,7 @@ public class EOLServiceIT {
         new EOLService().lookupPropertiesByName("Squat lobster", properties);
         assertThat(properties.get(PropertyAndValueDictionary.EXTERNAL_ID), is("EOL:315099"));
         assertThat(properties.get(PropertyAndValueDictionary.NAME), is("Munidopsis albatrossae"));
+        assertThat(properties.get(PropertyAndValueDictionary.RANK), is("Species"));
     }
 
     @Test
@@ -60,6 +61,7 @@ public class EOLServiceIT {
         new EOLService().lookupPropertiesByName("Pickleweed", properties);
         assertThat(properties.get(PropertyAndValueDictionary.EXTERNAL_ID), is("EOL:61812"));
         assertThat(properties.get(PropertyAndValueDictionary.NAME), is("Salicornia"));
+        assertThat(properties.get(PropertyAndValueDictionary.RANK), is("Genus"));
 
     }
 

@@ -1,12 +1,11 @@
 package org.eol.globi.domain;
 
-import java.util.Collection;
-
 public class TaxonImpl implements Taxon {
     private String name;
     private String path;
     private String externalId;
     private String commonNames;
+    private String rank;
 
     @Override
     public String getPath() {
@@ -46,6 +45,16 @@ public class TaxonImpl implements Taxon {
     @Override
     public void setExternalId(String externalId) {
         this.externalId = externalId;
+    }
+
+    @Override
+    public String getRank() {
+        return rank;
+    }
+
+    @Override
+    public void setRank(String rank) {
+        this.rank = rank;
     }
 
 }

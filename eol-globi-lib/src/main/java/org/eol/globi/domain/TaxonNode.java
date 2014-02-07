@@ -40,4 +40,18 @@ public class TaxonNode extends NamedNode implements Taxon {
             getUnderlyingNode().setProperty(COMMON_NAMES, commonNames);
         }
     }
+
+    @Override
+    public String getRank() {
+        return getUnderlyingNode().hasProperty(RANK) ?
+                (String) getUnderlyingNode().getProperty(RANK) : null;
+
+    }
+
+    @Override
+    public void setRank(String rank) {
+        if (rank != null) {
+            getUnderlyingNode().setProperty(RANK, rank);
+        }
+    }
 }

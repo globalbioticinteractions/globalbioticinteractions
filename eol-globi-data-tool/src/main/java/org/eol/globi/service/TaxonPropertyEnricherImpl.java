@@ -24,6 +24,7 @@ public class TaxonPropertyEnricherImpl implements TaxonPropertyEnricher {
     private void doEnrichment(Taxon taxon) {
         Map<String, String> properties = new HashMap<String, String>();
         properties.put(PropertyAndValueDictionary.NAME, taxon.getName());
+        properties.put(PropertyAndValueDictionary.RANK, taxon.getRank());
         properties.put(PropertyAndValueDictionary.EXTERNAL_ID, taxon.getExternalId());
         properties.put(PropertyAndValueDictionary.PATH, taxon.getPath());
         properties.put(PropertyAndValueDictionary.COMMON_NAMES, taxon.getCommonNames());
@@ -83,6 +84,8 @@ public class TaxonPropertyEnricherImpl implements TaxonPropertyEnricher {
                 enrichedAtLeastOneProperty = false;
                 if (PropertyAndValueDictionary.NAME.equals(property.getKey())) {
                     taxon.setName(property.getValue());
+                } else if (PropertyAndValueDictionary.RANK.equals(property.getKey())) {
+                    taxon.setRank(property.getValue());
                 } else if (PropertyAndValueDictionary.COMMON_NAMES.equals(property.getKey())) {
                     taxon.setCommonNames(property.getValue());
                 } else if (PropertyAndValueDictionary.PATH.equals(property.getKey())) {

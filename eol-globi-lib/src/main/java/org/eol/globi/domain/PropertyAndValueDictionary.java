@@ -7,4 +7,5 @@ public class PropertyAndValueDictionary {
     public static final String PATH = "path";
     public static final String COMMON_NAMES = "commonNames";
     protected final static String TYPE = "type";
+    public static final String RANK = "rank";
 }

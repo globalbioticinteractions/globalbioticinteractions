@@ -35,6 +35,7 @@ public class TaxonPropertyEnricherImplIT extends GraphDBTestCase {
         TaxonNode taxon = nodeFactory.getOrCreateTaxon("Homo sapiens", "blabla", null);
         assertThat(taxon.getExternalId(), is("EOL:327955"));
         assertThat(taxon.getPath(), containsString("Animalia"));
+        assertThat(taxon.getRank(), containsString("Species"));
 
         taxon = nodeFactory.getOrCreateTaxon("Homo sapiens");
         assertThat(taxon.getExternalId(), is("EOL:327955"));

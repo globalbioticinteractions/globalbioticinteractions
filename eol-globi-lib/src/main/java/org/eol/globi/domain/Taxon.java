@@ -17,4 +17,7 @@ public interface Taxon {
 
     void setExternalId(String externalId);
 
+    String getRank();
+
+    void setRank(String rank);
 }

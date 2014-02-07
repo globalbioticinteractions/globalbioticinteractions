@@ -111,6 +111,7 @@ public class TaxonServiceImpl implements TaxonService {
             taxonNode.setExternalId(taxon.getExternalId());
             taxonNode.setPath(taxon.getPath());
             taxonNode.setCommonNames(taxon.getCommonNames());
+            taxonNode.setRank(taxon.getRank());
             if (!StringUtils.equals(taxon.getName(), correctedName)) {
                 if (StringUtils.isNotBlank(correctedName)) {
                     taxons.add(taxonNode.getUnderlyingNode(), PropertyAndValueDictionary.NAME, correctedName);

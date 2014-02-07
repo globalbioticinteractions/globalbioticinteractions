@@ -1,7 +1,5 @@
 package org.eol.globi.geo;
 
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
 import org.apache.commons.lang3.StringUtils;
@@ -75,7 +73,11 @@ public class EcoRegionFinderImpl implements EcoRegionFinder {
                             String localName = attributeDescriptor.getLocalName();
                             Object value = feature.getAttribute(localName);
                             if (value != null) {
-                                if (value instanceof Number) {
+                                if (value instanceof Double) {
+                                    value = Double.toString(((Double) value).doubleValue());
+                                } else if (value instanceof Integer) {
+                                    value = Integer.toString(((Number) value).intValue());
+                                } else if (value instanceof Number) {
                                     value = Integer.toString(((Number) value).intValue());
                                 } else {
                                     value = value.toString();
