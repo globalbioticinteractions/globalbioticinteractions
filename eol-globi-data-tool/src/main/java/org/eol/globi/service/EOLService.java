@@ -104,8 +104,6 @@ public class EOLService extends BaseHttpClientService implements TaxonPropertyLo
     private void addCanonicalNamesAndRanks(Map<String, String> properties, String response, StringBuilder ranks) throws IOException, URISyntaxException, TaxonPropertyLookupServiceException {
         ObjectMapper mapper = new ObjectMapper();
         JsonNode node = mapper.readTree(response);
-        System.out.println(response);
-
         JsonNode taxonConcepts = node.get("taxonConcepts");
         String firstConceptId = null;
         for (JsonNode taxonConcept : taxonConcepts) {
