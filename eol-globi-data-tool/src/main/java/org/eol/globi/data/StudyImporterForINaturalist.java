@@ -34,6 +34,7 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
         put("Pollinating", InteractType.POLLINATES);
         put("Butterfly & Moth Host Plant", InteractType.HAS_HOST);
         put("Butterfly & Moth Nectar Plant", InteractType.HAS_HOST);
+        put("Drinking nectar from", InteractType.HAS_HOST);
         put("Gall Inducer", InteractType.INTERACTS_WITH);
         put("Insect Nectar Plant", InteractType.INTERACTS_WITH);
         put("Insect Host Plant", InteractType.HAS_HOST);
