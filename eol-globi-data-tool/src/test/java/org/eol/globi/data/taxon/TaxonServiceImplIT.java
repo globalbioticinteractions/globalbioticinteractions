@@ -13,6 +13,7 @@ import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.index.IndexHits;
 
 import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
@@ -64,6 +65,19 @@ public class TaxonServiceImplIT extends GraphDBTestCase {
         assertThat(taxon.getCommonNames(), is(nullValue()));
 
         assertZeroHits(taxonService, "no:match");
+    }
+
+    @Test
+    public void externalIdDummyName() throws NodeFactoryException {
+        taxonService.setEnricher(taxonEnricher);
+        TaxonNode taxon = taxonService.getOrCreateTaxon("EOL:1", "EOL:1", null);
+        assertThat(taxon.getName(), is("Animalia"));
+        assertThat(taxon.getExternalId(), is("EOL:1"));
+        assertThat(taxon.getPath(), containsString("Animalia"));
+        assertThat(taxon.getCommonNames(), containsString("animals"));
+
+        TaxonNode animaliaTaxon = taxonService.findTaxon("EOL:1");
+        assertThat(animaliaTaxon.getName(), is("Animalia"));
     }
 
     @Test

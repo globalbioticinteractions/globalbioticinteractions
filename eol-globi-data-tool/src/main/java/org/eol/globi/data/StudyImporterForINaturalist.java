@@ -36,8 +36,13 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
         put("Butterfly & Moth Nectar Plant", InteractType.HAS_HOST);
         put("Drinking nectar from", InteractType.HAS_HOST);
         put("Gall Inducer", InteractType.INTERACTS_WITH);
+        put("Forms gall on", InteractType.INTERACTS_WITH);
         put("Insect Nectar Plant", InteractType.INTERACTS_WITH);
         put("Insect Host Plant", InteractType.HAS_HOST);
+    }};
+
+    private static final Map<String, InteractType> INVERSE_TYPE_MAPPING = new HashMap<String, InteractType>() {{
+        put("Eaten by", InteractType.ATE);
     }};
 
     public StudyImporterForINaturalist(ParserFactory parserFactory, NodeFactory nodeFactory) {
@@ -119,7 +124,6 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
             String targetTaxonName = targetTaxonNode.getTextValue();
             Specimen targetSpecimen = nodeFactory.createSpecimen(targetTaxonName);
 
-
             JsonNode observationField = jsonNode.get("observation_field");
             String interactionDataType = observationField.get("datatype").getTextValue();
             String interactionType = observationField.get("name").getTextValue();
@@ -146,7 +150,17 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
                     sourceSpecimen.caughtIn(nodeFactory.getOrCreateLocation(latitude, longitude, null));
                 }
 
-                Relationship collectedRel = study.collected(sourceSpecimen);
+                Relationship collectedRel;
+
+                if (TYPE_MAPPING.containsKey(interactionType)) {
+                    sourceSpecimen.interactsWith(targetSpecimen, TYPE_MAPPING.get(interactionType));
+                    collectedRel = study.collected(sourceSpecimen);
+                } else if (INVERSE_TYPE_MAPPING.containsKey(interactionType)) {
+                    targetSpecimen.interactsWith(sourceSpecimen, INVERSE_TYPE_MAPPING.get(interactionType));
+                    collectedRel = study.collected(targetSpecimen);
+                } else {
+                    throw new StudyImporterException("found unsupported interactionType [" + interactionType + "] for observation [" + observationId + "]");
+                }
 
                 String timeObservedAtUtc = observation.get("time_observed_at_utc").getTextValue();
                 timeObservedAtUtc = timeObservedAtUtc == null ? observation.get("observed_on").getTextValue() : timeObservedAtUtc;
@@ -157,11 +171,6 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
                     nodeFactory.setUnixEpochProperty(collectedRel, dateTime.toDate());
                 }
 
-                InteractType type = TYPE_MAPPING.get(interactionType);
-                if (type == null) {
-                    throw new StudyImporterException("found unsupported interactionType [" + interactionType + "] for observation [" + observationId + "]");
-                }
-                sourceSpecimen.interactsWith(targetSpecimen, type);
             }
         }
 

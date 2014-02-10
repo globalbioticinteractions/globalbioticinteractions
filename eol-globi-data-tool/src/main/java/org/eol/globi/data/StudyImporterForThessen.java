@@ -33,8 +33,10 @@ public class StudyImporterForThessen extends BaseStudyImporter {
                     line = parser.getLine();
                     if (line.length == 2) {
                         try {
-                            Specimen source = nodeFactory.createSpecimen("some name", "EOL:" + line[0]);
-                            Specimen target = nodeFactory.createSpecimen("some name", "EOL:" + line[1]);
+                            String sourceTaxon = "EOL:" + line[0];
+                            String targetTaxon = "EOL:" + line[1];
+                            Specimen source = nodeFactory.createSpecimen(sourceTaxon, sourceTaxon);
+                            Specimen target = nodeFactory.createSpecimen(targetTaxon, targetTaxon);
                             source.interactsWith(target, InteractType.INTERACTS_WITH);
                             study.collected(source);
                         } catch (NodeFactoryException e) {

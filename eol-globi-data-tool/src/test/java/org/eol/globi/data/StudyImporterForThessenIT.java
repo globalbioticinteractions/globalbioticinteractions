@@ -1,8 +1,17 @@
 package org.eol.globi.data;
 
+import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Study;
+import org.eol.globi.domain.Taxon;
+import org.eol.globi.domain.TaxonNode;
+import org.eol.globi.service.TaxonPropertyEnricherFactory;
 import org.junit.Test;
+import org.neo4j.graphdb.Direction;
+import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
+
+import java.util.HashSet;
+import java.util.Set;
 
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
@@ -11,7 +20,7 @@ import static org.junit.Assert.assertThat;
 public class StudyImporterForThessenIT extends GraphDBTestCase {
 
     @Test
-    public void importSome() throws StudyImporterException {
+    public void importSome() throws StudyImporterException, NodeFactoryException {
         StudyImporterForThessen importer = new StudyImporterForThessen(new ParserFactoryImpl(), nodeFactory);
         importer.setFilter(new ImportFilter() {
             @Override
@@ -21,14 +30,25 @@ public class StudyImporterForThessenIT extends GraphDBTestCase {
         });
         Study study = importer.importStudy();
         Iterable<Relationship> specimens = study.getSpecimens();
-        int count = 0;
-        while(specimens.iterator().hasNext()) {
-            specimens.iterator().next();
-            count++;
+        int specimenCount = 0;
+        Set<String> taxonIds = new HashSet<String>();
+        while (specimens.iterator().hasNext()) {
+            Node sourceSpecimen = specimens.iterator().next().getEndNode();
+            specimenCount++;
+            Node taxonNode = sourceSpecimen.getSingleRelationship(RelTypes.CLASSIFIED_AS, Direction.OUTGOING).getEndNode();
+            taxonIds.add((String) taxonNode.getProperty("externalId"));
         }
 
-        assertThat(count > 10, is(true));
+        assertThat(specimenCount > 10, is(true));
+        assertThat(taxonIds.size() > 1, is(true));
         assertThat(study.getCitation(), is(notNullValue()));
         assertThat(study.getTitle(), is(notNullValue()));
+
+        for (String taxonId : taxonIds) {
+            TaxonNode taxon = nodeFactory.findTaxon(taxonId);
+            assertThat(taxon, is(notNullValue()));
+            assertThat(taxon.getName(), is(notNullValue()));
+        }
+
     }
 }
