@@ -20,4 +20,12 @@ public class GloBICachedTaxaServiceIT {
         assertThat(properties.get(PropertyAndValueDictionary.COMMON_NAMES), containsString("hardhead catfish"));
         assertThat(properties.get(PropertyAndValueDictionary.EXTERNAL_ID), containsString(":"));
     }
+
+    @Test
+    public void noMatch() throws TaxonPropertyLookupServiceException {
+        HashMap<String, String> properties = new HashMap<String, String>();
+        new GloBICachedTaxaService().lookupPropertiesByName("Santa Claus", properties);
+        assertThat(properties.size(), is(0));
+    }
+
 }
