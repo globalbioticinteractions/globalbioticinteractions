@@ -114,4 +114,15 @@ public class SearchServiceIT extends ITBase {
         assertThat(jsonNode.get("data").size(), is(1));
     }
 
+    @Test
+    public void findTaxon() throws IOException {
+        String uri = getURLPrefix() + "findTaxon/Ariopsis%20felis";
+        String response = HttpClient.httpGet(uri);
+        JsonNode jsonNode = new ObjectMapper().readTree(response);
+        assertThat(jsonNode.get("name").getTextValue(), is("Ariopsis felis"));
+        assertThat(jsonNode.get("path").getTextValue(), containsString("Actinopterygii"));
+        assertThat(jsonNode.get("commonNames").getTextValue(), containsString("hardhead catfish"));
+        assertThat(jsonNode.get("externalId").getTextValue(), containsString(":"));
+    }
+
 }

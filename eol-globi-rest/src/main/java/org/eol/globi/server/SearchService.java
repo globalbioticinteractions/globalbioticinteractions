@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 @Controller
 public class SearchService {
@@ -26,6 +28,24 @@ public class SearchService {
 
     @Autowired
     private GraphDatabaseService graphDb;
+
+    @RequestMapping(value ="/findTaxon/{taxonName}", method= RequestMethod.GET, produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public Map<String, String> findTaxon(@PathVariable("taxonName") String taxonName) {
+        Index<Node> taxons = graphDb.index().forNodes("taxons");
+        IndexHits<Node> hits = taxons.get("name", taxonName);
+        Map<String, String> properties = null;
+        if (hits.hasNext()) {
+            properties = new HashMap<String, String>();
+            Node node = hits.next();
+            Iterable<String> keys = node.getPropertyKeys();
+            for (String key : keys) {
+                properties.put(key, node.getProperty(key).toString());
+            }
+        }
+        hits.close();
+        return properties;
+    }
 
     @RequestMapping(value = "/findCloseMatchesForTaxon/{taxonName}", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
     @ResponseBody
