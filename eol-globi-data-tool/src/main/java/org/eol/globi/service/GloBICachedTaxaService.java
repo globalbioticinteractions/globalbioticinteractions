@@ -14,10 +14,15 @@ import java.net.URISyntaxException;
 import java.util.Iterator;
 import java.util.Map;
 
-public class GloBICacheService implements TaxonPropertyLookupService {
+public class GloBICachedTaxaService implements TaxonPropertyLookupService {
+
+    private HttpClient httpClient = null;
+
     @Override
     public void lookupPropertiesByName(String name, Map<String, String> properties) throws TaxonPropertyLookupServiceException {
-        HttpClient httpClient = HttpUtil.createHttpClient();
+        if (httpClient == null) {
+            httpClient = HttpUtil.createHttpClient();
+        }
         try {
             URI uri = new URI("http", null, "www.trophicgraph.com", 8080, "/findTaxon/" + name, null, null);
             String response = httpClient.execute(new HttpGet(uri), new BasicResponseHandler());
@@ -25,7 +30,7 @@ public class GloBICacheService implements TaxonPropertyLookupService {
             JsonNode node = mapper.readTree(response);
             if (node != null) {
                 Iterator<String> fieldNames = node.getFieldNames();
-                while(fieldNames.hasNext()) {
+                while (fieldNames.hasNext()) {
                     String key = fieldNames.next();
                     properties.put(key, node.get(key).getTextValue());
                 }
@@ -39,6 +44,8 @@ public class GloBICacheService implements TaxonPropertyLookupService {
 
     @Override
     public void shutdown() {
-
+        if (httpClient != null) {
+            httpClient.getConnectionManager().shutdown();
+        }
     }
 }
