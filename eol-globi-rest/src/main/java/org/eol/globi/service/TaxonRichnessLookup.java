@@ -19,7 +19,14 @@ public class TaxonRichnessLookup {
         Map<String, Object> featureProperties = EcoRegionFinderImpl.getFeatureProperties(GeoUtil.getPoint(latitude, longitude), features.getFeatures());
         Double allNorm = null;
         if (featureProperties != null) {
-            allNorm = (Double)featureProperties.get("AllNorm");
+            Object obj = featureProperties.get("AllNorm");
+            if (obj != null) {
+                if (obj instanceof String) {
+                    allNorm = Double.parseDouble((String) obj);
+                } else if (obj instanceof Number) {
+                    allNorm = (Double) obj;
+                }
+            }
         }
         return allNorm;
     }
