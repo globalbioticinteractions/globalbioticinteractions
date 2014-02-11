@@ -46,6 +46,8 @@ public class Study extends NodeBacked {
         return createRelationshipTo(specimen, RelTypes.COLLECTED);
     }
 
+    @Deprecated
+    // citation / doi's are used to convey the source
     public void setContributor(String contributor) {
         setProperty(CONTRIBUTOR, contributor);
     }
@@ -56,27 +58,38 @@ public class Study extends NodeBacked {
         }
     }
 
+    @Deprecated
+    // citation / doi's are used to convey the source
     public String getContributor() {
         return getProperty(CONTRIBUTOR);
     }
 
+    @Deprecated
+    // citation / doi's are used to convey the source
     public void setInstitution(String institution) {
         setProperty(INSTITUTION, institution);
     }
 
+    @Deprecated
+    // should be inferred from data
     public void setPeriod(String period) {
         setProperty(PERIOD, period);
     }
 
+    @Deprecated
     public void setDescription(String description) {
         setProperty(DESCRIPTION, description);
     }
 
+    @Deprecated
+    // citation / doi's are used to convey the source
     public String getInstitution() {
         return getProperty(INSTITUTION);
     }
 
 
+    @Deprecated
+    // use citation instead
     public String getDescription() {
         return getProperty(DESCRIPTION);
     }
@@ -90,10 +103,12 @@ public class Study extends NodeBacked {
 
     }
 
+    @Deprecated
     public String getPublicationYear() {
         return getProperty(PUBLICATION_YEAR);
     }
 
+    @Deprecated
     public void setPublicationYear(String publicationYear) {
         setProperty(PUBLICATION_YEAR, publicationYear);
     }
@@ -131,6 +146,9 @@ public class Study extends NodeBacked {
 
     public void setCitationWithTx(String citation) {
         setPropertyWithTx(CITATION, citation);
+        if (getDescription() == null) {
+            setPropertyWithTx(DESCRIPTION, citation);
+        }
     }
 
     public String getCitation() {

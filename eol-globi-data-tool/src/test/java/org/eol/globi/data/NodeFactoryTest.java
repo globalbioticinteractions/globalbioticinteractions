@@ -142,10 +142,6 @@ public class NodeFactoryTest extends GraphDBTestCase {
         Location locationA = nodeFactory.getOrCreateLocation(37.689254, -122.295799, null);
         // ensure that no duplicate node are created ...
         nodeFactory.getOrCreateLocation(37.689255, -122.295798, null);
-        List<EcoRegion> ecoRegions = nodeFactory.enrichLocationWithEcoRegions(locationA);
-        assertThat(ecoRegions.size(), not(is(0)));
-        EcoRegion ecoRegion = ecoRegions.get(0);
-        assertThat(ecoRegion.getName(), is("some eco region"));
         assertEcoRegions(locationA);
         nodeFactory.enrichLocationWithEcoRegions(locationA);
         assertEcoRegions(locationA);
@@ -175,15 +171,14 @@ public class NodeFactoryTest extends GraphDBTestCase {
 
     }
 
-    private void assertEcoRegions(Location locationInSanFranciscoBay) {
-        Iterable<Relationship> relationships = locationInSanFranciscoBay.getUnderlyingNode().getRelationships(Direction.OUTGOING, RelTypes.IN_ECO_REGION);
+    private void assertEcoRegions(Location location) {
+        Iterable<Relationship> relationships = location.getUnderlyingNode().getRelationships(Direction.OUTGOING, RelTypes.IN_ECO_REGION);
         int count = 0;
         for (Relationship relationship : relationships) {
             Node associatedEcoRegion = relationship.getEndNode();
             assertThat((String) associatedEcoRegion.getProperty("name"), is("some eco region"));
             count++;
         }
-
         assertThat(count, is(1));
     }
 
