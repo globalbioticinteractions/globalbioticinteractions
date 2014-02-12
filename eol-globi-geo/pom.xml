@@ -48,6 +48,12 @@
             <version>20140115</version>
             <type>zip</type>
         </dependency>
+        <dependency>
+            <groupId>org.eol.globi.geo</groupId>
+            <artifactId>longhurst</artifactId>
+            <version>v4_2010</version>
+            <type>zip</type>
+        </dependency>
     </dependencies>
 
     <build>
@@ -87,6 +93,14 @@
                                     <type>zip</type>
                                     <overWrite>false</overWrite>
                                     <outputDirectory>${shapefiles.dir}/meow-tnc</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.eol.globi.geo</groupId>
+                                    <artifactId>longhurst</artifactId>
+                                    <version>v4_2010</version>
+                                    <type>zip</type>
+                                    <overWrite>false</overWrite>
+                                    <outputDirectory>${shapefiles.dir}/longhurst</outputDirectory>
                                 </artifactItem>
                             </artifactItems>
                             <outputDirectory>${project.build.directory}</outputDirectory>

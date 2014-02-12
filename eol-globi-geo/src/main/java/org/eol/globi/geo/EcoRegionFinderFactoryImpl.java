@@ -33,7 +33,7 @@ public class EcoRegionFinderFactoryImpl implements EcoRegionFinderFactory {
             config.setIdLabel("ECO_ID_U");
             config.setNamespace("TEOW");
             config.setPathLabels(new String[]{config.getNameLabel(), "WWF_MHTNAM", "WWF_REALM2"});
-            put(EcoRegionType.Terrestrial, config);
+            put(EcoRegionType.TerrestrialEcoRegionsOfTheWorld, config);
             config.setGeometryLabel("the_geom");
 
             // http://maps.tnc.org/gis_data.html
@@ -46,7 +46,7 @@ public class EcoRegionFinderFactoryImpl implements EcoRegionFinderFactory {
             config.setNamespace("MEOW");
             config.setPathLabels(new String[]{config.getNameLabel(), "PROVINCE", "REALM", "Lat_Zone"});
             config.setGeometryLabel("the_geom");
-            put(EcoRegionType.Marine, config);
+            put(EcoRegionType.MarineEcoRegionsOfTheWorld, config);
 
             // Fresh Water Ecosystems of the World (FEW) http://www.feow.org/
             // http://maps.tnc.org/files/metadata/FEOW.xml
@@ -58,7 +58,22 @@ public class EcoRegionFinderFactoryImpl implements EcoRegionFinderFactory {
             config.setNamespace("FEOW");
             config.setPathLabels(new String[]{config.getNameLabel(), "MHT_TXT"});
             config.setGeometryLabel("the_geom");
-            put(EcoRegionType.Freshwater, config);
+            put(EcoRegionType.FreshwaterEcoRegionsOfTheWorld, config);
+
+            // VLIZ (2009). Longhurst Biogeographical Provinces. Available online at http://www.marineregions.org/. Consulted on 2014-02-12.
+            //
+            // Longhurst, A.R et al. (1995). An estimate of global primary production in the ocean from satellite radiometer data. J. Plankton Res. 17, 1245-1271
+            // Longhurst, A.R. (1995). Seasonal cycles of pelagic production and consumption. Prog. Oceanogr. 36, 77-167
+            // Longhurst, A.R. (1998). Ecological Geography of the Sea. Academic Press, San Diego. 397p. (IMIS)
+            // Longhurst, A.R. (2006). Ecological Geography of the Sea. 2nd Edition. Academic Press, San Diego, 560p.
+            config = new EcoRegionFinderConfig();
+            config.setShapeFilePath("/longhurst/Longhurst_world_v4_2010.shp");
+            config.setNameLabel("ProvDescr");
+            config.setIdLabel("ProvCode");
+            config.setNamespace("LBP");
+            config.setPathLabels(new String[]{config.getNameLabel()});
+            config.setGeometryLabel("the_geom");
+            put(EcoRegionType.LonghurstBioGeographicalProvinces, config);
         }};
     }
 }
