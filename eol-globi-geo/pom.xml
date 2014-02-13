@@ -30,30 +30,6 @@
             <artifactId>eol-globi-lib</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <dependency>
-            <groupId>org.eol.globi.geo</groupId>
-            <artifactId>teow-tnc</artifactId>
-            <version>20140115</version>
-            <type>zip</type>
-        </dependency>
-        <dependency>
-            <groupId>org.eol.globi.geo</groupId>
-            <artifactId>feow-tnc</artifactId>
-            <version>20140115</version>
-            <type>zip</type>
-        </dependency>
-        <dependency>
-            <groupId>org.eol.globi.geo</groupId>
-            <artifactId>meow-tnc</artifactId>
-            <version>20140115</version>
-            <type>zip</type>
-        </dependency>
-        <dependency>
-            <groupId>org.eol.globi.geo</groupId>
-            <artifactId>longhurst</artifactId>
-            <version>v4_2010</version>
-            <type>zip</type>
-        </dependency>
     </dependencies>
 
     <build>

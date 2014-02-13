@@ -176,6 +176,14 @@ public class EOLServiceIT {
     }
 
     @Test
+    public void lookupEOLExternalIdNoClassification() throws TaxonPropertyLookupServiceException {
+        HashMap<String, String> properties = new HashMap<String, String>();
+        properties.put(PropertyAndValueDictionary.EXTERNAL_ID, "EOL:3821293");
+        new EOLService().lookupPropertiesByName("EOL:3821293", properties);
+        assertThat(properties.get(PropertyAndValueDictionary.EXTERNAL_ID), is(nullValue()));
+    }
+
+    @Test
     public void lookupEOLExternalId2() throws TaxonPropertyLookupServiceException {
         HashMap<String, String> properties = new HashMap<String, String>();
         properties.put(PropertyAndValueDictionary.EXTERNAL_ID, "foo:bar");
