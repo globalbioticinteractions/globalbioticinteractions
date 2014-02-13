@@ -1,15 +1,19 @@
 package org.eol.globi.data;
 
 import com.Ostermiller.util.CSVParser;
+import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.BasicResponseHandler;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.util.HttpUtil;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 public class StudyImporterForThessen extends BaseStudyImporter {
 
@@ -24,9 +28,11 @@ public class StudyImporterForThessen extends BaseStudyImporter {
         Study study = nodeFactory.getOrCreateStudy("Thessen 2014", RESOURCE, null);
         study.setCitationWithTx("A. Thessen. 2014. Species associations extracted from EOL text data objects via text mining. Accessed at " + RESOURCE + " .");
         HttpGet httpGet = new HttpGet(RESOURCE);
+        File tmpFile = null;
         try {
-            HttpResponse response = HttpUtil.createHttpClient().execute(httpGet);
-            CSVParser parser = new CSVParser(response.getEntity().getContent(), '\t');
+            tmpFile = File.createTempFile("thessen", ".csv");
+            InputStream is = cachedRemoteResource(httpGet, tmpFile);
+            CSVParser parser = new CSVParser(is, '\t');
             String[] line;
             while (parser.getLine() != null) {
                 if (importFilter.shouldImportRecord((long)parser.lastLineNumber())) {
@@ -45,9 +51,23 @@ public class StudyImporterForThessen extends BaseStudyImporter {
                     }
                 }
             }
+            IOUtils.closeQuietly(is);
         } catch (IOException e) {
             throw new StudyImporterException("failed to access [" + RESOURCE + "]");
+        } finally {
+            if (tmpFile != null) {
+                tmpFile.delete();
+            }
         }
         return study;
+    }
+
+    private InputStream cachedRemoteResource(HttpGet httpGet, File thessen) throws IOException {
+        HttpResponse response = HttpUtil.createHttpClient().execute(httpGet);
+        File tmpFile = thessen;
+        FileOutputStream fos = new FileOutputStream(tmpFile);
+        fos.flush();
+        IOUtils.copy(response.getEntity().getContent(), fos);
+        return new FileInputStream(tmpFile);
     }
 }
