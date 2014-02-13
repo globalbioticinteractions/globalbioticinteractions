@@ -43,7 +43,7 @@ public class EOLServiceIT {
 
     @Test
     public void algae() throws TaxonPropertyLookupServiceException {
-        assertThat(lookupPageIdByName("Algae"), is("bla"));
+        assertThat(lookupPageIdByName("Algae"), is("EOL:3353"));
     }
 
     @Test

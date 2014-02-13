@@ -55,10 +55,6 @@ public class EOLService extends BaseHttpClientService implements TaxonPropertyLo
                     properties.put(PropertyAndValueDictionary.PATH, null);
                 } else {
                     properties.put(PropertyAndValueDictionary.EXTERNAL_ID, TaxonomyProvider.ID_PREFIX_EOL + id.toString());
-                    if (!path.contains(name)) {
-                        // add synonym
-                        properties.put(PropertyAndValueDictionary.PATH, path + CharsetConstant.SEPARATOR + name);
-                    }
                 }
             }
         }
