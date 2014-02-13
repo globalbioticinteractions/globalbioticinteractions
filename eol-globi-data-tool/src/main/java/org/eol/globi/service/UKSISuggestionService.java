@@ -74,13 +74,14 @@ public class UKSISuggestionService implements TaxonPropertyLookupService, NameSu
         LOG.info("[" + UKSISuggestionService.class.getSimpleName() + "] instantiating...");
         service = new TaxonLookupServiceImpl();
         service.start();
+        File tmpFile = null;
         try {
             InputStream is = new GZIPInputStream(getClass().getResourceAsStream("/org/eol/globi/data/uksi/NfWD.mdb.gz"));
-            File tempFile = File.createTempFile("NfWD", "mdb");
-            FileOutputStream fileOutputStream = new FileOutputStream(tempFile);
+            tmpFile = File.createTempFile("NfWD", "mdb");
+            FileOutputStream fileOutputStream = new FileOutputStream(tmpFile);
             IOUtils.copy(is, fileOutputStream);
 
-            Database db = Database.open(tempFile, true);
+            Database db = Database.open(tmpFile, true);
 
             Table names = db.getTable("NAMESERVER_FOR_WIDER_DELIVERY");
             for (Map<String, Object> study : names) {
@@ -95,6 +96,10 @@ public class UKSISuggestionService implements TaxonPropertyLookupService, NameSu
         } catch (IOException e) {
             LOG.warn("[" + UKSISuggestionService.class.getSimpleName() + "] instantiation failed.");
             throw new TaxonPropertyLookupServiceException("failed to created index", e);
+        } finally {
+           if (tmpFile != null) {
+               tmpFile.delete();
+           }
         }
         service.finish();
         LOG.info("[" + UKSISuggestionService.class.getSimpleName() + "] instantiated.");
