@@ -53,7 +53,7 @@ public class StudyImporterForThessen extends BaseStudyImporter {
             }
             IOUtils.closeQuietly(is);
         } catch (IOException e) {
-            throw new StudyImporterException("failed to access [" + RESOURCE + "]");
+            throw new StudyImporterException("failed to access [" + RESOURCE + "]", e);
         } finally {
             if (tmpFile != null) {
                 tmpFile.delete();
