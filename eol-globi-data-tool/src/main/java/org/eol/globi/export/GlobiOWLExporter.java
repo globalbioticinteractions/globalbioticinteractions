@@ -85,11 +85,13 @@ public class GlobiOWLExporter implements StudyExporter {
             OWLNamedIndividual i = nodeToIndividual(agentNode);
 
             Location location = specimen.getSampleLocation();
-            for (Environment env : location.getEnvironments()) {
-                String envoId = env.getExternalId();
-                OWLClass envoCls = getOWLClassViaOBOID(envoId);
-                OWLObjectProperty occurs_in = getOWLObjectProperty("occurs-in");
-                this.addLocation(i, envoCls);
+            if (location != null) {
+                for (Environment env : location.getEnvironments()) {
+                    String envoId = env.getExternalId();
+                    OWLClass envoCls = getOWLClassViaOBOID(envoId);
+                    OWLObjectProperty occurs_in = getOWLObjectProperty("occurs-in");
+                    this.addLocation(i, envoCls);
+                }
             }
             setTaxon(i, getNodeTaxonAsOWLIndividual(agentNode));
 
