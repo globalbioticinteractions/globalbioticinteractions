@@ -1,6 +1,7 @@
 package org.eol.globi.tool;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.time.StopWatch;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -54,6 +55,9 @@ public class Indexer {
 
         LOG.info("taxon names indexing...");
         ResourceIterator<Map<String, Object>> iterator = results.iterator();
+        int counter = 0;
+        StopWatch stopWatch = new StopWatch();
+        stopWatch.start();
         while (iterator.hasNext()) {
             Map<String, Object> next = iterator.next();
             String name = null;
@@ -65,6 +69,13 @@ public class Indexer {
                 externalId = (String) next.get("externalId");
             }
             taxonService.getOrCreateTaxon(name, externalId, null);
+            counter++;
+            if (counter % 100 == 0) {
+                stopWatch.stop();
+                LOG.info("[" + counter + "] taxa index at [" + 1000.0* 100 / stopWatch.getTime() + " ] names/s");
+                stopWatch.reset();
+                stopWatch.start();
+            }
         }
         iterator.close();
         LOG.info("taxon names indexed.");

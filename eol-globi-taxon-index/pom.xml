@@ -82,6 +82,7 @@
                 <artifactId>maven-assembly-plugin</artifactId>
                 <version>2.4</version>
                 <configuration>
+                    <skipAssembly>${skipTests}</skipAssembly>
                     <descriptors>
                         <descriptor>src/assembly/index-neo4j-graph-db.xml</descriptor>
                     </descriptors>
