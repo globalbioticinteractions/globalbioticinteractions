@@ -176,7 +176,7 @@ public class NodeFactory {
     public Specimen createSpecimen(String taxonName, String taxonExternalId) throws NodeFactoryException {
         TaxonNode taxon = getOrCreateTaxon(taxonName, taxonExternalId, null);
         Specimen specimen = createSpecimen(taxon);
-        specimen.setOriginalTaxonDescription(taxonName);
+        specimen.setOriginalTaxonDescription(taxonName, taxonExternalId);
         return specimen;
     }
 
