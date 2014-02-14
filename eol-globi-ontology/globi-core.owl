@@ -1,0 +1,133 @@
+Prefix: xsd: <http://www.w3.org/2001/XMLSchema#>
+Prefix: owl: <http://www.w3.org/2002/07/owl#>
+Prefix: : <http://eol.org/globi/>
+Prefix: obo: <http://purl.obolibrary.org/obo/>
+Prefix: dc: <http://purl.org/dc/elements/1.1/>
+Prefix: xml: <http://www.w3.org/XML/1998/namespace>
+Prefix: rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+Prefix: dc: <http://purl.org/dc/elements/1.1/>
+Prefix: rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+Prefix: scv: <http://purl.org/NET/scovo#>
+Prefix: definition: <http://purl.obolibrary.org/obo/IAO_0000115>
+Prefix: synonym: <http://purl.obolibrary.org/obo/IAO_0000118>
+
+Ontology: <http://eol.org/ontology/globi.owl>
+Import: <http://eol.org/ontology/globi-upper.owl>
+
+ObjectProperty: :has-interactor
+  Annotations: rdfs:comment "A relation between an interaction process and a participant, where the participant influences or is influences by other interactors"
+  Domain: :interaction
+  SubPropertyOf: :has-participant
+
+ObjectProperty: :interacts-in
+  Range: :interaction
+  SubPropertyOf: :participates-in
+  InverseOf: :has-interactor
+
+ObjectProperty: :has-agent
+  Annotations: rdfs:comment "The process is seen from the perspective of this participant. The agent is not necessarily the instigator"
+  SubPropertyOf: :has-interactor
+ObjectProperty: :agent-in
+  InverseOf: :has-agent
+
+ObjectProperty: :has-patient
+  Annotations: rdfs:comment "The converse of has-agent. The process is seen to be acting upon participant. Can also be thought of as the 'victim', or the 'star'"
+  SubPropertyOf: :has-interactor
+ObjectProperty: :patient-in
+  InverseOf: :has-patient
+
+ObjectProperty: :interacts-with
+  Annotations: rdfs:comment "This property is inferred between all participants in a process."
+  SubPropertyChain: :interacts-in o :has-interactor
+
+ObjectProperty: :interacts-with-patient
+  SubPropertyChain: :agent-in o :has-patient
+
+ObjectProperty: :interacts-with-agent
+  SubPropertyChain: :has-patient o :agent-in
+
+ObjectProperty: :taxonomically-interacts-with
+  SubPropertyChain: inverse(:has-taxon) o :interacts-with o :has-taxon
+ObjectProperty: :taxonomically-interacts-with-inferred
+  SubPropertyChain: inverse(:has-taxon-inferred) o :interacts-with o :has-taxon-inferred
+
+ObjectProperty: :has-participating-taxon
+  SubPropertyChain: :has-interactor o :has-taxon
+ObjectProperty: :has-participating-taxon-inferred
+  SubPropertyChain: :has-interactor o :has-taxon-inferred
+
+ObjectProperty: :reciprocal-of
+
+Class: :activity
+  Annotations: rdfs:comment "The process that is carried out by a participant in a process"
+  SubClassOf: :occurrent
+
+Class: :interaction
+  Annotations: rdfs:comment "A process involving two participants in which at least one participant is unfluencing the other (e.g. by hunting it, eating it, playing with it, touching it)"
+  EquivalentTo: :has-interactor some owl:Thing
+  SubClassOf: :occurrent
+  SubClassOf: :has-interactor min 2 owl:Thing
+  SubClassOf: :has-part min 2 :activity
+  DisjointUnionOf: :symmetric-interaction, :asymmetric-interaction
+
+Class: :organismal-interaction
+  Annotations: rdfs:comment "An interaction involving one or more organisms"
+  EquivalentTo: :interaction and :has-interactor some :organism
+  DisjointUnionOf: :biotic-interaction, :semibiotic-interaction
+
+Class: :biotic-interaction
+  Annotations: rdfs:comment "An interaction involving two or more organisms"
+  EquivalentTo: :interaction and :has-interactor min 2 :organism
+
+Class: :semibiotic-interaction
+  Annotations: rdfs:comment "For example, between a sponge and its substrate"
+  EquivalentTo: :interaction and :has-interactor exactly 1 :organism and :has-interactor min 1 :inanimate-object
+
+Class: :symmetric-interaction
+  Annotations: rdfs:comment "A interaction in which the participants play equivalent roles. For example, playing."
+  SubClassOf: :interaction
+
+Class: :asymmetric-interaction
+  Annotations: rdfs:comment "A interaction in which the participants play non-equivalent roles. For example, in a predator-prey interaction the roles are substantially different."
+  SubClassOf: :interaction
+  DisjointWith: :symmetric-interaction
+
+Class: :instigator-interaction
+  Annotations: rdfs:comment "A interaction performed by the participant playing the instigator role"
+  SubClassOf: :symmetric-interaction
+
+Class: :victim-interaction
+  Annotations: rdfs:comment "A interaction performed by the participant playing the victim role"
+  SubClassOf: :symmetric-interaction
+  DisjointWith: :instigator-interaction
+
+Class: :predator-prey-interaction
+  Annotations: rdfs:comment "The actions of the predator participant in a predator-prey interaction"
+  SubClassOf: :instigator-interaction
+
+Class: :pollination-interaction
+  Annotations: rdfs:comment "The actions of the pollinator participant in an instance of pollination"
+  SubClassOf: :instigator-interaction
+
+Class: :playing-interaction
+  Annotations: rdfs:comment "The actions of either of the mutual participants in a playing interaction"
+  SubClassOf: :asymmetric-interaction
+
+Class: :parasitism-interaction
+  Annotations: rdfs:comment "The actions of the parasite participant in a parasite-host interaction"
+  SubClassOf: :instigator-interaction
+
+Class: :mating-interaction
+  Annotations: rdfs:comment "The actions of either participant in a mating between two individuals"
+  SubClassOf: :symmetric-interaction
+
+Class: :male-mating-interaction
+  Annotations: rdfs:comment "A mating behavior in which the organism is a male"
+  EquivalentTo: :mating-interaction and :has-agent some :male-organism
+  EquivalentTo: :reciprocal-of some :female-mating-interaction
+
+Class: :female-mating-interaction
+  Annotations: rdfs:comment "A mating behavior in which the organism is a female"
+  EquivalentTo: :mating-interaction and :has-agent some :female-organism
+  EquivalentTo: :reciprocal-of some :male-mating-interaction
+

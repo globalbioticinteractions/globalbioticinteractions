@@ -1,0 +1,80 @@
+Prefix: xsd: <http://www.w3.org/2001/XMLSchema#>
+Prefix: owl: <http://www.w3.org/2002/07/owl#>
+Prefix: : <http://eol.org/globi/>
+Prefix: obo: <http://purl.obolibrary.org/obo/>
+Prefix: dc: <http://purl.org/dc/elements/1.1/>
+Prefix: xml: <http://www.w3.org/XML/1998/namespace>
+Prefix: rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+Prefix: dc: <http://purl.org/dc/elements/1.1/>
+Prefix: rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+Prefix: scv: <http://purl.org/NET/scovo#>
+Prefix: definition: <http://purl.obolibrary.org/obo/IAO_0000115>
+Prefix: synonym: <http://purl.obolibrary.org/obo/IAO_0000118>
+
+Ontology: <http://eol.org/ontology/globi-upper.owl>
+
+
+Class: :material-entity
+Class: :occurrent
+
+
+Class: :stage
+  SubClassOf: :occurrent
+
+Class: :observation
+  Annotations: rdfs:comment "the process of observing another process in a non-participatory fashion."
+  SubClassOf: :occurrent
+
+
+Class: :inanimate-object
+  SubClassOf: :material-entity
+  DisjointWith: :organism
+
+Class: :male-organism
+  SubClassOf: :organism
+Class: :female-organism
+  SubClassOf: :organism
+
+ObjectProperty: :has-part
+
+ObjectProperty: :has-participant
+  Annotations: rdfs:comment "This will be imported from RO"
+  Domain: :occurrent
+  Range: :material-entity
+
+ObjectProperty: :participates-in
+  InverseOf: :has-participant
+
+ObjectProperty: :occurs-in
+  Annotations: rdfs:comment "Connects a process (such as an interaction or interaction) to a material entity that contains all the particpants of the process. This could be expansive (e.g. ocean) or restricted."
+
+ObjectProperty: :has-stage
+  Domain: :organism
+  Range: :stage
+
+ObjectProperty: :subtaxon-of
+  Domain: :taxon
+  Range: :taxon
+  Characteristics: Transitive
+
+Class: :taxon
+
+Class: :biome
+  SubClassOf: :material-entity
+
+Class: :organism
+  SubClassOf: :material-entity
+
+ObjectProperty: :has-taxon-inferred
+  SubPropertyChain: :has-taxon o :subtaxon-of
+  Domain: :organism
+  Range: :taxon
+ObjectProperty: :has-taxon
+  SubPropertyOf: :has-taxon-inferred
+  Domain: :organism
+  Range: :taxon
+
+ObjectProperty: :has-observation
+  Range: :observation
+
+
