@@ -71,14 +71,12 @@ public class Indexer {
             taxonService.getOrCreateTaxon(name, externalId, null);
             counter++;
             if (counter % 100 == 0) {
-                stopWatch.stop();
-                LOG.info("[" + counter + "] taxa index at [" + 1000.0* 100 / stopWatch.getTime() + " ] names/s");
-                stopWatch.reset();
-                stopWatch.start();
+                LOG.info("[" + counter + "] taxa indexed at [" + 1000.0 * counter / stopWatch.getTime() + " ] names/s");
             }
         }
+        stopWatch.stop();
         iterator.close();
-        LOG.info("taxon names indexed.");
+        LOG.info("taxon names indexed in [" + stopWatch.getTime() / 1000.0 * 3600.0 + "] hours.");
         freshGraphService.shutdown();
         previousGraphService.shutdown();
     }
