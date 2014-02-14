@@ -46,7 +46,7 @@ public class StudyImporterForThessen extends BaseStudyImporter {
                             source.interactsWith(target, InteractType.INTERACTS_WITH);
                             study.collected(source);
                         } catch (NodeFactoryException e) {
-                            throw new StudyImporterException("failed to create nodes on line [" + parser.getLastLineNumber() + "]");
+                            throw new StudyImporterException("failed to create nodes on line [" + parser.getLastLineNumber() + "]", e);
                         }
                     }
                 }

@@ -3,6 +3,7 @@ package org.eol.globi.server;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.lucene.queryParser.QueryParser;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.index.Index;
@@ -25,6 +26,7 @@ public class SearchService {
     public static final String NAME = "name";
     public static final String PATH = "path";
     public static final String COMMON_NAMES = "commonNames";
+    public static final HashMap<String,String> NO_PROPERTIES = new HashMap<String, String>();
 
     @Autowired
     private GraphDatabaseService graphDb;
@@ -33,8 +35,8 @@ public class SearchService {
     @ResponseBody
     public Map<String, String> findTaxon(@PathVariable("taxonName") String taxonName) {
         Index<Node> taxons = graphDb.index().forNodes("taxons");
-        IndexHits<Node> hits = taxons.get("name", taxonName);
-        Map<String, String> properties = null;
+        IndexHits<Node> hits = taxons.query("name:\"" + QueryParser.escape(taxonName) + "\"");
+        Map<String, String> properties = NO_PROPERTIES;
         if (hits.hasNext()) {
             properties = new HashMap<String, String>();
             Node node = hits.next();
