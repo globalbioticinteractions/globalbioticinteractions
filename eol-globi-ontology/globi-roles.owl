@@ -12,7 +12,7 @@ Prefix: definition: <http://purl.obolibrary.org/obo/IAO_0000115>
 Prefix: synonym: <http://purl.obolibrary.org/obo/IAO_0000118>
 
 Ontology: <http://eol.org/ontology/globi-roles.owl>
-Import: <http://eol.org/ontology/globi.owl>
+Import: <http://eol.org/ontology/globi-core.owl>
 
 
 Class: :role

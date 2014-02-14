@@ -92,13 +92,13 @@
 
 
 
-###  http://eol.org/globi/has-patient
+###  http://eol.org/globi/has-receiver
 
-<http://eol.org/globi/has-patient> rdf:type owl:ObjectProperty ;
-                                   
-                                   rdfs:comment "The converse of has-agent. The process is seen to be acting upon participant. Can also be thought of as the 'victim', or the 'star'" ;
-                                   
-                                   rdfs:subPropertyOf <http://eol.org/globi/has-interactor> .
+<http://eol.org/globi/has-receiver> rdf:type owl:ObjectProperty ;
+                                    
+                                    rdfs:comment "The converse of has-agent. The process is seen to be acting upon participant. Can also be thought of as the 'victim', or the 'star'" ;
+                                    
+                                    rdfs:subPropertyOf <http://eol.org/globi/has-interactor> .
 
 
 
@@ -166,19 +166,31 @@
 
 <http://eol.org/globi/interacts-with-agent> rdf:type owl:ObjectProperty ;
                                             
-                                            owl:propertyChainAxiom ( <http://eol.org/globi/has-patient>
+                                            owl:propertyChainAxiom ( <http://eol.org/globi/has-receiver>
                                                                      <http://eol.org/globi/agent-in>
                                                                    ) .
 
 
 
-###  http://eol.org/globi/interacts-with-patient
+###  http://eol.org/globi/interacts-with-receiver
 
-<http://eol.org/globi/interacts-with-patient> rdf:type owl:ObjectProperty ;
-                                              
-                                              owl:propertyChainAxiom ( <http://eol.org/globi/agent-in>
-                                                                       <http://eol.org/globi/has-patient>
-                                                                     ) .
+<http://eol.org/globi/interacts-with-receiver> rdf:type owl:ObjectProperty ;
+                                               
+                                               owl:propertyChainAxiom ( <http://eol.org/globi/agent-in>
+                                                                        <http://eol.org/globi/has-receiver>
+                                                                      ) .
+
+
+
+###  http://eol.org/globi/members-interacts-with-members-of
+
+<http://eol.org/globi/members-interacts-with-members-of> rdf:type owl:ObjectProperty ;
+                                                         
+                                                         owl:propertyChainAxiom ( [ owl:inverseOf <http://eol.org/globi/has-taxon-inferred>
+                                                                                  ]
+                                                                                  <http://eol.org/globi/interacts-with>
+                                                                                  <http://eol.org/globi/has-taxon-inferred>
+                                                                                ) .
 
 
 
@@ -198,17 +210,29 @@
 
 
 
-###  http://eol.org/globi/patient-in
+###  http://eol.org/globi/receiver-in
 
-<http://eol.org/globi/patient-in> rdf:type owl:ObjectProperty ;
-                                  
-                                  owl:inverseOf <http://eol.org/globi/has-patient> .
+<http://eol.org/globi/receiver-in> rdf:type owl:ObjectProperty ;
+                                   
+                                   owl:inverseOf <http://eol.org/globi/has-receiver> .
 
 
 
 ###  http://eol.org/globi/reciprocal-of
 
 <http://eol.org/globi/reciprocal-of> rdf:type owl:ObjectProperty .
+
+
+
+###  http://eol.org/globi/species-interacts-with
+
+<http://eol.org/globi/species-interacts-with> rdf:type owl:ObjectProperty ;
+                                              
+                                              owl:propertyChainAxiom ( [ owl:inverseOf <http://eol.org/globi/has-taxon>
+                                                                       ]
+                                                                       <http://eol.org/globi/interacts-with>
+                                                                       <http://eol.org/globi/has-taxon>
+                                                                     ) .
 
 
 
@@ -220,30 +244,6 @@
                                    rdfs:domain <http://eol.org/globi/taxon> ;
                                    
                                    rdfs:range <http://eol.org/globi/taxon> .
-
-
-
-###  http://eol.org/globi/taxonomically-interacts-with
-
-<http://eol.org/globi/taxonomically-interacts-with> rdf:type owl:ObjectProperty ;
-                                                    
-                                                    owl:propertyChainAxiom ( [ owl:inverseOf <http://eol.org/globi/has-taxon>
-                                                                             ]
-                                                                             <http://eol.org/globi/interacts-with>
-                                                                             <http://eol.org/globi/has-taxon>
-                                                                           ) .
-
-
-
-###  http://eol.org/globi/taxonomically-interacts-with-inferred
-
-<http://eol.org/globi/taxonomically-interacts-with-inferred> rdf:type owl:ObjectProperty ;
-                                                             
-                                                             owl:propertyChainAxiom ( [ owl:inverseOf <http://eol.org/globi/has-taxon-inferred>
-                                                                                      ]
-                                                                                      <http://eol.org/globi/interacts-with>
-                                                                                      <http://eol.org/globi/has-taxon-inferred>
-                                                                                    ) .
 
 
 
@@ -304,27 +304,6 @@
 
 
 
-###  http://eol.org/globi/female-mating-interaction
-
-<http://eol.org/globi/female-mating-interaction> rdf:type owl:Class ;
-                                                 
-                                                 owl:equivalentClass [ rdf:type owl:Restriction ;
-                                                                       owl:onProperty <http://eol.org/globi/reciprocal-of> ;
-                                                                       owl:someValuesFrom <http://eol.org/globi/male-mating-interaction>
-                                                                     ] ,
-                                                                     [ rdf:type owl:Class ;
-                                                                       owl:intersectionOf ( <http://eol.org/globi/mating-interaction>
-                                                                                            [ rdf:type owl:Restriction ;
-                                                                                              owl:onProperty <http://eol.org/globi/has-agent> ;
-                                                                                              owl:someValuesFrom <http://eol.org/globi/female-organism>
-                                                                                            ]
-                                                                                          )
-                                                                     ] ;
-                                                 
-                                                 rdfs:comment "A mating behavior in which the organism is a female" .
-
-
-
 ###  http://eol.org/globi/female-organism
 
 <http://eol.org/globi/female-organism> rdf:type owl:Class ;
@@ -343,18 +322,6 @@
 
 
 
-###  http://eol.org/globi/instigator-interaction
-
-<http://eol.org/globi/instigator-interaction> rdf:type owl:Class ;
-                                              
-                                              rdfs:subClassOf <http://eol.org/globi/symmetric-interaction> ;
-                                              
-                                              owl:disjointWith <http://eol.org/globi/victim-interaction> ;
-                                              
-                                              rdfs:comment "A interaction performed by the participant playing the instigator role" .
-
-
-
 ###  http://eol.org/globi/interaction
 
 <http://eol.org/globi/interaction> rdf:type owl:Class ;
@@ -366,13 +333,13 @@
                                    
                                    rdfs:subClassOf <http://eol.org/globi/occurrent> ,
                                                    [ rdf:type owl:Restriction ;
+                                                     owl:onProperty <http://eol.org/globi/has-interactor> ;
+                                                     owl:minCardinality "2"^^xsd:nonNegativeInteger
+                                                   ] ,
+                                                   [ rdf:type owl:Restriction ;
                                                      owl:onProperty <http://eol.org/globi/has-part> ;
                                                      owl:onClass <http://eol.org/globi/activity> ;
                                                      owl:minQualifiedCardinality "2"^^xsd:nonNegativeInteger
-                                                   ] ,
-                                                   [ rdf:type owl:Restriction ;
-                                                     owl:onProperty <http://eol.org/globi/has-interactor> ;
-                                                     owl:minCardinality "2"^^xsd:nonNegativeInteger
                                                    ] ;
                                    
                                    rdfs:comment "A process involving two participants in which at least one participant is unfluencing the other (e.g. by hunting it, eating it, playing with it, touching it)" ;
@@ -380,27 +347,6 @@
                                    owl:disjointUnionOf ( <http://eol.org/globi/asymmetric-interaction>
                                                          <http://eol.org/globi/symmetric-interaction>
                                                        ) .
-
-
-
-###  http://eol.org/globi/male-mating-interaction
-
-<http://eol.org/globi/male-mating-interaction> rdf:type owl:Class ;
-                                               
-                                               owl:equivalentClass [ rdf:type owl:Restriction ;
-                                                                     owl:onProperty <http://eol.org/globi/reciprocal-of> ;
-                                                                     owl:someValuesFrom <http://eol.org/globi/female-mating-interaction>
-                                                                   ] ,
-                                                                   [ rdf:type owl:Class ;
-                                                                     owl:intersectionOf ( <http://eol.org/globi/mating-interaction>
-                                                                                          [ rdf:type owl:Restriction ;
-                                                                                            owl:onProperty <http://eol.org/globi/has-agent> ;
-                                                                                            owl:someValuesFrom <http://eol.org/globi/male-organism>
-                                                                                          ]
-                                                                                        )
-                                                                   ] ;
-                                               
-                                               rdfs:comment "A mating behavior in which the organism is a male" .
 
 
 
@@ -422,7 +368,7 @@
 
 <http://eol.org/globi/mating-interaction> rdf:type owl:Class ;
                                           
-                                          rdfs:subClassOf <http://eol.org/globi/symmetric-interaction> ;
+                                          rdfs:subClassOf <http://eol.org/globi/biotic-interaction> ;
                                           
                                           rdfs:comment "The actions of either participant in a mating between two individuals" .
 
@@ -477,7 +423,7 @@
 
 <http://eol.org/globi/parasitism-interaction> rdf:type owl:Class ;
                                               
-                                              rdfs:subClassOf <http://eol.org/globi/instigator-interaction> ;
+                                              rdfs:subClassOf <http://eol.org/globi/asymmetric-interaction> ;
                                               
                                               rdfs:comment "The actions of the parasite participant in a parasite-host interaction" .
 
@@ -487,7 +433,7 @@
 
 <http://eol.org/globi/playing-interaction> rdf:type owl:Class ;
                                            
-                                           rdfs:subClassOf <http://eol.org/globi/asymmetric-interaction> ;
+                                           rdfs:subClassOf <http://eol.org/globi/symmetric-interaction> ;
                                            
                                            rdfs:comment "The actions of either of the mutual participants in a playing interaction" .
 
@@ -497,7 +443,7 @@
 
 <http://eol.org/globi/pollination-interaction> rdf:type owl:Class ;
                                                
-                                               rdfs:subClassOf <http://eol.org/globi/instigator-interaction> ;
+                                               rdfs:subClassOf <http://eol.org/globi/asymmetric-interaction> ;
                                                
                                                rdfs:comment "The actions of the pollinator participant in an instance of pollination" .
 
@@ -507,7 +453,7 @@
 
 <http://eol.org/globi/predator-prey-interaction> rdf:type owl:Class ;
                                                  
-                                                 rdfs:subClassOf <http://eol.org/globi/instigator-interaction> ;
+                                                 rdfs:subClassOf <http://eol.org/globi/asymmetric-interaction> ;
                                                  
                                                  rdfs:comment "The actions of the predator participant in a predator-prey interaction" .
 
@@ -557,16 +503,6 @@
 ###  http://eol.org/globi/taxon
 
 <http://eol.org/globi/taxon> rdf:type owl:Class .
-
-
-
-###  http://eol.org/globi/victim-interaction
-
-<http://eol.org/globi/victim-interaction> rdf:type owl:Class ;
-                                          
-                                          rdfs:subClassOf <http://eol.org/globi/symmetric-interaction> ;
-                                          
-                                          rdfs:comment "A interaction performed by the participant playing the victim role" .
 
 
 

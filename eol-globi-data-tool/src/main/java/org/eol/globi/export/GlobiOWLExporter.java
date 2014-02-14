@@ -2,8 +2,11 @@ package org.eol.globi.export;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.WriterOutputStream;
+import org.eol.globi.domain.Environment;
 import org.eol.globi.domain.InteractType;
+import org.eol.globi.domain.Location;
 import org.eol.globi.domain.RelTypes;
+import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.export.turtle.TurtleOntologyFormat;
 import org.eol.globi.export.turtle.TurtleOntologyStorer;
@@ -36,6 +39,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Writer;
+import java.util.List;
 import java.util.UUID;
 
 public class GlobiOWLExporter implements StudyExporter {
@@ -49,7 +53,9 @@ public class GlobiOWLExporter implements StudyExporter {
         OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
         dataOntology = loadGlobiOntology(manager);
         DefaultPrefixManager defaultPrefixManager = new DefaultPrefixManager();
-        defaultPrefixManager.setPrefix("globi:", "http://eol.org/globi/ontology.owl#");
+        defaultPrefixManager.setPrefix("globi:", "http://eol.org/globi/");
+        defaultPrefixManager.setPrefix("eolo:", "http://eol.org/ontology/");
+        defaultPrefixManager.setPrefix("eol:", "http://eol.org/");
         prefixManager = defaultPrefixManager;
 
     }
@@ -75,8 +81,18 @@ public class GlobiOWLExporter implements StudyExporter {
 
         for (Relationship r : study.getSpecimens()) {
             Node agentNode = r.getEndNode();
+            Specimen specimen = new Specimen(agentNode);
             OWLNamedIndividual i = nodeToIndividual(agentNode);
+
+            Location location = specimen.getSampleLocation();
+            for (Environment env : location.getEnvironments()) {
+                String envoId = env.getExternalId();
+                OWLClass envoCls = getOWLClassViaOBOID(envoId);
+                OWLObjectProperty occurs_in = getOWLObjectProperty("occurs-in");
+                this.addLocation(i, envoCls);
+            }
             setTaxon(i, getNodeTaxonAsOWLIndividual(agentNode));
+
             // we assume that the specimen is always the agent
             for (Relationship ixnR : agentNode.getRelationships(Direction.OUTGOING, InteractType.ATE)) {
                 Node receiverNode = ixnR.getEndNode();
@@ -303,6 +319,11 @@ public class GlobiOWLExporter implements StudyExporter {
         return this.getOWLDataFactory().getOWLClass(shortName, getPrefixManager());
     }
 
+    public OWLClass getOWLClassViaOBOID(String clsId) {
+        IRI iri = getOBOIRI(clsId);
+        return this.getOWLDataFactory().getOWLClass(iri);
+    }
+
 
     private IRI getOBOIRI(String clsId) {
         // TODO - use constant
@@ -344,7 +365,7 @@ public class GlobiOWLExporter implements StudyExporter {
             }
         } else {
             if (isSymmetric) {
-                agentRelation = getOWLObjectProperty("has-participant");
+                agentRelation = getOWLObjectProperty("has-interactor");
                 receiverRelation = agentRelation;
             } else {
                 agentRelation = getOWLObjectProperty("has-agent");
@@ -438,7 +459,7 @@ public class GlobiOWLExporter implements StudyExporter {
     public OWLClass getInteractionType(RelationshipType relationshipType) {
         String shortName = null;
         if (relationshipType.equals(InteractType.ATE)) {
-            shortName = "predator-interaction";
+            shortName = "predator-prey-interaction";
         }
         if (shortName == null) {
             shortName = relationshipType.toString(); // TODO

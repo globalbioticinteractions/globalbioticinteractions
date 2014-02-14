@@ -14,8 +14,13 @@ interactions within Globi to allow
 
 ## Contents of this project
 
- * globi.owl - an OWL ontology modeling various kinds of interactions
+ * globi.owl - an OWL ontology modeling various kinds of interactions; made by merging:
+  * globi-core.owl - interaction types
+  * globi-upper.owl - upper level classes
+ * globi-plus.owl - core globi plus extensions for OWL reasoning
+ * Makefile - generates globi.owl and merged examples
  * examples/ - examples in turtle format of particular animals engaging in interactions
+  * examples/all.ttl - combines all examples together
 
 ## Model
 
@@ -49,7 +54,7 @@ multi-organism process. This allows us to accommodate semi-biotic
 interactions (not covered in GO).
 
 Note that GO biological processes are typically modeled from the
-perspective of one organism. Is this always the instigator?
+perspective of one organism(?). Is this always the instigator?
 
 ### Polarity
 
@@ -60,6 +65,8 @@ interaction, participants are equal in their roles.
 
 An interaction is always represented from the perspective of one
 participant.
+
+(note the agent/patient terminology may change)
 
 ### Taxa vs organisms
 
@@ -73,3 +80,25 @@ Lion SubClassOf capable_of predator-prey-interaction and has_patient some impala
 ### Sequences of interactions
 
 Ethograms
+
+## Queries
+
+http://trophicgraph.com:3030/sparql.tpl
+
+prefix i: <http://eol.org/globi/individuals>
+prefix g: <http://eol.org/globi/>
+prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> 
+
+SELECT *
+WHERE
+{
+ ?ixn 
+     rdf:type g:predator-interaction ;
+     g:has-receiver ?prey ;
+     g:has-agent ?predator .
+ ?prey g:has-taxon ?preyTax .
+ ?predator g:has-taxon ?predTax .
+ ?preyTax ?preyP ?preyV
+}
+
+LIMIT 100

@@ -11,7 +11,7 @@ Prefix: scv: <http://purl.org/NET/scovo#>
 Prefix: definition: <http://purl.obolibrary.org/obo/IAO_0000115>
 Prefix: synonym: <http://purl.obolibrary.org/obo/IAO_0000118>
 
-Ontology: <http://eol.org/ontology/globi.owl>
+Ontology: <http://eol.org/ontology/globi-core.owl>
 Import: <http://eol.org/ontology/globi-upper.owl>
 
 ObjectProperty: :has-interactor
@@ -30,25 +30,25 @@ ObjectProperty: :has-agent
 ObjectProperty: :agent-in
   InverseOf: :has-agent
 
-ObjectProperty: :has-patient
+ObjectProperty: :has-receiver
   Annotations: rdfs:comment "The converse of has-agent. The process is seen to be acting upon participant. Can also be thought of as the 'victim', or the 'star'"
   SubPropertyOf: :has-interactor
-ObjectProperty: :patient-in
-  InverseOf: :has-patient
+ObjectProperty: :receiver-in
+  InverseOf: :has-receiver
 
 ObjectProperty: :interacts-with
   Annotations: rdfs:comment "This property is inferred between all participants in a process."
   SubPropertyChain: :interacts-in o :has-interactor
 
-ObjectProperty: :interacts-with-patient
-  SubPropertyChain: :agent-in o :has-patient
+ObjectProperty: :interacts-with-receiver
+  SubPropertyChain: :agent-in o :has-receiver
 
 ObjectProperty: :interacts-with-agent
-  SubPropertyChain: :has-patient o :agent-in
+  SubPropertyChain: :has-receiver o :agent-in
 
-ObjectProperty: :taxonomically-interacts-with
+ObjectProperty: :species-interacts-with
   SubPropertyChain: inverse(:has-taxon) o :interacts-with o :has-taxon
-ObjectProperty: :taxonomically-interacts-with-inferred
+ObjectProperty: :members-interacts-with-members-of
   SubPropertyChain: inverse(:has-taxon-inferred) o :interacts-with o :has-taxon-inferred
 
 ObjectProperty: :has-participating-taxon
@@ -92,42 +92,23 @@ Class: :asymmetric-interaction
   SubClassOf: :interaction
   DisjointWith: :symmetric-interaction
 
-Class: :instigator-interaction
-  Annotations: rdfs:comment "A interaction performed by the participant playing the instigator role"
-  SubClassOf: :symmetric-interaction
-
-Class: :victim-interaction
-  Annotations: rdfs:comment "A interaction performed by the participant playing the victim role"
-  SubClassOf: :symmetric-interaction
-  DisjointWith: :instigator-interaction
-
 Class: :predator-prey-interaction
   Annotations: rdfs:comment "The actions of the predator participant in a predator-prey interaction"
-  SubClassOf: :instigator-interaction
+  SubClassOf: :asymmetric-interaction
 
 Class: :pollination-interaction
   Annotations: rdfs:comment "The actions of the pollinator participant in an instance of pollination"
-  SubClassOf: :instigator-interaction
+  SubClassOf: :asymmetric-interaction
 
 Class: :playing-interaction
   Annotations: rdfs:comment "The actions of either of the mutual participants in a playing interaction"
-  SubClassOf: :asymmetric-interaction
+  SubClassOf: :symmetric-interaction
 
 Class: :parasitism-interaction
   Annotations: rdfs:comment "The actions of the parasite participant in a parasite-host interaction"
-  SubClassOf: :instigator-interaction
+  SubClassOf: :asymmetric-interaction
 
 Class: :mating-interaction
   Annotations: rdfs:comment "The actions of either participant in a mating between two individuals"
-  SubClassOf: :symmetric-interaction
-
-Class: :male-mating-interaction
-  Annotations: rdfs:comment "A mating behavior in which the organism is a male"
-  EquivalentTo: :mating-interaction and :has-agent some :male-organism
-  EquivalentTo: :reciprocal-of some :female-mating-interaction
-
-Class: :female-mating-interaction
-  Annotations: rdfs:comment "A mating behavior in which the organism is a female"
-  EquivalentTo: :mating-interaction and :has-agent some :female-organism
-  EquivalentTo: :reciprocal-of some :male-mating-interaction
+  SubClassOf: :biotic-interaction
 
