@@ -8,7 +8,6 @@ public class TaxonPropertyEnricherFactory {
         TaxonPropertyEnricherImpl taxonEnricher = new TaxonPropertyEnricherImpl();
         List<TaxonPropertyLookupService> services = new ArrayList<TaxonPropertyLookupService>() {
             {
-                add(new GloBICachedTaxaService());
                 add(new EOLOfflineService());
                 add(new EnvoService());
                 add(new EOLService());
