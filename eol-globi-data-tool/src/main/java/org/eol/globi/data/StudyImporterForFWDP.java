@@ -8,7 +8,6 @@ import org.eol.globi.domain.Location;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.joda.time.DateTime;
-import org.joda.time.IllegalFieldValueException;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
 import org.neo4j.graphdb.Node;
@@ -59,7 +58,7 @@ public class StudyImporterForFWDP extends BaseStudyImporter {
 
     private void associatePreySpecimen(LabeledCSVParser parser, Specimen predatorSpecimen) throws StudyImporterException {
         try {
-            String prey = createTaxon(parser, "PYNAM");
+            String prey = parseTaxonName(parser, "PYNAM");
             Specimen preySpecimen = nodeFactory.createSpecimen(prey);
             String preyLength = parser.getValueByLabel("pylen");
             if (StringUtils.isNotBlank(preyLength)) {
@@ -83,8 +82,8 @@ public class StudyImporterForFWDP extends BaseStudyImporter {
                 }
             }
             if (predatorSpecimen == null) {
-                String predator = createTaxon(parser, "pdscinam");
-                predatorSpecimen = nodeFactory.createSpecimen(predator);
+                String predatorTaxonName = parseTaxonName(parser, "pdscinam");
+                predatorSpecimen = nodeFactory.createSpecimen(predatorTaxonName);
                 Relationship collected = study.collected(predatorSpecimen);
                 try {
                     addDateTime(parser, collected);
@@ -147,7 +146,7 @@ public class StudyImporterForFWDP extends BaseStudyImporter {
         return dateTime;
     }
 
-    private String createTaxon(LabeledCSVParser parser, String taxonLabel) throws StudyImporterException {
+    private String parseTaxonName(LabeledCSVParser parser, String taxonLabel) throws StudyImporterException {
         String instigatorScientificName = parser.getValueByLabel(taxonLabel);
         if (StringUtils.isBlank(instigatorScientificName)) {
             throw new StudyImporterException("found missing instigator scientific name at line [" + parser.getLastLineNumber() + "]");

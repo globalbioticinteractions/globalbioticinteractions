@@ -32,7 +32,7 @@ public class GlobiOWLExporterTest extends GraphDBTestCase {
         StringDocumentTarget target = new StringDocumentTarget();
         manager.saveOntology(globi, target);
 
-        assertThat(target.toString(), containsString("Prefix"));
+        assertThat(target.toString(), containsString("@prefix"));
     }
 
 
@@ -44,7 +44,7 @@ public class GlobiOWLExporterTest extends GraphDBTestCase {
         Study study = ExportTestUtil.createTestData(nodeFactory);
         exporter.exportStudy(study, writer, true);
         assertThat(writer.toString(), containsString("@prefix"));
-        assertThat(writer.toString(), containsString("@prefix : <http://eol.org/globi/ontology.owl#>"));
+        assertThat(writer.toString(), containsString("@prefix : <http://eol.org/ontology/globi.owl#>"));
 
         StringWriter anotherWriter = new StringWriter();
         exporter.exportStudy(study, anotherWriter, true);
