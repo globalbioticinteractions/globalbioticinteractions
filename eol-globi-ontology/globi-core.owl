@@ -51,9 +51,9 @@ ObjectProperty: :species-interacts-with
 ObjectProperty: :members-interacts-with-members-of
   SubPropertyChain: inverse(:has-taxon-inferred) o :interacts-with o :has-taxon-inferred
 
-ObjectProperty: :has-participating-taxon
+ObjectProperty: :has-interactor-taxon
   SubPropertyChain: :has-interactor o :has-taxon
-ObjectProperty: :has-participating-taxon-inferred
+ObjectProperty: :has-interactor-taxon-inferred
   SubPropertyChain: :has-interactor o :has-taxon-inferred
 
 ObjectProperty: :reciprocal-of
@@ -78,6 +78,7 @@ Class: :organismal-interaction
 Class: :biotic-interaction
   Annotations: rdfs:comment "An interaction involving two or more organisms"
   EquivalentTo: :interaction and :has-interactor min 2 :organism
+  DisjointUnionOf: :intraspecies-interaction, :interspecies-interaction
 
 Class: :semibiotic-interaction
   Annotations: rdfs:comment "For example, between a sponge and its substrate"
@@ -92,6 +93,30 @@ Class: :asymmetric-interaction
   SubClassOf: :interaction
   DisjointWith: :symmetric-interaction
 
+Class: :interspecies-interaction
+  SubClassOf: :interaction
+
+Class: :intraspecies-interaction
+  SubClassOf: :interaction
+###  Alas, :has-interactor-taxon is a non-simple property
+###  EquivalentTo: :interaction and :has-interactor-taxon min 2 :taxon
+
+Class: :symbiotic-interaction
+  Annotations: rdfs:comment "encompassing mutualism thru parasitism. An interaction between two organisms living together in more or less intimate association. The term host is usually used for the larger (macro) of the two members of a symbiosis. The smaller (micro) member is called the symbiont organism. Microscopic symbionts are often referred to as endosymbionts. The various forms of symbiosis include parasitism, in which the association is disadvantageous or destructive to one of the organisms; mutualism, in which the association is advantageous, or often necessary to one or both and not harmful to either; and commensalism, in which one member of the association benefits while the other is not affected. However, mutualism, parasitism, and commensalism are often not discrete categories of interactions and should rather be perceived as a continuum of interaction ranging from parasitism to mutualism. In fact, the direction of a symbiotic interaction can change during the lifetime of the symbionts due to developmental changes as well as changes in the biotic/abiotic environment in which the interaction occurs"
+  SubClassOf: :asymmetric-interaction
+  SubClassOf: :interspecies-interaction
+
+Class: :mutualist-interaction
+  SubClassOf: :symbiotic-interaction
+
+Class: :commensualist-interaction
+  SubClassOf: :symbiotic-interaction
+
+Class: :parasitite-host-interaction
+  Annotations: rdfs:comment "The actions of the parasite participant in a parasite-host interaction"
+  SubClassOf: :symbiotic-interaction
+
+
 Class: :predator-prey-interaction
   Annotations: rdfs:comment "The actions of the predator participant in a predator-prey interaction"
   SubClassOf: :asymmetric-interaction
@@ -104,9 +129,6 @@ Class: :playing-interaction
   Annotations: rdfs:comment "The actions of either of the mutual participants in a playing interaction"
   SubClassOf: :symmetric-interaction
 
-Class: :parasitism-interaction
-  Annotations: rdfs:comment "The actions of the parasite participant in a parasite-host interaction"
-  SubClassOf: :asymmetric-interaction
 
 Class: :mating-interaction
   Annotations: rdfs:comment "The actions of either participant in a mating between two individuals"
