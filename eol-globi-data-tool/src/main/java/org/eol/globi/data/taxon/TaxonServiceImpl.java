@@ -19,9 +19,6 @@ import org.neo4j.graphdb.index.IndexHits;
 import org.neo4j.graphdb.index.IndexManager;
 import org.neo4j.helpers.collection.MapUtil;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class TaxonServiceImpl implements TaxonService {
     private final GraphDatabaseService graphDbService;
     private final Index<Node> taxons;
@@ -71,8 +68,6 @@ public class TaxonServiceImpl implements TaxonService {
 
     private TaxonNode createTaxon(String name, String externalId, String path) throws NodeFactoryException {
         String correctedName = corrector.correct(name);
-        List<String> alternateNames = new ArrayList<String>();
-        alternateNames.add(correctedName);
 
         Taxon taxon = new TaxonImpl();
         taxon.setName(correctedName);
@@ -85,15 +80,14 @@ public class TaxonServiceImpl implements TaxonService {
             taxonNode = findTaxon(taxon.getName());
             if (taxonNode == null) {
                 if (TaxonMatchValidator.hasMatch(taxon)) {
-                    taxonNode = createAndIndexTaxon(taxon, alternateNames);
+                    taxonNode = createAndIndexTaxon(taxon, correctedName);
                 } else {
                     String truncatedName = NodeUtil.truncateTaxonName(taxon.getName());
                     if (truncatedName == null || StringUtils.length(truncatedName) < 3) {
-                        taxonNode = addNoMatchTaxon(externalId, path, alternateNames);
+                        taxonNode = addNoMatchTaxon(externalId, path, correctedName);
                     } else {
                         taxon = new TaxonImpl();
                         taxon.setName(truncatedName);
-                        alternateNames.add(truncatedName);
                     }
                 }
             }
@@ -101,16 +95,15 @@ public class TaxonServiceImpl implements TaxonService {
         return taxonNode;
     }
 
-    private TaxonNode addNoMatchTaxon(String externalId, String path, List<String> alternateNames) {
+    private TaxonNode addNoMatchTaxon(String externalId, String path, String correctedName) {
         Taxon noMatchTaxon = new TaxonImpl();
-        noMatchTaxon.setName(alternateNames.size() > 0 ? alternateNames.get(0) : PropertyAndValueDictionary.NO_MATCH);
+        noMatchTaxon.setName(correctedName);
         noMatchTaxon.setExternalId(StringUtils.isBlank(externalId) ? PropertyAndValueDictionary.NO_MATCH : externalId);
         noMatchTaxon.setPath(path);
-
-        return createAndIndexTaxon(noMatchTaxon, alternateNames);
+        return createAndIndexTaxon(noMatchTaxon, correctedName);
     }
 
-    private TaxonNode createAndIndexTaxon(Taxon taxon, List<String> correctedNames) {
+    private TaxonNode createAndIndexTaxon(Taxon taxon, String correctedName) {
         TaxonNode taxonNode = null;
         Transaction transaction = graphDbService.beginTx();
         try {
@@ -119,11 +112,9 @@ public class TaxonServiceImpl implements TaxonService {
             taxonNode.setPath(taxon.getPath());
             taxonNode.setCommonNames(taxon.getCommonNames());
             taxonNode.setRank(taxon.getRank());
-            for (String correctedName : correctedNames) {
-                if (!StringUtils.equals(taxon.getName(), correctedName)) {
-                    if (StringUtils.isNotBlank(correctedName)) {
-                        taxons.add(taxonNode.getUnderlyingNode(), PropertyAndValueDictionary.NAME, correctedName);
-                    }
+            if (!StringUtils.equals(taxon.getName(), correctedName)) {
+                if (StringUtils.isNotBlank(correctedName)) {
+                    taxons.add(taxonNode.getUnderlyingNode(), PropertyAndValueDictionary.NAME, correctedName);
                 }
             }
             addToIndeces(taxonNode, taxon.getName());
