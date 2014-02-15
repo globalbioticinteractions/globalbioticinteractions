@@ -8,6 +8,8 @@ import org.eol.globi.data.ParserFactoryImpl;
 import org.eol.globi.data.StudyImporter;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.data.StudyImporterFactory;
+import org.eol.globi.data.taxon.TaxonNameCorrector;
+import org.eol.globi.data.taxon.TaxonServiceImpl;
 import org.eol.globi.db.GraphService;
 import org.eol.globi.export.GraphExporter;
 import org.eol.globi.geo.EcoRegionFinder;
@@ -56,7 +58,7 @@ public class Normalizer {
 
 
     private void importData(GraphDatabaseService graphService) {
-        NodeFactory factory = new NodeFactory(graphService, TaxonPropertyEnricherFactory.createTaxonEnricher());
+        NodeFactory factory = new NodeFactory(graphService, new TaxonServiceImpl(TaxonPropertyEnricherFactory.createTaxonEnricher(), new TaxonNameCorrector(), graphService));
         for (Class importer : StudyImporterFactory.getAvailableImporters()) {
             try {
                 importData(importer, factory);

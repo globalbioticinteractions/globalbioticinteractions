@@ -3,9 +3,7 @@ package org.eol.globi.data;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.eol.globi.data.taxon.CorrectionService;
-import org.eol.globi.data.taxon.TaxonNameCorrector;
-import org.eol.globi.data.taxon.TaxonServiceImpl;
+import org.eol.globi.data.taxon.TaxonService;
 import org.eol.globi.domain.Environment;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.PropertyAndValueDictionary;
@@ -19,7 +17,6 @@ import org.eol.globi.geo.EcoRegionFinder;
 import org.eol.globi.geo.EcoRegionFinderException;
 import org.eol.globi.service.DOIResolver;
 import org.eol.globi.service.EnvoLookupService;
-import org.eol.globi.service.TaxonPropertyEnricher;
 import org.eol.globi.service.TermLookupService;
 import org.eol.globi.service.TermLookupServiceException;
 import org.eol.globi.service.UberonLookupService;
@@ -61,9 +58,9 @@ public class NodeFactory {
 
     private DOIResolver doiResolver;
     private EcoRegionFinder ecoRegionFinder;
-    private TaxonServiceImpl taxonService;
+    private TaxonService taxonService;
 
-    public NodeFactory(GraphDatabaseService graphDb, TaxonPropertyEnricher taxonEnricher) {
+    public NodeFactory(GraphDatabaseService graphDb, TaxonService taxonService) {
         this.graphDb = graphDb;
 
         this.termLookupService = new UberonLookupService();
@@ -77,7 +74,7 @@ public class NodeFactory {
         this.ecoRegionPaths = graphDb.index().forNodes("ecoRegionPaths", MapUtil.stringMap(IndexManager.PROVIDER, "lucene", "type", "fulltext"));
         this.ecoRegionSuggestions = graphDb.index().forNodes("ecoRegionSuggestions");
 
-        this.taxonService = new TaxonServiceImpl(taxonEnricher, new TaxonNameCorrector(), getGraphDb());
+        this.taxonService = taxonService;
 
     }
 
@@ -476,11 +473,6 @@ public class NodeFactory {
         this.doiResolver = doiResolver;
     }
 
-    public void setCorrectionService(CorrectionService correctionService) {
-        taxonService.setCorrector(correctionService);
-    }
-
-
     public void setEcoRegionFinder(EcoRegionFinder ecoRegionFinder) {
         this.ecoRegionFinder = ecoRegionFinder;
     }
@@ -501,5 +493,8 @@ public class NodeFactory {
         return ecoRegionSuggestions.query("name:\"" + wholeOrPartialEcoRegionNameOrPath + "\"");
     }
 
+    public void setTaxonService(TaxonService taxonService) {
+        this.taxonService = taxonService;
+    }
 }
 

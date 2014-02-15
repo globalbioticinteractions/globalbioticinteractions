@@ -3,6 +3,8 @@ package org.eol.globi.export;
 import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.NodeFactory;
 import org.eol.globi.data.NodeFactoryException;
+import org.eol.globi.data.taxon.TaxonNameCorrector;
+import org.eol.globi.data.taxon.TaxonServiceImpl;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
@@ -25,14 +27,15 @@ public class ExporterAssociationAggregatesTest extends GraphDBTestCase {
 
     @Before
     public void setEnricher() {
-        nodeFactory = new NodeFactory(getGraphDb(), new TaxonPropertyEnricher() {
+        final TaxonPropertyEnricher taxonEnricher = new TaxonPropertyEnricher() {
 
             @Override
             public void enrich(Taxon taxon) {
                 taxon.setExternalId(taxon.getName() + "id");
                 taxon.setPath(taxon.getName() + "path");
             }
-        });
+        };
+        nodeFactory = new NodeFactory(getGraphDb(), new TaxonServiceImpl(taxonEnricher, new TaxonNameCorrector(), getGraphDb()));
     }
 
     @Test

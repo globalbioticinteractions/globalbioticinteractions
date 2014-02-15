@@ -3,15 +3,19 @@ package org.eol.globi.data;
 import junit.framework.Assert;
 import org.apache.commons.lang.StringUtils;
 import org.eol.globi.data.taxon.CorrectionService;
+import org.eol.globi.data.taxon.TaxonService;
+import org.eol.globi.data.taxon.TaxonServiceImpl;
 import org.eol.globi.domain.Environment;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
+import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.Term;
 import org.eol.globi.geo.EcoRegion;
 import org.eol.globi.service.DOIResolver;
+import org.eol.globi.service.TaxonPropertyEnricher;
 import org.eol.globi.service.TermLookupService;
 import org.eol.globi.service.TermLookupServiceException;
 import org.junit.Test;
@@ -126,12 +130,20 @@ public class NodeFactoryTest extends GraphDBTestCase {
 
     @Test
     public void describeAndClassifySpecimenImplicit() throws NodeFactoryException {
-        nodeFactory.setCorrectionService(new CorrectionService() {
+        CorrectionService correctionService = new CorrectionService() {
             @Override
             public String correct(String taxonName) {
                 return taxonName + " corrected";
             }
-        });
+        };
+        TaxonService taxonService = new TaxonServiceImpl(new TaxonPropertyEnricher() {
+            @Override
+            public void enrich(Taxon taxon) {
+
+            }
+        }, correctionService, getGraphDb()
+        );
+        nodeFactory.setTaxonService(taxonService);
         Specimen specimen = nodeFactory.createSpecimen("mickey");
         assertThat(specimen.getOriginalTaxonDescription(), is("mickey"));
         assertThat("original taxon descriptions are not indexed", nodeFactory.findTaxon("mickey").getName(), is(not("mickey")));

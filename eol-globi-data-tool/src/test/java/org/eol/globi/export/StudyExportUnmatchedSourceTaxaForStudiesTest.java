@@ -3,6 +3,8 @@ package org.eol.globi.export;
 import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.NodeFactory;
 import org.eol.globi.data.NodeFactoryException;
+import org.eol.globi.data.taxon.TaxonNameCorrector;
+import org.eol.globi.data.taxon.TaxonServiceImpl;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Specimen;
@@ -21,7 +23,7 @@ public class StudyExportUnmatchedSourceTaxaForStudiesTest extends GraphDBTestCas
 
     @Test
     public void exportOnePredatorTwoPrey() throws NodeFactoryException, IOException {
-        nodeFactory = new NodeFactory(getGraphDb(), new TaxonPropertyEnricher() {
+        final TaxonPropertyEnricher taxonEnricher = new TaxonPropertyEnricher() {
             @Override
             public void enrich(Taxon taxon) {
                 if ("Homo sapiens".equals(taxon.getName())) {
@@ -32,7 +34,8 @@ public class StudyExportUnmatchedSourceTaxaForStudiesTest extends GraphDBTestCas
                     taxon.setPath("four five six");
                 }
             }
-        });
+        };
+        nodeFactory = new NodeFactory(getGraphDb(), new TaxonServiceImpl(taxonEnricher, new TaxonNameCorrector(), getGraphDb()));
         Study study = nodeFactory.createStudy("my study");
         nodeFactory.getOrCreateTaxon("Homo sapiens");
         Specimen predatorSpecimen = nodeFactory.createSpecimen("Homo sapiens");

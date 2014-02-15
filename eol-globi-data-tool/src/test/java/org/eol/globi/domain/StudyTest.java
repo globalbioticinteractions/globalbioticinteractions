@@ -3,6 +3,8 @@ package org.eol.globi.domain;
 import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.NodeFactory;
 import org.eol.globi.data.NodeFactoryException;
+import org.eol.globi.data.taxon.TaxonNameCorrector;
+import org.eol.globi.data.taxon.TaxonServiceImpl;
 import org.eol.globi.service.TaxonPropertyEnricher;
 import org.junit.Before;
 import org.junit.Test;
@@ -23,11 +25,12 @@ public class StudyTest extends GraphDBTestCase {
 
     @Before
     public void createFactory() {
-        factory = new NodeFactory(getGraphDb(), new TaxonPropertyEnricher() {
+        final TaxonPropertyEnricher taxonEnricher = new TaxonPropertyEnricher() {
             @Override
             public void enrich(Taxon taxon) {
             }
-        });
+        };
+        factory = new NodeFactory(getGraphDb(), new TaxonServiceImpl(taxonEnricher, new TaxonNameCorrector(), getGraphDb()));
     }
 
     @Test

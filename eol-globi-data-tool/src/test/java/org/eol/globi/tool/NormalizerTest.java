@@ -5,6 +5,8 @@ import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.NodeFactory;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.data.StudyImporterForSimons;
+import org.eol.globi.data.taxon.TaxonNameCorrector;
+import org.eol.globi.data.taxon.TaxonServiceImpl;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.geo.EcoRegion;
@@ -35,7 +37,7 @@ public class NormalizerTest extends GraphDBTestCase {
             public void enrich(Taxon taxon) {
             }
         };
-        dataNormalizationTool.importData(StudyImporterForSimons.class, new NodeFactory(getGraphDb(), taxonEnricher));
+        dataNormalizationTool.importData(StudyImporterForSimons.class, new NodeFactory(getGraphDb(), new TaxonServiceImpl(taxonEnricher, new TaxonNameCorrector(), getGraphDb())));
 
 
         GraphDatabaseService graphService = getGraphDb();
@@ -82,7 +84,7 @@ public class NormalizerTest extends GraphDBTestCase {
                 taxon.setExternalId("test-taxon:" + System.currentTimeMillis());
             }
         };
-        dataNormalizationTool.importData(StudyImporterForSimons.class, new NodeFactory(graphService, taxonEnricher));
+        dataNormalizationTool.importData(StudyImporterForSimons.class, new NodeFactory(graphService, new TaxonServiceImpl(taxonEnricher, new TaxonNameCorrector(), getGraphDb())));
 
 
         String baseDir = "./target/normalizer-test/";

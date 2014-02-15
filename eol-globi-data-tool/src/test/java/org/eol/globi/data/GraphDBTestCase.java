@@ -2,6 +2,7 @@ package org.eol.globi.data;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.data.taxon.CorrectionService;
+import org.eol.globi.data.taxon.TaxonServiceImpl;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.Term;
 import org.eol.globi.geo.EcoRegion;
@@ -30,13 +31,19 @@ public abstract class GraphDBTestCase {
     @Before
     public void startGraphDb() throws IOException {
         graphDb = new TestGraphDatabaseFactory().newImpermanentDatabase();
-        nodeFactory = new NodeFactory(graphDb, new TaxonPropertyEnricher() {
+        final TaxonPropertyEnricher taxonEnricher = new TaxonPropertyEnricher() {
 
             @Override
             public void enrich(Taxon taxon) {
 
             }
-        });
+        };
+        nodeFactory = new NodeFactory(graphDb, new TaxonServiceImpl(taxonEnricher, new CorrectionService() {
+            @Override
+            public String correct(String taxonName) {
+                return taxonName;
+            }
+        }, getGraphDb()));
         nodeFactory.setEcoRegionFinder(new EcoRegionFinder() {
 
             @Override
@@ -58,12 +65,6 @@ public abstract class GraphDBTestCase {
         });
         nodeFactory.setEnvoLookupService(new TestTermLookupService());
         nodeFactory.setTermLookupService(new TestTermLookupService());
-        nodeFactory.setCorrectionService(new CorrectionService() {
-            @Override
-            public String correct(String taxonName) {
-                return taxonName;
-            }
-        });
         nodeFactory.setDoiResolver(new DOIResolver() {
             @Override
             public String findDOIForReference(String reference) throws IOException {
