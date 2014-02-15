@@ -3,6 +3,8 @@ package org.eol.globi.data.taxon;
 import com.Ostermiller.util.CSVParser;
 import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.eol.globi.data.CharsetConstant;
 import org.eol.globi.service.NameSuggestor;
 import org.eol.globi.service.UKSISuggestionService;
@@ -16,6 +18,8 @@ import java.util.List;
 import java.util.Map;
 
 public class TaxonNameCorrector implements CorrectionService {
+
+    private static final Log LOG = LogFactory.getLog(TaxonNameCorrector.class);
 
     private List<NameSuggestor> suggestors = null;
 
@@ -69,15 +73,35 @@ public class TaxonNameCorrector implements CorrectionService {
                 }
             };
         }
-        String nameSuggestion = taxonName;
+        List<String> suggestions = new ArrayList<String>();
+        String suggestion = taxonName;
+        suggestions.add(suggestion);
+        boolean isCircular = false;
+        while (!isCircular) {
+            String newSuggestion = suggest(suggestion);
+            if (StringUtils.equals(newSuggestion, suggestion)) {
+                break;
+            } else if (suggestions.contains(newSuggestion)) {
+                isCircular = true;
+                suggestions.add(newSuggestion);
+                LOG.warn("found circular suggestion path " + suggestions + ": choosing original [" + taxonName + "] instead");
+            } else {
+                suggestions.add(newSuggestion);
+                suggestion = newSuggestion;
+            }
+        }
+        return isCircular ? suggestions.get(0) : suggestions.get(suggestions.size() - 1);
+    }
+
+    private String suggest(String nameSuggestion) {
         for (NameSuggestor suggestor : suggestors) {
-            nameSuggestion = suggestor.suggest(nameSuggestion);
+            nameSuggestion = StringUtils.trim(suggestor.suggest(nameSuggestion));
             if (StringUtils.length(nameSuggestion) < 2) {
                 nameSuggestion = "no name";
                 break;
             }
         }
-        return nameSuggestion.trim();
+        return nameSuggestion;
     }
 
     private static class NameScrubber implements NameSuggestor {

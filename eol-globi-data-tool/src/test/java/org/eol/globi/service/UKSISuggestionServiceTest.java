@@ -4,7 +4,9 @@ import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.Is.is;
@@ -36,8 +38,9 @@ public class UKSISuggestionServiceTest {
     }
 
     @Test
-    public void lookupNameWithSuggestions2() throws TaxonPropertyLookupServiceException {
-
+    public void lookupNameWithConflictingSuggestions() throws TaxonPropertyLookupServiceException {
+        assertThat(uksiSuggestionService.suggest("Mimesa bicolor"), is("Mimesa equestris"));
+        assertThat(uksiSuggestionService.suggest("Mimesa equestris"), is("Mimesa bicolor"));
     }
 
     @Test

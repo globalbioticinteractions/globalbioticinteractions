@@ -9,6 +9,7 @@ public class StudyImporterFactory {
 
     private static final Collection<Class> IMPORTERS = Collections.unmodifiableCollection(new ArrayList<Class>() {{
         //add(StudyImporterForThessen.class);
+        add(StudyImporterForBioInfo.class);
         add(StudyImporterForFWDP.class);
         add(StudyImporterForRaymond.class);
         add(StudyImporterForLifeWatchGreece.class);
@@ -19,7 +20,6 @@ public class StudyImporterFactory {
         add(StudyImporterForBlewett.class);
         add(StudyImporterForAkin.class);
         add(StudyImporterForBaremore.class);
-        add(StudyImporterForBioInfo.class);
         add(StudyImporterForJRFerrerParis.class);
         add(StudyImporterForSPIRE.class);
         add(StudyImporterForICES.class);

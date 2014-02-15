@@ -117,7 +117,9 @@ public class TaxonServiceImplIT extends GraphDBTestCase {
         assertThat(taxonService.findTaxon("Exidia plana"), is(nullValue()));
         taxonService.getOrCreateTaxon("Exidia plana", null, null);
         taxonService.getOrCreateTaxon("Exidia plana" + " bla", null, null);
-        assertThat(taxonService.findTaxon("Exidia plana"), is(notNullValue()));
+        // note that at time of writing (Feb 2014) EOL considers Exidia plana a alternate name of Exidia glandulosa
+        assertThat(taxonService.findTaxon("Exidia glandulosa"), is(notNullValue()));
+        assertThat(taxonService.findTaxon("Exidia plana"), is(nullValue()));
     }
 
     @Test
@@ -127,7 +129,7 @@ public class TaxonServiceImplIT extends GraphDBTestCase {
         TaxonNode third = taxonService.getOrCreateTaxon("Arius felis", null, null);
         assertThat(first.getNodeID(), is(second.getNodeID()));
         assertThat(third.getNodeID(), is(second.getNodeID()));
-        assertThat(third.getPath(), is("Animalia | Chordata | Actinopterygii | Siluriformes | Ariidae | Ariopsis | Ariopsis felis | Galeichthys felis"));
+        assertThat(third.getPath(), is("Animalia | Chordata | Actinopterygii | Siluriformes | Ariidae | Ariopsis | Ariopsis felis"));
     }
 
     @Test
@@ -136,7 +138,7 @@ public class TaxonServiceImplIT extends GraphDBTestCase {
         TaxonNode second = taxonService.getOrCreateTaxon("Ariopsis felis something", null, null);
         assertThat(first.getExternalId(), is(second.getExternalId()));
         assertThat(first.getNodeID(), is(second.getNodeID()));
-        assertThat(taxonService.findTaxon("Ariopsis felis something").getNodeID(), is(second.getNodeID()));
+        assertThat(taxonService.findTaxon("Ariopsis felis").getNodeID(), is(second.getNodeID()));
     }
 
     @Test
@@ -148,6 +150,8 @@ public class TaxonServiceImplIT extends GraphDBTestCase {
         assertThat(first.getNodeID(), is(second.getNodeID()));
 
         TaxonNode taxon = taxonService.findTaxon("Cliona langae");
+        assertThat(taxon, is(nullValue()));
+        taxon = taxonService.findTaxon("Cliona caribbaea");
         assertThat(taxon, is(notNullValue()));
         assertThat(first.getExternalId(), is(second.getExternalId()));
         assertThat(taxon.getNodeID(), is(first.getNodeID()));

@@ -109,4 +109,11 @@ public class TaxonNameCorrectorTest {
         assertThat(CORRECTOR.correct("Pleocyemata spp."), is("Pleocyemata"));
         assertThat(CORRECTOR.correct("Aegathoa oculata "), is("Aegathoa oculata"));
     }
+
+    @Test
+    public void circularSuggestions() {
+        assertThat(CORRECTOR.correct("Mimesa bicolor"), is("Mimesa bicolor"));
+        assertThat(CORRECTOR.correct("Mimesa equestris"), is("Mimesa equestris"));
+        assertThat(CORRECTOR.correct("Excalfactoria chinensis"), is("Coturnix chinensis"));
+    }
 }
