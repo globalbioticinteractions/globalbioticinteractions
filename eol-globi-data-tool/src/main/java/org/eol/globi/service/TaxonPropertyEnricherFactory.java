@@ -8,11 +8,12 @@ public class TaxonPropertyEnricherFactory {
         TaxonPropertyEnricherImpl taxonEnricher = new TaxonPropertyEnricherImpl();
         List<TaxonPropertyLookupService> services = new ArrayList<TaxonPropertyLookupService>() {
             {
-                add(new EOLOfflineService());
+                //add(new GloBICachedTaxaService());
+                //add(new EOLOfflineService());
                 add(new EnvoService());
                 add(new EOLService());
                 add(new WoRMSService());
-                add(new ITISService());
+                //add(new ITISService());
                 add(new GulfBaseService());
             }
         };
