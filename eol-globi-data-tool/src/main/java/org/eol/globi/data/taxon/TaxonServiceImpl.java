@@ -114,7 +114,10 @@ public class TaxonServiceImpl implements TaxonService {
             taxonNode.setRank(taxon.getRank());
             if (!StringUtils.equals(taxon.getName(), correctedName)) {
                 if (StringUtils.isNotBlank(correctedName)) {
-                    taxons.add(taxonNode.getUnderlyingNode(), PropertyAndValueDictionary.NAME, correctedName);
+                    IndexHits<Node> nodes = taxons.get(PropertyAndValueDictionary.NAME, correctedName);
+                    if (nodes.size() == 0) {
+                        taxons.add(taxonNode.getUnderlyingNode(), PropertyAndValueDictionary.NAME, correctedName);
+                    }
                 }
             }
             addToIndeces(taxonNode, taxon.getName());

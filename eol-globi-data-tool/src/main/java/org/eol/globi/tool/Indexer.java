@@ -71,7 +71,7 @@ public class Indexer {
             taxonService.getOrCreateTaxon(name, externalId, null);
             counter++;
             if (counter % 100 == 0) {
-                LOG.info("[" + counter + "] taxa indexed at [" + 1000.0 * counter / stopWatch.getTime() + " ] names/s");
+                LOG.info("[" + counter + "] taxa indexed at [" + 1000.0 * counter / stopWatch.getTime() + "] names/s");
             }
         }
         stopWatch.stop();
