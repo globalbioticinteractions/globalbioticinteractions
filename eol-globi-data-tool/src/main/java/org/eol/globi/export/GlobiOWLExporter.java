@@ -2,18 +2,25 @@ package org.eol.globi.export;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.WriterOutputStream;
+import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.domain.Environment;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
+import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.export.turtle.TurtleOntologyFormat;
 import org.eol.globi.export.turtle.TurtleOntologyStorer;
+import org.eol.globi.util.ExternalIdUtil;
+import org.neo4j.cypher.javacompat.ExecutionEngine;
+import org.neo4j.cypher.javacompat.ExecutionResult;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.RelationshipType;
+import org.neo4j.graphdb.index.Index;
+import org.neo4j.graphdb.index.IndexHits;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.io.OWLOntologyDocumentSource;
 import org.semanticweb.owlapi.io.StringDocumentSource;
@@ -79,6 +86,18 @@ public class GlobiOWLExporter implements StudyExporter {
     public void exportStudy(Study study, Writer writer, boolean includeHeader)
             throws IOException {
 
+        Index<Node> taxons = study.getUnderlyingNode().getGraphDatabase().index().forNodes("taxons");
+        IndexHits<Node> hits = taxons.query("name:*");
+        for (Node taxon : hits) {
+            OWLNamedIndividual subj = getNodeTaxonAsOWLIndividual(taxon);
+            Iterable<Relationship> sameAsRels = taxon.getRelationships(RelTypes.SAME_AS, Direction.OUTGOING);
+            for (Relationship sameAsRel : sameAsRels) {
+                OWLNamedIndividual obj = getNodeTaxonAsOWLIndividual(sameAsRel.getEndNode());
+                addAxiom(getOWLDataFactory().getOWLSameIndividualAxiom(subj, obj));
+            }
+        }
+
+
         for (Relationship r : study.getSpecimens()) {
             Node agentNode = r.getEndNode();
             Specimen specimen = new Specimen(agentNode);
@@ -115,7 +134,17 @@ public class GlobiOWLExporter implements StudyExporter {
 
     public OWLNamedIndividual getNodeTaxonAsOWLIndividual(Node n) {
         Relationship singleRelationship = n.getSingleRelationship(RelTypes.CLASSIFIED_AS, Direction.OUTGOING);
-        return singleRelationship == null ? null : nodeToIndividual(singleRelationship.getEndNode());
+        if (singleRelationship == null) {
+            return null;
+        }
+        else {
+            TaxonNode taxonNode = new TaxonNode(singleRelationship.getEndNode());
+            String externalId = taxonNode.getExternalId();
+            String uriString = ExternalIdUtil.infoURLForExternalId(externalId);
+            return StringUtils.isBlank(uriString)
+                    ? nodeToIndividual(taxonNode.getUnderlyingNode())
+                    : getOWLDataFactory().getOWLNamedIndividual(IRI.create(uriString));
+        }
     }
 
     private OWLNamedIndividual nodeToIndividual(Node sn) {
@@ -154,7 +183,6 @@ public class GlobiOWLExporter implements StudyExporter {
      */
     public void addFact(OWLNamedIndividual i, OWLAnnotationProperty p,
                         String label) {
-
         OWLLiteral lit = getOWLDataFactory().getOWLLiteral(label);
         addAxiom(getOWLDataFactory().getOWLAnnotationAssertionAxiom(p, i.getIRI(), lit));
     }
