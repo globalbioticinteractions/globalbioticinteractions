@@ -59,7 +59,9 @@ public class TaxonServiceImpl implements TaxonService {
         TaxonNode firstMatchingTaxon = null;
         if (matchingTaxa.hasNext()) {
             matchingTaxon = matchingTaxa.next();
-            firstMatchingTaxon = new TaxonNode(matchingTaxon);
+            if (matchingTaxon != null) {
+                firstMatchingTaxon = new TaxonNode(matchingTaxon);
+            }
         }
         if (matchingTaxa.hasNext()) {
             LOG.warn("found duplicate taxon for [" + taxonName + "]");
@@ -81,7 +83,7 @@ public class TaxonServiceImpl implements TaxonService {
             taxonNode = findTaxon(taxon.getName());
             if (taxonNode == null) {
                 if (TaxonMatchValidator.hasMatch(taxon)) {
-                    taxonNode = createAndIndexTaxon(taxon, name);
+                    taxonNode = createAndIndexTaxon(taxon);
                 } else {
                     String truncatedName = NodeUtil.truncateTaxonName(taxon.getName());
                     if (truncatedName == null || StringUtils.length(truncatedName) < 3) {
@@ -93,18 +95,39 @@ public class TaxonServiceImpl implements TaxonService {
                 }
             }
         }
+        indexOriginalNameForTaxon(name, taxon, taxonNode);
         return taxonNode;
     }
 
-    private TaxonNode addNoMatchTaxon(String externalId, String path, String correctedName) throws NodeFactoryException {
-        Taxon noMatchTaxon = new TaxonImpl();
-        noMatchTaxon.setName(correctedName);
-        noMatchTaxon.setExternalId(StringUtils.isBlank(externalId) ? PropertyAndValueDictionary.NO_MATCH : externalId);
-        noMatchTaxon.setPath(path);
-        return createAndIndexTaxon(noMatchTaxon, correctedName);
+    private void indexOriginalNameForTaxon(String name, Taxon taxon, TaxonNode taxonNode) throws NodeFactoryException {
+        if (!StringUtils.equals(taxon.getName(), name)) {
+            if (StringUtils.isNotBlank(name)) {
+                TaxonNode foundTaxon = findTaxon(name);
+                if (foundTaxon == null) {
+                    Transaction tx = null;
+                    try {
+                        tx = taxonNode.getUnderlyingNode().getGraphDatabase().beginTx();
+                        taxons.add(taxonNode.getUnderlyingNode(), PropertyAndValueDictionary.NAME, name);
+                        tx.success();
+                    } finally {
+                        if (tx != null) {
+                            tx.finish();
+                        }
+                    }
+                }
+            }
+        }
     }
 
-    private TaxonNode createAndIndexTaxon(Taxon taxon, String originalName) throws NodeFactoryException {
+    private TaxonNode addNoMatchTaxon(String externalId, String path, String originalName) throws NodeFactoryException {
+        Taxon noMatchTaxon = new TaxonImpl();
+        noMatchTaxon.setName(originalName);
+        noMatchTaxon.setExternalId(StringUtils.isBlank(externalId) ? PropertyAndValueDictionary.NO_MATCH : externalId);
+        noMatchTaxon.setPath(path);
+        return createAndIndexTaxon(noMatchTaxon);
+    }
+
+    private TaxonNode createAndIndexTaxon(Taxon taxon) throws NodeFactoryException {
         TaxonNode taxonNode = null;
         Transaction transaction = graphDbService.beginTx();
         try {
@@ -113,14 +136,6 @@ public class TaxonServiceImpl implements TaxonService {
             taxonNode.setPath(taxon.getPath());
             taxonNode.setCommonNames(taxon.getCommonNames());
             taxonNode.setRank(taxon.getRank());
-            if (!StringUtils.equals(taxon.getName(), originalName)) {
-                if (StringUtils.isNotBlank(originalName)) {
-                    TaxonNode foundTaxon = findTaxon(originalName);
-                    if (foundTaxon == null) {
-                        taxons.add(taxonNode.getUnderlyingNode(), PropertyAndValueDictionary.NAME, originalName);
-                    }
-                }
-            }
             addToIndeces(taxonNode, taxon.getName());
             transaction.success();
         } finally {

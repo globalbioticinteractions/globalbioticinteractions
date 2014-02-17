@@ -123,7 +123,7 @@ public class TaxonServiceImplIT extends GraphDBTestCase {
         taxonService.getOrCreateTaxon("Exidia plana" + " bla", null, null);
         // note that at time of writing (Feb 2014) EOL considers Exidia plana a alternate name of Exidia glandulosa
         assertThat(taxonService.findTaxon("Exidia glandulosa"), is(notNullValue()));
-        assertThat(taxonService.findTaxon("Exidia plana"), is(nullValue()));
+        assertThat(taxonService.findTaxon("Exidia plana"), is(notNullValue()));
     }
 
     @Test
@@ -152,13 +152,15 @@ public class TaxonServiceImplIT extends GraphDBTestCase {
         assertThat(first.getExternalId(), is(second.getExternalId()));
         assertThat(first.getPath(), is(second.getPath()));
         assertThat(first.getNodeID(), is(second.getNodeID()));
+        assertThat(first.getExternalId(), is(second.getExternalId()));
 
         TaxonNode taxon = taxonService.findTaxon("Cliona langae");
-        assertThat(taxon, is(nullValue()));
+        assertThat(taxon, is(notNullValue()));
         taxon = taxonService.findTaxon("Cliona caribbaea");
         assertThat(taxon, is(notNullValue()));
-        assertThat(first.getExternalId(), is(second.getExternalId()));
+
         assertThat(taxon.getNodeID(), is(first.getNodeID()));
+        assertThat(first.getNodeID(), is(second.getNodeID()));
     }
 
     @Test
@@ -178,16 +180,17 @@ public class TaxonServiceImplIT extends GraphDBTestCase {
     @Test
     public void specialCharacters() throws NodeFactoryException {
         taxonService.setCorrector(new TaxonNameCorrector());
-        TaxonNode taxon = taxonService.getOrCreateTaxon("Acheloüs spinicarpus bla", null, null);
+        TaxonNode taxon = taxonService.getOrCreateTaxon("Longspine swimming crab", null, null);
         assertThat(taxon.getName(), is("Acheloüs spinicarpus"));
         assertThat(taxon.getExternalId(), is(notNullValue()));
         assertThat(taxon.getPath(), is(notNullValue()));
 
-        TaxonNode secondTaxon = taxonService.getOrCreateTaxon("Acheloüs spinicarpus", null, null);
+        TaxonNode secondTaxon = taxonService.getOrCreateTaxon("Portunus spinicarpus", null, null);
         assertThat(secondTaxon.getNodeID(), is(taxon.getNodeID()));
+        assertThat(secondTaxon.getName(), is("Acheloüs spinicarpus"));
 
         assertThat(taxonService.findTaxon("Acheloüs spinicarpus"), is(notNullValue()));
-        assertThat(taxonService.findTaxon("Acheloüs spinicarpus bla"), is(notNullValue()));
+        assertThat(taxonService.findTaxon("Portunus spinicarpus"), is(notNullValue()));
     }
 
     @Test
