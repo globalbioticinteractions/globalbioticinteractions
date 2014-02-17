@@ -41,6 +41,8 @@ public class UKSISuggestionServiceTest {
     public void lookupNameWithConflictingSuggestions() throws TaxonPropertyLookupServiceException {
         assertThat(uksiSuggestionService.suggest("Mimesa bicolor"), is("Mimesa equestris"));
         assertThat(uksiSuggestionService.suggest("Mimesa equestris"), is("Mimesa bicolor"));
+        assertThat(uksiSuggestionService.suggest("Exidia glandulosa"), is("Exidia plana"));
+        assertThat(uksiSuggestionService.suggest("Exidia plana"), is("Exidia glandulosa"));
     }
 
     @Test
