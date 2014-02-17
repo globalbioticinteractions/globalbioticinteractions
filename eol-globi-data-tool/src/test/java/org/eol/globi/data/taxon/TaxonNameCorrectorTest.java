@@ -55,8 +55,6 @@ public class TaxonNameCorrectorTest {
 
         assertThat(CORRECTOR.correct("Leptochela cf bermudensis"), is("Leptochela"));
 
-        assertThat(CORRECTOR.correct("S enflata"), is("Sagitta enflata"));
-
         assertThat(CORRECTOR.correct("Aneugmenus fürstenbergensis"), is("Aneugmenus fuerstenbergensis"));
         assertThat(CORRECTOR.correct("Xanthorhoë"), is("Xanthorhoe"));
 
@@ -102,6 +100,11 @@ public class TaxonNameCorrectorTest {
     @Test
     public void taxonNameUSKI() {
         assertThat(CORRECTOR.correct("Scypha raphanus"), is("Sycon raphanus"));
+    }
+
+    @Test
+    public void taxonManualCorrectionInAdditionToPreferredNameSelection() {
+        assertThat(CORRECTOR.correct("S enflata"), is("Flaccisagitta enflata"));
     }
 
     @Test
