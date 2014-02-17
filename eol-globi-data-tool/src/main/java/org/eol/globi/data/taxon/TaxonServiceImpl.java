@@ -1,6 +1,8 @@
 package org.eol.globi.data.taxon;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.queryParser.QueryParser;
 import org.eol.globi.data.CharsetConstant;
 import org.eol.globi.data.NodeFactoryException;
@@ -20,6 +22,8 @@ import org.neo4j.graphdb.index.IndexManager;
 import org.neo4j.helpers.collection.MapUtil;
 
 public class TaxonServiceImpl implements TaxonService {
+    private static final Log LOG = LogFactory.getLog(TaxonServiceImpl.class);
+
     private final GraphDatabaseService graphDbService;
     private final Index<Node> taxons;
     private final Index<Node> taxonNameSuggestions;
@@ -58,7 +62,7 @@ public class TaxonServiceImpl implements TaxonService {
             firstMatchingTaxon = new TaxonNode(matchingTaxon);
         }
         if (matchingTaxa.hasNext()) {
-            throw new NodeFactoryException("found duplicate taxon for [" + taxonName + "]");
+            LOG.warn("found duplicate taxon for [" + taxonName + "]");
         }
         matchingTaxa.close();
 
@@ -92,7 +96,7 @@ public class TaxonServiceImpl implements TaxonService {
         return taxonNode;
     }
 
-    private TaxonNode addNoMatchTaxon(String externalId, String path, String correctedName) {
+    private TaxonNode addNoMatchTaxon(String externalId, String path, String correctedName) throws NodeFactoryException {
         Taxon noMatchTaxon = new TaxonImpl();
         noMatchTaxon.setName(correctedName);
         noMatchTaxon.setExternalId(StringUtils.isBlank(externalId) ? PropertyAndValueDictionary.NO_MATCH : externalId);
@@ -100,7 +104,7 @@ public class TaxonServiceImpl implements TaxonService {
         return createAndIndexTaxon(noMatchTaxon, correctedName);
     }
 
-    private TaxonNode createAndIndexTaxon(Taxon taxon, String originalName) {
+    private TaxonNode createAndIndexTaxon(Taxon taxon, String originalName) throws NodeFactoryException {
         TaxonNode taxonNode = null;
         Transaction transaction = graphDbService.beginTx();
         try {
@@ -111,8 +115,8 @@ public class TaxonServiceImpl implements TaxonService {
             taxonNode.setRank(taxon.getRank());
             if (!StringUtils.equals(taxon.getName(), originalName)) {
                 if (StringUtils.isNotBlank(originalName)) {
-                    IndexHits<Node> nodes = taxons.get(PropertyAndValueDictionary.NAME, originalName);
-                    if (nodes.size() == 0) {
+                    TaxonNode foundTaxon = findTaxon(originalName);
+                    if (foundTaxon == null) {
                         taxons.add(taxonNode.getUnderlyingNode(), PropertyAndValueDictionary.NAME, originalName);
                     }
                 }

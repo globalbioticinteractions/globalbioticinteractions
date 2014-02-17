@@ -176,6 +176,21 @@ public class TaxonServiceImplIT extends GraphDBTestCase {
     }
 
     @Test
+    public void specialCharacters() throws NodeFactoryException {
+        taxonService.setCorrector(new TaxonNameCorrector());
+        TaxonNode taxon = taxonService.getOrCreateTaxon("Acheloüs spinicarpus bla", null, null);
+        assertThat(taxon.getName(), is("Acheloüs spinicarpus"));
+        assertThat(taxon.getExternalId(), is(notNullValue()));
+        assertThat(taxon.getPath(), is(notNullValue()));
+
+        TaxonNode secondTaxon = taxonService.getOrCreateTaxon("Acheloüs spinicarpus", null, null);
+        assertThat(secondTaxon.getNodeID(), is(taxon.getNodeID()));
+
+        assertThat(taxonService.findTaxon("Acheloüs spinicarpus"), is(notNullValue()));
+        assertThat(taxonService.findTaxon("Acheloüs spinicarpus bla"), is(notNullValue()));
+    }
+
+    @Test
     public void createHomoSapiens() throws NodeFactoryException {
         TaxonNode taxon = taxonService.getOrCreateTaxon("Homo sapiens", null, null);
         assertThat(taxon.getName(), is("Homo sapiens"));

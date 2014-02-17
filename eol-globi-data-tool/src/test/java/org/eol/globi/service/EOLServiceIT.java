@@ -56,6 +56,15 @@ public class EOLServiceIT {
     }
 
     @Test
+    public void lookupByAcheloüsspinicarpus() throws TaxonPropertyLookupServiceException {
+        HashMap<String, String> properties = new HashMap<String, String>();
+        new EOLService().lookupPropertiesByName("Acheloüs spinicarpus", properties);
+        assertThat(properties.get(PropertyAndValueDictionary.EXTERNAL_ID), is("EOL:315099"));
+        assertThat(properties.get(PropertyAndValueDictionary.NAME), is("Munidopsis albatrossae"));
+        assertThat(properties.get(PropertyAndValueDictionary.RANK), is("Species"));
+    }
+
+    @Test
     public void lookupPickleweed() throws TaxonPropertyLookupServiceException {
         HashMap<String, String> properties = new HashMap<String, String>();
         new EOLService().lookupPropertiesByName("Pickleweed", properties);

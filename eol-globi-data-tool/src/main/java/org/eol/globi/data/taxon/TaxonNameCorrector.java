@@ -40,8 +40,8 @@ public class TaxonNameCorrector implements CorrectionService {
         name = name.replaceAll(" subsp. ", " ssp. ");
         name = name.replaceAll(" subspecies ", " ssp. ");
         name = name.replaceAll("^\\w$", "");
-        name = name.replaceAll("ü", "ue");
         name = name.replaceAll("ë", "e");
+        name = name.replaceAll("ü", "u");
         String trim = name.trim();
         return replaceMultipleWhiteSpacesWithSingleWhitespace(trim);
     }
