@@ -74,9 +74,9 @@ public class TaxonServiceImpl implements TaxonService {
         TaxonNode taxonNode = null;
         while (taxonNode == null) {
             enricher.enrich(taxon);
+            taxon.setName(corrector.correct(taxon.getName()));
             taxonNode = findTaxon(taxon.getName());
             if (taxonNode == null) {
-                taxon.setName(corrector.correct(taxon.getName()));
                 if (TaxonMatchValidator.hasMatch(taxon)) {
                     taxonNode = createAndIndexTaxon(taxon, name);
                 } else {
@@ -101,7 +101,7 @@ public class TaxonServiceImpl implements TaxonService {
         return createAndIndexTaxon(noMatchTaxon, correctedName);
     }
 
-    private TaxonNode createAndIndexTaxon(Taxon taxon, String correctedName) {
+    private TaxonNode createAndIndexTaxon(Taxon taxon, String originalName) {
         TaxonNode taxonNode = null;
         Transaction transaction = graphDbService.beginTx();
         try {
@@ -110,11 +110,11 @@ public class TaxonServiceImpl implements TaxonService {
             taxonNode.setPath(taxon.getPath());
             taxonNode.setCommonNames(taxon.getCommonNames());
             taxonNode.setRank(taxon.getRank());
-            if (!StringUtils.equals(taxon.getName(), correctedName)) {
-                if (StringUtils.isNotBlank(correctedName)) {
-                    IndexHits<Node> nodes = taxons.get(PropertyAndValueDictionary.NAME, correctedName);
+            if (!StringUtils.equals(taxon.getName(), originalName)) {
+                if (StringUtils.isNotBlank(originalName)) {
+                    IndexHits<Node> nodes = taxons.get(PropertyAndValueDictionary.NAME, originalName);
                     if (nodes.size() == 0) {
-                        taxons.add(taxonNode.getUnderlyingNode(), PropertyAndValueDictionary.NAME, correctedName);
+                        taxons.add(taxonNode.getUnderlyingNode(), PropertyAndValueDictionary.NAME, originalName);
                     }
                 }
             }
