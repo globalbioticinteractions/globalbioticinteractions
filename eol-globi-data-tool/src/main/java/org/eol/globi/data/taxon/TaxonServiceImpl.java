@@ -49,8 +49,7 @@ public class TaxonServiceImpl implements TaxonService {
 
     @Override
     public TaxonNode findTaxon(String taxonName) throws NodeFactoryException {
-        String cleanedTaxonName = corrector.correct(taxonName);
-        String query = "name:\"" + QueryParser.escape(cleanedTaxonName) + "\"";
+        String query = "name:\"" + QueryParser.escape(taxonName) + "\"";
         IndexHits<Node> matchingTaxa = taxons.query(query);
         Node matchingTaxon;
         TaxonNode firstMatchingTaxon = null;
@@ -59,7 +58,7 @@ public class TaxonServiceImpl implements TaxonService {
             firstMatchingTaxon = new TaxonNode(matchingTaxon);
         }
         if (matchingTaxa.hasNext()) {
-            throw new NodeFactoryException("found duplicate taxon for [" + cleanedTaxonName + "] (original name: [" + taxonName + "])");
+            throw new NodeFactoryException("found duplicate taxon for [" + taxonName + "]");
         }
         matchingTaxa.close();
 
@@ -67,24 +66,23 @@ public class TaxonServiceImpl implements TaxonService {
     }
 
     private TaxonNode createTaxon(String name, String externalId, String path) throws NodeFactoryException {
-        String correctedName = corrector.correct(name);
-
         Taxon taxon = new TaxonImpl();
-        taxon.setName(correctedName);
+        taxon.setName(corrector.correct(name));
         taxon.setExternalId(externalId);
         taxon.setPath(path);
 
         TaxonNode taxonNode = null;
         while (taxonNode == null) {
             enricher.enrich(taxon);
+            taxon.setName(corrector.correct(taxon.getName()));
             taxonNode = findTaxon(taxon.getName());
             if (taxonNode == null) {
                 if (TaxonMatchValidator.hasMatch(taxon)) {
-                    taxonNode = createAndIndexTaxon(taxon, correctedName);
+                    taxonNode = createAndIndexTaxon(taxon, name);
                 } else {
                     String truncatedName = NodeUtil.truncateTaxonName(taxon.getName());
                     if (truncatedName == null || StringUtils.length(truncatedName) < 3) {
-                        taxonNode = addNoMatchTaxon(externalId, path, correctedName);
+                        taxonNode = addNoMatchTaxon(externalId, path, name);
                     } else {
                         taxon = new TaxonImpl();
                         taxon.setName(truncatedName);

@@ -6,12 +6,15 @@ import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.service.TaxonPropertyEnricher;
 import org.eol.globi.service.TaxonPropertyEnricherFactory;
+import org.hamcrest.Matchers;
+import org.hamcrest.core.Is;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.index.IndexHits;
 
+import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.core.Is.is;
@@ -52,7 +55,8 @@ public class TaxonServiceImplIT extends GraphDBTestCase {
         taxon = taxonService.getOrCreateTaxon("Fish", null, null);
         assertThat(taxon.getName(), is("Actinopterygii"));
 
-        assertZeroHits(taxonService, "fish");
+        assertThat(taxonService.findTaxon("Fish"), is(Matchers.notNullValue()));
+        assertThat(taxonService.findCloseMatchesForTaxonName("Fish"), is(Matchers.notNullValue()));
     }
 
     @Test
@@ -155,6 +159,20 @@ public class TaxonServiceImplIT extends GraphDBTestCase {
         assertThat(taxon, is(notNullValue()));
         assertThat(first.getExternalId(), is(second.getExternalId()));
         assertThat(taxon.getNodeID(), is(first.getNodeID()));
+    }
+
+    @Test
+    public void noDuplicatesOnCircularSuggestionNames() throws NodeFactoryException {
+        // Mimesa bicolor -> Mimesa equestris -> Memisa bicolor
+        taxonService.setCorrector(new TaxonNameCorrector());
+        TaxonNode bicolor = taxonService.getOrCreateTaxon("Mimesa bicolor foo", null, null);
+        assertThat(taxonService.findTaxon("Mimesa bicolor"), is(notNullValue()));
+        taxonService.getOrCreateTaxon("Mimesa bicolor", null, null);
+        TaxonNode equestris = taxonService.getOrCreateTaxon("Mimesa equestris bla", null, null);
+        assertThat(taxonService.findTaxon("Mimesa equestris"), is(notNullValue()));
+        taxonService.getOrCreateTaxon("Mimesa equestris", null, null);
+        assertThat(taxonService.findTaxon("Mimesa equestris bla").getNodeID(), is(equestris.getNodeID()));
+        assertThat(bicolor.getNodeID(), not(Is.is(equestris.getNodeID())));
     }
 
     @Test
