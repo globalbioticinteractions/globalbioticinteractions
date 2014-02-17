@@ -133,7 +133,7 @@ public class NodeFactoryTest extends GraphDBTestCase {
         CorrectionService correctionService = new CorrectionService() {
             @Override
             public String correct(String taxonName) {
-                return taxonName + " corrected";
+                return "mickey corrected";
             }
         };
         TaxonService taxonService = new TaxonServiceImpl(new TaxonPropertyEnricher() {
@@ -146,7 +146,7 @@ public class NodeFactoryTest extends GraphDBTestCase {
         nodeFactory.setTaxonService(taxonService);
         Specimen specimen = nodeFactory.createSpecimen("mickey");
         assertThat(specimen.getOriginalTaxonDescription(), is("mickey"));
-        assertThat("original taxon descriptions are not indexed", nodeFactory.findTaxon("mickey").getName(), is(not("mickey")));
+        assertThat("original taxon descriptions are indexed", nodeFactory.findTaxon("mickey").getName(), is("mickey"));
     }
 
     @Test

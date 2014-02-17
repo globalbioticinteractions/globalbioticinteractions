@@ -74,7 +74,6 @@ public class TaxonServiceImpl implements TaxonService {
         TaxonNode taxonNode = null;
         while (taxonNode == null) {
             enricher.enrich(taxon);
-            taxon.setName(corrector.correct(taxon.getName()));
             taxonNode = findTaxon(taxon.getName());
             if (taxonNode == null) {
                 if (TaxonMatchValidator.hasMatch(taxon)) {
