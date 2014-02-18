@@ -48,7 +48,7 @@ public class Indexer {
         ExecutionResult results = executionEngine.execute("START taxon = node:taxons('*:*') MATCH taxon<-[:CLASSIFIED_AS]-specimen-[:ORIGINALLY_DESCRIBED_AS]->origName RETURN distinct(origName.name) as name, origName.externalId? as externalId");
         LOG.info("previous taxon names retrieved.");
 
-        final GraphDatabaseService freshGraphService = GraphService.getGraphService(baseDir);
+        final GraphDatabaseService freshGraphService = GraphService.startNeo4j(baseDir);
         TaxonService taxonService = new TaxonServiceImpl(TaxonPropertyEnricherFactory.createTaxonEnricher()
                 , new TaxonNameCorrector()
                 , freshGraphService);

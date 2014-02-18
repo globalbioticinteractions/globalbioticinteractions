@@ -36,7 +36,4 @@ public abstract class GraphService {
         return graphService;
     }
 
-    public static void setStoreDir(String storeDir) {
-        GraphService.storeDir = storeDir;
-    }
 }
