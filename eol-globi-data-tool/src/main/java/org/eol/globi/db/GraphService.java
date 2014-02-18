@@ -7,23 +7,22 @@ import org.neo4j.helpers.collection.MapUtil;
 
 public abstract class GraphService {
 
-    private static GraphDatabaseService graphService;
-    private static String storeDir = "graph.db";
+    private static GraphDatabaseService graphDb;
 
     public static GraphDatabaseService getGraphService(String baseDir) {
-        if (graphService == null) {
-            graphService = startNeo4j(baseDir);
+        if (graphDb == null) {
+            graphDb = startNeo4j(baseDir);
         }
-        return graphService;
+        return graphDb;
     }
 
     public static GraphDatabaseService startNeo4j(String baseDir) {
         System.out.println("neo4j starting...");
 
-        String storePath = baseDir + storeDir;
+        String storePath = baseDir + "graph.db";
         GraphDatabaseBuilder graphDatabaseBuilder = new GraphDatabaseFactory().newEmbeddedDatabaseBuilder(storePath);
         graphDatabaseBuilder.setConfig(MapUtil.stringMap("keep_logical_logs", "1M size"));
-        graphService = graphDatabaseBuilder.newGraphDatabase();
+        final GraphDatabaseService graphService = graphDatabaseBuilder.newGraphDatabase();
         Runtime.getRuntime().addShutdownHook(new Thread() {
             @Override
             public void run() {
