@@ -97,7 +97,7 @@ public class NodeFactory {
     }
 
     public TaxonNode findTaxonOfType(String taxonName) throws NodeFactoryException {
-        return this.taxonService.findTaxon(taxonName);
+        return getTaxonService().findTaxonByName(taxonName);
     }
 
     public TaxonNode getOrCreateTaxon(String name) throws NodeFactoryException {
@@ -105,7 +105,7 @@ public class NodeFactory {
     }
 
     public TaxonNode getOrCreateTaxon(String name, String externalId, String path) throws NodeFactoryException {
-        return taxonService.getOrCreateTaxon(name, externalId, path);
+        return getTaxonService().getOrCreateTaxon(name, externalId, path);
     }
 
     public Location findLocation(Double latitude, Double longitude, Double altitude) {
@@ -495,6 +495,10 @@ public class NodeFactory {
 
     public void setTaxonService(TaxonService taxonService) {
         this.taxonService = taxonService;
+    }
+
+    public TaxonService getTaxonService() {
+        return taxonService;
     }
 }
 

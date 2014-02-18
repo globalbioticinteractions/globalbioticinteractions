@@ -1,5 +1,6 @@
 package org.eol.globi.domain;
 
+import org.apache.commons.lang3.StringUtils;
 import org.neo4j.graphdb.Node;
 
 public abstract class NamedNode extends NodeBacked {
@@ -13,6 +14,8 @@ public abstract class NamedNode extends NodeBacked {
     }
 
     public void setName(String name) {
-        getUnderlyingNode().setProperty(PropertyAndValueDictionary.NAME, name);
+        if (StringUtils.isNotBlank(name)) {
+            getUnderlyingNode().setProperty(PropertyAndValueDictionary.NAME, name);
+        }
     }
 }

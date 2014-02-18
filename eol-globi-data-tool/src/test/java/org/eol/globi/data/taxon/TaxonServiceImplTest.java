@@ -13,7 +13,6 @@ import org.eol.globi.service.TaxonPropertyEnricher;
 import org.junit.Before;
 import org.junit.Test;
 import org.neo4j.graphdb.Node;
-import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.IndexHits;
 
@@ -43,7 +42,7 @@ public class TaxonServiceImplTest extends GraphDBTestCase {
         assertThat(getGraphDb().index().existsForNodes("thisDoesnoTExist"), is(false));
 
         assertEnrichedPropertiesSet(taxonService.getOrCreateTaxon("some name", null, null));
-        assertEnrichedPropertiesSet(taxonService.findTaxon("some name"));
+        assertEnrichedPropertiesSet(taxonService.findTaxonByName("some name"));
         IndexHits<Node> hits = taxonService.findTaxaByPath("etc");
         assertThat(hits.size(), is(1));
         assertEnrichedPropertiesSet(new TaxonNode(hits.getSingle()));
@@ -212,10 +211,10 @@ public class TaxonServiceImplTest extends GraphDBTestCase {
         TaxonNode taxon = taxonService.getOrCreateTaxon("bla", null, null);
         assertEquals("bla corrected", taxon.getName());
 
-        TaxonNode bla = taxonService.findTaxon("bla");
+        TaxonNode bla = taxonService.findTaxonByName("bla");
         assertThat(bla.getName(), is("bla corrected"));
 
-        TaxonNode taxonMatch = taxonService.findTaxon("bla corrected");
+        TaxonNode taxonMatch = taxonService.findTaxonByName("bla corrected");
         assertThat(taxonMatch.getName(), is("bla corrected"));
     }
 
@@ -246,9 +245,9 @@ public class TaxonServiceImplTest extends GraphDBTestCase {
         TaxonNode third = taxonService.getOrCreateTaxon("not pref", null, null);
         assertThat(third.getNodeID(), is(first.getNodeID()));
 
-        TaxonNode foundTaxon = taxonService.findTaxon("not pref");
+        TaxonNode foundTaxon = taxonService.findTaxonByName("not pref");
         assertThat(foundTaxon.getNodeID(), is(first.getNodeID()));
-        foundTaxon = taxonService.findTaxon("preferred");
+        foundTaxon = taxonService.findTaxonByName("preferred");
         assertThat(foundTaxon.getNodeID(), is(first.getNodeID()));
     }
 

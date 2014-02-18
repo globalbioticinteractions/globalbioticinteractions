@@ -44,30 +44,51 @@ public class TaxonServiceImpl implements TaxonService {
 
     @Override
     public TaxonNode getOrCreateTaxon(String name, String externalId, String path) throws NodeFactoryException {
-        if (StringUtils.length(name) < 2) {
-            throw new NodeFactoryException("taxon name [" + name + "] must contains more than 1 character");
-        }
-        TaxonNode taxon = findTaxon(name);
+        TaxonNode taxon = findTaxon(name, externalId);
         return taxon == null ? createTaxon(name, externalId, path) : taxon;
     }
 
-    @Override
-    public TaxonNode findTaxon(String taxonName) throws NodeFactoryException {
-        String query = "name:\"" + QueryParser.escape(taxonName) + "\"";
-        IndexHits<Node> matchingTaxa = taxons.query(query);
-        Node matchingTaxon;
-        TaxonNode firstMatchingTaxon = null;
-        if (matchingTaxa.hasNext()) {
-            matchingTaxon = matchingTaxa.next();
-            if (matchingTaxon != null) {
-                firstMatchingTaxon = new TaxonNode(matchingTaxon);
+    private TaxonNode findTaxon(String name, String externalId) throws NodeFactoryException {
+        TaxonNode taxon;
+        if (StringUtils.isBlank(externalId)) {
+            if (StringUtils.length(name) < 2) {
+                throw new NodeFactoryException("taxon name [" + name + "] must contains more than 1 character");
+            } else {
+                taxon = findTaxonByName(name);
             }
+        } else {
+            taxon = findTaxonById(externalId);
         }
-        if (matchingTaxa.hasNext()) {
-            LOG.warn("found duplicate taxon for [" + taxonName + "]");
-        }
-        matchingTaxa.close();
+        return taxon;
+    }
 
+    @Override
+    public TaxonNode findTaxonById(String externalId) {
+        return findTaxonByKey(PropertyAndValueDictionary.EXTERNAL_ID, externalId);
+    }
+
+    @Override
+    public TaxonNode findTaxonByName(String taxonName) throws NodeFactoryException {
+        return findTaxonByKey(PropertyAndValueDictionary.NAME, taxonName);
+    }
+
+    private TaxonNode findTaxonByKey(String key, String value) {
+        TaxonNode firstMatchingTaxon = null;
+        if (StringUtils.isNotBlank(value)) {
+            String query = key + ":\"" + QueryParser.escape(value) + "\"";
+            IndexHits<Node> matchingTaxa = taxons.query(query);
+            Node matchingTaxon;
+            if (matchingTaxa.hasNext()) {
+                matchingTaxon = matchingTaxa.next();
+                if (matchingTaxon != null) {
+                    firstMatchingTaxon = new TaxonNode(matchingTaxon);
+                }
+            }
+            if (matchingTaxa.hasNext()) {
+                LOG.warn("found duplicate taxon for [" + value + "]");
+            }
+            matchingTaxa.close();
+        }
         return firstMatchingTaxon;
     }
 
@@ -80,7 +101,7 @@ public class TaxonServiceImpl implements TaxonService {
         TaxonNode taxonNode = null;
         while (taxonNode == null) {
             enricher.enrich(taxon);
-            taxonNode = findTaxon(taxon.getName());
+            taxonNode = findTaxonByName(taxon.getName());
             if (taxonNode == null) {
                 if (TaxonMatchValidator.hasMatch(taxon)) {
                     taxonNode = createAndIndexTaxon(taxon);
@@ -102,7 +123,7 @@ public class TaxonServiceImpl implements TaxonService {
     private void indexOriginalNameForTaxon(String name, Taxon taxon, TaxonNode taxonNode) throws NodeFactoryException {
         if (!StringUtils.equals(taxon.getName(), name)) {
             if (StringUtils.isNotBlank(name)) {
-                TaxonNode foundTaxon = findTaxon(name);
+                TaxonNode foundTaxon = findTaxonByName(name);
                 if (foundTaxon == null) {
                     Transaction tx = null;
                     try {
@@ -121,7 +142,7 @@ public class TaxonServiceImpl implements TaxonService {
 
     private TaxonNode addNoMatchTaxon(String externalId, String path, String originalName) throws NodeFactoryException {
         Taxon noMatchTaxon = new TaxonImpl();
-        noMatchTaxon.setName(originalName);
+        noMatchTaxon.setName(StringUtils.isBlank(originalName) ? PropertyAndValueDictionary.NO_MATCH : originalName);
         noMatchTaxon.setExternalId(StringUtils.isBlank(externalId) ? PropertyAndValueDictionary.NO_MATCH : externalId);
         noMatchTaxon.setPath(path);
         return createAndIndexTaxon(noMatchTaxon);
@@ -188,6 +209,7 @@ public class TaxonServiceImpl implements TaxonService {
     private void addToIndeces(TaxonNode taxon, String indexedName) {
         if (StringUtils.isNotBlank(indexedName)) {
             taxons.add(taxon.getUnderlyingNode(), PropertyAndValueDictionary.NAME, indexedName);
+            taxons.add(taxon.getUnderlyingNode(), PropertyAndValueDictionary.EXTERNAL_ID, taxon.getExternalId());
             indexCommonNames(taxon);
             indexTaxonPath(taxon);
         }

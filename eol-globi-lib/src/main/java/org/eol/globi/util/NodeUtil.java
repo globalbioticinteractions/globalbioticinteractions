@@ -21,11 +21,13 @@ public class NodeUtil {
 
     public static String truncateTaxonName(String taxonName) {
         String truncatedName = null;
-        String[] nameParts = StringUtils.split(taxonName);
-        if (nameParts.length > 2) {
-            truncatedName = nameParts[0].trim() + " " + nameParts[1].trim();
-        } else if (nameParts.length > 1) {
-            truncatedName = nameParts[0];
+        if (StringUtils.isNotBlank(taxonName)) {
+            String[] nameParts = StringUtils.split(taxonName);
+            if (nameParts.length > 2) {
+                truncatedName = nameParts[0].trim() + " " + nameParts[1].trim();
+            } else if (nameParts.length > 1) {
+                truncatedName = nameParts[0];
+            }
         }
         return truncatedName;
     }

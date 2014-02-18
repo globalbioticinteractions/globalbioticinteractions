@@ -4,9 +4,11 @@ import com.Ostermiller.util.CSVParser;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
+import org.eol.globi.data.taxon.TaxonServiceImpl;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
+import org.eol.globi.service.EOLService;
 import org.eol.globi.util.HttpUtil;
 
 import java.io.File;
@@ -39,10 +41,8 @@ public class StudyImporterForThessen extends BaseStudyImporter {
                     line = parser.getLine();
                     if (line.length == 2) {
                         try {
-                            String sourceTaxon = "EOL:" + line[0];
-                            String targetTaxon = "EOL:" + line[1];
-                            Specimen source = nodeFactory.createSpecimen(sourceTaxon, sourceTaxon);
-                            Specimen target = nodeFactory.createSpecimen(targetTaxon, targetTaxon);
+                            Specimen source = nodeFactory.createSpecimen(null, "EOL:" + line[0]);
+                            Specimen target = nodeFactory.createSpecimen(null, "EOL:" + line[1]);
                             source.interactsWith(target, InteractType.INTERACTS_WITH);
                             study.collected(source);
                         } catch (NodeFactoryException e) {

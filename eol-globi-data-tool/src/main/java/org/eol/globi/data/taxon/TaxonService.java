@@ -6,5 +6,7 @@ import org.eol.globi.domain.TaxonNode;
 public interface TaxonService {
     TaxonNode getOrCreateTaxon(String name, String externalId, String path) throws NodeFactoryException;
 
-    TaxonNode findTaxon(String taxonName) throws NodeFactoryException;
+    TaxonNode findTaxonByName(String taxonName) throws NodeFactoryException;
+
+    TaxonNode findTaxonById(String taxonName) throws NodeFactoryException;
 }

@@ -1,10 +1,9 @@
 package org.eol.globi.data;
 
+import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Study;
-import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonNode;
-import org.eol.globi.service.TaxonPropertyEnricherFactory;
 import org.junit.Test;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
@@ -36,7 +35,7 @@ public class StudyImporterForThessenIT extends GraphDBTestCase {
             Node sourceSpecimen = specimens.iterator().next().getEndNode();
             specimenCount++;
             Node taxonNode = sourceSpecimen.getSingleRelationship(RelTypes.CLASSIFIED_AS, Direction.OUTGOING).getEndNode();
-            taxonIds.add((String) taxonNode.getProperty("externalId"));
+            taxonIds.add((String) taxonNode.getProperty(PropertyAndValueDictionary.EXTERNAL_ID));
         }
 
         assertThat(specimenCount > 10, is(true));
@@ -45,7 +44,7 @@ public class StudyImporterForThessenIT extends GraphDBTestCase {
         assertThat(study.getTitle(), is(notNullValue()));
 
         for (String taxonId : taxonIds) {
-            TaxonNode taxon = nodeFactory.findTaxon(taxonId);
+            TaxonNode taxon = nodeFactory.getTaxonService().findTaxonById(taxonId);
             assertThat(taxon, is(notNullValue()));
             assertThat(taxon.getName(), is(notNullValue()));
         }

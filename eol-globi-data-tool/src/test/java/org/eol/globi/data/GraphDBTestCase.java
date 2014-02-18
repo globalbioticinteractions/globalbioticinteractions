@@ -35,7 +35,9 @@ public abstract class GraphDBTestCase {
 
             @Override
             public void enrich(Taxon taxon) {
-
+                taxon.setName("name of [" + taxon.getExternalId() + "]");
+                taxon.setPath("path of [" + taxon.getExternalId() + " ]");
+                taxon.setCommonNames("common names of [" + taxon.getExternalId() + " ]");
             }
         };
         nodeFactory = new NodeFactory(graphDb, new TaxonServiceImpl(taxonEnricher, new CorrectionService() {
