@@ -146,6 +146,16 @@ public class TaxonServiceImplIT extends GraphDBTestCase {
     }
 
     @Test
+    public void firstGenusThenSpecies() throws NodeFactoryException {
+        TaxonNode first = taxonService.getOrCreateTaxon("Ariopsis", null, null);
+        TaxonNode second = taxonService.getOrCreateTaxon("Ariopsis felis", null, null);
+        assertThat(first.getExternalId(), not(is(second.getExternalId())));
+        assertThat(first.getNodeID(), not(is(second.getNodeID())));
+        assertThat(taxonService.findTaxon("Ariopsis felis").getNodeID(), is(second.getNodeID()));
+        assertThat(taxonService.findTaxon("Ariopsis").getNodeID(), is(first.getNodeID()));
+    }
+
+    @Test
     public void noDuplicatesOnAlternateNames() throws NodeFactoryException {
         TaxonNode first = taxonService.getOrCreateTaxon("Cliona caribbaea", null, null);
         TaxonNode second = taxonService.getOrCreateTaxon("Cliona langae", null, null);
