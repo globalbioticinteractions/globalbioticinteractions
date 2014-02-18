@@ -29,7 +29,7 @@ public abstract class StudyExportUnmatchedTaxaForStudies extends DarwinCoreExpor
         query.append(study.getTitle());
         query.append("\") ");
         query.append(getQueryString(study));
-        query.append("WHERE not(has(taxon.path)) OR taxon.path = 'no:match'");
+        query.append("WHERE not(has(taxon.path))");
         query.append(" RETURN distinct description.name, taxon.externalId?, taxon.name, study.title");
 
         ExecutionResult result = engine.execute(query.toString());
