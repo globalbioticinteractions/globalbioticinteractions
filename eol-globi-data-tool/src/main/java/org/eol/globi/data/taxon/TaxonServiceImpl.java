@@ -122,7 +122,7 @@ public class TaxonServiceImpl implements TaxonService {
 
     private void indexOriginalNameForTaxon(String name, Taxon taxon, TaxonNode taxonNode) throws NodeFactoryException {
         if (!StringUtils.equals(taxon.getName(), name)) {
-            if (StringUtils.isNotBlank(name)) {
+            if (StringUtils.isNotBlank(name) && !StringUtils.equals(PropertyAndValueDictionary.NO_MATCH, name)) {
                 TaxonNode foundTaxon = findTaxonByName(name);
                 if (foundTaxon == null) {
                     Transaction tx = null;
@@ -208,8 +208,14 @@ public class TaxonServiceImpl implements TaxonService {
 
     private void addToIndeces(TaxonNode taxon, String indexedName) {
         if (StringUtils.isNotBlank(indexedName)) {
-            taxons.add(taxon.getUnderlyingNode(), PropertyAndValueDictionary.NAME, indexedName);
-            taxons.add(taxon.getUnderlyingNode(), PropertyAndValueDictionary.EXTERNAL_ID, taxon.getExternalId());
+            if (!StringUtils.equals(PropertyAndValueDictionary.NO_MATCH, indexedName)) {
+                taxons.add(taxon.getUnderlyingNode(), PropertyAndValueDictionary.NAME, indexedName);
+            }
+
+            String externalId = taxon.getExternalId();
+            if (!StringUtils.equals(PropertyAndValueDictionary.NO_MATCH, externalId)) {
+                taxons.add(taxon.getUnderlyingNode(), PropertyAndValueDictionary.EXTERNAL_ID, externalId);
+            }
             indexCommonNames(taxon);
             indexTaxonPath(taxon);
         }
