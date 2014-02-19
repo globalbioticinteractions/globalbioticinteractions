@@ -1,5 +1,6 @@
 package org.eol.globi.data.taxon;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.document.Document;
@@ -44,32 +45,32 @@ public class TaxonLookupServiceImpl implements TaxonImportListener, TaxonLookupS
 
     @Override
     public void addTerm(TaxonTerm taxonTerm) {
-         addTerm(taxonTerm.getName(), taxonTerm);
+        addTerm(taxonTerm.getName(), taxonTerm);
     }
 
     @Override
     public void addTerm(String name, TaxonTerm taxonTerm) {
         if (hasStarted()) {
-                    Document doc = new Document();
-                    doc.add(new Field(FIELD_NAME, name, Field.Store.YES, Field.Index.NOT_ANALYZED_NO_NORMS));
-                    doc.add(new Field(FIELD_RECOMMENDED_NAME, taxonTerm.getName(), Field.Store.YES, Field.Index.NOT_ANALYZED_NO_NORMS));
-                    doc.add(new Field(FIELD_ID, taxonTerm.getId(), Field.Store.YES, Field.Index.NOT_ANALYZED_NO_NORMS));
-                    String rankPath = taxonTerm.getRankPath();
-                    if (rankPath != null) {
-                        doc.add(new Field(FIELD_RANK_PATH, rankPath, Field.Store.YES, Field.Index.NOT_ANALYZED_NO_NORMS));
-                    }
-                    try {
-                        indexWriter.addDocument(doc);
-                    } catch (IOException e) {
-                        throw new RuntimeException("failed to add document for term with name [" + taxonTerm.getName() + "]");
-                    }
-                }
+            Document doc = new Document();
+            doc.add(new Field(FIELD_NAME, name, Field.Store.YES, Field.Index.NOT_ANALYZED_NO_NORMS));
+            doc.add(new Field(FIELD_RECOMMENDED_NAME, taxonTerm.getName(), Field.Store.YES, Field.Index.NOT_ANALYZED_NO_NORMS));
+            doc.add(new Field(FIELD_ID, taxonTerm.getId(), Field.Store.YES, Field.Index.NOT_ANALYZED_NO_NORMS));
+            String rankPath = taxonTerm.getRankPath();
+            if (rankPath != null) {
+                doc.add(new Field(FIELD_RANK_PATH, rankPath, Field.Store.YES, Field.Index.NOT_ANALYZED_NO_NORMS));
+            }
+            try {
+                indexWriter.addDocument(doc);
+            } catch (IOException e) {
+                throw new RuntimeException("failed to add document for term with name [" + taxonTerm.getName() + "]");
+            }
+        }
     }
 
     @Override
     public TaxonTerm[] lookupTermsByName(String taxonName) throws IOException {
         TaxonTerm[] terms = new TaxonTerm[0];
-        if (indexSearcher != null) {
+        if (StringUtils.isNotBlank(taxonName) && indexSearcher != null) {
             PhraseQuery query = new PhraseQuery();
             query.add(new Term(FIELD_NAME, taxonName));
             int maxHits = 3;

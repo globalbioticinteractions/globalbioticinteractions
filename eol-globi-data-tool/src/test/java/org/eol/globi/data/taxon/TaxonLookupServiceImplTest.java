@@ -29,4 +29,21 @@ public class TaxonLookupServiceImplTest {
         taxonLookupServiceImpl.destroy();
     }
 
+    @Test
+    public void createIndexDoLookupBlankName() throws IOException {
+        TaxonLookupServiceImpl taxonLookupServiceImpl = new TaxonLookupServiceImpl(new RAMDirectory());
+
+        TaxonImportListener listener = taxonLookupServiceImpl;
+        listener.start();
+        listener.addTerm(new TaxonTerm("Homo sapiens", "1234"));
+        listener.addTerm(new TaxonTerm("Prefix Homo sapiens suffix", "12346"));
+        listener.finish();
+
+        TaxonTerm[] ids = taxonLookupServiceImpl.lookupTermsByName(null);
+
+        assertThat(ids.length, Is.is(0));
+
+        taxonLookupServiceImpl.destroy();
+    }
+
 }
