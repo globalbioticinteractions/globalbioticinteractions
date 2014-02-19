@@ -11,44 +11,42 @@ public class WoRMSServiceIT {
 
     @Test
     public void lookupExistingSpeciesTaxon() throws TaxonPropertyLookupServiceException {
-        String lsid = new WoRMSService().lookupIdByName("Peprilus burti");
-        assertThat(lsid, is("urn:lsid:marinespecies.org:taxname:276560"));
+        assertThat(new WoRMSService().lookupIdByName("Peprilus burti"), is("urn:lsid:marinespecies.org:taxname:276560"));
     }
 
     @Test
     public void lookupExistentPath() throws TaxonPropertyLookupServiceException {
-        String path = new WoRMSService().lookupTaxonPathById("urn:lsid:marinespecies.org:taxname:276560");
-        assertThat(path, containsString("Actinopterygii"));
+        assertThat(new WoRMSService().lookupTaxonPathById("urn:lsid:marinespecies.org:taxname:276560"), containsString("Actinopterygii"));
     }
 
     @Test
     public void lookupExistingGenusTaxon() throws TaxonPropertyLookupServiceException {
-        String lsid = new WoRMSService().lookupIdByName("Peprilus");
-        assertThat(lsid, is("urn:lsid:marinespecies.org:taxname:159825"));
+        assertThat(new WoRMSService().lookupIdByName("Peprilus"), is("urn:lsid:marinespecies.org:taxname:159825"));
     }
 
     @Test
     public void lookupNonExistentTaxon() throws TaxonPropertyLookupServiceException {
-        String lsid = new WoRMSService().lookupIdByName("Brutus blahblahi");
-        assertThat(lsid, is(nullValue()));
+        assertThat(new WoRMSService().lookupIdByName("Brutus blahblahi"), is(nullValue()));
     }
 
     @Test
     public void lookupNonExistentTaxonPath() throws TaxonPropertyLookupServiceException {
-        String lsid = new WoRMSService().lookupTaxonPathById("urn:lsid:marinespecies.org:taxname:EEEEEE");
-        assertThat(lsid, is(nullValue()));
+        assertThat(new WoRMSService().lookupTaxonPathById("urn:lsid:marinespecies.org:taxname:EEEEEE"), is(nullValue()));
     }
 
     @Test
     public void lookupEOLIdTaxonPath() throws TaxonPropertyLookupServiceException {
-        String lsid = new WoRMSService().lookupTaxonPathById("EOL:123");
-        assertThat(lsid, is(nullValue()));
+        assertThat(new WoRMSService().lookupTaxonPathById("EOL:123"), is(nullValue()));
     }
 
     @Test
     public void lookupNA() throws TaxonPropertyLookupServiceException {
-        String lsid = new WoRMSService().lookupIdByName("NA");
-        assertThat(lsid, is(nullValue()));
+        assertThat(new WoRMSService().lookupIdByName("NA"), is(nullValue()));
+    }
+
+    @Test
+    public void lookupNull() throws TaxonPropertyLookupServiceException {
+        assertThat(new WoRMSService().lookupIdByName(null), is(nullValue()));
     }
 
 

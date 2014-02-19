@@ -9,14 +9,11 @@ import org.eol.globi.domain.PropertyAndValueDictionary;
 import java.util.Map;
 
 public abstract class BaseTaxonIdService extends BaseHttpClientService implements TaxonPropertyLookupService {
-    private static final Log LOG = LogFactory.getLog(BaseHttpClientService.class);
 
     protected String lookupPropertyValueByTaxonName(String taxonName, String propertyName) throws TaxonPropertyLookupServiceException {
         String propertyValue = null;
         if (PropertyAndValueDictionary.EXTERNAL_ID.equals(propertyName)) {
-            if (StringUtils.length(taxonName) < 2) {
-                LOG.warn("taxon name [" + taxonName + "] too short");
-            } else {
+            if (StringUtils.length(taxonName) > 2) {
                 try {
                     propertyValue = lookupIdByName(taxonName);
                 } catch (TaxonPropertyLookupServiceException e) {
@@ -27,13 +24,8 @@ public abstract class BaseTaxonIdService extends BaseHttpClientService implement
         } else if (PropertyAndValueDictionary.PATH.equals(propertyName)) {
             try {
                 String lsId = lookupIdByName(taxonName);
-                if (lsId != null) {
+                if (StringUtils.isNotBlank(lsId)) {
                     propertyValue = lookupTaxonPathById(lsId);
-                    // append synonyms in path whenever available using "|" separator with suffix to enable search
-                    // see https://github.com/jhpoelen/eol-globi-data/issues/12
-                    if (StringUtils.isNotBlank(propertyValue) && !StringUtils.endsWith(propertyValue, taxonName)) {
-                        propertyValue += CharsetConstant.SEPARATOR + taxonName;
-                    }
                 }
             } catch (TaxonPropertyLookupServiceException e) {
                 shutdown();
