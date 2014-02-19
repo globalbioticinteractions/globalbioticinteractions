@@ -89,13 +89,19 @@ public class TaxonServiceImplIT extends GraphDBTestCase {
     @Test
     public void externalIdDummyName() throws NodeFactoryException {
         taxonService.setEnricher(taxonEnricher);
-        TaxonNode taxon = taxonService.getOrCreateTaxon("EOL:1", "EOL:1", null);
+        taxonService.setCorrector(new TaxonNameCorrector());
+        TaxonNode taxon = taxonService.getOrCreateTaxon(null, "EOL:1", null);
         assertThat(taxon.getName(), is("Animalia"));
         assertThat(taxon.getExternalId(), is("EOL:1"));
         assertThat(taxon.getPath(), containsString("Animalia"));
         assertThat(taxon.getCommonNames(), containsString("animals"));
 
-        TaxonNode animaliaTaxon = taxonService.findTaxonByName("EOL:1");
+        TaxonNode animaliaTaxon = taxonService.findTaxonById("EOL:1");
+        assertThat(animaliaTaxon, is(Matchers.notNullValue()));
+        assertThat(animaliaTaxon.getName(), is("Animalia"));
+
+        animaliaTaxon = taxonService.findTaxonByName("Animalia");
+        assertThat(animaliaTaxon, is(Matchers.notNullValue()));
         assertThat(animaliaTaxon.getName(), is("Animalia"));
     }
 

@@ -64,6 +64,15 @@ public class TaxonNameCorrector implements CorrectionService {
 
     @Override
     public String correct(String taxonName) {
+        String suggestion = taxonName;
+        if (StringUtils.isNotBlank(taxonName)) {
+            suggestion = suggestCorrection(taxonName);
+        }
+        return suggestion;
+    }
+
+    private String suggestCorrection(String taxonName) {
+        String suggestion;
         if (suggestors == null) {
             suggestors = new ArrayList<NameSuggestor>() {
                 {
@@ -74,7 +83,7 @@ public class TaxonNameCorrector implements CorrectionService {
             };
         }
         List<String> suggestions = new ArrayList<String>();
-        String suggestion = taxonName;
+        suggestion = taxonName;
         suggestions.add(suggestion);
         boolean isCircular = false;
         while (!isCircular) {
@@ -90,7 +99,8 @@ public class TaxonNameCorrector implements CorrectionService {
                 suggestion = newSuggestion;
             }
         }
-        return isCircular ? suggestions.get(0) : suggestions.get(suggestions.size() - 1);
+        suggestion = isCircular ? suggestions.get(0) : suggestions.get(suggestions.size() - 1);
+        return suggestion;
     }
 
     private String suggest(String nameSuggestion) {

@@ -14,7 +14,7 @@ public abstract class BaseTaxonIdService extends BaseHttpClientService implement
     protected String lookupPropertyValueByTaxonName(String taxonName, String propertyName) throws TaxonPropertyLookupServiceException {
         String propertyValue = null;
         if (PropertyAndValueDictionary.EXTERNAL_ID.equals(propertyName)) {
-            if (taxonName.trim().length() < 2) {
+            if (StringUtils.length(taxonName) < 2) {
                 LOG.warn("taxon name [" + taxonName + "] too short");
             } else {
                 try {
