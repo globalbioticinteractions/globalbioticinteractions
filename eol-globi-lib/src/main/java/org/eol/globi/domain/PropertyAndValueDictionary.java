@@ -8,4 +8,5 @@ public class PropertyAndValueDictionary {
     public static final String COMMON_NAMES = "commonNames";
     protected final static String TYPE = "type";
     public static final String RANK = "rank";
+    public static final String NO_NAME = "no name";
 }

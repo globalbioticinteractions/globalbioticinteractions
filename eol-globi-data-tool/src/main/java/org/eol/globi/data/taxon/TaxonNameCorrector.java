@@ -6,6 +6,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eol.globi.data.CharsetConstant;
+import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.service.NameSuggestor;
 import org.eol.globi.service.UKSISuggestionService;
 
@@ -64,8 +65,10 @@ public class TaxonNameCorrector implements CorrectionService {
 
     @Override
     public String correct(String taxonName) {
-        String suggestion = taxonName;
-        if (StringUtils.isNotBlank(taxonName)) {
+        String suggestion;
+        if (StringUtils.isBlank(taxonName)) {
+            suggestion = PropertyAndValueDictionary.NO_NAME;
+        } else {
             suggestion = suggestCorrection(taxonName);
         }
         return suggestion;
@@ -107,7 +110,7 @@ public class TaxonNameCorrector implements CorrectionService {
         for (NameSuggestor suggestor : suggestors) {
             nameSuggestion = StringUtils.trim(suggestor.suggest(nameSuggestion));
             if (StringUtils.length(nameSuggestion) < 2) {
-                nameSuggestion = "no name";
+                nameSuggestion = PropertyAndValueDictionary.NO_NAME;
                 break;
             }
         }
