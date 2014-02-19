@@ -43,16 +43,31 @@ public class Indexer {
         final GraphDatabaseService previousGraphService = GraphService.getGraphService(previousData.getAbsolutePath() + File.separator);
         ExecutionEngine executionEngine = new ExecutionEngine(previousGraphService);
 
-        LOG.info("previous taxon names retrieving ...");
-        ExecutionResult results = executionEngine.execute("START taxon = node:taxons('*:*') MATCH taxon<-[:CLASSIFIED_AS]-specimen-[:ORIGINALLY_DESCRIBED_AS]->origName RETURN distinct(origName.name) as name, origName.externalId? as externalId");
-        LOG.info("previous taxon names retrieved.");
-
         final GraphDatabaseService freshGraphService = GraphService.startNeo4j(baseDir);
         TaxonService taxonService = new TaxonServiceImpl(TaxonPropertyEnricherFactory.createTaxonEnricher()
                 , new TaxonNameCorrector()
                 , freshGraphService);
 
-        LOG.info("taxon names indexing...");
+
+        String msgPrefix = "taxon names";
+        String whereAndReturnClause = " WHERE has(origName.name) RETURN distinct(origName.name) as name";
+        indexTaxonByProperty(executionEngine, taxonService, msgPrefix, whereAndReturnClause);
+
+        msgPrefix = "taxon externalIds";
+        whereAndReturnClause = " WHERE not(has(origName.name)) AND has(origName.externalId) RETURN distinct(origName.externalId) as externalId";
+        indexTaxonByProperty(executionEngine, taxonService, msgPrefix, whereAndReturnClause);
+
+        freshGraphService.shutdown();
+        previousGraphService.shutdown();
+    }
+
+    private void indexTaxonByProperty(ExecutionEngine executionEngine, TaxonService taxonService, String msgPrefix, String whereAndReturnClause) throws NodeFactoryException {
+        LOG.info(msgPrefix + " retrieving ...");
+        ExecutionResult results = executionEngine.execute("START taxon = node:taxons('*:*') MATCH taxon<-[:CLASSIFIED_AS]-specimen-[:ORIGINALLY_DESCRIBED_AS]->origName " + whereAndReturnClause);
+        LOG.info(msgPrefix + " retrieved.");
+
+
+        LOG.info(msgPrefix + " indexing...");
         ResourceIterator<Map<String, Object>> iterator = results.iterator();
         int counter = 0;
         StopWatch stopWatch = new StopWatch();
@@ -75,9 +90,7 @@ public class Indexer {
         }
         stopWatch.stop();
         iterator.close();
-        LOG.info("taxon names indexed in [" + stopWatch.getTime() / 1000.0 * 3600.0 + "] hours.");
-        freshGraphService.shutdown();
-        previousGraphService.shutdown();
+        LOG.info(msgPrefix + " indexed in [" + stopWatch.getTime() / 1000.0 * 3600.0 + "] hours.");
     }
 
 }
