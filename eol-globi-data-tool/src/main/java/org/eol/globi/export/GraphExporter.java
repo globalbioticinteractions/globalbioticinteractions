@@ -39,7 +39,6 @@ public class GraphExporter {
             FileUtils.forceMkdir(new File(baseDir));
             export(studies, baseDir + "unmatchedSourceTaxa.csv", new StudyExportUnmatchedSourceTaxaForStudies());
             export(studies, baseDir + "unmatchedTargetTaxa.csv", new StudyExportUnmatchedTargetTaxaForStudies());
-            export(studies, baseDir + "distinctOriginalTaxa.csv", new StudyExportOriginalTaxonNames());
         } catch (IOException e) {
             throw new StudyImporterException("failed to export unmatched source taxa", e);
         }
