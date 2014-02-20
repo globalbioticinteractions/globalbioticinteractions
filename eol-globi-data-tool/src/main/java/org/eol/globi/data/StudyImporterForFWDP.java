@@ -7,6 +7,7 @@ import org.apache.commons.logging.LogFactory;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
+import org.eol.globi.geo.EcoRegion;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
@@ -15,6 +16,7 @@ import org.neo4j.graphdb.Relationship;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -84,6 +86,7 @@ public class StudyImporterForFWDP extends BaseStudyImporter {
             if (predatorSpecimen == null) {
                 String predatorTaxonName = parseTaxonName(parser, "pdscinam");
                 predatorSpecimen = nodeFactory.createSpecimen(predatorTaxonName);
+                predatorSpecimen.setExternalId(uniquePredatorId);
                 Relationship collected = study.collected(predatorSpecimen);
                 try {
                     addDateTime(parser, collected);

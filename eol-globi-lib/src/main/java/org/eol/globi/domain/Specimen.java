@@ -69,7 +69,8 @@ public class Specimen extends NodeBacked {
     }
 
     public Double getLengthInMm() {
-        return (Double) getUnderlyingNode().getProperty(LENGTH_IN_MM);
+        return getUnderlyingNode().hasProperty(LENGTH_IN_MM) ?
+                (Double) getUnderlyingNode().getProperty(LENGTH_IN_MM) : null;
     }
 
     public Iterable<Relationship> getClassifications() {
