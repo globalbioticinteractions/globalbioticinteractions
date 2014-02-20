@@ -52,7 +52,7 @@ public class StudyImporterForFWDPTest extends GraphDBTestCase {
         File tempCsvExport = File.createTempFile("fwdp", ".csv");
         FileOutputStream fos = new FileOutputStream(tempCsvExport);
         CSVPrinter csvOut = new CSVPrinter(fos);
-        csvOut.write(new String[]{"predator specimen id (cruise6-PDID-CATNUM)", "predator taxon (pdscinam)", "predator length in mm (PDLEN)", "prey taxon (PYNAM)", "year (year)", "month (month)", "ecoRegion (derived from declat;declon)"});
+        csvOut.write(new String[]{"predator specimen id (cruise6-PDID-CATNUM)", "predator taxon (pdscinam)", "predator length in mm (PDLEN * 10.0)", "prey taxon (PYNAM)", "year (year)", "month (month)", "ecoRegion (derived from declat;declon)"});
         Study study = studyImporter.importStudy();
         Iterable<Relationship> collected = study.getSpecimens();
         for (Relationship coll : collected) {
