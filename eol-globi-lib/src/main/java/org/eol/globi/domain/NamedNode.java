@@ -14,8 +14,6 @@ public abstract class NamedNode extends NodeBacked {
     }
 
     public void setName(String name) {
-        if (StringUtils.isNotBlank(name)) {
-            getUnderlyingNode().setProperty(PropertyAndValueDictionary.NAME, name);
-        }
+        getUnderlyingNode().setProperty(PropertyAndValueDictionary.NAME, StringUtils.isBlank(name) ? PropertyAndValueDictionary.NO_NAME : name);
     }
 }
