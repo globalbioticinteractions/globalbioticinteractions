@@ -3,6 +3,7 @@ package org.eol.globi.data.taxon;
 import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.NodeFactoryException;
+import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.service.TaxonPropertyEnricher;
 import org.eol.globi.service.TaxonPropertyEnricherFactory;
@@ -87,6 +88,17 @@ public class TaxonServiceImplIT extends GraphDBTestCase {
     }
 
     @Test
+    public void externalIdNoPath() throws NodeFactoryException {
+        taxonService.setEnricher(taxonEnricher);
+        taxonService.setCorrector(new TaxonNameCorrector());
+        TaxonNode firstTaxon = taxonService.getOrCreateTaxon(null, "EOL:3764974", null);
+        assertThat(firstTaxon.getName(), is(PropertyAndValueDictionary.NO_MATCH));
+        assertThat(firstTaxon.getPath(), is(nullValue()));
+        TaxonNode secondTaxon = taxonService.getOrCreateTaxon(null, "EOL:3764974", null);
+        assertThat(secondTaxon.getNodeID(), is(firstTaxon.getNodeID()));
+    }
+
+    @Test
     public void externalIdDummyName() throws NodeFactoryException {
         taxonService.setEnricher(taxonEnricher);
         taxonService.setCorrector(new TaxonNameCorrector());
@@ -95,6 +107,9 @@ public class TaxonServiceImplIT extends GraphDBTestCase {
         assertThat(taxon.getExternalId(), is("EOL:1"));
         assertThat(taxon.getPath(), containsString("Animalia"));
         assertThat(taxon.getCommonNames(), containsString("animals"));
+
+        TaxonNode secondTaxon = taxonService.getOrCreateTaxon(null, "EOL:1", null);
+        assertThat(secondTaxon.getNodeID(), is(taxon.getNodeID()));
 
         TaxonNode animaliaTaxon = taxonService.findTaxonById("EOL:1");
         assertThat(animaliaTaxon, is(Matchers.notNullValue()));
