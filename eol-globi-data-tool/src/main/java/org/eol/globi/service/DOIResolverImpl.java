@@ -73,7 +73,6 @@ public class DOIResolverImpl implements DOIResolver {
                     uri = new URI("http", doi.replace("http:", ""), null);
                 }
                 HttpGet request = new HttpGet(uri);
-                System.out.println(uri.toString());
                 request.setHeader("Accept", "text/x-bibliography; style=council-of-science-editors; charset=UTF-8");
                 request.setHeader("Accept-Charset", "UTF-8");
                 HttpResponse response = HttpUtil.createHttpClient().execute(request);
