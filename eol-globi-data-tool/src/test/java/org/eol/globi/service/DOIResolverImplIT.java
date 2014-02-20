@@ -3,7 +3,6 @@ package org.eol.globi.service;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.net.URI;
 import java.net.URISyntaxException;
 
 import static org.hamcrest.CoreMatchers.nullValue;
@@ -28,7 +27,7 @@ public class DOIResolverImplIT {
     @Test
     public void findCitationForDOI() throws IOException {
         String citationForDOI = new DOIResolverImpl().findCitationForDOI("http://dx.doi.org/10.1086/283073");
-        assertThat(citationForDOI, is("Menge BA, Sutherland JP. Species Diversity Gradients: Synthesis of the Roles of Predation, Competition, and Temporal Heterogeneity. The American Naturalist [Internet]. 1976 January;110(973):351. Available from: http://dx.doi.org/10.1086/283073"));
+        assertThat(citationForDOI, is("Menge BA, Sutherland JP. Species Diversity Gradients: Synthesis of the Roles of Predation, Competition, and Temporal Heterogeneity. American Naturalist, The [Internet]. 1976 January;110(973):351. Available from: http://dx.doi.org/10.1086/283073"));
     }
 
     @Test
