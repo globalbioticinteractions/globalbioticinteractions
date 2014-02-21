@@ -40,45 +40,6 @@ public class StudyImporterForRaymondTest extends GraphDBTestCase {
         assertThat(latLng.getLng(), is(-3.0));
     }
 
-    @Test
-    public void importStudy() throws StudyImporterException {
-        StudyImporterForRaymond importer = new StudyImporterForRaymond(new ParserFactoryImpl(), nodeFactory);
-        importer.setGeoNamesService(new GeoNamesService() {
-            @Override
-            public boolean hasPositionForLocality(String spireLocality) {
-                return true;
-            }
-
-            @Override
-            public LatLng findPointForLocality(String spireLocality) throws IOException {
-                return new LatLng(0, 0);
-            }
-
-            @Override
-            public LatLng findLatLng(Long id) throws IOException {
-                return new LatLng(0, 0);
-            }
-        });
-        importer.importStudy();
-
-        importer.setGeoNamesService(new GeoNamesServiceImpl());
-
-        Collection<String> unmappedLocations = new HashSet<String>();
-        for (String location : importer.getLocations()) {
-            if (!importer.getGeoNamesService().hasPositionForLocality(location)) {
-                unmappedLocations.add(location);
-            }
-        }
-
-        assertThat(unmappedLocations,
-                containsInAnyOrder("Not described",
-                        "South African waters",
-                        "Ocean location",
-                        "subantarctic waters",
-                        "oceanic habitat in Southern Ocean. 68� 07\u0019 S & 70�13\u0019 S",
-                        "Subantarctic Pacific Ocean"));
-    }
-
 
     @Test
     public void importPartialStudy() throws IOException, StudyImporterException {

@@ -1,39 +1,55 @@
 package org.eol.globi.data;
 
+import com.Ostermiller.util.CSVParser;
 import com.Ostermiller.util.LabeledCSVParser;
 import com.Ostermiller.util.MD5;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.output.NullOutputStream;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpGet;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.geo.GeoUtil;
+import org.eol.globi.util.HttpUtil;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.neo4j.graphdb.Relationship;
 import uk.me.jstott.jcoord.LatLng;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.Reader;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 public class StudyImporterForRaymond extends BaseStudyImporter {
 
-    private final static Log LOG = LogFactory.getLog(StudyImporter.class);
+    private final static Log LOG = LogFactory.getLog(StudyImporterForRaymond.class);
+
     public static final String OBSERVATION_DATE_START = "OBSERVATION_DATE_START";
     public static final String OBSERVATION_DATE_END = "OBSERVATION_DATE_END";
     public static final String WEST = "WEST";
     public static final String EAST = "EAST";
     public static final String SOUTH = "SOUTH";
     public static final String NORTH = "NORTH";
+    public static final String SOURCES_CSV = "sources.csv";
+    public static final String DIET_CSV = "diet.csv";
+    public static final String RESOURCE_URL = "http://data.aad.gov.au/aadc/trophic/trophic.zip";
     private Collection<String> locations = new HashSet<String>();
 
     public StudyImporterForRaymond(ParserFactory parserFactory, NodeFactory nodeFactory) {
@@ -42,16 +58,62 @@ public class StudyImporterForRaymond extends BaseStudyImporter {
 
     @Override
     public Study importStudy() throws StudyImporterException {
-        try {
-            LabeledCSVParser dietParser = parserFactory.createParser("raymond/diet.csv.gz", "UTF-8");
-            LabeledCSVParser sourcesParser = parserFactory.createParser("raymond/sources.csv.gz", "UTF-8");
+        File dietFile = null;
+        File sourcesFile = null;
 
+        try {
+            LOG.info("[" + RESOURCE_URL + "] downloading...");
+            HttpResponse response = HttpUtil.createHttpClient().execute(new HttpGet(RESOURCE_URL));
+            LabeledCSVParser sourcesParser = null;
+            LabeledCSVParser dietParser = null;
+            ZipInputStream zis = new ZipInputStream(response.getEntity().getContent());
+            ZipEntry entry;
+            while ((entry = zis.getNextEntry()) != null) {
+                if (DIET_CSV.equals(entry.getName())) {
+                    dietFile = File.createTempFile("raymondDiet", ".csv");
+                    dietParser = createParser(dietFile, zis);
+                } else if (SOURCES_CSV.equals(entry.getName())) {
+                    sourcesFile = File.createTempFile("raymondSources", ".csv");
+                    sourcesParser = createParser(sourcesFile, zis);
+                } else {
+                    IOUtils.copy(zis, new NullOutputStream());
+                }
+            }
+            LOG.info("[" + RESOURCE_URL + "] downloaded.");
+            if (sourcesParser == null) {
+                throw new StudyImporterException("failed to find [" + SOURCES_CSV + "] in [" + RESOURCE_URL + "]");
+            }
+            if (dietParser == null) {
+                throw new StudyImporterException("failed to find [" + DIET_CSV + "] in [" + RESOURCE_URL + "]");
+            }
             importData(sourcesParser, dietParser);
 
         } catch (IOException e) {
             throw new StudyImporterException("failed to import [" + getClass().getSimpleName() + "]", e);
+        } finally {
+            if (dietFile != null) {
+                dietFile.delete();
+            }
+            if (sourcesFile != null) {
+                sourcesFile.delete();
+            }
         }
         return null;
+    }
+
+    private LabeledCSVParser createParser(File dietFile, ZipInputStream zis) throws IOException {
+        LabeledCSVParser dietParser;
+        streamToFile(dietFile, zis);
+        Reader reader = FileUtils.getUncompressedBufferedReader(new FileInputStream(dietFile), "UTF-8");
+        dietParser = new LabeledCSVParser(new CSVParser(reader));
+        return dietParser;
+    }
+
+    private static void streamToFile(File sourcesFile, ZipInputStream zis) throws IOException {
+        FileOutputStream output = new FileOutputStream(sourcesFile);
+        IOUtils.copy(zis, output);
+        output.flush();
+        IOUtils.closeQuietly(output);
     }
 
     public void importData(LabeledCSVParser sourcesParser, LabeledCSVParser dietParser) throws IOException, StudyImporterException {
@@ -176,7 +238,7 @@ public class StudyImporterForRaymond extends BaseStudyImporter {
             Integer sourceId = Integer.parseInt(sourcesParser.getValueByLabel("SOURCE_ID"));
             String reference = sourcesParser.getValueByLabel("DETAILS");
             String title = StringUtils.abbreviate(reference, 16) + MD5.getHashString(reference);
-            Study study = nodeFactory.getOrCreateStudy(title, null, null, null, reference, null, "http://esapubs.org/archive/ecol/E092/097/");
+            Study study = nodeFactory.getOrCreateStudy(title, null, null, null, reference, null, "Raymond, B., Marshall, M., Nevitt, G., Gillies, C., van den Hoff, J., Stark, J.S., Losekoot, M., Woehler, E.J., and Constable, A.J. (2011) A Southern Ocean dietary database. Ecology 92(5):1188. http://data.aad.gov.au/aadc/trophic/. doi: 10.1890/i0012-9658-92-5-1188. Data set supplied by Ben Raymond. The data can also be accessed at http://data.aad.gov.au/aadc/trophic/.");
             sourceMap.put(sourceId, study);
         }
         return sourceMap;
