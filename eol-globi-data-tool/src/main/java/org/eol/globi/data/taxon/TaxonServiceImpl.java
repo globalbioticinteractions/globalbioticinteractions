@@ -98,10 +98,10 @@ public class TaxonServiceImpl implements TaxonService {
         taxon.setExternalId(externalId);
         taxon.setPath(path);
 
-        TaxonNode taxonNode = null;
+        TaxonNode taxonNode = findTaxon(taxon.getName(), taxon.getExternalId());
         while (taxonNode == null) {
             enricher.enrich(taxon);
-            taxonNode = findTaxonByName(taxon.getName());
+            taxonNode = findTaxon(taxon.getName(), taxon.getExternalId());
             if (taxonNode == null) {
                 if (TaxonMatchValidator.hasMatch(taxon)) {
                     taxonNode = createAndIndexTaxon(taxon);
@@ -112,6 +112,7 @@ public class TaxonServiceImpl implements TaxonService {
                     } else {
                         taxon = new TaxonImpl();
                         taxon.setName(truncatedName);
+                        taxonNode = findTaxonByName(taxon.getName());
                     }
                 }
             }
