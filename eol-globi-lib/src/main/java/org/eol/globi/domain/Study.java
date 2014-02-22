@@ -146,7 +146,7 @@ public class Study extends NodeBacked {
 
     public void setCitationWithTx(String citation) {
         setPropertyWithTx(CITATION, citation);
-        if (getDescription() == null) {
+        if (StringUtils.isBlank(getDescription())) {
             setPropertyWithTx(DESCRIPTION, citation);
         }
     }
