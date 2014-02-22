@@ -49,7 +49,7 @@ public class StudyImporterForRaymond extends BaseStudyImporter {
     public static final String NORTH = "NORTH";
     public static final String SOURCES_CSV = "sources.csv";
     public static final String DIET_CSV = "diet.csv";
-    public static final String RESOURCE_URL = "http://data.aad.gov.au/aadc/trophic/trophic.zip";
+    public static final String RESOURCE_URL = "https://data.aad.gov.au/aadc/trophic/trophic.zip";
     private Collection<String> locations = new HashSet<String>();
 
     public StudyImporterForRaymond(ParserFactory parserFactory, NodeFactory nodeFactory) {
