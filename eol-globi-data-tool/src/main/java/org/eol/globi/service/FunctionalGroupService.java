@@ -16,7 +16,7 @@ public class FunctionalGroupService extends BaseTaxonIdService {
     public static final String ZOOPLANKTON = ID_PREFIX_WIKIPEDIA + "Zooplankton";
     public static final String INVERTEBRATA = ID_PREFIX_WIKIPEDIA + "Invertebrata";
     public static final String BACTERIOPLANKTON = ID_PREFIX_WIKIPEDIA + "Bacterioplankton";
-    public static final String ALGAE = ID_PREFIX_EOL + "Algae";
+    public static final String ALGAE = ID_PREFIX_EOL + "37577397";
     public static final String MACROALGAE = WIKIPEDIA + "Macroalgae";
 
     private Map<String, String> mapping = new HashMap<String, String>() {{
