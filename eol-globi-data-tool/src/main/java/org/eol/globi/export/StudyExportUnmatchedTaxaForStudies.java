@@ -30,7 +30,7 @@ public abstract class StudyExportUnmatchedTaxaForStudies extends DarwinCoreExpor
         query.append("\") ");
         query.append(getQueryString(study));
         query.append("WHERE not(has(taxon.path))");
-        query.append(" RETURN distinct description.name, taxon.externalId?, taxon.name, study.title");
+        query.append(" RETURN distinct description.name, description.externalId?, taxon.name, taxon.externalId?, study.title");
 
         ExecutionResult result = engine.execute(query.toString());
 
@@ -48,18 +48,28 @@ public abstract class StudyExportUnmatchedTaxaForStudies extends DarwinCoreExpor
     protected abstract String getTaxonLabel();
 
     protected void writeRow(Writer writer, Map<String, Object> map) throws IOException {
-        writer.write("\"" + map.get("description.name") + "\",");
-        Object externalId = map.get("taxon.externalId");
+        writer.write("\"");
+        writer.write((String) map.get("description.name"));
+        writer.write("\",");
+        Object externalId = map.get("description.externalId");
         writer.write((externalId == null ? "" : ("\"" + externalId + "\"")));
         writer.write(",");
-        writer.write("\"" + map.get("taxon.name") + "\",");
-        writer.write("\"" + map.get("study.title") + "\"\n");
+        writer.write("\"");
+        writer.write((String) map.get("taxon.name"));
+        writer.write("\",");
+        externalId = map.get("taxon.externalId");
+        writer.write((externalId == null ? "" : ("\"" + externalId + "\"")));
+        writer.write(",\"");
+        writer.write((String) map.get("study.title"));
+        writer.write("\"\n");
+
     }
 
     protected void writeHeader(Writer writer, String taxonLabel) throws IOException {
         writer.write("\"original " + taxonLabel + " taxon name\"");
-        writer.write(",\"unmatched normalized " + taxonLabel + " external id\"");
+        writer.write(",\"original " + taxonLabel + " external id\"");
         writer.write(",\"unmatched normalized " + taxonLabel + " taxon name\"");
+        writer.write(",\"unmatched normalized " + taxonLabel + " external id\"");
         writer.write(",\"study\"\n");
     }
 

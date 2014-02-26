@@ -25,6 +25,12 @@ public class DOIResolverImplIT {
     }
 
     @Test
+    public void findCitationForDOIStrangeCharacters() throws IOException {
+        String citation = new DOIResolverImpl().findCitationForDOI("http://dx.doi.org/10.1007/s00300-004-0645-x");
+        assertThat(citation, is("Mesa M, Dal� M, Vacchi M. Trophic ecology of the emerald notothen Trematomus bernacchii (Pisces, Nototheniidae) from Terra Nova Bay, Ross Sea, Antarctica. Polar Biology [Internet]. 2004 October;27(11):721–728. Available from: http://dx.doi.org/10.1007/s00300-004-0645-x"));
+    }
+
+    @Test
     public void findCitationForDOI() throws IOException {
         String citationForDOI = new DOIResolverImpl().findCitationForDOI("http://dx.doi.org/10.1086/283073");
         assertThat(citationForDOI, is("Menge BA, Sutherland JP. Species Diversity Gradients: Synthesis of the Roles of Predation, Competition, and Temporal Heterogeneity. American Naturalist, The [Internet]. 1976 January;110(973):351. Available from: http://dx.doi.org/10.1086/283073"));

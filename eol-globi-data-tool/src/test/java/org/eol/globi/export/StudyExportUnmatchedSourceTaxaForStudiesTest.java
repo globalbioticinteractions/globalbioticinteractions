@@ -21,6 +21,8 @@ import static org.junit.Assert.assertThat;
 
 public class StudyExportUnmatchedSourceTaxaForStudiesTest extends GraphDBTestCase {
 
+    public static final String EXPECTED_HEADER = "\"original source taxon name\",\"original source external id\",\"unmatched normalized source taxon name\",\"unmatched normalized source external id\",\"study\"";
+
     @Test
     public void exportOnePredatorTwoPrey() throws NodeFactoryException, IOException {
         final TaxonPropertyEnricher taxonEnricher = new TaxonPropertyEnricher() {
@@ -65,15 +67,15 @@ public class StudyExportUnmatchedSourceTaxaForStudiesTest extends GraphDBTestCas
 
         StringWriter writer = new StringWriter();
         new StudyExportUnmatchedSourceTaxaForStudies().exportStudy(study, writer, true);
-        assertThat(writer.toString(), is("\"original source taxon name\",\"unmatched normalized source external id\",\"unmatched normalized source taxon name\",\"study\"\n" +
-                "\"Homo sapiens2\",,\"Homo sapiens2\",\"my study\"\n" +
-                "\"Homo sapiens3\",,\"Homo sapiens3\",\"my study\"\n"
+        assertThat(writer.toString(), is(EXPECTED_HEADER + "\n" +
+                "\"Homo sapiens2\",,\"Homo sapiens2\",,\"my study\"\n" +
+                "\"Homo sapiens3\",,\"Homo sapiens3\",,\"my study\"\n"
         ));
 
         writer = new StringWriter();
         new StudyExportUnmatchedTargetTaxaForStudies().exportStudy(study, writer, true);
-                assertThat(writer.toString(), is("\"original target taxon name\",\"unmatched normalized target external id\",\"unmatched normalized target taxon name\",\"study\"\n" +
-                        "\"Caniz\",,\"Caniz\",\"my study\"\n"
+                assertThat(writer.toString(), is("\"original target taxon name\",\"original target external id\",\"unmatched normalized target taxon name\",\"unmatched normalized target external id\",\"study\"" + "\n" +
+                        "\"Caniz\",,\"Caniz\",,\"my study\"\n"
                 ));
     }
 
