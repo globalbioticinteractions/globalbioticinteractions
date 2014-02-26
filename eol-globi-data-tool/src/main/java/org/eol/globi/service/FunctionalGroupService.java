@@ -8,7 +8,6 @@ import java.util.Map;
 import static org.eol.globi.domain.TaxonomyProvider.ID_PREFIX_EOL;
 import static org.eol.globi.domain.TaxonomyProvider.ID_PREFIX_WIKIPEDIA;
 import static org.eol.globi.domain.TaxonomyProvider.WIKIPEDIA;
-import static org.eol.globi.domain.TaxonomyProvider.EOL;
 
 public class FunctionalGroupService extends BaseTaxonIdService {
 

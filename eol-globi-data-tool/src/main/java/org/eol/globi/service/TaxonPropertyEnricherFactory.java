@@ -11,7 +11,7 @@ public class TaxonPropertyEnricherFactory {
                 //add(new GloBICachedTaxaService());
                 //add(new EOLOfflineService());
                 add(new EnvoService());
-                add(new WikipediaService());
+                add(new FunctionalGroupService());
                 add(new EOLService());
                 add(new WoRMSService());
                 //add(new ITISService());
