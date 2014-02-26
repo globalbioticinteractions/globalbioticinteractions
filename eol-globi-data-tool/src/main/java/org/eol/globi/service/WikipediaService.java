@@ -14,6 +14,8 @@ public class WikipediaService extends BaseTaxonIdService {
     public static final String ZOOPLANKTON = WIKIPEDIA + "Zooplankton";
     public static final String INVERTEBRATA = WIKIPEDIA + "Invertebrata";
     public static final String BACTERIOPLANKTON = WIKIPEDIA + "Bacterioplankton";
+    public static final String ALGAE = WIKIPEDIA + "Algae";
+    public static final String MACROALGAE = WIKIPEDIA + "Macroalgae";
 
     private Map<String, String> mapping = new HashMap<String, String>() {{
         put("Phytoplankton", PHYTOPLANKTON);
@@ -21,6 +23,8 @@ public class WikipediaService extends BaseTaxonIdService {
         put("Bacterioplankton", BACTERIOPLANKTON);
         put("Plankton", PLANKTON);
         put("Invertebrata", INVERTEBRATA);
+        put("Algae", ALGAE);
+        put("Macroalgae", MACROALGAE);
     }};
 
     private Map<String, String> pathLookup = new HashMap<String, String>() {{
@@ -29,6 +33,8 @@ public class WikipediaService extends BaseTaxonIdService {
         put(BACTERIOPLANKTON, "Plankton | Bacterioplankton | Bacteria");
         put(PLANKTON, "Plankton");
         put(INVERTEBRATA, "Invertebrata");
+        put(ALGAE, "Algae");
+        put(MACROALGAE, "Algae | Macroalgae");
     }};
 
     public String lookupIdByName(String taxonName) throws TaxonPropertyLookupServiceException {

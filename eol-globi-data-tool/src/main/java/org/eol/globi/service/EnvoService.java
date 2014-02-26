@@ -15,6 +15,7 @@ public class EnvoService extends BaseTaxonIdService {
     public static final String FECES = ID_PREFIX_ENVO + "00002003";
     public static final String WOOD = ID_PREFIX_ENVO + "00002040";
     public static final String ROCK = ID_PREFIX_ENVO + "00001995";
+    public static final String PIECE_OF_ROCK = ID_PREFIX_ENVO + "00000339";
 
     private Map<String, String> mapping = new HashMap<String, String>() {{
         put("organic material", ORGANIC_MATERIAL);
@@ -35,6 +36,7 @@ public class EnvoService extends BaseTaxonIdService {
         put("sediment POC", SEDIMENT);
         put("sediment", SEDIMENT);
         put("soil", SOIL);
+        put("stones", PIECE_OF_ROCK);
     }};
 
     private Map<String, String> pathLookup = new HashMap<String, String>() {{
@@ -44,6 +46,7 @@ public class EnvoService extends BaseTaxonIdService {
         put(FECES, "environmental material | organic material | bodily fluid | excreta | feces");
         put(WOOD, "environmental material | organic material | wood");
         put(ROCK, "environmental material");
+        put(PIECE_OF_ROCK, "environmental feature | mesoscopic physical object | abiotic mesoscopic physical object | piece of rock");
     }};
 
     public String lookupIdByName(String taxonName) throws TaxonPropertyLookupServiceException {
