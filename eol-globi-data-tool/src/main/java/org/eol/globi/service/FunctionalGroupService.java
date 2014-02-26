@@ -5,16 +5,19 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.eol.globi.domain.TaxonomyProvider.ID_PREFIX_EOL;
+import static org.eol.globi.domain.TaxonomyProvider.ID_PREFIX_WIKIPEDIA;
 import static org.eol.globi.domain.TaxonomyProvider.WIKIPEDIA;
+import static org.eol.globi.domain.TaxonomyProvider.EOL;
 
-public class WikipediaService extends BaseTaxonIdService {
+public class FunctionalGroupService extends BaseTaxonIdService {
 
-    public static final String PHYTOPLANKTON = WIKIPEDIA + "Phytoplankton";
-    public static final String PLANKTON = WIKIPEDIA + "Plankton";
-    public static final String ZOOPLANKTON = WIKIPEDIA + "Zooplankton";
-    public static final String INVERTEBRATA = WIKIPEDIA + "Invertebrata";
-    public static final String BACTERIOPLANKTON = WIKIPEDIA + "Bacterioplankton";
-    public static final String ALGAE = WIKIPEDIA + "Algae";
+    public static final String PHYTOPLANKTON = ID_PREFIX_WIKIPEDIA + "Phytoplankton";
+    public static final String PLANKTON = ID_PREFIX_WIKIPEDIA + "Plankton";
+    public static final String ZOOPLANKTON = ID_PREFIX_WIKIPEDIA + "Zooplankton";
+    public static final String INVERTEBRATA = ID_PREFIX_WIKIPEDIA + "Invertebrata";
+    public static final String BACTERIOPLANKTON = ID_PREFIX_WIKIPEDIA + "Bacterioplankton";
+    public static final String ALGAE = ID_PREFIX_EOL + "Algae";
     public static final String MACROALGAE = WIKIPEDIA + "Macroalgae";
 
     private Map<String, String> mapping = new HashMap<String, String>() {{
