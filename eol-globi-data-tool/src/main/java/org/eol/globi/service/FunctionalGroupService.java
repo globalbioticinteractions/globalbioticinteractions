@@ -11,9 +11,9 @@ import static org.eol.globi.domain.TaxonomyProvider.WIKIPEDIA;
 
 public class FunctionalGroupService extends BaseTaxonIdService {
 
-    public static final String PHYTOPLANKTON = ID_PREFIX_WIKIPEDIA + "Phytoplankton";
+    public static final String PHYTOPLANKTON = ID_PREFIX_EOL + "19662463";
     public static final String PLANKTON = ID_PREFIX_WIKIPEDIA + "Plankton";
-    public static final String ZOOPLANKTON = ID_PREFIX_WIKIPEDIA + "Zooplankton";
+    public static final String ZOOPLANKTON = ID_PREFIX_EOL + "19662459";
     public static final String INVERTEBRATA = ID_PREFIX_WIKIPEDIA + "Invertebrata";
     public static final String BACTERIOPLANKTON = ID_PREFIX_WIKIPEDIA + "Bacterioplankton";
     public static final String ALGAE = ID_PREFIX_EOL + "37577397";
