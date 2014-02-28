@@ -12,9 +12,14 @@ import org.eol.globi.service.UberonLookupService;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 public class StudyImporterForBarnes extends BaseStudyImporter {
     public static final String RESOURCE_URL = "http://www.esapubs.org/Archive/ecol/E089/051/";
+    public static final String SOURCE = "Barnes, C. et al., 2008. PREDATOR AND PREY BODY SIZES IN MARINE FOOD WEBS. Ecology, 89(3), pp.881–881. Available at: http://dx.doi.org/10.1890/07-1551.1 . Data provided by Carolyn Barnes. Also available at " + "http://www.esapubs.org/Archive/ecol/E089/051/" + " .";
+    public static final String RESOURCE_PATH = "barnes/Predator_and_prey_body_sizes_in_marine_food_webs_vsn4.txt";
+    public static final String REFERENCE_PATH = "barnes/references.csv";
     private TermLookupService termService = new UberonLookupService();
 
     public StudyImporterForBarnes(ParserFactory parserFactory, NodeFactory nodeFactory) {
@@ -23,61 +28,95 @@ public class StudyImporterForBarnes extends BaseStudyImporter {
 
     @Override
     public Study importStudy() throws StudyImporterException {
-        LabeledCSVParser parser;
+        LabeledCSVParser dataParser;
         try {
-            parser = parserFactory.createParser("barnes/Predator_and_prey_body_sizes_in_marine_food_webs_vsn3.tsv", CharsetConstant.UTF8);
+            dataParser = parserFactory.createParser(RESOURCE_PATH, CharsetConstant.UTF8);
         } catch (IOException e) {
-            throw new StudyImporterException("failed to read resource", e);
+            throw new StudyImporterException("failed to read resource [" + RESOURCE_PATH + "]", e);
         }
-        parser.changeDelimiter('\t');
+        dataParser.changeDelimiter('\t');
 
-        Study study = nodeFactory.getOrCreateStudy("Barnes 2008", "C. Barnes et al.", "Centre for Environment, Fisheries and Aquaculture Science, Lowestoft, Suffolk, NR33 0HT  UK", "", "C. Barnes, D. M. Bethea, R. D. Brodeur, J. Spitz, V. Ridoux, C. Pusineri, B. C. Chase, M. E. Hunsicker, F. Juanes, A. Kellermann, J. Lancaster, F. Ménard, F.-X. Bard, P. Munk, J. K. Pinnegar, F. S. Scharf, R. A. Rountree, K. I. Stergiou, C. Sassa, A. Sabates, and S. Jennings. 2008. Predator and prey body sizes in marine food webs. Ecology 89:881."
-                , "2008", "Barnes et al 2008. Available at " + RESOURCE_URL + " .", null);
-        study.setCitationWithTx("Barnes C, Bethea DM, Brodeur RD, Spitz J, Ridoux V, Pusineri C, Chase BC, Hunsicker ME, Juanes F, Kellermann A, Lancaster J, Ménard F, Bard FX, Munk P, Pinnegar JK, Scharf FS, Rountree RA, Stergiou KI, Sassa C, Sabates A, Jennings S. Predator and prey body sizes in marine food webs. 2008. Ecology 89:881.");
-        study.setExternalId(RESOURCE_URL);
+        Map<String, String> refMap = buildRefMap();
+
         try {
-            while (parser.getLine() != null) {
-                if (importFilter.shouldImportRecord((long) parser.getLastLineNumber())) {
-                    importLine(parser, study);
+            while (dataParser.getLine() != null) {
+                if (importFilter.shouldImportRecord((long) dataParser.getLastLineNumber())) {
+                    importLine(dataParser, refMap);
                 }
             }
         } catch (IOException e) {
-            throw new StudyImporterException("problem importing study at line [" + parser.lastLineNumber() + "]", e);
+            throw new StudyImporterException("problem importing study at line [" + dataParser.lastLineNumber() + "]", e);
         }
-        return study;
+        return null;
     }
 
-    private void importLine(LabeledCSVParser parser, Study study) throws StudyImporterException {
+    private Map<String, String> buildRefMap() throws StudyImporterException {
+        Map<String, String> refMap = new TreeMap<String, String>();
         try {
+            LabeledCSVParser referenceParser = parserFactory.createParser(REFERENCE_PATH, CharsetConstant.UTF8);
+            while (referenceParser.getLine() != null) {
+                String shortReference = referenceParser.getValueByLabel("short");
+                if (StringUtils.isBlank(shortReference)) {
+                    throw new StudyImporterException("missing short reference on line [" + referenceParser.lastLineNumber() + "]");
+                }
+                String fullReference = referenceParser.getValueByLabel("full");
+                if (StringUtils.isBlank(fullReference)) {
+                    throw new StudyImporterException("missing full reference for [" + shortReference + "] on line [" + referenceParser.lastLineNumber() + "]");
+                }
+                refMap.put(shortReference, fullReference);
+            }
+        } catch (IOException e) {
+            throw new StudyImporterException("failed to read resource [" + REFERENCE_PATH + "]", e);
+        }
+        return refMap;
+    }
+
+    private void importLine(LabeledCSVParser parser, Map<String, String> refMap) throws StudyImporterException {
+        Study localStudy = null;
+        try {
+            String shortReference = StringUtils.trim(parser.getValueByLabel("Reference"));
+            if (!refMap.containsKey(shortReference)) {
+                throw new StudyImporterException("failed to find ref [" + shortReference + "] on line [" + parser.lastLineNumber() + "]");
+            }
+            refMap.get(shortReference);
+            localStudy = nodeFactory.getOrCreateStudy("BARNES-" + shortReference, SOURCE, null);
+
             String predatorName = parser.getValueByLabel("Predator");
             if (StringUtils.isBlank(predatorName)) {
-                getLogger().warn(study, "found empty predator name on line [" + parser.lastLineNumber() + "]");
+                getLogger().warn(localStudy, "found empty predator name on line [" + parser.lastLineNumber() + "]");
             } else {
-                Specimen predator = nodeFactory.createSpecimen(predatorName);
-                addLifeStage(parser, predator);
-
-                Double latitude = LocationUtil.parseDegrees(parser.getValueByLabel("Latitude"));
-                Double longitude = LocationUtil.parseDegrees(parser.getValueByLabel("Longitude"));
-                String depth = parser.getValueByLabel("Depth");
-                Double altitudeInMeters = -1.0 * Double.parseDouble(depth);
-                Location location = nodeFactory.getOrCreateLocation(latitude, longitude, altitudeInMeters);
-                predator.caughtIn(location);
-
-                String preyName = parser.getValueByLabel("Prey");
-                if (StringUtils.isBlank(preyName)) {
-                  getLogger().warn(study, "found empty prey name on line [" + parser.lastLineNumber() + "]");
-                } else {
-                    Specimen prey = nodeFactory.createSpecimen(preyName);
-                    predator.ate(prey);
-                }
-                study.collected(predator);
+                addInteractionForPredator(parser, localStudy, predatorName);
             }
         } catch (NodeFactoryException e) {
             throw new StudyImporterException("problem creating nodes at line [" + parser.lastLineNumber() + "]", e);
         } catch (NumberFormatException e) {
             String message = "skipping record, found malformed field at line [" + parser.lastLineNumber() + "]: ";
-            getLogger().warn(study, message + e.getMessage());
+            if (localStudy != null) {
+                getLogger().warn(localStudy, message + e.getMessage());
+            }
         }
+    }
+
+    private void addInteractionForPredator(LabeledCSVParser parser, Study localStudy, String predatorName) throws NodeFactoryException, StudyImporterException {
+        Specimen predator = nodeFactory.createSpecimen(predatorName);
+        addLifeStage(parser, predator);
+
+        Double latitude = LocationUtil.parseDegrees(parser.getValueByLabel("Latitude"));
+        Double longitude = LocationUtil.parseDegrees(parser.getValueByLabel("Longitude"));
+        String depth = parser.getValueByLabel("Depth");
+        Double altitudeInMeters = -1.0 * Double.parseDouble(depth);
+        Location location = nodeFactory.getOrCreateLocation(latitude, longitude, altitudeInMeters);
+        predator.caughtIn(location);
+
+        String preyName = parser.getValueByLabel("Prey");
+        if (StringUtils.isBlank(preyName)) {
+            getLogger().warn(localStudy, "found empty prey name on line [" + parser.lastLineNumber() + "]");
+        } else {
+            Specimen prey = nodeFactory.createSpecimen(preyName);
+            predator.ate(prey);
+        }
+
+        localStudy.collected(predator);
     }
 
     private void addLifeStage(LabeledCSVParser parser, Specimen predator) throws StudyImporterException {
