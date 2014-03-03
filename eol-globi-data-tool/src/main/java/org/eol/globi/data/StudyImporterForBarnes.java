@@ -77,8 +77,8 @@ public class StudyImporterForBarnes extends BaseStudyImporter {
             if (!refMap.containsKey(shortReference)) {
                 throw new StudyImporterException("failed to find ref [" + shortReference + "] on line [" + parser.lastLineNumber() + "]");
             }
-            refMap.get(shortReference);
-            localStudy = nodeFactory.getOrCreateStudy("BARNES-" + shortReference, SOURCE, null);
+            String longReference = refMap.get(shortReference);
+            localStudy = nodeFactory.getOrCreateStudy("BARNES-" + shortReference, null, null, null, longReference, null, SOURCE);
 
             String predatorName = parser.getValueByLabel("Predator");
             if (StringUtils.isBlank(predatorName)) {

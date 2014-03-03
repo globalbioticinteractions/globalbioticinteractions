@@ -1,7 +1,9 @@
 package org.eol.globi.data;
 
+import org.apache.commons.lang.StringUtils;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Specimen;
+import org.eol.globi.domain.Study;
 import org.eol.globi.domain.TaxonNode;
 import org.junit.Test;
 import org.neo4j.graphdb.Direction;
@@ -10,7 +12,9 @@ import org.neo4j.graphdb.Relationship;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 
+import static junit.framework.Assert.assertTrue;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
@@ -89,6 +93,14 @@ public class StudyImporterForBarnesTest extends GraphDBTestCase {
             }
         });
         studyImporterForBarnes.importStudy();
+
+        List<Study> studies = NodeFactory.findAllStudies(getGraphDb());
+        assertTrue(studies.size() > 0);
+        for (Study study : studies) {
+            assertThat(study.getTitle(), is(notNullValue()));
+            assertThat(study.getSource(), is(notNullValue()));
+            assertThat(StringUtils.isBlank(study.getDescription()), is(false));
+        }
     }
 
 }
