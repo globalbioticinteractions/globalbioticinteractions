@@ -29,6 +29,7 @@ public class CypherProxyControllerTest {
         assertThat(list, is(notNullValue()));
     }
 
+    @Ignore(value = "requires specific datasets on a remote server")
     @Test
     public void findThunnusPrey() throws IOException, URISyntaxException {
         // see https://github.com/jhpoelen/eol-globi-data/issues/11
