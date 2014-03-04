@@ -2,6 +2,8 @@ package org.eol.globi.data;
 
 import com.Ostermiller.util.CSVParser;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.eol.globi.domain.InteractType;
@@ -16,6 +18,8 @@ import java.io.IOException;
 import java.io.InputStream;
 
 public class StudyImporterForThessen extends BaseStudyImporter {
+
+    private static final Log LOG = LogFactory.getLog(StudyImporterForThessen.class);
 
     public static final String RESOURCE = "https://raw.github.com/EOL/pseudonitzchia/master/associations_all_revised.txt";
 
@@ -32,7 +36,9 @@ public class StudyImporterForThessen extends BaseStudyImporter {
         InputStream is = null;
         try {
             tmpFile = File.createTempFile("thessen", ".csv");
+            LOG.info("remote file to [" + tmpFile.getAbsolutePath() + "] caching...");
             saveResponseToTempFile(httpGet, tmpFile);
+            LOG.info("remote file to [" + tmpFile.getAbsolutePath() + "] cached.");
             is = new FileInputStream(tmpFile);
             CSVParser parser = new CSVParser(is, '\t');
             String[] line;
