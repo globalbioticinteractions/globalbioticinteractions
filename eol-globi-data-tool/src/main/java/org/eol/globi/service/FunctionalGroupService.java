@@ -41,7 +41,7 @@ public class FunctionalGroupService extends BaseTaxonIdService {
 
     public String lookupIdByName(String taxonName) throws TaxonPropertyLookupServiceException {
         String id = null;
-        String lowerCaseName = StringUtils.lowerCase(taxonName);
+        String lowerCaseName = StringUtils.capitalize(StringUtils.lowerCase(taxonName));
         if (StringUtils.isNotBlank(lowerCaseName)) {
             id = mapping.get(lowerCaseName);
         }
