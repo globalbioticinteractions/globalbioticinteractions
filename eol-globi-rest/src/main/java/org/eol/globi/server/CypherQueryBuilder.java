@@ -206,19 +206,6 @@ public class CypherQueryBuilder {
         return new CypherQuery(query, taxonName1);
     }
 
-    public static CypherQuery stats(final String source) {
-        String whereClause = StringUtils.isBlank(source) ? "" : " WHERE study.source = {source}";
-        Map<String, String> params = StringUtils.isBlank(source) ? EMPTY_PARAMS : new HashMap<String, String>() {{
-            put("source", source);
-        }};
-        String cypherQuery = "START study=node:studies('*:*')" +
-                " MATCH study-[:COLLECTED]->sourceSpecimen-[interact:" + InteractUtil.allInteractionsCypherClause() + "]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon, sourceSpecimen-[:CLASSIFIED_AS]->sourceTaxon " +
-                whereClause +
-                " RETURN count(distinct(study)) as `number of studies`, count(interact) as `number of interactions`, count(distinct(sourceTaxon.name)) as `number of distinct source taxa (e.g. predators)`, count(distinct(targetTaxon.name)) as `number of distinct target taxa (e.g. prey)`, count(distinct(study.source)) as `number of distinct study sources`";
-
-        return new CypherQuery(cypherQuery, params);
-    }
-
     public static CypherQuery references(final String source) {
         String whereClause = StringUtils.isBlank(source) ? "" : " WHERE study.source = {source}";
         Map<String, String> params = StringUtils.isBlank(source) ? EMPTY_PARAMS : new HashMap<String, String>() {{
@@ -379,5 +366,57 @@ public class CypherQueryBuilder {
             }
         }
         return offset;
+    }
+
+    public static CypherQuery spatialInfo(Map<String, String[]> parameterMap) {
+        final String interactionLabel = "sourceTaxon.name + type(interact) + targetTaxon.name";
+        StringBuilder query = new StringBuilder();
+        query.append("START study = node:studies('*:*')")
+                .append(" MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen<-[:COLLECTED]-study")
+                .append(", sourceSpecimen-[interact]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon");
+        addLocationClausesIfNecessary(query, parameterMap);
+
+        Map<String, String> cypherParams = addSourceClauseIfNecessary(query, parameterMap);
+
+        query.append(" RETURN count(distinct(study)) as `number of distinct studies`")
+                .append(", count(interact) as `number of interactions`")
+                .append(", count(distinct(sourceTaxon.name)) as `number of distinct source taxa (e.g. predators)`")
+                .append(", count(distinct(targetTaxon.name)) as `number of distinct target taxa (e.g. prey)`")
+                .append(", count(distinct(study.source)) as `number of distinct study sources`");
+        if (RequestHelper.isSpatialSearch(parameterMap)) {
+            query.append(", count(distinct(loc))");
+        } else {
+            query.append(", NULL");
+        }
+        query.append(" as `number of distinct locations`")
+                .append(", count(distinct(").append(interactionLabel).append(")) as `number of distinct interactions`");
+        return new CypherQuery(query.toString(), cypherParams);
+    }
+
+    private static Map<String, String> addSourceClauseIfNecessary(StringBuilder query, Map<String, String[]> parameterMap) {
+        String[] sourceList = parameterMap == null ? null : parameterMap.get("source");
+        final String source = sourceList != null && sourceList.length > 0 ? sourceList[0] : null;
+        String sourceWhereClause = StringUtils.isBlank(source) ? "" : " study.source = {source}";
+        Map<String, String> params = StringUtils.isBlank(source) ? EMPTY_PARAMS : new HashMap<String, String>() {{
+            put("source", source);
+        }};
+
+        if (StringUtils.isNotBlank(sourceWhereClause)) {
+            if (RequestHelper.isSpatialSearch(parameterMap)) {
+                query.append(" AND");
+            } else {
+                query.append(" WHERE");
+            }
+            query.append(sourceWhereClause);
+        }
+        return params;
+    }
+
+    public static CypherQuery stats(final String source) {
+        HashMap<String, String[]> paramMap = new HashMap<String, String[]>();
+        if (StringUtils.isNotBlank(source)) {
+            paramMap.put("source", new String[]{source});
+        }
+        return spatialInfo(paramMap);
     }
 }

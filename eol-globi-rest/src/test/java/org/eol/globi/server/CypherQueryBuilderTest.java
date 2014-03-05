@@ -127,6 +127,39 @@ public class CypherQueryBuilderTest {
         assertThat(query.getParams().toString(), is("{source_taxon_name=path:\\\"Homo sapiens\\\", target_taxon_name=path:\\\"Plantae\\\"}"));
     }
 
+    @Test
+    public void statsWithBBox() throws IOException {
+        HashMap<String, String[]> params = new HashMap<String, String[]>() {
+            {
+                put("bbox", new String[]{"-67.87,12.79,-57.08,23.32"});
+            }
+        };
+
+        CypherQuery query = CypherQueryBuilder.spatialInfo(params);
+        assertThat(query.getQuery(), is("START sourceTaxon = node:taxonpaths({source_taxon_name}), targetTaxon = node:taxonpaths({target_taxon_name}) MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen-[:ATE|PREYS_UPON]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon RETURN sourceTaxon.name as source_taxon_name, 'preysOn' as interaction_type, collect(distinct(targetTaxon.name)) as target_taxon_name"));
+        assertThat(query.getParams().toString(), is(nullValue()));
+    }
+
+    @Test
+    public void statsWithBBoxAndSource() throws IOException {
+        HashMap<String, String[]> params = new HashMap<String, String[]>() {
+            {
+                put("bbox", new String[]{"-67.87,12.79,-57.08,23.32"});
+                put("source", new String[]{"mySource"});
+            }
+        };
+
+        CypherQuery query = CypherQueryBuilder.spatialInfo(params);
+        assertThat(query.getQuery(), is("START sourceTaxon = node:taxonpaths({source_taxon_name}), targetTaxon = node:taxonpaths({target_taxon_name}) MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen-[:ATE|PREYS_UPON]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon RETURN sourceTaxon.name as source_taxon_name, 'preysOn' as interaction_type, collect(distinct(targetTaxon.name)) as target_taxon_name"));
+        assertThat(query.getParams().toString(), is(nullValue()));
+    }
+
+    @Test
+    public void stats() throws IOException {
+        CypherQuery query = CypherQueryBuilder.spatialInfo(null);
+        assertThat(query.getQuery(), is("START sourceTaxon = node:taxonpaths({source_taxon_name}), targetTaxon = node:taxonpaths({target_taxon_name}) MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen-[:ATE|PREYS_UPON]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon RETURN sourceTaxon.name as source_taxon_name, 'preysOn' as interaction_type, collect(distinct(targetTaxon.name)) as target_taxon_name"));
+        assertThat(query.getParams().toString(), is(nullValue()));
+    }
 
 
 }

@@ -52,7 +52,7 @@ public class RequestHelper {
     }
 
     private static void addPointGeometry(Map<String, String[]> parameterMap, ArrayList<LatLng> latLngs) {
-        if (parameterMap.containsKey(GEOMETRY_PARAMETER)) {
+        if (parameterMap != null && parameterMap.containsKey(GEOMETRY_PARAMETER)) {
             String[] geometries = parameterMap.get(GEOMETRY_PARAMETER);
             if (geometries.length > 0) {
                 String geometry = geometries[0];
@@ -79,7 +79,7 @@ public class RequestHelper {
     }
 
     private static void addBoundingBox(Map<String, String[]> parameterMap, ArrayList<LatLng> latLngs) {
-        if (parameterMap.containsKey(BOUNDING_BOX_PARAMETER_NAME)) {
+        if (parameterMap != null && parameterMap.containsKey(BOUNDING_BOX_PARAMETER_NAME)) {
             String[] bboxes = parameterMap.get(BOUNDING_BOX_PARAMETER_NAME);
             if (bboxes.length > 0) {
                 String points = bboxes[0];
@@ -97,7 +97,7 @@ public class RequestHelper {
     }
 
     private static void addPoints(Map<String, String[]> parameterMap, ArrayList<LatLng> latLngs, List<String> pointParam) {
-        if (CollectionUtils.subtract(pointParam, parameterMap.keySet()).isEmpty()) {
+        if (parameterMap != null && CollectionUtils.subtract(pointParam, parameterMap.keySet()).isEmpty()) {
             for (int i = 0; i < pointParam.size(); i += 2) {
                 // account for http://stackoverflow.com/questions/1928675/servletrequest-getparametermap-returns-mapstring-string-and-servletreques
                 String[] lats = parameterMap.get(pointParam.get(i));

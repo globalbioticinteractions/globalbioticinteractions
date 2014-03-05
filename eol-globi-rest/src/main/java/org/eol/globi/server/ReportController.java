@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
 @Controller
@@ -26,12 +27,17 @@ public class ReportController {
         return new CypherQueryExecutor(CypherQueryBuilder.stats(source)).execute(null);
     }
 
+    @RequestMapping(value = "/spatialInfo", method = RequestMethod.GET, produces = "application/json")
+    @ResponseBody
+    public String spatialInfo(HttpServletRequest req) throws IOException {
+        return new CypherQueryExecutor(CypherQueryBuilder.spatialInfo(req.getParameterMap())).execute(req);
+    }
+
     @RequestMapping(value = "/sources", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
     @Cacheable(value = "sourcesCache")
     public String sources() throws IOException {
         return new CypherQueryExecutor(CypherQueryBuilder.sourcesQuery()).execute(null);
     }
-
 
 }
