@@ -136,8 +136,8 @@ public class CypherQueryBuilderTest {
         };
 
         CypherQuery query = CypherQueryBuilder.spatialInfo(params);
-        assertThat(query.getQuery(), is("START sourceTaxon = node:taxonpaths({source_taxon_name}), targetTaxon = node:taxonpaths({target_taxon_name}) MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen-[:ATE|PREYS_UPON]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon RETURN sourceTaxon.name as source_taxon_name, 'preysOn' as interaction_type, collect(distinct(targetTaxon.name)) as target_taxon_name"));
-        assertThat(query.getParams().toString(), is(nullValue()));
+        assertThat(query.getQuery(), is("START study = node:studies('*:*') MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen<-[:COLLECTED]-study, sourceSpecimen-[interact]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon, sourceSpecimen-[:COLLECTED_AT]->loc WHERE loc is not null AND loc.latitude < 23.32 AND loc.longitude > -67.87 AND loc.latitude > 12.79 AND loc.longitude < -57.08 RETURN count(distinct(study)) as `number of distinct studies`, count(interact) as `number of interactions`, count(distinct(sourceTaxon.name)) as `number of distinct source taxa (e.g. predators)`, count(distinct(targetTaxon.name)) as `number of distinct target taxa (e.g. prey)`, count(distinct(study.source)) as `number of distinct study sources`, count(distinct(loc)) as `number of distinct locations`, count(distinct(sourceTaxon.name + type(interact) + targetTaxon.name)) as `number of distinct interactions`"));
+        assertThat(query.getParams().toString(), is("{}"));
     }
 
     @Test
@@ -150,15 +150,15 @@ public class CypherQueryBuilderTest {
         };
 
         CypherQuery query = CypherQueryBuilder.spatialInfo(params);
-        assertThat(query.getQuery(), is("START sourceTaxon = node:taxonpaths({source_taxon_name}), targetTaxon = node:taxonpaths({target_taxon_name}) MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen-[:ATE|PREYS_UPON]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon RETURN sourceTaxon.name as source_taxon_name, 'preysOn' as interaction_type, collect(distinct(targetTaxon.name)) as target_taxon_name"));
-        assertThat(query.getParams().toString(), is(nullValue()));
+        assertThat(query.getQuery(), is("START study = node:studies('*:*') MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen<-[:COLLECTED]-study, sourceSpecimen-[interact]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon, sourceSpecimen-[:COLLECTED_AT]->loc WHERE loc is not null AND loc.latitude < 23.32 AND loc.longitude > -67.87 AND loc.latitude > 12.79 AND loc.longitude < -57.08 AND study.source = {source} RETURN count(distinct(study)) as `number of distinct studies`, count(interact) as `number of interactions`, count(distinct(sourceTaxon.name)) as `number of distinct source taxa (e.g. predators)`, count(distinct(targetTaxon.name)) as `number of distinct target taxa (e.g. prey)`, count(distinct(study.source)) as `number of distinct study sources`, count(distinct(loc)) as `number of distinct locations`, count(distinct(sourceTaxon.name + type(interact) + targetTaxon.name)) as `number of distinct interactions`"));
+        assertThat(query.getParams().toString(), is("{source=mySource}"));
     }
 
     @Test
     public void stats() throws IOException {
         CypherQuery query = CypherQueryBuilder.spatialInfo(null);
-        assertThat(query.getQuery(), is("START sourceTaxon = node:taxonpaths({source_taxon_name}), targetTaxon = node:taxonpaths({target_taxon_name}) MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen-[:ATE|PREYS_UPON]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon RETURN sourceTaxon.name as source_taxon_name, 'preysOn' as interaction_type, collect(distinct(targetTaxon.name)) as target_taxon_name"));
-        assertThat(query.getParams().toString(), is(nullValue()));
+        assertThat(query.getQuery(), is("START study = node:studies('*:*') MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen<-[:COLLECTED]-study, sourceSpecimen-[interact]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon RETURN count(distinct(study)) as `number of distinct studies`, count(interact) as `number of interactions`, count(distinct(sourceTaxon.name)) as `number of distinct source taxa (e.g. predators)`, count(distinct(targetTaxon.name)) as `number of distinct target taxa (e.g. prey)`, count(distinct(study.source)) as `number of distinct study sources`, NULL as `number of distinct locations`, count(distinct(sourceTaxon.name + type(interact) + targetTaxon.name)) as `number of distinct interactions`"));
+        assertThat(query.getParams().toString(), is("{}"));
     }
 
 
