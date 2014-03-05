@@ -20,28 +20,28 @@ public class FunctionalGroupService extends BaseTaxonIdService {
     public static final String MACROALGAE = WIKIPEDIA + "Macroalgae";
 
     private Map<String, String> mapping = new HashMap<String, String>() {{
-        put("Phytoplankton", PHYTOPLANKTON);
-        put("Zooplankton", ZOOPLANKTON);
-        put("Bacterioplankton", BACTERIOPLANKTON);
-        put("Plankton", PLANKTON);
-        put("Invertebrata", INVERTEBRATA);
-        put("Algae", ALGAE);
-        put("Macroalgae", MACROALGAE);
+        put("phytoplankton", PHYTOPLANKTON);
+        put("zooplankton", ZOOPLANKTON);
+        put("bacterioplankton", BACTERIOPLANKTON);
+        put("plankton", PLANKTON);
+        put("invertebrata", INVERTEBRATA);
+        put("algae", ALGAE);
+        put("macroalgae", MACROALGAE);
     }};
 
     private Map<String, String> pathLookup = new HashMap<String, String>() {{
-        put(PHYTOPLANKTON, "Plankton | Phytoplankton");
-        put(ZOOPLANKTON, "Plankton | Zooplankton | Animalia");
-        put(BACTERIOPLANKTON, "Plankton | Bacterioplankton | Bacteria");
-        put(PLANKTON, "Plankton");
-        put(INVERTEBRATA, "Invertebrata");
-        put(ALGAE, "Algae");
-        put(MACROALGAE, "Algae | Macroalgae");
+        put(PHYTOPLANKTON, "plankton | phytoplankton");
+        put(ZOOPLANKTON, "plankton | zooplankton | Animalia");
+        put(BACTERIOPLANKTON, "plankton | bacterioplankton | Bacteria");
+        put(PLANKTON, "plankton");
+        put(INVERTEBRATA, "invertebrata");
+        put(ALGAE, "algae");
+        put(MACROALGAE, "algae | macroalgae");
     }};
 
     public String lookupIdByName(String taxonName) throws TaxonPropertyLookupServiceException {
         String id = null;
-        String lowerCaseName = StringUtils.capitalize(StringUtils.lowerCase(taxonName));
+        String lowerCaseName = StringUtils.lowerCase(taxonName);
         if (StringUtils.isNotBlank(lowerCaseName)) {
             id = mapping.get(lowerCaseName);
         }
