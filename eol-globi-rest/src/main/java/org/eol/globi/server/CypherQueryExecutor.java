@@ -4,6 +4,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.eol.globi.server.util.ResultFormatter;
+import org.eol.globi.server.util.ResultFormatterFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;

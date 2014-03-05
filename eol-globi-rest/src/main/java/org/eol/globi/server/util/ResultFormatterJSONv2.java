@@ -1,7 +1,8 @@
-package org.eol.globi.server;
+package org.eol.globi.server.util;
 
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.eol.globi.server.CypherQueryExecutor;
 
 import java.io.IOException;
 import java.util.ArrayList;

@@ -1,5 +1,6 @@
-package org.eol.globi.server;
+package org.eol.globi.server.util;
 
+import org.eol.globi.server.util.RequestHelper;
 import org.hamcrest.core.Is;
 import org.junit.Test;
 import uk.me.jstott.jcoord.LatLng;

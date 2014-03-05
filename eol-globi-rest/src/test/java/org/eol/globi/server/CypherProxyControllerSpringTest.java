@@ -36,12 +36,4 @@ public class CypherProxyControllerSpringTest extends SpringTestBase {
                 Is.is("{\"url\":\"http://eol.org/pages/327955\"}"));
     }
 
-    @Test
-    public void findPredatorDistinctDOT() throws IOException, URISyntaxException {
-        HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
-        when(request.getParameterMap()).thenReturn(new HashMap<String, String>() {{ put("type", "dot");}});
-        String list = controller.findInteractions(request);
-        assertThat(list, is(notNullValue()));
-
-    }
 }

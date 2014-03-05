@@ -1,5 +1,7 @@
 package org.eol.globi.server;
 
+import org.eol.globi.server.util.ResultFields;
+
 public class CypherTestUtil {
     public static final String CYPHER_RESULT = "{\n" +
             "  \"columns\" : [ \"" + ResultFields.TARGET_TAXON_NAME + "\", \"" + ResultFields.LATITUDE + "\", \"" + ResultFields.LONGITUDE + "\", \"" + ResultFields.ALTITUDE + "\", \"" + ResultFields.STUDY_TITLE + "\", \"" + ResultFields.COLLECTION_TIME_IN_UNIX_EPOCH + "\", \"tmp_and_unique_specimen_id\", \"predator_life_stage\", \"prey_life_stage\", \"predator_body_part\", \"prey_body_part\", \"predator_physiological_state\", \"prey_physiological_state\", \"" + ResultFields.SOURCE_TAXON_NAME + "\", \"" + ResultFields.INTERACTION_TYPE + "\" ],\n" +

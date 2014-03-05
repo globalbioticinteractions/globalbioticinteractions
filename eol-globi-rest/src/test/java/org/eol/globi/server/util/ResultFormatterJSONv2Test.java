@@ -1,7 +1,9 @@
-package org.eol.globi.server;
+package org.eol.globi.server.util;
 
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.eol.globi.server.CypherTestUtil;
+import org.eol.globi.server.util.ResultFormatterJSONv2;
 import org.junit.Test;
 
 import java.io.IOException;

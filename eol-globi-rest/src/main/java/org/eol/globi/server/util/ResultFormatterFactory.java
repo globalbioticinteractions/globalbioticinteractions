@@ -1,4 +1,4 @@
-package org.eol.globi.server;
+package org.eol.globi.server.util;
 
 import java.util.HashMap;
 import java.util.Map;
