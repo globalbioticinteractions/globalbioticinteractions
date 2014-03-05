@@ -24,28 +24,6 @@ public class CypherProxyController {
         return new CypherQueryExecutor(CypherQueryBuilder.locations()).execute(request, false);
     }
 
-    @RequestMapping(value = "/contributors", method = RequestMethod.GET, produces = "application/json")
-    @ResponseBody
-    @Cacheable(value = "contributorCache")
-    public String contributors(@RequestParam(required = false) final String source) throws IOException {
-        return new CypherQueryExecutor(CypherQueryBuilder.references(source)).execute(null);
-    }
-
-    @RequestMapping(value = "/info", method = RequestMethod.GET, produces = "application/json")
-    @ResponseBody
-    @Cacheable(value = "infoCache")
-    public String info(@RequestParam(required = false) final String source) throws IOException {
-        return new CypherQueryExecutor(CypherQueryBuilder.stats(source)).execute(null);
-    }
-
-    @RequestMapping(value = "/sources", method = RequestMethod.GET, produces = "application/json")
-    @ResponseBody
-    @Cacheable(value = "sourcesCache")
-    public String sources() throws IOException {
-        return new CypherQueryExecutor(CypherQueryBuilder.sourcesQuery()).execute(null);
-    }
-
-
     @RequestMapping(value = "/findExternalUrlForTaxon/{taxonName}", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
     public String findExternalLinkForTaxonWithName(HttpServletRequest request, @PathVariable("taxonName") String taxonName) throws IOException {
