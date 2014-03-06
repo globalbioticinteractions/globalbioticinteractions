@@ -371,8 +371,16 @@ public class CypherQueryBuilder {
     public static CypherQuery spatialInfo(Map<String, String[]> parameterMap) {
         final String interactionLabel = "sourceTaxon.name + type(interact) + targetTaxon.name";
         StringBuilder query = new StringBuilder();
-        query.append("START study = node:studies('*:*')")
-                .append(" MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen<-[:COLLECTED]-study")
+
+        if (RequestHelper.isSpatialSearch(parameterMap)) {
+            query.append("START loc = node:locations('*:*') WHERE");
+            RequestHelper.addSpatialWhereClause(RequestHelper.parseSpatialSearchParams(parameterMap), query);
+            query.append(" WITH loc");
+        } else {
+            query.append("START study = node:studies('*:*')");
+        }
+
+        query.append(" MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen<-[:COLLECTED]-study")
                 .append(", sourceSpecimen-[interact]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon");
         addLocationClausesIfNecessary(query, parameterMap);
 

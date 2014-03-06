@@ -27,7 +27,8 @@ public class ReportController {
         return new CypherQueryExecutor(CypherQueryBuilder.stats(source)).execute(null);
     }
 
-    @RequestMapping(value = "/spatialInfo", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value =
+            "/spatialInfo", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
     public String spatialInfo(HttpServletRequest req) throws IOException {
         return new CypherQueryExecutor(CypherQueryBuilder.spatialInfo(req.getParameterMap())).execute(req);
