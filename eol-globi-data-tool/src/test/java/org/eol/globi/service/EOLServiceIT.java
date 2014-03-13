@@ -58,9 +58,17 @@ public class EOLServiceIT {
     @Test
     public void lookupByAcheloüsspinicarpus() throws TaxonPropertyLookupServiceException {
         HashMap<String, String> properties = new HashMap<String, String>();
+        // eol doesn't seem to support UTF-8 characters in URIs
         new EOLService().lookupPropertiesByName("Acheloüs spinicarpus", properties);
-        assertThat(properties.get(PropertyAndValueDictionary.EXTERNAL_ID), is("EOL:315099"));
-        assertThat(properties.get(PropertyAndValueDictionary.NAME), is("Munidopsis albatrossae"));
+        assertThat(properties.size(), is(0));
+    }
+
+    @Test
+    public void lookupByAcheloussprinicarpus() throws TaxonPropertyLookupServiceException {
+        HashMap<String, String> properties = new HashMap<String, String>();
+        new EOLService().lookupPropertiesByName("Achelous spinicarpus", properties);
+        assertThat(properties.get(PropertyAndValueDictionary.EXTERNAL_ID), is("EOL:343000"));
+        assertThat(properties.get(PropertyAndValueDictionary.NAME), is("Acheloüs spinicarpus"));
         assertThat(properties.get(PropertyAndValueDictionary.RANK), is("Species"));
     }
 
@@ -71,7 +79,23 @@ public class EOLServiceIT {
         assertThat(properties.get(PropertyAndValueDictionary.EXTERNAL_ID), is("EOL:61812"));
         assertThat(properties.get(PropertyAndValueDictionary.NAME), is("Salicornia"));
         assertThat(properties.get(PropertyAndValueDictionary.RANK), is("Genus"));
+        assertThat(properties.get(PropertyAndValueDictionary.PATH), is("Plantae | Tracheophyta | Magnoliopsida | Caryophyllales | Chenopodiaceae | Salicornia"));
 
+    }
+
+    @Test
+    public void lookupPickleweedAlreadyPopulated() throws TaxonPropertyLookupServiceException {
+        HashMap<String, String> properties = new HashMap<String, String>();
+        properties.put(PropertyAndValueDictionary.EXTERNAL_ID, "EOL:61812");
+        properties.put(PropertyAndValueDictionary.NAME, "a name");
+        properties.put(PropertyAndValueDictionary.RANK, "a rank");
+        properties.put(PropertyAndValueDictionary.PATH, "a path");
+        properties.put(PropertyAndValueDictionary.COMMON_NAMES, "a common name");
+        new EOLService().lookupPropertiesByName("Pickleweed", properties);
+        assertThat(properties.get(PropertyAndValueDictionary.EXTERNAL_ID), is("EOL:61812"));
+        assertThat(properties.get(PropertyAndValueDictionary.NAME), is("a name"));
+        assertThat(properties.get(PropertyAndValueDictionary.RANK), is("a rank"));
+        assertThat(properties.get(PropertyAndValueDictionary.PATH), is("a path"));
     }
 
     @Test

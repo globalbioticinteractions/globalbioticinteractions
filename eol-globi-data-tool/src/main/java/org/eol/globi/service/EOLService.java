@@ -4,6 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpResponseException;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.utils.URIUtils;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.JsonProcessingException;
@@ -27,24 +28,9 @@ public class EOLService extends BaseHttpClientService implements TaxonPropertyLo
         String externalId = properties.get(PropertyAndValueDictionary.EXTERNAL_ID);
 
         if (needsEnrichment(properties)) {
-            if (StringUtils.isNotBlank(externalId)) {
-                if (externalId.startsWith(TaxonomyProvider.ID_PREFIX_EOL)) {
-                    String eolPageIdString = externalId.replaceFirst(TaxonomyProvider.ID_PREFIX_EOL, "");
-                    try {
-                        id = Long.parseLong(eolPageIdString);
-                    } catch (NumberFormatException ex) {
-                        throw new TaxonPropertyLookupServiceException("failed to parse eol id [" + eolPageIdString + "]");
-                    }
-                }
-            }
-        }
+            id = getEOLPageId(name, id, externalId);
 
-        if (null == id) {
-            id = getPageId(name, true);
-        }
-
-        if (id != null) {
-            if (properties.get(PropertyAndValueDictionary.PATH) == null || properties.get(PropertyAndValueDictionary.COMMON_NAMES) == null) {
+            if (id != null) {
                 addPathAndCommonNames(id, properties);
                 String path = properties.get(PropertyAndValueDictionary.PATH);
 
@@ -58,6 +44,25 @@ public class EOLService extends BaseHttpClientService implements TaxonPropertyLo
                 }
             }
         }
+
+
+    }
+
+    private Long getEOLPageId(String name, Long id, String externalId) throws TaxonPropertyLookupServiceException {
+        if (StringUtils.isNotBlank(externalId)) {
+            if (externalId.startsWith(TaxonomyProvider.ID_PREFIX_EOL)) {
+                String eolPageIdString = externalId.replaceFirst(TaxonomyProvider.ID_PREFIX_EOL, "");
+                try {
+                    id = Long.parseLong(eolPageIdString);
+                } catch (NumberFormatException ex) {
+                    throw new TaxonPropertyLookupServiceException("failed to parse eol id [" + eolPageIdString + "]");
+                }
+            }
+        }
+        if (null == id) {
+            id = getPageId(name, true);
+        }
+        return id;
     }
 
     private boolean needsEnrichment(Map<String, String> properties) {
@@ -107,7 +112,8 @@ public class EOLService extends BaseHttpClientService implements TaxonPropertyLo
                 firstConceptId = taxonConcept.get("identifier").getValueAsText();
                 if (taxonConcept.has("canonicalForm")) {
                     properties.put(PropertyAndValueDictionary.NAME, taxonConcept.get("canonicalForm").getValueAsText());
-                } if (taxonConcept.has("taxonRank")) {
+                }
+                if (taxonConcept.has("taxonRank")) {
                     properties.put(PropertyAndValueDictionary.RANK, taxonConcept.get("taxonRank").getValueAsText());
                 }
                 break;

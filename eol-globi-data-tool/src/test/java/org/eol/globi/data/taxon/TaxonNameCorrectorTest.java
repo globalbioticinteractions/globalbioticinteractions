@@ -114,6 +114,11 @@ public class TaxonNameCorrectorTest {
     }
 
     @Test
+    public void longSpineSwimmingCrab() {
+        assertThat(CORRECTOR.correct("Acheloüs spinicarpus"), is("Achelous spinicarpus"));
+    }
+
+    @Test
     public void circularSuggestions() {
         assertThat(CORRECTOR.correct("Mimesa bicolor"), is("Mimesa bicolor"));
         assertThat(CORRECTOR.correct("Mimesa equestris"), is("Mimesa equestris"));
