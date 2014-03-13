@@ -31,8 +31,8 @@ public class FunctionalGroupService extends BaseTaxonIdService {
 
     private Map<String, String> pathLookup = new HashMap<String, String>() {{
         put(PHYTOPLANKTON, "plankton | phytoplankton");
-        put(ZOOPLANKTON, "plankton | zooplankton | Animalia");
-        put(BACTERIOPLANKTON, "plankton | bacterioplankton | Bacteria");
+        put(ZOOPLANKTON, "plankton | zooplankton");
+        put(BACTERIOPLANKTON, "plankton | bacterioplankton");
         put(PLANKTON, "plankton");
         put(INVERTEBRATA, "invertebrata");
         put(ALGAE, "algae");
