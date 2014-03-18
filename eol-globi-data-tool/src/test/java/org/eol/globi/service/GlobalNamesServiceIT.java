@@ -21,7 +21,7 @@ public class GlobalNamesServiceIT {
         final List<Taxon> foundTaxa =  new ArrayList<Taxon>();
         service.findTermsForNames(Arrays.asList("1|Homo sapiens", "2|Ariopsis felis"), new TermMatchListener() {
             @Override
-            public void foundTermForName(Long id, String name, Taxon taxon) {
+            public void foundTaxonForName(Long id, String name, Taxon taxon) {
                 assertNotNull(id);
                 foundTaxa.add(taxon);
             }

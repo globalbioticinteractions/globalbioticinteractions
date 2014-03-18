@@ -11,6 +11,7 @@ import org.eol.globi.data.taxon.TaxonService;
 import org.eol.globi.data.taxon.TaxonServiceImpl;
 import org.eol.globi.db.GraphService;
 import org.eol.globi.service.TaxonPropertyEnricherFactory;
+import org.eol.globi.service.TaxonPropertyLookupServiceException;
 import org.neo4j.cypher.javacompat.ExecutionEngine;
 import org.neo4j.cypher.javacompat.ExecutionResult;
 import org.neo4j.graphdb.GraphDatabaseService;
@@ -56,6 +57,12 @@ public class Indexer {
         msgPrefix = "taxon externalIds";
         whereAndReturnClause = " WHERE not(has(origName.name)) AND has(origName.externalId) RETURN distinct(origName.externalId) as externalId";
         indexTaxonByProperty(executionEngine, taxonService, msgPrefix, whereAndReturnClause);
+
+        try {
+            new Linker().linkTaxa(freshGraphService);
+        } catch (TaxonPropertyLookupServiceException e) {
+            LOG.warn("failed to link taxa", e);
+        }
 
         freshGraphService.shutdown();
         previousGraphService.shutdown();

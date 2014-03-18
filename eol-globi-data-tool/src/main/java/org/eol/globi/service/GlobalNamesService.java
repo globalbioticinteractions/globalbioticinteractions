@@ -39,7 +39,7 @@ public class GlobalNamesService extends BaseHttpClientService implements TaxonPr
         final List<Taxon> taxa = new ArrayList<Taxon>();
         findTermsForNames(Arrays.asList(name), new TermMatchListener() {
             @Override
-            public void foundTermForName(Long id, String name, Taxon taxon) {
+            public void foundTaxonForName(Long id, String name, Taxon taxon) {
                 taxa.add(taxon);
             }
         });
@@ -80,7 +80,7 @@ public class GlobalNamesService extends BaseHttpClientService implements TaxonPr
                             String externalId = source.getProvider().getIdPrefix() + aResult.get("taxon_id").getValueAsText();
                             taxon.setExternalId(externalId);
                             Long suppliedId = data.has("supplied_id") ? data.get("supplied_id").getLongValue() : null;
-                            termMatchListener.foundTermForName(suppliedId, data.get("supplied_name_string").getTextValue(), taxon);
+                            termMatchListener.foundTaxonForName(suppliedId, data.get("supplied_name_string").getTextValue(), taxon);
                         }
                     }
                 }

@@ -17,6 +17,7 @@ import org.eol.globi.geo.EcoRegionFinderFactoryImpl;
 import org.eol.globi.service.DOIResolverImpl;
 import org.eol.globi.service.EcoRegionFinderProxy;
 import org.eol.globi.service.TaxonPropertyEnricherFactory;
+import org.eol.globi.service.TaxonPropertyLookupServiceException;
 import org.neo4j.graphdb.GraphDatabaseService;
 
 public class Normalizer {
@@ -46,6 +47,11 @@ public class Normalizer {
     public void normalize(String baseDir) throws StudyImporterException {
         final GraphDatabaseService graphService = GraphService.getGraphService(baseDir);
         importData(graphService);
+        try {
+            new Linker().linkTaxa(graphService);
+        } catch (TaxonPropertyLookupServiceException e) {
+            LOG.warn("failed to link taxa", e);
+        }
         exportData(graphService, baseDir);
         graphService.shutdown();
         ecoRegionFinder.shutdown();
