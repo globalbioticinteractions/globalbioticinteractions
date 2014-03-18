@@ -3,7 +3,6 @@ package org.eol.globi.tool;
 import org.apache.commons.lang.time.StopWatch;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.eol.globi.domain.RelType;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonNode;
@@ -31,44 +30,50 @@ public class Linker {
         GlobalNamesService globalNamesService = new GlobalNamesService();
 
         Index<Node> taxons = graphDb.index().forNodes("taxons");
-        IndexHits<Node> hits = taxons.query("name", "*");
+        IndexHits<Node> hits = taxons.query("*:*");
 
         final Map<Long, TaxonNode> nodeMap = new HashMap<Long, TaxonNode>();
         int counter = 1;
         for (Node hit : hits) {
             if (counter % batchSize == 0) {
-                StopWatch stopWatch = new StopWatch();
-                stopWatch.start();
-                LOG.info("batch #" + counter / batchSize + " preparing...");
-                List<String> names = new ArrayList<String>();
-                for (Map.Entry<Long, TaxonNode> entry : nodeMap.entrySet()) {
-                    names.add(entry.getKey() + "|" + entry.getValue().getName());
-                }
-                globalNamesService.findTermsForNames(names, new TermMatchListener() {
-                    @Override
-                    public void foundTaxonForName(Long id, String name, Taxon taxon) {
-                        Transaction tx = graphDb.beginTx();
-                        try {
-                            TaxonNode sameAsTaxon = new TaxonNode(graphDb.createNode());
-                            sameAsTaxon.setName(taxon.getName());
-                            sameAsTaxon.setPath(taxon.getPath());
-                            sameAsTaxon.setRank(taxon.getRank());
-                            sameAsTaxon.setExternalId(taxon.getExternalId());
-                            TaxonNode taxonNode = nodeMap.get(id);
-                            taxonNode.getUnderlyingNode().createRelationshipTo(sameAsTaxon.getUnderlyingNode(), RelTypes.SAME_AS);
-                            tx.success();
-                        } finally {
-                            tx.finish();
-                        }
-                    }
-                });
-                stopWatch.stop();
-                LOG.info("batch #" + counter / batchSize + " completed in [" + stopWatch.getTime() + "] ms (" + stopWatch.getTime() / batchSize + " ms/name )");
-                nodeMap.clear();
+                handleBatch(graphDb, globalNamesService, nodeMap, counter);
             }
             TaxonNode node = new TaxonNode(hit);
             nodeMap.put(node.getNodeID(), node);
             counter++;
         }
+
+        handleBatch(graphDb, globalNamesService, nodeMap, counter);
+    }
+
+    private void handleBatch(final GraphDatabaseService graphDb, GlobalNamesService globalNamesService, final Map<Long, TaxonNode> nodeMap, int counter) throws TaxonPropertyLookupServiceException {
+        StopWatch stopWatch = new StopWatch();
+        stopWatch.start();
+        LOG.info("batch #" + counter / batchSize + " preparing...");
+        List<String> names = new ArrayList<String>();
+        for (Map.Entry<Long, TaxonNode> entry : nodeMap.entrySet()) {
+            String name = entry.getKey() + "|" + entry.getValue().getName();
+            names.add(name);
+        }
+        globalNamesService.findTermsForNames(names, new TermMatchListener() {
+            @Override
+            public void foundTaxonForName(Long id, String name, Taxon taxon) {
+                Transaction tx = graphDb.beginTx();
+                try {
+                    TaxonNode sameAsTaxon = new TaxonNode(graphDb.createNode());
+                    sameAsTaxon.setName(taxon.getName());
+                    sameAsTaxon.setPath(taxon.getPath());
+                    sameAsTaxon.setRank(taxon.getRank());
+                    sameAsTaxon.setExternalId(taxon.getExternalId());
+                    TaxonNode taxonNode = nodeMap.get(id);
+                    taxonNode.getUnderlyingNode().createRelationshipTo(sameAsTaxon.getUnderlyingNode(), RelTypes.SAME_AS);
+                    tx.success();
+                } finally {
+                    tx.finish();
+                }
+            }
+        });
+        LOG.info("batch #" + counter / batchSize + " completed in [" + stopWatch.getTime() + "] ms (" + stopWatch.getTime() / counter + " ms/name )");
+        nodeMap.clear();
     }
 }

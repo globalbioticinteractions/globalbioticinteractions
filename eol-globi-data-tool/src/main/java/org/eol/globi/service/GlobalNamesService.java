@@ -79,8 +79,9 @@ public class GlobalNamesService extends BaseHttpClientService implements TaxonPr
                             taxon.setRank(rank);
                             String externalId = source.getProvider().getIdPrefix() + aResult.get("taxon_id").getValueAsText();
                             taxon.setExternalId(externalId);
-                            Long suppliedId = data.has("supplied_id") ? data.get("supplied_id").getLongValue() : null;
-                            termMatchListener.foundTaxonForName(suppliedId, data.get("supplied_name_string").getTextValue(), taxon);
+                            Long suppliedId = data.has("supplied_id") ? data.get("supplied_id").getValueAsLong() : null;
+                            JsonNode supplied_name_string = data.get("supplied_name_string");
+                            termMatchListener.foundTaxonForName(suppliedId, supplied_name_string.getTextValue(), taxon);
                         }
                     }
                 }
