@@ -1,14 +1,35 @@
 package org.eol.globi.service;
 
 import org.eol.globi.domain.PropertyAndValueDictionary;
+import org.eol.globi.domain.Taxon;
 import org.junit.Test;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
+import static junit.framework.Assert.assertNotNull;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
 public class GlobalNamesServiceIT {
+
+    @Test
+    public void createTaxaListFromNameList() throws TaxonPropertyLookupServiceException {
+        GlobalNamesService service = new GlobalNamesService();
+        final List<Taxon> foundTaxa =  new ArrayList<Taxon>();
+        service.findTermsForNames(Arrays.asList("1|Homo sapiens", "2|Ariopsis felis"), new TermMatchListener() {
+            @Override
+            public void foundTermForName(Long id, String name, Taxon taxon) {
+                assertNotNull(id);
+                foundTaxa.add(taxon);
+            }
+        });
+
+        assertThat(foundTaxa.size(), is(2));
+    }
+
 
     @Test
     public void lookupITIS() throws TaxonPropertyLookupServiceException {
