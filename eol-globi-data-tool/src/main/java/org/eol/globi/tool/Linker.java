@@ -22,7 +22,7 @@ import java.util.Map;
 
 public class Linker {
 
-    private int batchSize = 500;
+    private int batchSize = 50;
 
     private static final Log LOG = LogFactory.getLog(Linker.class);
 
