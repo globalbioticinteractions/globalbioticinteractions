@@ -1,9 +1,16 @@
 package org.eol.globi.service;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.HttpEntityWrapper;
+import org.apache.http.entity.mime.MultipartEntity;
+import org.apache.http.entity.mime.content.ContentBody;
+import org.apache.http.entity.mime.content.FileBody;
+import org.apache.http.entity.mime.content.InputStreamBody;
+import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -12,9 +19,13 @@ import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.util.HttpUtil;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -61,8 +72,15 @@ public class GlobalNamesService extends BaseHttpClientService implements TaxonPr
 
         HttpClient httpClient = HttpUtil.createHttpClient();
         try {
-            URI uri = new URI("http", "resolver.globalnames.org", "/name_resolvers.json", "data=" + StringUtils.join(names, "\n") + "&data_source_ids=" + source.getId(), null);
-            String result = httpClient.execute(new HttpPost(uri), new BasicResponseHandler());
+            URI uri = new URI("http", "resolver.globalnames.org", "/name_resolvers.json", "data_source_ids=" + source.getId(), null);
+            HttpPost post = new HttpPost(uri);
+
+            MultipartEntity entity = new MultipartEntity();
+            InputStream is = IOUtils.toInputStream(StringUtils.join(names, "\n"), "UTF-8");
+            entity.addPart("file", new InputStreamBody(is, "file"));
+            post.setEntity(entity);
+
+            String result = httpClient.execute(post, new BasicResponseHandler());
             ObjectMapper mapper = new ObjectMapper();
             JsonNode jsonNode = mapper.readTree(result);
             JsonNode dataList = jsonNode.get("data");
@@ -75,8 +93,10 @@ public class GlobalNamesService extends BaseHttpClientService implements TaxonPr
                             taxon.setName(aResult.get("canonical_form").getValueAsText());
                             taxon.setPath(aResult.get("classification_path").getValueAsText());
                             String[] ranks = aResult.get("classification_path_ranks").getValueAsText().split("\\|");
-                            String rank = ranks[ranks.length - 1];
-                            taxon.setRank(rank);
+                            if (ranks.length > 0) {
+                                String rank = ranks[ranks.length - 1];
+                                taxon.setRank(rank);
+                            }
                             String externalId = source.getProvider().getIdPrefix() + aResult.get("taxon_id").getValueAsText();
                             taxon.setExternalId(externalId);
                             Long suppliedId = data.has("supplied_id") ? data.get("supplied_id").getValueAsLong() : null;

@@ -15,7 +15,6 @@ import org.eol.globi.service.UberonLookupService;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 
 public class StudyImporterForBarnes extends BaseStudyImporter {
     private static final Log LOG = LogFactory.getLog(StudyImporterForBarnes.class);
@@ -39,7 +38,7 @@ public class StudyImporterForBarnes extends BaseStudyImporter {
         }
         dataParser.changeDelimiter('\t');
 
-        Map<String, String> refMap = buildRefMap(parserFactory, REFERENCE_PATH);
+        Map<String, String> refMap = ReferenceUtil.buildRefMap(parserFactory, REFERENCE_PATH);
 
         try {
             while (dataParser.getLine() != null) {
@@ -51,31 +50,6 @@ public class StudyImporterForBarnes extends BaseStudyImporter {
             throw new StudyImporterException("problem importing study at line [" + dataParser.lastLineNumber() + "]", e);
         }
         return null;
-    }
-
-    public static Map<String, String> buildRefMap(ParserFactory parserFactory1, String referencePath) throws StudyImporterException {
-        Map<String, String> refMap = new TreeMap<String, String>();
-        try {
-            LabeledCSVParser referenceParser = parserFactory1.createParser(referencePath, CharsetConstant.UTF8);
-            while (referenceParser.getLine() != null) {
-                String shortReference = referenceParser.getValueByLabel("short");
-                if (StringUtils.isBlank(shortReference)) {
-                    LOG.warn("missing short reference on line [" + referenceParser.lastLineNumber() + "]");
-                } else {
-                    String fullReference = referenceParser.getValueByLabel("full");
-                    if (StringUtils.isBlank(fullReference)) {
-                        LOG.warn("missing full reference for [" + shortReference + "] on line [" + referenceParser.lastLineNumber() + "] in [" + referencePath + "]");
-                    } else {
-                        fullReference = shortReference;
-                    }
-                    refMap.put(shortReference, fullReference);
-                }
-
-            }
-        } catch (IOException e) {
-            throw new StudyImporterException("failed to read resource [" + referencePath + "]", e);
-        }
-        return refMap;
     }
 
     private void importLine(LabeledCSVParser parser, Map<String, String> refMap) throws StudyImporterException {

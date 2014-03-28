@@ -3,20 +3,11 @@ package org.eol.globi.data;
 import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.domain.InteractType;
-import org.eol.globi.domain.Location;
-import org.eol.globi.domain.RelType;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
-import org.eol.globi.domain.Term;
-import org.eol.globi.service.TermLookupService;
-import org.eol.globi.service.TermLookupServiceException;
-import org.eol.globi.service.UberonLookupService;
 
-import javax.management.relation.RelationType;
 import java.io.IOException;
-import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 
 public class StudyImporterForByrnes extends BaseStudyImporter {
     public static final String SOURCE = "Southern California Bight Kelp Forest Food Web data provided by Jarrett Byrnes. Also available at http://dx.doi.org/10.1111/j.1365-2486.2011.02409.x";
@@ -51,7 +42,7 @@ public class StudyImporterForByrnes extends BaseStudyImporter {
     }
 
     private Map<String, String> buildRefMap() throws StudyImporterException {
-        return StudyImporterForBarnes.buildRefMap(parserFactory, REFERENCE_PATH);
+        return ReferenceUtil.buildRefMap(parserFactory, REFERENCE_PATH);
     }
 
     private void importLine(LabeledCSVParser parser, Map<String, String> refMap) throws StudyImporterException {
