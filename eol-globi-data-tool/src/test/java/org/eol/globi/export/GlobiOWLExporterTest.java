@@ -2,11 +2,16 @@ package org.eol.globi.export;
 
 import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.NodeFactoryException;
+import org.eol.globi.domain.RelTypes;
+import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
+import org.eol.globi.domain.TaxonNode;
+import org.eol.globi.util.ExternalIdUtil;
 import org.hamcrest.core.Is;
 import org.junit.Test;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.io.StringDocumentTarget;
+import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
@@ -16,6 +21,7 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.text.ParseException;
 
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
@@ -33,6 +39,17 @@ public class GlobiOWLExporterTest extends GraphDBTestCase {
         manager.saveOntology(globi, target);
 
         assertThat(target.toString(), containsString("@prefix"));
+    }
+
+    @Test
+    public void getNamedIndividual() throws NodeFactoryException, OWLOntologyCreationException, ParseException {
+        TaxonNode homoSapiens = nodeFactory.getOrCreateTaxon("Homo sapiens");
+        TaxonNode human = nodeFactory.getOrCreateTaxon("Human");
+        homoSapiens.createRelationshipTo(human, RelTypes.SAME_AS);
+        Specimen specimen = nodeFactory.createSpecimen("Homo sapiens");
+        Study aStudy = nodeFactory.createStudy("aStudy");
+        aStudy.collected(specimen);
+        new GlobiOWLExporter().exportSameIndividuals(aStudy);
     }
 
 
