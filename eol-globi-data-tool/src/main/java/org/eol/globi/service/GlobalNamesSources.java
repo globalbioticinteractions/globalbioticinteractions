@@ -4,7 +4,8 @@ import org.eol.globi.domain.TaxonomyProvider;
 
 public enum GlobalNamesSources {
     ITIS(3, TaxonomyProvider.ITIS),
-    NCBI(4, TaxonomyProvider.NCBI);
+    NCBI(4, TaxonomyProvider.NCBI),
+    WORMS(9, TaxonomyProvider.WORMS),;
 
     private final int id;
 

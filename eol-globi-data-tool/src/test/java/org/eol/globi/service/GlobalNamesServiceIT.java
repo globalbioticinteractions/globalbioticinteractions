@@ -50,6 +50,18 @@ public class GlobalNamesServiceIT {
         assertThat(props.get(PropertyAndValueDictionary.EXTERNAL_ID), is("ncbi:9606"));
     }
 
+    @Test
+    public void lookupWoRMS() throws TaxonPropertyLookupServiceException {
+        GlobalNamesService service = new GlobalNamesService(GlobalNamesSources.WORMS);
+        HashMap<String, String> props1 = new HashMap<String, String>();
+        service.lookupPropertiesByName("Ariopsis felis", props1);
+        assertThat(props1.get(PropertyAndValueDictionary.NAME), is("Ariopsis felis"));
+        assertThat(props1.get(PropertyAndValueDictionary.PATH), is("Animalia|Chordata|Actinopterygii|Siluriformes|Ariidae|Ariopsis|Ariopsis felis"));
+        assertThat(props1.get(PropertyAndValueDictionary.RANK), is("species"));
+        HashMap<String, String> props = props1;
+        assertThat(props.get(PropertyAndValueDictionary.EXTERNAL_ID), is("urn:lsid:marinespecies.org:taxname:158709"));
+    }
+
     private HashMap<String, String> assertHomoSapiens(GlobalNamesService service) throws TaxonPropertyLookupServiceException {
         HashMap<String, String> props = new HashMap<String, String>();
         service.lookupPropertiesByName("Homo sapiens", props);

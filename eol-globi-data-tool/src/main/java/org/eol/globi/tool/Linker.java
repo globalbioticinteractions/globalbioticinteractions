@@ -7,6 +7,7 @@ import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.service.GlobalNamesService;
+import org.eol.globi.service.GlobalNamesSources;
 import org.eol.globi.service.TaxonPropertyLookupServiceException;
 import org.eol.globi.service.TermMatchListener;
 import org.neo4j.graphdb.GraphDatabaseService;
@@ -27,29 +28,32 @@ public class Linker {
     private static final Log LOG = LogFactory.getLog(Linker.class);
 
     public void linkTaxa(final GraphDatabaseService graphDb) throws TaxonPropertyLookupServiceException {
-        GlobalNamesService globalNamesService = new GlobalNamesService();
+        GlobalNamesSources[] sources = GlobalNamesSources.values();
+        for (GlobalNamesSources source : sources) {
+            GlobalNamesService globalNamesService = new GlobalNamesService(source);
 
-        Index<Node> taxons = graphDb.index().forNodes("taxons");
-        IndexHits<Node> hits = taxons.query("*:*");
+            Index<Node> taxons = graphDb.index().forNodes("taxons");
+            IndexHits<Node> hits = taxons.query("*:*");
 
-        final Map<Long, TaxonNode> nodeMap = new HashMap<Long, TaxonNode>();
-        int counter = 1;
-        for (Node hit : hits) {
-            if (counter % batchSize == 0) {
-                handleBatch(graphDb, globalNamesService, nodeMap, counter);
+            final Map<Long, TaxonNode> nodeMap = new HashMap<Long, TaxonNode>();
+            int counter = 1;
+            for (Node hit : hits) {
+                if (counter % batchSize == 0) {
+                    handleBatch(graphDb, globalNamesService, nodeMap, counter);
+                }
+                TaxonNode node = new TaxonNode(hit);
+                nodeMap.put(node.getNodeID(), node);
+                counter++;
             }
-            TaxonNode node = new TaxonNode(hit);
-            nodeMap.put(node.getNodeID(), node);
-            counter++;
+            handleBatch(graphDb, globalNamesService, nodeMap, counter);
         }
-
-        handleBatch(graphDb, globalNamesService, nodeMap, counter);
     }
 
     private void handleBatch(final GraphDatabaseService graphDb, GlobalNamesService globalNamesService, final Map<Long, TaxonNode> nodeMap, int counter) throws TaxonPropertyLookupServiceException {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
-        LOG.info("batch #" + counter / batchSize + " preparing...");
+        String msgPrefix = "batch #" + counter / batchSize + " for [" + globalNamesService.getSource() + "]";
+        LOG.info(msgPrefix +" preparing...");
         List<String> names = new ArrayList<String>();
         for (Map.Entry<Long, TaxonNode> entry : nodeMap.entrySet()) {
             String name = entry.getKey() + "|" + entry.getValue().getName();
@@ -73,7 +77,8 @@ public class Linker {
                 }
             }
         });
-        LOG.info("batch #" + counter / batchSize + " completed in [" + stopWatch.getTime() + "] ms (" + stopWatch.getTime() / counter + " ms/name )");
+        stopWatch.stop();
+        LOG.info(msgPrefix + " completed in [" + stopWatch.getTime() + "] ms (" + stopWatch.getTime() / counter + " ms/name )");
         nodeMap.clear();
     }
 }

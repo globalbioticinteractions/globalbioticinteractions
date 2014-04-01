@@ -114,4 +114,8 @@ public class GlobalNamesService extends BaseHttpClientService implements TaxonPr
             throw new TaxonPropertyLookupServiceException("Failed to query", e);
         }
     }
+
+    public GlobalNamesSources getSource() {
+        return source;
+    }
 }
