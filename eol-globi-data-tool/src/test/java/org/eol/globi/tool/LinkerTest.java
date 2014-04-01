@@ -18,10 +18,12 @@ public class LinkerTest extends GraphDBTestCase {
     public void twoTaxa() throws NodeFactoryException, TaxonPropertyLookupServiceException {
         nodeFactory.getOrCreateTaxon("Homo sapiens");
         nodeFactory.getOrCreateTaxon("Ariopsis felis");
+        nodeFactory.getOrCreateTaxon("Canis lupus");
 
         new Linker().linkTaxa(getGraphDb());
 
         assertHasOther("Homo sapiens", 2);
+        assertHasOther("Canis lupus", 2);
         assertHasOther("Ariopsis felis", 3);
 
     }
