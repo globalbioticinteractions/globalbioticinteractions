@@ -52,11 +52,9 @@ public class StudyImporterForByrnes extends BaseStudyImporter {
             String[] refs = StringUtils.split(refList, ",");
             for (String ref : refs) {
                 String singleShortRef = StringUtils.trim(ref);
-                if (!refMap.containsKey(singleShortRef)) {
-                    throw new StudyImporterException("failed to find ref [" + singleShortRef + "] on line [" + parser.lastLineNumber() + "]");
-                }
+                String longRef = refMap.get(singleShortRef);
                 localStudy = nodeFactory.getOrCreateStudy("BYRNES-" + singleShortRef, SOURCE, null);
-                localStudy.setCitationWithTx(refMap.get(refMap.get(singleShortRef)));
+                localStudy.setCitationWithTx(StringUtils.isBlank(longRef) ? singleShortRef : longRef);
                 String predatorName = parser.getValueByLabel("Predator");
                 if (StringUtils.isBlank(predatorName)) {
                     getLogger().warn(localStudy, "found empty predator name on line [" + parser.lastLineNumber() + "]");

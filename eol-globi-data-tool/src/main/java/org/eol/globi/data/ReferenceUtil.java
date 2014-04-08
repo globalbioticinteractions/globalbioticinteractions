@@ -19,7 +19,7 @@ public class ReferenceUtil {
             while (referenceParser.getLine() != null) {
                 String shortReference = referenceParser.getValueByLabel("short");
                 if (StringUtils.isBlank(shortReference)) {
-                    LOG.warn("missing short reference on line [" + referenceParser.lastLineNumber() + "]");
+                    LOG.warn("missing short reference on line [" + referenceParser.lastLineNumber() + "] in [" + referencePath + "]");
                 } else {
                     String fullReference = referenceParser.getValueByLabel("full");
                     if (StringUtils.isBlank(fullReference)) {
