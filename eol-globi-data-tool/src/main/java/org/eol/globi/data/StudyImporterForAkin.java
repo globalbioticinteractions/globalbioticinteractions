@@ -227,7 +227,7 @@ public class StudyImporterForAkin extends BaseStudyImporter {
                     "Section of Ecology, Evolutionary Biology and Systematics, Department of Wildlife and Fisheries Sciences, Texas A&M University",
                     "Mar 1998- Aug 1999",
                     "S. Akin, K. O. Winemiller, Seasonal variation in food web composition and structure in a temperate tidal estuary, Estuaries and Coasts" +
-                            "; August 2006, Volume 29, Issue 4, pp 552-567", "2006", StudyImporterForGoMexSI.GOMEXSI_URL, null);
+                            "; August 2006, Volume 29, Issue 4, pp 552-567", "2006", StudyImporterForGoMexSI.GOMEXI_SOURCE_DESCRIPTION, null);
             study.setDOIWithTx("http://dx.doi.org/10.1007/BF02784282");
             String[][] siteInfo = loadSampleSiteLocations();
             importAkinStudyFile(siteInfo, studyResource, study);

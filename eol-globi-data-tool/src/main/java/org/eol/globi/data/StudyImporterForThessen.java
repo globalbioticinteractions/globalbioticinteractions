@@ -29,8 +29,9 @@ public class StudyImporterForThessen extends BaseStudyImporter {
 
     @Override
     public Study importStudy() throws StudyImporterException {
-        Study study = nodeFactory.getOrCreateStudy("Thessen 2014", RESOURCE, null);
-        study.setCitationWithTx("A. Thessen. 2014. Species associations extracted from EOL text data objects via text mining. Accessed at " + RESOURCE + " .");
+        String citation = "A. Thessen. 2014. Species associations extracted from EOL text data objects via text mining. Accessed at " + RESOURCE + " .";
+        Study study = nodeFactory.getOrCreateStudy("Thessen 2014", citation, null);
+        study.setCitationWithTx(citation);
         HttpGet httpGet = new HttpGet(RESOURCE);
         File tmpFile = null;
         InputStream is = null;

@@ -22,7 +22,7 @@ public class StudyImporterForJRFerrerParis extends BaseStudyImporter {
                 "",
                 "Ferrer-Paris JR, Sánchez-Mercado AY, Lozano C, Zambrano L, Soto J, Baettig J, Ortega P, Leal M. Using web-content for the assessment of macroecological patterns in butterfly-hostplant associations at a global scale. March 2013 - January 2014. Unpublished results."
                 , null
-                , "http://papilionoidea.myspecies.info/");
+                , "Papilionoidea of the World. Available at http://papilionoidea.myspecies.info/ .");
         String studyResource = "jr_ferrer_paris/CompiledButterflyHostPlantRecords_JRFP.csv";
         try {
             LabeledCSVParser parser = parserFactory.createParser(studyResource, CharsetConstant.UTF8);

@@ -28,7 +28,7 @@ public class StudyImporterForSPIRE extends BaseStudyImporter {
     public static final String PREDATOR_NAME = "predator";
     public static final String PREY_NAME = "prey";
     public static final String LOCALITY_ORIGINAL = "localityOriginal";
-    public static final String SOURCE_SPIRE = "SPIRE";
+    public static final String SOURCE_SPIRE = "Semantic Prototypes in Research Ecoinformatics (SPIRE). Data provided by Joel Sachs. See also http://ebiquity.umbc.edu/get/a/publication/297.pdf .";
 
     private TrophicLinkListener trophicLinkListener = new TrophicLinkListener() {
         @Override

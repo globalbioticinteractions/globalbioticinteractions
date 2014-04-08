@@ -68,7 +68,7 @@ public class StudyImporterForSimons extends BaseStudyImporter {
                 "James D. Simons",
                 "Center for Coastal Studies, Texas A&M University - Corpus Christi",
                 "1987- 1990",
-                "Food habits and trophic structure of the demersal fish assemblages on the Mississippi-Alabama continental shelf.", "1997", StudyImporterForGoMexSI.GOMEXSI_URL, null);
+                "Food habits and trophic structure of the demersal fish assemblages on the Mississippi-Alabama continental shelf.", "1997", StudyImporterForGoMexSI.GOMEXI_SOURCE_DESCRIPTION, null);
         try {
             LabeledCSVParser csvParser = parserFactory.createParser(studyResource, CharsetConstant.UTF8);
             Map<String, String> columnMapper = COLUMN_MAPPER;

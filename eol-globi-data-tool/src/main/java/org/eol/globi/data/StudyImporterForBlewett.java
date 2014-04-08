@@ -37,7 +37,7 @@ public class StudyImporterForBlewett extends BaseStudyImporter {
                 , "Mar 2000- Feb 2002"
                 , "Blewett DA, Hensley RA, and Stevens PW, Feeding Habits of Common Snook, Centropomus Undecimalis, in Charlotte Harbor, Florida, Gulf and Caribbean Research Vol 18, 1–13, 2006"
                 , "2006"
-                , StudyImporterForGoMexSI.GOMEXSI_URL);
+                , StudyImporterForGoMexSI.GOMEXI_SOURCE_DESCRIPTION);
 
         study.setCitationWithTx("Blewett DA, Hensley RA, and Stevens PW, Feeding Habits of Common Snook, Centropomus Undecimalis, in Charlotte Harbor, Florida, Gulf and Caribbean Research Vol 18, 1–13, 2006");
         study.setExternalId("http://research.myfwc.com/engine/download_redirection_process.asp?file=06blewett_0718.pdf&objid=50963&dltype=publication");

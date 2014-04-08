@@ -44,12 +44,13 @@ public class StudyImporterForBioInfo extends BaseStudyImporter implements StudyI
     }
 
     protected Study createStudy() {
+        String citation = "Storey M. Food Webs and Species Interactions in the Biodiversity of UK and Ireland (Online). 2013. Available from " + BIOINFO_URL + ".";
         Study study = nodeFactory.getOrCreateStudy("BIO_INFO",
                 "Malcolm Storey",
                 BIOINFO_URL,
                 "",
-                "Food webs and species interactions in the Biodiversity of UK and Ireland.", null, "http://bioinfo.org.uk");
-        study.setCitationWithTx("Storey M. Food Webs and Species Interactions in the Biodiversity of UK and Ireland (Online). 2013. Available from " + BIOINFO_URL + ".");
+                "Food webs and species interactions in the Biodiversity of UK and Ireland.", null, citation);
+        study.setCitationWithTx(citation);
         study.setExternalId(BIOINFO_URL);
         return study;
     }

@@ -62,7 +62,6 @@ public class StudyImporterForByrnes extends BaseStudyImporter {
                     addInteractionForPredator(parser, localStudy, predatorName);
                 }
             }
-
         } catch (NodeFactoryException e) {
             throw new StudyImporterException("problem creating nodes at line [" + parser.lastLineNumber() + "]", e);
         } catch (NumberFormatException e) {
