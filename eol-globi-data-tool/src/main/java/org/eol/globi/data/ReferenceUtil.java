@@ -24,7 +24,6 @@ public class ReferenceUtil {
                     String fullReference = referenceParser.getValueByLabel("full");
                     if (StringUtils.isBlank(fullReference)) {
                         LOG.warn("missing full reference for [" + shortReference + "] on line [" + referenceParser.lastLineNumber() + "] in [" + referencePath + "]");
-                    } else {
                         fullReference = shortReference;
                     }
                     refMap.put(shortReference, fullReference);
