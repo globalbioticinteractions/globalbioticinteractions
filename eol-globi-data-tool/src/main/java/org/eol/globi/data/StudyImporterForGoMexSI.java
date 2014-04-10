@@ -22,7 +22,7 @@ import java.util.Map;
 public class StudyImporterForGoMexSI extends BaseStudyImporter {
     private static final Log LOG = LogFactory.getLog(StudyImporterForGoMexSI.class);
 
-    public static final String GOMEXI_SOURCE_DESCRIPTION = "Gulf of Mexico Species Interactions. Also available at http://gomexsi.tamucc.edu .";
+    public static final String GOMEXI_SOURCE_DESCRIPTION = "http://gomexsi.tamucc.edu";
     public static final String STOMACH_COUNT_TOTAL = "stomachCountTotal";
     public static final String STOMACH_COUNT_WITH_FOOD = "stomachCountWithFood";
     public static final String STOMACH_COUNT_WITHOUT_FOOD = "stomachCountWithoutFood";
