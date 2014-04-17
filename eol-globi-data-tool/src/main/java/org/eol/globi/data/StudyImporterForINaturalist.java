@@ -1,5 +1,7 @@
 package org.eol.globi.data;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -21,6 +23,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class StudyImporterForINaturalist extends BaseStudyImporter {
+    private static final Log LOG = LogFactory.getLog(StudyImporterForINaturalist.class);
+
     public static final String INATURALIST_URL = "http://inaturalist.org";
 
     private static final Map<String, InteractType> TYPE_MAPPING = new HashMap<String, InteractType>() {{
@@ -46,6 +50,7 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
     private static final Map<String, InteractType> INVERSE_TYPE_MAPPING = new HashMap<String, InteractType>() {{
         put("Eaten by", InteractType.ATE);
     }};
+    public static final int MAX_ATTEMPTS = 3;
 
     public StudyImporterForINaturalist(ParserFactory parserFactory, NodeFactory nodeFactory) {
         super(parserFactory, nodeFactory);
@@ -63,8 +68,9 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
         int totalInteractions = 0;
         HttpClient defaultHttpClient = HttpUtil.createHttpClient();
         try {
-            int previousResultCount;
+            int previousResultCount = 0;
             int pageNumber = 1;
+            int attempt = 0;
             do {
                 String uri = "http://www.inaturalist.org/observation_field_values.json?type=taxon&page=" + pageNumber + "&per_page=100&license=any";
                 HttpGet get = new HttpGet(uri);
@@ -74,13 +80,18 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
                     if (response.getStatusLine().getStatusCode() != 200) {
                         throw new StudyImporterException("failed to execute query to [ " + uri + "]: status code [" + response.getStatusLine().getStatusCode() + "]");
                     }
+                    attempt = 0;
                     previousResultCount = parseJSON(response.getEntity().getContent(), study);
                     pageNumber++;
                     totalInteractions += previousResultCount;
                     getLogger().info(study, "importing [" + pageNumber + "] total [" + totalInteractions + "]");
-
                 } catch (IOException e) {
-                    throw new StudyImporterException("failed to execute query to [ " + uri + "]", e);
+                    String msg = "failed to execute query to [ " + uri + "]";
+                    if (attempt < MAX_ATTEMPTS) {
+                        LOG.warn(msg + " retry [" + attempt + "] of [" + MAX_ATTEMPTS + "]", e);
+                    } else {
+                        throw new StudyImporterException(msg, e);
+                    }
                 }
 
             } while (previousResultCount > 0);
