@@ -83,7 +83,7 @@ Ethograms
 
 ## Queries
 
-http://trophicgraph.com:3030/sparql.tpl
+http://api.globalbioticinteractions.org:3030/sparql.tpl
 
 prefix i: <http://eol.org/globi/individuals>
 prefix g: <http://eol.org/globi/>

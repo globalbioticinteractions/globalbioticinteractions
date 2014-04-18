@@ -11,7 +11,7 @@ import java.util.Map;
 
 public class CypherUtil {
     public static String executeCypherQuery(CypherQuery query) throws IOException {
-        HttpPost httpPost = new HttpPost("http://46.4.36.142:7474/db/data/cypher");
+        HttpPost httpPost = new HttpPost("http://api.globalbioticinteractions.org:7474/db/data/cypher");
         HttpClient.addJsonHeaders(httpPost);
         httpPost.setEntity(new StringEntity(wrapQuery(query)));
         BasicResponseHandler responseHandler = new BasicResponseHandler();
