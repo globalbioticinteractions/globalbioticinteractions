@@ -8,6 +8,7 @@ import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.domain.TaxonomyProvider;
 import org.eol.globi.service.TaxonPropertyLookupServiceException;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
@@ -35,6 +36,14 @@ public class StudyImporterForINaturalistTest extends GraphDBTestCase {
         Study study = importer.importStudy();
         assertThat(study.getContributor(), is(""));
         assertThat(countSpecimen(study) > 150, is(true));
+    }
+
+    @Ignore(value = "see https://github.com/jhpoelen/eol-globi-data/issues/56")
+    @Test
+    public void importTestResponseWithEcologicalInteraction() throws StudyImporterException, NodeFactoryException {
+        Study study = nodeFactory.createStudy("testing123");
+        importer.parseJSON(getClass().getResourceAsStream("inaturalist/response_with_ecological_interaction_field.json"), study);
+        assertThat(countSpecimen(study) > 86, is(true));
     }
 
     @Test
