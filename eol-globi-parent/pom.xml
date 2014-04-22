@@ -131,6 +131,11 @@
             <name>GloBI Thirdparty Datasets</name>
             <url>https://s3.amazonaws.com/globi/thirdparty-datasets</url>
         </repository>
+        <repository>
+            <id>-globi-release</id>
+            <name>GloBI Releases</name>
+            <url>https://s3.amazonaws.com/globi/release</url>
+        </repository>
     </repositories>
 
 
