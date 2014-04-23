@@ -19,7 +19,8 @@ public abstract class StudyExportUnmatchedTaxaForStudies implements StudyExporte
         query.append(study.getTitle());
         query.append("\") ");
         query.append(getQueryString(study));
-        query.append("WHERE not(has(taxon.path))");
+        query.append(", taxon-[sameAs?:SAME_AS]->otherTaxon");
+        query.append(" WHERE not(has(taxon.path)) AND sameAs IS NULL");
         query.append(" RETURN distinct description.name, description.externalId?, taxon.name, taxon.externalId?, study.title, study.source");
 
         ExecutionResult result = engine.execute(query.toString());

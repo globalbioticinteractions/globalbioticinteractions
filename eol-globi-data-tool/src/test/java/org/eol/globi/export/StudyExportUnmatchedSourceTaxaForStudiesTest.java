@@ -7,11 +7,14 @@ import org.eol.globi.data.taxon.TaxonNameCorrector;
 import org.eol.globi.data.taxon.TaxonServiceImpl;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.PropertyAndValueDictionary;
+import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.service.TaxonPropertyEnricher;
 import org.junit.Test;
+import org.neo4j.graphdb.Node;
+import org.neo4j.graphdb.Transaction;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -69,15 +72,60 @@ public class StudyExportUnmatchedSourceTaxaForStudiesTest extends GraphDBTestCas
         StringWriter writer = new StringWriter();
         new StudyExportUnmatchedSourceTaxaForStudies().exportStudy(study, writer, true);
         assertThat(writer.toString(), is(EXPECTED_HEADER + "\n" +
-                "\"Homo sapiens2\",,\"Homo sapiens2\",,\"my study\",\"my first source\"\n" +
-                "\"Homo sapiens3\",,\"Homo sapiens3\",,\"my study\",\"my first source\"\n"
+                        "\"Homo sapiens2\",,\"Homo sapiens2\",,\"my study\",\"my first source\"\n" +
+                        "\"Homo sapiens3\",,\"Homo sapiens3\",,\"my study\",\"my first source\"\n"
         ));
 
         writer = new StringWriter();
         new StudyExportUnmatchedTargetTaxaForStudies().exportStudy(study, writer, true);
-                assertThat(writer.toString(), is("\"original target taxon name\",\"original target external id\",\"unmatched normalized target taxon name\",\"unmatched normalized target external id\",\"study\",\"source\"" + "\n" +
+        assertThat(writer.toString(), is("\"original target taxon name\",\"original target external id\",\"unmatched normalized target taxon name\",\"unmatched normalized target external id\",\"study\",\"source\"" + "\n" +
                         "\"Caniz\",,\"Caniz\",,\"my study\",\"my first source\"\n"
-                ));
+        ));
+    }
+
+    @Test
+    public void exportOnePredatorNoPathButWithSameAs() throws NodeFactoryException, IOException {
+        final TaxonPropertyEnricher taxonEnricher = new TaxonPropertyEnricher() {
+            @Override
+            public void enrich(Taxon taxon) {
+
+            }
+        };
+        nodeFactory = new NodeFactory(getGraphDb(), new TaxonServiceImpl(taxonEnricher, new TaxonNameCorrector(), getGraphDb()));
+        Study study = nodeFactory.getOrCreateStudy("my study", "my first source", null);
+
+        Specimen predatorSpecimen = nodeFactory.createSpecimen("Homo sapienz");
+        Specimen preySpecimen = nodeFactory.createSpecimen("Caniz");
+        predatorSpecimen.createRelationshipTo(preySpecimen, InteractType.ATE);
+        study.collected(predatorSpecimen);
+
+        predatorSpecimen = nodeFactory.createSpecimen("Homo sapiens");
+        Node synonymNode = nodeFactory.getOrCreateTaxon("Homo sapiens Synonym").getUnderlyingNode();
+        Node node = nodeFactory.getOrCreateTaxon("Homo sapiens").getUnderlyingNode();
+        Transaction tx = getGraphDb().beginTx();
+        try {
+            node.createRelationshipTo(synonymNode, RelTypes.SAME_AS);
+            tx.success();
+        } finally {
+            tx.finish();
+        }
+
+        preySpecimen = nodeFactory.createSpecimen("Canis");
+        predatorSpecimen.createRelationshipTo(preySpecimen, InteractType.ATE);
+        study.collected(predatorSpecimen);
+
+        StringWriter writer = new StringWriter();
+        new StudyExportUnmatchedSourceTaxaForStudies().exportStudy(study, writer, true);
+        assertThat(writer.toString(), is(EXPECTED_HEADER + "\n" +
+                        "\"Homo sapienz\",,\"Homo sapienz\",,\"my study\",\"my first source\"\n"
+        ));
+
+        writer = new StringWriter();
+        new StudyExportUnmatchedTargetTaxaForStudies().exportStudy(study, writer, true);
+        assertThat(writer.toString(), is("\"original target taxon name\",\"original target external id\",\"unmatched normalized target taxon name\",\"unmatched normalized target external id\",\"study\",\"source\"" + "\n" +
+                        "\"Caniz\",,\"Caniz\",,\"my study\",\"my first source\"\n" +
+                        "\"Canis\",,\"Canis\",,\"my study\",\"my first source\"\n"
+        ));
     }
 
     private void addCanisLupus(Specimen predatorSpecimen) throws NodeFactoryException {
