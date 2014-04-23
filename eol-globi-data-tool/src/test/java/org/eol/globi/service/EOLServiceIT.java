@@ -84,6 +84,16 @@ public class EOLServiceIT {
     }
 
     @Test
+    public void lookupOutdatedName() throws TaxonPropertyLookupServiceException {
+        HashMap<String, String> properties = new HashMap<String, String>();
+        new EOLService().lookupPropertiesByName("Corizidae", properties);
+        assertThat(properties.get(PropertyAndValueDictionary.EXTERNAL_ID), is("EOL:61812"));
+        assertThat(properties.get(PropertyAndValueDictionary.NAME), is("Salicornia"));
+        assertThat(properties.get(PropertyAndValueDictionary.RANK), is("Genus"));
+        assertThat(properties.get(PropertyAndValueDictionary.PATH), is("Plantae | Tracheophyta | Magnoliopsida | Caryophyllales | Chenopodiaceae | Salicornia"));
+    }
+
+    @Test
     public void lookupPickleweedAlreadyPopulated() throws TaxonPropertyLookupServiceException {
         HashMap<String, String> properties = new HashMap<String, String>();
         properties.put(PropertyAndValueDictionary.EXTERNAL_ID, "EOL:61812");
@@ -126,7 +136,6 @@ public class EOLServiceIT {
      * Malcolm
      *
      * @throws TaxonPropertyLookupServiceException
-     *
      */
 
     @Test

@@ -8,17 +8,7 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.Map;
 
-public abstract class StudyExportUnmatchedTaxaForStudies extends DarwinCoreExporter {
-    private static final String META_TABLE_SUFFIX = "</location>\n" +
-            "    </files>\n" +
-            "    <field index=\"0\" term=\"" + EOLDictionary.SCIENTIFIC_NAME + "\"/>\n" +
-            "    <field index=\"1\" term=\"" + EOLDictionary.TAXON_ID + "\"/>\n" +
-            "    <field index=\"2\" term=\"" + EOLDictionary.SCIENTIFIC_NAME + "\"/>\n" +
-            "    <field index=\"3\" term=\"" + EOLDictionary.COLLECTION_CODE + "\"/>\n" +
-            "  </table>\n";
-    private static final String META_TABLE_PREFIX = "<table encoding=\"UTF-8\" fieldsTerminatedBy=\",\" linesTerminatedBy=\"\\n\" ignoreHeaderLines=\"1\" rowType=\"http://rs.tdwg.org/dwc/terms/text/DarwinRecord\">\n" +
-            "    <files>\n" +
-            "      <location>";
+public abstract class StudyExportUnmatchedTaxaForStudies implements StudyExporter {
 
     @Override
     public void exportStudy(Study study, Writer writer, boolean includeHeader) throws IOException {
@@ -30,7 +20,7 @@ public abstract class StudyExportUnmatchedTaxaForStudies extends DarwinCoreExpor
         query.append("\") ");
         query.append(getQueryString(study));
         query.append("WHERE not(has(taxon.path))");
-        query.append(" RETURN distinct description.name, description.externalId?, taxon.name, taxon.externalId?, study.title");
+        query.append(" RETURN distinct description.name, description.externalId?, taxon.name, taxon.externalId?, study.title, study.source");
 
         ExecutionResult result = engine.execute(query.toString());
 
@@ -61,6 +51,8 @@ public abstract class StudyExportUnmatchedTaxaForStudies extends DarwinCoreExpor
         writer.write((externalId == null ? "" : ("\"" + externalId + "\"")));
         writer.write(",\"");
         writer.write((String) map.get("study.title"));
+        writer.write("\",\"");
+        writer.write((String) map.get("study.source"));
         writer.write("\"\n");
 
     }
@@ -70,17 +62,8 @@ public abstract class StudyExportUnmatchedTaxaForStudies extends DarwinCoreExpor
         writer.write(",\"original " + taxonLabel + " external id\"");
         writer.write(",\"unmatched normalized " + taxonLabel + " taxon name\"");
         writer.write(",\"unmatched normalized " + taxonLabel + " external id\"");
-        writer.write(",\"study\"\n");
+        writer.write(",\"study\"");
+        writer.write(",\"source\"\n");
     }
 
-
-    @Override
-    protected String getMetaTablePrefix() {
-        return META_TABLE_PREFIX;
-    }
-
-    @Override
-    protected String getMetaTableSuffix() {
-        return META_TABLE_SUFFIX;
-    }
 }

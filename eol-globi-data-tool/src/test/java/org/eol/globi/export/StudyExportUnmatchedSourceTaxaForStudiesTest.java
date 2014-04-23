@@ -21,7 +21,7 @@ import static org.junit.Assert.assertThat;
 
 public class StudyExportUnmatchedSourceTaxaForStudiesTest extends GraphDBTestCase {
 
-    public static final String EXPECTED_HEADER = "\"original source taxon name\",\"original source external id\",\"unmatched normalized source taxon name\",\"unmatched normalized source external id\",\"study\"";
+    public static final String EXPECTED_HEADER = "\"original source taxon name\",\"original source external id\",\"unmatched normalized source taxon name\",\"unmatched normalized source external id\",\"study\",\"source\"";
 
     @Test
     public void exportOnePredatorTwoPrey() throws NodeFactoryException, IOException {
@@ -38,7 +38,8 @@ public class StudyExportUnmatchedSourceTaxaForStudiesTest extends GraphDBTestCas
             }
         };
         nodeFactory = new NodeFactory(getGraphDb(), new TaxonServiceImpl(taxonEnricher, new TaxonNameCorrector(), getGraphDb()));
-        Study study = nodeFactory.createStudy("my study");
+        Study study = nodeFactory.getOrCreateStudy("my study", "my first source", null);
+
         nodeFactory.getOrCreateTaxon("Homo sapiens");
         Specimen predatorSpecimen = nodeFactory.createSpecimen("Homo sapiens");
         nodeFactory.getOrCreateTaxon("Canis lupus");
@@ -55,7 +56,7 @@ public class StudyExportUnmatchedSourceTaxaForStudiesTest extends GraphDBTestCas
         addCanisLupus(predatorSpecimen22);
         study.collected(predatorSpecimen22);
 
-        Study study2 = nodeFactory.createStudy("my study2");
+        Study study2 = nodeFactory.getOrCreateStudy("my study2", "my source2", null);
         Specimen predatorSpecimen21 = nodeFactory.createSpecimen("Homo sapiens2");
         addCanisLupus(predatorSpecimen21);
         study2.collected(predatorSpecimen21);
@@ -68,29 +69,20 @@ public class StudyExportUnmatchedSourceTaxaForStudiesTest extends GraphDBTestCas
         StringWriter writer = new StringWriter();
         new StudyExportUnmatchedSourceTaxaForStudies().exportStudy(study, writer, true);
         assertThat(writer.toString(), is(EXPECTED_HEADER + "\n" +
-                "\"Homo sapiens2\",,\"Homo sapiens2\",,\"my study\"\n" +
-                "\"Homo sapiens3\",,\"Homo sapiens3\",,\"my study\"\n"
+                "\"Homo sapiens2\",,\"Homo sapiens2\",,\"my study\",\"my first source\"\n" +
+                "\"Homo sapiens3\",,\"Homo sapiens3\",,\"my study\",\"my first source\"\n"
         ));
 
         writer = new StringWriter();
         new StudyExportUnmatchedTargetTaxaForStudies().exportStudy(study, writer, true);
-                assertThat(writer.toString(), is("\"original target taxon name\",\"original target external id\",\"unmatched normalized target taxon name\",\"unmatched normalized target external id\",\"study\"" + "\n" +
-                        "\"Caniz\",,\"Caniz\",,\"my study\"\n"
+                assertThat(writer.toString(), is("\"original target taxon name\",\"original target external id\",\"unmatched normalized target taxon name\",\"unmatched normalized target external id\",\"study\",\"source\"" + "\n" +
+                        "\"Caniz\",,\"Caniz\",,\"my study\",\"my first source\"\n"
                 ));
     }
 
     private void addCanisLupus(Specimen predatorSpecimen) throws NodeFactoryException {
         Specimen preySpecimen = nodeFactory.createSpecimen("Canis lupus");
         predatorSpecimen.createRelationshipTo(preySpecimen, InteractType.ATE);
-    }
-
-    @Test
-    public void darwinCoreMetaTable() throws IOException {
-        StudyExportUnmatchedTaxaForStudies exporter = new StudyExportUnmatchedSourceTaxaForStudies();
-        StringWriter writer = new StringWriter();
-        exporter.exportDarwinCoreMetaTable(writer, "unmatched.csv");
-        String expectedMetaTable = exporter.getMetaTablePrefix() + "unmatched.csv" + exporter.getMetaTableSuffix();
-        assertThat(writer.toString(), is(expectedMetaTable));
     }
 
 }

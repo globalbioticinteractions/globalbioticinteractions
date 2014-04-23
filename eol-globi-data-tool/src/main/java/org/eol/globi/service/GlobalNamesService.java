@@ -90,14 +90,21 @@ public class GlobalNamesService extends BaseHttpClientService implements TaxonPr
                     if (results != null && results.isArray()) {
                         for (JsonNode aResult : results) {
                             Taxon taxon = new TaxonImpl();
-                            taxon.setName(aResult.get("canonical_form").getValueAsText());
-                            taxon.setPath(aResult.get("classification_path").getValueAsText());
+                            String classificationPath = aResult.get("classification_path").getValueAsText();
+                            taxon.setPath(classificationPath);
                             String[] ranks = aResult.get("classification_path_ranks").getValueAsText().split("\\|");
                             if (ranks.length > 0) {
                                 String rank = ranks[ranks.length - 1];
                                 taxon.setRank(rank);
                             }
-                            String externalId = source.getProvider().getIdPrefix() + aResult.get("taxon_id").getValueAsText();
+                            String[] taxonNames = classificationPath.split("\\|");
+                            if (ranks.length > 0) {
+                                String taxonName = taxonNames[taxonNames.length - 1];
+                                taxon.setName(taxonName);
+                            }
+
+                            String taxonIdLabel = aResult.has("current_taxon_id") ? "current_taxon_id" : "taxon_id";
+                            String externalId = source.getProvider().getIdPrefix() + aResult.get(taxonIdLabel).getValueAsText();
                             taxon.setExternalId(externalId);
                             Long suppliedId = data.has("supplied_id") ? data.get("supplied_id").getValueAsLong() : null;
                             JsonNode supplied_name_string = data.get("supplied_name_string");

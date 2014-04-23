@@ -18,7 +18,7 @@ public class GlobalNamesServiceIT {
     @Test
     public void createTaxaListFromNameList() throws TaxonPropertyLookupServiceException {
         GlobalNamesService service = new GlobalNamesService();
-        final List<Taxon> foundTaxa =  new ArrayList<Taxon>();
+        final List<Taxon> foundTaxa = new ArrayList<Taxon>();
         service.findTermsForNames(Arrays.asList("1|Homo sapiens", "2|Ariopsis felis"), new TermMatchListener() {
             @Override
             public void foundTaxonForName(Long id, String name, Taxon taxon) {
@@ -36,6 +36,18 @@ public class GlobalNamesServiceIT {
         GlobalNamesService service = new GlobalNamesService();
         HashMap<String, String> props = assertHomoSapiens(service);
         assertThat(props.get(PropertyAndValueDictionary.EXTERNAL_ID), is("urn:lsid:itis.gov:itis_tsn:180092"));
+    }
+
+    @Test
+    public void lookupITISSynonym() throws TaxonPropertyLookupServiceException {
+        GlobalNamesService service = new GlobalNamesService();
+        HashMap<String, String> props1 = new HashMap<String, String>();
+        service.lookupPropertiesByName("Corizidae", props1);
+        assertThat(props1.get(PropertyAndValueDictionary.NAME), is("Rhopalidae"));
+        assertThat(props1.get(PropertyAndValueDictionary.PATH), is("Animalia|Arthropoda|Hexapoda|Insecta|Pterygota|Neoptera|Hemiptera|Heteroptera|Pentatomomorpha|Coreoidea|Rhopalidae"));
+        assertThat(props1.get(PropertyAndValueDictionary.RANK), is("Family"));
+        HashMap<String, String> props = props1;
+        assertThat(props.get(PropertyAndValueDictionary.EXTERNAL_ID), is("urn:lsid:itis.gov:itis_tsn:108477"));
     }
 
     @Test
