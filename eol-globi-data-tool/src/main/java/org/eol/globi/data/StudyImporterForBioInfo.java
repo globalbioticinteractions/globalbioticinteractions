@@ -44,7 +44,7 @@ public class StudyImporterForBioInfo extends BaseStudyImporter implements StudyI
     }
 
     protected Study createStudy() {
-        String citation = "Storey M. Food Webs and Species Interactions in the Biodiversity of UK and Ireland (Online). 2013. Available from " + BIOINFO_URL + ".";
+        String citation = "Food Webs and Species Interactions in the Biodiversity of UK and Ireland (Online). 2013. Data provided by Malcolm Storey. Also available from " + BIOINFO_URL + ".";
         Study study = nodeFactory.getOrCreateStudy("BIO_INFO",
                 "Malcolm Storey",
                 BIOINFO_URL,

@@ -24,6 +24,13 @@ public class DOIResolverImplIT {
         assertThat(doi, is("http://dx.doi.org/10.1002/bimj.4710230217"));
     }
 
+
+    @Test
+    public void resolveDOIBugFixedServerError() throws IOException {
+        String citation = new DOIResolverImpl().findCitationForDOI("http://dx.doi.org/10.2307/4070736");
+        assertThat(citation, is("Anon. McAtee’s “Food Habits of the Grosbeaks” Food Habits of the Grosbeaks W. L. McAtee. The Auk [Internet]. 1908 April;25(2):245–246. Available from: http://dx.doi.org/10.2307/4070736"));
+    }
+
     @Test
     public void findCitationForDOIStrangeCharacters() throws IOException {
         String citation = new DOIResolverImpl().findCitationForDOI("http://dx.doi.org/10.1007/s00300-004-0645-x");
