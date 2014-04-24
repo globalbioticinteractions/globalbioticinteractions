@@ -101,6 +101,8 @@ public class GlobalNamesService extends BaseHttpClientService implements TaxonPr
                             if (ranks.length > 0 && taxonNames.length > 0) {
                                 String taxonName = taxonNames[taxonNames.length - 1];
                                 taxon.setName(taxonName);
+                            } else {
+                                taxon.setName(aResult.get("canonical_form").getValueAsText());
                             }
 
                             String taxonIdLabel = aResult.has("current_taxon_id") ? "current_taxon_id" : "taxon_id";
