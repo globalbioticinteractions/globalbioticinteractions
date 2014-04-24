@@ -98,7 +98,7 @@ public class GlobalNamesService extends BaseHttpClientService implements TaxonPr
                                 taxon.setRank(rank);
                             }
                             String[] taxonNames = classificationPath.split("\\|");
-                            if (ranks.length > 0) {
+                            if (ranks.length > 0 && taxonNames.length > 0) {
                                 String taxonName = taxonNames[taxonNames.length - 1];
                                 taxon.setName(taxonName);
                             }
