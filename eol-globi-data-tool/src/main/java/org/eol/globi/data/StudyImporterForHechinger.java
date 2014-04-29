@@ -53,13 +53,23 @@ public class StudyImporterForHechinger extends BaseStudyImporter {
 
             while (nodes.getLine() != null) {
                 Integer nodeId = Integer.parseInt(nodes.getValueByLabel("NodeID"));
-                String name = nodes.getValueByLabel("WorkingName");
-                try {
-                    taxonForNode.put(nodeId, name);
-                    String stage = nodes.getValueByLabel("Stage");
-                    stageForNode.put(nodeId, nodeFactory.getOrCreateLifeStage("hechinger:" + stage, stage));
-                } catch (NodeFactoryException e) {
-                    throw new StudyImporterException("failed to reader line [" + nodes.lastLineNumber() + "]", e);
+
+                String name = parseMostGranularTaxonName(nodes);
+                if (StringUtils.isBlank(name)) {
+                    name = nodes.getValueByLabel("WorkingName");
+                    if (StringUtils.isBlank(name)) {
+                        getLogger().warn(study, "failed to find name for node on line [" + nodes.lastLineNumber() + "]");
+                    }
+                }
+
+                if (StringUtils.isNotBlank(name)) {
+                    try {
+                        taxonForNode.put(nodeId, name);
+                        String stage = nodes.getValueByLabel("Stage");
+                        stageForNode.put(nodeId, nodeFactory.getOrCreateLifeStage("hechinger:" + stage, stage));
+                    } catch (NodeFactoryException e) {
+                        throw new StudyImporterException("failed to reader line [" + nodes.lastLineNumber() + "]", e);
+                    }
                 }
             }
 
@@ -92,6 +102,27 @@ public class StudyImporterForHechinger extends BaseStudyImporter {
 
 
         return study;
+    }
+
+    private String parseMostGranularTaxonName(LabeledCSVParser nodes) {
+        String name = null;
+        String ranks[] = {"Kingdom", "Phylum", "Subphylum", "Superclass", "Class", "Subclass", "Order", "Suborder", "Infraorder", "Superfamily", "Family"};
+        String specificEpithet = nodes.getValueByLabel("SpecificEpithet");
+        String genus = nodes.getValueByLabel("Genus");
+        if (StringUtils.isNotBlank(genus)) {
+            name = genus;
+            if (StringUtils.isNotBlank(specificEpithet)) {
+                name += " " + specificEpithet;
+            }
+        } else {
+            for (int i = ranks.length - 1; i >= 0; i--) {
+                name = nodes.getValueByLabel(ranks[i]);
+                if (StringUtils.isNotBlank(name)) {
+                    break;
+                }
+            }
+        }
+        return name;
     }
 
     private void addLink(Study study, Map<Integer, Term> stageForNode, Map<Integer, String> taxonForNode, LabeledCSVParser links, Location location) throws StudyImporterException, NodeFactoryException {
