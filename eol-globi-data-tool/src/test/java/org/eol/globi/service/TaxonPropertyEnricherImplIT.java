@@ -65,6 +65,15 @@ public class TaxonPropertyEnricherImplIT extends GraphDBTestCase {
         assertThat(taxon.getPath(), containsString(CharsetConstant.SEPARATOR + "Foraminifera"));
     }
 
+
+    @Test
+    // see https://github.com/jhpoelen/eol-globi-data/issues/59
+    public void greySmoothhound() throws IOException, NodeFactoryException {
+        TaxonNode taxon = nodeFactory.getOrCreateTaxon("Grey Smoothhound");
+        assertThat(taxon.getExternalId(), is("EOL:207918"));
+        assertThat(taxon.getName(), is("Mustelus californicus"));
+    }
+
     @Test
     public void chromatomyiaScabiosae() throws IOException, NodeFactoryException {
         TaxonNode taxon = nodeFactory.getOrCreateTaxon("Chromatomyia scabiosae");

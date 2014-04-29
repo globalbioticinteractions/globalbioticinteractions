@@ -47,6 +47,11 @@ public class EOLServiceIT {
     }
 
     @Test
+    public void greySmoothhound() throws TaxonPropertyLookupServiceException {
+        assertThat(lookupPageIdByName("Grey Smoothhound"), is(nullValue()));
+    }
+
+    @Test
     public void lookupBySquatLobster() throws TaxonPropertyLookupServiceException {
         HashMap<String, String> properties = new HashMap<String, String>();
         new EOLService().lookupPropertiesByName("Squat lobster", properties);
