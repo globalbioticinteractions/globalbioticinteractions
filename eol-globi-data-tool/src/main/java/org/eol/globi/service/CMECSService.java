@@ -15,6 +15,7 @@ import org.eol.globi.util.HttpUtil;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -35,7 +36,8 @@ public class CMECSService implements TermLookupService {
                 throw new TermLookupServiceException("failed to instantiate terms", e);
             }
         }
-        return Arrays.asList(termMap.get(name));
+        Term term = termMap.get(name);
+        return term == null ? new ArrayList<Term>() : Arrays.asList(term);
     }
 
     private static Map<String, Term> buildTermMap() throws IOException {
@@ -57,7 +59,8 @@ public class CMECSService implements TermLookupService {
         while ((row = table.getNextRow()) != null) {
             Integer id = (Integer) row.get("AquaticSetting_Id");
             String name = (String) row.get("AquaticSettingName");
-            aquaticSettingsTerms.put(name, new Term(TaxonomyProvider.ID_CMECS + id, name));
+            String termId = TaxonomyProvider.ID_CMECS + id;
+            aquaticSettingsTerms.put(name, new Term(termId, name));
         }
         cmecs.delete();
         LOG.info(CMECSService.class.getSimpleName() + " instantiated.");

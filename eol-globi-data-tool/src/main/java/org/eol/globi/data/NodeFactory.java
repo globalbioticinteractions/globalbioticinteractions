@@ -12,9 +12,11 @@ import org.eol.globi.domain.Season;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.TaxonNode;
+import org.eol.globi.domain.Term;
 import org.eol.globi.geo.EcoRegion;
 import org.eol.globi.geo.EcoRegionFinder;
 import org.eol.globi.geo.EcoRegionFinderException;
+import org.eol.globi.service.CMECSService;
 import org.eol.globi.service.DOIResolver;
 import org.eol.globi.service.EnvoLookupService;
 import org.eol.globi.service.TermLookupService;
@@ -325,8 +327,12 @@ public class NodeFactory {
             throw new NodeFactoryException("failed to lookup environment [" + name + "]");
         }
 
+        return addEnvironmentToLocation(location, terms);
+    }
+
+    public List<Environment> addEnvironmentToLocation(Location location, List<Term> terms) {
         List<Environment> normalizedEnvironments = new ArrayList<Environment>();
-        for (org.eol.globi.domain.Term term : terms) {
+        for (Term term : terms) {
             Environment environment = findEnvironment(term.getName());
             if (environment == null) {
                 Transaction transaction = graphDb.beginTx();

@@ -10,6 +10,8 @@ import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.TaxonomyProvider;
 import org.eol.globi.domain.Term;
+import org.eol.globi.service.CMECSService;
+import org.eol.globi.service.TermLookupServiceException;
 import org.neo4j.graphdb.Transaction;
 
 import java.io.IOException;
@@ -171,6 +173,7 @@ public class StudyImporterForGoMexSI extends BaseStudyImporter {
     private void addObservations(Map<String, Map<String, String>> predatorIdToPredatorSpecimen, Map<String, Study> refIdToStudyMap, Map<String, List<Map<String, String>>> predatorUIToPreyLists, Study metaStudy) throws StudyImporterException {
         String locationResource = getLocationsResourcePath();
         try {
+            CMECSService cmecsService = new CMECSService();
             LabeledCSVParser parser = parserFactory.createParser(locationResource, CharsetConstant.UTF8);
             while (parser.getLine() != null) {
                 String refId = getMandatoryValue(locationResource, parser, "REF_ID");
@@ -186,13 +189,19 @@ public class StudyImporterForGoMexSI extends BaseStudyImporter {
                 if (location == null) {
                     getLogger().warn(metaStudy, "failed to find location for [" + latitude + "], longitude" + " [" + longitude + "] in [" + locationResource + ":" + parser.getLastLineNumber() + "]");
                 } else {
-                    String cmecsId = "CMECS:" + habitatSystem + "_" + habitatSubsystem + "_" + habitatTidalZone;
+                    List<Term> terms;
                     String cmecsLabel = habitatSystem + " " + habitatSubsystem + " " + habitatTidalZone;
+                    String msg = "failed to map CMECS habitat [" + cmecsLabel + "] on line [" + parser.lastLineNumber() + "] of image [" + locationResource + "]";
                     try {
-                        nodeFactory.getOrCreateEnvironments(location, cmecsId, cmecsLabel);
-                    } catch (NodeFactoryException e) {
-                        LOG.warn("failed to normalize environment [" + cmecsId + "]", e);
+                        terms = cmecsService.lookupTermByName(cmecsLabel);
+                        if (terms.size() == 0) {
+                            LOG.warn(msg);
+                        }
+                        nodeFactory.addEnvironmentToLocation(location, terms);
+                    } catch (TermLookupServiceException e) {
+                        LOG.warn(msg, e);
                     }
+
                 }
 
                 String predatorId = refId + specimenId;
