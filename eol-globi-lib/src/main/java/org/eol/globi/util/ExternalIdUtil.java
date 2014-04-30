@@ -29,6 +29,7 @@ public class ExternalIdUtil {
             put(TaxonomyProvider.ID_PREFIX_WIKIPEDIA, "http://wikipedia.org/wiki/");
             put(TaxonomyProvider.ID_PREFIX_GULFBASE, "http://gulfbase.org/biogomx/biospecies.php?species=");
             put(TaxonomyProvider.ID_PREFIX_GAME, "http://research.myfwc.com/game/Survey.aspx?id=");
+            put(TaxonomyProvider.ID_CMECS, "http://cmecscatalog.org/classification/aquaticSetting/");
             put(TaxonomyProvider.ID_PREFIX_HTTP, TaxonomyProvider.ID_PREFIX_HTTP);
         }};
     }
