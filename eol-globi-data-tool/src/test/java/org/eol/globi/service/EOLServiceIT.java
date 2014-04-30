@@ -52,6 +52,13 @@ public class EOLServiceIT {
     }
 
     @Test
+    // see https://github.com/jhpoelen/eol-globi-data/issues/60
+    public void gallTissue() throws TaxonPropertyLookupServiceException {
+        assertThat(lookupPageIdByName("gall tissue"), is(nullValue()));
+        assertThat(lookupPageIdByName("gall"), is("EOL:210208"));
+    }
+
+    @Test
     public void lookupBySquatLobster() throws TaxonPropertyLookupServiceException {
         HashMap<String, String> properties = new HashMap<String, String>();
         new EOLService().lookupPropertiesByName("Squat lobster", properties);

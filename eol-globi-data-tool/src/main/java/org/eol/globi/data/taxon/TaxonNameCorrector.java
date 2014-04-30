@@ -80,6 +80,7 @@ public class TaxonNameCorrector implements CorrectionService {
             suggestors = new ArrayList<NameSuggestor>() {
                 {
                     add(new UKSISuggestionService());
+                    add(new ManualSuggestor());
                     add(new NameScrubber());
                     add(new ManualSuggestor());
                 }

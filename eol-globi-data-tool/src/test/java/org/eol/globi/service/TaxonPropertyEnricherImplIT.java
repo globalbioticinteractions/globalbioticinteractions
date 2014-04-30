@@ -75,6 +75,14 @@ public class TaxonPropertyEnricherImplIT extends GraphDBTestCase {
     }
 
     @Test
+    // see https://github.com/jhpoelen/eol-globi-data/issues/60
+    public void gallTissue() throws IOException, NodeFactoryException {
+        TaxonNode taxon = nodeFactory.getOrCreateTaxon("gall tissue (Q. robur)");
+        assertThat(taxon.getName(), is("Quercus robur"));
+        assertThat(taxon.getExternalId(), is("EOL:1151323"));
+    }
+
+    @Test
     public void chromatomyiaScabiosae() throws IOException, NodeFactoryException {
         TaxonNode taxon = nodeFactory.getOrCreateTaxon("Chromatomyia scabiosae");
         assertThat(taxon.getName(), is(PropertyAndValueDictionary.NO_MATCH));
