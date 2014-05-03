@@ -80,7 +80,9 @@ public class StudyImporterForSAID extends BaseStudyImporter {
 
     @Override
     public Study importStudy() throws StudyImporterException {
-        Study study = nodeFactory.getOrCreateStudy("SAID", "Species Interactions of Australia Database (SAID): Helping us to understand species interactions in Australia and beyond. Accessed at http://ala1.science.unsw.edu.au/ on " + new DateTime().toString("dd MMM YYYY") + ".", null);
+        String source = "Species Interactions of Australia Database (SAID): Helping us to understand species interactions in Australia and beyond. Accessed at http://ala1.science.unsw.edu.au/ on " + new DateTime().toString("dd MMM YYYY") + ".";
+        Study study = nodeFactory.getOrCreateStudy("SAID", source, null);
+        study.setCitationWithTx(source);
         String prefix = "http://ala1.science.unsw.edu.au/data/source/biodiversity.org.au:dataexport/";
         String resources[] = {
                 "interactions.Heteroptera.txt",
