@@ -20,17 +20,19 @@ import org.eol.globi.service.TaxonPropertyEnricherFactory;
 import org.eol.globi.service.TaxonPropertyLookupServiceException;
 import org.neo4j.graphdb.GraphDatabaseService;
 
+import java.util.Collection;
+
 public class Normalizer {
     private static final Log LOG = LogFactory.getLog(Normalizer.class);
 
     private EcoRegionFinder ecoRegionFinder = null;
 
     public static void main(final String[] commandLineArguments) throws StudyImporterException {
-        new Normalizer().normalize();
+        new Normalizer().normalize(StudyImporterFactory.getAvailableImporters());
     }
 
-    public void normalize() throws StudyImporterException {
-        normalize("./");
+    public void normalize(Collection<Class> importers) throws StudyImporterException {
+        normalize("./", importers);
     }
 
     private EcoRegionFinder getEcoRegionFinder() {
@@ -44,9 +46,9 @@ public class Normalizer {
         this.ecoRegionFinder = finder;
     }
 
-    public void normalize(String baseDir) throws StudyImporterException {
+    public void normalize(String baseDir, Collection<Class> importers) throws StudyImporterException {
         final GraphDatabaseService graphService = GraphService.getGraphService(baseDir);
-        importData(graphService);
+        importData(graphService, importers);
         try {
             new Linker().linkTaxa(graphService);
         } catch (TaxonPropertyLookupServiceException e) {
@@ -63,9 +65,9 @@ public class Normalizer {
     }
 
 
-    private void importData(GraphDatabaseService graphService) {
+    private void importData(GraphDatabaseService graphService, Collection<Class> importers) {
         NodeFactory factory = new NodeFactory(graphService, new TaxonServiceImpl(TaxonPropertyEnricherFactory.createTaxonEnricher(), new TaxonNameCorrector(), graphService));
-        for (Class importer : StudyImporterFactory.getAvailableImporters()) {
+        for (Class importer : importers) {
             try {
                 importData(importer, factory);
             } catch (StudyImporterException e) {

@@ -30,6 +30,12 @@
             </modules>
         </profile>
         <profile>
+            <id>generate-dark-datasets</id>
+            <modules>
+                <module>eol-globi-datasets-dark</module>
+            </modules>
+        </profile>
+        <profile>
             <id>generate-index</id>
             <modules>
                 <module>eol-globi-taxon-index</module>
