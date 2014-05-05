@@ -74,7 +74,22 @@
                                     <outputDirectory>${shapefiles.dir}/longhurst</outputDirectory>
                                 </artifactItem>
                                 <artifactItem>
-                                    <!-- bootstrap neo4j with taxon index -->
+                                    <groupId>org.eol.globi.dark</groupId>
+                                    <artifactId>fwdp</artifactId>
+                                    <version>1.0</version>
+                                    <type>zip</type>
+                                    <overWrite>false</overWrite>
+                                    <outputDirectory>${project.build.outputDirectory}/org/eol/globi/data/fwdp</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.eol.globi.dark</groupId>
+                                    <artifactId>fishbase</artifactId>
+                                    <version>1.0</version>
+                                    <type>zip</type>
+                                    <overWrite>false</overWrite>
+                                    <outputDirectory>${project.build.outputDirectory}/org/eol/globi/data</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
                                     <groupId>org.eol</groupId>
                                     <artifactId>eol-globi-datasets</artifactId>
                                     <version>${project.version}</version>
@@ -143,7 +158,7 @@
                 <version>1.0-beta-4</version>
                 <configuration>
                     <serverId>aws-snapshot</serverId>
-                    <url>s3://globi/snapshot</url>
+                    <url>s3://globi/dark</url>
                     <skip>${skipTests}</skip>
                     <includes>**/*Taxa.csv,**/*.tar.gz,**/*.zip</includes>
                 </configuration>
