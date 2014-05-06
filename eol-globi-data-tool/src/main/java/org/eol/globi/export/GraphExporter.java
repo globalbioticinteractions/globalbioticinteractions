@@ -29,6 +29,7 @@ public class GraphExporter {
     public void export(GraphDatabaseService graphService, String baseDir) throws StudyImporterException {
         List<Study> studies = NodeFactory.findAllStudies(graphService);
         exportUnmatchedTaxa(studies, baseDir);
+        exportGoMexSI(studies, baseDir);
         exportDarwinCoreAggregatedByStudy(baseDir, studies);
         exportDarwinCoreAll(baseDir, studies);
         exportDataOntology(studies, baseDir);
@@ -39,6 +40,16 @@ public class GraphExporter {
             FileUtils.forceMkdir(new File(baseDir));
             export(studies, baseDir + "unmatchedSourceTaxa.csv", new StudyExportUnmatchedSourceTaxaForStudies());
             export(studies, baseDir + "unmatchedTargetTaxa.csv", new StudyExportUnmatchedTargetTaxaForStudies());
+        } catch (IOException e) {
+            throw new StudyImporterException("failed to export unmatched source taxa", e);
+        }
+    }
+
+    // Provide simple data representation
+    private void exportGoMexSI(List<Study> studies, String baseDir) throws StudyImporterException {
+        try {
+            FileUtils.forceMkdir(new File(baseDir));
+            export(studies, baseDir + "interactionsGoMexSI.csv", new ExporterGoMexSI());
         } catch (IOException e) {
             throw new StudyImporterException("failed to export unmatched source taxa", e);
         }
