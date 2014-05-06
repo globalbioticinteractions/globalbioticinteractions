@@ -81,14 +81,14 @@
                                     <overWrite>false</overWrite>
                                     <outputDirectory>${project.build.outputDirectory}/org/eol/globi/data/fwdp</outputDirectory>
                                 </artifactItem>
-                                <artifactItem>
-                                    <groupId>org.eol.globi.dark</groupId>
-                                    <artifactId>fishbase</artifactId>
-                                    <version>1.0</version>
-                                    <type>zip</type>
-                                    <overWrite>false</overWrite>
-                                    <outputDirectory>${project.build.outputDirectory}/org/eol/globi/data</outputDirectory>
-                                </artifactItem>
+                                <!--<artifactItem>-->
+                                    <!--<groupId>org.eol.globi.dark</groupId>-->
+                                    <!--<artifactId>fishbase</artifactId>-->
+                                    <!--<version>1.0</version>-->
+                                    <!--<type>zip</type>-->
+                                    <!--<overWrite>false</overWrite>-->
+                                    <!--<outputDirectory>${project.build.outputDirectory}/org/eol/globi/data</outputDirectory>-->
+                                <!--</artifactItem>-->
                                 <artifactItem>
                                     <groupId>org.eol</groupId>
                                     <artifactId>eol-globi-datasets</artifactId>
