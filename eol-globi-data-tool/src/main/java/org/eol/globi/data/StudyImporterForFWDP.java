@@ -37,7 +37,7 @@ public class StudyImporterForFWDP extends BaseStudyImporter {
                 "Food Habits Database of Food Web Dynamics Program, Northeast Fisheries Science Center, National Oceanic and Atmospheric Administration (NOAA)."
                 , null
                 , "http://www.nefsc.noaa.gov/femad/pbio/fwdp/");
-        String studyResource = "fwdp/NEShelf/NEshelf_diet.csv.gz";
+        String studyResource = "fwdp/NEshelf/NEshelf_diet.csv.gz";
 
         Map<String, Long> predatorSpecimenMap = new HashMap<String, Long>();
         try {
