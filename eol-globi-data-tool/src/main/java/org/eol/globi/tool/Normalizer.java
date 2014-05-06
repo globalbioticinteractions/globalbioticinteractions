@@ -11,11 +11,13 @@ import org.eol.globi.data.StudyImporterFactory;
 import org.eol.globi.data.taxon.TaxonNameCorrector;
 import org.eol.globi.data.taxon.TaxonServiceImpl;
 import org.eol.globi.db.GraphService;
+import org.eol.globi.domain.Taxon;
 import org.eol.globi.export.GraphExporter;
 import org.eol.globi.geo.EcoRegionFinder;
 import org.eol.globi.geo.EcoRegionFinderFactoryImpl;
 import org.eol.globi.service.DOIResolverImpl;
 import org.eol.globi.service.EcoRegionFinderProxy;
+import org.eol.globi.service.TaxonPropertyEnricher;
 import org.eol.globi.service.TaxonPropertyEnricherFactory;
 import org.eol.globi.service.TaxonPropertyLookupServiceException;
 import org.neo4j.graphdb.GraphDatabaseService;
@@ -81,7 +83,13 @@ public class Normalizer {
 
 
     private void importData(GraphDatabaseService graphService, Collection<Class> importers) {
-        NodeFactory factory = new NodeFactory(graphService, new TaxonServiceImpl(TaxonPropertyEnricherFactory.createTaxonEnricher(), new TaxonNameCorrector(), graphService));
+        // taxon enrichment is during indexing process
+        NodeFactory factory = new NodeFactory(graphService, new TaxonServiceImpl(new TaxonPropertyEnricher() {
+            @Override
+            public void enrich(Taxon taxon) {
+
+            }
+        }, new TaxonNameCorrector(), graphService));
         for (Class importer : importers) {
             try {
                 importData(importer, factory);
