@@ -75,7 +75,8 @@ public class Normalizer {
     }
 
     private boolean isFalseOrMissing(String propertyName) {
-        return "false".equalsIgnoreCase(System.getProperty(propertyName));
+        String value = System.getProperty(propertyName);
+        return value == null || "false".equalsIgnoreCase(value);
     }
 
     private boolean shouldLink() {
