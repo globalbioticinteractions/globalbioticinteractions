@@ -48,17 +48,43 @@ public class Normalizer {
 
     public void normalize(String baseDir, Collection<Class> importers) throws StudyImporterException {
         final GraphDatabaseService graphService = GraphService.getGraphService(baseDir);
-        importData(graphService, importers);
-        try {
-            new Linker().linkTaxa(graphService);
-        } catch (TaxonPropertyLookupServiceException e) {
-            LOG.warn("failed to link taxa", e);
+        if (shouldImport()) {
+            importData(graphService, importers);
+        } else {
+            LOG.info("skipping data import...");
         }
-        exportData(graphService, baseDir);
+        if (shouldLink()) {
+            try {
+                new Linker().linkTaxa(graphService);
+            } catch (TaxonPropertyLookupServiceException e) {
+                LOG.warn("failed to link taxa", e);
+            }
+        } else {
+            LOG.info("skipping taxon linking...");
+        }
+        if (shouldExport()) {
+            exportData(graphService, baseDir);
+        } else {
+            LOG.info("skipping data export...");
+        }
         graphService.shutdown();
-        ecoRegionFinder.shutdown();
     }
 
+    private boolean shouldImport() {
+        return isFalseOrMissing("skip.import");
+    }
+
+    private boolean isFalseOrMissing(String propertyName) {
+        return "false".equalsIgnoreCase(System.getProperty(propertyName));
+    }
+
+    private boolean shouldLink() {
+        return isFalseOrMissing("skip.taxon.linking");
+    }
+
+    private boolean shouldExport() {
+        return isFalseOrMissing("skip.export");
+    }
 
     protected void exportData(GraphDatabaseService graphService, String baseDir) throws StudyImporterException {
         new GraphExporter().export(graphService, baseDir);
@@ -73,6 +99,10 @@ public class Normalizer {
             } catch (StudyImporterException e) {
                 LOG.error("problem encountered while importing [" + importer.getName() + "]", e);
             }
+        }
+        EcoRegionFinder regionFinder = getEcoRegionFinder();
+        if (regionFinder != null) {
+            regionFinder.shutdown();
         }
     }
 

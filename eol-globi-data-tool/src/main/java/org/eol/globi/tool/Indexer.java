@@ -58,12 +58,6 @@ public class Indexer {
         whereAndReturnClause = " WHERE not(has(origName.name)) AND has(origName.externalId) RETURN distinct(origName.externalId) as externalId";
         indexTaxonByProperty(executionEngine, taxonService, msgPrefix, whereAndReturnClause);
 
-        try {
-            new Linker().linkTaxa(freshGraphService);
-        } catch (TaxonPropertyLookupServiceException e) {
-            LOG.warn("failed to link taxa", e);
-        }
-
         freshGraphService.shutdown();
         previousGraphService.shutdown();
     }
