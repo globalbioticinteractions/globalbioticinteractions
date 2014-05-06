@@ -32,7 +32,8 @@ public class GraphExporter {
         exportGoMexSI(studies, baseDir);
         exportDarwinCoreAggregatedByStudy(baseDir, studies);
         exportDarwinCoreAll(baseDir, studies);
-        exportDataOntology(studies, baseDir);
+        // disable until GloBI ontology
+        //exportDataOntology(studies, baseDir);
     }
 
     private void exportUnmatchedTaxa(List<Study> studies, String baseDir) throws StudyImporterException {

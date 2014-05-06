@@ -53,15 +53,7 @@ public class Normalizer {
         } else {
             LOG.info("skipping data import...");
         }
-        if (shouldLink()) {
-            try {
-                new Linker().linkTaxa(graphService);
-            } catch (TaxonPropertyLookupServiceException e) {
-                LOG.warn("failed to link taxa", e);
-            }
-        } else {
-            LOG.info("skipping taxon linking...");
-        }
+
         if (shouldExport()) {
             exportData(graphService, baseDir);
         } else {
@@ -77,10 +69,6 @@ public class Normalizer {
     private boolean isFalseOrMissing(String propertyName) {
         String value = System.getProperty(propertyName);
         return value == null || "false".equalsIgnoreCase(value);
-    }
-
-    private boolean shouldLink() {
-        return isFalseOrMissing("skip.taxon.linking");
     }
 
     private boolean shouldExport() {
