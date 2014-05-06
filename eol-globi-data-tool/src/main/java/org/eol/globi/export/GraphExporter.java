@@ -51,7 +51,7 @@ public class GraphExporter {
             FileUtils.forceMkdir(new File(baseDir));
             export(studies, baseDir + "interactionsGoMexSI.csv", new ExporterGoMexSI());
         } catch (IOException e) {
-            throw new StudyImporterException("failed to export unmatched source taxa", e);
+            throw new StudyImporterException("failed to export GoMexSI", e);
         }
     }
 
