@@ -50,7 +50,7 @@ public class GraphExporter {
     private void exportGoMexSI(List<Study> studies, String baseDir) throws StudyImporterException {
         try {
             FileUtils.forceMkdir(new File(baseDir));
-            export(studies, baseDir + "interactionsGoMexSI.csv", new ExporterGoMexSI());
+            export(studies, baseDir + "GoMexSIInteractionsTaxa.csv", new ExporterGoMexSI());
         } catch (IOException e) {
             throw new StudyImporterException("failed to export GoMexSI", e);
         }

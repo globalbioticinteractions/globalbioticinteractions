@@ -18,8 +18,6 @@ import org.eol.globi.geo.EcoRegionFinderFactoryImpl;
 import org.eol.globi.service.DOIResolverImpl;
 import org.eol.globi.service.EcoRegionFinderProxy;
 import org.eol.globi.service.TaxonPropertyEnricher;
-import org.eol.globi.service.TaxonPropertyEnricherFactory;
-import org.eol.globi.service.TaxonPropertyLookupServiceException;
 import org.neo4j.graphdb.GraphDatabaseService;
 
 import java.util.Collection;

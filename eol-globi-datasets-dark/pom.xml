@@ -164,7 +164,7 @@
                     <serverId>aws-snapshot</serverId>
                     <url>s3://globi/dark</url>
                     <skip>${skipTests}</skip>
-                    <includes>**/*Taxa.csv,**/*.tar.gz,**/*.zip</includes>
+                    <includes>**/*Taxa.csv,**/${project.artifactId}-${project.version}*.tar.gz,**/${project.artifactId}-${project.version}*.zip</includes>
                 </configuration>
                 <executions>
                     <execution>
