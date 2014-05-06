@@ -162,7 +162,6 @@
                 <version>1.0-beta-4</version>
                 <configuration>
                     <serverId>aws-snapshot</serverId>
-                    <!--<url>s3://globi/dark</url>-->
                     <url>s3://globi/dark</url>
                     <skip>${skipTests}</skip>
                     <includes>**/*Taxa.csv,**/*.tar.gz,**/*.zip</includes>

@@ -41,8 +41,7 @@ public class ExporterGoMexSITest extends GraphDBTestCase {
             isFirst = false;
         }
 
-        assertThat(writer.toString(), containsString("Ariopsis felis"));
-
-
+        String actual = writer.toString();
+        assertThat(actual, containsString("Ariopsis felis"));
     }
 }

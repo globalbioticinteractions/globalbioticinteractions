@@ -6,7 +6,6 @@ import org.eol.globi.domain.Study;
 import org.neo4j.cypher.javacompat.ExecutionEngine;
 import org.neo4j.cypher.javacompat.ExecutionResult;
 import org.neo4j.graphdb.ResourceIterator;
-import scala.collection.convert.Wrappers;
 
 import java.io.IOException;
 import java.io.Writer;
