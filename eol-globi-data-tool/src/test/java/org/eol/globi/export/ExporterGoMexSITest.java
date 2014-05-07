@@ -11,10 +11,12 @@ import org.eol.globi.data.StudyImporter;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.data.StudyImporterForSimons;
 import org.eol.globi.domain.Study;
+import org.joda.time.DateTime;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.util.Date;
 import java.util.List;
 
 import static org.hamcrest.core.Is.is;

@@ -76,7 +76,7 @@ public class ExporterGoMexSI implements StudyExporter {
         query.append(", loc-[?:HAS_ENVIRONMENT]->environment");
         query.append(" RETURN predatorTaxon.name as `predator taxon name`, collect(distinct(predatorTaxonLinked.externalId)) as `predator taxon ids`");
         query.append(", preyTaxon.name as `prey taxon name`, collect(distinct(preyTaxonLinked.externalId)) as `prey taxon id`");
-        query.append(", c.time? as `time in unix epoch`, loc.latitude? as `latitude`, loc.longitude? as `longitude`, loc.altitude? as `depth(m)`");
+        query.append(", c.dateInUnixEpoch? as `observation time (unix time)`, loc.latitude? as `latitude`, loc.longitude? as `longitude`, loc.altitude? as `depth(m)`");
         query.append(", collect(distinct(environment.name)) as `environment names`, collect(distinct(environment.externalId)) as `environment ids`");
         query.append(", collect(distinct(ecoRegion.name)) as `ecoRegion names`, collect(distinct(ecoRegion.externalId)) as `ecoRegion ids`");
         query.append(", study.title as `study ref`");
