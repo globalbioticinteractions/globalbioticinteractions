@@ -346,8 +346,7 @@
                     <systemProperties>
                         <systemProperty>
                             <key>storeDir</key>
-                            <value>${project.build.directory}/data/eol-globi-datasets-1.0-SNAPSHOT/graph.db/
-                            </value>
+                            <value>${project.build.directory}/data/graph.db/</value>
                         </systemProperty>
                     </systemProperties>
                 </configuration>
