@@ -192,7 +192,7 @@ public class StudyImporterForRaymond extends BaseStudyImporter {
         String northString = dietParser.getValueByLabel(NORTH);
         String southString = dietParser.getValueByLabel(SOUTH);
 
-        Location loc;
+        Location loc = null;
         if (StringUtils.isBlank(westString) || StringUtils.isBlank(eastString) || StringUtils.isBlank(northString) || StringUtils.isBlank(southString)) {
             try {
                 loc = locationFromLocale(dietParser, study);
@@ -209,7 +209,7 @@ public class StudyImporterForRaymond extends BaseStudyImporter {
                 loc = nodeFactory.getOrCreateLocation(centroid.getLat(), centroid.getLng(), null);
             } catch (NodeFactoryException ex) {
                 String locationString = StringUtils.join(Arrays.asList(westString, northString, eastString, southString), ",");
-                throw new StudyImporterException("found invalid locations [" + locationString + "] on line [" + dietParser.lastLineNumber() + "]", ex);
+                LOG.warn("found invalid locations [" + locationString + "] on line [" + (dietParser.lastLineNumber() + 1) + "]: " + ex.getMessage());
             }
         }
         return loc;
