@@ -125,7 +125,7 @@ public class StudyImporterForSimons extends BaseStudyImporter {
         return season;
     }
 
-    private Location getOrCreateSampleLocation(LabeledCSVParser csvParser, Map<String, String> columnToNormalizedTermMapper) {
+    private Location getOrCreateSampleLocation(LabeledCSVParser csvParser, Map<String, String> columnToNormalizedTermMapper) throws StudyImporterException {
         Double northing = parseAsDouble(csvParser, columnToNormalizedTermMapper.get(NORTHING));
         Double easting = parseAsDouble(csvParser, columnToNormalizedTermMapper.get(EASTING));
 
@@ -140,7 +140,11 @@ public class StudyImporterForSimons extends BaseStudyImporter {
 
         Double depth = parseAsDouble(csvParser, columnToNormalizedTermMapper.get(DEPTH));
         Double altitude = depth == null ? null : -depth;
-        return nodeFactory.getOrCreateLocation(latitude, longitude, altitude);
+        try {
+            return nodeFactory.getOrCreateLocation(latitude, longitude, altitude);
+        } catch (NodeFactoryException e) {
+            throw new StudyImporterException("failed to create location", e);
+        }
     }
 
 

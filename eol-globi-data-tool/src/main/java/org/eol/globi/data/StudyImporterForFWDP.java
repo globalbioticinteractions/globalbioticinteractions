@@ -108,7 +108,7 @@ public class StudyImporterForFWDP extends BaseStudyImporter {
         return predatorSpecimen;
     }
 
-    private void addLocation(LabeledCSVParser parser, Specimen instigatorSpecimen) {
+    private void addLocation(LabeledCSVParser parser, Specimen instigatorSpecimen) throws NodeFactoryException {
         String latString = parser.getValueByLabel("declat");
         String lngString = parser.getValueByLabel("declon");
         Double lng = new Double(lngString);

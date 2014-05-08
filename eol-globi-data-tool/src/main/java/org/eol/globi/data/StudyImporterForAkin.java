@@ -84,7 +84,7 @@ public class StudyImporterForAkin extends BaseStudyImporter {
         return siteInfo;
     }
 
-    private Location parseLocation(String[] siteInfo) throws StudyImporterException, IOException {
+    private Location parseLocation(String[] siteInfo) throws StudyImporterException, IOException, NodeFactoryException {
         Double longitude;
         Double latitude;
         // TODO note that this study was taken in shallow water ~ 0.7m, probably better to include a depth range?

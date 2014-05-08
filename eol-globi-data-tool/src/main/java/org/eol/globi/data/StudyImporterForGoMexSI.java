@@ -245,6 +245,8 @@ public class StudyImporterForGoMexSI extends BaseStudyImporter {
             }
         } catch (IOException e) {
             throw new StudyImporterException("failed to open resource [" + locationResource + "]", e);
+        } catch (NodeFactoryException e) {
+
         }
 
     }

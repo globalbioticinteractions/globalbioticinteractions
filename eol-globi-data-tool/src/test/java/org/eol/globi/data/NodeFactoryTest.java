@@ -39,7 +39,7 @@ import static org.junit.Assert.assertThat;
 public class NodeFactoryTest extends GraphDBTestCase {
 
     @Test
-    public void createFindLocation() {
+    public void createFindLocation() throws NodeFactoryException {
         Location location = nodeFactory.getOrCreateLocation(1.2d, 1.4d, -1.0d);
         nodeFactory.getOrCreateLocation(2.2d, 1.4d, -1.0d);
         nodeFactory.getOrCreateLocation(1.2d, 2.4d, -1.0d);
@@ -49,6 +49,14 @@ public class NodeFactoryTest extends GraphDBTestCase {
         Assert.assertNotNull(location1);
         Location foundLocationNoDepth = nodeFactory.findLocation(locationNoDepth.getLatitude(), locationNoDepth.getLongitude(), null);
         Assert.assertNotNull(foundLocationNoDepth);
+    }
+
+    @Test(expected = NodeFactoryException.class)
+    public void createInvalidLocation() throws NodeFactoryException {
+        nodeFactory.getOrCreateLocation(91.3d, -104.0d, -1.0d);
+        nodeFactory.getOrCreateLocation(-100.3d, 104d, -1.0d);
+        nodeFactory.getOrCreateLocation(-10.3d, -200.0d, -1.0d);
+        nodeFactory.getOrCreateLocation(-20.0d, 300.0d, -1.0d);
     }
 
     @Test

@@ -16,7 +16,6 @@ import org.eol.globi.domain.Term;
 import org.eol.globi.geo.EcoRegion;
 import org.eol.globi.geo.EcoRegionFinder;
 import org.eol.globi.geo.EcoRegionFinderException;
-import org.eol.globi.service.CMECSService;
 import org.eol.globi.service.DOIResolver;
 import org.eol.globi.service.EnvoLookupService;
 import org.eol.globi.service.TermLookupService;
@@ -276,9 +275,10 @@ public class NodeFactory {
         return seasonHit == null ? null : new Season(seasonHit);
     }
 
-    public Location getOrCreateLocation(Double latitude, Double longitude, Double altitude) {
+    public Location getOrCreateLocation(Double latitude, Double longitude, Double altitude) throws NodeFactoryException {
         Location location = null;
         if (latitude != null && longitude != null) {
+            validate(latitude, longitude);
             location = findLocation(latitude, longitude, altitude);
             if (null == location) {
                 location = createLocation(latitude, longitude, altitude);
@@ -290,6 +290,15 @@ public class NodeFactory {
             }
         }
         return location;
+    }
+
+    private void validate(Double latitude, Double longitude) throws NodeFactoryException {
+        if (latitude > 90.0 || latitude < -90.0) {
+            throw new NodeFactoryException("found invalid latitude [" + latitude + "]");
+        }
+        if (longitude > 180.0 || longitude < -180.0) {
+            throw new NodeFactoryException("found invalid latitude [" + latitude + "]");
+        }
     }
 
     public void setUnixEpochProperty(Relationship rel, Date date) {

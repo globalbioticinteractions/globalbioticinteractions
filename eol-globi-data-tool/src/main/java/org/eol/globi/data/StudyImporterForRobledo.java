@@ -31,7 +31,12 @@ public class StudyImporterForRobledo extends BaseStudyImporter {
         // spatial location from: http://www.ots.ac.cr/index.php?option=com_content&task=view&id=163&Itemid=348
         Double latitude = LocationUtil.parseDegrees("10°26'N");
         Double longitude = LocationUtil.parseDegrees("83°59'W");
-        Location location = nodeFactory.getOrCreateLocation(latitude, longitude, 35.0);
+        Location location;
+        try {
+            location = nodeFactory.getOrCreateLocation(latitude, longitude, 35.0);
+        } catch (NodeFactoryException e) {
+            throw new StudyImporterException("failed to create location", e);
+        }
 
         // TODO: need to map date range of collections
         String studyResource = "robledo/table_s1_extract.csv";

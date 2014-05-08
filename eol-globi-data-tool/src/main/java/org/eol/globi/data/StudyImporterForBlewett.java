@@ -76,7 +76,12 @@ public class StudyImporterForBlewett extends BaseStudyImporter {
             if (StringUtils.isBlank(longitude)) {
                 getLogger().warn(study, "blank value for longitude for line: [" + locationParser.getLastLineNumber() + "]");
             }
-            Location location = nodeFactory.getOrCreateLocation(Double.parseDouble(latitude), Double.parseDouble(longitude), 0.0);
+            Location location;
+            try {
+                location = nodeFactory.getOrCreateLocation(Double.parseDouble(latitude), Double.parseDouble(longitude), 0.0);
+            } catch (NodeFactoryException e) {
+                throw new StudyImporterException("failed to create location", e);
+            }
             collectionLocationMap.put(collectionCode, location);
 
             String timeString = locationParser.getValueByLabel("Time");

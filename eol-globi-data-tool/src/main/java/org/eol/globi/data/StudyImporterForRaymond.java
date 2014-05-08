@@ -177,7 +177,7 @@ public class StudyImporterForRaymond extends BaseStudyImporter {
         }
     }
 
-    private Location parseLocation(LabeledCSVParser dietParser, Study study) {
+    private Location parseLocation(LabeledCSVParser dietParser, Study study) throws NodeFactoryException {
         /**
          * left, top ------- right, top
          *  |                 |

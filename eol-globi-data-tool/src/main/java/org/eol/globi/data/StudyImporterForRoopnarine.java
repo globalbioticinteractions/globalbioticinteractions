@@ -42,7 +42,11 @@ public class StudyImporterForRoopnarine extends BaseStudyImporter {
                 study.collected(predator);
                 LatLng latLng = resourceLatLngEntry.getValue();
                 // TODO - depth is not encoded here
-                predator.caughtIn(nodeFactory.getOrCreateLocation(latLng.getLat(), latLng.getLng(), 0.0));
+                try {
+                    predator.caughtIn(nodeFactory.getOrCreateLocation(latLng.getLat(), latLng.getLng(), 0.0));
+                } catch (NodeFactoryException e) {
+                    throw new StudyImporterException("failed to create location", e);
+                }
             }
             getLogger().info(study, "import of [" + studyResource + "] done.");
         }

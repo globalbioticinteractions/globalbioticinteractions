@@ -126,7 +126,12 @@ public class StudyImporterForWrast extends BaseStudyImporter {
                 getLogger().warn(study, createMsgPrefix(csvParser) + " failed to find depth for habitat, region, site and season: [" + createDepthId(seasonName, region, site, habitat) + "], skipping entry");
             }
 
-            Location sampleLocation = nodeFactory.getOrCreateLocation(latLng1.getLat(), latLng1.getLng(), altitude);
+            Location sampleLocation;
+            try {
+                sampleLocation = nodeFactory.getOrCreateLocation(latLng1.getLat(), latLng1.getLng(), altitude);
+            } catch (NodeFactoryException e) {
+                throw new StudyImporterException("failed to create location", e);
+            }
             prey.caughtIn(sampleLocation);
             prey.caughtDuring(getOrCreateSeason(seasonName));
 

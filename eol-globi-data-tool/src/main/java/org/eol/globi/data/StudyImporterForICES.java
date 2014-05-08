@@ -89,11 +89,16 @@ public class StudyImporterForICES extends BaseStudyImporter {
         }
     }
 
-    private void addLocation(LabeledCSVParser parser, Specimen predatorSpecimen) {
+    private void addLocation(LabeledCSVParser parser, Specimen predatorSpecimen) throws StudyImporterException {
         Double lat = parseDoubleField(parser, "Latitude");
         Double lon = parseDoubleField(parser, "Longitude");
         Double depth = parseDoubleField(parser, "Depth");
-        Location loc = nodeFactory.getOrCreateLocation(lat, lon, depth == null ? null : -depth);
+        Location loc = null;
+        try {
+            loc = nodeFactory.getOrCreateLocation(lat, lon, depth == null ? null : -depth);
+        } catch (NodeFactoryException e) {
+            throw new StudyImporterException("failed to create location", e);
+        }
         predatorSpecimen.caughtIn(loc);
     }
 
