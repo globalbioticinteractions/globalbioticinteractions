@@ -30,6 +30,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.Reader;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -177,7 +178,7 @@ public class StudyImporterForRaymond extends BaseStudyImporter {
         }
     }
 
-    private Location parseLocation(LabeledCSVParser dietParser, Study study) throws NodeFactoryException {
+    private Location parseLocation(LabeledCSVParser dietParser, Study study) throws StudyImporterException {
         /**
          * left, top ------- right, top
          *  |                 |
@@ -191,39 +192,57 @@ public class StudyImporterForRaymond extends BaseStudyImporter {
         String northString = dietParser.getValueByLabel(NORTH);
         String southString = dietParser.getValueByLabel(SOUTH);
 
-        LatLng centroid = null;
+        Location loc;
         if (StringUtils.isBlank(westString) || StringUtils.isBlank(eastString) || StringUtils.isBlank(northString) || StringUtils.isBlank(southString)) {
-            String location = dietParser.getValueByLabel("LOCATION");
-            if (StringUtils.isNotBlank(location)) {
-                String cleanedLocationString = location.replaceAll("\\.$", "");
-                getLocations().add(cleanedLocationString);
-                try {
-                    centroid = getGeoNamesService().findPointForLocality(cleanedLocationString);
-                    if (centroid == null) {
-                        getLogger().warn(study, "missing lat/lng bounding box [" + dietParser.lastLineNumber() + "] and attempted to using location [" + location + "] failed.");
-                    }
-                } catch (IOException e) {
-                    getLogger().warn(study, "failed to lookup point for location [" + location + "] on line [" + dietParser.lastLineNumber() + "]");
-                }
+            try {
+                loc = locationFromLocale(dietParser, study);
+            } catch (NodeFactoryException ex) {
+                throw new StudyImporterException("found invalid location on line [" + dietParser.lastLineNumber() + "]", ex);
             }
         } else {
             double left = Double.parseDouble(westString);
             double top = Double.parseDouble(northString);
             double right = Double.parseDouble(eastString);
             double bottom = Double.parseDouble(southString);
-            centroid = calculateCentroidOfBBox(left, top, right, bottom);
+            LatLng centroid = calculateCentroidOfBBox(left, top, right, bottom);
+            try {
+                loc = nodeFactory.getOrCreateLocation(centroid.getLat(), centroid.getLng(), null);
+            } catch (NodeFactoryException ex) {
+                String locationString = StringUtils.join(Arrays.asList(westString, northString, eastString, southString), ",");
+                throw new StudyImporterException("found invalid locations [" + locationString + "] on line [" + dietParser.lastLineNumber() + "]", ex);
+            }
         }
+        return loc;
+    }
 
-        return centroid == null ? null : nodeFactory.getOrCreateLocation(centroid.getLat(), centroid.getLng(), null);
+    private Location locationFromLocale(LabeledCSVParser dietParser, Study study) throws NodeFactoryException {
+        Location loc = null;
+        LatLng centroid;
+        String location = dietParser.getValueByLabel("LOCATION");
+        if (StringUtils.isNotBlank(location)) {
+            String cleanedLocationString = location.replaceAll("\\.$", "");
+            getLocations().add(cleanedLocationString);
+            try {
+                centroid = getGeoNamesService().findPointForLocality(cleanedLocationString);
+                if (centroid == null) {
+                    getLogger().warn(study, "missing lat/lng bounding box [" + dietParser.lastLineNumber() + "] and attempted to using location [" + location + "] failed.");
+                } else {
+                    loc = nodeFactory.getOrCreateLocation(centroid.getLat(), centroid.getLng(), null);
+                }
+            } catch (IOException e) {
+                getLogger().warn(study, "failed to lookup point for location [" + location + "] on line [" + dietParser.lastLineNumber() + "]");
+            }
+        }
+        return loc;
     }
 
     static protected LatLng calculateCentroidOfBBox(double left, double top, double right, double bottom) {
         LatLng latLng;
         if (left == right && top == bottom) {
-            latLng = new LatLng(left, top);
+            latLng = new LatLng(top, left);
         } else {
-            Coordinate[] points = {GeoUtil.getCoordinate(left, top), GeoUtil.getCoordinate(right, top),
-                    GeoUtil.getCoordinate(right, bottom), GeoUtil.getCoordinate(left, bottom), GeoUtil.getCoordinate(left, top)};
+            Coordinate[] points = {GeoUtil.getCoordinate(top, left), GeoUtil.getCoordinate(top, right),
+                    GeoUtil.getCoordinate(bottom, right), GeoUtil.getCoordinate(bottom, left), GeoUtil.getCoordinate(top, left)};
             GeometryFactory geometryFactory = new GeometryFactory();
             Polygon polygon = geometryFactory.createPolygon(points);
             Point centroid = polygon.getCentroid();

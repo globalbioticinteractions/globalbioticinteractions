@@ -293,11 +293,12 @@ public class NodeFactory {
     }
 
     private void validate(Double latitude, Double longitude) throws NodeFactoryException {
-        if (latitude > 90.0 || latitude < -90.0) {
+
+        if (!LocationUtil.isValidLatitude(latitude)) {
             throw new NodeFactoryException("found invalid latitude [" + latitude + "]");
         }
-        if (longitude > 180.0 || longitude < -180.0) {
-            throw new NodeFactoryException("found invalid latitude [" + latitude + "]");
+        if (!LocationUtil.isValidLongitude(longitude)) {
+            throw new NodeFactoryException("found invalid longitude [" + longitude + "]");
         }
     }
 

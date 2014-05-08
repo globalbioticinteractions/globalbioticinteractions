@@ -29,4 +29,12 @@ public class LocationUtil {
         lat = lat * (latString.endsWith("N") || latString.endsWith("E") ? 1.0 : -1.0);
         return lat;
     }
+
+    public static boolean isValidLongitude(Double longitude) {
+        return longitude <= 180.0 && longitude >= -180.0;
+    }
+
+    public static boolean isValidLatitude(Double latitude) {
+        return latitude <= 90.0 && latitude >= -90.0;
+    }
 }

@@ -25,8 +25,8 @@ public class StudyImporterForRaymondTest extends GraphDBTestCase {
         double bottom = -63.95;
         double top = -63.95;
         LatLng latLng = StudyImporterForRaymond.calculateCentroidOfBBox(left, top, right, bottom);
-        assertThat(latLng.getLat(), is(-61.66666667));
-        assertThat(latLng.getLng(), is(-63.95));
+        assertThat(latLng.getLng(), is(-61.66666667));
+        assertThat(latLng.getLat(), is(-63.95));
     }
 
     @Test
@@ -36,8 +36,8 @@ public class StudyImporterForRaymondTest extends GraphDBTestCase {
         double top = -2;
         double bottom = -4;
         LatLng latLng = StudyImporterForRaymond.calculateCentroidOfBBox(left, top, right, bottom);
-        assertThat(latLng.getLat(), is(-2.5));
-        assertThat(latLng.getLng(), is(-3.0));
+        assertThat(latLng.getLng(), is(-2.5));
+        assertThat(latLng.getLat(), is(-3.0));
     }
 
 
