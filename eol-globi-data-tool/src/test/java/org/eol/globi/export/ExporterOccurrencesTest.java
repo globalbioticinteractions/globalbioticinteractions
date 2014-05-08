@@ -36,9 +36,9 @@ public class ExporterOccurrencesTest extends GraphDBTestCase {
     }
 
     private String getExpectedData() {
-        return "\nglobi:occur:3,EOL:327955,,,,,JUVENILE,,,,,,,,,,,,1992-03-30T08:00:00Z,,,123.0,345.9,,,-60.0 m,DIGESTATE,BONE" +
-               "\nglobi:occur:6,EOL:328607,,,,,,,,,,,,,,,,,1992-03-30T08:00:00Z,,,123.0,345.9,,,-60.0 m,," +
-               "\nglobi:occur:8,EOL:328607,,,,,,,,,,,,,,,,,1992-03-30T08:00:00Z,,,123.0,345.9,,,-60.0 m,,";
+        return "\nglobi:occur:3,EOL:327955,,,,,JUVENILE,,,,,,,,,,,,1992-03-30T08:00:00Z,,,12.0,-1.0,,,-60.0 m,DIGESTATE,BONE" +
+               "\nglobi:occur:6,EOL:328607,,,,,,,,,,,,,,,,,1992-03-30T08:00:00Z,,,12.0,-1.0,,,-60.0 m,," +
+               "\nglobi:occur:8,EOL:328607,,,,,,,,,,,,,,,,,1992-03-30T08:00:00Z,,,12.0,-1.0,,,-60.0 m,,";
     }
 
     private String getExpectedHeader() {
@@ -118,7 +118,7 @@ public class ExporterOccurrencesTest extends GraphDBTestCase {
             specimen.setLengthInMm(length);
         }
 
-        Location location = nodeFactory.getOrCreateLocation(123.0, 345.9, -60.0);
+        Location location = nodeFactory.getOrCreateLocation(12.0, -1.0, -60.0);
         specimen.caughtIn(location);
     }
 

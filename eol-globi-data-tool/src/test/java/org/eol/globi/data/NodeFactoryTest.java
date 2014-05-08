@@ -85,7 +85,7 @@ public class NodeFactoryTest extends GraphDBTestCase {
         assertThat(environment.getName(), is("this_and_that"));
         assertThat(environment.getExternalId(), is("NS:this and that"));
 
-        Location anotherLocation = nodeFactory.getOrCreateLocation(123.2, 123.1, null);
+        Location anotherLocation = nodeFactory.getOrCreateLocation(48.2, 123.1, null);
         assertThat(anotherLocation.getEnvironments().size(), is(0));
         anotherLocation.addEnvironment(environment);
         assertThat(anotherLocation.getEnvironments().size(), is(1));

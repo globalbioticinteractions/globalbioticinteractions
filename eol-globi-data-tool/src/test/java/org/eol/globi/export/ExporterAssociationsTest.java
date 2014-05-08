@@ -59,7 +59,7 @@ public class ExporterAssociationsTest extends GraphDBTestCase {
             specimen.setLengthInMm(length);
         }
 
-        Location location = nodeFactory.getOrCreateLocation(123.0, 345.9, -60.0);
+        Location location = nodeFactory.getOrCreateLocation(13.0, 45.9, -60.0);
         specimen.caughtIn(location);
     }
 
