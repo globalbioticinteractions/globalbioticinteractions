@@ -2,6 +2,8 @@ package org.eol.globi.data;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.codehaus.jackson.JsonNode;
@@ -10,10 +12,12 @@ import org.eol.globi.util.HttpUtil;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -32,11 +36,12 @@ import static org.junit.matchers.JUnitMatchers.hasItem;
 
 public class StudyImporterForVertNetTest extends GraphDBTestCase {
 
+    private static final Log LOG = LogFactory.getLog(StudyImporterForVertNetTest.class);
 
     @Test
     public void testResponse() throws IOException {
         List<String> stomachStrings = new ArrayList<String>();
-        JsonNode jsonNode = parseResponse(stomachStrings, IOUtils.toString(new GZIPInputStream(getClass().getResourceAsStream("vertnet/example_response.json.gz"))));
+        JsonNode jsonNode = parseResponse(stomachStrings, IOUtils.toString(new GZIPInputStream(getClass().getResourceAsStream("vertnet/example_response.json.gz"))), new FileOutputStream("./vertnet.csv"));
         assertThat(jsonNode, is(notNullValue()));
         assertThat(stomachStrings, hasItems("gravel", "insect parts", "sand"));
     }
@@ -46,8 +51,9 @@ public class StudyImporterForVertNetTest extends GraphDBTestCase {
     public void importStomachData() throws URISyntaxException, IOException {
         String oldCursor = null;
         String cursor = null;
-
-
+        File file = new File("./vertnet.csv");
+        LOG.info("writing to: [" + file.getAbsolutePath() + "]");
+        FileOutputStream fos = new FileOutputStream(file);
         while (StringUtils.isBlank(cursor) || !StringUtils.equals(cursor, oldCursor)) {
             List<String> stomachStrings = new ArrayList<String>();
             String uri = createRequestURL(cursor);
@@ -55,28 +61,30 @@ public class StudyImporterForVertNetTest extends GraphDBTestCase {
 
             if (200 == resp.getStatusLine().getStatusCode()) {
                 String jsonString = IOUtils.toString(resp.getEntity().getContent());
-                JsonNode jsonNode = parseResponse(stomachStrings, jsonString);
+                JsonNode jsonNode = parseResponse(stomachStrings, jsonString, fos);
                 if (jsonNode.has("cursor")) {
                     oldCursor = cursor;
                     cursor = jsonNode.get("cursor").getTextValue();
                 }
             }
+            fos.flush();
         }
+        fos.close();
     }
 
-    private JsonNode parseResponse(List<String> stomachStrings, String jsonString) throws IOException {
+    private JsonNode parseResponse(List<String> stomachStrings, String jsonString, OutputStream outputStream) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         JsonNode jsonNode = mapper.readTree(jsonString);
         JsonNode recs = jsonNode.get("recs");
 
         for (JsonNode rec : recs) {
-            parseRecord(stomachStrings, rec);
+            parseRecord(stomachStrings, rec, outputStream);
         }
         return jsonNode;
     }
 
 
-    private void parseRecord(Collection<String> stomachStrings, JsonNode rec) throws IOException {
+    private void parseRecord(Collection<String> stomachStrings, JsonNode rec, OutputStream outputStream) throws IOException {
         if (rec.has("dynamicproperties")) {
             String props = rec.get("dynamicproperties").getTextValue();
             Map<String, String> dynProps = new HashMap<String, String>();
@@ -91,22 +99,26 @@ public class StudyImporterForVertNetTest extends GraphDBTestCase {
                 }
 
             }
+            String stomachContents = "";
             if (dynProps.containsKey("stomach contents")) {
-                String stomachContents = dynProps.get("stomach contents");
-                String remarks = "";
-                stomachStrings.add(stomachContents);
-                if ("contents recorded".equals(stomachContents)) {
-                    if (rec.has("occurrenceremarks")) {
-                        remarks = rec.get("occurrenceremarks").getTextValue();
-                    }
+                stomachContents = dynProps.get("stomach contents");
+            }
+            String remarks = "";
+            stomachStrings.add(stomachContents);
+            if (StringUtils.isNotBlank(stomachContents)) {
+                if (rec.has("occurrenceremarks")) {
+                    remarks = rec.get("occurrenceremarks").getTextValue();
                 }
-                System.out.println("\"" + rec.get("individualid").getTextValue() + "\",\"" + stomachContents + "\", \"" + remarks + "\"");
+                String line = "\"" + (rec.has("individualid") ? rec.get("individualid").getTextValue() : "") + "\",\"" + stomachContents + "\", \"" + remarks + "\"\n";
+                IOUtils.write(line, outputStream);
             }
         }
+
+
     }
 
     private String createRequestURL(String cursor) {
-        String s = "http://api.vertnet-portal.appspot.com/api/search?q=%7B%22q%22%3A%22stomach%22%2C%22l%22%3A%2210%22";
+        String s = "http://api.vertnet-portal.appspot.com/api/search?q=%7B%22q%22%3A%22stomach%22";
         if (cursor != null) {
             s += "%2C%22c%22%3A%22" + cursor + "%22";
         }
