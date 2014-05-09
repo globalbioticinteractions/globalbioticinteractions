@@ -57,7 +57,7 @@ public class StudyImporterForHurlbert extends BaseStudyImporter {
 
                 String predatorName = parser.getValueByLabel("Scientific_Name");
                 try {
-                    Specimen predatorSpecimen = nodeFactory.createSpecimen(predatorName, "HURLBERT:" + parser.getValueByLabel("ID"));
+                    Specimen predatorSpecimen = nodeFactory.createSpecimen(predatorName);
                     //Longitude,Latitude,Altitude_min_m,Altitude_mean_m,Altitude_max_m,
 
                     Specimen preySpecimen = nodeFactory.createSpecimen(preyTaxonName);
