@@ -15,7 +15,7 @@ import static org.junit.Assert.assertThat;
 public class LinkerTest extends GraphDBTestCase {
 
     @Test
-    public void twoTaxa() throws NodeFactoryException, TaxonPropertyLookupServiceException {
+    public void threeTaxa() throws NodeFactoryException, TaxonPropertyLookupServiceException {
         nodeFactory.getOrCreateTaxon("Homo sapiens");
         nodeFactory.getOrCreateTaxon("Ariopsis felis");
         nodeFactory.getOrCreateTaxon("Canis lupus");
@@ -25,6 +25,18 @@ public class LinkerTest extends GraphDBTestCase {
         assertHasOther("Homo sapiens", 2);
         assertHasOther("Canis lupus", 2);
         assertHasOther("Ariopsis felis", 3);
+
+    }
+
+    @Test
+    public void australianTaxa() throws NodeFactoryException, TaxonPropertyLookupServiceException {
+        nodeFactory.getOrCreateTaxon("Gilippus hostilis");
+        nodeFactory.getOrCreateTaxon("Euander lacertosus");
+
+        new Linker().linkTaxa(getGraphDb());
+
+        assertHasOther("Euander lacertosus", 1);
+        assertHasOther("Gilippus hostilis", 1);
 
     }
 

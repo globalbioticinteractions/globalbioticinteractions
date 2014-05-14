@@ -7,7 +7,8 @@ public enum TaxonomyProvider {
     EOL("EOL:"),
     GEONAMES("GEO:"),
     WIKIPEDIA("W:"),
-    ENVO("ENVO:");
+    ENVO("ENVO:"),
+    GBIF("GBIF:");
 
     private final String idPrefix;
 
@@ -29,6 +30,7 @@ public enum TaxonomyProvider {
     public static final String ID_PREFIX_GAME = "GAME:";
     public static final String ID_PREFIX_HTTP = "http://";
     public static final String ID_PREFIX_USKI = "UKSI:";
+    public static final String ID_PREFIX_GBIF = GBIF.getIdPrefix();
     public static final String ID_CMECS = "CMECS:AQUATIC_SETTING:";
     public static final String BIO_INFO = "bioinfo:";
 
