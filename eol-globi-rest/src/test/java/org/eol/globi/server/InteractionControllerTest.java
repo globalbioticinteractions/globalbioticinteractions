@@ -182,7 +182,7 @@ public class InteractionControllerTest {
     @Test
     public void findInteractions() throws IOException {
         String externalLink = new InteractionController().findInteractions(getLocationRequest());
-        // TODO re-enable assertThat(externalLink, containsString("ATE"));
+        assertThat(externalLink, containsString("ATE"));
         assertThat(externalLink, containsString(ResultFields.SOURCE_TAXON_PATH));
         assertThat(externalLink, containsString(ResultFields.TARGET_TAXON_PATH));
     }
@@ -190,7 +190,7 @@ public class InteractionControllerTest {
     @Test
     public void findInteractionsBox() throws IOException {
         String externalLink = new InteractionController().findInteractions(getLocationBoxRequest());
-        // TODO re-enable assertThat(externalLink, containsString("ATE"));
+        assertThat(externalLink, containsString("ATE"));
         assertThat(externalLink, containsString(ResultFields.SOURCE_TAXON_PATH));
         assertThat(externalLink, containsString(ResultFields.TARGET_TAXON_PATH));
     }
