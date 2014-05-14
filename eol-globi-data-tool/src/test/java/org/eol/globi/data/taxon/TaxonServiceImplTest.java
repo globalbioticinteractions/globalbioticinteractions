@@ -17,6 +17,7 @@ import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.IndexHits;
 
 import static junit.framework.Assert.assertNull;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertEquals;
@@ -124,6 +125,18 @@ public class TaxonServiceImplTest extends GraphDBTestCase {
         TaxonNode taxon = taxonService.getOrCreateTaxon("bla bla", null, null);
         assertThat(taxon, is(notNullValue()));
         assertEquals("bla bla", taxon.getName());
+    }
+
+    @Test
+    public void doNotIndexMagicValuesTaxon() throws NodeFactoryException {
+        assertNotIndexed(PropertyAndValueDictionary.NO_NAME);
+        assertNotIndexed(PropertyAndValueDictionary.NO_MATCH);
+    }
+
+    private void assertNotIndexed(String magicValue) throws NodeFactoryException {
+        TaxonNode taxon = taxonService.getOrCreateTaxon(magicValue, null, null);
+        assertThat(taxon, is(notNullValue()));
+        assertThat(taxonService.findTaxonByName(magicValue), is(nullValue()));
     }
 
     @Test

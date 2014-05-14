@@ -209,7 +209,8 @@ public class TaxonServiceImpl implements TaxonService {
 
     private void addToIndeces(TaxonNode taxon, String indexedName) {
         if (StringUtils.isNotBlank(indexedName)) {
-            if (!StringUtils.equals(PropertyAndValueDictionary.NO_MATCH, indexedName)) {
+            if (!StringUtils.equals(PropertyAndValueDictionary.NO_MATCH, indexedName)
+                  && !StringUtils.equals(PropertyAndValueDictionary.NO_NAME, indexedName) ) {
                 taxons.add(taxon.getUnderlyingNode(), PropertyAndValueDictionary.NAME, indexedName);
             }
 
