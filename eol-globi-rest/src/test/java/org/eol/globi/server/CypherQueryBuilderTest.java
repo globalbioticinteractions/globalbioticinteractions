@@ -99,6 +99,14 @@ public class CypherQueryBuilderTest {
     }
 
     @Test
+    public void findPlantParasiteObservationsWithoutLocation() throws IOException {
+        HashMap<String, String[]> params = new HashMap<String, String[]>();
+        CypherQuery query = CypherQueryBuilder.interactionObservations("Homo sapiens", "parasiteOf", "Plantae", params);
+        assertThat(query.getQuery(), is("START sourceTaxon = node:taxonpaths({source_taxon_name}), targetTaxon = node:taxonpaths({target_taxon_name}) MATCH (sourceTaxon)<-[:CLASSIFIED_AS]-(sourceSpecimen)-[:PARASITE_OF|HAS_HOST]->(targetSpecimen)-[:CLASSIFIED_AS]->(targetTaxon),(sourceSpecimen)<-[collected_rel:COLLECTED]-(study) RETURN sourceTaxon.name as source_taxon_name,'parasiteOf' as interaction_type,targetTaxon.name as target_taxon_name, null as latitude, null as longitude, null as altitude,study.title as study_title,collected_rel.dateInUnixEpoch? as collection_time_in_unix_epoch,ID(sourceSpecimen) as tmp_and_unique_source_specimen_id,ID(targetSpecimen) as tmp_and_unique_target_specimen_id,sourceSpecimen.lifeStageLabel? as source_specimen_life_stage,targetSpecimen.lifeStageLabel? as target_specimen_life_stage,sourceSpecimen.bodyPartLabel? as source_specimen_body_part,targetSpecimen.bodyPartLabel? as target_specimen_body_part,sourceSpecimen.physiologicalStateLabel? as source_specimen_physiological_state,targetSpecimen.physiologicalStateLabel? as target_specimen_physiological_state,targetSpecimen.totalNumberConsumed? as target_specimen_total_count,targetSpecimen.totalVolumeInMl? as target_specimen_total_volume_ml,targetSpecimen.frequencyOfOccurrence? as target_specimen_frequency_of_occurrence"));
+        assertThat(query.getParams().toString(), is("{source_taxon_name=path:\\\"Homo sapiens\\\", target_taxon_name=path:\\\"Plantae\\\"}"));
+    }
+
+    @Test
     public void findPreyObservationsNoLocation() throws IOException {
         HashMap<String, String[]> params = new HashMap<String, String[]>();
         CypherQuery query = CypherQueryBuilder.interactionObservations("Homo sapiens", "preysOn", null, params);
@@ -124,6 +132,14 @@ public class CypherQueryBuilderTest {
         HashMap<String, String[]> params = new HashMap<String, String[]>();
         CypherQuery query = CypherQueryBuilder.distinctInteractions("Homo sapiens", "preysOn", "Plantae", params);
         assertThat(query.getQuery(), is("START sourceTaxon = node:taxonpaths({source_taxon_name}), targetTaxon = node:taxonpaths({target_taxon_name}) MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen-[:ATE|PREYS_UPON]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon RETURN sourceTaxon.name as source_taxon_name, 'preysOn' as interaction_type, collect(distinct(targetTaxon.name)) as target_taxon_name"));
+        assertThat(query.getParams().toString(), is("{source_taxon_name=path:\\\"Homo sapiens\\\", target_taxon_name=path:\\\"Plantae\\\"}"));
+    }
+
+    @Test
+    public void findDistinctPlantParasiteWithoutLocation() throws IOException {
+        HashMap<String, String[]> params = new HashMap<String, String[]>();
+        CypherQuery query = CypherQueryBuilder.distinctInteractions("Homo sapiens", "parasiteOf", "Plantae", params);
+        assertThat(query.getQuery(), is("START sourceTaxon = node:taxonpaths({source_taxon_name}), targetTaxon = node:taxonpaths({target_taxon_name}) MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen-[:PARASITE_OF|HAS_HOST]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon RETURN sourceTaxon.name as source_taxon_name, 'parasiteOf' as interaction_type, collect(distinct(targetTaxon.name)) as target_taxon_name"));
         assertThat(query.getParams().toString(), is("{source_taxon_name=path:\\\"Homo sapiens\\\", target_taxon_name=path:\\\"Plantae\\\"}"));
     }
 

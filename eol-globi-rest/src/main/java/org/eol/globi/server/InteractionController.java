@@ -17,7 +17,9 @@ public class InteractionController {
     @ResponseBody
     public String getInteractionTypes() throws IOException {
         return "{ \"" + CypherQueryBuilder.INTERACTION_PREYS_ON + "\":{\"source\":\"predator\",\"target\":\"prey\"}" +
-                ",\"" + CypherQueryBuilder.INTERACTION_PREYED_UPON_BY + "\":{\"source\":\"prey\",\"target\":\"predator\"}}";
+                ",\"" + CypherQueryBuilder.INTERACTION_PREYED_UPON_BY + "\":{\"source\":\"prey\",\"target\":\"predator\"}" +
+                ",\"" + CypherQueryBuilder.INTERACTION_PARASITE_OF + "\":{\"source\":\"parasite\",\"target\":\"host\"}" +
+                ",\"" + CypherQueryBuilder.INTERACTION_HOST_OF + "\":{\"source\":\"host\",\"target\":\"parasite\"}" + "}";
     }
 
     @RequestMapping(value = "/interaction", method = RequestMethod.GET)
