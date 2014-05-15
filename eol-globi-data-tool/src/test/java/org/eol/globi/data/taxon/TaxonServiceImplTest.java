@@ -128,6 +128,24 @@ public class TaxonServiceImplTest extends GraphDBTestCase {
     }
 
     @Test
+    public void createTaxonExternalIdIndex() throws NodeFactoryException {
+        taxonService = new TaxonServiceImpl(new TaxonPropertyEnricher() {
+            @Override
+            public void enrich(Taxon taxon) {
+            }
+        }, new CorrectionService() {
+            @Override
+            public String correct(String taxonName) {
+                return taxonName;
+            }
+        }, getGraphDb()
+        );
+        TaxonNode taxon = taxonService.getOrCreateTaxon(null, "foo:123", null);
+        assertThat(taxon, is(notNullValue()));
+        assertThat(taxonService.findTaxonById("foo:123"), is(notNullValue()));
+    }
+
+    @Test
     public void doNotIndexMagicValuesTaxon() throws NodeFactoryException {
         assertNotIndexed(PropertyAndValueDictionary.NO_NAME);
         assertNotIndexed(PropertyAndValueDictionary.NO_MATCH);
