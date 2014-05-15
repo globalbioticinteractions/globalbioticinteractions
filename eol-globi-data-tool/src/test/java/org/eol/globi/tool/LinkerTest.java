@@ -22,9 +22,9 @@ public class LinkerTest extends GraphDBTestCase {
 
         new Linker().linkTaxa(getGraphDb());
 
-        assertHasOther("Homo sapiens", 2);
-        assertHasOther("Canis lupus", 2);
-        assertHasOther("Ariopsis felis", 3);
+        assertHasOther("Homo sapiens", 3);
+        assertHasOther("Canis lupus", 3);
+        assertHasOther("Ariopsis felis", 4);
 
     }
 
