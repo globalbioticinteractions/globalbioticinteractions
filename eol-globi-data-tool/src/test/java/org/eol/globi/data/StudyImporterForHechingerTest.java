@@ -8,17 +8,24 @@ import org.neo4j.cypher.javacompat.ExecutionEngine;
 import org.neo4j.cypher.javacompat.ExecutionResult;
 import org.neo4j.graphdb.Relationship;
 
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
+import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
+import static org.junit.internal.matchers.IsCollectionContaining.hasItem;
 import static org.junit.matchers.JUnitMatchers.containsString;
+import static org.junit.matchers.JUnitMatchers.hasItems;
 
-public class StudyImporterForHechingerTest extends GraphDBTestCase{
+public class StudyImporterForHechingerTest extends GraphDBTestCase {
 
     private static final Log LOG = LogFactory.getLog(StudyImporterForHechingerTest.class);
 
     @Test
-    public void importStudy() throws StudyImporterException {
+    public void importStudy() throws StudyImporterException, NodeFactoryException {
         StudyImporter importer = new StudyImporterForHechinger(new ParserFactoryImpl(), nodeFactory);
         importer.setLogger(new ImportLogger() {
             @Override
@@ -45,6 +52,8 @@ public class StudyImporterForHechingerTest extends GraphDBTestCase{
         for (Relationship specimen : specimens) {
             count++;
         }
+        assertThat(count, is(13966));
+
 
         ExecutionEngine engine = new ExecutionEngine(getGraphDb());
         String query = "START resourceTaxon = node:taxons(name='Suaeda spp.')" +
@@ -57,7 +66,82 @@ public class StudyImporterForHechingerTest extends GraphDBTestCase{
         assertThat(result.dumpToString(), containsString("Anas acuta"));
         assertThat(result.dumpToString(), containsString("30.378207 | -115.938835 |"));
 
-        assertThat(count, is(13966));
+        query = "START taxon = node:taxons('*:*')" +
+                " MATCH taxon<-[:CLASSIFIED_AS]-specimen-[:PARASITE_OF]->resourceSpecimen-[:CLASSIFIED_AS]-resourceTaxon" +
+                " RETURN taxon.name";
+        result = engine.execute(query);
+        Set<String> actualParasites = new HashSet<String>();
+        for (Map<String, Object> row : result) {
+            actualParasites.add((String)row.get("taxon.name"));
+        }
+
+        assertThat(actualParasites.size() > 0, is(true));
+        for(String unlikelyParasite : unlikelyParasites()) {
+            assertThat(actualParasites, not(hasItem(unlikelyParasite)));
+        }
+
+    }
+
+    // see https://github.com/jhpoelen/eol-globi-data/issues/67
+    private String[] unlikelyParasites() {
+        return new String[]{"Tringa semipalmata",
+                "Calidris mauri",
+                "Larus occidentalis",
+                "Egretta tricolor",
+                "Melanitta perspicillata",
+                "Egretta thula",
+                "Charadrius semipalmatus",
+                "Limnodromus griseus",
+                "Thalasseus maximus",
+                "Egretta rufescens",
+                "Mergus serrator",
+                "Larus delawarensis",
+                "Podilymbus podiceps",
+                "Pandion haliaetus",
+                "Larus canus",
+                "Limosa fedoa",
+                "Calidris minutilla",
+                "Numenius americanus",
+                "Tringa melanoleuca",
+                "Butorides virescens",
+                "Ardea alba",
+                "Sterna forsteri",
+                "Thalasseus elegans",
+                "Podiceps nigricollis",
+                "Calidris alpina",
+                "Gavia immer",
+                "Hydroprogne caspia",
+                "Larus californicus",
+                "Bucephala albeola",
+                "Pelecanus occidentalis",
+                "Chroicocephalus philadelphia",
+                "Megaceryle alcyon",
+                "Nycticorax nycticorax",
+                "Pluvialis squatarola",
+                "Fulica americana",
+                "Recurvirostra americana",
+                "Numenius phaeopus",
+                "Phalacrocorax penicillatus",
+                "Paralichthys californicus",
+                "Porichthys myriaster",
+                "Leptocottus armatus",
+                "Ilypnus gilberti",
+                "Pleuronichthys guttulatus",
+                "Gillichthys mirabilis",
+                "Fundulus parvipinnis",
+                "Syngnathus leptorhynchus",
+                "Quietula y-cauda",
+                "Clevelandia ios",
+                "Acanthogobius flavimanus",
+                "Chionista fluctifraga",
+                "Chione californiensis",
+                "Tagelus subteres",
+                "Protothaca staminea",
+                "Tagelus californianus",
+                "Tagelus affinis",
+                "Macoma nasuta",
+                "Tripolium pannonicum",
+                "Polydora nuchalis"};
 
     }
 }

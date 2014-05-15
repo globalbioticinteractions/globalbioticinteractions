@@ -19,11 +19,11 @@ public class StudyImporterForHechinger extends BaseStudyImporter {
     private static final Map<String, InteractType> interactionMapping = new HashMap<String, InteractType>() {{
         put("commensalism", InteractType.INTERACTS_WITH);
         put("predation", InteractType.PREYS_UPON);
-        put("trophic transmission", InteractType.PARASITE_OF);
+        put("trophic transmission", InteractType.HOST_OF);
         put("parasitic castration", InteractType.PARASITE_OF);
         put("macroparasitism", InteractType.PARASITE_OF);
         put("trophically transmitted parasitism", InteractType.PARASITE_OF);
-        put("predation on free-living non-feeding stage", InteractType.PARASITE_OF);
+        put("predation on free-living non-feeding stage", InteractType.ATE);
         put("parasitoid infection", InteractType.PARASITE_OF);
         put("parasite intraguild antagonism", InteractType.PARASITE_OF);
         put("detritivory", InteractType.ATE);
