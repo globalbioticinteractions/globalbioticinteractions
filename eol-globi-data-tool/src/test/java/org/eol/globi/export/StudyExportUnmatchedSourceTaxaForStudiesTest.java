@@ -3,6 +3,7 @@ package org.eol.globi.export;
 import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.NodeFactory;
 import org.eol.globi.data.NodeFactoryException;
+import org.eol.globi.data.taxon.CorrectionService;
 import org.eol.globi.data.taxon.TaxonNameCorrector;
 import org.eol.globi.data.taxon.TaxonServiceImpl;
 import org.eol.globi.domain.InteractType;
@@ -40,31 +41,31 @@ public class StudyExportUnmatchedSourceTaxaForStudiesTest extends GraphDBTestCas
                 }
             }
         };
-        nodeFactory = new NodeFactory(getGraphDb(), new TaxonServiceImpl(taxonEnricher, new TaxonNameCorrector(), getGraphDb()));
-        Study study = nodeFactory.getOrCreateStudy("my study", "my first source", null);
+        NodeFactory factory = factory(taxonEnricher);
+        Study study = factory.getOrCreateStudy("my study", "my first source", null);
 
-        nodeFactory.getOrCreateTaxon("Homo sapiens");
-        Specimen predatorSpecimen = nodeFactory.createSpecimen("Homo sapiens");
-        nodeFactory.getOrCreateTaxon("Canis lupus");
+        factory.getOrCreateTaxon("Homo sapiens");
+        Specimen predatorSpecimen = factory.createSpecimen("Homo sapiens");
+        factory.getOrCreateTaxon("Canis lupus");
         addCanisLupus(predatorSpecimen);
         addCanisLupus(predatorSpecimen);
-        Specimen preySpecimen = nodeFactory.createSpecimen("Caniz");
+        Specimen preySpecimen = factory.createSpecimen("Caniz");
         predatorSpecimen.createRelationshipTo(preySpecimen, InteractType.ATE);
         study.collected(predatorSpecimen);
 
-        Specimen predatorSpecimen23 = nodeFactory.createSpecimen("Homo sapiens2");
+        Specimen predatorSpecimen23 = factory.createSpecimen("Homo sapiens2");
         addCanisLupus(predatorSpecimen23);
         study.collected(predatorSpecimen23);
-        Specimen predatorSpecimen22 = nodeFactory.createSpecimen("Homo sapiens2");
+        Specimen predatorSpecimen22 = factory.createSpecimen("Homo sapiens2");
         addCanisLupus(predatorSpecimen22);
         study.collected(predatorSpecimen22);
 
-        Study study2 = nodeFactory.getOrCreateStudy("my study2", "my source2", null);
-        Specimen predatorSpecimen21 = nodeFactory.createSpecimen("Homo sapiens2");
+        Study study2 = factory.getOrCreateStudy("my study2", "my source2", null);
+        Specimen predatorSpecimen21 = factory.createSpecimen("Homo sapiens2");
         addCanisLupus(predatorSpecimen21);
         study2.collected(predatorSpecimen21);
 
-        Specimen predatorSpecimen2 = nodeFactory.createSpecimen("Homo sapiens3", PropertyAndValueDictionary.NO_MATCH);
+        Specimen predatorSpecimen2 = factory.createSpecimen("Homo sapiens3", PropertyAndValueDictionary.NO_MATCH);
         addCanisLupus(predatorSpecimen2);
         study.collected(predatorSpecimen2);
 
@@ -72,14 +73,14 @@ public class StudyExportUnmatchedSourceTaxaForStudiesTest extends GraphDBTestCas
         StringWriter writer = new StringWriter();
         new StudyExportUnmatchedSourceTaxaForStudies().exportStudy(study, writer, true);
         assertThat(writer.toString(), is(EXPECTED_HEADER + "\n" +
-                        "\"Homo sapiens2\",,\"Homo sapiens2\",,\"my study\",\"my first source\"\n" +
-                        "\"Homo sapiens3\",,\"Homo sapiens3\",,\"my study\",\"my first source\"\n"
+                        "\"Homo sapiens2\",,\"Homo sapiens2\",\"no:match\",\"my study\",\"my first source\"\n" +
+                        "\"Homo sapiens3\",\"no:match\",\"Homo sapiens3\",\"no:match\",\"my study\",\"my first source\"\n"
         ));
 
         writer = new StringWriter();
         new StudyExportUnmatchedTargetTaxaForStudies().exportStudy(study, writer, true);
         assertThat(writer.toString(), is("\"original target taxon name\",\"original target external id\",\"unmatched normalized target taxon name\",\"unmatched normalized target external id\",\"study\",\"source\"" + "\n" +
-                        "\"Caniz\",,\"Caniz\",,\"my study\",\"my first source\"\n"
+                        "\"Caniz\",,\"Caniz\",\"no:match\",\"my study\",\"my first source\"\n"
         ));
     }
 
@@ -91,17 +92,17 @@ public class StudyExportUnmatchedSourceTaxaForStudiesTest extends GraphDBTestCas
 
             }
         };
-        nodeFactory = new NodeFactory(getGraphDb(), new TaxonServiceImpl(taxonEnricher, new TaxonNameCorrector(), getGraphDb()));
-        Study study = nodeFactory.getOrCreateStudy("my study", "my first source", null);
+        NodeFactory factory = factory(taxonEnricher);
+        Study study = factory.getOrCreateStudy("my study", "my first source", null);
 
-        Specimen predatorSpecimen = nodeFactory.createSpecimen("Homo sapienz");
-        Specimen preySpecimen = nodeFactory.createSpecimen("Caniz");
+        Specimen predatorSpecimen = factory.createSpecimen("Homo sapienz");
+        Specimen preySpecimen = factory.createSpecimen("Caniz");
         predatorSpecimen.createRelationshipTo(preySpecimen, InteractType.ATE);
         study.collected(predatorSpecimen);
 
-        predatorSpecimen = nodeFactory.createSpecimen("Homo sapiens");
-        Node synonymNode = nodeFactory.getOrCreateTaxon("Homo sapiens Synonym").getUnderlyingNode();
-        Node node = nodeFactory.getOrCreateTaxon("Homo sapiens").getUnderlyingNode();
+        predatorSpecimen = factory.createSpecimen("Homo sapiens");
+        Node synonymNode = factory.getOrCreateTaxon("Homo sapiens Synonym").getUnderlyingNode();
+        Node node = factory.getOrCreateTaxon("Homo sapiens").getUnderlyingNode();
         Transaction tx = getGraphDb().beginTx();
         try {
             node.createRelationshipTo(synonymNode, RelTypes.SAME_AS);
@@ -110,22 +111,31 @@ public class StudyExportUnmatchedSourceTaxaForStudiesTest extends GraphDBTestCas
             tx.finish();
         }
 
-        preySpecimen = nodeFactory.createSpecimen("Canis");
+        preySpecimen = factory.createSpecimen("Canis");
         predatorSpecimen.createRelationshipTo(preySpecimen, InteractType.ATE);
         study.collected(predatorSpecimen);
 
         StringWriter writer = new StringWriter();
         new StudyExportUnmatchedSourceTaxaForStudies().exportStudy(study, writer, true);
         assertThat(writer.toString(), is(EXPECTED_HEADER + "\n" +
-                        "\"Homo sapienz\",,\"Homo sapienz\",,\"my study\",\"my first source\"\n"
+                        "\"Homo sapienz\",,\"Homo sapienz\",\"no:match\",\"my study\",\"my first source\"\n"
         ));
 
         writer = new StringWriter();
         new StudyExportUnmatchedTargetTaxaForStudies().exportStudy(study, writer, true);
         assertThat(writer.toString(), is("\"original target taxon name\",\"original target external id\",\"unmatched normalized target taxon name\",\"unmatched normalized target external id\",\"study\",\"source\"" + "\n" +
-                        "\"Caniz\",,\"Caniz\",,\"my study\",\"my first source\"\n" +
-                        "\"Canis\",,\"Canis\",,\"my study\",\"my first source\"\n"
+                        "\"Caniz\",,\"Caniz\",\"no:match\",\"my study\",\"my first source\"\n" +
+                        "\"Canis\",,\"Canis\",\"no:match\",\"my study\",\"my first source\"\n"
         ));
+    }
+
+    private NodeFactory factory(TaxonPropertyEnricher taxonEnricher) {
+        return new NodeFactory(getGraphDb(), new TaxonServiceImpl(taxonEnricher, new CorrectionService() {
+            @Override
+            public String correct(String taxonName) {
+                return taxonName;
+            }
+        }, getGraphDb()));
     }
 
     private void addCanisLupus(Specimen predatorSpecimen) throws NodeFactoryException {

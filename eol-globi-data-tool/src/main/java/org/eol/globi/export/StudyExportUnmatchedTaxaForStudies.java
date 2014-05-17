@@ -1,11 +1,14 @@
 package org.eol.globi.export;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.domain.Study;
 import org.neo4j.cypher.javacompat.ExecutionEngine;
 import org.neo4j.cypher.javacompat.ExecutionResult;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public abstract class StudyExportUnmatchedTaxaForStudies implements StudyExporter {
@@ -29,34 +32,21 @@ public abstract class StudyExportUnmatchedTaxaForStudies implements StudyExporte
             writeHeader(writer, getTaxonLabel());
         }
 
+        List<String> columns = result.columns();
         for (Map<String, Object> map : result) {
-            writeRow(writer, map);
+            List<String> values = new ArrayList<String>();
+            for (String column : columns) {
+                Object value = map.get(column);
+                values.add((value == null ? "" : ("\"" + value + "\"")));
+            }
+            writer.write(StringUtils.join(values, ","));
+            writer.write("\n");
         }
     }
 
     protected abstract String getQueryString(Study study);
 
     protected abstract String getTaxonLabel();
-
-    protected void writeRow(Writer writer, Map<String, Object> map) throws IOException {
-        writer.write("\"");
-        writer.write((String) map.get("description.name"));
-        writer.write("\",");
-        Object externalId = map.get("description.externalId");
-        writer.write((externalId == null ? "" : ("\"" + externalId + "\"")));
-        writer.write(",");
-        writer.write("\"");
-        writer.write((String) map.get("taxon.name"));
-        writer.write("\",");
-        externalId = map.get("taxon.externalId");
-        writer.write((externalId == null ? "" : ("\"" + externalId + "\"")));
-        writer.write(",\"");
-        writer.write((String) map.get("study.title"));
-        writer.write("\",\"");
-        writer.write((String) map.get("study.source"));
-        writer.write("\"\n");
-
-    }
 
     protected void writeHeader(Writer writer, String taxonLabel) throws IOException {
         writer.write("\"original " + taxonLabel + " taxon name\"");
