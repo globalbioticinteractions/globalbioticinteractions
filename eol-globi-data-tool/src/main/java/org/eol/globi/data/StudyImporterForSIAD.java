@@ -12,9 +12,6 @@ import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.util.HttpUtil;
 import org.joda.time.DateTime;
-import org.joda.time.DateTimeUtils;
-import org.joda.time.format.DateTimeFormatterBuilder;
-import org.joda.time.format.DateTimePrinter;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -24,9 +21,9 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class StudyImporterForSAID extends BaseStudyImporter {
+public class StudyImporterForSIAD extends BaseStudyImporter {
 
-    private static final Log LOG = LogFactory.getLog(StudyImporterForSAID.class);
+    private static final Log LOG = LogFactory.getLog(StudyImporterForSIAD.class);
 
     private final static Map<String, InteractType> map = new HashMap<String, InteractType>() {
         {
@@ -73,15 +70,15 @@ public class StudyImporterForSAID extends BaseStudyImporter {
         }
     };
 
-    public StudyImporterForSAID(ParserFactory parserFactory, NodeFactory nodeFactory) {
+    public StudyImporterForSIAD(ParserFactory parserFactory, NodeFactory nodeFactory) {
         super(parserFactory, nodeFactory);
     }
 
 
     @Override
     public Study importStudy() throws StudyImporterException {
-        String source = "Species Interactions of Australia Database (SAID): Helping us to understand species interactions in Australia and beyond. Accessed at http://ala1.science.unsw.edu.au/ on " + new DateTime().toString("dd MMM YYYY") + ".";
-        Study study = nodeFactory.getOrCreateStudy("SAID", source, null);
+        String source = "Species Interactions of Australia Database (SIAD): Helping us to understand species interactions in Australia and beyond. Accessed at http://ala1.science.unsw.edu.au/ on " + new DateTime().toString("dd MMM YYYY") + ".";
+        Study study = nodeFactory.getOrCreateStudy("SIAD", source, null);
         study.setCitationWithTx(source);
         String prefix = "http://ala1.science.unsw.edu.au/data/source/biodiversity.org.au:dataexport/";
         String resources[] = {

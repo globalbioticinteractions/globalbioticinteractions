@@ -8,7 +8,7 @@ import java.util.Collections;
 public class StudyImporterFactory {
 
     private static final Collection<Class> IMPORTERS = Collections.unmodifiableCollection(new ArrayList<Class>() {{
-        add(StudyImporterForSAID.class);
+        add(StudyImporterForSIAD.class);
         add(StudyImporterForHurlbert.class);
         add(StudyImporterForByrnes.class);
         add(StudyImporterForRaymond.class);
