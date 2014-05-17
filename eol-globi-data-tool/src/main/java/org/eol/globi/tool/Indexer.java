@@ -48,16 +48,8 @@ public class Indexer {
         TaxonService taxonService = new TaxonServiceImpl(TaxonPropertyEnricherFactory.createTaxonEnricher()
                 , new TaxonNameCorrector()
                 , freshGraphService);
-
-
-        String msgPrefix = "taxon names";
-        String whereAndReturnClause = " WHERE has(origName.name) RETURN distinct(origName.name) as name";
-        indexTaxonByProperty(executionEngine, taxonService, msgPrefix, whereAndReturnClause);
-
-        msgPrefix = "taxon externalIds";
-        whereAndReturnClause = " WHERE not(has(origName.name)) AND has(origName.externalId) RETURN distinct(origName.externalId) as externalId";
-        indexTaxonByProperty(executionEngine, taxonService, msgPrefix, whereAndReturnClause);
-
+        indexUsingExternalIds(executionEngine, taxonService);
+        indexUsingNamesWithNoExternalIds(executionEngine, taxonService);
         try {
             new Linker().linkTaxa(freshGraphService);
         } catch (TaxonPropertyLookupServiceException e) {
@@ -66,6 +58,18 @@ public class Indexer {
 
         freshGraphService.shutdown();
         previousGraphService.shutdown();
+    }
+
+    private void indexUsingNamesWithNoExternalIds(ExecutionEngine executionEngine, TaxonService taxonService) throws NodeFactoryException {
+        String msgPrefix = "taxon names";
+        String whereAndReturnClause = " WHERE has(origName.name) AND not(has(origName.externalId)) RETURN distinct(origName.name) as name";
+        indexTaxonByProperty(executionEngine, taxonService, msgPrefix, whereAndReturnClause);
+    }
+
+    private void indexUsingExternalIds(ExecutionEngine executionEngine, TaxonService taxonService) throws NodeFactoryException {
+        String msgPrefix = "taxon externalIds";
+        String whereAndReturnClause = " WHERE has(origName.externalId) RETURN distinct(origName.externalId) as externalId";
+        indexTaxonByProperty(executionEngine, taxonService, msgPrefix, whereAndReturnClause);
     }
 
     private void indexTaxonByProperty(ExecutionEngine executionEngine, TaxonService taxonService, String msgPrefix, String whereAndReturnClause) throws NodeFactoryException {
