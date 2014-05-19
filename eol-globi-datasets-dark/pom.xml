@@ -125,7 +125,6 @@
                         <argument>-Dskip.import=${skip.import}</argument>
                         <argument>-Dskip.export=${skip.export}</argument>
                         <argument>-Dshapefiles.dir=${shapefiles.dir}</argument>
-                        <argument>-Ddark=true</argument>
                         <argument>-classpath</argument>
                         <classpath/>
                         <argument>org.eol.globi.tool.NormalizerDark</argument>
