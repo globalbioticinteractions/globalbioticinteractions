@@ -18,7 +18,6 @@
         <neo4j.version>1.9.4</neo4j.version>
         <skip.import>false</skip.import>
         <skip.export>false</skip.export>
-        <skip.taxon.linking>false</skip.taxon.linking>
     </properties>
 
     <dependencies>

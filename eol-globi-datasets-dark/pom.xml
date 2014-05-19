@@ -124,7 +124,6 @@
                         <argument>-Xmx2G</argument>
                         <argument>-Dskip.import=${skip.import}</argument>
                         <argument>-Dskip.export=${skip.export}</argument>
-                        <argument>-Dskip.taxon.linking=${skip.taxon.linking}</argument>
                         <argument>-Dshapefiles.dir=${shapefiles.dir}</argument>
                         <argument>-Ddark=true</argument>
                         <argument>-classpath</argument>
