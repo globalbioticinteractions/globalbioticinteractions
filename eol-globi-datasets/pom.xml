@@ -36,6 +36,24 @@
                 <version>2.8</version>
                 <executions>
                     <execution>
+                        <id>copy-tool</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>copy</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>${project.groupId}</groupId>
+                                    <artifactId>eol-globi-data-tool</artifactId>
+                                    <version>${project.version}</version>
+                                    <classifier>jar-with-dependencies</classifier>
+                                    <outputDirectory>${project.build.directory}</outputDirectory>
+                                </artifactItem>
+                            </artifactItems>
+                        </configuration>
+                    </execution>
+                    <execution>
                         <id>unpack</id>
                         <phase>generate-resources</phase>
                         <goals>
@@ -112,7 +130,9 @@
                         <argument>-Dskip.export=${skip.export}</argument>
                         <argument>-Dshapefiles.dir=${shapefiles.dir}</argument>
                         <argument>-classpath</argument>
-                        <classpath/>
+                        <argument>
+                            ${project.build.directory}/eol-globi-data-tool-${project.version}-jar-with-dependencies.jar
+                        </argument>
                         <argument>org.eol.globi.tool.Normalizer</argument>
                     </arguments>
                     <workingDirectory>${data.dir}</workingDirectory>
@@ -148,7 +168,9 @@
                     <serverId>aws-snapshot</serverId>
                     <url>s3://globi/snapshot</url>
                     <skip>${skipTests}</skip>
-                    <includes>**/*Taxa.csv,**/${project.artifactId}-${project.version}*.tar.gz,**/${project.artifactId}-${project.version}*.zip</includes>
+                    <includes>
+                        **/*Taxa.csv,**/${project.artifactId}-${project.version}*.tar.gz,**/${project.artifactId}-${project.version}*.zip
+                    </includes>
                 </configuration>
                 <executions>
                     <execution>
