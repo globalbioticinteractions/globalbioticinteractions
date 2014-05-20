@@ -1,0 +1,22 @@
+This directory contains some scripts to import or export fishbase data.
+
+Note that fishbase database is only available by request. 
+
+Please see http://fishbase.org for more information.
+
+--- importing data ---
+steps to import fishbase database:
+
+edit/create /etc/my.cnf to include:
+[mysqld] 
+max_allowed_packet=64M
+
+import using:
+mysql -uroot -p --default_character_set=latin1 < fbapp_mirror_Dec2013.sql
+
+--- exporting data ---
+
+Two (?) species interaction datasets can be extracted from fishbase: (1) diet data from diet table and (2) predator-prey data from the predats table. See sql scripts diet.sql and predats.sql in this directory for examples how to export the related data including information such as references, and taxon information. 
+
+The following command executes the diet.sql script against the fbapp_mirror database and exports the result into file diet.tsv .
+mysql -uroot -p fbapp_mirror < diet.sql > diet.tsv
