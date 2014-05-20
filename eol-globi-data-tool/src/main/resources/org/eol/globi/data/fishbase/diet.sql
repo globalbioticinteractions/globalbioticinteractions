@@ -1,10 +1,11 @@
--- lists diet items of a species. 
+-- lists diets of a specific species > include reference, location, time.
 --
--- questions:
+-- questions: 
+--		a. Is the date / time of the diet / consumer interaction available?
 --
--- 	a) On missing diet.yearEnd, does that mean that yearStart = yearEnd ?
---  b) Can diet locality be easy translated into lat/lng shape?
---
-select d.dietcode as 'prey code', s2.genus 'prey genus', s2.species 'prey species', 'diet of ', s.speccode as 'predator code', s.genus as 'predator genus', s.species as 'predator species', d.yearStart, d.yearEnd, d.locality, r.author, r.year, r.title from diet d JOIN species s ON s.speccode = d.speccode JOIN species s2 on s2.speccode = d.dietcode JOIN refrens r ON d.dietRefNo = r.refno
--- WHERE r.author <> 'ICES'
-;
+SELECT d.dietcode AS 'diet code', s2.genus AS 'diet genus', s2.species AS 'diet species', 'diet of', s.speccode AS 'consumer code', s.genus AS 'consumer genus', s.species AS 'consumer species', 
+r.author, r.year, r.title, 
+eref.salinity, d.locality, eref.ecosystemname AS 'ecosystemName', eref.ecosystemType AS 'ecosystemType', eref.NorthernLat, eref.NrangeNS, eref.SouthernLat, eref.SrangeNS, eref.WesternLat, eref.WrangeEW, eref.EASternLat, eref.ErangeEW 
+FROM diet d LEFT JOIN species s ON s.speccode = d.speccode LEFT JOIN species s2 on s2.speccode = d.dietcode LEFT JOIN refrens r ON d.dietRefNo = r.refno LEFT JOIN ecosystemref eref ON d.e_code = eref.e_code;
+ -- WHERE r.author <> 'ICES'
+; 
