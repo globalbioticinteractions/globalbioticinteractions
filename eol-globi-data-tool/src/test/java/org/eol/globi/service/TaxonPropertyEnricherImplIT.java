@@ -90,6 +90,15 @@ public class TaxonPropertyEnricherImplIT extends GraphDBTestCase {
         assertThat(taxon.getExternalId(), is("EOL:55493"));
     }
 
+
+    @Test
+    public void sphyrnaMokarran() throws IOException, NodeFactoryException {
+        TaxonNode taxon = nodeFactory.getOrCreateTaxon("Sphyrna mokarran");
+        assertThat(taxon.getName(), is("Sphyrna mokarran"));
+        assertThat(taxon.getPath(), is("Animalia | Chordata | Elasmobranchii | Carcharhiniformes | Sphyrnidae | Sphyrna | Sphyrna mokarran"));
+        assertThat(taxon.getExternalId(), is("EOL:224168"));
+    }
+
     @Test
     public void otherSuspensionFeeders() throws IOException, NodeFactoryException {
         TaxonNode taxon = nodeFactory.getOrCreateTaxon("Other suspension feeders");

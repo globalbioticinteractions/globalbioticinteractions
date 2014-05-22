@@ -115,10 +115,15 @@ public class EOLService extends BaseHttpClientService implements TaxonPropertyLo
                 }
                 if (taxonConcept.has("taxonRank")) {
                     properties.put(PropertyAndValueDictionary.RANK, taxonConcept.get("taxonRank").getValueAsText());
+                } else {
+                    // workaround related to https://github.com/jhpoelen/gomexsi/issues/92 - fishbase species names do not have taxonRank
+                    String name = properties.get(PropertyAndValueDictionary.NAME);
+                    if (StringUtils.split(name).length > 1) {
+                        properties.put(PropertyAndValueDictionary.RANK, "Species");
+                    }
                 }
                 break;
             }
-            ;
         }
         if (firstConceptId != null) {
             addRanks(firstConceptId, ranks);
@@ -181,7 +186,7 @@ public class EOLService extends BaseHttpClientService implements TaxonPropertyLo
             String scientificName = ancestor.get("scientificName").getTextValue();
             String[] split = scientificName.split(" ");
             ranks.append(split[0]);
-            if (split.length > 1 && ancestor.has("taxonRank") && "Species".equals(ancestor.get("taxonRank").getTextValue())) {
+            if (split.length > 1 && ((ancestor.has("taxonRank") && "Species".equals(ancestor.get("taxonRank").getTextValue()) || !ancestor.has("taxonRank")) )) {
                 ranks.append(" ");
                 ranks.append(split[1]);
             }

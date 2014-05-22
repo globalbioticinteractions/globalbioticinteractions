@@ -106,6 +106,14 @@ public class EOLServiceIT {
     }
 
     @Test
+    public void sphyrnaMokarran() throws TaxonPropertyLookupServiceException {
+        HashMap<String, String> properties = new HashMap<String, String>();
+        new EOLService().lookupPropertiesByName("Sphyrna mokarran", properties);
+        assertThat(properties.get(PropertyAndValueDictionary.PATH), is("Animalia | Chordata | Elasmobranchii | Carcharhiniformes | Sphyrnidae | Sphyrna | Sphyrna mokarran"));
+        assertThat(properties.get(PropertyAndValueDictionary.RANK), is("Species"));
+    }
+
+    @Test
     public void lookupPickleweedAlreadyPopulated() throws TaxonPropertyLookupServiceException {
         HashMap<String, String> properties = new HashMap<String, String>();
         properties.put(PropertyAndValueDictionary.EXTERNAL_ID, "EOL:61812");
