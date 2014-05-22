@@ -85,9 +85,9 @@ public class TaxonPropertyEnricherImplIT extends GraphDBTestCase {
     @Test
     public void chromatomyiaScabiosae() throws IOException, NodeFactoryException {
         TaxonNode taxon = nodeFactory.getOrCreateTaxon("Chromatomyia scabiosae");
-        assertThat(taxon.getName(), is(PropertyAndValueDictionary.NO_MATCH));
-        assertThat(taxon.getPath(), is(PropertyAndValueDictionary.NO_MATCH));
-        assertThat(taxon.getExternalId(), is(PropertyAndValueDictionary.NO_MATCH));
+        assertThat(taxon.getName(), is("Chromatomyia"));
+        assertThat(taxon.getPath(), is("Animalia | Arthropoda | Insecta | Diptera | Agromyzidae | Chromatomyia"));
+        assertThat(taxon.getExternalId(), is("EOL:55493"));
     }
 
     @Test
@@ -100,10 +100,10 @@ public class TaxonPropertyEnricherImplIT extends GraphDBTestCase {
 
     @Test
     public void sediment() throws IOException, NodeFactoryException {
-        TaxonNode taxon = nodeFactory.getOrCreateTaxon("Sediment");
-        assertThat(taxon.getExternalId(), is(PropertyAndValueDictionary.NO_MATCH));
-        assertThat(taxon.getName(), is(PropertyAndValueDictionary.NO_MATCH));
-        assertThat(taxon.getPath(), is(PropertyAndValueDictionary.NO_MATCH));
+        assertThat(nodeFactory.getOrCreateTaxon("Sediment").getExternalId(), is("ENVO:00002007"));
+        assertThat(nodeFactory.getOrCreateTaxon("sediment").getExternalId(), is("ENVO:00002007"));
+        assertThat(nodeFactory.getOrCreateTaxon("detritus").getExternalId(), is("ENVO:01000155"));
+        assertThat(nodeFactory.getOrCreateTaxon("Detritus").getExternalId(), is("ENVO:01000155"));
     }
 
     @Test
@@ -115,7 +115,7 @@ public class TaxonPropertyEnricherImplIT extends GraphDBTestCase {
         for (Relationship classification : classifications) {
             TaxonNode taxonNode = new TaxonNode(classification.getEndNode());
             assertThat(taxonNode.getName(), is("Ariopsis felis"));
-            assertThat(taxonNode.getPath(), is("Animalia | Chordata | Actinopterygii | Siluriformes | Ariidae | Ariopsis | Ariopsis felis | no name"));
+            assertThat(taxonNode.getPath(), is("Animalia | Chordata | Actinopterygii | Siluriformes | Ariidae | Ariopsis | Ariopsis felis"));
             assertThat(taxonNode.getExternalId(), is("EOL:223038"));
             count++;
         }
