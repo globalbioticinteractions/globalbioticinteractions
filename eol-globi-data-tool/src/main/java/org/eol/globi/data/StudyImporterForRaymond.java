@@ -257,7 +257,7 @@ public class StudyImporterForRaymond extends BaseStudyImporter {
             Integer sourceId = Integer.parseInt(sourcesParser.getValueByLabel("SOURCE_ID"));
             String reference = sourcesParser.getValueByLabel("DETAILS");
             String title = StringUtils.abbreviate(reference, 16) + MD5.getHashString(reference);
-            Study study = nodeFactory.getOrCreateStudy(title, null, null, null, reference, null, "Raymond, B., Marshall, M., Nevitt, G., Gillies, C., van den Hoff, J., Stark, J.S., Losekoot, M., Woehler, E.J., and Constable, A.J. (2011) A Southern Ocean dietary database. Ecology 92(5):1188. http://data.aad.gov.au/aadc/trophic/. doi: 10.1890/i0012-9658-92-5-1188. Data set supplied by Ben Raymond. The data can also be accessed at http://data.aad.gov.au/aadc/trophic/.");
+            Study study = nodeFactory.getOrCreateStudy(title, null, null, null, reference, null, "Raymond, B., Marshall, M., Nevitt, G., Gillies, C., van den Hoff, J., Stark, J.S., Losekoot, M., Woehler, E.J., and Constable, A.J. (2011) A Southern Ocean dietary database. Ecology 92(5):1188. Available from http://dx.doi.org/10.1890/i0012-9658-92-5-1188. Data set supplied by Ben Raymond. The data can also be accessed at http://data.aad.gov.au/aadc/trophic/.");
             sourceMap.put(sourceId, study);
         }
         return sourceMap;

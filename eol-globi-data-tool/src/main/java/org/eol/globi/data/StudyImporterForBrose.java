@@ -22,7 +22,7 @@ import java.util.Map;
 public class StudyImporterForBrose extends BaseStudyImporter {
     private static final Log LOG = LogFactory.getLog(StudyImporterForBrose.class);
 
-    public static final String SOURCE = "Brose, U. et al., 2005. Body sizes of consumers and their resources. Ecology 86:2545. Available at: http://dx.doi.org/10.1890/07-1551.1 . Available at " + "http://www.esapubs.org/archive/ecol/E086/135/" + " .";
+    public static final String SOURCE = "Brose, U. et al., 2005. Body sizes of consumers and their resources. Ecology 86:2545. Available from doi:10.1890/05-0379 .";
     public static final String RESOURCE_PATH = "brose/bodysizes_2008.txt.gz";
     public static final String REFERENCE_PATH = "brose/references.csv";
     private TermLookupService termService = new UberonLookupService();
