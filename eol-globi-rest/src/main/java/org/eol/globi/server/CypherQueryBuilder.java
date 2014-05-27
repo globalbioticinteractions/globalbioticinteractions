@@ -399,7 +399,7 @@ public class CypherQueryBuilder {
             query.append("START study = node:studies('*:*')");
         }
 
-        query.append(" MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen<-[:COLLECTED]-study")
+        query.append(" MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen<-[c:COLLECTED]-study")
                 .append(", sourceSpecimen-[interact]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon");
         addLocationClausesIfNecessary(query, parameterMap);
 
@@ -409,7 +409,9 @@ public class CypherQueryBuilder {
                 .append(", count(interact) as `number of interactions`")
                 .append(", count(distinct(sourceTaxon.name)) as `number of distinct source taxa (e.g. predators)`")
                 .append(", count(distinct(targetTaxon.name)) as `number of distinct target taxa (e.g. prey)`")
-                .append(", count(distinct(study.source)) as `number of distinct study sources`");
+                .append(", count(distinct(study.source)) as `number of distinct study sources`")
+                .append(", count(c." + Specimen.DATE_IN_UNIX_EPOCH + "?) as `number of interactions with timestamp`")
+        ;
         if (RequestHelper.isSpatialSearch(parameterMap)) {
             query.append(", count(distinct(loc))");
         } else {
