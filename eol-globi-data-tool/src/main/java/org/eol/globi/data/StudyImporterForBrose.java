@@ -16,8 +16,11 @@ import uk.me.jstott.jcoord.LatLng;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 public class StudyImporterForBrose extends BaseStudyImporter {
     private static final Log LOG = LogFactory.getLog(StudyImporterForBrose.class);
@@ -85,7 +88,7 @@ public class StudyImporterForBrose extends BaseStudyImporter {
                 throw new StudyImporterException("failed to find ref [" + shortReference + "] on line [" + parser.lastLineNumber() + "]");
             }
             String longReference = refMap.get(shortReference);
-            localStudy = nodeFactory.getOrCreateStudy("BROSE-" + shortReference, null, null, null, longReference, null, SOURCE);
+            localStudy = nodeFactory.getOrCreateStudy("BROSE-" + StringUtils.abbreviate(longReference, 20), null, null, null, longReference, null, SOURCE);
 
             String name = getName(parser, "Taxonomy consumer", "Common name(s) consumer");
             if (StringUtils.isBlank(name)) {

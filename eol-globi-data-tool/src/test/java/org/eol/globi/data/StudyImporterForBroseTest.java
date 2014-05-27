@@ -82,7 +82,7 @@ public class StudyImporterForBroseTest extends GraphDBTestCase {
         studyImporterForBrose.importStudy();
 
         List<Study> studies = NodeFactory.findAllStudies(getGraphDb());
-        assertTrue(studies.size() > 0);
+        assertThat(studies.size(), is(20));
         for (Study study : studies) {
             assertThat(study.getTitle(), is(notNullValue()));
             assertThat(study.getSource(), is(notNullValue()));
