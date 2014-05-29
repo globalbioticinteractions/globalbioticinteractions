@@ -235,14 +235,8 @@ public class NodeFactory {
     }
 
     private String findDOIUsingReference(String contributor, String description, String publicationYear) throws IOException {
-        String doi;
-        String prefix = StringUtils.isBlank(contributor) ? "" : (contributor + " ");
-        String reference = StringUtils.isBlank(description) ? "" : (prefix + description);
-        if (StringUtils.isNotBlank(publicationYear)) {
-            reference = reference + " " + publicationYear;
-        }
-        doi = doiResolver.findDOIForReference(reference);
-        return doi;
+        String reference = StringUtils.join(new String[] {contributor, publicationYear, description}, " ");
+        return doiResolver.findDOIForReference(reference);
     }
 
     @Deprecated
