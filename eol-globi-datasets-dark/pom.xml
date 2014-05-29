@@ -230,7 +230,7 @@
     <repositories>
         <repository>
             <id>globi-thirdparty-datasets</id>
-            <name>GloBI Thirdpary Datasets</name>
+            <name>GloBI Thirdparty Datasets</name>
             <url>https://s3.amazonaws.com/globi/thirdparty-datasets</url>
             <snapshots>
                 <enabled>false</enabled>
