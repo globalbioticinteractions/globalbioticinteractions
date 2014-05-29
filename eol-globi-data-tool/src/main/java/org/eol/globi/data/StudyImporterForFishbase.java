@@ -79,10 +79,10 @@ public class StudyImporterForFishbase extends BaseStudyImporter {
     }
 
     private Study parseStudy(LabeledCSVParser parser) {
-        String author = parser.getValueByLabel("author");
-        String year = parser.getValueByLabel("year");
-        String title = parser.getValueByLabel("title");
-        return nodeFactory.getOrCreateStudy("Fishbase-" + author + year,
+        String author = StringUtils.replace(parser.getValueByLabel("author"), "NULL", "");
+        String year = StringUtils.replace(parser.getValueByLabel("year"), "NULL", "");
+        String title = StringUtils.replace(parser.getValueByLabel("title"), "NULL", "");
+        return nodeFactory.getOrCreateStudy(StringUtils.join("Fishbase-", author, year),
                 author,
                 "",
                 "",
