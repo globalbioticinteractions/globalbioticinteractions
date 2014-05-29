@@ -103,7 +103,7 @@
                                 <artifactItem>
                                     <groupId>org.eol.globi.dark</groupId>
                                     <artifactId>fishbase</artifactId>
-                                    <version>1.0</version>
+                                    <version>1.1</version>
                                     <type>zip</type>
                                     <overWrite>false</overWrite>
                                     <outputDirectory>${project.build.outputDirectory}/org/eol/globi/data
