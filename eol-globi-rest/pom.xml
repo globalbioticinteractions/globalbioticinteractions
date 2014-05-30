@@ -371,29 +371,5 @@
                 </executions>
             </plugin>
         </plugins>
-
-        <extensions>
-            <extension>
-                <groupId>org.springframework.build</groupId>
-                <artifactId>aws-maven</artifactId>
-                <version>4.4.0.RELEASE</version>
-            </extension>
-        </extensions>
     </build>
-
-
-    <!-- see http://github.com/SpringSource/aws-maven -->
-    <distributionManagement>
-        <repository>
-            <id>aws-release</id>
-            <name>AWS Release Repository</name>
-            <url>s3://globi/release</url>
-        </repository>
-        <snapshotRepository>
-            <id>aws-snapshot</id>
-            <name>AWS Snapshot Repository</name>
-            <url>s3://globi/snapshot</url>
-        </snapshotRepository>
-    </distributionManagement>
-
 </project>
