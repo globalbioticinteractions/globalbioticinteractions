@@ -100,7 +100,6 @@
             <id>ibiblio.org</id>
             <name>ibiblio Repository for Maven 2</name>
             <url>http://mirrors.ibiblio.org/pub/mirrors/maven2/</url>
-            <layout>default</layout>
         </repository>
         <repository>
             <id>mygrid-repository</id>
@@ -114,29 +113,47 @@
             </releases>
         </repository>
         <repository>
-            <id>-berkeleybop</id>
+            <id>berkeleybop</id>
             <name>Berkeley Bop Repository</name>
             <url>http://code.berkeleybop.org/maven/repository</url>
         </repository>
         <repository>
-            <id>-neo4j</id>
+            <id>neo4j</id>
             <name>neo4j maven repo</name>
             <url>http://m2.neo4j.org/</url>
         </repository>
         <repository>
-            <id>-globi-snapshot</id>
+            <id>globi-snapshot</id>
             <name>GloBI snaphots</name>
             <url>https://s3.amazonaws.com/globi/snapshot</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
         </repository>
         <repository>
-            <id>-globi-thirdparty-datasets</id>
+            <id>globi-thirdparty-datasets</id>
             <name>GloBI Thirdparty Datasets</name>
             <url>https://s3.amazonaws.com/globi/thirdparty-datasets</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
         </repository>
         <repository>
             <id>-globi-release</id>
             <name>GloBI Releases</name>
             <url>https://s3.amazonaws.com/globi/release</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
         </repository>
     </repositories>
 
