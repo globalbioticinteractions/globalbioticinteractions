@@ -44,6 +44,13 @@
     </dependencies>
 
     <build>
+        <extensions>
+            <extension>
+                <groupId>com.allogy.maven.wagon</groupId>
+                <artifactId>maven-s3-wagon</artifactId>
+                <version>1.0</version>
+            </extension>
+        </extensions>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -86,13 +93,6 @@
                 </configuration>
             </plugin>
         </plugins>
-        <extensions>
-            <extension>
-                <groupId>org.springframework.build</groupId>
-                <artifactId>aws-maven</artifactId>
-                <version>4.4.0.RELEASE</version>
-            </extension>
-        </extensions>
     </build>
 
     <repositories>
@@ -134,9 +134,9 @@
             </releases>
         </repository>
         <repository>
-            <id>globi-thirdparty-datasets</id>
+            <id>globi-datasets</id>
             <name>GloBI Thirdparty Datasets</name>
-            <url>https://s3.amazonaws.com/globi/thirdparty-datasets</url>
+            <url>https://s3.amazonaws.com/globi/datasets</url>
             <snapshots>
                 <enabled>false</enabled>
             </snapshots>
@@ -145,7 +145,7 @@
             </releases>
         </repository>
         <repository>
-            <id>-globi-release</id>
+            <id>globi-release</id>
             <name>GloBI Releases</name>
             <url>https://s3.amazonaws.com/globi/release</url>
             <snapshots>
@@ -157,16 +157,14 @@
         </repository>
     </repositories>
 
-
-    <!-- see http://github.com/SpringSource/aws-maven -->
     <distributionManagement>
         <repository>
-            <id>aws-release</id>
+            <id>globi-release</id>
             <name>AWS Release Repository</name>
             <url>s3://globi/release</url>
         </repository>
         <snapshotRepository>
-            <id>aws-snapshot</id>
+            <id>globi-snapshot</id>
             <name>AWS Snapshot Repository</name>
             <url>s3://globi/snapshot</url>
         </snapshotRepository>

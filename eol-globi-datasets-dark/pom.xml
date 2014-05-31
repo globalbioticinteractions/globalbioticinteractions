@@ -229,9 +229,9 @@
 
     <repositories>
         <repository>
-            <id>globi-thirdparty-datasets</id>
-            <name>GloBI Thirdparty Datasets</name>
-            <url>https://s3.amazonaws.com/globi/thirdparty-datasets</url>
+            <id>globi-datasets</id>
+            <name>GloBI Datasets</name>
+            <url>https://s3.amazonaws.com/globi/datasets</url>
             <snapshots>
                 <enabled>false</enabled>
             </snapshots>
@@ -241,9 +241,9 @@
         </repository>
 
         <repository>
-            <id>globi-dark-datasets</id>
-            <name>GloBI Dark Datasets</name>
-            <url>s3://globi/dark-datasets</url>
+            <id>globi-datasets-dark</id>
+            <name>GloBI Datasets Dark</name>
+            <url>s3://globi/datasets-dark</url>
             <snapshots>
                 <enabled>false</enabled>
             </snapshots>
