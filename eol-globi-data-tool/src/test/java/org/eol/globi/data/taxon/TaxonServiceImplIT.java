@@ -61,6 +61,30 @@ public class TaxonServiceImplIT extends GraphDBTestCase {
     }
 
     @Test
+    public void eolIdsThatPointToSinglePage() throws NodeFactoryException {
+        String redirectTarget = "EOL:1073676";
+        TaxonNode taxon = taxonService.getOrCreateTaxon(null, redirectTarget, null);
+        String redirectSource = "EOL:10890298";
+        TaxonNode otherTaxon = taxonService.getOrCreateTaxon(null, redirectSource, null);
+        assertThat(otherTaxon.getName(), is(taxon.getName()));
+        assertThat(otherTaxon.getPath(), is(taxon.getPath()));
+        assertThat(taxon.getUnderlyingNode().getId(), is(otherTaxon.getUnderlyingNode().getId()));
+
+        assertThat(taxonService.findTaxonById(redirectTarget), is(notNullValue()));
+        assertThat(taxonService.findTaxonById(redirectSource).getUnderlyingNode().getId(), is(taxon.getUnderlyingNode().getId()));
+    }
+
+    @Test
+    public void prosopisPlantAndInsect() throws NodeFactoryException {
+        TaxonNode taxon = taxonService.getOrCreateTaxon("Prosopis", null, null);
+        assertThat(taxon.getPath(), containsString("Plantae"));
+        TaxonNode otherTaxon = taxonService.getOrCreateTaxon(null, "EOL:12072283", null);
+        assertThat(otherTaxon.getName(), is("Prosopis"));
+        assertThat(otherTaxon.getExternalId(), is("EOL:12072283"));
+        assertThat(otherTaxon.getPath(), containsString("Insecta"));
+    }
+
+    @Test
     public void createNoMatch() throws NodeFactoryException {
         taxonService.setEnricher(taxonEnricher);
         TaxonNode taxon = taxonService.getOrCreateTaxon("Santa Claus meets Superman", null, null);

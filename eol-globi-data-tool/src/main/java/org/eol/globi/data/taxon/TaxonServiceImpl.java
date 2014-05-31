@@ -92,7 +92,7 @@ public class TaxonServiceImpl implements TaxonService {
         return firstMatchingTaxon;
     }
 
-    private TaxonNode createTaxon(String name, String externalId, String path) throws NodeFactoryException {
+    private TaxonNode createTaxon(final String name, final String externalId, final String path) throws NodeFactoryException {
         Taxon taxon = new TaxonImpl();
         taxon.setName(corrector.correct(name));
         taxon.setExternalId(externalId);
@@ -118,25 +118,39 @@ public class TaxonServiceImpl implements TaxonService {
             }
         }
         indexOriginalNameForTaxon(name, taxon, taxonNode);
+        indexOriginalExternalIdForTaxon(externalId, taxon, taxonNode);
         return taxonNode;
     }
 
     private void indexOriginalNameForTaxon(String name, Taxon taxon, TaxonNode taxonNode) throws NodeFactoryException {
         if (!StringUtils.equals(taxon.getName(), name)) {
             if (StringUtils.isNotBlank(name) && !StringUtils.equals(PropertyAndValueDictionary.NO_MATCH, name)) {
-                TaxonNode foundTaxon = findTaxonByName(name);
-                if (foundTaxon == null) {
-                    Transaction tx = null;
-                    try {
-                        tx = taxonNode.getUnderlyingNode().getGraphDatabase().beginTx();
-                        taxons.add(taxonNode.getUnderlyingNode(), PropertyAndValueDictionary.NAME, name);
-                        tx.success();
-                    } finally {
-                        if (tx != null) {
-                            tx.finish();
-                        }
-                    }
+                if (findTaxonByName(name) == null) {
+                    indexTaxonByProperty(taxonNode, PropertyAndValueDictionary.NAME, name);
                 }
+            }
+        }
+    }
+
+    private void indexOriginalExternalIdForTaxon(String externalId, Taxon taxon, TaxonNode taxonNode) throws NodeFactoryException {
+        if (!StringUtils.equals(taxon.getExternalId(), externalId)) {
+            if (StringUtils.isNotBlank(externalId) && !StringUtils.equals(PropertyAndValueDictionary.NO_MATCH, externalId)) {
+                if (findTaxonById(externalId) == null) {
+                    indexTaxonByProperty(taxonNode, PropertyAndValueDictionary.EXTERNAL_ID, externalId);
+                }
+            }
+        }
+    }
+
+    private void indexTaxonByProperty(TaxonNode taxonNode, String propertyName, String propertyValue) {
+        Transaction tx = null;
+        try {
+            tx = taxonNode.getUnderlyingNode().getGraphDatabase().beginTx();
+            taxons.add(taxonNode.getUnderlyingNode(), propertyName, propertyValue);
+            tx.success();
+        } finally {
+            if (tx != null) {
+                tx.finish();
             }
         }
     }
