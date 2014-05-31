@@ -18,6 +18,8 @@ import org.eol.globi.geo.EcoRegionFinderFactoryImpl;
 import org.eol.globi.service.DOIResolverImpl;
 import org.eol.globi.service.EcoRegionFinderProxy;
 import org.eol.globi.service.TaxonPropertyEnricher;
+import org.eol.globi.service.TaxonPropertyEnricherFactory;
+import org.eol.globi.service.TaxonPropertyLookupServiceException;
 import org.neo4j.graphdb.GraphDatabaseService;
 
 import java.util.Collection;
@@ -54,6 +56,14 @@ public class Normalizer {
             LOG.info("skipping data import...");
         }
 
+        if (shouldLink()) {
+            try {
+                new Linker().linkTaxa(graphService);
+            } catch (TaxonPropertyLookupServiceException e) {
+                LOG.warn("failed to link taxa", e);
+            }
+        }
+
         if (shouldExport()) {
             exportData(graphService, baseDir);
         } else {
@@ -75,19 +85,19 @@ public class Normalizer {
         return isFalseOrMissing("skip.export");
     }
 
+    private boolean shouldLink() {
+        return isFalseOrMissing("skip.link");
+    }
+
     protected void exportData(GraphDatabaseService graphService, String baseDir) throws StudyImporterException {
         new GraphExporter().export(graphService, baseDir);
     }
 
 
     private void importData(GraphDatabaseService graphService, Collection<Class> importers) {
-        // taxon enrichment is during indexing process
-        NodeFactory factory = new NodeFactory(graphService, new TaxonServiceImpl(new TaxonPropertyEnricher() {
-            @Override
-            public void enrich(Taxon taxon) {
-
-            }
-        }, new TaxonNameCorrector(), graphService));
+        TaxonServiceImpl taxonService = new TaxonServiceImpl(TaxonPropertyEnricherFactory.createTaxonEnricher()
+                , new TaxonNameCorrector(), graphService);
+        NodeFactory factory = new NodeFactory(graphService, taxonService);
         for (Class importer : importers) {
             try {
                 importData(importer, factory);

@@ -83,16 +83,6 @@
                                     <overWrite>false</overWrite>
                                     <outputDirectory>${shapefiles.dir}/longhurst</outputDirectory>
                                 </artifactItem>
-                                <artifactItem>
-                                    <!-- bootstrap neo4j with taxon index -->
-                                    <groupId>org.eol</groupId>
-                                    <artifactId>eol-globi-taxon-index</artifactId>
-                                    <version>${project.version}</version>
-                                    <type>tar.gz</type>
-                                    <classifier>index-neo4j-graph-db</classifier>
-                                    <overWrite>false</overWrite>
-                                    <outputDirectory>${data.dir}</outputDirectory>
-                                </artifactItem>
                             </artifactItems>
                             <outputDirectory>${project.build.directory}</outputDirectory>
                         </configuration>
