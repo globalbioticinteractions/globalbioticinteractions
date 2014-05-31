@@ -253,4 +253,13 @@
         </repository>
     </repositories>
 
+    <distributionManagement>
+        <snapshotRepository>
+            <id>globi-snapshot-dark</id>
+            <name>GloBI Snapshot Repository Dark</name>
+            <url>s3://globi/snapshot-dark</url>
+        </snapshotRepository>
+    </distributionManagement>
+
+
 </project>
