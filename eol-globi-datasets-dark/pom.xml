@@ -12,6 +12,9 @@
     <properties>
         <shapefiles.dir>${project.build.directory}/shapefiles</shapefiles.dir>
         <data.dir>${project.build.directory}/data</data.dir>
+        <skip.import>false</skip.import>
+        <skip.export>false</skip.export>
+        <skip.link>true</skip.link>
     </properties>
 
     <build>
