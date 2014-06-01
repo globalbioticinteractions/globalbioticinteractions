@@ -145,7 +145,7 @@
                 <artifactId>wagon-maven-plugin</artifactId>
                 <version>1.0-beta-4</version>
                 <configuration>
-                    <serverId>aws-snapshot</serverId>
+                    <serverId>globi-snapshot</serverId>
                     <url>s3://globi/snapshot</url>
                     <skip>${skipTests}</skip>
                     <includes>
