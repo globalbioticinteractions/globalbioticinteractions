@@ -25,8 +25,6 @@ public class StudyImporterForFishbase extends BaseStudyImporter {
     @Override
     public Study importStudy() throws StudyImporterException {
         String studyResource = "fishbase/fooditems.tsv";
-
-        Map<String, Long> predatorSpecimenMap = new HashMap<String, Long>();
         try {
             LabeledCSVParser parser = parserFactory.createParser(studyResource, CharsetConstant.UTF8);
             parser.changeDelimiter('\t');
