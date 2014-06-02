@@ -51,6 +51,7 @@ public class StudyImporterForRaymond extends BaseStudyImporter {
     public static final String SOURCES_CSV = "sources.csv";
     public static final String DIET_CSV = "diet.csv";
     public static final String RESOURCE_URL = "https://data.aad.gov.au/aadc/trophic/trophic.zip";
+    private static final int MAX_ATTEMPT = 3;
     private Collection<String> locations = new HashSet<String>();
 
     public StudyImporterForRaymond(ParserFactory parserFactory, NodeFactory nodeFactory) {
@@ -59,12 +60,30 @@ public class StudyImporterForRaymond extends BaseStudyImporter {
 
     @Override
     public Study importStudy() throws StudyImporterException {
+        for (int attemptCount = 1; attemptCount <= MAX_ATTEMPT; attemptCount++) {
+            try {
+                LOG.info("[" + RESOURCE_URL + "] downloading (attempt " + attemptCount + ")...");
+                HttpResponse response = HttpUtil.createHttpClient().execute(new HttpGet(RESOURCE_URL));
+                if (response.getStatusLine().getStatusCode() == 200) {
+                    importData(response);
+                } else {
+                    attemptCount++;
+                }
+            } catch (IOException e) {
+                String msg = "failed to download [" + RESOURCE_URL + "]";
+                if (attemptCount > MAX_ATTEMPT) {
+                    throw new StudyImporterException(msg, e);
+                }
+                LOG.warn(msg + " retrying ...", e);
+            }
+        }
+        return null;
+    }
+
+    private void importData(HttpResponse response) throws StudyImporterException {
         File dietFile = null;
         File sourcesFile = null;
-
         try {
-            LOG.info("[" + RESOURCE_URL + "] downloading...");
-            HttpResponse response = HttpUtil.createHttpClient().execute(new HttpGet(RESOURCE_URL));
             LabeledCSVParser sourcesParser = null;
             LabeledCSVParser dietParser = null;
             ZipInputStream zis = new ZipInputStream(response.getEntity().getContent());
@@ -88,7 +107,6 @@ public class StudyImporterForRaymond extends BaseStudyImporter {
                 throw new StudyImporterException("failed to find [" + DIET_CSV + "] in [" + RESOURCE_URL + "]");
             }
             importData(sourcesParser, dietParser);
-
         } catch (IOException e) {
             throw new StudyImporterException("failed to import [" + getClass().getSimpleName() + "]", e);
         } finally {
@@ -99,7 +117,6 @@ public class StudyImporterForRaymond extends BaseStudyImporter {
                 sourcesFile.delete();
             }
         }
-        return null;
     }
 
     private LabeledCSVParser createParser(File dietFile, ZipInputStream zis) throws IOException {
