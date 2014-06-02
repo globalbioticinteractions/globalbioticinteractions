@@ -60,12 +60,14 @@ public class StudyImporterForRaymond extends BaseStudyImporter {
 
     @Override
     public Study importStudy() throws StudyImporterException {
-        for (int attemptCount = 1; attemptCount <= MAX_ATTEMPT; attemptCount++) {
+        boolean needsRetry = true;
+        for (int attemptCount = 1; needsRetry && attemptCount <= MAX_ATTEMPT; attemptCount++) {
             try {
                 LOG.info("[" + RESOURCE_URL + "] downloading (attempt " + attemptCount + ")...");
                 HttpResponse response = HttpUtil.createHttpClient().execute(new HttpGet(RESOURCE_URL));
                 if (response.getStatusLine().getStatusCode() == 200) {
                     importData(response);
+                    needsRetry = false;
                 } else {
                     attemptCount++;
                 }
