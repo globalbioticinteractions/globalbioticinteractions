@@ -35,7 +35,9 @@ public class StudyImporterForFishbase extends BaseStudyImporter {
                 if (importFilter.shouldImportRecord((long) lastLineNumber)) {
                     Study study = parseStudy(parser);
                     Specimen consumer = parseInteraction(parser, study);
-                    associateLocation(parser, consumer);
+                    if (consumer != null) {
+                        associateLocation(parser, consumer);
+                    }
                 }
             }
         } catch (IOException e) {
@@ -65,13 +67,22 @@ public class StudyImporterForFishbase extends BaseStudyImporter {
     }
 
     private Specimen parseInteraction(LabeledCSVParser parser, Study study) throws StudyImporterException {
-        Specimen consumer;
+        Specimen consumer = null;
         try {
             String consumerName = StringUtils.join(new String[]{parser.getValueByLabel("consumer genus"),
                     parser.getValueByLabel("consumer species")}, " ");
-            consumer = nodeFactory.createSpecimen(consumerName);
-            consumer.ate(nodeFactory.createSpecimen(parseFoodName(parser)));
-            study.collected(consumer);
+            if (StringUtils.isBlank(consumerName)) {
+                getLogger().warn(study, "found blank consumer name on line [" + parser.lastLineNumber() + 1 + "]");
+            }
+            String foodName = parseFoodName(parser);
+            if (StringUtils.isBlank(foodName)) {
+                getLogger().warn(study, "found blank food item name on line [" + parser.lastLineNumber() + 1 + "]");
+            }
+            if (StringUtils.isNotBlank(consumerName) && StringUtils.isNotBlank(foodName)) {
+                consumer = nodeFactory.createSpecimen(consumerName);
+                consumer.ate(nodeFactory.createSpecimen(foodName));
+                study.collected(consumer);
+            }
         } catch (NodeFactoryException e) {
             throw new StudyImporterException("failed to create specimens on line [" + parser.lastLineNumber() + 1 + "]", e);
         }

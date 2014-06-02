@@ -22,7 +22,7 @@ public class StudyImporterForFishbaseTest extends GraphDBTestCase {
                 "NULL\tn.a./others\tunidentified\tNULL\tNULL\tfood item of\t2\tOreochromis\tniloticus\tRainboth, W.J.1996\tFishes of the Cambodian Mekong.\tMekong.\tNULL\tNULL\tNULL\n" +
                 "NULL\tn.a./others\tSpirillum\tNULL\tNULL\tfood item of\t2\tOreochromis\tniloticus\tTrewavas, E.\t1983\tTilapiine fishes of the genera <i>Sarotherodon</i>, <i>Oreochromis</i> and <i>Danakilia</i>.\tNULL\tNULL\tNULL\tNULL\n" +
                 "NULL\tbenthic algae/weeds\tunidentified\tNULL\tNULL\tfood item of\t2\tOreochromis\tniloticus\tHickley, P. and R.G. Bailey\t1987\tFood and feeding relationships of fish in the Sudd swamps (River Nile, southern Sudan).\tSudd swamps, River Nile.\tSD\t13.8871414568\t30.0899425353\n" +
-                "1345\tbony fish\tPomatoschistus minutus\tPomatoschistus\tminutus\tfood item of\t29\tMerlangius\tmerlangus\tICES\t2012\tStomach Dataset.\tNorth Sea\tGB\t52.8763053517\t-1.69182449421";
+                "1345\tbony fish\tPomatoschistus minutus\tPomatoschistus\tminutus\tfood item of\t29\tMerlangius\tmerlangus\tICES\t2012\tStomach Dataset.\tNorth Sea\tGB\t52.8763053517\t-1.69182449421\n";
 
         StudyImporterForFishbase studyImporter = new StudyImporterForFishbase(new TestParserFactory(aFewLines), nodeFactory);
 
