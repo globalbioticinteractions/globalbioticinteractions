@@ -1,23 +1,26 @@
 package org.eol.globi.data;
 
+import com.Ostermiller.util.CSVParser;
 import com.Ostermiller.util.LabeledCSVParser;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.codehaus.swizzle.stream.FixedTokenReplacementInputStream;
+import org.codehaus.swizzle.stream.StreamTokenHandler;
+import org.codehaus.swizzle.stream.StringTokenHandler;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.Reader;
 import java.util.HashMap;
 import java.util.Map;
 
 public class StudyImporterForFishbase extends BaseStudyImporter {
-    private static final Log LOG = LogFactory.getLog(StudyImporterForFishbase.class);
-
-    public static final DateTimeFormatter DATE_TIME_FORMATTER = ISODateTimeFormat.dateTimeParser();
-
     public StudyImporterForFishbase(ParserFactory parserFactory, NodeFactory nodeFactory) {
         super(parserFactory, nodeFactory);
     }
@@ -26,23 +29,39 @@ public class StudyImporterForFishbase extends BaseStudyImporter {
     public Study importStudy() throws StudyImporterException {
         String studyResource = "fishbase/fooditems.tsv";
         try {
-            LabeledCSVParser parser = parserFactory.createParser(studyResource, CharsetConstant.UTF8);
-            parser.changeDelimiter('\t');
-            while (parser.getLine() != null) {
-                int lastLineNumber = parser.getLastLineNumber();
-                if (importFilter.shouldImportRecord((long) lastLineNumber)) {
-                    Study study = parseStudy(parser);
-                    Specimen consumer = parseInteraction(parser, study);
-                    if (consumer != null) {
-                        associateLocation(parser, consumer);
-                    }
-                }
-            }
+            importStudy(getClass().getResourceAsStream(studyResource));
         } catch (IOException e) {
             throw new StudyImporterException("failed to access resource [" + studyResource + "]");
         }
 
         return null;
+    }
+
+    protected void importStudy(InputStream inputStream) throws IOException, StudyImporterException {
+        LabeledCSVParser parser = getLabeledCSVParser(inputStream);
+        while (parser.getLine() != null) {
+            int lastLineNumber = parser.getLastLineNumber();
+            if (importFilter.shouldImportRecord((long) lastLineNumber)) {
+                Study study = parseStudy(parser);
+                Specimen consumer = parseInteraction(parser, study);
+                if (consumer != null) {
+                    associateLocation(parser, consumer);
+                }
+            }
+        }
+    }
+
+    protected static LabeledCSVParser getLabeledCSVParser(InputStream inputStream) throws IOException {
+        FixedTokenReplacementInputStream filteredInputStream = new FixedTokenReplacementInputStream(inputStream, "\r", new StringTokenHandler() {
+            @Override
+            public String handleToken(String token) throws IOException {
+                return "";
+            }
+        });
+        Reader reader = FileUtils.getUncompressedBufferedReader(filteredInputStream, CharsetConstant.UTF8);
+        LabeledCSVParser parser = new LabeledCSVParser(new CSVParser(reader));
+        parser.changeDelimiter('\t');
+        return parser;
     }
 
     private void associateLocation(LabeledCSVParser parser, Specimen consumer) throws StudyImporterException {
