@@ -1,5 +1,6 @@
 package org.eol.globi.data;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.HttpResponse;
@@ -19,7 +20,9 @@ import org.neo4j.graphdb.Relationship;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class StudyImporterForINaturalist extends BaseStudyImporter {
@@ -51,6 +54,11 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
         put("Eaten by", InteractType.ATE);
     }};
     public static final int MAX_ATTEMPTS = 3;
+    public static final List<String> IGNORED_INTERACTION_TYPES = new ArrayList<String>() {{
+        // see https://github.com/jhpoelen/eol-globi-data/issues/56
+        add("Associated species with names lookup");
+        add("Target species");
+    }};
 
     public StudyImporterForINaturalist(ParserFactory parserFactory, NodeFactory nodeFactory) {
         super(parserFactory, nodeFactory);
@@ -138,8 +146,7 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
             JsonNode observationField = jsonNode.get("observation_field");
             String interactionDataType = observationField.get("datatype").getTextValue();
             String interactionType = observationField.get("name").getTextValue();
-            // see https://github.com/jhpoelen/eol-globi-data/issues/56
-            if ("Associated species with names lookup".equals(interactionType)) {
+            if (isIgnoredInteractionType(interactionType)) {
                 LOG.warn("ignoring taxon observation field type [" + interactionType + "] for observation with id [" + observationId + "]");
             } else {
                 createInteraction(study, jsonNode, targetTaxonNode, observationId, interactionDataType, interactionType);
@@ -147,6 +154,11 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
         }
 
     }
+
+    private boolean isIgnoredInteractionType(String interactionType) {
+        return StringUtils.isBlank(interactionType) || IGNORED_INTERACTION_TYPES.contains(interactionType);
+    }
+
 
     private void createInteraction(Study study, JsonNode jsonNode, JsonNode targetTaxonNode, long observationId, String interactionDataType, String interactionType) throws StudyImporterException, NodeFactoryException {
         JsonNode observation = jsonNode.get("observation");
