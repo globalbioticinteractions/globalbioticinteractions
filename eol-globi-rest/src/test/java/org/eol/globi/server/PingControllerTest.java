@@ -12,7 +12,7 @@ import static org.junit.Assert.assertThat;
 public class PingControllerTest extends SpringTestBase {
 
     @Autowired
-    private DietNicheWidthController controller;
+    private PingController controller;
 
     @Test
     public void checkConfig() throws IOException {

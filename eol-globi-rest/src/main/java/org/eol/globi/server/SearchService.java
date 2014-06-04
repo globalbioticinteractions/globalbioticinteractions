@@ -41,6 +41,7 @@ public class SearchService {
         }
         return props;
     }
+
     public String findTaxonProxy(@PathVariable("taxonName") final String taxonName, HttpServletRequest request) throws IOException {
         CypherQuery cypherQuery = new CypherQuery("START taxon = node:taxons(name={taxonName}) " +
                 "RETURN taxon.name? as `name`, taxon.commonNames? as `commonNames`, taxon.path? as `path`, taxon.externalId? as `externalId` LIMIT 1", new HashMap<String, String>() {

@@ -2,10 +2,6 @@ package org.eol.globi.server;
 
 import org.eol.globi.domain.TaxonImage;
 import org.eol.globi.service.EOLTaxonImageService;
-import org.neo4j.graphdb.GraphDatabaseService;
-import org.neo4j.graphdb.Node;
-import org.neo4j.graphdb.index.IndexHits;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,25 +12,20 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 public class ImageService {
 
     private EOLTaxonImageService service = new EOLTaxonImageService();
 
-    @Autowired
-    private GraphDatabaseService graphDb;
-
     @RequestMapping(value = "/imagesForName/{scientificName}", method = RequestMethod.GET)
     @ResponseBody
     public TaxonImage findTaxonImagesForTaxonWithName(@PathVariable("scientificName") String scientificName) throws IOException {
+        Map<String, String> taxon = new SearchService().findTaxon(scientificName, null);
         TaxonImage taxonImage = null;
-        IndexHits<Node> hits = graphDb.index().forNodes("taxons").get("name", scientificName);
-        if (hits.hasNext()) {
-            Node firstHit = hits.next();
-            if (firstHit.hasProperty("externalId")) {
-                taxonImage = service.lookupImageForExternalId((String) firstHit.getProperty("externalId"));
-            }
+        if (taxon != null && taxon.containsKey("externalId")) {
+                taxonImage = service.lookupImageForExternalId(taxon.get("externalId"));
         }
         return taxonImage;
     }

@@ -1,9 +1,5 @@
 package org.eol.globi.server;
 
-import org.neo4j.graphdb.GraphDatabaseService;
-import org.neo4j.graphdb.factory.GraphDatabaseBuilder;
-import org.neo4j.graphdb.factory.GraphDatabaseFactory;
-import org.neo4j.helpers.collection.MapUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
@@ -23,13 +19,6 @@ public class Config {
         ppc.setIgnoreResourceNotFound(true);
         ppc.setSystemPropertiesMode(PropertyPlaceholderConfigurer.SYSTEM_PROPERTIES_MODE_OVERRIDE);
         return ppc;
-    }
-
-    @Bean(destroyMethod = "shutdown")
-    public GraphDatabaseService graphDb(@Value("${storeDir:target/graph.db.test}") final String storeDir) {
-        GraphDatabaseBuilder graphDatabaseBuilder = new GraphDatabaseFactory().newEmbeddedDatabaseBuilder(storeDir);
-        graphDatabaseBuilder.setConfig(MapUtil.stringMap("read_only", "false"));
-        return graphDatabaseBuilder.newGraphDatabase();
     }
 
     @Bean
