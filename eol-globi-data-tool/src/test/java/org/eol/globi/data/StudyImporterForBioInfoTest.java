@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.hamcrest.core.IsNull.nullValue;
@@ -51,7 +52,9 @@ public class StudyImporterForBioInfoTest extends GraphDBTestCase {
 
             @Override
             public boolean shouldImportRecord(Long recordNumber) {
-                return recordNumber < 500 || recordNumber == 4585;
+                return recordNumber < 500
+                        || recordNumber == 4585
+                        || (recordNumber > 24220 && recordNumber < 24340);
             }
         });
         Study study = importer.importStudy();
@@ -70,6 +73,12 @@ public class StudyImporterForBioInfoTest extends GraphDBTestCase {
         assertThat(result.dumpToString(), containsString("Puccinia impatientis parasite_of Impatiens capensis"));
         assertThat(result.dumpToString(), containsString("Paroxyna misella ate Centaurea nigra"));
         assertThat(result.dumpToString(), containsString("Puccinia calthae parasite_of Caltha palustris"));
+
+        result = engine.execute("START taxon = node:taxons(name='Aster tripolium')\n" +
+                "MATCH study-[:COLLECTED]-specimen-[:CLASSIFIED_AS]->taxon, specimen-[:PARASITE_OF]->host-[:CLASSIFIED_AS]->hostTaxon\n" +
+                "RETURN taxon.name, hostTaxon.name");
+        assertThat(result.dumpToString(), not(containsString("Aster tripolium")));
+
 
         assertThat(study.getTitle(), is("BIO_INFO"));
         TaxonNode acer = nodeFactory.findTaxon("Acer");

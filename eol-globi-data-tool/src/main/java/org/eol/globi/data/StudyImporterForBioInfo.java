@@ -1,6 +1,7 @@
 package org.eol.globi.data;
 
 import com.Ostermiller.util.LabeledCSVParser;
+import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.RelType;
 import org.eol.globi.domain.Specimen;
@@ -144,12 +145,17 @@ public class StudyImporterForBioInfo extends BaseStudyImporter implements StudyI
             long count = 1;
             while (parser.getLine() != null) {
                 if (importFilter.shouldImportRecord(count)) {
-                    Specimen donorSpecimen = createSpecimen(parser, taxaMap, "DonorTax_id");
-                    addLifeStage(parser, donorSpecimen, "DonorStage", study);
-                    Specimen recipientSpecimen = createSpecimen(parser, taxaMap, "RecipTax_id");
-                    addLifeStage(parser, recipientSpecimen, "RecipStage", study);
-                    study.collected(recipientSpecimen);
-                    recipientSpecimen.interactsWith(donorSpecimen, relationsTypeMap.get(labelAsLong(parser, "TrophicRel_Id")));
+                    String donorScientificName = getScientificNameForTaxonId(parser, taxaMap, "DonorTax_id");
+                    String recipientScientificName = getScientificNameForTaxonId(parser, taxaMap, "RecipTax_id");
+                    if (!invalidInteraction(donorScientificName, recipientScientificName)) {
+                        Specimen donorSpecimen = createSpecimen(parser, donorScientificName);
+                        addLifeStage(parser, donorSpecimen, "DonorStage", study);
+                        Specimen recipientSpecimen = createSpecimen(parser, recipientScientificName);
+                        addLifeStage(parser, recipientSpecimen, "RecipStage", study);
+                        study.collected(recipientSpecimen);
+                        recipientSpecimen.interactsWith(donorSpecimen, relationsTypeMap.get(labelAsLong(parser, "TrophicRel_Id")));
+                    }
+
                 }
                 count++;
             }
@@ -158,6 +164,12 @@ public class StudyImporterForBioInfo extends BaseStudyImporter implements StudyI
         }
         getLogger().info(study, "relations created.");
         return study;
+    }
+
+    // see https://github.com/jhpoelen/eol-globi-data/issues/67
+    private boolean invalidInteraction(String donorScientificName, String recipientScientificName) {
+        return StringUtils.equals("Aster tripolium", recipientScientificName)
+                && StringUtils.equals("Carex extensa", donorScientificName);
     }
 
     private void addLifeStage(LabeledCSVParser parser, Specimen donorSpecimen, String stageColumnName, Study study) throws StudyImporterException {
@@ -186,12 +198,7 @@ public class StudyImporterForBioInfo extends BaseStudyImporter implements StudyI
 
     }
 
-    private Specimen createSpecimen(LabeledCSVParser labeledCSVParser, Map<Long, String> taxaMap, String taxonIdString) throws StudyImporterException {
-        Long taxonId = labelAsLong(labeledCSVParser, taxonIdString);
-        String scientificName = taxaMap.get(taxonId);
-        if (scientificName == null) {
-            throw new StudyImporterException("failed to find scientific name for taxonId [" + taxonId + "] at line [" + labeledCSVParser.getLastLineNumber() + "]");
-        }
+    private Specimen createSpecimen(LabeledCSVParser labeledCSVParser, String scientificName) throws StudyImporterException {
         try {
             Specimen specimen = nodeFactory.createSpecimen(scientificName);
             specimen.setExternalId(TaxonomyProvider.BIO_INFO + "rel:" + labeledCSVParser.lastLineNumber());
@@ -199,6 +206,15 @@ public class StudyImporterForBioInfo extends BaseStudyImporter implements StudyI
         } catch (NodeFactoryException e) {
             throw new StudyImporterException("failed to create taxon with scientific name [" + scientificName + "]", e);
         }
+    }
+
+    private String getScientificNameForTaxonId(LabeledCSVParser labeledCSVParser, Map<Long, String> taxaMap, String taxonIdString) throws StudyImporterException {
+        Long taxonId = labelAsLong(labeledCSVParser, taxonIdString);
+        String scientificName = taxaMap.get(taxonId);
+        if (scientificName == null) {
+            throw new StudyImporterException("failed to find scientific name for taxonId [" + taxonId + "] at line [" + labeledCSVParser.getLastLineNumber() + "]");
+        }
+        return scientificName;
     }
 
     private Long labelAsLong(LabeledCSVParser labeledCSVParser, String trophicRelId2) {
