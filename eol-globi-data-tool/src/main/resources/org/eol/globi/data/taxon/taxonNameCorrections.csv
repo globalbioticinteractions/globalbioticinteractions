@@ -970,7 +970,9 @@ blue-green algae,Cyanophycota,,,,,,Term corrected to scientific notation by Bria
 dinoflagellates,Dinoflagellata,,,,,,Term corrected to scientific notation by BrianHayden
 diatoms,Bacillariophyceae,,,,,,Term corrected to scientific notation by BrianHayden
 green algae,Plantae,,,,,,Term corrected to scientific notation by BrianHayden
+green-algae,Plantae,,,,,,Term corrected to scientific notation by BrianHayden
 n.a./other  phytoplankton,Plantae,,,,,,Term corrected to scientific notation by BrianHayden
+n.a./other phytoplankton,Plantae,,,,,,Term corrected to scientific notation by BrianHayden
 benthic algae/weeds,Plantae,,,,,,Term corrected to scientific notation by BrianHayden
 periphyton,Other,,,,,,Term corrected to scientific notation by BrianHayden
 terrestrial plants,Embryophyta,,,,,,Term corrected to scientific notation by BrianHayden
@@ -988,6 +990,7 @@ octopi,Octopoda,,,,,,Term corrected to scientific notation by BrianHayden
 n.a./other mollusks,Mollusca,,,,,,Term corrected to scientific notation by BrianHayden
 ostracods,Ostracoda,,,,,,Term corrected to scientific notation by BrianHayden
 benthic copepods,Copepoda,,,,,,Term corrected to scientific notation by BrianHayden
+benth. copepods,Copepoda,,,,,,Term corrected to scientific notation by BrianHayden
 isopods,Isopoda,,,,,,Term corrected to scientific notation by BrianHayden
 amphipods,Amphipoda,,,,,,Term corrected to scientific notation by BrianHayden
 stomatopods,Stomatopoda,,,,,,Term corrected to scientific notation by BrianHayden
@@ -995,19 +998,31 @@ shrimps/prawns,Caridea,,,,,,Term corrected to scientific notation by BrianHayden
 lobsters,Nephropidae,,,,,,Term corrected to scientific notation by BrianHayden
 crabs,Brachyura,,,,,,Term corrected to scientific notation by BrianHayden
 n.a./benthic crustaceans,Crustacea,,,,,,Term corrected to scientific notation by BrianHayden
+n.a./other benth. Crustaceans,Crustacea,,,,,,Term corrected to scientific notation by BrianHayden
+n.a./other benth. crustaceans,Crustacea,,,,,,Term corrected to scientific notation by BrianHayden
 insects,Insecta,,,,,,Term corrected to scientific notation by BrianHayden
+n.a./terrest. Insects,Insecta,,,,,,Term corrected to scientific notation by BrianHayden
+n.a./terrest. insects,Insecta,,,,,,Term corrected to scientific notation by BrianHayden
 sea stars/brittle stars,Ophiuroidea,,,,,,Term corrected to scientific notation by BrianHayden
 sea urchins,Echinoidea,,,,,,Term corrected to scientific notation by BrianHayden
 sea cucumbers,Holothuroidea,,,,,,Term corrected to scientific notation by BrianHayden
 n.a./other echinoderms,Echinodermata,,,,,,Term corrected to scientific notation by BrianHayden
 n.a./other benthic invertebrates,Arthropoda,,,,,,Term corrected to scientific notation by BrianHayden
+n.a./other benth. Invertebrates,Arthropoda,,,,,,Term corrected to scientific notation by BrianHayden
+n.a./other benth. invertebrates,Arthropoda,,,,,,Term corrected to scientific notation by BrianHayden
 jellyfish/hydroids,Medusozoa,,,,,,Term corrected to scientific notation by BrianHayden
 planktonic copepods,Copepoda,,,,,,Term corrected to scientific notation by BrianHayden
+plank. copepods,Copepoda,,,,,,Term corrected to scientific notation by BrianHayden
+plank. Copepods,Copepoda,,,,,,Term corrected to scientific notation by BrianHayden
 cladocerans,Cladocera,,,,,,Term corrected to scientific notation by BrianHayden
 mysids,Mysis,,,,,,Term corrected to scientific notation by BrianHayden
 euphausiids,Euphausiacea,,,,,,Term corrected to scientific notation by BrianHayden
 n.a./other planktonic crustaceans,Crustacea,,,,,,Term corrected to scientific notation by BrianHayden
+n.a./other plank. crustaceans,Crustacea,,,,,,Term corrected to scientific notation by BrianHayden
+n.a./other plank. Crustaceans,Crustacea,,,,,,Term corrected to scientific notation by BrianHayden
 n.a./other planktonic invertebrates,Arthropoda,,,,,,Term corrected to scientific notation by BrianHayden
+n.a./other plank. Invertebrates,Arthropoda,,,,,,Term corrected to scientific notation by BrianHayden
+n.a./other plank. invertebrates,Arthropoda,,,,,,Term corrected to scientific notation by BrianHayden
 fish eggs/larvae,Osteichthyes,,,,,,Term corrected to scientific notation by BrianHayden
 squids/cuttlefish,Decapodiformes,,,,,,Term corrected to scientific notation by BrianHayden
 bony fish,Osteichthyes,,,,,,Term corrected to scientific notation by BrianHayden
