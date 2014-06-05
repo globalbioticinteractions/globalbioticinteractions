@@ -34,12 +34,16 @@ public class SearchService {
         if (dataNode != null && dataNode.size() > 0) {
             props = new HashMap<String, String>();
             JsonNode first = dataNode.get(0);
-            props.put("name", first.get(0).getTextValue());
-            props.put("commonNames", first.get(1).getTextValue());
-            props.put("path", first.get(2).getTextValue());
-            props.put("externalId", first.get(3).getTextValue());
+            props.put("name", valueOrEmpty(first.get(0).getTextValue()));
+            props.put("commonNames", valueOrEmpty(first.get(1).getTextValue()));
+            props.put("path", valueOrEmpty(first.get(2).getTextValue()));
+            props.put("externalId", valueOrEmpty(first.get(3).getTextValue()));
         }
         return props;
+    }
+
+    protected String valueOrEmpty(String name) {
+        return StringUtils.isBlank(name) ? "" : name;
     }
 
     public String findTaxonProxy(@PathVariable("taxonName") final String taxonName, HttpServletRequest request) throws IOException {
