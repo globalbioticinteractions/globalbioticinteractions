@@ -88,7 +88,7 @@ public class SearchServiceTest {
     @Test
     public void findCloseMatchesScientificChineseCharacters() throws IOException {
         String response = new SearchService().findCloseMatchesForCommonAndScientificNames("Ariidae");
-        assertThat(response, StringContains.containsString("海鲇科"));
+        assertThat(response, StringContains.containsString("密氏雅首海鯰"));
     }
 
     @Test
