@@ -19,7 +19,7 @@ public class ImageService {
 
     private EOLTaxonImageService service = new EOLTaxonImageService();
 
-    @RequestMapping(value = "/imagesForName/{scientificName}", method = RequestMethod.GET)
+    @RequestMapping(value = "/imagesForName/{scientificName}", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
     @ResponseBody
     public TaxonImage findTaxonImagesForTaxonWithName(@PathVariable("scientificName") String scientificName) throws IOException {
         Map<String, String> taxon = new SearchService().findTaxon(scientificName, null);
@@ -30,7 +30,7 @@ public class ImageService {
         return taxonImage;
     }
 
-    @RequestMapping(value = "/imagesForNames", method = RequestMethod.GET)
+    @RequestMapping(value = "/imagesForNames", method = RequestMethod.GET, produces = "application/json;charset=UTF-8" )
     @ResponseBody
     public List<TaxonImage> findImagesForNames(@RequestParam(value="name") String[] names) throws IOException {
         List<TaxonImage> images = new ArrayList<TaxonImage>();
@@ -43,7 +43,7 @@ public class ImageService {
         return images;
     }
 
-    @RequestMapping(value = "/images/{externalId}", method = RequestMethod.GET)
+    @RequestMapping(value = "/images/{externalId}", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
     @ResponseBody
     public TaxonImage findTaxonImagesForExternalId(@PathVariable("externalId") String externalId) throws IOException {
         return service.lookupImageForExternalId(externalId);
