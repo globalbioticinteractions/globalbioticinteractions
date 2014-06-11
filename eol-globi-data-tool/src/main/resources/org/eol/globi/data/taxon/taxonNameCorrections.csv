@@ -5,22 +5,22 @@ Cynosciona arenurius,Cynoscion arenarius,,,,,,
 Airus felis,Ariopsis felis,,,,,"James Simons personal communication April 2013, http://www.sms.si.edu/IRLSpec/Ariops_felis.htm retrieved April 7 2013","Ariopsis felis is now the correct name,  Arius felis is an old name."
 Arius felis,Ariopsis felis,,,,,"James Simons personal communication April 2013, http://www.sms.si.edu/IRLSpec/Ariops_felis.htm retrieved April 7 2013","Ariopsis felis is now the correct name,  Arius felis is an old name."
 Unidentified insects,Insecta,,,,,,
-Eggs,Animalia,,,,,,
+Eggs,Animalia,,,,egg,,
 Unidentifiable animal tissue,Animalia,,,,,,
-Egg capsules,Animalia,,,,,,
-Invertebrate eggs,Invertebrata,,,,,,
+Egg capsules,Animalia,,,,egg,,
+Invertebrate eggs,Invertebrata,,,,egg,,
 Neopunope sayi,Neopanope sayi,,,,,,
 Gobiosoma robustom,Gobiosoma robustum,,,,,,
 Lag rhomboides,Lagodon rhomboides,,,,,,
 Unidentified gastropod,Gastropoda,,,,,,
-Decopoda larvae,Decopoda,,,,,,
-Catfish egg,Catfish,,,,,,
+Decopoda larvae,Decopoda,,,,larvae,,
+Catfish egg,Siluriformes,,,,egg,,
 Cynoscion arenurius,Cynoscion arenarius,,,,,,
-Seeds,Plantae,,,,,,
+Seeds,Plantae,,,,seed,,
 Teleost scales,Teleostei,,,,,,
 Penaeid shrimp post larvae,Penaeidae,,,,,,
 Cyp. Variegatus,Cyprinodon variegatus,,,,,,
-Copepoda nauplii,Copepoda,,,,,,
+Copepoda nauplii,Copepoda,,,,larvae,,
 Unid fish,Actinopterygii,,,,,,
 Menidia berylina,Menidia beryllina,,,,,,
 Cyprinodon varieagatus,Cyprinodon variegatus,,,,,,
@@ -31,7 +31,7 @@ Citharichtys macrops,Citharichthys macrops,,,,,,
 Lei xanthurus,Leiostomus xanthurus,,,,,,
 Molluks,Mollusca,,,,,,
 Adina xenica,Adinia xenica,,,,,,
-Unidentified fish larvae,Actinopterygii,,,,,,
+Unidentified fish larvae,Actinopterygii,,,,larvae,,
 Unidentified bivalve,Bivalvia,,,,,,
 Cycloid fish scale,Actinopterygii,,,,,,
 Other fundulus species,Fundulus spp,,,,,,
@@ -45,7 +45,7 @@ Gobioosma bosc,Gobiosoma bosc,,,,,,
 Anidia xenica,Adinia xenica,,,,,,
 Euc gula,Eucinostomus gula,,,,,,
 Fish eyes,Actinopterygii,,,,,,
-Lucania parva eggs,Lucania parva,,,,,,
+Lucania parva eggs,Lucania parva,,,,egg,,
 Sciaenops ocellatus*,Sciaenops ocellatus,,,,,,
 Other Molluks,Mollusca,,,,,,
 Bai chrysoura,Bairdiella chrysoura,,,,,,
@@ -74,7 +74,7 @@ Flo carpio,Floridichthys carpio,,,,,,
 Oligoliptes saurus,Oligoplites saurus,,,,,,
 Ctenoid fish scale,Actinopterygii,,,,,,
 Peneaus aztecus,Farfantepenaeus aztecus,,,,,,
-Other fish eggs,Actinopterygii,,,,,,
+Other fish eggs,Actinopterygii,,,,egg,,
 Far duoraum,Farfantepenaeus duoraum,,,,,,
 Logodon rhomboides,Lagodon rhomboides,,,,,,
 Fish otolith,Actinopterygii,,,,,,
@@ -97,7 +97,7 @@ Gambuisa affinis,Gambusia affinis,,,,,,
 Ari felis,Ariopsis felis,,,,,,
 Peneaus setiferus,Litopenaeus setiferus,,,,,,
 Litopeneaus setiferus,Litopenaeus setiferus,,,,,js,spelling error
-Cyprid larvae,Barnacle,,,,,,
+Cyprid larvae,Cirripedia,,,,larvae,,
 Bivalave,Bivalvia,,,,,,
 Nemotoda,Nematoda,,,,,,
 Citharicthys spilopterus,Citharichthys spilopterus,,,,,,
@@ -315,15 +315,15 @@ Crustacea digestate, Crustacea,digestate,,,,McMichael,
 crustacean larva, Crustacea,,,,larvae,Barnes 2008,
 Unidentified crustacean, Crustacea,,,,,Barnes 2008,
 Unidentified crustacean egg, Crustacea,,,,egg,Barnes 2008,
-teleosts/molluscs/crustaceans, Crustacea,,,,,Barnes 2008,
+teleosts/molluscs/crustaceans, Animalia,,,,,Barnes 2008,
 Ctenophore medusae tissue, Ctenophora,,,tissue,medusae,Simons 1997,
 Cyclopoid copepoda, Cyclopoida,,,,,Akin et al 2006,
 Cyclopoid copepodite, Cyclopoida,,,,copepodite,Barnes 2008,
 Decapod carapace, Decapoda,,,carapace,,Wrast 2008,
 Decapod legs,Decapoda,,,legs,,Wrast 2008,
-Decapod zoea,Decapoda,,,,zoea,Barnes 2008,
+Decapod zoea,Decapoda,,,,larvae,Barnes 2008,
 Decopoda larvae,Decapoda,,,,larvae,Akin et al 2006,
-Diptera midges(pupa), Diptera,,,,midges,Akin et al 2006,
+Diptera midges(pupa), Diptera,,,,pupae,Akin et al 2006,
 Emiliani huxleyi, Emiliania huxleyi,,,,,Roopnarine et al 2013,according to WoRMS; is Coccolithus huxleyi in ITIS
 Erichtonius brasiliensis, Erichthonius brasiliensis,,,,,Wrast 2008,
 Euchirograspus sp., Euchirograpsus,,,,,Simons 1997,
@@ -364,7 +364,7 @@ Lysianassidae Genus A, Lysianassidae,,,,,Simons 1997,Genus A
 Lysianassidae Genus B, Lysianassidae,,,,,Simons 1997,Genus B
 Mediomastis californiensis, Mediomastus californiensis,,,,,Rogers 1977,
 Menippe adina claw, Menippe adina,,,claw,,Wrast 2008,
-teleosts/molluscs/crustaceans, Mollusca,,,,,Barnes 2008,
+teleosts/molluscs/crustaceans, Animalia,,,,,Barnes 2008,
 Natacidae, Naticidae,,,,,Simons 1997,
 Odonate, Odonata,,,,,Akin et al 2006,
 Digestate, Organic matter,digestate,,,,Wrast 2008,
@@ -386,7 +386,7 @@ Mantish shrimp sp., Stomatopoda,,,,,Baremore 2010,common name is mantis shrimp
 Mantish shrimp, Stomatopoda,,,,,,
 Synalphaeus sp., Synalpheus,,,,,Simons 1997,
 Synopiidae Genus A, Synopiidae,,,,,Simons 1997,Genus A
-teleosts/molluscs/crustaceans, Teleostei,,,,,Barnes 2008,
+teleosts/molluscs/crustaceans, Animalia,,,,,Barnes 2008,
 Tethygaster sp., Tethyaster,,,,,Torruco and Gonzalez 1994,
 squid unidentified, Teuthida,,,,,Barnes 2008,
 Squid beak, Teuthida,,,beak,,Wrast 2008,
@@ -402,7 +402,7 @@ Amyema lucasii, Amyema lucasii,,,,,JRFerrisParisButterflies,Found at:  http://bi
 Amyema melaleucae, Amyema melaleucae,,,,,JRFerrisParisButterflies,found at:  http://bie.ala.org.au/search?q=+Amyema+melaleucae+
 Appendicularians house, Appendicularian,,,house,,Barnes 2008,
 Arenaeus cribarius, Arenaeus cribrarius,,,,,Torruco and Gonzalez 1994,Found at:  http://www.marinespecies.org/aphia.php?p=taxdetails&id=158046
-Aricidea succinea, Aricidea  suecica,,,,,Simons 1997,Found at:  http://www.marinespecies.org/aphia.php?p=taxdetails&id=130572
+Aricidea succinea, Aricidea suecica,,,,,Simons 1997,Found at:  http://www.marinespecies.org/aphia.php?p=taxdetails&id=130572
 Liomophora, Chaetodon,,,,,Roopnarine et al 2013,Linophora (old name) Found at:  http://www.marinespecies.org/aphia.php?p=taxdetails&id=296995
 Asterocystis ramosa, Chroodactylon ornatum,,,,,Roopnarine et al 2013,Found at:  http://www.marinespecies.org/aphia.php?p=taxdetails&id=145685
 Loligo pealei or Illex illecebrosus, Decapodiformes,,,,,Barnes 2008,Found at:  http://www.marinespecies.org/aphia.php?p=taxdetails&id=325342
@@ -785,7 +785,7 @@ Ascochyta caulicola var. lupini, Ascochyta caulicola var. lupini,,,,,BIO_INFO,Fo
 Ascochyta graminicola var. festucae, Ascochyta graminicola var. festucae,,,,,BIO_INFO,Found at:  http://eol.org/pages/6434911/overview
 Ascochyta papaveris var. dicentrae, Ascochyta papaveris var. dicentrae,,,,,BIO_INFO,Found at:  http://eol.org/pages/6435772/overview
 Ascochyta vulgaris var. philadelphi, Ascochyta vulgaris var. philadelphi,,,,,BIO_INFO,Found at:  http://eol.org/pages/6434989/overview
-" silversides, anchovies and 'other fish prey' ", Atheriniformes,,,,,Barnes 2008,
+" silversides, anchovies and 'other fish prey' ", Teleostei,,,,,Barnes 2008,
 Bakerdania elliptica, Bakerdania elliptica,,,,,BIO_INFO,Found at:  http://www.organismnames.com/details.htm?lsid=565960
 Balanococcus kwoni, Balanococcus kwoni,,,,,BIO_INFO,Found at:  http://www.organismnames.com/details.htm?lsid=1929660
 Chloridium virescens var. virescens, Chloridium virescens var. virescens,,,,,BIO_INFO,Found at:  http://eol.org/pages/6418349/overview
@@ -842,7 +842,7 @@ Phoma exigua var. exigua, Phoma exigua var. exigua,,,,,BIO_INFO,Found at:  http:
 Phomopsis achilleae var. achilleae, Phomopsis achilleae var. achilleae,,,,,BIO_INFO,Found at:  http://eol.org/pages/6423926/overview
 Phyllachora sylvatica f. sylvatica, Phyllachora sylvatica f. sylvatica,,,,,BIO_INFO,Found at:  http://eol.org/pages/6643074/overview
 Phyllosticta sorbi var. torminalis, Phyllosticta sorbi var. torminalis,,,,,BIO_INFO,Found at:  http://eol.org/pages/6428605/overview
-Plagiognathus albipennis sensu S. & L., Plagiognathus albipennis sensu S. L.,,,,,BIO_INFO,Found at:  http://eol.org/pages/3698394/overview
+Plagiognathus albipennis sensu S. & L., Plagiognathus albipennis,,,,,BIO_INFO,Found at:  http://eol.org/pages/3698394/overview
 Protounguicularia barbata f. resinacea, Protounguicularia barbata f. resinacea,,,,,BIO_INFO,Found at:  http://eol.org/pages/1281858/overview
 Psathyrella prona f. cana, Psathyrella prona f. cana,,,,,BIO_INFO,Found at:  http://eol.org/pages/6690010/overview
 Psathyrella prona f. orbitarum, Psathyrella prona f. orbitarum,,,,,BIO_INFO,Found at:  http://eol.org/pages/6690009/overview
@@ -911,7 +911,7 @@ Mycosphaerella alchemilae,Mycosphaerella alchemillae,,,,,BIO_INFO,Found at:  htt
 Orthopristes chrysopterus,Orthopristis chrysoptera,,,,,Miles 1949,Found at:  http://www.itis.gov/servlet/SingleRpt/SingleRpt?search_topic=TSN&search_value=169077
 fish,Actinopterygii,,,,,,
 Fish,Actinopterygii,,,,,,
-fish eggs,Actinopterygii,,,,,,
+fish eggs,Actinopterygii,,,,egg,,
 Fish scale,Actinopterygii,,,,,,
 Fish tissue,Actinopterygii,,,,,,
 Decapod,Decapoda,,,,,,
@@ -977,12 +977,12 @@ benthic algae/weeds,Plantae,,,,,,Term corrected to scientific notation by BrianH
 periphyton,Other,,,,,,Term corrected to scientific notation by BrianHayden
 terrestrial plants,Embryophyta,,,,,,Term corrected to scientific notation by BrianHayden
 sponges,Porifera,,,,,,Term corrected to scientific notation by BrianHayden
-ascidians,Ascidiacia,,,,,,Term corrected to scientific notation by BrianHayden
+ascidians,Ascidiacea,,,,,,Term corrected to scientific notation by BrianHayden
 hard corals,Scleractinia,,,,,,Term corrected to scientific notation by BrianHayden
 n.a./other polyps,Cnidaria,,,,,,Term corrected to scientific notation by BrianHayden
 polychaetes,Polychaeta,,,,,,Term corrected to scientific notation by BrianHayden
 n.a./other annelids,Clitellata,,,,,,Term corrected to scientific notation by BrianHayden
-non-annelids,Haplodrili,,,,,,Term corrected to scientific notation by BrianHayden
+non-annelids,Archiannelida,,,,,,Term corrected to scientific notation by BrianHayden
 chitons,Polyplacophora,,,,,,Term corrected to scientific notation by BrianHayden
 bivalves,Bivalvia,,,,,,Term corrected to scientific notation by BrianHayden
 gastropods,Gastropoda,,,,,,Term corrected to scientific notation by BrianHayden
@@ -1039,7 +1039,7 @@ pinnipeds,Pinnipedia,,,,,,Term corrected to scientific notation by BrianHayden
 n.a./other mammals,Mammalia,,,,,,Term corrected to scientific notation by BrianHayden
 n.a./others,Other,,,,,,Term corrected to scientific notation by BrianHayden
 Invertebrates,Invertebrata,,,,,,normalized term to functional group see https://en.wikipedia.org/wiki/Invertebrata
-unidentified invert larva,Invertebrata,,,,larva,,as discussed with author Dr. Carolyn Barnes
+unidentified invert larva,Invertebrata,,,,larvae,,as discussed with author Dr. Carolyn Barnes
 Appendicularians house,Appendicularia,,,house,,,as discussed with author Dr. Carolyn Barnes
 Polychaete,Polychaeta,,,,calyptopis,,as discussed with author Dr. Carolyn Barnes
 Euphausid calyptopis,Euphausidae,,,,furcilia,,as discussed with author Dr. Carolyn Barnes
