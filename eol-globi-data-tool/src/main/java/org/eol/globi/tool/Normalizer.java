@@ -35,14 +35,14 @@ public class Normalizer {
         normalize("./", importers);
     }
 
-    private EcoregionFinder getEcoRegionFinder() {
+    private EcoregionFinder getEcoregionFinder() {
         if (null == ecoregionFinder) {
             ecoregionFinder = new EcoregionFinderProxy(new EcoregionFinderFactoryImpl().createAll());
         }
         return ecoregionFinder;
     }
 
-    public void setEcoRegionFinder(EcoregionFinder finder) {
+    public void setEcoregionFinder(EcoregionFinder finder) {
         this.ecoregionFinder = finder;
     }
 
@@ -103,7 +103,7 @@ public class Normalizer {
                 LOG.error("problem encountered while importing [" + importer.getName() + "]", e);
             }
         }
-        EcoregionFinder regionFinder = getEcoRegionFinder();
+        EcoregionFinder regionFinder = getEcoregionFinder();
         if (regionFinder != null) {
             regionFinder.shutdown();
         }
@@ -117,7 +117,7 @@ public class Normalizer {
     }
 
     private StudyImporter createStudyImporter(Class<StudyImporter> studyImporter, NodeFactory factory) throws StudyImporterException {
-        factory.setEcoregionFinder(getEcoRegionFinder());
+        factory.setEcoregionFinder(getEcoregionFinder());
         factory.setDoiResolver(new DOIResolverImpl());
         ParserFactory parserFactory = new ParserFactoryImpl();
         StudyImporter importer = new StudyImporterFactory(parserFactory, factory).instantiateImporter(studyImporter);

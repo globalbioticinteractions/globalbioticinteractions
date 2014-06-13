@@ -52,7 +52,7 @@ public class NormalizerTest extends GraphDBTestCase {
 
     private Normalizer createNormalizer() {
         Normalizer dataNormalizationTool = new Normalizer();
-        dataNormalizationTool.setEcoRegionFinder(new EcoregionFinder() {
+        dataNormalizationTool.setEcoregionFinder(new EcoregionFinder() {
             @Override
             public Collection<Ecoregion> findEcoregion(double lat, double lng) throws EcoRegionFinderException {
                 final Ecoregion ecoregion = new Ecoregion();
