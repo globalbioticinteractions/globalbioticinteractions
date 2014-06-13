@@ -23,7 +23,7 @@ public class Ecoregion2FinderProxyTest {
                 add(new EcoregionTestFinder("three:"));
             }
         };
-        Collection<Ecoregion2> ecoregion2 = new EcoregionFinderProxy(finders).findEcoregion(9.2, -79.91667);
+        Collection<Ecoregion2> ecoregion2 = new EcoregionFinderProxy2(finders).findEcoregion(9.2, -79.91667);
 
         Collection<String> ids = new ArrayList<String>();
         for (Ecoregion2 region : ecoregion2) {

@@ -10,11 +10,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class EcoregionFinderProxy implements EcoregionFinder2 {
+public class EcoregionFinderProxy2 implements EcoregionFinder2 {
     public static final ArrayList<Ecoregion2> EMPTY_REGIONS = new ArrayList<Ecoregion2>();
     public final List<EcoregionFinder2> finders;
 
-    public EcoregionFinderProxy(List<EcoregionFinder2> finders) {
+    public EcoregionFinderProxy2(List<EcoregionFinder2> finders) {
         this.finders = finders;
     }
 
