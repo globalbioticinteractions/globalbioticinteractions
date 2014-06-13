@@ -1,8 +1,8 @@
 package org.eol.globi.service;
 
-import org.eol.globi.geo.Ecoregion;
-import org.eol.globi.geo.EcoregionFinder;
-import org.eol.globi.geo.EcoregionFinderException;
+import org.eol.globi.geo.Ecoregion2;
+import org.eol.globi.geo.EcoregionFinder2;
+import org.eol.globi.geo.EcoregionFinderException2;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -11,11 +11,11 @@ import java.util.Collection;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
-public class EcoregionFinderProxyTest {
+public class Ecoregion2FinderProxyTest {
 
     @Test
-    public void multipleRegionsForSingleLocation() throws EcoregionFinderException {
-        ArrayList<EcoregionFinder> finders = new ArrayList<EcoregionFinder>() {
+    public void multipleRegionsForSingleLocation() throws EcoregionFinderException2 {
+        ArrayList<EcoregionFinder2> finders = new ArrayList<EcoregionFinder2>() {
             {
                 add(new EcoregionTestFinder("one:"));
                 add(new EcoregionTestFinder("two:"));
@@ -23,10 +23,10 @@ public class EcoregionFinderProxyTest {
                 add(new EcoregionTestFinder("three:"));
             }
         };
-        Collection<Ecoregion> ecoregion = new EcoregionFinderProxy(finders).findEcoregion(9.2, -79.91667);
+        Collection<Ecoregion2> ecoregion2 = new EcoregionFinderProxy(finders).findEcoregion(9.2, -79.91667);
 
         Collection<String> ids = new ArrayList<String>();
-        for (Ecoregion region : ecoregion) {
+        for (Ecoregion2 region : ecoregion2) {
             ids.add(region.getId());
         }
 
@@ -34,11 +34,11 @@ public class EcoregionFinderProxyTest {
         assertThat(ids.contains("two:123"), is(true));
         assertThat(ids.contains("three:123"), is(true));
 
-        assertThat(ecoregion.size(), is(3));
+        assertThat(ecoregion2.size(), is(3));
 
     }
 
-    private class EcoregionTestFinder implements EcoregionFinder {
+    private class EcoregionTestFinder implements EcoregionFinder2 {
         private final String name;
 
         public EcoregionTestFinder(String name) {
@@ -47,12 +47,12 @@ public class EcoregionFinderProxyTest {
         }
 
         @Override
-        public Collection<Ecoregion> findEcoregion(double lat, double lng) throws EcoregionFinderException {
-            return new ArrayList<Ecoregion>() {
+        public Collection<Ecoregion2> findEcoregion(double lat, double lng) throws EcoregionFinderException2 {
+            return new ArrayList<Ecoregion2>() {
                 {
-                    Ecoregion ecoregion = new Ecoregion();
-                    ecoregion.setId(name + "123");
-                    add(ecoregion);
+                    Ecoregion2 ecoregion2 = new Ecoregion2();
+                    ecoregion2.setId(name + "123");
+                    add(ecoregion2);
                 }
             };
         }

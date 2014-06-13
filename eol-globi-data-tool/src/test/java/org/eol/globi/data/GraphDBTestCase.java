@@ -5,9 +5,9 @@ import org.eol.globi.data.taxon.CorrectionService;
 import org.eol.globi.data.taxon.TaxonServiceImpl;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.Term;
-import org.eol.globi.geo.Ecoregion;
-import org.eol.globi.geo.EcoregionFinder;
-import org.eol.globi.geo.EcoregionFinderException;
+import org.eol.globi.geo.Ecoregion2;
+import org.eol.globi.geo.EcoregionFinder2;
+import org.eol.globi.geo.EcoregionFinderException2;
 import org.eol.globi.service.DOIResolver;
 import org.eol.globi.service.TaxonPropertyEnricher;
 import org.eol.globi.service.TermLookupService;
@@ -44,17 +44,17 @@ public abstract class GraphDBTestCase {
                 return taxonName;
             }
         }, getGraphDb()));
-        nodeFactory.setEcoregionFinder(new EcoregionFinder() {
+        nodeFactory.setEcoregionFinder2(new EcoregionFinder2() {
 
             @Override
-            public Collection<Ecoregion> findEcoregion(double lat, double lng) throws EcoregionFinderException {
-                final Ecoregion ecoregion = new Ecoregion();
-                ecoregion.setName("some eco region");
-                ecoregion.setPath("some | eco | region | path");
-                ecoregion.setId("some:id");
-                ecoregion.setGeometry("POINT(0,0)");
-                return new ArrayList<Ecoregion>() {{
-                    add(ecoregion);
+            public Collection<Ecoregion2> findEcoregion(double lat, double lng) throws EcoregionFinderException2 {
+                final Ecoregion2 ecoregion2 = new Ecoregion2();
+                ecoregion2.setName("some eco region");
+                ecoregion2.setPath("some | eco | region | path");
+                ecoregion2.setId("some:id");
+                ecoregion2.setGeometry("POINT(0,0)");
+                return new ArrayList<Ecoregion2>() {{
+                    add(ecoregion2);
                 }};
             }
 

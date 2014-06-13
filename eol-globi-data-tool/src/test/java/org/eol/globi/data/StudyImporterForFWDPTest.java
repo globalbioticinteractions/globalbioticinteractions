@@ -7,8 +7,8 @@ import org.apache.commons.logging.LogFactory;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
-import org.eol.globi.geo.Ecoregion;
-import org.eol.globi.geo.EcoregionFinderException;
+import org.eol.globi.geo.Ecoregion2;
+import org.eol.globi.geo.EcoregionFinderException2;
 import org.joda.time.DateTime;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -33,7 +33,7 @@ public class StudyImporterForFWDPTest extends GraphDBTestCase {
 
     @Ignore
     @Test
-    public void importAll() throws StudyImporterException, IOException, EcoregionFinderException {
+    public void importAll() throws StudyImporterException, IOException, EcoregionFinderException2 {
         StudyImporterForFWDP studyImporter = new StudyImporterForFWDP(new ParserFactoryImpl(), nodeFactory);
         studyImporter.setFilter(new ImportFilter() {
             @Override
@@ -54,10 +54,10 @@ public class StudyImporterForFWDPTest extends GraphDBTestCase {
             assertNotNull(sampleLocation);
             assertThat(sampleLocation.getLatitude() > 0, is(true));
             assertThat(sampleLocation.getLongitude() < 0, is(true));
-            Collection<Ecoregion> ecoregions = nodeFactory.getEcoregionFinder().findEcoregion(sampleLocation.getLatitude(), sampleLocation.getLongitude());
+            Collection<Ecoregion2> ecoregion2s = nodeFactory.getEcoregionFinder2().findEcoregion(sampleLocation.getLatitude(), sampleLocation.getLongitude());
             String ecoregionId = "";
-            for (Ecoregion ecoregion : ecoregions) {
-                ecoregionId = ecoregion.getId();
+            for (Ecoregion2 ecoregion2 : ecoregion2s) {
+                ecoregionId = ecoregion2.getId();
             }
 
             Long property = (Long) coll.getProperty(Specimen.DATE_IN_UNIX_EPOCH);

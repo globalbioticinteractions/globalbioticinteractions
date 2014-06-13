@@ -1,8 +1,8 @@
 package org.eol.globi.service;
 
-import org.eol.globi.geo.Ecoregion;
-import org.eol.globi.geo.EcoregionFinder;
-import org.eol.globi.geo.EcoregionFinderException;
+import org.eol.globi.geo.Ecoregion2;
+import org.eol.globi.geo.EcoregionFinder2;
+import org.eol.globi.geo.EcoregionFinderException2;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -10,23 +10,23 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class EcoregionFinderProxy implements EcoregionFinder {
-    public static final ArrayList<Ecoregion> EMPTY_REGIONS = new ArrayList<Ecoregion>();
-    public final List<EcoregionFinder> finders;
+public class EcoregionFinderProxy implements EcoregionFinder2 {
+    public static final ArrayList<Ecoregion2> EMPTY_REGIONS = new ArrayList<Ecoregion2>();
+    public final List<EcoregionFinder2> finders;
 
-    public EcoregionFinderProxy(List<EcoregionFinder> finders) {
+    public EcoregionFinderProxy(List<EcoregionFinder2> finders) {
         this.finders = finders;
     }
 
     @Override
-    public Collection<Ecoregion> findEcoregion(double lat, double lng) throws EcoregionFinderException {
-        Map<String, Ecoregion> regions = null;
-        for (EcoregionFinder finder : finders) {
-            Collection<Ecoregion> ecoregion = finder.findEcoregion(lat, lng);
-            if (ecoregion != null) {
-                for (Ecoregion region : ecoregion) {
+    public Collection<Ecoregion2> findEcoregion(double lat, double lng) throws EcoregionFinderException2 {
+        Map<String, Ecoregion2> regions = null;
+        for (EcoregionFinder2 finder : finders) {
+            Collection<Ecoregion2> ecoregion2 = finder.findEcoregion(lat, lng);
+            if (ecoregion2 != null) {
+                for (Ecoregion2 region : ecoregion2) {
                     if (regions == null) {
-                        regions = new HashMap<String, Ecoregion>();
+                        regions = new HashMap<String, Ecoregion2>();
                     }
                     regions.put(region.getId(), region);
                 }
@@ -38,7 +38,7 @@ public class EcoregionFinderProxy implements EcoregionFinder {
     @Override
     public void shutdown() {
         if (finders != null) {
-            for (EcoregionFinder finder : finders) {
+            for (EcoregionFinder2 finder : finders) {
                 finder.shutdown();
             }
         }

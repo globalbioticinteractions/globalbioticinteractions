@@ -12,8 +12,8 @@ import org.eol.globi.data.taxon.TaxonNameCorrector;
 import org.eol.globi.data.taxon.TaxonServiceImpl;
 import org.eol.globi.db.GraphService;
 import org.eol.globi.export.GraphExporter;
-import org.eol.globi.geo.EcoregionFinder;
-import org.eol.globi.geo.EcoregionFinderFactoryImpl;
+import org.eol.globi.geo.EcoregionFinder2;
+import org.eol.globi.geo.EcoregionFinderFactoryImpl2;
 import org.eol.globi.service.DOIResolverImpl;
 import org.eol.globi.service.EcoregionFinderProxy;
 import org.eol.globi.service.TaxonPropertyEnricherFactory;
@@ -25,7 +25,7 @@ import java.util.Collection;
 public class Normalizer {
     private static final Log LOG = LogFactory.getLog(Normalizer.class);
 
-    private EcoregionFinder ecoregionFinder = null;
+    private EcoregionFinder2 ecoregionFinder2 = null;
 
     public static void main(final String[] commandLineArguments) throws StudyImporterException {
         new Normalizer().normalize(StudyImporterFactory.getAvailableImporters());
@@ -35,15 +35,15 @@ public class Normalizer {
         normalize("./", importers);
     }
 
-    private EcoregionFinder getEcoregionFinder() {
-        if (null == ecoregionFinder) {
-            ecoregionFinder = new EcoregionFinderProxy(new EcoregionFinderFactoryImpl().createAll());
+    private EcoregionFinder2 getEcoregionFinder2() {
+        if (null == ecoregionFinder2) {
+            ecoregionFinder2 = new EcoregionFinderProxy(new EcoregionFinderFactoryImpl2().createAll());
         }
-        return ecoregionFinder;
+        return ecoregionFinder2;
     }
 
-    public void setEcoregionFinder(EcoregionFinder finder) {
-        this.ecoregionFinder = finder;
+    public void setEcoregionFinder2(EcoregionFinder2 finder) {
+        this.ecoregionFinder2 = finder;
     }
 
     public void normalize(String baseDir, Collection<Class> importers) throws StudyImporterException {
@@ -103,7 +103,7 @@ public class Normalizer {
                 LOG.error("problem encountered while importing [" + importer.getName() + "]", e);
             }
         }
-        EcoregionFinder regionFinder = getEcoregionFinder();
+        EcoregionFinder2 regionFinder = getEcoregionFinder2();
         if (regionFinder != null) {
             regionFinder.shutdown();
         }
@@ -117,7 +117,7 @@ public class Normalizer {
     }
 
     private StudyImporter createStudyImporter(Class<StudyImporter> studyImporter, NodeFactory factory) throws StudyImporterException {
-        factory.setEcoregionFinder(getEcoregionFinder());
+        factory.setEcoregionFinder2(getEcoregionFinder2());
         factory.setDoiResolver(new DOIResolverImpl());
         ParserFactory parserFactory = new ParserFactoryImpl();
         StudyImporter importer = new StudyImporterFactory(parserFactory, factory).instantiateImporter(studyImporter);

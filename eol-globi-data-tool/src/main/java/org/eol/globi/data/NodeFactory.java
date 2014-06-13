@@ -13,9 +13,9 @@ import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.domain.Term;
-import org.eol.globi.geo.Ecoregion;
-import org.eol.globi.geo.EcoregionFinder;
-import org.eol.globi.geo.EcoregionFinderException;
+import org.eol.globi.geo.Ecoregion2;
+import org.eol.globi.geo.EcoregionFinder2;
+import org.eol.globi.geo.EcoregionFinderException2;
 import org.eol.globi.service.DOIResolver;
 import org.eol.globi.service.EnvoLookupService;
 import org.eol.globi.service.TermLookupService;
@@ -58,7 +58,7 @@ public class NodeFactory {
     private TermLookupService envoLookupService;
 
     private DOIResolver doiResolver;
-    private EcoregionFinder ecoregionFinder;
+    private EcoregionFinder2 ecoregionFinder2;
     private TaxonService taxonService;
 
     public NodeFactory(GraphDatabaseService graphDb, TaxonService taxonService) {
@@ -357,52 +357,52 @@ public class NodeFactory {
         return normalizedEnvironments;
     }
 
-    private List<Ecoregion> getEcoRegions(Node locationNode) {
+    private List<Ecoregion2> getEcoRegions(Node locationNode) {
         Iterable<Relationship> relationships = locationNode.getRelationships(RelTypes.IN_ECO_REGION, Direction.OUTGOING);
-        List<Ecoregion> ecoregions = null;
+        List<Ecoregion2> ecoregion2s = null;
         for (Relationship relationship : relationships) {
             Node ecoregionNode = relationship.getEndNode();
-            Ecoregion ecoregion = new Ecoregion();
-            ecoregion.setGeometry(NodeUtil.getPropertyStringValueOrNull(ecoregionNode, "geometry"));
-            ecoregion.setName(NodeUtil.getPropertyStringValueOrNull(ecoregionNode, PropertyAndValueDictionary.NAME));
-            ecoregion.setId(NodeUtil.getPropertyStringValueOrNull(ecoregionNode, PropertyAndValueDictionary.EXTERNAL_ID));
-            ecoregion.setPath(NodeUtil.getPropertyStringValueOrNull(ecoregionNode, "path"));
-            if (ecoregions == null) {
-                ecoregions = new ArrayList<Ecoregion>();
+            Ecoregion2 ecoregion2 = new Ecoregion2();
+            ecoregion2.setGeometry(NodeUtil.getPropertyStringValueOrNull(ecoregionNode, "geometry"));
+            ecoregion2.setName(NodeUtil.getPropertyStringValueOrNull(ecoregionNode, PropertyAndValueDictionary.NAME));
+            ecoregion2.setId(NodeUtil.getPropertyStringValueOrNull(ecoregionNode, PropertyAndValueDictionary.EXTERNAL_ID));
+            ecoregion2.setPath(NodeUtil.getPropertyStringValueOrNull(ecoregionNode, "path"));
+            if (ecoregion2s == null) {
+                ecoregion2s = new ArrayList<Ecoregion2>();
             }
-            ecoregions.add(ecoregion);
+            ecoregion2s.add(ecoregion2);
         }
-        return ecoregions;
+        return ecoregion2s;
     }
 
-    public List<Ecoregion> enrichLocationWithEcoRegions(Location location) throws NodeFactoryException {
-        List<Ecoregion> associatedEcoregions = getEcoRegions(location.getUnderlyingNode());
-        return associatedEcoregions == null ? associateWithEcoRegions(location) : associatedEcoregions;
+    public List<Ecoregion2> enrichLocationWithEcoRegions(Location location) throws NodeFactoryException {
+        List<Ecoregion2> associatedEcoregion2s = getEcoRegions(location.getUnderlyingNode());
+        return associatedEcoregion2s == null ? associateWithEcoRegions(location) : associatedEcoregion2s;
     }
 
-    private List<Ecoregion> associateWithEcoRegions(Location location) throws NodeFactoryException {
-        List<Ecoregion> associatedEcoregions = new ArrayList<Ecoregion>();
+    private List<Ecoregion2> associateWithEcoRegions(Location location) throws NodeFactoryException {
+        List<Ecoregion2> associatedEcoregion2s = new ArrayList<Ecoregion2>();
         try {
-            EcoregionFinder finder = getEcoregionFinder();
+            EcoregionFinder2 finder = getEcoregionFinder2();
             if (finder != null) {
-                Collection<Ecoregion> ecoregions = finder.findEcoregion(location.getLatitude(), location.getLongitude());
-                for (Ecoregion ecoregion : ecoregions) {
-                    associateLocationWithEcoRegion(location, ecoregion);
-                    associatedEcoregions.add(ecoregion);
+                Collection<Ecoregion2> ecoregion2s = finder.findEcoregion(location.getLatitude(), location.getLongitude());
+                for (Ecoregion2 ecoregion2 : ecoregion2s) {
+                    associateLocationWithEcoRegion(location, ecoregion2);
+                    associatedEcoregion2s.add(ecoregion2);
                 }
             }
-        } catch (EcoregionFinderException e) {
+        } catch (EcoregionFinderException2 e) {
             throw new NodeFactoryException("problem finding eco region for location (lat,lng):(" + location.getLatitude() + "," + location.getLongitude() + ")");
         }
-        return associatedEcoregions;
+        return associatedEcoregion2s;
     }
 
-    private void associateLocationWithEcoRegion(Location location, Ecoregion ecoregion) {
-        Node ecoregionNode = findEcoRegion(ecoregion);
+    private void associateLocationWithEcoRegion(Location location, Ecoregion2 ecoregion2) {
+        Node ecoregionNode = findEcoRegion(ecoregion2);
         Transaction tx = graphDb.beginTx();
         try {
             if (ecoregionNode == null) {
-                ecoregionNode = addAndIndexEcoRegion(ecoregion);
+                ecoregionNode = addAndIndexEcoRegion(ecoregion2);
             }
             location.getUnderlyingNode().createRelationshipTo(ecoregionNode, RelTypes.IN_ECO_REGION);
             tx.success();
@@ -411,8 +411,8 @@ public class NodeFactory {
         }
     }
 
-    private Node findEcoRegion(Ecoregion ecoregion) {
-        String query = "name:\"" + ecoregion.getName() + "\"";
+    private Node findEcoRegion(Ecoregion2 ecoregion2) {
+        String query = "name:\"" + ecoregion2.getName() + "\"";
         IndexHits<Node> hits = this.ecoregions.query(query);
         try {
             return hits.hasNext() ? hits.next() : null;
@@ -421,17 +421,17 @@ public class NodeFactory {
         }
     }
 
-    private Node addAndIndexEcoRegion(Ecoregion ecoregion) {
+    private Node addAndIndexEcoRegion(Ecoregion2 ecoregion2) {
         Node node = graphDb.createNode();
-        node.setProperty(PropertyAndValueDictionary.NAME, ecoregion.getName());
-        node.setProperty(PropertyAndValueDictionary.EXTERNAL_ID, ecoregion.getId());
-        node.setProperty("path", ecoregion.getPath());
-        node.setProperty("geometry", ecoregion.getGeometry());
-        ecoregions.add(node, PropertyAndValueDictionary.NAME, ecoregion.getName());
-        ecoregionPaths.add(node, "path", ecoregion.getPath());
-        ecoregionSuggestions.add(node, PropertyAndValueDictionary.NAME, StringUtils.lowerCase(ecoregion.getName()));
-        if (StringUtils.isNotBlank(ecoregion.getPath())) {
-            for (String part : ecoregion.getPath().split(CharsetConstant.SEPARATOR)) {
+        node.setProperty(PropertyAndValueDictionary.NAME, ecoregion2.getName());
+        node.setProperty(PropertyAndValueDictionary.EXTERNAL_ID, ecoregion2.getId());
+        node.setProperty("path", ecoregion2.getPath());
+        node.setProperty("geometry", ecoregion2.getGeometry());
+        ecoregions.add(node, PropertyAndValueDictionary.NAME, ecoregion2.getName());
+        ecoregionPaths.add(node, "path", ecoregion2.getPath());
+        ecoregionSuggestions.add(node, PropertyAndValueDictionary.NAME, StringUtils.lowerCase(ecoregion2.getName()));
+        if (StringUtils.isNotBlank(ecoregion2.getPath())) {
+            for (String part : ecoregion2.getPath().split(CharsetConstant.SEPARATOR)) {
                 ecoregionSuggestions.add(node, PropertyAndValueDictionary.NAME, StringUtils.lowerCase(part));
             }
         }
@@ -486,12 +486,12 @@ public class NodeFactory {
         this.doiResolver = doiResolver;
     }
 
-    public void setEcoregionFinder(EcoregionFinder ecoregionFinder) {
-        this.ecoregionFinder = ecoregionFinder;
+    public void setEcoregionFinder2(EcoregionFinder2 ecoregionFinder2) {
+        this.ecoregionFinder2 = ecoregionFinder2;
     }
 
-    public EcoregionFinder getEcoregionFinder() {
-        return ecoregionFinder;
+    public EcoregionFinder2 getEcoregionFinder2() {
+        return ecoregionFinder2;
     }
 
     public IndexHits<Node> findCloseMatchesForEcoregion(String ecoregionName) {

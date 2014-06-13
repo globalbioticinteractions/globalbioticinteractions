@@ -227,7 +227,7 @@ public class EOLServiceIT {
     // see https://github.com/jhpoelen/eol-globi-data/issues/77
     @Test
     public void lookupEOLExternalIdNoClassification() throws TaxonPropertyLookupServiceException {
-        String[] externalIds = {"EOL:3821293", "EOL:3238626"};
+        String[] externalIds = {"EOL:3821293", "EOL:3238626", "EOL:17264771", "EOL:3825406"};
         for (String externalId : externalIds) {
             HashMap<String, String> properties = new HashMap<String, String>();
             properties.put(PropertyAndValueDictionary.EXTERNAL_ID, externalId);
