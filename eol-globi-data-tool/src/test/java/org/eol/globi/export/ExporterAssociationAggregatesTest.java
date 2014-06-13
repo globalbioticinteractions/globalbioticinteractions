@@ -3,7 +3,7 @@ package org.eol.globi.export;
 import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.NodeFactory;
 import org.eol.globi.data.NodeFactoryException;
-import org.eol.globi.data.taxon.TaxonNameCorrector;
+import org.eol.globi.data.taxon.CorrectionService;
 import org.eol.globi.data.taxon.TaxonServiceImpl;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.PropertyAndValueDictionary;
@@ -36,7 +36,13 @@ public class ExporterAssociationAggregatesTest extends GraphDBTestCase {
                 taxon.setPath(taxon.getName() + "path");
             }
         };
-        nodeFactory = new NodeFactory(getGraphDb(), new TaxonServiceImpl(taxonEnricher, new TaxonNameCorrector(), getGraphDb()));
+        nodeFactory = new NodeFactory(getGraphDb(), new TaxonServiceImpl(taxonEnricher, new CorrectionService() {
+
+            @Override
+            public String correct(String taxonName) {
+                return taxonName;
+            }
+        }, getGraphDb()));
     }
 
     @Test
@@ -49,6 +55,31 @@ public class ExporterAssociationAggregatesTest extends GraphDBTestCase {
 
         String expected = "\nglobi:assoc:1-2-ATE-5,globi:occur:source:1-2-ATE,http://eol.org/schema/terms/eats,globi:occur:target:1-2-ATE-5,,,,,data source description,,,globi:ref:1" +
                 "\nglobi:assoc:9-2-ATE-5,globi:occur:source:9-2-ATE,http://eol.org/schema/terms/eats,globi:occur:target:9-2-ATE-5,,,,,data source description,,,globi:ref:9";
+
+        ExporterAssociationAggregates exporter = new ExporterAssociationAggregates();
+        StringWriter row = new StringWriter();
+        for (String studyTitle : studyTitles) {
+            Study myStudy1 = nodeFactory.findStudy(studyTitle);
+            exporter.exportStudy(myStudy1, row, false);
+        }
+
+
+        assertThat(row.getBuffer().toString(), equalTo(expected));
+    }
+
+    @Test
+    public void exportNoMatchTaxa() throws IOException, NodeFactoryException, ParseException {
+        String[] studyTitles = {"myStudy1", "myStudy2"};
+
+        for (String studyTitle : studyTitles) {
+            Study myStudy = nodeFactory.getOrCreateStudy(studyTitle, "contributor", "inst", "per", "description", "pubYear", "data source description");
+            Specimen specimen = nodeFactory.createSpecimen(PropertyAndValueDictionary.NO_MATCH);
+            specimen.ate(nodeFactory.createSpecimen(PropertyAndValueDictionary.NO_MATCH));
+            myStudy.collected(specimen);
+
+        }
+
+        String expected = "";
 
         ExporterAssociationAggregates exporter = new ExporterAssociationAggregates();
         StringWriter row = new StringWriter();

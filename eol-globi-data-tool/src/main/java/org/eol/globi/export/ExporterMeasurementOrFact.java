@@ -49,19 +49,26 @@ public class ExporterMeasurementOrFact extends ExporterBase {
         Iterable<Relationship> specimens = study.getSpecimens();
         for (Relationship collectedRel : specimens) {
             Node specimenNode = collectedRel.getEndNode();
-            writeMeasurements(writer, properties, specimenNode, collectedRel, study);
-
-            Iterable<Relationship> interactRelationships = specimenNode.getRelationships(Direction.OUTGOING, InteractType.values());
-            if (interactRelationships.iterator().hasNext()) {
-                for (Relationship interactRel : interactRelationships) {
-                    writeMeasurements(writer, properties, interactRel.getEndNode(), collectedRel, study);
+            if (isSpecimenClassified(specimenNode)) {
+                writeMeasurements(writer, properties, specimenNode, collectedRel, study);
+                Iterable<Relationship> interactRelationships = specimenNode.getRelationships(Direction.OUTGOING, InteractType.values());
+                if (interactRelationships.iterator().hasNext()) {
+                    for (Relationship interactRel : interactRelationships) {
+                        Node specimenNode1 = interactRel.getEndNode();
+                        if (isSpecimenClassified(specimenNode1)) {
+                            writeMeasurements(writer, properties, specimenNode1, collectedRel, study);
+                        }
+                    }
                 }
             }
         }
     }
 
     private void writeMeasurements(Writer writer, Map<String, String> properties, Node specimenNode, Relationship collectedRel, Study study) throws IOException {
+        writeProperties(writer, properties, specimenNode, collectedRel, study);
+    }
 
+    private void writeProperties(Writer writer, Map<String, String> properties, Node specimenNode, Relationship collectedRel, Study study) throws IOException {
         if (specimenNode.hasProperty(Specimen.LENGTH_IN_MM)) {
             Object property = specimenNode.getProperty(Specimen.LENGTH_IN_MM);
             properties.put(EOLDictionary.MEASUREMENT_VALUE, property.toString());

@@ -1,5 +1,6 @@
 package org.eol.globi.data.taxon;
 
+import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.junit.Test;
 
 import static org.hamcrest.core.Is.is;
@@ -88,6 +89,11 @@ public class TaxonNameCorrectorTest {
         assertThat(CORRECTOR.correct("Genus species1 ×hybridName"), is("Genus species1 xhybridName"));
         assertThat(CORRECTOR.correct("Genus species1 X species2"), is("Genus species1 x species2"));
         assertThat(CORRECTOR.correct("Genus species1 XhybridName"), is("Genus species1 xhybridName"));
+    }
+
+    @Test
+    public void taxonNameNoMatch() {
+        assertThat(CORRECTOR.correct(PropertyAndValueDictionary.NO_MATCH), is(PropertyAndValueDictionary.NO_MATCH));
     }
 
     @Test

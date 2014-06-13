@@ -68,6 +68,8 @@ public class TaxonNameCorrector implements CorrectionService {
         String suggestion;
         if (StringUtils.isBlank(taxonName)) {
             suggestion = PropertyAndValueDictionary.NO_NAME;
+        } else if (StringUtils.equals(taxonName, PropertyAndValueDictionary.NO_MATCH)) {
+            suggestion = PropertyAndValueDictionary.NO_MATCH;
         } else {
             suggestion = suggestCorrection(taxonName);
         }

@@ -37,6 +37,16 @@ public class ExporterOccurrenceAggregatesTest extends GraphDBTestCase {
     }
 
     @Test
+    public void exportNoMatchName() throws NodeFactoryException, IOException {
+        Study myStudy = nodeFactory.createStudy("myStudy");
+        myStudy.collected(nodeFactory.createSpecimen(PropertyAndValueDictionary.NO_MATCH, "some externalid"));
+
+        StringWriter row = new StringWriter();
+        exportOccurrences().exportStudy(myStudy, row, false);
+        assertThat(row.toString(), equalTo(""));
+    }
+
+    @Test
     public void exportToCSVNoHeader() throws NodeFactoryException, IOException, ParseException {
         createTestData(123.0);
 
