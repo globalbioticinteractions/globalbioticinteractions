@@ -37,7 +37,9 @@ public abstract class ExporterBase extends DarwinCoreExporter {
                 "MATCH study-[:COLLECTED]->sourceSpecimen-[:CLASSIFIED_AS]->sourceTaxon, " +
                 "sourceSpecimen-[r:" + InteractUtil.allInteractionsCypherClause() + "]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon  " +
                 "WHERE sourceTaxon.externalId? <> '" + PropertyAndValueDictionary.NO_MATCH +
-                "' AND targetTaxon.externalId? <> '" + PropertyAndValueDictionary.NO_MATCH + "' " +
+                "' AND sourceTaxon.name? <> '" + PropertyAndValueDictionary.NO_MATCH +
+                "' AND targetTaxon.externalId? <> '" + PropertyAndValueDictionary.NO_MATCH +
+                "' AND targetTaxon.name? <> '" + PropertyAndValueDictionary.NO_MATCH + "' " +
                 "RETURN distinct(sourceTaxon) as " + QUERY_PARAM_SOURCE_TAXON +
                 ", type(r) as " + QUERY_PARAM_INTERACTION_TYPE +
                 ", collect(distinct(targetTaxon)) as " + QUERY_PARAM_TARGET_TAXA;

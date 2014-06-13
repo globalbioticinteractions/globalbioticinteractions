@@ -21,7 +21,7 @@ import static org.junit.Assert.assertThat;
 import static org.junit.matchers.JUnitMatchers.containsString;
 import static org.mockito.Mockito.when;
 
-public class InteractionControllerTest {
+public class InteractionControllerTestIT {
 
     @Test
     public void findPrey() throws IOException, URISyntaxException {

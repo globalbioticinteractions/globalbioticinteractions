@@ -14,7 +14,7 @@ import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.when;
 
-public class InteractionControllerSpringTest extends SpringTestBase {
+public class InteractionControllerSpringTestIT extends SpringTestBase {
 
     @Autowired
     private InteractionController controller;

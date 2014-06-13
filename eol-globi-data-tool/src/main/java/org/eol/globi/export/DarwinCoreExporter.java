@@ -17,12 +17,17 @@ public abstract class DarwinCoreExporter implements StudyExporter {
         Relationship classifiedAs = specimenNode.getSingleRelationship(RelTypes.CLASSIFIED_AS, Direction.OUTGOING);
         if (classifiedAs != null) {
             Node taxonNode = classifiedAs.getEndNode();
-            if (taxonNode.hasProperty(PropertyAndValueDictionary.EXTERNAL_ID)
-                    && !PropertyAndValueDictionary.NO_MATCH.equals(taxonNode.getProperty(PropertyAndValueDictionary.EXTERNAL_ID))) {
+            if (hasMatchForProperty(taxonNode, PropertyAndValueDictionary.EXTERNAL_ID)
+                    && hasMatchForProperty(taxonNode, PropertyAndValueDictionary.NAME)) {
                 classified = true;
             }
         }
         return classified;
+    }
+
+    private static boolean hasMatchForProperty(Node taxonNode, String propertyName) {
+        return taxonNode.hasProperty(propertyName)
+                && !PropertyAndValueDictionary.NO_MATCH.equals(taxonNode.getProperty(propertyName));
     }
 
     protected abstract String getMetaTablePrefix();
