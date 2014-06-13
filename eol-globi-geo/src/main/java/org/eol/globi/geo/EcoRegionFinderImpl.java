@@ -35,7 +35,7 @@ public class EcoregionFinderImpl implements EcoregionFinder {
         this.config = config;
     }
 
-    public Map<String, Object> findEcoRegion(Point point) throws EcoregionFinderException {
+    public Map<String, Object> findEcoregion(Point point) throws EcoregionFinderException {
         lazyLoadStore();
         try {
             SimpleFeatureSource featureSource = store.getFeatureSource();
@@ -88,9 +88,9 @@ public class EcoregionFinderImpl implements EcoregionFinder {
 
     @Override
     public Collection<Ecoregion> findEcoregion(double lat, double lng) throws EcoregionFinderException {
-        final Map<String, Object> props = findEcoRegion(GeoUtil.getPoint(lat, lng));
+        final Map<String, Object> props = findEcoregion(GeoUtil.getPoint(lat, lng));
         return props == null || !props.containsKey(config.getIdLabel()) ? null : new ArrayList<Ecoregion>() {{
-            add(createEcoRegion(props));
+            add(createEcoregion(props));
         }};
     }
 
@@ -101,7 +101,7 @@ public class EcoregionFinderImpl implements EcoregionFinder {
         }
     }
 
-    private Ecoregion createEcoRegion(Map<String, Object> props) {
+    private Ecoregion createEcoregion(Map<String, Object> props) {
         Ecoregion ecoregion;
         ecoregion = new Ecoregion();
         Object obj = props.get(config.getIdLabel());

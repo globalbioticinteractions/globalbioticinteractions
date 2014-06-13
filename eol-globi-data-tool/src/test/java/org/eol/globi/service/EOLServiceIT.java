@@ -232,6 +232,15 @@ public class EOLServiceIT {
         assertThat(properties.get(PropertyAndValueDictionary.EXTERNAL_ID), is(nullValue()));
     }
 
+    // see https://github.com/jhpoelen/eol-globi-data/issues/77
+    @Test
+    public void lookupEOLExternalIdNoClassification2() throws TaxonPropertyLookupServiceException {
+        HashMap<String, String> properties = new HashMap<String, String>();
+        properties.put(PropertyAndValueDictionary.EXTERNAL_ID, "EOL:3238626");
+        new EOLService().lookupPropertiesByName("EOL:3238626", properties);
+        assertThat(properties.get(PropertyAndValueDictionary.EXTERNAL_ID), is(nullValue()));
+    }
+
     @Test
     public void lookupEOLExternalId2() throws TaxonPropertyLookupServiceException {
         HashMap<String, String> properties = new HashMap<String, String>();

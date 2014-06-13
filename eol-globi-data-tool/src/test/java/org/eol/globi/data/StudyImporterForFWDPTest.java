@@ -8,7 +8,7 @@ import org.eol.globi.domain.Location;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.geo.Ecoregion;
-import org.eol.globi.geo.EcoRegionFinderException;
+import org.eol.globi.geo.EcoregionFinderException;
 import org.joda.time.DateTime;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -33,7 +33,7 @@ public class StudyImporterForFWDPTest extends GraphDBTestCase {
 
     @Ignore
     @Test
-    public void importAll() throws StudyImporterException, IOException, EcoRegionFinderException {
+    public void importAll() throws StudyImporterException, IOException, EcoregionFinderException {
         StudyImporterForFWDP studyImporter = new StudyImporterForFWDP(new ParserFactoryImpl(), nodeFactory);
         studyImporter.setFilter(new ImportFilter() {
             @Override
