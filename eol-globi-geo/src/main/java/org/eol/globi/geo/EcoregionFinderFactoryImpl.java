@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class EcoregionFinderFactoryImpl implements EcoregionFinderFactory {
+public class EcoregionFinderFactoryImpl implements EcoregionFinderFactory2 {
 
     @Override
     public EcoregionFinder createEcoregionFinder(EcoregionType type) {

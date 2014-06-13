@@ -9,7 +9,7 @@ import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
-public class EcoregionFinderFactoryImplTest {
+public class EcoregionFinderFactory2ImplTest {
 
     public static final String SHAPEFILES_DIR = "shapefiles.dir";
     private String oldPropertyValue;
