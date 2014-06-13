@@ -32,8 +32,8 @@ public class EcoregionFinderFactoryImplTest {
     @Test
     public void checkDataSources() throws EcoRegionFinderException {
         assertThat(oldPropertyValue, is(nullValue()));
-        for (EcoregionType EcoregionType : EcoregionType.values()) {
-            EcoregionFinder ecoregionFinder = new EcoRegionFinderFactoryImpl().createEcoregionFinder(EcoregionType);
+        for (EcoregionType type : EcoregionType.values()) {
+            EcoregionFinder ecoregionFinder = new EcoRegionFinderFactoryImpl().createEcoregionFinder(type);
             ecoregionFinder.findEcoRegion(10.2, 102);
         }
     }
