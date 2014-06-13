@@ -47,7 +47,7 @@ public abstract class GraphDBTestCase {
         nodeFactory.setEcoregionFinder(new EcoregionFinder() {
 
             @Override
-            public Collection<Ecoregion> findEcoRegion(double lat, double lng) throws EcoRegionFinderException {
+            public Collection<Ecoregion> findEcoregion(double lat, double lng) throws EcoRegionFinderException {
                 final Ecoregion ecoregion = new Ecoregion();
                 ecoregion.setName("some eco region");
                 ecoregion.setPath("some | eco | region | path");

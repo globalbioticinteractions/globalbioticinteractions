@@ -30,20 +30,20 @@ public class EcoregionFinderFactoryImplTest {
     }
 
     @Test
-    public void checkDataSources() throws EcoRegionFinderException {
+    public void checkDataSources() throws EcoregionFinderException {
         assertThat(oldPropertyValue, is(nullValue()));
         for (EcoregionType type : EcoregionType.values()) {
-            EcoregionFinder ecoregionFinder = new EcoRegionFinderFactoryImpl().createEcoregionFinder(type);
-            ecoregionFinder.findEcoRegion(10.2, 102);
+            EcoregionFinder ecoregionFinder = new EcoregionFinderFactoryImpl().createEcoregionFinder(type);
+            ecoregionFinder.findEcoregion(10.2, 102);
         }
     }
 
     @Test(expected = Exception.class)
-    public void checkDataSourcesUsingSystemPropertyIncorrect() throws EcoRegionFinderException {
+    public void checkDataSourcesUsingSystemPropertyIncorrect() throws EcoregionFinderException {
         System.setProperty(SHAPEFILES_DIR, "/thisdoesnotexistatall");
         for (EcoregionType type : EcoregionType.values()) {
-            EcoregionFinder ecoregionFinder = new EcoRegionFinderFactoryImpl().createEcoregionFinder(type);
-            ecoregionFinder.findEcoRegion(10.2, 102);
+            EcoregionFinder ecoregionFinder = new EcoregionFinderFactoryImpl().createEcoregionFinder(type);
+            ecoregionFinder.findEcoregion(10.2, 102);
         }
     }
 }

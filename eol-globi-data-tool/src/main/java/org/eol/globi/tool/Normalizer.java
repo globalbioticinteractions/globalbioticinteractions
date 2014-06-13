@@ -13,9 +13,9 @@ import org.eol.globi.data.taxon.TaxonServiceImpl;
 import org.eol.globi.db.GraphService;
 import org.eol.globi.export.GraphExporter;
 import org.eol.globi.geo.EcoregionFinder;
-import org.eol.globi.geo.EcoRegionFinderFactoryImpl;
+import org.eol.globi.geo.EcoregionFinderFactoryImpl;
 import org.eol.globi.service.DOIResolverImpl;
-import org.eol.globi.service.EcoRegionFinderProxy;
+import org.eol.globi.service.EcoregionFinderProxy;
 import org.eol.globi.service.TaxonPropertyEnricherFactory;
 import org.eol.globi.service.TaxonPropertyLookupServiceException;
 import org.neo4j.graphdb.GraphDatabaseService;
@@ -37,7 +37,7 @@ public class Normalizer {
 
     private EcoregionFinder getEcoRegionFinder() {
         if (null == ecoregionFinder) {
-            ecoregionFinder = new EcoRegionFinderProxy(new EcoRegionFinderFactoryImpl().createAll());
+            ecoregionFinder = new EcoregionFinderProxy(new EcoregionFinderFactoryImpl().createAll());
         }
         return ecoregionFinder;
     }

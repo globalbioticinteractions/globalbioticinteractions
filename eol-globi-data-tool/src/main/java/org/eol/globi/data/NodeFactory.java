@@ -15,7 +15,7 @@ import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.domain.Term;
 import org.eol.globi.geo.Ecoregion;
 import org.eol.globi.geo.EcoregionFinder;
-import org.eol.globi.geo.EcoRegionFinderException;
+import org.eol.globi.geo.EcoregionFinderException;
 import org.eol.globi.service.DOIResolver;
 import org.eol.globi.service.EnvoLookupService;
 import org.eol.globi.service.TermLookupService;
@@ -385,13 +385,13 @@ public class NodeFactory {
         try {
             EcoregionFinder finder = getEcoregionFinder();
             if (finder != null) {
-                Collection<Ecoregion> ecoregions = finder.findEcoRegion(location.getLatitude(), location.getLongitude());
+                Collection<Ecoregion> ecoregions = finder.findEcoregion(location.getLatitude(), location.getLongitude());
                 for (Ecoregion ecoregion : ecoregions) {
                     associateLocationWithEcoRegion(location, ecoregion);
                     associatedEcoregions.add(ecoregion);
                 }
             }
-        } catch (EcoRegionFinderException e) {
+        } catch (EcoregionFinderException e) {
             throw new NodeFactoryException("problem finding eco region for location (lat,lng):(" + location.getLatitude() + "," + location.getLongitude() + ")");
         }
         return associatedEcoregions;

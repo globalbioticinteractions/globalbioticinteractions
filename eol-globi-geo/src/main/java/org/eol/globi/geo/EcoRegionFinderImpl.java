@@ -24,34 +24,34 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-public class EcoRegionFinderImpl implements EcoregionFinder {
+public class EcoregionFinderImpl implements EcoregionFinder {
 
     private static final Log LOG = LogFactory.getLog(EcoregionFinder.class);
 
-    private final EcoRegionFinderConfig config;
+    private final EcoregionFinderConfig config;
     private FileDataStore store = null;
 
-    public EcoRegionFinderImpl(EcoRegionFinderConfig config) {
+    public EcoregionFinderImpl(EcoregionFinderConfig config) {
         this.config = config;
     }
 
-    public Map<String, Object> findEcoRegion(Point point) throws EcoRegionFinderException {
+    public Map<String, Object> findEcoRegion(Point point) throws EcoregionFinderException {
         lazyLoadStore();
         try {
             SimpleFeatureSource featureSource = store.getFeatureSource();
             return getFeatureProperties(point, featureSource.getFeatures());
         } catch (IOException e) {
-            throw new EcoRegionFinderException("lookup feature for point [" + point.toText() + "] from shapefile at [" + config.getShapeFilePath() + "]", e);
+            throw new EcoregionFinderException("lookup feature for point [" + point.toText() + "] from shapefile at [" + config.getShapeFilePath() + "]", e);
         }
     }
 
-    private void lazyLoadStore() throws EcoRegionFinderException {
+    private void lazyLoadStore() throws EcoregionFinderException {
         if (store == null) {
             URL dataStoreURL = getDataStoreURLForShapeFile(config.getShapeFilePath());
             try {
                 store = FileDataStoreFinder.getDataStore(dataStoreURL);
             } catch (IOException e) {
-                throw new EcoRegionFinderException("failed to load data store from url [" + dataStoreURL.toExternalForm() + "]", e);
+                throw new EcoregionFinderException("failed to load data store from url [" + dataStoreURL.toExternalForm() + "]", e);
             }
         }
     }
@@ -87,7 +87,7 @@ public class EcoRegionFinderImpl implements EcoregionFinder {
     }
 
     @Override
-    public Collection<Ecoregion> findEcoRegion(double lat, double lng) throws EcoRegionFinderException {
+    public Collection<Ecoregion> findEcoregion(double lat, double lng) throws EcoregionFinderException {
         final Map<String, Object> props = findEcoRegion(GeoUtil.getPoint(lat, lng));
         return props == null || !props.containsKey(config.getIdLabel()) ? null : new ArrayList<Ecoregion>() {{
             add(createEcoRegion(props));
@@ -141,7 +141,7 @@ public class EcoRegionFinderImpl implements EcoregionFinder {
             }
 
             if (null == resourceURI) {
-                resourceURI = EcoRegionFinderFactoryImpl.class.getResource(shapeFile).toURI();
+                resourceURI = EcoregionFinderFactoryImpl.class.getResource(shapeFile).toURI();
             }
             LOG.info("using shapefile at [" + resourceURI.toString() + "]");
             return resourceURI.toURL();

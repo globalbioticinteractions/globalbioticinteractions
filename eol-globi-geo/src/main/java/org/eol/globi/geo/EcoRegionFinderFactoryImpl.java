@@ -5,12 +5,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class EcoRegionFinderFactoryImpl implements EcoRegionFinderFactory {
+public class EcoregionFinderFactoryImpl implements EcoregionFinderFactory {
 
     @Override
     public EcoregionFinder createEcoregionFinder(EcoregionType type) {
-        Map<EcoregionType, EcoRegionFinderConfig> urlTypeMap = getUrlTypeMap();
-        return new EcoRegionFinderImpl(urlTypeMap.get(type));
+        Map<EcoregionType, EcoregionFinderConfig> urlTypeMap = getUrlTypeMap();
+        return new EcoregionFinderImpl(urlTypeMap.get(type));
     }
 
     @Override
@@ -22,43 +22,43 @@ public class EcoRegionFinderFactoryImpl implements EcoRegionFinderFactory {
         return finders;
     }
 
-    private Map<EcoregionType, EcoRegionFinderConfig> getUrlTypeMap() {
-        return new HashMap<EcoregionType, EcoRegionFinderConfig>() {{
+    private Map<EcoregionType, EcoregionFinderConfig> getUrlTypeMap() {
+        return new HashMap<EcoregionType, EcoregionFinderConfig>() {{
             // Terrestrial Ecosystem of the World
             // http://maps.tnc.org/files/metadata/TerrEcos.xml
             // http://maps.tnc.org/files/shp/terr-ecoregions-TNC.zip
-            EcoRegionFinderConfig config = new EcoRegionFinderConfig();
+            EcoregionFinderConfig config = new EcoregionFinderConfig();
             config.setShapeFilePath("/teow-tnc/tnc_terr_ecoregions.shp");
             config.setNameLabel("ECO_NAME");
             config.setIdLabel("ECO_ID_U");
             config.setNamespace("TEOW");
             config.setPathLabels(new String[]{config.getNameLabel(), "WWF_MHTNAM", "WWF_REALM2"});
-            put(EcoregionType.TerrestrialEcoRegionsOfTheWorld, config);
+            put(EcoregionType.TerrestrialEcoregionsOfTheWorld, config);
             config.setGeometryLabel("the_geom");
 
             // http://maps.tnc.org/gis_data.html
             // Marine Ecosystems of the World (MEOW) http://maps.tnc.org/files/metadata/MEOW.xml
             // http://maps.tnc.org/files/shp/MEOW-TNC.zip
-            config = new EcoRegionFinderConfig();
+            config = new EcoregionFinderConfig();
             config.setShapeFilePath("/meow-tnc/meow_ecos.shp");
             config.setNameLabel("ECOREGION");
             config.setIdLabel("ECO_CODE");
             config.setNamespace("MEOW");
             config.setPathLabels(new String[]{config.getNameLabel(), "PROVINCE", "REALM", "Lat_Zone"});
             config.setGeometryLabel("the_geom");
-            put(EcoregionType.MarineEcoRegionsOfTheWorld, config);
+            put(EcoregionType.MarineEcoregionsOfTheWorld, config);
 
             // Fresh Water Ecosystems of the World (FEW) http://www.feow.org/
             // http://maps.tnc.org/files/metadata/FEOW.xml
             // http://maps.tnc.org/files/shp/FEOW-TNC.zip
-            config = new EcoRegionFinderConfig();
+            config = new EcoregionFinderConfig();
             config.setShapeFilePath("/feow-tnc/FEOWv1_TNC.shp");
             config.setNameLabel("ECOREGION");
             config.setIdLabel("ECO_ID_U");
             config.setNamespace("FEOW");
             config.setPathLabels(new String[]{config.getNameLabel(), "MHT_TXT"});
             config.setGeometryLabel("the_geom");
-            put(EcoregionType.FreshwaterEcoRegionsOfTheWorld, config);
+            put(EcoregionType.FreshwaterEcoregionsOfTheWorld, config);
 
             // VLIZ (2009). Longhurst Biogeographical Provinces. Available online at http://www.marineregions.org/. Consulted on 2014-02-12.
             //
@@ -66,7 +66,7 @@ public class EcoRegionFinderFactoryImpl implements EcoRegionFinderFactory {
             // Longhurst, A.R. (1995). Seasonal cycles of pelagic production and consumption. Prog. Oceanogr. 36, 77-167
             // Longhurst, A.R. (1998). Ecological Geography of the Sea. Academic Press, San Diego. 397p. (IMIS)
             // Longhurst, A.R. (2006). Ecological Geography of the Sea. 2nd Edition. Academic Press, San Diego, 560p.
-            config = new EcoRegionFinderConfig();
+            config = new EcoregionFinderConfig();
             config.setShapeFilePath("/longhurst/Longhurst_world_v4_2010.shp");
             config.setNameLabel("ProvDescr");
             config.setIdLabel("ProvCode");

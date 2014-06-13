@@ -54,7 +54,7 @@ public class NormalizerTest extends GraphDBTestCase {
         Normalizer dataNormalizationTool = new Normalizer();
         dataNormalizationTool.setEcoRegionFinder(new EcoregionFinder() {
             @Override
-            public Collection<Ecoregion> findEcoRegion(double lat, double lng) throws EcoRegionFinderException {
+            public Collection<Ecoregion> findEcoregion(double lat, double lng) throws EcoRegionFinderException {
                 final Ecoregion ecoregion = new Ecoregion();
                 ecoregion.setName("some name");
                 ecoregion.setPath("some | path");

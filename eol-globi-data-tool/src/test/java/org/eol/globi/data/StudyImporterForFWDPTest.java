@@ -54,7 +54,7 @@ public class StudyImporterForFWDPTest extends GraphDBTestCase {
             assertNotNull(sampleLocation);
             assertThat(sampleLocation.getLatitude() > 0, is(true));
             assertThat(sampleLocation.getLongitude() < 0, is(true));
-            Collection<Ecoregion> ecoregions = nodeFactory.getEcoregionFinder().findEcoRegion(sampleLocation.getLatitude(), sampleLocation.getLongitude());
+            Collection<Ecoregion> ecoregions = nodeFactory.getEcoregionFinder().findEcoregion(sampleLocation.getLatitude(), sampleLocation.getLongitude());
             String ecoregionId = "";
             for (Ecoregion ecoregion : ecoregions) {
                 ecoregionId = ecoregion.getId();
