@@ -72,13 +72,13 @@ public class ExporterGoMexSI implements StudyExporter {
         query.append("START study = node:studies(title={title})");
         query.append(" MATCH study-[c:COLLECTED]->predator-->prey-[:CLASSIFIED_AS]->preyTaxon-[?:SAME_AS]->preyTaxonLinked");
         query.append(", predator-[:CLASSIFIED_AS]->predatorTaxon-[?:SAME_AS]->predatorTaxonLinked, predator-[:COLLECTED_AT]->loc");
-        query.append(", loc-[?:IN_ECO_REGION]->ecoRegion");
+        query.append(", loc-[?:IN_ECO_REGION]->ecoregion");
         query.append(", loc-[?:HAS_ENVIRONMENT]->environment");
         query.append(" RETURN predatorTaxon.name as `predator taxon name`, collect(distinct(predatorTaxonLinked.externalId)) as `predator taxon ids`");
         query.append(", preyTaxon.name as `prey taxon name`, collect(distinct(preyTaxonLinked.externalId)) as `prey taxon id`");
         query.append(", c.dateInUnixEpoch? as `observation time (unix time)`, loc.latitude? as `latitude`, loc.longitude? as `longitude`, loc.altitude? as `depth(m)`");
         query.append(", collect(distinct(environment.name)) as `environment names`, collect(distinct(environment.externalId)) as `environment ids`");
-        query.append(", collect(distinct(ecoRegion.name)) as `ecoRegion names`, collect(distinct(ecoRegion.externalId)) as `ecoRegion ids`");
+        query.append(", collect(distinct(ecoregion.name)) as `ecoregion names`, collect(distinct(ecoregion.externalId)) as `ecoregion ids`");
         query.append(", study.title as `study ref`");
         return query;
     }

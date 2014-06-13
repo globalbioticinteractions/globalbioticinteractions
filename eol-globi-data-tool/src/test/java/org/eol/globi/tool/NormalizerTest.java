@@ -9,8 +9,8 @@ import org.eol.globi.data.taxon.TaxonNameCorrector;
 import org.eol.globi.data.taxon.TaxonServiceImpl;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.Taxon;
-import org.eol.globi.geo.EcoRegion;
-import org.eol.globi.geo.EcoRegionFinder;
+import org.eol.globi.geo.Ecoregion;
+import org.eol.globi.geo.EcoregionFinder;
 import org.eol.globi.geo.EcoRegionFinderException;
 import org.eol.globi.service.TaxonPropertyEnricher;
 import org.hamcrest.core.Is;
@@ -52,16 +52,16 @@ public class NormalizerTest extends GraphDBTestCase {
 
     private Normalizer createNormalizer() {
         Normalizer dataNormalizationTool = new Normalizer();
-        dataNormalizationTool.setEcoRegionFinder(new EcoRegionFinder() {
+        dataNormalizationTool.setEcoRegionFinder(new EcoregionFinder() {
             @Override
-            public Collection<EcoRegion> findEcoRegion(double lat, double lng) throws EcoRegionFinderException {
-                final EcoRegion ecoRegion = new EcoRegion();
-                ecoRegion.setName("some name");
-                ecoRegion.setPath("some | path");
-                ecoRegion.setId("someId");
-                ecoRegion.setGeometry("POINT(1,2)");
-                return new ArrayList<EcoRegion>() {{
-                    add(ecoRegion);
+            public Collection<Ecoregion> findEcoRegion(double lat, double lng) throws EcoRegionFinderException {
+                final Ecoregion ecoregion = new Ecoregion();
+                ecoregion.setName("some name");
+                ecoregion.setPath("some | path");
+                ecoregion.setId("someId");
+                ecoregion.setGeometry("POINT(1,2)");
+                return new ArrayList<Ecoregion>() {{
+                    add(ecoregion);
                 }};
             }
 

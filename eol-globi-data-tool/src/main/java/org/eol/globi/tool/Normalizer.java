@@ -11,13 +11,11 @@ import org.eol.globi.data.StudyImporterFactory;
 import org.eol.globi.data.taxon.TaxonNameCorrector;
 import org.eol.globi.data.taxon.TaxonServiceImpl;
 import org.eol.globi.db.GraphService;
-import org.eol.globi.domain.Taxon;
 import org.eol.globi.export.GraphExporter;
-import org.eol.globi.geo.EcoRegionFinder;
+import org.eol.globi.geo.EcoregionFinder;
 import org.eol.globi.geo.EcoRegionFinderFactoryImpl;
 import org.eol.globi.service.DOIResolverImpl;
 import org.eol.globi.service.EcoRegionFinderProxy;
-import org.eol.globi.service.TaxonPropertyEnricher;
 import org.eol.globi.service.TaxonPropertyEnricherFactory;
 import org.eol.globi.service.TaxonPropertyLookupServiceException;
 import org.neo4j.graphdb.GraphDatabaseService;
@@ -27,7 +25,7 @@ import java.util.Collection;
 public class Normalizer {
     private static final Log LOG = LogFactory.getLog(Normalizer.class);
 
-    private EcoRegionFinder ecoRegionFinder = null;
+    private EcoregionFinder ecoregionFinder = null;
 
     public static void main(final String[] commandLineArguments) throws StudyImporterException {
         new Normalizer().normalize(StudyImporterFactory.getAvailableImporters());
@@ -37,15 +35,15 @@ public class Normalizer {
         normalize("./", importers);
     }
 
-    private EcoRegionFinder getEcoRegionFinder() {
-        if (null == ecoRegionFinder) {
-            ecoRegionFinder = new EcoRegionFinderProxy(new EcoRegionFinderFactoryImpl().createAll());
+    private EcoregionFinder getEcoRegionFinder() {
+        if (null == ecoregionFinder) {
+            ecoregionFinder = new EcoRegionFinderProxy(new EcoRegionFinderFactoryImpl().createAll());
         }
-        return ecoRegionFinder;
+        return ecoregionFinder;
     }
 
-    public void setEcoRegionFinder(EcoRegionFinder finder) {
-        this.ecoRegionFinder = finder;
+    public void setEcoRegionFinder(EcoregionFinder finder) {
+        this.ecoregionFinder = finder;
     }
 
     public void normalize(String baseDir, Collection<Class> importers) throws StudyImporterException {
@@ -105,7 +103,7 @@ public class Normalizer {
                 LOG.error("problem encountered while importing [" + importer.getName() + "]", e);
             }
         }
-        EcoRegionFinder regionFinder = getEcoRegionFinder();
+        EcoregionFinder regionFinder = getEcoRegionFinder();
         if (regionFinder != null) {
             regionFinder.shutdown();
         }
@@ -119,7 +117,7 @@ public class Normalizer {
     }
 
     private StudyImporter createStudyImporter(Class<StudyImporter> studyImporter, NodeFactory factory) throws StudyImporterException {
-        factory.setEcoRegionFinder(getEcoRegionFinder());
+        factory.setEcoregionFinder(getEcoRegionFinder());
         factory.setDoiResolver(new DOIResolverImpl());
         ParserFactory parserFactory = new ParserFactoryImpl();
         StudyImporter importer = new StudyImporterFactory(parserFactory, factory).instantiateImporter(studyImporter);

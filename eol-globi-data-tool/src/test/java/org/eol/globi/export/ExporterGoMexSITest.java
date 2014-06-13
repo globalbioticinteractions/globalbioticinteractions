@@ -63,6 +63,6 @@ public class ExporterGoMexSITest extends GraphDBTestCase {
     }
 
     private void assertHeader(LabeledCSVParser parser) throws IOException {
-        assertThat(parser.getLabels(), is(new String[]{"predator taxon name", "predator taxon ids", "prey taxon name", "prey taxon id", "observation time (unix time)", "latitude", "longitude", "depth(m)", "environment names", "environment ids", "ecoRegion names", "ecoRegion ids", "study ref"}));
+        assertThat(parser.getLabels(), is(new String[]{"predator taxon name", "predator taxon ids", "prey taxon name", "prey taxon id", "observation time (unix time)", "latitude", "longitude", "depth(m)", "environment names", "environment ids", "ecoregion names", "ecoregion ids", "study ref"}));
     }
 }

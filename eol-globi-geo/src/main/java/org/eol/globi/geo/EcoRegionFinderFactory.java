@@ -3,7 +3,7 @@ package org.eol.globi.geo;
 import java.util.List;
 
 public interface EcoRegionFinderFactory {
-    EcoRegionFinder createEcoRegionFinder(EcoRegionType type);
+    EcoregionFinder createEcoregionFinder(EcoregionType type);
 
-    List<EcoRegionFinder> createAll();
+    List<EcoregionFinder> createAll();
 }

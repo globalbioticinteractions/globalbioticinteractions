@@ -13,7 +13,6 @@ import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.Term;
-import org.eol.globi.geo.EcoRegion;
 import org.eol.globi.service.DOIResolver;
 import org.eol.globi.service.TaxonPropertyEnricher;
 import org.eol.globi.service.TermLookupService;
@@ -170,23 +169,23 @@ public class NodeFactoryTest extends GraphDBTestCase {
         Location locationB = nodeFactory.getOrCreateLocation(37.689255, -122.295799, null);
         assertEcoRegions(locationB);
 
-        IndexHits<Node> hits = nodeFactory.findCloseMatchesForEcoRegion("some elo egion");
+        IndexHits<Node> hits = nodeFactory.findCloseMatchesForEcoregion("some elo egion");
         assertThat(hits.size(), is(1));
         assertThat((String) hits.iterator().next().getProperty(PropertyAndValueDictionary.NAME), is("some eco region"));
 
-        hits = nodeFactory.findCloseMatchesForEcoRegion("mickey mouse goes shopping");
+        hits = nodeFactory.findCloseMatchesForEcoregion("mickey mouse goes shopping");
         assertThat(hits.size(), is(0));
-        hits = nodeFactory.findCloseMatchesForEcoRegionPath("mickey mouse goes shopping");
+        hits = nodeFactory.findCloseMatchesForEcoregionPath("mickey mouse goes shopping");
         assertThat(hits.size(), is(0));
 
-        hits = nodeFactory.findCloseMatchesForEcoRegionPath("path");
+        hits = nodeFactory.findCloseMatchesForEcoregionPath("path");
         assertThat(hits.size(), is(1));
-        hits = nodeFactory.findCloseMatchesForEcoRegionPath("some");
+        hits = nodeFactory.findCloseMatchesForEcoregionPath("some");
         assertThat(hits.size(), is(1));
 
-        hits = nodeFactory.suggestEcoRegionByName("some eco region");
+        hits = nodeFactory.suggestEcoregionByName("some eco region");
         assertThat(hits.size(), is(1));
-        hits = nodeFactory.suggestEcoRegionByName("path");
+        hits = nodeFactory.suggestEcoregionByName("path");
         assertThat(hits.size(), is(1));
 
     }

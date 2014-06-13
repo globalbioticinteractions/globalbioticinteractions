@@ -8,22 +8,22 @@ import java.util.Map;
 public class EcoRegionFinderFactoryImpl implements EcoRegionFinderFactory {
 
     @Override
-    public EcoRegionFinder createEcoRegionFinder(EcoRegionType type) {
-        Map<EcoRegionType, EcoRegionFinderConfig> urlTypeMap = getUrlTypeMap();
+    public EcoregionFinder createEcoregionFinder(EcoregionType type) {
+        Map<EcoregionType, EcoRegionFinderConfig> urlTypeMap = getUrlTypeMap();
         return new EcoRegionFinderImpl(urlTypeMap.get(type));
     }
 
     @Override
-    public List<EcoRegionFinder> createAll() {
-        List<EcoRegionFinder> finders = new ArrayList<EcoRegionFinder>();
-        for (EcoRegionType ecoRegionType : EcoRegionType.values()) {
-            finders.add(createEcoRegionFinder(ecoRegionType));
+    public List<EcoregionFinder> createAll() {
+        List<EcoregionFinder> finders = new ArrayList<EcoregionFinder>();
+        for (EcoregionType type : EcoregionType.values()) {
+            finders.add(createEcoregionFinder(type));
         }
         return finders;
     }
 
-    private Map<EcoRegionType, EcoRegionFinderConfig> getUrlTypeMap() {
-        return new HashMap<EcoRegionType, EcoRegionFinderConfig>() {{
+    private Map<EcoregionType, EcoRegionFinderConfig> getUrlTypeMap() {
+        return new HashMap<EcoregionType, EcoRegionFinderConfig>() {{
             // Terrestrial Ecosystem of the World
             // http://maps.tnc.org/files/metadata/TerrEcos.xml
             // http://maps.tnc.org/files/shp/terr-ecoregions-TNC.zip
@@ -33,7 +33,7 @@ public class EcoRegionFinderFactoryImpl implements EcoRegionFinderFactory {
             config.setIdLabel("ECO_ID_U");
             config.setNamespace("TEOW");
             config.setPathLabels(new String[]{config.getNameLabel(), "WWF_MHTNAM", "WWF_REALM2"});
-            put(EcoRegionType.TerrestrialEcoRegionsOfTheWorld, config);
+            put(EcoregionType.TerrestrialEcoRegionsOfTheWorld, config);
             config.setGeometryLabel("the_geom");
 
             // http://maps.tnc.org/gis_data.html
@@ -46,7 +46,7 @@ public class EcoRegionFinderFactoryImpl implements EcoRegionFinderFactory {
             config.setNamespace("MEOW");
             config.setPathLabels(new String[]{config.getNameLabel(), "PROVINCE", "REALM", "Lat_Zone"});
             config.setGeometryLabel("the_geom");
-            put(EcoRegionType.MarineEcoRegionsOfTheWorld, config);
+            put(EcoregionType.MarineEcoRegionsOfTheWorld, config);
 
             // Fresh Water Ecosystems of the World (FEW) http://www.feow.org/
             // http://maps.tnc.org/files/metadata/FEOW.xml
@@ -58,7 +58,7 @@ public class EcoRegionFinderFactoryImpl implements EcoRegionFinderFactory {
             config.setNamespace("FEOW");
             config.setPathLabels(new String[]{config.getNameLabel(), "MHT_TXT"});
             config.setGeometryLabel("the_geom");
-            put(EcoRegionType.FreshwaterEcoRegionsOfTheWorld, config);
+            put(EcoregionType.FreshwaterEcoRegionsOfTheWorld, config);
 
             // VLIZ (2009). Longhurst Biogeographical Provinces. Available online at http://www.marineregions.org/. Consulted on 2014-02-12.
             //
@@ -73,7 +73,7 @@ public class EcoRegionFinderFactoryImpl implements EcoRegionFinderFactory {
             config.setNamespace("LBP");
             config.setPathLabels(new String[]{config.getNameLabel()});
             config.setGeometryLabel("the_geom");
-            put(EcoRegionType.LonghurstBioGeographicalProvinces, config);
+            put(EcoregionType.LonghurstBioGeographicalProvinces, config);
         }};
     }
 }

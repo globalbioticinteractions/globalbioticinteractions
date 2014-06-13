@@ -175,7 +175,7 @@ public class CypherQueryBuilder {
     }
 
     private static String getTaxonPathSelector(String taxonParamName) {
-        return "node:taxonpaths({" + taxonParamName + "})";
+        return "node:taxonPaths({" + taxonParamName + "})";
     }
 
     private static void appendSpatialClauses(Map parameterMap, StringBuilder query) {

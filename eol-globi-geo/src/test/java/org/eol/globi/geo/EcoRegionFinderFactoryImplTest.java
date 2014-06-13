@@ -9,7 +9,7 @@ import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
-public class EcoRegionFinderFactoryImplTest {
+public class EcoregionFinderFactoryImplTest {
 
     public static final String SHAPEFILES_DIR = "shapefiles.dir";
     private String oldPropertyValue;
@@ -32,18 +32,18 @@ public class EcoRegionFinderFactoryImplTest {
     @Test
     public void checkDataSources() throws EcoRegionFinderException {
         assertThat(oldPropertyValue, is(nullValue()));
-        for (EcoRegionType ecoRegionType : EcoRegionType.values()) {
-            EcoRegionFinder ecoRegionFinder = new EcoRegionFinderFactoryImpl().createEcoRegionFinder(ecoRegionType);
-            ecoRegionFinder.findEcoRegion(10.2, 102);
+        for (EcoregionType EcoregionType : EcoregionType.values()) {
+            EcoregionFinder ecoregionFinder = new EcoRegionFinderFactoryImpl().createEcoregionFinder(EcoregionType);
+            ecoregionFinder.findEcoRegion(10.2, 102);
         }
     }
 
     @Test(expected = Exception.class)
     public void checkDataSourcesUsingSystemPropertyIncorrect() throws EcoRegionFinderException {
         System.setProperty(SHAPEFILES_DIR, "/thisdoesnotexistatall");
-        for (EcoRegionType ecoRegionType : EcoRegionType.values()) {
-            EcoRegionFinder ecoRegionFinder = new EcoRegionFinderFactoryImpl().createEcoRegionFinder(ecoRegionType);
-            ecoRegionFinder.findEcoRegion(10.2, 102);
+        for (EcoregionType type : EcoregionType.values()) {
+            EcoregionFinder ecoregionFinder = new EcoRegionFinderFactoryImpl().createEcoregionFinder(type);
+            ecoregionFinder.findEcoRegion(10.2, 102);
         }
     }
 }

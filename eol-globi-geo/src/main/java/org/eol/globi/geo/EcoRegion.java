@@ -1,6 +1,6 @@
 package org.eol.globi.geo;
 
-public class EcoRegion {
+public class Ecoregion {
     private String id;
     private String path;
     private String name;

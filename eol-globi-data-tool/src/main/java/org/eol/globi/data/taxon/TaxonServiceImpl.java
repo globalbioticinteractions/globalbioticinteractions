@@ -38,7 +38,7 @@ public class TaxonServiceImpl implements TaxonService {
         this.graphDbService = graphDbService;
         this.taxons = graphDbService.index().forNodes("taxons");
         this.taxonNameSuggestions = graphDbService.index().forNodes("taxonNameSuggestions");
-        this.taxonPaths = graphDbService.index().forNodes("taxonpaths", MapUtil.stringMap(IndexManager.PROVIDER, "lucene", "type", "fulltext"));
+        this.taxonPaths = graphDbService.index().forNodes("taxonPaths", MapUtil.stringMap(IndexManager.PROVIDER, "lucene", "type", "fulltext"));
         this.taxonCommonNames = graphDbService.index().forNodes("taxonCommonNames", MapUtil.stringMap(IndexManager.PROVIDER, "lucene", "type", "fulltext"));
     }
 

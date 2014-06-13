@@ -3,7 +3,6 @@ package org.eol.globi.geo;
 import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.geotools.data.FileDataStore;
@@ -25,9 +24,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-public class EcoRegionFinderImpl implements EcoRegionFinder {
+public class EcoRegionFinderImpl implements EcoregionFinder {
 
-    private static final Log LOG = LogFactory.getLog(EcoRegionFinder.class);
+    private static final Log LOG = LogFactory.getLog(EcoregionFinder.class);
 
     private final EcoRegionFinderConfig config;
     private FileDataStore store = null;
@@ -88,9 +87,9 @@ public class EcoRegionFinderImpl implements EcoRegionFinder {
     }
 
     @Override
-    public Collection<EcoRegion> findEcoRegion(double lat, double lng) throws EcoRegionFinderException {
+    public Collection<Ecoregion> findEcoRegion(double lat, double lng) throws EcoRegionFinderException {
         final Map<String, Object> props = findEcoRegion(GeoUtil.getPoint(lat, lng));
-        return props == null || !props.containsKey(config.getIdLabel()) ? null : new ArrayList<EcoRegion>() {{
+        return props == null || !props.containsKey(config.getIdLabel()) ? null : new ArrayList<Ecoregion>() {{
             add(createEcoRegion(props));
         }};
     }
@@ -102,18 +101,18 @@ public class EcoRegionFinderImpl implements EcoRegionFinder {
         }
     }
 
-    private EcoRegion createEcoRegion(Map<String, Object> props) {
-        EcoRegion ecoRegion;
-        ecoRegion = new EcoRegion();
+    private Ecoregion createEcoRegion(Map<String, Object> props) {
+        Ecoregion ecoregion;
+        ecoregion = new Ecoregion();
         Object obj = props.get(config.getIdLabel());
         if (obj instanceof Number) {
             obj = Integer.toString(((Number) obj).intValue());
         } else {
             obj = obj.toString();
         }
-        ecoRegion.setId(config.getNamespace() + ":" + obj);
-        ecoRegion.setName((String) props.get(config.getNameLabel()));
-        ecoRegion.setGeometry(props.get(config.getGeometryLabel()).toString());
+        ecoregion.setId(config.getNamespace() + ":" + obj);
+        ecoregion.setName((String) props.get(config.getNameLabel()));
+        ecoregion.setGeometry(props.get(config.getGeometryLabel()).toString());
 
         StringBuilder path = new StringBuilder();
         for (String label : config.getPathLabels()) {
@@ -128,8 +127,8 @@ public class EcoRegionFinderImpl implements EcoRegionFinder {
 
             }
         }
-        ecoRegion.setPath(path.toString());
-        return ecoRegion;
+        ecoregion.setPath(path.toString());
+        return ecoregion;
     }
 
     private URL getDataStoreURLForShapeFile(String shapeFile) {

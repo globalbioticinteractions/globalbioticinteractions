@@ -7,7 +7,7 @@ import org.apache.commons.logging.LogFactory;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
-import org.eol.globi.geo.EcoRegion;
+import org.eol.globi.geo.Ecoregion;
 import org.eol.globi.geo.EcoRegionFinderException;
 import org.joda.time.DateTime;
 import org.junit.Ignore;
@@ -54,10 +54,10 @@ public class StudyImporterForFWDPTest extends GraphDBTestCase {
             assertNotNull(sampleLocation);
             assertThat(sampleLocation.getLatitude() > 0, is(true));
             assertThat(sampleLocation.getLongitude() < 0, is(true));
-            Collection<EcoRegion> ecoRegions = nodeFactory.getEcoRegionFinder().findEcoRegion(sampleLocation.getLatitude(), sampleLocation.getLongitude());
-            String ecoRegionId = "";
-            for (EcoRegion ecoRegion : ecoRegions) {
-                ecoRegionId = ecoRegion.getId();
+            Collection<Ecoregion> ecoregions = nodeFactory.getEcoregionFinder().findEcoRegion(sampleLocation.getLatitude(), sampleLocation.getLongitude());
+            String ecoregionId = "";
+            for (Ecoregion ecoregion : ecoregions) {
+                ecoregionId = ecoregion.getId();
             }
 
             Long property = (Long) coll.getProperty(Specimen.DATE_IN_UNIX_EPOCH);
@@ -73,7 +73,7 @@ public class StudyImporterForFWDPTest extends GraphDBTestCase {
                 csvOut.write(preySpecimen.getOriginalTaxonDescription());
                 csvOut.write(Integer.toString(dateTime.getYear()));
                 csvOut.write(Integer.toString(dateTime.getMonthOfYear()));
-                csvOut.write(ecoRegionId);
+                csvOut.write(ecoregionId);
             }
 
         }
