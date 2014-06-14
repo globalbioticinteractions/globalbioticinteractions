@@ -1,6 +1,6 @@
 package org.eol.globi.service;
 
-import org.eol.globi.geo.EcoregionFinderImpl2;
+import org.eol.globi.geo.EcoregionFinderImpl;
 import org.eol.globi.geo.GeoUtil;
 import org.geotools.data.FileDataStore;
 import org.geotools.data.FileDataStoreFinder;
@@ -16,7 +16,7 @@ public class TaxonRichnessLookup {
     public Double lookupRichness(double latitude, double longitude) throws IOException {
         lazyInit();
         SimpleFeatureSource features = dataStore.getFeatureSource();
-        Map<String, Object> featureProperties = EcoregionFinderImpl2.getFeatureProperties(GeoUtil.getPoint(latitude, longitude), features.getFeatures());
+        Map<String, Object> featureProperties = EcoregionFinderImpl.getFeatureProperties(GeoUtil.getPoint(latitude, longitude), features.getFeatures());
         Double allNorm = null;
         if (featureProperties != null) {
             Object obj = featureProperties.get("AllNorm");

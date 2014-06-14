@@ -1,6 +1,6 @@
 package org.eol.globi.geo;
 
-public class EcoregionFinderConfig2 {
+public class EcoregionFinderConfig {
     private String shapeFilePath;
     private String nameLabel;
     private String idLabel;

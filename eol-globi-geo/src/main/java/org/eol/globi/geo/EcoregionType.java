@@ -1,6 +1,6 @@
 package org.eol.globi.geo;
 
-public enum EcoregionType2 {
+public enum EcoregionType {
     MarineEcoregionsOfTheWorld,
     TerrestrialEcoregionsOfTheWorld,
     FreshwaterEcoregionsOfTheWorld,
