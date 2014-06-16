@@ -51,6 +51,7 @@ public class ExporterTaxa extends ExporterBase {
         ExecutionResult results = engine.execute("START taxon = node:taxons('*:*') " +
                 "MATCH taxon<-[:CLASSIFIED_AS]-specimen " +
                 "WHERE has(taxon.externalId) AND taxon.externalId <> '" + PropertyAndValueDictionary.NO_MATCH + "' " +
+                "AND has(taxon.name) AND taxon.name <> '" + PropertyAndValueDictionary.NO_MATCH + "' " +
                 "RETURN distinct(taxon), taxon.name as scientificName, taxon.externalId as taxonId");
 
         Map<String, String> properties = new HashMap<String, String>();

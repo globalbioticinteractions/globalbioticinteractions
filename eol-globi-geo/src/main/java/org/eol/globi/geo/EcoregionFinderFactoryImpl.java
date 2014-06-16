@@ -33,7 +33,7 @@ public class EcoregionFinderFactoryImpl implements EcoregionFinderFactory {
             config.setIdLabel("ECO_ID_U");
             config.setNamespace("TEOW");
             config.setPathLabels(new String[]{config.getNameLabel(), "WWF_MHTNAM", "WWF_REALM2"});
-            put(EcoregionType.TerrestrialEcoregionsOfTheWorld, config);
+            put(EcoregionType.TERRESTRIAL_ECOREGIONS_OF_THE_WORLD, config);
             config.setGeometryLabel("the_geom");
 
             // http://maps.tnc.org/gis_data.html
@@ -46,7 +46,7 @@ public class EcoregionFinderFactoryImpl implements EcoregionFinderFactory {
             config.setNamespace("MEOW");
             config.setPathLabels(new String[]{config.getNameLabel(), "PROVINCE", "REALM", "Lat_Zone"});
             config.setGeometryLabel("the_geom");
-            put(EcoregionType.MarineEcoregionsOfTheWorld, config);
+            put(EcoregionType.MARINE_ECOREGIONS_OF_THE_WORLD, config);
 
             // Fresh Water Ecosystems of the World (FEW) http://www.feow.org/
             // http://maps.tnc.org/files/metadata/FEOW.xml
@@ -58,7 +58,7 @@ public class EcoregionFinderFactoryImpl implements EcoregionFinderFactory {
             config.setNamespace("FEOW");
             config.setPathLabels(new String[]{config.getNameLabel(), "MHT_TXT"});
             config.setGeometryLabel("the_geom");
-            put(EcoregionType.FreshwaterEcoregionsOfTheWorld, config);
+            put(EcoregionType.FRESHWATER_ECOREGIONS_OF_THE_WORLD, config);
 
             // VLIZ (2009). Longhurst Biogeographical Provinces. Available online at http://www.marineregions.org/. Consulted on 2014-02-12.
             //
@@ -73,7 +73,7 @@ public class EcoregionFinderFactoryImpl implements EcoregionFinderFactory {
             config.setNamespace("LBP");
             config.setPathLabels(new String[]{config.getNameLabel()});
             config.setGeometryLabel("the_geom");
-            put(EcoregionType.LonghurstBioGeographicalProvinces, config);
+            put(EcoregionType.LONGHURST_BIOGEOGRAPHICAL_PROVINCES, config);
         }};
     }
 }

@@ -2,6 +2,8 @@ package org.eol.globi.export;
 
 import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.NodeFactoryException;
+import org.eol.globi.domain.PropertyAndValueDictionary;
+import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.junit.Test;
 
@@ -25,11 +27,8 @@ public class ExporterTaxaTest extends GraphDBTestCase {
 
         Study myStudy1 = nodeFactory.findStudy("myStudy");
 
-        StringWriter row = new StringWriter();
-
-        new ExporterTaxa().exportStudy(myStudy1, row, true);
-
-        String actual = row.getBuffer().toString();
+        String actual = exportStudy(myStudy1);
+        StringWriter row;
         assertThat(actual, containsString("EOL:123,Canis lupus,,,,,,,,,,,,,"));
         assertThat(actual, containsString("EOL:45634,Homo sapiens,,,,,,,,,,,,,"));
         assertThat(actual, not(containsString("no:match,ThemFishes,,,,,,,,,,,,,")));
@@ -37,6 +36,24 @@ public class ExporterTaxaTest extends GraphDBTestCase {
         row = new StringWriter();
 
         assertThatNoTaxaAreExportedOnMissingHeader(myStudy1, row);
+    }
+
+    protected String exportStudy(Study myStudy1) throws IOException {
+        StringWriter row = new StringWriter();
+
+        new ExporterTaxa().exportStudy(myStudy1, row, true);
+
+        return row.getBuffer().toString();
+    }
+
+    @Test
+    public void excludeNoMatchNames() throws NodeFactoryException, IOException {
+        Specimen predator = nodeFactory.createSpecimen(PropertyAndValueDictionary.NO_MATCH, "EOL:1234");
+        Specimen prey = nodeFactory.createSpecimen(PropertyAndValueDictionary.NO_MATCH, "EOL:122");
+        Study study = nodeFactory.createStudy("bla");
+        study.collected(predator);
+        predator.ate(prey);
+        assertThat(exportStudy(study), not(containsString(PropertyAndValueDictionary.NO_MATCH)));
     }
 
     private void assertThatNoTaxaAreExportedOnMissingHeader(Study myStudy1, StringWriter row) throws IOException {

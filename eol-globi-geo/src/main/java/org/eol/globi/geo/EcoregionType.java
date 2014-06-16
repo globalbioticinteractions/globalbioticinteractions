@@ -1,8 +1,8 @@
 package org.eol.globi.geo;
 
 public enum EcoregionType {
-    MarineEcoregionsOfTheWorld,
-    TerrestrialEcoregionsOfTheWorld,
-    FreshwaterEcoregionsOfTheWorld,
-    LonghurstBioGeographicalProvinces
+    MARINE_ECOREGIONS_OF_THE_WORLD,
+    TERRESTRIAL_ECOREGIONS_OF_THE_WORLD,
+    FRESHWATER_ECOREGIONS_OF_THE_WORLD,
+    LONGHURST_BIOGEOGRAPHICAL_PROVINCES
 }
