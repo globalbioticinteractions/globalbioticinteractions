@@ -7,7 +7,7 @@ public enum RelTypes implements RelType {
     ORIGINALLY_DESCRIBED_AS,
     HAS_ENVIRONMENT,
     HAS_LOG_MESSAGE,
-    IN_ECO_REGION,
+    IN_ECOREGION,
     SAME_AS,
     COLLECTED
 }

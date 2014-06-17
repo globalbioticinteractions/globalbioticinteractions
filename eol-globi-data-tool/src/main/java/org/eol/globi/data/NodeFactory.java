@@ -72,7 +72,7 @@ public class NodeFactory {
         this.environments = graphDb.index().forNodes("environments");
 
         this.ecoregions = graphDb.index().forNodes("ecoregions");
-        this.ecoregionPaths = graphDb.index().forNodes("ecoregionPath", MapUtil.stringMap(IndexManager.PROVIDER, "lucene", "type", "fulltext"));
+        this.ecoregionPaths = graphDb.index().forNodes("ecoregionPaths", MapUtil.stringMap(IndexManager.PROVIDER, "lucene", "type", "fulltext"));
         this.ecoregionSuggestions = graphDb.index().forNodes("ecoregionSuggestions");
 
         this.taxonService = taxonService;
@@ -355,7 +355,7 @@ public class NodeFactory {
     }
 
     private List<Ecoregion> getEcoRegions(Node locationNode) {
-        Iterable<Relationship> relationships = locationNode.getRelationships(RelTypes.IN_ECO_REGION, Direction.OUTGOING);
+        Iterable<Relationship> relationships = locationNode.getRelationships(RelTypes.IN_ECOREGION, Direction.OUTGOING);
         List<Ecoregion> ecoregions = null;
         for (Relationship relationship : relationships) {
             Node ecoregionNode = relationship.getEndNode();
@@ -401,7 +401,7 @@ public class NodeFactory {
             if (ecoregionNode == null) {
                 ecoregionNode = addAndIndexEcoRegion(ecoregion);
             }
-            location.getUnderlyingNode().createRelationshipTo(ecoregionNode, RelTypes.IN_ECO_REGION);
+            location.getUnderlyingNode().createRelationshipTo(ecoregionNode, RelTypes.IN_ECOREGION);
             tx.success();
         } finally {
             tx.finish();

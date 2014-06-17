@@ -191,7 +191,7 @@ public class NodeFactoryTest extends GraphDBTestCase {
     }
 
     private void assertEcoRegions(Location location) {
-        Iterable<Relationship> relationships = location.getUnderlyingNode().getRelationships(Direction.OUTGOING, RelTypes.IN_ECO_REGION);
+        Iterable<Relationship> relationships = location.getUnderlyingNode().getRelationships(Direction.OUTGOING, RelTypes.IN_ECOREGION);
         int count = 0;
         for (Relationship relationship : relationships) {
             Node associatedEcoRegion = relationship.getEndNode();
