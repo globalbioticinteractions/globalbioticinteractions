@@ -27,10 +27,13 @@ public class CypherQueryBuilder {
     public static final String INTERACTION_PARASITE_OF = "parasiteOf";
     public static final String INTERACTION_HOST_OF = "hostOf";
 
+    public static final String INTERACTION_POLLINATES = "pollinates";
+    public static final String INTERACTION_POLLINATED_BY = "pollinatedBy";
+
     private static final String SOURCE_TAXON_HTTP_PARAM_NAME = "sourceTaxon";
     private static final String TARGET_TAXON_HTTP_PARAM_NAME = "targetTaxon";
-    private static final List<String> INVERTED_INTERACTION_TYPES = Arrays.asList(INTERACTION_PREYED_UPON_BY, INTERACTION_HOST_OF);
-    private static final List<String> NON_INVERTED_INTERACTION_TYPES = Arrays.asList(INTERACTION_PREYS_ON, INTERACTION_PARASITE_OF);
+    private static final List<String> INVERTED_INTERACTION_TYPES = Arrays.asList(INTERACTION_PREYED_UPON_BY, INTERACTION_HOST_OF, INTERACTION_POLLINATED_BY);
+    private static final List<String> NON_INVERTED_INTERACTION_TYPES = Arrays.asList(INTERACTION_PREYS_ON, INTERACTION_PARASITE_OF, INTERACTION_POLLINATES);
     private static final Map<String, String> INTERACTION_TYPE_MAP = new HashMap<String, String>() {
         {
             String preysOn = InteractType.ATE + "|" + InteractType.PREYS_UPON;
@@ -38,6 +41,8 @@ public class CypherQueryBuilder {
             put(INTERACTION_PREYED_UPON_BY, preysOn);
             put(INTERACTION_PARASITE_OF, InteractType.PARASITE_OF + "|" + InteractType.HAS_HOST);
             put(INTERACTION_HOST_OF, InteractType.PARASITE_OF + "|" + InteractType.HAS_HOST);
+            put(INTERACTION_POLLINATES, InteractType.POLLINATES.toString());
+            put(INTERACTION_POLLINATED_BY, InteractType.POLLINATES.toString());
         }
     };
 
