@@ -10,6 +10,7 @@ import org.eol.globi.domain.Study;
 import org.eol.globi.server.util.RequestHelper;
 import org.eol.globi.server.util.ResultFields;
 import org.eol.globi.util.InteractUtil;
+import uk.me.jstott.jcoord.LatLng;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
@@ -279,17 +280,17 @@ public class CypherQueryBuilder {
     }
 
     public static CypherQuery buildInteractionQuery(Map parameterMap) {
-        boolean spatialSearch = RequestHelper.isSpatialSearch(parameterMap);
+        boolean isSpatialSearch = RequestHelper.isSpatialSearch(parameterMap);
         List<String> sourceTaxaSelectors = collectTaxa(parameterMap, SOURCE_TAXON_HTTP_PARAM_NAME);
         List<String> targetTaxaSelectors = collectTaxa(parameterMap, TARGET_TAXON_HTTP_PARAM_NAME);
-        if (noSearchCriteria(spatialSearch, sourceTaxaSelectors, targetTaxaSelectors)) {
+        if (noSearchCriteria(isSpatialSearch, sourceTaxaSelectors, targetTaxaSelectors)) {
             // sensible default
             sourceTaxaSelectors.add("Homo sapiens");
         }
 
         StringBuilder query = new StringBuilder();
         query.append("START");
-        if (spatialSearch) {
+        if (isSpatialSearch) {
             query.append(" loc = node:locations('*:*')");
         } else {
             if (sourceTaxaSelectors.size() > 0) {
@@ -302,16 +303,19 @@ public class CypherQueryBuilder {
         }
         query.append(" MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen-[interactionType:")
                 .append(InteractUtil.allInteractionsCypherClause())
-                .append("]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon");
+                .append("]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon")
+                .append(",sourceSpecimen<-[:COLLECTED]-study,")
+                .append("sourceSpecimen-[?:COLLECTED_AT]->loc");
 
-        if (parameterMap != null) {
-            RequestHelper.appendSpatialClauses(parameterMap, query);
+        if (parameterMap != null && isSpatialSearch) {
+            query.append(" WHERE");
+            RequestHelper.addSpatialWhereClause(RequestHelper.parseSpatialSearchParams(parameterMap), query);
         }
 
         boolean hasWhereClause = false;
         if (sourceTaxaSelectors.size() > 0) {
-            if (spatialSearch) {
-                hasWhereClause = appendTaxonFilter(query, spatialSearch, "sourceTaxon", sourceTaxaSelectors);
+            if (isSpatialSearch) {
+                hasWhereClause = appendTaxonFilter(query, isSpatialSearch, "sourceTaxon", sourceTaxaSelectors);
             }
             appendTaxonFilter(query, hasWhereClause, "targetTaxon", targetTaxaSelectors);
         }
@@ -325,7 +329,7 @@ public class CypherQueryBuilder {
                 .append(",targetTaxon.path? as ").append(ResultFields.TARGET_TAXON_PATH);
 
         Map<String, String> params = null;
-        if (!spatialSearch) {
+        if (!isSpatialSearch) {
             params = getParams(sourceTaxaSelectors, targetTaxaSelectors);
         }
         return new CypherQuery(query.toString(), params);
