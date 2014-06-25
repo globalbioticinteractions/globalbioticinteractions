@@ -323,10 +323,15 @@ public class CypherQueryBuilder {
         query.append(" RETURN sourceTaxon.externalId? as ").append(ResultFields.SOURCE_TAXON_EXTERNAL_ID)
                 .append(",sourceTaxon.name as ").append(ResultFields.SOURCE_TAXON_NAME)
                 .append(",sourceTaxon.path? as ").append(ResultFields.SOURCE_TAXON_PATH)
+                .append(",sourceTaxon.lifeStage? as ").append(ResultFields.PREFIX_SOURCE_SPECIMEN).append(ResultFields.SUFFIX_LIFE_STAGE)
                 .append(",type(interactionType) as ").append(ResultFields.INTERACTION_TYPE)
                 .append(",targetTaxon.externalId? as ").append(ResultFields.TARGET_TAXON_EXTERNAL_ID)
                 .append(",targetTaxon.name as ").append(ResultFields.TARGET_TAXON_NAME)
-                .append(",targetTaxon.path? as ").append(ResultFields.TARGET_TAXON_PATH);
+                .append(",targetTaxon.path? as ").append(ResultFields.TARGET_TAXON_PATH)
+                .append(",targetTaxon.lifeStage? as ").append(ResultFields.PREFIX_TARGET_SPECIMEN).append(ResultFields.SUFFIX_LIFE_STAGE)
+                .append(",loc.latitude? as ").append(ResultFields.LATITUDE)
+                .append(",loc.longitude? as ").append(ResultFields.LONGITUDE)
+                .append(",study.title as ").append(ResultFields.STUDY_TITLE);
 
         Map<String, String> params = null;
         if (!isSpatialSearch) {

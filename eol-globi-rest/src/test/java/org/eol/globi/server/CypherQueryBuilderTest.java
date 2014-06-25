@@ -14,7 +14,18 @@ public class CypherQueryBuilderTest {
 
     public static final String EXPECTED_SOURCE_TARGET_SPECIMEN_ALL_INTERACTIONS_CLAUSE = "sourceSpecimen-[interactionType:" + InteractUtil.allInteractionsCypherClause() + "]->targetSpecimen";
     public static final String EXPECTED_MATCH_CLAUSE = "MATCH sourceTaxon<-[:CLASSIFIED_AS]-" + EXPECTED_SOURCE_TARGET_SPECIMEN_ALL_INTERACTIONS_CLAUSE + "-[:CLASSIFIED_AS]->targetTaxon,sourceSpecimen<-[:COLLECTED]-study,sourceSpecimen-[?:COLLECTED_AT]->loc ";
-    public static final String EXPECTED_RETURN_CLAUSE = "RETURN sourceTaxon.externalId? as source_taxon_external_id,sourceTaxon.name as source_taxon_name,sourceTaxon.path? as source_taxon_path,type(interactionType) as interaction_type,targetTaxon.externalId? as target_taxon_external_id,targetTaxon.name as target_taxon_name,targetTaxon.path? as target_taxon_path";
+    public static final String EXPECTED_RETURN_CLAUSE = "RETURN sourceTaxon.externalId? as source_taxon_external_id," +
+            "sourceTaxon.name as source_taxon_name," +
+            "sourceTaxon.path? as source_taxon_path," +
+            "sourceTaxon.lifeStage? as source_specimen_life_stage," +
+            "type(interactionType) as interaction_type," +
+            "targetTaxon.externalId? as target_taxon_external_id," +
+            "targetTaxon.name as target_taxon_name," +
+            "targetTaxon.path? as target_taxon_path," +
+            "targetTaxon.lifeStage? as target_specimen_life_stage," +
+            "loc.latitude? as latitude," +
+            "loc.longitude? as longitude," +
+            "study.title as study_title";
 
     @Test
     public void findInteractionForSourceAndTargetTaxaLocations() throws IOException {
