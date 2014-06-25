@@ -92,17 +92,19 @@ public class CypherQueryBuilderTest {
     public void findInteractionForTargetTaxaOnlyByInteractionType() throws IOException {
         HashMap<String, String[]> params = new HashMap<String, String[]>() {
             {
-                put("targetTaxon", new String[]{"Arthropoda"});
+                put("sourceTaxon", new String[]{"Arthropoda"});
+                put("targetTaxon", new String[]{"Mammalia"});
                 put("interactionType", new String[]{"preysOn", "parasiteOf"});
             }
         };
 
-        String expectedQuery = "START targetTaxon = node:taxonPaths({target_taxon_name}) " +
+        String expectedQuery = "START sourceTaxon = node:taxonPaths({source_taxon_name}) " +
                 expectedMatchClause(expectedInteractionClause("ATE|PREYS_UPON|PARASITE_OF|HAS_HOST")) +
+                "WHERE has(targetTaxon.path) AND targetTaxon.path =~ '(.*(Mammalia).*)' " +
                 EXPECTED_RETURN_CLAUSE;
         CypherQuery query = CypherQueryBuilder.buildInteractionQuery(params);
         assertThat(query.getQuery(), is(expectedQuery));
-        assertThat(query.getParams().toString(), is("{target_taxon_name=path:\\\"Arthropoda\\\"}"));
+        assertThat(query.getParams().toString(), is("{source_taxon_name=path:\\\"Arthropoda\\\", target_taxon_name=path:\\\"Mammalia\\\"}"));
     }
 
     @Test
