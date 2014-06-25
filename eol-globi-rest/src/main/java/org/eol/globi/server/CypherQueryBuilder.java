@@ -10,7 +10,6 @@ import org.eol.globi.domain.Study;
 import org.eol.globi.server.util.RequestHelper;
 import org.eol.globi.server.util.ResultFields;
 import org.eol.globi.util.InteractUtil;
-import uk.me.jstott.jcoord.LatLng;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
@@ -280,9 +279,10 @@ public class CypherQueryBuilder {
     }
 
     public static CypherQuery buildInteractionQuery(Map parameterMap) {
+        List<String> sourceTaxaSelectors = collectParamValues(parameterMap, SOURCE_TAXON_HTTP_PARAM_NAME);
+        List<String> targetTaxaSelectors = collectParamValues(parameterMap, TARGET_TAXON_HTTP_PARAM_NAME);
+
         boolean isSpatialSearch = RequestHelper.isSpatialSearch(parameterMap);
-        List<String> sourceTaxaSelectors = collectTaxa(parameterMap, SOURCE_TAXON_HTTP_PARAM_NAME);
-        List<String> targetTaxaSelectors = collectTaxa(parameterMap, TARGET_TAXON_HTTP_PARAM_NAME);
         if (noSearchCriteria(isSpatialSearch, sourceTaxaSelectors, targetTaxaSelectors)) {
             // sensible default
             sourceTaxaSelectors.add("Homo sapiens");
@@ -301,8 +301,21 @@ public class CypherQueryBuilder {
                 appendTaxonSelectors(false, true, query);
             }
         }
+
+        List<String> interactionTypeSelectors = collectParamValues(parameterMap, "interactionType");
+        List<String> cypherTypes = new ArrayList<String>();
+        for (String type : interactionTypeSelectors) {
+            if (INTERACTION_TYPE_MAP.containsKey(type)) {
+                if (NON_INVERTED_INTERACTION_TYPES.contains(type)) {
+                    cypherTypes.add(INTERACTION_TYPE_MAP.get(type));
+                }
+            }
+        }
+
+        String interactionSelector = cypherTypes.isEmpty() ? InteractUtil.allInteractionsCypherClause() : StringUtils.join(cypherTypes, "|");
+
         query.append(" MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen-[interactionType:")
-                .append(InteractUtil.allInteractionsCypherClause())
+                .append(interactionSelector)
                 .append("]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon")
                 .append(",sourceSpecimen<-[:COLLECTED]-study,")
                 .append("sourceSpecimen-[?:COLLECTED_AT]->loc");
@@ -359,7 +372,7 @@ public class CypherQueryBuilder {
         return hasWhereClause;
     }
 
-    private static List<String> collectTaxa(Map parameterMap, String taxonSearchKey) {
+    private static List<String> collectParamValues(Map parameterMap, String taxonSearchKey) {
         List<String> taxa = new ArrayList<String>();
         if (parameterMap.containsKey(taxonSearchKey)) {
             Object paramObject = parameterMap.get(taxonSearchKey);

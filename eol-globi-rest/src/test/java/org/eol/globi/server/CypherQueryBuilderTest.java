@@ -12,8 +12,17 @@ import static org.junit.Assert.assertThat;
 
 public class CypherQueryBuilderTest {
 
-    public static final String EXPECTED_SOURCE_TARGET_SPECIMEN_ALL_INTERACTIONS_CLAUSE = "sourceSpecimen-[interactionType:" + InteractUtil.allInteractionsCypherClause() + "]->targetSpecimen";
-    public static final String EXPECTED_MATCH_CLAUSE = "MATCH sourceTaxon<-[:CLASSIFIED_AS]-" + EXPECTED_SOURCE_TARGET_SPECIMEN_ALL_INTERACTIONS_CLAUSE + "-[:CLASSIFIED_AS]->targetTaxon,sourceSpecimen<-[:COLLECTED]-study,sourceSpecimen-[?:COLLECTED_AT]->loc ";
+    public static final String EXPECTED_INTERACTION_CLAUSE_ALL_INTERACTIONS = expectedInteractionClause(InteractUtil.allInteractionsCypherClause());
+    public static final String EXPECTED_MATCH_CLAUSE = expectedMatchClause(EXPECTED_INTERACTION_CLAUSE_ALL_INTERACTIONS);
+
+    private static String expectedInteractionClause(String interactions) {
+        return "sourceSpecimen-[interactionType:" + interactions + "]->targetSpecimen";
+    }
+
+    private static String expectedMatchClause(String expectedInteractionClause) {
+        return "MATCH sourceTaxon<-[:CLASSIFIED_AS]-" + expectedInteractionClause + "-[:CLASSIFIED_AS]->targetTaxon,sourceSpecimen<-[:COLLECTED]-study,sourceSpecimen-[?:COLLECTED_AT]->loc ";
+    }
+
     public static final String EXPECTED_RETURN_CLAUSE = "RETURN sourceTaxon.externalId? as source_taxon_external_id," +
             "sourceTaxon.name as source_taxon_name," +
             "sourceTaxon.path? as source_taxon_path," +
@@ -73,6 +82,23 @@ public class CypherQueryBuilderTest {
 
         String expectedQuery = "START targetTaxon = node:taxonPaths({target_taxon_name}) " +
                 EXPECTED_MATCH_CLAUSE +
+                EXPECTED_RETURN_CLAUSE;
+        CypherQuery query = CypherQueryBuilder.buildInteractionQuery(params);
+        assertThat(query.getQuery(), is(expectedQuery));
+        assertThat(query.getParams().toString(), is("{target_taxon_name=path:\\\"Arthropoda\\\"}"));
+    }
+
+    @Test
+    public void findInteractionForTargetTaxaOnlyByInteractionType() throws IOException {
+        HashMap<String, String[]> params = new HashMap<String, String[]>() {
+            {
+                put("targetTaxon", new String[]{"Arthropoda"});
+                put("interactionType", new String[]{"preysOn", "parasiteOf"});
+            }
+        };
+
+        String expectedQuery = "START targetTaxon = node:taxonPaths({target_taxon_name}) " +
+                expectedMatchClause(expectedInteractionClause("ATE|PREYS_UPON|PARASITE_OF|HAS_HOST")) +
                 EXPECTED_RETURN_CLAUSE;
         CypherQuery query = CypherQueryBuilder.buildInteractionQuery(params);
         assertThat(query.getQuery(), is(expectedQuery));
