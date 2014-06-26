@@ -43,4 +43,13 @@ public class UberonLookupServiceTest {
         assertThat(scales.get(0).getId(), is("no:match"));
         assertThat(scales.get(0).getName(), is("donald duck"));
     }
+
+    @Test
+    public void noHeader() throws TermLookupServiceException {
+        // ensure that header is not used as value
+        List<Term> scales = uberonLookupService.lookupTermByName("original_name");
+        assertThat(scales.size(), is(1));
+        assertThat(scales.get(0).getId(), is("no:match"));
+        assertThat(scales.get(0).getName(), is("original_name"));
+    }
 }

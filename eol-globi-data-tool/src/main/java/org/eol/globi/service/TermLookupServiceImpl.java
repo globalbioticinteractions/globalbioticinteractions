@@ -1,6 +1,8 @@
 package org.eol.globi.service;
 
+import com.Ostermiller.util.CSVParse;
 import com.Ostermiller.util.CSVParser;
+import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
@@ -44,8 +46,12 @@ public abstract class TermLookupServiceImpl extends BaseHttpClientService implem
             LOG.info("term mapping populating with [" + uriList + "]...");
             try {
                 String response = IOUtils.toString(uri.toURL());
-                CSVParser parser = new CSVParser(new StringReader(response));
+                CSVParse parser = new CSVParser(new StringReader(response));
                 parser.changeDelimiter(getDelimiter());
+
+                if (hasHeader()) {
+                    parser = new LabeledCSVParser(parser);
+                }
                 String[] line;
                 while ((line = parser.getLine()) != null) {
                     if (line.length < 4) {
@@ -72,5 +78,7 @@ public abstract class TermLookupServiceImpl extends BaseHttpClientService implem
             }
         }
     }
+
+    protected abstract boolean hasHeader();
 
 }

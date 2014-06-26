@@ -21,4 +21,9 @@ public class EnvoLookupService extends TermLookupServiceImpl {
     protected char getDelimiter() {
         return '\t';
     }
+
+    @Override
+    protected boolean hasHeader() {
+        return false;
+    }
 }
