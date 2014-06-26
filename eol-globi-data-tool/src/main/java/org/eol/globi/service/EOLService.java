@@ -17,6 +17,8 @@ import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLDecoder;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public class EOLService extends BaseHttpClientService implements TaxonPropertyLookupService {
@@ -73,11 +75,11 @@ public class EOLService extends BaseHttpClientService implements TaxonPropertyLo
             URI uri = new URI("http", null, "eol.org", 80, "/api/pages/1.0/" + pageId + ".json", "images=1&videos=0&sounds=0&maps=0&text=0&iucn=false&subjects=overview&licenses=all&details=false&common_names=true&synonyms=false&references=false&format=json", null);
             String response = getResponse(uri);
             if (response != null) {
-                StringBuilder ranks = new StringBuilder();
-                addCanonicalNamesAndRanks(properties, response, ranks);
+                addCanonicalNamesAndRanks(properties, response);
 
                 StringBuilder commonNames = new StringBuilder();
                 addCommonNames(commonNames, response);
+
                 if (commonNames.length() > 0) {
                     properties.put(PropertyAndValueDictionary.COMMON_NAMES, commonNames.toString());
                 }
@@ -91,7 +93,9 @@ public class EOLService extends BaseHttpClientService implements TaxonPropertyLo
         }
     }
 
-    private void addCanonicalNamesAndRanks(Map<String, String> properties, String response, StringBuilder ranks) throws IOException, URISyntaxException, TaxonPropertyLookupServiceException {
+    private void addCanonicalNamesAndRanks(Map<String, String> properties, String response) throws IOException, URISyntaxException, TaxonPropertyLookupServiceException {
+        List<String> ranks = new ArrayList<String>();
+        List<String> rankNames = new ArrayList<String>();
         ObjectMapper mapper = new ObjectMapper();
         JsonNode node = mapper.readTree(response);
         if (node.has("identifier")) {
@@ -119,11 +123,17 @@ public class EOLService extends BaseHttpClientService implements TaxonPropertyLo
             }
         }
         if (firstConceptId != null) {
-            addRanks(firstConceptId, ranks);
+            addRanks(firstConceptId, ranks, rankNames);
         }
-        if (ranks.length() > 0) {
-            properties.put(PropertyAndValueDictionary.PATH, ranks.toString());
+
+        if (ranks.size() > 0) {
+            properties.put(PropertyAndValueDictionary.PATH, StringUtils.join(ranks, " | "));
         }
+
+        if (rankNames.size() == ranks.size()) {
+            properties.put(PropertyAndValueDictionary.PATH_NAMES, StringUtils.join(rankNames, " | "));
+        }
+
     }
 
     private void addExternalId(Map<String, String> properties, Long resolvedPageId) {
@@ -152,45 +162,41 @@ public class EOLService extends BaseHttpClientService implements TaxonPropertyLo
 
     }
 
-    private void addRanks(String firstConceptId, StringBuilder ranks) throws URISyntaxException, TaxonPropertyLookupServiceException, IOException {
+    private void addRanks(String firstConceptId, List<String> ranks, List<String> rankNames) throws URISyntaxException, TaxonPropertyLookupServiceException, IOException {
         URI uri;
         String response;
         uri = new URI("http", null, "eol.org", 80, "/api/hierarchy_entries/1.0/" + firstConceptId + ".json", "common_names=false&synonyms=false&format=json", null);
         response = getResponse(uri);
         if (response != null) {
-            parseResponse(ranks, response);
+            parseResponse(response, ranks, rankNames);
         }
     }
 
-    protected void parseResponse(StringBuilder ranks, String response) throws IOException {
+    protected void parseResponse( String response, List<String> ranks, List<String> rankNames) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         JsonNode node = mapper.readTree(response);
         JsonNode ancestors = node.get("ancestors");
 
-        boolean isFirst = true;
         for (JsonNode ancestor : ancestors) {
-            isFirst = parseTaxonNode(ranks, isFirst, ancestor);
+            parseTaxonNode(ranks, ancestor, rankNames);
         }
 
-        parseTaxonNode(ranks, isFirst, node);
+        parseTaxonNode(ranks, node, rankNames);
     }
 
-    private boolean parseTaxonNode(StringBuilder ranks, boolean first, JsonNode ancestor) {
+    private void parseTaxonNode(List<String> ranks, JsonNode ancestor, List<String> rankNames) {
         if (ancestor.has("scientificName")) {
-            if (!first) {
-                ranks.append(CharsetConstant.SEPARATOR);
-            }
             String scientificName = ancestor.get("scientificName").getTextValue();
             String[] split = scientificName.split(" ");
-            ranks.append(split[0]);
-            if (split.length > 1 && ((ancestor.has("taxonRank") && "Species".equals(ancestor.get("taxonRank").getTextValue()) || !ancestor.has("taxonRank")) )) {
-                ranks.append(" ");
-                ranks.append(split[1]);
+            String name = split[0];
+            if (split.length > 1 && ((ancestor.has("taxonRank") && "Species".equalsIgnoreCase(ancestor.get("taxonRank").getTextValue()) || !ancestor.has("taxonRank")))) {
+                name += " " + split[1];
             }
-
-            first = false;
+            ranks.add(name);
+            if (ancestor.has("taxonRank")) {
+                rankNames.add(ancestor.get("taxonRank").getTextValue().toLowerCase());
+            }
         }
-        return first;
     }
 
     protected Long getPageId(String taxonName, boolean shouldFollowAlternate) throws TaxonPropertyLookupServiceException {

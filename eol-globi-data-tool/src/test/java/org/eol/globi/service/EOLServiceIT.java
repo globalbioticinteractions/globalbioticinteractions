@@ -89,6 +89,7 @@ public class EOLServiceIT {
         assertThat(properties.get(PropertyAndValueDictionary.NAME), is("Salicornia"));
         assertThat(properties.get(PropertyAndValueDictionary.RANK), is("Genus"));
         assertThat(properties.get(PropertyAndValueDictionary.PATH), is("Plantae | Tracheophyta | Magnoliopsida | Caryophyllales | Chenopodiaceae | Salicornia"));
+        assertThat(properties.get(PropertyAndValueDictionary.PATH_NAMES), is("Faimly | Tracheophyta | Magnoliopsida | Caryophyllales | Chenopodiaceae | Salicornia"));
 
     }
 
