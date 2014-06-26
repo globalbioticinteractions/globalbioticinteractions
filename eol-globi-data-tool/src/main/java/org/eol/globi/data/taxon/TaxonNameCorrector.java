@@ -141,7 +141,7 @@ public class TaxonNameCorrector implements CorrectionService {
 
         private void doInit() {
             try {
-                InputStream resourceAsStream = getClass().getResourceAsStream("taxonNameCorrections.csv");
+                InputStream resourceAsStream = getClass().getResourceAsStream("/org/eol/globi/service/taxon-name-mapping.csv");
                 BufferedReader is = org.eol.globi.data.FileUtils.getUncompressedBufferedReader(resourceAsStream, CharsetConstant.UTF8);
                 LabeledCSVParser labeledCSVParser = new LabeledCSVParser(new CSVParser(is));
                 String[] line;
