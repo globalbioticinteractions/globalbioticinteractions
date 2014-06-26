@@ -18,24 +18,24 @@ GOMEXSI:kernels,kernels,GLOBI:KERNEL,KERNEL
 GOMEXSI:wood,wood,GLOBI:WOOD,WOOD
 GOMEXSI:feather,feather,UBERON:0000022,feather
 ,Pharyngeal tooth,UBERON:2001647,pharyngeal tooth plate
-,air bladder,,
+,air bladder,GLOBI:air_bladder,air bladder
 ,beak,UBERON:0005094,beak
 ,carapace,UBERON:0008275,carapace
-,claw,,
-,claws,,
+,claw,GLOBI:claw,claw
+,claws,GLOBI:claw,claw
 ,ctenoid scale,UBERON:2002273,ctenoid scale
 ,eyeball,UBERON:0010230,eyeball of camera-type eye
 ,fin ray,UBERON:4400005,fin ray
-,house,,
+,house,GLOBI:house,house
 ,legs,UBERON_0000978,leg
 ,leg,UBERON_0000978,leg
-,operculum,,
+,operculum,GLOBI:operculum,operculum
 ,otolith,UBERON:0002280,otolith
 ,otoliths,UBERON:0002280,otolith
-,root,,
+,root,GLOBI:root,root
 ,skull,UBERON:0003129,skull
-,telson,,
+,telson,GLOBI:telson,telson
 ,tissue,UBERON:0000479,tissue
-,torso,,
+,torso,GLOBI:torso,torso
 ,wings,UBERON:0000023,wing
 ,wing,UBERON:0000023,wing
