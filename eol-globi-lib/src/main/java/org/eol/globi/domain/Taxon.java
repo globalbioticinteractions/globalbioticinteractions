@@ -5,6 +5,10 @@ public interface Taxon {
 
     void setPath(String path);
 
+    String getPathNames();
+
+    void setPathNames(String pathNames);
+
     String getCommonNames();
 
     void setCommonNames(String commonNames);

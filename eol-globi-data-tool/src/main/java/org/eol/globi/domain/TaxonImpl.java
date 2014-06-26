@@ -3,6 +3,7 @@ package org.eol.globi.domain;
 public class TaxonImpl implements Taxon {
     private String name;
     private String path;
+    private String pathNames;
     private String externalId;
     private String commonNames;
     private String rank;
@@ -15,6 +16,16 @@ public class TaxonImpl implements Taxon {
     @Override
     public void setPath(String path) {
         this.path = path;
+    }
+
+    @Override
+    public String getPathNames() {
+        return pathNames;
+    }
+
+    @Override
+    public void setPathNames(String pathNames) {
+        this.pathNames = pathNames;
     }
 
     @Override

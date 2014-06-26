@@ -57,6 +57,7 @@ public class GlobalNamesServiceIT {
         service.lookupPropertiesByName("Homo sapiens", props1);
         assertThat(props1.get(PropertyAndValueDictionary.NAME), is("Homo sapiens"));
         assertThat(props1.get(PropertyAndValueDictionary.PATH), is("|Eukaryota|Opisthokonta|Metazoa|Eumetazoa|Bilateria|Coelomata|Deuterostomia|Chordata|Craniata|Vertebrata|Gnathostomata|Teleostomi|Euteleostomi|Sarcopterygii|Tetrapoda|Amniota|Mammalia|Theria|Eutheria|Euarchontoglires|Primates|Haplorrhini|Simiiformes|Catarrhini|Hominoidea|Hominidae|Homininae|Homo|Homo sapiens"));
+        assertThat(props1.get(PropertyAndValueDictionary.PATH_NAMES), is("|superkingdom||kingdom|||||phylum|subphylum||superclass||||||class|||superorder|order|suborder|infraorder|parvorder|superfamily|family|subfamily|genus|species"));
         assertThat(props1.get(PropertyAndValueDictionary.RANK), is("species"));
         HashMap<String, String> props = props1;
         assertThat(props.get(PropertyAndValueDictionary.EXTERNAL_ID), is("ncbi:9606"));

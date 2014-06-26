@@ -60,6 +60,7 @@ public class GlobalNamesService extends BaseHttpClientService implements TaxonPr
             properties.put(PropertyAndValueDictionary.NAME, taxon.getName());
             properties.put(PropertyAndValueDictionary.EXTERNAL_ID, taxon.getExternalId());
             properties.put(PropertyAndValueDictionary.PATH, taxon.getPath());
+            properties.put(PropertyAndValueDictionary.PATH_NAMES, taxon.getPathNames());
             properties.put(PropertyAndValueDictionary.RANK, taxon.getRank());
         }
 
@@ -92,7 +93,9 @@ public class GlobalNamesService extends BaseHttpClientService implements TaxonPr
                             Taxon taxon = new TaxonImpl();
                             String classificationPath = aResult.get("classification_path").getValueAsText();
                             taxon.setPath(classificationPath);
-                            String[] ranks = aResult.get("classification_path_ranks").getValueAsText().split("\\|");
+                            String pathRanks = aResult.get("classification_path_ranks").getValueAsText();
+                            taxon.setPathNames(pathRanks);
+                            String[] ranks = pathRanks.split("\\|");
                             if (ranks.length > 0) {
                                 String rank = ranks[ranks.length - 1];
                                 taxon.setRank(rank);

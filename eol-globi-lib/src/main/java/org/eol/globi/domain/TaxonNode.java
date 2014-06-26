@@ -29,6 +29,19 @@ public class TaxonNode extends NamedNode implements Taxon {
     }
 
     @Override
+    public String getPathNames() {
+        return getUnderlyingNode().hasProperty(PATH_NAMES) ?
+                (String) getUnderlyingNode().getProperty(PATH_NAMES) : null;
+    }
+
+    @Override
+    public void setPathNames(String pathNames) {
+        if (pathNames != null) {
+            getUnderlyingNode().setProperty(PATH_NAMES, pathNames);
+        }
+    }
+
+    @Override
     public String getCommonNames() {
         return getUnderlyingNode().hasProperty(COMMON_NAMES) ?
                 (String) getUnderlyingNode().getProperty(COMMON_NAMES) : null;
