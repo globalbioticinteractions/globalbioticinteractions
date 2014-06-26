@@ -18,6 +18,7 @@ import org.eol.globi.geo.EcoregionFinder;
 import org.eol.globi.geo.EcoregionFinderException;
 import org.eol.globi.service.DOIResolver;
 import org.eol.globi.service.EnvoLookupService;
+import org.eol.globi.service.TermLookupServiceWithResource;
 import org.eol.globi.service.TermLookupService;
 import org.eol.globi.service.TermLookupServiceException;
 import org.eol.globi.service.UberonLookupService;
@@ -56,6 +57,8 @@ public class NodeFactory {
 
     private TermLookupService termLookupService;
     private TermLookupService envoLookupService;
+    private final TermLookupService lifeStageLookupService;
+    private final TermLookupService bodyPartLookupService;
 
     private DOIResolver doiResolver;
     private EcoregionFinder ecoregionFinder;
@@ -65,6 +68,8 @@ public class NodeFactory {
         this.graphDb = graphDb;
 
         this.termLookupService = new UberonLookupService();
+        this.lifeStageLookupService = new TermLookupServiceWithResource("life-stage-mapping.csv");
+        this.bodyPartLookupService = new TermLookupServiceWithResource("body-part-mapping.csv");
         this.envoLookupService = new EnvoLookupService();
         this.studies = graphDb.index().forNodes("studies");
         this.seasons = graphDb.index().forNodes("seasons");
@@ -175,7 +180,45 @@ public class NodeFactory {
         TaxonNode taxon = getOrCreateTaxon(taxonName, taxonExternalId, null);
         Specimen specimen = createSpecimen(taxon);
         specimen.setOriginalTaxonDescription(taxonName, taxonExternalId);
+        extractTerms(taxonName, specimen);
+
         return specimen;
+    }
+
+    protected void extractTerms(String taxonName, Specimen specimen) throws NodeFactoryException {
+        String[] nameParts = StringUtils.split(taxonName);
+        for (String part : nameParts) {
+            extractLifeStage(specimen, part);
+            extractBodyPart(specimen, part);
+        }
+    }
+
+    private void extractLifeStage(Specimen specimen, String part) throws NodeFactoryException {
+        try {
+            List<Term> terms = lifeStageLookupService.lookupTermByName(part);
+            for (Term term : terms) {
+                if (!StringUtils.equals(term.getId(), PropertyAndValueDictionary.NO_MATCH)) {
+                    specimen.setLifeStage(terms.get(0));
+                    break;
+                }
+            }
+        } catch (TermLookupServiceException e) {
+            throw new NodeFactoryException("failed to map term [" + part + "]", e);
+        }
+    }
+
+    private void extractBodyPart(Specimen specimen, String part) throws NodeFactoryException {
+        try {
+            List<Term> terms = bodyPartLookupService.lookupTermByName(part);
+            for (Term term : terms) {
+                if (!StringUtils.equals(term.getId(), PropertyAndValueDictionary.NO_MATCH)) {
+                    specimen.setBodyPart(terms.get(0));
+                    break;
+                }
+            }
+        } catch (TermLookupServiceException e) {
+            throw new NodeFactoryException("failed to map term [" + part + "]", e);
+        }
     }
 
 
@@ -235,7 +278,7 @@ public class NodeFactory {
     }
 
     private String findDOIUsingReference(String contributor, String description, String publicationYear) throws IOException {
-        String reference = StringUtils.join(new String[] {contributor, publicationYear, description}, " ");
+        String reference = StringUtils.join(new String[]{contributor, publicationYear, description}, " ");
         return doiResolver.findDOIForReference(reference);
     }
 

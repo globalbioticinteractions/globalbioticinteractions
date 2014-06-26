@@ -5,15 +5,20 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UberonLookupService extends TermLookupServiceImpl {
+public class TermLookupServiceWithResource extends TermLookupServiceImpl {
+
+    private final String resourceName;
+
+    public TermLookupServiceWithResource(String resourceName) {
+        super();
+        this.resourceName = resourceName;
+    }
 
     @Override
     protected List<URI> getMappingURIList() {
         try {
             return new ArrayList<URI>() {{
-                add(getClass().getResource("body-part-mapping.csv").toURI());
-                add(getClass().getResource("life-stage-mapping.csv").toURI());
-                add(getClass().getResource("physiological-state-mapping.csv").toURI());
+                add(getClass().getResource(resourceName).toURI());
             }};
         } catch (URISyntaxException e) {
             throw new RuntimeException("failed to read mapping file ", e);

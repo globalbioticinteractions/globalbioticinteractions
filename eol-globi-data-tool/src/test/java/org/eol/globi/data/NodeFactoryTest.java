@@ -27,12 +27,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static junit.framework.Assert.assertNull;
-import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
 public class NodeFactoryTest extends GraphDBTestCase {
@@ -136,6 +133,29 @@ public class NodeFactoryTest extends GraphDBTestCase {
     }
 
     @Test
+    public void specimenWithLifeStageInName() throws NodeFactoryException {
+        CorrectionService correctionService = new CorrectionService() {
+            @Override
+            public String correct(String taxonName) {
+                return "mickey corrected";
+            }
+        };
+        TaxonService taxonService = new TaxonServiceImpl(new TaxonPropertyEnricher() {
+            @Override
+            public void enrich(Taxon taxon) {
+
+            }
+        }, correctionService, getGraphDb()
+        );
+        nodeFactory.setTaxonService(taxonService);
+        Specimen specimen = nodeFactory.createSpecimen("mickey egg scales");
+        assertThat(specimen.getLifeStage().getName(), is("egg"));
+        assertThat(specimen.getLifeStage().getId(), is("UBERON:0007379"));
+        assertThat(specimen.getBodyPart().getName(), is("scale"));
+        assertThat(specimen.getBodyPart().getId(), is("UBERON:0002542"));
+    }
+
+    @Test
     public void describeAndClassifySpecimenImplicit() throws NodeFactoryException {
         CorrectionService correctionService = new CorrectionService() {
             @Override
@@ -155,6 +175,7 @@ public class NodeFactoryTest extends GraphDBTestCase {
         assertThat(specimen.getOriginalTaxonDescription(), is("mickey"));
         assertThat("original taxon descriptions are indexed", nodeFactory.findTaxon("mickey").getName(), is("mickey"));
     }
+
 
     @Test
     public void createEcoRegion() throws NodeFactoryException {

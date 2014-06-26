@@ -6,6 +6,7 @@ import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.Transaction;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
 
 public class Specimen extends NodeBacked {
 
@@ -150,5 +151,13 @@ public class Specimen extends NodeBacked {
     public void setTotalVolumeInMl(Double totalVolumeInMl) {
         setPropertyWithTx(Specimen.TOTAL_VOLUME_IN_ML, totalVolumeInMl);
 
+    }
+
+    public Term getLifeStage() {
+        return new Term(getPropertyStringValueOrNull(LIFE_STAGE_ID), getPropertyStringValueOrNull(LIFE_STAGE_LABEL));
+    }
+
+    public Term getBodyPart() {
+        return new Term(getPropertyStringValueOrNull(BODY_PART_ID), getPropertyStringValueOrNull(BODY_PART_LABEL));
     }
 }

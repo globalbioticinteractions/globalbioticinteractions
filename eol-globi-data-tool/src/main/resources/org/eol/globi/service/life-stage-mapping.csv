@@ -17,8 +17,8 @@ GOMEXSI:larvae/post larvae,larvae/post larvae,GLOBI:LARVA_OR_POSTLARVA,LARVA_OR_
 GOMEXSI:megalopa,megalopa,GLOBI:MEGALOPA,MEGALOPA
 GOMEXSI:cypris,cypris,GLOBI:CYPRIS,CYPRIS
 GOMEXSI:cyp,cyp,GLOBI:CYPRIS,CYPRIS
-GOMEXSI:egg,egg,GO:0009792,embryo development ending in birth or egg hatching
-GOMEXSI:eggs,egg,GO:0009792,embryo development ending in birth or egg hatching
+GOMEXSI:egg,egg,UBERON:0007379,egg
+GOMEXSI:eggs,egg,UBERON:0007379,egg
 GOMEXSI:nauplii,nauplii,GLOBI:NAUPLII,NAUPLII
 GOMEXSI:copepodite,copepodite,GLOBI:COPEPODITE,COPEPODITE
 GOMEXSI:copepodites,copepodites,GLOBI:COPEPODITE,COPEPODITE
@@ -34,7 +34,7 @@ BIO_INFO:sporangium,sporangium,GLOBI:SPORANGIUM,SPORANGIUM
 BIO_INFO:uredium,uredium,GLOBI:UREDIUM,UREDIUM
 BIO_INFO:caterpillar,caterpillar,UBERON:0000069,larval stage
 BIO_INFO:adult,adult,UBERON:0000113,post-juvenile adult stage
-BIO_INFO:egg,egg,GO:0009792,embryo development ending in birth or egg hatching
+BIO_INFO:egg,egg,UBERON:0007379,egg
 BIO_INFO:nymph,nymph,UBERON:0014405,nymph stage
 BIO_INFO:telium,telium,GLOBI:TELIUM,TELIUM
 BIO_INFO:anamorph,anamorph,GLOBI:ANAMORPH,ANAMORPH
