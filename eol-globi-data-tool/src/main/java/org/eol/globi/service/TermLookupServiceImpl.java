@@ -43,7 +43,6 @@ public abstract class TermLookupServiceImpl extends BaseHttpClientService implem
         mapping = new HashMap<String, List<Term>>();
 
         for (URI uri : uriList) {
-            LOG.info("term mapping populating with [" + uriList + "]...");
             try {
                 String response = IOUtils.toString(uri.toURL());
                 CSVParse parser = new CSVParser(new StringReader(response));
@@ -72,7 +71,6 @@ public abstract class TermLookupServiceImpl extends BaseHttpClientService implem
                         }
                     }
                 }
-                LOG.info("term mapping populated.");
             } catch (IOException e) {
                 throw new TermLookupServiceException("failed to retrieve mapping from [" + uriList + "]", e);
             }
