@@ -11,16 +11,16 @@ public class UberonLookupService extends TermLookupServiceImpl {
     protected List<URI> getMappingURIList() {
         try {
             return new ArrayList<URI>() {{
-                add(getClass().getResource("body-part-mapping.txt").toURI());
-                add(getClass().getResource("life-stage-mapping.txt").toURI());
+                add(getClass().getResource("body-part-mapping.csv").toURI());
+                add(getClass().getResource("life-stage-mapping.csv").toURI());
             }};
         } catch (URISyntaxException e) {
-            throw new RuntimeException(("failed to configure service for [" + getClass().getResource("body-part-mapping.txt").toString() + "]"));
+            throw new RuntimeException(("failed to configure service for [" + getClass().getResource("body-part-mapping.csv").toString() + "]"));
         }
     }
 
     @Override
     protected char getDelimiter() {
-        return '\t';
+        return ',';
     }
 }
