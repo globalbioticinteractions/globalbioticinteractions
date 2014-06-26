@@ -22,12 +22,14 @@ public abstract class TermLookupServiceImpl extends BaseHttpClientService implem
 
     private Map<String, List<Term>> mapping = null;
 
-    public abstract String getMappingURI();
+    protected abstract List<URI> getMappingURIList();
+
+    protected abstract char getDelimiter();
 
     @Override
     public List<Term> lookupTermByName(final String name) throws TermLookupServiceException {
         if (mapping == null) {
-            buildMapping(getMappingURI());
+            buildMapping(getMappingURIList());
         }
         List<Term> terms = mapping.get(name);
         return terms == null ? new ArrayList<Term>() {{
@@ -35,38 +37,39 @@ public abstract class TermLookupServiceImpl extends BaseHttpClientService implem
         }} : terms;
     }
 
-    private void buildMapping(String uri) throws TermLookupServiceException {
+    private void buildMapping(List<URI> uriList) throws TermLookupServiceException {
         mapping = new HashMap<String, List<Term>>();
-        LOG.info("term mapping populating with [" + uri + "]...");
-        try {
-            String response = IOUtils.toString(new URI(uri));
-            CSVParser parser = new CSVParser(new StringReader(response));
-            parser.changeDelimiter('\t');
-            String[] line;
-            while ((line = parser.getLine()) != null) {
-                if (line.length < 4) {
-                    LOG.info("line: [" + parser.getLastLineNumber() + "] in [" + uri + "] contains less than 4 columns");
-                } else {
-                    String spireName = line[1];
-                    String envoId = line[2];
-                    String envoName = line[3];
-                    if (StringUtils.isNotBlank(spireName)
-                            && StringUtils.isNotBlank(envoId)
-                            && StringUtils.isNotBlank(envoName)) {
-                        List<Term> terms = mapping.get(spireName);
-                        if (terms == null) {
-                            terms = new ArrayList<Term>();
-                            mapping.put(spireName, terms);
+
+        for (URI uri : uriList) {
+            LOG.info("term mapping populating with [" + uriList + "]...");
+            try {
+                String response = IOUtils.toString(uri.toURL());
+                CSVParser parser = new CSVParser(new StringReader(response));
+                parser.changeDelimiter(getDelimiter());
+                String[] line;
+                while ((line = parser.getLine()) != null) {
+                    if (line.length < 4) {
+                        LOG.info("line: [" + parser.getLastLineNumber() + "] in [" + uriList + "] contains less than 4 columns");
+                    } else {
+                        String sourceName = line[1];
+                        String targetId = line[2];
+                        String targetName = line[3];
+                        if (StringUtils.isNotBlank(sourceName)
+                                && StringUtils.isNotBlank(targetId)
+                                && StringUtils.isNotBlank(targetName)) {
+                            List<Term> terms = mapping.get(sourceName);
+                            if (terms == null) {
+                                terms = new ArrayList<Term>();
+                                mapping.put(sourceName, terms);
+                            }
+                            terms.add(new Term(targetId, targetName));
                         }
-                        terms.add(new Term(envoId, envoName));
                     }
                 }
+                LOG.info("term mapping populated.");
+            } catch (IOException e) {
+                throw new TermLookupServiceException("failed to retrieve mapping from [" + uriList + "]", e);
             }
-            LOG.info("term mapping populated.");
-        } catch (IOException e) {
-            throw new TermLookupServiceException("failed to retrieve mapping from [" + uri + "]", e);
-        } catch (URISyntaxException e) {
-            throw new TermLookupServiceException("failed to retrieve mapping from [" + uri + "]", e);
         }
     }
 
