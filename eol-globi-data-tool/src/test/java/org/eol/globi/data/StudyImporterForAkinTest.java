@@ -42,8 +42,8 @@ public class StudyImporterForAkinTest extends GraphDBTestCase {
     @Test
     public void parseLifeStage() throws TermLookupServiceException {
         UberonLookupService service = new UberonLookupService();
-        assertThat(StudyImporterForAkin.parseLifeStage(service, "something egg").get(0).getId(), is("GO:0009792"));
-        assertThat(StudyImporterForAkin.parseLifeStage(service, "something eggs").get(0).getId(), is("GO:0009792"));
+        assertThat(StudyImporterForAkin.parseLifeStage(service, "something egg").get(0).getId(), is("UBERON:0007379"));
+        assertThat(StudyImporterForAkin.parseLifeStage(service, "something eggs").get(0).getId(), is("UBERON:0007379"));
         assertThat(StudyImporterForAkin.parseLifeStage(service, "something larvae").get(0).getId(), is("UBERON:0000069"));
         assertThat(StudyImporterForAkin.parseLifeStage(service, "something zoea").get(0).getId(), is("UBERON:0000069"));
     }
