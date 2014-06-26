@@ -19,7 +19,7 @@ GOMEXSI:cypris,cypris,GLOBI:CYPRIS,CYPRIS
 GOMEXSI:cyp,cyp,GLOBI:CYPRIS,CYPRIS
 GOMEXSI:egg,egg,UBERON:0007379,egg
 GOMEXSI:eggs,egg,UBERON:0007379,egg
-GOMEXSI:nauplii,nauplii,GLOBI:NAUPLII,NAUPLII
+GOMEXSI:nauplii,nauplii,UBERON:0014406,nauplius stage
 GOMEXSI:copepodite,copepodite,GLOBI:COPEPODITE,COPEPODITE
 GOMEXSI:copepodites,copepodites,GLOBI:COPEPODITE,COPEPODITE
 GOMEXSI:copepedites,copepedites,GLOBI:COPEPODITE,COPEPODITE
@@ -54,9 +54,9 @@ BAREMORE:Yoy/Juv,Yoy/Juv,GLOBI:YOUNG_OF_THE_YEAR_OR_JUVENILE,YOUNG_OF_THE_YEAR_O
 BAREMORE:Yoy,Yoy,GLOBI:YOUNG_OF_THE_YEAR,YOUNG_OF_THE_YEAR
 BAREMORE:YOY,YOY,GLOBI:YOUNG_OF_THE_YEAR,YOUNG_OF_THE_YEAR
 BAREMORE:Neo,Neo,GLOBI:NEO,NEO
-,calyptopis,,
-,furcilia,,
-,medusae,,
-,nauplius,,
-,pupae,,
-,seed,,
+,calyptopis,GLOBI:calyptopis,calyptopis
+,furcilia,GLOBI:calyptopis,calyptopis
+,medusae,GLOBI:medusae,medusae
+,nauplius,UBERON:0014406,nauplius stage
+,pupae,UBERON:0000070,pupal stage
+,seed,GLOBI:seed,seed

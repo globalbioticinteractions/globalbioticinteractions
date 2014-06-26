@@ -17,23 +17,25 @@ GOMEXSI:seed_pod,seed pod,GLOBI:SEED_POD,SEED_POD
 GOMEXSI:kernels,kernels,GLOBI:KERNEL,KERNEL
 GOMEXSI:wood,wood,GLOBI:WOOD,WOOD
 GOMEXSI:feather,feather,UBERON:0000022,feather
-,Pharyngeal tooth,,
+,Pharyngeal tooth,UBERON:2001647,pharyngeal tooth plate
 ,air bladder,,
-,beak,,
-,carapace,,
+,beak,UBERON:0005094,beak
+,carapace,UBERON:0008275,carapace
 ,claw,,
 ,claws,,
-,ctenoid scale,,
-,eyeball,,
-,fin ray,,
+,ctenoid scale,UBERON:2002273,ctenoid scale
+,eyeball,UBERON:0010230,eyeball of camera-type eye
+,fin ray,UBERON:4400005,fin ray
 ,house,,
-,legs,,
+,legs,UBERON_0000978,leg
+,leg,UBERON_0000978,leg
 ,operculum,,
-,otolith,,
-,otoliths,,
+,otolith,UBERON:0002280,otolith
+,otoliths,UBERON:0002280,otolith
 ,root,,
-,skull,,
+,skull,UBERON:0003129,skull
 ,telson,,
-,tissue,,
+,tissue,UBERON:0000479,tissue
 ,torso,,
-,wings,,
+,wings,UBERON:0000023,wing
+,wing,UBERON:0000023,wing
