@@ -180,12 +180,13 @@ public class NodeFactory {
         TaxonNode taxon = getOrCreateTaxon(taxonName, taxonExternalId, null);
         Specimen specimen = createSpecimen(taxon);
         specimen.setOriginalTaxonDescription(taxonName, taxonExternalId);
-        extractTerms(taxonName, specimen);
-
+        if (StringUtils.isNotBlank(taxonName)) {
+            extractTerms(taxonName, specimen);
+        }
         return specimen;
     }
 
-    protected void extractTerms(String taxonName, Specimen specimen) throws NodeFactoryException {
+    private void extractTerms(String taxonName, Specimen specimen) throws NodeFactoryException {
         String[] nameParts = StringUtils.split(taxonName);
         for (String part : nameParts) {
             extractLifeStage(specimen, part);

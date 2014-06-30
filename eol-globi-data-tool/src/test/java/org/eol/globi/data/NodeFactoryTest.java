@@ -12,6 +12,7 @@ import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.Taxon;
+import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.domain.Term;
 import org.eol.globi.service.DOIResolver;
 import org.eol.globi.service.TaxonPropertyEnricher;
@@ -130,6 +131,13 @@ public class NodeFactoryTest extends GraphDBTestCase {
         assertThat(study.getCitation(), nullValue());
 
 
+    }
+
+    @Test public void specimenWithNoName() throws NodeFactoryException {
+        Specimen specimen = nodeFactory.createSpecimen(null, "bla:123");
+
+        Relationship next = specimen.getClassifications().iterator().next();
+        assertThat(new TaxonNode(next.getEndNode()).getExternalId(), is("bla:123"));
     }
 
     @Test
