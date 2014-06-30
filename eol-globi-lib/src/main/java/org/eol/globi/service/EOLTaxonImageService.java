@@ -72,7 +72,7 @@ public class EOLTaxonImageService extends BaseHttpClientService implements Image
                 taxonImage = new TaxonImage();
                 String infoURL = ExternalIdUtil.infoURLForExternalId(TaxonomyProvider.EOL.getIdPrefix() + eolPageId);
                 taxonImage.setInfoURL(infoURL);
-                taxonImage.setEOLPageId(eolPageId);
+                taxonImage.setPageId(eolPageId);
                 taxonImage.setCommonName(pageInfo.getCommonName());
                 taxonImage.setScientificName(pageInfo.getScientificName());
                 taxonImage.setThumbnailURL(pageInfo.getThumbnailURL());
@@ -100,7 +100,6 @@ public class EOLTaxonImageService extends BaseHttpClientService implements Image
                 for (JsonNode dataObject : dataObjects) {
                     String dataType = dataObject.has("dataType") ? dataObject.get("dataType").getValueAsText() : "";
                     if ("http://purl.org/dc/dcmitype/StillImage".equals(dataType)) {
-                        pageInfo.setImageObjectId(dataObject.get("identifier").getValueAsText());
                         if (dataObject.has("eolMediaURL")) {
                             pageInfo.setImageURL(dataObject.get("eolMediaURL").getValueAsText());
                         }
@@ -148,20 +147,6 @@ public class EOLTaxonImageService extends BaseHttpClientService implements Image
         return pageInfo;
     }
 
-    protected void enrichTaxonWithImageInfo(TaxonImage taxonImage, String responseString) throws IOException {
-        ObjectMapper mapper = new ObjectMapper();
-        JsonNode array = mapper.readTree(responseString);
-        JsonNode eolMediaURL = array.findValue("eolMediaURL");
-        if (eolMediaURL != null) {
-            taxonImage.setImageURL(eolMediaURL.getValueAsText());
-        }
-
-        JsonNode eolThumbnailURL = array.findValue("eolThumbnailURL");
-        if (eolThumbnailURL != null) {
-            taxonImage.setThumbnailURL(eolThumbnailURL.getValueAsText());
-        }
-    }
-
     private String lookupEOLPageId(String taxonId, String eolPageId, String eolProviderId) throws IOException {
         String urlString = "http://eol.org/api/search_by_provider/1.0/" + taxonId + ".json?hierarchy_id=" + eolProviderId + "&cache_ttl=3600";
         HttpGet get = new HttpGet(urlString);
@@ -189,19 +174,10 @@ public class EOLTaxonImageService extends BaseHttpClientService implements Image
     }
 
     private class PageInfo {
-        private String imageObjectId;
         private String commonName;
         private String scientificName;
         private String imageURL;
         private String thumbnailURL;
-
-        public void setImageObjectId(String imageObjectId) {
-            this.imageObjectId = imageObjectId;
-        }
-
-        public String getImageObjectId() {
-            return imageObjectId;
-        }
 
         public void setCommonName(String commonName) {
             this.commonName = commonName;

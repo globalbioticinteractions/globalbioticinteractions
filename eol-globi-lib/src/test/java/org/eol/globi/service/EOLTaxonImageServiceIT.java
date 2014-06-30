@@ -26,7 +26,7 @@ public class EOLTaxonImageServiceIT {
     private void assertITISImage(TaxonImage taxonImage) {
         assertThat(taxonImage.getThumbnailURL(), containsString(".jpg"));
         assertThat(taxonImage.getImageURL(), containsString(".jpg"));
-        assertThat(taxonImage.getEOLPageId(), is("207614"));
+        assertThat(taxonImage.getPageId(), is("207614"));
         assertThat(taxonImage.getInfoURL(), is("http://eol.org/pages/207614"));
         assertThat(taxonImage.getScientificName(), is("Fundulus jenkinsi"));
         assertThat(taxonImage.getCommonName(), is("Topminnows"));
@@ -37,7 +37,7 @@ public class EOLTaxonImageServiceIT {
         TaxonImage taxonImage = imageService.lookupImageURLs(TaxonomyProvider.NCBI, "28806");
         assertThat(taxonImage.getThumbnailURL(), endsWith(".jpg"));
         assertThat(taxonImage.getImageURL(), endsWith(".jpg"));
-        assertThat(taxonImage.getEOLPageId(), is("205157"));
+        assertThat(taxonImage.getPageId(), is("205157"));
         assertThat(taxonImage.getInfoURL(), is("http://eol.org/pages/205157"));
         assertThat(taxonImage.getScientificName(), is("Centropomus undecimalis"));
         assertThat(taxonImage.getCommonName(), is("Common Snook"));
@@ -58,7 +58,7 @@ public class EOLTaxonImageServiceIT {
     private void assertWoRMSImage(TaxonImage taxonImage) {
         assertThat(taxonImage.getThumbnailURL(), is("http://media.eol.org/content/2009/11/17/11/81513_98_68.jpg"));
         assertThat(taxonImage.getImageURL(), is("http://media.eol.org/content/2009/11/17/11/81513_orig.jpg"));
-        assertThat(taxonImage.getEOLPageId(), is("210779"));
+        assertThat(taxonImage.getPageId(), is("210779"));
         assertThat(taxonImage.getInfoURL(), is("http://eol.org/pages/210779"));
         assertThat(taxonImage.getScientificName(), is("Prionotus paralatus"));
         assertThat(taxonImage.getCommonName(), is("Mexican Searobin"));
@@ -73,7 +73,7 @@ public class EOLTaxonImageServiceIT {
     private void assertEOLImage(TaxonImage taxonImage) {
         assertThat(taxonImage.getThumbnailURL(), containsString(".jpg"));
         assertThat(taxonImage.getImageURL(), containsString(".jpg"));
-        assertThat(taxonImage.getEOLPageId(), is("1045608"));
+        assertThat(taxonImage.getPageId(), is("1045608"));
         assertThat(taxonImage.getInfoURL(), is("http://eol.org/pages/1045608"));
         assertThat(taxonImage.getScientificName(), is("Apis mellifera"));
         assertThat(taxonImage.getCommonName(), is("European Honey Bee"));
@@ -86,7 +86,7 @@ public class EOLTaxonImageServiceIT {
     }
 
     private void assertEOLImage2(TaxonImage taxonImage) {
-        assertThat(taxonImage.getEOLPageId(), is("2215"));
+        assertThat(taxonImage.getPageId(), is("2215"));
         assertThat(taxonImage.getInfoURL(), is("http://eol.org/pages/2215"));
         assertThat(taxonImage.getCommonName(), is("Mussels and Clams"));
         assertThat(taxonImage.getScientificName(), is("Bivalvia"));

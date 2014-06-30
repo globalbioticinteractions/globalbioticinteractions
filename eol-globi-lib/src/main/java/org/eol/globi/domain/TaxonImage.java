@@ -4,7 +4,7 @@ public class TaxonImage {
     private String thumbnailURL;
     private String imageURL;
     private String infoURL;
-    private String EOLPageId;
+    private String pageId;
     private String scientificName;
     private String commonName;
 
@@ -32,12 +32,12 @@ public class TaxonImage {
         return infoURL;
     }
 
-    public void setEOLPageId(String EOLPageId) {
-        this.EOLPageId = EOLPageId;
+    public void setPageId(String pageId) {
+        this.pageId = pageId;
     }
 
-    public String getEOLPageId() {
-        return EOLPageId;
+    public String getPageId() {
+        return pageId;
     }
 
     public void setScientificName(String scientificName) {
