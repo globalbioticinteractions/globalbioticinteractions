@@ -107,44 +107,6 @@
                 <enabled>true</enabled>
             </releases>
         </repository>
-        <repository>
-            <id>berkeleybop</id>
-            <name>Berkeley Bop Repository</name>
-            <url>http://code.berkeleybop.org/maven/repository</url>
-        </repository>
-        <repository>
-            <id>globi-snapshot</id>
-            <name>GloBI snaphots</name>
-            <url>https://s3.amazonaws.com/globi/snapshot</url>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-        </repository>
-        <repository>
-            <id>globi-datasets</id>
-            <name>GloBI Thirdparty Datasets</name>
-            <url>https://s3.amazonaws.com/globi/datasets</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-        </repository>
-        <repository>
-            <id>globi-release</id>
-            <name>GloBI Releases</name>
-            <url>https://s3.amazonaws.com/globi/release</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-        </repository>
     </repositories>
 
     <distributionManagement>
