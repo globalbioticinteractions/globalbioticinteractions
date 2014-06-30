@@ -2,6 +2,7 @@ package org.eol.globi.server;
 
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.TaxonImage;
+import org.eol.globi.domain.TaxonomyProvider;
 import org.eol.globi.service.ImageSearch;
 import org.junit.Before;
 import org.junit.Test;
@@ -12,7 +13,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
@@ -44,6 +44,11 @@ public class ImageServiceTest {
                 taxonImage.setCommonName("some common name for " + externalId);
                 return taxonImage;
             }
+
+            @Override
+            public TaxonImage lookupImageURLs(TaxonomyProvider provider, String taxonId) throws IOException {
+                return null;
+            }
         });
     }
 
@@ -62,7 +67,7 @@ public class ImageServiceTest {
     @Test
     public void imagesForNames() throws IOException {
         List<TaxonImage> images = imageService.findImagesForNames(new String[]{"Homo sapiens", "Ariopsis felis"});
-        assertThat(images.size(), is(2)) ;
+        assertThat(images.size(), is(2));
     }
 
 }
