@@ -12,11 +12,11 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.matchers.JUnitMatchers.containsString;
 
-public class SearchServiceTest {
+public class TaxonSearchImplTest {
 
     @Test
     public void nameSuggestions() throws IOException {
-        String result = new SearchService().findCloseMatchesForCommonAndScientificNames("homo zapiens");
+        String result = new TaxonSearchImpl().findCloseMatchesForCommonAndScientificNames("homo zapiens");
         assertThat(result, containsString("Homo sapiens"));
     }
 
@@ -45,7 +45,7 @@ public class SearchServiceTest {
     }
 
     private void assertHuman(String searchTerm) throws IOException {
-        String response = new SearchService().findCloseMatchesForCommonAndScientificNames(searchTerm);
+        String response = new TaxonSearchImpl().findCloseMatchesForCommonAndScientificNames(searchTerm);
         assertThat(response.startsWith(COLUMN_PREFIX), is(true));
         assertThat(response, StringContains.containsString("Homo sapiens"));
         assertThat(response, StringContains.containsString("man"));
@@ -53,7 +53,7 @@ public class SearchServiceTest {
 
     @Test
     public void findCloseMatchesShortPartial2() throws IOException {
-        String response = new SearchService().findCloseMatchesForCommonAndScientificNames("h s");
+        String response = new TaxonSearchImpl().findCloseMatchesForCommonAndScientificNames("h s");
         assertThat(response.startsWith(COLUMN_PREFIX), is(true));
         // expect at least one common name
         assertThat(response, StringContains.containsString("@en"));
@@ -61,53 +61,53 @@ public class SearchServiceTest {
 
     @Test
     public void findCloseMatchesCommonNameFoxDutch() throws IOException {
-        String response = new SearchService().findCloseMatchesForCommonAndScientificNames("vos");
+        String response = new TaxonSearchImpl().findCloseMatchesForCommonAndScientificNames("vos");
         assertThat(response.startsWith(COLUMN_PREFIX), is(true));
         assertThat(response, StringContains.containsString("vos"));
     }
 
     @Test
     public void findCloseMatchesCommonNameFoxFrenchType() throws IOException {
-        String response = new SearchService().findCloseMatchesForCommonAndScientificNames("reinard");
+        String response = new TaxonSearchImpl().findCloseMatchesForCommonAndScientificNames("reinard");
         assertThat(response, StringContains.containsString("Vulpes vulpes"));
         assertThat(response, StringContains.containsString("renard"));
     }
 
     @Test
     public void findCloseMatchesScientificNameRedFoxWithTypo() throws IOException {
-        String response = new SearchService().findCloseMatchesForCommonAndScientificNames("Vulpes vules");
+        String response = new TaxonSearchImpl().findCloseMatchesForCommonAndScientificNames("Vulpes vules");
         assertThat(response, StringContains.containsString("Vulpes vulpes"));
     }
 
     @Test
     public void findCloseMatchesScientificGenus() throws IOException {
-        String response = new SearchService().findCloseMatchesForCommonAndScientificNames("Ariidae");
+        String response = new TaxonSearchImpl().findCloseMatchesForCommonAndScientificNames("Ariidae");
         assertThat(response, StringContains.containsString("Ariopsis felis"));
     }
 
     @Test
     public void findCloseMatchesScientificChineseCharacters() throws IOException {
-        String response = new SearchService().findCloseMatchesForCommonAndScientificNames("Ariidae");
+        String response = new TaxonSearchImpl().findCloseMatchesForCommonAndScientificNames("Ariidae");
         assertThat(response, StringContains.containsString("密氏雅首海鯰"));
     }
 
     @Test
     public void findCloseMatchesLowerCase() throws IOException {
-        String response = new SearchService().findCloseMatchesForCommonAndScientificNames("King mackerel");
+        String response = new TaxonSearchImpl().findCloseMatchesForCommonAndScientificNames("King mackerel");
         assertThat(response, StringContains.containsString("Scomberomorus cavalla"));
         assertThat(response, StringContains.containsString("king mackeral"));
     }
 
     @Test
     public void findCloseMatchesUpperCase() throws IOException {
-        String response = new SearchService().findCloseMatchesForCommonAndScientificNames("King Mackerel");
+        String response = new TaxonSearchImpl().findCloseMatchesForCommonAndScientificNames("King Mackerel");
         assertThat(response, StringContains.containsString("Scomberomorus cavalla"));
         assertThat(response, StringContains.containsString("king mackeral"));
     }
 
     @Test
     public void ensureSingleMatch() throws IOException {
-        String response = new SearchService().findCloseMatchesForCommonAndScientificNames("Ariopsis felis");
+        String response = new TaxonSearchImpl().findCloseMatchesForCommonAndScientificNames("Ariopsis felis");
         JsonNode jsonNode = new ObjectMapper().readTree(response);
         assertThat(jsonNode.get("data").get(0).get(0).getTextValue(), is("Ariopsis felis"));
         assertThat(jsonNode.get("data").size(), is(1));
@@ -115,7 +115,7 @@ public class SearchServiceTest {
 
     @Test
     public void findTaxonProxy() throws IOException {
-        String response = new SearchService().findTaxonProxy("Ariopsis felis", null);
+        String response = new TaxonSearchImpl().findTaxonProxy("Ariopsis felis", null);
         JsonNode resp = new ObjectMapper().readTree(response);
         JsonNode columns = resp.get("columns");
         assertThat(columns.get(0).getTextValue(), is("name"));
@@ -131,7 +131,7 @@ public class SearchServiceTest {
 
     @Test
     public void findTaxonAriopsisFelis() throws IOException {
-        Map<String, String> props = new SearchService().findTaxon("Ariopsis felis", null);
+        Map<String, String> props = new TaxonSearchImpl().findTaxon("Ariopsis felis", null);
         assertThat(props.get("name"), is("Ariopsis felis"));
         assertThat(props.get("commonNames"), StringContains.containsString("hardhead catfish"));
         assertThat(props.get("path"), StringContains.containsString("Actinopterygii"));

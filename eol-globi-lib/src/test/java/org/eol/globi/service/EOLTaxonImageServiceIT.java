@@ -15,12 +15,12 @@ import static org.junit.matchers.JUnitMatchers.containsString;
 
 public class EOLTaxonImageServiceIT {
 
-    private EOLTaxonImageService serviceTaxon = new EOLTaxonImageService();
+    private ImageSearch imageService = new EOLTaxonImageService();
 
     @Test
     public void imageLookupITIS() throws URISyntaxException, IOException {
-        assertITISImage(serviceTaxon.lookupImageURLs(TaxonomyProvider.ITIS, "165653"));
-        assertITISImage(serviceTaxon.lookupImageForExternalId(TaxonomyProvider.ID_PREFIX_ITIS + "165653"));
+        assertITISImage(imageService.lookupImageURLs(TaxonomyProvider.ITIS, "165653"));
+        assertITISImage(imageService.lookupImageForExternalId(TaxonomyProvider.ID_PREFIX_ITIS + "165653"));
     }
 
     private void assertITISImage(TaxonImage taxonImage) {
@@ -34,7 +34,7 @@ public class EOLTaxonImageServiceIT {
 
     @Test
     public void imageLookupNCBI() throws URISyntaxException, IOException {
-        TaxonImage taxonImage = serviceTaxon.lookupImageURLs(TaxonomyProvider.NCBI, "28806");
+        TaxonImage taxonImage = imageService.lookupImageURLs(TaxonomyProvider.NCBI, "28806");
         assertThat(taxonImage.getThumbnailURL(), endsWith(".jpg"));
         assertThat(taxonImage.getImageURL(), endsWith(".jpg"));
         assertThat(taxonImage.getEOLPageId(), is("205157"));
@@ -45,13 +45,13 @@ public class EOLTaxonImageServiceIT {
 
     @Test
     public void imageLookupWoRMS() throws URISyntaxException, IOException {
-        assertWoRMSImage(serviceTaxon.lookupImageURLs(TaxonomyProvider.WORMS, "276287"));
-        assertWoRMSImage(serviceTaxon.lookupImageForExternalId(TaxonomyProvider.ID_PREFIX_WORMS + "276287"));
+        assertWoRMSImage(imageService.lookupImageURLs(TaxonomyProvider.WORMS, "276287"));
+        assertWoRMSImage(imageService.lookupImageForExternalId(TaxonomyProvider.ID_PREFIX_WORMS + "276287"));
     }
 
     @Test
     public void imageLookupWoRMSNoEOLPageId() throws IOException {
-        TaxonImage taxonImage = serviceTaxon.lookupImageForExternalId(TaxonomyProvider.ID_PREFIX_WORMS + "585857");
+        TaxonImage taxonImage = imageService.lookupImageForExternalId(TaxonomyProvider.ID_PREFIX_WORMS + "585857");
         assertThat(taxonImage.getInfoURL(), notNullValue());
     }
 
@@ -66,8 +66,8 @@ public class EOLTaxonImageServiceIT {
 
     @Test
     public void imageLookupEOL() throws URISyntaxException, IOException {
-        assertEOLImage(serviceTaxon.lookupImageURLs(TaxonomyProvider.EOL, "1045608"));
-        assertEOLImage(serviceTaxon.lookupImageForExternalId(TaxonomyProvider.ID_PREFIX_EOL + "1045608"));
+        assertEOLImage(imageService.lookupImageURLs(TaxonomyProvider.EOL, "1045608"));
+        assertEOLImage(imageService.lookupImageForExternalId(TaxonomyProvider.ID_PREFIX_EOL + "1045608"));
     }
 
     private void assertEOLImage(TaxonImage taxonImage) {
@@ -81,8 +81,8 @@ public class EOLTaxonImageServiceIT {
 
     @Test
     public void imageLookupEOL2() throws URISyntaxException, IOException {
-        assertEOLImage2(serviceTaxon.lookupImageURLs(TaxonomyProvider.EOL, "2215"));
-        assertEOLImage2(serviceTaxon.lookupImageForExternalId(TaxonomyProvider.ID_PREFIX_EOL + "2215"));
+        assertEOLImage2(imageService.lookupImageURLs(TaxonomyProvider.EOL, "2215"));
+        assertEOLImage2(imageService.lookupImageForExternalId(TaxonomyProvider.ID_PREFIX_EOL + "2215"));
     }
 
     private void assertEOLImage2(TaxonImage taxonImage) {

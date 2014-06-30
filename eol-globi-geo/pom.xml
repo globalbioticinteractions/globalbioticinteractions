@@ -91,7 +91,7 @@
         <repository>
             <id>opengeo</id>
             <name>OpenGeo.org</name>
-            <url>http://download.osgeo.org/webdav/geotools/</url>
+            <url>http://repo.opengeo.org/</url>
             <snapshots>
                 <enabled>false</enabled>
             </snapshots>

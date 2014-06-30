@@ -19,7 +19,7 @@ import org.eol.globi.util.HttpUtil;
 
 import java.io.IOException;
 
-public class EOLTaxonImageService extends BaseHttpClientService {
+public class EOLTaxonImageService extends BaseHttpClientService implements ImageSearch {
     private static final Log LOG = LogFactory.getLog(EOLTaxonImageService.class);
 
     public TaxonImage lookupImageForExternalId(String externalId) throws IOException {

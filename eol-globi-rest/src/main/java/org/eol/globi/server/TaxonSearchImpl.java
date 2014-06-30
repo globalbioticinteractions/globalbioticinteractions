@@ -17,11 +17,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Controller
-public class SearchService {
-    private static final Log LOG = LogFactory.getLog(SearchService.class);
+public class TaxonSearchImpl implements TaxonSearch {
+    private static final Log LOG = LogFactory.getLog(TaxonSearchImpl.class);
 
     public static final HashMap<String, String> NO_PROPERTIES = new HashMap<String, String>();
-
 
     @RequestMapping(value = "/findTaxon/{taxonName}", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
     @ResponseBody
