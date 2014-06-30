@@ -97,11 +97,6 @@
 
     <repositories>
         <repository>
-            <id>ibiblio.org</id>
-            <name>ibiblio Repository for Maven 2</name>
-            <url>http://mirrors.ibiblio.org/pub/mirrors/maven2/</url>
-        </repository>
-        <repository>
             <id>mygrid-repository</id>
             <name>myGrid repository</name>
             <url>http://www.mygrid.org.uk/maven/repository</url>
@@ -116,11 +111,6 @@
             <id>berkeleybop</id>
             <name>Berkeley Bop Repository</name>
             <url>http://code.berkeleybop.org/maven/repository</url>
-        </repository>
-        <repository>
-            <id>neo4j</id>
-            <name>neo4j maven repo</name>
-            <url>http://m2.neo4j.org/</url>
         </repository>
         <repository>
             <id>globi-snapshot</id>
