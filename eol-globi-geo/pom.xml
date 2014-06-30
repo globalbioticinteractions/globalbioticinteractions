@@ -54,7 +54,8 @@
                                     <type>zip</type>
                                     <overWrite>false</overWrite>
                                     <outputDirectory>${shapefiles.dir}/feow-tnc</outputDirectory>
-                                </artifactItem><artifactItem>
+                                </artifactItem>
+                                <artifactItem>
                                     <groupId>org.eol.globi.geo</groupId>
                                     <artifactId>teow-tnc</artifactId>
                                     <version>20140115</version>
@@ -99,6 +100,17 @@
                 <enabled>true</enabled>
             </releases>
             <layout>default</layout>
+        </repository>
+        <repository>
+            <id>globi-datasets</id>
+            <name>GloBI Thirdparty Datasets</name>
+            <url>https://s3.amazonaws.com/globi/datasets</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
         </repository>
     </repositories>
 
