@@ -31,12 +31,6 @@
             </modules>
         </profile>
         <profile>
-            <id>generate-index</id>
-            <modules>
-                <module>eol-globi-taxon-index</module>
-            </modules>
-        </profile>
-        <profile>
             <id>rdf</id>
             <modules>
                 <module>eol-globi-rdf</module>
