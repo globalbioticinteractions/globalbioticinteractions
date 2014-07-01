@@ -54,7 +54,7 @@ public class StudyImporterForByrnes extends BaseStudyImporter {
                 String singleShortRef = StringUtils.trim(ref);
                 String longRef = refMap.get(singleShortRef);
                 String citation = StringUtils.isBlank(longRef) ? singleShortRef : longRef;
-                localStudy = nodeFactory.getOrCreateStudy("BYRNES-" + singleShortRef, null, null, null, citation, null, SOURCE, null);
+                localStudy = nodeFactory.getOrCreateStudy("BYRNES-" + StringUtils.abbreviate(citation, 32), null, null, null, citation, null, SOURCE, null);
                 localStudy.setCitationWithTx(citation);
                 String predatorName = parser.getValueByLabel("Predator");
                 if (StringUtils.isBlank(predatorName)) {

@@ -3,6 +3,7 @@ package org.eol.globi.data;
 import org.eol.globi.domain.Study;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -21,6 +22,7 @@ public class StudyImporterForByrnesTest extends GraphDBTestCase {
         StudyImporterForByrnes studyImporterForByrnes = new StudyImporterForByrnes(new ParserFactoryImpl(), nodeFactory);
         studyImporterForByrnes.importStudy();
 
+        List<String> citationList = new ArrayList<String>();
         Set<String> citations = new HashSet<String>();
         List<Study> studies = NodeFactory.findAllStudies(getGraphDb());
         assertTrue(studies.size() > 0);
@@ -30,7 +32,10 @@ public class StudyImporterForByrnesTest extends GraphDBTestCase {
             assertThat(study.getDescription(), is(notNullValue()));
             assertThat(study.getCitation(), is(notNullValue()));
             citations.add(study.getCitation());
+            citationList.add(study.getCitation());
         }
+
+        assertThat("found duplicates in citation list", citationList.size(), is(citations.size()));
 
         assertNotNull(nodeFactory.findTaxon("Anisotremus davidsonii"));
 
