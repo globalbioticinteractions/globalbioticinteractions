@@ -15,14 +15,12 @@ import static org.apache.commons.lang3.StringUtils.capitalize;
 import static org.apache.commons.lang3.StringUtils.lowerCase;
 import static org.apache.commons.lang3.StringUtils.replace;
 
-public class StudyImporterForPlangue extends BaseStudyImporter {
-    private static final Log LOG = LogFactory.getLog(StudyImporterForPlangue.class);
-
+public class StudyImporterForPlanque extends BaseStudyImporter {
     public static final String SOURCE = "Benjamin Planque, Raul Primicerio, Kathrine Michalsen, Michaela Aschan, Grégoire Certain, Padmini Dalpadado, Harald Gjøsæater, Cecilie Hansen, Edda Johannesen, Lis Lindal Jørgensen, Ina Kolsum, Susanne Kortsch, Lise-Marie Leclerc, Lena Omli, Mette Skern-Mauritzen, and Magnus Wiedmann 2014. Who eats whom in the Barents Sea: a food web topology from plankton to whales. Ecology 95:1430–1430. http://dx.doi.org/10.1890/13-1062.1";
     public static final String RESOURCE_PATH = "http://www.esapubs.org/archive/ecol/E095/124/PairwiseList.txt";
     public static final String REFERENCE_PATH = "http://www.esapubs.org/archive/ecol/E095/124/References.txt";
 
-    public StudyImporterForPlangue(ParserFactory parserFactory, NodeFactory nodeFactory) {
+    public StudyImporterForPlanque(ParserFactory parserFactory, NodeFactory nodeFactory) {
         super(parserFactory, nodeFactory);
     }
 

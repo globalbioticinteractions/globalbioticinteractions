@@ -11,14 +11,14 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
 
-public class StudyImporterForPlangueTest extends GraphDBTestCase {
+public class StudyImporterForPlanqueTest extends GraphDBTestCase {
 
     @Test
     public void importAll() throws StudyImporterException, NodeFactoryException {
         final List<String> errorMessages = new ArrayList<String>();
 
 
-        StudyImporter importer = new StudyImporterForPlangue(new ParserFactoryImpl(), nodeFactory);
+        StudyImporter importer = new StudyImporterForPlanque(new ParserFactoryImpl(), nodeFactory);
         importer.setLogger(new ImportLogger() {
             @Override
             public void warn(Study study, String message) {
@@ -51,8 +51,8 @@ public class StudyImporterForPlangueTest extends GraphDBTestCase {
 
     @Test
     public void taxonNameParser() {
-        assertThat(StudyImporterForPlangue.normalizeName("SAGITTA_ELEGANS"), is("Sagitta elegans"));
-        assertThat(StudyImporterForPlangue.normalizeName("OSTRACODA_INDET"), is("Ostracoda"));
+        assertThat(StudyImporterForPlanque.normalizeName("SAGITTA_ELEGANS"), is("Sagitta elegans"));
+        assertThat(StudyImporterForPlanque.normalizeName("OSTRACODA_INDET"), is("Ostracoda"));
     }
 
 }
