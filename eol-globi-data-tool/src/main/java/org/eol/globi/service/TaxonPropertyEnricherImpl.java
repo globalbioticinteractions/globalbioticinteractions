@@ -27,6 +27,7 @@ public class TaxonPropertyEnricherImpl implements TaxonPropertyEnricher {
         properties.put(PropertyAndValueDictionary.RANK, taxon.getRank());
         properties.put(PropertyAndValueDictionary.EXTERNAL_ID, taxon.getExternalId());
         properties.put(PropertyAndValueDictionary.PATH, taxon.getPath());
+        properties.put(PropertyAndValueDictionary.PATH_NAMES, taxon.getPathNames());
         properties.put(PropertyAndValueDictionary.COMMON_NAMES, taxon.getCommonNames());
         for (TaxonPropertyLookupService service : services) {
             try {
@@ -90,6 +91,8 @@ public class TaxonPropertyEnricherImpl implements TaxonPropertyEnricher {
                     taxon.setCommonNames(property.getValue());
                 } else if (PropertyAndValueDictionary.PATH.equals(property.getKey())) {
                     taxon.setPath(property.getValue());
+                } else if (PropertyAndValueDictionary.PATH_NAMES.equals(property.getKey())) {
+                    taxon.setPathNames(property.getValue());
                 } else if (PropertyAndValueDictionary.EXTERNAL_ID.equals(property.getKey())) {
                     taxon.setExternalId(property.getValue());
                 } else {

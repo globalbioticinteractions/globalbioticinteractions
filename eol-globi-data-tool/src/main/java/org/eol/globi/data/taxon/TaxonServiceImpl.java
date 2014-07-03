@@ -170,6 +170,7 @@ public class TaxonServiceImpl implements TaxonService {
             taxonNode = new TaxonNode(graphDbService.createNode(), taxon.getName());
             taxonNode.setExternalId(taxon.getExternalId());
             taxonNode.setPath(taxon.getPath());
+            taxonNode.setPathNames(taxon.getPathNames());
             taxonNode.setCommonNames(taxon.getCommonNames());
             taxonNode.setRank(taxon.getRank());
             addToIndeces(taxonNode, taxon.getName());
