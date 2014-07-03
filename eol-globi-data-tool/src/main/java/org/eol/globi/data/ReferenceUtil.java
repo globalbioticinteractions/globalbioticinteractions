@@ -12,21 +12,26 @@ import java.util.TreeMap;
 public class ReferenceUtil {
     private static final Log LOG = LogFactory.getLog(ReferenceUtil.class);
 
-    public static Map<String, String> buildRefMap(ParserFactory parserFactory1, String referencePath) throws StudyImporterException {
+    public static Map<String, String> buildRefMap(ParserFactory parserFactory, String referencePath) throws StudyImporterException {
+        return buildRefMap(parserFactory, referencePath, "short", "full", ',');
+    }
+
+    protected static Map<String, String> buildRefMap(ParserFactory parserFactory, String referencePath, String shortRefColumnName, String fullRefColumnName, char delimiter) throws StudyImporterException {
         Map<String, String> refMap = new TreeMap<String, String>();
         try {
-            LabeledCSVParser referenceParser = parserFactory1.createParser(referencePath, CharsetConstant.UTF8);
+            LabeledCSVParser referenceParser = parserFactory.createParser(referencePath, CharsetConstant.UTF8);
+            referenceParser.changeDelimiter(delimiter);
             while (referenceParser.getLine() != null) {
-                String shortReference = referenceParser.getValueByLabel("short");
+                String shortReference = referenceParser.getValueByLabel(shortRefColumnName);
                 if (StringUtils.isBlank(shortReference)) {
                     LOG.warn("missing short reference on line [" + referenceParser.lastLineNumber() + "] in [" + referencePath + "]");
                 } else {
-                    String fullReference = referenceParser.getValueByLabel("full");
+                    String fullReference = referenceParser.getValueByLabel(fullRefColumnName);
                     if (StringUtils.isBlank(fullReference)) {
                         LOG.warn("missing full reference for [" + shortReference + "] on line [" + referenceParser.lastLineNumber() + "] in [" + referencePath + "]");
                         fullReference = shortReference;
                     }
-                    refMap.put(shortReference, fullReference);
+                    refMap.put(StringUtils.trim(shortReference), StringUtils.trim(fullReference));
                 }
 
             }
