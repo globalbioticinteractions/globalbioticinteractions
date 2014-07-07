@@ -1,6 +1,7 @@
 package org.eol.globi.server;
 
 import org.apache.commons.lang3.StringUtils;
+import org.eol.globi.util.CypherQuery;
 import org.eol.globi.util.ExternalIdUtil;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Controller;

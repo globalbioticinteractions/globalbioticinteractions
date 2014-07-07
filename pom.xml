@@ -11,6 +11,7 @@
     <name>EOL's GloBI Project - normalize, aggregate and export spatial-temporal species interaction data.</name>
     <modules>
         <module>eol-globi-parent</module>
+        <module>eol-globi-jcoord</module>
         <module>eol-globi-lib</module>
         <module>eol-globi-ontology</module>
         <module>eol-globi-geo</module>

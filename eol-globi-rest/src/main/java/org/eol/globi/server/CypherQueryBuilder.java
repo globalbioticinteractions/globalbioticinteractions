@@ -9,6 +9,7 @@ import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.server.util.RequestHelper;
 import org.eol.globi.server.util.ResultFields;
+import org.eol.globi.util.CypherQuery;
 import org.eol.globi.util.InteractUtil;
 
 import javax.servlet.http.HttpServletRequest;

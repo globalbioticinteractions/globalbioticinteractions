@@ -2,6 +2,7 @@ package org.eol.globi.server;
 
 import org.apache.commons.lang.time.StopWatch;
 import org.apache.commons.lang3.StringUtils;
+import org.eol.globi.util.HttpClient;
 import org.junit.Test;
 
 import java.io.IOException;

@@ -6,6 +6,8 @@ import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.server.util.ResultFormatter;
 import org.eol.globi.server.util.ResultFormatterFactory;
+import org.eol.globi.util.CypherQuery;
+import org.eol.globi.util.CypherUtil;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;

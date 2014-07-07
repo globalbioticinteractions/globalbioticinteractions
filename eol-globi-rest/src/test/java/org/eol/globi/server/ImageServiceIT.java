@@ -1,6 +1,7 @@
 package org.eol.globi.server;
 
 import org.apache.http.client.HttpResponseException;
+import org.eol.globi.util.HttpClient;
 import org.junit.Test;
 
 import java.io.IOException;
