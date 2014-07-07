@@ -156,7 +156,7 @@ public class NodeFactoryTest extends GraphDBTestCase {
         }, correctionService, getGraphDb()
         );
         nodeFactory.setTaxonService(taxonService);
-        Specimen specimen = nodeFactory.createSpecimen("mickey egg scales");
+        Specimen specimen = nodeFactory.createSpecimen("mickey eggs scales");
         assertThat(specimen.getLifeStage().getName(), is("egg"));
         assertThat(specimen.getLifeStage().getId(), is("UBERON:0007379"));
         assertThat(specimen.getBodyPart().getName(), is("scale"));
