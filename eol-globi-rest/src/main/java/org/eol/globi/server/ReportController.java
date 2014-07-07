@@ -13,14 +13,14 @@ import java.io.IOException;
 @Controller
 public class ReportController {
 
-    @RequestMapping(value = "/contributors", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = "/contributors", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
     @ResponseBody
     @Cacheable(value = "contributorCache")
     public String contributors(@RequestParam(required = false) final String source) throws IOException {
         return new CypherQueryExecutor(CypherQueryBuilder.references(source)).execute(null);
     }
 
-    @RequestMapping(value = "/info", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = "/info", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
     @ResponseBody
     @Cacheable(value = "infoCache")
     public String info(@RequestParam(required = false) final String source) throws IOException {
@@ -28,13 +28,13 @@ public class ReportController {
     }
 
     @RequestMapping(value =
-            "/spatialInfo", method = RequestMethod.GET, produces = "application/json")
+            "/spatialInfo", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
     @ResponseBody
     public String spatialInfo(HttpServletRequest req) throws IOException {
         return new CypherQueryExecutor(CypherQueryBuilder.spatialInfo(req.getParameterMap())).execute(req);
     }
 
-    @RequestMapping(value = "/sources", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = "/sources", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
     @ResponseBody
     @Cacheable(value = "sourcesCache")
     public String sources() throws IOException {
