@@ -25,7 +25,7 @@ public class ReportControllerTest {
         assertThat(jsonNode.has("data"), is(true));
         JsonNode data = jsonNode.get("data");
         assertThat(data.get(0).size() > 0, is(true));
-        assertThat(data.get(0).get(0).getValueAsText(), not(is(nullValue())));
+        assertThat(data.get(0).get(0).getTextValue(), not(is(nullValue())));
     }
 
 
@@ -36,7 +36,7 @@ public class ReportControllerTest {
         JsonNode jsonNode = mapper.readTree(studies);
         assertThat(jsonNode.has("data"), is(true));
         JsonNode data = jsonNode.get("data");
-        assertThat(data.get(0).get(0).getValueAsInt() > 0, is(true));
+        assertThat(data.get(0).get(0).getIntValue() > 0, is(true));
     }
 
     @Test
@@ -46,7 +46,7 @@ public class ReportControllerTest {
         JsonNode jsonNode = mapper.readTree(studies);
         assertThat(jsonNode.has("data"), is(true));
         JsonNode data = jsonNode.get("data");
-        assertThat(data.get(0).get(0).getValueAsInt() > 0, is(true));
+        assertThat(data.get(0).get(0).getIntValue() > 0, is(true));
     }
 
     @Test
@@ -62,7 +62,7 @@ public class ReportControllerTest {
         JsonNode jsonNode = mapper.readTree(response);
         assertThat(jsonNode.has("data"), is(true));
         JsonNode data = jsonNode.get("data");
-        assertThat(data.get(0).get(0).getValueAsInt() > 0, is(true));
+        assertThat(data.get(0).get(0).getIntValue() > 0, is(true));
     }
 
     @Test
@@ -72,6 +72,6 @@ public class ReportControllerTest {
         JsonNode jsonNode = mapper.readTree(studies);
         assertThat(jsonNode.has("data"), is(true));
         JsonNode data = jsonNode.get("data");
-        assertThat(data.get(0).get(0).getValueAsInt() > 0, is(true));
+        assertThat(data.get(0).get(0).getIntValue() > 0, is(true));
     }
 }

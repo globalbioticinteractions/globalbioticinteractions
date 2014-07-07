@@ -5,6 +5,7 @@ import org.eol.globi.domain.Location;
 import org.eol.globi.domain.Season;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
+
 import uk.me.jstott.jcoord.UTMRef;
 import uk.me.jstott.jcoord.LatLng;
 
