@@ -43,10 +43,6 @@ public class StudyImporterForPlanqueTest extends GraphDBTestCase {
         assertThat(nodeFactory.findTaxon("Sagitta elegans"), is(notNullValue()));
 
         assertThat(errorMessages.size(), is(67));
-        String join = join(errorMessages, "\n");
-        System.out.println(join);
-
-
     }
 
     @Test
