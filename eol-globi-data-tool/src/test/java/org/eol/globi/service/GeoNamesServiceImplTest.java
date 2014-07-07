@@ -2,7 +2,7 @@ package org.eol.globi.service;
 
 import org.apache.commons.lang.time.StopWatch;
 import org.junit.Test;
-import uk.me.jstott.jcoord.LatLng;
+import org.eol.globi.geo.LatLng;
 
 import java.io.IOException;
 

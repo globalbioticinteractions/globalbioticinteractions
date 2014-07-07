@@ -2,7 +2,7 @@ package org.eol.globi.server.util;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import uk.me.jstott.jcoord.LatLng;
+import org.eol.globi.geo.LatLng;
 
 import java.util.ArrayList;
 import java.util.List;

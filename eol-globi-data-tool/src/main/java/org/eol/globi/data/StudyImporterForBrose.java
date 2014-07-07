@@ -12,15 +12,12 @@ import org.eol.globi.domain.Term;
 import org.eol.globi.service.TermLookupService;
 import org.eol.globi.service.TermLookupServiceException;
 import org.eol.globi.service.UberonLookupService;
-import uk.me.jstott.jcoord.LatLng;
+import org.eol.globi.geo.LatLng;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
 
 public class StudyImporterForBrose extends BaseStudyImporter {
     private static final Log LOG = LogFactory.getLog(StudyImporterForBrose.class);

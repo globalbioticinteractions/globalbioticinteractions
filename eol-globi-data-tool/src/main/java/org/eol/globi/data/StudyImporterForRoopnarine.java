@@ -4,7 +4,7 @@ import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
-import uk.me.jstott.jcoord.LatLng;
+import org.eol.globi.geo.LatLng;
 
 import java.io.IOException;
 import java.util.ArrayList;

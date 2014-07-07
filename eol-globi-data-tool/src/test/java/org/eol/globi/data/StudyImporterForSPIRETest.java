@@ -12,7 +12,7 @@ import org.eol.globi.service.GeoNamesServiceImpl;
 import org.junit.Test;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Relationship;
-import uk.me.jstott.jcoord.LatLng;
+import org.eol.globi.geo.LatLng;
 
 import java.io.IOException;
 import java.util.ArrayList;

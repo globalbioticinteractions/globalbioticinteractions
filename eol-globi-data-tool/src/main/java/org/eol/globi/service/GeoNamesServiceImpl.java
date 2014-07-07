@@ -9,7 +9,7 @@ import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.domain.Term;
 import org.eol.globi.util.HttpUtil;
-import uk.me.jstott.jcoord.LatLng;
+import org.eol.globi.geo.LatLng;
 
 import java.io.IOException;
 import java.util.HashMap;

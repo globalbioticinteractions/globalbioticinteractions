@@ -2,7 +2,7 @@ package org.eol.globi.server.util;
 
 import org.hamcrest.core.Is;
 import org.junit.Test;
-import uk.me.jstott.jcoord.LatLng;
+import org.eol.globi.geo.LatLng;
 
 import java.util.HashMap;
 import java.util.List;

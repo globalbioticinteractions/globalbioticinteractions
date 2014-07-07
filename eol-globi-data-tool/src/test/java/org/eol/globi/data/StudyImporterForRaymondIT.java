@@ -3,7 +3,7 @@ package org.eol.globi.data;
 import org.eol.globi.service.GeoNamesService;
 import org.eol.globi.service.GeoNamesServiceImpl;
 import org.junit.Test;
-import uk.me.jstott.jcoord.LatLng;
+import org.eol.globi.geo.LatLng;
 
 import java.io.IOException;
 import java.util.Collection;

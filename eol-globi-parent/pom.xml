@@ -95,20 +95,6 @@
         </plugins>
     </build>
 
-    <repositories>
-        <repository>
-            <id>mygrid-repository</id>
-            <name>myGrid repository</name>
-            <url>http://www.mygrid.org.uk/maven/repository</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-        </repository>
-    </repositories>
-
     <distributionManagement>
         <repository>
             <id>globi-release</id>

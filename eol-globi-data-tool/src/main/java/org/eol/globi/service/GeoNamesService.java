@@ -1,6 +1,6 @@
 package org.eol.globi.service;
 
-import uk.me.jstott.jcoord.LatLng;
+import org.eol.globi.geo.LatLng;
 
 import java.io.IOException;
 
