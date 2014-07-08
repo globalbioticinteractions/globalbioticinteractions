@@ -42,15 +42,17 @@ public class StudyImporterForRaymond extends BaseStudyImporter {
 
     private final static Log LOG = LogFactory.getLog(StudyImporterForRaymond.class);
 
-    public static final String OBSERVATION_DATE_START = "OBSERVATION_DATE_START";
-    public static final String OBSERVATION_DATE_END = "OBSERVATION_DATE_END";
-    public static final String WEST = "WEST";
-    public static final String EAST = "EAST";
-    public static final String SOUTH = "SOUTH";
-    public static final String NORTH = "NORTH";
-    public static final String SOURCES_CSV = "sources.csv";
-    public static final String DIET_CSV = "diet.csv";
-    public static final String RESOURCE_URL = "https://data.aad.gov.au/aadc/trophic/trophic.zip";
+    private static final String OBSERVATION_DATE_START = "OBSERVATION_DATE_START";
+    private static final String OBSERVATION_DATE_END = "OBSERVATION_DATE_END";
+    private static final String WEST = "WEST";
+    private static final String EAST = "EAST";
+    private static final String SOUTH = "SOUTH";
+    private static final String NORTH = "NORTH";
+    private static final String SOURCES_CSV = "sources.csv";
+    private static final String DIET_CSV = "diet.csv";
+    private static final String RESOURCE_URL = "https://data.aad.gov.au/aadc/trophic/trophic.zip";
+    private static final String RESOURCE_URL_FALLBACK = "https://s3.amazonaws.com/globi/datasets/org/eol/globi/geo/tittensor2010/0.1/tittensor2010-0.1.zip";
+
     private static final int MAX_ATTEMPT = 3;
     private Collection<String> locations = new HashSet<String>();
 
@@ -60,16 +62,22 @@ public class StudyImporterForRaymond extends BaseStudyImporter {
 
     @Override
     public Study importStudy() throws StudyImporterException {
-        boolean needsRetry = true;
-        for (int attemptCount = 1; needsRetry && attemptCount <= MAX_ATTEMPT; attemptCount++) {
+
+        if (!retrieveAndImport(RESOURCE_URL)) {
+            retrieveAndImport(RESOURCE_URL_FALLBACK);
+        }
+        return null;
+    }
+
+    protected boolean retrieveAndImport(String resourceUrl) throws StudyImporterException {
+        boolean isDone = false;
+        for (int attemptCount = 1; !isDone && attemptCount <= MAX_ATTEMPT; attemptCount++) {
             try {
                 LOG.info("[" + RESOURCE_URL + "] downloading (attempt " + attemptCount + ")...");
-                HttpResponse response = HttpUtil.createHttpClient().execute(new HttpGet(RESOURCE_URL));
+                HttpResponse response = HttpUtil.createHttpClient().execute(new HttpGet(resourceUrl));
                 if (response.getStatusLine().getStatusCode() == 200) {
                     importData(response);
-                    needsRetry = false;
-                } else {
-                    attemptCount++;
+                    isDone = true;
                 }
             } catch (IOException e) {
                 String msg = "failed to download [" + RESOURCE_URL + "]";
@@ -79,7 +87,7 @@ public class StudyImporterForRaymond extends BaseStudyImporter {
                 LOG.warn(msg + " retrying ...", e);
             }
         }
-        return null;
+        return isDone;
     }
 
     private void importData(HttpResponse response) throws StudyImporterException {
