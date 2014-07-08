@@ -1,7 +1,9 @@
 package org.eol.globi.export;
 
+import org.apache.commons.lang.StringUtils;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Study;
+import org.eol.globi.util.ExternalIdUtil;
 import org.neo4j.cypher.javacompat.ExecutionEngine;
 import org.neo4j.cypher.javacompat.ExecutionResult;
 import org.neo4j.graphdb.GraphDatabaseService;
@@ -52,14 +54,61 @@ public class ExporterTaxa extends ExporterBase {
                 "MATCH taxon<-[:CLASSIFIED_AS]-specimen " +
                 "WHERE has(taxon.externalId) AND taxon.externalId <> '" + PropertyAndValueDictionary.NO_MATCH + "' " +
                 "AND has(taxon.name) AND taxon.name <> '" + PropertyAndValueDictionary.NO_MATCH + "' " +
-                "RETURN distinct(taxon), taxon.name as scientificName, taxon.externalId as taxonId");
+                "RETURN distinct(taxon)" +
+                ", taxon.name as scientificName" +
+                ", taxon.path? as path" +
+                ", taxon.pathNames? as pathNames" +
+                ", taxon.rank? as rank" +
+                ", taxon.externalId as taxonId");
 
-        Map<String, String> properties = new HashMap<String, String>();
+        Map<String, String> row = new HashMap<String, String>();
         for (Map<String, Object> result : results) {
-            properties.put(EOLDictionary.TAXON_ID, (String) result.get("taxonId"));
-            properties.put(EOLDictionary.SCIENTIFIC_NAME, (String) result.get("scientificName"));
-            writeProperties(writer, properties);
-            properties.clear();
+            resultsToRow(row, result);
+            writeProperties(writer, row);
+            row.clear();
+        }
+    }
+
+    static protected void resultsToRow(Map<String, String> properties, Map<String, Object> result) {
+        Map<String, String> rankMap = new HashMap<String, String>() {
+            {
+                put("kingdom", EOLDictionary.KINGDOM);
+                put("phylum", EOLDictionary.PHYLUM);
+                put("class", EOLDictionary.CLASS);
+                put("order", EOLDictionary.ORDER);
+                put("family", EOLDictionary.FAMILY);
+                put("genus", EOLDictionary.GENUS);
+            }
+        };
+
+        String taxonId = (String) result.get("taxonId");
+
+        properties.put(EOLDictionary.TAXON_ID, taxonId);
+        String infoURL = ExternalIdUtil.infoURLForExternalId(taxonId);
+        if (infoURL != null) {
+            properties.put(EOLDictionary.FURTHER_INFORMATION_URL, infoURL);
+        }
+
+        properties.put(EOLDictionary.SCIENTIFIC_NAME, (String) result.get("scientificName"));
+        if (result.containsKey("taxonRank")) {
+            properties.put(EOLDictionary.TAXON_RANK, (String) result.get("taxonRank"));
+        }
+
+        addHigherOrderTaxa(properties, result, rankMap);
+    }
+
+    private static void addHigherOrderTaxa(Map<String, String> properties, Map<String, Object> result, Map<String, String> rankMap) {
+        if (result.containsKey("pathNames")) {
+            String[] names = StringUtils.split((String) result.get("pathNames"), "|");
+            if (result.containsKey("path")) {
+                String[] values = StringUtils.split((String) result.get("path"), "|");
+                for (int i = 0; values != null && i < values.length && values.length == names.length; i++) {
+                    String colName = rankMap.get(StringUtils.trim(names[i]));
+                    if (colName != null) {
+                        properties.put(colName, StringUtils.trim(values[i]));
+                    }
+                }
+            }
         }
     }
 
