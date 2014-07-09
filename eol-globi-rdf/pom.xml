@@ -50,7 +50,7 @@
                                 <artifactItem>
                                     <groupId>${project.groupId}</groupId>
                                     <artifactId>eol-globi-datasets</artifactId>
-                                    <version>${project.version}</version>
+                                    <version>0.1</version>
                                     <classifier>ttl</classifier>
                                     <type>tar.gz</type>
                                     <outputDirectory>${fuseki.dir}/Data</outputDirectory>
