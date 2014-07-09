@@ -1,5 +1,6 @@
 package org.eol.globi.domain;
 
-public interface RelType {
-    java.lang.String name();
+import org.neo4j.graphdb.RelationshipType;
+
+public interface RelType extends RelationshipType {
 }

@@ -3,10 +3,10 @@ package org.eol.globi.domain;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
-import org.neo4j.graphdb.RelationshipType;
 import org.neo4j.graphdb.Transaction;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
 
 public class Specimen extends NodeBacked {
 
@@ -42,16 +42,11 @@ public class Specimen extends NodeBacked {
     }
 
     public Iterable<Relationship> getStomachContents() {
-        return getRelationships(InteractType.ATE, Direction.OUTGOING);
+        return getUnderlyingNode().getRelationships(InteractType.ATE, Direction.OUTGOING);
     }
 
     public Location getSampleLocation() {
-        Relationship singleRelationship = getUnderlyingNode().getSingleRelationship(new RelationshipType() {
-            @Override
-            public String name() {
-                return RelTypes.COLLECTED_AT.name();
-            }
-        }, Direction.OUTGOING);
+        Relationship singleRelationship = getUnderlyingNode().getSingleRelationship(RelTypes.COLLECTED_AT, Direction.OUTGOING);
         return singleRelationship == null ? null : new Location(singleRelationship.getEndNode());
     }
 
@@ -66,12 +61,7 @@ public class Specimen extends NodeBacked {
     }
 
     public Season getSeason() {
-        Relationship singleRelationship = getUnderlyingNode().getSingleRelationship(new RelationshipType() {
-            @Override
-            public String name() {
-                return RelTypes.CAUGHT_DURING.name();
-            }
-        }, Direction.OUTGOING);
+        Relationship singleRelationship = getUnderlyingNode().getSingleRelationship(RelTypes.CAUGHT_DURING, Direction.OUTGOING);
         return singleRelationship == null ? null : new Season(singleRelationship.getEndNode());
     }
 
@@ -85,12 +75,7 @@ public class Specimen extends NodeBacked {
     }
 
     public Iterable<Relationship> getClassifications() {
-        return getUnderlyingNode().getRelationships(Direction.OUTGOING, new RelationshipType() {
-            @Override
-            public String name() {
-                return RelTypes.CLASSIFIED_AS.name();
-            }
-        });
+        return getUnderlyingNode().getRelationships(Direction.OUTGOING, RelTypes.CLASSIFIED_AS);
     }
 
     public void classifyAs(TaxonNode taxon) {
@@ -117,12 +102,7 @@ public class Specimen extends NodeBacked {
     }
 
     public String getOriginalTaxonDescription() {
-        Relationship singleRelationship = getUnderlyingNode().getSingleRelationship(new RelationshipType() {
-            @Override
-            public String name() {
-                return RelTypes.ORIGINALLY_DESCRIBED_AS.name();
-            }
-        }, Direction.OUTGOING);
+        Relationship singleRelationship = getUnderlyingNode().getSingleRelationship(RelTypes.ORIGINALLY_DESCRIBED_AS, Direction.OUTGOING);
         return singleRelationship == null ? null : new TaxonNode(singleRelationship.getEndNode()).getName();
     }
 
