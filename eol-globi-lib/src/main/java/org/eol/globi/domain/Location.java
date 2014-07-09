@@ -52,12 +52,12 @@ public class Location extends NodeBacked {
     }
 
     public Iterable<Relationship> getSpecimenCaughtHere() {
-        return getUnderlyingNode().getRelationships(RelTypes.COLLECTED_AT, Direction.INCOMING);
+        return getRelationships(RelTypes.COLLECTED_AT, Direction.INCOMING);
     }
 
     public void addEnvironment(Environment environment) {
         boolean needsAssociation = true;
-        Iterable<Relationship> relationships = getUnderlyingNode().getRelationships(RelTypes.HAS_ENVIRONMENT, Direction.OUTGOING);
+        Iterable<Relationship> relationships = getRelationships(RelTypes.HAS_ENVIRONMENT, Direction.OUTGOING);
         for (Relationship relationship : relationships) {
             if (relationship.getEndNode().getId() == environment.getNodeID()) {
                 needsAssociation = false;
@@ -70,7 +70,7 @@ public class Location extends NodeBacked {
     }
 
     public List<Environment> getEnvironments() {
-        Iterable<Relationship> relationships = getUnderlyingNode().getRelationships(RelTypes.HAS_ENVIRONMENT, Direction.OUTGOING);
+        Iterable<Relationship> relationships = getRelationships(RelTypes.HAS_ENVIRONMENT, Direction.OUTGOING);
         List<Environment> environments = new ArrayList<Environment>();
         for (Relationship relationship : relationships) {
             environments.add(new Environment(relationship.getEndNode()));

@@ -5,6 +5,7 @@ import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
+import org.neo4j.graphdb.RelationshipType;
 import org.neo4j.graphdb.Transaction;
 
 import java.util.ArrayList;
@@ -38,8 +39,12 @@ public class Study extends NodeBacked {
     }
 
     public Iterable<Relationship> getSpecimens() {
-        return getUnderlyingNode().getRelationships(Direction.OUTGOING, RelTypes.COLLECTED);
-
+        return getUnderlyingNode().getRelationships(Direction.OUTGOING, new RelationshipType() {
+            @Override
+            public String name() {
+                return RelTypes.COLLECTED.name();
+            }
+        });
     }
 
     public Relationship collected(Specimen specimen) {
@@ -160,7 +165,7 @@ public class Study extends NodeBacked {
         Transaction tx = graphDb.beginTx();
         try {
             LogMessage msg = new LogMessage(graphDb.createNode(), message, warning);
-            getUnderlyingNode().createRelationshipTo(msg.getUnderlyingNode(), RelTypes.HAS_LOG_MESSAGE);
+            createRelationshipTo(msg, RelTypes.HAS_LOG_MESSAGE);
             tx.success();
         } finally {
             tx.finish();
@@ -168,7 +173,7 @@ public class Study extends NodeBacked {
     }
 
     public List<LogMessage> getLogMessages() {
-        Iterable<Relationship> rels = getUnderlyingNode().getRelationships(RelTypes.HAS_LOG_MESSAGE, Direction.OUTGOING);
+        Iterable<Relationship> rels = getRelationships(RelTypes.HAS_LOG_MESSAGE, Direction.OUTGOING);
         List<LogMessage> msgs = new ArrayList<LogMessage>();
         for (Relationship rel : rels) {
             msgs.add(new LogMessage(rel.getEndNode()));
