@@ -86,6 +86,31 @@ public class ExporterTaxaTest extends GraphDBTestCase {
     }
 
     @Test
+    public void missingTaxonPathnames() throws NodeFactoryException, IOException {
+        HashMap<String, Object> result = new HashMap<String, Object>() {
+            {
+                put("taxonRankz", "the taxon rank");
+                put("pathNames", null);
+                put("path", "the kingdom | the phylum | the class | the order | the family | the genus");
+                put("scientificName", "Some namus");
+                put("taxonId", "ZZZ:1234");
+            }
+        };
+        HashMap<String, String> rowFields = new HashMap<String, String>();
+        ExporterTaxa.resultsToRow(rowFields, result);
+
+        assertThat(rowFields.get(EOLDictionary.TAXON_ID), is("ZZZ:1234"));
+        assertThat(rowFields.get(EOLDictionary.SCIENTIFIC_NAME), is("Some namus"));
+        assertThat(rowFields.containsKey(EOLDictionary.TAXON_RANK), is(false));
+        assertThat(rowFields.containsKey(EOLDictionary.KINGDOM), is(false));
+        assertThat(rowFields.containsKey(EOLDictionary.PHYLUM), is(false));
+        assertThat(rowFields.containsKey(EOLDictionary.CLASS), is(false));
+        assertThat(rowFields.containsKey(EOLDictionary.ORDER), is(false));
+        assertThat(rowFields.containsKey(EOLDictionary.FAMILY), is(false));
+        assertThat(rowFields.containsKey(EOLDictionary.GENUS), is(false));
+        assertThat(rowFields.containsKey(EOLDictionary.FURTHER_INFORMATION_URL), is(false));
+    }
+@Test
     public void includeInvalidHigherOrderRanks() throws NodeFactoryException, IOException {
         HashMap<String, Object> result = new HashMap<String, Object>() {
             {

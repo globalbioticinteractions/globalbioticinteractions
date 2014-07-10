@@ -7,7 +7,6 @@ import java.util.Map;
 
 import static org.eol.globi.domain.TaxonomyProvider.ID_PREFIX_EOL;
 import static org.eol.globi.domain.TaxonomyProvider.ID_PREFIX_WIKIPEDIA;
-import static org.eol.globi.domain.TaxonomyProvider.WIKIPEDIA;
 
 public class FunctionalGroupService extends BaseTaxonIdService {
 
@@ -17,7 +16,7 @@ public class FunctionalGroupService extends BaseTaxonIdService {
     public static final String INVERTEBRATA = ID_PREFIX_WIKIPEDIA + "Invertebrata";
     public static final String BACTERIOPLANKTON = ID_PREFIX_WIKIPEDIA + "Bacterioplankton";
     public static final String ALGAE = ID_PREFIX_EOL + "37577397";
-    public static final String MACROALGAE = WIKIPEDIA + "Macroalgae";
+    public static final String MACROALGAE = ID_PREFIX_WIKIPEDIA + "Macroalgae";
 
     private Map<String, String> mapping = new HashMap<String, String>() {{
         put("phytoplankton", PHYTOPLANKTON);

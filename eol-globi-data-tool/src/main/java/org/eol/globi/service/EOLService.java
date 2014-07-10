@@ -37,6 +37,7 @@ public class EOLService extends BaseHttpClientService implements TaxonPropertyLo
                     properties.put(PropertyAndValueDictionary.COMMON_NAMES, null);
                     properties.put(PropertyAndValueDictionary.EXTERNAL_ID, null);
                     properties.put(PropertyAndValueDictionary.PATH, null);
+                    properties.put(PropertyAndValueDictionary.PATH_NAMES, null);
                 }
             }
         }
@@ -172,7 +173,7 @@ public class EOLService extends BaseHttpClientService implements TaxonPropertyLo
         }
     }
 
-    protected void parseResponse( String response, List<String> ranks, List<String> rankNames) throws IOException {
+    protected void parseResponse(String response, List<String> ranks, List<String> rankNames) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         JsonNode node = mapper.readTree(response);
         JsonNode ancestors = node.get("ancestors");
@@ -193,9 +194,11 @@ public class EOLService extends BaseHttpClientService implements TaxonPropertyLo
                 name += " " + split[1];
             }
             ranks.add(name);
+            String taxonRank = "";
             if (ancestor.has("taxonRank")) {
-                rankNames.add(ancestor.get("taxonRank").getTextValue().toLowerCase());
+                taxonRank = ancestor.get("taxonRank").getTextValue().toLowerCase();
             }
+            rankNames.add(taxonRank);
         }
     }
 

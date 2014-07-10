@@ -102,10 +102,12 @@ public class ExporterTaxa extends ExporterBase {
             String[] names = StringUtils.split((String) result.get("pathNames"), "|");
             if (result.containsKey("path")) {
                 String[] values = StringUtils.split((String) result.get("path"), "|");
-                for (int i = 0; values != null && i < values.length && values.length == names.length; i++) {
-                    String colName = rankMap.get(StringUtils.trim(names[i]));
-                    if (colName != null) {
-                        properties.put(colName, StringUtils.trim(values[i]));
+                if (values != null && names != null && values.length == names.length) {
+                    for (int i = 0; i < values.length; i++) {
+                        String colName = rankMap.get(StringUtils.trim(names[i]));
+                        if (colName != null) {
+                            properties.put(colName, StringUtils.trim(values[i]));
+                        }
                     }
                 }
             }

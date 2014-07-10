@@ -94,6 +94,18 @@ public class EOLServiceIT {
     }
 
     @Test
+    public void lookupCalyptridium() throws TaxonPropertyLookupServiceException {
+        HashMap<String, String> properties = new HashMap<String, String>();
+        new EOLService().lookupPropertiesByName("Calyptridium", properties);
+        assertThat(properties.get(PropertyAndValueDictionary.EXTERNAL_ID), is("EOL:2500577"));
+        assertThat(properties.get(PropertyAndValueDictionary.NAME), is("Calyptridium"));
+        assertThat(properties.get(PropertyAndValueDictionary.RANK), is("Genus"));
+        assertThat(properties.get(PropertyAndValueDictionary.PATH), is("Cellular organisms | Eukaryota | Viridiplantae | Streptophyta | Streptophytina | Embryophyta | Tracheophyta | Euphyllophyta | Spermatophyta | Magnoliophyta | Mesangiospermae | Eudicotyledons | Gunneridae | Pentapetalae | Caryophyllales | Cactineae | Montiaceae | Calyptridium"));
+        assertThat(properties.get(PropertyAndValueDictionary.PATH_NAMES), is(" | superkingdom | kingdom | phylum |  |  |  |  |  |  |  |  |  |  | order | suborder | family | genus"));
+
+    }
+
+    @Test
     public void sphyrnaMokarran() throws TaxonPropertyLookupServiceException {
         HashMap<String, String> properties = new HashMap<String, String>();
         new EOLService().lookupPropertiesByName("Sphyrna mokarran", properties);
