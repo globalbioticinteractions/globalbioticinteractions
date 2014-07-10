@@ -102,7 +102,17 @@ public class EOLServiceIT {
         assertThat(properties.get(PropertyAndValueDictionary.RANK), is("Genus"));
         assertThat(properties.get(PropertyAndValueDictionary.PATH), is("Cellular organisms | Eukaryota | Viridiplantae | Streptophyta | Streptophytina | Embryophyta | Tracheophyta | Euphyllophyta | Spermatophyta | Magnoliophyta | Mesangiospermae | Eudicotyledons | Gunneridae | Pentapetalae | Caryophyllales | Cactineae | Montiaceae | Calyptridium"));
         assertThat(properties.get(PropertyAndValueDictionary.PATH_NAMES), is(" | superkingdom | kingdom | phylum |  |  |  |  |  |  |  |  |  |  | order | suborder | family | genus"));
+    }
 
+    @Test
+    public void lookupPyrguscirsii() throws TaxonPropertyLookupServiceException {
+        HashMap<String, String> properties = new HashMap<String, String>();
+        new EOLService().lookupPropertiesByName("Pyrgus cirsii", properties);
+        assertThat(properties.get(PropertyAndValueDictionary.EXTERNAL_ID), is("EOL:186021"));
+        assertThat(properties.get(PropertyAndValueDictionary.NAME), is("Pyrgus cirsii"));
+        assertThat(properties.get(PropertyAndValueDictionary.RANK), is("Species"));
+        assertThat(properties.get(PropertyAndValueDictionary.PATH), is("Animalia | Arthropoda | Insecta | Lepidoptera | Hesperiidae | Pyrgus | Pyrgus cirsii"));
+        assertThat(properties.get(PropertyAndValueDictionary.PATH_NAMES), is("kingdom | phylum | class | order | family | genus | "));
     }
 
     @Test
