@@ -90,7 +90,7 @@ public class ExporterTaxa extends ExporterBase {
         }
 
         properties.put(EOLDictionary.SCIENTIFIC_NAME, (String) result.get("scientificName"));
-        if (result.containsKey("taxonRank")) {
+        if (result.containsKey("rank")) {
             properties.put(EOLDictionary.TAXON_RANK, (String) result.get("rank"));
         }
 

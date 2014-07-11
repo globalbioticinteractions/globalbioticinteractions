@@ -63,7 +63,7 @@ public class ExporterTaxaTest extends GraphDBTestCase {
     public void includeHigherOrderRanks() throws NodeFactoryException, IOException {
         HashMap<String, Object> result = new HashMap<String, Object>() {
             {
-                put("taxonRank", "the taxon rank");
+                put("rank", "the taxon rank");
                 put("pathNames", "kingdom | phylum | class | order | family | genus");
                 put("path", "the kingdom | the phylum | the class | the order | the family | the genus");
                 put("scientificName", "Some namus");
