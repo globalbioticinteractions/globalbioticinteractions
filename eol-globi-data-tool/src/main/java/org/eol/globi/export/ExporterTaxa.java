@@ -91,7 +91,7 @@ public class ExporterTaxa extends ExporterBase {
 
         properties.put(EOLDictionary.SCIENTIFIC_NAME, (String) result.get("scientificName"));
         if (result.containsKey("taxonRank")) {
-            properties.put(EOLDictionary.TAXON_RANK, (String) result.get("taxonRank"));
+            properties.put(EOLDictionary.TAXON_RANK, (String) result.get("rank"));
         }
 
         addHigherOrderTaxa(properties, result, rankMap);
