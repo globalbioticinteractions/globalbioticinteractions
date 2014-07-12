@@ -44,9 +44,18 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Writer;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 public class GlobiOWLExporter implements StudyExporter {
+
+    public static final String OBO_PREFIX = "http://purl.obolibrary.org/obo/";
+    public static final String INTER_SPECIES_INTERACTION = OBO_PREFIX + "GO_0044419";
+    public static final String HAS_PARTICIPANT = OBO_PREFIX + "RO_0000057";
+    public static final String OCCURS_IN = OBO_PREFIX + "BFO_0000066";
+    public static final String ORGANISM = OBO_PREFIX + "CARO_0010004";
+    public static final String MEMBER_OF = OBO_PREFIX + "RO_0002350";
 
     private OWLOntology dataOntology;
     private PrefixManager prefixManager;
@@ -94,23 +103,20 @@ public class GlobiOWLExporter implements StudyExporter {
             Location location = specimen.getSampleLocation();
             if (location != null) {
                 for (Environment env : location.getEnvironments()) {
-                    String envoId = env.getExternalId();
-                    OWLClass envoCls = getOWLClassViaOBOID(envoId);
-                    OWLObjectProperty occurs_in = getOWLObjectProperty("occurs-in");
-                    this.addLocation(i, envoCls);
+                    String envoId = StringUtils.replace(env.getExternalId(), "ENVO:", "ENVO_");
+                    OWLClass envoCls = getOWLDataFactory().getOWLClass(getOBOIRI(envoId));
+                    addLocation(i, envoCls);
                 }
             }
             setTaxon(i, getSpecimenAsNamedIndividual(agentNode));
 
             // we assume that the specimen is always the agent
-            for (Relationship ixnR : agentNode.getRelationships(Direction.OUTGOING, InteractType.ATE)) {
+            for (Relationship ixnR : agentNode.getRelationships(Direction.OUTGOING, InteractType.values())) {
                 Node receiverNode = ixnR.getEndNode();
-                RelationshipType rt = r.getType();
                 OWLNamedIndividual j = nodeToIndividual(receiverNode);
                 setTaxon(j, getSpecimenAsNamedIndividual(receiverNode));
                 OWLNamedIndividual ixn = getOWLDataFactory().getOWLNamedIndividual("individuals/" + r.getId(), getPrefixManager());
-                OWLClass interactionType = this.getInteractionType(ixnR.getType());
-                addOrganismPairInteraction(i, j, interactionType, ixn, false);
+                addOrganismPairInteraction(i, j, asProperty(ixnR.getType()), ixn);
             }
         }
         try {
@@ -249,7 +255,7 @@ public class GlobiOWLExporter implements StudyExporter {
      * @return
      * @see {genIndividual(Object... args)}
      */
-    private OWLNamedIndividual genIndividual() {
+    protected OWLNamedIndividual genIndividual() {
         UUID uuid = UUID.randomUUID();
         return getOWLDataFactory().getOWLNamedIndividual("individuals/" + uuid.toString(), getPrefixManager());
     }
@@ -344,27 +350,21 @@ public class GlobiOWLExporter implements StudyExporter {
      * @param taxon
      */
     public void setTaxon(OWLNamedIndividual i, OWLNamedIndividual taxon) {
-        addFact(i, getOWLObjectProperty("has-taxon"), taxon);
+        addFact(i, getOWLObjectProperty(MEMBER_OF), taxon);
     }
 
-    public OWLObjectProperty getOWLObjectProperty(String shortName) {
-        return this.getOWLDataFactory().getOWLObjectProperty(shortName, getPrefixManager());
+    public OWLObjectProperty getOWLObjectProperty(String iriString) {
+        return this.getOWLDataFactory().getOWLObjectProperty(IRI.create(iriString));
     }
 
 
     public OWLClass getOWLClass(String shortName) {
-        return this.getOWLDataFactory().getOWLClass(shortName, getPrefixManager());
-    }
-
-    public OWLClass getOWLClassViaOBOID(String clsId) {
-        IRI iri = getOBOIRI(clsId);
-        return this.getOWLDataFactory().getOWLClass(iri);
+        return this.getOWLDataFactory().getOWLClass(IRI.create(shortName));
     }
 
 
     private IRI getOBOIRI(String clsId) {
-        // TODO - use constant
-        return IRI.create("http://purl.obolibrary.org/obo/" + clsId);
+        return IRI.create(OBO_PREFIX + clsId);
     }
 
     /**
@@ -372,105 +372,37 @@ public class GlobiOWLExporter implements StudyExporter {
      * for example, fido the dog chasing bill the postman;
      * or, a pair of unnamed lion cubs as depicted in a particular image
      *
-     * @param i
-     * @param j
+     * @param source
+     * @param target
      * @param interactionType
      * @param interaction     [optional]
      * @return interaction
      */
-    public OWLNamedIndividual addOrganismPairInteraction(OWLNamedIndividual i, OWLNamedIndividual j,
-                                                         OWLClass interactionType,
-                                                         OWLNamedIndividual interaction, boolean isTaxonLevel) {
+    public OWLNamedIndividual addOrganismPairInteraction(OWLNamedIndividual source,
+                                                         OWLNamedIndividual target,
+                                                         OWLObjectProperty interactionType,
+                                                         OWLNamedIndividual interaction) {
         if (interaction == null) {
             interaction = genIndividual();
         }
-        boolean isSymmetric = false;
-        addRdfType(interaction, interactionType);
+        addRdfType(interaction, getOWLClass(INTER_SPECIES_INTERACTION));
 
-        // if the interaction is symmetrical, both relations = has-participant
-        // is isTaxonLevel = true, we use has-participating-taxon
-        OWLObjectProperty agentRelation = null;
-        OWLObjectProperty receiverRelation = null;
-        // TODO - use enums or something smarter here
-        if (isTaxonLevel) {
-            if (isSymmetric) {
-                agentRelation = getOWLObjectProperty("has-participating-taxon");
-                receiverRelation = agentRelation;
-            } else {
-                agentRelation = getOWLObjectProperty("has-agent-taxon");
-                receiverRelation = getOWLObjectProperty("has-receiver-taxon");
-            }
-        } else {
-            if (isSymmetric) {
-                agentRelation = getOWLObjectProperty("has-interactor");
-                receiverRelation = agentRelation;
-            } else {
-                agentRelation = getOWLObjectProperty("has-agent");
-                receiverRelation = getOWLObjectProperty("has-receiver");
-            }
-        }
-        addFact(interaction, agentRelation, i);
-        addFact(interaction, receiverRelation, j);
+        addFact(interaction, getOWLObjectProperty(HAS_PARTICIPANT), source);
+        addFact(interaction, getOWLObjectProperty(HAS_PARTICIPANT), target);
+        addFact(source, interactionType, target);
 
-        if (isTaxonLevel) {
-            addRdfType(i, this.getOWLClass("taxon"));
-            addRdfType(j, this.getOWLClass("taxon"));
-        } else {
-            addRdfType(i, this.getOWLClass("organism"));
-            addRdfType(j, this.getOWLClass("organism"));
-        }
+        addRdfType(source, getOWLClass(ORGANISM));
+        addRdfType(target, getOWLClass(ORGANISM));
 
         return interaction;
     }
 
 
-    /**
-     * Convenience method
-     *
-     * @param i
-     * @param j
-     * @param interactionType
-     * @return
-     */
-    public OWLNamedIndividual addOrganismPairInteraction(OWLNamedIndividual i, OWLNamedIndividual j,
-                                                         OWLClass interactionType) {
-        return addOrganismPairInteraction(i, j, interactionType, null, false);
-    }
-
-    /**
-     * Convenience method
-     *
-     * @param i
-     * @param j
-     * @return
-     */
-    public OWLNamedIndividual addOrganismPairPredatorInteraction(OWLNamedIndividual i,
-                                                                 OWLNamedIndividual j) {
-        return addOrganismPairInteraction(i, j, getInteractionType(InteractType.ATE));
-    }
-
-
     public void addLocation(OWLNamedIndividual i, OWLClass locType) {
         // we assume i is an interaction - a different relation must be used for material entities
-        addFact(i, getOWLObjectProperty("occurs-in"), locType);
+        addFact(i, getOWLObjectProperty(OCCURS_IN), locType);
     }
 
-
-    /**
-     * Used for describing generalized interactions at the level of species or taxa
-     * For example, Apis mellifera pollinates Magnoliophyta
-     *
-     * @param i
-     * @param j
-     * @param interactionType
-     * @param interaction
-     * @return
-     */
-    public OWLNamedIndividual addTaxonPairInteraction(OWLNamedIndividual i, OWLNamedIndividual j,
-                                                      OWLClass interactionType, OWLNamedIndividual interaction) {
-        // model same way as individuals for now
-        return addOrganismPairInteraction(i, j, interactionType, interaction, true);
-    }
 
     public OWLNamedIndividual addTaxon(String name) {
         return null;
@@ -478,6 +410,7 @@ public class GlobiOWLExporter implements StudyExporter {
 
     public void exportDataOntolog(Writer w) throws OWLOntologyStorageException {
         OWLOntologyFormat fmt = new TurtleOntologyFormat();
+        fmt.asPrefixOWLOntologyFormat().setPrefix("OBO", OBO_PREFIX);
         fmt.setParameter("verbose", "false");
         getOWLOntologyManager().addOntologyStorer(new TurtleOntologyStorer());
         this.getOWLOntologyManager().saveOntology(dataOntology, fmt, new WriterOutputStream(w));
@@ -487,22 +420,17 @@ public class GlobiOWLExporter implements StudyExporter {
         return getOWLDataFactory().getOWLNamedIndividual(string, getPrefixManager());
     }
 
-    /**
-     * @param relationshipType - from the study model
-     *                         <p/>
-     *                         TODO - this is highly incomplete!
-     * @return
-     */
-    public OWLClass getInteractionType(RelationshipType relationshipType) {
-        String shortName = null;
-        if (relationshipType.equals(InteractType.ATE)) {
-            shortName = "predator-prey-interaction";
-        }
-        if (shortName == null) {
-            shortName = relationshipType.toString(); // TODO
-        }
-        // TODO
-        return getOWLDataFactory().getOWLClass(shortName, getPrefixManager());
+    public OWLObjectProperty asProperty(final RelationshipType interactType) {
+        Map<InteractType, String> lookup = new HashMap<InteractType, String>() {
+            {
+                put(InteractType.ATE, "http://purl.obolibrary.org/obo/RO_0002470");
+
+            }
+        };
+        String name = lookup.containsKey(interactType)
+                ? lookup.get(interactType)
+                : "http://purl.obolibrary.org/obo/RO_0002437";
+        return getOWLDataFactory().getOWLObjectProperty(IRI.create(name));
     }
 
     public OWLClass getLocationType(String clsId) {
@@ -510,12 +438,8 @@ public class GlobiOWLExporter implements StudyExporter {
         return getOWLDataFactory().getOWLClass(iri);
     }
 
-
     public PrefixManager getPrefixManager() {
         return prefixManager;
     }
 
-    public void setPrefixManager(PrefixManager prefixManager) {
-        this.prefixManager = prefixManager;
-    }
 }
