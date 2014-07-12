@@ -424,6 +424,14 @@ public class GlobiOWLExporter implements StudyExporter {
         Map<InteractType, String> lookup = new HashMap<InteractType, String>() {
             {
                 put(InteractType.ATE, "http://purl.obolibrary.org/obo/RO_0002470");
+                put(InteractType.HAS_HOST, "http://purl.obolibrary.org/obo/RO_0002454");
+                put(InteractType.HOST_OF, "http://purl.obolibrary.org/obo/RO_0002453");
+                put(InteractType.PARASITE_OF, "http://purl.obolibrary.org/obo/RO_0002444");
+                put(InteractType.POLLINATES, "http://purl.obolibrary.org/obo/RO_0002455");
+                put(InteractType.PREYS_UPON, "http://purl.obolibrary.org/obo/RO_0002439");
+                put(InteractType.INTERACTS_WITH, "http://purl.obolibrary.org/obo/RO_0002437");
+                put(InteractType.PATHOGEN_OF, "http://purl.obolibrary.org/obo/RO_0002556");
+                // put(InteractType.PERCHING_ON, "http://purl.obolibrary.org/obo/RO_?");
 
             }
         };
