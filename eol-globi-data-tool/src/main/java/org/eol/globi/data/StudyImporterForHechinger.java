@@ -27,8 +27,8 @@ public class StudyImporterForHechinger extends BaseStudyImporter {
         put("parasitoid infection", InteractType.PARASITE_OF);
         put("parasite intraguild antagonism", InteractType.PARASITE_OF);
         put("detritivory", InteractType.ATE);
-        put("pathogen infection", InteractType.INTERACTS_WITH);
-        put("concurrent predation on symbionts", InteractType.PREYS_UPON);
+        put("pathogen infection", InteractType.PATHOGEN_OF);
+        put("concurrent predation on symbionts", InteractType.INTERACTS_WITH);
         put("micropredation", InteractType.PREYS_UPON);
     }};
 
@@ -135,10 +135,12 @@ public class StudyImporterForHechinger extends BaseStudyImporter {
         }
         Specimen consumer = nodeFactory.createSpecimen(taxonForNode.get(consumerNodeID));
         consumer.setLifeStage(stageForNode.get(consumerNodeID));
+        consumer.setExternalId("NodeID:" + consumerNodeID);
         study.collected(consumer);
         consumer.caughtIn(location);
         Specimen resource = nodeFactory.createSpecimen(taxonForNode.get(resourceNodeID));
         resource.setLifeStage(stageForNode.get(resourceNodeID));
+        resource.setExternalId("NodeID:" + resourceNodeID);
         consumer.interactsWith(resource, interactType);
     }
 
