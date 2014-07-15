@@ -4,7 +4,7 @@
 
     <groupId>org.eol</groupId>
     <artifactId>eol-globi-parent</artifactId>
-    <version>0.3-SNAPSHOT</version>
+    <version>0.3</version>
     <packaging>pom</packaging>
     <name>EOL's Global Biotic Interaction Shared Project Settings</name>
 

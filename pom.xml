@@ -1,12 +1,10 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.eol</groupId>
     <artifactId>eol-globi-data</artifactId>
-    <version>0.3-SNAPSHOT</version>
+    <version>0.3</version>
     <packaging>pom</packaging>
     <name>EOL's GloBI Project - normalize, aggregate and export spatial-temporal species interaction data.</name>
     <modules>
@@ -39,7 +37,8 @@
         <connection>scm:git:git@github.com:jhpoelen/eol-globi-data.git</connection>
         <url>scm:git:git@github.com:jhpoelen/eol-globi-data.git</url>
         <developerConnection>scm:git:git@github.com:jhpoelen/eol-globi-data</developerConnection>
-    </scm>
+      <tag>eol-globi-data-0.3</tag>
+  </scm>
 
     <distributionManagement>
         <repository>
