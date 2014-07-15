@@ -155,7 +155,7 @@
                 <executions>
                     <execution>
                         <id>upload-datasets</id>
-                        <phase>install</phase>
+                        <phase>deploy</phase>
                         <goals>
                             <goal>upload</goal>
                         </goals>
