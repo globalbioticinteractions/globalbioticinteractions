@@ -6,7 +6,7 @@
 
     <groupId>org.eol</groupId>
     <artifactId>eol-globi-data</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>0.3-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>EOL's GloBI Project - normalize, aggregate and export spatial-temporal species interaction data.</name>
     <modules>
@@ -18,10 +18,6 @@
         <module>eol-globi-data-tool</module>
         <module>eol-globi-rest</module>
     </modules>
-
-    <properties>
-        <test_prop>2.5</test_prop>
-    </properties>
 
     <profiles>
         <profile>
