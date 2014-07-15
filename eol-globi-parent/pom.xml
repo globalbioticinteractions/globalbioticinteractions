@@ -80,23 +80,4 @@
         </plugins>
     </build>
 
-    <scm>
-        <connection>scm:git:git@github.com:jhpoelen/eol-globi-data.git</connection>
-        <url>scm:git:git@github.com:jhpoelen/eol-globi-data.git</url>
-        <developerConnection>scm:git:git@github.com:jhpoelen/eol-globi-data</developerConnection>
-    </scm>
-
-    <distributionManagement>
-        <repository>
-            <id>globi-release</id>
-            <name>AWS Release Repository</name>
-            <url>s3://globi/release</url>
-        </repository>
-        <snapshotRepository>
-            <id>globi-snapshot</id>
-            <name>AWS Snapshot Repository</name>
-            <url>s3://globi/snapshot</url>
-        </snapshotRepository>
-    </distributionManagement>
-
 </project>
