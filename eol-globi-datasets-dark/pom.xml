@@ -10,6 +10,8 @@
     <packaging>pom</packaging>
 
     <properties>
+        <globi.data.version>${project.version}</globi.data.version>
+        <globi.tool.version>0.3-SNAPSHOT</globi.tool.version>
         <shapefiles.dir>${project.build.directory}/shapefiles</shapefiles.dir>
         <data.dir>${project.build.directory}/data</data.dir>
         <skip.import>false</skip.import>
@@ -42,7 +44,7 @@
                                 <artifactItem>
                                     <groupId>${project.groupId}</groupId>
                                     <artifactId>eol-globi-data-tool</artifactId>
-                                    <version>${project.version}</version>
+                                    <version>${globi.tool.version}</version>
                                     <classifier>jar-with-dependencies</classifier>
                                     <outputDirectory>${project.build.directory}</outputDirectory>
                                 </artifactItem>
@@ -110,7 +112,7 @@
                                 <artifactItem>
                                     <groupId>org.eol</groupId>
                                     <artifactId>eol-globi-datasets</artifactId>
-                                    <version>${project.version}</version>
+                                    <version>${globi.data.version}</version>
                                     <type>tar.gz</type>
                                     <classifier>neo4j-graph-db</classifier>
                                     <overWrite>false</overWrite>

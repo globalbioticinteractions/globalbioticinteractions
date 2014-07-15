@@ -6,16 +6,16 @@
     <parent>
         <artifactId>eol-globi-parent</artifactId>
         <groupId>org.eol</groupId>
-        <version>1.0-SNAPSHOT</version>
-        <relativePath>../eol-globi-parent/pom.xml</relativePath>
+        <version>0.2</version>
     </parent>
 
     <artifactId>eol-globi-rdf</artifactId>
+    <version>1.0-SNAPSHOT</version>
 
     <name>EOL's Global Biotic Interaction RDF Store</name>
 
-
     <properties>
+        <globi.data.version>0.1</globi.data.version>
         <fuseki.version>0.2.7</fuseki.version>
         <fuseki.artifactId>jena-fuseki</fuseki.artifactId>
         <fuseki.dir>${project.build.directory}/${fuseki.artifactId}-${fuseki.version}</fuseki.dir>
@@ -50,7 +50,7 @@
                                 <artifactItem>
                                     <groupId>${project.groupId}</groupId>
                                     <artifactId>eol-globi-datasets</artifactId>
-                                    <version>0.1</version>
+                                    <version>${globi.data.version}</version>
                                     <classifier>ttl</classifier>
                                     <type>tar.gz</type>
                                     <outputDirectory>${fuseki.dir}/Data</outputDirectory>
