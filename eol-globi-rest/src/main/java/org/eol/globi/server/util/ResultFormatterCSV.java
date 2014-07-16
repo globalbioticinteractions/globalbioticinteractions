@@ -138,7 +138,7 @@ public class ResultFormatterCSV implements ResultFormatter {
             if (node.isTextual()) {
                 resultBuilder.append("\"");
             }
-            resultBuilder.append(node.getTextValue());
+            resultBuilder.append(node.asText());
             if (node.isTextual()) {
                 resultBuilder.append("\"");
             }
