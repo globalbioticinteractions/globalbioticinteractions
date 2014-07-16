@@ -244,6 +244,28 @@
                 <enabled>true</enabled>
             </releases>
         </repository>
+        <repository>
+            <id>public-globi-release</id>
+            <name>GloBI Releases</name>
+            <url>https://s3.amazonaws.com/globi/release</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+        </repository>
+        <repository>
+            <id>public-globi-snapshots</id>
+            <name>GloBI Releases</name>
+            <url>https://s3.amazonaws.com/globi/snapshots</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+        </repository>
 
         <repository>
             <id>globi-datasets-dark</id>

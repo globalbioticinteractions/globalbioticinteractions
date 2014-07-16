@@ -201,7 +201,7 @@
 
     <repositories>
         <repository>
-            <id>globi-snapshot</id>
+            <id>public-globi-snapshot</id>
             <name>GloBI snaphots</name>
             <url>https://s3.amazonaws.com/globi/snapshot</url>
             <snapshots>
@@ -223,7 +223,7 @@
             </releases>
         </repository>
         <repository>
-            <id>globi-release</id>
+            <id>public-globi-release</id>
             <name>GloBI Releases</name>
             <url>https://s3.amazonaws.com/globi/release</url>
             <snapshots>
