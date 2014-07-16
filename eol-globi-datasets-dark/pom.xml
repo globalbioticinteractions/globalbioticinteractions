@@ -11,7 +11,7 @@
 
     <properties>
         <globi.data.version>${project.version}</globi.data.version>
-        <globi.tool.version>0.3-SNAPSHOT</globi.tool.version>
+        <globi.tool.version>0.4</globi.tool.version>
         <shapefiles.dir>${project.build.directory}/shapefiles</shapefiles.dir>
         <data.dir>${project.build.directory}/data</data.dir>
         <skip.import>false</skip.import>
@@ -146,7 +146,7 @@
                         <argument>-Dshapefiles.dir=${shapefiles.dir}</argument>
                         <argument>-classpath</argument>
                         <argument>
-                            ${project.build.outputDirectory}${path.separator}${project.build.directory}/eol-globi-data-tool-${project.version}-jar-with-dependencies.jar
+                            ${project.build.outputDirectory}${path.separator}${project.build.directory}/eol-globi-data-tool-${globi.tool.version}-jar-with-dependencies.jar
                         </argument>
                         <argument>org.eol.globi.tool.NormalizerDark</argument>
                     </arguments>
