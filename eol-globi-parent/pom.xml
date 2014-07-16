@@ -4,7 +4,7 @@
 
     <groupId>org.eol</groupId>
     <artifactId>eol-globi-parent</artifactId>
-    <version>0.4</version>
+    <version>0.5-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>EOL's Global Biotic Interaction Shared Project Settings</name>
 
@@ -84,7 +84,7 @@
         <connection>scm:git:git@github.com:jhpoelen/eol-globi-data.git</connection>
         <url>scm:git:git@github.com:jhpoelen/eol-globi-data.git</url>
         <developerConnection>scm:git:git@github.com:jhpoelen/eol-globi-data</developerConnection>
-      <tag>eol-globi-tool-0.4</tag>
+      <tag>HEAD</tag>
   </scm>
 
     <distributionManagement>
