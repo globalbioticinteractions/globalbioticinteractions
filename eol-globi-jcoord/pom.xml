@@ -5,9 +5,14 @@
 
     <modelVersion>4.0.0</modelVersion>
 
+    <parent>
+        <artifactId>eol-globi-parent</artifactId>
+        <groupId>org.eol</groupId>
+        <version>0.3-SNAPSHOT</version>
+        <relativePath>../eol-globi-parent/pom.xml</relativePath>
+    </parent>
+
     <artifactId>eol-globi-jcoord</artifactId>
-    <groupId>org.eol</groupId>
-    <version>0.3-SNAPSHOT</version>
     <name>EOL's Global Biotic Interaction Wrapper for JCoord</name>
     <packaging>pom</packaging>
     <!-- note that this module was created to avoid including the mygrid repository for all artifacts -->
