@@ -58,6 +58,7 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
         // see https://github.com/jhpoelen/eol-globi-data/issues/56
         add("Associated species with names lookup");
         add("Target species");
+        add("Tree species");
     }};
 
     public StudyImporterForINaturalist(ParserFactory parserFactory, NodeFactory nodeFactory) {
