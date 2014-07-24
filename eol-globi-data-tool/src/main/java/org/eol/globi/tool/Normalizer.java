@@ -1,5 +1,12 @@
 package org.eol.globi.tool;
 
+import org.apache.commons.cli.BasicParser;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eol.globi.data.NodeFactory;
@@ -24,15 +31,65 @@ import java.util.Collection;
 
 public class Normalizer {
     private static final Log LOG = LogFactory.getLog(Normalizer.class);
+    public static final String OPTION_HELP = "h";
+    public static final String OPTION_SKIP_IMPORT = "skipImport";
+    public static final String OPTION_SKIP_EXPORT = "skipExport";
+    public static final String OPTION_SKIP_LINK = "skipLink";
 
     private EcoregionFinder ecoregionFinder = null;
 
-    public static void main(final String[] commandLineArguments) throws StudyImporterException {
-        new Normalizer().normalize(StudyImporterFactory.getAvailableImporters());
+    public static void main(final String[] args) throws StudyImporterException, ParseException {
+        CommandLine cmdLine = parseOptions(args);
+        if (cmdLine.hasOption(OPTION_HELP)) {
+            HelpFormatter formatter = new HelpFormatter();
+            formatter.printHelp("java -jar eol-globi-data-tool-[VERSION]-jar-with-dependencies.jar", getOptions());
+        } else {
+            new Normalizer().run(cmdLine);
+        }
     }
 
-    public void normalize(Collection<Class> importers) throws StudyImporterException {
-        normalize("./", importers);
+    protected static CommandLine parseOptions(String[] args) throws ParseException {
+        CommandLineParser parser = new BasicParser();
+        return parser.parse(getOptions(), args);
+    }
+
+    private static Options getOptions() {
+        Options options = new Options();
+        options.addOption(OPTION_SKIP_IMPORT, false, "skip the import of all GloBI datasets");
+        options.addOption(OPTION_SKIP_EXPORT, false, "skip the export for GloBI datasets to aggregated archives.");
+        options.addOption(OPTION_SKIP_LINK, false, "skip taxa cross-reference step");
+        Option helpOpt = new Option(OPTION_HELP, "help", false, "print this help information");
+        options.addOption(helpOpt);
+        return options;
+    }
+
+    public void run(CommandLine cmdLine) throws StudyImporterException {
+        final GraphDatabaseService graphService = GraphService.getGraphService("./");
+        if (cmdLine == null || !cmdLine.hasOption(OPTION_SKIP_IMPORT)) {
+            importData(graphService, getImporters());
+            if (cmdLine == null || !cmdLine.hasOption(OPTION_SKIP_LINK)) {
+                try {
+                    new Linker().linkTaxa(graphService);
+                } catch (TaxonPropertyLookupServiceException e) {
+                    LOG.warn("failed to link taxa", e);
+                }
+            } else {
+                LOG.info("skipping taxa linking ...");
+            }
+        } else {
+            LOG.info("skipping data import...");
+        }
+
+        if (cmdLine == null || !cmdLine.hasOption(OPTION_SKIP_EXPORT)) {
+            exportData(graphService, "./");
+        } else {
+            LOG.info("skipping data export...");
+        }
+        graphService.shutdown();
+    }
+
+    protected Collection<Class> getImporters() {
+        return StudyImporterFactory.getAvailableImporters();
     }
 
     private EcoregionFinder getEcoregionFinder() {
@@ -44,47 +101,6 @@ public class Normalizer {
 
     public void setEcoregionFinder(EcoregionFinder finder) {
         this.ecoregionFinder = finder;
-    }
-
-    public void normalize(String baseDir, Collection<Class> importers) throws StudyImporterException {
-        final GraphDatabaseService graphService = GraphService.getGraphService(baseDir);
-        if (shouldImport()) {
-            importData(graphService, importers);
-        } else {
-            LOG.info("skipping data import...");
-        }
-
-        if (shouldLink()) {
-            try {
-                new Linker().linkTaxa(graphService);
-            } catch (TaxonPropertyLookupServiceException e) {
-                LOG.warn("failed to link taxa", e);
-            }
-        }
-
-        if (shouldExport()) {
-            exportData(graphService, baseDir);
-        } else {
-            LOG.info("skipping data export...");
-        }
-        graphService.shutdown();
-    }
-
-    private boolean shouldImport() {
-        return isFalseOrMissing("skip.import");
-    }
-
-    private boolean isFalseOrMissing(String propertyName) {
-        String value = System.getProperty(propertyName);
-        return value == null || "false".equalsIgnoreCase(value);
-    }
-
-    private boolean shouldExport() {
-        return isFalseOrMissing("skip.export");
-    }
-
-    private boolean shouldLink() {
-        return isFalseOrMissing("skip.link");
     }
 
     protected void exportData(GraphDatabaseService graphService, String baseDir) throws StudyImporterException {

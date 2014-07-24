@@ -1,5 +1,7 @@
 package org.eol.globi.tool;
 
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.ParseException;
 import org.apache.commons.io.FileUtils;
 import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.NodeFactory;
@@ -24,9 +26,28 @@ import java.util.Collection;
 import java.util.List;
 
 import static junit.framework.Assert.assertNotNull;
+import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
 public class NormalizerTest extends GraphDBTestCase {
+
+    @Test
+    public void handleOptions() throws ParseException {
+        CommandLine commandLine = Normalizer.parseOptions(new String[]{"-h"});
+        assertThat(commandLine.hasOption("h"), is(true));
+        commandLine = Normalizer.parseOptions(new String[]{"--help"});
+        assertThat(commandLine.hasOption("h"), is(true));
+
+        commandLine = Normalizer.parseOptions(new String[]{"--skipImport"});
+        assertThat(commandLine.hasOption("-skipImport"), is(true));
+        assertThat(commandLine.hasOption("skipImport"), is(true));
+
+        commandLine = Normalizer.parseOptions(new String[]{"-skipImport", "--skipExport"});
+        assertThat(commandLine.hasOption("-skipImport"), is(true));
+        assertThat(commandLine.hasOption("skipImport"), is(true));
+        assertThat(commandLine.hasOption("skipExport"), is(true));
+        assertThat(commandLine.hasOption("skipLink"), is(false));
+    }
 
     @Test
     public void doSingleImport() throws IOException, StudyImporterException {
@@ -43,8 +64,8 @@ public class NormalizerTest extends GraphDBTestCase {
         GraphDatabaseService graphService = getGraphDb();
 
         List<Study> allStudies = NodeFactory.findAllStudies(graphService);
-        assertThat(allStudies.size(), Is.is(1));
-        assertThat(allStudies.get(0).getTitle(), Is.is("Simons 1997"));
+        assertThat(allStudies.size(), is(1));
+        assertThat(allStudies.get(0).getTitle(), is("Simons 1997"));
 
         assertNotNull(graphService.getNodeById(1));
         assertNotNull(graphService.getNodeById(200));

@@ -28,11 +28,11 @@ public class GraphExporter {
 
     public void export(GraphDatabaseService graphService, String baseDir) throws StudyImporterException {
         List<Study> studies = NodeFactory.findAllStudies(graphService);
+        exportDataOntology(studies, baseDir);
         exportUnmatchedTaxa(studies, baseDir);
         exportGoMexSI(studies, baseDir);
         exportDarwinCoreAggregatedByStudy(baseDir, studies);
         exportDarwinCoreAll(baseDir, studies);
-        exportDataOntology(studies, baseDir);
     }
 
     private void exportUnmatchedTaxa(List<Study> studies, String baseDir) throws StudyImporterException {

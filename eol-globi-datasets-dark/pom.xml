@@ -14,9 +14,6 @@
         <globi.tool.version>0.4</globi.tool.version>
         <shapefiles.dir>${project.build.directory}/shapefiles</shapefiles.dir>
         <data.dir>${project.build.directory}/data</data.dir>
-        <skip.import>false</skip.import>
-        <skip.export>false</skip.export>
-        <skip.link>true</skip.link>
     </properties>
 
     <build>
@@ -141,8 +138,6 @@
                     <executable>java</executable>
                     <arguments>
                         <argument>-Xmx2G</argument>
-                        <argument>-Dskip.import=${skip.import}</argument>
-                        <argument>-Dskip.export=${skip.export}</argument>
                         <argument>-Dshapefiles.dir=${shapefiles.dir}</argument>
                         <argument>-classpath</argument>
                         <argument>

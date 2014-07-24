@@ -108,8 +108,6 @@
                     <executable>java</executable>
                     <arguments>
                         <argument>-Xmx2G</argument>
-                        <argument>-Dskip.import=${skip.import}</argument>
-                        <argument>-Dskip.export=${skip.export}</argument>
                         <argument>-Dshapefiles.dir=${shapefiles.dir}</argument>
                         <argument>-classpath</argument>
                         <argument>
