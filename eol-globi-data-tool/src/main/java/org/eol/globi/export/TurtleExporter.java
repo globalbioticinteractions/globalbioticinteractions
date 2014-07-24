@@ -1,6 +1,5 @@
 package org.eol.globi.export;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.WriterOutputStream;
 import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.domain.Environment;
@@ -17,17 +16,12 @@ import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.RelationshipType;
-import org.neo4j.graphdb.index.Index;
-import org.neo4j.graphdb.index.IndexHits;
 import org.semanticweb.owlapi.apibinding.OWLManager;
-import org.semanticweb.owlapi.io.OWLOntologyDocumentSource;
-import org.semanticweb.owlapi.io.StringDocumentSource;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLAnnotationProperty;
 import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLDataFactory;
-import org.semanticweb.owlapi.model.OWLDataProperty;
 import org.semanticweb.owlapi.model.OWLLiteral;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
@@ -40,15 +34,13 @@ import org.semanticweb.owlapi.model.PrefixManager;
 import org.semanticweb.owlapi.util.DefaultPrefixManager;
 import org.semanticweb.owlapi.vocab.OWLRDFVocabulary;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.Writer;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public class GlobiOWLExporter implements StudyExporter {
+public class TurtleExporter implements StudyExporter {
 
     public static final String OBO_PREFIX = "http://purl.obolibrary.org/obo/";
     public static final String INTER_SPECIES_INTERACTION = OBO_PREFIX + "GO_0044419";
@@ -57,43 +49,19 @@ public class GlobiOWLExporter implements StudyExporter {
     public static final String ORGANISM = OBO_PREFIX + "CARO_0010004";
     public static final String MEMBER_OF = OBO_PREFIX + "RO_0002350";
 
-    private OWLOntology dataOntology;
-    private PrefixManager prefixManager;
+    private final OWLOntology dataOntology;
+    private final PrefixManager prefixManager;
 
 
-    public GlobiOWLExporter() throws OWLOntologyCreationException {
+    public TurtleExporter() throws OWLOntologyCreationException {
         super();
-        OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
-        dataOntology = loadGlobiOntology(manager);
-        DefaultPrefixManager defaultPrefixManager = new DefaultPrefixManager();
-        defaultPrefixManager.setPrefix("globi:", "http://eol.org/globi/");
-        defaultPrefixManager.setPrefix("eolo:", "http://eol.org/ontology/");
-        defaultPrefixManager.setPrefix("eol:", "http://eol.org/");
-        prefixManager = defaultPrefixManager;
-
-    }
-
-    protected static OWLOntology loadGlobiOntology(OWLOntologyManager manager) throws OWLOntologyCreationException {
-        String globiResource = "/globi.owl";
-        InputStream resourceAsStream = GlobiOWLExporter.class.getResourceAsStream(globiResource);
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        try {
-            IOUtils.copy(resourceAsStream, baos);
-            String sourceOntologyString = baos.toString("UTF-8");
-            OWLOntologyDocumentSource source = new StringDocumentSource(sourceOntologyString);
-            return manager.loadOntologyFromOntologyDocument(source);
-        } catch (IOException e) {
-            throw new OWLOntologyCreationException("failed to read [" + globiResource + "]");
-        }
-
+        dataOntology = OWLManager.createOWLOntologyManager().createOntology();
+        prefixManager = new DefaultPrefixManager();
     }
 
     @Override
     public void exportStudy(Study study, Writer writer, boolean includeHeader)
             throws IOException {
-
-        exportSameIndividuals(study);
-
 
         for (Relationship r : study.getSpecimens()) {
             Node agentNode = r.getEndNode();
@@ -120,23 +88,19 @@ public class GlobiOWLExporter implements StudyExporter {
             }
         }
         try {
-            exportDataOntolog(writer);
+            exportDataOntology(writer);
         } catch (OWLOntologyStorageException e) {
             throw new IOException("failed to export study [ " + study.getTitle() + "]", e);
         }
     }
 
-    public void exportSameIndividuals(Study study) {
-        Index<Node> taxons = study.getUnderlyingNode().getGraphDatabase().index().forNodes("taxons");
-        IndexHits<Node> hits = taxons.query("name:*");
-        for (Node taxon : hits) {
-            OWLNamedIndividual subj = getTaxonAsNamedIndividual(taxon);
-            Iterable<Relationship> sameAsRels = taxon.getRelationships(RelTypes.SAME_AS, Direction.OUTGOING);
-            for (Relationship sameAsRel : sameAsRels) {
-                OWLNamedIndividual obj = getTaxonAsNamedIndividual(sameAsRel.getEndNode());
-                if (subj != null && obj != null) {
-                    addAxiom(getOWLDataFactory().getOWLSameIndividualAxiom(subj, obj));
-                }
+    protected void addSameAsTaxaFor(Node taxon) {
+        OWLNamedIndividual subj = getTaxonAsNamedIndividual(taxon);
+        Iterable<Relationship> sameAsRels = taxon.getRelationships(RelTypes.SAME_AS, Direction.OUTGOING);
+        for (Relationship sameAsRel : sameAsRels) {
+            OWLNamedIndividual obj = getTaxonAsNamedIndividual(sameAsRel.getEndNode());
+            if (subj != null && obj != null) {
+                addAxiom(getOWLDataFactory().getOWLSameIndividualAxiom(subj, obj));
             }
         }
     }
@@ -146,8 +110,9 @@ public class GlobiOWLExporter implements StudyExporter {
         if (singleRelationship == null) {
             return null;
         } else {
-            Node endNode = singleRelationship.getEndNode();
-            return getTaxonAsNamedIndividual(endNode);
+            Node taxonNode = singleRelationship.getEndNode();
+            addSameAsTaxaFor(taxonNode);
+            return getTaxonAsNamedIndividual(taxonNode);
         }
     }
 
@@ -198,22 +163,6 @@ public class GlobiOWLExporter implements StudyExporter {
                         String label) {
         OWLLiteral lit = getOWLDataFactory().getOWLLiteral(label);
         addAxiom(getOWLDataFactory().getOWLAnnotationAssertionAxiom(p, i.getIRI(), lit));
-    }
-
-    /**
-     * Adds a triple <i p label>, where p is an annotation property and label is a literal.
-     * <p/>
-     * Note that OWL2 forces a strict separation of annotation, data and object properties
-     *
-     * @param i
-     * @param p
-     * @param label
-     */
-    public void addFact(OWLNamedIndividual i, OWLDataProperty p,
-                        String label) {
-
-        OWLLiteral lit = getOWLDataFactory().getOWLLiteral(label);
-        addAxiom(getOWLDataFactory().getOWLDataPropertyAssertionAxiom(p, i, lit));
     }
 
     /**
@@ -300,18 +249,6 @@ public class GlobiOWLExporter implements StudyExporter {
         return getOWLDataFactory().getOWLNamedIndividual(local, getPrefixManager());
     }
 
-
-    /**
-     * Generates an individual organism (e.g. clarence-the-tiger)
-     *
-     * @param taxon
-     * @return
-     */
-    public OWLNamedIndividual genOrganism(OWLNamedIndividual taxon) {
-        OWLNamedIndividual i = genIndividual();
-        setTaxon(i, taxon);
-        return i;
-    }
 
     public OWLNamedIndividual genOrganism(String label, OWLNamedIndividual taxon) {
         OWLNamedIndividual i = genIndividual();
@@ -404,11 +341,7 @@ public class GlobiOWLExporter implements StudyExporter {
     }
 
 
-    public OWLNamedIndividual addTaxon(String name) {
-        return null;
-    }
-
-    public void exportDataOntolog(Writer w) throws OWLOntologyStorageException {
+    public void exportDataOntology(Writer w) throws OWLOntologyStorageException {
         OWLOntologyFormat fmt = new TurtleOntologyFormat();
         fmt.asPrefixOWLOntologyFormat().setPrefix("OBO", OBO_PREFIX);
         fmt.setParameter("verbose", "false");

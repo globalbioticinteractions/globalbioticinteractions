@@ -13,7 +13,7 @@ import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.domain.Study;
 import org.eol.globi.export.ExportTestUtil;
-import org.eol.globi.export.GlobiOWLExporter;
+import org.eol.globi.export.TurtleExporter;
 import org.junit.Test;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 
@@ -30,7 +30,7 @@ public class SPARQLTest extends GraphDBTestCase {
 
     @Test
     public void executeQuerySampleGloBIData() throws NodeFactoryException, ParseException, IOException, OWLOntologyCreationException {
-        GlobiOWLExporter exporter = new GlobiOWLExporter();
+        TurtleExporter exporter = new TurtleExporter();
         StringWriter writer = new StringWriter();
         Study study = ExportTestUtil.createTestData(nodeFactory);
         exporter.exportStudy(study, writer, true);
@@ -39,7 +39,6 @@ public class SPARQLTest extends GraphDBTestCase {
         model.read(new ByteArrayInputStream(writer.toString().getBytes("UTF-8")), null, "TTL");
 
         String queryString =
-                "PREFIX : <http://eol.org/globi/> " +
                 "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> " +
                         "SELECT ?individual WHERE { " +
                         " ?individual rdf:type ?organism . " +

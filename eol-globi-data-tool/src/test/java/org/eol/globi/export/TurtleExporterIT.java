@@ -24,11 +24,11 @@ import java.util.List;
 
 import static org.junit.Assert.assertTrue;
 
-public class GlobiOWLExporterIT extends GraphDBTestCase {
+public class TurtleExporterIT extends GraphDBTestCase {
 
 
     @Test
-    public void importSPIREExportTTL() throws OWLOntologyCreationException, OWLOntologyStorageException, IOException, StudyImporterException, NodeFactoryException {
+    public void exportSPIRE() throws OWLOntologyCreationException, OWLOntologyStorageException, IOException, StudyImporterException, NodeFactoryException {
         nodeFactory.setEnvoLookupService(new EnvoLookupService());
         StudyImporterForSPIRE importer = new StudyImporterForSPIRE(null, nodeFactory);
         importer.setFilter(new ImportFilter() {
@@ -53,16 +53,17 @@ public class GlobiOWLExporterIT extends GraphDBTestCase {
         }
 
         FileUtils.forceMkdir(new File("target"));
-        String tgt = "target/spire-as-globi.ttl";
-        Writer writer = new FileWriter(tgt);
-        GlobiOWLExporter globiOWLExporter = new GlobiOWLExporter();
+        File file = new File("target/spire-as-globi.ttl");
+        FileUtils.deleteQuietly(file);
+        Writer writer = new FileWriter(file);
+        TurtleExporter turtleExporter = new TurtleExporter();
         for (Study study : studies) {
-            globiOWLExporter.exportStudy(study, writer, true);
+            turtleExporter.exportStudy(study, writer, true);
         }
         writer.flush();
         writer.close();
 
-        assertTrue(new File(tgt).exists());
+        assertTrue(file.exists());
     }
 
 
