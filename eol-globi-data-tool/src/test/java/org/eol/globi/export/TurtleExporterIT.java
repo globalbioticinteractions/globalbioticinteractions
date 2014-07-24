@@ -1,6 +1,7 @@
 package org.eol.globi.export;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.ImportFilter;
 import org.eol.globi.data.NodeFactory;
@@ -17,12 +18,16 @@ import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.semanticweb.owlapi.model.OWLOntologyStorageException;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.List;
 
+import static org.hamcrest.CoreMatchers.not;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+import static org.junit.matchers.JUnitMatchers.containsString;
 
 public class TurtleExporterIT extends GraphDBTestCase {
 
@@ -64,6 +69,10 @@ public class TurtleExporterIT extends GraphDBTestCase {
         writer.close();
 
         assertTrue(file.exists());
+
+        String content = IOUtils.toString(new FileInputStream(file));
+        assertThat(content, not(containsString("no:match")));
+        assertThat(content, containsString("OBO:ENVO_00000447"));
     }
 
 

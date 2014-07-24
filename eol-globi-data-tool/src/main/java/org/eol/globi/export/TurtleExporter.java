@@ -71,9 +71,11 @@ public class TurtleExporter implements StudyExporter {
             Location location = specimen.getSampleLocation();
             if (location != null) {
                 for (Environment env : location.getEnvironments()) {
-                    String envoId = StringUtils.replace(env.getExternalId(), "ENVO:", "ENVO_");
-                    OWLClass envoCls = getOWLDataFactory().getOWLClass(getOBOIRI(envoId));
-                    addLocation(i, envoCls);
+                    String envoId = ExternalIdUtil.infoURLForExternalId(env.getExternalId());
+                    if (StringUtils.isNotBlank(envoId)) {
+                        OWLClass envoCls = getOWLDataFactory().getOWLClass(IRI.create(envoId));
+                        addLocation(i, envoCls);
+                    }
                 }
             }
             setTaxon(i, getSpecimenAsNamedIndividual(agentNode));
