@@ -40,6 +40,13 @@ public class LinkerTest extends GraphDBTestCase {
 
     }
 
+    @Test
+    public void frogs() throws NodeFactoryException, TaxonPropertyLookupServiceException {
+        nodeFactory.getOrCreateTaxon("Anura");
+        new Linker().linkTaxa(getGraphDb());
+        assertHasOther("Anura", 3);
+    }
+
     private void assertHasOther(String name, int expectedCount) throws NodeFactoryException {
         TaxonNode taxon1 = nodeFactory.findTaxon(name);
         assertThat(taxon1.getName(), is(name));

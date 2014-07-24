@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import static junit.framework.Assert.assertNotNull;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
@@ -41,12 +42,11 @@ public class GlobalNamesServiceIT {
     @Test
     public void lookupITISSynonym() throws TaxonPropertyLookupServiceException {
         GlobalNamesService service = new GlobalNamesService();
-        HashMap<String, String> props1 = new HashMap<String, String>();
-        service.lookupPropertiesByName("Corizidae", props1);
-        assertThat(props1.get(PropertyAndValueDictionary.NAME), is("Rhopalidae"));
-        assertThat(props1.get(PropertyAndValueDictionary.PATH), is("Animalia|Arthropoda|Hexapoda|Insecta|Pterygota|Neoptera|Hemiptera|Heteroptera|Pentatomomorpha|Coreoidea|Rhopalidae"));
-        assertThat(props1.get(PropertyAndValueDictionary.RANK), is("Family"));
-        HashMap<String, String> props = props1;
+        HashMap<String, String> props = new HashMap<String, String>();
+        service.lookupPropertiesByName("Corizidae", props);
+        assertThat(props.get(PropertyAndValueDictionary.NAME), is("Rhopalidae"));
+        assertThat(props.get(PropertyAndValueDictionary.PATH), is("Animalia|Bilateria|Protostomia|Ecdysozoa|Arthropoda|Hexapoda|Insecta|Pterygota|Neoptera|Paraneoptera|Hemiptera|Heteroptera|Pentatomomorpha|Coreoidea|Rhopalidae"));
+        assertThat(props.get(PropertyAndValueDictionary.RANK), is("Family"));
         assertThat(props.get(PropertyAndValueDictionary.EXTERNAL_ID), is("urn:lsid:itis.gov:itis_tsn:108477"));
     }
 
@@ -79,7 +79,7 @@ public class GlobalNamesServiceIT {
         HashMap<String, String> props = new HashMap<String, String>();
         service.lookupPropertiesByName("Homo sapiens", props);
         assertThat(props.get(PropertyAndValueDictionary.NAME), is("Homo sapiens"));
-        assertThat(props.get(PropertyAndValueDictionary.PATH), is("Animalia|Chordata|Vertebrata|Mammalia|Theria|Eutheria|Primates|Hominidae|Homo|Homo sapiens"));
+        assertThat(props.get(PropertyAndValueDictionary.PATH), is("Animalia|Bilateria|Deuterostomia|Chordata|Vertebrata|Gnathostomata|Tetrapoda|Mammalia|Theria|Eutheria|Primates|Hominidae|Homo|Homo sapiens"));
         assertThat(props.get(PropertyAndValueDictionary.RANK), is("Species"));
         return props;
     }
@@ -98,8 +98,27 @@ public class GlobalNamesServiceIT {
         HashMap<String, String> props = new HashMap<String, String>();
         service.lookupPropertiesByName("Ariopsis felis", props);
         assertThat(props.get(PropertyAndValueDictionary.NAME), is("Ariopsis felis"));
-        assertThat(props.get(PropertyAndValueDictionary.PATH), is("Animalia|Chordata|Vertebrata|Osteichthyes|Actinopterygii|Neopterygii|Teleostei|Ostariophysi|Siluriformes|Ariidae|Ariopsis|Ariopsis felis"));
+        assertThat(props.get(PropertyAndValueDictionary.PATH), is("Animalia|Bilateria|Deuterostomia|Chordata|Vertebrata|Gnathostomata|Osteichthyes|Actinopterygii|Neopterygii|Teleostei|Ostariophysi|Siluriformes|Ariidae|Ariopsis|Ariopsis felis"));
         assertThat(props.get(PropertyAndValueDictionary.RANK), is("Species"));
         assertThat(props.get(PropertyAndValueDictionary.EXTERNAL_ID), is("urn:lsid:itis.gov:itis_tsn:680665"));
+    }
+
+    @Test
+    public void lookupGBIF() throws TaxonPropertyLookupServiceException {
+        GlobalNamesService service = new GlobalNamesService(GlobalNamesSources.GBIF);
+        HashMap<String, String> props = new HashMap<String, String>();
+        service.lookupPropertiesByName("Anura", props);
+        assertThat(props.get(PropertyAndValueDictionary.NAME), is("Anura"));
+        assertThat(props.get(PropertyAndValueDictionary.PATH), is("Animalia|Chordata|Amphibia|Anura"));
+        assertThat(props.get(PropertyAndValueDictionary.RANK), is("order"));
+        assertThat(props.get(PropertyAndValueDictionary.EXTERNAL_ID), is("GBIF:952"));
+    }
+
+    @Test
+    public void lookupWORMS() throws TaxonPropertyLookupServiceException {
+        GlobalNamesService service = new GlobalNamesService(GlobalNamesSources.WORMS);
+        HashMap<String, String> props = new HashMap<String, String>();
+        service.lookupPropertiesByName("Anura", props);
+        assertThat(props.get(PropertyAndValueDictionary.NAME), is(nullValue()));
     }
 }

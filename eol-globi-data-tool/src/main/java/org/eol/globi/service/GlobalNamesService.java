@@ -73,7 +73,7 @@ public class GlobalNamesService extends BaseHttpClientService implements TaxonPr
 
         HttpClient httpClient = HttpUtil.createHttpClient();
         try {
-            URI uri = new URI("http", "resolver.globalnames.org", "/name_resolvers.json", "data_source_ids=" + source.getId(), null);
+            URI uri = new URI("http", "resolver.globalnames.org", "/name_resolvers.json", "best_match_only=true&data_source_ids=" + source.getId(), null);
             HttpPost post = new HttpPost(uri);
 
             MultipartEntity entity = new MultipartEntity();
@@ -109,11 +109,18 @@ public class GlobalNamesService extends BaseHttpClientService implements TaxonPr
                             }
 
                             String taxonIdLabel = aResult.has("current_taxon_id") ? "current_taxon_id" : "taxon_id";
-                            String externalId = source.getProvider().getIdPrefix() + aResult.get(taxonIdLabel).getValueAsText();
-                            taxon.setExternalId(externalId);
-                            Long suppliedId = data.has("supplied_id") ? data.get("supplied_id").getValueAsLong() : null;
-                            JsonNode supplied_name_string = data.get("supplied_name_string");
-                            termMatchListener.foundTaxonForName(suppliedId, supplied_name_string.getTextValue(), taxon);
+                            String taxonIdValue = aResult.get(taxonIdLabel).getValueAsText();
+                            // see https://github.com/GlobalNamesArchitecture/gni/issues/35
+                            if (!StringUtils.startsWith(taxonIdValue, "gn:")) {
+                                String externalId = source.getProvider().getIdPrefix() + taxonIdValue;
+                                taxon.setExternalId(externalId);
+                                Long suppliedId = data.has("supplied_id") ? data.get("supplied_id").getValueAsLong() : null;
+                                JsonNode supplied_name_string = data.get("supplied_name_string");
+
+                                if (aResult.has("match_type") && aResult.get("match_type").getIntValue() < 3) {
+                                    termMatchListener.foundTaxonForName(suppliedId, supplied_name_string.getTextValue(), taxon);
+                                }
+                            }
                         }
                     }
                 }
