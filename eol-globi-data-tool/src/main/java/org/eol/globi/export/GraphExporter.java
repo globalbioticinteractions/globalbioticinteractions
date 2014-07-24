@@ -27,6 +27,11 @@ public class GraphExporter {
     private static final Log LOG = LogFactory.getLog(GraphExporter.class);
 
     public void export(GraphDatabaseService graphService, String baseDir) throws StudyImporterException {
+        try {
+            FileUtils.forceMkdir(new File(baseDir));
+        } catch (IOException e) {
+            throw new StudyImporterException("failed to create output dir [" + baseDir + "]", e);
+        }
         List<Study> studies = NodeFactory.findAllStudies(graphService);
         exportDataOntology(studies, baseDir);
         exportUnmatchedTaxa(studies, baseDir);
@@ -37,7 +42,6 @@ public class GraphExporter {
 
     private void exportUnmatchedTaxa(List<Study> studies, String baseDir) throws StudyImporterException {
         try {
-            FileUtils.forceMkdir(new File(baseDir));
             export(studies, baseDir + "unmatchedSourceTaxa.csv", new StudyExportUnmatchedSourceTaxaForStudies());
             export(studies, baseDir + "unmatchedTargetTaxa.csv", new StudyExportUnmatchedTargetTaxaForStudies());
         } catch (IOException e) {
