@@ -123,3 +123,15 @@ REF_ID,COLL_METHOD,GEAR_NOTES,COLL_NOTES,FIELD_PRES_METH_TYPE,FIELD_PRES_CHEM,FI
 12d,Seine,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
 12d,Hook and line,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
 12d,Push Net,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+43b,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,hook and line,electric reels,15 hooks fished for 1 hour,NA,NA
+43b,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,hook and line,manual reels,15 hooks fished for 1 hour,NA,NA
+43b,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,flat otter trawls,4.4 cm to 5.1 cm streched mesh,"Trawling times varied from 10 minutes to 2 hours depending on the depth and bottom conditions. Most tows were for 30 minutes. 98 bottom trawl samples were taken in 1970, 84 in 1971, 118 in 1972. From June 1973 to January 1974, 36 trawl samples were taken in areas where a shrimp fleet was working. In June, July and August 1974, 45 samples were taken with the fleet. Trawling sampling depths ranged between 5.5 and 173.7 m. Field work was accomplished from aboard the Texas Parks and Wildlife vessel Western Gulf. An attempt was made to take samples at 9.1 m intervals each month, with supplementary sampling as time allowed. The majority of collections were obtained between 7.3 and 64.0 m off shore of Port Aransas and Freeport-Galveston.",NA,NA
+43b,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,sport fishermen,NA,NA,NA,NA
+43b,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,commercial fishermen,NA,NA,NA,NA
+4f,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Field work was conducted from a small outboard boat. A systematic sampling survey, consisting of several passes through the 2m wide study transect, was made on eight occasions between August, 1970 and July, 1971. Studies on food habits of the red snapper, Lutjanus campechanus (Poey), were conducted by James K. Davis concurrently with the present study.",NA,NA
+45s,chemical,buffered formalin / filtered seawater mixture,10,NA,NA,NA,NA,NA,NA,NA,trammel nets,Two 25m nets were deployed in sequence between transects. Nets were set on three successive days at 1730 then checked at 2030 and again at midnight for both crepuscular and nocturnal predators.,NA,NA,NA
+45s,chemical,buffered formalin / filtered seawater mixture,10,NA,NA,NA,NA,NA,NA,NA,trammel nets,Two 25m nets were deployed in sequence between transects. Nets were set on three successive days at 1730 then checked at 2030 and again at midnight for both crepuscular and nocturnal predators.,NA,NA,NA
+85s,chemical,formalin,10,NA,buffered,chemical,isopropyl alcohol,60,NA,NA,hook and line,NA,NA,,
+85s,chemical,formalin,10,NA,buffered,chemical,isopropyl alcohol,60,NA,NA,speargun,NA,NA,,
+85s,chemical,formalin,10,NA,buffered,chemical,isopropyl alcohol,60,NA,NA,fish traps,NA,NA,,
+85s,chemical,formalin,10,NA,buffered,chemical,isopropyl alcohol,60,NA,NA,poisoning with rotenone,NA,NA,,

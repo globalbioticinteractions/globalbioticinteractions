@@ -34,6 +34,14 @@ public class StudyImporterForGoMexSI extends BaseStudyImporter {
         add("NA");
         add("> .001");
         add("TR");
+        add("< 2");
+    }};
+
+    public static final Collection KNOWN_INVALID_INTEGER_STRINGS = new ArrayList<String>() {{
+        add("NA");
+        add("numerous");
+        add("a few");
+        add("several");
     }};
 
     public StudyImporterForGoMexSI(ParserFactory parserFactory, NodeFactory nodeFactory) {
@@ -251,7 +259,7 @@ public class StudyImporterForGoMexSI extends BaseStudyImporter {
 
     }
 
-    private void checkStomachDataConsistency(String predatorId, Map<String, String> predatorProperties, List<Map<String, String>> preyList, Study metaStudy) {
+    private void checkStomachDataConsistency(String predatorId, Map<String, String> predatorProperties, List<Map<String, String>> preyList, Study metaStudy) throws StudyImporterException {
         Integer total = integerValueOrNull(predatorProperties, STOMACH_COUNT_TOTAL);
         Integer withoutFood = integerValueOrNull(predatorProperties, STOMACH_COUNT_WITHOUT_FOOD);
         Integer withFood = integerValueOrNull(predatorProperties, STOMACH_COUNT_WITH_FOOD);
@@ -268,14 +276,22 @@ public class StudyImporterForGoMexSI extends BaseStudyImporter {
         }
     }
 
-    private Integer integerValueOrNull(Map<String, String> props, String key) {
+    private Integer integerValueOrNull(Map<String, String> props, String key) throws StudyImporterException {
         String value = props.get(key);
-        return value == null || "NA".equals(value) ? null : Integer.parseInt(value);
+        try {
+            return value == null || KNOWN_INVALID_INTEGER_STRINGS.contains(value) ? null : Integer.parseInt(value);
+        } catch (NumberFormatException ex) {
+            throw new StudyImporterException("failed to parse key [" + key + "] with value [" + value + "]", ex);
+        }
     }
 
     private Double doubleValueOrNull(Map<String, String> props, String key) throws StudyImporterException {
         String value = props.get(key);
-        return value == null || KNOWN_INVALID_DOUBLE_STRINGS.contains(value) ? null : Double.parseDouble(value);
+        try {
+            return value == null || KNOWN_INVALID_DOUBLE_STRINGS.contains(value) ? null : Double.parseDouble(value);
+        } catch (NumberFormatException ex) {
+            throw new StudyImporterException("failed to parse key [" + key + "] with value [" + value + "]", ex);
+        }
     }
 
     private Specimen createSpecimen(Map<String, String> properties) throws NodeFactoryException, StudyImporterException {
@@ -287,6 +303,7 @@ public class StudyImporterForGoMexSI extends BaseStudyImporter {
         addLifeStage(properties, specimen);
         addPhysiologicalState(properties, specimen);
         addBodyPart(properties, specimen);
+
         return specimen;
     }
 
