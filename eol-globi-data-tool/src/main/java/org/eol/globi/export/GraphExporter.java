@@ -92,9 +92,7 @@ public class GraphExporter {
                     spireStudies.add(study);
                 }
             }
-            export(spireStudies, baseDir + "globi.ttl.gz", new TurtleExporter());
-        } catch (OWLOntologyCreationException e) {
-            throw new StudyImporterException("failed to export as owl", e);
+            export(spireStudies, baseDir + "globi.ttl.gz", new LittleTurtleExporter());
         } catch (IOException e) {
             throw new StudyImporterException("failed to export as owl", e);
         }
