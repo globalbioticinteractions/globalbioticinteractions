@@ -33,20 +33,21 @@ public class LittleTurtleExporter implements StudyExporter {
     public static final String OCCURS_IN = OBO_PREFIX + "BFO_0000066";
     public static final String ORGANISM = OBO_PREFIX + "CARO_0010004";
     public static final String MEMBER_OF = OBO_PREFIX + "RO_0002350";
-
-    private final Model model;
-
+    private Model model;
 
     public LittleTurtleExporter() {
         super();
-        model = ModelFactory.createDefaultModel();
     }
+
+
 
     @Override
     public void exportStudy(Study study, Writer writer, boolean includeHeader)
             throws IOException {
 
-
+        if (model == null) {
+            model = ModelFactory.createDefaultModel();
+        }
         for (Relationship r : study.getSpecimens()) {
             Node agentNode = r.getEndNode();
             Specimen specimen = new Specimen(agentNode);
@@ -58,54 +59,54 @@ public class LittleTurtleExporter implements StudyExporter {
                 for (Environment env : location.getEnvironments()) {
                     String envoId = ExternalIdUtil.infoURLForExternalId(env.getExternalId());
                     if (StringUtils.isNotBlank(envoId)) {
-                        addLocation(agent, model.createResource(envoId));
+                        addLocation(agent, model.createResource(envoId), model);
                     }
                 }
             }
-            setTaxon(agent, taxonOfSpecimen(agentNode));
+            setTaxon(agent, taxonOfSpecimen(agentNode, model), model);
 
             // we assume that the specimen is always the agent
+
             for (Relationship ixnR : agentNode.getRelationships(Direction.OUTGOING, InteractType.values())) {
                 Resource interactor = model.createResource();
-                setTaxon(interactor, taxonOfSpecimen(ixnR.getEndNode()));
+                setTaxon(interactor, taxonOfSpecimen(ixnR.getEndNode(), model), model);
                 Resource ixn = model.createResource();
-                addOrganismPairInteraction(agent, interactor, asProperty(ixnR.getType()), ixn);
+                addOrganismPairInteraction(agent, interactor, asProperty(ixnR.getType(), model), ixn, model);
             }
         }
-        exportDataOntology(writer);
     }
 
-    protected void addSameAsTaxaFor(Node taxon) {
-        Resource subj = getTaxonAsNamedIndividual(taxon);
+    protected void addSameAsTaxaFor(Node taxon, Model model1) {
+        Resource subj = getTaxonAsNamedIndividual(taxon, model1);
         if (null != subj) {
             Iterable<Relationship> sameAsRels = taxon.getRelationships(RelTypes.SAME_AS, Direction.OUTGOING);
             for (Relationship sameAsRel : sameAsRels) {
-                Resource obj = getTaxonAsNamedIndividual(sameAsRel.getEndNode());
+                Resource obj = getTaxonAsNamedIndividual(sameAsRel.getEndNode(), model1);
                 if (subj != null && obj != null) {
-                    model.add(subj, OWL.sameAs, obj);
+                    model1.add(subj, OWL.sameAs, obj);
                 }
             }
         }
     }
 
-    public Resource taxonOfSpecimen(Node n) {
+    public Resource taxonOfSpecimen(Node n, Model model1) {
         Relationship singleRelationship = n.getSingleRelationship(RelTypes.CLASSIFIED_AS, Direction.OUTGOING);
         if (singleRelationship == null) {
             return null;
         } else {
             Node taxonNode = singleRelationship.getEndNode();
-            addSameAsTaxaFor(taxonNode);
-            return getTaxonAsNamedIndividual(taxonNode);
+            addSameAsTaxaFor(taxonNode, model1);
+            return getTaxonAsNamedIndividual(taxonNode, model1);
         }
     }
 
-    public Resource getTaxonAsNamedIndividual(Node endNode) {
+    public Resource getTaxonAsNamedIndividual(Node endNode, Model model1) {
         TaxonNode taxonNode = new TaxonNode(endNode);
         String externalId = taxonNode.getExternalId();
         String uriString = ExternalIdUtil.infoURLForExternalId(externalId);
         return StringUtils.isBlank(uriString)
                 ? null
-                : model.createResource(uriString);
+                : model1.createResource(uriString);
     }
 
 
@@ -114,9 +115,10 @@ public class LittleTurtleExporter implements StudyExporter {
      *
      * @param i
      * @param c
+     * @param model1
      */
-    public void addRdfType(Resource i, Resource c) {
-        model.add(i, RDF.type, c);
+    public void addRdfType(Resource i, Resource c, Model model1) {
+        model1.add(i, RDF.type, c);
     }
 
 
@@ -131,20 +133,21 @@ public class LittleTurtleExporter implements StudyExporter {
      *
      * @param i
      * @param taxon
+     * @param model1
      */
-    public void setTaxon(Resource i, Resource taxon) {
+    public void setTaxon(Resource i, Resource taxon, Model model1) {
         if (null != taxon) {
-            model.add(i, getJenaProperty(MEMBER_OF), taxon);
+            model1.add(i, getJenaProperty(MEMBER_OF, model1), taxon);
         }
     }
 
-    public Property getJenaProperty(String iriString) {
-        return model.getProperty(iriString);
+    public Property getJenaProperty(String iriString, Model model1) {
+        return model1.getProperty(iriString);
     }
 
 
-    public Resource getOWLClass(String shortName) {
-        return model.createResource(shortName);
+    public Resource getOWLClass(String shortName, Model model1) {
+        return model1.createResource(shortName);
     }
 
 
@@ -157,31 +160,32 @@ public class LittleTurtleExporter implements StudyExporter {
      * @param target
      * @param interactionType
      * @param interaction     [optional]
+     * @param model1
      * @return interaction
      */
     public Resource addOrganismPairInteraction(Resource source,
                                                Resource target,
                                                Property interactionType,
-                                               Resource interaction) {
+                                               Resource interaction, Model model1) {
         if (interaction == null) {
-            interaction = model.createResource();
+            interaction = model1.createResource();
         }
-        addRdfType(interaction, getOWLClass(INTER_SPECIES_INTERACTION));
+        addRdfType(interaction, getOWLClass(INTER_SPECIES_INTERACTION, model1), model1);
 
-        model.add(interaction, getJenaProperty(HAS_PARTICIPANT), source);
-        model.add(interaction, getJenaProperty(HAS_PARTICIPANT), target);
-        model.add(source, interactionType, target);
+        model1.add(interaction, getJenaProperty(HAS_PARTICIPANT, model1), source);
+        model1.add(interaction, getJenaProperty(HAS_PARTICIPANT, model1), target);
+        model1.add(source, interactionType, target);
 
-        addRdfType(source, getOWLClass(ORGANISM));
-        addRdfType(target, getOWLClass(ORGANISM));
+        addRdfType(source, getOWLClass(ORGANISM, model1), model1);
+        addRdfType(target, getOWLClass(ORGANISM, model1), model1);
 
         return interaction;
     }
 
 
-    public void addLocation(Resource i, Resource locType) {
+    public void addLocation(Resource i, Resource locType, Model model1) {
         // we assume i is an interaction - a different relation must be used for material entities
-        model.add(i, getJenaProperty(OCCURS_IN), locType);
+        model1.add(i, getJenaProperty(OCCURS_IN, model1), locType);
     }
 
 
@@ -191,7 +195,7 @@ public class LittleTurtleExporter implements StudyExporter {
         model.write(w, "TURTLE");
     }
 
-    public Property asProperty(final RelationshipType interactType) {
+    public Property asProperty(final RelationshipType interactType, Model model1) {
         Map<InteractType, String> lookup = new HashMap<InteractType, String>() {
             {
                 put(InteractType.ATE, "http://purl.obolibrary.org/obo/RO_0002470");
@@ -209,7 +213,7 @@ public class LittleTurtleExporter implements StudyExporter {
         String name = lookup.containsKey(interactType)
                 ? lookup.get(interactType)
                 : "http://purl.obolibrary.org/obo/RO_0002437";
-        return model.createProperty(name);
+        return model1.createProperty(name);
     }
 
 }

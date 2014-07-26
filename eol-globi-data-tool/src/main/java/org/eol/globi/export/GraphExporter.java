@@ -41,8 +41,18 @@ public class GraphExporter {
 
     private void exportUnmatchedTaxa(List<Study> studies, String baseDir) throws StudyImporterException {
         try {
-            export(studies, baseDir + "unmatchedSourceTaxa.csv", new StudyExportUnmatchedSourceTaxaForStudies());
-            export(studies, baseDir + "unmatchedTargetTaxa.csv", new StudyExportUnmatchedTargetTaxaForStudies());
+            OutputStreamWriter writer1 = openStream(baseDir + "unmatchedSourceTaxa.csv");
+            for (Study importedStudy1 : studies) {
+                boolean includeHeader1 = studies.indexOf(importedStudy1) == 0;
+                new StudyExportUnmatchedSourceTaxaForStudies().exportStudy(importedStudy1, writer1, includeHeader1);
+            }
+            closeStream(baseDir + "unmatchedSourceTaxa.csv", writer1);
+            OutputStreamWriter writer = openStream(baseDir + "unmatchedTargetTaxa.csv");
+            for (Study importedStudy : studies) {
+                boolean includeHeader = studies.indexOf(importedStudy) == 0;
+                new StudyExportUnmatchedTargetTaxaForStudies().exportStudy(importedStudy, writer, includeHeader);
+            }
+            closeStream(baseDir + "unmatchedTargetTaxa.csv", writer);
         } catch (IOException e) {
             throw new StudyImporterException("failed to export unmatched source taxa", e);
         }
@@ -52,7 +62,12 @@ public class GraphExporter {
     private void exportGoMexSI(List<Study> studies, String baseDir) throws StudyImporterException {
         try {
             FileUtils.forceMkdir(new File(baseDir));
-            export(studies, baseDir + "GoMexSIInteractionsTaxa.csv", new ExporterGoMexSI());
+            OutputStreamWriter writer = openStream(baseDir + "GoMexSIInteractionsTaxa.csv");
+            for (Study importedStudy : studies) {
+                boolean includeHeader = studies.indexOf(importedStudy) == 0;
+                new ExporterGoMexSI().exportStudy(importedStudy, writer, includeHeader);
+            }
+            closeStream(baseDir + "GoMexSIInteractionsTaxa.csv", writer);
         } catch (IOException e) {
             throw new StudyImporterException("failed to export GoMexSI", e);
         }
@@ -91,7 +106,13 @@ public class GraphExporter {
                     spireStudies.add(study);
                 }
             }
-            export(spireStudies, baseDir + "globi.ttl.gz", new LittleTurtleExporter());
+            LittleTurtleExporter studyExporter = new LittleTurtleExporter();
+            OutputStreamWriter writer = openStream(baseDir + "globi.ttl.gz");
+            for (Study importedStudy : spireStudies) {
+                studyExporter.exportStudy(importedStudy, writer, true);
+            }
+            studyExporter.exportDataOntology(writer);
+            closeStream(baseDir + "globi.ttl.gz", writer);
         } catch (IOException e) {
             throw new StudyImporterException("failed to export as owl", e);
         }
@@ -124,26 +145,31 @@ public class GraphExporter {
     }
 
     private void export(List<Study> importedStudies, String exportPath, String filename, DarwinCoreExporter studyExporter, FileWriter darwinCoreMeta) throws IOException {
-        export(importedStudies, exportPath + filename, studyExporter);
+        OutputStreamWriter writer = openStream(exportPath + filename);
+        for (Study importedStudy : importedStudies) {
+            boolean includeHeader = importedStudies.indexOf(importedStudy) == 0;
+            studyExporter.exportStudy(importedStudy, writer, includeHeader);
+        }
+        closeStream(exportPath + filename, writer);
         LOG.info("darwin core meta file writing... ");
         studyExporter.exportDarwinCoreMetaTable(darwinCoreMeta, filename);
         LOG.info("darwin core meta file written. ");
     }
 
-    private void export(List<Study> importedStudies, String exportPath, StudyExporter studyExporter) throws IOException {
+    private void closeStream(String exportPath, OutputStreamWriter writer) throws IOException {
+        writer.flush();
+        writer.close();
+        LOG.info("export data to [" + new File(exportPath).getAbsolutePath() + "] complete.");
+    }
+
+    private OutputStreamWriter openStream(String exportPath) throws IOException {
         OutputStream fos = new BufferedOutputStream(new FileOutputStream(exportPath));
         if (exportPath.endsWith(".gz")) {
             fos = new GZIPOutputStream(fos);
         }
         OutputStreamWriter writer = new OutputStreamWriter(fos, "UTF-8");
         LOG.info("export data to [" + new File(exportPath).getAbsolutePath() + "] started...");
-        for (Study importedStudy : importedStudies) {
-            boolean includeHeader = importedStudies.indexOf(importedStudy) == 0;
-            studyExporter.exportStudy(importedStudy, writer, includeHeader);
-        }
-        writer.flush();
-        writer.close();
-        LOG.info("export data to [" + new File(exportPath).getAbsolutePath() + "] complete.");
+        return writer;
     }
 
 }

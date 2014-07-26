@@ -63,6 +63,7 @@ public class LittleTurtleExporterIT extends GraphDBTestCase {
         for (Study study : studies) {
             turtleExporter.exportStudy(study, writer, true);
         }
+        turtleExporter.exportDataOntology(writer);
         writer.flush();
         writer.close();
 
