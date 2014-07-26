@@ -6,7 +6,6 @@ import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.vocabulary.OWL;
 import com.hp.hpl.jena.vocabulary.RDF;
-import com.hp.hpl.jena.vocabulary.RDFS;
 import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.domain.Environment;
 import org.eol.globi.domain.InteractType;
@@ -25,7 +24,6 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 public class LittleTurtleExporter implements StudyExporter {
 
@@ -52,26 +50,26 @@ public class LittleTurtleExporter implements StudyExporter {
         for (Relationship r : study.getSpecimens()) {
             Node agentNode = r.getEndNode();
             Specimen specimen = new Specimen(agentNode);
-            Resource i = nodeToIndividual(agentNode);
+            // is this OK?
+            Resource agent = model.createResource();
 
             Location location = specimen.getSampleLocation();
             if (location != null) {
                 for (Environment env : location.getEnvironments()) {
                     String envoId = ExternalIdUtil.infoURLForExternalId(env.getExternalId());
                     if (StringUtils.isNotBlank(envoId)) {
-                        addLocation(i, model.createResource(envoId));
+                        addLocation(agent, model.createResource(envoId));
                     }
                 }
             }
-            setTaxon(i, getSpecimenAsNamedIndividual(agentNode));
+            setTaxon(agent, taxonOfSpecimen(agentNode));
 
             // we assume that the specimen is always the agent
             for (Relationship ixnR : agentNode.getRelationships(Direction.OUTGOING, InteractType.values())) {
-                Node receiverNode = ixnR.getEndNode();
-                Resource j = nodeToIndividual(receiverNode);
-                setTaxon(j, getSpecimenAsNamedIndividual(receiverNode));
-                Resource ixn = model.createResource("individuals/" + r.getId());
-                addOrganismPairInteraction(i, j, asProperty(ixnR.getType()), ixn);
+                Resource interactor = model.createResource();
+                setTaxon(interactor, taxonOfSpecimen(ixnR.getEndNode()));
+                Resource ixn = model.createResource();
+                addOrganismPairInteraction(agent, interactor, asProperty(ixnR.getType()), ixn);
             }
         }
         exportDataOntology(writer);
@@ -79,16 +77,18 @@ public class LittleTurtleExporter implements StudyExporter {
 
     protected void addSameAsTaxaFor(Node taxon) {
         Resource subj = getTaxonAsNamedIndividual(taxon);
-        Iterable<Relationship> sameAsRels = taxon.getRelationships(RelTypes.SAME_AS, Direction.OUTGOING);
-        for (Relationship sameAsRel : sameAsRels) {
-            Resource obj = getTaxonAsNamedIndividual(sameAsRel.getEndNode());
-            if (subj != null && obj != null) {
-                model.add(subj, OWL.sameAs, obj);
+        if (null != subj) {
+            Iterable<Relationship> sameAsRels = taxon.getRelationships(RelTypes.SAME_AS, Direction.OUTGOING);
+            for (Relationship sameAsRel : sameAsRels) {
+                Resource obj = getTaxonAsNamedIndividual(sameAsRel.getEndNode());
+                if (subj != null && obj != null) {
+                    model.add(subj, OWL.sameAs, obj);
+                }
             }
         }
     }
 
-    public Resource getSpecimenAsNamedIndividual(Node n) {
+    public Resource taxonOfSpecimen(Node n) {
         Relationship singleRelationship = n.getSingleRelationship(RelTypes.CLASSIFIED_AS, Direction.OUTGOING);
         if (singleRelationship == null) {
             return null;
@@ -104,28 +104,8 @@ public class LittleTurtleExporter implements StudyExporter {
         String externalId = taxonNode.getExternalId();
         String uriString = ExternalIdUtil.infoURLForExternalId(externalId);
         return StringUtils.isBlank(uriString)
-                ? nodeToIndividual(taxonNode.getUnderlyingNode())
+                ? null
                 : model.createResource(uriString);
-    }
-
-    private Resource nodeToIndividual(Node sn) {
-        // is this OK?
-        return model.createResource("individuals/" + sn.getId());
-    }
-
-
-    /**
-     * Adds a triple <i p label>, where p is an annotation property and label is a literal.
-     * <p/>
-     * Note that OWL2 forces a strict separation of annotation, data and object properties
-     *
-     * @param i
-     * @param p
-     * @param label
-     */
-    public void addFact(Resource i, Property p,
-                        String label) {
-        model.add(i, p, label);
     }
 
 
@@ -137,29 +117,6 @@ public class LittleTurtleExporter implements StudyExporter {
      */
     public void addRdfType(Resource i, Resource c) {
         model.add(i, RDF.type, c);
-    }
-
-    /**
-     * Generates a new individual with a random ID.
-     *
-     * @return
-     * @see {genIndividual(Object... args)}
-     */
-    protected Resource genIndividual() {
-        UUID uuid = UUID.randomUUID();
-        return model.createResource("individuals/" + uuid.toString());
-    }
-
-    /**
-     * Adds a triple
-     * <p/>
-     * <i rdfs:label label>
-     *
-     * @param i
-     * @param label
-     */
-    public void setLabel(Resource i, String label) {
-        model.add(i, RDFS.label, label);
     }
 
 
@@ -176,7 +133,9 @@ public class LittleTurtleExporter implements StudyExporter {
      * @param taxon
      */
     public void setTaxon(Resource i, Resource taxon) {
-        model.add(i, getJenaProperty(MEMBER_OF), taxon);
+        if (null != taxon) {
+            model.add(i, getJenaProperty(MEMBER_OF), taxon);
+        }
     }
 
     public Property getJenaProperty(String iriString) {
@@ -205,7 +164,7 @@ public class LittleTurtleExporter implements StudyExporter {
                                                Property interactionType,
                                                Resource interaction) {
         if (interaction == null) {
-            interaction = genIndividual();
+            interaction = model.createResource();
         }
         addRdfType(interaction, getOWLClass(INTER_SPECIES_INTERACTION));
 
