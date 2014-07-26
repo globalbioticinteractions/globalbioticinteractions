@@ -126,7 +126,7 @@
                         <descriptor>src/assembly/neo4j-graph-db.xml</descriptor>
                         <descriptor>src/assembly/darwin-core.xml</descriptor>
                         <descriptor>src/assembly/darwin-core-aggregated.xml</descriptor>
-                        <!-- excluding bulky data exports such at ttl archive to save bandwidth / storage fees -->
+                        <descriptor>src/assembly/ttl.xml</descriptor>
                     </descriptors>
                 </configuration>
                 <executions>
@@ -164,38 +164,6 @@
             </plugin>
         </plugins>
     </build>
-
-    <profiles>
-        <profile>
-            <id>include-big-datasets</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <artifactId>maven-assembly-plugin</artifactId>
-                        <version>2.4</version>
-                        <configuration>
-                            <descriptors>
-                                <descriptor>src/assembly/neo4j-graph-db.xml</descriptor>
-                                <descriptor>src/assembly/darwin-core.xml</descriptor>
-                                <descriptor>src/assembly/darwin-core-aggregated.xml</descriptor>
-                                <descriptor>src/assembly/ttl.xml</descriptor>
-                            </descriptors>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <id>make-assembly</id>
-                                <!-- ensure that this doesn't run on travis -->
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>single</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
 
     <repositories>
         <repository>

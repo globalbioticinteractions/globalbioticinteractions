@@ -36,7 +36,11 @@ public class LittleTurtleExporter implements StudyExporter {
     private Model model;
 
     public LittleTurtleExporter() {
-        super();
+        this(ModelFactory.createDefaultModel());
+    }
+
+    public LittleTurtleExporter(Model model) {
+        this.model = model;
     }
 
 
@@ -44,9 +48,6 @@ public class LittleTurtleExporter implements StudyExporter {
     public void exportStudy(Study study, Writer writer, boolean includeHeader)
             throws IOException {
 
-        if (model == null) {
-            model = ModelFactory.createDefaultModel();
-        }
         for (Relationship r : study.getSpecimens()) {
             Node agentNode = r.getEndNode();
             Specimen specimen = new Specimen(agentNode);

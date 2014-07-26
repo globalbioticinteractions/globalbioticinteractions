@@ -1,11 +1,15 @@
 package org.eol.globi.export;
 
+import com.hp.hpl.jena.query.Dataset;
+import com.hp.hpl.jena.query.ReadWrite;
+import com.hp.hpl.jena.rdf.model.Model;
+import com.hp.hpl.jena.tdb.TDB;
+import com.hp.hpl.jena.tdb.TDBFactory;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eol.globi.data.NodeFactory;
 import org.eol.globi.data.StudyImporterException;
-import org.eol.globi.data.StudyImporterForSPIRE;
 import org.eol.globi.domain.Study;
 import org.neo4j.graphdb.GraphDatabaseService;
 
@@ -16,7 +20,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -76,13 +79,14 @@ public class GraphExporter {
     private void exportDarwinCoreAggregatedByStudy(String baseDir, List<Study> studies) throws StudyImporterException {
         exportDarwinCoreArchive(studies,
                 baseDir + "aggregatedByStudy/", new HashMap<String, DarwinCoreExporter>() {
-            {
-                put("association.csv", new ExporterAssociationAggregates());
-                put("occurrence.csv", new ExporterOccurrenceAggregates());
-                put("references.csv", new ExporterReferences());
-                put("taxa.csv", new ExporterTaxa());
-            }
-        });
+                    {
+                        put("association.csv", new ExporterAssociationAggregates());
+                        put("occurrence.csv", new ExporterOccurrenceAggregates());
+                        put("references.csv", new ExporterReferences());
+                        put("taxa.csv", new ExporterTaxa());
+                    }
+                }
+        );
     }
 
     private void exportDarwinCoreAll(String baseDir, List<Study> studies) throws StudyImporterException {
@@ -99,18 +103,25 @@ public class GraphExporter {
 
     private void exportDataOntology(List<Study> studies, String baseDir) throws StudyImporterException {
         try {
-            // only exporting SPIRE studies to ttl for purposes of testing the globi ontology
-            List<Study> spireStudies = new ArrayList<Study>();
-            for (Study study : studies) {
-                if (study.getSource().contains(StudyImporterForSPIRE.SOURCE_SPIRE)) {
-                    spireStudies.add(study);
-                }
-            }
-            LittleTurtleExporter studyExporter = new LittleTurtleExporter();
+            String directory = baseDir + "jena-tdb-tmp";
+            FileUtils.deleteQuietly(new File(directory));
+            Dataset dataset = TDBFactory.createDataset(directory);
+            Model model = dataset.getDefaultModel();
+            LittleTurtleExporter studyExporter = new LittleTurtleExporter(model);
             OutputStreamWriter writer = openStream(baseDir + "globi.ttl.gz");
-            for (Study importedStudy : spireStudies) {
-                studyExporter.exportStudy(importedStudy, writer, true);
+            int total = studies.size();
+            int count = 1;
+            for (Study study : studies) {
+                studyExporter.exportStudy(study, writer, true);
+                if (count % 50 == 0) {
+                    LOG.info("added triples for [" + count + "] of [" + total + "] studies...");
+                }
+                count++;
             }
+            LOG.info("adding triples for [" + total + "] of [" + total + "] studies.");
+
+            TDB.sync(dataset);
+            LOG.info("writing turtle archive...");
             studyExporter.exportDataOntology(writer);
             closeStream(baseDir + "globi.ttl.gz", writer);
         } catch (IOException e) {
