@@ -40,7 +40,6 @@ public class LittleTurtleExporter implements StudyExporter {
     }
 
 
-
     @Override
     public void exportStudy(Study study, Writer writer, boolean includeHeader)
             throws IOException {
@@ -190,9 +189,11 @@ public class LittleTurtleExporter implements StudyExporter {
 
 
     public void exportDataOntology(Writer w) {
-        model.setNsPrefix("OBO", OBO_PREFIX);
-        model.setNsPrefix("EOL", "http://eol.org/pages/");
-        model.write(w, "TURTLE");
+        if (null != model) {
+            model.setNsPrefix("OBO", OBO_PREFIX);
+            model.setNsPrefix("EOL", "http://eol.org/pages/");
+            model.write(w, "TURTLE");
+        }
     }
 
     public Property asProperty(final RelationshipType interactType, Model model1) {
