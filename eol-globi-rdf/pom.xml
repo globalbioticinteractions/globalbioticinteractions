@@ -23,18 +23,7 @@
     </properties>
 
     <build>
-        <resources>
-            <resource>
-                <includes>
-                    <include>**/*.ttl</include>
-                </includes>
-                <directory>src/main/resources</directory>
-                <targetPath>${fuseki.dir}</targetPath>
-            </resource>
-        </resources>
-
         <plugins>
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
@@ -79,6 +68,27 @@
                             </artifactItems>
                             <!-- no need to install the data when skipping the tests -->
                             <skip>${skipTests}</skip>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>2.6</version>
+                <executions>
+                    <execution>
+                        <id>copy-config</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${fuseki.dir}</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>src/main/resources</directory>
+                                </resource>
+                            </resources>
                         </configuration>
                     </execution>
                 </executions>
