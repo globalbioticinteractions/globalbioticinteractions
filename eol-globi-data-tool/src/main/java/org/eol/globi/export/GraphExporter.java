@@ -124,6 +124,7 @@ public class GraphExporter {
             LOG.info("writing turtle archive...");
             studyExporter.exportDataOntology(writer);
             closeStream(baseDir + "globi.ttl.gz", writer);
+            FileUtils.deleteQuietly(new File(directory));
         } catch (IOException e) {
             throw new StudyImporterException("failed to export as owl", e);
         }
