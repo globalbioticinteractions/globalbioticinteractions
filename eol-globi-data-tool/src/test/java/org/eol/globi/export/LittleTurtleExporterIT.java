@@ -14,8 +14,6 @@ import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.service.EnvoLookupService;
 import org.junit.Test;
 import org.neo4j.graphdb.Transaction;
-import org.semanticweb.owlapi.model.OWLOntologyCreationException;
-import org.semanticweb.owlapi.model.OWLOntologyStorageException;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -33,7 +31,7 @@ public class LittleTurtleExporterIT extends GraphDBTestCase {
 
 
     @Test
-    public void exportSPIRE() throws OWLOntologyCreationException, OWLOntologyStorageException, IOException, StudyImporterException, NodeFactoryException {
+    public void exportSPIRE() throws IOException, StudyImporterException, NodeFactoryException {
         nodeFactory.setEnvoLookupService(new EnvoLookupService());
         StudyImporterForSPIRE importer = new StudyImporterForSPIRE(null, nodeFactory);
         importer.setFilter(new ImportFilter() {

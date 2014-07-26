@@ -8,7 +8,6 @@ import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.data.StudyImporterForSPIRE;
 import org.eol.globi.domain.Study;
 import org.neo4j.graphdb.GraphDatabaseService;
-import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 
 import java.io.BufferedOutputStream;
 import java.io.File;

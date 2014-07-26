@@ -13,9 +13,8 @@ import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.domain.Study;
 import org.eol.globi.export.ExportTestUtil;
-import org.eol.globi.export.TurtleExporter;
+import org.eol.globi.export.LittleTurtleExporter;
 import org.junit.Test;
-import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -29,8 +28,8 @@ import static org.junit.Assert.assertThat;
 public class SPARQLTest extends GraphDBTestCase {
 
     @Test
-    public void executeQuerySampleGloBIData() throws NodeFactoryException, ParseException, IOException, OWLOntologyCreationException {
-        TurtleExporter exporter = new TurtleExporter();
+    public void executeQuerySampleGloBIData() throws NodeFactoryException, ParseException, IOException {
+        LittleTurtleExporter exporter = new LittleTurtleExporter();
         StringWriter writer = new StringWriter();
         Study study = ExportTestUtil.createTestData(nodeFactory);
         exporter.exportStudy(study, writer, true);
@@ -41,7 +40,7 @@ public class SPARQLTest extends GraphDBTestCase {
         String queryString =
                 "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> " +
                         "SELECT ?individual WHERE { " +
-                        " ?individual rdf:type ?organism . " +
+                        " ?individual rdf:type <http://purl.obolibrary.org/obo/CARO_0010004> . " +
                         "}";
         Query query = QueryFactory.create(queryString);
         QueryExecution exec = QueryExecutionFactory.create(query, model);
@@ -53,7 +52,7 @@ public class SPARQLTest extends GraphDBTestCase {
                 assertThat(solution.get("individual"), is(notNullValue()));
                 counter++;
             }
-            assertThat(counter > 5, is(true));
+            assertThat(counter, is(3));
         } finally {
             exec.close();
         }
