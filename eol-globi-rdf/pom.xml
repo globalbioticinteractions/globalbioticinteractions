@@ -16,7 +16,7 @@
     <packaging>pom</packaging>
 
     <properties>
-        <globi.data.version>0.2</globi.data.version>
+        <globi.data.version>0.3</globi.data.version>
         <fuseki.version>0.2.7</fuseki.version>
         <fuseki.artifactId>jena-fuseki</fuseki.artifactId>
         <fuseki.dir>${project.build.directory}/${fuseki.artifactId}-${fuseki.version}</fuseki.dir>
