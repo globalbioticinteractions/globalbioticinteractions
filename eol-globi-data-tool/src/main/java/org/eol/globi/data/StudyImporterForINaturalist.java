@@ -56,6 +56,7 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
     public static final int MAX_ATTEMPTS = 3;
     public static final List<String> IGNORED_INTERACTION_TYPES = new ArrayList<String>() {{
         // see https://github.com/jhpoelen/eol-globi-data/issues/56
+        add("Syntopic");
         add("Associated species with names lookup");
         add("Target species");
         add("Tree species");
