@@ -1,6 +1,7 @@
 package org.eol.globi.data;
 
 import com.Ostermiller.util.LabeledCSVParser;
+import org.apache.commons.collections.SetUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -19,7 +20,7 @@ import java.util.Set;
 
 public class StudyImporterForHurlbert extends BaseStudyImporter {
 
-    public static final String RESOURCE = "hurlbert/AvianDietDatabase_201404014.csv";
+    public static final String RESOURCE = "https://raw.githubusercontent.com/hurlbertlab/dietdatabase/master/AvianDietDatabase.csv";
 
     private static final Log LOG = LogFactory.getLog(StudyImporterForHurlbert.class);
 
@@ -29,14 +30,13 @@ public class StudyImporterForHurlbert extends BaseStudyImporter {
 
     @Override
     public Study importStudy() throws StudyImporterException {
-        Set<String> lifeStages = new HashSet<String>();
-        Set<String> bodyParts = new HashSet<String>();
         Set<String> regions = new HashSet<String>();
         Set<String> locales = new HashSet<String>();
         Set<String> habitats = new HashSet<String>();
 
 
         try {
+
             LabeledCSVParser parser = parserFactory.createParser(RESOURCE, "UTF-8");
             while (parser.getLine() != null) {
                 String sourceCitation = parser.getValueByLabel("Source");
@@ -55,23 +55,20 @@ public class StudyImporterForHurlbert extends BaseStudyImporter {
                     }
                 }
 
-                String predatorName = parser.getValueByLabel("Scientific_Name");
+                String predatorName = StringUtils.trim(parser.getValueByLabel("Scientific_Name"));
                 try {
                     Specimen predatorSpecimen = nodeFactory.createSpecimen(predatorName);
                     //Longitude,Latitude,Altitude_min_m,Altitude_mean_m,Altitude_max_m,
 
                     Specimen preySpecimen = nodeFactory.createSpecimen(preyTaxonName);
 
-                    String preyStage = parser.getValueByLabel("Prey_Stage");
+                    String preyStage = StringUtils.trim(parser.getValueByLabel("Prey_Stage"));
                     if (StringUtils.isNotBlank(preyStage)) {
                         Term lifeStage = nodeFactory.getOrCreateLifeStage("HULBERT:" + StringUtils.replace(preyStage, " ", "_"), preyStage);
                         preySpecimen.setLifeStage(lifeStage);
                     }
 
-                    lifeStages.add(preyStage);
-
-                    String preyPart = parser.getValueByLabel("Prey_Part");
-                    bodyParts.add(preyPart);
+                    String preyPart = StringUtils.trim(parser.getValueByLabel("Prey_Part"));
                     if (StringUtils.isNotBlank(preyPart)) {
                         Term term = nodeFactory.getOrCreateBodyPart("HULBERT:" + StringUtils.replace(preyPart, " ", "_"), preyPart);
                         preySpecimen.setBodyPart(term);
@@ -97,13 +94,9 @@ public class StudyImporterForHurlbert extends BaseStudyImporter {
             throw new StudyImporterException("failed to import [" + RESOURCE + "]", e);
         }
 
-        LOG.info("unmapped habitats " + habitats);
-        LOG.info("unmapped locales " + locales);
-        LOG.info("unmapped regions " + regions);
-        LOG.info("unmapped parts " + bodyParts);
-        LOG.info("unmapped stages " + lifeStages);
-
-
+        LOG.info("unmapped habitats [" + StringUtils.join(habitats.iterator(), ";") + "]");
+        LOG.info("unmapped locales [" + StringUtils.join(locales.iterator(), ";") + "]");
+        LOG.info("unmapped regions [" + StringUtils.join(regions.iterator(), ";") + "]");
         return null;
     }
 

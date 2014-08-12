@@ -2,6 +2,7 @@ package org.eol.globi.data;
 
 import com.Ostermiller.util.CSVParser;
 import com.Ostermiller.util.LabeledCSVParser;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
 import org.apache.http.client.HttpResponseException;
@@ -16,7 +17,8 @@ public class ParserFactoryImpl implements ParserFactory {
 
     public LabeledCSVParser createParser(String studyResource, String characterEncoding) throws IOException {
         InputStream is;
-        if (studyResource.startsWith("http://")) {
+        if (StringUtils.startsWith(studyResource,"http://")
+                || StringUtils.startsWith(studyResource, "https://")) {
             is = getRemoteInputStream(studyResource);
         } else {
             is = getClass().getResourceAsStream(studyResource);
