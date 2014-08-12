@@ -91,36 +91,10 @@ public class GlobalNamesService extends BaseHttpClientService implements TaxonPr
                     if (results != null && results.isArray()) {
                         for (JsonNode aResult : results) {
                             Taxon taxon = new TaxonImpl();
-                            String classificationPath = aResult.get("classification_path").getValueAsText();
-                            taxon.setPath(classificationPath);
-                            String pathRanks = aResult.get("classification_path_ranks").getValueAsText();
-                            taxon.setPathNames(pathRanks);
-                            String[] ranks = pathRanks.split("\\|");
-                            if (ranks.length > 0) {
-                                String rank = ranks[ranks.length - 1];
-                                taxon.setRank(rank);
-                            }
-                            String[] taxonNames = classificationPath.split("\\|");
-                            if (ranks.length > 0 && taxonNames.length > 0) {
-                                String taxonName = taxonNames[taxonNames.length - 1];
-                                taxon.setName(taxonName);
-                            } else {
-                                taxon.setName(aResult.get("canonical_form").getValueAsText());
+                            if (aResult.has("classification_path") && aResult.has("classification_path_ranks")) {
+                                parseResult(termMatchListener, data, aResult, taxon);
                             }
 
-                            String taxonIdLabel = aResult.has("current_taxon_id") ? "current_taxon_id" : "taxon_id";
-                            String taxonIdValue = aResult.get(taxonIdLabel).getValueAsText();
-                            // see https://github.com/GlobalNamesArchitecture/gni/issues/35
-                            if (!StringUtils.startsWith(taxonIdValue, "gn:")) {
-                                String externalId = source.getProvider().getIdPrefix() + taxonIdValue;
-                                taxon.setExternalId(externalId);
-                                Long suppliedId = data.has("supplied_id") ? data.get("supplied_id").getValueAsLong() : null;
-                                JsonNode supplied_name_string = data.get("supplied_name_string");
-
-                                if (aResult.has("match_type") && aResult.get("match_type").getIntValue() < 3) {
-                                    termMatchListener.foundTaxonForName(suppliedId, supplied_name_string.getTextValue(), taxon);
-                                }
-                            }
                         }
                     }
                 }
@@ -131,6 +105,39 @@ public class GlobalNamesService extends BaseHttpClientService implements TaxonPr
             throw new TaxonPropertyLookupServiceException("Failed to query", e);
         } catch (IOException e) {
             throw new TaxonPropertyLookupServiceException("Failed to query", e);
+        }
+    }
+
+    protected void parseResult(TermMatchListener termMatchListener, JsonNode data, JsonNode aResult, Taxon taxon) {
+        String classificationPath = aResult.get("classification_path").getValueAsText();
+        taxon.setPath(classificationPath);
+        String pathRanks = aResult.get("classification_path_ranks").getValueAsText();
+        taxon.setPathNames(pathRanks);
+        String[] ranks = pathRanks.split("\\|");
+        if (ranks.length > 0) {
+            String rank = ranks[ranks.length - 1];
+            taxon.setRank(rank);
+        }
+        String[] taxonNames = classificationPath.split("\\|");
+        if (ranks.length > 0 && taxonNames.length > 0) {
+            String taxonName = taxonNames[taxonNames.length - 1];
+            taxon.setName(taxonName);
+        } else {
+            taxon.setName(aResult.get("canonical_form").getValueAsText());
+        }
+
+        String taxonIdLabel = aResult.has("current_taxon_id") ? "current_taxon_id" : "taxon_id";
+        String taxonIdValue = aResult.get(taxonIdLabel).getValueAsText();
+        // see https://github.com/GlobalNamesArchitecture/gni/issues/35
+        if (!StringUtils.startsWith(taxonIdValue, "gn:")) {
+            String externalId = source.getProvider().getIdPrefix() + taxonIdValue;
+            taxon.setExternalId(externalId);
+            Long suppliedId = data.has("supplied_id") ? data.get("supplied_id").getValueAsLong() : null;
+            JsonNode supplied_name_string = data.get("supplied_name_string");
+
+            if (aResult.has("match_type") && aResult.get("match_type").getIntValue() < 3) {
+                termMatchListener.foundTaxonForName(suppliedId, supplied_name_string.getTextValue(), taxon);
+            }
         }
     }
 
