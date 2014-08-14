@@ -91,27 +91,11 @@ public class StudyImporterForSIAD extends BaseStudyImporter {
     }
 
     private void downloadAndImportResource(Study study, String prefix, String resource) throws StudyImporterException {
-        LOG.info("resource [" + resource + "] downloading ...");
-        HttpResponse response = null;
         String resourceURI = prefix + resource;
+
         try {
-            response = HttpUtil.createHttpClient().execute(new HttpGet(resourceURI));
-        } catch (IOException e) {
-            throw new StudyImporterException("failed to access resource [" + resourceURI + "]", e);
-        }
-        File tmpFile = null;
-        try {
-            tmpFile = File.createTempFile("inter", ".txt");
-        } catch (IOException e) {
-            throw new StudyImporterException("failed to create tmp file", e);
-        }
-        tmpFile.deleteOnExit();
-        FileOutputStream fos = null;
-        try {
-            fos = new FileOutputStream(tmpFile);
-            IOUtils.copy(response.getEntity().getContent(), fos);
-            LOG.info("resource [" + resource + "] downloaded.");
-            LabeledCSVParser labeledCSVParser = new LabeledCSVParser(new CSVParser(new FileInputStream(tmpFile), '\t'));
+            LabeledCSVParser labeledCSVParser = parserFactory.createParser(resourceURI, "UTF-8");
+            labeledCSVParser.changeDelimiter('\t');
             while (labeledCSVParser.getLine() != null) {
                 String name = labeledCSVParser.getValueByLabel("name");
                 Specimen specimen = nodeFactory.createSpecimen(name);
@@ -126,7 +110,7 @@ public class StudyImporterForSIAD extends BaseStudyImporter {
         } catch (NodeFactoryException e) {
             throw new StudyImporterException("failed to map data", e);
         } catch (IOException e) {
-            throw new StudyImporterException("failed to read resource [" + resourceURI + "]");
+            throw new StudyImporterException("failed to read resource [" + resourceURI + "]", e);
         }
     }
 }
