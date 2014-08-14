@@ -34,7 +34,7 @@ public class DOIResolverImplIT {
     @Test
     public void findCitationForDOIStrangeCharacters() throws IOException {
         String citation = new DOIResolverImpl().findCitationForDOI("http://dx.doi.org/10.1007/s00300-004-0645-x");
-        assertThat(citation, is("Mesa M, Dal� M, Vacchi M. Trophic ecology of the emerald notothen Trematomus bernacchii (Pisces, Nototheniidae) from Terra Nova Bay, Ross Sea, Antarctica. Polar Biology [Internet]. 2004 October;27(11):721–728. Available from: http://dx.doi.org/10.1007/s00300-004-0645-x"));
+        assertThat(citation, is("La Mesa M, Dalú M, Vacchi M. Trophic ecology of the emerald notothen Trematomus bernacchii (Pisces, Nototheniidae) from Terra Nova Bay, Ross Sea, Antarctica. Polar Biology [Internet]. 2004 July 27;27(11):721–728. Available from: http://dx.doi.org/10.1007/s00300-004-0645-x"));
     }
 
     @Test
@@ -46,7 +46,7 @@ public class DOIResolverImplIT {
     @Test
     public void findCitationForDOIEscaped() throws IOException {
         String citationForDOI = new DOIResolverImpl().findCitationForDOI("http://dx.doi.org/10.1577/1548-8659(1973)102<511:fhojmf>2.0.co;2");
-        assertThat(citationForDOI, is("Carr WES, Adams CA. Food Habits of Juvenile Marine Fishes Occupying Seagrass Beds in the Estuarine Zone near Crystal River, Florida. Transactions of the American Fisheries Society [Internet]. 1973 July;102(3):511-540. Available from: http://dx.doi.org/10.1577/1548-8659(1973)102<511:FHOJMF>2.0.CO;2"));
+        assertThat(citationForDOI, is("Carr WES, Adams CA. Food Habits of Juvenile Marine Fishes Occupying Seagrass Beds in the Estuarine Zone near Crystal River, Florida. Transactions of the American Fisheries Society [Internet]. 1973 July;102(3):511–540. Available from: http://dx.doi.org/10.1577/1548-8659(1973)102<511:fhojmf>2.0.co;2"));
     }
 
     @Test
@@ -57,7 +57,7 @@ public class DOIResolverImplIT {
 @Test
     public void findCitationForDOI3() throws IOException {
         String citationForDOI = new DOIResolverImpl().findCitationForDOI("http://dx.doi.org/10.2307/177149");
-        assertThat(citationForDOI, is("Yodzis P. DIFFUSE EFFECTS IN FOOD WEBS. Ecology [Internet]. 2000 January;81(1):261-266. Available from: http://dx.doi.org/10.1890/0012-9658(2000)081[0261:DEIFW]2.0.CO;2"));
+        assertThat(citationForDOI, is("Yodzis P. DIFFUSE EFFECTS IN FOOD WEBS. Ecology [Internet]. 2000 January;81(1):261–266. Available from: http://dx.doi.org/10.1890/0012-9658(2000)081[0261:DEIFW]2.0.CO;2"));
     }
 
     @Test

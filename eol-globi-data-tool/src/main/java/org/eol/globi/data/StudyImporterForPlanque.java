@@ -121,7 +121,7 @@ public class StudyImporterForPlanque extends BaseStudyImporter {
             longReference = refMap.get(shortReference);
         }
 
-        Study localStudy = nodeFactory.getOrCreateStudy("PLANGUE-" + shortReference, null, null, null, longReference, null, SOURCE);
+        Study localStudy = nodeFactory.getOrCreateStudy("PLANQUE-" + shortReference, null, null, null, longReference, null, SOURCE);
         if (StringUtils.isNotBlank(msg)) {
             getLogger().warn(localStudy, msg);
         }

@@ -266,7 +266,7 @@ public class NodeFactory {
                         study.setCitation(doiResolver.findCitationForDOI(doi));
                     }
                 } catch (IOException e) {
-                    LOG.warn("failed to lookup doi for [" + title + "]");
+                    LOG.warn("failed to lookup doi for [" + title + "]", e);
                 }
             }
             studies.add(node, Study.TITLE, title);
@@ -323,7 +323,7 @@ public class NodeFactory {
                 try {
                     enrichLocationWithEcoRegions(location);
                 } catch (NodeFactoryException e) {
-                    LOG.error("failed to create eco region for location (" + location.getLatitude() + ", " + location.getLongitude() + ")");
+                    LOG.error("failed to create eco region for location (" + location.getLatitude() + ", " + location.getLongitude() + ")", e);
                 }
             }
         }
@@ -372,7 +372,7 @@ public class NodeFactory {
                 terms.add(new org.eol.globi.domain.Term(externalId, name));
             }
         } catch (TermLookupServiceException e) {
-            throw new NodeFactoryException("failed to lookup environment [" + name + "]");
+            throw new NodeFactoryException("failed to lookup environment [" + name + "]", e);
         }
 
         return addEnvironmentToLocation(location, terms);
