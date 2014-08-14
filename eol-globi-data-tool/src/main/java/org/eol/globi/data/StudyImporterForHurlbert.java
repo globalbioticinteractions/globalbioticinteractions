@@ -2,6 +2,7 @@ package org.eol.globi.data;
 
 import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.collections.SetUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -36,7 +37,6 @@ public class StudyImporterForHurlbert extends BaseStudyImporter {
 
 
         try {
-
             LabeledCSVParser parser = parserFactory.createParser(RESOURCE, "UTF-8");
             while (parser.getLine() != null) {
                 String sourceCitation = parser.getValueByLabel("Source");

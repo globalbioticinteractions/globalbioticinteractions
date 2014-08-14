@@ -25,7 +25,6 @@ public class StudyImporterForHurlbertTest extends GraphDBTestCase {
         StudyImporter importer = new StudyImporterForHurlbert(factory, nodeFactory);
         importer.importStudy();
 
-
         List<Study> allStudies = NodeFactory.findAllStudies(getGraphDb());
         assertThat(allStudies.size(), is(1));
 

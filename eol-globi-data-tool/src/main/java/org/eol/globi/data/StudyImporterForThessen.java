@@ -1,19 +1,16 @@
 package org.eol.globi.data;
 
 import com.Ostermiller.util.CSVParser;
+import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpGet;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
-import org.eol.globi.util.HttpUtil;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -32,16 +29,9 @@ public class StudyImporterForThessen extends BaseStudyImporter {
         String citation = "A. Thessen. 2014. Species associations extracted from EOL text data objects via text mining. Accessed at " + RESOURCE + " .";
         Study study = nodeFactory.getOrCreateStudy("Thessen 2014", citation, null);
         study.setCitationWithTx(citation);
-        HttpGet httpGet = new HttpGet(RESOURCE);
-        File tmpFile = null;
-        InputStream is = null;
         try {
-            tmpFile = File.createTempFile("thessen", ".csv");
-            LOG.info("remote file to [" + tmpFile.getAbsolutePath() + "] caching...");
-            saveResponseToTempFile(httpGet, tmpFile);
-            LOG.info("remote file to [" + tmpFile.getAbsolutePath() + "] cached.");
-            is = new FileInputStream(tmpFile);
-            CSVParser parser = new CSVParser(is, '\t');
+            LabeledCSVParser parser = parserFactory.createParser(RESOURCE, "UTF-8");
+            parser.changeDelimiter('\t');
             String[] line;
             while ((line = parser.getLine()) != null) {
                 if (importFilter.shouldImportRecord((long)parser.lastLineNumber())) {
@@ -60,20 +50,8 @@ public class StudyImporterForThessen extends BaseStudyImporter {
 
         } catch (IOException e) {
             throw new StudyImporterException("failed to access [" + RESOURCE + "]", e);
-        } finally {
-            IOUtils.closeQuietly(is);
-            if (tmpFile != null) {
-                tmpFile.delete();
-            }
         }
         return study;
     }
 
-    private void saveResponseToTempFile(HttpGet httpGet, File tmpFile) throws IOException {
-        HttpResponse response = HttpUtil.createHttpClient().execute(httpGet);
-        FileOutputStream fos = new FileOutputStream(tmpFile);
-        IOUtils.copy(response.getEntity().getContent(), fos);
-        fos.flush();
-        IOUtils.closeQuietly(fos);
-    }
 }
