@@ -7,6 +7,12 @@ import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.vocabulary.OWL;
 import com.hp.hpl.jena.vocabulary.RDF;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.jena.riot.RDFDataMgr;
+import org.apache.jena.riot.RDFFormat;
+import org.apache.jena.riot.RDFWriterRegistry;
+import org.apache.jena.riot.WriterDatasetRIOT;
+import org.apache.jena.riot.WriterDatasetRIOTFactory;
+import org.apache.jena.riot.WriterGraphRIOTFactory;
 import org.eol.globi.domain.Environment;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.Location;
@@ -193,7 +199,8 @@ public class LittleTurtleExporter implements StudyExporter {
         if (null != model) {
             model.setNsPrefix("OBO", OBO_PREFIX);
             model.setNsPrefix("EOL", "http://eol.org/pages/");
-            model.write(w, "TURTLE");
+            // https://jena.apache.org/documentation/io/rdf-output.html
+            RDFDataMgr.write(w, model.getGraph(), RDFFormat.TURTLE_BLOCKS);
         }
     }
 
