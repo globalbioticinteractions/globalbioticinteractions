@@ -84,9 +84,6 @@ public class TaxonServiceImpl implements TaxonService {
                     firstMatchingTaxon = new TaxonNode(matchingTaxon);
                 }
             }
-            if (matchingTaxa.hasNext()) {
-                LOG.warn("found duplicate taxon for [" + value + "]");
-            }
             matchingTaxa.close();
         }
         return firstMatchingTaxon;

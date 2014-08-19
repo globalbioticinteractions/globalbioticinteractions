@@ -3,6 +3,7 @@ package org.eol.globi.data;
 import com.Ostermiller.util.CSVParser;
 import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.HttpResponse;
@@ -10,6 +11,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
+import org.eol.globi.domain.TaxonomyProvider;
 import org.eol.globi.util.HttpUtil;
 import org.joda.time.DateTime;
 
@@ -98,7 +100,9 @@ public class StudyImporterForSIAD extends BaseStudyImporter {
             labeledCSVParser.changeDelimiter('\t');
             while (labeledCSVParser.getLine() != null) {
                 String name = labeledCSVParser.getValueByLabel("name");
-                Specimen specimen = nodeFactory.createSpecimen(name);
+                String source = labeledCSVParser.getValueByLabel("source");
+                String externalId = StringUtils.replace(source, "http://biodiversity.org.au/afd/taxa/", TaxonomyProvider.ID_PREFIX_LIVING_ATLAS_OF_AUSTRALIA);
+                Specimen specimen = nodeFactory.createSpecimen(name, externalId);
                 String hostName = labeledCSVParser.getValueByLabel("host name");
                 Specimen hostSpecimen = nodeFactory.createSpecimen(hostName);
                 InteractType type = map.get(labeledCSVParser.getValueByLabel("interaction"));
