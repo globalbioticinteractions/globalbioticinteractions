@@ -128,11 +128,11 @@ public class EOLService extends BaseHttpClientService implements TaxonPropertyLo
         }
 
         if (ranks.size() > 0) {
-            properties.put(PropertyAndValueDictionary.PATH, StringUtils.join(ranks, " | "));
+            properties.put(PropertyAndValueDictionary.PATH, StringUtils.join(ranks, CharsetConstant.SEPARATOR));
         }
 
         if (rankNames.size() == ranks.size()) {
-            properties.put(PropertyAndValueDictionary.PATH_NAMES, StringUtils.join(rankNames, " | "));
+            properties.put(PropertyAndValueDictionary.PATH_NAMES, StringUtils.join(rankNames, CharsetConstant.SEPARATOR));
         }
 
     }

@@ -5,6 +5,7 @@ import com.vividsolutions.jts.geom.Point;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.eol.globi.data.CharsetConstant;
 import org.geotools.data.FileDataStore;
 import org.geotools.data.FileDataStoreFinder;
 import org.geotools.data.simple.SimpleFeatureCollection;
@@ -117,7 +118,7 @@ public class EcoregionFinderImpl implements EcoregionFinder {
         StringBuilder path = new StringBuilder();
         for (String label : config.getPathLabels()) {
             if (path.length() > 0) {
-                path.append(" | ");
+                path.append(CharsetConstant.SEPARATOR);
             }
             if (props.containsKey(label)) {
                 String value = props.get(label).toString();
