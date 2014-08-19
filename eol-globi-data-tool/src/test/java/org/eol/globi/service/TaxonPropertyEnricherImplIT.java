@@ -131,4 +131,21 @@ public class TaxonPropertyEnricherImplIT extends GraphDBTestCase {
         assertThat(count, is(1));
     }
 
+    @Test
+    public void atlasOfLivingAustralia() throws NodeFactoryException {
+        Specimen specimen = nodeFactory.createSpecimen(null, "urn:lsid:biodiversity.org.au:afd.taxon:aa745ff0-c776-4d0e-851d-369ba0e6f537");
+        assertThat(specimen, is(notNullValue()));
+        Iterable<Relationship> classifications = specimen.getClassifications();
+        int count = 0;
+        for (Relationship classification : classifications) {
+            TaxonNode taxonNode = new TaxonNode(classification.getEndNode());
+            assertThat(taxonNode.getName(), is("Macropus rufus"));
+            assertThat(taxonNode.getExternalId(), is("urn:lsid:biodiversity.org.au:afd.taxon:aa745ff0-c776-4d0e-851d-369ba0e6f537"));
+            count++;
+        }
+        assertThat(count, is(1));
+    }
+
+
+
 }

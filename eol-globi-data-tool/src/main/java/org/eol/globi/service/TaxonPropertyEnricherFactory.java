@@ -15,6 +15,7 @@ public class TaxonPropertyEnricherFactory {
                 add(new WoRMSService());
                 //add(new ITISService());
                 add(new GulfBaseService());
+                add(new AtlasOfLivingAustraliaService());
             }
         };
         taxonEnricher.setServices(services);

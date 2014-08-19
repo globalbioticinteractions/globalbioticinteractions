@@ -54,8 +54,7 @@ public class EOLService extends BaseHttpClientService implements TaxonPropertyLo
                     throw new TaxonPropertyLookupServiceException("failed to parse eol id [" + eolPageIdString + "]");
                 }
             }
-        }
-        if (null == id) {
+        } else {
             id = getPageId(name, true);
         }
         return id;
