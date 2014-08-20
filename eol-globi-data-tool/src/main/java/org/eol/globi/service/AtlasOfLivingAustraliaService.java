@@ -145,6 +145,11 @@ public class AtlasOfLivingAustraliaService extends BaseHttpClientService impleme
             info.put(PropertyAndValueDictionary.RANK, getRankString(rank));
         }
 
+        if (classification.has("guid")) {
+            String guid = classification.get("guid").getTextValue();
+            info.put(PropertyAndValueDictionary.EXTERNAL_ID, guid);
+        }
+
         for (String rank : ranks) {
             if (classification.has(rank)) {
                 String textValue = classification.get(rank).getTextValue();

@@ -1,5 +1,6 @@
 package org.eol.globi.util;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.domain.TaxonomyProvider;
 
 import java.util.HashMap;
@@ -33,5 +34,15 @@ public class ExternalIdUtil {
             put(TaxonomyProvider.ID_PREFIX_GBIF, "http://www.gbif.org/species/");
             put(TaxonomyProvider.ID_PREFIX_HTTP, TaxonomyProvider.ID_PREFIX_HTTP);
         }};
+    }
+
+    public static boolean isSupported(String externalId) {
+        boolean supported = false;
+        for (String prefix : getURLPrefixMap().values()) {
+            if (StringUtils.startsWith(externalId, prefix)) {
+                supported = true;
+            }
+        }
+        return supported;
     }
 }

@@ -11,6 +11,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.data.CharsetConstant;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.TaxonomyProvider;
+import org.eol.globi.util.ExternalIdUtil;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -45,7 +46,7 @@ public class EOLService extends BaseHttpClientService implements TaxonPropertyLo
 
     private Long getEOLPageId(String name, String externalId) throws TaxonPropertyLookupServiceException {
         Long id = null;
-        if (StringUtils.isNotBlank(externalId)) {
+        if (ExternalIdUtil.isSupported(externalId)) {
             if (externalId.startsWith(TaxonomyProvider.ID_PREFIX_EOL)) {
                 String eolPageIdString = externalId.replaceFirst(TaxonomyProvider.ID_PREFIX_EOL, "");
                 try {

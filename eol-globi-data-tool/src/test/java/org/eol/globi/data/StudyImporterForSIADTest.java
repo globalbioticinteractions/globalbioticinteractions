@@ -18,20 +18,13 @@ public class StudyImporterForSIADTest extends GraphDBTestCase {
         StudyImporterForSIAD importerForSAID = new StudyImporterForSIAD(new ParserFactoryImpl(), nodeFactory);
         importerForSAID.importStudy();
         List<Study> allStudies = NodeFactory.findAllStudies(getGraphDb());
-        assertThat(allStudies.size(), is(1));
-
-        Study foundStudy = allStudies.get(0);
-        Iterable<Relationship> relationships = foundStudy.getSpecimens();
-        int count = 0;
-        for (Relationship relationship : relationships) {
-            count++;
-        }
-
-        assertThat(count > 14000, is(true));
+        assertThat(allStudies.size() > 1, is(true));
 
         TaxonNode taxon = nodeFactory.findTaxon("Anisakis");
         assertThat(taxon, is(notNullValue())) ;
 
+        taxon = nodeFactory.findTaxon("Abbreviata");
+        assertThat(taxon, is(notNullValue())) ;
     }
 
 }

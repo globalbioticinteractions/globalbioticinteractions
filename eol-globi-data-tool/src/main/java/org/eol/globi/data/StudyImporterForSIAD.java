@@ -1,24 +1,14 @@
 package org.eol.globi.data;
 
-import com.Ostermiller.util.CSVParser;
 import com.Ostermiller.util.LabeledCSVParser;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpGet;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
-import org.eol.globi.domain.TaxonomyProvider;
-import org.eol.globi.util.HttpUtil;
 import org.joda.time.DateTime;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -79,20 +69,19 @@ public class StudyImporterForSIAD extends BaseStudyImporter {
 
     @Override
     public Study importStudy() throws StudyImporterException {
-        String source = "Species Interactions of Australia Database (SIAD): Helping us to understand species interactions in Australia and beyond. Accessed at http://ala1.science.unsw.edu.au/ on " + new DateTime().toString("dd MMM YYYY") + ".";
-        Study study = nodeFactory.getOrCreateStudy("SIAD", source, null);
-        study.setCitationWithTx(source);
         String prefix = "http://www.discoverlife.org/siad/data/source/biodiversity.org.au:dataexport/";
         String resources[] = {
                 "interactions.Heteroptera.txt",
                 "interactions.txt"};
         for (String resource : resources) {
-            downloadAndImportResource(study, prefix, resource);
+            downloadAndImportResource(prefix, resource);
         }
-        return study;
+        return null;
     }
 
-    private void downloadAndImportResource(Study study, String prefix, String resource) throws StudyImporterException {
+    private void downloadAndImportResource(String prefix, String resource) throws StudyImporterException {
+        String source = "Species Interactions of Australia Database (SIAD): Helping us to understand species interactions in Australia and beyond. Accessed at http://ala1.science.unsw.edu.au/ on " + new DateTime().toString("dd MMM YYYY") + ".";
+
         String resourceURI = prefix + resource;
 
         try {
@@ -100,13 +89,19 @@ public class StudyImporterForSIAD extends BaseStudyImporter {
             labeledCSVParser.changeDelimiter('\t');
             while (labeledCSVParser.getLine() != null) {
                 String name = labeledCSVParser.getValueByLabel("name");
-                String source = labeledCSVParser.getValueByLabel("source");
-                String externalId = StringUtils.replace(source, "http://biodiversity.org.au/afd/taxa/", TaxonomyProvider.ID_PREFIX_LIVING_ATLAS_OF_AUSTRALIA);
-                Specimen specimen = nodeFactory.createSpecimen(name, externalId);
+                Specimen specimen = nodeFactory.createSpecimen(name);
                 String hostName = labeledCSVParser.getValueByLabel("host name");
                 Specimen hostSpecimen = nodeFactory.createSpecimen(hostName);
                 InteractType type = map.get(labeledCSVParser.getValueByLabel("interaction"));
                 specimen.interactsWith(hostSpecimen, type);
+
+                String ref = labeledCSVParser.getValueByLabel("source");
+                String title = "SIAD-" + ref;
+                Study study = nodeFactory.findStudy(title);
+                if (study == null) {
+                    study = nodeFactory.getOrCreateStudy(title, source, null);
+                    study.setCitationWithTx(ref);
+                }
                 study.collected(specimen);
             }
         } catch (FileNotFoundException e) {

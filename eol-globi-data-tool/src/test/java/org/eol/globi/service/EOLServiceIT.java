@@ -403,6 +403,15 @@ public class EOLServiceIT {
     }
 
     @Test
+    public void lookupAriopsisFelis() throws TaxonPropertyLookupServiceException {
+        HashMap<String, String> properties = new HashMap<String, String>() {{
+        }};
+        new EOLService().lookupPropertiesByName("Ariopsis felis", properties);
+        assertThat(properties.get(PropertyAndValueDictionary.EXTERNAL_ID), Is.is("EOL:223038"));
+        assertThat(properties.get(PropertyAndValueDictionary.PATH), containsString("Ariopsis felis"));
+    }
+
+    @Test
     public void lookupTaxonPathByScientificName() throws TaxonPropertyLookupServiceException {
         HashMap<String, String> properties = new HashMap<String, String>();
         new EOLService().lookupPropertiesByName("Homo sapiens", properties);
