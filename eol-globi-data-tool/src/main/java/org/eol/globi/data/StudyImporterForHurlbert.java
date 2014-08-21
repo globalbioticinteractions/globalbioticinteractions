@@ -21,7 +21,7 @@ import java.util.Set;
 
 public class StudyImporterForHurlbert extends BaseStudyImporter {
 
-    public static final String RESOURCE = "https://raw.githubusercontent.com/hurlbertlab/dietdatabase/master/AvianDietDatabase.csv";
+    public static final String RESOURCE = "https://raw.githubusercontent.com/hurlbertlab/dietdatabase/master/AvianDietDatabase.txt";
 
     private static final Log LOG = LogFactory.getLog(StudyImporterForHurlbert.class);
 
@@ -38,6 +38,7 @@ public class StudyImporterForHurlbert extends BaseStudyImporter {
 
         try {
             LabeledCSVParser parser = parserFactory.createParser(RESOURCE, "UTF-8");
+            parser.changeDelimiter('\t');
             while (parser.getLine() != null) {
                 String sourceCitation = parser.getValueByLabel("Source");
                 Study study = nodeFactory.getOrCreateStudy(sourceCitation, null, null, null, sourceCitation, null, "Avian Diet Database. Unpublished data provided by Allen Hurlbert. For more info see http://labs.bio.unc.edu/Hurlbert/ .", null);
@@ -55,40 +56,10 @@ public class StudyImporterForHurlbert extends BaseStudyImporter {
                     }
                 }
 
-                String predatorName = StringUtils.trim(parser.getValueByLabel("Scientific_Name"));
-                try {
-                    Specimen predatorSpecimen = nodeFactory.createSpecimen(predatorName);
-                    //Longitude,Latitude,Altitude_min_m,Altitude_mean_m,Altitude_max_m,
-
-                    Specimen preySpecimen = nodeFactory.createSpecimen(preyTaxonName);
-
-                    String preyStage = StringUtils.trim(parser.getValueByLabel("Prey_Stage"));
-                    if (StringUtils.isNotBlank(preyStage)) {
-                        Term lifeStage = nodeFactory.getOrCreateLifeStage("HULBERT:" + StringUtils.replace(preyStage, " ", "_"), preyStage);
-                        preySpecimen.setLifeStage(lifeStage);
-                    }
-
-                    String preyPart = StringUtils.trim(parser.getValueByLabel("Prey_Part"));
-                    if (StringUtils.isNotBlank(preyPart)) {
-                        Term term = nodeFactory.getOrCreateBodyPart("HULBERT:" + StringUtils.replace(preyPart, " ", "_"), preyPart);
-                        preySpecimen.setBodyPart(term);
-                    }
-
-                    predatorSpecimen.ate(preySpecimen);
-                    // Observation_Season,,
-                    Relationship collected = study.collected(predatorSpecimen);
-                    addCollectionDate(parser, study, collected);
-                } catch (NodeFactoryException e) {
-                    throw new StudyImporterException("failed to create interaction between [" + predatorName + "] and [" + preyTaxonName + "] on line [" + parser.lastLineNumber() + "] in [" + RESOURCE + "]");
+                String predatorTaxonName = StringUtils.trim(parser.getValueByLabel("Scientific_Name"));
+                if (StringUtils.isNotBlank(predatorTaxonName) || StringUtils.isNotBlank(preyTaxonName)) {
+                    importInteraction(regions, locales, habitats, parser, study, preyTaxonName, predatorTaxonName);
                 }
-
-
-                //Location_Region,Location_Specific
-                regions.add(parser.getValueByLabel("Location_Region"));
-                locales.add(parser.getValueByLabel("Location_Specific"));
-                habitats.add(parser.getValueByLabel("Habitat_type"));
-
-
             }
         } catch (IOException e) {
             throw new StudyImporterException("failed to import [" + RESOURCE + "]", e);
@@ -98,6 +69,40 @@ public class StudyImporterForHurlbert extends BaseStudyImporter {
         LOG.info("unmapped locales [" + StringUtils.join(locales.iterator(), ";") + "]");
         LOG.info("unmapped regions [" + StringUtils.join(regions.iterator(), ";") + "]");
         return null;
+    }
+
+    protected void importInteraction(Set<String> regions, Set<String> locales, Set<String> habitats, LabeledCSVParser parser, Study study, String preyTaxonName, String predatorName) throws StudyImporterException {
+        try {
+            Specimen predatorSpecimen = nodeFactory.createSpecimen(predatorName);
+            //Longitude,Latitude,Altitude_min_m,Altitude_mean_m,Altitude_max_m,
+
+            Specimen preySpecimen = nodeFactory.createSpecimen(preyTaxonName);
+
+            String preyStage = StringUtils.trim(parser.getValueByLabel("Prey_Stage"));
+            if (StringUtils.isNotBlank(preyStage)) {
+                Term lifeStage = nodeFactory.getOrCreateLifeStage("HULBERT:" + StringUtils.replace(preyStage, " ", "_"), preyStage);
+                preySpecimen.setLifeStage(lifeStage);
+            }
+
+            String preyPart = StringUtils.trim(parser.getValueByLabel("Prey_Part"));
+            if (StringUtils.isNotBlank(preyPart)) {
+                Term term = nodeFactory.getOrCreateBodyPart("HULBERT:" + StringUtils.replace(preyPart, " ", "_"), preyPart);
+                preySpecimen.setBodyPart(term);
+            }
+
+            predatorSpecimen.ate(preySpecimen);
+            // Observation_Season,,
+            Relationship collected = study.collected(predatorSpecimen);
+            addCollectionDate(parser, study, collected);
+        } catch (NodeFactoryException e) {
+            throw new StudyImporterException("failed to create interaction between [" + predatorName + "] and [" + preyTaxonName + "] on line [" + parser.lastLineNumber() + "] in [" + RESOURCE + "]", e);
+        }
+
+
+        //Location_Region,Location_Specific
+        regions.add(parser.getValueByLabel("Location_Region"));
+        locales.add(parser.getValueByLabel("Location_Specific"));
+        habitats.add(parser.getValueByLabel("Habitat_type"));
     }
 
     private void addCollectionDate(LabeledCSVParser parser, Study study, Relationship collected) {
