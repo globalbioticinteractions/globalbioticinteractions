@@ -8,6 +8,7 @@ import java.util.List;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
+import static org.junit.matchers.JUnitMatchers.containsString;
 
 public class StudyImporterForHurlbertTest extends GraphDBTestCase {
 
@@ -29,7 +30,7 @@ public class StudyImporterForHurlbertTest extends GraphDBTestCase {
         assertThat(allStudies.size(), is(1));
 
         Study study = allStudies.get(0);
-        assertThat(study.getSource(), is("Avian Diet Database. Unpublished data provided by Allen Hurlbert. For more info see http://labs.bio.unc.edu/Hurlbert/ ."));
+        assertThat(study.getSource(), containsString("Allen Hurlbert. Avian Diet Database (https://github.com/hurlbertlab/dietdatabase/). Accessed at https://raw.githubusercontent.com/hurlbertlab/dietdatabase/master/AvianDietDatabase.txt"));
         assertThat(study.getCitation(), is("Strong, A. M. 2000. Divergent foraging strategies of two neotropical migrant warblers: Implications for winter habitat use. Auk 117(2):381-392."));
 
         assertThat(nodeFactory.findTaxon("Seiurus aurocapillus"), is(notNullValue()));
