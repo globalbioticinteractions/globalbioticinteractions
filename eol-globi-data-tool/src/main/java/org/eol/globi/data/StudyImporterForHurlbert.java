@@ -41,7 +41,7 @@ public class StudyImporterForHurlbert extends BaseStudyImporter {
             parser.changeDelimiter('\t');
             while (parser.getLine() != null) {
                 String sourceCitation = parser.getValueByLabel("Source");
-                Study study = nodeFactory.getOrCreateStudy(sourceCitation, null, null, null, sourceCitation, null, "Avian Diet Database. Unpublished data provided by Allen Hurlbert. For more info see http://labs.bio.unc.edu/Hurlbert/ .", null);
+                Study study = nodeFactory.getOrCreateStudy(sourceCitation, null, null, null, sourceCitation, null, "Allen Hurlbert. Avian Diet Database (https://github.com/hurlbertlab/dietdatabase/). " + ReferenceUtil.createLastAccessedString(RESOURCE), null);
                 study.setCitationWithTx(sourceCitation);
 
                 //ID,Common_Name,Scientific_Name,,,,Prey_Common_Name,Fraction_Diet_By_Wt_or_Vol,Fraction_Diet_By_Items,Fraction_Occurrence,Fraction_Diet_Unspecified,Item Sample Size,Bird Sample size,Sites,Study Type,Notes,Source

@@ -1,12 +1,12 @@
 package org.eol.globi.data;
 
 import com.Ostermiller.util.LabeledCSVParser;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
-import org.joda.time.DateTime;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -61,6 +61,10 @@ public class StudyImporterForSIAD extends BaseStudyImporter {
             put("Associate:Neutral:Algae associate", InteractType.INTERACTS_WITH);
         }
     };
+    public static final String PREFIX = "http://www.discoverlife.org/siad/data/source/biodiversity.org.au:dataexport/";
+    public static final String[] RESOURCES = new String[]{
+            PREFIX + "interactions.Heteroptera.txt",
+            PREFIX + "interactions.txt"};
 
     public StudyImporterForSIAD(ParserFactory parserFactory, NodeFactory nodeFactory) {
         super(parserFactory, nodeFactory);
@@ -69,23 +73,17 @@ public class StudyImporterForSIAD extends BaseStudyImporter {
 
     @Override
     public Study importStudy() throws StudyImporterException {
-        String prefix = "http://www.discoverlife.org/siad/data/source/biodiversity.org.au:dataexport/";
-        String resources[] = {
-                "interactions.Heteroptera.txt",
-                "interactions.txt"};
-        for (String resource : resources) {
-            downloadAndImportResource(prefix, resource);
+        String source = "Species Interactions of Australia Database (SIAD): Helping us to understand species interactions in Australia and beyond. "
+                + ReferenceUtil.createLastAccessedString("http://www.discoverlife.org/siad/");
+        for (String resource : RESOURCES) {
+            downloadAndImportResource(resource, source);
         }
         return null;
     }
 
-    private void downloadAndImportResource(String prefix, String resource) throws StudyImporterException {
-        String source = "Species Interactions of Australia Database (SIAD): Helping us to understand species interactions in Australia and beyond. Accessed at http://ala1.science.unsw.edu.au/ on " + new DateTime().toString("dd MMM YYYY") + ".";
-
-        String resourceURI = prefix + resource;
-
+    private void downloadAndImportResource(String resource, String source) throws StudyImporterException {
         try {
-            LabeledCSVParser labeledCSVParser = parserFactory.createParser(resourceURI, "UTF-8");
+            LabeledCSVParser labeledCSVParser = parserFactory.createParser(resource, "UTF-8");
             labeledCSVParser.changeDelimiter('\t');
             while (labeledCSVParser.getLine() != null) {
                 String name = labeledCSVParser.getValueByLabel("name");
@@ -109,7 +107,7 @@ public class StudyImporterForSIAD extends BaseStudyImporter {
         } catch (NodeFactoryException e) {
             throw new StudyImporterException("failed to map data", e);
         } catch (IOException e) {
-            throw new StudyImporterException("failed to read resource [" + resourceURI + "]", e);
+            throw new StudyImporterException("failed to read resource [" + resource + "]", e);
         }
     }
 }

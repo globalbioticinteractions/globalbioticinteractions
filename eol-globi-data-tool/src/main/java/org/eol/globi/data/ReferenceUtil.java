@@ -4,6 +4,7 @@ import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.joda.time.DateTime;
 
 import java.io.IOException;
 import java.util.Map;
@@ -39,5 +40,9 @@ public class ReferenceUtil {
             throw new StudyImporterException("failed to read resource [" + referencePath + "]", e);
         }
         return refMap;
+    }
+
+    public static String createLastAccessedString(String reference) {
+        return "Accessed at " + reference + " on " + new DateTime().toString("dd MMM YYYY") + ".";
     }
 }
