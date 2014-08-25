@@ -98,7 +98,8 @@ public class StudyImporterForSIAD extends BaseStudyImporter {
                 Study study = nodeFactory.findStudy(title);
                 if (study == null) {
                     study = nodeFactory.getOrCreateStudy(title, source, null);
-                    study.setCitationWithTx(ref);
+                    study.setCitationWithTx("ABRS 2009. Australian Faunal Directory. " + name + ". Australian Biological Resources Study, Canberra. " + ReferenceUtil.createLastAccessedString(ref));
+                    study.setExternalId(ref);
                 }
                 study.collected(specimen);
             }
