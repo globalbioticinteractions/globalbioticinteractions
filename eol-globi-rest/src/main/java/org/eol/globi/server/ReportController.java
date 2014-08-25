@@ -17,7 +17,7 @@ public class ReportController {
     @ResponseBody
     @Cacheable(value = "contributorCache")
     public String contributors(@RequestParam(required = false) final String source) throws IOException {
-        return new CypherQueryExecutor(CypherQueryBuilder.references(source)).execute(null);
+        return new CypherQueryExecutor(CypherQueryBuilder.references(source)).execute(null, false);
     }
 
     @RequestMapping(value = "/info", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
