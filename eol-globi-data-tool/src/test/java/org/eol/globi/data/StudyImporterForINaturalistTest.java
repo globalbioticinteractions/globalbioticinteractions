@@ -20,6 +20,7 @@ import static org.hamcrest.CoreMatchers.any;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.junit.matchers.JUnitMatchers.containsString;
 
@@ -33,25 +34,28 @@ public class StudyImporterForINaturalistTest extends GraphDBTestCase {
 
     @Test
     public void importUsingINatAPI() throws StudyImporterException, TaxonPropertyLookupServiceException {
-        Study study = importer.importStudy();
-        assertThat(study.getContributor(), is(""));
-        assertThat(countSpecimen(study) > 150, is(true));
+        importer.importStudy();
+        assertThat(NodeFactory.findAllStudies(getGraphDb()).size() > 150, is(true));
     }
 
     @Ignore(value = "see https://github.com/jhpoelen/eol-globi-data/issues/56")
     @Test
     public void importTestResponseWithEcologicalInteraction() throws StudyImporterException, NodeFactoryException {
         Study study = nodeFactory.createStudy("testing123");
-        importer.parseJSON(getClass().getResourceAsStream("inaturalist/response_with_ecological_interaction_field.json"), study);
+        importer.parseJSON(getClass().getResourceAsStream("inaturalist/response_with_ecological_interaction_field.json"));
         assertThat(countSpecimen(study) > 86, is(true));
     }
 
     @Test
     public void importTestResponse() throws IOException, NodeFactoryException, StudyImporterException {
-        Study study = nodeFactory.createStudy("testing123");
-        importer.parseJSON(getClass().getResourceAsStream("inaturalist/sample_inaturalist_response.json"), study);
+        importer.parseJSON(getClass().getResourceAsStream("inaturalist/sample_inaturalist_response.json"));
 
-        assertThat(countSpecimen(study), is(30));
+        assertThat(NodeFactory.findAllStudies(getGraphDb()).size(), is(30));
+
+        Study anotherStudy = nodeFactory.findStudy("INAT:831");
+        assertThat(anotherStudy, is(notNullValue()));
+        assertThat(anotherStudy.getCitation(), containsString("Ken-ichi Ueda. 2008. Argiope eating Orthoptera. iNaturalist.org. Accessed at http://inaturalist.org/observations/831 on "));
+        assertThat(anotherStudy.getExternalId(), is("http://inaturalist.org/observations/831"));
 
 
         TaxonNode sourceTaxonNode = nodeFactory.findTaxon("Arenaria interpres");
