@@ -12,6 +12,7 @@ import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.TaxonomyProvider;
+import org.eol.globi.util.ExternalIdUtil;
 import org.eol.globi.util.HttpUtil;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -186,7 +187,7 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
             Date observationDate = getObservationDate(study, observationId, observation);
 
             StringBuilder citation = buildCitation(observation, interactionType, targetTaxonName, sourceTaxonName, observationDate);
-            String url = "http://inaturalist.org/observations/" + observationId;
+            String url = ExternalIdUtil.infoURLForExternalId(TaxonomyProvider.ID_PREFIX_INATURALIST + observationId);
             citation.append(ReferenceUtil.createLastAccessedString(url));
             study.setCitationWithTx(citation.toString());
             study.setExternalId(url);

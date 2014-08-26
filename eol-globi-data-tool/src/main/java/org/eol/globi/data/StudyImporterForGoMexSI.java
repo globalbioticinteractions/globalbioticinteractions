@@ -12,6 +12,7 @@ import org.eol.globi.domain.TaxonomyProvider;
 import org.eol.globi.domain.Term;
 import org.eol.globi.service.CMECSService;
 import org.eol.globi.service.TermLookupServiceException;
+import org.eol.globi.util.ExternalIdUtil;
 import org.neo4j.graphdb.Transaction;
 
 import java.io.IOException;
@@ -169,7 +170,7 @@ public class StudyImporterForGoMexSI extends BaseStudyImporter {
         try {
             study.setPublicationYear(publicationYear);
             if (StringUtils.isNotBlank(externalId)) {
-                study.setExternalId(TaxonomyProvider.ID_PREFIX_GAME + externalId);
+                study.setExternalId(ExternalIdUtil.infoURLForExternalId(TaxonomyProvider.ID_PREFIX_GAME + externalId));
             }
             transaction.success();
         } finally {
