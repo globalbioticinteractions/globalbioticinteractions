@@ -7,6 +7,7 @@ import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.TaxonNode;
+import org.eol.globi.util.ExternalIdUtil;
 import org.junit.Test;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
@@ -37,7 +38,7 @@ public class StudyImporterForGoMexSITest extends GraphDBTestCase {
 
         assertNotNull(study);
         assertThat(study.getTitle(), is("Divita et al 1983"));
-        assertThat(study.getExternalId(), is("GAME:2689"));
+        assertThat(study.getExternalId(), is(ExternalIdUtil.infoURLForExternalId("GAME:2689")));
         assertThat(study.getContributor(), is("Regina Divita, Mischelle Creel, Peter Sheridan"));
         assertThat(study.getPublicationYear(), is("1983"));
         assertThat(study.getInstitution(), is(""));
