@@ -4,7 +4,6 @@ import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.NodeFactory;
 import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.data.taxon.CorrectionService;
-import org.eol.globi.data.taxon.TaxonNameCorrector;
 import org.eol.globi.data.taxon.TaxonServiceImpl;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.PropertyAndValueDictionary;
@@ -25,7 +24,7 @@ import static org.junit.Assert.assertThat;
 
 public class StudyExportUnmatchedSourceTaxaForStudiesTest extends GraphDBTestCase {
 
-    public static final String EXPECTED_HEADER = "\"original source taxon name\",\"original source external id\",\"unmatched normalized source taxon name\",\"unmatched normalized source external id\",\"study\",\"source\"";
+    public static final String EXPECTED_HEADER = "original source taxon name,original source external id,unmatched normalized source taxon name,unmatched normalized source external id,study,source";
 
     @Test
     public void exportOnePredatorTwoPrey() throws NodeFactoryException, IOException {
@@ -42,7 +41,8 @@ public class StudyExportUnmatchedSourceTaxaForStudiesTest extends GraphDBTestCas
             }
         };
         NodeFactory factory = factory(taxonEnricher);
-        Study study = factory.getOrCreateStudy("my study", "my first source", null);
+        String title = "my study\"";
+        Study study = factory.getOrCreateStudy(title, "my first source", null);
 
         factory.getOrCreateTaxon("Homo sapiens");
         Specimen predatorSpecimen = factory.createSpecimen("Homo sapiens");
@@ -73,14 +73,14 @@ public class StudyExportUnmatchedSourceTaxaForStudiesTest extends GraphDBTestCas
         StringWriter writer = new StringWriter();
         new StudyExportUnmatchedSourceTaxaForStudies().exportStudy(study, writer, true);
         assertThat(writer.toString(), is(EXPECTED_HEADER + "\n" +
-                        "\"Homo sapiens2\",,\"Homo sapiens2\",\"no:match\",\"my study\",\"my first source\"\n" +
-                        "\"Homo sapiens3\",\"no:match\",\"Homo sapiens3\",\"no:match\",\"my study\",\"my first source\"\n"
+                        "Homo sapiens2,,Homo sapiens2,no:match,\"my study\\\"\",my first source\n" +
+                        "Homo sapiens3,no:match,Homo sapiens3,no:match,\"my study\\\"\",my first source\n"
         ));
 
         writer = new StringWriter();
         new StudyExportUnmatchedTargetTaxaForStudies().exportStudy(study, writer, true);
-        assertThat(writer.toString(), is("\"original target taxon name\",\"original target external id\",\"unmatched normalized target taxon name\",\"unmatched normalized target external id\",\"study\",\"source\"" + "\n" +
-                        "\"Caniz\",,\"Caniz\",\"no:match\",\"my study\",\"my first source\"\n"
+        assertThat(writer.toString(), is("original target taxon name,original target external id,unmatched normalized target taxon name,unmatched normalized target external id,study,source" + "\n" +
+                        "Caniz,,Caniz,no:match,\"my study\\\"\",my first source\n"
         ));
     }
 
@@ -118,14 +118,14 @@ public class StudyExportUnmatchedSourceTaxaForStudiesTest extends GraphDBTestCas
         StringWriter writer = new StringWriter();
         new StudyExportUnmatchedSourceTaxaForStudies().exportStudy(study, writer, true);
         assertThat(writer.toString(), is(EXPECTED_HEADER + "\n" +
-                        "\"Homo sapienz\",,\"Homo sapienz\",\"no:match\",\"my study\",\"my first source\"\n"
+                        "Homo sapienz,,Homo sapienz,no:match,my study,my first source\n"
         ));
 
         writer = new StringWriter();
         new StudyExportUnmatchedTargetTaxaForStudies().exportStudy(study, writer, true);
-        assertThat(writer.toString(), is("\"original target taxon name\",\"original target external id\",\"unmatched normalized target taxon name\",\"unmatched normalized target external id\",\"study\",\"source\"" + "\n" +
-                        "\"Caniz\",,\"Caniz\",\"no:match\",\"my study\",\"my first source\"\n" +
-                        "\"Canis\",,\"Canis\",\"no:match\",\"my study\",\"my first source\"\n"
+        assertThat(writer.toString(), is("original target taxon name,original target external id,unmatched normalized target taxon name,unmatched normalized target external id,study,source" + "\n" +
+                        "Caniz,,Caniz,no:match,my study,my first source\n" +
+                        "Canis,,Canis,no:match,my study,my first source\n"
         ));
     }
 
