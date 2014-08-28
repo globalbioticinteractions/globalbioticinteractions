@@ -1,0 +1,6 @@
+GloBI Integration with http://opentreeoflife.org
+----
+
+For easy integration and version management, opentree trees and reference taxonomies have been pushed into GloBI maven repository.
+
+Integration allows to lookup phylogenetic trees for interacting species.

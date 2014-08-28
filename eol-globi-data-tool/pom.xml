@@ -60,13 +60,6 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- CVS Parsing, base 64 encoding and more -->
-        <dependency>
-            <groupId>org.ostermiller</groupId>
-            <artifactId>utils</artifactId>
-            <version>1.07.00</version>
-        </dependency>
-
         <dependency>
             <groupId>com.healthmarketscience.jackcess</groupId>
             <artifactId>jackcess</artifactId>
