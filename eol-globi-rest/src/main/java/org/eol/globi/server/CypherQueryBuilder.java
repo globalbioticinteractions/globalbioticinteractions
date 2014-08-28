@@ -235,7 +235,7 @@ public class CypherQueryBuilder {
         String cypherQuery = "START study=node:studies('*:*')" +
                 " MATCH study-[:COLLECTED]->sourceSpecimen-[interact:" + InteractUtil.allInteractionsCypherClause() + "]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon, sourceSpecimen-[:CLASSIFIED_AS]->sourceTaxon " +
                 whereClause +
-                " RETURN study.institution?, study.period?, study.description, study.contributor?, count(interact), count(distinct(sourceTaxon.name)), count(distinct(targetTaxon.name)), study.title, study.citation?, study.doi?, study.source";
+                " RETURN study.institution?, study.period?, study.description, study.contributor?, count(interact), count(distinct(sourceTaxon.name)), count(distinct(targetTaxon.name)), study.title, study.citation?, study.doi?, study.source, study.externalId?";
 
         return new CypherQuery(cypherQuery, params);
     }
