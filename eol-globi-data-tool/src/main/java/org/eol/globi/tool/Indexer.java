@@ -11,7 +11,7 @@ import org.eol.globi.data.taxon.TaxonService;
 import org.eol.globi.data.taxon.TaxonServiceImpl;
 import org.eol.globi.db.GraphService;
 import org.eol.globi.service.PropertyEnricherException;
-import org.eol.globi.service.TaxonPropertyEnricherFactory;
+import org.eol.globi.service.TaxonEnricherFactory;
 import org.neo4j.cypher.javacompat.ExecutionEngine;
 import org.neo4j.cypher.javacompat.ExecutionResult;
 import org.neo4j.graphdb.GraphDatabaseService;
@@ -45,7 +45,7 @@ public class Indexer {
         ExecutionEngine executionEngine = new ExecutionEngine(previousGraphService);
 
         final GraphDatabaseService freshGraphService = GraphService.startNeo4j(baseDir);
-        TaxonService taxonService = new TaxonServiceImpl(TaxonPropertyEnricherFactory.createTaxonEnricher()
+        TaxonService taxonService = new TaxonServiceImpl(TaxonEnricherFactory.createTaxonEnricher()
                 , new TaxonNameCorrector()
                 , freshGraphService);
         indexUsingExternalIds(executionEngine, taxonService);

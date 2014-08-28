@@ -63,7 +63,7 @@ public class UKSISuggestionServiceTest {
         HashMap<String, String> properties = new HashMap<String, String>();
         properties.put(PropertyAndValueDictionary.NAME, "Yogi the Bear");
         uksiSuggestionService.enrich(properties);
-        assertThat(properties.get(PropertyAndValueDictionary.NAME), is(nullValue()));
+        assertThat(properties.get(PropertyAndValueDictionary.NAME), is("Yogi the Bear"));
         assertThat(properties.get(PropertyAndValueDictionary.EXTERNAL_ID), is(nullValue()));
     }
 

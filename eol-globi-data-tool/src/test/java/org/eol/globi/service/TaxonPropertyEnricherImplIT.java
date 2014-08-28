@@ -28,7 +28,7 @@ public class TaxonPropertyEnricherImplIT extends GraphDBTestCase {
 
     @Before
     public void start() {
-        enricher = TaxonPropertyEnricherFactory.createTaxonEnricher();
+        enricher = TaxonEnricherFactory.createTaxonEnricher();
         nodeFactory = new NodeFactory(getGraphDb(), new TaxonServiceImpl(enricher, new TaxonNameCorrector(), getGraphDb()));
     }
 

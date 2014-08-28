@@ -3,7 +3,7 @@ package org.eol.globi.service;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TaxonPropertyEnricherFactory {
+public class TaxonEnricherFactory {
     public static TaxonEnricher createTaxonEnricher() {
         TaxonEnricherImpl taxonEnricher = new TaxonEnricherImpl();
         List<PropertyEnricher> services = new ArrayList<PropertyEnricher>() {
