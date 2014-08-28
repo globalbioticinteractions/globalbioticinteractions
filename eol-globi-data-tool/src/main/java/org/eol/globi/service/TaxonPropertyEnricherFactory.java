@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TaxonPropertyEnricherFactory {
-    public static TaxonPropertyEnricher createTaxonEnricher() {
-        TaxonPropertyEnricherImpl taxonEnricher = new TaxonPropertyEnricherImpl();
+    public static TaxonEnricher createTaxonEnricher() {
+        TaxonEnricherImpl taxonEnricher = new TaxonEnricherImpl();
         List<PropertyEnricher> services = new ArrayList<PropertyEnricher>() {
             {
                 //add(new EOLOfflineService());

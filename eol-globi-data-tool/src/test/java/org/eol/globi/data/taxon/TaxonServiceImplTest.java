@@ -9,7 +9,7 @@ import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonNode;
-import org.eol.globi.service.TaxonPropertyEnricher;
+import org.eol.globi.service.TaxonEnricher;
 import org.junit.Before;
 import org.junit.Test;
 import org.neo4j.graphdb.Node;
@@ -82,7 +82,7 @@ public class TaxonServiceImplTest extends GraphDBTestCase {
 
     @Test
     public void findByStringWithWhitespaces() throws NodeFactoryException {
-        TaxonPropertyEnricher enricher = new TaxonPropertyEnricher() {
+        TaxonEnricher enricher = new TaxonEnricher() {
             @Override
             public void enrich(Taxon taxon) {
                 taxon.setPath("kingdom" + CharsetConstant.SEPARATOR + "phylum" + CharsetConstant.SEPARATOR + "Homo sapiens" + CharsetConstant.SEPARATOR);
@@ -129,7 +129,7 @@ public class TaxonServiceImplTest extends GraphDBTestCase {
 
     @Test
     public void createTaxonExternalIdIndex() throws NodeFactoryException {
-        taxonService = new TaxonServiceImpl(new TaxonPropertyEnricher() {
+        taxonService = new TaxonServiceImpl(new TaxonEnricher() {
             @Override
             public void enrich(Taxon taxon) {
             }
@@ -159,7 +159,7 @@ public class TaxonServiceImplTest extends GraphDBTestCase {
 
     @Test
     public void createSpeciesMatchHigherOrder() throws NodeFactoryException {
-        TaxonPropertyEnricher enricher = new TaxonPropertyEnricher() {
+        TaxonEnricher enricher = new TaxonEnricher() {
             @Override
             public void enrich(Taxon taxon) {
                 if ("bla".equals(taxon.getName())) {
@@ -188,7 +188,7 @@ public class TaxonServiceImplTest extends GraphDBTestCase {
 
     @Test
     public void findCloseMatchForTaxonPath() throws NodeFactoryException {
-        taxonService.setEnricher(new TaxonPropertyEnricher() {
+        taxonService.setEnricher(new TaxonEnricher() {
             @Override
             public void enrich(Taxon taxon) {
 
@@ -251,7 +251,7 @@ public class TaxonServiceImplTest extends GraphDBTestCase {
 
     @Test
     public void synonymsAddedToIndexOnce() throws NodeFactoryException {
-        taxonService.setEnricher(new TaxonPropertyEnricher() {
+        taxonService.setEnricher(new TaxonEnricher() {
             private boolean firstTime = true;
 
             @Override
@@ -283,7 +283,7 @@ public class TaxonServiceImplTest extends GraphDBTestCase {
     }
 
     private TaxonServiceImpl createTaxonService() {
-        return new TaxonServiceImpl(new TaxonPropertyEnricher() {
+        return new TaxonServiceImpl(new TaxonEnricher() {
             @Override
             public void enrich(Taxon taxon) {
                 taxon.setPath("kingdom" + CharsetConstant.SEPARATOR + "phylum" + CharsetConstant.SEPARATOR + "etc" + CharsetConstant.SEPARATOR);

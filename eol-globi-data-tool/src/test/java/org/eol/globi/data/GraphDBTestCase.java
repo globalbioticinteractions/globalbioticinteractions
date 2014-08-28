@@ -9,7 +9,7 @@ import org.eol.globi.geo.Ecoregion;
 import org.eol.globi.geo.EcoregionFinder;
 import org.eol.globi.geo.EcoregionFinderException;
 import org.eol.globi.service.DOIResolver;
-import org.eol.globi.service.TaxonPropertyEnricher;
+import org.eol.globi.service.TaxonEnricher;
 import org.eol.globi.service.TermLookupService;
 import org.eol.globi.service.TermLookupServiceException;
 import org.junit.After;
@@ -31,7 +31,7 @@ public abstract class GraphDBTestCase {
     @Before
     public void startGraphDb() throws IOException {
         graphDb = new TestGraphDatabaseFactory().newImpermanentDatabase();
-        final TaxonPropertyEnricher taxonEnricher = new TaxonPropertyEnricher() {
+        final TaxonEnricher taxonEnricher = new TaxonEnricher() {
 
             @Override
             public void enrich(Taxon taxon) {

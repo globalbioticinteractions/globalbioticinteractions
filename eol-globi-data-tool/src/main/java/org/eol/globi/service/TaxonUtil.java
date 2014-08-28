@@ -1,5 +1,6 @@
 package org.eol.globi.service;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Taxon;
 
@@ -25,5 +26,11 @@ public class TaxonUtil {
         taxon.setPath(properties.get(PropertyAndValueDictionary.PATH));
         taxon.setPathNames(properties.get(PropertyAndValueDictionary.PATH_NAMES));
         taxon.setCommonNames(properties.get(PropertyAndValueDictionary.COMMON_NAMES));
+    }
+
+    public static boolean isResolved(Map<String, String> properties) {
+        return StringUtils.isNotBlank(properties.get(PropertyAndValueDictionary.NAME))
+                && StringUtils.isNotBlank(properties.get(PropertyAndValueDictionary.EXTERNAL_ID))
+                && StringUtils.isNotBlank(properties.get(PropertyAndValueDictionary.PATH));
     }
 }

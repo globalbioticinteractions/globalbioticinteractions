@@ -14,7 +14,7 @@ import org.eol.globi.domain.Taxon;
 import org.eol.globi.geo.Ecoregion;
 import org.eol.globi.geo.EcoregionFinder;
 import org.eol.globi.geo.EcoregionFinderException;
-import org.eol.globi.service.TaxonPropertyEnricher;
+import org.eol.globi.service.TaxonEnricher;
 import org.junit.Test;
 import org.neo4j.graphdb.GraphDatabaseService;
 
@@ -52,7 +52,7 @@ public class NormalizerTest extends GraphDBTestCase {
     public void doSingleImport() throws IOException, StudyImporterException {
         Normalizer dataNormalizationTool = createNormalizer();
 
-        final TaxonPropertyEnricher taxonEnricher = new TaxonPropertyEnricher() {
+        final TaxonEnricher taxonEnricher = new TaxonEnricher() {
             @Override
             public void enrich(Taxon taxon) {
             }
@@ -98,7 +98,7 @@ public class NormalizerTest extends GraphDBTestCase {
         Normalizer dataNormalizationTool = createNormalizer();
 
         GraphDatabaseService graphService = getGraphDb();
-        final TaxonPropertyEnricher taxonEnricher = new TaxonPropertyEnricher() {
+        final TaxonEnricher taxonEnricher = new TaxonEnricher() {
             @Override
             public void enrich(Taxon taxon) {
                 taxon.setExternalId("test-taxon:" + System.currentTimeMillis());

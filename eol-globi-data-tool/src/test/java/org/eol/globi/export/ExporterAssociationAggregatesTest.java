@@ -11,7 +11,7 @@ import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.Term;
-import org.eol.globi.service.TaxonPropertyEnricher;
+import org.eol.globi.service.TaxonEnricher;
 import org.junit.Before;
 import org.junit.Test;
 import org.neo4j.graphdb.Relationship;
@@ -28,7 +28,7 @@ public class ExporterAssociationAggregatesTest extends GraphDBTestCase {
 
     @Before
     public void setEnricher() {
-        final TaxonPropertyEnricher taxonEnricher = new TaxonPropertyEnricher() {
+        final TaxonEnricher taxonEnricher = new TaxonEnricher() {
 
             @Override
             public void enrich(Taxon taxon) {

@@ -15,7 +15,7 @@ import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.domain.Term;
 import org.eol.globi.service.DOIResolver;
-import org.eol.globi.service.TaxonPropertyEnricher;
+import org.eol.globi.service.TaxonEnricher;
 import org.eol.globi.service.TermLookupService;
 import org.eol.globi.service.TermLookupServiceException;
 import org.junit.Test;
@@ -148,7 +148,7 @@ public class NodeFactoryTest extends GraphDBTestCase {
                 return "mickey corrected";
             }
         };
-        TaxonService taxonService = new TaxonServiceImpl(new TaxonPropertyEnricher() {
+        TaxonService taxonService = new TaxonServiceImpl(new TaxonEnricher() {
             @Override
             public void enrich(Taxon taxon) {
 
@@ -171,7 +171,7 @@ public class NodeFactoryTest extends GraphDBTestCase {
                 return "mickey corrected";
             }
         };
-        TaxonService taxonService = new TaxonServiceImpl(new TaxonPropertyEnricher() {
+        TaxonService taxonService = new TaxonServiceImpl(new TaxonEnricher() {
             @Override
             public void enrich(Taxon taxon) {
 

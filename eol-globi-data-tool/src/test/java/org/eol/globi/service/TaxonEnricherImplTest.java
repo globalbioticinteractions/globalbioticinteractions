@@ -20,12 +20,12 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 
-public class TaxonPropertyEnricherImplTest extends GraphDBTestCase {
+public class TaxonEnricherImplTest extends GraphDBTestCase {
 
     @Test
     public void enrichNoServices() throws NodeFactoryException, IOException, PropertyEnricherException {
         List<PropertyEnricher> list = new ArrayList<PropertyEnricher>();
-        TaxonPropertyEnricherImpl enricher = new TaxonPropertyEnricherImpl();
+        TaxonEnricherImpl enricher = new TaxonEnricherImpl();
         enricher.setServices(list);
         Transaction transaction = getGraphDb().beginTx();
         TaxonNode taxon = new TaxonNode(getGraphDb().createNode());
@@ -104,7 +104,7 @@ public class TaxonPropertyEnricherImplTest extends GraphDBTestCase {
     }
 
     private TaxonNode enrich(String taxonName, PropertyEnricher serviceA, PropertyEnricher serviceB) throws IOException, PropertyEnricherException {
-        TaxonPropertyEnricherImpl enricher = new TaxonPropertyEnricherImpl();
+        TaxonEnricherImpl enricher = new TaxonEnricherImpl();
         List<PropertyEnricher> list = new ArrayList<PropertyEnricher>();
         list.add(serviceA);
         list.add(serviceB);

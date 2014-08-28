@@ -1,18 +1,12 @@
 package org.eol.globi.export;
 
 import org.eol.globi.data.GraphDBTestCase;
-import org.eol.globi.data.NodeFactory;
 import org.eol.globi.data.NodeFactoryException;
-import org.eol.globi.data.taxon.CorrectionService;
-import org.eol.globi.data.taxon.TaxonServiceImpl;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
-import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.Term;
-import org.eol.globi.service.TaxonPropertyEnricher;
-import org.junit.Before;
 import org.junit.Test;
 import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.Transaction;

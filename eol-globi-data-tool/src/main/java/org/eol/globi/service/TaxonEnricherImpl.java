@@ -1,9 +1,7 @@
 package org.eol.globi.service;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Taxon;
 
 import java.util.ArrayList;
@@ -11,8 +9,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class TaxonPropertyEnricherImpl implements TaxonPropertyEnricher, PropertyEnricher {
-    private static final Log LOG = LogFactory.getLog(TaxonPropertyEnricherImpl.class);
+public class TaxonEnricherImpl implements TaxonEnricher, PropertyEnricher {
+    private static final Log LOG = LogFactory.getLog(TaxonEnricherImpl.class);
 
     private final List<PropertyEnricher> services = new ArrayList<PropertyEnricher>();
     private final HashMap<Class, Integer> errorCounts = new HashMap<Class, Integer>();
@@ -29,9 +27,7 @@ public class TaxonPropertyEnricherImpl implements TaxonPropertyEnricher, Propert
         for (PropertyEnricher service : services) {
             try {
                 enrichTaxonWithPropertyValue(errorCounts, service, properties);
-                if (StringUtils.isNotBlank(properties.get(PropertyAndValueDictionary.NAME))
-                        && StringUtils.isNotBlank(properties.get(PropertyAndValueDictionary.EXTERNAL_ID))
-                        && StringUtils.isNotBlank(properties.get(PropertyAndValueDictionary.PATH))) {
+                if (TaxonUtil.isResolved(properties)) {
                     break;
                 }
             } catch (PropertyEnricherException e) {

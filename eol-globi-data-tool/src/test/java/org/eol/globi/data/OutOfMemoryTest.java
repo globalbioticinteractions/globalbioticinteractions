@@ -3,7 +3,7 @@ package org.eol.globi.data;
 import org.eol.globi.data.taxon.CorrectionService;
 import org.eol.globi.data.taxon.TaxonServiceImpl;
 import org.eol.globi.domain.Taxon;
-import org.eol.globi.service.TaxonPropertyEnricher;
+import org.eol.globi.service.TaxonEnricher;
 import org.hamcrest.core.Is;
 import org.junit.After;
 import org.junit.Before;
@@ -50,7 +50,7 @@ public class OutOfMemoryTest {
         graphDb = graphDatabaseBuilder.newGraphDatabase();
 
 
-        factory = new TaxonServiceImpl(new TaxonPropertyEnricher() {
+        factory = new TaxonServiceImpl(new TaxonEnricher() {
             @Override
             public void enrich(Taxon taxon) {
             }

@@ -12,7 +12,7 @@ import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.service.PropertyEnricherException;
 import org.eol.globi.service.TaxonMatchValidator;
-import org.eol.globi.service.TaxonPropertyEnricher;
+import org.eol.globi.service.TaxonEnricher;
 import org.eol.globi.util.NodeUtil;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
@@ -31,9 +31,9 @@ public class TaxonServiceImpl implements TaxonService {
     private final Index<Node> taxonPaths;
     private final Index<Node> taxonCommonNames;
     private CorrectionService corrector;
-    private TaxonPropertyEnricher enricher;
+    private TaxonEnricher enricher;
 
-    public TaxonServiceImpl(TaxonPropertyEnricher taxonEnricher, CorrectionService correctionService, GraphDatabaseService graphDbService) {
+    public TaxonServiceImpl(TaxonEnricher taxonEnricher, CorrectionService correctionService, GraphDatabaseService graphDbService) {
         this.enricher = taxonEnricher;
         this.corrector = correctionService;
         this.graphDbService = graphDbService;
@@ -196,7 +196,7 @@ public class TaxonServiceImpl implements TaxonService {
         return taxon;
     }
 
-    public void setEnricher(TaxonPropertyEnricher enricher) {
+    public void setEnricher(TaxonEnricher enricher) {
         this.enricher = enricher;
     }
 

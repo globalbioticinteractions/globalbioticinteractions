@@ -5,7 +5,7 @@ import org.eol.globi.data.NodeFactory;
 import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.data.taxon.TaxonNameCorrector;
 import org.eol.globi.data.taxon.TaxonServiceImpl;
-import org.eol.globi.service.TaxonPropertyEnricher;
+import org.eol.globi.service.TaxonEnricher;
 import org.junit.Before;
 import org.junit.Test;
 import org.neo4j.graphdb.Direction;
@@ -25,7 +25,7 @@ public class StudyTest extends GraphDBTestCase {
 
     @Before
     public void createFactory() {
-        final TaxonPropertyEnricher taxonEnricher = new TaxonPropertyEnricher() {
+        final TaxonEnricher taxonEnricher = new TaxonEnricher() {
             @Override
             public void enrich(Taxon taxon) {
             }

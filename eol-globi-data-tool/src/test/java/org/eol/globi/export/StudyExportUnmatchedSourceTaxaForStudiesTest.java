@@ -11,7 +11,7 @@ import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.Taxon;
-import org.eol.globi.service.TaxonPropertyEnricher;
+import org.eol.globi.service.TaxonEnricher;
 import org.junit.Test;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Transaction;
@@ -28,7 +28,7 @@ public class StudyExportUnmatchedSourceTaxaForStudiesTest extends GraphDBTestCas
 
     @Test
     public void exportOnePredatorTwoPrey() throws NodeFactoryException, IOException {
-        final TaxonPropertyEnricher taxonEnricher = new TaxonPropertyEnricher() {
+        final TaxonEnricher taxonEnricher = new TaxonEnricher() {
             @Override
             public void enrich(Taxon taxon) {
                 if ("Homo sapiens".equals(taxon.getName())) {
@@ -86,7 +86,7 @@ public class StudyExportUnmatchedSourceTaxaForStudiesTest extends GraphDBTestCas
 
     @Test
     public void exportOnePredatorNoPathButWithSameAs() throws NodeFactoryException, IOException {
-        final TaxonPropertyEnricher taxonEnricher = new TaxonPropertyEnricher() {
+        final TaxonEnricher taxonEnricher = new TaxonEnricher() {
             @Override
             public void enrich(Taxon taxon) {
 
@@ -129,7 +129,7 @@ public class StudyExportUnmatchedSourceTaxaForStudiesTest extends GraphDBTestCas
         ));
     }
 
-    private NodeFactory factory(TaxonPropertyEnricher taxonEnricher) {
+    private NodeFactory factory(TaxonEnricher taxonEnricher) {
         return new NodeFactory(getGraphDb(), new TaxonServiceImpl(taxonEnricher, new CorrectionService() {
             @Override
             public String correct(String taxonName) {
