@@ -10,7 +10,7 @@ import static org.junit.Assert.assertThat;
 public class EOLOfflineServiceTest {
 
     @Test
-    public void canLookup() throws TaxonPropertyLookupServiceException {
+    public void canLookup() throws PropertyEnricherException {
         EOLOfflineService service = new EOLOfflineService();
         assertThat(service.lookupPropertyValueByTaxonName("Todarodes pacificus", PropertyAndValueDictionary.EXTERNAL_ID), is("EOL:590939"));
         assertThat(service.lookupPropertyValueByTaxonName("Homo sapiens", PropertyAndValueDictionary.PATH), is(nullValue()));

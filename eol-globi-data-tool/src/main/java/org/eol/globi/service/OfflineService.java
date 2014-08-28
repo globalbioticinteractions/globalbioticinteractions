@@ -12,12 +12,12 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-public abstract class OfflineService implements TaxonPropertyLookupService {
+public abstract class OfflineService implements PropertyEnricher {
     private static final Log LOG = LogFactory.getLog(OfflineService.class);
     private TaxonLookupService taxonLookupService;
 
     @Override
-    public void lookupProperties(Map<String, String> properties) throws TaxonPropertyLookupServiceException {
+    public void enrich(Map<String, String> properties) throws PropertyEnricherException {
         for (String propertyName : properties.keySet()) {
             if (properties.get(propertyName) == null) {
                 lookupProperty(properties.get(PropertyAndValueDictionary.NAME), properties, propertyName);
@@ -25,7 +25,7 @@ public abstract class OfflineService implements TaxonPropertyLookupService {
         }
     }
 
-    private void lookupProperty(String taxonName, Map<String, String> properties, String propertyName) throws TaxonPropertyLookupServiceException {
+    private void lookupProperty(String taxonName, Map<String, String> properties, String propertyName) throws PropertyEnricherException {
         if (null == taxonLookupService) {
             lazyInit();
         }
@@ -43,7 +43,7 @@ public abstract class OfflineService implements TaxonPropertyLookupService {
                 properties.put(propertyName, propertyValue);
             }
         } catch (IOException e) {
-            throw new TaxonPropertyLookupServiceException("lookup for property with name [" + propertyName + "] failed for [" + getServiceName() + "].", e);
+            throw new PropertyEnricherException("lookup for property with name [" + propertyName + "] failed for [" + getServiceName() + "].", e);
         }
     }
 
@@ -53,13 +53,13 @@ public abstract class OfflineService implements TaxonPropertyLookupService {
 
     protected abstract String getValueForPropertyName(String propertyName, TaxonTerm first);
 
-    private void lazyInit() throws TaxonPropertyLookupServiceException {
+    private void lazyInit() throws PropertyEnricherException {
         LOG.info("lazy init of taxonomy index [" + getServiceName() + "] started...");
         TaxonomyImporter importer = createTaxonomyImporter();
         try {
             importer.doImport();
         } catch (StudyImporterException e) {
-            throw new TaxonPropertyLookupServiceException("failed to build index for [" + getServiceName() + "]", e);
+            throw new PropertyEnricherException("failed to build index for [" + getServiceName() + "]", e);
         }
         taxonLookupService = importer.getTaxonLookupService();
         LOG.info("lazy init of taxonomy index [" + getServiceName() + "] done.");
@@ -74,12 +74,12 @@ public abstract class OfflineService implements TaxonPropertyLookupService {
         }
     }
 
-    public String lookupPropertyValueByTaxonName(String taxonName, final String propertyName) throws TaxonPropertyLookupServiceException {
+    public String lookupPropertyValueByTaxonName(String taxonName, final String propertyName) throws PropertyEnricherException {
         HashMap<String, String> properties = new HashMap<String, String>() {{
             put(propertyName, null);
         }};
         properties.put(PropertyAndValueDictionary.NAME, taxonName);
-        lookupProperties(properties);
+        enrich(properties);
         return properties.get(propertyName);
     }
 }

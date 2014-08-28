@@ -39,8 +39,8 @@ public class ExternalIdUtil {
 
     public static boolean isSupported(String externalId) {
         boolean supported = false;
-        for (String prefix : getURLPrefixMap().keySet()) {
-            if (StringUtils.startsWith(externalId, prefix)) {
+        for (TaxonomyProvider prefix : TaxonomyProvider.values()) {
+            if (StringUtils.startsWith(externalId, prefix.getIdPrefix())) {
                 supported = true;
             }
         }

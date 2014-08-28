@@ -9,14 +9,14 @@ import static org.junit.Assert.assertThat;
 public class GulfBaseServiceTest {
 
     @Test
-    public void lookupRankPath() throws TaxonPropertyLookupServiceException {
+    public void lookupRankPath() throws PropertyEnricherException {
         OfflineService service = new GulfBaseService();
         assertThat(service.lookupPropertyValueByTaxonName("Haplognathia rosea", PropertyAndValueDictionary.PATH), is("Animalia Gnathostomulida Filospermoidea Haplognathiidae Haplognathia"));
         assertThat(service.lookupPropertyValueByTaxonName("Ariopsis felis", PropertyAndValueDictionary.PATH), is("Animalia Chordata Vertebrata Actinopterygii Siluriformes Ariidae Ariopsis"));
     }
 
     @Test
-    public void lookupExternalId() throws TaxonPropertyLookupServiceException {
+    public void lookupExternalId() throws PropertyEnricherException {
         OfflineService service = new GulfBaseService();
         assertThat(service.lookupPropertyValueByTaxonName("Haplognathia rosea", PropertyAndValueDictionary.EXTERNAL_ID), is("BioGoMx:Spp-26-0003"));
         assertThat(service.lookupPropertyValueByTaxonName("Ariopsis felis", PropertyAndValueDictionary.EXTERNAL_ID), is("BioGoMx:Spp-75-0281"));

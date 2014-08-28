@@ -15,7 +15,6 @@ import org.eol.globi.geo.Ecoregion;
 import org.eol.globi.geo.EcoregionFinder;
 import org.eol.globi.geo.EcoregionFinderException;
 import org.eol.globi.service.TaxonPropertyEnricher;
-import org.hamcrest.core.Is;
 import org.junit.Test;
 import org.neo4j.graphdb.GraphDatabaseService;
 

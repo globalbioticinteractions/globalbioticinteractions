@@ -10,11 +10,11 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
-public class WoRMSService extends BaseTaxonIdService {
+public class WoRMSService extends BasePropertyEnricherService {
     public static final String RESPONSE_PREFIX = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><SOAP-ENV:Envelope SOAP-ENV:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\" xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:SOAP-ENC=\"http://schemas.xmlsoap.org/soap/encoding/\"><SOAP-ENV:Body><ns1:getAphiaIDResponse xmlns:ns1=\"http://tempuri.org/\"><return xsi:type=\"xsd:int\">";
     public static final String RESPONSE_SUFFIX = "</return></ns1:getAphiaIDResponse></SOAP-ENV:Body></SOAP-ENV:Envelope>";
 
-    public String lookupIdByName(String taxonName) throws TaxonPropertyLookupServiceException {
+    public String lookupIdByName(String taxonName) throws PropertyEnricherException {
         String response = getResponse("getAphiaID", "scientificname", taxonName);
         String id = null;
         if (response.startsWith(RESPONSE_PREFIX) && response.endsWith(RESPONSE_SUFFIX)) {
@@ -30,7 +30,7 @@ public class WoRMSService extends BaseTaxonIdService {
         return id;
     }
 
-    private String getResponse(String methodName, String paramName, String paramValue) throws TaxonPropertyLookupServiceException {
+    private String getResponse(String methodName, String paramName, String paramValue) throws PropertyEnricherException {
         HttpPost post = new HttpPost("http://www.marinespecies.org/aphia.php?p=soap");
         post.setHeader("SOAPAction", "http://tempuri.org/getAphiaID");
         post.setHeader("Content-Type", "text/xml;charset=utf-8");
@@ -49,7 +49,7 @@ public class WoRMSService extends BaseTaxonIdService {
         try {
             catchEntity = new InputStreamEntity(new ByteArrayInputStream(requestBody.getBytes("UTF-8")), requestBody.getBytes().length);
         } catch (UnsupportedEncodingException e) {
-            throw new TaxonPropertyLookupServiceException("problem creating request body for [" + post.getURI().toString() + "]", e);
+            throw new PropertyEnricherException("problem creating request body for [" + post.getURI().toString() + "]", e);
         }
         post.setEntity(catchEntity);
 
@@ -58,13 +58,13 @@ public class WoRMSService extends BaseTaxonIdService {
         try {
             response = execute(post, responseHandler);
         } catch (IOException e) {
-            throw new TaxonPropertyLookupServiceException("failed to connect to [" + post.getURI().toString() + "]", e);
+            throw new PropertyEnricherException("failed to connect to [" + post.getURI().toString() + "]", e);
         }
         return response;
     }
 
     @Override
-    public String lookupTaxonPathById(String id) throws TaxonPropertyLookupServiceException {
+    public String lookupTaxonPathById(String id) throws PropertyEnricherException {
         String path = null;
         if (StringUtils.startsWith(id, TaxonomyProvider.ID_PREFIX_WORMS)) {
             String response = getResponse("getAphiaClassificationByID", "AphiaID", id.replace(TaxonomyProvider.ID_PREFIX_WORMS, ""));

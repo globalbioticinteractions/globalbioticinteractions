@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ServiceUtil {
-    public static String extractPath(String xmlContent, String elementName) throws TaxonPropertyLookupServiceException {
+    public static String extractPath(String xmlContent, String elementName) throws PropertyEnricherException {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         Document doc;
         try {
@@ -37,7 +37,7 @@ public class ServiceUtil {
             }
             return StringUtils.join(ranks, CharsetConstant.SEPARATOR);
         } catch (Exception e) {
-            throw new TaxonPropertyLookupServiceException("failed to handle response [" + xmlContent + "]", e);
+            throw new PropertyEnricherException("failed to handle response [" + xmlContent + "]", e);
         }
     }
 }

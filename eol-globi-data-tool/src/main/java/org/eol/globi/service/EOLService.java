@@ -10,6 +10,7 @@ import org.codehaus.jackson.JsonProcessingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.data.CharsetConstant;
 import org.eol.globi.domain.PropertyAndValueDictionary;
+import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonomyProvider;
 import org.eol.globi.util.ExternalIdUtil;
 
@@ -22,10 +23,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class EOLService extends BaseHttpClientService implements TaxonPropertyLookupService {
+public class EOLService extends BaseHttpClientService implements PropertyEnricher {
 
     @Override
-    public void lookupProperties(Map<String, String> properties) throws TaxonPropertyLookupServiceException {
+    public void enrich(Map<String, String> properties) throws PropertyEnricherException {
         String externalId = properties.get(PropertyAndValueDictionary.EXTERNAL_ID);
         if (needsEnrichment(properties)) {
             Long id = getEOLPageId(properties.get(PropertyAndValueDictionary.NAME), externalId);
@@ -44,7 +45,7 @@ public class EOLService extends BaseHttpClientService implements TaxonPropertyLo
         }
     }
 
-    private Long getEOLPageId(String name, String externalId) throws TaxonPropertyLookupServiceException {
+    private Long getEOLPageId(String name, String externalId) throws PropertyEnricherException {
         Long id = null;
         if (ExternalIdUtil.isSupported(externalId)) {
             if (externalId.startsWith(TaxonomyProvider.ID_PREFIX_EOL)) {
@@ -52,7 +53,7 @@ public class EOLService extends BaseHttpClientService implements TaxonPropertyLo
                 try {
                     id = Long.parseLong(eolPageIdString);
                 } catch (NumberFormatException ex) {
-                    throw new TaxonPropertyLookupServiceException("failed to parse eol id [" + eolPageIdString + "]");
+                    throw new PropertyEnricherException("failed to parse eol id [" + eolPageIdString + "]");
                 }
             }
         } else if (StringUtils.isNotBlank(name)) {
@@ -71,7 +72,7 @@ public class EOLService extends BaseHttpClientService implements TaxonPropertyLo
         return new URI("http", null, "eol.org", 80, "/api/search/1.0.xml", query, null);
     }
 
-    protected void addTaxonInfo(Long pageId, Map<String, String> properties) throws TaxonPropertyLookupServiceException {
+    protected void addTaxonInfo(Long pageId, Map<String, String> properties) throws PropertyEnricherException {
         try {
             URI uri = new URI("http", null, "eol.org", 80, "/api/pages/1.0/" + pageId + ".json", "images=1&videos=0&sounds=0&maps=0&text=0&iucn=false&subjects=overview&licenses=all&details=false&common_names=true&synonyms=false&references=false&format=json", null);
             String response = getResponse(uri);
@@ -86,15 +87,15 @@ public class EOLService extends BaseHttpClientService implements TaxonPropertyLo
                 }
             }
         } catch (URISyntaxException e) {
-            throw new TaxonPropertyLookupServiceException("failed to create uri", e);
+            throw new PropertyEnricherException("failed to create uri", e);
         } catch (JsonProcessingException e) {
-            throw new TaxonPropertyLookupServiceException("failed to parse response", e);
+            throw new PropertyEnricherException("failed to parse response", e);
         } catch (IOException e) {
-            throw new TaxonPropertyLookupServiceException("failed to get response", e);
+            throw new PropertyEnricherException("failed to get response", e);
         }
     }
 
-    private void addCanonicalNamesAndRanks(Map<String, String> properties, String response) throws IOException, URISyntaxException, TaxonPropertyLookupServiceException {
+    private void addCanonicalNamesAndRanks(Map<String, String> properties, String response) throws IOException, URISyntaxException, PropertyEnricherException {
         List<String> ranks = new ArrayList<String>();
         List<String> rankNames = new ArrayList<String>();
         ObjectMapper mapper = new ObjectMapper();
@@ -163,7 +164,7 @@ public class EOLService extends BaseHttpClientService implements TaxonPropertyLo
 
     }
 
-    private void addRanks(String firstConceptId, List<String> ranks, List<String> rankNames) throws URISyntaxException, TaxonPropertyLookupServiceException, IOException {
+    private void addRanks(String firstConceptId, List<String> ranks, List<String> rankNames) throws URISyntaxException, PropertyEnricherException, IOException {
         URI uri;
         String response;
         uri = new URI("http", null, "eol.org", 80, "/api/hierarchy_entries/1.0/" + firstConceptId + ".json", "common_names=false&synonyms=false&format=json", null);
@@ -202,7 +203,7 @@ public class EOLService extends BaseHttpClientService implements TaxonPropertyLo
         }
     }
 
-    protected Long getPageId(String taxonName, boolean shouldFollowAlternate) throws TaxonPropertyLookupServiceException {
+    protected Long getPageId(String taxonName, boolean shouldFollowAlternate) throws PropertyEnricherException {
         try {
             URI uri = createSearchURI(taxonName);
             String response = getResponse(uri);
@@ -226,7 +227,7 @@ public class EOLService extends BaseHttpClientService implements TaxonPropertyLo
                                     smallestPageId = getPageId(decodedName, false);
                                 }
                             } catch (UnsupportedEncodingException e) {
-                                throw new TaxonPropertyLookupServiceException("failed to decode [" + alternateTaxonName + "]", e);
+                                throw new PropertyEnricherException("failed to decode [" + alternateTaxonName + "]", e);
                             }
 
                         }
@@ -237,12 +238,12 @@ public class EOLService extends BaseHttpClientService implements TaxonPropertyLo
             }
             return smallestPageId;
         } catch (URISyntaxException e) {
-            throw new TaxonPropertyLookupServiceException("failed to fetch pageid for [" + taxonName + "]", e);
+            throw new PropertyEnricherException("failed to fetch pageid for [" + taxonName + "]", e);
         }
 
     }
 
-    private String getResponse(URI uri) throws TaxonPropertyLookupServiceException {
+    private String getResponse(URI uri) throws PropertyEnricherException {
         HttpGet get = new HttpGet(uri);
         BasicResponseHandler responseHandler = new BasicResponseHandler();
         String response = null;
@@ -250,12 +251,12 @@ public class EOLService extends BaseHttpClientService implements TaxonPropertyLo
             response = execute(get, responseHandler);
         } catch (HttpResponseException e) {
             if (e.getStatusCode() != 406 && e.getStatusCode() != 404) {
-                throw new TaxonPropertyLookupServiceException("failed to lookup [" + uri.toString() + "]: http status [" + e.getStatusCode() + "]   ", e);
+                throw new PropertyEnricherException("failed to lookup [" + uri.toString() + "]: http status [" + e.getStatusCode() + "]   ", e);
             }
         } catch (ClientProtocolException e) {
-            throw new TaxonPropertyLookupServiceException("failed to lookup [" + uri.toString() + "]", e);
+            throw new PropertyEnricherException("failed to lookup [" + uri.toString() + "]", e);
         } catch (IOException e) {
-            throw new TaxonPropertyLookupServiceException("failed to lookup [" + uri.toString() + "]", e);
+            throw new PropertyEnricherException("failed to lookup [" + uri.toString() + "]", e);
         }
         return response;
     }

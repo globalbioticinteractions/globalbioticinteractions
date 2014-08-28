@@ -36,26 +36,26 @@ public class EOLOfflineServiceIT {
     }
 
     @Test
-    public void matchPredatorTaxon() throws TaxonPropertyLookupServiceException {
+    public void matchPredatorTaxon() throws PropertyEnricherException {
         matchTaxon("Homo sapiens");
     }
 
     @Test
-    public void matchPreyTaxon() throws TaxonPropertyLookupServiceException {
+    public void matchPreyTaxon() throws PropertyEnricherException {
         enrichPreyTaxon("Rattus rattus");
     }
 
     @Test
-    public void matchNameTooShort() throws TaxonPropertyLookupServiceException {
+    public void matchNameTooShort() throws PropertyEnricherException {
         String externalId = eolOfflineService.lookupPropertyValueByTaxonName("G", PropertyAndValueDictionary.EXTERNAL_ID);
         assertThat(externalId, is(nullValue()));
     }
 
-    private void enrichPreyTaxon(String preyName) throws TaxonPropertyLookupServiceException {
+    private void enrichPreyTaxon(String preyName) throws PropertyEnricherException {
         matchTaxon(preyName);
     }
 
-    private void matchTaxon(String speciesName) throws TaxonPropertyLookupServiceException {
+    private void matchTaxon(String speciesName) throws PropertyEnricherException {
         String externalId = eolOfflineService.lookupPropertyValueByTaxonName(speciesName, PropertyAndValueDictionary.EXTERNAL_ID);
         assertThat("failed to match [" + speciesName + "]", externalId, containsString(TaxonomyProvider.ID_PREFIX_EOL));
     }
@@ -63,7 +63,7 @@ public class EOLOfflineServiceIT {
 
     @Ignore
     @Test
-    public void matchManyPredatorTaxons() throws TaxonPropertyLookupServiceException {
+    public void matchManyPredatorTaxons() throws PropertyEnricherException {
 
         //warm-up
         matchTaxon("Syacium gunteri");
@@ -81,7 +81,7 @@ public class EOLOfflineServiceIT {
 
     @Ignore
     @Test
-    public void matchManyPreyTaxons() throws TaxonPropertyLookupServiceException {
+    public void matchManyPreyTaxons() throws PropertyEnricherException {
 
         //warm-up
         enrichPreyTaxon("Syacium gunteri");

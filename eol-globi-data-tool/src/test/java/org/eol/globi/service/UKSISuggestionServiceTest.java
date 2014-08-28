@@ -20,16 +20,16 @@ public class UKSISuggestionServiceTest {
     }
 
     @Test
-    public void lookupNameWithCorrection() throws TaxonPropertyLookupServiceException {
+    public void lookupNameWithCorrection() throws PropertyEnricherException {
         HashMap<String, String> properties = new HashMap<String, String>();
         properties.put(PropertyAndValueDictionary.NAME, "Stellaria apetala");
-        uksiSuggestionService.lookupProperties(properties);
+        uksiSuggestionService.enrich(properties);
         assertThat(properties.get(PropertyAndValueDictionary.NAME), is("Stellaria pallida"));
         assertThat(properties.get(PropertyAndValueDictionary.EXTERNAL_ID), is("UKSI:NBNSYS0000157226"));
     }
 
     @Test
-    public void lookupNameWithSuggestion() throws TaxonPropertyLookupServiceException {
+    public void lookupNameWithSuggestion() throws PropertyEnricherException {
         assertThat(uksiSuggestionService.suggest("Stellaria apetala"), is("Stellaria pallida"));
         assertThat(uksiSuggestionService.suggest("Bombus"), is("Bombus"));
         assertThat(uksiSuggestionService.suggest("Actinopterygii"), is("Actinopterygii"));
@@ -37,7 +37,7 @@ public class UKSISuggestionServiceTest {
     }
 
     @Test
-    public void lookupNameWithConflictingSuggestions() throws TaxonPropertyLookupServiceException {
+    public void lookupNameWithConflictingSuggestions() throws PropertyEnricherException {
         assertThat(uksiSuggestionService.suggest("Mimesa bicolor"), is("Mimesa equestris"));
         assertThat(uksiSuggestionService.suggest("Mimesa equestris"), is("Mimesa bicolor"));
         assertThat(uksiSuggestionService.suggest("Exidia glandulosa"), is("Exidia plana"));
@@ -45,10 +45,10 @@ public class UKSISuggestionServiceTest {
     }
 
     @Test
-    public void lookupNameNoCorrectionButPresent() throws TaxonPropertyLookupServiceException {
+    public void lookupNameNoCorrectionButPresent() throws PropertyEnricherException {
         HashMap<String, String> properties = new HashMap<String, String>();
         properties.put(PropertyAndValueDictionary.NAME, "Serpulidae");
-        uksiSuggestionService.lookupProperties(properties);
+        uksiSuggestionService.enrich(properties);
         assertThat(properties.get(PropertyAndValueDictionary.NAME), is("Serpulidae"));
         assertThat(properties.get(PropertyAndValueDictionary.EXTERNAL_ID), is("UKSI:NBNSYS0000177931"));
     }
@@ -59,10 +59,10 @@ public class UKSISuggestionServiceTest {
     }
 
     @Test
-    public void lookupNameNoCorrectionNotPresent() throws TaxonPropertyLookupServiceException {
+    public void lookupNameNoCorrectionNotPresent() throws PropertyEnricherException {
         HashMap<String, String> properties = new HashMap<String, String>();
         properties.put(PropertyAndValueDictionary.NAME, "Yogi the Bear");
-        uksiSuggestionService.lookupProperties(properties);
+        uksiSuggestionService.enrich(properties);
         assertThat(properties.get(PropertyAndValueDictionary.NAME), is(nullValue()));
         assertThat(properties.get(PropertyAndValueDictionary.EXTERNAL_ID), is(nullValue()));
     }

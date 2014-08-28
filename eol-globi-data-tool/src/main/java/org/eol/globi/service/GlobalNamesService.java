@@ -24,7 +24,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-public class GlobalNamesService extends BaseHttpClientService implements TaxonPropertyLookupService {
+public class GlobalNamesService extends BaseHttpClientService implements PropertyEnricher {
 
 
     private final GlobalNamesSources source;
@@ -39,7 +39,7 @@ public class GlobalNamesService extends BaseHttpClientService implements TaxonPr
     }
 
     @Override
-    public void lookupProperties(Map<String, String> properties) throws TaxonPropertyLookupServiceException {
+    public void enrich(Map<String, String> properties) throws PropertyEnricherException {
         final List<Taxon> taxa = new ArrayList<Taxon>();
         findTermsForNames(Arrays.asList(properties.get(PropertyAndValueDictionary.NAME)), new TermMatchListener() {
             @Override
@@ -59,7 +59,7 @@ public class GlobalNamesService extends BaseHttpClientService implements TaxonPr
 
     }
 
-    public void findTermsForNames(List<String> names, TermMatchListener termMatchListener) throws TaxonPropertyLookupServiceException {
+    public void findTermsForNames(List<String> names, TermMatchListener termMatchListener) throws PropertyEnricherException {
         if (names.size() == 0) {
             throw new IllegalArgumentException("need non-empty list of names");
         }
@@ -93,11 +93,11 @@ public class GlobalNamesService extends BaseHttpClientService implements TaxonPr
                 }
             }
         } catch (URISyntaxException e) {
-            throw new TaxonPropertyLookupServiceException("Failed to query", e);
+            throw new PropertyEnricherException("Failed to query", e);
         } catch (ClientProtocolException e) {
-            throw new TaxonPropertyLookupServiceException("Failed to query", e);
+            throw new PropertyEnricherException("Failed to query", e);
         } catch (IOException e) {
-            throw new TaxonPropertyLookupServiceException("Failed to query", e);
+            throw new PropertyEnricherException("Failed to query", e);
         }
     }
 

@@ -7,7 +7,7 @@ import java.util.Map;
 
 import static org.eol.globi.domain.TaxonomyProvider.ID_PREFIX_ENVO;
 
-public class EnvoService extends BaseTaxonIdService {
+public class EnvoService extends BasePropertyEnricherService {
 
     public static final String SEDIMENT = ID_PREFIX_ENVO + "00002007";
     public static final String SOIL = ID_PREFIX_ENVO + "00001998";
@@ -49,7 +49,7 @@ public class EnvoService extends BaseTaxonIdService {
         put(PIECE_OF_ROCK, "environmental feature | mesoscopic physical object | abiotic mesoscopic physical object | piece of rock");
     }};
 
-    public String lookupIdByName(String taxonName) throws TaxonPropertyLookupServiceException {
+    public String lookupIdByName(String taxonName) throws PropertyEnricherException {
         String id = null;
         String lowerCaseName = StringUtils.lowerCase(taxonName);
         if (StringUtils.isNotBlank(lowerCaseName)) {
@@ -59,7 +59,7 @@ public class EnvoService extends BaseTaxonIdService {
     }
 
     @Override
-    public String lookupTaxonPathById(String id) throws TaxonPropertyLookupServiceException {
+    public String lookupTaxonPathById(String id) throws PropertyEnricherException {
         return pathLookup.get(id);
     }
 }

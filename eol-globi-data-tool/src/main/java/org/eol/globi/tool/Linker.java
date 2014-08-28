@@ -8,7 +8,7 @@ import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.service.GlobalNamesService;
 import org.eol.globi.service.GlobalNamesSources;
-import org.eol.globi.service.TaxonPropertyLookupServiceException;
+import org.eol.globi.service.PropertyEnricherException;
 import org.eol.globi.service.TermMatchListener;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
@@ -27,7 +27,7 @@ public class Linker {
 
     private static final Log LOG = LogFactory.getLog(Linker.class);
 
-    public void linkTaxa(final GraphDatabaseService graphDb) throws TaxonPropertyLookupServiceException {
+    public void linkTaxa(final GraphDatabaseService graphDb) throws PropertyEnricherException {
         GlobalNamesSources[] sources = GlobalNamesSources.values();
         for (GlobalNamesSources source : sources) {
             GlobalNamesService globalNamesService = new GlobalNamesService(source);
@@ -49,7 +49,7 @@ public class Linker {
         }
     }
 
-    private void handleBatch(final GraphDatabaseService graphDb, GlobalNamesService globalNamesService, final Map<Long, TaxonNode> nodeMap, int counter) throws TaxonPropertyLookupServiceException {
+    private void handleBatch(final GraphDatabaseService graphDb, GlobalNamesService globalNamesService, final Map<Long, TaxonNode> nodeMap, int counter) throws PropertyEnricherException {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         String msgPrefix = "batch #" + counter / batchSize + " for [" + globalNamesService.getSource() + "]";

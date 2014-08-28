@@ -10,6 +10,7 @@ import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TaxonNode;
+import org.eol.globi.service.PropertyEnricherException;
 import org.eol.globi.service.TaxonMatchValidator;
 import org.eol.globi.service.TaxonPropertyEnricher;
 import org.eol.globi.util.NodeUtil;
@@ -97,7 +98,11 @@ public class TaxonServiceImpl implements TaxonService {
 
         TaxonNode taxonNode = findTaxon(taxon.getName(), taxon.getExternalId());
         while (taxonNode == null) {
-            enricher.enrich(taxon);
+            try {
+                enricher.enrich(taxon);
+            } catch (PropertyEnricherException e) {
+                throw new NodeFactoryException("failed to enrich taxon with name ["  + taxon.getName() + "]", e);
+            }
             taxonNode = findTaxon(taxon.getName(), taxon.getExternalId());
             if (taxonNode == null) {
                 if (TaxonMatchValidator.hasMatch(taxon)) {

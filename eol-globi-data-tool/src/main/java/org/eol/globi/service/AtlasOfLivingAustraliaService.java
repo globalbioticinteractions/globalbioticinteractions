@@ -9,6 +9,7 @@ import org.codehaus.jackson.JsonProcessingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.data.CharsetConstant;
 import org.eol.globi.domain.PropertyAndValueDictionary;
+import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonomyProvider;
 
 import java.io.IOException;
@@ -20,10 +21,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class AtlasOfLivingAustraliaService extends BaseHttpClientService implements TaxonPropertyLookupService {
+public class AtlasOfLivingAustraliaService extends BaseHttpClientService implements PropertyEnricher {
 
     @Override
-    public void lookupProperties(Map<String, String> properties) throws TaxonPropertyLookupServiceException {
+    public void enrich(Map<String, String> properties) throws PropertyEnricherException {
         String externalId = properties.get(PropertyAndValueDictionary.EXTERNAL_ID);
         if (needsEnrichment(properties)) {
             String guid = hasValidGUID(externalId) ? externalId : findTaxonGUIDByName(properties.get(PropertyAndValueDictionary.NAME));
@@ -34,7 +35,7 @@ public class AtlasOfLivingAustraliaService extends BaseHttpClientService impleme
         }
     }
 
-    private boolean hasValidGUID(String externalId) throws TaxonPropertyLookupServiceException {
+    private boolean hasValidGUID(String externalId) throws PropertyEnricherException {
         return StringUtils.startsWith(externalId, TaxonomyProvider.ID_PREFIX_LIVING_ATLAS_OF_AUSTRALIA);
     }
 
@@ -51,7 +52,7 @@ public class AtlasOfLivingAustraliaService extends BaseHttpClientService impleme
         return new URI("http", null, "bie.ala.org.au", 80, "/ws/search.json", "q=" + taxonName, null);
     }
 
-    private String findTaxonGUIDByName(String taxonName) throws TaxonPropertyLookupServiceException {
+    private String findTaxonGUIDByName(String taxonName) throws PropertyEnricherException {
         String guid = null;
         try {
             URI uri = taxonInfoByName(taxonName);
@@ -76,16 +77,16 @@ public class AtlasOfLivingAustraliaService extends BaseHttpClientService impleme
 
 
         } catch (URISyntaxException e) {
-            throw new TaxonPropertyLookupServiceException("failed to create uri", e);
+            throw new PropertyEnricherException("failed to create uri", e);
         } catch (JsonProcessingException e) {
-            throw new TaxonPropertyLookupServiceException("failed to parse response", e);
+            throw new PropertyEnricherException("failed to parse response", e);
         } catch (IOException e) {
-            throw new TaxonPropertyLookupServiceException("failed to get response", e);
+            throw new PropertyEnricherException("failed to get response", e);
         }
         return guid;
     }
 
-    protected Map<String, String> findTaxonInfoByGUID(String taxonGUID) throws TaxonPropertyLookupServiceException {
+    protected Map<String, String> findTaxonInfoByGUID(String taxonGUID) throws PropertyEnricherException {
         Map<String, String> info = Collections.emptyMap();
         try {
             URI uri = taxonInfoByGUID(taxonGUID);
@@ -102,11 +103,11 @@ public class AtlasOfLivingAustraliaService extends BaseHttpClientService impleme
                 }
             }
         } catch (URISyntaxException e) {
-            throw new TaxonPropertyLookupServiceException("failed to create uri", e);
+            throw new PropertyEnricherException("failed to create uri", e);
         } catch (JsonProcessingException e) {
-            throw new TaxonPropertyLookupServiceException("failed to parse response", e);
+            throw new PropertyEnricherException("failed to parse response", e);
         } catch (IOException e) {
-            throw new TaxonPropertyLookupServiceException("failed to get response", e);
+            throw new PropertyEnricherException("failed to get response", e);
         }
         return info;
     }
@@ -163,16 +164,16 @@ public class AtlasOfLivingAustraliaService extends BaseHttpClientService impleme
         return StringUtils.equals(rank, "clazz") ? "class" : rank;
     }
 
-    private String getResponse(URI uri) throws TaxonPropertyLookupServiceException {
+    private String getResponse(URI uri) throws PropertyEnricherException {
         HttpGet get = new HttpGet(uri);
         BasicResponseHandler responseHandler = new BasicResponseHandler();
         String response;
         try {
             response = execute(get, responseHandler);
         } catch (ClientProtocolException e) {
-            throw new TaxonPropertyLookupServiceException("failed to lookup [" + uri.toString() + "]", e);
+            throw new PropertyEnricherException("failed to lookup [" + uri.toString() + "]", e);
         } catch (IOException e) {
-            throw new TaxonPropertyLookupServiceException("failed to lookup [" + uri.toString() + "]", e);
+            throw new PropertyEnricherException("failed to lookup [" + uri.toString() + "]", e);
         }
         return response;
     }

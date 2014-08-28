@@ -23,8 +23,8 @@ import org.eol.globi.geo.EcoregionFinder;
 import org.eol.globi.geo.EcoregionFinderFactoryImpl;
 import org.eol.globi.service.DOIResolverImpl;
 import org.eol.globi.service.EcoregionFinderProxy;
+import org.eol.globi.service.PropertyEnricherException;
 import org.eol.globi.service.TaxonPropertyEnricherFactory;
-import org.eol.globi.service.TaxonPropertyLookupServiceException;
 import org.neo4j.graphdb.GraphDatabaseService;
 
 import java.util.Collection;
@@ -70,7 +70,7 @@ public class Normalizer {
             if (cmdLine == null || !cmdLine.hasOption(OPTION_SKIP_LINK)) {
                 try {
                     new Linker().linkTaxa(graphService);
-                } catch (TaxonPropertyLookupServiceException e) {
+                } catch (PropertyEnricherException e) {
                     LOG.warn("failed to link taxa", e);
                 }
             } else {

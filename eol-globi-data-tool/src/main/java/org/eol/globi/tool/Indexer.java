@@ -10,8 +10,8 @@ import org.eol.globi.data.taxon.TaxonNameCorrector;
 import org.eol.globi.data.taxon.TaxonService;
 import org.eol.globi.data.taxon.TaxonServiceImpl;
 import org.eol.globi.db.GraphService;
+import org.eol.globi.service.PropertyEnricherException;
 import org.eol.globi.service.TaxonPropertyEnricherFactory;
-import org.eol.globi.service.TaxonPropertyLookupServiceException;
 import org.neo4j.cypher.javacompat.ExecutionEngine;
 import org.neo4j.cypher.javacompat.ExecutionResult;
 import org.neo4j.graphdb.GraphDatabaseService;
@@ -52,7 +52,7 @@ public class Indexer {
         indexUsingNamesWithNoExternalIds(executionEngine, taxonService);
         try {
             new Linker().linkTaxa(freshGraphService);
-        } catch (TaxonPropertyLookupServiceException e) {
+        } catch (PropertyEnricherException e) {
             LOG.warn("failed to link taxa", e);
         }
 

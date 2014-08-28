@@ -6,7 +6,7 @@ import java.util.List;
 public class TaxonPropertyEnricherFactory {
     public static TaxonPropertyEnricher createTaxonEnricher() {
         TaxonPropertyEnricherImpl taxonEnricher = new TaxonPropertyEnricherImpl();
-        List<TaxonPropertyLookupService> services = new ArrayList<TaxonPropertyLookupService>() {
+        List<PropertyEnricher> services = new ArrayList<PropertyEnricher>() {
             {
                 //add(new EOLOfflineService());
                 add(new EnvoService());

@@ -2,18 +2,19 @@ package org.eol.globi.service;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.domain.PropertyAndValueDictionary;
+import org.eol.globi.domain.Taxon;
 
 import java.util.Map;
 
-public abstract class BaseTaxonIdService extends BaseHttpClientService implements TaxonPropertyLookupService {
+public abstract class BasePropertyEnricherService extends BaseHttpClientService implements PropertyEnricher {
 
-    protected String lookupPropertyValueByTaxonName(String taxonName, String propertyName) throws TaxonPropertyLookupServiceException {
+    protected String lookupPropertyValueByTaxonName(String taxonName, String propertyName) throws PropertyEnricherException {
         String propertyValue = null;
         if (PropertyAndValueDictionary.EXTERNAL_ID.equals(propertyName)) {
             if (StringUtils.length(taxonName) > 2) {
                 try {
                     propertyValue = lookupIdByName(taxonName);
-                } catch (TaxonPropertyLookupServiceException e) {
+                } catch (PropertyEnricherException e) {
                     shutdown();
                     throw e;
                 }
@@ -24,7 +25,7 @@ public abstract class BaseTaxonIdService extends BaseHttpClientService implement
                 if (StringUtils.isNotBlank(lsId)) {
                     propertyValue = lookupTaxonPathById(lsId);
                 }
-            } catch (TaxonPropertyLookupServiceException e) {
+            } catch (PropertyEnricherException e) {
                 shutdown();
                 throw e;
             }
@@ -33,7 +34,7 @@ public abstract class BaseTaxonIdService extends BaseHttpClientService implement
     }
 
     @Override
-    public void lookupProperties(Map<String, String> properties) throws TaxonPropertyLookupServiceException {
+    public void enrich(Map<String, String> properties) throws PropertyEnricherException {
         for (String propertyName : properties.keySet()) {
             String propertyValue = lookupPropertyValueByTaxonName(properties.get(PropertyAndValueDictionary.NAME), propertyName);
             if (propertyValue != null) {
@@ -42,8 +43,8 @@ public abstract class BaseTaxonIdService extends BaseHttpClientService implement
         }
     }
 
-    public abstract String lookupIdByName(String taxonName) throws TaxonPropertyLookupServiceException;
+    public abstract String lookupIdByName(String taxonName) throws PropertyEnricherException;
 
-    public abstract String lookupTaxonPathById(String id) throws TaxonPropertyLookupServiceException;
+    public abstract String lookupTaxonPathById(String id) throws PropertyEnricherException;
 
 }

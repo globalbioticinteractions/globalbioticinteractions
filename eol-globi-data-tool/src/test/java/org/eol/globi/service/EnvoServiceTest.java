@@ -9,7 +9,7 @@ import static org.junit.Assert.assertThat;
 public class EnvoServiceTest {
 
     @Test
-    public void firstTerm() throws TaxonPropertyLookupServiceException {
+    public void firstTerm() throws PropertyEnricherException {
         EnvoService envoService = new EnvoService();
         assertThat(envoService.lookupIdByName("Sediment"), is("ENVO:00002007"));
         assertThat(envoService.lookupIdByName("sediment"), is("ENVO:00002007"));

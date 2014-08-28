@@ -14,20 +14,20 @@ import static org.junit.matchers.JUnitMatchers.containsString;
 public class ITISServiceIT {
 
     @Test
-    public void lookupNonExistentTaxon() throws TaxonPropertyLookupServiceException {
+    public void lookupNonExistentTaxon() throws PropertyEnricherException {
         String term = "Bregmacerous contori";
         assertNull(lookupTerm(term));
 
     }
 
     @Test
-    public void lookupExistentTaxon() throws TaxonPropertyLookupServiceException {
+    public void lookupExistentTaxon() throws PropertyEnricherException {
         String actual = lookupTerm("Fundulus jenkinsi");
         assertThat(actual, is("urn:lsid:itis.gov:itis_tsn:165653"));
     }
 
     @Test
-    public void lookupPathByExistingTaxon() throws TaxonPropertyLookupServiceException {
+    public void lookupPathByExistingTaxon() throws PropertyEnricherException {
         ITISService itisService = new ITISService();
         String s = itisService.lookupPropertyValueByTaxonName("Fundulus jenkinsi", PropertyAndValueDictionary.PATH);
         assertThat(s, is(notNullValue()));
@@ -35,24 +35,24 @@ public class ITISServiceIT {
     }
 
     @Test
-    public void lookupPathByNonExistingTaxon() throws TaxonPropertyLookupServiceException {
+    public void lookupPathByNonExistingTaxon() throws PropertyEnricherException {
         ITISService itisService = new ITISService();
         String s = itisService.lookupPropertyValueByTaxonName("donald duck", PropertyAndValueDictionary.PATH);
         assertThat(s, is (nullValue()));
     }
 
     @Test
-    public void lookupValidCommonName() throws TaxonPropertyLookupServiceException {
+    public void lookupValidCommonName() throws PropertyEnricherException {
         assertThat(lookupTerm("Common Snook"), is(nullValue()));
     }
 
     @Ignore
     @Test
-    public void lookupNA() throws TaxonPropertyLookupServiceException {
+    public void lookupNA() throws PropertyEnricherException {
         assertThat(lookupTerm("NA"), is(nullValue()));
     }
 
-    private String lookupTerm(String term) throws TaxonPropertyLookupServiceException {
+    private String lookupTerm(String term) throws PropertyEnricherException {
         return new ITISService().lookupIdByName(term);
     }
 

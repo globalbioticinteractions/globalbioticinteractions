@@ -8,7 +8,7 @@ import java.util.Map;
 import static org.eol.globi.domain.TaxonomyProvider.ID_PREFIX_EOL;
 import static org.eol.globi.domain.TaxonomyProvider.ID_PREFIX_WIKIPEDIA;
 
-public class FunctionalGroupService extends BaseTaxonIdService {
+public class FunctionalGroupService extends BasePropertyEnricherService {
 
     public static final String PHYTOPLANKTON = ID_PREFIX_EOL + "19662463";
     public static final String PLANKTON = ID_PREFIX_WIKIPEDIA + "Plankton";
@@ -38,7 +38,7 @@ public class FunctionalGroupService extends BaseTaxonIdService {
         put(MACROALGAE, "algae | macroalgae");
     }};
 
-    public String lookupIdByName(String taxonName) throws TaxonPropertyLookupServiceException {
+    public String lookupIdByName(String taxonName) throws PropertyEnricherException {
         String id = null;
         String lowerCaseName = StringUtils.lowerCase(taxonName);
         if (StringUtils.isNotBlank(lowerCaseName)) {
@@ -48,7 +48,7 @@ public class FunctionalGroupService extends BaseTaxonIdService {
     }
 
     @Override
-    public String lookupTaxonPathById(String id) throws TaxonPropertyLookupServiceException {
+    public String lookupTaxonPathById(String id) throws PropertyEnricherException {
         return pathLookup.get(id);
     }
 }

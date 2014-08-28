@@ -23,8 +23,8 @@ import static org.mockito.Mockito.verifyZeroInteractions;
 public class TaxonPropertyEnricherImplTest extends GraphDBTestCase {
 
     @Test
-    public void enrichNoServices() throws NodeFactoryException, IOException {
-        List<TaxonPropertyLookupService> list = new ArrayList<TaxonPropertyLookupService>();
+    public void enrichNoServices() throws NodeFactoryException, IOException, PropertyEnricherException {
+        List<PropertyEnricher> list = new ArrayList<PropertyEnricher>();
         TaxonPropertyEnricherImpl enricher = new TaxonPropertyEnricherImpl();
         enricher.setServices(list);
         Transaction transaction = getGraphDb().beginTx();
@@ -36,20 +36,20 @@ public class TaxonPropertyEnricherImplTest extends GraphDBTestCase {
     }
 
     @Test
-    public void enrichTwoService() throws NodeFactoryException, IOException, TaxonPropertyLookupServiceException {
-        TaxonPropertyLookupService serviceA = Mockito.mock(TaxonPropertyLookupService.class);
-        TaxonPropertyLookupService serviceB = Mockito.mock(TaxonPropertyLookupService.class);
+    public void enrichTwoService() throws NodeFactoryException, IOException, PropertyEnricherException {
+        PropertyEnricher serviceA = Mockito.mock(PropertyEnricher.class);
+        PropertyEnricher serviceB = Mockito.mock(PropertyEnricher.class);
         enrich("Homo sapiens", serviceA, serviceB);
-        verify(serviceA).lookupProperties(anyMap());
-        verify(serviceB).lookupProperties(anyMap());
+        verify(serviceA).enrich(anyMap());
+        verify(serviceB).enrich(anyMap());
     }
 
     @Test
-    public void enrichTwoServiceFirstIncomplete() throws NodeFactoryException, IOException, TaxonPropertyLookupServiceException {
-        TaxonPropertyLookupService serviceA = new TaxonPropertyLookupService() {
+    public void enrichTwoServiceFirstIncomplete() throws NodeFactoryException, IOException, PropertyEnricherException {
+        PropertyEnricher serviceA = new PropertyEnricher() {
 
             @Override
-            public void lookupProperties(Map<String, String> properties) throws TaxonPropertyLookupServiceException {
+            public void enrich(Map<String, String> properties) throws PropertyEnricherException {
                 properties.put(PropertyAndValueDictionary.EXTERNAL_ID, "FIRST:123");
             }
 
@@ -58,10 +58,10 @@ public class TaxonPropertyEnricherImplTest extends GraphDBTestCase {
 
             }
         };
-        TaxonPropertyLookupService serviceB = new TaxonPropertyLookupService() {
+        PropertyEnricher serviceB = new PropertyEnricher() {
 
             @Override
-            public void lookupProperties(Map<String, String> properties) throws TaxonPropertyLookupServiceException {
+            public void enrich(Map<String, String> properties) throws PropertyEnricherException {
                 properties.put(PropertyAndValueDictionary.PATH, "one | two | three");
             }
 
@@ -77,11 +77,11 @@ public class TaxonPropertyEnricherImplTest extends GraphDBTestCase {
     }
 
     @Test
-    public void enrichTwoServiceFirstComplete() throws NodeFactoryException, IOException, TaxonPropertyLookupServiceException {
-        TaxonPropertyLookupService serviceA = new TaxonPropertyLookupService() {
+    public void enrichTwoServiceFirstComplete() throws NodeFactoryException, IOException, PropertyEnricherException {
+        PropertyEnricher serviceA = new PropertyEnricher() {
 
             @Override
-            public void lookupProperties(Map<String, String> properties) throws TaxonPropertyLookupServiceException {
+            public void enrich(Map<String, String> properties) throws PropertyEnricherException {
                 properties.put(PropertyAndValueDictionary.EXTERNAL_ID, "FIRST:123");
                 properties.put(PropertyAndValueDictionary.PATH, "one | two | three");
                 properties.put(PropertyAndValueDictionary.COMMON_NAMES, "four | five | six");
@@ -92,7 +92,7 @@ public class TaxonPropertyEnricherImplTest extends GraphDBTestCase {
 
             }
         };
-        TaxonPropertyLookupService serviceB = Mockito.mock(TaxonPropertyLookupService.class);
+        PropertyEnricher serviceB = Mockito.mock(PropertyEnricher.class);
 
         TaxonNode taxon = enrich("Homo sapiens", serviceA, serviceB);
         assertThat(taxon.getExternalId(), is("FIRST:123"));
@@ -103,9 +103,9 @@ public class TaxonPropertyEnricherImplTest extends GraphDBTestCase {
 
     }
 
-    private TaxonNode enrich(String taxonName, TaxonPropertyLookupService serviceA, TaxonPropertyLookupService serviceB) throws IOException {
+    private TaxonNode enrich(String taxonName, PropertyEnricher serviceA, PropertyEnricher serviceB) throws IOException, PropertyEnricherException {
         TaxonPropertyEnricherImpl enricher = new TaxonPropertyEnricherImpl();
-        List<TaxonPropertyLookupService> list = new ArrayList<TaxonPropertyLookupService>();
+        List<PropertyEnricher> list = new ArrayList<PropertyEnricher>();
         list.add(serviceA);
         list.add(serviceB);
         enricher.setServices(list);

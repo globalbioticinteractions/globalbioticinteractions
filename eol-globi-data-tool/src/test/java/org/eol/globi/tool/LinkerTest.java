@@ -4,7 +4,7 @@ import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.TaxonNode;
-import org.eol.globi.service.TaxonPropertyLookupServiceException;
+import org.eol.globi.service.PropertyEnricherException;
 import org.junit.Test;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Relationship;
@@ -15,7 +15,7 @@ import static org.junit.Assert.assertThat;
 public class LinkerTest extends GraphDBTestCase {
 
     @Test
-    public void threeTaxa() throws NodeFactoryException, TaxonPropertyLookupServiceException {
+    public void threeTaxa() throws NodeFactoryException, PropertyEnricherException {
         nodeFactory.getOrCreateTaxon("Homo sapiens");
         nodeFactory.getOrCreateTaxon("Ariopsis felis");
         nodeFactory.getOrCreateTaxon("Canis lupus");
@@ -29,7 +29,7 @@ public class LinkerTest extends GraphDBTestCase {
     }
 
     @Test
-    public void australianTaxa() throws NodeFactoryException, TaxonPropertyLookupServiceException {
+    public void australianTaxa() throws NodeFactoryException, PropertyEnricherException {
         nodeFactory.getOrCreateTaxon("Gilippus hostilis");
         nodeFactory.getOrCreateTaxon("Euander lacertosus");
 
@@ -41,7 +41,7 @@ public class LinkerTest extends GraphDBTestCase {
     }
 
     @Test
-    public void frogs() throws NodeFactoryException, TaxonPropertyLookupServiceException {
+    public void frogs() throws NodeFactoryException, PropertyEnricherException {
         nodeFactory.getOrCreateTaxon("Anura");
         new Linker().linkTaxa(getGraphDb());
         assertHasOther("Anura", 3);

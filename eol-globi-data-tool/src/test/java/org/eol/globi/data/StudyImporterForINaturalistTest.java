@@ -6,7 +6,7 @@ import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.domain.TaxonomyProvider;
-import org.eol.globi.service.TaxonPropertyLookupServiceException;
+import org.eol.globi.service.PropertyEnricherException;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -33,7 +33,7 @@ public class StudyImporterForINaturalistTest extends GraphDBTestCase {
     }
 
     @Test
-    public void importUsingINatAPI() throws StudyImporterException, TaxonPropertyLookupServiceException {
+    public void importUsingINatAPI() throws StudyImporterException, PropertyEnricherException {
         importer.importStudy();
         assertThat(NodeFactory.findAllStudies(getGraphDb()).size() > 150, is(true));
     }
