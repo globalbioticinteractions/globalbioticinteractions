@@ -4,12 +4,14 @@ import org.eol.globi.data.CharsetConstant;
 import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.NodeFactory;
 import org.eol.globi.data.NodeFactoryException;
+import org.eol.globi.data.taxon.CorrectionService;
 import org.eol.globi.data.taxon.TaxonNameCorrector;
 import org.eol.globi.data.taxon.TaxonServiceImpl;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.TaxonNode;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.neo4j.graphdb.Relationship;
 
@@ -28,7 +30,12 @@ public class TaxonPropertyEnricherImplIT extends GraphDBTestCase {
     @Before
     public void start() {
         enricher = TaxonPropertyEnricherFactory.createTaxonEnricher();
-        nodeFactory = new NodeFactory(getGraphDb(), new TaxonServiceImpl(enricher, new TaxonNameCorrector(), getGraphDb()));
+        nodeFactory = new NodeFactory(getGraphDb(), new TaxonServiceImpl(enricher, new CorrectionService() {
+            @Override
+            public String correct(String taxonName) {
+                return taxonName;
+            }
+        }, getGraphDb()));
     }
 
 
@@ -85,9 +92,9 @@ public class TaxonPropertyEnricherImplIT extends GraphDBTestCase {
     @Test
     public void chromatomyiaScabiosae() throws IOException, NodeFactoryException {
         TaxonNode taxon = nodeFactory.getOrCreateTaxon("Chromatomyia scabiosae");
-        assertThat(taxon.getName(), is("Chromatomyia"));
-        assertThat(taxon.getPath(), is("Animalia | Arthropoda | Insecta | Diptera | Agromyzidae | Chromatomyia"));
-        assertThat(taxon.getExternalId(), is("EOL:55493"));
+        assertThat(taxon.getExternalId(), is("EOL:3492979"));
+        assertThat(taxon.getName(), is("Chromatomyia scabiosae"));
+        assertThat(taxon.getPath(), is("Animalia | Arthropoda | Insecta | Diptera | Agromyzidae | Chromatomyia | Chromatomyia scabiosae"));
     }
 
 
@@ -99,6 +106,7 @@ public class TaxonPropertyEnricherImplIT extends GraphDBTestCase {
         assertThat(taxon.getExternalId(), is("EOL:224168"));
     }
 
+    @Ignore("Other suspension feeders resolves to Other, which is an alternate name for  http://eol.org/pages/2913255/overview")
     @Test
     public void otherSuspensionFeeders() throws IOException, NodeFactoryException {
         TaxonNode taxon = nodeFactory.getOrCreateTaxon("Other suspension feeders");
@@ -117,15 +125,15 @@ public class TaxonPropertyEnricherImplIT extends GraphDBTestCase {
 
     @Test
     public void noNameButExternalId() throws NodeFactoryException {
-        Specimen specimen = nodeFactory.createSpecimen("no name", "EOL:223038");
+        Specimen specimen = nodeFactory.createSpecimen(PropertyAndValueDictionary.NO_NAME, "EOL:223038");
         assertThat(specimen, is(notNullValue()));
         Iterable<Relationship> classifications = specimen.getClassifications();
         int count = 0;
         for (Relationship classification : classifications) {
             TaxonNode taxonNode = new TaxonNode(classification.getEndNode());
+            assertThat(taxonNode.getExternalId(), is("EOL:223038"));
             assertThat(taxonNode.getName(), is("Ariopsis felis"));
             assertThat(taxonNode.getPath(), is("Animalia | Chordata | Actinopterygii | Siluriformes | Ariidae | Ariopsis | Ariopsis felis"));
-            assertThat(taxonNode.getExternalId(), is("EOL:223038"));
             count++;
         }
         assertThat(count, is(1));
@@ -133,14 +141,14 @@ public class TaxonPropertyEnricherImplIT extends GraphDBTestCase {
 
     @Test
     public void atlasOfLivingAustralia() throws NodeFactoryException {
-        Specimen specimen = nodeFactory.createSpecimen(null, "urn:lsid:biodiversity.org.au:afd.taxon:aa745ff0-c776-4d0e-851d-369ba0e6f537");
+        Specimen specimen = nodeFactory.createSpecimen(null, "urn:lsid:biodiversity.org.au:afd.taxon:31a9b8b8-4e8f-4343-a15f-2ed24e0bf1ae");
         assertThat(specimen, is(notNullValue()));
         Iterable<Relationship> classifications = specimen.getClassifications();
         int count = 0;
         for (Relationship classification : classifications) {
             TaxonNode taxonNode = new TaxonNode(classification.getEndNode());
             assertThat(taxonNode.getName(), is("Macropus rufus"));
-            assertThat(taxonNode.getExternalId(), is("urn:lsid:biodiversity.org.au:afd.taxon:aa745ff0-c776-4d0e-851d-369ba0e6f537"));
+            assertThat(taxonNode.getExternalId(), is("urn:lsid:biodiversity.org.au:afd.taxon:31a9b8b8-4e8f-4343-a15f-2ed24e0bf1ae"));
             count++;
         }
         assertThat(count, is(1));

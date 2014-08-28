@@ -35,6 +35,11 @@ public class AtlasOfLivingAustraliaService extends BaseHttpClientService impleme
         }
     }
 
+    @Override
+    public void lookupProperties(Map<String, String> properties) throws TaxonPropertyLookupServiceException {
+        lookupPropertiesByName(properties.get(PropertyAndValueDictionary.NAME), properties);
+    }
+
     private boolean hasValidGUID(String externalId) throws TaxonPropertyLookupServiceException {
         return StringUtils.startsWith(externalId, TaxonomyProvider.ID_PREFIX_LIVING_ATLAS_OF_AUSTRALIA);
     }

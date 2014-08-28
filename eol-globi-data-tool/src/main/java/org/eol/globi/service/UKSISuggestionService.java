@@ -45,6 +45,11 @@ public class UKSISuggestionService implements TaxonPropertyLookupService, NameSu
 
     }
 
+    @Override
+    public void lookupProperties(Map<String, String> properties) throws TaxonPropertyLookupServiceException {
+        lookupPropertiesByName(properties.get(PropertyAndValueDictionary.NAME), properties);
+    }
+
     private TaxonTerm findMatch(String taxonName) throws TaxonPropertyLookupServiceException {
         TaxonTerm match = null;
         if (service == null) {

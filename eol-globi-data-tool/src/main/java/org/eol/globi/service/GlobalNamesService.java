@@ -5,12 +5,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.HttpEntityWrapper;
 import org.apache.http.entity.mime.MultipartEntity;
-import org.apache.http.entity.mime.content.ContentBody;
-import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.entity.mime.content.InputStreamBody;
-import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -19,13 +15,10 @@ import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.util.HttpUtil;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -64,6 +57,11 @@ public class GlobalNamesService extends BaseHttpClientService implements TaxonPr
             properties.put(PropertyAndValueDictionary.RANK, taxon.getRank());
         }
 
+    }
+
+    @Override
+    public void lookupProperties(Map<String, String> properties) throws TaxonPropertyLookupServiceException {
+        lookupPropertiesByName(properties.get(PropertyAndValueDictionary.NAME), properties);
     }
 
     public void findTermsForNames(List<String> names, TermMatchListener termMatchListener) throws TaxonPropertyLookupServiceException {

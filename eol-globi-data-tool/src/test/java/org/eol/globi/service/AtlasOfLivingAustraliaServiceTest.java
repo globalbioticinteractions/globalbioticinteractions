@@ -28,6 +28,22 @@ public class AtlasOfLivingAustraliaServiceTest {
     }
 
     @Test
+    public void lookupTaxonByRedirectedGUID() throws TaxonPropertyLookupServiceException {
+        HashMap<String, String> props = new HashMap<String, String>() {
+            {
+                put(PropertyAndValueDictionary.EXTERNAL_ID, "urn:lsid:biodiversity.org.au:afd.taxon:aa745ff0-c776-4d0e-851d-369ba0e6f537");
+            }
+        };
+        new AtlasOfLivingAustraliaService().lookupPropertiesByName(null, props);
+
+        assertThat(props.get(PropertyAndValueDictionary.NAME), is("Macropus rufus"));
+        assertThat(props.get(PropertyAndValueDictionary.PATH), is("Animalia | Chordata | Mammalia | Diprotodontia | Macropodidae | Macropus | Macropus rufus"));
+        assertThat(props.get(PropertyAndValueDictionary.PATH_NAMES), is("kingdom | phylum | class | order | family | genus | species"));
+        assertThat(props.get(PropertyAndValueDictionary.EXTERNAL_ID), is("urn:lsid:biodiversity.org.au:afd.taxon:31a9b8b8-4e8f-4343-a15f-2ed24e0bf1ae"));
+        assertThat(props.get(PropertyAndValueDictionary.COMMON_NAMES), is("Red Kangaroo @en"));
+    }
+
+    @Test
     public void lookupTaxonByInvalidGUID() throws TaxonPropertyLookupServiceException {
         HashMap<String, String> props = new HashMap<String, String>() {
             {

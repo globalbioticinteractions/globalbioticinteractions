@@ -53,6 +53,11 @@ public class TaxonPropertyEnricherImplTest extends GraphDBTestCase {
             }
 
             @Override
+            public void lookupProperties(Map<String, String> properties) throws TaxonPropertyLookupServiceException {
+                lookupPropertiesByName(null, properties);
+            }
+
+            @Override
             public void shutdown() {
 
             }
@@ -61,6 +66,11 @@ public class TaxonPropertyEnricherImplTest extends GraphDBTestCase {
             @Override
             public void lookupPropertiesByName(String name, Map<String, String> properties) throws TaxonPropertyLookupServiceException {
                 properties.put(PropertyAndValueDictionary.PATH, "one | two | three");
+            }
+
+            @Override
+            public void lookupProperties(Map<String, String> properties) throws TaxonPropertyLookupServiceException {
+                lookupPropertiesByName(null, properties);
             }
 
             @Override
@@ -82,6 +92,11 @@ public class TaxonPropertyEnricherImplTest extends GraphDBTestCase {
                 properties.put(PropertyAndValueDictionary.EXTERNAL_ID, "FIRST:123");
                 properties.put(PropertyAndValueDictionary.PATH, "one | two | three");
                 properties.put(PropertyAndValueDictionary.COMMON_NAMES, "four | five | six");
+            }
+
+            @Override
+            public void lookupProperties(Map<String, String> properties) throws TaxonPropertyLookupServiceException {
+                lookupPropertiesByName(null, properties);
             }
 
             @Override

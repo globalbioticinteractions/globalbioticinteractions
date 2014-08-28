@@ -57,7 +57,7 @@ public class TaxonPropertyEnricherImpl implements TaxonPropertyEnricher {
             service, Integer errorCount, Map<String, String> properties) throws TaxonPropertyLookupServiceException {
         String taxonName = taxon.getName();
         try {
-            lookupAndSetProperties(taxon, service, taxonName, properties);
+            lookupAndSetProperties(taxon, service, properties);
             resetErrorCount(errorCounts, service);
         } catch (TaxonPropertyLookupServiceException ex) {
             LOG.warn("failed to find a match for [" + taxonName + "] in [" + service.getClass().getSimpleName() + "]", ex);
@@ -70,9 +70,9 @@ public class TaxonPropertyEnricherImpl implements TaxonPropertyEnricher {
         errorCounts.put(service.getClass(), 0);
     }
 
-    private void lookupAndSetProperties(Taxon taxon, TaxonPropertyLookupService service, String
-            taxonName, Map<String, String> properties) throws TaxonPropertyLookupServiceException {
-        service.lookupPropertiesByName(taxonName, properties);
+    private void lookupAndSetProperties(Taxon taxon, TaxonPropertyLookupService service,
+             Map<String, String> properties) throws TaxonPropertyLookupServiceException {
+        service.lookupPropertiesByName(taxon.getName(), properties);
         if (properties.size() > 0) {
             setProperties(taxon, properties);
         }

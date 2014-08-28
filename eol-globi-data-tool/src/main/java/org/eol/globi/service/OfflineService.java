@@ -6,6 +6,7 @@ import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.data.taxon.TaxonLookupService;
 import org.eol.globi.data.taxon.TaxonTerm;
 import org.eol.globi.data.taxon.TaxonomyImporter;
+import org.eol.globi.domain.PropertyAndValueDictionary;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -22,6 +23,11 @@ public abstract class OfflineService implements TaxonPropertyLookupService {
                 lookupProperty(name, properties, propertyName);
             }
         }
+    }
+
+    @Override
+    public void lookupProperties(Map<String, String> properties) throws TaxonPropertyLookupServiceException {
+        lookupPropertiesByName(properties.get(PropertyAndValueDictionary.NAME), properties);
     }
 
     private void lookupProperty(String taxonName, Map<String, String> properties, String propertyName) throws TaxonPropertyLookupServiceException {

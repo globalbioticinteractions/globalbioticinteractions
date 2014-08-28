@@ -124,6 +124,14 @@ public class EOLServiceIT {
     }
 
     @Test
+    public void suspensionFeeders() throws TaxonPropertyLookupServiceException {
+        HashMap<String, String> properties = new HashMap<String, String>();
+        new EOLService().lookupPropertiesByName("Other suspension feeders", properties);
+        assertThat(properties.get(PropertyAndValueDictionary.EXTERNAL_ID), is(nullValue()));
+        assertThat(properties.get(PropertyAndValueDictionary.PATH), is(nullValue()));
+    }
+
+    @Test
     public void lookupPickleweedAlreadyPopulated() throws TaxonPropertyLookupServiceException {
         HashMap<String, String> properties = new HashMap<String, String>();
         properties.put(PropertyAndValueDictionary.EXTERNAL_ID, "EOL:61812");

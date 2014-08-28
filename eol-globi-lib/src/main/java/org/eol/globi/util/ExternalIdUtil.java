@@ -39,7 +39,7 @@ public class ExternalIdUtil {
 
     public static boolean isSupported(String externalId) {
         boolean supported = false;
-        for (String prefix : getURLPrefixMap().values()) {
+        for (String prefix : getURLPrefixMap().keySet()) {
             if (StringUtils.startsWith(externalId, prefix)) {
                 supported = true;
             }

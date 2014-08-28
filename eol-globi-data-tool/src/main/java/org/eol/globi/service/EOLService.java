@@ -44,6 +44,11 @@ public class EOLService extends BaseHttpClientService implements TaxonPropertyLo
         }
     }
 
+    @Override
+    public void lookupProperties(Map<String, String> properties) throws TaxonPropertyLookupServiceException {
+        lookupPropertiesByName(properties.get(PropertyAndValueDictionary.NAME), properties);
+    }
+
     private Long getEOLPageId(String name, String externalId) throws TaxonPropertyLookupServiceException {
         Long id = null;
         if (ExternalIdUtil.isSupported(externalId)) {
@@ -55,7 +60,7 @@ public class EOLService extends BaseHttpClientService implements TaxonPropertyLo
                     throw new TaxonPropertyLookupServiceException("failed to parse eol id [" + eolPageIdString + "]");
                 }
             }
-        } else {
+        } else if (StringUtils.isNotBlank(name)) {
             id = getPageId(name, true);
         }
         return id;
@@ -129,11 +134,11 @@ public class EOLService extends BaseHttpClientService implements TaxonPropertyLo
 
         if (ranks.size() > 0) {
             properties.put(PropertyAndValueDictionary.PATH, StringUtils.join(ranks, CharsetConstant.SEPARATOR));
+            if (rankNames.size() == ranks.size()) {
+                properties.put(PropertyAndValueDictionary.PATH_NAMES, StringUtils.join(rankNames, CharsetConstant.SEPARATOR));
+            }
         }
 
-        if (rankNames.size() == ranks.size()) {
-            properties.put(PropertyAndValueDictionary.PATH_NAMES, StringUtils.join(rankNames, CharsetConstant.SEPARATOR));
-        }
 
     }
 
