@@ -72,7 +72,7 @@ public class TaxonPropertyEnricherImpl implements TaxonPropertyEnricher {
 
     private void lookupAndSetProperties(Taxon taxon, TaxonPropertyLookupService service,
              Map<String, String> properties) throws TaxonPropertyLookupServiceException {
-        service.lookupPropertiesByName(taxon.getName(), properties);
+        service.lookupProperties(properties);
         if (properties.size() > 0) {
             setProperties(taxon, properties);
         }

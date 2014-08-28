@@ -18,7 +18,7 @@ public class AtlasOfLivingAustraliaServiceTest {
                 put(PropertyAndValueDictionary.EXTERNAL_ID, "urn:lsid:biodiversity.org.au:afd.taxon:31a9b8b8-4e8f-4343-a15f-2ed24e0bf1ae");
             }
         };
-        new AtlasOfLivingAustraliaService().lookupPropertiesByName(null, props);
+        new AtlasOfLivingAustraliaService().lookupProperties(props);
 
         assertThat(props.get(PropertyAndValueDictionary.NAME), is("Macropus rufus"));
         assertThat(props.get(PropertyAndValueDictionary.PATH), is("Animalia | Chordata | Mammalia | Diprotodontia | Macropodidae | Macropus | Macropus rufus"));
@@ -34,7 +34,7 @@ public class AtlasOfLivingAustraliaServiceTest {
                 put(PropertyAndValueDictionary.EXTERNAL_ID, "urn:lsid:biodiversity.org.au:afd.taxon:aa745ff0-c776-4d0e-851d-369ba0e6f537");
             }
         };
-        new AtlasOfLivingAustraliaService().lookupPropertiesByName(null, props);
+        new AtlasOfLivingAustraliaService().lookupProperties(props);
 
         assertThat(props.get(PropertyAndValueDictionary.NAME), is("Macropus rufus"));
         assertThat(props.get(PropertyAndValueDictionary.PATH), is("Animalia | Chordata | Mammalia | Diprotodontia | Macropodidae | Macropus | Macropus rufus"));
@@ -50,7 +50,7 @@ public class AtlasOfLivingAustraliaServiceTest {
                 put(PropertyAndValueDictionary.EXTERNAL_ID, "urn:lsxxx:bla");
             }
         };
-        new AtlasOfLivingAustraliaService().lookupPropertiesByName(null, props);
+        new AtlasOfLivingAustraliaService().lookupProperties(props);
         assertThat(props.size(), is(1));
         assertThat(props.get(PropertyAndValueDictionary.EXTERNAL_ID), is("urn:lsxxx:bla"));
     }
@@ -58,7 +58,8 @@ public class AtlasOfLivingAustraliaServiceTest {
     @Test
     public void lookupTaxonByName() throws TaxonPropertyLookupServiceException {
         HashMap<String, String> props = new HashMap<String, String>();
-        new AtlasOfLivingAustraliaService().lookupPropertiesByName("Macropus rufus", props);
+        props.put(PropertyAndValueDictionary.NAME, "Macropus rufus");
+        new AtlasOfLivingAustraliaService().lookupProperties(props);
 
         assertThat(props.get(PropertyAndValueDictionary.NAME), is("Macropus rufus"));
         assertThat(props.get(PropertyAndValueDictionary.EXTERNAL_ID), is("urn:lsid:biodiversity.org.au:afd.taxon:31a9b8b8-4e8f-4343-a15f-2ed24e0bf1ae"));
@@ -69,8 +70,11 @@ public class AtlasOfLivingAustraliaServiceTest {
 
     @Test
     public void lookupTaxonByName2() throws TaxonPropertyLookupServiceException {
-        HashMap<String, String> props = new HashMap<String, String>();
-        new AtlasOfLivingAustraliaService().lookupPropertiesByName("Abbreviata", props);
+        HashMap<String, String> props = new HashMap<String, String>() {{
+            put(PropertyAndValueDictionary.NAME, "Abbreviata");
+        }
+        };
+        new AtlasOfLivingAustraliaService().lookupProperties(props);
 
         assertThat(props.get(PropertyAndValueDictionary.NAME), is("Abbreviata"));
         assertThat(props.get(PropertyAndValueDictionary.EXTERNAL_ID), is("urn:lsid:biodiversity.org.au:afd.taxon:39683706-f5b1-43be-934b-5fdf4f5e3150"));
@@ -82,7 +86,7 @@ public class AtlasOfLivingAustraliaServiceTest {
     @Test
     public void lookupTaxonByInvalidName() throws TaxonPropertyLookupServiceException {
         HashMap<String, String> props = new HashMap<String, String>();
-        new AtlasOfLivingAustraliaService().lookupPropertiesByName("Donald Duck", props);
+        new AtlasOfLivingAustraliaService().lookupProperties(props);
         assertThat(props.isEmpty(), is(true));
     }
 }

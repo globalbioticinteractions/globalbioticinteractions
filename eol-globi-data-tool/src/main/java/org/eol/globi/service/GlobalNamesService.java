@@ -39,9 +39,9 @@ public class GlobalNamesService extends BaseHttpClientService implements TaxonPr
     }
 
     @Override
-    public void lookupPropertiesByName(String name, Map<String, String> properties) throws TaxonPropertyLookupServiceException {
+    public void lookupProperties(Map<String, String> properties) throws TaxonPropertyLookupServiceException {
         final List<Taxon> taxa = new ArrayList<Taxon>();
-        findTermsForNames(Arrays.asList(name), new TermMatchListener() {
+        findTermsForNames(Arrays.asList(properties.get(PropertyAndValueDictionary.NAME)), new TermMatchListener() {
             @Override
             public void foundTaxonForName(Long id, String name, Taxon taxon) {
                 taxa.add(taxon);
@@ -57,11 +57,6 @@ public class GlobalNamesService extends BaseHttpClientService implements TaxonPr
             properties.put(PropertyAndValueDictionary.RANK, taxon.getRank());
         }
 
-    }
-
-    @Override
-    public void lookupProperties(Map<String, String> properties) throws TaxonPropertyLookupServiceException {
-        lookupPropertiesByName(properties.get(PropertyAndValueDictionary.NAME), properties);
     }
 
     public void findTermsForNames(List<String> names, TermMatchListener termMatchListener) throws TaxonPropertyLookupServiceException {

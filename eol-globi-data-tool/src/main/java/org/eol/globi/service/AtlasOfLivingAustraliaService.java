@@ -23,21 +23,15 @@ import java.util.Map;
 public class AtlasOfLivingAustraliaService extends BaseHttpClientService implements TaxonPropertyLookupService {
 
     @Override
-    public void lookupPropertiesByName(String name, Map<String, String> properties) throws TaxonPropertyLookupServiceException {
+    public void lookupProperties(Map<String, String> properties) throws TaxonPropertyLookupServiceException {
         String externalId = properties.get(PropertyAndValueDictionary.EXTERNAL_ID);
         if (needsEnrichment(properties)) {
-            String guid = hasValidGUID(externalId) ? externalId : findTaxonGUIDByName(name);
-
+            String guid = hasValidGUID(externalId) ? externalId : findTaxonGUIDByName(properties.get(PropertyAndValueDictionary.NAME));
             if (hasValidGUID(guid)) {
                 Map<String, String> taxonInfo = findTaxonInfoByGUID(guid);
                 properties.putAll(taxonInfo);
             }
         }
-    }
-
-    @Override
-    public void lookupProperties(Map<String, String> properties) throws TaxonPropertyLookupServiceException {
-        lookupPropertiesByName(properties.get(PropertyAndValueDictionary.NAME), properties);
     }
 
     private boolean hasValidGUID(String externalId) throws TaxonPropertyLookupServiceException {
@@ -106,8 +100,6 @@ public class AtlasOfLivingAustraliaService extends BaseHttpClientService impleme
                 if (node.has("commonNames")) {
                     info.putAll(parseCommonName(node.get("commonNames")));
                 }
-
-
             }
         } catch (URISyntaxException e) {
             throw new TaxonPropertyLookupServiceException("failed to create uri", e);

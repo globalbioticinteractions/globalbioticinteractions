@@ -25,10 +25,10 @@ import java.util.Map;
 public class EOLService extends BaseHttpClientService implements TaxonPropertyLookupService {
 
     @Override
-    public void lookupPropertiesByName(String name, Map<String, String> properties) throws TaxonPropertyLookupServiceException {
+    public void lookupProperties(Map<String, String> properties) throws TaxonPropertyLookupServiceException {
         String externalId = properties.get(PropertyAndValueDictionary.EXTERNAL_ID);
         if (needsEnrichment(properties)) {
-            Long id = getEOLPageId(name, externalId);
+            Long id = getEOLPageId(properties.get(PropertyAndValueDictionary.NAME), externalId);
             if (id != null) {
                 addExternalId(properties, id);
                 addTaxonInfo(id, properties);
@@ -42,11 +42,6 @@ public class EOLService extends BaseHttpClientService implements TaxonPropertyLo
                 }
             }
         }
-    }
-
-    @Override
-    public void lookupProperties(Map<String, String> properties) throws TaxonPropertyLookupServiceException {
-        lookupPropertiesByName(properties.get(PropertyAndValueDictionary.NAME), properties);
     }
 
     private Long getEOLPageId(String name, String externalId) throws TaxonPropertyLookupServiceException {

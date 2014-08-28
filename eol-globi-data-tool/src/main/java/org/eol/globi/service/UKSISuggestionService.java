@@ -35,19 +35,12 @@ public class UKSISuggestionService implements TaxonPropertyLookupService, NameSu
     }
 
     @Override
-    public void lookupPropertiesByName(String name, Map<String, String> properties) throws TaxonPropertyLookupServiceException {
-        TaxonTerm match = findMatch(name);
-
+    public void lookupProperties(Map<String, String> properties) throws TaxonPropertyLookupServiceException {
+        TaxonTerm match = findMatch(properties.get(PropertyAndValueDictionary.NAME));
         if (match != null) {
             properties.put(PropertyAndValueDictionary.NAME, match.getName());
             properties.put(PropertyAndValueDictionary.EXTERNAL_ID, match.getId());
         }
-
-    }
-
-    @Override
-    public void lookupProperties(Map<String, String> properties) throws TaxonPropertyLookupServiceException {
-        lookupPropertiesByName(properties.get(PropertyAndValueDictionary.NAME), properties);
     }
 
     private TaxonTerm findMatch(String taxonName) throws TaxonPropertyLookupServiceException {

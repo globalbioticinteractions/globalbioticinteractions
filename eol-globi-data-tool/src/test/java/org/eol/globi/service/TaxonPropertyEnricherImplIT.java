@@ -30,12 +30,7 @@ public class TaxonPropertyEnricherImplIT extends GraphDBTestCase {
     @Before
     public void start() {
         enricher = TaxonPropertyEnricherFactory.createTaxonEnricher();
-        nodeFactory = new NodeFactory(getGraphDb(), new TaxonServiceImpl(enricher, new CorrectionService() {
-            @Override
-            public String correct(String taxonName) {
-                return taxonName;
-            }
-        }, getGraphDb()));
+        nodeFactory = new NodeFactory(getGraphDb(), new TaxonServiceImpl(enricher, new TaxonNameCorrector(), getGraphDb()));
     }
 
 
@@ -147,8 +142,8 @@ public class TaxonPropertyEnricherImplIT extends GraphDBTestCase {
         int count = 0;
         for (Relationship classification : classifications) {
             TaxonNode taxonNode = new TaxonNode(classification.getEndNode());
-            assertThat(taxonNode.getName(), is("Macropus rufus"));
             assertThat(taxonNode.getExternalId(), is("urn:lsid:biodiversity.org.au:afd.taxon:31a9b8b8-4e8f-4343-a15f-2ed24e0bf1ae"));
+            assertThat(taxonNode.getName(), is("Macropus rufus"));
             count++;
         }
         assertThat(count, is(1));

@@ -4,9 +4,7 @@ import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.Is.is;
@@ -24,7 +22,8 @@ public class UKSISuggestionServiceTest {
     @Test
     public void lookupNameWithCorrection() throws TaxonPropertyLookupServiceException {
         HashMap<String, String> properties = new HashMap<String, String>();
-        uksiSuggestionService.lookupPropertiesByName("Stellaria apetala", properties);
+        properties.put(PropertyAndValueDictionary.NAME, "Stellaria apetala");
+        uksiSuggestionService.lookupProperties(properties);
         assertThat(properties.get(PropertyAndValueDictionary.NAME), is("Stellaria pallida"));
         assertThat(properties.get(PropertyAndValueDictionary.EXTERNAL_ID), is("UKSI:NBNSYS0000157226"));
     }
@@ -48,7 +47,8 @@ public class UKSISuggestionServiceTest {
     @Test
     public void lookupNameNoCorrectionButPresent() throws TaxonPropertyLookupServiceException {
         HashMap<String, String> properties = new HashMap<String, String>();
-        uksiSuggestionService.lookupPropertiesByName("Serpulidae", properties);
+        properties.put(PropertyAndValueDictionary.NAME, "Serpulidae");
+        uksiSuggestionService.lookupProperties(properties);
         assertThat(properties.get(PropertyAndValueDictionary.NAME), is("Serpulidae"));
         assertThat(properties.get(PropertyAndValueDictionary.EXTERNAL_ID), is("UKSI:NBNSYS0000177931"));
     }
@@ -61,7 +61,8 @@ public class UKSISuggestionServiceTest {
     @Test
     public void lookupNameNoCorrectionNotPresent() throws TaxonPropertyLookupServiceException {
         HashMap<String, String> properties = new HashMap<String, String>();
-        uksiSuggestionService.lookupPropertiesByName("Yogi the Bear", properties);
+        properties.put(PropertyAndValueDictionary.NAME, "Yogi the Bear");
+        uksiSuggestionService.lookupProperties(properties);
         assertThat(properties.get(PropertyAndValueDictionary.NAME), is(nullValue()));
         assertThat(properties.get(PropertyAndValueDictionary.EXTERNAL_ID), is(nullValue()));
     }

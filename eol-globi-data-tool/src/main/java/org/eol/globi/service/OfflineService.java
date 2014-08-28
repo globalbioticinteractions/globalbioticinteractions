@@ -17,17 +17,12 @@ public abstract class OfflineService implements TaxonPropertyLookupService {
     private TaxonLookupService taxonLookupService;
 
     @Override
-    public void lookupPropertiesByName(String name, Map<String, String> properties) throws TaxonPropertyLookupServiceException {
+    public void lookupProperties(Map<String, String> properties) throws TaxonPropertyLookupServiceException {
         for (String propertyName : properties.keySet()) {
             if (properties.get(propertyName) == null) {
-                lookupProperty(name, properties, propertyName);
+                lookupProperty(properties.get(PropertyAndValueDictionary.NAME), properties, propertyName);
             }
         }
-    }
-
-    @Override
-    public void lookupProperties(Map<String, String> properties) throws TaxonPropertyLookupServiceException {
-        lookupPropertiesByName(properties.get(PropertyAndValueDictionary.NAME), properties);
     }
 
     private void lookupProperty(String taxonName, Map<String, String> properties, String propertyName) throws TaxonPropertyLookupServiceException {
@@ -83,7 +78,8 @@ public abstract class OfflineService implements TaxonPropertyLookupService {
         HashMap<String, String> properties = new HashMap<String, String>() {{
             put(propertyName, null);
         }};
-        lookupPropertiesByName(taxonName, properties);
+        properties.put(PropertyAndValueDictionary.NAME, taxonName);
+        lookupProperties(properties);
         return properties.get(propertyName);
     }
 }

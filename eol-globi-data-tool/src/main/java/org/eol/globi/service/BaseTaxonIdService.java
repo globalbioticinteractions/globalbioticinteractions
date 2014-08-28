@@ -1,9 +1,6 @@
 package org.eol.globi.service;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.eol.globi.data.CharsetConstant;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 
 import java.util.Map;
@@ -36,18 +33,13 @@ public abstract class BaseTaxonIdService extends BaseHttpClientService implement
     }
 
     @Override
-    public void lookupPropertiesByName(String name, Map<String, String> properties) throws TaxonPropertyLookupServiceException {
+    public void lookupProperties(Map<String, String> properties) throws TaxonPropertyLookupServiceException {
         for (String propertyName : properties.keySet()) {
-            String propertyValue = lookupPropertyValueByTaxonName(name, propertyName);
+            String propertyValue = lookupPropertyValueByTaxonName(properties.get(PropertyAndValueDictionary.NAME), propertyName);
             if (propertyValue != null) {
                 properties.put(propertyName, propertyValue);
             }
         }
-    }
-
-    @Override
-    public void lookupProperties(Map<String, String> properties) throws TaxonPropertyLookupServiceException {
-        lookupPropertiesByName(properties.get(PropertyAndValueDictionary.NAME), properties);
     }
 
     public abstract String lookupIdByName(String taxonName) throws TaxonPropertyLookupServiceException;
