@@ -146,9 +146,8 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
         JsonNode targetTaxon = jsonNode.get("taxon");
         JsonNode targetTaxonNode = targetTaxon.get("name");
         long observationId = jsonNode.get("observation_id").getLongValue();
-        Study study = nodeFactory.getOrCreateStudy(TaxonomyProvider.ID_PREFIX_INATURALIST + observationId, getSourceString(), null);
         if (targetTaxonNode == null) {
-            getLogger().warn(study, "skipping interaction with missing target taxon name for observation [" + observationId + "]");
+            LOG.warn("skipping interaction with missing target taxon name for observation [" + observationId + "]");
         } else {
             JsonNode observationField = jsonNode.get("observation_field");
             String interactionDataType = observationField.get("datatype").getTextValue();
@@ -156,7 +155,7 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
             if (isIgnoredInteractionType(interactionType)) {
                 LOG.warn("ignoring taxon observation field type [" + interactionType + "] for observation with id [" + observationId + "]");
             } else {
-                createInteraction(jsonNode, targetTaxonNode, observationId, interactionDataType, interactionType, study);
+                createInteraction(jsonNode, targetTaxonNode, observationId, interactionDataType, interactionType);
             }
         }
 
@@ -167,13 +166,14 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
     }
 
 
-    private void createInteraction(JsonNode jsonNode, JsonNode targetTaxonNode, long observationId, String interactionDataType, String interactionType, Study study) throws StudyImporterException, NodeFactoryException {
+    private void createInteraction(JsonNode jsonNode, JsonNode targetTaxonNode, long observationId, String interactionDataType, String interactionType) throws StudyImporterException, NodeFactoryException {
         JsonNode observation = jsonNode.get("observation");
 
         JsonNode sourceTaxon = observation.get("taxon");
         if (sourceTaxon == null) {
-            getLogger().warn(study, "cannot create interaction with missing source taxon name for observation with id [" + observation.get("id") + "]");
+            LOG.warn("cannot create interaction with missing source taxon name for observation with id [" + observation.get("id") + "]");
         } else {
+            Study study = nodeFactory.getOrCreateStudy(TaxonomyProvider.ID_PREFIX_INATURALIST + observationId, getSourceString(), null);
             Specimen specimen;
             String targetTaxonName = targetTaxonNode.getTextValue();
             String sourceTaxonName = sourceTaxon.get("name").getTextValue();
@@ -199,8 +199,9 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
         StringBuilder citation = new StringBuilder();
         if (observationNode.has("user")) {
             JsonNode userNode = observationNode.get("user");
-            String user = userNode.has("name") ? userNode.get("name").getTextValue() : userNode.get("login").getTextValue();
-            citation.append(user);
+            String user = userNode.has("name") ? userNode.get("name").getTextValue() : "";
+            String login = userNode.has("login") ? userNode.get("login").getTextValue() : "";
+            citation.append(StringUtils.isBlank(user) ? login : user);
             citation.append(". ");
         }
         if (observationDate != null) {
