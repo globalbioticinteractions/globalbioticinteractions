@@ -26,8 +26,11 @@ public class TaxonEnricherImpl implements TaxonEnricher, PropertyEnricher {
     public void enrich(Map<String, String> properties) throws PropertyEnricherException {
         for (PropertyEnricher service : services) {
             try {
-                enrichTaxonWithPropertyValue(errorCounts, service, properties);
-                if (TaxonUtil.isResolved(properties)) {
+                Map<String, String> copy = new HashMap<String, String>(properties);
+                enrichTaxonWithPropertyValue(errorCounts, service, copy);
+                if (TaxonUtil.isResolved(copy)) {
+                    properties.clear();
+                    properties.putAll(copy);
                     break;
                 }
             } catch (PropertyEnricherException e) {

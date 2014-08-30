@@ -241,14 +241,14 @@ public class StudyImporterForGoMexSI extends BaseStudyImporter {
                                     try {
                                         predatorSpecimen.ate(createSpecimen(preyProperties));
                                     } catch (NodeFactoryException e) {
-                                        throw new StudyImporterException("failed to create specimen for [" + predatorProperties + "]");
+                                        throw new StudyImporterException("failed to create specimen for [" + predatorProperties + "]", e);
                                     }
                                 }
                             }
                         }
 
                     } catch (NodeFactoryException e) {
-                        throw new StudyImporterException("failed to create specimen for location on line [" + parser.getLastLineNumber() + "]");
+                        throw new StudyImporterException("failed to create specimen for location on line [" + parser.getLastLineNumber() + "]", e);
                     }
                 }
             }

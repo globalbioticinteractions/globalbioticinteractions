@@ -254,7 +254,7 @@ public class TaxonServiceImplIT extends GraphDBTestCase {
         assertThat(taxon.getName(), is("Homo sapiens"));
         assertThat(taxon.getExternalId(), is("EOL:327955"));
         assertThat(taxon.getPath(), containsString("Primates"));
-        assertThat(taxon.getCommonNames(), containsString("human"));
+        assertThat(taxon.getCommonNames(), containsString("Humans"));
         assertThat(taxon.getPathNames(), containsString("genus"));
         assertZeroHits(taxonService, "no:match");
     }

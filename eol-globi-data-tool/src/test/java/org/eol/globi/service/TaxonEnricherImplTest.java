@@ -45,38 +45,6 @@ public class TaxonEnricherImplTest extends GraphDBTestCase {
     }
 
     @Test
-    public void enrichTwoServiceFirstIncomplete() throws NodeFactoryException, IOException, PropertyEnricherException {
-        PropertyEnricher serviceA = new PropertyEnricher() {
-
-            @Override
-            public void enrich(Map<String, String> properties) throws PropertyEnricherException {
-                properties.put(PropertyAndValueDictionary.EXTERNAL_ID, "FIRST:123");
-            }
-
-            @Override
-            public void shutdown() {
-
-            }
-        };
-        PropertyEnricher serviceB = new PropertyEnricher() {
-
-            @Override
-            public void enrich(Map<String, String> properties) throws PropertyEnricherException {
-                properties.put(PropertyAndValueDictionary.PATH, "one | two | three");
-            }
-
-            @Override
-            public void shutdown() {
-
-            }
-        };
-        TaxonNode taxon = enrich("Homo sapiens", serviceA, serviceB);
-        assertThat(taxon.getExternalId(), is("FIRST:123"));
-        assertThat(taxon.getPath(), is("one | two | three"));
-
-    }
-
-    @Test
     public void enrichTwoServiceFirstComplete() throws NodeFactoryException, IOException, PropertyEnricherException {
         PropertyEnricher serviceA = new PropertyEnricher() {
 

@@ -50,11 +50,9 @@ public class TaxonServiceImpl implements TaxonService {
     }
 
     private TaxonNode findTaxon(String name, String externalId) throws NodeFactoryException {
-        TaxonNode taxon;
+        TaxonNode taxon = null;
         if (StringUtils.isBlank(externalId)) {
-            if (StringUtils.length(name) < 2) {
-                throw new NodeFactoryException("taxon name [" + name + "] must contains more than 1 character");
-            } else {
+            if (StringUtils.length(name) > 1) {
                 taxon = findTaxonByName(name);
             }
         } else {
@@ -101,7 +99,7 @@ public class TaxonServiceImpl implements TaxonService {
             try {
                 enricher.enrich(taxon);
             } catch (PropertyEnricherException e) {
-                throw new NodeFactoryException("failed to enrich taxon with name ["  + taxon.getName() + "]", e);
+                throw new NodeFactoryException("failed to enrich taxon with name [" + taxon.getName() + "]", e);
             }
             taxonNode = findTaxon(taxon.getName(), taxon.getExternalId());
             if (taxonNode == null) {
@@ -227,7 +225,7 @@ public class TaxonServiceImpl implements TaxonService {
     private void addToIndeces(TaxonNode taxon, String indexedName) {
         if (StringUtils.isNotBlank(indexedName)) {
             if (!StringUtils.equals(PropertyAndValueDictionary.NO_MATCH, indexedName)
-                  && !StringUtils.equals(PropertyAndValueDictionary.NO_NAME, indexedName) ) {
+                    && !StringUtils.equals(PropertyAndValueDictionary.NO_NAME, indexedName)) {
                 taxons.add(taxon.getUnderlyingNode(), PropertyAndValueDictionary.NAME, indexedName);
             }
 
