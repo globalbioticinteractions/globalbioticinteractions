@@ -183,7 +183,7 @@ public class TaxonServiceImplTest extends GraphDBTestCase {
         taxon = taxonService.getOrCreateTaxon("boo bla", null, null);
         assertEquals("boo bla", taxon.getName());
         assertThat(taxon.getExternalId(), is(PropertyAndValueDictionary.NO_MATCH));
-        assertNull(taxon.getPath());
+        assertThat(taxon.getPath(), is(PropertyAndValueDictionary.NO_MATCH));
     }
 
     @Test
