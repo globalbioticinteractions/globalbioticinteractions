@@ -1,16 +1,34 @@
 package org.eol.globi.data.taxon;
 
-import org.eol.globi.data.GraphDBTestCase;
 import org.junit.Test;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.util.Map;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
-public class TaxonomyImporterTest extends GraphDBTestCase {
+public class TaxonomyImporterTest {
 
     @Test
     public void stringFormat() {
-        TaxonomyImporter taxonomyImporter = new TaxonomyImporter(new OboParser(), new SingleResourceTaxonReaderFactory("/org/obofoundry/ncbi_taxonomy.obo.gz"));
+        TaxonomyImporter taxonomyImporter = new TaxonomyImporter(new TaxonParser() {
+            @Override
+            public void parse(BufferedReader reader, TaxonImportListener listener) throws IOException {
+
+            }
+
+            @Override
+            public int getExpectedMaxTerms() {
+                return 798595;
+            }
+        }, new TaxonReaderFactory() {
+            @Override
+            public Map<String, BufferedReader> getAllReaders() throws IOException {
+                return null;
+            }
+        });
         taxonomyImporter.setCounter(123);
         String s = taxonomyImporter.formatProgressString(12.2);
 

@@ -1,1 +1,0 @@
-Retrieved from http://content70.eol.org/downloads/eol_names_and_ranks_archive.tar.gz  in Dec 2012.

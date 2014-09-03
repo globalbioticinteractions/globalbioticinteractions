@@ -67,8 +67,8 @@ public class TaxonServiceImpl implements TaxonService {
     }
 
     @Override
-    public TaxonNode findTaxonByName(String taxonName) throws NodeFactoryException {
-        return findTaxonByKey(PropertyAndValueDictionary.NAME, taxonName);
+    public TaxonNode findTaxonByName(String name) throws NodeFactoryException {
+        return findTaxonByKey(PropertyAndValueDictionary.NAME, name);
     }
 
     private TaxonNode findTaxonByKey(String key, String value) {

@@ -25,8 +25,8 @@ import java.io.IOException;
 public class TaxonLookupServiceImpl implements TaxonImportListener, TaxonLookupService {
     private static final Log LOG = LogFactory.getLog(TaxonLookupServiceImpl.class);
 
-    public static final String FIELD_ID = "id";
-    public static final String FIELD_NAME = "name";
+    private static final String FIELD_ID = "id";
+    private static final String FIELD_NAME = "name";
     private static final String FIELD_RANK_PATH = "rank_path";
     private static final String FIELD_RECOMMENDED_NAME = "recommended_name";
 

@@ -20,12 +20,16 @@ public class TaxonomyImporter {
 
     private TaxonReaderFactory taxonReaderFactory;
 
-    private final TaxonLookupServiceImpl taxonLookupService;
+    private final TaxonLookupService taxonLookupService;
+
+    private final TaxonImportListener taxonImportListener;
 
     public TaxonomyImporter(TaxonParser taxonParser, TaxonReaderFactory taxonReaderFactory) {
         this.parser = taxonParser;
         this.taxonReaderFactory = taxonReaderFactory;
-        this.taxonLookupService = new TaxonLookupServiceImpl();
+        TaxonLookupServiceImpl service = new TaxonLookupServiceImpl();
+        this.taxonLookupService = service;
+        this.taxonImportListener = service;
         stopwatch = new StopWatch();
     }
 
@@ -67,7 +71,7 @@ public class TaxonomyImporter {
         getParser().parse(reader, new TaxonImportListener() {
             @Override
             public void addTerm(TaxonTerm term) {
-                taxonLookupService.addTerm(term);
+                taxonImportListener.addTerm(term);
                 count();
                 if (getCounter() % BATCH_TRANSACTION_SIZE == 0) {
                     StopWatch stopwatch = getStopwatch();
@@ -87,12 +91,12 @@ public class TaxonomyImporter {
 
             @Override
             public void start() {
-                taxonLookupService.start();
+                taxonImportListener.start();
             }
 
             @Override
             public void finish() {
-                taxonLookupService.finish();
+                taxonImportListener.finish();
             }
         });
     }

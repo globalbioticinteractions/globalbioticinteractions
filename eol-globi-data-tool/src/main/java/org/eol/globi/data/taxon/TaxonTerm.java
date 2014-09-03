@@ -23,16 +23,11 @@ public class TaxonTerm {
         return name;
     }
 
-    public String getIsA() {
-        return isA;
-    }
-
     public String getId() {
         return id;
     }
 
     private String name;
-    private String isA;
     private String id;
 
     public void setName(String name) {
@@ -40,7 +35,6 @@ public class TaxonTerm {
     }
 
     public void setIsA(String isA) {
-        this.isA = isA;
     }
 
     public void setId(String id) {
