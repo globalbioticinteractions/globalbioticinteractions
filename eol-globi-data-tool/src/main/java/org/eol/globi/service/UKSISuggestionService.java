@@ -6,9 +6,9 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eol.globi.data.taxon.TaxonLookupServiceImpl;
-import org.eol.globi.data.taxon.TaxonTerm;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Taxon;
+import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TaxonomyProvider;
 
 import java.io.File;
@@ -27,7 +27,7 @@ public class UKSISuggestionService implements PropertyEnricher, NameSuggestor {
     public String suggest(String name) {
         String suggestion = null;
         try {
-            TaxonTerm match = findMatch(name);
+            Taxon match = findMatch(name);
             suggestion = match == null ? name : match.getName();
         } catch (PropertyEnricherException e) {
             LOG.warn("failed to find suggestion for name [" + name + "]", e);
@@ -37,20 +37,20 @@ public class UKSISuggestionService implements PropertyEnricher, NameSuggestor {
 
     @Override
     public void enrich(Map<String, String> properties) throws PropertyEnricherException {
-        TaxonTerm match = findMatch(properties.get(PropertyAndValueDictionary.NAME));
+        Taxon match = findMatch(properties.get(PropertyAndValueDictionary.NAME));
         if (match != null) {
             properties.put(PropertyAndValueDictionary.NAME, match.getName());
-            properties.put(PropertyAndValueDictionary.EXTERNAL_ID, match.getId());
+            properties.put(PropertyAndValueDictionary.EXTERNAL_ID, match.getExternalId());
         }
     }
 
-    private TaxonTerm findMatch(String taxonName) throws PropertyEnricherException {
-        TaxonTerm match = null;
+    private Taxon findMatch(String taxonName) throws PropertyEnricherException {
+        Taxon match = null;
         if (service == null) {
             doInit();
         }
         try {
-            TaxonTerm[] taxonTerms = service.lookupTermsByName(taxonName);
+            Taxon[] taxonTerms = service.lookupTermsByName(taxonName);
             if (taxonTerms.length > 0) {
                 // pick the first one
                 match = taxonTerms[0];
@@ -87,8 +87,8 @@ public class UKSISuggestionService implements PropertyEnricher, NameSuggestor {
                 Object taxonName = study.get("TAXON_NAME");
                 Object externalId = study.get("NBN_TAXON_VERSION_KEY");
                 Object recommendedScientificName = study.get("RECOMMENDED_SCIENTIFIC_NAME");
-                TaxonTerm taxonTerm = new TaxonTerm();
-                taxonTerm.setId(TaxonomyProvider.ID_PREFIX_USKI + externalId);
+                Taxon taxonTerm = new TaxonImpl();
+                taxonTerm.setExternalId(TaxonomyProvider.ID_PREFIX_USKI + externalId);
                 taxonTerm.setName(recommendedScientificName.toString());
                 service.addTerm(taxonName.toString(), taxonTerm);
             }

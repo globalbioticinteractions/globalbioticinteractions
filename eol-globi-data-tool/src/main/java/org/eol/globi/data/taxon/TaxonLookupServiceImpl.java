@@ -17,6 +17,8 @@ import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.SimpleFSDirectory;
 import org.apache.lucene.util.Version;
+import org.eol.globi.domain.Taxon;
+import org.eol.globi.domain.TaxonImpl;
 import org.neo4j.kernel.impl.util.FileUtils;
 
 import java.io.File;
@@ -44,18 +46,18 @@ public class TaxonLookupServiceImpl implements TaxonImportListener, TaxonLookupS
     }
 
     @Override
-    public void addTerm(TaxonTerm taxonTerm) {
+    public void addTerm(Taxon taxonTerm) {
         addTerm(taxonTerm.getName(), taxonTerm);
     }
 
     @Override
-    public void addTerm(String name, TaxonTerm taxonTerm) {
+    public void addTerm(String name, Taxon taxonTerm) {
         if (hasStarted()) {
             Document doc = new Document();
             doc.add(new Field(FIELD_NAME, name, Field.Store.YES, Field.Index.NOT_ANALYZED_NO_NORMS));
             doc.add(new Field(FIELD_RECOMMENDED_NAME, taxonTerm.getName(), Field.Store.YES, Field.Index.NOT_ANALYZED_NO_NORMS));
-            doc.add(new Field(FIELD_ID, taxonTerm.getId(), Field.Store.YES, Field.Index.NOT_ANALYZED_NO_NORMS));
-            String rankPath = taxonTerm.getRankPath();
+            doc.add(new Field(FIELD_ID, taxonTerm.getExternalId(), Field.Store.YES, Field.Index.NOT_ANALYZED_NO_NORMS));
+            String rankPath = taxonTerm.getPath();
             if (rankPath != null) {
                 doc.add(new Field(FIELD_RANK_PATH, rankPath, Field.Store.YES, Field.Index.NOT_ANALYZED_NO_NORMS));
             }
@@ -68,8 +70,8 @@ public class TaxonLookupServiceImpl implements TaxonImportListener, TaxonLookupS
     }
 
     @Override
-    public TaxonTerm[] lookupTermsByName(String taxonName) throws IOException {
-        TaxonTerm[] terms = new TaxonTerm[0];
+    public Taxon[] lookupTermsByName(String taxonName) throws IOException {
+        Taxon[] terms = new TaxonImpl[0];
         if (StringUtils.isNotBlank(taxonName) && indexSearcher != null) {
             PhraseQuery query = new PhraseQuery();
             query.add(new Term(FIELD_NAME, taxonName));
@@ -77,18 +79,18 @@ public class TaxonLookupServiceImpl implements TaxonImportListener, TaxonLookupS
             TopDocs docs = indexSearcher.search(query, maxHits);
 
             if (docs.totalHits > 0) {
-                terms = new TaxonTerm[docs.totalHits];
+                terms = new TaxonImpl[docs.totalHits];
                 for (int i = 0; i < docs.totalHits && i < maxHits; i++) {
                     ScoreDoc scoreDoc = docs.scoreDocs[i];
                     Document foundDoc = indexSearcher.doc(scoreDoc.doc);
-                    TaxonTerm term = new TaxonTerm();
+                    Taxon term = new TaxonImpl();
                     Fieldable idField = foundDoc.getFieldable(FIELD_ID);
                     if (idField != null) {
-                        term.setId(idField.stringValue());
+                        term.setExternalId(idField.stringValue());
                     }
                     Fieldable rankPathField = foundDoc.getFieldable(FIELD_RANK_PATH);
                     if (rankPathField != null) {
-                        term.setRankPath(rankPathField.stringValue());
+                        term.setPath(rankPathField.stringValue());
                     }
                     Fieldable fieldName = foundDoc.getFieldable(FIELD_RECOMMENDED_NAME);
                     if (fieldName != null) {

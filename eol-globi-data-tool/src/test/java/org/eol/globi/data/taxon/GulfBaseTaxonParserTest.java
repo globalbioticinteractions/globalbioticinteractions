@@ -1,5 +1,6 @@
 package org.eol.globi.data.taxon;
 
+import org.eol.globi.domain.Taxon;
 import org.junit.Test;
 
 import java.io.BufferedReader;
@@ -18,7 +19,7 @@ public class GulfBaseTaxonParserTest {
 
     @Test
     public void readAllLines() throws IOException {
-        final List<TaxonTerm> terms = new ArrayList<TaxonTerm>();
+        final List<Taxon> terms = new ArrayList<Taxon>();
         Map<String, BufferedReader> allReaders = new GulfBaseTaxonReaderFactory().getAllReaders();
         TaxonParser taxonParser = new GulfBaseTaxonParser();
         TestTaxonImportListener listener = new TestTaxonImportListener(terms);
@@ -33,17 +34,17 @@ public class GulfBaseTaxonParserTest {
 
         assertThat(terms.size(), is(10));
 
-        TaxonTerm taxonTerm = terms.get(0);
-        assertThat(taxonTerm.getId(), is("Spp-26-0003"));
+        Taxon taxonTerm = terms.get(0);
+        assertThat(taxonTerm.getExternalId(), is("Spp-26-0003"));
         assertThat(taxonTerm.getRank(), is(nullValue()));
         assertThat(taxonTerm.getName(), is("Haplognathia rosea"));
-        assertThat(taxonTerm.getRankPath(), is("Animalia Gnathostomulida Filospermoidea Haplognathiidae Haplognathia"));
+        assertThat(taxonTerm.getPath(), is("Animalia Gnathostomulida Filospermoidea Haplognathiidae Haplognathia"));
 
         taxonTerm = terms.get(2);
-        assertThat(taxonTerm.getId(), is("Spp-26-0005"));
+        assertThat(taxonTerm.getExternalId(), is("Spp-26-0005"));
         assertThat(taxonTerm.getRank(), is(nullValue()));
         assertThat(taxonTerm.getName(), is("Haplognathia cf. ruberrima"));
-        assertThat(taxonTerm.getRankPath(), is("Animalia Gnathostomulida Filospermoidea Haplognathiidae Haplognathia"));
+        assertThat(taxonTerm.getPath(), is("Animalia Gnathostomulida Filospermoidea Haplognathiidae Haplognathia"));
 
         assertThat(listener.count, is(taxonParser.getExpectedMaxTerms()));
     }
@@ -60,35 +61,35 @@ public class GulfBaseTaxonParserTest {
 
 
         TaxonParser taxonParser = new GulfBaseTaxonParser();
-        final List<TaxonTerm> terms = new ArrayList<TaxonTerm>();
+        final List<Taxon> terms = new ArrayList<Taxon>();
         TestTaxonImportListener listener = new TestTaxonImportListener(terms);
         taxonParser.parse(threeFirstLinesFromAcanthocephala_O, listener);
 
         assertThat(terms.size(), is(3));
 
-        TaxonTerm taxonTerm = terms.get(0);
-        assertThat(taxonTerm.getId(), is("Spp-28-0004"));
+        Taxon taxonTerm = terms.get(0);
+        assertThat(taxonTerm.getExternalId(), is("Spp-28-0004"));
         assertThat(taxonTerm.getRank(), is(nullValue()));
         assertThat(taxonTerm.getName(), is("Caballerorhynchus lamothei"));
-        assertThat(taxonTerm.getRankPath(), is("Animalia Acanthocephala Palaeacanthocephala Echinorhynchida Cavisomidae Caballerorhynchus"));
+        assertThat(taxonTerm.getPath(), is("Animalia Acanthocephala Palaeacanthocephala Echinorhynchida Cavisomidae Caballerorhynchus"));
 
         taxonTerm = terms.get(2);
-        assertThat(taxonTerm.getId(), is("Spp-28-0007"));
+        assertThat(taxonTerm.getExternalId(), is("Spp-28-0007"));
         assertThat(taxonTerm.getRank(), is(nullValue()));
         assertThat(taxonTerm.getName(), is("Filisoma fidum"));
-        assertThat(taxonTerm.getRankPath(), is("Animalia Acanthocephala Palaeacanthocephala Echinorhynchida Cavisomidae Filisoma"));
+        assertThat(taxonTerm.getPath(), is("Animalia Acanthocephala Palaeacanthocephala Echinorhynchida Cavisomidae Filisoma"));
     }
 
     private static class TestTaxonImportListener implements TaxonImportListener {
-        private final List<TaxonTerm> terms;
+        private final List<Taxon> terms;
         int count = 0;
 
-        public TestTaxonImportListener(List<TaxonTerm> terms) {
+        public TestTaxonImportListener(List<Taxon> terms) {
             this.terms = terms;
         }
 
         @Override
-        public void addTerm(TaxonTerm taxonTerm) {
+        public void addTerm(Taxon taxonTerm) {
             if (terms.size() < 10) {
                 terms.add(taxonTerm);
             }
@@ -96,7 +97,7 @@ public class GulfBaseTaxonParserTest {
         }
 
         @Override
-        public void addTerm(String name, TaxonTerm term) {
+        public void addTerm(String name, Taxon term) {
 
         }
 

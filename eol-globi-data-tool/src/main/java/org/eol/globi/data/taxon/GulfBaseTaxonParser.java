@@ -3,6 +3,8 @@ package org.eol.globi.data.taxon;
 import com.Ostermiller.util.CSVParser;
 import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.lang3.StringUtils;
+import org.eol.globi.domain.Taxon;
+import org.eol.globi.domain.TaxonImpl;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -26,10 +28,10 @@ public class GulfBaseTaxonParser implements TaxonParser {
                     rankPathBuffer.append(' ');
                 }
             }
-            TaxonTerm term = new TaxonTerm();
-            term.setId(labeledCSVParser.getValueByLabel("Species number"));
+            Taxon term = new TaxonImpl();
+            term.setExternalId(labeledCSVParser.getValueByLabel("Species number"));
             term.setName(labeledCSVParser.getValueByLabel("Scientific name"));
-            term.setRankPath(rankPathBuffer.toString().trim());
+            term.setPath(rankPathBuffer.toString().trim());
             listener.addTerm(term);
         }
         listener.finish();

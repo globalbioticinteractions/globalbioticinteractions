@@ -1,6 +1,8 @@
 package org.eol.globi.data.taxon;
 
 import org.apache.lucene.store.RAMDirectory;
+import org.eol.globi.domain.Taxon;
+import org.eol.globi.domain.TaxonImpl;
 import org.hamcrest.core.Is;
 import org.junit.Test;
 
@@ -17,14 +19,14 @@ public class TaxonLookupServiceImplTest {
 
         TaxonImportListener listener = taxonLookupServiceImpl;
         listener.start();
-        listener.addTerm(new TaxonTerm("Homo sapiens", "1234"));
-        listener.addTerm(new TaxonTerm("Prefix Homo sapiens suffix", "12346"));
+        listener.addTerm(new TaxonImpl("Homo sapiens", "1234"));
+        listener.addTerm(new TaxonImpl("Prefix Homo sapiens suffix", "12346"));
         listener.finish();
 
-        TaxonTerm[] ids = taxonLookupServiceImpl.lookupTermsByName("Homo sapiens");
+        Taxon[] ids = taxonLookupServiceImpl.lookupTermsByName("Homo sapiens");
 
         assertThat(ids.length, Is.is(1));
-        assertThat(ids[0].getId(), Is.is("1234"));
+        assertThat(ids[0].getExternalId(), Is.is("1234"));
 
         taxonLookupServiceImpl.destroy();
     }
@@ -33,13 +35,12 @@ public class TaxonLookupServiceImplTest {
     public void createIndexDoLookupBlankName() throws IOException {
         TaxonLookupServiceImpl taxonLookupServiceImpl = new TaxonLookupServiceImpl(new RAMDirectory());
 
-        TaxonImportListener listener = taxonLookupServiceImpl;
-        listener.start();
-        listener.addTerm(new TaxonTerm("Homo sapiens", "1234"));
-        listener.addTerm(new TaxonTerm("Prefix Homo sapiens suffix", "12346"));
-        listener.finish();
+        taxonLookupServiceImpl.start();
+        taxonLookupServiceImpl.addTerm(new TaxonImpl("Homo sapiens", "1234"));
+        taxonLookupServiceImpl.addTerm(new TaxonImpl("Prefix Homo sapiens suffix", "12346"));
+        taxonLookupServiceImpl.finish();
 
-        TaxonTerm[] ids = taxonLookupServiceImpl.lookupTermsByName(null);
+        Taxon[] ids = taxonLookupServiceImpl.lookupTermsByName(null);
 
         assertThat(ids.length, Is.is(0));
 

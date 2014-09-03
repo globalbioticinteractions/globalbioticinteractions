@@ -4,6 +4,7 @@ import org.apache.commons.lang3.time.StopWatch;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eol.globi.data.StudyImporterException;
+import org.eol.globi.domain.Taxon;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -70,7 +71,7 @@ public class TaxonomyImporter {
     private void parse(BufferedReader reader) throws IOException {
         getParser().parse(reader, new TaxonImportListener() {
             @Override
-            public void addTerm(TaxonTerm term) {
+            public void addTerm(Taxon term) {
                 taxonImportListener.addTerm(term);
                 count();
                 if (getCounter() % BATCH_TRANSACTION_SIZE == 0) {
@@ -85,7 +86,7 @@ public class TaxonomyImporter {
             }
 
             @Override
-            public void addTerm(String name, TaxonTerm term) {
+            public void addTerm(String name, Taxon term) {
 
             }
 

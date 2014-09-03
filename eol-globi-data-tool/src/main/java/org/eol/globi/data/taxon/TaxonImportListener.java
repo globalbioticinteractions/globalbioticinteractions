@@ -1,9 +1,11 @@
 package org.eol.globi.data.taxon;
 
-public interface TaxonImportListener {
-    void addTerm(TaxonTerm term);
+import org.eol.globi.domain.Taxon;
 
-    void addTerm(String name, TaxonTerm term);
+public interface TaxonImportListener {
+    void addTerm(Taxon term);
+
+    void addTerm(String name, Taxon term);
 
     void start();
 

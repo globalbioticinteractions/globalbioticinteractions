@@ -8,6 +8,15 @@ public class TaxonImpl implements Taxon {
     private String commonNames;
     private String rank;
 
+    public TaxonImpl(String name, String externalId) {
+        this.name = name;
+        this.externalId = externalId;
+    }
+
+    public TaxonImpl() {
+
+    }
+
     @Override
     public String getPath() {
         return path;

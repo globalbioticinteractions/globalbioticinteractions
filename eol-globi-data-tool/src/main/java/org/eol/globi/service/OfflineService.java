@@ -4,9 +4,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.data.taxon.TaxonLookupService;
-import org.eol.globi.data.taxon.TaxonTerm;
 import org.eol.globi.data.taxon.TaxonomyImporter;
 import org.eol.globi.domain.PropertyAndValueDictionary;
+import org.eol.globi.domain.Taxon;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -30,10 +30,10 @@ public abstract class OfflineService implements PropertyEnricher {
             lazyInit();
         }
         try {
-            TaxonTerm[] taxonTerms = taxonLookupService.lookupTermsByName(taxonName);
-            TaxonTerm first = taxonTerms.length == 0 ? null : taxonTerms[0];
+            Taxon[] taxonTerms = taxonLookupService.lookupTermsByName(taxonName);
+            Taxon first = taxonTerms.length == 0 ? null : taxonTerms[0];
             if (taxonTerms.length > 1) {
-                LOG.warn("found more than one matches for name [" + taxonName + "] in [" + getServiceName() + "], choosing first one with id [" + first.getId() + "]");
+                LOG.warn("found more than one matches for name [" + taxonName + "] in [" + getServiceName() + "], choosing first one with id [" + first.getExternalId() + "]");
             }
             String propertyValue = null;
             if (first != null) {
@@ -51,7 +51,7 @@ public abstract class OfflineService implements PropertyEnricher {
         return getClass().getSimpleName();
     }
 
-    protected abstract String getValueForPropertyName(String propertyName, TaxonTerm first);
+    protected abstract String getValueForPropertyName(String propertyName, Taxon first);
 
     private void lazyInit() throws PropertyEnricherException {
         LOG.info("lazy init of taxonomy index [" + getServiceName() + "] started...");
