@@ -23,8 +23,6 @@ import org.neo4j.graphdb.index.IndexManager;
 import org.neo4j.helpers.collection.MapUtil;
 
 public class TaxonServiceImpl implements TaxonService {
-    private static final Log LOG = LogFactory.getLog(TaxonServiceImpl.class);
-
     private final GraphDatabaseService graphDbService;
     private final Index<Node> taxons;
     private final Index<Node> taxonNameSuggestions;
@@ -159,7 +157,7 @@ public class TaxonServiceImpl implements TaxonService {
         Taxon noMatchTaxon = new TaxonImpl();
         noMatchTaxon.setName(StringUtils.isBlank(originalName) ? PropertyAndValueDictionary.NO_MATCH : originalName);
         noMatchTaxon.setExternalId(StringUtils.isBlank(externalId) ? PropertyAndValueDictionary.NO_MATCH : externalId);
-        noMatchTaxon.setPath(path);
+        noMatchTaxon.setPath(StringUtils.isBlank(path) ? PropertyAndValueDictionary.NO_MATCH : path);
         return createAndIndexTaxon(noMatchTaxon);
     }
 
