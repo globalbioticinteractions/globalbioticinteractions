@@ -52,7 +52,8 @@ public class OutOfMemoryTest {
 
         factory = new TaxonServiceImpl(new TaxonEnricher() {
             @Override
-            public void enrich(Taxon taxon) {
+            public Taxon enrich(Taxon taxon) {
+                return taxon;
             }
         }, new CorrectionService() {
             @Override

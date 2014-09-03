@@ -3,8 +3,10 @@ package org.eol.globi.service;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eol.globi.domain.Taxon;
+import org.eol.globi.domain.TaxonImpl;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,21 +18,20 @@ public class TaxonEnricherImpl implements TaxonEnricher, PropertyEnricher {
     private final HashMap<Class, Integer> errorCounts = new HashMap<Class, Integer>();
 
     @Override
-    public void enrich(Taxon taxon) throws PropertyEnricherException {
+    public Taxon enrich(Taxon taxon) throws PropertyEnricherException {
         Map<String, String> properties = TaxonUtil.taxonToMap(taxon);
-        enrich(properties);
-        TaxonUtil.mapToTaxon(properties, taxon);
+        Taxon enrichedTaxon = new TaxonImpl();
+        TaxonUtil.mapToTaxon(enrich(properties), enrichedTaxon);
+        return enrichedTaxon;
     }
 
     @Override
-    public void enrich(Map<String, String> properties) throws PropertyEnricherException {
+    public Map<String, String> enrich(final Map<String, String> properties) throws PropertyEnricherException {
+        Map<String, String> enrichedProperties = new HashMap<String, String>(properties);
         for (PropertyEnricher service : services) {
             try {
-                Map<String, String> copy = new HashMap<String, String>(properties);
-                enrichTaxonWithPropertyValue(errorCounts, service, copy);
-                if (TaxonUtil.isResolved(copy)) {
-                    properties.clear();
-                    properties.putAll(copy);
+                enrichedProperties = enrichTaxonWithPropertyValue(errorCounts, service, enrichedProperties);
+                if (TaxonUtil.isResolved(enrichedProperties)) {
                     break;
                 }
             } catch (PropertyEnricherException e) {
@@ -38,6 +39,7 @@ public class TaxonEnricherImpl implements TaxonEnricher, PropertyEnricher {
                 service.shutdown();
             }
         }
+        return Collections.unmodifiableMap(enrichedProperties);
     }
 
     @Override
@@ -48,21 +50,23 @@ public class TaxonEnricherImpl implements TaxonEnricher, PropertyEnricher {
         services.clear();
     }
 
-    private void enrichTaxonWithPropertyValue(HashMap<Class, Integer> errorCounts, PropertyEnricher service, Map<String, String> properties) throws
+    private Map<String, String> enrichTaxonWithPropertyValue(HashMap<Class, Integer> errorCounts, PropertyEnricher service, Map<String, String> properties) throws
             PropertyEnricherException {
         Integer errorCount = errorCounts.get(service.getClass());
         if (errorCount != null && errorCount > 10) {
             LOG.error("skipping taxon match against [" + service.getClass().toString() + "], error count [" + errorCount + "] too high.");
         } else {
-            enrichTaxon(errorCounts, service, errorCount, properties);
+            properties = enrichTaxon(errorCounts, service, errorCount, properties);
         }
+        return Collections.unmodifiableMap(properties);
     }
 
-    private void enrichTaxon(HashMap<Class, Integer> errorCounts, PropertyEnricher
+    private Map<String, String> enrichTaxon(HashMap<Class, Integer> errorCounts, PropertyEnricher
             service, Integer errorCount, Map<String, String> properties) throws PropertyEnricherException {
         try {
-            service.enrich(properties);
+            Map<String, String> enrichedProperties = service.enrich(properties);
             resetErrorCount(errorCounts, service);
+            return enrichedProperties;
         } catch (PropertyEnricherException ex) {
             LOG.warn("failed to find a match for [" + properties + "] in [" + service.getClass().getSimpleName() + "]", ex);
             incrementErrorCount(errorCounts, service, errorCount);

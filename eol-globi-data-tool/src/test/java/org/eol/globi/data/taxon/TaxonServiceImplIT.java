@@ -259,12 +259,9 @@ public class TaxonServiceImplIT extends GraphDBTestCase {
         assertZeroHits(taxonService, "no:match");
     }
 
-    @Test
+    @Test(expected = NodeFactoryException.class)
     public void nameTooShort() throws NodeFactoryException {
-        TaxonNode orCreateTaxon = taxonService.getOrCreateTaxon("", null, null);
-        assertThat(orCreateTaxon.getName(), is(PropertyAndValueDictionary.NO_MATCH));
-        assertThat(orCreateTaxon.getExternalId(), is(PropertyAndValueDictionary.NO_MATCH));
-        assertThat(orCreateTaxon.getPath(), is(PropertyAndValueDictionary.NO_MATCH));
+        taxonService.getOrCreateTaxon("", null, null);
     }
 
     @Test

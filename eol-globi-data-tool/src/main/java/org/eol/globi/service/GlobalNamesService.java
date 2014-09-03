@@ -21,6 +21,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -39,7 +41,8 @@ public class GlobalNamesService extends BaseHttpClientService implements Propert
     }
 
     @Override
-    public void enrich(Map<String, String> properties) throws PropertyEnricherException {
+    public Map<String, String> enrich(Map<String, String> properties) throws PropertyEnricherException {
+        Map<String, String> enrichedProperties = new HashMap<String, String>(properties);
         final List<Taxon> taxa = new ArrayList<Taxon>();
         findTermsForNames(Arrays.asList(properties.get(PropertyAndValueDictionary.NAME)), new TermMatchListener() {
             @Override
@@ -56,7 +59,7 @@ public class GlobalNamesService extends BaseHttpClientService implements Propert
             properties.put(PropertyAndValueDictionary.PATH_NAMES, taxon.getPathNames());
             properties.put(PropertyAndValueDictionary.RANK, taxon.getRank());
         }
-
+        return Collections.unmodifiableMap(enrichedProperties);
     }
 
     public void findTermsForNames(List<String> names, TermMatchListener termMatchListener) throws PropertyEnricherException {

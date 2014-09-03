@@ -16,11 +16,11 @@ import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.IndexHits;
 
-import static junit.framework.Assert.assertNull;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
@@ -84,11 +84,12 @@ public class TaxonServiceImplTest extends GraphDBTestCase {
     public void findByStringWithWhitespaces() throws NodeFactoryException {
         TaxonEnricher enricher = new TaxonEnricher() {
             @Override
-            public void enrich(Taxon taxon) {
+            public Taxon enrich(Taxon taxon) {
                 taxon.setPath("kingdom" + CharsetConstant.SEPARATOR + "phylum" + CharsetConstant.SEPARATOR + "Homo sapiens" + CharsetConstant.SEPARATOR);
                 taxon.setExternalId("anExternalId");
                 taxon.setCommonNames(EXPECTED_COMMON_NAMES);
                 taxon.setName("this is the actual name");
+                return taxon;
             }
         };
         taxonService.setEnricher(enricher);
@@ -131,7 +132,8 @@ public class TaxonServiceImplTest extends GraphDBTestCase {
     public void createTaxonExternalIdIndex() throws NodeFactoryException {
         taxonService = new TaxonServiceImpl(new TaxonEnricher() {
             @Override
-            public void enrich(Taxon taxon) {
+            public Taxon enrich(Taxon taxon) {
+                return taxon;
             }
         }, new CorrectionService() {
             @Override
@@ -161,12 +163,13 @@ public class TaxonServiceImplTest extends GraphDBTestCase {
     public void createSpeciesMatchHigherOrder() throws NodeFactoryException {
         TaxonEnricher enricher = new TaxonEnricher() {
             @Override
-            public void enrich(Taxon taxon) {
+            public Taxon enrich(Taxon taxon) {
                 if ("bla".equals(taxon.getName())) {
                     taxon.setPath("a path");
                     taxon.setExternalId("anExternalId");
                     taxon.setCommonNames(EXPECTED_COMMON_NAMES);
                 }
+                return taxon;
             }
         };
         taxonService.setEnricher(enricher);
@@ -183,15 +186,15 @@ public class TaxonServiceImplTest extends GraphDBTestCase {
         taxon = taxonService.getOrCreateTaxon("boo bla", null, null);
         assertEquals("boo bla", taxon.getName());
         assertThat(taxon.getExternalId(), is(PropertyAndValueDictionary.NO_MATCH));
-        assertThat(taxon.getPath(), is(PropertyAndValueDictionary.NO_MATCH));
+        assertNull(taxon.getPath());
     }
 
     @Test
     public void findCloseMatchForTaxonPath() throws NodeFactoryException {
         taxonService.setEnricher(new TaxonEnricher() {
             @Override
-            public void enrich(Taxon taxon) {
-
+            public Taxon enrich(Taxon taxon) {
+                return taxon;
             }
         });
         taxonService.getOrCreateTaxon("Homo sapiens", "someid", "Animalia Mammalia");
@@ -255,7 +258,7 @@ public class TaxonServiceImplTest extends GraphDBTestCase {
             private boolean firstTime = true;
 
             @Override
-            public void enrich(Taxon taxon) {
+            public Taxon enrich(Taxon taxon) {
                 if ("not pref".equals(taxon.getName())) {
                     if (!firstTime) {
                         fail("should already have indexed [" + taxon.getName() + "]...");
@@ -265,6 +268,7 @@ public class TaxonServiceImplTest extends GraphDBTestCase {
                     taxon.setPath("one | two | three");
                     firstTime = false;
                 }
+                return taxon;
             }
         });
         TaxonNode first = taxonService.getOrCreateTaxon("not pref", null, null);
@@ -285,10 +289,11 @@ public class TaxonServiceImplTest extends GraphDBTestCase {
     private TaxonServiceImpl createTaxonService() {
         return new TaxonServiceImpl(new TaxonEnricher() {
             @Override
-            public void enrich(Taxon taxon) {
+            public Taxon enrich(Taxon taxon) {
                 taxon.setPath("kingdom" + CharsetConstant.SEPARATOR + "phylum" + CharsetConstant.SEPARATOR + "etc" + CharsetConstant.SEPARATOR);
                 taxon.setExternalId("anExternalId");
                 taxon.setCommonNames(EXPECTED_COMMON_NAMES);
+                return taxon;
             }
         }, new CorrectionService() {
             @Override

@@ -3,6 +3,8 @@ package org.eol.globi.service;
 import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.domain.PropertyAndValueDictionary;
+import org.eol.globi.domain.Taxon;
+import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TaxonNode;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -10,6 +12,7 @@ import org.neo4j.graphdb.Transaction;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -49,10 +52,12 @@ public class TaxonEnricherImplTest extends GraphDBTestCase {
         PropertyEnricher serviceA = new PropertyEnricher() {
 
             @Override
-            public void enrich(Map<String, String> properties) throws PropertyEnricherException {
+            public Map<String, String> enrich(Map<String, String> properties) throws PropertyEnricherException {
+                properties = new HashMap<String, String>(properties);
                 properties.put(PropertyAndValueDictionary.EXTERNAL_ID, "FIRST:123");
                 properties.put(PropertyAndValueDictionary.PATH, "one | two | three");
                 properties.put(PropertyAndValueDictionary.COMMON_NAMES, "four | five | six");
+                return properties;
             }
 
             @Override
@@ -62,28 +67,24 @@ public class TaxonEnricherImplTest extends GraphDBTestCase {
         };
         PropertyEnricher serviceB = Mockito.mock(PropertyEnricher.class);
 
-        TaxonNode taxon = enrich("Homo sapiens", serviceA, serviceB);
+        Taxon taxon = enrich("Homo sapiens", serviceA, serviceB);
         assertThat(taxon.getExternalId(), is("FIRST:123"));
         assertThat(taxon.getPath(), is("one | two | three"));
         assertThat(taxon.getCommonNames(), is("four | five | six"));
         assertThat(taxon.getName(), is("Homo sapiens"));
         verifyZeroInteractions(serviceB);
-
     }
 
-    private TaxonNode enrich(String taxonName, PropertyEnricher serviceA, PropertyEnricher serviceB) throws IOException, PropertyEnricherException {
+    private Taxon enrich(String taxonName, PropertyEnricher serviceA, PropertyEnricher serviceB) throws IOException, PropertyEnricherException {
         TaxonEnricherImpl enricher = new TaxonEnricherImpl();
         List<PropertyEnricher> list = new ArrayList<PropertyEnricher>();
         list.add(serviceA);
         list.add(serviceB);
         enricher.setServices(list);
 
-        Transaction transaction = getGraphDb().beginTx();
-        TaxonNode taxon = new TaxonNode(getGraphDb().createNode());
+        Taxon taxon = new TaxonImpl();
         taxon.setName(taxonName);
-        transaction.success();
-        enricher.enrich(taxon);
-        return taxon;
+        return enricher.enrich(taxon);
     }
 
 }

@@ -54,7 +54,8 @@ public class NormalizerTest extends GraphDBTestCase {
 
         final TaxonEnricher taxonEnricher = new TaxonEnricher() {
             @Override
-            public void enrich(Taxon taxon) {
+            public Taxon enrich(Taxon taxon) {
+                return taxon;
             }
         };
         dataNormalizationTool.importData(StudyImporterForSimons.class, new NodeFactory(getGraphDb(), new TaxonServiceImpl(taxonEnricher, new TaxonNameCorrector(), getGraphDb())));
@@ -100,8 +101,9 @@ public class NormalizerTest extends GraphDBTestCase {
         GraphDatabaseService graphService = getGraphDb();
         final TaxonEnricher taxonEnricher = new TaxonEnricher() {
             @Override
-            public void enrich(Taxon taxon) {
+            public Taxon enrich(Taxon taxon) {
                 taxon.setExternalId("test-taxon:" + System.currentTimeMillis());
+                return taxon;
             }
         };
         dataNormalizationTool.importData(StudyImporterForSimons.class, new NodeFactory(graphService, new TaxonServiceImpl(taxonEnricher, new TaxonNameCorrector(), getGraphDb())));

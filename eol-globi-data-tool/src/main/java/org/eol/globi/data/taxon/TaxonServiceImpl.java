@@ -5,6 +5,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.queryParser.QueryParser;
 import org.eol.globi.data.CharsetConstant;
+import org.eol.globi.data.NodeFactory;
 import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Taxon;
@@ -43,6 +44,9 @@ public class TaxonServiceImpl implements TaxonService {
 
     @Override
     public TaxonNode getOrCreateTaxon(String name, String externalId, String path) throws NodeFactoryException {
+        if (StringUtils.isBlank(externalId) && StringUtils.length(name) < 3) {
+            throw new NodeFactoryException("taxon name [" + name + "] too short and no externalId is provided");
+        }
         TaxonNode taxon = findTaxon(name, externalId);
         return taxon == null ? createTaxon(name, externalId, path) : taxon;
     }
@@ -95,7 +99,7 @@ public class TaxonServiceImpl implements TaxonService {
         TaxonNode taxonNode = findTaxon(taxon.getName(), taxon.getExternalId());
         while (taxonNode == null) {
             try {
-                enricher.enrich(taxon);
+                taxon = enricher.enrich(taxon);
             } catch (PropertyEnricherException e) {
                 throw new NodeFactoryException("failed to enrich taxon with name [" + taxon.getName() + "]", e);
             }
@@ -157,7 +161,7 @@ public class TaxonServiceImpl implements TaxonService {
         Taxon noMatchTaxon = new TaxonImpl();
         noMatchTaxon.setName(StringUtils.isBlank(originalName) ? PropertyAndValueDictionary.NO_MATCH : originalName);
         noMatchTaxon.setExternalId(StringUtils.isBlank(externalId) ? PropertyAndValueDictionary.NO_MATCH : externalId);
-        noMatchTaxon.setPath(StringUtils.isBlank(path) ? PropertyAndValueDictionary.NO_MATCH : path);
+        noMatchTaxon.setPath(path);
         return createAndIndexTaxon(noMatchTaxon);
     }
 

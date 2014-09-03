@@ -150,8 +150,8 @@ public class NodeFactoryTest extends GraphDBTestCase {
         };
         TaxonService taxonService = new TaxonServiceImpl(new TaxonEnricher() {
             @Override
-            public void enrich(Taxon taxon) {
-
+            public Taxon enrich(Taxon taxon) {
+                return taxon;
             }
         }, correctionService, getGraphDb()
         );
@@ -173,8 +173,8 @@ public class NodeFactoryTest extends GraphDBTestCase {
         };
         TaxonService taxonService = new TaxonServiceImpl(new TaxonEnricher() {
             @Override
-            public void enrich(Taxon taxon) {
-
+            public Taxon enrich(Taxon taxon) {
+                return taxon;
             }
         }, correctionService, getGraphDb()
         );

@@ -34,8 +34,8 @@ public abstract class GraphDBTestCase {
         final TaxonEnricher taxonEnricher = new TaxonEnricher() {
 
             @Override
-            public void enrich(Taxon taxon) {
-
+            public Taxon enrich(Taxon taxon) {
+                return taxon;
             }
         };
         nodeFactory = new NodeFactory(graphDb, new TaxonServiceImpl(taxonEnricher, new CorrectionService() {

@@ -15,6 +15,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.zip.GZIPInputStream;
 
@@ -36,12 +38,14 @@ public class UKSISuggestionService implements PropertyEnricher, NameSuggestor {
     }
 
     @Override
-    public void enrich(Map<String, String> properties) throws PropertyEnricherException {
-        Taxon match = findMatch(properties.get(PropertyAndValueDictionary.NAME));
+    public Map<String, String> enrich(Map<String, String> properties) throws PropertyEnricherException {
+        Map<String, String> enrichedProperties = new HashMap<String, String>(properties);
+        Taxon match = findMatch(enrichedProperties.get(PropertyAndValueDictionary.NAME));
         if (match != null) {
-            properties.put(PropertyAndValueDictionary.NAME, match.getName());
-            properties.put(PropertyAndValueDictionary.EXTERNAL_ID, match.getExternalId());
+            enrichedProperties.put(PropertyAndValueDictionary.NAME, match.getName());
+            enrichedProperties.put(PropertyAndValueDictionary.EXTERNAL_ID, match.getExternalId());
         }
+        return Collections.unmodifiableMap(enrichedProperties);
     }
 
     private Taxon findMatch(String taxonName) throws PropertyEnricherException {

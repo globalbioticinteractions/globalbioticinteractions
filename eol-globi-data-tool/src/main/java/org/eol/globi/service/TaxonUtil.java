@@ -4,6 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Taxon;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,7 +17,7 @@ public class TaxonUtil {
         properties.put(PropertyAndValueDictionary.PATH, taxon.getPath());
         properties.put(PropertyAndValueDictionary.PATH_NAMES, taxon.getPathNames());
         properties.put(PropertyAndValueDictionary.COMMON_NAMES, taxon.getCommonNames());
-        return properties;
+        return Collections.unmodifiableMap(properties);
     }
 
     public static void mapToTaxon(Map<String, String> properties, Taxon taxon) {

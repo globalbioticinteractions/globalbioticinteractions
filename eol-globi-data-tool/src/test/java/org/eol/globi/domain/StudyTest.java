@@ -27,7 +27,8 @@ public class StudyTest extends GraphDBTestCase {
     public void createFactory() {
         final TaxonEnricher taxonEnricher = new TaxonEnricher() {
             @Override
-            public void enrich(Taxon taxon) {
+            public Taxon enrich(Taxon taxon) {
+                return taxon;
             }
         };
         factory = new NodeFactory(getGraphDb(), new TaxonServiceImpl(taxonEnricher, new TaxonNameCorrector(), getGraphDb()));

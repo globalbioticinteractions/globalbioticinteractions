@@ -9,6 +9,7 @@ import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Taxon;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,12 +18,13 @@ public abstract class OfflineService implements PropertyEnricher {
     private TaxonLookupService taxonLookupService;
 
     @Override
-    public void enrich(Map<String, String> properties) throws PropertyEnricherException {
+    public Map<String, String> enrich(Map<String, String> properties) throws PropertyEnricherException {
         for (String propertyName : properties.keySet()) {
             if (properties.get(propertyName) == null) {
                 lookupProperty(properties.get(PropertyAndValueDictionary.NAME), properties, propertyName);
             }
         }
+        return Collections.unmodifiableMap(new HashMap<String, String>(properties));
     }
 
     private void lookupProperty(String taxonName, Map<String, String> properties, String propertyName) throws PropertyEnricherException {

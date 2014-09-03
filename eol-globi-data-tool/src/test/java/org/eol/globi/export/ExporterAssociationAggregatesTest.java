@@ -31,9 +31,10 @@ public class ExporterAssociationAggregatesTest extends GraphDBTestCase {
         final TaxonEnricher taxonEnricher = new TaxonEnricher() {
 
             @Override
-            public void enrich(Taxon taxon) {
+            public Taxon enrich(Taxon taxon) {
                 taxon.setExternalId(taxon.getName() + "id");
                 taxon.setPath(taxon.getName() + "path");
+                return taxon;
             }
         };
         nodeFactory = new NodeFactory(getGraphDb(), new TaxonServiceImpl(taxonEnricher, new CorrectionService() {

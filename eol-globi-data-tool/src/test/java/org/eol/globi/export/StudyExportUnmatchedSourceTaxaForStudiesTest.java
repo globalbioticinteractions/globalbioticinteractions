@@ -1,5 +1,6 @@
 package org.eol.globi.export;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.NodeFactory;
 import org.eol.globi.data.NodeFactoryException;
@@ -11,6 +12,7 @@ import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.Taxon;
+import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.service.TaxonEnricher;
 import org.junit.Test;
 import org.neo4j.graphdb.Node;
@@ -20,6 +22,7 @@ import java.io.IOException;
 import java.io.StringWriter;
 
 import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
 public class StudyExportUnmatchedSourceTaxaForStudiesTest extends GraphDBTestCase {
@@ -30,7 +33,7 @@ public class StudyExportUnmatchedSourceTaxaForStudiesTest extends GraphDBTestCas
     public void exportOnePredatorTwoPrey() throws NodeFactoryException, IOException {
         final TaxonEnricher taxonEnricher = new TaxonEnricher() {
             @Override
-            public void enrich(Taxon taxon) {
+            public Taxon enrich(Taxon taxon) {
                 if ("Homo sapiens".equals(taxon.getName())) {
                     taxon.setExternalId("homoSapiensId");
                     taxon.setPath("one two three");
@@ -38,6 +41,7 @@ public class StudyExportUnmatchedSourceTaxaForStudiesTest extends GraphDBTestCas
                     taxon.setExternalId("canisLupusId");
                     taxon.setPath("four five six");
                 }
+                return taxon;
             }
         };
         NodeFactory factory = factory(taxonEnricher);
@@ -88,14 +92,19 @@ public class StudyExportUnmatchedSourceTaxaForStudiesTest extends GraphDBTestCas
     public void exportOnePredatorNoPathButWithSameAs() throws NodeFactoryException, IOException {
         final TaxonEnricher taxonEnricher = new TaxonEnricher() {
             @Override
-            public void enrich(Taxon taxon) {
-
+            public Taxon enrich(Taxon taxon) {
+                String externalId = taxon.getExternalId() == null
+                        ? PropertyAndValueDictionary.NO_MATCH : taxon.getExternalId();
+                TaxonImpl taxon1 = new TaxonImpl(taxon.getName(), externalId);
+                taxon1.setPath(PropertyAndValueDictionary.NO_MATCH);
+                return taxon1;
             }
         };
         NodeFactory factory = factory(taxonEnricher);
         Study study = factory.getOrCreateStudy("my study", "my first source", null);
 
         Specimen predatorSpecimen = factory.createSpecimen("Homo sapienz");
+        assertNotNull(factory.getOrCreateTaxon("Homo sapienz"));
         Specimen preySpecimen = factory.createSpecimen("Caniz");
         predatorSpecimen.createRelationshipTo(preySpecimen, InteractType.ATE);
         study.collected(predatorSpecimen);

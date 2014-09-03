@@ -10,7 +10,6 @@ import org.codehaus.jackson.JsonProcessingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.data.CharsetConstant;
 import org.eol.globi.domain.PropertyAndValueDictionary;
-import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonomyProvider;
 import org.eol.globi.util.ExternalIdUtil;
 
@@ -20,29 +19,32 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class EOLService extends BaseHttpClientService implements PropertyEnricher {
 
     @Override
-    public void enrich(Map<String, String> properties) throws PropertyEnricherException {
-        String externalId = properties.get(PropertyAndValueDictionary.EXTERNAL_ID);
-        if (needsEnrichment(properties)) {
-            Long id = getEOLPageId(properties.get(PropertyAndValueDictionary.NAME), externalId);
+    public Map<String, String> enrich(final Map<String, String> properties) throws PropertyEnricherException {
+        Map<String, String> enrichedProperties = new HashMap<String, String>(properties);
+        String externalId = enrichedProperties.get(PropertyAndValueDictionary.EXTERNAL_ID);
+        if (needsEnrichment(enrichedProperties)) {
+            Long id = getEOLPageId(enrichedProperties.get(PropertyAndValueDictionary.NAME), externalId);
             if (id != null) {
-                addExternalId(properties, id);
-                addTaxonInfo(id, properties);
-                String path = properties.get(PropertyAndValueDictionary.PATH);
+                addExternalId(enrichedProperties, id);
+                addTaxonInfo(id, enrichedProperties);
+                String path = enrichedProperties.get(PropertyAndValueDictionary.PATH);
                 if (StringUtils.isBlank(path)) {
-                    properties.put(PropertyAndValueDictionary.NAME, null);
-                    properties.put(PropertyAndValueDictionary.COMMON_NAMES, null);
-                    properties.put(PropertyAndValueDictionary.EXTERNAL_ID, null);
-                    properties.put(PropertyAndValueDictionary.PATH, null);
-                    properties.put(PropertyAndValueDictionary.PATH_NAMES, null);
+                    enrichedProperties.put(PropertyAndValueDictionary.NAME, null);
+                    enrichedProperties.put(PropertyAndValueDictionary.COMMON_NAMES, null);
+                    enrichedProperties.put(PropertyAndValueDictionary.EXTERNAL_ID, null);
+                    enrichedProperties.put(PropertyAndValueDictionary.PATH, null);
+                    enrichedProperties.put(PropertyAndValueDictionary.PATH_NAMES, null);
                 }
             }
         }
+        return enrichedProperties;
     }
 
     private Long getEOLPageId(String name, String externalId) throws PropertyEnricherException {

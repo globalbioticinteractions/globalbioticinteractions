@@ -2,8 +2,9 @@ package org.eol.globi.service;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.domain.PropertyAndValueDictionary;
-import org.eol.globi.domain.Taxon;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 public abstract class BasePropertyEnricherService extends BaseHttpClientService implements PropertyEnricher {
@@ -34,13 +35,15 @@ public abstract class BasePropertyEnricherService extends BaseHttpClientService 
     }
 
     @Override
-    public void enrich(Map<String, String> properties) throws PropertyEnricherException {
-        for (String propertyName : properties.keySet()) {
-            String propertyValue = lookupPropertyValueByTaxonName(properties.get(PropertyAndValueDictionary.NAME), propertyName);
+    public Map<String, String> enrich(final Map<String, String> properties) throws PropertyEnricherException {
+        Map<String, String> enrichedProperties = new HashMap<String, String>(properties);;
+        for (String propertyName : enrichedProperties.keySet()) {
+            String propertyValue = lookupPropertyValueByTaxonName(enrichedProperties.get(PropertyAndValueDictionary.NAME), propertyName);
             if (propertyValue != null) {
-                properties.put(propertyName, propertyValue);
+                enrichedProperties.put(propertyName, propertyValue);
             }
         }
+        return Collections.unmodifiableMap(enrichedProperties);
     }
 
     public abstract String lookupIdByName(String taxonName) throws PropertyEnricherException;

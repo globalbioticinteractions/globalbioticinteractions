@@ -9,7 +9,6 @@ import org.codehaus.jackson.JsonProcessingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.data.CharsetConstant;
 import org.eol.globi.domain.PropertyAndValueDictionary;
-import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonomyProvider;
 
 import java.io.IOException;
@@ -24,15 +23,18 @@ import java.util.Map;
 public class AtlasOfLivingAustraliaService extends BaseHttpClientService implements PropertyEnricher {
 
     @Override
-    public void enrich(Map<String, String> properties) throws PropertyEnricherException {
+    public Map<String, String> enrich(final Map<String, String> properties) throws PropertyEnricherException {
+        Map<String, String> enrichedProperties = null;
         String externalId = properties.get(PropertyAndValueDictionary.EXTERNAL_ID);
         if (needsEnrichment(properties)) {
+            enrichedProperties = new HashMap<String, String>(properties);
             String guid = hasValidGUID(externalId) ? externalId : findTaxonGUIDByName(properties.get(PropertyAndValueDictionary.NAME));
             if (hasValidGUID(guid)) {
                 Map<String, String> taxonInfo = findTaxonInfoByGUID(guid);
                 properties.putAll(taxonInfo);
             }
         }
+        return enrichedProperties == null ? properties : enrichedProperties;
     }
 
     private boolean hasValidGUID(String externalId) throws PropertyEnricherException {
