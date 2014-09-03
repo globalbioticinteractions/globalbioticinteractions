@@ -5,6 +5,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.Is.is;
@@ -23,9 +24,9 @@ public class UKSISuggestionServiceTest {
     public void lookupNameWithCorrection() throws PropertyEnricherException {
         HashMap<String, String> properties = new HashMap<String, String>();
         properties.put(PropertyAndValueDictionary.NAME, "Stellaria apetala");
-        uksiSuggestionService.enrich(properties);
-        assertThat(properties.get(PropertyAndValueDictionary.NAME), is("Stellaria pallida"));
-        assertThat(properties.get(PropertyAndValueDictionary.EXTERNAL_ID), is("UKSI:NBNSYS0000157226"));
+        Map<String, String> enrichedProperties = uksiSuggestionService.enrich(properties);
+        assertThat(enrichedProperties.get(PropertyAndValueDictionary.NAME), is("Stellaria pallida"));
+        assertThat(enrichedProperties.get(PropertyAndValueDictionary.EXTERNAL_ID), is("UKSI:NBNSYS0000157226"));
     }
 
     @Test
@@ -48,9 +49,9 @@ public class UKSISuggestionServiceTest {
     public void lookupNameNoCorrectionButPresent() throws PropertyEnricherException {
         HashMap<String, String> properties = new HashMap<String, String>();
         properties.put(PropertyAndValueDictionary.NAME, "Serpulidae");
-        uksiSuggestionService.enrich(properties);
-        assertThat(properties.get(PropertyAndValueDictionary.NAME), is("Serpulidae"));
-        assertThat(properties.get(PropertyAndValueDictionary.EXTERNAL_ID), is("UKSI:NBNSYS0000177931"));
+        Map<String, String> enrichedProperties = uksiSuggestionService.enrich(properties);
+        assertThat(enrichedProperties.get(PropertyAndValueDictionary.NAME), is("Serpulidae"));
+        assertThat(enrichedProperties.get(PropertyAndValueDictionary.EXTERNAL_ID), is("UKSI:NBNSYS0000177931"));
     }
 
     @Test

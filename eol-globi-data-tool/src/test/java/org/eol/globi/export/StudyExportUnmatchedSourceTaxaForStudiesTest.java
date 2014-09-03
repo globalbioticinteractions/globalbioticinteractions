@@ -95,9 +95,7 @@ public class StudyExportUnmatchedSourceTaxaForStudiesTest extends GraphDBTestCas
             public Taxon enrich(Taxon taxon) {
                 String externalId = taxon.getExternalId() == null
                         ? PropertyAndValueDictionary.NO_MATCH : taxon.getExternalId();
-                TaxonImpl taxon1 = new TaxonImpl(taxon.getName(), externalId);
-                taxon1.setPath(PropertyAndValueDictionary.NO_MATCH);
-                return taxon1;
+                return new TaxonImpl(taxon.getName(), externalId);
             }
         };
         NodeFactory factory = factory(taxonEnricher);
