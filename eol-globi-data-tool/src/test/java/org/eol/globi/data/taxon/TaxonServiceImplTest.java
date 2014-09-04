@@ -6,15 +6,20 @@ import org.apache.lucene.search.TermQuery;
 import org.eol.globi.data.CharsetConstant;
 import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.NodeFactoryException;
+import org.eol.globi.data.PassThroughEnricher;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonNode;
-import org.eol.globi.service.TaxonEnricher;
+import org.eol.globi.service.PropertyEnricher;
+import org.eol.globi.service.PropertyEnricherException;
+import org.eol.globi.service.TaxonUtil;
 import org.junit.Before;
 import org.junit.Test;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.IndexHits;
+
+import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.Is.is;
@@ -82,14 +87,20 @@ public class TaxonServiceImplTest extends GraphDBTestCase {
 
     @Test
     public void findByStringWithWhitespaces() throws NodeFactoryException {
-        TaxonEnricher enricher = new TaxonEnricher() {
+        PropertyEnricher enricher = new PropertyEnricher() {
             @Override
-            public Taxon enrich(Taxon taxon) {
+            public Map<String, String> enrich(Map<String, String> properties) throws PropertyEnricherException {
+                Taxon taxon = TaxonUtil.mapToTaxon(properties);
                 taxon.setPath("kingdom" + CharsetConstant.SEPARATOR + "phylum" + CharsetConstant.SEPARATOR + "Homo sapiens" + CharsetConstant.SEPARATOR);
                 taxon.setExternalId("anExternalId");
                 taxon.setCommonNames(EXPECTED_COMMON_NAMES);
                 taxon.setName("this is the actual name");
-                return taxon;
+                return TaxonUtil.taxonToMap(taxon);
+            }
+
+            @Override
+            public void shutdown() {
+
             }
         };
         taxonService.setEnricher(enricher);
@@ -130,17 +141,13 @@ public class TaxonServiceImplTest extends GraphDBTestCase {
 
     @Test
     public void createTaxonExternalIdIndex() throws NodeFactoryException {
-        taxonService = new TaxonServiceImpl(new TaxonEnricher() {
-            @Override
-            public Taxon enrich(Taxon taxon) {
-                return taxon;
-            }
-        }, new CorrectionService() {
-            @Override
-            public String correct(String taxonName) {
-                return taxonName;
-            }
-        }, getGraphDb()
+        taxonService = new TaxonServiceImpl(new PassThroughEnricher(),
+                new CorrectionService() {
+                    @Override
+                    public String correct(String taxonName) {
+                        return taxonName;
+                    }
+                }, getGraphDb()
         );
         TaxonNode taxon = taxonService.getOrCreateTaxon(null, "foo:123", null);
         assertThat(taxon, is(notNullValue()));
@@ -161,15 +168,22 @@ public class TaxonServiceImplTest extends GraphDBTestCase {
 
     @Test
     public void createSpeciesMatchHigherOrder() throws NodeFactoryException {
-        TaxonEnricher enricher = new TaxonEnricher() {
+        PropertyEnricher enricher = new PropertyEnricher() {
+
             @Override
-            public Taxon enrich(Taxon taxon) {
+            public Map<String, String> enrich(Map<String, String> properties) throws PropertyEnricherException {
+                Taxon taxon = TaxonUtil.mapToTaxon(properties);
                 if ("bla".equals(taxon.getName())) {
                     taxon.setPath("a path");
                     taxon.setExternalId("anExternalId");
                     taxon.setCommonNames(EXPECTED_COMMON_NAMES);
                 }
-                return taxon;
+                return TaxonUtil.taxonToMap(taxon);
+            }
+
+            @Override
+            public void shutdown() {
+
             }
         };
         taxonService.setEnricher(enricher);
@@ -191,12 +205,7 @@ public class TaxonServiceImplTest extends GraphDBTestCase {
 
     @Test
     public void findCloseMatchForTaxonPath() throws NodeFactoryException {
-        taxonService.setEnricher(new TaxonEnricher() {
-            @Override
-            public Taxon enrich(Taxon taxon) {
-                return taxon;
-            }
-        });
+        taxonService.setEnricher(new PassThroughEnricher());
         taxonService.getOrCreateTaxon("Homo sapiens", "someid", "Animalia Mammalia");
         taxonService.getOrCreateTaxon("Homo erectus", null, null);
         assertMatch("Mammalia");
@@ -254,11 +263,12 @@ public class TaxonServiceImplTest extends GraphDBTestCase {
 
     @Test
     public void synonymsAddedToIndexOnce() throws NodeFactoryException {
-        taxonService.setEnricher(new TaxonEnricher() {
+        taxonService.setEnricher(new PropertyEnricher() {
             private boolean firstTime = true;
 
             @Override
-            public Taxon enrich(Taxon taxon) {
+            public Map<String, String> enrich(Map<String, String> properties) throws PropertyEnricherException {
+                Taxon taxon = TaxonUtil.mapToTaxon(properties);
                 if ("not pref".equals(taxon.getName())) {
                     if (!firstTime) {
                         fail("should already have indexed [" + taxon.getName() + "]...");
@@ -268,7 +278,12 @@ public class TaxonServiceImplTest extends GraphDBTestCase {
                     taxon.setPath("one | two | three");
                     firstTime = false;
                 }
-                return taxon;
+                return TaxonUtil.taxonToMap(taxon);
+            }
+
+            @Override
+            public void shutdown() {
+
             }
         });
         TaxonNode first = taxonService.getOrCreateTaxon("not pref", null, null);
@@ -287,13 +302,19 @@ public class TaxonServiceImplTest extends GraphDBTestCase {
     }
 
     private TaxonServiceImpl createTaxonService() {
-        return new TaxonServiceImpl(new TaxonEnricher() {
+        return new TaxonServiceImpl(new PropertyEnricher() {
             @Override
-            public Taxon enrich(Taxon taxon) {
+            public Map<String, String> enrich(Map<String, String> properties) throws PropertyEnricherException {
+                Taxon taxon = TaxonUtil.mapToTaxon(properties);
                 taxon.setPath("kingdom" + CharsetConstant.SEPARATOR + "phylum" + CharsetConstant.SEPARATOR + "etc" + CharsetConstant.SEPARATOR);
                 taxon.setExternalId("anExternalId");
                 taxon.setCommonNames(EXPECTED_COMMON_NAMES);
-                return taxon;
+                return TaxonUtil.taxonToMap(taxon);
+            }
+
+            @Override
+            public void shutdown() {
+
             }
         }, new CorrectionService() {
             @Override

@@ -11,11 +11,9 @@ import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
-import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.domain.Term;
 import org.eol.globi.service.DOIResolver;
-import org.eol.globi.service.TaxonEnricher;
 import org.eol.globi.service.TermLookupService;
 import org.eol.globi.service.TermLookupServiceException;
 import org.junit.Test;
@@ -142,20 +140,7 @@ public class NodeFactoryTest extends GraphDBTestCase {
 
     @Test
     public void specimenWithLifeStageInName() throws NodeFactoryException {
-        CorrectionService correctionService = new CorrectionService() {
-            @Override
-            public String correct(String taxonName) {
-                return "mickey corrected";
-            }
-        };
-        TaxonService taxonService = new TaxonServiceImpl(new TaxonEnricher() {
-            @Override
-            public Taxon enrich(Taxon taxon) {
-                return taxon;
-            }
-        }, correctionService, getGraphDb()
-        );
-        nodeFactory.setTaxonService(taxonService);
+        initTaxonService();
         Specimen specimen = nodeFactory.createSpecimen("mickey eggs scales");
         assertThat(specimen.getLifeStage().getName(), is("egg"));
         assertThat(specimen.getLifeStage().getId(), is("UBERON:0007379"));
@@ -165,23 +150,23 @@ public class NodeFactoryTest extends GraphDBTestCase {
 
     @Test
     public void describeAndClassifySpecimenImplicit() throws NodeFactoryException {
+        initTaxonService();
+        Specimen specimen = nodeFactory.createSpecimen("mickey");
+        assertThat(specimen.getOriginalTaxonDescription(), is("mickey"));
+        assertThat("original taxon descriptions are indexed", nodeFactory.findTaxon("mickey").getName(), is("mickey"));
+    }
+
+    protected void initTaxonService() {
         CorrectionService correctionService = new CorrectionService() {
             @Override
             public String correct(String taxonName) {
                 return "mickey corrected";
             }
         };
-        TaxonService taxonService = new TaxonServiceImpl(new TaxonEnricher() {
-            @Override
-            public Taxon enrich(Taxon taxon) {
-                return taxon;
-            }
-        }, correctionService, getGraphDb()
+        TaxonService taxonService = new TaxonServiceImpl(new PassThroughEnricher(),
+                correctionService, getGraphDb()
         );
         nodeFactory.setTaxonService(taxonService);
-        Specimen specimen = nodeFactory.createSpecimen("mickey");
-        assertThat(specimen.getOriginalTaxonDescription(), is("mickey"));
-        assertThat("original taxon descriptions are indexed", nodeFactory.findTaxon("mickey").getName(), is("mickey"));
     }
 
 

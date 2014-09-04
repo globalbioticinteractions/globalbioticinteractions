@@ -10,8 +10,11 @@ import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.Taxon;
+import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.Term;
-import org.eol.globi.service.TaxonEnricher;
+import org.eol.globi.service.PropertyEnricher;
+import org.eol.globi.service.PropertyEnricherException;
+import org.eol.globi.service.TaxonUtil;
 import org.junit.Before;
 import org.junit.Test;
 import org.neo4j.graphdb.Relationship;
@@ -20,6 +23,7 @@ import org.neo4j.graphdb.Transaction;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.text.ParseException;
+import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
@@ -28,13 +32,20 @@ public class ExporterAssociationAggregatesTest extends GraphDBTestCase {
 
     @Before
     public void setEnricher() {
-        final TaxonEnricher taxonEnricher = new TaxonEnricher() {
+        final PropertyEnricher taxonEnricher = new PropertyEnricher() {
 
             @Override
-            public Taxon enrich(Taxon taxon) {
+            public Map<String, String> enrich(Map<String, String> properties) throws PropertyEnricherException {
+                Taxon taxon = new TaxonImpl();
+                TaxonUtil.mapToTaxon(properties, taxon);
                 taxon.setExternalId(taxon.getName() + "id");
                 taxon.setPath(taxon.getName() + "path");
-                return taxon;
+                return TaxonUtil.taxonToMap(taxon);
+            }
+
+            @Override
+            public void shutdown() {
+
             }
         };
         nodeFactory = new NodeFactory(getGraphDb(), new TaxonServiceImpl(taxonEnricher, new CorrectionService() {

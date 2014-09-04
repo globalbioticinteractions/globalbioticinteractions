@@ -11,19 +11,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class TaxonEnricherImpl implements TaxonEnricher, PropertyEnricher {
+public class TaxonEnricherImpl implements PropertyEnricher {
     private static final Log LOG = LogFactory.getLog(TaxonEnricherImpl.class);
 
     private final List<PropertyEnricher> services = new ArrayList<PropertyEnricher>();
     private final HashMap<Class, Integer> errorCounts = new HashMap<Class, Integer>();
-
-    @Override
-    public Taxon enrich(Taxon taxon) throws PropertyEnricherException {
-        Map<String, String> properties = TaxonUtil.taxonToMap(taxon);
-        Taxon enrichedTaxon = new TaxonImpl();
-        TaxonUtil.mapToTaxon(enrich(properties), enrichedTaxon);
-        return enrichedTaxon;
-    }
 
     @Override
     public Map<String, String> enrich(final Map<String, String> properties) throws PropertyEnricherException {

@@ -1,6 +1,5 @@
 package org.eol.globi.export;
 
-import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.NodeFactory;
 import org.eol.globi.data.NodeFactoryException;
@@ -13,13 +12,15 @@ import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
-import org.eol.globi.service.TaxonEnricher;
+import org.eol.globi.service.PropertyEnricher;
+import org.eol.globi.service.TaxonUtil;
 import org.junit.Test;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Transaction;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.util.Map;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertNotNull;
@@ -31,9 +32,11 @@ public class StudyExportUnmatchedSourceTaxaForStudiesTest extends GraphDBTestCas
 
     @Test
     public void exportOnePredatorTwoPrey() throws NodeFactoryException, IOException {
-        final TaxonEnricher taxonEnricher = new TaxonEnricher() {
+        final PropertyEnricher taxonEnricher = new PropertyEnricher() {
             @Override
-            public Taxon enrich(Taxon taxon) {
+            public Map<String, String> enrich(Map<String, String> properties) {
+                Taxon taxon = new TaxonImpl();
+                TaxonUtil.mapToTaxon(properties, taxon);
                 if ("Homo sapiens".equals(taxon.getName())) {
                     taxon.setExternalId("homoSapiensId");
                     taxon.setPath("one two three");
@@ -41,7 +44,12 @@ public class StudyExportUnmatchedSourceTaxaForStudiesTest extends GraphDBTestCas
                     taxon.setExternalId("canisLupusId");
                     taxon.setPath("four five six");
                 }
-                return taxon;
+                return TaxonUtil.taxonToMap(taxon);
+            }
+
+            @Override
+            public void shutdown() {
+
             }
         };
         NodeFactory factory = factory(taxonEnricher);
@@ -90,12 +98,19 @@ public class StudyExportUnmatchedSourceTaxaForStudiesTest extends GraphDBTestCas
 
     @Test
     public void exportOnePredatorNoPathButWithSameAs() throws NodeFactoryException, IOException {
-        final TaxonEnricher taxonEnricher = new TaxonEnricher() {
+        final PropertyEnricher taxonEnricher = new PropertyEnricher() {
             @Override
-            public Taxon enrich(Taxon taxon) {
+            public Map<String, String> enrich(Map<String, String> properties) {
+                TaxonImpl taxon = new TaxonImpl();
+                TaxonUtil.mapToTaxon(properties, taxon);
                 String externalId = taxon.getExternalId() == null
                         ? PropertyAndValueDictionary.NO_MATCH : taxon.getExternalId();
-                return new TaxonImpl(taxon.getName(), externalId);
+                return TaxonUtil.taxonToMap(new TaxonImpl(taxon.getName(), externalId));
+            }
+
+            @Override
+            public void shutdown() {
+
             }
         };
         NodeFactory factory = factory(taxonEnricher);
@@ -136,8 +151,8 @@ public class StudyExportUnmatchedSourceTaxaForStudiesTest extends GraphDBTestCas
         ));
     }
 
-    private NodeFactory factory(TaxonEnricher taxonEnricher) {
-        return new NodeFactory(getGraphDb(), new TaxonServiceImpl(taxonEnricher, new CorrectionService() {
+    private NodeFactory factory(PropertyEnricher enricher) {
+        return new NodeFactory(getGraphDb(), new TaxonServiceImpl(enricher, new CorrectionService() {
             @Override
             public String correct(String taxonName) {
                 return taxonName;

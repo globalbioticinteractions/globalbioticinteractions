@@ -3,9 +3,9 @@ package org.eol.globi.domain;
 import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.NodeFactory;
 import org.eol.globi.data.NodeFactoryException;
+import org.eol.globi.data.PassThroughEnricher;
 import org.eol.globi.data.taxon.TaxonNameCorrector;
 import org.eol.globi.data.taxon.TaxonServiceImpl;
-import org.eol.globi.service.TaxonEnricher;
 import org.junit.Before;
 import org.junit.Test;
 import org.neo4j.graphdb.Direction;
@@ -25,13 +25,8 @@ public class StudyTest extends GraphDBTestCase {
 
     @Before
     public void createFactory() {
-        final TaxonEnricher taxonEnricher = new TaxonEnricher() {
-            @Override
-            public Taxon enrich(Taxon taxon) {
-                return taxon;
-            }
-        };
-        factory = new NodeFactory(getGraphDb(), new TaxonServiceImpl(taxonEnricher, new TaxonNameCorrector(), getGraphDb()));
+        factory = new NodeFactory(getGraphDb(), new TaxonServiceImpl(new PassThroughEnricher(),
+                new TaxonNameCorrector(), getGraphDb()));
     }
 
     @Test

@@ -1,19 +1,17 @@
 package org.eol.globi.data.taxon;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.queryParser.QueryParser;
 import org.eol.globi.data.CharsetConstant;
-import org.eol.globi.data.NodeFactory;
 import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TaxonNode;
+import org.eol.globi.service.PropertyEnricher;
 import org.eol.globi.service.PropertyEnricherException;
 import org.eol.globi.service.TaxonMatchValidator;
-import org.eol.globi.service.TaxonEnricher;
+import org.eol.globi.service.TaxonUtil;
 import org.eol.globi.util.NodeUtil;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
@@ -30,10 +28,10 @@ public class TaxonServiceImpl implements TaxonService {
     private final Index<Node> taxonPaths;
     private final Index<Node> taxonCommonNames;
     private CorrectionService corrector;
-    private TaxonEnricher enricher;
+    private PropertyEnricher enricher;
 
-    public TaxonServiceImpl(TaxonEnricher taxonEnricher, CorrectionService correctionService, GraphDatabaseService graphDbService) {
-        this.enricher = taxonEnricher;
+    public TaxonServiceImpl(PropertyEnricher enricher, CorrectionService correctionService, GraphDatabaseService graphDbService) {
+        this.enricher = enricher;
         this.corrector = correctionService;
         this.graphDbService = graphDbService;
         this.taxons = graphDbService.index().forNodes("taxons");
@@ -99,7 +97,7 @@ public class TaxonServiceImpl implements TaxonService {
         TaxonNode taxonNode = findTaxon(taxon.getName(), taxon.getExternalId());
         while (taxonNode == null) {
             try {
-                taxon = enricher.enrich(taxon);
+                taxon = TaxonUtil.enrich(enricher, taxon);
             } catch (PropertyEnricherException e) {
                 throw new NodeFactoryException("failed to enrich taxon with name [" + taxon.getName() + "]", e);
             }
@@ -196,7 +194,7 @@ public class TaxonServiceImpl implements TaxonService {
         return taxon;
     }
 
-    public void setEnricher(TaxonEnricher enricher) {
+    public void setEnricher(PropertyEnricher enricher) {
         this.enricher = enricher;
     }
 

@@ -5,16 +5,20 @@ import org.apache.commons.cli.ParseException;
 import org.apache.commons.io.FileUtils;
 import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.NodeFactory;
+import org.eol.globi.data.PassThroughEnricher;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.data.StudyImporterForSimons;
 import org.eol.globi.data.taxon.TaxonNameCorrector;
 import org.eol.globi.data.taxon.TaxonServiceImpl;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.Taxon;
+import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.geo.Ecoregion;
 import org.eol.globi.geo.EcoregionFinder;
 import org.eol.globi.geo.EcoregionFinderException;
-import org.eol.globi.service.TaxonEnricher;
+import org.eol.globi.service.PropertyEnricher;
+import org.eol.globi.service.PropertyEnricherException;
+import org.eol.globi.service.TaxonUtil;
 import org.junit.Test;
 import org.neo4j.graphdb.GraphDatabaseService;
 
@@ -23,6 +27,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import static junit.framework.Assert.assertNotNull;
 import static org.hamcrest.core.Is.is;
@@ -52,13 +57,8 @@ public class NormalizerTest extends GraphDBTestCase {
     public void doSingleImport() throws IOException, StudyImporterException {
         Normalizer dataNormalizationTool = createNormalizer();
 
-        final TaxonEnricher taxonEnricher = new TaxonEnricher() {
-            @Override
-            public Taxon enrich(Taxon taxon) {
-                return taxon;
-            }
-        };
-        dataNormalizationTool.importData(StudyImporterForSimons.class, new NodeFactory(getGraphDb(), new TaxonServiceImpl(taxonEnricher, new TaxonNameCorrector(), getGraphDb())));
+        dataNormalizationTool.importData(StudyImporterForSimons.class, new NodeFactory(getGraphDb(),
+                new TaxonServiceImpl(new PassThroughEnricher(), new TaxonNameCorrector(), getGraphDb())));
 
 
         GraphDatabaseService graphService = getGraphDb();
@@ -99,11 +99,19 @@ public class NormalizerTest extends GraphDBTestCase {
         Normalizer dataNormalizationTool = createNormalizer();
 
         GraphDatabaseService graphService = getGraphDb();
-        final TaxonEnricher taxonEnricher = new TaxonEnricher() {
+        final PropertyEnricher taxonEnricher = new PropertyEnricher() {
+
             @Override
-            public Taxon enrich(Taxon taxon) {
+            public Map<String, String> enrich(Map<String, String> properties) throws PropertyEnricherException {
+                Taxon taxon = new TaxonImpl();
+                TaxonUtil.mapToTaxon(properties, taxon);
                 taxon.setExternalId("test-taxon:" + System.currentTimeMillis());
-                return taxon;
+                return TaxonUtil.taxonToMap(taxon);
+            }
+
+            @Override
+            public void shutdown() {
+
             }
         };
         dataNormalizationTool.importData(StudyImporterForSimons.class, new NodeFactory(graphService, new TaxonServiceImpl(taxonEnricher, new TaxonNameCorrector(), getGraphDb())));

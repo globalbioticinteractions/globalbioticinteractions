@@ -3,6 +3,7 @@ package org.eol.globi.service;
 import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Taxon;
+import org.eol.globi.domain.TaxonImpl;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -33,5 +34,18 @@ public class TaxonUtil {
         return StringUtils.isNotBlank(properties.get(PropertyAndValueDictionary.NAME))
                 && StringUtils.isNotBlank(properties.get(PropertyAndValueDictionary.EXTERNAL_ID))
                 && StringUtils.isNotBlank(properties.get(PropertyAndValueDictionary.PATH));
+    }
+
+    public static Taxon enrich(PropertyEnricher enricher, Taxon taxon) throws PropertyEnricherException {
+        Map<String, String> properties = taxonToMap(taxon);
+        Taxon enrichedTaxon = new TaxonImpl();
+        mapToTaxon(enricher.enrich(properties), enrichedTaxon);
+        return enrichedTaxon;
+    }
+
+    public static Taxon mapToTaxon(Map<String, String> properties) {
+        Taxon taxon = new TaxonImpl();
+        mapToTaxon(properties, taxon);
+        return taxon;
     }
 }

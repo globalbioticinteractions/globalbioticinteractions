@@ -23,8 +23,8 @@ import org.eol.globi.geo.EcoregionFinder;
 import org.eol.globi.geo.EcoregionFinderFactoryImpl;
 import org.eol.globi.service.DOIResolverImpl;
 import org.eol.globi.service.EcoregionFinderProxy;
+import org.eol.globi.service.PropertyEnricherFactory;
 import org.eol.globi.service.PropertyEnricherException;
-import org.eol.globi.service.TaxonEnricherFactory;
 import org.neo4j.graphdb.GraphDatabaseService;
 
 import java.util.Collection;
@@ -109,7 +109,7 @@ public class Normalizer {
 
 
     private void importData(GraphDatabaseService graphService, Collection<Class> importers) {
-        TaxonServiceImpl taxonService = new TaxonServiceImpl(TaxonEnricherFactory.createTaxonEnricher()
+        TaxonServiceImpl taxonService = new TaxonServiceImpl(PropertyEnricherFactory.createTaxonEnricher()
                 , new TaxonNameCorrector(), graphService);
         NodeFactory factory = new NodeFactory(graphService, taxonService);
         for (Class importer : importers) {

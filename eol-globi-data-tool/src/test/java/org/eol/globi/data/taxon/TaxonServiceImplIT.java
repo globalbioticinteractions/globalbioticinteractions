@@ -5,8 +5,8 @@ import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.TaxonNode;
-import org.eol.globi.service.TaxonEnricher;
-import org.eol.globi.service.TaxonEnricherFactory;
+import org.eol.globi.service.PropertyEnricher;
+import org.eol.globi.service.PropertyEnricherFactory;
 import org.hamcrest.Matchers;
 import org.hamcrest.core.Is;
 import org.junit.Before;
@@ -25,11 +25,11 @@ import static org.junit.Assert.assertThat;
 public class TaxonServiceImplIT extends GraphDBTestCase {
 
     private TaxonServiceImpl taxonService;
-    private static TaxonEnricher taxonEnricher = null;
+    private static PropertyEnricher taxonEnricher = null;
 
     @BeforeClass
     public static void initEnricher() {
-        taxonEnricher = TaxonEnricherFactory.createTaxonEnricher();
+        taxonEnricher = PropertyEnricherFactory.createTaxonEnricher();
     }
 
     @Before

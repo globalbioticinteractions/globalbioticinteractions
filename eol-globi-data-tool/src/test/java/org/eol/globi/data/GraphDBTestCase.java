@@ -3,13 +3,12 @@ package org.eol.globi.data;
 import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.data.taxon.CorrectionService;
 import org.eol.globi.data.taxon.TaxonServiceImpl;
-import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.Term;
 import org.eol.globi.geo.Ecoregion;
 import org.eol.globi.geo.EcoregionFinder;
 import org.eol.globi.geo.EcoregionFinderException;
 import org.eol.globi.service.DOIResolver;
-import org.eol.globi.service.TaxonEnricher;
+import org.eol.globi.service.PropertyEnricher;
 import org.eol.globi.service.TermLookupService;
 import org.eol.globi.service.TermLookupServiceException;
 import org.junit.After;
@@ -31,13 +30,7 @@ public abstract class GraphDBTestCase {
     @Before
     public void startGraphDb() throws IOException {
         graphDb = new TestGraphDatabaseFactory().newImpermanentDatabase();
-        final TaxonEnricher taxonEnricher = new TaxonEnricher() {
-
-            @Override
-            public Taxon enrich(Taxon taxon) {
-                return taxon;
-            }
-        };
+        final PropertyEnricher taxonEnricher = new PassThroughEnricher();
         nodeFactory = new NodeFactory(graphDb, new TaxonServiceImpl(taxonEnricher, new CorrectionService() {
             @Override
             public String correct(String taxonName) {

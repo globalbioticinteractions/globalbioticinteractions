@@ -24,11 +24,9 @@ import static org.junit.internal.matchers.StringContains.containsString;
 
 public class TaxonPropertyEnricherImplIT extends GraphDBTestCase {
 
-    private TaxonEnricher enricher;
-
     @Before
     public void start() {
-        enricher = TaxonEnricherFactory.createTaxonEnricher();
+        PropertyEnricher enricher = PropertyEnricherFactory.createTaxonEnricher();
         nodeFactory = new NodeFactory(getGraphDb(), new TaxonServiceImpl(enricher, new TaxonNameCorrector(), getGraphDb()));
     }
 
