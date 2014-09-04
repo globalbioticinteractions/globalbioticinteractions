@@ -63,9 +63,7 @@ public class StudyImporterForINaturalistTest extends GraphDBTestCase {
         assertThat(anotherStudy.getExternalId(), is("http://inaturalist.org/observations/97380"));
 
 
-
-
-        TaxonNode sourceTaxonNode = nodeFactory.findTaxon("Arenaria interpres");
+        TaxonNode sourceTaxonNode = nodeFactory.findTaxonByName("Arenaria interpres");
 
         assertThat(sourceTaxonNode, is(not(nullValue())));
         Iterable<Relationship> relationships = sourceTaxonNode.getUnderlyingNode().getRelationships(Direction.INCOMING, RelTypes.CLASSIFIED_AS);

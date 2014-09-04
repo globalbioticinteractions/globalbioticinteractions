@@ -33,10 +33,10 @@ public class StudyImporterForAkinTest extends GraphDBTestCase {
         StudyImporter importer = new StudyImporterFactory(new ParserFactoryImpl(), nodeFactory).instantiateImporter((Class) StudyImporterForAkin.class);
         importer.importStudy();
 
-        assertNotNull(nodeFactory.findTaxonOfType("Sciaenops ocellatus"));
-        assertNotNull(nodeFactory.findTaxonOfType("Paralichthys lethostigma"));
-        assertNotNull(nodeFactory.findTaxonOfType("Adinia xenica"));
-        assertNotNull(nodeFactory.findTaxonOfType("Citharichthys spilopterus"));
+        assertNotNull(nodeFactory.findTaxonByName("Sciaenops ocellatus"));
+        assertNotNull(nodeFactory.findTaxonByName("Paralichthys lethostigma"));
+        assertNotNull(nodeFactory.findTaxonByName("Adinia xenica"));
+        assertNotNull(nodeFactory.findTaxonByName("Citharichthys spilopterus"));
     }
 
     @Test
@@ -55,7 +55,7 @@ public class StudyImporterForAkinTest extends GraphDBTestCase {
                 ",9,\"Leiostomus xanthurus\",\"03.07.98\",,6,26.7,0,,\"Seine\",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,\"EMPTY\",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,";
         StudyImporter importer = new StudyImporterFactory(new TestParserFactory(csvString), nodeFactory).instantiateImporter((Class) StudyImporterForAkin.class);
         importer.importStudy();
-        TaxonNode taxon = nodeFactory.findTaxonOfType("Leiostomus xanthurus");
+        TaxonNode taxon = nodeFactory.findTaxonByName("Leiostomus xanthurus");
         assertNotNull(taxon);
 
     }
@@ -67,7 +67,7 @@ public class StudyImporterForAkinTest extends GraphDBTestCase {
                 ",1,\"Pogonias cromis\",\"03.07.98\",,1,226,3,,\"Gillnet\",,0.15,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,0.6,,,,,,0.45,,,,,,,,,,,,,,,,,,1.35,0.45,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,";
         StudyImporter importer = new StudyImporterFactory(new TestParserFactory(csvString), nodeFactory).instantiateImporter((Class) StudyImporterForAkin.class);
         Study study = importer.importStudy();
-        TaxonNode taxon = nodeFactory.findTaxonOfType("Pogonias cromis");
+        TaxonNode taxon = nodeFactory.findTaxonByName("Pogonias cromis");
         assertNotNull(taxon);
 
         Iterable<Relationship> specimens = study.getSpecimens();

@@ -21,7 +21,7 @@ import org.neo4j.graphdb.index.IndexHits;
 import org.neo4j.graphdb.index.IndexManager;
 import org.neo4j.helpers.collection.MapUtil;
 
-public class TaxonServiceImpl implements TaxonService {
+public class TaxonIndexImpl implements TaxonIndex {
     private final GraphDatabaseService graphDbService;
     private final Index<Node> taxons;
     private final Index<Node> taxonNameSuggestions;
@@ -30,7 +30,7 @@ public class TaxonServiceImpl implements TaxonService {
     private CorrectionService corrector;
     private PropertyEnricher enricher;
 
-    public TaxonServiceImpl(PropertyEnricher enricher, CorrectionService correctionService, GraphDatabaseService graphDbService) {
+    public TaxonIndexImpl(PropertyEnricher enricher, CorrectionService correctionService, GraphDatabaseService graphDbService) {
         this.enricher = enricher;
         this.corrector = correctionService;
         this.graphDbService = graphDbService;

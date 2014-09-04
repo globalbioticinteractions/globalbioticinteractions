@@ -29,10 +29,10 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
-public class TaxonServiceImplTest extends GraphDBTestCase {
+public class TaxonIndexImplTest extends GraphDBTestCase {
     public static final String EXPECTED_COMMON_NAMES = "some german name @de" + CharsetConstant.SEPARATOR + "some english name @en" + CharsetConstant.SEPARATOR;
 
-    private TaxonServiceImpl taxonService;
+    private TaxonIndexImpl taxonService;
 
     @Before
     public void init() {
@@ -141,7 +141,7 @@ public class TaxonServiceImplTest extends GraphDBTestCase {
 
     @Test
     public void createTaxonExternalIdIndex() throws NodeFactoryException {
-        taxonService = new TaxonServiceImpl(new PassThroughEnricher(),
+        taxonService = new TaxonIndexImpl(new PassThroughEnricher(),
                 new CorrectionService() {
                     @Override
                     public String correct(String taxonName) {
@@ -301,8 +301,8 @@ public class TaxonServiceImplTest extends GraphDBTestCase {
         assertThat(foundTaxon.getNodeID(), is(first.getNodeID()));
     }
 
-    private TaxonServiceImpl createTaxonService() {
-        return new TaxonServiceImpl(new PropertyEnricher() {
+    private TaxonIndexImpl createTaxonService() {
+        return new TaxonIndexImpl(new PropertyEnricher() {
             @Override
             public Map<String, String> enrich(Map<String, String> properties) throws PropertyEnricherException {
                 Taxon taxon = TaxonUtil.mapToTaxon(properties);

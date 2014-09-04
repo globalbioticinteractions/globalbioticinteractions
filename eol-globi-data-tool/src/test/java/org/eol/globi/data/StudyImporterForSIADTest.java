@@ -3,7 +3,6 @@ package org.eol.globi.data;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.TaxonNode;
 import org.junit.Test;
-import org.neo4j.graphdb.Relationship;
 
 import java.util.List;
 
@@ -20,10 +19,10 @@ public class StudyImporterForSIADTest extends GraphDBTestCase {
         List<Study> allStudies = NodeFactory.findAllStudies(getGraphDb());
         assertThat(allStudies.size() > 1, is(true));
 
-        TaxonNode taxon = nodeFactory.findTaxon("Anisakis");
+        TaxonNode taxon = nodeFactory.findTaxonByName("Anisakis");
         assertThat(taxon, is(notNullValue())) ;
 
-        taxon = nodeFactory.findTaxon("Abbreviata");
+        taxon = nodeFactory.findTaxonByName("Abbreviata");
         assertThat(taxon, is(notNullValue())) ;
     }
 

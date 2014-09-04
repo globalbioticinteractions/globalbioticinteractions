@@ -75,10 +75,10 @@ public class StudyImporterForWrastTest extends GraphDBTestCase {
         assertThat(specimenCount, is(2));
 
 
-        assertNotNull(nodeFactory.findTaxonOfType("Sciaenops ocellatus"));
-        assertNotNull(nodeFactory.findTaxonOfType("Arius felis"));
+        assertNotNull(nodeFactory.findTaxonByName("Sciaenops ocellatus"));
+        assertNotNull(nodeFactory.findTaxonByName("Arius felis"));
 
-        assertNotNull(nodeFactory.findTaxonOfType("Aegathoa oculata"));
+        assertNotNull(nodeFactory.findTaxonByName("Aegathoa oculata"));
 
         assertNotNull(nodeFactory.findSeason("spring"));
         assertNotNull(nodeFactory.findSeason("fall"));

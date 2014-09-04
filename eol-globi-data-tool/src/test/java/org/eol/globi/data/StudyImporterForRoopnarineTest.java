@@ -65,9 +65,9 @@ public class StudyImporterForRoopnarineTest extends GraphDBTestCase {
         }, nodeFactory);
 
         Study study = importer.importStudy();
-        assertNotNull(nodeFactory.findTaxonOfType("Negaprion brevirostris"));
-        assertNotNull(nodeFactory.findTaxonOfType("Carcharhinus perezi"));
-        assertNotNull(nodeFactory.findTaxonOfType("Galeocerdo cuvieri"));
+        assertNotNull(nodeFactory.findTaxonByName("Negaprion brevirostris"));
+        assertNotNull(nodeFactory.findTaxonByName("Carcharhinus perezi"));
+        assertNotNull(nodeFactory.findTaxonByName("Galeocerdo cuvieri"));
 
         Iterable<Relationship> collectedRels = study.getSpecimens();
         int totalRels = validateSpecimen(collectedRels);
@@ -86,8 +86,8 @@ public class StudyImporterForRoopnarineTest extends GraphDBTestCase {
         int totalRels = validateSpecimen(collectedRels);
         assertThat(totalRels, Is.is(1939));
 
-        assertNotNull(nodeFactory.findTaxonOfType("Lestrigonus bengalensis"));
-        assertNotNull(nodeFactory.findTaxonOfType("Bracyscelus crusculum"));
+        assertNotNull(nodeFactory.findTaxonByName("Lestrigonus bengalensis"));
+        assertNotNull(nodeFactory.findTaxonByName("Bracyscelus crusculum"));
     }
 
     private int validateSpecimen(Iterable<Relationship> collectedRels) {

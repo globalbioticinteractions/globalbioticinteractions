@@ -3,7 +3,7 @@ package org.eol.globi.data;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.eol.globi.data.taxon.TaxonService;
+import org.eol.globi.data.taxon.TaxonIndex;
 import org.eol.globi.domain.Environment;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.PropertyAndValueDictionary;
@@ -62,9 +62,9 @@ public class NodeFactory {
 
     private DOIResolver doiResolver;
     private EcoregionFinder ecoregionFinder;
-    private TaxonService taxonService;
+    private TaxonIndex taxonIndex;
 
-    public NodeFactory(GraphDatabaseService graphDb, TaxonService taxonService) {
+    public NodeFactory(GraphDatabaseService graphDb, TaxonIndex taxonIndex) {
         this.graphDb = graphDb;
 
         this.termLookupService = new UberonLookupService();
@@ -80,7 +80,7 @@ public class NodeFactory {
         this.ecoregionPaths = graphDb.index().forNodes("ecoregionPaths", MapUtil.stringMap(IndexManager.PROVIDER, "lucene", "type", "fulltext"));
         this.ecoregionSuggestions = graphDb.index().forNodes("ecoregionSuggestions");
 
-        this.taxonService = taxonService;
+        this.taxonIndex = taxonIndex;
 
     }
 
@@ -98,12 +98,8 @@ public class NodeFactory {
         return graphDb;
     }
 
-    public TaxonNode findTaxon(String taxonName) throws NodeFactoryException {
-        return findTaxonOfType(taxonName);
-    }
-
-    public TaxonNode findTaxonOfType(String taxonName) throws NodeFactoryException {
-        return getTaxonService().findTaxonByName(taxonName);
+    public TaxonNode findTaxonByName(String taxonName) throws NodeFactoryException {
+        return getTaxonIndex().findTaxonByName(taxonName);
     }
 
     public TaxonNode getOrCreateTaxon(String name) throws NodeFactoryException {
@@ -111,7 +107,7 @@ public class NodeFactory {
     }
 
     public TaxonNode getOrCreateTaxon(String name, String externalId, String path) throws NodeFactoryException {
-        return getTaxonService().getOrCreateTaxon(name, externalId, path);
+        return getTaxonIndex().getOrCreateTaxon(name, externalId, path);
     }
 
     public Location findLocation(Double latitude, Double longitude, Double altitude) {
@@ -547,12 +543,12 @@ public class NodeFactory {
         return ecoregionSuggestions.query("name:\"" + wholeOrPartialEcoregionNameOrPath + "\"");
     }
 
-    public void setTaxonService(TaxonService taxonService) {
-        this.taxonService = taxonService;
+    public void setTaxonIndex(TaxonIndex taxonIndex) {
+        this.taxonIndex = taxonIndex;
     }
 
-    public TaxonService getTaxonService() {
-        return taxonService;
+    public TaxonIndex getTaxonIndex() {
+        return taxonIndex;
     }
 }
 

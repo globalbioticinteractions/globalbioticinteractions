@@ -84,9 +84,9 @@ public class StudyImporterForSPIRETest extends GraphDBTestCase {
         properties.put(StudyImporterForSPIRE.OF_HABITAT, spireHabitat);
         studyImporterForSPIRE.importTrophicLink(properties);
 
-        TaxonNode dog = nodeFactory.findTaxon("dog");
+        TaxonNode dog = nodeFactory.findTaxonByName("dog");
         assertThat(dog, is(notNullValue()));
-        TaxonNode man = nodeFactory.findTaxon("man");
+        TaxonNode man = nodeFactory.findTaxonByName("man");
         assertThat(man, is(notNullValue()));
         Iterable<Relationship> specimenRels = man.getUnderlyingNode().getRelationships(Direction.INCOMING, RelTypes.CLASSIFIED_AS);
 

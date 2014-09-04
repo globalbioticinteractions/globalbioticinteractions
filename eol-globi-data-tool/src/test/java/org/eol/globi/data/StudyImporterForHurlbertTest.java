@@ -33,9 +33,9 @@ public class StudyImporterForHurlbertTest extends GraphDBTestCase {
         assertThat(study.getSource(), containsString("Allen Hurlbert. Avian Diet Database (https://github.com/hurlbertlab/dietdatabase/). Accessed at https://raw.githubusercontent.com/hurlbertlab/dietdatabase/master/AvianDietDatabase.txt"));
         assertThat(study.getCitation(), is("Strong, A. M. 2000. Divergent foraging strategies of two neotropical migrant warblers: Implications for winter habitat use. Auk 117(2):381-392."));
 
-        assertThat(nodeFactory.findTaxon("Seiurus aurocapillus"), is(notNullValue()));
-        assertThat(nodeFactory.findTaxon("Formicidae"), is(notNullValue()));
-        assertThat(nodeFactory.findTaxon("Coleoptera"), is(notNullValue()));
+        assertThat(nodeFactory.findTaxonByName("Seiurus aurocapillus"), is(notNullValue()));
+        assertThat(nodeFactory.findTaxonByName("Formicidae"), is(notNullValue()));
+        assertThat(nodeFactory.findTaxonByName("Coleoptera"), is(notNullValue()));
 
     }
 

@@ -2,8 +2,6 @@ package org.eol.globi.service;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.eol.globi.domain.Taxon;
-import org.eol.globi.domain.TaxonImpl;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -42,7 +40,7 @@ public class TaxonEnricherImpl implements PropertyEnricher {
         services.clear();
     }
 
-    private Map<String, String> enrichTaxonWithPropertyValue(HashMap<Class, Integer> errorCounts, PropertyEnricher service, Map<String, String> properties) throws
+    private Map<String, String> enrichTaxonWithPropertyValue(Map<Class, Integer> errorCounts, PropertyEnricher service, Map<String, String> properties) throws
             PropertyEnricherException {
         Integer errorCount = errorCounts.get(service.getClass());
         if (errorCount != null && errorCount > 10) {
@@ -53,7 +51,7 @@ public class TaxonEnricherImpl implements PropertyEnricher {
         return Collections.unmodifiableMap(properties);
     }
 
-    private Map<String, String> enrichTaxon(HashMap<Class, Integer> errorCounts, PropertyEnricher
+    private Map<String, String> enrichTaxon(Map<Class, Integer> errorCounts, PropertyEnricher
             service, Integer errorCount, Map<String, String> properties) throws PropertyEnricherException {
         try {
             Map<String, String> enrichedProperties = service.enrich(properties);
@@ -66,11 +64,11 @@ public class TaxonEnricherImpl implements PropertyEnricher {
         }
     }
 
-    private void resetErrorCount(HashMap<Class, Integer> errorCounts, PropertyEnricher service) {
+    private void resetErrorCount(Map<Class, Integer> errorCounts, PropertyEnricher service) {
         errorCounts.put(service.getClass(), 0);
     }
 
-    private void incrementErrorCount(HashMap<Class, Integer> errorCounts, PropertyEnricher
+    private void incrementErrorCount(Map<Class, Integer> errorCounts, PropertyEnricher
             service, Integer errorCount) {
         if (errorCounts.containsKey(service.getClass()) && errorCount != null) {
             errorCounts.put(service.getClass(), ++errorCount);

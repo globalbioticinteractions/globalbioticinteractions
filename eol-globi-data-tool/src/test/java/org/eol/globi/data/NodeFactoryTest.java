@@ -3,8 +3,8 @@ package org.eol.globi.data;
 import junit.framework.Assert;
 import org.apache.commons.lang.StringUtils;
 import org.eol.globi.data.taxon.CorrectionService;
-import org.eol.globi.data.taxon.TaxonService;
-import org.eol.globi.data.taxon.TaxonServiceImpl;
+import org.eol.globi.data.taxon.TaxonIndex;
+import org.eol.globi.data.taxon.TaxonIndexImpl;
 import org.eol.globi.domain.Environment;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.PropertyAndValueDictionary;
@@ -153,7 +153,7 @@ public class NodeFactoryTest extends GraphDBTestCase {
         initTaxonService();
         Specimen specimen = nodeFactory.createSpecimen("mickey");
         assertThat(specimen.getOriginalTaxonDescription(), is("mickey"));
-        assertThat("original taxon descriptions are indexed", nodeFactory.findTaxon("mickey").getName(), is("mickey"));
+        assertThat("original taxon descriptions are indexed", nodeFactory.findTaxonByName("mickey").getName(), is("mickey"));
     }
 
     protected void initTaxonService() {
@@ -163,10 +163,10 @@ public class NodeFactoryTest extends GraphDBTestCase {
                 return "mickey corrected";
             }
         };
-        TaxonService taxonService = new TaxonServiceImpl(new PassThroughEnricher(),
+        TaxonIndex taxonIndex = new TaxonIndexImpl(new PassThroughEnricher(),
                 correctionService, getGraphDb()
         );
-        nodeFactory.setTaxonService(taxonService);
+        nodeFactory.setTaxonIndex(taxonIndex);
     }
 
 

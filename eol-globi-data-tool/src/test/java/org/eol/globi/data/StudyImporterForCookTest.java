@@ -30,9 +30,9 @@ public class StudyImporterForCookTest extends GraphDBTestCase {
         StudyImporterForCook importer = new StudyImporterForCook(new TestParserFactory(firstFiveLines), nodeFactory);
         Study study = importer.importStudy();
 
-        TaxonNode hostTaxon = nodeFactory.findTaxon("Micropogonias undulatus");
+        TaxonNode hostTaxon = nodeFactory.findTaxonByName("Micropogonias undulatus");
         assertThat(hostTaxon, is(notNullValue()));
-        TaxonNode parasiteTaxon = nodeFactory.findTaxon("Cymothoa excisa");
+        TaxonNode parasiteTaxon = nodeFactory.findTaxonByName("Cymothoa excisa");
         assertThat(parasiteTaxon, is(notNullValue()));
         assertThat("missing location", nodeFactory.findLocation(27.85, -(97.0 + 8.0 / 60.0), -3.0), is(notNullValue()));
 

@@ -20,8 +20,8 @@ public class StudyImporterForRobledoTest extends GraphDBTestCase {
 
         Study study = importer.importStudy();
 
-        assertNotNull(nodeFactory.findTaxonOfType("Heliconia imbricata"));
-        assertNotNull(nodeFactory.findTaxonOfType("Renealmia alpinia"));
+        assertNotNull(nodeFactory.findTaxonByName("Heliconia imbricata"));
+        assertNotNull(nodeFactory.findTaxonByName("Renealmia alpinia"));
 
         assertNotNull(nodeFactory.findStudy(study.getTitle()));
 

@@ -2,12 +2,9 @@ package org.eol.globi.export;
 
 import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.NodeFactoryException;
-import org.eol.globi.data.taxon.TaxonService;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
-import org.eol.globi.domain.TaxonNode;
-import org.eol.globi.util.ExternalIdUtil;
 import org.junit.Test;
 
 import java.io.IOException;

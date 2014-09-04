@@ -50,9 +50,9 @@ public class StudyImporterForICESTest extends GraphDBTestCase {
         StudyImporterForICES studyImporterFor = new StudyImporterForICES(new TestParserFactory(firstBunchOfLines), nodeFactory);
 
         Study study = studyImporterFor.importStudy();
-        assertNotNull(nodeFactory.findTaxonOfType("Gadus morhua"));
-        assertNotNull(nodeFactory.findTaxonOfType("Polychaeta"));
-        assertNotNull(nodeFactory.findTaxonOfType("Nereis"));
+        assertNotNull(nodeFactory.findTaxonByName("Gadus morhua"));
+        assertNotNull(nodeFactory.findTaxonByName("Polychaeta"));
+        assertNotNull(nodeFactory.findTaxonByName("Nereis"));
 
         Iterable<Relationship> collectedRels = study.getSpecimens();
         int predatorCollected = 0;

@@ -4,7 +4,7 @@ import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.NodeFactory;
 import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.data.taxon.CorrectionService;
-import org.eol.globi.data.taxon.TaxonServiceImpl;
+import org.eol.globi.data.taxon.TaxonIndexImpl;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.RelTypes;
@@ -152,7 +152,7 @@ public class StudyExportUnmatchedSourceTaxaForStudiesTest extends GraphDBTestCas
     }
 
     private NodeFactory factory(PropertyEnricher enricher) {
-        return new NodeFactory(getGraphDb(), new TaxonServiceImpl(enricher, new CorrectionService() {
+        return new NodeFactory(getGraphDb(), new TaxonIndexImpl(enricher, new CorrectionService() {
             @Override
             public String correct(String taxonName) {
                 return taxonName;

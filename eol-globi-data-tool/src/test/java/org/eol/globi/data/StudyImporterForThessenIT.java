@@ -44,7 +44,7 @@ public class StudyImporterForThessenIT extends GraphDBTestCase {
         assertThat(study.getTitle(), is(notNullValue()));
 
         for (String taxonId : taxonIds) {
-            TaxonNode taxon = nodeFactory.getTaxonService().findTaxonById(taxonId);
+            TaxonNode taxon = nodeFactory.getTaxonIndex().findTaxonById(taxonId);
             assertThat(taxon, is(notNullValue()));
             assertThat(taxon.getName(), is(notNullValue()));
         }

@@ -48,7 +48,7 @@ public class LinkerTest extends GraphDBTestCase {
     }
 
     private void assertHasOther(String name, int expectedCount) throws NodeFactoryException {
-        TaxonNode taxon1 = nodeFactory.findTaxon(name);
+        TaxonNode taxon1 = nodeFactory.findTaxonByName(name);
         assertThat(taxon1.getName(), is(name));
         Iterable<Relationship> rels = taxon1.getUnderlyingNode().getRelationships(RelTypes.SAME_AS, Direction.OUTGOING);
         int counter = 0;

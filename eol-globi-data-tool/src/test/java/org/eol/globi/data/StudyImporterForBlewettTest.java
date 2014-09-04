@@ -49,10 +49,10 @@ public class StudyImporterForBlewettTest extends GraphDBTestCase {
         assertThat(count, is(694));
 
 
-        assertNotNull(nodeFactory.findTaxonOfType("Centropomus undecimalis"));
-        TaxonNode taxonOfType = nodeFactory.findTaxonOfType("Cal sapidus");
+        assertNotNull(nodeFactory.findTaxonByName("Centropomus undecimalis"));
+        TaxonNode taxonOfType = nodeFactory.findTaxonByName("Cal sapidus");
         assertThat(taxonOfType.getName(), is("Cal sapidus"));
-        assertNotNull(nodeFactory.findTaxonOfType("Ort chrysoptera"));
+        assertNotNull(nodeFactory.findTaxonByName("Ort chrysoptera"));
     }
 
     @Test

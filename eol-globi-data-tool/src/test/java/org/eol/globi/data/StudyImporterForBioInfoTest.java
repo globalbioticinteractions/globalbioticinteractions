@@ -81,20 +81,20 @@ public class StudyImporterForBioInfoTest extends GraphDBTestCase {
 
 
         assertThat(study.getTitle(), is("BIO_INFO"));
-        TaxonNode acer = nodeFactory.findTaxon("Acer");
+        TaxonNode acer = nodeFactory.findTaxonByName("Acer");
         assertNotNull(acer);
         assertThat(acer.getExternalId(), is(PropertyAndValueDictionary.NO_MATCH));
-        TaxonNode taxon = nodeFactory.findTaxon("Dasineura tympani");
+        TaxonNode taxon = nodeFactory.findTaxonByName("Dasineura tympani");
         assertNotNull(taxon);
         assertThat(taxon.getExternalId(), is(PropertyAndValueDictionary.NO_MATCH));
-        TaxonNode taxon1 = nodeFactory.findTaxon("Phyllocoptes acericola");
+        TaxonNode taxon1 = nodeFactory.findTaxonByName("Phyllocoptes acericola");
         assertNotNull(taxon1);
         assertThat(taxon1.getExternalId(), is(PropertyAndValueDictionary.NO_MATCH));
-        TaxonNode taxon2 = nodeFactory.findTaxon("Aceria eriobia");
+        TaxonNode taxon2 = nodeFactory.findTaxonByName("Aceria eriobia");
         assertNotNull(taxon2);
         assertThat(taxon2.getExternalId(), is(PropertyAndValueDictionary.NO_MATCH));
         // relation record number: 4585
-        taxon2 = nodeFactory.findTaxon("Aneugmenus fürstenbergensis");
+        taxon2 = nodeFactory.findTaxonByName("Aneugmenus fürstenbergensis");
         assertNotNull(taxon2);
     }
 
@@ -149,7 +149,7 @@ public class StudyImporterForBioInfoTest extends GraphDBTestCase {
 
     private void assertRelations(String relationsString, Map<Long, String> taxaMap, Map<Long, RelType> relationsTypeMap) throws IOException, StudyImporterException, NodeFactoryException {
 
-        assertThat(nodeFactory.findTaxon("Homo sapiens"), is(nullValue()));
+        assertThat(nodeFactory.findTaxonByName("Homo sapiens"), is(nullValue()));
 
         LabeledCSVParser labeledCSVParser = createParser(relationsString);
 
@@ -171,8 +171,8 @@ public class StudyImporterForBioInfoTest extends GraphDBTestCase {
         assertThat(specimenList.get(0).getSingleRelationship(RelTypes.CLASSIFIED_AS, Direction.OUTGOING), is(notNullValue()));
         assertThat(specimenList.get(1).getSingleRelationship(RelTypes.CLASSIFIED_AS, Direction.OUTGOING), is(notNullValue()));
 
-        assertThat(nodeFactory.findTaxon("Homo sapiens"), is(notNullValue()));
-        assertThat(nodeFactory.findTaxon("some scientific name"), is(notNullValue()));
+        assertThat(nodeFactory.findTaxonByName("Homo sapiens"), is(notNullValue()));
+        assertThat(nodeFactory.findTaxonByName("some scientific name"), is(notNullValue()));
     }
 
 

@@ -1,14 +1,12 @@
 package org.eol.globi.data;
 
 import org.apache.commons.lang3.StringUtils;
-import org.eol.globi.data.taxon.CorrectionService;
-import org.eol.globi.data.taxon.TaxonServiceImpl;
+import org.eol.globi.data.taxon.TaxonIndexImpl;
 import org.eol.globi.domain.Term;
 import org.eol.globi.geo.Ecoregion;
 import org.eol.globi.geo.EcoregionFinder;
 import org.eol.globi.geo.EcoregionFinderException;
 import org.eol.globi.service.DOIResolver;
-import org.eol.globi.service.PropertyEnricher;
 import org.eol.globi.service.TermLookupService;
 import org.eol.globi.service.TermLookupServiceException;
 import org.junit.After;
@@ -30,13 +28,8 @@ public abstract class GraphDBTestCase {
     @Before
     public void startGraphDb() throws IOException {
         graphDb = new TestGraphDatabaseFactory().newImpermanentDatabase();
-        final PropertyEnricher taxonEnricher = new PassThroughEnricher();
-        nodeFactory = new NodeFactory(graphDb, new TaxonServiceImpl(taxonEnricher, new CorrectionService() {
-            @Override
-            public String correct(String taxonName) {
-                return taxonName;
-            }
-        }, getGraphDb()));
+        nodeFactory = new NodeFactory(graphDb, new TaxonIndexImpl(new PassThroughEnricher(),
+                new PassThroughCorrectionService(), getGraphDb()));
         nodeFactory.setEcoregionFinder(new EcoregionFinder() {
 
             @Override

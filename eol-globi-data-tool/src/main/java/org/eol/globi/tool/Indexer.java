@@ -6,9 +6,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.data.StudyImporterException;
+import org.eol.globi.data.taxon.TaxonIndex;
 import org.eol.globi.data.taxon.TaxonNameCorrector;
-import org.eol.globi.data.taxon.TaxonService;
-import org.eol.globi.data.taxon.TaxonServiceImpl;
+import org.eol.globi.data.taxon.TaxonIndexImpl;
 import org.eol.globi.db.GraphService;
 import org.eol.globi.service.PropertyEnricherFactory;
 import org.eol.globi.service.PropertyEnricherException;
@@ -45,11 +45,11 @@ public class Indexer {
         ExecutionEngine executionEngine = new ExecutionEngine(previousGraphService);
 
         final GraphDatabaseService freshGraphService = GraphService.startNeo4j(baseDir);
-        TaxonService taxonService = new TaxonServiceImpl(PropertyEnricherFactory.createTaxonEnricher()
+        TaxonIndex taxonIndex = new TaxonIndexImpl(PropertyEnricherFactory.createTaxonEnricher()
                 , new TaxonNameCorrector()
                 , freshGraphService);
-        indexUsingExternalIds(executionEngine, taxonService);
-        indexUsingNamesWithNoExternalIds(executionEngine, taxonService);
+        indexUsingExternalIds(executionEngine, taxonIndex);
+        indexUsingNamesWithNoExternalIds(executionEngine, taxonIndex);
         try {
             new Linker().linkTaxa(freshGraphService);
         } catch (PropertyEnricherException e) {
@@ -60,19 +60,19 @@ public class Indexer {
         previousGraphService.shutdown();
     }
 
-    private void indexUsingNamesWithNoExternalIds(ExecutionEngine executionEngine, TaxonService taxonService) throws NodeFactoryException {
+    private void indexUsingNamesWithNoExternalIds(ExecutionEngine executionEngine, TaxonIndex taxonIndex) throws NodeFactoryException {
         String msgPrefix = "taxon names";
         String whereAndReturnClause = " WHERE has(origName.name) AND not(has(origName.externalId)) RETURN distinct(origName.name) as name";
-        indexTaxonByProperty(executionEngine, taxonService, msgPrefix, whereAndReturnClause);
+        indexTaxonByProperty(executionEngine, taxonIndex, msgPrefix, whereAndReturnClause);
     }
 
-    private void indexUsingExternalIds(ExecutionEngine executionEngine, TaxonService taxonService) throws NodeFactoryException {
+    private void indexUsingExternalIds(ExecutionEngine executionEngine, TaxonIndex taxonIndex) throws NodeFactoryException {
         String msgPrefix = "taxon externalIds";
         String whereAndReturnClause = " WHERE has(origName.externalId) RETURN distinct(origName.externalId) as externalId";
-        indexTaxonByProperty(executionEngine, taxonService, msgPrefix, whereAndReturnClause);
+        indexTaxonByProperty(executionEngine, taxonIndex, msgPrefix, whereAndReturnClause);
     }
 
-    private void indexTaxonByProperty(ExecutionEngine executionEngine, TaxonService taxonService, String msgPrefix, String whereAndReturnClause) throws NodeFactoryException {
+    private void indexTaxonByProperty(ExecutionEngine executionEngine, TaxonIndex taxonIndex, String msgPrefix, String whereAndReturnClause) throws NodeFactoryException {
         LOG.info(msgPrefix + " retrieving ...");
         ExecutionResult results = executionEngine.execute("START taxon = node:taxons('*:*') MATCH taxon<-[:CLASSIFIED_AS]-specimen-[:ORIGINALLY_DESCRIBED_AS]->origName " + whereAndReturnClause);
         LOG.info(msgPrefix + " retrieved.");
@@ -93,7 +93,7 @@ public class Indexer {
             if (next.containsKey("externalId")) {
                 externalId = (String) next.get("externalId");
             }
-            taxonService.getOrCreateTaxon(name, externalId, null);
+            taxonIndex.getOrCreateTaxon(name, externalId, null);
             counter++;
             if (counter % 100 == 0) {
                 LOG.info("[" + counter + "] taxa indexed at [" + 1000.0 * counter / stopWatch.getTime() + "] names/s");

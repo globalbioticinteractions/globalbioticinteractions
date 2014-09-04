@@ -44,7 +44,7 @@ public class LittleTurtleExporterIT extends GraphDBTestCase {
         List<Study> studies = NodeFactory.findAllStudies(getGraphDb());
 
 
-        TaxonNode taxon = nodeFactory.findTaxon("Paracalliope fluviatalus");
+        TaxonNode taxon = nodeFactory.findTaxonByName("Paracalliope fluviatalus");
         TaxonNode sameAsTaxon = nodeFactory.getOrCreateTaxon("bugus same as taxon", "EOL:123", null);
 
         Transaction tx = nodeFactory.getGraphDb().beginTx();

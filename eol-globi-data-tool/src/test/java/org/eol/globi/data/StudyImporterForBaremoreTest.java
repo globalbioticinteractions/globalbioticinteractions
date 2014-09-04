@@ -30,8 +30,8 @@ public class StudyImporterForBaremoreTest extends GraphDBTestCase {
         StudyImporterForBaremore studyImporterFor = new StudyImporterForBaremore(new TestParserFactory(csvContent), nodeFactory);
 
         Study study = studyImporterFor.importStudy();
-        assertNotNull(nodeFactory.findTaxonOfType("Squatina dumeril"));
-        assertNotNull(nodeFactory.findTaxonOfType("Atlantic croaker"));
+        assertNotNull(nodeFactory.findTaxonByName("Squatina dumeril"));
+        assertNotNull(nodeFactory.findTaxonByName("Atlantic croaker"));
 
         Iterable<Relationship> collectedRels = study.getSpecimens();
         int totalRels = validateSpecimen(collectedRels);
@@ -44,7 +44,7 @@ public class StudyImporterForBaremoreTest extends GraphDBTestCase {
         StudyImporterForBaremore studyImporterFor = new StudyImporterForBaremore(new ParserFactoryImpl(), nodeFactory);
 
         Study study = studyImporterFor.importStudy();
-        assertNotNull(nodeFactory.findTaxonOfType("Squatina dumeril"));
+        assertNotNull(nodeFactory.findTaxonByName("Squatina dumeril"));
 
         Iterable<Relationship> collectedRels = study.getSpecimens();
         int totalRels = validateSpecimen(collectedRels);

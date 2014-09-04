@@ -6,7 +6,6 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.apache.commons.lang3.StringUtils.*;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
@@ -40,7 +39,7 @@ public class StudyImporterForPlanqueTest extends GraphDBTestCase {
         List<Study> studies = NodeFactory.findAllStudies(getGraphDb());
 
         assertThat(studies.size(), is(215));
-        assertThat(nodeFactory.findTaxon("Sagitta elegans"), is(notNullValue()));
+        assertThat(nodeFactory.findTaxonByName("Sagitta elegans"), is(notNullValue()));
 
         assertThat(errorMessages.size(), is(67));
     }

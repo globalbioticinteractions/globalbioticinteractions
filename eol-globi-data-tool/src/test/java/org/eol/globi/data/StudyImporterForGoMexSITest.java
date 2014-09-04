@@ -45,13 +45,13 @@ public class StudyImporterForGoMexSITest extends GraphDBTestCase {
         assertThat(study.getDescription(), is("Foods of coastal fishes during brown shrimp Penaeus aztecus, migration from Texas estuaries (June - July 1981). "));
         assertNotNull(nodeFactory.findStudy("Beaumariage 1973"));
 
-        assertNotNull(nodeFactory.findTaxonOfType("Chloroscombrus chrysurus"));
-        assertNotNull(nodeFactory.findTaxonOfType("Micropogonias undulatus"));
+        assertNotNull(nodeFactory.findTaxonByName("Chloroscombrus chrysurus"));
+        assertNotNull(nodeFactory.findTaxonByName("Micropogonias undulatus"));
 
-        assertNotNull(nodeFactory.findTaxonOfType("Amphipoda"));
-        assertNotNull(nodeFactory.findTaxonOfType("Crustacea"));
+        assertNotNull(nodeFactory.findTaxonByName("Amphipoda"));
+        assertNotNull(nodeFactory.findTaxonByName("Crustacea"));
 
-        TaxonNode taxon = nodeFactory.findTaxonOfType("Scomberomorus cavalla");
+        TaxonNode taxon = nodeFactory.findTaxonByName("Scomberomorus cavalla");
         List<String> preyList = new ArrayList<String>();
         final List<String> titles = new ArrayList<String>();
         Iterable<Relationship> classifiedAsRels = taxon.getUnderlyingNode().getRelationships(Direction.INCOMING, RelTypes.CLASSIFIED_AS);
