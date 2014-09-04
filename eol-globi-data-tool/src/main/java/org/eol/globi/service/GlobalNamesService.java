@@ -42,7 +42,7 @@ public class GlobalNamesService extends BaseHttpClientService implements Propert
 
     @Override
     public Map<String, String> enrich(Map<String, String> properties) throws PropertyEnricherException {
-        Map<String, String> enrichedProperties = new HashMap<String, String>(properties);
+        Map<String, String> enrichedProperties = new HashMap<String, String>();
         final List<Taxon> taxa = new ArrayList<Taxon>();
         findTermsForNames(Arrays.asList(properties.get(PropertyAndValueDictionary.NAME)), new TermMatchListener() {
             @Override
@@ -53,11 +53,11 @@ public class GlobalNamesService extends BaseHttpClientService implements Propert
 
         if (taxa.size() > 0) {
             Taxon taxon = taxa.get(0);
-            properties.put(PropertyAndValueDictionary.NAME, taxon.getName());
-            properties.put(PropertyAndValueDictionary.EXTERNAL_ID, taxon.getExternalId());
-            properties.put(PropertyAndValueDictionary.PATH, taxon.getPath());
-            properties.put(PropertyAndValueDictionary.PATH_NAMES, taxon.getPathNames());
-            properties.put(PropertyAndValueDictionary.RANK, taxon.getRank());
+            enrichedProperties.put(PropertyAndValueDictionary.NAME, taxon.getName());
+            enrichedProperties.put(PropertyAndValueDictionary.EXTERNAL_ID, taxon.getExternalId());
+            enrichedProperties.put(PropertyAndValueDictionary.PATH, taxon.getPath());
+            enrichedProperties.put(PropertyAndValueDictionary.PATH_NAMES, taxon.getPathNames());
+            enrichedProperties.put(PropertyAndValueDictionary.RANK, taxon.getRank());
         }
         return Collections.unmodifiableMap(enrichedProperties);
     }
