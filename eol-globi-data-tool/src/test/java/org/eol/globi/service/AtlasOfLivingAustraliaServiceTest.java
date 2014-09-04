@@ -69,6 +69,19 @@ public class AtlasOfLivingAustraliaServiceTest {
     }
 
     @Test
+    public void lookupPretestisAustralianus() throws PropertyEnricherException {
+        HashMap<String, String> props = new HashMap<String, String>();
+        props.put(PropertyAndValueDictionary.NAME, "Pretestis australianus");
+        new AtlasOfLivingAustraliaService().enrich(props);
+
+        assertThat(props.get(PropertyAndValueDictionary.NAME), is("Pretestis australianus"));
+        assertThat(props.get(PropertyAndValueDictionary.EXTERNAL_ID), is("urn:lsid:biodiversity.org.au:afd.taxon:98342a00-e3a3-4a27-be17-9d20477be54c"));
+        assertThat(props.get(PropertyAndValueDictionary.PATH), is("Animalia | Platyhelminthes | Trematoda | Plagiorchiida | Cladorchiidae | Pretestis | Pretestis australianus"));
+        assertThat(props.get(PropertyAndValueDictionary.PATH_NAMES), is("kingdom | phylum | class | order | family | genus | species"));
+        assertThat(props.get(PropertyAndValueDictionary.COMMON_NAMES), is(nullValue()));
+    }
+
+    @Test
     public void lookupTaxonByName2() throws PropertyEnricherException {
         HashMap<String, String> props = new HashMap<String, String>() {{
             put(PropertyAndValueDictionary.NAME, "Abbreviata");
