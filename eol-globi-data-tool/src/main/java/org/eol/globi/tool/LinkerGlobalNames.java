@@ -58,13 +58,15 @@ public class LinkerGlobalNames {
             String name = entry.getKey() + "|" + entry.getValue().getName();
             names.add(name);
         }
-        globalNamesService.findTermsForNames(names, new TermMatchListener() {
-            @Override
-            public void foundTaxonForName(Long id, String name, Taxon taxon) {
-                TaxonNode taxonNode = nodeMap.get(id);
-                NodeUtil.createSameAsTaxon(taxon, taxonNode, graphDb);
-            }
-        });
+        if (names.size() > 0) {
+            globalNamesService.findTermsForNames(names, new TermMatchListener() {
+                @Override
+                public void foundTaxonForName(Long id, String name, Taxon taxon) {
+                    TaxonNode taxonNode = nodeMap.get(id);
+                    NodeUtil.createSameAsTaxon(taxon, taxonNode, graphDb);
+                }
+            });
+        }
         stopWatch.stop();
         LOG.info(msgPrefix + " completed in [" + stopWatch.getTime() + "] ms (" + stopWatch.getTime() / counter + " ms/name )");
         nodeMap.clear();

@@ -69,34 +69,47 @@ public class Normalizer {
 
     public void run(CommandLine cmdLine) throws StudyImporterException {
         final GraphDatabaseService graphService = GraphService.getGraphService("./");
-        if (cmdLine == null || !cmdLine.hasOption(OPTION_SKIP_IMPORT)) {
-            importData(graphService, getImporters());
-            if (cmdLine == null || !cmdLine.hasOption(OPTION_SKIP_LINK)) {
-                try {
-                    new LinkerGlobalNames().link(graphService);
 
-                    String ottFile = System.getProperty("ott.file");
-                    if (StringUtils.isNotBlank(ottFile)) {
-                        new LinkerOpenTreeOfLife().linkToOpenTreeOfLife(graphService, new OpenTreeTaxonIndex(new File(ottFile).toURI().toURL()));
-                    }
-                } catch (PropertyEnricherException e) {
-                    LOG.warn("failed to link taxa", e);
-                } catch (MalformedURLException e) {
-                    LOG.warn("failed to link against OpenTreeOfLife", e);
-                }
-            } else {
-                LOG.info("skipping taxa linking ...");
-            }
-        } else {
-            LOG.info("skipping data import...");
-        }
+        importData(cmdLine, graphService);
+        linkTaxa(cmdLine, graphService);
+        exportData(cmdLine, graphService);
 
+        graphService.shutdown();
+    }
+
+    protected void exportData(CommandLine cmdLine, GraphDatabaseService graphService) throws StudyImporterException {
         if (cmdLine == null || !cmdLine.hasOption(OPTION_SKIP_EXPORT)) {
             exportData(graphService, "./");
         } else {
             LOG.info("skipping data export...");
         }
-        graphService.shutdown();
+    }
+
+    protected void linkTaxa(CommandLine cmdLine, GraphDatabaseService graphService) {
+        if (cmdLine == null || !cmdLine.hasOption(OPTION_SKIP_LINK)) {
+            try {
+                new LinkerGlobalNames().link(graphService);
+
+                String ottFile = System.getProperty("ott.file");
+                if (StringUtils.isNotBlank(ottFile)) {
+                    new LinkerOpenTreeOfLife().linkToOpenTreeOfLife(graphService, new OpenTreeTaxonIndex(new File(ottFile).toURI().toURL()));
+                }
+            } catch (PropertyEnricherException e) {
+                LOG.warn("failed to link taxa", e);
+            } catch (MalformedURLException e) {
+                LOG.warn("failed to link against OpenTreeOfLife", e);
+            }
+        } else {
+            LOG.info("skipping taxa linking ...");
+        }
+    }
+
+    protected void importData(CommandLine cmdLine, GraphDatabaseService graphService) {
+        if (cmdLine == null || !cmdLine.hasOption(OPTION_SKIP_IMPORT)) {
+            importData(graphService, getImporters());
+        } else {
+            LOG.info("skipping data import...");
+        }
     }
 
     protected Collection<Class> getImporters() {
