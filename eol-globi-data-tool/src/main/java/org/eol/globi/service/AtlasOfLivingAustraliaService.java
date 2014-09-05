@@ -24,17 +24,16 @@ public class AtlasOfLivingAustraliaService extends BaseHttpClientService impleme
 
     @Override
     public Map<String, String> enrich(final Map<String, String> properties) throws PropertyEnricherException {
-        Map<String, String> enrichedProperties = null;
+        Map<String, String> enrichedProperties = new HashMap<String, String>(properties);
         String externalId = properties.get(PropertyAndValueDictionary.EXTERNAL_ID);
         if (needsEnrichment(properties)) {
-            enrichedProperties = new HashMap<String, String>(properties);
             String guid = hasValidGUID(externalId) ? externalId : findTaxonGUIDByName(properties.get(PropertyAndValueDictionary.NAME));
             if (hasValidGUID(guid)) {
                 Map<String, String> taxonInfo = findTaxonInfoByGUID(guid);
-                properties.putAll(taxonInfo);
+                enrichedProperties.putAll(taxonInfo);
             }
         }
-        return enrichedProperties == null ? properties : enrichedProperties;
+        return enrichedProperties;
     }
 
     private boolean hasValidGUID(String externalId) throws PropertyEnricherException {
