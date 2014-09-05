@@ -26,7 +26,7 @@ public class LinkerTest extends GraphDBTestCase {
         nodeFactory.getOrCreateTaxon("Ariopsis felis");
         nodeFactory.getOrCreateTaxon("Canis lupus");
 
-        new Linker().linkTaxa(getGraphDb());
+        new Linker().linkToGlobalNames(getGraphDb());
 
         assertHasOther("Homo sapiens", 4);
         assertHasOther("Canis lupus", 4);
@@ -39,7 +39,7 @@ public class LinkerTest extends GraphDBTestCase {
         nodeFactory.getOrCreateTaxon("Gilippus hostilis");
         nodeFactory.getOrCreateTaxon("Euander lacertosus");
 
-        new Linker().linkTaxa(getGraphDb());
+        new Linker().linkToGlobalNames(getGraphDb());
 
         assertHasOther("Euander lacertosus", 2);
         assertHasOther("Gilippus hostilis", 2);
@@ -49,7 +49,7 @@ public class LinkerTest extends GraphDBTestCase {
     @Test
     public void frogs() throws NodeFactoryException, PropertyEnricherException {
         nodeFactory.getOrCreateTaxon("Anura");
-        new Linker().linkTaxa(getGraphDb());
+        new Linker().linkToGlobalNames(getGraphDb());
         assertHasOther("Anura", 4);
     }
 
@@ -69,8 +69,8 @@ public class LinkerTest extends GraphDBTestCase {
             index = new OpenTreeTaxonIndex(getClass().getResource("taxonomy-small.tsv"));
             nodeFactory.getOrCreateTaxon(name);
             Linker linker = new Linker();
-            linker.linkTaxa(getGraphDb());
-            linker.linkTaxa2(getGraphDb(), index);
+            linker.linkToGlobalNames(getGraphDb());
+            linker.linkToOpenTreeOfLife(getGraphDb(), index);
             List<String> externalIds = assertHasOther(name, expectedCount);
             assertThat(externalIds, hasItem(TaxonomyProvider.OPEN_TREE_OF_LIFE.getIdPrefix() + ottId));
         } finally {

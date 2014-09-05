@@ -36,7 +36,7 @@ public class Linker {
 
     private static final Log LOG = LogFactory.getLog(Linker.class);
 
-    public void linkTaxa(final GraphDatabaseService graphDb) throws PropertyEnricherException {
+    public void linkToGlobalNames(final GraphDatabaseService graphDb) throws PropertyEnricherException {
         GlobalNamesSources[] sources = GlobalNamesSources.values();
         for (GlobalNamesSources source : sources) {
             GlobalNamesService globalNamesService = new GlobalNamesService(source);
@@ -95,7 +95,7 @@ public class Linker {
         }
     }
 
-    public void linkTaxa2(GraphDatabaseService graphDb, OpenTreeTaxonIndex index) {
+    public void linkToOpenTreeOfLife(GraphDatabaseService graphDb, OpenTreeTaxonIndex index) {
         Index<Node> taxons = graphDb.index().forNodes("taxons");
         IndexHits<Node> hits = taxons.query("*:*");
         for (Node hit : hits) {
