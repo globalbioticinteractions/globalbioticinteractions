@@ -7,7 +7,12 @@ import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.FuzzyQuery;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.WildcardQuery;
+import org.eol.globi.domain.RelTypes;
+import org.eol.globi.domain.Taxon;
+import org.eol.globi.domain.TaxonNode;
+import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
+import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.IndexHits;
 
@@ -46,5 +51,20 @@ public class NodeUtil {
     private static void addQueriesForProperty(String capitalizedValue, String propertyName, List<Query> list) {
         list.add(new FuzzyQuery(new Term(propertyName, capitalizedValue)));
         list.add(new WildcardQuery(new Term(propertyName, capitalizedValue + "*")));
+    }
+
+    public static void createSameAsTaxon(Taxon taxon, TaxonNode taxonNode, GraphDatabaseService graphDb) {
+        Transaction tx = graphDb.beginTx();
+        try {
+            TaxonNode sameAsTaxon = new TaxonNode(graphDb.createNode());
+            sameAsTaxon.setName(taxon.getName());
+            sameAsTaxon.setPath(taxon.getPath());
+            sameAsTaxon.setRank(taxon.getRank());
+            sameAsTaxon.setExternalId(taxon.getExternalId());
+            taxonNode.getUnderlyingNode().createRelationshipTo(sameAsTaxon.getUnderlyingNode(), RelTypes.SAME_AS);
+            tx.success();
+        } finally {
+            tx.finish();
+        }
     }
 }

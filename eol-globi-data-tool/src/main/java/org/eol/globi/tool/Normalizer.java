@@ -73,12 +73,11 @@ public class Normalizer {
             importData(graphService, getImporters());
             if (cmdLine == null || !cmdLine.hasOption(OPTION_SKIP_LINK)) {
                 try {
-                    Linker linker = new Linker();
-                    linker.linkToGlobalNames(graphService);
+                    new LinkerGlobalNames().link(graphService);
 
                     String ottFile = System.getProperty("ott.file");
                     if (StringUtils.isNotBlank(ottFile)) {
-                        linker.linkToOpenTreeOfLife(graphService, new OpenTreeTaxonIndex(new File(ottFile).toURI().toURL()));
+                        new LinkerOpenTreeOfLife().linkToOpenTreeOfLife(graphService, new OpenTreeTaxonIndex(new File(ottFile).toURI().toURL()));
                     }
                 } catch (PropertyEnricherException e) {
                     LOG.warn("failed to link taxa", e);

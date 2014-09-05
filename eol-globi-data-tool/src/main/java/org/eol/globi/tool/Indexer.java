@@ -51,7 +51,7 @@ public class Indexer {
         indexUsingExternalIds(executionEngine, taxonIndex);
         indexUsingNamesWithNoExternalIds(executionEngine, taxonIndex);
         try {
-            new Linker().linkToGlobalNames(freshGraphService);
+            new LinkerGlobalNames().link(freshGraphService);
         } catch (PropertyEnricherException e) {
             LOG.warn("failed to link taxa", e);
         }
