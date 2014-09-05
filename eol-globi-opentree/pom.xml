@@ -29,6 +29,11 @@
             <artifactId>swizzle-stream</artifactId>
             <version>1.6.2</version>
         </dependency>
+        <dependency>
+            <groupId>org.mapdb</groupId>
+            <artifactId>mapdb</artifactId>
+            <version>1.0.6</version>
+        </dependency>
     </dependencies>
 
     <build>
