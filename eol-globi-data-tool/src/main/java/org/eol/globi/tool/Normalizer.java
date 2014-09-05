@@ -7,6 +7,7 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eol.globi.data.NodeFactory;
@@ -21,12 +22,15 @@ import org.eol.globi.db.GraphService;
 import org.eol.globi.export.GraphExporter;
 import org.eol.globi.geo.EcoregionFinder;
 import org.eol.globi.geo.EcoregionFinderFactoryImpl;
+import org.eol.globi.opentree.OpenTreeTaxonIndex;
 import org.eol.globi.service.DOIResolverImpl;
 import org.eol.globi.service.EcoregionFinderProxy;
 import org.eol.globi.service.PropertyEnricherFactory;
 import org.eol.globi.service.PropertyEnricherException;
 import org.neo4j.graphdb.GraphDatabaseService;
 
+import java.io.File;
+import java.net.MalformedURLException;
 import java.util.Collection;
 
 public class Normalizer {
@@ -69,9 +73,17 @@ public class Normalizer {
             importData(graphService, getImporters());
             if (cmdLine == null || !cmdLine.hasOption(OPTION_SKIP_LINK)) {
                 try {
-                    new Linker().linkTaxa(graphService);
+                    Linker linker = new Linker();
+                    linker.linkTaxa(graphService);
+
+                    String ottFile = System.getProperty("ott.file");
+                    if (StringUtils.isNotBlank(ottFile)) {
+                        linker.linkTaxa2(graphService, new OpenTreeTaxonIndex(new File(ottFile).toURI().toURL()));
+                    }
                 } catch (PropertyEnricherException e) {
                     LOG.warn("failed to link taxa", e);
+                } catch (MalformedURLException e) {
+                    LOG.warn("failed to link against OpenTreeOfLife", e);
                 }
             } else {
                 LOG.info("skipping taxa linking ...");

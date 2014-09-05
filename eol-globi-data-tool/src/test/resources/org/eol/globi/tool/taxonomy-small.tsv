@@ -1,0 +1,36 @@
+uid	|	parent_uid	|	name	|	rank	|	sourceinfo	|	uniqname	|	flags	|	
+805080	|		|	life	|	no rank	|	silva:0,ncbi:1,gbif:0,irmng:0	|		|	edited	|	
+5208838	|	805080	|	other sequences	|	no rank	|	ncbi:28384	|		|	not_otu	|	
+5208861	|	5208838	|	plasmids	|	no rank	|	ncbi:36549	|		|	not_otu,tattered	|	
+5209113	|	5208861	|	Plasmid pSB24.2	|	species	|	ncbi:2623	|		|	not_otu,tattered_inherited	|	
+5209182	|	5208861	|	Plasmid R751	|	species	|	ncbi:2496	|		|	not_otu,tattered_inherited	|	
+5208954	|	5208861	|	Plasmid pNS1981	|	species	|	ncbi:2612	|		|	not_otu,tattered_inherited	|	
+5208895	|	5208861	|	Plasmid pWP116a	|	species	|	ncbi:28426	|		|	not_otu,tattered_inherited	|	
+5208883	|	5208861	|	Plasmid pH1	|	species	|	ncbi:35414	|		|	not_otu,tattered_inherited	|	
+5209021	|	5208861	|	Plasmid R1-19	|	species	|	ncbi:2476	|		|	not_otu,tattered_inherited	|	
+285304	|	206555	|	Trichuris sp. ex Homo sapiens JP-2011	|	species	|	ncbi:1035824	|		|		|	
+770315	|	770309	|	Homo sapiens	|	species	|	ncbi:9606,gbif:2436436,irmng:10857762	|		|		|	
+933436	|	770315	|	Homo sapiens ssp. Denisova	|	subspecies	|	ncbi:741158	|		|	extinct_direct,infraspecific	|	
+83926	|	770315	|	Homo sapiens neanderthalensis	|	subspecies	|	ncbi:63221,gbif:4827584,irmng:11109282	|		|	extinct_direct,infraspecific	|	
+5341349	|	770315	|	Homo sapiens sapiens	|	subspecies	|	https://en.wikipedia.org/wiki/Homo_sapiens_sapiens	|		|	hidden,infraspecific	|	
+4943687	|	244265	|	Homo sapiens x Mus musculus hybrid cell line	|	species	|	ncbi:1131344	|		|	hybrid,unclassified,sibling_higher	|	
+5332386	|	244265	|	Homo sapiens/Mus musculus xenograft	|	species	|	ncbi:1383439	|		|	unclassified,sibling_higher	|	
+704260	|	609233	|	Ariopsis	|	genus	|	ncbi:243723,gbif:2344804,irmng:1276152,irmng:1276497	|	Ariopsis (genus in family Ariidae)	|	extinct_direct	|	
+704261	|	704260	|	Ariopsis bonillai	|	species	|	ncbi:243724,gbif:5851766,irmng:10495421	|		|	extinct_inherited	|	
+206073	|	704260	|	Ariopsis sp. INVEMAR-PEC 5332	|	species	|	ncbi:420437	|		|	extinct_inherited	|	
+678013	|	704260	|	Ariopsis sp. RB-2009	|	species	|	ncbi:591252	|		|	extinct_inherited	|	
+139650	|	704260	|	Ariopsis felis	|	species	|	ncbi:75286,gbif:5202927,irmng:10572147	|		|	extinct_inherited	|	
+206076	|	704260	|	Ariopsis sp. INVEMAR-PEC 5340	|	species	|	ncbi:420438	|		|	extinct_inherited	|	
+3623430	|	704260	|	Ariopsis festinus	|	species	|	gbif:5712375	|		|	extinct_inherited	|	
+3623419	|	704260	|	Ariopsis latirostris	|	species	|	gbif:5712371	|		|	extinct_inherited	|	
+3623425	|	704260	|	Ariopsis lentiginosus	|	species	|	gbif:5712377	|		|	extinct_inherited	|	
+3623426	|	704260	|	Ariopsis robertsi	|	species	|	gbif:5712372	|		|	extinct_inherited	|	
+3623423	|	704260	|	Ariopsis velutinus	|	species	|	gbif:5712374	|		|	extinct_inherited	|	
+3623428	|	704260	|	Ariopsis coatesi	|	species	|	gbif:5712368	|		|	extinct_inherited	|	
+3623429	|	704260	|	Ariopsis uncinatus	|	species	|	gbif:5712373	|		|	extinct_inherited	|	
+3623420	|	704260	|	Ariopsis insculptus	|	species	|	gbif:5712376	|		|	extinct_inherited	|	
+3623427	|	704260	|	Ariopsis madagascariensis	|	species	|	gbif:5712369	|		|	extinct_inherited	|	
+3623422	|	704260	|	Ariopsis surinamensis	|	species	|	gbif:5712370	|		|	extinct_inherited	|	
+534781	|	708552	|	Ariopsis	|	genus	|	ncbi:15023,gbif:2873684,irmng:1276173	|	Ariopsis (genus in tribe Colocasieae)	|		|	
+1070119	|	534781	|	Ariopsis protanthera	|	species	|	ncbi:1120155,gbif:5331085,irmng:11311579	|		|		|	
+647107	|	534781	|	Ariopsis peltata	|	species	|	ncbi:28474,gbif:5331087,irmng:10939505	|		|		|	

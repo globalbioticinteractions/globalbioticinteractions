@@ -115,6 +115,14 @@
                                     <overWrite>false</overWrite>
                                     <outputDirectory>${data.dir}</outputDirectory>
                                 </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.eol.globi.opentree</groupId>
+                                    <artifactId>opentree-taxonomy</artifactId>
+                                    <version>2.8</version>
+                                    <type>tar.gz</type>
+                                    <overWrite>false</overWrite>
+                                    <outputDirectory>${shapefiles.dir}</outputDirectory>
+                                </artifactItem>
                             </artifactItems>
                             <outputDirectory>${project.build.directory}</outputDirectory>
                         </configuration>
@@ -139,6 +147,7 @@
                     <arguments>
                         <argument>-Xmx2G</argument>
                         <argument>-Dshapefiles.dir=${shapefiles.dir}</argument>
+                        <argument>-Dott.file=${shapefiles.dir}/ott/taxonomy.tsv</argument>
                         <argument>-classpath</argument>
                         <argument>
                             ${project.build.outputDirectory}${path.separator}${project.build.directory}/eol-globi-data-tool-${globi.tool.version}-jar-with-dependencies.jar

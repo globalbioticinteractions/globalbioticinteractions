@@ -4,6 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
+import org.eol.globi.domain.TaxonNode;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -47,5 +48,11 @@ public class TaxonUtil {
         Taxon taxon = new TaxonImpl();
         mapToTaxon(properties, taxon);
         return taxon;
+    }
+
+    public static Taxon copy(Taxon taxon) {
+        TaxonImpl taxonCopy = new TaxonImpl();
+        mapToTaxon(taxonToMap(taxon), taxonCopy);
+        return taxonCopy;
     }
 }

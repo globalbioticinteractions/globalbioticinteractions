@@ -3,10 +3,12 @@ package org.eol.globi.service;
 import org.eol.globi.domain.TaxonomyProvider;
 
 public enum GlobalNamesSources {
-    ITIS(3, TaxonomyProvider.ITIS),
+    GBIF(11, TaxonomyProvider.GBIF),
     NCBI(4, TaxonomyProvider.NCBI),
-    WORMS(9, TaxonomyProvider.WORMS),
-    GBIF(11, TaxonomyProvider.GBIF);
+    IRMNG(8, TaxonomyProvider.ITIS),
+    IF(5, TaxonomyProvider.INDEX_FUNGORUM),
+    ITIS(3, TaxonomyProvider.ITIS),
+    WORMS(9, TaxonomyProvider.WORMS);
 
     private final int id;
 

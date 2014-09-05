@@ -13,7 +13,7 @@ public class OpenTreeTaxonIndexIT {
 
     @Test
     public void buildMap() throws IOException {
-        OpenTreeTaxonIndex openTreeTaxonIndex = new OpenTreeTaxonIndex();
+        OpenTreeTaxonIndex openTreeTaxonIndex = new OpenTreeTaxonIndex(getClass().getResource("/ott/taxonomy.tsv"));
         assertThat(openTreeTaxonIndex.findOpenTreeTaxonIdFor("ncbi:518"), is(898843L));
         assertThat(openTreeTaxonIndex.findOpenTreeTaxonIdFor("gbif:3219832"), is(898843L));
         assertThat(openTreeTaxonIndex.findOpenTreeTaxonIdFor("irmng:11068172"), is(898843L));
