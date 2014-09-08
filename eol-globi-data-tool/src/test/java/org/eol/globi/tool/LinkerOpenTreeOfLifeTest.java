@@ -15,13 +15,6 @@ import static org.junit.matchers.JUnitMatchers.hasItem;
 public class LinkerOpenTreeOfLifeTest extends GraphDBTestCase {
 
     @Test
-    public void frogs() throws NodeFactoryException, PropertyEnricherException {
-        nodeFactory.getOrCreateTaxon("Anura");
-        new LinkerGlobalNames().link(getGraphDb());
-        LinkerTestUtil.assertHasOther("Anura", 4, nodeFactory);
-    }
-
-    @Test
     public void homoSapiens() throws NodeFactoryException, PropertyEnricherException {
         assertOTTLink("Homo sapiens", 5, "770315");
     }

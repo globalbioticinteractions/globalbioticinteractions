@@ -9,7 +9,7 @@ public enum TaxonomyProvider {
     WIKIPEDIA("W:"),
     ENVO("ENVO:"),
     GBIF("GBIF:"),
-    LIVING_ATLAS_OF_AUSTRALIA("LAA:"),
+    AUSTRALIAN_FAUNAL_DIRECTORY("AFD:"),
     INTERIM_REGISTER_OF_MARINE_AND_NONMARINE_GENERA("IRMNG:"),
     INDEX_FUNGORUM("IF:"),
     OPEN_TREE_OF_LIFE("OTT:");
@@ -35,7 +35,7 @@ public enum TaxonomyProvider {
     public static final String ID_PREFIX_HTTP = "http://";
     public static final String ID_PREFIX_USKI = "UKSI:";
     public static final String ID_PREFIX_GBIF = GBIF.getIdPrefix();
-    public static final String ID_PREFIX_LIVING_ATLAS_OF_AUSTRALIA = LIVING_ATLAS_OF_AUSTRALIA.getIdPrefix();
+    public static final String ID_PREFIX_AUSTRALIAN_FAUNAL_DIRECTORY = AUSTRALIAN_FAUNAL_DIRECTORY.getIdPrefix();
 
     public static final String ID_CMECS = "CMECS:AQUATIC_SETTING:";
     public static final String BIO_INFO = "bioinfo:";

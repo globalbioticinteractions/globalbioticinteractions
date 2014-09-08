@@ -17,7 +17,7 @@ public class AtlasOfLivingAustraliaServiceTest {
     public void lookupTaxonByGUID() throws PropertyEnricherException {
         HashMap<String, String> props = new HashMap<String, String>() {
             {
-                put(PropertyAndValueDictionary.EXTERNAL_ID, "urn:lsid:biodiversity.org.au:afd.taxon:31a9b8b8-4e8f-4343-a15f-2ed24e0bf1ae");
+                put(PropertyAndValueDictionary.EXTERNAL_ID, "AFD:31a9b8b8-4e8f-4343-a15f-2ed24e0bf1ae");
             }
         };
         Map<String, String> enrich = new AtlasOfLivingAustraliaService().enrich(props);
@@ -25,7 +25,7 @@ public class AtlasOfLivingAustraliaServiceTest {
         assertThat(enrich.get(PropertyAndValueDictionary.NAME), is("Macropus rufus"));
         assertThat(enrich.get(PropertyAndValueDictionary.PATH), is("Animalia | Chordata | Mammalia | Diprotodontia | Macropodidae | Macropus | Macropus rufus"));
         assertThat(enrich.get(PropertyAndValueDictionary.PATH_NAMES), is("kingdom | phylum | class | order | family | genus | species"));
-        assertThat(enrich.get(PropertyAndValueDictionary.EXTERNAL_ID), is("urn:lsid:biodiversity.org.au:afd.taxon:31a9b8b8-4e8f-4343-a15f-2ed24e0bf1ae"));
+        assertThat(enrich.get(PropertyAndValueDictionary.EXTERNAL_ID), is("AFD:31a9b8b8-4e8f-4343-a15f-2ed24e0bf1ae"));
         assertThat(enrich.get(PropertyAndValueDictionary.COMMON_NAMES), is("Red Kangaroo @en"));
     }
 
@@ -33,7 +33,7 @@ public class AtlasOfLivingAustraliaServiceTest {
     public void lookupTaxonByRedirectedGUID() throws PropertyEnricherException {
         HashMap<String, String> props = new HashMap<String, String>() {
             {
-                put(PropertyAndValueDictionary.EXTERNAL_ID, "urn:lsid:biodiversity.org.au:afd.taxon:aa745ff0-c776-4d0e-851d-369ba0e6f537");
+                put(PropertyAndValueDictionary.EXTERNAL_ID, "AFD:aa745ff0-c776-4d0e-851d-369ba0e6f537");
             }
         };
         Map<String, String> enrich = new AtlasOfLivingAustraliaService().enrich(Collections.unmodifiableMap(props));
@@ -41,7 +41,7 @@ public class AtlasOfLivingAustraliaServiceTest {
         assertThat(enrich.get(PropertyAndValueDictionary.NAME), is("Macropus rufus"));
         assertThat(enrich.get(PropertyAndValueDictionary.PATH), is("Animalia | Chordata | Mammalia | Diprotodontia | Macropodidae | Macropus | Macropus rufus"));
         assertThat(enrich.get(PropertyAndValueDictionary.PATH_NAMES), is("kingdom | phylum | class | order | family | genus | species"));
-        assertThat(enrich.get(PropertyAndValueDictionary.EXTERNAL_ID), is("urn:lsid:biodiversity.org.au:afd.taxon:31a9b8b8-4e8f-4343-a15f-2ed24e0bf1ae"));
+        assertThat(enrich.get(PropertyAndValueDictionary.EXTERNAL_ID), is("AFD:31a9b8b8-4e8f-4343-a15f-2ed24e0bf1ae"));
         assertThat(enrich.get(PropertyAndValueDictionary.COMMON_NAMES), is("Red Kangaroo @en"));
     }
 
@@ -64,7 +64,7 @@ public class AtlasOfLivingAustraliaServiceTest {
         Map<String, String> enrich = new AtlasOfLivingAustraliaService().enrich(props);
 
         assertThat(enrich.get(PropertyAndValueDictionary.NAME), is("Macropus rufus"));
-        assertThat(enrich.get(PropertyAndValueDictionary.EXTERNAL_ID), is("urn:lsid:biodiversity.org.au:afd.taxon:31a9b8b8-4e8f-4343-a15f-2ed24e0bf1ae"));
+        assertThat(enrich.get(PropertyAndValueDictionary.EXTERNAL_ID), is("AFD:31a9b8b8-4e8f-4343-a15f-2ed24e0bf1ae"));
         assertThat(enrich.get(PropertyAndValueDictionary.PATH), is("Animalia | Chordata | Mammalia | Diprotodontia | Macropodidae | Macropus | Macropus rufus"));
         assertThat(enrich.get(PropertyAndValueDictionary.PATH_NAMES), is("kingdom | phylum | class | order | family | genus | species"));
         assertThat(enrich.get(PropertyAndValueDictionary.COMMON_NAMES), is("Red Kangaroo @en"));
@@ -77,7 +77,7 @@ public class AtlasOfLivingAustraliaServiceTest {
         Map<String, String> enrich = new AtlasOfLivingAustraliaService().enrich(props);
 
         assertThat(enrich.get(PropertyAndValueDictionary.NAME), is("Pretestis australianus"));
-        assertThat(enrich.get(PropertyAndValueDictionary.EXTERNAL_ID), is("urn:lsid:biodiversity.org.au:afd.taxon:98342a00-e3a3-4a27-be17-9d20477be54c"));
+        assertThat(enrich.get(PropertyAndValueDictionary.EXTERNAL_ID), is("AFD:98342a00-e3a3-4a27-be17-9d20477be54c"));
         assertThat(enrich.get(PropertyAndValueDictionary.PATH), is("Animalia | Platyhelminthes | Trematoda | Plagiorchiida | Cladorchiidae | Pretestis | Pretestis australianus"));
         assertThat(enrich.get(PropertyAndValueDictionary.PATH_NAMES), is("kingdom | phylum | class | order | family | genus | species"));
         assertThat(enrich.get(PropertyAndValueDictionary.COMMON_NAMES), is(nullValue()));
@@ -92,7 +92,7 @@ public class AtlasOfLivingAustraliaServiceTest {
         Map<String, String> enrich = new AtlasOfLivingAustraliaService().enrich(props);
 
         assertThat(enrich.get(PropertyAndValueDictionary.NAME), is("Abbreviata"));
-        assertThat(enrich.get(PropertyAndValueDictionary.EXTERNAL_ID), is("urn:lsid:biodiversity.org.au:afd.taxon:39683706-f5b1-43be-934b-5fdf4f5e3150"));
+        assertThat(enrich.get(PropertyAndValueDictionary.EXTERNAL_ID), is("AFD:39683706-f5b1-43be-934b-5fdf4f5e3150"));
         assertThat(enrich.get(PropertyAndValueDictionary.PATH), is("Animalia | Nematoda | Chromadorea | Spirurida | Physalopteridae | Abbreviata | "));
         assertThat(enrich.get(PropertyAndValueDictionary.PATH_NAMES), is("kingdom | phylum | class | order | family | genus | species"));
         assertThat(enrich.get(PropertyAndValueDictionary.COMMON_NAMES), is(nullValue()));

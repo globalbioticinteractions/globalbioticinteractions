@@ -167,7 +167,7 @@ public class EOLServiceIT {
     public void lookupSupportedByNonEOLId() throws PropertyEnricherException {
         HashMap<String, String> properties = new HashMap<String, String>();
         properties.put(PropertyAndValueDictionary.NAME, "Homo sapiens");
-        String nonEOLId = TaxonomyProvider.ID_PREFIX_LIVING_ATLAS_OF_AUSTRALIA + "1235";
+        String nonEOLId = TaxonomyProvider.ID_PREFIX_AUSTRALIAN_FAUNAL_DIRECTORY + "1235";
         properties.put(PropertyAndValueDictionary.EXTERNAL_ID, nonEOLId);
         new EOLService().enrich(properties);
         assertThat(properties.get(PropertyAndValueDictionary.EXTERNAL_ID), is(nonEOLId));
