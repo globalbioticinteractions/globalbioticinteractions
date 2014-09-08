@@ -11,17 +11,17 @@ public class WoRMSServiceIT {
 
     @Test
     public void lookupExistingSpeciesTaxon() throws PropertyEnricherException {
-        assertThat(new WoRMSService().lookupIdByName("Peprilus burti"), is("urn:lsid:marinespecies.org:taxname:276560"));
+        assertThat(new WoRMSService().lookupIdByName("Peprilus burti"), is("WORMS:276560"));
     }
 
     @Test
     public void lookupExistentPath() throws PropertyEnricherException {
-        assertThat(new WoRMSService().lookupTaxonPathById("urn:lsid:marinespecies.org:taxname:276560"), containsString("Actinopterygii"));
+        assertThat(new WoRMSService().lookupTaxonPathById("WORMS:276560"), containsString("Actinopterygii"));
     }
 
     @Test
     public void lookupExistingGenusTaxon() throws PropertyEnricherException {
-        assertThat(new WoRMSService().lookupIdByName("Peprilus"), is("urn:lsid:marinespecies.org:taxname:159825"));
+        assertThat(new WoRMSService().lookupIdByName("Peprilus"), is("WORMS:159825"));
     }
 
     @Test
@@ -31,7 +31,7 @@ public class WoRMSServiceIT {
 
     @Test
     public void lookupNonExistentTaxonPath() throws PropertyEnricherException {
-        assertThat(new WoRMSService().lookupTaxonPathById("urn:lsid:marinespecies.org:taxname:EEEEEE"), is(nullValue()));
+        assertThat(new WoRMSService().lookupTaxonPathById("WORMS:EEEEEE"), is(nullValue()));
     }
 
     @Test

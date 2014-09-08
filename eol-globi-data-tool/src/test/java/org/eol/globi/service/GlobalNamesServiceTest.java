@@ -27,7 +27,7 @@ public class GlobalNamesServiceTest {
                 assertNotNull(id);
                 foundTaxa.add(taxon);
             }
-        });
+        }, Arrays.asList(GlobalNamesSources.ITIS));
 
         assertThat(foundTaxa.size(), is(2));
     }
@@ -37,19 +37,16 @@ public class GlobalNamesServiceTest {
     public void lookupITIS() throws PropertyEnricherException {
         GlobalNamesService service = new GlobalNamesService();
         Map<String, String> props = assertHomoSapiens(service);
-        assertThat(props.get(PropertyAndValueDictionary.EXTERNAL_ID), is("urn:lsid:itis.gov:itis_tsn:180092"));
+        assertThat(props.get(PropertyAndValueDictionary.EXTERNAL_ID), is("ITIS:180092"));
     }
 
     @Test
-    public void lookupITISSynonym() throws PropertyEnricherException {
+    public void lookupITISSynonymFails() throws PropertyEnricherException {
         GlobalNamesService service = new GlobalNamesService();
         HashMap<String, String> props = new HashMap<String, String>();
         props.put(PropertyAndValueDictionary.NAME, "Corizidae");
         Map<String, String> enrich = service.enrich(props);
-        assertThat(enrich.get(PropertyAndValueDictionary.NAME), is("Rhopalidae"));
-        assertThat(enrich.get(PropertyAndValueDictionary.PATH), is("Animalia|Bilateria|Protostomia|Ecdysozoa|Arthropoda|Hexapoda|Insecta|Pterygota|Neoptera|Paraneoptera|Hemiptera|Heteroptera|Pentatomomorpha|Coreoidea|Rhopalidae"));
-        assertThat(enrich.get(PropertyAndValueDictionary.RANK), is("Family"));
-        assertThat(enrich.get(PropertyAndValueDictionary.EXTERNAL_ID), is("urn:lsid:itis.gov:itis_tsn:108477"));
+        assertThat(enrich.get(PropertyAndValueDictionary.EXTERNAL_ID), is(nullValue()));
     }
 
     @Test
@@ -74,7 +71,7 @@ public class GlobalNamesServiceTest {
         assertThat(enrich.get(PropertyAndValueDictionary.NAME), is("Ariopsis felis"));
         assertThat(enrich.get(PropertyAndValueDictionary.PATH), is("Animalia|Chordata|Actinopterygii|Siluriformes|Ariidae|Ariopsis|Ariopsis felis"));
         assertThat(enrich.get(PropertyAndValueDictionary.RANK), is("species"));
-        assertThat(enrich.get(PropertyAndValueDictionary.EXTERNAL_ID), is("urn:lsid:marinespecies.org:taxname:158709"));
+        assertThat(enrich.get(PropertyAndValueDictionary.EXTERNAL_ID), is("WORMS:158709"));
     }
 
     private Map<String, String> assertHomoSapiens(GlobalNamesService service) throws PropertyEnricherException {
@@ -105,7 +102,7 @@ public class GlobalNamesServiceTest {
         assertThat(enrich.get(PropertyAndValueDictionary.NAME), is("Ariopsis felis"));
         assertThat(enrich.get(PropertyAndValueDictionary.PATH), is("Animalia|Bilateria|Deuterostomia|Chordata|Vertebrata|Gnathostomata|Osteichthyes|Actinopterygii|Neopterygii|Teleostei|Ostariophysi|Siluriformes|Ariidae|Ariopsis|Ariopsis felis"));
         assertThat(enrich.get(PropertyAndValueDictionary.RANK), is("Species"));
-        assertThat(enrich.get(PropertyAndValueDictionary.EXTERNAL_ID), is("urn:lsid:itis.gov:itis_tsn:680665"));
+        assertThat(enrich.get(PropertyAndValueDictionary.EXTERNAL_ID), is("ITIS:680665"));
     }
 
     @Test
@@ -127,5 +124,20 @@ public class GlobalNamesServiceTest {
         props.put(PropertyAndValueDictionary.NAME, "Anura");
         Map<String, String> enrich = service.enrich(props);
         assertThat(enrich.get(PropertyAndValueDictionary.NAME), is(nullValue()));
+    }
+    
+    @Test 
+    public void lookupMultipleSources() throws PropertyEnricherException {
+        GlobalNamesService service = new GlobalNamesService();
+        final List<Taxon> taxa = new ArrayList<Taxon>();
+        service.findTermsForNames(Arrays.asList("Homo sapiens"), new TermMatchListener() {
+            @Override
+            public void foundTaxonForName(Long id, String name, Taxon taxon) {
+                taxa.add(taxon);
+            }
+        }, Arrays.asList(GlobalNamesSources.GBIF, GlobalNamesSources.ITIS));
+
+        assertThat(taxa.size(), is(2));
+
     }
 }

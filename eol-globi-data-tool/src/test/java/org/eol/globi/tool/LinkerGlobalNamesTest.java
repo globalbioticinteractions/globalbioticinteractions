@@ -5,9 +5,10 @@ import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.service.PropertyEnricherException;
 import org.junit.Test;
 
-import static org.hamcrest.Matchers.is;
+import java.util.List;
+
 import static org.junit.Assert.assertThat;
-import static org.junit.matchers.JUnitMatchers.hasItem;
+import static org.junit.matchers.JUnitMatchers.hasItems;
 
 public class LinkerGlobalNamesTest extends GraphDBTestCase {
 
@@ -32,8 +33,8 @@ public class LinkerGlobalNamesTest extends GraphDBTestCase {
 
         new LinkerGlobalNames().link(getGraphDb());
 
-        LinkerTestUtil.assertHasOther("Euander lacertosus", 2, nodeFactory);
         LinkerTestUtil.assertHasOther("Gilippus hostilis", 2, nodeFactory);
+        LinkerTestUtil.assertHasOther("Euander lacertosus", 2, nodeFactory);
 
     }
 
@@ -41,7 +42,12 @@ public class LinkerGlobalNamesTest extends GraphDBTestCase {
     public void frogs() throws NodeFactoryException, PropertyEnricherException {
         nodeFactory.getOrCreateTaxon("Anura");
         new LinkerGlobalNames().link(getGraphDb());
-        LinkerTestUtil.assertHasOther("Anura", 4, nodeFactory);
+        List<String> ids = LinkerTestUtil.assertHasOther("Anura", 7, nodeFactory);
+
+        assertThat(ids, hasItems("ITIS:173423"
+                , "NCBI:8342", "IRMNG:10211", "GBIF:952"
+                , "IRMNG:1284513", "GBIF:3242458", "GBIF:3089470"));
+
     }
 
 }

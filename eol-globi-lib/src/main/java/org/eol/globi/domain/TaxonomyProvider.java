@@ -1,15 +1,15 @@
 package org.eol.globi.domain;
 
 public enum TaxonomyProvider {
-    ITIS("urn:lsid:itis.gov:itis_tsn:"),
-    WORMS("urn:lsid:marinespecies.org:taxname:"),
+    ITIS("ITIS:"),
+    WORMS("WORMS:"),
     NCBI("NCBI:"),
     EOL("EOL:"),
     GEONAMES("GEO:"),
     WIKIPEDIA("W:"),
     ENVO("ENVO:"),
     GBIF("GBIF:"),
-    LIVING_ATLAS_OF_AUSTRALIA("urn:lsid:biodiversity.org.au:afd.taxon:"),
+    LIVING_ATLAS_OF_AUSTRALIA("LAA:"),
     INTERIM_REGISTER_OF_MARINE_AND_NONMARINE_GENERA("IRMNG:"),
     INDEX_FUNGORUM("IF:"),
     OPEN_TREE_OF_LIFE("OTT:");

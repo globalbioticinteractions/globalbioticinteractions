@@ -23,7 +23,7 @@ public class ITISServiceIT {
     @Test
     public void lookupExistentTaxon() throws PropertyEnricherException {
         String actual = lookupTerm("Fundulus jenkinsi");
-        assertThat(actual, is("urn:lsid:itis.gov:itis_tsn:165653"));
+        assertThat(actual, is("ITIS:165653"));
     }
 
     @Test
