@@ -55,11 +55,12 @@ public class LinkerOpenTreeOfLife {
         }
 
         protected boolean link(GraphDatabaseService graphDb, OpenTreeTaxonIndex index, Map<String, Long> ottIds, Relationship rel) {
+            boolean hasPrexistingLink = false;
             TaxonNode taxonNode = new TaxonNode(rel.getEndNode());
             String externalId = taxonNode.getExternalId();
             if (StringUtils.contains(externalId, TaxonomyProvider.OPEN_TREE_OF_LIFE.getIdPrefix())) {
                 ottIds.clear();
-                return true;
+                hasPrexistingLink = true;
             } else {
                 externalId = StringUtils.replace(externalId, TaxonomyProvider.INTERIM_REGISTER_OF_MARINE_AND_NONMARINE_GENERA.getIdPrefix(), "irmng:");
                 externalId = StringUtils.replace(externalId, TaxonomyProvider.INDEX_FUNGORUM.getIdPrefix(), "if:");
@@ -75,6 +76,6 @@ public class LinkerOpenTreeOfLife {
                     ottIds.put(externalId, ottId);
                 }
             }
-            return false;
+            return hasPrexistingLink;
         }
 }
