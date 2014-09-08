@@ -70,9 +70,23 @@ public class Normalizer {
     public void run(CommandLine cmdLine) throws StudyImporterException {
         final GraphDatabaseService graphService = GraphService.getGraphService("./");
 
-        importData(cmdLine, graphService);
-        linkTaxa(cmdLine, graphService);
-        exportData(cmdLine, graphService);
+        if (cmdLine == null || !cmdLine.hasOption(OPTION_SKIP_IMPORT)) {
+            importData(graphService, getImporters());
+        } else {
+            LOG.info("skipping data import...");
+        }
+
+        if (cmdLine == null || !cmdLine.hasOption(OPTION_SKIP_LINK)) {
+            linkTaxa(graphService);
+        } else {
+            LOG.info("skipping taxa linking ...");
+        }
+
+        if (cmdLine == null || !cmdLine.hasOption(OPTION_SKIP_EXPORT)) {
+            exportData(graphService, "./");
+        } else {
+            LOG.info("skipping data export...");
+        }
 
         graphService.shutdown();
     }
@@ -87,20 +101,26 @@ public class Normalizer {
 
     protected void linkTaxa(CommandLine cmdLine, GraphDatabaseService graphService) {
         if (cmdLine == null || !cmdLine.hasOption(OPTION_SKIP_LINK)) {
-            try {
-                new LinkerGlobalNames().link(graphService);
-
-                String ottFile = System.getProperty("ott.file");
-                if (StringUtils.isNotBlank(ottFile)) {
-                    new LinkerOpenTreeOfLife().linkToOpenTreeOfLife(graphService, new OpenTreeTaxonIndex(new File(ottFile).toURI().toURL()));
-                }
-            } catch (PropertyEnricherException e) {
-                LOG.warn("failed to link taxa", e);
-            } catch (MalformedURLException e) {
-                LOG.warn("failed to link against OpenTreeOfLife", e);
-            }
+            linkTaxa(graphService);
         } else {
             LOG.info("skipping taxa linking ...");
+        }
+    }
+
+    private void linkTaxa(GraphDatabaseService graphService) {
+        try {
+            new LinkerGlobalNames().link(graphService);
+        } catch (PropertyEnricherException e) {
+            LOG.warn("Problem linking taxa using Global Names Resolver", e);
+        }
+
+        String ottFile = System.getProperty("ott.file");
+        try {
+            if (StringUtils.isNotBlank(ottFile)) {
+                new LinkerOpenTreeOfLife().link(graphService, new OpenTreeTaxonIndex(new File(ottFile).toURI().toURL()));
+            }
+        } catch (MalformedURLException e) {
+            LOG.warn("failed to link against OpenTreeOfLife", e);
         }
     }
 

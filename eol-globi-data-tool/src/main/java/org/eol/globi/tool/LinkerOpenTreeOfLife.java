@@ -26,7 +26,7 @@ public class LinkerOpenTreeOfLife {
 
     private static final Log LOG = LogFactory.getLog(LinkerOpenTreeOfLife.class);
 
-    public void linkToOpenTreeOfLife(GraphDatabaseService graphDb, OpenTreeTaxonIndex index) {
+    public void link(GraphDatabaseService graphDb, OpenTreeTaxonIndex index) {
             Index<Node> taxons = graphDb.index().forNodes("taxons");
             IndexHits<Node> hits = taxons.query("*:*");
             for (Node hit : hits) {
