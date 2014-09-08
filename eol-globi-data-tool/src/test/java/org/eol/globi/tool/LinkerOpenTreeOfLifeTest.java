@@ -18,7 +18,7 @@ public class LinkerOpenTreeOfLifeTest extends GraphDBTestCase {
     public void frogs() throws NodeFactoryException, PropertyEnricherException {
         nodeFactory.getOrCreateTaxon("Anura");
         new LinkerGlobalNames().link(getGraphDb());
-        LinkTestUtil.assertHasOther("Anura", 4, nodeFactory);
+        LinkerTestUtil.assertHasOther("Anura", 4, nodeFactory);
     }
 
     @Test
@@ -39,7 +39,7 @@ public class LinkerOpenTreeOfLifeTest extends GraphDBTestCase {
             LinkerGlobalNames linkerGlobalNames = new LinkerGlobalNames();
             linkerGlobalNames.link(getGraphDb());
             new LinkerOpenTreeOfLife().link(getGraphDb(), index);
-            List<String> externalIds = LinkTestUtil.assertHasOther(name, expectedCount, nodeFactory);
+            List<String> externalIds = LinkerTestUtil.assertHasOther(name, expectedCount, nodeFactory);
             assertThat(externalIds, hasItem(TaxonomyProvider.OPEN_TREE_OF_LIFE.getIdPrefix() + ottId));
         } finally {
             if (index != null) {

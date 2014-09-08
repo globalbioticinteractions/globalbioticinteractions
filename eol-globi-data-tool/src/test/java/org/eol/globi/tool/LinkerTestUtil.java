@@ -13,7 +13,7 @@ import java.util.List;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
-public class LinkTestUtil {
+public class LinkerTestUtil {
     public static List<String> assertHasOther(String name, int expectedCount, NodeFactory nodeFactory1) throws NodeFactoryException {
         List<String> externalIds = new ArrayList<String>();
         TaxonNode taxon1 = nodeFactory1.findTaxonByName(name);

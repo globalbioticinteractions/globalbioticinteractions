@@ -19,9 +19,9 @@ public class LinkerGlobalNamesTest extends GraphDBTestCase {
 
         new LinkerGlobalNames().link(getGraphDb());
 
-        LinkTestUtil.assertHasOther("Homo sapiens", 4, nodeFactory);
-        LinkTestUtil.assertHasOther("Canis lupus", 4, nodeFactory);
-        LinkTestUtil.assertHasOther("Ariopsis felis", 5, nodeFactory);
+        LinkerTestUtil.assertHasOther("Homo sapiens", 4, nodeFactory);
+        LinkerTestUtil.assertHasOther("Canis lupus", 4, nodeFactory);
+        LinkerTestUtil.assertHasOther("Ariopsis felis", 5, nodeFactory);
 
     }
 
@@ -32,8 +32,8 @@ public class LinkerGlobalNamesTest extends GraphDBTestCase {
 
         new LinkerGlobalNames().link(getGraphDb());
 
-        LinkTestUtil.assertHasOther("Euander lacertosus", 2, nodeFactory);
-        LinkTestUtil.assertHasOther("Gilippus hostilis", 2, nodeFactory);
+        LinkerTestUtil.assertHasOther("Euander lacertosus", 2, nodeFactory);
+        LinkerTestUtil.assertHasOther("Gilippus hostilis", 2, nodeFactory);
 
     }
 
@@ -41,7 +41,7 @@ public class LinkerGlobalNamesTest extends GraphDBTestCase {
     public void frogs() throws NodeFactoryException, PropertyEnricherException {
         nodeFactory.getOrCreateTaxon("Anura");
         new LinkerGlobalNames().link(getGraphDb());
-        LinkTestUtil.assertHasOther("Anura", 4, nodeFactory);
+        LinkerTestUtil.assertHasOther("Anura", 4, nodeFactory);
     }
 
 }
