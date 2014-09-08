@@ -67,40 +67,48 @@ public class GlobalNamesService extends BaseHttpClientService implements Propert
             throw new IllegalArgumentException("need non-empty list of names");
         }
 
-        HttpClient httpClient = HttpUtil.createHttpClient();
         try {
-            URI uri = new URI("http", "resolver.globalnames.org", "/name_resolvers.json", "best_match_only=true&data_source_ids=" + source.getId(), null);
-            HttpPost post = new HttpPost(uri);
-
-            MultipartEntity entity = new MultipartEntity();
-            InputStream is = IOUtils.toInputStream(StringUtils.join(names, "\n"), "UTF-8");
-            entity.addPart("file", new InputStreamBody(is, "file"));
-            post.setEntity(entity);
-
-            String result = httpClient.execute(post, new BasicResponseHandler());
-            ObjectMapper mapper = new ObjectMapper();
-            JsonNode jsonNode = mapper.readTree(result);
-            JsonNode dataList = jsonNode.get("data");
-            if (dataList != null && dataList.isArray()) {
-                for (JsonNode data : dataList) {
-                    JsonNode results = data.get("results");
-                    if (results != null && results.isArray()) {
-                        for (JsonNode aResult : results) {
-                            Taxon taxon = new TaxonImpl();
-                            if (aResult.has("classification_path") && aResult.has("classification_path_ranks")) {
-                                parseResult(termMatchListener, data, aResult, taxon);
-                            }
-
-                        }
-                    }
-                }
-            }
-        } catch (URISyntaxException e) {
-            throw new PropertyEnricherException("Failed to query", e);
+            String result = queryForNames(names);
+            parseResult(termMatchListener, result);
         } catch (ClientProtocolException e) {
             throw new PropertyEnricherException("Failed to query", e);
         } catch (IOException e) {
             throw new PropertyEnricherException("Failed to query", e);
+        } catch (URISyntaxException e) {
+            throw new PropertyEnricherException("Failed to query", e);
+        }
+
+    }
+
+    protected String queryForNames(List<String> names) throws URISyntaxException, IOException {
+        HttpClient httpClient = HttpUtil.createHttpClient();
+        URI uri = new URI("http", "resolver.globalnames.org", "/name_resolvers.json", "best_match_only=true&data_source_ids=" + source.getId(), null);
+        HttpPost post = new HttpPost(uri);
+
+        MultipartEntity entity = new MultipartEntity();
+        InputStream is = IOUtils.toInputStream(StringUtils.join(names, "\n"), "UTF-8");
+        entity.addPart("file", new InputStreamBody(is, "file"));
+        post.setEntity(entity);
+
+        return httpClient.execute(post, new BasicResponseHandler());
+    }
+
+    protected void parseResult(TermMatchListener termMatchListener, String result) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode jsonNode = mapper.readTree(result);
+        JsonNode dataList = jsonNode.get("data");
+        if (dataList != null && dataList.isArray()) {
+            for (JsonNode data : dataList) {
+                JsonNode results = data.get("results");
+                if (results != null && results.isArray()) {
+                    for (JsonNode aResult : results) {
+                        Taxon taxon = new TaxonImpl();
+                        if (aResult.has("classification_path") && aResult.has("classification_path_ranks")) {
+                            parseResult(termMatchListener, data, aResult, taxon);
+                        }
+                    }
+                }
+            }
         }
     }
 

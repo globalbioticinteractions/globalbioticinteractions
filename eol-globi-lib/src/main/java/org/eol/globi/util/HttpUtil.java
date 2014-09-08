@@ -2,6 +2,7 @@ package org.eol.globi.util;
 
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.DefaultHttpRequestRetryHandler;
 import org.apache.http.params.HttpConnectionParams;
 
 public class HttpUtil {
@@ -15,6 +16,8 @@ public class HttpUtil {
     public static HttpClient createHttpClient(int soTimeoutMs) {
         DefaultHttpClient httpClient = new DefaultHttpClient();
         HttpConnectionParams.setSoTimeout(httpClient.getParams(), soTimeoutMs);
+        DefaultHttpRequestRetryHandler retryHandler = new DefaultHttpRequestRetryHandler(5, true);
+        httpClient.setHttpRequestRetryHandler(retryHandler);
         return httpClient;
     }
 }
