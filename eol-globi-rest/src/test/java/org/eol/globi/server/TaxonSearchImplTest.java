@@ -138,4 +138,13 @@ public class TaxonSearchImplTest {
         assertThat(props.get("path"), StringContains.containsString("Actinopterygii"));
         assertThat(props.get("externalId"), StringContains.containsString(":"));
     }
+
+    @Test
+    public void findTaxonByExternalId() throws IOException {
+        Map<String, String> props = new TaxonSearchImpl().findTaxon("Ariopsis felis", null);
+        assertThat(props.get("name"), is("Ariopsis felis"));
+        assertThat(props.get("commonNames"), StringContains.containsString("hardhead catfish"));
+        assertThat(props.get("path"), StringContains.containsString("Actinopterygii"));
+        assertThat(props.get("externalId"), StringContains.containsString(":"));
+    }
 }

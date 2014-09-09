@@ -91,22 +91,6 @@ public class Normalizer {
         graphService.shutdown();
     }
 
-    protected void exportData(CommandLine cmdLine, GraphDatabaseService graphService) throws StudyImporterException {
-        if (cmdLine == null || !cmdLine.hasOption(OPTION_SKIP_EXPORT)) {
-            exportData(graphService, "./");
-        } else {
-            LOG.info("skipping data export...");
-        }
-    }
-
-    protected void linkTaxa(CommandLine cmdLine, GraphDatabaseService graphService) {
-        if (cmdLine == null || !cmdLine.hasOption(OPTION_SKIP_LINK)) {
-            linkTaxa(graphService);
-        } else {
-            LOG.info("skipping taxa linking ...");
-        }
-    }
-
     private void linkTaxa(GraphDatabaseService graphService) {
         try {
             new LinkerGlobalNames().link(graphService);
@@ -122,14 +106,9 @@ public class Normalizer {
         } catch (MalformedURLException e) {
             LOG.warn("failed to link against OpenTreeOfLife", e);
         }
-    }
 
-    protected void importData(CommandLine cmdLine, GraphDatabaseService graphService) {
-        if (cmdLine == null || !cmdLine.hasOption(OPTION_SKIP_IMPORT)) {
-            importData(graphService, getImporters());
-        } else {
-            LOG.info("skipping data import...");
-        }
+        new LinkerTaxonIndex().link(graphService);
+
     }
 
     protected Collection<Class> getImporters() {
