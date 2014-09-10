@@ -55,12 +55,11 @@ public class InteractionControllerIT extends ITBase {
         assertThat(response, is(not(nullValue())));
     }
 
-    @Ignore("not yet implemented")
     @Test
     public void listPreyForPredatorObservationsExternalIdOTT() throws IOException {
         String uri = getURLPrefix() + "taxon/OTT%3A770315/preysOn?includeObservations=true";
         String response = HttpClient.httpGet(uri);
-        assertThat(response, is(not(nullValue())));
+        assertThat(response, containsString("Homo sapiens"));
     }
 
     @Test
