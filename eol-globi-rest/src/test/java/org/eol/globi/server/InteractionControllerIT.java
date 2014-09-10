@@ -2,6 +2,7 @@ package org.eol.globi.server;
 
 import org.eol.globi.server.util.ResultFields;
 import org.eol.globi.util.HttpClient;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -50,6 +51,14 @@ public class InteractionControllerIT extends ITBase {
     @Test
     public void listPreyForPredatorObservations() throws IOException {
         String uri = getURLPrefix() + "taxon/Homo%20sapiens/preysOn?includeObservations=true";
+        String response = HttpClient.httpGet(uri);
+        assertThat(response, is(not(nullValue())));
+    }
+
+    @Ignore("not yet implemented")
+    @Test
+    public void listPreyForPredatorObservationsExternalIdOTT() throws IOException {
+        String uri = getURLPrefix() + "taxon/OTT%3A770315/preysOn?includeObservations=true";
         String response = HttpClient.httpGet(uri);
         assertThat(response, is(not(nullValue())));
     }

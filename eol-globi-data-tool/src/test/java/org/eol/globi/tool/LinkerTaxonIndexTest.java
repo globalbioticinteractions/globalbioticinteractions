@@ -44,7 +44,7 @@ public class LinkerTaxonIndexTest extends GraphDBTestCase {
     protected void assertSingleHit(String query) {
         IndexHits<Node> hits;
         Node next;
-        hits = getGraphDb().index().forNodes(EXTERNAL_IDS).query(query);
+        hits = getGraphDb().index().forNodes("taxonExternalIds").query(query);
         next = hits.next();
         assertThat(new TaxonNode(next).getName(), is("Homo sapiens"));
         assertThat(hits.hasNext(), is(false));

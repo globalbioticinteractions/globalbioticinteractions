@@ -36,18 +36,10 @@ public class InteractionController {
 
     @RequestMapping(value = "/taxon/{sourceTaxonName}/{interactionType}", method = RequestMethod.GET, headers = "content-type=*/*")
     @ResponseBody
-    public String findPreyOf(HttpServletRequest request,
-                             @PathVariable("sourceTaxonName") String sourceTaxonName,
-                             @PathVariable("interactionType") String interactionType) throws IOException {
-        Map parameterMap = request == null ? null : request.getParameterMap();
-        CypherQueryExecutor executor;
-        if (shouldIncludeObservations(request, parameterMap)) {
-            executor = findObservationsForInteraction(sourceTaxonName, interactionType, null, parameterMap);
-        } else {
-            executor = findDistinctTaxonInteractions(sourceTaxonName, interactionType, null, parameterMap);
-        }
-
-        return executor.execute(request);
+    public String findInteractions(HttpServletRequest request,
+                                   @PathVariable("sourceTaxonName") String sourceTaxonName,
+                                   @PathVariable("interactionType") String interactionType) throws IOException {
+        return findInteractions(request, sourceTaxonName, interactionType, null);
     }
 
 
@@ -58,10 +50,10 @@ public class InteractionController {
 
     @RequestMapping(value = "/taxon/{sourceTaxonName}/{interactionType}/{targetTaxonName}", method = RequestMethod.GET)
     @ResponseBody
-    public String findObservationsOf(HttpServletRequest request,
-                                     @PathVariable("sourceTaxonName") String sourceTaxonName,
-                                     @PathVariable("interactionType") String interactionType,
-                                     @PathVariable("targetTaxonName") String targetTaxonName)
+    public String findInteractions(HttpServletRequest request,
+                                   @PathVariable("sourceTaxonName") String sourceTaxonName,
+                                   @PathVariable("interactionType") String interactionType,
+                                   @PathVariable("targetTaxonName") String targetTaxonName)
             throws IOException {
         CypherQueryExecutor result;
         Map parameterMap = request == null ? null : request.getParameterMap();
@@ -84,12 +76,4 @@ public class InteractionController {
         CypherQuery cypherQuery = CypherQueryBuilder.interactionObservations(sourceTaxonName, interactionType, targetTaxonName, parameterMap);
         return new CypherQueryExecutor(cypherQuery.getQuery(), cypherQuery.getParams());
     }
-
-
-    public String findObservationsOf(HttpServletRequest request,
-                                     String sourceTaxonName,
-                                     String interactionType) throws IOException {
-        return findObservationsOf(request, sourceTaxonName, interactionType, null);
-    }
-
 }
