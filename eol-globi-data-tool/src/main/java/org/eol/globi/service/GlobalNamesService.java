@@ -12,6 +12,7 @@ import org.apache.http.entity.mime.content.InputStreamBody;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.eol.globi.data.CharsetConstant;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
@@ -55,12 +56,7 @@ public class GlobalNamesService extends BaseHttpClientService implements Propert
         }, Arrays.asList(source));
 
         if (taxa.size() > 0) {
-            Taxon taxon = taxa.get(0);
-            enrichedProperties.put(PropertyAndValueDictionary.NAME, taxon.getName());
-            enrichedProperties.put(PropertyAndValueDictionary.EXTERNAL_ID, taxon.getExternalId());
-            enrichedProperties.put(PropertyAndValueDictionary.PATH, taxon.getPath());
-            enrichedProperties.put(PropertyAndValueDictionary.PATH_NAMES, taxon.getPathNames());
-            enrichedProperties.put(PropertyAndValueDictionary.RANK, taxon.getRank());
+            enrichedProperties.putAll(TaxonUtil.taxonToMap(taxa.get(0)));
         }
         return Collections.unmodifiableMap(enrichedProperties);
     }
@@ -113,10 +109,14 @@ public class GlobalNamesService extends BaseHttpClientService implements Propert
                 if (results != null && results.isArray()) {
                     for (JsonNode aResult : results) {
                         Taxon taxon = new TaxonImpl();
-                        if (aResult.has("data_source_id")
-                                && aResult.has("classification_path")
-                                && aResult.has("classification_path_ranks")) {
-                            parseClassification(termMatchListener, data, aResult, taxon);
+                        TaxonomyProvider provider = getTaxonomyProvider(aResult);
+                        if (provider == null) {
+                            LOG.warn("found unsupported data_source_id");
+                        } else {
+                            if (aResult.has("classification_path")
+                                    && aResult.has("classification_path_ranks")) {
+                                parseClassification(termMatchListener, data, aResult, taxon, provider);
+                            }
                         }
                     }
                 }
@@ -124,11 +124,40 @@ public class GlobalNamesService extends BaseHttpClientService implements Propert
         }
     }
 
-    protected void parseClassification(TermMatchListener termMatchListener, JsonNode data, JsonNode aResult, Taxon taxon) {
+    private String parseList(String list) {
+        return parseList(list, null);
+    }
+
+    private String parseList(String list, String prefix) {
+        String[] split = StringUtils.split(list, "|");
+        List<String> parsedList = Collections.emptyList();
+        if (split != null) {
+            parsedList = Arrays.asList(split);
+        }
+        if (StringUtils.isNotBlank(prefix)) {
+            List<String> prefixed = new ArrayList<String>();
+            for (String s : parsedList) {
+                if (StringUtils.startsWith(s, "gn:")) {
+                    prefixed.add("");
+                } else {
+                    prefixed.add(prefix + s);
+                }
+            }
+            parsedList = prefixed;
+        }
+        return StringUtils.join(parsedList, CharsetConstant.SEPARATOR);
+    }
+
+    protected void parseClassification(TermMatchListener termMatchListener, JsonNode data, JsonNode aResult, Taxon taxon, TaxonomyProvider provider) {
         String classificationPath = aResult.get("classification_path").getValueAsText();
-        taxon.setPath(classificationPath);
+        taxon.setPath(parseList(classificationPath));
+
+        if (aResult.has("classification_path_ids")) {
+            String classificationPathIds = aResult.get("classification_path_ids").getValueAsText();
+            taxon.setPathIds(parseList(classificationPathIds, provider.getIdPrefix()));
+        }
         String pathRanks = aResult.get("classification_path_ranks").getValueAsText();
-        taxon.setPathNames(pathRanks);
+        taxon.setPathNames(parseList(pathRanks));
         String[] ranks = pathRanks.split("\\|");
         if (ranks.length > 0) {
             String rank = ranks[ranks.length - 1];
@@ -146,30 +175,33 @@ public class GlobalNamesService extends BaseHttpClientService implements Propert
         String taxonIdValue = aResult.get(taxonIdLabel).getValueAsText();
         // see https://github.com/GlobalNamesArchitecture/gni/issues/35
         if (!StringUtils.startsWith(taxonIdValue, "gn:")) {
+            String externalId = provider.getIdPrefix() + taxonIdValue;
+            taxon.setExternalId(externalId);
+            Long suppliedId = data.has("supplied_id") ? data.get("supplied_id").getValueAsLong() : null;
+            String suppliedNameString = data.get("supplied_name_string").getTextValue();
+
+            if (aResult.has("match_type") && aResult.get("match_type").getIntValue() < 3) {
+                if (StringUtils.endsWith(taxon.getPath(), CharsetConstant.SEPARATOR + suppliedNameString)) {
+                    termMatchListener.foundTaxonForName(suppliedId, suppliedNameString, taxon);
+                }
+            }
+        }
+    }
+
+    private TaxonomyProvider getTaxonomyProvider(JsonNode aResult) {
+        TaxonomyProvider provider = null;
+        if (aResult.has("data_source_id")) {
             int sourceId = aResult.get("data_source_id").getIntValue();
+
             GlobalNamesSources[] values = GlobalNamesSources.values();
-            TaxonomyProvider provider = null;
             for (GlobalNamesSources value : values) {
                 if (value.getId() == sourceId) {
                     provider = value.getProvider();
+                    break;
                 }
             }
-            if (provider == null) {
-                LOG.warn("found unsupport data_source_id with value [" + sourceId + "]");
-            } else {
-                String externalId = provider.getIdPrefix() + taxonIdValue;
-                taxon.setExternalId(externalId);
-                Long suppliedId = data.has("supplied_id") ? data.get("supplied_id").getValueAsLong() : null;
-                String suppliedNameString = data.get("supplied_name_string").getTextValue();
-
-                if (aResult.has("match_type") && aResult.get("match_type").getIntValue() < 3) {
-                    if (StringUtils.endsWith(taxon.getPath(), "|" + suppliedNameString)) {
-                        termMatchListener.foundTaxonForName(suppliedId, suppliedNameString, taxon);
-                    }
-                }
-            }
-
         }
+        return provider;
     }
 
     public GlobalNamesSources getSource() {

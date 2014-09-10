@@ -24,4 +24,8 @@ public interface Taxon {
     String getRank();
 
     void setRank(String rank);
+
+    void setPathIds(String pathIds);
+
+    String getPathIds();
 }

@@ -67,4 +67,17 @@ public class TaxonNode extends NamedNode implements Taxon {
             getUnderlyingNode().setProperty(RANK, rank);
         }
     }
+
+    @Override
+    public void setPathIds(String pathIds) {
+        if (pathIds != null) {
+            getUnderlyingNode().setProperty(PATH_IDS, pathIds);
+        }
+    }
+
+    @Override
+    public String getPathIds() {
+        return getUnderlyingNode().hasProperty(PATH_IDS) ?
+                (String) getUnderlyingNode().getProperty(PATH_IDS) : null;
+    }
 }

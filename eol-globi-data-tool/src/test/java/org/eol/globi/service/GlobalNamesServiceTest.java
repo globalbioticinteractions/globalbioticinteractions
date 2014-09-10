@@ -56,8 +56,9 @@ public class GlobalNamesServiceTest {
         props1.put(PropertyAndValueDictionary.NAME, "Homo sapiens");
         Map<String, String> enrich = service.enrich(props1);
         assertThat(enrich.get(PropertyAndValueDictionary.NAME), is("Homo sapiens"));
-        assertThat(enrich.get(PropertyAndValueDictionary.PATH), is("|Eukaryota|Opisthokonta|Metazoa|Eumetazoa|Bilateria|Coelomata|Deuterostomia|Chordata|Craniata|Vertebrata|Gnathostomata|Teleostomi|Euteleostomi|Sarcopterygii|Tetrapoda|Amniota|Mammalia|Theria|Eutheria|Euarchontoglires|Primates|Haplorrhini|Simiiformes|Catarrhini|Hominoidea|Hominidae|Homininae|Homo|Homo sapiens"));
-        assertThat(enrich.get(PropertyAndValueDictionary.PATH_NAMES), is("|superkingdom||kingdom|||||phylum|subphylum||superclass||||||class|||superorder|order|suborder|infraorder|parvorder|superfamily|family|subfamily|genus|species"));
+        assertThat(enrich.get(PropertyAndValueDictionary.PATH), is("Eukaryota | Opisthokonta | Metazoa | Eumetazoa | Bilateria | Coelomata | Deuterostomia | Chordata | Craniata | Vertebrata | Gnathostomata | Teleostomi | Euteleostomi | Sarcopterygii | Tetrapoda | Amniota | Mammalia | Theria | Eutheria | Euarchontoglires | Primates | Haplorrhini | Simiiformes | Catarrhini | Hominoidea | Hominidae | Homininae | Homo | Homo sapiens"));
+        assertThat(enrich.get(PropertyAndValueDictionary.PATH_IDS), is("NCBI:131567 | NCBI:2759 | NCBI:33154 | NCBI:33208 | NCBI:6072 | NCBI:33213 | NCBI:33316 | NCBI:33511 | NCBI:7711 | NCBI:89593 | NCBI:7742 | NCBI:7776 | NCBI:117570 | NCBI:117571 | NCBI:8287 | NCBI:32523 | NCBI:32524 | NCBI:40674 | NCBI:32525 | NCBI:9347 | NCBI:314146 | NCBI:9443 | NCBI:376913 | NCBI:314293 | NCBI:9526 | NCBI:314295 | NCBI:9604 | NCBI:207598 | NCBI:9605 | NCBI:9606"));
+        assertThat(enrich.get(PropertyAndValueDictionary.PATH_NAMES), is("superkingdom | kingdom | phylum | subphylum | superclass | class | superorder | order | suborder | infraorder | parvorder | superfamily | family | subfamily | genus | species"));
         assertThat(enrich.get(PropertyAndValueDictionary.RANK), is("species"));
         assertThat(enrich.get(PropertyAndValueDictionary.EXTERNAL_ID), is("NCBI:9606"));
     }
@@ -69,7 +70,8 @@ public class GlobalNamesServiceTest {
         props1.put(PropertyAndValueDictionary.NAME, "Ariopsis felis");
         Map<String, String> enrich = service.enrich(props1);
         assertThat(enrich.get(PropertyAndValueDictionary.NAME), is("Ariopsis felis"));
-        assertThat(enrich.get(PropertyAndValueDictionary.PATH), is("Animalia|Chordata|Actinopterygii|Siluriformes|Ariidae|Ariopsis|Ariopsis felis"));
+        assertThat(enrich.get(PropertyAndValueDictionary.PATH), is("Animalia | Chordata | Actinopterygii | Siluriformes | Ariidae | Ariopsis | Ariopsis felis"));
+        assertThat(enrich.get(PropertyAndValueDictionary.PATH_IDS), is(" |  |  |  |  |  | WORMS:158709"));
         assertThat(enrich.get(PropertyAndValueDictionary.RANK), is("species"));
         assertThat(enrich.get(PropertyAndValueDictionary.EXTERNAL_ID), is("WORMS:158709"));
     }
@@ -79,7 +81,8 @@ public class GlobalNamesServiceTest {
         props.put(PropertyAndValueDictionary.NAME, "Homo sapiens");
         Map<String, String> enrich = service.enrich(props);
         assertThat(enrich.get(PropertyAndValueDictionary.NAME), is("Homo sapiens"));
-        assertThat(enrich.get(PropertyAndValueDictionary.PATH), is("Animalia|Bilateria|Deuterostomia|Chordata|Vertebrata|Gnathostomata|Tetrapoda|Mammalia|Theria|Eutheria|Primates|Hominidae|Homo|Homo sapiens"));
+        assertThat(enrich.get(PropertyAndValueDictionary.PATH), is("Animalia | Bilateria | Deuterostomia | Chordata | Vertebrata | Gnathostomata | Tetrapoda | Mammalia | Theria | Eutheria | Primates | Hominidae | Homo | Homo sapiens"));
+        assertThat(enrich.get(PropertyAndValueDictionary.PATH_IDS), is("ITIS:202423 | ITIS:914154 | ITIS:914156 | ITIS:158852 | ITIS:331030 | ITIS:914179 | ITIS:914181 | ITIS:179913 | ITIS:179916 | ITIS:179925 | ITIS:180089 | ITIS:180090 | ITIS:180091 | ITIS:180092"));
         assertThat(enrich.get(PropertyAndValueDictionary.RANK), is("Species"));
         return enrich;
     }
@@ -100,7 +103,8 @@ public class GlobalNamesServiceTest {
         props.put(PropertyAndValueDictionary.NAME, "Ariopsis felis");
         Map<String, String> enrich = service.enrich(props);
         assertThat(enrich.get(PropertyAndValueDictionary.NAME), is("Ariopsis felis"));
-        assertThat(enrich.get(PropertyAndValueDictionary.PATH), is("Animalia|Bilateria|Deuterostomia|Chordata|Vertebrata|Gnathostomata|Osteichthyes|Actinopterygii|Neopterygii|Teleostei|Ostariophysi|Siluriformes|Ariidae|Ariopsis|Ariopsis felis"));
+        assertThat(enrich.get(PropertyAndValueDictionary.PATH), is("Animalia | Bilateria | Deuterostomia | Chordata | Vertebrata | Gnathostomata | Osteichthyes | Actinopterygii | Neopterygii | Teleostei | Ostariophysi | Siluriformes | Ariidae | Ariopsis | Ariopsis felis"));
+        assertThat(enrich.get(PropertyAndValueDictionary.PATH_IDS), is("ITIS:202423 | ITIS:914154 | ITIS:914156 | ITIS:158852 | ITIS:331030 | ITIS:914179 | ITIS:161030 | ITIS:161061 | ITIS:553120 | ITIS:161105 | ITIS:162845 | ITIS:163992 | ITIS:164157 | ITIS:639019 | ITIS:680665"));
         assertThat(enrich.get(PropertyAndValueDictionary.RANK), is("Species"));
         assertThat(enrich.get(PropertyAndValueDictionary.EXTERNAL_ID), is("ITIS:680665"));
     }
@@ -112,7 +116,8 @@ public class GlobalNamesServiceTest {
         props.put(PropertyAndValueDictionary.NAME, "Anura");
         Map<String, String> enrich = service.enrich(props);
         assertThat(enrich.get(PropertyAndValueDictionary.NAME), is("Anura"));
-        assertThat(enrich.get(PropertyAndValueDictionary.PATH), is("Animalia|Chordata|Amphibia|Anura"));
+        assertThat(enrich.get(PropertyAndValueDictionary.PATH), is("Animalia | Chordata | Amphibia | Anura"));
+        assertThat(enrich.get(PropertyAndValueDictionary.PATH_IDS), is("GBIF:1 | GBIF:44 | GBIF:131 | GBIF:952"));
         assertThat(enrich.get(PropertyAndValueDictionary.RANK), is("order"));
         assertThat(enrich.get(PropertyAndValueDictionary.EXTERNAL_ID), is("GBIF:952"));
     }

@@ -17,8 +17,10 @@ public class LinkerTaxonIndexTest extends GraphDBTestCase {
 
     @Test
     public void linking() throws NodeFactoryException {
-        TaxonNode taxon = nodeFactory.getOrCreateTaxon("Homo sapiens", "Bar:123", "Animalia|Mammalia|Homo sapiens");
-        NodeUtil.createSameAsTaxon(new TaxonImpl("Homo sapiens also", "FOO:444"), taxon, getGraphDb());
+        TaxonNode taxon = nodeFactory.getOrCreateTaxon("Homo sapiens", "Bar:123", "Animalia | Mammalia | Homo sapiens");
+        TaxonImpl taxon1 = new TaxonImpl("Homo sapiens also", "FOO:444");
+        taxon1.setPathIds("BARZ:111 | FOOZ:777");
+        NodeUtil.createSameAsTaxon(taxon1, taxon, getGraphDb());
 
         taxon = nodeFactory.getOrCreateTaxon("Bla blaus");
         taxon.setExternalId("FOO 1234");
@@ -37,10 +39,10 @@ public class LinkerTaxonIndexTest extends GraphDBTestCase {
         assertSingleHit(PropertyAndValueDictionary.PATH + ":BAR\\:*");
         assertSingleHit(PropertyAndValueDictionary.PATH + ":Homo");
         assertSingleHit(PropertyAndValueDictionary.PATH + ":\"Homo sapiens\"");
-        assertSingleHit(PropertyAndValueDictionary.PATH + ":\"omo sapiens\"");
 
         TaxonNode node = nodeFactory.findTaxonByName("Homo sapiens");
-        assertThat(node.getUnderlyingNode().getProperty(PropertyAndValueDictionary.PATH).toString(), is("Bar:123 | Animalia | Mammalia | Homo sapiens | FOO:444"));
+        assertThat(node.getUnderlyingNode().getProperty(PropertyAndValueDictionary.EXTERNAL_IDS).toString()
+                , is("Bar:123 | Animalia | Mammalia | Homo sapiens | FOO:444 | BARZ:111 | FOOZ:777"));
     }
 
     protected void assertSingleHit(String query) {

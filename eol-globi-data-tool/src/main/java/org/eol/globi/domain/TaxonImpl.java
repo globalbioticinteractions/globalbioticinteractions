@@ -7,6 +7,7 @@ public class TaxonImpl implements Taxon {
     private String externalId;
     private String commonNames;
     private String rank;
+    private String pathIds;
 
     public TaxonImpl(String name, String externalId) {
         this.name = name;
@@ -75,6 +76,16 @@ public class TaxonImpl implements Taxon {
     @Override
     public void setRank(String rank) {
         this.rank = rank;
+    }
+
+    @Override
+    public void setPathIds(String pathIds) {
+        this.pathIds = pathIds;
+    }
+
+    @Override
+    public String getPathIds() {
+        return pathIds;
     }
 
 }

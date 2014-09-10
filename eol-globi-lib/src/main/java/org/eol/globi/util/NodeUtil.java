@@ -59,6 +59,7 @@ public class NodeUtil {
             TaxonNode sameAsTaxon = new TaxonNode(graphDb.createNode());
             sameAsTaxon.setName(taxon.getName());
             sameAsTaxon.setPath(taxon.getPath());
+            sameAsTaxon.setPathIds(taxon.getPathIds());
             sameAsTaxon.setRank(taxon.getRank());
             sameAsTaxon.setExternalId(taxon.getExternalId());
             taxonNode.getUnderlyingNode().createRelationshipTo(sameAsTaxon.getUnderlyingNode(), RelTypes.SAME_AS);

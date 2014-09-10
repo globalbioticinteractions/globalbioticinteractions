@@ -38,7 +38,7 @@ public class LinkerTaxonIndex {
             try {
                 String aggregateIds = StringUtils.join(externalIds, CharsetConstant.SEPARATOR);
                 ids.add(hit, PropertyAndValueDictionary.PATH, aggregateIds);
-                hit.setProperty(PropertyAndValueDictionary.PATH, aggregateIds);
+                hit.setProperty(PropertyAndValueDictionary.EXTERNAL_IDS, aggregateIds);
                 tx.success();
             } finally {
                 tx.finish();
@@ -53,7 +53,12 @@ public class LinkerTaxonIndex {
         if (StringUtils.isNotBlank(externalId)) {
             externalIds.add(externalId);
         }
-        String[] pathElements = StringUtils.split(taxonNode.getPath(), CharsetConstant.SEPARATOR_CHAR);
+        addDelimitedList(externalIds, taxonNode.getPath());
+        addDelimitedList(externalIds, taxonNode.getPathIds());
+    }
+
+    private void addDelimitedList(List<String> externalIds, String path) {
+        String[] pathElements = StringUtils.splitByWholeSeparator(path, CharsetConstant.SEPARATOR);
         if (pathElements != null) {
             externalIds.addAll(Arrays.asList(pathElements));
         }

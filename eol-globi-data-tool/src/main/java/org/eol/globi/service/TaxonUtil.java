@@ -17,6 +17,7 @@ public class TaxonUtil {
         properties.put(PropertyAndValueDictionary.RANK, taxon.getRank());
         properties.put(PropertyAndValueDictionary.EXTERNAL_ID, taxon.getExternalId());
         properties.put(PropertyAndValueDictionary.PATH, taxon.getPath());
+        properties.put(PropertyAndValueDictionary.PATH_IDS, taxon.getPathIds());
         properties.put(PropertyAndValueDictionary.PATH_NAMES, taxon.getPathNames());
         properties.put(PropertyAndValueDictionary.COMMON_NAMES, taxon.getCommonNames());
         return Collections.unmodifiableMap(properties);
@@ -27,6 +28,7 @@ public class TaxonUtil {
         taxon.setRank(properties.get(PropertyAndValueDictionary.RANK));
         taxon.setExternalId(properties.get(PropertyAndValueDictionary.EXTERNAL_ID));
         taxon.setPath(properties.get(PropertyAndValueDictionary.PATH));
+        taxon.setPathIds(properties.get(PropertyAndValueDictionary.PATH_IDS));
         taxon.setPathNames(properties.get(PropertyAndValueDictionary.PATH_NAMES));
         taxon.setCommonNames(properties.get(PropertyAndValueDictionary.COMMON_NAMES));
     }
