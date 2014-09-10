@@ -18,15 +18,11 @@ import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.IndexHits;
-import org.neo4j.graphdb.index.IndexManager;
-import org.neo4j.helpers.collection.MapUtil;
 
 public class TaxonIndexImpl implements TaxonIndex {
     private final GraphDatabaseService graphDbService;
     private final Index<Node> taxons;
     private final Index<Node> taxonNameSuggestions;
-    private final Index<Node> taxonPaths;
-    private final Index<Node> taxonCommonNames;
     private CorrectionService corrector;
     private PropertyEnricher enricher;
 
@@ -36,8 +32,6 @@ public class TaxonIndexImpl implements TaxonIndex {
         this.graphDbService = graphDbService;
         this.taxons = graphDbService.index().forNodes("taxons");
         this.taxonNameSuggestions = graphDbService.index().forNodes("taxonNameSuggestions");
-        this.taxonPaths = graphDbService.index().forNodes("taxonPaths", MapUtil.stringMap(IndexManager.PROVIDER, "lucene", "type", "fulltext"));
-        this.taxonCommonNames = graphDbService.index().forNodes("taxonCommonNames", MapUtil.stringMap(IndexManager.PROVIDER, "lucene", "type", "fulltext"));
     }
 
     @Override
@@ -206,18 +200,6 @@ public class TaxonIndexImpl implements TaxonIndex {
         return NodeUtil.query(taxonName, PropertyAndValueDictionary.NAME, taxons);
     }
 
-    public IndexHits<Node> findCloseMatchesForTaxonPath(String taxonPath) {
-        return NodeUtil.query(taxonPath, PropertyAndValueDictionary.PATH, taxonPaths);
-    }
-
-    public IndexHits<Node> findTaxaByPath(String wholeOrPartialPath) {
-        return taxonPaths.query("path:\"" + wholeOrPartialPath + "\"");
-    }
-
-    public IndexHits<Node> findTaxaByCommonName(String wholeOrPartialName) {
-        return taxonCommonNames.query("commonNames:\"" + wholeOrPartialName + "\"");
-    }
-
     public IndexHits<Node> suggestTaxaByName(String wholeOrPartialScientificOrCommonName) {
         return taxonNameSuggestions.query("name:\"" + wholeOrPartialScientificOrCommonName + "\"");
     }
@@ -241,7 +223,6 @@ public class TaxonIndexImpl implements TaxonIndex {
     private void indexTaxonPath(TaxonNode taxon) {
         String path = taxon.getPath();
         if (StringUtils.isNotBlank(path)) {
-            taxonPaths.add(taxon.getUnderlyingNode(), PropertyAndValueDictionary.PATH, path);
             String[] pathElementArray = path.split(CharsetConstant.SEPARATOR);
             for (String pathElement : pathElementArray) {
                 taxonNameSuggestions.add(taxon.getUnderlyingNode(), PropertyAndValueDictionary.NAME, StringUtils.lowerCase(pathElement));
@@ -252,7 +233,6 @@ public class TaxonIndexImpl implements TaxonIndex {
     private void indexCommonNames(TaxonNode taxon) {
         String commonNames = taxon.getCommonNames();
         if (StringUtils.isNotBlank(commonNames)) {
-            taxonCommonNames.add(taxon.getUnderlyingNode(), PropertyAndValueDictionary.COMMON_NAMES, commonNames);
             String[] commonNameArray = commonNames.split(CharsetConstant.SEPARATOR);
             for (String commonName : commonNameArray) {
                 taxonNameSuggestions.add(taxon.getUnderlyingNode(), PropertyAndValueDictionary.NAME, StringUtils.lowerCase(commonName));

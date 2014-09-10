@@ -1,8 +1,6 @@
 package org.eol.globi.tool;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.eol.globi.data.CharsetConstant;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.RelTypes;
@@ -18,29 +16,29 @@ import org.neo4j.graphdb.index.IndexManager;
 import org.neo4j.helpers.collection.MapUtil;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 public class LinkerTaxonIndex {
 
+    public static final String INDEX_TAXON_NAMES_AND_IDS = "taxonPaths";
+
     public void link(GraphDatabaseService graphDb) {
         Index<Node> taxons = graphDb.index().forNodes("taxons");
-        Index<Node> ids = graphDb.index().forNodes("taxonExternalIds", MapUtil.stringMap(IndexManager.PROVIDER, "lucene", "type", "fulltext"));
+        Index<Node> ids = graphDb.index().forNodes(INDEX_TAXON_NAMES_AND_IDS, MapUtil.stringMap(IndexManager.PROVIDER, "lucene", "type", "fulltext"));
         IndexHits<Node> hits = taxons.query("*:*");
         for (Node hit : hits) {
             List<String> externalIds = new ArrayList<String>();
             addId(externalIds, hit);
             Iterable<Relationship> rels = hit.getRelationships(Direction.OUTGOING, RelTypes.SAME_AS);
             for (Relationship rel : rels) {
-                Node endNode = rel.getEndNode();
-                addId(externalIds, endNode);
+                addId(externalIds, rel.getEndNode());
             }
             Transaction tx = graphDb.beginTx();
             try {
                 String aggregateIds = StringUtils.join(externalIds, CharsetConstant.SEPARATOR);
-                ids.add(hit, PropertyAndValueDictionary.EXTERNAL_IDS, aggregateIds);
-                hit.setProperty(PropertyAndValueDictionary.EXTERNAL_IDS, aggregateIds);
+                ids.add(hit, PropertyAndValueDictionary.PATH, aggregateIds);
+                hit.setProperty(PropertyAndValueDictionary.PATH, aggregateIds);
                 tx.success();
             } finally {
                 tx.finish();
@@ -54,6 +52,10 @@ public class LinkerTaxonIndex {
         String externalId = taxonNode.getExternalId();
         if (StringUtils.isNotBlank(externalId)) {
             externalIds.add(externalId);
+        }
+        String[] pathElements = StringUtils.split(taxonNode.getPath(), CharsetConstant.SEPARATOR_CHAR);
+        if (pathElements != null) {
+            externalIds.addAll(Arrays.asList(pathElements));
         }
     }
 }

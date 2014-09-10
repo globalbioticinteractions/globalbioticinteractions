@@ -41,22 +41,14 @@ public class TaxonIndexImplTest extends GraphDBTestCase {
 
     @Test
     public void ensureThatEnrichedPropertiesAreIndexed() throws NodeFactoryException {
-        assertThat(getGraphDb().index().existsForNodes("taxonCommonNames"), is(true));
         assertThat(getGraphDb().index().existsForNodes("taxons"), is(true));
-        assertThat(getGraphDb().index().existsForNodes("taxonPaths"), is(true));
         assertThat(getGraphDb().index().existsForNodes("taxonNameSuggestions"), is(true));
         assertThat(getGraphDb().index().existsForNodes("thisDoesnoTExist"), is(false));
 
         assertEnrichedPropertiesSet(taxonService.getOrCreateTaxon("some name", null, null));
         assertEnrichedPropertiesSet(taxonService.findTaxonByName("some name"));
-        IndexHits<Node> hits = taxonService.findTaxaByPath("etc");
-        assertThat(hits.size(), is(1));
-        assertEnrichedPropertiesSet(new TaxonNode(hits.getSingle()));
-        hits = taxonService.findTaxaByCommonName("some german name");
-        assertThat(hits.size(), is(1));
-        assertEnrichedPropertiesSet(new TaxonNode(hits.getSingle()));
 
-        hits = taxonService.suggestTaxaByName("kingdom");
+        IndexHits<Node> hits = taxonService.suggestTaxaByName("kingdom");
         assertThat(hits.size(), is(1));
         assertEnrichedPropertiesSet(new TaxonNode(hits.getSingle()));
 
@@ -201,28 +193,6 @@ public class TaxonIndexImplTest extends GraphDBTestCase {
         assertEquals("boo bla", taxon.getName());
         assertThat(taxon.getExternalId(), is(PropertyAndValueDictionary.NO_MATCH));
         assertNull(taxon.getPath());
-    }
-
-    @Test
-    public void findCloseMatchForTaxonPath() throws NodeFactoryException {
-        taxonService.setEnricher(new PassThroughEnricher());
-        taxonService.getOrCreateTaxon("Homo sapiens", "someid", "Animalia Mammalia");
-        taxonService.getOrCreateTaxon("Homo erectus", null, null);
-        assertMatch("Mammalia");
-        assertMatch("Mammali");
-        assertMatch("mammali");
-        assertMatch("inmalia");
-        IndexHits<Node> hits = taxonService.findCloseMatchesForTaxonPath("il");
-        assertThat(hits.hasNext(), is(false));
-    }
-
-    private void assertMatch(String taxonRankOfClassName) {
-        IndexHits<Node> hits = taxonService.findCloseMatchesForTaxonPath(taxonRankOfClassName);
-        assertThat(hits.hasNext(), is(true));
-        Node firstHit = hits.next();
-        assertThat((String) firstHit.getProperty(PropertyAndValueDictionary.NAME), is("Homo sapiens"));
-        assertThat((String) firstHit.getProperty(PropertyAndValueDictionary.PATH), is("Animalia Mammalia"));
-        assertThat(hits.hasNext(), is(false));
     }
 
     @Test

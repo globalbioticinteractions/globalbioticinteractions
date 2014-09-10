@@ -59,35 +59,20 @@ public class CypherQueryBuilder {
 
     public static String lucenePathQuery(List<String> taxonNames) {
         int count = 0;
-        String searchFieldName = getSearchFieldName(taxonNames);
-
         StringBuilder lucenePathQuery = new StringBuilder();
         for (String taxonName : taxonNames) {
             if (count > 0) {
                 lucenePathQuery.append(" OR ");
             }
-            lucenePathQuery.append(searchFieldName + ":\\\"" + taxonName + "\\\"");
+            lucenePathQuery.append("path:\\\"" + taxonName + "\\\"");
             count++;
         }
         return lucenePathQuery.toString();
     }
 
-    protected static String getSearchFieldName(List<String> taxonNames) {
-        boolean hasExternalIds = false;
-        for (String taxonName : taxonNames) {
-            hasExternalIds = hasExternalIds || StringUtils.contains(taxonName, ":");
-        }
-        return hasExternalIds
-                ? PropertyAndValueDictionary.EXTERNAL_IDS
-                : PropertyAndValueDictionary.PATH;
-    }
-
     public static CypherQuery interactionObservations(String sourceTaxonName, String interactionType, String targetTaxonName, Map parameterMap) {
         Map<String, String> queryParams;
         StringBuilder query = new StringBuilder();
-
-        boolean hasSourceTaxonId = StringUtils.contains(sourceTaxonName, ":");
-        boolean hasTargetTaxonId = StringUtils.contains(targetTaxonName, ":");
 
         boolean isInvertedInteraction = INVERTED_INTERACTION_TYPES.contains(interactionType);
 
@@ -96,7 +81,7 @@ public class CypherQueryBuilder {
 
         if (NON_INVERTED_INTERACTION_TYPES.contains(interactionType)) {
             query.append("START ");
-            appendTaxonSelectors(sourceTaxonName != null, targetTaxonName != null, query, hasSourceTaxonId, hasTargetTaxonId);
+            appendTaxonSelectors(sourceTaxonName != null, targetTaxonName != null, query);
             query.append(" ")
                     .append(getObservationMatchClause(INTERACTION_TYPE_MAP.get(interactionType)));
             appendSpatialClauses(parameterMap, query);
@@ -108,7 +93,7 @@ public class CypherQueryBuilder {
         } else if (isInvertedInteraction) {
             // note that "preyedUponBy" is interpreted as an inverted "preysOn" relationship
             query.append("START ");
-            appendTaxonSelectors(targetTaxonName != null, sourceTaxonName != null, query, false, false);
+            appendTaxonSelectors(targetTaxonName != null, sourceTaxonName != null, query);
             query.append(" ").append(getObservationMatchClause(INTERACTION_TYPE_MAP.get(interactionType)));
             appendSpatialClauses(parameterMap, query);
             query.append(" RETURN ")
@@ -182,25 +167,22 @@ public class CypherQueryBuilder {
         return paramMap;
     }
 
-    static void appendTaxonSelectors(boolean includeSourceTaxon, boolean includeTargetTaxon, StringBuilder query, boolean isSourceTaxonExternalId, boolean isTargetTaxonExternalId) {
+    static void appendTaxonSelectors(boolean includeSourceTaxon, boolean includeTargetTaxon, StringBuilder query) {
         if (includeSourceTaxon) {
-            String taxonPathSelector = getTaxonPathSelector(ResultFields.SOURCE_TAXON_NAME, isSourceTaxonExternalId);
-            final String sourceTaxonSelector = "sourceTaxon = " + taxonPathSelector;
+            final String sourceTaxonSelector = "sourceTaxon = " + getTaxonPathSelector(ResultFields.SOURCE_TAXON_NAME);
             query.append(sourceTaxonSelector);
         }
         if (includeTargetTaxon) {
             if (includeSourceTaxon) {
                 query.append(", ");
             }
-            String taxonPathSelector = getTaxonPathSelector(ResultFields.TARGET_TAXON_NAME, isTargetTaxonExternalId);
-            final String targetTaxonSelector = "targetTaxon = " + taxonPathSelector;
+            final String targetTaxonSelector = "targetTaxon = " + getTaxonPathSelector(ResultFields.TARGET_TAXON_NAME);
             query.append(targetTaxonSelector);
         }
     }
 
-    private static String getTaxonPathSelector(String taxonParamName, boolean isTaxonExternalId) {
-        String indexName = isTaxonExternalId ? "taxonExternalIds" : "taxonPaths";
-        return "node:" + indexName + "({" + taxonParamName + "})";
+    private static String getTaxonPathSelector(String taxonParamName) {
+        return "node:taxonPaths({" + taxonParamName + "})";
     }
 
     private static void appendSpatialClauses(Map parameterMap, StringBuilder query) {
@@ -268,14 +250,10 @@ public class CypherQueryBuilder {
         StringBuilder query = new StringBuilder();
         Map<String, String> params;
 
-        boolean hasSourceTaxonId = StringUtils.contains(sourceTaxonName, ":");
-        boolean hasTargetTaxonId = StringUtils.contains(targetTaxonName, ":");
-
-
         String interactionMatch = getInteractionMatch(INTERACTION_TYPE_MAP.get(interactionType));
         if (NON_INVERTED_INTERACTION_TYPES.contains(interactionType)) {
             query.append("START ");
-            appendTaxonSelectors(sourceTaxonName != null, targetTaxonName != null, query, hasSourceTaxonId, hasTargetTaxonId);
+            appendTaxonSelectors(sourceTaxonName != null, targetTaxonName != null, query);
             query.append(" ")
                     .append(interactionMatch);
             addLocationClausesIfNecessary(query, parameterMap);
@@ -284,7 +262,7 @@ public class CypherQueryBuilder {
         } else if (INVERTED_INTERACTION_TYPES.contains(interactionType)) {
             // "preyedUponBy is inverted interaction of "preysOn"
             query.append("START ");
-            appendTaxonSelectors(targetTaxonName != null, sourceTaxonName != null, query, hasSourceTaxonId, hasTargetTaxonId);
+            appendTaxonSelectors(targetTaxonName != null, sourceTaxonName != null, query);
             query.append(" ")
                     .append(interactionMatch);
             addLocationClausesIfNecessary(query, parameterMap);
@@ -324,10 +302,10 @@ public class CypherQueryBuilder {
         } else {
             if (sourceTaxaSelectors.size() > 0) {
                 query.append(" ");
-                appendTaxonSelectors(true, false, query, false, false);
+                appendTaxonSelectors(true, false, query);
             } else if (targetTaxaSelectors.size() > 0) {
                 query.append(" ");
-                appendTaxonSelectors(false, true, query, false, false);
+                appendTaxonSelectors(false, true, query);
             }
         }
 

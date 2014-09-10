@@ -1,6 +1,5 @@
 package org.eol.globi.server;
 
-import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.util.CypherQuery;
 import org.eol.globi.util.InteractUtil;
 import org.junit.Test;
