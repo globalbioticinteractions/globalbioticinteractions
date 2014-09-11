@@ -53,7 +53,6 @@ public class GulfBaseTaxonParserTest {
 
     @Test
     public void readThreeLine() throws IOException {
-
         BufferedReader threeFirstLinesFromAcanthocephala_O = new BufferedReader(new StringReader("Species number,Scientific name,Kingdom,Phylum,Subphylum,Class,Subclass,Infraclass,Superorder,Order,Suborder,Infraorder,Section,Subsection,Superfamily,Above family,Family,Subfamily,Tribe,Supergenus,Genus,Subgenus,Species,Subspecies,Synonyms,Scientific name author,Habitat-Biology,Overall geographic range,Min depth (m),Max depth (m),Polygon,Source,References,Endnotes,Author,Year,Changes from the book,URL\n" +
                 "Spp-28-0004,Caballerorhynchus lamothei,Animalia,Acanthocephala,,Palaeacanthocephala,,,,Echinorhynchida,,,,,,,Cavisomidae,,,,Caballerorhynchus,,lamothei,,,\"Salgado-Maldonado,\",parasitic,Coastal waters and tidal wetlands southwest Gulf of Mexico,,,\"E1; E2; E3; E4; E5; E6\",\"Salgado-Maldonado, G. and O. M. Amin. 2009. Acanthocephala of the Gulf of Mexico, Pp. 539–552 in Felder, D.L. and D.K. Camp (eds.), Gulf of Mexico–Origins, Waters, and Biota. Biodiversity. Texas A&M Press, College Station, Texas.\",111,1,Salgado-Maldonado,1977,\"Added keyword \"\"parasitic\"\"\",http://gulfbase.org/biogomx/biospecies.php?species=Spp-28-0004\n" +
                 "Spp-28-0005,Caballerorhynchus lamothei,Animalia,Acanthocephala,,Palaeacanthocephala,,,,Echinorhynchida,,,,,,,Cavisomidae,,,,Caballerorhynchus,,lamothei,,,\"Salgado-Maldonado,\",parasitic,Coastal waters and tidal wetlands southwest Gulf of Mexico,,,\"E1; E2; E3; E4; E5; E6\",\"Salgado-Maldonado, G. and O. M. Amin. 2009. Acanthocephala of the Gulf of Mexico, Pp. 539–552 in Felder, D.L. and D.K. Camp (eds.), Gulf of Mexico–Origins, Waters, and Biota. Biodiversity. Texas A&M Press, College Station, Texas.\",103,,Salgado-Maldonado,1977,\"Added keyword \"\"parasitic\"\"\",http://gulfbase.org/biogomx/biospecies.php?species=Spp-28-0005\n" +
@@ -73,13 +72,13 @@ public class GulfBaseTaxonParserTest {
         assertThat(taxonTerm.getExternalId(), is("Spp-28-0004"));
         assertThat(taxonTerm.getRank(), is(nullValue()));
         assertThat(taxonTerm.getName(), is("Caballerorhynchus lamothei"));
-        assertThat(taxonTerm.getPath(), is("Animalia Acanthocephala Palaeacanthocephala Echinorhynchida Cavisomidae Caballerorhynchus"));
+        assertThat(taxonTerm.getPath(), is("Animalia | Acanthocephala | Palaeacanthocephala | Echinorhynchida | Cavisomidae | Caballerorhynchus | Caballerorhynchus lamothei"));
 
         taxonTerm = terms.get(2);
         assertThat(taxonTerm.getExternalId(), is("Spp-28-0007"));
         assertThat(taxonTerm.getRank(), is(nullValue()));
         assertThat(taxonTerm.getName(), is("Filisoma fidum"));
-        assertThat(taxonTerm.getPath(), is("Animalia Acanthocephala Palaeacanthocephala Echinorhynchida Cavisomidae Filisoma"));
+        assertThat(taxonTerm.getPath(), is("Animalia | Acanthocephala | Palaeacanthocephala | Echinorhynchida | Cavisomidae | Filisoma | Filisoma fidum"));
     }
 
     private static class TestTaxonImportListener implements TaxonImportListener {
