@@ -1,5 +1,6 @@
 package org.eol.globi.service;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eol.globi.data.StudyImporterException;
@@ -7,6 +8,7 @@ import org.eol.globi.data.taxon.TaxonLookupService;
 import org.eol.globi.data.taxon.TaxonomyImporter;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Taxon;
+import org.eol.globi.util.NodeUtil;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -19,12 +21,14 @@ public abstract class OfflineService implements PropertyEnricher {
 
     @Override
     public Map<String, String> enrich(Map<String, String> properties) throws PropertyEnricherException {
-        for (String propertyName : properties.keySet()) {
-            if (properties.get(propertyName) == null) {
-                lookupProperty(properties.get(PropertyAndValueDictionary.NAME), properties, propertyName);
-            }
+        Map<String, String> enrichedProperties = new HashMap<String, String>(properties);
+        String taxonName = properties.get(PropertyAndValueDictionary.NAME);
+        if (StringUtils.isNotBlank(taxonName)) {
+            lookupProperty(taxonName, enrichedProperties, PropertyAndValueDictionary.EXTERNAL_ID);
+            lookupProperty(taxonName, enrichedProperties, PropertyAndValueDictionary.PATH);
+            lookupProperty(taxonName, enrichedProperties, PropertyAndValueDictionary.PATH_NAMES);
         }
-        return Collections.unmodifiableMap(new HashMap<String, String>(properties));
+        return Collections.unmodifiableMap(new HashMap<String, String>(enrichedProperties));
     }
 
     private void lookupProperty(String taxonName, Map<String, String> properties, String propertyName) throws PropertyEnricherException {
@@ -41,7 +45,7 @@ public abstract class OfflineService implements PropertyEnricher {
             if (first != null) {
                 propertyValue = getValueForPropertyName(propertyName, first);
             }
-            if (propertyValue != null) {
+            if (StringUtils.isNotBlank(propertyValue)) {
                 properties.put(propertyName, propertyValue);
             }
         } catch (IOException e) {

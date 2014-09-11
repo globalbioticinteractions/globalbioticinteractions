@@ -21,6 +21,8 @@ public class GulfBaseService extends OfflineService {
             value = TaxonomyProvider.ID_PREFIX_GULFBASE + term.getExternalId();
         } else if (PropertyAndValueDictionary.PATH.equals(propertyName)) {
             value = term.getPath();
+        } else if (PropertyAndValueDictionary.PATH_NAMES.equals(propertyName)) {
+            value = term.getPathNames();
         }
         return value;
     }

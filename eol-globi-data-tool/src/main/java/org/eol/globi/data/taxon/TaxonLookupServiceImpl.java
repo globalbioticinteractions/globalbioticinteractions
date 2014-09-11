@@ -30,6 +30,7 @@ public class TaxonLookupServiceImpl implements TaxonImportListener, TaxonLookupS
     private static final String FIELD_ID = "id";
     private static final String FIELD_NAME = "name";
     private static final String FIELD_RANK_PATH = "rank_path";
+    private static final String FIELD_RANK_PATH_NAMES = "rank_path_names";
     private static final String FIELD_RECOMMENDED_NAME = "recommended_name";
 
     private Directory indexDir;
@@ -50,7 +51,6 @@ public class TaxonLookupServiceImpl implements TaxonImportListener, TaxonLookupS
         addTerm(taxonTerm.getName(), taxonTerm);
     }
 
-    @Override
     public void addTerm(String name, Taxon taxonTerm) {
         if (hasStarted()) {
             Document doc = new Document();
@@ -60,6 +60,10 @@ public class TaxonLookupServiceImpl implements TaxonImportListener, TaxonLookupS
             String rankPath = taxonTerm.getPath();
             if (rankPath != null) {
                 doc.add(new Field(FIELD_RANK_PATH, rankPath, Field.Store.YES, Field.Index.NOT_ANALYZED_NO_NORMS));
+            }
+            String rankPathNames = taxonTerm.getPathNames();
+            if (rankPathNames != null) {
+                doc.add(new Field(FIELD_RANK_PATH_NAMES, rankPathNames, Field.Store.YES, Field.Index.NOT_ANALYZED_NO_NORMS));
             }
             try {
                 indexWriter.addDocument(doc);
@@ -91,6 +95,10 @@ public class TaxonLookupServiceImpl implements TaxonImportListener, TaxonLookupS
                     Fieldable rankPathField = foundDoc.getFieldable(FIELD_RANK_PATH);
                     if (rankPathField != null) {
                         term.setPath(rankPathField.stringValue());
+                    }
+                    Fieldable rankPathNamesField = foundDoc.getFieldable(FIELD_RANK_PATH_NAMES);
+                    if (rankPathField != null) {
+                        term.setPathNames(rankPathNamesField.stringValue());
                     }
                     Fieldable fieldName = foundDoc.getFieldable(FIELD_RECOMMENDED_NAME);
                     if (fieldName != null) {

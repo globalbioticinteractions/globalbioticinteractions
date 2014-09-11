@@ -38,13 +38,15 @@ public class GulfBaseTaxonParserTest {
         assertThat(taxonTerm.getExternalId(), is("Spp-26-0003"));
         assertThat(taxonTerm.getRank(), is(nullValue()));
         assertThat(taxonTerm.getName(), is("Haplognathia rosea"));
-        assertThat(taxonTerm.getPath(), is("Animalia Gnathostomulida Filospermoidea Haplognathiidae Haplognathia"));
+        assertThat(taxonTerm.getPath(), is("Animalia | Gnathostomulida | Filospermoidea | Haplognathiidae | Haplognathia | Haplognathia rosea"));
+        assertThat(taxonTerm.getPathNames(), is("kingdom | phylum | order | family | genus | species"));
 
         taxonTerm = terms.get(2);
         assertThat(taxonTerm.getExternalId(), is("Spp-26-0005"));
         assertThat(taxonTerm.getRank(), is(nullValue()));
         assertThat(taxonTerm.getName(), is("Haplognathia cf. ruberrima"));
-        assertThat(taxonTerm.getPath(), is("Animalia Gnathostomulida Filospermoidea Haplognathiidae Haplognathia"));
+        assertThat(taxonTerm.getPath(), is("Animalia | Gnathostomulida | Filospermoidea | Haplognathiidae | Haplognathia | Haplognathia cf. ruberrima"));
+        assertThat(taxonTerm.getPathNames(), is("kingdom | phylum | order | family | genus | species"));
 
         assertThat(listener.count, is(taxonParser.getExpectedMaxTerms()));
     }
@@ -94,11 +96,6 @@ public class GulfBaseTaxonParserTest {
                 terms.add(taxonTerm);
             }
             count++;
-        }
-
-        @Override
-        public void addTerm(String name, Taxon term) {
-
         }
 
         @Override
