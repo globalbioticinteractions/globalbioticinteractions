@@ -29,7 +29,7 @@ public class InteractionControllerTestIT {
         assertThat(list, containsString("Homo sapiens"));
     }
 
-    @Ignore("re-enable after rebuilding path index")
+    @Ignore("enable after rebuilding path index")
     @Test
     public void findPreyExternalId() throws IOException, URISyntaxException {
         String list = new InteractionController().findInteractions(null, "OTT:770315", CypherQueryBuilder.INTERACTION_PREYS_ON);
@@ -200,21 +200,6 @@ public class InteractionControllerTestIT {
         assertThat(externalLink, containsString("ATE"));
         assertThat(externalLink, containsString(ResultFields.SOURCE_TAXON_PATH));
         assertThat(externalLink, containsString(ResultFields.TARGET_TAXON_PATH));
-    }
-
-    @Test
-    public void findSupportedInteractionTypes() throws IOException {
-        String interactionTypes = new InteractionController().getInteractionTypes();
-        ObjectMapper mapper = new ObjectMapper();
-        JsonNode jsonNode = mapper.readTree(interactionTypes);
-        for (JsonNode interactionType : jsonNode) {
-            assertThat(interactionType.has("source"), is(true));
-            assertThat(interactionType.has("target"), is(true));
-        }
-        assertThat(jsonNode.has(CypherQueryBuilder.INTERACTION_HOST_OF), is(true));
-        assertThat(jsonNode.has(CypherQueryBuilder.INTERACTION_PARASITE_OF), is(true));
-        assertThat(jsonNode.has(CypherQueryBuilder.INTERACTION_PREYED_UPON_BY), is(true));
-        assertThat(jsonNode.has(CypherQueryBuilder.INTERACTION_PREYS_ON), is(true));
     }
 
 

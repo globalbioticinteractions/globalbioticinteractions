@@ -14,16 +14,31 @@ import java.util.Map;
 @Controller
 public class InteractionController {
 
-    @RequestMapping(value = "/interactionTypes", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = "/interactionTypes", method = RequestMethod.GET)
     @ResponseBody
-    public String getInteractionTypes() throws IOException {
-        return "{ \"" + CypherQueryBuilder.INTERACTION_PREYS_ON + "\":{\"source\":\"predator\",\"target\":\"prey\"}" +
-                ",\"" + CypherQueryBuilder.INTERACTION_PREYED_UPON_BY + "\":{\"source\":\"prey\",\"target\":\"predator\"}" +
-                ",\"" + CypherQueryBuilder.INTERACTION_PARASITE_OF + "\":{\"source\":\"parasite\",\"target\":\"host\"}" +
-                ",\"" + CypherQueryBuilder.INTERACTION_HOST_OF + "\":{\"source\":\"host\",\"target\":\"parasite\"}" +
-                ",\"" + CypherQueryBuilder.INTERACTION_POLLINATES + "\":{\"source\":\"pollinator\",\"target\":\"plant\"}" +
-                ",\"" + CypherQueryBuilder.INTERACTION_POLLINATED_BY + "\":{\"source\":\"plant\",\"target\":\"pollinator\"}" +
-                "}";
+    public String getInteractionTypes(HttpServletRequest request) throws IOException {
+        String type = request == null ? "json" : request.getParameter("type");
+        String result;
+        if ("csv".equals(type)) {
+            StringBuilder builder = new StringBuilder();
+            builder.append("interaction,source,target\n");
+            builder.append(CypherQueryBuilder.INTERACTION_PREYS_ON).append(",predator,prey\n");
+            builder.append(CypherQueryBuilder.INTERACTION_PREYED_UPON_BY).append(",prey,predator\n");
+            builder.append(CypherQueryBuilder.INTERACTION_PARASITE_OF).append(",parasite,host\n");
+            builder.append(CypherQueryBuilder.INTERACTION_HOST_OF).append(",host,parasite\n");
+            builder.append(CypherQueryBuilder.INTERACTION_POLLINATES).append(",pollinator,plant\n");
+            builder.append(CypherQueryBuilder.INTERACTION_POLLINATED_BY).append(",plant,pollinator");
+            result = builder.toString();
+        } else {
+            result = "{ \"" + CypherQueryBuilder.INTERACTION_PREYS_ON + "\":{\"source\":\"predator\",\"target\":\"prey\"}" +
+                    ",\"" + CypherQueryBuilder.INTERACTION_PREYED_UPON_BY + "\":{\"source\":\"prey\",\"target\":\"predator\"}" +
+                    ",\"" + CypherQueryBuilder.INTERACTION_PARASITE_OF + "\":{\"source\":\"parasite\",\"target\":\"host\"}" +
+                    ",\"" + CypherQueryBuilder.INTERACTION_HOST_OF + "\":{\"source\":\"host\",\"target\":\"parasite\"}" +
+                    ",\"" + CypherQueryBuilder.INTERACTION_POLLINATES + "\":{\"source\":\"pollinator\",\"target\":\"plant\"}" +
+                    ",\"" + CypherQueryBuilder.INTERACTION_POLLINATED_BY + "\":{\"source\":\"plant\",\"target\":\"pollinator\"}" +
+                    "}";
+        }
+        return result;
     }
 
     @RequestMapping(value = "/interaction", method = RequestMethod.GET)
