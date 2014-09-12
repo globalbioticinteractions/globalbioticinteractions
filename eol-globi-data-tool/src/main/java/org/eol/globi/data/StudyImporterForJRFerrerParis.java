@@ -10,22 +10,20 @@ import java.util.logging.Level;
 
 public class StudyImporterForJRFerrerParis extends BaseStudyImporter {
 
+    private static final String RESOURCE = "http://files.figshare.com/1674327/20140912_CompiledButterflyHostPlantRecords_JRFP.csv";
+
+
     public StudyImporterForJRFerrerParis(ParserFactory parserFactory, NodeFactory nodeFactory) {
         super(parserFactory, nodeFactory);
     }
 
     @Override
     public Study importStudy() throws StudyImporterException {
-        Study study = nodeFactory.getOrCreateStudy("JRFerrisParisButterflies",
-                "Jose R. Ferrer Paris",
-                "",
-                "",
-                "Ferrer-Paris JR, Sánchez-Mercado AY, Lozano C, Zambrano L, Soto J, Baettig J, Ortega P, Leal M. Using web-content for the assessment of macroecological patterns in butterfly-hostplant associations at a global scale. March 2013 - January 2014. Unpublished results."
-                , null
-                , "Papilionoidea of the World. Available at http://papilionoidea.myspecies.info/ .");
-        String studyResource = "jr_ferrer_paris/CompiledButterflyHostPlantRecords_JRFP.csv";
+        String citation = "Ferrer-Paris, José R.; Sánchez-Mercado, Ada Y.; Lozano, Cecilia; Zambrano, Liset; Soto, José; Baettig, Jessica; Leal, María (2014): A compilation of larval host-plant records for six families of butterflies (Lepidoptera: Papilionoidea) from available electronic resources. figshare. http://dx.doi.org/10.6084/m9.figshare.1168861 . " + ReferenceUtil.createLastAccessedString(RESOURCE);
+        Study study = nodeFactory.getOrCreateStudy("Ferrer-Paris 2014", citation, "http://dx.doi.org/10.6084/m9.figshare.1168861");
+        study.setCitationWithTx(citation);
         try {
-            LabeledCSVParser parser = parserFactory.createParser(studyResource, CharsetConstant.UTF8);
+            LabeledCSVParser parser = parserFactory.createParser(RESOURCE, CharsetConstant.UTF8);
             while (parser.getLine() != null) {
                 String butterflyName = createTaxon(parser, "Lepidoptera Name");
                 String plantName = createTaxon(parser, "Hostplant Name");
@@ -34,7 +32,7 @@ public class StudyImporterForJRFerrerParis extends BaseStudyImporter {
                 }
             }
         } catch (IOException e) {
-            throw new StudyImporterException("failed to access resource [" + studyResource + "]");
+            throw new StudyImporterException("failed to access resource [" + RESOURCE + "]");
         }
 
         return study;
