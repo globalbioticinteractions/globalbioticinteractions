@@ -2,6 +2,8 @@ package org.eol.globi.data;
 
 import org.eol.globi.domain.Study;
 import org.junit.Test;
+import org.neo4j.cypher.javacompat.ExecutionEngine;
+import org.neo4j.cypher.javacompat.ExecutionResult;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -14,6 +16,7 @@ import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.internal.matchers.IsCollectionContaining.hasItem;
+import static org.junit.matchers.JUnitMatchers.containsString;
 
 public class StudyImporterForByrnesTest extends GraphDBTestCase {
 
@@ -41,5 +44,11 @@ public class StudyImporterForByrnesTest extends GraphDBTestCase {
 
         assertThat(citations, hasItem("Pennings, S. C. 1990. Size-related shifts in herbivory: specialization in the sea hare Aplysia californica Cooper. Journal of Experimental Marine Biology and Ecology 142:43-61."));
         assertThat(citations, hasItem("Barry, J. and M. Ehret. 1993. Diet, food preference, and algal availability for fishes and crabs on intertidal reef communities in southern California. Environmental Biology of Fishes 37:75-95."));
+
+        ExecutionEngine executionEngine = new ExecutionEngine(getGraphDb());
+        ExecutionResult result = executionEngine.execute("START taxon = node:taxons(name=\"Strongylocentrotus purpuratus\")" +
+                " MATCH taxon<-[:CLASSIFIED_AS]-specimen-[:ATE]->prey-[:CLASSIFIED_AS]->preyTaxon " +
+                " RETURN collect(distinct(preyTaxon.name))");
+        assertThat(result.dumpToString(), containsString("Bossiella orbigiana"));
     }
 }

@@ -49,6 +49,9 @@ public class StudyImporterForByrnes extends BaseStudyImporter {
         Study localStudy = null;
         try {
             String refList = StringUtils.trim(parser.getValueByLabel("Reference"));
+            if (StringUtils.isBlank(refList)) {
+                refList = "Byrnes pers. obs.";
+            }
             String[] refs = StringUtils.split(refList, ",");
             for (String ref : refs) {
                 String singleShortRef = StringUtils.trim(ref);
