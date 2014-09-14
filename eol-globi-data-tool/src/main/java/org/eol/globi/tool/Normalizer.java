@@ -39,6 +39,7 @@ public class Normalizer {
     public static final String OPTION_SKIP_IMPORT = "skipImport";
     public static final String OPTION_SKIP_EXPORT = "skipExport";
     public static final String OPTION_SKIP_LINK = "skipLink";
+    public static final String OPTION_USE_DARK_DATA = "useDarkData";
 
     private EcoregionFinder ecoregionFinder = null;
 
@@ -52,6 +53,8 @@ public class Normalizer {
         }
     }
 
+
+
     protected static CommandLine parseOptions(String[] args) throws ParseException {
         CommandLineParser parser = new BasicParser();
         return parser.parse(getOptions(), args);
@@ -62,6 +65,7 @@ public class Normalizer {
         options.addOption(OPTION_SKIP_IMPORT, false, "skip the import of all GloBI datasets");
         options.addOption(OPTION_SKIP_EXPORT, false, "skip the export for GloBI datasets to aggregated archives.");
         options.addOption(OPTION_SKIP_LINK, false, "skip taxa cross-reference step");
+        options.addOption(OPTION_USE_DARK_DATA, false, "use only dark datasets (requires permission)");
         Option helpOpt = new Option(OPTION_HELP, "help", false, "print this help information");
         options.addOption(helpOpt);
         return options;
@@ -71,7 +75,10 @@ public class Normalizer {
         final GraphDatabaseService graphService = GraphService.getGraphService("./");
 
         if (cmdLine == null || !cmdLine.hasOption(OPTION_SKIP_IMPORT)) {
-            importData(graphService, getImporters());
+            Collection<Class> importers = shouldUseDarkData(cmdLine)
+                    ? StudyImporterFactory.getDarkImporters()
+                    : StudyImporterFactory.getOpenImporters();
+            importData(graphService, importers);
         } else {
             LOG.info("skipping data import...");
         }
@@ -89,6 +96,10 @@ public class Normalizer {
         }
 
         graphService.shutdown();
+    }
+
+    protected boolean shouldUseDarkData(CommandLine cmdLine) {
+        return cmdLine != null && cmdLine.hasOption(OPTION_USE_DARK_DATA);
     }
 
     private void linkTaxa(GraphDatabaseService graphService) {
@@ -112,7 +123,7 @@ public class Normalizer {
     }
 
     protected Collection<Class> getImporters() {
-        return StudyImporterFactory.getAvailableImporters();
+        return StudyImporterFactory.getOpenImporters();
     }
 
     private EcoregionFinder getEcoregionFinder() {

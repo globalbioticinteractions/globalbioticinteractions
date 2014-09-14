@@ -52,7 +52,14 @@ public class StudyImporterFactory {
     }
 
 
-    public static Collection<Class> getAvailableImporters() {
+    public static Collection<Class> getOpenImporters() {
         return IMPORTERS;
+    }
+
+    public static Collection<Class> getDarkImporters() {
+        return new ArrayList<Class>() {{
+            add(StudyImporterForFWDP.class);
+            add(StudyImporterForFishbase.class);
+        }};
     }
 }

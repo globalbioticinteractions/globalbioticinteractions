@@ -152,7 +152,8 @@
                         <argument>
                             ${project.build.outputDirectory}${path.separator}${project.build.directory}/eol-globi-data-tool-${globi.tool.version}-jar-with-dependencies.jar
                         </argument>
-                        <argument>org.eol.globi.tool.NormalizerDark</argument>
+                        <argument>org.eol.globi.tool.Normalizer</argument>
+                        <argument>-useDarkData</argument>
                     </arguments>
                     <workingDirectory>${data.dir}</workingDirectory>
                 </configuration>
