@@ -54,6 +54,7 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
 
     private static final Map<String, InteractType> INVERSE_TYPE_MAPPING = new HashMap<String, InteractType>() {{
         put("Eaten by", InteractType.ATE);
+        put("Hunted by", InteractType.PREYS_UPON);
     }};
     public static final int MAX_ATTEMPTS = 3;
     public static final List<String> IGNORED_INTERACTION_TYPES = new ArrayList<String>() {{
