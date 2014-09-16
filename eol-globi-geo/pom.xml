@@ -88,9 +88,9 @@
 
     <repositories>
         <repository>
-            <id>boundlessgeo</id>
-            <name>repo.boundlessgeo.com</name>
-            <url>http://repo.boundlessgeo.com/main</url>
+            <id>opengeo-mirror</id>
+            <name>opengeo-mirror</name>
+            <url>http://download.osgeo.org/webdav/geotools/</url>
             <snapshots>
                 <enabled>false</enabled>
             </snapshots>
