@@ -90,7 +90,7 @@
         <repository>
             <id>boundlessgeo</id>
             <name>repo.boundlessgeo.com</name>
-            <url>http://repo.boundlessgeo.com</url>
+            <url>http://repo.boundlessgeo.com/main</url>
             <snapshots>
                 <enabled>false</enabled>
             </snapshots>
