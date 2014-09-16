@@ -88,9 +88,9 @@
 
     <repositories>
         <repository>
-            <id>opengeo</id>
-            <name>OpenGeo.org</name>
-            <url>http://repo.opengeo.org/</url>
+            <id>boundlessgeo</id>
+            <name>repo.boundlessgeo.com</name>
+            <url>http://repo.boundlessgeo.com</url>
             <snapshots>
                 <enabled>false</enabled>
             </snapshots>
