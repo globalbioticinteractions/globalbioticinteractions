@@ -37,7 +37,7 @@ public class GraphExporter {
         List<Study> studies = NodeFactory.findAllStudies(graphService);
         exportDataOntology(studies, baseDir);
         exportUnmatchedTaxa(studies, baseDir);
-        exportGoMexSI(studies, baseDir);
+        //exportGoMexSI(studies, baseDir);
         exportDarwinCoreAggregatedByStudy(baseDir, studies);
         exportDarwinCoreAll(baseDir, studies);
     }
