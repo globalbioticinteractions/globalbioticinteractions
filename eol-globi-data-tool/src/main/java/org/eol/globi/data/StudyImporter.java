@@ -9,4 +9,6 @@ public interface StudyImporter {
     void setFilter(ImportFilter importFilter);
 
     void setLogger(ImportLogger importLogger);
+
+    boolean shouldCrossCheckReference();
 }

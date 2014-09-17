@@ -54,7 +54,6 @@ public class Normalizer {
     }
 
 
-
     protected static CommandLine parseOptions(String[] args) throws ParseException {
         CommandLineParser parser = new BasicParser();
         return parser.parse(getOptions(), args);
@@ -168,9 +167,12 @@ public class Normalizer {
 
     private StudyImporter createStudyImporter(Class<StudyImporter> studyImporter, NodeFactory factory) throws StudyImporterException {
         factory.setEcoregionFinder(getEcoregionFinder());
-        factory.setDoiResolver(new DOIResolverImpl());
         ParserFactory parserFactory = new ParserFactoryImpl();
         StudyImporter importer = new StudyImporterFactory(parserFactory, factory).instantiateImporter(studyImporter);
+        if (importer.shouldCrossCheckReference()) {
+            factory.setDoiResolver(new DOIResolverImpl());
+        }
+
         importer.setLogger(new StudyImportLogger(factory));
         return importer;
     }

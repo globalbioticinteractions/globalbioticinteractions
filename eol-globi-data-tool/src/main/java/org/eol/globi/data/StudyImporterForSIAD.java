@@ -15,8 +15,6 @@ import java.util.Map;
 
 public class StudyImporterForSIAD extends BaseStudyImporter {
 
-    private static final Log LOG = LogFactory.getLog(StudyImporterForSIAD.class);
-
     private final static Map<String, InteractType> map = new HashMap<String, InteractType>() {
         {
             put("Associate", InteractType.INTERACTS_WITH);
@@ -68,6 +66,11 @@ public class StudyImporterForSIAD extends BaseStudyImporter {
 
     public StudyImporterForSIAD(ParserFactory parserFactory, NodeFactory nodeFactory) {
         super(parserFactory, nodeFactory);
+    }
+
+    @Override
+    public boolean shouldCrossCheckReference() {
+        return false;
     }
 
 

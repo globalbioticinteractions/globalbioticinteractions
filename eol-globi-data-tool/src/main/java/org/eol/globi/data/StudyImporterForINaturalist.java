@@ -266,4 +266,9 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
     private DateTime parseUTCDateTime(String timeObservedAtUtc) {
         return ISODateTimeFormat.dateTimeParser().parseDateTime(timeObservedAtUtc).withZone(DateTimeZone.UTC);
     }
+
+    @Override
+    public boolean shouldCrossCheckReference() {
+        return false;
+    }
 }
