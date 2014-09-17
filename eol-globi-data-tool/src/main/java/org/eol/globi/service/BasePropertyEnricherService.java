@@ -11,24 +11,25 @@ public abstract class BasePropertyEnricherService extends BaseHttpClientService 
 
     protected String lookupPropertyValueByTaxonName(String taxonName, String propertyName) throws PropertyEnricherException {
         String propertyValue = null;
-        if (PropertyAndValueDictionary.EXTERNAL_ID.equals(propertyName)) {
-            if (StringUtils.length(taxonName) > 2) {
+        if (StringUtils.length(taxonName) > 2) {
+            if (PropertyAndValueDictionary.EXTERNAL_ID.equals(propertyName)) {
                 try {
                     propertyValue = lookupIdByName(taxonName);
                 } catch (PropertyEnricherException e) {
                     shutdown();
                     throw e;
                 }
-            }
-        } else if (PropertyAndValueDictionary.PATH.equals(propertyName)) {
-            try {
-                String lsId = lookupIdByName(taxonName);
-                if (StringUtils.isNotBlank(lsId)) {
-                    propertyValue = lookupTaxonPathById(lsId);
+            } else if (PropertyAndValueDictionary.PATH.equals(propertyName)) {
+                try {
+                    String lsId = lookupIdByName(taxonName);
+                    if (StringUtils.isNotBlank(lsId)) {
+                        propertyValue = lookupTaxonPathById(lsId);
+                    }
+                } catch (PropertyEnricherException e) {
+                    shutdown();
+                    throw e;
                 }
-            } catch (PropertyEnricherException e) {
-                shutdown();
-                throw e;
+
             }
         }
         return propertyValue;
@@ -36,7 +37,8 @@ public abstract class BasePropertyEnricherService extends BaseHttpClientService 
 
     @Override
     public Map<String, String> enrich(final Map<String, String> properties) throws PropertyEnricherException {
-        Map<String, String> enrichedProperties = new HashMap<String, String>(properties);;
+        Map<String, String> enrichedProperties = new HashMap<String, String>(properties);
+        ;
         for (String propertyName : enrichedProperties.keySet()) {
             String propertyValue = lookupPropertyValueByTaxonName(enrichedProperties.get(PropertyAndValueDictionary.NAME), propertyName);
             if (propertyValue != null) {
