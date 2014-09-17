@@ -40,9 +40,11 @@ public class ExternalIdUtil {
 
     public static boolean isSupported(String externalId) {
         boolean supported = false;
-        for (TaxonomyProvider prefix : TaxonomyProvider.values()) {
-            if (StringUtils.startsWith(externalId, prefix.getIdPrefix())) {
-                supported = true;
+        if (StringUtils.isNotBlank(externalId)) {
+            for (TaxonomyProvider prefix : TaxonomyProvider.values()) {
+                if (StringUtils.startsWith(externalId, prefix.getIdPrefix())) {
+                    supported = true;
+                }
             }
         }
         return supported;

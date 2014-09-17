@@ -27,14 +27,17 @@ public class AtlasOfLivingAustraliaService extends BaseHttpClientService impleme
     @Override
     public Map<String, String> enrich(final Map<String, String> properties) throws PropertyEnricherException {
         Map<String, String> enrichedProperties = new HashMap<String, String>(properties);
-        String externalId = properties.get(PropertyAndValueDictionary.EXTERNAL_ID);
-        if (StringUtils.isBlank(externalId) || hasSupportedExternalId(externalId)) {
-            if (needsEnrichment(properties)) {
-                String guid = StringUtils.replace(externalId, TaxonomyProvider.ID_PREFIX_AUSTRALIAN_FAUNAL_DIRECTORY, AFD_TSN_PREFIX);
-                guid = StringUtils.isNotBlank(guid) ? guid : findTaxonGUIDByName(properties.get(PropertyAndValueDictionary.NAME));
-                if (StringUtils.isNotBlank(guid)) {
-                    Map<String, String> taxonInfo = findTaxonInfoByGUID(guid);
-                    enrichedProperties.putAll(taxonInfo);
+        String taxonName = properties.get(PropertyAndValueDictionary.NAME);
+        if (StringUtils.isNotBlank(taxonName)) {
+            String externalId = properties.get(PropertyAndValueDictionary.EXTERNAL_ID);
+            if (StringUtils.isBlank(externalId) || hasSupportedExternalId(externalId)) {
+                if (needsEnrichment(properties)) {
+                    String guid = StringUtils.replace(externalId, TaxonomyProvider.ID_PREFIX_AUSTRALIAN_FAUNAL_DIRECTORY, AFD_TSN_PREFIX);
+                    guid = StringUtils.isNotBlank(guid) ? guid : findTaxonGUIDByName(taxonName);
+                    if (StringUtils.isNotBlank(guid)) {
+                        Map<String, String> taxonInfo = findTaxonInfoByGUID(guid);
+                        enrichedProperties.putAll(taxonInfo);
+                    }
                 }
             }
         }

@@ -8,6 +8,8 @@ import org.eol.globi.data.taxon.TaxonNameCorrector;
 import org.eol.globi.data.taxon.TaxonIndexImpl;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Specimen;
+import org.eol.globi.domain.Taxon;
+import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TaxonNode;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -24,9 +26,11 @@ import static org.junit.internal.matchers.StringContains.containsString;
 
 public class TaxonPropertyEnricherImplIT extends GraphDBTestCase {
 
+    private PropertyEnricher enricher;
+
     @Before
     public void start() {
-        PropertyEnricher enricher = PropertyEnricherFactory.createTaxonEnricher();
+        enricher = PropertyEnricherFactory.createTaxonEnricher();
         nodeFactory = new NodeFactory(getGraphDb(), new TaxonIndexImpl(enricher, new TaxonNameCorrector(), getGraphDb()));
     }
 
@@ -62,6 +66,13 @@ public class TaxonPropertyEnricherImplIT extends GraphDBTestCase {
         assertThat(taxon.getExternalId(), is("EOL:4888"));
         assertThat(taxon.getName(), is("Foraminifera"));
         assertThat(taxon.getPath(), containsString(CharsetConstant.SEPARATOR + "Foraminifera"));
+    }
+
+    @Test
+    public void emptyTaxon() throws IOException, NodeFactoryException, PropertyEnricherException {
+        Taxon enrich = TaxonUtil.enrich(enricher, new TaxonImpl("", ""));
+        assertThat(enrich.getName(), is(""));
+        assertThat(enrich.getExternalId(), is(""));
     }
 
 
@@ -145,7 +156,6 @@ public class TaxonPropertyEnricherImplIT extends GraphDBTestCase {
         }
         assertThat(count, is(1));
     }
-
 
 
 }
