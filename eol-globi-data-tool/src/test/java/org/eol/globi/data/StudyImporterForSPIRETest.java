@@ -111,19 +111,15 @@ public class StudyImporterForSPIRETest extends GraphDBTestCase {
         studyImporterForSPIRE.setGeoNamesService(new GeoNamesService() {
 
             @Override
-            public boolean hasPositionForLocality(String spireLocality) {
-                return "something".equals(spireLocality);
+            public boolean hasPositionForLocality(String locality) {
+                return "something".equals(locality);
             }
 
             @Override
-            public LatLng findPointForLocality(String spireLocality) throws IOException {
-                return hasPositionForLocality(spireLocality) ? new LatLng(1.0, 2.0) : null;
+            public LatLng findPointForLocality(String locality) throws IOException {
+                return hasPositionForLocality(locality) ? new LatLng(1.0, 2.0) : null;
             }
 
-            @Override
-            public LatLng findLatLng(Long id) throws IOException {
-                return null;
-            }
         });
         return studyImporterForSPIRE;
     }

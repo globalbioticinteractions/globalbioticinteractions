@@ -32,12 +32,14 @@ public class GeoNamesServiceImpl implements GeoNamesService {
         put("Country: USA", new Term("GEO:6252001", "United States of America"));
         put("Country: USA;   State: Iowa;   Locality: Mississippi River", new Term("GEO:4862182", "State of Iowa"));
         put("Country: Japan", new Term("GEO:1861060", "Japan"));
+        put("Japan", new Term("GEO:1861060", "Japan"));
         put("Country: Malaysia;   Locality: W. Malaysia", new Term("GEO:1745185", "Peninsular Malaysia"));
         put("Country: Chile;   Locality: central Chile", new Term("GEO:3882554", "Central Valley"));
         put("Country: USA;   State: New Mexico;   Locality: Aden Crater", new Term("GEO:5454273", "Aden Crater"));
         put("Country: USA;   State: Alaska;   Locality: Torch Bay", new Term("GEO:5558058", "Torch Bay"));
         put("Country: USA;   State: Pennsylvania", new Term("GEO:6254927", "Pennsylvania"));
         put("Country: Costa Rica", new Term("GEO:3624060", "Costa Rica"));
+        put("Costa Rica", new Term("GEO:3624060", "Costa Rica"));
         put("Country: Pacific", new Term("GEO:8411083", "Pacific Ocean"));
         put("Country: USA;   State: California;   Locality: Cabrillo Point", new Term("GEO:5332459", "Cabrillo Point"));
         put("Country: USA;   State: Texas", new Term("GEO:4736286", "Texas"));
@@ -65,6 +67,7 @@ public class GeoNamesServiceImpl implements GeoNamesService {
         put("Country: USA;   State: Maine", new Term("GEO:4971068", "State Of Maine"));
         put("Country: Polynesia", new Term("GEO:7729901", "Polynesia"));
         put("Country: South Africa", new Term("GEO:953987", "South Africa"));
+        put("South Africa", new Term("GEO:953987", "South Africa"));
         put("Country: New Zealand;   State: Otago;   Locality: Berwick, Meggatburn", new Term("GEO:2193374", "Berwick"));
         put("Country: New Zealand;   State: Otago;   Locality: Venlaw, Mimihau catchment", new Term("GEO:2180525", "Venlaw"));
         put("Country: USA;   State: Montana", new Term("GEO:5667009", "Montana"));
@@ -137,6 +140,7 @@ public class GeoNamesServiceImpl implements GeoNamesService {
         put("Country: USA;   State: Idaho-Utah;   Locality: Deep Creek", new Term("GEO:5596512", "Idaho"));
         put("Country: Malawi", new Term("GEO:927384", "Republic of Malawi"));
         put("Country: Malaysia", new Term("GEO:1733045", "Malaysia"));
+        put("Malaysia", new Term("GEO:1733045", "Malaysia"));
         put("Country: Europe;   State: Central Europe", new Term("GEO:6255148", "Europe"));
         put("Country: USA;   State: Florida", new Term("GEO:4155751", "Florida"));
         put("Country: Norway;   State: Oppland;   Locality: Ovre Heimdalsvatn Lake", new Term("GEO:3144873", "Heimdalsvatnet Nedre"));
@@ -159,9 +163,11 @@ public class GeoNamesServiceImpl implements GeoNamesService {
         put("Country: Puerto Rico;   Locality: Puerto Rico-Virgin Islands shelf", new Term("GEO:4566966", "Puerto Rico"));
         put("Country: England;   Locality: River Thames", new Term("GEO:2636063", "Thames"));
         put("Country: Madagascar", new Term("GEO:1062947", "Madagascar"));
+        put("Madagascar", new Term("GEO:1062947", "Madagascar"));
         put("Country: USA;   State: New Mexico;   Locality: White Sands", new Term("GEO:5497915", "White Sands"));
         put("Country: England;   Locality: River Cam", new Term("GEO:2653956", "River Cam"));
         put("Country: Australia", new Term("GEO:2077456", "Australia"));
+        put("Australia", new Term("GEO:2077456", "Australia"));
         put("Country: USA;   State: North Carolina;   Locality: Coweeta", new Term("GEO:4462207", "Coweeta Gap"));
         put("Country: Scotland;   Locality: Ythan estuary", new Term("GEO:2633329", "River Ythan"));
         put("Country: Wales;   Locality: River Clydach", new Term("GEO:3333248", "Swansea"));
@@ -207,6 +213,32 @@ public class GeoNamesServiceImpl implements GeoNamesService {
         put("Antarctic and subantarctic waters", new Term("GEO:6632710", "Antarctic"));
         put("Antarctic waters", new Term("GEO:6632710", "Antarctic"));
         put("McMurdo Sound", new Term("GEO:6637890", "McMurdo Sound"));
+        put("Zambia", new Term("GEO:895949", "Republic of Zambia"));
+        put("Ivory Coast", new Term("GEO:2287781", "Ivory Coast"));
+        put("Cameroun", new Term("GEO:2233387", "Cameroon"));
+        put("Gabon", new Term("GEO:2400553", "Gabon"));
+        put("Mozambique", new Term("GEO:1036973", "Mozambique"));
+        put("Sao Tome", new Term("GEO:2410763", "São Tomé"));
+        put("France", new Term("GEO:3017382", "France"));
+        put("China", new Term("GEO:1814991", "China"));
+        put("Papua New Guinea", new Term("GEO:2088628", "Papua New Guinea"));
+        put("Vanuatu Islands", new Term("GEO:2134431", "Vanuatu"));
+        put("La Réunion", new Term("GEO:935317", "Réunion"));
+        put("Burkina Faso", new Term("GEO:2361809", "Burkina Faso"));
+        put("Philippines", new Term("GEO:1694008", "Philippines"));
+        put("Taiwan", new Term("GEO:1668284", "Taiwan"));
+        put("Solomon Islands", new Term("GEO:2103350", "Solomon Islands"));
+        put("Indonesia", new Term("GEO:1643084", "Indonesia"));
+        put("Uganda", new Term("GEO:226074", "Uganda"));
+        put("Mexico", new Term("GEO:3996063", "Mexico"));
+        put("French Guiana", new Term("GEO:3381670", "French Guiana"));
+        put("Brunei", new Term("GEO:1820814", "Brunei"));
+        put("Singapore", new Term("GEO:1880251", "Singapore"));
+        put("New Caledonia", new Term("GEO:2139685", "New Caledonia"));
+        put("Brazil", new Term("GEO:3469034", "Brazil"));
+        put("Panama", new Term("GEO:3703430", "Panama"));
+        put("Zimbabwe", new Term("GEO:878675", "Zimbabwe"));
+        put("Colombia", new Term("GEO:3686110", "Colombia"));
     }};
     private Map<String, LatLng> pointCache = new ConcurrentHashMap<String, LatLng>();
 
@@ -255,7 +287,6 @@ public class GeoNamesServiceImpl implements GeoNamesService {
         return id;
     }
 
-    @Override
     public LatLng findLatLng(Long id) throws IOException {
         LatLng point = null;
         String jsonString = HttpUtil.createHttpClient().execute(new HttpGet("http://api.geonames.org/getJSON?formatted=true&geonameId=" + id + "&username=globi&style=full"), new BasicResponseHandler());

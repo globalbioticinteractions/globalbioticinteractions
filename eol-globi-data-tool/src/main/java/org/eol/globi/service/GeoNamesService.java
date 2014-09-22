@@ -6,9 +6,8 @@ import java.io.IOException;
 
 public interface GeoNamesService {
 
-    boolean hasPositionForLocality(String spireLocality);
+    boolean hasPositionForLocality(String locality);
 
-    LatLng findPointForLocality(String spireLocality) throws IOException;
+    LatLng findPointForLocality(String locality) throws IOException;
 
-    LatLng findLatLng(Long id) throws IOException;
 }

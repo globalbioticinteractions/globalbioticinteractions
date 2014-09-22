@@ -19,19 +19,15 @@ public class StudyImporterForRaymondIT extends GraphDBTestCase {
         StudyImporterForRaymond importer = new StudyImporterForRaymond(new ParserFactoryImpl(), nodeFactory);
         importer.setGeoNamesService(new GeoNamesService() {
             @Override
-            public boolean hasPositionForLocality(String spireLocality) {
+            public boolean hasPositionForLocality(String locality) {
                 return true;
             }
 
             @Override
-            public LatLng findPointForLocality(String spireLocality) throws IOException {
+            public LatLng findPointForLocality(String locality) throws IOException {
                 return new LatLng(0, 0);
             }
 
-            @Override
-            public LatLng findLatLng(Long id) throws IOException {
-                return new LatLng(0, 0);
-            }
         });
         importer.importStudy();
 
