@@ -427,7 +427,9 @@ public class CypherQueryBuilder {
 
         query.append(" MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen<-[c:COLLECTED]-study")
                 .append(", sourceSpecimen-[interact]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon");
-        addLocationClausesIfNecessary(query, parameterMap);
+        if (RequestHelper.isSpatialSearch(parameterMap)) {
+            addLocationClausesIfNecessary(query, parameterMap);
+        }
 
         Map<String, String> cypherParams = addSourceClauseIfNecessary(query, parameterMap);
 
