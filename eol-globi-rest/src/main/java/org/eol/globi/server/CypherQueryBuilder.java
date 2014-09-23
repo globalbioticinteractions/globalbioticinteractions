@@ -395,7 +395,11 @@ public class CypherQueryBuilder {
 
 
     public static CypherQuery createPagedQuery(HttpServletRequest request, CypherQuery query) {
-        long offset = getValueOrDefault(request, "offset", 0L);
+        long defaultValue = 0L;
+        long offset = getValueOrDefault(request, "offset", defaultValue);
+        if (offset == defaultValue) {
+            offset = getValueOrDefault(request, "skip", defaultValue);
+        }
         long limit = getValueOrDefault(request, "limit", 1024L);
         return new CypherQuery(query.getQuery() + " SKIP " + offset + " LIMIT " + limit, query.getParams());
     }
