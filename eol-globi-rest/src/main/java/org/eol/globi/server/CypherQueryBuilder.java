@@ -114,15 +114,9 @@ public class CypherQueryBuilder {
     }
 
     private static void appendReturnClause(String predatorPrefix, String preyPrefix, StringBuilder returnClause, boolean spatialQuery) {
-        if (spatialQuery) {
-            returnClause.append("loc.").append(Location.LATITUDE).append("? as ").append(ResultFields.LATITUDE)
-                    .append(",loc.").append(Location.LONGITUDE).append("? as ").append(ResultFields.LONGITUDE)
-                    .append(",loc.").append(Location.ALTITUDE).append("? as ").append(ResultFields.ALTITUDE);
-        } else {
-            returnClause.append("null as ").append(ResultFields.LATITUDE)
-                    .append(", null as ").append(ResultFields.LONGITUDE)
-                    .append(", null as ").append(ResultFields.ALTITUDE);
-        }
+        returnClause.append("loc.").append(Location.LATITUDE).append("? as ").append(ResultFields.LATITUDE)
+                .append(",loc.").append(Location.LONGITUDE).append("? as ").append(ResultFields.LONGITUDE)
+                .append(",loc.").append(Location.ALTITUDE).append("? as ").append(ResultFields.ALTITUDE);
 
         returnClause.append(",study.").append(Study.TITLE).append(" as ").append(ResultFields.STUDY_TITLE)
                 .append(",collected_rel.dateInUnixEpoch? as ").append(ResultFields.COLLECTION_TIME_IN_UNIX_EPOCH)

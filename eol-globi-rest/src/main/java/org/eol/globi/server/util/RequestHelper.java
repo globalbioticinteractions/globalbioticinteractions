@@ -118,6 +118,8 @@ public class RequestHelper {
     public static void addSpatialClause(List<LatLng> points, StringBuilder query) {
         if (isPointOrBox(points)) {
             query.append(", sourceSpecimen-[:COLLECTED_AT]->loc ");
+        } else {
+            query.append(", sourceSpecimen-[?:COLLECTED_AT]->loc ");
         }
 
         if (isPointOrBox(points)) {
