@@ -1,8 +1,6 @@
 package org.eol.globi.data;
 
 import com.Ostermiller.util.LabeledCSVParser;
-import org.apache.commons.collections.SetUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -57,7 +55,8 @@ public class StudyImporterForHurlbert extends BaseStudyImporter {
                 }
 
                 String predatorTaxonName = StringUtils.trim(parser.getValueByLabel("Scientific_Name"));
-                if (StringUtils.isNotBlank(predatorTaxonName) || StringUtils.isNotBlank(preyTaxonName)) {
+                if (StringUtils.isNotBlank(StringUtils.trim(predatorTaxonName))
+                        || StringUtils.isNotBlank(StringUtils.trim(preyTaxonName))) {
                     importInteraction(regions, locales, habitats, parser, study, preyTaxonName, predatorTaxonName);
                 }
             }
