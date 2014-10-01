@@ -10,7 +10,7 @@ We're happy to be using http://travis-cli.org to run our automated tests. Our cu
 
 [![Build Status](https://travis-ci.org/jhpoelen/eol-globi-data.png)](https://travis-ci.org/jhpoelen/eol-globi-data)
 
-## Citing GloBi
+## Citing GloBI
 
 Poelen, J. H., Simons, J. D., & Mungall, C. J. (2014). **Global Biotic Interactions: An open infrastructure to share and analyze species-interaction datasets**. *Ecological Informatics*, 24, 148–159. [doi:10.1016/j.ecoinf.2014.08.005](http://dx.doi.org/10.1016/j.ecoinf.2014.08.005)
 
