@@ -56,7 +56,7 @@ public class StudyImporterForHurlbert extends BaseStudyImporter {
 
                 String predatorTaxonName = StringUtils.trim(parser.getValueByLabel("Scientific_Name"));
                 if (StringUtils.isNotBlank(StringUtils.trim(predatorTaxonName))
-                        || StringUtils.isNotBlank(StringUtils.trim(preyTaxonName))) {
+                        && StringUtils.isNotBlank(StringUtils.trim(preyTaxonName))) {
                     importInteraction(regions, locales, habitats, parser, study, preyTaxonName, predatorTaxonName);
                 }
             }
