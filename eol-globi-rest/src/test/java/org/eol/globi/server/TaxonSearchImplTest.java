@@ -125,7 +125,7 @@ public class TaxonSearchImplTest {
         assertThat(columns.get(3).getTextValue(), is("externalId"));
         JsonNode info = resp.get("data").get(0);
         assertThat(info.get(0).getTextValue(), is("Ariopsis felis"));
-        assertThat(info.get(1).getTextValue(), StringContains.containsString("hardhead catfish"));
+        assertThat(info.get(1).getTextValue(), StringContains.containsString("catfish"));
         assertThat(info.get(2).getTextValue(), StringContains.containsString("Actinopterygii"));
         assertThat(info.get(3).getTextValue(), StringContains.containsString(":"));
     }
@@ -134,7 +134,7 @@ public class TaxonSearchImplTest {
     public void findTaxonAriopsisFelis() throws IOException {
         Map<String, String> props = new TaxonSearchImpl().findTaxon("Ariopsis felis", null);
         assertThat(props.get("name"), is("Ariopsis felis"));
-        assertThat(props.get("commonNames"), StringContains.containsString("hardhead catfish"));
+        assertThat(props.get("commonNames"), StringContains.containsString("catfish"));
         assertThat(props.get("path"), StringContains.containsString("Actinopterygii"));
         assertThat(props.get("externalId"), StringContains.containsString(":"));
     }
@@ -143,7 +143,7 @@ public class TaxonSearchImplTest {
     public void findTaxonByExternalId() throws IOException {
         Map<String, String> props = new TaxonSearchImpl().findTaxon("Ariopsis felis", null);
         assertThat(props.get("name"), is("Ariopsis felis"));
-        assertThat(props.get("commonNames"), StringContains.containsString("hardhead catfish"));
+        assertThat(props.get("commonNames"), StringContains.containsString("catfish"));
         assertThat(props.get("path"), StringContains.containsString("Actinopterygii"));
         assertThat(props.get("externalId"), StringContains.containsString(":"));
     }
