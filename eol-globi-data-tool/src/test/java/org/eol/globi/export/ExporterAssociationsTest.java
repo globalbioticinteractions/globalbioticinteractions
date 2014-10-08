@@ -26,7 +26,7 @@ public class ExporterAssociationsTest extends GraphDBTestCase {
         createTestData(null);
 
         String expected = "\nglobi:assoc:5,globi:occur:source:3,http://eol.org/schema/terms/eats,globi:occur:target:6,,,,,data source description,,,globi:ref:1" +
-                "\nglobi:assoc:6,globi:occur:source:3,http://eol.org/schema/terms/eats,globi:occur:target:6,,,,,data source description,,,globi:ref:1";
+                "\nglobi:assoc:7,globi:occur:source:3,http://eol.org/schema/terms/eats,globi:occur:target:6,,,,,data source description,,,globi:ref:1";
 
 
         Study myStudy1 = nodeFactory.findStudy("myStudy");
