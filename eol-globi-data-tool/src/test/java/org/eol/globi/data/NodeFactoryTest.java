@@ -6,6 +6,7 @@ import org.eol.globi.data.taxon.CorrectionService;
 import org.eol.globi.data.taxon.TaxonIndex;
 import org.eol.globi.data.taxon.TaxonIndexImpl;
 import org.eol.globi.domain.Environment;
+import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.RelTypes;
@@ -32,6 +33,16 @@ import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
 
 public class NodeFactoryTest extends GraphDBTestCase {
+
+    @Test
+    public void createInteraction() throws NodeFactoryException {
+        Specimen specimen = nodeFactory.createSpecimen("Donalda duckus");
+        Specimen specimen1 = nodeFactory.createSpecimen("Mickeya mouseus");
+        specimen.interactsWith(specimen1, InteractType.SYMBIONT_OF);
+        assertThat(specimen.getUnderlyingNode().getRelationships(Direction.OUTGOING, InteractType.SYMBIONT_OF).iterator().hasNext(), is(true));
+        assertThat(specimen1.getUnderlyingNode().getRelationships(Direction.OUTGOING, InteractType.SYMBIONT_OF).iterator().hasNext(), is(true));
+    }
+
 
     @Test
     public void createFindLocation() throws NodeFactoryException {
@@ -131,7 +142,8 @@ public class NodeFactoryTest extends GraphDBTestCase {
 
     }
 
-    @Test public void specimenWithNoName() throws NodeFactoryException {
+    @Test
+    public void specimenWithNoName() throws NodeFactoryException {
         Specimen specimen = nodeFactory.createSpecimen(null, "bla:123");
 
         Relationship next = specimen.getClassifications().iterator().next();

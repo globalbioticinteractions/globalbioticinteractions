@@ -1,5 +1,6 @@
 package org.eol.globi.domain;
 
+import org.eol.globi.util.InteractUtil;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
@@ -51,7 +52,7 @@ public class Specimen extends NodeBacked {
     }
 
     public void ate(Specimen specimen) {
-        createRelationshipTo(specimen, InteractType.ATE);
+        interactsWith(specimen, InteractType.ATE);
     }
 
     public void caughtIn(Location sampleLocation) {
@@ -97,8 +98,9 @@ public class Specimen extends NodeBacked {
     }
 
 
-    public void interactsWith(Specimen recipientSpecimen, RelType relType) {
+    public void interactsWith(Specimen recipientSpecimen, InteractType relType) {
         createRelationshipTo(recipientSpecimen, relType);
+        recipientSpecimen.createRelationshipTo(this, InteractUtil.inverseOf(relType));
     }
 
     public String getOriginalTaxonDescription() {

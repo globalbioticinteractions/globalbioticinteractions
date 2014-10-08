@@ -30,14 +30,18 @@ public class NodeBacked {
                 underlyingNode.equals(((NodeBacked) o).getUnderlyingNode());
     }
 
-    public Relationship createRelationshipTo(NodeBacked nodeBacked, RelType relType) {
+    public Relationship createRelationshipTo(NodeBacked endNode, RelType relType) {
         Transaction tx = getUnderlyingNode().getGraphDatabase().beginTx();
         Relationship rel = null;
         try {
-            if (!this.equals(nodeBacked)) {
-                rel = getFirstIncomingRelationshipOfType(nodeBacked, relType);
-                if (rel == null) {
-                    rel = getUnderlyingNode().createRelationshipTo(nodeBacked.getUnderlyingNode(), relType);
+            if (!this.equals(endNode)) {
+                Iterable<Relationship> relationships = getUnderlyingNode().getRelationships(Direction.OUTGOING, relType);
+                boolean hasRelationship = false;
+                for (Relationship relationship : relationships) {
+                    hasRelationship = hasRelationship || endNode.equals(relationship.getEndNode());
+                }
+                if (!hasRelationship) {
+                    rel = getUnderlyingNode().createRelationshipTo(endNode.getUnderlyingNode(), relType);
                 }
                 tx.success();
             }

@@ -123,7 +123,7 @@ public class StudyImporterForBioInfoTest extends GraphDBTestCase {
     @Test(expected = StudyImporterException.class)
     public void relationsParsingMissingTaxon() throws IOException, NodeFactoryException, StudyImporterException {
         Map<Long, String> taxaMap = buildTaxaMap();
-        Map<Long, RelType> relationsTypeMap = buildRelationsTypeMap();
+        Map<Long, InteractType> relationsTypeMap = buildRelationsTypeMap();
         assertRelations(RELATIONS_STRING, taxaMap, relationsTypeMap);
     }
 
@@ -143,11 +143,11 @@ public class StudyImporterForBioInfoTest extends GraphDBTestCase {
         taxaMap.put(32122L, "some scientific name");
         taxaMap.put(465L, "some scientific name");
         taxaMap.put(464L, "some scientific name");
-        Map<Long, RelType> relationsTypeMap = buildRelationsTypeMap();
+        Map<Long, InteractType> relationsTypeMap = buildRelationsTypeMap();
         assertRelations(RELATIONS_STRING, taxaMap, relationsTypeMap);
     }
 
-    private void assertRelations(String relationsString, Map<Long, String> taxaMap, Map<Long, RelType> relationsTypeMap) throws IOException, StudyImporterException, NodeFactoryException {
+    private void assertRelations(String relationsString, Map<Long, String> taxaMap, Map<Long, InteractType> relationsTypeMap) throws IOException, StudyImporterException, NodeFactoryException {
 
         assertThat(nodeFactory.findTaxonByName("Homo sapiens"), is(nullValue()));
 
@@ -178,7 +178,7 @@ public class StudyImporterForBioInfoTest extends GraphDBTestCase {
 
     @Test
     public void trophicRelationsParser() throws IOException, StudyImporterException {
-        Map<Long, RelType> relationsTypeMap = buildRelationsTypeMap();
+        Map<Long, InteractType> relationsTypeMap = buildRelationsTypeMap();
 
         assertThat(relationsTypeMap.get(43899L), is((RelType) InteractType.PREYS_UPON));
         assertThat(relationsTypeMap.get(43900L), is((RelType) InteractType.PARASITE_OF));
@@ -186,7 +186,7 @@ public class StudyImporterForBioInfoTest extends GraphDBTestCase {
         assertThat(relationsTypeMap.get(43902L), is((RelType) InteractType.INTERACTS_WITH));
     }
 
-    private Map<Long, RelType> buildRelationsTypeMap() throws IOException, StudyImporterException {
+    private Map<Long, InteractType> buildRelationsTypeMap() throws IOException, StudyImporterException {
         String trophicRelations = "TrophicRel_id\tEnergyDonor\tEnergyRecipient\tTitle80\tNotes\tisFoodWeb\tPrimarySort8\tSecondarySort8\tisLiving\tisDead\tisMycorrhizal\t\n" +
                 "43899\t\"is predated by\"\t\"is predator of\"\t\"Animal / predator\"\t\"Kills and feeds on this type of animal\"\tTrue\t\"A Anim\"\t\"A Pred\"\tTrue\tFalse\tFalse\n" +
                 "43900\t\"is ectoparasitised by\"\t\"ectoparasitises\"\t\"Animal / parasite / ectoparasite\"\t\"derives its nutrition from a single living individual of another species with which it is closely associated but remains external to\"\tTrue\t\"A Anim\"\t\"EEC Par\"\tTrueFalse\tFalse\n" +

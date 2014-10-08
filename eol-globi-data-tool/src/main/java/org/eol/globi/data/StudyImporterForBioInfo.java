@@ -3,7 +3,6 @@ package org.eol.globi.data;
 import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.domain.InteractType;
-import org.eol.globi.domain.RelType;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.TaxonomyProvider;
@@ -56,10 +55,10 @@ public class StudyImporterForBioInfo extends BaseStudyImporter implements StudyI
         return study;
     }
 
-    private Map<Long, RelType> createRelationTypes(Study study) throws StudyImporterException {
+    private Map<Long, InteractType> createRelationTypes(Study study) throws StudyImporterException {
         getLogger().info(study, "relationTypes being created...");
 
-        Map<Long, RelType> relationsTypeMap;
+        Map<Long, InteractType> relationsTypeMap;
         try {
             LabeledCSVParser relationTypesParser = parserFactory.createParser(RELATION_TYPE_DATA_FILE, CharsetConstant.UTF8);
             relationTypesParser.changeDelimiter('\t');
@@ -106,9 +105,9 @@ public class StudyImporterForBioInfo extends BaseStudyImporter implements StudyI
         return taxaMap;
     }
 
-    protected Map<Long, RelType> createRelationsTypeMap(LabeledCSVParser labeledCSVParser) throws StudyImporterException {
+    protected Map<Long, InteractType> createRelationsTypeMap(LabeledCSVParser labeledCSVParser) throws StudyImporterException {
         // Attempt to map Malcolms interactions to http://vocabularies.gbif.org/vocabularies/Interaction
-        Map<String, RelType> interactionMapping = new HashMap<String, RelType>();
+        Map<String, InteractType> interactionMapping = new HashMap<String, InteractType>();
         interactionMapping.put("ectoparasitises", InteractType.PARASITE_OF);
         interactionMapping.put("endoparasitises", InteractType.PARASITE_OF);
         interactionMapping.put("parasitises", InteractType.PARASITE_OF);
@@ -122,12 +121,12 @@ public class StudyImporterForBioInfo extends BaseStudyImporter implements StudyI
         interactionMapping.put("is predator of", InteractType.PREYS_UPON);
         interactionMapping.put("is ectomycorrhizal with", InteractType.INTERACTS_WITH);
 
-        Map<Long, RelType> relationsTypeMap = new HashMap<Long, RelType>();
+        Map<Long, InteractType> relationsTypeMap = new HashMap<Long, InteractType>();
         try {
             while (labeledCSVParser.getLine() != null) {
                 Long trophicRelationId = labelAsLong(labeledCSVParser, "TrophicRel_id");
                 String descriptionEnergyRecipient = labeledCSVParser.getValueByLabel("EnergyRecipient");
-                RelType relType = interactionMapping.get(descriptionEnergyRecipient);
+                InteractType relType = interactionMapping.get(descriptionEnergyRecipient);
                 if (trophicRelationId != null) {
                     relType = relType == null ? InteractType.INTERACTS_WITH : relType;
                     relationsTypeMap.put(trophicRelationId, relType);
@@ -139,7 +138,7 @@ public class StudyImporterForBioInfo extends BaseStudyImporter implements StudyI
         return relationsTypeMap;
     }
 
-    protected Study createRelations(Map<Long, String> taxaMap, Map<Long, RelType> relationsTypeMap, LabeledCSVParser parser, Study study) throws StudyImporterException {
+    protected Study createRelations(Map<Long, String> taxaMap, Map<Long, InteractType> relationsTypeMap, LabeledCSVParser parser, Study study) throws StudyImporterException {
         getLogger().info(study, "relations being created...");
         try {
             long count = 1;

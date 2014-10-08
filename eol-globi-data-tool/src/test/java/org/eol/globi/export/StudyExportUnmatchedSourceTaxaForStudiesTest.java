@@ -62,7 +62,7 @@ public class StudyExportUnmatchedSourceTaxaForStudiesTest extends GraphDBTestCas
         addCanisLupus(predatorSpecimen);
         addCanisLupus(predatorSpecimen);
         Specimen preySpecimen = factory.createSpecimen("Caniz");
-        predatorSpecimen.createRelationshipTo(preySpecimen, InteractType.ATE);
+        predatorSpecimen.ate(preySpecimen);
         study.collected(predatorSpecimen);
 
         Specimen predatorSpecimen23 = factory.createSpecimen("Homo sapiens2");
@@ -119,7 +119,7 @@ public class StudyExportUnmatchedSourceTaxaForStudiesTest extends GraphDBTestCas
         Specimen predatorSpecimen = factory.createSpecimen("Homo sapienz");
         assertNotNull(factory.getOrCreateTaxon("Homo sapienz"));
         Specimen preySpecimen = factory.createSpecimen("Caniz");
-        predatorSpecimen.createRelationshipTo(preySpecimen, InteractType.ATE);
+        predatorSpecimen.interactsWith(preySpecimen, InteractType.ATE);
         study.collected(predatorSpecimen);
 
         predatorSpecimen = factory.createSpecimen("Homo sapiens");
@@ -134,7 +134,7 @@ public class StudyExportUnmatchedSourceTaxaForStudiesTest extends GraphDBTestCas
         }
 
         preySpecimen = factory.createSpecimen("Canis");
-        predatorSpecimen.createRelationshipTo(preySpecimen, InteractType.ATE);
+        predatorSpecimen.ate(preySpecimen);
         study.collected(predatorSpecimen);
 
         StringWriter writer = new StringWriter();
@@ -162,7 +162,7 @@ public class StudyExportUnmatchedSourceTaxaForStudiesTest extends GraphDBTestCas
 
     private void addCanisLupus(Specimen predatorSpecimen) throws NodeFactoryException {
         Specimen preySpecimen = nodeFactory.createSpecimen("Canis lupus");
-        predatorSpecimen.createRelationshipTo(preySpecimen, InteractType.ATE);
+        predatorSpecimen.interactsWith(preySpecimen, InteractType.ATE);
     }
 
 }
