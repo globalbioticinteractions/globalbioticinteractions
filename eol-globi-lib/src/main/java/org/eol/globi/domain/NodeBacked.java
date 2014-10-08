@@ -34,31 +34,28 @@ public class NodeBacked {
         Transaction tx = getUnderlyingNode().getGraphDatabase().beginTx();
         Relationship rel = null;
         try {
-            if (!this.equals(endNode)) {
-                Iterable<Relationship> relationships = getUnderlyingNode().getRelationships(Direction.OUTGOING, relType);
-                boolean hasRelationship = false;
-                for (Relationship relationship : relationships) {
-                    hasRelationship = hasRelationship || endNode.equals(relationship.getEndNode());
-                }
-                if (!hasRelationship) {
-                    rel = getUnderlyingNode().createRelationshipTo(endNode.getUnderlyingNode(), relType);
-                }
-                tx.success();
-            }
+            rel = createRelationshipToNoTx(endNode, relType);
+            tx.success();
         } finally {
             tx.finish();
         }
         return rel;
     }
 
-    private Relationship getFirstIncomingRelationshipOfType(NodeBacked otherTaxon, RelType relType) {
-        Node otherNode = otherTaxon.getUnderlyingNode();
-        for (Relationship rel : getUnderlyingNode().getRelationships(Direction.INCOMING, relType)) {
-            if (rel.getOtherNode(getUnderlyingNode()).equals(otherNode)) {
-                return rel;
+    protected Relationship createRelationshipToNoTx(NodeBacked endNode, RelType relType) {
+        Relationship rel = null;
+        if (!this.equals(endNode)) {
+            Iterable<Relationship> relationships = getUnderlyingNode().getRelationships(Direction.OUTGOING, relType);
+            boolean hasRelationship = false;
+            while (relationships.iterator().hasNext() && !hasRelationship) {
+                Relationship relationship = relationships.iterator().next();
+                hasRelationship = endNode.equals(relationship.getEndNode());
+            }
+            if (!hasRelationship) {
+                rel = getUnderlyingNode().createRelationshipTo(endNode.getUnderlyingNode(), relType);
             }
         }
-        return null;
+        return rel;
     }
 
     public long getNodeID() {

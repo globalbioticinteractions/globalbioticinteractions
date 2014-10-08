@@ -98,15 +98,21 @@ public class Specimen extends NodeBacked {
     }
 
     public void interactsWith(Specimen recipientSpecimen, InteractType relType) {
-        createInteraction(this, recipientSpecimen, relType);
-        Relationship classifiedAs = recipientSpecimen.getUnderlyingNode().getSingleRelationship(RelTypes.CLASSIFIED_AS, Direction.OUTGOING);
-        Relationship classifiedAs1 = this.getUnderlyingNode().getSingleRelationship(RelTypes.CLASSIFIED_AS, Direction.OUTGOING);
-        createInteraction(new TaxonNode(classifiedAs1.getEndNode()), new TaxonNode(classifiedAs.getEndNode()), relType);
+        Transaction tx = getUnderlyingNode().getGraphDatabase().beginTx();
+        try {
+            createInteraction(this, recipientSpecimen, relType);
+            Relationship classifiedAs = recipientSpecimen.getUnderlyingNode().getSingleRelationship(RelTypes.CLASSIFIED_AS, Direction.OUTGOING);
+            Relationship classifiedAs1 = this.getUnderlyingNode().getSingleRelationship(RelTypes.CLASSIFIED_AS, Direction.OUTGOING);
+            createInteraction(new TaxonNode(classifiedAs1.getEndNode()), new TaxonNode(classifiedAs.getEndNode()), relType);
+            tx.success();
+        } finally {
+            tx.finish();
+        }
     }
 
     protected static void createInteraction(NodeBacked donorSpecimen, NodeBacked recipientSpecimen, InteractType relType) {
-        donorSpecimen.createRelationshipTo(recipientSpecimen, relType);
-        recipientSpecimen.createRelationshipTo(donorSpecimen, InteractUtil.inverseOf(relType));
+        donorSpecimen.createRelationshipToNoTx(recipientSpecimen, relType);
+        recipientSpecimen.createRelationshipToNoTx(donorSpecimen, InteractUtil.inverseOf(relType));
     }
 
     public String getOriginalTaxonDescription() {
