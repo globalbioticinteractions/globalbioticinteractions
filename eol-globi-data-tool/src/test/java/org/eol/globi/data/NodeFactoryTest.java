@@ -41,6 +41,16 @@ public class NodeFactoryTest extends GraphDBTestCase {
         specimen.interactsWith(specimen1, InteractType.SYMBIONT_OF);
         assertThat(specimen.getUnderlyingNode().getRelationships(Direction.OUTGOING, InteractType.SYMBIONT_OF).iterator().hasNext(), is(true));
         assertThat(specimen1.getUnderlyingNode().getRelationships(Direction.OUTGOING, InteractType.SYMBIONT_OF).iterator().hasNext(), is(true));
+
+        TaxonNode taxon = new TaxonNode(specimen.getClassifications().iterator().next().getEndNode());
+        TaxonNode taxon1 = new TaxonNode(specimen1.getClassifications().iterator().next().getEndNode());
+        Relationship taxonRel = taxon.getUnderlyingNode().getSingleRelationship(InteractType.SYMBIONT_OF, Direction.OUTGOING);
+        assertThat(taxonRel, is(notNullValue()));
+        Relationship taxon1Rel = taxon1.getUnderlyingNode().getSingleRelationship(InteractType.SYMBIONT_OF, Direction.OUTGOING);
+        assertThat(taxonRel.getEndNode(), is(taxon1.getUnderlyingNode()));
+        assertThat(taxon1Rel, is(notNullValue()));
+        assertThat(taxon1Rel.getEndNode(), is(taxon.getUnderlyingNode()));
+
     }
 
 

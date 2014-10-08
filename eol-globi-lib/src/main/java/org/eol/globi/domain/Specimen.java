@@ -97,10 +97,16 @@ public class Specimen extends NodeBacked {
         setPropertyWithTx(STOMACH_VOLUME_ML, volumeInMilliLiter);
     }
 
-
     public void interactsWith(Specimen recipientSpecimen, InteractType relType) {
-        createRelationshipTo(recipientSpecimen, relType);
-        recipientSpecimen.createRelationshipTo(this, InteractUtil.inverseOf(relType));
+        createInteraction(this, recipientSpecimen, relType);
+        Relationship classifiedAs = recipientSpecimen.getUnderlyingNode().getSingleRelationship(RelTypes.CLASSIFIED_AS, Direction.OUTGOING);
+        Relationship classifiedAs1 = this.getUnderlyingNode().getSingleRelationship(RelTypes.CLASSIFIED_AS, Direction.OUTGOING);
+        createInteraction(new TaxonNode(classifiedAs1.getEndNode()), new TaxonNode(classifiedAs.getEndNode()), relType);
+    }
+
+    protected static void createInteraction(NodeBacked donorSpecimen, NodeBacked recipientSpecimen, InteractType relType) {
+        donorSpecimen.createRelationshipTo(recipientSpecimen, relType);
+        recipientSpecimen.createRelationshipTo(donorSpecimen, InteractUtil.inverseOf(relType));
     }
 
     public String getOriginalTaxonDescription() {
