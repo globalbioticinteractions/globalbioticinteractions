@@ -25,6 +25,8 @@ import java.util.Map;
 
 public class EOLService extends BaseHttpClientService implements PropertyEnricher {
 
+    private PropertyEnrichmentFilter filter = new PropertyEnrichmentFilterExternalId();
+
     @Override
     public Map<String, String> enrich(final Map<String, String> properties) throws PropertyEnricherException {
         Map<String, String> enrichedProperties = new HashMap<String, String>(properties);
@@ -34,8 +36,7 @@ public class EOLService extends BaseHttpClientService implements PropertyEnriche
             if (id != null) {
                 addExternalId(enrichedProperties, id);
                 addTaxonInfo(id, enrichedProperties);
-                String path = enrichedProperties.get(PropertyAndValueDictionary.PATH);
-                if (StringUtils.isBlank(path)) {
+                if (filter.shouldReject(enrichedProperties)) {
                     enrichedProperties.put(PropertyAndValueDictionary.NAME, null);
                     enrichedProperties.put(PropertyAndValueDictionary.COMMON_NAMES, null);
                     enrichedProperties.put(PropertyAndValueDictionary.EXTERNAL_ID, null);
@@ -278,5 +279,9 @@ public class EOLService extends BaseHttpClientService implements PropertyEnriche
             }
         }
         return smallestPageId;
+    }
+
+    public void setFilter(PropertyEnrichmentFilter filter) {
+        this.filter = filter;
     }
 }
