@@ -16,7 +16,7 @@ import java.util.Map;
 
 public class PropertyEnrichmentFilterExternalId extends BaseHttpClientService implements PropertyEnrichmentFilter {
     private static final Log LOG = LogFactory.getLog(PropertyEnrichmentFilter.class);
-    public static final String EOL_NON_TAXON_PAGES = "http://eol.org/api/collections/1.0/6991.json";
+    public static final String EOL_NON_TAXON_PAGES = "http://eol.org/api/collections/1.0/6991.json?per_page=500";
 
     private final PropertyEnrichmentFilterWithPathOnly propertyEnrichmentFilterWithPathOnly = new PropertyEnrichmentFilterWithPathOnly();
 
