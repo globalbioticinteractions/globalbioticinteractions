@@ -11,9 +11,9 @@ public class PropertyEnricherFactory {
                 add(new EnvoService());
                 add(new FunctionalGroupService());
                 add(new EOLService());
-                //add(new WoRMSService());
+                add(new WoRMSService());
                 add(new GulfBaseService());
-                //add(new AtlasOfLivingAustraliaService());
+                add(new AtlasOfLivingAustraliaService());
             }
         };
         taxonEnricher.setServices(services);
