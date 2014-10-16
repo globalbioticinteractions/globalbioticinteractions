@@ -34,6 +34,7 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
 
     private static final Map<String, InteractType> TYPE_MAPPING = new HashMap<String, InteractType>() {{
         put("Eating", InteractType.ATE);
+        put("Feeding on:", InteractType.ATE);
         put("Mariposas que alimenta", InteractType.ATE);
         put("With the prey", InteractType.ATE);
         put("Alimentándose", InteractType.ATE);
