@@ -23,7 +23,7 @@ public class PingControllerIT extends ITBase {
 
     @Test
     public void head() throws IOException {
-        HttpUtil.createHttpClient().execute(new HttpHead("http://localhost:8080"));
+        HttpUtil.createHttpClient().execute(new HttpHead("http://localhost:8080/taxon/Homo%20sapiens/preysOn"));
     }
 
 }
