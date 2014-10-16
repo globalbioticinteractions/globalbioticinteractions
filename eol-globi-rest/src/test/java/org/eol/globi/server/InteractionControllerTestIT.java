@@ -29,14 +29,12 @@ public class InteractionControllerTestIT {
         assertThat(list, containsString("Homo sapiens"));
     }
 
-    @Ignore("enable after rebuilding path index")
     @Test
     public void findPreyExternalId() throws IOException, URISyntaxException {
         String list = new InteractionController().findInteractions(null, "OTT:770315", CypherQueryBuilder.INTERACTION_PREYS_ON);
         assertThat(list, containsString("Homo sapiens"));
     }
 
-    @Ignore(value = "requires specific datasets on a remote server")
     @Test
     public void findThunnusPrey() throws IOException, URISyntaxException {
         // see https://github.com/jhpoelen/eol-globi-data/issues/11
