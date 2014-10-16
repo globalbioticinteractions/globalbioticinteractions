@@ -398,7 +398,6 @@ Periclemenes iridescens,Periclimenes iridescens,Simons 1997,Found at:  http://ww
 Petrolithes armatus,Petrolisthes armatus,Wrast 2008,Found at:  http://www.marinespecies.org/aphia.php?p=taxdetails&id=396707
 Pteromalitidae (Hymenoptera),Pteromalidae,Akin et al 2006,Found at:  http://eol.org/pages/706/overview
 Pharangeal tooth,Teleostei,Wrast 2008,
-Tetraleberidini,Tetraleberidini,Simons 1997,Found at:  http://gni.globalnames.org/name_strings?search_term=+Tetraleberidini&commit=Search
 Thais hemastoma,Thais haemastoma,Torruco and Gonzalez 1994,Found at:  http://www.itis.gov/servlet/SingleRpt/SingleRpt?search_topic=TSN&search_value=73312
 Thalassiotrix sp.,Thalassiothrix,Vega-Cendejas 1998,Found at:  http://www.marinespecies.org/aphia.php?p=taxdetails&id=
 Other Thrips,Thysanoptera,Akin et al 2006,Found at:  http://eol.org/pages/1095/names
@@ -1026,11 +1025,135 @@ Oligocheate,Oligochaeta,,suspected typo in Hechinger et al 2011; author has been
 Cryptorynchus lapathi,Cryptorhynchus lapathi,,suspected typo in Hurlbert Avian Diet Database
 Secernentia nematodes,Secernentae,,suspected usage of combination of typo and common name in SPIRE resource
 Bossiella orbigiana,Bossiella orbigniana,http://eol.org/pages/922133/overview,suspected typo in Byrnes et al. 2011
-Epishura lacustris,Epischura lacustris,http://eol.org/pages/340949,suspected typo in SPIRE resource
 Potamya,Potamyia,http://eol.org/pages/72788,suspected typo in SPIRE resource
-Kelicottia longispina,Kellicottia longispina,http://eol.org/pages/1062533,suspected typo in SPIRE resource
-Kelicottia bostoniensis,Kellicottia bostoniensis,http://eol.org/pages/1062532,suspected typo in SPIRE resource
-Colletheca mutabilis,Collotheca mutabilis,http://eol.org/pages/1062104,suspected typo in SPIRE resource
-Chaoborys punctipennis,Chaoborus punctipennis,http://eol.org/pages/740825,suspected typo
-Phoxinys neogaeus,Phoxinus neogaeus,http://eol.org/pages/208318,suspected typo
+Kelicottia longispina,Kellicottia longispina,http://eol.org/pages/1062533,suspected typo in SPIRE resource;confirmed by Brian Hayden
+Kelicottia bostoniensis,Kellicottia bostoniensis,http://eol.org/pages/1062532,suspected typo in SPIRE resource;confirmed by Brian Hayden
+Colletheca mutabilis,Collotheca mutabilis,http://eol.org/pages/1062104,suspected typo in SPIRE resource;confirmed by Brian Hayden
+Chaoborys punctipennis,Chaoborus punctipennis,http://eol.org/pages/740825,suspected typo;confirmed by Brian Hayden
+Phoxinys neogaeus,Phoxinus neogaeus,http://eol.org/pages/208318,suspected typo;confirmed by Brian Hayden
 Micropogonius undulatus,Micropogonias undulatus,http://eol.org/pages/994841,suspected typo
+Macrozooplankton,Crustacea,,mapping provided by Brian Hayden
+macrozooplankton,Crustacea,,mapping provided by Brian Hayden
+mesozooplankton,Crustacea,,mapping provided by Brian Hayden
+Mesozooplankton,Crustacea,,mapping provided by Brian Hayden
+Paralepidae,Chalcidoidea,,mapping provided by Brian Hayden
+Fecal remains,Detritus,,mapping provided by Brian Hayden
+Fish-unidentified,Actinopterygii,,mapping provided by Brian Hayden
+macrobenthos,Detritus,,mapping provided by Brian Hayden
+Enchinometra lucunter,Echinoidea,,mapping provided by Brian Hayden
+benthos,Detritus,,mapping provided by Brian Hayden
+organic stuff,Detritus,,mapping provided by Brian Hayden
+decomposers/microfauna,Protistae,,mapping provided by Brian Hayden
+herbivorous plankton,Crustacea,,mapping provided by Brian Hayden
+producers,Detritus,,mapping provided by Brian Hayden
+micro-benthos and meio-benthos,Detritus,,mapping provided by Brian Hayden
+Epishura lacustris,Epischura lacustris,http://eol.org/pages/340949,mapping provided by Brian Hayden
+macrocrustacea,Crustacea,,mapping provided by Brian Hayden
+microzooplankton,Crustacea,,mapping provided by Brian Hayden
+Trisopterus-sp,Trisopterus,,remove non standard -sp notation
+Monogonanta,Monogononta,,mapping provided by Brian Hayden
+Eoparagyractis,Crambidae,,http://www.inaturalist.org/taxa/317682-Eoparargyractis
+Albabesmyia,Ablabesmyia,,mapping provided by Brian Hayden
+Macropelopis,Macropalpis,,mapping provided by Brian Hayden
+Endochrionomus,Chironomidae,,mapping provided by Brian Hayden
+Cyclopoda,Cyclopoida,,mapping provided by Brian Hayden
+emerging aquatic invertebrates,Insecta,,mapping provided by Brian Hayden
+Terrestrial invertebrates,Insecta,,mapping provided by Brian Hayden
+Aelosoma,Aeolosoma,,mapping provided by Brian Hayden
+Psilachorema bidens,Chironomidae,,mapping provided by Brian Hayden
+Maoridiamesea,Chironomidae,,mapping provided by Brian Hayden
+Baraeoptera roria,Balaeoptera roria,,mapping provided by Brian Hayden
+Polypedellum,Polypedilum,,mapping provided by Brian Hayden
+Amelotopsis perscitus,Ephemeroptera,,mapping provided by Brian Hayden
+Terrestial invertebrates,Insecta,,mapping provided by Brian Hayden
+Orthoclad Blue Black,Chironomidae,,mapping provided by Brian Hayden
+Terrestrial invertebrate,Insecta,,mapping provided by Brian Hayden
+Diamesid Brown Orange,Chironomidae,,mapping provided by Brian Hayden
+Diamesid Blond,Chironomidae,,mapping provided by Brian Hayden
+Fish-Larvae,Actinopterygii,,mapping provided by Brian Hayden
+Oxyrhyncha,Crustacea,,mapping provided by Brian Hayden
+Tricoptera,Trichoptera,,mapping provided by Brian Hayden
+Dipteran (not Chironomidae),Diptera,,mapping provided by Brian Hayden
+Filamentous algae,Algae,,mapping provided by Brian Hayden
+Small terrestrial inverts,Insecta,,mapping provided by Brian Hayden
+Aquatic macrophytes,Plantae,,mapping provided by Brian Hayden
+Large terrestrial inverts,Insecta,,mapping provided by Brian Hayden
+Terrestrial vegetation,Plantae,,mapping provided by Brian Hayden
+Fruit,Plantae,,mapping provided by Brian Hayden
+Collembolla,Collembola,,mapping provided by Brian Hayden
+Unicellular green algae,Algae,,mapping provided by Brian Hayden
+Undefined zooplankton,Crustacea,,mapping provided by Brian Hayden
+Testate amoeba,Protistae,,mapping provided by Brian Hayden
+Pelegobia longicirrata,Pelagobia longicirrata,,mapping provided by Brian Hayden
+Crinoida,Crinoidea,,mapping provided by Brian Hayden
+Oncea curvata,Oncaea curvata,,mapping provided by Brian Hayden
+Vampryoteuthis,Cephalopoda,,mapping provided by Brian Hayden
+Phytodetritus,Detritus,,mapping provided by Brian Hayden
+Eophiliantidae,Amphipoda,,mapping provided by Brian Hayden
+macrophytes,Plantae,,mapping provided by Brian Hayden
+Matter,Detritus,,mapping provided by Brian Hayden
+Entomostraca,Crustacea,,mapping provided by Brian Hayden
+Chimarrha marginata,Trichoptera,,mapping provided by Brian Hayden
+Sabellid Worm,Polychaeta,,mapping provided by Brian Hayden
+Amphipod tube mat,Amphipoda,,mapping provided by Brian Hayden
+Cottid spp.,Cottidae,,mapping provided by Brian Hayden
+Encrusting Bryozoan spp.,Bryozoa,,mapping provided by Brian Hayden
+Phyllobduris abdominalis,Isopoda,,mapping provided by Brian Hayden
+Lecisthaster sp.,Trematoda,,mapping provided by Brian Hayden
+Filamentous red spp.,Algae,,mapping provided by Brian Hayden
+Filamentous green spp.,Algae,,mapping provided by Brian Hayden
+Filamentous brown spp.,Algae,,mapping provided by Brian Hayden
+Encrusting red algae spp.,Algae,,mapping provided by Brian Hayden
+Branching Red Algae spp.,Algae,,mapping provided by Brian Hayden
+Blady red spp.,Algae,,mapping provided by Brian Hayden
+Blade Unidentified kelp juveniles,Algae,,mapping provided by Brian Hayden
+Stylela montereyensis,Styela montereyensis,,mapping provided by Brian Hayden
+Encrusting sponge spp.,Porifera,,mapping provided by Brian Hayden
+Bothid spp.,Bothidae,,mapping provided by Brian Hayden
+Small Kelletia,Buccinidae,,mapping provided by Brian Hayden
+Orchomonopsis,Copepoda,,mapping provided by Brian Hayden
+Feathers,Aves,,mapping provided by Brian Hayden
+epontic microalgae,Algae,,mapping provided by Brian Hayden
+Stempelinella,Chironomidae,,mapping provided by Brian Hayden
+Suwalia,Plecoptera,,mapping provided by Brian Hayden
+Ostacoda,Ostracoda,,mapping provided by Brian Hayden
+Evadine sp.,Cladocera,,mapping provided by Brian Hayden
+Nauplii2,Copepoda,,mapping provided by Brian Hayden
+Unidefined zooplankton,Crustacea,,mapping provided by Brian Hayden
+Detrital sediment,Detritus,,mapping provided by Brian Hayden
+Acunmindeutopus naglei,Plantae,,mapping provided by Brian Hayden
+Paracerces caudata,Paracerceis caudata,,mapping provided by Brian Hayden
+Pinixia floridana,Gastropoda,,mapping provided by Brian Hayden
+meroplankton,Crustacea,,mapping provided by Brian Hayden
+Golden brown algae,Algae,,mapping provided by Brian Hayden
+Eucopepoda,Copepoda,,mapping provided by Brian Hayden
+allochthonous matter,Detritus,,mapping provided by Brian Hayden
+Aufwuchs,Detritus,,mapping provided by Brian Hayden
+Sarortherdon macrochir,Sarotherdon macrochir,,mapping provided by Brian Hayden
+epiphytic algae,Algae,,mapping provided by Brian Hayden
+Phyacophila parantra,Rhyacophila parantra,,mapping provided by Brian Hayden
+Heptagenidae,Heptageniidae,,mapping provided by Brian Hayden
+Thunninae,Thunnini,,inconsistent name from SPIRE resource
+filamentous green algae,Algae,,mapping provided by Brian Hayden
+Chironomid type Slant-eye,Chironomidae,,mapping provided by Brian Hayden
+Orthoclad Blue Blond,Chironomidae,,mapping provided by Brian Hayden
+Decabrachia,Cephalopoda,,mapping provided by Brian Hayden
+Metopograpsis messor,Metopograpsus messor,,mapping provided by Brian Hayden
+Brachiodontes exustus,Brachidontes exustus,,mapping provided by Brian Hayden
+Aquipecten irradians amplicostata,Aequipecten irradians,,mapping provided by Brian Hayden
+Anomolopcardia cuneimeris,Anomalocardia cuneimeris,,mapping provided by Brian Hayden
+Accetabularia crenulata,Acetabularia crenulata,,mapping provided by Brian Hayden
+Mollusa,Mollusca,,mapping provided by Brian Hayden
+Palaemontes intermedius,Palaemontes intermedius,,mapping provided by Brian Hayden
+Haploscoloplus foliosus,Haploscoloplus foliosus,,mapping provided by Brian Hayden
+Penaeid shrimp,Penaeidae,,mapping provided by Brian Hayden
+Panaeidae,Penaeidae,,mapping provided by Brian Hayden
+Dendobranchiata,Decapoda,,mapping provided by Brian Hayden
+Anisopteridae,Anisoptera,,mapping provided by Brian Hayden
+fry,Actinopterygii,,mapping provided by Brian Hayden
+detritivore,Detritus,,mapping provided by Brian Hayden
+herb,Plantae,,mapping provided by Brian Hayden
+Tetraleberidini,Ostracoda,,mapping provided by Brian Hayden
+Ictalurid,Ictaluridae,,mapping provided by Brian Hayden
+Loliguncula brevis,Lolliguncula brevis,,mapping provided by Brian Hayden
+Habrophleboides,Leptophlebiidae,,mapping provided by Brian Hayden
