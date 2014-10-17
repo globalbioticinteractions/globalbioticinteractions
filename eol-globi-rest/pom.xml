@@ -16,6 +16,7 @@
     <properties>
         <spring.version>3.1.1.RELEASE</spring.version>
         <aspectj.version>1.6.11</aspectj.version>
+        <jetty.groupId>org.eclipse.jetty</jetty.groupId>
         <jetty.version>9.2.3.v20140905</jetty.version>
         <slf4j.version>1.6.1</slf4j.version>
         <javax.validation.version>1.0.0.GA</javax.validation.version>
@@ -163,7 +164,7 @@
             <version>2.4</version>
         </dependency>
         <dependency>
-            <groupId>org.eclipse.jetty</groupId>
+            <groupId>${jetty.groupId}</groupId>
             <artifactId>jetty-servlets</artifactId>
             <version>${jetty.version}</version>
         </dependency>
@@ -218,7 +219,7 @@
                         <configuration>
                             <artifactItems>
                                 <artifactItem>
-                                    <groupId>org.mortbay.jetty</groupId>
+                                    <groupId>${jetty.groupId}</groupId>
                                     <artifactId>jetty-runner</artifactId>
                                     <version>${jetty.version}</version>
                                     <destFileName>jetty-runner.jar</destFileName>
@@ -229,7 +230,7 @@
                 </executions>
             </plugin>
             <plugin>
-                <groupId>org.eclipse.jetty</groupId>
+                <groupId>${jetty.groupId}</groupId>
                 <artifactId>jetty-maven-plugin</artifactId>
                 <version>${jetty.version}</version>
                 <configuration>
