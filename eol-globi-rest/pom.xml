@@ -16,7 +16,7 @@
     <properties>
         <spring.version>3.1.1.RELEASE</spring.version>
         <aspectj.version>1.6.11</aspectj.version>
-        <jetty.version>8.1.9.v20130131</jetty.version>
+        <jetty.version>9.2.3.v20140905</jetty.version>
         <slf4j.version>1.6.1</slf4j.version>
         <javax.validation.version>1.0.0.GA</javax.validation.version>
         <commons-dbcp.version>1.4</commons-dbcp.version>
@@ -128,11 +128,6 @@
             <version>${aspectj.version}</version>
         </dependency>
         <dependency>
-            <groupId>jaxen</groupId>
-            <artifactId>jaxen</artifactId>
-            <version>1.1.1</version>
-        </dependency>
-        <dependency>
             <groupId>javax.validation</groupId>
             <artifactId>validation-api</artifactId>
             <version>${javax.validation.version}</version>
@@ -166,6 +161,11 @@
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
             <version>2.4</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-servlets</artifactId>
+            <version>${jetty.version}</version>
         </dependency>
         <dependency>
             <groupId>javax.mail</groupId>
@@ -220,7 +220,7 @@
                                 <artifactItem>
                                     <groupId>org.mortbay.jetty</groupId>
                                     <artifactId>jetty-runner</artifactId>
-                                    <version>7.6.15.v20140411</version>
+                                    <version>${jetty.version}</version>
                                     <destFileName>jetty-runner.jar</destFileName>
                                 </artifactItem>
                             </artifactItems>
@@ -229,9 +229,9 @@
                 </executions>
             </plugin>
             <plugin>
-                <groupId>org.mortbay.jetty</groupId>
+                <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-maven-plugin</artifactId>
-                <version>8.1.4.v20120524</version>
+                <version>${jetty.version}</version>
                 <configuration>
                     <scanIntervalSeconds>10</scanIntervalSeconds>
                     <stopKey>foo</stopKey>

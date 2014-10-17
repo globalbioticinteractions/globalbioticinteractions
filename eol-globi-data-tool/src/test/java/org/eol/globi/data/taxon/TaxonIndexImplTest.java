@@ -39,7 +39,6 @@ public class TaxonIndexImplTest extends GraphDBTestCase {
     @Test
     public void ensureThatEnrichedPropertiesAreIndexed() throws NodeFactoryException {
         assertThat(getGraphDb().index().existsForNodes("taxons"), is(true));
-        assertThat(getGraphDb().index().existsForNodes("taxonNameSuggestions"), is(true));
         assertThat(getGraphDb().index().existsForNodes("thisDoesnoTExist"), is(false));
 
         assertEnrichedPropertiesSet(taxonService.getOrCreateTaxon("some name", null, null));
