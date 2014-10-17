@@ -2,6 +2,7 @@ package org.eol.globi.tool;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.data.CharsetConstant;
+import org.eol.globi.data.taxon.TaxonFuzzySearchIndex;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.TaxonNode;
@@ -26,13 +27,18 @@ public class LinkerTaxonIndex {
     public void link(GraphDatabaseService graphDb) {
         Index<Node> taxons = graphDb.index().forNodes("taxons");
         Index<Node> ids = graphDb.index().forNodes(INDEX_TAXON_NAMES_AND_IDS, MapUtil.stringMap(IndexManager.PROVIDER, "lucene", "type", "fulltext"));
+        TaxonFuzzySearchIndex fuzzySearchIndex = new TaxonFuzzySearchIndex(graphDb);
         IndexHits<Node> hits = taxons.query("*:*");
         for (Node hit : hits) {
             List<String> externalIds = new ArrayList<String>();
-            addId(externalIds, hit);
+            TaxonNode taxonNode = new TaxonNode(hit);
+            collectIds(externalIds, taxonNode);
+            addToFuzzyIndex(graphDb, fuzzySearchIndex, hit, taxonNode);
             Iterable<Relationship> rels = hit.getRelationships(Direction.OUTGOING, RelTypes.SAME_AS);
             for (Relationship rel : rels) {
-                addId(externalIds, rel.getEndNode());
+                TaxonNode sameAsTaxon = new TaxonNode(rel.getEndNode());
+                collectIds(externalIds, sameAsTaxon);
+                addToFuzzyIndex(graphDb, fuzzySearchIndex, hit, sameAsTaxon);
             }
             Transaction tx = graphDb.beginTx();
             try {
@@ -47,8 +53,17 @@ public class LinkerTaxonIndex {
         hits.close();
     }
 
-    protected void addId(List<String> externalIds, Node endNode) {
-        TaxonNode taxonNode = new TaxonNode(endNode);
+    protected void addToFuzzyIndex(GraphDatabaseService graphDb, TaxonFuzzySearchIndex fuzzySearchIndex, Node indexNode, TaxonNode taxonNode) {
+        Transaction tx = graphDb.beginTx();
+        try {
+            fuzzySearchIndex.index(indexNode, taxonNode);
+            tx.success();
+        } finally {
+            tx.finish();
+        }
+    }
+
+    protected void collectIds(List<String> externalIds, TaxonNode taxonNode) {
         String externalId = taxonNode.getExternalId();
         if (StringUtils.isNotBlank(externalId)) {
             externalIds.add(externalId);

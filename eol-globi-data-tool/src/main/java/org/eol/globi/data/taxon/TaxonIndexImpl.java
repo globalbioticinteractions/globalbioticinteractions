@@ -22,7 +22,7 @@ import org.neo4j.graphdb.index.IndexHits;
 public class TaxonIndexImpl implements TaxonIndex {
     private final GraphDatabaseService graphDbService;
     private final Index<Node> taxons;
-    private final Index<Node> taxonNameSuggestions;
+    private final TaxonFuzzySearchIndex taxonFuzzySearch;
     private CorrectionService corrector;
     private PropertyEnricher enricher;
 
@@ -31,7 +31,7 @@ public class TaxonIndexImpl implements TaxonIndex {
         this.corrector = correctionService;
         this.graphDbService = graphDbService;
         this.taxons = graphDbService.index().forNodes("taxons");
-        this.taxonNameSuggestions = graphDbService.index().forNodes("taxonNameSuggestions");
+        this.taxonFuzzySearch = new TaxonFuzzySearchIndex(graphDbService);
     }
 
     @Override
@@ -200,10 +200,6 @@ public class TaxonIndexImpl implements TaxonIndex {
         return NodeUtil.query(taxonName, PropertyAndValueDictionary.NAME, taxons);
     }
 
-    public IndexHits<Node> suggestTaxaByName(String wholeOrPartialScientificOrCommonName) {
-        return taxonNameSuggestions.query("name:\"" + wholeOrPartialScientificOrCommonName + "\"");
-    }
-
     private void addToIndeces(TaxonNode taxon, String indexedName) {
         if (StringUtils.isNotBlank(indexedName)) {
             if (!StringUtils.equals(PropertyAndValueDictionary.NO_MATCH, indexedName)
@@ -215,28 +211,8 @@ public class TaxonIndexImpl implements TaxonIndex {
             if (!StringUtils.equals(PropertyAndValueDictionary.NO_MATCH, externalId)) {
                 taxons.add(taxon.getUnderlyingNode(), PropertyAndValueDictionary.EXTERNAL_ID, externalId);
             }
-            indexCommonNames(taxon);
-            indexTaxonPath(taxon);
         }
     }
 
-    private void indexTaxonPath(TaxonNode taxon) {
-        String path = taxon.getPath();
-        if (StringUtils.isNotBlank(path)) {
-            String[] pathElementArray = path.split(CharsetConstant.SEPARATOR);
-            for (String pathElement : pathElementArray) {
-                taxonNameSuggestions.add(taxon.getUnderlyingNode(), PropertyAndValueDictionary.NAME, StringUtils.lowerCase(pathElement));
-            }
-        }
-    }
 
-    private void indexCommonNames(TaxonNode taxon) {
-        String commonNames = taxon.getCommonNames();
-        if (StringUtils.isNotBlank(commonNames)) {
-            String[] commonNameArray = commonNames.split(CharsetConstant.SEPARATOR);
-            for (String commonName : commonNameArray) {
-                taxonNameSuggestions.add(taxon.getUnderlyingNode(), PropertyAndValueDictionary.NAME, StringUtils.lowerCase(commonName));
-            }
-        }
-    }
 }

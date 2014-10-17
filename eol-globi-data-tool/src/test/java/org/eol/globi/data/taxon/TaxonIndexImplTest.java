@@ -1,8 +1,5 @@
 package org.eol.globi.data.taxon;
 
-import org.apache.lucene.index.Term;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.TermQuery;
 import org.eol.globi.data.CharsetConstant;
 import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.NodeFactoryException;
@@ -15,8 +12,8 @@ import org.eol.globi.service.PropertyEnricherException;
 import org.eol.globi.service.TaxonUtil;
 import org.junit.Before;
 import org.junit.Test;
+import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
-import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.IndexHits;
 
 import java.util.Map;
@@ -36,7 +33,7 @@ public class TaxonIndexImplTest extends GraphDBTestCase {
 
     @Before
     public void init() {
-        this.taxonService = createTaxonService();
+        this.taxonService = createTaxonService(getGraphDb());
     }
 
     @Test
@@ -47,26 +44,6 @@ public class TaxonIndexImplTest extends GraphDBTestCase {
 
         assertEnrichedPropertiesSet(taxonService.getOrCreateTaxon("some name", null, null));
         assertEnrichedPropertiesSet(taxonService.findTaxonByName("some name"));
-
-        IndexHits<Node> hits = taxonService.suggestTaxaByName("kingdom");
-        assertThat(hits.size(), is(1));
-        assertEnrichedPropertiesSet(new TaxonNode(hits.getSingle()));
-
-        hits = taxonService.suggestTaxaByName("phylum");
-        assertThat(hits.size(), is(1));
-        assertEnrichedPropertiesSet(new TaxonNode(hits.getSingle()));
-
-        hits = taxonService.suggestTaxaByName("some");
-        assertThat(hits.size(), is(1));
-        assertEnrichedPropertiesSet(new TaxonNode(hits.getSingle()));
-
-        hits = taxonService.suggestTaxaByName("german");
-        assertThat(hits.size(), is(1));
-        assertEnrichedPropertiesSet(new TaxonNode(hits.getSingle()));
-
-        hits = taxonService.suggestTaxaByName("@de");
-        assertThat(hits.size(), is(1));
-        assertEnrichedPropertiesSet(new TaxonNode(hits.getSingle()));
     }
 
 
@@ -75,53 +52,6 @@ public class TaxonIndexImplTest extends GraphDBTestCase {
         assertThat(aTaxon.getCommonNames(), is(EXPECTED_COMMON_NAMES));
         assertThat(aTaxon.getName(), is("some name"));
         assertThat(aTaxon.getExternalId(), is("anExternalId"));
-    }
-
-    @Test
-    public void findByStringWithWhitespaces() throws NodeFactoryException {
-        PropertyEnricher enricher = new PropertyEnricher() {
-            @Override
-            public Map<String, String> enrich(Map<String, String> properties) throws PropertyEnricherException {
-                Taxon taxon = TaxonUtil.mapToTaxon(properties);
-                taxon.setPath("kingdom" + CharsetConstant.SEPARATOR + "phylum" + CharsetConstant.SEPARATOR + "Homo sapiens" + CharsetConstant.SEPARATOR);
-                taxon.setExternalId("anExternalId");
-                taxon.setCommonNames(EXPECTED_COMMON_NAMES);
-                taxon.setName("this is the actual name");
-                return TaxonUtil.taxonToMap(taxon);
-            }
-
-            @Override
-            public void shutdown() {
-
-            }
-        };
-        taxonService.setEnricher(enricher);
-        taxonService.getOrCreateTaxon("Homo sapiens", null, null);
-
-        assertThat(getGraphDb().index().existsForNodes("taxonNameSuggestions"), is(true));
-        Index<Node> index = getGraphDb().index().forNodes("taxonNameSuggestions");
-        Query query = new TermQuery(new Term("name", "name"));
-        IndexHits<Node> hits = index.query(query);
-        assertThat(hits.size(), is(1));
-
-        hits = index.query("name", "s nme~");
-        assertThat(hits.size(), is(1));
-
-        hits = index.query("name", "geRman~");
-        assertThat(hits.size(), is(1));
-
-        hits = index.query("name:geRman~ AND name:som~");
-        assertThat(hits.size(), is(1));
-
-        hits = index.query("name:hmo~ AND name:SApiens~");
-        assertThat(hits.size(), is(1));
-
-        hits = index.query("name:hmo~ AND name:sapiens~");
-        assertThat(hits.size(), is(1));
-
-        // queries are case sensitive . . . should all be lower cased.
-        hits = index.query("name:HMO~ AND name:saPIENS~");
-        assertThat(hits.size(), is(0));
     }
 
     @Test
@@ -271,7 +201,7 @@ public class TaxonIndexImplTest extends GraphDBTestCase {
         assertThat(foundTaxon.getNodeID(), is(first.getNodeID()));
     }
 
-    private TaxonIndexImpl createTaxonService() {
+    public static TaxonIndexImpl createTaxonService(GraphDatabaseService graphDb) {
         return new TaxonIndexImpl(new PropertyEnricher() {
             @Override
             public Map<String, String> enrich(Map<String, String> properties) throws PropertyEnricherException {
@@ -291,7 +221,7 @@ public class TaxonIndexImplTest extends GraphDBTestCase {
             public String correct(String taxonName) {
                 return taxonName;
             }
-        }, getGraphDb()
+        }, graphDb
         );
     }
 }
