@@ -16,10 +16,6 @@ public class TaxonFuzzySearchIndex {
         this.taxonNameSuggestions = graphDbService.index().forNodes("taxonNameSuggestions");
     }
 
-    public IndexHits<Node> suggestTaxaByName(String wholeOrPartialScientificOrCommonName) {
-        return taxonNameSuggestions.query("name:\"" + wholeOrPartialScientificOrCommonName + "\"");
-    }
-
     public IndexHits<Node> query(String luceneQueryString) {
         return taxonNameSuggestions.query(luceneQueryString);
     }
