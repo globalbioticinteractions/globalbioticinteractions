@@ -2,7 +2,6 @@ package org.eol.globi.data.taxon;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.lucene.queryParser.QueryParser;
-import org.eol.globi.data.CharsetConstant;
 import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Taxon;
@@ -22,7 +21,6 @@ import org.neo4j.graphdb.index.IndexHits;
 public class TaxonIndexImpl implements TaxonIndex {
     private final GraphDatabaseService graphDbService;
     private final Index<Node> taxons;
-    private final TaxonFuzzySearchIndex taxonFuzzySearch;
     private CorrectionService corrector;
     private PropertyEnricher enricher;
 
@@ -31,7 +29,6 @@ public class TaxonIndexImpl implements TaxonIndex {
         this.corrector = correctionService;
         this.graphDbService = graphDbService;
         this.taxons = graphDbService.index().forNodes("taxons");
-        this.taxonFuzzySearch = new TaxonFuzzySearchIndex(graphDbService);
     }
 
     @Override
