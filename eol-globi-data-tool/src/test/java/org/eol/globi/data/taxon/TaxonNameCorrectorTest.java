@@ -71,6 +71,7 @@ public class TaxonNameCorrectorTest {
 
         assertThat(CORRECTOR.correct("Bivalvia Genus A"), is("Bivalvia"));
         assertThat(CORRECTOR.correct("EOL:123"), is("EOL 123"));
+        assertThat(CORRECTOR.correct("Pegoscapus cf. obscurus (Kirby, 1890)"), is("Pegoscapus"));
 
 
     }

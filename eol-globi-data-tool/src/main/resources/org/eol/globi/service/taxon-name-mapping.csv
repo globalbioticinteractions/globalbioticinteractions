@@ -895,6 +895,7 @@ dead plants,Plantae,,
 emergent plants,Plantae,,
 Scomberomorous cavalla,Scomberomorus cavalla,,assuming typo
 Scomberomorous maculatus,Scomberomorus maculatus,,assuming typo
+Scombomorus maculatus,Scomberomorus maculatus,,assuming typo
 Decapoa,Decapoda,,assuming typo
 Canis lupus ssp. familiaris,Canis lupus familiaris,,added genus to match with ITIS
 diatoms in sand,Bacillariophyta,,diatoms are Bacillariophyta according to ITIS
@@ -1157,3 +1158,12 @@ Tetraleberidini,Ostracoda,,mapping provided by Brian Hayden
 Ictalurid,Ictaluridae,,mapping provided by Brian Hayden
 Loliguncula brevis,Lolliguncula brevis,,mapping provided by Brian Hayden
 Habrophleboides,Leptophlebiidae,,mapping provided by Brian Hayden
+Hippodplosia Insculpta,Primavelans insculpta,http://www.marinespecies.org/aphia.php?p=taxdetails&id=472023,suspected typo of synonym Hippodiplosia insculpta
+Monticirrhus spp.,Menticirrhus,http://www.fishbase.org/summary/409,assumed typo
+Lepistosteus spatula,Lepisosteus spatula,http://eol.org/pages/584620/overview,assumed typo
+Lepistosteus osseus,Lepisosteus osseus,http://eol.org/pages/223876/overview,assumed typo
+Halichores caudalis,Halichoeres caudalis,http://eol.org/pages/222978/overview,assumed typo
+Halichores bivittatus,Halichoeres bivittatus,http://eol.org/pages/220796/overview,assumed typo
+Sciaenop ocellatus,Sciaenops ocellatus,http://eol.org/pages/993263/overview,assumed typo
+Epinephelus drummond-hayi,Epinephelus drummondhayi,http://eol.org/pages/207212/overview,assumed typo
+Belennius marmoreus,Blennius marmoreus,http://www.itis.gov/servlet/SingleRpt/SingleRpt?search_topic=TSN&search_value=171305,assumed typo

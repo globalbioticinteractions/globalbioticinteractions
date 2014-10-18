@@ -25,6 +25,7 @@ public class TaxonNameCorrector implements CorrectionService {
         name = keepOnlyLettersAndNumbers(name);
         name = name.replaceAll("\\s(spp|sp)\\.*($|\\s.*)", "");
         name = name.replaceAll(" cf .*", " ");
+        name = name.replaceAll(" cf\\. .*", " ");
         name = name.replaceAll(" var ", " var. ");
         name = name.replaceAll(" variety ", " var. ");
         name = name.replaceAll(" varietas ", " var. ");
