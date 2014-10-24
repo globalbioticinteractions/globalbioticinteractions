@@ -50,8 +50,8 @@ public class StudyImporterForRaymond extends BaseStudyImporter {
     private static final String NORTH = "NORTH";
     private static final String SOURCES_CSV = "sources.csv";
     private static final String DIET_CSV = "diet.csv";
-    private static final String RESOURCE_URL = "https://data.aad.gov.au/aadc/trophic/trophic.zip";
-    private static final String RESOURCE_URL_FALLBACK = "https://s3.amazonaws.com/globi/datasets/org/eol/globi/geo/tittensor2010/0.1/tittensor2010-0.1.zip";
+    private static final String RESOURCE_URL = "https://www1.data.antarctica.gov.au/aadc/trophic/trophic.zip";
+    private static final String RESOURCE_URL_FALLBACK = "https://s3.amazonaws.com/globi/datasets/org/eol/globi/data/raymond2011/0.1/raymond2011-0.1.zip";
 
     private static final int MAX_ATTEMPT = 3;
     private Collection<String> locations = new HashSet<String>();
@@ -73,14 +73,15 @@ public class StudyImporterForRaymond extends BaseStudyImporter {
         boolean isDone = false;
         for (int attemptCount = 1; !isDone && attemptCount <= MAX_ATTEMPT; attemptCount++) {
             try {
-                LOG.info("[" + RESOURCE_URL + "] downloading (attempt " + attemptCount + ")...");
+                LOG.info("[" + resourceUrl + "] downloading (attempt " + attemptCount + ")...");
                 HttpResponse response = HttpUtil.createHttpClient().execute(new HttpGet(resourceUrl));
                 if (response.getStatusLine().getStatusCode() == 200) {
                     importData(response);
                     isDone = true;
                 }
+                LOG.info("[" + resourceUrl + "] downloaded and imported.");
             } catch (IOException e) {
-                String msg = "failed to download [" + RESOURCE_URL + "]";
+                String msg = "failed to download [" + resourceUrl + "]";
                 if (attemptCount > MAX_ATTEMPT) {
                     throw new StudyImporterException(msg, e);
                 }
@@ -109,7 +110,6 @@ public class StudyImporterForRaymond extends BaseStudyImporter {
                     IOUtils.copy(zis, new NullOutputStream());
                 }
             }
-            LOG.info("[" + RESOURCE_URL + "] downloaded.");
             if (sourcesParser == null) {
                 throw new StudyImporterException("failed to find [" + SOURCES_CSV + "] in [" + RESOURCE_URL + "]");
             }
