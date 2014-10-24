@@ -66,8 +66,7 @@ public class StudyImporterForBell extends BaseStudyImporter {
                         collectionId = "";
                     }
 
-                    Study study = nodeFactory.getOrCreateStudy("bell-" + collectionId, null, null, null, description, null, sourceCitation, null);
-                    study.setCitationWithTx(sourceCitation);
+                    Study study = nodeFactory.getOrCreateStudy("bell-" + collectionId, null, null, null, sourceCitation + " " + description, null, sourceCitation, null);
 
                     String genus = parser.getValueByLabel("Genus");
                     String species = parser.getValueByLabel("Species");
