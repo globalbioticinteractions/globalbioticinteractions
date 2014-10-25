@@ -83,13 +83,13 @@ public class TaxonSearchImplTest {
     @Test
     public void findCloseMatchesScientificGenus() throws IOException {
         String response = new TaxonSearchImpl().findCloseMatchesForCommonAndScientificNames("Ariidae");
-        assertThat(response, StringContains.containsString("Ariopsis felis"));
+        assertThat(response, StringContains.containsString("Arius"));
     }
 
     @Test
     public void findCloseMatchesScientificChineseCharacters() throws IOException {
         String response = new TaxonSearchImpl().findCloseMatchesForCommonAndScientificNames("Ariidae");
-        assertThat(response, StringContains.containsString("密氏雅首海鯰"));
+        assertThat(response, StringContains.containsString("黑翅海鲶"));
     }
 
     @Test
