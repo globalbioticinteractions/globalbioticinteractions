@@ -39,15 +39,19 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
         put("With the prey", InteractType.ATE);
         put("Alimentándose", InteractType.ATE);
         put("Host", InteractType.HAS_HOST);
+        put("Host plant NZ", InteractType.PARASITE_OF);
+        put("Host animal", InteractType.PARASITE_OF);
         put("Flower species", InteractType.POLLINATES);
         put("Perching on", InteractType.PERCHING_ON);
         put("Pollinating", InteractType.POLLINATES);
         put("Other Species in Group", InteractType.INTERACTS_WITH);
         put("associated species NZ", InteractType.INTERACTS_WITH);
+        put("second associated species", InteractType.INTERACTS_WITH);
         put("Other other species in group", InteractType.INTERACTS_WITH);
         put("Pollinating", InteractType.POLLINATES);
         put("Butterfly & Moth Host Plant", InteractType.HAS_HOST);
         put("Butterfly & Moth Nectar Plant", InteractType.HAS_HOST);
+        put("honey bee food plant", InteractType.HAS_HOST);
         put("Drinking nectar from", InteractType.HAS_HOST);
         put("Gall Inducer", InteractType.INTERACTS_WITH);
         put("Forms gall on", InteractType.INTERACTS_WITH);
@@ -66,6 +70,7 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
         add("Syntopic");
         add("Associated species with names lookup");
         add("Target species");
+        add("Iconic taxon name");
         add("Tree species");
     }};
 
@@ -179,7 +184,7 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
             LOG.warn("cannot create interaction with missing source taxon name for observation with id [" + observation.get("id") + "]");
         } else {
             Study study = nodeFactory.getOrCreateStudy(TaxonomyProvider.ID_PREFIX_INATURALIST + observationId, getSourceString(), null);
-            Specimen specimen;
+            Specimen specimen = null;
             String targetTaxonName = targetTaxonNode.getTextValue();
             String sourceTaxonName = sourceTaxon.get("name").getTextValue();
             if (TYPE_MAPPING.containsKey(interactionType)) {
@@ -187,16 +192,19 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
             } else if (INVERSE_TYPE_MAPPING.containsKey(interactionType)) {
                 specimen = createInverseAssociation(observationId, interactionDataType, interactionType, observation, targetTaxonName, sourceTaxonName);
             } else {
-                throw new StudyImporterException("found unsupported interactionType [" + interactionType + "] for observation [" + observationId + "]");
+                String msg = "found unsupported interactionType [" + interactionType + "] for observation [" + observationId + "]";
+                throw new StudyImporterException(msg);
             }
-            Date observationDate = getObservationDate(study, observationId, observation);
 
-            StringBuilder citation = buildCitation(observation, interactionType, targetTaxonName, sourceTaxonName, observationDate);
-            String url = ExternalIdUtil.infoURLForExternalId(TaxonomyProvider.ID_PREFIX_INATURALIST + observationId);
-            citation.append(ReferenceUtil.createLastAccessedString(url));
-            study.setCitationWithTx(citation.toString());
-            study.setExternalId(url);
-            nodeFactory.setUnixEpochProperty(study.collected(specimen), observationDate);
+            if (specimen != null) {
+                Date observationDate = getObservationDate(study, observationId, observation);
+                StringBuilder citation = buildCitation(observation, interactionType, targetTaxonName, sourceTaxonName, observationDate);
+                String url = ExternalIdUtil.infoURLForExternalId(TaxonomyProvider.ID_PREFIX_INATURALIST + observationId);
+                citation.append(ReferenceUtil.createLastAccessedString(url));
+                study.setCitationWithTx(citation.toString());
+                study.setExternalId(url);
+                nodeFactory.setUnixEpochProperty(study.collected(specimen), observationDate);
+            }
         }
     }
 
