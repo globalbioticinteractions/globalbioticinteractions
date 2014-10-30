@@ -51,7 +51,7 @@ public class StudyImporterForRaymond extends BaseStudyImporter {
     private static final String SOURCES_CSV = "sources.csv";
     private static final String DIET_CSV = "diet.csv";
     private static final String RESOURCE_URL = "https://www1.data.antarctica.gov.au/aadc/trophic/trophic.zip";
-    private static final String RESOURCE_URL_FALLBACK = "https://s3.amazonaws.com/globi/datasets/org/eol/globi/data/raymond2011/0.1/raymond2011-0.1.zip";
+    private static final String RESOURCE_URL_FALLBACK = "https://s3.amazonaws.com/globi/datasets/org/eol/globi/data/raymond2011/0.2/raymond2011-0.2.zip";
 
     private static final int MAX_ATTEMPT = 3;
     private Collection<String> locations = new HashSet<String>();
@@ -284,7 +284,7 @@ public class StudyImporterForRaymond extends BaseStudyImporter {
             Integer sourceId = Integer.parseInt(sourcesParser.getValueByLabel("SOURCE_ID"));
             String reference = sourcesParser.getValueByLabel("DETAILS");
             String title = StringUtils.abbreviate(reference, 16) + MD5.getHashString(reference);
-            Study study = nodeFactory.getOrCreateStudy(title, null, null, null, reference, null, "Raymond, B., Marshall, M., Nevitt, G., Gillies, C., van den Hoff, J., Stark, J.S., Losekoot, M., Woehler, E.J., and Constable, A.J. (2011) A Southern Ocean dietary database. Ecology 92(5):1188. Available from http://dx.doi.org/10.1890/10-1907.1 . Data set supplied by Ben Raymond. The data can also be accessed at http://data.aad.gov.au/aadc/trophic/.");
+            Study study = nodeFactory.getOrCreateStudy(title, null, null, null, reference, null, "Raymond, B., Marshall, M., Nevitt, G., Gillies, C., van den Hoff, J., Stark, J.S., Losekoot, M., Woehler, E.J., and Constable, A.J. (2011) A Southern Ocean dietary database. Ecology 92(5):1188. Available from http://dx.doi.org/10.1890/10-1907.1 . Data set supplied by Ben Raymond. " + ReferenceUtil.createLastAccessedString(RESOURCE_URL));
             sourceMap.put(sourceId, study);
         }
         return sourceMap;
