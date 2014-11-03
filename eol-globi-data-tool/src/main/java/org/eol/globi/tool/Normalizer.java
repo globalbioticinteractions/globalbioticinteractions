@@ -80,7 +80,6 @@ public class Normalizer {
             Collection<Class> importers = StudyImporterFactory.getOpenImporters();
             if (shouldUseDarkData(cmdLine)) {
                 LOG.info("adding dark importers...");
-                importers.addAll(StudyImporterFactory.getDarkImporters());
                 ArrayList<Class> list = new ArrayList<Class>();
                 list.addAll(importers);
                 list.addAll(StudyImporterFactory.getDarkImporters());
