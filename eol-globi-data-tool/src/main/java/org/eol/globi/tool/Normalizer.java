@@ -74,9 +74,11 @@ public class Normalizer {
         final GraphDatabaseService graphService = GraphService.getGraphService("./");
 
         if (cmdLine == null || !cmdLine.hasOption(OPTION_SKIP_IMPORT)) {
-            Collection<Class> importers = shouldUseDarkData(cmdLine)
-                    ? StudyImporterFactory.getDarkImporters()
-                    : StudyImporterFactory.getOpenImporters();
+            Collection<Class> importers = StudyImporterFactory.getOpenImporters();
+            if (shouldUseDarkData(cmdLine)) {
+                LOG.info("adding dark importers...");
+                importers.addAll(StudyImporterFactory.getDarkImporters());
+            }
             importData(graphService, importers);
         } else {
             LOG.info("skipping data import...");
