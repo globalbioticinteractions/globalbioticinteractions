@@ -7,6 +7,7 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -31,7 +32,9 @@ import org.neo4j.graphdb.GraphDatabaseService;
 
 import java.io.File;
 import java.net.MalformedURLException;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 
 public class Normalizer {
     private static final Log LOG = LogFactory.getLog(Normalizer.class);
@@ -78,6 +81,10 @@ public class Normalizer {
             if (shouldUseDarkData(cmdLine)) {
                 LOG.info("adding dark importers...");
                 importers.addAll(StudyImporterFactory.getDarkImporters());
+                ArrayList<Class> list = new ArrayList<Class>();
+                list.addAll(importers);
+                list.addAll(StudyImporterFactory.getDarkImporters());
+                importers = Collections.unmodifiableList(list);
             }
             importData(graphService, importers);
         } else {
