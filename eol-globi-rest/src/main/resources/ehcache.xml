@@ -10,8 +10,9 @@
             memoryStoreEvictionPolicy="LRU">
         <persistence strategy="localTempSwap"/>
     </defaultCache>
-    <cache name="contributorCache"/>
-    <cache name="infoCache"/>
-    <cache name="sourcesCache"/>
-    <cache name="locationCache"/>
+
+    <cache name="contributorCache" maxEntriesLocalHeap="50" timeToLiveSeconds="86400"/>
+    <cache name="infoCache" maxEntriesLocalHeap="50" timeToLiveSeconds="86400"/>
+    <cache name="sourcesCache" maxEntriesLocalHeap="50" timeToLiveSeconds="86400"/>
+    <cache name="locationCache" maxEntriesLocalHeap="50" timeToLiveSeconds="86400"/>
 </ehcache>
