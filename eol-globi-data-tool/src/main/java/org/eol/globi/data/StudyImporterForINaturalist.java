@@ -48,6 +48,7 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
         put("Other Species in Group", InteractType.INTERACTS_WITH);
         put("associated species NZ", InteractType.INTERACTS_WITH);
         put("second associated species", InteractType.INTERACTS_WITH);
+        put("2nd associated organism with names lookup", InteractType.INTERACTS_WITH);
         put("Other other species in group", InteractType.INTERACTS_WITH);
         put("Pollinating", InteractType.POLLINATES);
         put("Butterfly & Moth Host Plant", InteractType.HAS_HOST);
