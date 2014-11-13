@@ -17,6 +17,8 @@ import java.net.URL;
 import java.util.List;
 
 public class StudyImporterForGitHubData extends BaseStudyImporter {
+    private static final Log LOG = LogFactory.getLog(StudyImporterForGitHubData.class);
+
     public StudyImporterForGitHubData(ParserFactory parserFactory, NodeFactory nodeFactory) {
         super(parserFactory, nodeFactory);
     }
@@ -24,17 +26,28 @@ public class StudyImporterForGitHubData extends BaseStudyImporter {
     @Override
     public Study importStudy() throws StudyImporterException {
 
-        try {
-            List<String> repositories = GitHubDataFinder.find();
-            for (String repository : repositories) {
+        List<String> repositories = discoverDataRepositories();
+
+        for (String repository : repositories) {
+            try {
                 importData(repository);
+            } catch (StudyImporterException ex) {
+                LOG.error("failed to import data from repo [" + repository + "]", ex);
             }
+        }
+        return null;
+    }
+
+    protected List<String> discoverDataRepositories() throws StudyImporterException {
+        List<String> repositories;
+        try {
+            repositories = GitHubDataFinder.find();
         } catch (IOException e) {
             throw new StudyImporterException("failed to discover github data repositories", e);
         } catch (URISyntaxException e) {
             throw new StudyImporterException("failed to discover github data repositories", e);
         }
-        return null;
+        return repositories;
     }
 
     protected void importData(String repo) throws StudyImporterException {
