@@ -72,4 +72,10 @@ public class DOIResolverImplIT {
         assertThat(citationForDOI, is(notNullValue()));
     }
 
+    @Test
+    public void findCitationForShortDOI() throws IOException, URISyntaxException {
+        String citationForDOI = new DOIResolverImpl().findCitationForDOI("doi:10.1007/s13127-011-0039-1");
+        assertThat(citationForDOI, is(notNullValue()));
+    }
+
 }

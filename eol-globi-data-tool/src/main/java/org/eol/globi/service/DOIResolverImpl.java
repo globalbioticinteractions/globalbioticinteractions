@@ -55,7 +55,9 @@ public class DOIResolverImpl implements DOIResolver {
         if (StringUtils.isNotBlank(doi)) {
             try {
                 URI uri;
-                if (StringUtils.startsWith(doi, "http://")) {
+                if (StringUtils.startsWith(doi, "doi:")) {
+                    uri = new URI("http", "dx.doi.org", StringUtils.replace(doi, "doi:", "/"), null);
+                } else if (StringUtils.startsWith(doi, "http://")) {
                     String[] parts = StringUtils.replace(doi, "http://", "").split("/");
                     String host = parts[0];
                     String path = null;
