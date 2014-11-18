@@ -14,10 +14,18 @@ import org.eol.globi.service.GitHubDataFinder;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class StudyImporterForGitHubData extends BaseStudyImporter {
     private static final Log LOG = LogFactory.getLog(StudyImporterForGitHubData.class);
+    private static final Map<String, InteractType> INTERACT_ID_TO_TYPE = new HashMap<String, InteractType>() {{
+        put("RO:0002470", InteractType.ATE);
+        put("RO:0002444", InteractType.PARASITE_OF);
+        put("RO:0002556", InteractType.PATHOGEN_OF);
+        put("RO:0002456", InteractType.POLLINATES);
+    }};
 
     public StudyImporterForGitHubData(ParserFactory parserFactory, NodeFactory nodeFactory) {
         super(parserFactory, nodeFactory);
@@ -60,7 +68,7 @@ public class StudyImporterForGitHubData extends BaseStudyImporter {
             parser.changeDelimiter('\t');
             while (parser.getLine() != null) {
                 String referenceCitation = parser.getValueByLabel("referenceCitation");
-                String referenceDoi = parser.getValueByLabel("referenceDoi");
+                String referenceDoi = StringUtils.replace(parser.getValueByLabel("referenceDoi"),  " ", "");
                 Study study = nodeFactory.getOrCreateStudy(referenceCitation, null, null, null, referenceCitation, null, sourceCitation + ReferenceUtil.createLastAccessedString(dataUrl), referenceDoi);
                 study.setCitationWithTx(referenceCitation);
 
@@ -73,10 +81,12 @@ public class StudyImporterForGitHubData extends BaseStudyImporter {
                 String interactionTypeId = StringUtils.trim(parser.getValueByLabel("interactionTypeId"));
                 if (StringUtils.isNotBlank(targetTaxonName)
                         && StringUtils.isNotBlank(sourceTaxonName)) {
-                    if (StringUtils.equals("RO:0002444", interactionTypeId)) {
+
+                    InteractType type = INTERACT_ID_TO_TYPE.get(interactionTypeId);
+                    if (type != null) {
                         Specimen source = nodeFactory.createSpecimen(sourceTaxonName, sourceTaxonId);
                         Specimen target = nodeFactory.createSpecimen(targetTaxonName, targetTaxonId);
-                        source.interactsWith(target, InteractType.PARASITE_OF);
+                        source.interactsWith(target, type);
                         study.collected(source);
                     } else {
                         throw new StudyImporterException("unsupported interaction type id [" + interactionTypeId + "]");

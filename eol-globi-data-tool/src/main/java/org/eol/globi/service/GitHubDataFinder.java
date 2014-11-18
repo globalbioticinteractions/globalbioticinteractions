@@ -28,7 +28,7 @@ public class GitHubDataFinder {
     }
 
     public static List<String> find() throws URISyntaxException, IOException {
-        String repositoriesThatMentionGloBI = httpGet("/search/repositories", "q=globalbioticinteractions+in:readme");
+        String repositoriesThatMentionGloBI = httpGet("/search/repositories", "q=globalbioticinteractions+in:readme+fork:true");
 
         List<String> globiRepos = new ArrayList<String>();
         JsonNode jsonNode = new ObjectMapper().readTree(repositoriesThatMentionGloBI);

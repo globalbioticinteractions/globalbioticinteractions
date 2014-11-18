@@ -28,6 +28,7 @@ public class StudyImporterForGitHubDataTest extends GraphDBTestCase {
 
         assertThat(refs, hasItem("Gittenberger, A., Gittenberger, E. (2011). Cryptic, adaptive radiation of endoparasitic snails: sibling species of Leptoconchus (Gastropoda: Coralliophilidae) in corals. Org Divers Evol, 11(1), 21–41. doi:10.1007/s13127-011-0039-1"));
         assertThat(DOIs, hasItem("doi:10.1007/s13127-011-0039-1"));
+        assertThat(DOIs, hasItem("doi:10.3354/meps09511"));
 
         assertThat(nodeFactory.findTaxonByName("Leptoconchus incycloseris"), is(notNullValue()));
         assertThat(nodeFactory.findTaxonByName("Sandalolitha dentata"), is(notNullValue()));
