@@ -41,6 +41,7 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
         put("Alimentándose", InteractType.ATE);
         put("Host", InteractType.HAS_HOST);
         put("Host plant NZ", InteractType.PARASITE_OF);
+        put("host species with names lookup", InteractType.PARASITE_OF);
         put("Host animal", InteractType.PARASITE_OF);
         put("Flower species", InteractType.POLLINATES);
         put("Perching on", InteractType.PERCHING_ON);
@@ -74,6 +75,7 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
         add("Target species");
         add("Iconic taxon name");
         add("Tree species");
+        add("Class");
     }};
 
     public StudyImporterForINaturalist(ParserFactory parserFactory, NodeFactory nodeFactory) {
