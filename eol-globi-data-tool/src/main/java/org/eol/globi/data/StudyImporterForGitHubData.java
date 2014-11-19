@@ -60,16 +60,20 @@ public class StudyImporterForGitHubData extends BaseStudyImporter {
 
     protected void importData(String repo) throws StudyImporterException {
         try {
-            String descriptor = "https://raw.githubusercontent.com/" + repo + "/master/globi.json";
+            String lastCommitSHA = GitHubDataFinder.lastCommitSHA(repo);
+            if (lastCommitSHA == null) {
+                throw new StudyImporterException("failed to import github repo [" + repo + "]: no commits found.");
+            }
+            String descriptor = "https://raw.githubusercontent.com/" + repo + "/" + lastCommitSHA + "/globi.json";
             JsonNode desc = new ObjectMapper().readTree(new URL(descriptor).openStream());
             String sourceCitation = desc.get("citation").getValueAsText();
-            String dataUrl = "https://raw.githubusercontent.com/" + repo + "/master/interactions.tsv";
+            String dataUrl = "https://raw.githubusercontent.com/" + repo + "/" + lastCommitSHA + "/interactions.tsv";
             LabeledCSVParser parser = parserFactory.createParser(dataUrl, "UTF-8");
             parser.changeDelimiter('\t');
             while (parser.getLine() != null) {
                 String referenceCitation = parser.getValueByLabel("referenceCitation");
                 String referenceDoi = StringUtils.replace(parser.getValueByLabel("referenceDoi"),  " ", "");
-                Study study = nodeFactory.getOrCreateStudy(referenceCitation, null, null, null, referenceCitation, null, sourceCitation + ReferenceUtil.createLastAccessedString(dataUrl), referenceDoi);
+                Study study = nodeFactory.getOrCreateStudy(referenceCitation, null, null, null, referenceCitation, null, sourceCitation + " " + ReferenceUtil.createLastAccessedString(dataUrl), referenceDoi);
                 study.setCitationWithTx(referenceCitation);
 
                 String sourceTaxonId = StringUtils.trimToNull(parser.getValueByLabel("sourceTaxonId"));
@@ -96,6 +100,8 @@ public class StudyImporterForGitHubData extends BaseStudyImporter {
         } catch (IOException e) {
             throw new StudyImporterException("failed to import repo [" + repo + "]", e);
         } catch (NodeFactoryException e) {
+            throw new StudyImporterException("failed to import repo [" + repo + "]", e);
+        } catch (URISyntaxException e) {
             throw new StudyImporterException("failed to import repo [" + repo + "]", e);
         }
 

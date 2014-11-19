@@ -48,4 +48,18 @@ public class GitHubDataFinder {
         }
         return reposWithData;
     }
+
+    public static String lastCommitSHA(String repository) throws IOException, URISyntaxException {
+        String lastCommitSHA = null;
+        String response = httpGet("/repos/" + repository + "/commits", null);
+        JsonNode commits = new ObjectMapper().readTree(response);
+        if (commits.size() > 0) {
+            JsonNode mostRecentCommit = commits.get(0);
+            if (mostRecentCommit.has("sha")) {
+                lastCommitSHA = mostRecentCommit.get("sha").getValueAsText();
+            }
+        }
+        return lastCommitSHA;
+    }
+
 }
