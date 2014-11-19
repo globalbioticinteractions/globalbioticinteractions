@@ -76,6 +76,7 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
         add("Iconic taxon name");
         add("Tree species");
         add("Class");
+        add("Phylum");
     }};
 
     public StudyImporterForINaturalist(ParserFactory parserFactory, NodeFactory nodeFactory) {
