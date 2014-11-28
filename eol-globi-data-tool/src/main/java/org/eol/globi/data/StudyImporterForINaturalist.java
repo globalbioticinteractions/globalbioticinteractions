@@ -66,6 +66,9 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
     private static final Map<String, InteractType> INVERSE_TYPE_MAPPING = new HashMap<String, InteractType>() {{
         put("Eaten by", InteractType.ATE);
         put("Hunted by", InteractType.PREYS_UPON);
+        put("Associated parasitic / pathogenic organism with names lookup", InteractType.PARASITE_OF);
+        put("first nectar or pollen feeding insect", InteractType.POLLINATES);
+        put("second nectar or pollen feeding insect", InteractType.POLLINATES);
     }};
     public static final int MAX_ATTEMPTS = 3;
     public static final List<String> IGNORED_INTERACTION_TYPES = new ArrayList<String>() {{
@@ -75,6 +78,7 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
         add("Target species");
         add("Iconic taxon name");
         add("Tree species");
+        add("Order");
         add("Class");
         add("Phylum");
     }};
