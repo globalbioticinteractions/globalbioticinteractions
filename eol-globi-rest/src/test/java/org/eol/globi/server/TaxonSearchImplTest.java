@@ -83,7 +83,11 @@ public class TaxonSearchImplTest {
     @Test
     public void findCloseMatchesScientificGenus() throws IOException {
         String response = new TaxonSearchImpl().findCloseMatchesForCommonAndScientificNames("Ariidae");
-        assertThat(response, StringContains.containsString("Bagre marinus"));
+        JsonNode mapper = new ObjectMapper().readTree(response);
+        JsonNode data = mapper.get("data");
+        assertThat(data.isArray(), is(true));
+        assertThat(data.size() > 0, is (true));
+        assertThat(response, StringContains.containsString("Ariidae"));
     }
 
     @Test
