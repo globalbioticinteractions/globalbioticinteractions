@@ -72,8 +72,8 @@ public class StudyImporterForGitHubData extends BaseStudyImporter {
             parser.changeDelimiter('\t');
             while (parser.getLine() != null) {
                 String referenceCitation = parser.getValueByLabel("referenceCitation");
-                String referenceDoi = StringUtils.replace(parser.getValueByLabel("referenceDoi"),  " ", "");
-                Study study = nodeFactory.getOrCreateStudy(referenceCitation, null, null, null, referenceCitation, null, sourceCitation + " " + ReferenceUtil.createLastAccessedString(dataUrl), referenceDoi);
+                String referenceDoi = StringUtils.replace(parser.getValueByLabel("referenceDoi"), " ", "");
+                Study study = nodeFactory.getOrCreateStudy(repo + referenceCitation, null, null, null, referenceCitation, null, sourceCitation + " " + ReferenceUtil.createLastAccessedString(dataUrl), referenceDoi);
                 study.setCitationWithTx(referenceCitation);
 
                 String sourceTaxonId = StringUtils.trimToNull(parser.getValueByLabel("sourceTaxonId"));
