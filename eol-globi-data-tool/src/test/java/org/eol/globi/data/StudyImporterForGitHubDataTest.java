@@ -38,6 +38,9 @@ public class StudyImporterForGitHubDataTest extends GraphDBTestCase {
 
         assertThat(nodeFactory.findTaxonByName("Leptoconchus incycloseris"), is(notNullValue()));
         assertThat(nodeFactory.findTaxonByName("Sandalolitha dentata"), is(notNullValue()));
+        assertThat(nodeFactory.findTaxonByName("Pterois volitans/miles"), is(notNullValue()));
+
+
     }
 
 }
