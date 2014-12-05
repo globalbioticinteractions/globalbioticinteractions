@@ -45,28 +45,32 @@ public class StudyImporterForGoMexSI extends BaseStudyImporter {
         add("several");
     }};
 
+    private String sourceCitation = GOMEXI_SOURCE_DESCRIPTION;
+    private String baseUrl = "gomexsi";
+
+
     public StudyImporterForGoMexSI(ParserFactory parserFactory, NodeFactory nodeFactory) {
         super(parserFactory, nodeFactory);
     }
 
     protected String getPreyResourcePath() {
-        return getResourcePackage() + "/Prey.csv";
+        return getBaseUrl() + "/Prey.csv";
     }
 
-    private String getResourcePackage() {
-        return "gomexsi";
+    private String getBaseUrl() {
+        return baseUrl;
     }
 
     protected String getPredatorResourcePath() {
-        return getResourcePackage() + "/Predators.csv";
+        return getBaseUrl() + "/Predators.csv";
     }
 
     protected String getReferencesResourcePath() {
-        return getResourcePackage() + "/References.csv";
+        return getBaseUrl() + "/References.csv";
     }
 
     protected String getLocationsResourcePath() {
-        return getResourcePackage() + "/Locations.csv";
+        return getBaseUrl() + "/Locations.csv";
     }
 
     @Override
@@ -165,7 +169,7 @@ public class StudyImporterForGoMexSI extends BaseStudyImporter {
         }
         study = nodeFactory.getOrCreateStudy(refTag, firstName + " " + lastName, institution.toString(), "", description
                 , publicationYear
-                , GOMEXI_SOURCE_DESCRIPTION, null);
+                , getSourceCitation(), null);
         Transaction transaction = nodeFactory.getGraphDb().beginTx();
         try {
             study.setPublicationYear(publicationYear);
@@ -389,5 +393,17 @@ public class StudyImporterForGoMexSI extends BaseStudyImporter {
             throw new StudyImporterException("missing mandatory column [" + label + "] in [" + datafile + "]:[" + parser.getLastLineNumber() + "]");
         }
         return "NA".equals(value) ? "" : value;
+    }
+
+    public void setSourceCitation(String sourceCitation) {
+        this.sourceCitation = sourceCitation;
+    }
+
+    public void setBaseUrl(String baseUrl) {
+        this.baseUrl = baseUrl;
+    }
+
+    public String getSourceCitation() {
+        return sourceCitation;
     }
 }

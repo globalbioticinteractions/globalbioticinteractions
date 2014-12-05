@@ -6,6 +6,7 @@ import org.apache.http.client.methods.HttpHead;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.util.HttpUtil;
 
 import java.io.IOException;
@@ -14,7 +15,7 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GitHubDataFinder {
+public class GitHubUtil {
     protected static String httpGet(String path, String query) throws URISyntaxException, IOException {
         URI uri = new URI("https", null, "api.github.com", 443, path, query, null);
         return HttpUtil.createHttpClient().execute(
@@ -62,4 +63,15 @@ public class GitHubDataFinder {
         return lastCommitSHA;
     }
 
+    public static String getBaseUrl(String repo, String lastCommitSHA) {
+        return "https://raw.githubusercontent.com/" + repo + "/" + lastCommitSHA;
+    }
+
+    public static String getBaseUrlLastCommit(String repo) throws IOException, URISyntaxException, StudyImporterException {
+        String lastCommitSHA = lastCommitSHA(repo);
+        if (lastCommitSHA == null) {
+            throw new StudyImporterException("failed to import github repo [" + repo + "]: no commits found.");
+        }
+        return getBaseUrl(repo, lastCommitSHA);
+    }
 }

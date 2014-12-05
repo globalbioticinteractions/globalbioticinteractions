@@ -7,6 +7,7 @@ import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.TaxonNode;
+import org.eol.globi.service.GitHubUtil;
 import org.eol.globi.util.ExternalIdUtil;
 import org.junit.Test;
 import org.neo4j.graphdb.Direction;
@@ -14,6 +15,8 @@ import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.index.Index;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,14 +30,25 @@ import static org.junit.matchers.JUnitMatchers.hasItem;
 public class StudyImporterForGoMexSITest extends GraphDBTestCase {
 
     @Test
-    public void createAndPopulateStudy() throws StudyImporterException, NodeFactoryException {
+    public void createAndPopulateStudy() throws StudyImporterException, NodeFactoryException, IOException, URISyntaxException {
         StudyImporterForGoMexSI importer = new StudyImporterForGoMexSI(new ParserFactoryImpl(), nodeFactory);
+        assertThatSomeDataIsImported(importer, nodeFactory);
+    }
 
+    @Test
+    public void createAndPopulateStudyGitHub() throws StudyImporterException, NodeFactoryException, IOException, URISyntaxException {
+        StudyImporterForGoMexSI importer = new StudyImporterForGoMexSI(new ParserFactoryImpl(), nodeFactory);
+        importer.setBaseUrl(GitHubUtil.getBaseUrlLastCommit("gomexsi/interaction-data"));
+        importer.setSourceCitation("testing source citation");
+        assertThatSomeDataIsImported(importer, nodeFactory);
+    }
+
+    private static void assertThatSomeDataIsImported(StudyImporterForGoMexSI importer, NodeFactory nodeFactory) throws StudyImporterException, NodeFactoryException {
         importer.importStudy();
 
         Study study = nodeFactory.findStudy("Divita et al 1983");
 
-        assertSpecimenProperties();
+        assertSpecimenProperties(nodeFactory);
 
         assertNotNull(study);
         assertThat(study.getTitle(), is("Divita et al 1983"));
@@ -92,8 +106,8 @@ public class StudyImporterForGoMexSITest extends GraphDBTestCase {
         assertNotNull(nodeFactory.findStudy("GoMexSI"));
     }
 
-    private void assertSpecimenProperties() {
-        Index<Node> taxa = getGraphDb().index().forNodes("taxons");
+    private static void assertSpecimenProperties(NodeFactory nodeFactory) {
+        Index<Node> taxa = nodeFactory.getGraphDb().index().forNodes("taxons");
         boolean detectedAtLeastOneLifeState = false;
         boolean detectedAtLeastOnePhysiologicalState = false;
         boolean detectedAtLeastOnePreyBodyPart = false;
