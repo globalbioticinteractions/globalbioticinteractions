@@ -36,8 +36,8 @@ public class CypherQueryBuilder {
 
     private static final String SOURCE_TAXON_HTTP_PARAM_NAME = "sourceTaxon";
     private static final String TARGET_TAXON_HTTP_PARAM_NAME = "targetTaxon";
-    private static final List<String> INVERTED_INTERACTION_TYPES = Arrays.asList(INTERACTION_PREYED_UPON_BY, INTERACTION_HOST_OF, INTERACTION_POLLINATED_BY, INTERACTION_HAS_PATHOGEN);
-    private static final List<String> NON_INVERTED_INTERACTION_TYPES = Arrays.asList(INTERACTION_PREYS_ON, INTERACTION_PARASITE_OF, INTERACTION_POLLINATES, INTERACTION_PATHOGEN_OF);
+    private static final List<String> INVERTED_INTERACTION_TYPES = Arrays.asList(INTERACTION_PREYED_UPON_BY, INTERACTION_HOST_OF, INTERACTION_POLLINATED_BY, INTERACTION_PATHOGEN_OF);
+    private static final List<String> NON_INVERTED_INTERACTION_TYPES = Arrays.asList(INTERACTION_PREYS_ON, INTERACTION_PARASITE_OF, INTERACTION_POLLINATES, INTERACTION_HAS_PATHOGEN);
     private static final Map<String, String> INTERACTION_TYPE_MAP = new HashMap<String, String>() {
         {
             String preysOn = InteractType.ATE + "|" + InteractType.PREYS_UPON;
