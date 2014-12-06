@@ -325,10 +325,10 @@ public class EOLServiceIT {
     public void lookupEOLExternalIdNoClassification() throws PropertyEnricherException {
         String[] externalIds = {"EOL:3821293", "EOL:3238626", "EOL:17264771", "EOL:3825406"};
         for (String externalId : externalIds) {
-            HashMap<String, String> properties = new HashMap<String, String>();
+            Map<String, String> properties = new HashMap<String, String>();
             properties.put(PropertyAndValueDictionary.EXTERNAL_ID, externalId);
             properties.put(PropertyAndValueDictionary.NAME, null);
-            eolService.enrich(properties);
+            properties = eolService.enrich(properties);
             assertThat(properties.get(PropertyAndValueDictionary.EXTERNAL_ID), is(nullValue()));
         }
     }
@@ -425,31 +425,31 @@ public class EOLServiceIT {
 
     @Test
     public void lookupTaxonPathByLSIDForPageWithoutClassification() throws PropertyEnricherException {
-        HashMap<String, String> properties = new HashMap<String, String>();
+        Map<String, String> properties = new HashMap<String, String>();
         eolService.addTaxonInfo(13644436L, properties);
         assertThat(properties.get(PropertyAndValueDictionary.PATH), Is.is(nullValue()));
     }
 
     @Test
     public void lookupRedirectedId() throws PropertyEnricherException {
-        HashMap<String, String> properties = new HashMap<String, String>() {{
+        Map<String, String> properties = new HashMap<String, String>() {{
             put(PropertyAndValueDictionary.EXTERNAL_ID, "EOL:10890298");
         }};
         properties.put(PropertyAndValueDictionary.NAME, "");
-        eolService.enrich(properties);
+        properties = eolService.enrich(properties);
         assertThat(properties.get(PropertyAndValueDictionary.NAME), is("Anaphes brachygaster"));
         assertThat(properties.get(PropertyAndValueDictionary.EXTERNAL_ID), is("EOL:1073676"));
     }
 
     @Test
     public void lookupTaxonPathByScientificNameAlreadySet() throws PropertyEnricherException {
-        HashMap<String, String> properties = new HashMap<String, String>() {{
+        Map<String, String> properties = new HashMap<String, String>() {{
             put(PropertyAndValueDictionary.COMMON_NAMES, "bla bla");
             put(PropertyAndValueDictionary.PATH, "bla bla2");
             put(PropertyAndValueDictionary.EXTERNAL_ID, "bla bla3");
         }};
         properties.put(PropertyAndValueDictionary.NAME, "Homo sapiens");
-        eolService.enrich(properties);
+        properties = eolService.enrich(properties);
         assertThat(properties.get(PropertyAndValueDictionary.COMMON_NAMES), Is.is("bla bla"));
         assertThat(properties.get(PropertyAndValueDictionary.PATH), Is.is("bla bla2"));
         assertThat(properties.get(PropertyAndValueDictionary.EXTERNAL_ID), Is.is("bla bla3"));
@@ -458,12 +458,12 @@ public class EOLServiceIT {
 
     @Test
     public void lookupCommonNamesOnly() throws PropertyEnricherException {
-        HashMap<String, String> properties = new HashMap<String, String>() {{
+        Map<String, String> properties = new HashMap<String, String>() {{
             put(PropertyAndValueDictionary.PATH, "bla bla2");
             put(PropertyAndValueDictionary.EXTERNAL_ID, "bla bla3");
         }};
         properties.put(PropertyAndValueDictionary.NAME, "Homo sapiens");
-        eolService.enrich(properties);
+        properties = eolService.enrich(properties);
         assertThat(properties.get(PropertyAndValueDictionary.COMMON_NAMES), containsString("Human"));
         assertThat(properties.get(PropertyAndValueDictionary.PATH), containsString("Animalia"));
         assertThat(properties.get(PropertyAndValueDictionary.EXTERNAL_ID), Is.is("EOL:327955"));
@@ -471,12 +471,12 @@ public class EOLServiceIT {
 
     @Test
     public void lookupToads() throws PropertyEnricherException {
-        HashMap<String, String> properties = new HashMap<String, String>() {{
+        Map<String, String> properties = new HashMap<String, String>() {{
             put(PropertyAndValueDictionary.PATH, "bla bla2");
             put(PropertyAndValueDictionary.EXTERNAL_ID, "bla bla3");
         }};
         properties.put(PropertyAndValueDictionary.NAME, "Todarodes pacificus");
-        eolService.enrich(properties);
+        properties = eolService.enrich(properties);
         assertThat(properties.get(PropertyAndValueDictionary.EXTERNAL_ID), Is.is("EOL:590939"));
         assertThat(properties.get(PropertyAndValueDictionary.COMMON_NAMES), containsString("flying squid"));
         assertThat(properties.get(PropertyAndValueDictionary.PATH), containsString("Animalia"));
@@ -484,36 +484,36 @@ public class EOLServiceIT {
 
     @Test
     public void lookupAriopsisFelis() throws PropertyEnricherException {
-        HashMap<String, String> properties = new HashMap<String, String>() {{
+        Map<String, String> properties = new HashMap<String, String>() {{
         }};
         properties.put(PropertyAndValueDictionary.NAME, "Ariopsis felis");
-        eolService.enrich(properties);
+        properties = eolService.enrich(properties);
         assertThat(properties.get(PropertyAndValueDictionary.EXTERNAL_ID), Is.is("EOL:223038"));
         assertThat(properties.get(PropertyAndValueDictionary.PATH), containsString("Ariopsis felis"));
     }
 
     @Test
     public void lookupTaxonPathByScientificName() throws PropertyEnricherException {
-        HashMap<String, String> properties = new HashMap<String, String>();
+        Map<String, String> properties = new HashMap<String, String>();
         properties.put(PropertyAndValueDictionary.NAME, "Homo sapiens");
-        eolService.enrich(properties);
+        properties = eolService.enrich(properties);
         assertThat(properties.get(PropertyAndValueDictionary.PATH), Is.is(HOMO_SAPIENS_PATH));
     }
 
     @Test
     public void lookupExternalIdByScientificName() throws PropertyEnricherException {
-        HashMap<String, String> properties = new HashMap<String, String>();
+        Map<String, String> properties = new HashMap<String, String>();
         properties.put(PropertyAndValueDictionary.NAME, "Homo sapiens");
-        eolService.enrich(properties);
+        properties = eolService.enrich(properties);
         assertThat(properties.get(PropertyAndValueDictionary.EXTERNAL_ID), Is.is("EOL:327955"));
         assertThat(properties.get(PropertyAndValueDictionary.PATH), Is.is(HOMO_SAPIENS_PATH));
     }
 
     @Test
     public void lookupExternalIdAndPathByScientificName() throws PropertyEnricherException {
-        HashMap<String, String> properties = new HashMap<String, String>();
+        Map<String, String> properties = new HashMap<String, String>();
         properties.put(PropertyAndValueDictionary.NAME, "Homo sapiens");
-        eolService.enrich(properties);
+        properties = eolService.enrich(properties);
         assertThat(properties.get(PropertyAndValueDictionary.EXTERNAL_ID), Is.is("EOL:327955"));
         assertThat(properties.get(PropertyAndValueDictionary.PATH), Is.is(HOMO_SAPIENS_PATH));
 
@@ -521,9 +521,9 @@ public class EOLServiceIT {
 
     @Test
     public void lookupExternalIdAndPathByNonScientificName() throws PropertyEnricherException {
-        HashMap<String, String> properties = new HashMap<String, String>();
+        Map<String, String> properties = new HashMap<String, String>();
         properties.put(PropertyAndValueDictionary.NAME, "Other suspension feeders");
-        eolService.enrich(properties);
+        properties = eolService.enrich(properties);
         assertThat(properties.get(PropertyAndValueDictionary.EXTERNAL_ID), Is.is(nullValue()));
         assertThat(properties.get(PropertyAndValueDictionary.PATH), Is.is(nullValue()));
 
@@ -531,9 +531,9 @@ public class EOLServiceIT {
 
     @Test
     public void lookupCommonNamesByScientificName() throws PropertyEnricherException {
-        HashMap<String, String> properties = new HashMap<String, String>();
+        Map<String, String> properties = new HashMap<String, String>();
         properties.put(PropertyAndValueDictionary.NAME, "Rattus rattus");
-        eolService.enrich(properties);
+        properties = eolService.enrich(properties);
         assertThat(properties.get(PropertyAndValueDictionary.EXTERNAL_ID), Is.is("EOL:328447"));
         assertThat(properties.get(PropertyAndValueDictionary.PATH), containsString("Animalia" + CharsetConstant.SEPARATOR));
         assertThat(properties.get(PropertyAndValueDictionary.PATH), containsString("Chordata" + CharsetConstant.SEPARATOR));
