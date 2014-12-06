@@ -4,6 +4,7 @@ import com.Ostermiller.util.CSVParser;
 import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.File;
@@ -43,23 +44,14 @@ public class StudyImporterFelderTest {
     public static final String HEADER = StringUtils.join(FIELDS, '\t');
 
     @Test
-    public void convertToTSV() throws IOException {
+    public void convertToTSVWithHeader() throws IOException {
         File felder = File.createTempFile("felder", ".tsv");
         felder.deleteOnExit();
         OutputStream os = new FileOutputStream(felder);
 
         IOUtils.write(HEADER + "\n", os);
-        String[] diskNumbers = {"1", "5", "6", "7"};
-        for (String i : diskNumbers) {
-            String path = "/Volumes/Data/Users/unencrypted/jorrit/Desktop/Felder/" + "DISK" + i + "/BIRDS.";
-            for (String ext : new String[]{"BDT", "DAT"}) {
-                String filePath = path + ext;
-                File file = new File(filePath);
-                if (file.exists()) {
-                    IOUtils.copy(convertToTSV(new FileInputStream(file)), os);
-                }
-            }
-        }
+        IOUtils.copy(convertToTSV(getClass().getResourceAsStream("felder/BIRDS.BDT")), os);
+
         LabeledCSVParser parser = new LabeledCSVParser(new CSVParser(new FileInputStream(felder)));
         parser.changeDelimiter('\t');
         assertThat(parser.getLabels(), is(FIELDS));
@@ -73,42 +65,39 @@ public class StudyImporterFelderTest {
     @Test
     public void importData() throws IOException {
         FilterInputStream fis = convertToTSV(getClass().getResourceAsStream("felder/BIRDS.BDT"));
-        IOUtils.copy(fis, System.out);
-        LabeledCSVParser parser = new LabeledCSVParser(new CSVParser(fis));
+        CSVParser parser = new CSVParser(fis);
         parser.changeDelimiter('\t');
-        assertThat(parser.getLine(), is(notNullValue()));
-        assertThat(parser.getValueByLabel("Author"), is("*Dawson, W. L."));
-        assertThat(parser.getValueByLabel("species"), is("_fulicarius_"));
+        String[] line = parser.getLine();
+        assertThat(line, is(notNullValue()));
+        assertThat(line[1], is("*Dawson, W. L."));
+        assertThat(line[2], is("1923"));
 
-    }
-
-    @Test
-    public void importDataDAT() throws IOException {
-        String path = "/Volumes/Data/Users/unencrypted/jorrit/Desktop/Felder/DISK1/BIRDS.DAT";
-        File file = new File(path);
-        FilterInputStream fis = convertToTSV(new FileInputStream(file));
-        IOUtils.copy(fis, System.out);
-    }
-
-    @Test
-    public void importData2() throws IOException {
-        String path = "/Volumes/Data/Users/unencrypted/jorrit/Desktop/Felder/DISK1/BIRDS.BDF";
-        File file = new File(path);
-        FilterInputStream fis = convertToTSV(new FileInputStream(file));
-        IOUtils.copy(fis, System.out);
     }
 
     protected FilterInputStream convertToTSV(InputStream inputStream) throws FileNotFoundException {
         return new FilterInputStream(inputStream) {
             @Override
             public int read(byte[] buffer) throws IOException {
-                int read = this.in.read(buffer);
-                for (int i = 0; i < buffer.length; i++) {
+                return read(buffer, 0, buffer.length);
+            }
+
+            @Override
+            public int read(byte[] buffer, int off, int len) throws IOException {
+                int read = this.in.read(buffer, off, len);
+                for (int i = off; i < len; i++) {
                     byte val = buffer[i];
-                    buffer[i] = val == 0 ? (byte) '\t' : val;
-                    buffer[i] = val == -128 ? (byte) '\n' : buffer[i];
+                    buffer[i] = insertTabs(val);
+                    buffer[i] = insertNewline(val, buffer[i]);
                 }
                 return read;
+            }
+
+            private byte insertNewline(byte val, byte b) {
+                return val == -128 ? (byte) '\n' : b;
+            }
+
+            private byte insertTabs(byte val) {
+                return val == 0 ? (byte) '\t' : val;
             }
         };
     }
