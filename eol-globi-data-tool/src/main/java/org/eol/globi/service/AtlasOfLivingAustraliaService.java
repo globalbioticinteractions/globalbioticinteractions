@@ -45,7 +45,8 @@ public class AtlasOfLivingAustraliaService extends BaseHttpClientService impleme
     }
 
     private boolean hasSupportedExternalId(String externalId) throws PropertyEnricherException {
-        return StringUtils.startsWith(externalId, TaxonomyProvider.ID_PREFIX_AUSTRALIAN_FAUNAL_DIRECTORY);
+        return StringUtils.startsWith(externalId, TaxonomyProvider.ID_PREFIX_AUSTRALIAN_FAUNAL_DIRECTORY)
+                || StringUtils.startsWith(externalId, AFD_TSN_PREFIX);
     }
 
     private boolean needsEnrichment(Map<String, String> properties) {

@@ -62,7 +62,7 @@ public class EOLService extends BaseHttpClientService implements PropertyEnriche
                 int eolProviderId = 1172;
                 id = getPageIdFromProvider(eolProviderId, externalId.replace(TaxonomyProvider.NCBI.getIdPrefix(), ""));
             }
-        } else if (StringUtils.isNotBlank(name)) {
+        } else if (StringUtils.isNotBlank(name) && !PropertyAndValueDictionary.NO_NAME.equals(name)) {
             id = getPageId(name, true);
         }
         return id;

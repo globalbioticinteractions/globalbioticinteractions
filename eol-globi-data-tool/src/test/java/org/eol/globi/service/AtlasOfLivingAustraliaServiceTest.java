@@ -12,10 +12,8 @@ import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
-@Ignore("re-enable after service is back up")
 public class AtlasOfLivingAustraliaServiceTest {
 
-    @Ignore("re-enable after service is back up")
     @Test
     public void lookupTaxonByGUID() throws PropertyEnricherException {
         HashMap<String, String> props = new HashMap<String, String>() {
@@ -32,7 +30,6 @@ public class AtlasOfLivingAustraliaServiceTest {
         assertThat(enrich.get(PropertyAndValueDictionary.COMMON_NAMES), is("Red Kangaroo @en"));
     }
 
-    @Ignore("re-enable after service is back up")
     @Test
     public void lookupTaxonByRedirectedGUID() throws PropertyEnricherException {
         HashMap<String, String> props = new HashMap<String, String>() {
@@ -49,7 +46,6 @@ public class AtlasOfLivingAustraliaServiceTest {
         assertThat(enrich.get(PropertyAndValueDictionary.COMMON_NAMES), is("Red Kangaroo @en"));
     }
 
-    @Ignore("re-enable after service is back up")
     @Test
     public void lookupTaxonByInvalidGUID() throws PropertyEnricherException {
         HashMap<String, String> props = new HashMap<String, String>() {
@@ -62,7 +58,6 @@ public class AtlasOfLivingAustraliaServiceTest {
         assertThat(enrich.get(PropertyAndValueDictionary.EXTERNAL_ID), is("urn:lsxxx:bla"));
     }
 
-    @Ignore("re-enable after service is back up")
     @Test
     public void lookupTaxonByName() throws PropertyEnricherException {
         HashMap<String, String> props = new HashMap<String, String>();
@@ -76,7 +71,6 @@ public class AtlasOfLivingAustraliaServiceTest {
         assertThat(enrich.get(PropertyAndValueDictionary.COMMON_NAMES), is("Red Kangaroo @en"));
     }
 
-    @Ignore("re-enable after service is back up")
     @Test
     public void lookupPretestisAustralianus() throws PropertyEnricherException {
         HashMap<String, String> props = new HashMap<String, String>();
@@ -90,7 +84,6 @@ public class AtlasOfLivingAustraliaServiceTest {
         assertThat(enrich.get(PropertyAndValueDictionary.COMMON_NAMES), is(nullValue()));
     }
 
-    @Ignore("re-enable after service is back up")
     @Test
     public void lookupTaxonByName2() throws PropertyEnricherException {
         HashMap<String, String> props = new HashMap<String, String>() {{
@@ -106,7 +99,6 @@ public class AtlasOfLivingAustraliaServiceTest {
         assertThat(enrich.get(PropertyAndValueDictionary.COMMON_NAMES), is(nullValue()));
     }
 
-    @Ignore("re-enable after service is back up")
     @Test
     public void lookupTaxonByInvalidName() throws PropertyEnricherException {
         HashMap<String, String> props = new HashMap<String, String>();

@@ -34,7 +34,6 @@ public class TaxonPropertyEnricherImplIT extends GraphDBTestCase {
         nodeFactory = new NodeFactory(getGraphDb(), new TaxonIndexImpl(enricher, new TaxonNameCorrector(), getGraphDb()));
     }
 
-
     @Test
     public void enrichTwoTaxons() throws NodeFactoryException, IOException {
         TaxonNode taxon = nodeFactory.getOrCreateTaxon("Homo sapiens", "blabla", null);
@@ -150,7 +149,7 @@ public class TaxonPropertyEnricherImplIT extends GraphDBTestCase {
         int count = 0;
         for (Relationship classification : classifications) {
             TaxonNode taxonNode = new TaxonNode(classification.getEndNode());
-            assertThat(taxonNode.getExternalId(), is("urn:lsid:biodiversity.org.au:afd.taxon:31a9b8b8-4e8f-4343-a15f-2ed24e0bf1ae"));
+            assertThat(taxonNode.getExternalId(), is("AFD:31a9b8b8-4e8f-4343-a15f-2ed24e0bf1ae"));
             assertThat(taxonNode.getName(), is("Macropus rufus"));
             count++;
         }
