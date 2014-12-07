@@ -520,6 +520,18 @@ public class EOLServiceIT {
     }
 
     @Test
+    public void lookupPathNCBIExternalId() throws PropertyEnricherException {
+        Map<String, String> properties = new HashMap<String, String>();
+        properties.put(PropertyAndValueDictionary.NAME, "Homo sapiens");
+        properties.put(PropertyAndValueDictionary.EXTERNAL_ID, "NCBI:9606");
+        properties = eolService.enrich(properties);
+        assertThat(properties.get(PropertyAndValueDictionary.NAME), Is.is("Homo sapiens"));
+        assertThat(properties.get(PropertyAndValueDictionary.EXTERNAL_ID), Is.is("EOL:327955"));
+        assertThat(properties.get(PropertyAndValueDictionary.PATH), Is.is(HOMO_SAPIENS_PATH));
+
+    }
+
+    @Test
     public void lookupExternalIdAndPathByNonScientificName() throws PropertyEnricherException {
         Map<String, String> properties = new HashMap<String, String>();
         properties.put(PropertyAndValueDictionary.NAME, "Other suspension feeders");

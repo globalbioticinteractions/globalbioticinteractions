@@ -58,11 +58,38 @@ public class EOLService extends BaseHttpClientService implements PropertyEnriche
                 } catch (NumberFormatException ex) {
                     throw new PropertyEnricherException("failed to parse eol id [" + eolPageIdString + "]");
                 }
+            } else if (externalId.startsWith(TaxonomyProvider.NCBI.getIdPrefix())) {
+                int eolProviderId = 1172;
+                id = getPageIdFromProvider(eolProviderId, externalId.replace(TaxonomyProvider.NCBI.getIdPrefix(), ""));
             }
         } else if (StringUtils.isNotBlank(name)) {
             id = getPageId(name, true);
         }
         return id;
+    }
+
+    private Long getPageIdFromProvider(int eolProviderId, String provideTaxonId) throws PropertyEnricherException {
+        Long eolPageId = null;
+        try {
+            URI uri1 = new URI("http://eol.org/api/search_by_provider/1.0/" + provideTaxonId + ".json?hierarchy_id=" + eolProviderId);
+            String response1 = getResponse(uri1);
+            JsonNode jsonNode = new ObjectMapper().readTree(response1);
+            if (jsonNode.isArray() && jsonNode.size() > 0) {
+                JsonNode jsonNode1 = jsonNode.get(0);
+                if (jsonNode1.has("eol_page_id")) {
+                    eolPageId = Long.parseLong(jsonNode1.get("eol_page_id").getValueAsText());
+                }
+            }
+        } catch (JsonProcessingException ex) {
+            throw new PropertyEnricherException("failed to create uri", ex);
+        } catch (URISyntaxException ex) {
+            throw new PropertyEnricherException("failed to create uri", ex);
+        } catch (IOException e) {
+            throw new PropertyEnricherException("failed to get response", e);
+        } catch (NumberFormatException e) {
+            throw new PropertyEnricherException("invalid page id", e);
+        }
+        return eolPageId;
     }
 
     private boolean needsEnrichment(Map<String, String> properties) {
