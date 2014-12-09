@@ -73,6 +73,9 @@ public class EOLService extends BaseHttpClientService implements PropertyEnriche
         try {
             URI uri1 = new URI("http://eol.org/api/search_by_provider/1.0/" + provideTaxonId + ".json?hierarchy_id=" + eolProviderId);
             String response1 = getResponse(uri1);
+            if (response1 == null) {
+                throw new PropertyEnricherException("failed to retrieve response for [" + uri1 + "]");
+            }
             JsonNode jsonNode = new ObjectMapper().readTree(response1);
             if (jsonNode.isArray() && jsonNode.size() > 0) {
                 JsonNode jsonNode1 = jsonNode.get(0);
