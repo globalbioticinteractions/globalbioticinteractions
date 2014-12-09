@@ -145,10 +145,7 @@ public class StudyImporterForHechinger extends BaseStudyImporter {
     }
 
     private Study createStudy() {
-        return nodeFactory.getOrCreateStudy("Hechinger 2011",
-                "", null, null,
-                "Ryan F. Hechinger, Kevin D. Lafferty, John P. McLaughlin, Brian L. Fredensborg, Todd C. Huspeni, Julio Lorda, Parwant K. Sandhu, Jenny C. Shaw, Mark E. Torchin, Kathleen L. Whitney, and Armand M. Kuris. 2011. Food webs including parasites, biomass, body sizes, and life stages for three California/Baja California estuaries. Ecology 92:791.",
-                "2011",
-                "http://www.esapubs.org/archive/ecol/E092/066/");
+        String description = "Ryan F. Hechinger, Kevin D. Lafferty, John P. McLaughlin, Brian L. Fredensborg, Todd C. Huspeni, Julio Lorda, Parwant K. Sandhu, Jenny C. Shaw, Mark E. Torchin, Kathleen L. Whitney, and Armand M. Kuris 2011. Food webs including parasites, biomass, body sizes, and life stages for three California/Baja California estuaries. Ecology 92:791–791. http://dx.doi.org/10.1890/10-1383.1 . ";
+        return nodeFactory.getOrCreateStudy("hechinger2011", description, "http://dx.doi.org/10.1890/10-1383.1");
     }
 }
