@@ -68,10 +68,10 @@ public class EOLService extends BaseHttpClientService implements PropertyEnriche
         return id;
     }
 
-    private Long getPageIdFromProvider(int eolProviderId, String provideTaxonId) throws PropertyEnricherException {
+    private Long getPageIdFromProvider(int eolProviderId, String providerTaxonId) throws PropertyEnricherException {
         Long eolPageId = null;
         try {
-            URI uri1 = new URI("http://eol.org/api/search_by_provider/1.0/" + provideTaxonId + ".json?hierarchy_id=" + eolProviderId);
+            URI uri1 = new URI("http://eol.org/api/search_by_provider/1.0/" + providerTaxonId + ".json?hierarchy_id=" + eolProviderId);
             String response1 = getResponse(uri1);
             if (response1 == null) {
                 throw new PropertyEnricherException("failed to retrieve response for [" + uri1 + "]");

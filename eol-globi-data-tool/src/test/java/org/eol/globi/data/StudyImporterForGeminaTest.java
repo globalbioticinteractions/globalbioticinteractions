@@ -2,20 +2,22 @@ package org.eol.globi.data;
 
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.RelTypes;
-import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.TaxonNode;
-import org.junit.Ignore;
 import org.junit.Test;
+import org.neo4j.cypher.javacompat.ExecutionEngine;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
+import org.neo4j.graphdb.index.Index;
+import org.neo4j.graphdb.index.IndexHits;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
 import static org.junit.internal.matchers.IsCollectionContaining.hasItem;
 
 public class StudyImporterForGeminaTest extends GraphDBTestCase {
@@ -62,6 +64,13 @@ public class StudyImporterForGeminaTest extends GraphDBTestCase {
         StudyImporterForGemina importer = new StudyImporterForGemina(new ParserFactoryImpl(), nodeFactory);
         importer.importStudy();
         assertHuman();
+
+        Index<Node> taxons = nodeFactory.getGraphDb().index().forNodes("taxons");
+        IndexHits<Node> hits = taxons.query("*:*");
+        for (Node hit : hits) {
+            assertThat("taxon with name [" + hit.getProperty("name") + "] has no externalId", (String) hit.getProperty("externalId"), not(is("NCBI:")));
+        }
+
     }
 
     protected void assertHuman() throws NodeFactoryException {

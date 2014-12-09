@@ -39,8 +39,12 @@ public class StudyImporterForGemina extends BaseStudyImporter {
             String line[];
             while ((line = parser.getLine()) != null) {
                 if (line.length > 7) {
-                    Specimen pathogen = nodeFactory.createSpecimen(parser.getValueByLabel("Pathogen"), TaxonomyProvider.NCBI.getIdPrefix() + parser.getValueByLabel("Pathogen Taxonomy"));
-                    Specimen host = nodeFactory.createSpecimen(parser.getValueByLabel("Host/Reservoir"), TaxonomyProvider.NCBI.getIdPrefix() + line[7]);
+                    String pathogenId = parser.getValueByLabel("Pathogen Taxonomy");
+                    String pathogenExternalId = StringUtils.isBlank(pathogenId) ? null : TaxonomyProvider.NCBI.getIdPrefix() + pathogenId;
+                    Specimen pathogen = nodeFactory.createSpecimen(parser.getValueByLabel("Pathogen"), pathogenExternalId);
+                    String hostId = line[7];
+                    String hostReservoirExternalId = StringUtils.isBlank(hostId) ? null : TaxonomyProvider.NCBI.getIdPrefix() + hostId;
+                    Specimen host = nodeFactory.createSpecimen(parser.getValueByLabel("Host/Reservoir"), hostReservoirExternalId);
                     pathogen.interactsWith(host, InteractType.PATHOGEN_OF);
                     study.collected(pathogen);
                 }
