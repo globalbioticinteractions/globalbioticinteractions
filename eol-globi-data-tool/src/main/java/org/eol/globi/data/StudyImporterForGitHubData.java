@@ -38,7 +38,9 @@ public class StudyImporterForGitHubData extends BaseStudyImporter {
 
         for (String repository : repositories) {
             try {
+                LOG.info("importing github repo [" + repository + "]...");
                 importData(repository);
+                LOG.info("importing github repo [" + repository + "] done.");
             } catch (StudyImporterException ex) {
                 LOG.error("failed to import data from repo [" + repository + "]", ex);
             }
@@ -70,6 +72,7 @@ public class StudyImporterForGitHubData extends BaseStudyImporter {
                     StudyImporterForGoMexSI importer = new StudyImporterForGoMexSI(parserFactory, nodeFactory);
                     importer.setBaseUrl(baseUrl);
                     importer.setSourceCitation(sourceCitation);
+                    importer.importStudy();
                 } else {
                     throw new StudyImporterException("unsupported format [" + format + "]");
                 }
@@ -83,7 +86,6 @@ public class StudyImporterForGitHubData extends BaseStudyImporter {
         } catch (URISyntaxException e) {
             throw new StudyImporterException("failed to import repo [" + repo + "]", e);
         }
-
     }
 
     private void importRepository(String repo, String sourceCitation, String baseUrl) throws IOException, NodeFactoryException, StudyImporterException {

@@ -35,6 +35,7 @@ public class StudyImporterForGitHubDataTest extends GraphDBTestCase {
         assertThat(DOIs, hasItem("doi:10.3354/meps09511"));
         assertThat(sources, hasItem(containsString("Accessed at")));
         assertThat(sources, hasItem(containsString("Miller")));
+        assertThat(sources, hasItem(containsString("Gomexsi")));
 
         assertThat(nodeFactory.findTaxonByName("Leptoconchus incycloseris"), is(notNullValue()));
         assertThat(nodeFactory.findTaxonByName("Sandalolitha dentata"), is(notNullValue()));
