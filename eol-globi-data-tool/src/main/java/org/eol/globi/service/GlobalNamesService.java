@@ -1,15 +1,15 @@
 package org.eol.globi.service;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.mime.MultipartEntity;
-import org.apache.http.entity.mime.content.InputStreamBody;
 import org.apache.http.impl.client.BasicResponseHandler;
+import org.apache.http.message.BasicNameValuePair;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.data.CharsetConstant;
@@ -20,7 +20,6 @@ import org.eol.globi.domain.TaxonomyProvider;
 import org.eol.globi.util.HttpUtil;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -91,10 +90,9 @@ public class GlobalNamesService extends BaseHttpClientService implements Propert
                 , null);
         HttpPost post = new HttpPost(uri);
 
-        MultipartEntity entity = new MultipartEntity();
-        InputStream is = IOUtils.toInputStream(StringUtils.join(names, "\n"), "UTF-8");
-        entity.addPart("file", new InputStreamBody(is, "file"));
-        post.setEntity(entity);
+        List<NameValuePair> params = new ArrayList<NameValuePair>();
+        params.add(new BasicNameValuePair("data", StringUtils.join(names, "\n")));
+        post.setEntity(new UrlEncodedFormEntity(params));
 
         return httpClient.execute(post, new BasicResponseHandler());
     }
