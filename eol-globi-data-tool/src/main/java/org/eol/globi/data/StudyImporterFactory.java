@@ -34,7 +34,6 @@ public class StudyImporterFactory {
         add(StudyImporterForICES.class);
         add(StudyImporterForBarnes.class);
         add(StudyImporterForCook.class);
-        add(StudyImporterForGoMexSI.class);
         add(StudyImporterForRobledo.class);
         add(StudyImporterForINaturalist.class);
         add(StudyImporterForThessen.class);
