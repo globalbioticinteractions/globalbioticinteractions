@@ -59,8 +59,9 @@ public class EOLService extends BaseHttpClientService implements PropertyEnriche
                     throw new PropertyEnricherException("failed to parse eol id [" + eolPageIdString + "]");
                 }
             } else if (externalId.startsWith(TaxonomyProvider.NCBI.getIdPrefix())) {
-                int eolProviderId = 1172;
-                id = getPageIdFromProvider(eolProviderId, externalId.replace(TaxonomyProvider.NCBI.getIdPrefix(), ""));
+                id = getPageIdFromProvider(1172, externalId.replace(TaxonomyProvider.NCBI.getIdPrefix(), ""));
+            } else if (externalId.startsWith(TaxonomyProvider.ITIS.getIdPrefix())) {
+                id = getPageIdFromProvider(903, externalId.replace(TaxonomyProvider.ITIS.getIdPrefix(), ""));
             }
         } else if (StringUtils.isNotBlank(name) && !PropertyAndValueDictionary.NO_NAME.equals(name)) {
             id = getPageId(name, true);

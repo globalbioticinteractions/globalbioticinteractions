@@ -532,6 +532,17 @@ public class EOLServiceIT {
     }
 
     @Test
+    public void lookupPathITISExternalId() throws PropertyEnricherException {
+        Map<String, String> properties = new HashMap<String, String>();
+        properties.put(PropertyAndValueDictionary.NAME, "sea otter");
+        properties.put(PropertyAndValueDictionary.EXTERNAL_ID, "ITIS:180547");
+        properties = eolService.enrich(properties);
+        assertThat(properties.get(PropertyAndValueDictionary.NAME), Is.is("Enhydra lutris"));
+        assertThat(properties.get(PropertyAndValueDictionary.EXTERNAL_ID), Is.is("EOL:328583"));
+        assertThat(properties.get(PropertyAndValueDictionary.PATH), Is.is("Animalia | Chordata | Mammalia | Carnivora | Mustelidae | Enhydra | Enhydra lutris"));
+    }
+
+    @Test
     public void lookupExternalIdAndPathByNonScientificName() throws PropertyEnricherException {
         Map<String, String> properties = new HashMap<String, String>();
         properties.put(PropertyAndValueDictionary.NAME, "Other suspension feeders");
