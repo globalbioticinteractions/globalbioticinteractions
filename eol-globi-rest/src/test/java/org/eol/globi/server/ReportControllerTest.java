@@ -31,7 +31,12 @@ public class ReportControllerTest {
 
     @Test
     public void info() throws IOException {
-        String studies = new ReportController().info(null);
+        HttpServletRequest req = Mockito.mock(HttpServletRequest.class);
+        when(req.getParameterMap()).thenReturn(new HashMap<String, String[]>() {
+            {
+            }
+        });
+        String studies = new ReportController().info(null, req);
         ObjectMapper mapper = new ObjectMapper();
         JsonNode jsonNode = mapper.readTree(studies);
         assertThat(jsonNode.has("data"), is(true));
@@ -41,7 +46,12 @@ public class ReportControllerTest {
 
     @Test
     public void infoBySource() throws IOException {
-        String studies = new ReportController().info("http://gomexsi.tamucc.edu");
+        HttpServletRequest req = Mockito.mock(HttpServletRequest.class);
+        when(req.getParameterMap()).thenReturn(new HashMap<String, String[]>() {
+            {
+            }
+        });
+        String studies = new ReportController().info("http://gomexsi.tamucc.edu", req);
         ObjectMapper mapper = new ObjectMapper();
         JsonNode jsonNode = mapper.readTree(studies);
         assertThat(jsonNode.has("data"), is(true));
@@ -52,10 +62,11 @@ public class ReportControllerTest {
     @Test
     public void infoBySourceAndBoundingBox() throws IOException {
         HttpServletRequest req = Mockito.mock(HttpServletRequest.class);
-        when(req.getParameterMap()).thenReturn(new HashMap<String, String[]>() {{
-            put("source", new String[] {"http://gomexsi.tamucc.edu"});
-            put("bbox", new String[]{"-100.0,0.0,-80.08,40.32"});
-        }
+        when(req.getParameterMap()).thenReturn(new HashMap<String, String[]>() {
+            {
+                put("source", new String[]{"http://gomexsi.tamucc.edu"});
+                put("bbox", new String[]{"-100.0,0.0,-80.08,40.32"});
+            }
         });
         String response = new ReportController().spatialInfo(req);
         ObjectMapper mapper = new ObjectMapper();
@@ -67,7 +78,13 @@ public class ReportControllerTest {
 
     @Test
     public void spatialInfo() throws IOException {
-        String studies = new ReportController().info(null);
+        HttpServletRequest req = Mockito.mock(HttpServletRequest.class);
+        when(req.getParameterMap()).thenReturn(new HashMap<String, String[]>() {
+            {
+            }
+        });
+
+        String studies = new ReportController().info(null, req);
         ObjectMapper mapper = new ObjectMapper();
         JsonNode jsonNode = mapper.readTree(studies);
         assertThat(jsonNode.has("data"), is(true));
