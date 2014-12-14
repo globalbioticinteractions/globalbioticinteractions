@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Set;
 
 import static junit.framework.Assert.assertTrue;
+import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertNotNull;
@@ -44,6 +45,9 @@ public class StudyImporterForByrnesTest extends GraphDBTestCase {
 
         assertThat(citations, hasItem("Pennings, S. C. 1990. Size-related shifts in herbivory: specialization in the sea hare Aplysia californica Cooper. Journal of Experimental Marine Biology and Ecology 142:43-61."));
         assertThat(citations, hasItem("Barry, J. and M. Ehret. 1993. Diet, food preference, and algal availability for fishes and crabs on intertidal reef communities in southern California. Environmental Biology of Fishes 37:75-95."));
+        assertThat(citations, hasItem("Byrnes, J.E. et al., 2011. Climate-driven increases in storm frequency simplify kelp forest food webs. Global Change Biology, 17(8), pp.2513–2524. Available at: http://dx.doi.org/10.1111/j.1365-2486.2011.02409.x."));
+
+        assertThat(citations, not(hasItem("17(8)")));
 
         ExecutionEngine executionEngine = new ExecutionEngine(getGraphDb());
         ExecutionResult result = executionEngine.execute("START taxon = node:taxons(name=\"Strongylocentrotus purpuratus\")" +

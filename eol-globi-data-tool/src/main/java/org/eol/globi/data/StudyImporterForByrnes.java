@@ -49,10 +49,12 @@ public class StudyImporterForByrnes extends BaseStudyImporter {
         Study localStudy = null;
         try {
             String refList = StringUtils.trim(parser.getValueByLabel("Reference"));
+            String[] refs;
             if (StringUtils.isBlank(refList)) {
-                refList = "Byrnes, J.E. et al., 2011. Climate-driven increases in storm frequency simplify kelp forest food webs. Global Change Biology, 17(8), pp.2513–2524. Available at: http://dx.doi.org/10.1111/j.1365-2486.2011.02409.x.";
+                refs = new String[]{"Byrnes, J.E. et al., 2011. Climate-driven increases in storm frequency simplify kelp forest food webs. Global Change Biology, 17(8), pp.2513–2524. Available at: http://dx.doi.org/10.1111/j.1365-2486.2011.02409.x."};
+            } else {
+                refs = StringUtils.split(refList, ",");
             }
-            String[] refs = StringUtils.split(refList, ",");
             for (String ref : refs) {
                 String singleShortRef = StringUtils.trim(ref);
                 String longRef = refMap.get(singleShortRef);
