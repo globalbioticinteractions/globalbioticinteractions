@@ -16,15 +16,15 @@ public class ReportController {
     @RequestMapping(value = "/contributors", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
     @ResponseBody
     @Cacheable(value = "contributorCache")
-    public String contributors(@RequestParam(required = false) final String source, HttpServletRequest request) throws IOException {
-        return new CypherQueryExecutor(CypherQueryBuilder.references(source)).execute(request, false);
+    public String contributors(@RequestParam(required = false) final String source) throws IOException {
+        return new CypherQueryExecutor(CypherQueryBuilder.references(source)).execute(null, false);
     }
 
     @RequestMapping(value = "/info", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
     @ResponseBody
     @Cacheable(value = "infoCache")
-    public String info(@RequestParam(required = false) final String source, HttpServletRequest request) throws IOException {
-        return new CypherQueryExecutor(CypherQueryBuilder.stats(source)).execute(request);
+    public String info(@RequestParam(required = false) final String source) throws IOException {
+        return new CypherQueryExecutor(CypherQueryBuilder.stats(source)).execute(null);
     }
 
     @RequestMapping(value =
