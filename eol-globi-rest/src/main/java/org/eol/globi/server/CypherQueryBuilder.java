@@ -314,6 +314,8 @@ public class CypherQueryBuilder {
                 if (NON_INVERTED_INTERACTION_TYPES.contains(type)) {
                     cypherTypes.add(INTERACTION_TYPE_MAP.get(type));
                 }
+            } else {
+                throw new IllegalArgumentException("unsupported interaction type [" + type + "]");
             }
         }
 
