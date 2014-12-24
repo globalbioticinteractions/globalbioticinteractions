@@ -108,6 +108,26 @@ public class CypherQueryBuilderTest {
         assertThat(query.getParams().toString(), is("{source_taxon_name=path:\\\"Arthropoda\\\", target_taxon_name=path:\\\"Mammalia\\\"}"));
     }
 
+
+    @Test
+    public void findInteractionForTargetTaxaPollinates() throws IOException {
+        HashMap<String, String[]> params = new HashMap<String, String[]>() {
+            {
+                put("sourceTaxon", new String[]{"Arthropoda"});
+                put("targetTaxon", new String[]{"Mammalia"});
+                put("interactionType", new String[]{"pollinatedBy"});
+            }
+        };
+
+        String expectedQuery = "START sourceTaxon = node:taxonPaths({source_taxon_name}) " +
+                expectedMatchClause(expectedInteractionClause("POLLINATES")) +
+                "WHERE has(targetTaxon.path) AND targetTaxon.path =~ '(.*(Arthropoda).*)' " +
+                EXPECTED_RETURN_CLAUSE;
+        CypherQuery query = CypherQueryBuilder.buildInteractionQuery(params);
+        assertThat(query.getQuery(), is(expectedQuery));
+        assertThat(query.getParams().toString(), is("{source_taxon_name=path:\\\"Mammalia\\\", target_taxon_name=path:\\\"Arthropoda\\\"}"));
+    }
+
     @Test(expected = IllegalArgumentException.class)
     public void findInteractionForTargetTaxaOnlyByInteractionTypeNotSupported() throws IOException {
         HashMap<String, String[]> params = new HashMap<String, String[]>() {

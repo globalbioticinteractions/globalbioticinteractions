@@ -287,6 +287,21 @@ public class CypherQueryBuilder {
         List<String> sourceTaxaSelectors = collectParamValues(parameterMap, SOURCE_TAXON_HTTP_PARAM_NAME);
         List<String> targetTaxaSelectors = collectParamValues(parameterMap, TARGET_TAXON_HTTP_PARAM_NAME);
 
+        List<String> interactionTypeSelectors = collectParamValues(parameterMap, "interactionType");
+        List<String> cypherTypes = new ArrayList<String>();
+        for (String type : interactionTypeSelectors) {
+            if (INTERACTION_TYPE_MAP.containsKey(type)) {
+                cypherTypes.add(INTERACTION_TYPE_MAP.get(type));
+                if (INVERTED_INTERACTION_TYPES.contains(type)) {
+                    List<String> tmp = sourceTaxaSelectors;
+                    sourceTaxaSelectors = targetTaxaSelectors;
+                    targetTaxaSelectors = tmp;
+                }
+            } else {
+                throw new IllegalArgumentException("unsupported interaction type [" + type + "]");
+            }
+        }
+
         boolean isSpatialSearch = RequestHelper.isSpatialSearch(parameterMap);
         if (noSearchCriteria(isSpatialSearch, sourceTaxaSelectors, targetTaxaSelectors)) {
             // sensible default
@@ -307,17 +322,6 @@ public class CypherQueryBuilder {
             }
         }
 
-        List<String> interactionTypeSelectors = collectParamValues(parameterMap, "interactionType");
-        List<String> cypherTypes = new ArrayList<String>();
-        for (String type : interactionTypeSelectors) {
-            if (INTERACTION_TYPE_MAP.containsKey(type)) {
-                if (NON_INVERTED_INTERACTION_TYPES.contains(type)) {
-                    cypherTypes.add(INTERACTION_TYPE_MAP.get(type));
-                }
-            } else {
-                throw new IllegalArgumentException("unsupported interaction type [" + type + "]");
-            }
-        }
 
         String interactionSelector = cypherTypes.isEmpty() ? InteractUtil.allInteractionsCypherClause() : StringUtils.join(cypherTypes, "|");
 
