@@ -297,7 +297,7 @@ public class CypherQueryBuilder {
                     sourceTaxaSelectors = targetTaxaSelectors;
                     targetTaxaSelectors = tmp;
                 }
-            } else {
+            } else if (StringUtils.isNotBlank(type)) {
                 throw new IllegalArgumentException("unsupported interaction type [" + type + "]");
             }
         }
