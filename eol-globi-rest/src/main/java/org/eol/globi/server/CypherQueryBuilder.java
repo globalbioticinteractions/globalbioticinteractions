@@ -36,8 +36,14 @@ public class CypherQueryBuilder {
 
     private static final String SOURCE_TAXON_HTTP_PARAM_NAME = "sourceTaxon";
     private static final String TARGET_TAXON_HTTP_PARAM_NAME = "targetTaxon";
+
+    @Deprecated
     private static final List<String> INVERTED_INTERACTION_TYPES = Arrays.asList(INTERACTION_PREYED_UPON_BY, INTERACTION_HOST_OF, INTERACTION_POLLINATED_BY, INTERACTION_HAS_PATHOGEN);
+
+    @Deprecated
     private static final List<String> NON_INVERTED_INTERACTION_TYPES = Arrays.asList(INTERACTION_PREYS_ON, INTERACTION_PARASITE_OF, INTERACTION_POLLINATES, INTERACTION_PATHOGEN_OF);
+
+    @Deprecated
     private static final Map<String, String> INTERACTION_TYPE_MAP = new HashMap<String, String>() {
         {
             String preysOn = InteractType.ATE + "|" + InteractType.PREYS_UPON;
@@ -49,6 +55,20 @@ public class CypherQueryBuilder {
             put(INTERACTION_POLLINATED_BY, InteractType.POLLINATES.toString());
             put(INTERACTION_PATHOGEN_OF, InteractType.PATHOGEN_OF.toString());
             put(INTERACTION_HAS_PATHOGEN, InteractType.PATHOGEN_OF.toString());
+        }
+    };
+
+    private static final Map<String, String> DIRECTIONAL_INTERACTION_TYPE_MAP = new HashMap<String, String>() {
+        {
+            String preysOn = InteractType.ATE + "|" + InteractType.PREYS_UPON;
+            put(INTERACTION_PREYS_ON, preysOn);
+            put(INTERACTION_PREYED_UPON_BY, InteractType.EATEN_BY + "|" + InteractType.PREYED_UPON_BY);
+            put(INTERACTION_PARASITE_OF, InteractType.PARASITE_OF + "|" + InteractType.HAS_HOST);
+            put(INTERACTION_HOST_OF, InteractType.HAS_PARASITE + "|" + InteractType.HOST_OF);
+            put(INTERACTION_POLLINATES, InteractType.POLLINATES.toString());
+            put(INTERACTION_POLLINATED_BY, InteractType.POLLINATED_BY.toString());
+            put(INTERACTION_PATHOGEN_OF, InteractType.PATHOGEN_OF.toString());
+            put(INTERACTION_HAS_PATHOGEN, InteractType.HAS_PARASITE.toString());
         }
     };
 
@@ -287,21 +307,6 @@ public class CypherQueryBuilder {
         List<String> sourceTaxaSelectors = collectParamValues(parameterMap, SOURCE_TAXON_HTTP_PARAM_NAME);
         List<String> targetTaxaSelectors = collectParamValues(parameterMap, TARGET_TAXON_HTTP_PARAM_NAME);
 
-        List<String> interactionTypeSelectors = collectParamValues(parameterMap, "interactionType");
-        List<String> cypherTypes = new ArrayList<String>();
-        for (String type : interactionTypeSelectors) {
-            if (INTERACTION_TYPE_MAP.containsKey(type)) {
-                cypherTypes.add(INTERACTION_TYPE_MAP.get(type));
-                if (INVERTED_INTERACTION_TYPES.contains(type)) {
-                    List<String> tmp = sourceTaxaSelectors;
-                    sourceTaxaSelectors = targetTaxaSelectors;
-                    targetTaxaSelectors = tmp;
-                }
-            } else if (StringUtils.isNotBlank(type)) {
-                throw new IllegalArgumentException("unsupported interaction type [" + type + "]");
-            }
-        }
-
         boolean isSpatialSearch = RequestHelper.isSpatialSearch(parameterMap);
         if (noSearchCriteria(isSpatialSearch, sourceTaxaSelectors, targetTaxaSelectors)) {
             // sensible default
@@ -323,13 +328,24 @@ public class CypherQueryBuilder {
         }
 
 
+        List<String> interactionTypeSelectors = collectParamValues(parameterMap, "interactionType");
+        List<String> cypherTypes = new ArrayList<String>();
+        for (String type : interactionTypeSelectors) {
+            if (DIRECTIONAL_INTERACTION_TYPE_MAP.containsKey(type)) {
+                cypherTypes.add(DIRECTIONAL_INTERACTION_TYPE_MAP.get(type));
+            } else if (StringUtils.isNotBlank(type)) {
+                throw new IllegalArgumentException("unsupported interaction type [" + type + "]");
+            }
+        }
+
         String interactionSelector = cypherTypes.isEmpty() ? InteractUtil.allInteractionsCypherClause() : StringUtils.join(cypherTypes, "|");
 
         query.append(" MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen-[interactionType:")
                 .append(interactionSelector)
                 .append("]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon")
-                .append(",sourceSpecimen<-[:COLLECTED]-study,")
-                .append("sourceSpecimen-[?:COLLECTED_AT]->loc");
+                .append(",sourceSpecimen<-[?:COLLECTED]-study")
+                .append(",targetSpecimen<-[?:COLLECTED]-study")
+                .append(",sourceSpecimen-[?:COLLECTED_AT]->loc");
 
         if (parameterMap != null && isSpatialSearch) {
             query.append(" WHERE");

@@ -21,7 +21,7 @@ public class CypherQueryBuilderTest {
     }
 
     private static String expectedMatchClause(String expectedInteractionClause) {
-        return "MATCH sourceTaxon<-[:CLASSIFIED_AS]-" + expectedInteractionClause + "-[:CLASSIFIED_AS]->targetTaxon,sourceSpecimen<-[:COLLECTED]-study,sourceSpecimen-[?:COLLECTED_AT]->loc ";
+        return "MATCH sourceTaxon<-[:CLASSIFIED_AS]-" + expectedInteractionClause + "-[:CLASSIFIED_AS]->targetTaxon,sourceSpecimen<-[?:COLLECTED]-study,targetSpecimen<-[?:COLLECTED]-study,sourceSpecimen-[?:COLLECTED_AT]->loc ";
     }
 
     public static final String EXPECTED_RETURN_CLAUSE = "RETURN sourceTaxon.externalId? as source_taxon_external_id," +
@@ -120,12 +120,12 @@ public class CypherQueryBuilderTest {
         };
 
         String expectedQuery = "START sourceTaxon = node:taxonPaths({source_taxon_name}) " +
-                expectedMatchClause(expectedInteractionClause("POLLINATES")) +
-                "WHERE has(targetTaxon.path) AND targetTaxon.path =~ '(.*(Arthropoda).*)' " +
+                expectedMatchClause(expectedInteractionClause("POLLINATED_BY")) +
+                "WHERE has(targetTaxon.path) AND targetTaxon.path =~ '(.*(Mammalia).*)' " +
                 EXPECTED_RETURN_CLAUSE;
         CypherQuery query = CypherQueryBuilder.buildInteractionQuery(params);
         assertThat(query.getQuery(), is(expectedQuery));
-        assertThat(query.getParams().toString(), is("{source_taxon_name=path:\\\"Mammalia\\\", target_taxon_name=path:\\\"Arthropoda\\\"}"));
+        assertThat(query.getParams().toString(), is("{source_taxon_name=path:\\\"Arthropoda\\\", target_taxon_name=path:\\\"Mammalia\\\"}"));
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -152,7 +152,7 @@ public class CypherQueryBuilderTest {
         };
 
         String expectedQuery = "START sourceTaxon = node:taxonPaths({source_taxon_name}) " +
-                expectedMatchClause(expectedInteractionClause("ATE|PREYS_UPON|PARASITE_OF|HAS_HOST")) +
+                expectedMatchClause(EXPECTED_INTERACTION_CLAUSE_ALL_INTERACTIONS) +
                 "WHERE has(targetTaxon.path) AND targetTaxon.path =~ '(.*(Mammalia).*)' " +
                 EXPECTED_RETURN_CLAUSE;
         CypherQuery query = CypherQueryBuilder.buildInteractionQuery(params);
