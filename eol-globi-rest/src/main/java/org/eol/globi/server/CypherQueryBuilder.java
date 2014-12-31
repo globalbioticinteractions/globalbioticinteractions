@@ -299,7 +299,7 @@ public class CypherQueryBuilder {
         query.append(" MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen-[interactionType:")
                 .append(interactionSelector)
                 .append("]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon")
-                .append(",sourceSpecimen<-[?:COLLECTED]-study")
+                .append(",sourceSpecimen<-[:COLLECTED]-study")
                 .append(",sourceSpecimen-[?:COLLECTED_AT]->loc");
 
         if (parameterMap != null && isSpatialSearch) {
@@ -410,14 +410,13 @@ public class CypherQueryBuilder {
         query.append(" MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen<-[c:COLLECTED]-study")
                 .append(", sourceSpecimen-[interact]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon");
         if (RequestHelper.isSpatialSearch(parameterMap)) {
-            addLocationClausesIfNecessary(query, parameterMap);
+            query.append(", sourceSpecimen-[:COLLECTED_AT]->loc");
         }
-
-        Map<String, String> cypherParams = addSourceClauseIfNecessary(query, parameterMap);
-
         query.append(" WHERE not(has(interact.");
         query.append(PropertyAndValueDictionary.INVERTED);
         query.append("))");
+
+        Map<String, String> params = addSourceWhereClause(parameterMap, query);
 
         query.append(" RETURN count(distinct(study)) as `number of distinct studies`")
                 .append(", count(interact) as `number of interactions`")
@@ -433,7 +432,22 @@ public class CypherQueryBuilder {
         }
         query.append(" as `number of distinct locations`")
                 .append(", count(distinct(").append(interactionLabel).append(")) as `number of distinct interactions`");
-        return new CypherQuery(query.toString(), cypherParams);
+        return new CypherQuery(query.toString(), params);
+    }
+
+    protected static Map<String, String> addSourceWhereClause(Map<String, String[]> parameterMap, StringBuilder query) {
+        String[] sourceList = parameterMap == null ? null : parameterMap.get("source");
+        final String source = sourceList != null && sourceList.length > 0 ? sourceList[0] : null;
+        String sourceWhereClause = StringUtils.isBlank(source) ? "" : " study.source = {source}";
+        Map<String, String> params = StringUtils.isBlank(source) ? EMPTY_PARAMS : new HashMap<String, String>() {{
+            put("source", source);
+        }};
+
+        if (StringUtils.isNotBlank(sourceWhereClause)) {
+            query.append(" AND");
+            query.append(sourceWhereClause);
+        }
+        return params;
     }
 
     private static Map<String, String> addSourceClauseIfNecessary(StringBuilder query, Map<String, String[]> parameterMap) {
