@@ -1,22 +1,18 @@
 package org.eol.globi.data;
 
-import org.eol.globi.domain.InteractType;
-import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Study;
 import org.hamcrest.core.Is;
+import org.junit.Ignore;
 import org.junit.Test;
-import org.neo4j.graphdb.Direction;
-import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 
-import java.util.Iterator;
-
 import static junit.framework.Assert.assertNotNull;
-import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 public class StudyImporterForJRFerrerParisTest extends GraphDBTestCase {
+
+    @Ignore(value = "too slow for regular use")
     @Test
     public void testFullImport() throws StudyImporterException {
         StudyImporterForJRFerrerParis studyImporterForJRFerrerParis = new StudyImporterForJRFerrerParis(new ParserFactoryImpl(), nodeFactory);
