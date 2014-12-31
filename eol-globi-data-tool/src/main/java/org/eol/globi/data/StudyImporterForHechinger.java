@@ -133,14 +133,14 @@ public class StudyImporterForHechinger extends BaseStudyImporter {
         if (interactType == null) {
             throw new StudyImporterException("failed to map interaction type [" + linkType + "] in line [" + links.lastLineNumber() + "]");
         }
-        Specimen consumer = nodeFactory.createSpecimen(taxonForNode.get(consumerNodeID));
+        Specimen consumer = nodeFactory.createSpecimen(study, taxonForNode.get(consumerNodeID));
         consumer.setLifeStage(stageForNode.get(consumerNodeID));
         consumer.setExternalId("NodeID:" + consumerNodeID);
-        study.collected(consumer);
         consumer.caughtIn(location);
-        Specimen resource = nodeFactory.createSpecimen(taxonForNode.get(resourceNodeID));
+        Specimen resource = nodeFactory.createSpecimen(study, taxonForNode.get(resourceNodeID));
         resource.setLifeStage(stageForNode.get(resourceNodeID));
         resource.setExternalId("NodeID:" + resourceNodeID);
+        resource.caughtIn(location);
         consumer.interactsWith(resource, interactType);
     }
 

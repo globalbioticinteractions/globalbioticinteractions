@@ -23,6 +23,7 @@ import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.fail;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import static org.junit.matchers.JUnitMatchers.hasItem;
 
 public class StudyImporterForSimonsTest extends GraphDBTestCase {
@@ -93,6 +94,14 @@ public class StudyImporterForSimonsTest extends GraphDBTestCase {
                 String seasonName = "summer";
                 double length = (26.0d + 50.0d) / 2.0d;
                 assertSpecimen(specimen, LONG_2, LAT_2, -20.0, seasonName, genusName, length);
+            } else if ("Ampelisca sp. (abdita complex)".equals(scientificName)) {
+                Node locationNode = specimen.getSingleRelationship(RelTypes.COLLECTED_AT, Direction.OUTGOING).getEndNode();
+                assertNotNull(locationNode);
+                assertTrue(locationNode.hasProperty(Location.LONGITUDE));
+                assertTrue(locationNode.hasProperty(Location.ALTITUDE));
+                assertTrue(locationNode.hasProperty(Location.LATITUDE));
+            } else if ("Ampelisca agassizi".equals(scientificName)) {
+                assertPreySpecimen(specimen, LONG_1, LAT_1, -60.0);
             } else {
                 fail("found predator with unexpected scientificName [" + scientificName + "]");
             }
@@ -116,6 +125,14 @@ public class StudyImporterForSimonsTest extends GraphDBTestCase {
         assertEquals(seasonName, season);
 
         assertEquals(length, firstSpecimen.getProperty(Specimen.LENGTH_IN_MM));
+    }
+
+    private void assertPreySpecimen(Node firstSpecimen, double longitude, double lat, double alt) {
+        Node locationNode = firstSpecimen.getSingleRelationship(RelTypes.COLLECTED_AT, Direction.OUTGOING).getEndNode();
+        assertNotNull(locationNode);
+        assertEquals(longitude, locationNode.getProperty(Location.LONGITUDE));
+        assertEquals(alt, locationNode.getProperty(Location.ALTITUDE));
+        assertEquals(lat, locationNode.getProperty(Location.LATITUDE));
     }
 
 }

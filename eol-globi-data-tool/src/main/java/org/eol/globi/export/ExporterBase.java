@@ -1,7 +1,6 @@
 package org.eol.globi.export;
 
 import com.Ostermiller.util.CSVPrinter;
-import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.util.InteractUtil;
@@ -17,6 +16,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TimeZone;
+
+import static org.eol.globi.domain.PropertyAndValueDictionary.*;
 
 public abstract class ExporterBase extends DarwinCoreExporter {
 
@@ -36,10 +37,11 @@ public abstract class ExporterBase extends DarwinCoreExporter {
         return "START study = node:studies(title={studyTitle}) " +
                 "MATCH study-[:COLLECTED]->sourceSpecimen-[:CLASSIFIED_AS]->sourceTaxon, " +
                 "sourceSpecimen-[r:" + InteractUtil.allInteractionsCypherClause() + "]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon  " +
-                "WHERE sourceTaxon.externalId? <> '" + PropertyAndValueDictionary.NO_MATCH +
-                "' AND sourceTaxon.name? <> '" + PropertyAndValueDictionary.NO_MATCH +
-                "' AND targetTaxon.externalId? <> '" + PropertyAndValueDictionary.NO_MATCH +
-                "' AND targetTaxon.name? <> '" + PropertyAndValueDictionary.NO_MATCH + "' " +
+                "WHERE sourceTaxon.externalId? <> '" + NO_MATCH +
+                "' AND sourceTaxon.name? <> '" + NO_MATCH +
+                "' AND targetTaxon.externalId? <> '" + NO_MATCH +
+                "' AND targetTaxon.name? <> '" + NO_MATCH + "' " +
+                " AND not(has(r." + INVERTED + ")) " +
                 "RETURN distinct(sourceTaxon) as " + QUERY_PARAM_SOURCE_TAXON +
                 ", type(r) as " + QUERY_PARAM_INTERACTION_TYPE +
                 ", collect(distinct(targetTaxon)) as " + QUERY_PARAM_TARGET_TAXA;

@@ -64,7 +64,6 @@ public class StudyImporterForWrastTest extends GraphDBTestCase {
         StudyImporterForWrast studyImporterFor = new StudyImporterForWrast(new TestParserFactory(contentMap), nodeFactory);
 
 
-
         Study study = studyImporterFor.importStudy();
 
         int specimenCount = 0;
@@ -72,7 +71,7 @@ public class StudyImporterForWrastTest extends GraphDBTestCase {
             specimenCount++;
         }
 
-        assertThat(specimenCount, is(2));
+        assertThat(specimenCount, is(5));
 
 
         assertNotNull(nodeFactory.findTaxonByName("Sciaenops ocellatus"));
@@ -86,7 +85,7 @@ public class StudyImporterForWrastTest extends GraphDBTestCase {
         Study foundStudy = nodeFactory.findStudy("Wrast 2008");
         assertNotNull(foundStudy);
         for (Relationship rel : study.getSpecimens()) {
-            Date unixEpochProperty = nodeFactory.getUnixEpochProperty(rel);
+            Date unixEpochProperty = nodeFactory.getUnixEpochProperty(new Specimen(rel.getEndNode()));
             SimpleDateFormat simpleDateFormat = StudyImporterForWrast.getSimpleDateFormat();
             Date endDate = simpleDateFormat.parse("7/27/2001");
             Date startDate = simpleDateFormat.parse("7/23/2001");
@@ -100,8 +99,8 @@ public class StudyImporterForWrastTest extends GraphDBTestCase {
                 if ("Sciaenops ocellatus".equals(scientificName)) {
                     Location location = specimen.getSampleLocation();
                     assertThat(location, is(not(nullValue())));
-                    assertThat(location.getLatitude(), is((28.595267 + 28.596233)/2.0));
-                    assertThat(location.getLongitude(), is((-96.477033 - 96.476483)/2.0));
+                    assertThat(location.getLatitude(), is((28.595267 + 28.596233) / 2.0));
+                    assertThat(location.getLongitude(), is((-96.477033 - 96.476483) / 2.0));
                     assertThat(location.getAltitude(), is(-0.8));
 
                     Iterable<Relationship> stomachContents = specimen.getStomachContents();
@@ -122,8 +121,8 @@ public class StudyImporterForWrastTest extends GraphDBTestCase {
                 } else if ("Arius felis".equals(scientificName)) {
                     Location location = specimen.getSampleLocation();
                     assertThat(location, is(not(nullValue())));
-                    assertThat(location.getLatitude(), is((28.608417 + 28.607217)/2.0));
-                    assertThat(location.getLongitude(), is((-96.475517 - 96.474500)/2.0));
+                    assertThat(location.getLatitude(), is((28.608417 + 28.607217) / 2.0));
+                    assertThat(location.getLongitude(), is((-96.475517 - 96.474500) / 2.0));
                     assertThat(location.getAltitude(), is(-2.0d));
 
                     Iterable<Relationship> stomachContents = specimen.getStomachContents();
@@ -143,8 +142,7 @@ public class StudyImporterForWrastTest extends GraphDBTestCase {
                     Location location = specimen.getSampleLocation();
                     assertThat(location, is(not(nullValue())));
                     assertThat(location.getAltitude(), is(nullValue()));
-                }
-                else {
+                } else {
                     fail("unexpected scientificName of predator [" + scientificName + "]");
                 }
 

@@ -8,7 +8,6 @@ import org.apache.commons.logging.LogFactory;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.Term;
-import org.neo4j.graphdb.Relationship;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -72,10 +71,8 @@ public class StudyImporterForHurlbert extends BaseStudyImporter {
 
     protected void importInteraction(Set<String> regions, Set<String> locales, Set<String> habitats, LabeledCSVParser parser, Study study, String preyTaxonName, String predatorName) throws StudyImporterException {
         try {
-            Specimen predatorSpecimen = nodeFactory.createSpecimen(predatorName);
-            //Longitude,Latitude,Altitude_min_m,Altitude_mean_m,Altitude_max_m,
-
-            Specimen preySpecimen = nodeFactory.createSpecimen(preyTaxonName);
+            Specimen predatorSpecimen = nodeFactory.createSpecimen(study, predatorName);
+            Specimen preySpecimen = nodeFactory.createSpecimen(study, preyTaxonName);
 
             String preyStage = StringUtils.trim(parser.getValueByLabel("Prey_Stage"));
             if (StringUtils.isNotBlank(preyStage)) {
@@ -90,9 +87,9 @@ public class StudyImporterForHurlbert extends BaseStudyImporter {
             }
 
             predatorSpecimen.ate(preySpecimen);
-            // Observation_Season,,
-            Relationship collected = study.collected(predatorSpecimen);
-            addCollectionDate(parser, study, collected);
+            Date date = addCollectionDate(parser, study);
+            nodeFactory.setUnixEpochProperty(predatorSpecimen, date);
+            nodeFactory.setUnixEpochProperty(preySpecimen, date);
         } catch (NodeFactoryException e) {
             throw new StudyImporterException("failed to create interaction between [" + predatorName + "] and [" + preyTaxonName + "] on line [" + parser.lastLineNumber() + "] in [" + RESOURCE + "]", e);
         }
@@ -104,7 +101,7 @@ public class StudyImporterForHurlbert extends BaseStudyImporter {
         habitats.add(parser.getValueByLabel("Habitat_type"));
     }
 
-    private void addCollectionDate(LabeledCSVParser parser, Study study, Relationship collected) {
+    private Date addCollectionDate(LabeledCSVParser parser, Study study) {
         //Observation_Month_Begin,Observation_Year_Begin,Observation_Month_End,Observation_Year_End
         String dateString = null;
         String year = parser.getValueByLabel("Observation_Year_Begin");
@@ -116,15 +113,16 @@ public class StudyImporterForHurlbert extends BaseStudyImporter {
             dateString += "-" + StringUtils.trim(month);
         }
 
+        Date date = null;
         if (StringUtils.isNotBlank(dateString)) {
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM");
             try {
-                Date date = dateFormat.parse(dateString);
-                nodeFactory.setUnixEpochProperty(collected, date);
+                date = dateFormat.parse(dateString);
             } catch (ParseException e) {
                 getLogger().warn(study, "not setting collection date, because [" + dateString + "] on line [" + parser.getLastLineNumber() + "] could not be read as date.");
             }
         }
+        return date;
     }
 
 }

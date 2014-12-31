@@ -2,23 +2,16 @@ package org.eol.globi.data;
 
 import com.Ostermiller.util.CSVParser;
 import com.Ostermiller.util.LabeledCSVParser;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.codehaus.swizzle.stream.FixedTokenReplacementInputStream;
-import org.codehaus.swizzle.stream.StreamTokenHandler;
 import org.codehaus.swizzle.stream.StringTokenHandler;
+import org.eol.globi.domain.Location;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
-import org.joda.time.format.DateTimeFormatter;
-import org.joda.time.format.ISODateTimeFormat;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
-import java.util.HashMap;
-import java.util.Map;
 
 public class StudyImporterForFishbase extends BaseStudyImporter {
     public StudyImporterForFishbase(ParserFactory parserFactory, NodeFactory nodeFactory) {
@@ -43,10 +36,8 @@ public class StudyImporterForFishbase extends BaseStudyImporter {
             int lastLineNumber = parser.getLastLineNumber();
             if (importFilter.shouldImportRecord((long) lastLineNumber)) {
                 Study study = parseStudy(parser);
-                Specimen consumer = parseInteraction(parser, study);
-                if (consumer != null) {
-                    associateLocation(parser, consumer);
-                }
+                Location location = parseLocation(parser);
+                parseInteraction(parser, study, location);
             }
         }
     }
@@ -64,16 +55,17 @@ public class StudyImporterForFishbase extends BaseStudyImporter {
         return parser;
     }
 
-    private void associateLocation(LabeledCSVParser parser, Specimen consumer) throws StudyImporterException {
+    private Location parseLocation(LabeledCSVParser parser) throws StudyImporterException {
         parser.getValueByLabel("locality");
         parser.getValueByLabel("countryCode");
         String latitude = StringUtils.replace(parser.getValueByLabel("latitude"), "NULL", "");
         String longitude = StringUtils.replace(parser.getValueByLabel("longitude"), "NULL", "");
 
+        Location location = null;
         if (StringUtils.isNotBlank(latitude) && StringUtils.isNotBlank(longitude)) {
             try {
-                consumer.caughtIn(nodeFactory.getOrCreateLocation(Double.parseDouble(latitude),
-                        Double.parseDouble(longitude), null));
+                location = nodeFactory.getOrCreateLocation(Double.parseDouble(latitude),
+                        Double.parseDouble(longitude), null);
             } catch (NodeFactoryException e) {
                 throw new StudyImporterException("failed to create location using [" + latitude + "] and [" + longitude + "] on line [" + parser.lastLineNumber() + 1 + "]", e);
 
@@ -81,9 +73,10 @@ public class StudyImporterForFishbase extends BaseStudyImporter {
                 throw new StudyImporterException("failed to create location using [" + latitude + "] and [" + longitude + "] on line [" + parser.lastLineNumber() + 1 + "]", e);
             }
         }
+        return location;
     }
 
-    private Specimen parseInteraction(LabeledCSVParser parser, Study study) throws StudyImporterException {
+    private Specimen parseInteraction(LabeledCSVParser parser, Study study, Location location) throws StudyImporterException {
         Specimen consumer = null;
         try {
             String consumerName = StringUtils.join(new String[]{parser.getValueByLabel("consumer genus"),
@@ -96,9 +89,11 @@ public class StudyImporterForFishbase extends BaseStudyImporter {
                 getLogger().warn(study, "found blank food item name on line [" + parser.lastLineNumber() + 1 + "]");
             }
             if (StringUtils.isNotBlank(consumerName) && StringUtils.isNotBlank(foodName)) {
-                consumer = nodeFactory.createSpecimen(consumerName);
-                consumer.ate(nodeFactory.createSpecimen(foodName));
-                study.collected(consumer);
+                consumer = nodeFactory.createSpecimen(study, consumerName);
+                consumer.caughtIn(location);
+                Specimen food = nodeFactory.createSpecimen(study, foodName);
+                food.caughtIn(location);
+                consumer.ate(food);
             }
         } catch (NodeFactoryException e) {
             throw new StudyImporterException("failed to create specimens on line [" + parser.lastLineNumber() + 1 + "]", e);

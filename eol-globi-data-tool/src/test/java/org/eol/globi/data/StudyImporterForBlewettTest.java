@@ -46,7 +46,7 @@ public class StudyImporterForBlewettTest extends GraphDBTestCase {
         for (Relationship specimen : specimens) {
             count++;
         }
-        assertThat(count, is(694));
+        assertThat(count, is(1824));
 
 
         assertNotNull(nodeFactory.findTaxonByName("Centropomus undecimalis"));
@@ -56,7 +56,7 @@ public class StudyImporterForBlewettTest extends GraphDBTestCase {
     }
 
     @Test
-    public void importLines() throws StudyImporterException {
+    public void importLines() throws StudyImporterException, NodeFactoryException {
         String predatorPreyMapping = "\"Collection #\",\"Sp#\",\"Standard Length\",\"ID\",\"Far duoraum\",\"Cal sapidus\",\"Unid fish\",\"Anchoa spp\",\"Mug gyrans\",\"Bai chrysoura\",\"Portunus spp\",\"Bivalves\",\"Portunidae\",\"Lag rhomboides\",\"Xanthidae\",\"Palaemonidae\",\"Eucinostomus spp\",\"Mugil spp\",\"Alpheidae\",\"Atherinidae\",\"Syn foetens\",\"Ort chrysoptera\",\"Snails\",\"Euc gula\",\"Cynoscion spp\",\"Cyp. Variegatus\",\"Fun majalis\",\"Poe latipinna\",\"Unid crab\",\"Har jaguana\",\"Arm mierii\",\"Fun grandis\",\"Mic gulosus\",\"Ari felis\",\"Clupeidae\",\"Fundulus spp\",\"Diapterus/Eugerres spp\",\"Isopods\",\"Cyn nebulosus\",\"Opi oglinum\",\"Flo carpio\",\"Luc parva\",\"Uca spp\",\"Majidae\",\"Mug cephalus\",\"Squ empusa\",\"Opi robinsi\",\"Ariidae\",\"Sci ocellatus\",\"Unid shrimp\",\"Uca thayeri\",\"Grapsidae\",\"Lei xanthurus\",\"Elo saurus\",\"Brevoortia spp\"\n" +
                 "\"CHD01101502\",1,549,,,,,,,,,,,1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,\n" +
                 "\"CHD01102504\",1,548,\"E\",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,\n" +
@@ -99,7 +99,7 @@ public class StudyImporterForBlewettTest extends GraphDBTestCase {
         Iterable<Relationship> collectedRels = study.getSpecimens();
 
         Relationship collectedRel = collectedRels.iterator().next();
-        Date unixEpochProperty = nodeFactory.getUnixEpochProperty(collectedRel);
+        Date unixEpochProperty = nodeFactory.getUnixEpochProperty(new Specimen(collectedRel.getEndNode()));
         assertThat(unixEpochProperty, is(not(nullValue())));
         assertThat(StudyImporterForBlewett.dateToString(unixEpochProperty), is("01-Mar-00 10:55:00 Central Standard Time"));
 
@@ -120,7 +120,9 @@ public class StudyImporterForBlewettTest extends GraphDBTestCase {
 
         assertThat((String) taxonNode.getProperty(PropertyAndValueDictionary.NAME), is("Lag rhomboides"));
 
-        collectedRel = collectedRels.iterator().next();
+        Iterator<Relationship> i = collectedRels.iterator();
+        i.next();
+        collectedRel = i.next();
         predatorNode = collectedRel.getEndNode();
         assertThat((Double) predatorNode.getProperty(Specimen.LENGTH_IN_MM), is(548.0));
 
@@ -131,6 +133,8 @@ public class StudyImporterForBlewettTest extends GraphDBTestCase {
         assertThat(location, is(not(nullValue())));
         Iterable<Relationship> specimenCaughtHere = location.getSpecimenCaughtHere();
         Iterator<Relationship> iterator = specimenCaughtHere.iterator();
+        assertThat(iterator.hasNext(), is(true));
+        iterator.next();
         assertThat(iterator.hasNext(), is(true));
         iterator.next();
         assertThat(iterator.hasNext(), is(true));

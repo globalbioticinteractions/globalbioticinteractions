@@ -1,6 +1,5 @@
 package org.eol.globi.export;
 
-import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.RelTypes;
@@ -35,22 +34,9 @@ public class ExporterOccurrences extends ExporterOccurrencesBase {
         for (Relationship relationship1 : collectedAt) {
             locationNode = relationship1.getEndNode();
         }
-
         Map<String, String> properties = new HashMap<String, String>();
         addOccurrenceProperties(locationNode, collectedRel, properties, specimenNode, study);
         writeProperties(writer, properties);
-
-        Iterable<Relationship> interactRelationships = specimenNode.getRelationships(Direction.OUTGOING, InteractType.ATE, InteractType.HAS_HOST, InteractType.INTERACTS_WITH, InteractType.PARASITE_OF, InteractType.PREYS_UPON);
-        if (interactRelationships.iterator().hasNext()) {
-            for (Relationship interactRel : interactRelationships) {
-                properties = new HashMap<String, String>();
-                Node preyNode = interactRel == null ? null : interactRel.getEndNode();
-                if (isSpecimenClassified(preyNode)) {
-                    addOccurrenceProperties(locationNode, collectedRel, properties, preyNode, study);
-                    writeProperties(writer, properties);
-                }
-            }
-        }
     }
 
     private void addOccurrenceProperties(Node locationNode, Relationship collectedRelationship, Map<String, String> properties, Node specimenNode, Study study) throws IOException {

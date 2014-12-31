@@ -168,7 +168,7 @@ public class StudyImporterForBioInfoTest extends GraphDBTestCase {
             specimenList.add(specimen.getEndNode());
         }
 
-        assertThat(specimenList.size(), is(9));
+        assertThat(specimenList.size(), is(18));
         assertThat(specimenList.get(0).getSingleRelationship(RelTypes.CLASSIFIED_AS, Direction.OUTGOING), is(notNullValue()));
         assertThat(specimenList.get(1).getSingleRelationship(RelTypes.CLASSIFIED_AS, Direction.OUTGOING), is(notNullValue()));
 

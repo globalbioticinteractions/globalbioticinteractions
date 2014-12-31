@@ -44,18 +44,13 @@ public class GraphExporter {
 
     private void exportUnmatchedTaxa(List<Study> studies, String baseDir) throws StudyImporterException {
         try {
-            OutputStreamWriter writer1 = openStream(baseDir + "unmatchedSourceTaxa.csv");
+            String filePath = baseDir + "unmatchedTaxa.csv";
+            OutputStreamWriter writer1 = openStream(filePath);
             for (Study importedStudy1 : studies) {
                 boolean includeHeader1 = studies.indexOf(importedStudy1) == 0;
-                new StudyExportUnmatchedSourceTaxaForStudies().exportStudy(importedStudy1, writer1, includeHeader1);
+                new StudyExportUnmatchedTaxaForStudies().exportStudy(importedStudy1, writer1, includeHeader1);
             }
-            closeStream(baseDir + "unmatchedSourceTaxa.csv", writer1);
-            OutputStreamWriter writer = openStream(baseDir + "unmatchedTargetTaxa.csv");
-            for (Study importedStudy : studies) {
-                boolean includeHeader = studies.indexOf(importedStudy) == 0;
-                new StudyExportUnmatchedTargetTaxaForStudies().exportStudy(importedStudy, writer, includeHeader);
-            }
-            closeStream(baseDir + "unmatchedTargetTaxa.csv", writer);
+            closeStream(filePath, writer1);
         } catch (IOException e) {
             throw new StudyImporterException("failed to export unmatched source taxa", e);
         }

@@ -35,10 +35,10 @@ public class StudyTest extends GraphDBTestCase {
 
         factory.getOrCreateTaxon(CARCHARODON_CARCHARIAS);
 
-        Specimen goldFish = factory.createSpecimen(CARASSIUS_AURATUS_AURATUS);
+        Specimen goldFish = factory.createSpecimen(study, CARASSIUS_AURATUS_AURATUS);
 
-        Specimen shark = factory.createSpecimen(CARCHARODON_CARCHARIAS);
-        Specimen fuzzyShark = factory.createSpecimen(CARCHARODON);
+        Specimen shark = factory.createSpecimen(study, CARCHARODON_CARCHARIAS);
+        Specimen fuzzyShark = factory.createSpecimen(study, CARCHARODON);
 
         shark.ate(goldFish);
         fuzzyShark.ate(goldFish);
@@ -48,8 +48,6 @@ public class StudyTest extends GraphDBTestCase {
 
         Season winter = factory.createSeason("winter");
         shark.caughtDuring(winter);
-        study.collected(shark);
-        study.collected(fuzzyShark);
 
         shark.setLengthInMm(1.2d);
 
@@ -72,6 +70,9 @@ public class StudyTest extends GraphDBTestCase {
                 } else {
                     fail("expected to find a specimen");
                 }
+            } else if (specimen.equals(goldFish)) {
+                Node genusNode = specimen.getClassifications().iterator().next().getEndNode();
+                assertEquals(CARASSIUS_AURATUS_AURATUS, genusNode.getProperty("name"));
             } else if (specimen.equals(fuzzyShark)) {
                 Node genusNode = specimen.getClassifications().iterator().next().getEndNode();
                 assertEquals(CARCHARODON, genusNode.getProperty("name"));

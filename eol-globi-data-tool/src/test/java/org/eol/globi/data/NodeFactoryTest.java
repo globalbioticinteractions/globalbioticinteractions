@@ -36,8 +36,9 @@ public class NodeFactoryTest extends GraphDBTestCase {
 
     @Test
     public void createInteraction() throws NodeFactoryException {
-        Specimen specimen = nodeFactory.createSpecimen("Donalda duckus");
-        Specimen specimen1 = nodeFactory.createSpecimen("Mickeya mouseus");
+        Study study = nodeFactory.createStudy("bla");
+        Specimen specimen = nodeFactory.createSpecimen(study, "Donalda duckus");
+        Specimen specimen1 = nodeFactory.createSpecimen(study, "Mickeya mouseus");
         specimen.interactsWith(specimen1, InteractType.SYMBIONT_OF);
         assertThat(specimen.getUnderlyingNode().getRelationships(Direction.OUTGOING, InteractType.SYMBIONT_OF).iterator().hasNext(), is(true));
         assertThat(specimen1.getUnderlyingNode().getRelationships(Direction.OUTGOING, InteractType.SYMBIONT_OF).iterator().hasNext(), is(true));
@@ -154,7 +155,7 @@ public class NodeFactoryTest extends GraphDBTestCase {
 
     @Test
     public void specimenWithNoName() throws NodeFactoryException {
-        Specimen specimen = nodeFactory.createSpecimen(null, "bla:123");
+        Specimen specimen = nodeFactory.createSpecimen(nodeFactory.createStudy("bla"), null, "bla:123");
 
         Relationship next = specimen.getClassifications().iterator().next();
         assertThat(new TaxonNode(next.getEndNode()).getExternalId(), is("bla:123"));
@@ -163,7 +164,7 @@ public class NodeFactoryTest extends GraphDBTestCase {
     @Test
     public void specimenWithLifeStageInName() throws NodeFactoryException {
         initTaxonService();
-        Specimen specimen = nodeFactory.createSpecimen("mickey eggs scales");
+        Specimen specimen = nodeFactory.createSpecimen(nodeFactory.createStudy("bla"), "mickey eggs scales");
         assertThat(specimen.getLifeStage().getName(), is("egg"));
         assertThat(specimen.getLifeStage().getId(), is("UBERON:0007379"));
         assertThat(specimen.getBodyPart().getName(), is("scale"));
@@ -173,7 +174,7 @@ public class NodeFactoryTest extends GraphDBTestCase {
     @Test
     public void describeAndClassifySpecimenImplicit() throws NodeFactoryException {
         initTaxonService();
-        Specimen specimen = nodeFactory.createSpecimen("mickey");
+        Specimen specimen = nodeFactory.createSpecimen(nodeFactory.createStudy("bla"), "mickey");
         assertThat(specimen.getOriginalTaxonDescription(), is("mickey"));
         assertThat("original taxon descriptions are indexed", nodeFactory.findTaxonByName("mickey").getName(), is("mickey"));
     }

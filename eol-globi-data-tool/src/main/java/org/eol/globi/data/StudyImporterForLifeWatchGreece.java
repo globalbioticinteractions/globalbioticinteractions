@@ -148,9 +148,8 @@ public class StudyImporterForLifeWatchGreece extends BaseStudyImporter {
         public void foundInteraction(String predatorTaxonName, String preyTaxonName, String studyId, String studyReference) {
             Study study = nodeFactory.getOrCreateStudy("http://polytraits.lifewatchgreece.eu/publication/" + studyId, null, null, null, studyReference, null, "Polytraits, a database on biological traits of polychaetes. Available at http://polytraits.lifewatchgreece.eu.");
             try {
-                Specimen predator = nodeFactory.createSpecimen(predatorTaxonName);
-                predator.ate(nodeFactory.createSpecimen(preyTaxonName));
-                study.collected(predator);
+                Specimen predator = nodeFactory.createSpecimen(study, predatorTaxonName);
+                predator.ate(nodeFactory.createSpecimen(study, preyTaxonName));
             } catch (NodeFactoryException e) {
                 LOG.warn("failed to create specimen with name [" + predatorTaxonName + "]", e);
             }

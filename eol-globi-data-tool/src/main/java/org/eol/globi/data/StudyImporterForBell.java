@@ -10,12 +10,9 @@ import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
-import org.neo4j.graphdb.Relationship;
-import sun.rmi.log.ReliableLog;
 
+import java.util.Date;
 import java.util.HashMap;
-import java.util.IllegalFormatException;
 import java.util.Map;
 
 public class StudyImporterForBell extends BaseStudyImporter {
@@ -72,18 +69,21 @@ public class StudyImporterForBell extends BaseStudyImporter {
                     String species = parser.getValueByLabel("Species");
 
                     String parasiteName = StringUtils.join(new String[]{StringUtils.trim(genus), StringUtils.trim(species)}, " ");
-                    Specimen parasite = nodeFactory.createSpecimen(parasiteName);
+                    Specimen parasite = nodeFactory.createSpecimen(study, parasiteName);
                     parasite.setExternalId(externalId);
-                    addLocationIfComplete(parser, parasite);
+                    Location location = getLocation(parser, parasite);
+                    parasite.caughtIn(location);
 
                     String scientificName = parser.getValueByLabel("SCIENTIFIC_NAME");
                     String hostName = StringUtils.trim(scientificName);
-                    Specimen host = nodeFactory.createSpecimen(hostName);
+                    Specimen host = nodeFactory.createSpecimen(study, hostName);
+                    host.caughtIn(location);
                     host.setExternalId(externalId);
                     parasite.interactsWith(host, InteractType.PARASITE_OF);
+                    Date date = parseDate(parser);
+                    nodeFactory.setUnixEpochProperty(parasite, date);
+                    nodeFactory.setUnixEpochProperty(host, date);
 
-                    Relationship collected = study.collected(parasite);
-                    addDate(parser, collected);
                 }
             } catch (Throwable e) {
                 throw new StudyImporterException(getErrorMessage(resource, parser), e);
@@ -94,7 +94,7 @@ public class StudyImporterForBell extends BaseStudyImporter {
         return null;
     }
 
-    protected void addDate(LabeledCSVParser parser, Relationship collected) throws StudyImporterException {
+    protected java.util.Date parseDate(LabeledCSVParser parser) throws StudyImporterException {
         String date = StringUtils.trim(parser.getValueByLabel("VERBATIM_DATE"));
         DateTime dateTime = attemptParse(date, "MM/dd/yy");
         if (dateTime == null) {
@@ -108,9 +108,7 @@ public class StudyImporterForBell extends BaseStudyImporter {
             throw new StudyImporterException("failed to parse [" + date + "] line [" + parser.lastLineNumber() + "]");
         }
 
-        if (dateTime != null) {
-            nodeFactory.setUnixEpochProperty(collected, dateTime.toDate());
-        }
+        return dateTime == null ? null : dateTime.toDate();
     }
 
     protected DateTime attemptParse(String date, String pattern) {
@@ -132,13 +130,14 @@ public class StudyImporterForBell extends BaseStudyImporter {
     }
 
 
-    protected void addLocationIfComplete(LabeledCSVParser parser, Specimen parasite) throws NodeFactoryException {
+    protected Location getLocation(LabeledCSVParser parser, Specimen parasite) throws NodeFactoryException {
         String latitude = parser.getValueByLabel("DEC_LAT");
         String longitude = parser.getValueByLabel("DEC_LONG");
+        Location location = null;
         if (StringUtils.isNotBlank(latitude) && StringUtils.isNotBlank(longitude)) {
-            Location location = nodeFactory.getOrCreateLocation(Double.parseDouble(latitude), Double.parseDouble(longitude), null);
-            parasite.caughtIn(location);
+            location = nodeFactory.getOrCreateLocation(Double.parseDouble(latitude), Double.parseDouble(longitude), null);
         }
+        return location;
     }
 
 }

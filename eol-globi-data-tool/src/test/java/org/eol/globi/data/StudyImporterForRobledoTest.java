@@ -37,7 +37,7 @@ public class StudyImporterForRobledoTest extends GraphDBTestCase {
             count++;
         }
 
-        assertThat(count, is(19));
+        assertThat(count, is(93));
 
     }
 

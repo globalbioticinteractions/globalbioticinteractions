@@ -45,17 +45,9 @@ public class StudyImporterForJRFerrerParisTest extends GraphDBTestCase {
         Iterable<Relationship> collectedRels = study.getSpecimens();
         int totalRels = 0;
         for (Relationship collectedRel : collectedRels) {
-            Node endNode = collectedRel.getEndNode();
-            Iterable<Relationship> relationships = endNode.getRelationships(Direction.OUTGOING, InteractType.ATE);
-            assertThat(relationships.iterator().hasNext(), Is.is(true));
-            Node targetSpecimen = relationships.iterator().next().getEndNode();
-            Iterator<Relationship> targetClassificationRel = targetSpecimen.getRelationships(Direction.OUTGOING, RelTypes.CLASSIFIED_AS).iterator();
-            assertThat(targetClassificationRel.hasNext(), Is.is(true));
-            Node targetTaxon = targetClassificationRel.next().getEndNode();
-            assertThat(targetTaxon, Is.is(notNullValue()));
             totalRels++;
         }
 
-        assertThat(totalRels, Is.is(4));
+        assertThat(totalRels, Is.is(8));
     }
 }

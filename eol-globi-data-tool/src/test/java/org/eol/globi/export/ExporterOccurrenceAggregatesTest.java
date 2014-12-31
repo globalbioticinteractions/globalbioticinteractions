@@ -9,12 +9,11 @@ import org.eol.globi.domain.Study;
 import org.eol.globi.domain.Term;
 import org.hamcrest.core.Is;
 import org.junit.Test;
-import org.neo4j.graphdb.Relationship;
-import org.neo4j.graphdb.Transaction;
 
 import java.io.IOException;
 import java.io.StringWriter;
 import java.text.ParseException;
+import java.util.Date;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
@@ -39,7 +38,7 @@ public class ExporterOccurrenceAggregatesTest extends GraphDBTestCase {
     @Test
     public void exportNoMatchName() throws NodeFactoryException, IOException {
         Study myStudy = nodeFactory.createStudy("myStudy");
-        myStudy.collected(nodeFactory.createSpecimen(PropertyAndValueDictionary.NO_MATCH, "some externalid"));
+        nodeFactory.createSpecimen(myStudy, PropertyAndValueDictionary.NO_MATCH, "some externalid");
 
         StringWriter row = new StringWriter();
         exportOccurrences().exportStudy(myStudy, row, false);
@@ -81,9 +80,9 @@ public class ExporterOccurrenceAggregatesTest extends GraphDBTestCase {
 
     private void specimenEatCatAndDog(Double length, Study myStudy, String scientificName, String externalId) throws NodeFactoryException {
         Specimen specimen = collectSpecimen(myStudy, scientificName, externalId);
-        eatPrey(specimen, "Canis lupus", "EOL:555");
-        eatPrey(specimen, "Felis domesticus", "EOL:666");
-        eatPrey(specimen, "Blah blahuuuu", PropertyAndValueDictionary.NO_MATCH);
+        eatPrey(specimen, "Canis lupus", "EOL:555", myStudy);
+        eatPrey(specimen, "Felis domesticus", "EOL:666", myStudy);
+        eatPrey(specimen, "Blah blahuuuu", PropertyAndValueDictionary.NO_MATCH, myStudy);
         if (null != length) {
             specimen.setLengthInMm(length);
         }
@@ -93,24 +92,17 @@ public class ExporterOccurrenceAggregatesTest extends GraphDBTestCase {
     }
 
     private Specimen collectSpecimen(Study myStudy, String scientificName, String externalId) throws NodeFactoryException {
-        Specimen specimen = nodeFactory.createSpecimen(scientificName, externalId);
+        Specimen specimen = nodeFactory.createSpecimen(myStudy, scientificName, externalId);
         specimen.setStomachVolumeInMilliLiter(666.0);
         specimen.setLifeStage(new Term("GLOBI:JUVENILE", "JUVENILE"));
         specimen.setPhysiologicalState(new Term("GLOBI:DIGESTATE", "DIGESTATE"));
         specimen.setBodyPart(new Term("GLOBI:BONE", "BONE"));
-        Relationship collected = myStudy.collected(specimen);
-        Transaction transaction = myStudy.getUnderlyingNode().getGraphDatabase().beginTx();
-        try {
-            collected.setProperty(Specimen.DATE_IN_UNIX_EPOCH, ExportTestUtil.utcTestTime());
-            transaction.success();
-        } finally {
-            transaction.finish();
-        }
+        nodeFactory.setUnixEpochProperty(specimen, new Date(ExportTestUtil.utcTestTime()));
         return specimen;
     }
 
-    private Specimen eatPrey(Specimen specimen, String scientificName, String externalId) throws NodeFactoryException {
-        Specimen otherSpecimen = nodeFactory.createSpecimen(scientificName, externalId);
+    private Specimen eatPrey(Specimen specimen, String scientificName, String externalId, Study study) throws NodeFactoryException {
+        Specimen otherSpecimen = nodeFactory.createSpecimen(study, scientificName, externalId);
         otherSpecimen.setVolumeInMilliLiter(124.0);
         specimen.ate(otherSpecimen);
         return otherSpecimen;

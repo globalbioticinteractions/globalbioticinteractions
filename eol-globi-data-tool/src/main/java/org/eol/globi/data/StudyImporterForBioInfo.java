@@ -147,14 +147,12 @@ public class StudyImporterForBioInfo extends BaseStudyImporter implements StudyI
                     String donorScientificName = getScientificNameForTaxonId(parser, taxaMap, "DonorTax_id");
                     String recipientScientificName = getScientificNameForTaxonId(parser, taxaMap, "RecipTax_id");
                     if (!invalidInteraction(donorScientificName, recipientScientificName)) {
-                        Specimen donorSpecimen = createSpecimen(parser, donorScientificName);
+                        Specimen donorSpecimen = createSpecimen(study, parser, donorScientificName);
                         addLifeStage(parser, donorSpecimen, "DonorStage", study);
-                        Specimen recipientSpecimen = createSpecimen(parser, recipientScientificName);
+                        Specimen recipientSpecimen = createSpecimen(study, parser, recipientScientificName);
                         addLifeStage(parser, recipientSpecimen, "RecipStage", study);
-                        study.collected(recipientSpecimen);
                         recipientSpecimen.interactsWith(donorSpecimen, relationsTypeMap.get(labelAsLong(parser, "TrophicRel_Id")));
                     }
-
                 }
                 count++;
             }
@@ -197,9 +195,9 @@ public class StudyImporterForBioInfo extends BaseStudyImporter implements StudyI
 
     }
 
-    private Specimen createSpecimen(LabeledCSVParser labeledCSVParser, String scientificName) throws StudyImporterException {
+    private Specimen createSpecimen(Study study, LabeledCSVParser labeledCSVParser, String scientificName) throws StudyImporterException {
         try {
-            Specimen specimen = nodeFactory.createSpecimen(scientificName);
+            Specimen specimen = nodeFactory.createSpecimen(study, scientificName);
             specimen.setExternalId(TaxonomyProvider.BIO_INFO + "rel:" + labeledCSVParser.lastLineNumber());
             return specimen;
         } catch (NodeFactoryException e) {

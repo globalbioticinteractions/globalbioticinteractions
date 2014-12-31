@@ -23,6 +23,7 @@ import org.eol.globi.service.TermLookupServiceException;
 import org.eol.globi.service.TermLookupServiceWithResource;
 import org.eol.globi.service.UberonLookupService;
 import org.eol.globi.util.NodeUtil;
+import org.neo4j.cypher.internal.symbols.RelationshipType;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
@@ -168,13 +169,19 @@ public class NodeFactory {
         return location;
     }
 
-    public Specimen createSpecimen(String taxonName) throws NodeFactoryException {
-        return createSpecimen(taxonName, null);
+    public Specimen createSpecimen(Study study, String taxonName) throws NodeFactoryException {
+        return createSpecimen(study, taxonName, null);
     }
 
-    public Specimen createSpecimen(String taxonName, String taxonExternalId) throws NodeFactoryException {
+    public Specimen createSpecimen(Study study, String taxonName, String taxonExternalId) throws NodeFactoryException {
+        if (null == study) {
+            throw new NodeFactoryException("specimen needs study, but none is specified");
+        }
+
         TaxonNode taxon = getOrCreateTaxon(taxonName, taxonExternalId, null);
         Specimen specimen = createSpecimen(taxon);
+        study.createRelationshipTo(specimen, RelTypes.COLLECTED);
+
         specimen.setOriginalTaxonDescription(taxonName, taxonExternalId);
         if (StringUtils.isNotBlank(taxonName)) {
             extractTerms(taxonName, specimen);
@@ -336,8 +343,9 @@ public class NodeFactory {
         }
     }
 
-    public void setUnixEpochProperty(Relationship rel, Date date) {
-        if (date != null) {
+    public void setUnixEpochProperty(Specimen specimen, Date date) throws NodeFactoryException {
+        if (specimen != null && date != null) {
+            Relationship rel = getCollectedRel(specimen);
             Transaction tx = rel.getGraphDatabase().beginTx();
             try {
                 rel.setProperty(Specimen.DATE_IN_UNIX_EPOCH, date.getTime());
@@ -348,15 +356,22 @@ public class NodeFactory {
         }
     }
 
-    public Date getUnixEpochProperty(Relationship rel) {
-        Date date = null;
-        if (rel != null) {
-            if (rel.hasProperty(Specimen.DATE_IN_UNIX_EPOCH)) {
-                Long unixEpoch = (Long) rel.getProperty(Specimen.DATE_IN_UNIX_EPOCH);
-                date = new Date(unixEpoch);
-            }
-
+    protected Relationship getCollectedRel(Specimen specimen) throws NodeFactoryException {
+        Relationship rel = specimen.getUnderlyingNode().getSingleRelationship(RelTypes.COLLECTED, Direction.INCOMING);
+        if (null == rel) {
+            throw new NodeFactoryException("specimen not associated with study");
         }
+        return rel;
+    }
+
+    public Date getUnixEpochProperty(Specimen specimen) throws NodeFactoryException {
+        Date date = null;
+        Relationship rel = getCollectedRel(specimen);
+        if (rel.hasProperty(Specimen.DATE_IN_UNIX_EPOCH)) {
+            Long unixEpoch = (Long) rel.getProperty(Specimen.DATE_IN_UNIX_EPOCH);
+            date = new Date(unixEpoch);
+        }
+
         return date;
     }
 

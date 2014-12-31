@@ -26,9 +26,9 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
-public class StudyExportUnmatchedSourceTaxaForStudiesTest extends GraphDBTestCase {
+public class StudyExportUnmatchedTaxaForStudiesTest extends GraphDBTestCase {
 
-    public static final String EXPECTED_HEADER = "original source taxon name,original source external id,unmatched normalized source taxon name,unmatched normalized source external id,study,source";
+    public static final String EXPECTED_HEADER = "original taxon name,original taxon external id,unmatched normalized taxon name,unmatched normalized taxon external id,study,source";
 
     @Test
     public void exportOnePredatorTwoPrey() throws NodeFactoryException, IOException {
@@ -57,42 +57,39 @@ public class StudyExportUnmatchedSourceTaxaForStudiesTest extends GraphDBTestCas
         Study study = factory.getOrCreateStudy(title, "my first source", null);
 
         factory.getOrCreateTaxon("Homo sapiens");
-        Specimen predatorSpecimen = factory.createSpecimen("Homo sapiens");
+        Specimen predatorSpecimen = factory.createSpecimen(study, "Homo sapiens");
         factory.getOrCreateTaxon("Canis lupus");
-        addCanisLupus(predatorSpecimen);
-        addCanisLupus(predatorSpecimen);
-        Specimen preySpecimen = factory.createSpecimen("Caniz");
+        Specimen preySpecimen6 = nodeFactory.createSpecimen(study, "Canis lupus");
+        predatorSpecimen.interactsWith(preySpecimen6, InteractType.ATE);
+        Specimen preySpecimen5 = nodeFactory.createSpecimen(study, "Canis lupus");
+        predatorSpecimen.interactsWith(preySpecimen5, InteractType.ATE);
+        Specimen preySpecimen = factory.createSpecimen(study, "Caniz");
         predatorSpecimen.ate(preySpecimen);
-        study.collected(predatorSpecimen);
 
-        Specimen predatorSpecimen23 = factory.createSpecimen("Homo sapiens2");
-        addCanisLupus(predatorSpecimen23);
-        study.collected(predatorSpecimen23);
-        Specimen predatorSpecimen22 = factory.createSpecimen("Homo sapiens2");
-        addCanisLupus(predatorSpecimen22);
-        study.collected(predatorSpecimen22);
+        Specimen predatorSpecimen23 = factory.createSpecimen(study, "Homo sapiens2");
+        Specimen preySpecimen4 = nodeFactory.createSpecimen(study, "Canis lupus");
+        predatorSpecimen23.interactsWith(preySpecimen4, InteractType.ATE);
+
+        Specimen predatorSpecimen22 = factory.createSpecimen(study, "Homo sapiens2");
+        Specimen preySpecimen3 = nodeFactory.createSpecimen(study, "Canis lupus");
+        predatorSpecimen22.interactsWith(preySpecimen3, InteractType.ATE);
 
         Study study2 = factory.getOrCreateStudy("my study2", "my source2", null);
-        Specimen predatorSpecimen21 = factory.createSpecimen("Homo sapiens2");
-        addCanisLupus(predatorSpecimen21);
-        study2.collected(predatorSpecimen21);
+        Specimen predatorSpecimen21 = factory.createSpecimen(study2, "Homo sapiens2");
+        Specimen preySpecimen2 = nodeFactory.createSpecimen(study2, "Canis lupus");
+        predatorSpecimen21.interactsWith(preySpecimen2, InteractType.ATE);
 
-        Specimen predatorSpecimen2 = factory.createSpecimen("Homo sapiens3", PropertyAndValueDictionary.NO_MATCH);
-        addCanisLupus(predatorSpecimen2);
-        study.collected(predatorSpecimen2);
+        Specimen predatorSpecimen2 = factory.createSpecimen(study, "Homo sapiens3", PropertyAndValueDictionary.NO_MATCH);
+        Specimen preySpecimen1 = nodeFactory.createSpecimen(study, "Canis lupus");
+        predatorSpecimen2.interactsWith(preySpecimen1, InteractType.ATE);
 
 
         StringWriter writer = new StringWriter();
-        new StudyExportUnmatchedSourceTaxaForStudies().exportStudy(study, writer, true);
+        new StudyExportUnmatchedTaxaForStudies().exportStudy(study, writer, true);
         assertThat(writer.toString(), is(EXPECTED_HEADER + "\n" +
+                        "Caniz,,Caniz,no:match,\"my study\\\"\",my first source\n" +
                         "Homo sapiens2,,Homo sapiens2,no:match,\"my study\\\"\",my first source\n" +
                         "Homo sapiens3,no:match,Homo sapiens3,no:match,\"my study\\\"\",my first source\n"
-        ));
-
-        writer = new StringWriter();
-        new StudyExportUnmatchedTargetTaxaForStudies().exportStudy(study, writer, true);
-        assertThat(writer.toString(), is("original target taxon name,original target external id,unmatched normalized target taxon name,unmatched normalized target external id,study,source" + "\n" +
-                        "Caniz,,Caniz,no:match,\"my study\\\"\",my first source\n"
         ));
     }
 
@@ -116,13 +113,12 @@ public class StudyExportUnmatchedSourceTaxaForStudiesTest extends GraphDBTestCas
         NodeFactory factory = factory(taxonEnricher);
         Study study = factory.getOrCreateStudy("my study", "my first source", null);
 
-        Specimen predatorSpecimen = factory.createSpecimen("Homo sapienz");
+        Specimen predatorSpecimen = factory.createSpecimen(study, "Homo sapienz");
         assertNotNull(factory.getOrCreateTaxon("Homo sapienz"));
-        Specimen preySpecimen = factory.createSpecimen("Caniz");
+        Specimen preySpecimen = factory.createSpecimen(study, "Caniz");
         predatorSpecimen.interactsWith(preySpecimen, InteractType.ATE);
-        study.collected(predatorSpecimen);
 
-        predatorSpecimen = factory.createSpecimen("Homo sapiens");
+        predatorSpecimen = factory.createSpecimen(study, "Homo sapiens");
         Node synonymNode = factory.getOrCreateTaxon("Homo sapiens Synonym").getUnderlyingNode();
         Node node = factory.getOrCreateTaxon("Homo sapiens").getUnderlyingNode();
         Transaction tx = getGraphDb().beginTx();
@@ -133,19 +129,13 @@ public class StudyExportUnmatchedSourceTaxaForStudiesTest extends GraphDBTestCas
             tx.finish();
         }
 
-        preySpecimen = factory.createSpecimen("Canis");
+        preySpecimen = factory.createSpecimen(study, "Canis");
         predatorSpecimen.ate(preySpecimen);
-        study.collected(predatorSpecimen);
 
         StringWriter writer = new StringWriter();
-        new StudyExportUnmatchedSourceTaxaForStudies().exportStudy(study, writer, true);
+        new StudyExportUnmatchedTaxaForStudies().exportStudy(study, writer, true);
         assertThat(writer.toString(), is(EXPECTED_HEADER + "\n" +
-                        "Homo sapienz,,Homo sapienz,no:match,my study,my first source\n"
-        ));
-
-        writer = new StringWriter();
-        new StudyExportUnmatchedTargetTaxaForStudies().exportStudy(study, writer, true);
-        assertThat(writer.toString(), is("original target taxon name,original target external id,unmatched normalized target taxon name,unmatched normalized target external id,study,source" + "\n" +
+                        "Homo sapienz,,Homo sapienz,no:match,my study,my first source\n" +
                         "Caniz,,Caniz,no:match,my study,my first source\n" +
                         "Canis,,Canis,no:match,my study,my first source\n"
         ));
@@ -158,11 +148,6 @@ public class StudyExportUnmatchedSourceTaxaForStudiesTest extends GraphDBTestCas
                 return taxonName;
             }
         }, getGraphDb()));
-    }
-
-    private void addCanisLupus(Specimen predatorSpecimen) throws NodeFactoryException {
-        Specimen preySpecimen = nodeFactory.createSpecimen("Canis lupus");
-        predatorSpecimen.interactsWith(preySpecimen, InteractType.ATE);
     }
 
 }

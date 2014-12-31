@@ -1,5 +1,6 @@
 package org.eol.globi.data;
 
+import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Specimen;
@@ -36,7 +37,7 @@ public class StudyImporterForBaremoreTest extends GraphDBTestCase {
         Iterable<Relationship> collectedRels = study.getSpecimens();
         int totalRels = validateSpecimen(collectedRels);
 
-        assertThat(totalRels, Is.is(5));
+        assertThat(totalRels, Is.is(11));
     }
 
     @Test
@@ -49,7 +50,7 @@ public class StudyImporterForBaremoreTest extends GraphDBTestCase {
         Iterable<Relationship> collectedRels = study.getSpecimens();
         int totalRels = validateSpecimen(collectedRels);
 
-        assertThat(totalRels, Is.is(432));
+        assertThat(totalRels, Is.is(1450));
 
     }
 
@@ -59,14 +60,17 @@ public class StudyImporterForBaremoreTest extends GraphDBTestCase {
             assertTrue(rel.hasProperty(Specimen.DATE_IN_UNIX_EPOCH));
             Node specimen = rel.getEndNode();
             assertNotNull(specimen);
-            assertTrue(specimen.hasProperty(Specimen.LENGTH_IN_MM));
-            assertTrue(specimen.hasProperty(Specimen.LIFE_STAGE_LABEL));
+            Iterable<Relationship> rels = specimen.getRelationships(Direction.OUTGOING, InteractType.ATE);
+            for (Relationship relationship : rels) {
+                assertTrue(specimen.hasProperty(Specimen.LENGTH_IN_MM));
+                assertTrue(specimen.hasProperty(Specimen.LIFE_STAGE_LABEL));
+            }
             Relationship collectedAtRelationship = specimen.getSingleRelationship(RelTypes.COLLECTED_AT, Direction.OUTGOING);
             assertNotNull(collectedAtRelationship);
             Node locationNode = collectedAtRelationship.getEndNode();
             assertNotNull(locationNode);
             assertThat((Double) locationNode.getProperty(Location.LATITUDE), is(29.219302));
-            assertThat((Double)locationNode.getProperty(Location.LONGITUDE), is(-87.06665));
+            assertThat((Double) locationNode.getProperty(Location.LONGITUDE), is(-87.06665));
             totalRels++;
         }
         return totalRels;

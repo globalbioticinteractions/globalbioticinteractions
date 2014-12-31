@@ -9,7 +9,6 @@ import org.eol.globi.domain.Study;
 import org.eol.globi.domain.Term;
 import org.eol.globi.service.TermLookupService;
 import org.eol.globi.service.TermLookupServiceException;
-import org.neo4j.graphdb.Relationship;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -57,9 +56,9 @@ public class StudyImporterForAkin extends BaseStudyImporter {
         try {
             Specimen specimen = addSpecimen(study, parser, header, line);
             if (specimen != null) {
-                addPrey(parser, header, line, specimen);
                 Location location = parseLocation(findSiteInfo(header, line, siteInfos, parser));
                 specimen.caughtIn(location);
+                addPrey(study, parser, header, line, specimen, location);
             }
         } catch (StudyImporterException ex) {
             getLogger().warn(study, "[" + studyResource + "]:" + ex.getMessage());
@@ -75,9 +74,9 @@ public class StudyImporterForAkin extends BaseStudyImporter {
         int siteIndex = findIndexForColumnWithNameThrowOnMissing("Site ", header);
         String siteString = line[siteIndex];
         String[] siteInfo = null;
-        for (int i = 0; i < siteInfos.length; i++) {
-            if (siteString.equals(siteInfos[i][0])) {
-                siteInfo = siteInfos[i];
+        for (String[] siteInfo1 : siteInfos) {
+            if (siteString.equals(siteInfo1[0])) {
+                siteInfo = siteInfo1;
             }
         }
 
@@ -106,7 +105,7 @@ public class StudyImporterForAkin extends BaseStudyImporter {
         return nodeFactory.getOrCreateLocation(latitude, longitude, altitude);
     }
 
-    private void addPrey(LabeledCSVParser parser, String[] header, String[] line, Specimen specimen) throws StudyImporterException, NodeFactoryException {
+    private void addPrey(Study study, LabeledCSVParser parser, String[] header, String[] line, Specimen specimen, Location location) throws StudyImporterException, NodeFactoryException {
         int firstPreyIndex = findIndexForColumnWithNameThrowOnMissing("Detritus", header);
         for (int i = firstPreyIndex; i < line.length; i++) {
             String preySpeciesName = header[i];
@@ -116,9 +115,10 @@ public class StudyImporterForAkin extends BaseStudyImporter {
                     if (StringUtils.isNotBlank(preyVolumeString)) {
                         double volume = Double.parseDouble(preyVolumeString);
                         if (volume > 0) {
-                            Specimen prey = nodeFactory.createSpecimen(preySpeciesName);
+                            Specimen prey = nodeFactory.createSpecimen(study, preySpeciesName);
                             prey.setLifeStage(parseLifeStage(nodeFactory.getTermLookupService(), preySpeciesName));
                             prey.setVolumeInMilliLiter(volume);
+                            prey.caughtIn(location);
                             specimen.ate(prey);
                         }
                     }
@@ -148,7 +148,7 @@ public class StudyImporterForAkin extends BaseStudyImporter {
         int speciesIndex = findIndexForColumnWithNameThrowOnMissing("Fish Species", header);
         String speciesName = line[speciesIndex];
         if (StringUtils.isNotBlank(speciesName)) {
-            specimen = nodeFactory.createSpecimen(speciesName);
+            specimen = nodeFactory.createSpecimen(study, speciesName);
             addSpecimenLength(parser, header, line, specimen, study);
             addStomachVolume(parser, header, line, specimen, study);
             addCollectionDate(study, parser, header, line, specimen, study);
@@ -159,16 +159,17 @@ public class StudyImporterForAkin extends BaseStudyImporter {
     }
 
     private void addCollectionDate(Study study, LabeledCSVParser parser, String[] header, String[] line, Specimen specimen, Study study1) throws StudyImporterException {
-        Relationship collected = study.collected(specimen);
         int dateIndex = findIndexForColumnWithNameThrowOnMissing("Date", header);
         String dateString = line[dateIndex];
         if (!StringUtils.isBlank(dateString)) {
             SimpleDateFormat dateFormat = new SimpleDateFormat("MM.dd.yy");
             try {
                 Date date = dateFormat.parse(dateString);
-                nodeFactory.setUnixEpochProperty(collected, date);
+                nodeFactory.setUnixEpochProperty(specimen, date);
             } catch (ParseException e) {
                 getLogger().warn(study, "not setting collection date, because [" + dateString + "] on line [" + parser.getLastLineNumber() + "] could not be read as date.");
+            } catch (NodeFactoryException e) {
+                throw new StudyImporterException("failed to set collection time", e);
             }
         }
     }

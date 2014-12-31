@@ -79,7 +79,7 @@ public class StudyImporterForBarnes extends BaseStudyImporter {
     }
 
     private void addInteractionForPredator(LabeledCSVParser parser, Study localStudy, String predatorName) throws NodeFactoryException, StudyImporterException {
-        Specimen predator = nodeFactory.createSpecimen(predatorName);
+        Specimen predator = nodeFactory.createSpecimen(localStudy, predatorName);
         addLifeStage(parser, predator);
 
         Double latitude = LocationUtil.parseDegrees(parser.getValueByLabel("Latitude"));
@@ -93,11 +93,10 @@ public class StudyImporterForBarnes extends BaseStudyImporter {
         if (StringUtils.isBlank(preyName)) {
             getLogger().warn(localStudy, "found empty prey name on line [" + parser.lastLineNumber() + "]");
         } else {
-            Specimen prey = nodeFactory.createSpecimen(preyName);
+            Specimen prey = nodeFactory.createSpecimen(localStudy, preyName);
+            prey.caughtIn(location);
             predator.ate(prey);
         }
-
-        localStudy.collected(predator);
     }
 
     private void addLifeStage(LabeledCSVParser parser, Specimen predator) throws StudyImporterException {

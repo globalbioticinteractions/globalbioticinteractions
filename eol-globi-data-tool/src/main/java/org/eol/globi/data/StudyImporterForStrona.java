@@ -34,10 +34,9 @@ public class StudyImporterForStrona extends BaseStudyImporter {
                         String parasiteName = StringUtils.trim(dataParser.getValueByLabel("P_SP"));
                         String hostName = StringUtils.trim(dataParser.getValueByLabel("H_SP"));
                         if (areNamesAvailable(parasiteName, hostName)) {
-                            Specimen parasite = nodeFactory.createSpecimen(parasiteName);
-                            Specimen host = nodeFactory.createSpecimen(hostName);
+                            Specimen parasite = nodeFactory.createSpecimen(study, parasiteName);
+                            Specimen host = nodeFactory.createSpecimen(study, hostName);
                             parasite.interactsWith(host, InteractType.PARASITE_OF);
-                            study.collected(parasite);
                         }
                     } catch (NodeFactoryException e) {
                         throw new StudyImporterException("failed to import line [" + (dataParser.lastLineNumber() + 1) + "]", e);

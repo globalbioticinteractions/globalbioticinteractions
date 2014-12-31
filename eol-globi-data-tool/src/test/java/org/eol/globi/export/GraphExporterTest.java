@@ -5,6 +5,7 @@ import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.domain.Specimen;
+import org.eol.globi.domain.Study;
 import org.junit.Test;
 
 import java.io.File;
@@ -22,12 +23,13 @@ public class GraphExporterTest extends GraphDBTestCase {
         File tmpDirPath = new File(tmpDir, "test" + new Random().nextLong());
         FileUtils.forceMkdir(tmpDirPath);
         assertThat(tmpDirPath.list().length, is(0));
-        Specimen human = nodeFactory.createSpecimen("Homo sapiens", "BLA:123");
-        human.ate(nodeFactory.createSpecimen("Canis familiaris", "BLA:444"));
-        nodeFactory.getOrCreateStudy("a study", "a source", "doi:12345L").collected(human);
+        Study study = nodeFactory.getOrCreateStudy("a study", "a source", "doi:12345L");
+
+        Specimen human = nodeFactory.createSpecimen(study, "Homo sapiens", "BLA:123");
+        human.ate(nodeFactory.createSpecimen(study, "Canis familiaris", "BLA:444"));
         try {
             new GraphExporter().export(getGraphDb(), tmpDirPath.getAbsolutePath() + "/");
-            assertThat(tmpDirPath.list().length, is(5));
+            assertThat(tmpDirPath.list().length, is(4));
         } finally {
             FileUtils.deleteQuietly(tmpDirPath);
         }

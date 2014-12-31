@@ -1,9 +1,6 @@
 package org.eol.globi.data;
 
 import com.Ostermiller.util.LabeledCSVParser;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
@@ -90,11 +87,6 @@ public class StudyImporterForSIAD extends BaseStudyImporter {
             labeledCSVParser.changeDelimiter('\t');
             while (labeledCSVParser.getLine() != null) {
                 String name = labeledCSVParser.getValueByLabel("name");
-                Specimen specimen = nodeFactory.createSpecimen(name);
-                String hostName = labeledCSVParser.getValueByLabel("host name");
-                Specimen hostSpecimen = nodeFactory.createSpecimen(hostName);
-                InteractType type = map.get(labeledCSVParser.getValueByLabel("interaction"));
-                specimen.interactsWith(hostSpecimen, type);
 
                 String ref = labeledCSVParser.getValueByLabel("source");
                 String title = "SIAD-" + ref;
@@ -104,7 +96,12 @@ public class StudyImporterForSIAD extends BaseStudyImporter {
                     study.setCitationWithTx("ABRS 2009. Australian Faunal Directory. " + name + ". Australian Biological Resources Study, Canberra. " + ReferenceUtil.createLastAccessedString(ref));
                     study.setExternalId(ref);
                 }
-                study.collected(specimen);
+
+                Specimen specimen = nodeFactory.createSpecimen(study, name);
+                String hostName = labeledCSVParser.getValueByLabel("host name");
+                Specimen hostSpecimen = nodeFactory.createSpecimen(study, hostName);
+                InteractType type = map.get(labeledCSVParser.getValueByLabel("interaction"));
+                specimen.interactsWith(hostSpecimen, type);
             }
         } catch (FileNotFoundException e) {
             throw new StudyImporterException("failed to open tmp file", e);

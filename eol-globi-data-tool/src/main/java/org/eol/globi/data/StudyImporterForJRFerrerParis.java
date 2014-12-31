@@ -41,14 +41,13 @@ public class StudyImporterForJRFerrerParis extends BaseStudyImporter {
     private void addAssociation(Study study, LabeledCSVParser parser, String butterflyName, String plantName) throws StudyImporterException {
         Specimen instigatorSpecimen;
         try {
-            instigatorSpecimen = nodeFactory.createSpecimen(butterflyName);
-            study.collected(instigatorSpecimen);
+            instigatorSpecimen = nodeFactory.createSpecimen(study, butterflyName);
         } catch (NodeFactoryException e) {
             throw new StudyImporterException("failed to create butterfly specimen [" + butterflyName + "] on line [" + parser.lastLineNumber() + "]", e);
         }
         Specimen targetSpecimen;
         try {
-            targetSpecimen = nodeFactory.createSpecimen(plantName);
+            targetSpecimen = nodeFactory.createSpecimen(study, plantName);
             instigatorSpecimen.ate(targetSpecimen);
         } catch (NodeFactoryException e) {
             throw new StudyImporterException("failed to associate butterfly [" + butterflyName + "] to plant [" + plantName + "] on line [" + parser.lastLineNumber() + "]", e);

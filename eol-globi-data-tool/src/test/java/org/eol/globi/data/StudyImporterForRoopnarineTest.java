@@ -72,7 +72,7 @@ public class StudyImporterForRoopnarineTest extends GraphDBTestCase {
         Iterable<Relationship> collectedRels = study.getSpecimens();
         int totalRels = validateSpecimen(collectedRels);
 
-        assertThat(totalRels, Is.is(21));
+        assertThat(totalRels, Is.is(51));
     }
 
     @Ignore ("roopnarine imports eats more memory that other study imports")

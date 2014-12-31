@@ -59,10 +59,9 @@ public class StudyImporterForKelpForest extends BaseStudyImporter {
                     if (null == interactType) {
                         LOG.warn("ignoring type [" + interactionType + "] on line: [" + (parser.getLastLineNumber() + 1) + "]");
                     } else {
-                        Specimen sourceSpecimen = createSpecimen(parser, nameToId, "node_1_working_name", "node1_stage");
-                        Specimen targetSpecimen = createSpecimen(parser, nameToId, "node_2_working_name", "node2_stage");
+                        Specimen sourceSpecimen = createSpecimen(parser, nameToId, "node_1_working_name", "node1_stage", study);
+                        Specimen targetSpecimen = createSpecimen(parser, nameToId, "node_2_working_name", "node2_stage", study);
                         sourceSpecimen.interactsWith(targetSpecimen, interactType);
-                        study.collected(sourceSpecimen);
                     }
 
                 }
@@ -78,11 +77,11 @@ public class StudyImporterForKelpForest extends BaseStudyImporter {
         return null;
     }
 
-    protected Specimen createSpecimen(LabeledCSVParser parser, Map<String, Long> nameToId, String nameLabel, String stageLabel) throws NodeFactoryException {
+    protected Specimen createSpecimen(LabeledCSVParser parser, Map<String, Long> nameToId, String nameLabel, String stageLabel, Study study) throws NodeFactoryException {
         String sourceName = parser.getValueByLabel(nameLabel);
         Long id = nameToId.get(sourceName);
         String taxonExternalId = id == null ? null : TaxonomyProvider.ID_PREFIX_ITIS + id;
-        Specimen sourceSpecimen = nodeFactory.createSpecimen(sourceName, taxonExternalId);
+        Specimen sourceSpecimen = nodeFactory.createSpecimen(study, sourceName, taxonExternalId);
         String sourceLifeStage = parser.getValueByLabel(stageLabel);
         Term orCreateLifeStage = nodeFactory.getOrCreateLifeStage("KELP:" + sourceLifeStage, sourceLifeStage);
         sourceSpecimen.setLifeStage(orCreateLifeStage);

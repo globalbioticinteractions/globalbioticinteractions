@@ -1,6 +1,7 @@
 package org.eol.globi.export;
 
 import org.eol.globi.domain.InteractType;
+import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.neo4j.graphdb.Direction;
@@ -51,15 +52,6 @@ public class ExporterMeasurementOrFact extends ExporterBase {
             Node specimenNode = collectedRel.getEndNode();
             if (isSpecimenClassified(specimenNode)) {
                 writeMeasurements(writer, properties, specimenNode, collectedRel, study);
-                Iterable<Relationship> interactRelationships = specimenNode.getRelationships(Direction.OUTGOING, InteractType.values());
-                if (interactRelationships.iterator().hasNext()) {
-                    for (Relationship interactRel : interactRelationships) {
-                        Node specimenNode1 = interactRel.getEndNode();
-                        if (isSpecimenClassified(specimenNode1)) {
-                            writeMeasurements(writer, properties, specimenNode1, collectedRel, study);
-                        }
-                    }
-                }
             }
         }
     }

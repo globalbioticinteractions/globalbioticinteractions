@@ -5,6 +5,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eol.globi.domain.InteractType;
+import org.eol.globi.domain.Location;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.geo.LatLng;
@@ -41,17 +42,18 @@ public class StudyImporterForCruaud extends BaseStudyImporter {
                         String hostName = StringUtils.trim(dataParser.getValueByLabel("Natural host Ficus species"));
                         hostName = StringUtils.replace(hostName, "F.", "Ficus");
                         if (areNamesAvailable(parasiteName, hostName)) {
-                            Specimen parasite = nodeFactory.createSpecimen(parasiteName);
-                            Specimen host = nodeFactory.createSpecimen(hostName);
+                            Specimen parasite = nodeFactory.createSpecimen(study, parasiteName);
+                            Specimen host = nodeFactory.createSpecimen(study, hostName);
                             parasite.interactsWith(host, InteractType.PARASITE_OF);
                             String samplingLocation = StringUtils.trim(dataParser.getValueByLabel("Sampling location"));
                             if (getGeoNamesService().hasPositionForLocality(samplingLocation)) {
                                 LatLng pointForLocality = getGeoNamesService().findPointForLocality(samplingLocation);
-                                nodeFactory.getOrCreateLocation(pointForLocality.getLat(), pointForLocality.getLng(), null);
+                                Location location = nodeFactory.getOrCreateLocation(pointForLocality.getLat(), pointForLocality.getLng(), null);
+                                parasite.caughtIn(location);
+                                host.caughtIn(location);
                             } else {
                                LOG.warn("no location associated with locality [" + samplingLocation + "]");
                             }
-                            study.collected(parasite);
                         }
                     } catch (NodeFactoryException e) {
                         throw new StudyImporterException("failed to import line [" + (dataParser.lastLineNumber() + 1) + "]", e);

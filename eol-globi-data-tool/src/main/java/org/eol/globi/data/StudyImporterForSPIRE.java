@@ -151,7 +151,7 @@ public class StudyImporterForSPIRE extends BaseStudyImporter {
                     null, null, properties.get(Study.DESCRIPTION), properties.get(Study.PUBLICATION_YEAR), SOURCE_SPIRE);
 
             try {
-                Specimen predator = createSpecimen(properties.get(PREDATOR_NAME));
+                Specimen predator = createSpecimen(properties.get(PREDATOR_NAME), study);
                 String locality = properties.get(LOCALITY_ORIGINAL);
                 LatLng latLng = getGeoNamesService().findPointForLocality(locality);
                 if (latLng == null) {
@@ -164,8 +164,7 @@ public class StudyImporterForSPIRE extends BaseStudyImporter {
                         addEnvironment(location, "SPIRE:" + habitat, habitat);
                     }
                 }
-                study.collected(predator);
-                Specimen prey = createSpecimen(properties.get(PREY_NAME));
+                Specimen prey = createSpecimen(properties.get(PREY_NAME), study);
                 predator.ate(prey);
             } catch (NodeFactoryException e) {
                 getLogger().warn(study, "failed to import trophic link with properties [" + properties + "]: " + e.getMessage());
@@ -179,9 +178,9 @@ public class StudyImporterForSPIRE extends BaseStudyImporter {
         nodeFactory.getOrCreateEnvironments(location, id, name);
     }
 
-    private Specimen createSpecimen(String taxonName) throws NodeFactoryException {
+    private Specimen createSpecimen(String taxonName, Study study) throws NodeFactoryException {
         taxonName = taxonName.replaceAll("_", " ");
-        Specimen specimen = nodeFactory.createSpecimen(taxonName);
+        Specimen specimen = nodeFactory.createSpecimen(study, taxonName);
 
         if (taxonName.contains("adult")) {
             addLifeStage(specimen, "adult");

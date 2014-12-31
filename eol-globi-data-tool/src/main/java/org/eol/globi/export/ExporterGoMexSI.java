@@ -2,6 +2,7 @@ package org.eol.globi.export;
 
 import org.apache.commons.lang.StringUtils;
 import org.eol.globi.data.StudyImporterForGoMexSI;
+import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Study;
 import org.neo4j.cypher.javacompat.ExecutionEngine;
 import org.neo4j.cypher.javacompat.ExecutionResult;
@@ -70,10 +71,11 @@ public class ExporterGoMexSI implements StudyExporter {
     public static StringBuilder buildQuery() {
         StringBuilder query = new StringBuilder();
         query.append("START study = node:studies(title={title})");
-        query.append(" MATCH study-[c:COLLECTED]->predator-->prey-[:CLASSIFIED_AS]->preyTaxon-[?:SAME_AS]->preyTaxonLinked");
+        query.append(" MATCH study-[c:COLLECTED]->predator-[r]->prey-[:CLASSIFIED_AS]->preyTaxon-[?:SAME_AS]->preyTaxonLinked");
         query.append(", predator-[:CLASSIFIED_AS]->predatorTaxon-[?:SAME_AS]->predatorTaxonLinked, predator-[:COLLECTED_AT]->loc");
         query.append(", loc-[?:IN_ECOREGION]->ecoregion");
         query.append(", loc-[?:HAS_ENVIRONMENT]->environment");
+        query.append(" WHERE not(has(r." + PropertyAndValueDictionary.INVERTED + "))");
         query.append(" RETURN predatorTaxon.name as `predator taxon name`, collect(distinct(predatorTaxonLinked.externalId)) as `predator taxon ids`");
         query.append(", preyTaxon.name as `prey taxon name`, collect(distinct(preyTaxonLinked.externalId)) as `prey taxon id`");
         query.append(", c.dateInUnixEpoch? as `observation time (unix time)`, loc.latitude? as `latitude`, loc.longitude? as `longitude`, loc.altitude? as `depth(m)`");

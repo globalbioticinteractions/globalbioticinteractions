@@ -45,16 +45,17 @@ public class StudyImporterForRobledo extends BaseStudyImporter {
             while (parser.getLine() != null) {
                 String beetleName = parser.getValueByLabel("Herbivore species");
                 String beetleScientificName = completeBeetleName(beetleName);
-                Specimen predator = nodeFactory.createSpecimen(beetleScientificName);
+                Specimen predator = nodeFactory.createSpecimen(study, beetleScientificName);
                 predator.caughtIn(location);
-                study.collected(predator);
                 for (String plantAbbreviation : abrLookup.keySet()) {
                     String plantScientificName = abrLookup.get(plantAbbreviation);
                     String valueByLabel = parser.getValueByLabel(plantAbbreviation);
                     try {
                         int interactionCode = Integer.parseInt(valueByLabel);
                         if (interactionCode > 0) {
-                            predator.ate(nodeFactory.createSpecimen(plantScientificName));
+                            Specimen plant = nodeFactory.createSpecimen(study, plantScientificName);
+                            plant.caughtIn(location);
+                            predator.ate(plant);
                         }
                     } catch (NumberFormatException ex) {
                         getLogger().warn(study, "malformed or no value [" + valueByLabel + "] found for [" + plantScientificName + "(" + plantAbbreviation + ")" + "] and beetle [" + beetleScientificName + "] could be found in [" + studyResource + ":" + parser.lastLineNumber() + "]");

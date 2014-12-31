@@ -9,6 +9,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.domain.InteractType;
+import org.eol.globi.domain.Location;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.TaxonomyProvider;
@@ -193,26 +194,26 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
             LOG.warn("cannot create interaction with missing source taxon name for observation with id [" + observation.get("id") + "]");
         } else {
             Study study = nodeFactory.getOrCreateStudy(TaxonomyProvider.ID_PREFIX_INATURALIST + observationId, getSourceString(), null);
-            Specimen specimen = null;
             String targetTaxonName = targetTaxonNode.getTextValue();
             String sourceTaxonName = sourceTaxon.get("name").getTextValue();
+            Date observationDate = getObservationDate(study, observationId, observation);
+
+            Specimen specimen;
             if (TYPE_MAPPING.containsKey(interactionType)) {
-                specimen = createAssociation(observationId, interactionDataType, interactionType, observation, targetTaxonName, sourceTaxonName);
+                specimen = createAssociation(observationId, interactionDataType, interactionType, observation, targetTaxonName, sourceTaxonName, study, observationDate);
             } else if (INVERSE_TYPE_MAPPING.containsKey(interactionType)) {
-                specimen = createInverseAssociation(observationId, interactionDataType, interactionType, observation, targetTaxonName, sourceTaxonName);
+                specimen = createInverseAssociation(observationId, interactionDataType, interactionType, observation, targetTaxonName, sourceTaxonName, study, observationDate);
             } else {
                 String msg = "found unsupported interactionType [" + interactionType + "] for observation [" + observationId + "]";
                 throw new StudyImporterException(msg);
             }
 
             if (specimen != null) {
-                Date observationDate = getObservationDate(study, observationId, observation);
                 StringBuilder citation = buildCitation(observation, interactionType, targetTaxonName, sourceTaxonName, observationDate);
                 String url = ExternalIdUtil.infoURLForExternalId(TaxonomyProvider.ID_PREFIX_INATURALIST + observationId);
                 citation.append(ReferenceUtil.createLastAccessedString(url));
                 study.setCitationWithTx(citation.toString());
                 study.setExternalId(url);
-                nodeFactory.setUnixEpochProperty(study.collected(specimen), observationDate);
             }
         }
     }
@@ -252,34 +253,55 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
         return dateTime == null ? null : dateTime.toDate();
     }
 
-    private Specimen createInverseAssociation(long observationId, String interactionDataType, String interactionType, JsonNode observation, String targetTaxonName, String sourceTaxonName) throws StudyImporterException, NodeFactoryException {
-        Specimen sourceSpecimen = getSourceSpecimen(observationId, interactionDataType, observation, sourceTaxonName);
-        Specimen targetSpecimen = nodeFactory.createSpecimen(targetTaxonName);
+    private Specimen createInverseAssociation(long observationId, String interactionDataType, String interactionType, JsonNode observation, String targetTaxonName, String sourceTaxonName, Study study, Date observationDate) throws StudyImporterException, NodeFactoryException {
+        Specimen sourceSpecimen = getSourceSpecimen(observationId, interactionDataType, sourceTaxonName, study);
+        Specimen targetSpecimen = nodeFactory.createSpecimen(study, targetTaxonName);
         targetSpecimen.interactsWith(sourceSpecimen, INVERSE_TYPE_MAPPING.get(interactionType));
+        setCollectionDate(sourceSpecimen, targetSpecimen, observationDate);
         return targetSpecimen;
     }
 
-    private Specimen createAssociation(long observationId, String interactionDataType, String interactionType, JsonNode observation, String targetTaxonName, String sourceTaxonName) throws StudyImporterException, NodeFactoryException {
-        Specimen sourceSpecimen = getSourceSpecimen(observationId, interactionDataType, observation, sourceTaxonName);
-        Specimen targetSpecimen = nodeFactory.createSpecimen(targetTaxonName);
+    private Specimen createAssociation(long observationId, String interactionDataType, String interactionType, JsonNode observation, String targetTaxonName, String sourceTaxonName, Study study, Date observationDate) throws StudyImporterException, NodeFactoryException {
+        Specimen sourceSpecimen = getSourceSpecimen(observationId, interactionDataType, sourceTaxonName, study);
+        Specimen targetSpecimen = nodeFactory.createSpecimen(study, targetTaxonName);
+
         sourceSpecimen.interactsWith(targetSpecimen, TYPE_MAPPING.get(interactionType));
+
+        setCollectionDate(sourceSpecimen, targetSpecimen, observationDate);
+        setCollectionDate(sourceSpecimen, sourceSpecimen, observationDate);
+
+        Location location = parseLocation(observation);
+        sourceSpecimen.caughtIn(location);
+        targetSpecimen.caughtIn(location);
+
         return sourceSpecimen;
     }
 
-    private Specimen getSourceSpecimen(long observationId, String interactionDataType, JsonNode observation, String sourceTaxonName) throws StudyImporterException, NodeFactoryException {
-        if (!"taxon".equals(interactionDataType)) {
-            throw new StudyImporterException("expected [taxon] as observation_type datatype, but found [" + interactionDataType + "]");
-        }
-        Specimen sourceSpecimen = nodeFactory.createSpecimen(sourceTaxonName);
-        sourceSpecimen.setExternalId(TaxonomyProvider.ID_PREFIX_INATURALIST + observationId);
-
+    private Location parseLocation(JsonNode observation) throws NodeFactoryException {
+        Location location = null;
         String latitudeString = observation.get("latitude").getTextValue();
         String longitudeString = observation.get("longitude").getTextValue();
         if (latitudeString != null && longitudeString != null) {
             double latitude = Double.parseDouble(latitudeString);
             double longitude = Double.parseDouble(longitudeString);
-            sourceSpecimen.caughtIn(nodeFactory.getOrCreateLocation(latitude, longitude, null));
+            location = nodeFactory.getOrCreateLocation(latitude, longitude, null);
+
         }
+        return location;
+    }
+
+    private void setCollectionDate(Specimen sourceSpecimen, Specimen targetSpecimen, Date observationDate) throws NodeFactoryException {
+        nodeFactory.setUnixEpochProperty(sourceSpecimen, observationDate);
+        nodeFactory.setUnixEpochProperty(targetSpecimen, observationDate);
+    }
+
+    private Specimen getSourceSpecimen(long observationId, String interactionDataType, String sourceTaxonName, Study study) throws StudyImporterException, NodeFactoryException {
+        if (!"taxon".equals(interactionDataType)) {
+            throw new StudyImporterException("expected [taxon] as observation_type datatype, but found [" + interactionDataType + "]");
+        }
+        Specimen sourceSpecimen = nodeFactory.createSpecimen(study, sourceTaxonName);
+        sourceSpecimen.setExternalId(TaxonomyProvider.ID_PREFIX_INATURALIST + observationId);
+
         return sourceSpecimen;
     }
 

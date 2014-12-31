@@ -12,6 +12,7 @@ import org.neo4j.graphdb.Transaction;
 import javax.xml.bind.DatatypeConverter;
 import java.text.ParseException;
 import java.util.Calendar;
+import java.util.Date;
 
 public class ExportTestUtil {
     public static Study createTestData( NodeFactory factory) throws NodeFactoryException, ParseException {
@@ -20,25 +21,18 @@ public class ExportTestUtil {
 
     public static Study createTestData(Double length, NodeFactory factory) throws NodeFactoryException, ParseException {
         Study myStudy = factory.createStudy("myStudy");
-        Specimen specimen = factory.createSpecimen("Homo sapiens", "EOL:45634");
+        Specimen specimen = factory.createSpecimen(myStudy, "Homo sapiens", "EOL:45634");
         specimen.setStomachVolumeInMilliLiter(666.0);
         specimen.setLifeStage(new Term("GLOBI:JUVENILE", "JUVENILE"));
         specimen.setPhysiologicalState(new Term("GLOBI:DIGESTATE", "DIGESTATE"));
         specimen.setBodyPart(new Term("GLOBI:BONE", "BONE"));
-        Relationship collected = myStudy.collected(specimen);
-        Transaction transaction = myStudy.getUnderlyingNode().getGraphDatabase().beginTx();
-        try {
-            collected.setProperty(Specimen.DATE_IN_UNIX_EPOCH, utcTestTime());
-            transaction.success();
-        } finally {
-            transaction.finish();
-        }
-        Specimen otherSpecimen = factory.createSpecimen("Canis lupus", "EOL:123");
+        factory.setUnixEpochProperty(specimen, ExportTestUtil.utcTestDate());
+        Specimen otherSpecimen = factory.createSpecimen(myStudy, "Canis lupus", "EOL:123");
         otherSpecimen.setVolumeInMilliLiter(124.0);
 
         specimen.ate(otherSpecimen);
 
-        otherSpecimen = factory.createSpecimen("Canis lupus", "EOL:123");
+        otherSpecimen = factory.createSpecimen(myStudy, "Canis lupus", "EOL:123");
         otherSpecimen.setVolumeInMilliLiter(18.0);
         specimen.ate(otherSpecimen);
         if (null != length) {
@@ -51,7 +45,12 @@ public class ExportTestUtil {
     }
 
     public static long utcTestTime() {
+        Date time = utcTestDate();
+        return time.getTime();
+    }
+
+    protected static Date utcTestDate() {
         Calendar calendar = DatatypeConverter.parseDateTime("1992-03-30T08:00:00Z");
-        return calendar.getTime().getTime();
+        return calendar.getTime();
     }
 }

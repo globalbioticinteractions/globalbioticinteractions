@@ -1,23 +1,13 @@
 package org.eol.globi.data;
 
 import com.Ostermiller.util.LabeledCSVParser;
-import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.TaxonomyProvider;
-import org.eol.globi.domain.Term;
-import org.neo4j.graphdb.Relationship;
 
 import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
 
 public class StudyImporterForGemina extends BaseStudyImporter {
 
@@ -41,12 +31,11 @@ public class StudyImporterForGemina extends BaseStudyImporter {
                 if (line.length > 7) {
                     String pathogenId = parser.getValueByLabel("Pathogen Taxonomy");
                     String pathogenExternalId = StringUtils.isBlank(pathogenId) ? null : TaxonomyProvider.NCBI.getIdPrefix() + pathogenId;
-                    Specimen pathogen = nodeFactory.createSpecimen(parser.getValueByLabel("Pathogen"), pathogenExternalId);
+                    Specimen pathogen = nodeFactory.createSpecimen(study, parser.getValueByLabel("Pathogen"), pathogenExternalId);
                     String hostId = line[7];
                     String hostReservoirExternalId = StringUtils.isBlank(hostId) ? null : TaxonomyProvider.NCBI.getIdPrefix() + hostId;
-                    Specimen host = nodeFactory.createSpecimen(parser.getValueByLabel("Host/Reservoir"), hostReservoirExternalId);
+                    Specimen host = nodeFactory.createSpecimen(study, parser.getValueByLabel("Host/Reservoir"), hostReservoirExternalId);
                     pathogen.interactsWith(host, InteractType.PATHOGEN_OF);
-                    study.collected(pathogen);
                 }
             }
         } catch (IOException e) {

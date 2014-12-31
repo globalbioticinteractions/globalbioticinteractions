@@ -5,7 +5,6 @@ import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
-import org.neo4j.graphdb.Relationship;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -41,14 +40,13 @@ public class StudyImporterForCook extends BaseStudyImporter {
 
             try {
                 while (parser.getLine() != null) {
-                    Specimen host = nodeFactory.createSpecimen("Micropogonias undulatus");
+                    Specimen host = nodeFactory.createSpecimen(study, "Micropogonias undulatus");
                     host.setLengthInMm(Double.parseDouble(parser.getValueByLabel("Fish Length")) * 10.0);
-                    Relationship collected = study.collected(host);
 
                     String dateString = parser.getValueByLabel("Date");
                     SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
                     Date collectionDate = dateFormat.parse(dateString);
-                    nodeFactory.setUnixEpochProperty(collected, collectionDate);
+                    nodeFactory.setUnixEpochProperty(host, collectionDate);
                     host.caughtIn(sampleLocation);
 
                     String[] isoCols = {"Iso 1", "Iso 2", "Iso 3", "Iso 4 ", "Iso 5"};
@@ -75,15 +73,14 @@ public class StudyImporterForCook extends BaseStudyImporter {
             boolean lengthAvailable = parasiteDetected && !"NA".equals(valueByLabel);
 
             if (parasiteDetected) {
-                Specimen parasite = nodeFactory.createSpecimen("Cymothoa excisa");
+                Specimen parasite = nodeFactory.createSpecimen(study, "Cymothoa excisa");
                 parasite.caughtIn(sampleLocation);
                 if (lengthAvailable) {
                     double parasiteLengthCm = Double.parseDouble(valueByLabel);
                     parasite.setLengthInMm(parasiteLengthCm * 10.0);
                 }
                 parasite.interactsWith(host, InteractType.PARASITE_OF);
-                Relationship collected1 = study.collected(parasite);
-                nodeFactory.setUnixEpochProperty(collected1, collectionDate);
+                nodeFactory.setUnixEpochProperty(parasite, collectionDate);
             }
         } catch (NumberFormatException ex) {
             // ignore

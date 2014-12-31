@@ -5,11 +5,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
-import org.neo4j.graphdb.Relationship;
 
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class StudyImporterForICES extends BaseStudyImporter {
 
@@ -30,16 +30,25 @@ public class StudyImporterForICES extends BaseStudyImporter {
                 , "International Council for the Exploration of the Sea. Available at http://www.ices.dk/products/cooperative.asp .");
         study.setExternalId("http://ecosystemdata.ices.dk/stomachdata/");
         try {
-            Specimen predatorSpecimen = null;
+            Specimen predator = null;
             String lastStomachId = null;
             while ((parser.getLine()) != null) {
                 if (importFilter.shouldImportRecord((long) parser.getLastLineNumber())) {
+                    Date date = parseDate(parser);
+                    Location location = parseLocation(parser);
+
                     String currentStomachId = parser.getValueByLabel("ICES StomachID");
                     if (lastStomachId == null || !lastStomachId.equals(currentStomachId)) {
-                        predatorSpecimen = addPredator(parser, study);
+                        predator = addPredator(parser, study);
+                        nodeFactory.setUnixEpochProperty(predator, date);
+                        predator.caughtIn(location);
                     }
 
-                    addPrey(parser, predatorSpecimen);
+                    Specimen prey = addPrey(parser, predator, study);
+                    if (prey != null) {
+                        nodeFactory.setUnixEpochProperty(prey, date);
+                        prey.caughtIn(location);
+                    }
                     lastStomachId = currentStomachId;
                 }
             }
@@ -52,20 +61,19 @@ public class StudyImporterForICES extends BaseStudyImporter {
         return study;
     }
 
-    private void addPrey(LabeledCSVParser parser, Specimen predatorSpecimen) throws NodeFactoryException {
+    private Specimen addPrey(LabeledCSVParser parser, Specimen predatorSpecimen, Study study) throws NodeFactoryException {
         String preyName = parser.getValueByLabel("Prey Species Name");
+        Specimen specimen = null;
         if (StringUtils.isNotBlank(preyName)) {
-            atePrey(predatorSpecimen, preyName);
+            specimen = atePrey(predatorSpecimen, preyName, study);
         }
+        return specimen;
     }
 
     private Specimen addPredator(LabeledCSVParser parser, Study study) throws NodeFactoryException, StudyImporterException {
         Specimen predatorSpecimen;
-        predatorSpecimen = nodeFactory.createSpecimen(parser.getValueByLabel("Predator"));
+        predatorSpecimen = nodeFactory.createSpecimen(study, parser.getValueByLabel("Predator"));
         predatorSpecimen.setLengthInMm(parseDoubleField(parser, "Predator (mean) Lengh"));
-
-        addLocation(parser, predatorSpecimen);
-        addCollectedAt(parser, study, predatorSpecimen);
         return predatorSpecimen;
     }
 
@@ -79,32 +87,33 @@ public class StudyImporterForICES extends BaseStudyImporter {
         return parser;
     }
 
-    private void addCollectedAt(LabeledCSVParser parser, Study study, Specimen predatorSpecimen) throws StudyImporterException {
-        Relationship collected = study.collected(predatorSpecimen);
+    private Date parseDate(LabeledCSVParser parser) throws StudyImporterException {
         String dateTime = parser.getValueByLabel("Date/Time");
+        Date date;
         try {
-            nodeFactory.setUnixEpochProperty(collected, new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").parse(dateTime));
+            date = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").parse(dateTime);
         } catch (ParseException e) {
             throw new StudyImporterException("missing or invalid date value [" + dateTime + "]", e);
         }
+
+        return date;
     }
 
-    private void addLocation(LabeledCSVParser parser, Specimen predatorSpecimen) throws StudyImporterException {
+    private Location parseLocation(LabeledCSVParser parser) throws StudyImporterException {
         Double lat = parseDoubleField(parser, "Latitude");
         Double lon = parseDoubleField(parser, "Longitude");
         Double depth = parseDoubleField(parser, "Depth");
-        Location loc = null;
         try {
-            loc = nodeFactory.getOrCreateLocation(lat, lon, depth == null ? null : -depth);
+            return nodeFactory.getOrCreateLocation(lat, lon, depth == null ? null : -depth);
         } catch (NodeFactoryException e) {
             throw new StudyImporterException("failed to create location", e);
         }
-        predatorSpecimen.caughtIn(loc);
     }
 
-    private void atePrey(Specimen predatorSpecimen, String preyName) throws NodeFactoryException {
-        Specimen preySpecimen = nodeFactory.createSpecimen(preyName);
+    private Specimen atePrey(Specimen predatorSpecimen, String preyName, Study study) throws NodeFactoryException {
+        Specimen preySpecimen = nodeFactory.createSpecimen(study, preyName);
         predatorSpecimen.ate(preySpecimen);
+        return preySpecimen;
     }
 
     private Double parseDoubleField(LabeledCSVParser parser, String name) {

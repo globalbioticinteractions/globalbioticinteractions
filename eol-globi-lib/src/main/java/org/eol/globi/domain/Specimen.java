@@ -7,7 +7,6 @@ import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.Transaction;
 
 import java.util.List;
-import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
 
 public class Specimen extends NodeBacked {
 
@@ -104,6 +103,7 @@ public class Specimen extends NodeBacked {
             Relationship classifiedAs = recipientSpecimen.getUnderlyingNode().getSingleRelationship(RelTypes.CLASSIFIED_AS, Direction.OUTGOING);
             Relationship classifiedAs1 = this.getUnderlyingNode().getSingleRelationship(RelTypes.CLASSIFIED_AS, Direction.OUTGOING);
             createInteraction(new TaxonNode(classifiedAs1.getEndNode()), new TaxonNode(classifiedAs.getEndNode()), relType);
+
             tx.success();
         } finally {
             tx.finish();
@@ -112,7 +112,10 @@ public class Specimen extends NodeBacked {
 
     protected static void createInteraction(NodeBacked donorSpecimen, NodeBacked recipientSpecimen, InteractType relType) {
         donorSpecimen.createRelationshipToNoTx(recipientSpecimen, relType);
-        recipientSpecimen.createRelationshipToNoTx(donorSpecimen, InteractUtil.inverseOf(relType));
+        Relationship inverseRel = recipientSpecimen.createRelationshipToNoTx(donorSpecimen, InteractUtil.inverseOf(relType));
+        if (inverseRel != null) {
+            inverseRel.setProperty(PropertyAndValueDictionary.INVERTED, PropertyAndValueDictionary.TRUE);
+        }
     }
 
     public String getOriginalTaxonDescription() {

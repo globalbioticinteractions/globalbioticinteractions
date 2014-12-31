@@ -57,10 +57,6 @@ public class StudyImporterForSimons extends BaseStudyImporter {
 
     private Study createAndPopulateStudy(ParserFactory parserFactory, String studyResource) throws StudyImporterException {
         getPredatorSpecimenMap().clear();
-        Map<String, String> columnMapper = COLUMN_MAPPER;
-        if (null == columnMapper) {
-            throw new StudyImporterException("no suitable column mapper found for [" + studyResource + "]");
-        }
         return importStudy(parserFactory, studyResource);
     }
 
@@ -85,7 +81,7 @@ public class StudyImporterForSimons extends BaseStudyImporter {
 
     private void addNextRecordToStudy(LabeledCSVParser csvParser, Study study, Map<String, String> columnToNormalizedTermMapper, LengthParser lengthParser) throws StudyImporterException {
         String seasonName = csvParser.getValueByLabel(columnToNormalizedTermMapper.get(SEASON));
-        Specimen prey = createAndClassifySpecimen(csvParser.getValueByLabel(columnToNormalizedTermMapper.get(PREY_SPECIES)));
+        Specimen prey = createAndClassifySpecimen(csvParser.getValueByLabel(columnToNormalizedTermMapper.get(PREY_SPECIES)), study);
 
         Location sampleLocation = getOrCreateSampleLocation(csvParser, columnToNormalizedTermMapper);
         prey.caughtIn(sampleLocation);
@@ -101,8 +97,7 @@ public class StudyImporterForSimons extends BaseStudyImporter {
         Map<String, Specimen> predatorMap = getPredatorSpecimenMap();
         Specimen predator = predatorMap.get(occurrenceId);
         if (predator == null) {
-            predator = createAndClassifySpecimen(speciesName);
-            study.collected(predator);
+            predator = createAndClassifySpecimen(speciesName, study);
             predator.setLengthInMm(lengthParser.parseLengthInMm(csvParser));
             predator.caughtDuring(getOrCreateSeason(seasonName));
             predator.caughtIn(sampleLocation);
@@ -154,9 +149,9 @@ public class StudyImporterForSimons extends BaseStudyImporter {
         return valueByLabel == null ? null : Double.parseDouble(valueByLabel);
     }
 
-    private Specimen createAndClassifySpecimen(final String speciesName) throws StudyImporterException {
+    private Specimen createAndClassifySpecimen(final String speciesName, Study study) throws StudyImporterException {
         try {
-            return nodeFactory.createSpecimen(speciesName);
+            return nodeFactory.createSpecimen(study, speciesName);
         } catch (NodeFactoryException e) {
             throw new StudyImporterException("failed to classify specimen", e);
         }

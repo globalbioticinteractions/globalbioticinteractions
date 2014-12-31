@@ -32,6 +32,7 @@ import java.io.IOException;
 import java.io.Reader;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -161,10 +162,7 @@ public class StudyImporterForRaymond extends BaseStudyImporter {
 
     private void parseDietObservation(LabeledCSVParser dietParser, Study study) throws StudyImporterException {
         try {
-            Specimen predator = getSpecimen(dietParser, "PREDATOR_NAME", "PREDATOR_LIFE_STAGE");
-
-            Relationship collected = study.collected(predator);
-            parseCollectionDate(dietParser, collected);
+            Specimen predator = getSpecimen(dietParser, "PREDATOR_NAME", "PREDATOR_LIFE_STAGE", study);
 
             dietParser.getValueByLabel("ALTITUDE_MIN");
             dietParser.getValueByLabel("ALTITUDE_MAX");
@@ -172,25 +170,32 @@ public class StudyImporterForRaymond extends BaseStudyImporter {
             dietParser.getValueByLabel("DEPTH_MIN");
             dietParser.getValueByLabel("DEPTH_MAX");
 
-            predator.caughtIn(parseLocation(dietParser, study));
+            Location sampleLocation = parseLocation(dietParser, study);
+            predator.caughtIn(sampleLocation);
 
-            Specimen prey = getSpecimen(dietParser, "PREY_NAME", "PREY_LIFE_STAGE");
+            Specimen prey = getSpecimen(dietParser, "PREY_NAME", "PREY_LIFE_STAGE", study);
+            prey.caughtIn(sampleLocation);
             predator.ate(prey);
+
+            Date date = parseCollectionDate(dietParser);
+            nodeFactory.setUnixEpochProperty(prey, date);
+            nodeFactory.setUnixEpochProperty(predator, date);
         } catch (NodeFactoryException e) {
             throw new StudyImporterException("failed to import data", e);
         }
     }
 
-    private Specimen getSpecimen(LabeledCSVParser dietParser, String nameLabel, String lifeStageLabel) throws NodeFactoryException {
+    private Specimen getSpecimen(LabeledCSVParser dietParser, String nameLabel, String lifeStageLabel, Study study) throws NodeFactoryException {
         String predatorName = dietParser.getValueByLabel(nameLabel);
-        Specimen predator = nodeFactory.createSpecimen(predatorName);
+        Specimen predator = nodeFactory.createSpecimen(study, predatorName);
         String predatorLifeStage = dietParser.getValueByLabel(lifeStageLabel);
         predator.setLifeStage(nodeFactory.getOrCreateLifeStage("RAYMOND:" + predatorLifeStage, predatorLifeStage));
         return predator;
     }
 
-    private void parseCollectionDate(LabeledCSVParser dietParser, Relationship collected) throws StudyImporterException {
+    private Date parseCollectionDate(LabeledCSVParser dietParser) throws StudyImporterException {
         DateTimeFormatter formatter = DateTimeFormat.forPattern("dd/MM/yyyy");
+        Date date = null;
         try {
             String observationDateStart = dietParser.getValueByLabel(OBSERVATION_DATE_START);
             String observationDateEnd = dietParser.getValueByLabel(OBSERVATION_DATE_END);
@@ -198,11 +203,12 @@ public class StudyImporterForRaymond extends BaseStudyImporter {
                 DateTime startDate = formatter.parseDateTime(observationDateStart);
                 DateTime endDate = formatter.parseDateTime(observationDateEnd);
                 DateTime meanTime = startDate.plus(endDate.minus(startDate.toDate().getTime()).toDate().getTime());
-                nodeFactory.setUnixEpochProperty(collected, meanTime.toDate());
+                date = meanTime.toDate();
             }
         } catch (IllegalArgumentException ex) {
             throw new StudyImporterException("malformed date on line [" + dietParser.lastLineNumber() + "]", ex);
         }
+        return date;
     }
 
     private Location parseLocation(LabeledCSVParser dietParser, Study study) throws StudyImporterException {

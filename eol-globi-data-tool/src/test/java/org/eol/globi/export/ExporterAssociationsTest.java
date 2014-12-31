@@ -8,12 +8,11 @@ import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.Term;
 import org.junit.Test;
-import org.neo4j.graphdb.Relationship;
-import org.neo4j.graphdb.Transaction;
 
 import java.io.IOException;
 import java.io.StringWriter;
 import java.text.ParseException;
+import java.util.Date;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.core.Is.is;
@@ -25,8 +24,8 @@ public class ExporterAssociationsTest extends GraphDBTestCase {
     public void exportWithoutHeader() throws IOException, NodeFactoryException, ParseException {
         createTestData(null);
 
-        String expected = "\nglobi:assoc:5,globi:occur:source:3,http://eol.org/schema/terms/eats,globi:occur:target:6,,,,,data source description,,,globi:ref:1" +
-                "\nglobi:assoc:9,globi:occur:source:3,http://eol.org/schema/terms/eats,globi:occur:target:6,,,,,data source description,,,globi:ref:1";
+        String expected = "\nglobi:assoc:6,globi:occur:source:3,http://eol.org/schema/terms/eats,globi:occur:target:6,,,,,data source description,,,globi:ref:1" +
+                "\nglobi:assoc:10,globi:occur:source:3,http://eol.org/schema/terms/eats,globi:occur:target:6,,,,,data source description,,,globi:ref:1";
 
 
         Study myStudy1 = nodeFactory.findStudy("myStudy");
@@ -40,21 +39,14 @@ public class ExporterAssociationsTest extends GraphDBTestCase {
 
     private void createTestData(Double length) throws NodeFactoryException, ParseException {
         Study myStudy = nodeFactory.getOrCreateStudy("myStudy", "contributor", "institute", "period", "description", "pubYear", "data source description");
-        Specimen specimen = nodeFactory.createSpecimen("Homo sapiens", "EOL:123");
+        Specimen specimen = nodeFactory.createSpecimen(myStudy, "Homo sapiens", "EOL:123");
         specimen.setStomachVolumeInMilliLiter(666.0);
         specimen.setLifeStage(new Term("GLOBI:JUVENILE", "JUVENILE"));
         specimen.setPhysiologicalState(new Term("GLOBI:DIGESTATE", "DIGESTATE"));
         specimen.setBodyPart(new Term("GLOBI:BONE", "BONE"));
-        Relationship collected = myStudy.collected(specimen);
-        Transaction transaction = myStudy.getUnderlyingNode().getGraphDatabase().beginTx();
-        try {
-            collected.setProperty(Specimen.DATE_IN_UNIX_EPOCH, ExportTestUtil.utcTestTime());
-            transaction.success();
-        } finally {
-            transaction.finish();
-        }
-        eats(specimen, "Canis lupus", "EOL:456");
-        eats(specimen, "Felis whateverus", PropertyAndValueDictionary.NO_MATCH);
+        nodeFactory.setUnixEpochProperty(specimen, new Date(ExportTestUtil.utcTestTime()));
+        eats(specimen, "Canis lupus", "EOL:456", myStudy);
+        eats(specimen, "Felis whateverus", PropertyAndValueDictionary.NO_MATCH, myStudy);
         if (null != length) {
             specimen.setLengthInMm(length);
         }
@@ -63,8 +55,8 @@ public class ExporterAssociationsTest extends GraphDBTestCase {
         specimen.caughtIn(location);
     }
 
-    private void eats(Specimen specimen, String scientificName, String taxonExternalId) throws NodeFactoryException {
-        Specimen otherSpecimen = nodeFactory.createSpecimen(scientificName, taxonExternalId);
+    private void eats(Specimen specimen, String scientificName, String taxonExternalId, Study study) throws NodeFactoryException {
+        Specimen otherSpecimen = nodeFactory.createSpecimen(study, scientificName, taxonExternalId);
         otherSpecimen.setVolumeInMilliLiter(124.0);
 
         specimen.ate(otherSpecimen);

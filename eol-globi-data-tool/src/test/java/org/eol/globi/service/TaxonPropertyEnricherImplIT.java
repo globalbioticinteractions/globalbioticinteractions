@@ -127,7 +127,7 @@ public class TaxonPropertyEnricherImplIT extends GraphDBTestCase {
 
     @Test
     public void noNameButExternalId() throws NodeFactoryException {
-        Specimen specimen = nodeFactory.createSpecimen(PropertyAndValueDictionary.NO_NAME, "EOL:223038");
+        Specimen specimen = nodeFactory.createSpecimen(null, PropertyAndValueDictionary.NO_NAME, "EOL:223038");
         assertThat(specimen, is(notNullValue()));
         Iterable<Relationship> classifications = specimen.getClassifications();
         int count = 0;

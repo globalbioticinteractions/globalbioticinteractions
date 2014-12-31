@@ -9,10 +9,10 @@ import org.eol.globi.domain.Location;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.Term;
+import org.eol.globi.geo.LatLng;
 import org.eol.globi.service.TermLookupService;
 import org.eol.globi.service.TermLookupServiceException;
 import org.eol.globi.service.UberonLookupService;
-import org.eol.globi.geo.LatLng;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -112,21 +112,23 @@ public class StudyImporterForBrose extends BaseStudyImporter {
     }
 
     private void addInteractionForConsumer(LabeledCSVParser parser, Study localStudy, String predatorName) throws NodeFactoryException, StudyImporterException {
-        Specimen consumer = nodeFactory.createSpecimen(predatorName);
-        addLifeStage(parser, consumer, "Lifestage consumer");
 
-
+        Location location = null;
         String locationString = parser.getValueByLabel("Geographic location");
         LatLng latLng = LOC_MAP.get(StringUtils.trim(locationString));
         if (latLng == null) {
             getLogger().warn(localStudy, "failed to find location for [" + locationString + "]");
         } else {
-            Location location = nodeFactory.getOrCreateLocation(latLng.getLat(), latLng.getLng(), null);
-            consumer.caughtIn(location);
+            location = nodeFactory.getOrCreateLocation(latLng.getLat(), latLng.getLng(), null);
             String habitat = StringUtils.join(parser.getValueByLabel("General habitat"), " ", parser.getValueByLabel("Specific habitat"));
             String habitatId = "BROSE:" + habitat.replaceAll("\\W", "_");
             nodeFactory.getOrCreateEnvironments(location, habitatId, habitat);
         }
+
+        Specimen consumer = nodeFactory.createSpecimen(localStudy, predatorName);
+        consumer.caughtIn(location);
+        addLifeStage(parser, consumer, "Lifestage consumer");
+
 
         String name = getName(parser, "Taxonomy resource", "Common name(s) resource");
         if (StringUtils.isBlank(name) || StringUtils.length(name) < 2) {
@@ -134,7 +136,8 @@ public class StudyImporterForBrose extends BaseStudyImporter {
             LOG.warn(message);
             getLogger().warn(localStudy, message);
         } else {
-            Specimen resource = nodeFactory.createSpecimen(name);
+            Specimen resource = nodeFactory.createSpecimen(localStudy, name);
+            resource.caughtIn(location);
             addLifeStage(parser, resource, "Lifestage - resource");
             String interactionType = parser.getValueByLabel("Type of feeding interaction");
             Map<String, InteractType> typeMapping = new HashMap<String, InteractType>() {
@@ -156,8 +159,6 @@ public class StudyImporterForBrose extends BaseStudyImporter {
             }
             consumer.interactsWith(resource, interactType);
         }
-
-        localStudy.collected(consumer);
     }
 
     private void addLifeStage(LabeledCSVParser parser, Specimen specimen, String label) throws StudyImporterException {

@@ -37,10 +37,9 @@ public class StudyImporterForThessen extends BaseStudyImporter {
                 if (importFilter.shouldImportRecord((long)parser.lastLineNumber())) {
                     if (line.length == 2) {
                         try {
-                            Specimen source = nodeFactory.createSpecimen(null, "EOL:" + line[0]);
-                            Specimen target = nodeFactory.createSpecimen(null, "EOL:" + line[1]);
+                            Specimen source = nodeFactory.createSpecimen(study, "EOL:" + line[0]);
+                            Specimen target = nodeFactory.createSpecimen(study, "EOL:" + line[1]);
                             source.interactsWith(target, InteractType.INTERACTS_WITH);
-                            study.collected(source);
                         } catch (NodeFactoryException e) {
                             throw new StudyImporterException("failed to create nodes on line [" + parser.getLastLineNumber() + "]", e);
                         }

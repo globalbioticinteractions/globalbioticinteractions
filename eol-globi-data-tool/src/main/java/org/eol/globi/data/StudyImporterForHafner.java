@@ -1,22 +1,11 @@
 package org.eol.globi.data;
 
 import com.Ostermiller.util.LabeledCSVParser;
-import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
-import org.eol.globi.domain.Term;
-import org.neo4j.graphdb.Relationship;
 
 import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
 
 public class StudyImporterForHafner extends BaseStudyImporter {
 
@@ -37,10 +26,9 @@ public class StudyImporterForHafner extends BaseStudyImporter {
 
                 String hostName = parser.getValueByLabel("Host");
                 String parasiteName = parser.getValueByLabel("Parasite");
-                Specimen host = nodeFactory.createSpecimen(hostName);
-                Specimen parasite = nodeFactory.createSpecimen(parasiteName);
+                Specimen host = nodeFactory.createSpecimen(study, hostName);
+                Specimen parasite = nodeFactory.createSpecimen(study, parasiteName);
                 parasite.interactsWith(host, InteractType.PARASITE_OF);
-                study.collected(parasite);
             }
         } catch (IOException e) {
             throw new StudyImporterException("failed to import [" + RESOURCE + "]", e);

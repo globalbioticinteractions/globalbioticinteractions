@@ -2,7 +2,9 @@ package org.eol.globi.util;
 
 import org.eol.globi.domain.InteractType;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class InteractUtil {

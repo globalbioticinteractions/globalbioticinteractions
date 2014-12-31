@@ -17,12 +17,11 @@ import org.eol.globi.service.PropertyEnricherException;
 import org.eol.globi.service.TaxonUtil;
 import org.junit.Before;
 import org.junit.Test;
-import org.neo4j.graphdb.Relationship;
-import org.neo4j.graphdb.Transaction;
 
 import java.io.IOException;
 import java.io.StringWriter;
 import java.text.ParseException;
+import java.util.Date;
 import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -85,10 +84,8 @@ public class ExporterAssociationAggregatesTest extends GraphDBTestCase {
 
         for (String studyTitle : studyTitles) {
             Study myStudy = nodeFactory.getOrCreateStudy(studyTitle, "contributor", "inst", "per", "description", "pubYear", "data source description");
-            Specimen specimen = nodeFactory.createSpecimen(PropertyAndValueDictionary.NO_MATCH);
-            specimen.ate(nodeFactory.createSpecimen(PropertyAndValueDictionary.NO_MATCH));
-            myStudy.collected(specimen);
-
+            Specimen specimen = nodeFactory.createSpecimen(myStudy, PropertyAndValueDictionary.NO_MATCH);
+            specimen.ate(nodeFactory.createSpecimen(myStudy, PropertyAndValueDictionary.NO_MATCH));
         }
 
         String expected = "";
@@ -106,20 +103,13 @@ public class ExporterAssociationAggregatesTest extends GraphDBTestCase {
 
     private void createTestData(Double length, String studyTitle) throws NodeFactoryException, ParseException {
         Study myStudy = nodeFactory.getOrCreateStudy(studyTitle, "contributor", "inst", "per", "description", "pubYear", "data source description");
-        Specimen specimen = nodeFactory.createSpecimen("Homo sapiens");
+        Specimen specimen = nodeFactory.createSpecimen(myStudy, "Homo sapiens");
         specimen.setStomachVolumeInMilliLiter(666.0);
         specimen.setLifeStage(new Term("GlOBI:JUVENILE", "JUVENILE"));
         specimen.setPhysiologicalState(new Term("GlOBI:DIGESTATE", "DIGESTATE"));
         specimen.setBodyPart(new Term("GLOBI:BONE", "BONE"));
-        Relationship collected = myStudy.collected(specimen);
-        Transaction transaction = myStudy.getUnderlyingNode().getGraphDatabase().beginTx();
-        try {
-            collected.setProperty(Specimen.DATE_IN_UNIX_EPOCH, ExportTestUtil.utcTestTime());
-            transaction.success();
-        } finally {
-            transaction.finish();
-        }
-        Specimen otherSpecimen = nodeFactory.createSpecimen("Canis lupus");
+        nodeFactory.setUnixEpochProperty(specimen, new Date(ExportTestUtil.utcTestTime()));
+        Specimen otherSpecimen = nodeFactory.createSpecimen(myStudy, "Canis lupus");
         otherSpecimen.setVolumeInMilliLiter(124.0);
 
         specimen.ate(otherSpecimen);

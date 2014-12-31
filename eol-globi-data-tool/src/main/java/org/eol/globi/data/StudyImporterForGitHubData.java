@@ -110,10 +110,9 @@ public class StudyImporterForGitHubData extends BaseStudyImporter {
 
                 InteractType type = INTERACT_ID_TO_TYPE.get(interactionTypeId);
                 if (type != null) {
-                    Specimen source = nodeFactory.createSpecimen(sourceTaxonName, sourceTaxonId);
-                    Specimen target = nodeFactory.createSpecimen(targetTaxonName, targetTaxonId);
+                    Specimen source = nodeFactory.createSpecimen(study, sourceTaxonName, sourceTaxonId);
+                    Specimen target = nodeFactory.createSpecimen(study, targetTaxonName, targetTaxonId);
                     source.interactsWith(target, type);
-                    study.collected(source);
                 } else {
                     throw new StudyImporterException("unsupported interaction type id [" + interactionTypeId + "]");
                 }

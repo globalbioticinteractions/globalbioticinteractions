@@ -79,13 +79,13 @@ public class StudyImporterForByrnes extends BaseStudyImporter {
     }
 
     private void addInteractionForPredator(LabeledCSVParser parser, Study localStudy, String predatorName) throws NodeFactoryException, StudyImporterException {
-        Specimen predator = nodeFactory.createSpecimen(predatorName);
+        Specimen predator = nodeFactory.createSpecimen(localStudy, predatorName);
 
         String preyName = parser.getValueByLabel("Prey");
         if (StringUtils.isBlank(preyName)) {
             getLogger().warn(localStudy, "found empty prey name on line [" + parser.lastLineNumber() + "]");
         } else {
-            Specimen prey = nodeFactory.createSpecimen(preyName);
+            Specimen prey = nodeFactory.createSpecimen(localStudy, preyName);
             String feedingLink = parser.getValueByLabel("Feeding Link?");
             if (StringUtils.equals("1", StringUtils.trim(feedingLink))) {
                 predator.ate(prey);
@@ -93,8 +93,5 @@ public class StudyImporterForByrnes extends BaseStudyImporter {
                 predator.interactsWith(prey, InteractType.INTERACTS_WITH);
             }
         }
-
-        localStudy.collected(predator);
     }
-
 }

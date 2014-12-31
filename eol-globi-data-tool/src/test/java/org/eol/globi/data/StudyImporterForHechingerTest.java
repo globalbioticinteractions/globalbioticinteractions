@@ -52,7 +52,7 @@ public class StudyImporterForHechingerTest extends GraphDBTestCase {
         for (Relationship specimen : specimens) {
             count++;
         }
-        assertThat(count, is(13966));
+        assertThat(count, is(27932));
 
 
         ExecutionEngine engine = new ExecutionEngine(getGraphDb());

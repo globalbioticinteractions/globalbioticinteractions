@@ -41,7 +41,10 @@ public class StudyImporterForVertNetTest extends GraphDBTestCase {
     @Test
     public void testResponse() throws IOException {
         List<String> stomachStrings = new ArrayList<String>();
-        JsonNode jsonNode = parseResponse(stomachStrings, IOUtils.toString(new GZIPInputStream(getClass().getResourceAsStream("vertnet/example_response.json.gz"))), new FileOutputStream("./vertnet.csv"));
+        File file = File.createTempFile("vertnet", ".csv");
+        file.deleteOnExit();
+        JsonNode jsonNode = parseResponse(stomachStrings, IOUtils.toString(new GZIPInputStream(getClass().getResourceAsStream("vertnet/example_response.json.gz"))),
+                new FileOutputStream(file));
         assertThat(jsonNode, is(notNullValue()));
         assertThat(stomachStrings, hasItems("gravel", "insect parts", "sand"));
     }
@@ -51,7 +54,8 @@ public class StudyImporterForVertNetTest extends GraphDBTestCase {
     public void importStomachData() throws URISyntaxException, IOException {
         String oldCursor = null;
         String cursor = null;
-        File file = new File("./vertnet.csv");
+        File file = File.createTempFile("vertnet", ".csv");
+        file.deleteOnExit();
         LOG.info("writing to: [" + file.getAbsolutePath() + "]");
         FileOutputStream fos = new FileOutputStream(file);
         while (StringUtils.isBlank(cursor) || !StringUtils.equals(cursor, oldCursor)) {

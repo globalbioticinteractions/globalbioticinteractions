@@ -6,6 +6,7 @@ import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.Transaction;
+import scala.deprecated;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,10 +41,6 @@ public class Study extends NodeBacked {
     public Iterable<Relationship> getSpecimens() {
         return getUnderlyingNode().getRelationships(Direction.OUTGOING, RelTypes.COLLECTED);
 
-    }
-
-    public Relationship collected(Specimen specimen) {
-        return createRelationshipTo(specimen, RelTypes.COLLECTED);
     }
 
     @Deprecated

@@ -47,10 +47,9 @@ public class ExporterTaxaTest extends GraphDBTestCase {
 
     @Test
     public void excludeNoMatchNames() throws NodeFactoryException, IOException {
-        Specimen predator = nodeFactory.createSpecimen(PropertyAndValueDictionary.NO_MATCH, "EOL:1234");
-        Specimen prey = nodeFactory.createSpecimen(PropertyAndValueDictionary.NO_MATCH, "EOL:122");
         Study study = nodeFactory.createStudy("bla");
-        study.collected(predator);
+        Specimen predator = nodeFactory.createSpecimen(study, PropertyAndValueDictionary.NO_MATCH, "EOL:1234");
+        Specimen prey = nodeFactory.createSpecimen(study, PropertyAndValueDictionary.NO_MATCH, "EOL:122");
         predator.ate(prey);
         assertThat(exportStudy(study), not(containsString(PropertyAndValueDictionary.NO_MATCH)));
     }
@@ -107,7 +106,8 @@ public class ExporterTaxaTest extends GraphDBTestCase {
         assertThat(rowFields.containsKey(EOLDictionary.GENUS), is(false));
         assertThat(rowFields.containsKey(EOLDictionary.FURTHER_INFORMATION_URL), is(false));
     }
-@Test
+
+    @Test
     public void includeInvalidHigherOrderRanks() throws NodeFactoryException, IOException {
         HashMap<String, Object> result = new HashMap<String, Object>() {
             {

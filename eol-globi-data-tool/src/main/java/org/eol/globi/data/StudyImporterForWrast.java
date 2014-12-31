@@ -6,7 +6,6 @@ import org.eol.globi.domain.Location;
 import org.eol.globi.domain.Season;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
-import org.neo4j.graphdb.Relationship;
 import org.eol.globi.geo.LatLng;
 
 import java.io.IOException;
@@ -101,7 +100,7 @@ public class StudyImporterForWrast extends BaseStudyImporter {
         if (preyItem == null) {
             getLogger().warn(study, "no prey name for line [" + csvParser.getLastLineNumber() + "]");
         } else {
-            Specimen prey = createAndClassifySpecimen(preyItem);
+            Specimen prey = createAndClassifySpecimen(preyItem, study);
 
             String habitat = csvParser.getValueByLabel(COLUMN_MAPPER.get(HABITAT));
             String site = csvParser.getValueByLabel(COLUMN_MAPPER.get(SITE));
@@ -144,12 +143,20 @@ public class StudyImporterForWrast extends BaseStudyImporter {
             }
 
             predator.ate(prey);
+
+            Date date = parseCollectionDate(csvParser, study);
+            try {
+                nodeFactory.setUnixEpochProperty(predator, date);
+                nodeFactory.setUnixEpochProperty(prey, date);
+            } catch (NodeFactoryException e) {
+                throw new StudyImporterException("specimen not associated to study", e);
+            }
+
         }
     }
 
     private Specimen addPredatorSpecimen(LabeledCSVParser csvParser, Study study, LengthParser lengthParser, String seasonName, Location sampleLocation, String speciesName, String predatorId, Map<String, Specimen> predatorMap) throws StudyImporterException {
-        Specimen predator;
-        predator = createAndClassifySpecimen(speciesName);
+        Specimen predator = createAndClassifySpecimen(speciesName, study);
         predatorMap.put(predatorId, predator);
         predator.setLengthInMm(lengthParser.parseLengthInMm(csvParser));
 
@@ -157,25 +164,23 @@ public class StudyImporterForWrast extends BaseStudyImporter {
             predator.caughtIn(sampleLocation);
         }
         predator.caughtDuring(getOrCreateSeason(seasonName));
-        Relationship collectedRel = study.collected(predator);
-        addCollectionDate(csvParser, collectedRel, study);
-
         return predator;
     }
 
-    private void addCollectionDate(LabeledCSVParser csvParser, Relationship collectedRel, Study study) {
+    private Date parseCollectionDate(LabeledCSVParser csvParser, Study study) {
         String dayString = csvParser.getValueByLabel(COLUMN_MAPPER.get(DAY));
         String monthString = csvParser.getValueByLabel(COLUMN_MAPPER.get(MONTH));
         String yearString = csvParser.getValueByLabel(COLUMN_MAPPER.get(YEAR));
+        Date collectionDate = null;
         if (StringUtils.isNotBlank(dayString) && StringUtils.isNotBlank(monthString) && StringUtils.isNotBlank(yearString)) {
             String dateString = monthString + "/" + dayString + "/" + yearString;
             try {
-                Date collectionDate = getSimpleDateFormat().parse(dateString);
-                nodeFactory.setUnixEpochProperty(collectedRel, collectionDate);
+                collectionDate = getSimpleDateFormat().parse(dateString);
             } catch (ParseException e) {
                 getLogger().warn(study, "failed to parse [" + dateString + "]: " + e.getMessage());
             }
         }
+        return collectionDate;
     }
 
     private HashMap<String, Specimen> getPredatorSpecimenMap() {
@@ -319,9 +324,9 @@ public class StudyImporterForWrast extends BaseStudyImporter {
         return habitateDef.trim() + regionDef.trim() + siteDef.trim();
     }
 
-    private Specimen createAndClassifySpecimen(final String speciesName) throws StudyImporterException {
+    private Specimen createAndClassifySpecimen(final String speciesName, Study study) throws StudyImporterException {
         try {
-            return nodeFactory.createSpecimen(speciesName);
+            return nodeFactory.createSpecimen(study, speciesName);
         } catch (NodeFactoryException e) {
             throw new StudyImporterException("failed to classify specimen with name [" + speciesName + "]", e);
         }

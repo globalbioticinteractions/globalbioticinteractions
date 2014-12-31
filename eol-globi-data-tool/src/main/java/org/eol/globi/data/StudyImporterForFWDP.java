@@ -11,10 +11,10 @@ import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
 import org.neo4j.graphdb.Node;
-import org.neo4j.graphdb.Relationship;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -45,26 +45,53 @@ public class StudyImporterForFWDP extends BaseStudyImporter {
             while (parser.getLine() != null) {
                 int lastLineNumber = parser.getLastLineNumber();
                 if (importFilter.shouldImportRecord((long) lastLineNumber)) {
-                    Specimen predatorSpecimen = getPredatorSpecimen(study, predatorSpecimenMap, parser);
-                    associatePreySpecimen(parser, predatorSpecimen);
+                    Specimen predator = getPredatorSpecimen(study, predatorSpecimenMap, parser);
+                    Specimen prey = associatePreySpecimen(study, parser, predator);
+                    try {
+                        Location location = getLocation(parser);
+                        predator.caughtIn(location);
+                        prey.caughtIn(location);
+
+                        Date date = parseDate(parser);
+                        nodeFactory.setUnixEpochProperty(predator, date);
+                        nodeFactory.setUnixEpochProperty(prey, date);
+                    } catch (NumberFormatException ex) {
+                        getLogger().warn(study, "found illegal location line [" + parser.lastLineNumber() + "]: " + ex.getMessage());
+                    } catch (NodeFactoryException e) {
+                        throw new StudyImporterException("failed to parse location on line [" + parser.lastLineNumber() + "]", e);
+                    } catch (IllegalArgumentException ex) {
+                        getLogger().warn(study, "found illegal date time on line [" + parser.lastLineNumber() + "]: " + ex.getMessage());
+                    }
+
+
+                    predator.ate(prey);
+                    try {
+                        nodeFactory.setUnixEpochProperty(prey, nodeFactory.getUnixEpochProperty(predator));
+                    } catch (NodeFactoryException e) {
+                        throw new StudyImporterException("specimen not associated with study");
+                    }
                 }
             }
-        } catch (IOException e) {
+        } catch (
+                IOException e
+                )
+
+        {
             throw new StudyImporterException("failed to access resource [" + studyResource + "]");
         }
 
         return study;
     }
 
-    private void associatePreySpecimen(LabeledCSVParser parser, Specimen predatorSpecimen) throws StudyImporterException {
+    private Specimen associatePreySpecimen(Study study, LabeledCSVParser parser, Specimen predatorSpecimen) throws StudyImporterException {
         try {
             String prey = parseTaxonName(parser, "PYNAM");
-            Specimen preySpecimen = nodeFactory.createSpecimen(prey);
+            Specimen preySpecimen = nodeFactory.createSpecimen(study, prey);
             String preyLength = parser.getValueByLabel("pylen");
             if (StringUtils.isNotBlank(preyLength)) {
                 predatorSpecimen.setLengthInMm(new Double(preyLength));
             }
-            predatorSpecimen.ate(preySpecimen);
+            return preySpecimen;
         } catch (NodeFactoryException e) {
             throw new StudyImporterException("failed to associate predator to prey on line [" + parser.lastLineNumber() + "]", e);
         }
@@ -83,19 +110,8 @@ public class StudyImporterForFWDP extends BaseStudyImporter {
             }
             if (predatorSpecimen == null) {
                 String predatorTaxonName = parseTaxonName(parser, "pdscinam");
-                predatorSpecimen = nodeFactory.createSpecimen(predatorTaxonName);
+                predatorSpecimen = nodeFactory.createSpecimen(study, predatorTaxonName);
                 predatorSpecimen.setExternalId(uniquePredatorId);
-                Relationship collected = study.collected(predatorSpecimen);
-                try {
-                    addDateTime(parser, collected);
-                } catch (IllegalArgumentException ex) {
-                    getLogger().warn(study, "found illegal date time on line [" + parser.lastLineNumber() + "]: " + ex.getMessage());
-                }
-                try {
-                    addLocation(parser, predatorSpecimen);
-                } catch (NumberFormatException ex) {
-                    getLogger().warn(study, "found illegal location line [" + parser.lastLineNumber() + "]: " + ex.getMessage());
-                }
                 String lengthCm = parser.getValueByLabel("PDLEN");
                 if (StringUtils.isNotBlank(lengthCm)) {
                     predatorSpecimen.setLengthInMm(new Double(lengthCm) * 10.0);
@@ -108,22 +124,21 @@ public class StudyImporterForFWDP extends BaseStudyImporter {
         return predatorSpecimen;
     }
 
-    private void addLocation(LabeledCSVParser parser, Specimen instigatorSpecimen) throws NodeFactoryException {
+    private Location getLocation(LabeledCSVParser parser) throws NodeFactoryException {
         String latString = parser.getValueByLabel("declat");
         String lngString = parser.getValueByLabel("declon");
         Double lng = new Double(lngString);
         Double lat = new Double(latString);
         // note that the minus sign for longitude was apparently omitted
-        Location loc = nodeFactory.getOrCreateLocation(lat, -1.0 * lng, null);
-        instigatorSpecimen.caughtIn(loc);
+        return nodeFactory.getOrCreateLocation(lat, -1.0 * lng, null);
     }
 
-    private void addDateTime(LabeledCSVParser parser, Relationship collected) {
+    private java.util.Date parseDate(LabeledCSVParser parser) throws NodeFactoryException {
         String year = parser.getValueByLabel("year");
         String month = parser.getValueByLabel("month");
         String day = parser.getValueByLabel("day");
         DateTime catchDateTime = parseDateTime(year, month, day, parser.getValueByLabel("hour"), parser.getValueByLabel("minute"));
-        nodeFactory.setUnixEpochProperty(collected, catchDateTime.toDate());
+        return catchDateTime.toDate();
     }
 
     protected static DateTime parseDateTime(String year, String month, String day, String hourOfDay, String minute) {

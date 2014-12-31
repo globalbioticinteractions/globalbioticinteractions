@@ -2,8 +2,6 @@ package org.eol.globi.data;
 
 import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
@@ -136,7 +134,7 @@ public class StudyImporterForPlanque extends BaseStudyImporter {
     }
 
     private void addInteractionForPredator(LabeledCSVParser parser, Study localStudy, String predatorName) throws NodeFactoryException, StudyImporterException {
-        Specimen predator = nodeFactory.createSpecimen(normalizeName(predatorName));
+        Specimen predator = nodeFactory.createSpecimen(localStudy, normalizeName(predatorName));
         // from http://www.geonames.org/630674/barents-sea.html
         Location location = nodeFactory.getOrCreateLocation(74.0, 36.0, null);
         predator.caughtIn(location);
@@ -145,11 +143,10 @@ public class StudyImporterForPlanque extends BaseStudyImporter {
         if (StringUtils.isBlank(preyName)) {
             getLogger().warn(localStudy, "found empty prey name on line [" + parser.lastLineNumber() + "]");
         } else {
-            Specimen prey = nodeFactory.createSpecimen(normalizeName(preyName));
+            Specimen prey = nodeFactory.createSpecimen(localStudy, normalizeName(preyName));
+            prey.caughtIn(location);
             predator.ate(prey);
         }
-
-        localStudy.collected(predator);
     }
 
 }

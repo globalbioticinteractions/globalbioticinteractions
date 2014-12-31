@@ -37,7 +37,7 @@ public class StudyImporterForICESTest extends GraphDBTestCase {
             specimens.next();
             specimenCount++;
         }
-        assertThat(specimenCount, is(201));
+        assertThat(specimenCount, is(388));
     }
 
     @Test
@@ -55,27 +55,29 @@ public class StudyImporterForICESTest extends GraphDBTestCase {
         assertNotNull(nodeFactory.findTaxonByName("Nereis"));
 
         Iterable<Relationship> collectedRels = study.getSpecimens();
-        int predatorCollected = 0;
+        int specimenCollected = 0;
         int preyEaten = 0;
         for (Relationship rel : collectedRels) {
             assertThat((Long) rel.getProperty(Specimen.DATE_IN_UNIX_EPOCH), is(new SimpleDateFormat("yyyy").parse("1981").getTime()));
             Node specimen = rel.getEndNode();
             assertNotNull(specimen);
-            assertThat((Double) specimen.getProperty(Specimen.LENGTH_IN_MM), is(125.0));
+            Iterable<Relationship> relationships = specimen.getRelationships(Direction.OUTGOING, InteractType.ATE);
+            for (Relationship relationship : relationships) {
+                assertThat((Double) specimen.getProperty(Specimen.LENGTH_IN_MM), is(125.0));
+                preyEaten++;
+            }
+
             Relationship collectedAtRelationship = specimen.getSingleRelationship(RelTypes.COLLECTED_AT, Direction.OUTGOING);
             assertNotNull(collectedAtRelationship);
             Node locationNode = collectedAtRelationship.getEndNode();
             assertNotNull(locationNode);
             assertThat((Double) locationNode.getProperty(Location.LATITUDE), is(55.25));
             assertThat((Double) locationNode.getProperty(Location.LONGITUDE), is(8.5));
-            predatorCollected++;
-            Iterable<Relationship> relationships = specimen.getRelationships(Direction.OUTGOING, InteractType.ATE);
-            for (Relationship relationship : relationships) {
-                preyEaten++;
-            }
+            specimenCollected++;
+
         }
 
-        assertThat(predatorCollected, Is.is(1));
+        assertThat(specimenCollected, Is.is(3));
         assertThat(preyEaten, Is.is(2));
 
     }

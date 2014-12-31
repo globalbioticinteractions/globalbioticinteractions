@@ -73,7 +73,7 @@ public class StudyImporterForCookTest extends GraphDBTestCase {
             count++;
         }
 
-        assertThat(count, is(1346));
+        assertThat(count, is(1372));
     }
 
     private void assertTaxonClassification(Node parasite, Node underlyingNode) {

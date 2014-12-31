@@ -9,7 +9,6 @@ import org.eol.globi.domain.Term;
 import org.eol.globi.service.TermLookupService;
 import org.eol.globi.service.TermLookupServiceException;
 import org.eol.globi.service.UberonLookupService;
-import org.neo4j.graphdb.Relationship;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -55,13 +54,12 @@ public class StudyImporterForBaremore extends BaseStudyImporter {
                 } else {
                     Specimen predatorSpecimen = specimenMap.get(sharkId);
                     if (predatorSpecimen == null) {
-                        predatorSpecimen = nodeFactory.createSpecimen("Squatina dumeril");
+                        predatorSpecimen = nodeFactory.createSpecimen(study, "Squatina dumeril");
                         predatorSpecimen.caughtIn(collectionLocation);
                         addLifeStage(parser, predatorSpecimen);
 
-                        Relationship collectedRel = study.collected(predatorSpecimen);
                         try {
-                            addCollectionDate(collectionDateString, collectedRel);
+                            addCollectionDate(collectionDateString, predatorSpecimen);
                         } catch (ParseException ex) {
                             throw new StudyImporterException("failed to parse collection date at line [" + parser.getLastLineNumber() + "] in [" + DATA_SOURCE + "]", ex);
                         }
@@ -79,8 +77,10 @@ public class StudyImporterForBaremore extends BaseStudyImporter {
                     if (StringUtils.isBlank(preySpeciesDescription)) {
                         getLogger().info(study, "found blank prey species description [" + preySpeciesDescription + "] on line [" + parser.lastLineNumber() + "]");
                     } else {
-                        Specimen preySpecimen = nodeFactory.createSpecimen(preySpeciesDescription);
+                        Specimen preySpecimen = nodeFactory.createSpecimen(study, preySpeciesDescription);
+                        preySpecimen.caughtIn(collectionLocation);
                         predatorSpecimen.ate(preySpecimen);
+                        nodeFactory.setUnixEpochProperty(preySpecimen, nodeFactory.getUnixEpochProperty(predatorSpecimen));
                     }
                 }
             }
@@ -106,8 +106,8 @@ public class StudyImporterForBaremore extends BaseStudyImporter {
         }
     }
 
-    private void addCollectionDate(String s, Relationship collectedRel) throws ParseException {
+    private void addCollectionDate(String s, Specimen specimen) throws ParseException, NodeFactoryException {
         Date collectionDate = new SimpleDateFormat("MM/dd/yyyy").parse(s);
-        nodeFactory.setUnixEpochProperty(collectedRel, collectionDate);
+        nodeFactory.setUnixEpochProperty(specimen, collectionDate);
     }
 }

@@ -7,8 +7,6 @@ import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.Term;
 import org.junit.Test;
-import org.neo4j.graphdb.Relationship;
-import org.neo4j.graphdb.Transaction;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -37,8 +35,8 @@ public class ExporterOccurrencesTest extends GraphDBTestCase {
 
     private String getExpectedData() {
         return "\nglobi:occur:3,EOL:327955,,,,,JUVENILE,,,,,,,,,,,,1992-03-30T08:00:00Z,,,12.0,-1.0,,,-60.0 m,DIGESTATE,BONE" +
-               "\nglobi:occur:6,EOL:328607,,,,,,,,,,,,,,,,,1992-03-30T08:00:00Z,,,12.0,-1.0,,,-60.0 m,," +
-               "\nglobi:occur:8,EOL:328607,,,,,,,,,,,,,,,,,1992-03-30T08:00:00Z,,,12.0,-1.0,,,-60.0 m,,";
+                "\nglobi:occur:8,EOL:328607,,,,,,,,,,,,,,,,,1992-03-30T08:00:00Z,,,12.0,-1.0,,,-60.0 m,," +
+                "\nglobi:occur:10,EOL:328607,,,,,,,,,,,,,,,,,1992-03-30T08:00:00Z,,,12.0,-1.0,,,-60.0 m,,";
     }
 
     private String getExpectedHeader() {
@@ -83,8 +81,7 @@ public class ExporterOccurrencesTest extends GraphDBTestCase {
     @Test
     public void dontExportToCSVSpecimenEmptyStomach() throws NodeFactoryException, IOException {
         Study myStudy = nodeFactory.createStudy("myStudy");
-        Specimen specimen = nodeFactory.createSpecimen("Homo sapiens", "EOL:123");
-        myStudy.collected(specimen);
+        nodeFactory.createSpecimen(myStudy, "Homo sapiens", "EOL:123");
 
         StringWriter row = new StringWriter();
 
@@ -99,32 +96,28 @@ public class ExporterOccurrencesTest extends GraphDBTestCase {
 
     private void createTestData(Double length) throws NodeFactoryException, ParseException {
         Study myStudy = nodeFactory.createStudy("myStudy");
-        Specimen specimen = nodeFactory.createSpecimen("Homo sapiens", "EOL:327955");
+        Specimen specimen = nodeFactory.createSpecimen(myStudy, "Homo sapiens", "EOL:327955");
         specimen.setStomachVolumeInMilliLiter(666.0);
         specimen.setLifeStage(new Term("GLOBI:JUVENILE", "JUVENILE"));
         specimen.setPhysiologicalState(new Term("GLOBI:DIGESTATE", "DIGESTATE"));
         specimen.setBodyPart(new Term("GLOBI:BONE", "BONE"));
-        Relationship collected = myStudy.collected(specimen);
-        Transaction transaction = myStudy.getUnderlyingNode().getGraphDatabase().beginTx();
-        try {
-            collected.setProperty(Specimen.DATE_IN_UNIX_EPOCH, ExportTestUtil.utcTestTime());
-            transaction.success();
-        } finally {
-            transaction.finish();
-        }
-        eatWolf(specimen);
-        eatWolf(specimen);
+        nodeFactory.setUnixEpochProperty(specimen, ExportTestUtil.utcTestDate());
         if (null != length) {
             specimen.setLengthInMm(length);
         }
 
         Location location = nodeFactory.getOrCreateLocation(12.0, -1.0, -60.0);
         specimen.caughtIn(location);
+        Specimen wolf1 = eatWolf(specimen, myStudy);
+        wolf1.caughtIn(location);
+        Specimen wolf2 = eatWolf(specimen, myStudy);
+        wolf2.caughtIn(location);
     }
 
-    private Specimen eatWolf(Specimen specimen) throws NodeFactoryException {
-        Specimen otherSpecimen = nodeFactory.createSpecimen("Canis lupus", "EOL:328607");
+    private Specimen eatWolf(Specimen specimen, Study study) throws NodeFactoryException {
+        Specimen otherSpecimen = nodeFactory.createSpecimen(study, "Canis lupus", "EOL:328607");
         otherSpecimen.setVolumeInMilliLiter(124.0);
+        nodeFactory.setUnixEpochProperty(otherSpecimen, ExportTestUtil.utcTestDate());
         specimen.ate(otherSpecimen);
         return otherSpecimen;
     }

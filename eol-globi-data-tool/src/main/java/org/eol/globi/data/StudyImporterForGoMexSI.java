@@ -190,78 +190,89 @@ public class StudyImporterForGoMexSI extends BaseStudyImporter {
             LabeledCSVParser parser = parserFactory.createParser(locationResource, CharsetConstant.UTF8);
             while (parser.getLine() != null) {
                 String refId = getMandatoryValue(locationResource, parser, "REF_ID");
-                String specimenId = getMandatoryValue(locationResource, parser, "PRED_ID");
-                Double latitude = getMandatoryDoubleValue(locationResource, parser, "LOC_CENTR_LAT");
-                Double longitude = getMandatoryDoubleValue(locationResource, parser, "LOC_CENTR_LONG");
-                Double depth = getMandatoryDoubleValue(locationResource, parser, "MN_DEP_SAMP");
-                String habitatSystem = getMandatoryValue(locationResource, parser, "HAB_SYSTEM");
-                String habitatSubsystem = getMandatoryValue(locationResource, parser, "HAB_SUBSYSTEM");
-                String habitatTidalZone = getMandatoryValue(locationResource, parser, "TIDAL_ZONE");
-
-                Location location = nodeFactory.getOrCreateLocation(latitude, longitude, depth == null ? null : -depth);
-                if (location == null) {
-                    getLogger().warn(metaStudy, "failed to find location for [" + latitude + "], longitude" + " [" + longitude + "] in [" + locationResource + ":" + parser.getLastLineNumber() + "]");
+                if (!refIdToStudyMap.containsKey(refId)) {
+                    getLogger().warn(metaStudy, "failed to find study for ref id [" + refId + "] on related to observation location in [" + locationResource + ":" + parser.getLastLineNumber() + "]");
                 } else {
-                    List<Term> terms;
-                    String cmecsLabel = habitatSystem + " " + habitatSubsystem + " " + habitatTidalZone;
-                    String msg = "failed to map CMECS habitat [" + cmecsLabel + "] on line [" + parser.lastLineNumber() + "] of image [" + locationResource + "]";
-                    try {
-                        terms = cmecsService.lookupTermByName(cmecsLabel);
-                        if (terms.size() == 0) {
-                            LOG.warn(msg);
-                        }
-                        nodeFactory.addEnvironmentToLocation(location, terms);
-                    } catch (TermLookupServiceException e) {
-                        LOG.warn(msg, e);
-                    }
+                    Study study = refIdToStudyMap.get(refId);
+                    String specimenId = getMandatoryValue(locationResource, parser, "PRED_ID");
+                    Double latitude = getMandatoryDoubleValue(locationResource, parser, "LOC_CENTR_LAT");
+                    Double longitude = getMandatoryDoubleValue(locationResource, parser, "LOC_CENTR_LONG");
+                    Double depth = getMandatoryDoubleValue(locationResource, parser, "MN_DEP_SAMP");
+                    String habitatSystem = getMandatoryValue(locationResource, parser, "HAB_SYSTEM");
+                    String habitatSubsystem = getMandatoryValue(locationResource, parser, "HAB_SUBSYSTEM");
+                    String habitatTidalZone = getMandatoryValue(locationResource, parser, "TIDAL_ZONE");
 
-                }
+                    Location location = getLocation(metaStudy, locationResource, cmecsService, parser, latitude, longitude, depth, habitatSystem, habitatSubsystem, habitatTidalZone);
 
-                String predatorId = refId + specimenId;
-                Map<String, String> predatorProperties = predatorIdToPredatorSpecimen.get(predatorId);
-                if (predatorProperties == null) {
-                    getLogger().warn(metaStudy, "failed to lookup location for predator [" + refId + ":" + specimenId + "] from [" + locationResource + ":" + parser.getLastLineNumber() + "]");
-                } else {
-                    try {
-                        Specimen predatorSpecimen = createSpecimen(predatorProperties);
-                        predatorSpecimen.setExternalId(predatorId);
-                        if (location == null) {
-                            getLogger().warn(metaStudy, "no location for predator with id [" + predatorSpecimen.getExternalId() + "]");
-                        } else {
-                            predatorSpecimen.caughtIn(location);
-                        }
-                        Study study = refIdToStudyMap.get(refId);
-                        if (study != null) {
-                            study.collected(predatorSpecimen);
-                        } else {
-                            getLogger().warn(metaStudy, "failed to find study for ref id [" + refId + "] on related to observation location in [" + locationResource + ":" + parser.getLastLineNumber() + "]");
-                        }
-
-                        List<Map<String, String>> preyList = predatorUIToPreyLists.get(predatorId);
-                        checkStomachDataConsistency(predatorId, predatorProperties, preyList, metaStudy);
-                        if (preyList != null) {
-                            for (Map<String, String> preyProperties : preyList) {
-                                if (preyProperties != null) {
-                                    try {
-                                        predatorSpecimen.ate(createSpecimen(preyProperties));
-                                    } catch (NodeFactoryException e) {
-                                        throw new StudyImporterException("failed to create specimen for [" + predatorProperties + "]", e);
-                                    }
-                                }
-                            }
-                        }
-
-                    } catch (NodeFactoryException e) {
-                        throw new StudyImporterException("failed to create specimen for location on line [" + parser.getLastLineNumber() + "]", e);
+                    String predatorId = refId + specimenId;
+                    Map<String, String> predatorProperties = predatorIdToPredatorSpecimen.get(predatorId);
+                    if (predatorProperties == null) {
+                        getLogger().warn(metaStudy, "failed to lookup location for predator [" + refId + ":" + specimenId + "] from [" + locationResource + ":" + parser.getLastLineNumber() + "]");
+                    } else {
+                        addObservation(predatorUIToPreyLists, metaStudy, parser, study, location, predatorId, predatorProperties);
                     }
                 }
             }
         } catch (IOException e) {
             throw new StudyImporterException("failed to open resource [" + locationResource + "]", e);
-        } catch (NodeFactoryException e) {
-
         }
 
+    }
+
+    private Location getLocation(Study metaStudy, String locationResource, CMECSService cmecsService, LabeledCSVParser parser, Double latitude, Double longitude, Double depth, String habitatSystem, String habitatSubsystem, String habitatTidalZone) {
+        Location location = null;
+        try {
+            location = nodeFactory.getOrCreateLocation(latitude, longitude, depth == null ? null : -depth);
+        } catch (NodeFactoryException e) {
+            //
+        }
+        if (location == null) {
+            getLogger().warn(metaStudy, "failed to find location for [" + latitude + "], longitude" + " [" + longitude + "] in [" + locationResource + ":" + parser.getLastLineNumber() + "]");
+        } else {
+            List<Term> terms;
+            String cmecsLabel = habitatSystem + " " + habitatSubsystem + " " + habitatTidalZone;
+            String msg = "failed to map CMECS habitat [" + cmecsLabel + "] on line [" + parser.lastLineNumber() + "] of image [" + locationResource + "]";
+            try {
+                terms = cmecsService.lookupTermByName(cmecsLabel);
+                if (terms.size() == 0) {
+                    LOG.warn(msg);
+                }
+                nodeFactory.addEnvironmentToLocation(location, terms);
+            } catch (TermLookupServiceException e) {
+                LOG.warn(msg, e);
+            }
+
+        }
+        return location;
+    }
+
+    private void addObservation(Map<String, List<Map<String, String>>> predatorUIToPreyLists, Study metaStudy, LabeledCSVParser parser, Study study, Location location, String predatorId, Map<String, String> predatorProperties) throws StudyImporterException {
+        try {
+            Specimen predatorSpecimen = createSpecimen(study, predatorProperties);
+            predatorSpecimen.setExternalId(predatorId);
+            if (location == null) {
+                getLogger().warn(metaStudy, "no location for predator with id [" + predatorSpecimen.getExternalId() + "]");
+            } else {
+                predatorSpecimen.caughtIn(location);
+            }
+            List<Map<String, String>> preyList = predatorUIToPreyLists.get(predatorId);
+            checkStomachDataConsistency(predatorId, predatorProperties, preyList, metaStudy);
+            if (preyList != null) {
+                for (Map<String, String> preyProperties : preyList) {
+                    if (preyProperties != null) {
+                        try {
+                            Specimen prey = createSpecimen(study, preyProperties);
+                            prey.caughtIn(location);
+                            predatorSpecimen.ate(prey);
+                        } catch (NodeFactoryException e) {
+                            throw new StudyImporterException("failed to create specimen for [" + predatorProperties + "]", e);
+                        }
+                    }
+                }
+            }
+        } catch (NodeFactoryException e) {
+            throw new StudyImporterException("failed to create specimen for location on line [" + parser.getLastLineNumber() + "]", e);
+        }
     }
 
     private void checkStomachDataConsistency(String predatorId, Map<String, String> predatorProperties, List<Map<String, String>> preyList, Study metaStudy) throws StudyImporterException {
@@ -299,8 +310,8 @@ public class StudyImporterForGoMexSI extends BaseStudyImporter {
         }
     }
 
-    private Specimen createSpecimen(Map<String, String> properties) throws NodeFactoryException, StudyImporterException {
-        Specimen specimen = nodeFactory.createSpecimen(properties.get(PropertyAndValueDictionary.NAME));
+    private Specimen createSpecimen(Study study, Map<String, String> properties) throws NodeFactoryException, StudyImporterException {
+        Specimen specimen = nodeFactory.createSpecimen(study, properties.get(PropertyAndValueDictionary.NAME));
         specimen.setLengthInMm(doubleValueOrNull(properties, Specimen.LENGTH_IN_MM));
         specimen.setFrequencyOfOccurrence(doubleValueOrNull(properties, Specimen.FREQUENCY_OF_OCCURRENCE));
         specimen.setTotalCount(integerValueOrNull(properties, Specimen.TOTAL_COUNT));

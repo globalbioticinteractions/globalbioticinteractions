@@ -1,6 +1,7 @@
 package org.eol.globi.export;
 
 import org.eol.globi.domain.InteractType;
+import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Study;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
@@ -29,10 +30,12 @@ public class ExporterAssociations extends ExporterAssociationsBase {
         Iterable<Relationship> interactRelationships = specimenNode.getRelationships(Direction.OUTGOING, InteractType.values());
         if (interactRelationships.iterator().hasNext()) {
             for (Relationship interactRel : interactRelationships) {
-                Node targetSpecimen = interactRel.getEndNode();
+                if (!interactRel.hasProperty(PropertyAndValueDictionary.INVERTED)) {
+                    Node targetSpecimen = interactRel.getEndNode();
 
-                if (isSpecimenClassified(targetSpecimen)) {
-                    writeRow(study, writer, properties, specimenNode, interactRel, targetSpecimen);
+                    if (isSpecimenClassified(targetSpecimen)) {
+                        writeRow(study, writer, properties, specimenNode, interactRel, targetSpecimen);
+                    }
                 }
             }
         }
@@ -47,7 +50,6 @@ public class ExporterAssociations extends ExporterAssociationsBase {
         writeProperties(writer, properties);
         properties.clear();
     }
-
 
 
 }

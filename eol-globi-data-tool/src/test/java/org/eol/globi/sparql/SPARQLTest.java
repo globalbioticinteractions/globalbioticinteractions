@@ -53,7 +53,7 @@ public class SPARQLTest extends GraphDBTestCase {
                 assertThat(solution.get("individual"), is(notNullValue()));
                 counter++;
             }
-            assertThat(counter, is(3));
+            assertThat(counter, is(7));
         } finally {
             exec.close();
         }

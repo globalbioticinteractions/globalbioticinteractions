@@ -12,12 +12,13 @@ import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
-import org.neo4j.graphdb.Relationship;
 
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class StudyImporterForBlewett extends BaseStudyImporter {
@@ -94,7 +95,7 @@ public class StudyImporterForBlewett extends BaseStudyImporter {
                 getLogger().warn(study, "blank value for date for line: [" + locationParser.getLastLineNumber() + "]");
             }
 
-            String dateTimeString =  dateString + " " + timeString;
+            String dateTimeString = dateString + " " + timeString;
             try {
                 Date dateTime = parseDateString(dateTimeString);
                 collectionTimeMap.put(collectionCode, dateTime);
@@ -128,16 +129,24 @@ public class StudyImporterForBlewett extends BaseStudyImporter {
             if (line.length < 2) {
                 break;
             }
-            Specimen predatorSpecimen = addPredator(study, locationMap, parser, line, collectionTimeMap);
-            addPreyForPredator(header, line, predatorSpecimen, study);
+            Specimen predatorSpecimen = addPredator(study, parser, line);
+            List<Specimen> specimen = addPreyForPredator(header, line, study);
+            for (Specimen prey : specimen) {
+                predatorSpecimen.ate(prey);
+            }
+
+            String collectionCode = parser.getValueByLabel(COLLECTION_NO);
+            if (collectionCode != null) {
+                specimen.add(predatorSpecimen);
+                setLocationAndDate(locationMap, collectionTimeMap, specimen, collectionCode);
+            }
         }
     }
 
-    private Specimen addPredator(Study study, Map<String, Location> locationMap, LabeledCSVParser parser, String[] line, Map<String, Date> collectionTimeMap) throws NodeFactoryException, TermLookupServiceException {
-        Specimen predatorSpecimen = nodeFactory.createSpecimen("Centropomus undecimalis");
+    private Specimen addPredator(Study study, LabeledCSVParser parser, String[] line) throws NodeFactoryException, TermLookupServiceException {
+        Specimen predatorSpecimen = nodeFactory.createSpecimen(study, "Centropomus undecimalis");
 
         predatorSpecimen.setLifeStage(termLookupService.lookupTermByName("adult"));
-        Relationship collectedRel = study.collected(predatorSpecimen);
         try {
             String length = parser.getValueByLabel("Standard Length");
             predatorSpecimen.setLengthInMm(Double.parseDouble(length));
@@ -145,23 +154,28 @@ public class StudyImporterForBlewett extends BaseStudyImporter {
             getLogger().warn(study, "found malformed length in line:" + parser.lastLineNumber() + " [" + StringUtils.join(line, ",") + "]");
         }
 
-        String collectionCode = parser.getValueByLabel(COLLECTION_NO);
-        if (collectionCode != null) {
-            String collectionCodeTrim = collectionCode.trim();
-            Location location = locationMap.get(collectionCodeTrim);
-            if (location != null) {
-                predatorSpecimen.caughtIn(location);
-            }
-
-            Date collectionDatetime = collectionTimeMap.get(collectionCodeTrim);
-            if (collectionDatetime != null) {
-                nodeFactory.setUnixEpochProperty(collectedRel, collectionDatetime);
-            }
-        }
         return predatorSpecimen;
     }
 
-    private void addPreyForPredator(String[] header, String[] line, Specimen predatorSpecimen, Study study) throws NodeFactoryException {
+    private void setLocationAndDate(Map<String, Location> locationMap, Map<String, Date> collectionTimeMap, List<Specimen> items, String collectionCode) throws NodeFactoryException {
+        String collectionCodeTrim = collectionCode.trim();
+        Location location = locationMap.get(collectionCodeTrim);
+        if (location != null) {
+            for (Specimen item : items) {
+                item.caughtIn(location);
+            }
+        }
+
+        Date collectionDatetime = collectionTimeMap.get(collectionCodeTrim);
+        if (collectionDatetime != null) {
+            for (Specimen item : items) {
+                nodeFactory.setUnixEpochProperty(item, collectionDatetime);
+            }
+        }
+    }
+
+    private List<Specimen> addPreyForPredator(String[] header, String[] line, Study study) throws NodeFactoryException {
+        List<Specimen> preyItems = new ArrayList<Specimen>();
         int preyColumn = 4;
         for (int i = preyColumn; i < header.length; i++) {
             if (i < line.length) {
@@ -171,8 +185,8 @@ public class StudyImporterForBlewett extends BaseStudyImporter {
                         int preyCount = Integer.parseInt(preyCountString);
                         String preyName = header[i];
                         for (int j = 0; j < preyCount; j++) {
-                            Specimen preySpecimen = nodeFactory.createSpecimen(preyName);
-                            predatorSpecimen.ate(preySpecimen);
+                            Specimen preySpecimen = nodeFactory.createSpecimen(study, preyName);
+                            preyItems.add(preySpecimen);
                         }
                     } catch (NumberFormatException e) {
                         getLogger().warn(study, "failed to parse prey count line/column:");
@@ -180,6 +194,7 @@ public class StudyImporterForBlewett extends BaseStudyImporter {
                 }
             }
         }
+        return preyItems;
     }
 
 }
