@@ -16,7 +16,7 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
 
-public class StudyImporterForThessenIT extends GraphDBTestCase {
+public class StudyImporterForThessenTest extends GraphDBTestCase {
 
     @Test
     public void importSome() throws StudyImporterException, NodeFactoryException {
