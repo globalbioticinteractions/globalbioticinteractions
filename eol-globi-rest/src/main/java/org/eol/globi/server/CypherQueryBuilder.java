@@ -47,7 +47,7 @@ public class CypherQueryBuilder {
             put(INTERACTION_POLLINATES, InteractType.POLLINATES.toString());
             put(INTERACTION_POLLINATED_BY, InteractType.POLLINATED_BY.toString());
             put(INTERACTION_PATHOGEN_OF, InteractType.PATHOGEN_OF.toString());
-            put(INTERACTION_HAS_PATHOGEN, InteractType.HAS_PARASITE.toString());
+            put(INTERACTION_HAS_PATHOGEN, InteractType.HAS_PATHOGEN.toString());
         }
     };
 
