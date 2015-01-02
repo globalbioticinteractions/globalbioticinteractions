@@ -128,6 +128,45 @@ public class CypherQueryBuilderTest {
         assertThat(query.getParams().toString(), is("{source_taxon_name=path:\\\"Arthropoda\\\", target_taxon_name=path:\\\"Mammalia\\\"}"));
     }
 
+    @Test
+    public void findSymbioticInteractions() throws IOException {
+        HashMap<String, String[]> params = new HashMap<String, String[]>() {
+            {
+                put("sourceTaxon", new String[]{"Arthropoda"});
+                put("targetTaxon", new String[]{"Mammalia"});
+                put("interactionType", new String[]{"symbiontOf"});
+            }
+        };
+
+        String expectedQuery = "START sourceTaxon = node:taxonPaths({source_taxon_name}) " +
+                expectedMatchClause(EXPECTED_INTERACTION_CLAUSE_ALL_INTERACTIONS) +
+                "WHERE has(targetTaxon.path) AND targetTaxon.path =~ '(.*(Mammalia).*)' " +
+                EXPECTED_RETURN_CLAUSE;
+        CypherQuery query = CypherQueryBuilder.buildInteractionQuery(params);
+        assertThat(query.getQuery(), is(expectedQuery));
+        assertThat(query.getParams().toString(), is("{source_taxon_name=path:\\\"Arthropoda\\\", target_taxon_name=path:\\\"Mammalia\\\"}"));
+    }
+
+    @Test
+    public void findAnyInteractions() throws IOException {
+        HashMap<String, String[]> params = new HashMap<String, String[]>() {
+            {
+                put("sourceTaxon", new String[]{"Arthropoda"});
+                put("targetTaxon", new String[]{"Mammalia"});
+                put("interactionType", new String[]{"interactsWith"});
+            }
+        };
+
+        String expectedQuery = "START sourceTaxon = node:taxonPaths({source_taxon_name}) " +
+                expectedMatchClause(EXPECTED_INTERACTION_CLAUSE_ALL_INTERACTIONS) +
+                "WHERE has(targetTaxon.path) AND targetTaxon.path =~ '(.*(Mammalia).*)' " +
+                EXPECTED_RETURN_CLAUSE;
+        CypherQuery query = CypherQueryBuilder.buildInteractionQuery(params);
+        System.out.println(expectedQuery);
+        assertThat(query.getQuery(), is(expectedQuery));
+        assertThat(query.getParams().toString(), is("{source_taxon_name=path:\\\"Arthropoda\\\", target_taxon_name=path:\\\"Mammalia\\\"}"));
+    }
+
     @Test(expected = IllegalArgumentException.class)
     public void findInteractionForTargetTaxaOnlyByInteractionTypeNotSupported() throws IOException {
         HashMap<String, String[]> params = new HashMap<String, String[]>() {

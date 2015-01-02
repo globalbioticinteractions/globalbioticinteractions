@@ -25,6 +25,13 @@ public class InteractionControllerIT extends ITBase {
     }
 
     @Test
+    public void listSymbiontOf() throws IOException {
+        String uri = getURLPrefix() + "taxon/Homo%20sapiens/symbiontOf";
+        String response = HttpClient.httpGet(uri);
+        assertThat(response, is(not(nullValue())));
+    }
+
+    @Test
     public void listPreyForPredatorLocation() throws IOException {
         String uri = getURLPrefix() + "taxon/Homo%20sapiens/preysOn?lat=12.4&lng=54.4";
         String response = HttpClient.httpGet(uri);

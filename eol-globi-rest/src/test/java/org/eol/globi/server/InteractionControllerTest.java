@@ -53,6 +53,9 @@ public class InteractionControllerTest {
         assertThat(jsonNode.has(CypherQueryBuilder.INTERACTION_PARASITE_OF), is(true));
         assertThat(jsonNode.has(CypherQueryBuilder.INTERACTION_PREYED_UPON_BY), is(true));
         assertThat(jsonNode.has(CypherQueryBuilder.INTERACTION_PREYS_ON), is(true));
+        assertThat(jsonNode.has(CypherQueryBuilder.INTERACTION_HAS_PATHOGEN), is(true));
+        assertThat(jsonNode.has(CypherQueryBuilder.INTERACTION_SYMBIONT_OF), is(true));
+        assertThat(jsonNode.has(CypherQueryBuilder.INTERACTION_INTERACTS_WITH), is(true));
     }
 
 }

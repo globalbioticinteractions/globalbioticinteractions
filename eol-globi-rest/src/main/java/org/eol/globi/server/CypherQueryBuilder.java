@@ -34,6 +34,9 @@ public class CypherQueryBuilder {
     public static final String INTERACTION_PATHOGEN_OF = "pathogenOf";
     public static final String INTERACTION_HAS_PATHOGEN = "hasPathogen";
 
+    public static final String INTERACTION_SYMBIONT_OF = "symbiontOf";
+    public static final String INTERACTION_INTERACTS_WITH = "interactsWith";
+
     private static final String SOURCE_TAXON_HTTP_PARAM_NAME = "sourceTaxon";
     private static final String TARGET_TAXON_HTTP_PARAM_NAME = "targetTaxon";
 
@@ -48,6 +51,8 @@ public class CypherQueryBuilder {
             put(INTERACTION_POLLINATED_BY, InteractType.POLLINATED_BY.toString());
             put(INTERACTION_PATHOGEN_OF, InteractType.PATHOGEN_OF.toString());
             put(INTERACTION_HAS_PATHOGEN, InteractType.HAS_PATHOGEN.toString());
+            put(INTERACTION_SYMBIONT_OF, StringUtils.join(InteractType.values(), "|"));
+            put(INTERACTION_INTERACTS_WITH, StringUtils.join(InteractType.values(), "|"));
         }
     };
 

@@ -30,6 +30,8 @@ public class InteractionController {
             builder.append(CypherQueryBuilder.INTERACTION_POLLINATED_BY).append(",plant,pollinator\n");
             builder.append(CypherQueryBuilder.INTERACTION_PATHOGEN_OF).append(",pathogen,host\n");
             builder.append(CypherQueryBuilder.INTERACTION_HAS_PATHOGEN).append(",plant,pollinator");
+            builder.append(CypherQueryBuilder.INTERACTION_SYMBIONT_OF).append(",source,target");
+            builder.append(CypherQueryBuilder.INTERACTION_INTERACTS_WITH).append(",source,target");
             result = builder.toString();
         } else {
             result = "{ \"" + CypherQueryBuilder.INTERACTION_PREYS_ON + "\":{\"source\":\"predator\",\"target\":\"prey\"}" +
@@ -40,6 +42,8 @@ public class InteractionController {
                     ",\"" + CypherQueryBuilder.INTERACTION_POLLINATED_BY + "\":{\"source\":\"plant\",\"target\":\"pollinator\"}" +
                     ",\"" + CypherQueryBuilder.INTERACTION_PATHOGEN_OF + "\":{\"source\":\"pathogen\",\"target\":\"host\"}" +
                     ",\"" + CypherQueryBuilder.INTERACTION_HAS_PATHOGEN + "\":{\"source\":\"host\",\"target\":\"pathogen\"}" +
+                    ",\"" + CypherQueryBuilder.INTERACTION_SYMBIONT_OF + "\":{\"source\":\"source\",\"target\":\"target\"}" +
+                    ",\"" + CypherQueryBuilder.INTERACTION_INTERACTS_WITH + "\":{\"source\":\"source\",\"target\":\"target\"}" +
                     "}";
         }
         return result;
