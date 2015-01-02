@@ -24,7 +24,7 @@ public class StudyImporterForThessenIT extends GraphDBTestCase {
         importer.setFilter(new ImportFilter() {
             @Override
             public boolean shouldImportRecord(Long recordNumber) {
-                return recordNumber % 100 == 0;
+                return recordNumber % 1000 == 0;
             }
         });
         Study study = importer.importStudy();

@@ -1,24 +1,15 @@
 package org.eol.globi.data;
 
-import com.Ostermiller.util.CSVParser;
 import com.Ostermiller.util.LabeledCSVParser;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 
 public class StudyImporterForThessen extends BaseStudyImporter {
 
-    private static final Log LOG = LogFactory.getLog(StudyImporterForThessen.class);
-
-    public static final String RESOURCE = "https://raw.github.com/EOL/pseudonitzchia/master/associations_all_revised.txt";
+    public static final String RESOURCE = "https://raw.githubusercontent.com/EOL/pseudonitzchia/master/associations_all_revised.txt";
 
     public StudyImporterForThessen(ParserFactory parserFactory, NodeFactory nodeFactory) {
         super(parserFactory, nodeFactory);
@@ -37,8 +28,8 @@ public class StudyImporterForThessen extends BaseStudyImporter {
                 if (importFilter.shouldImportRecord((long)parser.lastLineNumber())) {
                     if (line.length == 2) {
                         try {
-                            Specimen source = nodeFactory.createSpecimen(study, "EOL:" + line[0]);
-                            Specimen target = nodeFactory.createSpecimen(study, "EOL:" + line[1]);
+                            Specimen source = nodeFactory.createSpecimen(study, null, "EOL:" + line[0]);
+                            Specimen target = nodeFactory.createSpecimen(study, null, "EOL:" + line[1]);
                             source.interactsWith(target, InteractType.INTERACTS_WITH);
                         } catch (NodeFactoryException e) {
                             throw new StudyImporterException("failed to create nodes on line [" + parser.getLastLineNumber() + "]", e);
