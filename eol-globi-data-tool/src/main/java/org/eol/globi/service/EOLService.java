@@ -132,6 +132,7 @@ public class EOLService extends BaseHttpClientService implements PropertyEnriche
     private void addCanonicalNamesAndRanks(Map<String, String> properties, String response) throws IOException, URISyntaxException, PropertyEnricherException {
         List<String> ranks = new ArrayList<String>();
         List<String> rankNames = new ArrayList<String>();
+        List<String> rankIds = new ArrayList<String>();
         ObjectMapper mapper = new ObjectMapper();
         JsonNode node = mapper.readTree(response);
         if (node.has("identifier")) {
@@ -159,13 +160,16 @@ public class EOLService extends BaseHttpClientService implements PropertyEnriche
             }
         }
         if (firstConceptId != null) {
-            addRanks(firstConceptId, ranks, rankNames);
+            addRanks(firstConceptId, ranks, rankNames, rankIds);
         }
 
         if (ranks.size() > 0) {
             properties.put(PropertyAndValueDictionary.PATH, StringUtils.join(ranks, CharsetConstant.SEPARATOR));
             if (rankNames.size() == ranks.size()) {
                 properties.put(PropertyAndValueDictionary.PATH_NAMES, StringUtils.join(rankNames, CharsetConstant.SEPARATOR));
+            }
+            if (rankIds.size() == ranks.size()) {
+                properties.put(PropertyAndValueDictionary.PATH_IDS, StringUtils.join(rankIds, CharsetConstant.SEPARATOR));
             }
         }
 
@@ -198,29 +202,29 @@ public class EOLService extends BaseHttpClientService implements PropertyEnriche
 
     }
 
-    private void addRanks(String firstConceptId, List<String> ranks, List<String> rankNames) throws URISyntaxException, PropertyEnricherException, IOException {
+    private void addRanks(String firstConceptId, List<String> ranks, List<String> rankNames, List<String> rankIds) throws URISyntaxException, PropertyEnricherException, IOException {
         URI uri;
         String response;
         uri = new URI("http", null, "eol.org", 80, "/api/hierarchy_entries/1.0/" + firstConceptId + ".json", "common_names=false&synonyms=false&format=json", null);
         response = getResponse(uri);
         if (response != null) {
-            parseResponse(response, ranks, rankNames);
+            parseResponse(response, ranks, rankNames, rankIds);
         }
     }
 
-    protected void parseResponse(String response, List<String> ranks, List<String> rankNames) throws IOException {
+    protected void parseResponse(String response, List<String> ranks, List<String> rankNames, List<String> rankIds) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         JsonNode node = mapper.readTree(response);
         JsonNode ancestors = node.get("ancestors");
 
         for (JsonNode ancestor : ancestors) {
-            parseTaxonNode(ranks, ancestor, rankNames);
+            parseTaxonNode(ancestor, ranks, rankNames, rankIds);
         }
 
-        parseTaxonNode(ranks, node, rankNames);
+        parseTaxonNode(node, ranks, rankNames, rankIds);
     }
 
-    private void parseTaxonNode(List<String> ranks, JsonNode ancestor, List<String> rankNames) {
+    private void parseTaxonNode(JsonNode ancestor, List<String> ranks, List<String> rankNames, List<String> rankIds) {
         if (ancestor.has("scientificName")) {
             String scientificName = ancestor.get("scientificName").getTextValue();
             String[] split = scientificName.split(" ");
@@ -234,6 +238,12 @@ public class EOLService extends BaseHttpClientService implements PropertyEnriche
                 taxonRank = ancestor.get("taxonRank").getTextValue().toLowerCase();
             }
             rankNames.add(taxonRank);
+
+            String taxonConceptId = "";
+            if (ancestor.has("taxonConceptID")) {
+                taxonConceptId = ancestor.get("taxonConceptID").getValueAsText();
+            }
+            rankIds.add(TaxonomyProvider.ID_PREFIX_EOL + taxonConceptId);
         }
     }
 

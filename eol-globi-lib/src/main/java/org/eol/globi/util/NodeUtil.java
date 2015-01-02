@@ -60,6 +60,7 @@ public class NodeUtil {
             sameAsTaxon.setName(taxon.getName());
             sameAsTaxon.setPath(taxon.getPath());
             sameAsTaxon.setPathIds(taxon.getPathIds());
+            sameAsTaxon.setPathNames(taxon.getPathNames());
             sameAsTaxon.setRank(taxon.getRank());
             sameAsTaxon.setExternalId(taxon.getExternalId());
             taxonNode.getUnderlyingNode().createRelationshipTo(sameAsTaxon.getUnderlyingNode(), RelTypes.SAME_AS);

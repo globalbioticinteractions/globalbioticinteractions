@@ -72,6 +72,7 @@ public class GlobalNamesServiceTest {
         assertThat(enrich.get(PropertyAndValueDictionary.NAME), is("Ariopsis felis"));
         assertThat(enrich.get(PropertyAndValueDictionary.PATH), is("Animalia | Chordata | Actinopterygii | Siluriformes | Ariidae | Ariopsis | Ariopsis felis"));
         assertThat(enrich.get(PropertyAndValueDictionary.PATH_IDS), is(" |  |  |  |  |  | WORMS:158709"));
+        assertThat(enrich.get(PropertyAndValueDictionary.PATH_NAMES), is("kingdom | phylum | class | order | family | genus | species"));
         assertThat(enrich.get(PropertyAndValueDictionary.RANK), is("species"));
         assertThat(enrich.get(PropertyAndValueDictionary.EXTERNAL_ID), is("WORMS:158709"));
     }
@@ -83,6 +84,7 @@ public class GlobalNamesServiceTest {
         assertThat(enrich.get(PropertyAndValueDictionary.NAME), is("Homo sapiens"));
         assertThat(enrich.get(PropertyAndValueDictionary.PATH), is("Animalia | Bilateria | Deuterostomia | Chordata | Vertebrata | Gnathostomata | Tetrapoda | Mammalia | Theria | Eutheria | Primates | Hominidae | Homo | Homo sapiens"));
         assertThat(enrich.get(PropertyAndValueDictionary.PATH_IDS), is("ITIS:202423 | ITIS:914154 | ITIS:914156 | ITIS:158852 | ITIS:331030 | ITIS:914179 | ITIS:914181 | ITIS:179913 | ITIS:179916 | ITIS:179925 | ITIS:180089 | ITIS:180090 | ITIS:180091 | ITIS:180092"));
+        assertThat(enrich.get(PropertyAndValueDictionary.PATH_NAMES), is("Kingdom | Subkingdom | Infrakingdom | Phylum | Subphylum | Infraphylum | Superclass | Class | Subclass | Infraclass | Order | Family | Genus | Species"));
         assertThat(enrich.get(PropertyAndValueDictionary.RANK), is("Species"));
         return enrich;
     }
@@ -105,6 +107,7 @@ public class GlobalNamesServiceTest {
         assertThat(enrich.get(PropertyAndValueDictionary.NAME), is("Ariopsis felis"));
         assertThat(enrich.get(PropertyAndValueDictionary.PATH), is("Animalia | Bilateria | Deuterostomia | Chordata | Vertebrata | Gnathostomata | Osteichthyes | Actinopterygii | Neopterygii | Teleostei | Ostariophysi | Siluriformes | Ariidae | Ariopsis | Ariopsis felis"));
         assertThat(enrich.get(PropertyAndValueDictionary.PATH_IDS), is("ITIS:202423 | ITIS:914154 | ITIS:914156 | ITIS:158852 | ITIS:331030 | ITIS:914179 | ITIS:161030 | ITIS:161061 | ITIS:553120 | ITIS:161105 | ITIS:162845 | ITIS:163992 | ITIS:164157 | ITIS:639019 | ITIS:680665"));
+        assertThat(enrich.get(PropertyAndValueDictionary.PATH_NAMES), is("Kingdom | Subkingdom | Infrakingdom | Phylum | Subphylum | Infraphylum | Superclass | Class | Subclass | Infraclass | Superorder | Order | Family | Genus | Species"));
         assertThat(enrich.get(PropertyAndValueDictionary.RANK), is("Species"));
         assertThat(enrich.get(PropertyAndValueDictionary.EXTERNAL_ID), is("ITIS:680665"));
     }
@@ -118,6 +121,7 @@ public class GlobalNamesServiceTest {
         assertThat(enrich.get(PropertyAndValueDictionary.NAME), is("Anura"));
         assertThat(enrich.get(PropertyAndValueDictionary.PATH), is("Animalia | Chordata | Amphibia | Anura"));
         assertThat(enrich.get(PropertyAndValueDictionary.PATH_IDS), is("GBIF:1 | GBIF:44 | GBIF:131 | GBIF:952"));
+        assertThat(enrich.get(PropertyAndValueDictionary.PATH_NAMES), is("kingdom | phylum | class | order"));
         assertThat(enrich.get(PropertyAndValueDictionary.RANK), is("order"));
         assertThat(enrich.get(PropertyAndValueDictionary.EXTERNAL_ID), is("GBIF:952"));
     }

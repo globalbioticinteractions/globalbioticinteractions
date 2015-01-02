@@ -148,6 +148,7 @@ public class EOLServiceIT {
         assertThat(enrich.get(PropertyAndValueDictionary.RANK), is("Genus"));
         assertThat(enrich.get(PropertyAndValueDictionary.PATH), is("Cellular organisms | Eukaryota | Viridiplantae | Streptophyta | Streptophytina | Embryophyta | Tracheophyta | Euphyllophyta | Spermatophyta | Magnoliophyta | Mesangiospermae | Eudicotyledons | Gunneridae | Pentapetalae | Caryophyllales | Cactineae | Montiaceae | Calyptridium"));
         assertThat(enrich.get(PropertyAndValueDictionary.PATH_NAMES), is(" | superkingdom | kingdom | phylum |  |  |  |  |  |  |  |  |  |  | order | suborder | family | genus"));
+        assertThat(enrich.get(PropertyAndValueDictionary.PATH_IDS), is("EOL:6061725 | EOL:2908256 | EOL:10460529 | EOL:11823577 | EOL:11824138 | EOL:2913521 | EOL:4077 | EOL:11830053 | EOL:6152932 | EOL:282 | EOL:39835629 | EOL:39865587 | EOL:39868843 | EOL:39868886 | EOL:4223 | EOL:39873764 | EOL:6360216 | EOL:2500577"));
     }
 
     @Test
@@ -160,6 +161,7 @@ public class EOLServiceIT {
         assertThat(enrich.get(PropertyAndValueDictionary.RANK), is("Species"));
         assertThat(enrich.get(PropertyAndValueDictionary.PATH), is("Animalia | Arthropoda | Insecta | Lepidoptera | Hesperiidae | Pyrgus | Pyrgus cirsii"));
         assertThat(enrich.get(PropertyAndValueDictionary.PATH_NAMES), is("kingdom | phylum | class | order | family | genus | "));
+        assertThat(enrich.get(PropertyAndValueDictionary.PATH_IDS), is("EOL:1 | EOL:164 | EOL:344 | EOL:747 | EOL:836 | EOL:20293 | EOL:186021"));
     }
 
     @Test

@@ -18,7 +18,7 @@ public class EOLServiceTest {
 
         ArrayList<String> ranks = new ArrayList<String>();
         ArrayList<String> rankNames = new ArrayList<String>();
-        new EOLService().parseResponse(response, ranks, rankNames);
+        new EOLService().parseResponse(response, ranks, rankNames, new ArrayList<String>());
 
         assertThat(StringUtils.join(ranks, " | "), is("Animalia" + CharsetConstant.SEPARATOR
                 + "Arthropoda" + CharsetConstant.SEPARATOR
