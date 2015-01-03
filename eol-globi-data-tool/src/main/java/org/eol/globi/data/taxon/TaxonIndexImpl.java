@@ -162,7 +162,7 @@ public class TaxonIndexImpl implements TaxonIndex {
             taxonNode.setExternalId(taxon.getExternalId());
             taxonNode.setPath(taxon.getPath());
             taxonNode.setPathNames(taxon.getPathNames());
-            //taxonNode.setPathIds(taxon.getPathIds());
+            taxonNode.setPathIds(taxon.getPathIds());
             taxonNode.setCommonNames(taxon.getCommonNames());
             taxonNode.setRank(taxon.getRank());
             addToIndeces(taxonNode, taxon.getName());

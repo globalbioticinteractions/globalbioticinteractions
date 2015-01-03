@@ -7,6 +7,7 @@ import org.eol.globi.geo.Ecoregion;
 import org.eol.globi.geo.EcoregionFinder;
 import org.eol.globi.geo.EcoregionFinderException;
 import org.eol.globi.service.DOIResolver;
+import org.eol.globi.service.PropertyEnricher;
 import org.eol.globi.service.TermLookupService;
 import org.eol.globi.service.TermLookupServiceException;
 import org.junit.After;
@@ -28,7 +29,12 @@ public abstract class GraphDBTestCase {
     @Before
     public void startGraphDb() throws IOException {
         graphDb = new TestGraphDatabaseFactory().newImpermanentDatabase();
-        nodeFactory = new NodeFactory(graphDb, new TaxonIndexImpl(new PassThroughEnricher(),
+        PropertyEnricher enricher = new PassThroughEnricher();
+        nodeFactory = createNodeFactory(enricher);
+    }
+
+    protected NodeFactory createNodeFactory(PropertyEnricher enricher) {
+        NodeFactory nodeFactory = new NodeFactory(getGraphDb(), new TaxonIndexImpl(enricher,
                 new PassThroughCorrectionService(), getGraphDb()));
         nodeFactory.setEcoregionFinder(new EcoregionFinder() {
 
@@ -63,6 +69,7 @@ public abstract class GraphDBTestCase {
             }
         });
 
+        return nodeFactory;
     }
 
     @After
