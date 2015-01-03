@@ -175,6 +175,7 @@ public class TaxonIndexImplTest extends GraphDBTestCase {
                     taxon.setName("preferred");
                     taxon.setExternalId("bla:123");
                     taxon.setPath("one | two | three");
+                    taxon.setPathIds("1 | 2 | 3");
                     firstTime = false;
                 }
                 return TaxonUtil.taxonToMap(taxon);
@@ -188,6 +189,7 @@ public class TaxonIndexImplTest extends GraphDBTestCase {
         TaxonNode first = taxonService.getOrCreateTaxon("not pref", null, null);
         assertThat(first.getName(), is("preferred"));
         assertThat(first.getPath(), is("one | two | three"));
+        assertThat(first.getPathIds(), is("1 | 2 | 3"));
         TaxonNode second = taxonService.getOrCreateTaxon("not pref", null, null);
         assertThat(second.getNodeID(), is(first.getNodeID()));
 
