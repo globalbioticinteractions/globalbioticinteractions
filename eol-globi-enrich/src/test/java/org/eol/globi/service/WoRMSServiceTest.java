@@ -7,7 +7,7 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.matchers.JUnitMatchers.containsString;
 
-public class WoRMSServiceIT {
+public class WoRMSServiceTest {
 
     @Test
     public void lookupExistingSpeciesTaxon() throws PropertyEnricherException {
@@ -27,6 +27,13 @@ public class WoRMSServiceIT {
     @Test
     public void lookupNonExistentTaxon() throws PropertyEnricherException {
         assertThat(new WoRMSService().lookupIdByName("Brutus blahblahi"), is(nullValue()));
+    }
+
+    @Test
+    public void lookupUnacceptedTaxonName() throws PropertyEnricherException {
+        String wormsId = new WoRMSService().lookupIdByName("Sterrhurus concavovesiculus");
+        assertThat(wormsId, is("WORMS:729172"));
+        assertThat(new WoRMSService().lookupTaxonPathById(wormsId), containsString("Sterrhurus"));
     }
 
     @Test

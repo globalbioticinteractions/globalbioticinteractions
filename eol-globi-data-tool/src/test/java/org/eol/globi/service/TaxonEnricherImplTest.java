@@ -16,10 +16,12 @@ import java.util.Map;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.anyMap;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.when;
 
-public class TaxonEnricherImplTest  {
+public class TaxonEnricherImplTest {
 
     @Test
     public void enrichNoServices() throws NodeFactoryException, IOException, PropertyEnricherException {
@@ -42,6 +44,21 @@ public class TaxonEnricherImplTest  {
         enrich("Homo sapiens", serviceA, serviceB);
         verify(serviceA).enrich(anyMap());
         verify(serviceB).enrich(anyMap());
+    }
+
+    @Test
+    public void enrichTwoServiceOneBlowsUp() throws NodeFactoryException, IOException, PropertyEnricherException {
+        PropertyEnricher serviceA = Mockito.mock(PropertyEnricher.class);
+        PropertyEnricher serviceB = Mockito.mock(PropertyEnricher.class);
+        when(serviceB.enrich(anyMap())).thenThrow(PropertyEnricherException.class);
+
+        PropertyEnricher enricher = createEnricher(serviceA, serviceB);
+
+        enrich("Homo sapiens", enricher);
+        enrich("Homo sapiens", enricher);
+        verify(serviceA, times(2)).enrich(anyMap());
+        verify(serviceB, times(2)).enrich(anyMap());
+
     }
 
     @Test
@@ -73,12 +90,12 @@ public class TaxonEnricherImplTest  {
     }
 
     private Taxon enrich(final String taxonName, PropertyEnricher serviceA, PropertyEnricher serviceB) throws IOException, PropertyEnricherException {
-        TaxonEnricherImpl enricher = new TaxonEnricherImpl();
-        List<PropertyEnricher> list = new ArrayList<PropertyEnricher>();
-        list.add(serviceA);
-        list.add(serviceB);
-        enricher.setServices(list);
+        PropertyEnricher enricher = createEnricher(serviceA, serviceB);
 
+        return enrich(taxonName, enricher);
+    }
+
+    private Taxon enrich(final String taxonName, PropertyEnricher enricher) throws PropertyEnricherException {
         Map<String, String> properties = new HashMap<String, String>() {
             {
                 put(PropertyAndValueDictionary.NAME, taxonName);
@@ -87,6 +104,15 @@ public class TaxonEnricherImplTest  {
         Taxon enrichedTaxon = new TaxonImpl();
         TaxonUtil.mapToTaxon(enricher.enrich(properties), enrichedTaxon);
         return enrichedTaxon;
+    }
+
+    private PropertyEnricher createEnricher(PropertyEnricher serviceA, PropertyEnricher serviceB) {
+        TaxonEnricherImpl enricher = new TaxonEnricherImpl();
+        List<PropertyEnricher> list = new ArrayList<PropertyEnricher>();
+        list.add(serviceA);
+        list.add(serviceB);
+        enricher.setServices(list);
+        return enricher;
     }
 
 }

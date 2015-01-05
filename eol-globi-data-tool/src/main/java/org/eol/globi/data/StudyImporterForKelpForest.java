@@ -40,6 +40,7 @@ public class StudyImporterForKelpForest extends BaseStudyImporter {
                     String name = parser.getValueByLabel("working_name");
                     String itisId = parser.getValueByLabel("itis_id");
                     Long id = StringUtils.isBlank(itisId) ? null : Long.parseLong(itisId);
+                    id = (id != null && id > 0L) ? id : null;
                     nameToId.put(name, id);
                 }
             }
