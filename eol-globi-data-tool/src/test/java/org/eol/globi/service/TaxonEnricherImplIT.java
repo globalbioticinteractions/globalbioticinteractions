@@ -24,7 +24,7 @@ import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.junit.internal.matchers.StringContains.containsString;
 
-public class TaxonPropertyEnricherImplIT extends GraphDBTestCase {
+public class TaxonEnricherImplIT extends GraphDBTestCase {
 
     private PropertyEnricher enricher;
 
@@ -65,6 +65,14 @@ public class TaxonPropertyEnricherImplIT extends GraphDBTestCase {
         assertThat(taxon.getExternalId(), is("EOL:4888"));
         assertThat(taxon.getName(), is("Foraminifera"));
         assertThat(taxon.getPath(), containsString(CharsetConstant.SEPARATOR + "Foraminifera"));
+    }
+
+    @Test
+    public void unacceptedWoRMSSpecies() throws IOException, NodeFactoryException {
+        TaxonNode taxon = nodeFactory.getOrCreateTaxon("Sterrhurus concavovesiculus");
+        assertThat(taxon.getExternalId(), is("WORMS:729172"));
+        assertThat(taxon.getName(), is("Sterrhurus concavovesiculus"));
+        assertThat(taxon.getPath(), containsString(CharsetConstant.SEPARATOR + "Platyhelminthes"));
     }
 
     @Test

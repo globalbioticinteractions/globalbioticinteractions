@@ -20,7 +20,7 @@ public class TaxonEnricherImpl implements PropertyEnricher {
         Map<String, String> enrichedProperties = new HashMap<String, String>(properties);
         for (PropertyEnricher service : services) {
             try {
-                enrichedProperties = enrichTaxonWithPropertyValue(errorCounts, service, enrichedProperties);
+                enrichedProperties = enrichTaxonWithPropertyValue(errorCounts, service, properties);
                 if (TaxonUtil.isResolved(enrichedProperties)) {
                     break;
                 }
