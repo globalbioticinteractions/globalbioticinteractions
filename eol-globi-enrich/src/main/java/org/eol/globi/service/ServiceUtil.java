@@ -40,4 +40,18 @@ public class ServiceUtil {
             throw new PropertyEnricherException("failed to handle response [" + xmlContent + "]", e);
         }
     }
+
+    public static String extractName(String xmlContent, String elementName) throws PropertyEnricherException {
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        Document doc;
+        try {
+            doc = factory.newDocumentBuilder().parse(IOUtils.toInputStream(xmlContent, "UTF-8"));
+            XPathFactory xPathfactory = XPathFactory.newInstance();
+            XPath xpath = xPathfactory.newXPath();
+            Object result = xpath.compile("//*[local-name() = '" + elementName + "']").evaluate(doc, XPathConstants.STRING);
+            return (String) result;
+        } catch (Exception e) {
+            throw new PropertyEnricherException("failed to handle response [" + xmlContent + "]", e);
+        }
+    }
 }

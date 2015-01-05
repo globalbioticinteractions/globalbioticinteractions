@@ -67,12 +67,27 @@ public class TaxonEnricherImplIT extends GraphDBTestCase {
         assertThat(taxon.getPath(), containsString(CharsetConstant.SEPARATOR + "Foraminifera"));
     }
 
+
+
     @Test
     public void unacceptedWoRMSSpecies() throws IOException, NodeFactoryException {
         TaxonNode taxon = nodeFactory.getOrCreateTaxon("Sterrhurus concavovesiculus");
-        assertThat(taxon.getExternalId(), is("WORMS:729172"));
-        assertThat(taxon.getName(), is("Sterrhurus concavovesiculus"));
+        assertUnacceptedWoRMS(taxon);
+    }
+
+    protected void assertUnacceptedWoRMS(TaxonNode taxon) {
+        assertThat(taxon.getExternalId(), is("WORMS:726834"));
+        assertThat(taxon.getName(), is("Lecithochirium concavovesiculus"));
+        assertThat(taxon.getPathIds(), is("1 | 2 | 793 | 19948 | 108400 | 108402 | 468918 | 108418 | 108471 | 724982 | 108758 | 726834"));
         assertThat(taxon.getPath(), containsString(CharsetConstant.SEPARATOR + "Platyhelminthes"));
+        assertThat(taxon.getPathNames(), containsString(CharsetConstant.SEPARATOR + "Species"));
+    }
+
+    @Test
+    public void unacceptedWoRMSSpeciesById() throws IOException, NodeFactoryException {
+        // note that the ID takes precedence over the name
+        TaxonNode taxon = nodeFactory.getOrCreateTaxon("donald duckus", "WORMS:729172", null);
+        assertUnacceptedWoRMS(taxon);
     }
 
     @Test

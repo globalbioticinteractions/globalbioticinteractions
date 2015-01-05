@@ -1,6 +1,10 @@
 package org.eol.globi.service;
 
+import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.junit.Test;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.Is.is;
@@ -30,10 +34,16 @@ public class WoRMSServiceTest {
     }
 
     @Test
-    public void lookupUnacceptedTaxonName() throws PropertyEnricherException {
+    public void lookupByUnacceptedTaxonName() throws PropertyEnricherException {
         String wormsId = new WoRMSService().lookupIdByName("Sterrhurus concavovesiculus");
         assertThat(wormsId, is("WORMS:729172"));
-        assertThat(new WoRMSService().lookupTaxonPathById(wormsId), containsString("Sterrhurus"));
+        HashMap<String, String> properties = new HashMap<String, String>();
+        Map<String, String> enriched = new WoRMSService().enrichById(wormsId, properties);
+        assertThat(enriched.get(PropertyAndValueDictionary.NAME), containsString("Lecithochirium"));
+        assertThat(enriched.get(PropertyAndValueDictionary.EXTERNAL_ID), containsString("WORMS:726834"));
+        assertThat(enriched.get(PropertyAndValueDictionary.PATH), containsString("Lecithochirium"));
+        assertThat(enriched.get(PropertyAndValueDictionary.PATH_IDS), containsString("1 | 2 | 793 | 19948 | 108400 | 108402 | 468918 | 108418 | 108471 | 724982 | 108758 | 726834"));
+        assertThat(enriched.get(PropertyAndValueDictionary.PATH_NAMES), containsString("Superdomain | Kingdom | Phylum | Class | Subclass | Order | Suborder | Superfamily | Family | Subfamily | Genus | Species"));
     }
 
     @Test

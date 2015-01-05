@@ -4,17 +4,20 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.impl.client.BasicResponseHandler;
+import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.TaxonomyProvider;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
-public class WoRMSService extends BasePropertyEnricherService {
+public class WoRMSService extends BaseHttpClientService implements PropertyEnricher {
     public static final String RESPONSE_PREFIX = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><SOAP-ENV:Envelope SOAP-ENV:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\" xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:SOAP-ENC=\"http://schemas.xmlsoap.org/soap/encoding/\"><SOAP-ENV:Body><ns1:getAphiaIDResponse xmlns:ns1=\"http://tempuri.org/\"><return xsi:type=\"xsd:int\">";
     public static final String RESPONSE_SUFFIX = "</return></ns1:getAphiaIDResponse></SOAP-ENV:Body></SOAP-ENV:Envelope>";
 
-    @Override
     public String lookupIdByName(String taxonName) throws PropertyEnricherException {
         String response = getResponse("getAphiaID", "scientificname", taxonName);
         String id = null;
@@ -64,14 +67,59 @@ public class WoRMSService extends BasePropertyEnricherService {
         return response;
     }
 
-    @Override
-    public String lookupTaxonPathById(String id) throws PropertyEnricherException {
+    public Map<String, String> enrichById(final String id, final Map<String, String> properties) throws PropertyEnricherException {
+        if (isAlphiaID(id)) {
+            String response = getResponse("getAphiaRecordByID", "AphiaID", id.replace(TaxonomyProvider.ID_PREFIX_WORMS, ""));
+            String aphiaId = id;
+            String validAphiaId = ServiceUtil.extractName(response, "valid_AphiaID");
+            if (StringUtils.isNotBlank(validAphiaId)) {
+                aphiaId = TaxonomyProvider.ID_PREFIX_WORMS + validAphiaId;
+                properties.put(PropertyAndValueDictionary.EXTERNAL_ID, aphiaId);
+                properties.put(PropertyAndValueDictionary.NAME, ServiceUtil.extractName(response, "valid_name"));
+            }
+            if (isAlphiaID(aphiaId)) {
+                String response1 = getResponse("getAphiaClassificationByID", "AphiaID", aphiaId.replace(TaxonomyProvider.ID_PREFIX_WORMS, ""));
+                String value = ServiceUtil.extractPath(response1, "scientificname");
+                properties.put(PropertyAndValueDictionary.PATH, StringUtils.isBlank(value) ? null : value);
+                value = ServiceUtil.extractPath(response1, "AphiaID");
+                properties.put(PropertyAndValueDictionary.PATH_IDS, StringUtils.isBlank(value) ? null : value);
+                value = ServiceUtil.extractPath(response1, "rank");
+                properties.put(PropertyAndValueDictionary.PATH_NAMES, StringUtils.isBlank(value) ? null : value);
+            }
+
+
+        }
+
+        return properties;
+    }
+
+    protected String lookupTaxonPathById(String id) throws PropertyEnricherException {
         String path = null;
-        if (StringUtils.startsWith(id, TaxonomyProvider.ID_PREFIX_WORMS)) {
+        if (isAlphiaID(id)) {
             String response = getResponse("getAphiaClassificationByID", "AphiaID", id.replace(TaxonomyProvider.ID_PREFIX_WORMS, ""));
             path = ServiceUtil.extractPath(response, "scientificname");
         }
-
         return StringUtils.isBlank(path) ? null : path;
+    }
+
+    protected boolean isAlphiaID(String id) {
+        return StringUtils.startsWith(id, TaxonomyProvider.ID_PREFIX_WORMS);
+    }
+
+    @Override
+    public Map<String, String> enrich(final Map<String, String> properties) throws PropertyEnricherException {
+        Map<String, String> enrichedProperties = new HashMap<String, String>(properties);
+        if (!isAlphiaID(properties.get(PropertyAndValueDictionary.EXTERNAL_ID))) {
+            enrichedProperties.put(PropertyAndValueDictionary.EXTERNAL_ID, lookupIdByName(properties.get(PropertyAndValueDictionary.NAME)));
+        }
+
+        enrichedProperties = enrichById(enrichedProperties.get(PropertyAndValueDictionary.EXTERNAL_ID), enrichedProperties);
+
+        return Collections.unmodifiableMap(enrichedProperties);
+    }
+
+    @Override
+    public void shutdown() {
+
     }
 }
