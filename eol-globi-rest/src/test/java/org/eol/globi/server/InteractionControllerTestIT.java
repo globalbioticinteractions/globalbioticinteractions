@@ -1,10 +1,7 @@
 package org.eol.globi.server;
 
 import org.apache.commons.lang3.ArrayUtils;
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.server.util.ResultFields;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -88,13 +85,13 @@ public class InteractionControllerTestIT {
 
     @Test
     public void findPredator() throws IOException, URISyntaxException {
-        String list = new InteractionController().findDistinctTaxonInteractions(null, CypherQueryBuilder.INTERACTION_PREYS_ON, "Hemiramphus brasiliensis", null).execute(null);
+        String list = InteractionController.createQueryExecutor(null, CypherQueryBuilder.INTERACTION_PREYS_ON, "Hemiramphus brasiliensis", null, CypherQueryBuilder.QueryType.SINGLE_TAXON_DISTINCT).execute(null);
         assertThat(list, is(notNullValue()));
     }
 
     @Test
     public void findTargetsForSource() throws IOException, URISyntaxException {
-        String list = new InteractionController().findDistinctTaxonInteractions("Homo sapiens", CypherQueryBuilder.INTERACTION_PREYS_ON, "Hemiramphus brasiliensis", null).execute(null);
+        String list = InteractionController.createQueryExecutor("Homo sapiens", CypherQueryBuilder.INTERACTION_PREYS_ON, "Hemiramphus brasiliensis", null, CypherQueryBuilder.QueryType.SINGLE_TAXON_DISTINCT).execute(null);
         assertThat(list, is(notNullValue()));
     }
 

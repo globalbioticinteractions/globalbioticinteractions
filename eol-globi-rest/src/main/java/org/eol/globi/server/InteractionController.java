@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -53,7 +55,10 @@ public class InteractionController {
     @ResponseBody
     public String findInteractions(HttpServletRequest request) throws IOException {
         Map parameterMap = request.getParameterMap();
-        CypherQuery query = CypherQueryBuilder.buildInteractionQuery(parameterMap);
+        CypherQueryBuilder.QueryType queryType = shouldIncludeObservations(request, parameterMap)
+                        ? CypherQueryBuilder.QueryType.MULTI_TAXON_ALL
+                        : CypherQueryBuilder.QueryType.MULTI_TAXON_DISTINCT;
+        CypherQuery query = CypherQueryBuilder.buildInteractionQuery(parameterMap, queryType);
         return new CypherQueryExecutor(query.getQuery(), query.getParams()).execute(request);
     }
 
@@ -66,11 +71,6 @@ public class InteractionController {
     }
 
 
-    public CypherQueryExecutor findDistinctTaxonInteractions(String sourceTaxonName, String interactionType, String targetTaxonName, Map parameterMap) throws IOException {
-        CypherQuery cypherQuery = CypherQueryBuilder.distinctInteractions(sourceTaxonName, interactionType, targetTaxonName, parameterMap);
-        return new CypherQueryExecutor(cypherQuery);
-    }
-
     @RequestMapping(value = "/taxon/{sourceTaxonName}/{interactionType}/{targetTaxonName}", method = RequestMethod.GET)
     @ResponseBody
     public String findInteractions(HttpServletRequest request,
@@ -80,13 +80,10 @@ public class InteractionController {
             throws IOException {
         CypherQueryExecutor result;
         Map parameterMap = request == null ? null : request.getParameterMap();
-
-        if (shouldIncludeObservations(request, parameterMap)) {
-            result = findObservationsForInteraction(sourceTaxonName, interactionType, targetTaxonName, parameterMap);
-        } else {
-            result = findDistinctTaxonInteractions(sourceTaxonName, interactionType, targetTaxonName, parameterMap);
-        }
-
+        CypherQueryBuilder.QueryType queryType = shouldIncludeObservations(request, parameterMap)
+                ? CypherQueryBuilder.QueryType.SINGLE_TAXON_ALL
+                : CypherQueryBuilder.QueryType.SINGLE_TAXON_DISTINCT;
+        result = createQueryExecutor(sourceTaxonName, interactionType, targetTaxonName, parameterMap, queryType);
         return result.execute(request);
     }
 
@@ -95,8 +92,18 @@ public class InteractionController {
         return "true".equalsIgnoreCase(includeObservations);
     }
 
-    private CypherQueryExecutor findObservationsForInteraction(String sourceTaxonName, String interactionType, String targetTaxonName, Map parameterMap) throws IOException {
-        CypherQuery cypherQuery = CypherQueryBuilder.interactionObservations(sourceTaxonName, interactionType, targetTaxonName, parameterMap);
+    public static CypherQueryExecutor createQueryExecutor(final String sourceTaxonName, String interactionType, final String targetTaxonName, Map parameterMap, CypherQueryBuilder.QueryType queryType) throws IOException {
+        List<String> sourceTaxa = new ArrayList<String>() {{
+            if (sourceTaxonName != null) {
+                add(sourceTaxonName);
+            }
+        }};
+        List<String> targetTaxa = new ArrayList<String>() {{
+            if (targetTaxonName != null) {
+                add(targetTaxonName);
+            }
+        }};
+        CypherQuery cypherQuery = CypherQueryBuilder.buildInteractionQuery(sourceTaxa, interactionType, targetTaxa, parameterMap, queryType);
         return new CypherQueryExecutor(cypherQuery.getQuery(), cypherQuery.getParams());
     }
 }

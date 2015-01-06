@@ -123,19 +123,20 @@ public class RequestHelper {
         }
 
         if (isPointOrBox(points)) {
-            query.append("WHERE loc is not null AND");
+            query.append("WHERE ");
         }
         addSpatialWhereClause(points, query);
     }
 
     public static void addSpatialWhereClause(List<LatLng> points, StringBuilder query) {
         if (points.size() == 1) {
-            query.append(" loc.latitude = ");
+            query.append("loc.latitude = ");
             query.append(points.get(0).getLat());
             query.append(" AND loc.longitude = ");
             query.append(points.get(0).getLng());
+            query.append(" ");
         } else if (points.size() == 2) {
-            query.append(" loc.latitude < ");
+            query.append("loc.latitude < ");
             query.append(points.get(0).getLat());
             query.append(" AND loc.longitude > ");
             query.append(points.get(0).getLng());
@@ -143,6 +144,7 @@ public class RequestHelper {
             query.append(points.get(1).getLat());
             query.append(" AND loc.longitude < ");
             query.append(points.get(1).getLng());
+            query.append(" ");
         }
     }
 
