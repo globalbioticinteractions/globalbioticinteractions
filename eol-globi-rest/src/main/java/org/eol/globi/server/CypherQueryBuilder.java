@@ -323,12 +323,12 @@ public class CypherQueryBuilder {
         query.append(" RETURN sourceTaxon.externalId? as ").append(ResultFields.SOURCE_TAXON_EXTERNAL_ID)
                 .append(",sourceTaxon.name as ").append(ResultFields.SOURCE_TAXON_NAME)
                 .append(",sourceTaxon.path? as ").append(ResultFields.SOURCE_TAXON_PATH)
-                .append(",sourceTaxon.lifeStage? as ").append(ResultFields.PREFIX_SOURCE_SPECIMEN).append(ResultFields.SUFFIX_LIFE_STAGE)
+                .append(",sourceSpecimen.lifeStage? as ").append(ResultFields.PREFIX_SOURCE_SPECIMEN).append(ResultFields.SUFFIX_LIFE_STAGE)
                 .append(",type(interactionType) as ").append(ResultFields.INTERACTION_TYPE)
                 .append(",targetTaxon.externalId? as ").append(ResultFields.TARGET_TAXON_EXTERNAL_ID)
                 .append(",targetTaxon.name as ").append(ResultFields.TARGET_TAXON_NAME)
                 .append(",targetTaxon.path? as ").append(ResultFields.TARGET_TAXON_PATH)
-                .append(",targetTaxon.lifeStage? as ").append(ResultFields.PREFIX_TARGET_SPECIMEN).append(ResultFields.SUFFIX_LIFE_STAGE)
+                .append(",targetSpecimen.lifeStage? as ").append(ResultFields.PREFIX_TARGET_SPECIMEN).append(ResultFields.SUFFIX_LIFE_STAGE)
                 .append(",loc.latitude? as ").append(ResultFields.LATITUDE)
                 .append(",loc.longitude? as ").append(ResultFields.LONGITUDE)
                 .append(",study.title as ").append(ResultFields.STUDY_TITLE);
@@ -450,25 +450,6 @@ public class CypherQueryBuilder {
 
         if (StringUtils.isNotBlank(sourceWhereClause)) {
             query.append(" AND");
-            query.append(sourceWhereClause);
-        }
-        return params;
-    }
-
-    private static Map<String, String> addSourceClauseIfNecessary(StringBuilder query, Map<String, String[]> parameterMap) {
-        String[] sourceList = parameterMap == null ? null : parameterMap.get("source");
-        final String source = sourceList != null && sourceList.length > 0 ? sourceList[0] : null;
-        String sourceWhereClause = StringUtils.isBlank(source) ? "" : " study.source = {source}";
-        Map<String, String> params = StringUtils.isBlank(source) ? EMPTY_PARAMS : new HashMap<String, String>() {{
-            put("source", source);
-        }};
-
-        if (StringUtils.isNotBlank(sourceWhereClause)) {
-            if (RequestHelper.isSpatialSearch(parameterMap)) {
-                query.append(" AND");
-            } else {
-                query.append(" WHERE");
-            }
             query.append(sourceWhereClause);
         }
         return params;
