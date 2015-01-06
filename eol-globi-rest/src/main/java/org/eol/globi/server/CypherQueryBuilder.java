@@ -264,7 +264,7 @@ public class CypherQueryBuilder {
         return new CypherQuery(cypherQuery, EMPTY_PARAMS);
     }
 
-    public static CypherQuery buildInteractionQuery(Map parameterMap) {
+    private static CypherQuery buildInteractionQueryWithObservations(Map parameterMap) {
         List<String> sourceTaxaSelectors = collectParamValues(parameterMap, SOURCE_TAXON_HTTP_PARAM_NAME);
         List<String> targetTaxaSelectors = collectParamValues(parameterMap, TARGET_TAXON_HTTP_PARAM_NAME);
 
@@ -279,13 +279,7 @@ public class CypherQueryBuilder {
         if (isSpatialSearch) {
             query.append(" loc = node:locations('*:*')");
         } else {
-            if (sourceTaxaSelectors.size() > 0) {
-                query.append(" ");
-                appendTaxonSelectors(true, false, query);
-            } else if (targetTaxaSelectors.size() > 0) {
-                query.append(" ");
-                appendTaxonSelectors(false, true, query);
-            }
+            appendTaxaSelectors(sourceTaxaSelectors, targetTaxaSelectors, query);
         }
 
 
@@ -323,12 +317,12 @@ public class CypherQueryBuilder {
         query.append(" RETURN sourceTaxon.externalId? as ").append(ResultFields.SOURCE_TAXON_EXTERNAL_ID)
                 .append(",sourceTaxon.name as ").append(ResultFields.SOURCE_TAXON_NAME)
                 .append(",sourceTaxon.path? as ").append(ResultFields.SOURCE_TAXON_PATH)
-                .append(",sourceTaxon.lifeStage? as ").append(ResultFields.PREFIX_SOURCE_SPECIMEN).append(ResultFields.SUFFIX_LIFE_STAGE)
+                .append(",sourceSpecimen.lifeStage? as ").append(ResultFields.PREFIX_SOURCE_SPECIMEN).append(ResultFields.SUFFIX_LIFE_STAGE)
                 .append(",type(interactionType) as ").append(ResultFields.INTERACTION_TYPE)
                 .append(",targetTaxon.externalId? as ").append(ResultFields.TARGET_TAXON_EXTERNAL_ID)
                 .append(",targetTaxon.name as ").append(ResultFields.TARGET_TAXON_NAME)
                 .append(",targetTaxon.path? as ").append(ResultFields.TARGET_TAXON_PATH)
-                .append(",targetTaxon.lifeStage? as ").append(ResultFields.PREFIX_TARGET_SPECIMEN).append(ResultFields.SUFFIX_LIFE_STAGE)
+                .append(",targetSpecimen.lifeStage? as ").append(ResultFields.PREFIX_TARGET_SPECIMEN).append(ResultFields.SUFFIX_LIFE_STAGE)
                 .append(",loc.latitude? as ").append(ResultFields.LATITUDE)
                 .append(",loc.longitude? as ").append(ResultFields.LONGITUDE)
                 .append(",study.title as ").append(ResultFields.STUDY_TITLE);
@@ -338,6 +332,75 @@ public class CypherQueryBuilder {
             params = getParams(sourceTaxaSelectors, targetTaxaSelectors);
         }
         return new CypherQuery(query.toString(), params);
+    }
+
+    protected static void appendTaxaSelectors(List<String> sourceTaxaSelectors, List<String> targetTaxaSelectors, StringBuilder query) {
+        if (sourceTaxaSelectors.size() > 0) {
+            query.append(" ");
+            appendTaxonSelectors(true, false, query);
+        } else if (targetTaxaSelectors.size() > 0) {
+            query.append(" ");
+            appendTaxonSelectors(false, true, query);
+        }
+    }
+
+    private static CypherQuery buildInteractionQueryWithoutObservations(Map parameterMap) {
+        List<String> sourceTaxaSelectors = collectParamValues(parameterMap, SOURCE_TAXON_HTTP_PARAM_NAME);
+        List<String> targetTaxaSelectors = collectParamValues(parameterMap, TARGET_TAXON_HTTP_PARAM_NAME);
+
+        boolean isSpatialSearch = RequestHelper.isSpatialSearch(parameterMap);
+        if (noSearchCriteria(isSpatialSearch, sourceTaxaSelectors, targetTaxaSelectors)) {
+            // sensible default
+            sourceTaxaSelectors.add("Homo sapiens");
+        }
+
+        StringBuilder query = new StringBuilder();
+        query.append("START");
+
+        appendTaxaSelectors(sourceTaxaSelectors, targetTaxaSelectors, query);
+
+        query.append(" MATCH sourceTaxon-[interactionType:");
+
+        appendInteractionTypes(parameterMap, query);
+
+        query.append("]->targetTaxon");
+
+        boolean hasWhereClause = false;
+        if (sourceTaxaSelectors.size() > 0) {
+            appendTaxonFilter(query, hasWhereClause, "targetTaxon", targetTaxaSelectors);
+        }
+
+        query.append(" RETURN sourceTaxon.externalId? as ").append(ResultFields.SOURCE_TAXON_EXTERNAL_ID)
+                .append(",sourceTaxon.name as ").append(ResultFields.SOURCE_TAXON_NAME)
+                .append(",sourceTaxon.path? as ").append(ResultFields.SOURCE_TAXON_PATH)
+                .append(",NULL as ").append(ResultFields.PREFIX_SOURCE_SPECIMEN).append(ResultFields.SUFFIX_LIFE_STAGE)
+                .append(",type(interactionType) as ").append(ResultFields.INTERACTION_TYPE)
+                .append(",targetTaxon.externalId? as ").append(ResultFields.TARGET_TAXON_EXTERNAL_ID)
+                .append(",targetTaxon.name as ").append(ResultFields.TARGET_TAXON_NAME)
+                .append(",targetTaxon.path? as ").append(ResultFields.TARGET_TAXON_PATH)
+                .append(",NULL as ").append(ResultFields.PREFIX_TARGET_SPECIMEN).append(ResultFields.SUFFIX_LIFE_STAGE)
+                .append(",NULL as ").append(ResultFields.LATITUDE)
+                .append(",NULL as ").append(ResultFields.LONGITUDE)
+                .append(",NULL as ").append(ResultFields.STUDY_TITLE);
+
+        Map<String, String> params = getParams(sourceTaxaSelectors, targetTaxaSelectors);;
+        return new CypherQuery(query.toString(), params);
+    }
+
+    protected static void appendInteractionTypes(Map parameterMap, StringBuilder query) {
+        List<String> interactionTypeSelectors = collectParamValues(parameterMap, "interactionType");
+        List<String> cypherTypes = new ArrayList<String>();
+        for (String type : interactionTypeSelectors) {
+            if (DIRECTIONAL_INTERACTION_TYPE_MAP.containsKey(type)) {
+                cypherTypes.add(DIRECTIONAL_INTERACTION_TYPE_MAP.get(type));
+            } else if (StringUtils.isNotBlank(type)) {
+                throw new IllegalArgumentException("unsupported interaction type [" + type + "]");
+            }
+        }
+
+        String interactionSelector = cypherTypes.isEmpty() ? InteractUtil.allInteractionsCypherClause() : StringUtils.join(cypherTypes, "|");
+
+        query.append(interactionSelector);
     }
 
     private static boolean noSearchCriteria(boolean spatialSearch, List<String> sourceTaxaSelectors, List<String> targetTaxaSelectors) {
@@ -361,7 +424,7 @@ public class CypherQueryBuilder {
 
     private static List<String> collectParamValues(Map parameterMap, String taxonSearchKey) {
         List<String> taxa = new ArrayList<String>();
-        if (parameterMap.containsKey(taxonSearchKey)) {
+        if (parameterMap != null && parameterMap.containsKey(taxonSearchKey)) {
             Object paramObject = parameterMap.get(taxonSearchKey);
             if (paramObject instanceof String[]) {
                 for (String elem : (String[]) paramObject) {
@@ -455,30 +518,30 @@ public class CypherQueryBuilder {
         return params;
     }
 
-    private static Map<String, String> addSourceClauseIfNecessary(StringBuilder query, Map<String, String[]> parameterMap) {
-        String[] sourceList = parameterMap == null ? null : parameterMap.get("source");
-        final String source = sourceList != null && sourceList.length > 0 ? sourceList[0] : null;
-        String sourceWhereClause = StringUtils.isBlank(source) ? "" : " study.source = {source}";
-        Map<String, String> params = StringUtils.isBlank(source) ? EMPTY_PARAMS : new HashMap<String, String>() {{
-            put("source", source);
-        }};
-
-        if (StringUtils.isNotBlank(sourceWhereClause)) {
-            if (RequestHelper.isSpatialSearch(parameterMap)) {
-                query.append(" AND");
-            } else {
-                query.append(" WHERE");
-            }
-            query.append(sourceWhereClause);
-        }
-        return params;
-    }
-
     public static CypherQuery stats(final String source) {
         HashMap<String, String[]> paramMap = new HashMap<String, String[]>();
         if (StringUtils.isNotBlank(source)) {
             paramMap.put("source", new String[]{source});
         }
         return spatialInfo(paramMap);
+    }
+
+    public static boolean shouldIncludeObservations(Map parameterMap) {
+        List<String> values = collectParamValues(parameterMap, "includeObservations");
+        boolean shouldIncludeObservations = false;
+        for (String value : values) {
+            shouldIncludeObservations = shouldIncludeObservations || "true".equalsIgnoreCase(value) || "t".equalsIgnoreCase(value);
+        }
+        return shouldIncludeObservations;
+    }
+
+    protected static CypherQuery buildInteractionQuery(Map parameterMap) {
+        CypherQuery query;
+        if (shouldIncludeObservations(parameterMap)) {
+            query = buildInteractionQueryWithObservations(parameterMap);
+        } else {
+            query = buildInteractionQueryWithoutObservations(parameterMap);
+        }
+        return query;
     }
 }

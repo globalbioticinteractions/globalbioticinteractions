@@ -6,6 +6,7 @@ import org.junit.Test;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.Is.is;
@@ -14,36 +15,55 @@ import static org.junit.Assert.assertThat;
 public class CypherQueryBuilderTest {
 
     public static final String EXPECTED_INTERACTION_CLAUSE_ALL_INTERACTIONS = expectedInteractionClause(InteractUtil.allInteractionsCypherClause());
-    public static final String EXPECTED_MATCH_CLAUSE = expectedMatchClause(EXPECTED_INTERACTION_CLAUSE_ALL_INTERACTIONS);
+    public static final String EXPECTED_MATCH_CLAUSE = expectedMatchClauseWithObservation(EXPECTED_INTERACTION_CLAUSE_ALL_INTERACTIONS);
+    public static final String EXPECTED_MATCH_CLAUSE_WITHOUT_OBSERVATIONS = expectedMatchClauseWithoutObservations(InteractUtil.allInteractionsCypherClause());
 
     private static String expectedInteractionClause(String interactions) {
         return "sourceSpecimen-[interactionType:" + interactions + "]->targetSpecimen";
     }
 
-    private static String expectedMatchClause(String expectedInteractionClause) {
+    private static String expectedMatchClauseWithObservation(String expectedInteractionClause) {
         return "MATCH sourceTaxon<-[:CLASSIFIED_AS]-" + expectedInteractionClause + "-[:CLASSIFIED_AS]->targetTaxon,sourceSpecimen<-[:COLLECTED]-study,sourceSpecimen-[?:COLLECTED_AT]->loc ";
     }
 
-    public static final String EXPECTED_RETURN_CLAUSE = "RETURN sourceTaxon.externalId? as source_taxon_external_id," +
+    private static String expectedMatchClauseWithoutObservations(String interactionSelector) {
+        return "MATCH sourceTaxon-[interactionType:" + interactionSelector + "]->targetTaxon ";
+    }
+
+    public static final String EXPECTED_RETURN_CLAUSE_WITH_OBSERVATIONS = "RETURN sourceTaxon.externalId? as source_taxon_external_id," +
             "sourceTaxon.name as source_taxon_name," +
             "sourceTaxon.path? as source_taxon_path," +
-            "sourceTaxon.lifeStage? as source_specimen_life_stage," +
+            "sourceSpecimen.lifeStage? as source_specimen_life_stage," +
             "type(interactionType) as interaction_type," +
             "targetTaxon.externalId? as target_taxon_external_id," +
             "targetTaxon.name as target_taxon_name," +
             "targetTaxon.path? as target_taxon_path," +
-            "targetTaxon.lifeStage? as target_specimen_life_stage," +
+            "targetSpecimen.lifeStage? as target_specimen_life_stage," +
             "loc.latitude? as latitude," +
             "loc.longitude? as longitude," +
             "study.title as study_title";
 
+    public static final String EXPECTED_RETURN_CLAUSE_WITHOUT_OBSERVATIONS = "RETURN sourceTaxon.externalId? as source_taxon_external_id," +
+            "sourceTaxon.name as source_taxon_name," +
+            "sourceTaxon.path? as source_taxon_path," +
+            "NULL as source_specimen_life_stage," +
+            "type(interactionType) as interaction_type," +
+            "targetTaxon.externalId? as target_taxon_external_id," +
+            "targetTaxon.name as target_taxon_name," +
+            "targetTaxon.path? as target_taxon_path," +
+            "NULL as target_specimen_life_stage," +
+            "NULL as latitude," +
+            "NULL as longitude," +
+            "NULL as study_title";
+
     @Test
-    public void findInteractionForSourceAndTargetTaxaLocations() throws IOException {
+    public void findInteractionForSourceAndTargetTaxaLocationsIncludeObservations() throws IOException {
         HashMap<String, String[]> params = new HashMap<String, String[]>() {
             {
                 put("sourceTaxon", new String[]{"Actinopterygii", "Chordata"});
                 put("targetTaxon", new String[]{"Arthropoda"});
                 put("bbox", new String[]{"-67.87,12.79,-57.08,23.32"});
+                put("includeObservations", new String[]{"t"});
             }
         };
 
@@ -51,7 +71,7 @@ public class CypherQueryBuilderTest {
         assertThat(query.getQuery(), is("START loc = node:locations('*:*') " +
                 EXPECTED_MATCH_CLAUSE +
                 "WHERE loc.latitude < 23.32 AND loc.longitude > -67.87 AND loc.latitude > 12.79 AND loc.longitude < -57.08 AND has(sourceTaxon.path) AND sourceTaxon.path =~ '(.*(Actinopterygii|Chordata).*)' AND has(targetTaxon.path) AND targetTaxon.path =~ '(.*(Arthropoda).*)' " +
-                EXPECTED_RETURN_CLAUSE));
+                EXPECTED_RETURN_CLAUSE_WITH_OBSERVATIONS));
         assertThat(query.getParams(), is(nullValue()));
     }
 
@@ -61,48 +81,70 @@ public class CypherQueryBuilderTest {
             {
                 put("sourceTaxon", new String[]{"Actinopterygii", "Chordata"});
                 put("targetTaxon", new String[]{"Arthropoda"});
+                put("includeObservations", new String[]{"t"});
             }
         };
 
         String expectedQuery = "START sourceTaxon = node:taxonPaths({source_taxon_name}) " +
                 EXPECTED_MATCH_CLAUSE +
                 "WHERE has(targetTaxon.path) AND targetTaxon.path =~ '(.*(Arthropoda).*)' " +
-                EXPECTED_RETURN_CLAUSE;
+                EXPECTED_RETURN_CLAUSE_WITH_OBSERVATIONS;
         CypherQuery query = CypherQueryBuilder.buildInteractionQuery(params);
         assertThat(query.getQuery(), is(expectedQuery));
         assertThat(query.getParams().toString(), is("{source_taxon_name=path:\\\"Actinopterygii\\\" OR path:\\\"Chordata\\\", target_taxon_name=path:\\\"Arthropoda\\\"}"));
     }
 
     @Test
-    public void findInteractionForTargetTaxaOnlyNoLocation() throws IOException {
+    public void findInteractionForSourceAndTargetTaxaNoLocationIncludeObservations() throws IOException {
+        HashMap<String, String[]> params = new HashMap<String, String[]>() {
+            {
+                put("sourceTaxon", new String[]{"Actinopterygii", "Chordata"});
+                put("targetTaxon", new String[]{"Arthropoda"});
+                put("includeObservations", new String[]{"t"});
+            }
+        };
+
+        String expectedQuery = "START sourceTaxon = node:taxonPaths({source_taxon_name}) " +
+                EXPECTED_MATCH_CLAUSE +
+                "WHERE has(targetTaxon.path) AND targetTaxon.path =~ '(.*(Arthropoda).*)' " +
+                EXPECTED_RETURN_CLAUSE_WITH_OBSERVATIONS;
+        CypherQuery query = CypherQueryBuilder.buildInteractionQuery(params);
+        assertThat(query.getQuery(), is(expectedQuery));
+        assertThat(query.getParams().toString(), is("{source_taxon_name=path:\\\"Actinopterygii\\\" OR path:\\\"Chordata\\\", target_taxon_name=path:\\\"Arthropoda\\\"}"));
+    }
+
+    @Test
+    public void findInteractionForTargetTaxaOnlyNoLocationIncludingObservations() throws IOException {
         HashMap<String, String[]> params = new HashMap<String, String[]>() {
             {
                 put("targetTaxon", new String[]{"Arthropoda"});
+                put("includeObservations", new String[]{"t"});
             }
         };
 
         String expectedQuery = "START targetTaxon = node:taxonPaths({target_taxon_name}) " +
                 EXPECTED_MATCH_CLAUSE +
-                EXPECTED_RETURN_CLAUSE;
+                EXPECTED_RETURN_CLAUSE_WITH_OBSERVATIONS;
         CypherQuery query = CypherQueryBuilder.buildInteractionQuery(params);
         assertThat(query.getQuery(), is(expectedQuery));
         assertThat(query.getParams().toString(), is("{target_taxon_name=path:\\\"Arthropoda\\\"}"));
     }
 
     @Test
-    public void findInteractionForTargetTaxaOnlyByInteractionType() throws IOException {
+    public void findInteractionForTargetTaxaOnlyByInteractionTypeIncludeObservations() throws IOException {
         HashMap<String, String[]> params = new HashMap<String, String[]>() {
             {
                 put("sourceTaxon", new String[]{"Arthropoda"});
                 put("targetTaxon", new String[]{"Mammalia"});
                 put("interactionType", new String[]{"preysOn", "parasiteOf"});
+                put("includeObservations", new String[]{"t"});
             }
         };
 
         String expectedQuery = "START sourceTaxon = node:taxonPaths({source_taxon_name}) " +
-                expectedMatchClause(expectedInteractionClause("ATE|PREYS_UPON|PARASITE_OF|HAS_HOST")) +
+                expectedMatchClauseWithObservation(expectedInteractionClause("ATE|PREYS_UPON|PARASITE_OF|HAS_HOST")) +
                 "WHERE has(targetTaxon.path) AND targetTaxon.path =~ '(.*(Mammalia).*)' " +
-                EXPECTED_RETURN_CLAUSE;
+                EXPECTED_RETURN_CLAUSE_WITH_OBSERVATIONS;
         CypherQuery query = CypherQueryBuilder.buildInteractionQuery(params);
         assertThat(query.getQuery(), is(expectedQuery));
         assertThat(query.getParams().toString(), is("{source_taxon_name=path:\\\"Arthropoda\\\", target_taxon_name=path:\\\"Mammalia\\\"}"));
@@ -116,13 +158,14 @@ public class CypherQueryBuilderTest {
                 put("sourceTaxon", new String[]{"Arthropoda"});
                 put("targetTaxon", new String[]{"Mammalia"});
                 put("interactionType", new String[]{"pollinatedBy"});
+                put("includeObservations", new String[]{"t"});
             }
         };
 
         String expectedQuery = "START sourceTaxon = node:taxonPaths({source_taxon_name}) " +
-                expectedMatchClause(expectedInteractionClause("POLLINATED_BY")) +
+                expectedMatchClauseWithObservation(expectedInteractionClause("POLLINATED_BY")) +
                 "WHERE has(targetTaxon.path) AND targetTaxon.path =~ '(.*(Mammalia).*)' " +
-                EXPECTED_RETURN_CLAUSE;
+                EXPECTED_RETURN_CLAUSE_WITH_OBSERVATIONS;
         CypherQuery query = CypherQueryBuilder.buildInteractionQuery(params);
         assertThat(query.getQuery(), is(expectedQuery));
         assertThat(query.getParams().toString(), is("{source_taxon_name=path:\\\"Arthropoda\\\", target_taxon_name=path:\\\"Mammalia\\\"}"));
@@ -135,13 +178,35 @@ public class CypherQueryBuilderTest {
                 put("sourceTaxon", new String[]{"Arthropoda"});
                 put("targetTaxon", new String[]{"Mammalia"});
                 put("interactionType", new String[]{"symbiontOf"});
+                put("includeObservations", new String[]{"true"});
             }
         };
 
         String expectedQuery = "START sourceTaxon = node:taxonPaths({source_taxon_name}) " +
-                expectedMatchClause(EXPECTED_INTERACTION_CLAUSE_ALL_INTERACTIONS) +
+                expectedMatchClauseWithObservation(EXPECTED_INTERACTION_CLAUSE_ALL_INTERACTIONS) +
                 "WHERE has(targetTaxon.path) AND targetTaxon.path =~ '(.*(Mammalia).*)' " +
-                EXPECTED_RETURN_CLAUSE;
+                EXPECTED_RETURN_CLAUSE_WITH_OBSERVATIONS;
+        CypherQuery query = CypherQueryBuilder.buildInteractionQuery(params);
+        assertThat(query.getQuery(), is(expectedQuery));
+        assertThat(query.getParams().toString(), is("{source_taxon_name=path:\\\"Arthropoda\\\", target_taxon_name=path:\\\"Mammalia\\\"}"));
+    }
+
+
+    @Test
+    public void findSymbioticInteractionsWithoutObservations() throws IOException {
+        HashMap<String, String[]> params = new HashMap<String, String[]>() {
+            {
+                put("sourceTaxon", new String[]{"Arthropoda"});
+                put("targetTaxon", new String[]{"Mammalia"});
+                put("interactionType", new String[]{"preysOn"});
+                put("includeObservations", new String[]{"F"});
+            }
+        };
+
+        String expectedQuery = "START sourceTaxon = node:taxonPaths({source_taxon_name}) " +
+                expectedMatchClauseWithoutObservations("ATE|PREYS_UPON") +
+                "WHERE has(targetTaxon.path) AND targetTaxon.path =~ '(.*(Mammalia).*)' " +
+                EXPECTED_RETURN_CLAUSE_WITHOUT_OBSERVATIONS;
         CypherQuery query = CypherQueryBuilder.buildInteractionQuery(params);
         assertThat(query.getQuery(), is(expectedQuery));
         assertThat(query.getParams().toString(), is("{source_taxon_name=path:\\\"Arthropoda\\\", target_taxon_name=path:\\\"Mammalia\\\"}"));
@@ -154,15 +219,34 @@ public class CypherQueryBuilderTest {
                 put("sourceTaxon", new String[]{"Arthropoda"});
                 put("targetTaxon", new String[]{"Mammalia"});
                 put("interactionType", new String[]{"interactsWith"});
+                put("includeObservations", new String[]{"t"});
             }
         };
 
         String expectedQuery = "START sourceTaxon = node:taxonPaths({source_taxon_name}) " +
-                expectedMatchClause(EXPECTED_INTERACTION_CLAUSE_ALL_INTERACTIONS) +
+                expectedMatchClauseWithObservation(EXPECTED_INTERACTION_CLAUSE_ALL_INTERACTIONS) +
                 "WHERE has(targetTaxon.path) AND targetTaxon.path =~ '(.*(Mammalia).*)' " +
-                EXPECTED_RETURN_CLAUSE;
+                EXPECTED_RETURN_CLAUSE_WITH_OBSERVATIONS;
         CypherQuery query = CypherQueryBuilder.buildInteractionQuery(params);
-        System.out.println(expectedQuery);
+        assertThat(query.getQuery(), is(expectedQuery));
+        assertThat(query.getParams().toString(), is("{source_taxon_name=path:\\\"Arthropoda\\\", target_taxon_name=path:\\\"Mammalia\\\"}"));
+    }
+
+    @Test
+    public void findAnyInteractionsWithoutObservations() throws IOException {
+        HashMap<String, String[]> params = new HashMap<String, String[]>() {
+            {
+                put("sourceTaxon", new String[]{"Arthropoda"});
+                put("targetTaxon", new String[]{"Mammalia"});
+                put("interactionType", new String[]{"interactsWith"});
+            }
+        };
+
+        String expectedQuery = "START sourceTaxon = node:taxonPaths({source_taxon_name}) " +
+                expectedMatchClauseWithoutObservations(InteractUtil.allInteractionsCypherClause()) +
+                "WHERE has(targetTaxon.path) AND targetTaxon.path =~ '(.*(Mammalia).*)' " +
+                EXPECTED_RETURN_CLAUSE_WITHOUT_OBSERVATIONS;
+        CypherQuery query = CypherQueryBuilder.buildInteractionQuery(params);
         assertThat(query.getQuery(), is(expectedQuery));
         assertThat(query.getParams().toString(), is("{source_taxon_name=path:\\\"Arthropoda\\\", target_taxon_name=path:\\\"Mammalia\\\"}"));
     }
@@ -187,13 +271,14 @@ public class CypherQueryBuilderTest {
                 put("sourceTaxon", new String[]{"Arthropoda"});
                 put("targetTaxon", new String[]{"Mammalia"});
                 put("interactionType", new String[]{""});
+                put("includeObservations", new String[]{"t"});
             }
         };
 
         String expectedQuery = "START sourceTaxon = node:taxonPaths({source_taxon_name}) " +
-                expectedMatchClause(EXPECTED_INTERACTION_CLAUSE_ALL_INTERACTIONS) +
+                expectedMatchClauseWithObservation(EXPECTED_INTERACTION_CLAUSE_ALL_INTERACTIONS) +
                 "WHERE has(targetTaxon.path) AND targetTaxon.path =~ '(.*(Mammalia).*)' " +
-                EXPECTED_RETURN_CLAUSE;
+                EXPECTED_RETURN_CLAUSE_WITH_OBSERVATIONS;
         CypherQuery query = CypherQueryBuilder.buildInteractionQuery(params);
         assertThat(query.getQuery(), is(expectedQuery));
         assertThat(query.getParams().toString(), is("{source_taxon_name=path:\\\"Arthropoda\\\", target_taxon_name=path:\\\"Mammalia\\\"}"));
@@ -204,12 +289,13 @@ public class CypherQueryBuilderTest {
         HashMap<String, String[]> params = new HashMap<String, String[]>() {
             {
                 put("sourceTaxon", new String[]{"Actinopterygii", "Chordata"});
+                put("includeObservations", new String[]{"t"});
             }
         };
 
         String expectedQuery = "START sourceTaxon = node:taxonPaths({source_taxon_name}) " +
                 EXPECTED_MATCH_CLAUSE +
-                EXPECTED_RETURN_CLAUSE;
+                EXPECTED_RETURN_CLAUSE_WITH_OBSERVATIONS;
         CypherQuery query = CypherQueryBuilder.buildInteractionQuery(params);
         assertThat(query.getQuery(), is(expectedQuery));
         assertThat(query.getParams().toString(), is("{source_taxon_name=path:\\\"Actinopterygii\\\" OR path:\\\"Chordata\\\"}"));
@@ -218,9 +304,25 @@ public class CypherQueryBuilderTest {
     @Test
     public void findInteractionNoParams() throws IOException {
         String expectedQuery = "START sourceTaxon = node:taxonPaths({source_taxon_name}) " +
-                EXPECTED_MATCH_CLAUSE +
-                EXPECTED_RETURN_CLAUSE;
+                EXPECTED_MATCH_CLAUSE_WITHOUT_OBSERVATIONS +
+                EXPECTED_RETURN_CLAUSE_WITHOUT_OBSERVATIONS;
         CypherQuery query = CypherQueryBuilder.buildInteractionQuery(new HashMap<String, String[]>());
+        assertThat(query.getQuery(), is(expectedQuery));
+        assertThat(query.getParams().toString(), is("{source_taxon_name=path:\\\"Homo sapiens\\\"}"));
+    }
+
+    @Test
+    public void findInteractionNoParamsIncludeObservations() throws IOException {
+        String expectedQuery = "START sourceTaxon = node:taxonPaths({source_taxon_name}) " +
+                EXPECTED_MATCH_CLAUSE +
+                EXPECTED_RETURN_CLAUSE_WITH_OBSERVATIONS;
+        Map<String, String[]> params = new HashMap<String, String[]>() {
+            {
+                put("includeObservations", new String[]{"t"});
+            }
+        };
+
+        CypherQuery query = CypherQueryBuilder.buildInteractionQuery(params);
         assertThat(query.getQuery(), is(expectedQuery));
         assertThat(query.getParams().toString(), is("{source_taxon_name=path:\\\"Homo sapiens\\\"}"));
     }
