@@ -52,7 +52,8 @@ public class InteractionController {
     @RequestMapping(value = "/interaction", method = RequestMethod.GET)
     @ResponseBody
     public String findInteractions(HttpServletRequest request) throws IOException {
-        CypherQuery query = CypherQueryBuilder.buildInteractionQuery(request.getParameterMap());
+        Map parameterMap = request.getParameterMap();
+        CypherQuery query = CypherQueryBuilder.buildInteractionQuery(parameterMap);
         return new CypherQueryExecutor(query.getQuery(), query.getParams()).execute(request);
     }
 
@@ -80,13 +81,18 @@ public class InteractionController {
         CypherQueryExecutor result;
         Map parameterMap = request == null ? null : request.getParameterMap();
 
-        if (CypherQueryBuilder.shouldIncludeObservations(parameterMap)) {
+        if (shouldIncludeObservations(request, parameterMap)) {
             result = findObservationsForInteraction(sourceTaxonName, interactionType, targetTaxonName, parameterMap);
         } else {
             result = findDistinctTaxonInteractions(sourceTaxonName, interactionType, targetTaxonName, parameterMap);
         }
 
         return result.execute(request);
+    }
+
+    private boolean shouldIncludeObservations(HttpServletRequest request, Map parameterMap) {
+        String includeObservations = parameterMap == null ? null : request.getParameter("includeObservations");
+        return "true".equalsIgnoreCase(includeObservations);
     }
 
     private CypherQueryExecutor findObservationsForInteraction(String sourceTaxonName, String interactionType, String targetTaxonName, Map parameterMap) throws IOException {
