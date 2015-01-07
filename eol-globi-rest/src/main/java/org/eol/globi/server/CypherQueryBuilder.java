@@ -211,8 +211,10 @@ public class CypherQueryBuilder {
                 appendReturnClause(interactionType.get(0), query);
                 break;
             case MULTI_TAXON_ALL:
-            case MULTI_TAXON_DISTINCT:
                 appendReturnClause(query);
+                break;
+            case MULTI_TAXON_DISTINCT:
+                appendReturnClauseDistinct(query);
                 break;
             default:
                 throw new IllegalArgumentException("invalid option [" + returnType + "]");
@@ -322,6 +324,22 @@ public class CypherQueryBuilder {
                 .append(",loc.latitude? as ").append(ResultFields.LATITUDE)
                 .append(",loc.longitude? as ").append(ResultFields.LONGITUDE)
                 .append(",study.title as ").append(ResultFields.STUDY_TITLE);
+    }
+
+    protected static void appendReturnClauseDistinct(StringBuilder query) {
+        query.append("WITH distinct targetTaxon as tTaxon, type(interactionType) as iType, sourceTaxon as sTaxon ");
+        query.append("RETURN sTaxon.externalId? as ").append(ResultFields.SOURCE_TAXON_EXTERNAL_ID)
+                .append(",sTaxon.name as ").append(ResultFields.SOURCE_TAXON_NAME)
+                .append(",sTaxon.path? as ").append(ResultFields.SOURCE_TAXON_PATH)
+                .append(",NULL as ").append(ResultFields.PREFIX_SOURCE_SPECIMEN).append(ResultFields.SUFFIX_LIFE_STAGE)
+                .append(",iType as ").append(ResultFields.INTERACTION_TYPE)
+                .append(",tTaxon.externalId? as ").append(ResultFields.TARGET_TAXON_EXTERNAL_ID)
+                .append(",tTaxon.name as ").append(ResultFields.TARGET_TAXON_NAME)
+                .append(",tTaxon.path? as ").append(ResultFields.TARGET_TAXON_PATH)
+                .append(",NULL as ").append(ResultFields.PREFIX_TARGET_SPECIMEN).append(ResultFields.SUFFIX_LIFE_STAGE)
+                .append(",NULL as ").append(ResultFields.LATITUDE)
+                .append(",NULL as ").append(ResultFields.LONGITUDE)
+                .append(",NULL as ").append(ResultFields.STUDY_TITLE);
     }
 
     protected static String createInteractionTypeSelector(List<String> interactionTypeSelectors) {

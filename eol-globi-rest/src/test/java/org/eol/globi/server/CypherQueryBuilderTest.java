@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.eol.globi.server.CypherQueryBuilder.QueryType.MULTI_TAXON_ALL;
+import static org.eol.globi.server.CypherQueryBuilder.QueryType.MULTI_TAXON_DISTINCT;
 import static org.eol.globi.server.CypherQueryBuilder.QueryType.SINGLE_TAXON_ALL;
 import static org.eol.globi.server.CypherQueryBuilder.QueryType.SINGLE_TAXON_DISTINCT;
 import static org.eol.globi.server.CypherQueryBuilder.appendMatchAndWhereClause;
@@ -46,6 +47,20 @@ public class CypherQueryBuilderTest {
             "loc.longitude? as longitude," +
             "study.title as study_title";
 
+    public static final String EXPECTED_RETURN_CLAUSE_DISTINCT = "WITH distinct targetTaxon as tTaxon, type(interactionType) as iType, sourceTaxon as sTaxon " +
+            "RETURN sTaxon.externalId? as source_taxon_external_id," +
+            "sTaxon.name as source_taxon_name," +
+            "sTaxon.path? as source_taxon_path," +
+            "NULL as source_specimen_life_stage," +
+            "iType as interaction_type," +
+            "tTaxon.externalId? as target_taxon_external_id," +
+            "tTaxon.name as target_taxon_name," +
+            "tTaxon.path? as target_taxon_path," +
+            "NULL as target_specimen_life_stage," +
+            "NULL as latitude," +
+            "NULL as longitude," +
+            "NULL as study_title";
+
     @Test
     public void findInteractionForSourceAndTargetTaxaLocations() throws IOException {
         HashMap<String, String[]> params = new HashMap<String, String[]>() {
@@ -65,6 +80,24 @@ public class CypherQueryBuilderTest {
     }
 
     @Test
+    public void findInteractionForSourceAndTargetTaxaLocationsDistinct() throws IOException {
+        HashMap<String, String[]> params = new HashMap<String, String[]>() {
+            {
+                put("sourceTaxon", new String[]{"Actinopterygii", "Chordata"});
+                put("targetTaxon", new String[]{"Arthropoda"});
+                put("bbox", new String[]{"-67.87,12.79,-57.08,23.32"});
+            }
+        };
+
+        CypherQuery query = buildInteractionQuery(params, MULTI_TAXON_DISTINCT);
+        assertThat(query.getQuery(), is("START sourceTaxon = node:taxonPaths({source_taxon_name}) " +
+                EXPECTED_MATCH_CLAUSE_SPATIAL +
+                "WHERE loc.latitude < 23.32 AND loc.longitude > -67.87 AND loc.latitude > 12.79 AND loc.longitude < -57.08 AND has(targetTaxon.path) AND targetTaxon.path =~ '(.*(Arthropoda).*)' " +
+                EXPECTED_RETURN_CLAUSE_DISTINCT));
+        assertThat(query.getParams().toString(), is(is("{source_taxon_name=path:\\\"Actinopterygii\\\" OR path:\\\"Chordata\\\", target_taxon_name=path:\\\"Arthropoda\\\"}")));
+    }
+
+    @Test
     public void findInteractionForLocationOnly() throws IOException {
         HashMap<String, String[]> params = new HashMap<String, String[]>() {
             {
@@ -77,6 +110,22 @@ public class CypherQueryBuilderTest {
                 EXPECTED_MATCH_CLAUSE_SPATIAL +
                 "WHERE loc.latitude < 23.32 AND loc.longitude > -67.87 AND loc.latitude > 12.79 AND loc.longitude < -57.08 " +
                 EXPECTED_RETURN_CLAUSE));
+        assertThat(query.getParams().isEmpty(), is(true));
+    }
+
+    @Test
+    public void findInteractionForLocationOnlyDistinct() throws IOException {
+        HashMap<String, String[]> params = new HashMap<String, String[]>() {
+            {
+                put("bbox", new String[]{"-67.87,12.79,-57.08,23.32"});
+            }
+        };
+
+        CypherQuery query = buildInteractionQuery(params, MULTI_TAXON_DISTINCT);
+        assertThat(query.getQuery(), is("START loc = node:locations('*:*') " +
+                EXPECTED_MATCH_CLAUSE_SPATIAL +
+                "WHERE loc.latitude < 23.32 AND loc.longitude > -67.87 AND loc.latitude > 12.79 AND loc.longitude < -57.08 " +
+                EXPECTED_RETURN_CLAUSE_DISTINCT));
         assertThat(query.getParams().isEmpty(), is(true));
     }
 
@@ -129,6 +178,25 @@ public class CypherQueryBuilderTest {
                 "WHERE has(targetTaxon.path) AND targetTaxon.path =~ '(.*(Mammalia).*)' " +
                 EXPECTED_RETURN_CLAUSE;
         CypherQuery query = buildInteractionQuery(params, MULTI_TAXON_ALL);
+        assertThat(query.getQuery(), is(expectedQuery));
+        assertThat(query.getParams().toString(), is("{source_taxon_name=path:\\\"Arthropoda\\\", target_taxon_name=path:\\\"Mammalia\\\"}"));
+    }
+
+    @Test
+    public void findInteractionForTargetTaxaOnlyByInteractionTypeDistinct() throws IOException {
+        HashMap<String, String[]> params = new HashMap<String, String[]>() {
+            {
+                put("sourceTaxon", new String[]{"Arthropoda"});
+                put("targetTaxon", new String[]{"Mammalia"});
+                put("interactionType", new String[]{"preysOn", "parasiteOf"});
+            }
+        };
+
+        String expectedQuery = "START sourceTaxon = node:taxonPaths({source_taxon_name}) " +
+                expectedMatchClause(expectedInteractionClause("ATE|PREYS_UPON|PARASITE_OF|HAS_HOST"), false) +
+                "WHERE has(targetTaxon.path) AND targetTaxon.path =~ '(.*(Mammalia).*)' " +
+                EXPECTED_RETURN_CLAUSE_DISTINCT;
+        CypherQuery query = buildInteractionQuery(params, MULTI_TAXON_DISTINCT);
         assertThat(query.getQuery(), is(expectedQuery));
         assertThat(query.getParams().toString(), is("{source_taxon_name=path:\\\"Arthropoda\\\", target_taxon_name=path:\\\"Mammalia\\\"}"));
     }
