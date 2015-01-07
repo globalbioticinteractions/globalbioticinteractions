@@ -89,7 +89,7 @@ public class InteractionController {
 
     private boolean shouldIncludeObservations(HttpServletRequest request, Map parameterMap) {
         String includeObservations = parameterMap == null ? null : request.getParameter("includeObservations");
-        return "true".equalsIgnoreCase(includeObservations);
+        return "t".equalsIgnoreCase(includeObservations) || "true".equalsIgnoreCase(includeObservations);
     }
 
     public static CypherQueryExecutor createQueryExecutor(final String sourceTaxonName, String interactionType, final String targetTaxonName, Map parameterMap, CypherQueryBuilder.QueryType queryType) throws IOException {
