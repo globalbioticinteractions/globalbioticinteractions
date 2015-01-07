@@ -1,7 +1,6 @@
 package org.eol.globi.export;
 
 import com.hp.hpl.jena.query.Dataset;
-import com.hp.hpl.jena.query.ReadWrite;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.tdb.TDB;
 import com.hp.hpl.jena.tdb.TDBFactory;
@@ -78,7 +77,7 @@ public class GraphExporter {
                         put("association.csv", new ExporterAssociationAggregates());
                         put("occurrence.csv", new ExporterOccurrenceAggregates());
                         put("references.csv", new ExporterReferences());
-                        put("taxa.csv", new ExporterTaxa());
+                        put("taxa.csv", new ExporterTaxaDistinct());
                     }
                 }
         );
@@ -90,7 +89,7 @@ public class GraphExporter {
                 put("association.csv", new ExporterAssociations());
                 put("occurrence.csv", new ExporterOccurrences());
                 put("references.csv", new ExporterReferences());
-                put("taxa.csv", new ExporterTaxa());
+                put("taxa.csv", new ExporterTaxaDistinct());
                 put("measurementOrFact.csv", new ExporterMeasurementOrFact());
             }
         });

@@ -84,7 +84,7 @@ public class WoRMSService extends BaseHttpClientService implements PropertyEnric
                 value = ServiceUtil.extractPath(response1, "AphiaID");
                 properties.put(PropertyAndValueDictionary.PATH_IDS, StringUtils.isBlank(value) ? null : value);
                 value = ServiceUtil.extractPath(response1, "rank");
-                properties.put(PropertyAndValueDictionary.PATH_NAMES, StringUtils.isBlank(value) ? null : value);
+                properties.put(PropertyAndValueDictionary.PATH_NAMES, StringUtils.isBlank(value) ? null : StringUtils.lowerCase(value));
             }
 
 

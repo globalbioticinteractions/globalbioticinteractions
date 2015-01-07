@@ -43,7 +43,7 @@ public class WoRMSServiceTest {
         assertThat(enriched.get(PropertyAndValueDictionary.EXTERNAL_ID), containsString("WORMS:726834"));
         assertThat(enriched.get(PropertyAndValueDictionary.PATH), containsString("Lecithochirium"));
         assertThat(enriched.get(PropertyAndValueDictionary.PATH_IDS), containsString("1 | 2 | 793 | 19948 | 108400 | 108402 | 468918 | 108418 | 108471 | 724982 | 108758 | 726834"));
-        assertThat(enriched.get(PropertyAndValueDictionary.PATH_NAMES), containsString("Superdomain | Kingdom | Phylum | Class | Subclass | Order | Suborder | Superfamily | Family | Subfamily | Genus | Species"));
+        assertThat(enriched.get(PropertyAndValueDictionary.PATH_NAMES), containsString("superdomain | kingdom | phylum | class | subclass | order | suborder | superfamily | family | subfamily | genus | species"));
     }
 
     @Test
