@@ -41,9 +41,10 @@ public class WoRMSServiceTest {
         Map<String, String> enriched = new WoRMSService().enrichById(wormsId, properties);
         assertThat(enriched.get(PropertyAndValueDictionary.NAME), containsString("Lecithochirium"));
         assertThat(enriched.get(PropertyAndValueDictionary.EXTERNAL_ID), containsString("WORMS:726834"));
-        assertThat(enriched.get(PropertyAndValueDictionary.PATH), containsString("Lecithochirium"));
-        assertThat(enriched.get(PropertyAndValueDictionary.PATH_IDS), containsString("1 | 2 | 793 | 19948 | 108400 | 108402 | 468918 | 108418 | 108471 | 724982 | 108758 | 726834"));
-        assertThat(enriched.get(PropertyAndValueDictionary.PATH_NAMES), containsString("superdomain | kingdom | phylum | class | subclass | order | suborder | superfamily | family | subfamily | genus | species"));
+        assertThat(enriched.get(PropertyAndValueDictionary.RANK), is("species"));
+        assertThat(enriched.get(PropertyAndValueDictionary.PATH), is("Biota | Animalia | Platyhelminthes | Trematoda | Digenea | Plagiorchiida | Hemiurata | Hemiuroidea | Hemiuridae | Lecithochiriinae | Lecithochirium | Lecithochirium concavovesiculus"));
+        assertThat(enriched.get(PropertyAndValueDictionary.PATH_IDS), is("1 | 2 | 793 | 19948 | 108400 | 108402 | 468918 | 108418 | 108471 | 724982 | 108758 | 726834"));
+        assertThat(enriched.get(PropertyAndValueDictionary.PATH_NAMES), is("superdomain | kingdom | phylum | class | subclass | order | suborder | superfamily | family | subfamily | genus | species"));
     }
 
     @Test

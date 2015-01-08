@@ -4,6 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.impl.client.BasicResponseHandler;
+import org.eol.globi.data.CharsetConstant;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.TaxonomyProvider;
 
@@ -84,6 +85,11 @@ public class WoRMSService extends BaseHttpClientService implements PropertyEnric
                 value = ServiceUtil.extractPath(response1, "AphiaID");
                 properties.put(PropertyAndValueDictionary.PATH_IDS, StringUtils.isBlank(value) ? null : value);
                 value = ServiceUtil.extractPath(response1, "rank");
+                String[] ranks = StringUtils.split(value, CharsetConstant.SEPARATOR);
+                if (ranks != null && ranks.length > 0) {
+                    properties.put(PropertyAndValueDictionary.RANK, StringUtils.trim(StringUtils.lowerCase(ranks[ranks.length-1])));
+                }
+
                 properties.put(PropertyAndValueDictionary.PATH_NAMES, StringUtils.isBlank(value) ? null : StringUtils.lowerCase(value));
             }
 
