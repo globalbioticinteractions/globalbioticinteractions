@@ -50,7 +50,7 @@ public class StudyImporterFactory {
 
     public StudyImporter instantiateImporter(Class<StudyImporter> clazz) throws StudyImporterException {
         try {
-            Constructor<StudyImporter> aConstructor = clazz.getConstructor(ParserFactory.class, NodeFactoryImpl.class);
+            Constructor<StudyImporter> aConstructor = clazz.getConstructor(ParserFactory.class, NodeFactory.class);
             return aConstructor.newInstance(parserFactory, nodeFactory);
         } catch (Exception ex) {
             throw new StudyImporterException("failed to create study importer for [" + clazz.toString() + "]", ex);
