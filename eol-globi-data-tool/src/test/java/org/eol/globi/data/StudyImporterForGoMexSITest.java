@@ -11,6 +11,7 @@ import org.eol.globi.service.GitHubUtil;
 import org.eol.globi.util.ExternalIdUtil;
 import org.junit.Test;
 import org.neo4j.graphdb.Direction;
+import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.index.Index;
@@ -48,7 +49,7 @@ public class StudyImporterForGoMexSITest extends GraphDBTestCase {
 
         Study study = nodeFactory.findStudy("Divita et al 1983");
 
-        assertSpecimenProperties(nodeFactory);
+        assertSpecimenProperties(study.getUnderlyingNode().getGraphDatabase());
 
         assertNotNull(study);
         assertThat(study.getTitle(), is("Divita et al 1983"));
@@ -106,8 +107,8 @@ public class StudyImporterForGoMexSITest extends GraphDBTestCase {
         assertNotNull(nodeFactory.findStudy("GoMexSI"));
     }
 
-    private static void assertSpecimenProperties(NodeFactory nodeFactory) {
-        Index<Node> taxa = nodeFactory.getGraphDb().index().forNodes("taxons");
+    private static void assertSpecimenProperties(GraphDatabaseService service) {
+        Index<Node> taxa = service.index().forNodes("taxons");
         boolean detectedAtLeastOneLifeState = false;
         boolean detectedAtLeastOnePhysiologicalState = false;
         boolean detectedAtLeastOnePreyBodyPart = false;

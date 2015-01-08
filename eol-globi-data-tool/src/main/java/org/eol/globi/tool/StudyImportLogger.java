@@ -1,17 +1,11 @@
 package org.eol.globi.tool;
 
 import org.eol.globi.data.ImportLogger;
-import org.eol.globi.data.NodeFactory;
 import org.eol.globi.domain.Study;
 
 import java.util.logging.Level;
 
 public class StudyImportLogger implements ImportLogger {
-    private final NodeFactory factory;
-
-    public StudyImportLogger(NodeFactory factory) {
-        this.factory = factory;
-    }
 
     @Override
     public void warn(Study study, String message) {

@@ -16,7 +16,7 @@ public class StudyImporterForSIADTest extends GraphDBTestCase {
     public void importAll() throws StudyImporterException, NodeFactoryException {
         StudyImporterForSIAD importerForSAID = new StudyImporterForSIAD(new ParserFactoryImpl(), nodeFactory);
         importerForSAID.importStudy();
-        List<Study> allStudies = NodeFactory.findAllStudies(getGraphDb());
+        List<Study> allStudies = NodeFactoryImpl.findAllStudies(getGraphDb());
         assertThat(allStudies.size() > 1, is(true));
 
         TaxonNode taxon = nodeFactory.findTaxonByName("Anisakis");

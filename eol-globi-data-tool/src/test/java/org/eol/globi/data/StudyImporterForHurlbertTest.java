@@ -16,7 +16,7 @@ public class StudyImporterForHurlbertTest extends GraphDBTestCase {
     public void importAll() throws StudyImporterException {
         StudyImporter importer = new StudyImporterForHurlbert(new ParserFactoryImpl(), nodeFactory);
         importer.importStudy();
-        List<Study> allStudies = NodeFactory.findAllStudies(getGraphDb());
+        List<Study> allStudies = NodeFactoryImpl.findAllStudies(getGraphDb());
         assertThat(allStudies.size() > 10, is(true));
     }
 
@@ -26,7 +26,7 @@ public class StudyImporterForHurlbertTest extends GraphDBTestCase {
         StudyImporter importer = new StudyImporterForHurlbert(factory, nodeFactory);
         importer.importStudy();
 
-        List<Study> allStudies = NodeFactory.findAllStudies(getGraphDb());
+        List<Study> allStudies = NodeFactoryImpl.findAllStudies(getGraphDb());
         assertThat(allStudies.size(), is(1));
 
         Study study = allStudies.get(0);

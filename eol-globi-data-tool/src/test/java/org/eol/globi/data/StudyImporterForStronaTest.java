@@ -24,7 +24,7 @@ public class StudyImporterForStronaTest extends GraphDBTestCase {
         });
         importer.importStudy();
 
-        List<Study> allStudies = NodeFactory.findAllStudies(getGraphDb());
+        List<Study> allStudies = NodeFactoryImpl.findAllStudies(getGraphDb());
         assertThat(allStudies.size(), is(1));
 
 

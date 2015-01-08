@@ -4,7 +4,6 @@ import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.TaxonNode;
 import org.junit.Test;
-import org.neo4j.cypher.javacompat.ExecutionEngine;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
@@ -65,7 +64,7 @@ public class StudyImporterForGeminaTest extends GraphDBTestCase {
         importer.importStudy();
         assertHuman();
 
-        Index<Node> taxons = nodeFactory.getGraphDb().index().forNodes("taxons");
+        Index<Node> taxons = getGraphDb().index().forNodes("taxons");
         IndexHits<Node> hits = taxons.query("*:*");
         for (Node hit : hits) {
             assertThat("taxon with name [" + hit.getProperty("name") + "] has no externalId", (String) hit.getProperty("externalId"), not(is("NCBI:")));

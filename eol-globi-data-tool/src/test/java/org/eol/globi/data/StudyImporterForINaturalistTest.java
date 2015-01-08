@@ -35,7 +35,7 @@ public class StudyImporterForINaturalistTest extends GraphDBTestCase {
     @Test
     public void importUsingINatAPI() throws StudyImporterException, PropertyEnricherException {
         importer.importStudy();
-        assertThat(NodeFactory.findAllStudies(getGraphDb()).size() > 150, is(true));
+        assertThat(NodeFactoryImpl.findAllStudies(getGraphDb()).size() > 150, is(true));
     }
 
     @Ignore(value = "see https://github.com/jhpoelen/eol-globi-data/issues/56")
@@ -50,7 +50,7 @@ public class StudyImporterForINaturalistTest extends GraphDBTestCase {
     public void importTestResponse() throws IOException, NodeFactoryException, StudyImporterException {
         importer.parseJSON(getClass().getResourceAsStream("inaturalist/sample_inaturalist_response.json"));
 
-        assertThat(NodeFactory.findAllStudies(getGraphDb()).size(), is(30));
+        assertThat(NodeFactoryImpl.findAllStudies(getGraphDb()).size(), is(30));
 
         Study anotherStudy = nodeFactory.findStudy("INAT:831");
         assertThat(anotherStudy, is(notNullValue()));

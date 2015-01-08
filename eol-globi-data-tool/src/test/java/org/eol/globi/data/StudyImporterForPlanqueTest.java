@@ -36,7 +36,7 @@ public class StudyImporterForPlanqueTest extends GraphDBTestCase {
         });
         importer.importStudy();
 
-        List<Study> studies = NodeFactory.findAllStudies(getGraphDb());
+        List<Study> studies = NodeFactoryImpl.findAllStudies(getGraphDb());
 
         assertThat(studies.size(), is(215));
         assertThat(nodeFactory.findTaxonByName("Sagitta elegans"), is(notNullValue()));

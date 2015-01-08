@@ -2,6 +2,7 @@ package org.eol.globi.domain;
 
 import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.NodeFactory;
+import org.eol.globi.data.NodeFactoryImpl;
 import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.data.PassThroughEnricher;
 import org.eol.globi.data.taxon.TaxonIndexImpl;
@@ -25,7 +26,7 @@ public class StudyTest extends GraphDBTestCase {
 
     @Before
     public void createFactory() {
-        factory = new NodeFactory(getGraphDb(), new TaxonIndexImpl(new PassThroughEnricher(),
+        factory = new NodeFactoryImpl(getGraphDb(), new TaxonIndexImpl(new PassThroughEnricher(),
                 new TaxonNameCorrector(), getGraphDb()));
     }
 

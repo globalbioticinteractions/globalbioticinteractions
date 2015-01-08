@@ -4,7 +4,7 @@ import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.io.FileUtils;
 import org.eol.globi.data.GraphDBTestCase;
-import org.eol.globi.data.NodeFactory;
+import org.eol.globi.data.NodeFactoryImpl;
 import org.eol.globi.data.PassThroughEnricher;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.data.StudyImporterForSimons;
@@ -57,13 +57,13 @@ public class NormalizerTest extends GraphDBTestCase {
     public void doSingleImport() throws IOException, StudyImporterException {
         Normalizer dataNormalizationTool = createNormalizer();
 
-        dataNormalizationTool.importData(StudyImporterForSimons.class, new NodeFactory(getGraphDb(),
+        dataNormalizationTool.importData(StudyImporterForSimons.class, new NodeFactoryImpl(getGraphDb(),
                 new TaxonIndexImpl(new PassThroughEnricher(), new TaxonNameCorrector(), getGraphDb())));
 
 
         GraphDatabaseService graphService = getGraphDb();
 
-        List<Study> allStudies = NodeFactory.findAllStudies(graphService);
+        List<Study> allStudies = NodeFactoryImpl.findAllStudies(graphService);
         assertThat(allStudies.size(), is(1));
         assertThat(allStudies.get(0).getTitle(), is("Simons 1997"));
 
@@ -114,7 +114,7 @@ public class NormalizerTest extends GraphDBTestCase {
 
             }
         };
-        dataNormalizationTool.importData(StudyImporterForSimons.class, new NodeFactory(graphService, new TaxonIndexImpl(taxonEnricher, new TaxonNameCorrector(), getGraphDb())));
+        dataNormalizationTool.importData(StudyImporterForSimons.class, new NodeFactoryImpl(graphService, new TaxonIndexImpl(taxonEnricher, new TaxonNameCorrector(), getGraphDb())));
 
 
         String baseDir = "./target/normalizer-test/";

@@ -16,7 +16,7 @@ public class StudyImporterForCruaudTest extends GraphDBTestCase {
             StudyImporter importer = new StudyImporterForCruaud(new ParserFactoryImpl(), nodeFactory);
             importer.importStudy();
 
-            List<Study> allStudies = NodeFactory.findAllStudies(getGraphDb());
+            List<Study> allStudies = NodeFactoryImpl.findAllStudies(getGraphDb());
             assertThat(allStudies.size(), is(1));
 
 

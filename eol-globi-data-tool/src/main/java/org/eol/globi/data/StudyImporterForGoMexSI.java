@@ -132,7 +132,7 @@ public class StudyImporterForGoMexSI extends BaseStudyImporter {
     }
 
     private void updateContributorList(String lastName, String firstName, Study study) {
-        Transaction transaction = nodeFactory.getGraphDb().beginTx();
+        Transaction transaction = study.getUnderlyingNode().getGraphDatabase().beginTx();
         try {
             String contributor = study.getContributor();
             study.setContributor(contributor + ", " + firstName + " " + lastName);
@@ -170,7 +170,7 @@ public class StudyImporterForGoMexSI extends BaseStudyImporter {
         study = nodeFactory.getOrCreateStudy(refTag, firstName + " " + lastName, institution.toString(), "", description
                 , publicationYear
                 , getSourceCitation(), null);
-        Transaction transaction = nodeFactory.getGraphDb().beginTx();
+        Transaction transaction = study.getUnderlyingNode().getGraphDatabase().beginTx();
         try {
             study.setPublicationYear(publicationYear);
             if (StringUtils.isNotBlank(externalId)) {

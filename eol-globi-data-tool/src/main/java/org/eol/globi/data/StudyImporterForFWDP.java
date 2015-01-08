@@ -103,7 +103,7 @@ public class StudyImporterForFWDP extends BaseStudyImporter {
             String uniquePredatorId = parser.getValueByLabel("cruise6") + "-" + parser.getValueByLabel("PDID") + "-" + parser.getValueByLabel("CATNUM");
             Long nodeId = predatorSpecimenMap.get(uniquePredatorId);
             if (nodeId != null) {
-                Node nodeById = nodeFactory.getGraphDb().getNodeById(nodeId);
+                Node nodeById = study.getUnderlyingNode().getGraphDatabase().getNodeById(nodeId);
                 if (nodeById != null) {
                     predatorSpecimen = new Specimen(nodeById);
                 }

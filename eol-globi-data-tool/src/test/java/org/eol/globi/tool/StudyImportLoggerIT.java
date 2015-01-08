@@ -7,7 +7,7 @@ public class StudyImportLoggerIT extends GraphDBTestCase {
 
     @Test
     public void logMsg() {
-        StudyImportLogger logger = new StudyImportLogger(nodeFactory);
+        StudyImportLogger logger = new StudyImportLogger();
         logger.info(nodeFactory.createStudy("bla"), "my info message");
     }
 }

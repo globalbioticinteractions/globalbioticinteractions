@@ -2,6 +2,7 @@ package org.eol.globi.export;
 
 import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.NodeFactory;
+import org.eol.globi.data.NodeFactoryImpl;
 import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.data.taxon.CorrectionService;
 import org.eol.globi.data.taxon.TaxonIndexImpl;
@@ -141,8 +142,8 @@ public class StudyExportUnmatchedTaxaForStudiesTest extends GraphDBTestCase {
         ));
     }
 
-    private NodeFactory factory(PropertyEnricher enricher) {
-        return new NodeFactory(getGraphDb(), new TaxonIndexImpl(enricher, new CorrectionService() {
+    private NodeFactoryImpl factory(PropertyEnricher enricher) {
+        return new NodeFactoryImpl(getGraphDb(), new TaxonIndexImpl(enricher, new CorrectionService() {
             @Override
             public String correct(String taxonName) {
                 return taxonName;

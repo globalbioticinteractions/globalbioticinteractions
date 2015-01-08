@@ -5,7 +5,7 @@ import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.eol.globi.data.GraphDBTestCase;
-import org.eol.globi.data.NodeFactory;
+import org.eol.globi.data.NodeFactoryImpl;
 import org.eol.globi.data.ParserFactoryImpl;
 import org.eol.globi.data.StudyImporter;
 import org.eol.globi.data.StudyImporterException;
@@ -42,7 +42,7 @@ public class ExporterGoMexSITest extends GraphDBTestCase {
     public void exportAll() throws StudyImporterException, IOException {
         StudyImporter importer = new StudyImporterForSimons(new ParserFactoryImpl(), nodeFactory);
         importer.importStudy();
-        List<Study> allStudies = NodeFactory.findAllStudies(getGraphDb());
+        List<Study> allStudies = NodeFactoryImpl.findAllStudies(getGraphDb());
 
         assertThat(allStudies.size() > 0, is(true));
 

@@ -2,7 +2,7 @@ package org.eol.globi.service;
 
 import org.eol.globi.data.CharsetConstant;
 import org.eol.globi.data.GraphDBTestCase;
-import org.eol.globi.data.NodeFactory;
+import org.eol.globi.data.NodeFactoryImpl;
 import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.data.taxon.TaxonNameCorrector;
 import org.eol.globi.data.taxon.TaxonIndexImpl;
@@ -31,7 +31,7 @@ public class TaxonEnricherImplIT extends GraphDBTestCase {
     @Before
     public void start() {
         enricher = PropertyEnricherFactory.createTaxonEnricher();
-        nodeFactory = new NodeFactory(getGraphDb(), new TaxonIndexImpl(enricher, new TaxonNameCorrector(), getGraphDb()));
+        nodeFactory = new NodeFactoryImpl(getGraphDb(), new TaxonIndexImpl(enricher, new TaxonNameCorrector(), getGraphDb()));
     }
 
     @Test

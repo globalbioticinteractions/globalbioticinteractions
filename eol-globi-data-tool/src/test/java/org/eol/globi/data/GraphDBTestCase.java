@@ -34,9 +34,9 @@ public abstract class GraphDBTestCase {
     }
 
     protected NodeFactory createNodeFactory(PropertyEnricher enricher) {
-        NodeFactory nodeFactory = new NodeFactory(getGraphDb(), new TaxonIndexImpl(enricher,
+        NodeFactoryImpl nodeFactoryImpl = new NodeFactoryImpl(getGraphDb(), new TaxonIndexImpl(enricher,
                 new PassThroughCorrectionService(), getGraphDb()));
-        nodeFactory.setEcoregionFinder(new EcoregionFinder() {
+        nodeFactoryImpl.setEcoregionFinder(new EcoregionFinder() {
 
             @Override
             public Collection<Ecoregion> findEcoregion(double lat, double lng) throws EcoregionFinderException {
@@ -55,9 +55,9 @@ public abstract class GraphDBTestCase {
 
             }
         });
-        nodeFactory.setEnvoLookupService(new TestTermLookupService());
-        nodeFactory.setTermLookupService(new TestTermLookupService());
-        nodeFactory.setDoiResolver(new DOIResolver() {
+        nodeFactoryImpl.setEnvoLookupService(getEnvoLookupService());
+        nodeFactoryImpl.setTermLookupService(new TestTermLookupService());
+        nodeFactoryImpl.setDoiResolver(new DOIResolver() {
             @Override
             public String findDOIForReference(String reference) throws IOException {
                 return StringUtils.isBlank(reference) ? null : "doi:" + reference;
@@ -69,7 +69,11 @@ public abstract class GraphDBTestCase {
             }
         });
 
-        return nodeFactory;
+        return nodeFactoryImpl;
+    }
+
+    protected TermLookupService getEnvoLookupService() {
+        return new TestTermLookupService();
     }
 
     @After

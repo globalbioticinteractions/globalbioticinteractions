@@ -22,7 +22,6 @@ import org.eol.globi.util.HttpUtil;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
-import org.neo4j.graphdb.Relationship;
 import org.eol.globi.geo.LatLng;
 
 import java.io.File;

@@ -94,7 +94,7 @@ public class StudyImporterForBarnesTest extends GraphDBTestCase {
         });
         studyImporterForBarnes.importStudy();
 
-        List<Study> studies = NodeFactory.findAllStudies(getGraphDb());
+        List<Study> studies = NodeFactoryImpl.findAllStudies(getGraphDb());
         assertTrue(studies.size() > 0);
         for (Study study : studies) {
             assertThat(study.getTitle(), is(notNullValue()));

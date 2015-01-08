@@ -31,7 +31,7 @@ public class StudyImporterForFishbaseTest extends GraphDBTestCase {
 
         studyImporter.importStudy(IOUtils.toInputStream(aFewLines));
 
-        List<Study> studies = NodeFactory.findAllStudies(getGraphDb());
+        List<Study> studies = NodeFactoryImpl.findAllStudies(getGraphDb());
         List<String> sources = new ArrayList<String>();
         List<String> citations = new ArrayList<String>();
         for (Study study : studies) {

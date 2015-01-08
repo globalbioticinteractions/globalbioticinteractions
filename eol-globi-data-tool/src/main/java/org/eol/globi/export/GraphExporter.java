@@ -7,7 +7,7 @@ import com.hp.hpl.jena.tdb.TDBFactory;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.eol.globi.data.NodeFactory;
+import org.eol.globi.data.NodeFactoryImpl;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.domain.Study;
 import org.neo4j.graphdb.GraphDatabaseService;
@@ -33,7 +33,7 @@ public class GraphExporter {
         } catch (IOException e) {
             throw new StudyImporterException("failed to create output dir [" + baseDir + "]", e);
         }
-        List<Study> studies = NodeFactory.findAllStudies(graphService);
+        List<Study> studies = NodeFactoryImpl.findAllStudies(graphService);
         exportDataOntology(studies, baseDir);
         exportUnmatchedTaxa(studies, baseDir);
         //exportGoMexSI(studies, baseDir);

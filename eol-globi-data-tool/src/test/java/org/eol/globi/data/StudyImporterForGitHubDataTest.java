@@ -20,7 +20,7 @@ public class StudyImporterForGitHubDataTest extends GraphDBTestCase {
         StudyImporter importer = new StudyImporterForGitHubData(new ParserFactoryImpl(), nodeFactory);
         importer.importStudy();
 
-        List<Study> allStudies = NodeFactory.findAllStudies(getGraphDb());
+        List<Study> allStudies = NodeFactoryImpl.findAllStudies(getGraphDb());
         List<String> refs = new ArrayList<String>();
         List<String> DOIs = new ArrayList<String>();
         List<String> sources = new ArrayList<String>();

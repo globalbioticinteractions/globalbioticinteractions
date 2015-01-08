@@ -28,7 +28,7 @@ public class StudyImporterForByrnesTest extends GraphDBTestCase {
 
         List<String> citationList = new ArrayList<String>();
         Set<String> citations = new HashSet<String>();
-        List<Study> studies = NodeFactory.findAllStudies(getGraphDb());
+        List<Study> studies = NodeFactoryImpl.findAllStudies(getGraphDb());
         assertTrue(studies.size() > 0);
         for (Study study : studies) {
             assertThat(study.getTitle(), is(notNullValue()));

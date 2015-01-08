@@ -36,13 +36,13 @@ public class StudyImporterForLifeWatchGreeceTest extends GraphDBTestCase {
 
     @Test
     public void readAssociations() throws StudyImporterException {
-        List<Study> studies = NodeFactory.findAllStudies(nodeFactory.getGraphDb());
+        List<Study> studies = NodeFactoryImpl.findAllStudies(getGraphDb());
         assertThat(studies.size(), is(0));
 
         StudyImporterForLifeWatchGreece importer = new StudyImporterForLifeWatchGreece(null, nodeFactory);
         importer.importStudy();
 
-        studies = NodeFactory.findAllStudies(nodeFactory.getGraphDb());
+        studies = NodeFactoryImpl.findAllStudies(getGraphDb());
         assertThat(studies.size(), is(146));
 
         Set<String> taxa = new HashSet<String>();

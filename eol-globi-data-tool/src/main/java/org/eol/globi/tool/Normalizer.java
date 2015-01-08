@@ -7,18 +7,17 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.eol.globi.data.NodeFactory;
+import org.eol.globi.data.NodeFactoryImpl;
 import org.eol.globi.data.ParserFactory;
 import org.eol.globi.data.ParserFactoryImpl;
 import org.eol.globi.data.StudyImporter;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.data.StudyImporterFactory;
-import org.eol.globi.data.taxon.TaxonNameCorrector;
 import org.eol.globi.data.taxon.TaxonIndexImpl;
+import org.eol.globi.data.taxon.TaxonNameCorrector;
 import org.eol.globi.db.GraphService;
 import org.eol.globi.export.GraphExporter;
 import org.eol.globi.geo.EcoregionFinder;
@@ -26,8 +25,8 @@ import org.eol.globi.geo.EcoregionFinderFactoryImpl;
 import org.eol.globi.opentree.OpenTreeTaxonIndex;
 import org.eol.globi.service.DOIResolverImpl;
 import org.eol.globi.service.EcoregionFinderProxy;
-import org.eol.globi.service.PropertyEnricherFactory;
 import org.eol.globi.service.PropertyEnricherException;
+import org.eol.globi.service.PropertyEnricherFactory;
 import org.neo4j.graphdb.GraphDatabaseService;
 
 import java.io.File;
@@ -152,7 +151,7 @@ public class Normalizer {
     private void importData(GraphDatabaseService graphService, Collection<Class> importers) {
         TaxonIndexImpl taxonService = new TaxonIndexImpl(PropertyEnricherFactory.createTaxonEnricher()
                 , new TaxonNameCorrector(), graphService);
-        NodeFactory factory = new NodeFactory(graphService, taxonService);
+        NodeFactoryImpl factory = new NodeFactoryImpl(graphService, taxonService);
         for (Class importer : importers) {
             try {
                 importData(importer, factory);
@@ -166,14 +165,14 @@ public class Normalizer {
         }
     }
 
-    protected void importData(Class importer, NodeFactory factory) throws StudyImporterException {
+    protected void importData(Class importer, NodeFactoryImpl factory) throws StudyImporterException {
         StudyImporter studyImporter = createStudyImporter(importer, factory);
         LOG.info("[" + importer + "] importing ...");
         studyImporter.importStudy();
         LOG.info("[" + importer + "] imported.");
     }
 
-    private StudyImporter createStudyImporter(Class<StudyImporter> studyImporter, NodeFactory factory) throws StudyImporterException {
+    private StudyImporter createStudyImporter(Class<StudyImporter> studyImporter, NodeFactoryImpl factory) throws StudyImporterException {
         factory.setEcoregionFinder(getEcoregionFinder());
         ParserFactory parserFactory = new ParserFactoryImpl();
         StudyImporter importer = new StudyImporterFactory(parserFactory, factory).instantiateImporter(studyImporter);
@@ -181,7 +180,7 @@ public class Normalizer {
             factory.setDoiResolver(new DOIResolverImpl());
         }
 
-        importer.setLogger(new StudyImportLogger(factory));
+        importer.setLogger(new StudyImportLogger());
         return importer;
     }
 

@@ -18,7 +18,7 @@ public class StudyImporterForBellTest extends GraphDBTestCase {
     public void importAll() throws StudyImporterException, NodeFactoryException {
         StudyImporter importer = new StudyImporterForBell(new ParserFactoryImpl(), nodeFactory);
         importer.importStudy();
-        List<Study> allStudies = NodeFactory.findAllStudies(getGraphDb());
+        List<Study> allStudies = NodeFactoryImpl.findAllStudies(getGraphDb());
         assertThat(allStudies.size(), is(6));
         ExecutionResult execute = new ExecutionEngine(getGraphDb()).execute("START taxon = node:taxons('*:*') RETURN taxon.name");
         String actual = execute.dumpToString();
