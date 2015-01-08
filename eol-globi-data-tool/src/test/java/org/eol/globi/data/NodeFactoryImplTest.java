@@ -3,7 +3,6 @@ package org.eol.globi.data;
 import junit.framework.Assert;
 import org.apache.commons.lang.StringUtils;
 import org.eol.globi.data.taxon.CorrectionService;
-import org.eol.globi.data.taxon.TaxonIndex;
 import org.eol.globi.data.taxon.TaxonIndexImpl;
 import org.eol.globi.domain.Environment;
 import org.eol.globi.domain.InteractType;

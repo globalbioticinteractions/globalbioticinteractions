@@ -1,4 +1,4 @@
-package org.eol.globi.data.taxon;
+package org.eol.globi.data;
 
 import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.domain.TaxonNode;

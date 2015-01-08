@@ -8,9 +8,7 @@ import org.eol.globi.domain.Location;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.Term;
-import org.eol.globi.service.TermLookupService;
 import org.eol.globi.service.TermLookupServiceException;
-import org.eol.globi.service.UberonLookupService;
 
 import java.io.IOException;
 import java.util.List;
@@ -22,7 +20,6 @@ public class StudyImporterForBarnes extends BaseStudyImporter {
     public static final String SOURCE = "Barnes, C. et al., 2008. PREDATOR AND PREY BODY SIZES IN MARINE FOOD WEBS. Ecology, 89(3), pp.881–881. Available at: http://dx.doi.org/10.1890/07-1551.1 . Data provided by Carolyn Barnes. Also available at " + "http://www.esapubs.org/Archive/ecol/E089/051/" + " .";
     public static final String RESOURCE_PATH = "barnes/Predator_and_prey_body_sizes_in_marine_food_webs_vsn4.txt";
     public static final String REFERENCE_PATH = "barnes/references.csv";
-    private TermLookupService termService = new UberonLookupService();
 
     public StudyImporterForBarnes(ParserFactory parserFactory, NodeFactory nodeFactory) {
         super(parserFactory, nodeFactory);
@@ -102,7 +99,7 @@ public class StudyImporterForBarnes extends BaseStudyImporter {
     private void addLifeStage(LabeledCSVParser parser, Specimen predator) throws StudyImporterException {
         String lifeStageString = parser.getValueByLabel("Predator lifestage");
         try {
-            List<Term> terms = termService.lookupTermByName(lifeStageString);
+            List<Term> terms = nodeFactory.getTermLookupService().lookupTermByName(lifeStageString);
             if (terms.size() == 0) {
                 throw new StudyImporterException("unsupported life stage [" + lifeStageString + "] on line [" + parser.getLastLineNumber() + "]");
             }

@@ -274,7 +274,7 @@ public class GeoNamesServiceImpl implements GeoNamesService {
         return point;
     }
 
-    protected static Long parseGeoId(String locality, String idString) {
+    public static Long parseGeoId(String locality, String idString) {
         String s = idString.replaceFirst(GEONAMES.getIdPrefix(), "");
         Long id = null;
         if (StringUtils.isNotBlank(s)) {

@@ -6,7 +6,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.data.StudyImporterException;
-import org.eol.globi.data.taxon.TaxonIndex;
+import org.eol.globi.data.TaxonIndex;
 import org.eol.globi.data.taxon.TaxonNameCorrector;
 import org.eol.globi.data.taxon.TaxonIndexImpl;
 import org.eol.globi.db.GraphService;

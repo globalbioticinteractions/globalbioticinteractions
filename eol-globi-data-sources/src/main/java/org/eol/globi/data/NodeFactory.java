@@ -1,6 +1,5 @@
 package org.eol.globi.data;
 
-import org.eol.globi.data.taxon.TaxonIndex;
 import org.eol.globi.domain.Environment;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.Season;

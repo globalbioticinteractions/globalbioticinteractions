@@ -10,9 +10,7 @@ import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.Term;
 import org.eol.globi.geo.LatLng;
-import org.eol.globi.service.TermLookupService;
 import org.eol.globi.service.TermLookupServiceException;
-import org.eol.globi.service.UberonLookupService;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -25,7 +23,6 @@ public class StudyImporterForBrose extends BaseStudyImporter {
     public static final String SOURCE = "Brose, U. et al., 2005. Body sizes of consumers and their resources. Ecology 86:2545. Available from doi:10.1890/05-0379 .";
     public static final String RESOURCE_PATH = "brose/bodysizes_2008.txt.gz";
     public static final String REFERENCE_PATH = "brose/references.csv";
-    private TermLookupService termService = new UberonLookupService();
 
     private static final Map<String, LatLng> LOC_MAP = new HashMap<String, LatLng>() {{
         put("Country: United Kingdom; UTM: 51.24'N, 0.34'W; Silwood Park, Berkshire", new LatLng(51.24d, -0.34d));
@@ -164,7 +161,7 @@ public class StudyImporterForBrose extends BaseStudyImporter {
     private void addLifeStage(LabeledCSVParser parser, Specimen specimen, String label) throws StudyImporterException {
         String lifeStageString = parser.getValueByLabel(label);
         try {
-            List<Term> terms = termService.lookupTermByName(lifeStageString);
+            List<Term> terms = nodeFactory.getTermLookupService().lookupTermByName(lifeStageString);
             if (terms.size() == 0) {
                 throw new StudyImporterException("unsupported life stage [" + lifeStageString + "] on line [" + parser.getLastLineNumber() + "]");
             }

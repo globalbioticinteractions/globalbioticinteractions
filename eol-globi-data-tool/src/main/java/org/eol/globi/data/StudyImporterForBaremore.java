@@ -23,9 +23,6 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 public class StudyImporterForBaremore extends BaseStudyImporter {
     private static final String DATA_SOURCE = "baremore/ANGELSHARK_DIET_DATAREQUEST_10012012.csv";
 
-    private TermLookupService termLookupService = new UberonLookupService();
-
-
     public StudyImporterForBaremore(ParserFactory parserFactory, NodeFactory nodeFactory) {
         super(parserFactory, nodeFactory);
     }
@@ -96,7 +93,7 @@ public class StudyImporterForBaremore extends BaseStudyImporter {
     private void addLifeStage(LabeledCSVParser parser, Specimen predatorSpecimen) throws StudyImporterException {
         String lifeStageString = parser.getValueByLabel("Mat State");
         try {
-            List<Term> lifeStages = termLookupService.lookupTermByName(lifeStageString);
+            List<Term> lifeStages = nodeFactory.getTermLookupService().lookupTermByName(lifeStageString);
             if (lifeStages.size() == 0) {
                 throw new StudyImporterException("unsupported lifeStage [" + lifeStageString + "] on line [" + parser.getLastLineNumber() + "]");
             }

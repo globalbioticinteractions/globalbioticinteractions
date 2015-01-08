@@ -5,9 +5,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
-import org.eol.globi.service.TermLookupService;
 import org.eol.globi.service.TermLookupServiceException;
-import org.eol.globi.service.UberonLookupService;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormat;
@@ -23,8 +21,6 @@ import java.util.Map;
 
 public class StudyImporterForBlewett extends BaseStudyImporter {
     public static final String COLLECTION_NO = "Collection #";
-
-    private TermLookupService termLookupService = new UberonLookupService();
 
     public StudyImporterForBlewett(ParserFactory parserFactory, NodeFactory nodeFactory) {
         super(parserFactory, nodeFactory);
@@ -146,7 +142,7 @@ public class StudyImporterForBlewett extends BaseStudyImporter {
     private Specimen addPredator(Study study, LabeledCSVParser parser, String[] line) throws NodeFactoryException, TermLookupServiceException {
         Specimen predatorSpecimen = nodeFactory.createSpecimen(study, "Centropomus undecimalis");
 
-        predatorSpecimen.setLifeStage(termLookupService.lookupTermByName("adult"));
+        predatorSpecimen.setLifeStage(nodeFactory.getTermLookupService().lookupTermByName("adult"));
         try {
             String length = parser.getValueByLabel("Standard Length");
             predatorSpecimen.setLengthInMm(Double.parseDouble(length));

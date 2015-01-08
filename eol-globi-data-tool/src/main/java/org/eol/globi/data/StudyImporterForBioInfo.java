@@ -7,9 +7,7 @@ import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.TaxonomyProvider;
 import org.eol.globi.domain.Term;
-import org.eol.globi.service.TermLookupService;
 import org.eol.globi.service.TermLookupServiceException;
-import org.eol.globi.service.UberonLookupService;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -20,8 +18,6 @@ public class StudyImporterForBioInfo extends BaseStudyImporter implements StudyI
     public static final String TAXA_DATA_FILE = "bioinfo.org.uk/Taxa.txt.gz";
     public static final String RELATION_TYPE_DATA_FILE = "bioinfo.org.uk/TrophicRelations.txt.gz";
     public static final String RELATIONS_DATA_FILE = "bioinfo.org.uk/Relations.txt.gz";
-
-    public TermLookupService termLookupService = new UberonLookupService();
 
     public static final String BIOINFO_URL = "http://bioinfo.org.uk";
 
@@ -183,7 +179,7 @@ public class StudyImporterForBioInfo extends BaseStudyImporter implements StudyI
 
     private List<Term> parseLifeStage(String lifeStageString, Study study) throws StudyImporterException {
         try {
-            List<Term> terms = termLookupService.lookupTermByName(lifeStageString);
+            List<Term> terms = nodeFactory.getTermLookupService().lookupTermByName(lifeStageString);
             if (terms.size() > 0) {
             } else {
                 getLogger().warn(study, "failed to map life stage [" + lifeStageString + "]");

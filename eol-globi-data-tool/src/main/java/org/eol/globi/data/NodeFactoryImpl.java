@@ -3,7 +3,6 @@ package org.eol.globi.data;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.eol.globi.data.taxon.TaxonIndex;
 import org.eol.globi.domain.Environment;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.PropertyAndValueDictionary;
@@ -444,7 +443,6 @@ public class NodeFactoryImpl implements NodeFactory {
         return ecoregions;
     }
 
-    @Override
     public List<Ecoregion> enrichLocationWithEcoRegions(Location location) throws NodeFactoryException {
         List<Ecoregion> associatedEcoregions = getEcoRegions(location.getUnderlyingNode());
         return associatedEcoregions == null ? associateWithEcoRegions(location) : associatedEcoregions;
@@ -569,17 +567,14 @@ public class NodeFactoryImpl implements NodeFactory {
         return ecoregionFinder;
     }
 
-    @Override
     public IndexHits<Node> findCloseMatchesForEcoregion(String ecoregionName) {
         return NodeUtil.query(ecoregionName, PropertyAndValueDictionary.NAME, ecoregions);
     }
 
-    @Override
     public IndexHits<Node> findCloseMatchesForEcoregionPath(String ecoregionPath) {
         return NodeUtil.query(ecoregionPath, PropertyAndValueDictionary.PATH, ecoregionPaths);
     }
 
-    @Override
     public IndexHits<Node> suggestEcoregionByName(String wholeOrPartialEcoregionNameOrPath) {
         return ecoregionSuggestions.query("name:\"" + wholeOrPartialEcoregionNameOrPath + "\"");
     }

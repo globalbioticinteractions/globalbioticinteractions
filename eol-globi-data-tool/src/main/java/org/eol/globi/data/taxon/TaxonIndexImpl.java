@@ -3,6 +3,7 @@ package org.eol.globi.data.taxon;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.lucene.queryParser.QueryParser;
 import org.eol.globi.data.NodeFactoryException;
+import org.eol.globi.data.TaxonIndex;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
