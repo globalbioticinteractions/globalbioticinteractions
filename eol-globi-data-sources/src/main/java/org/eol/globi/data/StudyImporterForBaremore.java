@@ -6,9 +6,7 @@ import org.eol.globi.domain.Location;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.Term;
-import org.eol.globi.service.TermLookupService;
 import org.eol.globi.service.TermLookupServiceException;
-import org.eol.globi.service.UberonLookupService;
 
 import java.io.IOException;
 import java.text.ParseException;

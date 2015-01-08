@@ -10,7 +10,6 @@ import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.TaxonomyProvider;
 import org.eol.globi.domain.Term;
-import org.eol.globi.service.CMECSService;
 import org.eol.globi.service.TermLookupServiceException;
 import org.eol.globi.util.ExternalIdUtil;
 import org.neo4j.graphdb.Transaction;

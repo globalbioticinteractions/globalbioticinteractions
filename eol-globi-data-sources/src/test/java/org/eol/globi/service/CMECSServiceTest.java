@@ -1,5 +1,6 @@
 package org.eol.globi.service;
 
+import org.eol.globi.data.CMECSService;
 import org.eol.globi.domain.Term;
 import org.eol.globi.util.ExternalIdUtil;
 import org.junit.Test;

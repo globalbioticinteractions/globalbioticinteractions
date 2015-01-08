@@ -1,6 +1,5 @@
 package org.eol.globi.data;
 
-import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.domain.TaxonNode;
 
 public interface TaxonIndex {

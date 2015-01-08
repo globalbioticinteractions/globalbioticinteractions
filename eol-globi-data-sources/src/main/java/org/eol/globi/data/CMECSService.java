@@ -1,7 +1,6 @@
-package org.eol.globi.service;
+package org.eol.globi.data;
 
 import com.healthmarketscience.jackcess.Database;
-import com.healthmarketscience.jackcess.JetFormat;
 import com.healthmarketscience.jackcess.Table;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
@@ -10,6 +9,8 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.eol.globi.domain.TaxonomyProvider;
 import org.eol.globi.domain.Term;
+import org.eol.globi.service.TermLookupService;
+import org.eol.globi.service.TermLookupServiceException;
 import org.eol.globi.util.HttpUtil;
 
 import java.io.File;
