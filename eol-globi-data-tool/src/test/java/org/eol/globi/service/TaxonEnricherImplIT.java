@@ -80,7 +80,8 @@ public class TaxonEnricherImplIT extends GraphDBTestCase {
         assertThat(taxon.getName(), is("Lecithochirium concavovesiculus"));
         assertThat(taxon.getPathIds(), is("1 | 2 | 793 | 19948 | 108400 | 108402 | 468918 | 108418 | 108471 | 724982 | 108758 | 726834"));
         assertThat(taxon.getPath(), containsString(CharsetConstant.SEPARATOR + "Platyhelminthes"));
-        assertThat(taxon.getPathNames(), containsString(CharsetConstant.SEPARATOR + "Species"));
+        assertThat(taxon.getRank(), is("species"));
+        assertThat(taxon.getPathNames(), containsString(CharsetConstant.SEPARATOR + "species"));
     }
 
     @Test
