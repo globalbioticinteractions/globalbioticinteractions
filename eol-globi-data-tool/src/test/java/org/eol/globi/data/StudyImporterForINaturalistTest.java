@@ -7,6 +7,7 @@ import org.eol.globi.domain.Study;
 import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.domain.TaxonomyProvider;
 import org.eol.globi.service.PropertyEnricherException;
+import org.eol.globi.util.NodeUtil;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -35,7 +36,7 @@ public class StudyImporterForINaturalistTest extends GraphDBTestCase {
     @Test
     public void importUsingINatAPI() throws StudyImporterException, PropertyEnricherException {
         importer.importStudy();
-        assertThat(NodeFactoryImpl.findAllStudies(getGraphDb()).size() > 150, is(true));
+        assertThat(NodeUtil.findAllStudies(getGraphDb()).size() > 150, is(true));
     }
 
     @Ignore(value = "see https://github.com/jhpoelen/eol-globi-data/issues/56")
@@ -50,7 +51,7 @@ public class StudyImporterForINaturalistTest extends GraphDBTestCase {
     public void importTestResponse() throws IOException, NodeFactoryException, StudyImporterException {
         importer.parseJSON(getClass().getResourceAsStream("inaturalist/sample_inaturalist_response.json"));
 
-        assertThat(NodeFactoryImpl.findAllStudies(getGraphDb()).size(), is(30));
+        assertThat(NodeUtil.findAllStudies(getGraphDb()).size(), is(30));
 
         Study anotherStudy = nodeFactory.findStudy("INAT:831");
         assertThat(anotherStudy, is(notNullValue()));

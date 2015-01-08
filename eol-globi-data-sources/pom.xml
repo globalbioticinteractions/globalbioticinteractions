@@ -31,16 +31,6 @@
             <type>pom</type>
         </dependency>
         <dependency>
-            <groupId>org.apache.jena</groupId>
-            <artifactId>jena-tdb</artifactId>
-            <version>1.0.2</version>
-        </dependency>
-        <dependency>
-            <groupId>commons-logging</groupId>
-            <artifactId>commons-logging</artifactId>
-            <version>1.0.4</version>
-        </dependency>
-        <dependency>
             <groupId>org.codehaus.swizzle</groupId>
             <artifactId>swizzle-stream</artifactId>
             <version>1.6.2</version>

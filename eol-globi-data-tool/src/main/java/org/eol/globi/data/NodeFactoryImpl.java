@@ -83,16 +83,6 @@ public class NodeFactoryImpl implements NodeFactory {
 
     }
 
-    public static List<Study> findAllStudies(GraphDatabaseService graphService) {
-        List<Study> studies = new ArrayList<Study>();
-        Index<Node> studyIndex = graphService.index().forNodes("studies");
-        IndexHits<Node> hits = studyIndex.query("title", "*");
-        for (Node hit : hits) {
-            studies.add(new Study(hit));
-        }
-        return studies;
-    }
-
     public GraphDatabaseService getGraphDb() {
         return graphDb;
     }

@@ -12,6 +12,7 @@
         <module>eol-globi-jcoord</module>
         <module>eol-globi-lib</module>
         <module>eol-globi-data-sources</module>
+        <module>eol-globi-data-export</module>
         <module>eol-globi-enrich</module>
         <module>eol-globi-ontology</module>
         <module>eol-globi-geo</module>

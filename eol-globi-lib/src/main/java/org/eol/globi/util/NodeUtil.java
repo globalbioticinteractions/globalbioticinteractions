@@ -8,6 +8,7 @@ import org.apache.lucene.search.FuzzyQuery;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.WildcardQuery;
 import org.eol.globi.domain.RelTypes;
+import org.eol.globi.domain.Study;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonNode;
 import org.neo4j.graphdb.GraphDatabaseService;
@@ -68,5 +69,15 @@ public class NodeUtil {
         } finally {
             tx.finish();
         }
+    }
+
+    public static List<Study> findAllStudies(GraphDatabaseService graphService) {
+        List<Study> studies = new ArrayList<Study>();
+        Index<Node> studyIndex = graphService.index().forNodes("studies");
+        IndexHits<Node> hits = studyIndex.query("title", "*");
+        for (Node hit : hits) {
+            studies.add(new Study(hit));
+        }
+        return studies;
     }
 }

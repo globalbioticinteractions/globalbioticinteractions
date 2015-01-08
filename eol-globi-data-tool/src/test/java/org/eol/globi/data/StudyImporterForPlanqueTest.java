@@ -1,6 +1,7 @@
 package org.eol.globi.data;
 
 import org.eol.globi.domain.Study;
+import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -36,7 +37,7 @@ public class StudyImporterForPlanqueTest extends GraphDBTestCase {
         });
         importer.importStudy();
 
-        List<Study> studies = NodeFactoryImpl.findAllStudies(getGraphDb());
+        List<Study> studies = NodeUtil.findAllStudies(getGraphDb());
 
         assertThat(studies.size(), is(215));
         assertThat(nodeFactory.findTaxonByName("Sagitta elegans"), is(notNullValue()));

@@ -1,5 +1,6 @@
 package org.eol.globi.export;
 
+import org.apache.commons.lang.StringUtils;
 import org.eol.globi.data.CharsetConstant;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Study;
@@ -18,10 +19,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.apache.commons.lang.StringUtils.join;
-import static org.apache.commons.lang.StringUtils.split;
-import static org.apache.commons.lang.StringUtils.trim;
-
 /**
  * Exports an expanded taxon list. Rolls up to taxonomic rank "order".
  * <p/>
@@ -38,22 +35,22 @@ public class ExporterTaxaRollup extends ExporterTaxa {
     public static List<Map<String, Object>> expandTaxonResult(Map<String, Object> result) {
         List<Map<String, Object>> expandedResults = new ArrayList<Map<String, Object>>();
 
-        String[] pathNames = split((String) result.get("pathNames"), CharsetConstant.SEPARATOR_CHAR);
-        String[] pathIds = split((String) result.get("pathIds"), "|");
-        String[] path = split((String) result.get("path"), "|");
+        String[] pathNames = StringUtils.split((String) result.get("pathNames"), CharsetConstant.SEPARATOR_CHAR);
+        String[] pathIds = StringUtils.split((String) result.get("pathIds"), "|");
+        String[] path = StringUtils.split((String) result.get("path"), "|");
         if (pathNames != null && pathIds != null && path != null
                 && pathNames.length == pathIds.length && pathNames.length == path.length) {
             for (int i = 0; i < pathNames.length; i++) {
-                String rank = trim(pathNames[i]);
+                String rank = StringUtils.trim(pathNames[i]);
                 if (EXPANDABLE_RANKS.contains(rank)) {
                     Map<String, Object> taxon = new HashMap<String, Object>();
-                    taxon.put("scientificName", trim(path[i]));
-                    taxon.put("taxonId", trim(pathIds[i]));
+                    taxon.put("scientificName", StringUtils.trim(path[i]));
+                    taxon.put("taxonId", StringUtils.trim(pathIds[i]));
                     taxon.put("rank", rank);
                     String[] partialPathNames = Arrays.copyOfRange(pathNames, 0, i + 1);
                     String[] partialPath = Arrays.copyOfRange(path, 0, i + 1);
-                    taxon.put("path", trim(join(partialPath, CharsetConstant.SEPARATOR_CHAR)));
-                    taxon.put("pathNames", trim(join(partialPathNames, CharsetConstant.SEPARATOR_CHAR)));
+                    taxon.put("path", StringUtils.trim(StringUtils.join(partialPath, CharsetConstant.SEPARATOR_CHAR)));
+                    taxon.put("pathNames", StringUtils.trim(StringUtils.join(partialPathNames, CharsetConstant.SEPARATOR_CHAR)));
                     expandedResults.add(taxon);
                 }
             }
@@ -89,7 +86,7 @@ public class ExporterTaxaRollup extends ExporterTaxa {
 
             Map<String, String> row = new HashMap<String, String>();
             for (Map<String, Object> taxon : taxonMap.values()) {
-                resultsToRow(row, taxon);
+                ExporterTaxa.resultsToRow(row, taxon);
                 writeProperties(writer, row);
                 row.clear();
             }

@@ -2,6 +2,7 @@ package org.eol.globi.data;
 
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.TaxonNode;
+import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
 
 import java.util.List;
@@ -16,7 +17,7 @@ public class StudyImporterForSIADTest extends GraphDBTestCase {
     public void importAll() throws StudyImporterException, NodeFactoryException {
         StudyImporterForSIAD importerForSAID = new StudyImporterForSIAD(new ParserFactoryImpl(), nodeFactory);
         importerForSAID.importStudy();
-        List<Study> allStudies = NodeFactoryImpl.findAllStudies(getGraphDb());
+        List<Study> allStudies = NodeUtil.findAllStudies(getGraphDb());
         assertThat(allStudies.size() > 1, is(true));
 
         TaxonNode taxon = nodeFactory.findTaxonByName("Anisakis");

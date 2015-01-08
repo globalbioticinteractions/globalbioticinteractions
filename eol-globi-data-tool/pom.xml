@@ -13,13 +13,7 @@
     <name>EOL's Global Biotic Interaction Data Import/Export Tool</name>
 
     <dependencies>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>eol-globi-lib</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-
-        <dependency>
+         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>eol-globi-enrich</artifactId>
             <version>${project.version}</version>
@@ -28,6 +22,12 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>eol-globi-data-sources</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>eol-globi-data-export</artifactId>
             <version>${project.version}</version>
         </dependency>
 
@@ -57,12 +57,6 @@
             <version>${neo4j.version}</version>
             <type>test-jar</type>
             <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>commons-collections</groupId>
-            <artifactId>commons-collections</artifactId>
-            <version>3.2.1</version>
         </dependency>
     </dependencies>
 

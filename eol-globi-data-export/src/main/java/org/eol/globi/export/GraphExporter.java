@@ -7,9 +7,9 @@ import com.hp.hpl.jena.tdb.TDBFactory;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.eol.globi.data.NodeFactoryImpl;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.domain.Study;
+import org.eol.globi.util.NodeUtil;
 import org.neo4j.graphdb.GraphDatabaseService;
 
 import java.io.BufferedOutputStream;
@@ -33,10 +33,9 @@ public class GraphExporter {
         } catch (IOException e) {
             throw new StudyImporterException("failed to create output dir [" + baseDir + "]", e);
         }
-        List<Study> studies = NodeFactoryImpl.findAllStudies(graphService);
+        List<Study> studies = NodeUtil.findAllStudies(graphService);
         exportDataOntology(studies, baseDir);
         exportUnmatchedTaxa(studies, baseDir);
-        //exportGoMexSI(studies, baseDir);
         exportDarwinCoreAggregatedByStudy(baseDir, studies);
         exportDarwinCoreAll(baseDir, studies);
     }
@@ -52,21 +51,6 @@ public class GraphExporter {
             closeStream(filePath, writer1);
         } catch (IOException e) {
             throw new StudyImporterException("failed to export unmatched source taxa", e);
-        }
-    }
-
-    // Provide simple data representation
-    private void exportGoMexSI(List<Study> studies, String baseDir) throws StudyImporterException {
-        try {
-            FileUtils.forceMkdir(new File(baseDir));
-            OutputStreamWriter writer = openStream(baseDir + "GoMexSIInteractionsTaxa.csv");
-            for (Study importedStudy : studies) {
-                boolean includeHeader = studies.indexOf(importedStudy) == 0;
-                new ExporterGoMexSI().exportStudy(importedStudy, writer, includeHeader);
-            }
-            closeStream(baseDir + "GoMexSIInteractionsTaxa.csv", writer);
-        } catch (IOException e) {
-            throw new StudyImporterException("failed to export GoMexSI", e);
         }
     }
 

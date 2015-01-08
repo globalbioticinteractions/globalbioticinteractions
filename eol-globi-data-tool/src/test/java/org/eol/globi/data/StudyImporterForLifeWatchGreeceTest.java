@@ -4,6 +4,7 @@ package org.eol.globi.data;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.TaxonNode;
+import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
@@ -36,13 +37,13 @@ public class StudyImporterForLifeWatchGreeceTest extends GraphDBTestCase {
 
     @Test
     public void readAssociations() throws StudyImporterException {
-        List<Study> studies = NodeFactoryImpl.findAllStudies(getGraphDb());
+        List<Study> studies = NodeUtil.findAllStudies(getGraphDb());
         assertThat(studies.size(), is(0));
 
         StudyImporterForLifeWatchGreece importer = new StudyImporterForLifeWatchGreece(null, nodeFactory);
         importer.importStudy();
 
-        studies = NodeFactoryImpl.findAllStudies(getGraphDb());
+        studies = NodeUtil.findAllStudies(getGraphDb());
         assertThat(studies.size(), is(146));
 
         Set<String> taxa = new HashSet<String>();

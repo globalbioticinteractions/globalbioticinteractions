@@ -5,6 +5,7 @@ import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.TaxonNode;
+import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
@@ -94,7 +95,7 @@ public class StudyImporterForBarnesTest extends GraphDBTestCase {
         });
         studyImporterForBarnes.importStudy();
 
-        List<Study> studies = NodeFactoryImpl.findAllStudies(getGraphDb());
+        List<Study> studies = NodeUtil.findAllStudies(getGraphDb());
         assertTrue(studies.size() > 0);
         for (Study study : studies) {
             assertThat(study.getTitle(), is(notNullValue()));

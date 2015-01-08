@@ -1,6 +1,7 @@
 package org.eol.globi.data;
 
 import org.eol.globi.domain.Study;
+import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -20,7 +21,7 @@ public class StudyImporterForGitHubDataTest extends GraphDBTestCase {
         StudyImporter importer = new StudyImporterForGitHubData(new ParserFactoryImpl(), nodeFactory);
         importer.importStudy();
 
-        List<Study> allStudies = NodeFactoryImpl.findAllStudies(getGraphDb());
+        List<Study> allStudies = NodeUtil.findAllStudies(getGraphDb());
         List<String> refs = new ArrayList<String>();
         List<String> DOIs = new ArrayList<String>();
         List<String> sources = new ArrayList<String>();

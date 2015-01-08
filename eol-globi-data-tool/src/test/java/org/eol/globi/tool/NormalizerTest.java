@@ -19,6 +19,7 @@ import org.eol.globi.geo.EcoregionFinderException;
 import org.eol.globi.service.PropertyEnricher;
 import org.eol.globi.service.PropertyEnricherException;
 import org.eol.globi.service.TaxonUtil;
+import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
 import org.neo4j.graphdb.GraphDatabaseService;
 
@@ -63,7 +64,7 @@ public class NormalizerTest extends GraphDBTestCase {
 
         GraphDatabaseService graphService = getGraphDb();
 
-        List<Study> allStudies = NodeFactoryImpl.findAllStudies(graphService);
+        List<Study> allStudies = NodeUtil.findAllStudies(graphService);
         assertThat(allStudies.size(), is(1));
         assertThat(allStudies.get(0).getTitle(), is("Simons 1997"));
 

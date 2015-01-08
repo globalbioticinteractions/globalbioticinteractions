@@ -4,7 +4,6 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.ImportFilter;
-import org.eol.globi.data.NodeFactoryImpl;
 import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.data.StudyImporterForSPIRE;
@@ -13,6 +12,7 @@ import org.eol.globi.domain.Study;
 import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.service.EnvoLookupService;
 import org.eol.globi.service.TermLookupService;
+import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
 import org.neo4j.graphdb.Transaction;
 
@@ -45,7 +45,7 @@ public class LittleTurtleExporterIT extends GraphDBTestCase {
             }
         });
         importer.importStudy();
-        List<Study> studies = NodeFactoryImpl.findAllStudies(getGraphDb());
+        List<Study> studies = NodeUtil.findAllStudies(getGraphDb());
 
 
         TaxonNode taxon = nodeFactory.findTaxonByName("Paracalliope fluviatalus");

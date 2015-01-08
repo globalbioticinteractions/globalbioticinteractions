@@ -1,6 +1,7 @@
 package org.eol.globi.data;
 
 import org.eol.globi.domain.Study;
+import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
 
 import java.util.List;
@@ -16,7 +17,7 @@ public class StudyImporterForHurlbertTest extends GraphDBTestCase {
     public void importAll() throws StudyImporterException {
         StudyImporter importer = new StudyImporterForHurlbert(new ParserFactoryImpl(), nodeFactory);
         importer.importStudy();
-        List<Study> allStudies = NodeFactoryImpl.findAllStudies(getGraphDb());
+        List<Study> allStudies = NodeUtil.findAllStudies(getGraphDb());
         assertThat(allStudies.size() > 10, is(true));
     }
 
@@ -26,7 +27,7 @@ public class StudyImporterForHurlbertTest extends GraphDBTestCase {
         StudyImporter importer = new StudyImporterForHurlbert(factory, nodeFactory);
         importer.importStudy();
 
-        List<Study> allStudies = NodeFactoryImpl.findAllStudies(getGraphDb());
+        List<Study> allStudies = NodeUtil.findAllStudies(getGraphDb());
         assertThat(allStudies.size(), is(1));
 
         Study study = allStudies.get(0);
