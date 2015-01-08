@@ -56,7 +56,7 @@ public abstract class GraphDBTestCase {
             }
         });
         nodeFactoryImpl.setEnvoLookupService(getEnvoLookupService());
-        nodeFactoryImpl.setTermLookupService(new TestTermLookupService());
+        nodeFactoryImpl.setTermLookupService(getTermLookupService());
         nodeFactoryImpl.setDoiResolver(new DOIResolver() {
             @Override
             public String findDOIForReference(String reference) throws IOException {
@@ -70,6 +70,10 @@ public abstract class GraphDBTestCase {
         });
 
         return nodeFactoryImpl;
+    }
+
+    protected TermLookupService getTermLookupService() {
+        return new TestTermLookupService();
     }
 
     protected TermLookupService getEnvoLookupService() {

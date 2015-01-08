@@ -8,6 +8,8 @@ import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.TaxonNode;
+import org.eol.globi.service.TermLookupService;
+import org.eol.globi.service.UberonLookupService;
 import org.junit.Test;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
@@ -26,6 +28,11 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
 public class StudyImporterForBlewettTest extends GraphDBTestCase {
+
+    @Override
+    protected TermLookupService getTermLookupService() {
+        return new UberonLookupService();
+    }
 
     @Test
     public void parseDateTime() throws ParseException {
@@ -104,8 +111,8 @@ public class StudyImporterForBlewettTest extends GraphDBTestCase {
         assertThat(StudyImporterForBlewett.dateToString(unixEpochProperty), is("01-Mar-00 10:55:00 Central Standard Time"));
 
         Node predatorNode = collectedRel.getEndNode();
-        assertThat((String)predatorNode.getProperty(Specimen.LIFE_STAGE_LABEL), is("post-juvenile adult stage"));
-        assertThat((String)predatorNode.getProperty(Specimen.LIFE_STAGE_ID), is("UBERON:0000113"));
+        assertThat((String) predatorNode.getProperty(Specimen.LIFE_STAGE_LABEL), is("post-juvenile adult stage"));
+        assertThat((String) predatorNode.getProperty(Specimen.LIFE_STAGE_ID), is("UBERON:0000113"));
         assertThat((Double) predatorNode.getProperty(Specimen.LENGTH_IN_MM), is(549.0));
 
         Node predatorTaxonNode = predatorNode.getRelationships(RelTypes.CLASSIFIED_AS, Direction.OUTGOING).iterator().next().getEndNode();

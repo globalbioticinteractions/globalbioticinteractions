@@ -5,6 +5,8 @@ import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.TaxonNode;
+import org.eol.globi.service.TermLookupService;
+import org.eol.globi.service.UberonLookupService;
 import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
 import org.neo4j.graphdb.Direction;
@@ -21,6 +23,11 @@ import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
 
 public class StudyImporterForBarnesTest extends GraphDBTestCase {
+
+    @Override
+    protected TermLookupService getTermLookupService() {
+        return new UberonLookupService();
+    }
 
     @Test
     public void importHeadAndTail() throws IOException, NodeFactoryException, StudyImporterException {
@@ -46,10 +53,11 @@ public class StudyImporterForBarnesTest extends GraphDBTestCase {
                 "34931\tn/a\tn/a\tZeus faber\tJohn dory\tectotherm vertebrate\tadult\tpiscivorous\t3.5470E+02\tmm\ttotal length\t2.9085E+02\t0.0000E+00\t3.5470E+02\tFishbase (species)\t3.5470E+01\tmid-class\tM=0.0230SL^2.9114\tDorel (1986)\t1\t4.1983E+02\tg\t2.3354E+03\t1.9156E+03\t5.5628E+00\t4.1983E+02\tall\tMicromesistius potassou\tBlue-whiting\tectotherm vertebrate\t2.1704E+01\tcm\tL = 10^ ((logM-log(0.0038))/3.082)\t1\tDorel (1986)\t2.1704E+01\tmass\tn/a\tn/a\tindividual\t5.0000E+01\tg\t5.3502E+02\t4.8502E+02\t1.0700E+01\t5.0000E+01\tWeighed\tn/a\t0\tEastern Mediterranean\t38�00'N\t23�00'E\t75\t19.3\t4.6\t435\t17\tStergiou & Fourtouni 1991\tEuboikos and Pagassitikos Gulfs\tPredator length mid-class\n";
 
 
-        TestParserFactory parserFactory = new TestParserFactory(new HashMap<String, String>() {{
-            put(StudyImporterForBarnes.RESOURCE_PATH, firstFourLines);
-            put(StudyImporterForBarnes.REFERENCE_PATH, "short,full\nBethea et al (2004),something long\nStergiou & Fourtouni 1991,something longer");
-        }
+        TestParserFactory parserFactory = new TestParserFactory(new HashMap<String, String>() {
+            {
+                put(StudyImporterForBarnes.RESOURCE_PATH, firstFourLines);
+                put(StudyImporterForBarnes.REFERENCE_PATH, "short,full\nBethea et al (2004),something long\nStergiou & Fourtouni 1991,something longer");
+            }
         });
         StudyImporterForBarnes importer = new StudyImporterForBarnes(parserFactory, nodeFactory);
         importer.importStudy();

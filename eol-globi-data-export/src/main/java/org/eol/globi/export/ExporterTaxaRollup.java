@@ -24,7 +24,7 @@ import java.util.Map;
  * <p/>
  * see https://github.com/jhpoelen/eol-globi-data/issues/79
  */
-public class ExporterTaxaRollup extends ExporterTaxa {
+public class ExporterTaxaRollUp extends ExporterTaxa {
 
     static final List<String> EXPANDABLE_RANKS = Arrays.asList("subspecies", "species"
             , "subgenus", "genus"
@@ -33,11 +33,14 @@ public class ExporterTaxaRollup extends ExporterTaxa {
             , "suborder", "order");
 
     public static List<Map<String, Object>> expandTaxonResult(Map<String, Object> result) {
-        List<Map<String, Object>> expandedResults = new ArrayList<Map<String, Object>>();
-
         String[] pathNames = StringUtils.split((String) result.get("pathNames"), CharsetConstant.SEPARATOR_CHAR);
         String[] pathIds = StringUtils.split((String) result.get("pathIds"), "|");
         String[] path = StringUtils.split((String) result.get("path"), "|");
+        return expandTaxon(pathNames, pathIds, path);
+    }
+
+    public static List<Map<String, Object>> expandTaxon(String[] pathNames, String[] pathIds, String[] path) {
+        List<Map<String, Object>> expandedResults = new ArrayList<Map<String, Object>>();
         if (pathNames != null && pathIds != null && path != null
                 && pathNames.length == pathIds.length && pathNames.length == path.length) {
             for (int i = 0; i < pathNames.length; i++) {

@@ -7,6 +7,8 @@ import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.TaxonNode;
+import org.eol.globi.service.TermLookupService;
+import org.eol.globi.service.UberonLookupService;
 import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
 import org.neo4j.graphdb.Direction;
@@ -17,12 +19,16 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 
-import static junit.framework.Assert.assertTrue;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
 
 public class StudyImporterForBroseTest extends GraphDBTestCase {
+
+    @Override
+    protected TermLookupService getTermLookupService() {
+        return new UberonLookupService();
+    }
 
     @Test
     public void importHeadAndTail() throws IOException, NodeFactoryException, StudyImporterException {
@@ -48,10 +54,11 @@ public class StudyImporterForBroseTest extends GraphDBTestCase {
                 "16866\tCohen et al. (2005)\tCohen et al. (2005)\t\"Country: United Kingdom; UTM: 51.24'N, 0.34'W; Silwood Park, Berkshire\"\tterrestrial\tabandoned field\trearing\t\"measurement; regression\"\tAphelinus varipes\tadult\tparasitoid wasp\tinvertebrate\tparasitoid\t0.000896552\t0.000896552\t0.000896552\t-999\t-999\t-999\tSitobion fragariae / Sitobion avenae\tnymphs\taphid\tinvertebrate\t0.001965517\t0.001965517\t0.001965517\t-999\t-999\t-999\t0.127890431\t\"newly emerged adult parsitoids were measured; resource length was measured without cauda; for data on individual body sizes and body sizes of hyperparasitoids and mummy parasitoids see Cohen et al. (2005); 1 pair of individuals were measured\"\n";
 
 
-        TestParserFactory parserFactory = new TestParserFactory(new HashMap<String, String>() {{
-            put(StudyImporterForBrose.RESOURCE_PATH, headAndTail);
-            put(StudyImporterForBrose.REFERENCE_PATH, "short,full\nCohen et al. (2005),something long\nYodzis (1998),something longer");
-        }
+        TestParserFactory parserFactory = new TestParserFactory(new HashMap<String, String>() {
+            {
+                put(StudyImporterForBrose.RESOURCE_PATH, headAndTail);
+                put(StudyImporterForBrose.REFERENCE_PATH, "short,full\nCohen et al. (2005),something long\nYodzis (1998),something longer");
+            }
         });
         StudyImporter importer = new StudyImporterForBrose(parserFactory, nodeFactory);
         importer.importStudy();

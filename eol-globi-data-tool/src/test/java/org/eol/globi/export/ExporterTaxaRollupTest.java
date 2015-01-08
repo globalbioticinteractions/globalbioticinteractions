@@ -22,7 +22,7 @@ import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.*;
 import static org.junit.matchers.JUnitMatchers.containsString;
 
-public class ExporterTaxaRollupTest extends GraphDBTestCase {
+public class ExporterTaxaRollUpTest extends GraphDBTestCase {
 
     @Test
     public void export() throws NodeFactoryException, ParseException, IOException {
@@ -52,7 +52,7 @@ public class ExporterTaxaRollupTest extends GraphDBTestCase {
         StringWriter writer = new StringWriter();
         Study myStudy = nodeFactory1.findStudy("myStudy");
         assertThat(myStudy, is(notNullValue()));
-        new ExporterTaxaRollup().doExportStudy(myStudy, writer, true);
+        new ExporterTaxaRollUp().doExportStudy(myStudy, writer, true);
         String exported = writer.toString();
         assertThat(exported, containsString("genus id 2,genus 2,,,phylum 2,,,family 2,genus 2,genus,,,,,"));
         assertThat(exported, containsString("genus id 1,genus 1,,,phylum 1,,,,genus 1,genus,,,,,"));
@@ -75,7 +75,7 @@ public class ExporterTaxaRollupTest extends GraphDBTestCase {
             }
         };
 
-        List<Map<String, Object>> expandedResults = ExporterTaxaRollup.expandTaxonResult(result);
+        List<Map<String, Object>> expandedResults = ExporterTaxaRollUp.expandTaxonResult(result);
 
         assertThat(expandedResults.size(), is(3));
         Map<String, Object> genus = expandedResults.get(2);
