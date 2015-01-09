@@ -4,6 +4,8 @@ import org.apache.commons.lang.StringUtils;
 import org.eol.globi.data.CharsetConstant;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Study;
+import org.eol.globi.domain.Taxon;
+import org.eol.globi.domain.TaxonImpl;
 import org.mapdb.DB;
 import org.mapdb.DBMaker;
 import org.mapdb.HTreeMap;
@@ -24,7 +26,7 @@ import java.util.Map;
  * <p/>
  * see https://github.com/jhpoelen/eol-globi-data/issues/79
  */
-public class ExporterTaxaRollUp extends ExporterTaxa {
+public class RollUpTaxa extends ExporterTaxa {
 
     static final List<String> EXPANDABLE_RANKS = Arrays.asList("subspecies", "species"
             , "subgenus", "genus"
@@ -32,28 +34,42 @@ public class ExporterTaxaRollUp extends ExporterTaxa {
             , "subfamily", "family", "superfamily"
             , "suborder", "order");
 
-    public static List<Map<String, Object>> expandTaxonResult(Map<String, Object> result) {
-        String[] pathNames = StringUtils.split((String) result.get("pathNames"), CharsetConstant.SEPARATOR_CHAR);
-        String[] pathIds = StringUtils.split((String) result.get("pathIds"), "|");
-        String[] path = StringUtils.split((String) result.get("path"), "|");
+    public static List<Taxon> expandTaxonResult(Map<String, Object> result) {
+        String pathNames1 = (String) result.get("pathNames");
+        String pathIds1 = (String) result.get("pathIds");
+        String path1 = (String) result.get("path");
+        return expandTaxon(pathNames1, pathIds1, path1);
+    }
+
+    protected static List<Taxon> expandTaxon(String pathNames1, String pathIds1, String path1) {
+        String[] pathNames = StringUtils.split(pathNames1, CharsetConstant.SEPARATOR_CHAR);
+        String[] pathIds = StringUtils.split(pathIds1, CharsetConstant.SEPARATOR_CHAR);
+        String[] path = StringUtils.split(path1, CharsetConstant.SEPARATOR_CHAR);
         return expandTaxon(pathNames, pathIds, path);
     }
 
-    public static List<Map<String, Object>> expandTaxon(String[] pathNames, String[] pathIds, String[] path) {
-        List<Map<String, Object>> expandedResults = new ArrayList<Map<String, Object>>();
+    protected static List<Taxon> expandTaxon(Taxon sourceTaxon) {
+        return RollUpTaxa.expandTaxon(sourceTaxon.getPathNames(),
+                sourceTaxon.getPathIds(),
+                sourceTaxon.getPath());
+    }
+
+
+    public static List<Taxon> expandTaxon(String[] pathNames, String[] pathIds, String[] path) {
+        List<Taxon> expandedResults = new ArrayList<Taxon>();
         if (pathNames != null && pathIds != null && path != null
                 && pathNames.length == pathIds.length && pathNames.length == path.length) {
             for (int i = 0; i < pathNames.length; i++) {
                 String rank = StringUtils.trim(pathNames[i]);
                 if (EXPANDABLE_RANKS.contains(rank)) {
-                    Map<String, Object> taxon = new HashMap<String, Object>();
-                    taxon.put("scientificName", StringUtils.trim(path[i]));
-                    taxon.put("taxonId", StringUtils.trim(pathIds[i]));
-                    taxon.put("rank", rank);
+                    Taxon taxon = new TaxonImpl();
+                    taxon.setName(StringUtils.trim(path[i]));
+                    taxon.setRank(rank);
+                    taxon.setExternalId(StringUtils.trim(pathIds[i]));
                     String[] partialPathNames = Arrays.copyOfRange(pathNames, 0, i + 1);
                     String[] partialPath = Arrays.copyOfRange(path, 0, i + 1);
-                    taxon.put("path", StringUtils.trim(StringUtils.join(partialPath, CharsetConstant.SEPARATOR_CHAR)));
-                    taxon.put("pathNames", StringUtils.trim(StringUtils.join(partialPathNames, CharsetConstant.SEPARATOR_CHAR)));
+                    taxon.setPath(StringUtils.trim(StringUtils.join(partialPath, CharsetConstant.SEPARATOR_CHAR)));
+                    taxon.setPathNames(StringUtils.trim(StringUtils.join(partialPathNames, CharsetConstant.SEPARATOR_CHAR)));
                     expandedResults.add(taxon);
                 }
             }
@@ -101,26 +117,31 @@ public class ExporterTaxaRollUp extends ExporterTaxa {
     }
 
     public static HTreeMap<String, Map<String, Object>> buildExpandedTaxonMap(ExecutionResult results) {
-        HTreeMap<String, Map<String, Object>> taxonMap;
-        taxonMap = createTaxonMap();
+        HTreeMap<String, Map<String, Object>> taxonMap = createHTreeMap("taxonIdMap");
         for (Map<String, Object> result : results) {
-            List<Map<String, Object>> expandedTaxa = expandTaxonResult(result);
-            for (Map<String, Object> taxon : expandedTaxa) {
-                taxonMap.put((String) taxon.get("taxonId"), taxon);
+            List<Taxon> taxa = expandTaxonResult(result);
+            for (Taxon taxon : taxa) {
+                Map<String, Object> taxonEntry = new HashMap<String, Object>();
+                taxonEntry.put("scientificName", taxon.getName());
+                taxonEntry.put("taxonId", taxon.getExternalId());
+                taxonEntry.put("rank", taxon.getRank());
+                taxonEntry.put("path", taxon.getPath());
+                taxonEntry.put("pathNames", taxon.getPathNames());
+                taxonMap.put(taxon.getExternalId(), taxonEntry);
             }
         }
         return taxonMap;
     }
 
 
-    private static HTreeMap<String, Map<String, Object>> createTaxonMap() {
+    public static HTreeMap<String, Map<String, Object>> createHTreeMap(String mapName) {
         DB db = DBMaker
                 .newMemoryDirectDB()
                 .compressionEnable()
                 .transactionDisable()
                 .make();
         final HTreeMap<String, Map<String, Object>> idLookup = db
-                .createHashMap("taxonIdMap")
+                .createHashMap(mapName)
                 .make();
         return idLookup;
     }

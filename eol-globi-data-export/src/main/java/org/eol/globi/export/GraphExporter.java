@@ -36,6 +36,7 @@ public class GraphExporter {
         List<Study> studies = NodeUtil.findAllStudies(graphService);
         exportDataOntology(studies, baseDir);
         exportUnmatchedTaxa(studies, baseDir);
+        exportDarwinCoreAggregatedByStudyRollUp(baseDir, studies);
         exportDarwinCoreAggregatedByStudy(baseDir, studies);
         exportDarwinCoreAll(baseDir, studies);
     }
@@ -52,6 +53,19 @@ public class GraphExporter {
         } catch (IOException e) {
             throw new StudyImporterException("failed to export unmatched source taxa", e);
         }
+    }
+
+    private void exportDarwinCoreAggregatedByStudyRollUp(String baseDir, List<Study> studies) throws StudyImporterException {
+        exportDarwinCoreArchive(studies,
+                baseDir + "aggregatedByStudyRollUp/", new HashMap<String, DarwinCoreExporter>() {
+                    {
+                        put("association.csv", new RollUpAssociations());
+                        put("occurrence.csv", new RollUpOccurrence());
+                        put("references.csv", new ExporterReferences());
+                        put("taxa.csv", new RollUpTaxa());
+                    }
+                }
+        );
     }
 
     private void exportDarwinCoreAggregatedByStudy(String baseDir, List<Study> studies) throws StudyImporterException {
