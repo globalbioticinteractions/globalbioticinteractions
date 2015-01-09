@@ -26,7 +26,7 @@ import java.util.Map;
  * <p/>
  * see https://github.com/jhpoelen/eol-globi-data/issues/79
  */
-public class RollUpTaxa extends ExporterTaxa {
+public class RollUpDistinctTaxa extends ExporterTaxa {
 
     static final List<String> EXPANDABLE_RANKS = Arrays.asList("subspecies", "species"
             , "subgenus", "genus"
@@ -49,7 +49,7 @@ public class RollUpTaxa extends ExporterTaxa {
     }
 
     protected static List<Taxon> expandTaxon(Taxon sourceTaxon) {
-        return RollUpTaxa.expandTaxon(sourceTaxon.getPathNames(),
+        return RollUpDistinctTaxa.expandTaxon(sourceTaxon.getPathNames(),
                 sourceTaxon.getPathIds(),
                 sourceTaxon.getPath());
     }

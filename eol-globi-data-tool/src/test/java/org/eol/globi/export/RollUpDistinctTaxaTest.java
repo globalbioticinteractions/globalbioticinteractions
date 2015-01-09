@@ -17,13 +17,13 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.matchers.JUnitMatchers.containsString;
 
-public class RollUpTaxaTest extends RollUpTest {
+public class RollUpDistinctTaxaTest extends RollUpTest {
 
     @Test
     public void export() throws NodeFactoryException, ParseException, IOException {
         Study myStudy = createStudy();
         StringWriter writer = new StringWriter();
-        new RollUpTaxa().doExportStudy(myStudy, writer, true);
+        new RollUpDistinctTaxa().doExportStudy(myStudy, writer, true);
         String exported = writer.toString();
         assertThat(exported, containsString("genus id 2,genus 2,,,phylum 2,,,family 2,genus 2,genus,,,,,"));
         assertThat(exported, containsString("genus id 1,genus 1,,,phylum 1,,,,genus 1,genus,,,,,"));
@@ -46,7 +46,7 @@ public class RollUpTaxaTest extends RollUpTest {
             }
         };
 
-        List<Taxon> expandedResults = RollUpTaxa.expandTaxonResult(result);
+        List<Taxon> expandedResults = RollUpDistinctTaxa.expandTaxonResult(result);
 
         assertThat(expandedResults.size(), is(3));
         Taxon genus = expandedResults.get(2);

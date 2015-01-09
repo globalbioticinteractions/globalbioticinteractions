@@ -62,7 +62,7 @@ public class GraphExporter {
                         put("association.csv", new RollUpAssociations());
                         put("occurrence.csv", new RollUpOccurrence());
                         put("references.csv", new ExporterReferences());
-                        put("taxa.csv", new RollUpTaxa());
+                        put("taxa.csv", new RollUpDistinctTaxa());
                     }
                 }
         );

@@ -48,11 +48,11 @@ public class RollUpOccurrence extends ExporterOccurrencesBase {
 
     protected void putOccIds(Map<String, String> occIds, Map<String, Object> result, long studyId) {
         TaxonNode sourceTaxon = new TaxonNode((Node) result.get(QUERY_PARAM_SOURCE_TAXON));
-        List<Taxon> sTaxa = RollUpTaxa.expandTaxon(sourceTaxon);
+        List<Taxon> sTaxa = RollUpDistinctTaxa.expandTaxon(sourceTaxon);
         String relationshipType = (String) result.get(QUERY_PARAM_INTERACTION_TYPE);
         Wrappers.SeqWrapper<Node> targetTaxa = (Wrappers.SeqWrapper<Node>) result.get(QUERY_PARAM_TARGET_TAXA);
         for (Node targetTaxon : targetTaxa) {
-            List<Taxon> tTaxa = RollUpTaxa.expandTaxon(new TaxonNode(targetTaxon));
+            List<Taxon> tTaxa = RollUpDistinctTaxa.expandTaxon(new TaxonNode(targetTaxon));
             for (Taxon sTaxon : sTaxa) {
                 String occSourceId = sourceOccurrenceId(studyId, relationshipType, sTaxon);
                 occIds.put(fullSourceOccurrenceId(occSourceId), sTaxon.getExternalId());
