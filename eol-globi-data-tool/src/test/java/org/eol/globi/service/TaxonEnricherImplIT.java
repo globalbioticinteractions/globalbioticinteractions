@@ -151,7 +151,7 @@ public class TaxonEnricherImplIT extends GraphDBTestCase {
 
     @Test
     public void noNameButExternalId() throws NodeFactoryException {
-        Specimen specimen = nodeFactory.createSpecimen(null, PropertyAndValueDictionary.NO_NAME, "EOL:223038");
+        Specimen specimen = nodeFactory.createSpecimen(nodeFactory.createStudy("testing123"), PropertyAndValueDictionary.NO_NAME, "EOL:223038");
         assertThat(specimen, is(notNullValue()));
         Iterable<Relationship> classifications = specimen.getClassifications();
         int count = 0;
@@ -167,7 +167,7 @@ public class TaxonEnricherImplIT extends GraphDBTestCase {
 
     @Test
     public void atlasOfLivingAustralia() throws NodeFactoryException {
-        Specimen specimen = nodeFactory.createSpecimen(null, "urn:lsid:biodiversity.org.au:afd.taxon:31a9b8b8-4e8f-4343-a15f-2ed24e0bf1ae");
+        Specimen specimen = nodeFactory.createSpecimen(nodeFactory.createStudy("testing123"), null, "urn:lsid:biodiversity.org.au:afd.taxon:31a9b8b8-4e8f-4343-a15f-2ed24e0bf1ae");
         assertThat(specimen, is(notNullValue()));
         Iterable<Relationship> classifications = specimen.getClassifications();
         int count = 0;

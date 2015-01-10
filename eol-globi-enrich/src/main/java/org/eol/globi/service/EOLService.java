@@ -144,19 +144,24 @@ public class EOLService extends BaseHttpClientService implements PropertyEnriche
         for (JsonNode taxonConcept : taxonConcepts) {
             if (taxonConcept.has("identifier")) {
                 firstConceptId = taxonConcept.get("identifier").getValueAsText();
-                if (taxonConcept.has("canonicalForm")) {
-                    properties.put(PropertyAndValueDictionary.NAME, taxonConcept.get("canonicalForm").getValueAsText());
-                }
-                if (taxonConcept.has("taxonRank")) {
-                    properties.put(PropertyAndValueDictionary.RANK, taxonConcept.get("taxonRank").getValueAsText());
-                } else {
-                    // workaround related to https://github.com/jhpoelen/gomexsi/issues/92 - fishbase species names do not have taxonRank
-                    String name = properties.get(PropertyAndValueDictionary.NAME);
-                    if (StringUtils.split(name).length > 1) {
-                        properties.put(PropertyAndValueDictionary.RANK, "Species");
+                String accordingTo = nameAccordingTo(taxonConcept);
+                if (!StringUtils.contains(accordingTo, "IUCN")) {
+                    if (accordingToNCBI(accordingTo) && taxonConcept.has("scientificName")) {
+                        properties.put(PropertyAndValueDictionary.NAME, taxonConcept.get("scientificName").getValueAsText());
+                    } else if (taxonConcept.has("canonicalForm")) {
+                        properties.put(PropertyAndValueDictionary.NAME, taxonConcept.get("canonicalForm").getValueAsText());
                     }
+                    String taxonRank = rankOf(taxonConcept);
+                    if (StringUtils.isEmpty(taxonRank)) {
+                        String name = properties.get(PropertyAndValueDictionary.NAME);
+                        if (isProbablyFishBaseSpecies(accordingTo, name)) {
+                            properties.put(PropertyAndValueDictionary.RANK, "Species");
+                        }
+                    } else {
+                        properties.put(PropertyAndValueDictionary.RANK, taxonConcept.get("taxonRank").getValueAsText());
+                    }
+                    break;
                 }
-                break;
             }
         }
         if (firstConceptId != null) {
@@ -174,6 +179,30 @@ public class EOLService extends BaseHttpClientService implements PropertyEnriche
         }
 
 
+    }
+
+    // workaround related to https://github.com/jhpoelen/gomexsi/issues/92 - fishbase species names do not have taxonRank
+    private boolean isProbablyFishBaseSpecies(String accordingTo, String name) {
+        return StringUtils.contains(accordingTo, "FishBase") && StringUtils.split(name).length > 1;
+    }
+
+    private boolean accordingToNCBI(String accordingTo) {
+        return StringUtils.contains(accordingTo, "NCBI");
+    }
+
+    private String nameAccordingTo(JsonNode taxonConcept) {
+        return taxonConcept.has("nameAccordingTo") ? getNameAccordingTo(taxonConcept) : null;
+    }
+
+    private String getNameAccordingTo(JsonNode taxonConcept) {
+        String accordingTo;
+        JsonNode node = taxonConcept.get("nameAccordingTo");
+        if (node.isArray() && node.size() > 0) {
+            accordingTo = node.get(0).getValueAsText();
+        } else {
+            accordingTo = node.getValueAsText();
+        }
+        return accordingTo;
     }
 
     private void addExternalId(Map<String, String> properties, Long resolvedPageId) {
@@ -208,43 +237,71 @@ public class EOLService extends BaseHttpClientService implements PropertyEnriche
         uri = new URI("http", null, "eol.org", 80, "/api/hierarchy_entries/1.0/" + firstConceptId + ".json", "common_names=false&synonyms=false&format=json", null);
         response = getResponse(uri);
         if (response != null) {
-            parseResponse(response, ranks, rankNames, rankIds);
+            parseRankResponse(response, ranks, rankNames, rankIds);
         }
     }
 
-    protected void parseResponse(String response, List<String> ranks, List<String> rankNames, List<String> rankIds) throws IOException {
+    protected void parseRankResponse(String response, List<String> ranks, List<String> rankNames, List<String> rankIds) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         JsonNode node = mapper.readTree(response);
-        JsonNode ancestors = node.get("ancestors");
+        String accordingTo = nameAccordingTo(node);
 
+        JsonNode ancestors = node.get("ancestors");
         for (JsonNode ancestor : ancestors) {
-            parseTaxonNode(ancestor, ranks, rankNames, rankIds);
+            parseTaxonNode(ancestor, ranks, rankNames, rankIds, accordingTo);
         }
 
-        parseTaxonNode(node, ranks, rankNames, rankIds);
+        parseTaxonNode(node, ranks, rankNames, rankIds, accordingTo);
     }
 
-    private void parseTaxonNode(JsonNode ancestor, List<String> ranks, List<String> rankNames, List<String> rankIds) {
+    private void parseTaxonNode(JsonNode ancestor, List<String> ranks, List<String> rankNames, List<String> rankIds, String accordingTo) {
         if (ancestor.has("scientificName")) {
-            String scientificName = ancestor.get("scientificName").getTextValue();
-            String[] split = scientificName.split(" ");
-            String name = split[0];
-            if (split.length > 1 && ((ancestor.has("taxonRank") && "Species".equalsIgnoreCase(ancestor.get("taxonRank").getTextValue()) || !ancestor.has("taxonRank")))) {
-                name += " " + split[1];
-            }
-            ranks.add(name);
-            String taxonRank = "";
-            if (ancestor.has("taxonRank")) {
-                taxonRank = ancestor.get("taxonRank").getTextValue().toLowerCase();
-            }
+            String taxonRank = rankOf(ancestor);
             rankNames.add(taxonRank);
 
-            String taxonConceptId = "";
-            if (ancestor.has("taxonConceptID")) {
-                taxonConceptId = ancestor.get("taxonConceptID").getValueAsText();
+            String scientificName = ancestor.get("scientificName").getTextValue();
+            if (isProbablyFishBaseSpecies(accordingTo, scientificName)) {
+                taxonRank = "species";
             }
-            rankIds.add(TaxonomyProvider.ID_PREFIX_EOL + taxonConceptId);
+            if (accordingToNCBI(accordingTo)) {
+                ranks.add(scientificName);
+            } else {
+                String[] split = scientificName.split(" ");
+                String name = split[0];
+                if (split.length > 0) {
+                    if (StringUtils.contains(taxonRank, "species")) {
+                        if (split.length > 1 && StringUtils.equals(taxonRank, "species")) {
+                            name += " " + split[1];
+                        } else if (split.length > 1) {
+                            if (split.length > 1) {
+                                name += " " + split[1];
+                            }
+                            if (split.length > 2) {
+                                name += " " + split[2];
+                            }
+                        }
+                    }
+                }
+                ranks.add(name);
+            }
+
+
         }
+
+        String taxonConceptId = "";
+        if (ancestor.has("taxonConceptID")) {
+            taxonConceptId = ancestor.get("taxonConceptID").getValueAsText();
+        }
+        rankIds.add(TaxonomyProvider.ID_PREFIX_EOL + taxonConceptId);
+    }
+
+
+    private String rankOf(JsonNode ancestor) {
+        String taxonRank = "";
+        if (ancestor.has("taxonRank")) {
+            taxonRank = ancestor.get("taxonRank").getTextValue().toLowerCase();
+        }
+        return taxonRank;
     }
 
     protected Long getPageId(String taxonName, boolean shouldFollowAlternate) throws PropertyEnricherException {
