@@ -30,15 +30,15 @@ public class StudyImporterForGoMexSI extends BaseStudyImporter {
     public static final String STOMACH_COUNT_WITHOUT_FOOD = "stomachCountWithoutFood";
     public static final String GOMEXSI_NAMESPACE = "GOMEXSI:";
 
-    public static final Collection KNOWN_INVALID_DOUBLE_STRINGS = new ArrayList<String>() {{
-        add("NA");
+    private static final Collection KNOWN_INVALID_DOUBLE_STRINGS = new ArrayList<String>() {{
+        add("na");
         add("> .001");
-        add("TR");
+        add("tr");
         add("< 2");
     }};
 
-    public static final Collection KNOWN_INVALID_INTEGER_STRINGS = new ArrayList<String>() {{
-        add("NA");
+    private static final Collection KNOWN_INVALID_INTEGER_STRINGS = new ArrayList<String>() {{
+        add("na");
         add("numerous");
         add("a few");
         add("several");
@@ -234,11 +234,11 @@ public class StudyImporterForGoMexSI extends BaseStudyImporter {
             try {
                 terms = cmecsService.lookupTermByName(cmecsLabel);
                 if (terms.size() == 0) {
-                    LOG.warn(msg);
+                    getLogger().warn(metaStudy, msg);
                 }
                 nodeFactory.addEnvironmentToLocation(location, terms);
             } catch (TermLookupServiceException e) {
-                LOG.warn(msg, e);
+                getLogger().warn(metaStudy, msg);
             }
 
         }
@@ -264,7 +264,7 @@ public class StudyImporterForGoMexSI extends BaseStudyImporter {
                             prey.caughtIn(location);
                             predatorSpecimen.ate(prey);
                         } catch (NodeFactoryException e) {
-                            throw new StudyImporterException("failed to create specimen for [" + predatorProperties + "]", e);
+                            getLogger().warn(metaStudy, "failed to add prey [" + preyProperties + "] for predator with id + [" + predatorId + "]: [" + predatorProperties + "]: [" +  e.getMessage() + "]");
                         }
                     }
                 }
@@ -294,7 +294,7 @@ public class StudyImporterForGoMexSI extends BaseStudyImporter {
     private Integer integerValueOrNull(Map<String, String> props, String key) throws StudyImporterException {
         String value = props.get(key);
         try {
-            return value == null || KNOWN_INVALID_INTEGER_STRINGS.contains(value) ? null : Integer.parseInt(value);
+            return StringUtils.isBlank(value) || KNOWN_INVALID_INTEGER_STRINGS.contains(StringUtils.lowerCase(value)) ? null : Integer.parseInt(value);
         } catch (NumberFormatException ex) {
             throw new StudyImporterException("failed to parse key [" + key + "] with value [" + value + "]", ex);
         }
@@ -303,7 +303,7 @@ public class StudyImporterForGoMexSI extends BaseStudyImporter {
     private Double doubleValueOrNull(Map<String, String> props, String key) throws StudyImporterException {
         String value = props.get(key);
         try {
-            return value == null || KNOWN_INVALID_DOUBLE_STRINGS.contains(value) ? null : Double.parseDouble(value);
+            return StringUtils.isBlank(value) || KNOWN_INVALID_DOUBLE_STRINGS.contains(StringUtils.lowerCase(value)) ? null : Double.parseDouble(value);
         } catch (NumberFormatException ex) {
             throw new StudyImporterException("failed to parse key [" + key + "] with value [" + value + "]", ex);
         }

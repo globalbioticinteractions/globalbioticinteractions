@@ -3,12 +3,14 @@ package org.eol.globi.data;
 
 import org.eol.globi.domain.Environment;
 import org.eol.globi.domain.Location;
+import org.eol.globi.domain.LogMessage;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.service.GitHubUtil;
 import org.eol.globi.util.ExternalIdUtil;
+import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.GraphDatabaseService;
@@ -20,6 +22,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 
 import static junit.framework.Assert.assertNotNull;
 import static org.hamcrest.CoreMatchers.not;
@@ -39,9 +42,29 @@ public class StudyImporterForGoMexSITest extends GraphDBTestCase {
     @Test
     public void createAndPopulateStudyGitHub() throws StudyImporterException, NodeFactoryException, IOException, URISyntaxException {
         StudyImporterForGoMexSI importer = new StudyImporterForGoMexSI(new ParserFactoryImpl(), nodeFactory);
+        final List<String> msgs = new ArrayList<String>();
+        importer.setLogger(new ImportLogger() {
+            @Override
+            public void warn(Study study, String message) {
+                msgs.add("warn: " + message);
+            }
+
+            @Override
+            public void info(Study study, String message) {
+                msgs.add("info: " + message);
+            }
+
+            @Override
+            public void severe(Study study, String message) {
+                msgs.add("severe: " + message);
+            }
+        });
         importer.setBaseUrl(GitHubUtil.getBaseUrlLastCommit("gomexsi/interaction-data"));
         importer.setSourceCitation("testing source citation");
         assertThatSomeDataIsImported(importer, nodeFactory);
+        for (String msg : msgs) {
+            System.out.println(msg);
+        }
     }
 
     private static void assertThatSomeDataIsImported(StudyImporterForGoMexSI importer, NodeFactory nodeFactory) throws StudyImporterException, NodeFactoryException {
