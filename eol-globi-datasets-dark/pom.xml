@@ -145,6 +145,7 @@
                         </argument>
                         <argument>org.eol.globi.tool.Normalizer</argument>
                         <argument>-useDarkData</argument>
+                        <argument>-skipExport</argument>
                     </arguments>
                     <workingDirectory>${data.dir}</workingDirectory>
                 </configuration>
@@ -155,10 +156,6 @@
                 <configuration>
                     <descriptors>
                         <descriptor>src/assembly/neo4j-graph-db.xml</descriptor>
-                        <descriptor>src/assembly/darwin-core.xml</descriptor>
-                        <descriptor>src/assembly/darwin-core-aggregated.xml</descriptor>
-                        <descriptor>src/assembly/darwin-core-aggregated-roll-up.xml</descriptor>
-                        <descriptor>src/assembly/ttl.xml</descriptor>
                     </descriptors>
                 </configuration>
                 <executions>

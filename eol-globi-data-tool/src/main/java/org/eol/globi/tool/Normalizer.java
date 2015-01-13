@@ -128,10 +128,6 @@ public class Normalizer {
 
     }
 
-    protected Collection<Class> getImporters() {
-        return StudyImporterFactory.getOpenImporters();
-    }
-
     private EcoregionFinder getEcoregionFinder() {
         if (null == ecoregionFinder) {
             ecoregionFinder = new EcoregionFinderProxy(new EcoregionFinderFactoryImpl().createAll());

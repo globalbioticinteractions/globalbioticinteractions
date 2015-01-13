@@ -22,83 +22,7 @@
 
     <build>
         <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <version>2.8</version>
-                <executions>
-                    <execution>
-                        <id>copy-tool</id>
-                        <phase>generate-resources</phase>
-                        <goals>
-                            <goal>copy</goal>
-                        </goals>
-                        <configuration>
-                            <artifactItems>
-                                <artifactItem>
-                                    <groupId>${project.groupId}</groupId>
-                                    <artifactId>eol-globi-data-tool</artifactId>
-                                    <version>${globi.tool.version}</version>
-                                    <classifier>jar-with-dependencies</classifier>
-                                    <outputDirectory>${project.build.directory}</outputDirectory>
-                                </artifactItem>
-                            </artifactItems>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>unpack</id>
-                        <phase>generate-resources</phase>
-                        <goals>
-                            <goal>unpack</goal>
-                        </goals>
-                        <configuration>
-                            <artifactItems>
-                                <artifactItem>
-                                    <groupId>org.eol.globi.geo</groupId>
-                                    <artifactId>feow-tnc</artifactId>
-                                    <version>20140115</version>
-                                    <type>zip</type>
-                                    <overWrite>false</overWrite>
-                                    <outputDirectory>${shapefiles.dir}/feow-tnc</outputDirectory>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>org.eol.globi.geo</groupId>
-                                    <artifactId>teow-tnc</artifactId>
-                                    <version>20140115</version>
-                                    <type>zip</type>
-                                    <overWrite>false</overWrite>
-                                    <outputDirectory>${shapefiles.dir}/teow-tnc</outputDirectory>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>org.eol.globi.geo</groupId>
-                                    <artifactId>meow-tnc</artifactId>
-                                    <version>20140115</version>
-                                    <type>zip</type>
-                                    <overWrite>false</overWrite>
-                                    <outputDirectory>${shapefiles.dir}/meow-tnc</outputDirectory>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>org.eol.globi.geo</groupId>
-                                    <artifactId>longhurst</artifactId>
-                                    <version>v4_2010</version>
-                                    <type>zip</type>
-                                    <overWrite>false</overWrite>
-                                    <outputDirectory>${shapefiles.dir}/longhurst</outputDirectory>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>org.eol.globi.opentree</groupId>
-                                    <artifactId>opentree-taxonomy</artifactId>
-                                    <version>2.8</version>
-                                    <type>tar.gz</type>
-                                    <overWrite>false</overWrite>
-                                    <outputDirectory>${shapefiles.dir}</outputDirectory>
-                                </artifactItem>
-                            </artifactItems>
-                            <outputDirectory>${project.build.directory}</outputDirectory>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
+
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
@@ -116,40 +40,18 @@
                     <executable>java</executable>
                     <arguments>
                         <argument>-Xmx2G</argument>
-                        <argument>-Dshapefiles.dir=${shapefiles.dir}</argument>
-                        <argument>-Dott.file=${shapefiles.dir}/ott/taxonomy.tsv</argument>
                         <argument>-classpath</argument>
                         <argument>
                             ${project.build.directory}/eol-globi-data-tool-${globi.tool.version}-jar-with-dependencies.jar
                         </argument>
                         <argument>org.eol.globi.tool.Normalizer</argument>
+                        <argument>${normalizer.arg.1}</argument>
+                        <argument>${normalizer.arg.2}</argument>
                     </arguments>
                     <workingDirectory>${data.dir}</workingDirectory>
                 </configuration>
             </plugin>
-            <plugin>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <version>2.4</version>
-                <configuration>
-                    <descriptors>
-                        <descriptor>src/assembly/neo4j-graph-db.xml</descriptor>
-                        <descriptor>src/assembly/darwin-core.xml</descriptor>
-                        <descriptor>src/assembly/darwin-core-aggregated.xml</descriptor>
-                        <descriptor>src/assembly/darwin-core-aggregated-roll-up.xml</descriptor>
-                        <descriptor>src/assembly/ttl.xml</descriptor>
-                    </descriptors>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>make-assembly</id>
-                        <!-- ensure that this doesn't run on travis -->
-                        <phase>package</phase>
-                        <goals>
-                            <goal>single</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
+
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>wagon-maven-plugin</artifactId>
@@ -174,6 +76,200 @@
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>import-link-export-neo4j-only</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <normalizer.arg.1>-skipExport</normalizer.arg.1>
+                <normalizer.arg.2>noArg</normalizer.arg.2>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-dependency-plugin</artifactId>
+                        <version>2.8</version>
+                        <executions>
+                            <execution>
+                                <id>copy-tool</id>
+                                <phase>generate-resources</phase>
+                                <goals>
+                                    <goal>copy</goal>
+                                </goals>
+                                <configuration>
+                                    <artifactItems>
+                                        <artifactItem>
+                                            <groupId>${project.groupId}</groupId>
+                                            <artifactId>eol-globi-data-tool</artifactId>
+                                            <version>${globi.tool.version}</version>
+                                            <classifier>jar-with-dependencies</classifier>
+                                            <outputDirectory>${project.build.directory}</outputDirectory>
+                                        </artifactItem>
+                                    </artifactItems>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>unpack</id>
+                                <phase>generate-resources</phase>
+                                <goals>
+                                    <goal>unpack</goal>
+                                </goals>
+                                <configuration>
+                                    <artifactItems>
+                                        <artifactItem>
+                                            <groupId>org.eol.globi.geo</groupId>
+                                            <artifactId>feow-tnc</artifactId>
+                                            <version>20140115</version>
+                                            <type>zip</type>
+                                            <overWrite>false</overWrite>
+                                            <outputDirectory>${shapefiles.dir}/feow-tnc</outputDirectory>
+                                        </artifactItem>
+                                        <artifactItem>
+                                            <groupId>org.eol.globi.geo</groupId>
+                                            <artifactId>teow-tnc</artifactId>
+                                            <version>20140115</version>
+                                            <type>zip</type>
+                                            <overWrite>false</overWrite>
+                                            <outputDirectory>${shapefiles.dir}/teow-tnc</outputDirectory>
+                                        </artifactItem>
+                                        <artifactItem>
+                                            <groupId>org.eol.globi.geo</groupId>
+                                            <artifactId>meow-tnc</artifactId>
+                                            <version>20140115</version>
+                                            <type>zip</type>
+                                            <overWrite>false</overWrite>
+                                            <outputDirectory>${shapefiles.dir}/meow-tnc</outputDirectory>
+                                        </artifactItem>
+                                        <artifactItem>
+                                            <groupId>org.eol.globi.geo</groupId>
+                                            <artifactId>longhurst</artifactId>
+                                            <version>v4_2010</version>
+                                            <type>zip</type>
+                                            <overWrite>false</overWrite>
+                                            <outputDirectory>${shapefiles.dir}/longhurst</outputDirectory>
+                                        </artifactItem>
+                                        <artifactItem>
+                                            <groupId>org.eol.globi.opentree</groupId>
+                                            <artifactId>opentree-taxonomy</artifactId>
+                                            <version>2.8</version>
+                                            <type>tar.gz</type>
+                                            <overWrite>false</overWrite>
+                                            <outputDirectory>${shapefiles.dir}</outputDirectory>
+                                        </artifactItem>
+                                    </artifactItems>
+                                    <outputDirectory>${project.build.directory}</outputDirectory>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <artifactId>maven-assembly-plugin</artifactId>
+                        <version>2.4</version>
+                        <configuration>
+                            <descriptors>
+                                <descriptor>src/assembly/neo4j-graph-db.xml</descriptor>
+                            </descriptors>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>make-assembly</id>
+                                <!-- ensure that this doesn't run on travis -->
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>single</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>export-all</id>
+            <properties>
+                <normalizer.arg.1>-skipImport</normalizer.arg.1>
+                <normalizer.arg.2>-skipLink</normalizer.arg.2>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-dependency-plugin</artifactId>
+                        <version>2.8</version>
+                        <executions>
+                            <execution>
+                                <id>copy-tool</id>
+                                <phase>generate-resources</phase>
+                                <goals>
+                                    <goal>copy</goal>
+                                </goals>
+                                <configuration>
+                                    <artifactItems>
+                                        <artifactItem>
+                                            <groupId>${project.groupId}</groupId>
+                                            <artifactId>eol-globi-data-tool</artifactId>
+                                            <version>${globi.tool.version}</version>
+                                            <classifier>jar-with-dependencies</classifier>
+                                            <outputDirectory>${project.build.directory}</outputDirectory>
+                                        </artifactItem>
+                                    </artifactItems>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>copy-unpack-neo4j-db</id>
+                                <phase>generate-resources</phase>
+                                <goals>
+                                    <goal>unpack</goal>
+                                </goals>
+                                <configuration>
+                                    <artifactItems>
+                                        <artifactItem>
+                                            <groupId>${project.groupId}</groupId>
+                                            <artifactId>eol-globi-datasets</artifactId>
+                                            <version>${project.version}</version>
+                                            <classifier>neo4j-graph-db</classifier>
+                                            <type>tar.gz</type>
+                                            <overWrite>false</overWrite>
+                                            <outputDirectory>${data.dir}</outputDirectory>
+                                        </artifactItem>
+                                    </artifactItems>
+                                    <outputDirectory>${project.build.directory}</outputDirectory>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <artifactId>maven-assembly-plugin</artifactId>
+                        <version>2.4</version>
+                        <configuration>
+                            <descriptors>
+                                <descriptor>src/assembly/neo4j-graph-db.xml</descriptor>
+                                <descriptor>src/assembly/darwin-core.xml</descriptor>
+                                <descriptor>src/assembly/darwin-core-aggregated.xml</descriptor>
+                                <descriptor>src/assembly/darwin-core-aggregated-roll-up.xml</descriptor>
+                                <descriptor>src/assembly/ttl.xml</descriptor>
+                            </descriptors>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>make-assembly</id>
+                                <!-- ensure that this doesn't run on travis -->
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>single</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
 
     <repositories>
         <repository>
