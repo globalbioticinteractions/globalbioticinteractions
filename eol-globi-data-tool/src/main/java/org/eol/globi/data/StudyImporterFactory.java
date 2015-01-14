@@ -8,9 +8,9 @@ import java.util.Collections;
 public class StudyImporterFactory {
 
     private static final Collection<Class> IMPORTERS = Collections.unmodifiableCollection(new ArrayList<Class>() {{
+        add(StudyImporterForGitHubData.class);
         add(StudyImporterForKelpForest.class);
         add(StudyImporterForGemina.class);
-        add(StudyImporterForGitHubData.class);
         add(StudyImporterForCruaud.class);
         add(StudyImporterForStrona.class);
         add(StudyImporterForBell.class);
