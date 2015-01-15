@@ -72,6 +72,7 @@ public class StudyImporterForGitHubData extends BaseStudyImporter {
                     StudyImporterForGoMexSI importer = new StudyImporterForGoMexSI(parserFactory, nodeFactory);
                     importer.setBaseUrl(baseUrl);
                     importer.setSourceCitation(sourceCitation);
+                    importer.setLogger(getLogger());
                     importer.importStudy();
                 } else {
                     throw new StudyImporterException("unsupported format [" + format + "]");
