@@ -53,22 +53,28 @@ public class LinkerGlobalNames {
         stopWatch.start();
         String msgPrefix = "batch #" + counter / batchSize;
         LOG.info(msgPrefix + " preparing...");
-        List<String> names = new ArrayList<String>();
-        for (Map.Entry<Long, TaxonNode> entry : nodeMap.entrySet()) {
-            String name = entry.getKey() + "|" + entry.getValue().getName();
-            names.add(name);
-        }
-        if (names.size() > 0) {
-            globalNamesService.findTermsForNames(names, new TermMatchListener() {
-                @Override
-                public void foundTaxonForName(Long id, String name, Taxon taxon) {
-                    TaxonNode taxonNode = nodeMap.get(id);
-                    NodeUtil.createSameAsTaxon(taxon, taxonNode, graphDb);
-                }
-            }, desiredSources);
+        try {
+            List<String> names = new ArrayList<String>();
+            for (Map.Entry<Long, TaxonNode> entry : nodeMap.entrySet()) {
+                String name = entry.getKey() + "|" + entry.getValue().getName();
+                names.add(name);
+            }
+            if (names.size() > 0) {
+                globalNamesService.findTermsForNames(names, new TermMatchListener() {
+                    @Override
+                    public void foundTaxonForName(Long id, String name, Taxon taxon) {
+                        TaxonNode taxonNode = nodeMap.get(id);
+                        NodeUtil.createSameAsTaxon(taxon, taxonNode, graphDb);
+                    }
+                }, desiredSources);
+            }
+
+        } catch (PropertyEnricherException ex) {
+            LOG.error(msgPrefix + "problem matching terms", ex);
         }
         stopWatch.stop();
         LOG.info(msgPrefix + " completed in [" + stopWatch.getTime() + "] ms (" + stopWatch.getTime() / counter + " ms/name )");
+
         nodeMap.clear();
     }
 
