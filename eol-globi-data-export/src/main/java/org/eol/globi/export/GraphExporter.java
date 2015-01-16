@@ -34,7 +34,7 @@ public class GraphExporter {
             throw new StudyImporterException("failed to create output dir [" + baseDir + "]", e);
         }
         List<Study> studies = NodeUtil.findAllStudies(graphService);
-        exportDataOntology(studies, baseDir);
+//        exportDataOntology(studies, baseDir);
         exportUnmatchedTaxa(studies, baseDir);
         exportDarwinCoreAggregatedByStudyRollUp(baseDir, studies);
         exportDarwinCoreAggregatedByStudy(baseDir, studies);
