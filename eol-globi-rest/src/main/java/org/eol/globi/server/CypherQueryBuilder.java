@@ -27,7 +27,7 @@ public class CypherQueryBuilder {
     public static final String INTERACTION_PREYED_UPON_BY = "preyedUponBy";
 
     public static final String INTERACTION_PARASITE_OF = "parasiteOf";
-    public static final String INTERACTION_HOST_OF = "hostOf";
+    public static final String INTERACTION_HAS_PARASITE = "hasParasite";
 
     public static final String INTERACTION_POLLINATES = "pollinates";
     public static final String INTERACTION_POLLINATED_BY = "pollinatedBy";
@@ -47,7 +47,7 @@ public class CypherQueryBuilder {
             put(INTERACTION_PREYS_ON, preysOn);
             put(INTERACTION_PREYED_UPON_BY, InteractType.EATEN_BY + "|" + InteractType.PREYED_UPON_BY);
             put(INTERACTION_PARASITE_OF, InteractType.PARASITE_OF + "|" + InteractType.HAS_HOST);
-            put(INTERACTION_HOST_OF, InteractType.HAS_PARASITE + "|" + InteractType.HOST_OF);
+            put(INTERACTION_HAS_PARASITE, InteractType.HAS_PARASITE + "|" + InteractType.HOST_OF);
             put(INTERACTION_POLLINATES, InteractType.POLLINATES.toString());
             put(INTERACTION_POLLINATED_BY, InteractType.POLLINATED_BY.toString());
             put(INTERACTION_PATHOGEN_OF, InteractType.PATHOGEN_OF.toString());

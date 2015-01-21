@@ -6,7 +6,6 @@ import org.apache.commons.io.IOUtils;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Test;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 
 import javax.servlet.http.HttpServletRequest;
@@ -49,7 +48,7 @@ public class InteractionControllerTest {
             assertThat(interactionType.has("source"), is(true));
             assertThat(interactionType.has("target"), is(true));
         }
-        assertThat(jsonNode.has(CypherQueryBuilder.INTERACTION_HOST_OF), is(true));
+        assertThat(jsonNode.has(CypherQueryBuilder.INTERACTION_HAS_PARASITE), is(true));
         assertThat(jsonNode.has(CypherQueryBuilder.INTERACTION_PARASITE_OF), is(true));
         assertThat(jsonNode.has(CypherQueryBuilder.INTERACTION_PREYED_UPON_BY), is(true));
         assertThat(jsonNode.has(CypherQueryBuilder.INTERACTION_PREYS_ON), is(true));
