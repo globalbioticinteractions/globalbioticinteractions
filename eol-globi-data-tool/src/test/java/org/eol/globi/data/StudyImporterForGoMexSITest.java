@@ -62,9 +62,6 @@ public class StudyImporterForGoMexSITest extends GraphDBTestCase {
         importer.setBaseUrl(GitHubUtil.getBaseUrlLastCommit("gomexsi/interaction-data"));
         importer.setSourceCitation("testing source citation");
         assertThatSomeDataIsImported(importer, nodeFactory);
-        for (String msg : msgs) {
-            System.out.println(msg);
-        }
     }
 
     private static void assertThatSomeDataIsImported(StudyImporterForGoMexSI importer, NodeFactory nodeFactory) throws StudyImporterException, NodeFactoryException {

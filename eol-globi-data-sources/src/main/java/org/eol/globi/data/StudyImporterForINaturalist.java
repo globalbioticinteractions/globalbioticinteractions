@@ -62,6 +62,7 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
         put("Insect Nectar Plant", InteractType.INTERACTS_WITH);
         put("Insect Host Plant", InteractType.HAS_HOST);
         put("Hunting", InteractType.PREYS_UPON);
+        put("Predated by", InteractType.PREYED_UPON_BY);
     }};
 
     private static final Map<String, InteractType> INVERSE_TYPE_MAPPING = new HashMap<String, InteractType>() {{
