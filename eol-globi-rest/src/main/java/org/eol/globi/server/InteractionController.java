@@ -31,8 +31,8 @@ public class InteractionController {
             builder.append(CypherQueryBuilder.INTERACTION_POLLINATES).append(",pollinator,plant\n");
             builder.append(CypherQueryBuilder.INTERACTION_POLLINATED_BY).append(",plant,pollinator\n");
             builder.append(CypherQueryBuilder.INTERACTION_PATHOGEN_OF).append(",pathogen,host\n");
-            builder.append(CypherQueryBuilder.INTERACTION_HAS_PATHOGEN).append(",plant,pollinator");
-            builder.append(CypherQueryBuilder.INTERACTION_SYMBIONT_OF).append(",source,target");
+            builder.append(CypherQueryBuilder.INTERACTION_HAS_PATHOGEN).append(",plant,pollinator\n");
+            builder.append(CypherQueryBuilder.INTERACTION_SYMBIONT_OF).append(",source,target\n");
             builder.append(CypherQueryBuilder.INTERACTION_INTERACTS_WITH).append(",source,target");
             result = builder.toString();
         } else {
