@@ -10,6 +10,7 @@ import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.TaxonomyProvider;
 import org.eol.globi.domain.Term;
+import org.eol.globi.service.TermLookupService;
 import org.eol.globi.service.TermLookupServiceException;
 import org.eol.globi.util.ExternalIdUtil;
 import org.neo4j.graphdb.Transaction;
@@ -185,7 +186,12 @@ public class StudyImporterForGoMexSI extends BaseStudyImporter {
     private void addObservations(Map<String, Map<String, String>> predatorIdToPredatorSpecimen, Map<String, Study> refIdToStudyMap, Map<String, List<Map<String, String>>> predatorUIToPreyLists, Study metaStudy) throws StudyImporterException {
         String locationResource = getLocationsResourcePath();
         try {
-            CMECSService cmecsService = new CMECSService();
+            TermLookupService cmecsService = new TermLookupService() {
+                @Override
+                public List<Term> lookupTermByName(String name) throws TermLookupServiceException {
+                    return new ArrayList<Term>();
+                }
+            }; //new CMECSService();
             LabeledCSVParser parser = parserFactory.createParser(locationResource, CharsetConstant.UTF8);
             while (parser.getLine() != null) {
                 String refId = getMandatoryValue(locationResource, parser, "REF_ID");
@@ -218,7 +224,7 @@ public class StudyImporterForGoMexSI extends BaseStudyImporter {
 
     }
 
-    private Location getLocation(Study metaStudy, String locationResource, CMECSService cmecsService, LabeledCSVParser parser, Double latitude, Double longitude, Double depth, String habitatSystem, String habitatSubsystem, String habitatTidalZone) {
+    private Location getLocation(Study metaStudy, String locationResource, TermLookupService cmecsService, LabeledCSVParser parser, Double latitude, Double longitude, Double depth, String habitatSystem, String habitatSubsystem, String habitatTidalZone) {
         Location location = null;
         try {
             location = nodeFactory.getOrCreateLocation(latitude, longitude, depth == null ? null : -depth);
