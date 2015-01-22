@@ -14,7 +14,6 @@ import static org.junit.Assert.assertThat;
 
 public class CMECSServiceTest {
 
-    @Ignore("re-enable after finding the new location of the ms accessdatabase")
     @Test
     public void lookupCMECSTerms() throws IOException, TermLookupServiceException {
         TermLookupService service = new CMECSService();

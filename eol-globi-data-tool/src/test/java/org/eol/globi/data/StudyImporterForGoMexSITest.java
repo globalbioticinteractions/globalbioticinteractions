@@ -119,10 +119,10 @@ public class StudyImporterForGoMexSITest extends GraphDBTestCase {
 
         Location location = nodeFactory.findLocation(29.346953, -92.980614, -13.641);
         assertNotNull(location);
-//        List<Environment> environments = location.getEnvironments();
-//        assertThat(environments.size(), not(is(0)));
-//        assertThat(environments.get(0).getExternalId(), is("CMECS:AQUATIC_SETTING:13"));
-//        assertThat(environments.get(0).getName(), is("Marine Nearshore Subtidal"));
+        List<Environment> environments = location.getEnvironments();
+        assertThat(environments.size(), not(is(0)));
+        assertThat(environments.get(0).getExternalId(), is("CMECS:AQUATIC_SETTING:13"));
+        assertThat(environments.get(0).getName(), is("Marine Nearshore Subtidal"));
 
         assertNotNull(nodeFactory.findStudy("GoMexSI"));
     }

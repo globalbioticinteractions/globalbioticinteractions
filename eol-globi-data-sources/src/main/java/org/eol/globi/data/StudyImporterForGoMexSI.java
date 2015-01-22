@@ -186,12 +186,7 @@ public class StudyImporterForGoMexSI extends BaseStudyImporter {
     private void addObservations(Map<String, Map<String, String>> predatorIdToPredatorSpecimen, Map<String, Study> refIdToStudyMap, Map<String, List<Map<String, String>>> predatorUIToPreyLists, Study metaStudy) throws StudyImporterException {
         String locationResource = getLocationsResourcePath();
         try {
-            TermLookupService cmecsService = new TermLookupService() {
-                @Override
-                public List<Term> lookupTermByName(String name) throws TermLookupServiceException {
-                    return new ArrayList<Term>();
-                }
-            }; //new CMECSService();
+            TermLookupService cmecsService = new CMECSService();
             LabeledCSVParser parser = parserFactory.createParser(locationResource, CharsetConstant.UTF8);
             while (parser.getLine() != null) {
                 String refId = getMandatoryValue(locationResource, parser, "REF_ID");
