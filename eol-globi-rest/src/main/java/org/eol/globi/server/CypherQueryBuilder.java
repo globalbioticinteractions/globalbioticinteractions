@@ -46,14 +46,30 @@ public class CypherQueryBuilder {
             String preysOn = InteractType.ATE + "|" + InteractType.PREYS_UPON;
             put(INTERACTION_PREYS_ON, preysOn);
             put(INTERACTION_PREYED_UPON_BY, InteractType.EATEN_BY + "|" + InteractType.PREYED_UPON_BY);
-            put(INTERACTION_PARASITE_OF, InteractType.PARASITE_OF + "|" + InteractType.HAS_HOST);
-            put(INTERACTION_HAS_PARASITE, InteractType.HAS_PARASITE + "|" + InteractType.HOST_OF);
+            put(INTERACTION_PARASITE_OF, InteractType.PARASITE_OF.toString());
+            put(INTERACTION_HAS_PARASITE, InteractType.HAS_PARASITE.toString());
             put(INTERACTION_POLLINATES, InteractType.POLLINATES.toString());
             put(INTERACTION_POLLINATED_BY, InteractType.POLLINATED_BY.toString());
             put(INTERACTION_PATHOGEN_OF, InteractType.PATHOGEN_OF.toString());
             put(INTERACTION_HAS_PATHOGEN, InteractType.HAS_PATHOGEN.toString());
             put(INTERACTION_SYMBIONT_OF, StringUtils.join(InteractType.values(), "|"));
             put(INTERACTION_INTERACTS_WITH, StringUtils.join(InteractType.values(), "|"));
+        }
+    };
+
+    private static final Map<String, String> TRANSLATION_MAP = new HashMap<String, String>() {
+        {
+            String preysOn = InteractType.ATE + "|" + InteractType.PREYS_UPON;
+            put(INTERACTION_PREYS_ON, preysOn);
+            put(INTERACTION_PREYED_UPON_BY, InteractType.EATEN_BY + "|" + InteractType.PREYED_UPON_BY);
+            put(INTERACTION_PARASITE_OF, InteractType.PARASITE_OF.toString());
+            put(INTERACTION_HAS_PARASITE, InteractType.HAS_PARASITE.toString());
+            put(INTERACTION_POLLINATES, InteractType.POLLINATES.toString());
+            put(INTERACTION_POLLINATED_BY, InteractType.POLLINATED_BY.toString());
+            put(INTERACTION_PATHOGEN_OF, InteractType.PATHOGEN_OF.toString());
+            put(INTERACTION_HAS_PATHOGEN, InteractType.HAS_PATHOGEN.toString());
+            put(INTERACTION_INTERACTS_WITH, InteractType.INTERACTS_WITH.toString());
+            put(INTERACTION_SYMBIONT_OF, InteractType.SYMBIONT_OF.toString());
         }
     };
 
@@ -283,7 +299,12 @@ public class CypherQueryBuilder {
     }
 
     protected static void appendReturnClauseDistinct(String interactionType, StringBuilder query) {
-        query.append("RETURN sourceTaxon.name as ").append(ResultFields.SOURCE_TAXON_NAME).append(", '").append(interactionType).append("' as ").append(ResultFields.INTERACTION_TYPE).append(", collect(distinct(targetTaxon.name)) as ").append(ResultFields.TARGET_TAXON_NAME);
+        query.append("RETURN sourceTaxon.name as ")
+                .append(ResultFields.SOURCE_TAXON_NAME).append(", '")
+                .append(interactionType).append("' as ")
+                .append(ResultFields.INTERACTION_TYPE)
+                .append(", collect(distinct(targetTaxon.name)) as ")
+                .append(ResultFields.TARGET_TAXON_NAME);
     }
 
     protected static StringBuilder appendMatchAndWhereClause(List<String> interactionTypes, Map parameterMap, StringBuilder query) {
@@ -316,8 +337,9 @@ public class CypherQueryBuilder {
                 .append(",sourceTaxon.name as ").append(ResultFields.SOURCE_TAXON_NAME)
                 .append(",sourceTaxon.path? as ").append(ResultFields.SOURCE_TAXON_PATH)
                 .append(",sourceSpecimen.lifeStage? as ").append(ResultFields.PREFIX_SOURCE_SPECIMEN).append(ResultFields.SUFFIX_LIFE_STAGE)
-                .append(",type(interactionType) as ").append(ResultFields.INTERACTION_TYPE)
-                .append(",targetTaxon.externalId? as ").append(ResultFields.TARGET_TAXON_EXTERNAL_ID)
+                .append(",");
+        appendInteractionTypeReturn(query, "type(interactionType)");
+        query.append(",targetTaxon.externalId? as ").append(ResultFields.TARGET_TAXON_EXTERNAL_ID)
                 .append(",targetTaxon.name as ").append(ResultFields.TARGET_TAXON_NAME)
                 .append(",targetTaxon.path? as ").append(ResultFields.TARGET_TAXON_PATH)
                 .append(",targetSpecimen.lifeStage? as ").append(ResultFields.PREFIX_TARGET_SPECIMEN).append(ResultFields.SUFFIX_LIFE_STAGE)
@@ -326,14 +348,36 @@ public class CypherQueryBuilder {
                 .append(",study.title as ").append(ResultFields.STUDY_TITLE);
     }
 
+    protected static StringBuilder appendInteractionTypeReturn(StringBuilder query, String interactionTypeValue) {
+        int terms = 0;
+        StringBuilder suffix = new StringBuilder();
+        for (Map.Entry<String, String> interactMap : TRANSLATION_MAP.entrySet()) {
+            String externalType = interactMap.getKey();
+            String[] internalTypes = interactMap.getValue().split("\\|");
+
+            for (String internalType : internalTypes) {
+                suffix.append(",'").append(internalType).append("','").append(externalType).append("')");
+                terms++;
+            }
+
+        }
+
+        query.append(StringUtils.repeat("replace(", terms));
+        query.append(interactionTypeValue);
+        query.append(suffix);
+        query.append(" as ").append(ResultFields.INTERACTION_TYPE);
+        return query;
+    }
+
     protected static void appendReturnClauseDistinct(StringBuilder query) {
         query.append("WITH distinct targetTaxon as tTaxon, type(interactionType) as iType, sourceTaxon as sTaxon ");
         query.append("RETURN sTaxon.externalId? as ").append(ResultFields.SOURCE_TAXON_EXTERNAL_ID)
                 .append(",sTaxon.name as ").append(ResultFields.SOURCE_TAXON_NAME)
                 .append(",sTaxon.path? as ").append(ResultFields.SOURCE_TAXON_PATH)
                 .append(",NULL as ").append(ResultFields.PREFIX_SOURCE_SPECIMEN).append(ResultFields.SUFFIX_LIFE_STAGE)
-                .append(",iType as ").append(ResultFields.INTERACTION_TYPE)
-                .append(",tTaxon.externalId? as ").append(ResultFields.TARGET_TAXON_EXTERNAL_ID)
+                .append(",");
+        appendInteractionTypeReturn(query, "iType");
+        query.append(",tTaxon.externalId? as ").append(ResultFields.TARGET_TAXON_EXTERNAL_ID)
                 .append(",tTaxon.name as ").append(ResultFields.TARGET_TAXON_NAME)
                 .append(",tTaxon.path? as ").append(ResultFields.TARGET_TAXON_PATH)
                 .append(",NULL as ").append(ResultFields.PREFIX_TARGET_SPECIMEN).append(ResultFields.SUFFIX_LIFE_STAGE)
