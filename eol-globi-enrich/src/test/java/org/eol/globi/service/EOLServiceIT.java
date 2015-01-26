@@ -548,6 +548,17 @@ public class EOLServiceIT {
     }
 
     @Test
+    public void lookupPathITISExternalIdInvalidName() throws PropertyEnricherException {
+        // see https://github.com/jhpoelen/eol-globi-data/issues/110
+        Map<String, String> properties = new HashMap<String, String>();
+        properties.put(EXTERNAL_ID, "ITIS:167353");
+        properties = eolService.enrich(properties);
+        assertThat(properties.get(NAME), is(nullValue()));
+        assertThat(properties.get(EXTERNAL_ID), is("ITIS:167353"));
+        assertThat(properties.get(PATH), is(nullValue()));
+    }
+
+    @Test
     public void lookupPathNCBIExternalIdInfluenza() throws PropertyEnricherException {
         Map<String, String> properties = new HashMap<String, String>();
         properties.put(NAME, "something");
