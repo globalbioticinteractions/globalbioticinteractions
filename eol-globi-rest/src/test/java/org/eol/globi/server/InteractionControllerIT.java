@@ -1,8 +1,12 @@
 package org.eol.globi.server;
 
+import org.apache.commons.io.IOUtils;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.BasicResponseHandler;
 import org.eol.globi.server.util.ResultFields;
 import org.eol.globi.util.HttpClient;
-import org.junit.Ignore;
+import org.eol.globi.util.HttpUtil;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -34,7 +38,22 @@ public class InteractionControllerIT extends ITBase {
     @Test
     public void listPreyForPredatorLocation() throws IOException {
         String uri = getURLPrefix() + "taxon/Homo%20sapiens/preysOn?lat=12.4&lng=54.4";
-        String response = HttpClient.httpGet(uri);
+        HttpGet httpGet = new HttpGet(uri);
+        HttpClient.addJsonHeaders(httpGet);
+        HttpResponse execute = HttpUtil.createHttpClient().execute(httpGet);
+//        assertThat(execute.getHeaders("Content-Type")[0].getValue(), is("application/json; charset=UTF-8"));
+        String response = IOUtils.toString(execute.getEntity().getContent());
+        assertThat(response, is(not(nullValue())));
+    }
+
+    @Test
+    public void listPreyForPredatorDOT() throws IOException {
+        String uri = getURLPrefix() + "taxon/Homo%20sapiens/preysOn?type=dot";
+        HttpGet httpGet = new HttpGet(uri);
+        HttpClient.addJsonHeaders(httpGet);
+        HttpResponse execute = HttpUtil.createHttpClient().execute(httpGet);
+//        assertThat(execute.getHeaders("Content-Type")[0].getValue(), is("text/vnd.graphviz; charset=UTF-8"));
+        String response = IOUtils.toString(execute.getEntity().getContent());
         assertThat(response, is(not(nullValue())));
     }
 
@@ -49,7 +68,11 @@ public class InteractionControllerIT extends ITBase {
     }
 
     private void assertCSV(String uri) throws IOException {
-        String response = HttpClient.httpGet(uri);
+        HttpGet httpGet = new HttpGet(uri);
+        HttpClient.addJsonHeaders(httpGet);
+        HttpResponse execute = HttpUtil.createHttpClient().execute(httpGet);
+//        assertThat(execute.getHeaders("Content-Type")[0].getValue(), is("text/csv; charset=UTF-8"));
+        String response = IOUtils.toString(execute.getEntity().getContent());
         assertThat(response, not(containsString("columns")));
         assertThat(response, anyOf(containsString("\"" + ResultFields.SOURCE_TAXON_NAME + "\""),
                 containsString("\"" + ResultFields.TARGET_TAXON_NAME + "\"")));
