@@ -31,8 +31,7 @@ public class RollUpDistinctTaxa extends ExporterTaxa {
     static final List<String> EXPANDABLE_RANKS = Arrays.asList("subspecies", "species"
             , "subgenus", "genus"
             , "subtribe", "tribe"
-            , "subfamily", "family", "superfamily"
-            , "suborder", "order");
+            , "subfamily", "family", "superfamily");
 
     public static List<Taxon> expandTaxonResult(Map<String, Object> result) {
         String pathNames1 = (String) result.get("pathNames");

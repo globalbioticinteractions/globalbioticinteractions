@@ -48,27 +48,19 @@ public class RollUpDistinctTaxaTest extends RollUpTest {
 
         List<Taxon> expandedResults = RollUpDistinctTaxa.expandTaxonResult(result);
 
-        assertThat(expandedResults.size(), is(3));
-        Taxon genus = expandedResults.get(2);
+        assertThat(expandedResults.size(), is(2));
+        Taxon genus = expandedResults.get(1);
         assertThat(genus.getRank(), is("genus"));
         assertThat(genus.getName(), is("the genus"));
         assertThat(genus.getPath(), is("the kingdom | the phylum | the class | the order | the family | the genus"));
         assertThat(genus.getPathNames(), is("kingdom | phylum | class | order | family | genus"));
         assertThat(genus.getExternalId(), is("EOL:1234"));
 
-        Taxon family = expandedResults.get(1);
+        Taxon family = expandedResults.get(0);
         assertThat(family.getRank(), is("family"));
         assertThat(family.getName(), is("the family"));
         assertThat(family.getPath(),  is("the kingdom | the phylum | the class | the order | the family"));
         assertThat(family.getExternalId(),  is("EOL:5"));
-
-        Taxon order = expandedResults.get(0);
-        assertThat(order.getRank(), is("order"));
-        assertThat(order.getName(), is("the order"));
-        assertThat(order.getPath(), is("the kingdom | the phylum | the class | the order"));
-        assertThat(order.getPathNames(), is("kingdom | phylum | class | order"));
-        assertThat(order.getExternalId(), is("EOL:4"));
-
     }
 
 
