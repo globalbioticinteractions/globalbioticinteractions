@@ -14,7 +14,20 @@
        http://www.springframework.org/schema/mvc/spring-mvc-3.2.xsd">
     <context:spring-configured/>
     <context:annotation-config/>
-    <mvc:annotation-driven/>
+    <mvc:annotation-driven content-negotiation-manager="contentNegotiationManager"/>
+
+    <bean id="contentNegotiationManager" class="org.springframework.web.accept.ContentNegotiationManagerFactoryBean">
+        <property name="favorPathExtension" value="false"/>
+        <property name="favorParameter" value="true"/>
+        <property name="parameterName" value="type"/>
+        <property name="mediaTypes">
+            <value>
+                json=application/json;charset=UTF-8
+                csv=text/csv;charset=UTF-8
+                dot=text/vnd.graphviz;charset=UTF-8
+            </value>
+        </property>
+    </bean>
     <cache:annotation-driven/>
     <context:component-scan base-package="org.eol.globi"/>
 </beans>

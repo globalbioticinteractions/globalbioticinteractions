@@ -41,7 +41,7 @@ public class InteractionControllerIT extends ITBase {
         HttpGet httpGet = new HttpGet(uri);
         HttpClient.addJsonHeaders(httpGet);
         HttpResponse execute = HttpUtil.createHttpClient().execute(httpGet);
-//        assertThat(execute.getHeaders("Content-Type")[0].getValue(), is("application/json; charset=UTF-8"));
+        assertThat(execute.getHeaders("Content-Type")[0].getValue(), is("application/json;charset=UTF-8"));
         String response = IOUtils.toString(execute.getEntity().getContent());
         assertThat(response, is(not(nullValue())));
     }
@@ -52,7 +52,7 @@ public class InteractionControllerIT extends ITBase {
         HttpGet httpGet = new HttpGet(uri);
         HttpClient.addJsonHeaders(httpGet);
         HttpResponse execute = HttpUtil.createHttpClient().execute(httpGet);
-//        assertThat(execute.getHeaders("Content-Type")[0].getValue(), is("text/vnd.graphviz; charset=UTF-8"));
+        assertThat(execute.getHeaders("Content-Type")[0].getValue(), is("text/vnd.graphviz;charset=UTF-8"));
         String response = IOUtils.toString(execute.getEntity().getContent());
         assertThat(response, is(not(nullValue())));
     }
@@ -67,11 +67,16 @@ public class InteractionControllerIT extends ITBase {
         assertCSV(getURLPrefix() + "taxon/Homo%20sapiens/preysOn?type=csv");
     }
 
+//    @Test
+//    public void listPreyForPredatorCSVExtension() throws IOException {
+//        assertCSV(getURLPrefix() + "taxon/Homo%20sapiens/preysOn.csv");
+//    }
+
     private void assertCSV(String uri) throws IOException {
         HttpGet httpGet = new HttpGet(uri);
         HttpClient.addJsonHeaders(httpGet);
         HttpResponse execute = HttpUtil.createHttpClient().execute(httpGet);
-//        assertThat(execute.getHeaders("Content-Type")[0].getValue(), is("text/csv; charset=UTF-8"));
+        assertThat(execute.getHeaders("Content-Type")[0].getValue(), is("text/csv;charset=UTF-8"));
         String response = IOUtils.toString(execute.getEntity().getContent());
         assertThat(response, not(containsString("columns")));
         assertThat(response, anyOf(containsString("\"" + ResultFields.SOURCE_TAXON_NAME + "\""),
