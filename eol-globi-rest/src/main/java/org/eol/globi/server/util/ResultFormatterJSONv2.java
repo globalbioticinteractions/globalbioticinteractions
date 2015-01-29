@@ -2,7 +2,6 @@ package org.eol.globi.server.util;
 
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.eol.globi.server.CypherQueryExecutor;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -15,7 +14,7 @@ public class ResultFormatterJSONv2 implements ResultFormatter {
     @Override
     public String format(String result) throws ResultFormattingException {
         try {
-            JsonNode jsonNode = CypherQueryExecutor.parse(result);
+            JsonNode jsonNode = RequestHelper.parse(result);
             return format(jsonNode);
         } catch (IOException e) {
             throw new ResultFormattingException("failed to format result", e);

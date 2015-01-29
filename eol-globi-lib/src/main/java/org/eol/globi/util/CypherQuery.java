@@ -21,7 +21,7 @@ public class CypherQuery {
     }
 
     public String getQuery() {
-        return query;
+        return query.replaceAll("\\s+", " ");
     }
 
 }

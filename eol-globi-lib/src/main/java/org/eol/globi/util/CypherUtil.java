@@ -1,5 +1,7 @@
 package org.eol.globi.util;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.BasicResponseHandler;
@@ -9,6 +11,8 @@ import java.util.Iterator;
 import java.util.Map;
 
 public class CypherUtil {
+    private static final Log LOG = LogFactory.getLog(CypherUtil.class);
+
     public static String executeCypherQuery(CypherQuery query) throws IOException {
         HttpPost httpPost = new HttpPost("http://api.globalbioticinteractions.org:7474/db/data/cypher");
         HttpClient.addJsonHeaders(httpPost);
@@ -42,5 +46,10 @@ public class CypherUtil {
                 builder.append(", ");
             }
         }
+    }
+
+    public static String executeRemote(CypherQuery query) throws IOException {
+        LOG.info("executing query: [" + query.getQuery() + "] with params [" + query.getParams() + "]");
+        return executeCypherQuery(query);
     }
 }

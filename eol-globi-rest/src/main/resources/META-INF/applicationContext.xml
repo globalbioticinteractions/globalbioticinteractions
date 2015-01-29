@@ -8,26 +8,29 @@
        http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
        http://www.springframework.org/schema/context
        http://www.springframework.org/schema/context/spring-context-3.2.xsd
-       http://www.springframework.org/schema/cache
-       http://www.springframework.org/schema/cache/spring-cache-3.2.xsd
        http://www.springframework.org/schema/mvc
        http://www.springframework.org/schema/mvc/spring-mvc-3.2.xsd">
     <context:spring-configured/>
     <context:annotation-config/>
-    <mvc:annotation-driven content-negotiation-manager="contentNegotiationManager"/>
+    <mvc:annotation-driven content-negotiation-manager="contentNegotiationManager">
+        <mvc:message-converters register-defaults="true">
+            <bean class="org.eol.globi.server.util.CypherHttpMessageConverter"/>
+        </mvc:message-converters>
+    </mvc:annotation-driven>
 
     <bean id="contentNegotiationManager" class="org.springframework.web.accept.ContentNegotiationManagerFactoryBean">
-        <property name="favorPathExtension" value="false"/>
+        <property name="favorPathExtension" value="true"/>
+        <property name="ignoreAcceptHeader" value="true"/>
         <property name="favorParameter" value="true"/>
         <property name="parameterName" value="type"/>
         <property name="mediaTypes">
             <value>
+                json.v2=text/html;charset=UTF-8
                 json=application/json;charset=UTF-8
                 csv=text/csv;charset=UTF-8
                 dot=text/vnd.graphviz;charset=UTF-8
             </value>
         </property>
     </bean>
-    <cache:annotation-driven/>
     <context:component-scan base-package="org.eol.globi"/>
 </beans>

@@ -2,8 +2,8 @@ package org.eol.globi.server;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.util.CypherQuery;
+import org.eol.globi.util.CypherUtil;
 import org.eol.globi.util.ExternalIdUtil;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,16 +19,14 @@ public class CypherProxyController {
 
     @RequestMapping(value = "/locations", method = RequestMethod.GET)
     @ResponseBody
-    @Cacheable(value = "locationCache")
-    public String locations(HttpServletRequest request) throws IOException {
-        return new CypherQueryExecutor(CypherQueryBuilder.locations()).execute(request, false);
+    public CypherQuery locationsNew(HttpServletRequest request) throws IOException {
+        return CypherQueryBuilder.locations();
     }
 
     @RequestMapping(value = "/findExternalUrlForTaxon/{taxonName}", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
     public String findExternalLinkForTaxonWithName(HttpServletRequest request, @PathVariable("taxonName") String taxonName) throws IOException {
-        String result = findExternalIdForTaxon(request, taxonName);
-        return getUrlFromExternalId(result);
+        return getUrlFromExternalId(CypherUtil.executeRemote(findExternalIdForTaxonNew(request, taxonName)));
     }
 
     private String getUrlFromExternalId(String result) {
@@ -46,22 +44,21 @@ public class CypherProxyController {
     @RequestMapping(value = "/findExternalUrlForStudy/{studyTitle}", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
     public String findExternalLinkForStudyWithTitle(HttpServletRequest request, @PathVariable("studyTitle") String taxonName) throws IOException {
-        String result = findExternalIdForStudy(request, taxonName);
-        return getUrlFromExternalId(result);
+        return getUrlFromExternalId(CypherUtil.executeRemote(findExternalIdForStudyNew(request, taxonName)));
     }
 
     @RequestMapping(value = "/findExternalIdForTaxon/{taxonName}", method = RequestMethod.GET)
     @ResponseBody
-    public String findExternalIdForTaxon(HttpServletRequest request, @PathVariable("taxonName") final String taxonName) throws IOException {
+    public CypherQuery findExternalIdForTaxonNew(HttpServletRequest request, @PathVariable("taxonName") final String taxonName) throws IOException {
         CypherQuery cypherQuery = CypherQueryBuilder.externalIdForTaxon(taxonName);
-        return new CypherQueryExecutor(cypherQuery).execute(request);
+        return CypherQueryBuilder.createPagedQuery(request, cypherQuery);
     }
 
     @RequestMapping(value = "/findExternalIdForStudy/{studyTitle}", method = RequestMethod.GET)
     @ResponseBody
-    public String findExternalIdForStudy(HttpServletRequest request, @PathVariable("studyTitle") final String studyTitle) throws IOException {
+    public CypherQuery findExternalIdForStudyNew(HttpServletRequest request, @PathVariable("studyTitle") final String studyTitle) throws IOException {
         CypherQuery cypherQuery = CypherQueryBuilder.externalIdForStudy(studyTitle);
-        return new CypherQueryExecutor(cypherQuery).execute(request);
+        return CypherQueryBuilder.createPagedQuery(request, cypherQuery);
     }
 
     private String buildJsonUrl(String url) {
@@ -76,11 +73,10 @@ public class CypherProxyController {
 
     @RequestMapping(value = "/shortestPathsBetweenTaxon/{startTaxon}/andTaxon/{endTaxon}", method = RequestMethod.GET)
     @ResponseBody
-    public String findShortestPaths(HttpServletRequest request, @PathVariable("startTaxon") final String startTaxon,
-                                    @PathVariable("endTaxon") final String endTaxon) throws IOException {
+    public CypherQuery findShortestPathsNew(HttpServletRequest request, @PathVariable("startTaxon") final String startTaxon,
+                                            @PathVariable("endTaxon") final String endTaxon) throws IOException {
         CypherQuery cypherQuery = CypherQueryBuilder.shortestPathQuery(startTaxon, endTaxon);
-
-        return new CypherQueryExecutor(cypherQuery).execute(request);
+        return CypherQueryBuilder.createPagedQuery(request, cypherQuery);
     }
 
     private String getUrl(String result, String externalIdPrefix, String urlPrefix) {

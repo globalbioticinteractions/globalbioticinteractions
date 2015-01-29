@@ -1,7 +1,6 @@
 package org.eol.globi.server.util;
 
 import org.codehaus.jackson.JsonNode;
-import org.eol.globi.server.CypherQueryExecutor;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 
@@ -28,7 +27,7 @@ public class ResultFormatterDOT implements ResultFormatter {
         StringBuilder builder = dotPrefix();
         JsonNode results;
         try {
-            results = CypherQueryExecutor.parse(content);
+            results = RequestHelper.parse(content);
         } catch (IOException e) {
             throw new ResultFormattingException("failed to parse", e);
         }

@@ -1,5 +1,6 @@
 package org.eol.globi.server;
 
+import org.eol.globi.util.CypherQuery;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -33,7 +34,8 @@ public class CypherProxyControllerTest {
 
     @Test
     public void findShortestPaths() throws IOException {
-        String externalLink = new CypherProxyController().findShortestPaths(null, "Homo sapiens", "Rattus rattus");
+        CypherQuery cypherQuery = new CypherProxyController().findShortestPathsNew(null, "Homo sapiens", "Rattus rattus");
+        String externalLink = new CypherQueryExecutor(cypherQuery).execute(null);
         assertThat(externalLink, containsString("Rattus rattus"));
     }
 

@@ -31,7 +31,7 @@ public class RequestHelperTest {
 
         StringBuilder clause = new StringBuilder();
         RequestHelper.addSpatialClause(points, clause);
-        assertThat(clause.toString().trim(), Is.is(", sourceSpecimen-[:COLLECTED_AT]->loc WHERE loc.latitude = 12.2" +
+        assertThat(clause.toString().trim().replaceAll("\\s+", " "), Is.is(", sourceSpecimen-[:COLLECTED_AT]->loc WHERE loc.latitude = 12.2" +
                 " AND loc.longitude = 12.1"));
     }
 
@@ -67,7 +67,7 @@ public class RequestHelperTest {
 
         StringBuilder clause = new StringBuilder();
          RequestHelper.addSpatialClause(points, clause);
-        assertThat(clause.toString().trim(),
+        assertThat(clause.toString().trim().replaceAll("\\s+", " "),
                 Is.is(", sourceSpecimen-[:COLLECTED_AT]->loc WHERE loc.latitude < 10.0" +
                         " AND loc.longitude > -20.0" +
                         " AND loc.latitude > -10.0" +
@@ -115,7 +115,7 @@ public class RequestHelperTest {
 
         StringBuilder clause = new StringBuilder();
         RequestHelper.addSpatialClause(points, clause);
-        assertThat(clause.toString().trim(),
+        assertThat(clause.toString().trim().replaceAll("\\s+", " "),
                 Is.is(", sourceSpecimen-[:COLLECTED_AT]->loc WHERE loc.latitude = 10.0" +
                         " AND loc.longitude = 12.4"));
     }

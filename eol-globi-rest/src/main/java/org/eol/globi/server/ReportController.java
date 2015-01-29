@@ -1,6 +1,6 @@
 package org.eol.globi.server;
 
-import org.springframework.cache.annotation.Cacheable;
+import org.eol.globi.util.CypherQuery;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -13,32 +13,30 @@ import java.io.IOException;
 @Controller
 public class ReportController {
 
-    @RequestMapping(value = "/contributors", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
+    @RequestMapping(value = "/contributors", method = RequestMethod.GET)
     @ResponseBody
-    @Cacheable(value = "contributorCache")
-    public String contributors(@RequestParam(required = false) final String source) throws IOException {
-        return new CypherQueryExecutor(CypherQueryBuilder.references(source)).execute(null, false);
+    public CypherQuery contributorsNew(@RequestParam(required = false) final String source) throws IOException {
+        return CypherQueryBuilder.references(source);
     }
 
-    @RequestMapping(value = "/info", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
+    @RequestMapping(value = "/info", method = RequestMethod.GET)
     @ResponseBody
-    @Cacheable(value = "infoCache")
-    public String info(@RequestParam(required = false) final String source) throws IOException {
-        return new CypherQueryExecutor(CypherQueryBuilder.stats(source)).execute(null);
+    public CypherQuery infoNew(@RequestParam(required = false) final String source) throws IOException {
+        return CypherQueryBuilder.stats(source);
     }
 
     @RequestMapping(value =
-            "/spatialInfo", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
+            "/spatialInfo", method = RequestMethod.GET)
     @ResponseBody
-    public String spatialInfo(HttpServletRequest req) throws IOException {
-        return new CypherQueryExecutor(CypherQueryBuilder.spatialInfo(req.getParameterMap())).execute(req);
+    public CypherQuery spatialInfoNew(HttpServletRequest req) throws IOException {
+        CypherQuery cypherQuery = CypherQueryBuilder.spatialInfo(req.getParameterMap());
+        return CypherQueryBuilder.createPagedQuery(req, cypherQuery);
     }
 
-    @RequestMapping(value = "/sources", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
+    @RequestMapping(value = "/sources", method = RequestMethod.GET)
     @ResponseBody
-    @Cacheable(value = "sourcesCache")
-    public String sources() throws IOException {
-        return new CypherQueryExecutor(CypherQueryBuilder.sourcesQuery()).execute(null);
+    public CypherQuery sourcesNew() throws IOException {
+        return CypherQueryBuilder.sourcesQuery();
     }
 
 }

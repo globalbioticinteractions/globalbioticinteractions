@@ -1,7 +1,6 @@
 package org.eol.globi.server.util;
 
 import org.codehaus.jackson.JsonNode;
-import org.eol.globi.server.CypherQueryExecutor;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -14,7 +13,7 @@ public class ResultFormatterCSV implements ResultFormatter {
     public String format(String s) throws ResultFormattingException {
         JsonNode jsonNode;
         try {
-            jsonNode = CypherQueryExecutor.parse(s);
+            jsonNode = RequestHelper.parse(s);
         } catch (IOException e) {
             throw new ResultFormattingException("failed to parse result", e);
         }

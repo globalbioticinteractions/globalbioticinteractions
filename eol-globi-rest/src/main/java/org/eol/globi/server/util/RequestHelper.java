@@ -2,8 +2,11 @@ package org.eol.globi.server.util;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.geo.LatLng;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -123,7 +126,7 @@ public class RequestHelper {
         }
 
         if (isPointOrBox(points)) {
-            query.append("WHERE ");
+            query.append(" WHERE ");
         }
         addSpatialWhereClause(points, query);
     }
@@ -150,5 +153,10 @@ public class RequestHelper {
 
     private static boolean isPointOrBox(List<LatLng> points) {
         return points.size() == 1 || points.size() == 2;
+    }
+
+    public static JsonNode parse(String content) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        return mapper.readTree(content);
     }
 }

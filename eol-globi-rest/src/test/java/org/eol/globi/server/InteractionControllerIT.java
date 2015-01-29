@@ -3,11 +3,11 @@ package org.eol.globi.server;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.BasicResponseHandler;
 import org.eol.globi.server.util.ResultFields;
 import org.eol.globi.util.HttpClient;
 import org.eol.globi.util.HttpUtil;
 import org.junit.Test;
+import org.springframework.http.MediaType;
 
 import java.io.IOException;
 
@@ -47,6 +47,17 @@ public class InteractionControllerIT extends ITBase {
     }
 
     @Test
+    public void listPreyForPredatorLocationJsonV2() throws IOException {
+        String uri = getURLPrefix() + "interaction?type=json.v2&nw_lat=41.574361&nw_lng=-125.53344800000002&se_lat=32.750323&se_lng=-114.74487299999998&sourceTaxon=Animalia&targetTaxon=Insecta";
+        HttpGet httpGet = new HttpGet(uri);
+        HttpClient.addJsonHeaders(httpGet);
+        HttpResponse execute = HttpUtil.createHttpClient().execute(httpGet);
+        String response = IOUtils.toString(execute.getEntity().getContent());
+        assertThat(MediaType.parseMediaType(execute.getHeaders("Content-Type")[0].getValue()), is(MediaType.parseMediaType("text/html;charset=UTF-8")));
+        assertThat(response, not(containsString("columns")));
+    }
+
+    @Test
     public void listPreyForPredatorDOT() throws IOException {
         String uri = getURLPrefix() + "taxon/Homo%20sapiens/preysOn?type=dot";
         HttpGet httpGet = new HttpGet(uri);
@@ -67,10 +78,10 @@ public class InteractionControllerIT extends ITBase {
         assertCSV(getURLPrefix() + "taxon/Homo%20sapiens/preysOn?type=csv");
     }
 
-//    @Test
-//    public void listPreyForPredatorCSVExtension() throws IOException {
-//        assertCSV(getURLPrefix() + "taxon/Homo%20sapiens/preysOn.csv");
-//    }
+    @Test
+    public void listPreyForPredatorCSVExtension() throws IOException {
+        assertCSV(getURLPrefix() + "taxon/Homo%20sapiens/preysOn.csv");
+    }
 
     private void assertCSV(String uri) throws IOException {
         HttpGet httpGet = new HttpGet(uri);

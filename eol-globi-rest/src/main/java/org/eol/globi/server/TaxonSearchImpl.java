@@ -6,6 +6,7 @@ import org.apache.commons.logging.LogFactory;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.util.CypherQuery;
+import org.eol.globi.util.CypherUtil;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -53,16 +54,15 @@ public class TaxonSearchImpl implements TaxonSearch {
                 put("taxonName", taxonName);
             }
         });
-        return new CypherQueryExecutor(cypherQuery.getQuery(), cypherQuery.getParams()).execute(request, false);
+        return CypherUtil.executeRemote(cypherQuery);
     }
 
     @RequestMapping(value = "/findCloseMatchesForTaxon/{taxonName}", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String findCloseMatchesForCommonAndScientificNames(@PathVariable("taxonName") final String taxonName) throws IOException {
+    public CypherQuery findCloseMatchesForCommonAndScientificNamesNew(@PathVariable("taxonName") final String taxonName) throws IOException {
         String luceneQuery = buildLuceneQuery(taxonName, "name");
-        CypherQuery cypherQuery = new CypherQuery("START taxon = node:taxonNameSuggestions('" + luceneQuery + "') " +
+        return new CypherQuery("START taxon = node:taxonNameSuggestions('" + luceneQuery + "') " +
                 "RETURN taxon.name? as `taxon.name`, taxon.commonNames? as `taxon.commonNames`, taxon.path? as `taxon.path` LIMIT 15", null);
-        return new CypherQueryExecutor(cypherQuery.getQuery(), cypherQuery.getParams()).execute(null, false);
     }
 
     private String buildLuceneQuery(String taxonName, String name) {

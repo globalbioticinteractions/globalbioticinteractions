@@ -455,7 +455,7 @@ public class CypherQueryBuilderTest {
     }
 
     protected void assertLocationMatchAndWhereClause(String clause) {
-        assertThat(clause
+        assertThat(clause.replaceAll("\\s+", " ")
                 , is(" MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen-[interactionType:ATE|PREYS_UPON]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon" +
                 ", sourceSpecimen<-[collected_rel:COLLECTED]-study, sourceSpecimen-[:COLLECTED_AT]->loc" +
                 " WHERE loc.latitude < 23.32 AND loc.longitude > -67.87 AND loc.latitude > 12.79 AND loc.longitude < -57.08 "));

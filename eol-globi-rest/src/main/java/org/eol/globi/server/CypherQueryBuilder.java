@@ -274,7 +274,7 @@ public class CypherQueryBuilder {
     }
 
     protected static void appendReturnClause(String interactionType, StringBuilder query) {
-        query.append("RETURN ")
+        query.append(" RETURN ")
                 .append("sourceTaxon.name as ").append(ResultFields.SOURCE_TAXON_NAME)
                 .append(",'").append(interactionType).append("' as ").append(ResultFields.INTERACTION_TYPE)
                 .append(",targetTaxon.name as ").append(ResultFields.TARGET_TAXON_NAME).append(", ");
@@ -299,7 +299,7 @@ public class CypherQueryBuilder {
     }
 
     protected static void appendReturnClauseDistinct(String interactionType, StringBuilder query) {
-        query.append("RETURN sourceTaxon.name as ")
+        query.append(" RETURN sourceTaxon.name as ")
                 .append(ResultFields.SOURCE_TAXON_NAME).append(", '")
                 .append(interactionType).append("' as ")
                 .append(ResultFields.INTERACTION_TYPE)
@@ -407,7 +407,7 @@ public class CypherQueryBuilder {
             if (hasWhereClause) {
                 query.append("AND ");
             } else {
-                query.append("WHERE ");
+                query.append(" WHERE ");
                 hasWhereClause = true;
             }
             query.append("has(").append(taxonLabel).append(".path) AND ").append(taxonLabel).append(".path =~ '(.*(");
