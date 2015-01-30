@@ -32,7 +32,20 @@ public class ImageService {
         if (taxon != null && taxon.containsKey("externalId")) {
             taxonImage = imageSearch.lookupImageForExternalId(taxon.get("externalId"));
         }
+        if (taxonImage == null) {
+            throw new ResourceNotFoundException("no image for [" + scientificName + "]");
+        }
         return taxonImage;
+    }
+
+    @RequestMapping(value = "/imagesForName", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public TaxonImage findTaxonImagesForTaxonWithName2(@RequestParam(value = "name") String[] names) throws IOException {
+        if (names == null || names.length == 0) {
+            throw new BadRequestException("no names provided");
+        }
+
+        return findTaxonImagesForTaxonWithName(names[0]);
     }
 
     @RequestMapping(value = "/imagesForNames", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
@@ -51,7 +64,11 @@ public class ImageService {
     @RequestMapping(value = "/images/{externalId}", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
     @ResponseBody
     public TaxonImage findTaxonImagesForExternalId(@PathVariable("externalId") String externalId) throws IOException {
-        return imageSearch.lookupImageForExternalId(externalId);
+        TaxonImage taxonImage = imageSearch.lookupImageForExternalId(externalId);
+        if (taxonImage == null) {
+            throw new ResourceNotFoundException("no image for [" + externalId + "]");
+        }
+        return taxonImage;
     }
 
     protected void setTaxonSearch(TaxonSearch taxonSearch) {
