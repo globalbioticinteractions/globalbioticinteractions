@@ -48,13 +48,6 @@
             </exclusions>
         </dependency>
 
-
-        <dependency>
-            <groupId>commons-collections</groupId>
-            <artifactId>commons-collections</artifactId>
-            <version>3.2.1</version>
-        </dependency>
-
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>servlet-api</artifactId>
@@ -133,16 +126,6 @@
             <version>0.6.2</version>
         </dependency>
         <dependency>
-            <groupId>commons-lang</groupId>
-            <artifactId>commons-lang</artifactId>
-            <version>2.6</version>
-        </dependency>
-        <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-            <version>2.4</version>
-        </dependency>
-        <dependency>
             <groupId>${jetty.groupId}</groupId>
             <artifactId>jetty-servlets</artifactId>
             <version>${jetty.version}</version>
@@ -152,11 +135,6 @@
             <artifactId>mail</artifactId>
             <version>1.4</version>
             <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>joda-time</groupId>
-            <artifactId>joda-time</artifactId>
-            <version>2.1</version>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
