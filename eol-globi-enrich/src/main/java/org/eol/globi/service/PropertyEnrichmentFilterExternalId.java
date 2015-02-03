@@ -32,7 +32,7 @@ public class PropertyEnrichmentFilterExternalId extends BaseHttpClientService im
                 for (JsonNode item : collectionItems) {
                     JsonNode objectId = item.get("object_id");
                     if (objectId != null) {
-                        exludedEOLIds.add(TaxonomyProvider.ID_PREFIX_EOL + objectId.getValueAsText());
+                        exludedEOLIds.add(TaxonomyProvider.ID_PREFIX_EOL + objectId.asText());
                     }
                 }
 

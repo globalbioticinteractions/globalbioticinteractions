@@ -293,8 +293,8 @@ public class GeoNamesServiceImpl implements GeoNamesService {
         ObjectMapper mapper = new ObjectMapper();
         JsonNode node = mapper.readTree(jsonString);
         if (node.has("lat") && node.has("lng")) {
-            double lat = Double.parseDouble(node.get("lat").getValueAsText());
-            double lng = Double.parseDouble(node.get("lng").getValueAsText());
+            double lat = Double.parseDouble(node.get("lat").asText());
+            double lng = Double.parseDouble(node.get("lng").asText());
             point = new LatLng(lat, lng);
 
         }

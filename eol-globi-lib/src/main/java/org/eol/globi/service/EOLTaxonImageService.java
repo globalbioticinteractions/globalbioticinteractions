@@ -98,13 +98,13 @@ public class EOLTaxonImageService extends BaseHttpClientService implements Image
                 JsonNode array = mapper.readTree(responseString);
                 JsonNode dataObjects = array.findValue("dataObjects");
                 for (JsonNode dataObject : dataObjects) {
-                    String dataType = dataObject.has("dataType") ? dataObject.get("dataType").getValueAsText() : "";
+                    String dataType = dataObject.has("dataType") ? dataObject.get("dataType").asText() : "";
                     if ("http://purl.org/dc/dcmitype/StillImage".equals(dataType)) {
                         if (dataObject.has("eolMediaURL")) {
-                            pageInfo.setImageURL(dataObject.get("eolMediaURL").getValueAsText());
+                            pageInfo.setImageURL(dataObject.get("eolMediaURL").asText());
                         }
                         if (dataObject.has("eolThumbnailURL")) {
-                            pageInfo.setThumbnailURL(dataObject.get("eolThumbnailURL").getValueAsText());
+                            pageInfo.setThumbnailURL(dataObject.get("eolThumbnailURL").asText());
                         }
 
                         break;
@@ -163,7 +163,7 @@ public class EOLTaxonImageService extends BaseHttpClientService implements Image
                     if (arrayNode.size() > 0) {
                         JsonNode firstNode = arrayNode.get(0);
                         JsonNode eol_page_id = firstNode.get("eol_page_id");
-                        eolPageId = eol_page_id.getValueAsText();
+                        eolPageId = eol_page_id.asText();
                     }
                 }
             }

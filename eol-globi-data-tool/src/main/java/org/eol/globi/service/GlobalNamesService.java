@@ -147,14 +147,14 @@ public class GlobalNamesService extends BaseHttpClientService implements Propert
     }
 
     protected void parseClassification(TermMatchListener termMatchListener, JsonNode data, JsonNode aResult, Taxon taxon, TaxonomyProvider provider) {
-        String classificationPath = aResult.get("classification_path").getValueAsText();
+        String classificationPath = aResult.get("classification_path").asText();
         taxon.setPath(parseList(classificationPath));
 
         if (aResult.has("classification_path_ids")) {
-            String classificationPathIds = aResult.get("classification_path_ids").getValueAsText();
+            String classificationPathIds = aResult.get("classification_path_ids").asText();
             taxon.setPathIds(parseList(classificationPathIds, provider.getIdPrefix()));
         }
-        String pathRanks = aResult.get("classification_path_ranks").getValueAsText();
+        String pathRanks = aResult.get("classification_path_ranks").asText();
         taxon.setPathNames(parseList(pathRanks));
         String[] ranks = pathRanks.split("\\|");
         if (ranks.length > 0) {
@@ -166,11 +166,11 @@ public class GlobalNamesService extends BaseHttpClientService implements Propert
             String taxonName = taxonNames[taxonNames.length - 1];
             taxon.setName(taxonName);
         } else {
-            taxon.setName(aResult.get("canonical_form").getValueAsText());
+            taxon.setName(aResult.get("canonical_form").asText());
         }
 
         String taxonIdLabel = aResult.has("current_taxon_id") ? "current_taxon_id" : "taxon_id";
-        String taxonIdValue = aResult.get(taxonIdLabel).getValueAsText();
+        String taxonIdValue = aResult.get(taxonIdLabel).asText();
         // see https://github.com/GlobalNamesArchitecture/gni/issues/35
         if (!StringUtils.startsWith(taxonIdValue, "gn:")) {
             String externalId = provider.getIdPrefix() + taxonIdValue;

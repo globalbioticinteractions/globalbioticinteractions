@@ -81,7 +81,7 @@ public class EOLService extends BaseHttpClientService implements PropertyEnriche
             if (jsonNode.isArray() && jsonNode.size() > 0) {
                 JsonNode jsonNode1 = jsonNode.get(0);
                 if (jsonNode1.has("eol_page_id")) {
-                    eolPageId = Long.parseLong(jsonNode1.get("eol_page_id").getValueAsText());
+                    eolPageId = Long.parseLong(jsonNode1.get("eol_page_id").asText());
                 }
             }
         } catch (JsonProcessingException ex) {
@@ -143,13 +143,13 @@ public class EOLService extends BaseHttpClientService implements PropertyEnriche
         String firstConceptId = null;
         for (JsonNode taxonConcept : taxonConcepts) {
             if (taxonConcept.has("identifier")) {
-                firstConceptId = taxonConcept.get("identifier").getValueAsText();
+                firstConceptId = taxonConcept.get("identifier").asText();
                 String accordingTo = nameAccordingTo(taxonConcept);
                 if (!StringUtils.contains(accordingTo, "IUCN")) {
                     if (accordingToNCBI(accordingTo) && taxonConcept.has("scientificName")) {
-                        properties.put(PropertyAndValueDictionary.NAME, taxonConcept.get("scientificName").getValueAsText());
+                        properties.put(PropertyAndValueDictionary.NAME, taxonConcept.get("scientificName").asText());
                     } else if (taxonConcept.has("canonicalForm")) {
-                        properties.put(PropertyAndValueDictionary.NAME, taxonConcept.get("canonicalForm").getValueAsText());
+                        properties.put(PropertyAndValueDictionary.NAME, taxonConcept.get("canonicalForm").asText());
                     }
                     String taxonRank = rankOf(taxonConcept);
                     if (StringUtils.isEmpty(taxonRank)) {
@@ -158,7 +158,7 @@ public class EOLService extends BaseHttpClientService implements PropertyEnriche
                             properties.put(PropertyAndValueDictionary.RANK, "Species");
                         }
                     } else {
-                        properties.put(PropertyAndValueDictionary.RANK, taxonConcept.get("taxonRank").getValueAsText());
+                        properties.put(PropertyAndValueDictionary.RANK, taxonConcept.get("taxonRank").asText());
                     }
                     break;
                 }
@@ -198,9 +198,9 @@ public class EOLService extends BaseHttpClientService implements PropertyEnriche
         String accordingTo;
         JsonNode node = taxonConcept.get("nameAccordingTo");
         if (node.isArray() && node.size() > 0) {
-            accordingTo = node.get(0).getValueAsText();
+            accordingTo = node.get(0).asText();
         } else {
-            accordingTo = node.getValueAsText();
+            accordingTo = node.asText();
         }
         return accordingTo;
     }
@@ -216,8 +216,8 @@ public class EOLService extends BaseHttpClientService implements PropertyEnriche
         JsonNode vernacularNames = node.get("vernacularNames");
         for (JsonNode vernacularName : vernacularNames) {
             if (vernacularName.has("eol_preferred")) {
-                String languageCode = vernacularName.get("language").getValueAsText();
-                String commonName = vernacularName.get("vernacularName").getValueAsText();
+                String languageCode = vernacularName.get("language").asText();
+                String commonName = vernacularName.get("vernacularName").asText();
                 if (StringUtils.isNotBlank(languageCode) && StringUtils.isNotBlank(commonName)) {
                     commonNames.append(commonName);
                     commonNames.append(" @");
@@ -290,7 +290,7 @@ public class EOLService extends BaseHttpClientService implements PropertyEnriche
 
         String taxonConceptId = "";
         if (ancestor.has("taxonConceptID")) {
-            taxonConceptId = ancestor.get("taxonConceptID").getValueAsText();
+            taxonConceptId = ancestor.get("taxonConceptID").asText();
         }
         rankIds.add(TaxonomyProvider.ID_PREFIX_EOL + taxonConceptId);
     }

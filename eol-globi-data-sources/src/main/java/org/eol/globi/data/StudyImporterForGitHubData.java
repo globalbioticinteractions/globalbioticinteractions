@@ -65,9 +65,9 @@ public class StudyImporterForGitHubData extends BaseStudyImporter {
             String baseUrl = GitHubUtil.getBaseUrlLastCommit(repo);
             String descriptor = baseUrl + "/globi.json";
             JsonNode desc = new ObjectMapper().readTree(new URL(descriptor).openStream());
-            String sourceCitation = desc.get("citation").getValueAsText();
+            String sourceCitation = desc.get("citation").asText();
             if (desc.has("format")) {
-                String format = desc.get("format").getValueAsText();
+                String format = desc.get("format").asText();
                 if ("gomexsi".equals(format)) {
                     StudyImporterForGoMexSI importer = new StudyImporterForGoMexSI(parserFactory, nodeFactory);
                     importer.setBaseUrl(baseUrl);

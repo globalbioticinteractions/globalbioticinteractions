@@ -36,7 +36,7 @@ public class GitHubUtil {
         if (jsonNode.has("items")) {
             for (JsonNode item : jsonNode.get("items")) {
                 if (item.has("full_name")) {
-                    globiRepos.add(item.get("full_name").getValueAsText());
+                    globiRepos.add(item.get("full_name").asText());
                 }
             }
         }
@@ -57,7 +57,7 @@ public class GitHubUtil {
         if (commits.size() > 0) {
             JsonNode mostRecentCommit = commits.get(0);
             if (mostRecentCommit.has("sha")) {
-                lastCommitSHA = mostRecentCommit.get("sha").getValueAsText();
+                lastCommitSHA = mostRecentCommit.get("sha").asText();
             }
         }
         return lastCommitSHA;
