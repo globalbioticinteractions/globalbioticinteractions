@@ -17,6 +17,7 @@ import org.eol.globi.geo.EcoregionFinder;
 import org.eol.globi.geo.EcoregionFinderException;
 import org.eol.globi.service.DOIResolver;
 import org.eol.globi.service.EnvoLookupService;
+import org.eol.globi.service.QueryUtil;
 import org.eol.globi.service.TermLookupService;
 import org.eol.globi.service.TermLookupServiceException;
 import org.eol.globi.service.TermLookupServiceWithResource;
@@ -558,11 +559,11 @@ public class NodeFactoryImpl implements NodeFactory {
     }
 
     public IndexHits<Node> findCloseMatchesForEcoregion(String ecoregionName) {
-        return NodeUtil.query(ecoregionName, PropertyAndValueDictionary.NAME, ecoregions);
+        return QueryUtil.query(ecoregionName, PropertyAndValueDictionary.NAME, ecoregions);
     }
 
     public IndexHits<Node> findCloseMatchesForEcoregionPath(String ecoregionPath) {
-        return NodeUtil.query(ecoregionPath, PropertyAndValueDictionary.PATH, ecoregionPaths);
+        return QueryUtil.query(ecoregionPath, PropertyAndValueDictionary.PATH, ecoregionPaths);
     }
 
     public IndexHits<Node> suggestEcoregionByName(String wholeOrPartialEcoregionNameOrPath) {

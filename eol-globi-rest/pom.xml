@@ -28,7 +28,7 @@
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>eol-globi-geo</artifactId>
+            <artifactId>eol-globi-lib</artifactId>
             <version>${project.version}</version>
         </dependency>
 

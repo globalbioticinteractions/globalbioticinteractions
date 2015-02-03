@@ -10,6 +10,7 @@ import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.service.PropertyEnricher;
 import org.eol.globi.service.PropertyEnricherException;
+import org.eol.globi.service.QueryUtil;
 import org.eol.globi.service.TaxonMatchValidator;
 import org.eol.globi.service.TaxonUtil;
 import org.eol.globi.util.NodeUtil;
@@ -196,7 +197,7 @@ public class TaxonIndexImpl implements TaxonIndex {
     }
 
     public IndexHits<Node> findCloseMatchesForTaxonName(String taxonName) {
-        return NodeUtil.query(taxonName, PropertyAndValueDictionary.NAME, taxons);
+        return QueryUtil.query(taxonName, PropertyAndValueDictionary.NAME, taxons);
     }
 
     private void addToIndeces(TaxonNode taxon, String indexedName) {
