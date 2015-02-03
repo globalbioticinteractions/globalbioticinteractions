@@ -48,7 +48,7 @@ public class StudyImporterForHurlbert extends BaseStudyImporter {
                 String preyTaxonName = null;
                 for (String preyLabel : preyLabels) {
                     preyTaxonName = parser.getValueByLabel(preyLabel);
-                    if (StringUtils.isNotBlank(preyTaxonName)) {
+                    if (StringUtils.isNotBlank(preyTaxonName) && !"NA".equals(preyTaxonName)) {
                         break;
                     }
                 }
