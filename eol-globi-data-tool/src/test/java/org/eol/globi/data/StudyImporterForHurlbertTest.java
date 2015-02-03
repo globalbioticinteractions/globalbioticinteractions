@@ -41,26 +41,6 @@ public class StudyImporterForHurlbertTest extends GraphDBTestCase {
 
     }
 
-    @Test
-    public void importSomeMore() throws StudyImporterException, NodeFactoryException {
-        String csvString = someMoreLines();
-        TestParserFactory factory = new TestParserFactory(csvString);
-        StudyImporter importer = new StudyImporterForHurlbert(factory, nodeFactory);
-        importer.importStudy();
-
-        List<Study> allStudies = NodeUtil.findAllStudies(getGraphDb());
-        assertThat(allStudies.size(), is(2));
-
-        Study study = allStudies.get(0);
-        assertThat(study.getSource(), containsString("Allen Hurlbert. Avian Diet Database (https://github.com/hurlbertlab/dietdatabase/). Accessed at https://raw.githubusercontent.com/hurlbertlab/dietdatabase/master/AvianDietDatabase.txt"));
-        assertThat(study.getCitation(), is("Beal, F. 1915. Food of the robins and bluebirds of the United States. Bull. U.S.Dep. Agricul. 171:1-31."));
-
-        assertThat(nodeFactory.findTaxonByName("Turdus migratorius"), is(notNullValue()));
-        assertThat(nodeFactory.findTaxonByName("Taraxicum"), is(notNullValue()));
-
-    }
-
-
     public String aFewLines() {
         return "Common_Name	Scientific_Name	Taxonomy	Longitude	Latitude	Altitude_min_m	Altitude_mean_m	Altitude_max_m	Location_Region	Location_Specific	Habitat_type	Observation_Month_Begin	Observation_Year_Begin	Observation_Month_End	Observation_Year_End	Observation_Season	Prey_Kingdom	Prey_Phylum	Prey_Class	Prey_Order	Prey_Suborder	Prey_Family	Prey_Genus	Prey_Scientific_Name	Prey_Stage	Prey_Part	Prey_Common_Name	Fraction_Diet_By_Wt_or_Vol	Fraction_Diet_By_Items	Fraction_Occurrence	Fraction_Diet_Unspecified	Item Sample Size	Bird Sample size	Sites	Study Type	Notes	Source\n" +
                 "Ovenbird	Seiurus aurocapillus	\"AOU 7th ed., 52nd supplement\"			5		630	Jamaica		\"shade coffee	 second-growth scrub	 and undisturbed dry limestone forest\"	11	1993	3	1997	winter	Animalia	Arthropoda	Insecta	Hymenoptera		Formicidae							0.619	1.0000		2137	53	4	Emetic	\"When seeds were excluded from the analysis	 Ovenbird diets were similar across habitats\"	Strong, A. M. 2000. Divergent foraging strategies of two neotropical migrant warblers: Implications for winter habitat use. Auk 117(2):381-392.\n" +
@@ -74,14 +54,4 @@ public class StudyImporterForHurlbertTest extends GraphDBTestCase {
                 "Ovenbird	Seiurus aurocapillus	\"AOU 7th ed., 52nd supplement\"			5		630	Jamaica		\"shade coffee	 second-growth scrub	 and undisturbed dry limestone forest\"	11	1993	3	1997	winter	Animalia	Arthropoda	Insecta	Dermaptera									0.004	0.0800		2137	53	4	Emetic	\"When seeds were excluded from the analysis	 Ovenbird diets were similar across habitats\"	Strong, A. M. 2000. Divergent foraging strategies of two neotropical migrant warblers: Implications for winter habitat use. Auk 117(2):381-392.\n";
     }
 
-    private String someMoreLines() {
-        return "Common_Name\tScientific_Name\tFamily\tTaxonomy\tLongitude_dd\tLatitude_dd\tAltitude_min_m\tAltitude_mean_m\tAltitude_max_m\tLocation_Region\tLocation_Specific\tHabitat_type\tObservation_Month_Begin\tObservation_Year_Begin\tObservation_Month_End\tObservation_Year_End\tObservation_Season\tPrey_Kingdom\tPrey_Phylum\tPrey_Class\tPrey_Order\tPrey_Suborder\tPrey_Family\tPrey_Genus\tPrey_Scientific_Name\tPrey_Stage\tPrey_Part\tPrey_Common_Name\tFraction_Diet_By_Wt_or_Vol\tFraction_Diet_By_Items\tFraction_Occurrence\tFraction_Diet_Unspecified\tItem_Sample_Size\tBird_Sample_Size\tSites\tStudy_Type\tNotes\tEntered_By\tSource\n" +
-                        "American robin\tTurdus migratorius\tTurdidae\t\"AOU 7th ed., 55th supplement\"\tNA\tNA\tNA\tNA\tNA\tMultiple\tMultiple\tMultiple\t1\t1914\t12\t1914\tMultiple\tPlantae\t\t\t\t\t\tHelianthus\t\t\t\tSunflower\tNA\tNA\t0.000809\tNA\tNA\t1236\tNA\tstomach contents\t\tMCA\t\"Beal, F. 1915. Food of the robins and bluebirds of the United States. Bull. U.S.Dep. Agricul. 171:1-31.\"\n" +
-                        "American robin\tTurdus migratorius\tTurdidae\t\"AOU 7th ed., 55th supplement\"\tNA\tNA\tNA\tNA\tNA\tMultiple\tMultiple\tMultiple\t1\t1914\t12\t1914\tMultiple\tPlantae\t\t\t\t\t\tTaraxicum\t\t\t\tDandelion\tNA\tNA\t0.002427\tNA\tNA\t1236\tNA\tstomach contents\t\tMCA\t\"Beal, F. 1915. Food of the robins and bluebirds of the United States. Bull. U.S.Dep. Agricul. 171:1-31.\"\n" +
-                        "Bachman's Sparrow\tPeucaea aestivalis\tEmberizidae\t\"AOU 7th ed., 54th supplement\"\tNA\tNA\tNA\tNA\tNA\tTexas\tNacogdoches County\tconiferous forest; grassland\t9\t1971\t11\t1971\tFall\tAnimalia\tArthropoda\tInsecta\tIsoptera\tNA\tNA\tNA\tNA\tNA\tNA\tNA\tNA\t0.00353\tNA\tNA\t284\t11\t2\tstomach contents\t\tCS & WL\t\"Allaire, P. N. and C. D. Fisher. 1975. Feeding ecology of three resident sympatric sparrows in eastern Texas. Auk 92:260-269.\"\n" +
-                        "Bachman's Sparrow\tPeucaea aestivalis\tEmberizidae\t\"AOU 7th ed., 54th supplement\"\tNA\tNA\tNA\tNA\tNA\tTexas\tNacogdoches County\tconiferous forest; grassland\t9\t1971\t11\t1971\tFall\tAnimalia\tArthropoda\tInsecta\tHemiptera\tHomoptera\tNA\tNA\tNA\tNA\tNA\tNA\tNA\t0.00353\tNA\tNA\t284\t11\t2\tstomach contents\t\tCS & WL\t\"Allaire, P. N. and C. D. Fisher. 1975. Feeding ecology of three resident sympatric sparrows in eastern Texas. Auk 92:260-269.\"\n" +
-                        "Bachman's Sparrow\tPeucaea aestivalis\tEmberizidae\t\"AOU 7th ed., 54th supplement\"\tNA\tNA\tNA\tNA\tNA\tTexas\tNacogdoches County\tconiferous forest; grassland\t9\t1971\t11\t1971\tFall\tAnimalia\tArthropoda\tArachnida\tUnidentified\tNA\tNA\tNA\tNA\tNA\tNA\tNA\tNA\t0.00353\tNA\tNA\t284\t11\t2\tstomach contents\t\tCS & WL\t\"Allaire, P. N. and C. D. Fisher. 1975. Feeding ecology of three resident sympatric sparrows in eastern Texas. Auk 92:260-269.\"\n" +
-                        "Bachman's Sparrow\tPeucaea aestivalis\tEmberizidae\t\"AOU 7th ed., 54th supplement\"\tNA\tNA\tNA\tNA\tNA\tTexas\tNacogdoches County\tconiferous forest; grassland\t9\t1971\t11\t1971\tFall\tPlantae\tTracheophyta\tMagnoliopsida\tAsterales\tNA\tCompositae (Asteraceae)\tIva\tNA\tNA\tseed\tNA\tNA\t0.00376\tNA\tNA\t284\t11\t2\tstomach contents\t\tCS & WL\t\"Allaire, P. N. and C. D. Fisher. 1975. Feeding ecology of three resident sympatric sparrows in eastern Texas. Auk 92:260-269.\"\n";
-
-    }
 }
