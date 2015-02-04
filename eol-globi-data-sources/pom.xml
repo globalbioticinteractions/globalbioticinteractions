@@ -14,10 +14,6 @@
     <artifactId>eol-globi-data-sources</artifactId>
     <name>EOL's Global Biotic Interactions Data Sources</name>
 
-    <properties>
-        <httpcomponents.version>4.1.2</httpcomponents.version>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>

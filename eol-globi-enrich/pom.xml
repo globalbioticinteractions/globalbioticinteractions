@@ -14,10 +14,6 @@
     <artifactId>eol-globi-enrich</artifactId>
     <name>EOL's Global Biotic Interactions Enrichers</name>
 
-    <properties>
-        <httpcomponents.version>4.1.2</httpcomponents.version>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>

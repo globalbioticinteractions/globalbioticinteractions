@@ -11,11 +11,19 @@ import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.junit.matchers.JUnitMatchers.hasItem;
 
-public class GitHubUtilTest {
+public class GitHubUtilIT {
+
+    public static final String TEMPLATE_DATA_REPOSITORY = "globalbioticinteractions/template-dataset";
+
+    @Test
+    public void discoverRepos() throws IOException, URISyntaxException {
+        List<String> reposWithData = GitHubUtil.find();
+        assertThat(reposWithData, hasItem(TEMPLATE_DATA_REPOSITORY));
+    }
 
     @Test
     public void findFile() throws IOException, URISyntaxException {
-        assertThat(GitHubUtil.hasInteractionData(GitHubUtilIT.TEMPLATE_DATA_REPOSITORY), is(true));
+        assertThat(GitHubUtil.hasInteractionData(TEMPLATE_DATA_REPOSITORY), is(true));
     }
 
     @Test
@@ -25,7 +33,7 @@ public class GitHubUtilTest {
 
     @Test
     public void findMostRecentCommit() throws IOException, URISyntaxException {
-        String sha = GitHubUtil.lastCommitSHA(GitHubUtilIT.TEMPLATE_DATA_REPOSITORY);
+        String sha = GitHubUtil.lastCommitSHA(TEMPLATE_DATA_REPOSITORY);
         assertThat(sha, is(notNullValue()));
     }
 
