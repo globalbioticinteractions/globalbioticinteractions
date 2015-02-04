@@ -255,11 +255,11 @@ public class EOLService extends BaseHttpClientService implements PropertyEnriche
     }
 
     private void parseTaxonNode(JsonNode ancestor, List<String> ranks, List<String> rankNames, List<String> rankIds, String accordingTo) {
-        if (ancestor.has("scientificName")) {
+        String scientificName = ancestor.has("scientificName") ? ancestor.get("scientificName").getTextValue() : "";
+        if (StringUtils.isNotBlank(scientificName) && !StringUtils.containsIgnoreCase(scientificName, "Not Assigned")) {
             String taxonRank = rankOf(ancestor);
             rankNames.add(taxonRank);
 
-            String scientificName = ancestor.get("scientificName").getTextValue();
             if (isProbablyFishBaseSpecies(accordingTo, scientificName)) {
                 taxonRank = "species";
             }

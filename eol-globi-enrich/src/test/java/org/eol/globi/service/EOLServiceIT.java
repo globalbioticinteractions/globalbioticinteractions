@@ -77,6 +77,15 @@ public class EOLServiceIT {
     }
 
     @Test
+    public void taxonPathIncludesNotAssigned() throws PropertyEnricherException {
+        final HashMap<String, String> properties = new HashMap<String, String>();
+        properties.put(NAME, "Armandia agilis");
+        Map<String, String> props = eolService.enrich(properties);
+        assertThat(props.get(EXTERNAL_ID), is(notNullValue()));
+        assertThat(props.get(PATH), not(containsString("Not")));
+    }
+
+    @Test
     public void nonTaxonPage() throws PropertyEnricherException {
         HashMap<String, String> properties = new HashMap<String, String>();
         properties.put(EXTERNAL_ID, "EOL:29725463");
