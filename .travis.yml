@@ -7,3 +7,5 @@ cache:
 env:
   global:
     - JAVA_OPTS="-Xmx2G"
+
+script: mvn test -pl eol-globi-data-tool 
