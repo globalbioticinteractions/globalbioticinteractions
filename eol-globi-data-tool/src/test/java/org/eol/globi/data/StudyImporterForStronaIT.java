@@ -11,7 +11,7 @@ import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.junit.matchers.JUnitMatchers.containsString;
 
-public class StudyImporterForStronaTest extends GraphDBTestCase {
+public class StudyImporterForStronaIT extends GraphDBTestCase {
 
 
     @Test
