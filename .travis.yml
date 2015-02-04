@@ -1,11 +1,5 @@
 language: java
-install: mvn install -DskipTests=true -B
 sudo: false
 cache:
   directories:
     - $HOME/.m2
-env:
-  global:
-    - JAVA_OPTS="-Xmx2G"
-
-script: mvn test -pl eol-globi-data-tool 
