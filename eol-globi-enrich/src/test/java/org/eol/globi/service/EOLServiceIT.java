@@ -82,7 +82,12 @@ public class EOLServiceIT {
         properties.put(NAME, "Armandia agilis");
         Map<String, String> props = eolService.enrich(properties);
         assertThat(props.get(EXTERNAL_ID), is(notNullValue()));
+        assertThat(props.get(PATH),is(notNullValue()));
         assertThat(props.get(PATH), not(containsString("Not")));
+        assertThat(props.get(PATH_IDS), is(notNullValue()));
+        assertThat(props.get(PATH_IDS), not(containsString("EOL:16833350")));
+        assertThat(props.get(PATH_NAMES), is(notNullValue()));
+        assertThat(props.get(PATH_NAMES), not(containsString("order")));
     }
 
     @Test

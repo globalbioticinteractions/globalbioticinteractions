@@ -255,14 +255,15 @@ public class EOLService extends BaseHttpClientService implements PropertyEnriche
     }
 
     private void parseTaxonNode(JsonNode ancestor, List<String> ranks, List<String> rankNames, List<String> rankIds, String accordingTo) {
-        String scientificName = ancestor.has("scientificName") ? ancestor.get("scientificName").getTextValue() : "";
-        if (StringUtils.isNotBlank(scientificName) && !StringUtils.containsIgnoreCase(scientificName, "Not Assigned")) {
-            String taxonRank = rankOf(ancestor);
-            rankNames.add(taxonRank);
-
+        String scientificName = ancestor.has("scientificName") ? ancestor.get("scientificName").getTextValue() : null;
+        scientificName = StringUtils.containsIgnoreCase(scientificName, "Not Assigned") ? "" : scientificName;
+        if (null != scientificName) {
+            String taxonRank = StringUtils.isBlank(scientificName) ? "" : rankOf(ancestor);
             if (isProbablyFishBaseSpecies(accordingTo, scientificName)) {
                 taxonRank = "species";
             }
+            rankNames.add(taxonRank);
+
             if (accordingToNCBI(accordingTo)) {
                 ranks.add(scientificName);
             } else {
@@ -285,14 +286,14 @@ public class EOLService extends BaseHttpClientService implements PropertyEnriche
                 ranks.add(name);
             }
 
-
+            String taxonConceptId = "";
+            if (StringUtils.isNotBlank(scientificName) && ancestor.has("taxonConceptID")) {
+                taxonConceptId = TaxonomyProvider.ID_PREFIX_EOL + ancestor.get("taxonConceptID").asText();
+            }
+            rankIds.add(taxonConceptId);
         }
 
-        String taxonConceptId = "";
-        if (ancestor.has("taxonConceptID")) {
-            taxonConceptId = ancestor.get("taxonConceptID").asText();
-        }
-        rankIds.add(TaxonomyProvider.ID_PREFIX_EOL + taxonConceptId);
+
     }
 
 
