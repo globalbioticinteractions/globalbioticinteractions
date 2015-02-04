@@ -21,20 +21,4 @@ public class GitHubUtilIT {
         assertThat(reposWithData, hasItem(TEMPLATE_DATA_REPOSITORY));
     }
 
-    @Test
-    public void findFile() throws IOException, URISyntaxException {
-        assertThat(GitHubUtil.hasInteractionData(TEMPLATE_DATA_REPOSITORY), is(true));
-    }
-
-    @Test
-    public void fileNotFound() throws IOException {
-        assertThat(GitHubUtil.hasInteractionData("ropensci/rgbif"), is(false));
-    }
-
-    @Test
-    public void findMostRecentCommit() throws IOException, URISyntaxException {
-        String sha = GitHubUtil.lastCommitSHA(TEMPLATE_DATA_REPOSITORY);
-        assertThat(sha, is(notNullValue()));
-    }
-
 }
