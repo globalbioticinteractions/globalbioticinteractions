@@ -14,7 +14,7 @@ import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.*;
 import static org.junit.internal.matchers.IsCollectionContaining.hasItem;
 
-public class StudyImporterForGitHubDataTest extends GraphDBTestCase {
+public class StudyImporterForGitHubDataIT extends GraphDBTestCase {
 
     @Test
     public void importAll() throws StudyImporterException, NodeFactoryException {
