@@ -1,5 +1,6 @@
 package org.eol.globi.server;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -15,6 +16,7 @@ import org.eol.globi.util.InteractUtil;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -74,6 +76,23 @@ public class CypherQueryBuilder {
     };
 
     static final Map<String, String> EMPTY_PARAMS = new HashMap<String, String>();
+    public static final List<String> DEFAULT_FIELDS = Collections.unmodifiableList(new ArrayList<String>() {{
+        add(ResultFields.TAXON_NAME);
+        add(ResultFields.TAXON_COMMON_NAMES);
+        add(ResultFields.TAXON_EXTERNAL_ID);
+        add(ResultFields.TAXON_PATH);
+        add(ResultFields.TAXON_PATH_IDS);
+        add(ResultFields.TAXON_PATH_NAMES);
+    }});
+
+    public static final Map<String, String> FIELD_MAP = Collections.unmodifiableMap(new HashMap<String, String>() {{
+        put(ResultFields.TAXON_NAME, "taxon.name");
+        put(ResultFields.TAXON_COMMON_NAMES, "taxon.commonNames");
+        put(ResultFields.TAXON_EXTERNAL_ID, "taxon.externalId");
+        put(ResultFields.TAXON_PATH, "taxon.path");
+        put(ResultFields.TAXON_PATH_IDS, "taxon.pathIds");
+        put(ResultFields.TAXON_PATH_NAMES, "taxon.pathNames");
+    }});
 
     static public CypherQuery createDistinctTaxaInLocationQuery(Map<String, String[]> params) {
         StringBuilder builder = new StringBuilder();
@@ -102,7 +121,25 @@ public class CypherQueryBuilder {
             }
         }
 
-        builder.append("RETURN distinct(taxon.name) as name, taxon.commonNames? as common_names, taxon.externalId? as external_id, taxon.path? as taxon_path, taxon.pathIds? as taxon_path_ids, taxon.pathNames? as taxon_path_names");
+        List<String> fields = collectParamValues(params, "field");
+
+        List<String> returnFields = new ArrayList<String>();
+        for (String defaultField : DEFAULT_FIELDS) {
+            if (fields.contains(defaultField)) {
+                returnFields.add(defaultField);
+            }
+        }
+        if (returnFields.isEmpty()) {
+            returnFields.addAll(DEFAULT_FIELDS);
+        }
+        for (int i = 0; i < returnFields.size(); i++) {
+            String fieldName = returnFields.get(i);
+            if (i == 0) {
+                builder.append("RETURN distinct(").append(FIELD_MAP.get(fieldName)).append("?) as ").append(fieldName);
+            } else {
+                builder.append(", ").append( FIELD_MAP.get(fieldName)).append("? as ").append(fieldName);
+            }
+        }
         return new CypherQuery(builder.toString(), new HashMap<String, String>());
     }
 

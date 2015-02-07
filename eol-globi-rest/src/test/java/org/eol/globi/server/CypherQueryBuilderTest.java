@@ -1,5 +1,6 @@
 package org.eol.globi.server;
 
+import org.eol.globi.server.util.ResultFields;
 import org.eol.globi.util.CypherQuery;
 import org.eol.globi.util.InteractUtil;
 import org.junit.Test;
@@ -116,7 +117,7 @@ public class CypherQueryBuilderTest {
                 "WHERE loc.latitude < 23.32 AND loc.longitude > -67.87 AND loc.latitude > 12.79 AND loc.longitude < -57.08 " +
                 "WITH loc " +
                 "MATCH taxon<-[:CLASSIFIED_AS]-specimen-[:COLLECTED_AT]->loc " +
-                "RETURN distinct(taxon.name) as name, taxon.commonNames? as common_names, taxon.externalId? as external_id, taxon.path? as taxon_path, taxon.pathIds? as taxon_path_ids, taxon.pathNames? as taxon_path_names"));
+                "RETURN distinct(taxon.name?) as taxon_name, taxon.commonNames? as taxon_common_names, taxon.externalId? as taxon_external_id, taxon.path? as taxon_path, taxon.pathIds? as taxon_path_ids, taxon.pathNames? as taxon_path_names"));
         assertThat(query.getParams().isEmpty(), is(true));
     }
 
@@ -130,7 +131,22 @@ public class CypherQueryBuilderTest {
         };
 
         CypherQuery query = CypherQueryBuilder.createDistinctTaxaInLocationQuery(params);
-        assertThat(query.getQuery(), is("START loc = node:locations('*:*') WHERE loc.latitude < 23.32 AND loc.longitude > -67.87 AND loc.latitude > 12.79 AND loc.longitude < -57.08 WITH loc MATCH taxon<-[:CLASSIFIED_AS]-specimen-[:COLLECTED_AT]->loc, taxon-[:ATE|PREYS_UPON|PARASITE_OF]->otherTaxon RETURN distinct(taxon.name) as name, taxon.commonNames? as common_names, taxon.externalId? as external_id, taxon.path? as taxon_path, taxon.pathIds? as taxon_path_ids, taxon.pathNames? as taxon_path_names"));
+        assertThat(query.getQuery(), is("START loc = node:locations('*:*') WHERE loc.latitude < 23.32 AND loc.longitude > -67.87 AND loc.latitude > 12.79 AND loc.longitude < -57.08 WITH loc MATCH taxon<-[:CLASSIFIED_AS]-specimen-[:COLLECTED_AT]->loc, taxon-[:ATE|PREYS_UPON|PARASITE_OF]->otherTaxon RETURN distinct(taxon.name?) as taxon_name, taxon.commonNames? as taxon_common_names, taxon.externalId? as taxon_external_id, taxon.path? as taxon_path, taxon.pathIds? as taxon_path_ids, taxon.pathNames? as taxon_path_names"));
+        assertThat(query.getParams().isEmpty(), is(true));
+    }
+
+    @Test
+    public void findTaxaAtLocationsDistinctInteractionTypesSpecificFields() throws IOException {
+        HashMap<String, String[]> params = new HashMap<String, String[]>() {
+            {
+                put("bbox", new String[]{"-67.87,12.79,-57.08,23.32"});
+                put("interactionType", new String[]{"preysOn", "parasiteOf"});
+                put("field", new String[]{ResultFields.TAXON_NAME});
+            }
+        };
+
+        CypherQuery query = CypherQueryBuilder.createDistinctTaxaInLocationQuery(params);
+        assertThat(query.getQuery(), is("START loc = node:locations('*:*') WHERE loc.latitude < 23.32 AND loc.longitude > -67.87 AND loc.latitude > 12.79 AND loc.longitude < -57.08 WITH loc MATCH taxon<-[:CLASSIFIED_AS]-specimen-[:COLLECTED_AT]->loc, taxon-[:ATE|PREYS_UPON|PARASITE_OF]->otherTaxon RETURN distinct(taxon.name?) as taxon_name"));
         assertThat(query.getParams().isEmpty(), is(true));
     }
 
@@ -143,7 +159,7 @@ public class CypherQueryBuilderTest {
 
         CypherQuery query = CypherQueryBuilder.createDistinctTaxaInLocationQuery(params);
         assertThat(query.getQuery(), is("START taxon = node:taxons('*:*') " +
-                "RETURN distinct(taxon.name) as name, taxon.commonNames? as common_names, taxon.externalId? as external_id, taxon.path? as taxon_path, taxon.pathIds? as taxon_path_ids, taxon.pathNames? as taxon_path_names"));
+                "RETURN distinct(taxon.name?) as taxon_name, taxon.commonNames? as taxon_common_names, taxon.externalId? as taxon_external_id, taxon.path? as taxon_path, taxon.pathIds? as taxon_path_ids, taxon.pathNames? as taxon_path_names"));
         assertThat(query.getParams().isEmpty(), is(true));
     }
 
@@ -156,7 +172,7 @@ public class CypherQueryBuilderTest {
         };
 
         CypherQuery query = CypherQueryBuilder.createDistinctTaxaInLocationQuery(params);
-        assertThat(query.getQuery(), is("START taxon = node:taxons('*:*') MATCH taxon-[:ATE|PREYS_UPON|PARASITE_OF]->otherTaxon RETURN distinct(taxon.name) as name, taxon.commonNames? as common_names, taxon.externalId? as external_id, taxon.path? as taxon_path, taxon.pathIds? as taxon_path_ids, taxon.pathNames? as taxon_path_names"));
+        assertThat(query.getQuery(), is("START taxon = node:taxons('*:*') MATCH taxon-[:ATE|PREYS_UPON|PARASITE_OF]->otherTaxon RETURN distinct(taxon.name?) as taxon_name, taxon.commonNames? as taxon_common_names, taxon.externalId? as taxon_external_id, taxon.path? as taxon_path, taxon.pathIds? as taxon_path_ids, taxon.pathNames? as taxon_path_names"));
         assertThat(query.getParams().isEmpty(), is(true));
     }
 

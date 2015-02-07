@@ -25,4 +25,10 @@ public class ResultFields {
     public static final String SUFFIX_LIFE_STAGE = "_life_stage";
 
 
+    public static final String TAXON_NAME = "taxon_name";
+    public static final String TAXON_COMMON_NAMES = "taxon_common_names";
+    public static final String TAXON_EXTERNAL_ID = "taxon_external_id";
+    public static final String TAXON_PATH = "taxon_path";
+    public static final String TAXON_PATH_IDS = "taxon_path_ids";
+    public static final String TAXON_PATH_NAMES = "taxon_path_names";
 }

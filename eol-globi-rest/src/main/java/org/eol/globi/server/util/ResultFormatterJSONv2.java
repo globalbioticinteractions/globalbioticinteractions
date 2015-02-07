@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 public class ResultFormatterJSONv2 implements ResultFormatter {
 
@@ -37,6 +38,24 @@ public class ResultFormatterJSONv2 implements ResultFormatter {
             throw new IllegalArgumentException("data array expected, but not found");
         }
 
+        if (columnNames.contains(ResultFields.INTERACTION_TYPE)) {
+            return formatAsSourceTargetPairs(columnNames, data);
+        } else if (columnNames.contains(ResultFields.TAXON_NAME)) {
+            List<Map<String, String>> taxa = new ArrayList<Map<String, String>>();
+            for (JsonNode row : data) {
+                Map<String, String> taxon = new TreeMap<String, String>();
+                for (int i = 0; i < row.size(); i++) {
+                    taxon.put(columns.get(i).asText(), row.get(i).asText());
+                }
+                taxa.add(taxon);
+            }
+            return new ObjectMapper().writeValueAsString(taxa);
+        }
+
+        return "[]";
+    }
+
+    private String formatAsSourceTargetPairs(List<String> columnNames, JsonNode data) throws IOException {
         List<Map<String, Object>> interactions = new ArrayList<Map<String, Object>>();
 
 
@@ -66,7 +85,6 @@ public class ResultFormatterJSONv2 implements ResultFormatter {
                 interactions.add(interaction);
             }
         }
-
         ObjectMapper mapper = new ObjectMapper();
         return mapper.writeValueAsString(interactions);
     }
