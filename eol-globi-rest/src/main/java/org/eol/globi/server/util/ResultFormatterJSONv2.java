@@ -1,7 +1,9 @@
 package org.eol.globi.server.util;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.eol.globi.server.CypherQueryBuilder;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -38,9 +40,9 @@ public class ResultFormatterJSONv2 implements ResultFormatter {
             throw new IllegalArgumentException("data array expected, but not found");
         }
 
-        if (columnNames.contains(ResultFields.INTERACTION_TYPE)) {
+        if (isInteractionQuery(columnNames)) {
             return formatAsSourceTargetPairs(columnNames, data);
-        } else if (columnNames.contains(ResultFields.TAXON_NAME)) {
+        } else if (isTaxonQuery(columnNames)) {
             List<Map<String, String>> taxa = new ArrayList<Map<String, String>>();
             for (JsonNode row : data) {
                 Map<String, String> taxon = new TreeMap<String, String>();
@@ -53,6 +55,14 @@ public class ResultFormatterJSONv2 implements ResultFormatter {
         }
 
         return "[]";
+    }
+
+    private boolean isInteractionQuery(List<String> columnNames) {
+        return columnNames.contains(ResultFields.INTERACTION_TYPE);
+    }
+
+    private boolean isTaxonQuery(List<String> columnNames) {
+        return CollectionUtils.containsAny(CypherQueryBuilder.TAXON_FIELDS, columnNames);
     }
 
     private String formatAsSourceTargetPairs(List<String> columnNames, JsonNode data) throws IOException {

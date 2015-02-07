@@ -1,6 +1,5 @@
 package org.eol.globi.server;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -16,7 +15,6 @@ import org.eol.globi.util.InteractUtil;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -76,7 +74,7 @@ public class CypherQueryBuilder {
     };
 
     static final Map<String, String> EMPTY_PARAMS = new HashMap<String, String>();
-    public static final List<String> DEFAULT_FIELDS = Collections.unmodifiableList(new ArrayList<String>() {{
+    public static final List<String> TAXON_FIELDS = Collections.unmodifiableList(new ArrayList<String>() {{
         add(ResultFields.TAXON_NAME);
         add(ResultFields.TAXON_COMMON_NAMES);
         add(ResultFields.TAXON_EXTERNAL_ID);
@@ -124,13 +122,13 @@ public class CypherQueryBuilder {
         List<String> fields = collectParamValues(params, "field");
 
         List<String> returnFields = new ArrayList<String>();
-        for (String defaultField : DEFAULT_FIELDS) {
+        for (String defaultField : TAXON_FIELDS) {
             if (fields.contains(defaultField)) {
                 returnFields.add(defaultField);
             }
         }
         if (returnFields.isEmpty()) {
-            returnFields.addAll(DEFAULT_FIELDS);
+            returnFields.addAll(TAXON_FIELDS);
         }
         for (int i = 0; i < returnFields.size(); i++) {
             String fieldName = returnFields.get(i);
