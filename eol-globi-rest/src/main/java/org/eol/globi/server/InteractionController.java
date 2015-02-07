@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -59,6 +60,13 @@ public class InteractionController {
                 ? CypherQueryBuilder.QueryType.MULTI_TAXON_ALL
                 : CypherQueryBuilder.QueryType.MULTI_TAXON_DISTINCT;
         CypherQuery query = CypherQueryBuilder.buildInteractionQuery(parameterMap, queryType);
+        return CypherQueryBuilder.createPagedQuery(request, query);
+    }
+
+    @RequestMapping(value = "/taxon", method = RequestMethod.GET, headers = "content-type=*/*")
+    @ResponseBody
+    public CypherQuery findDistinctTaxa(HttpServletRequest request) throws IOException {
+        CypherQuery query = CypherQueryBuilder.createDistinctTaxaInLocationQuery((Map<String, String[]>) request.getParameterMap());
         return CypherQueryBuilder.createPagedQuery(request, query);
     }
 

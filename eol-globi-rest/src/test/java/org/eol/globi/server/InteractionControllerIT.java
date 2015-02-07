@@ -29,6 +29,13 @@ public class InteractionControllerIT extends ITBase {
     }
 
     @Test
+    public void distinctTaxa() throws IOException {
+        String uri = getURLPrefix() + "taxon";
+        String response = HttpClient.httpGet(uri);
+        assertThat(response, is(not(nullValue())));
+    }
+
+    @Test
     public void listSymbiontOf() throws IOException {
         String uri = getURLPrefix() + "taxon/Homo%20sapiens/symbiontOf";
         String response = HttpClient.httpGet(uri);

@@ -75,6 +75,37 @@ public class CypherQueryBuilder {
 
     static final Map<String, String> EMPTY_PARAMS = new HashMap<String, String>();
 
+    static public CypherQuery createDistinctTaxaInLocationQuery(Map<String, String[]> params) {
+        StringBuilder builder = new StringBuilder();
+        List<String> interactionTypes = collectParamValues(params, "interactionType");
+
+        if (RequestHelper.isSpatialSearch(params)) {
+            appendSpatialStartWhereWith(params, builder);
+        } else {
+            builder.append("START taxon = node:taxons('*:*') ");
+        }
+
+        if (RequestHelper.isSpatialSearch(params)) {
+            builder.append("MATCH taxon<-[:CLASSIFIED_AS]-specimen-[:COLLECTED_AT]->loc");
+            if (!interactionTypes.isEmpty()) {
+                builder.append(", taxon-[:");
+                builder.append(createInteractionTypeSelector(interactionTypes));
+                builder.append("]->otherTaxon ");
+            } else {
+                builder.append(" ");
+            }
+        } else {
+            if (!interactionTypes.isEmpty()) {
+                builder.append("MATCH taxon-[:");
+                builder.append(createInteractionTypeSelector(interactionTypes));
+                builder.append("]->otherTaxon ");
+            }
+        }
+
+        builder.append("RETURN distinct(taxon.name) as name, taxon.commonNames? as common_names, taxon.externalId? as external_id, taxon.path? as taxon_path, taxon.pathIds? as taxon_path_ids, taxon.pathNames? as taxon_path_names");
+        return new CypherQuery(builder.toString(), new HashMap<String, String>());
+    }
+
     public enum QueryType {
         SINGLE_TAXON_DISTINCT, SINGLE_TAXON_ALL, MULTI_TAXON_DISTINCT, MULTI_TAXON_ALL
     }
@@ -461,9 +492,7 @@ public class CypherQueryBuilder {
         StringBuilder query = new StringBuilder();
 
         if (RequestHelper.isSpatialSearch(parameterMap)) {
-            query.append("START loc = node:locations('*:*') WHERE ");
-            RequestHelper.addSpatialWhereClause(RequestHelper.parseSpatialSearchParams(parameterMap), query);
-            query.append("WITH loc ");
+            appendSpatialStartWhereWith(parameterMap, query);
         } else {
             query.append("START study = node:studies('*:*') ");
         }
@@ -494,6 +523,12 @@ public class CypherQueryBuilder {
         query.append(" as `number of distinct locations`")
                 .append(", count(distinct(").append(interactionLabel).append(")) as `number of distinct interactions`");
         return new CypherQuery(query.toString(), params);
+    }
+
+    public static void appendSpatialStartWhereWith(Map<String, String[]> parameterMap, StringBuilder query) {
+        query.append("START loc = node:locations('*:*') WHERE ");
+        RequestHelper.addSpatialWhereClause(RequestHelper.parseSpatialSearchParams(parameterMap), query);
+        query.append("WITH loc ");
     }
 
     protected static Map<String, String> addSourceWhereClause(Map<String, String[]> parameterMap, StringBuilder query) {

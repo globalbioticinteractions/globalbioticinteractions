@@ -89,4 +89,29 @@ public class ExporterTaxaTest {
         assertThat(rowFields.containsKey(EOLDictionary.FURTHER_INFORMATION_URL), is(false));
     }
 
+    @Test
+    public void infraSpecies() throws NodeFactoryException, IOException {
+        HashMap<String, Object> result = new HashMap<String, Object>() {
+            {
+                put("rank", "infraspecies");
+                put("pathNames", "kingdom | phylum | class | order | family | genus | species | infraspecies");
+                put("path", "Animalia | Chordata | Mammalia | Carnivora | Mustelidae | Enhydra | Enhydra lutris | Enhydra lutris nereis");
+                put("scientificName", "Enhydra lutris nereis");
+                put("taxonId", "EOL:1251487");
+            }
+        };
+        HashMap<String, String> rowFields = new HashMap<String, String>();
+        ExporterTaxa.resultsToRow(rowFields, result);
+
+        assertThat(rowFields.get(EOLDictionary.TAXON_ID), is("EOL:1251487"));
+        assertThat(rowFields.get(EOLDictionary.SCIENTIFIC_NAME), is("Enhydra lutris nereis"));
+        assertThat(rowFields.get(EOLDictionary.TAXON_RANK), is("infraspecies"));
+        assertThat(rowFields.get(EOLDictionary.KINGDOM), is("Animalia"));
+        assertThat(rowFields.get(EOLDictionary.PHYLUM), is("Chordata"));
+        assertThat(rowFields.get(EOLDictionary.CLASS), is("Mammalia"));
+        assertThat(rowFields.get(EOLDictionary.ORDER), is("Carnivora"));
+        assertThat(rowFields.get(EOLDictionary.FAMILY), is("Mustelidae"));
+        assertThat(rowFields.get(EOLDictionary.GENUS), is("Enhydra"));
+    }
+
 }
