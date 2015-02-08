@@ -80,7 +80,7 @@ public class CypherQueryBuilder {
         add(ResultFields.TAXON_EXTERNAL_ID);
         add(ResultFields.TAXON_PATH);
         add(ResultFields.TAXON_PATH_IDS);
-        add(ResultFields.TAXON_PATH_NAMES);
+        add(ResultFields.TAXON_PATH_RANKS);
     }});
 
     public static final Map<String, String> FIELD_MAP = Collections.unmodifiableMap(new HashMap<String, String>() {{
@@ -89,7 +89,7 @@ public class CypherQueryBuilder {
         put(ResultFields.TAXON_EXTERNAL_ID, "taxon.externalId");
         put(ResultFields.TAXON_PATH, "taxon.path");
         put(ResultFields.TAXON_PATH_IDS, "taxon.pathIds");
-        put(ResultFields.TAXON_PATH_NAMES, "taxon.pathNames");
+        put(ResultFields.TAXON_PATH_RANKS, "taxon.pathNames");
     }});
 
     static public CypherQuery createDistinctTaxaInLocationQuery(Map<String, String[]> params) {
