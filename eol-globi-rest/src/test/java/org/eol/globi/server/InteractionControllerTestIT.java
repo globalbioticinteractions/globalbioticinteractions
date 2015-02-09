@@ -44,6 +44,21 @@ public class InteractionControllerTestIT {
     }
 
     @Test
+    public void findSupportedInteractionTypesById() throws IOException, URISyntaxException {
+        HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
+        when(request.getParameterMap()).thenReturn(new HashMap<String, String[]>() {
+            {
+                put("taxon", new String[]{"EOL:7666"});
+            }
+        });
+        when(request.getParameter("taxon")).thenReturn("something");
+        when(request.getParameter("type")).thenReturn("csv");
+        String list = new InteractionController().getInteractionTypes(request);
+        assertThat(list, not(containsString("pollinate")));
+        assertThat(list, containsString("preysOn"));
+    }
+
+    @Test
     public void findSupportedInteractionTypesBees() throws IOException, URISyntaxException {
         HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
         when(request.getParameterMap()).thenReturn(new HashMap<String, String[]>() {
