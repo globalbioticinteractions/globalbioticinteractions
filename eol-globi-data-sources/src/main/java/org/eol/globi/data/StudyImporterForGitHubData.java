@@ -17,6 +17,7 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 
 public class StudyImporterForGitHubData extends BaseStudyImporter {
     private static final Log LOG = LogFactory.getLog(StudyImporterForGitHubData.class);
@@ -110,14 +111,13 @@ public class StudyImporterForGitHubData extends BaseStudyImporter {
             String interactionTypeId = StringUtils.trim(parser.getValueByLabel("interactionTypeId"));
             if (StringUtils.isNotBlank(targetTaxonName)
                     && StringUtils.isNotBlank(sourceTaxonName)) {
-
                 InteractType type = INTERACT_ID_TO_TYPE.get(interactionTypeId);
-                if (type != null) {
+                if (type == null) {
+                    study.appendLogMessage("unsupported interaction type id [" + interactionTypeId + "]", Level.WARNING);
+                } else {
                     Specimen source = nodeFactory.createSpecimen(study, sourceTaxonName, sourceTaxonId);
                     Specimen target = nodeFactory.createSpecimen(study, targetTaxonName, targetTaxonId);
                     source.interactsWith(target, type);
-                } else {
-                    throw new StudyImporterException("unsupported interaction type id [" + interactionTypeId + "]");
                 }
             }
         }

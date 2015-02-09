@@ -1,7 +1,6 @@
 package org.eol.globi.server;
 
 import org.apache.commons.lang.StringUtils;
-import org.eol.globi.domain.InteractType;
 import org.eol.globi.server.util.InteractionTypeExternal;
 import org.eol.globi.server.util.ResultFormatterCSV;
 import org.eol.globi.util.CypherQuery;
@@ -32,7 +31,6 @@ public class InteractionController {
             if (StringUtils.isNotBlank(request.getParameter(CypherQueryBuilder.TAXON_HTTP_PARAM_NAME))) {
                 CypherQuery cypherQuery = CypherQueryBuilder.buildInteractionTypeQuery(request.getParameterMap());
                 String interactionTypes = new ResultFormatterCSV().format(CypherUtil.executeRemote(cypherQuery));
-
                 String[] interactionType = StringUtils.replace(interactionTypes, "\"", "").split("\n");
                 availableTypes = new HashSet<InteractionTypeExternal>();
                 for (String type : interactionType) {
