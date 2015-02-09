@@ -27,14 +27,14 @@ public class InteractionController {
     @RequestMapping(value = "/interactionTypes", method = RequestMethod.GET)
     @ResponseBody
     public String getInteractionTypes(HttpServletRequest request) throws IOException {
-        List<InteractionTypeExternal> availableTypes = Arrays.asList(InteractionTypeExternal.values());
+        Collection<InteractionTypeExternal> availableTypes = Arrays.asList(InteractionTypeExternal.values());
         if (request != null) {
             if (StringUtils.isNotBlank(request.getParameter(CypherQueryBuilder.TAXON_HTTP_PARAM_NAME))) {
                 CypherQuery cypherQuery = CypherQueryBuilder.buildInteractionTypeQuery(request.getParameterMap());
                 String interactionTypes = new ResultFormatterCSV().format(CypherUtil.executeRemote(cypherQuery));
 
                 String[] interactionType = StringUtils.replace(interactionTypes, "\"", "").split("\n");
-                availableTypes = new ArrayList<InteractionTypeExternal>();
+                availableTypes = new HashSet<InteractionTypeExternal>();
                 for (String type : interactionType) {
                     InteractionTypeExternal value = CypherQueryBuilder.INTERACTION_TYPE_INTERNAL_EXTERNAL_MAP.get(type);
                     if (value != null) {
