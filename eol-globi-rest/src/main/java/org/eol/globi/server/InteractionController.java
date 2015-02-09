@@ -1,5 +1,8 @@
 package org.eol.globi.server;
 
+import org.apache.commons.lang.StringUtils;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.eol.globi.server.util.ExternalInteractionType;
 import org.eol.globi.util.CypherQuery;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -10,7 +13,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -21,35 +23,30 @@ public class InteractionController {
     @ResponseBody
     public String getInteractionTypes(HttpServletRequest request) throws IOException {
         String type = request == null ? "json" : request.getParameter("type");
-        String result;
-        if ("csv".equals(type)) {
+        return "csv".equals(type) ? interactionMapCsv() : interactionMapJson();
+    }
+
+    protected String interactionMapJson() {
+        List<String> interactions = new ArrayList<String>();
+        for (ExternalInteractionType value : ExternalInteractionType.values()) {
             StringBuilder builder = new StringBuilder();
-            builder.append("interaction,source,target\n");
-            builder.append(CypherQueryBuilder.INTERACTION_PREYS_ON).append(",predator,prey\n");
-            builder.append(CypherQueryBuilder.INTERACTION_PREYED_UPON_BY).append(",prey,predator\n");
-            builder.append(CypherQueryBuilder.INTERACTION_PARASITE_OF).append(",parasite,host\n");
-            builder.append(CypherQueryBuilder.INTERACTION_HAS_PARASITE).append(",host,parasite\n");
-            builder.append(CypherQueryBuilder.INTERACTION_POLLINATES).append(",pollinator,plant\n");
-            builder.append(CypherQueryBuilder.INTERACTION_POLLINATED_BY).append(",plant,pollinator\n");
-            builder.append(CypherQueryBuilder.INTERACTION_PATHOGEN_OF).append(",pathogen,host\n");
-            builder.append(CypherQueryBuilder.INTERACTION_HAS_PATHOGEN).append(",plant,pollinator\n");
-            builder.append(CypherQueryBuilder.INTERACTION_SYMBIONT_OF).append(",source,target\n");
-            builder.append(CypherQueryBuilder.INTERACTION_INTERACTS_WITH).append(",source,target");
-            result = builder.toString();
-        } else {
-            result = "{ \"" + CypherQueryBuilder.INTERACTION_PREYS_ON + "\":{\"source\":\"predator\",\"target\":\"prey\"}" +
-                    ",\"" + CypherQueryBuilder.INTERACTION_PREYED_UPON_BY + "\":{\"source\":\"prey\",\"target\":\"predator\"}" +
-                    ",\"" + CypherQueryBuilder.INTERACTION_PARASITE_OF + "\":{\"source\":\"parasite\",\"target\":\"host\"}" +
-                    ",\"" + CypherQueryBuilder.INTERACTION_HAS_PARASITE + "\":{\"source\":\"host\",\"target\":\"parasite\"}" +
-                    ",\"" + CypherQueryBuilder.INTERACTION_POLLINATES + "\":{\"source\":\"pollinator\",\"target\":\"plant\"}" +
-                    ",\"" + CypherQueryBuilder.INTERACTION_POLLINATED_BY + "\":{\"source\":\"plant\",\"target\":\"pollinator\"}" +
-                    ",\"" + CypherQueryBuilder.INTERACTION_PATHOGEN_OF + "\":{\"source\":\"pathogen\",\"target\":\"host\"}" +
-                    ",\"" + CypherQueryBuilder.INTERACTION_HAS_PATHOGEN + "\":{\"source\":\"host\",\"target\":\"pathogen\"}" +
-                    ",\"" + CypherQueryBuilder.INTERACTION_SYMBIONT_OF + "\":{\"source\":\"source\",\"target\":\"target\"}" +
-                    ",\"" + CypherQueryBuilder.INTERACTION_INTERACTS_WITH + "\":{\"source\":\"source\",\"target\":\"target\"}" +
-                    "}";
+            builder.append("\"").append(value.getLabel()).append("\":");
+            builder.append("{\"source\":\"").append(value.getSource()).append("\",");
+            builder.append("\"target\":\"").append(value.getTarget()).append("\"}");
+            interactions.add(builder.toString());
         }
-        return result;
+        return "{" + StringUtils.join(interactions, ",") + "}";
+    }
+
+    protected String interactionMapCsv() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("interaction,source,target\n");
+        for (ExternalInteractionType value : ExternalInteractionType.values()) {
+            builder.append(value.getLabel());
+            builder.append(",").append(value.getSource());
+            builder.append(",").append(value.getTarget()).append("\"\n");
+        }
+        return builder.toString();
     }
 
     @RequestMapping(value = "/interaction", method = RequestMethod.GET)
