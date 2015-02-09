@@ -1,9 +1,11 @@
 package org.eol.globi.server;
 
 import org.apache.commons.lang.StringUtils;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.eol.globi.server.util.ExternalInteractionType;
+import org.eol.globi.domain.InteractType;
+import org.eol.globi.server.util.InteractionTypeExternal;
+import org.eol.globi.server.util.ResultFormatterCSV;
 import org.eol.globi.util.CypherQuery;
+import org.eol.globi.util.CypherUtil;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,6 +15,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -22,26 +27,40 @@ public class InteractionController {
     @RequestMapping(value = "/interactionTypes", method = RequestMethod.GET)
     @ResponseBody
     public String getInteractionTypes(HttpServletRequest request) throws IOException {
+        List<InteractionTypeExternal> availableTypes = Arrays.asList(InteractionTypeExternal.values());
+        if (request != null) {
+            if (StringUtils.isNotBlank(request.getParameter(CypherQueryBuilder.TAXON_HTTP_PARAM_NAME))) {
+                CypherQuery cypherQuery = CypherQueryBuilder.buildInteractionTypeQuery(request.getParameterMap());
+                String interactionTypes = new ResultFormatterCSV().format(CypherUtil.executeRemote(cypherQuery));
+
+                String[] interactionType = StringUtils.replace(interactionTypes, "\"", "").split("\n");
+                availableTypes = new ArrayList<InteractionTypeExternal>();
+                for (String type : interactionType) {
+                    InteractionTypeExternal value = CypherQueryBuilder.INTERACTION_TYPE_INTERNAL_EXTERNAL_MAP.get(type);
+                    if (value != null) {
+                        availableTypes.add(value);
+                    }
+                }
+            }
+        }
         String type = request == null ? "json" : request.getParameter("type");
-        return "csv".equals(type) ? interactionMapCsv() : interactionMapJson();
+        return "csv".equals(type) ? interactionMapCsv(availableTypes) : interactionMapJson(availableTypes);
     }
 
-    protected String interactionMapJson() {
+    protected String interactionMapJson(Collection<InteractionTypeExternal> availableTypes) {
         List<String> interactions = new ArrayList<String>();
-        for (ExternalInteractionType value : ExternalInteractionType.values()) {
-            StringBuilder builder = new StringBuilder();
-            builder.append("\"").append(value.getLabel()).append("\":");
-            builder.append("{\"source\":\"").append(value.getSource()).append("\",");
-            builder.append("\"target\":\"").append(value.getTarget()).append("\"}");
-            interactions.add(builder.toString());
+        for (InteractionTypeExternal value : availableTypes) {
+            interactions.add("\"" + value.getLabel() + "\":"
+                    + "{\"source\":\"" + value.getSource()
+                    + "\"," + "\"target\":\"" + value.getTarget() + "\"}");
         }
         return "{" + StringUtils.join(interactions, ",") + "}";
     }
 
-    protected String interactionMapCsv() {
+    protected String interactionMapCsv(Collection<InteractionTypeExternal> availableTypes) {
         StringBuilder builder = new StringBuilder();
         builder.append("interaction,source,target\n");
-        for (ExternalInteractionType value : ExternalInteractionType.values()) {
+        for (InteractionTypeExternal value : availableTypes) {
             builder.append(value.getLabel());
             builder.append(",").append(value.getSource());
             builder.append(",").append(value.getTarget()).append("\"\n");

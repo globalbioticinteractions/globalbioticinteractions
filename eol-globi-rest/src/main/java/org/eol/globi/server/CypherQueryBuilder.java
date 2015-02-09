@@ -8,6 +8,7 @@ import org.eol.globi.domain.Location;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
+import org.eol.globi.server.util.InteractionTypeExternal;
 import org.eol.globi.server.util.RequestHelper;
 import org.eol.globi.server.util.ResultFields;
 import org.eol.globi.util.CypherQuery;
@@ -41,6 +42,8 @@ public class CypherQueryBuilder {
     private static final String SOURCE_TAXON_HTTP_PARAM_NAME = "sourceTaxon";
     private static final String TARGET_TAXON_HTTP_PARAM_NAME = "targetTaxon";
 
+    public static final String TAXON_HTTP_PARAM_NAME = "taxon";
+
     private static final Map<String, String> DIRECTIONAL_INTERACTION_TYPE_MAP = new HashMap<String, String>() {
         {
             String preysOn = InteractType.ATE + "|" + InteractType.PREYS_UPON;
@@ -54,6 +57,23 @@ public class CypherQueryBuilder {
             put(INTERACTION_HAS_PATHOGEN, InteractType.HAS_PATHOGEN.toString());
             put(INTERACTION_SYMBIONT_OF, StringUtils.join(InteractType.values(), "|"));
             put(INTERACTION_INTERACTS_WITH, StringUtils.join(InteractType.values(), "|"));
+        }
+    };
+
+    public static final Map<String, InteractionTypeExternal> INTERACTION_TYPE_INTERNAL_EXTERNAL_MAP = new HashMap<String, InteractionTypeExternal>() {
+        {
+            put(InteractType.ATE.toString(), InteractionTypeExternal.PREYS_ON);
+            put(InteractType.PREYS_UPON.toString(), InteractionTypeExternal.PREYS_ON);
+            put(InteractType.EATEN_BY.toString(), InteractionTypeExternal.PREYED_UPON_BY);
+            put(InteractType.PREYED_UPON_BY.toString(), InteractionTypeExternal.PREYED_UPON_BY);
+            put(InteractType.PARASITE_OF.toString(), InteractionTypeExternal.PARASITE_OF);
+            put(InteractType.HAS_PARASITE.toString(), InteractionTypeExternal.HAS_PARASITE);
+            put(InteractType.POLLINATES.toString(), InteractionTypeExternal.POLLINATES);
+            put(InteractType.POLLINATED_BY.toString(), InteractionTypeExternal.POLLINATED_BY);
+            put(InteractType.PATHOGEN_OF.toString(), InteractionTypeExternal.PATHOGEN_OF);
+            put(InteractType.HAS_PATHOGEN.toString(), InteractionTypeExternal.HAS_PATHOGEN);
+            put(InteractType.SYMBIONT_OF.toString(), InteractionTypeExternal.SYMBIONT_OF);
+            put(InteractType.INTERACTS_WITH.toString(), InteractionTypeExternal.INTERACTS_WITH);
         }
     };
 
@@ -135,7 +155,7 @@ public class CypherQueryBuilder {
             if (i == 0) {
                 builder.append("RETURN distinct(").append(FIELD_MAP.get(fieldName)).append("?) as ").append(fieldName);
             } else {
-                builder.append(", ").append( FIELD_MAP.get(fieldName)).append("? as ").append(fieldName);
+                builder.append(", ").append(FIELD_MAP.get(fieldName)).append("? as ").append(fieldName);
             }
         }
         return new CypherQuery(builder.toString(), new HashMap<String, String>());
@@ -275,6 +295,20 @@ public class CypherQueryBuilder {
         appendReturnClause(interactionTypes, query, queryType);
         return new CypherQuery(query.toString(), getParams(sourceTaxa, targetTaxa));
     }
+
+
+    public static CypherQuery buildInteractionTypeQuery(Map parameterMap) {
+        final List<String> taxa = collectParamValues(parameterMap, TAXON_HTTP_PARAM_NAME);
+        String query = "START taxon = " + getTaxonPathSelector(ResultFields.TAXON_NAME)
+                + " MATCH taxon-[rel:" + InteractUtil.allInteractionsCypherClause() + "]->otherTaxon RETURN distinct(type(rel)) as " + ResultFields.INTERACTION_TYPE;
+        return new CypherQuery(query
+                , new HashMap<String, String>() {
+            {
+                put(ResultFields.TAXON_NAME, lucenePathQuery(taxa));
+            }
+        });
+    }
+
 
     public static CypherQuery buildInteractionQuery(Map parameterMap, QueryType queryType) {
         List<String> sourceTaxa = collectParamValues(parameterMap, SOURCE_TAXON_HTTP_PARAM_NAME);

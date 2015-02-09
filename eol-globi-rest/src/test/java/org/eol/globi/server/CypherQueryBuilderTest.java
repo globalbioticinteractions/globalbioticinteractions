@@ -17,7 +17,6 @@ import static org.eol.globi.server.CypherQueryBuilder.QueryType.SINGLE_TAXON_DIS
 import static org.eol.globi.server.CypherQueryBuilder.appendMatchAndWhereClause;
 import static org.eol.globi.server.CypherQueryBuilder.appendStartClause;
 import static org.eol.globi.server.CypherQueryBuilder.buildInteractionQuery;
-import static org.eol.globi.server.CypherQueryBuilder.createPagedQuery;
 import static org.eol.globi.server.CypherQueryBuilder.spatialInfo;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
@@ -85,6 +84,20 @@ public class CypherQueryBuilderTest {
     public void interactionReturnTerms() {
         assertThat(CypherQueryBuilder.appendInteractionTypeReturn(new StringBuilder(), "type(interactionType)").toString(), is("replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(type(interactionType),'HAS_PARASITE','hasParasite'),'POLLINATES','pollinates'),'SYMBIONT_OF','symbiontOf'),'POLLINATED_BY','pollinatedBy'),'HAS_PATHOGEN','hasPathogen'),'PATHOGEN_OF','pathogenOf'),'EATEN_BY','preyedUponBy'),'PREYED_UPON_BY','preyedUponBy'),'ATE','preysOn'),'PREYS_UPON','preysOn'),'INTERACTS_WITH','interactsWith'),'PARASITE_OF','parasiteOf') as interaction_type"));
     }
+
+    @Test
+    public void findInteractionTypesForTaxon() {
+        HashMap<String, String[]> params = new HashMap<String, String[]>() {
+            {
+                put("taxon", new String[]{"Actinopterygii", "Chordata"});
+            }
+        };
+
+        CypherQuery query = CypherQueryBuilder.buildInteractionTypeQuery(params);
+        assertThat(query.getQuery(), is("START taxon = node:taxonPaths({taxon_name}) MATCH taxon-[rel:PREYS_UPON|PARASITE_OF|HAS_HOST|INTERACTS_WITH|HOST_OF|POLLINATES|PERCHING_ON|ATE|SYMBIONT_OF|PREYED_UPON_BY|POLLINATED_BY|EATEN_BY|HAS_PARASITE|PERCHED_ON_BY|HAS_PATHOGEN|PATHOGEN_OF]->otherTaxon RETURN distinct(type(rel)) as interaction_type"));
+        assertThat(query.getParams().toString(), is(is("{taxon_name=path:\\\"Actinopterygii\\\" OR path:\\\"Chordata\\\"}")));
+    }
+
 
     @Test
     public void findInteractionForSourceAndTargetTaxaLocationsDistinct() throws IOException {

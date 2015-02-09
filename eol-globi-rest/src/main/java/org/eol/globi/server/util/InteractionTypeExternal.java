@@ -2,7 +2,7 @@ package org.eol.globi.server.util;
 
 import org.eol.globi.server.CypherQueryBuilder;
 
-public enum ExternalInteractionType {
+public enum InteractionTypeExternal {
     PREYS_ON(CypherQueryBuilder.INTERACTION_PREYS_ON, "predator", "prey"),
     PREYED_UPON_BY(CypherQueryBuilder.INTERACTION_PREYED_UPON_BY, "prey", "predator"),
     PARASITE_OF(CypherQueryBuilder.INTERACTION_PARASITE_OF, "parasite", "host"),
@@ -15,7 +15,7 @@ public enum ExternalInteractionType {
     INTERACTS_WITH(CypherQueryBuilder.INTERACTION_INTERACTS_WITH, "source", "target");
 
 
-    private ExternalInteractionType(String label, String source, String target) {
+    private InteractionTypeExternal(String label, String source, String target) {
         this.label = label;
         this.source = source;
         this.target = target;
