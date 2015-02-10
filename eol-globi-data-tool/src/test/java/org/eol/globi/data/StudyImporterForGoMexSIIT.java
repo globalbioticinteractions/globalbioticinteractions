@@ -31,7 +31,7 @@ import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.junit.matchers.JUnitMatchers.hasItem;
 
-public class StudyImporterForGoMexSITest extends GraphDBTestCase {
+public class StudyImporterForGoMexSIIT extends GraphDBTestCase {
 
     @Test
     public void createAndPopulateStudy() throws StudyImporterException, NodeFactoryException, IOException, URISyntaxException {
