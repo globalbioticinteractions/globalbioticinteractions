@@ -30,7 +30,9 @@ public abstract class ExporterTaxa extends ExporterBase {
 
         properties.put(EOLDictionary.SCIENTIFIC_NAME, (String) result.get("scientificName"));
         if (result.containsKey("rank")) {
-            properties.put(EOLDictionary.TAXON_RANK, (String) result.get("rank"));
+            String rank = (String) result.get("rank");
+            // see https://github.com/jhpoelen/eol-globi-data/issues/114
+            properties.put(EOLDictionary.TAXON_RANK, StringUtils.replace(StringUtils.lowerCase(rank), "infraspecies", "subspecies"));
         }
 
         addHigherOrderTaxa(properties, result, rankMap);

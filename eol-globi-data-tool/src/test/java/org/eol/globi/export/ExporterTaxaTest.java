@@ -93,7 +93,7 @@ public class ExporterTaxaTest {
     public void infraSpecies() throws NodeFactoryException, IOException {
         HashMap<String, Object> result = new HashMap<String, Object>() {
             {
-                put("rank", "infraspecies");
+                put("rank", "Infraspecies");
                 put("pathNames", "kingdom | phylum | class | order | family | genus | species | infraspecies");
                 put("path", "Animalia | Chordata | Mammalia | Carnivora | Mustelidae | Enhydra | Enhydra lutris | Enhydra lutris nereis");
                 put("scientificName", "Enhydra lutris nereis");
@@ -105,7 +105,8 @@ public class ExporterTaxaTest {
 
         assertThat(rowFields.get(EOLDictionary.TAXON_ID), is("EOL:1251487"));
         assertThat(rowFields.get(EOLDictionary.SCIENTIFIC_NAME), is("Enhydra lutris nereis"));
-        assertThat(rowFields.get(EOLDictionary.TAXON_RANK), is("infraspecies"));
+        // see https://github.com/jhpoelen/eol-globi-data/issues/114
+        assertThat(rowFields.get(EOLDictionary.TAXON_RANK), is("Subspecies"));
         assertThat(rowFields.get(EOLDictionary.KINGDOM), is("Animalia"));
         assertThat(rowFields.get(EOLDictionary.PHYLUM), is("Chordata"));
         assertThat(rowFields.get(EOLDictionary.CLASS), is("Mammalia"));
