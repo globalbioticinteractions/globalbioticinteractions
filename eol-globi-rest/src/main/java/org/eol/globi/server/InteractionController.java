@@ -31,6 +31,7 @@ public class InteractionController {
             if (StringUtils.isNotBlank(request.getParameter(CypherQueryBuilder.TAXON_HTTP_PARAM_NAME))) {
                 CypherQuery cypherQuery = CypherQueryBuilder.buildInteractionTypeQuery(request.getParameterMap());
                 String interactionTypes = new ResultFormatterCSV().format(CypherUtil.executeRemote(cypherQuery));
+                System.out.println(interactionTypes);
                 String[] interactionType = StringUtils.replace(interactionTypes, "\"", "").split("\n");
                 availableTypes = new HashSet<InteractionTypeExternal>();
                 for (String type : interactionType) {
@@ -61,7 +62,7 @@ public class InteractionController {
         for (InteractionTypeExternal value : availableTypes) {
             builder.append(value.getLabel());
             builder.append(",").append(value.getSource());
-            builder.append(",").append(value.getTarget()).append("\"\n");
+            builder.append(",").append(value.getTarget()).append("\n");
         }
         return builder.toString();
     }

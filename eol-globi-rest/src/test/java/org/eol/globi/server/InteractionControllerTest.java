@@ -11,9 +11,11 @@ import org.mockito.Mockito;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
+import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
+import static org.junit.matchers.JUnitMatchers.containsString;
 import static org.mockito.Mockito.when;
 
 public class InteractionControllerTest {
