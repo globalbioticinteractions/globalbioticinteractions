@@ -21,4 +21,10 @@ public class GitHubUtilIT {
         assertThat(reposWithData, hasItem(TEMPLATE_DATA_REPOSITORY));
     }
 
+    @Test
+    public void findMostRecentCommit() throws IOException, URISyntaxException {
+        String sha = GitHubUtil.lastCommitSHA(GitHubUtilIT.TEMPLATE_DATA_REPOSITORY);
+        assertThat(sha, is(notNullValue()));
+    }
+
 }

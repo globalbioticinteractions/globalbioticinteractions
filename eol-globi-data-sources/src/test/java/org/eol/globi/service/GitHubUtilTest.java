@@ -23,10 +23,6 @@ public class GitHubUtilTest {
         assertThat(GitHubUtil.hasInteractionData("ropensci/rgbif"), is(false));
     }
 
-    @Test
-    public void findMostRecentCommit() throws IOException, URISyntaxException {
-        String sha = GitHubUtil.lastCommitSHA(GitHubUtilIT.TEMPLATE_DATA_REPOSITORY);
-        assertThat(sha, is(notNullValue()));
-    }
+
 
 }
