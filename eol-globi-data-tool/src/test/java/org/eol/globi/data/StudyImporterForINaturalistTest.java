@@ -25,7 +25,7 @@ import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.junit.matchers.JUnitMatchers.containsString;
 
-public class StudyImporterFxorINaturalistTest extends GraphDBTestCase {
+public class StudyImporterForINaturalistTest extends GraphDBTestCase {
     private StudyImporterForINaturalist importer;
 
     @Before
