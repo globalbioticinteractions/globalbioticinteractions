@@ -169,16 +169,18 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
         JsonNode targetTaxon = jsonNode.get("taxon");
         JsonNode targetTaxonNode = targetTaxon.get("name");
         long observationId = jsonNode.get("observation_id").getLongValue();
-        if (targetTaxonNode == null) {
-            LOG.warn("skipping interaction with missing target taxon name for observation [" + observationId + "]");
-        } else {
-            JsonNode observationField = jsonNode.get("observation_field");
-            String interactionDataType = observationField.get("datatype").getTextValue();
-            String interactionType = observationField.get("name").getTextValue();
-            if (isIgnoredInteractionType(interactionType)) {
-                LOG.warn("ignoring taxon observation field type [" + interactionType + "] for observation with id [" + observationId + "]");
+        if (isResearchGrade(observationId)) {
+            if (targetTaxonNode == null) {
+                LOG.warn("skipping interaction with missing target taxon name for observation [" + observationId + "]");
             } else {
-                createInteraction(jsonNode, targetTaxonNode, observationId, interactionDataType, interactionType);
+                JsonNode observationField = jsonNode.get("observation_field");
+                String interactionDataType = observationField.get("datatype").getTextValue();
+                String interactionType = observationField.get("name").getTextValue();
+                if (isIgnoredInteractionType(interactionType)) {
+                    LOG.warn("ignoring taxon observation field type [" + interactionType + "] for observation with id [" + observationId + "]");
+                } else {
+                    createInteraction(jsonNode, targetTaxonNode, observationId, interactionDataType, interactionType);
+                }
             }
         }
 
@@ -315,5 +317,15 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
     @Override
     public boolean shouldCrossCheckReference() {
         return false;
+    }
+
+    protected boolean isResearchGrade(long observationId) throws StudyImporterException {
+        try {
+            String observation = org.eol.globi.util.HttpClient.httpGet("http://www.inaturalist.org/observations/" + observationId + ".json");
+            JsonNode obs = new ObjectMapper().readTree(observation);
+            return (obs.has("quality_grade") && "research".equals(obs.get("quality_grade").asText()));
+        } catch (IOException ex) {
+            throw new StudyImporterException("failed to lookup observation [" + observationId + "]", ex);
+        }
     }
 }

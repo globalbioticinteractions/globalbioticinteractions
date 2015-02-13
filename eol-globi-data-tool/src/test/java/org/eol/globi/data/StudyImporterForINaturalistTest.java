@@ -25,7 +25,7 @@ import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.junit.matchers.JUnitMatchers.containsString;
 
-public class StudyImporterForINaturalistTest extends GraphDBTestCase {
+public class StudyImporterFxorINaturalistTest extends GraphDBTestCase {
     private StudyImporterForINaturalist importer;
 
     @Before
@@ -45,6 +45,12 @@ public class StudyImporterForINaturalistTest extends GraphDBTestCase {
         Study study = nodeFactory.createStudy("testing123");
         importer.parseJSON(getClass().getResourceAsStream("inaturalist/response_with_ecological_interaction_field.json"));
         assertThat(countSpecimen(study) > 86, is(true));
+    }
+
+    @Test
+    public void isResearchGrade() throws StudyImporterException {
+        assertThat(importer.isResearchGrade(757556), is(false));
+        assertThat(importer.isResearchGrade(563486), is(true));
     }
 
     @Test
