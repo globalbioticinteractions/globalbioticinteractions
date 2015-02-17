@@ -79,6 +79,7 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
         // see https://github.com/jhpoelen/eol-globi-data/issues/56
         add("Syntopic");
         add("Associated species with names lookup");
+        add("associated species alien to NZ");
         add("Target species");
         add("Iconic taxon name");
         add("Tree species");
