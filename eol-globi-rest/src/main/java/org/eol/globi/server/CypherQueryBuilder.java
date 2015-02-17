@@ -36,6 +36,9 @@ public class CypherQueryBuilder {
     public static final String INTERACTION_PATHOGEN_OF = "pathogenOf";
     public static final String INTERACTION_HAS_PATHOGEN = "hasPathogen";
 
+    public static final String INTERACTION_VECTOR_OF = "vectorOf";
+    public static final String INTERACTION_HAS_VECTOR = "hasVector";
+
     public static final String INTERACTION_SYMBIONT_OF = "symbiontOf";
     public static final String INTERACTION_INTERACTS_WITH = "interactsWith";
 
@@ -55,6 +58,8 @@ public class CypherQueryBuilder {
             put(INTERACTION_POLLINATED_BY, InteractType.POLLINATED_BY.toString());
             put(INTERACTION_PATHOGEN_OF, InteractType.PATHOGEN_OF.toString());
             put(INTERACTION_HAS_PATHOGEN, InteractType.HAS_PATHOGEN.toString());
+            put(INTERACTION_HAS_VECTOR, InteractType.HAS_VECTOR.toString());
+            put(INTERACTION_VECTOR_OF, InteractType.VECTOR_OF.toString());
             put(INTERACTION_SYMBIONT_OF, StringUtils.join(InteractType.values(), "|"));
             put(INTERACTION_INTERACTS_WITH, StringUtils.join(InteractType.values(), "|"));
         }
@@ -72,6 +77,8 @@ public class CypherQueryBuilder {
             put(InteractType.POLLINATED_BY.toString(), InteractionTypeExternal.POLLINATED_BY);
             put(InteractType.PATHOGEN_OF.toString(), InteractionTypeExternal.PATHOGEN_OF);
             put(InteractType.HAS_PATHOGEN.toString(), InteractionTypeExternal.HAS_PATHOGEN);
+            put(InteractType.VECTOR_OF.toString(), InteractionTypeExternal.VECTOR_OF);
+            put(InteractType.HAS_VECTOR.toString(), InteractionTypeExternal.HAS_VECTOR);
             put(InteractType.SYMBIONT_OF.toString(), InteractionTypeExternal.SYMBIONT_OF);
             put(InteractType.INTERACTS_WITH.toString(), InteractionTypeExternal.INTERACTS_WITH);
         }

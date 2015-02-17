@@ -2,13 +2,10 @@ package org.eol.globi.util;
 
 import org.eol.globi.domain.InteractType;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class InteractUtil {
-
 
     public static String allInteractionsCypherClause() {
         InteractType[] values = InteractType.values();
@@ -47,6 +44,9 @@ public class InteractUtil {
 
                 put(InteractType.PATHOGEN_OF, InteractType.HAS_PATHOGEN);
                 put(InteractType.HAS_PATHOGEN, InteractType.PATHOGEN_OF);
+
+                put(InteractType.VECTOR_OF, InteractType.HAS_VECTOR);
+                put(InteractType.HAS_VECTOR, InteractType.VECTOR_OF);
             }
         };
         return inverseMap.get(interactType);

@@ -10,6 +10,7 @@ public class PropertyEnricherFactory {
             {
                 add(new EnvoService());
                 add(new FunctionalGroupService());
+                add(new NBNService());
                 add(new EOLService());
                 add(new WoRMSService());
                 add(new GulfBaseService());

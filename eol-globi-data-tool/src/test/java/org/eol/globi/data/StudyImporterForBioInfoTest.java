@@ -4,11 +4,9 @@ import com.Ostermiller.util.CSVParser;
 import com.Ostermiller.util.LabeledCSVParser;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.PropertyAndValueDictionary;
-import org.eol.globi.domain.RelType;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
-import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.domain.TaxonomyProvider;
 import org.junit.Test;
 import org.neo4j.cypher.javacompat.ExecutionEngine;
@@ -21,28 +19,25 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
-import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.hamcrest.core.IsNull.nullValue;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.matchers.JUnitMatchers.containsString;
 
 public class StudyImporterForBioInfoTest extends GraphDBTestCase {
 
-    public static final String RELATIONS_STRING = "DonorTax_id\tRecipTax_id\tTrophicRel_Id\tRecipStage\txisRestricted\tRelate_id\tDonorStage\tisRelationshipUncertain\tSeason\txisForeignRecord\txisGBRecord\txisRare\txisMajor\tisIndoorRecord\txisMinor\tDonorState\tRecipState\tDonorPart\tRecipPart\tSymptoms\tisDonorUncertain\tisRecipientUncertain\tDonorPartFrequencyCode4\tDonorPartGeographyCode4\tRecipStageFrequencyCode4\tRecipStageGeographyCode4\tRelationFrequencyCode4\tRelationGeographyCode4\t\n" +
-            "43913\t43912\t43902\t\"mycelium\"\tFalse\t43916\t\"\"\tFalse\t\"\"\tFalse\tFalse\tFalse\tFalse\tFalse\tFalse\t\"\"\t\"\"\t\"stem\"\t\"\"\t\"causes witches' broom. Infected shoots are pale yellow, thick and short and grow vertically upwards with short, thick, spirally-arranged leaves\"\tFalse\tFalse\t\"\"\t\"\"\t\"\"\t\"\"\t\"\"\t\"\"\n" +
-            "3011\t43917\t43902\t\"\"\tFalse\t43918\t\"\"\tFalse\t\"\"\tFalse\tFalse\tFalse\tFalse\tFalse\tFalse\t\"\"\t\"\"\t\"leaf (petiole)\"\t\"\"\t\"\"\tFalse\tFalse\t\"\"\t\"\"\t\"\"\t\"\"\t\"\"\t\"\"\n" +
-            "3011\t43920\t43902\t\"larva\"\tFalse\t43921\t\"\"\tFalse\t\"\"\tFalse\tFalse\tFalse\tFalse\tFalse\tFalse\t\"\"\t\"\"\t\"leaf (petiole)\"\t\"\"\t\"\"\tFalse\tFalse\t\"\"\t\"\"\t\"\"\t\"\"\t\"\"\t\"\"\n" +
-            "3011\t107544\t43902\t\"larva\"\tFalse\t43923\t\"\"\tFalse\t\"\"\tFalse\tFalse\tFalse\tFalse\tFalse\tFalse\t\"\"\t\"\"\t\"leaf\"\t\"\"\t\"\"\tFalse\tFalse\t\"\"\t\"\"\t\"\"\t\"\"\t\"\"\t\"\"\n" +
-            "3011\t1625\t43902\t\"\"\tFalse\t43925\t\"\"\tFalse\t\"\"\tFalse\tFalse\tFalse\tFalse\tFalse\tFalse\t\"live\"\t\"\"\t\"leaf\"\t\"\"\t\"\"\tFalse\tFalse\t\"\"\t\"\"\t\"\"\t\"\"\t\"\"\t\"\"\n" +
-            "3011\t12958\t43902\t\"\"\tFalse\t43926\t\"\"\tFalse\t\"\"\tFalse\tFalse\tFalse\tFalse\tFalse\tFalse\t\"\"\t\"\"\t\"leaf\"\t\"\"\t\"\"\tFalse\tFalse\t\"\"\t\"\"\t\"\"\t\"\"\t\"\"\t\"\"\n" +
-            "3011\t43927\t43902\t\"\"\tFalse\t43928\t\"\"\tFalse\t\"\"\tFalse\tFalse\tFalse\tFalse\tFalse\tFalse\t\"\"\t\"\"\t\"leaf\"\t\"\"\t\"\"\tFalse\tFalse\t\"\"\t\"\"\t\"\"\t\"\"\t\"\"\t\"\"\n" +
-            "465\t43930\t43902\t\"\"\tFalse\t43931\t\"\"\tFalse\t\"\"\tFalse\tFalse\tFalse\tFalse\tFalse\tFalse\t\"\"\t\"\"\t\"leaf\"\t\"\"\t\"\"\tFalse\tFalse\t\"\"\t\"\"\t\"\"\t\"\"\t\"\"\t\"\"\n" +
-            "464\t32122\t43902\t\"\"\tFalse\t43933\t\"\"\tFalse\t\"\"\tFalse\tFalse\tFalse\tFalse\tFalse\tFalse\t\"\"\t\"\"\t\"leaf\"\t\"\"\t\"\"\tFalse\tFalse\t\"\"\t\"\"\t\"\"\t\"\"\t\"\"\t\"\"";
+    public static final String RELATIONS_STRING = "my relation id,relationship,active relation,passive relation,my active taxon id,active NBN Code,active url,is identity of active taxon uncertain,state of active taxon,part of active taxon,stage of active taxon,where stage of active taxon is recorded,importance of stage of active taxon,state of passive taxon,part of passive taxon,stage of passive taxon,where part of passive taxon is recorded,importance of part of passive taxon,season (numeric),season (alpha),indoors etc,relation recorded in GB/Ireland,importance of relationship,is nature of relationship uncertain,constructed sentence for active,constructed sentence for passive,my passive taxon id,passive NBN Code,passive url,is identity of passive taxon uncertain,list of reference ids\n" +
+            "\"1534\",\"Plant / associate\",\"is associated with\",\"is associate of\",\"34737\",\"NBNSYS0000024889\",\"www.bioinfo.org.uk/html/Abdera_biflexuosa.htm\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\" \",\"\",\"\",\"\",\"\",\"\",\"<active> is associated with <passive>\",\"<passive> is associate of <active>\",\"537\",\"NBNSYS0000003949\",\"www.bioinfo.org.uk/html/Fraxinus_excelsior.htm\",\"\",\"60527\"\n" +
+            "\"2068\",\"Plant / associate\",\"is associated with\",\"is associate of\",\"34737\",\"NBNSYS0000024889\",\"www.bioinfo.org.uk/html/Abdera_biflexuosa.htm\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\" \",\"\",\"\",\"\",\"\",\"\",\"<active> is associated with <passive>\",\"<passive> is associate of <active>\",\"3078\",\"NHMSYS0000462211\",\"www.bioinfo.org.uk/html/Quercus.htm\",\"\",\"60527\"\n" +
+            "\"1139\",\"Plant / associate\",\"is associated with\",\"is associate of\",\"34738\",\"NBNSYS0000024890\",\"www.bioinfo.org.uk/html/Abdera_flexuosa.htm\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\" \",\"\",\"\",\"\",\"\",\"\",\"<active> is associated with <passive>\",\"<passive> is associate of <active>\",\"473\",\"NHMSYS0000455771\",\"www.bioinfo.org.uk/html/Alnus_glutinosa.htm\",\"\",\"60527\"\n" +
+            "\"2210\",\"Plant / associate\",\"is associated with\",\"is associate of\",\"34738\",\"NBNSYS0000024890\",\"www.bioinfo.org.uk/html/Abdera_flexuosa.htm\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\" \",\"\",\"\",\"\",\"\",\"\",\"<active> is associated with <passive>\",\"<passive> is associate of <active>\",\"6240\",\"NHMSYS0000463078\",\"www.bioinfo.org.uk/html/Salix.htm\",\"\",\"60527\"\n" +
+            "\"1321\",\"Plant / associate\",\"is associated with\",\"is associate of\",\"34739\",\"NBNSYS0000024891\",\"www.bioinfo.org.uk/html/Abdera_quadrifasciata.htm\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\" \",\"\",\"\",\"\",\"\",\"\",\"<active> is associated with <passive>\",\"<passive> is associate of <active>\",\"1186\",\"NBNSYS0000003838\",\"www.bioinfo.org.uk/html/Carpinus_betulus.htm\",\"\",\"60527\"\n" +
+            "\"1502\",\"Plant / associate\",\"is associated with\",\"is associate of\",\"34739\",\"NBNSYS0000024891\",\"www.bioinfo.org.uk/html/Abdera_quadrifasciata.htm\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\" \",\"\",\"\",\"\",\"\",\"\",\"<active> is associated with <passive>\",\"<passive> is associate of <active>\",\"885\",\"NBNSYS0000003840\",\"www.bioinfo.org.uk/html/Fagus_sylvatica.htm\",\"\",\"60527\"\n" +
+            "\"2069\",\"Plant / associate\",\"is associated with\",\"is associate of\",\"34739\",\"NBNSYS0000024891\",\"www.bioinfo.org.uk/html/Abdera_quadrifasciata.htm\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\" \",\"\",\"\",\"\",\"\",\"\",\"<active> is associated with <passive>\",\"<passive> is associate of <active>\",\"3078\",\"NHMSYS0000462211\",\"www.bioinfo.org.uk/html/Quercus.htm\",\"\",\"60527\"\n" +
+            "\"1870\",\"Plant / associate\",\"is associated with\",\"is associate of\",\"34740\",\"NBNSYS0000024892\",\"www.bioinfo.org.uk/html/Abdera_triguttata.htm\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\" \",\"\",\"\",\"\",\"\",\"\",\"<active> is associated with <passive>\",\"<passive> is associate of <active>\",\"42202\",\"NHMSYS0000461702\",\"www.bioinfo.org.uk/html/Pinus.htm\",\"\",\"60527\"\n" +
+            "\"4029\",\"Foodplant / open feeder\",\"grazes on\",\"is grazed by\",\"102829\",\"NHMSYS0020480647\",\"www.bioinfo.org.uk/html/Abia_sericea.htm\",\"\",\"\",\"\",\"larva\",\"\",\"\",\"\",\"leaf\",\"\",\"\",\"\",\" \",\"\",\"\",\"\",\"\",\"\",\"larva of <active> grazes on leaf of <passive>\",\"leaf of <passive> is grazed by larva of <active>\",\"1283\",\"NBNSYS0000004352\",\"www.bioinfo.org.uk/html/Succisa_pratensis.htm\",\"\",\"60536\"\n";
 
     @Test
     public void importAll() throws StudyImporterException, NodeFactoryException {
@@ -68,86 +63,23 @@ public class StudyImporterForBioInfoTest extends GraphDBTestCase {
         }
 
         ExecutionEngine engine = new ExecutionEngine(getGraphDb());
-        ExecutionResult result = engine.execute("START taxon = node:taxons('*:*') MATCH taxon<-[:CLASSIFIED_AS]-specimen-[r]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon RETURN taxon.name + ' ' + lower(type(r)) + ' ' + targetTaxon.name");
-        assertThat(result.dumpToString(), containsString("Lilioceris lilii ate Lilium"));
-        assertThat(result.dumpToString(), containsString("Puccinia impatientis parasite_of Impatiens capensis"));
-        assertThat(result.dumpToString(), containsString("Paroxyna misella ate Centaurea nigra"));
-        assertThat(result.dumpToString(), containsString("Puccinia calthae parasite_of Caltha palustris"));
-
-        result = engine.execute("START taxon = node:taxons(name='Aster tripolium')\n" +
-                "MATCH study-[:COLLECTED]-specimen-[:CLASSIFIED_AS]->taxon, specimen-[:PARASITE_OF]->host-[:CLASSIFIED_AS]->hostTaxon\n" +
-                "RETURN taxon.name, hostTaxon.name");
-        assertThat(result.dumpToString(), not(containsString("Aster tripolium")));
-
+        ExecutionResult result = engine.execute("START taxon = node:taxons('*:*') MATCH taxon<-[:CLASSIFIED_AS]-specimen-[r]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon RETURN taxon.externalId + ' ' + lower(type(r)) + ' ' + targetTaxon.externalId");
+        assertThat(result.dumpToString(), containsString("NBN:NHMSYS0000455771 interacts_with NBN:NBNSYS0000024890"));
+        assertThat(result.dumpToString(), containsString("NBN:NBNSYS0000030148 parasite_of NBN:NHMSYS0000502366"));
+        assertThat(result.dumpToString(), containsString("NBN:NHMSYS0000500943 has_parasite NBN:NBNSYS0000030148"));
+        assertThat(result.dumpToString(), containsString("NBN:NHMSYS0000460576 eaten_by NBN:NHMSYS0020152444"));
 
         assertThat(study.getTitle(), is("BIO_INFO"));
-        TaxonNode acer = nodeFactory.findTaxonByName("Acer");
-        assertNotNull(acer);
-        assertThat(acer.getExternalId(), is(PropertyAndValueDictionary.NO_MATCH));
-        TaxonNode taxon = nodeFactory.findTaxonByName("Dasineura tympani");
-        assertNotNull(taxon);
-        assertThat(taxon.getExternalId(), is(PropertyAndValueDictionary.NO_MATCH));
-        TaxonNode taxon1 = nodeFactory.findTaxonByName("Phyllocoptes acericola");
-        assertNotNull(taxon1);
-        assertThat(taxon1.getExternalId(), is(PropertyAndValueDictionary.NO_MATCH));
-        TaxonNode taxon2 = nodeFactory.findTaxonByName("Aceria eriobia");
-        assertNotNull(taxon2);
-        assertThat(taxon2.getExternalId(), is(PropertyAndValueDictionary.NO_MATCH));
-        // relation record number: 4585
-        taxon2 = nodeFactory.findTaxonByName("Aneugmenus fürstenbergensis");
-        assertNotNull(taxon2);
     }
+
+
 
     @Test
-    public void taxaParsing() throws StudyImporterException, NodeFactoryException, IOException {
-        Map<Long, String> taxaMap = buildTaxaMap();
-        assertThat(taxaMap.get(1L), is("Biota"));
-        assertThat(taxaMap.get(25L), is("Eukaryota"));
+    public void parseRelations() throws IOException, NodeFactoryException, StudyImporterException {
+        assertRelations(RELATIONS_STRING);
     }
 
-    private Map<Long, String> buildTaxaMap() throws IOException, StudyImporterException {
-        String taxaString = "Taxon_id\tOwner_id\tLatin80\tEnglish80\tContext\tRecordable\tNBNCode20\tHierarchy80\tTaxonomicNotes\tAuthor\tCriticalSpecies\tShortCut\tAlienState4\tNWebStandardPhotos\tEndemic\tNWebIdentLiterature\tNWebOwnFedOnBy\tNWebImageSubtaxa\tNWebOwnStandardPhotos\tLocalInterestCode4\tImageCode20\tNWebMicrophotos\tNWebLiterature\tNWebMacrophotos\tNWebNotes\tNWebOwnMicrophotos\tNWebOwnMacrophotos\tNWebOwnNotes\tNWebOwnLiterature\tTaxonRank_id\tExposeOnWeb\tNeedsAttention\tNWebOwnFeedsOn\tNWebTrophisms\tBMSCode8\tNWebOwnIdentLiterature\tNWebInfoSubtaxa\tSortCode80\tVeryOldName\t\n" +
-                "1\t0\t\"Biota\"\t\"living things\"\tTrue\tTrue\t\"\"\t\"AA\"\t\"NASA's working definition of <quotes>Life<quotes>: a self-sustained chemical system capable of undergoing Darwinian evolution. (Rachel Nowak, writing in New Scientist, 27 July 2002, p13)\"\t\"\"\tFalse\tFals\"NATI\"\t41412\tFalse\t6238\t0\t7452\t0\t\"\"\t\"\"\t11945\t8887\t23836\t2352\t0\t0\t0\t180\t146907\tFalse\tFalse\t0\t98997\t\"\"\t17\t18643\t\"Biota\"\tFalse\n" +
-                "25\t1\t\"Eukaryota\"\t\"eukaryotes\"\tTrue\tFalse\t\"\"\t\"AAAA\"\t\"\"\t\"\"\tFalse\tFalse\t\"NATI\"\t41333\tFalse\t61787423\t0\t\"\"\t\"\"\t11847\t8606\t23827\t2352\t0\t0\t0\t23\t146905\tFalse\tFalse\t0\t98152\t\"\"\t18450\t\"Eukaryota\"\tFalse\n" +
-                "72\t25\t\"Animalia\"\t\"animals\"\tTrue\tFalse\t\"\"\t\"AAAAAA\"\t\"\"\t\"\"\tFalse\tTrue\t\"NATI\"\t14970\tFals2552\t1\t2828\t0\t\"\"\t\"\"\t880\t3367\t9754\t4\t0\t0\t0\t37\t146906\tFalse\tFalse\t0\t19512\t\"\"\t14\t5991\t\"Animalia\"\tFalse\n" +
-                "395\t157011\t\"Annelida\"\t\"segmented worms and leeches\"\tTrue\tFalse\t\"\"\t\"AAAAAAAAAAADABAHAA\"\t\"\"\t\"\"\tFalse\tFals\"NATI\"\t255\tFalse\t27\t0\t22\t0\t\"\"\t\"\"\t22\t34\t90\t0\t0\t0\t0\t10\t146911\tFalse\tFalse\t0\t90\t\"\"\t7\t25\t\"Annelida\"\tFalse\n" +
-                "51\t157695\t\"Arthropoda\"\t\"arthropods\"\tFalse\tFalse\t\"\"\t\"AAAAAAAAAAADAAAA\"\t\"\"\t\"\"\tFalse\tTrue\t\"NATI\"\t1241False\t2004\t11\t2362\t0\t\"\"\t\"\"\t667\t2643\t8845\t4\t0\t0\t0\t9\t146911\tFalse\tFals16266\t\"\"\t3\t5392\t\"Arthropoda\"\tFalse\n" +
-                "360\t51\t\"Arachnida\"\t\"mites, spiders, false scorpions, harvestmen etc.\"\tTrue\tFalse\t\"\"\t\"AAAAAAAAAAADAAAAAA\"\t\"\"\t\"\"\tFalse\tTrue\t\"NATI\"\t464\tFalse\t89\t0\t119\t0\t\"\"\t\"\"\t65\t127\t324\t0\t0\t0\t146912\tFalse\tFalse\t0\t457\t\"\"\t3\t190\t\"Arachnida\"\tFalse\n" +
-                "358\t51\t\"Crustacea\"\t\"crustaceans\"\tTrue\tFalse\t\"\"\t\"AAAAAAAAAAADAAAAAB\"\t\"\"\t\"\"\tFalse\tFalse\t\"NATI\"\t587\tFalse\t84\t3\t79\t0\t\"\"\t\"\"\t154\t100\t295\t4\t0\t0\t0\t18\t146912\tFalse\tFals188\t\"\"\t13\t99\t\"Crustacea\"\tFalse\n" +
-                "414\t358\t\"Branchiopoda\"\t\"branchiopods\"\tFalse\tFalse\t\"\"\t\"AAAAAAAAAAADAAAAABAA\"\t\"\"\t\"\"\tFalse\tFalse\t\"NATI\"\t30\tFalse\t3\t0\t11\t0\t\"\"\t\"\"\t88\t4\t19\t4\t0\t0\t0\t0\t146914\tFalse\tFals\"\"\t0\t3\t\"Branchiopoda\"\tFalse\n" +
-                "417\t358\t\"Branchiura\"\t\"fish lice\"\tFalse\tFalse\t\"\"\t\"AAAAAAAAAAADAAAAABAB\"\t\"\"\t\"\"\tFalse\tFalse\t\"NATI\"\t0\tFalse\t1\t0\t1\t0\t\"\"\t\"\"\t0\t1\t0\t0\t0\t0\t0\t0\t146914\tFalse\tFals10\t\"\"\t0\t1\t\"Branchiura\"\tFalse";
-        LabeledCSVParser labeledCSVParser = createParser(taxaString);
-        return new StudyImporterForBioInfo(new ParserFactoryImpl(), nodeFactory).createTaxaMap(labeledCSVParser);
-    }
-
-    @Test(expected = StudyImporterException.class)
-    public void relationsParsingMissingTaxon() throws IOException, NodeFactoryException, StudyImporterException {
-        Map<Long, String> taxaMap = buildTaxaMap();
-        Map<Long, InteractType> relationsTypeMap = buildRelationsTypeMap();
-        assertRelations(RELATIONS_STRING, taxaMap, relationsTypeMap);
-    }
-
-    @Test
-    public void relationsParsing() throws IOException, NodeFactoryException, StudyImporterException {
-        Map<Long, String> taxaMap = buildTaxaMap();
-        taxaMap.put(43913L, "Homo sapiens");
-        taxaMap.put(43912L, "some scientific name");
-        taxaMap.put(3011L, "some scientific name");
-        taxaMap.put(43917L, "some scientific name");
-        taxaMap.put(43920L, "some scientific name");
-        taxaMap.put(107544L, "some scientific name");
-        taxaMap.put(1625L, "some scientific name");
-        taxaMap.put(12958L, "some scientific name");
-        taxaMap.put(43927L, "some scientific name");
-        taxaMap.put(43930L, "some scientific name");
-        taxaMap.put(32122L, "some scientific name");
-        taxaMap.put(465L, "some scientific name");
-        taxaMap.put(464L, "some scientific name");
-        Map<Long, InteractType> relationsTypeMap = buildRelationsTypeMap();
-        assertRelations(RELATIONS_STRING, taxaMap, relationsTypeMap);
-    }
-
-    private void assertRelations(String relationsString, Map<Long, String> taxaMap, Map<Long, InteractType> relationsTypeMap) throws IOException, StudyImporterException, NodeFactoryException {
+    private void assertRelations(String relationsString) throws IOException, StudyImporterException, NodeFactoryException {
 
         assertThat(nodeFactory.findTaxonByName("Homo sapiens"), is(nullValue()));
 
@@ -155,7 +87,7 @@ public class StudyImporterForBioInfoTest extends GraphDBTestCase {
 
         StudyImporterForBioInfo importer = new StudyImporterForBioInfo(new ParserFactoryImpl(), nodeFactory);
         Study study = importer.createStudy();
-        importer.createRelations(taxaMap, relationsTypeMap, labeledCSVParser, study);
+        importer.createRelations(labeledCSVParser, study);
 
         Study study1 = nodeFactory.findStudy(study.getTitle());
         assertThat(study1, is(notNullValue()));
@@ -165,46 +97,23 @@ public class StudyImporterForBioInfoTest extends GraphDBTestCase {
             assertThat(specimen.getEndNode().getSingleRelationship(RelTypes.CLASSIFIED_AS, Direction.OUTGOING), is(notNullValue()));
             assertThat(specimen.getEndNode().getSingleRelationship(InteractType.INTERACTS_WITH, Direction.OUTGOING), is(notNullValue()));
             assertThat(specimen.getEndNode().getSingleRelationship(InteractType.INTERACTS_WITH, Direction.INCOMING), is(notNullValue()));
+            assertThat(specimen.getEndNode().getSingleRelationship(InteractType.INTERACTS_WITH, Direction.INCOMING), is(notNullValue()));
             specimenList.add(specimen.getEndNode());
         }
 
         assertThat(specimenList.size(), is(18));
-        assertThat(specimenList.get(0).getSingleRelationship(RelTypes.CLASSIFIED_AS, Direction.OUTGOING), is(notNullValue()));
+        Relationship classifiedAs = specimenList.get(0).getSingleRelationship(RelTypes.CLASSIFIED_AS, Direction.OUTGOING);
+        assertThat(classifiedAs, is(notNullValue()));
+        assertThat((String)classifiedAs.getEndNode().getProperty(PropertyAndValueDictionary.EXTERNAL_ID), is("NBN:NBNSYS0000003949"));
         assertThat(specimenList.get(1).getSingleRelationship(RelTypes.CLASSIFIED_AS, Direction.OUTGOING), is(notNullValue()));
 
-        assertThat(nodeFactory.findTaxonByName("Homo sapiens"), is(notNullValue()));
-        assertThat(nodeFactory.findTaxonByName("some scientific name"), is(notNullValue()));
+        assertThat(nodeFactory.findTaxonById(TaxonomyProvider.NBN.getIdPrefix() + "NBNSYS0000024889"), is(notNullValue()));
+        assertThat(nodeFactory.findTaxonById(TaxonomyProvider.NBN.getIdPrefix() + "NBNSYS0000024891"), is(notNullValue()));
     }
 
-
-    @Test
-    public void trophicRelationsParser() throws IOException, StudyImporterException {
-        Map<Long, InteractType> relationsTypeMap = buildRelationsTypeMap();
-
-        assertThat(relationsTypeMap.get(43899L), is((RelType) InteractType.PREYS_UPON));
-        assertThat(relationsTypeMap.get(43900L), is((RelType) InteractType.PARASITE_OF));
-        assertThat(relationsTypeMap.get(43901L), is((RelType) InteractType.INTERACTS_WITH));
-        assertThat(relationsTypeMap.get(43902L), is((RelType) InteractType.INTERACTS_WITH));
-    }
-
-    private Map<Long, InteractType> buildRelationsTypeMap() throws IOException, StudyImporterException {
-        String trophicRelations = "TrophicRel_id\tEnergyDonor\tEnergyRecipient\tTitle80\tNotes\tisFoodWeb\tPrimarySort8\tSecondarySort8\tisLiving\tisDead\tisMycorrhizal\t\n" +
-                "43899\t\"is predated by\"\t\"is predator of\"\t\"Animal / predator\"\t\"Kills and feeds on this type of animal\"\tTrue\t\"A Anim\"\t\"A Pred\"\tTrue\tFalse\tFalse\n" +
-                "43900\t\"is ectoparasitised by\"\t\"ectoparasitises\"\t\"Animal / parasite / ectoparasite\"\t\"derives its nutrition from a single living individual of another species with which it is closely associated but remains external to\"\tTrue\t\"A Anim\"\t\"EEC Par\"\tTrueFalse\tFalse\n" +
-                "43901\t\"is ectomycorrhizal host of\"\t\"is ectomycorrhizal with\"\t\"Foodplant / mycorrhiza / ectomycorrhiza\"\t\"Exchanges simple inorganic chemicals from the soil for organic photosynthate from the host. <cr><cr>Very few of these relationships have been demonstrated experimentally. Most are deduced from field associations. In the future DNA-based analyses of ectomycorrhiza will increase the reliabilty of the data - and probably extend the range of host species.\"\tTrue\t\"P Plant\"\t\"EM Ect\"\tTrue\tFalse\tTrue\n" +
-                "43902\t\"is galled by\"\t\"causes gall of\"\t\"Foodplant / gall\"\t\"Feeds within an abnormal growth caused by its presence on the host plant\"\tTrue\t\"P Plant\"\t\"R Gall\"\tTrue\tFalse\tFalse\n" +
-                "43903\t\"with inquiline\"\t\"is inquiline in\"\t\"Animal / inquiline\"\t\"dwells in a gall caused by, or nest of, another species\"\tTrue\t\"A Anim\"\t\"E Inq\"\tTrue\tFalse\tFalse\n" +
-                "45434\t\"is mined by\"\t\"mines\"\t\"Foodplant / miner\"\t\"Feeds under the surface (leaf, bark or stem miner) on the host plant\"\tTrue\t\"P Plant\"\t\"M1 Miner\"\tTrue\tFalse\tFalse\n" +
-                "45436\t\"is endoparasitoid host of\"\t\"is endoparasitoid of\"\t\"Animal / parasitoid / endoparasitoid\"\t\"derives its nutrition from a single living individual of another species on which it is an endoparasite (internal parasite) and which finally dies as a result of these attentions\"\tTrue\t\"A Anim\"\t\"D PEN\"\tTrue\tFalse\tFalse\n" +
-                "45437\t\"is grazed by\"\t\"grazes on\"\t\"Foodplant / open feeder\"\t\"Feeds in the open (ie not in a mine or case) on the surface of the plant\"\tTrue\t\"P Plant\"\t\"B Open\"\tTrue\tFalse\tFalse\n" +
-                "134529\t\"is mutualistic with\"\t\"is mutualistic with\"\t\"Foodplant / mutualist\"\t\"A mutually beneficial exchange of nutrients between two individuals of different species.\"\tTrue\t\"P Plant\"\t\"E Symb\"\tTrue\tFalse\tFalse";
-        LabeledCSVParser trophicRelationsParser = createParser(trophicRelations);
-        return new StudyImporterForBioInfo(new ParserFactoryImpl(), nodeFactory).createRelationsTypeMap(trophicRelationsParser);
-    }
 
     private LabeledCSVParser createParser(String trophicRelations) throws IOException {
         CSVParser parse = new CSVParser(new StringReader(trophicRelations));
-        parse.changeDelimiter('\t');
         return new LabeledCSVParser(parse);
     }
 

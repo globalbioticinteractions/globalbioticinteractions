@@ -16,5 +16,7 @@ public enum InteractType implements RelType {
     HAS_PARASITE,
     PERCHED_ON_BY,
     HAS_PATHOGEN,
-    PATHOGEN_OF
+    PATHOGEN_OF,
+    HAS_VECTOR,
+    VECTOR_OF
 }

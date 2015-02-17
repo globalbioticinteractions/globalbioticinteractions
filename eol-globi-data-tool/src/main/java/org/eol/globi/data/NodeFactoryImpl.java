@@ -94,6 +94,11 @@ public class NodeFactoryImpl implements NodeFactory {
     }
 
     @Override
+    public TaxonNode findTaxonById(String externalId) throws NodeFactoryException {
+        return getTaxonIndex().findTaxonById(externalId);
+    }
+
+    @Override
     public TaxonNode getOrCreateTaxon(String name) throws NodeFactoryException {
         return getOrCreateTaxon(name, null, null);
     }

@@ -2,6 +2,7 @@ package org.eol.globi.domain;
 
 public enum TaxonomyProvider {
     ITIS("ITIS:"),
+    NBN("NBN:"),
     WORMS("WORMS:"),
     NCBI("NCBI:"),
     EOL("EOL:"),

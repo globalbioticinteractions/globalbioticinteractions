@@ -54,7 +54,7 @@ public class ITISService extends BasePropertyEnricherService {
         if (StringUtils.isNotBlank(id) && id.startsWith(TaxonomyProvider.ID_PREFIX_ITIS)) {
             String tsn = id.replace(TaxonomyProvider.ID_PREFIX_ITIS, "");
             String fullHierarchy = getResponse("getFullHierarchyFromTSN", "tsn=" + tsn);
-            ServiceUtil.extractPath(fullHierarchy, "taxonName");
+            result = ServiceUtil.extractPath(fullHierarchy, "taxonName");
         }
 
         return result;

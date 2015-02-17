@@ -31,6 +31,7 @@ public class ITISServiceIT {
         ITISService itisService = new ITISService();
         String s = itisService.lookupPropertyValueByTaxonName("Fundulus jenkinsi", PropertyAndValueDictionary.PATH);
         assertThat(s, is(notNullValue()));
+        assertThat(s, is("bla"));
         assertThat(s, containsString("Animalia"));
     }
 

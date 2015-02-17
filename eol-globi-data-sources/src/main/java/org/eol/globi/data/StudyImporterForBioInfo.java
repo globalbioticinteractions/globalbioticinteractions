@@ -10,16 +10,121 @@ import org.eol.globi.domain.Term;
 import org.eol.globi.service.TermLookupServiceException;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class StudyImporterForBioInfo extends BaseStudyImporter implements StudyImporter {
-    public static final String TAXA_DATA_FILE = "bioinfo.org.uk/Taxa.txt.gz";
-    public static final String RELATION_TYPE_DATA_FILE = "bioinfo.org.uk/TrophicRelations.txt.gz";
-    public static final String RELATIONS_DATA_FILE = "bioinfo.org.uk/Relations.txt.gz";
-
+    public static final String RELATIONS_DATA_FILE = "bioinfo.org.uk/eol_taxon_relations.csv.gz";
     public static final String BIOINFO_URL = "http://bioinfo.org.uk";
+    public static final Map<String, InteractType> INTERACTION_MAPPING = Collections.unmodifiableMap(new HashMap<String, InteractType>() {
+        {
+            put("Animal / associate", InteractType.INTERACTS_WITH);
+            put("Animal / carrion / dead animal feeder", InteractType.INTERACTS_WITH);
+            put("Animal / dung / associate", InteractType.INTERACTS_WITH);
+            put("Animal / dung / debris feeder", InteractType.INTERACTS_WITH);
+            put("Animal / dung / oviposition", InteractType.INTERACTS_WITH);
+            put("Animal / dung / saprobe", InteractType.INTERACTS_WITH);
+            put("Animal / endozoite", InteractType.INTERACTS_WITH);
+            put("Animal / epizoite", InteractType.INTERACTS_WITH);
+            put("Animal / gamete vector / crsss fertilises", InteractType.INTERACTS_WITH);
+            put("Animal / guest", InteractType.INTERACTS_WITH);
+            put("Animal / honeydew feeder", InteractType.INTERACTS_WITH);
+            put("Animal / inquiline", InteractType.INTERACTS_WITH);
+            put("Animal / kill", InteractType.INTERACTS_WITH);
+            put("Animal / kleptoparasite", InteractType.PARASITE_OF);
+            put("Animal / parasite / ectoparasite / blood sucker", InteractType.PARASITE_OF);
+            put("Animal / parasite / ectoparasite / sweat sucker", InteractType.PARASITE_OF);
+            put("Animal / parasite / ectoparasite / tear sucker", InteractType.PARASITE_OF);
+            put("Animal / parasite / ectoparasite", InteractType.PARASITE_OF);
+            put("Animal / parasite / endoparasite", InteractType.PARASITE_OF);
+            put("Animal / parasite", InteractType.PARASITE_OF);
+            put("Animal / parasitoid / ectoparasitoid", InteractType.PARASITE_OF);
+            put("Animal / parasitoid / endoparasitoid", InteractType.PARASITE_OF);
+            put("Animal / parasitoid", InteractType.PARASITE_OF);
+            put("Animal / pathogen", InteractType.PATHOGEN_OF);
+            put("Animal / phoresy", InteractType.INTERACTS_WITH);
+            put("Animal / predator / stocks nest with", InteractType.PREYS_UPON);
+            put("Animal / predator", InteractType.PREYS_UPON);
+            put("Animal / resting place / on", InteractType.INTERACTS_WITH);
+            put("Animal / resting place / under", InteractType.INTERACTS_WITH);
+            put("Animal / resting place / within", InteractType.INTERACTS_WITH);
+            put("Animal / sequestrates", InteractType.INTERACTS_WITH);
+            put("Animal / slave maker", InteractType.INTERACTS_WITH);
+            put("Animal / vector", InteractType.HAS_VECTOR);
+            put("Bacterium / farmer", InteractType.INTERACTS_WITH);
+            put("Bacterium / predator", InteractType.PREYS_UPON);
+            put("Foodplant / collects", InteractType.INTERACTS_WITH);
+            put("Foodplant / debris feeder", InteractType.ATE);
+            put("Foodplant / endophyte", InteractType.INTERACTS_WITH);
+            put("Foodplant / false gall", InteractType.INTERACTS_WITH);
+            put("Foodplant / feeds on", InteractType.ATE);
+            put("Foodplant / gall", InteractType.INTERACTS_WITH);
+            put("Foodplant / hemiparasite", InteractType.PARASITE_OF);
+            put("Foodplant / immobile silken tube feeder", InteractType.INTERACTS_WITH);
+            put("Foodplant / internal feeder", InteractType.INTERACTS_WITH);
+            put("Foodplant / miner", InteractType.INTERACTS_WITH);
+            put("Foodplant / mobile cased feeder", InteractType.INTERACTS_WITH);
+            put("Foodplant / mutualist", InteractType.SYMBIONT_OF);
+            put("Foodplant / mycorrhiza / ectomycorrhiza", InteractType.SYMBIONT_OF);
+            put("Foodplant / mycorrhiza / endomycorrhiza", InteractType.SYMBIONT_OF);
+            put("Foodplant / mycorrhiza", InteractType.SYMBIONT_OF);
+            put("Foodplant / nest", InteractType.INTERACTS_WITH);
+            put("Foodplant / open feeder", InteractType.INTERACTS_WITH);
+            put("Foodplant / parasite", InteractType.PARASITE_OF);
+            put("Foodplant / pathogen", InteractType.PATHOGEN_OF);
+            put("Foodplant / robber", InteractType.INTERACTS_WITH);
+            put("Foodplant / roller", InteractType.INTERACTS_WITH);
+            put("Foodplant / sap sucker", InteractType.INTERACTS_WITH);
+            put("Foodplant / saprobe", InteractType.INTERACTS_WITH);
+            put("Foodplant / secondary infection", InteractType.INTERACTS_WITH);
+            put("Foodplant / shot hole causer", InteractType.INTERACTS_WITH);
+            put("Foodplant / spinner", InteractType.INTERACTS_WITH);
+            put("Foodplant / spot causer", InteractType.INTERACTS_WITH);
+            put("Foodplant / visitor / nectar", InteractType.INTERACTS_WITH);
+            put("Foodplant / visitor", InteractType.INTERACTS_WITH);
+            put("Foodplant / web feeder", InteractType.INTERACTS_WITH);
+            put("Fungus / associate", InteractType.INTERACTS_WITH);
+            put("Fungus / external feeder", InteractType.INTERACTS_WITH);
+            put("Fungus / feeder", InteractType.INTERACTS_WITH);
+            put("Fungus / gall", InteractType.INTERACTS_WITH);
+            put("Fungus / infection vector", InteractType.INTERACTS_WITH);
+            put("Fungus / internal feeder", InteractType.INTERACTS_WITH);
+            put("Fungus / nest", InteractType.INTERACTS_WITH);
+            put("Fungus / parasite / endoparasite", InteractType.PARASITE_OF);
+            put("Fungus / parasite", InteractType.PARASITE_OF);
+            put("Fungus / resting place / on", InteractType.INTERACTS_WITH);
+            put("Fungus / resting place / within", InteractType.INTERACTS_WITH);
+            put("Fungus / saprobe", InteractType.INTERACTS_WITH);
+            put("Inhibits or restricts the growth of", InteractType.INTERACTS_WITH);
+            put("Lichen / associate", InteractType.INTERACTS_WITH);
+            put("Lichen / gall", InteractType.INTERACTS_WITH);
+            put("Lichen / grows on or over", InteractType.INTERACTS_WITH);
+            put("Lichen / kleptoparasite", InteractType.PARASITE_OF);
+            put("Lichen / nest", InteractType.INTERACTS_WITH);
+            put("Lichen / parasite", InteractType.PARASITE_OF);
+            put("Lichen / pathogen", InteractType.PATHOGEN_OF);
+            put("Lichen / photobiont", InteractType.INTERACTS_WITH);
+            put("Lichen / saprobe", InteractType.INTERACTS_WITH);
+            put("Lichen / sequestrate", InteractType.INTERACTS_WITH);
+            put("Lichen / symbiont", InteractType.SYMBIONT_OF);
+            put("Plant / associate", InteractType.INTERACTS_WITH);
+            put("Plant / epiphyte", InteractType.INTERACTS_WITH);
+            put("Plant / grows among", InteractType.INTERACTS_WITH);
+            put("Plant / grows inside", InteractType.INTERACTS_WITH);
+            put("Plant / hibernates / on", InteractType.INTERACTS_WITH);
+            put("Plant / hibernates / under", InteractType.INTERACTS_WITH);
+            put("Plant / hibernates / within", InteractType.INTERACTS_WITH);
+            put("Plant / nest", InteractType.INTERACTS_WITH);
+            put("Plant / pollenated", InteractType.POLLINATES);
+            put("Plant / resting place / among", InteractType.INTERACTS_WITH);
+            put("Plant / resting place / on", InteractType.INTERACTS_WITH);
+            put("Plant / resting place / under", InteractType.INTERACTS_WITH);
+            put("Plant / resting place / within", InteractType.INTERACTS_WITH);
+            put("Plant / vector", InteractType.HAS_VECTOR);
+        }
+    });
 
     public StudyImporterForBioInfo(ParserFactory parserFactory, NodeFactory nodeFactory) {
         super(parserFactory, nodeFactory);
@@ -32,11 +137,10 @@ public class StudyImporterForBioInfo extends BaseStudyImporter implements StudyI
         LabeledCSVParser relationsParser;
         try {
             relationsParser = parserFactory.createParser(RELATIONS_DATA_FILE, CharsetConstant.UTF8);
-            relationsParser.changeDelimiter('\t');
         } catch (IOException e1) {
             throw new StudyImporterException("problem reading trophic relations file [" + RELATIONS_DATA_FILE + "]", e1);
         }
-        return createRelations(createTaxa(study), createRelationTypes(study), relationsParser, study);
+        return createRelations(relationsParser, study);
     }
 
     protected Study createStudy() {
@@ -51,103 +155,21 @@ public class StudyImporterForBioInfo extends BaseStudyImporter implements StudyI
         return study;
     }
 
-    private Map<Long, InteractType> createRelationTypes(Study study) throws StudyImporterException {
-        getLogger().info(study, "relationTypes being created...");
-
-        Map<Long, InteractType> relationsTypeMap;
-        try {
-            LabeledCSVParser relationTypesParser = parserFactory.createParser(RELATION_TYPE_DATA_FILE, CharsetConstant.UTF8);
-            relationTypesParser.changeDelimiter('\t');
-            relationsTypeMap = createRelationsTypeMap(relationTypesParser);
-        } catch (IOException e1) {
-            throw new StudyImporterException("problem reading trophic relations data [" + RELATION_TYPE_DATA_FILE + "", e1);
-        }
-        getLogger().info(study, "relationTypes created.");
-        return relationsTypeMap;
-    }
-
-    private Map<Long, String> createTaxa(Study study) throws StudyImporterException {
-        getLogger().info(study, "taxa map being created...");
-        Map<Long, String> taxaMap;
-        try {
-            LabeledCSVParser taxaParser = parserFactory.createParser(TAXA_DATA_FILE, CharsetConstant.UTF8);
-            taxaParser.changeDelimiter('\t');
-            taxaMap = createTaxaMap(taxaParser);
-        } catch (IOException e) {
-            throw new StudyImporterException("failed to parse taxa file [" + TAXA_DATA_FILE + "]", e);
-        }
-        getLogger().info(study, "taxa map created.");
-        return taxaMap;
-    }
-
-    protected Map<Long, String> createTaxaMap(LabeledCSVParser taxaParser) throws StudyImporterException {
-        Map<Long, String> taxaMap = new HashMap<Long, String>();
-
-        try {
-            while (taxaParser.getLine() != null) {
-                Long taxonId = labelAsLong(taxaParser, "Taxon_id");
-                if (taxonId == null) {
-                    throw new StudyImporterException("failed to parse taxa at line [" + taxaParser.getLastLineNumber() + "]");
-                }
-                String taxonScientificName = taxaParser.getValueByLabel("Latin80");
-                if (taxonScientificName == null || taxonScientificName.trim().length() == 0) {
-                    throw new StudyImporterException("found missing or empty scientific taxa name at line [" + taxaParser.getLastLineNumber() + "]");
-                }
-                taxaMap.put(taxonId, taxonScientificName);
-            }
-        } catch (IOException e) {
-            throw new StudyImporterException("failed to parse taxa file");
-        }
-        return taxaMap;
-    }
-
-    protected Map<Long, InteractType> createRelationsTypeMap(LabeledCSVParser labeledCSVParser) throws StudyImporterException {
-        // Attempt to map Malcolms interactions to http://vocabularies.gbif.org/vocabularies/Interaction
-        Map<String, InteractType> interactionMapping = new HashMap<String, InteractType>();
-        interactionMapping.put("ectoparasitises", InteractType.PARASITE_OF);
-        interactionMapping.put("endoparasitises", InteractType.PARASITE_OF);
-        interactionMapping.put("parasitises", InteractType.PARASITE_OF);
-        interactionMapping.put("is ectoparasitoid of", InteractType.PARASITE_OF);
-        interactionMapping.put("is parasitoid of", InteractType.PARASITE_OF);
-        interactionMapping.put("parasitises", InteractType.PARASITE_OF);
-        interactionMapping.put("pollenates or fertilises", InteractType.POLLINATES);
-        interactionMapping.put("feeds on dead", InteractType.ATE);
-        interactionMapping.put("grazes on", InteractType.ATE);
-        interactionMapping.put("feeds on", InteractType.ATE);
-        interactionMapping.put("is predator of", InteractType.PREYS_UPON);
-        interactionMapping.put("is ectomycorrhizal with", InteractType.INTERACTS_WITH);
-
-        Map<Long, InteractType> relationsTypeMap = new HashMap<Long, InteractType>();
-        try {
-            while (labeledCSVParser.getLine() != null) {
-                Long trophicRelationId = labelAsLong(labeledCSVParser, "TrophicRel_id");
-                String descriptionEnergyRecipient = labeledCSVParser.getValueByLabel("EnergyRecipient");
-                InteractType relType = interactionMapping.get(descriptionEnergyRecipient);
-                if (trophicRelationId != null) {
-                    relType = relType == null ? InteractType.INTERACTS_WITH : relType;
-                    relationsTypeMap.put(trophicRelationId, relType);
-                }
-            }
-        } catch (IOException e1) {
-            throw new StudyImporterException("problem reading the trophic relations data", e1);
-        }
-        return relationsTypeMap;
-    }
-
-    protected Study createRelations(Map<Long, String> taxaMap, Map<Long, InteractType> relationsTypeMap, LabeledCSVParser parser, Study study) throws StudyImporterException {
+    protected Study createRelations(LabeledCSVParser parser, Study study) throws StudyImporterException {
         getLogger().info(study, "relations being created...");
         try {
             long count = 1;
             while (parser.getLine() != null) {
                 if (importFilter.shouldImportRecord(count)) {
-                    String donorScientificName = getScientificNameForTaxonId(parser, taxaMap, "DonorTax_id");
-                    String recipientScientificName = getScientificNameForTaxonId(parser, taxaMap, "RecipTax_id");
-                    if (!invalidInteraction(donorScientificName, recipientScientificName)) {
-                        Specimen donorSpecimen = createSpecimen(study, parser, donorScientificName);
-                        addLifeStage(parser, donorSpecimen, "DonorStage", study);
-                        Specimen recipientSpecimen = createSpecimen(study, parser, recipientScientificName);
-                        addLifeStage(parser, recipientSpecimen, "RecipStage", study);
-                        recipientSpecimen.interactsWith(donorSpecimen, relationsTypeMap.get(labelAsLong(parser, "TrophicRel_Id")));
+                    String relationship = parser.getValueByLabel("relationship");
+                    if (StringUtils.isBlank(relationship)) {
+                        getLogger().warn(study, "no relationship for record on line [" + (parser.lastLineNumber() + 1) + "]");
+                    }
+                    InteractType interactType = INTERACTION_MAPPING.get(relationship);
+                    if (null == interactType) {
+                        getLogger().warn(study, "no mapping found for relationship [" + relationship + "] for record on line [" + (parser.lastLineNumber() + 1) + "]");
+                    } else {
+                        importInteraction(parser, study, interactType);
                     }
                 }
                 count++;
@@ -159,10 +181,16 @@ public class StudyImporterForBioInfo extends BaseStudyImporter implements StudyI
         return study;
     }
 
-    // see https://github.com/jhpoelen/eol-globi-data/issues/67
-    private boolean invalidInteraction(String donorScientificName, String recipientScientificName) {
-        return StringUtils.equals("Aster tripolium", recipientScientificName)
-                && StringUtils.equals("Carex extensa", donorScientificName);
+    private void importInteraction(LabeledCSVParser parser, Study study, InteractType interactType) throws StudyImporterException {
+        String passiveId = parser.getValueByLabel("passive NBN Code");
+        String activeId = parser.getValueByLabel("active NBN Code");
+        if (StringUtils.isNotBlank(passiveId) && StringUtils.isNotBlank(activeId)) {
+            Specimen donorSpecimen = createSpecimen(study, parser, passiveId);
+            addLifeStage(parser, donorSpecimen, "DonorStage", study);
+            Specimen recipientSpecimen = createSpecimen(study, parser, activeId);
+            addLifeStage(parser, recipientSpecimen, "RecipStage", study);
+            recipientSpecimen.interactsWith(donorSpecimen, interactType);
+        }
     }
 
     private void addLifeStage(LabeledCSVParser parser, Specimen donorSpecimen, String stageColumnName, Study study) throws StudyImporterException {
@@ -191,33 +219,14 @@ public class StudyImporterForBioInfo extends BaseStudyImporter implements StudyI
 
     }
 
-    private Specimen createSpecimen(Study study, LabeledCSVParser labeledCSVParser, String scientificName) throws StudyImporterException {
+    private Specimen createSpecimen(Study study, LabeledCSVParser labeledCSVParser, String externalId) throws StudyImporterException {
         try {
-            Specimen specimen = nodeFactory.createSpecimen(study, scientificName);
+            Specimen specimen = nodeFactory.createSpecimen(study, null, TaxonomyProvider.NBN.getIdPrefix() + externalId);
             specimen.setExternalId(TaxonomyProvider.BIO_INFO + "rel:" + labeledCSVParser.lastLineNumber());
             return specimen;
         } catch (NodeFactoryException e) {
-            throw new StudyImporterException("failed to create taxon with scientific name [" + scientificName + "]", e);
+            throw new StudyImporterException("failed to create taxon with scientific name [" + externalId + "]", e);
         }
     }
 
-    private String getScientificNameForTaxonId(LabeledCSVParser labeledCSVParser, Map<Long, String> taxaMap, String taxonIdString) throws StudyImporterException {
-        Long taxonId = labelAsLong(labeledCSVParser, taxonIdString);
-        String scientificName = taxaMap.get(taxonId);
-        if (scientificName == null) {
-            throw new StudyImporterException("failed to find scientific name for taxonId [" + taxonId + "] at line [" + labeledCSVParser.getLastLineNumber() + "]");
-        }
-        return scientificName;
-    }
-
-    private Long labelAsLong(LabeledCSVParser labeledCSVParser, String trophicRelId2) {
-        String valueByLabel = labeledCSVParser.getValueByLabel(trophicRelId2);
-        Long trophicRelationId = null;
-        try {
-            trophicRelationId = Long.parseLong(valueByLabel);
-        } catch (NumberFormatException ex) {
-
-        }
-        return trophicRelationId;
-    }
 }
