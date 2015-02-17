@@ -18,11 +18,15 @@ import org.neo4j.graphdb.Relationship;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.hamcrest.core.IsNull.nullValue;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.matchers.JUnitMatchers.containsString;
 
@@ -52,8 +56,9 @@ public class StudyImporterForBioInfoTest extends GraphDBTestCase {
                         || (recordNumber > 24220 && recordNumber < 24340);
             }
         });
-        Study study = importer.importStudy();
+        importer.importStudy();
 
+        Study study = nodeFactory.findStudy(TaxonomyProvider.BIO_INFO + "ref:60527");
         Iterable<Relationship> collectedRels = study.getSpecimens();
         for (Relationship collectedRel : collectedRels) {
             Specimen specimen = new Specimen(collectedRel.getEndNode());
@@ -69,27 +74,28 @@ public class StudyImporterForBioInfoTest extends GraphDBTestCase {
         assertThat(result.dumpToString(), containsString("NBN:NHMSYS0000500943 has_parasite NBN:NBNSYS0000030148"));
         assertThat(result.dumpToString(), containsString("NBN:NHMSYS0000460576 eaten_by NBN:NHMSYS0020152444"));
 
-        assertThat(study.getTitle(), is("BIO_INFO"));
+        assertThat(study.getTitle(), is("bioinfo:ref:60527"));
+        assertThat(study.getSource(), is("Food Webs and Species Interactions in the Biodiversity of UK and Ireland (Online). 2015. Data provided by Malcolm Storey. Also available from http://bioinfo.org.uk."));
     }
-
 
 
     @Test
-    public void parseRelations() throws IOException, NodeFactoryException, StudyImporterException {
-        assertRelations(RELATIONS_STRING);
-    }
-
-    private void assertRelations(String relationsString) throws IOException, StudyImporterException, NodeFactoryException {
+    public void parseSomeRelations() throws IOException, NodeFactoryException, StudyImporterException {
 
         assertThat(nodeFactory.findTaxonByName("Homo sapiens"), is(nullValue()));
 
-        LabeledCSVParser labeledCSVParser = createParser(relationsString);
+        LabeledCSVParser labeledCSVParser = createParser(RELATIONS_STRING);
 
         StudyImporterForBioInfo importer = new StudyImporterForBioInfo(new ParserFactoryImpl(), nodeFactory);
-        Study study = importer.createStudy();
-        importer.createRelations(labeledCSVParser, study);
+        importer.createRelations(labeledCSVParser, new HashMap <String, String>(){{
+            put("60527", "citation A");
+            put("60536", "citation B");
+        }});
 
-        Study study1 = nodeFactory.findStudy(study.getTitle());
+        assertNotNull(nodeFactory.findStudy(TaxonomyProvider.BIO_INFO + "ref:60536"));
+        assertNull(nodeFactory.findStudy(TaxonomyProvider.BIO_INFO + "ref:bla"));
+        Study study1 = nodeFactory.findStudy(TaxonomyProvider.BIO_INFO + "ref:60527");
+        assertThat(study1.getCitation(), is("citation A"));
         assertThat(study1, is(notNullValue()));
         Iterable<Relationship> specimens = study1.getSpecimens();
         List<Node> specimenList = new ArrayList<Node>();
@@ -101,10 +107,10 @@ public class StudyImporterForBioInfoTest extends GraphDBTestCase {
             specimenList.add(specimen.getEndNode());
         }
 
-        assertThat(specimenList.size(), is(18));
+        assertThat(specimenList.size(), is(16));
         Relationship classifiedAs = specimenList.get(0).getSingleRelationship(RelTypes.CLASSIFIED_AS, Direction.OUTGOING);
         assertThat(classifiedAs, is(notNullValue()));
-        assertThat((String)classifiedAs.getEndNode().getProperty(PropertyAndValueDictionary.EXTERNAL_ID), is("NBN:NBNSYS0000003949"));
+        assertThat((String) classifiedAs.getEndNode().getProperty(PropertyAndValueDictionary.EXTERNAL_ID), is("NBN:NBNSYS0000003949"));
         assertThat(specimenList.get(1).getSingleRelationship(RelTypes.CLASSIFIED_AS, Direction.OUTGOING), is(notNullValue()));
 
         assertThat(nodeFactory.findTaxonById(TaxonomyProvider.NBN.getIdPrefix() + "NBNSYS0000024889"), is(notNullValue()));
@@ -112,9 +118,26 @@ public class StudyImporterForBioInfoTest extends GraphDBTestCase {
     }
 
 
-    private LabeledCSVParser createParser(String trophicRelations) throws IOException {
-        CSVParser parse = new CSVParser(new StringReader(trophicRelations));
+    private LabeledCSVParser createParser(String csvString) throws IOException {
+        CSVParser parse = new CSVParser(new StringReader(csvString));
         return new LabeledCSVParser(parse);
+    }
+
+    @Test
+    public void importReferences() throws IOException {
+        String firstFewlines = "BioInfo reference id,BioInfo url,author,year,title,reference type,edition,BioInfo reference id of the source (journal/book/publisher etc),source author,source title,source journal short title,source year,source reference type,source ISSN/ISBN,volume,series,page range,no of pages,ISSN/ISBN,URL of online source\n" +
+                "\"149326\",\"www.bioinfo.org.uk/html/b149326.htm\",\"\",\"\",\"Agrobacterium tumefaciens\",\"Web Site/Page\",\"\",\"0\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"http://en.wikipedia.org/Agrobacterium_tumefaciens\"\n" +
+                "\"147341\",\"www.bioinfo.org.uk/html/b147341.htm\",\"\",\"\",\"www.seabean.com\",\"Web Site/Page\",\"\",\"0\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"http://www.seabean.com\"\n" +
+                "\"148459\",\"www.bioinfo.org.uk/html/b148459.htm\",\"\",\"\",\"British Leafminers\",\"Web Site/Page\",\"\",\"0\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"http://www.leafmines.co.uk/\"\n" +
+                "\"148671\",\"www.bioinfo.org.uk/html/b148671.htm\",\"\",\"\",\"Sawflies discussion group\",\"E-forum\",\"\",\"148672\",\"\",\"Yahoo\",\"\",\"\",\"Publisher\",\"\",\"\",\"\",\"\",\"\",\"\",\"http://tech.groups.yahoo.com/group/sawfly/join\"\n" +
+                "\"149380\",\"www.bioinfo.org.uk/html/b149380.htm\",\"\",\"\",\"Cuttlefish\",\"Web Site/Page\",\"\",\"0\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"http://www.pznow.co.uk/marine/cuttlefish.html\"\n" +
+                "\"149878\",\"www.bioinfo.org.uk/html/b149878.htm\",\"\",\"\",\"The Marine Life Information Network for Britain and Ireland (MarLIN)\",\"Web Site/Page\",\"\",\"0\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"http://www.marlin.ac.uk\"\n" +
+                "\"150118\",\"www.bioinfo.org.uk/html/b150118.htm\",\"\",\"2008\",\"Bacterial bleeding canker of horse chestnut\",\"Paper\",\"\",\"150094\",\"FERA\",\"Plant Clinic News\",\"\",\"\",\"Journal\",\"\",\"May 08\",\"\",\"2\",\"1\",\"\",\"\"\n" +
+                "\"150071\",\"www.bioinfo.org.uk/html/b150071.htm\",\"\",\"\",\"Pyrenopeziza brassicae - CropMonitor\",\"Web Site/Page\",\"\",\"0\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"http://www.cropmonitor.co.uk/wosr/encyclopaedia/view_icard.cfm?cslref=12680\"\n" +
+                "\"150095\",\"www.bioinfo.org.uk/html/b150095.htm\",\"\",\"2009\",\"Verbena downy mildew\",\"Paper\",\"\",\"150094\",\"FERA\",\"Plant Clinic News\",\"\",\"\",\"Journal\",\"\",\"Sept 09\",\"\",\"1\",\"\",\"\",\"\"\n";
+        final LabeledCSVParser parser = createParser(firstFewlines);
+        Map<String, String> refIdMap = StudyImporterForBioInfo.buildRefMap(parser);
+        assertThat(refIdMap.get("149326"), is("Accessed at: http://en.wikipedia.org/Agrobacterium_tumefaciens"));
     }
 
 }

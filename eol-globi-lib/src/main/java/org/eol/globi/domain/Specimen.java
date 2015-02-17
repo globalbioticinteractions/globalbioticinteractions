@@ -151,6 +151,12 @@ public class Specimen extends NodeBacked {
         setPropertyWithTx(Specimen.PHYSIOLOGICAL_STATE_ID, physiologicalState.getId());
     }
 
+    public void setBodyPart(List<Term> bodyParts) {
+        if (bodyParts != null && bodyParts.size() > 0) {
+            setBodyPart(bodyParts.get(0));
+        }
+    }
+
     public void setBodyPart(Term bodyPart) {
         setPropertyWithTx(Specimen.BODY_PART_LABEL, bodyPart.getName());
         setPropertyWithTx(Specimen.BODY_PART_ID, bodyPart.getId());

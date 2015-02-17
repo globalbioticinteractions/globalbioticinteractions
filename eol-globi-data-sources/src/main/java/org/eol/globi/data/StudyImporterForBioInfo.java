@@ -10,12 +10,14 @@ import org.eol.globi.domain.Term;
 import org.eol.globi.service.TermLookupServiceException;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class StudyImporterForBioInfo extends BaseStudyImporter implements StudyImporter {
+    public static final String REFERENCE_DATA_FILE = "bioinfo.org.uk/eol_references.csv.gz";
     public static final String RELATIONS_DATA_FILE = "bioinfo.org.uk/eol_taxon_relations.csv.gz";
     public static final String BIOINFO_URL = "http://bioinfo.org.uk";
     public static final Map<String, InteractType> INTERACTION_MAPPING = Collections.unmodifiableMap(new HashMap<String, InteractType>() {
@@ -130,46 +132,110 @@ public class StudyImporterForBioInfo extends BaseStudyImporter implements StudyI
         super(parserFactory, nodeFactory);
     }
 
+    protected static Map<String, String> buildRefMap(final LabeledCSVParser parser) throws IOException {
+        Map<String, String> refIdMap = new HashMap<String, String>();
+        while (parser.getLine() != null) {
+            String refId = parser.getValueByLabel("BioInfo reference id");
+            List<String> list = new ArrayList<String>() {
+                {
+                    String refType = parser.getValueByLabel("reference type");
+
+                    if ("Web Site/Page".equals(refType)) {
+                        addURL();
+                    } else {
+                        String author = parser.getValueByLabel("author");
+                        if (StringUtils.isBlank(author)) {
+                            addIfNotBlank("title");
+                            addIfNotBlank("source title");
+                            addIfNotBlank("year");
+                        } else {
+                            addIfNotBlank("author");
+                            addIfNotBlank("year");
+                            addIfNotBlank("title");
+                            addIfNotBlank("source title");
+                        }
+
+                        addIfNotBlank("edition");
+                        addIfNotBlank("volume");
+                        addIfNotBlank("series");
+                        String pageRange = parser.getValueByLabel("page range");
+                        if (StringUtils.isNotBlank(pageRange)) {
+                            add("pp " + pageRange);
+                        }
+                        addURL();
+                    }
+                }
+
+                protected void addIfNotBlank(String name) {
+                    String title = parser.getValueByLabel(name);
+                    if (StringUtils.isNotBlank(title)) {
+                        add(title);
+                    }
+                }
+
+                protected void addURL() {
+                    String url = parser.getValueByLabel("URL of online source");
+                    if (StringUtils.isNotBlank(url)) {
+                        add("Accessed at: " + parser.getValueByLabel("URL of online source"));
+                    }
+                }
+            };
+            refIdMap.put(refId, StringUtils.join(list, ". ").replaceAll("\\s+", " ").trim());
+        }
+        return refIdMap;
+    }
+
     @Override
     public Study importStudy() throws StudyImporterException {
-        Study study = createStudy();
+        Map<String, String> refMap;
 
         LabeledCSVParser relationsParser;
         try {
+            refMap = buildRefMap(parserFactory.createParser(REFERENCE_DATA_FILE, CharsetConstant.UTF8));
             relationsParser = parserFactory.createParser(RELATIONS_DATA_FILE, CharsetConstant.UTF8);
+            createRelations(relationsParser, refMap);
         } catch (IOException e1) {
             throw new StudyImporterException("problem reading trophic relations file [" + RELATIONS_DATA_FILE + "]", e1);
         }
-        return createRelations(relationsParser, study);
+        return null;
     }
 
-    protected Study createStudy() {
-        String citation = "Food Webs and Species Interactions in the Biodiversity of UK and Ireland (Online). 2013. Data provided by Malcolm Storey. Also available from " + BIOINFO_URL + ".";
-        Study study = nodeFactory.getOrCreateStudy("BIO_INFO",
-                "Malcolm Storey",
-                BIOINFO_URL,
-                "",
-                "Food webs and species interactions in the Biodiversity of UK and Ireland.", null, citation);
-        study.setCitationWithTx(citation);
-        study.setExternalId(BIOINFO_URL);
+    protected Study createStudy(String refId, String citation) {
+        String sourceCitation = "Food Webs and Species Interactions in the Biodiversity of UK and Ireland (Online). 2015. Data provided by Malcolm Storey. Also available from " + BIOINFO_URL + ".";
+        String bioInfoId = TaxonomyProvider.BIO_INFO + "ref:" + refId;
+        Study study = nodeFactory.getOrCreateStudy(bioInfoId,
+                sourceCitation, null);
+        if (study != null) {
+            study.setCitationWithTx(citation);
+            study.setExternalId(bioInfoId);
+        }
         return study;
     }
 
-    protected Study createRelations(LabeledCSVParser parser, Study study) throws StudyImporterException {
-        getLogger().info(study, "relations being created...");
+    protected void createRelations(LabeledCSVParser parser, Map<String, String> refMap) throws StudyImporterException {
         try {
             long count = 1;
             while (parser.getLine() != null) {
                 if (importFilter.shouldImportRecord(count)) {
-                    String relationship = parser.getValueByLabel("relationship");
-                    if (StringUtils.isBlank(relationship)) {
-                        getLogger().warn(study, "no relationship for record on line [" + (parser.lastLineNumber() + 1) + "]");
-                    }
-                    InteractType interactType = INTERACTION_MAPPING.get(relationship);
-                    if (null == interactType) {
-                        getLogger().warn(study, "no mapping found for relationship [" + relationship + "] for record on line [" + (parser.lastLineNumber() + 1) + "]");
-                    } else {
-                        importInteraction(parser, study, interactType);
+                    String refIds = parser.getValueByLabel("list of reference ids");
+                    if (StringUtils.isNotBlank(refIds)) {
+                        String[] ids = StringUtils.split(refIds, ";");
+                        for (String id : ids) {
+                            String trimmedId = StringUtils.trim(id);
+                            Study study = createStudy(trimmedId, refMap.get(trimmedId));
+                            getLogger().info(study, "relations being created...");
+
+                            String relationship = parser.getValueByLabel("relationship");
+                            if (StringUtils.isBlank(relationship)) {
+                                getLogger().warn(study, "no relationship for record on line [" + (parser.lastLineNumber() + 1) + "]");
+                            }
+                            InteractType interactType = INTERACTION_MAPPING.get(relationship);
+                            if (null == interactType) {
+                                getLogger().warn(study, "no mapping found for relationship [" + relationship + "] for record on line [" + (parser.lastLineNumber() + 1) + "]");
+                            } else {
+                                importInteraction(parser, study, interactType);
+                            }
+                        }
                     }
                 }
                 count++;
@@ -177,8 +243,6 @@ public class StudyImporterForBioInfo extends BaseStudyImporter implements StudyI
         } catch (IOException e1) {
             throw new StudyImporterException("problem reading trophic relations data", e1);
         }
-        getLogger().info(study, "relations created.");
-        return study;
     }
 
     private void importInteraction(LabeledCSVParser parser, Study study, InteractType interactType) throws StudyImporterException {
@@ -186,14 +250,26 @@ public class StudyImporterForBioInfo extends BaseStudyImporter implements StudyI
         String activeId = parser.getValueByLabel("active NBN Code");
         if (StringUtils.isNotBlank(passiveId) && StringUtils.isNotBlank(activeId)) {
             Specimen donorSpecimen = createSpecimen(study, parser, passiveId);
-            addLifeStage(parser, donorSpecimen, "DonorStage", study);
+            addLifeStage(parser, donorSpecimen, "stage of passive taxon", study);
+            addBodyPart(parser, donorSpecimen, "part of passive taxon", study);
             Specimen recipientSpecimen = createSpecimen(study, parser, activeId);
-            addLifeStage(parser, recipientSpecimen, "RecipStage", study);
+            addLifeStage(parser, recipientSpecimen, "stage of active taxon", study);
+            addBodyPart(parser, donorSpecimen, "part of active taxon", study);
             recipientSpecimen.interactsWith(donorSpecimen, interactType);
         }
     }
 
-    private void addLifeStage(LabeledCSVParser parser, Specimen donorSpecimen, String stageColumnName, Study study) throws StudyImporterException {
+    private void addLifeStage(LabeledCSVParser parser, Specimen donorSpecimen, String columnName, Study study) throws StudyImporterException {
+        List<Term> lifeStage = parseTerms(parser, columnName, study);
+        donorSpecimen.setLifeStage(lifeStage);
+    }
+
+    private void addBodyPart(LabeledCSVParser parser, Specimen donorSpecimen, String columnName, Study study) throws StudyImporterException {
+        List<Term> bodyParts = parseTerms(parser, columnName, study);
+        donorSpecimen.setBodyPart(bodyParts);
+    }
+
+    private List<Term> parseTerms(LabeledCSVParser parser, String stageColumnName, Study study) throws StudyImporterException {
         List<Term> lifeStage = null;
         String donorLifeStage = parser.getValueByLabel(stageColumnName);
         if (donorLifeStage != null && donorLifeStage.trim().length() > 0) {
@@ -202,7 +278,7 @@ public class StudyImporterForBioInfo extends BaseStudyImporter implements StudyI
                 throw new StudyImporterException("failed to map stage [" + donorLifeStage + "] on line [" + parser.getLastLineNumber() + "]");
             }
         }
-        donorSpecimen.setLifeStage(lifeStage);
+        return lifeStage;
     }
 
     private List<Term> parseLifeStage(String lifeStageString, Study study) throws StudyImporterException {
