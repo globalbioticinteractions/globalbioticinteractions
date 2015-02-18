@@ -80,11 +80,11 @@ public class WoRMSService extends BaseHttpClientService implements PropertyEnric
             }
             if (isAlphiaID(aphiaId)) {
                 String response1 = getResponse("getAphiaClassificationByID", "AphiaID", aphiaId.replace(TaxonomyProvider.ID_PREFIX_WORMS, ""));
-                String value = ServiceUtil.extractPath(response1, "scientificname");
+                String value = ServiceUtil.extractPath(response1, "scientificname", "");
                 properties.put(PropertyAndValueDictionary.PATH, StringUtils.isBlank(value) ? null : value);
-                value = ServiceUtil.extractPath(response1, "AphiaID");
+                value = ServiceUtil.extractPath(response1, "AphiaID", "");
                 properties.put(PropertyAndValueDictionary.PATH_IDS, StringUtils.isBlank(value) ? null : value);
-                value = ServiceUtil.extractPath(response1, "rank");
+                value = ServiceUtil.extractPath(response1, "rank", "");
                 String[] ranks = StringUtils.split(value, CharsetConstant.SEPARATOR);
                 if (ranks != null && ranks.length > 0) {
                     properties.put(PropertyAndValueDictionary.RANK, StringUtils.trim(StringUtils.lowerCase(ranks[ranks.length-1])));
@@ -103,7 +103,7 @@ public class WoRMSService extends BaseHttpClientService implements PropertyEnric
         String path = null;
         if (isAlphiaID(id)) {
             String response = getResponse("getAphiaClassificationByID", "AphiaID", id.replace(TaxonomyProvider.ID_PREFIX_WORMS, ""));
-            path = ServiceUtil.extractPath(response, "scientificname");
+            path = ServiceUtil.extractPath(response, "scientificname", "");
         }
         return StringUtils.isBlank(path) ? null : path;
     }

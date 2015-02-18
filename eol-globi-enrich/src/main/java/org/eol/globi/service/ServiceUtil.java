@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ServiceUtil {
-    public static String extractPath(String xmlContent, String elementName) throws PropertyEnricherException {
+    public static String extractPath(String xmlContent, String elementName, String valuePrefix) throws PropertyEnricherException {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         Document doc;
         try {
@@ -31,7 +31,7 @@ public class ServiceUtil {
                 if (null != firstChild) {
                     String nodeValue = firstChild.getNodeValue();
                     if (StringUtils.isNotBlank(nodeValue)) {
-                        ranks.add(nodeValue);
+                        ranks.add(valuePrefix + nodeValue);
                     }
                 }
             }

@@ -1,7 +1,6 @@
 package org.eol.globi.service;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.codehaus.jackson.JsonNode;
@@ -9,7 +8,6 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.data.CharsetConstant;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.TaxonomyProvider;
-import org.eol.globi.util.HttpUtil;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -17,12 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class NBNService implements PropertyEnricher {
-    private HttpClient client = null;
-
-    private HttpClient getHttpClient() {
-        return client == null ? HttpUtil.createHttpClient() : client;
-    }
+public class NBNService extends BaseHttpClientService implements PropertyEnricher {
 
     @Override
     public Map<String, String> enrich(Map<String, String> properties) throws PropertyEnricherException {
@@ -54,7 +47,7 @@ public class NBNService implements PropertyEnricher {
             JsonNode jsonNode = new ObjectMapper().readTree(response);
             addTaxonNode(enriched, ids, names, ranks, jsonNode);
         } catch (IOException e) {
-            client = null;
+            shutdown();
             throw new PropertyEnricherException("failed to lookup [" + externalId + "]", e);
         }
         enriched.put(PropertyAndValueDictionary.PATH_IDS, toString(ids));
@@ -82,10 +75,5 @@ public class NBNService implements PropertyEnricher {
 
     protected String toString(List<String> ids) {
         return StringUtils.join(ids, CharsetConstant.SEPARATOR);
-    }
-
-    @Override
-    public void shutdown() {
-
     }
 }

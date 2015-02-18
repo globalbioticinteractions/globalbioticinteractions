@@ -27,7 +27,7 @@ public abstract class BaseHttpClientService {
         }
     }
 
-    private HttpClient getHttpClient() {
+    protected HttpClient getHttpClient() {
         if (httpClient == null) {
             this.httpClient = HttpUtil.createHttpClient();
         }

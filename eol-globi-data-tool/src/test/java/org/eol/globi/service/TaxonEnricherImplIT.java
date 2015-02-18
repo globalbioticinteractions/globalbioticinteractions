@@ -75,6 +75,14 @@ public class TaxonEnricherImplIT extends GraphDBTestCase {
         assertUnacceptedWoRMS(taxon);
     }
 
+    @Test
+    public void resolveAcceptedNameStartingFromUnacceptedITISTSN() throws IOException, NodeFactoryException {
+        // related to issue https://github.com/jhpoelen/eol-globi-data/issues/110
+        TaxonNode taxon = nodeFactory.getOrCreateTaxon(null, "ITIS:167353", null);
+        assertThat(taxon.getExternalId(), is("ITIS:692068"));
+        assertThat(taxon.getName(), is("Scorpaenichthys marmoratus"));
+    }
+
     protected void assertUnacceptedWoRMS(TaxonNode taxon) {
         assertThat(taxon.getExternalId(), is("WORMS:726834"));
         assertThat(taxon.getName(), is("Lecithochirium concavovesiculus"));

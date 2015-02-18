@@ -12,6 +12,7 @@ public class PropertyEnricherFactory {
                 add(new FunctionalGroupService());
                 add(new NBNService());
                 add(new EOLService());
+                add(new ITISService());
                 add(new WoRMSService());
                 add(new GulfBaseService());
                 add(new AtlasOfLivingAustraliaService());
