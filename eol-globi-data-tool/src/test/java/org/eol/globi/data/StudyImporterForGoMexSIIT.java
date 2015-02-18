@@ -34,12 +34,6 @@ import static org.junit.matchers.JUnitMatchers.hasItem;
 public class StudyImporterForGoMexSIIT extends GraphDBTestCase {
 
     @Test
-    public void createAndPopulateStudy() throws StudyImporterException, NodeFactoryException, IOException, URISyntaxException {
-        StudyImporterForGoMexSI importer = new StudyImporterForGoMexSI(new ParserFactoryImpl(), nodeFactory);
-        assertThatSomeDataIsImported(importer, nodeFactory);
-    }
-
-    @Test
     public void createAndPopulateStudyGitHub() throws StudyImporterException, NodeFactoryException, IOException, URISyntaxException {
         StudyImporterForGoMexSI importer = new StudyImporterForGoMexSI(new ParserFactoryImpl(), nodeFactory);
         final List<String> msgs = new ArrayList<String>();
