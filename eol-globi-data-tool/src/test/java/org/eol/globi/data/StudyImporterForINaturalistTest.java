@@ -48,18 +48,17 @@ public class StudyImporterForINaturalistTest extends GraphDBTestCase {
     }
 
     @Test
-    public void isResearchGrade() throws StudyImporterException {
-        assertThat(importer.isResearchGrade(757556), is(false));
-        assertThat(importer.isResearchGrade(563486), is(true));
-    }
-
-    @Test
     public void importTestResponse() throws IOException, NodeFactoryException, StudyImporterException {
         importer.parseJSON(getClass().getResourceAsStream("inaturalist/sample_inaturalist_response.json"));
 
-        assertThat(NodeUtil.findAllStudies(getGraphDb()).size(), is(14));
+        assertThat(NodeUtil.findAllStudies(getGraphDb()).size(), is(30));
 
-        Study anotherStudy = nodeFactory.findStudy("INAT:97380");
+        Study anotherStudy = nodeFactory.findStudy("INAT:831");
+        assertThat(anotherStudy, is(notNullValue()));
+        assertThat(anotherStudy.getCitation(), containsString("Ken-ichi Ueda. 2008. Argiope eating Orthoptera. iNaturalist.org. Accessed at http://inaturalist.org/observations/831 on "));
+        assertThat(anotherStudy.getExternalId(), is("http://inaturalist.org/observations/831"));
+
+        anotherStudy = nodeFactory.findStudy("INAT:97380");
         assertThat(anotherStudy, is(notNullValue()));
         assertThat(anotherStudy.getCitation(), containsString("annetanne. 2012. Misumena vatia eating Eristalis nemorum."));
         assertThat(anotherStudy.getExternalId(), is("http://inaturalist.org/observations/97380"));

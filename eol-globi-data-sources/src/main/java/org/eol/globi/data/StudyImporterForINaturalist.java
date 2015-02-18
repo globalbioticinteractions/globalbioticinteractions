@@ -79,7 +79,6 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
         // see https://github.com/jhpoelen/eol-globi-data/issues/56
         add("Syntopic");
         add("Associated species with names lookup");
-        add("associated species alien to NZ");
         add("Target species");
         add("Iconic taxon name");
         add("Tree species");
@@ -112,7 +111,7 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
             int pageNumber = 1;
             int attempt = 0;
             do {
-                String uri = "http://www.inaturalist.org/observation_field_values.json?type=taxon&page=" + pageNumber + "&per_page=100&license=any";
+                String uri = "http://www.inaturalist.org/observation_field_values.json?type=taxon&page=" + pageNumber + "&per_page=100&license=any&quality_grade=research";
                 HttpGet get = new HttpGet(uri);
                 get.addHeader("accept", "application/json");
                 try {
@@ -170,18 +169,16 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
         JsonNode targetTaxon = jsonNode.get("taxon");
         JsonNode targetTaxonNode = targetTaxon.get("name");
         long observationId = jsonNode.get("observation_id").getLongValue();
-        if (isResearchGrade(observationId)) {
-            if (targetTaxonNode == null) {
-                LOG.warn("skipping interaction with missing target taxon name for observation [" + observationId + "]");
+        if (targetTaxonNode == null) {
+            LOG.warn("skipping interaction with missing target taxon name for observation [" + observationId + "]");
+        } else {
+            JsonNode observationField = jsonNode.get("observation_field");
+            String interactionDataType = observationField.get("datatype").getTextValue();
+            String interactionType = observationField.get("name").getTextValue();
+            if (isIgnoredInteractionType(interactionType)) {
+                LOG.warn("ignoring taxon observation field type [" + interactionType + "] for observation with id [" + observationId + "]");
             } else {
-                JsonNode observationField = jsonNode.get("observation_field");
-                String interactionDataType = observationField.get("datatype").getTextValue();
-                String interactionType = observationField.get("name").getTextValue();
-                if (isIgnoredInteractionType(interactionType)) {
-                    LOG.warn("ignoring taxon observation field type [" + interactionType + "] for observation with id [" + observationId + "]");
-                } else {
-                    createInteraction(jsonNode, targetTaxonNode, observationId, interactionDataType, interactionType);
-                }
+                createInteraction(jsonNode, targetTaxonNode, observationId, interactionDataType, interactionType);
             }
         }
 
@@ -318,15 +315,5 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
     @Override
     public boolean shouldCrossCheckReference() {
         return false;
-    }
-
-    protected boolean isResearchGrade(long observationId) throws StudyImporterException {
-        try {
-            String observation = org.eol.globi.util.HttpClient.httpGet("http://www.inaturalist.org/observations/" + observationId + ".json");
-            JsonNode obs = new ObjectMapper().readTree(observation);
-            return (obs.has("quality_grade") && "research".equals(obs.get("quality_grade").asText()));
-        } catch (IOException ex) {
-            throw new StudyImporterException("failed to lookup observation [" + observationId + "]", ex);
-        }
     }
 }
