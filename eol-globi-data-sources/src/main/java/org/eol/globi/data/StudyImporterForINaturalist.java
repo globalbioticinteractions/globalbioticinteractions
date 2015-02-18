@@ -52,6 +52,8 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
         put("Other Species in Group", InteractType.INTERACTS_WITH);
         put("associated species NZ", InteractType.INTERACTS_WITH);
         put("second associated species", InteractType.INTERACTS_WITH);
+        put("associated species alien to NZ", InteractType.INTERACTS_WITH);
+        put("Associated species with names lookup", InteractType.INTERACTS_WITH);
         put("2nd associated organism with names lookup", InteractType.INTERACTS_WITH);
         put("Other other species in group", InteractType.INTERACTS_WITH);
         put("Pollinating", InteractType.POLLINATES);
@@ -78,7 +80,6 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
     public static final List<String> IGNORED_INTERACTION_TYPES = new ArrayList<String>() {{
         // see https://github.com/jhpoelen/eol-globi-data/issues/56
         add("Syntopic");
-        add("Associated species with names lookup");
         add("Target species");
         add("Iconic taxon name");
         add("Tree species");
