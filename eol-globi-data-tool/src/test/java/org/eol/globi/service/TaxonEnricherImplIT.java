@@ -86,7 +86,7 @@ public class TaxonEnricherImplIT extends GraphDBTestCase {
     protected void assertUnacceptedWoRMS(TaxonNode taxon) {
         assertThat(taxon.getExternalId(), is("WORMS:726834"));
         assertThat(taxon.getName(), is("Lecithochirium concavovesiculus"));
-        assertThat(taxon.getPathIds(), is("1 | 2 | 793 | 19948 | 108400 | 108402 | 468918 | 108418 | 108471 | 724982 | 108758 | 726834"));
+        assertThat(taxon.getPathIds(), is("WORMS:1 | WORMS:2 | WORMS:793 | WORMS:19948 | WORMS:108400 | WORMS:108402 | WORMS:468918 | WORMS:108418 | WORMS:108471 | WORMS:724982 | WORMS:108758 | WORMS:726834"));
         assertThat(taxon.getPath(), containsString(CharsetConstant.SEPARATOR + "Platyhelminthes"));
         assertThat(taxon.getRank(), is("species"));
         assertThat(taxon.getPathNames(), containsString(CharsetConstant.SEPARATOR + "species"));

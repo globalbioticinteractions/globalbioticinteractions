@@ -82,7 +82,7 @@ public class WoRMSService extends BaseHttpClientService implements PropertyEnric
                 String response1 = getResponse("getAphiaClassificationByID", "AphiaID", aphiaId.replace(TaxonomyProvider.ID_PREFIX_WORMS, ""));
                 String value = ServiceUtil.extractPath(response1, "scientificname", "");
                 properties.put(PropertyAndValueDictionary.PATH, StringUtils.isBlank(value) ? null : value);
-                value = ServiceUtil.extractPath(response1, "AphiaID", "");
+                value = ServiceUtil.extractPath(response1, "AphiaID", TaxonomyProvider.ID_PREFIX_WORMS);
                 properties.put(PropertyAndValueDictionary.PATH_IDS, StringUtils.isBlank(value) ? null : value);
                 value = ServiceUtil.extractPath(response1, "rank", "");
                 String[] ranks = StringUtils.split(value, CharsetConstant.SEPARATOR);

@@ -43,7 +43,7 @@ public class WoRMSServiceTest {
         assertThat(enriched.get(PropertyAndValueDictionary.EXTERNAL_ID), containsString("WORMS:726834"));
         assertThat(enriched.get(PropertyAndValueDictionary.RANK), is("species"));
         assertThat(enriched.get(PropertyAndValueDictionary.PATH), is("Biota | Animalia | Platyhelminthes | Trematoda | Digenea | Plagiorchiida | Hemiurata | Hemiuroidea | Hemiuridae | Lecithochiriinae | Lecithochirium | Lecithochirium concavovesiculus"));
-        assertThat(enriched.get(PropertyAndValueDictionary.PATH_IDS), is("1 | 2 | 793 | 19948 | 108400 | 108402 | 468918 | 108418 | 108471 | 724982 | 108758 | 726834"));
+        assertThat(enriched.get(PropertyAndValueDictionary.PATH_IDS), is("WORMS:1 | WORMS:2 | WORMS:793 | WORMS:19948 | WORMS:108400 | WORMS:108402 | WORMS:468918 | WORMS:108418 | WORMS:108471 | WORMS:724982 | WORMS:108758 | WORMS:726834"));
         assertThat(enriched.get(PropertyAndValueDictionary.PATH_NAMES), is("superdomain | kingdom | phylum | class | subclass | order | suborder | superfamily | family | subfamily | genus | species"));
     }
 
