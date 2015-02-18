@@ -7,6 +7,7 @@ import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
+import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonomyProvider;
 import org.junit.Test;
 import org.neo4j.cypher.javacompat.ExecutionEngine;
@@ -90,7 +91,7 @@ public class StudyImporterForBioInfoTest extends GraphDBTestCase {
         importer.createRelations(labeledCSVParser, new HashMap <String, String>(){{
             put("60527", "citation A");
             put("60536", "citation B");
-        }});
+        }}, new HashMap<String, Taxon>());
 
         assertNotNull(nodeFactory.findStudy(TaxonomyProvider.BIO_INFO + "ref:60536"));
         assertNull(nodeFactory.findStudy(TaxonomyProvider.BIO_INFO + "ref:bla"));
@@ -138,6 +139,24 @@ public class StudyImporterForBioInfoTest extends GraphDBTestCase {
         final LabeledCSVParser parser = createParser(firstFewlines);
         Map<String, String> refIdMap = StudyImporterForBioInfo.buildRefMap(parser);
         assertThat(refIdMap.get("149326"), is("Accessed at: http://en.wikipedia.org/Agrobacterium_tumefaciens"));
+    }
+
+    @Test
+    public void importTaxa() throws IOException {
+        String firstFewlines = "my taxon id,rank,latin,authority,english,NBN Code,family,order,phylum,url\n" +
+                "\"268\",\"Informal\",\"'Chenopodiaceae'\",\"\",\"the old Chenopodiaceae\",\"\",\"Amaranthaceae\",\"Caryophyllales\",\"Tracheophyta\",\"www.bioinfo.org.uk/html/t268.htm\"\n" +
+                "\"162827\",\"Species\",\"Abacarus hystrix\",\"(Nalepa, 1896)\",\"a mite\",\"NHMSYS0020190380\",\"Eriophyidae\",\"Trombidiformes\",\"Arthropoda\",\"www.bioinfo.org.uk/html/t162827.htm\"\n" +
+                "\"41886\",\"Genus\",\"Abdera\",\"Stephens, 1832\",\"a genus of false darkling beetles\",\"NHMSYS0020151134\",\"Melandryidae\",\"Coleoptera\",\"Arthropoda\",\"www.bioinfo.org.uk/html/t41886.htm\"\n" +
+                "\"34737\",\"Species\",\"Abdera biflexuosa\",\"(Curtis, 1829)\",\"a false darkling beetle\",\"NBNSYS0000024889\",\"Melandryidae\",\"Coleoptera\",\"Arthropoda\",\"www.bioinfo.org.uk/html/t34737.htm\"\n" +
+                "\"34738\",\"Species\",\"Abdera flexuosa\",\"(Paykull, 1799)\",\"a false darkling beetle\",\"NBNSYS0000024890\",\"Melandryidae\",\"Coleoptera\",\"Arthropoda\",\"www.bioinfo.org.uk/html/t34738.htm\"\n" +
+                "\"34739\",\"Species\",\"Abdera quadrifasciata\",\"(Curtis, 1829)\",\"a false darkling beetle\",\"NBNSYS0000024891\",\"Melandryidae\",\"Coleoptera\",\"Arthropoda\",\"www.bioinfo.org.uk/html/t34739.htm\"\n" +
+                "\"34740\",\"Species\",\"Abdera triguttata\",\"(Gyllenhal, 1810)\",\"a false darkling beetle\",\"NBNSYS0000024892\",\"Melandryidae\",\"Coleoptera\",\"Arthropoda\",\"www.bioinfo.org.uk/html/t34740.htm\"\n" +
+                "\"102829\",\"Species\",\"Abia sericea\",\"(Linnaeus, 1767)\",\"a clubhorned sawfly\",\"NHMSYS0020480647\",\"Cimbicidae\",\"Hymenoptera\",\"Arthropoda\",\"www.bioinfo.org.uk/html/t102829.htm\"\n" +
+                "\"43913\",\"Genus\",\"Abies\",\"Mill.\",\"firs\",\"NHMSYS0000455511\",\"Pinaceae\",\"Pinales\",\"Tracheophyta\",\"www.bioinfo.org.uk/html/t43913.htm\"\n";
+        final LabeledCSVParser parser = createParser(firstFewlines);
+        Map<String, Taxon> taxonMap = StudyImporterForBioInfo.buildTaxonMap(parser);
+        assertThat(taxonMap.get("268").getName(), is("Chenopodiaceae"));
+        assertThat(taxonMap.get("41886"), is(nullValue()));
     }
 
 }

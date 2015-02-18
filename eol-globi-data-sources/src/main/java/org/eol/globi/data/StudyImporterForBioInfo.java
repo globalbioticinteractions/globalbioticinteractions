@@ -5,6 +5,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
+import org.eol.globi.domain.Taxon;
+import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TaxonomyProvider;
 import org.eol.globi.domain.Term;
 import org.eol.globi.service.TermLookupServiceException;
@@ -19,6 +21,7 @@ import java.util.Map;
 public class StudyImporterForBioInfo extends BaseStudyImporter implements StudyImporter {
     public static final String REFERENCE_DATA_FILE = "bioinfo.org.uk/eol_references.csv.gz";
     public static final String RELATIONS_DATA_FILE = "bioinfo.org.uk/eol_taxon_relations.csv.gz";
+    public static final String TAXON_DATA_FILE = "bioinfo.org.uk/eol_taxa.csv.gz";
     public static final String BIOINFO_URL = "http://bioinfo.org.uk";
     public static final Map<String, InteractType> INTERACTION_MAPPING = Collections.unmodifiableMap(new HashMap<String, InteractType>() {
         {
@@ -185,6 +188,21 @@ public class StudyImporterForBioInfo extends BaseStudyImporter implements StudyI
         return refIdMap;
     }
 
+    protected static Map<String, Taxon> buildTaxonMap(LabeledCSVParser parser) throws IOException {
+        Map<String, Taxon> taxonMap = new HashMap<String, Taxon>();
+        while (parser.getLine() != null) {
+            if (StringUtils.isBlank(parser.getValueByLabel("NBN Code"))) {
+                Taxon taxon = new TaxonImpl();
+                taxon.setRank(parser.getValueByLabel("rank"));
+                taxon.setName(StringUtils.replaceChars(parser.getValueByLabel("latin"), "'", ""));
+                String bioInfoTaxonId = parser.getValueByLabel("my taxon id");
+                taxon.setExternalId(TaxonomyProvider.BIO_INFO + "taxon:" + bioInfoTaxonId);
+                taxonMap.put(bioInfoTaxonId, taxon);
+            }
+        }
+        return taxonMap;
+    }
+
     @Override
     public Study importStudy() throws StudyImporterException {
         Map<String, String> refMap;
@@ -192,8 +210,9 @@ public class StudyImporterForBioInfo extends BaseStudyImporter implements StudyI
         LabeledCSVParser relationsParser;
         try {
             refMap = buildRefMap(parserFactory.createParser(REFERENCE_DATA_FILE, CharsetConstant.UTF8));
+            Map<String, Taxon> taxonMap = buildTaxonMap(parserFactory.createParser(TAXON_DATA_FILE, CharsetConstant.UTF8));
             relationsParser = parserFactory.createParser(RELATIONS_DATA_FILE, CharsetConstant.UTF8);
-            createRelations(relationsParser, refMap);
+            createRelations(relationsParser, refMap, taxonMap);
         } catch (IOException e1) {
             throw new StudyImporterException("problem reading trophic relations file [" + RELATIONS_DATA_FILE + "]", e1);
         }
@@ -212,7 +231,7 @@ public class StudyImporterForBioInfo extends BaseStudyImporter implements StudyI
         return study;
     }
 
-    protected void createRelations(LabeledCSVParser parser, Map<String, String> refMap) throws StudyImporterException {
+    protected void createRelations(LabeledCSVParser parser, Map<String, String> refMap, Map<String, Taxon> taxonMap) throws StudyImporterException {
         try {
             long count = 1;
             while (parser.getLine() != null) {
@@ -233,7 +252,7 @@ public class StudyImporterForBioInfo extends BaseStudyImporter implements StudyI
                             if (null == interactType) {
                                 getLogger().warn(study, "no mapping found for relationship [" + relationship + "] for record on line [" + (parser.lastLineNumber() + 1) + "]");
                             } else {
-                                importInteraction(parser, study, interactType);
+                                importInteraction(parser, study, interactType, taxonMap);
                             }
                         }
                     }
@@ -245,18 +264,39 @@ public class StudyImporterForBioInfo extends BaseStudyImporter implements StudyI
         }
     }
 
-    private void importInteraction(LabeledCSVParser parser, Study study, InteractType interactType) throws StudyImporterException {
+    private void importInteraction(LabeledCSVParser parser, Study study, InteractType interactType, Map<String, Taxon> taxonMap) throws StudyImporterException {
         String passiveId = parser.getValueByLabel("passive NBN Code");
         String activeId = parser.getValueByLabel("active NBN Code");
-        if (StringUtils.isNotBlank(passiveId) && StringUtils.isNotBlank(activeId)) {
-            Specimen donorSpecimen = createSpecimen(study, parser, passiveId);
+        Specimen donorSpecimen = createSpecimen(parser, study, taxonMap, passiveId, parser.getValueByLabel("my passive taxon id"));
+        Specimen recipientSpecimen = createSpecimen(parser, study, taxonMap, activeId, parser.getValueByLabel("my active taxon id"));
+
+        if (donorSpecimen != null && recipientSpecimen != null) {
             addLifeStage(parser, donorSpecimen, "stage of passive taxon", study);
             addBodyPart(parser, donorSpecimen, "part of passive taxon", study);
-            Specimen recipientSpecimen = createSpecimen(study, parser, activeId);
             addLifeStage(parser, recipientSpecimen, "stage of active taxon", study);
             addBodyPart(parser, donorSpecimen, "part of active taxon", study);
             recipientSpecimen.interactsWith(donorSpecimen, interactType);
         }
+    }
+
+    private Specimen createSpecimen(LabeledCSVParser parser, Study study, Map<String, Taxon> taxonMap, String nbnId, String bioTaxonId) throws StudyImporterException {
+        Specimen specimen = null;
+        if (StringUtils.isBlank(nbnId)) {
+            try {
+                Taxon taxon = taxonMap.get(bioTaxonId);
+                if (taxon == null) {
+                    getLogger().warn(study, "no taxon for id [" + bioTaxonId + "] on line [" + parser.lastLineNumber() + 1 + "]");
+                } else {
+                    specimen = nodeFactory.createSpecimen(study, taxon.getName(), TaxonomyProvider.BIO_INFO + "taxon:" + bioTaxonId);
+                    setSpecimenExternalId(parser, specimen);
+                }
+            } catch (NodeFactoryException e) {
+                throw new StudyImporterException("failed to create taxon with scientific name [" + bioTaxonId + "]", e);
+            }
+        } else {
+            specimen = createSpecimen(study, parser, nbnId);
+        }
+        return specimen;
     }
 
     private void addLifeStage(LabeledCSVParser parser, Specimen donorSpecimen, String columnName, Study study) throws StudyImporterException {
@@ -298,11 +338,15 @@ public class StudyImporterForBioInfo extends BaseStudyImporter implements StudyI
     private Specimen createSpecimen(Study study, LabeledCSVParser labeledCSVParser, String externalId) throws StudyImporterException {
         try {
             Specimen specimen = nodeFactory.createSpecimen(study, null, TaxonomyProvider.NBN.getIdPrefix() + externalId);
-            specimen.setExternalId(TaxonomyProvider.BIO_INFO + "rel:" + labeledCSVParser.lastLineNumber());
+            setSpecimenExternalId(labeledCSVParser, specimen);
             return specimen;
         } catch (NodeFactoryException e) {
             throw new StudyImporterException("failed to create taxon with scientific name [" + externalId + "]", e);
         }
+    }
+
+    private void setSpecimenExternalId(LabeledCSVParser labeledCSVParser, Specimen specimen) {
+        specimen.setExternalId(TaxonomyProvider.BIO_INFO + "rel:" + labeledCSVParser.lastLineNumber());
     }
 
 }
