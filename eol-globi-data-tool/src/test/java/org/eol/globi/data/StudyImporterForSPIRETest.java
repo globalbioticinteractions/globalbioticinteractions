@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.Set;
 
 import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
@@ -71,6 +72,27 @@ public class StudyImporterForSPIRETest extends GraphDBTestCase {
     @Test
     public void importSingleLink() throws NodeFactoryException {
         assertSingleImport("habitat", "TEST:habitat", "habitat");
+
+    }
+
+    @Test
+    public void ignoreOtterEatsBeaver() throws NodeFactoryException {
+        HashMap<String, String> props = new HashMap<String, String>() {{
+            put(StudyImporterForSPIRE.PREDATOR_NAME, "Enhydra lutris");
+            put(StudyImporterForSPIRE.PREY_NAME, "Castor canadensis");
+            put(Study.TITLE, "some reference");
+        }};
+
+        createImporter().importTrophicLink(props);
+
+        assertThat(nodeFactory.findTaxonByName("Enhydra lutris"), is(nullValue()));
+        assertThat(nodeFactory.findTaxonByName("Castor canadensis"), is(nullValue()));
+
+        props.put(StudyImporterForSPIRE.PREY_NAME, "Cancer productus");
+        createImporter().importTrophicLink(props);
+
+        assertThat(nodeFactory.findTaxonByName("Enhydra lutris"), is(notNullValue()));
+        assertThat(nodeFactory.findTaxonByName("Cancer productus"), is(notNullValue()));
 
     }
 

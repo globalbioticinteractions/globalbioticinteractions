@@ -145,32 +145,42 @@ public class StudyImporterForSPIRE extends BaseStudyImporter {
     }
 
     protected void importTrophicLink(Map<String, String> properties) {
-        if (properties.containsKey(Study.TITLE)) {
-            Study study = nodeFactory.getOrCreateStudy(properties.get(Study.TITLE),
-                    properties.get(Study.CONTRIBUTOR),
-                    null, null, properties.get(Study.DESCRIPTION), properties.get(Study.PUBLICATION_YEAR), SOURCE_SPIRE);
+        if (isValid(properties)) {
+            importValidLink(properties);
+        }
+    }
 
-            try {
-                Specimen predator = createSpecimen(properties.get(PREDATOR_NAME), study);
-                String locality = properties.get(LOCALITY_ORIGINAL);
-                LatLng latLng = getGeoNamesService().findPointForLocality(locality);
-                if (latLng == null) {
-                    getLogger().warn(study, "failed to find location for county [" + locality + "]");
-                } else {
-                    Location location = nodeFactory.getOrCreateLocation(latLng.getLat(), latLng.getLng(), null);
-                    predator.caughtIn(location);
-                    String habitat = properties.get(OF_HABITAT);
-                    if (StringUtils.isNotBlank(habitat)) {
-                        addEnvironment(location, "SPIRE:" + habitat, habitat);
-                    }
+    private boolean isValid(Map<String, String> properties) {
+        // see https://github.com/jhpoelen/eol-globi-data/issues/118
+        boolean invalidInteraction = "Enhydra lutris".equals(properties.get(PREDATOR_NAME)) && "Castor canadensis".equals(properties.get(PREY_NAME));
+        return properties.containsKey(Study.TITLE) && !invalidInteraction;
+    }
+
+    private void importValidLink(Map<String, String> properties) {
+        Study study = nodeFactory.getOrCreateStudy(properties.get(Study.TITLE),
+                properties.get(Study.CONTRIBUTOR),
+                null, null, properties.get(Study.DESCRIPTION), properties.get(Study.PUBLICATION_YEAR), SOURCE_SPIRE);
+
+        try {
+            Specimen predator = createSpecimen(properties.get(PREDATOR_NAME), study);
+            String locality = properties.get(LOCALITY_ORIGINAL);
+            LatLng latLng = getGeoNamesService().findPointForLocality(locality);
+            if (latLng == null) {
+                getLogger().warn(study, "failed to find location for county [" + locality + "]");
+            } else {
+                Location location = nodeFactory.getOrCreateLocation(latLng.getLat(), latLng.getLng(), null);
+                predator.caughtIn(location);
+                String habitat = properties.get(OF_HABITAT);
+                if (StringUtils.isNotBlank(habitat)) {
+                    addEnvironment(location, "SPIRE:" + habitat, habitat);
                 }
-                Specimen prey = createSpecimen(properties.get(PREY_NAME), study);
-                predator.ate(prey);
-            } catch (NodeFactoryException e) {
-                getLogger().warn(study, "failed to import trophic link with properties [" + properties + "]: " + e.getMessage());
-            } catch (IOException e) {
-                getLogger().warn(study, "failed to import trophic link with properties [" + properties + "]: " + e.getMessage());
             }
+            Specimen prey = createSpecimen(properties.get(PREY_NAME), study);
+            predator.ate(prey);
+        } catch (NodeFactoryException e) {
+            getLogger().warn(study, "failed to import trophic link with properties [" + properties + "]: " + e.getMessage());
+        } catch (IOException e) {
+            getLogger().warn(study, "failed to import trophic link with properties [" + properties + "]: " + e.getMessage());
         }
     }
 
