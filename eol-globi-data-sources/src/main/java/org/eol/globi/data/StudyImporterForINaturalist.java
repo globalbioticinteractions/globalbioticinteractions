@@ -80,6 +80,7 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
     public static final List<String> IGNORED_INTERACTION_TYPES = new ArrayList<String>() {{
         // see https://github.com/jhpoelen/eol-globi-data/issues/56
         add("Syntopic");
+        add("Syntop");
         add("Target species");
         add("Iconic taxon name");
         add("Tree species");
