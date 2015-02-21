@@ -144,6 +144,7 @@ public class StudyImporterForBioInfo extends BaseStudyImporter implements StudyI
                     String refType = parser.getValueByLabel("reference type");
 
                     if ("Web Site/Page".equals(refType)) {
+                        addIfNotBlank("title");
                         addURL();
                     } else {
                         String author = parser.getValueByLabel("author");
