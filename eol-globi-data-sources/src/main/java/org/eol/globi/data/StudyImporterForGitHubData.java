@@ -4,12 +4,15 @@ import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.BasicResponseHandler;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.service.GitHubUtil;
+import org.eol.globi.util.HttpUtil;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -65,23 +68,26 @@ public class StudyImporterForGitHubData extends BaseStudyImporter {
         try {
             String baseUrl = GitHubUtil.getBaseUrlLastCommit(repo);
             String descriptor = baseUrl + "/globi.json";
-            JsonNode desc = new ObjectMapper().readTree(new URL(descriptor).openStream());
-            String sourceCitation = desc.get("citation").asText();
-            if (desc.has("format")) {
-                String format = desc.get("format").asText();
-                if ("gomexsi".equals(format)) {
-                    StudyImporterForGoMexSI importer = new StudyImporterForGoMexSI(parserFactory, nodeFactory);
-                    importer.setBaseUrl(baseUrl);
-                    importer.setSourceCitation(sourceCitation);
-                    if (getLogger() != null) {
-                        importer.setLogger(getLogger());
+            String response = HttpUtil.createHttpClient().execute(new HttpGet(descriptor), new BasicResponseHandler());
+            if (StringUtils.isNotBlank(response)) {
+                JsonNode desc = new ObjectMapper().readTree(response);
+                String sourceCitation = desc.get("citation").asText();
+                if (desc.has("format")) {
+                    String format = desc.get("format").asText();
+                    if ("gomexsi".equals(format)) {
+                        StudyImporterForGoMexSI importer = new StudyImporterForGoMexSI(parserFactory, nodeFactory);
+                        importer.setBaseUrl(baseUrl);
+                        importer.setSourceCitation(sourceCitation);
+                        if (getLogger() != null) {
+                            importer.setLogger(getLogger());
+                        }
+                        importer.importStudy();
+                    } else {
+                        throw new StudyImporterException("unsupported format [" + format + "]");
                     }
-                    importer.importStudy();
                 } else {
-                    throw new StudyImporterException("unsupported format [" + format + "]");
+                    importRepository(repo, sourceCitation, baseUrl);
                 }
-            } else {
-                importRepository(repo, sourceCitation, baseUrl);
             }
         } catch (IOException e) {
             throw new StudyImporterException("failed to import repo [" + repo + "]", e);
