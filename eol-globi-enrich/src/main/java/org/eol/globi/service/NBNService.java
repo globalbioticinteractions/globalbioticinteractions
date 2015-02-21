@@ -1,6 +1,8 @@
 package org.eol.globi.service;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.codehaus.jackson.JsonNode;
@@ -16,6 +18,8 @@ import java.util.List;
 import java.util.Map;
 
 public class NBNService extends BaseHttpClientService implements PropertyEnricher {
+
+    private static final Log LOG = LogFactory.getLog(NBNService.class);
 
     @Override
     public Map<String, String> enrich(Map<String, String> properties) throws PropertyEnricherException {
@@ -44,8 +48,12 @@ public class NBNService extends BaseHttpClientService implements PropertyEnriche
 
             uri = "https://data.nbn.org.uk/api/taxa/" + nbnId;
             response = getHttpClient().execute(new HttpGet(uri), new BasicResponseHandler());
-            JsonNode jsonNode = new ObjectMapper().readTree(response);
-            addTaxonNode(enriched, ids, names, ranks, jsonNode);
+            if (StringUtils.isNotBlank(response)) {
+                JsonNode jsonNode = new ObjectMapper().readTree(response);
+                addTaxonNode(enriched, ids, names, ranks, jsonNode);
+            } else {
+                LOG.warn("empty response for nbn taxon lookup with id [" + nbnId + "]");
+            }
         } catch (IOException e) {
             shutdown();
             throw new PropertyEnricherException("failed to lookup [" + externalId + "]", e);

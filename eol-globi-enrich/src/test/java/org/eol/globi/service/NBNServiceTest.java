@@ -1,5 +1,6 @@
 package org.eol.globi.service;
 
+import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.TaxonomyProvider;
 import org.junit.Test;
@@ -41,7 +42,6 @@ public class NBNServiceTest {
         assertThat(enriched.get(PropertyAndValueDictionary.PATH_NAMES), is("Kingdom | Phylum | Class | Order | Family | Genus | Species"));
         assertThat(enriched.get(PropertyAndValueDictionary.PATH), is("Animalia | Arthropoda | Insecta | Coleoptera | Melandryidae | Abdera | Abdera biflexuosa"));
     }
-
 
     protected Map<String, String> getTaxonInfo(final String nbnCode) throws PropertyEnricherException {
         Map<String, String> props = Collections.unmodifiableMap(new HashMap<String, String>() {{
