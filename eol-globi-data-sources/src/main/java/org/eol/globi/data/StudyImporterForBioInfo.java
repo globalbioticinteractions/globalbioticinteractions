@@ -160,7 +160,10 @@ public class StudyImporterForBioInfo extends BaseStudyImporter implements StudyI
                         }
 
                         addIfNotBlank("edition");
-                        addIfNotBlank("volume");
+                        String volume = parser.getValueByLabel("volume");
+                        if (StringUtils.isNotBlank(volume)) {
+                            add("Vol " + volume);
+                        }
                         addIfNotBlank("series");
                         String pageRange = parser.getValueByLabel("page range");
                         if (StringUtils.isNotBlank(pageRange)) {

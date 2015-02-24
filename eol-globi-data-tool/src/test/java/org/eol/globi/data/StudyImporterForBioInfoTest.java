@@ -135,13 +135,15 @@ public class StudyImporterForBioInfoTest extends GraphDBTestCase {
                 "\"149878\",\"www.bioinfo.org.uk/html/b149878.htm\",\"\",\"\",\"The Marine Life Information Network for Britain and Ireland (MarLIN)\",\"Web Site/Page\",\"\",\"0\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"http://www.marlin.ac.uk\"\n" +
                 "\"150118\",\"www.bioinfo.org.uk/html/b150118.htm\",\"\",\"2008\",\"Bacterial bleeding canker of horse chestnut\",\"Paper\",\"\",\"150094\",\"FERA\",\"Plant Clinic News\",\"\",\"\",\"Journal\",\"\",\"May 08\",\"\",\"2\",\"1\",\"\",\"\"\n" +
                 "\"150071\",\"www.bioinfo.org.uk/html/b150071.htm\",\"\",\"\",\"Pyrenopeziza brassicae - CropMonitor\",\"Web Site/Page\",\"\",\"0\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"http://www.cropmonitor.co.uk/wosr/encyclopaedia/view_icard.cfm?cslref=12680\"\n" +
+                "\"60527\",\"www.bioinfo.org.uk/html/b60527.htm\",\"Bullock, J.A.\",\"1992\",\"Host Plants of British Beetles: A List of Recorded Associations\",\"Book/Report\",\"\",\"147501\",\"\",\"Amateur Entomologists' Society\",\"AES\",\"\",\"Publisher\",\"\",\"11a\",\"\",\"\",\"24\",\"0 900054 56 5\",\"\"\n" +
                 "\"150095\",\"www.bioinfo.org.uk/html/b150095.htm\",\"\",\"2009\",\"Verbena downy mildew\",\"Paper\",\"\",\"150094\",\"FERA\",\"Plant Clinic News\",\"\",\"\",\"Journal\",\"\",\"Sept 09\",\"\",\"1\",\"\",\"\",\"\"\n";
         final LabeledCSVParser parser = createParser(firstFewlines);
         Map<String, String> refIdMap = StudyImporterForBioInfo.buildRefMap(parser);
         assertThat(refIdMap.get("149326"), is("Agrobacterium tumefaciens. Accessed at: http://en.wikipedia.org/Agrobacterium_tumefaciens"));
         assertThat(refIdMap.get("149878"), is("The Marine Life Information Network for Britain and Ireland (MarLIN). Accessed at: http://www.marlin.ac.uk"));
-        assertThat(refIdMap.get("150118"), is("Bacterial bleeding canker of horse chestnut. Plant Clinic News. 2008. May 08. pp 2"));
-        assertThat(refIdMap.get("150095"), is("Verbena downy mildew. Plant Clinic News. 2009. Sept 09. pp 1"));
+        assertThat(refIdMap.get("150118"), is("Bacterial bleeding canker of horse chestnut. Plant Clinic News. 2008. Vol May 08. pp 2"));
+        assertThat(refIdMap.get("150095"), is("Verbena downy mildew. Plant Clinic News. 2009. Vol Sept 09. pp 1"));
+        assertThat(refIdMap.get("60527"), is("Bullock, J.A.. 1992. Host Plants of British Beetles: A List of Recorded Associations. Amateur Entomologists' Society. Vol 11a"));
     }
 
     @Test
