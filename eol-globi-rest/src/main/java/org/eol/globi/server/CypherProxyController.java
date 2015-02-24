@@ -1,6 +1,5 @@
 package org.eol.globi.server;
 
-import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.util.CypherQuery;
 import org.eol.globi.util.CypherUtil;
 import org.eol.globi.util.ExternalIdUtil;
@@ -12,7 +11,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.util.Map;
 
 @Controller
 public class CypherProxyController {
@@ -26,25 +24,13 @@ public class CypherProxyController {
     @RequestMapping(value = "/findExternalUrlForTaxon/{taxonName}", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
     public String findExternalLinkForTaxonWithName(HttpServletRequest request, @PathVariable("taxonName") String taxonName) throws IOException {
-        return getUrlFromExternalId(CypherUtil.executeRemote(findExternalIdForTaxonNew(request, taxonName)));
-    }
-
-    private String getUrlFromExternalId(String result) {
-        String urlString = null;
-        for (Map.Entry<String, String> stringStringEntry : ExternalIdUtil.getURLPrefixMap().entrySet()) {
-            urlString = getUrl(result, stringStringEntry.getKey(), stringStringEntry.getValue());
-            if (urlString != null && urlString.startsWith("http")) {
-                break;
-            }
-
-        }
-        return buildJsonUrl(urlString);
+        return ExternalIdUtil.getUrlFromExternalId(CypherUtil.executeRemote(findExternalIdForTaxonNew(request, taxonName)));
     }
 
     @RequestMapping(value = "/findExternalUrlForStudy/{studyTitle}", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
     public String findExternalLinkForStudyWithTitle(HttpServletRequest request, @PathVariable("studyTitle") String taxonName) throws IOException {
-        return getUrlFromExternalId(CypherUtil.executeRemote(findExternalIdForStudyNew(request, taxonName)));
+        return ExternalIdUtil.getUrlFromExternalId(CypherUtil.executeRemote(findExternalIdForStudyNew(request, taxonName)));
     }
 
     @RequestMapping(value = "/findExternalIdForTaxon/{taxonName}", method = RequestMethod.GET)
@@ -61,14 +47,10 @@ public class CypherProxyController {
         return CypherQueryBuilder.createPagedQuery(request, cypherQuery);
     }
 
-    private String buildJsonUrl(String url) {
-        return StringUtils.isBlank(url) ? "{}" : "{\"url\":\"" + url + "\"}";
-    }
-
     @RequestMapping(value = "/findExternalUrlForExternalId/{externalId}", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
     public String findExternalLinkForExternalId(@PathVariable("externalId") String externalId) {
-        return buildJsonUrl(ExternalIdUtil.infoURLForExternalId(externalId));
+        return ExternalIdUtil.buildJsonUrl(ExternalIdUtil.infoURLForExternalId(externalId));
     }
 
     @RequestMapping(value = "/shortestPathsBetweenTaxon/{startTaxon}/andTaxon/{endTaxon}", method = RequestMethod.GET)
@@ -78,20 +60,4 @@ public class CypherProxyController {
         CypherQuery cypherQuery = CypherQueryBuilder.shortestPathQuery(startTaxon, endTaxon);
         return CypherQueryBuilder.createPagedQuery(request, cypherQuery);
     }
-
-    private String getUrl(String result, String externalIdPrefix, String urlPrefix) {
-        String url = "";
-        if (result.contains(externalIdPrefix)) {
-            String[] split = result.split(externalIdPrefix);
-            if (split.length > 1) {
-                String[] externalIdParts = split[1].split("\"");
-                if (externalIdParts.length > 1) {
-                    url = urlPrefix + externalIdParts[0];
-                }
-            }
-        }
-        return url;
-    }
-
-
 }

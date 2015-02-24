@@ -33,6 +33,12 @@ public class CypherProxyControllerTest {
     }
 
     @Test
+    public void findExternalLinkFoStudyWithTitle() throws IOException {
+        String externalLink = new CypherProxyController().findExternalLinkForStudyWithTitle(null, "bioinfo:ref:147884");
+        assertThat(externalLink, is("{\"url\":\"http://bioinfo.org.uk/html/b147884.htm\"}"));
+    }
+
+    @Test
     public void findShortestPaths() throws IOException {
         CypherQuery cypherQuery = new CypherProxyController().findShortestPathsNew(null, "Homo sapiens", "Rattus rattus");
         String externalLink = new CypherQueryExecutor(cypherQuery).execute(null);

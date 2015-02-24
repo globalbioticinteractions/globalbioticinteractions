@@ -10,6 +10,7 @@ import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TaxonomyProvider;
 import org.eol.globi.domain.Term;
 import org.eol.globi.service.TermLookupServiceException;
+import org.eol.globi.util.ExternalIdUtil;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -230,7 +231,7 @@ public class StudyImporterForBioInfo extends BaseStudyImporter implements StudyI
                 sourceCitation, null);
         if (study != null) {
             study.setCitationWithTx(citation);
-            study.setExternalId(bioInfoId);
+            study.setExternalId(ExternalIdUtil.infoURLForExternalId(bioInfoId));
         }
         return study;
     }

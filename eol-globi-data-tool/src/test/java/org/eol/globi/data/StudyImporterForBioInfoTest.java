@@ -93,7 +93,9 @@ public class StudyImporterForBioInfoTest extends GraphDBTestCase {
             put("60536", "citation B");
         }}, new HashMap<String, Taxon>());
 
-        assertNotNull(nodeFactory.findStudy(TaxonomyProvider.BIO_INFO + "ref:60536"));
+        Study study = nodeFactory.findStudy(TaxonomyProvider.BIO_INFO + "ref:60536");
+        assertNotNull(study);
+        assertThat(study.getExternalId(), is("http://bioinfo.org.uk/html/b60536.htm"));
         assertNull(nodeFactory.findStudy(TaxonomyProvider.BIO_INFO + "ref:bla"));
         Study study1 = nodeFactory.findStudy(TaxonomyProvider.BIO_INFO + "ref:60527");
         assertThat(study1.getCitation(), is("citation A"));

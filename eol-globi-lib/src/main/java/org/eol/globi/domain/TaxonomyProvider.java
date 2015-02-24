@@ -39,6 +39,7 @@ public enum TaxonomyProvider {
     public static final String ID_PREFIX_AUSTRALIAN_FAUNAL_DIRECTORY = AUSTRALIAN_FAUNAL_DIRECTORY.getIdPrefix();
 
     public static final String ID_CMECS = "CMECS:AQUATIC_SETTING:";
+    public static final String ID_BIO_INFO_REFERENCE = "bioinfo:ref:";
     public static final String BIO_INFO = "bioinfo:";
 
 }
