@@ -198,7 +198,8 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
         if (sourceTaxon == null) {
             LOG.warn("cannot create interaction with missing source taxon name for observation with id [" + observation.get("id") + "]");
         } else {
-            Study study = nodeFactory.getOrCreateStudy(TaxonomyProvider.ID_PREFIX_INATURALIST + observationId, getSourceString(), null);
+            String observationExternalId = TaxonomyProvider.ID_PREFIX_INATURALIST + observationId;
+            Study study = nodeFactory.getOrCreateStudy(observationExternalId, getSourceString(), null);
             String targetTaxonName = targetTaxonNode.getTextValue();
             String sourceTaxonName = sourceTaxon.get("name").getTextValue();
             Date observationDate = getObservationDate(study, observationId, observation);
@@ -215,10 +216,10 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
 
             if (specimen != null) {
                 StringBuilder citation = buildCitation(observation, interactionType, targetTaxonName, sourceTaxonName, observationDate);
-                String url = ExternalIdUtil.infoURLForExternalId(TaxonomyProvider.ID_PREFIX_INATURALIST + observationId);
+                String url = ExternalIdUtil.infoURLForExternalId(observationExternalId);
                 citation.append(ReferenceUtil.createLastAccessedString(url));
                 study.setCitationWithTx(citation.toString());
-                study.setExternalId(url);
+                study.setExternalId(observationExternalId);
             }
         }
     }

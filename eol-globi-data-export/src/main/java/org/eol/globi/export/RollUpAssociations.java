@@ -50,7 +50,7 @@ public class RollUpAssociations extends ExporterAssociationsBase {
             for (Taxon sTaxon : sTaxa) {
                 for (Taxon tTaxon : tTaxa) {
                     Map<String, String> properties = new HashMap<String, String>();
-                    String occSourceId1 = RollUpOccurrence.sourceOccurrenceId(study.getNodeID(), relationshipType, sTaxon);
+                    String occSourceId1 = RollUpOccurrence.sourceOccurrenceId(externalIdOrId(study), relationshipType, sTaxon);
                     String fullOccSourceId = RollUpOccurrence.fullSourceOccurrenceId(occSourceId1);
                     String fullOccTargetId = RollUpOccurrence.fullTargetOccurrenceId(occSourceId1, tTaxon);
                     String assocId = "globi:assoc:" + occSourceId1 + "-" + fillBlanks(tTaxon.getExternalId());

@@ -29,7 +29,7 @@ public class RollUpOccurrence extends ExporterOccurrencesBase {
         final HTreeMap<String, String> occIds = createMap();
         try {
             for (Map<String, Object> result : results) {
-                putOccIds(occIds, result, study.getUnderlyingNode().getId());
+                putOccIds(occIds, result, study);
             }
 
             Map<String, String> properties = new HashMap<String, String>();
@@ -46,7 +46,7 @@ public class RollUpOccurrence extends ExporterOccurrencesBase {
         }
     }
 
-    protected void putOccIds(Map<String, String> occIds, Map<String, Object> result, long studyId) {
+    protected void putOccIds(Map<String, String> occIds, Map<String, Object> result, Study study) {
         TaxonNode sourceTaxon = new TaxonNode((Node) result.get(QUERY_PARAM_SOURCE_TAXON));
         List<Taxon> sTaxa = RollUpDistinctTaxa.expandTaxon(sourceTaxon);
         String relationshipType = (String) result.get(QUERY_PARAM_INTERACTION_TYPE);
@@ -54,7 +54,7 @@ public class RollUpOccurrence extends ExporterOccurrencesBase {
         for (Node targetTaxon : targetTaxa) {
             List<Taxon> tTaxa = RollUpDistinctTaxa.expandTaxon(new TaxonNode(targetTaxon));
             for (Taxon sTaxon : sTaxa) {
-                String occSourceId = sourceOccurrenceId(studyId, relationshipType, sTaxon);
+                String occSourceId = sourceOccurrenceId(externalIdOrId(study), relationshipType, sTaxon);
                 occIds.put(fullSourceOccurrenceId(occSourceId), sTaxon.getExternalId());
                 for (Taxon tTaxon : tTaxa) {
                     occIds.put(fullTargetOccurrenceId(occSourceId, tTaxon), tTaxon.getExternalId());
@@ -71,7 +71,7 @@ public class RollUpOccurrence extends ExporterOccurrencesBase {
         return GLOBI_OCCUR_RTARGET + occSourceId + "-" + RollUpAssociations.fillBlanks(tTaxon.getExternalId());
     }
 
-    protected static String sourceOccurrenceId(long studyId, String relationshipType, Taxon sTaxon) {
+    protected static String sourceOccurrenceId(String studyId, String relationshipType, Taxon sTaxon) {
         return studyId + "-" + RollUpAssociations.fillBlanks(sTaxon.getExternalId()) + "-" + relationshipType;
     }
 

@@ -1,6 +1,8 @@
 package org.eol.globi.export;
 
 import com.Ostermiller.util.CSVPrinter;
+import org.apache.commons.lang3.StringUtils;
+import org.eol.globi.domain.NodeBacked;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.util.InteractUtil;
@@ -51,6 +53,12 @@ public abstract class ExporterBase extends DarwinCoreExporter {
         if (node != null && node.hasProperty(propertyName)) {
             properties.put(fieldName, node.getProperty(propertyName).toString());
         }
+    }
+
+    public static String externalIdOrId(NodeBacked node) {
+        String studyId = node.getExternalId();
+        studyId = StringUtils.isBlank(studyId) ? Long.toString(node.getUnderlyingNode().getId()) : studyId;
+        return studyId;
     }
 
     protected abstract String[] getFields();
