@@ -76,10 +76,10 @@ public class Normalizer {
         final GraphDatabaseService graphService = GraphService.getGraphService("./");
 
         if (cmdLine == null || !cmdLine.hasOption(OPTION_SKIP_IMPORT)) {
-            Collection<Class> importers = StudyImporterFactory.getOpenImporters();
+            Collection<Class<? extends StudyImporter>> importers = StudyImporterFactory.getOpenImporters();
             if (shouldUseDarkData(cmdLine)) {
                 LOG.info("adding dark importers...");
-                ArrayList<Class> list = new ArrayList<Class>();
+                ArrayList<Class<? extends StudyImporter>> list = new ArrayList<Class<? extends StudyImporter>>();
                 list.addAll(importers);
                 list.addAll(StudyImporterFactory.getDarkImporters());
                 importers = Collections.unmodifiableList(list);
@@ -144,11 +144,11 @@ public class Normalizer {
     }
 
 
-    private void importData(GraphDatabaseService graphService, Collection<Class> importers) {
+    private void importData(GraphDatabaseService graphService, Collection<Class<? extends StudyImporter>> importers) {
         TaxonIndexImpl taxonService = new TaxonIndexImpl(PropertyEnricherFactory.createTaxonEnricher()
                 , new TaxonNameCorrector(), graphService);
         NodeFactoryImpl factory = new NodeFactoryImpl(graphService, taxonService);
-        for (Class importer : importers) {
+        for (Class<? extends StudyImporter> importer : importers) {
             try {
                 importData(importer, factory);
             } catch (StudyImporterException e) {
@@ -161,14 +161,14 @@ public class Normalizer {
         }
     }
 
-    protected void importData(Class importer, NodeFactoryImpl factory) throws StudyImporterException {
+    protected void importData(Class<? extends StudyImporter> importer, NodeFactoryImpl factory) throws StudyImporterException {
         StudyImporter studyImporter = createStudyImporter(importer, factory);
         LOG.info("[" + importer + "] importing ...");
         studyImporter.importStudy();
         LOG.info("[" + importer + "] imported.");
     }
 
-    private StudyImporter createStudyImporter(Class<StudyImporter> studyImporter, NodeFactoryImpl factory) throws StudyImporterException {
+    private StudyImporter createStudyImporter(Class<? extends StudyImporter> studyImporter, NodeFactoryImpl factory) throws StudyImporterException {
         factory.setEcoregionFinder(getEcoregionFinder());
         ParserFactory parserFactory = new ParserFactoryImpl();
         StudyImporter importer = new StudyImporterFactory(parserFactory, factory).instantiateImporter(studyImporter);

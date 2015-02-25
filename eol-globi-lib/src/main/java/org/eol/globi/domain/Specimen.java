@@ -1,5 +1,6 @@
 package org.eol.globi.domain;
 
+import org.eol.globi.geo.LatLng;
 import org.eol.globi.util.InteractUtil;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
@@ -96,6 +97,12 @@ public class Specimen extends NodeBacked {
         setPropertyWithTx(STOMACH_VOLUME_ML, volumeInMilliLiter);
     }
 
+    public void interactsWith(Specimen target, InteractType type, Location centroid) {
+        caughtIn(centroid);
+        target.caughtIn(centroid);
+        interactsWith(target, type);
+    }
+
     public void interactsWith(Specimen recipientSpecimen, InteractType relType) {
         Transaction tx = getUnderlyingNode().getGraphDatabase().beginTx();
         try {
@@ -183,4 +190,5 @@ public class Specimen extends NodeBacked {
     public Term getBodyPart() {
         return new Term(getPropertyStringValueOrNull(BODY_PART_ID), getPropertyStringValueOrNull(BODY_PART_LABEL));
     }
+
 }

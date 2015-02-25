@@ -9,14 +9,16 @@ import org.apache.http.impl.client.BasicResponseHandler;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.domain.InteractType;
+import org.eol.globi.domain.Location;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
+import org.eol.globi.geo.LatLng;
 import org.eol.globi.service.GitHubUtil;
 import org.eol.globi.util.HttpUtil;
+import org.eol.globi.util.InvalidLocationException;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,10 +27,15 @@ import java.util.logging.Level;
 public class StudyImporterForGitHubData extends BaseStudyImporter {
     private static final Log LOG = LogFactory.getLog(StudyImporterForGitHubData.class);
     private static final Map<String, InteractType> INTERACT_ID_TO_TYPE = new HashMap<String, InteractType>() {{
-        put("RO:0002470", InteractType.ATE);
+        put("RO:0002434", InteractType.INTERACTS_WITH);
+        put("RO:0002440", InteractType.SYMBIONT_OF);
         put("RO:0002444", InteractType.PARASITE_OF);
+        put("RO:0002453", InteractType.HOST_OF);
+        put("RO:0002455", InteractType.POLLINATES);
         put("RO:0002556", InteractType.PATHOGEN_OF);
-        put("RO:0002456", InteractType.POLLINATES);
+        put("RO:0002456", InteractType.POLLINATED_BY);
+        put("RO:0002458", InteractType.PREYED_UPON_BY);
+        put("RO:0002470", InteractType.ATE);
     }};
 
     public StudyImporterForGitHubData(ParserFactory parserFactory, NodeFactory nodeFactory) {
@@ -71,7 +78,7 @@ public class StudyImporterForGitHubData extends BaseStudyImporter {
             String response = HttpUtil.createHttpClient().execute(new HttpGet(descriptor), new BasicResponseHandler());
             if (StringUtils.isNotBlank(response)) {
                 JsonNode desc = new ObjectMapper().readTree(response);
-                String sourceCitation = desc.get("citation").asText();
+                String sourceCitation = desc.has("citation") ? desc.get("citation").asText() : baseUrl;
                 if (desc.has("format")) {
                     String format = desc.get("format").asText();
                     if ("gomexsi".equals(format)) {
@@ -105,7 +112,7 @@ public class StudyImporterForGitHubData extends BaseStudyImporter {
         while (parser.getLine() != null) {
             String referenceCitation = parser.getValueByLabel("referenceCitation");
             String referenceDoi = StringUtils.replace(parser.getValueByLabel("referenceDoi"), " ", "");
-            Study study = nodeFactory.getOrCreateStudy(repo + referenceCitation, null, null, null, referenceCitation, null, sourceCitation + " " + ReferenceUtil.createLastAccessedString(dataUrl), referenceDoi);
+            Study study = nodeFactory.getOrCreateStudy(repo + referenceCitation, sourceCitation + " " + ReferenceUtil.createLastAccessedString(dataUrl), referenceDoi);
             study.setCitationWithTx(referenceCitation);
 
             String sourceTaxonId = StringUtils.trimToNull(parser.getValueByLabel("sourceTaxonId"));
@@ -123,7 +130,26 @@ public class StudyImporterForGitHubData extends BaseStudyImporter {
                 } else {
                     Specimen source = nodeFactory.createSpecimen(study, sourceTaxonName, sourceTaxonId);
                     Specimen target = nodeFactory.createSpecimen(study, targetTaxonName, targetTaxonId);
-                    source.interactsWith(target, type);
+
+
+                    LatLng centroid = null;
+                    String latitude = StringUtils.trim(parser.getValueByLabel("decimalLatitude"));
+                    String longitude = StringUtils.trim(parser.getValueByLabel("decimalLongitude"));
+                    if (StringUtils.isNotBlank(latitude) && StringUtils.isNotBlank(longitude)) {
+                        try {
+                            centroid = LocationUtil.parseLatLng(latitude, longitude);
+                        } catch (InvalidLocationException e) {
+                            getLogger().warn(study, "found invalid location: [" + e.getMessage() + "]");
+                        }
+                    }
+                    if (centroid == null) {
+                        String localityId = StringUtils.trim(parser.getValueByLabel("localityId"));
+                        if (StringUtils.isNotBlank(localityId)) {
+                            centroid = getGeoNamesService().findLatLng(localityId);
+                        }
+                    }
+                    Location location = centroid == null ? null : nodeFactory.getOrCreateLocation(centroid.getLat(), centroid.getLng(), null);
+                    source.interactsWith(target, type, location);
                 }
             }
         }

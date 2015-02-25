@@ -164,7 +164,7 @@ public class StudyImporterForSPIRE extends BaseStudyImporter {
         try {
             Specimen predator = createSpecimen(properties.get(PREDATOR_NAME), study);
             String locality = properties.get(LOCALITY_ORIGINAL);
-            LatLng latLng = getGeoNamesService().findPointForLocality(locality);
+            LatLng latLng = getGeoNamesService().findLatLng(locality);
             if (latLng == null) {
                 getLogger().warn(study, "failed to find location for county [" + locality + "]");
             } else {

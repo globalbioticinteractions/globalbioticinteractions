@@ -1,6 +1,7 @@
 package org.eol.globi.domain;
 
 import org.apache.commons.lang3.StringUtils;
+import org.eol.globi.util.ExternalIdUtil;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
@@ -119,8 +120,8 @@ public class Study extends NodeBacked {
 
     public void setDOI(String doi) {
         setProperty(DOI, doi);
-        if (getExternalId() == null) {
-            setExternalId(doi);
+        if (StringUtils.isBlank(getExternalId())) {
+            setExternalId(ExternalIdUtil.infoURLForExternalId(doi));
         }
     }
 

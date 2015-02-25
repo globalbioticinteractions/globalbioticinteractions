@@ -6,8 +6,8 @@ import java.io.IOException;
 
 public interface GeoNamesService {
 
-    boolean hasPositionForLocality(String locality);
+    boolean hasTermForLocale(String locality);
 
-    LatLng findPointForLocality(String locality) throws IOException;
+    LatLng findLatLng(String locality) throws IOException;
 
 }

@@ -7,7 +7,7 @@ import java.util.Collections;
 
 public class StudyImporterFactory {
 
-    private static final Collection<Class> IMPORTERS = Collections.unmodifiableCollection(new ArrayList<Class>() {{
+    private static final Collection<Class<? extends StudyImporter>> IMPORTERS = Collections.unmodifiableCollection(new ArrayList<Class<? extends StudyImporter>>() {{
         add(StudyImporterForGitHubData.class);
         add(StudyImporterForKelpForest.class);
         add(StudyImporterForGemina.class);
@@ -48,9 +48,9 @@ public class StudyImporterFactory {
         this.nodeFactory = nodeFactory;
     }
 
-    public StudyImporter instantiateImporter(Class<StudyImporter> clazz) throws StudyImporterException {
+    public StudyImporter instantiateImporter(Class<? extends StudyImporter> clazz) throws StudyImporterException {
         try {
-            Constructor<StudyImporter> aConstructor = clazz.getConstructor(ParserFactory.class, NodeFactory.class);
+            Constructor<? extends StudyImporter> aConstructor = clazz.getConstructor(ParserFactory.class, NodeFactory.class);
             return aConstructor.newInstance(parserFactory, nodeFactory);
         } catch (Exception ex) {
             throw new StudyImporterException("failed to create study importer for [" + clazz.toString() + "]", ex);
@@ -58,12 +58,12 @@ public class StudyImporterFactory {
     }
 
 
-    public static Collection<Class> getOpenImporters() {
+    public static Collection<Class<? extends StudyImporter>> getOpenImporters() {
         return IMPORTERS;
     }
 
-    public static Collection<Class> getDarkImporters() {
-        return new ArrayList<Class>() {{
+    public static ArrayList<Class<? extends StudyImporter>> getDarkImporters() {
+        return new ArrayList<Class<? extends StudyImporter>>() {{
             add(StudyImporterForFWDP.class);
             add(StudyImporterForFishbase.class);
         }};

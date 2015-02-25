@@ -157,6 +157,13 @@ public class NodeFactoryImplTest extends GraphDBTestCase {
     }
 
     @Test
+    public void createStudy() {
+        Study study = getNodeFactory().getOrCreateStudy("myTitle", "mySource", "doi:myDoi");
+        assertThat(study.getDOI(), is("doi:myDoi"));
+        assertThat(study.getExternalId(), is("http://dx.doi.org/myDoi"));
+    }
+
+    @Test
     public void specimenWithNoName() throws NodeFactoryException {
         Specimen specimen = getNodeFactory().createSpecimen(getNodeFactory().createStudy("bla"), null, "bla:123");
 

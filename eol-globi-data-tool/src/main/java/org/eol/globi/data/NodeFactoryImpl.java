@@ -15,6 +15,7 @@ import org.eol.globi.domain.Term;
 import org.eol.globi.geo.Ecoregion;
 import org.eol.globi.geo.EcoregionFinder;
 import org.eol.globi.geo.EcoregionFinderException;
+import org.eol.globi.geo.LatLng;
 import org.eol.globi.service.DOIResolver;
 import org.eol.globi.service.EnvoLookupService;
 import org.eol.globi.service.QueryUtil;

@@ -19,12 +19,12 @@ public class StudyImporterForRaymondIT extends GraphDBTestCase {
         StudyImporterForRaymond importer = new StudyImporterForRaymond(new ParserFactoryImpl(), nodeFactory);
         importer.setGeoNamesService(new GeoNamesService() {
             @Override
-            public boolean hasPositionForLocality(String locality) {
+            public boolean hasTermForLocale(String locality) {
                 return true;
             }
 
             @Override
-            public LatLng findPointForLocality(String locality) throws IOException {
+            public LatLng findLatLng(String locality) throws IOException {
                 return new LatLng(0, 0);
             }
 
@@ -35,7 +35,7 @@ public class StudyImporterForRaymondIT extends GraphDBTestCase {
 
         Collection<String> unmappedLocations = new HashSet<String>();
         for (String location : importer.getLocations()) {
-            if (!importer.getGeoNamesService().hasPositionForLocality(location)) {
+            if (!importer.getGeoNamesService().hasTermForLocale(location)) {
                 unmappedLocations.add(location);
             }
         }

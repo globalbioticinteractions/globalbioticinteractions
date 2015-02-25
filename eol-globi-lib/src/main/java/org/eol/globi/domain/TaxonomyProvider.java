@@ -6,7 +6,7 @@ public enum TaxonomyProvider {
     WORMS("WORMS:"),
     NCBI("NCBI:"),
     EOL("EOL:"),
-    GEONAMES("GEO:"),
+    GEONAMES("GEONAMES:"),
     WIKIPEDIA("W:"),
     ENVO("ENVO:"),
     GBIF("GBIF:"),
@@ -34,6 +34,7 @@ public enum TaxonomyProvider {
     public static final String ID_PREFIX_GULFBASE = "BioGoMx:";
     public static final String ID_PREFIX_GAME = "GAME:";
     public static final String ID_PREFIX_HTTP = "http://";
+    public static final String ID_PREFIX_DOI = "doi:";
     public static final String ID_PREFIX_USKI = "UKSI:";
     public static final String ID_PREFIX_GBIF = GBIF.getIdPrefix();
     public static final String ID_PREFIX_AUSTRALIAN_FAUNAL_DIRECTORY = AUSTRALIAN_FAUNAL_DIRECTORY.getIdPrefix();

@@ -255,7 +255,7 @@ public class StudyImporterForRaymond extends BaseStudyImporter {
             String cleanedLocationString = location.replaceAll("\\.$", "");
             getLocations().add(cleanedLocationString);
             try {
-                centroid = getGeoNamesService().findPointForLocality(cleanedLocationString);
+                centroid = getGeoNamesService().findLatLng(cleanedLocationString);
                 if (centroid == null) {
                     getLogger().warn(study, "missing lat/lng bounding box [" + dietParser.lastLineNumber() + "] and attempted to using location [" + location + "] failed.");
                 } else {

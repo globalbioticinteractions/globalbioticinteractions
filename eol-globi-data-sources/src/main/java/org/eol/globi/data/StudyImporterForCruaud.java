@@ -46,8 +46,8 @@ public class StudyImporterForCruaud extends BaseStudyImporter {
                             Specimen host = nodeFactory.createSpecimen(study, hostName);
                             parasite.interactsWith(host, InteractType.PARASITE_OF);
                             String samplingLocation = StringUtils.trim(dataParser.getValueByLabel("Sampling location"));
-                            if (getGeoNamesService().hasPositionForLocality(samplingLocation)) {
-                                LatLng pointForLocality = getGeoNamesService().findPointForLocality(samplingLocation);
+                            if (getGeoNamesService().hasTermForLocale(samplingLocation)) {
+                                LatLng pointForLocality = getGeoNamesService().findLatLng(samplingLocation);
                                 Location location = nodeFactory.getOrCreateLocation(pointForLocality.getLat(), pointForLocality.getLng(), null);
                                 parasite.caughtIn(location);
                                 host.caughtIn(location);
