@@ -35,7 +35,7 @@ public class RollUpAssociationsTest extends RollUpTest {
         StringWriter writer = new StringWriter();
         new RollUpAssociations().doExportStudy(myStudy, writer, true);
         String exported = writer.toString();
-        assertThat(exported, containsString("globi:assoc:ext:id-genus_id_1-ATE-species_id_2,globi:occur:rsource:ext:id-genus_id_1-ATE,http://eol.org/schema/terms/eats,globi:occur:rtarget:ext:id-genus_id_1-ATE-species_id_2,,,,,,,,globi:ref:1"));
+        assertThat(exported, containsString("globi:assoc:1-genus_id_1-ATE-species_id_2,globi:occur:rsource:1-genus_id_1-ATE,http://eol.org/schema/terms/eats,globi:occur:rtarget:1-genus_id_1-ATE-species_id_2,,,,,,,,globi:ref:1"));
     }
 
     @Test
@@ -45,7 +45,7 @@ public class RollUpAssociationsTest extends RollUpTest {
         StringWriter writer = new StringWriter();
         new RollUpAssociations().doExportStudy(myStudy, writer, true);
         String exported = writer.toString();
-        assertThat(exported, containsString("globi:assoc:http://dx.doi.org/10.1007/bf02784282-genus_id_1-ATE-species_id_2,globi:occur:rsource:http://dx.doi.org/10.1007/bf02784282-genus_id_1-ATE,http://eol.org/schema/terms/eats,globi:occur:rtarget:http://dx.doi.org/10.1007/bf02784282-genus_id_1-ATE-species_id_2,,,,,,,,globi:ref:1"));
+        assertThat(exported, containsString("globi:assoc:1-genus_id_1-ATE-species_id_2,globi:occur:rsource:1-genus_id_1-ATE,http://eol.org/schema/terms/eats,globi:occur:rtarget:1-genus_id_1-ATE-species_id_2,,,,,,,,globi:ref:1"));
     }
 
 }

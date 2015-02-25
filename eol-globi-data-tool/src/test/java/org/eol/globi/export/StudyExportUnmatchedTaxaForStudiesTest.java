@@ -88,9 +88,9 @@ public class StudyExportUnmatchedTaxaForStudiesTest extends GraphDBTestCase {
         StringWriter writer = new StringWriter();
         new StudyExportUnmatchedTaxaForStudies().exportStudy(study, writer, true);
         assertThat(writer.toString(), is(EXPECTED_HEADER + "\n" +
-                        "Caniz,,Caniz,no:match,\"my study\\\"\",my first source\n" +
-                        "Homo sapiens2,,Homo sapiens2,no:match,\"my study\\\"\",my first source\n" +
-                        "Homo sapiens3,no:match,Homo sapiens3,no:match,\"my study\\\"\",my first source\n"
+                        "Caniz,,Caniz,no:match,\"my study\"\"\",my first source\n" +
+                        "Homo sapiens2,,Homo sapiens2,no:match,\"my study\"\"\",my first source\n" +
+                        "Homo sapiens3,no:match,Homo sapiens3,no:match,\"my study\"\"\",my first source\n"
         ));
     }
 

@@ -55,7 +55,7 @@ public class ExporterReferences extends ExporterBase {
     }
 
     public static String referenceIdForStudy(Study study) {
-        return "globi:ref:" + study.getNodeID();
+        return "globi:ref:" + referenceId(study);
     }
 
     private String referenceForStudy(Study study) {

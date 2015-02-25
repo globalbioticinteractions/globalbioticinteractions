@@ -54,7 +54,7 @@ public class RollUpOccurrence extends ExporterOccurrencesBase {
         for (Node targetTaxon : targetTaxa) {
             List<Taxon> tTaxa = RollUpDistinctTaxa.expandTaxon(new TaxonNode(targetTaxon));
             for (Taxon sTaxon : sTaxa) {
-                String occSourceId = sourceOccurrenceId(externalIdOrId(study), relationshipType, sTaxon);
+                String occSourceId = sourceOccurrenceId(referenceId(study), relationshipType, sTaxon);
                 occIds.put(fullSourceOccurrenceId(occSourceId), sTaxon.getExternalId());
                 for (Taxon tTaxon : tTaxa) {
                     occIds.put(fullTargetOccurrenceId(occSourceId, tTaxon), tTaxon.getExternalId());

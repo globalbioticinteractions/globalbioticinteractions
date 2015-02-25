@@ -29,7 +29,7 @@ public class ExporterAssociationAggregates extends ExporterAssociationsBase {
         String interactionType = (String) result.get(QUERY_PARAM_INTERACTION_TYPE);
 
         for (Node preyTaxon : targetTaxa) {
-            String sourceOccurrenceId = externalIdOrId(study) + "-" + sourceTaxon.getId() + "-" + interactionType;
+            String sourceOccurrenceId = referenceId(study) + "-" + sourceTaxon.getId() + "-" + interactionType;
             String assocIdAndTargetOccurrenceIdId = sourceOccurrenceId + "-" + preyTaxon.getId();
             properties.put(EOLDictionary.ASSOCIATION_ID, "globi:assoc:" + assocIdAndTargetOccurrenceIdId);
             properties.put(EOLDictionary.OCCURRENCE_ID, "globi:occur:source:" + sourceOccurrenceId);

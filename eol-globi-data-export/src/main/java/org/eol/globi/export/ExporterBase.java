@@ -57,10 +57,8 @@ public abstract class ExporterBase extends DarwinCoreExporter {
         }
     }
 
-    public static String externalIdOrId(NodeBacked node) {
-        String studyId = node.getExternalId();
-        studyId = StringUtils.isBlank(studyId) ? Long.toString(node.getUnderlyingNode().getId()) : studyId;
-        return studyId;
+    public static String referenceId(NodeBacked node) {
+        return Long.toString(node.getUnderlyingNode().getId());
     }
 
     protected abstract String[] getFields();
