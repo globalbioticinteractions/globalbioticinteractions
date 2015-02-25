@@ -1,7 +1,7 @@
 package org.eol.globi.data;
 
-import com.Ostermiller.util.CSVParser;
 import com.Ostermiller.util.LabeledCSVParser;
+import org.eol.globi.util.CSVUtil;
 import org.junit.Test;
 import org.eol.globi.geo.LatLng;
 
@@ -40,8 +40,8 @@ public class StudyImporterForRaymondTest extends GraphDBTestCase {
     @Test
     public void importPartialStudy() throws IOException, StudyImporterException {
         StudyImporterForRaymond importer = new StudyImporterForRaymond(new ParserFactoryImpl(), nodeFactory);
-        LabeledCSVParser dietParser = new LabeledCSVParser(new CSVParser(new StringReader(firstFewLinesOfDiet())));
-        LabeledCSVParser sourcesParser = new LabeledCSVParser(new CSVParser(new StringReader(firstFewLinesOfSourcesAlteredToFitDietDataSample())));
+        LabeledCSVParser dietParser = CSVUtil.createLabeledCSVParser(new StringReader(firstFewLinesOfDiet()));
+        LabeledCSVParser sourcesParser = CSVUtil.createLabeledCSVParser(new StringReader(firstFewLinesOfSourcesAlteredToFitDietDataSample()));
         importer.importData(sourcesParser, dietParser);
     }
 

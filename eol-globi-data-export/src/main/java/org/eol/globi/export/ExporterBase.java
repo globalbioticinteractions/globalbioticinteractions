@@ -1,10 +1,11 @@
 package org.eol.globi.export;
 
-import com.Ostermiller.util.CSVPrinter;
+import com.Ostermiller.util.CSVPrint;
 import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.domain.NodeBacked;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
+import org.eol.globi.util.CSVUtil;
 import org.eol.globi.util.InteractUtil;
 import org.neo4j.cypher.javacompat.ExecutionEngine;
 import org.neo4j.cypher.javacompat.ExecutionResult;
@@ -19,7 +20,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.TimeZone;
 
-import static org.eol.globi.domain.PropertyAndValueDictionary.*;
+import static org.eol.globi.domain.PropertyAndValueDictionary.INVERTED;
+import static org.eol.globi.domain.PropertyAndValueDictionary.NO_MATCH;
 
 public abstract class ExporterBase extends DarwinCoreExporter {
 
@@ -125,7 +127,7 @@ public abstract class ExporterBase extends DarwinCoreExporter {
     }
 
     protected static void writeProperties(Writer writer, Map<String, String> properties, String[] fields) throws IOException {
-        CSVPrinter csvPrinter = new CSVPrinter(writer);
+        CSVPrint csvPrinter = CSVUtil.createCSVPrint(writer);
         String values[] = new String[fields.length];
         for (int i = 0; i < fields.length; i++) {
             if (properties.containsKey(fields[i])) {

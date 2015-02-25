@@ -4,7 +4,7 @@ import com.Ostermiller.util.CSVParser;
 import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.junit.Ignore;
+import org.eol.globi.util.CSVUtil;
 import org.junit.Test;
 
 import java.io.File;
@@ -52,7 +52,7 @@ public class StudyImporterFelderTest {
         IOUtils.write(HEADER + "\n", os);
         IOUtils.copy(convertToTSV(getClass().getResourceAsStream("felder/BIRDS.BDT")), os);
 
-        LabeledCSVParser parser = new LabeledCSVParser(new CSVParser(new FileInputStream(felder)));
+        LabeledCSVParser parser = CSVUtil.createLabeledCSVParser(new FileInputStream(felder));
         parser.changeDelimiter('\t');
         assertThat(parser.getLabels(), is(FIELDS));
         assertThat(parser.getLine(), is(notNullValue()));

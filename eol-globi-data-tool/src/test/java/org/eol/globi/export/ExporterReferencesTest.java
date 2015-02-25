@@ -41,6 +41,15 @@ public class ExporterReferencesTest extends GraphDBTestCase {
         assertThat(row.getBuffer().toString().trim(), equalTo("globi:ref:1,,,,,,,,,,,,,,,,,"));
     }
 
+    @Test
+    public void exportReferenceEscapeCharacters() throws IOException, NodeFactoryException, ParseException {
+        Study myStudy = nodeFactory.createStudy("myStudy");
+        myStudy.setCitationWithTx("bla \"one\"");
+        StringWriter row = new StringWriter();
+        new ExporterReferences().exportStudy(myStudy, row, false);
+        assertThat(row.getBuffer().toString().trim(), equalTo("globi:ref:1,,\"bla \"\"one\"\"\",,,,,,,,,,,,,,,"));
+    }
+
 
     private String getExpectedData() {
         return "\"identifier\",\"publicationType\",\"full_reference\",\"primaryTitle\",\"title\",\"pages\",\"pageStart\",\"pageEnd\",\"volume\",\"edition\",\"publisher\",\"authorList\",\"editorList\",\"created\",\"language\",\"uri\",\"doi\",\"schema#localityName\""

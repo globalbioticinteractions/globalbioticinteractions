@@ -1,6 +1,5 @@
 package org.eol.globi.data;
 
-import com.Ostermiller.util.CSVParser;
 import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -8,6 +7,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
 import org.apache.http.client.HttpResponseException;
 import org.apache.http.client.methods.HttpGet;
+import org.eol.globi.util.CSVUtil;
 import org.eol.globi.util.HttpUtil;
 
 import java.io.File;
@@ -38,7 +38,7 @@ public class ParserFactoryImpl implements ParserFactory {
         } else {
             reader = FileUtils.getUncompressedBufferedReader(is, characterEncoding);
         }
-        return new LabeledCSVParser(new CSVParser(reader));
+        return CSVUtil.createLabeledCSVParser(reader);
 
     }
 

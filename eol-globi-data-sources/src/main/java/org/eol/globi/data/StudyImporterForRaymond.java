@@ -1,6 +1,5 @@
 package org.eol.globi.data;
 
-import com.Ostermiller.util.CSVParser;
 import com.Ostermiller.util.LabeledCSVParser;
 import com.Ostermiller.util.MD5;
 import com.vividsolutions.jts.geom.Coordinate;
@@ -18,6 +17,7 @@ import org.eol.globi.domain.Location;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.geo.GeoUtil;
+import org.eol.globi.util.CSVUtil;
 import org.eol.globi.util.HttpUtil;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
@@ -133,7 +133,7 @@ public class StudyImporterForRaymond extends BaseStudyImporter {
         LabeledCSVParser dietParser;
         streamToFile(dietFile, zis);
         Reader reader = FileUtils.getUncompressedBufferedReader(new FileInputStream(dietFile), "UTF-8");
-        dietParser = new LabeledCSVParser(new CSVParser(reader));
+        dietParser = CSVUtil.createLabeledCSVParser(reader);
         return dietParser;
     }
 

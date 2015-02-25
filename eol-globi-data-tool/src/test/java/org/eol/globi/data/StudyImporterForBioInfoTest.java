@@ -1,6 +1,5 @@
 package org.eol.globi.data;
 
-import com.Ostermiller.util.CSVParser;
 import com.Ostermiller.util.LabeledCSVParser;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.PropertyAndValueDictionary;
@@ -9,6 +8,7 @@ import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonomyProvider;
+import org.eol.globi.util.CSVUtil;
 import org.junit.Test;
 import org.neo4j.cypher.javacompat.ExecutionEngine;
 import org.neo4j.cypher.javacompat.ExecutionResult;
@@ -120,10 +120,8 @@ public class StudyImporterForBioInfoTest extends GraphDBTestCase {
         assertThat(nodeFactory.findTaxonById(TaxonomyProvider.NBN.getIdPrefix() + "NBNSYS0000024891"), is(notNullValue()));
     }
 
-
     private LabeledCSVParser createParser(String csvString) throws IOException {
-        CSVParser parse = new CSVParser(new StringReader(csvString));
-        return new LabeledCSVParser(parse);
+        return CSVUtil.createLabeledCSVParser(new StringReader(csvString));
     }
 
     @Test

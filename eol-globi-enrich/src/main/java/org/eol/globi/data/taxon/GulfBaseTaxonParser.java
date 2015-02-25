@@ -1,11 +1,11 @@
 package org.eol.globi.data.taxon;
 
-import com.Ostermiller.util.CSVParser;
 import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.data.CharsetConstant;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
+import org.eol.globi.util.CSVUtil;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -15,7 +15,7 @@ import java.util.List;
 public class GulfBaseTaxonParser implements TaxonParser {
     @Override
     public void parse(BufferedReader reader, TaxonImportListener listener) throws IOException {
-        LabeledCSVParser labeledCSVParser = new LabeledCSVParser(new CSVParser(reader));
+        LabeledCSVParser labeledCSVParser = CSVUtil.createLabeledCSVParser(reader);
         listener.start();
         while (labeledCSVParser.getLine() != null) {
             List<String> pathNames = new ArrayList<String>();

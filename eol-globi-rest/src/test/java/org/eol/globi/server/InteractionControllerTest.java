@@ -1,21 +1,19 @@
 package org.eol.globi.server;
 
-import com.Ostermiller.util.CSVParser;
 import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.io.IOUtils;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.eol.globi.util.CSVUtil;
 import org.junit.Test;
 import org.mockito.Mockito;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
-import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
-import static org.junit.matchers.JUnitMatchers.containsString;
 import static org.mockito.Mockito.when;
 
 public class InteractionControllerTest {
@@ -32,7 +30,7 @@ public class InteractionControllerTest {
         when(request.getParameter("type")).thenReturn("csv");
 
         String interactionTypes = new InteractionController().getInteractionTypes(request);
-        LabeledCSVParser parser = new LabeledCSVParser(new CSVParser(IOUtils.toInputStream(interactionTypes)));
+        LabeledCSVParser parser = CSVUtil.createLabeledCSVParser(IOUtils.toInputStream(interactionTypes));
         assertThat(parser.getLabels(), is(new String[] {"interaction", "source", "target"}));
         while(parser.getLine() != null)  {
             assertThat(parser.getValueByLabel("interaction"), is(notNullValue()));

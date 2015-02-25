@@ -1,7 +1,9 @@
 package org.eol.globi.export;
 
-import com.Ostermiller.util.CSVPrinter;
+import com.Ostermiller.util.CSVPrint;
+import com.Ostermiller.util.ExcelCSVPrinter;
 import org.eol.globi.domain.Study;
+import org.eol.globi.util.CSVUtil;
 import org.neo4j.cypher.javacompat.ExecutionEngine;
 import org.neo4j.cypher.javacompat.ExecutionResult;
 
@@ -33,7 +35,7 @@ public class StudyExportUnmatchedTaxaForStudies implements StudyExporter {
             writeHeader(writer);
         }
 
-        CSVPrinter printer = new CSVPrinter(writer);
+        CSVPrint printer = CSVUtil.createCSVPrint(writer);
         List<String> columns = result.columns();
         for (Map<String, Object> map : result) {
             for (String column : columns) {
@@ -50,7 +52,7 @@ public class StudyExportUnmatchedTaxaForStudies implements StudyExporter {
     }
 
     protected void writeHeader(Writer writer) throws IOException {
-        CSVPrinter printer = new CSVPrinter(writer);
+        CSVPrint printer = CSVUtil.createCSVPrint(writer);
         printer.println(new String[]{"original taxon name"
                 , "original taxon external id"
                 , "unmatched normalized taxon name"

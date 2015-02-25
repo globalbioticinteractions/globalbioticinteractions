@@ -1,19 +1,17 @@
 package org.eol.globi.service;
 
 import com.Ostermiller.util.CSVParse;
-import com.Ostermiller.util.CSVParser;
-import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Term;
+import org.eol.globi.util.CSVUtil;
 
 import java.io.IOException;
 import java.io.StringReader;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -45,11 +43,11 @@ public abstract class TermLookupServiceImpl extends BaseHttpClientService implem
         for (URI uri : uriList) {
             try {
                 String response = IOUtils.toString(uri.toURL());
-                CSVParse parser = new CSVParser(new StringReader(response));
+                CSVParse parser = CSVUtil.createCSVParse(new StringReader(response));
                 parser.changeDelimiter(getDelimiter());
 
                 if (hasHeader()) {
-                    parser = new LabeledCSVParser(parser);
+                    parser = CSVUtil.createLabeledCSVParser(parser);
                 }
                 String[] line;
                 while ((line = parser.getLine()) != null) {

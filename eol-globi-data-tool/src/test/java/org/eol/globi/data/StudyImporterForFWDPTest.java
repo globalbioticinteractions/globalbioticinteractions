@@ -1,6 +1,7 @@
 package org.eol.globi.data;
 
-import com.Ostermiller.util.CSVPrinter;
+import com.Ostermiller.util.CSVPrint;
+import com.Ostermiller.util.ExcelCSVPrinter;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -9,6 +10,7 @@ import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.geo.Ecoregion;
 import org.eol.globi.geo.EcoregionFinderException;
+import org.eol.globi.util.CSVUtil;
 import org.joda.time.DateTime;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -44,7 +46,7 @@ public class StudyImporterForFWDPTest extends GraphDBTestCase {
         LOG.info("test import started... importing every 1000th record");
         File tempCsvExport = File.createTempFile("fwdp", ".csv");
         FileOutputStream fos = new FileOutputStream(tempCsvExport);
-        CSVPrinter csvOut = new CSVPrinter(fos);
+        CSVPrint csvOut = CSVUtil.createCSVPrint(fos);
         csvOut.write(new String[]{"predator specimen id (cruise6-PDID-CATNUM)", "predator taxon (pdscinam)", "predator length in mm (PDLEN * 10.0)", "prey taxon (PYNAM)", "year (year)", "month (month)", "ecoRegion (derived from declat;declon)"});
         Study study = studyImporter.importStudy();
         Iterable<Relationship> collected = study.getSpecimens();

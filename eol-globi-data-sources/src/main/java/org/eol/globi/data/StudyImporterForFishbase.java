@@ -1,6 +1,5 @@
 package org.eol.globi.data;
 
-import com.Ostermiller.util.CSVParser;
 import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.lang3.StringUtils;
 import org.codehaus.swizzle.stream.FixedTokenReplacementInputStream;
@@ -8,6 +7,7 @@ import org.codehaus.swizzle.stream.StringTokenHandler;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
+import org.eol.globi.util.CSVUtil;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -50,7 +50,7 @@ public class StudyImporterForFishbase extends BaseStudyImporter {
             }
         });
         Reader reader = FileUtils.getUncompressedBufferedReader(filteredInputStream, CharsetConstant.UTF8);
-        LabeledCSVParser parser = new LabeledCSVParser(new CSVParser(reader));
+        LabeledCSVParser parser = CSVUtil.createLabeledCSVParser(reader);
         parser.changeDelimiter('\t');
         return parser;
     }
