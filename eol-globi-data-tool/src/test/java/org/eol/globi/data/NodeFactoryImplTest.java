@@ -134,7 +134,7 @@ public class NodeFactoryImplTest extends GraphDBTestCase {
         });
         Study study = getNodeFactory().getOrCreateStudy("my title", "my contr", null, null, "some description", null, null);
         assertThat(study.getDOI(), is("doi:1234"));
-        assertThat(study.getExternalId(), is("doi:1234"));
+        assertThat(study.getExternalId(), is("http://dx.doi.org/1234"));
         assertThat(study.getCitation(), is("my citation"));
 
         getNodeFactory().setDoiResolver(new DOIResolver() {
