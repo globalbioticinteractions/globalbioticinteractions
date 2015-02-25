@@ -1,6 +1,7 @@
 package org.eol.globi.util;
 
 import com.Ostermiller.util.CSVParse;
+import com.Ostermiller.util.CSVParser;
 import com.Ostermiller.util.CSVPrint;
 import com.Ostermiller.util.ExcelCSVParser;
 import com.Ostermiller.util.ExcelCSVPrinter;
@@ -31,11 +32,11 @@ public class CSVUtil {
     }
 
     public static LabeledCSVParser createLabeledCSVParser(InputStream inputStream) throws IOException {
-        return new LabeledCSVParser(createCSVParse(inputStream));
+        return new LabeledCSVParser(new CSVParser(inputStream)) ;
     }
 
     public static LabeledCSVParser createLabeledCSVParser(Reader reader) throws IOException {
-        return new LabeledCSVParser(createCSVParse(reader));
+        return new LabeledCSVParser(new CSVParser(reader));
     }
 
     public static LabeledCSVParser createLabeledCSVParser(CSVParse parser) throws IOException {
