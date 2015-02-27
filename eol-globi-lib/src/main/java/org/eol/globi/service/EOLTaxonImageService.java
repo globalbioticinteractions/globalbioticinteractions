@@ -6,7 +6,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -90,7 +89,7 @@ public class EOLTaxonImageService implements ImageSearch {
         HttpGet request = new HttpGet(pageUrlString);
         try {
             response = HttpUtil.getHttpClient().execute(request);
-            responseString = EntityUtils.toString(response.getEntity(), HTTP.UTF_8);
+            responseString = EntityUtils.toString(response.getEntity(), "UTF-8");
             return 200 == response.getStatusLine().getStatusCode() ? parsePageInfo(responseString) : null;
         } finally {
             request.releaseConnection();

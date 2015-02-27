@@ -30,7 +30,7 @@ public class StudyImporterForAkinTest extends GraphDBTestCase {
 
     @Test
     public void importAll() throws StudyImporterException, NodeFactoryException {
-        StudyImporter importer = new StudyImporterFactory(new ParserFactoryImpl(), nodeFactory).instantiateImporter((Class) StudyImporterForAkin.class);
+        StudyImporter importer = new StudyImporterFactory(new ParserFactoryImpl(), nodeFactory).instantiateImporter(StudyImporterForAkin.class);
         importer.importStudy();
 
         assertNotNull(nodeFactory.findTaxonByName("Sciaenops ocellatus"));
