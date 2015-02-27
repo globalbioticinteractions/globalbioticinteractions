@@ -75,7 +75,7 @@ public class StudyImporterForGitHubData extends BaseStudyImporter {
         try {
             String baseUrl = GitHubUtil.getBaseUrlLastCommit(repo);
             String descriptor = baseUrl + "/globi.json";
-            String response = HttpUtil.createHttpClient().execute(new HttpGet(descriptor), new BasicResponseHandler());
+            String response = getContent(descriptor);
             if (StringUtils.isNotBlank(response)) {
                 JsonNode desc = new ObjectMapper().readTree(response);
                 String sourceCitation = desc.has("citation") ? desc.get("citation").asText() : baseUrl;
@@ -103,6 +103,10 @@ public class StudyImporterForGitHubData extends BaseStudyImporter {
         } catch (URISyntaxException e) {
             throw new StudyImporterException("failed to import repo [" + repo + "]", e);
         }
+    }
+
+    private String getContent(String uri) throws IOException {
+        return HttpUtil.getContent(uri);
     }
 
     private void importRepository(String repo, String sourceCitation, String baseUrl) throws IOException, NodeFactoryException, StudyImporterException {

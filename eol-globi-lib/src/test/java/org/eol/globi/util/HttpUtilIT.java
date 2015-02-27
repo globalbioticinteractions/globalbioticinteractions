@@ -9,7 +9,6 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import java.io.Closeable;
 import java.io.IOException;
 
 import static org.hamcrest.Matchers.lessThan;
@@ -26,7 +25,7 @@ public class HttpUtilIT {
 
     @Test
     public void timeoutDefault() throws IOException {
-        HttpClient httpClient = HttpUtil.createHttpClient();
+        HttpClient httpClient = HttpUtil.getHttpClient();
         executeRequest(httpClient);
     }
 
@@ -47,14 +46,13 @@ public class HttpUtilIT {
     protected void assertCaching(String nonCacheableUri) throws IOException {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
-        CloseableHttpClient httpClient = HttpUtil.createHttpClient();
+        HttpClient httpClient = HttpUtil.getHttpClient();
         httpClient.execute(new HttpGet(nonCacheableUri), new BasicResponseHandler());
-        httpClient.close();
         stopWatch.stop();
         long firstDelay = stopWatch.getTime();
         stopWatch.reset();
         stopWatch.start();
-        HttpUtil.createHttpClient().execute(new HttpGet(nonCacheableUri), new BasicResponseHandler());
+        HttpUtil.getHttpClient().execute(new HttpGet(nonCacheableUri), new BasicResponseHandler());
         long secondDelay = stopWatch.getTime();
         stopWatch.stop();
         assertThat("expected second delay [" + secondDelay + "] ms to be at least 10x shorter than first [" + firstDelay + "] ms",

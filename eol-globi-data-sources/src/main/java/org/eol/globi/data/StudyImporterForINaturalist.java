@@ -4,7 +4,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.codehaus.jackson.JsonNode;
@@ -110,37 +109,28 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
 
     private int retrieveDataParseResults() throws StudyImporterException {
         int totalInteractions = 0;
-        CloseableHttpClient httpClient = HttpUtil.createHttpClient();
-        try {
-            int previousResultCount = 0;
-            int pageNumber = 1;
-            int attempt = 0;
-            do {
-                String uri = "http://www.inaturalist.org/observation_field_values.json?type=taxon&page=" + pageNumber + "&per_page=100&license=any&quality_grade=research";
-                HttpGet get = new HttpGet(uri);
-                get.addHeader("accept", "application/json");
-                try {
-                    HttpResponse response = httpClient.execute(get);
-                    if (response.getStatusLine().getStatusCode() != 200) {
-                        throw new StudyImporterException("failed to execute query to [ " + uri + "]: status code [" + response.getStatusLine().getStatusCode() + "]");
-                    }
-                    attempt = 0;
-                    previousResultCount = parseJSON(response.getEntity().getContent());
-                    pageNumber++;
-                    totalInteractions += previousResultCount;
-                } catch (IOException e) {
-                    String msg = "failed to execute query to [ " + uri + "]";
-                    if (attempt < MAX_ATTEMPTS) {
-                        LOG.warn(msg + " retry [" + attempt + "] of [" + MAX_ATTEMPTS + "]", e);
-                    } else {
-                        throw new StudyImporterException(msg, e);
-                    }
+        int previousResultCount = 0;
+        int pageNumber = 1;
+        do {
+            String uri = "http://www.inaturalist.org/observation_field_values.json?type=taxon&page=" + pageNumber + "&per_page=100&license=any&quality_grade=research";
+            HttpGet httpGet = new HttpGet(uri);
+            try {
+                httpGet.addHeader("accept", "application/json");
+                HttpResponse response = HttpUtil.getHttpClient().execute(httpGet);
+                if (response.getStatusLine().getStatusCode() != 200) {
+                    throw new StudyImporterException("failed to execute query to [ " + uri + "]: status code [" + response.getStatusLine().getStatusCode() + "]");
                 }
+                previousResultCount = parseJSON(response.getEntity().getContent());
+                pageNumber++;
+                totalInteractions += previousResultCount;
+            } catch (IOException e) {
+                throw new StudyImporterException("failed to import iNaturalist", e);
+            }
+            finally {
+                httpGet.releaseConnection();
+            }
 
-            } while (previousResultCount > 0);
-        } finally {
-            httpClient.close();
-        }
+        } while (previousResultCount > 0);
         return totalInteractions;
     }
 

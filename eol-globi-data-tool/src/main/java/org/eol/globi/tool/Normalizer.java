@@ -27,6 +27,7 @@ import org.eol.globi.service.DOIResolverImpl;
 import org.eol.globi.service.EcoregionFinderProxy;
 import org.eol.globi.service.PropertyEnricherException;
 import org.eol.globi.service.PropertyEnricherFactory;
+import org.eol.globi.util.HttpUtil;
 import org.neo4j.graphdb.GraphDatabaseService;
 
 import java.io.File;
@@ -74,34 +75,38 @@ public class Normalizer {
 
     public void run(CommandLine cmdLine) throws StudyImporterException {
         final GraphDatabaseService graphService = GraphService.getGraphService("./");
+        try {
 
-        if (cmdLine == null || !cmdLine.hasOption(OPTION_SKIP_IMPORT)) {
-            Collection<Class<? extends StudyImporter>> importers = StudyImporterFactory.getOpenImporters();
-            if (shouldUseDarkData(cmdLine)) {
-                LOG.info("adding dark importers...");
-                ArrayList<Class<? extends StudyImporter>> list = new ArrayList<Class<? extends StudyImporter>>();
-                list.addAll(importers);
-                list.addAll(StudyImporterFactory.getDarkImporters());
-                importers = Collections.unmodifiableList(list);
+            if (cmdLine == null || !cmdLine.hasOption(OPTION_SKIP_IMPORT)) {
+                Collection<Class<? extends StudyImporter>> importers = StudyImporterFactory.getOpenImporters();
+                if (shouldUseDarkData(cmdLine)) {
+                    LOG.info("adding dark importers...");
+                    ArrayList<Class<? extends StudyImporter>> list = new ArrayList<Class<? extends StudyImporter>>();
+                    list.addAll(importers);
+                    list.addAll(StudyImporterFactory.getDarkImporters());
+                    importers = Collections.unmodifiableList(list);
+                }
+                importData(graphService, importers);
+            } else {
+                LOG.info("skipping data import...");
             }
-            importData(graphService, importers);
-        } else {
-            LOG.info("skipping data import...");
+
+            if (cmdLine == null || !cmdLine.hasOption(OPTION_SKIP_LINK)) {
+                linkTaxa(graphService);
+            } else {
+                LOG.info("skipping taxa linking ...");
+            }
+
+            if (cmdLine == null || !cmdLine.hasOption(OPTION_SKIP_EXPORT)) {
+                exportData(graphService, "./");
+            } else {
+                LOG.info("skipping data export...");
+            }
+        } finally {
+            graphService.shutdown();
+            HttpUtil.shutdown();
         }
 
-        if (cmdLine == null || !cmdLine.hasOption(OPTION_SKIP_LINK)) {
-            linkTaxa(graphService);
-        } else {
-            LOG.info("skipping taxa linking ...");
-        }
-
-        if (cmdLine == null || !cmdLine.hasOption(OPTION_SKIP_EXPORT)) {
-            exportData(graphService, "./");
-        } else {
-            LOG.info("skipping data export...");
-        }
-
-        graphService.shutdown();
     }
 
     protected boolean shouldUseDarkData(CommandLine cmdLine) {

@@ -14,9 +14,7 @@ import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.util.HttpUtil;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.StringWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -35,13 +33,13 @@ public class DOIResolverImpl implements DOIResolver {
         post.setEntity(entity);
 
         BasicResponseHandler handler = new BasicResponseHandler();
-        String response = HttpUtil.createHttpClient().execute(post, handler);
+        String response = HttpUtil.getHttpClient().execute(post, handler);
         JsonNode jsonNode = mapper.readTree(response);
         JsonNode results = jsonNode.get("results");
         String doi = null;
-        if (jsonNode.get("query_ok").getValueAsBoolean()) {
+        if (jsonNode.get("query_ok").asBoolean()) {
             for (JsonNode result : results) {
-                if (result.get("match").getValueAsBoolean()) {
+                if (result.get("match").asBoolean()) {
                     doi = result.get("doi").getTextValue();
                 }
             }
@@ -77,7 +75,7 @@ public class DOIResolverImpl implements DOIResolver {
                 HttpGet request = new HttpGet(uri);
                 request.setHeader("Accept", "text/x-bibliography; style=council-of-science-editors; charset=UTF-8");
                 request.setHeader("Accept-Charset", "UTF-8");
-                HttpResponse response = HttpUtil.createHttpClient().execute(request);
+                HttpResponse response = HttpUtil.getHttpClient().execute(request);
                 if (response.getStatusLine().getStatusCode() == 200) {
                     citation = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
                 } else {

@@ -16,13 +16,12 @@ public class PingControllerIT extends ITBase {
     @Test
     public void ping() throws IOException {
         String uri = getURLPrefix() + "ping";
-        String response = HttpUtil.httpGet(uri);
-        assertThat(response, is(not(nullValue())));
+        assertThat(HttpUtil.getRemoteJson(uri), is(not(nullValue())));
     }
 
     @Test
     public void head() throws IOException {
-        HttpUtil.createHttpClient().execute(new HttpHead("http://localhost:8080/taxon/Homo%20sapiens/preysOn"));
+        HttpUtil.getHttpClient().execute(new HttpHead("http://localhost:8080/taxon/Homo%20sapiens/preysOn"));
     }
 
 }

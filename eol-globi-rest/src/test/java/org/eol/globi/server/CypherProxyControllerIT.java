@@ -13,8 +13,7 @@ public class CypherProxyControllerIT extends ITBase {
     @Test
     public void findExternalUrl() throws IOException {
         String uri = getURLPrefix() + "findExternalUrlForTaxon/Homo%20sapiens";
-        String response = HttpUtil.httpGet(uri);
-        assertThat(response, containsString("url"));
+        assertThat(HttpUtil.getRemoteJson(uri), containsString("url"));
     }
 
 

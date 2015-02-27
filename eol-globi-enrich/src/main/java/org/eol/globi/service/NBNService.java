@@ -10,6 +10,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.data.CharsetConstant;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.TaxonomyProvider;
+import org.eol.globi.util.HttpUtil;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -39,15 +40,13 @@ public class NBNService extends BaseHttpClientService implements PropertyEnriche
 
         try {
             String nbnId = StringUtils.replace(externalId, TaxonomyProvider.NBN.getIdPrefix(), "");
-            String uri = "https://data.nbn.org.uk/api/taxa/" + nbnId + "/taxonomy";
-            String response = getHttpClient().execute(new HttpGet(uri), new BasicResponseHandler());
+            String response = HttpUtil.getContent("https://data.nbn.org.uk/api/taxa/" + nbnId + "/taxonomy");
             JsonNode taxa = new ObjectMapper().readTree(response);
             for (JsonNode jsonNode : taxa) {
                 addTaxonNode(enriched, ids, names, ranks, jsonNode);
             }
 
-            uri = "https://data.nbn.org.uk/api/taxa/" + nbnId;
-            response = getHttpClient().execute(new HttpGet(uri), new BasicResponseHandler());
+            response = HttpUtil.getContent("https://data.nbn.org.uk/api/taxa/" + nbnId);
             if (StringUtils.isNotBlank(response)) {
                 JsonNode jsonNode = new ObjectMapper().readTree(response);
                 addTaxonNode(enriched, ids, names, ranks, jsonNode);

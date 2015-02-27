@@ -313,7 +313,7 @@ public class GeoNamesServiceImpl implements GeoNamesService {
 
     public LatLng getCentroid(Long id) throws IOException {
         LatLng point = null;
-        String jsonString = HttpUtil.createHttpClient().execute(new HttpGet("http://api.geonames.org/getJSON?formatted=true&geonameId=" + id + "&username=globi&style=full"), new BasicResponseHandler());
+        String jsonString = HttpUtil.getRemoteJson("http://api.geonames.org/getJSON?formatted=true&geonameId=" + id + "&username=globi&style=full");
         ObjectMapper mapper = new ObjectMapper();
         JsonNode node = mapper.readTree(jsonString);
         if (node.has("lat") && node.has("lng")) {

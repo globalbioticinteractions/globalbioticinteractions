@@ -84,83 +84,93 @@ public class EOLTaxonImageService extends BaseHttpClientService implements Image
 
     private PageInfo getPageInfo(String eolPageId) throws IOException {
         HttpResponse response;
-        PageInfo pageInfo = new PageInfo();
+
         String responseString;
         String pageUrlString = "http://eol.org/api/pages/1.0/" + eolPageId + ".json?images=1&videos=0&sounds=0&maps=0&text=0&iucn=false&subjects=overview&licenses=all&details=true&common_names=true&references=false&vetted=0&cache_ttl=";
 
-        response = getHttpClient().execute(new HttpGet(pageUrlString));
-        responseString = EntityUtils.toString(response.getEntity(), HTTP.UTF_8);
-        if (200 == response.getStatusLine().getStatusCode()) {
-            ObjectMapper mapper = new ObjectMapper();
-            JsonNode array = mapper.readTree(responseString);
-            JsonNode dataObjects = array.findValue("dataObjects");
-            for (JsonNode dataObject : dataObjects) {
-                String dataType = dataObject.has("dataType") ? dataObject.get("dataType").asText() : "";
-                if ("http://purl.org/dc/dcmitype/StillImage".equals(dataType)) {
-                    if (dataObject.has("eolMediaURL")) {
-                        pageInfo.setImageURL(dataObject.get("eolMediaURL").asText());
-                    }
-                    if (dataObject.has("eolThumbnailURL")) {
-                        pageInfo.setThumbnailURL(dataObject.get("eolThumbnailURL").asText());
-                    }
+        HttpGet request = new HttpGet(pageUrlString);
+        try {
+            response = HttpUtil.getHttpClient().execute(request);
+            responseString = EntityUtils.toString(response.getEntity(), HTTP.UTF_8);
+            return 200 == response.getStatusLine().getStatusCode() ? parsePageInfo(responseString) : null;
+        } finally {
+            request.releaseConnection();
+        }
+    }
 
-                    break;
+    private PageInfo parsePageInfo(String responseString) throws IOException {
+        PageInfo pageInfo = new PageInfo();
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode array = mapper.readTree(responseString);
+        JsonNode dataObjects = array.findValue("dataObjects");
+        for (JsonNode dataObject : dataObjects) {
+            String dataType = dataObject.has("dataType") ? dataObject.get("dataType").asText() : "";
+            if ("http://purl.org/dc/dcmitype/StillImage".equals(dataType)) {
+                if (dataObject.has("eolMediaURL")) {
+                    pageInfo.setImageURL(dataObject.get("eolMediaURL").asText());
                 }
-            }
-
-            JsonNode commonNames = array.findValue("vernacularNames");
-            if (commonNames != null && commonNames.size() > 0) {
-                for (int i = 0; i < commonNames.size(); i++) {
-                    JsonNode commonNameNode = commonNames.get(i);
-                    if (commonNameNode.has("eol_preferred") && commonNameNode.has("language")) {
-                        String language = commonNameNode.get("language").getTextValue();
-                        if ("en".equals(language) && commonNameNode.has("vernacularName")) {
-                            String vernacularName = commonNameNode.get("vernacularName").getTextValue();
-                            String commonName = vernacularName.replaceAll("\\(.*\\)", "");
-                            String capitalize = WordUtils.capitalize(commonName);
-
-                            pageInfo.setCommonName(capitalize.replaceAll("\\sAnd\\s", " and "));
-                            break;
-                        }
-                    }
+                if (dataObject.has("eolThumbnailURL")) {
+                    pageInfo.setThumbnailURL(dataObject.get("eolThumbnailURL").asText());
                 }
-            }
 
-            JsonNode taxonConceptsNode = array.findValue("taxonConcepts");
-            if (taxonConceptsNode != null && taxonConceptsNode.size() > 0) {
-                for (int i = 0; i < taxonConceptsNode.size(); i++) {
-                    JsonNode taxonConcept = taxonConceptsNode.get(i);
-                    if (taxonConcept.has("canonicalForm")) {
-                        pageInfo.setScientificName(taxonConcept.get("canonicalForm").getTextValue());
+                break;
+            }
+        }
+
+        JsonNode commonNames = array.findValue("vernacularNames");
+        if (commonNames != null && commonNames.size() > 0) {
+            for (int i = 0; i < commonNames.size(); i++) {
+                JsonNode commonNameNode = commonNames.get(i);
+                if (commonNameNode.has("eol_preferred") && commonNameNode.has("language")) {
+                    String language = commonNameNode.get("language").getTextValue();
+                    if ("en".equals(language) && commonNameNode.has("vernacularName")) {
+                        String vernacularName = commonNameNode.get("vernacularName").getTextValue();
+                        String commonName = vernacularName.replaceAll("\\(.*\\)", "");
+                        String capitalize = WordUtils.capitalize(commonName);
+
+                        pageInfo.setCommonName(capitalize.replaceAll("\\sAnd\\s", " and "));
                         break;
                     }
                 }
             }
+        }
 
+        JsonNode taxonConceptsNode = array.findValue("taxonConcepts");
+        if (taxonConceptsNode != null && taxonConceptsNode.size() > 0) {
+            for (int i = 0; i < taxonConceptsNode.size(); i++) {
+                JsonNode taxonConcept = taxonConceptsNode.get(i);
+                if (taxonConcept.has("canonicalForm")) {
+                    pageInfo.setScientificName(taxonConcept.get("canonicalForm").getTextValue());
+                    break;
+                }
+            }
         }
         return pageInfo;
     }
 
+
     private String lookupEOLPageId(String taxonId, String eolPageId, String eolProviderId) throws IOException {
         String urlString = "http://eol.org/api/search_by_provider/1.0/" + taxonId + ".json?hierarchy_id=" + eolProviderId + "&cache_ttl=3600";
         HttpGet get = new HttpGet(urlString);
-        HttpResponse response = getHttpClient().execute(get);
-
-        String responseString = EntityUtils.toString(response.getEntity());
-
-        if (200 == response.getStatusLine().getStatusCode()) {
-            ObjectMapper mapper = new ObjectMapper();
-            JsonNode jsonNode = mapper.readTree(responseString);
-            if (jsonNode.isArray()) {
-                ArrayNode arrayNode = (ArrayNode) jsonNode;
-                if (arrayNode.size() > 0) {
-                    JsonNode firstNode = arrayNode.get(0);
-                    JsonNode eol_page_id = firstNode.get("eol_page_id");
-                    eolPageId = eol_page_id.asText();
+        try {
+            HttpResponse response = HttpUtil.getHttpClient().execute(get);
+            String responseString = EntityUtils.toString(response.getEntity());
+            if (200 == response.getStatusLine().getStatusCode()) {
+                ObjectMapper mapper = new ObjectMapper();
+                JsonNode jsonNode = mapper.readTree(responseString);
+                if (jsonNode.isArray()) {
+                    ArrayNode arrayNode = (ArrayNode) jsonNode;
+                    if (arrayNode.size() > 0) {
+                        JsonNode firstNode = arrayNode.get(0);
+                        JsonNode eol_page_id = firstNode.get("eol_page_id");
+                        eolPageId = eol_page_id.asText();
+                    }
                 }
             }
+            return eolPageId;
+        } finally {
+            get.releaseConnection();
         }
-        return eolPageId;
     }
 
     private class PageInfo {

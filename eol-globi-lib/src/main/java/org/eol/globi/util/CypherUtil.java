@@ -18,7 +18,7 @@ public class CypherUtil {
         HttpUtil.addJsonHeaders(httpPost);
         httpPost.setEntity(new StringEntity(wrapQuery(query)));
         BasicResponseHandler responseHandler = new BasicResponseHandler();
-        return HttpUtil.createHttpClient().execute(httpPost, responseHandler);
+        return HttpUtil.getHttpClient().execute(httpPost, responseHandler);
     }
 
     private static String wrapQuery(CypherQuery cypherQuery) {

@@ -17,15 +17,17 @@ import java.util.List;
 
 public class GitHubUtil {
     protected static String httpGet(String path, String query) throws URISyntaxException, IOException {
-        URI uri = new URI("https", null, "api.github.com", 443, path, query, null);
-        return HttpUtil.createHttpClient().execute(
-                new HttpGet(uri)
-                , new BasicResponseHandler());
+        return HttpUtil.getContent(new URI("https", null, "api.github.com", 443, path, query, null));
     }
 
     protected static boolean hasInteractionData(String repoName) throws IOException {
-        HttpResponse execute = HttpUtil.createHttpClient().execute(new HttpHead("https://raw.githubusercontent.com/" + repoName + "/master/globi.json"));
-        return execute.getStatusLine().getStatusCode() == 200;
+        HttpHead request = new HttpHead("https://raw.githubusercontent.com/" + repoName + "/master/globi.json");
+        try {
+            HttpResponse execute = HttpUtil.getHttpClient().execute(request);
+            return execute.getStatusLine().getStatusCode() == 200;
+        } finally {
+            request.releaseConnection();
+        }
     }
 
     public static List<String> find() throws URISyntaxException, IOException {

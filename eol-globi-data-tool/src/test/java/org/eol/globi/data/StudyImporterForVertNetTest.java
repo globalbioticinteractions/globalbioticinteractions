@@ -61,7 +61,7 @@ public class StudyImporterForVertNetTest extends GraphDBTestCase {
         while (StringUtils.isBlank(cursor) || !StringUtils.equals(cursor, oldCursor)) {
             List<String> stomachStrings = new ArrayList<String>();
             String uri = createRequestURL(cursor);
-            HttpResponse resp = HttpUtil.createHttpClient().execute(new HttpGet(uri));
+            HttpResponse resp = HttpUtil.getHttpClient().execute(new HttpGet(uri));
 
             if (200 == resp.getStatusLine().getStatusCode()) {
                 String jsonString = IOUtils.toString(resp.getEntity().getContent());

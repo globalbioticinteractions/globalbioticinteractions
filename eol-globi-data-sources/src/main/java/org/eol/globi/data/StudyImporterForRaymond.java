@@ -74,10 +74,15 @@ public class StudyImporterForRaymond extends BaseStudyImporter {
         for (int attemptCount = 1; !isDone && attemptCount <= MAX_ATTEMPT; attemptCount++) {
             try {
                 LOG.info("[" + resourceUrl + "] downloading (attempt " + attemptCount + ")...");
-                HttpResponse response = HttpUtil.createHttpClient().execute(new HttpGet(resourceUrl));
-                if (response.getStatusLine().getStatusCode() == 200) {
-                    importData(response);
-                    isDone = true;
+                HttpGet request = new HttpGet(resourceUrl);
+                try {
+                    HttpResponse response = HttpUtil.getHttpClient().execute(request);
+                    if (response.getStatusLine().getStatusCode() == 200) {
+                        importData(response);
+                        isDone = true;
+                    }
+                } finally {
+                    request.releaseConnection();
                 }
                 LOG.info("[" + resourceUrl + "] downloaded and imported.");
             } catch (IOException e) {

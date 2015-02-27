@@ -136,7 +136,7 @@ public class EOLService extends BaseHttpClientService implements PropertyEnriche
         ObjectMapper mapper = new ObjectMapper();
         JsonNode node = mapper.readTree(response);
         if (node.has("identifier")) {
-            Long resolvedPageId = node.get("identifier").getValueAsLong();
+            Long resolvedPageId = node.get("identifier").asLong();
             addExternalId(properties, resolvedPageId);
         }
         JsonNode taxonConcepts = node.get("taxonConcepts");

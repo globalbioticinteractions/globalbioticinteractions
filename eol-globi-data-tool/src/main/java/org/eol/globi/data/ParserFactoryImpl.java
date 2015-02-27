@@ -44,13 +44,18 @@ public class ParserFactoryImpl implements ParserFactory {
 
     protected InputStream getCachedRemoteInputStream(String studyResource) throws IOException {
         URI resourceURI = URI.create(studyResource);
-        HttpResponse response = HttpUtil.createHttpClient().execute(new HttpGet(resourceURI));
-        StatusLine statusLine = response.getStatusLine();
-        if (statusLine.getStatusCode() >= 300) {
-            throw new HttpResponseException(statusLine.getStatusCode(),
-                    statusLine.getReasonPhrase());
+        HttpGet request = new HttpGet(resourceURI);
+        try {
+            HttpResponse response = HttpUtil.getHttpClient().execute(request);
+            StatusLine statusLine = response.getStatusLine();
+            if (statusLine.getStatusCode() >= 300) {
+                throw new HttpResponseException(statusLine.getStatusCode(),
+                        statusLine.getReasonPhrase());
+            }
+            return openCachedStream(response);
+        } finally {
+            request.releaseConnection();
         }
-        return openCachedStream(response);
     }
 
     private InputStream openCachedStream(HttpResponse response) throws IOException {

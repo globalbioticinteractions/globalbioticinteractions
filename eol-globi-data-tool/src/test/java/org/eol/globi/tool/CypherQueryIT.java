@@ -118,6 +118,6 @@ public class CypherQueryIT {
         post.setHeader("Accept", "application/json");
         post.setEntity(new StringEntity(queryJson));
 
-        return HttpUtil.createHttpClient().execute(post, new BasicResponseHandler());
+        return HttpUtil.getHttpClient().execute(post, new BasicResponseHandler());
     }
 }

@@ -45,26 +45,31 @@ public class CMECSService implements TermLookupService {
         LOG.info(CMECSService.class.getSimpleName() + " instantiating...");
         String uri = "http://cmecscatalog.org/docs/cmecs4.accdb";
         LOG.info("CMECS data [" + uri + "] downloading ...");
-        HttpResponse execute = HttpUtil.createHttpClient().execute(new HttpGet(uri));
-        File cmecs = File.createTempFile("cmecs", "accdb");
-        cmecs.deleteOnExit();
-        IOUtils.copy(execute.getEntity().getContent(), new FileOutputStream(cmecs));
-        LOG.info("CMECS data [" + uri + "] downloaded.");
+        HttpGet get = new HttpGet(uri);
+        try {
+            HttpResponse execute = HttpUtil.getHttpClient().execute(get);
+            File cmecs = File.createTempFile("cmecs", "accdb");
+            cmecs.deleteOnExit();
+            IOUtils.copy(execute.getEntity().getContent(), new FileOutputStream(cmecs));
+            LOG.info("CMECS data [" + uri + "] downloaded.");
 
-        Database db = Database.open(new File(cmecs.toURI()), true);
+            Database db = Database.open(new File(cmecs.toURI()), true);
 
-        Map<String, Term> aquaticSettingsTerms = new HashMap<String, Term>();
+            Map<String, Term> aquaticSettingsTerms = new HashMap<String, Term>();
 
-        Table table = db.getTable("Aquatic Setting");
-        Map<String, Object> row;
-        while ((row = table.getNextRow()) != null) {
-            Integer id = (Integer) row.get("AquaticSetting_Id");
-            String name = (String) row.get("AquaticSettingName");
-            String termId = TaxonomyProvider.ID_CMECS + id;
-            aquaticSettingsTerms.put(name, new Term(termId, name));
+            Table table = db.getTable("Aquatic Setting");
+            Map<String, Object> row;
+            while ((row = table.getNextRow()) != null) {
+                Integer id = (Integer) row.get("AquaticSetting_Id");
+                String name = (String) row.get("AquaticSettingName");
+                String termId = TaxonomyProvider.ID_CMECS + id;
+                aquaticSettingsTerms.put(name, new Term(termId, name));
+            }
+            cmecs.delete();
+            LOG.info(CMECSService.class.getSimpleName() + " instantiated.");
+            return aquaticSettingsTerms;
+        } finally {
+            get.releaseConnection();
         }
-        cmecs.delete();
-        LOG.info(CMECSService.class.getSimpleName() + " instantiated.");
-        return aquaticSettingsTerms;
     }
 }

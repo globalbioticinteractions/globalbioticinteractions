@@ -83,7 +83,7 @@ public class GlobalNamesService extends BaseHttpClientService implements Propert
         for (GlobalNamesSources globalNamesSources : sources) {
             sourceIds.add(Integer.toString(globalNamesSources.getId()));
         }
-        HttpClient httpClient = HttpUtil.createHttpClient();
+        HttpClient httpClient = HttpUtil.getHttpClient();
         URI uri = new URI("http", "resolver.globalnames.org"
                 , "/name_resolvers.json"
                 , "data_source_ids=" + StringUtils.join(sourceIds, "|")
@@ -175,7 +175,7 @@ public class GlobalNamesService extends BaseHttpClientService implements Propert
         if (!StringUtils.startsWith(taxonIdValue, "gn:")) {
             String externalId = provider.getIdPrefix() + taxonIdValue;
             taxon.setExternalId(externalId);
-            Long suppliedId = data.has("supplied_id") ? data.get("supplied_id").getValueAsLong() : null;
+            Long suppliedId = data.has("supplied_id") ? data.get("supplied_id").asLong() : null;
             String suppliedNameString = data.get("supplied_name_string").getTextValue();
 
             if (aResult.has("match_type") && aResult.get("match_type").getIntValue() < 3) {
