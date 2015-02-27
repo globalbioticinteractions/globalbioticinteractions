@@ -2,6 +2,7 @@ package org.eol.globi.util;
 
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.conn.ConnectTimeoutException;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.junit.Test;
 
@@ -10,7 +11,7 @@ import java.net.SocketTimeoutException;
 
 public class HttpUtilIT {
 
-    @Test(expected = SocketTimeoutException.class)
+    @Test(expected = ConnectTimeoutException.class)
     public void timeoutVeryShort() throws IOException {
         HttpClient httpClient = HttpUtil.createHttpClient(1);
         executeRequest(httpClient);
