@@ -64,6 +64,7 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
         put("Gall Inducer", InteractType.INTERACTS_WITH);
         put("Forms gall on", InteractType.INTERACTS_WITH);
         put("Insect Nectar Plant", InteractType.INTERACTS_WITH);
+        put("specified substrate of fungus", InteractType.INTERACTS_WITH);
         put("Insect Host Plant", InteractType.HAS_HOST);
         put("Hunting", InteractType.PREYS_UPON);
         put("Predated by", InteractType.PREYED_UPON_BY);
