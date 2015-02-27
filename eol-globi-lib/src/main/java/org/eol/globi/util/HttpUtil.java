@@ -35,6 +35,7 @@ public class HttpUtil {
         if (httpClient != null) {
             try {
                 httpClient.close();
+                httpClient = null;
             } catch (IOException e) {
                 // ignore
             }
