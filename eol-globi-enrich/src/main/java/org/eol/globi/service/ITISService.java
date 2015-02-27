@@ -6,6 +6,7 @@ import org.apache.http.impl.client.BasicResponseHandler;
 import org.eol.globi.data.CharsetConstant;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.TaxonomyProvider;
+import org.eol.globi.util.HttpUtil;
 
 import java.io.IOException;
 import java.net.URI;
@@ -13,7 +14,7 @@ import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ITISService extends BaseHttpClientService implements PropertyEnricher {
+public class ITISService implements PropertyEnricher {
 
     @Override
     public Map<String, String> enrich(Map<String, String> properties) throws PropertyEnricherException {
@@ -60,11 +61,14 @@ public class ITISService extends BaseHttpClientService implements PropertyEnrich
         BasicResponseHandler responseHandler = new BasicResponseHandler();
         String response;
         try {
-            response = execute(get, responseHandler);
+            response = HttpUtil.executeWithTimer(get, responseHandler);
         } catch (IOException e) {
             throw new PropertyEnricherException("failed to execute query to [ " + uri.toString() + "]", e);
         }
         return response;
     }
 
+    public void shutdown() {
+
+    }
 }

@@ -17,7 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public abstract class TermLookupServiceImpl extends BaseHttpClientService implements TermLookupService {
+public abstract class TermLookupServiceImpl implements TermLookupService {
     private static final Log LOG = LogFactory.getLog(TermLookupServiceImpl.class);
 
     private Map<String, List<Term>> mapping = null;
@@ -77,4 +77,7 @@ public abstract class TermLookupServiceImpl extends BaseHttpClientService implem
 
     protected abstract boolean hasHeader();
 
+    public void shutdown() {
+
+    }
 }

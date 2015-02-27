@@ -29,7 +29,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class GlobalNamesService extends BaseHttpClientService implements PropertyEnricher {
+public class GlobalNamesService implements PropertyEnricher {
     private static final Log LOG = LogFactory.getLog(GlobalNamesService.class);
 
     private final GlobalNamesSources source;
@@ -204,5 +204,9 @@ public class GlobalNamesService extends BaseHttpClientService implements Propert
 
     public GlobalNamesSources getSource() {
         return source;
+    }
+
+    public void shutdown() {
+
     }
 }

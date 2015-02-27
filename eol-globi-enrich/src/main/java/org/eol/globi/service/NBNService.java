@@ -3,8 +3,6 @@ package org.eol.globi.service;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.BasicResponseHandler;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.data.CharsetConstant;
@@ -18,7 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class NBNService extends BaseHttpClientService implements PropertyEnricher {
+public class NBNService implements PropertyEnricher {
 
     private static final Log LOG = LogFactory.getLog(NBNService.class);
 
@@ -54,7 +52,7 @@ public class NBNService extends BaseHttpClientService implements PropertyEnriche
                 LOG.warn("empty response for nbn taxon lookup with id [" + nbnId + "]");
             }
         } catch (IOException e) {
-            shutdown();
+
             throw new PropertyEnricherException("failed to lookup [" + externalId + "]", e);
         }
         enriched.put(PropertyAndValueDictionary.PATH_IDS, toString(ids));
@@ -82,5 +80,9 @@ public class NBNService extends BaseHttpClientService implements PropertyEnriche
 
     protected String toString(List<String> ids) {
         return StringUtils.join(ids, CharsetConstant.SEPARATOR);
+    }
+
+    public void shutdown() {
+
     }
 }

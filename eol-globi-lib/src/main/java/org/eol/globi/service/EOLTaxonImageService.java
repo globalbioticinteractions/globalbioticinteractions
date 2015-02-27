@@ -6,7 +6,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
 import org.codehaus.jackson.JsonNode;
@@ -19,7 +18,7 @@ import org.eol.globi.util.HttpUtil;
 
 import java.io.IOException;
 
-public class EOLTaxonImageService extends BaseHttpClientService implements ImageSearch {
+public class EOLTaxonImageService implements ImageSearch {
     private static final Log LOG = LogFactory.getLog(EOLTaxonImageService.class);
 
     public TaxonImage lookupImageForExternalId(String externalId) throws IOException {
@@ -171,6 +170,10 @@ public class EOLTaxonImageService extends BaseHttpClientService implements Image
         } finally {
             get.releaseConnection();
         }
+    }
+
+    public void shutdown() {
+
     }
 
     private class PageInfo {

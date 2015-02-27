@@ -1,6 +1,10 @@
 package org.eol.globi.util;
 
+import org.apache.commons.lang3.time.StopWatch;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpRequestBase;
@@ -13,6 +17,7 @@ import java.io.IOException;
 import java.net.URI;
 
 public class HttpUtil {
+    private static final Log LOG = LogFactory.getLog(HttpUtil.class);
 
     public static final int FIVE_MINUTES_IN_MS = 5 * 60 * 1000;
     protected static final String APPLICATION_JSON = "application/json;charset=UTF-8";
@@ -75,6 +80,24 @@ public class HttpUtil {
             return HttpUtil.getHttpClient().execute(get, new BasicResponseHandler());
         } finally {
             get.releaseConnection();
+        }
+    }
+
+    public static String executeWithTimer(HttpRequestBase request, ResponseHandler<String> handler) throws IOException {
+        try {
+            HttpClient httpClient = getHttpClient();
+            StopWatch stopwatch = new StopWatch();
+            stopwatch.start();
+            String response = httpClient.execute(request, handler);
+            stopwatch.stop();
+            if (stopwatch.getTime() > 3000) {
+                String responseTime = "slowish http request (took " + stopwatch.getTime() + "ms) for [" + request.getURI().toString() + "]";
+                LOG.warn(responseTime);
+            }
+
+            return response;
+        } finally {
+            request.releaseConnection();
         }
     }
 }

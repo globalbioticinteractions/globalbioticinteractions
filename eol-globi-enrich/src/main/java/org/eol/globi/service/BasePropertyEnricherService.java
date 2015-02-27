@@ -7,7 +7,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-public abstract class BasePropertyEnricherService extends BaseHttpClientService implements PropertyEnricher {
+public abstract class BasePropertyEnricherService implements PropertyEnricher {
 
     protected String lookupPropertyValueByTaxonName(String taxonName, String propertyName) throws PropertyEnricherException {
         String propertyValue = null;
@@ -16,7 +16,7 @@ public abstract class BasePropertyEnricherService extends BaseHttpClientService 
                 try {
                     propertyValue = lookupIdByName(taxonName);
                 } catch (PropertyEnricherException e) {
-                    shutdown();
+
                     throw e;
                 }
             } else if (PropertyAndValueDictionary.PATH.equals(propertyName)) {
@@ -26,7 +26,7 @@ public abstract class BasePropertyEnricherService extends BaseHttpClientService 
                         propertyValue = lookupTaxonPathById(lsId);
                     }
                 } catch (PropertyEnricherException e) {
-                    shutdown();
+
                     throw e;
                 }
 
@@ -52,4 +52,7 @@ public abstract class BasePropertyEnricherService extends BaseHttpClientService 
 
     public abstract String lookupTaxonPathById(String id) throws PropertyEnricherException;
 
+    public void shutdown() {
+
+    }
 }

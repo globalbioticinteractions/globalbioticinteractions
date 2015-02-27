@@ -7,6 +7,7 @@ import org.apache.http.impl.client.BasicResponseHandler;
 import org.eol.globi.data.CharsetConstant;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.TaxonomyProvider;
+import org.eol.globi.util.HttpUtil;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -15,7 +16,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-public class WoRMSService extends BaseHttpClientService implements PropertyEnricher {
+public class WoRMSService implements PropertyEnricher {
     public static final String RESPONSE_PREFIX = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><SOAP-ENV:Envelope SOAP-ENV:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\" xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:SOAP-ENC=\"http://schemas.xmlsoap.org/soap/encoding/\"><SOAP-ENV:Body><ns1:getAphiaIDResponse xmlns:ns1=\"http://tempuri.org/\"><return xsi:type=\"xsd:int\">";
     public static final String RESPONSE_SUFFIX = "</return></ns1:getAphiaIDResponse></SOAP-ENV:Body></SOAP-ENV:Envelope>";
 
@@ -61,7 +62,7 @@ public class WoRMSService extends BaseHttpClientService implements PropertyEnric
         BasicResponseHandler responseHandler = new BasicResponseHandler();
         String response;
         try {
-            response = execute(post, responseHandler);
+            response = HttpUtil.executeWithTimer(post, responseHandler);
         } catch (IOException e) {
             throw new PropertyEnricherException("failed to connect to [" + post.getURI().toString() + "]", e);
         }
@@ -92,8 +93,6 @@ public class WoRMSService extends BaseHttpClientService implements PropertyEnric
 
                 properties.put(PropertyAndValueDictionary.PATH_NAMES, StringUtils.isBlank(value) ? null : StringUtils.lowerCase(value));
             }
-
-
         }
 
         return properties;

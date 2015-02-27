@@ -12,6 +12,7 @@ import org.eol.globi.data.CharsetConstant;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.TaxonomyProvider;
 import org.eol.globi.util.ExternalIdUtil;
+import org.eol.globi.util.HttpUtil;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -23,7 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class EOLService extends BaseHttpClientService implements PropertyEnricher {
+public class EOLService implements PropertyEnricher {
 
     private PropertyEnrichmentFilter filter = new PropertyEnrichmentFilterExternalId();
 
@@ -350,7 +351,7 @@ public class EOLService extends BaseHttpClientService implements PropertyEnriche
         BasicResponseHandler responseHandler = new BasicResponseHandler();
         String response = null;
         try {
-            response = execute(get, responseHandler);
+            response = HttpUtil.executeWithTimer(get, responseHandler);
         } catch (HttpResponseException e) {
             if (e.getStatusCode() != 406 && e.getStatusCode() != 404) {
                 throw new PropertyEnricherException("failed to lookup [" + uri.toString() + "]: http status [" + e.getStatusCode() + "]   ", e);
@@ -382,5 +383,9 @@ public class EOLService extends BaseHttpClientService implements PropertyEnriche
 
     public void setFilter(PropertyEnrichmentFilter filter) {
         this.filter = filter;
+    }
+
+    public void shutdown() {
+
     }
 }

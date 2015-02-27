@@ -10,6 +10,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.data.CharsetConstant;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.TaxonomyProvider;
+import org.eol.globi.util.HttpUtil;
 
 import java.io.IOException;
 import java.net.URI;
@@ -20,7 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class AtlasOfLivingAustraliaService extends BaseHttpClientService implements PropertyEnricher {
+public class AtlasOfLivingAustraliaService implements PropertyEnricher {
 
     public static final String AFD_TSN_PREFIX = "urn:lsid:biodiversity.org.au:afd.taxon:";
 
@@ -180,12 +181,16 @@ public class AtlasOfLivingAustraliaService extends BaseHttpClientService impleme
         BasicResponseHandler responseHandler = new BasicResponseHandler();
         String response;
         try {
-            response = execute(get, responseHandler);
+            response = HttpUtil.executeWithTimer(get, responseHandler);
         } catch (ClientProtocolException e) {
             throw new PropertyEnricherException("failed to lookup [" + uri.toString() + "]", e);
         } catch (IOException e) {
             throw new PropertyEnricherException("failed to lookup [" + uri.toString() + "]", e);
         }
         return response;
+    }
+
+    public void shutdown() {
+
     }
 }

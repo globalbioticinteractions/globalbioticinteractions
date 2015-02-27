@@ -8,13 +8,14 @@ import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.TaxonomyProvider;
+import org.eol.globi.util.HttpUtil;
 
 import java.io.IOException;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 
-public class PropertyEnrichmentFilterExternalId extends BaseHttpClientService implements PropertyEnrichmentFilter {
+public class PropertyEnrichmentFilterExternalId implements PropertyEnrichmentFilter {
     private static final Log LOG = LogFactory.getLog(PropertyEnrichmentFilter.class);
     public static final String EOL_NON_TAXON_PAGES = "http://eol.org/api/collections/1.0/6991.json?per_page=500";
 
@@ -26,7 +27,7 @@ public class PropertyEnrichmentFilterExternalId extends BaseHttpClientService im
         if (exludedEOLIds == null) {
             exludedEOLIds = new HashSet<String>();
             try {
-                String response = execute(new HttpGet(EOL_NON_TAXON_PAGES), new BasicResponseHandler());
+                String response = HttpUtil.executeWithTimer(new HttpGet(EOL_NON_TAXON_PAGES), new BasicResponseHandler());
                 JsonNode jsonNode = new ObjectMapper().readTree(response);
                 JsonNode collectionItems = jsonNode.get("collection_items");
                 for (JsonNode item : collectionItems) {
@@ -52,5 +53,9 @@ public class PropertyEnrichmentFilterExternalId extends BaseHttpClientService im
     protected boolean shouldExcludeExternalId(Map<String, String> props) {
         String externalId = props.get(PropertyAndValueDictionary.EXTERNAL_ID);
         return getExcludedIds().contains(externalId);
+    }
+
+    public void shutdown() {
+
     }
 }
