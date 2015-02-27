@@ -1,6 +1,5 @@
 package org.eol.globi.service;
 
-import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.TaxonomyProvider;
 import org.junit.Test;

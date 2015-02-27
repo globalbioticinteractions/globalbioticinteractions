@@ -1,6 +1,5 @@
 package org.eol.globi.domain;
 
-import org.eol.globi.geo.LatLng;
 import org.eol.globi.util.InteractUtil;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;

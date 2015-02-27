@@ -131,6 +131,7 @@ public class StudyImporterForGoMexSIIT extends GraphDBTestCase {
         boolean detectedAtLeastOneFrequencyOfOccurrence = false;
         boolean detectedAtLeastOneTotalNumberConsumed = false;
         boolean detectedAtLeastOneTotalVolume = false;
+        boolean detectedAtLeastOneGoMexSIProperty = false;
 
         assertThat(taxa, is(notNullValue()));
 
@@ -145,6 +146,8 @@ public class StudyImporterForGoMexSIIT extends GraphDBTestCase {
                 detectedAtLeastOneFrequencyOfOccurrence |= specimenNode.hasProperty(Specimen.FREQUENCY_OF_OCCURRENCE);
                 detectedAtLeastOneTotalNumberConsumed |= specimenNode.hasProperty(Specimen.TOTAL_COUNT);
                 detectedAtLeastOneTotalVolume |= specimenNode.hasProperty(Specimen.TOTAL_VOLUME_IN_ML);
+                detectedAtLeastOneGoMexSIProperty |= specimenNode.hasProperty(StudyImporterForGoMexSI.GOMEXSI_NAMESPACE + "PRED_SCI_NAME");
+                detectedAtLeastOneGoMexSIProperty |= specimenNode.hasProperty(StudyImporterForGoMexSI.GOMEXSI_NAMESPACE + "DATABASE_PREY_NAME");
                 if (specimenNode.hasRelationship(Direction.INCOMING, RelTypes.COLLECTED)) {
                     detectedAtLeastOneLocation = true;
                 }
@@ -159,6 +162,7 @@ public class StudyImporterForGoMexSIIT extends GraphDBTestCase {
         assertThat(detectedAtLeastOneFrequencyOfOccurrence, is(true));
         assertThat(detectedAtLeastOneTotalNumberConsumed, is(true));
         assertThat(detectedAtLeastOneTotalVolume, is(true));
+        assertThat(detectedAtLeastOneGoMexSIProperty, is(true));
     }
 
 

@@ -265,7 +265,7 @@ public class StudyImporterForGoMexSI extends BaseStudyImporter {
                             prey.caughtIn(location);
                             predatorSpecimen.ate(prey);
                         } catch (NodeFactoryException e) {
-                            getLogger().warn(metaStudy, "failed to add prey [" + preyProperties + "] for predator with id + [" + predatorId + "]: [" + predatorProperties + "]: [" +  e.getMessage() + "]");
+                            getLogger().warn(metaStudy, "failed to add prey [" + preyProperties + "] for predator with id + [" + predatorId + "]: [" + predatorProperties + "]: [" + e.getMessage() + "]");
                         }
                     }
                 }
@@ -320,6 +320,13 @@ public class StudyImporterForGoMexSI extends BaseStudyImporter {
         addPhysiologicalState(properties, specimen);
         addBodyPart(properties, specimen);
 
+        // add all original GoMexSI properties for completeness
+        for (Map.Entry<String, String> entry : properties.entrySet()) {
+            if (entry.getKey().startsWith(GOMEXSI_NAMESPACE)) {
+                specimen.getUnderlyingNode().setProperty(entry.getKey(), entry.getValue());
+            }
+        }
+
         return specimen;
     }
 
@@ -365,32 +372,42 @@ public class StudyImporterForGoMexSI extends BaseStudyImporter {
     private void addSpecimen(String datafile, String scientificNameLabel, ParseEventHandler specimenListener) throws StudyImporterException {
         try {
             LabeledCSVParser parser = parserFactory.createParser(datafile, CharsetConstant.UTF8);
-            while (parser.getLine() != null) {
-                Map<String, String> properties = new HashMap<String, String>();
-                addOptionalProperty(parser, "TOT_WO_FD", STOMACH_COUNT_WITHOUT_FOOD, properties);
-                addOptionalProperty(parser, "TOT_W_FD", STOMACH_COUNT_WITH_FOOD, properties);
-                addOptionalProperty(parser, "TOT_PRED_STOM_EXAM", STOMACH_COUNT_TOTAL, properties);
-                addOptionalProperty(parser, "MN_LEN", Specimen.LENGTH_IN_MM, properties);
-                addOptionalProperty(parser, "LIFE_HIST_STAGE", Specimen.LIFE_STAGE_LABEL, properties);
-                addOptionalProperty(parser, "PHYSIOLOG_STATE", Specimen.PHYSIOLOGICAL_STATE_LABEL, properties);
-                addOptionalProperty(parser, "PREY_PARTS", Specimen.BODY_PART_LABEL, properties);
-                addOptionalProperty(parser, "N_CONS", Specimen.TOTAL_COUNT, properties);
-                addOptionalProperty(parser, "VOL_CONS", Specimen.TOTAL_VOLUME_IN_ML, properties);
-                addOptionalProperty(parser, "FREQ_OCC", Specimen.FREQUENCY_OF_OCCURRENCE, properties);
-                properties.put(PropertyAndValueDictionary.NAME, getMandatoryValue(datafile, parser, scientificNameLabel));
-
-                String refId = getMandatoryValue(datafile, parser, "REF_ID");
-                String specimenId = getMandatoryValue(datafile, parser, "PRED_ID");
-                String predatorUID = refId + specimenId;
-
-                specimenListener.onSpecimen(predatorUID, properties);
-            }
+            parseSpecimen(datafile, scientificNameLabel, specimenListener, parser);
         } catch (IOException e) {
             throw new StudyImporterException("failed to open resource [" + datafile + "]", e);
         }
     }
 
-    private void addOptionalProperty(LabeledCSVParser parser, String label, String normalizedName, Map<String, String> properties) {
+    protected static void parseSpecimen(String datafile, String scientificNameLabel, ParseEventHandler specimenListener, LabeledCSVParser parser) throws IOException, StudyImporterException {
+        while (parser.getLine() != null) {
+            Map<String, String> properties = new HashMap<String, String>();
+            addOptionalProperty(parser, "TOT_WO_FD", STOMACH_COUNT_WITHOUT_FOOD, properties);
+            addOptionalProperty(parser, "TOT_W_FD", STOMACH_COUNT_WITH_FOOD, properties);
+            addOptionalProperty(parser, "TOT_PRED_STOM_EXAM", STOMACH_COUNT_TOTAL, properties);
+            addOptionalProperty(parser, "MN_LEN", Specimen.LENGTH_IN_MM, properties);
+            addOptionalProperty(parser, "LIFE_HIST_STAGE", Specimen.LIFE_STAGE_LABEL, properties);
+            addOptionalProperty(parser, "PHYSIOLOG_STATE", Specimen.PHYSIOLOGICAL_STATE_LABEL, properties);
+            addOptionalProperty(parser, "PREY_PARTS", Specimen.BODY_PART_LABEL, properties);
+            addOptionalProperty(parser, "N_CONS", Specimen.TOTAL_COUNT, properties);
+            addOptionalProperty(parser, "VOL_CONS", Specimen.TOTAL_VOLUME_IN_ML, properties);
+            addOptionalProperty(parser, "FREQ_OCC", Specimen.FREQUENCY_OF_OCCURRENCE, properties);
+            properties.put(PropertyAndValueDictionary.NAME, getMandatoryValue(datafile, parser, scientificNameLabel));
+
+            String refId = getMandatoryValue(datafile, parser, "REF_ID");
+            String specimenId = getMandatoryValue(datafile, parser, "PRED_ID");
+            String predatorUID = refId + specimenId;
+
+            // add all original data in GoMexSI namespace
+            String[] labels = parser.getLabels();
+            for (String label : labels) {
+                properties.put(GOMEXSI_NAMESPACE + label, parser.getValueByLabel(label));
+            }
+
+            specimenListener.onSpecimen(predatorUID, properties);
+        }
+    }
+
+    private static void addOptionalProperty(LabeledCSVParser parser, String label, String normalizedName, Map<String, String> properties) {
         String value = parser.getValueByLabel(label);
         value = value == null || "NA".equalsIgnoreCase(value) ? null : value;
         if (value != null) {
@@ -398,7 +415,7 @@ public class StudyImporterForGoMexSI extends BaseStudyImporter {
         }
     }
 
-    private String getMandatoryValue(String datafile, LabeledCSVParser parser, String label) throws StudyImporterException {
+    private static String getMandatoryValue(String datafile, LabeledCSVParser parser, String label) throws StudyImporterException {
         String value = parser.getValueByLabel(label);
         if (value == null) {
             throw new StudyImporterException("missing mandatory column [" + label + "] in [" + datafile + "]:[" + parser.getLastLineNumber() + "]");
