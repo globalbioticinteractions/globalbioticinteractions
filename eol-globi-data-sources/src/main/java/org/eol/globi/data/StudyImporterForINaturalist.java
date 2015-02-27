@@ -84,6 +84,7 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
         add("Target species");
         add("Iconic taxon name");
         add("Tree species");
+        add("associated fern plant, pteridophyte");
         add("Order");
         add("Class");
         add("Phylum");
