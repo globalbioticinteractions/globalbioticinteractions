@@ -1,7 +1,6 @@
 package org.eol.globi.server;
 
 import org.apache.http.client.methods.HttpHead;
-import org.eol.globi.util.HttpClient;
 import org.eol.globi.util.HttpUtil;
 import org.junit.Test;
 
@@ -17,7 +16,7 @@ public class PingControllerIT extends ITBase {
     @Test
     public void ping() throws IOException {
         String uri = getURLPrefix() + "ping";
-        String response = HttpClient.httpGet(uri);
+        String response = HttpUtil.httpGet(uri);
         assertThat(response, is(not(nullValue())));
     }
 

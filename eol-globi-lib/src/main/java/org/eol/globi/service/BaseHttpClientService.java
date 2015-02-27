@@ -6,6 +6,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.eol.globi.util.HttpUtil;
 
 import java.io.IOException;
@@ -14,7 +15,7 @@ public abstract class BaseHttpClientService {
 
     private static final Log LOG = LogFactory.getLog(BaseHttpClientService.class);
 
-    private HttpClient httpClient;
+    private CloseableHttpClient httpClient;
 
     public BaseHttpClientService() {
         this.httpClient = HttpUtil.createHttpClient();
@@ -22,8 +23,13 @@ public abstract class BaseHttpClientService {
 
     public void shutdown() {
         if (this.httpClient != null) {
-            this.httpClient.getConnectionManager().shutdown();
-            this.httpClient = null;
+            try {
+                this.httpClient.close();
+            } catch (IOException ex) {
+                // ignore
+            } finally {
+                this.httpClient = null;
+            }
         }
     }
 

@@ -15,7 +15,7 @@ public class CypherUtil {
 
     public static String executeCypherQuery(CypherQuery query) throws IOException {
         HttpPost httpPost = new HttpPost("http://api.globalbioticinteractions.org:7474/db/data/cypher");
-        HttpClient.addJsonHeaders(httpPost);
+        HttpUtil.addJsonHeaders(httpPost);
         httpPost.setEntity(new StringEntity(wrapQuery(query)));
         BasicResponseHandler responseHandler = new BasicResponseHandler();
         return HttpUtil.createHttpClient().execute(httpPost, responseHandler);

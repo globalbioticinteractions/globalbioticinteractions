@@ -6,6 +6,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.domain.InteractType;
@@ -109,7 +110,7 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
 
     private int retrieveDataParseResults() throws StudyImporterException {
         int totalInteractions = 0;
-        HttpClient defaultHttpClient = HttpUtil.createHttpClient();
+        CloseableHttpClient httpClient = HttpUtil.createHttpClient();
         try {
             int previousResultCount = 0;
             int pageNumber = 1;
@@ -119,7 +120,7 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
                 HttpGet get = new HttpGet(uri);
                 get.addHeader("accept", "application/json");
                 try {
-                    HttpResponse response = defaultHttpClient.execute(get);
+                    HttpResponse response = httpClient.execute(get);
                     if (response.getStatusLine().getStatusCode() != 200) {
                         throw new StudyImporterException("failed to execute query to [ " + uri + "]: status code [" + response.getStatusLine().getStatusCode() + "]");
                     }
@@ -138,7 +139,7 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
 
             } while (previousResultCount > 0);
         } finally {
-            defaultHttpClient.getConnectionManager().shutdown();
+            httpClient.close();
         }
         return totalInteractions;
     }
