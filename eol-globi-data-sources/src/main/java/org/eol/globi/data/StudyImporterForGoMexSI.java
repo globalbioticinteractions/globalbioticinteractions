@@ -321,11 +321,17 @@ public class StudyImporterForGoMexSI extends BaseStudyImporter {
         addBodyPart(properties, specimen);
 
         // add all original GoMexSI properties for completeness
+        Transaction tx = specimen.getUnderlyingNode().getGraphDatabase().beginTx();
+        try {
         for (Map.Entry<String, String> entry : properties.entrySet()) {
             if (entry.getKey().startsWith(GOMEXSI_NAMESPACE)) {
                 specimen.getUnderlyingNode().setProperty(entry.getKey(), entry.getValue());
             }
+            tx.success();
+        } } finally {
+            tx.finish();
         }
+
 
         return specimen;
     }
