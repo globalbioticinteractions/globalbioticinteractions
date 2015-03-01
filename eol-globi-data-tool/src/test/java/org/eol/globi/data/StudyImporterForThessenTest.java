@@ -15,6 +15,7 @@ import java.util.Set;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
+import static org.junit.matchers.JUnitMatchers.containsString;
 
 public class StudyImporterForThessenTest extends GraphDBTestCase {
 
@@ -28,6 +29,7 @@ public class StudyImporterForThessenTest extends GraphDBTestCase {
             }
         });
         Study study = importer.importStudy();
+        assertThat(study.getExternalId(), containsString("github"));
         Iterable<Relationship> specimens = study.getSpecimens();
         int specimenCount = 0;
         Set<String> taxonIds = new HashSet<String>();
