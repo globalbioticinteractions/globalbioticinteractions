@@ -31,11 +31,12 @@ public class InteractionControllerTest {
 
         String interactionTypes = new InteractionController().getInteractionTypes(request);
         LabeledCSVParser parser = CSVUtil.createLabeledCSVParser(IOUtils.toInputStream(interactionTypes));
-        assertThat(parser.getLabels(), is(new String[] {"interaction", "source", "target"}));
+        assertThat(parser.getLabels(), is(new String[] {"interaction", "source", "target", "termIRI"}));
         while(parser.getLine() != null)  {
             assertThat(parser.getValueByLabel("interaction"), is(notNullValue()));
             assertThat(parser.getValueByLabel("source"), is(notNullValue()));
             assertThat(parser.getValueByLabel("target"), is(notNullValue()));
+            assertThat(parser.getValueByLabel("termIRI"), is(notNullValue()));
         }
     }
 
@@ -47,6 +48,7 @@ public class InteractionControllerTest {
         for (JsonNode interactionType : jsonNode) {
             assertThat(interactionType.has("source"), is(true));
             assertThat(interactionType.has("target"), is(true));
+            assertThat(interactionType.has("termIRI"), is(true));
         }
         assertThat(jsonNode.has(CypherQueryBuilder.INTERACTION_HAS_PARASITE), is(true));
         assertThat(jsonNode.has(CypherQueryBuilder.INTERACTION_PARASITE_OF), is(true));
