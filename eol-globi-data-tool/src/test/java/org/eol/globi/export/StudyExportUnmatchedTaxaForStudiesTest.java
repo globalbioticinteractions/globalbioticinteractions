@@ -55,7 +55,7 @@ public class StudyExportUnmatchedTaxaForStudiesTest extends GraphDBTestCase {
         };
         NodeFactory factory = factory(taxonEnricher);
         String title = "my study\"";
-        Study study = factory.getOrCreateStudy(title, "my first source", null);
+        Study study = factory.getOrCreateStudy2(title, "my first source", null);
 
         factory.getOrCreateTaxon("Homo sapiens");
         Specimen predatorSpecimen = factory.createSpecimen(study, "Homo sapiens");
@@ -75,7 +75,7 @@ public class StudyExportUnmatchedTaxaForStudiesTest extends GraphDBTestCase {
         Specimen preySpecimen3 = nodeFactory.createSpecimen(study, "Canis lupus");
         predatorSpecimen22.interactsWith(preySpecimen3, InteractType.ATE);
 
-        Study study2 = factory.getOrCreateStudy("my study2", "my source2", null);
+        Study study2 = factory.getOrCreateStudy2("my study2", "my source2", null);
         Specimen predatorSpecimen21 = factory.createSpecimen(study2, "Homo sapiens2");
         Specimen preySpecimen2 = nodeFactory.createSpecimen(study2, "Canis lupus");
         predatorSpecimen21.interactsWith(preySpecimen2, InteractType.ATE);
@@ -112,7 +112,7 @@ public class StudyExportUnmatchedTaxaForStudiesTest extends GraphDBTestCase {
             }
         };
         NodeFactory factory = factory(taxonEnricher);
-        Study study = factory.getOrCreateStudy("my study", "my first source", null);
+        Study study = factory.getOrCreateStudy2("my study", "my first source", null);
 
         Specimen predatorSpecimen = factory.createSpecimen(study, "Homo sapienz");
         assertNotNull(factory.getOrCreateTaxon("Homo sapienz"));

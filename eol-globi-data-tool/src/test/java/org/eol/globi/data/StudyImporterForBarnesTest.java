@@ -98,7 +98,7 @@ public class StudyImporterForBarnesTest extends GraphDBTestCase {
         for (Study study : studies) {
             assertThat(study.getTitle(), is(notNullValue()));
             assertThat(study.getSource(), is(notNullValue()));
-            assertThat(StringUtils.isBlank(study.getDescription()), is(false));
+            assertThat(StringUtils.isBlank(study.getCitation()), is(false));
         }
     }
 

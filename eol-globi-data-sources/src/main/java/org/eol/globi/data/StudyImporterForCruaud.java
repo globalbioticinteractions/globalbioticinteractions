@@ -32,7 +32,7 @@ public class StudyImporterForCruaud extends BaseStudyImporter {
             throw new StudyImporterException("failed to read resource [" + RESOURCE_PATH + "]", e);
         }
         try {
-            Study study = nodeFactory.getOrCreateStudy("cruaud"
+            Study study = nodeFactory.getOrCreateStudy2("cruaud"
                     , SOURCE
                     , "http://dx.doi.org/10.1093/sysbio/sys068");
             while (dataParser.getLine() != null) {

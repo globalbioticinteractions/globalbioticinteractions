@@ -15,6 +15,7 @@ import org.eol.globi.domain.Term;
 import org.eol.globi.service.PropertyEnricher;
 import org.eol.globi.service.PropertyEnricherException;
 import org.eol.globi.service.TaxonUtil;
+import org.eol.globi.util.ExternalIdUtil;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -83,7 +84,7 @@ public class ExporterAssociationAggregatesTest extends GraphDBTestCase {
         String[] studyTitles = {"myStudy1", "myStudy2"};
 
         for (String studyTitle : studyTitles) {
-            Study myStudy = nodeFactory.getOrCreateStudy(studyTitle, "contributor", "inst", "per", "description", "pubYear", "data source description");
+            Study myStudy = nodeFactory.getOrCreateStudy(studyTitle, "data source description", ExternalIdUtil.toCitation("contributor", "description", "pubYear"));
             Specimen specimen = nodeFactory.createSpecimen(myStudy, PropertyAndValueDictionary.NO_MATCH);
             specimen.ate(nodeFactory.createSpecimen(myStudy, PropertyAndValueDictionary.NO_MATCH));
         }
@@ -100,7 +101,7 @@ public class ExporterAssociationAggregatesTest extends GraphDBTestCase {
     }
 
     private void createTestData(Double length, String studyTitle) throws NodeFactoryException, ParseException {
-        Study myStudy = nodeFactory.getOrCreateStudy(studyTitle, "contributor", "inst", "per", "description", "pubYear", "data source description");
+        Study myStudy = nodeFactory.getOrCreateStudy(studyTitle, "data source description", ExternalIdUtil.toCitation("contributor", "description", "pubYear"));
         Specimen specimen = nodeFactory.createSpecimen(myStudy, "Homo sapiens");
         specimen.setStomachVolumeInMilliLiter(666.0);
         specimen.setLifeStage(new Term("GlOBI:JUVENILE", "JUVENILE"));

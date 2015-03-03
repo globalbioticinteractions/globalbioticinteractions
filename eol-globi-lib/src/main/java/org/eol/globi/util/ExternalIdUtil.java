@@ -6,7 +6,9 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.domain.TaxonomyProvider;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class ExternalIdUtil {
@@ -87,5 +89,16 @@ public class ExternalIdUtil {
 
     public static String buildJsonUrl(String url) {
         return StringUtils.isBlank(url) ? "{}" : "{\"url\":\"" + url + "\"}";
+    }
+
+    public static String toCitation(String contributor, String description, String publicationYear) {
+        String[] array = {contributor, publicationYear, description};
+        List<String> nonBlanks = new ArrayList<String>();
+        for (String string : array) {
+            if (StringUtils.isNotBlank(string)) {
+                nonBlanks.add(string);
+            }
+        }
+        return StringUtils.join(nonBlanks, ". ");
     }
 }

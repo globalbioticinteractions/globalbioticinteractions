@@ -25,7 +25,7 @@ public class StudyImporterForStrona extends BaseStudyImporter {
             throw new StudyImporterException("failed to read resource [" + RESOURCE_PATH + "]", e);
         }
         try {
-            Study study = nodeFactory.getOrCreateStudy("strona2013"
+            Study study = nodeFactory.getOrCreateStudy2("strona2013"
                     , SOURCE + " . " + ReferenceUtil.createLastAccessedString(RESOURCE_PATH)
                     , "http://dx.doi.org/10.1890/12-1419.1");
             while (dataParser.getLine() != null) {

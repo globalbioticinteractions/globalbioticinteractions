@@ -5,6 +5,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
+import org.eol.globi.util.ExternalIdUtil;
 
 import java.io.IOException;
 import java.util.Map;
@@ -59,7 +60,7 @@ public class StudyImporterForByrnes extends BaseStudyImporter {
                 String singleShortRef = StringUtils.trim(ref);
                 String longRef = refMap.get(singleShortRef);
                 String citation = StringUtils.isBlank(longRef) ? singleShortRef : longRef;
-                localStudy = nodeFactory.getOrCreateStudy("BYRNES-" + StringUtils.abbreviate(citation, 32), null, null, null, citation, null, SOURCE, null);
+                localStudy = nodeFactory.getOrCreateStudy("BYRNES-" + StringUtils.abbreviate(citation, 32), SOURCE, null, ExternalIdUtil.toCitation(null, citation, null));
                 localStudy.setCitationWithTx(citation);
                 String predatorName = parser.getValueByLabel("Predator");
                 if (StringUtils.isBlank(predatorName)) {

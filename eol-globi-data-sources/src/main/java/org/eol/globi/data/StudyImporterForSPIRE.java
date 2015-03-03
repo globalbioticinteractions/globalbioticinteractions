@@ -13,6 +13,7 @@ import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.Term;
 import org.eol.globi.geo.LatLng;
+import org.eol.globi.util.ExternalIdUtil;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -158,8 +159,7 @@ public class StudyImporterForSPIRE extends BaseStudyImporter {
 
     private void importValidLink(Map<String, String> properties) {
         Study study = nodeFactory.getOrCreateStudy(properties.get(Study.TITLE),
-                properties.get(Study.CONTRIBUTOR),
-                null, null, properties.get(Study.DESCRIPTION), properties.get(Study.PUBLICATION_YEAR), SOURCE_SPIRE);
+                SOURCE_SPIRE, ExternalIdUtil.toCitation(properties.get(Study.CONTRIBUTOR), properties.get(Study.DESCRIPTION), properties.get(Study.PUBLICATION_YEAR)));
 
         try {
             Specimen predator = createSpecimen(properties.get(PREDATOR_NAME), study);

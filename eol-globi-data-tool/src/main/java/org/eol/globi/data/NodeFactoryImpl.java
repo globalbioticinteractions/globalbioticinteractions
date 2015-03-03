@@ -15,7 +15,6 @@ import org.eol.globi.domain.Term;
 import org.eol.globi.geo.Ecoregion;
 import org.eol.globi.geo.EcoregionFinder;
 import org.eol.globi.geo.EcoregionFinderException;
-import org.eol.globi.geo.LatLng;
 import org.eol.globi.service.DOIResolver;
 import org.eol.globi.service.EnvoLookupService;
 import org.eol.globi.service.QueryUtil;
@@ -246,25 +245,21 @@ public class NodeFactoryImpl implements NodeFactory {
 
     @Override
     public Study createStudy(String title) {
-        return createStudy(title, null, null, null, null, null, null, null);
+        return createStudy(title, null, null, null);
     }
 
-    private Study createStudy(String title, String contributor, String institution, String period, String description, String publicationYear, String source, String doi) {
+    private Study createStudy(String title, String source, String doi, String citation) {
         Transaction transaction = graphDb.beginTx();
         Study study;
         try {
             Node node = graphDb.createNode();
             study = new Study(node, title);
             study.setSource(source);
-            study.setContributor(contributor);
-            study.setInstitution(institution);
-            study.setPeriod(period);
-            study.setDescription(description);
-            study.setPublicationYear(publicationYear);
+            study.setCitation(citation);
             if (doiResolver != null) {
                 try {
                     if (StringUtils.isBlank(doi)) {
-                        doi = findDOIUsingReference(contributor, description, publicationYear);
+                        doi = doiResolver.findDOIForReference(citation);
                     }
 
                     if (StringUtils.isNotBlank(doi)) {
@@ -284,30 +279,23 @@ public class NodeFactoryImpl implements NodeFactory {
         return study;
     }
 
-    private String findDOIUsingReference(String contributor, String description, String publicationYear) throws IOException {
-        String reference = StringUtils.join(new String[]{contributor, publicationYear, description}, " ");
-        return doiResolver.findDOIForReference(reference);
+    @Override
+    public Study getOrCreateStudy(String title, String source, String citation) {
+        return getOrCreateStudy(title, source, null, citation);
     }
 
     @Override
-    @Deprecated
-    public Study getOrCreateStudy(String title, String contributor, String institution, String period, String description, String publicationYear, String source) {
-        return getOrCreateStudy(title, contributor, institution, period, description, publicationYear, source, null);
-    }
-
-    @Override
-    @Deprecated
-    public Study getOrCreateStudy(String title, String contributor, String institution, String period, String description, String publicationYear, String source, String doi) {
+    public Study getOrCreateStudy(String title, String source, String doi, String citation) {
         Study study = findStudy(title);
         if (null == study) {
-            study = createStudy(title, contributor, institution, period, description, publicationYear, source, doi);
+            study = createStudy(title, source, doi, citation);
         }
         return study;
     }
 
     @Override
-    public Study getOrCreateStudy(String title, String source, String doi) {
-        return getOrCreateStudy(title, null, null, null, null, null, source, doi);
+    public Study getOrCreateStudy2(String title, String source, String doi) {
+        return getOrCreateStudy(title, source, doi, null);
     }
 
     @Override

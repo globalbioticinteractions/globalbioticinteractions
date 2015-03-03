@@ -3,6 +3,7 @@ package org.eol.globi.export;
 import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.domain.Study;
+import org.eol.globi.util.ExternalIdUtil;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -17,7 +18,7 @@ public class ExporterReferencesTest extends GraphDBTestCase {
 
     @Test
     public void exportReference() throws IOException, NodeFactoryException, ParseException {
-        Study myStudy = nodeFactory.getOrCreateStudy("myStudy", "John Doe", "institution", null, "description study 1", "1927", "a source");
+        Study myStudy = nodeFactory.getOrCreateStudy("myStudy", "a source", ExternalIdUtil.toCitation("John Doe", "description study 1", "1927"));
         myStudy.setDOIWithTx("doi:1234");
         myStudy.setExternalId("GAME:444");
         StringWriter row = new StringWriter();

@@ -7,6 +7,7 @@ import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.Term;
 import org.eol.globi.service.TermLookupServiceException;
+import org.eol.globi.util.ExternalIdUtil;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -33,10 +34,7 @@ public class StudyImporterForBaremore extends BaseStudyImporter {
             String[] line;
 
             study = nodeFactory.getOrCreateStudy("Baremore 2010",
-                    "Ivy E. Baremore",
-                    "University of Florida, Department of Fisheries and Aquatic Sciences",
-                    "2005",
-                    "Prey Selection By The Atlantic Angel Shark Squatina Dumeril In The Northeastern Gulf Of Mexico.", "2010", StudyImporterForGoMexSI.GOMEXI_SOURCE_DESCRIPTION);
+                    StudyImporterForGoMexSI.GOMEXI_SOURCE_DESCRIPTION, ExternalIdUtil.toCitation("Ivy E. Baremore", "Prey Selection By The Atlantic Angel Shark Squatina Dumeril In The Northeastern Gulf Of Mexico.", "2010"));
             Location collectionLocation = nodeFactory.getOrCreateLocation(29.219302, -87.06665, null);
 
             Map<Integer, Specimen> specimenMap = new HashMap<Integer, Specimen>();

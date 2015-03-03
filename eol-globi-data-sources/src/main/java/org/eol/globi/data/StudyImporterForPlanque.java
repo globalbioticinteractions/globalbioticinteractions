@@ -5,6 +5,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
+import org.eol.globi.util.ExternalIdUtil;
 
 import java.io.IOException;
 import java.util.Map;
@@ -119,7 +120,7 @@ public class StudyImporterForPlanque extends BaseStudyImporter {
             longReference = refMap.get(shortReference);
         }
 
-        Study localStudy = nodeFactory.getOrCreateStudy("PLANQUE-" + shortReference, null, null, null, longReference, null, SOURCE);
+        Study localStudy = nodeFactory.getOrCreateStudy("PLANQUE-" + shortReference, SOURCE, ExternalIdUtil.toCitation(null, longReference, null));
         if (StringUtils.isNotBlank(msg)) {
             getLogger().warn(localStudy, msg);
         }

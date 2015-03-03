@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 public class CypherQueryBuilder {
     private static final Log LOG = LogFactory.getLog(CypherQueryBuilder.class);
@@ -47,7 +48,7 @@ public class CypherQueryBuilder {
 
     public static final String TAXON_HTTP_PARAM_NAME = "taxon";
 
-    private static final Map<String, String> DIRECTIONAL_INTERACTION_TYPE_MAP = new HashMap<String, String>() {
+    private static final Map<String, String> DIRECTIONAL_INTERACTION_TYPE_MAP = new TreeMap<String, String>() {
         {
             String preysOn = InteractType.ATE + "|" + InteractType.PREYS_UPON;
             put(INTERACTION_PREYS_ON, preysOn);
@@ -65,7 +66,7 @@ public class CypherQueryBuilder {
         }
     };
 
-    public static final Map<String, InteractionTypeExternal> INTERACTION_TYPE_INTERNAL_EXTERNAL_MAP = new HashMap<String, InteractionTypeExternal>() {
+    public static final Map<String, InteractionTypeExternal> INTERACTION_TYPE_INTERNAL_EXTERNAL_MAP = new TreeMap<String, InteractionTypeExternal>() {
         {
             put(InteractType.ATE.toString(), InteractionTypeExternal.PREYS_ON);
             put(InteractType.PREYS_UPON.toString(), InteractionTypeExternal.PREYS_ON);
@@ -84,7 +85,7 @@ public class CypherQueryBuilder {
         }
     };
 
-    private static final Map<String, String> TRANSLATION_MAP = new HashMap<String, String>() {
+    private static final Map<String, String> TRANSLATION_MAP = new TreeMap<String, String>() {
         {
             String preysOn = InteractType.ATE + "|" + InteractType.PREYS_UPON;
             put(INTERACTION_PREYS_ON, preysOn);
@@ -100,7 +101,7 @@ public class CypherQueryBuilder {
         }
     };
 
-    static final Map<String, String> EMPTY_PARAMS = new HashMap<String, String>();
+    static final Map<String, String> EMPTY_PARAMS = new TreeMap<String, String>();
     public static final List<String> TAXON_FIELDS = Collections.unmodifiableList(new ArrayList<String>() {{
         add(ResultFields.TAXON_NAME);
         add(ResultFields.TAXON_COMMON_NAMES);
@@ -110,7 +111,7 @@ public class CypherQueryBuilder {
         add(ResultFields.TAXON_PATH_RANKS);
     }});
 
-    public static final Map<String, String> FIELD_MAP = Collections.unmodifiableMap(new HashMap<String, String>() {{
+    public static final Map<String, String> FIELD_MAP = Collections.unmodifiableMap(new TreeMap<String, String>() {{
         put(ResultFields.TAXON_NAME, "taxon.name");
         put(ResultFields.TAXON_COMMON_NAMES, "taxon.commonNames");
         put(ResultFields.TAXON_EXTERNAL_ID, "taxon.externalId");

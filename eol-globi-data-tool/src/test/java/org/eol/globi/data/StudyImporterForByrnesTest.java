@@ -34,7 +34,6 @@ public class StudyImporterForByrnesTest extends GraphDBTestCase {
         for (Study study : studies) {
             assertThat(study.getTitle(), is(notNullValue()));
             assertThat(study.getSource(), is(notNullValue()));
-            assertThat(study.getDescription(), is(notNullValue()));
             assertThat(study.getCitation(), is(notNullValue()));
             citations.add(study.getCitation());
             citationList.add(study.getCitation());

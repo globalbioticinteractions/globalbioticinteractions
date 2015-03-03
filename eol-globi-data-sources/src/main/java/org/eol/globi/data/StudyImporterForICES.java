@@ -5,6 +5,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
+import org.eol.globi.util.ExternalIdUtil;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -22,12 +23,7 @@ public class StudyImporterForICES extends BaseStudyImporter {
         LabeledCSVParser parser = createParser();
 
         Study study = nodeFactory.getOrCreateStudy("ICES",
-                "<a href=\"http://ecosystemdata.ices.dk/stomachdata/\">ICES Stomach Dataset, ICES, Copenhagen</a>",
-                "International Council for the Exploration of the Sea (ICES); Institute for Marine Resources & Ecosystem Studies (IMARES)",
-                "1980- 1991",
-                "<a href=\"http://www.ices.dk/products/cooperative.asp\">ICES Cooperative Research Report No. 164</a>; <a href=\"http://ices.dk/products/cooperative.asp\">ICES Cooperative Research Report No. 219</a>"
-                , null
-                , "International Council for the Exploration of the Sea. Available at http://www.ices.dk/products/cooperative.asp .");
+                "International Council for the Exploration of the Sea. Available at http://www.ices.dk/products/cooperative.asp .", ExternalIdUtil.toCitation("<a href=\"http://ecosystemdata.ices.dk/stomachdata/\">ICES Stomach Dataset, ICES, Copenhagen</a>", "<a href=\"http://www.ices.dk/products/cooperative.asp\">ICES Cooperative Research Report No. 164</a>; <a href=\"http://ices.dk/products/cooperative.asp\">ICES Cooperative Research Report No. 219</a>", null));
         study.setExternalId("http://ecosystemdata.ices.dk/stomachdata/");
         try {
             Specimen predator = null;

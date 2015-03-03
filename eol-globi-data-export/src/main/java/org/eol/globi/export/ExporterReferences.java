@@ -59,14 +59,7 @@ public class ExporterReferences extends ExporterBase {
     }
 
     private String referenceForStudy(Study study) {
-        StringBuilder reference = new StringBuilder();
-        String contributor = study.getContributor();
-        reference.append(StringUtils.isBlank(contributor) ? "" : contributor + " ");
-        String publicationYear = study.getPublicationYear();
-        reference.append(StringUtils.isBlank(publicationYear) ? "" : ("(" + publicationYear + ") "));
-        String description = study.getDescription();
-        reference.append(description);
-        return reference.toString();
+        return StringUtils.isBlank(study.getCitation()) ? study.getTitle() : study.getCitation();
     }
 
 

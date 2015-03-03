@@ -7,6 +7,7 @@ import org.eol.globi.domain.Season;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.geo.LatLng;
+import org.eol.globi.util.ExternalIdUtil;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -72,10 +73,7 @@ public class StudyImporterForWrast extends BaseStudyImporter {
     @Override
     public Study importStudy() throws StudyImporterException {
         Study study = nodeFactory.getOrCreateStudy("Wrast 2008",
-                "Jenny L. Wrast",
-                "Department of Life Sciences Texas A&M University-Corpus Christi",
-                "July 2006- April 2007",
-                "Spatiotemporal And Habitat-mediated Food Web Dynamics in Lavaca Bay, Texas.", "2008", StudyImporterForGoMexSI.GOMEXI_SOURCE_DESCRIPTION);
+                StudyImporterForGoMexSI.GOMEXI_SOURCE_DESCRIPTION, ExternalIdUtil.toCitation("Jenny L. Wrast", "Spatiotemporal And Habitat-mediated Food Web Dynamics in Lavaca Bay, Texas.", "2008"));
         study.setCitationWithTx("Wrast JL. Spatiotemporal And Habitat-mediated Food Web Dynamics in Lavaca Bay, Texas. 2008. Master Thesis.");
         study.setExternalId("http://www.fisheries.tamucc.edu/people_files/FINAL%20WRAST%20THESIS.pdf");
         try {

@@ -11,6 +11,7 @@ import org.eol.globi.domain.Study;
 import org.eol.globi.domain.Term;
 import org.eol.globi.geo.LatLng;
 import org.eol.globi.service.TermLookupServiceException;
+import org.eol.globi.util.ExternalIdUtil;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -82,7 +83,7 @@ public class StudyImporterForBrose extends BaseStudyImporter {
                 throw new StudyImporterException("failed to find ref [" + shortReference + "] on line [" + parser.lastLineNumber() + "]");
             }
             String longReference = refMap.get(shortReference);
-            localStudy = nodeFactory.getOrCreateStudy("BROSE-" + StringUtils.abbreviate(longReference, 20), null, null, null, longReference, null, SOURCE);
+            localStudy = nodeFactory.getOrCreateStudy("BROSE-" + StringUtils.abbreviate(longReference, 20), SOURCE, ExternalIdUtil.toCitation(null, longReference, null));
 
             String name = getName(parser, "Taxonomy consumer", "Common name(s) consumer");
             if (StringUtils.isBlank(name)) {

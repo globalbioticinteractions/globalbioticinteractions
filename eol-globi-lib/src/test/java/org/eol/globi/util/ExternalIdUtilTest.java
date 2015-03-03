@@ -22,4 +22,11 @@ public class ExternalIdUtilTest {
         assertThat(ExternalIdUtil.getUrlFromExternalId("{ \"data\": []}"), is("{}"));
         assertThat(ExternalIdUtil.getUrlFromExternalId("{}"), is("{}"));
     }
+
+    @Test
+    public void buildCitation() {
+        assertThat(ExternalIdUtil.toCitation("Joe Smith", "my study", "1984"), is("Joe Smith. 1984. my study"));
+        assertThat(ExternalIdUtil.toCitation("Joe Smith", null, "1984"), is("Joe Smith. 1984"));
+        assertThat(ExternalIdUtil.toCitation("Joe Smith", "my study", null), is("Joe Smith. my study"));
+    }
 }

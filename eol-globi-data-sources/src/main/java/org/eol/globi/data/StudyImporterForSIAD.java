@@ -92,7 +92,7 @@ public class StudyImporterForSIAD extends BaseStudyImporter {
                 String title = "SIAD-" + ref;
                 Study study = nodeFactory.findStudy(title);
                 if (study == null) {
-                    study = nodeFactory.getOrCreateStudy(title, source, null);
+                    study = nodeFactory.getOrCreateStudy2(title, source, null);
                     study.setCitationWithTx("ABRS 2009. Australian Faunal Directory. " + name + ". Australian Biological Resources Study, Canberra. " + ReferenceUtil.createLastAccessedString(ref));
                     study.setExternalId(ref);
                 }

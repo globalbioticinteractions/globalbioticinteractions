@@ -28,7 +28,7 @@ public class StudyImporterForRoopnarine extends BaseStudyImporter {
 
         Map<String, LatLng> resourceLocation = resourceLocationMap(suffix, prefix);
 
-        Study study = nodeFactory.getOrCreateStudy("Roopnarine et al 2013"
+        Study study = nodeFactory.getOrCreateStudy2("Roopnarine et al 2013"
                 , "Roopnarine, P.D. & Hertog, R., 2013. Detailed Food Web Networks of Three Greater Antillean Coral Reef Systems: The Cayman Islands, Cuba, and Jamaica. Dataset Papers in Ecology, 2013, pp.1–9. Available at: http://dx.doi.org/10.7167/2013/857470."
                 , "http://dx.doi.org/10.7167/2013/857470");
         for (Map.Entry<String, LatLng> resourceLatLngEntry : resourceLocation.entrySet()) {

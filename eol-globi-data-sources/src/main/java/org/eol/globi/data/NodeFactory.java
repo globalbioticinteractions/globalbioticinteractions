@@ -32,13 +32,11 @@ public interface NodeFactory {
 
     Study createStudy(String title);
 
-    @Deprecated
-    Study getOrCreateStudy(String title, String contributor, String institution, String period, String description, String publicationYear, String source);
+    Study getOrCreateStudy(String title, String source, String citation);
 
-    @Deprecated
-    Study getOrCreateStudy(String title, String contributor, String institution, String period, String description, String publicationYear, String source, String doi);
+    Study getOrCreateStudy(String title, String source, String doi, String citation);
 
-    Study getOrCreateStudy(String title, String source, String doi);
+    Study getOrCreateStudy2(String title, String source, String doi);
 
     Study findStudy(String title);
 

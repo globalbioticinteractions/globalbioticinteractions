@@ -23,7 +23,7 @@ public class GraphExporterTest extends GraphDBTestCase {
         File tmpDirPath = new File(tmpDir, "test" + new Random().nextLong());
         FileUtils.forceMkdir(tmpDirPath);
         assertThat(tmpDirPath.list().length, is(0));
-        Study study = nodeFactory.getOrCreateStudy("a study", "a source", "doi:12345L");
+        Study study = nodeFactory.getOrCreateStudy2("a study", "a source", "doi:12345L");
 
         Specimen human = nodeFactory.createSpecimen(study, "Homo sapiens", "BLA:123");
         human.ate(nodeFactory.createSpecimen(study, "Canis familiaris", "BLA:444"));

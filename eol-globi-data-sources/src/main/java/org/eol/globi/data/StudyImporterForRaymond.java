@@ -18,6 +18,7 @@ import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.geo.GeoUtil;
 import org.eol.globi.util.CSVUtil;
+import org.eol.globi.util.ExternalIdUtil;
 import org.eol.globi.util.HttpUtil;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
@@ -294,7 +295,7 @@ public class StudyImporterForRaymond extends BaseStudyImporter {
             Integer sourceId = Integer.parseInt(sourcesParser.getValueByLabel("SOURCE_ID"));
             String reference = sourcesParser.getValueByLabel("DETAILS");
             String title = StringUtils.abbreviate(reference, 16) + MD5.getHashString(reference);
-            Study study = nodeFactory.getOrCreateStudy(title, null, null, null, reference, null, "Raymond, B., Marshall, M., Nevitt, G., Gillies, C., van den Hoff, J., Stark, J.S., Losekoot, M., Woehler, E.J., and Constable, A.J. (2011) A Southern Ocean dietary database. Ecology 92(5):1188. Available from http://dx.doi.org/10.1890/10-1907.1 . Data set supplied by Ben Raymond. " + ReferenceUtil.createLastAccessedString(RESOURCE_URL));
+            Study study = nodeFactory.getOrCreateStudy(title, "Raymond, B., Marshall, M., Nevitt, G., Gillies, C., van den Hoff, J., Stark, J.S., Losekoot, M., Woehler, E.J., and Constable, A.J. (2011) A Southern Ocean dietary database. Ecology 92(5):1188. Available from http://dx.doi.org/10.1890/10-1907.1 . Data set supplied by Ben Raymond. " + ReferenceUtil.createLastAccessedString(RESOURCE_URL), ExternalIdUtil.toCitation(null, reference, null));
             sourceMap.put(sourceId, study);
         }
         return sourceMap;

@@ -9,6 +9,7 @@ import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.Term;
 import org.eol.globi.service.TermLookupServiceException;
+import org.eol.globi.util.ExternalIdUtil;
 
 import java.io.IOException;
 import java.util.List;
@@ -57,7 +58,7 @@ public class StudyImporterForBarnes extends BaseStudyImporter {
                 throw new StudyImporterException("failed to find ref [" + shortReference + "] on line [" + parser.lastLineNumber() + "]");
             }
             String longReference = refMap.get(shortReference);
-            localStudy = nodeFactory.getOrCreateStudy("BARNES-" + shortReference, null, null, null, longReference, null, SOURCE);
+            localStudy = nodeFactory.getOrCreateStudy("BARNES-" + shortReference, SOURCE, ExternalIdUtil.toCitation(null, longReference, null));
 
             String predatorName = parser.getValueByLabel("Predator");
             if (StringUtils.isBlank(predatorName)) {

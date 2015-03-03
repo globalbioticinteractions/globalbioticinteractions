@@ -51,7 +51,7 @@ public class StudyImporterForLifeWatchGreeceTest extends GraphDBTestCase {
         int totalPredatorPreyRelationships = 0;
 
         for (Study study : studies) {
-            assertThat(study.getDescription(), is(notNullValue()));
+            assertThat(study.getCitation(), is(notNullValue()));
             assertThat(study.getTitle(), containsString("greece"));
             Iterable<Relationship> specimens = study.getSpecimens();
             for (Relationship collectedRel : specimens) {

@@ -19,7 +19,7 @@ public class ReportControllerTest {
 
     @Test
     public void sources() throws IOException {
-        String studies = new CypherQueryExecutor(new ReportController().sourcesNew()).execute(null);
+        String studies = new CypherQueryExecutor(new ReportController().sources()).execute(null);
         ObjectMapper mapper = new ObjectMapper();
         JsonNode jsonNode = mapper.readTree(studies);
         assertThat(jsonNode.has("data"), is(true));
@@ -31,7 +31,7 @@ public class ReportControllerTest {
 
     @Test
     public void info() throws IOException {
-        String studies = new CypherQueryExecutor(new ReportController().infoNew(null)).execute(null);
+        String studies = new CypherQueryExecutor(new ReportController().info(null)).execute(null);
         ObjectMapper mapper = new ObjectMapper();
         JsonNode jsonNode = mapper.readTree(studies);
         assertThat(jsonNode.has("data"), is(true));
@@ -41,7 +41,7 @@ public class ReportControllerTest {
 
     @Test
     public void infoBySource() throws IOException {
-        String studies = new CypherQueryExecutor(new ReportController().infoNew("http://gomexsi.tamucc.edu")).execute(null);
+        String studies = new CypherQueryExecutor(new ReportController().info("http://gomexsi.tamucc.edu")).execute(null);
         ObjectMapper mapper = new ObjectMapper();
         JsonNode jsonNode = mapper.readTree(studies);
         assertThat(jsonNode.has("data"), is(true));
@@ -57,7 +57,7 @@ public class ReportControllerTest {
             put("bbox", new String[]{"-100.0,0.0,-80.08,40.32"});
         }
         });
-        String response = new CypherQueryExecutor(new ReportController().spatialInfoNew(req)).execute(req);
+        String response = new CypherQueryExecutor(new ReportController().spatialInfo(req)).execute(req);
         ObjectMapper mapper = new ObjectMapper();
         JsonNode jsonNode = mapper.readTree(response);
         assertThat(jsonNode.has("data"), is(true));
@@ -67,7 +67,7 @@ public class ReportControllerTest {
 
     @Test
     public void spatialInfo() throws IOException {
-        String studies = new CypherQueryExecutor(new ReportController().infoNew(null)).execute(null);
+        String studies = new CypherQueryExecutor(new ReportController().info(null)).execute(null);
         ObjectMapper mapper = new ObjectMapper();
         JsonNode jsonNode = mapper.readTree(studies);
         assertThat(jsonNode.has("data"), is(true));

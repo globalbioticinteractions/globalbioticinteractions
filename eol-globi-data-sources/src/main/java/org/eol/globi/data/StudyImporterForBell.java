@@ -8,6 +8,7 @@ import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
+import org.eol.globi.util.ExternalIdUtil;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 
@@ -63,7 +64,7 @@ public class StudyImporterForBell extends BaseStudyImporter {
                         collectionId = "";
                     }
 
-                    Study study = nodeFactory.getOrCreateStudy("bell-" + collectionId, null, null, null, sourceCitation + " " + description, null, sourceCitation, null);
+                    Study study = nodeFactory.getOrCreateStudy("bell-" + collectionId, sourceCitation, null, ExternalIdUtil.toCitation(null, sourceCitation + " " + description, null));
 
                     String genus = parser.getValueByLabel("Genus");
                     String species = parser.getValueByLabel("Species");

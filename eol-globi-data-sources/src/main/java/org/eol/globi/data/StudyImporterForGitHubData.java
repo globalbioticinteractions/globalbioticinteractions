@@ -4,8 +4,6 @@ import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.BasicResponseHandler;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.domain.InteractType;
@@ -116,7 +114,7 @@ public class StudyImporterForGitHubData extends BaseStudyImporter {
         while (parser.getLine() != null) {
             String referenceCitation = parser.getValueByLabel("referenceCitation");
             String referenceDoi = StringUtils.replace(parser.getValueByLabel("referenceDoi"), " ", "");
-            Study study = nodeFactory.getOrCreateStudy(repo + referenceCitation, sourceCitation + " " + ReferenceUtil.createLastAccessedString(dataUrl), referenceDoi);
+            Study study = nodeFactory.getOrCreateStudy2(repo + referenceCitation, sourceCitation + " " + ReferenceUtil.createLastAccessedString(dataUrl), referenceDoi);
             study.setCitationWithTx(referenceCitation);
 
             String sourceTaxonId = StringUtils.trimToNull(parser.getValueByLabel("sourceTaxonId"));

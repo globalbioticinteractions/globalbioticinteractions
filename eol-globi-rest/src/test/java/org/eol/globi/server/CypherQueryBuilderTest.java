@@ -39,7 +39,7 @@ public class CypherQueryBuilderTest {
             "sourceTaxon.name as source_taxon_name," +
             "sourceTaxon.path? as source_taxon_path," +
             "sourceSpecimen.lifeStage? as source_specimen_life_stage," +
-            "replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(type(interactionType),'HAS_PARASITE','hasParasite'),'POLLINATES','pollinates'),'SYMBIONT_OF','symbiontOf'),'POLLINATED_BY','pollinatedBy'),'HAS_PATHOGEN','hasPathogen'),'PATHOGEN_OF','pathogenOf'),'EATEN_BY','preyedUponBy'),'PREYED_UPON_BY','preyedUponBy'),'ATE','preysOn'),'PREYS_UPON','preysOn'),'INTERACTS_WITH','interactsWith'),'PARASITE_OF','parasiteOf') as interaction_type," +
+            "replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(type(interactionType),'HAS_PARASITE','hasParasite'),'HAS_PATHOGEN','hasPathogen'),'INTERACTS_WITH','interactsWith'),'PARASITE_OF','parasiteOf'),'PATHOGEN_OF','pathogenOf'),'POLLINATED_BY','pollinatedBy'),'POLLINATES','pollinates'),'EATEN_BY','preyedUponBy'),'PREYED_UPON_BY','preyedUponBy'),'ATE','preysOn'),'PREYS_UPON','preysOn'),'SYMBIONT_OF','symbiontOf') as interaction_type," +
             "targetTaxon.externalId? as target_taxon_external_id," +
             "targetTaxon.name as target_taxon_name," +
             "targetTaxon.path? as target_taxon_path," +
@@ -53,7 +53,7 @@ public class CypherQueryBuilderTest {
             "sTaxon.name as source_taxon_name," +
             "sTaxon.path? as source_taxon_path," +
             "NULL as source_specimen_life_stage," +
-            "replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(iType,'HAS_PARASITE','hasParasite'),'POLLINATES','pollinates'),'SYMBIONT_OF','symbiontOf'),'POLLINATED_BY','pollinatedBy'),'HAS_PATHOGEN','hasPathogen'),'PATHOGEN_OF','pathogenOf'),'EATEN_BY','preyedUponBy'),'PREYED_UPON_BY','preyedUponBy'),'ATE','preysOn'),'PREYS_UPON','preysOn'),'INTERACTS_WITH','interactsWith'),'PARASITE_OF','parasiteOf') as interaction_type," +
+            "replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(iType,'HAS_PARASITE','hasParasite'),'HAS_PATHOGEN','hasPathogen'),'INTERACTS_WITH','interactsWith'),'PARASITE_OF','parasiteOf'),'PATHOGEN_OF','pathogenOf'),'POLLINATED_BY','pollinatedBy'),'POLLINATES','pollinates'),'EATEN_BY','preyedUponBy'),'PREYED_UPON_BY','preyedUponBy'),'ATE','preysOn'),'PREYS_UPON','preysOn'),'SYMBIONT_OF','symbiontOf') as interaction_type," +
             "tTaxon.externalId? as target_taxon_external_id," +
             "tTaxon.name as target_taxon_name," +
             "tTaxon.path? as target_taxon_path," +
@@ -82,7 +82,7 @@ public class CypherQueryBuilderTest {
 
     @Test
     public void interactionReturnTerms() {
-        assertThat(CypherQueryBuilder.appendInteractionTypeReturn(new StringBuilder(), "type(interactionType)").toString(), is("replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(type(interactionType),'HAS_PARASITE','hasParasite'),'POLLINATES','pollinates'),'SYMBIONT_OF','symbiontOf'),'POLLINATED_BY','pollinatedBy'),'HAS_PATHOGEN','hasPathogen'),'PATHOGEN_OF','pathogenOf'),'EATEN_BY','preyedUponBy'),'PREYED_UPON_BY','preyedUponBy'),'ATE','preysOn'),'PREYS_UPON','preysOn'),'INTERACTS_WITH','interactsWith'),'PARASITE_OF','parasiteOf') as interaction_type"));
+        assertThat(CypherQueryBuilder.appendInteractionTypeReturn(new StringBuilder(), "type(interactionType)").toString(), is("replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(type(interactionType),'HAS_PARASITE','hasParasite'),'HAS_PATHOGEN','hasPathogen'),'INTERACTS_WITH','interactsWith'),'PARASITE_OF','parasiteOf'),'PATHOGEN_OF','pathogenOf'),'POLLINATED_BY','pollinatedBy'),'POLLINATES','pollinates'),'EATEN_BY','preyedUponBy'),'PREYED_UPON_BY','preyedUponBy'),'ATE','preysOn'),'PREYS_UPON','preysOn'),'SYMBIONT_OF','symbiontOf') as interaction_type"));
     }
 
     @Test
@@ -574,5 +574,6 @@ public class CypherQueryBuilderTest {
                 , is(" MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen-[interactionType:ATE|PREYS_UPON]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon" +
                 ", sourceSpecimen<-[collected_rel:COLLECTED]-study, sourceSpecimen-[?:COLLECTED_AT]->loc "));
     }
+
 
 }

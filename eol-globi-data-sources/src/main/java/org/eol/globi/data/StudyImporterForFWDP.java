@@ -7,6 +7,7 @@ import org.apache.commons.logging.LogFactory;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
+import org.eol.globi.util.ExternalIdUtil;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
@@ -31,12 +32,7 @@ public class StudyImporterForFWDP extends BaseStudyImporter {
     @Override
     public Study importStudy() throws StudyImporterException {
         Study study = nodeFactory.getOrCreateStudy("NOAA; Northeast Fisheries Science Center; Food Web Dynamics Program",
-                "Brian Smith",
-                "",
-                "",
-                "Food Habits Database of Food Web Dynamics Program, Northeast Fisheries Science Center, National Oceanic and Atmospheric Administration (NOAA)."
-                , null
-                , "http://www.nefsc.noaa.gov/femad/pbio/fwdp/");
+                "http://www.nefsc.noaa.gov/femad/pbio/fwdp/", ExternalIdUtil.toCitation("Brian Smith", "Food Habits Database of Food Web Dynamics Program, Northeast Fisheries Science Center, National Oceanic and Atmospheric Administration (NOAA).", null));
         String studyResource = "fwdp/NEshelf/NEshelf_diet.csv.gz";
 
         Map<String, Long> predatorSpecimenMap = new HashMap<String, Long>();

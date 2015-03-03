@@ -2,8 +2,6 @@ package org.eol.globi.data;
 
 import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Specimen;
@@ -23,8 +21,6 @@ import java.util.List;
 import java.util.Map;
 
 public class StudyImporterForGoMexSI extends BaseStudyImporter {
-    private static final Log LOG = LogFactory.getLog(StudyImporterForGoMexSI.class);
-
     public static final String GOMEXI_SOURCE_DESCRIPTION = "http://gomexsi.tamucc.edu";
     public static final String STOMACH_COUNT_TOTAL = "stomachCountTotal";
     public static final String STOMACH_COUNT_WITH_FOOD = "stomachCountWithFood";
@@ -76,12 +72,7 @@ public class StudyImporterForGoMexSI extends BaseStudyImporter {
     @Override
     public Study importStudy() throws StudyImporterException {
         Study study = nodeFactory.getOrCreateStudy("GoMexSI",
-                "James D. Simons",
-                "Center for Coastal Studies, Texas A&M University - Corpus Christi, United States",
-                "",
-                "<a href=\"http://www.ingentaconnect.com/content/umrsmas/bullmar/2013/00000089/00000001/art00009\">Building a Fisheries Trophic Interaction Database for Management and Modeling Research in the Gulf of Mexico Large Marine Ecosystem.</a>"
-                , null
-                , GOMEXI_SOURCE_DESCRIPTION, null);
+                GOMEXI_SOURCE_DESCRIPTION, null, ExternalIdUtil.toCitation("James D. Simons", "<a href=\"http://www.ingentaconnect.com/content/umrsmas/bullmar/2013/00000089/00000001/art00009\">Building a Fisheries Trophic Interaction Database for Management and Modeling Research in the Gulf of Mexico Large Marine Ecosystem.</a>", null));
         final Map<String, Map<String, String>> predatorIdToPredatorNames = new HashMap<String, Map<String, String>>();
         final Map<String, List<Map<String, String>>> predatorIdToPreyNames = new HashMap<String, List<Map<String, String>>>();
         Map<String, Study> referenceIdToStudy = new HashMap<String, Study>();
@@ -110,69 +101,55 @@ public class StudyImporterForGoMexSI extends BaseStudyImporter {
         return study;
     }
 
-    private void addReferences(Map<String, Study> referenceIdToStudy) throws StudyImporterException {
+    protected void addReferences(Map<String, Study> referenceIdToStudy) throws StudyImporterException {
         String referenceResource = getReferencesResourcePath();
+
         try {
             LabeledCSVParser parser = parserFactory.createParser(referenceResource, CharsetConstant.UTF8);
+            Map<String, String> studyContributorMap = collectContributors(referenceResource, parser);
+
+            parser = parserFactory.createParser(referenceResource, CharsetConstant.UTF8);
             while (parser.getLine() != null) {
                 String refId = getMandatoryValue(referenceResource, parser, "REF_ID");
-                String lastName = getMandatoryValue(referenceResource, parser, "AUTH_L_NAME");
-                String firstName = getMandatoryValue(referenceResource, parser, "AUTH_F_NAME");
                 Study study = referenceIdToStudy.get(refId);
                 if (study == null) {
-                    addNewStudy(referenceIdToStudy, referenceResource, parser, refId, lastName, firstName);
-                } else {
-                    updateContributorList(lastName, firstName, study);
+                    addNewStudy(referenceIdToStudy, referenceResource, parser, refId, studyContributorMap.get(refId));
                 }
-
             }
         } catch (IOException e) {
             throw new StudyImporterException("failed to open resource [" + referenceResource + "]", e);
         }
+
     }
 
-    private void updateContributorList(String lastName, String firstName, Study study) {
-        Transaction transaction = study.getUnderlyingNode().getGraphDatabase().beginTx();
-        try {
-            String contributor = study.getContributor();
-            study.setContributor(contributor + ", " + firstName + " " + lastName);
-            transaction.success();
-        } finally {
-            transaction.finish();
+    protected static Map<String, String> collectContributors(String referenceResource, LabeledCSVParser parser) throws IOException, StudyImporterException {
+        Map<String, String> studyContributorMap = new HashMap<String, String>();
+        while (parser.getLine() != null) {
+            String refId = getMandatoryValue(referenceResource, parser, "REF_ID");
+            String lastName = getMandatoryValue(referenceResource, parser, "AUTH_L_NAME");
+            String firstName = getMandatoryValue(referenceResource, parser, "AUTH_F_NAME");
+            String contributors = studyContributorMap.get(refId);
+            studyContributorMap.put(refId, updateContributorList(lastName, firstName, contributors == null ? "" : contributors));
         }
+        return studyContributorMap;
     }
 
-    private void addNewStudy(Map<String, Study> referenceIdToStudy, String referenceResource, LabeledCSVParser parser, String refId, String lastName, String firstName) throws StudyImporterException {
+    private static String updateContributorList(String lastName, String firstName, String contributor) {
+        String name = firstName + " " + lastName;
+        return StringUtils.isBlank(contributor) ? name : (contributor + ", " + name);
+    }
+
+    private void addNewStudy(Map<String, Study> referenceIdToStudy, String referenceResource, LabeledCSVParser parser, String refId, String contributors) throws StudyImporterException {
         Study study;
         String refTag = getMandatoryValue(referenceResource, parser, "REF_TAG");
         String externalId = getMandatoryValue(referenceResource, parser, "GAME_ID");
         String description = getMandatoryValue(referenceResource, parser, "TITLE_REF");
         String publicationYear = getMandatoryValue(referenceResource, parser, "YEAR_PUB");
-        String universityName = getMandatoryValue(referenceResource, parser, "UNIV_NAME");
-        String universityCity = getMandatoryValue(referenceResource, parser, "UNIV_CITY");
 
-        String universityState = getMandatoryValue(referenceResource, parser, "UNIV_STATE");
-
-        String universityCountry = getMandatoryValue(referenceResource, parser, "UNIV_COUNTRY");
-        StringBuilder institution = new StringBuilder();
-        if (StringUtils.isNotBlank(universityName)
-                && StringUtils.isNotBlank(universityCity)
-                && StringUtils.isNotBlank(universityState)
-                && StringUtils.isNotBlank(universityCountry)) {
-            institution.append(universityName);
-            institution.append(", ");
-            institution.append(universityCity);
-            institution.append(", ");
-            institution.append(universityState);
-            institution.append(", ");
-            institution.append(universityCountry);
-        }
-        study = nodeFactory.getOrCreateStudy(refTag, firstName + " " + lastName, institution.toString(), "", description
-                , publicationYear
-                , getSourceCitation(), null);
+        study = nodeFactory.getOrCreateStudy(refTag,
+                getSourceCitation(), null, ExternalIdUtil.toCitation(contributors, description, publicationYear));
         Transaction transaction = study.getUnderlyingNode().getGraphDatabase().beginTx();
         try {
-            study.setPublicationYear(publicationYear);
             if (StringUtils.isNotBlank(externalId)) {
                 study.setExternalId(ExternalIdUtil.infoURLForExternalId(TaxonomyProvider.ID_PREFIX_GAME + externalId));
             }
@@ -323,12 +300,13 @@ public class StudyImporterForGoMexSI extends BaseStudyImporter {
         // add all original GoMexSI properties for completeness
         Transaction tx = specimen.getUnderlyingNode().getGraphDatabase().beginTx();
         try {
-        for (Map.Entry<String, String> entry : properties.entrySet()) {
-            if (entry.getKey().startsWith(GOMEXSI_NAMESPACE)) {
-                specimen.getUnderlyingNode().setProperty(entry.getKey(), entry.getValue());
+            for (Map.Entry<String, String> entry : properties.entrySet()) {
+                if (entry.getKey().startsWith(GOMEXSI_NAMESPACE)) {
+                    specimen.getUnderlyingNode().setProperty(entry.getKey(), entry.getValue());
+                }
+                tx.success();
             }
-            tx.success();
-        } } finally {
+        } finally {
             tx.finish();
         }
 

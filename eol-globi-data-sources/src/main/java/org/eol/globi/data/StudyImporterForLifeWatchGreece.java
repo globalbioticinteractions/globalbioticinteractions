@@ -6,6 +6,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
+import org.eol.globi.util.ExternalIdUtil;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -146,7 +147,7 @@ public class StudyImporterForLifeWatchGreece extends BaseStudyImporter {
 
 
         public void foundInteraction(String predatorTaxonName, String preyTaxonName, String studyId, String studyReference) {
-            Study study = nodeFactory.getOrCreateStudy("http://polytraits.lifewatchgreece.eu/publication/" + studyId, null, null, null, studyReference, null, "Polytraits, a database on biological traits of polychaetes. Available at http://polytraits.lifewatchgreece.eu.");
+            Study study = nodeFactory.getOrCreateStudy("http://polytraits.lifewatchgreece.eu/publication/" + studyId, "Polytraits, a database on biological traits of polychaetes. Available at http://polytraits.lifewatchgreece.eu.", ExternalIdUtil.toCitation(null, studyReference, null));
             try {
                 Specimen predator = nodeFactory.createSpecimen(study, predatorTaxonName);
                 predator.ate(nodeFactory.createSpecimen(study, preyTaxonName));

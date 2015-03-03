@@ -24,6 +24,18 @@ public class DOIResolverImplIT {
         assertThat(doi, is("http://dx.doi.org/10.1002/bimj.4710230217"));
     }
 
+    @Test
+    public void resolveDOIByReferenceMatch2() throws IOException {
+        String doi = new DOIResolverImpl().findDOIForReference("Medan, D., N. H. Montaldo, M. Devoto, A. Mantese, V. Vasellati, and N. H. Bartoloni. 2002. Plant-pollinator relationships at two altitudes in the Andes of Mendoza, Argentina. Arctic Antarctic and Alpine Research 34:233-241.");
+        assertThat(doi, is("http://dx.doi.org/10.2307/1552480"));
+    }
+
+@Test
+    public void resolveDOIByReferenceMatch3() throws IOException {
+        String doi = new DOIResolverImpl().findDOIForReference("Hocking, B. 1968. Insect-flower associations in the high Arctic with special reference to nectar. Oikos 19:359-388.");
+        assertThat(doi, is("http://dx.doi.org/10.2307/3565022"));
+    }
+
 
     @Test
     public void resolveDOIBugFixedServerError() throws IOException {

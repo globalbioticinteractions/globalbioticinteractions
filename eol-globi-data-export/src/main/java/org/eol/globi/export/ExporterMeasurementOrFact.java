@@ -97,7 +97,6 @@ public class ExporterMeasurementOrFact extends ExporterBase {
 
     private void addCommonProperties(Map<String, String> properties, Node specimenNode, Relationship collectedRel, Study study) throws IOException {
         properties.put(EOLDictionary.SOURCE, study.getTitle());
-        properties.put(EOLDictionary.CONTRIBUTOR, study.getContributor());
         addCollectionDate(properties, collectedRel, EOLDictionary.MEASUREMENT_DETERMINED_DATE);
         properties.put(EOLDictionary.OCCURRENCE_ID, "globi:occur:" + specimenNode.getId());
         properties.put(EOLDictionary.REFERENCE_ID, ExporterReferences.referenceIdForStudy(study));

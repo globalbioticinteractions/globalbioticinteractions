@@ -18,7 +18,7 @@ public class StudyImporterForThessen extends BaseStudyImporter {
     @Override
     public Study importStudy() throws StudyImporterException {
         String citation = "A. Thessen. 2014. Species associations extracted from EOL text data objects via text mining. " + ReferenceUtil.createLastAccessedString(RESOURCE);
-        Study study = nodeFactory.getOrCreateStudy("Thessen 2014", citation, null);
+        Study study = nodeFactory.getOrCreateStudy2("Thessen 2014", citation, null);
         study.setExternalId("https://github.com/EOL/pseudonitzchia");
         study.setCitationWithTx(citation);
         try {

@@ -16,6 +16,7 @@ import org.eol.globi.domain.Term;
 import org.eol.globi.service.DOIResolver;
 import org.eol.globi.service.TermLookupService;
 import org.eol.globi.service.TermLookupServiceException;
+import org.eol.globi.util.ExternalIdUtil;
 import org.junit.Test;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
@@ -32,6 +33,11 @@ import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
 
 public class NodeFactoryImplTest extends GraphDBTestCase {
+
+    @Test
+    public void toCitation() {
+        assertThat(ExternalIdUtil.toCitation(null, null, null), is("bla"));
+    }
 
     @Test
     public void createInteraction() throws NodeFactoryException {
@@ -132,7 +138,7 @@ public class NodeFactoryImplTest extends GraphDBTestCase {
                 return "my citation";
             }
         });
-        Study study = getNodeFactory().getOrCreateStudy("my title", "my contr", null, null, "some description", null, null);
+        Study study = getNodeFactory().getOrCreateStudy("my title", null, ExternalIdUtil.toCitation("my contr", "some description", null));
         assertThat(study.getDOI(), is("doi:1234"));
         assertThat(study.getExternalId(), is("http://dx.doi.org/1234"));
         assertThat(study.getCitation(), is("my citation"));
@@ -148,7 +154,7 @@ public class NodeFactoryImplTest extends GraphDBTestCase {
                 throw new IOException("kaboom!");
             }
         });
-        study = getNodeFactory().getOrCreateStudy("my other title", "my contr", null, null, "some description", null, null);
+        study = getNodeFactory().getOrCreateStudy("my other title", null, ExternalIdUtil.toCitation("my contr", "some description", null));
         assertThat(study.getDOI(), nullValue());
         assertThat(study.getExternalId(), nullValue());
         assertThat(study.getCitation(), nullValue());
@@ -158,7 +164,7 @@ public class NodeFactoryImplTest extends GraphDBTestCase {
 
     @Test
     public void createStudy() {
-        Study study = getNodeFactory().getOrCreateStudy("myTitle", "mySource", "doi:myDoi");
+        Study study = getNodeFactory().getOrCreateStudy2("myTitle", "mySource", "doi:myDoi");
         assertThat(study.getDOI(), is("doi:myDoi"));
         assertThat(study.getExternalId(), is("http://dx.doi.org/myDoi"));
     }

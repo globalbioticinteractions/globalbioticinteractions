@@ -29,7 +29,7 @@ public class StudyImporterForKelpForest extends BaseStudyImporter {
     public Study importStudy() throws StudyImporterException {
         try {
             String source = "Beas-Luna, R., Novak, M., Carr, M. H., Tinker, M. T., Black, A., Caselle, J. E., … Iles, A. (2014). An Online Database for Informing Ecological Network Models: http://kelpforest.ucsc.edu. PLoS ONE, 9(10), e109356. doi:10.1371/journal.pone.0109356";
-            Study study = nodeFactory.getOrCreateStudy(source, source, "doi:10.1371/journal.pone.0109356");
+            Study study = nodeFactory.getOrCreateStudy2(source, source, "doi:10.1371/journal.pone.0109356");
             study.setCitationWithTx(source);
 
             LabeledCSVParser parser = parserFactory.createParser(NODES, "UTF-8");

@@ -7,6 +7,7 @@ import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.Term;
+import org.eol.globi.util.ExternalIdUtil;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -38,7 +39,7 @@ public class ExporterAssociationsTest extends GraphDBTestCase {
     }
 
     private void createTestData(Double length) throws NodeFactoryException, ParseException {
-        Study myStudy = nodeFactory.getOrCreateStudy("myStudy", "contributor", "institute", "period", "description", "pubYear", "data source description");
+        Study myStudy = nodeFactory.getOrCreateStudy("myStudy", "data source description", ExternalIdUtil.toCitation("contributor", "description", "pubYear"));
         Specimen specimen = nodeFactory.createSpecimen(myStudy, "Homo sapiens", "EOL:123");
         specimen.setStomachVolumeInMilliLiter(666.0);
         specimen.setLifeStage(new Term("GLOBI:JUVENILE", "JUVENILE"));

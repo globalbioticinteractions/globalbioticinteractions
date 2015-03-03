@@ -4,6 +4,7 @@ import com.Ostermiller.util.LabeledCSVParser;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
+import org.eol.globi.util.ExternalIdUtil;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -19,12 +20,8 @@ public class StudyImporterForRobledo extends BaseStudyImporter {
     public Study importStudy() throws StudyImporterException {
         String description = "García-Robledo C, Erickson DL, Staines CL, Erwin TL, Kress WJ. Tropical Plant–Herbivore Networks: Reconstructing Species Interactions Using DNA Barcodes Heil M, editor. PLoS ONE [Internet]. 2013 January 8;8(1):e52967. Available from: http://dx.doi.org/10.1371/journal.pone.0052967";
         Study study = nodeFactory.getOrCreateStudy("García-Robledo et al 2013"
-                , "",
-                "",
-                "",
-                description
-                , "2013"
-                , description);
+                ,
+                description, ExternalIdUtil.toCitation("", description, "2013"));
         study.setDOIWithTx("http://dx.doi.org/10.1371/journal.pone.0052967");
         Map<String, String> abrLookup = buildPlantLookup();
 

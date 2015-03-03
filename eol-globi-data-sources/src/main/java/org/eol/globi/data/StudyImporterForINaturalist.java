@@ -5,7 +5,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.CloseableHttpClient;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.domain.InteractType;
@@ -191,7 +190,7 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
         if (sourceTaxon == null) {
             LOG.warn("cannot create interaction with missing source taxon name for observation with id [" + observation.get("id") + "]");
         } else {
-            Study study = nodeFactory.getOrCreateStudy(TaxonomyProvider.ID_PREFIX_INATURALIST + observationId, getSourceString(), null);
+            Study study = nodeFactory.getOrCreateStudy2(TaxonomyProvider.ID_PREFIX_INATURALIST + observationId, getSourceString(), null);
             String targetTaxonName = targetTaxonNode.getTextValue();
             String sourceTaxonName = sourceTaxon.get("name").getTextValue();
             Date observationDate = getObservationDate(study, observationId, observation);

@@ -6,6 +6,7 @@ import org.eol.globi.domain.Season;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 
+import org.eol.globi.util.ExternalIdUtil;
 import uk.me.jstott.jcoord.UTMRef;
 import uk.me.jstott.jcoord.LatLng;
 
@@ -62,10 +63,7 @@ public class StudyImporterForSimons extends BaseStudyImporter {
 
     private Study importStudy(ParserFactory parserFactory, String studyResource) throws StudyImporterException {
         Study study = nodeFactory.getOrCreateStudy("Simons 1997",
-                "James D. Simons",
-                "Center for Coastal Studies, Texas A&M University - Corpus Christi",
-                "1987- 1990",
-                "Food habits and trophic structure of the demersal fish assemblages on the Mississippi-Alabama continental shelf.", "1997", StudyImporterForGoMexSI.GOMEXI_SOURCE_DESCRIPTION, null);
+                StudyImporterForGoMexSI.GOMEXI_SOURCE_DESCRIPTION, null, ExternalIdUtil.toCitation("James D. Simons", "Food habits and trophic structure of the demersal fish assemblages on the Mississippi-Alabama continental shelf.", "1997"));
         try {
             LabeledCSVParser csvParser = parserFactory.createParser(studyResource, CharsetConstant.UTF8);
             Map<String, String> columnMapper = COLUMN_MAPPER;
