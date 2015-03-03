@@ -40,12 +40,17 @@ public class ImageService {
 
     @RequestMapping(value = "/imagesForName", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public TaxonImage findTaxonImagesForTaxonWithName2(@RequestParam(value = "name") String[] names) throws IOException {
-        if (names == null || names.length == 0) {
-            throw new BadRequestException("no names provided");
+    public TaxonImage findTaxonImagesForTaxonWithName2(@RequestParam(value = "name", required = false) String[] names, @RequestParam(value = "externalId", required = false) String[] externalIds) throws IOException {
+        TaxonImage image = null;
+        if (externalIds != null && externalIds.length > 0) {
+            image = findTaxonImagesForExternalId(externalIds[0]);
+        } else if (names != null && names.length > 0) {
+            image = findTaxonImagesForTaxonWithName(names[0]);
+        } else {
+            throw new BadRequestException("no names nor externalIds provided");
         }
 
-        return findTaxonImagesForTaxonWithName(names[0]);
+        return image;
     }
 
     @RequestMapping(value = "/imagesForNames", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")

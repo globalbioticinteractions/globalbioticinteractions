@@ -45,6 +45,20 @@ public class ImageServiceIT extends ITBase {
         assertThat(response, is(notNullValue()));
     }
 
+    @Test
+    public void imagesForEOLExternalIdInsecta() throws IOException {
+        String uri = getURLPrefix() + "imagesForName?externalId=EOL:344";
+        String response = getRemoteJson(uri);
+        assertThat(response, is(notNullValue()));
+    }
+
+    @Test
+    public void imagesForInsecta() throws IOException {
+        String uri = getURLPrefix() + "imagesForName?name=Insecta";
+        String response = getRemoteJson(uri);
+        assertThat(response, is(notNullValue()));
+    }
+
     protected String getRemoteJson(String uri) throws IOException {
         return HttpUtil.getRemoteJson(uri);
     }
