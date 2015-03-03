@@ -41,11 +41,11 @@ public class StudyImporterForFishbaseTest extends GraphDBTestCase {
         }
 
         assertThat(sources, hasItem("Database export shared by http://fishbase.org in December 2013. For use by Brian Hayden and Jorrit Poelen only."));
-        assertThat(citations, hasItem("citation:doi:Hickley, P. and R.G. Bailey 1987 Food and feeding relationships of fish in the Sudd swamps (River Nile, southern Sudan)."));
-        assertThat(citations, hasItem("citation:doi:Rainboth, W.J.1996 Fishes of the Cambodian Mekong. Mekong."));
-        assertThat(citations, hasItem("citation:doi:Trewavas, E. 1983 Tilapiine fishes of the genera <i>Sarotherodon</i>, <i>Oreochromis</i> and <i>Danakilia</i>."));
+        assertThat(citations, hasItem("citation:doi:Hickley, P. and R.G. Bailey. 1987. Food and feeding relationships of fish in the Sudd swamps (River Nile, southern Sudan)."));
+        assertThat(citations, hasItem("citation:doi:Rainboth, W.J.1996. Fishes of the Cambodian Mekong.. Mekong."));
+        assertThat(citations, hasItem("citation:doi:Trewavas, E.. 1983. Tilapiine fishes of the genera <i>Sarotherodon</i>, <i>Oreochromis</i> and <i>Danakilia</i>."));
 
-        assertThat(citations, hasItem("citation:doi:ICES 2012 Stomach Dataset."));
+        assertThat(citations, hasItem("citation:doi:ICES. 2012. Stomach Dataset."));
 
         assertThat(nodeFactory.findTaxonByName("n.a./others"), is(notNullValue()));
         assertThat(nodeFactory.findTaxonByName("benthic algae/weeds"), is(notNullValue()));

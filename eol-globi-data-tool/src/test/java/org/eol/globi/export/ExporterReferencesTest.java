@@ -39,7 +39,7 @@ public class ExporterReferencesTest extends GraphDBTestCase {
         Study myStudy = nodeFactory.createStudy("myStudy");
         StringWriter row = new StringWriter();
         new ExporterReferences().exportStudy(myStudy, row, false);
-        assertThat(row.getBuffer().toString().trim(), equalTo("globi:ref:1,,,,,,,,,,,,,,,,,"));
+        assertThat(row.getBuffer().toString().trim(), equalTo("globi:ref:1,,myStudy,,,,,,,,,,,,,,,"));
     }
 
     @Test
@@ -58,7 +58,7 @@ public class ExporterReferencesTest extends GraphDBTestCase {
     }
 
     private String getExpectedRow() {
-        return "globi:ref:1,,John Doe (1927) description study 1,,,,,,,,,,,,,http://research.myfwc.com/game/Survey.aspx?id=444,doi:1234,";
+        return "globi:ref:1,,citation:doi:John Doe. 1927. description study 1,,,,,,,,,,,,,http://research.myfwc.com/game/Survey.aspx?id=444,doi:1234,";
     }
 
     @Test

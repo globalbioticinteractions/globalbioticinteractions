@@ -36,7 +36,7 @@ public class NodeFactoryImplTest extends GraphDBTestCase {
 
     @Test
     public void toCitation() {
-        assertThat(ExternalIdUtil.toCitation(null, null, null), is("bla"));
+        assertThat(ExternalIdUtil.toCitation(null, null, null), is(""));
     }
 
     @Test
@@ -157,7 +157,7 @@ public class NodeFactoryImplTest extends GraphDBTestCase {
         study = getNodeFactory().getOrCreateStudy("my other title", null, ExternalIdUtil.toCitation("my contr", "some description", null));
         assertThat(study.getDOI(), nullValue());
         assertThat(study.getExternalId(), nullValue());
-        assertThat(study.getCitation(), nullValue());
+        assertThat(study.getCitation(), is("my contr. some description"));
 
 
     }
