@@ -32,7 +32,7 @@ public class StudyImporterForGitHubDataIT extends GraphDBTestCase {
             @Override
             public LatLng findLatLng(String termsOrLocale) throws IOException {
                 geoTerms.add(termsOrLocale);
-                return new LatLng(10,10);
+                return new LatLng(10, 10);
             }
         });
         importer.importStudy();
@@ -63,6 +63,26 @@ public class StudyImporterForGitHubDataIT extends GraphDBTestCase {
         assertThat(nodeFactory.findTaxonByName("Sandalolitha dentata"), is(notNullValue()));
         assertThat(nodeFactory.findTaxonByName("Pterois volitans/miles"), is(notNullValue()));
 
+    }
+
+    @Test
+    public void importHechingers() throws Exception {
+        String datasetsUsingHechingerFormat[] = { "thieltges2011", "preston2012", "zander2011", "mouritsen2011"};
+
+        int studyCount = 0;
+
+        for (String dataset : datasetsUsingHechingerFormat) {
+            try {
+                StudyImporterForGitHubData importer = new StudyImporterForGitHubData(new ParserFactoryImpl(), nodeFactory);
+                importer.importData("globalbioticinteractions/" + dataset);
+                List<Study> allStudies = NodeUtil.findAllStudies(getGraphDb());
+                assertThat(allStudies.size(), is(studyCount + 1));
+                studyCount += 1;
+            } catch (Exception e) {
+                throw new Exception("failed to import [" + dataset + "]", e);
+            }
+
+        }
 
     }
 

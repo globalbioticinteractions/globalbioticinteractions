@@ -41,7 +41,6 @@ public class StudyImporterForGoMexSI extends BaseStudyImporter {
         add("several");
     }};
 
-    private String sourceCitation = GOMEXI_SOURCE_DESCRIPTION;
     private String baseUrl = "gomexsi";
 
 
@@ -407,15 +406,9 @@ public class StudyImporterForGoMexSI extends BaseStudyImporter {
         return "NA".equals(value) ? "" : value;
     }
 
-    public void setSourceCitation(String sourceCitation) {
-        this.sourceCitation = sourceCitation;
-    }
 
     public void setBaseUrl(String baseUrl) {
         this.baseUrl = baseUrl;
     }
 
-    public String getSourceCitation() {
-        return sourceCitation;
-    }
 }

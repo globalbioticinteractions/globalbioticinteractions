@@ -12,6 +12,9 @@ public abstract class BaseStudyImporter extends BaseImporter implements StudyImp
             return true;
         }
     };
+    protected String sourceCitation;
+
+    protected String sourceDOI;
 
     private GeoNamesService geoNamesService = new GeoNamesServiceImpl();
 
@@ -63,4 +66,21 @@ public abstract class BaseStudyImporter extends BaseImporter implements StudyImp
     public GeoNamesService getGeoNamesService() {
         return geoNamesService;
     }
+
+    public void setSourceCitation(String sourceCitation) {
+        this.sourceCitation = sourceCitation;
+    }
+
+    public String getSourceCitation() {
+        return sourceCitation;
+    }
+
+    public String getSourceDOI() {
+        return sourceDOI;
+    }
+
+    public void setSourceDOI(String sourceDOI) {
+        this.sourceDOI = sourceDOI;
+    }
+
 }
