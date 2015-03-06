@@ -10,7 +10,6 @@ import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.server.util.InteractionTypeExternal;
 import org.eol.globi.server.util.RequestHelper;
-import org.eol.globi.server.util.ResultFields;
 import org.eol.globi.util.CypherQuery;
 import org.eol.globi.util.InteractUtil;
 
@@ -121,6 +120,28 @@ public class CypherQueryBuilder {
         put(TAXON_PATH_IDS, "taxon.pathIds");
         put(TAXON_PATH_RANKS, "taxon.pathNames");
     }});
+    public static final String[] RETURN_FIELDS_MULTI_TAXON_DEFAULT = new String[]{SOURCE_TAXON_EXTERNAL_ID, SOURCE_TAXON_NAME, SOURCE_TAXON_PATH, PREFIX_SOURCE_SPECIMEN + SUFFIX_LIFE_STAGE,
+            INTERACTION_TYPE, TARGET_TAXON_EXTERNAL_ID, TARGET_TAXON_NAME, TARGET_TAXON_PATH, PREFIX_TARGET_SPECIMEN + SUFFIX_LIFE_STAGE,
+            LATITUDE, LONGITUDE, STUDY_TITLE};
+    public static final String TARGET_SPECIMEN_ID = "tmp_and_unique_" + PREFIX_TARGET_SPECIMEN + "_id";
+    public static final String SOURCE_SPECIMEN_ID = "tmp_and_unique_" + PREFIX_SOURCE_SPECIMEN + "_id";
+    public static final String TARGET_SPECIMEN_TOTAL_COUNT = PREFIX_TARGET_SPECIMEN + "_total_count";
+    public static final String TARGET_SPECIMEN_TOTAL_VOLUME_ML = PREFIX_TARGET_SPECIMEN + "_total_volume_ml";
+    public static final String TARGET_SPECIMEN_TOTAL_FREQUENCY_OF_OCCURRENCE = PREFIX_TARGET_SPECIMEN + "_frequency_of_occurrence";
+    public static final String[] RETURN_FIELDS_SINGLE_TAXON_DEFAULT = new String[]{SOURCE_TAXON_NAME, INTERACTION_TYPE, TARGET_TAXON_NAME,
+            LATITUDE, LONGITUDE, ALTITUDE, STUDY_TITLE, COLLECTION_TIME_IN_UNIX_EPOCH,
+            SOURCE_SPECIMEN_ID,
+            TARGET_SPECIMEN_ID,
+            PREFIX_SOURCE_SPECIMEN + SUFFIX_LIFE_STAGE,
+            PREFIX_TARGET_SPECIMEN + SUFFIX_LIFE_STAGE,
+            PREFIX_SOURCE_SPECIMEN + SUFFIX_BODY_PART,
+            PREFIX_TARGET_SPECIMEN + SUFFIX_BODY_PART,
+            PREFIX_SOURCE_SPECIMEN + SUFFIX_PHYSIOLOGICAL_STATE,
+            PREFIX_TARGET_SPECIMEN + SUFFIX_PHYSIOLOGICAL_STATE,
+            TARGET_SPECIMEN_TOTAL_COUNT,
+            TARGET_SPECIMEN_TOTAL_VOLUME_ML,
+            TARGET_SPECIMEN_TOTAL_FREQUENCY_OF_OCCURRENCE
+    };
 
     static public CypherQuery createDistinctTaxaInLocationQuery(Map<String, String[]> params) {
         StringBuilder builder = new StringBuilder();
@@ -334,13 +355,13 @@ public class CypherQueryBuilder {
                 appendReturnClauseDistinct(interactionType.get(0), query);
                 break;
             case SINGLE_TAXON_ALL:
-                appendReturnClause(interactionType.get(0), query);
+                appendReturnClause(interactionType.get(0), query, RETURN_FIELDS_SINGLE_TAXON_DEFAULT);
                 break;
             case MULTI_TAXON_ALL:
-                appendReturnClause(query);
+                appendReturnClause(query, RETURN_FIELDS_MULTI_TAXON_DEFAULT);
                 break;
             case MULTI_TAXON_DISTINCT:
-                appendReturnClauseDistinct(query);
+                appendReturnClauseDistinct(query, RETURN_FIELDS_MULTI_TAXON_DEFAULT);
                 break;
             default:
                 throw new IllegalArgumentException("invalid option [" + returnType + "]");
@@ -383,38 +404,47 @@ public class CypherQueryBuilder {
         return appendTargetTaxonWhereClause(parameterMap, sourceTaxa, targetTaxa, query);
     }
 
-    protected static void appendReturnClause(String interactionType, StringBuilder query) {
-        query.append(" RETURN ")
-                .append("sourceTaxon.name as ").append(SOURCE_TAXON_NAME)
-                .append(",'").append(interactionType).append("' as ").append(INTERACTION_TYPE)
-                .append(",targetTaxon.name as ").append(TARGET_TAXON_NAME).append(", ");
-        query.append("loc.").append(Location.LATITUDE).append("? as ").append(LATITUDE)
-                .append(",loc.").append(Location.LONGITUDE).append("? as ").append(LONGITUDE)
-                .append(",loc.").append(Location.ALTITUDE).append("? as ").append(ALTITUDE);
-        query.append(",study.").append(Study.TITLE).append(" as ").append(STUDY_TITLE)
-                .append(",collected_rel.dateInUnixEpoch? as ").append(COLLECTION_TIME_IN_UNIX_EPOCH)
-                .append(",ID(sourceSpecimen) as tmp_and_unique_")
-                .append(PREFIX_SOURCE_SPECIMEN).append("_id,")
-                .append("ID(targetSpecimen) as tmp_and_unique_")
-                .append(PREFIX_TARGET_SPECIMEN).append("_id,")
-                .append("sourceSpecimen.").append(Specimen.LIFE_STAGE_LABEL).append("? as ").append(PREFIX_SOURCE_SPECIMEN).append(SUFFIX_LIFE_STAGE).append(",")
-                .append("targetSpecimen.").append(Specimen.LIFE_STAGE_LABEL).append("? as ").append(PREFIX_TARGET_SPECIMEN).append(SUFFIX_LIFE_STAGE).append(",")
-                .append("sourceSpecimen.").append(Specimen.BODY_PART_LABEL).append("? as ").append(PREFIX_SOURCE_SPECIMEN).append(SUFFIX_BODY_PART).append(",")
-                .append("targetSpecimen.").append(Specimen.BODY_PART_LABEL).append("? as ").append(PREFIX_TARGET_SPECIMEN).append(SUFFIX_BODY_PART).append(",")
-                .append("sourceSpecimen.").append(Specimen.PHYSIOLOGICAL_STATE_LABEL).append("? as ").append(PREFIX_SOURCE_SPECIMEN).append(SUFFIX_PHYSIOLOGICAL_STATE).append(",")
-                .append("targetSpecimen.").append(Specimen.PHYSIOLOGICAL_STATE_LABEL).append("? as ").append(PREFIX_TARGET_SPECIMEN).append(SUFFIX_PHYSIOLOGICAL_STATE).append(",")
-                .append("targetSpecimen.").append(Specimen.TOTAL_COUNT).append("? as ").append(PREFIX_TARGET_SPECIMEN).append("_total_count").append(",")
-                .append("targetSpecimen.").append(Specimen.TOTAL_VOLUME_IN_ML).append("? as ").append(PREFIX_TARGET_SPECIMEN).append("_total_volume_ml").append(",")
-                .append("targetSpecimen.").append(Specimen.FREQUENCY_OF_OCCURRENCE).append("? as ").append(PREFIX_TARGET_SPECIMEN).append("_frequency_of_occurrence");
+    protected static void appendReturnClause(final String interactionType, StringBuilder query, String[] returnFields) {
+
+        Map<String, String> selectors = new HashMap<String, String>() {
+            {
+                put(SOURCE_TAXON_NAME, "sourceTaxon.name");
+                put(INTERACTION_TYPE, "'" + interactionType + "'");
+                put(TARGET_TAXON_NAME, "targetTaxon.name");
+                put(LATITUDE, "loc." + Location.LATITUDE + "?");
+                put(LONGITUDE, "loc." + Location.LONGITUDE + "?");
+                put(ALTITUDE, "loc." + Location.ALTITUDE + "?");
+                put(STUDY_TITLE, "study." + Study.TITLE);
+                put(COLLECTION_TIME_IN_UNIX_EPOCH, "collected_rel.dateInUnixEpoch?");
+                put(SOURCE_SPECIMEN_ID, "ID(sourceSpecimen)");
+                put(TARGET_SPECIMEN_ID, "ID(targetSpecimen)");
+                put(PREFIX_SOURCE_SPECIMEN + SUFFIX_LIFE_STAGE, "sourceSpecimen." + Specimen.LIFE_STAGE_LABEL + "?");
+                put(PREFIX_TARGET_SPECIMEN + SUFFIX_LIFE_STAGE, "targetSpecimen." + Specimen.LIFE_STAGE_LABEL + "?");
+                put(PREFIX_SOURCE_SPECIMEN + SUFFIX_BODY_PART, "sourceSpecimen." + Specimen.BODY_PART_LABEL + "?");
+                put(PREFIX_TARGET_SPECIMEN + SUFFIX_BODY_PART, "targetSpecimen." + Specimen.BODY_PART_LABEL + "?");
+                put(PREFIX_SOURCE_SPECIMEN + SUFFIX_PHYSIOLOGICAL_STATE, "sourceSpecimen." + Specimen.PHYSIOLOGICAL_STATE_LABEL + "?");
+                put(PREFIX_TARGET_SPECIMEN + SUFFIX_PHYSIOLOGICAL_STATE, "targetSpecimen." + Specimen.PHYSIOLOGICAL_STATE_LABEL + "?");
+                put(TARGET_SPECIMEN_TOTAL_COUNT, "targetSpecimen." + Specimen.TOTAL_COUNT + "?");
+                put(TARGET_SPECIMEN_TOTAL_VOLUME_ML, "targetSpecimen." + Specimen.TOTAL_VOLUME_IN_ML + "?");
+                put(TARGET_SPECIMEN_TOTAL_FREQUENCY_OF_OCCURRENCE, "targetSpecimen." + Specimen.FREQUENCY_OF_OCCURRENCE + "?");
+            }
+        };
+
+        query.append(" RETURN ");
+        appendReturnFields(query, returnFields, selectors);
     }
 
-    protected static void appendReturnClauseDistinct(String interactionType, StringBuilder query) {
-        query.append(" RETURN sourceTaxon.name as ")
-                .append(SOURCE_TAXON_NAME).append(", '")
-                .append(interactionType).append("' as ")
-                .append(INTERACTION_TYPE)
-                .append(", collect(distinct(targetTaxon.name)) as ")
-                .append(TARGET_TAXON_NAME);
+    protected static void appendReturnClauseDistinct(final String interactionType, StringBuilder query) {
+        String[] fields = {SOURCE_TAXON_NAME, INTERACTION_TYPE, TARGET_TAXON_NAME};
+
+        Map<String, String> selectors = new HashMap<String, String>() {{
+            put(SOURCE_TAXON_NAME, "sourceTaxon.name");
+            put(INTERACTION_TYPE, "'" + interactionType + "'");
+            put(TARGET_TAXON_NAME, "collect(distinct(targetTaxon.name))");
+        }
+        };
+        query.append(" RETURN ");
+        appendReturnFields(query, fields, selectors);
     }
 
     protected static StringBuilder appendMatchAndWhereClause(List<String> interactionTypes, Map parameterMap, StringBuilder query) {
@@ -442,12 +472,7 @@ public class CypherQueryBuilder {
     }
 
 
-    protected static void appendReturnClause(StringBuilder query) {
-        String[] fields = {SOURCE_TAXON_EXTERNAL_ID, SOURCE_TAXON_NAME, SOURCE_TAXON_PATH,
-                PREFIX_SOURCE_SPECIMEN + SUFFIX_LIFE_STAGE, INTERACTION_TYPE,
-                TARGET_TAXON_EXTERNAL_ID, TARGET_TAXON_NAME, TARGET_TAXON_PATH,
-                PREFIX_TARGET_SPECIMEN + SUFFIX_LIFE_STAGE, LATITUDE, LONGITUDE, STUDY_TITLE};
-
+    protected static void appendReturnClause(StringBuilder query, String[] returnFields) {
         query.append("RETURN ");
 
         Map<String, String> selectors = new HashMap<String, String>() {
@@ -469,12 +494,7 @@ public class CypherQueryBuilder {
             }
         };
 
-        List<String> returnFields = new ArrayList<String>();
-        for (String field : fields) {
-            returnFields.add(selectors.get(field) + " as " + field);
-        }
-
-        query.append(StringUtils.join(returnFields, ","));
+        appendReturnFields(query, returnFields, selectors);
     }
 
     protected static StringBuilder appendInteractionTypeReturn(StringBuilder query, String interactionTypeValue) {
@@ -497,21 +517,37 @@ public class CypherQueryBuilder {
         return query;
     }
 
-    protected static void appendReturnClauseDistinct(StringBuilder query) {
+    protected static void appendReturnClauseDistinct(StringBuilder query, String[] returnFields) {
         query.append("WITH distinct targetTaxon as tTaxon, type(interactionType) as iType, sourceTaxon as sTaxon ");
-        query.append("RETURN sTaxon.externalId? as ").append(SOURCE_TAXON_EXTERNAL_ID)
-                .append(",sTaxon.name as ").append(SOURCE_TAXON_NAME)
-                .append(",sTaxon.path? as ").append(SOURCE_TAXON_PATH)
-                .append(",NULL as ").append(PREFIX_SOURCE_SPECIMEN).append(SUFFIX_LIFE_STAGE)
-                .append(",");
-        appendInteractionTypeReturn(query, "iType").append(" as ").append(INTERACTION_TYPE);
-        query.append(",tTaxon.externalId? as ").append(TARGET_TAXON_EXTERNAL_ID)
-                .append(",tTaxon.name as ").append(TARGET_TAXON_NAME)
-                .append(",tTaxon.path? as ").append(TARGET_TAXON_PATH)
-                .append(",NULL as ").append(PREFIX_TARGET_SPECIMEN).append(SUFFIX_LIFE_STAGE)
-                .append(",NULL as ").append(LATITUDE)
-                .append(",NULL as ").append(LONGITUDE)
-                .append(",NULL as ").append(STUDY_TITLE);
+        query.append("RETURN ");
+
+        Map<String, String> selectors = new HashMap<String, String>() {
+            {
+                put(SOURCE_TAXON_EXTERNAL_ID, "sTaxon.externalId?");
+                put(SOURCE_TAXON_NAME, "sTaxon.name");
+                put(SOURCE_TAXON_PATH, "sTaxon.path?");
+                put(PREFIX_SOURCE_SPECIMEN + SUFFIX_LIFE_STAGE, "NULL");
+                put(INTERACTION_TYPE, appendInteractionTypeReturn(new StringBuilder(), "iType").toString());
+                put(TARGET_TAXON_EXTERNAL_ID, "tTaxon.externalId?");
+                put(TARGET_TAXON_NAME, "tTaxon.name");
+                put(TARGET_TAXON_PATH, "tTaxon.path?");
+                put(PREFIX_TARGET_SPECIMEN + SUFFIX_LIFE_STAGE, "NULL");
+                put(LATITUDE, "NULL");
+                put(LONGITUDE, "NULL");
+                put(STUDY_TITLE, "NULL");
+            }
+        };
+
+        appendReturnFields(query, returnFields, selectors);
+    }
+
+    private static void appendReturnFields(StringBuilder query, String[] fields, Map<String, String> selectors) {
+        List<String> returnFields = new ArrayList<String>();
+        for (String field : fields) {
+            returnFields.add(selectors.get(field) + " as " + field);
+        }
+
+        query.append(StringUtils.join(returnFields, ","));
     }
 
     protected static String createInteractionTypeSelector(List<String> interactionTypeSelectors) {
