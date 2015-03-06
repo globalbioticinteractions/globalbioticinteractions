@@ -109,7 +109,7 @@ public class CypherQueryBuilderTest {
             }
         };
 
-        CypherQuery query = buildInter  actionQuery(params, MULTI_TAXON_DISTINCT);
+        CypherQuery query = buildInteractionQuery(params, MULTI_TAXON_DISTINCT);
         assertThat(query.getQuery(), is("START sourceTaxon = node:taxonPaths({source_taxon_name}) " +
                 EXPECTED_MATCH_CLAUSE_SPATIAL +
                 "WHERE loc.latitude < 23.32 AND loc.longitude > -67.87 AND loc.latitude > 12.79 AND loc.longitude < -57.08 AND has(targetTaxon.path) AND targetTaxon.path =~ '(.*(Arthropoda).*)' " +
