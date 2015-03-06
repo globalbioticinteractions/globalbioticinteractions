@@ -49,4 +49,5 @@ public class ResultFields {
     public static final String TAXON_PATH = "taxon_path";
     public static final String TAXON_PATH_IDS = "taxon_path_ids";
     public static final String TAXON_PATH_RANKS = "taxon_path_ranks";
+    public static final String INTERACTION_RECORD_COUNT = "interaction_record_count";
 }

@@ -10,6 +10,7 @@ import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.server.util.InteractionTypeExternal;
 import org.eol.globi.server.util.RequestHelper;
+import org.eol.globi.server.util.ResultFields;
 import org.eol.globi.util.CypherQuery;
 import org.eol.globi.util.InteractUtil;
 
@@ -28,19 +29,17 @@ import static org.eol.globi.server.util.ResultFields.COLLECTION_TIME_IN_UNIX_EPO
 import static org.eol.globi.server.util.ResultFields.INTERACTION_TYPE;
 import static org.eol.globi.server.util.ResultFields.LATITUDE;
 import static org.eol.globi.server.util.ResultFields.LONGITUDE;
-import static org.eol.globi.server.util.ResultFields.PREFIX_SOURCE_SPECIMEN;
-import static org.eol.globi.server.util.ResultFields.PREFIX_TARGET_SPECIMEN;
 import static org.eol.globi.server.util.ResultFields.SOURCE_SPECIMEN_BODY_PART;
 import static org.eol.globi.server.util.ResultFields.SOURCE_SPECIMEN_ID;
 import static org.eol.globi.server.util.ResultFields.SOURCE_SPECIMEN_LIFE_STAGE;
 import static org.eol.globi.server.util.ResultFields.SOURCE_SPECIMEN_PHYSIOLOGICAL_STATE;
+import static org.eol.globi.server.util.ResultFields.SOURCE_TAXON_COMMON_NAMES;
 import static org.eol.globi.server.util.ResultFields.SOURCE_TAXON_EXTERNAL_ID;
 import static org.eol.globi.server.util.ResultFields.SOURCE_TAXON_NAME;
 import static org.eol.globi.server.util.ResultFields.SOURCE_TAXON_PATH;
 import static org.eol.globi.server.util.ResultFields.SOURCE_TAXON_PATH_IDS;
 import static org.eol.globi.server.util.ResultFields.SOURCE_TAXON_PATH_RANKS;
 import static org.eol.globi.server.util.ResultFields.STUDY_TITLE;
-import static org.eol.globi.server.util.ResultFields.SUFFIX_LIFE_STAGE;
 import static org.eol.globi.server.util.ResultFields.TARGET_SPECIMEN_BODY_PART;
 import static org.eol.globi.server.util.ResultFields.TARGET_SPECIMEN_ID;
 import static org.eol.globi.server.util.ResultFields.TARGET_SPECIMEN_LIFE_STAGE;
@@ -48,6 +47,7 @@ import static org.eol.globi.server.util.ResultFields.TARGET_SPECIMEN_PHYSIOLOGIC
 import static org.eol.globi.server.util.ResultFields.TARGET_SPECIMEN_TOTAL_COUNT;
 import static org.eol.globi.server.util.ResultFields.TARGET_SPECIMEN_TOTAL_FREQUENCY_OF_OCCURRENCE;
 import static org.eol.globi.server.util.ResultFields.TARGET_SPECIMEN_TOTAL_VOLUME_ML;
+import static org.eol.globi.server.util.ResultFields.TARGET_TAXON_COMMON_NAMES;
 import static org.eol.globi.server.util.ResultFields.TARGET_TAXON_EXTERNAL_ID;
 import static org.eol.globi.server.util.ResultFields.TARGET_TAXON_NAME;
 import static org.eol.globi.server.util.ResultFields.TARGET_TAXON_PATH;
@@ -385,8 +385,6 @@ public class CypherQueryBuilder {
 
 
     private static void appendReturnClause(final List<String> interactionType, StringBuilder query, QueryType returnType, List<String> requestedReturnFields) {
-
-
         switch (returnType) {
             case SINGLE_TAXON_DISTINCT:
                 appendReturnClauseDistinct(interactionType.get(0), query, Arrays.asList(SOURCE_TAXON_NAME, INTERACTION_TYPE, TARGET_TAXON_NAME));
@@ -411,7 +409,7 @@ public class CypherQueryBuilder {
                     {
                         put(SOURCE_SPECIMEN_LIFE_STAGE, "sourceSpecimen.lifeStage?");
                         StringBuilder interactionBuilder = new StringBuilder();
-                        appendInteractionTypeReturn(interactionBuilder, "type(interactionType)");
+                        appendInteractionTypeReturn(interactionBuilder, "type(interaction)");
                         put(INTERACTION_TYPE, interactionBuilder.toString());
                         put(TARGET_SPECIMEN_LIFE_STAGE, "targetSpecimen.lifeStage?");
                         put(STUDY_TITLE, "study.title");
@@ -420,17 +418,17 @@ public class CypherQueryBuilder {
                 appendReturnClausez(query, actualReturnFields(requestedReturnFields, Arrays.asList(RETURN_FIELDS_MULTI_TAXON_DEFAULT), selectors.keySet()), selectors);
                 break;
             case MULTI_TAXON_DISTINCT:
-                selectors = new HashMap<String, String>() {
+                selectors = new HashMap<String, String>(defaultSelectors()) {
                     {
                         put(SOURCE_TAXON_EXTERNAL_ID, "sTaxon.externalId?");
                         put(SOURCE_TAXON_NAME, "sTaxon.name");
                         put(SOURCE_TAXON_PATH, "sTaxon.path?");
-                        put(PREFIX_SOURCE_SPECIMEN + SUFFIX_LIFE_STAGE, "NULL");
+                        put(SOURCE_SPECIMEN_LIFE_STAGE, "NULL");
                         put(INTERACTION_TYPE, appendInteractionTypeReturn(new StringBuilder(), "iType").toString());
                         put(TARGET_TAXON_EXTERNAL_ID, "tTaxon.externalId?");
                         put(TARGET_TAXON_NAME, "tTaxon.name");
                         put(TARGET_TAXON_PATH, "tTaxon.path?");
-                        put(PREFIX_TARGET_SPECIMEN + SUFFIX_LIFE_STAGE, "NULL");
+                        put(TARGET_SPECIMEN_LIFE_STAGE, "NULL");
                         put(LATITUDE, "NULL");
                         put(LONGITUDE, "NULL");
                         put(STUDY_TITLE, "NULL");
@@ -501,6 +499,7 @@ public class CypherQueryBuilder {
                 addSourceTaxonFields();
                 addTargetTaxonFields();
                 put(LATITUDE, "loc." + Location.LATITUDE + "?");
+                put(LATITUDE, "loc." + Location.LATITUDE + "?");
                 put(LONGITUDE, "loc." + Location.LONGITUDE + "?");
                 put(ALTITUDE, "loc." + Location.ALTITUDE + "?");
                 put(SOURCE_SPECIMEN_LIFE_STAGE, "sourceSpecimen." + Specimen.LIFE_STAGE_LABEL + "?");
@@ -514,6 +513,7 @@ public class CypherQueryBuilder {
 
             private void addTargetTaxonFields() {
                 put(TARGET_TAXON_NAME, "targetTaxon.name");
+                put(TARGET_TAXON_COMMON_NAMES, "targetTaxon.commonNames?");
                 put(TARGET_TAXON_EXTERNAL_ID, "targetTaxon.externalId?");
                 put(TARGET_TAXON_PATH, "targetTaxon.path?");
                 put(TARGET_TAXON_PATH_RANKS, "targetTaxon.pathNames?");
@@ -522,6 +522,7 @@ public class CypherQueryBuilder {
 
             private void addSourceTaxonFields() {
                 put(SOURCE_TAXON_NAME, "sourceTaxon.name");
+                put(SOURCE_TAXON_COMMON_NAMES, "sourceTaxon.commonNames?");
                 put(SOURCE_TAXON_EXTERNAL_ID, "sourceTaxon.externalId?");
                 put(SOURCE_TAXON_PATH, "sourceTaxon.path?");
                 put(SOURCE_TAXON_PATH_RANKS, "sourceTaxon.pathNames?");
@@ -557,7 +558,7 @@ public class CypherQueryBuilder {
     }
 
     private static String getInteractionMatch(String interactionTypeSelector) {
-        return "MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen-[interactionType:" + interactionTypeSelector + "]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon, sourceSpecimen<-[collected_rel:COLLECTED]-study";
+        return "MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen-[interaction:" + interactionTypeSelector + "]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon, sourceSpecimen<-[collected_rel:COLLECTED]-study";
     }
 
     public static CypherQuery sourcesQuery() {
@@ -593,7 +594,7 @@ public class CypherQueryBuilder {
     }
 
     protected static void appendReturnClauseDistinctz(StringBuilder query, List<String> returnFields, Map<String, String> selectors) {
-        query.append("WITH distinct targetTaxon as tTaxon, type(interactionType) as iType, sourceTaxon as sTaxon ");
+        query.append("WITH distinct targetTaxon as tTaxon, type(interaction) as iType, sourceTaxon as sTaxon ");
         query.append("RETURN ");
         appendReturnFields(query, returnFields, selectors);
     }
