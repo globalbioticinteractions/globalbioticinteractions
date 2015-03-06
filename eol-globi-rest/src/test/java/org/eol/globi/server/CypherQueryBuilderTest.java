@@ -82,7 +82,7 @@ public class CypherQueryBuilderTest {
 
     @Test
     public void interactionReturnTerms() {
-        assertThat(CypherQueryBuilder.appendInteractionTypeReturn(new StringBuilder(), "type(interactionType)").toString(), is("replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(type(interactionType),'HAS_PARASITE','hasParasite'),'HAS_PATHOGEN','hasPathogen'),'INTERACTS_WITH','interactsWith'),'PARASITE_OF','parasiteOf'),'PATHOGEN_OF','pathogenOf'),'POLLINATED_BY','pollinatedBy'),'POLLINATES','pollinates'),'EATEN_BY','preyedUponBy'),'PREYED_UPON_BY','preyedUponBy'),'ATE','preysOn'),'PREYS_UPON','preysOn'),'SYMBIONT_OF','symbiontOf') as interaction_type"));
+        assertThat(CypherQueryBuilder.appendInteractionTypeReturn(new StringBuilder(), "type(interactionType)").toString(), is("replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(type(interactionType),'HAS_PARASITE','hasParasite'),'HAS_PATHOGEN','hasPathogen'),'INTERACTS_WITH','interactsWith'),'PARASITE_OF','parasiteOf'),'PATHOGEN_OF','pathogenOf'),'POLLINATED_BY','pollinatedBy'),'POLLINATES','pollinates'),'EATEN_BY','preyedUponBy'),'PREYED_UPON_BY','preyedUponBy'),'ATE','preysOn'),'PREYS_UPON','preysOn'),'SYMBIONT_OF','symbiontOf')"));
     }
 
     @Test
