@@ -26,6 +26,7 @@ public class StudyImporterForGitHubData extends BaseStudyImporter {
     private static final Log LOG = LogFactory.getLog(StudyImporterForGitHubData.class);
     private static final Map<String, InteractType> INTERACT_ID_TO_TYPE = new HashMap<String, InteractType>() {{
         put("RO:0002434", InteractType.INTERACTS_WITH);
+        put("RO:0002439", InteractType.PREYS_UPON);
         put("RO:0002440", InteractType.SYMBIONT_OF);
         put("RO:0002444", InteractType.PARASITE_OF);
         put("RO:0002453", InteractType.HOST_OF);
@@ -84,53 +85,51 @@ public class StudyImporterForGitHubData extends BaseStudyImporter {
     }
 
     protected void importUsingDescriptor(String repo, String baseUrl, String descriptor) throws IOException, StudyImporterException, NodeFactoryException {
-        if (StringUtils.isBlank(descriptor)) {
-            importRepository(repo, sourceCitation, baseUrl);
-        } else {
+        if (StringUtils.isNotBlank(descriptor)) {
             JsonNode desc = new ObjectMapper().readTree(descriptor);
             String sourceCitation = desc.has("citation") ? desc.get("citation").asText() : baseUrl;
-            if (desc.has("format")) {
-                String format = desc.get("format").asText();
-                if ("gomexsi".equals(format)) {
-                    StudyImporterForGoMexSI importer = new StudyImporterForGoMexSI(parserFactory, nodeFactory);
-                    importer.setBaseUrl(baseUrl);
-                    importer.setSourceCitation(sourceCitation);
-                    if (getLogger() != null) {
-                        importer.setLogger(getLogger());
-                    }
-                    importer.importStudy();
-                } else if ("hechinger".equals(format)) {
-                    StudyImporterForHechinger importer = new StudyImporterForHechinger(parserFactory, nodeFactory);
-                    JsonNode resources = desc.get("resources");
-                    if (resources.has("links")) {
-                        importer.setLinkResource(resources.get("links").asText());
-                    }
-                    if (resources.has("nodes")) {
-                        importer.setNodeResource(resources.get("nodes").asText());
-                    }
-                    JsonNode location = desc.get("location");
-                    JsonNode latitude = location.get("latitude");
-                    JsonNode longitude = location.get("longitude");
-                    if (latitude != null && latitude.isDouble() && longitude != null && longitude.isDouble()) {
-                        importer.setLocation(new LatLng(latitude.asDouble(), longitude.asDouble()));
-                    }
-
-                    importer.setNamespace(repo);
-                    importer.setSourceCitation(sourceCitation);
-                    if (desc.has("delimiter")) {
-                        String delimiter = desc.get("delimiter").asText();
-                        if (delimiter.length() > 0) {
-                            importer.setDelimiter(StringUtils.trim(delimiter).charAt(0));
-                        }
-                    }
-
-                    if (getLogger() != null) {
-                        importer.setLogger(getLogger());
-                    }
-                    importer.importStudy();
-                } else {
-                    throw new StudyImporterException("unsupported format [" + format + "]");
+            String format = desc.has("format") ? desc.get("format").asText() : "globi";
+            if ("globi".equals(format)) {
+                importRepository(repo, sourceCitation, baseUrl);
+            } else if ("gomexsi".equals(format)) {
+                StudyImporterForGoMexSI importer = new StudyImporterForGoMexSI(parserFactory, nodeFactory);
+                importer.setBaseUrl(baseUrl);
+                importer.setSourceCitation(sourceCitation);
+                if (getLogger() != null) {
+                    importer.setLogger(getLogger());
                 }
+                importer.importStudy();
+            } else if ("hechinger".equals(format)) {
+                StudyImporterForHechinger importer = new StudyImporterForHechinger(parserFactory, nodeFactory);
+                JsonNode resources = desc.get("resources");
+                if (resources.has("links")) {
+                    importer.setLinkResource(resources.get("links").asText());
+                }
+                if (resources.has("nodes")) {
+                    importer.setNodeResource(resources.get("nodes").asText());
+                }
+                JsonNode location = desc.get("location");
+                JsonNode latitude = location.get("latitude");
+                JsonNode longitude = location.get("longitude");
+                if (latitude != null && latitude.isDouble() && longitude != null && longitude.isDouble()) {
+                    importer.setLocation(new LatLng(latitude.asDouble(), longitude.asDouble()));
+                }
+
+                importer.setNamespace(repo);
+                importer.setSourceCitation(sourceCitation);
+                if (desc.has("delimiter")) {
+                    String delimiter = desc.get("delimiter").asText();
+                    if (delimiter.length() > 0) {
+                        importer.setDelimiter(StringUtils.trim(delimiter).charAt(0));
+                    }
+                }
+
+                if (getLogger() != null) {
+                    importer.setLogger(getLogger());
+                }
+                importer.importStudy();
+            } else {
+                throw new StudyImporterException("unsupported format [" + format + "]");
             }
         }
     }

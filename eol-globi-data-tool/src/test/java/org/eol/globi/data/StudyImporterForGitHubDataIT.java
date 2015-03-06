@@ -66,8 +66,17 @@ public class StudyImporterForGitHubDataIT extends GraphDBTestCase {
     }
 
     @Test
+    public void importWeidinger() throws StudyImporterException, NodeFactoryException {
+        StudyImporterForGitHubData importer = new StudyImporterForGitHubData(new ParserFactoryImpl(), nodeFactory);
+        importer.importData("millerse/Weidinger-et-al.-2009");
+        List<Study> allStudies = NodeUtil.findAllStudies(getGraphDb());
+        assertThat(allStudies.size(), is(1));
+        assertThat(nodeFactory.findTaxonByName("Garrulus glandarius"), is(notNullValue()));
+    }
+
+    @Test
     public void importHechingers() throws Exception {
-        String datasetsUsingHechingerFormat[] = { "thieltges2011", "preston2012", "zander2011", "mouritsen2011"};
+        String datasetsUsingHechingerFormat[] = {"thieltges2011", "preston2012", "zander2011", "mouritsen2011"};
 
         int studyCount = 0;
 
