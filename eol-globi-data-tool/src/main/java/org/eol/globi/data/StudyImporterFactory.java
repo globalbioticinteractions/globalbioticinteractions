@@ -21,7 +21,6 @@ public class StudyImporterFactory {
         add(StudyImporterForHurlbert.class);
         add(StudyImporterForByrnes.class);
         add(StudyImporterForRaymond.class);
-        add(StudyImporterForBioInfo.class);
         add(StudyImporterForLifeWatchGreece.class);
         add(StudyImporterForHechinger.class);
         add(StudyImporterForRoopnarine.class);
@@ -38,6 +37,7 @@ public class StudyImporterFactory {
         add(StudyImporterForRobledo.class);
         add(StudyImporterForINaturalist.class);
         add(StudyImporterForThessen.class);
+        add(StudyImporterForBioInfo.class);
     }});
 
     private NodeFactory nodeFactory;
