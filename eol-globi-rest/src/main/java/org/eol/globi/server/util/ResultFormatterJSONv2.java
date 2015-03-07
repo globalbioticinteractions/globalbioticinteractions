@@ -58,11 +58,16 @@ public class ResultFormatterJSONv2 implements ResultFormatter {
     }
 
     private boolean isInteractionQuery(List<String> columnNames) {
-        return columnNames.contains(ResultField.INTERACTION_TYPE);
+        return columnNames.contains(ResultField.INTERACTION_TYPE.getLabel());
     }
 
     private boolean isTaxonQuery(List<String> columnNames) {
-        return CollectionUtils.containsAny(CypherQueryBuilder.TAXON_FIELDS, columnNames);
+        for (ResultField resultField : CypherQueryBuilder.TAXON_FIELDS) {
+            if (columnNames.contains(resultField.getLabel())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private String formatAsSourceTargetPairs(List<String> columnNames, JsonNode data) throws IOException {
@@ -102,21 +107,21 @@ public class ResultFormatterJSONv2 implements ResultFormatter {
     private void parseRow(List<String> columnNames, JsonNode row, Map<String, Object> interaction, Map<String, String> sourceTaxon, Map<String, String> targetTaxon, List<Map<String, String>> targetTaxa, int i) {
         String colName = columnNames.get(i);
         final JsonNode value = row.get(i);
-        if (ResultField.INTERACTION_TYPE.equals(colName)) {
+        if (ResultField.INTERACTION_TYPE.getLabel().equals(colName)) {
             interaction.put("type", value.getTextValue());
-        } else if (ResultField.SOURCE_TAXON_NAME.equals(colName)) {
+        } else if (ResultField.SOURCE_TAXON_NAME.getLabel().equals(colName)) {
             if (value.isTextual()) {
                 sourceTaxon.put("name", value.getTextValue());
             }
-        } else if (ResultField.SOURCE_TAXON_PATH.equals(colName)) {
+        } else if (ResultField.SOURCE_TAXON_PATH.getLabel().equals(colName)) {
             if (value.isTextual()) {
                 sourceTaxon.put("path", value.getTextValue());
             }
-        } else if (ResultField.SOURCE_TAXON_EXTERNAL_ID.equals(colName)) {
+        } else if (ResultField.SOURCE_TAXON_EXTERNAL_ID.getLabel().equals(colName)) {
             if (value.isTextual()) {
                 sourceTaxon.put("id", value.getTextValue());
             }
-        } else if (ResultField.TARGET_TAXON_NAME.equals(colName)) {
+        } else if (ResultField.TARGET_TAXON_NAME.getLabel().equals(colName)) {
             if (value.isTextual()) {
                 targetTaxon.put("name", value.getTextValue());
             } else if (value.isArray()) {
@@ -126,31 +131,31 @@ public class ResultFormatterJSONv2 implements ResultFormatter {
                     }
                 }
             }
-        } else if (ResultField.TARGET_TAXON_PATH.equals(colName)) {
+        } else if (ResultField.TARGET_TAXON_PATH.getLabel().equals(colName)) {
             if (value.isTextual()) {
                 targetTaxon.put("path", value.getTextValue());
             }
-        } else if (ResultField.TARGET_TAXON_EXTERNAL_ID.equals(colName)) {
+        } else if (ResultField.TARGET_TAXON_EXTERNAL_ID.getLabel().equals(colName)) {
             if (value.isTextual()) {
                 targetTaxon.put("id", value.getTextValue());
             }
-        } else if (ResultField.LATITUDE.equals(colName)) {
+        } else if (ResultField.LATITUDE.getLabel().equals(colName)) {
             if (value.isNumber()) {
                 interaction.put("latitude", value.getDoubleValue());
             }
-        } else if (ResultField.LONGITUDE.equals(colName)) {
+        } else if (ResultField.LONGITUDE.getLabel().equals(colName)) {
             if (value.isNumber()) {
                 interaction.put("longitude", value.getDoubleValue());
             }
-        } else if (ResultField.ALTITUDE.equals(colName)) {
+        } else if (ResultField.ALTITUDE.getLabel().equals(colName)) {
             if (value.isNumber()) {
                 interaction.put("altitude", value.getDoubleValue());
             }
-        } else if (ResultField.COLLECTION_TIME_IN_UNIX_EPOCH.equals(colName)) {
+        } else if (ResultField.COLLECTION_TIME_IN_UNIX_EPOCH.getLabel().equals(colName)) {
             if (value.isNumber()) {
                 interaction.put("time", value.getLongValue());
             }
-        } else if (ResultField.STUDY_TITLE.equals(colName)) {
+        } else if (ResultField.STUDY_TITLE.getLabel().equals(colName)) {
             interaction.put("study", value.getTextValue());
         }
     }

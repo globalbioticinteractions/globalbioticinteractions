@@ -1,7 +1,5 @@
 package org.eol.globi.server.util;
 
-import org.eol.globi.server.util.ResultFormatterDOT;
-import org.eol.globi.server.util.ResultFormattingException;
 import org.hamcrest.core.Is;
 import org.junit.Test;
 
