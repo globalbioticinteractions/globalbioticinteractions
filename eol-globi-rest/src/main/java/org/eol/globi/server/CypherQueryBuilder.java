@@ -140,7 +140,7 @@ public class CypherQueryBuilder {
     };
 
     static final Map<String, String> EMPTY_PARAMS = new TreeMap<String, String>();
-    public static final List<String> TAXON_FIELDS = Collections.unmodifiableList(new ArrayList<String>() {{
+    public static final List<ResultFields> TAXON_FIELDS = Collections.unmodifiableList(new ArrayList<ResultFields>() {{
         add(TAXON_NAME);
         add(TAXON_COMMON_NAMES);
         add(TAXON_EXTERNAL_ID);
@@ -149,7 +149,7 @@ public class CypherQueryBuilder {
         add(TAXON_PATH_RANKS);
     }});
 
-    public static final Map<String, String> FIELD_MAP = Collections.unmodifiableMap(new TreeMap<String, String>() {{
+    public static final Map<ResultFields, String> FIELD_MAP = Collections.unmodifiableMap(new TreeMap<ResultFields, String>() {{
         put(TAXON_NAME, "taxon.name");
         put(TAXON_COMMON_NAMES, "taxon.commonNames");
         put(TAXON_EXTERNAL_ID, "taxon.externalId");
@@ -158,12 +158,12 @@ public class CypherQueryBuilder {
         put(TAXON_PATH_RANKS, "taxon.pathNames");
     }});
 
-    public static final String[] RETURN_FIELDS_MULTI_TAXON_DEFAULT = new String[]{SOURCE_TAXON_EXTERNAL_ID, SOURCE_TAXON_NAME, SOURCE_TAXON_PATH, SOURCE_SPECIMEN_LIFE_STAGE,
+    public static final ResultFields[] RETURN_FIELDS_MULTI_TAXON_DEFAULT = new ResultFields[]{SOURCE_TAXON_EXTERNAL_ID, SOURCE_TAXON_NAME, SOURCE_TAXON_PATH, SOURCE_SPECIMEN_LIFE_STAGE,
             INTERACTION_TYPE,
             TARGET_TAXON_EXTERNAL_ID, TARGET_TAXON_NAME, TARGET_TAXON_PATH, TARGET_SPECIMEN_LIFE_STAGE,
             LATITUDE, LONGITUDE, STUDY_TITLE};
 
-    public static final String[] RETURN_FIELDS_SINGLE_TAXON_DEFAULT = new String[]{SOURCE_TAXON_NAME, INTERACTION_TYPE, TARGET_TAXON_NAME,
+    public static final ResultFields[] RETURN_FIELDS_SINGLE_TAXON_DEFAULT = new ResultFields[]{SOURCE_TAXON_NAME, INTERACTION_TYPE, TARGET_TAXON_NAME,
             LATITUDE, LONGITUDE, ALTITUDE, STUDY_TITLE, COLLECTION_TIME_IN_UNIX_EPOCH,
             SOURCE_SPECIMEN_ID,
             TARGET_SPECIMEN_ID,
@@ -206,18 +206,10 @@ public class CypherQueryBuilder {
         }
 
         List<String> fields = collectParamValues(params, "field");
+        List<ResultFields> returnFields = actualReturnFields(fields, TAXON_FIELDS, TAXON_FIELDS);
 
-        List<String> returnFields = new ArrayList<String>();
-        for (String defaultField : TAXON_FIELDS) {
-            if (fields.contains(defaultField)) {
-                returnFields.add(defaultField);
-            }
-        }
-        if (returnFields.isEmpty()) {
-            returnFields.addAll(TAXON_FIELDS);
-        }
         for (int i = 0; i < returnFields.size(); i++) {
-            String fieldName = returnFields.get(i);
+            ResultFields fieldName = returnFields.get(i);
             if (i == 0) {
                 builder.append("RETURN distinct(").append(FIELD_MAP.get(fieldName)).append("?) as ").append(fieldName);
             } else {
@@ -253,25 +245,25 @@ public class CypherQueryBuilder {
     private static Map<String, String> getParams(List<String> sourceTaxonNames, List<String> targetTaxonNames) {
         Map<String, String> paramMap = new HashMap<String, String>();
         if (sourceTaxonNames != null && sourceTaxonNames.size() > 0) {
-            paramMap.put(SOURCE_TAXON_NAME, lucenePathQuery(sourceTaxonNames));
+            paramMap.put(SOURCE_TAXON_NAME.getLabel(), lucenePathQuery(sourceTaxonNames));
         }
 
         if (targetTaxonNames != null && targetTaxonNames.size() > 0) {
-            paramMap.put(TARGET_TAXON_NAME, lucenePathQuery(targetTaxonNames));
+            paramMap.put(TARGET_TAXON_NAME.getLabel(), lucenePathQuery(targetTaxonNames));
         }
         return paramMap;
     }
 
     static void appendTaxonSelectors(boolean includeSourceTaxon, boolean includeTargetTaxon, StringBuilder query) {
         if (includeSourceTaxon) {
-            final String sourceTaxonSelector = "sourceTaxon = " + getTaxonPathSelector(SOURCE_TAXON_NAME);
+            final String sourceTaxonSelector = "sourceTaxon = " + getTaxonPathSelector(SOURCE_TAXON_NAME.getLabel());
             query.append(sourceTaxonSelector);
         }
         if (includeTargetTaxon) {
             if (includeSourceTaxon) {
                 query.append(", ");
             }
-            final String targetTaxonSelector = "targetTaxon = " + getTaxonPathSelector(TARGET_TAXON_NAME);
+            final String targetTaxonSelector = "targetTaxon = " + getTaxonPathSelector(TARGET_TAXON_NAME.getLabel());
             query.append(targetTaxonSelector);
         }
     }
@@ -365,12 +357,12 @@ public class CypherQueryBuilder {
 
     public static CypherQuery buildInteractionTypeQuery(Map parameterMap) {
         final List<String> taxa = collectParamValues(parameterMap, TAXON_HTTP_PARAM_NAME);
-        String query = "START taxon = " + getTaxonPathSelector(TAXON_NAME)
+        String query = "START taxon = " + getTaxonPathSelector(TAXON_NAME.getLabel())
                 + " MATCH taxon-[rel:" + InteractUtil.allInteractionsCypherClause() + "]->otherTaxon RETURN distinct(type(rel)) as " + INTERACTION_TYPE;
         return new CypherQuery(query
                 , new HashMap<String, String>() {
             {
-                put(TAXON_NAME, lucenePathQuery(taxa));
+                put(TAXON_NAME.getLabel(), lucenePathQuery(taxa));
             }
         });
     }
@@ -390,10 +382,14 @@ public class CypherQueryBuilder {
                 appendReturnClauseDistinct(interactionType.get(0), query, Arrays.asList(SOURCE_TAXON_NAME, INTERACTION_TYPE, TARGET_TAXON_NAME));
                 break;
             case SINGLE_TAXON_ALL:
-                HashMap<String, String> selectors = new HashMap<String, String>(defaultSelectors()) {
+                HashMap<ResultFields, String> selectors = new HashMap<ResultFields, String>(defaultSelectors()) {
                     {
                         put(INTERACTION_TYPE, "'" + interactionType.get(0) + "'");
                         put(STUDY_TITLE, "study." + Study.TITLE);
+                        put(ResultFields.STUDY_URL, "study.externalId?");
+                        put(ResultFields.STUDY_DOI, "study.doi?");
+                        put(ResultFields.STUDY_CITATION, "study.citation?");
+                        put(ResultFields.STUDY_SOURCE_CITATION, "study.source?");
                         put(COLLECTION_TIME_IN_UNIX_EPOCH, "collected_rel.dateInUnixEpoch?");
                         put(SOURCE_SPECIMEN_ID, "ID(sourceSpecimen)");
                         put(TARGET_SPECIMEN_ID, "ID(targetSpecimen)");
@@ -405,7 +401,7 @@ public class CypherQueryBuilder {
                 appendReturnClause(query, actualReturnFields(requestedReturnFields, Arrays.asList(RETURN_FIELDS_SINGLE_TAXON_DEFAULT), selectors.keySet()), selectors);
                 break;
             case MULTI_TAXON_ALL:
-                selectors = new HashMap<String, String>(defaultSelectors()) {
+                selectors = new HashMap<ResultFields, String>(defaultSelectors()) {
                     {
                         put(SOURCE_SPECIMEN_LIFE_STAGE, "sourceSpecimen.lifeStage?");
                         StringBuilder interactionBuilder = new StringBuilder();
@@ -413,12 +409,16 @@ public class CypherQueryBuilder {
                         put(INTERACTION_TYPE, interactionBuilder.toString());
                         put(TARGET_SPECIMEN_LIFE_STAGE, "targetSpecimen.lifeStage?");
                         put(STUDY_TITLE, "study.title");
+                        put(ResultFields.STUDY_URL, "study.externalId?");
+                        put(ResultFields.STUDY_DOI, "study.doi?");
+                        put(ResultFields.STUDY_CITATION, "study.citation?");
+                        put(ResultFields.STUDY_SOURCE_CITATION, "study.source?");
                     }
                 };
                 appendReturnClausez(query, actualReturnFields(requestedReturnFields, Arrays.asList(RETURN_FIELDS_MULTI_TAXON_DEFAULT), selectors.keySet()), selectors);
                 break;
             case MULTI_TAXON_DISTINCT:
-                selectors = new HashMap<String, String>(defaultSelectors()) {
+                selectors = new HashMap<ResultFields, String>(defaultSelectors()) {
                     {
                         put(SOURCE_TAXON_EXTERNAL_ID, "sTaxon.externalId?");
                         put(SOURCE_TAXON_NAME, "sTaxon.name");
@@ -432,9 +432,13 @@ public class CypherQueryBuilder {
                         put(LATITUDE, "NULL");
                         put(LONGITUDE, "NULL");
                         put(STUDY_TITLE, "NULL");
+                        put(ResultFields.STUDY_URL, "NULL");
+                        put(ResultFields.STUDY_DOI, "NULL");
+                        put(ResultFields.STUDY_CITATION, "NULL");
+                        put(ResultFields.STUDY_SOURCE_CITATION, "study.source?");
                     }
                 };
-                List<String> returnFields = actualReturnFields(requestedReturnFields, Arrays.asList(RETURN_FIELDS_MULTI_TAXON_DEFAULT), selectors.keySet());
+                List<ResultFields> returnFields = actualReturnFields(requestedReturnFields, Arrays.asList(RETURN_FIELDS_MULTI_TAXON_DEFAULT), selectors.keySet());
                 appendReturnClauseDistinctz(query, returnFields, selectors);
                 break;
             default:
@@ -442,12 +446,18 @@ public class CypherQueryBuilder {
         }
     }
 
-    private static List<String> actualReturnFields(List<String> requestedReturnFields, List<String> defaultReturnFields, Collection<String> availableReturnFields) {
-        List<String> returnFields = new ArrayList<String>();
+    private static List<ResultFields> actualReturnFields(List<String> requestedReturnFields, List<ResultFields> defaultReturnFields, Collection<ResultFields> availableReturnFields) {
+        List<ResultFields> returnFields = new ArrayList<ResultFields>();
         for (String requestedReturnField : requestedReturnFields) {
-            if (availableReturnFields.contains(requestedReturnField)) {
-                returnFields.add(requestedReturnField);
+            for (ResultFields resultFields : ResultFields.values()) {
+                if (resultFields.getLabel().equals(requestedReturnField)) {
+                    if (availableReturnFields.contains(resultFields)) {
+                        returnFields.add(resultFields);
+                    }
+                    break;
+                }
             }
+
         }
         return returnFields.size() == 0 ? Collections.unmodifiableList(defaultReturnFields) : Collections.unmodifiableList(returnFields);
     }
@@ -488,13 +498,13 @@ public class CypherQueryBuilder {
         return appendTargetTaxonWhereClause(parameterMap, sourceTaxa, targetTaxa, query);
     }
 
-    protected static void appendReturnClause(StringBuilder query, List<String> returnFields, Map<String, String> selectors) {
+    protected static void appendReturnClause(StringBuilder query, List<ResultFields> returnFields, Map<ResultFields, String> selectors) {
         query.append(" RETURN ");
         appendReturnFields(query, returnFields, selectors);
     }
 
-    private static Map<String, String> defaultSelectors() {
-        return new HashMap<String, String>() {
+    private static Map<ResultFields, String> defaultSelectors() {
+        return new HashMap<ResultFields, String>() {
             {
                 addSourceTaxonFields();
                 addTargetTaxonFields();
@@ -531,8 +541,8 @@ public class CypherQueryBuilder {
         };
     }
 
-    protected static void appendReturnClauseDistinct(final String interactionType, StringBuilder query, List<String> fields) {
-        Map<String, String> selectors = new HashMap<String, String>() {
+    protected static void appendReturnClauseDistinct(final String interactionType, StringBuilder query, List<ResultFields> fields) {
+        Map<ResultFields, String> selectors = new HashMap<ResultFields, String>() {
             {
                 put(SOURCE_TAXON_NAME, "sourceTaxon.name");
                 put(INTERACTION_TYPE, "'" + interactionType + "'");
@@ -568,7 +578,7 @@ public class CypherQueryBuilder {
     }
 
 
-    protected static void appendReturnClausez(StringBuilder query, List<String> returnFields, Map<String, String> selectors) {
+    protected static void appendReturnClausez(StringBuilder query, List<ResultFields> returnFields, Map<ResultFields, String> selectors) {
         query.append("RETURN ");
         appendReturnFields(query, returnFields, selectors);
     }
@@ -593,15 +603,15 @@ public class CypherQueryBuilder {
         return query;
     }
 
-    protected static void appendReturnClauseDistinctz(StringBuilder query, List<String> returnFields, Map<String, String> selectors) {
+    protected static void appendReturnClauseDistinctz(StringBuilder query, List<ResultFields> returnFields, Map<ResultFields, String> selectors) {
         query.append("WITH distinct targetTaxon as tTaxon, type(interaction) as iType, sourceTaxon as sTaxon ");
         query.append("RETURN ");
         appendReturnFields(query, returnFields, selectors);
     }
 
-    private static void appendReturnFields(StringBuilder query, List<String> fields, Map<String, String> selectors) {
+    private static void appendReturnFields(StringBuilder query, List<ResultFields> fields, Map<ResultFields, String> selectors) {
         List<String> returnFields = new ArrayList<String>();
-        for (String field : fields) {
+        for (ResultFields field : fields) {
             returnFields.add(selectors.get(field) + " as " + field);
         }
         query.append(StringUtils.join(returnFields, ","));

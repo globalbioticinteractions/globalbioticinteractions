@@ -161,7 +161,7 @@ public class CypherQueryBuilderTest {
             {
                 put("sourceTaxon", new String[]{"Enhydra"});
                 put("targetTaxon", new String[]{"Arthropoda"});
-                put("field", new String[]{"target_taxon_name"});
+                put("field", new String[]{"target_taxon_name", "study_citation"});
             }
         };
 
@@ -169,7 +169,7 @@ public class CypherQueryBuilderTest {
         assertThat(query.getQuery(), is("START sourceTaxon = node:taxonPaths({source_taxon_name}) " +
                 EXPECTED_MATCH_CLAUSE +
                 "WHERE has(targetTaxon.path) AND targetTaxon.path =~ '(.*(Arthropoda).*)' " +
-                "RETURN targetTaxon.name as target_taxon_name"));
+                "RETURN targetTaxon.name as target_taxon_name,study.citation? as study_citation"));
         assertThat(query.getParams().toString(), is(is("{source_taxon_name=path:\\\"Enhydra\\\", target_taxon_name=path:\\\"Arthropoda\\\"}")));
     }
 
@@ -210,7 +210,7 @@ public class CypherQueryBuilderTest {
             {
                 put("bbox", new String[]{"-67.87,12.79,-57.08,23.32"});
                 put("interactionType", new String[]{"preysOn", "parasiteOf"});
-                put("field", new String[]{ResultFields.TAXON_NAME});
+                put("field", new String[]{ResultFields.TAXON_NAME.getLabel()});
             }
         };
 

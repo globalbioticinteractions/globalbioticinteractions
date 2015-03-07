@@ -1,7 +1,9 @@
 package org.eol.globi.server;
 
 import org.apache.commons.lang.StringUtils;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.server.util.InteractionTypeExternal;
+import org.eol.globi.server.util.ResultFields;
 import org.eol.globi.server.util.ResultFormatterCSV;
 import org.eol.globi.util.CypherQuery;
 import org.eol.globi.util.CypherUtil;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -41,8 +44,34 @@ public class InteractionController {
                 }
             }
         }
-        String type = request == null ? "json" : request.getParameter("type");
-        return "csv".equals(type) ? interactionMapCsv(availableTypes) : interactionMapJson(availableTypes);
+        return "csv".equals(getRequestType(request)) ? interactionMapCsv(availableTypes) : interactionMapJson(availableTypes);
+    }
+
+    protected String getRequestType(HttpServletRequest request) {
+        return request == null ? "json" : request.getParameter("type");
+    }
+
+    @RequestMapping(value = "/interactionFields", method = RequestMethod.GET)
+    @ResponseBody
+    public String getInteractionFields(HttpServletRequest request) throws IOException {
+        return "csv".equals(getRequestType(request)) ? csvFields() : jsonFields();
+    }
+
+    protected String jsonFields() {
+        List<String> fields = new ArrayList<String>();
+        for (ResultFields resultFields : ResultFields.values()) {
+            fields.add("\"" + resultFields.getLabel() + "\":{\"description\":\"" + resultFields.getDescription() + "\"}");
+        }
+        return "{" + StringUtils.join(fields, ",") + "}";
+    }
+
+    protected String csvFields() {
+        List<String> fields = new ArrayList<String>();
+        fields.add("name,description");
+        for (ResultFields resultFields : ResultFields.values()) {
+            fields.add("" + resultFields.getLabel() + "," + resultFields.getDescription() + "");
+        }
+        return StringUtils.join(fields, "\n");
     }
 
     protected String interactionMapJson(Collection<InteractionTypeExternal> availableTypes) {

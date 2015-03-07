@@ -235,8 +235,8 @@ public class InteractionControllerTestIT {
         CypherQuery query = new InteractionController().findInteractionsNew(request);
         String externalLink = new CypherQueryExecutor(query.getQuery(), query.getParams()).execute(request);
         assertThat(externalLink, containsString("ate"));
-        assertThat(externalLink, containsString(ResultFields.SOURCE_TAXON_PATH));
-        assertThat(externalLink, containsString(ResultFields.TARGET_TAXON_PATH));
+        assertThat(externalLink, containsString(ResultFields.SOURCE_TAXON_PATH.getLabel()));
+        assertThat(externalLink, containsString(ResultFields.TARGET_TAXON_PATH.getLabel()));
     }
 
     @Test
@@ -245,8 +245,8 @@ public class InteractionControllerTestIT {
         CypherQuery query = new InteractionController().findInteractionsNew(request);
         String externalLink = new CypherQueryExecutor(query.getQuery(), query.getParams()).execute(request);
         assertThat(externalLink, containsString("ate"));
-        assertThat(externalLink, containsString(ResultFields.SOURCE_TAXON_PATH));
-        assertThat(externalLink, containsString(ResultFields.TARGET_TAXON_PATH));
+        assertThat(externalLink, containsString(ResultFields.SOURCE_TAXON_PATH.getLabel()));
+        assertThat(externalLink, containsString(ResultFields.TARGET_TAXON_PATH.getLabel()));
     }
 
 

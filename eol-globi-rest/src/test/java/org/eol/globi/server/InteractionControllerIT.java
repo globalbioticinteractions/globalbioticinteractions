@@ -154,10 +154,10 @@ public class InteractionControllerIT extends ITBase {
         String uri = getURLPrefix() + "taxon/Rattus%20rattus/preyedUponBy?includeObservations=true&type=csv";
         String response = HttpUtil.getRemoteJson(uri);
         assertThat(response, not(containsString("columns")));
-        assertThat(response, anyOf(containsString(ResultFields.SOURCE_TAXON_NAME),
-                containsString(ResultFields.TARGET_TAXON_NAME),
-                containsString(ResultFields.INTERACTION_TYPE),
-                containsString(ResultFields.LATITUDE)));
+        assertThat(response, anyOf(containsString(ResultFields.SOURCE_TAXON_NAME.getLabel()),
+                containsString(ResultFields.TARGET_TAXON_NAME.getLabel()),
+                containsString(ResultFields.INTERACTION_TYPE.getLabel()),
+                containsString(ResultFields.LATITUDE.getLabel())));
     }
 
     @Test
