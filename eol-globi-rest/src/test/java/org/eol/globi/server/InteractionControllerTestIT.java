@@ -1,7 +1,7 @@
 package org.eol.globi.server;
 
 import org.apache.commons.lang3.ArrayUtils;
-import org.eol.globi.server.util.ResultFields;
+import org.eol.globi.server.util.ResultField;
 import org.eol.globi.util.CypherQuery;
 import org.eol.globi.util.CypherUtil;
 import org.junit.Test;
@@ -235,8 +235,8 @@ public class InteractionControllerTestIT {
         CypherQuery query = new InteractionController().findInteractionsNew(request);
         String externalLink = new CypherQueryExecutor(query.getQuery(), query.getParams()).execute(request);
         assertThat(externalLink, containsString("ate"));
-        assertThat(externalLink, containsString(ResultFields.SOURCE_TAXON_PATH.getLabel()));
-        assertThat(externalLink, containsString(ResultFields.TARGET_TAXON_PATH.getLabel()));
+        assertThat(externalLink, containsString(ResultField.SOURCE_TAXON_PATH.getLabel()));
+        assertThat(externalLink, containsString(ResultField.TARGET_TAXON_PATH.getLabel()));
     }
 
     @Test
@@ -245,8 +245,8 @@ public class InteractionControllerTestIT {
         CypherQuery query = new InteractionController().findInteractionsNew(request);
         String externalLink = new CypherQueryExecutor(query.getQuery(), query.getParams()).execute(request);
         assertThat(externalLink, containsString("ate"));
-        assertThat(externalLink, containsString(ResultFields.SOURCE_TAXON_PATH.getLabel()));
-        assertThat(externalLink, containsString(ResultFields.TARGET_TAXON_PATH.getLabel()));
+        assertThat(externalLink, containsString(ResultField.SOURCE_TAXON_PATH.getLabel()));
+        assertThat(externalLink, containsString(ResultField.TARGET_TAXON_PATH.getLabel()));
     }
 
 

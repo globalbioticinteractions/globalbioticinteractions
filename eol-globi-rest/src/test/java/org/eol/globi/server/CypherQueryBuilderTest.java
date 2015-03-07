@@ -1,6 +1,6 @@
 package org.eol.globi.server;
 
-import org.eol.globi.server.util.ResultFields;
+import org.eol.globi.server.util.ResultField;
 import org.eol.globi.util.CypherQuery;
 import org.eol.globi.util.InteractUtil;
 import org.junit.Test;
@@ -210,7 +210,7 @@ public class CypherQueryBuilderTest {
             {
                 put("bbox", new String[]{"-67.87,12.79,-57.08,23.32"});
                 put("interactionType", new String[]{"preysOn", "parasiteOf"});
-                put("field", new String[]{ResultFields.TAXON_NAME.getLabel()});
+                put("field", new String[]{ResultField.TAXON_NAME.getLabel()});
             }
         };
 

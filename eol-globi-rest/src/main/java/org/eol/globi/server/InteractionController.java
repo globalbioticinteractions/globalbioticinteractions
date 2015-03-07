@@ -1,9 +1,8 @@
 package org.eol.globi.server;
 
 import org.apache.commons.lang.StringUtils;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.server.util.InteractionTypeExternal;
-import org.eol.globi.server.util.ResultFields;
+import org.eol.globi.server.util.ResultField;
 import org.eol.globi.server.util.ResultFormatterCSV;
 import org.eol.globi.util.CypherQuery;
 import org.eol.globi.util.CypherUtil;
@@ -15,7 +14,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -59,8 +57,8 @@ public class InteractionController {
 
     protected String jsonFields() {
         List<String> fields = new ArrayList<String>();
-        for (ResultFields resultFields : ResultFields.values()) {
-            fields.add("\"" + resultFields.getLabel() + "\":{\"description\":\"" + resultFields.getDescription() + "\"}");
+        for (ResultField resultField : ResultField.values()) {
+            fields.add("\"" + resultField.getLabel() + "\":{\"description\":\"" + resultField.getDescription() + "\"}");
         }
         return "{" + StringUtils.join(fields, ",") + "}";
     }
@@ -68,8 +66,8 @@ public class InteractionController {
     protected String csvFields() {
         List<String> fields = new ArrayList<String>();
         fields.add("name,description");
-        for (ResultFields resultFields : ResultFields.values()) {
-            fields.add("" + resultFields.getLabel() + "," + resultFields.getDescription() + "");
+        for (ResultField resultField : ResultField.values()) {
+            fields.add("" + resultField.getLabel() + "," + resultField.getDescription() + "");
         }
         return StringUtils.join(fields, "\n");
     }

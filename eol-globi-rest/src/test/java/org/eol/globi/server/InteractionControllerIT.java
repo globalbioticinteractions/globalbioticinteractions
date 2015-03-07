@@ -3,7 +3,7 @@ package org.eol.globi.server;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
-import org.eol.globi.server.util.ResultFields;
+import org.eol.globi.server.util.ResultField;
 import org.eol.globi.util.HttpUtil;
 import org.junit.Test;
 import org.springframework.http.MediaType;
@@ -96,8 +96,8 @@ public class InteractionControllerIT extends ITBase {
         assertThat(execute.getHeaders("Content-Type")[0].getValue(), is("text/csv;charset=UTF-8"));
         String response = IOUtils.toString(execute.getEntity().getContent());
         assertThat(response, not(containsString("columns")));
-        assertThat(response, anyOf(containsString("\"" + ResultFields.SOURCE_TAXON_NAME + "\""),
-                containsString("\"" + ResultFields.TARGET_TAXON_NAME + "\"")));
+        assertThat(response, anyOf(containsString("\"" + ResultField.SOURCE_TAXON_NAME + "\""),
+                containsString("\"" + ResultField.TARGET_TAXON_NAME + "\"")));
     }
 
     @Test
@@ -154,10 +154,10 @@ public class InteractionControllerIT extends ITBase {
         String uri = getURLPrefix() + "taxon/Rattus%20rattus/preyedUponBy?includeObservations=true&type=csv";
         String response = HttpUtil.getRemoteJson(uri);
         assertThat(response, not(containsString("columns")));
-        assertThat(response, anyOf(containsString(ResultFields.SOURCE_TAXON_NAME.getLabel()),
-                containsString(ResultFields.TARGET_TAXON_NAME.getLabel()),
-                containsString(ResultFields.INTERACTION_TYPE.getLabel()),
-                containsString(ResultFields.LATITUDE.getLabel())));
+        assertThat(response, anyOf(containsString(ResultField.SOURCE_TAXON_NAME.getLabel()),
+                containsString(ResultField.TARGET_TAXON_NAME.getLabel()),
+                containsString(ResultField.INTERACTION_TYPE.getLabel()),
+                containsString(ResultField.LATITUDE.getLabel())));
     }
 
     @Test

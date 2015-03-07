@@ -58,7 +58,7 @@ public class ResultFormatterJSONv2 implements ResultFormatter {
     }
 
     private boolean isInteractionQuery(List<String> columnNames) {
-        return columnNames.contains(ResultFields.INTERACTION_TYPE);
+        return columnNames.contains(ResultField.INTERACTION_TYPE);
     }
 
     private boolean isTaxonQuery(List<String> columnNames) {
@@ -102,21 +102,21 @@ public class ResultFormatterJSONv2 implements ResultFormatter {
     private void parseRow(List<String> columnNames, JsonNode row, Map<String, Object> interaction, Map<String, String> sourceTaxon, Map<String, String> targetTaxon, List<Map<String, String>> targetTaxa, int i) {
         String colName = columnNames.get(i);
         final JsonNode value = row.get(i);
-        if (ResultFields.INTERACTION_TYPE.equals(colName)) {
+        if (ResultField.INTERACTION_TYPE.equals(colName)) {
             interaction.put("type", value.getTextValue());
-        } else if (ResultFields.SOURCE_TAXON_NAME.equals(colName)) {
+        } else if (ResultField.SOURCE_TAXON_NAME.equals(colName)) {
             if (value.isTextual()) {
                 sourceTaxon.put("name", value.getTextValue());
             }
-        } else if (ResultFields.SOURCE_TAXON_PATH.equals(colName)) {
+        } else if (ResultField.SOURCE_TAXON_PATH.equals(colName)) {
             if (value.isTextual()) {
                 sourceTaxon.put("path", value.getTextValue());
             }
-        } else if (ResultFields.SOURCE_TAXON_EXTERNAL_ID.equals(colName)) {
+        } else if (ResultField.SOURCE_TAXON_EXTERNAL_ID.equals(colName)) {
             if (value.isTextual()) {
                 sourceTaxon.put("id", value.getTextValue());
             }
-        } else if (ResultFields.TARGET_TAXON_NAME.equals(colName)) {
+        } else if (ResultField.TARGET_TAXON_NAME.equals(colName)) {
             if (value.isTextual()) {
                 targetTaxon.put("name", value.getTextValue());
             } else if (value.isArray()) {
@@ -126,31 +126,31 @@ public class ResultFormatterJSONv2 implements ResultFormatter {
                     }
                 }
             }
-        } else if (ResultFields.TARGET_TAXON_PATH.equals(colName)) {
+        } else if (ResultField.TARGET_TAXON_PATH.equals(colName)) {
             if (value.isTextual()) {
                 targetTaxon.put("path", value.getTextValue());
             }
-        } else if (ResultFields.TARGET_TAXON_EXTERNAL_ID.equals(colName)) {
+        } else if (ResultField.TARGET_TAXON_EXTERNAL_ID.equals(colName)) {
             if (value.isTextual()) {
                 targetTaxon.put("id", value.getTextValue());
             }
-        } else if (ResultFields.LATITUDE.equals(colName)) {
+        } else if (ResultField.LATITUDE.equals(colName)) {
             if (value.isNumber()) {
                 interaction.put("latitude", value.getDoubleValue());
             }
-        } else if (ResultFields.LONGITUDE.equals(colName)) {
+        } else if (ResultField.LONGITUDE.equals(colName)) {
             if (value.isNumber()) {
                 interaction.put("longitude", value.getDoubleValue());
             }
-        } else if (ResultFields.ALTITUDE.equals(colName)) {
+        } else if (ResultField.ALTITUDE.equals(colName)) {
             if (value.isNumber()) {
                 interaction.put("altitude", value.getDoubleValue());
             }
-        } else if (ResultFields.COLLECTION_TIME_IN_UNIX_EPOCH.equals(colName)) {
+        } else if (ResultField.COLLECTION_TIME_IN_UNIX_EPOCH.equals(colName)) {
             if (value.isNumber()) {
                 interaction.put("time", value.getLongValue());
             }
-        } else if (ResultFields.STUDY_TITLE.equals(colName)) {
+        } else if (ResultField.STUDY_TITLE.equals(colName)) {
             interaction.put("study", value.getTextValue());
         }
     }

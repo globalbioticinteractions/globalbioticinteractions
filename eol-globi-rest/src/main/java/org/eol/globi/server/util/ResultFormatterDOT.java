@@ -38,9 +38,9 @@ public class ResultFormatterDOT implements ResultFormatter {
         }
         JsonNode rows = results.get("data");
         for (JsonNode row : rows) {
-            JsonNode sourceTaxon = row.get(nameIndex.get(ResultFields.SOURCE_TAXON_NAME));
-            JsonNode targetTaxon = row.get(nameIndex.get(ResultFields.TARGET_TAXON_NAME));
-            JsonNode type = row.get(nameIndex.get(ResultFields.INTERACTION_TYPE));
+            JsonNode sourceTaxon = row.get(nameIndex.get(ResultField.SOURCE_TAXON_NAME));
+            JsonNode targetTaxon = row.get(nameIndex.get(ResultField.TARGET_TAXON_NAME));
+            JsonNode type = row.get(nameIndex.get(ResultField.INTERACTION_TYPE));
             if (sourceTaxon != null && targetTaxon != null && type != null) {
                 String sourceId = getSafeLabel(sourceTaxon.getTextValue());
                 if (targetTaxon.isArray()) {

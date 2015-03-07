@@ -10,7 +10,7 @@ import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.server.util.InteractionTypeExternal;
 import org.eol.globi.server.util.RequestHelper;
-import org.eol.globi.server.util.ResultFields;
+import org.eol.globi.server.util.ResultField;
 import org.eol.globi.util.CypherQuery;
 import org.eol.globi.util.InteractUtil;
 
@@ -24,41 +24,41 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import static org.eol.globi.server.util.ResultFields.ALTITUDE;
-import static org.eol.globi.server.util.ResultFields.COLLECTION_TIME_IN_UNIX_EPOCH;
-import static org.eol.globi.server.util.ResultFields.INTERACTION_TYPE;
-import static org.eol.globi.server.util.ResultFields.LATITUDE;
-import static org.eol.globi.server.util.ResultFields.LONGITUDE;
-import static org.eol.globi.server.util.ResultFields.SOURCE_SPECIMEN_BODY_PART;
-import static org.eol.globi.server.util.ResultFields.SOURCE_SPECIMEN_ID;
-import static org.eol.globi.server.util.ResultFields.SOURCE_SPECIMEN_LIFE_STAGE;
-import static org.eol.globi.server.util.ResultFields.SOURCE_SPECIMEN_PHYSIOLOGICAL_STATE;
-import static org.eol.globi.server.util.ResultFields.SOURCE_TAXON_COMMON_NAMES;
-import static org.eol.globi.server.util.ResultFields.SOURCE_TAXON_EXTERNAL_ID;
-import static org.eol.globi.server.util.ResultFields.SOURCE_TAXON_NAME;
-import static org.eol.globi.server.util.ResultFields.SOURCE_TAXON_PATH;
-import static org.eol.globi.server.util.ResultFields.SOURCE_TAXON_PATH_IDS;
-import static org.eol.globi.server.util.ResultFields.SOURCE_TAXON_PATH_RANKS;
-import static org.eol.globi.server.util.ResultFields.STUDY_TITLE;
-import static org.eol.globi.server.util.ResultFields.TARGET_SPECIMEN_BODY_PART;
-import static org.eol.globi.server.util.ResultFields.TARGET_SPECIMEN_ID;
-import static org.eol.globi.server.util.ResultFields.TARGET_SPECIMEN_LIFE_STAGE;
-import static org.eol.globi.server.util.ResultFields.TARGET_SPECIMEN_PHYSIOLOGICAL_STATE;
-import static org.eol.globi.server.util.ResultFields.TARGET_SPECIMEN_TOTAL_COUNT;
-import static org.eol.globi.server.util.ResultFields.TARGET_SPECIMEN_TOTAL_FREQUENCY_OF_OCCURRENCE;
-import static org.eol.globi.server.util.ResultFields.TARGET_SPECIMEN_TOTAL_VOLUME_ML;
-import static org.eol.globi.server.util.ResultFields.TARGET_TAXON_COMMON_NAMES;
-import static org.eol.globi.server.util.ResultFields.TARGET_TAXON_EXTERNAL_ID;
-import static org.eol.globi.server.util.ResultFields.TARGET_TAXON_NAME;
-import static org.eol.globi.server.util.ResultFields.TARGET_TAXON_PATH;
-import static org.eol.globi.server.util.ResultFields.TARGET_TAXON_PATH_IDS;
-import static org.eol.globi.server.util.ResultFields.TARGET_TAXON_PATH_RANKS;
-import static org.eol.globi.server.util.ResultFields.TAXON_COMMON_NAMES;
-import static org.eol.globi.server.util.ResultFields.TAXON_EXTERNAL_ID;
-import static org.eol.globi.server.util.ResultFields.TAXON_NAME;
-import static org.eol.globi.server.util.ResultFields.TAXON_PATH;
-import static org.eol.globi.server.util.ResultFields.TAXON_PATH_IDS;
-import static org.eol.globi.server.util.ResultFields.TAXON_PATH_RANKS;
+import static org.eol.globi.server.util.ResultField.ALTITUDE;
+import static org.eol.globi.server.util.ResultField.COLLECTION_TIME_IN_UNIX_EPOCH;
+import static org.eol.globi.server.util.ResultField.INTERACTION_TYPE;
+import static org.eol.globi.server.util.ResultField.LATITUDE;
+import static org.eol.globi.server.util.ResultField.LONGITUDE;
+import static org.eol.globi.server.util.ResultField.SOURCE_SPECIMEN_BODY_PART;
+import static org.eol.globi.server.util.ResultField.SOURCE_SPECIMEN_ID;
+import static org.eol.globi.server.util.ResultField.SOURCE_SPECIMEN_LIFE_STAGE;
+import static org.eol.globi.server.util.ResultField.SOURCE_SPECIMEN_PHYSIOLOGICAL_STATE;
+import static org.eol.globi.server.util.ResultField.SOURCE_TAXON_COMMON_NAMES;
+import static org.eol.globi.server.util.ResultField.SOURCE_TAXON_EXTERNAL_ID;
+import static org.eol.globi.server.util.ResultField.SOURCE_TAXON_NAME;
+import static org.eol.globi.server.util.ResultField.SOURCE_TAXON_PATH;
+import static org.eol.globi.server.util.ResultField.SOURCE_TAXON_PATH_IDS;
+import static org.eol.globi.server.util.ResultField.SOURCE_TAXON_PATH_RANKS;
+import static org.eol.globi.server.util.ResultField.STUDY_TITLE;
+import static org.eol.globi.server.util.ResultField.TARGET_SPECIMEN_BODY_PART;
+import static org.eol.globi.server.util.ResultField.TARGET_SPECIMEN_ID;
+import static org.eol.globi.server.util.ResultField.TARGET_SPECIMEN_LIFE_STAGE;
+import static org.eol.globi.server.util.ResultField.TARGET_SPECIMEN_PHYSIOLOGICAL_STATE;
+import static org.eol.globi.server.util.ResultField.TARGET_SPECIMEN_TOTAL_COUNT;
+import static org.eol.globi.server.util.ResultField.TARGET_SPECIMEN_TOTAL_FREQUENCY_OF_OCCURRENCE;
+import static org.eol.globi.server.util.ResultField.TARGET_SPECIMEN_TOTAL_VOLUME_ML;
+import static org.eol.globi.server.util.ResultField.TARGET_TAXON_COMMON_NAMES;
+import static org.eol.globi.server.util.ResultField.TARGET_TAXON_EXTERNAL_ID;
+import static org.eol.globi.server.util.ResultField.TARGET_TAXON_NAME;
+import static org.eol.globi.server.util.ResultField.TARGET_TAXON_PATH;
+import static org.eol.globi.server.util.ResultField.TARGET_TAXON_PATH_IDS;
+import static org.eol.globi.server.util.ResultField.TARGET_TAXON_PATH_RANKS;
+import static org.eol.globi.server.util.ResultField.TAXON_COMMON_NAMES;
+import static org.eol.globi.server.util.ResultField.TAXON_EXTERNAL_ID;
+import static org.eol.globi.server.util.ResultField.TAXON_NAME;
+import static org.eol.globi.server.util.ResultField.TAXON_PATH;
+import static org.eol.globi.server.util.ResultField.TAXON_PATH_IDS;
+import static org.eol.globi.server.util.ResultField.TAXON_PATH_RANKS;
 
 public class CypherQueryBuilder {
     private static final Log LOG = LogFactory.getLog(CypherQueryBuilder.class);
@@ -140,7 +140,7 @@ public class CypherQueryBuilder {
     };
 
     static final Map<String, String> EMPTY_PARAMS = new TreeMap<String, String>();
-    public static final List<ResultFields> TAXON_FIELDS = Collections.unmodifiableList(new ArrayList<ResultFields>() {{
+    public static final List<ResultField> TAXON_FIELDS = Collections.unmodifiableList(new ArrayList<ResultField>() {{
         add(TAXON_NAME);
         add(TAXON_COMMON_NAMES);
         add(TAXON_EXTERNAL_ID);
@@ -149,7 +149,7 @@ public class CypherQueryBuilder {
         add(TAXON_PATH_RANKS);
     }});
 
-    public static final Map<ResultFields, String> FIELD_MAP = Collections.unmodifiableMap(new TreeMap<ResultFields, String>() {{
+    public static final Map<ResultField, String> FIELD_MAP = Collections.unmodifiableMap(new TreeMap<ResultField, String>() {{
         put(TAXON_NAME, "taxon.name");
         put(TAXON_COMMON_NAMES, "taxon.commonNames");
         put(TAXON_EXTERNAL_ID, "taxon.externalId");
@@ -158,12 +158,12 @@ public class CypherQueryBuilder {
         put(TAXON_PATH_RANKS, "taxon.pathNames");
     }});
 
-    public static final ResultFields[] RETURN_FIELDS_MULTI_TAXON_DEFAULT = new ResultFields[]{SOURCE_TAXON_EXTERNAL_ID, SOURCE_TAXON_NAME, SOURCE_TAXON_PATH, SOURCE_SPECIMEN_LIFE_STAGE,
+    public static final ResultField[] RETURN_FIELDS_MULTI_TAXON_DEFAULT = new ResultField[]{SOURCE_TAXON_EXTERNAL_ID, SOURCE_TAXON_NAME, SOURCE_TAXON_PATH, SOURCE_SPECIMEN_LIFE_STAGE,
             INTERACTION_TYPE,
             TARGET_TAXON_EXTERNAL_ID, TARGET_TAXON_NAME, TARGET_TAXON_PATH, TARGET_SPECIMEN_LIFE_STAGE,
             LATITUDE, LONGITUDE, STUDY_TITLE};
 
-    public static final ResultFields[] RETURN_FIELDS_SINGLE_TAXON_DEFAULT = new ResultFields[]{SOURCE_TAXON_NAME, INTERACTION_TYPE, TARGET_TAXON_NAME,
+    public static final ResultField[] RETURN_FIELDS_SINGLE_TAXON_DEFAULT = new ResultField[]{SOURCE_TAXON_NAME, INTERACTION_TYPE, TARGET_TAXON_NAME,
             LATITUDE, LONGITUDE, ALTITUDE, STUDY_TITLE, COLLECTION_TIME_IN_UNIX_EPOCH,
             SOURCE_SPECIMEN_ID,
             TARGET_SPECIMEN_ID,
@@ -206,10 +206,10 @@ public class CypherQueryBuilder {
         }
 
         List<String> fields = collectParamValues(params, "field");
-        List<ResultFields> returnFields = actualReturnFields(fields, TAXON_FIELDS, TAXON_FIELDS);
+        List<ResultField> returnFields = actualReturnFields(fields, TAXON_FIELDS, TAXON_FIELDS);
 
         for (int i = 0; i < returnFields.size(); i++) {
-            ResultFields fieldName = returnFields.get(i);
+            ResultField fieldName = returnFields.get(i);
             if (i == 0) {
                 builder.append("RETURN distinct(").append(FIELD_MAP.get(fieldName)).append("?) as ").append(fieldName);
             } else {
@@ -382,14 +382,14 @@ public class CypherQueryBuilder {
                 appendReturnClauseDistinct(interactionType.get(0), query, Arrays.asList(SOURCE_TAXON_NAME, INTERACTION_TYPE, TARGET_TAXON_NAME));
                 break;
             case SINGLE_TAXON_ALL:
-                HashMap<ResultFields, String> selectors = new HashMap<ResultFields, String>(defaultSelectors()) {
+                HashMap<ResultField, String> selectors = new HashMap<ResultField, String>(defaultSelectors()) {
                     {
                         put(INTERACTION_TYPE, "'" + interactionType.get(0) + "'");
                         put(STUDY_TITLE, "study." + Study.TITLE);
-                        put(ResultFields.STUDY_URL, "study.externalId?");
-                        put(ResultFields.STUDY_DOI, "study.doi?");
-                        put(ResultFields.STUDY_CITATION, "study.citation?");
-                        put(ResultFields.STUDY_SOURCE_CITATION, "study.source?");
+                        put(ResultField.STUDY_URL, "study.externalId?");
+                        put(ResultField.STUDY_DOI, "study.doi?");
+                        put(ResultField.STUDY_CITATION, "study.citation?");
+                        put(ResultField.STUDY_SOURCE_CITATION, "study.source?");
                         put(COLLECTION_TIME_IN_UNIX_EPOCH, "collected_rel.dateInUnixEpoch?");
                         put(SOURCE_SPECIMEN_ID, "ID(sourceSpecimen)");
                         put(TARGET_SPECIMEN_ID, "ID(targetSpecimen)");
@@ -401,7 +401,7 @@ public class CypherQueryBuilder {
                 appendReturnClause(query, actualReturnFields(requestedReturnFields, Arrays.asList(RETURN_FIELDS_SINGLE_TAXON_DEFAULT), selectors.keySet()), selectors);
                 break;
             case MULTI_TAXON_ALL:
-                selectors = new HashMap<ResultFields, String>(defaultSelectors()) {
+                selectors = new HashMap<ResultField, String>(defaultSelectors()) {
                     {
                         put(SOURCE_SPECIMEN_LIFE_STAGE, "sourceSpecimen.lifeStage?");
                         StringBuilder interactionBuilder = new StringBuilder();
@@ -409,16 +409,16 @@ public class CypherQueryBuilder {
                         put(INTERACTION_TYPE, interactionBuilder.toString());
                         put(TARGET_SPECIMEN_LIFE_STAGE, "targetSpecimen.lifeStage?");
                         put(STUDY_TITLE, "study.title");
-                        put(ResultFields.STUDY_URL, "study.externalId?");
-                        put(ResultFields.STUDY_DOI, "study.doi?");
-                        put(ResultFields.STUDY_CITATION, "study.citation?");
-                        put(ResultFields.STUDY_SOURCE_CITATION, "study.source?");
+                        put(ResultField.STUDY_URL, "study.externalId?");
+                        put(ResultField.STUDY_DOI, "study.doi?");
+                        put(ResultField.STUDY_CITATION, "study.citation?");
+                        put(ResultField.STUDY_SOURCE_CITATION, "study.source?");
                     }
                 };
                 appendReturnClausez(query, actualReturnFields(requestedReturnFields, Arrays.asList(RETURN_FIELDS_MULTI_TAXON_DEFAULT), selectors.keySet()), selectors);
                 break;
             case MULTI_TAXON_DISTINCT:
-                selectors = new HashMap<ResultFields, String>(defaultSelectors()) {
+                selectors = new HashMap<ResultField, String>(defaultSelectors()) {
                     {
                         put(SOURCE_TAXON_EXTERNAL_ID, "sTaxon.externalId?");
                         put(SOURCE_TAXON_NAME, "sTaxon.name");
@@ -432,13 +432,13 @@ public class CypherQueryBuilder {
                         put(LATITUDE, "NULL");
                         put(LONGITUDE, "NULL");
                         put(STUDY_TITLE, "NULL");
-                        put(ResultFields.STUDY_URL, "NULL");
-                        put(ResultFields.STUDY_DOI, "NULL");
-                        put(ResultFields.STUDY_CITATION, "NULL");
-                        put(ResultFields.STUDY_SOURCE_CITATION, "study.source?");
+                        put(ResultField.STUDY_URL, "NULL");
+                        put(ResultField.STUDY_DOI, "NULL");
+                        put(ResultField.STUDY_CITATION, "NULL");
+                        put(ResultField.STUDY_SOURCE_CITATION, "study.source?");
                     }
                 };
-                List<ResultFields> returnFields = actualReturnFields(requestedReturnFields, Arrays.asList(RETURN_FIELDS_MULTI_TAXON_DEFAULT), selectors.keySet());
+                List<ResultField> returnFields = actualReturnFields(requestedReturnFields, Arrays.asList(RETURN_FIELDS_MULTI_TAXON_DEFAULT), selectors.keySet());
                 appendReturnClauseDistinctz(query, returnFields, selectors);
                 break;
             default:
@@ -446,13 +446,13 @@ public class CypherQueryBuilder {
         }
     }
 
-    private static List<ResultFields> actualReturnFields(List<String> requestedReturnFields, List<ResultFields> defaultReturnFields, Collection<ResultFields> availableReturnFields) {
-        List<ResultFields> returnFields = new ArrayList<ResultFields>();
+    private static List<ResultField> actualReturnFields(List<String> requestedReturnFields, List<ResultField> defaultReturnFields, Collection<ResultField> availableReturnFields) {
+        List<ResultField> returnFields = new ArrayList<ResultField>();
         for (String requestedReturnField : requestedReturnFields) {
-            for (ResultFields resultFields : ResultFields.values()) {
-                if (resultFields.getLabel().equals(requestedReturnField)) {
-                    if (availableReturnFields.contains(resultFields)) {
-                        returnFields.add(resultFields);
+            for (ResultField resultField : ResultField.values()) {
+                if (resultField.getLabel().equals(requestedReturnField)) {
+                    if (availableReturnFields.contains(resultField)) {
+                        returnFields.add(resultField);
                     }
                     break;
                 }
@@ -498,13 +498,13 @@ public class CypherQueryBuilder {
         return appendTargetTaxonWhereClause(parameterMap, sourceTaxa, targetTaxa, query);
     }
 
-    protected static void appendReturnClause(StringBuilder query, List<ResultFields> returnFields, Map<ResultFields, String> selectors) {
+    protected static void appendReturnClause(StringBuilder query, List<ResultField> returnFields, Map<ResultField, String> selectors) {
         query.append(" RETURN ");
         appendReturnFields(query, returnFields, selectors);
     }
 
-    private static Map<ResultFields, String> defaultSelectors() {
-        return new HashMap<ResultFields, String>() {
+    private static Map<ResultField, String> defaultSelectors() {
+        return new HashMap<ResultField, String>() {
             {
                 addSourceTaxonFields();
                 addTargetTaxonFields();
@@ -541,8 +541,8 @@ public class CypherQueryBuilder {
         };
     }
 
-    protected static void appendReturnClauseDistinct(final String interactionType, StringBuilder query, List<ResultFields> fields) {
-        Map<ResultFields, String> selectors = new HashMap<ResultFields, String>() {
+    protected static void appendReturnClauseDistinct(final String interactionType, StringBuilder query, List<ResultField> fields) {
+        Map<ResultField, String> selectors = new HashMap<ResultField, String>() {
             {
                 put(SOURCE_TAXON_NAME, "sourceTaxon.name");
                 put(INTERACTION_TYPE, "'" + interactionType + "'");
@@ -578,7 +578,7 @@ public class CypherQueryBuilder {
     }
 
 
-    protected static void appendReturnClausez(StringBuilder query, List<ResultFields> returnFields, Map<ResultFields, String> selectors) {
+    protected static void appendReturnClausez(StringBuilder query, List<ResultField> returnFields, Map<ResultField, String> selectors) {
         query.append("RETURN ");
         appendReturnFields(query, returnFields, selectors);
     }
@@ -603,15 +603,15 @@ public class CypherQueryBuilder {
         return query;
     }
 
-    protected static void appendReturnClauseDistinctz(StringBuilder query, List<ResultFields> returnFields, Map<ResultFields, String> selectors) {
+    protected static void appendReturnClauseDistinctz(StringBuilder query, List<ResultField> returnFields, Map<ResultField, String> selectors) {
         query.append("WITH distinct targetTaxon as tTaxon, type(interaction) as iType, sourceTaxon as sTaxon ");
         query.append("RETURN ");
         appendReturnFields(query, returnFields, selectors);
     }
 
-    private static void appendReturnFields(StringBuilder query, List<ResultFields> fields, Map<ResultFields, String> selectors) {
+    private static void appendReturnFields(StringBuilder query, List<ResultField> fields, Map<ResultField, String> selectors) {
         List<String> returnFields = new ArrayList<String>();
-        for (ResultFields field : fields) {
+        for (ResultField field : fields) {
             returnFields.add(selectors.get(field) + " as " + field);
         }
         query.append(StringUtils.join(returnFields, ","));

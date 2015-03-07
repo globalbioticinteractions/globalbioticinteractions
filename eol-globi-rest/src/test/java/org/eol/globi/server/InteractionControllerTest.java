@@ -4,7 +4,7 @@ import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.io.IOUtils;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.eol.globi.server.util.ResultFields;
+import org.eol.globi.server.util.ResultField;
 import org.eol.globi.util.CSVUtil;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -30,7 +30,7 @@ public class InteractionControllerTest {
     public void interactionFieldsJson() throws IOException {
         String interactionFields = new InteractionController().getInteractionFields(null);
         JsonNode jsonNode = new ObjectMapper().readTree(interactionFields);
-        assertThat(jsonNode.get(ResultFields.TAXON_NAME.getLabel()).get("description").asText(), is(notNullValue()));
+        assertThat(jsonNode.get(ResultField.TAXON_NAME.getLabel()).get("description").asText(), is(notNullValue()));
     }
 
     @Test
