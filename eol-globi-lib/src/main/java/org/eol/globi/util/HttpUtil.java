@@ -8,13 +8,19 @@ import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.conn.ssl.AllowAllHostnameVerifier;
+import org.apache.http.conn.ssl.TrustStrategy;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.DefaultServiceUnavailableRetryStrategy;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.client.HttpClients;
 
+import javax.net.ssl.SSLSocketFactory;
 import java.io.IOException;
 import java.net.URI;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 
 public class HttpUtil {
     private static final Log LOG = LogFactory.getLog(HttpUtil.class);
@@ -28,6 +34,10 @@ public class HttpUtil {
             httpClient = createHttpClient(FIVE_MINUTES_IN_MS);
         }
         return httpClient;
+    }
+
+    public static CloseableHttpClient getHttpClientNoSSLCheck() {
+        return HttpClients.custom().setHostnameVerifier(new AllowAllHostnameVerifier()).build();
     }
 
     // should only be called once

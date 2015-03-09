@@ -12,7 +12,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
@@ -75,15 +77,21 @@ public class StudyImporterForRaymond extends BaseStudyImporter {
         for (int attemptCount = 1; !isDone && attemptCount <= MAX_ATTEMPT; attemptCount++) {
             try {
                 LOG.info("[" + resourceUrl + "] downloading (attempt " + attemptCount + ")...");
+                CloseableHttpClient httpClientNoSSLCheck = HttpUtil.getHttpClientNoSSLCheck();
                 HttpGet request = new HttpGet(resourceUrl);
                 try {
-                    HttpResponse response = HttpUtil.getHttpClient().execute(request);
+                    HttpResponse response = httpClientNoSSLCheck.execute(request);
                     if (response.getStatusLine().getStatusCode() == 200) {
                         importData(response);
                         isDone = true;
                     }
                 } finally {
                     request.releaseConnection();
+                    try {
+                        httpClientNoSSLCheck.close();
+                    } catch (IOException ex) {
+                        //
+                    }
                 }
                 LOG.info("[" + resourceUrl + "] downloaded and imported.");
             } catch (IOException e) {
