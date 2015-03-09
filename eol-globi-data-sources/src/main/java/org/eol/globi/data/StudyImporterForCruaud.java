@@ -48,11 +48,15 @@ public class StudyImporterForCruaud extends BaseStudyImporter {
                             String samplingLocation = StringUtils.trim(dataParser.getValueByLabel("Sampling location"));
                             if (getGeoNamesService().hasTermForLocale(samplingLocation)) {
                                 LatLng pointForLocality = getGeoNamesService().findLatLng(samplingLocation);
-                                Location location = nodeFactory.getOrCreateLocation(pointForLocality.getLat(), pointForLocality.getLng(), null);
-                                parasite.caughtIn(location);
-                                host.caughtIn(location);
+                                if (pointForLocality == null) {
+                                    LOG.warn("no location associated with locality [" + samplingLocation + "]");
+                                } else {
+                                    Location location = nodeFactory.getOrCreateLocation(pointForLocality.getLat(), pointForLocality.getLng(), null);
+                                    parasite.caughtIn(location);
+                                    host.caughtIn(location);
+                                }
                             } else {
-                               LOG.warn("no location associated with locality [" + samplingLocation + "]");
+                                LOG.warn("no location associated with locality [" + samplingLocation + "]");
                             }
                         }
                     } catch (NodeFactoryException e) {
