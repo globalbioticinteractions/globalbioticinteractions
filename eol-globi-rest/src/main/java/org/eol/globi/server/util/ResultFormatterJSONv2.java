@@ -97,7 +97,7 @@ public class ResultFormatterJSONv2 implements ResultFormatter {
             for (int k = 0; k < row.size(); k++) {
                 values.put(columnNames.get(k), row.get(k));
             }
-            interactions.add(values);
+            interactions.get(j).putAll(values);
         }
     }
 
