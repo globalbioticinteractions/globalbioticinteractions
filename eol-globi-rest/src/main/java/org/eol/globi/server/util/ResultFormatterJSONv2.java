@@ -1,6 +1,5 @@
 package org.eol.globi.server.util;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.server.CypherQueryBuilder;
@@ -41,20 +40,65 @@ public class ResultFormatterJSONv2 implements ResultFormatter {
         }
 
         if (isInteractionQuery(columnNames)) {
-            return formatAsSourceTargetPairs(columnNames, data);
-        } else if (isTaxonQuery(columnNames)) {
-            List<Map<String, String>> taxa = new ArrayList<Map<String, String>>();
+            List<Map<String, Object>> interactions = new ArrayList<Map<String, Object>>();
+
+
             for (JsonNode row : data) {
-                Map<String, String> taxon = new TreeMap<String, String>();
+                Map<String, Object> interaction = new HashMap<String, Object>();
+
+                Map<String, String> sourceTaxon = new HashMap<String, String>();
+                interaction.put("source", sourceTaxon);
+
+                Map<String, String> targetTaxon = new HashMap<String, String>();
+                interaction.put("target", targetTaxon);
+
+                List<Map<String, String>> targetTaxa = new ArrayList<Map<String, String>>();
+
+                for (int i = 0; i < row.size(); i++) {
+                    parseRow(columnNames, row, interaction, sourceTaxon, targetTaxon, targetTaxa, i);
+                }
+
+                if (targetTaxa.size() > 0) {
+                    for (Map<String, String> aTargetTaxon : targetTaxa) {
+                        Map<String, Object> anotherInteraction = new HashMap<String, Object>();
+                        interactions.add(anotherInteraction);
+                        anotherInteraction.putAll(interaction);
+                        anotherInteraction.put("target", aTargetTaxon);
+                    }
+                } else {
+                    interactions.add(interaction);
+                }
+            }
+            addAllDataColumns(jsonNode, columnNames, interactions);
+            ObjectMapper mapper = new ObjectMapper();
+            String s = mapper.writeValueAsString(interactions);
+            return s;
+        } else if (isTaxonQuery(columnNames)) {
+            List<Map<String, Object>> taxa = new ArrayList<Map<String, Object>>();
+            for (JsonNode row : data) {
+                Map<String, Object> taxon = new TreeMap<String, Object>();
                 for (int i = 0; i < row.size(); i++) {
                     taxon.put(columns.get(i).asText(), row.get(i).asText());
                 }
                 taxa.add(taxon);
             }
+            addAllDataColumns(jsonNode, columnNames, taxa);
             return new ObjectMapper().writeValueAsString(taxa);
         }
 
         return "[]";
+    }
+
+    private void addAllDataColumns(JsonNode jsonNode, List<String> columnNames, List<Map<String, Object>> interactions) {
+        JsonNode rows = jsonNode.get("data");
+        for (int j = 0; j < rows.size(); j++) {
+            Map<String, Object> values = new HashMap<String, Object>();
+            JsonNode row = rows.get(j);
+            for (int k = 0; k < row.size(); k++) {
+                values.put(columnNames.get(k), row.get(k));
+            }
+            interactions.add(values);
+        }
     }
 
     private boolean isInteractionQuery(List<String> columnNames) {
@@ -68,40 +112,6 @@ public class ResultFormatterJSONv2 implements ResultFormatter {
             }
         }
         return false;
-    }
-
-    private String formatAsSourceTargetPairs(List<String> columnNames, JsonNode data) throws IOException {
-        List<Map<String, Object>> interactions = new ArrayList<Map<String, Object>>();
-
-
-        for (JsonNode row : data) {
-            Map<String, Object> interaction = new HashMap<String, Object>();
-
-            Map<String, String> sourceTaxon = new HashMap<String, String>();
-            interaction.put("source", sourceTaxon);
-
-            Map<String, String> targetTaxon = new HashMap<String, String>();
-            interaction.put("target", targetTaxon);
-
-            List<Map<String, String>> targetTaxa = new ArrayList<Map<String, String>>();
-
-            for (int i = 0; i < row.size(); i++) {
-                parseRow(columnNames, row, interaction, sourceTaxon, targetTaxon, targetTaxa, i);
-            }
-
-            if (targetTaxa.size() > 0) {
-                for (Map<String, String> aTargetTaxon : targetTaxa) {
-                    Map<String, Object> anotherInteraction = new HashMap<String, Object>();
-                    interactions.add(anotherInteraction);
-                    anotherInteraction.putAll(interaction);
-                    anotherInteraction.put("target", aTargetTaxon);
-                }
-            } else {
-                interactions.add(interaction);
-            }
-        }
-        ObjectMapper mapper = new ObjectMapper();
-        return mapper.writeValueAsString(interactions);
     }
 
     private void parseRow(List<String> columnNames, JsonNode row, Map<String, Object> interaction, Map<String, String> sourceTaxon, Map<String, String> targetTaxon, List<Map<String, String>> targetTaxa, int i) {

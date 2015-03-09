@@ -22,27 +22,34 @@ public class ResultFormatterJSONv2Test {
 
         JsonNode jsonNode = mapper.readTree(format);
         assertThat(jsonNode.isArray(), is(true));
-        assertThat(jsonNode.size(), is(5));
         for (JsonNode interaction : jsonNode) {
-            assertThat(interaction.get("type").getTextValue(), is("preyedUponBy"));
-            JsonNode taxon = interaction.get("source");
-            assertThat(taxon.get("name").getTextValue(), is("Ariopsis felis"));
+            if (interaction.has("type")) {
+                assertThat(interaction.get("type").getTextValue(), is("preyedUponBy"));
+                JsonNode taxon = interaction.get("source");
+                assertThat(taxon.get("name").getTextValue(), is("Ariopsis felis"));
 
-            taxon = interaction.get("target");
-            assertThat(taxon.get("name").getTextValue(),
-                    anyOf(is("Pomatomus saltatrix"), is("Lagodon rhomboides"), is("Centropomus undecimalis")));
+                taxon = interaction.get("target");
+                assertThat(taxon.get("name").getTextValue(),
+                        anyOf(is("Pomatomus saltatrix"), is("Lagodon rhomboides"), is("Centropomus undecimalis")));
 
-            assertThat(interaction.get("latitude").getDoubleValue(), is(notNullValue()));
-            assertThat(interaction.get("longitude").getDoubleValue(), is(notNullValue()));
-            if (interaction.has("altitude")) {
-                assertThat(interaction.get("altitude").getDoubleValue(), is(notNullValue()));
+                assertThat(interaction.get("latitude").getDoubleValue(), is(notNullValue()));
+                assertThat(interaction.get("longitude").getDoubleValue(), is(notNullValue()));
+                if (interaction.has("altitude")) {
+                    assertThat(interaction.get("altitude").getDoubleValue(), is(notNullValue()));
+                }
+                if (interaction.has("time")) {
+                    assertThat(interaction.get("time").getLongValue() > 0, is(true));
+                }
+
+                assertThat(interaction.get("study").getTextValue(),
+                        anyOf(is("SPIRE"), is("Akin et al 2006"), is("Blewett 2006")));
+            } else {
+                assertThat(interaction.get("study_title").asText(), anyOf(is("SPIRE"), is("Blewett 2006"), is("Akin et al 2006")));
+                assertThat(interaction.get("source_taxon_name").asText(), is("Ariopsis felis"));
+                assertThat(interaction.get("latitude").asText(), is(notNullValue()));
+                assertThat(interaction.get("longitude").asText(), is(notNullValue()));
+                assertThat(interaction.get("interaction_type").asText(), is("preyedUponBy"));
             }
-            if (interaction.has("time")) {
-                assertThat(interaction.get("time").getLongValue() > 0, is(true));
-            }
-
-            assertThat(interaction.get("study").getTextValue(),
-                    anyOf(is("SPIRE"), is("Akin et al 2006"), is("Blewett 2006")));
 
         }
 
@@ -61,27 +68,41 @@ public class ResultFormatterJSONv2Test {
 
         JsonNode jsonNode = mapper.readTree(format);
         assertThat(jsonNode.isArray(), is(true));
-        assertThat(jsonNode.size(), is(3));
         int count = 0;
         for (JsonNode interaction : jsonNode) {
-            assertThat(interaction.get("type").getTextValue(), is("ATE"));
-            JsonNode taxon = assertNodePropertiesExist(interaction, "source");
+            if (interaction.has("type")) {
+                assertThat(interaction.get("type").getTextValue(), is("ATE"));
+                JsonNode taxon = assertNodePropertiesExist(interaction, "source");
 
-            if (count == 0) {
-                assertThat(taxon.get("name").getTextValue(), is("Todus mexicanus"));
-                assertThat(taxon.get("path").getTextValue(), is("Animalia Chordata Aves Coraciiformes Todidae Todus"));
-                assertThat(taxon.get("id").getTextValue(), is("EOL:917146"));
+                if (count == 0) {
+                    assertThat(taxon.get("name").getTextValue(), is("Todus mexicanus"));
+                    assertThat(taxon.get("path").getTextValue(), is("Animalia Chordata Aves Coraciiformes Todidae Todus"));
+                    assertThat(taxon.get("id").getTextValue(), is("EOL:917146"));
+                }
+
+                taxon = assertNodePropertiesExist(interaction, "target");
+                if (count == 0) {
+                    assertThat(taxon.get("name").getTextValue(), is("Coleoptera"));
+                    assertThat(taxon.get("path").getTextValue(), is("Animalia Arthropoda Insecta"));
+                    assertThat(taxon.get("id").getTextValue(), is("EOL:345"));
+                }
+
+                assertThat(interaction.has("source"), is(true));
+
+                count++;
+            } else {
+                if (count == 0) {
+                    assertThat(interaction.get("source_taxon_name").asText(), is("Todus mexicanus"));
+                    assertThat(interaction.get("source_taxon_path").asText(), is("Animalia Chordata Aves Coraciiformes Todidae Todus"));
+                    assertThat(interaction.get("source_taxon_external_id").asText(), is("EOL:917146"));
+                }
+
+                if (count == 0) {
+                    assertThat(interaction.get("target_taxon_name").asText(), is("Coleoptera"));
+                    assertThat(interaction.get("target_taxon_path").asText(), is("Animalia Arthropoda Insecta"));
+                    assertThat(interaction.get("target_taxon_external_id").asText(), is("EOL:345"));
+                }
             }
-
-            taxon = assertNodePropertiesExist(interaction, "target");
-            if (count == 0) {
-                assertThat(taxon.get("name").getTextValue(), is("Coleoptera"));
-                assertThat(taxon.get("path").getTextValue(), is("Animalia Arthropoda Insecta"));
-                assertThat(taxon.get("id").getTextValue(), is("EOL:345"));
-            }
-
-
-            count++;
         }
 
     }
@@ -98,7 +119,6 @@ public class ResultFormatterJSONv2Test {
 
         JsonNode jsonNode = mapper.readTree(format);
         assertThat(jsonNode.isArray(), is(true));
-        assertThat(jsonNode.size(), is(9));
 
         JsonNode isopoda = jsonNode.get(0);
         assertThat(isopoda.get("taxon_name").asText(), is("Isopoda"));
@@ -122,7 +142,6 @@ public class ResultFormatterJSONv2Test {
 
         JsonNode jsonNode = mapper.readTree(format);
         assertThat(jsonNode.isArray(), is(true));
-        assertThat(jsonNode.size(), is(1));
 
         JsonNode isopoda = jsonNode.get(0);
         assertThat(isopoda.get("taxon_common_names").asText(), is("Isopoda"));
