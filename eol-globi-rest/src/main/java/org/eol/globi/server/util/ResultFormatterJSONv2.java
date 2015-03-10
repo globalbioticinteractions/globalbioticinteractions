@@ -39,10 +39,8 @@ public class ResultFormatterJSONv2 implements ResultFormatter {
             throw new IllegalArgumentException("data array expected, but not found");
         }
 
+        List<Map<String, Object>> resultList = new ArrayList<Map<String, Object>>();
         if (isInteractionQuery(columnNames)) {
-            List<Map<String, Object>> interactions = new ArrayList<Map<String, Object>>();
-
-
             for (JsonNode row : data) {
                 Map<String, Object> interaction = new HashMap<String, Object>();
 
@@ -61,32 +59,25 @@ public class ResultFormatterJSONv2 implements ResultFormatter {
                 if (targetTaxa.size() > 0) {
                     for (Map<String, String> aTargetTaxon : targetTaxa) {
                         Map<String, Object> anotherInteraction = new HashMap<String, Object>();
-                        interactions.add(anotherInteraction);
+                        resultList.add(anotherInteraction);
                         anotherInteraction.putAll(interaction);
                         anotherInteraction.put("target", aTargetTaxon);
                     }
                 } else {
-                    interactions.add(interaction);
+                    resultList.add(interaction);
                 }
             }
-            addAllDataColumns(jsonNode, columnNames, interactions);
-            ObjectMapper mapper = new ObjectMapper();
-            String s = mapper.writeValueAsString(interactions);
-            return s;
         } else if (isTaxonQuery(columnNames)) {
-            List<Map<String, Object>> taxa = new ArrayList<Map<String, Object>>();
             for (JsonNode row : data) {
                 Map<String, Object> taxon = new TreeMap<String, Object>();
                 for (int i = 0; i < row.size(); i++) {
                     taxon.put(columns.get(i).asText(), row.get(i).asText());
                 }
-                taxa.add(taxon);
+                resultList.add(taxon);
             }
-            addAllDataColumns(jsonNode, columnNames, taxa);
-            return new ObjectMapper().writeValueAsString(taxa);
         }
-
-        return "[]";
+        addAllDataColumns(jsonNode, columnNames, resultList);
+        return new ObjectMapper().writeValueAsString(resultList);
     }
 
     private void addAllDataColumns(JsonNode jsonNode, List<String> columnNames, List<Map<String, Object>> interactions) {
