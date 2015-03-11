@@ -457,12 +457,12 @@ public class CypherQueryBuilderTest {
 
     @Test
     public void findInteractionNoParams() throws IOException {
-        String expectedQuery = "START sourceTaxon = node:taxonPaths({source_taxon_name}) " +
+        String expectedQuery = "START study = node:studies('*:*') " +
                 EXPECTED_MATCH_CLAUSE +
                 EXPECTED_RETURN_CLAUSE;
         CypherQuery query = buildInteractionQuery(new HashMap<String, String[]>(), MULTI_TAXON_ALL);
         assertThat(query.getQuery(), is(expectedQuery));
-        assertThat(query.getParams().toString(), is("{source_taxon_name=path:\\\"Homo sapiens\\\"}"));
+        assertThat(query.getParams().toString(), is("{}"));
     }
 
     @Test

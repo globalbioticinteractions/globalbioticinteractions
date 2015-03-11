@@ -471,13 +471,10 @@ public class CypherQueryBuilder {
     }
 
     protected static StringBuilder appendStartClause2(Map parameterMap, List<String> sourceTaxa, List<String> targetTaxa, StringBuilder query) {
-        if (noSearchCriteria(RequestHelper.isSpatialSearch(parameterMap), sourceTaxa, targetTaxa)) {
-            // sensible default
-            sourceTaxa.add("Homo sapiens");
-        }
-
         query.append("START");
-        if (sourceTaxa.size() == 0 && targetTaxa.size() == 0) {
+        if (noSearchCriteria(RequestHelper.isSpatialSearch(parameterMap), sourceTaxa, targetTaxa)) {
+            query.append(" study = node:studies('*:*')");
+        } else if (sourceTaxa.size() == 0 && targetTaxa.size() == 0) {
             query.append(" loc = node:locations('*:*')");
         } else {
             if (sourceTaxa.size() > 0) {
