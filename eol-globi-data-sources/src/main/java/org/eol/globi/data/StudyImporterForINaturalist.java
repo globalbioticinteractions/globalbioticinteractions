@@ -88,6 +88,7 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
         add("Order");
         add("Class");
         add("Phylum");
+        add("Unidentified");
     }};
 
     public StudyImporterForINaturalist(ParserFactory parserFactory, NodeFactory nodeFactory) {
