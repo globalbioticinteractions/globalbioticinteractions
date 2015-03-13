@@ -21,9 +21,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
@@ -161,6 +163,9 @@ public class StudyImporterForSPIRETest extends GraphDBTestCase {
         assertThat(listener.descriptions, not(hasItem("http://spire.umbc.edu/ontologies/SpireEcoConcepts.owl#")));
         assertThat(listener.titles, not(hasItem("http://spire.umbc.edu/")));
         assertThat(listener.environments, not(hasItem("http://spire.umbc.edu/ontologies/SpireEcoConcepts.owl#")));
+
+        assertThat(listener.invalidInteractions.size(), is(greaterThan(0)));
+        assertThat(listener.invalidInteractions.get(0).toString(), is("{Country=General, Locality=General, description=Myers, P., R. Espinosa, C. S. Parr, T. Jones, G. S. Hammond, and T. A. Dewey. 2013. The Animal Diversity Web (online). Accessed at http://animaldiversity.org., localityOriginal=Country: General;   Locality: General, ofHabitat=unknown, predator=Enhydra_lutris, prey=Castor_canadensis, title=Animal Diversity Web756312ea19e09816008252921e67441a}"));
     }
 
     private void assertGAZMapping(TestTrophicLinkListener listener) {
@@ -337,6 +342,7 @@ public class StudyImporterForSPIRETest extends GraphDBTestCase {
         }
 
         private int count = 0;
+        List<Map<String, String>> invalidInteractions = new ArrayList<Map<String, String>>();
         Set<String> localities = new HashSet<String>();
         Set<String> descriptions = new HashSet<String>();
         Set<String> titles = new HashSet<String>();
@@ -365,6 +371,12 @@ public class StudyImporterForSPIRETest extends GraphDBTestCase {
             if (properties.containsKey(Study.PUBLICATION_YEAR)) {
                 publicationYears.add(properties.get(Study.PUBLICATION_YEAR));
             }
+
+
+            if (!StudyImporterForSPIRE.isValid(properties)) {
+                invalidInteractions.add(new TreeMap<String, String>(properties));
+            }
+
             count++;
         }
     }

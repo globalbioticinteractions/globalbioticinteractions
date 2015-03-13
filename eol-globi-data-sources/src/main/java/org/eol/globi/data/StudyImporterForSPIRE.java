@@ -143,9 +143,9 @@ public class StudyImporterForSPIRE extends BaseStudyImporter {
         }
     }
 
-    private boolean isValid(Map<String, String> properties) {
+    protected static boolean isValid(Map<String, String> properties) {
         // see https://github.com/jhpoelen/eol-globi-data/issues/118
-        boolean invalidInteraction = "Enhydra lutris".equals(properties.get(PREDATOR_NAME)) && "Castor canadensis".equals(properties.get(PREY_NAME));
+        boolean invalidInteraction = "Enhydra_lutris".equals(properties.get(PREDATOR_NAME)) && "Castor_canadensis".equals(properties.get(PREY_NAME));
         return properties.containsKey(Study.TITLE) && !invalidInteraction;
     }
 
