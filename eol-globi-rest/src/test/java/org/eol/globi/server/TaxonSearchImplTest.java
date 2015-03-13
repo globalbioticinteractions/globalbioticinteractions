@@ -5,24 +5,28 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.util.CypherQuery;
 import org.junit.Test;
 import org.junit.internal.matchers.StringContains;
+import org.mockito.Mockito;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.matchers.JUnitMatchers.containsString;
+import static org.mockito.Mockito.when;
 
 public class TaxonSearchImplTest {
 
     @Test
     public void nameSuggestions() throws IOException {
-        CypherQuery cypherQuery = new TaxonSearchImpl().findCloseMatchesForCommonAndScientificNamesNew("homo zapiens");
+        CypherQuery cypherQuery = new TaxonSearchImpl().findCloseMatchesForCommonAndScientificNamesNew("homo zapiens", null);
         String result = new CypherQueryExecutor(cypherQuery.getQuery(), cypherQuery.getParams()).execute(null);
         assertThat(result, containsString("Homo sapiens"));
     }
 
-    public static final String COLUMN_PREFIX = "{\n  \"columns\" : [ \"taxon.name\", \"taxon.commonNames\", \"taxon.path\" ]";
+    public static final String COLUMN_PREFIX = "{\n  \"columns\" : [ \"taxon_name\", \"taxon_common_names\", \"taxon_path\" ]";
 
 
     @Test
@@ -46,8 +50,23 @@ public class TaxonSearchImplTest {
         assertHuman("Homo s");
     }
 
+    @Test
+    public void findCloseMatchesShortPartialFields() throws IOException {
+        HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
+        when(request.getParameterMap()).thenReturn(new HashMap<String, String[]>() {{
+            put("field", new String[]{"taxon_external_id", "taxon_name"});
+        }});
+        when(request.getParameter("limit")).thenReturn("10");
+
+        CypherQuery cypherQuery = new TaxonSearchImpl().findCloseMatchesForCommonAndScientificNamesNew("Homo s", request);
+        String response = new CypherQueryExecutor(cypherQuery.getQuery(), cypherQuery.getParams()).execute(request);
+        assertThat(cypherQuery.getQuery(), StringContains.containsString("LIMIT 10"));
+        assertThat(response, StringContains.containsString("taxon_external_id"));
+        assertThat(response, StringContains.containsString("taxon_name"));
+    }
+
     private void assertHuman(String searchTerm) throws IOException {
-        CypherQuery cypherQuery = new TaxonSearchImpl().findCloseMatchesForCommonAndScientificNamesNew(searchTerm);
+        CypherQuery cypherQuery = new TaxonSearchImpl().findCloseMatchesForCommonAndScientificNamesNew(searchTerm, null);
         String response = new CypherQueryExecutor(cypherQuery.getQuery(), cypherQuery.getParams()).execute(null);
         assertThat(response.startsWith(COLUMN_PREFIX), is(true));
         assertThat(response, StringContains.containsString("Homo sapiens"));
@@ -56,7 +75,7 @@ public class TaxonSearchImplTest {
 
     @Test
     public void findCloseMatchesShortPartial2() throws IOException {
-        CypherQuery cypherQuery = new TaxonSearchImpl().findCloseMatchesForCommonAndScientificNamesNew("h s");
+        CypherQuery cypherQuery = new TaxonSearchImpl().findCloseMatchesForCommonAndScientificNamesNew("h s", null);
         String response = new CypherQueryExecutor(cypherQuery.getQuery(), cypherQuery.getParams()).execute(null);
         assertThat(response.startsWith(COLUMN_PREFIX), is(true));
         // expect at least one common name
@@ -65,7 +84,7 @@ public class TaxonSearchImplTest {
 
     @Test
     public void findCloseMatchesCommonNameFoxDutch() throws IOException {
-        CypherQuery cypherQuery = new TaxonSearchImpl().findCloseMatchesForCommonAndScientificNamesNew("vos");
+        CypherQuery cypherQuery = new TaxonSearchImpl().findCloseMatchesForCommonAndScientificNamesNew("vos", null);
         String response = new CypherQueryExecutor(cypherQuery.getQuery(), cypherQuery.getParams()).execute(null);
         assertThat(response.startsWith(COLUMN_PREFIX), is(true));
         assertThat(response, StringContains.containsString("vos"));
@@ -73,7 +92,7 @@ public class TaxonSearchImplTest {
 
     @Test
     public void findCloseMatchesCommonNameFoxFrenchType() throws IOException {
-        CypherQuery cypherQuery = new TaxonSearchImpl().findCloseMatchesForCommonAndScientificNamesNew("reinard");
+        CypherQuery cypherQuery = new TaxonSearchImpl().findCloseMatchesForCommonAndScientificNamesNew("reinard", null);
         String response = new CypherQueryExecutor(cypherQuery.getQuery(), cypherQuery.getParams()).execute(null);
         assertThat(response, StringContains.containsString("Vulpes vulpes"));
         assertThat(response, StringContains.containsString("renard"));
@@ -81,32 +100,32 @@ public class TaxonSearchImplTest {
 
     @Test
     public void findCloseMatchesScientificNameRedFoxWithTypo() throws IOException {
-        CypherQuery cypherQuery = new TaxonSearchImpl().findCloseMatchesForCommonAndScientificNamesNew("Vulpes vules");
+        CypherQuery cypherQuery = new TaxonSearchImpl().findCloseMatchesForCommonAndScientificNamesNew("Vulpes vules", null);
         String response = new CypherQueryExecutor(cypherQuery.getQuery(), cypherQuery.getParams()).execute(null);
         assertThat(response, StringContains.containsString("Vulpes vulpes"));
     }
 
     @Test
     public void findCloseMatchesScientificGenus() throws IOException {
-        CypherQuery cypherQuery = new TaxonSearchImpl().findCloseMatchesForCommonAndScientificNamesNew("Ariidae");
+        CypherQuery cypherQuery = new TaxonSearchImpl().findCloseMatchesForCommonAndScientificNamesNew("Ariidae", null);
         String response = new CypherQueryExecutor(cypherQuery.getQuery(), cypherQuery.getParams()).execute(null);
         JsonNode mapper = new ObjectMapper().readTree(response);
         JsonNode data = mapper.get("data");
         assertThat(data.isArray(), is(true));
-        assertThat(data.size() > 0, is (true));
+        assertThat(data.size() > 0, is(true));
         assertThat(response, StringContains.containsString("Ariidae"));
     }
 
     @Test
     public void findCloseMatchesScientificChineseCharacters() throws IOException {
-        CypherQuery cypherQuery = new TaxonSearchImpl().findCloseMatchesForCommonAndScientificNamesNew("Ariidae");
+        CypherQuery cypherQuery = new TaxonSearchImpl().findCloseMatchesForCommonAndScientificNamesNew("Ariidae", null);
         String response = new CypherQueryExecutor(cypherQuery.getQuery(), cypherQuery.getParams()).execute(null);
         assertThat(response, StringContains.containsString("海鱨"));
     }
 
     @Test
     public void findCloseMatchesLowerCase() throws IOException {
-        CypherQuery cypherQuery = new TaxonSearchImpl().findCloseMatchesForCommonAndScientificNamesNew("King mackerel");
+        CypherQuery cypherQuery = new TaxonSearchImpl().findCloseMatchesForCommonAndScientificNamesNew("King mackerel", null);
         String response = new CypherQueryExecutor(cypherQuery.getQuery(), cypherQuery.getParams()).execute(null);
         assertThat(response, StringContains.containsString("Scomberomorus cavalla"));
         assertThat(response, StringContains.containsString("king mackeral"));
@@ -114,7 +133,7 @@ public class TaxonSearchImplTest {
 
     @Test
     public void findCloseMatchesUpperCase() throws IOException {
-        CypherQuery cypherQuery = new TaxonSearchImpl().findCloseMatchesForCommonAndScientificNamesNew("King Mackerel");
+        CypherQuery cypherQuery = new TaxonSearchImpl().findCloseMatchesForCommonAndScientificNamesNew("King Mackerel", null);
         String response = new CypherQueryExecutor(cypherQuery.getQuery(), cypherQuery.getParams()).execute(null);
         assertThat(response, StringContains.containsString("Scomberomorus cavalla"));
         assertThat(response, StringContains.containsString("king mackeral"));
@@ -122,7 +141,7 @@ public class TaxonSearchImplTest {
 
     @Test
     public void ensureSingleMatch() throws IOException {
-        CypherQuery cypherQuery = new TaxonSearchImpl().findCloseMatchesForCommonAndScientificNamesNew("Ariopsis felis");
+        CypherQuery cypherQuery = new TaxonSearchImpl().findCloseMatchesForCommonAndScientificNamesNew("Ariopsis felis", null);
         String response = new CypherQueryExecutor(cypherQuery.getQuery(), cypherQuery.getParams()).execute(null);
         JsonNode jsonNode = new ObjectMapper().readTree(response);
         assertThat(jsonNode.get("data").get(0).get(0).getTextValue(), is("Ariopsis felis"));

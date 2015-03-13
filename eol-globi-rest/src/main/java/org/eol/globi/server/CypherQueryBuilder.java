@@ -177,6 +177,7 @@ public class CypherQueryBuilder {
             TARGET_SPECIMEN_TOTAL_VOLUME_ML,
             TARGET_SPECIMEN_TOTAL_FREQUENCY_OF_OCCURRENCE
     };
+    public static final long DEFAULT_LIMIT = 1024L;
 
     static public CypherQuery createDistinctTaxaInLocationQuery(Map<String, String[]> params) {
         StringBuilder builder = new StringBuilder();
@@ -446,7 +447,7 @@ public class CypherQueryBuilder {
         }
     }
 
-    private static List<ResultField> actualReturnFields(List<String> requestedReturnFields, List<ResultField> defaultReturnFields, Collection<ResultField> availableReturnFields) {
+    protected static List<ResultField> actualReturnFields(List<String> requestedReturnFields, List<ResultField> defaultReturnFields, Collection<ResultField> availableReturnFields) {
         List<ResultField> returnFields = new ArrayList<ResultField>();
         for (String requestedReturnField : requestedReturnFields) {
             for (ResultField resultField : ResultField.values()) {
@@ -645,7 +646,7 @@ public class CypherQueryBuilder {
         return hasWhereClause;
     }
 
-    private static List<String> collectParamValues(Map parameterMap, String taxonSearchKey) {
+    protected static List<String> collectParamValues(Map parameterMap, String taxonSearchKey) {
         List<String> taxa = new ArrayList<String>();
         if (parameterMap.containsKey(taxonSearchKey)) {
             Object paramObject = parameterMap.get(taxonSearchKey);
@@ -658,14 +659,17 @@ public class CypherQueryBuilder {
         return taxa;
     }
 
-
     public static CypherQuery createPagedQuery(HttpServletRequest request, CypherQuery query) {
+        return createPagedQuery(request, query, DEFAULT_LIMIT);
+    }
+
+    public static CypherQuery createPagedQuery(HttpServletRequest request, CypherQuery query, long defaultLimit) {
         long defaultValue = 0L;
         long offset = getValueOrDefault(request, "offset", defaultValue);
         if (offset == defaultValue) {
             offset = getValueOrDefault(request, "skip", defaultValue);
         }
-        long limit = getValueOrDefault(request, "limit", 1024L);
+        long limit = getValueOrDefault(request, "limit", defaultLimit);
         return new CypherQuery(query.getQuery() + " SKIP " + offset + " LIMIT " + limit, query.getParams());
     }
 

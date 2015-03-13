@@ -5,6 +5,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.eol.globi.server.util.ResultField;
 import org.eol.globi.util.CypherQuery;
 import org.eol.globi.util.CypherUtil;
 import org.springframework.stereotype.Controller;
@@ -15,8 +16,18 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import static org.eol.globi.server.util.ResultField.TAXON_COMMON_NAMES;
+import static org.eol.globi.server.util.ResultField.TAXON_EXTERNAL_ID;
+import static org.eol.globi.server.util.ResultField.TAXON_NAME;
+import static org.eol.globi.server.util.ResultField.TAXON_PATH;
+import static org.eol.globi.server.util.ResultField.TAXON_PATH_IDS;
+import static org.eol.globi.server.util.ResultField.TAXON_PATH_RANKS;
 
 @Controller
 public class TaxonSearchImpl implements TaxonSearch {
@@ -59,10 +70,32 @@ public class TaxonSearchImpl implements TaxonSearch {
 
     @RequestMapping(value = "/findCloseMatchesForTaxon/{taxonName}", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public CypherQuery findCloseMatchesForCommonAndScientificNamesNew(@PathVariable("taxonName") final String taxonName) throws IOException {
+    public CypherQuery findCloseMatchesForCommonAndScientificNamesNew(@PathVariable("taxonName") final String taxonName, HttpServletRequest request) throws IOException {
         String luceneQuery = buildLuceneQuery(taxonName, "name");
-        return new CypherQuery("START taxon = node:taxonNameSuggestions('" + luceneQuery + "') " +
-                "RETURN taxon.name? as `taxon.name`, taxon.commonNames? as `taxon.commonNames`, taxon.path? as `taxon.path` LIMIT 15", null);
+        StringBuilder query = new StringBuilder("START taxon = node:taxonNameSuggestions('" + luceneQuery + "') ");
+
+        Map<ResultField, String> selectors = new HashMap<ResultField, String>() {
+            {
+                put(TAXON_NAME, "taxon.name?");
+                put(TAXON_COMMON_NAMES, "taxon.commonNames?");
+                put(TAXON_PATH, "taxon.path?");
+                put(TAXON_EXTERNAL_ID, "taxon.externalId?");
+                put(TAXON_PATH_IDS, "taxon.pathIds?");
+                put(TAXON_PATH_RANKS, "taxon.pathNames?");
+            }
+        };
+
+        ResultField[] returnFieldsCloseMatches = new ResultField[]{TAXON_NAME,
+                TAXON_COMMON_NAMES,
+                TAXON_PATH
+        };
+
+        List<String> requestedFields = new ArrayList<String>();
+        if (request != null) {
+            requestedFields.addAll(CypherQueryBuilder.collectParamValues(request.getParameterMap(), "field"));
+        }
+        CypherQueryBuilder.appendReturnClausez(query, CypherQueryBuilder.actualReturnFields(requestedFields, Arrays.asList(returnFieldsCloseMatches), selectors.keySet()), selectors);
+        return CypherQueryBuilder.createPagedQuery(request, new CypherQuery(query.toString(), null), 15);
     }
 
     private String buildLuceneQuery(String taxonName, String name) {
