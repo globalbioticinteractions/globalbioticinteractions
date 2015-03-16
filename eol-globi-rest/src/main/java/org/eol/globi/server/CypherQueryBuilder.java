@@ -79,6 +79,9 @@ public class CypherQueryBuilder {
     public static final String INTERACTION_VECTOR_OF = "vectorOf";
     public static final String INTERACTION_HAS_VECTOR = "hasVector";
 
+    public static final String INTERACTION_HOST_OF = "hostOf";
+    public static final String INTERACTION_HAS_HOST = "hasHost";
+
     public static final String INTERACTION_SYMBIONT_OF = "symbiontOf";
     public static final String INTERACTION_INTERACTS_WITH = "interactsWith";
 
@@ -100,6 +103,8 @@ public class CypherQueryBuilder {
             put(INTERACTION_HAS_PATHOGEN, InteractType.HAS_PATHOGEN.toString());
             put(INTERACTION_HAS_VECTOR, InteractType.HAS_VECTOR.toString());
             put(INTERACTION_VECTOR_OF, InteractType.VECTOR_OF.toString());
+            put(INTERACTION_HOST_OF, StringUtils.join(new String[]{InteractType.HOST_OF.toString(), InteractType.HAS_PARASITE.toString(), InteractType.HAS_PATHOGEN.toString()}, "|"));
+            put(INTERACTION_HAS_HOST, StringUtils.join(new String[]{InteractType.HAS_HOST.toString(),InteractType.PARASITE_OF.toString(), InteractType.PATHOGEN_OF.toString()}, "|"));
             put(INTERACTION_SYMBIONT_OF, StringUtils.join(InteractType.values(), "|"));
             put(INTERACTION_INTERACTS_WITH, StringUtils.join(InteractType.values(), "|"));
         }
@@ -121,6 +126,8 @@ public class CypherQueryBuilder {
             put(InteractType.HAS_VECTOR.toString(), InteractionTypeExternal.HAS_VECTOR);
             put(InteractType.SYMBIONT_OF.toString(), InteractionTypeExternal.SYMBIONT_OF);
             put(InteractType.INTERACTS_WITH.toString(), InteractionTypeExternal.INTERACTS_WITH);
+            put(InteractType.HAS_HOST.toString(), InteractionTypeExternal.HAS_HOST);
+            put(InteractType.HOST_OF.toString(), InteractionTypeExternal.HOST_OF);
         }
     };
 
@@ -137,6 +144,8 @@ public class CypherQueryBuilder {
             put(INTERACTION_HAS_PATHOGEN, InteractType.HAS_PATHOGEN.toString());
             put(INTERACTION_INTERACTS_WITH, InteractType.INTERACTS_WITH.toString());
             put(INTERACTION_SYMBIONT_OF, InteractType.SYMBIONT_OF.toString());
+            put(INTERACTION_HOST_OF, InteractType.HOST_OF.toString());
+            put(INTERACTION_HAS_HOST, InteractType.HOST_OF.toString());
         }
     };
 

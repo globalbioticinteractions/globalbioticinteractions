@@ -7,6 +7,8 @@ public enum InteractionTypeExternal {
     PREYED_UPON_BY(CypherQueryBuilder.INTERACTION_PREYED_UPON_BY, "prey", "predator", "http://purl.obolibrary.org/obo/RO_0002458"),
     PARASITE_OF(CypherQueryBuilder.INTERACTION_PARASITE_OF, "parasite", "host", "http://purl.obolibrary.org/obo/RO_0002444"),
     HAS_PARASITE(CypherQueryBuilder.INTERACTION_HAS_PARASITE, "host", "parasite", "http://purl.obolibrary.org/obo/RO_0002445"),
+    HOST_OF(CypherQueryBuilder.INTERACTION_HOST_OF, "host", "symbiont", "http://purl.obolibrary.org/obo/RO_0002453"),
+    HAS_HOST(CypherQueryBuilder.INTERACTION_HAS_HOST, "symbiont", "host", "http://purl.obolibrary.org/obo/RO_0002454"),
     POLLINATES(CypherQueryBuilder.INTERACTION_POLLINATES, "pollinator", "plant", "http://purl.obolibrary.org/obo/RO_0002455"),
     POLLINATED_BY(CypherQueryBuilder.INTERACTION_POLLINATED_BY, "plant", "pollinator", "http://purl.obolibrary.org/obo/RO_0002456"),
     PATHOGEN_OF(CypherQueryBuilder.INTERACTION_PATHOGEN_OF, "pathogen", "host", "http://purl.obolibrary.org/obo/RO_0002556"),
