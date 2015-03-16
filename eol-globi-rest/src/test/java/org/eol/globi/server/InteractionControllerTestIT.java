@@ -198,6 +198,25 @@ public class InteractionControllerTestIT {
     }
 
     @Test
+    public void findAccordingTo() throws IOException, URISyntaxException {
+        HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
+        when(request.getParameter("type")).thenReturn("json.v2");
+        when(request.getParameter("sourceTaxon")).thenReturn("json.v2");
+        when(request.getParameter("accordingTo")).thenReturn("inaturalist");
+        when(request.getParameterMap()).thenReturn(new HashMap<String, String[]>() {
+            {
+                put("sourceTaxon", new String[]{"Enhydra"});
+                put("accordingTo", new String[]{"inaturalist"});
+            }
+        });
+
+        String list = new CypherQueryExecutor(new InteractionController().findInteractionsNew(request)).execute(request);
+        assertThat(list, containsString("\"source\":"));
+        assertThat(list, containsString("\"target\":"));
+        assertThat(list, containsString("\"type\":\"preysOn\""));
+    }
+
+    @Test
     public void findPreyOfJSONv2() throws IOException, URISyntaxException {
         HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
         when(request.getParameter("type")).thenReturn("json.v2");

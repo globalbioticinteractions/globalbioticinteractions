@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.regex.Pattern;
 
 import static org.eol.globi.server.util.ResultField.ALTITUDE;
 import static org.eol.globi.server.util.ResultField.COLLECTION_TIME_IN_UNIX_EPOCH;
@@ -244,7 +245,11 @@ public class CypherQueryBuilder {
     }
 
     public static String regex(List<String> terms) {
-        String joined = StringUtils.join(terms, "|");
+        List<String> quotedTerms = new ArrayList<String>();
+        for (String term : terms) {
+            quotedTerms.add(Pattern.quote(term).replace("\\Q", "\\\\Q").replace("\\E", "\\\\E"));
+        }
+        String joined = StringUtils.join(quotedTerms, "|");
         return ".*(" + joined + ").*";
     }
 
@@ -484,7 +489,9 @@ public class CypherQueryBuilder {
             appendTaxonSelector(query, "targetTaxon", targetTaxa);
 
             appendAndOrWhere(sourceTaxa, query, spatialSearch || targetTaxa.size() > 0);
-
+            if (targetTaxa.size() == 0 && sourceTaxa.size() > 0) {
+                query.append("(");
+            }
             appendTaxonSelector(query, "sourceTaxon", sourceTaxa);
             if (sourceTaxa.size() > 0 || targetTaxa.size() > 0) {
                 query.append(") ");
