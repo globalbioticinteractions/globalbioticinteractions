@@ -243,7 +243,12 @@ public class CypherQueryBuilder {
         return lucenePathQuery.toString();
     }
 
-    private static Map<String, String> getParams(List<String> sourceTaxonNames, List<String> targetTaxonNames) {
+    public static String regex(List<String> terms) {
+        String joined = StringUtils.join(terms, "|");
+        return ".*(" + joined + ").*";
+    }
+
+    private static Map<String, String> getParams(List<String> sourceTaxonNames, List<String> targetTaxonNames, List<String> accordingTo) {
         Map<String, String> paramMap = new HashMap<String, String>();
         if (sourceTaxonNames != null && sourceTaxonNames.size() > 0) {
             paramMap.put(SOURCE_TAXON_NAME.getLabel(), lucenePathQuery(sourceTaxonNames));
@@ -252,6 +257,11 @@ public class CypherQueryBuilder {
         if (targetTaxonNames != null && targetTaxonNames.size() > 0) {
             paramMap.put(TARGET_TAXON_NAME.getLabel(), lucenePathQuery(targetTaxonNames));
         }
+
+        if (accordingTo != null && accordingTo.size() > 0) {
+            paramMap.put("accordingTo", regex(accordingTo));
+        }
+
         return paramMap;
     }
 
@@ -352,7 +362,7 @@ public class CypherQueryBuilder {
     protected static CypherQuery interactionObservations(List<String> sourceTaxa, List<String> interactionTypes, List<String> targetTaxa, Map parameterMap, QueryType queryType) {
         StringBuilder query = appendStartMatchWhereClauses(sourceTaxa, interactionTypes, targetTaxa, parameterMap);
         appendReturnClause(interactionTypes, query, queryType, collectParamValues(parameterMap, "field"));
-        return new CypherQuery(query.toString(), getParams(sourceTaxa, targetTaxa));
+        return new CypherQuery(query.toString(), getParams(sourceTaxa, targetTaxa, collectParamValues(parameterMap, "accordingTo")));
     }
 
 
@@ -464,16 +474,46 @@ public class CypherQueryBuilder {
     }
 
 
-    protected static StringBuilder appendTargetTaxonWhereClause(Map parameterMap, List<String> sourceTaxa, List<String> targetTaxa, StringBuilder query) {
-        if (sourceTaxa.size() > 0) {
-            appendTaxonFilter(query, RequestHelper.isSpatialSearch(parameterMap), "targetTaxon", targetTaxa);
+    protected static StringBuilder appendTaxonWherClauseIfNecessary(Map parameterMap, List<String> sourceTaxa, List<String> targetTaxa, StringBuilder query) {
+        boolean spatialSearch = RequestHelper.isSpatialSearch(parameterMap);
+        if (collectParamValues(parameterMap, "accordingTo").size() > 0) {
+            appendAndOrWhere(targetTaxa, query, spatialSearch);
+            if (hasTaxaSelection(sourceTaxa, targetTaxa)) {
+                query.append("(");
+            }
+            appendTaxonSelector(query, "targetTaxon", targetTaxa);
+            appendAndOrWhere(sourceTaxa, query, spatialSearch || targetTaxa.size() > 0);
+            appendTaxonSelector(query, "sourceTaxon", sourceTaxa);
+            if (hasTaxaSelection(sourceTaxa, targetTaxa)) {
+                query.append(") ");
+            }
+        } else if (sourceTaxa.size() > 0) {
+            appendAndOrWhere(targetTaxa, query, spatialSearch);
+            appendTaxonSelector(query, "targetTaxon", targetTaxa);
         }
         return query;
     }
 
+    private static void appendAndOrWhere(List<String> sourceTaxa, StringBuilder query, boolean hasWhereClause) {
+        if (sourceTaxa.size() > 0) {
+            if (hasWhereClause) {
+                query.append("AND ");
+            } else {
+                query.append(" WHERE ");
+            }
+        }
+    }
+
+    private static boolean hasTaxaSelection(List<String> sourceTaxa, List<String> targetTaxa) {
+        return sourceTaxa.size() > 0 || targetTaxa.size() > 0;
+    }
+
     protected static StringBuilder appendStartClause2(Map parameterMap, List<String> sourceTaxa, List<String> targetTaxa, StringBuilder query) {
         query.append("START");
-        if (noSearchCriteria(RequestHelper.isSpatialSearch(parameterMap), sourceTaxa, targetTaxa)) {
+        List<String> accordingTo = collectParamValues(parameterMap, "accordingTo");
+        if (accordingTo.size() > 0) {
+            query.append(" study = node:studies('*:*') WHERE (has(study.externalId) AND study.externalId =~ {accordingTo}) OR study.citation =~ {accordingTo} OR study.source =~ {accordingTo} WITH study");
+        } else if (noSearchCriteria(RequestHelper.isSpatialSearch(parameterMap), sourceTaxa, targetTaxa)) {
             query.append(" study = node:studies('*:*')");
         } else if (sourceTaxa.size() == 0 && targetTaxa.size() == 0) {
             query.append(" loc = node:locations('*:*')");
@@ -493,7 +533,7 @@ public class CypherQueryBuilder {
         StringBuilder query = new StringBuilder();
         appendStartClause2(parameterMap, sourceTaxa, targetTaxa, query);
         appendMatchAndWhereClause(interactionTypes, parameterMap, query);
-        return appendTargetTaxonWhereClause(parameterMap, sourceTaxa, targetTaxa, query);
+        return appendTaxonWherClauseIfNecessary(parameterMap, sourceTaxa, targetTaxa, query);
     }
 
     protected static void appendReturnClause(StringBuilder query, List<ResultField> returnFields, Map<ResultField, String> selectors) {
@@ -631,19 +671,12 @@ public class CypherQueryBuilder {
         return !spatialSearch && sourceTaxaSelectors.size() == 0 && targetTaxaSelectors.size() == 0;
     }
 
-    private static boolean appendTaxonFilter(StringBuilder query, boolean hasWhereClause, String taxonLabel, List<String> taxonNames) {
+    private static void appendTaxonSelector(StringBuilder query, String taxonLabel, List<String> taxonNames) {
         if (taxonNames.size() > 0) {
-            if (hasWhereClause) {
-                query.append("AND ");
-            } else {
-                query.append(" WHERE ");
-                hasWhereClause = true;
-            }
             query.append("has(").append(taxonLabel).append(".path) AND ").append(taxonLabel).append(".path =~ '(.*(");
             query.append(StringUtils.join(taxonNames, "|"));
             query.append(").*)' ");
         }
-        return hasWhereClause;
     }
 
     protected static List<String> collectParamValues(Map parameterMap, String taxonSearchKey) {

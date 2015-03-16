@@ -98,7 +98,6 @@ public class CypherQueryBuilderTest {
         assertThat(query.getParams().toString(), is(is("{taxon_name=path:\\\"Actinopterygii\\\" OR path:\\\"Chordata\\\"}")));
     }
 
-
     @Test
     public void findInteractionForSourceAndTargetTaxaLocationsDistinct() throws IOException {
         HashMap<String, String[]> params = new HashMap<String, String[]>() {
@@ -134,6 +133,57 @@ public class CypherQueryBuilderTest {
                 "WHERE loc.latitude < 23.32 AND loc.longitude > -67.87 AND loc.latitude > 12.79 AND loc.longitude < -57.08 AND has(targetTaxon.path) AND targetTaxon.path =~ '(.*(Arthropoda).*)' " +
                 "WITH distinct targetTaxon as tTaxon, type(interaction) as iType, sourceTaxon as sTaxon RETURN sTaxon.name as source_taxon_name,tTaxon.name as target_taxon_name"));
         assertThat(query.getParams().toString(), is(is("{source_taxon_name=path:\\\"Actinopterygii\\\" OR path:\\\"Chordata\\\", target_taxon_name=path:\\\"Arthropoda\\\"}")));
+    }
+
+    @Test
+    public void findInteractionsAccordingToWithTaxa() throws IOException {
+        HashMap<String, String[]> params = new HashMap<String, String[]>() {
+            {
+                put("accordingTo", new String[]{"inaturalist"});
+                put("targetTaxon", new String[]{"Arthropoda"});
+                put("sourceTaxon", new String[]{"Arthropoda"});
+                put("field", new String[]{"source_taxon_name", "target_taxon_name"});
+            }
+        };
+
+        CypherQuery query = buildInteractionQuery(params, MULTI_TAXON_DISTINCT);
+        assertThat(query.getQuery(), is("START study = node:studies('*:*') WHERE (has(study.externalId) AND study.externalId =~ {accordingTo}) OR study.citation =~ {accordingTo} OR study.source =~ {accordingTo} WITH study " +
+                EXPECTED_MATCH_CLAUSE +
+                "WHERE (has(targetTaxon.path) AND targetTaxon.path =~ '(.*(Arthropoda).*)' AND has(sourceTaxon.path) AND sourceTaxon.path =~ '(.*(Arthropoda).*)' ) " +
+                "WITH distinct targetTaxon as tTaxon, type(interaction) as iType, sourceTaxon as sTaxon RETURN sTaxon.name as source_taxon_name,tTaxon.name as target_taxon_name"));
+        assertThat(query.getParams().toString(), is(is("{accordingTo=.*(inaturalist).*, source_taxon_name=path:\\\"Arthropoda\\\", target_taxon_name=path:\\\"Arthropoda\\\"}")));
+    }
+
+    @Test
+    public void findInteractionsAccordingToNoTaxa() throws IOException {
+        HashMap<String, String[]> params = new HashMap<String, String[]>() {
+            {
+                put("accordingTo", new String[]{"inaturalist"});
+                put("field", new String[]{"source_taxon_name", "target_taxon_name"});
+            }
+        };
+
+        CypherQuery query = buildInteractionQuery(params, MULTI_TAXON_DISTINCT);
+        assertThat(query.getQuery(), is("START study = node:studies('*:*') WHERE (has(study.externalId) AND study.externalId =~ {accordingTo}) OR study.citation =~ {accordingTo} OR study.source =~ {accordingTo} WITH study " +
+                EXPECTED_MATCH_CLAUSE +
+                "WITH distinct targetTaxon as tTaxon, type(interaction) as iType, sourceTaxon as sTaxon RETURN sTaxon.name as source_taxon_name,tTaxon.name as target_taxon_name"));
+        assertThat(query.getParams().toString(), is(is("{accordingTo=.*(inaturalist).*}")));
+    }
+
+    @Test
+    public void findInteractionsAccordingToMultipleNoTaxa() throws IOException {
+        HashMap<String, String[]> params = new HashMap<String, String[]>() {
+            {
+                put("accordingTo", new String[]{"inaturalist", "gomexsi"});
+                put("field", new String[]{"source_taxon_name", "target_taxon_name"});
+            }
+        };
+
+        CypherQuery query = buildInteractionQuery(params, MULTI_TAXON_DISTINCT);
+        assertThat(query.getQuery(), is("START study = node:studies('*:*') WHERE (has(study.externalId) AND study.externalId =~ {accordingTo}) OR study.citation =~ {accordingTo} OR study.source =~ {accordingTo} WITH study " +
+                EXPECTED_MATCH_CLAUSE +
+                "WITH distinct targetTaxon as tTaxon, type(interaction) as iType, sourceTaxon as sTaxon RETURN sTaxon.name as source_taxon_name,tTaxon.name as target_taxon_name"));
+        assertThat(query.getParams().toString(), is(is("{accordingTo=.*(inaturalist|gomexsi).*}")));
     }
 
     @Test
