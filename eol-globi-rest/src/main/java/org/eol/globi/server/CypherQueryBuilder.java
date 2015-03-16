@@ -478,13 +478,15 @@ public class CypherQueryBuilder {
         boolean spatialSearch = RequestHelper.isSpatialSearch(parameterMap);
         if (collectParamValues(parameterMap, "accordingTo").size() > 0) {
             appendAndOrWhere(targetTaxa, query, spatialSearch);
-            if (hasTaxaSelection(sourceTaxa, targetTaxa)) {
+            if (targetTaxa.size() > 0) {
                 query.append("(");
             }
             appendTaxonSelector(query, "targetTaxon", targetTaxa);
+
             appendAndOrWhere(sourceTaxa, query, spatialSearch || targetTaxa.size() > 0);
+
             appendTaxonSelector(query, "sourceTaxon", sourceTaxa);
-            if (hasTaxaSelection(sourceTaxa, targetTaxa)) {
+            if (sourceTaxa.size() > 0 || targetTaxa.size() > 0) {
                 query.append(") ");
             }
         } else if (sourceTaxa.size() > 0) {
@@ -494,18 +496,14 @@ public class CypherQueryBuilder {
         return query;
     }
 
-    private static void appendAndOrWhere(List<String> sourceTaxa, StringBuilder query, boolean hasWhereClause) {
-        if (sourceTaxa.size() > 0) {
+    private static void appendAndOrWhere(List<String> taxa, StringBuilder query, boolean hasWhereClause) {
+        if (taxa.size() > 0) {
             if (hasWhereClause) {
                 query.append("AND ");
             } else {
                 query.append(" WHERE ");
             }
         }
-    }
-
-    private static boolean hasTaxaSelection(List<String> sourceTaxa, List<String> targetTaxa) {
-        return sourceTaxa.size() > 0 || targetTaxa.size() > 0;
     }
 
     protected static StringBuilder appendStartClause2(Map parameterMap, List<String> sourceTaxa, List<String> targetTaxa, StringBuilder query) {
