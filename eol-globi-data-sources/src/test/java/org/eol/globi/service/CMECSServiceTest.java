@@ -21,14 +21,14 @@ public class CMECSServiceTest {
         List<Term> estuarine = service.lookupTermByName("Estuarine");
         assertThat(estuarine.size(), is(1));
         assertThat(estuarine.get(0).getName(), is("Estuarine"));
-        assertThat(estuarine.get(0).getId(), is("CMECS:AQUATIC_SETTING:2"));
+        assertThat(estuarine.get(0).getId(), is("http://cmecscatalog.org/classification/aquaticSetting/2"));
 
         List<Term> marineNearshoreSupratidal = service.lookupTermByName("Marine Nearshore Supratidal");
         assertThat(marineNearshoreSupratidal.size(), is(1));
         assertThat(marineNearshoreSupratidal.get(0).getName(), is("Marine Nearshore Supratidal"));
-        assertThat(marineNearshoreSupratidal.get(0).getId(), is("CMECS:AQUATIC_SETTING:15"));
+        assertThat(marineNearshoreSupratidal.get(0).getId(), is("http://cmecscatalog.org/classification/aquaticSetting/15"));
 
-        assertThat(ExternalIdUtil.infoURLForExternalId("CMECS:AQUATIC_SETTING:15"), is("http://cmecscatalog.org/classification/aquaticSetting/15"));
+        assertThat(ExternalIdUtil.infoURLForExternalId("http://cmecscatalog.org/classification/aquaticSetting/15"), is("http://cmecscatalog.org/classification/aquaticSetting/15"));
     }
 
 }
