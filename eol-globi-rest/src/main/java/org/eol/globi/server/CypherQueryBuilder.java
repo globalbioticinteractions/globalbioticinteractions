@@ -67,6 +67,9 @@ public class CypherQueryBuilder {
     public static final String INTERACTION_PREYS_ON = "preysOn";
     public static final String INTERACTION_PREYED_UPON_BY = "preyedUponBy";
 
+    public static final String INTERACTION_EATS = "eats";
+    public static final String INTERACTION_EATEN_BY = "eatenBy";
+
     public static final String INTERACTION_PARASITE_OF = "parasiteOf";
     public static final String INTERACTION_HAS_PARASITE = "hasParasite";
 
@@ -92,9 +95,10 @@ public class CypherQueryBuilder {
 
     private static final Map<String, String> DIRECTIONAL_INTERACTION_TYPE_MAP = new TreeMap<String, String>() {
         {
-            String preysOn = InteractType.ATE + "|" + InteractType.PREYS_UPON;
-            put(INTERACTION_PREYS_ON, preysOn);
-            put(INTERACTION_PREYED_UPON_BY, InteractType.EATEN_BY + "|" + InteractType.PREYED_UPON_BY);
+            put(INTERACTION_PREYS_ON, InteractType.PREYS_UPON.toString());
+            put(INTERACTION_PREYED_UPON_BY, InteractType.PREYED_UPON_BY.toString());
+            put(INTERACTION_EATS, InteractType.ATE + "|" + InteractType.PREYS_UPON);
+            put(INTERACTION_EATEN_BY, InteractType.EATEN_BY + "|" + InteractType.PREYED_UPON_BY);
             put(INTERACTION_PARASITE_OF, InteractType.PARASITE_OF.toString());
             put(INTERACTION_HAS_PARASITE, InteractType.HAS_PARASITE.toString());
             put(INTERACTION_POLLINATES, InteractType.POLLINATES.toString());
@@ -104,7 +108,7 @@ public class CypherQueryBuilder {
             put(INTERACTION_HAS_VECTOR, InteractType.HAS_VECTOR.toString());
             put(INTERACTION_VECTOR_OF, InteractType.VECTOR_OF.toString());
             put(INTERACTION_HOST_OF, StringUtils.join(new String[]{InteractType.HOST_OF.toString(), InteractType.HAS_PARASITE.toString(), InteractType.HAS_PATHOGEN.toString()}, "|"));
-            put(INTERACTION_HAS_HOST, StringUtils.join(new String[]{InteractType.HAS_HOST.toString(),InteractType.PARASITE_OF.toString(), InteractType.PATHOGEN_OF.toString()}, "|"));
+            put(INTERACTION_HAS_HOST, StringUtils.join(new String[]{InteractType.HAS_HOST.toString(), InteractType.PARASITE_OF.toString(), InteractType.PATHOGEN_OF.toString()}, "|"));
             put(INTERACTION_SYMBIONT_OF, StringUtils.join(InteractType.values(), "|"));
             put(INTERACTION_INTERACTS_WITH, StringUtils.join(InteractType.values(), "|"));
         }
@@ -112,9 +116,9 @@ public class CypherQueryBuilder {
 
     public static final Map<String, InteractionTypeExternal> INTERACTION_TYPE_INTERNAL_EXTERNAL_MAP = new TreeMap<String, InteractionTypeExternal>() {
         {
-            put(InteractType.ATE.toString(), InteractionTypeExternal.PREYS_ON);
+            put(InteractType.ATE.toString(), InteractionTypeExternal.EATS);
             put(InteractType.PREYS_UPON.toString(), InteractionTypeExternal.PREYS_ON);
-            put(InteractType.EATEN_BY.toString(), InteractionTypeExternal.PREYED_UPON_BY);
+            put(InteractType.EATEN_BY.toString(), InteractionTypeExternal.EATEN_BY);
             put(InteractType.PREYED_UPON_BY.toString(), InteractionTypeExternal.PREYED_UPON_BY);
             put(InteractType.PARASITE_OF.toString(), InteractionTypeExternal.PARASITE_OF);
             put(InteractType.HAS_PARASITE.toString(), InteractionTypeExternal.HAS_PARASITE);
@@ -133,9 +137,10 @@ public class CypherQueryBuilder {
 
     private static final Map<String, String> TRANSLATION_MAP = new TreeMap<String, String>() {
         {
-            String preysOn = InteractType.ATE + "|" + InteractType.PREYS_UPON;
-            put(INTERACTION_PREYS_ON, preysOn);
-            put(INTERACTION_PREYED_UPON_BY, InteractType.EATEN_BY + "|" + InteractType.PREYED_UPON_BY);
+            put(INTERACTION_PREYS_ON, InteractType.PREYS_UPON.toString());
+            put(INTERACTION_PREYED_UPON_BY, InteractType.PREYED_UPON_BY.toString());
+            put(INTERACTION_EATS, InteractType.ATE + "|" + InteractType.PREYS_UPON);
+            put(INTERACTION_EATEN_BY, InteractType.EATEN_BY + "|" + InteractType.PREYED_UPON_BY);
             put(INTERACTION_PARASITE_OF, InteractType.PARASITE_OF.toString());
             put(INTERACTION_HAS_PARASITE, InteractType.HAS_PARASITE.toString());
             put(INTERACTION_POLLINATES, InteractType.POLLINATES.toString());

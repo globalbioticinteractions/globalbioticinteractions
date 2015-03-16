@@ -3,6 +3,8 @@ package org.eol.globi.server.util;
 import org.eol.globi.server.CypherQueryBuilder;
 
 public enum InteractionTypeExternal {
+    EATS(CypherQueryBuilder.INTERACTION_EATS, "consumer", "food", "http://purl.obolibrary.org/obo/RO_0002439"),
+    EATEN_BY(CypherQueryBuilder.INTERACTION_EATEN_BY, "food", "consumer", "http://purl.obolibrary.org/obo/RO_0002458"),
     PREYS_ON(CypherQueryBuilder.INTERACTION_PREYS_ON, "predator", "prey", "http://purl.obolibrary.org/obo/RO_0002439"),
     PREYED_UPON_BY(CypherQueryBuilder.INTERACTION_PREYED_UPON_BY, "prey", "predator", "http://purl.obolibrary.org/obo/RO_0002458"),
     PARASITE_OF(CypherQueryBuilder.INTERACTION_PARASITE_OF, "parasite", "host", "http://purl.obolibrary.org/obo/RO_0002444"),
