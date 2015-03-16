@@ -140,10 +140,9 @@ public class CypherQueryBuilder {
         {
             put(INTERACTION_POLLINATES, InteractType.POLLINATES.toString());
             put(INTERACTION_POLLINATED_BY, InteractType.POLLINATED_BY.toString());
+            put(INTERACTION_EATEN_BY, InteractType.EATEN_BY + "|" + InteractType.PREYED_UPON_BY);
             put(INTERACTION_PREYS_ON, InteractType.PREYS_UPON.toString());
             put(INTERACTION_PREYED_UPON_BY, InteractType.PREYED_UPON_BY.toString());
-            put(INTERACTION_EATS, InteractType.ATE + "|" + InteractType.PREYS_UPON);
-            put(INTERACTION_EATEN_BY, InteractType.EATEN_BY + "|" + InteractType.PREYED_UPON_BY);
             put(INTERACTION_PARASITE_OF, InteractType.PARASITE_OF.toString());
             put(INTERACTION_HAS_PARASITE, InteractType.HAS_PARASITE.toString());
             put(INTERACTION_PATHOGEN_OF, InteractType.PATHOGEN_OF.toString());
@@ -152,6 +151,8 @@ public class CypherQueryBuilder {
             put(INTERACTION_SYMBIONT_OF, InteractType.SYMBIONT_OF.toString());
             put(INTERACTION_HOST_OF, InteractType.HOST_OF.toString());
             put(INTERACTION_HAS_HOST, InteractType.HAS_HOST.toString());
+            put(INTERACTION_EATS, InteractType.ATE + "|" + InteractType.PREYS_UPON);
+
         }
     };
 

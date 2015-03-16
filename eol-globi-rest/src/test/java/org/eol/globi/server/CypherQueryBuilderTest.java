@@ -35,11 +35,17 @@ public class CypherQueryBuilderTest {
         return "MATCH sourceTaxon<-[:CLASSIFIED_AS]-" + expectedInteractionClause + "-[:CLASSIFIED_AS]->targetTaxon, sourceSpecimen<-[collected_rel:COLLECTED]-study, sourceSpecimen-[" + (isSpatial ? "" : "?") + ":COLLECTED_AT]->loc ";
     }
 
+    private static String expectedReplacementString(String interactionParamName) {
+        String suffix = ",'POLLINATES','pollinates'),'POLLINATED_BY','pollinatedBy'),'EATEN_BY','eatenBy'),'PREYED_UPON_BY','eatenBy'),'PREYS_UPON','preysOn'),'PREYED_UPON_BY','preyedUponBy'),'PARASITE_OF','parasiteOf'),'HAS_PARASITE','hasParasite'),'PATHOGEN_OF','pathogenOf'),'HAS_PATHOGEN','hasPathogen'),'INTERACTS_WITH','interactsWith'),'SYMBIONT_OF','symbiontOf'),'HOST_OF','hostOf'),'HAS_HOST','hasHost'),'ATE','eats'),'PREYS_UPON','eats')";
+        String prefix = "replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(";
+        return prefix + interactionParamName + suffix;
+    }
+
     public static final String EXPECTED_RETURN_CLAUSE = "RETURN sourceTaxon.externalId? as source_taxon_external_id," +
             "sourceTaxon.name as source_taxon_name," +
             "sourceTaxon.path? as source_taxon_path," +
             "sourceSpecimen.lifeStage? as source_specimen_life_stage," +
-            "replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(type(interaction),'POLLINATES','pollinates'),'POLLINATED_BY','pollinatedBy'),'PREYS_UPON','preysOn'),'PREYED_UPON_BY','preyedUponBy'),'ATE','eats'),'PREYS_UPON','eats'),'EATEN_BY','eatenBy'),'PREYED_UPON_BY','eatenBy'),'PARASITE_OF','parasiteOf'),'HAS_PARASITE','hasParasite'),'PATHOGEN_OF','pathogenOf'),'HAS_PATHOGEN','hasPathogen'),'INTERACTS_WITH','interactsWith'),'SYMBIONT_OF','symbiontOf'),'HOST_OF','hostOf'),'HAS_HOST','hasHost') as interaction_type," +
+            expectedReplacementString("type(interaction)")+ " as interaction_type," +
             "targetTaxon.externalId? as target_taxon_external_id," +
             "targetTaxon.name as target_taxon_name," +
             "targetTaxon.path? as target_taxon_path," +
@@ -53,7 +59,7 @@ public class CypherQueryBuilderTest {
             "sTaxon.name as source_taxon_name," +
             "sTaxon.path? as source_taxon_path," +
             "NULL as source_specimen_life_stage," +
-            "replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(iType,'POLLINATES','pollinates'),'POLLINATED_BY','pollinatedBy'),'PREYS_UPON','preysOn'),'PREYED_UPON_BY','preyedUponBy'),'ATE','eats'),'PREYS_UPON','eats'),'EATEN_BY','eatenBy'),'PREYED_UPON_BY','eatenBy'),'PARASITE_OF','parasiteOf'),'HAS_PARASITE','hasParasite'),'PATHOGEN_OF','pathogenOf'),'HAS_PATHOGEN','hasPathogen'),'INTERACTS_WITH','interactsWith'),'SYMBIONT_OF','symbiontOf'),'HOST_OF','hostOf'),'HAS_HOST','hasHost') as interaction_type," +
+            expectedReplacementString("iType")+ " as interaction_type," +
             "tTaxon.externalId? as target_taxon_external_id," +
             "tTaxon.name as target_taxon_name," +
             "tTaxon.path? as target_taxon_path," +
@@ -82,7 +88,7 @@ public class CypherQueryBuilderTest {
 
     @Test
     public void interactionReturnTerms() {
-        assertThat(CypherQueryBuilder.appendInteractionTypeReturn(new StringBuilder(), "type(interaction)").toString(), is("replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(type(interaction),'POLLINATES','pollinates'),'POLLINATED_BY','pollinatedBy'),'PREYS_UPON','preysOn'),'PREYED_UPON_BY','preyedUponBy'),'ATE','eats'),'PREYS_UPON','eats'),'EATEN_BY','eatenBy'),'PREYED_UPON_BY','eatenBy'),'PARASITE_OF','parasiteOf'),'HAS_PARASITE','hasParasite'),'PATHOGEN_OF','pathogenOf'),'HAS_PATHOGEN','hasPathogen'),'INTERACTS_WITH','interactsWith'),'SYMBIONT_OF','symbiontOf'),'HOST_OF','hostOf'),'HAS_HOST','hasHost')"));
+        assertThat(CypherQueryBuilder.appendInteractionTypeReturn(new StringBuilder(), "type(interaction)").toString(), is(expectedReplacementString("type(interaction)")));
     }
 
     @Test
