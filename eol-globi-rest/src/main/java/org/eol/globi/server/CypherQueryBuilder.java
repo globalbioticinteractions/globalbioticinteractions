@@ -20,6 +20,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -135,16 +136,16 @@ public class CypherQueryBuilder {
         }
     };
 
-    private static final Map<String, String> TRANSLATION_MAP = new TreeMap<String, String>() {
+    private static final Map<String, String> TRANSLATION_MAP = new LinkedHashMap<String, String>() {
         {
+            put(INTERACTION_POLLINATES, InteractType.POLLINATES.toString());
+            put(INTERACTION_POLLINATED_BY, InteractType.POLLINATED_BY.toString());
             put(INTERACTION_PREYS_ON, InteractType.PREYS_UPON.toString());
             put(INTERACTION_PREYED_UPON_BY, InteractType.PREYED_UPON_BY.toString());
             put(INTERACTION_EATS, InteractType.ATE + "|" + InteractType.PREYS_UPON);
             put(INTERACTION_EATEN_BY, InteractType.EATEN_BY + "|" + InteractType.PREYED_UPON_BY);
             put(INTERACTION_PARASITE_OF, InteractType.PARASITE_OF.toString());
             put(INTERACTION_HAS_PARASITE, InteractType.HAS_PARASITE.toString());
-            put(INTERACTION_POLLINATES, InteractType.POLLINATES.toString());
-            put(INTERACTION_POLLINATED_BY, InteractType.POLLINATED_BY.toString());
             put(INTERACTION_PATHOGEN_OF, InteractType.PATHOGEN_OF.toString());
             put(INTERACTION_HAS_PATHOGEN, InteractType.HAS_PATHOGEN.toString());
             put(INTERACTION_INTERACTS_WITH, InteractType.INTERACTS_WITH.toString());

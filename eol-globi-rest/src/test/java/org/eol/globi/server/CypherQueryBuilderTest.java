@@ -39,7 +39,7 @@ public class CypherQueryBuilderTest {
             "sourceTaxon.name as source_taxon_name," +
             "sourceTaxon.path? as source_taxon_path," +
             "sourceSpecimen.lifeStage? as source_specimen_life_stage," +
-            "replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(type(interaction),'EATEN_BY','eatenBy'),'PREYED_UPON_BY','eatenBy'),'ATE','eats'),'PREYS_UPON','eats'),'HAS_HOST','hasHost'),'HAS_PARASITE','hasParasite'),'HAS_PATHOGEN','hasPathogen'),'HOST_OF','hostOf'),'INTERACTS_WITH','interactsWith'),'PARASITE_OF','parasiteOf'),'PATHOGEN_OF','pathogenOf'),'POLLINATED_BY','pollinatedBy'),'POLLINATES','pollinates'),'PREYED_UPON_BY','preyedUponBy'),'PREYS_UPON','preysOn'),'SYMBIONT_OF','symbiontOf') as interaction_type," +
+            "replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(type(interaction),'POLLINATES','pollinates'),'POLLINATED_BY','pollinatedBy'),'PREYS_UPON','preysOn'),'PREYED_UPON_BY','preyedUponBy'),'ATE','eats'),'PREYS_UPON','eats'),'EATEN_BY','eatenBy'),'PREYED_UPON_BY','eatenBy'),'PARASITE_OF','parasiteOf'),'HAS_PARASITE','hasParasite'),'PATHOGEN_OF','pathogenOf'),'HAS_PATHOGEN','hasPathogen'),'INTERACTS_WITH','interactsWith'),'SYMBIONT_OF','symbiontOf'),'HOST_OF','hostOf'),'HAS_HOST','hasHost') as interaction_type," +
             "targetTaxon.externalId? as target_taxon_external_id," +
             "targetTaxon.name as target_taxon_name," +
             "targetTaxon.path? as target_taxon_path," +
@@ -53,7 +53,7 @@ public class CypherQueryBuilderTest {
             "sTaxon.name as source_taxon_name," +
             "sTaxon.path? as source_taxon_path," +
             "NULL as source_specimen_life_stage," +
-            "replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(iType,'EATEN_BY','eatenBy'),'PREYED_UPON_BY','eatenBy'),'ATE','eats'),'PREYS_UPON','eats'),'HAS_HOST','hasHost'),'HAS_PARASITE','hasParasite'),'HAS_PATHOGEN','hasPathogen'),'HOST_OF','hostOf'),'INTERACTS_WITH','interactsWith'),'PARASITE_OF','parasiteOf'),'PATHOGEN_OF','pathogenOf'),'POLLINATED_BY','pollinatedBy'),'POLLINATES','pollinates'),'PREYED_UPON_BY','preyedUponBy'),'PREYS_UPON','preysOn'),'SYMBIONT_OF','symbiontOf') as interaction_type," +
+            "replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(iType,'POLLINATES','pollinates'),'POLLINATED_BY','pollinatedBy'),'PREYS_UPON','preysOn'),'PREYED_UPON_BY','preyedUponBy'),'ATE','eats'),'PREYS_UPON','eats'),'EATEN_BY','eatenBy'),'PREYED_UPON_BY','eatenBy'),'PARASITE_OF','parasiteOf'),'HAS_PARASITE','hasParasite'),'PATHOGEN_OF','pathogenOf'),'HAS_PATHOGEN','hasPathogen'),'INTERACTS_WITH','interactsWith'),'SYMBIONT_OF','symbiontOf'),'HOST_OF','hostOf'),'HAS_HOST','hasHost') as interaction_type," +
             "tTaxon.externalId? as target_taxon_external_id," +
             "tTaxon.name as target_taxon_name," +
             "tTaxon.path? as target_taxon_path," +
@@ -82,7 +82,7 @@ public class CypherQueryBuilderTest {
 
     @Test
     public void interactionReturnTerms() {
-        assertThat(CypherQueryBuilder.appendInteractionTypeReturn(new StringBuilder(), "type(interaction)").toString(), is("replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(type(interaction),'EATEN_BY','eatenBy'),'PREYED_UPON_BY','eatenBy'),'ATE','eats'),'PREYS_UPON','eats'),'HAS_HOST','hasHost'),'HAS_PARASITE','hasParasite'),'HAS_PATHOGEN','hasPathogen'),'HOST_OF','hostOf'),'INTERACTS_WITH','interactsWith'),'PARASITE_OF','parasiteOf'),'PATHOGEN_OF','pathogenOf'),'POLLINATED_BY','pollinatedBy'),'POLLINATES','pollinates'),'PREYED_UPON_BY','preyedUponBy'),'PREYS_UPON','preysOn'),'SYMBIONT_OF','symbiontOf')"));
+        assertThat(CypherQueryBuilder.appendInteractionTypeReturn(new StringBuilder(), "type(interaction)").toString(), is("replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(type(interaction),'POLLINATES','pollinates'),'POLLINATED_BY','pollinatedBy'),'PREYS_UPON','preysOn'),'PREYED_UPON_BY','preyedUponBy'),'ATE','eats'),'PREYS_UPON','eats'),'EATEN_BY','eatenBy'),'PREYED_UPON_BY','eatenBy'),'PARASITE_OF','parasiteOf'),'HAS_PARASITE','hasParasite'),'PATHOGEN_OF','pathogenOf'),'HAS_PATHOGEN','hasPathogen'),'INTERACTS_WITH','interactsWith'),'SYMBIONT_OF','symbiontOf'),'HOST_OF','hostOf'),'HAS_HOST','hasHost')"));
     }
 
     @Test
