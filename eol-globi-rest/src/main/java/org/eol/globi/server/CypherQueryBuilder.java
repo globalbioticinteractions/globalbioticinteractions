@@ -145,7 +145,7 @@ public class CypherQueryBuilder {
             put(INTERACTION_INTERACTS_WITH, InteractType.INTERACTS_WITH.toString());
             put(INTERACTION_SYMBIONT_OF, InteractType.SYMBIONT_OF.toString());
             put(INTERACTION_HOST_OF, InteractType.HOST_OF.toString());
-            put(INTERACTION_HAS_HOST, InteractType.HOST_OF.toString());
+            put(INTERACTION_HAS_HOST, InteractType.HAS_HOST.toString());
         }
     };
 
