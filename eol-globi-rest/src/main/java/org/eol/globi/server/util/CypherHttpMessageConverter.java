@@ -16,6 +16,7 @@ public class CypherHttpMessageConverter extends AbstractHttpMessageConverter<Cyp
 
     public CypherHttpMessageConverter() {
         super(MediaType.parseMediaType("application/json;charset=UTF-8"),
+                MediaType.parseMediaType("application/ld+json;charset=UTF-8"),
                 MediaType.parseMediaType("text/html;charset=UTF-8"),
                 MediaType.parseMediaType("text/vnd.graphviz;charset=UTF-8"),
                 MediaType.parseMediaType("text/csv;charset=UTF-8"));
