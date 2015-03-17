@@ -145,6 +145,8 @@ public class CypherQueryBuilder {
             put(INTERACTION_PREYED_UPON_BY, InteractType.PREYED_UPON_BY.toString());
             put(INTERACTION_PARASITE_OF, InteractType.PARASITE_OF.toString());
             put(INTERACTION_HAS_PARASITE, InteractType.HAS_PARASITE.toString());
+            put(INTERACTION_VECTOR_OF, InteractType.VECTOR_OF.toString());
+            put(INTERACTION_HAS_VECTOR, InteractType.HAS_VECTOR.toString());
             put(INTERACTION_PATHOGEN_OF, InteractType.PATHOGEN_OF.toString());
             put(INTERACTION_HAS_PATHOGEN, InteractType.HAS_PATHOGEN.toString());
             put(INTERACTION_INTERACTS_WITH, InteractType.INTERACTS_WITH.toString());
