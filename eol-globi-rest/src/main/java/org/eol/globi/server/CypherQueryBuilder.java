@@ -1,5 +1,6 @@
 package org.eol.globi.server;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -140,7 +141,6 @@ public class CypherQueryBuilder {
         {
             put(INTERACTION_POLLINATES, InteractType.POLLINATES.toString());
             put(INTERACTION_POLLINATED_BY, InteractType.POLLINATED_BY.toString());
-            put(INTERACTION_EATEN_BY, InteractType.EATEN_BY + "|" + InteractType.PREYED_UPON_BY);
             put(INTERACTION_PREYS_ON, InteractType.PREYS_UPON.toString());
             put(INTERACTION_PREYED_UPON_BY, InteractType.PREYED_UPON_BY.toString());
             put(INTERACTION_PARASITE_OF, InteractType.PARASITE_OF.toString());
@@ -153,6 +153,8 @@ public class CypherQueryBuilder {
             put(INTERACTION_SYMBIONT_OF, InteractType.SYMBIONT_OF.toString());
             put(INTERACTION_HOST_OF, InteractType.HOST_OF.toString());
             put(INTERACTION_HAS_HOST, InteractType.HAS_HOST.toString());
+
+            put(INTERACTION_EATEN_BY, InteractType.EATEN_BY + "|" + InteractType.PREYED_UPON_BY);
             put(INTERACTION_EATS, InteractType.ATE + "|" + InteractType.PREYS_UPON);
 
         }
@@ -249,14 +251,14 @@ public class CypherQueryBuilder {
         }
     }
 
-    public static String lucenePathQuery(List<String> taxonNames) {
+    public static String lucenePathQuery(List<String> taxonNames, String prefix) {
         int count = 0;
         StringBuilder lucenePathQuery = new StringBuilder();
         for (String taxonName : taxonNames) {
             if (count > 0) {
                 lucenePathQuery.append(" OR ");
             }
-            lucenePathQuery.append("path:\\\"").append(taxonName).append("\\\"");
+            lucenePathQuery.append(prefix).append(taxonName).append("\\\"");
             count++;
         }
         return lucenePathQuery.toString();
@@ -271,14 +273,15 @@ public class CypherQueryBuilder {
         return ".*(" + joined + ").*";
     }
 
-    private static Map<String, String> getParams(List<String> sourceTaxonNames, List<String> targetTaxonNames, List<String> accordingTo) {
+    private static Map<String, String> getParams(List<String> sourceTaxonNames, List<String> targetTaxonNames, List<String> accordingTo, boolean exactNameMatchesOnly) {
         Map<String, String> paramMap = new HashMap<String, String>();
+        String prefix = exactNameMatchesOnly ? "name:\\\"" : "path:\\\"";
         if (sourceTaxonNames != null && sourceTaxonNames.size() > 0) {
-            paramMap.put(SOURCE_TAXON_NAME.getLabel(), lucenePathQuery(sourceTaxonNames));
+            paramMap.put(SOURCE_TAXON_NAME.getLabel(), lucenePathQuery(sourceTaxonNames, prefix));
         }
 
         if (targetTaxonNames != null && targetTaxonNames.size() > 0) {
-            paramMap.put(TARGET_TAXON_NAME.getLabel(), lucenePathQuery(targetTaxonNames));
+            paramMap.put(TARGET_TAXON_NAME.getLabel(), lucenePathQuery(targetTaxonNames, prefix));
         }
 
         if (accordingTo != null && accordingTo.size() > 0) {
@@ -288,22 +291,23 @@ public class CypherQueryBuilder {
         return paramMap;
     }
 
-    static void appendTaxonSelectors(boolean includeSourceTaxon, boolean includeTargetTaxon, StringBuilder query) {
+    static void appendTaxonSelectors(boolean includeSourceTaxon, boolean includeTargetTaxon, StringBuilder query, boolean exactNameMatchesOnly) {
         if (includeSourceTaxon) {
-            final String sourceTaxonSelector = "sourceTaxon = " + getTaxonPathSelector(SOURCE_TAXON_NAME.getLabel());
+            final String sourceTaxonSelector = "sourceTaxon = " + getTaxonPathSelector(SOURCE_TAXON_NAME.getLabel(), exactNameMatchesOnly);
             query.append(sourceTaxonSelector);
         }
         if (includeTargetTaxon) {
             if (includeSourceTaxon) {
                 query.append(", ");
             }
-            final String targetTaxonSelector = "targetTaxon = " + getTaxonPathSelector(TARGET_TAXON_NAME.getLabel());
+            final String targetTaxonSelector = "targetTaxon = " + getTaxonPathSelector(TARGET_TAXON_NAME.getLabel(), exactNameMatchesOnly);
             query.append(targetTaxonSelector);
         }
     }
 
-    private static String getTaxonPathSelector(String taxonParamName) {
-        return "node:taxonPaths({" + taxonParamName + "})";
+    private static String getTaxonPathSelector(String taxonParamName, boolean exactNameMatchesOnly) {
+        String prefix = exactNameMatchesOnly ? "node:taxons" : "node:taxonPaths";
+        return prefix + "({" + taxonParamName + "})";
     }
 
     public static CypherQuery shortestPathQuery(final String startTaxon, final String endTaxon) {
@@ -385,18 +389,18 @@ public class CypherQueryBuilder {
     protected static CypherQuery interactionObservations(List<String> sourceTaxa, List<String> interactionTypes, List<String> targetTaxa, Map parameterMap, QueryType queryType) {
         StringBuilder query = appendStartMatchWhereClauses(sourceTaxa, interactionTypes, targetTaxa, parameterMap);
         appendReturnClause(interactionTypes, query, queryType, collectParamValues(parameterMap, "field"));
-        return new CypherQuery(query.toString(), getParams(sourceTaxa, targetTaxa, collectParamValues(parameterMap, "accordingTo")));
+        return new CypherQuery(query.toString(), getParams(sourceTaxa, targetTaxa, collectParamValues(parameterMap, "accordingTo"), shouldIncludeExactNameMatchesOnly(parameterMap)));
     }
 
 
     public static CypherQuery buildInteractionTypeQuery(Map parameterMap) {
         final List<String> taxa = collectParamValues(parameterMap, TAXON_HTTP_PARAM_NAME);
-        String query = "START taxon = " + getTaxonPathSelector(TAXON_NAME.getLabel())
+        String query = "START taxon = " + getTaxonPathSelector(TAXON_NAME.getLabel(), false)
                 + " MATCH taxon-[rel:" + InteractUtil.allInteractionsCypherClause() + "]->otherTaxon RETURN distinct(type(rel)) as " + INTERACTION_TYPE;
         return new CypherQuery(query
                 , new HashMap<String, String>() {
             {
-                put(TAXON_NAME.getLabel(), lucenePathQuery(taxa));
+                put(TAXON_NAME.getLabel(), lucenePathQuery(taxa, "path:\\\""));
             }
         });
     }
@@ -499,26 +503,32 @@ public class CypherQueryBuilder {
 
     protected static StringBuilder appendTaxonWherClauseIfNecessary(Map parameterMap, List<String> sourceTaxa, List<String> targetTaxa, StringBuilder query) {
         boolean spatialSearch = RequestHelper.isSpatialSearch(parameterMap);
+        boolean exactNameMatchesOnly = shouldIncludeExactNameMatchesOnly(parameterMap);
         if (collectParamValues(parameterMap, "accordingTo").size() > 0) {
             appendAndOrWhere(targetTaxa, query, spatialSearch);
             if (targetTaxa.size() > 0) {
                 query.append("(");
             }
-            appendTaxonSelector(query, "targetTaxon", targetTaxa);
+
+            appendTaxonSelector(query, "targetTaxon", targetTaxa, exactNameMatchesOnly);
 
             appendAndOrWhere(sourceTaxa, query, spatialSearch || targetTaxa.size() > 0);
             if (targetTaxa.size() == 0 && sourceTaxa.size() > 0) {
                 query.append("(");
             }
-            appendTaxonSelector(query, "sourceTaxon", sourceTaxa);
+            appendTaxonSelector(query, "sourceTaxon", sourceTaxa, exactNameMatchesOnly);
             if (sourceTaxa.size() > 0 || targetTaxa.size() > 0) {
                 query.append(") ");
             }
         } else if (sourceTaxa.size() > 0) {
             appendAndOrWhere(targetTaxa, query, spatialSearch);
-            appendTaxonSelector(query, "targetTaxon", targetTaxa);
+            appendTaxonSelector(query, "targetTaxon", targetTaxa, exactNameMatchesOnly);
         }
         return query;
+    }
+
+    private static boolean shouldIncludeExactNameMatchesOnly(Map parameterMap) {
+        return CollectionUtils.containsAny(collectParamValues(parameterMap, "exactNameMatchOnly"), Arrays.asList("t", "T", "true", "TRUE"));
     }
 
     private static void appendAndOrWhere(List<String> taxa, StringBuilder query, boolean hasWhereClause) {
@@ -541,12 +551,13 @@ public class CypherQueryBuilder {
         } else if (sourceTaxa.size() == 0 && targetTaxa.size() == 0) {
             query.append(" loc = node:locations('*:*')");
         } else {
+            boolean exactNameMatchesOnly = shouldIncludeExactNameMatchesOnly(parameterMap);
             if (sourceTaxa.size() > 0) {
                 query.append(" ");
-                appendTaxonSelectors(true, false, query);
+                appendTaxonSelectors(true, false, query, exactNameMatchesOnly);
             } else if (targetTaxa.size() > 0) {
                 query.append(" ");
-                appendTaxonSelectors(false, true, query);
+                appendTaxonSelectors(false, true, query, exactNameMatchesOnly);
             }
         }
         return query;
@@ -622,12 +633,6 @@ public class CypherQueryBuilder {
         return query;
     }
 
-    public static StringBuilder appendStartClause(boolean includeSourceTaxon, boolean includeTargetTaxon, StringBuilder query) {
-        query.append("START ");
-        appendTaxonSelectors(includeSourceTaxon, includeTargetTaxon, query);
-        return query;
-    }
-
     private static String getInteractionMatch(String interactionTypeSelector) {
         return "MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen-[interaction:" + interactionTypeSelector + "]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon, sourceSpecimen<-[collected_rel:COLLECTED]-study";
     }
@@ -694,11 +699,16 @@ public class CypherQueryBuilder {
         return !spatialSearch && sourceTaxaSelectors.size() == 0 && targetTaxaSelectors.size() == 0;
     }
 
-    private static void appendTaxonSelector(StringBuilder query, String taxonLabel, List<String> taxonNames) {
+    private static void appendTaxonSelector(StringBuilder query, String taxonLabel, List<String> taxonNames, boolean exactNameMatchesOnly) {
         if (taxonNames.size() > 0) {
-            query.append("has(").append(taxonLabel).append(".path) AND ").append(taxonLabel).append(".path =~ '(.*(");
-            query.append(StringUtils.join(taxonNames, "|"));
-            query.append(").*)' ");
+            if (exactNameMatchesOnly) {
+                query.append("has(").append(taxonLabel).append(".name) AND ");
+                query.append(taxonLabel).append(".name IN ['").append(StringUtils.join(taxonNames, "','")).append("'] ");
+            } else {
+                query.append("has(").append(taxonLabel).append(".path) AND ").append(taxonLabel).append(".path =~ '(.*(");
+                query.append(StringUtils.join(taxonNames, "|"));
+                query.append(").*)' ");
+            }
         }
     }
 

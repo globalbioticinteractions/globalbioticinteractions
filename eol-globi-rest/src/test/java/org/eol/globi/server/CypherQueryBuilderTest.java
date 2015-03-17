@@ -15,7 +15,6 @@ import static org.eol.globi.server.CypherQueryBuilder.QueryType.MULTI_TAXON_DIST
 import static org.eol.globi.server.CypherQueryBuilder.QueryType.SINGLE_TAXON_ALL;
 import static org.eol.globi.server.CypherQueryBuilder.QueryType.SINGLE_TAXON_DISTINCT;
 import static org.eol.globi.server.CypherQueryBuilder.appendMatchAndWhereClause;
-import static org.eol.globi.server.CypherQueryBuilder.appendStartClause;
 import static org.eol.globi.server.CypherQueryBuilder.buildInteractionQuery;
 import static org.eol.globi.server.CypherQueryBuilder.spatialInfo;
 import static org.hamcrest.core.Is.is;
@@ -36,8 +35,8 @@ public class CypherQueryBuilderTest {
     }
 
     private static String expectedReplacementString(String interactionParamName) {
-        String suffix = ",'POLLINATES','pollinates'),'POLLINATED_BY','pollinatedBy'),'EATEN_BY','eatenBy'),'PREYED_UPON_BY','eatenBy'),'PREYS_UPON','preysOn'),'PREYED_UPON_BY','preyedUponBy'),'PARASITE_OF','parasiteOf'),'HAS_PARASITE','hasParasite'),'PATHOGEN_OF','pathogenOf'),'HAS_PATHOGEN','hasPathogen'),'INTERACTS_WITH','interactsWith'),'SYMBIONT_OF','symbiontOf'),'HOST_OF','hostOf'),'HAS_HOST','hasHost'),'ATE','eats'),'PREYS_UPON','eats')";
-        String prefix = "replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(";
+        String suffix = ",'POLLINATES','pollinates'),'POLLINATED_BY','pollinatedBy'),'PREYS_UPON','preysOn'),'PREYED_UPON_BY','preyedUponBy'),'PARASITE_OF','parasiteOf'),'HAS_PARASITE','hasParasite'),'VECTOR_OF','vectorOf'),'HAS_VECTOR','hasVector'),'PATHOGEN_OF','pathogenOf'),'HAS_PATHOGEN','hasPathogen'),'INTERACTS_WITH','interactsWith'),'SYMBIONT_OF','symbiontOf'),'HOST_OF','hostOf'),'HAS_HOST','hasHost'),'EATEN_BY','eatenBy'),'PREYED_UPON_BY','eatenBy'),'ATE','eats'),'PREYS_UPON','eats')";
+        String prefix = "replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(";
         return prefix + interactionParamName + suffix;
     }
 
@@ -45,7 +44,7 @@ public class CypherQueryBuilderTest {
             "sourceTaxon.name as source_taxon_name," +
             "sourceTaxon.path? as source_taxon_path," +
             "sourceSpecimen.lifeStage? as source_specimen_life_stage," +
-            expectedReplacementString("type(interaction)")+ " as interaction_type," +
+            expectedReplacementString("type(interaction)") + " as interaction_type," +
             "targetTaxon.externalId? as target_taxon_external_id," +
             "targetTaxon.name as target_taxon_name," +
             "targetTaxon.path? as target_taxon_path," +
@@ -59,7 +58,7 @@ public class CypherQueryBuilderTest {
             "sTaxon.name as source_taxon_name," +
             "sTaxon.path? as source_taxon_path," +
             "NULL as source_specimen_life_stage," +
-            expectedReplacementString("iType")+ " as interaction_type," +
+            expectedReplacementString("iType") + " as interaction_type," +
             "tTaxon.externalId? as target_taxon_external_id," +
             "tTaxon.name as target_taxon_name," +
             "tTaxon.path? as target_taxon_path," +
@@ -194,6 +193,65 @@ public class CypherQueryBuilderTest {
                 "WHERE (has(sourceTaxon.path) AND sourceTaxon.path =~ '(.*(Arthropoda).*)' ) " +
                 "WITH distinct targetTaxon as tTaxon, type(interaction) as iType, sourceTaxon as sTaxon RETURN sTaxon.name as source_taxon_name,tTaxon.name as target_taxon_name"));
         assertThat(query.getParams().toString(), is(is("{accordingTo=.*(\\\\Qinaturalist\\\\E).*, source_taxon_name=path:\\\"Arthropoda\\\"}")));
+    }
+
+    @Test
+    public void findInteractionsAccordingToWithSourceTaxaOnlyAndExactMatchOnly() throws IOException {
+        HashMap<String, String[]> params = new HashMap<String, String[]>() {
+            {
+                put("exactNameMatchOnly", new String[]{"true"});
+                put("accordingTo", new String[]{"inaturalist"});
+                put("sourceTaxon", new String[]{"Arthropoda"});
+                put("field", new String[]{"source_taxon_name", "target_taxon_name"});
+            }
+        };
+
+        CypherQuery query = buildInteractionQuery(params, MULTI_TAXON_DISTINCT);
+        assertThat(query.getQuery(), is("START study = node:studies('*:*') WHERE (has(study.externalId) AND study.externalId =~ {accordingTo}) OR study.citation =~ {accordingTo} OR study.source =~ {accordingTo} WITH study " +
+                EXPECTED_MATCH_CLAUSE +
+                "WHERE (has(sourceTaxon.name) AND sourceTaxon.name IN ['Arthropoda'] ) " +
+                "WITH distinct targetTaxon as tTaxon, type(interaction) as iType, sourceTaxon as sTaxon RETURN sTaxon.name as source_taxon_name,tTaxon.name as target_taxon_name"));
+        assertThat(query.getParams().toString(), is(is("{accordingTo=.*(\\\\Qinaturalist\\\\E).*, source_taxon_name=name:\\\"Arthropoda\\\"}")));
+    }
+
+    @Test
+    public void findInteractionsAccordingToWithSourceTaxaOnlyAndExactMatchOnlyIncludeObservations() throws IOException {
+        HashMap<String, String[]> params = new HashMap<String, String[]>() {
+            {
+                put("exactNameMatchOnly", new String[]{"true"});
+                put("sourceTaxon", new String[]{"Arthropoda"});
+                put("targetTaxon", new String[]{"Insecta"});
+                put("field", new String[]{"source_taxon_name", "target_taxon_name"});
+            }
+        };
+
+        CypherQuery query = buildInteractionQuery(params, MULTI_TAXON_ALL);
+        assertThat(query.getQuery(), is("START sourceTaxon = node:taxons({source_taxon_name}) " +
+                EXPECTED_MATCH_CLAUSE +
+                "WHERE has(targetTaxon.name) AND targetTaxon.name IN ['Insecta']" +
+                " RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name"));
+        assertThat(query.getQuery(), is("bla"));
+        assertThat(query.getParams().toString(), is(is("{source_taxon_name=name:\\\"Arthropoda\\\", target_taxon_name=name:\\\"Insecta\\\"}")));
+    }
+
+    @Test
+    public void findInteractionsAccordingToWithSourceTaxaOnlyAndExactMatch() throws IOException {
+        HashMap<String, String[]> params = new HashMap<String, String[]>() {
+            {
+                put("exactNameMatchOnly", new String[]{"true"});
+                put("sourceTaxon", new String[]{"Arthropoda"});
+                put("targetTaxon", new String[]{"Insecta"});
+                put("field", new String[]{"source_taxon_name", "target_taxon_name"});
+            }
+        };
+
+        CypherQuery query = buildInteractionQuery(params, MULTI_TAXON_DISTINCT);
+        assertThat(query.getQuery(), is("START sourceTaxon = node:taxons({source_taxon_name}) " +
+                EXPECTED_MATCH_CLAUSE +
+                "WHERE has(targetTaxon.name) AND targetTaxon.name IN ['Insecta']" +
+                " RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name"));
+        assertThat(query.getQuery(), is("bla"));
+        assertThat(query.getParams().toString(), is(is("{source_taxon_name=name:\\\"Arthropoda\\\", target_taxon_name=name:\\\"Insecta\\\"}")));
     }
 
     @Test
@@ -657,24 +715,6 @@ public class CypherQueryBuilderTest {
         assertThat(query.getParams().toString(), is("{}"));
     }
 
-
-    @Test
-    public void interactionStartClauseSourceTaxonOnly() {
-        assertThat(appendStartClause(true, false, new StringBuilder()).toString()
-                , is("START sourceTaxon = node:taxonPaths({source_taxon_name})"));
-    }
-
-    @Test
-    public void interactionStartClauseTargetTaxonOnly() {
-        assertThat(appendStartClause(false, true, new StringBuilder()).toString()
-                , is("START targetTaxon = node:taxonPaths({target_taxon_name})"));
-    }
-
-    @Test
-    public void interactionStartClauseSourceAndTarget() {
-        assertThat(appendStartClause(true, true, new StringBuilder()).toString()
-                , is("START sourceTaxon = node:taxonPaths({source_taxon_name}), targetTaxon = node:taxonPaths({target_taxon_name})"));
-    }
 
     @Test
     public void interactionMatchClauseWithLocationPreysOn() {
