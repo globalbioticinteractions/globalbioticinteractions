@@ -230,27 +230,6 @@ public class CypherQueryBuilderTest {
                 EXPECTED_MATCH_CLAUSE +
                 "WHERE has(targetTaxon.name) AND targetTaxon.name IN ['Insecta']" +
                 " RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name"));
-        assertThat(query.getQuery(), is("bla"));
-        assertThat(query.getParams().toString(), is(is("{source_taxon_name=name:\\\"Arthropoda\\\", target_taxon_name=name:\\\"Insecta\\\"}")));
-    }
-
-    @Test
-    public void findInteractionsAccordingToWithSourceTaxaOnlyAndExactMatch() throws IOException {
-        HashMap<String, String[]> params = new HashMap<String, String[]>() {
-            {
-                put("exactNameMatchOnly", new String[]{"true"});
-                put("sourceTaxon", new String[]{"Arthropoda"});
-                put("targetTaxon", new String[]{"Insecta"});
-                put("field", new String[]{"source_taxon_name", "target_taxon_name"});
-            }
-        };
-
-        CypherQuery query = buildInteractionQuery(params, MULTI_TAXON_DISTINCT);
-        assertThat(query.getQuery(), is("START sourceTaxon = node:taxons({source_taxon_name}) " +
-                EXPECTED_MATCH_CLAUSE +
-                "WHERE has(targetTaxon.name) AND targetTaxon.name IN ['Insecta']" +
-                " RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name"));
-        assertThat(query.getQuery(), is("bla"));
         assertThat(query.getParams().toString(), is(is("{source_taxon_name=name:\\\"Arthropoda\\\", target_taxon_name=name:\\\"Insecta\\\"}")));
     }
 
