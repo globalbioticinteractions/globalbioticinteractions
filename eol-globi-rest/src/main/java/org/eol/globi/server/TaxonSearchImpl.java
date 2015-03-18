@@ -12,6 +12,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
@@ -66,6 +67,12 @@ public class TaxonSearchImpl implements TaxonSearch {
             }
         });
         return CypherUtil.executeRemote(cypherQuery);
+    }
+
+    @RequestMapping(value = "/findCloseMatches", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public CypherQuery findCloseMatches(@RequestParam("taxonName") final String taxonName, HttpServletRequest request) throws IOException {
+        return findCloseMatchesForCommonAndScientificNamesNew(taxonName, request);
     }
 
     @RequestMapping(value = "/findCloseMatchesForTaxon/{taxonName}", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
