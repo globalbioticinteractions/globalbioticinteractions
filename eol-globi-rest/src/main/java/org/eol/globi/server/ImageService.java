@@ -6,7 +6,6 @@ import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.TaxonImage;
 import org.eol.globi.service.EOLTaxonImageService;
 import org.eol.globi.service.ImageSearch;
-import org.eol.globi.util.ExternalIdUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -35,25 +34,33 @@ public class ImageService {
         TaxonImage taxonImage = null;
         if (taxon != null && taxon.containsKey(PropertyAndValueDictionary.EXTERNAL_ID)) {
             taxonImage = imageSearch.lookupImageForExternalId(taxon.get(PropertyAndValueDictionary.EXTERNAL_ID));
-            if (StringUtils.isBlank(taxonImage.getCommonName())) {
-                String commonName = taxon.get(PropertyAndValueDictionary.COMMON_NAMES);
-                if (StringUtils.isNotBlank(commonName)) {
-                    String[] splits = StringUtils.split(commonName, CharsetConstant.SEPARATOR_CHAR);
-                    for (String split : splits) {
-                        if (StringUtils.contains(split, "@en")) {
-                            taxonImage.setCommonName(StringUtils.trim(StringUtils.replace(split, "@en", "")));
-                        }
-                    }
-                }
+            if (taxonImage == null) {
+                taxonImage = new TaxonImage();
             }
-            if (StringUtils.isBlank(taxonImage.getScientificName())) {
-                taxonImage.setScientificName(taxon.get(PropertyAndValueDictionary.NAME));
-            }
+            populateFromTaxonIfNeeded(taxon, taxonImage);
         }
         if (taxonImage == null) {
             throw new ResourceNotFoundException("no image for [" + scientificName + "]");
         }
         return taxonImage;
+    }
+
+    protected void populateFromTaxonIfNeeded(Map<String, String> taxon, TaxonImage taxonImage) {
+        if (StringUtils.isBlank(taxonImage.getCommonName())) {
+            String commonName = taxon.get(PropertyAndValueDictionary.COMMON_NAMES);
+            if (StringUtils.isNotBlank(commonName)) {
+                String[] splits = StringUtils.split(commonName, CharsetConstant.SEPARATOR_CHAR);
+                for (String split : splits) {
+                    if (StringUtils.contains(split, "@en")) {
+                        taxonImage.setCommonName(StringUtils.trim(StringUtils.replace(split, "@en", "")));
+                    }
+                }
+            }
+        }
+
+        if (StringUtils.isBlank(taxonImage.getScientificName())) {
+            taxonImage.setScientificName(taxon.get(PropertyAndValueDictionary.NAME));
+        }
     }
 
     @RequestMapping(value = "/imagesForName", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")

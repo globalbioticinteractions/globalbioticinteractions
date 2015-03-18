@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
@@ -65,7 +66,7 @@ public class ImageServiceTest {
     }
 
     @Test
-    public void taxonFoundButNotImage() throws IOException {
+    public void taxonFoundButNoImage() throws IOException {
         imageService.setTaxonSearch(new TaxonSearch() {
 
             @Override
@@ -99,6 +100,40 @@ public class ImageServiceTest {
         assertThat(image.getInfoURL(), is("some info url"));
         assertThat(image.getScientificName(), is("some latin name"));
         assertThat(image.getCommonName(), is("one"));
+    }
+
+    @Test
+    public void taxonFoundButNoExternalId() throws IOException {
+        imageService.setTaxonSearch(new TaxonSearch() {
+
+            @Override
+            public Map<String, String> findTaxon(String scientificName, HttpServletRequest request) throws IOException {
+                return new HashMap<String, String>() {
+                    {
+                        put(PropertyAndValueDictionary.EXTERNAL_ID, "no:match");
+                        put(PropertyAndValueDictionary.NAME, "some latin name");
+                    }
+                };
+            }
+        });
+
+        imageService.setImageSearch(new ImageSearch() {
+
+            @Override
+            public TaxonImage lookupImageForExternalId(String externalId) {
+                return null;
+            }
+
+            @Override
+            public TaxonImage lookupImageURLs(TaxonomyProvider provider, String taxonId) throws IOException {
+                return null;
+            }
+        });
+
+        TaxonImage image = imageService.findTaxonImagesForTaxonWithName("some name");
+        assertThat(image.getInfoURL(), is(nullValue()));
+        assertThat(image.getScientificName(), is("some latin name"));
+        assertThat(image.getCommonName(), is(nullValue()));
     }
 
     @Test
