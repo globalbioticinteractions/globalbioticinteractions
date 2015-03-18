@@ -26,7 +26,7 @@ public class TaxonSearchImplTest {
         assertThat(result, containsString("Homo sapiens"));
     }
 
-    public static final String COLUMN_PREFIX = "{\n  \"columns\" : [ \"taxon_name\", \"taxon_common_names\", \"taxon_path\" ]";
+    public static final String COLUMN_PREFIX = "{\n  \"columns\" : [ \"taxon_name\", \"taxon_common_names\", \"taxon_path\", \"taxon_path_ids\" ]";
 
 
     @Test
