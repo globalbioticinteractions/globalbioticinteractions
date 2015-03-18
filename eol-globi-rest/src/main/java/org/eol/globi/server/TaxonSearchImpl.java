@@ -95,7 +95,8 @@ public class TaxonSearchImpl implements TaxonSearch {
 
         ResultField[] returnFieldsCloseMatches = new ResultField[]{TAXON_NAME,
                 TAXON_COMMON_NAMES,
-                TAXON_PATH
+                TAXON_PATH,
+                TAXON_PATH_IDS
         };
 
         List<String> requestedFields = new ArrayList<String>();
