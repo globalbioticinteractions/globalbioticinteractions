@@ -5,6 +5,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.server.util.ResultField;
 import org.eol.globi.util.CypherQuery;
 import org.eol.globi.util.CypherUtil;
@@ -47,10 +48,10 @@ public class TaxonSearchImpl implements TaxonSearch {
         if (dataNode != null && dataNode.size() > 0) {
             props = new HashMap<String, String>();
             JsonNode first = dataNode.get(0);
-            props.put("name", valueOrEmpty(first.get(0).getTextValue()));
-            props.put("commonNames", valueOrEmpty(first.get(1).getTextValue()));
-            props.put("path", valueOrEmpty(first.get(2).getTextValue()));
-            props.put("externalId", valueOrEmpty(first.get(3).getTextValue()));
+            props.put(PropertyAndValueDictionary.NAME, valueOrEmpty(first.get(0).getTextValue()));
+            props.put(PropertyAndValueDictionary.COMMON_NAMES, valueOrEmpty(first.get(1).getTextValue()));
+            props.put(PropertyAndValueDictionary.PATH, valueOrEmpty(first.get(2).getTextValue()));
+            props.put(PropertyAndValueDictionary.EXTERNAL_ID, valueOrEmpty(first.get(3).getTextValue()));
         }
         return props;
     }

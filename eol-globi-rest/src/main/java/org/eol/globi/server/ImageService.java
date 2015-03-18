@@ -1,8 +1,12 @@
 package org.eol.globi.server;
 
+import org.apache.commons.lang3.StringUtils;
+import org.eol.globi.data.CharsetConstant;
+import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.TaxonImage;
 import org.eol.globi.service.EOLTaxonImageService;
 import org.eol.globi.service.ImageSearch;
+import org.eol.globi.util.ExternalIdUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,8 +33,22 @@ public class ImageService {
     public TaxonImage findTaxonImagesForTaxonWithName(@PathVariable("scientificName") String scientificName) throws IOException {
         Map<String, String> taxon = taxonSearch.findTaxon(scientificName, null);
         TaxonImage taxonImage = null;
-        if (taxon != null && taxon.containsKey("externalId")) {
-            taxonImage = imageSearch.lookupImageForExternalId(taxon.get("externalId"));
+        if (taxon != null && taxon.containsKey(PropertyAndValueDictionary.EXTERNAL_ID)) {
+            taxonImage = imageSearch.lookupImageForExternalId(taxon.get(PropertyAndValueDictionary.EXTERNAL_ID));
+            if (StringUtils.isBlank(taxonImage.getCommonName())) {
+                String commonName = taxon.get(PropertyAndValueDictionary.COMMON_NAMES);
+                if (StringUtils.isNotBlank(commonName)) {
+                    String[] splits = StringUtils.split(commonName, CharsetConstant.SEPARATOR_CHAR);
+                    for (String split : splits) {
+                        if (StringUtils.contains(split, "@en")) {
+                            taxonImage.setCommonName(StringUtils.trim(StringUtils.replace(split, "@en", "")));
+                        }
+                    }
+                }
+            }
+            if (StringUtils.isBlank(taxonImage.getScientificName())) {
+                taxonImage.setScientificName(taxon.get(PropertyAndValueDictionary.NAME));
+            }
         }
         if (taxonImage == null) {
             throw new ResourceNotFoundException("no image for [" + scientificName + "]");

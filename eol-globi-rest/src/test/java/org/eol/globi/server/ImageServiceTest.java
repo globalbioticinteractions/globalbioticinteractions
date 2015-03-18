@@ -65,6 +65,43 @@ public class ImageServiceTest {
     }
 
     @Test
+    public void taxonFoundButNotImage() throws IOException {
+        imageService.setTaxonSearch(new TaxonSearch() {
+
+            @Override
+            public Map<String, String> findTaxon(String scientificName, HttpServletRequest request) throws IOException {
+                return new HashMap<String, String>() {
+                    {
+                        put(PropertyAndValueDictionary.EXTERNAL_ID, "EOL:123456");
+                        put(PropertyAndValueDictionary.NAME, "some latin name");
+                        put(PropertyAndValueDictionary.COMMON_NAMES, "one @en | zwei @de");
+                    }
+                };
+            }
+        });
+
+        imageService.setImageSearch(new ImageSearch() {
+
+            @Override
+            public TaxonImage lookupImageForExternalId(String externalId) {
+                TaxonImage taxonImage = new TaxonImage();
+                taxonImage.setInfoURL("some info url");
+                return taxonImage;
+            }
+
+            @Override
+            public TaxonImage lookupImageURLs(TaxonomyProvider provider, String taxonId) throws IOException {
+                return null;
+            }
+        });
+
+        TaxonImage image = imageService.findTaxonImagesForTaxonWithName("some name");
+        assertThat(image.getInfoURL(), is("some info url"));
+        assertThat(image.getScientificName(), is("some latin name"));
+        assertThat(image.getCommonName(), is("one"));
+    }
+
+    @Test
     public void imagesForNames() throws IOException {
         List<TaxonImage> images = imageService.findImagesForNames(new String[]{"Homo sapiens", "Ariopsis felis"});
         assertThat(images.size(), is(2));

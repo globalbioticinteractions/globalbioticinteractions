@@ -59,6 +59,13 @@ public class ImageServiceIT extends ITBase {
         assertThat(response, is(notNullValue()));
     }
 
+    @Test
+    public void imagesForPlantae() throws IOException {
+        String uri = getURLPrefix() + "imagesForName?name=Plantae";
+        String response = getRemoteJson(uri);
+        assertThat(response, is(notNullValue()));
+    }
+
     protected String getRemoteJson(String uri) throws IOException {
         return HttpUtil.getRemoteJson(uri);
     }
