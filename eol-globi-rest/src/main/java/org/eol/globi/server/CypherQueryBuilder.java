@@ -528,7 +528,9 @@ public class CypherQueryBuilder {
     }
 
     private static boolean shouldIncludeExactNameMatchesOnly(Map parameterMap) {
-        return CollectionUtils.containsAny(collectParamValues(parameterMap, "exactNameMatchOnly"), Arrays.asList("t", "T", "true", "TRUE"));
+        List<String> trueValues = Arrays.asList("t", "T", "true", "TRUE");
+        boolean b = CollectionUtils.containsAny(collectParamValues(parameterMap, "exactNameMatchOnly"), trueValues);
+        return b || CollectionUtils.containsAny(collectParamValues(parameterMap, "excludeChildTaxa"), trueValues);
     }
 
     private static void appendAndOrWhere(List<String> taxa, StringBuilder query, boolean hasWhereClause) {

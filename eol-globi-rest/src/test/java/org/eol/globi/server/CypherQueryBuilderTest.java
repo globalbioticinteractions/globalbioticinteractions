@@ -215,6 +215,25 @@ public class CypherQueryBuilderTest {
     }
 
     @Test
+    public void findInteractionsAccordingToWithSourceTaxaOnlyAndExcludeChildTaxa() throws IOException {
+        HashMap<String, String[]> params = new HashMap<String, String[]>() {
+            {
+                put("excludeChildTaxa", new String[]{"true"});
+                put("accordingTo", new String[]{"inaturalist"});
+                put("sourceTaxon", new String[]{"Arthropoda"});
+                put("field", new String[]{"source_taxon_name", "target_taxon_name"});
+            }
+        };
+
+        CypherQuery query = buildInteractionQuery(params, MULTI_TAXON_DISTINCT);
+        assertThat(query.getQuery(), is("START study = node:studies('*:*') WHERE (has(study.externalId) AND study.externalId =~ {accordingTo}) OR study.citation =~ {accordingTo} OR study.source =~ {accordingTo} WITH study " +
+                EXPECTED_MATCH_CLAUSE +
+                "WHERE (has(sourceTaxon.name) AND sourceTaxon.name IN ['Arthropoda'] ) " +
+                "WITH distinct targetTaxon as tTaxon, type(interaction) as iType, sourceTaxon as sTaxon RETURN sTaxon.name as source_taxon_name,tTaxon.name as target_taxon_name"));
+        assertThat(query.getParams().toString(), is(is("{accordingTo=.*(\\\\Qinaturalist\\\\E).*, source_taxon_name=name:\\\"Arthropoda\\\"}")));
+    }
+
+    @Test
     public void findInteractionsAccordingToWithSourceTaxaOnlyAndExactMatchOnlyIncludeObservations() throws IOException {
         HashMap<String, String[]> params = new HashMap<String, String[]>() {
             {
