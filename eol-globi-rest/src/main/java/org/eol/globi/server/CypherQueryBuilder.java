@@ -473,7 +473,7 @@ public class CypherQueryBuilder {
                         put(ResultField.STUDY_URL, "NULL");
                         put(ResultField.STUDY_DOI, "NULL");
                         put(ResultField.STUDY_CITATION, "NULL");
-                        put(ResultField.STUDY_SOURCE_CITATION, "study.source?");
+                        put(ResultField.STUDY_SOURCE_CITATION, "NULL");
                     }
                 };
                 List<ResultField> returnFields = actualReturnFields(requestedReturnFields, Arrays.asList(RETURN_FIELDS_MULTI_TAXON_DEFAULT), selectors.keySet());
