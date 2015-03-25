@@ -1,0 +1,10 @@
+dwc:coreid	idigbio:recordID	dwc:basisOfRecord	aec:associatedOccuranceID	aec:associatedFamily	aec:associatedGenus	aec:associatedSpecificEpithet	aec:associatedScientificName	aec:associatedAuthor	aec:associatedCommonName	aec:associatedRelationshipTerm	aec:associatedRelationshipURI	aec:associatedNotes	aec:associatedDeterminedBy	aec:associatedCondition	aec:associatedLocationOnHost	aec:associatedEmergenceVerbatimDate	aec:associatedCollectionLocation	aec:isCultivar
+urn:uuid:8245f83c-d8e1-11e2-99a2-0026552be7ea_RID	urn:uuid:8245f83c-d8e1-11e2-99a2-0026552be7ea_A001	LabelObservation		Loasaceae	Mentzelia	tricuspis	Mentzelia tricuspis	L.					T. J. Zavortink	Unknown			
+urn:uuid:8245f8c8-d8e1-11e2-99a2-0026552be7ea_RID	urn:uuid:8245f8c8-d8e1-11e2-99a2-0026552be7ea_A001	LabelObservation		Loasaceae	Mentzelia	tricuspis	Mentzelia tricuspis	L.					T. J. Zavortink	Unknown			
+urn:uuid:8245f95e-d8e1-11e2-99a2-0026552be7ea_RID	urn:uuid:8245f95e-d8e1-11e2-99a2-0026552be7ea_A001	LabelObservation		Loasaceae	Mentzelia	tricuspis	Mentzelia tricuspis	L.					T. J. Zavortink	Unknown			
+urn:uuid:824617cc-d8e1-11e2-99a2-0026552be7ea_RID	urn:uuid:824617cc-d8e1-11e2-99a2-0026552be7ea_A001	LabelObservation		Loasaceae	Mentzelia		Mentzelia							Unknown			
+urn:uuid:82461858-d8e1-11e2-99a2-0026552be7ea_RID	urn:uuid:82461858-d8e1-11e2-99a2-0026552be7ea_A001	LabelObservation		Loasaceae	Mentzelia		Mentzelia							Unknown			
+urn:uuid:82461db2-d8e1-11e2-99a2-0026552be7ea_RID	urn:uuid:82461db2-d8e1-11e2-99a2-0026552be7ea_A001	LabelObservation		Loasaceae	Mentzelia		Mentzelia							Unknown			
+urn:uuid:82461d1c-d8e1-11e2-99a2-0026552be7ea_RID	urn:uuid:82461d1c-d8e1-11e2-99a2-0026552be7ea_A001	LabelObservation		Loasaceae	Mentzelia		Mentzelia							Unknown			
+urn:uuid:824626fe-d8e1-11e2-99a2-0026552be7ea_RID	urn:uuid:824626fe-d8e1-11e2-99a2-0026552be7ea_A001	LabelObservation		Asteraceae	Geraea	canescens	Geraea canescens	Torr. & A. Gray						Unknown			
+urn:uuid:82462794-d8e1-11e2-99a2-0026552be7ea_RID	urn:uuid:82462794-d8e1-11e2-99a2-0026552be7ea_A001	LabelObservation		Asteraceae	Geraea	canescens	Geraea canescens	Torr. & A. Gray						Unknown			

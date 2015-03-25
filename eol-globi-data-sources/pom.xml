@@ -51,7 +51,10 @@
             <artifactId>jackcess</artifactId>
             <version>1.2.10</version>
         </dependency>
-
-
+        <dependency>
+            <groupId>org.mapdb</groupId>
+            <artifactId>mapdb</artifactId>
+            <version>${mapdb.version}</version>
+        </dependency>
     </dependencies>
 </project>
