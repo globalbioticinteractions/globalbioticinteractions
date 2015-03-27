@@ -227,7 +227,7 @@ public class CypherQueryBuilder {
             }
         }
 
-        List<String> fields = collectParamValues(params, "field");
+        List<String> fields = collectRequestedFields(params);
         List<ResultField> returnFields = actualReturnFields(fields, TAXON_FIELDS, TAXON_FIELDS);
 
         for (int i = 0; i < returnFields.size(); i++) {
@@ -239,6 +239,22 @@ public class CypherQueryBuilder {
             }
         }
         return new CypherQuery(builder.toString(), new HashMap<String, String>());
+    }
+
+    protected static List<String> collectRequestedFields(Map params) {
+        List<String> requestedFields = collectParamValues(params, "field");
+        if (requestedFields.isEmpty()) {
+            List<String> fields = collectParamValues(params, "fields");
+            if (fields.size() > 0) {
+                String[] requestedFieldsSplit = StringUtils.split(fields.get(0), ',');
+                if (requestedFieldsSplit != null) {
+                    for (String s : requestedFieldsSplit) {
+                        requestedFields.add(StringUtils.trim(s));
+                    }
+                }
+            }
+        }
+        return requestedFields;
     }
 
     public enum QueryType {
@@ -388,7 +404,7 @@ public class CypherQueryBuilder {
 
     protected static CypherQuery interactionObservations(List<String> sourceTaxa, List<String> interactionTypes, List<String> targetTaxa, Map parameterMap, QueryType queryType) {
         StringBuilder query = appendStartMatchWhereClauses(sourceTaxa, interactionTypes, targetTaxa, parameterMap);
-        appendReturnClause(interactionTypes, query, queryType, collectParamValues(parameterMap, "field"));
+        appendReturnClause(interactionTypes, query, queryType, collectRequestedFields(parameterMap));
         return new CypherQuery(query.toString(), getParams(sourceTaxa, targetTaxa, collectParamValues(parameterMap, "accordingTo"), shouldIncludeExactNameMatchesOnly(parameterMap)));
     }
 

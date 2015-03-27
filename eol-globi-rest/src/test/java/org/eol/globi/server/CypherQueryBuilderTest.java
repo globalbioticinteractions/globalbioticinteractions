@@ -123,14 +123,33 @@ public class CypherQueryBuilderTest {
 
     @Test
     public void findInteractionForSourceAndTargetTaxaLocationsDistinctTaxonNamesOnly() throws IOException {
+        Map<String, String[]> fieldParams = new HashMap<String, String[]>() {{
+            put("field", new String[]{"source_taxon_name", "target_taxon_name"});
+        }};
+
+        assertInteractionForSourceAndTargetTaxaLocationsDistinctTaxonNamesOnly(fieldParams);
+    }
+
+    @Test
+    public void findInteractionForSourceAndTargetTaxaLocationsDistinctTaxonNamesOnlyUsingCommaFields() throws IOException {
+        Map<String, String[]> fieldParams = new HashMap<String, String[]>() {{
+            put("fields", new String[]{"source_taxon_name,target_taxon_name"});
+        }};
+
+        assertInteractionForSourceAndTargetTaxaLocationsDistinctTaxonNamesOnly(fieldParams);
+    }
+
+    protected void assertInteractionForSourceAndTargetTaxaLocationsDistinctTaxonNamesOnly(Map<String, String[]> fieldParams) {
         HashMap<String, String[]> params = new HashMap<String, String[]>() {
             {
                 put("sourceTaxon", new String[]{"Actinopterygii", "Chordata"});
                 put("targetTaxon", new String[]{"Arthropoda"});
                 put("bbox", new String[]{"-67.87,12.79,-57.08,23.32"});
-                put("field", new String[]{"source_taxon_name", "target_taxon_name"});
+
             }
         };
+        params.putAll(fieldParams);
+
 
         CypherQuery query = buildInteractionQuery(params, MULTI_TAXON_DISTINCT);
         assertThat(query.getQuery(), is("START sourceTaxon = node:taxonPaths({source_taxon_name}) " +
@@ -142,14 +161,33 @@ public class CypherQueryBuilderTest {
 
     @Test
     public void findInteractionsAccordingToWithTaxa() throws IOException {
+        Map<String, String[]> fieldParams = new HashMap<String, String[]>() {{
+            put("field", new String[]{"source_taxon_name", "target_taxon_name"});
+        }};
+
+        assertFindInteractionsAccordingToWithTaxa(fieldParams);
+    }
+
+    @Test
+    public void findInteractionsAccordingToWithTaxaWithCommaFields() throws IOException {
+        Map<String, String[]> fieldParams = new HashMap<String, String[]>() {{
+            put("fields", new String[]{"source_taxon_name,target_taxon_name"});
+        }};
+
+        assertFindInteractionsAccordingToWithTaxa(fieldParams);
+    }
+
+    protected void assertFindInteractionsAccordingToWithTaxa(Map<String, String[]> fieldParams) {
         HashMap<String, String[]> params = new HashMap<String, String[]>() {
             {
                 put("accordingTo", new String[]{"inaturalist"});
                 put("targetTaxon", new String[]{"Arthropoda"});
                 put("sourceTaxon", new String[]{"Arthropoda"});
-                put("field", new String[]{"source_taxon_name", "target_taxon_name"});
+
             }
         };
+        params.putAll(fieldParams);
+
 
         CypherQuery query = buildInteractionQuery(params, MULTI_TAXON_DISTINCT);
         assertThat(query.getQuery(), is("START study = node:studies('*:*') WHERE (has(study.externalId) AND study.externalId =~ {accordingTo}) OR study.citation =~ {accordingTo} OR study.source =~ {accordingTo} WITH study " +

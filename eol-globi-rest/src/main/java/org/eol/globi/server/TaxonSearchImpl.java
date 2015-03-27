@@ -101,7 +101,7 @@ public class TaxonSearchImpl implements TaxonSearch {
 
         List<String> requestedFields = new ArrayList<String>();
         if (request != null) {
-            requestedFields.addAll(CypherQueryBuilder.collectParamValues(request.getParameterMap(), "field"));
+            requestedFields.addAll(CypherQueryBuilder.collectRequestedFields(request.getParameterMap()));
         }
         CypherQueryBuilder.appendReturnClausez(query, CypherQueryBuilder.actualReturnFields(requestedFields, Arrays.asList(returnFieldsCloseMatches), selectors.keySet()), selectors);
         return CypherQueryBuilder.createPagedQuery(request, new CypherQuery(query.toString(), null), 15);
