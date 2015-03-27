@@ -456,7 +456,7 @@ public class CypherQueryBuilder {
                 appendReturnClausez(query, actualReturnFields(requestedReturnFields, Arrays.asList(RETURN_FIELDS_MULTI_TAXON_DEFAULT), selectors.keySet()), selectors);
                 break;
             case MULTI_TAXON_DISTINCT:
-                selectors = new HashMap<ResultField, String>(defaultSelectors()) {
+                selectors = new HashMap<ResultField, String>(defaultSelectors("sTaxon", "tTaxon")) {
                     {
                         put(SOURCE_TAXON_EXTERNAL_ID, "sTaxon.externalId?");
                         put(SOURCE_TAXON_NAME, "sTaxon.name");
@@ -578,10 +578,14 @@ public class CypherQueryBuilder {
     }
 
     private static Map<ResultField, String> defaultSelectors() {
+        return defaultSelectors("sourceTaxon", "targetTaxon");
+    }
+
+    private static Map<ResultField, String> defaultSelectors(final String sourceTaxonPrefix, final String targetTaxonPrefix) {
         return new HashMap<ResultField, String>() {
             {
-                addSourceTaxonFields();
-                addTargetTaxonFields();
+                addSourceTaxonFields(sourceTaxonPrefix);
+                addTargetTaxonFields(targetTaxonPrefix);
                 put(LATITUDE, "loc." + Location.LATITUDE + "?");
                 put(LATITUDE, "loc." + Location.LATITUDE + "?");
                 put(LONGITUDE, "loc." + Location.LONGITUDE + "?");
@@ -595,22 +599,22 @@ public class CypherQueryBuilder {
 
             }
 
-            private void addTargetTaxonFields() {
-                put(TARGET_TAXON_NAME, "targetTaxon.name");
-                put(TARGET_TAXON_COMMON_NAMES, "targetTaxon.commonNames?");
-                put(TARGET_TAXON_EXTERNAL_ID, "targetTaxon.externalId?");
-                put(TARGET_TAXON_PATH, "targetTaxon.path?");
-                put(TARGET_TAXON_PATH_RANKS, "targetTaxon.pathNames?");
-                put(TARGET_TAXON_PATH_IDS, "targetTaxon.pathIds?");
+            private void addTargetTaxonFields(String prefix) {
+                put(TARGET_TAXON_NAME, prefix + ".name");
+                put(TARGET_TAXON_COMMON_NAMES, prefix + ".commonNames?");
+                put(TARGET_TAXON_EXTERNAL_ID, prefix + ".externalId?");
+                put(TARGET_TAXON_PATH, prefix + ".path?");
+                put(TARGET_TAXON_PATH_RANKS, prefix + ".pathNames?");
+                put(TARGET_TAXON_PATH_IDS, prefix + ".pathIds?");
             }
 
-            private void addSourceTaxonFields() {
-                put(SOURCE_TAXON_NAME, "sourceTaxon.name");
-                put(SOURCE_TAXON_COMMON_NAMES, "sourceTaxon.commonNames?");
-                put(SOURCE_TAXON_EXTERNAL_ID, "sourceTaxon.externalId?");
-                put(SOURCE_TAXON_PATH, "sourceTaxon.path?");
-                put(SOURCE_TAXON_PATH_RANKS, "sourceTaxon.pathNames?");
-                put(SOURCE_TAXON_PATH_IDS, "sourceTaxon.pathIds?");
+            private void addSourceTaxonFields(String prefix) {
+                put(SOURCE_TAXON_NAME, prefix + ".name");
+                put(SOURCE_TAXON_COMMON_NAMES, prefix + ".commonNames?");
+                put(SOURCE_TAXON_EXTERNAL_ID, prefix + ".externalId?");
+                put(SOURCE_TAXON_PATH, prefix + ".path?");
+                put(SOURCE_TAXON_PATH_RANKS, prefix + ".pathNames?");
+                put(SOURCE_TAXON_PATH_IDS, prefix + ".pathIds?");
             }
         };
     }
