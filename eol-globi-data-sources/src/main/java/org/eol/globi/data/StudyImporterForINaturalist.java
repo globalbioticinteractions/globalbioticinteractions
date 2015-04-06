@@ -39,6 +39,7 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
         put("Mariposas que alimenta", InteractType.ATE);
         put("With the prey", InteractType.ATE);
         put("Alimentándose", InteractType.ATE);
+        put("Food Source", InteractType.ATE);
         put("Host", InteractType.HAS_HOST);
         put("Host plant NZ", InteractType.HAS_HOST);
         put("host species with names lookup", InteractType.HAS_HOST);
