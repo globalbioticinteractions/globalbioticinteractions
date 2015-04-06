@@ -190,7 +190,7 @@ public class CypherQueryBuilderTest {
 
 
         CypherQuery query = buildInteractionQuery(params, MULTI_TAXON_DISTINCT);
-        assertThat(query.getQuery(), is("START study = node:studies('*:*') WHERE (has(study.externalId) AND study.externalId =~ {accordingTo}) OR study.citation =~ {accordingTo} OR study.source =~ {accordingTo} WITH study " +
+        assertThat(query.getQuery(), is("START study = node:studies('*:*') WHERE (has(study.externalId) AND study.externalId =~ {accordingTo}) OR (has(study.citation) AND study.citation =~ {accordingTo}) OR (has(study.source) AND study.source =~ {accordingTo}) WITH study " +
                 EXPECTED_MATCH_CLAUSE +
                 "WHERE (has(targetTaxon.path) AND targetTaxon.path =~ '(.*(Arthropoda).*)' AND has(sourceTaxon.path) AND sourceTaxon.path =~ '(.*(Arthropoda).*)' ) " +
                 "WITH distinct targetTaxon as tTaxon, type(interaction) as iType, sourceTaxon as sTaxon RETURN sTaxon.name as source_taxon_name,tTaxon.name as target_taxon_name"));
@@ -208,7 +208,7 @@ public class CypherQueryBuilderTest {
         };
 
         CypherQuery query = buildInteractionQuery(params, MULTI_TAXON_DISTINCT);
-        assertThat(query.getQuery(), is("START study = node:studies('*:*') WHERE (has(study.externalId) AND study.externalId =~ {accordingTo}) OR study.citation =~ {accordingTo} OR study.source =~ {accordingTo} WITH study " +
+        assertThat(query.getQuery(), is("START study = node:studies('*:*') WHERE (has(study.externalId) AND study.externalId =~ {accordingTo}) OR (has(study.citation) AND study.citation =~ {accordingTo}) OR (has(study.source) AND study.source =~ {accordingTo}) WITH study " +
                 EXPECTED_MATCH_CLAUSE +
                 "WHERE (has(targetTaxon.path) AND targetTaxon.path =~ '(.*(Arthropoda).*)' ) " +
                 "WITH distinct targetTaxon as tTaxon, type(interaction) as iType, sourceTaxon as sTaxon RETURN sTaxon.name as source_taxon_name,tTaxon.name as target_taxon_name"));
@@ -226,7 +226,7 @@ public class CypherQueryBuilderTest {
         };
 
         CypherQuery query = buildInteractionQuery(params, MULTI_TAXON_DISTINCT);
-        assertThat(query.getQuery(), is("START study = node:studies('*:*') WHERE (has(study.externalId) AND study.externalId =~ {accordingTo}) OR study.citation =~ {accordingTo} OR study.source =~ {accordingTo} WITH study " +
+        assertThat(query.getQuery(), is("START study = node:studies('*:*') WHERE (has(study.externalId) AND study.externalId =~ {accordingTo}) OR (has(study.citation) AND study.citation =~ {accordingTo}) OR (has(study.source) AND study.source =~ {accordingTo}) WITH study " +
                 EXPECTED_MATCH_CLAUSE +
                 "WHERE (has(sourceTaxon.path) AND sourceTaxon.path =~ '(.*(Arthropoda).*)' ) " +
                 "WITH distinct targetTaxon as tTaxon, type(interaction) as iType, sourceTaxon as sTaxon RETURN sTaxon.name as source_taxon_name,tTaxon.name as target_taxon_name"));
@@ -245,7 +245,7 @@ public class CypherQueryBuilderTest {
         };
 
         CypherQuery query = buildInteractionQuery(params, MULTI_TAXON_DISTINCT);
-        assertThat(query.getQuery(), is("START study = node:studies('*:*') WHERE (has(study.externalId) AND study.externalId =~ {accordingTo}) OR study.citation =~ {accordingTo} OR study.source =~ {accordingTo} WITH study " +
+        assertThat(query.getQuery(), is("START study = node:studies('*:*') WHERE (has(study.externalId) AND study.externalId =~ {accordingTo}) OR (has(study.citation) AND study.citation =~ {accordingTo}) OR (has(study.source) AND study.source =~ {accordingTo}) WITH study " +
                 EXPECTED_MATCH_CLAUSE +
                 "WHERE (has(sourceTaxon.name) AND sourceTaxon.name IN ['Arthropoda'] ) " +
                 "WITH distinct targetTaxon as tTaxon, type(interaction) as iType, sourceTaxon as sTaxon RETURN sTaxon.name as source_taxon_name,tTaxon.name as target_taxon_name"));
@@ -264,7 +264,7 @@ public class CypherQueryBuilderTest {
         };
 
         CypherQuery query = buildInteractionQuery(params, MULTI_TAXON_DISTINCT);
-        assertThat(query.getQuery(), is("START study = node:studies('*:*') WHERE (has(study.externalId) AND study.externalId =~ {accordingTo}) OR study.citation =~ {accordingTo} OR study.source =~ {accordingTo} WITH study " +
+        assertThat(query.getQuery(), is("START study = node:studies('*:*') WHERE (has(study.externalId) AND study.externalId =~ {accordingTo}) OR (has(study.citation) AND study.citation =~ {accordingTo}) OR (has(study.source) AND study.source =~ {accordingTo}) WITH study " +
                 EXPECTED_MATCH_CLAUSE +
                 "WHERE (has(sourceTaxon.name) AND sourceTaxon.name IN ['Arthropoda'] ) " +
                 "WITH distinct targetTaxon as tTaxon, type(interaction) as iType, sourceTaxon as sTaxon RETURN sTaxon.name as source_taxon_name,tTaxon.name as target_taxon_name"));
@@ -300,7 +300,7 @@ public class CypherQueryBuilderTest {
         };
 
         CypherQuery query = buildInteractionQuery(params, MULTI_TAXON_DISTINCT);
-        assertThat(query.getQuery(), is("START study = node:studies('*:*') WHERE (has(study.externalId) AND study.externalId =~ {accordingTo}) OR study.citation =~ {accordingTo} OR study.source =~ {accordingTo} WITH study " +
+        assertThat(query.getQuery(), is("START study = node:studies('*:*') WHERE (has(study.externalId) AND study.externalId =~ {accordingTo}) OR (has(study.citation) AND study.citation =~ {accordingTo}) OR (has(study.source) AND study.source =~ {accordingTo}) WITH study " +
                 EXPECTED_MATCH_CLAUSE +
                 "WITH distinct targetTaxon as tTaxon, type(interaction) as iType, sourceTaxon as sTaxon RETURN sTaxon.name as source_taxon_name,tTaxon.name as target_taxon_name"));
         assertThat(query.getParams().toString(), is(is("{accordingTo=.*(\\\\Qinaturalist\\\\E).*}")));
@@ -316,7 +316,7 @@ public class CypherQueryBuilderTest {
         };
 
         CypherQuery query = buildInteractionQuery(params, MULTI_TAXON_DISTINCT);
-        assertThat(query.getQuery(), is("START study = node:studies('*:*') WHERE (has(study.externalId) AND study.externalId =~ {accordingTo}) OR study.citation =~ {accordingTo} OR study.source =~ {accordingTo} WITH study " +
+        assertThat(query.getQuery(), is("START study = node:studies('*:*') WHERE (has(study.externalId) AND study.externalId =~ {accordingTo}) OR (has(study.citation) AND study.citation =~ {accordingTo}) OR (has(study.source) AND study.source =~ {accordingTo}) WITH study " +
                 EXPECTED_MATCH_CLAUSE +
                 "WITH distinct targetTaxon as tTaxon, type(interaction) as iType, sourceTaxon as sTaxon RETURN sTaxon.name as source_taxon_name,tTaxon.name as target_taxon_name"));
         assertThat(query.getParams().toString(), is(is("{accordingTo=.*(\\\\Qinaturalist\\\\E|\\\\Qgomexsi.edu\\\\E).*}")));

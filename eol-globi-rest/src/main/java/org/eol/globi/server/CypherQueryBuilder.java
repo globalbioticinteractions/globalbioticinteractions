@@ -563,7 +563,7 @@ public class CypherQueryBuilder {
         query.append("START");
         List<String> accordingTo = collectParamValues(parameterMap, "accordingTo");
         if (accordingTo.size() > 0) {
-            query.append(" study = node:studies('*:*') WHERE (has(study.externalId) AND study.externalId =~ {accordingTo}) OR study.citation =~ {accordingTo} OR study.source =~ {accordingTo} WITH study");
+            query.append(" study = node:studies('*:*') WHERE (has(study.externalId) AND study.externalId =~ {accordingTo}) OR (has(study.citation) AND study.citation =~ {accordingTo}) OR (has(study.source) AND study.source =~ {accordingTo}) WITH study");
         } else if (noSearchCriteria(RequestHelper.isSpatialSearch(parameterMap), sourceTaxa, targetTaxa)) {
             query.append(" study = node:studies('*:*')");
         } else if (sourceTaxa.size() == 0 && targetTaxa.size() == 0) {
