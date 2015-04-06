@@ -43,7 +43,7 @@ public class ExternalIdUtil {
             put(TaxonomyProvider.ID_CMECS, "http://cmecscatalog.org/classification/aquaticSetting/");
             put(TaxonomyProvider.ID_BIO_INFO_REFERENCE, "http://bioinfo.org.uk/html/b");
             put(TaxonomyProvider.ID_PREFIX_GBIF, "http://www.gbif.org/species/");
-            put(TaxonomyProvider.ID_PREFIX_INATURALIST, "http://inaturalist.org/observations/");
+            put(TaxonomyProvider.ID_PREFIX_INATURALIST, "http://www.inaturalist.org/observations/");
             put(TaxonomyProvider.ID_PREFIX_AUSTRALIAN_FAUNAL_DIRECTORY, "http://www.environment.gov.au/biodiversity/abrs/online-resources/fauna/afd/taxa/");
             put(TaxonomyProvider.ID_PREFIX_NBN, "https://data.nbn.org.uk/Taxa/");
             put(TaxonomyProvider.ID_PREFIX_DOI, "http://dx.doi.org/");
