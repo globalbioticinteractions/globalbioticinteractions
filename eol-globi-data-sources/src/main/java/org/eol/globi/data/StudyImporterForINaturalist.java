@@ -44,6 +44,7 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
         put("Host plant NZ", InteractType.HAS_HOST);
         put("host species with names lookup", InteractType.HAS_HOST);
         put("parasitic fungus on hoast with names lookup", InteractType.HAS_PARASITE);
+        put("Hospedero", InteractType.HAS_PARASITE);
         put("host to parasitic fungus", InteractType.PARASITE_OF);
         put("Host animal", InteractType.HAS_HOST);
         put("Flower species", InteractType.POLLINATES);
