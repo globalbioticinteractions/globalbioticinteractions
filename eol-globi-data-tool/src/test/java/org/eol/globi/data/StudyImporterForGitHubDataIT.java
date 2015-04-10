@@ -75,6 +75,15 @@ public class StudyImporterForGitHubDataIT extends GraphDBTestCase {
     }
 
     @Test
+    public void importJSONLD() throws StudyImporterException, NodeFactoryException {
+        StudyImporterForGitHubData importer = new StudyImporterForGitHubData(new ParserFactoryImpl(), nodeFactory);
+        importer.importData("globalbioticinteractions/jsonld-template-dataset");
+        List<Study> allStudies = NodeUtil.findAllStudies(getGraphDb());
+        assertThat(allStudies.size(), is(1));
+        assertThat(nodeFactory.findTaxonById("NCBI:8782"), is(notNullValue()));
+    }
+
+    @Test
     public void importHechingers() throws Exception {
         String datasetsUsingHechingerFormat[] = {"thieltges2011", "preston2012", "zander2011", "mouritsen2011"};
 

@@ -1,0 +1,175 @@
+{
+ "@context": {
+       "@base" : "http://globalbioticinteractions.org/",
+       "id" : "@id",
+       "rdf" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+       "void" : "http://rdfs.org/ns/void#",
+       "rdfs" : "http://www.w3.org/2000/01/rdf-schema#",
+       "dcat" : "http://www.w3.org/ns/dcat#",
+       "owl" : "http://www.w3.org/2002/07/owl#",
+       "prov" : "http://www.w3.org/ns/prov#",
+       "dcterms" : "http://purl.org/dc/terms/",
+       "oa" : "http://www.w3.org/ns/oa#",
+       "xsd" : "http://www.w3.org/2001/XMLSchema#",
+       "foaf" : "http://xmlns.com/foaf/0.1/",
+       "dc" : "http://purl.org/dc/terms/",
+       "eol" : "http://eol.org/pages/",
+
+       "RO" : "http://purl.obolibrary.org/obo/RO_",
+       "BCO" : "http://purl.obolibrary.org/obo/BCO_",
+       "OBI" : "http://purl.obolibrary.org/obo/OBI_",
+       "IAO" : "http://purl.obolibrary.org/obo/IAO_",
+       "OBI" : "http://purl.obolibrary.org/obo/OBI_",
+       "obo" : "http://purl.obolibrary.org/obo/",
+       "ENVO" : "http://purl.obolibrary.org/obo/ENVO_",
+       "UBERON" : "http://purl.obolibrary.org/obo/UBERON_",
+       "PMID" : "http://www.ncbi.nlm.nih.gov/pubmed/",
+       "NCBITaxon" : "http://purl.obolibrary.org/obo/NCBITaxon_",
+       "MI" : "http://purl.obolibrary.org/obo/MI_",
+
+       "preys_on" : "RO:0002439",
+       "is_about" : "IAO:0000136",
+       "specimen" : "OBI:0100051",
+       "dataset" : "MI:0875",
+       "type" : {
+          "@id" : "rdf:type",
+          "@type" : "@id"
+       },
+       "creator" : {
+          "@id" : "dc:creator",
+          "@type" : "@id"
+       },
+       "depiction" : {
+          "@id" : "foaf:depiction",
+          "@type" : "@id"
+       },
+       "created" : {
+          "@id" : "dc:created",
+          "@type" : "xsd:date"
+       },
+       "homepage" : {
+          "@id" : "foaf:homepage",
+          "@type" : "@id"
+       },
+
+       "studies" : "is_about",
+       "nodes" : "is_about",
+
+       "links" : {
+          "@id" : "is_about",
+          "@type" : "rdf:Statement"
+       },
+       "datasets" : {
+          "@id" : "is_about",
+          "@type" : "void:Dataset"
+       },
+
+       "taxon" : "RO:0002162",
+
+       "subject" : "rdf:subject",
+       "target" : "rdf:target",
+       "relation" : "rdf:predicate",
+
+       "label" : "rdfs:label",
+       "email" : "foaf:mbox",
+       "title" : "dc:title",
+       "author" : "dc:author",
+       "Class" : "owl:Class",
+       "publisher" : "dc:publisher",
+       "description" : "dc:description",
+       "subClassOf" : "owl:subClassOf",
+       "source" : "dc:source",
+       "keyword" : "dcat:keyword",
+
+       "location": "http://schema.org/geo",
+       "latitude": {
+         "@id": "http://schema.org/latitude",
+         "@type": "xsd:decimal"
+       },
+       "longitude": {
+         "@id": "http://schema.org/longitude",
+         "@type": "xsd:decimal"
+       }
+ },
+ "datasets" : {
+     "id": "http://foo.bar/...",
+     "type": "dataset",
+     "created": "2015-03-16",
+     "keyword" : ["birds", "insects"],
+     "author": {
+         "id": "http://orcid.org/0000-0002-6601-2165",
+         "label": "Chris Mungall"
+     },   
+
+     "nodes": [
+         {
+             "id": "http://arctos.database.museum/guid/CUMV:Bird:25225",
+             "type": "OBI:0100051",
+             "taxon": {
+                 "id": "NCBITaxon:56350",
+                 "label": "Falco sparverius"
+             },
+             "OBI:0001619": "1955-07-18",
+             "location": {
+                 "latitude": "44.378414",
+                 "longitude": "-98.178441",
+                 "elevation": {
+                     "value": "1300",
+                     "units": "foot"
+                 }
+             }
+         },
+         {
+             "id": "http://arctos.database.museum/guid/CUMV:Bird:25225-UBERON_0000945-1",
+             "label": "stomach contents part 1",
+             "taxon": {
+                 "id": "NCBITaxon:50557",
+                 "label": "insects"
+             }
+         },
+         {
+             "id": "http://arctos.database.museum/guid/CUMV:Bird:25225-UBERON_0000945-2",
+             "type": "OBI:0100051",
+             "label": "stomach contents part 2, fledglings",
+             "taxon": {
+                 "id": "NCBITaxon:8782",
+                 "label": "birds"
+             },
+             "stage": {
+                 "id": "UBERON:0034919",
+                 "label": "juvenile stage"
+             }
+         }
+     ],
+     "links": [
+         {
+             "subject": {
+                "id": "http://arctos.database.museum/guid/CUMV:Bird:25225",
+                "type": "OBI:0100051"
+              },
+             "relation": {
+                "id": "RO:0002470",
+                "label": "eats"
+              },
+             "target": {
+                "id": "http://arctos.database.museum/guid/CUMV:Bird:25225-UBERON_0000945-1",
+                "type": "OBI:0100051"
+              }
+         },
+         {
+             "subject": { 
+                "id": "http://arctos.database.museum/guid/CUMV:Bird:25225",
+                "type": "OBI:0100051"
+              },
+             "relation": {
+                "id": "RO:0002470",
+                "label": "eats"
+              },
+             "target": {
+                "id": "http://arctos.database.museum/guid/CUMV:Bird:25225-UBERON_0000945-2",
+                "type": "OBI:0100051"
+              }
+         }
+     ]
+ }
+}

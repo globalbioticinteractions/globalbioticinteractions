@@ -15,8 +15,10 @@ import org.eol.globi.domain.Term;
 import org.eol.globi.geo.Ecoregion;
 import org.eol.globi.geo.EcoregionFinder;
 import org.eol.globi.geo.EcoregionFinderException;
+import org.eol.globi.service.AuthorIdResolver;
 import org.eol.globi.service.DOIResolver;
 import org.eol.globi.service.EnvoLookupService;
+import org.eol.globi.service.ORCIDResolverImpl;
 import org.eol.globi.service.QueryUtil;
 import org.eol.globi.service.TermLookupService;
 import org.eol.globi.service.TermLookupServiceException;
@@ -571,6 +573,11 @@ public class NodeFactoryImpl implements NodeFactory {
     @Override
     public TaxonIndex getTaxonIndex() {
         return taxonIndex;
+    }
+
+    @Override
+    public AuthorIdResolver getAuthorResolver() {
+        return new ORCIDResolverImpl();
     }
 }
 

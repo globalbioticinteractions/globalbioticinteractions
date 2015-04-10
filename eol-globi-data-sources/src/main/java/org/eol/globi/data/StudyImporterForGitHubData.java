@@ -1,26 +1,24 @@
 package org.eol.globi.data;
 
-import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.client.methods.HttpHead;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.domain.InteractType;
-import org.eol.globi.domain.Location;
-import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.geo.LatLng;
 import org.eol.globi.service.GitHubUtil;
 import org.eol.globi.util.HttpUtil;
-import org.eol.globi.util.InvalidLocationException;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
 
 public class StudyImporterForGitHubData extends BaseStudyImporter {
     private static final Log LOG = LogFactory.getLog(StudyImporterForGitHubData.class);
@@ -43,10 +41,7 @@ public class StudyImporterForGitHubData extends BaseStudyImporter {
 
     @Override
     public Study importStudy() throws StudyImporterException {
-
-        List<String> repositories = discoverDataRepositories();
-
-        for (String repository : repositories) {
+        for (String repository : discoverDataRepositories()) {
             try {
                 LOG.info("importing github repo [" + repository + "]...");
                 importData(repository);
@@ -72,9 +67,22 @@ public class StudyImporterForGitHubData extends BaseStudyImporter {
 
     protected void importData(String repo) throws StudyImporterException {
         try {
-            String baseUrl = GitHubUtil.getBaseUrlLastCommit(repo);
-            String descriptor = baseUrl + "/globi.json";
-            importUsingDescriptor(repo, baseUrl, getContent(descriptor));
+            final String baseUrl = GitHubUtil.getBaseUrlLastCommit(repo);
+            final String resourceUrl = baseUrl + "/globi.json";
+            if (resourceExists(resourceUrl)) {
+                StudyImporter importer = importUsingDescriptor(repo, baseUrl, getContent(resourceUrl));
+                importer.importStudy();
+            } else {
+                final String jsonldResourceUrl = baseUrl + "/globi-dataset.jsonld";
+                if (resourceExists(jsonldResourceUrl)) {
+                    StudyImporter importer = new StudyImporterForJSONLD(parserFactory, nodeFactory) {
+                        {
+                            setResourceUrl(jsonldResourceUrl);
+                        }
+                    };
+                    importer.importStudy();
+                }
+            }
         } catch (IOException e) {
             throw new StudyImporterException("failed to import repo [" + repo + "]", e);
         } catch (NodeFactoryException e) {
@@ -84,109 +92,90 @@ public class StudyImporterForGitHubData extends BaseStudyImporter {
         }
     }
 
-    protected void importUsingDescriptor(String repo, String baseUrl, String descriptor) throws IOException, StudyImporterException, NodeFactoryException {
+    private boolean resourceExists(String descriptor) {
+        boolean exists = false;
+        try {
+            HttpResponse resp = HttpUtil.getHttpClient().execute(new HttpHead(descriptor));
+            exists = resp.getStatusLine().getStatusCode() == HttpStatus.SC_OK;
+        } catch (IOException e) {
+            // ignore
+        }
+        return exists;
+    }
+
+    protected StudyImporter importUsingDescriptor(final String repo, final String baseUrl, final String descriptor) throws IOException, StudyImporterException, NodeFactoryException {
+        StudyImporter importer = null;
         if (StringUtils.isNotBlank(descriptor)) {
             JsonNode desc = new ObjectMapper().readTree(descriptor);
-            String sourceCitation = desc.has("citation") ? desc.get("citation").asText() : baseUrl;
-            String sourceDOI = desc.has("doi") ? desc.get("doi").asText() : "";
+            final String sourceCitation = desc.has("citation") ? desc.get("citation").asText() : baseUrl;
+            final String sourceDOI = desc.has("doi") ? desc.get("doi").asText() : "";
             String format = desc.has("format") ? desc.get("format").asText() : "globi";
             if ("globi".equals(format)) {
-                importRepository(repo, sourceCitation, baseUrl);
-            } else if ("gomexsi".equals(format)) {
-                StudyImporterForGoMexSI importer = new StudyImporterForGoMexSI(parserFactory, nodeFactory);
-                importer.setBaseUrl(baseUrl);
-                importer.setSourceCitation(sourceCitation);
-                if (getLogger() != null) {
-                    importer.setLogger(getLogger());
-                }
-                importer.importStudy();
-            } else if ("hechinger".equals(format)) {
-                StudyImporterForHechinger importer = new StudyImporterForHechinger(parserFactory, nodeFactory);
-                JsonNode resources = desc.get("resources");
-                if (resources.has("links")) {
-                    importer.setLinkResource(resources.get("links").asText());
-                }
-                if (resources.has("nodes")) {
-                    importer.setNodeResource(resources.get("nodes").asText());
-                }
-                JsonNode location = desc.get("location");
-                JsonNode latitude = location.get("latitude");
-                JsonNode longitude = location.get("longitude");
-                if (latitude != null && latitude.isDouble() && longitude != null && longitude.isDouble()) {
-                    importer.setLocation(new LatLng(latitude.asDouble(), longitude.asDouble()));
-                }
-
-                importer.setNamespace(repo);
-                importer.setSourceCitation(sourceCitation);
-                importer.setSourceDOI(sourceDOI);
-                if (desc.has("delimiter")) {
-                    String delimiter = desc.get("delimiter").asText();
-                    if (delimiter.length() > 0) {
-                        importer.setDelimiter(StringUtils.trim(delimiter).charAt(0));
+                importer = new StudyImporterForTSV(parserFactory, nodeFactory) {
+                    {
+                        setBaseUrl(baseUrl);
+                        setSourceCitation(sourceCitation);
+                        setRepositoryName(repo);
                     }
-                }
-
-                if (getLogger() != null) {
-                    importer.setLogger(getLogger());
-                }
-                importer.importStudy();
+                };
+            } else if ("gomexsi".equals(format)) {
+                importer = createGoMexSIImporter(baseUrl, sourceCitation);
+            } else if ("hechinger".equals(format)) {
+                importer = createHechingerImporter(repo, desc, sourceCitation, sourceDOI);
             } else {
                 throw new StudyImporterException("unsupported format [" + format + "]");
             }
         }
+        return importer;
+    }
+
+    private StudyImporterForGoMexSI createGoMexSIImporter(String baseUrl, String sourceCitation) {
+        StudyImporterForGoMexSI importer = new StudyImporterForGoMexSI(parserFactory, nodeFactory);
+        importer.setBaseUrl(baseUrl);
+        importer.setSourceCitation(sourceCitation);
+        if (getLogger() != null) {
+            importer.setLogger(getLogger());
+        }
+        return importer;
+    }
+
+    private StudyImporterForHechinger createHechingerImporter(String repo, JsonNode desc, String sourceCitation, String sourceDOI) {
+        StudyImporterForHechinger importer = new StudyImporterForHechinger(parserFactory, nodeFactory);
+        JsonNode resources = desc.get("resources");
+        if (resources.has("links")) {
+            importer.setLinkResource(resources.get("links").asText());
+        }
+        if (resources.has("nodes")) {
+            importer.setNodeResource(resources.get("nodes").asText());
+        }
+        JsonNode location = desc.get("location");
+        JsonNode latitude = location.get("latitude");
+        JsonNode longitude = location.get("longitude");
+        if (latitude != null && latitude.isDouble() && longitude != null && longitude.isDouble()) {
+            importer.setLocation(new LatLng(latitude.asDouble(), longitude.asDouble()));
+        }
+
+        importer.setNamespace(repo);
+        importer.setSourceCitation(sourceCitation);
+        importer.setSourceDOI(sourceDOI);
+        if (desc.has("delimiter")) {
+            String delimiter = desc.get("delimiter").asText();
+            if (delimiter.length() > 0) {
+                importer.setDelimiter(StringUtils.trim(delimiter).charAt(0));
+            }
+        }
+
+        if (getLogger() != null) {
+            importer.setLogger(getLogger());
+        }
+        return importer;
     }
 
     private String getContent(String uri) throws IOException {
-        return HttpUtil.getContent(uri);
-    }
-
-    private void importRepository(String repo, String sourceCitation, String baseUrl) throws IOException, NodeFactoryException, StudyImporterException {
-        String dataUrl = baseUrl + "/interactions.tsv";
-        LabeledCSVParser parser = parserFactory.createParser(dataUrl, "UTF-8");
-        parser.changeDelimiter('\t');
-        while (parser.getLine() != null) {
-            String referenceCitation = parser.getValueByLabel("referenceCitation");
-            String referenceDoi = StringUtils.replace(parser.getValueByLabel("referenceDoi"), " ", "");
-            Study study = nodeFactory.getOrCreateStudy2(repo + referenceCitation, sourceCitation + " " + ReferenceUtil.createLastAccessedString(dataUrl), referenceDoi);
-            study.setCitationWithTx(referenceCitation);
-
-            String sourceTaxonId = StringUtils.trimToNull(parser.getValueByLabel("sourceTaxonId"));
-            String sourceTaxonName = StringUtils.trim(parser.getValueByLabel("sourceTaxonName"));
-
-            String targetTaxonId = StringUtils.trimToNull(parser.getValueByLabel("targetTaxonId"));
-            String targetTaxonName = StringUtils.trim(parser.getValueByLabel("targetTaxonName"));
-
-            String interactionTypeId = StringUtils.trim(parser.getValueByLabel("interactionTypeId"));
-            if (StringUtils.isNotBlank(targetTaxonName)
-                    && StringUtils.isNotBlank(sourceTaxonName)) {
-                InteractType type = INTERACT_ID_TO_TYPE.get(interactionTypeId);
-                if (type == null) {
-                    study.appendLogMessage("unsupported interaction type id [" + interactionTypeId + "]", Level.WARNING);
-                } else {
-                    Specimen source = nodeFactory.createSpecimen(study, sourceTaxonName, sourceTaxonId);
-                    Specimen target = nodeFactory.createSpecimen(study, targetTaxonName, targetTaxonId);
-
-
-                    LatLng centroid = null;
-                    String latitude = StringUtils.trim(parser.getValueByLabel("decimalLatitude"));
-                    String longitude = StringUtils.trim(parser.getValueByLabel("decimalLongitude"));
-                    if (StringUtils.isNotBlank(latitude) && StringUtils.isNotBlank(longitude)) {
-                        try {
-                            centroid = LocationUtil.parseLatLng(latitude, longitude);
-                        } catch (InvalidLocationException e) {
-                            getLogger().warn(study, "found invalid location: [" + e.getMessage() + "]");
-                        }
-                    }
-                    if (centroid == null) {
-                        String localityId = StringUtils.trim(parser.getValueByLabel("localityId"));
-                        if (StringUtils.isNotBlank(localityId)) {
-                            centroid = getGeoNamesService().findLatLng(localityId);
-                        }
-                    }
-                    Location location = centroid == null ? null : nodeFactory.getOrCreateLocation(centroid.getLat(), centroid.getLng(), null);
-                    source.interactsWith(target, type, location);
-                }
-            }
+        try {
+            return HttpUtil.getContent(uri);
+        } catch (IOException ex) {
+            throw new IOException("failed to find [" + uri + "]", ex);
         }
     }
 

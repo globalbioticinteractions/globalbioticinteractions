@@ -8,6 +8,7 @@ import org.eol.globi.domain.Study;
 import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.domain.Term;
 import org.eol.globi.geo.EcoregionFinder;
+import org.eol.globi.service.AuthorIdResolver;
 import org.eol.globi.service.TermLookupService;
 
 import java.util.Date;
@@ -63,4 +64,6 @@ public interface NodeFactory {
     EcoregionFinder getEcoregionFinder();
 
     TaxonIndex getTaxonIndex();
+
+    AuthorIdResolver getAuthorResolver();
 }
