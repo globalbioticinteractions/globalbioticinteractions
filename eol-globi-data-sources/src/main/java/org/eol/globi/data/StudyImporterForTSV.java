@@ -75,7 +75,7 @@ public class StudyImporterForTSV extends BaseStudyImporter {
         while (parser.getLine() != null) {
             String referenceCitation = parser.getValueByLabel("referenceCitation");
             String referenceDoi = StringUtils.replace(parser.getValueByLabel("referenceDoi"), " ", "");
-            Study study = nodeFactory.getOrCreateStudy2(repo + referenceCitation, sourceCitation + " " + ReferenceUtil.createLastAccessedString(dataUrl), referenceDoi);
+            Study study = nodeFactory.getOrCreateStudy2(repo + referenceCitation, (sourceCitation == null ? "" : sourceCitation + ". ") + ReferenceUtil.createLastAccessedString(dataUrl), referenceDoi);
             study.setCitationWithTx(referenceCitation);
 
             String sourceTaxonId = StringUtils.trimToNull(parser.getValueByLabel("sourceTaxonId"));
