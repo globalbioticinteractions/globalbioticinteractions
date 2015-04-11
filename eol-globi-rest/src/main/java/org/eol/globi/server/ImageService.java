@@ -21,7 +21,6 @@ import java.util.Map;
 
 @Controller
 public class ImageService {
-
     private ImageSearch imageSearch = new EOLTaxonImageService();
 
     @Autowired

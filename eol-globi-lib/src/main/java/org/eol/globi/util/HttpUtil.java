@@ -9,25 +9,23 @@ import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.conn.ssl.AllowAllHostnameVerifier;
-import org.apache.http.conn.ssl.TrustStrategy;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.DefaultServiceUnavailableRetryStrategy;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
 
-import javax.net.ssl.SSLSocketFactory;
 import java.io.IOException;
 import java.net.URI;
-import java.security.cert.CertificateException;
-import java.security.cert.X509Certificate;
 
 public class HttpUtil {
     private static final Log LOG = LogFactory.getLog(HttpUtil.class);
 
     public static final int FIVE_MINUTES_IN_MS = 5 * 60 * 1000;
     protected static final String APPLICATION_JSON = "application/json;charset=UTF-8";
+    public static final int FIVE_SECONDS = 5000;
     private static CloseableHttpClient httpClient = null;
+    private static CloseableHttpClient failFastHttpClient = null;
 
     public static HttpClient getHttpClient() {
         if (httpClient == null) {
@@ -36,16 +34,35 @@ public class HttpUtil {
         return httpClient;
     }
 
+    public static HttpClient getFailFastHttpClient() {
+        if (failFastHttpClient == null) {
+            RequestConfig config = RequestConfig.custom()
+                    .setSocketTimeout(FIVE_SECONDS)
+                    .setConnectTimeout(FIVE_SECONDS)
+                    .build();
+
+            HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
+            failFastHttpClient = httpClientBuilder
+                            .setDefaultRequestConfig(config).build();
+        }
+        return failFastHttpClient;
+    }
+
     public static CloseableHttpClient getHttpClientNoSSLCheck() {
         return HttpClients.custom().setHostnameVerifier(new AllowAllHostnameVerifier()).build();
     }
 
     // should only be called once
     public static void shutdown() {
+        closeQuietly(HttpUtil.httpClient);
+        closeQuietly(HttpUtil.failFastHttpClient);
+    }
+
+    protected static void closeQuietly(CloseableHttpClient httpClient) {
         if (httpClient != null) {
             try {
-                httpClient.close();
-                httpClient = null;
+                HttpUtil.httpClient.close();
+                HttpUtil.httpClient = null;
             } catch (IOException e) {
                 // ignore
             }

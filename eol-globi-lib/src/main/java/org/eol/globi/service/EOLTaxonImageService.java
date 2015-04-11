@@ -81,15 +81,11 @@ public class EOLTaxonImageService implements ImageSearch {
     }
 
     private PageInfo getPageInfo(String eolPageId) throws IOException {
-        HttpResponse response;
-
-        String responseString;
         String pageUrlString = "http://eol.org/api/pages/1.0/" + eolPageId + ".json?images=1&videos=0&sounds=0&maps=0&text=0&iucn=false&subjects=overview&licenses=all&details=true&common_names=true&references=false&vetted=0&cache_ttl=";
-
         HttpGet request = new HttpGet(pageUrlString);
         try {
-            response = HttpUtil.getHttpClient().execute(request);
-            responseString = EntityUtils.toString(response.getEntity(), "UTF-8");
+            HttpResponse response = HttpUtil.getFailFastHttpClient().execute(request);
+            String responseString = EntityUtils.toString(response.getEntity(), "UTF-8");
             return 200 == response.getStatusLine().getStatusCode() ? parsePageInfo(responseString) : null;
         } finally {
             request.releaseConnection();
