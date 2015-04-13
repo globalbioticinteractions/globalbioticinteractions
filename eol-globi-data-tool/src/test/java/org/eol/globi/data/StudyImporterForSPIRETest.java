@@ -60,6 +60,17 @@ public class StudyImporterForSPIRETest extends GraphDBTestCase {
     }
 
     @Test
+    public void mergeIdenticalReferences() throws StudyImporterException {
+        // see https://github.com/danielabar/globi-proto/issues/59#issuecomment-92150679
+        Map<String, String> properties = new HashMap<String, String>();
+        StudyImporterForSPIRE.parseTitlesAndAuthors("G. W. Minshall, Role of allochthonous detritus in the trophic structure\n" +
+                " of a woodland springbrook community, Ecology 48(1):139-149, from p. 148 (1967).\n" +
+                "", properties);
+        assertThat(properties.get(Study.DESCRIPTION), is("G. W. Minshall, 1967.  Role of allochthonous detritus in the trophic structure of a woodland springbrook community.  Ecology 48:139-149, from pp. 145, 148."));
+        assertThat(properties.get(Study.TITLE), is("Minshall, 196 Role of...e40765a49c84da8d9e0c2a527f1fd111"));
+    }
+
+    @Test
     public void parseYetOtherTitlesAndAuthorsFormat() throws StudyImporterException {
         Map<String, String> properties = new HashMap<String, String>();
         StudyImporterForSPIRE.parseTitlesAndAuthors("Townsend, CR, Thompson, RM, McIntosh, AR, Kilroy, C, Edwards, ED, Scarsbrook, MR. 1998.  Disturbance, resource supply and food-web architecture in streams.  Ecology Letters 1:200-209.", properties);
@@ -144,7 +155,7 @@ public class StudyImporterForSPIRETest extends GraphDBTestCase {
         assertThat(listener.environments, not(hasItem("http://spire.umbc.edu/ontologies/SpireEcoConcepts.owl#")));
 
         assertThat(listener.invalidInteractions.size(), is(greaterThan(0)));
-        assertThat(listener.invalidInteractions.get(0).toString(), is("{Country=General, Locality=General, description=Myers, P., R. Espinosa, C. S. Parr, T. Jones, G. S. Hammond, and T. A. Dewey. 2013. The Animal Diversity Web (online). Accessed at http://animaldiversity.org., localityOriginal=Country: General;   Locality: General, ofHabitat=unknown, predator=Enhydra_lutris, prey=Castor_canadensis, title=Animal Diversity Web756312ea19e09816008252921e67441a}"));
+        assertThat(listener.invalidInteractions.get(0).toString(), is("{Country=General, Locality=General, description=Myers, P., R. Espinosa, C. S. Parr, T. Jones, G. S. Hammond, and T. A. Dewey. 2013. The Animal Diversity Web (online). Accessed at http://animaldiversity.org., localityOriginal=Country: General;   Locality: General, ofHabitat=unknown, predator=Enhydra_lutris, prey=Castor_canadensis, title=Myers, P., Espinosa, ...26cb4abc9cf6d64e10e7799e5cab8afd}"));
     }
 
     private void assertGAZMapping(TestTrophicLinkListener listener) {

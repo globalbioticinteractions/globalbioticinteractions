@@ -44,16 +44,19 @@ public class StudyImporterForSPIRE extends BaseStudyImporter {
 
     protected static void parseTitlesAndAuthors(String titlesAndAuthors, Map<String, String> properties) {
         String titlesAndAuthors1 = titlesAndAuthors.replace("\n", "");
-        String shortened = StringUtils.abbreviate(titlesAndAuthors1.
-                replaceAll("(\\w(\\. )+)", "").trim(), 24);
-
-        properties.put(Study.TITLE, shortened + MD5.getHashString(titlesAndAuthors1));
         // see https://github.com/jhpoelen/eol-globi-data/issues/28
         if ("Animal Diversity Web".equals(titlesAndAuthors1)) {
             titlesAndAuthors1 = "Myers, P., R. Espinosa, C. S. Parr, T. Jones, G. S. Hammond, and T. A. Dewey. 2013. The Animal Diversity Web (online). Accessed at http://animaldiversity.org.";
         } else if ("K. H. Mann, R. H. Britton, A. Kowalczewski, T. J. Lack, C. P. Mathews and I. McDonald, Productivity and energy flow at all trophic levels in the River Thames, England. In: Productivity Problems of Freshwaters, Z. Kajak and A.  Hillbricht-Ilkowska, Eds. (P".equals(titlesAndAuthors1)) {
             titlesAndAuthors1 = "Mann KH, Britton RH, Kowalczewski A, Lack TJ, Mathews CP, McDonald I (1972) Productivity and energy flow at all trophic levels in the River Thames, England. In: Kajak Z, Hillbricht-Ilkowska A (eds) Productivity problems of freshwaters. Polish Scientific, Warsaw, pp 579-596";
+        } else if ("G. W. Minshall, Role of allochthonous detritus in the trophic structure of a woodland springbrook community, Ecology 48(1):139-149, from p. 148 (1967).".equals(titlesAndAuthors1)) {
+            // see https://github.com/danielabar/globi-proto/issues/59
+            titlesAndAuthors1 = "G. W. Minshall, 1967.  Role of allochthonous detritus in the trophic structure of a woodland springbrook community.  Ecology 48:139-149, from pp. 145, 148.";
         }
+
+        String shortened = StringUtils.abbreviate(titlesAndAuthors1.
+                replaceAll("(\\w(\\. )+)", "").trim(), 24);
+        properties.put(Study.TITLE, shortened + MD5.getHashString(titlesAndAuthors1));
         properties.put(Study.DESCRIPTION, titlesAndAuthors1);
     }
 
