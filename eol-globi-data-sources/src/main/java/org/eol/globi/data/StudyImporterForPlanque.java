@@ -8,6 +8,8 @@ import org.eol.globi.domain.Study;
 import org.eol.globi.util.ExternalIdUtil;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Map;
 
 import static org.apache.commons.lang3.StringUtils.capitalize;
@@ -40,6 +42,20 @@ public class StudyImporterForPlanque extends BaseStudyImporter {
 
         Map<String, String> refMap = ReferenceUtil.buildRefMap(parserFactory, REFERENCE_PATH, "AUTHOR_YEAR", "FULL_REFERENCE", '\t');
         correctSuspectedTypos(refMap);
+        refMap.put("Bjelland et al. 2000", "Bjelland, O., Bergstad, O.A., Skjæraasen, J.E. and Meland, K. 2000. Trophic ecology of deep-water fishes associated with the continental slope of the eastern Norwegian Sea. Sarsia, 85: 101-117.");
+        refMap.put("Burgos & Mehl 1987", "Burgos, G., and Mehl, S. 1987. Diet overlap between North-east Arctic cod and haddock in the southern part of the Barents Sea in 1984–1986. ICES CM, 1987/G: 50: 22pp.");
+        refMap.put("Dolgov et al. 2010", "Dolgov, A.V., Johannesen, E., Heino, M. and Olsen, E. 2010. Trophic ecology of blue whiting in the Barents Sea. ICES Journal of Marine Science, 67: 483-493.");
+        refMap.put("Dolgov 2005", "Dolgov, A.V. 2005. Feeding and Food Consumption by the Barents Sea Skates. Journal of Northwest  Atlantic Fishery Science, 37: 495-503.");
+        refMap.put("Finley & Evans 1983", "Finley K. J., Evans C. R. 1983. Summer diet of the bearded seal (Erignathus barbatus) in the Canadian High Arctic. Arctic");
+        refMap.put("Gjertz & Wiig 1992", "Gjertz, I., Wiig Ø. 1992. Feeding of walrus Odobenus rosmarus in Svalbard. In Polar record.");
+        refMap.put("Gundersen 1996", "Gundersen, A.C. 1996. Diettundersøkelse hos blålange, lange og brosme i storegga. Møreforskning.");
+        refMap.put("Santos & Pierce 2003", "Santos M. B., Pierce G. J. 2003. The diet of harbour porpoise (Phocena phocena) in the northeast Atlantic. Oceanography and marine Biology: an Annual Review. 41: 355-390");
+        refMap.put("Woll & Gundersen 2004", "Woll A. K., Gundersen A. C. 2004. Diet composition and intra-specific competition of young Greenland halibut around southern Greenalnd. Journal of Sea Reserach. 51: 243-249");
+        refMap.put("Gonzáles et al. 2006", "Gonzales, C., Roman, E., Paz, X. and Ceballos, E. 2006. Feeding habits and diet overlap of skates (Amblyraja radiata, A. hyperborea, Bathyraja spinicauda, Malacoraja senta and Rajella fyllae) in the North Atlantic. Northwest Atlantic Fisheries Organization: 17.");
+        refMap.put("IMR-PINRO 1994", "Kortsch pers. comm.");
+        refMap.put("Falk-Petersen et al.1987", "Kortsch pers. comm.");
+        refMap.put("Svalbard", "Kortsch pers. comm.");
+        refMap.put("Cochrane pers. comm.", "Cochrane pers. comm.");
 
         try {
             while (dataParser.getLine() != null) {
@@ -60,6 +76,7 @@ public class StudyImporterForPlanque extends BaseStudyImporter {
         addCorrection(refMap, "Moura 2005", "Moura et al. 2005;");
         addCorrection(refMap, "Gonzales et al. 2006", "Gonzáles et al. 2006");
         addCorrection(refMap, "Gonzales 2006", "Gonzáles et al. 2006");
+        addCorrection(refMap, "Gonzales et al. 2005", "Gonzáles et al. 2006");
         addCorrection(refMap, "Thiemann et al. 2008", "Thiemann 2008");
         addCorrection(refMap, "Tonnesson & Tiselius 2005", "Tonneson & Tiselius 2005");
         addCorrection(refMap, "T_nneson & Tiselius 2005", "Tonneson & Tiselius 2005");
@@ -82,6 +99,23 @@ public class StudyImporterForPlanque extends BaseStudyImporter {
         addCorrection(refMap, "Pedersen et al. 1999", "Pedersen 1999");
         addCorrection(refMap, "Gordon & Duncan1979", "Gordon & Duncan 1979");
         addCorrection(refMap, "Vatlysson 1995", "Valtysson 1995");
+        addCorrection(refMap, "Dolgov 2006", "Dolgov 2005");
+        addCorrection(refMap, "Bjelland et al. 2010", "Bjelland et al. 2000");
+        addCorrection(refMap, "Mehl 1999", "Mehl 1991");
+        addCorrection(refMap, "Sazepin & Petrova 1934-1938", "Satsepin & Petrova 1934-1938");
+        addCorrection(refMap, "Hinz et al. 2005", "Hinz et al., 2006");
+        addCorrection(refMap, "Valtysson 1996", "Valtysson, 1995");
+        addCorrection(refMap, "Valtysson 1997", "Valtysson, 1995");
+        addCorrection(refMap, "Prokhorov 1967", "Prokhorov, 1965");
+        addCorrection(refMap, "Dolgov 2010", "Dolgov et al. 2010");
+        addCorrection(refMap, "Gjertz & Wiig 1995", "Gjertz & Wiig 1992");
+        addCorrection(refMap, "Plyuscheva et al. 2010", "Plyuscheva et al. 2004");
+        addCorrection(refMap, "Dolgov 2010", "Dolgov at al. 2010");
+        addCorrection(refMap, "Woll & Gundersen 2003", "Woll & Gundersen 2004");
+        addCorrection(refMap, "Falk-Petersen et al.1987", "Kortsch pers. comm.");
+        addCorrection(refMap, "González et al. 2000", "González et al. 1999");
+        addCorrection(refMap, "Dolgov and Drevetnyak 1993", "Dolgov and Drevetnyak 1993");
+        addCorrection(refMap, "Burgos &  Mehl 1987", "Burgos & Mehl 1987");
     }
 
     private void addCorrection(Map<String, String> refMap, String original, String corrected) {
@@ -93,11 +127,13 @@ public class StudyImporterForPlanque extends BaseStudyImporter {
         try {
             String shortReference = StringUtils.trim(parser.getValueByLabel("REFERENCE"));
             if (StringUtils.isNotBlank(shortReference)) {
-                shortReference = shortReference.replace("Macdonald, 1927", "Macdonald 1927");
-                shortReference = shortReference.replace("Vesin, Leggett et al. 1981", "Vesin et al. 1981");
+                shortReference = StringUtils.replace(shortReference, "Macdonald, 1927", "Macdonald 1927");
+                shortReference = StringUtils.replace(shortReference, "Vesin, Leggett et al. 1981", "Vesin et al. 1981");
                 String[] refs = StringUtils.split(shortReference, ",;:");
-                for (String ref : refs) {
-                    localStudy = importInteraction(parser, refMap, StringUtils.trim(ref));
+                if (refs != null) {
+                    for (String ref : refs) {
+                        localStudy = importInteraction(parser, refMap, StringUtils.trim(ref));
+                    }
                 }
             }
         } catch (NodeFactoryException e) {
@@ -111,8 +147,22 @@ public class StudyImporterForPlanque extends BaseStudyImporter {
     }
 
     private Study importInteraction(LabeledCSVParser parser, Map<String, String> refMap, String shortReference) throws NodeFactoryException, StudyImporterException {
-        String longReference;
+        Study study = null;
+        Collection<String> ignoreReferences = new ArrayList<String>() {{
+            add("Fall 2011");
+            add("Coyle et al. 1994");
+            add("Casanova et al 2012");
+        }};
+        if (!ignoreReferences.contains(shortReference)) {
+            study = importLink(parser, refMap, shortReference);
+        }
+        return study;
+    }
+
+    private Study importLink(LabeledCSVParser parser, Map<String, String> refMap, String shortReference) throws NodeFactoryException, StudyImporterException {
         String msg = null;
+        String longReference;
+        Study study;
         if (shortReference == null || !refMap.containsKey(shortReference)) {
             msg = "no full ref for [" + shortReference + "] on line [" + parser.lastLineNumber() + "], using short instead";
             longReference = shortReference;
@@ -131,7 +181,8 @@ public class StudyImporterForPlanque extends BaseStudyImporter {
         } else {
             addInteractionForPredator(parser, localStudy, predatorName);
         }
-        return localStudy;
+        study = localStudy;
+        return study;
     }
 
     private void addInteractionForPredator(LabeledCSVParser parser, Study localStudy, String predatorName) throws NodeFactoryException, StudyImporterException {
