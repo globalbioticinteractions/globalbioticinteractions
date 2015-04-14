@@ -39,17 +39,17 @@ public class ResourceUtil {
                 throw new HttpResponseException(statusLine.getStatusCode(),
                         statusLine.getReasonPhrase());
             }
-            return openCachedStream(response);
+            return cacheAndOpenStream(response.getEntity().getContent());
         } finally {
             request.releaseConnection();
         }
     }
 
-    private static InputStream openCachedStream(HttpResponse response) throws IOException {
+    public static InputStream cacheAndOpenStream(InputStream is) throws IOException {
         File tempFile = File.createTempFile("globiRemote", "tmp");
         tempFile.deleteOnExit();
         FileOutputStream fos = new FileOutputStream(tempFile);
-        IOUtils.copy(response.getEntity().getContent(), fos);
+        IOUtils.copy(is, fos);
         fos.flush();
         IOUtils.closeQuietly(fos);
         return new FileInputStream(tempFile);

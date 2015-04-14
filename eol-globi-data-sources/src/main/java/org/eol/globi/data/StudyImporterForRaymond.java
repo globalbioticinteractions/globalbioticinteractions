@@ -12,7 +12,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.eol.globi.domain.Location;
@@ -28,10 +27,7 @@ import org.joda.time.format.DateTimeFormatter;
 import org.eol.globi.geo.LatLng;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.Reader;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
@@ -116,10 +112,10 @@ public class StudyImporterForRaymond extends BaseStudyImporter {
             while ((entry = zis.getNextEntry()) != null) {
                 if (DIET_CSV.equals(entry.getName())) {
                     dietFile = File.createTempFile("raymondDiet", ".csv");
-                    dietParser = createParser(dietFile, zis);
+                    dietParser = CSVUtil.createParser(dietFile, zis);
                 } else if (SOURCES_CSV.equals(entry.getName())) {
                     sourcesFile = File.createTempFile("raymondSources", ".csv");
-                    sourcesParser = createParser(sourcesFile, zis);
+                    sourcesParser = CSVUtil.createParser(sourcesFile, zis);
                 } else {
                     IOUtils.copy(zis, new NullOutputStream());
                 }
@@ -141,21 +137,6 @@ public class StudyImporterForRaymond extends BaseStudyImporter {
                 sourcesFile.delete();
             }
         }
-    }
-
-    private LabeledCSVParser createParser(File dietFile, ZipInputStream zis) throws IOException {
-        LabeledCSVParser dietParser;
-        streamToFile(dietFile, zis);
-        Reader reader = FileUtils.getUncompressedBufferedReader(new FileInputStream(dietFile), "UTF-8");
-        dietParser = CSVUtil.createLabeledCSVParser(reader);
-        return dietParser;
-    }
-
-    private static void streamToFile(File sourcesFile, ZipInputStream zis) throws IOException {
-        FileOutputStream output = new FileOutputStream(sourcesFile);
-        IOUtils.copy(zis, output);
-        output.flush();
-        IOUtils.closeQuietly(output);
     }
 
     public void importData(LabeledCSVParser sourcesParser, LabeledCSVParser dietParser) throws IOException, StudyImporterException {

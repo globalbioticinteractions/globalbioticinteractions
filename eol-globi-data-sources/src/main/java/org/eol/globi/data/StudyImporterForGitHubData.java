@@ -122,11 +122,25 @@ public class StudyImporterForGitHubData extends BaseStudyImporter {
                 importer = createGoMexSIImporter(baseUrl, sourceCitation);
             } else if ("hechinger".equals(format)) {
                 importer = createHechingerImporter(repo, desc, sourceCitation, sourceDOI);
+            } else if ("seltmann".equals(format)) {
+                importer = getStudyImporterForSeltmann(repo, desc);
             } else {
                 throw new StudyImporterException("unsupported format [" + format + "]");
             }
         }
+
         return importer;
+    }
+
+    private StudyImporterForSeltmann getStudyImporterForSeltmann(String repo, JsonNode desc) throws StudyImporterException {
+        StudyImporterForSeltmann studyImporterForSeltmann = new StudyImporterForSeltmann(parserFactory, nodeFactory);
+        final String archiveURL = desc.has("archiveURL") ? desc.get("archiveURL").asText() : "";
+        if (StringUtils.isBlank(archiveURL)) {
+            throw new StudyImporterException("failed to import [" + repo + "]: no [archiveURL] specified");
+        } else {
+            studyImporterForSeltmann.setArchiveURL(archiveURL);
+        }
+        return studyImporterForSeltmann;
     }
 
     private StudyImporterForGoMexSI createGoMexSIImporter(String baseUrl, String sourceCitation) {

@@ -75,6 +75,15 @@ public class StudyImporterForGitHubDataIT extends GraphDBTestCase {
     }
 
     @Test
+    public void importSeltmann() throws StudyImporterException, NodeFactoryException {
+        StudyImporterForGitHubData importer = new StudyImporterForGitHubData(new ParserFactoryImpl(), nodeFactory);
+        importer.importData("globalbioticinteractions/digital-bee-collections-network");
+        List<Study> allStudies = NodeUtil.findAllStudies(getGraphDb());
+        assertThat(allStudies.size(), is(1));
+        assertThat(nodeFactory.findTaxonByName("Garrulus glandarius"), is(notNullValue()));
+    }
+
+    @Test
     public void importJSONLD() throws StudyImporterException, NodeFactoryException {
         StudyImporterForGitHubData importer = new StudyImporterForGitHubData(new ParserFactoryImpl(), nodeFactory);
         importer.importData("globalbioticinteractions/jsonld-template-dataset");
