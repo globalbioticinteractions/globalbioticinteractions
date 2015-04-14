@@ -50,15 +50,6 @@ public class GlobalNamesServiceTest {
     }
 
     @Test
-    public void lookupGBIFHomonym() throws PropertyEnricherException {
-        GlobalNamesService service = new GlobalNamesService(GlobalNamesSources.GBIF);
-        HashMap<String, String> props = new HashMap<String, String>();
-        props.put(PropertyAndValueDictionary.NAME, "Lestes");
-        Map<String, String> enrich = service.enrich(props);
-        assertThat(enrich.get(PropertyAndValueDictionary.EXTERNAL_ID), is(nullValue()));
-    }
-
-    @Test
     public void lookupNCBI() throws PropertyEnricherException {
         GlobalNamesService service = new GlobalNamesService(GlobalNamesSources.NCBI);
         HashMap<String, String> props1 = new HashMap<String, String>();
