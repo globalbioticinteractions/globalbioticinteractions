@@ -1,6 +1,7 @@
 package org.eol.globi.tool;
 
 import org.apache.commons.lang.time.StopWatch;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eol.globi.domain.Taxon;
@@ -23,7 +24,7 @@ import java.util.Map;
 
 public class LinkerGlobalNames {
 
-    private int batchSize = 100;
+    private static final int BATCH_SIZE = 100;
 
     private static final Log LOG = LogFactory.getLog(LinkerGlobalNames.class);
 
@@ -38,7 +39,7 @@ public class LinkerGlobalNames {
         final Map<Long, TaxonNode> nodeMap = new HashMap<Long, TaxonNode>();
         int counter = 1;
         for (Node hit : hits) {
-            if (counter % batchSize == 0) {
+            if (counter % BATCH_SIZE == 0) {
                 handleBatch(graphDb, globalNamesService, nodeMap, counter, desiredSources);
             }
             TaxonNode node = new TaxonNode(hit);
@@ -51,14 +52,14 @@ public class LinkerGlobalNames {
     private void handleBatch(final GraphDatabaseService graphDb, GlobalNamesService globalNamesService, final Map<Long, TaxonNode> nodeMap, int counter, List<GlobalNamesSources> desiredSources) throws PropertyEnricherException {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
-        String msgPrefix = "batch #" + counter / batchSize;
+        String msgPrefix = "batch #" + counter / BATCH_SIZE;
         LOG.info(msgPrefix + " preparing...");
+        List<String> names = new ArrayList<String>();
+        for (Map.Entry<Long, TaxonNode> entry : nodeMap.entrySet()) {
+            String name = entry.getKey() + "|" + entry.getValue().getName();
+            names.add(name);
+        }
         try {
-            List<String> names = new ArrayList<String>();
-            for (Map.Entry<Long, TaxonNode> entry : nodeMap.entrySet()) {
-                String name = entry.getKey() + "|" + entry.getValue().getName();
-                names.add(name);
-            }
             if (names.size() > 0) {
                 globalNamesService.findTermsForNames(names, new TermMatchListener() {
                     @Override
@@ -70,10 +71,10 @@ public class LinkerGlobalNames {
             }
 
         } catch (PropertyEnricherException ex) {
-            LOG.error(msgPrefix + "problem matching terms", ex);
+            LOG.error(msgPrefix + " problem matching terms: [" + StringUtils.join(names,"|") + "]", ex);
         }
         stopWatch.stop();
-        LOG.info(msgPrefix + " completed in [" + stopWatch.getTime() + "] ms (" + stopWatch.getTime() / counter + " ms/name )");
+        LOG.info(msgPrefix + " completed in [" + stopWatch.getTime() + "] ms (" + (1.0*stopWatch.getTime() / BATCH_SIZE) + " ms/name )");
 
         nodeMap.clear();
     }
