@@ -4,7 +4,6 @@ import org.junit.Test;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.List;
 
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
@@ -14,13 +13,13 @@ import static org.junit.matchers.JUnitMatchers.hasItem;
 public class GitHubUtilTest {
 
     @Test
-    public void findFile() throws IOException, URISyntaxException {
-        assertThat(GitHubUtil.hasInteractionData(GitHubUtilIT.TEMPLATE_DATA_REPOSITORY), is(true));
+    public void isGloBIRepo() throws IOException, URISyntaxException {
+        assertThat(GitHubUtil.isGloBIRepository(GitHubUtilIT.TEMPLATE_DATA_REPOSITORY_TSV), is(true));
     }
 
     @Test
-    public void fileNotFound() throws IOException {
-        assertThat(GitHubUtil.hasInteractionData("ropensci/rgbif"), is(false));
+    public void nonGloBIRepo() throws IOException {
+        assertThat(GitHubUtil.isGloBIRepository("ropensci/rgbif"), is(false));
     }
 
 

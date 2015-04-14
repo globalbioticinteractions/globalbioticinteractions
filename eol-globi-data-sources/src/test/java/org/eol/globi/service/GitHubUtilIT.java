@@ -13,17 +13,19 @@ import static org.junit.matchers.JUnitMatchers.hasItem;
 
 public class GitHubUtilIT {
 
-    public static final String TEMPLATE_DATA_REPOSITORY = "globalbioticinteractions/template-dataset";
+    public static final String TEMPLATE_DATA_REPOSITORY_TSV = "globalbioticinteractions/template-dataset";
+    public static final String TEMPLATE_DATA_REPOSITORY_JSONLD = "globalbioticinteractions/jsonld-template-dataset";
 
     @Test
     public void discoverRepos() throws IOException, URISyntaxException {
         List<String> reposWithData = GitHubUtil.find();
-        assertThat(reposWithData, hasItem(TEMPLATE_DATA_REPOSITORY));
+        assertThat(reposWithData, hasItem(TEMPLATE_DATA_REPOSITORY_TSV));
+        assertThat(reposWithData, hasItem(TEMPLATE_DATA_REPOSITORY_JSONLD));
     }
 
     @Test
     public void findMostRecentCommit() throws IOException, URISyntaxException {
-        String sha = GitHubUtil.lastCommitSHA(GitHubUtilIT.TEMPLATE_DATA_REPOSITORY);
+        String sha = GitHubUtil.lastCommitSHA(GitHubUtilIT.TEMPLATE_DATA_REPOSITORY_TSV);
         assertThat(sha, is(notNullValue()));
     }
 

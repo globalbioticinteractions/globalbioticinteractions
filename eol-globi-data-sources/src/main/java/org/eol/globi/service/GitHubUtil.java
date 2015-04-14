@@ -1,9 +1,7 @@
 package org.eol.globi.service;
 
 import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpHead;
-import org.apache.http.impl.client.BasicResponseHandler;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.data.StudyImporterException;
@@ -20,8 +18,8 @@ public class GitHubUtil {
         return HttpUtil.getContent(new URI("https", null, "api.github.com", 443, path, query, null));
     }
 
-    protected static boolean hasInteractionData(String repoName) throws IOException {
-        HttpHead request = new HttpHead("https://raw.githubusercontent.com/" + repoName + "/master/globi.json");
+    protected static boolean hasInteractionData(String repoName, String globiFilename) throws IOException {
+        HttpHead request = new HttpHead("https://raw.githubusercontent.com/" + repoName + "/master/" + globiFilename);
         try {
             HttpResponse execute = HttpUtil.getHttpClient().execute(request);
             return execute.getStatusLine().getStatusCode() == 200;
@@ -45,11 +43,15 @@ public class GitHubUtil {
 
         List<String> reposWithData = new ArrayList<String>();
         for (String globiRepo : globiRepos) {
-            if (hasInteractionData(globiRepo)) {
+            if (isGloBIRepository(globiRepo)) {
                 reposWithData.add(globiRepo);
             }
         }
         return reposWithData;
+    }
+
+    protected static boolean isGloBIRepository(String globiRepo) throws IOException {
+        return hasInteractionData(globiRepo, "globi.json") || hasInteractionData(globiRepo, "globi-dataset.jsonld");
     }
 
     public static String lastCommitSHA(String repository) throws IOException, URISyntaxException {
