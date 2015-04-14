@@ -9,6 +9,7 @@ import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.service.GlobalNamesService;
 import org.eol.globi.service.GlobalNamesSources;
 import org.eol.globi.service.PropertyEnricherException;
+import org.eol.globi.service.TaxonUtil;
 import org.eol.globi.service.TermMatchListener;
 import org.eol.globi.util.NodeUtil;
 import org.neo4j.graphdb.GraphDatabaseService;
@@ -65,7 +66,9 @@ public class LinkerGlobalNames {
                     @Override
                     public void foundTaxonForName(Long id, String name, Taxon taxon) {
                         TaxonNode taxonNode = nodeMap.get(id);
-                        NodeUtil.createSameAsTaxon(taxon, taxonNode, graphDb);
+                        if (!TaxonUtil.likelyHomonym(taxon, taxonNode)) {
+                            NodeUtil.createSameAsTaxon(taxon, taxonNode, graphDb);
+                        }
                     }
                 }, desiredSources);
             }

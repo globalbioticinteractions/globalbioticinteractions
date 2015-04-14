@@ -47,12 +47,12 @@ public class GlobalNamesService implements PropertyEnricher {
     public Map<String, String> enrich(Map<String, String> properties) throws PropertyEnricherException {
         Map<String, String> enrichedProperties = new HashMap<String, String>();
         final List<Taxon> taxa = new ArrayList<Taxon>();
-        findTermsForNames(Arrays.asList(properties.get(PropertyAndValueDictionary.NAME)), new TermMatchListener() {
+        findTermsForNames(Collections.singletonList(properties.get(PropertyAndValueDictionary.NAME)), new TermMatchListener() {
             @Override
             public void foundTaxonForName(Long id, String name, Taxon taxon) {
                 taxa.add(taxon);
             }
-        }, Arrays.asList(source));
+        }, Collections.singletonList(source));
 
         if (taxa.size() > 0) {
             enrichedProperties.putAll(TaxonUtil.taxonToMap(taxa.get(0)));

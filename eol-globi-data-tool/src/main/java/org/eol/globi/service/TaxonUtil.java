@@ -1,6 +1,7 @@
 package org.eol.globi.service;
 
 import org.apache.commons.lang3.StringUtils;
+import org.eol.globi.data.CharsetConstant;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
@@ -56,5 +57,32 @@ public class TaxonUtil {
         TaxonImpl taxonCopy = new TaxonImpl();
         mapToTaxon(taxonToMap(taxon), taxonCopy);
         return taxonCopy;
+    }
+
+    public static boolean likelyHomonym(Taxon taxonA, Taxon taxonB) {
+        boolean likelyHomonym = false;
+        Map<String, String> pathMapA = toPathMap(taxonA);
+        Map<String, String> pathMapB = toPathMap(taxonB);
+        String[] ranks = new String[]{"kingdom", "phylum", "class"};
+        for (String rank : ranks) {
+            if (pathMapA.containsKey(rank) && pathMapB.containsKey(rank)) {
+                if (!StringUtils.equals(pathMapA.get(rank), pathMapB.get(rank))) {
+                    likelyHomonym = true;
+                }
+            }
+        }
+        return likelyHomonym;
+    }
+
+    protected static Map<String, String> toPathMap(Taxon taxonA) {
+        String[] pathNames = StringUtils.split(taxonA.getPathNames(), CharsetConstant.SEPARATOR_CHAR);
+        String[] path = StringUtils.split(taxonA.getPath(), CharsetConstant.SEPARATOR_CHAR);
+        Map<String, String> pathMap = new HashMap<String, String>();
+        if (pathNames != null && path != null && pathNames.length == path.length) {
+            for (int i = 0; i < pathNames.length; i++) {
+                pathMap.put(StringUtils.trim(StringUtils.lowerCase(pathNames[i])), StringUtils.trim(path[i]));
+            }
+        }
+        return pathMap;
     }
 }
