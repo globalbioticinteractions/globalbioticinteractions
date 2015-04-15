@@ -4,6 +4,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.commons.validator.routines.UrlValidator;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.PropertyAndValueDictionary;
@@ -280,13 +281,16 @@ public class CypherQueryBuilder {
         return lucenePathQuery.toString();
     }
 
-    public static String regex(List<String> terms) {
+    public static String regexWildcard(List<String> terms) {
+        return ".*(" + regexStrict(terms) + ").*";
+    }
+
+    protected static String regexStrict(List<String> terms) {
         List<String> quotedTerms = new ArrayList<String>();
         for (String term : terms) {
             quotedTerms.add(Pattern.quote(term).replace("\\Q", "\\\\Q").replace("\\E", "\\\\E"));
         }
-        String joined = StringUtils.join(quotedTerms, "|");
-        return ".*(" + joined + ").*";
+        return StringUtils.join(quotedTerms, "|");
     }
 
     private static Map<String, String> getParams(List<String> sourceTaxonNames, List<String> targetTaxonNames, List<String> accordingTo, boolean exactNameMatchesOnly) {
@@ -301,7 +305,7 @@ public class CypherQueryBuilder {
         }
 
         if (accordingTo != null && accordingTo.size() > 0) {
-            paramMap.put("accordingTo", regex(accordingTo));
+            paramMap.put("accordingTo", hasAtLeastOneURL(accordingTo) ? regexStrict(accordingTo) : regexWildcard(accordingTo));
         }
 
         return paramMap;
@@ -561,9 +565,17 @@ public class CypherQueryBuilder {
 
     protected static StringBuilder appendStartClause2(Map parameterMap, List<String> sourceTaxa, List<String> targetTaxa, StringBuilder query) {
         query.append("START");
-        List<String> accordingTo = collectParamValues(parameterMap, "accordingTo");
-        if (accordingTo.size() > 0) {
-            query.append(" study = node:studies('*:*') WHERE (has(study.externalId) AND study.externalId =~ {accordingTo}) OR (has(study.citation) AND study.citation =~ {accordingTo}) OR (has(study.source) AND study.source =~ {accordingTo}) WITH study");
+        List<String> accordingToParams = collectParamValues(parameterMap, "accordingTo");
+        if (accordingToParams.size() > 0) {
+            String whereClause;
+            if (hasAtLeastOneURL(accordingToParams)) {
+                whereClause = "(has(study.externalId) AND study.externalId = {accordingTo})";
+            } else {
+                whereClause = "(has(study.externalId) AND study.externalId =~ {accordingTo}) OR (has(study.citation) AND study.citation =~ {accordingTo}) OR (has(study.source) AND study.source =~ {accordingTo})";
+            }
+            query.append(" study = node:studies('*:*') WHERE ")
+                    .append(whereClause)
+                    .append(" WITH study");
         } else if (noSearchCriteria(RequestHelper.isSpatialSearch(parameterMap), sourceTaxa, targetTaxa)) {
             query.append(" study = node:studies('*:*')");
         } else if (sourceTaxa.size() == 0 && targetTaxa.size() == 0) {
@@ -579,6 +591,15 @@ public class CypherQueryBuilder {
             }
         }
         return query;
+    }
+
+    private static boolean hasAtLeastOneURL(List<String> accordingToParams) {
+        boolean hasAtLeastOneURL = false;
+        for (String s : accordingToParams) {
+            UrlValidator urlValidator = new UrlValidator();
+            hasAtLeastOneURL = hasAtLeastOneURL || urlValidator.isValid(s);
+        }
+        return hasAtLeastOneURL;
     }
 
     private static StringBuilder appendStartMatchWhereClauses(List<String> sourceTaxa, List<String> interactionTypes, List<String> targetTaxa, Map parameterMap) {

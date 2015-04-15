@@ -216,6 +216,24 @@ public class CypherQueryBuilderTest {
     }
 
     @Test
+    public void findInteractionsAccordingToWithTargetTaxaOnly2() throws IOException {
+        HashMap<String, String[]> params = new HashMap<String, String[]>() {
+            {
+                put("accordingTo", new String[]{"http://inaturalist.org/bla"});
+                put("targetTaxon", new String[]{"Arthropoda"});
+                put("field", new String[]{"source_taxon_name", "target_taxon_name"});
+            }
+        };
+
+        CypherQuery query = buildInteractionQuery(params, MULTI_TAXON_DISTINCT);
+        assertThat(query.getQuery(), is("START study = node:studies('*:*') WHERE (has(study.externalId) AND study.externalId = {accordingTo}) WITH study " +
+                EXPECTED_MATCH_CLAUSE +
+                "WHERE (has(targetTaxon.path) AND targetTaxon.path =~ '(.*(Arthropoda).*)' ) " +
+                "WITH distinct targetTaxon as tTaxon, type(interaction) as iType, sourceTaxon as sTaxon RETURN sTaxon.name as source_taxon_name,tTaxon.name as target_taxon_name"));
+        assertThat(query.getParams().toString(), is(is("{accordingTo=\\\\Qhttp://inaturalist.org/bla\\\\E, target_taxon_name=path:\\\"Arthropoda\\\"}")));
+    }
+
+    @Test
     public void findInteractionsAccordingToWithSourceTaxaOnly() throws IOException {
         HashMap<String, String[]> params = new HashMap<String, String[]>() {
             {
@@ -798,6 +816,5 @@ public class CypherQueryBuilderTest {
                 , is(" MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen-[interaction:PREYS_UPON]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon" +
                 ", sourceSpecimen<-[collected_rel:COLLECTED]-study, sourceSpecimen-[?:COLLECTED_AT]->loc "));
     }
-
 
 }

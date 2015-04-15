@@ -21,7 +21,6 @@
         <jetty.version>9.2.3.v20140905</jetty.version>
         <slf4j.version>1.6.1</slf4j.version>
         <javax.validation.version>1.0.0.GA</javax.validation.version>
-        <commons-dbcp.version>1.4</commons-dbcp.version>
         <javassist.version>3.9.0.GA</javassist.version>
     </properties>
 
@@ -114,6 +113,11 @@
             <groupId>javax.validation</groupId>
             <artifactId>validation-api</artifactId>
             <version>${javax.validation.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-validator</groupId>
+            <artifactId>commons-validator</artifactId>
+            <version>1.4.0</version>
         </dependency>
         <dependency>
             <groupId>javax.transaction</groupId>
