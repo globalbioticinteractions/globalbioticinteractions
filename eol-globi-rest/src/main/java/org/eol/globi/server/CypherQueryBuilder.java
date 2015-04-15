@@ -282,7 +282,7 @@ public class CypherQueryBuilder {
     }
 
     public static String regexWildcard(List<String> terms) {
-        return ".*(" + regexStrict(terms) + ").*";
+        return ".*" + regexStrict(terms) + ".*";
     }
 
     protected static String regexStrict(List<String> terms) {
@@ -290,7 +290,7 @@ public class CypherQueryBuilder {
         for (String term : terms) {
             quotedTerms.add(Pattern.quote(term).replace("\\Q", "\\\\Q").replace("\\E", "\\\\E"));
         }
-        return StringUtils.join(quotedTerms, "|");
+        return "(" + StringUtils.join(quotedTerms, "|") + ")";
     }
 
     private static Map<String, String> getParams(List<String> sourceTaxonNames, List<String> targetTaxonNames, List<String> accordingTo, boolean exactNameMatchesOnly) {
@@ -569,7 +569,7 @@ public class CypherQueryBuilder {
         if (accordingToParams.size() > 0) {
             String whereClause;
             if (hasAtLeastOneURL(accordingToParams)) {
-                whereClause = "(has(study.externalId) AND study.externalId = {accordingTo})";
+                whereClause = "(has(study.externalId) AND study.externalId =~ {accordingTo})";
             } else {
                 whereClause = "(has(study.externalId) AND study.externalId =~ {accordingTo}) OR (has(study.citation) AND study.citation =~ {accordingTo}) OR (has(study.source) AND study.source =~ {accordingTo})";
             }
