@@ -11,7 +11,6 @@ import org.eol.globi.domain.Location;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.util.CSVUtil;
-import org.eol.globi.util.HttpUtil;
 import org.eol.globi.util.ResourceUtil;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -24,7 +23,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -131,36 +129,44 @@ public class StudyImporterForSeltmann extends BaseStudyImporter {
                     }
 
                     if (StringUtils.isNotBlank(sourceName) && StringUtils.isNotBlank(targetName)) {
-                        Specimen source = nodeFactory.createSpecimen(study, sourceName);
-                        Specimen target = nodeFactory.createSpecimen(study, targetName);
-                        String interactionURI = assoc.get("aec:associatedRelationshipURI");
-                        final Map<String, InteractType> assocInteractMap = new HashMap<String, InteractType>() {{
-                            // no known interaction terms yet
-                        }
-                        };
-                        InteractType interactType = StringUtils.isBlank(interactionURI) ? InteractType.INTERACTS_WITH : assocInteractMap.get(interactionURI);
-                        if (interactType == null) {
-                            throw new StudyImporterException("found unsupported interactionURI: [" + interactionURI +"] related to" + getLineMsg(occurrence));
-                        }
-                        source.interactsWith(target, interactType);
-                        String basisOfRecord = occurrence.getValueByLabel("dwc:basisOfRecord");
-                        nodeFactory.setUnixEpochProperty(source, date);
-                        nodeFactory.setUnixEpochProperty(target, date);
-                        String latitude = occurrence.getValueByLabel("dwc:decimalLatitude");
-                        String longitude = occurrence.getValueByLabel("dwc:decimalLongitude");
-                        if (StringUtils.isNotBlank(latitude) && StringUtils.isNotBlank(longitude)) {
-                            Location loc = nodeFactory.getOrCreateLocation(Double.parseDouble(latitude), Double.parseDouble(longitude), null);
-                            source.caughtIn(loc);
+                        try {
+                            createInteraction(occurrence, study, assoc, targetName, sourceName, date);
+                        } catch (NodeFactoryException ex) {
+                            String message = "failed to import interaction because of [" + ex.getMessage() + "]" + getLineMsg(occurrence);
+                            LOG.warn(message);
+                            getLogger().warn(study, message);
                         }
                     }
                 }
             }
         } catch (IOException e) {
             throw new StudyImporterException(e);
-        } catch (NodeFactoryException e) {
-            throw new StudyImporterException(e);
         }
         return null;
+    }
+
+    protected void createInteraction(LabeledCSVParser occurrence, Study study, Map<String, String> assoc, String targetName, String sourceName, Date date) throws NodeFactoryException, StudyImporterException {
+        Specimen source = nodeFactory.createSpecimen(study, sourceName);
+        Specimen target = nodeFactory.createSpecimen(study, targetName);
+        String interactionURI = assoc.get("aec:associatedRelationshipURI");
+        final Map<String, InteractType> assocInteractMap = new HashMap<String, InteractType>() {{
+            // no known interaction terms yet
+        }
+        };
+        InteractType interactType = StringUtils.isBlank(interactionURI) ? InteractType.INTERACTS_WITH : assocInteractMap.get(interactionURI);
+        if (interactType == null) {
+            throw new StudyImporterException("found unsupported interactionURI: [" + interactionURI +"] related to" + getLineMsg(occurrence));
+        }
+        source.interactsWith(target, interactType);
+        String basisOfRecord = occurrence.getValueByLabel("dwc:basisOfRecord");
+        nodeFactory.setUnixEpochProperty(source, date);
+        nodeFactory.setUnixEpochProperty(target, date);
+        String latitude = occurrence.getValueByLabel("dwc:decimalLatitude");
+        String longitude = occurrence.getValueByLabel("dwc:decimalLongitude");
+        if (StringUtils.isNotBlank(latitude) && StringUtils.isNotBlank(longitude)) {
+            Location loc = nodeFactory.getOrCreateLocation(Double.parseDouble(latitude), Double.parseDouble(longitude), null);
+            source.caughtIn(loc);
+        }
     }
 
     private String getLineMsg(LabeledCSVParser occurrence) {
