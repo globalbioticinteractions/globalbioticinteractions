@@ -5,6 +5,7 @@ import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.geo.LatLng;
+import org.eol.globi.server.CypherQueryBuilder;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -114,15 +115,18 @@ public class RequestHelper {
         }
     }
 
-    public static void appendSpatialClauses(Map<String, String[]> paramMap, StringBuilder query) {
-        addSpatialClause(RequestHelper.parseSpatialSearchParams(paramMap), query);
+    public static void appendSpatialClauses(Map<String, String[]> paramMap, StringBuilder query, CypherQueryBuilder.QueryType queryType) {
+        addSpatialClause(RequestHelper.parseSpatialSearchParams(paramMap), query, queryType);
     }
 
-    public static void addSpatialClause(List<LatLng> points, StringBuilder query) {
+    public static void addSpatialClause(List<LatLng> points, StringBuilder query, CypherQueryBuilder.QueryType queryType) {
         if (isPointOrBox(points)) {
             query.append(", sourceSpecimen-[:COLLECTED_AT]->loc ");
-        } else {
+        } else if (CypherQueryBuilder.QueryType.MULTI_TAXON_ALL.equals(queryType)
+                || CypherQueryBuilder.QueryType.SINGLE_TAXON_ALL.equals(queryType)){
             query.append(", sourceSpecimen-[?:COLLECTED_AT]->loc ");
+        } else {
+            query.append(" ");
         }
 
         if (isPointOrBox(points)) {

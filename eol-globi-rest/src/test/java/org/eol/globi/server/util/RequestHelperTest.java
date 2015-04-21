@@ -1,5 +1,6 @@
 package org.eol.globi.server.util;
 
+import org.eol.globi.server.CypherQueryBuilder;
 import org.hamcrest.core.Is;
 import org.junit.Test;
 import org.eol.globi.geo.LatLng;
@@ -30,7 +31,7 @@ public class RequestHelperTest {
         assertThat(points.get(0).getLng(), Is.is(12.1d));
 
         StringBuilder clause = new StringBuilder();
-        RequestHelper.addSpatialClause(points, clause);
+        RequestHelper.addSpatialClause(points, clause, CypherQueryBuilder.QueryType.MULTI_TAXON_ALL);
         assertThat(clause.toString().trim().replaceAll("\\s+", " "), Is.is(", sourceSpecimen-[:COLLECTED_AT]->loc WHERE loc.latitude = 12.2" +
                 " AND loc.longitude = 12.1"));
     }
@@ -66,7 +67,7 @@ public class RequestHelperTest {
         assertThat(points.get(1).getLng(), Is.is(20d));
 
         StringBuilder clause = new StringBuilder();
-         RequestHelper.addSpatialClause(points, clause);
+         RequestHelper.addSpatialClause(points, clause, CypherQueryBuilder.QueryType.MULTI_TAXON_ALL);
         assertThat(clause.toString().trim().replaceAll("\\s+", " "),
                 Is.is(", sourceSpecimen-[:COLLECTED_AT]->loc WHERE loc.latitude < 10.0" +
                         " AND loc.longitude > -20.0" +
@@ -114,7 +115,7 @@ public class RequestHelperTest {
         assertThat(points.get(0).getLng(), Is.is(12.4d));
 
         StringBuilder clause = new StringBuilder();
-        RequestHelper.addSpatialClause(points, clause);
+        RequestHelper.addSpatialClause(points, clause, CypherQueryBuilder.QueryType.MULTI_TAXON_ALL);
         assertThat(clause.toString().trim().replaceAll("\\s+", " "),
                 Is.is(", sourceSpecimen-[:COLLECTED_AT]->loc WHERE loc.latitude = 10.0" +
                         " AND loc.longitude = 12.4"));

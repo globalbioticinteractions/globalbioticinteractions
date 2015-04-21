@@ -262,9 +262,9 @@ public class CypherQueryBuilder {
         SINGLE_TAXON_DISTINCT, SINGLE_TAXON_ALL, MULTI_TAXON_DISTINCT, MULTI_TAXON_ALL
     }
 
-    public static void addLocationClausesIfNecessary(StringBuilder query, Map parameterMap) {
+    public static void addLocationClausesIfNecessary(StringBuilder query, Map parameterMap, QueryType queryType) {
         if (parameterMap != null) {
-            RequestHelper.appendSpatialClauses(parameterMap, query);
+            RequestHelper.appendSpatialClauses(parameterMap, query, queryType);
         }
     }
 
@@ -407,7 +407,7 @@ public class CypherQueryBuilder {
     }
 
     protected static CypherQuery interactionObservations(List<String> sourceTaxa, List<String> interactionTypes, List<String> targetTaxa, Map parameterMap, QueryType queryType) {
-        StringBuilder query = appendStartMatchWhereClauses(sourceTaxa, interactionTypes, targetTaxa, parameterMap);
+        StringBuilder query = appendStartMatchWhereClauses(sourceTaxa, interactionTypes, targetTaxa, parameterMap, queryType);
         appendReturnClause(interactionTypes, query, queryType, collectRequestedFields(parameterMap));
         return new CypherQuery(query.toString(), getParams(sourceTaxa, targetTaxa, collectParamValues(parameterMap, "accordingTo"), shouldIncludeExactNameMatchesOnly(parameterMap)));
     }
@@ -602,10 +602,10 @@ public class CypherQueryBuilder {
         return hasAtLeastOneURL;
     }
 
-    private static StringBuilder appendStartMatchWhereClauses(List<String> sourceTaxa, List<String> interactionTypes, List<String> targetTaxa, Map parameterMap) {
+    private static StringBuilder appendStartMatchWhereClauses(List<String> sourceTaxa, List<String> interactionTypes, List<String> targetTaxa, Map parameterMap, QueryType queryType) {
         StringBuilder query = new StringBuilder();
         appendStartClause2(parameterMap, sourceTaxa, targetTaxa, query);
-        appendMatchAndWhereClause(interactionTypes, parameterMap, query);
+        appendMatchAndWhereClause(interactionTypes, parameterMap, query, queryType);
         return appendTaxonWherClauseIfNecessary(parameterMap, sourceTaxa, targetTaxa, query);
     }
 
@@ -668,11 +668,11 @@ public class CypherQueryBuilder {
         appendReturnFields(query, fields, selectors);
     }
 
-    protected static StringBuilder appendMatchAndWhereClause(List<String> interactionTypes, Map parameterMap, StringBuilder query) {
+    protected static StringBuilder appendMatchAndWhereClause(List<String> interactionTypes, Map parameterMap, StringBuilder query, QueryType queryType) {
         String interactionMatch = getInteractionMatch(createInteractionTypeSelector(interactionTypes));
         query.append(" ")
                 .append(interactionMatch);
-        addLocationClausesIfNecessary(query, parameterMap);
+        addLocationClausesIfNecessary(query, parameterMap, queryType);
         return query;
     }
 

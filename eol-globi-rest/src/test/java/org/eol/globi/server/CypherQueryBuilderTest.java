@@ -23,15 +23,17 @@ import static org.junit.Assert.assertThat;
 public class CypherQueryBuilderTest {
 
     public static final String EXPECTED_INTERACTION_CLAUSE_ALL_INTERACTIONS = expectedInteractionClause(InteractUtil.allInteractionsCypherClause());
-    public static final String EXPECTED_MATCH_CLAUSE = expectedMatchClause(EXPECTED_INTERACTION_CLAUSE_ALL_INTERACTIONS, false);
-    public static final String EXPECTED_MATCH_CLAUSE_SPATIAL = expectedMatchClause(EXPECTED_INTERACTION_CLAUSE_ALL_INTERACTIONS, true);
+    public static final String EXPECTED_MATCH_CLAUSE_ALL = expectedMatchClause(EXPECTED_INTERACTION_CLAUSE_ALL_INTERACTIONS, false, true);
+    public static final String EXPECTED_MATCH_CLAUSE_DISTINCT = expectedMatchClause(EXPECTED_INTERACTION_CLAUSE_ALL_INTERACTIONS, false, false);
+    public static final String EXPECTED_MATCH_CLAUSE_SPATIAL = expectedMatchClause(EXPECTED_INTERACTION_CLAUSE_ALL_INTERACTIONS, true, true);
 
     private static String expectedInteractionClause(String interactions) {
         return "sourceSpecimen-[interaction:" + interactions + "]->targetSpecimen";
     }
 
-    private static String expectedMatchClause(String expectedInteractionClause, boolean isSpatial) {
-        return "MATCH sourceTaxon<-[:CLASSIFIED_AS]-" + expectedInteractionClause + "-[:CLASSIFIED_AS]->targetTaxon, sourceSpecimen<-[collected_rel:COLLECTED]-study, sourceSpecimen-[" + (isSpatial ? "" : "?") + ":COLLECTED_AT]->loc ";
+    private static String expectedMatchClause(String expectedInteractionClause, boolean hasSpatialConstraints, boolean requestedSpatialInfo) {
+        String spatialClause = requestedSpatialInfo ? (", sourceSpecimen-[" + (hasSpatialConstraints ? "" : "?") + ":COLLECTED_AT]->loc ") : " ";
+        return "MATCH sourceTaxon<-[:CLASSIFIED_AS]-" + expectedInteractionClause + "-[:CLASSIFIED_AS]->targetTaxon, sourceSpecimen<-[collected_rel:COLLECTED]-study" + spatialClause;
     }
 
     private static String expectedReplacementString(String interactionParamName) {
@@ -191,7 +193,7 @@ public class CypherQueryBuilderTest {
 
         CypherQuery query = buildInteractionQuery(params, MULTI_TAXON_DISTINCT);
         assertThat(query.getQuery(), is("START study = node:studies('*:*') WHERE (has(study.externalId) AND study.externalId =~ {accordingTo}) OR (has(study.citation) AND study.citation =~ {accordingTo}) OR (has(study.source) AND study.source =~ {accordingTo}) WITH study " +
-                EXPECTED_MATCH_CLAUSE +
+                EXPECTED_MATCH_CLAUSE_DISTINCT +
                 "WHERE (has(targetTaxon.path) AND targetTaxon.path =~ '(.*(Arthropoda).*)' AND has(sourceTaxon.path) AND sourceTaxon.path =~ '(.*(Arthropoda).*)' ) " +
                 "WITH distinct targetTaxon as tTaxon, type(interaction) as iType, sourceTaxon as sTaxon RETURN sTaxon.name as source_taxon_name,tTaxon.name as target_taxon_name"));
         assertThat(query.getParams().toString(), is(is("{accordingTo=.*(\\\\Qinaturalist\\\\E).*, source_taxon_name=path:\\\"Arthropoda\\\", target_taxon_name=path:\\\"Arthropoda\\\"}")));
@@ -209,7 +211,7 @@ public class CypherQueryBuilderTest {
 
         CypherQuery query = buildInteractionQuery(params, MULTI_TAXON_DISTINCT);
         assertThat(query.getQuery(), is("START study = node:studies('*:*') WHERE (has(study.externalId) AND study.externalId =~ {accordingTo}) OR (has(study.citation) AND study.citation =~ {accordingTo}) OR (has(study.source) AND study.source =~ {accordingTo}) WITH study " +
-                EXPECTED_MATCH_CLAUSE +
+                EXPECTED_MATCH_CLAUSE_DISTINCT +
                 "WHERE (has(targetTaxon.path) AND targetTaxon.path =~ '(.*(Arthropoda).*)' ) " +
                 "WITH distinct targetTaxon as tTaxon, type(interaction) as iType, sourceTaxon as sTaxon RETURN sTaxon.name as source_taxon_name,tTaxon.name as target_taxon_name"));
         assertThat(query.getParams().toString(), is(is("{accordingTo=.*(\\\\Qinaturalist\\\\E).*, target_taxon_name=path:\\\"Arthropoda\\\"}")));
@@ -227,7 +229,7 @@ public class CypherQueryBuilderTest {
 
         CypherQuery query = buildInteractionQuery(params, MULTI_TAXON_DISTINCT);
         assertThat(query.getQuery(), is("START study = node:studies('*:*') WHERE (has(study.externalId) AND study.externalId =~ {accordingTo}) WITH study " +
-                EXPECTED_MATCH_CLAUSE +
+                EXPECTED_MATCH_CLAUSE_DISTINCT +
                 "WHERE (has(targetTaxon.path) AND targetTaxon.path =~ '(.*(Arthropoda).*)' ) " +
                 "WITH distinct targetTaxon as tTaxon, type(interaction) as iType, sourceTaxon as sTaxon RETURN sTaxon.name as source_taxon_name,tTaxon.name as target_taxon_name"));
         assertThat(query.getParams().toString(), is(is("{accordingTo=(\\\\Qhttp://inaturalist.org/bla\\\\E), target_taxon_name=path:\\\"Arthropoda\\\"}")));
@@ -245,7 +247,7 @@ public class CypherQueryBuilderTest {
 
         CypherQuery query = buildInteractionQuery(params, MULTI_TAXON_DISTINCT);
         assertThat(query.getQuery(), is("START study = node:studies('*:*') WHERE (has(study.externalId) AND study.externalId =~ {accordingTo}) WITH study " +
-                EXPECTED_MATCH_CLAUSE +
+                EXPECTED_MATCH_CLAUSE_DISTINCT +
                 "WHERE (has(targetTaxon.path) AND targetTaxon.path =~ '(.*(Arthropoda).*)' ) " +
                 "WITH distinct targetTaxon as tTaxon, type(interaction) as iType, sourceTaxon as sTaxon RETURN sTaxon.name as source_taxon_name,tTaxon.name as target_taxon_name"));
         assertThat(query.getParams().toString(), is(is("{accordingTo=(\\\\Qhttp://inaturalist.org/bla\\\\E|\\\\Qhttp://inaturalist.org/bla2\\\\E), target_taxon_name=path:\\\"Arthropoda\\\"}")));
@@ -263,7 +265,7 @@ public class CypherQueryBuilderTest {
 
         CypherQuery query = buildInteractionQuery(params, MULTI_TAXON_DISTINCT);
         assertThat(query.getQuery(), is("START study = node:studies('*:*') WHERE (has(study.externalId) AND study.externalId =~ {accordingTo}) OR (has(study.citation) AND study.citation =~ {accordingTo}) OR (has(study.source) AND study.source =~ {accordingTo}) WITH study " +
-                EXPECTED_MATCH_CLAUSE +
+                EXPECTED_MATCH_CLAUSE_DISTINCT +
                 "WHERE (has(sourceTaxon.path) AND sourceTaxon.path =~ '(.*(Arthropoda).*)' ) " +
                 "WITH distinct targetTaxon as tTaxon, type(interaction) as iType, sourceTaxon as sTaxon RETURN sTaxon.name as source_taxon_name,tTaxon.name as target_taxon_name"));
         assertThat(query.getParams().toString(), is(is("{accordingTo=.*(\\\\Qinaturalist\\\\E).*, source_taxon_name=path:\\\"Arthropoda\\\"}")));
@@ -282,7 +284,7 @@ public class CypherQueryBuilderTest {
 
         CypherQuery query = buildInteractionQuery(params, MULTI_TAXON_DISTINCT);
         assertThat(query.getQuery(), is("START study = node:studies('*:*') WHERE (has(study.externalId) AND study.externalId =~ {accordingTo}) OR (has(study.citation) AND study.citation =~ {accordingTo}) OR (has(study.source) AND study.source =~ {accordingTo}) WITH study " +
-                EXPECTED_MATCH_CLAUSE +
+                EXPECTED_MATCH_CLAUSE_DISTINCT +
                 "WHERE (has(sourceTaxon.name) AND sourceTaxon.name IN ['Arthropoda'] ) " +
                 "WITH distinct targetTaxon as tTaxon, type(interaction) as iType, sourceTaxon as sTaxon RETURN sTaxon.name as source_taxon_name,tTaxon.name as target_taxon_name"));
         assertThat(query.getParams().toString(), is(is("{accordingTo=.*(\\\\Qinaturalist\\\\E).*, source_taxon_name=name:\\\"Arthropoda\\\"}")));
@@ -301,7 +303,7 @@ public class CypherQueryBuilderTest {
 
         CypherQuery query = buildInteractionQuery(params, MULTI_TAXON_DISTINCT);
         assertThat(query.getQuery(), is("START study = node:studies('*:*') WHERE (has(study.externalId) AND study.externalId =~ {accordingTo}) OR (has(study.citation) AND study.citation =~ {accordingTo}) OR (has(study.source) AND study.source =~ {accordingTo}) WITH study " +
-                EXPECTED_MATCH_CLAUSE +
+                EXPECTED_MATCH_CLAUSE_DISTINCT +
                 "WHERE (has(sourceTaxon.name) AND sourceTaxon.name IN ['Arthropoda'] ) " +
                 "WITH distinct targetTaxon as tTaxon, type(interaction) as iType, sourceTaxon as sTaxon RETURN sTaxon.name as source_taxon_name,tTaxon.name as target_taxon_name"));
         assertThat(query.getParams().toString(), is(is("{accordingTo=.*(\\\\Qinaturalist\\\\E).*, source_taxon_name=name:\\\"Arthropoda\\\"}")));
@@ -320,7 +322,7 @@ public class CypherQueryBuilderTest {
 
         CypherQuery query = buildInteractionQuery(params, MULTI_TAXON_ALL);
         assertThat(query.getQuery(), is("START sourceTaxon = node:taxons({source_taxon_name}) " +
-                EXPECTED_MATCH_CLAUSE +
+                EXPECTED_MATCH_CLAUSE_ALL +
                 "WHERE has(targetTaxon.name) AND targetTaxon.name IN ['Insecta']" +
                 " RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name"));
         assertThat(query.getParams().toString(), is(is("{source_taxon_name=name:\\\"Arthropoda\\\", target_taxon_name=name:\\\"Insecta\\\"}")));
@@ -337,7 +339,7 @@ public class CypherQueryBuilderTest {
 
         CypherQuery query = buildInteractionQuery(params, MULTI_TAXON_DISTINCT);
         assertThat(query.getQuery(), is("START study = node:studies('*:*') WHERE (has(study.externalId) AND study.externalId =~ {accordingTo}) OR (has(study.citation) AND study.citation =~ {accordingTo}) OR (has(study.source) AND study.source =~ {accordingTo}) WITH study " +
-                EXPECTED_MATCH_CLAUSE +
+                EXPECTED_MATCH_CLAUSE_DISTINCT +
                 "WITH distinct targetTaxon as tTaxon, type(interaction) as iType, sourceTaxon as sTaxon RETURN sTaxon.name as source_taxon_name,tTaxon.name as target_taxon_name"));
         assertThat(query.getParams().toString(), is(is("{accordingTo=.*(\\\\Qinaturalist\\\\E).*}")));
     }
@@ -353,7 +355,7 @@ public class CypherQueryBuilderTest {
 
         CypherQuery query = buildInteractionQuery(params, MULTI_TAXON_DISTINCT);
         assertThat(query.getQuery(), is("START study = node:studies('*:*') WHERE (has(study.externalId) AND study.externalId =~ {accordingTo}) OR (has(study.citation) AND study.citation =~ {accordingTo}) OR (has(study.source) AND study.source =~ {accordingTo}) WITH study " +
-                EXPECTED_MATCH_CLAUSE +
+                EXPECTED_MATCH_CLAUSE_DISTINCT +
                 "WITH distinct targetTaxon as tTaxon, type(interaction) as iType, sourceTaxon as sTaxon RETURN sTaxon.name as source_taxon_name,tTaxon.name as target_taxon_name"));
         assertThat(query.getParams().toString(), is(is("{accordingTo=.*(\\\\Qinaturalist\\\\E|\\\\Qgomexsi.edu\\\\E).*}")));
     }
@@ -389,7 +391,7 @@ public class CypherQueryBuilderTest {
 
         CypherQuery query = buildInteractionQuery(params, MULTI_TAXON_ALL);
         assertThat(query.getQuery(), is("START sourceTaxon = node:taxonPaths({source_taxon_name}) " +
-                EXPECTED_MATCH_CLAUSE +
+                EXPECTED_MATCH_CLAUSE_ALL +
                 "WHERE has(targetTaxon.path) AND targetTaxon.path =~ '(.*(Arthropoda).*)' " +
                 "RETURN targetTaxon.name as target_taxon_name,study.citation? as study_citation"));
         assertThat(query.getParams().toString(), is(is("{source_taxon_name=path:\\\"Enhydra\\\", target_taxon_name=path:\\\"Arthropoda\\\"}")));
@@ -509,7 +511,7 @@ public class CypherQueryBuilderTest {
         };
 
         String expectedQuery = "START sourceTaxon = node:taxonPaths({source_taxon_name}) " +
-                EXPECTED_MATCH_CLAUSE +
+                EXPECTED_MATCH_CLAUSE_ALL +
                 "WHERE has(targetTaxon.path) AND targetTaxon.path =~ '(.*(Arthropoda).*)' " +
                 EXPECTED_RETURN_CLAUSE;
         CypherQuery query = buildInteractionQuery(params, MULTI_TAXON_ALL);
@@ -526,7 +528,7 @@ public class CypherQueryBuilderTest {
         };
 
         String expectedQuery = "START targetTaxon = node:taxonPaths({target_taxon_name}) " +
-                EXPECTED_MATCH_CLAUSE +
+                EXPECTED_MATCH_CLAUSE_ALL +
                 EXPECTED_RETURN_CLAUSE;
         CypherQuery query = buildInteractionQuery(params, MULTI_TAXON_ALL);
         assertThat(query.getQuery(), is(expectedQuery));
@@ -544,7 +546,7 @@ public class CypherQueryBuilderTest {
         };
 
         String expectedQuery = "START sourceTaxon = node:taxonPaths({source_taxon_name}) " +
-                expectedMatchClause(expectedInteractionClause("PREYS_UPON|PARASITE_OF"), false) +
+                expectedMatchClause(expectedInteractionClause("PREYS_UPON|PARASITE_OF"), false, true) +
                 "WHERE has(targetTaxon.path) AND targetTaxon.path =~ '(.*(Mammalia).*)' " +
                 EXPECTED_RETURN_CLAUSE;
         CypherQuery query = buildInteractionQuery(params, MULTI_TAXON_ALL);
@@ -563,7 +565,7 @@ public class CypherQueryBuilderTest {
         };
 
         String expectedQuery = "START sourceTaxon = node:taxonPaths({source_taxon_name}) " +
-                expectedMatchClause(expectedInteractionClause("PREYS_UPON|PARASITE_OF"), false) +
+                expectedMatchClause(expectedInteractionClause("PREYS_UPON|PARASITE_OF"), false, false) +
                 "WHERE has(targetTaxon.path) AND targetTaxon.path =~ '(.*(Mammalia).*)' " +
                 EXPECTED_RETURN_CLAUSE_DISTINCT;
         CypherQuery query = buildInteractionQuery(params, MULTI_TAXON_DISTINCT);
@@ -583,7 +585,7 @@ public class CypherQueryBuilderTest {
         };
 
         String expectedQuery = "START sourceTaxon = node:taxonPaths({source_taxon_name}) " +
-                expectedMatchClause(expectedInteractionClause("POLLINATED_BY"), false) +
+                expectedMatchClause(expectedInteractionClause("POLLINATED_BY"), false, true) +
                 "WHERE has(targetTaxon.path) AND targetTaxon.path =~ '(.*(Mammalia).*)' " +
                 EXPECTED_RETURN_CLAUSE;
         CypherQuery query = buildInteractionQuery(params, MULTI_TAXON_ALL);
@@ -602,7 +604,7 @@ public class CypherQueryBuilderTest {
         };
 
         String expectedQuery = "START sourceTaxon = node:taxonPaths({source_taxon_name}) " +
-                expectedMatchClause(EXPECTED_INTERACTION_CLAUSE_ALL_INTERACTIONS, false) +
+                expectedMatchClause(EXPECTED_INTERACTION_CLAUSE_ALL_INTERACTIONS, false, true) +
                 "WHERE has(targetTaxon.path) AND targetTaxon.path =~ '(.*(Mammalia).*)' " +
                 EXPECTED_RETURN_CLAUSE;
         CypherQuery query = buildInteractionQuery(params, MULTI_TAXON_ALL);
@@ -621,7 +623,7 @@ public class CypherQueryBuilderTest {
         };
 
         String expectedQuery = "START sourceTaxon = node:taxonPaths({source_taxon_name}) " +
-                expectedMatchClause(EXPECTED_INTERACTION_CLAUSE_ALL_INTERACTIONS, false) +
+                expectedMatchClause(EXPECTED_INTERACTION_CLAUSE_ALL_INTERACTIONS, false, true) +
                 "WHERE has(targetTaxon.path) AND targetTaxon.path =~ '(.*(Mammalia).*)' " +
                 EXPECTED_RETURN_CLAUSE;
         CypherQuery query = buildInteractionQuery(params, MULTI_TAXON_ALL);
@@ -653,7 +655,7 @@ public class CypherQueryBuilderTest {
         };
 
         String expectedQuery = "START sourceTaxon = node:taxonPaths({source_taxon_name}) " +
-                expectedMatchClause(EXPECTED_INTERACTION_CLAUSE_ALL_INTERACTIONS, false) +
+                expectedMatchClause(EXPECTED_INTERACTION_CLAUSE_ALL_INTERACTIONS, false, true) +
                 "WHERE has(targetTaxon.path) AND targetTaxon.path =~ '(.*(Mammalia).*)' " +
                 EXPECTED_RETURN_CLAUSE;
         CypherQuery query = buildInteractionQuery(params, MULTI_TAXON_ALL);
@@ -670,7 +672,7 @@ public class CypherQueryBuilderTest {
         };
 
         String expectedQuery = "START sourceTaxon = node:taxonPaths({source_taxon_name}) " +
-                EXPECTED_MATCH_CLAUSE +
+                EXPECTED_MATCH_CLAUSE_ALL +
                 EXPECTED_RETURN_CLAUSE;
         CypherQuery query = buildInteractionQuery(params, MULTI_TAXON_ALL);
         assertThat(query.getQuery(), is(expectedQuery));
@@ -680,7 +682,7 @@ public class CypherQueryBuilderTest {
     @Test
     public void findInteractionNoParams() throws IOException {
         String expectedQuery = "START study = node:studies('*:*') " +
-                EXPECTED_MATCH_CLAUSE +
+                EXPECTED_MATCH_CLAUSE_ALL +
                 EXPECTED_RETURN_CLAUSE;
         CypherQuery query = buildInteractionQuery(new HashMap<String, String[]>(), MULTI_TAXON_ALL);
         assertThat(query.getQuery(), is(expectedQuery));
@@ -741,7 +743,7 @@ public class CypherQueryBuilderTest {
     public void findDistinctPlantPreyWithoutLocation() throws IOException {
         HashMap<String, String[]> params = new HashMap<String, String[]>();
         CypherQuery query = buildInteractionQuery("Homo sapiens", "preysOn", "Plantae", params, SINGLE_TAXON_DISTINCT);
-        assertThat(query.getQuery(), is("START sourceTaxon = node:taxonPaths({source_taxon_name}) MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen-[interaction:PREYS_UPON]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon, sourceSpecimen<-[collected_rel:COLLECTED]-study, sourceSpecimen-[?:COLLECTED_AT]->loc WHERE has(targetTaxon.path) AND targetTaxon.path =~ '(.*(Plantae).*)' RETURN sourceTaxon.name as source_taxon_name,'preysOn' as interaction_type,collect(distinct(targetTaxon.name)) as target_taxon_name"));
+        assertThat(query.getQuery(), is("START sourceTaxon = node:taxonPaths({source_taxon_name}) MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen-[interaction:PREYS_UPON]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon, sourceSpecimen<-[collected_rel:COLLECTED]-study WHERE has(targetTaxon.path) AND targetTaxon.path =~ '(.*(Plantae).*)' RETURN sourceTaxon.name as source_taxon_name,'preysOn' as interaction_type,collect(distinct(targetTaxon.name)) as target_taxon_name"));
         assertThat(query.getParams().toString(), is("{source_taxon_name=path:\\\"Homo sapiens\\\", target_taxon_name=path:\\\"Plantae\\\"}"));
     }
 
@@ -749,7 +751,7 @@ public class CypherQueryBuilderTest {
     public void findDistinctPlantParasiteWithoutLocation() throws IOException {
         HashMap<String, String[]> params = new HashMap<String, String[]>();
         CypherQuery query = buildInteractionQuery("Homo sapiens", "parasiteOf", "Plantae", params, SINGLE_TAXON_DISTINCT);
-        assertThat(query.getQuery(), is("START sourceTaxon = node:taxonPaths({source_taxon_name}) MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen-[interaction:PARASITE_OF]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon, sourceSpecimen<-[collected_rel:COLLECTED]-study, sourceSpecimen-[?:COLLECTED_AT]->loc WHERE has(targetTaxon.path) AND targetTaxon.path =~ '(.*(Plantae).*)' RETURN sourceTaxon.name as source_taxon_name,'parasiteOf' as interaction_type,collect(distinct(targetTaxon.name)) as target_taxon_name"));
+        assertThat(query.getQuery(), is("START sourceTaxon = node:taxonPaths({source_taxon_name}) MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen-[interaction:PARASITE_OF]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon, sourceSpecimen<-[collected_rel:COLLECTED]-study WHERE has(targetTaxon.path) AND targetTaxon.path =~ '(.*(Plantae).*)' RETURN sourceTaxon.name as source_taxon_name,'parasiteOf' as interaction_type,collect(distinct(targetTaxon.name)) as target_taxon_name"));
         assertThat(query.getParams().toString(), is("{source_taxon_name=path:\\\"Homo sapiens\\\", target_taxon_name=path:\\\"Plantae\\\"}"));
     }
 
@@ -797,7 +799,7 @@ public class CypherQueryBuilderTest {
         };
         String clause = appendMatchAndWhereClause(new ArrayList<String>() {{
             add("preysOn");
-        }}, params, new StringBuilder()).toString();
+        }}, params, new StringBuilder(), CypherQueryBuilder.QueryType.MULTI_TAXON_ALL).toString();
         assertLocationMatchAndWhereClause(clause);
     }
 
@@ -817,7 +819,7 @@ public class CypherQueryBuilderTest {
         };
         String clause = appendMatchAndWhereClause(new ArrayList<String>() {{
             add("preysOn");
-        }}, params, new StringBuilder()).toString();
+        }}, params, new StringBuilder(), CypherQueryBuilder.QueryType.MULTI_TAXON_ALL).toString();
         assertLocationMatchAndWhereClause(clause);
     }
 
@@ -830,7 +832,7 @@ public class CypherQueryBuilderTest {
 
         assertThat(appendMatchAndWhereClause(new ArrayList<String>() {{
             add("preysOn");
-        }}, params, new StringBuilder()).toString()
+        }}, params, new StringBuilder(), CypherQueryBuilder.QueryType.MULTI_TAXON_ALL).toString()
                 , is(" MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen-[interaction:PREYS_UPON]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon" +
                 ", sourceSpecimen<-[collected_rel:COLLECTED]-study, sourceSpecimen-[?:COLLECTED_AT]->loc "));
     }
