@@ -1,6 +1,7 @@
 package org.eol.globi.data;
 
 import com.Ostermiller.util.LabeledCSVParser;
+import com.Ostermiller.util.MD5;
 import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.Specimen;
@@ -170,7 +171,10 @@ public class StudyImporterForPlanque extends BaseStudyImporter {
             longReference = refMap.get(shortReference);
         }
 
-        Study localStudy = nodeFactory.getOrCreateStudy("PLANQUE-" + shortReference, SOURCE, ExternalIdUtil.toCitation(null, longReference, null));
+        String studyId = "PLANQUE-" + (longReference == null
+                ? shortReference
+                : (StringUtils.abbreviate(longReference, 20) + MD5.getHashString(longReference)));
+        Study localStudy = nodeFactory.getOrCreateStudy(studyId, SOURCE, ExternalIdUtil.toCitation(null, longReference, null));
         if (StringUtils.isNotBlank(msg)) {
             getLogger().warn(localStudy, msg);
         }
