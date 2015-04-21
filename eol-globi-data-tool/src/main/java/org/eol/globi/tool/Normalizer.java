@@ -19,6 +19,7 @@ import org.eol.globi.data.StudyImporterFactory;
 import org.eol.globi.data.taxon.TaxonIndexImpl;
 import org.eol.globi.data.taxon.TaxonNameCorrector;
 import org.eol.globi.db.GraphService;
+import org.eol.globi.domain.RelTypes;
 import org.eol.globi.export.GraphExporter;
 import org.eol.globi.geo.EcoregionFinder;
 import org.eol.globi.geo.EcoregionFinderFactoryImpl;

@@ -4,6 +4,7 @@ import org.apache.commons.lang.time.StopWatch;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.service.GlobalNamesService;
@@ -64,10 +65,14 @@ public class LinkerGlobalNames {
             if (names.size() > 0) {
                 globalNamesService.findTermsForNames(names, new TermMatchListener() {
                     @Override
-                    public void foundTaxonForName(Long id, String name, Taxon taxon) {
+                    public void foundTaxonForName(Long id, String name, Taxon taxon, boolean isExactMatch) {
                         TaxonNode taxonNode = nodeMap.get(id);
                         if (!TaxonUtil.likelyHomonym(taxon, taxonNode)) {
-                            NodeUtil.createSameAsTaxon(taxon, taxonNode, graphDb);
+                            if (isExactMatch) {
+                                NodeUtil.connectTaxa(taxon, taxonNode, graphDb, RelTypes.SAME_AS);
+                            } else {
+                                NodeUtil.connectTaxa(taxon, taxonNode, graphDb, RelTypes.SIMILAR_TO);
+                            }
                         }
                     }
                 }, desiredSources);

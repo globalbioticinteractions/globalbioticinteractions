@@ -49,8 +49,10 @@ public class GlobalNamesService implements PropertyEnricher {
         final List<Taxon> taxa = new ArrayList<Taxon>();
         findTermsForNames(Collections.singletonList(properties.get(PropertyAndValueDictionary.NAME)), new TermMatchListener() {
             @Override
-            public void foundTaxonForName(Long id, String name, Taxon taxon) {
-                taxa.add(taxon);
+            public void foundTaxonForName(Long id, String name, Taxon taxon, boolean isExactMatch) {
+                if (isExactMatch) {
+                    taxa.add(taxon);
+                }
             }
         }, Collections.singletonList(source));
 
@@ -178,11 +180,10 @@ public class GlobalNamesService implements PropertyEnricher {
             Long suppliedId = data.has("supplied_id") ? data.get("supplied_id").asLong() : null;
             String suppliedNameString = data.get("supplied_name_string").getTextValue();
 
-            if (aResult.has("match_type") && aResult.get("match_type").getIntValue() < 3) {
-                if (StringUtils.endsWith(taxon.getPath(), CharsetConstant.SEPARATOR + suppliedNameString)) {
-                    termMatchListener.foundTaxonForName(suppliedId, suppliedNameString, taxon);
-                }
-            }
+            boolean isExactMatch = aResult.has("match_type")
+                    && aResult.get("match_type").getIntValue() < 3
+                    && StringUtils.endsWith(taxon.getPath(), CharsetConstant.SEPARATOR + suppliedNameString);
+            termMatchListener.foundTaxonForName(suppliedId, suppliedNameString, taxon, isExactMatch);
         }
     }
 

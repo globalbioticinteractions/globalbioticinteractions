@@ -9,5 +9,6 @@ public enum RelTypes implements RelType {
     HAS_LOG_MESSAGE,
     IN_ECOREGION,
     SAME_AS,
+    SIMILAR_TO,
     COLLECTED
 }

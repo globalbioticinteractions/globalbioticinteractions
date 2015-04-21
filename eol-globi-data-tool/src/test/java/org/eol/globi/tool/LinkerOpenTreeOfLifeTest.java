@@ -2,6 +2,7 @@ package org.eol.globi.tool;
 
 import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.NodeFactoryException;
+import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.TaxonomyProvider;
 import org.eol.globi.opentree.OpenTreeTaxonIndex;
 import org.eol.globi.service.PropertyEnricherException;
@@ -32,7 +33,7 @@ public class LinkerOpenTreeOfLifeTest extends GraphDBTestCase {
             LinkerGlobalNames linkerGlobalNames = new LinkerGlobalNames();
             linkerGlobalNames.link(getGraphDb());
             new LinkerOpenTreeOfLife().link(getGraphDb(), index);
-            List<String> externalIds = LinkerTestUtil.assertHasOther(name, expectedCount, nodeFactory);
+            List<String> externalIds = LinkerTestUtil.assertHasOther(name, expectedCount, nodeFactory, RelTypes.SAME_AS);
             assertThat(externalIds, hasItem(TaxonomyProvider.OPEN_TREE_OF_LIFE.getIdPrefix() + ottId));
         } finally {
             if (index != null) {

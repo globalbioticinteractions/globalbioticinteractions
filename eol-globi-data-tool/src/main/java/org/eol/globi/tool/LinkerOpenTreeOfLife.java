@@ -71,7 +71,7 @@ public class LinkerOpenTreeOfLife {
                     if (ottIds.size() == 0) {
                         Taxon taxonCopy = TaxonUtil.copy(taxonNode);
                         taxonCopy.setExternalId(TaxonomyProvider.OPEN_TREE_OF_LIFE.getIdPrefix() + ottId);
-                        NodeUtil.createSameAsTaxon(taxonCopy, new TaxonNode(rel.getStartNode()), graphDb);
+                        NodeUtil.connectTaxa(taxonCopy, new TaxonNode(rel.getStartNode()), graphDb, RelTypes.SAME_AS);
                     }
                     ottIds.put(externalId, ottId);
                 }

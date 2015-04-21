@@ -10,6 +10,7 @@ import org.eol.globi.data.taxon.TaxonFuzzySearchIndex;
 import org.eol.globi.data.taxon.TaxonIndexImpl;
 import org.eol.globi.data.taxon.TaxonIndexImplTest;
 import org.eol.globi.domain.PropertyAndValueDictionary;
+import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TaxonNode;
@@ -34,7 +35,7 @@ public class LinkerTaxonIndexTest extends GraphDBTestCase {
         TaxonNode taxon = nodeFactory.getOrCreateTaxon("Homo sapiens", "Bar:123", "Animalia | Mammalia | Homo sapiens");
         TaxonImpl taxon1 = new TaxonImpl("Homo sapiens also", "FOO:444");
         taxon1.setPathIds("BARZ:111 | FOOZ:777");
-        NodeUtil.createSameAsTaxon(taxon1, taxon, getGraphDb());
+        NodeUtil.connectTaxa(taxon1, taxon, getGraphDb(), RelTypes.SAME_AS);
 
         taxon = nodeFactory.getOrCreateTaxon("Bla blaus");
         taxon.setExternalId("FOO 1234");

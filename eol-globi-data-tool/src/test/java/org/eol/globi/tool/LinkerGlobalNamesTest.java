@@ -4,6 +4,7 @@ import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.NodeFactory;
 import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.domain.PropertyAndValueDictionary;
+import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.service.PropertyEnricher;
 import org.eol.globi.service.PropertyEnricherException;
@@ -27,9 +28,22 @@ public class LinkerGlobalNamesTest extends GraphDBTestCase {
 
         new LinkerGlobalNames().link(getGraphDb());
 
-        LinkerTestUtil.assertHasOther("Homo sapiens", 4, nodeFactory);
-        LinkerTestUtil.assertHasOther("Canis lupus", 4, nodeFactory);
-        LinkerTestUtil.assertHasOther("Ariopsis felis", 5, nodeFactory);
+        LinkerTestUtil.assertHasOther("Homo sapiens", 4, nodeFactory, RelTypes.SAME_AS);
+        LinkerTestUtil.assertHasOther("Homo sapiens", 0, nodeFactory, RelTypes.SIMILAR_TO);
+        LinkerTestUtil.assertHasOther("Canis lupus", 4, nodeFactory, RelTypes.SAME_AS);
+        LinkerTestUtil.assertHasOther("Canis lupus", 0, nodeFactory, RelTypes.SIMILAR_TO);
+        LinkerTestUtil.assertHasOther("Ariopsis felis", 5, nodeFactory, RelTypes.SAME_AS);
+        LinkerTestUtil.assertHasOther("Ariopsis felis", 0, nodeFactory, RelTypes.SIMILAR_TO);
+    }
+
+    @Test
+    public void oneSimilarTaxon() throws NodeFactoryException, PropertyEnricherException {
+        nodeFactory.getOrCreateTaxon("Homo sapienz");
+
+        new LinkerGlobalNames().link(getGraphDb());
+
+        LinkerTestUtil.assertHasOther("Homo sapienz", 4, nodeFactory, RelTypes.SIMILAR_TO);
+        LinkerTestUtil.assertHasOther("Homo sapienz", 0, nodeFactory, RelTypes.SAME_AS);
 
     }
 
@@ -40,8 +54,8 @@ public class LinkerGlobalNamesTest extends GraphDBTestCase {
 
         new LinkerGlobalNames().link(getGraphDb());
 
-        LinkerTestUtil.assertHasOther("Gilippus hostilis", 2, nodeFactory);
-        LinkerTestUtil.assertHasOther("Euander lacertosus", 2, nodeFactory);
+        LinkerTestUtil.assertHasOther("Gilippus hostilis", 2, nodeFactory, RelTypes.SAME_AS);
+        LinkerTestUtil.assertHasOther("Euander lacertosus", 2, nodeFactory, RelTypes.SAME_AS);
 
     }
 
@@ -49,7 +63,7 @@ public class LinkerGlobalNamesTest extends GraphDBTestCase {
     public void frogs() throws NodeFactoryException, PropertyEnricherException {
         nodeFactory.getOrCreateTaxon("Anura");
         new LinkerGlobalNames().link(getGraphDb());
-        List<String> ids = LinkerTestUtil.assertHasOther("Anura", 7, nodeFactory);
+        List<String> ids = LinkerTestUtil.assertHasOther("Anura", 7, nodeFactory, RelTypes.SAME_AS);
 
         assertThat(ids, hasItems("ITIS:173423"
                 , "NCBI:8342", "IRMNG:10211", "GBIF:952"
@@ -81,7 +95,7 @@ public class LinkerGlobalNamesTest extends GraphDBTestCase {
         TaxonNode lestes = nodeFactory.getOrCreateTaxon("Lestes");
         assertThat(lestes.getPath(), is("Animalia | Insecta | Lestes"));
         new LinkerGlobalNames().link(getGraphDb());
-        List<String> ids = LinkerTestUtil.assertHasOther("Lestes", 5, nodeFactory);
+        List<String> ids = LinkerTestUtil.assertHasOther("Lestes", 5, nodeFactory, RelTypes.SAME_AS);
         assertThat(ids, hasItems("NCBI:181491", "ITIS:102061", "IRMNG:1320006", "GBIF:7235838", "GBIF:1423980"));
     }
 

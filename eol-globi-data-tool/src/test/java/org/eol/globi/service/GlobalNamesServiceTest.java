@@ -23,7 +23,7 @@ public class GlobalNamesServiceTest {
         final List<Taxon> foundTaxa = new ArrayList<Taxon>();
         service.findTermsForNames(Arrays.asList("1|Homo sapiens", "2|Ariopsis felis"), new TermMatchListener() {
             @Override
-            public void foundTaxonForName(Long id, String name, Taxon taxon) {
+            public void foundTaxonForName(Long id, String name, Taxon taxon, boolean isExactMatch) {
                 assertNotNull(id);
                 foundTaxa.add(taxon);
             }
@@ -141,7 +141,7 @@ public class GlobalNamesServiceTest {
         final List<Taxon> taxa = new ArrayList<Taxon>();
         service.findTermsForNames(Arrays.asList("Homo sapiens"), new TermMatchListener() {
             @Override
-            public void foundTaxonForName(Long id, String name, Taxon taxon) {
+            public void foundTaxonForName(Long id, String name, Taxon taxon, boolean isExactMatch) {
                 taxa.add(taxon);
             }
         }, Arrays.asList(GlobalNamesSources.GBIF, GlobalNamesSources.ITIS));

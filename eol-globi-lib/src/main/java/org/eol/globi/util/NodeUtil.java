@@ -32,7 +32,7 @@ public class NodeUtil {
         return truncatedName;
     }
 
-    public static void createSameAsTaxon(Taxon taxon, TaxonNode taxonNode, GraphDatabaseService graphDb) {
+    public static void connectTaxa(Taxon taxon, TaxonNode taxonNode, GraphDatabaseService graphDb, RelTypes sameAs) {
         Transaction tx = graphDb.beginTx();
         try {
             TaxonNode sameAsTaxon = new TaxonNode(graphDb.createNode());
@@ -42,7 +42,7 @@ public class NodeUtil {
             sameAsTaxon.setPathNames(taxon.getPathNames());
             sameAsTaxon.setRank(taxon.getRank());
             sameAsTaxon.setExternalId(taxon.getExternalId());
-            taxonNode.getUnderlyingNode().createRelationshipTo(sameAsTaxon.getUnderlyingNode(), RelTypes.SAME_AS);
+            taxonNode.getUnderlyingNode().createRelationshipTo(sameAsTaxon.getUnderlyingNode(), sameAs);
             tx.success();
         } finally {
             tx.finish();

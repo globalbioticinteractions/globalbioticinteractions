@@ -11,14 +11,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
 
 public class LinkerTestUtil {
-    public static List<String> assertHasOther(String name, int expectedCount, NodeFactory nodeFactory) throws NodeFactoryException {
+    public static List<String> assertHasOther(String name, int expectedCount, NodeFactory nodeFactory, RelTypes relType) throws NodeFactoryException {
         List<String> externalIds = new ArrayList<String>();
         TaxonNode taxon1 = nodeFactory.findTaxonByName(name);
+        assertThat(taxon1, is(notNullValue()));
         assertThat(taxon1.getName(), is(name));
-        Iterable<Relationship> rels = taxon1.getUnderlyingNode().getRelationships(RelTypes.SAME_AS, Direction.OUTGOING);
+        Iterable<Relationship> rels = taxon1.getUnderlyingNode().getRelationships(relType, Direction.OUTGOING);
         int counter = 0;
         for (Relationship rel : rels) {
             counter++;
