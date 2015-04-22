@@ -20,7 +20,7 @@ public class WoRMSServiceTest {
 
     @Test
     public void lookupExistentPath() throws PropertyEnricherException {
-        assertThat(new WoRMSService().lookupTaxonPathById("WORMS:276560"), containsString("Actinopterygii"));
+        assertThat(new WoRMSService().lookupTaxonPathById("WORMS:276560"), containsString("Actinopteri"));
     }
 
     @Test
