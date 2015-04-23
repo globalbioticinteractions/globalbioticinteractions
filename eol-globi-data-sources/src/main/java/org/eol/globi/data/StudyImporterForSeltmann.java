@@ -150,7 +150,15 @@ public class StudyImporterForSeltmann extends BaseStudyImporter {
         Specimen target = nodeFactory.createSpecimen(study, targetName);
         String interactionURI = assoc.get("aec:associatedRelationshipURI");
         final Map<String, InteractType> assocInteractMap = new HashMap<String, InteractType>() {{
-            // no known interaction terms yet
+            put("http://purl.obolibrary.org/obo/RO_0002444", InteractType.PARASITE_OF);
+            put("http://purl.obolibrary.org/obo/RO_0002445", InteractType.HAS_PARASITE);
+            put("http://purl.obolibrary.org/obo/RO_0002437", InteractType.INTERACTS_WITH);
+
+            // interaction types that could probably be more specific (e.g. found inside, found on, emerged from)
+            put("http://purl.obolibrary.org/obo/RO_0002220", InteractType.INTERACTS_WITH);
+            put("http://purl.obolibrary.org/obo/RO_0001025", InteractType.INTERACTS_WITH);
+            put("http://eol.org/schema/terms/emergedFrom", InteractType.INTERACTS_WITH);
+            put("http://eol.org/schema/terms/foundNear", InteractType.INTERACTS_WITH);
         }
         };
         InteractType interactType = StringUtils.isBlank(interactionURI) ? InteractType.INTERACTS_WITH : assocInteractMap.get(interactionURI);
