@@ -26,7 +26,6 @@ public enum ResultField {
     TARGET_TAXON_PATH_IDS("target_taxon_path_ids"),
     SOURCE_TAXON_PATH_IDS("source_taxon_path_ids"),
 
-
     TARGET_SPECIMEN_TOTAL_FREQUENCY_OF_OCCURRENCE("target_specimen_frequency_of_occurrence"),
     TARGET_SPECIMEN_TOTAL_VOLUME_ML("target_specimen_total_volume_ml"),
     TARGET_SPECIMEN_TOTAL_COUNT("target_specimen_total_count"),
@@ -42,6 +41,9 @@ public enum ResultField {
 
     SOURCE_SPECIMEN_LIFE_STAGE("source_specimen_life_stage"),
     TARGET_SPECIMEN_LIFE_STAGE("target_specimen_life_stage"),
+
+    SOURCE_SPECIMEN_BASIS_OF_RECORD("source_specimen_basis_of_record"),
+    TARGET_SPECIMEN_BASIS_OF_RECORD("target_specimen_basis_of_record"),
 
     TAXON_NAME("taxon_name"),
     TAXON_COMMON_NAMES("taxon_common_names"),

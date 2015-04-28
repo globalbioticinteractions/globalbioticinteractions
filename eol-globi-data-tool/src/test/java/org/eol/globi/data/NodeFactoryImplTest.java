@@ -56,7 +56,6 @@ public class NodeFactoryImplTest extends GraphDBTestCase {
         assertThat(taxonRel.getEndNode(), is(taxon1.getUnderlyingNode()));
         assertThat(taxon1Rel, is(notNullValue()));
         assertThat(taxon1Rel.getEndNode(), is(taxon.getUnderlyingNode()));
-
     }
 
 
@@ -185,6 +184,15 @@ public class NodeFactoryImplTest extends GraphDBTestCase {
         assertThat(specimen.getLifeStage().getId(), is("UBERON:0007379"));
         assertThat(specimen.getBodyPart().getName(), is("scale"));
         assertThat(specimen.getBodyPart().getId(), is("UBERON:0002542"));
+    }
+
+    @Test
+    public void specimenWithBasisOfRecord() throws NodeFactoryException {
+        initTaxonService();
+        Specimen specimen = getNodeFactory().createSpecimen(getNodeFactory().createStudy("bla"), "mickey mouse");
+        specimen.setBasisOfRecord(getNodeFactory().getOrCreateBasisOfRecord("something:123", "theBasis"));
+        assertThat(specimen.getBasisOfRecord().getName(), is("theBasis"));
+        assertThat(specimen.getBasisOfRecord().getId(), is("TEST:theBasis"));
     }
 
     @Test

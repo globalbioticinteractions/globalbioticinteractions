@@ -22,12 +22,12 @@ public class ExporterOccurrenceAggregatesTest extends GraphDBTestCase {
 
     private String getExpectedData() {
         return "\n" +
-                "globi:occur:source:1-2-ATE,EOL:333,,,,,,,,,,,,,,,,,,,,,,,,,,\n" +
-                "globi:occur:target:1-2-ATE-5,EOL:555,,,,,,,,,,,,,,,,,,,,,,,,,,\n" +
-                "globi:occur:target:1-2-ATE-8,EOL:666,,,,,,,,,,,,,,,,,,,,,,,,,,\n" +
-                "globi:occur:source:1-25-ATE,EOL:123,,,,,,,,,,,,,,,,,,,,,,,,,,\n" +
-                "globi:occur:target:1-25-ATE-5,EOL:555,,,,,,,,,,,,,,,,,,,,,,,,,,\n" +
-                "globi:occur:target:1-25-ATE-8,EOL:666,,,,,,,,,,,,,,,,,,,,,,,,,,"
+                "globi:occur:source:1-2-ATE,EOL:333,,,,,,,,,,,,,,,,,,,,,,,,,,,\n" +
+                "globi:occur:target:1-2-ATE-5,EOL:555,,,,,,,,,,,,,,,,,,,,,,,,,,,\n" +
+                "globi:occur:target:1-2-ATE-8,EOL:666,,,,,,,,,,,,,,,,,,,,,,,,,,,\n" +
+                "globi:occur:source:1-25-ATE,EOL:123,,,,,,,,,,,,,,,,,,,,,,,,,,,\n" +
+                "globi:occur:target:1-25-ATE-5,EOL:555,,,,,,,,,,,,,,,,,,,,,,,,,,,\n" +
+                "globi:occur:target:1-25-ATE-8,EOL:666,,,,,,,,,,,,,,,,,,,,,,,,,,,"
                 ;
     }
 

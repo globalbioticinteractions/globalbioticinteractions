@@ -66,4 +66,6 @@ public interface NodeFactory {
     TaxonIndex getTaxonIndex();
 
     AuthorIdResolver getAuthorResolver();
+
+    Term getOrCreateBasisOfRecord(String externalId, String name) throws NodeFactoryException;
 }

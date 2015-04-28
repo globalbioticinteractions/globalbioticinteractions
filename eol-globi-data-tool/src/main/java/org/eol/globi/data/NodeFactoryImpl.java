@@ -579,5 +579,10 @@ public class NodeFactoryImpl implements NodeFactory {
     public AuthorIdResolver getAuthorResolver() {
         return new ORCIDResolverImpl();
     }
+
+    @Override
+    public Term getOrCreateBasisOfRecord(String externalId, String name) throws NodeFactoryException {
+        return matchTerm(externalId, name);
+    }
 }
 

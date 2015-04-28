@@ -10,6 +10,7 @@ import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
+import org.eol.globi.domain.Term;
 import org.eol.globi.util.CSVUtil;
 import org.eol.globi.util.ResourceUtil;
 import org.joda.time.format.DateTimeFormat;
@@ -166,7 +167,13 @@ public class StudyImporterForSeltmann extends BaseStudyImporter {
             throw new StudyImporterException("found unsupported interactionURI: [" + interactionURI +"] related to" + getLineMsg(occurrence));
         }
         source.interactsWith(target, interactType);
-        String basisOfRecord = occurrence.getValueByLabel("dwc:basisOfRecord");
+
+        String sourceBasisOfRecord = occurrence.getValueByLabel("dwc:basisOfRecord");
+        source.setBasisOfRecord(nodeFactory.getOrCreateBasisOfRecord(sourceBasisOfRecord, sourceBasisOfRecord));
+
+        String targetBasisOfRecord = assoc.get("dwc:basisOfRecord");
+        target.setBasisOfRecord(nodeFactory.getOrCreateBasisOfRecord(targetBasisOfRecord, targetBasisOfRecord));
+
         nodeFactory.setUnixEpochProperty(source, date);
         nodeFactory.setUnixEpochProperty(target, date);
         String latitude = occurrence.getValueByLabel("dwc:decimalLatitude");

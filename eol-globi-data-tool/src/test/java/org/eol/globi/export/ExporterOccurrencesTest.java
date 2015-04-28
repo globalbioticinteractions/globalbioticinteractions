@@ -34,13 +34,13 @@ public class ExporterOccurrencesTest extends GraphDBTestCase {
     }
 
     private String getExpectedData() {
-        return "\nglobi:occur:3,EOL:327955,,,,,JUVENILE,,,,,,,,,,,,1992-03-30T08:00:00Z,,,12.0,-1.0,,,-60.0 m,DIGESTATE,BONE" +
-                "\nglobi:occur:8,EOL:328607,,,,,,,,,,,,,,,,,1992-03-30T08:00:00Z,,,12.0,-1.0,,,-60.0 m,," +
-                "\nglobi:occur:10,EOL:328607,,,,,,,,,,,,,,,,,1992-03-30T08:00:00Z,,,12.0,-1.0,,,-60.0 m,,";
+        return "\nglobi:occur:3,EOL:327955,,,,,JUVENILE,,,,,,,,,,,,,1992-03-30T08:00:00Z,,,12.0,-1.0,,,-60.0 m,DIGESTATE,BONE" +
+                "\nglobi:occur:8,EOL:328607,,,,,,,,,,,,,,,,,,1992-03-30T08:00:00Z,,,12.0,-1.0,,,-60.0 m,," +
+                "\nglobi:occur:10,EOL:328607,,,,,,,,,,,,,,,,,,1992-03-30T08:00:00Z,,,12.0,-1.0,,,-60.0 m,,";
     }
 
     private String getExpectedHeader() {
-        return "\"occurrenceID\",\"taxonID\",\"institutionCode\",\"collectionCode\",\"catalogNumber\",\"sex\",\"lifeStage\",\"reproductiveCondition\",\"behavior\",\"establishmentMeans\",\"occurrenceRemarks\",\"individualCount\",\"preparations\",\"fieldNotes\",\"samplingProtocol\",\"samplingEffort\",\"identifiedBy\",\"dateIdentified\",\"eventDate\",\"modified\",\"locality\",\"decimalLatitude\",\"decimalLongitude\",\"verbatimLatitude\",\"verbatimLongitude\",\"verbatimElevation\",\"physiologicalState\",\"bodyPart\"";
+        return "\"occurrenceID\",\"taxonID\",\"institutionCode\",\"collectionCode\",\"catalogNumber\",\"sex\",\"lifeStage\",\"reproductiveCondition\",\"behavior\",\"establishmentMeans\",\"occurrenceRemarks\",\"individualCount\",\"preparations\",\"fieldNotes\",\"basisOfRecord\",\"samplingProtocol\",\"samplingEffort\",\"identifiedBy\",\"dateIdentified\",\"eventDate\",\"modified\",\"locality\",\"decimalLatitude\",\"decimalLongitude\",\"verbatimLatitude\",\"verbatimLongitude\",\"verbatimElevation\",\"physiologicalState\",\"bodyPart\"";
     }
 
     @Test
@@ -81,7 +81,8 @@ public class ExporterOccurrencesTest extends GraphDBTestCase {
     @Test
     public void dontExportToCSVSpecimenEmptyStomach() throws NodeFactoryException, IOException {
         Study myStudy = nodeFactory.createStudy("myStudy");
-        nodeFactory.createSpecimen(myStudy, "Homo sapiens", "EOL:123");
+        Specimen specimen = nodeFactory.createSpecimen(myStudy, "Homo sapiens", "EOL:123");
+        specimen.setBasisOfRecord(new Term("test:123", "aBasisOfRecord"));
 
         StringWriter row = new StringWriter();
 
@@ -89,7 +90,7 @@ public class ExporterOccurrencesTest extends GraphDBTestCase {
 
         String expected = "";
         expected += getExpectedHeader();
-        expected += "\nglobi:occur:3,EOL:123,,,,,,,,,,,,,,,,,,,,,,,,,,";
+        expected += "\nglobi:occur:3,EOL:123,,,,,,,,,,,,,aBasisOfRecord,,,,,,,,,,,,,,";
 
         assertThat(row.getBuffer().toString(), equalTo(expected));
     }

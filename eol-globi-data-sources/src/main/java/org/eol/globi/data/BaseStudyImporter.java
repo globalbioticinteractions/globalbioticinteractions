@@ -1,5 +1,6 @@
 package org.eol.globi.data;
 
+import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.service.GeoNamesService;
 import org.eol.globi.service.GeoNamesServiceImpl;
@@ -83,4 +84,7 @@ public abstract class BaseStudyImporter extends BaseImporter implements StudyImp
         this.sourceDOI = sourceDOI;
     }
 
+    protected void setBasisOfRecordAsLiterature(Specimen specimen) throws NodeFactoryException {
+        specimen.setBasisOfRecord(nodeFactory.getOrCreateBasisOfRecord("http://gbif.github.io/gbif-api/apidocs/org/gbif/api/vocabulary/BasisOfRecord.html#LITERATURE", "Literature"));
+    }
 }

@@ -2,6 +2,7 @@ package org.eol.globi.export;
 
 public class EOLDictionary {
     public static final String LIFE_STAGE = "http://rs.tdwg.org/dwc/terms/lifeStage";
+    public static final String BASIS_OF_RECORD = "http://rs.tdwg.org/dwc/terms/basisOfRecord";
     public static final String SEX = "http://rs.tdwg.org/dwc/terms/sex";
     public static final String TAXON_ID = "http://rs.tdwg.org/dwc/terms/taxonID";
     public static final String OCCURRENCE_ID = "http://rs.tdwg.org/dwc/terms/occurrenceID";

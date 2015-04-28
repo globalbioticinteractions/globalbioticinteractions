@@ -78,7 +78,6 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
         put("first nectar or pollen feeding insect", InteractType.POLLINATES);
         put("second nectar or pollen feeding insect", InteractType.POLLINATES);
     }};
-    public static final int MAX_ATTEMPTS = 3;
     public static final List<String> IGNORED_INTERACTION_TYPES = new ArrayList<String>() {{
         // see https://github.com/jhpoelen/eol-globi-data/issues/56
         add("Syntopic");
@@ -263,10 +262,11 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
 
     private Specimen createAssociation(long observationId, String interactionDataType, String interactionType, JsonNode observation, String targetTaxonName, String sourceTaxonName, Study study, Date observationDate) throws StudyImporterException, NodeFactoryException {
         Specimen sourceSpecimen = getSourceSpecimen(observationId, interactionDataType, sourceTaxonName, study);
+        setBasisOfRecord(sourceSpecimen);
         Specimen targetSpecimen = nodeFactory.createSpecimen(study, targetTaxonName);
+        setBasisOfRecord(targetSpecimen);
 
         sourceSpecimen.interactsWith(targetSpecimen, TYPE_MAPPING.get(interactionType));
-
         setCollectionDate(sourceSpecimen, targetSpecimen, observationDate);
         setCollectionDate(sourceSpecimen, sourceSpecimen, observationDate);
 
@@ -275,6 +275,10 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
         targetSpecimen.caughtIn(location);
 
         return sourceSpecimen;
+    }
+
+    private void setBasisOfRecord(Specimen sourceSpecimen) throws NodeFactoryException {
+        sourceSpecimen.setBasisOfRecord(nodeFactory.getOrCreateBasisOfRecord("http://rs.tdwg.org/dwc/dwctype/HumanObservation", "HumanObservation"));
     }
 
     private Location parseLocation(JsonNode observation) throws NodeFactoryException {

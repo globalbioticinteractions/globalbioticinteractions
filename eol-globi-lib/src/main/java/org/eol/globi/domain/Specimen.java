@@ -14,6 +14,8 @@ public class Specimen extends NodeBacked {
     public static final String VOLUME_IN_ML = "volumeInMilliLiter";
     public static final String STOMACH_VOLUME_ML = "stomachVolumeInMilliLiter";
     public static final String DATE_IN_UNIX_EPOCH = "dateInUnixEpoch";
+    public static final String BASIS_OF_RECORD_LABEL = "basisOfRecordLabel";
+    public static final String BASIS_OF_RECORD_ID = "basisOfRecordId";
     public static final String LIFE_STAGE_LABEL = "lifeStageLabel";
     public static final String LIFE_STAGE_ID = "lifeStageId";
     public static final String PHYSIOLOGICAL_STATE_LABEL = "physiologicalStateLabel";
@@ -166,6 +168,15 @@ public class Specimen extends NodeBacked {
     public void setBodyPart(Term bodyPart) {
         setPropertyWithTx(Specimen.BODY_PART_LABEL, bodyPart.getName());
         setPropertyWithTx(Specimen.BODY_PART_ID, bodyPart.getId());
+    }
+
+    public void setBasisOfRecord(Term basisOfRecord) {
+        setPropertyWithTx(Specimen.BASIS_OF_RECORD_LABEL, basisOfRecord.getName());
+        setPropertyWithTx(Specimen.BASIS_OF_RECORD_ID, basisOfRecord.getId());
+    }
+
+    public Term getBasisOfRecord() {
+        return new Term(getPropertyStringValueOrNull(BASIS_OF_RECORD_ID), getPropertyStringValueOrNull(BASIS_OF_RECORD_LABEL));
     }
 
     public void setFrequencyOfOccurrence(Double frequencyOfOccurrence) {

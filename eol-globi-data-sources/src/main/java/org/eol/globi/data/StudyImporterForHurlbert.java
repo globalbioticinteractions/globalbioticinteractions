@@ -73,7 +73,9 @@ public class StudyImporterForHurlbert extends BaseStudyImporter {
     protected void importInteraction(Set<String> regions, Set<String> locales, Set<String> habitats, LabeledCSVParser parser, Study study, String preyTaxonName, String predatorName) throws StudyImporterException {
         try {
             Specimen predatorSpecimen = nodeFactory.createSpecimen(study, predatorName);
+            setBasisOfRecordAsLiterature(predatorSpecimen);
             Specimen preySpecimen = nodeFactory.createSpecimen(study, preyTaxonName);
+            setBasisOfRecordAsLiterature(preySpecimen);
 
             String preyStage = StringUtils.trim(parser.getValueByLabel("Prey_Stage"));
             if (StringUtils.isNotBlank(preyStage)) {

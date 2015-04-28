@@ -225,6 +225,7 @@ public class StudyImporterForGoMexSI extends BaseStudyImporter {
     private void addObservation(Map<String, List<Map<String, String>>> predatorUIToPreyLists, Study metaStudy, LabeledCSVParser parser, Study study, Location location, String predatorId, Map<String, String> predatorProperties) throws StudyImporterException {
         try {
             Specimen predatorSpecimen = createSpecimen(study, predatorProperties);
+            setBasisOfRecordAsLiterature(predatorSpecimen);
             predatorSpecimen.setExternalId(predatorId);
             if (location == null) {
                 getLogger().warn(metaStudy, "no location for predator with id [" + predatorSpecimen.getExternalId() + "]");
@@ -238,6 +239,7 @@ public class StudyImporterForGoMexSI extends BaseStudyImporter {
                     if (preyProperties != null) {
                         try {
                             Specimen prey = createSpecimen(study, preyProperties);
+                            setBasisOfRecordAsLiterature(prey);
                             prey.caughtIn(location);
                             predatorSpecimen.ate(prey);
                         } catch (NodeFactoryException e) {

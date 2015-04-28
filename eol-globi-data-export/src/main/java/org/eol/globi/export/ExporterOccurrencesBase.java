@@ -18,6 +18,7 @@ public abstract class ExporterOccurrencesBase extends ExporterBase {
                 EOLDictionary.INDIVIDUAL_COUNT,
                 EOLDictionary.PREPARATIONS,
                 EOLDictionary.FIELD_NOTES,
+                EOLDictionary.BASIS_OF_RECORD,
                 EOLDictionary.SAMPLING_PROTOCOL,
                 EOLDictionary.SAMPLING_EFFORT,
                 EOLDictionary.IDENTIFIED_BY,
