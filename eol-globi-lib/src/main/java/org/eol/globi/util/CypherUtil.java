@@ -14,7 +14,7 @@ public class CypherUtil {
     private static final Log LOG = LogFactory.getLog(CypherUtil.class);
 
     public static String executeCypherQuery(CypherQuery query) throws IOException {
-        HttpPost httpPost = new HttpPost("http://api.globalbioticinteractions.org:7474/db/data/cypher");
+        HttpPost httpPost = new HttpPost("http://neo4j.globalbioticinteractions.org/db/data/cypher");
         HttpUtil.addJsonHeaders(httpPost);
         httpPost.setEntity(new StringEntity(wrapQuery(query)));
         BasicResponseHandler responseHandler = new BasicResponseHandler();
