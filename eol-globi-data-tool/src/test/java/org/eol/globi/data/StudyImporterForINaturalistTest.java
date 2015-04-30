@@ -72,7 +72,7 @@ public class StudyImporterForINaturalistTest extends GraphDBTestCase {
             Node sourceSpecimen = relationship.getStartNode();
 
             assertThat(new Specimen(sourceSpecimen).getBasisOfRecord().getName(), is("HumanObservation"));
-            assertThat(new Specimen(sourceSpecimen).getBasisOfRecord().getId(), is("http://rs.tdwg.org/dwc/dwctype/HumanObservation"));
+            assertThat(new Specimen(sourceSpecimen).getBasisOfRecord().getId(), is("TEST:HumanObservation"));
             assertThat(new Specimen(sourceSpecimen).getExternalId(), containsString(TaxonomyProvider.ID_PREFIX_INATURALIST));
             Relationship ateRel = sourceSpecimen.getSingleRelationship(InteractType.ATE, Direction.OUTGOING);
             Node preySpecimen = ateRel.getEndNode();
