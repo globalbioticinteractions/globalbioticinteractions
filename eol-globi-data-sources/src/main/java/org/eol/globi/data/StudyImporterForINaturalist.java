@@ -48,6 +48,7 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
         put("host to parasitic fungus", InteractType.PARASITE_OF);
         put("Host animal", InteractType.HAS_HOST);
         put("Flower species", InteractType.POLLINATES);
+        put("Euphorbia pulcherrima", InteractType.POLLINATES);
         put("Perching on", InteractType.PERCHING_ON);
         put("Pollinating", InteractType.POLLINATES);
         put("Other Species in Group", InteractType.INTERACTS_WITH);
