@@ -49,6 +49,7 @@
                         <argument>org.eol.globi.tool.Normalizer</argument>
                         <argument>${normalizer.arg.1}</argument>
                         <argument>${normalizer.arg.2}</argument>
+                        <argument>${normalizer.arg.3}</argument>
                     </arguments>
                     <workingDirectory>${data.dir}</workingDirectory>
                 </configuration>
@@ -86,10 +87,9 @@
                 <activeByDefault>true</activeByDefault>
             </activation>
             <properties>
-                <normalizer.arg.1>-skipExport</normalizer.arg.1>
-                <!-- should remove this after fixing issue #135 -->
-                <normalizer.arg.2>-skipImport</normalizer.arg.2>
-                <normalizer.arg.3>-skipLink</normalizer.arg.3>
+                <normalizer.arg.1>-skipImport</normalizer.arg.1>
+                <normalizer.arg.2>-skipLink</normalizer.arg.2>
+                <normalizer.arg.3>-skipExport</normalizer.arg.3>
             </properties>
             <build>
                 <plugins>
@@ -206,6 +206,7 @@
             <properties>
                 <normalizer.arg.1>-skipImport</normalizer.arg.1>
                 <normalizer.arg.2>-skipLink</normalizer.arg.2>
+                <normalizer.arg.3>-skipReport</normalizer.arg.3>
             </properties>
             <build>
                 <plugins>

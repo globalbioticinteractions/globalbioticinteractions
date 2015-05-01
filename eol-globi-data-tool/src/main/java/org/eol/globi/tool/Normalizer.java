@@ -69,6 +69,7 @@ public class Normalizer {
         options.addOption(OPTION_SKIP_IMPORT, false, "skip the import of all GloBI datasets");
         options.addOption(OPTION_SKIP_EXPORT, false, "skip the export for GloBI datasets to aggregated archives.");
         options.addOption(OPTION_SKIP_LINK, false, "skip taxa cross-reference step");
+        options.addOption(OPTION_SKIP_REPORT, false, "skip report generation step");
         options.addOption(OPTION_USE_DARK_DATA, false, "use only dark datasets (requires permission)");
         Option helpOpt = new Option(OPTION_HELP, "help", false, "print this help information");
         options.addOption(helpOpt);

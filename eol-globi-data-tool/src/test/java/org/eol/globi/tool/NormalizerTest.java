@@ -52,6 +52,9 @@ public class NormalizerTest extends GraphDBTestCase {
         assertThat(commandLine.hasOption("skipImport"), is(true));
         assertThat(commandLine.hasOption("skipExport"), is(true));
         assertThat(commandLine.hasOption("skipLink"), is(false));
+
+        commandLine = Normalizer.parseOptions(new String[]{"-skipLink", "--skipExport"});
+        assertThat(commandLine.hasOption("skipLink"), is(true));
     }
 
     @Test
