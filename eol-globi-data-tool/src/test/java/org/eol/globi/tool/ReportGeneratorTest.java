@@ -35,7 +35,7 @@ public class ReportGeneratorTest extends GraphDBTestCase {
         reports = getGraphDb().index().forNodes("reports").get(Study.TITLE, "a second title");
         assertThat(reports.size(), is(1));
         reportNode = reports.getSingle();
-        assertThat((String) reportNode.getProperty(Study.TITLE), is("a title"));
+        assertThat((String) reportNode.getProperty(Study.TITLE), is("a second title"));
         assertThat((String) reportNode.getProperty(Study.SOURCE), is("a third source"));
         assertThat(reportNode.hasProperty(Study.CITATION), is(false));
         assertThat((Integer) reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_INTERACTIONS), is(4));
