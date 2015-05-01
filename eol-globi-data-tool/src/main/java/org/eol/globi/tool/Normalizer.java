@@ -43,6 +43,7 @@ public class Normalizer {
     public static final String OPTION_SKIP_IMPORT = "skipImport";
     public static final String OPTION_SKIP_EXPORT = "skipExport";
     public static final String OPTION_SKIP_LINK = "skipLink";
+    public static final String OPTION_SKIP_REPORT = "skipReport";
     public static final String OPTION_USE_DARK_DATA = "useDarkData";
 
     private EcoregionFinder ecoregionFinder = null;
@@ -96,6 +97,12 @@ public class Normalizer {
                 linkTaxa(graphService);
             } else {
                 LOG.info("skipping taxa linking ...");
+            }
+
+            if (cmdLine == null || !cmdLine.hasOption(OPTION_SKIP_REPORT)) {
+                new ReportGenerator(graphService).run();
+            } else {
+                LOG.info("skipping report generation ...");
             }
 
             if (cmdLine == null || !cmdLine.hasOption(OPTION_SKIP_EXPORT)) {

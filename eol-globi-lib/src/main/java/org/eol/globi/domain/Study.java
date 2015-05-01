@@ -20,7 +20,7 @@ public class Study extends NodeBacked {
     public static final String DESCRIPTION = "description";
     public static final String PUBLICATION_YEAR = "publicationYear";
     public static final String PERIOD = "period";
-    private static final String SOURCE = "source";
+    public static final String SOURCE = "source";
     public static final String CITATION = "citation";
     public static final String DOI = "doi";
 
