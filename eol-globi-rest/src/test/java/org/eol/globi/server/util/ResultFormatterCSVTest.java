@@ -22,7 +22,7 @@ public class ResultFormatterCSVTest {
     @Test
     public void toCSVQuotedText() throws ResultFormattingException {
         String format = new ResultFormatterCSV().format("{ \"columns\" : [ \"loc.latitude\", \"loc.longitude\" ], \"data\" : [ [ \"and he said: \\\"boo\\\"\", \"two\" ], [ \"three\", \"four\" ] ]}");
-        assertThat(format, is("\"loc.latitude\",\"loc.longitude\"\n\"and he said: \"\"\"boo\"\"\"\",\"two\"\n\"three\",\"four\"\n"));
+        assertThat(format, is("\"loc.latitude\",\"loc.longitude\"\n\"and he said: \"\"boo\"\"\",\"two\"\n\"three\",\"four\"\n"));
     }
 
 }
