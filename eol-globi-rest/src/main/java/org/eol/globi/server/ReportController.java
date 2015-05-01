@@ -14,12 +14,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Controller
-public class ReportController2 {
+public class ReportController {
 
     @RequestMapping(value = "/reports/studies", method = RequestMethod.GET)
     @ResponseBody
     public CypherQuery studies(@RequestParam(required = false) final String source) throws IOException {
-        String cypherQuery = "START report = node:reports(" + (StringUtils.isBlank(source) ? "'*:*'" : "source={source}") + ") "
+        String cypherQuery = "START report = node:reports(" + (StringUtils.isBlank(source) ? "'source:*'" : "source={source}") + ") "
                 + " WHERE has(report.title) "
                 + " RETURN report.citation? as " + ResultField.STUDY_CITATION
                 + ", report.externalId? as " + ResultField.STUDY_URL
@@ -39,7 +39,7 @@ public class ReportController2 {
     @RequestMapping(value = "/reports/sources", method = RequestMethod.GET)
     @ResponseBody
     public CypherQuery sources(@RequestParam(required = false) final String source) throws IOException {
-        String cypherQuery = "START report = node:reports(" + (StringUtils.isBlank(source) ? "'*:*'" : "source={source}") + ") "
+        String cypherQuery = "START report = node:reports(" + (StringUtils.isBlank(source) ? "'source:*'" : "source={source}") + ") "
                 + " WHERE not(has(report.title)) AND has(report.source)"
                 + " RETURN report.citation? as " + ResultField.STUDY_CITATION
                 + ", report.externalId? as " + ResultField.STUDY_URL
@@ -60,7 +60,7 @@ public class ReportController2 {
     @RequestMapping(value = "/reports/collections", method = RequestMethod.GET)
     @ResponseBody
     public CypherQuery collections() throws IOException {
-        String cypherQuery = "START report = node:reports('*:*')" +
+        String cypherQuery = "START report = node:reports('collection:*')" +
                 " WHERE not(has(report.title)) AND not(has(report.source)) "
                 + " RETURN report.citation? as " + ResultField.STUDY_CITATION
                 + ", report.externalId? as " + ResultField.STUDY_URL
