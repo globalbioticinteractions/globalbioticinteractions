@@ -17,16 +17,27 @@ public class ReportGeneratorTest extends GraphDBTestCase {
 
     @Test
     public void generateStudyReport() throws NodeFactoryException {
+        createStudy("a second title", "a third source", null);
         createStudy("a title", "a third source");
 
         new ReportGenerator(getGraphDb()).generateReportForStudies();
 
-        IndexHits<Node> reports = getGraphDb().index().forNodes("reports").query("*:*");
+        IndexHits<Node> reports = getGraphDb().index().forNodes("reports").get(Study.TITLE, "a title");
         assertThat(reports.size(), is(1));
         Node reportNode = reports.getSingle();
         assertThat((String) reportNode.getProperty(Study.TITLE), is("a title"));
         assertThat((String) reportNode.getProperty(Study.SOURCE), is("a third source"));
         assertThat((String) reportNode.getProperty(Study.CITATION), is("citation:doi:citation"));
+        assertThat((Integer) reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_INTERACTIONS), is(4));
+        assertThat((Integer) reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_DISTINCT_TAXA), is(3));
+        reports.close();
+
+        reports = getGraphDb().index().forNodes("reports").get(Study.TITLE, "a second title");
+        assertThat(reports.size(), is(1));
+        reportNode = reports.getSingle();
+        assertThat((String) reportNode.getProperty(Study.TITLE), is("a title"));
+        assertThat((String) reportNode.getProperty(Study.SOURCE), is("a third source"));
+        assertThat(reportNode.hasProperty(Study.CITATION), is(false));
         assertThat((Integer) reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_INTERACTIONS), is(4));
         assertThat((Integer) reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_DISTINCT_TAXA), is(3));
         reports.close();
@@ -37,7 +48,7 @@ public class ReportGeneratorTest extends GraphDBTestCase {
     public void generateStudySourceReport() throws NodeFactoryException {
         createStudy("a title", "az source");
         createStudy("another title", "az source");
-        createStudy("yet another title", "zother source");
+        createStudy("yet another title", "zother source", null);
 
         new ReportGenerator(getGraphDb()).generateReportForStudySources();
 
@@ -74,7 +85,11 @@ public class ReportGeneratorTest extends GraphDBTestCase {
     }
 
     protected Study createStudy(String title, String source) throws NodeFactoryException {
-        Study study = nodeFactory.getOrCreateStudy(title, source, "citation");
+        return createStudy(title, source, "citation");
+    }
+
+    protected Study createStudy(String title, String source, String citation) throws NodeFactoryException {
+        Study study = nodeFactory.getOrCreateStudy(title, source, citation);
         Specimen monkey = nodeFactory.createSpecimen(study, "Monkey");
         monkey.ate(nodeFactory.createSpecimen(study, "Banana"));
         monkey.ate(nodeFactory.createSpecimen(study, "Banana"));

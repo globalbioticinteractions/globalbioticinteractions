@@ -70,7 +70,9 @@ public class ReportGenerator {
         try {
             Node node = getGraphDb().createNode();
             node.setProperty(Study.SOURCE, study.getSource());
-            node.setProperty(Study.CITATION, study.getCitation());
+            if (StringUtils.isNotBlank(study.getCitation())) {
+                node.setProperty(Study.CITATION, study.getCitation());
+            }
             node.setProperty(Study.TITLE, study.getTitle());
             node.setProperty(PropertyAndValueDictionary.COLLECTION, GLOBI_COLLECTION_NAME);
             node.setProperty(PropertyAndValueDictionary.NUMBER_OF_INTERACTIONS, interactionCounter.getCount() / 2);
