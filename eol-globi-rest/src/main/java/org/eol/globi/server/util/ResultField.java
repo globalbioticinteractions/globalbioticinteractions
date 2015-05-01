@@ -54,7 +54,11 @@ public enum ResultField {
     STUDY_URL("study_url"),
     STUDY_DOI("study_doi"),
     STUDY_CITATION("study_citation"),
-    STUDY_SOURCE_CITATION("study_source_citation");
+    STUDY_SOURCE_CITATION("study_source_citation"),
+    NUMBER_OF_DISTINCT_TAXA("number_of_distinct_taxa"),
+    NUMBER_OF_SOURCES("number_of_sources"),
+    NUMBER_OF_STUDIES("number_of_studies"),
+    NUMBER_OF_INTERACTIONS("number_of_interactions");
 
     public String getLabel() {
         return label;
