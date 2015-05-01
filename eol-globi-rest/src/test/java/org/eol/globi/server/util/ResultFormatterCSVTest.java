@@ -19,4 +19,10 @@ public class ResultFormatterCSVTest {
         assertThat(format, is("\"loc.latitude\",\"loc.longitude\"\n\"one\",\"two\"\n\"three\",\"four\"\n"));
     }
 
+    @Test
+    public void toCSVQuotedText() throws ResultFormattingException {
+        String format = new ResultFormatterCSV().format("{ \"columns\" : [ \"loc.latitude\", \"loc.longitude\" ], \"data\" : [ [ \"and he said: \\\"boo\\\"\", \"two\" ], [ \"three\", \"four\" ] ]}");
+        assertThat(format, is("\"loc.latitude\",\"loc.longitude\"\n\"and he said: \"\"\"boo\"\"\"\",\"two\"\n\"three\",\"four\"\n"));
+    }
+
 }

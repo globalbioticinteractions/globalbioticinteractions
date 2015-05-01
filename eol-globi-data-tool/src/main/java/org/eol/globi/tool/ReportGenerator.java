@@ -77,7 +77,10 @@ public class ReportGenerator {
             node.setProperty(PropertyAndValueDictionary.COLLECTION, GLOBI_COLLECTION_NAME);
             node.setProperty(PropertyAndValueDictionary.NUMBER_OF_INTERACTIONS, interactionCounter.getCount() / 2);
             node.setProperty(PropertyAndValueDictionary.NUMBER_OF_DISTINCT_TAXA, ids.size());
+            node.setProperty(PropertyAndValueDictionary.NUMBER_OF_STUDIES, 1);
+            node.setProperty(PropertyAndValueDictionary.NUMBER_OF_SOURCES, 1);
             getGraphDb().index().forNodes("reports").add(node, Study.TITLE, study.getTitle());
+            getGraphDb().index().forNodes("reports").add(node, Study.SOURCE, study.getTitle());
             tx.success();
         } finally {
             tx.finish();
@@ -118,6 +121,8 @@ public class ReportGenerator {
                 node.setProperty(PropertyAndValueDictionary.NUMBER_OF_INTERACTIONS, counter.getCount() / 2);
                 node.setProperty(PropertyAndValueDictionary.NUMBER_OF_DISTINCT_TAXA, distinctTaxonIds.size());
                 node.setProperty(PropertyAndValueDictionary.NUMBER_OF_STUDIES, studyCounter.getCount());
+                node.setProperty(PropertyAndValueDictionary.NUMBER_OF_SOURCES, 1);
+
                 getGraphDb().index().forNodes("reports").add(node, Study.SOURCE, source);
                 tx.success();
             } finally {
