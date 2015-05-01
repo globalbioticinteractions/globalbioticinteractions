@@ -164,27 +164,17 @@
                                             <overWrite>false</overWrite>
                                             <outputDirectory>${shapefiles.dir}</outputDirectory>
                                         </artifactItem>
-                                        <execution>
-                                            <id>copy-unpack-neo4j-db</id>
-                                            <phase>generate-resources</phase>
-                                            <goals>
-                                                <goal>unpack</goal>
-                                            </goals>
-                                            <configuration>
-                                                <artifactItems>
-                                                    <artifactItem>
-                                                        <groupId>${project.groupId}</groupId>
-                                                        <artifactId>eol-globi-datasets</artifactId>
-                                                        <version>${project.version}</version>
-                                                        <classifier>neo4j-graph-db</classifier>
-                                                        <type>tar.gz</type>
-                                                        <overWrite>false</overWrite>
-                                                        <outputDirectory>${data.dir}</outputDirectory>
-                                                    </artifactItem>
-                                                </artifactItems>
-                                                <outputDirectory>${project.build.directory}</outputDirectory>
-                                            </configuration>
-                                        </execution>
+                                        <artifactItems>
+                                            <artifactItem>
+                                                <groupId>${project.groupId}</groupId>
+                                                <artifactId>eol-globi-datasets</artifactId>
+                                                <version>${project.version}</version>
+                                                <classifier>neo4j-graph-db</classifier>
+                                                <type>tar.gz</type>
+                                                <overWrite>false</overWrite>
+                                                <outputDirectory>${data.dir}</outputDirectory>
+                                            </artifactItem>
+                                        </artifactItems>
                                     </artifactItems>
                                     <outputDirectory>${project.build.directory}</outputDirectory>
                                 </configuration>
