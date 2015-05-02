@@ -15,8 +15,8 @@ import org.eol.globi.util.HttpUtil;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -94,21 +94,17 @@ public class StudyImporterForVertNetTest extends GraphDBTestCase {
 
     @Test
     public void parseAssociatedOccurrences2() throws IOException {
-        File linkFile = File.createTempFile("vertnet-links", ".csv");
-        linkFile.deleteOnExit();
-
-        File nodeFile = File.createTempFile("vertnet-nodes", ".csv");
-        nodeFile.deleteOnExit();
-
         ObjectMapper mapper = new ObjectMapper();
         JsonNode jsonNode1 = mapper.readTree(IOUtils.toString(new GZIPInputStream(getClass().getResourceAsStream("vertnet/response_associated_occurrences.json.gz"))));
         JsonNode recs = jsonNode1.get("recs");
 
-        CSVPrint linkPrinter = CSVUtil.createCSVPrint(new FileOutputStream(linkFile));
+        ByteArrayOutputStream linkOs = new ByteArrayOutputStream();
+        CSVPrint linkPrinter = CSVUtil.createCSVPrint(linkOs);
         linkPrinter.print(new String[]{"source", "interaction_type", "target"});
         linkPrinter.setAutoFlush(true);
 
-        CSVPrint nodePrinter = CSVUtil.createCSVPrint(new FileOutputStream(nodeFile));
+        ByteArrayOutputStream nodeOs = new ByteArrayOutputStream();
+        CSVPrint nodePrinter = CSVUtil.createCSVPrint(nodeOs);
         String[] nodeFields = {"individualid", "decimallongitude", "decimallatitude"
                 , "year", "month", "day", "basisofrecord", "scientificname"
                 , "dataset_citation"};
@@ -139,7 +135,7 @@ public class StudyImporterForVertNetTest extends GraphDBTestCase {
         linkPrinter.flush();
         linkPrinter.close();
 
-        String linkString = IOUtils.toString(new FileInputStream(linkFile));
+        String linkString = IOUtils.toString(linkOs.toByteArray(), CharsetConstant.UTF8);
         assertThat(linkString, is("source,interaction_type,target" +
                 "\nhttp://arctos.database.museum/guid/CUMV:Amph:16004,EATEN_BY,http://arctos.database.museum/guid/CUMV:Rept:4988" +
                 "\nhttp://arctos.database.museum/guid/DMNS:Bird:34623,ATE,http://arctos.database.museum/guid/DMNS:Mamm:13142" +
@@ -147,7 +143,7 @@ public class StudyImporterForVertNetTest extends GraphDBTestCase {
                 "\nhttp://arctos.database.museum/guid/DMNS:Bird:34728,ATE,DZTM::Denver:Zoology:Tissue:Mammal:2285" +
                 "\nhttp://arctos.database.museum/guid/DMNS:Bird:34728,ATE,http://arctos.database.museum/guid/DMNS:Mamm:13685"));
 
-        String nodeString = IOUtils.toString(new FileInputStream(nodeFile));
+        String nodeString = IOUtils.toString(nodeOs.toByteArray(), CharsetConstant.UTF8);
         assertThat(nodeString, is("individualid,decimallongitude,decimallatitude,year,month,day,basisofrecord,scientificname,dataset_citation" +
                 "\nindividualID,180,-90,2014,10,10,basisOfRecord,scientificName,test citation" +
                 "\nhttp://arctos.database.museum/guid/CUMV:Amph:16004,-76.45442,42.4566,1953,09,27,PreservedSpecimen,Rana sylvatica," +
