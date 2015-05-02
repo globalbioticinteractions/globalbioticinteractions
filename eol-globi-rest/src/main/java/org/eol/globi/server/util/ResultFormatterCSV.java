@@ -1,7 +1,7 @@
 package org.eol.globi.server.util;
 
 import org.codehaus.jackson.JsonNode;
-import org.springframework.util.StringUtils;
+import org.eol.globi.util.CSVUtil;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -138,10 +138,11 @@ public class ResultFormatterCSV implements ResultFormatter {
             if (node.isTextual()) {
                 resultBuilder.append("\"");
             }
-            resultBuilder.append(StringUtils.replace(node.asText(), "\"", "\"\""));
+            CSVUtil.escapeQuotes(resultBuilder, node);
             if (node.isTextual()) {
                 resultBuilder.append("\"");
             }
         }
     }
+
 }

@@ -7,6 +7,8 @@ import com.Ostermiller.util.ExcelCSVParser;
 import com.Ostermiller.util.ExcelCSVPrinter;
 import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.codehaus.jackson.JsonNode;
 import org.eol.globi.data.FileUtils;
 
 import java.io.File;
@@ -62,5 +64,9 @@ public class CSVUtil {
         IOUtils.copy(zis, output);
         output.flush();
         IOUtils.closeQuietly(output);
+    }
+
+    public static void escapeQuotes(StringBuilder resultBuilder, JsonNode node) {
+        resultBuilder.append(StringUtils.replace(node.asText(), "\"", "\"\""));
     }
 }

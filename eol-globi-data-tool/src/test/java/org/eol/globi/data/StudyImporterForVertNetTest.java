@@ -1,5 +1,6 @@
 package org.eol.globi.data;
 
+import com.Ostermiller.util.CSVPrint;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -8,14 +9,18 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.eol.globi.domain.InteractType;
+import org.eol.globi.util.CSVUtil;
 import org.eol.globi.util.HttpUtil;
 import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -28,7 +33,6 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.junit.internal.matchers.IsCollectionContaining.hasItems;
-import static org.junit.matchers.JUnitMatchers.hasItem;
 
 /**
  * Note that Animal Diversity Web data tested below is currently assumed to be part of SPIRE.
@@ -49,6 +53,132 @@ public class StudyImporterForVertNetTest extends GraphDBTestCase {
         assertThat(stomachStrings, hasItems("gravel", "insect parts", "sand"));
     }
 
+    @Test
+    public void parseAssociatedOccurrences() {
+        Map<String, InteractType> assoc = parseAssOcc("(eaten by) institutional catalog number CUMV Rept 4988");
+        assertThat(assoc.get("http://arctos.database.museum/guid/CUMV:Rept:4988"), is(InteractType.EATEN_BY));
+
+        assoc = parseAssOcc("(ate) DMNS:Mamm http://arctos.database.museum/guid/DMNS:Mamm:13142; (ate) DMNS:Mamm http://arctos.database.museum/guid/DMNS:Mamm:13143");
+        assertThat(assoc.get("http://arctos.database.museum/guid/DMNS:Mamm:13142"), is(InteractType.ATE));
+        assertThat(assoc.get("http://arctos.database.museum/guid/DMNS:Mamm:13143"), is(InteractType.ATE));
+    }
+
+    protected Map<String, InteractType> parseAssOcc(String str) {
+        Map<String, InteractType> mapping = new HashMap<String, InteractType>() {
+            {
+                put("ate", InteractType.ATE);
+                put("eaten by", InteractType.EATEN_BY);
+                put("parasite of", InteractType.PARASITE_OF);
+            }
+        };
+
+        String[] occurrences = StringUtils.split(str, ";");
+        Map<String, InteractType> assoc = new HashMap<String, InteractType>();
+        for (String occurrence : occurrences) {
+            int index = StringUtils.indexOf(occurrence, ")");
+            if (index > 0) {
+                String association = StringUtils.substring(StringUtils.trim(StringUtils.substring(occurrence, 0, index)), 1);
+                String rest = StringUtils.substring(occurrence, index + 1);
+                InteractType interactType = mapping.get(association);
+                if (interactType != null) {
+                    String trim = StringUtils.trim(rest);
+                    int nsIndex = StringUtils.indexOf(trim, "http://arctos.database.museum/guid/");
+                    String strip = nsIndex < 0 ? trim : StringUtils.substring(trim, nsIndex, trim.length());
+                    String ns = StringUtils.replace(strip, "institutional catalog number ", "http://arctos.database.museum/guid/");
+                    assoc.put(StringUtils.replace(ns, " ", ":"), interactType);
+                }
+            }
+        }
+        return assoc;
+    }
+
+    @Test
+    public void parseAssociatedOccurrences2() throws IOException {
+        File linkFile = File.createTempFile("vertnet-links", ".csv");
+        linkFile.deleteOnExit();
+
+        File nodeFile = File.createTempFile("vertnet-nodes", ".csv");
+        nodeFile.deleteOnExit();
+
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode jsonNode1 = mapper.readTree(IOUtils.toString(new GZIPInputStream(getClass().getResourceAsStream("vertnet/response_associated_occurrences.json.gz"))));
+        JsonNode recs = jsonNode1.get("recs");
+
+        CSVPrint linkPrinter = CSVUtil.createCSVPrint(new FileOutputStream(linkFile));
+        linkPrinter.print(new String[]{"source", "interaction_type", "target"});
+        linkPrinter.setAutoFlush(true);
+
+        CSVPrint nodePrinter = CSVUtil.createCSVPrint(new FileOutputStream(nodeFile));
+        String[] nodeFields = {"individualid", "decimallongitude", "decimallatitude"
+                , "year", "month", "day", "basisofrecord", "scientificname"
+                , "dataset_citation"};
+        nodePrinter.print(nodeFields);
+        nodePrinter.setAutoFlush(true);
+
+        for (JsonNode rec : recs) {
+            String specimenId = getOrNull(rec, "individualid");
+            String associatedOcc = getOrNull(rec, "associatedoccurrences");
+            if (StringUtils.isNotBlank(specimenId) && StringUtils.isNotBlank(associatedOcc)) {
+                Map<String, InteractType> associatedoccurrences = parseAssOcc(associatedOcc);
+
+                for (Map.Entry<String, InteractType> entry : associatedoccurrences.entrySet()) {
+                    linkPrinter.println();
+                    linkPrinter.print(specimenId);
+                    linkPrinter.print(entry.getValue().toString());
+                    linkPrinter.print(entry.getKey());
+                }
+
+                nodePrinter.println();
+                for (String field : nodeFields) {
+                    String value = getOrNull(rec, field);
+                    nodePrinter.print(StringUtils.isBlank(value) ? "" : value);
+                }
+            }
+
+        }
+        linkPrinter.flush();
+        linkPrinter.close();
+
+        String linkString = IOUtils.toString(new FileInputStream(linkFile));
+        assertThat(linkString, is("source,interaction_type,target" +
+                "\nhttp://arctos.database.museum/guid/CUMV:Amph:16004,EATEN_BY,http://arctos.database.museum/guid/CUMV:Rept:4988" +
+                "\nhttp://arctos.database.museum/guid/DMNS:Bird:34623,ATE,http://arctos.database.museum/guid/DMNS:Mamm:13142" +
+                "\nhttp://arctos.database.museum/guid/DMNS:Bird:34623,ATE,http://arctos.database.museum/guid/DMNS:Mamm:13143" +
+                "\nhttp://arctos.database.museum/guid/DMNS:Bird:34728,ATE,DZTM::Denver:Zoology:Tissue:Mammal:2285" +
+                "\nhttp://arctos.database.museum/guid/DMNS:Bird:34728,ATE,http://arctos.database.museum/guid/DMNS:Mamm:13685"));
+
+        String nodeString = IOUtils.toString(new FileInputStream(nodeFile));
+        assertThat(nodeString, is("individualid,decimallongitude,decimallatitude,year,month,day,basisofrecord,scientificname,dataset_citation" +
+                "\nindividualID,180,-90,2014,10,10,basisOfRecord,scientificName,test citation" +
+                "\nhttp://arctos.database.museum/guid/CUMV:Amph:16004,-76.45442,42.4566,1953,09,27,PreservedSpecimen,Rana sylvatica," +
+                "\nhttp://arctos.database.museum/guid/DMNS:Bird:21686,-106.434158,38.709448,1940,07,27,PreservedSpecimen,Lagopus leucurus,Denver Museum of Nature & Science Bird Collection" +
+                "\nhttp://arctos.database.museum/guid/DMNS:Bird:21688,-106.434158,38.709448,1940,07,27,PreservedSpecimen,Lagopus leucurus,Denver Museum of Nature & Science Bird Collection" +
+                "\nhttp://arctos.database.museum/guid/DMNS:Bird:21689,-106.434158,38.709448,1940,07,27,PreservedSpecimen,Lagopus leucurus,Denver Museum of Nature & Science Bird Collection" +
+                "\nhttp://arctos.database.museum/guid/DMNS:Bird:26722,-105.02222,39.38528,1943,06,24,PreservedSpecimen,Chordeiles minor,Denver Museum of Nature & Science Bird Collection" +
+                "\nhttp://arctos.database.museum/guid/DMNS:Bird:26724,-105.02222,39.38528,1943,06,24,PreservedSpecimen,Chordeiles minor,Denver Museum of Nature & Science Bird Collection" +
+                "\nhttp://arctos.database.museum/guid/DMNS:Bird:34623,-104.738965,39.461082,2012,04,30,PreservedSpecimen,Asio otus,Denver Museum of Nature & Science Bird Collection" +
+                "\nhttp://arctos.database.museum/guid/DMNS:Bird:34728,-105.096498,40.454918,2012,08,10,PreservedSpecimen,Buteo swainsoni,Denver Museum of Nature & Science Bird Collection"));
+    }
+
+    private String getOrNull(JsonNode node, String propertyName) {
+        String value = null;
+        if (node.has(propertyName)) {
+            value = node.get(propertyName).asText();
+        }
+        return value;
+    }
+
+    @Test
+    public void testRequestURL() throws IOException, URISyntaxException {
+        assertThat(createRequestURL(null, "stomach").toString(), is("http://api.vertnet-portal.appspot.com:80/api/search?q=%7B%22q%22:%22stomach%22,%22l%22:100%7D"));
+        assertThat(createRequestURL(null, "associatedOccurrences", 10).toString(), is("http://api.vertnet-portal.appspot.com:80/api/search?q=%7B%22q%22:%22associatedOccurrences%22,%22l%22:10%7D"));
+    }
+
+    @Test
+    public void parseSingleRecord() {
+
+    }
+
     @Ignore
     @Test
     public void importStomachData() throws URISyntaxException, IOException {
@@ -60,7 +190,7 @@ public class StudyImporterForVertNetTest extends GraphDBTestCase {
         FileOutputStream fos = new FileOutputStream(file);
         while (StringUtils.isBlank(cursor) || !StringUtils.equals(cursor, oldCursor)) {
             List<String> stomachStrings = new ArrayList<String>();
-            String uri = createRequestURL(cursor);
+            URI uri = createRequestURL(cursor, "stomach");
             HttpResponse resp = HttpUtil.getHttpClient().execute(new HttpGet(uri));
 
             if (200 == resp.getStatusLine().getStatusCode()) {
@@ -121,12 +251,21 @@ public class StudyImporterForVertNetTest extends GraphDBTestCase {
 
     }
 
-    private String createRequestURL(String cursor) {
-        String s = "http://api.vertnet-portal.appspot.com/api/search?q=%7B%22q%22%3A%22stomach%22";
-        if (cursor != null) {
-            s += "%2C%22c%22%3A%22" + cursor + "%22";
+    private URI createRequestURL(String cursor, String searchTerm) throws IOException, URISyntaxException {
+        return createRequestURL(cursor, searchTerm, 100);
+    }
+
+    private URI createRequestURL(String cursor, String searchTerm, int limit) throws IOException, URISyntaxException {
+        Map<String, Object> param = new HashMap<String, Object>();
+        param.put("q", searchTerm);
+        param.put("l", limit);
+        if (StringUtils.isNotBlank(cursor)) {
+            param.put("c", cursor);
         }
-        return s + "%7D";
+
+        ObjectMapper mapper = new ObjectMapper();
+        String query = mapper.writeValueAsString(param);
+        return new URI("http", null, "api.vertnet-portal.appspot.com", 80, "/api/search", "q=" + query, null);
     }
 
 
