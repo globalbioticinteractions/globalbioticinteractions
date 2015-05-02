@@ -1,6 +1,4 @@
 language: java
-jdk:
-  - oraclejdk8
 install: mvn --version
 sudo: false
 cache:

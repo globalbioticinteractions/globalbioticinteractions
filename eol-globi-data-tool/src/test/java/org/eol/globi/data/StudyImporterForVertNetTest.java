@@ -92,6 +92,7 @@ public class StudyImporterForVertNetTest extends GraphDBTestCase {
         return assoc;
     }
 
+    @Ignore
     @Test
     public void parseAssociatedOccurrences2() throws IOException {
         ObjectMapper mapper = new ObjectMapper();
