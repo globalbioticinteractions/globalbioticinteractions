@@ -15,6 +15,7 @@ import org.neo4j.cypher.javacompat.ExecutionResult;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
+import org.neo4j.graphdb.ResourceIterator;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -30,6 +31,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.matchers.JUnitMatchers.containsString;
+import static org.junit.matchers.JUnitMatchers.hasItem;
 
 public class StudyImporterForBioInfoTest extends GraphDBTestCase {
 
@@ -69,11 +71,16 @@ public class StudyImporterForBioInfoTest extends GraphDBTestCase {
         }
 
         ExecutionEngine engine = new ExecutionEngine(getGraphDb());
-        ExecutionResult result = engine.execute("START taxon = node:taxons('*:*') MATCH taxon<-[:CLASSIFIED_AS]-specimen-[r]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon RETURN taxon.externalId + ' ' + lower(type(r)) + ' ' + targetTaxon.externalId");
-        assertThat(result.dumpToString(), containsString("NBN:NHMSYS0000455771 interacts_with NBN:NBNSYS0000024890"));
-        assertThat(result.dumpToString(), containsString("NBN:NBNSYS0000030148 parasite_of NBN:NHMSYS0000502366"));
-        assertThat(result.dumpToString(), containsString("NBN:NHMSYS0000500943 has_parasite NBN:NBNSYS0000030148"));
-        assertThat(result.dumpToString(), containsString("NBN:NHMSYS0000460576 eaten_by NBN:NHMSYS0020152444"));
+        ExecutionResult result = engine.execute("START taxon = node:taxons('*:*') MATCH taxon<-[:CLASSIFIED_AS]-specimen-[r]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon RETURN taxon.externalId + ' ' + lower(type(r)) + ' ' + targetTaxon.externalId as interaction");
+        ResourceIterator<Map<String, Object>> iterator = result.iterator();
+        List<String> interactions = new ArrayList<String>();
+        while (iterator.hasNext()) {
+            Map<String, Object> next = iterator.next();
+            interactions.add((String)next.get("interaction"));
+        }
+        assertThat(interactions, hasItem("NBN:NHMSYS0000455771 interacts_with NBN:NBNSYS0000024890"));
+        assertThat(interactions, hasItem("NBN:NBNSYS0000030148 parasite_of NBN:NHMSYS0000502366"));
+        assertThat(interactions, hasItem("NBN:NHMSYS0000500943 has_parasite NBN:NBNSYS0000030148"));
 
         assertThat(study.getTitle(), is("bioinfo:ref:60527"));
         assertThat(study.getSource(), is("Food Webs and Species Interactions in the Biodiversity of UK and Ireland (Online). 2015. Data provided by Malcolm Storey. Also available from http://bioinfo.org.uk."));
@@ -88,7 +95,7 @@ public class StudyImporterForBioInfoTest extends GraphDBTestCase {
         LabeledCSVParser labeledCSVParser = createParser(RELATIONS_STRING);
 
         StudyImporterForBioInfo importer = new StudyImporterForBioInfo(new ParserFactoryImpl(), nodeFactory);
-        importer.createRelations(labeledCSVParser, new HashMap <String, String>(){{
+        importer.createRelations(labeledCSVParser, new HashMap<String, String>() {{
             put("60527", "citation A");
             put("60536", "citation B");
         }}, new HashMap<String, Taxon>());
