@@ -15,7 +15,6 @@ import org.eol.globi.util.HttpUtil;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -25,9 +24,9 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.zip.GZIPInputStream;
 
 import static org.hamcrest.core.Is.is;
@@ -65,7 +64,7 @@ public class StudyImporterForVertNetTest extends GraphDBTestCase {
     }
 
     protected Map<String, InteractType> parseAssOcc(String str) {
-        Map<String, InteractType> mapping = new HashMap<String, InteractType>() {
+        Map<String, InteractType> mapping = new TreeMap<String, InteractType>() {
             {
                 put("ate", InteractType.ATE);
                 put("eaten by", InteractType.EATEN_BY);
@@ -74,7 +73,7 @@ public class StudyImporterForVertNetTest extends GraphDBTestCase {
         };
 
         String[] occurrences = StringUtils.split(str, ";");
-        Map<String, InteractType> assoc = new HashMap<String, InteractType>();
+        Map<String, InteractType> assoc = new TreeMap<String, InteractType>();
         for (String occurrence : occurrences) {
             int index = StringUtils.indexOf(occurrence, ")");
             if (index > 0) {
@@ -165,8 +164,8 @@ public class StudyImporterForVertNetTest extends GraphDBTestCase {
 
     @Test
     public void testRequestURL() throws IOException, URISyntaxException {
-        assertThat(createRequestURL(null, "stomach").toString(), is("http://api.vertnet-portal.appspot.com:80/api/search?q=%7B%22q%22:%22stomach%22,%22l%22:100%7D"));
-        assertThat(createRequestURL(null, "associatedOccurrences", 10).toString(), is("http://api.vertnet-portal.appspot.com:80/api/search?q=%7B%22q%22:%22associatedOccurrences%22,%22l%22:10%7D"));
+        assertThat(createRequestURL(null, "stomach").toString(), is("http://api.vertnet-portal.appspot.com:80/api/search?q=%7B%22l%22:100,%22q%22:%22stomach%22%7D"));
+        assertThat(createRequestURL(null, "associatedOccurrences", 10).toString(), is("http://api.vertnet-portal.appspot.com:80/api/search?q=%7B%22l%22:10,%22q%22:%22associatedOccurrences%22%7D"));
     }
 
     @Test
@@ -216,7 +215,7 @@ public class StudyImporterForVertNetTest extends GraphDBTestCase {
     private void parseRecord(Collection<String> stomachStrings, JsonNode rec, OutputStream outputStream) throws IOException {
         if (rec.has("dynamicproperties")) {
             String props = rec.get("dynamicproperties").getTextValue();
-            Map<String, String> dynProps = new HashMap<String, String>();
+            Map<String, String> dynProps = new TreeMap<String, String>();
             String[] split = props.split(";");
             if (split.length > 1) {
                 for (String s1 : split) {
@@ -251,7 +250,7 @@ public class StudyImporterForVertNetTest extends GraphDBTestCase {
     }
 
     private URI createRequestURL(String cursor, String searchTerm, int limit) throws IOException, URISyntaxException {
-        Map<String, Object> param = new HashMap<String, Object>();
+        Map<String, Object> param = new TreeMap<String, Object>();
         param.put("q", searchTerm);
         param.put("l", limit);
         if (StringUtils.isNotBlank(cursor)) {
