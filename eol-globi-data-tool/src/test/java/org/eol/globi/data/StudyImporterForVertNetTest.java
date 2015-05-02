@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.StringWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -98,12 +99,12 @@ public class StudyImporterForVertNetTest extends GraphDBTestCase {
         JsonNode jsonNode1 = mapper.readTree(IOUtils.toString(new GZIPInputStream(getClass().getResourceAsStream("vertnet/response_associated_occurrences.json.gz"))));
         JsonNode recs = jsonNode1.get("recs");
 
-        ByteArrayOutputStream linkOs = new ByteArrayOutputStream();
+        StringWriter linkOs = new StringWriter();
         CSVPrint linkPrinter = CSVUtil.createCSVPrint(linkOs);
         linkPrinter.print(new String[]{"source", "interaction_type", "target"});
         linkPrinter.setAutoFlush(true);
 
-        ByteArrayOutputStream nodeOs = new ByteArrayOutputStream();
+        StringWriter nodeOs = new StringWriter();
         CSVPrint nodePrinter = CSVUtil.createCSVPrint(nodeOs);
         String[] nodeFields = {"individualid", "decimallongitude", "decimallatitude"
                 , "year", "month", "day", "basisofrecord", "scientificname"
@@ -135,16 +136,14 @@ public class StudyImporterForVertNetTest extends GraphDBTestCase {
         linkPrinter.flush();
         linkPrinter.close();
 
-        String linkString = IOUtils.toString(linkOs.toByteArray(), CharsetConstant.UTF8);
-        assertThat(linkString, is("source,interaction_type,target" +
+        assertThat(linkOs.toString(), is("source,interaction_type,target" +
                 "\nhttp://arctos.database.museum/guid/CUMV:Amph:16004,EATEN_BY,http://arctos.database.museum/guid/CUMV:Rept:4988" +
                 "\nhttp://arctos.database.museum/guid/DMNS:Bird:34623,ATE,http://arctos.database.museum/guid/DMNS:Mamm:13142" +
                 "\nhttp://arctos.database.museum/guid/DMNS:Bird:34623,ATE,http://arctos.database.museum/guid/DMNS:Mamm:13143" +
                 "\nhttp://arctos.database.museum/guid/DMNS:Bird:34728,ATE,DZTM::Denver:Zoology:Tissue:Mammal:2285" +
                 "\nhttp://arctos.database.museum/guid/DMNS:Bird:34728,ATE,http://arctos.database.museum/guid/DMNS:Mamm:13685"));
 
-        String nodeString = IOUtils.toString(nodeOs.toByteArray(), CharsetConstant.UTF8);
-        assertThat(nodeString, is("individualid,decimallongitude,decimallatitude,year,month,day,basisofrecord,scientificname,dataset_citation" +
+        assertThat(nodeOs.toString(), is("individualid,decimallongitude,decimallatitude,year,month,day,basisofrecord,scientificname,dataset_citation" +
                 "\nindividualID,180,-90,2014,10,10,basisOfRecord,scientificName,test citation" +
                 "\nhttp://arctos.database.museum/guid/CUMV:Amph:16004,-76.45442,42.4566,1953,09,27,PreservedSpecimen,Rana sylvatica," +
                 "\nhttp://arctos.database.museum/guid/DMNS:Bird:21686,-106.434158,38.709448,1940,07,27,PreservedSpecimen,Lagopus leucurus,Denver Museum of Nature & Science Bird Collection" +
