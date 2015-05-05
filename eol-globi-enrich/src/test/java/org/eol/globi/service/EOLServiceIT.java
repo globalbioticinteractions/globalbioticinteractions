@@ -22,13 +22,6 @@ import static org.junit.internal.matchers.StringContains.containsString;
 
 public class EOLServiceIT {
 
-    public static final String HOMO_SAPIENS_PATH = "Animalia" + CharsetConstant.SEPARATOR +
-            "Chordata" + CharsetConstant.SEPARATOR +
-            "Mammalia" + CharsetConstant.SEPARATOR +
-            "Primates" + CharsetConstant.SEPARATOR +
-            "Hominidae" + CharsetConstant.SEPARATOR +
-            "Homo" + CharsetConstant.SEPARATOR +
-            "Homo sapiens";
     private final EOLService eolService = new EOLService();
 
     @Before
