@@ -62,23 +62,25 @@ public class LittleTurtleExporterTest extends GraphDBTestCase {
             tx.finish();
         }
 
-        FileUtils.forceMkdir(new File("target"));
-        File file = new File("target/spire-as-light-globi.ttl");
-        FileUtils.deleteQuietly(file);
-        Writer writer = new FileWriter(file);
-        LittleTurtleExporter turtleExporter = new LittleTurtleExporter();
-        for (Study study : studies) {
-            turtleExporter.exportStudy(study, writer, true);
+        File file = File.createTempFile("spire-as-light-globi", ".ttl");
+        try {
+            Writer writer = new FileWriter(file);
+            LittleTurtleExporter turtleExporter = new LittleTurtleExporter();
+            for (Study study : studies) {
+                turtleExporter.exportStudy(study, writer, true);
+            }
+            turtleExporter.exportDataOntology(writer);
+            writer.flush();
+            writer.close();
+
+            assertTrue(file.exists());
+
+            String content = IOUtils.toString(new FileInputStream(file));
+            assertThat(content, not(containsString("no:match")));
+            assertThat(content, containsString("OBO:ENVO_00000447"));
+        } finally {
+            FileUtils.deleteQuietly(file);
         }
-        turtleExporter.exportDataOntology(writer);
-        writer.flush();
-        writer.close();
-
-        assertTrue(file.exists());
-
-        String content = IOUtils.toString(new FileInputStream(file));
-        assertThat(content, not(containsString("no:match")));
-        assertThat(content, containsString("OBO:ENVO_00000447"));
     }
 
 
