@@ -42,7 +42,6 @@ public class StudyImporterForHurlbertTest extends GraphDBTestCase {
         assertThat(nodeFactory.findTaxonByName("Seiurus aurocapillus"), is(notNullValue()));
         TaxonNode formicidae = nodeFactory.findTaxonByName("Formicidae");
         assertThat(formicidae, is(notNullValue()));
-        assertThat(formicidae.getStatus(), is(notNullValue()));
         assertThat(nodeFactory.findTaxonByName("Coleoptera"), is(notNullValue()));
 
     }
