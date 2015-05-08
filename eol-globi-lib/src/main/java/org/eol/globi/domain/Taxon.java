@@ -28,4 +28,8 @@ public interface Taxon {
     void setPathIds(String pathIds);
 
     String getPathIds();
+
+    void setStatus(Term status);
+
+    Term getStatus();
 }

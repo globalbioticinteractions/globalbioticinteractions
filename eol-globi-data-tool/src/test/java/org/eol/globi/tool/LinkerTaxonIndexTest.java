@@ -83,7 +83,7 @@ public class LinkerTaxonIndexTest extends GraphDBTestCase {
         };
         TaxonIndexImpl taxonService = TaxonIndexImplTest.createTaxonService(getGraphDb());
         taxonService.setEnricher(enricher);
-        taxonService.getOrCreateTaxon("Homo sapiens", null, null);
+        taxonService.getOrCreateTaxon(new TaxonImpl("Homo sapiens"));
         new LinkerTaxonIndex().link(getGraphDb());
 
         assertThat(getGraphDb().index().existsForNodes("taxonNameSuggestions"), is(true));

@@ -6,6 +6,7 @@ import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.data.PassThroughEnricher;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Taxon;
+import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.service.PropertyEnricher;
 import org.eol.globi.service.PropertyEnricherException;
@@ -41,7 +42,7 @@ public class TaxonIndexImplTest extends GraphDBTestCase {
         assertThat(getGraphDb().index().existsForNodes("taxons"), is(true));
         assertThat(getGraphDb().index().existsForNodes("thisDoesnoTExist"), is(false));
 
-        assertEnrichedPropertiesSet(taxonService.getOrCreateTaxon("some name", null, null));
+        assertEnrichedPropertiesSet(taxonService.getOrCreateTaxon(new TaxonImpl("some name")));
         assertEnrichedPropertiesSet(taxonService.findTaxonByName("some name"));
     }
 
@@ -55,7 +56,9 @@ public class TaxonIndexImplTest extends GraphDBTestCase {
 
     @Test
     public void createTaxon() throws NodeFactoryException {
-        TaxonNode taxon = taxonService.getOrCreateTaxon("bla bla", null, null);
+        Taxon taxon1 = new TaxonImpl("bla bla", null);
+        taxon1.setPath(null);
+        TaxonNode taxon = taxonService.getOrCreateTaxon(taxon1);
         assertThat(taxon, is(notNullValue()));
         assertEquals("bla bla", taxon.getName());
     }
@@ -70,7 +73,9 @@ public class TaxonIndexImplTest extends GraphDBTestCase {
                     }
                 }, getGraphDb()
         );
-        TaxonNode taxon = taxonService.getOrCreateTaxon(null, "foo:123", null);
+        Taxon taxon1 = new TaxonImpl(null, "foo:123");
+        taxon1.setPath(null);
+        TaxonNode taxon = taxonService.getOrCreateTaxon(taxon1);
         assertThat(taxon, is(notNullValue()));
         assertThat(taxonService.findTaxonById("foo:123"), is(notNullValue()));
     }
@@ -82,7 +87,9 @@ public class TaxonIndexImplTest extends GraphDBTestCase {
     }
 
     private void assertNotIndexed(String magicValue) throws NodeFactoryException {
-        TaxonNode taxon = taxonService.getOrCreateTaxon(magicValue, null, null);
+        Taxon taxon1 = new TaxonImpl(magicValue, null);
+        taxon1.setPath(null);
+        TaxonNode taxon = taxonService.getOrCreateTaxon(taxon1);
         assertThat(taxon, is(notNullValue()));
         assertThat(taxonService.findTaxonByName(magicValue), is(nullValue()));
     }
@@ -108,17 +115,17 @@ public class TaxonIndexImplTest extends GraphDBTestCase {
             }
         };
         taxonService.setEnricher(enricher);
-        TaxonNode taxon = taxonService.getOrCreateTaxon("bla bla", null, null);
+        TaxonNode taxon = taxonService.getOrCreateTaxon(new TaxonImpl("bla bla"));
         assertEquals("bla", taxon.getName());
         assertEquals("a path", taxon.getPath());
         assertEquals("anExternalId", taxon.getExternalId());
 
-        taxon = taxonService.getOrCreateTaxon("bla bla boo", null, null);
+        taxon = taxonService.getOrCreateTaxon(new TaxonImpl("bla bla boo"));
         assertEquals("bla", taxon.getName());
         assertEquals("a path", taxon.getPath());
         assertEquals("anExternalId", taxon.getExternalId());
 
-        taxon = taxonService.getOrCreateTaxon("boo bla", null, null);
+        taxon = taxonService.getOrCreateTaxon(new TaxonImpl("boo bla"));
         assertEquals("boo bla", taxon.getName());
         assertThat(taxon.getExternalId(), is(PropertyAndValueDictionary.NO_MATCH));
         assertNull(taxon.getPath());
@@ -126,7 +133,7 @@ public class TaxonIndexImplTest extends GraphDBTestCase {
 
     @Test
     public void findCloseMatch() throws NodeFactoryException {
-        taxonService.getOrCreateTaxon("Homo sapiens", null, null);
+        taxonService.getOrCreateTaxon(new TaxonImpl("Homo sapiens"));
         IndexHits<Node> hits = taxonService.findCloseMatchesForTaxonName("Homo sapiens");
         assertThat(hits.hasNext(), is(true));
         hits.close();
@@ -150,7 +157,7 @@ public class TaxonIndexImplTest extends GraphDBTestCase {
                 return corrected;
             }
         });
-        TaxonNode taxon = taxonService.getOrCreateTaxon("bla", null, null);
+        TaxonNode taxon = taxonService.getOrCreateTaxon(new TaxonImpl("bla"));
         assertEquals("bla corrected", taxon.getName());
 
         TaxonNode bla = taxonService.findTaxonByName("bla");
@@ -186,14 +193,18 @@ public class TaxonIndexImplTest extends GraphDBTestCase {
 
             }
         });
-        TaxonNode first = taxonService.getOrCreateTaxon("not pref", null, null);
+        Taxon taxon2 = new TaxonImpl("not pref", null);
+        taxon2.setPath(null);
+        TaxonNode first = taxonService.getOrCreateTaxon(taxon2);
         assertThat(first.getName(), is("preferred"));
         assertThat(first.getPath(), is("one | two | three"));
         assertThat(first.getPathIds(), is("1 | 2 | 3"));
-        TaxonNode second = taxonService.getOrCreateTaxon("not pref", null, null);
+        Taxon taxon1 = new TaxonImpl("not pref", null);
+        taxon1.setPath(null);
+        TaxonNode second = taxonService.getOrCreateTaxon(taxon1);
         assertThat(second.getNodeID(), is(first.getNodeID()));
 
-        TaxonNode third = taxonService.getOrCreateTaxon("not pref", null, null);
+        TaxonNode third = taxonService.getOrCreateTaxon(new TaxonImpl("not pref"));
         assertThat(third.getNodeID(), is(first.getNodeID()));
 
         TaxonNode foundTaxon = taxonService.findTaxonByName("not pref");

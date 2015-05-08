@@ -7,6 +7,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
+import org.eol.globi.domain.Taxon;
+import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.Term;
 import org.eol.globi.util.ExternalIdUtil;
 
@@ -72,9 +74,16 @@ public class StudyImporterForHurlbert extends BaseStudyImporter {
 
     protected void importInteraction(Set<String> regions, Set<String> locales, Set<String> habitats, LabeledCSVParser parser, Study study, String preyTaxonName, String predatorName) throws StudyImporterException {
         try {
-            Specimen predatorSpecimen = nodeFactory.createSpecimen(study, predatorName);
+            Taxon predatorTaxon = new TaxonImpl(predatorName);
+            Specimen predatorSpecimen = nodeFactory.createSpecimen(study, predatorTaxon);
             setBasisOfRecordAsLiterature(predatorSpecimen);
-            Specimen preySpecimen = nodeFactory.createSpecimen(study, preyTaxonName);
+
+            Taxon preyTaxon = new TaxonImpl(preyTaxonName);
+            String preyNameStatus = StringUtils.trim(parser.getValueByLabel("Prey_Name_Status"));
+            if (StringUtils.isNotBlank(preyNameStatus)) {
+                preyTaxon.setStatus(new Term("HURLBERT:" + preyNameStatus, preyNameStatus));
+            }
+            Specimen preySpecimen = nodeFactory.createSpecimen(study, preyTaxon);
             setBasisOfRecordAsLiterature(preySpecimen);
 
             String preyStage = StringUtils.trim(parser.getValueByLabel("Prey_Stage"));

@@ -10,6 +10,8 @@ import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Season;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
+import org.eol.globi.domain.Taxon;
+import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.domain.Term;
 import org.eol.globi.geo.Ecoregion;
@@ -102,12 +104,19 @@ public class NodeFactoryImpl implements NodeFactory {
 
     @Override
     public TaxonNode getOrCreateTaxon(String name) throws NodeFactoryException {
-        return getOrCreateTaxon(name, null, null);
+        return getOrCreateTaxon(new TaxonImpl(name));
     }
 
     @Override
     public TaxonNode getOrCreateTaxon(String name, String externalId, String path) throws NodeFactoryException {
-        return getTaxonIndex().getOrCreateTaxon(name, externalId, path);
+        Taxon taxon = new TaxonImpl(name, externalId);
+        taxon.setPath(path);
+        return getOrCreateTaxon(taxon);
+    }
+
+    @Override
+    public TaxonNode getOrCreateTaxon(Taxon taxon) throws NodeFactoryException {
+        return getTaxonIndex().getOrCreateTaxon(taxon);
     }
 
     @Override
@@ -170,24 +179,30 @@ public class NodeFactoryImpl implements NodeFactory {
         return location;
     }
 
-    @Override
-    public Specimen createSpecimen(Study study, String taxonName) throws NodeFactoryException {
-        return createSpecimen(study, taxonName, null);
-    }
 
     @Override
     public Specimen createSpecimen(Study study, String taxonName, String taxonExternalId) throws NodeFactoryException {
+        return createSpecimen(study, new TaxonImpl(taxonName, taxonExternalId));
+    }
+
+    @Override
+    public Specimen createSpecimen(Study study, String taxonName) throws NodeFactoryException {
+        return createSpecimen(study, new TaxonImpl(taxonName, null));
+    }
+
+    @Override
+    public Specimen createSpecimen(Study study, Taxon origTaxon) throws NodeFactoryException {
         if (null == study) {
             throw new NodeFactoryException("specimen needs study, but none is specified");
         }
 
-        TaxonNode taxon = getOrCreateTaxon(taxonName, taxonExternalId, null);
-        Specimen specimen = createSpecimen(taxon);
+        TaxonNode taxonNode = getOrCreateTaxon(origTaxon);
+        Specimen specimen = createSpecimen(taxonNode);
         study.createRelationshipTo(specimen, RelTypes.COLLECTED);
 
-        specimen.setOriginalTaxonDescription(taxonName, taxonExternalId);
-        if (StringUtils.isNotBlank(taxonName)) {
-            extractTerms(taxonName, specimen);
+        specimen.setOriginalTaxonDescription(origTaxon.getName(), origTaxon.getExternalId());
+        if (StringUtils.isNotBlank(origTaxon.getName())) {
+            extractTerms(origTaxon.getName(), specimen);
         }
         return specimen;
     }

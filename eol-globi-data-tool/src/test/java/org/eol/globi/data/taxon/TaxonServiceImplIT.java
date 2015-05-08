@@ -4,6 +4,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.domain.PropertyAndValueDictionary;
+import org.eol.globi.domain.Taxon;
+import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.service.PropertyEnricher;
 import org.eol.globi.service.PropertyEnricherFactory;
@@ -51,9 +53,13 @@ public class TaxonServiceImplIT extends GraphDBTestCase {
             }
         });
 
-        TaxonNode taxon = taxonService.getOrCreateTaxon("Fish", null, null);
+        Taxon taxon2 = new TaxonImpl("Fish", null);
+        taxon2.setPath(null);
+        TaxonNode taxon = taxonService.getOrCreateTaxon(taxon2);
         assertThat(taxon.getName(), is("Actinopterygii"));
-        taxon = taxonService.getOrCreateTaxon("Fish", null, null);
+        Taxon taxon1 = new TaxonImpl("Fish", null);
+        taxon1.setPath(null);
+        taxon = taxonService.getOrCreateTaxon(taxon1);
         assertThat(taxon.getName(), is("Actinopterygii"));
 
         assertThat(taxonService.findTaxonByName("Fish"), is(Matchers.notNullValue()));
@@ -63,9 +69,13 @@ public class TaxonServiceImplIT extends GraphDBTestCase {
     @Test
     public void eolIdsThatPointToSinglePage() throws NodeFactoryException {
         String redirectTarget = "EOL:1073676";
-        TaxonNode taxon = taxonService.getOrCreateTaxon(null, redirectTarget, null);
+        Taxon taxon2 = new TaxonImpl(null, redirectTarget);
+        taxon2.setPath(null);
+        TaxonNode taxon = taxonService.getOrCreateTaxon(taxon2);
         String redirectSource = "EOL:10890298";
-        TaxonNode otherTaxon = taxonService.getOrCreateTaxon(null, redirectSource, null);
+        Taxon taxon1 = new TaxonImpl(null, redirectSource);
+        taxon1.setPath(null);
+        TaxonNode otherTaxon = taxonService.getOrCreateTaxon(taxon1);
         assertThat(otherTaxon.getName(), is(taxon.getName()));
         assertThat(otherTaxon.getPath(), is(taxon.getPath()));
         assertThat(taxon.getUnderlyingNode().getId(), is(otherTaxon.getUnderlyingNode().getId()));
@@ -76,9 +86,13 @@ public class TaxonServiceImplIT extends GraphDBTestCase {
 
     @Test
     public void prosopisPlantAndInsect() throws NodeFactoryException {
-        TaxonNode taxon = taxonService.getOrCreateTaxon("Prosopis", null, null);
+        Taxon taxon2 = new TaxonImpl("Prosopis", null);
+        taxon2.setPath(null);
+        TaxonNode taxon = taxonService.getOrCreateTaxon(taxon2);
         assertThat(taxon.getPath(), containsString("Plantae"));
-        TaxonNode otherTaxon = taxonService.getOrCreateTaxon(null, "EOL:12072283", null);
+        Taxon taxon1 = new TaxonImpl(null, "EOL:12072283");
+        taxon1.setPath(null);
+        TaxonNode otherTaxon = taxonService.getOrCreateTaxon(taxon1);
         assertThat(otherTaxon.getName(), is("Prosopis"));
         assertThat(otherTaxon.getExternalId(), is("EOL:12072283"));
         assertThat(otherTaxon.getPath(), containsString("Insecta"));
@@ -87,7 +101,9 @@ public class TaxonServiceImplIT extends GraphDBTestCase {
     @Test
     public void createNoMatch() throws NodeFactoryException {
         taxonService.setEnricher(taxonEnricher);
-        TaxonNode taxon = taxonService.getOrCreateTaxon("Santa Claus meets Superman", null, null);
+        Taxon taxon1 = new TaxonImpl("Santa Claus meets Superman", null);
+        taxon1.setPath(null);
+        TaxonNode taxon = taxonService.getOrCreateTaxon(taxon1);
         assertThat(taxon.getName(), is("Santa Claus meets Superman"));
         assertThat(taxon.getExternalId(), is("no:match"));
         assertThat(taxon.getPath(), is(nullValue()));
@@ -100,14 +116,16 @@ public class TaxonServiceImplIT extends GraphDBTestCase {
     public void createMatchAnimalRemains() throws NodeFactoryException {
         taxonService.setEnricher(taxonEnricher);
         taxonService.setCorrector(new TaxonNameCorrector());
-        TaxonNode firstTaxon = taxonService.getOrCreateTaxon("Animal remains", null, null);
+        Taxon taxon1 = new TaxonImpl("Animal remains", null);
+        taxon1.setPath(null);
+        TaxonNode firstTaxon = taxonService.getOrCreateTaxon(taxon1);
         assertThat(firstTaxon.getName(), is("Animalia"));
         assertThat(firstTaxon.getExternalId(), is("EOL:1"));
 
         TaxonNode secondTaxon = taxonService.findTaxonByName("Animal remains");
         assertThat(secondTaxon.getNodeID(), is(firstTaxon.getNodeID()));
 
-        TaxonNode thirdTaxon = taxonService.getOrCreateTaxon("Animal remains", null, null);
+        TaxonNode thirdTaxon = taxonService.getOrCreateTaxon(new TaxonImpl("Animal remains"));
         assertThat(thirdTaxon.getNodeID(), is(firstTaxon.getNodeID()));
     }
 
@@ -115,10 +133,10 @@ public class TaxonServiceImplIT extends GraphDBTestCase {
     public void externalIdNoPath() throws NodeFactoryException {
         taxonService.setEnricher(taxonEnricher);
         taxonService.setCorrector(new TaxonNameCorrector());
-        TaxonNode firstTaxon = taxonService.getOrCreateTaxon(null, "EOL:3764974", null);
+        TaxonNode firstTaxon = taxonService.getOrCreateTaxon(new TaxonImpl(null, "EOL:3764974"));
         assertThat(firstTaxon.getName(), is(PropertyAndValueDictionary.NO_MATCH));
         assertThat(firstTaxon.getPath(), is(nullValue()));
-        TaxonNode secondTaxon = taxonService.getOrCreateTaxon(null, "EOL:3764974", null);
+        TaxonNode secondTaxon = taxonService.getOrCreateTaxon(new TaxonImpl(null, "EOL:3764974"));
         assertThat(secondTaxon.getNodeID(), is(firstTaxon.getNodeID()));
     }
 
@@ -126,13 +144,13 @@ public class TaxonServiceImplIT extends GraphDBTestCase {
     public void externalIdDummyName() throws NodeFactoryException {
         taxonService.setEnricher(taxonEnricher);
         taxonService.setCorrector(new TaxonNameCorrector());
-        TaxonNode taxon = taxonService.getOrCreateTaxon(null, "EOL:1", null);
+        TaxonNode taxon = taxonService.getOrCreateTaxon(new TaxonImpl(null, "EOL:1"));
         assertThat(taxon.getName(), is("Animalia"));
         assertThat(taxon.getExternalId(), is("EOL:1"));
         assertThat(taxon.getPath(), containsString("Animalia"));
         assertThat(taxon.getCommonNames(), containsString("animals"));
 
-        TaxonNode secondTaxon = taxonService.getOrCreateTaxon(null, "EOL:1", null);
+        TaxonNode secondTaxon = taxonService.getOrCreateTaxon(new TaxonImpl(null, "EOL:1"));
         assertThat(secondTaxon.getNodeID(), is(taxon.getNodeID()));
 
         TaxonNode animaliaTaxon = taxonService.findTaxonById("EOL:1");
@@ -151,9 +169,9 @@ public class TaxonServiceImplIT extends GraphDBTestCase {
         taxonService.setCorrector(new TaxonNameCorrector());
         String taxonName = "Exidia plana";
         assertThat(taxonService.findTaxonByName(taxonName), is(nullValue()));
-        taxonService.getOrCreateTaxon(taxonName, null, null);
-        taxonService.getOrCreateTaxon(taxonName + " bla", null, null);
-        taxonService.getOrCreateTaxon("Exidia nigricans", null, null);
+        taxonService.getOrCreateTaxon(new TaxonImpl(taxonName));
+        taxonService.getOrCreateTaxon(new TaxonImpl(taxonName + " bla"));
+        taxonService.getOrCreateTaxon(new TaxonImpl("Exidia nigricans"));
         assertThat(taxonService.findTaxonByName(taxonName), is(notNullValue()));
     }
 
@@ -162,10 +180,10 @@ public class TaxonServiceImplIT extends GraphDBTestCase {
         // this name was causing problem end of Jan 2014 in BioInfo dataset:
         // Caused by: org.eol.globi.data.NodeFactoryException: found duplicate taxon for [Exidia glandulosa] (original name: [Exidia plana])
         taxonService.setCorrector(new TaxonNameCorrector());
-        taxonService.getOrCreateTaxon("Exidia glandulosa", null, null);
+        taxonService.getOrCreateTaxon(new TaxonImpl("Exidia glandulosa"));
         assertThat(taxonService.findTaxonByName("Exidia plana"), is(nullValue()));
-        taxonService.getOrCreateTaxon("Exidia plana", null, null);
-        taxonService.getOrCreateTaxon("Exidia plana" + " bla", null, null);
+        taxonService.getOrCreateTaxon(new TaxonImpl("Exidia plana"));
+        taxonService.getOrCreateTaxon(new TaxonImpl("Exidia plana" + " bla"));
         // note that at time of writing (Feb 2014) EOL considers Exidia plana a alternate name of Exidia glandulosa
         assertThat(taxonService.findTaxonByName("Exidia glandulosa"), is(notNullValue()));
         assertThat(taxonService.findTaxonByName("Exidia plana"), is(notNullValue()));
@@ -173,9 +191,9 @@ public class TaxonServiceImplIT extends GraphDBTestCase {
 
     @Test
     public void noDuplicatesOnSynomyms() throws NodeFactoryException {
-        TaxonNode first = taxonService.getOrCreateTaxon("Galeichthys felis", null, null);
-        TaxonNode second = taxonService.getOrCreateTaxon("Ariopsis felis", null, null);
-        TaxonNode third = taxonService.getOrCreateTaxon("Arius felis", null, null);
+        TaxonNode first = taxonService.getOrCreateTaxon(new TaxonImpl("Galeichthys felis"));
+        TaxonNode second = taxonService.getOrCreateTaxon(new TaxonImpl("Ariopsis felis"));
+        TaxonNode third = taxonService.getOrCreateTaxon(new TaxonImpl("Arius felis"));
         assertThat(first.getNodeID(), is(second.getNodeID()));
         assertThat(third.getNodeID(), is(second.getNodeID()));
         assertThat(third.getPath(), is("Animalia | Chordata | Actinopterygii | Siluriformes | Ariidae | Ariopsis | Ariopsis felis"));
@@ -183,8 +201,8 @@ public class TaxonServiceImplIT extends GraphDBTestCase {
 
     @Test
     public void noDuplicatesOnChoppingNames() throws NodeFactoryException {
-        TaxonNode first = taxonService.getOrCreateTaxon("Ariopsis felis", null, null);
-        TaxonNode second = taxonService.getOrCreateTaxon("Ariopsis felis something", null, null);
+        TaxonNode first = taxonService.getOrCreateTaxon(new TaxonImpl("Ariopsis felis"));
+        TaxonNode second = taxonService.getOrCreateTaxon(new TaxonImpl("Ariopsis felis something"));
         assertThat(first.getExternalId(), is(second.getExternalId()));
         assertThat(first.getNodeID(), is(second.getNodeID()));
         assertThat(taxonService.findTaxonByName("Ariopsis felis").getNodeID(), is(second.getNodeID()));
@@ -192,8 +210,8 @@ public class TaxonServiceImplIT extends GraphDBTestCase {
 
     @Test
     public void firstGenusThenSpecies() throws NodeFactoryException {
-        TaxonNode first = taxonService.getOrCreateTaxon("Ariopsis", null, null);
-        TaxonNode second = taxonService.getOrCreateTaxon("Ariopsis felis", null, null);
+        TaxonNode first = taxonService.getOrCreateTaxon(new TaxonImpl("Ariopsis"));
+        TaxonNode second = taxonService.getOrCreateTaxon(new TaxonImpl("Ariopsis felis"));
         assertThat(first.getExternalId(), not(is(second.getExternalId())));
         assertThat(first.getNodeID(), not(is(second.getNodeID())));
         assertThat(taxonService.findTaxonByName("Ariopsis felis").getNodeID(), is(second.getNodeID()));
@@ -202,8 +220,8 @@ public class TaxonServiceImplIT extends GraphDBTestCase {
 
     @Test
     public void noDuplicatesOnAlternateNames() throws NodeFactoryException {
-        TaxonNode first = taxonService.getOrCreateTaxon("Cliona caribbaea", null, null);
-        TaxonNode second = taxonService.getOrCreateTaxon("Cliona langae", null, null);
+        TaxonNode first = taxonService.getOrCreateTaxon(new TaxonImpl("Cliona caribbaea"));
+        TaxonNode second = taxonService.getOrCreateTaxon(new TaxonImpl("Cliona langae"));
         assertThat(first.getExternalId(), is(second.getExternalId()));
         assertThat(first.getPath(), is(second.getPath()));
         assertThat(first.getNodeID(), is(second.getNodeID()));
@@ -222,12 +240,18 @@ public class TaxonServiceImplIT extends GraphDBTestCase {
     public void noDuplicatesOnCircularSuggestionNames() throws NodeFactoryException {
         // Mimesa bicolor -> Mimesa equestris -> Memisa bicolor
         taxonService.setCorrector(new TaxonNameCorrector());
-        TaxonNode bicolor = taxonService.getOrCreateTaxon("Mimesa bicolor foo", null, null);
+        Taxon taxon3 = new TaxonImpl("Mimesa bicolor foo", null);
+        taxon3.setPath(null);
+        TaxonNode bicolor = taxonService.getOrCreateTaxon(taxon3);
         assertThat(taxonService.findTaxonByName("Mimesa bicolor"), is(notNullValue()));
-        taxonService.getOrCreateTaxon("Mimesa bicolor", null, null);
-        TaxonNode equestris = taxonService.getOrCreateTaxon("Mimesa equestris bla", null, null);
+        Taxon taxon2 = new TaxonImpl("Mimesa bicolor", null);
+        taxon2.setPath(null);
+        taxonService.getOrCreateTaxon(taxon2);
+        Taxon taxon1 = new TaxonImpl("Mimesa equestris bla", null);
+        taxon1.setPath(null);
+        TaxonNode equestris = taxonService.getOrCreateTaxon(taxon1);
         assertThat(taxonService.findTaxonByName("Mimesa equestris"), is(notNullValue()));
-        taxonService.getOrCreateTaxon("Mimesa equestris", null, null);
+        taxonService.getOrCreateTaxon(new TaxonImpl("Mimesa equestris"));
         assertThat(taxonService.findTaxonByName("Mimesa equestris bla").getNodeID(), is(equestris.getNodeID()));
         assertThat(bicolor.getNodeID(), not(Is.is(equestris.getNodeID())));
     }
@@ -235,12 +259,16 @@ public class TaxonServiceImplIT extends GraphDBTestCase {
     @Test
     public void specialCharacters() throws NodeFactoryException {
         taxonService.setCorrector(new TaxonNameCorrector());
-        TaxonNode taxon = taxonService.getOrCreateTaxon("Longspine swimming crab", null, null);
+        Taxon taxon2 = new TaxonImpl("Longspine swimming crab", null);
+        taxon2.setPath(null);
+        TaxonNode taxon = taxonService.getOrCreateTaxon(taxon2);
         assertThat(taxon.getName(), is("Acheloüs spinicarpus"));
         assertThat(taxon.getExternalId(), is(notNullValue()));
         assertThat(taxon.getPath(), is(notNullValue()));
 
-        TaxonNode secondTaxon = taxonService.getOrCreateTaxon("Portunus spinicarpus", null, null);
+        Taxon taxon1 = new TaxonImpl("Portunus spinicarpus", null);
+        taxon1.setPath(null);
+        TaxonNode secondTaxon = taxonService.getOrCreateTaxon(taxon1);
         assertThat(secondTaxon.getNodeID(), is(taxon.getNodeID()));
         assertThat(secondTaxon.getName(), is("Acheloüs spinicarpus"));
 
@@ -250,7 +278,9 @@ public class TaxonServiceImplIT extends GraphDBTestCase {
 
     @Test
     public void createHomoSapiens() throws NodeFactoryException {
-        TaxonNode taxon = taxonService.getOrCreateTaxon("Homo sapiens", null, null);
+        Taxon taxon1 = new TaxonImpl("Homo sapiens", null);
+        taxon1.setPath(null);
+        TaxonNode taxon = taxonService.getOrCreateTaxon(taxon1);
         assertThat(taxon.getName(), is("Homo sapiens"));
         assertThat(taxon.getExternalId(), is("EOL:327955"));
         assertThat(taxon.getPath(), containsString("Primates"));
@@ -261,12 +291,12 @@ public class TaxonServiceImplIT extends GraphDBTestCase {
 
     @Test(expected = NodeFactoryException.class)
     public void nameTooShort() throws NodeFactoryException {
-        taxonService.getOrCreateTaxon("", null, null);
+        taxonService.getOrCreateTaxon(new TaxonImpl(""));
     }
 
     @Test
     public void nameTooShortButHasExternalId() throws NodeFactoryException {
-        TaxonNode taxon = taxonService.getOrCreateTaxon("", "EOL:327955", null);
+        TaxonNode taxon = taxonService.getOrCreateTaxon(new TaxonImpl("", "EOL:327955"));
         assertThat(taxon.getPath(), containsString("Homo sapiens"));
     }
 

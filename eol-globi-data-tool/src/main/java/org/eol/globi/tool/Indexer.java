@@ -10,6 +10,7 @@ import org.eol.globi.data.TaxonIndex;
 import org.eol.globi.data.taxon.TaxonNameCorrector;
 import org.eol.globi.data.taxon.TaxonIndexImpl;
 import org.eol.globi.db.GraphService;
+import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.service.PropertyEnricherFactory;
 import org.eol.globi.service.PropertyEnricherException;
 import org.neo4j.cypher.javacompat.ExecutionEngine;
@@ -93,7 +94,7 @@ public class Indexer {
             if (next.containsKey("externalId")) {
                 externalId = (String) next.get("externalId");
             }
-            taxonIndex.getOrCreateTaxon(name, externalId, null);
+            taxonIndex.getOrCreateTaxon(new TaxonImpl(name, externalId));
             counter++;
             if (counter % 100 == 0) {
                 LOG.info("[" + counter + "] taxa indexed at [" + 1000.0 * counter / stopWatch.getTime() + "] names/s");

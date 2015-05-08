@@ -8,10 +8,15 @@ public class TaxonImpl implements Taxon {
     private String commonNames;
     private String rank;
     private String pathIds;
+    private Term status;
 
     public TaxonImpl(String name, String externalId) {
         this.name = name;
         this.externalId = externalId;
+    }
+
+    public TaxonImpl(String name) {
+        this(name, null);
     }
 
     public TaxonImpl() {
@@ -88,4 +93,13 @@ public class TaxonImpl implements Taxon {
         return pathIds;
     }
 
+    @Override
+    public Term getStatus() {
+        return status;
+    }
+
+    @Override
+    public void setStatus(Term status) {
+        this.status = status;
+    }
 }

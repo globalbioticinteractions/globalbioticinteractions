@@ -34,12 +34,12 @@ public class TaxonIndexImpl implements TaxonIndex {
     }
 
     @Override
-    public TaxonNode getOrCreateTaxon(String name, String externalId, String path) throws NodeFactoryException {
-        if (StringUtils.isBlank(externalId) && StringUtils.length(name) < 3) {
-            throw new NodeFactoryException("taxon name [" + name + "] too short and no externalId is provided");
+    public TaxonNode getOrCreateTaxon(Taxon taxon) throws NodeFactoryException {
+        if (StringUtils.isBlank(taxon.getExternalId()) && StringUtils.length(taxon.getName()) < 3) {
+            throw new NodeFactoryException("taxon name [" + taxon.getName() + "] too short and no externalId is provided");
         }
-        TaxonNode taxon = findTaxon(name, externalId);
-        return taxon == null ? createTaxon(name, externalId, path) : taxon;
+        TaxonNode taxonNode = findTaxon(taxon.getName(), taxon.getExternalId());
+        return taxonNode != null ? taxonNode : createTaxon(taxon);
     }
 
     private TaxonNode findTaxon(String name, String externalId) throws NodeFactoryException {
@@ -81,11 +81,12 @@ public class TaxonIndexImpl implements TaxonIndex {
         return firstMatchingTaxon;
     }
 
-    private TaxonNode createTaxon(final String name, final String externalId, final String path) throws NodeFactoryException {
+    private TaxonNode createTaxon(final Taxon origTaxon) throws NodeFactoryException {
         Taxon taxon = new TaxonImpl();
-        taxon.setName(corrector.correct(name));
-        taxon.setExternalId(externalId);
-        taxon.setPath(path);
+        taxon.setName(corrector.correct(origTaxon.getName()));
+        taxon.setExternalId(origTaxon.getExternalId());
+        taxon.setPath(origTaxon.getPath());
+        taxon.setStatus(origTaxon.getStatus());
 
         TaxonNode taxonNode = findTaxon(taxon.getName(), taxon.getExternalId());
         while (taxonNode == null) {
@@ -101,7 +102,7 @@ public class TaxonIndexImpl implements TaxonIndex {
                 } else {
                     String truncatedName = NodeUtil.truncateTaxonName(taxon.getName());
                     if (truncatedName == null || StringUtils.length(truncatedName) < 3) {
-                        taxonNode = addNoMatchTaxon(externalId, path, name);
+                        taxonNode = addNoMatchTaxon(origTaxon);
                     } else {
                         taxon = new TaxonImpl();
                         taxon.setName(truncatedName);
@@ -110,8 +111,8 @@ public class TaxonIndexImpl implements TaxonIndex {
                 }
             }
         }
-        indexOriginalNameForTaxon(name, taxon, taxonNode);
-        indexOriginalExternalIdForTaxon(externalId, taxon, taxonNode);
+        indexOriginalNameForTaxon(origTaxon.getName(), taxon, taxonNode);
+        indexOriginalExternalIdForTaxon(origTaxon.getExternalId(), taxon, taxonNode);
         return taxonNode;
     }
 
@@ -148,11 +149,12 @@ public class TaxonIndexImpl implements TaxonIndex {
         }
     }
 
-    private TaxonNode addNoMatchTaxon(String externalId, String path, String originalName) throws NodeFactoryException {
+    private TaxonNode addNoMatchTaxon(Taxon origTaxon) throws NodeFactoryException {
         Taxon noMatchTaxon = new TaxonImpl();
-        noMatchTaxon.setName(StringUtils.isBlank(originalName) ? PropertyAndValueDictionary.NO_MATCH : originalName);
-        noMatchTaxon.setExternalId(StringUtils.isBlank(externalId) ? PropertyAndValueDictionary.NO_MATCH : externalId);
-        noMatchTaxon.setPath(path);
+        noMatchTaxon.setName(StringUtils.isBlank(origTaxon.getName()) ? PropertyAndValueDictionary.NO_MATCH : origTaxon.getName());
+        noMatchTaxon.setExternalId(StringUtils.isBlank(origTaxon.getExternalId()) ? PropertyAndValueDictionary.NO_MATCH : origTaxon.getExternalId());
+        noMatchTaxon.setPath(origTaxon.getPath());
+        noMatchTaxon.setStatus(origTaxon.getStatus());
         return createAndIndexTaxon(noMatchTaxon);
     }
 
@@ -167,6 +169,7 @@ public class TaxonIndexImpl implements TaxonIndex {
             taxonNode.setPathIds(taxon.getPathIds());
             taxonNode.setCommonNames(taxon.getCommonNames());
             taxonNode.setRank(taxon.getRank());
+            taxonNode.setStatus(taxon.getStatus());
             addToIndeces(taxonNode, taxon.getName());
             transaction.success();
         } finally {

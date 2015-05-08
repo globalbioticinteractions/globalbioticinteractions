@@ -5,6 +5,7 @@ import org.eol.globi.domain.Location;
 import org.eol.globi.domain.Season;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
+import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.domain.Term;
 import org.eol.globi.geo.EcoregionFinder;
@@ -23,9 +24,13 @@ public interface NodeFactory {
 
     TaxonNode getOrCreateTaxon(String name, String externalId, String path) throws NodeFactoryException;
 
+    TaxonNode getOrCreateTaxon(Taxon taxon) throws NodeFactoryException;
+
     Location findLocation(Double latitude, Double longitude, Double altitude);
 
     Season createSeason(String seasonNameLower);
+
+    Specimen createSpecimen(Study study, Taxon taxon) throws NodeFactoryException;
 
     Specimen createSpecimen(Study study, String taxonName) throws NodeFactoryException;
 

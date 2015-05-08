@@ -1,6 +1,7 @@
 package org.eol.globi.data;
 
 import org.eol.globi.domain.Study;
+import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
 
@@ -14,11 +15,14 @@ import static org.junit.matchers.JUnitMatchers.containsString;
 public class StudyImporterForHurlbertTest extends GraphDBTestCase {
 
     @Test
-    public void importAll() throws StudyImporterException {
+    public void importAll() throws StudyImporterException, NodeFactoryException {
         StudyImporter importer = new StudyImporterForHurlbert(new ParserFactoryImpl(), nodeFactory);
         importer.importStudy();
         List<Study> allStudies = NodeUtil.findAllStudies(getGraphDb());
         assertThat(allStudies.size() > 10, is(true));
+
+        TaxonNode formicidae = nodeFactory.findTaxonByName("Formicidae");
+        assertThat(formicidae.getStatus(), is(notNullValue()));
     }
 
     @Test
@@ -36,7 +40,9 @@ public class StudyImporterForHurlbertTest extends GraphDBTestCase {
         assertThat(study.getCitation(), is("Strong, A. M. 2000. Divergent foraging strategies of two neotropical migrant warblers: Implications for winter habitat use. Auk 117(2):381-392."));
 
         assertThat(nodeFactory.findTaxonByName("Seiurus aurocapillus"), is(notNullValue()));
-        assertThat(nodeFactory.findTaxonByName("Formicidae"), is(notNullValue()));
+        TaxonNode formicidae = nodeFactory.findTaxonByName("Formicidae");
+        assertThat(formicidae, is(notNullValue()));
+        assertThat(formicidae.getStatus(), is(notNullValue()));
         assertThat(nodeFactory.findTaxonByName("Coleoptera"), is(notNullValue()));
 
     }

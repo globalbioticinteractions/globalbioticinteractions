@@ -6,6 +6,9 @@ import static org.eol.globi.domain.PropertyAndValueDictionary.*;
 
 public class TaxonNode extends NamedNode implements Taxon {
 
+    private static final String STATUS_ID = "statusId";
+    private static final String STATUS_LABEL = "statusLabel";
+
     public TaxonNode(Node node) {
         super(node);
     }
@@ -79,5 +82,23 @@ public class TaxonNode extends NamedNode implements Taxon {
     public String getPathIds() {
         return getUnderlyingNode().hasProperty(PATH_IDS) ?
                 (String) getUnderlyingNode().getProperty(PATH_IDS) : null;
+    }
+
+    @Override
+    public void setStatus(Term status) {
+        if (status != null) {
+            getUnderlyingNode().setProperty(STATUS_ID, status.getId());
+            getUnderlyingNode().setProperty(STATUS_LABEL, status.getName());
+        }
+    }
+
+    @Override
+    public Term getStatus() {
+        Term status = null;
+        Node node = getUnderlyingNode();
+        if (node.hasProperty(STATUS_ID) && node.hasProperty(STATUS_LABEL)) {
+            status = new Term((String) node.getProperty(STATUS_ID), (String) node.getProperty(STATUS_LABEL));
+        }
+        return status;
     }
 }
