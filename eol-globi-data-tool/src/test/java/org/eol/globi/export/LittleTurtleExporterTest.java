@@ -24,11 +24,13 @@ import java.io.Writer;
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.matchers.JUnitMatchers.containsString;
 
-public class LittleTurtleExporterIT extends GraphDBTestCase {
+public class LittleTurtleExporterTest extends GraphDBTestCase {
 
     @Override
     protected TermLookupService getEnvoLookupService() {
@@ -48,11 +50,12 @@ public class LittleTurtleExporterIT extends GraphDBTestCase {
         List<Study> studies = NodeUtil.findAllStudies(getGraphDb());
 
 
-        TaxonNode taxon = nodeFactory.findTaxonByName("Paracalliope fluviatalus");
+        TaxonNode taxon = nodeFactory.findTaxonByName("Syngnathus scovelli");
         TaxonNode sameAsTaxon = nodeFactory.getOrCreateTaxon("bugus same as taxon", "EOL:123", null);
 
         Transaction tx = getGraphDb().beginTx();
         try {
+            assertThat(taxon, is(notNullValue()));
             taxon.getUnderlyingNode().createRelationshipTo(sameAsTaxon.getUnderlyingNode(), RelTypes.SAME_AS);
             tx.success();
         } finally {

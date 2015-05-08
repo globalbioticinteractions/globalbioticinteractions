@@ -40,7 +40,7 @@ public abstract class ExporterAssociationsBase extends ExporterBase {
             put(InteractType.POLLINATES.name(), "http://eol.org/schema/terms/pollinates");
             put(InteractType.PERCHING_ON.name(), "http://eol.org/schema/terms/isFoundOn");
             put(InteractType.PARASITE_OF.name(), "http://eol.org/schema/terms/parasitizes");
-            put(InteractType.PATHOGEN_OF.name(), "http://purl.obolibrary.org/obo/RO_0002556");
+            put(InteractType.PATHOGEN_OF.name(), InteractType.PATHOGEN_OF.getIRI());
         }
     };
 

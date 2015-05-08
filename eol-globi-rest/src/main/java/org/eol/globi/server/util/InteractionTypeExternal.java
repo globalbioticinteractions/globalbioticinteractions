@@ -1,31 +1,32 @@
 package org.eol.globi.server.util;
 
+import org.eol.globi.domain.InteractType;
 import org.eol.globi.server.CypherQueryBuilder;
 
 public enum InteractionTypeExternal {
-    EATS(CypherQueryBuilder.INTERACTION_EATS, "consumer", "food", "http://purl.obolibrary.org/obo/RO_0002439"),
-    EATEN_BY(CypherQueryBuilder.INTERACTION_EATEN_BY, "food", "consumer", "http://purl.obolibrary.org/obo/RO_0002458"),
-    PREYS_ON(CypherQueryBuilder.INTERACTION_PREYS_ON, "predator", "prey", "http://purl.obolibrary.org/obo/RO_0002439"),
-    PREYED_UPON_BY(CypherQueryBuilder.INTERACTION_PREYED_UPON_BY, "prey", "predator", "http://purl.obolibrary.org/obo/RO_0002458"),
-    PARASITE_OF(CypherQueryBuilder.INTERACTION_PARASITE_OF, "parasite", "host", "http://purl.obolibrary.org/obo/RO_0002444"),
-    HAS_PARASITE(CypherQueryBuilder.INTERACTION_HAS_PARASITE, "host", "parasite", "http://purl.obolibrary.org/obo/RO_0002445"),
-    HOST_OF(CypherQueryBuilder.INTERACTION_HOST_OF, "host", "symbiont", "http://purl.obolibrary.org/obo/RO_0002453"),
-    HAS_HOST(CypherQueryBuilder.INTERACTION_HAS_HOST, "symbiont", "host", "http://purl.obolibrary.org/obo/RO_0002454"),
-    POLLINATES(CypherQueryBuilder.INTERACTION_POLLINATES, "pollinator", "plant", "http://purl.obolibrary.org/obo/RO_0002455"),
-    POLLINATED_BY(CypherQueryBuilder.INTERACTION_POLLINATED_BY, "plant", "pollinator", "http://purl.obolibrary.org/obo/RO_0002456"),
-    PATHOGEN_OF(CypherQueryBuilder.INTERACTION_PATHOGEN_OF, "pathogen", "host", "http://purl.obolibrary.org/obo/RO_0002556"),
-    HAS_PATHOGEN(CypherQueryBuilder.INTERACTION_HAS_PATHOGEN, "host", "pathogen", "http://purl.obolibrary.org/obo/RO_0002557"),
-    VECTOR_OF(CypherQueryBuilder.INTERACTION_VECTOR_OF, "vector", "pathogen", "http://purl.obolibrary.org/obo/RO_0002459"),
-    HAS_VECTOR(CypherQueryBuilder.INTERACTION_HAS_VECTOR, "pathogen", "vector", "http://purl.obolibrary.org/obo/RO_0002460"),
-    SYMBIONT_OF(CypherQueryBuilder.INTERACTION_SYMBIONT_OF, "source", "target", "http://purl.obolibrary.org/obo/RO_0002440"),
-    INTERACTS_WITH(CypherQueryBuilder.INTERACTION_INTERACTS_WITH, "source", "target", "http://purl.obolibrary.org/obo/RO_0002437");
+    EATS(CypherQueryBuilder.INTERACTION_EATS, "consumer", "food", InteractType.ATE),
+    EATEN_BY(CypherQueryBuilder.INTERACTION_EATEN_BY, "food", "consumer", InteractType.EATEN_BY),
+    PREYS_ON(CypherQueryBuilder.INTERACTION_PREYS_ON, "predator", "prey", InteractType.PREYS_UPON),
+    PREYED_UPON_BY(CypherQueryBuilder.INTERACTION_PREYED_UPON_BY, "prey", "predator", InteractType.PREYED_UPON_BY),
+    PARASITE_OF(CypherQueryBuilder.INTERACTION_PARASITE_OF, "parasite", "host", InteractType.PARASITE_OF),
+    HAS_PARASITE(CypherQueryBuilder.INTERACTION_HAS_PARASITE, "host", "parasite", InteractType.HAS_PARASITE),
+    HOST_OF(CypherQueryBuilder.INTERACTION_HOST_OF, "host", "symbiont", InteractType.HOST_OF),
+    HAS_HOST(CypherQueryBuilder.INTERACTION_HAS_HOST, "symbiont", "host", InteractType.HAS_HOST),
+    POLLINATES(CypherQueryBuilder.INTERACTION_POLLINATES, "pollinator", "plant", InteractType.POLLINATES),
+    POLLINATED_BY(CypherQueryBuilder.INTERACTION_POLLINATED_BY, "plant", "pollinator", InteractType.POLLINATED_BY),
+    PATHOGEN_OF(CypherQueryBuilder.INTERACTION_PATHOGEN_OF, "pathogen", "host", InteractType.PATHOGEN_OF),
+    HAS_PATHOGEN(CypherQueryBuilder.INTERACTION_HAS_PATHOGEN, "host", "pathogen", InteractType.HAS_PATHOGEN),
+    VECTOR_OF(CypherQueryBuilder.INTERACTION_VECTOR_OF, "vector", "pathogen", InteractType.VECTOR_OF),
+    HAS_VECTOR(CypherQueryBuilder.INTERACTION_HAS_VECTOR, "pathogen", "vector", InteractType.HAS_VECTOR),
+    SYMBIONT_OF(CypherQueryBuilder.INTERACTION_SYMBIONT_OF, "source", "target", InteractType.SYMBIONT_OF),
+    INTERACTS_WITH(CypherQueryBuilder.INTERACTION_INTERACTS_WITH, "source", "target", InteractType.INTERACTS_WITH);
 
 
-    private InteractionTypeExternal(String label, String source, String target, String termIRI) {
+    private InteractionTypeExternal(String label, String source, String target, InteractType interactType) {
         this.label = label;
         this.source = source;
         this.target = target;
-        this.termIRI = termIRI;
+        this.interactType = interactType;
     }
 
     public String getLabel() {
@@ -41,13 +42,13 @@ public enum InteractionTypeExternal {
     }
 
     public String getTermIRI() {
-        return termIRI;
+        return interactType.getIRI();
     }
 
     private String label;
     private String source;
     private String target;
-    private final String termIRI;
+    private final InteractType interactType;
 
 
 }

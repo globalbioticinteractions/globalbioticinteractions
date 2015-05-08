@@ -9,10 +9,6 @@ import com.hp.hpl.jena.vocabulary.RDF;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.jena.riot.RDFDataMgr;
 import org.apache.jena.riot.RDFFormat;
-import org.apache.jena.riot.RDFWriterRegistry;
-import org.apache.jena.riot.WriterDatasetRIOT;
-import org.apache.jena.riot.WriterDatasetRIOTFactory;
-import org.apache.jena.riot.WriterGraphRIOTFactory;
 import org.eol.globi.domain.Environment;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.Location;
@@ -24,12 +20,9 @@ import org.eol.globi.util.ExternalIdUtil;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
-import org.neo4j.graphdb.RelationshipType;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.util.HashMap;
-import java.util.Map;
 
 public class LittleTurtleExporter implements StudyExporter {
 
@@ -77,7 +70,7 @@ public class LittleTurtleExporter implements StudyExporter {
                 Resource interactor = model.createResource();
                 setTaxon(interactor, taxonOfSpecimen(ixnR.getEndNode(), model), model);
                 Resource ixn = model.createResource();
-                addOrganismPairInteraction(agent, interactor, asProperty(ixnR.getType(), model), ixn, model);
+                addOrganismPairInteraction(agent, interactor, asProperty(InteractType.valueOf(ixnR.getType().name()), model), ixn, model);
             }
         }
     }
@@ -204,25 +197,8 @@ public class LittleTurtleExporter implements StudyExporter {
         }
     }
 
-    public Property asProperty(final RelationshipType interactType, Model model1) {
-        Map<InteractType, String> lookup = new HashMap<InteractType, String>() {
-            {
-                put(InteractType.ATE, "http://purl.obolibrary.org/obo/RO_0002470");
-                put(InteractType.HAS_HOST, "http://purl.obolibrary.org/obo/RO_0002454");
-                put(InteractType.HOST_OF, "http://purl.obolibrary.org/obo/RO_0002453");
-                put(InteractType.PARASITE_OF, "http://purl.obolibrary.org/obo/RO_0002444");
-                put(InteractType.POLLINATES, "http://purl.obolibrary.org/obo/RO_0002455");
-                put(InteractType.PREYS_UPON, "http://purl.obolibrary.org/obo/RO_0002439");
-                put(InteractType.INTERACTS_WITH, "http://purl.obolibrary.org/obo/RO_0002437");
-                put(InteractType.PATHOGEN_OF, "http://purl.obolibrary.org/obo/RO_0002556");
-                // put(InteractType.PERCHING_ON, "http://purl.obolibrary.org/obo/RO_?");
-
-            }
-        };
-        String name = lookup.containsKey(interactType)
-                ? lookup.get(interactType)
-                : "http://purl.obolibrary.org/obo/RO_0002437";
-        return model1.createProperty(name);
+    public Property asProperty(final InteractType interactType, Model model1) {
+        return model1.createProperty(interactType.getIRI());
     }
 
 }
