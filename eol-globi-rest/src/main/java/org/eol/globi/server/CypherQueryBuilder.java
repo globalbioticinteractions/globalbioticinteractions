@@ -386,7 +386,7 @@ public class CypherQueryBuilder {
     }
 
     public static CypherQuery locations() {
-        String query = "START loc = node:locations('*:*') RETURN loc.latitude, loc.longitude";
+        String query = "START loc = node:locations('latitude:*') RETURN loc.latitude, loc.longitude";
         return new CypherQuery(query);
     }
 
@@ -588,7 +588,7 @@ public class CypherQueryBuilder {
         } else if (noSearchCriteria(RequestHelper.isSpatialSearch(parameterMap), sourceTaxa, targetTaxa)) {
             query.append(" study = node:studies('*:*')");
         } else if (sourceTaxa.size() == 0 && targetTaxa.size() == 0) {
-            query.append(" loc = node:locations('*:*')");
+            query.append(" loc = node:locations('latitude:*')");
         } else {
             boolean exactNameMatchesOnly = shouldIncludeExactNameMatchesOnly(parameterMap);
             if (sourceTaxa.size() > 0) {
@@ -846,7 +846,7 @@ public class CypherQueryBuilder {
     }
 
     public static void appendSpatialStartWhereWith(Map<String, String[]> parameterMap, StringBuilder query) {
-        query.append("START loc = node:locations('*:*') WHERE ");
+        query.append("START loc = node:locations('latitude:*') WHERE ");
         RequestHelper.addSpatialWhereClause(RequestHelper.parseSpatialSearchParams(parameterMap), query);
         query.append("WITH loc ");
     }
