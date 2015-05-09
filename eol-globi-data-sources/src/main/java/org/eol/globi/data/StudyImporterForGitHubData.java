@@ -107,14 +107,14 @@ public class StudyImporterForGitHubData extends BaseStudyImporter {
         StudyImporter importer = null;
         if (StringUtils.isNotBlank(descriptor)) {
             JsonNode desc = new ObjectMapper().readTree(descriptor);
-            final String sourceCitation = desc.has("citation") ? desc.get("citation").asText() : baseUrl;
+            final String citation = desc.has("citation") ? desc.get("citation").asText() : baseUrl;
             final String sourceDOI = desc.has("doi") ? desc.get("doi").asText() : "";
             String format = desc.has("format") ? desc.get("format").asText() : "globi";
             if ("globi".equals(format)) {
                 importer = new StudyImporterForTSV(parserFactory, nodeFactory) {
                     {
                         setBaseUrl(baseUrl);
-                        setSourceCitation(sourceCitation);
+                        setSourceCitation(citation);
                         setRepositoryName(repo);
                     }
                 };

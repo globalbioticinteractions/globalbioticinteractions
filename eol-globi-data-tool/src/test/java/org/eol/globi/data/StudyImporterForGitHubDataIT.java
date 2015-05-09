@@ -71,6 +71,7 @@ public class StudyImporterForGitHubDataIT extends GraphDBTestCase {
         importer.importData("millerse/Weidinger-et-al.-2009");
         List<Study> allStudies = NodeUtil.findAllStudies(getGraphDb());
         assertThat(allStudies.size(), is(1));
+        assertThat(allStudies.get(0).getSource(), containsString("Miller"));
         assertThat(nodeFactory.findTaxonByName("Garrulus glandarius"), is(notNullValue()));
     }
 
