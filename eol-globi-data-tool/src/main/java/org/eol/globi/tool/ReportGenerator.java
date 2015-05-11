@@ -73,6 +73,12 @@ public class ReportGenerator {
             if (StringUtils.isNotBlank(study.getCitation())) {
                 node.setProperty(Study.CITATION, study.getCitation());
             }
+            if (StringUtils.isNotBlank(study.getDOI())) {
+                node.setProperty(Study.DOI, study.getDOI());
+            }
+            if (StringUtils.isNotBlank(study.getExternalId())) {
+                node.setProperty(PropertyAndValueDictionary.EXTERNAL_ID, study.getExternalId());
+            }
             node.setProperty(Study.TITLE, study.getTitle());
             node.setProperty(PropertyAndValueDictionary.COLLECTION, GLOBI_COLLECTION_NAME);
             node.setProperty(PropertyAndValueDictionary.NUMBER_OF_INTERACTIONS, interactionCounter.getCount() / 2);

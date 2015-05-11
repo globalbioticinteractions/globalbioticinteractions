@@ -18,7 +18,9 @@ public class ReportGeneratorTest extends GraphDBTestCase {
     @Test
     public void generateStudyReport() throws NodeFactoryException {
         createStudy("a second title", "a third source", null);
-        createStudy("a title", "a third source");
+
+        Study study = createStudy("a title", "a third source");
+        study.setDOIWithTx("doi:12345");
 
         new ReportGenerator(getGraphDb()).generateReportForStudies();
 
@@ -28,6 +30,8 @@ public class ReportGeneratorTest extends GraphDBTestCase {
         assertThat((String) reportNode.getProperty(Study.TITLE), is("a title"));
         assertThat((String) reportNode.getProperty(Study.SOURCE), is("a third source"));
         assertThat((String) reportNode.getProperty(Study.CITATION), is("citation:doi:citation"));
+        assertThat((String) reportNode.getProperty(Study.DOI), is("doi:12345"));
+        assertThat((String) reportNode.getProperty(PropertyAndValueDictionary.EXTERNAL_ID), is("http://dx.doi.org/citation"));
         assertThat((Integer) reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_INTERACTIONS), is(4));
         assertThat((Integer) reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_DISTINCT_TAXA), is(3));
         reports.close();
@@ -38,6 +42,8 @@ public class ReportGeneratorTest extends GraphDBTestCase {
         assertThat((String) reportNode.getProperty(Study.TITLE), is("a second title"));
         assertThat((String) reportNode.getProperty(Study.SOURCE), is("a third source"));
         assertThat(reportNode.hasProperty(Study.CITATION), is(false));
+        assertThat(reportNode.hasProperty(Study.DOI), is(false));
+        assertThat(reportNode.hasProperty(PropertyAndValueDictionary.EXTERNAL_ID), is(false));
         assertThat((Integer) reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_INTERACTIONS), is(4));
         assertThat((Integer) reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_DISTINCT_TAXA), is(3));
         reports.close();
