@@ -46,7 +46,17 @@ public class GlobalNamesServiceTest {
         HashMap<String, String> props = new HashMap<String, String>();
         props.put(PropertyAndValueDictionary.NAME, "Corizidae");
         Map<String, String> enrich = service.enrich(props);
-        assertThat(enrich.get(PropertyAndValueDictionary.EXTERNAL_ID), is(nullValue()));
+        assertThat(enrich.get(PropertyAndValueDictionary.EXTERNAL_ID), is("ITIS:108477"));
+    }
+
+    @Test
+    public void lookupITISSynonymSuccess() throws PropertyEnricherException {
+        GlobalNamesService service = new GlobalNamesService();
+        HashMap<String, String> props = new HashMap<String, String>();
+        props.put(PropertyAndValueDictionary.NAME, "Arius felis");
+        Map<String, String> enrich = service.enrich(props);
+        assertThat(enrich.get(PropertyAndValueDictionary.EXTERNAL_ID), is("ITIS:680665"));
+        assertThat(enrich.get(PropertyAndValueDictionary.NAME), is("Ariopsis felis"));
     }
 
     @Test

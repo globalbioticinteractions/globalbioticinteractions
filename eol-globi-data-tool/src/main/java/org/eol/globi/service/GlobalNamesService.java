@@ -181,8 +181,7 @@ public class GlobalNamesService implements PropertyEnricher {
             String suppliedNameString = data.get("supplied_name_string").getTextValue();
 
             boolean isExactMatch = aResult.has("match_type")
-                    && aResult.get("match_type").getIntValue() < 3
-                    && StringUtils.endsWith(taxon.getPath(), CharsetConstant.SEPARATOR + suppliedNameString);
+                    && aResult.get("match_type").getIntValue() < 3;
             termMatchListener.foundTaxonForName(suppliedId, suppliedNameString, taxon, isExactMatch);
         }
     }
