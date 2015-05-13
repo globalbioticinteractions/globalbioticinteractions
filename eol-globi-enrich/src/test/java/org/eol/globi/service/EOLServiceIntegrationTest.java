@@ -513,7 +513,7 @@ public class EOLServiceIntegrationTest {
     }
 
     protected void hasHomoSapiensPath(Map<String, String> properties) {
-        assertThat(properties.get(PATH), containsString("Hominoidea"));
+        assertThat(properties.get(PATH), containsString("Hominidae"));
     }
 
     @Test

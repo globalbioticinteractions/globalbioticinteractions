@@ -109,7 +109,7 @@ public class EOLService implements PropertyEnricher {
 
     protected void addTaxonInfo(Long pageId, Map<String, String> properties) throws PropertyEnricherException {
         try {
-            URI uri = new URI("http", null, "eol.org", 80, "/api/pages/1.0/" + pageId + ".json", "images=1&videos=0&sounds=0&maps=0&text=0&iucn=false&subjects=overview&licenses=all&details=false&common_names=true&synonyms=false&references=false&format=json", null);
+            URI uri = new URI("http", null, "eol.org", 80, "/api/pages/1.0/" + pageId + ".json", "images=0&videos=0&sounds=0&maps=0&text=0&iucn=false&subjects=overview&licenses=all&details=false&common_names=true&synonyms=false&references=false&format=json", null);
             String response = getResponse(uri);
             if (response != null) {
                 addCanonicalNamesAndRanks(properties, response);
