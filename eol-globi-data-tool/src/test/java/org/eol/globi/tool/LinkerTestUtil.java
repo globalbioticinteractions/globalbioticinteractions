@@ -27,7 +27,7 @@ public class LinkerTestUtil {
             externalIds.add(new TaxonNode(rel.getEndNode()).getExternalId());
 
         }
-        assertThat("expected [" + expectedCount + "] relationships for " + name, counter, is(expectedCount));
+        assertThat("expected [" + expectedCount + "] relationships for [" + name + "]: [" + externalIds.toString() + "]", counter, is(expectedCount));
         return externalIds;
     }
 }

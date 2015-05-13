@@ -60,10 +60,10 @@ public class LinkerGlobalNamesTest extends GraphDBTestCase {
     }
 
     @Test
-    public void frogs() throws NodeFactoryException, PropertyEnricherException {
+    public void anura() throws NodeFactoryException, PropertyEnricherException {
         nodeFactory.getOrCreateTaxon("Anura");
         new LinkerGlobalNames().link(getGraphDb());
-        List<String> ids = LinkerTestUtil.assertHasOther("Anura", 7, nodeFactory, RelTypes.SAME_AS);
+        List<String> ids = LinkerTestUtil.assertHasOther("Anura", 14, nodeFactory, RelTypes.SAME_AS);
 
         assertThat(ids, hasItems("ITIS:173423"
                 , "NCBI:8342", "IRMNG:10211", "GBIF:952"
