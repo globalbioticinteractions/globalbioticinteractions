@@ -188,6 +188,8 @@ public class Normalizer {
         StudyImporter importer = new StudyImporterFactory(parserFactory, factory).instantiateImporter(studyImporter);
         if (importer.shouldCrossCheckReference()) {
             factory.setDoiResolver(new DOIResolverImpl());
+        } else {
+            factory.setDoiResolver(null);
         }
 
         importer.setLogger(new StudyImportLogger());

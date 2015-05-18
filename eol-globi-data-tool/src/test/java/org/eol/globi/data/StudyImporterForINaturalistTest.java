@@ -34,6 +34,11 @@ public class StudyImporterForINaturalistTest extends GraphDBTestCase {
     }
 
     @Test
+    public void config() {
+        assertThat(importer.shouldCrossCheckReference(), is(false));
+    }
+
+    @Test
     public void importUsingINatAPI() throws StudyImporterException, PropertyEnricherException {
         importer.importStudy();
         assertThat(NodeUtil.findAllStudies(getGraphDb()).size() > 150, is(true));

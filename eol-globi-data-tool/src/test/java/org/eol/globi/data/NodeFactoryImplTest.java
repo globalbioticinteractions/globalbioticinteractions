@@ -58,6 +58,25 @@ public class NodeFactoryImplTest extends GraphDBTestCase {
         assertThat(taxon1Rel.getEndNode(), is(taxon.getUnderlyingNode()));
     }
 
+    @Test
+    public void createStudyDOIlookup() {
+        getNodeFactory().setDoiResolver(new DOIResolver() {
+            @Override
+            public String findDOIForReference(String reference) throws IOException {
+                throw new IOException("kaboom!");
+            }
+
+            @Override
+            public String findCitationForDOI(String doi) throws IOException {
+                throw new IOException("kaboom!");
+            }
+        });
+        Study study = getNodeFactory().getOrCreateStudy("title", "some source", "some citation");
+        assertThat(study.getSource(), is("some source"));
+        assertThat(study.getCitation(), is("some citation"));
+        assertThat(study.getTitle(), is("title"));
+    }
+
 
     @Test
     public void createFindLocation() throws NodeFactoryException {

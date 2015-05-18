@@ -21,11 +21,20 @@ import java.util.ArrayList;
 
 public class DOIResolverImpl implements DOIResolver {
     private static final Log LOG = LogFactory.getLog(DOIResolverImpl.class);
+    private final String baseURL;
+
+    public DOIResolverImpl() {
+        this("http://search.crossref.org/links");
+    }
+
+    public DOIResolverImpl(String baseURL) {
+        this.baseURL = baseURL;
+    }
 
     public String findDOIForReference(final String reference) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
 
-        HttpPost post = new HttpPost("http://search.crossref.org/links");
+        HttpPost post = new HttpPost(baseURL);
         post.setHeader("Content-Type", "application/json");
         StringEntity entity = new StringEntity(mapper.writeValueAsString(new ArrayList<String>() {{
             add(reference);

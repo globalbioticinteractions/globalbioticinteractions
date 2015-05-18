@@ -78,6 +78,11 @@ public class DOIResolverImplIT {
         assertThat(citationForDOI, nullValue());
     }
 
+    @Test(expected = IOException.class)
+    public void findNotResponding() throws IOException {
+        new DOIResolverImpl("http://google.com").findDOIForReference("some reference");
+    }
+
     @Test
     public void findCitationForDOIWithUnescapeChars() throws IOException, URISyntaxException {
         String citationForDOI = new DOIResolverImpl().findCitationForDOI("http://dx.doi.org/10.1642/0004-8038(2005)122[1182:baemfa]2.0.co;2");

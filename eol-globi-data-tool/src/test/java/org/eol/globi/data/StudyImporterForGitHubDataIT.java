@@ -4,17 +4,17 @@ import org.eol.globi.domain.Study;
 import org.eol.globi.geo.LatLng;
 import org.eol.globi.service.GeoNamesService;
 import org.eol.globi.util.NodeUtil;
+import org.hamcrest.Matchers;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
 import static org.junit.internal.matchers.IsCollectionContaining.hasItem;
 
 public class StudyImporterForGitHubDataIT extends GraphDBTestCase {
@@ -91,6 +91,17 @@ public class StudyImporterForGitHubDataIT extends GraphDBTestCase {
         List<Study> allStudies = NodeUtil.findAllStudies(getGraphDb());
         assertThat(allStudies.size(), is(1));
         assertThat(nodeFactory.findTaxonById("NCBI:8782"), is(notNullValue()));
+    }
+
+    @Test
+    public void importGoMexSI() throws StudyImporterException, NodeFactoryException {
+        StudyImporterForGitHubData importer = new StudyImporterForGitHubData(new ParserFactoryImpl(), nodeFactory);
+
+        importer.importData("gomexsi/interaction-data");
+        List<Study> allStudies = NodeUtil.findAllStudies(getGraphDb());
+        for (Study study : allStudies) {
+            assertThat(study.getSource(), is(Matchers.notNullValue()));
+        }
     }
 
     @Test
