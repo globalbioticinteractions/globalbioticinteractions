@@ -50,7 +50,7 @@ public class StudyImporterForJSONLD extends BaseStudyImporter {
 
         Query query;
         try {
-            query = QueryFactory.create(IOUtils.toString(ResourceUtil.asInputStream("find-jsonld-interactions.rq", getClass()), CharsetConstant.UTF8));
+            query = QueryFactory.create(IOUtils.toString(ResourceUtil.asInputStream("/org/eol/globi/data/find-jsonld-interactions.rq", getClass()), CharsetConstant.UTF8));
         } catch (IOException e) {
             throw new StudyImporterException("failed to find sparql query", e);
         }
