@@ -1,6 +1,8 @@
 package org.eol.globi.util;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.domain.InteractType;
+import org.eol.globi.domain.PropertyAndValueDictionary;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -51,4 +53,5 @@ public class InteractUtil {
         };
         return inverseMap.get(interactType);
     }
+
 }

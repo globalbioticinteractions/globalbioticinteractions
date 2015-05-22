@@ -9,6 +9,7 @@ public class PropertyAndValueDictionary {
     public static final String PATH_IDS = "pathIds";
     public static final String COMMON_NAMES = "commonNames";
     public static final String INVERTED = "inverted";
+    public static final String RO_NAMESPACE = "http://purl.obolibrary.org/obo/RO_";
     protected final static String TYPE = "type";
     public static final String RANK = "rank";
     public static final String NO_NAME = "no name";

@@ -85,6 +85,24 @@ public class StudyImporterForGitHubDataIT extends GraphDBTestCase {
     }
 
     @Test
+    public void importMillerSE() throws StudyImporterException, NodeFactoryException {
+        StudyImporterForGitHubData importer = new StudyImporterForGitHubData(new ParserFactoryImpl(), nodeFactory);
+        importer.importData("millerse/Bird-Parasite");
+        List<Study> allStudies = NodeUtil.findAllStudies(getGraphDb());
+        assertThat(allStudies.size(), is(1));
+        assertThat(nodeFactory.findTaxonByName("Bombycilla cedrorum"), is(notNullValue()));
+    }
+
+    @Test
+    public void importMillerSECarribean() throws StudyImporterException, NodeFactoryException {
+        StudyImporterForGitHubData importer = new StudyImporterForGitHubData(new ParserFactoryImpl(), nodeFactory);
+        importer.importData("millerse/Caribbean-food-web");
+        List<Study> allStudies = NodeUtil.findAllStudies(getGraphDb());
+        assertThat(allStudies.size(), is(1));
+        assertThat(nodeFactory.findTaxonByName("Scarus coelestinus"), is(notNullValue()));
+    }
+
+    @Test
     public void importJSONLD() throws StudyImporterException, NodeFactoryException {
         StudyImporterForGitHubData importer = new StudyImporterForGitHubData(new ParserFactoryImpl(), nodeFactory);
         importer.importData("globalbioticinteractions/jsonld-template-dataset");

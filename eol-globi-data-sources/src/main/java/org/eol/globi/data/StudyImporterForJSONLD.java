@@ -75,7 +75,7 @@ public class StudyImporterForJSONLD extends BaseStudyImporter {
                 Specimen target = createSpecimen(solution, study, "targetTaxon");
 
                 String interactType = solution.get("p").asResource().getLocalName();
-                InteractType interactType1 = StudyImporterForTSV.INTERACT_ID_TO_TYPE.get(StringUtils.replace(interactType, "RO_", "RO:"));
+                InteractType interactType1 = InteractType.typeOf(StringUtils.replace(interactType, "RO_", "RO:"));
                 if (interactType1 == null) {
                     throw new StudyImporterException("failed to map interaction type [" + interactType + "]");
                 }

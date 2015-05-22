@@ -1,5 +1,7 @@
 package org.eol.globi.domain;
 
+import org.apache.commons.lang3.StringUtils;
+
 public enum InteractType implements RelType {
     PREYS_UPON("http://purl.obolibrary.org/obo/RO_0002439"),
     PARASITE_OF("http://purl.obolibrary.org/obo/RO_0002444"),
@@ -24,6 +26,20 @@ public enum InteractType implements RelType {
 
     InteractType(String iri) {
         this.iri = iri;
+    }
+
+    public static InteractType typeOf(String term) {
+        if (StringUtils.startsWith(term, "RO:")) {
+            String iri = StringUtils.replace(term, "RO:", PropertyAndValueDictionary.RO_NAMESPACE);
+            InteractType[] values = values();
+            for (InteractType interactType : values) {
+                if (StringUtils.equals(iri, interactType.getIRI())) {
+                    return interactType;
+                }
+            }
+
+        }
+        return null;
     }
 
     public String getIRI() {
