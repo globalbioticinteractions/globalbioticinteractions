@@ -175,7 +175,6 @@ public class StudyImporterForSPIRETest extends GraphDBTestCase {
         assertThat(listener.environments, not(hasItem("http://spire.umbc.edu/ontologies/SpireEcoConcepts.owl#")));
 
         assertThat(listener.invalidInteractions.size(), is(greaterThan(0)));
-        assertThat(listener.invalidInteractions.get(0).toString(), is("{Country=General, Locality=General, description=Myers, P., R. Espinosa, C. S. Parr, T. Jones, G. S. Hammond, and T. A. Dewey. 2013. The Animal Diversity Web (online). Accessed at http://animaldiversity.org., localityOriginal=Country: General;   Locality: General, ofHabitat=unknown, predator=Enhydra_lutris, prey=Castor_canadensis, title=Myers, P., Espinosa, ...26cb4abc9cf6d64e10e7799e5cab8afd}"));
     }
 
     private void assertGAZMapping(TestTrophicLinkListener listener) {
