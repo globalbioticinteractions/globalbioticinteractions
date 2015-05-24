@@ -1,6 +1,7 @@
 package org.eol.globi.data;
 
 import com.hp.hpl.jena.rdf.model.impl.RDFDefaultErrorHandler;
+import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.domain.Environment;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Specimen;
@@ -25,6 +26,7 @@ import java.util.TreeMap;
 
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
@@ -132,6 +134,24 @@ public class StudyImporterForSPIRETest extends GraphDBTestCase {
 
         });
         return studyImporterForSPIRE;
+    }
+
+
+    @Test
+    public void phytoplanktonUnlikelyPredators() throws IOException, StudyImporterException {
+        RDFDefaultErrorHandler.silent = true;
+        StudyImporterForSPIRE importer = createImporter();
+        final List<String> predators = new ArrayList<String>();
+        importer.setTrophicLinkListener(new TrophicLinkListener() {
+            @Override
+            public void newLink(Map<String, String> properties) {
+                if (!StudyImporterForSPIRE.isValid(properties)) {
+                    predators.add(properties.get(StudyImporterForSPIRE.PREDATOR_NAME));
+                }
+            }
+        });
+        importer.importStudy();
+        assertThat(predators, hasItem("phytoplankton"));
     }
 
     @Test
