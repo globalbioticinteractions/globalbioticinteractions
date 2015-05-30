@@ -26,6 +26,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 public class StudyImporterForINaturalist extends BaseStudyImporter {
     private static final Log LOG = LogFactory.getLog(StudyImporterForINaturalist.class);
@@ -94,6 +95,7 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
         add("Phylum");
         add("Unidentified");
     }};
+    private final Map<Long, String> unsupportedInteractionTypes = new TreeMap<Long, String>();
 
     public StudyImporterForINaturalist(ParserFactory parserFactory, NodeFactory nodeFactory) {
         super(parserFactory, nodeFactory);
@@ -101,8 +103,21 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
 
     @Override
     public Study importStudy() throws StudyImporterException {
+        unsupportedInteractionTypes.clear();
         getSourceString();
         retrieveDataParseResults();
+        if (unsupportedInteractionTypes.size() > 0) {
+            StringBuilder unsupportedInteractions = new StringBuilder();
+            for (Map.Entry<Long, String> entry : unsupportedInteractionTypes.entrySet()) {
+                unsupportedInteractions.append("([")
+                        .append(entry.getKey())
+                        .append("], [")
+                        .append(entry.getValue())
+                        .append("]) ");
+            }
+            String msg = "found unsupported (observationId, interactionType) pairs: " + unsupportedInteractions.toString();
+            throw new StudyImporterException(msg);
+        }
         return null;
     }
 
@@ -129,8 +144,7 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
                 totalInteractions += previousResultCount;
             } catch (IOException e) {
                 throw new StudyImporterException("failed to import iNaturalist", e);
-            }
-            finally {
+            } finally {
                 httpGet.releaseConnection();
             }
 
@@ -200,14 +214,13 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
             String sourceTaxonName = sourceTaxon.get("name").getTextValue();
             Date observationDate = getObservationDate(study, observationId, observation);
 
-            Specimen specimen;
+            Specimen specimen = null;
             if (TYPE_MAPPING.containsKey(interactionType)) {
                 specimen = createAssociation(observationId, interactionDataType, interactionType, observation, targetTaxonName, sourceTaxonName, study, observationDate);
             } else if (INVERSE_TYPE_MAPPING.containsKey(interactionType)) {
                 specimen = createInverseAssociation(observationId, interactionDataType, interactionType, observation, targetTaxonName, sourceTaxonName, study, observationDate);
             } else {
-                String msg = "found unsupported interactionType [" + interactionType + "] for observation [" + observationId + "]";
-                throw new StudyImporterException(msg);
+                unsupportedInteractionTypes.put(observationId, interactionType);
             }
 
             if (specimen != null) {
