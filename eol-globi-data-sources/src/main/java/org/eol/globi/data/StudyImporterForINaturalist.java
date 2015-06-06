@@ -94,6 +94,7 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
         add("Class");
         add("Phylum");
         add("Unidentified");
+        add("Animal observed");
     }};
     private final Map<Long, String> unsupportedInteractionTypes = new TreeMap<Long, String>();
 
