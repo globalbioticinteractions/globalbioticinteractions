@@ -12,6 +12,7 @@ public class Location extends NodeBacked {
     public static final String LONGITUDE = "longitude";
     public static final String ALTITUDE = "altitude";
     public static final String LATITUDE = "latitude";
+    public static final String GEO_HASH = "geoHash";
 
     public Location(Node node) {
         super(node);
