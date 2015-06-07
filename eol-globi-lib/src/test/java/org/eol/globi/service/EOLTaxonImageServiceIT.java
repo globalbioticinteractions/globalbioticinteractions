@@ -44,18 +44,6 @@ public class EOLTaxonImageServiceIT {
     }
 
     @Test
-    public void imageLookupGBIF() throws URISyntaxException, IOException {
-        TaxonImage taxonImage = imageService.lookupImageForExternalId("GBIF:1");
-
-        assertThat(taxonImage.getThumbnailURL(), endsWith(".jpg"));
-        assertThat(taxonImage.getImageURL(), endsWith(".jpg"));
-        assertThat(taxonImage.getPageId(), is("205157"));
-        assertThat(taxonImage.getInfoURL(), is("http://eol.org/pages/205157"));
-        assertThat(taxonImage.getScientificName(), is("Centropomus undecimalis"));
-        assertThat(taxonImage.getCommonName(), is("Common Snook"));
-    }
-
-    @Test
     public void imageLookupWoRMS() throws URISyntaxException, IOException {
         assertWoRMSImage(imageService.lookupImageURLs(TaxonomyProvider.WORMS, "276287"));
         assertWoRMSImage(imageService.lookupImageForExternalId(TaxonomyProvider.ID_PREFIX_WORMS + "276287"));

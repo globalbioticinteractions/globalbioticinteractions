@@ -30,8 +30,6 @@ public class EOLTaxonImageService implements ImageSearch {
             image = lookupImageURLs(TaxonomyProvider.WORMS, externalId.replace(TaxonomyProvider.ID_PREFIX_WORMS, ""));
         } else if (externalId.startsWith(TaxonomyProvider.ID_PREFIX_ITIS)) {
             image = lookupImageURLs(TaxonomyProvider.ITIS, externalId.replace(TaxonomyProvider.ID_PREFIX_ITIS, ""));
-        } else if (externalId.startsWith(TaxonomyProvider.ID_PREFIX_GBIF)) {
-            image = lookupImageURLs(TaxonomyProvider.GBIF, externalId.replace(TaxonomyProvider.ID_PREFIX_GBIF, ""));
         }
 
         if (image == null) {
@@ -55,8 +53,6 @@ public class EOLTaxonImageService implements ImageSearch {
             eolProviderId = "759";
         } else if (TaxonomyProvider.WORMS.equals(provider)) {
             eolProviderId = "123";
-        } else if (TaxonomyProvider.GBIF.equals(provider)) {
-            eolProviderId = "800";
         } else if (TaxonomyProvider.EOL.equals(provider)) {
             // no need to lookup, because the page id is already in the taxon id
             eolPageId = taxonId.replace(TaxonomyProvider.ID_PREFIX_EOL, "");

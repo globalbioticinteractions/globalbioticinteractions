@@ -50,16 +50,6 @@
             <version>2.1</version>
         </dependency>
         <dependency>
-            <groupId>ch.hsr</groupId>
-            <artifactId>geohash</artifactId>
-            <version>1.0.13</version>
-        </dependency>
-        <dependency>
-            <groupId>com.jillesvangurp</groupId>
-            <artifactId>geogeometry</artifactId>
-            <version>2.11</version>
-        </dependency>
-        <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
             <version>${httpcomponents.version}</version>

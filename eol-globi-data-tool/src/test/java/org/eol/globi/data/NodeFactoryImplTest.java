@@ -1,10 +1,5 @@
 package org.eol.globi.data;
 
-import ch.hsr.geohash.BoundingBox;
-import ch.hsr.geohash.GeoHash;
-import ch.hsr.geohash.WGS84Point;
-import ch.hsr.geohash.queries.GeoHashBoundingBoxQuery;
-import com.jillesvangurp.geo.GeoHashUtils;
 import junit.framework.Assert;
 import org.apache.commons.lang.StringUtils;
 import org.eol.globi.data.taxon.CorrectionService;
@@ -26,19 +21,16 @@ import org.junit.Test;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
-import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.IndexHits;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
-import static org.junit.matchers.JUnitMatchers.containsString;
 
 public class NodeFactoryImplTest extends GraphDBTestCase {
 
@@ -97,46 +89,6 @@ public class NodeFactoryImplTest extends GraphDBTestCase {
         Assert.assertNotNull(location1);
         Location foundLocationNoDepth = getNodeFactory().findLocation(locationNoDepth.getLatitude(), locationNoDepth.getLongitude(), null);
         Assert.assertNotNull(foundLocationNoDepth);
-    }
-
-    @Test
-    public void createFindLocationByGeoHash() throws NodeFactoryException {
-        Location location = getNodeFactory().getOrCreateLocation(37.810227, -122.248362, -1.0d);
-        Index<Node> geoHashIndex = getGraphDb().index().forNodes("locationGeoHashes");
-
-        String geoHash = GeoHash.geoHashStringWithCharacterPrecision(37.810227, -122.248362, 7);
-        assertHit(location, geoHashIndex, geoHash.substring(0, 2));
-        assertHit(location, geoHashIndex, geoHash);
-
-        IndexHits<Node> hits;
-        hits = geoHashIndex.query(Location.GEO_HASH + ":" + GeoHash.geoHashStringWithCharacterPrecision(47.810227, -122.248362, 7));
-        assertThat(hits.size(), is(0));
-        hits.close();
-        hits = geoHashIndex.query(createLocationsInBBoxQuery(37.8200001, 38.1242, -130.0000, -129.0000));
-        assertThat(hits.getSingle().getId(), is(location.getNodeID()));
-    }
-
-    @Test
-    public void luceneBBox() {
-        assertThat(createLocationsInBBoxQuery(37.8200001, 38.1242, -130.0000, -129.0000), containsString("9nex1v3"));
-    }
-
-    protected String createLocationsInBBoxQuery(double latMin, double latMax, double lngMin, double lngMax) {
-        double[][] polygon = new double[][]{
-                {lngMin, latMin}
-                , {lngMin, latMax}
-                , {lngMax, latMax}
-                , {lngMax, latMin}};
-        Set<String> searchHashes = GeoHashUtils.geoHashesForPolygon(
-                7, polygon);
-        return Location.GEO_HASH + ":" + StringUtils.join(searchHashes, " OR ");
-    }
-
-    protected void assertHit(Location location, Index<Node> locations, String geoHash) {
-        String query = Location.GEO_HASH + ":" + geoHash;
-        IndexHits<Node> hits = locations.query(query);
-        assertThat(hits.getSingle().getId(), is(location.getNodeID()));
-        hits.close();
     }
 
     @Test(expected = NodeFactoryException.class)

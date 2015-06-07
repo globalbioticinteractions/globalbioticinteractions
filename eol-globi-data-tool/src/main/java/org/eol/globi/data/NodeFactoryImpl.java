@@ -17,7 +17,6 @@ import org.eol.globi.domain.Term;
 import org.eol.globi.geo.Ecoregion;
 import org.eol.globi.geo.EcoregionFinder;
 import org.eol.globi.geo.EcoregionFinderException;
-import org.eol.globi.geo.GeoUtil;
 import org.eol.globi.service.AuthorIdResolver;
 import org.eol.globi.service.DOIResolver;
 import org.eol.globi.service.EnvoLookupService;
@@ -55,7 +54,6 @@ public class NodeFactoryImpl implements NodeFactory {
     private final Index<Node> studies;
     private final Index<Node> seasons;
     private final Index<Node> locations;
-    private final Index<Node> geoHashes;
     private final Index<Node> environments;
     private final Index<Node> ecoregions;
     private final Index<Node> ecoregionSuggestions;
@@ -80,7 +78,6 @@ public class NodeFactoryImpl implements NodeFactory {
         this.studies = graphDb.index().forNodes("studies");
         this.seasons = graphDb.index().forNodes("seasons");
         this.locations = graphDb.index().forNodes("locations");
-        this.geoHashes = graphDb.index().forNodes("locationGeoHashes", MapUtil.stringMap(IndexManager.PROVIDER, "lucene", "type", "fulltext"));
         this.environments = graphDb.index().forNodes("environments");
 
         this.ecoregions = graphDb.index().forNodes("ecoregions");
@@ -175,13 +172,13 @@ public class NodeFactoryImpl implements NodeFactory {
             if (altitude != null) {
                 locations.add(node, Location.ALTITUDE, ValueContext.numeric(altitude));
             }
-            geoHashes.add(node, Location.GEO_HASH, GeoUtil.createGeoHashPrefixes(latitude, longitude, 7));
             transaction.success();
         } finally {
             transaction.finish();
         }
         return location;
     }
+
 
     @Override
     public Specimen createSpecimen(Study study, String taxonName, String taxonExternalId) throws NodeFactoryException {
