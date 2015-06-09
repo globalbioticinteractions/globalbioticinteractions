@@ -439,47 +439,61 @@ public class CypherQueryBuilder {
     }
 
 
+    private static Map<ResultField, String> appendStudyFields(Map<ResultField, String> selectors) {
+        return new HashMap<ResultField, String>(selectors) {
+            {
+                put(STUDY_TITLE, "study.title");
+                put(ResultField.STUDY_URL, "study.externalId?");
+                put(ResultField.STUDY_DOI, "study.doi?");
+                put(ResultField.STUDY_CITATION, "study.citation?");
+                put(ResultField.STUDY_SOURCE_CITATION, "study.source?");
+            }
+        };
+    }
+
+    private static Map<ResultField, String> appendSpecimenFields(Map<ResultField, String> selectors) {
+        return new HashMap<ResultField, String>(selectors) {
+            {
+                put(SOURCE_SPECIMEN_ID, "ID(sourceSpecimen)");
+                put(TARGET_SPECIMEN_ID, "ID(targetSpecimen)");
+                put(TARGET_SPECIMEN_TOTAL_COUNT, "targetSpecimen." + Specimen.TOTAL_COUNT + "?");
+                put(TARGET_SPECIMEN_TOTAL_VOLUME_ML, "targetSpecimen." + Specimen.TOTAL_VOLUME_IN_ML + "?");
+                put(TARGET_SPECIMEN_TOTAL_FREQUENCY_OF_OCCURRENCE, "targetSpecimen." + Specimen.FREQUENCY_OF_OCCURRENCE + "?");
+                put(SOURCE_SPECIMEN_LIFE_STAGE, "sourceSpecimen." + Specimen.LIFE_STAGE_LABEL + "?");
+                put(SOURCE_SPECIMEN_BASIS_OF_RECORD, "sourceSpecimen." + Specimen.BASIS_OF_RECORD_LABEL + "?");
+                put(TARGET_SPECIMEN_LIFE_STAGE, "targetSpecimen." + Specimen.LIFE_STAGE_LABEL + "?");
+                put(TARGET_SPECIMEN_BASIS_OF_RECORD, "targetSpecimen." + Specimen.BASIS_OF_RECORD_LABEL + "?");
+
+            }
+        };
+    }
+
+
     private static void appendReturnClause(final List<String> interactionType, StringBuilder query, QueryType returnType, List<String> requestedReturnFields) {
         switch (returnType) {
             case SINGLE_TAXON_DISTINCT:
                 appendReturnClauseDistinct(interactionType.get(0), query, Arrays.asList(SOURCE_TAXON_NAME, INTERACTION_TYPE, TARGET_TAXON_NAME));
                 break;
             case SINGLE_TAXON_ALL:
-                HashMap<ResultField, String> selectors = new HashMap<ResultField, String>(defaultSelectors()) {
-                    {
-                        put(INTERACTION_TYPE, "'" + interactionType.get(0) + "'");
-                        put(STUDY_TITLE, "study." + Study.TITLE);
-                        put(ResultField.STUDY_URL, "study.externalId?");
-                        put(ResultField.STUDY_DOI, "study.doi?");
-                        put(ResultField.STUDY_CITATION, "study.citation?");
-                        put(ResultField.STUDY_SOURCE_CITATION, "study.source?");
-                        put(COLLECTION_TIME_IN_UNIX_EPOCH, "collected_rel.dateInUnixEpoch?");
-                        put(SOURCE_SPECIMEN_ID, "ID(sourceSpecimen)");
-                        put(TARGET_SPECIMEN_ID, "ID(targetSpecimen)");
-                        put(TARGET_SPECIMEN_TOTAL_COUNT, "targetSpecimen." + Specimen.TOTAL_COUNT + "?");
-                        put(TARGET_SPECIMEN_TOTAL_VOLUME_ML, "targetSpecimen." + Specimen.TOTAL_VOLUME_IN_ML + "?");
-                        put(TARGET_SPECIMEN_TOTAL_FREQUENCY_OF_OCCURRENCE, "targetSpecimen." + Specimen.FREQUENCY_OF_OCCURRENCE + "?");
-                    }
-                };
+                Map<ResultField, String> selectors = appendSpecimenFields(
+                        appendStudyFields(new HashMap<ResultField, String>(defaultSelectors()) {
+                            {
+                                put(INTERACTION_TYPE, "'" + interactionType.get(0) + "'");
+                                put(COLLECTION_TIME_IN_UNIX_EPOCH, "collected_rel.dateInUnixEpoch?");
+
+                            }
+                        }));
                 appendReturnClause(query, actualReturnFields(requestedReturnFields, Arrays.asList(RETURN_FIELDS_SINGLE_TAXON_DEFAULT), selectors.keySet()), selectors);
                 break;
             case MULTI_TAXON_ALL:
-                selectors = new HashMap<ResultField, String>(defaultSelectors()) {
-                    {
-                        put(SOURCE_SPECIMEN_LIFE_STAGE, "sourceSpecimen.lifeStage?");
-                        put(SOURCE_SPECIMEN_BASIS_OF_RECORD, "sourceSpecimen.basisOfRecordLabel?");
-                        StringBuilder interactionBuilder = new StringBuilder();
-                        appendInteractionTypeReturn(interactionBuilder, "type(interaction)");
-                        put(INTERACTION_TYPE, interactionBuilder.toString());
-                        put(TARGET_SPECIMEN_LIFE_STAGE, "targetSpecimen.lifeStage?");
-                        put(TARGET_SPECIMEN_BASIS_OF_RECORD, "targetSpecimen.basisOfRecordLabel?");
-                        put(STUDY_TITLE, "study.title");
-                        put(ResultField.STUDY_URL, "study.externalId?");
-                        put(ResultField.STUDY_DOI, "study.doi?");
-                        put(ResultField.STUDY_CITATION, "study.citation?");
-                        put(ResultField.STUDY_SOURCE_CITATION, "study.source?");
-                    }
-                };
+                selectors = appendSpecimenFields(
+                        appendStudyFields(new HashMap<ResultField, String>(defaultSelectors()) {
+                            {
+                                StringBuilder interactionBuilder = new StringBuilder();
+                                appendInteractionTypeReturn(interactionBuilder, "type(interaction)");
+                                put(INTERACTION_TYPE, interactionBuilder.toString());
+                            }
+                        }));
                 appendReturnClausez(query, actualReturnFields(requestedReturnFields, Arrays.asList(RETURN_FIELDS_MULTI_TAXON_DEFAULT), selectors.keySet()), selectors);
                 break;
             case MULTI_TAXON_DISTINCT:
