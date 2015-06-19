@@ -1,5 +1,7 @@
 package org.eol.globi.service;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpHead;
 import org.codehaus.jackson.JsonNode;
@@ -14,6 +16,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GitHubUtil {
+    private static final Log LOG = LogFactory.getLog(GitHubUtil.class);
+
     protected static String httpGet(String path, String query) throws URISyntaxException, IOException {
         return HttpUtil.getContent(new URI("https", null, "api.github.com", 443, path, query, null));
     }
@@ -29,17 +33,27 @@ public class GitHubUtil {
     }
 
     public static List<String> find() throws URISyntaxException, IOException {
-        String repositoriesThatMentionGloBI = httpGet("/search/repositories", "q=globalbioticinteractions+in:readme+fork:true");
-
+        int page = 1;
+        int totalAvailable = 0;
         List<String> globiRepos = new ArrayList<String>();
-        JsonNode jsonNode = new ObjectMapper().readTree(repositoriesThatMentionGloBI);
-        if (jsonNode.has("items")) {
-            for (JsonNode item : jsonNode.get("items")) {
-                if (item.has("full_name")) {
-                    globiRepos.add(item.get("full_name").asText());
+        do {
+            LOG.info("searching for repositories that mention [globalbioticinteractions], page [" + page + "]...");
+            String repositoriesThatMentionGloBI = httpGet("/search/repositories", "q=globalbioticinteractions+in:readme+fork:true&page=" + page);
+            JsonNode jsonNode = new ObjectMapper().readTree(repositoriesThatMentionGloBI);
+            if (jsonNode.has("total_count")) {
+                totalAvailable = jsonNode.get("total_count").getIntValue();
+            }
+            if (jsonNode.has("items")) {
+                for (JsonNode item : jsonNode.get("items")) {
+                    if (item.has("full_name")) {
+                        globiRepos.add(item.get("full_name").asText());
+                    }
                 }
             }
+            page++;
         }
+        while (globiRepos.size() < totalAvailable);
+        LOG.info("searching for repositories that mention [globalbioticinteractions] done.");
 
         List<String> reposWithData = new ArrayList<String>();
         for (String globiRepo : globiRepos) {
