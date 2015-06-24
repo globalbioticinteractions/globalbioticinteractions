@@ -10,8 +10,11 @@ import org.junit.Test;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.startsWith;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
@@ -73,6 +76,25 @@ public class StudyImporterForGitHubDataIT extends GraphDBTestCase {
         assertThat(allStudies.size(), is(1));
         assertThat(allStudies.get(0).getSource(), containsString("Miller"));
         assertThat(nodeFactory.findTaxonByName("Garrulus glandarius"), is(notNullValue()));
+    }
+
+    @Test
+    public void importSmithsonian() throws StudyImporterException, NodeFactoryException {
+        StudyImporterForGitHubData importer = new StudyImporterForGitHubData(new ParserFactoryImpl(), nodeFactory);
+        importer.importData("millerse/Smithsonian-Repository-Interactions");
+        List<Study> allStudies = NodeUtil.findAllStudies(getGraphDb());
+        Map<String, String> citationDOIs = new TreeMap<String, String>();
+        for (Study study : allStudies) {
+            citationDOIs.put(study.getCitation(), study.getDOI());
+        }
+
+        String citation = "Raboy, Becky E., and James M. Dietz. Diet, Foraging, and Use of Space in Wild Golden-headed Lion Tamarins. American Journal of Primatology, 63(1):, 2004, 1-15. Accessed April 20, 2015. http://hdl.handle.net/10088/4251.";
+        assertThat(citationDOIs.keySet(), hasItem(citation));
+        String doi = citationDOIs.get(citation);
+        assertThat(doi, startsWith("doi:Raboy"));
+
+        assertThat(allStudies.get(0).getSource(), containsString("Miller"));
+        assertThat(nodeFactory.findTaxonByName("Leontopithecus chrysomelas"), is(notNullValue()));
     }
 
     @Test

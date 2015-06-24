@@ -25,6 +25,12 @@ public class DOIResolverImplIT {
     }
 
     @Test
+    public void resolveDOIByReferenceTamarins() throws IOException {
+        String doi = new DOIResolverImpl().findDOIForReference("Raboy, Becky E., and James M. Dietz. Diet, Foraging, and Use of Space in Wild Golden-headed Lion Tamarins. American Journal of Primatology, 63(1):, 2004, 1-15. Accessed April 20, 2015. http://hdl.handle.net/10088/4251.");
+        assertThat(doi, is("http://dx.doi.org/10.1002/ajp.20032"));
+    }
+
+    @Test
     public void resolveDOIByReferenceMatch2() throws IOException {
         String doi = new DOIResolverImpl().findDOIForReference("Medan, D., N. H. Montaldo, M. Devoto, A. Mantese, V. Vasellati, and N. H. Bartoloni. 2002. Plant-pollinator relationships at two altitudes in the Andes of Mendoza, Argentina. Arctic Antarctic and Alpine Research 34:233-241.");
         assertThat(doi, is("http://dx.doi.org/10.2307/1552480"));
