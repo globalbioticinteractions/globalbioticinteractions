@@ -2,9 +2,7 @@ package org.eol.globi.service;
 
 import org.apache.commons.lang3.time.StopWatch;
 import org.eol.globi.data.CharsetConstant;
-import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.TaxonomyProvider;
-import org.hamcrest.core.Is;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -12,7 +10,13 @@ import org.junit.Test;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.eol.globi.domain.PropertyAndValueDictionary.*;
+import static org.eol.globi.domain.PropertyAndValueDictionary.COMMON_NAMES;
+import static org.eol.globi.domain.PropertyAndValueDictionary.EXTERNAL_ID;
+import static org.eol.globi.domain.PropertyAndValueDictionary.NAME;
+import static org.eol.globi.domain.PropertyAndValueDictionary.PATH;
+import static org.eol.globi.domain.PropertyAndValueDictionary.PATH_IDS;
+import static org.eol.globi.domain.PropertyAndValueDictionary.PATH_NAMES;
+import static org.eol.globi.domain.PropertyAndValueDictionary.RANK;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.Is.is;
@@ -502,6 +506,9 @@ public class EOLServiceIntegrationTest {
         properties = eolService.enrich(properties);
         assertThat(properties.get(EXTERNAL_ID), is("EOL:223038"));
         assertThat(properties.get(PATH), containsString("Ariopsis felis"));
+        String encoded = "&#1089;&#1086;&#1084;&#32;&#1084;&#1086;&#1088;&#1089;&#1082;&#1086;&#1081;";
+        assertThat(properties.get(COMMON_NAMES), not(containsString(encoded)));
+        assertThat(properties.get(COMMON_NAMES), containsString("сом морской"));
     }
 
     @Test

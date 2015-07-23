@@ -1,5 +1,6 @@
 package org.eol.globi.service;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpResponseException;
@@ -220,7 +221,7 @@ public class EOLService implements PropertyEnricher {
                 String languageCode = vernacularName.get("language").asText();
                 String commonName = vernacularName.get("vernacularName").asText();
                 if (StringUtils.isNotBlank(languageCode) && StringUtils.isNotBlank(commonName)) {
-                    commonNames.append(commonName);
+                    commonNames.append(StringEscapeUtils.unescapeHtml(commonName));
                     commonNames.append(" @");
                     commonNames.append(languageCode);
                     commonNames.append(CharsetConstant.SEPARATOR);
