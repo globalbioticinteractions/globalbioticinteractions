@@ -1,8 +1,6 @@
 package org.eol.globi.util;
 
-import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.domain.InteractType;
-import org.eol.globi.domain.PropertyAndValueDictionary;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -49,6 +47,9 @@ public class InteractUtil {
 
                 put(InteractType.VECTOR_OF, InteractType.HAS_VECTOR);
                 put(InteractType.HAS_VECTOR, InteractType.VECTOR_OF);
+
+                put(InteractType.VISITS_FLOWERS_OF, InteractType.FLOWERS_VISITED_BY);
+                put(InteractType.FLOWERS_VISITED_BY, InteractType.VISITS_FLOWERS_OF);
             }
         };
         return inverseMap.get(interactType);

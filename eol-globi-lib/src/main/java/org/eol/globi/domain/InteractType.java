@@ -20,7 +20,9 @@ public enum InteractType implements RelType {
     HAS_PATHOGEN("http://purl.obolibrary.org/obo/RO_0002557"),
     PATHOGEN_OF("http://purl.obolibrary.org/obo/RO_0002556"),
     HAS_VECTOR("http://purl.obolibrary.org/obo/RO_0002460"),
-    VECTOR_OF("http://purl.obolibrary.org/obo/RO_0002459");
+    VECTOR_OF("http://purl.obolibrary.org/obo/RO_0002459"),
+    FLOWERS_VISITED_BY("http://eol.org/schema/terms/FlowersVisitedBy"),
+    VISITS_FLOWERS_OF("http://eol.org/schema/terms/VisitsFlowersOf");
 
     String iri;
 
@@ -28,16 +30,15 @@ public enum InteractType implements RelType {
         this.iri = iri;
     }
 
-    public static InteractType typeOf(String term) {
-        if (StringUtils.startsWith(term, "RO:")) {
-            String iri = StringUtils.replace(term, "RO:", PropertyAndValueDictionary.RO_NAMESPACE);
-            InteractType[] values = values();
-            for (InteractType interactType : values) {
-                if (StringUtils.equals(iri, interactType.getIRI())) {
-                    return interactType;
-                }
+    public static InteractType typeOf(String iri) {
+        if (StringUtils.startsWith(iri, "RO:")) {
+            iri = StringUtils.replace(iri, "RO:", PropertyAndValueDictionary.RO_NAMESPACE);
+        }
+        InteractType[] values = values();
+        for (InteractType interactType : values) {
+            if (StringUtils.equals(iri, interactType.getIRI())) {
+                return interactType;
             }
-
         }
         return null;
     }

@@ -90,6 +90,9 @@ public class CypherQueryBuilder {
     public static final String INTERACTION_HOST_OF = "hostOf";
     public static final String INTERACTION_HAS_HOST = "hasHost";
 
+    public static final String INTERACTION_VISITS_FLOWERS_OF = "visitsFlowersOf";
+    public static final String INTERACTION_FLOWERS_VISITED_BY = "flowersVisitedBy";
+
     public static final String INTERACTION_SYMBIONT_OF = "symbiontOf";
     public static final String INTERACTION_INTERACTS_WITH = "interactsWith";
 
@@ -106,6 +109,8 @@ public class CypherQueryBuilder {
             put(INTERACTION_EATEN_BY, InteractType.EATEN_BY + "|" + InteractType.PREYED_UPON_BY);
             put(INTERACTION_PARASITE_OF, InteractType.PARASITE_OF.toString());
             put(INTERACTION_HAS_PARASITE, InteractType.HAS_PARASITE.toString());
+            put(INTERACTION_VISITS_FLOWERS_OF, InteractType.VISITS_FLOWERS_OF + "|" + InteractType.POLLINATES);
+            put(INTERACTION_FLOWERS_VISITED_BY, InteractType.FLOWERS_VISITED_BY + "|" + InteractType.POLLINATED_BY);
             put(INTERACTION_POLLINATES, InteractType.POLLINATES.toString());
             put(INTERACTION_POLLINATED_BY, InteractType.POLLINATED_BY.toString());
             put(INTERACTION_PATHOGEN_OF, InteractType.PATHOGEN_OF.toString());

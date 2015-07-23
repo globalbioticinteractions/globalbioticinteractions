@@ -111,7 +111,7 @@ public class CypherQueryBuilderTest {
         };
 
         CypherQuery query = CypherQueryBuilder.buildInteractionTypeQuery(params);
-        assertThat(query.getQuery(), is("START taxon = node:taxonPaths({taxon_name}) MATCH taxon-[rel:PREYS_UPON|PARASITE_OF|HAS_HOST|INTERACTS_WITH|HOST_OF|POLLINATES|PERCHING_ON|ATE|SYMBIONT_OF|PREYED_UPON_BY|POLLINATED_BY|EATEN_BY|HAS_PARASITE|PERCHED_ON_BY|HAS_PATHOGEN|PATHOGEN_OF|HAS_VECTOR|VECTOR_OF]->otherTaxon RETURN distinct(type(rel)) as interaction_type"));
+        assertThat(query.getQuery(), is("START taxon = node:taxonPaths({taxon_name}) MATCH taxon-[rel:PREYS_UPON|PARASITE_OF|HAS_HOST|INTERACTS_WITH|HOST_OF|POLLINATES|PERCHING_ON|ATE|SYMBIONT_OF|PREYED_UPON_BY|POLLINATED_BY|EATEN_BY|HAS_PARASITE|PERCHED_ON_BY|HAS_PATHOGEN|PATHOGEN_OF|HAS_VECTOR|VECTOR_OF|FLOWERS_VISITED_BY|VISITS_FLOWERS_OF]->otherTaxon RETURN distinct(type(rel)) as interaction_type"));
         assertThat(query.getParams().toString(), is(is("{taxon_name=path:\\\"Actinopterygii\\\" OR path:\\\"Chordata\\\"}")));
     }
 
