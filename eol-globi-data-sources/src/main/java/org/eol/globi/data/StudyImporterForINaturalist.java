@@ -39,6 +39,8 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
         put("Feeding on", InteractType.ATE);
         put("Mariposas que alimenta", InteractType.ATE);
         put("With the prey", InteractType.ATE);
+        put("Predating", InteractType.PREYS_UPON);
+        put("Depredando", InteractType.PREYS_UPON);
         put("Alimentándose", InteractType.ATE);
         put("Food Source", InteractType.ATE);
         put("Host", InteractType.HAS_HOST);
@@ -74,6 +76,8 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
         put("Hunting", InteractType.PREYS_UPON);
         put("Predated by", InteractType.PREYED_UPON_BY);
         put("Is Host For", InteractType.HOST_OF);
+        put("Being parasitized by", InteractType.HAS_PARASITE);
+        put("Parasitando a", InteractType.PARASITE_OF);
     }};
 
     private static final Map<String, InteractType> INVERSE_TYPE_MAPPING = new HashMap<String, InteractType>() {{
