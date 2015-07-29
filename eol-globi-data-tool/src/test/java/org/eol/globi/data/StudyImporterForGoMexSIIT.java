@@ -41,24 +41,19 @@ public class StudyImporterForGoMexSIIT extends GraphDBTestCase {
     public void createAndPopulateStudyGitHubMostRecent() throws StudyImporterException, NodeFactoryException, IOException, URISyntaxException {
         String baseUrlLastCommit = GitHubUtil.getBaseUrlLastCommit("gomexsi/interaction-data");
         StudyImporterForGoMexSI importer = importWithCommit(baseUrlLastCommit);
-
-        assertInteractionCount(1234);
-
         assertThatSomeDataIsImported(importer, nodeFactory);
     }
 
     @Test
     public void createAndPopulateStudyGitHub2June2015() throws StudyImporterException, NodeFactoryException, IOException, URISyntaxException {
-        StudyImporterForGoMexSI importer = importWithCommit(GitHubUtil.getBaseUrl("gomexsi/interaction-data", "c00b359b220be168e0396f1b357949f428226474"));
+        importWithCommit(GitHubUtil.getBaseUrl("gomexsi/interaction-data", "c00b359b220be168e0396f1b357949f428226474"));
         assertInteractionCount(53495);
-        assertThatSomeDataIsImported(importer, nodeFactory);
     }
 
     @Test
     public void createAndPopulateStudyGitHub9June2015() throws StudyImporterException, NodeFactoryException, IOException, URISyntaxException {
         StudyImporterForGoMexSI importer = importWithCommit(GitHubUtil.getBaseUrl("gomexsi/interaction-data", "e51f18e016f26627d4c264797869c910f1baefdd"));
         assertInteractionCount(55150);
-        assertThatSomeDataIsImported(importer, nodeFactory);
     }
 
     protected StudyImporterForGoMexSI importWithCommit(String baseUrlLastCommit) throws StudyImporterException {

@@ -99,6 +99,6 @@ public class ExternalIdUtil {
                 nonBlanks.add(string);
             }
         }
-        return StringUtils.join(nonBlanks, ". ");
+        return StringUtils.join(nonBlanks, ". ").trim();
     }
 }
