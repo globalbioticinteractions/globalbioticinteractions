@@ -12,10 +12,13 @@ import org.eol.globi.service.GitHubUtil;
 import org.eol.globi.util.ExternalIdUtil;
 import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
+import org.neo4j.cypher.javacompat.ExecutionEngine;
+import org.neo4j.cypher.javacompat.ExecutionResult;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
+import org.neo4j.graphdb.ResourceIterator;
 import org.neo4j.graphdb.index.Index;
 
 import java.io.IOException;
@@ -29,12 +32,36 @@ import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
+import static org.junit.matchers.JUnitMatchers.containsString;
 import static org.junit.matchers.JUnitMatchers.hasItem;
 
 public class StudyImporterForGoMexSIIT extends GraphDBTestCase {
 
     @Test
-    public void createAndPopulateStudyGitHub() throws StudyImporterException, NodeFactoryException, IOException, URISyntaxException {
+    public void createAndPopulateStudyGitHubMostRecent() throws StudyImporterException, NodeFactoryException, IOException, URISyntaxException {
+        String baseUrlLastCommit = GitHubUtil.getBaseUrlLastCommit("gomexsi/interaction-data");
+        StudyImporterForGoMexSI importer = importWithCommit(baseUrlLastCommit);
+
+        assertInteractionCount(1234);
+
+        assertThatSomeDataIsImported(importer, nodeFactory);
+    }
+
+    @Test
+    public void createAndPopulateStudyGitHub2June2015() throws StudyImporterException, NodeFactoryException, IOException, URISyntaxException {
+        StudyImporterForGoMexSI importer = importWithCommit(GitHubUtil.getBaseUrl("gomexsi/interaction-data", "c00b359b220be168e0396f1b357949f428226474"));
+        assertInteractionCount(53495);
+        assertThatSomeDataIsImported(importer, nodeFactory);
+    }
+
+    @Test
+    public void createAndPopulateStudyGitHub9June2015() throws StudyImporterException, NodeFactoryException, IOException, URISyntaxException {
+        StudyImporterForGoMexSI importer = importWithCommit(GitHubUtil.getBaseUrl("gomexsi/interaction-data", "e51f18e016f26627d4c264797869c910f1baefdd"));
+        assertInteractionCount(55150);
+        assertThatSomeDataIsImported(importer, nodeFactory);
+    }
+
+    protected StudyImporterForGoMexSI importWithCommit(String baseUrlLastCommit) throws StudyImporterException {
         StudyImporterForGoMexSI importer = new StudyImporterForGoMexSI(new ParserFactoryImpl(), nodeFactory);
         final List<String> msgs = new ArrayList<String>();
         importer.setLogger(new ImportLogger() {
@@ -53,13 +80,22 @@ public class StudyImporterForGoMexSIIT extends GraphDBTestCase {
                 msgs.add("severe: " + message);
             }
         });
-        importer.setBaseUrl(GitHubUtil.getBaseUrlLastCommit("gomexsi/interaction-data"));
+        importer.setBaseUrl(baseUrlLastCommit);
         importer.setSourceCitation("testing source citation");
-        assertThatSomeDataIsImported(importer, nodeFactory);
+
+        importer.importStudy();
+        return importer;
+    }
+
+    protected void assertInteractionCount(int expectedCount) {
+        ExecutionEngine engine = new ExecutionEngine(getGraphDb());
+        ExecutionResult result = engine.execute("START study = node:studies('*:*') MATCH study-[:COLLECTED]->specimen-[rel:ATE|PREYS_ON]->prey RETURN count(rel) as count");
+        ResourceIterator<Object> values = result.columnAs("count");
+        assertThat(values.next().toString(), is(Integer.toString(expectedCount)));
     }
 
     private static void assertThatSomeDataIsImported(StudyImporterForGoMexSI importer, NodeFactory nodeFactory) throws StudyImporterException, NodeFactoryException {
-        importer.importStudy();
+
 
         Study study = nodeFactory.findStudy("Divita et al 1983");
 
