@@ -52,7 +52,7 @@ public class StudyImporterForGoMexSIIT extends GraphDBTestCase {
 
     @Test
     public void createAndPopulateStudyGitHub9June2015() throws StudyImporterException, NodeFactoryException, IOException, URISyntaxException {
-        StudyImporterForGoMexSI importer = importWithCommit(GitHubUtil.getBaseUrl("gomexsi/interaction-data", "e51f18e016f26627d4c264797869c910f1baefdd"));
+        importWithCommit(GitHubUtil.getBaseUrl("gomexsi/interaction-data", "e51f18e016f26627d4c264797869c910f1baefdd"));
         assertInteractionCount(55150);
     }
 
