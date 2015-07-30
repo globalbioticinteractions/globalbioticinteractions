@@ -140,14 +140,15 @@ public class StudyImporterForRaymond extends BaseStudyImporter {
     }
 
     public void importData(LabeledCSVParser sourcesParser, LabeledCSVParser dietParser) throws IOException, StudyImporterException {
-        Map<Integer, Study> sourceMap = buildStudyLookup(sourcesParser);
+        Map<Integer, String> sourceMap = buildStudyLookup(sourcesParser);
 
         while (dietParser.getLine() != null) {
             String sourceId = dietParser.getValueByLabel("SOURCE_ID");
-            Study study = sourceMap.get(Integer.parseInt(sourceId));
-            if (study == null) {
+            String citation = sourceMap.get(Integer.parseInt(sourceId));
+            if (StringUtils.isBlank(citation)) {
                 LOG.error("no source found for id [" + sourceId + "]: line [" + dietParser.lastLineNumber() + "]");
             } else {
+                Study study = getOrCreateStudy(citation);
                 parseDietObservation(dietParser, study);
             }
 
@@ -278,17 +279,22 @@ public class StudyImporterForRaymond extends BaseStudyImporter {
         return latLng;
     }
 
-    private Map<Integer, Study> buildStudyLookup(LabeledCSVParser sourcesParser) throws IOException {
-        Map<Integer, Study> sourceMap = new HashMap<Integer, Study>();
+    private Map<Integer, String> buildStudyLookup(LabeledCSVParser sourcesParser) throws IOException {
+        Map<Integer, String> sourceMap = new HashMap<Integer, String>();
         while (sourcesParser.getLine() != null) {
             Integer sourceId = Integer.parseInt(sourcesParser.getValueByLabel("SOURCE_ID"));
             String reference = sourcesParser.getValueByLabel("DETAILS");
-            String title = StringUtils.abbreviate(reference, 16) + MD5.getHashString(reference);
-            Study study = nodeFactory.getOrCreateStudy(title, "Raymond, B., Marshall, M., Nevitt, G., Gillies, C., van den Hoff, J., Stark, J.S., Losekoot, M., Woehler, E.J., and Constable, A.J. (2011) A Southern Ocean dietary database. Ecology 92(5):1188. Available from http://dx.doi.org/10.1890/10-1907.1 . Data set supplied by Ben Raymond. " + ReferenceUtil.createLastAccessedString(RESOURCE_URL), ExternalIdUtil.toCitation(null, reference, null));
-            sourceMap.put(sourceId, study);
+            String citation = ExternalIdUtil.toCitation(null, reference, null);
+            sourceMap.put(sourceId, citation);
         }
         return sourceMap;
     }
+
+    private Study getOrCreateStudy(String citation) {
+        String title = StringUtils.abbreviate(citation, 16) + MD5.getHashString(citation);
+        return nodeFactory.getOrCreateStudy(title, "Raymond, B., Marshall, M., Nevitt, G., Gillies, C., van den Hoff, J., Stark, J.S., Losekoot, M., Woehler, E.J., and Constable, A.J. (2011) A Southern Ocean dietary database. Ecology 92(5):1188. Available from http://dx.doi.org/10.1890/10-1907.1 . Data set supplied by Ben Raymond. " + ReferenceUtil.createLastAccessedString(RESOURCE_URL), citation);
+    }
+
 
     public Collection<String> getLocations() {
         return locations;
