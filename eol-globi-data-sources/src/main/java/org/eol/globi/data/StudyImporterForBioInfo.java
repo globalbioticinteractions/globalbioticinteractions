@@ -247,8 +247,6 @@ public class StudyImporterForBioInfo extends BaseStudyImporter implements StudyI
                         for (String id : ids) {
                             String trimmedId = StringUtils.trim(id);
                             Study study = createStudy(trimmedId, refMap.get(trimmedId));
-                            getLogger().info(study, "relations being created...");
-
                             String relationship = parser.getValueByLabel("relationship");
                             if (StringUtils.isBlank(relationship)) {
                                 getLogger().warn(study, "no relationship for record on line [" + (parser.lastLineNumber() + 1) + "]");
