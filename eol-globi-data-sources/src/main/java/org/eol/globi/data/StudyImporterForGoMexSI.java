@@ -183,7 +183,7 @@ public class StudyImporterForGoMexSI extends BaseStudyImporter {
                     String predatorId = refId + specimenId;
                     Map<String, String> predatorProperties = predatorIdToPredatorSpecimen.get(predatorId);
                     if (predatorProperties == null) {
-                        getLogger().warn(metaStudy, "failed to lookup location for predator [" + refId + ":" + specimenId + "] from [" + locationResource + ":" + parser.getLastLineNumber() + "]");
+                        getLogger().warn(study, "failed to lookup location for predator [" + refId + ":" + specimenId + "] from [" + locationResource + ":" + parser.getLastLineNumber() + "]");
                     } else {
                         addObservation(predatorUIToPreyLists, metaStudy, parser, study, location, predatorId, predatorProperties);
                     }
@@ -228,12 +228,12 @@ public class StudyImporterForGoMexSI extends BaseStudyImporter {
             setBasisOfRecordAsLiterature(predatorSpecimen);
             predatorSpecimen.setExternalId(predatorId);
             if (location == null) {
-                getLogger().warn(metaStudy, "no location for predator with id [" + predatorSpecimen.getExternalId() + "]");
+                getLogger().warn(study, "no location for predator with id [" + predatorSpecimen.getExternalId() + "]");
             } else {
                 predatorSpecimen.caughtIn(location);
             }
             List<Map<String, String>> preyList = predatorUIToPreyLists.get(predatorId);
-            checkStomachDataConsistency(predatorId, predatorProperties, preyList, metaStudy);
+            checkStomachDataConsistency(predatorId, predatorProperties, preyList, study);
             if (preyList != null) {
                 for (Map<String, String> preyProperties : preyList) {
                     if (preyProperties != null) {
@@ -243,7 +243,7 @@ public class StudyImporterForGoMexSI extends BaseStudyImporter {
                             prey.caughtIn(location);
                             predatorSpecimen.ate(prey);
                         } catch (NodeFactoryException e) {
-                            getLogger().warn(metaStudy, "failed to add prey [" + preyProperties + "] for predator with id + [" + predatorId + "]: [" + predatorProperties + "]: [" + e.getMessage() + "]");
+                            getLogger().warn(study, "failed to add prey [" + preyProperties + "] for predator with id + [" + predatorId + "]: [" + predatorProperties + "]: [" + e.getMessage() + "]");
                         }
                     }
                 }
@@ -253,18 +253,18 @@ public class StudyImporterForGoMexSI extends BaseStudyImporter {
         }
     }
 
-    private void checkStomachDataConsistency(String predatorId, Map<String, String> predatorProperties, List<Map<String, String>> preyList, Study metaStudy) throws StudyImporterException {
+    private void checkStomachDataConsistency(String predatorId, Map<String, String> predatorProperties, List<Map<String, String>> preyList, Study study) throws StudyImporterException {
         Integer total = integerValueOrNull(predatorProperties, STOMACH_COUNT_TOTAL);
         Integer withoutFood = integerValueOrNull(predatorProperties, STOMACH_COUNT_WITHOUT_FOOD);
         Integer withFood = integerValueOrNull(predatorProperties, STOMACH_COUNT_WITH_FOOD);
         if (total != null && withoutFood != null) {
             if (preyList == null || preyList.size() == 0) {
                 if (!total.equals(withoutFood)) {
-                    getLogger().warn(metaStudy, "no prey for predator with id [" + predatorId + "], but found [" + withFood + "] stomachs with food");
+                    getLogger().warn(study, "no prey for predator with id [" + predatorId + "], but found [" + withFood + "] stomachs with food");
                 }
             } else {
                 if (total.equals(withoutFood)) {
-                    getLogger().warn(metaStudy, "found prey for predator with id [" + predatorId + "], but found only stomachs without food");
+                    getLogger().warn(study, "found prey for predator with id [" + predatorId + "], but found only stomachs without food");
                 }
             }
         }

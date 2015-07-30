@@ -3,14 +3,12 @@ package org.eol.globi.data;
 
 import org.eol.globi.domain.Environment;
 import org.eol.globi.domain.Location;
-import org.eol.globi.domain.LogMessage;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.service.GitHubUtil;
 import org.eol.globi.util.ExternalIdUtil;
-import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
 import org.neo4j.cypher.javacompat.ExecutionEngine;
 import org.neo4j.cypher.javacompat.ExecutionResult;
@@ -25,14 +23,12 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
 
 import static junit.framework.Assert.assertNotNull;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
-import static org.junit.matchers.JUnitMatchers.containsString;
 import static org.junit.matchers.JUnitMatchers.hasItem;
 
 public class StudyImporterForGoMexSIIT extends GraphDBTestCase {
@@ -41,7 +37,7 @@ public class StudyImporterForGoMexSIIT extends GraphDBTestCase {
     public void createAndPopulateStudyGitHubMostRecent() throws StudyImporterException, NodeFactoryException, IOException, URISyntaxException {
         String baseUrlLastCommit = GitHubUtil.getBaseUrlLastCommit("gomexsi/interaction-data");
         StudyImporterForGoMexSI importer = importWithCommit(baseUrlLastCommit);
-        assertThatSomeDataIsImported(importer, nodeFactory);
+        assertThatSomeDataIsImported(nodeFactory);
     }
 
     @Test
@@ -89,7 +85,7 @@ public class StudyImporterForGoMexSIIT extends GraphDBTestCase {
         assertThat(values.next().toString(), is(Integer.toString(expectedCount)));
     }
 
-    private static void assertThatSomeDataIsImported(StudyImporterForGoMexSI importer, NodeFactory nodeFactory) throws StudyImporterException, NodeFactoryException {
+    private static void assertThatSomeDataIsImported(NodeFactory nodeFactory) throws StudyImporterException, NodeFactoryException {
 
 
         Study study = nodeFactory.findStudy("Divita et al 1983");
@@ -136,6 +132,7 @@ public class StudyImporterForGoMexSIIT extends GraphDBTestCase {
 
         assertThat(titles, hasItem("Beaumariage 1973"));
         assertThat(titles, hasItem("Blanton et al 1972"));
+        assertThat(titles, hasItem("Baughman, 1943"));
 
         assertNotNull(taxon);
 
