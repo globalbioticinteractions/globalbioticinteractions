@@ -197,7 +197,7 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
             if (isIgnoredInteractionType(interactionType)) {
                 LOG.warn("ignoring taxon observation field type [" + interactionType + "] for observation with id [" + observationId + "]");
             } else {
-                createInteraction(jsonNode, targetTaxonNode, observationId, interactionDataType, interactionType);
+                handleObservation(jsonNode, targetTaxonNode, observationId, interactionDataType, interactionType);
             }
         }
 
@@ -208,35 +208,37 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
     }
 
 
-    private void createInteraction(JsonNode jsonNode, JsonNode targetTaxonNode, long observationId, String interactionDataType, String interactionType) throws StudyImporterException, NodeFactoryException {
+    private void handleObservation(JsonNode jsonNode, JsonNode targetTaxonNode, long observationId, String interactionDataType, String interactionType) throws StudyImporterException, NodeFactoryException {
         JsonNode observation = jsonNode.get("observation");
 
         JsonNode sourceTaxon = observation.get("taxon");
         if (sourceTaxon == null) {
             LOG.warn("cannot create interaction with missing source taxon name for observation with id [" + observation.get("id") + "]");
         } else {
-            Study study = nodeFactory.getOrCreateStudy2(TaxonomyProvider.ID_PREFIX_INATURALIST + observationId, getSourceString(), null);
-            String targetTaxonName = targetTaxonNode.getTextValue();
-            String sourceTaxonName = sourceTaxon.get("name").getTextValue();
-            Date observationDate = getObservationDate(study, observationId, observation);
-
-            Specimen specimen = null;
-            if (TYPE_MAPPING.containsKey(interactionType)) {
-                specimen = createAssociation(observationId, interactionDataType, interactionType, observation, targetTaxonName, sourceTaxonName, study, observationDate);
-            } else if (INVERSE_TYPE_MAPPING.containsKey(interactionType)) {
-                specimen = createInverseAssociation(observationId, interactionDataType, interactionType, observation, targetTaxonName, sourceTaxonName, study, observationDate);
+            if (TYPE_MAPPING.containsKey(interactionType) || INVERSE_TYPE_MAPPING.containsKey(interactionType)) {
+                importInteraction(targetTaxonNode, observationId, interactionDataType, interactionType, observation, sourceTaxon);
             } else {
                 unsupportedInteractionTypes.put(observationId, interactionType);
             }
-
-            if (specimen != null) {
-                StringBuilder citation = buildCitation(observation, interactionType, targetTaxonName, sourceTaxonName, observationDate);
-                String url = ExternalIdUtil.infoURLForExternalId(TaxonomyProvider.ID_PREFIX_INATURALIST + observationId);
-                citation.append(ReferenceUtil.createLastAccessedString(url));
-                study.setCitationWithTx(citation.toString());
-                study.setExternalId(url);
-            }
         }
+    }
+
+    private void importInteraction(JsonNode targetTaxonNode, long observationId, String interactionDataType, String interactionType, JsonNode observation, JsonNode sourceTaxon) throws StudyImporterException, NodeFactoryException {
+        Study study = nodeFactory.getOrCreateStudy2(TaxonomyProvider.ID_PREFIX_INATURALIST + observationId, getSourceString(), null);
+        String targetTaxonName = targetTaxonNode.getTextValue();
+        String sourceTaxonName = sourceTaxon.get("name").getTextValue();
+        Date observationDate = getObservationDate(study, observationId, observation);
+
+        if (TYPE_MAPPING.containsKey(interactionType)) {
+            createAssociation(observationId, interactionDataType, interactionType, observation, targetTaxonName, sourceTaxonName, study, observationDate);
+        } else if (INVERSE_TYPE_MAPPING.containsKey(interactionType)) {
+            createInverseAssociation(observationId, interactionDataType, interactionType, observation, targetTaxonName, sourceTaxonName, study, observationDate);
+        }
+        StringBuilder citation = buildCitation(observation, interactionType, targetTaxonName, sourceTaxonName, observationDate);
+        String url = ExternalIdUtil.infoURLForExternalId(TaxonomyProvider.ID_PREFIX_INATURALIST + observationId);
+        citation.append(ReferenceUtil.createLastAccessedString(url));
+        study.setCitationWithTx(citation.toString());
+        study.setExternalId(url);
     }
 
     private StringBuilder buildCitation(JsonNode observationNode, String interactionType, String targetTaxonName, String sourceTaxonName, Date observationDate) {

@@ -53,6 +53,12 @@ public class StudyImporterForINaturalistTest extends GraphDBTestCase {
     }
 
     @Test
+    public void importNotSupportedTestResponse() throws IOException, NodeFactoryException, StudyImporterException {
+        importer.parseJSON(getClass().getResourceAsStream("inaturalist/unsupported_interaction_type_inaturalist_response.json"));
+        assertThat(nodeFactory.findStudy("INAT:45209"), is(nullValue()));
+    }
+
+        @Test
     public void importTestResponse() throws IOException, NodeFactoryException, StudyImporterException {
         importer.parseJSON(getClass().getResourceAsStream("inaturalist/sample_inaturalist_response.json"));
 
