@@ -152,7 +152,7 @@ public class CypherQueryBuilder {
             put(INTERACTION_POLLINATES, InteractType.POLLINATES.toString());
             put(INTERACTION_POLLINATED_BY, InteractType.POLLINATED_BY.toString());
             put(INTERACTION_VISITS_FLOWERS_OF, InteractType.VISITS_FLOWERS_OF + "|" + InteractType.POLLINATES);
-            put(INTERACTION_POLLINATED_BY, InteractType.FLOWERS_VISITED_BY + "|" + InteractType.POLLINATED_BY);
+            put(INTERACTION_FLOWERS_VISITED_BY, InteractType.FLOWERS_VISITED_BY + "|" + InteractType.POLLINATED_BY);
             put(INTERACTION_PREYS_ON, InteractType.PREYS_UPON.toString());
             put(INTERACTION_PREYED_UPON_BY, InteractType.PREYED_UPON_BY.toString());
             put(INTERACTION_PARASITE_OF, InteractType.PARASITE_OF.toString());
