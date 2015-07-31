@@ -132,6 +132,8 @@ public class CypherQueryBuilder {
             put(InteractType.PREYED_UPON_BY.toString(), InteractionTypeExternal.PREYED_UPON_BY);
             put(InteractType.PARASITE_OF.toString(), InteractionTypeExternal.PARASITE_OF);
             put(InteractType.HAS_PARASITE.toString(), InteractionTypeExternal.HAS_PARASITE);
+            put(InteractType.VISITS_FLOWERS_OF.toString(), InteractionTypeExternal.VISITS_FLOWERS_OF);
+            put(InteractType.FLOWERS_VISITED_BY.toString(), InteractionTypeExternal.FLOWERS_VISITED_BY);
             put(InteractType.POLLINATES.toString(), InteractionTypeExternal.POLLINATES);
             put(InteractType.POLLINATED_BY.toString(), InteractionTypeExternal.POLLINATED_BY);
             put(InteractType.PATHOGEN_OF.toString(), InteractionTypeExternal.PATHOGEN_OF);
@@ -149,6 +151,8 @@ public class CypherQueryBuilder {
         {
             put(INTERACTION_POLLINATES, InteractType.POLLINATES.toString());
             put(INTERACTION_POLLINATED_BY, InteractType.POLLINATED_BY.toString());
+            put(INTERACTION_VISITS_FLOWERS_OF, InteractType.VISITS_FLOWERS_OF + "|" + InteractType.POLLINATES);
+            put(INTERACTION_POLLINATED_BY, InteractType.FLOWERS_VISITED_BY + "|" + InteractType.POLLINATED_BY);
             put(INTERACTION_PREYS_ON, InteractType.PREYS_UPON.toString());
             put(INTERACTION_PREYED_UPON_BY, InteractType.PREYED_UPON_BY.toString());
             put(INTERACTION_PARASITE_OF, InteractType.PARASITE_OF.toString());
