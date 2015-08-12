@@ -88,7 +88,7 @@ public class GlobalNamesService implements PropertyEnricher {
         HttpClient httpClient = HttpUtil.getHttpClient();
         URI uri = new URI("http", "resolver.globalnames.org"
                 , "/name_resolvers.json"
-                , "data_source_ids=" + StringUtils.join(sourceIds, "|")
+                , "with_vernaculars=true&data_source_ids=" + StringUtils.join(sourceIds, "|")
                 , null);
         HttpPost post = new HttpPost(uri);
 
@@ -183,6 +183,23 @@ public class GlobalNamesService implements PropertyEnricher {
             boolean isExactMatch = aResult.has("match_type")
                     && aResult.get("match_type").getIntValue() < 3;
             termMatchListener.foundTaxonForName(suppliedId, suppliedNameString, taxon, isExactMatch);
+        }
+
+        if (aResult.has("vernaculars")) {
+            List<String> commonNames = new ArrayList<String>();
+            JsonNode vernaculars = aResult.get("vernaculars");
+            for (JsonNode vernacular : vernaculars) {
+                if (vernacular.has("name") && vernacular.has("language")) {
+                    String name = vernacular.get("name").asText();
+                    String language = vernacular.get("language").asText();
+                    if (!StringUtils.equals(name, "null") && !StringUtils.equals(language, "null")) {
+                        commonNames.add(vernacular.get("name").asText() + " @" + language);
+                    }
+                }
+            }
+            if (commonNames.size() > 0) {
+                taxon.setCommonNames(StringUtils.join(commonNames, CharsetConstant.SEPARATOR));
+            }
         }
     }
 

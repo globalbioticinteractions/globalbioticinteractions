@@ -12,7 +12,10 @@ import java.util.Map;
 
 import static junit.framework.Assert.assertNotNull;
 import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.isEmptyOrNullString;
+import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertThat;
 
 public class GlobalNamesServiceTest {
@@ -71,6 +74,7 @@ public class GlobalNamesServiceTest {
         assertThat(enrich.get(PropertyAndValueDictionary.PATH_NAMES), is("superkingdom | kingdom | phylum | subphylum | superclass | class | superorder | order | suborder | infraorder | parvorder | superfamily | family | subfamily | genus | species"));
         assertThat(enrich.get(PropertyAndValueDictionary.RANK), is("species"));
         assertThat(enrich.get(PropertyAndValueDictionary.EXTERNAL_ID), is("NCBI:9606"));
+        assertThat(enrich.get(PropertyAndValueDictionary.COMMON_NAMES), is(nullValue()));
     }
 
     @Test
@@ -85,6 +89,18 @@ public class GlobalNamesServiceTest {
         assertThat(enrich.get(PropertyAndValueDictionary.PATH_NAMES), is("kingdom | phylum | class | order | family | genus | species"));
         assertThat(enrich.get(PropertyAndValueDictionary.RANK), is("species"));
         assertThat(enrich.get(PropertyAndValueDictionary.EXTERNAL_ID), is("WORMS:158709"));
+        assertThat(enrich.get(PropertyAndValueDictionary.COMMON_NAMES), not(containsString("hardhead catfish @en")));
+        assertThat(enrich.get(PropertyAndValueDictionary.COMMON_NAMES), not(containsString("bagre boca chica @en")));
+    }
+
+    @Test
+    public void lookupWoRMSCod() throws PropertyEnricherException {
+        GlobalNamesService service = new GlobalNamesService(GlobalNamesSources.WORMS);
+        HashMap<String, String> props1 = new HashMap<String, String>();
+        props1.put(PropertyAndValueDictionary.NAME, "Gadus morhua");
+        Map<String, String> enrich = service.enrich(props1);
+        assertThat(enrich.get(PropertyAndValueDictionary.PATH), containsString("Animalia | Chordata | Actinopterygii | Gadiformes | Gadidae | Gadus | Gadus morhua"));
+        assertThat(enrich.get(PropertyAndValueDictionary.COMMON_NAMES), is(nullValue()));
     }
 
     private Map<String, String> assertHomoSapiens(GlobalNamesService service) throws PropertyEnricherException {
@@ -120,6 +136,7 @@ public class GlobalNamesServiceTest {
         assertThat(enrich.get(PropertyAndValueDictionary.PATH_NAMES), is("Kingdom | Subkingdom | Infrakingdom | Phylum | Subphylum | Infraphylum | Superclass | Class | Subclass | Infraclass | Superorder | Order | Family | Genus | Species"));
         assertThat(enrich.get(PropertyAndValueDictionary.RANK), is("Species"));
         assertThat(enrich.get(PropertyAndValueDictionary.EXTERNAL_ID), is("ITIS:680665"));
+        assertThat(enrich.get(PropertyAndValueDictionary.COMMON_NAMES), is("bagre boca chica @Spanish"));
     }
 
     @Test
@@ -134,6 +151,9 @@ public class GlobalNamesServiceTest {
         assertThat(enrich.get(PropertyAndValueDictionary.PATH_NAMES), is("kingdom | phylum | class | order"));
         assertThat(enrich.get(PropertyAndValueDictionary.RANK), is("order"));
         assertThat(enrich.get(PropertyAndValueDictionary.EXTERNAL_ID), is("GBIF:952"));
+        assertThat(enrich.get(PropertyAndValueDictionary.COMMON_NAMES), containsString("Kikkers @nl"));
+        assertThat(enrich.get(PropertyAndValueDictionary.COMMON_NAMES), containsString("Бесхвостые @ru"));
+        assertThat(enrich.get(PropertyAndValueDictionary.COMMON_NAMES), not(containsString("Frogs @en")));
     }
 
     @Test
