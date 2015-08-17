@@ -1,11 +1,17 @@
 package org.eol.globi.server.util;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.ArrayUtils;
 import org.codehaus.jackson.JsonNode;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 public class ResultFormatterDOT implements ResultFormatter {
@@ -36,24 +42,42 @@ public class ResultFormatterDOT implements ResultFormatter {
         for (int i = 0; i < columns.size(); i++) {
             nameIndex.put(columns.get(i).getTextValue(), i);
         }
+
+        List<ResultField> sourceTaxonResultFields = Arrays.asList(ResultField.SOURCE_TAXON_NAME, ResultField.SOURCE_TAXON_PATH, ResultField.SOURCE_TAXON_EXTERNAL_ID, ResultField.SOURCE_TAXON_PATH_IDS);
+        List<ResultField> targetTaxonResultFields = Arrays.asList(ResultField.TARGET_TAXON_NAME, ResultField.TARGET_TAXON_PATH, ResultField.TARGET_TAXON_EXTERNAL_ID, ResultField.TARGET_TAXON_PATH_IDS);
         JsonNode rows = results.get("data");
         for (JsonNode row : rows) {
-            JsonNode sourceTaxon = row.get(nameIndex.get(ResultField.SOURCE_TAXON_NAME.getLabel()));
-            JsonNode targetTaxon = row.get(nameIndex.get(ResultField.TARGET_TAXON_NAME.getLabel()));
-            JsonNode type = row.get(nameIndex.get(ResultField.INTERACTION_TYPE.getLabel()));
-            if (sourceTaxon != null && targetTaxon != null && type != null) {
-                String sourceId = getSafeLabel(sourceTaxon.getTextValue());
-                if (targetTaxon.isArray()) {
-                    for (JsonNode targetTaxonItem : targetTaxon) {
-                        appendEdge(builder, targetTaxonItem, type, sourceId);
+            Integer sourceTaxonIndex = getTaxonLabel(nameIndex, sourceTaxonResultFields);
+            Integer targetTaxonIndex = getTaxonLabel(nameIndex, targetTaxonResultFields);
+
+            Integer interactionTypeIndex = nameIndex.get(ResultField.INTERACTION_TYPE.getLabel());
+            if (null != sourceTaxonIndex && null != targetTaxonIndex && null != interactionTypeIndex) {
+                JsonNode sourceTaxon = row.get(sourceTaxonIndex);
+                JsonNode targetTaxon = row.get(targetTaxonIndex);
+                JsonNode type = row.get(interactionTypeIndex);
+                if (sourceTaxon != null && targetTaxon != null && type != null) {
+                    String sourceId = getSafeLabel(sourceTaxon.getTextValue());
+                    if (targetTaxon.isArray()) {
+                        for (JsonNode targetTaxonItem : targetTaxon) {
+                            appendEdge(builder, targetTaxonItem, type, sourceId);
+                        }
+                    } else {
+                        appendEdge(builder, targetTaxon, type, sourceId);
                     }
-                } else {
-                    appendEdge(builder, targetTaxon, type, sourceId);
                 }
             }
         }
         dotSuffix(builder);
         return builder.toString();
+    }
+
+    protected Integer getTaxonLabel(Map<String, Integer> nameIndex, List<ResultField> sourceTaxonResultFields) {
+        Integer sourceTaxonIndex = null;
+        Iterator<ResultField> sourceResultFields = sourceTaxonResultFields.iterator();
+        while(sourceTaxonIndex == null && sourceResultFields.hasNext()) {
+            sourceTaxonIndex = nameIndex.get(sourceResultFields.next().getLabel());
+        }
+        return sourceTaxonIndex;
     }
 
     private void appendEdge(StringBuilder builder, JsonNode targetTaxon, JsonNode type, String sourceId) {
