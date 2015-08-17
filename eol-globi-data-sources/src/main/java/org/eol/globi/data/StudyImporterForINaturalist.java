@@ -39,10 +39,12 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
         put("Feeding on", InteractType.ATE);
         put("Mariposas que alimenta", InteractType.ATE);
         put("With the prey", InteractType.ATE);
+        put("Interaction: Preyed upon", InteractType.PREYS_UPON);
         put("Predating", InteractType.PREYS_UPON);
         put("Depredando", InteractType.PREYS_UPON);
         put("Alimentándose", InteractType.ATE);
         put("Food Source", InteractType.ATE);
+        put("Interaction: Fruit eaten by", InteractType.ATE);
         put("Host", InteractType.HAS_HOST);
         put("Host plant NZ", InteractType.HAS_HOST);
         put("host species with names lookup", InteractType.HAS_HOST);
@@ -50,6 +52,7 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
         put("Hospedero", InteractType.HAS_PARASITE);
         put("host to parasitic fungus", InteractType.PARASITE_OF);
         put("Host animal", InteractType.HAS_HOST);
+        put("Interaction: Visited flower of", InteractType.VISITS_FLOWERS_OF);
         put("Flower species", InteractType.POLLINATES);
         put("Euphorbia pulcherrima", InteractType.POLLINATES);
         put("Perching on", InteractType.PERCHING_ON);
@@ -78,6 +81,10 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
         put("Is Host For", InteractType.HOST_OF);
         put("Being parasitized by", InteractType.HAS_PARASITE);
         put("Parasitando a", InteractType.PARASITE_OF);
+        put("Interaction: Nested in", InteractType.INTERACTS_WITH);
+        put("Interaction: Nested in", InteractType.INTERACTS_WITH);
+        put("Interaction: Decomposer of", InteractType.INTERACTS_WITH);
+
     }};
 
     private static final Map<String, InteractType> INVERSE_TYPE_MAPPING = new HashMap<String, InteractType>() {{
