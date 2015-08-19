@@ -8,7 +8,10 @@ import java.util.Map;
 public class InteractUtil {
 
     public static String allInteractionsCypherClause() {
-        InteractType[] values = InteractType.values();
+        return interactionsCypherClause(InteractType.values());
+    }
+
+    protected static String interactionsCypherClause(InteractType[] values) {
         StringBuilder interactions = new StringBuilder();
         for (int i = 0; i < values.length; i++) {
             interactions.append(i == 0 ? "" : "|");
