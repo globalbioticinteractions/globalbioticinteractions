@@ -40,6 +40,9 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
         put("Mariposas que alimenta", InteractType.ATE);
         put("With the prey", InteractType.ATE);
         put("Interaction: Preyed upon", InteractType.PREYS_UPON);
+        put("Interaction: Ate fruit of", InteractType.ATE);
+        put("Interaction: Herbivore of", InteractType.ATE);
+        put("Interaction: Infected by", InteractType.PATHOGEN_OF);
         put("Predating", InteractType.PREYS_UPON);
         put("Depredando", InteractType.PREYS_UPON);
         put("Alimentándose", InteractType.ATE);
