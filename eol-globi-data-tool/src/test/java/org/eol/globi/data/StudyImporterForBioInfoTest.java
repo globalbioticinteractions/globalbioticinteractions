@@ -1,6 +1,7 @@
 package org.eol.globi.data;
 
 import com.Ostermiller.util.LabeledCSVParser;
+import org.apache.commons.lang.StringUtils;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.RelTypes;
@@ -47,14 +48,31 @@ public class StudyImporterForBioInfoTest extends GraphDBTestCase {
             "\"4029\",\"Foodplant / open feeder\",\"grazes on\",\"is grazed by\",\"102829\",\"NHMSYS0020480647\",\"www.bioinfo.org.uk/html/Abia_sericea.htm\",\"\",\"\",\"\",\"larva\",\"\",\"\",\"\",\"leaf\",\"\",\"\",\"\",\" \",\"\",\"\",\"\",\"\",\"\",\"larva of <active> grazes on leaf of <passive>\",\"leaf of <passive> is grazed by larva of <active>\",\"1283\",\"NBNSYS0000004352\",\"www.bioinfo.org.uk/html/Succisa_pratensis.htm\",\"\",\"60536\"\n";
 
     @Test
-    public void importAll() throws StudyImporterException, NodeFactoryException {
+    public void importAbout600Records() throws StudyImporterException, NodeFactoryException {
         StudyImporter importer = new StudyImporterFactory(new ParserFactoryImpl(), nodeFactory).instantiateImporter((Class) StudyImporterForBioInfo.class);
+        final List<String> msgs = new ArrayList<String>();
+        importer.setLogger(new ImportLogger() {
+            @Override
+            public void warn(Study study, String message) {
+                msgs.add(message);
+            }
+
+            @Override
+            public void info(Study study, String message) {
+                msgs.add(message);
+            }
+
+            @Override
+            public void severe(Study study, String message) {
+                msgs.add(message);
+            }
+        });
         // limit the number of line to be imported to make test runs reasonably fast
         importer.setFilter(new ImportFilter() {
 
             @Override
             public boolean shouldImportRecord(Long recordNumber) {
-                return recordNumber < 500
+                return recordNumber < 1000
                         || recordNumber == 4585
                         || (recordNumber > 24220 && recordNumber < 24340);
             }
@@ -84,6 +102,10 @@ public class StudyImporterForBioInfoTest extends GraphDBTestCase {
 
         assertThat(study.getTitle(), is("bioinfo:ref:60527"));
         assertThat(study.getSource(), is("Food Webs and Species Interactions in the Biodiversity of UK and Ireland (Online). 2015. Data provided by Malcolm Storey. Also available from http://bioinfo.org.uk."));
+
+
+        assertThat("found unexpected log messages: [" + StringUtils.join(msgs, "\n") + "]", msgs.size(), is(1));
+        assertThat(msgs.get(0), is("no taxon for id [149359] on line [4171]"));
     }
 
 

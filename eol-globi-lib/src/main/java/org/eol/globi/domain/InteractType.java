@@ -2,6 +2,12 @@ package org.eol.globi.domain;
 
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+
 public enum InteractType implements RelType {
     PREYS_UPON("http://purl.obolibrary.org/obo/RO_0002439"),
     PARASITE_OF("http://purl.obolibrary.org/obo/RO_0002444"),
@@ -19,10 +25,62 @@ public enum InteractType implements RelType {
     PERCHED_ON_BY(PropertyAndValueDictionary.NO_MATCH),
     HAS_PATHOGEN("http://purl.obolibrary.org/obo/RO_0002557"),
     PATHOGEN_OF("http://purl.obolibrary.org/obo/RO_0002556"),
+
     HAS_VECTOR("http://purl.obolibrary.org/obo/RO_0002460"),
     VECTOR_OF("http://purl.obolibrary.org/obo/RO_0002459"),
     FLOWERS_VISITED_BY("http://eol.org/schema/terms/FlowersVisitedBy"),
-    VISITS_FLOWERS_OF("http://eol.org/schema/terms/VisitsFlowersOf");
+    VISITS_FLOWERS_OF("http://eol.org/schema/terms/VisitsFlowersOf"),
+
+    IS_INHABITED_BY(PropertyAndValueDictionary.NO_MATCH),
+    INHABITS(PropertyAndValueDictionary.NO_MATCH),
+
+    IS_LIVED_ON_BY(PropertyAndValueDictionary.NO_MATCH),
+    LIVES_ON(PropertyAndValueDictionary.NO_MATCH),
+
+    IS_LIVED_INSIDE_OF_BY(PropertyAndValueDictionary.NO_MATCH),
+    LIVES_INSIDE_OF(PropertyAndValueDictionary.NO_MATCH),
+
+    IS_LIVED_NEAR_BY(PropertyAndValueDictionary.NO_MATCH),
+    LIVES_NEAR(PropertyAndValueDictionary.NO_MATCH),
+
+    IS_LIVED_UNDER_BY(PropertyAndValueDictionary.NO_MATCH),
+    LIVES_UNDER(PropertyAndValueDictionary.NO_MATCH),
+
+    LIVES_WITH(PropertyAndValueDictionary.NO_MATCH),
+
+    ENDOPARASITE_OF(PropertyAndValueDictionary.NO_MATCH),
+    HAS_ENDOPARASITE(PropertyAndValueDictionary.NO_MATCH),
+
+    HYPERPARASITE_OF(PropertyAndValueDictionary.NO_MATCH),
+    HAS_HYPERPARASITE(PropertyAndValueDictionary.NO_MATCH),
+
+    HYPERPARASITOID_OF(PropertyAndValueDictionary.NO_MATCH),
+    HAS_HYPERPARASITOID(PropertyAndValueDictionary.NO_MATCH),
+
+    ECTOPARASITE_OF(PropertyAndValueDictionary.NO_MATCH),
+    HAS_ECTOPARASITE(PropertyAndValueDictionary.NO_MATCH),
+
+    KLEPTOPARASITE_OF(PropertyAndValueDictionary.NO_MATCH),
+    HAS_KLEPTOPARASITE(PropertyAndValueDictionary.NO_MATCH),
+
+    PARASITOID_OF(PropertyAndValueDictionary.NO_MATCH),
+    HAS_PARASITOID(PropertyAndValueDictionary.NO_MATCH),
+
+    // living in something that is not the body.
+    GUEST_OF(PropertyAndValueDictionary.NO_MATCH),
+    HAS_GUEST_OF(PropertyAndValueDictionary.NO_MATCH),
+
+    FARMED_BY(PropertyAndValueDictionary.NO_MATCH),
+    FARMS(PropertyAndValueDictionary.NO_MATCH),
+
+    DAMAGED_BY(PropertyAndValueDictionary.NO_MATCH),
+    DAMAGES(PropertyAndValueDictionary.NO_MATCH),
+
+    DISPERSAL_VECTOR_OF(PropertyAndValueDictionary.NO_MATCH),
+    HAS_DISPERAL_VECTOR(PropertyAndValueDictionary.NO_MATCH),
+
+    KILLED_BY(PropertyAndValueDictionary.NO_MATCH),
+    KILLS(PropertyAndValueDictionary.NO_MATCH);
 
     String iri;
 
@@ -45,5 +103,108 @@ public enum InteractType implements RelType {
 
     public String getIRI() {
         return iri;
+    }
+
+    public static Collection<InteractType> pathOf(InteractType type) {
+        final ArrayList<InteractType> emptyList = new ArrayList<InteractType>();
+        final Map<InteractType, Collection<InteractType>> pathMap = new HashMap<InteractType, Collection<InteractType>>() {
+            {
+                put(INTERACTS_WITH, emptyList);
+                put(PERCHING_ON, Arrays.asList(LIVES_ON, INTERACTS_WITH));
+                put(ATE, Arrays.asList(SYMBIONT_OF, INTERACTS_WITH));
+                put(SYMBIONT_OF, Arrays.asList(INTERACTS_WITH));
+                put(PREYS_UPON, Arrays.asList(ATE, KILLS, SYMBIONT_OF, INTERACTS_WITH));
+                put(PATHOGEN_OF, Arrays.asList(PARASITE_OF, SYMBIONT_OF, INTERACTS_WITH));
+                put(VECTOR_OF, Arrays.asList(HOST_OF, SYMBIONT_OF, INTERACTS_WITH));
+                put(DISPERSAL_VECTOR_OF, Arrays.asList(HOST_OF, SYMBIONT_OF, INTERACTS_WITH));
+                put(PARASITOID_OF, Arrays.asList(PARASITE_OF, ATE, KILLS, LIVES_WITH, SYMBIONT_OF, INTERACTS_WITH));
+                put(HYPERPARASITOID_OF, Arrays.asList(PARASITOID_OF, PARASITE_OF, ATE, KILLS, LIVES_WITH, SYMBIONT_OF, INTERACTS_WITH));
+                put(PARASITE_OF, Arrays.asList(ATE, DAMAGES, LIVES_WITH, SYMBIONT_OF, INTERACTS_WITH));
+                put(HYPERPARASITE_OF, Arrays.asList(PARASITE_OF, ATE, DAMAGES, LIVES_WITH, SYMBIONT_OF, INTERACTS_WITH));
+                put(ENDOPARASITE_OF, Arrays.asList(PARASITE_OF, LIVES_INSIDE_OF, ATE, DAMAGES, SYMBIONT_OF, INTERACTS_WITH));
+                put(ECTOPARASITE_OF, Arrays.asList(PARASITE_OF, LIVES_ON, ATE, DAMAGES, SYMBIONT_OF, INTERACTS_WITH));
+                put(POLLINATES, Arrays.asList(VISITS_FLOWERS_OF, ATE, SYMBIONT_OF, INTERACTS_WITH));
+                put(VISITS_FLOWERS_OF, Arrays.asList(INTERACTS_WITH));
+                put(HOST_OF, Arrays.asList(HAS_PARASITE, HAS_ENDOPARASITE, HAS_ECTOPARASITE, HAS_PARASITOID, HAS_PATHOGEN, VECTOR_OF, FLOWERS_VISITED_BY));
+                put(KLEPTOPARASITE_OF, Arrays.asList(INTERACTS_WITH));
+                put(INHABITS, Arrays.asList(INTERACTS_WITH));
+                put(LIVES_ON, Arrays.asList(INTERACTS_WITH));
+                put(LIVES_INSIDE_OF, Arrays.asList(INTERACTS_WITH));
+                put(LIVES_NEAR, Arrays.asList(INTERACTS_WITH));
+                put(LIVES_UNDER, Arrays.asList(INTERACTS_WITH));
+                put(LIVES_WITH, Arrays.asList(INTERACTS_WITH));
+                put(GUEST_OF, Arrays.asList(INTERACTS_WITH));
+                put(FARMS, Arrays.asList(ATE, SYMBIONT_OF, INTERACTS_WITH));
+                put(DAMAGES, Arrays.asList(SYMBIONT_OF, INTERACTS_WITH));
+                put(DISPERSAL_VECTOR_OF, Arrays.asList(SYMBIONT_OF, INTERACTS_WITH));
+                put(KILLS, Arrays.asList(SYMBIONT_OF, INTERACTS_WITH));
+            }
+        };
+
+        Map<InteractType, Collection<InteractType>> invertedPathMap = new HashMap<InteractType, Collection<InteractType>>() {
+            {
+                for (Map.Entry<InteractType, Collection<InteractType>> entry : pathMap.entrySet())
+
+                {
+                    ArrayList<InteractType> invertedPath = emptyList;
+                    InteractType keyInverse = inverseOf(entry.getKey());
+                    if (keyInverse != entry.getKey()) {
+                        invertedPath.add(keyInverse);
+                        for (InteractType interactType : entry.getValue()) {
+                            InteractType inverse = inverseOf(interactType);
+                            if (null != inverse) {
+                                invertedPath.add(inverse);
+                            }
+                        }
+                        put(keyInverse, invertedPath);
+                    }
+                }
+            }
+        };
+        pathMap.putAll(invertedPathMap);
+        return pathMap.get(type);
+    }
+
+    public static InteractType inverseOf(InteractType type) {
+        Map<InteractType, InteractType> inverseMap = new HashMap<InteractType, InteractType>() {
+            {
+                put(POLLINATES, POLLINATED_BY);
+                put(PATHOGEN_OF, HAS_PATHOGEN);
+                put(VECTOR_OF, HAS_VECTOR);
+                put(FLOWERS_VISITED_BY, VISITS_FLOWERS_OF);
+                put(IS_INHABITED_BY, INHABITS);
+                put(FARMED_BY, FARMS);
+                put(IS_LIVED_ON_BY, LIVES_ON);
+                put(IS_LIVED_INSIDE_OF_BY, LIVES_INSIDE_OF);
+                put(IS_LIVED_NEAR_BY, LIVES_NEAR);
+                put(IS_LIVED_UNDER_BY, LIVES_UNDER);
+                put(LIVES_WITH, LIVES_WITH);
+                put(KLEPTOPARASITE_OF, HAS_KLEPTOPARASITE);
+                put(GUEST_OF, HAS_GUEST_OF);
+                put(PERCHING_ON, PERCHED_ON_BY);
+                put(HOST_OF, HAS_HOST);
+                put(PREYS_UPON, PREYED_UPON_BY);
+                put(ATE, EATEN_BY);
+                put(DAMAGED_BY, DAMAGES);
+                put(KILLS, KILLED_BY);
+                put(SYMBIONT_OF, SYMBIONT_OF);
+                put(INTERACTS_WITH, INTERACTS_WITH);
+                put(PARASITE_OF, HAS_PARASITE);
+                put(HYPERPARASITE_OF, HAS_HYPERPARASITE);
+                put(ENDOPARASITE_OF, HAS_ENDOPARASITE);
+                put(ECTOPARASITE_OF, HAS_ECTOPARASITE);
+                put(PARASITOID_OF, HAS_PARASITOID);
+                put(HYPERPARASITOID_OF, HAS_HYPERPARASITOID);
+                put(DISPERSAL_VECTOR_OF, HAS_DISPERAL_VECTOR);
+            }
+        };
+
+        final Map<InteractType, InteractType> swappedMap = new HashMap<InteractType, InteractType>();
+        for (Map.Entry<InteractType, InteractType> entry : inverseMap.entrySet()) {
+            swappedMap.put(entry.getValue(), entry.getKey());
+        }
+        inverseMap.putAll(swappedMap);
+
+        return inverseMap.get(type);
     }
 }

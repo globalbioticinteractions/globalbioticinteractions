@@ -1,6 +1,5 @@
 package org.eol.globi.domain;
 
-import org.eol.globi.util.InteractUtil;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
@@ -120,7 +119,7 @@ public class Specimen extends NodeBacked {
 
     protected static void createInteraction(NodeBacked donorSpecimen, NodeBacked recipientSpecimen, InteractType relType) {
         donorSpecimen.createRelationshipToNoTx(recipientSpecimen, relType);
-        Relationship inverseRel = recipientSpecimen.createRelationshipToNoTx(donorSpecimen, InteractUtil.inverseOf(relType));
+        Relationship inverseRel = recipientSpecimen.createRelationshipToNoTx(donorSpecimen, InteractType.inverseOf(relType));
         if (inverseRel != null) {
             inverseRel.setProperty(PropertyAndValueDictionary.INVERTED, PropertyAndValueDictionary.TRUE);
         }
