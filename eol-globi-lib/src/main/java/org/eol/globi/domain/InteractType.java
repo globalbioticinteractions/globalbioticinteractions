@@ -134,7 +134,7 @@ public enum InteractType implements RelType {
                 put(LIVES_WITH, Arrays.asList(INTERACTS_WITH));
                 put(GUEST_OF, Arrays.asList(INTERACTS_WITH));
                 put(FARMS, Arrays.asList(ATE, SYMBIONT_OF, INTERACTS_WITH));
-                put(DAMAGES, Arrays.asList(SYMBIONT_OF, INTERACTS_WITH));
+                put(DAMAGES, Arrays.asList(INTERACTS_WITH));
                 put(DISPERSAL_VECTOR_OF, Arrays.asList(HOST_OF, SYMBIONT_OF, INTERACTS_WITH));
                 put(KILLS, Arrays.asList(INTERACTS_WITH));
             }
