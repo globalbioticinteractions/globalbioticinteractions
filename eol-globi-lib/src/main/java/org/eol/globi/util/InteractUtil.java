@@ -2,9 +2,6 @@ package org.eol.globi.util;
 
 import org.eol.globi.domain.InteractType;
 
-import java.util.HashMap;
-import java.util.Map;
-
 public class InteractUtil {
 
     public static String allInteractionsCypherClause() {
