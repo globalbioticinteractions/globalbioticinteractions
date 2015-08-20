@@ -110,9 +110,9 @@ public enum InteractType implements RelType {
             {
                 put(INTERACTS_WITH, new ArrayList<InteractType>());
                 put(PERCHING_ON, Arrays.asList(LIVES_ON, INTERACTS_WITH));
-                put(ATE, Arrays.asList(SYMBIONT_OF, INTERACTS_WITH));
+                put(ATE, Arrays.asList(INTERACTS_WITH));
                 put(SYMBIONT_OF, Arrays.asList(INTERACTS_WITH));
-                put(PREYS_UPON, Arrays.asList(ATE, KILLS, SYMBIONT_OF, INTERACTS_WITH));
+                put(PREYS_UPON, Arrays.asList(ATE, KILLS, INTERACTS_WITH));
                 put(PATHOGEN_OF, Arrays.asList(PARASITE_OF, HAS_HOST, SYMBIONT_OF, INTERACTS_WITH));
                 put(VECTOR_OF, Arrays.asList(HOST_OF, SYMBIONT_OF, INTERACTS_WITH));
                 put(DISPERSAL_VECTOR_OF, Arrays.asList(HOST_OF, SYMBIONT_OF, INTERACTS_WITH));
@@ -136,7 +136,7 @@ public enum InteractType implements RelType {
                 put(FARMS, Arrays.asList(ATE, SYMBIONT_OF, INTERACTS_WITH));
                 put(DAMAGES, Arrays.asList(SYMBIONT_OF, INTERACTS_WITH));
                 put(DISPERSAL_VECTOR_OF, Arrays.asList(HOST_OF, SYMBIONT_OF, INTERACTS_WITH));
-                put(KILLS, Arrays.asList(SYMBIONT_OF, INTERACTS_WITH));
+                put(KILLS, Arrays.asList(INTERACTS_WITH));
             }
         };
 
