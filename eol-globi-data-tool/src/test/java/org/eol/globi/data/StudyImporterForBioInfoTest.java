@@ -97,8 +97,8 @@ public class StudyImporterForBioInfoTest extends GraphDBTestCase {
             interactions.add((String)next.get("interaction"));
         }
         assertThat(interactions, hasItem("NBN:NHMSYS0000455771 interacts_with NBN:NBNSYS0000024890"));
-        assertThat(interactions, hasItem("NBN:NBNSYS0000030148 parasite_of NBN:NHMSYS0000502366"));
-        assertThat(interactions, hasItem("NBN:NHMSYS0000500943 has_parasite NBN:NBNSYS0000030148"));
+        assertThat(interactions, hasItem("NBN:NBNSYS0000030148 endoparasitoid_of NBN:NHMSYS0000502366"));
+        assertThat(interactions, hasItem("NBN:NHMSYS0000500943 has_endoparasitoid NBN:NBNSYS0000030148"));
 
         assertThat(study.getTitle(), is("bioinfo:ref:60527"));
         assertThat(study.getSource(), is("Food Webs and Species Interactions in the Biodiversity of UK and Ireland (Online). 2015. Data provided by Malcolm Storey. Also available from http://bioinfo.org.uk."));
