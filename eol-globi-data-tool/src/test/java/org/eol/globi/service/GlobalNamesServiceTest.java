@@ -127,6 +127,7 @@ public class GlobalNamesServiceTest {
     @Test
     public void lookupITISFish() throws PropertyEnricherException {
         GlobalNamesService service = new GlobalNamesService();
+        service.setIncludeCommonNames(true);
         HashMap<String, String> props = new HashMap<String, String>();
         props.put(PropertyAndValueDictionary.NAME, "Ariopsis felis");
         Map<String, String> enrich = service.enrich(props);
@@ -142,6 +143,7 @@ public class GlobalNamesServiceTest {
     @Test
     public void lookupGBIF() throws PropertyEnricherException {
         GlobalNamesService service = new GlobalNamesService(GlobalNamesSources.GBIF);
+        service.setIncludeCommonNames(true);
         HashMap<String, String> props = new HashMap<String, String>();
         props.put(PropertyAndValueDictionary.NAME, "Anura");
         Map<String, String> enrich = service.enrich(props);

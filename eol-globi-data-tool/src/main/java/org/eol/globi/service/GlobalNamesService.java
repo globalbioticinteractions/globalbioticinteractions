@@ -33,6 +33,7 @@ public class GlobalNamesService implements PropertyEnricher {
     private static final Log LOG = LogFactory.getLog(GlobalNamesService.class);
 
     private final GlobalNamesSources source;
+    private boolean includeCommonNames = false;
 
     public GlobalNamesService() {
         this(GlobalNamesSources.ITIS);
@@ -42,6 +43,16 @@ public class GlobalNamesService implements PropertyEnricher {
         super();
         this.source = source;
     }
+
+    public void setIncludeCommonNames(boolean includeCommonNames) {
+        this.includeCommonNames = includeCommonNames;
+    }
+
+    public boolean shouldIncludeCommonNames() {
+        return this.includeCommonNames;
+    }
+
+
 
     @Override
     public Map<String, String> enrich(Map<String, String> properties) throws PropertyEnricherException {
@@ -85,10 +96,16 @@ public class GlobalNamesService implements PropertyEnricher {
         for (GlobalNamesSources globalNamesSources : sources) {
             sourceIds.add(Integer.toString(globalNamesSources.getId()));
         }
+
+        String query = "data_source_ids=" + StringUtils.join(sourceIds, "|");
+        if (shouldIncludeCommonNames()) {
+            query = "with_vernaculars=true&" + query;
+        }
+
         HttpClient httpClient = HttpUtil.getHttpClient();
         URI uri = new URI("http", "resolver.globalnames.org"
                 , "/name_resolvers.json"
-                , "with_vernaculars=true&data_source_ids=" + StringUtils.join(sourceIds, "|")
+                , query
                 , null);
         HttpPost post = new HttpPost(uri);
 
