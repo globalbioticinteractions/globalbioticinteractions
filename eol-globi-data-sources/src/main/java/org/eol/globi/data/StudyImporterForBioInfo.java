@@ -36,11 +36,11 @@ public class StudyImporterForBioInfo extends BaseStudyImporter implements StudyI
             put("Animal / dung / saprobe", InteractType.INTERACTS_WITH);
             put("Animal / dung / debris saprobe", InteractType.INTERACTS_WITH);
 
-            put("Animal / endozoite", InteractType.IS_INHABITED_BY);
-            put("Animal / epizoite", InteractType.IS_LIVED_ON_BY);
+            put("Animal / endozoite", InteractType.INHABITED_BY);
+            put("Animal / epizoite", InteractType.LIVED_ON_BY);
 
             // check on apparent typo
-            put("Animal / gamete vector / crsss fertilises", InteractType.POLLINATES);
+            put("Animal / gamete vector / crsss fertilises", InteractType.DISPERSAL_VECTOR_OF);
             put("Animal / guest", InteractType.GUEST_OF);
             put("Animal / honeydew feeder", InteractType.INTERACTS_WITH);
             put("Animal / inquiline", InteractType.GUEST_OF);
@@ -52,9 +52,9 @@ public class StudyImporterForBioInfo extends BaseStudyImporter implements StudyI
             put("Animal / parasite / ectoparasite", InteractType.ECTOPARASITE_OF);
             put("Animal / parasite / endoparasite", InteractType.ENDOPARASITE_OF);
             put("Animal / parasite", InteractType.PARASITE_OF);
-            put("Animal / parasitoid / ectoparasitoid", InteractType.PARASITE_OF);
-            put("Animal / parasitoid / endoparasitoid", InteractType.PARASITE_OF);
-            put("Animal / parasitoid", InteractType.PARASITE_OF);
+            put("Animal / parasitoid / ectoparasitoid", InteractType.ECTOPARASITOID_OF);
+            put("Animal / parasitoid / endoparasitoid", InteractType.ENDOPARASITOID_OF);
+            put("Animal / parasitoid", InteractType.PARASITOID_OF);
             put("Animal / pathogen", InteractType.PATHOGEN_OF);
             put("Animal / phoresy", InteractType.VECTOR_OF);
             put("Animal / predator / stocks nest with", InteractType.PREYS_UPON);
@@ -69,7 +69,7 @@ public class StudyImporterForBioInfo extends BaseStudyImporter implements StudyI
             put("Bacterium / predator", InteractType.PREYS_UPON);
             put("Foodplant / collects", InteractType.FLOWERS_VISITED_BY);
             put("Foodplant / debris feeder", InteractType.EATEN_BY);
-            put("Foodplant / endophyte", InteractType.IS_LIVED_INSIDE_OF_BY);
+            put("Foodplant / endophyte", InteractType.LIVED_INSIDE_OF_BY);
             put("Foodplant / false gall", InteractType.EATEN_BY);
             put("Foodplant / feeds on", InteractType.EATEN_BY);
             put("Foodplant / gall", InteractType.EATEN_BY);
@@ -106,13 +106,13 @@ public class StudyImporterForBioInfo extends BaseStudyImporter implements StudyI
             put("Fungus / nest", InteractType.INTERACTS_WITH);
             put("Fungus / parasite / endoparasite", InteractType.ENDOPARASITE_OF);
             put("Fungus / parasite", InteractType.PARASITE_OF);
-            put("Fungus / resting place / on", InteractType.IS_LIVED_ON_BY);
-            put("Fungus / resting place / within", InteractType.IS_LIVED_INSIDE_OF_BY);
+            put("Fungus / resting place / on", InteractType.LIVED_ON_BY);
+            put("Fungus / resting place / within", InteractType.LIVED_INSIDE_OF_BY);
             put("Fungus / saprobe", InteractType.EATEN_BY);
             put("Inhibits or restricts the growth of", InteractType.INTERACTS_WITH);
             put("Lichen / associate", InteractType.INTERACTS_WITH);
             put("Lichen / gall", InteractType.EATEN_BY);
-            put("Lichen / grows on or over", InteractType.IS_LIVED_ON_BY);
+            put("Lichen / grows on or over", InteractType.LIVED_ON_BY);
             put("Lichen / kleptoparasite", InteractType.KLEPTOPARASITE_OF);
             put("Lichen / nest", InteractType.INTERACTS_WITH);
             put("Lichen / parasite", InteractType.HAS_PARASITE);
@@ -122,18 +122,18 @@ public class StudyImporterForBioInfo extends BaseStudyImporter implements StudyI
             put("Lichen / sequestrate", InteractType.INTERACTS_WITH);
             put("Lichen / symbiont", InteractType.SYMBIONT_OF);
             put("Plant / associate", InteractType.INTERACTS_WITH);
-            put("Plant / epiphyte", InteractType.IS_LIVED_ON_BY);
-            put("Plant / grows among", InteractType.IS_LIVED_NEAR_BY);
-            put("Plant / grows inside", InteractType.IS_LIVED_INSIDE_OF_BY);
-            put("Plant / hibernates / on", InteractType.IS_LIVED_ON_BY);
-            put("Plant / hibernates / under", InteractType.IS_LIVED_UNDER_BY);
-            put("Plant / hibernates / within", InteractType.IS_LIVED_INSIDE_OF_BY);
+            put("Plant / epiphyte", InteractType.LIVED_ON_BY);
+            put("Plant / grows among", InteractType.LIVED_NEAR_BY);
+            put("Plant / grows inside", InteractType.LIVED_INSIDE_OF_BY);
+            put("Plant / hibernates / on", InteractType.LIVED_ON_BY);
+            put("Plant / hibernates / under", InteractType.LIVED_UNDER_BY);
+            put("Plant / hibernates / within", InteractType.LIVED_INSIDE_OF_BY);
             put("Plant / nest", InteractType.INTERACTS_WITH);
             put("Plant / pollenated", InteractType.POLLINATES);
-            put("Plant / resting place / among", InteractType.IS_LIVED_NEAR_BY);
-            put("Plant / resting place / on", InteractType.IS_LIVED_ON_BY);
-            put("Plant / resting place / under", InteractType.IS_LIVED_UNDER_BY);
-            put("Plant / resting place / within", InteractType.IS_LIVED_INSIDE_OF_BY);
+            put("Plant / resting place / among", InteractType.LIVED_NEAR_BY);
+            put("Plant / resting place / on", InteractType.LIVED_ON_BY);
+            put("Plant / resting place / under", InteractType.LIVED_UNDER_BY);
+            put("Plant / resting place / within", InteractType.LIVED_INSIDE_OF_BY);
             put("Plant / vector", InteractType.HAS_VECTOR);
         }
     });

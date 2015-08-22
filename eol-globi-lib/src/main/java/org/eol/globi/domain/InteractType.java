@@ -31,19 +31,19 @@ public enum InteractType implements RelType {
     FLOWERS_VISITED_BY("http://eol.org/schema/terms/FlowersVisitedBy"),
     VISITS_FLOWERS_OF("http://eol.org/schema/terms/VisitsFlowersOf"),
 
-    IS_INHABITED_BY(PropertyAndValueDictionary.NO_MATCH),
+    INHABITED_BY(PropertyAndValueDictionary.NO_MATCH),
     INHABITS(PropertyAndValueDictionary.NO_MATCH),
 
-    IS_LIVED_ON_BY(PropertyAndValueDictionary.NO_MATCH),
+    LIVED_ON_BY(PropertyAndValueDictionary.NO_MATCH),
     LIVES_ON(PropertyAndValueDictionary.NO_MATCH),
 
-    IS_LIVED_INSIDE_OF_BY(PropertyAndValueDictionary.NO_MATCH),
+    LIVED_INSIDE_OF_BY(PropertyAndValueDictionary.NO_MATCH),
     LIVES_INSIDE_OF(PropertyAndValueDictionary.NO_MATCH),
 
-    IS_LIVED_NEAR_BY(PropertyAndValueDictionary.NO_MATCH),
+    LIVED_NEAR_BY(PropertyAndValueDictionary.NO_MATCH),
     LIVES_NEAR(PropertyAndValueDictionary.NO_MATCH),
 
-    IS_LIVED_UNDER_BY(PropertyAndValueDictionary.NO_MATCH),
+    LIVED_UNDER_BY(PropertyAndValueDictionary.NO_MATCH),
     LIVES_UNDER(PropertyAndValueDictionary.NO_MATCH),
 
     LIVES_WITH(PropertyAndValueDictionary.NO_MATCH),
@@ -65,6 +65,12 @@ public enum InteractType implements RelType {
 
     PARASITOID_OF(PropertyAndValueDictionary.NO_MATCH),
     HAS_PARASITOID(PropertyAndValueDictionary.NO_MATCH),
+
+    ENDOPARASITOID_OF(PropertyAndValueDictionary.NO_MATCH),
+    HAS_ENDOPARASITOID(PropertyAndValueDictionary.NO_MATCH),
+
+    ECTOPARASITOID_OF(PropertyAndValueDictionary.NO_MATCH),
+    HAS_ECTOPARASITOID(PropertyAndValueDictionary.NO_MATCH),
 
     // living in something that is not the body.
     GUEST_OF(PropertyAndValueDictionary.NO_MATCH),
@@ -117,6 +123,8 @@ public enum InteractType implements RelType {
                 put(VECTOR_OF, Arrays.asList(HOST_OF, SYMBIONT_OF, INTERACTS_WITH));
                 put(DISPERSAL_VECTOR_OF, Arrays.asList(HOST_OF, SYMBIONT_OF, INTERACTS_WITH));
                 put(PARASITOID_OF, Arrays.asList(PARASITE_OF, HAS_HOST, ATE, KILLS, LIVES_WITH, SYMBIONT_OF, INTERACTS_WITH));
+                put(ENDOPARASITOID_OF, Arrays.asList(PARASITOID_OF, PARASITE_OF, HAS_HOST, ATE, KILLS, LIVES_WITH, SYMBIONT_OF, INTERACTS_WITH));
+                put(ECTOPARASITOID_OF, Arrays.asList(PARASITOID_OF, PARASITE_OF, HAS_HOST, ATE, KILLS, LIVES_WITH, SYMBIONT_OF, INTERACTS_WITH));
                 put(HYPERPARASITOID_OF, Arrays.asList(PARASITOID_OF, PARASITE_OF,HAS_HOST,  ATE, KILLS, LIVES_WITH, SYMBIONT_OF, INTERACTS_WITH));
                 put(PARASITE_OF, Arrays.asList(ATE, DAMAGES, LIVES_WITH, HAS_HOST, SYMBIONT_OF, INTERACTS_WITH));
                 put(HYPERPARASITE_OF, Arrays.asList(PARASITE_OF, ATE, DAMAGES, HAS_HOST, LIVES_WITH, SYMBIONT_OF, INTERACTS_WITH));
@@ -180,12 +188,12 @@ public enum InteractType implements RelType {
                 put(PATHOGEN_OF, HAS_PATHOGEN);
                 put(VECTOR_OF, HAS_VECTOR);
                 put(FLOWERS_VISITED_BY, VISITS_FLOWERS_OF);
-                put(IS_INHABITED_BY, INHABITS);
+                put(INHABITED_BY, INHABITS);
                 put(FARMED_BY, FARMS);
-                put(IS_LIVED_ON_BY, LIVES_ON);
-                put(IS_LIVED_INSIDE_OF_BY, LIVES_INSIDE_OF);
-                put(IS_LIVED_NEAR_BY, LIVES_NEAR);
-                put(IS_LIVED_UNDER_BY, LIVES_UNDER);
+                put(LIVED_ON_BY, LIVES_ON);
+                put(LIVED_INSIDE_OF_BY, LIVES_INSIDE_OF);
+                put(LIVED_NEAR_BY, LIVES_NEAR);
+                put(LIVED_UNDER_BY, LIVES_UNDER);
                 put(LIVES_WITH, LIVES_WITH);
                 put(KLEPTOPARASITE_OF, HAS_KLEPTOPARASITE);
                 put(GUEST_OF, HAS_GUEST_OF);
@@ -203,6 +211,8 @@ public enum InteractType implements RelType {
                 put(ECTOPARASITE_OF, HAS_ECTOPARASITE);
                 put(PARASITOID_OF, HAS_PARASITOID);
                 put(HYPERPARASITOID_OF, HAS_HYPERPARASITOID);
+                put(ENDOPARASITOID_OF, HAS_ENDOPARASITOID);
+                put(ECTOPARASITOID_OF, HAS_ECTOPARASITOID);
                 put(DISPERSAL_VECTOR_OF, HAS_DISPERAL_VECTOR);
             }
         };
