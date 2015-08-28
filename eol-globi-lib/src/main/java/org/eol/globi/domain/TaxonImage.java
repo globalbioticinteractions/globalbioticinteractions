@@ -7,6 +7,7 @@ public class TaxonImage {
     private String pageId;
     private String scientificName;
     private String commonName;
+    private String taxonPath;
 
     public void setThumbnailURL(String thumbnailURL) {
         this.thumbnailURL = thumbnailURL;
@@ -55,4 +56,14 @@ public class TaxonImage {
     public void setCommonName(String commonName) {
         this.commonName = commonName;
     }
+
+    public String getTaxonPath() {
+        return taxonPath;
+    }
+
+    public void setTaxonPath(String taxonPath) {
+        this.taxonPath = taxonPath;
+    }
+
+
 }

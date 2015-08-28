@@ -60,6 +60,9 @@ public class ImageService {
         if (StringUtils.isBlank(taxonImage.getScientificName())) {
             taxonImage.setScientificName(taxon.get(PropertyAndValueDictionary.NAME));
         }
+        if (StringUtils.isBlank(taxonImage.getTaxonPath())) {
+            taxonImage.setTaxonPath(taxon.get(PropertyAndValueDictionary.PATH));
+        }
     }
 
     @RequestMapping(value = "/imagesForName", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")

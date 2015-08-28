@@ -75,6 +75,7 @@ public class ImageServiceTest {
                     {
                         put(PropertyAndValueDictionary.EXTERNAL_ID, "EOL:123456");
                         put(PropertyAndValueDictionary.NAME, "some latin name");
+                        put(PropertyAndValueDictionary.PATH, "path1 | path2");
                         put(PropertyAndValueDictionary.COMMON_NAMES, "one @en | zwei @de");
                     }
                 };
@@ -100,6 +101,7 @@ public class ImageServiceTest {
         assertThat(image.getInfoURL(), is("some info url"));
         assertThat(image.getScientificName(), is("some latin name"));
         assertThat(image.getCommonName(), is("one"));
+        assertThat(image.getTaxonPath(), is("path1 | path2"));
     }
 
     @Test
