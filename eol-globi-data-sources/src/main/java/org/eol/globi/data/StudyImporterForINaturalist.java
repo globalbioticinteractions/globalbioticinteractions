@@ -87,6 +87,7 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
         put("Interaction: Nested in", InteractType.INTERACTS_WITH);
         put("Interaction: Nested in", InteractType.INTERACTS_WITH);
         put("Interaction: Decomposer of", InteractType.INTERACTS_WITH);
+        put("Interaction: Parasite/parasitoid of", InteractType.PARASITE_OF);
 
     }};
 
