@@ -105,13 +105,13 @@ public class CypherQueryBuilder {
 
     private static final Map<String, String> DIRECTIONAL_INTERACTION_TYPE_MAP = new TreeMap<String, String>() {
         {
-            put(INTERACTION_PREYS_ON, InteractType.PREYS_UPON + "|" + InteractType.KILLS);
-            put(INTERACTION_PREYED_UPON_BY, InteractType.PREYED_UPON_BY + "|" + InteractType.KILLED_BY);
+            put(INTERACTION_PREYS_ON, InteractType.PREYS_UPON.toString());
+            put(INTERACTION_PREYED_UPON_BY, InteractType.PREYED_UPON_BY.toString());
             put(INTERACTION_EATS, InteractType.ATE + "|" + InteractType.PREYS_UPON);
             put(INTERACTION_EATEN_BY, InteractType.EATEN_BY + "|" + InteractType.PREYED_UPON_BY);
 
-            put(INTERACTION_KILLS, InteractType.KILLS.toString());
-            put(INTERACTION_KILLED_BY, InteractType.KILLED_BY.toString());
+            put(INTERACTION_KILLS, InteractType.KILLS + "|" + InteractType.PREYS_UPON);
+            put(INTERACTION_KILLED_BY, InteractType.KILLED_BY + "|" + InteractType.PREYED_UPON_BY);
 
             put(INTERACTION_VISITS_FLOWERS_OF, InteractType.VISITS_FLOWERS_OF + "|" + InteractType.POLLINATES);
             put(INTERACTION_FLOWERS_VISITED_BY, InteractType.FLOWERS_VISITED_BY + "|" + InteractType.POLLINATED_BY);

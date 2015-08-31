@@ -27,6 +27,7 @@ public class CypherQueryBuilderTest {
     public static final String EXPECTED_MATCH_CLAUSE_DISTINCT = expectedMatchClause(EXPECTED_INTERACTION_CLAUSE_ALL_INTERACTIONS, false, false);
     public static final String EXPECTED_MATCH_CLAUSE_SPATIAL = expectedMatchClause(EXPECTED_INTERACTION_CLAUSE_ALL_INTERACTIONS, true, true);
     public static final String RETURN_PREYS_ON_CLAUSE = expectedReturnClause("preysOn");
+    public static final String RETURN_KILLS_CLAUSE = expectedReturnClause("kills");
     public static final String RETURN_PARASITE_OF_CLAUSE = expectedReturnClause("parasiteOf");
 
     private static String expectedReturnClause(String interactionType) {
@@ -436,7 +437,21 @@ public class CypherQueryBuilderTest {
         };
 
         CypherQuery query = CypherQueryBuilder.createDistinctTaxaInLocationQuery(params);
-        assertThat(query.getQuery(), is("START loc = node:locations('latitude:*') WHERE loc.latitude < 23.32 AND loc.longitude > -67.87 AND loc.latitude > 12.79 AND loc.longitude < -57.08 WITH loc MATCH taxon<-[:CLASSIFIED_AS]-specimen-[:COLLECTED_AT]->loc, taxon-[:PREYS_UPON|KILLS|PARASITE_OF]->otherTaxon RETURN distinct(taxon.name?) as taxon_name, taxon.commonNames? as taxon_common_names, taxon.externalId? as taxon_external_id, taxon.path? as taxon_path, taxon.pathIds? as taxon_path_ids, taxon.pathNames? as taxon_path_ranks"));
+        assertThat(query.getQuery(), is("START loc = node:locations('latitude:*') WHERE loc.latitude < 23.32 AND loc.longitude > -67.87 AND loc.latitude > 12.79 AND loc.longitude < -57.08 WITH loc MATCH taxon<-[:CLASSIFIED_AS]-specimen-[:COLLECTED_AT]->loc, taxon-[:PREYS_UPON|PARASITE_OF]->otherTaxon RETURN distinct(taxon.name?) as taxon_name, taxon.commonNames? as taxon_common_names, taxon.externalId? as taxon_external_id, taxon.path? as taxon_path, taxon.pathIds? as taxon_path_ids, taxon.pathNames? as taxon_path_ranks"));
+        assertThat(query.getParams().isEmpty(), is(true));
+    }
+
+    @Test
+    public void findTaxaAtLocationsKillDistinctInteractionTypes() throws IOException {
+        HashMap<String, String[]> params = new HashMap<String, String[]>() {
+            {
+                put("bbox", new String[]{"-67.87,12.79,-57.08,23.32"});
+                put("interactionType", new String[]{"kills", "parasiteOf"});
+            }
+        };
+
+        CypherQuery query = CypherQueryBuilder.createDistinctTaxaInLocationQuery(params);
+        assertThat(query.getQuery(), is("START loc = node:locations('latitude:*') WHERE loc.latitude < 23.32 AND loc.longitude > -67.87 AND loc.latitude > 12.79 AND loc.longitude < -57.08 WITH loc MATCH taxon<-[:CLASSIFIED_AS]-specimen-[:COLLECTED_AT]->loc, taxon-[:KILLS|PREYS_UPON|PARASITE_OF]->otherTaxon RETURN distinct(taxon.name?) as taxon_name, taxon.commonNames? as taxon_common_names, taxon.externalId? as taxon_external_id, taxon.path? as taxon_path, taxon.pathIds? as taxon_path_ids, taxon.pathNames? as taxon_path_ranks"));
         assertThat(query.getParams().isEmpty(), is(true));
     }
 
@@ -451,7 +466,7 @@ public class CypherQueryBuilderTest {
         };
 
         CypherQuery query = CypherQueryBuilder.createDistinctTaxaInLocationQuery(params);
-        assertThat(query.getQuery(), is("START loc = node:locations('latitude:*') WHERE loc.latitude < 23.32 AND loc.longitude > -67.87 AND loc.latitude > 12.79 AND loc.longitude < -57.08 WITH loc MATCH taxon<-[:CLASSIFIED_AS]-specimen-[:COLLECTED_AT]->loc, taxon-[:PREYS_UPON|KILLS|PARASITE_OF]->otherTaxon RETURN distinct(taxon.name?) as taxon_name"));
+        assertThat(query.getQuery(), is("START loc = node:locations('latitude:*') WHERE loc.latitude < 23.32 AND loc.longitude > -67.87 AND loc.latitude > 12.79 AND loc.longitude < -57.08 WITH loc MATCH taxon<-[:CLASSIFIED_AS]-specimen-[:COLLECTED_AT]->loc, taxon-[:PREYS_UPON|PARASITE_OF]->otherTaxon RETURN distinct(taxon.name?) as taxon_name"));
         assertThat(query.getParams().isEmpty(), is(true));
     }
 
@@ -477,7 +492,7 @@ public class CypherQueryBuilderTest {
         };
 
         CypherQuery query = CypherQueryBuilder.createDistinctTaxaInLocationQuery(params);
-        assertThat(query.getQuery(), is("START taxon = node:taxons('*:*') MATCH taxon-[:PREYS_UPON|KILLS|PARASITE_OF]->otherTaxon RETURN distinct(taxon.name?) as taxon_name, taxon.commonNames? as taxon_common_names, taxon.externalId? as taxon_external_id, taxon.path? as taxon_path, taxon.pathIds? as taxon_path_ids, taxon.pathNames? as taxon_path_ranks"));
+        assertThat(query.getQuery(), is("START taxon = node:taxons('*:*') MATCH taxon-[:PREYS_UPON|PARASITE_OF]->otherTaxon RETURN distinct(taxon.name?) as taxon_name, taxon.commonNames? as taxon_common_names, taxon.externalId? as taxon_external_id, taxon.path? as taxon_path, taxon.pathIds? as taxon_path_ids, taxon.pathNames? as taxon_path_ranks"));
         assertThat(query.getParams().isEmpty(), is(true));
     }
 
@@ -558,7 +573,7 @@ public class CypherQueryBuilderTest {
         };
 
         String expectedQuery = "START sourceTaxon = node:taxonPaths({source_taxon_name}) " +
-                expectedMatchClause(expectedInteractionClause("PREYS_UPON|KILLS|PARASITE_OF"), false, true) +
+                expectedMatchClause(expectedInteractionClause("PREYS_UPON|PARASITE_OF"), false, true) +
                 "WHERE has(targetTaxon.path) AND targetTaxon.path =~ '(.*(Mammalia).*)' " +
                 EXPECTED_RETURN_CLAUSE;
         CypherQuery query = buildInteractionQuery(params, MULTI_TAXON_ALL);
@@ -577,7 +592,7 @@ public class CypherQueryBuilderTest {
         };
 
         String expectedQuery = "START sourceTaxon = node:taxonPaths({source_taxon_name}) " +
-                expectedMatchClause(expectedInteractionClause("PREYS_UPON|KILLS|PARASITE_OF"), false, false) +
+                expectedMatchClause(expectedInteractionClause("PREYS_UPON|PARASITE_OF"), false, false) +
                 "WHERE has(targetTaxon.path) AND targetTaxon.path =~ '(.*(Mammalia).*)' " +
                 EXPECTED_RETURN_CLAUSE_DISTINCT;
         CypherQuery query = buildInteractionQuery(params, MULTI_TAXON_DISTINCT);
@@ -710,7 +725,7 @@ public class CypherQueryBuilderTest {
         };
 
         CypherQuery query = buildInteractionQuery("Homo sapiens", "preysOn", "Plantae", params, SINGLE_TAXON_ALL);
-        assertThat(query.getQuery(), is("START sourceTaxon = node:taxonPaths({source_taxon_name}) MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen-[interaction:PREYS_UPON|KILLS]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon, sourceSpecimen<-[collected_rel:COLLECTED]-study, sourceSpecimen-[:COLLECTED_AT]->loc WHERE loc.latitude < 23.32 AND loc.longitude > -67.87 AND loc.latitude > 12.79 AND loc.longitude < -57.08 AND has(targetTaxon.path) AND targetTaxon.path =~ '(.*(Plantae).*)' " + RETURN_PREYS_ON_CLAUSE));
+        assertThat(query.getQuery(), is("START sourceTaxon = node:taxonPaths({source_taxon_name}) MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen-[interaction:PREYS_UPON]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon, sourceSpecimen<-[collected_rel:COLLECTED]-study, sourceSpecimen-[:COLLECTED_AT]->loc WHERE loc.latitude < 23.32 AND loc.longitude > -67.87 AND loc.latitude > 12.79 AND loc.longitude < -57.08 AND has(targetTaxon.path) AND targetTaxon.path =~ '(.*(Plantae).*)' " + RETURN_PREYS_ON_CLAUSE));
         assertThat(query.getParams().toString(), is("{source_taxon_name=path:\\\"Homo sapiens\\\", target_taxon_name=path:\\\"Plantae\\\"}"));
     }
 
@@ -718,7 +733,7 @@ public class CypherQueryBuilderTest {
     public void findPlantPreyObservationsWithoutLocation() throws IOException {
         HashMap<String, String[]> params = new HashMap<String, String[]>();
         CypherQuery query = buildInteractionQuery("Homo sapiens", "preysOn", "Plantae", params, SINGLE_TAXON_ALL);
-        assertThat(query.getQuery(), is("START sourceTaxon = node:taxonPaths({source_taxon_name}) MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen-[interaction:PREYS_UPON|KILLS]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon, sourceSpecimen<-[collected_rel:COLLECTED]-study, sourceSpecimen-[?:COLLECTED_AT]->loc WHERE has(targetTaxon.path) AND targetTaxon.path =~ '(.*(Plantae).*)' " + RETURN_PREYS_ON_CLAUSE));
+        assertThat(query.getQuery(), is("START sourceTaxon = node:taxonPaths({source_taxon_name}) MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen-[interaction:PREYS_UPON]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon, sourceSpecimen<-[collected_rel:COLLECTED]-study, sourceSpecimen-[?:COLLECTED_AT]->loc WHERE has(targetTaxon.path) AND targetTaxon.path =~ '(.*(Plantae).*)' " + RETURN_PREYS_ON_CLAUSE));
         assertThat(query.getParams().toString(), is("{source_taxon_name=path:\\\"Homo sapiens\\\", target_taxon_name=path:\\\"Plantae\\\"}"));
     }
 
@@ -734,7 +749,15 @@ public class CypherQueryBuilderTest {
     public void findPreyObservationsNoLocation() throws IOException {
         HashMap<String, String[]> params = new HashMap<String, String[]>();
         CypherQuery query = buildInteractionQuery("Homo sapiens", "preysOn", null, params, SINGLE_TAXON_ALL);
-        assertThat(query.getQuery(), is("START sourceTaxon = node:taxonPaths({source_taxon_name}) MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen-[interaction:PREYS_UPON|KILLS]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon, sourceSpecimen<-[collected_rel:COLLECTED]-study, sourceSpecimen-[?:COLLECTED_AT]->loc " + RETURN_PREYS_ON_CLAUSE));
+        assertThat(query.getQuery(), is("START sourceTaxon = node:taxonPaths({source_taxon_name}) MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen-[interaction:PREYS_UPON]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon, sourceSpecimen<-[collected_rel:COLLECTED]-study, sourceSpecimen-[?:COLLECTED_AT]->loc " + RETURN_PREYS_ON_CLAUSE));
+        assertThat(query.getParams().toString(), is("{source_taxon_name=path:\\\"Homo sapiens\\\"}"));
+    }
+
+    @Test
+    public void findKillsObservationsNoLocation() throws IOException {
+        HashMap<String, String[]> params = new HashMap<String, String[]>();
+        CypherQuery query = buildInteractionQuery("Homo sapiens", "kills", null, params, SINGLE_TAXON_ALL);
+        assertThat(query.getQuery(), is("START sourceTaxon = node:taxonPaths({source_taxon_name}) MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen-[interaction:KILLS|PREYS_UPON]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon, sourceSpecimen<-[collected_rel:COLLECTED]-study, sourceSpecimen-[?:COLLECTED_AT]->loc " + RETURN_KILLS_CLAUSE));
         assertThat(query.getParams().toString(), is("{source_taxon_name=path:\\\"Homo sapiens\\\"}"));
     }
 
@@ -747,7 +770,7 @@ public class CypherQueryBuilderTest {
         };
 
         CypherQuery query = buildInteractionQuery("Homo sapiens", "preysOn", "Plantae", params, SINGLE_TAXON_DISTINCT);
-        assertThat(query.getQuery(), is("START sourceTaxon = node:taxonPaths({source_taxon_name}) MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen-[interaction:PREYS_UPON|KILLS]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon, sourceSpecimen<-[collected_rel:COLLECTED]-study, sourceSpecimen-[:COLLECTED_AT]->loc WHERE loc.latitude < 23.32 AND loc.longitude > -67.87 AND loc.latitude > 12.79 AND loc.longitude < -57.08 AND has(targetTaxon.path) AND targetTaxon.path =~ '(.*(Plantae).*)' RETURN sourceTaxon.name as source_taxon_name,'preysOn' as interaction_type,collect(distinct(targetTaxon.name)) as target_taxon_name"));
+        assertThat(query.getQuery(), is("START sourceTaxon = node:taxonPaths({source_taxon_name}) MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen-[interaction:PREYS_UPON]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon, sourceSpecimen<-[collected_rel:COLLECTED]-study, sourceSpecimen-[:COLLECTED_AT]->loc WHERE loc.latitude < 23.32 AND loc.longitude > -67.87 AND loc.latitude > 12.79 AND loc.longitude < -57.08 AND has(targetTaxon.path) AND targetTaxon.path =~ '(.*(Plantae).*)' RETURN sourceTaxon.name as source_taxon_name,'preysOn' as interaction_type,collect(distinct(targetTaxon.name)) as target_taxon_name"));
         assertThat(query.getParams().toString(), is("{source_taxon_name=path:\\\"Homo sapiens\\\", target_taxon_name=path:\\\"Plantae\\\"}"));
     }
 
@@ -755,7 +778,7 @@ public class CypherQueryBuilderTest {
     public void findDistinctPlantPreyWithoutLocation() throws IOException {
         HashMap<String, String[]> params = new HashMap<String, String[]>();
         CypherQuery query = buildInteractionQuery("Homo sapiens", "preysOn", "Plantae", params, SINGLE_TAXON_DISTINCT);
-        assertThat(query.getQuery(), is("START sourceTaxon = node:taxonPaths({source_taxon_name}) MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen-[interaction:PREYS_UPON|KILLS]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon, sourceSpecimen<-[collected_rel:COLLECTED]-study WHERE has(targetTaxon.path) AND targetTaxon.path =~ '(.*(Plantae).*)' RETURN sourceTaxon.name as source_taxon_name,'preysOn' as interaction_type,collect(distinct(targetTaxon.name)) as target_taxon_name"));
+        assertThat(query.getQuery(), is("START sourceTaxon = node:taxonPaths({source_taxon_name}) MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen-[interaction:PREYS_UPON]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon, sourceSpecimen<-[collected_rel:COLLECTED]-study WHERE has(targetTaxon.path) AND targetTaxon.path =~ '(.*(Plantae).*)' RETURN sourceTaxon.name as source_taxon_name,'preysOn' as interaction_type,collect(distinct(targetTaxon.name)) as target_taxon_name"));
         assertThat(query.getParams().toString(), is("{source_taxon_name=path:\\\"Homo sapiens\\\", target_taxon_name=path:\\\"Plantae\\\"}"));
     }
 
@@ -817,7 +840,7 @@ public class CypherQueryBuilderTest {
 
     protected void assertLocationMatchAndWhereClause(String clause) {
         assertThat(clause.replaceAll("\\s+", " ")
-                , is(" MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen-[interaction:PREYS_UPON|KILLS]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon" +
+                , is(" MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen-[interaction:PREYS_UPON]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon" +
                 ", sourceSpecimen<-[collected_rel:COLLECTED]-study, sourceSpecimen-[:COLLECTED_AT]->loc" +
                 " WHERE loc.latitude < 23.32 AND loc.longitude > -67.87 AND loc.latitude > 12.79 AND loc.longitude < -57.08 "));
     }
@@ -845,7 +868,7 @@ public class CypherQueryBuilderTest {
         assertThat(appendMatchAndWhereClause(new ArrayList<String>() {{
             add("preysOn");
         }}, params, new StringBuilder(), CypherQueryBuilder.QueryType.MULTI_TAXON_ALL).toString()
-                , is(" MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen-[interaction:PREYS_UPON|KILLS]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon" +
+                , is(" MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen-[interaction:PREYS_UPON]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon" +
                 ", sourceSpecimen<-[collected_rel:COLLECTED]-study, sourceSpecimen-[?:COLLECTED_AT]->loc "));
     }
 
