@@ -8,6 +8,8 @@ public enum InteractionTypeExternal {
     EATEN_BY(CypherQueryBuilder.INTERACTION_EATEN_BY, "food", "consumer", InteractType.EATEN_BY),
     PREYS_ON(CypherQueryBuilder.INTERACTION_PREYS_ON, "predator", "prey", InteractType.PREYS_UPON),
     PREYED_UPON_BY(CypherQueryBuilder.INTERACTION_PREYED_UPON_BY, "prey", "predator", InteractType.PREYED_UPON_BY),
+    KILLS(CypherQueryBuilder.INTERACTION_KILLS, "killer", "victim", InteractType.KILLS),
+    KILLED_BY(CypherQueryBuilder.INTERACTION_KILLED_BY, "killer", "victim", InteractType.KILLED_BY),
     PARASITE_OF(CypherQueryBuilder.INTERACTION_PARASITE_OF, "parasite", "host", InteractType.PARASITE_OF),
     HAS_PARASITE(CypherQueryBuilder.INTERACTION_HAS_PARASITE, "host", "parasite", InteractType.HAS_PARASITE),
     HOST_OF(CypherQueryBuilder.INTERACTION_HOST_OF, "host", "symbiont", InteractType.HOST_OF),

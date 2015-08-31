@@ -9,7 +9,6 @@ import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Specimen;
-import org.eol.globi.domain.Study;
 import org.eol.globi.server.util.InteractionTypeExternal;
 import org.eol.globi.server.util.RequestHelper;
 import org.eol.globi.server.util.ResultField;
@@ -96,6 +95,9 @@ public class CypherQueryBuilder {
     public static final String INTERACTION_SYMBIONT_OF = "symbiontOf";
     public static final String INTERACTION_INTERACTS_WITH = "interactsWith";
 
+    public static final String INTERACTION_KILLS = "kills";
+    public static final String INTERACTION_KILLED_BY = "killedBy";
+
     private static final String SOURCE_TAXON_HTTP_PARAM_NAME = "sourceTaxon";
     private static final String TARGET_TAXON_HTTP_PARAM_NAME = "targetTaxon";
 
@@ -103,16 +105,22 @@ public class CypherQueryBuilder {
 
     private static final Map<String, String> DIRECTIONAL_INTERACTION_TYPE_MAP = new TreeMap<String, String>() {
         {
-            put(INTERACTION_PREYS_ON, InteractType.PREYS_UPON.toString());
-            put(INTERACTION_PREYED_UPON_BY, InteractType.PREYED_UPON_BY.toString());
+            put(INTERACTION_PREYS_ON, InteractType.PREYS_UPON + "|" + InteractType.KILLS);
+            put(INTERACTION_PREYED_UPON_BY, InteractType.PREYED_UPON_BY + "|" + InteractType.KILLED_BY);
             put(INTERACTION_EATS, InteractType.ATE + "|" + InteractType.PREYS_UPON);
             put(INTERACTION_EATEN_BY, InteractType.EATEN_BY + "|" + InteractType.PREYED_UPON_BY);
-            put(INTERACTION_PARASITE_OF, InteractType.PARASITE_OF.toString());
-            put(INTERACTION_HAS_PARASITE, InteractType.HAS_PARASITE.toString());
+
+            put(INTERACTION_KILLS, InteractType.KILLS.toString());
+            put(INTERACTION_KILLED_BY, InteractType.KILLED_BY.toString());
+
             put(INTERACTION_VISITS_FLOWERS_OF, InteractType.VISITS_FLOWERS_OF + "|" + InteractType.POLLINATES);
             put(INTERACTION_FLOWERS_VISITED_BY, InteractType.FLOWERS_VISITED_BY + "|" + InteractType.POLLINATED_BY);
             put(INTERACTION_POLLINATES, InteractType.POLLINATES.toString());
             put(INTERACTION_POLLINATED_BY, InteractType.POLLINATED_BY.toString());
+
+            put(INTERACTION_PARASITE_OF, InteractType.PARASITE_OF.toString());
+            put(INTERACTION_HAS_PARASITE, InteractType.HAS_PARASITE.toString());
+
             put(INTERACTION_PATHOGEN_OF, InteractType.PATHOGEN_OF.toString());
             put(INTERACTION_HAS_PATHOGEN, InteractType.HAS_PATHOGEN.toString());
             put(INTERACTION_HAS_VECTOR, InteractType.HAS_VECTOR.toString());
@@ -120,6 +128,7 @@ public class CypherQueryBuilder {
             put(INTERACTION_HOST_OF, StringUtils.join(new String[]{InteractType.HOST_OF.toString(), InteractType.HAS_PARASITE.toString(), InteractType.HAS_PATHOGEN.toString()}, "|"));
             put(INTERACTION_HAS_HOST, StringUtils.join(new String[]{InteractType.HAS_HOST.toString(), InteractType.PARASITE_OF.toString(), InteractType.PATHOGEN_OF.toString()}, "|"));
             put(INTERACTION_SYMBIONT_OF, StringUtils.join(InteractType.values(), "|"));
+
             put(INTERACTION_INTERACTS_WITH, StringUtils.join(InteractType.values(), "|"));
         }
     };
@@ -127,23 +136,28 @@ public class CypherQueryBuilder {
     public static final Map<String, InteractionTypeExternal> INTERACTION_TYPE_INTERNAL_EXTERNAL_MAP = new TreeMap<String, InteractionTypeExternal>() {
         {
             put(InteractType.ATE.toString(), InteractionTypeExternal.EATS);
-            put(InteractType.PREYS_UPON.toString(), InteractionTypeExternal.PREYS_ON);
             put(InteractType.EATEN_BY.toString(), InteractionTypeExternal.EATEN_BY);
+            put(InteractType.PREYS_UPON.toString(), InteractionTypeExternal.PREYS_ON);
             put(InteractType.PREYED_UPON_BY.toString(), InteractionTypeExternal.PREYED_UPON_BY);
-            put(InteractType.PARASITE_OF.toString(), InteractionTypeExternal.PARASITE_OF);
-            put(InteractType.HAS_PARASITE.toString(), InteractionTypeExternal.HAS_PARASITE);
+            put(InteractType.KILLS.toString(), InteractionTypeExternal.KILLS);
+            put(InteractType.KILLED_BY.toString(), InteractionTypeExternal.KILLED_BY);
+
             put(InteractType.VISITS_FLOWERS_OF.toString(), InteractionTypeExternal.VISITS_FLOWERS_OF);
             put(InteractType.FLOWERS_VISITED_BY.toString(), InteractionTypeExternal.FLOWERS_VISITED_BY);
             put(InteractType.POLLINATES.toString(), InteractionTypeExternal.POLLINATES);
             put(InteractType.POLLINATED_BY.toString(), InteractionTypeExternal.POLLINATED_BY);
+
+            put(InteractType.HAS_HOST.toString(), InteractionTypeExternal.HAS_HOST);
+            put(InteractType.HOST_OF.toString(), InteractionTypeExternal.HOST_OF);
+            put(InteractType.PARASITE_OF.toString(), InteractionTypeExternal.PARASITE_OF);
+            put(InteractType.HAS_PARASITE.toString(), InteractionTypeExternal.HAS_PARASITE);
             put(InteractType.PATHOGEN_OF.toString(), InteractionTypeExternal.PATHOGEN_OF);
             put(InteractType.HAS_PATHOGEN.toString(), InteractionTypeExternal.HAS_PATHOGEN);
             put(InteractType.VECTOR_OF.toString(), InteractionTypeExternal.VECTOR_OF);
             put(InteractType.HAS_VECTOR.toString(), InteractionTypeExternal.HAS_VECTOR);
             put(InteractType.SYMBIONT_OF.toString(), InteractionTypeExternal.SYMBIONT_OF);
+
             put(InteractType.INTERACTS_WITH.toString(), InteractionTypeExternal.INTERACTS_WITH);
-            put(InteractType.HAS_HOST.toString(), InteractionTypeExternal.HAS_HOST);
-            put(InteractType.HOST_OF.toString(), InteractionTypeExternal.HOST_OF);
         }
     };
 
@@ -168,6 +182,9 @@ public class CypherQueryBuilder {
 
             put(INTERACTION_EATEN_BY, InteractType.EATEN_BY + "|" + InteractType.PREYED_UPON_BY);
             put(INTERACTION_EATS, InteractType.ATE + "|" + InteractType.PREYS_UPON);
+
+            put(INTERACTION_KILLS, InteractType.KILLS + "|" + InteractType.ATE);
+            put(INTERACTION_KILLED_BY, InteractType.KILLED_BY + "|" + InteractType.PREYED_UPON_BY);
 
         }
     };
