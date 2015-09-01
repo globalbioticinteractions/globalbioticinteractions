@@ -2,6 +2,8 @@ package org.eol.globi.util;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
 import org.apache.http.client.HttpResponseException;
@@ -15,11 +17,17 @@ import java.io.InputStream;
 import java.net.URI;
 
 public class ResourceUtil {
+
+    private static final Log LOG = LogFactory.getLog(ResourceUtil.class);
+
     public static InputStream asInputStream(String resource, Class clazz) throws IOException {
         InputStream is;
         if (StringUtils.startsWith(resource, "http://")
                 || StringUtils.startsWith(resource, "https://")) {
+            LOG.info("caching of [" + resource + "] started...");
             is = getCachedRemoteInputStream(resource);
+            LOG.info("caching of [" + resource + "] complete.");
+
         } else {
             is = clazz.getResourceAsStream(resource);
             if (is == null) {
@@ -43,6 +51,7 @@ public class ResourceUtil {
         } finally {
             request.releaseConnection();
         }
+
     }
 
     public static InputStream cacheAndOpenStream(InputStream is) throws IOException {

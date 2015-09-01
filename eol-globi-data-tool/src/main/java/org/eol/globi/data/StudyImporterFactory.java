@@ -9,6 +9,8 @@ public class StudyImporterFactory {
 
     private static final Collection<Class<? extends StudyImporter>> IMPORTERS = Collections.unmodifiableCollection(new ArrayList<Class<? extends StudyImporter>>() {{
         add(StudyImporterForGitHubData.class);
+        add(StudyImporterForSzoboszlai.class);
+        add(StudyImporterForWood.class);
         add(StudyImporterForKelpForest.class);
         add(StudyImporterForGemina.class);
         add(StudyImporterForCruaud.class);

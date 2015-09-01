@@ -31,7 +31,9 @@ class InteractionListenerNeo4j implements InteractionListener {
     @Override
     public void newLink(Map<String, String> properties) throws StudyImporterException  {
         try {
-            importLink(properties);
+            if (properties != null) {
+                importLink(properties);
+            }
         } catch (NodeFactoryException e) {
             throw new StudyImporterException("failed to import: " + properties, e);
         } catch (IOException e) {

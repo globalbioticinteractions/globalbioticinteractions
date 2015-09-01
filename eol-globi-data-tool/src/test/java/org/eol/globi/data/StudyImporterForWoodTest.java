@@ -11,21 +11,37 @@ import java.util.Map;
 import static org.eol.globi.data.StudyImporterForTSV.*;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
+import static org.junit.internal.matchers.StringContains.containsString;
 
-public class StudyImporterWoodTest extends GraphDBTestCase {
+public class StudyImporterForWoodTest extends GraphDBTestCase {
+
+    @Test
+    public void importFirst500() throws StudyImporterException, NodeFactoryException {
+        StudyImporterForWood wood = new StudyImporterForWood(new ParserFactoryImpl(), nodeFactory);
+        wood.setFilter(new ImportFilter() {
+            @Override
+            public boolean shouldImportRecord(Long recordNumber) {
+                return recordNumber < 500;
+            }
+        });
+        wood.importStudy();
+
+        assertThat(nodeFactory.findTaxonByName("Amphipoda"), is(notNullValue()));
+    }
 
     @Test
     public void importLines() throws IOException, StudyImporterException {
         final List<Map<String, String>> maps = new ArrayList<Map<String, String>>();
 
-        StudyImporterWood.importLinks(IOUtils.toInputStream(firstFewLines()), new InteractionListener() {
+        StudyImporterForWood.importLinks(IOUtils.toInputStream(firstFewLines()), new InteractionListener() {
 
             @Override
             public void newLink(final Map<String, String> properties) {
                 maps.add(properties);
             }
-        });
+        }, null);
         assertThat(maps.size(), is(5));
         Map<String, String> firstLink = maps.get(0);
         assertThat(firstLink.get(StudyImporterForTSV.SOURCE_TAXON_ID), is("ITIS:93294"));
@@ -41,7 +57,8 @@ public class StudyImporterWoodTest extends GraphDBTestCase {
     }
 
     protected void assertStaticInfo(Map<String, String> firstLink) {
-        assertThat(firstLink.get(STUDY_SOURCE_CITATION), is("Wood SA, Russell R, Hanson D, Williams RJ, Dunne JA (2015) Data from: Effects of spatial scale of sampling on food web structure. Dryad Digital Repository. http://dx.doi.org/10.5061/dryad.g1qr6"));
+        assertThat(firstLink.get(STUDY_SOURCE_CITATION), containsString("Wood SA, Russell R, Hanson D, Williams RJ, Dunne JA (2015) Data from: Effects of spatial scale of sampling on food web structure. Dryad Digital Repository. http://dx.doi.org/10.5061/dryad.g1qr6"));
+        assertThat(firstLink.get(STUDY_SOURCE_CITATION), containsString("Accessed at"));
         assertThat(firstLink.get(REFERENCE_CITATION), is("Wood SA, Russell R, Hanson D, Williams RJ, Dunne JA (2015) Effects of spatial scale of sampling on food web structure. Ecology and Evolution, online in advance of print. http://dx.doi.org/10.1002/ece3.1640"));
         assertThat(firstLink.get(REFERENCE_DOI), is("doi:10.1002/ece3.1640"));
         assertThat(firstLink.get(REFERENCE_URL), is("http://dx.doi.org/10.1002/ece3.1640"));

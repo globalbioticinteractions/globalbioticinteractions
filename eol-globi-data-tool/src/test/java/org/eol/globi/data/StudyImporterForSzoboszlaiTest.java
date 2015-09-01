@@ -26,20 +26,23 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
 import static org.eol.globi.data.StudyImporterForTSV.*;
+import static org.junit.internal.matchers.StringContains.containsString;
 
-public class StudyImporterSzoboszlaiTest extends GraphDBTestCase {
+public class StudyImporterForSzoboszlaiTest extends GraphDBTestCase {
 
     @Test
-    public void importAll() throws StudyImporterException {
-        StudyImporter importer = new StudyImporterSzoboszlai(new ParserFactoryImpl(), nodeFactory);
+    public void importAll() throws StudyImporterException, NodeFactoryException {
+        StudyImporter importer = new StudyImporterForSzoboszlai(new ParserFactoryImpl(), nodeFactory);
         importer.importStudy();
+
+        assertThat(nodeFactory.findTaxonByName("Thunnus thynnus"), is(notNullValue()));
     }
 
     @Test
     public void importLines() throws IOException, StudyImporterException {
-        StudyImporterSzoboszlai studyImporterSzoboszlai = new StudyImporterSzoboszlai(new ParserFactoryImpl(), nodeFactory);
+        StudyImporterForSzoboszlai studyImporterForSzoboszlai = new StudyImporterForSzoboszlai(new ParserFactoryImpl(), nodeFactory);
         final List<Map<String, String>> maps = new ArrayList<Map<String, String>>();
-        studyImporterSzoboszlai.importLinks(IOUtils.toInputStream(firstFewLines()), new InteractionListener(){
+        studyImporterForSzoboszlai.importLinks(IOUtils.toInputStream(firstFewLines()), new InteractionListener(){
             @Override
             public void newLink(Map<String, String> properties) {
                 maps.add(properties);
@@ -51,7 +54,9 @@ public class StudyImporterSzoboszlaiTest extends GraphDBTestCase {
         assertThat(firstLink.get(SOURCE_TAXON_NAME), is("Thunnus thynnus"));
         assertThat(firstLink.get(TARGET_TAXON_ID), is("ITIS:161828"));
         assertThat(firstLink.get(TARGET_TAXON_NAME), is("Engraulis mordax"));
-        assertThat(firstLink.get(STUDY_SOURCE_CITATION), is("Szoboszlai AI, Thayer JA, Wood SA, Sydeman WJ, Koehn LE (2015) Data from: Forage species in predator diets: synthesis of data from the California Current. Dryad Digital Repository. http://dx.doi.org/10.5061/dryad.nv5d2"));
+        assertThat(firstLink.get(STUDY_SOURCE_CITATION), containsString("Szoboszlai AI, Thayer JA, Wood SA, Sydeman WJ, Koehn LE (2015) Data from: Forage species in predator diets: synthesis of data from the California Current. Dryad Digital Repository. http://dx.doi.org/10.5061/dryad.nv5d2"));
+        assertThat(firstLink.get(STUDY_SOURCE_CITATION), containsString("Szoboszlai AI, Thayer JA, Wood SA, Sydeman WJ, Koehn LE (2015) Forage species in predator diets: synthesis of data from the California Current. Ecological Informatics 29(1): 45-56. http://dx.doi.org/10.1016/j.ecoinf.2015.07.003"));
+        assertThat(firstLink.get(STUDY_SOURCE_CITATION), containsString("Accessed at"));
         assertThat(firstLink.get(REFERENCE_CITATION), is("Blunt, CE. 1958. California bluefin tuna-wary wanderer of the Pacific. Outdoor California. v.19. pp.14"));
         assertThat(firstLink.get(REFERENCE_DOI), is(nullValue()));
         assertThat(firstLink.get(REFERENCE_URL), is(nullValue()));

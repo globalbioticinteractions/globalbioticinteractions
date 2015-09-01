@@ -46,6 +46,10 @@ public abstract class BaseStudyImporter extends BaseImporter implements StudyImp
         this.importFilter = importFilter;
     }
 
+    protected ImportFilter getFilter() {
+        return this.importFilter;
+    }
+
     @Override
     public void setLogger(ImportLogger importLogger) {
         this.importLogger = importLogger;
