@@ -13,7 +13,6 @@ import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.Term;
 import org.eol.globi.geo.LatLng;
-import org.eol.globi.util.ExternalIdUtil;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -31,7 +30,7 @@ public class StudyImporterForSPIRE extends BaseStudyImporter {
     public static final String LOCALITY_ORIGINAL = "localityOriginal";
     public static final String SOURCE_SPIRE = "Semantic Prototypes in Research Ecoinformatics (SPIRE). Data provided by Joel Sachs. See also http://ebiquity.umbc.edu/get/a/publication/297.pdf .";
 
-    private TrophicLinkListener trophicLinkListener = new TrophicLinkListener() {
+    private InteractionListener interactionListener = new InteractionListener() {
         @Override
         public void newLink(Map<String, String> properties) {
             importTrophicLink(properties);
@@ -60,12 +59,12 @@ public class StudyImporterForSPIRE extends BaseStudyImporter {
         properties.put(Study.DESCRIPTION, titlesAndAuthors1);
     }
 
-    public TrophicLinkListener getTrophicLinkListener() {
-        return trophicLinkListener;
+    public InteractionListener getInteractionListener() {
+        return interactionListener;
     }
 
-    public void setTrophicLinkListener(TrophicLinkListener trophicLinkListener) {
-        this.trophicLinkListener = trophicLinkListener;
+    public void setInteractionListener(InteractionListener interactionListener) {
+        this.interactionListener = interactionListener;
     }
 
 
@@ -98,8 +97,8 @@ public class StudyImporterForSPIRE extends BaseStudyImporter {
             }
             if (properties.containsKey(PREDATOR_NAME)
                     && properties.containsKey(PREY_NAME)
-                    && getTrophicLinkListener() != null) {
-                getTrophicLinkListener().newLink(properties);
+                    && getInteractionListener() != null) {
+                getInteractionListener().newLink(properties);
             }
             subjectCounter++;
         }

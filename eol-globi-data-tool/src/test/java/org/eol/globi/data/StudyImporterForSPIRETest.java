@@ -1,7 +1,6 @@
 package org.eol.globi.data;
 
 import com.hp.hpl.jena.rdf.model.impl.RDFDefaultErrorHandler;
-import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.domain.Environment;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Specimen;
@@ -142,7 +141,7 @@ public class StudyImporterForSPIRETest extends GraphDBTestCase {
         RDFDefaultErrorHandler.silent = true;
         StudyImporterForSPIRE importer = createImporter();
         final List<String> predators = new ArrayList<String>();
-        importer.setTrophicLinkListener(new TrophicLinkListener() {
+        importer.setInteractionListener(new InteractionListener() {
             @Override
             public void newLink(Map<String, String> properties) {
                 if (!StudyImporterForSPIRE.isValid(properties)) {
@@ -158,8 +157,8 @@ public class StudyImporterForSPIRETest extends GraphDBTestCase {
     public void importStudy() throws IOException, StudyImporterException {
         RDFDefaultErrorHandler.silent = true;
         StudyImporterForSPIRE importer = createImporter();
-        TestTrophicLinkListener listener = new TestTrophicLinkListener();
-        importer.setTrophicLinkListener(listener);
+        TestInteractionListener listener = new TestInteractionListener();
+        importer.setInteractionListener(listener);
         importer.importStudy();
 
         assertGAZMapping(listener);
@@ -177,7 +176,7 @@ public class StudyImporterForSPIRETest extends GraphDBTestCase {
         assertThat(listener.invalidInteractions.size(), is(greaterThan(0)));
     }
 
-    private void assertGAZMapping(TestTrophicLinkListener listener) {
+    private void assertGAZMapping(TestInteractionListener listener) {
         Map<String, Term> gazMap = new HashMap<String, Term>() {{
             put("Country: New Zealand;   State: Otago;   Locality: Catlins, Craggy Tor catchment", new Term("GAZ:00146864", "The Catlins"));
             put("Country: Scotland", new Term("GAZ:00002639", "Scotland"));
@@ -345,7 +344,7 @@ public class StudyImporterForSPIRETest extends GraphDBTestCase {
     }
 
 
-    private static class TestTrophicLinkListener implements TrophicLinkListener {
+    private static class TestInteractionListener implements InteractionListener {
         public int getCount() {
             return count;
         }
