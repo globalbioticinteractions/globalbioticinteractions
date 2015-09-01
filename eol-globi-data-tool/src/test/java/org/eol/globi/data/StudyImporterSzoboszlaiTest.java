@@ -3,7 +3,6 @@ package org.eol.globi.data;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Point;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.geo.LatLng;
 import org.geotools.data.FeatureReader;
 import org.geotools.data.FileDataStore;
@@ -26,6 +25,8 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
+import static org.eol.globi.data.StudyImporterForTSV.*;
+
 public class StudyImporterSzoboszlaiTest extends GraphDBTestCase {
 
     @Test
@@ -35,7 +36,7 @@ public class StudyImporterSzoboszlaiTest extends GraphDBTestCase {
     }
 
     @Test
-    public void importLines() throws IOException {
+    public void importLines() throws IOException, StudyImporterException {
         StudyImporterSzoboszlai studyImporterSzoboszlai = new StudyImporterSzoboszlai(new ParserFactoryImpl(), nodeFactory);
         final List<Map<String, String>> maps = new ArrayList<Map<String, String>>();
         studyImporterSzoboszlai.importLinks(IOUtils.toInputStream(firstFewLines()), new InteractionListener(){
@@ -46,20 +47,20 @@ public class StudyImporterSzoboszlaiTest extends GraphDBTestCase {
         });
         assertThat(maps.size(), is(4));
         Map<String, String> firstLink = maps.get(0);
-        assertThat(firstLink.get("source_taxon_external_id"), is(nullValue()));
-        assertThat(firstLink.get("source_taxon_name"), is("Thunnus thynnus"));
-        assertThat(firstLink.get("target_taxon_external_id"), is("ITIS:161828"));
-        assertThat(firstLink.get("target_taxon_name"), is("Engraulis mordax"));
-        assertThat(firstLink.get("study_source_citation"), is("Szoboszlai AI, Thayer JA, Wood SA, Sydeman WJ, Koehn LE (2015) Data from: Forage species in predator diets: synthesis of data from the California Current. Dryad Digital Repository. http://dx.doi.org/10.5061/dryad.nv5d2"));
-        assertThat(firstLink.get("study_citation"), is("Blunt, CE. 1958. California bluefin tuna-wary wanderer of the Pacific. Outdoor California. v.19. pp.14"));
-        assertThat(firstLink.get("study_doi"), is(nullValue()));
-        assertThat(firstLink.get("study_url"), is(nullValue()));
-        assertThat(firstLink.get("locality_name"), is("USA, CA"));
-        assertThat(firstLink.get("locality_id"), is(nullValue()));
-        assertThat(firstLink.get("longitude"), is(nullValue()));
-        assertThat(firstLink.get("latitude"), is(nullValue()));
-        assertThat(firstLink.get("interaction_type_id"), is("RO:0002439"));
-        assertThat(firstLink.get("interaction_type_name"), is("preysOn"));
+        assertThat(firstLink.get(SOURCE_TAXON_ID), is(nullValue()));
+        assertThat(firstLink.get(SOURCE_TAXON_NAME), is("Thunnus thynnus"));
+        assertThat(firstLink.get(TARGET_TAXON_ID), is("ITIS:161828"));
+        assertThat(firstLink.get(TARGET_TAXON_NAME), is("Engraulis mordax"));
+        assertThat(firstLink.get(STUDY_SOURCE_CITATION), is("Szoboszlai AI, Thayer JA, Wood SA, Sydeman WJ, Koehn LE (2015) Data from: Forage species in predator diets: synthesis of data from the California Current. Dryad Digital Repository. http://dx.doi.org/10.5061/dryad.nv5d2"));
+        assertThat(firstLink.get(REFERENCE_CITATION), is("Blunt, CE. 1958. California bluefin tuna-wary wanderer of the Pacific. Outdoor California. v.19. pp.14"));
+        assertThat(firstLink.get(REFERENCE_DOI), is(nullValue()));
+        assertThat(firstLink.get(REFERENCE_URL), is(nullValue()));
+        assertThat(firstLink.get(LOCALITY_NAME), is("USA, CA"));
+        assertThat(firstLink.get(LOCALITY_ID), is(nullValue()));
+        assertThat(firstLink.get(DECIMAL_LONGITUDE), is(nullValue()));
+        assertThat(firstLink.get(DECIMAL_LATITUDE), is(nullValue()));
+        assertThat(firstLink.get(INTERACTION_TYPE_ID), is("RO:0002439"));
+        assertThat(firstLink.get(INTERACTION_TYPE_NAME), is("preysOn"));
     }
 
     @Test

@@ -14,6 +14,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import static org.eol.globi.data.StudyImporterForTSV.*;
+
 public class StudyImporterSzoboszlai extends BaseStudyImporter {
 
     private static final String sourceCitation = "Szoboszlai AI, Thayer JA, Wood SA, Sydeman WJ, Koehn LE (2015) Data from: Forage species in predator diets: synthesis of data from the California Current. Dryad Digital Repository. http://dx.doi.org/10.5061/dryad.nv5d2";
@@ -43,7 +45,7 @@ public class StudyImporterSzoboszlai extends BaseStudyImporter {
         return null;
     }
 
-    protected void importLinks(InputStream is, InteractionListener interactionListener) throws IOException {
+    protected void importLinks(InputStream is, InteractionListener interactionListener) throws IOException, StudyImporterException {
         LabeledCSVParser parser = new LabeledCSVParser(new CSVParser(is));
         while (parser.getLine() != null) {
             Map<String, String> e = importLink(parser);
@@ -56,26 +58,26 @@ public class StudyImporterSzoboszlai extends BaseStudyImporter {
     protected Map<String, String> importLink(LabeledCSVParser parser) throws IOException {
         TreeMap<String, String> link = new TreeMap<String, String>();
 
-        link.put("study_source_citation", sourceCitation);
+        link.put(STUDY_SOURCE_CITATION, sourceCitation);
 
         String predNum = StringUtils.trim(parser.getValueByLabel("PredatorSciNameTSN"));
         if (StringUtils.isNotBlank(predNum)) {
-            link.put("source_taxon_external_id", TaxonomyProvider.ITIS.getIdPrefix() + predNum);
+            link.put(SOURCE_TAXON_ID, TaxonomyProvider.ITIS.getIdPrefix() + predNum);
         }
 
         String predName = StringUtils.trim(parser.getValueByLabel("PredatorSciName"));
         if (StringUtils.isNotBlank(predName)) {
-            link.put("source_taxon_name", predName);
+            link.put(SOURCE_TAXON_NAME, predName);
         }
 
         String preyNum = StringUtils.trim(parser.getValueByLabel("PreySciNameTSN"));
         if (StringUtils.isNotBlank(preyNum)) {
-            link.put("target_taxon_external_id", TaxonomyProvider.ITIS.getIdPrefix() + preyNum);
+            link.put(TARGET_TAXON_ID, TaxonomyProvider.ITIS.getIdPrefix() + preyNum);
         }
 
         String preyName = StringUtils.trim(parser.getValueByLabel("PreySciName"));
         if (StringUtils.isNotBlank(preyName)) {
-            link.put("target_taxon_name", preyName);
+            link.put(TARGET_TAXON_NAME, preyName);
         }
 
         String[] citeFields = {"CiteAuth","CiteYear","CiteTitle","CiteSource","CiteVolume","CitePages"};
@@ -94,10 +96,10 @@ public class StudyImporterSzoboszlai extends BaseStudyImporter {
                 citeValues.add(prefix + value);
             }
         }
-        link.put("study_citation", StringUtils.join(citeValues, ". "));
-        link.put("interaction_type_name", "preysOn");
-        link.put("interaction_type_id", "RO:0002439");
-        link.put("locality_name", StringUtils.trim(parser.getValueByLabel("LocatName")));
+        link.put(REFERENCE_CITATION, StringUtils.join(citeValues, ". "));
+        link.put(INTERACTION_TYPE_NAME, "preysOn");
+        link.put(INTERACTION_TYPE_ID, "RO:0002439");
+        link.put(LOCALITY_NAME, StringUtils.trim(parser.getValueByLabel("LocatName")));
 
         return link;
     }

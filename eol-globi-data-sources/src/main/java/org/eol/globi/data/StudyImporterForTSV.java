@@ -10,9 +10,26 @@ import org.eol.globi.geo.LatLng;
 import org.eol.globi.util.InvalidLocationException;
 
 import java.io.IOException;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.logging.Level;
 
 public class StudyImporterForTSV extends BaseStudyImporter {
+    public static final String INTERACTION_TYPE_ID = "interactionTypeId";
+    public static final String TARGET_TAXON_ID = "targetTaxonId";
+    public static final String TARGET_TAXON_NAME = "targetTaxonName";
+    public static final String SOURCE_TAXON_NAME = "sourceTaxonName";
+    public static final String SOURCE_TAXON_ID = "sourceTaxonId";
+    public static final String STUDY_SOURCE_CITATION = "studySourceCitation";
+    public static final String REFERENCE_ID = "studyTitle";
+    public static final String REFERENCE_DOI = "referenceDoi";
+    public static final String REFERENCE_CITATION = "referenceCitation";
+    public static final String DECIMAL_LATITUDE = "decimalLatitude";
+    public static final String DECIMAL_LONGITUDE = "decimalLongitude";
+    public static final String LOCALITY_ID = "localityId";
+    public static final String REFERENCE_URL = "referenceUrl";
+    public static final String LOCALITY_NAME = "localityName";
+    public static final String INTERACTION_TYPE_NAME = "interactionTypeName";
     private String repositoryName;
 
     public String getBaseUrl() {
@@ -44,54 +61,26 @@ public class StudyImporterForTSV extends BaseStudyImporter {
 
 
     private void importRepository(String repo, String sourceCitation, String baseUrl) throws IOException, NodeFactoryException, StudyImporterException {
+        InteractionListenerNeo4j interactionListenerNeo4j = new InteractionListenerNeo4j(nodeFactory, getGeoNamesService(), getLogger());
         String dataUrl = baseUrl + "/interactions.tsv";
         LabeledCSVParser parser = parserFactory.createParser(dataUrl, "UTF-8");
         parser.changeDelimiter('\t');
         while (parser.getLine() != null) {
-            String referenceCitation = parser.getValueByLabel("referenceCitation");
-            String referenceDoi = StringUtils.replace(parser.getValueByLabel("referenceDoi"), " ", "");
-            Study study = nodeFactory.getOrCreateStudy(repo + referenceCitation, (sourceCitation == null ? "" : sourceCitation + ". ") + ReferenceUtil.createLastAccessedString(dataUrl), referenceDoi, referenceCitation);
-            study.setCitationWithTx(referenceCitation);
-
-            String sourceTaxonId = StringUtils.trimToNull(parser.getValueByLabel("sourceTaxonId"));
-            String sourceTaxonName = StringUtils.trim(parser.getValueByLabel("sourceTaxonName"));
-
-            String targetTaxonId = StringUtils.trimToNull(parser.getValueByLabel("targetTaxonId"));
-            String targetTaxonName = StringUtils.trim(parser.getValueByLabel("targetTaxonName"));
-
-            String interactionTypeId = StringUtils.trim(parser.getValueByLabel("interactionTypeId"));
-            if (StringUtils.isNotBlank(targetTaxonName)
-                    && StringUtils.isNotBlank(sourceTaxonName)) {
-                InteractType type = InteractType.typeOf(interactionTypeId);
-                if (type == null) {
-                    study.appendLogMessage("unsupported interaction type id [" + interactionTypeId + "]", Level.WARNING);
-                } else {
-                    Specimen source = nodeFactory.createSpecimen(study, sourceTaxonName, sourceTaxonId);
-                    Specimen target = nodeFactory.createSpecimen(study, targetTaxonName, targetTaxonId);
-                    source.interactsWith(target, type, getOrCreateLocation(parser, study));
-                }
-            }
+            final Map<String, String> link = new TreeMap<String, String>();
+            link.put(REFERENCE_CITATION, parser.getValueByLabel(REFERENCE_CITATION));
+            link.put(REFERENCE_DOI, StringUtils.replace(parser.getValueByLabel("referenceDoi"), " ", ""));
+            link.put(STUDY_SOURCE_CITATION, (sourceCitation == null ? "" : sourceCitation + ". ") + ReferenceUtil.createLastAccessedString(dataUrl));
+            link.put(REFERENCE_ID, repo + parser.getValueByLabel(REFERENCE_CITATION));
+            link.put(SOURCE_TAXON_ID, StringUtils.trimToNull(parser.getValueByLabel(SOURCE_TAXON_ID)));
+            link.put(SOURCE_TAXON_NAME, StringUtils.trim(parser.getValueByLabel(SOURCE_TAXON_NAME)));
+            link.put(TARGET_TAXON_ID, StringUtils.trimToNull(parser.getValueByLabel(TARGET_TAXON_ID)));
+            link.put(TARGET_TAXON_NAME, StringUtils.trim(parser.getValueByLabel(TARGET_TAXON_NAME)));
+            link.put(INTERACTION_TYPE_ID, StringUtils.trim(parser.getValueByLabel(INTERACTION_TYPE_ID)));
+            link.put(DECIMAL_LATITUDE, StringUtils.trim(parser.getValueByLabel(DECIMAL_LATITUDE)));
+            link.put(DECIMAL_LONGITUDE, StringUtils.trim(parser.getValueByLabel(DECIMAL_LONGITUDE)));
+            link.put(LOCALITY_ID, StringUtils.trim(parser.getValueByLabel(LOCALITY_ID)));
+            interactionListenerNeo4j.newLink(link);
         }
-    }
-
-    private Location getOrCreateLocation(LabeledCSVParser parser, Study study) throws IOException, NodeFactoryException {
-        LatLng centroid = null;
-        String latitude = StringUtils.trim(parser.getValueByLabel("decimalLatitude"));
-        String longitude = StringUtils.trim(parser.getValueByLabel("decimalLongitude"));
-        if (StringUtils.isNotBlank(latitude) && StringUtils.isNotBlank(longitude)) {
-            try {
-                centroid = LocationUtil.parseLatLng(latitude, longitude);
-            } catch (InvalidLocationException e) {
-                getLogger().warn(study, "found invalid location: [" + e.getMessage() + "]");
-            }
-        }
-        if (centroid == null) {
-            String localityId = StringUtils.trim(parser.getValueByLabel("localityId"));
-            if (StringUtils.isNotBlank(localityId)) {
-                centroid = getGeoNamesService().findLatLng(localityId);
-            }
-        }
-        return centroid == null ? null : nodeFactory.getOrCreateLocation(centroid.getLat(), centroid.getLng(), null);
     }
 
     public String getRepositoryName() {
@@ -101,4 +90,5 @@ public class StudyImporterForTSV extends BaseStudyImporter {
     public void setRepositoryName(String repositoryName) {
         this.repositoryName = repositoryName;
     }
+
 }

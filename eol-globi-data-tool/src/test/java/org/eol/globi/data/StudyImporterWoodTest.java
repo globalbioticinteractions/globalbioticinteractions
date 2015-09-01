@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import static org.eol.globi.data.StudyImporterForTSV.*;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
@@ -15,7 +16,7 @@ import static org.junit.Assert.assertThat;
 public class StudyImporterWoodTest extends GraphDBTestCase {
 
     @Test
-    public void importLines() throws IOException {
+    public void importLines() throws IOException, StudyImporterException {
         final List<Map<String, String>> maps = new ArrayList<Map<String, String>>();
 
         StudyImporterWood.importLinks(IOUtils.toInputStream(firstFewLines()), new InteractionListener() {
@@ -27,29 +28,29 @@ public class StudyImporterWoodTest extends GraphDBTestCase {
         });
         assertThat(maps.size(), is(5));
         Map<String, String> firstLink = maps.get(0);
-        assertThat(firstLink.get("source_taxon_external_id"), is("ITIS:93294"));
-        assertThat(firstLink.get("source_taxon_name"), is("Amphipoda"));
-        assertThat(firstLink.get("target_taxon_external_id"), is("ITIS:10824"));
-        assertThat(firstLink.get("target_taxon_name"), is("Pilayella littoralis"));
+        assertThat(firstLink.get(StudyImporterForTSV.SOURCE_TAXON_ID), is("ITIS:93294"));
+        assertThat(firstLink.get(StudyImporterForTSV.SOURCE_TAXON_NAME), is("Amphipoda"));
+        assertThat(firstLink.get(StudyImporterForTSV.TARGET_TAXON_ID), is("ITIS:10824"));
+        assertThat(firstLink.get(StudyImporterForTSV.TARGET_TAXON_NAME), is("Pilayella littoralis"));
         assertStaticInfo(firstLink);
 
         Map<String, String> secondLink = maps.get(1);
-        assertThat(secondLink.get("source_taxon_external_id"), is(nullValue()));
-        assertThat(secondLink.get("source_taxon_name"), is("Phytoplankton complex"));
+        assertThat(secondLink.get(StudyImporterForTSV.SOURCE_TAXON_ID), is(nullValue()));
+        assertThat(secondLink.get(StudyImporterForTSV.SOURCE_TAXON_NAME), is("Phytoplankton complex"));
         assertStaticInfo(secondLink);
     }
 
     protected void assertStaticInfo(Map<String, String> firstLink) {
-        assertThat(firstLink.get("study_source_citation"), is("Wood SA, Russell R, Hanson D, Williams RJ, Dunne JA (2015) Data from: Effects of spatial scale of sampling on food web structure. Dryad Digital Repository. http://dx.doi.org/10.5061/dryad.g1qr6"));
-        assertThat(firstLink.get("study_citation"), is("Wood SA, Russell R, Hanson D, Williams RJ, Dunne JA (2015) Effects of spatial scale of sampling on food web structure. Ecology and Evolution, online in advance of print. http://dx.doi.org/10.1002/ece3.1640"));
-        assertThat(firstLink.get("study_doi"), is("doi:10.1002/ece3.1640"));
-        assertThat(firstLink.get("study_url"), is("http://dx.doi.org/10.1002/ece3.1640"));
-        assertThat(firstLink.get("locality_name"), is("Sanak Island, Alaska, USA"));
-        assertThat(firstLink.get("locality_id"), is("GEONAMES:5873327"));
-        assertThat(firstLink.get("longitude"), is("-162.70889"));
-        assertThat(firstLink.get("latitude"), is("54.42972"));
-        assertThat(firstLink.get("interaction_type_id"), is("RO:0002439"));
-        assertThat(firstLink.get("interaction_type_name"), is("preysOn"));
+        assertThat(firstLink.get(STUDY_SOURCE_CITATION), is("Wood SA, Russell R, Hanson D, Williams RJ, Dunne JA (2015) Data from: Effects of spatial scale of sampling on food web structure. Dryad Digital Repository. http://dx.doi.org/10.5061/dryad.g1qr6"));
+        assertThat(firstLink.get(REFERENCE_CITATION), is("Wood SA, Russell R, Hanson D, Williams RJ, Dunne JA (2015) Effects of spatial scale of sampling on food web structure. Ecology and Evolution, online in advance of print. http://dx.doi.org/10.1002/ece3.1640"));
+        assertThat(firstLink.get(REFERENCE_DOI), is("doi:10.1002/ece3.1640"));
+        assertThat(firstLink.get(REFERENCE_URL), is("http://dx.doi.org/10.1002/ece3.1640"));
+        assertThat(firstLink.get(LOCALITY_NAME), is("Sanak Island, Alaska, USA"));
+        assertThat(firstLink.get(LOCALITY_ID), is("GEONAMES:5873327"));
+        assertThat(firstLink.get(DECIMAL_LONGITUDE), is("-162.70889"));
+        assertThat(firstLink.get(DECIMAL_LATITUDE), is("54.42972"));
+        assertThat(firstLink.get(INTERACTION_TYPE_ID), is("RO:0002439"));
+        assertThat(firstLink.get(INTERACTION_TYPE_NAME), is("preysOn"));
     }
 
     private String firstFewLines() {
