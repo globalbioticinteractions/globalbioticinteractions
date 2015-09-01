@@ -4,6 +4,7 @@ import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -15,7 +16,15 @@ public class StudyImporterWoodTest extends GraphDBTestCase {
 
     @Test
     public void importLines() throws IOException {
-        List<Map<String, String>> maps = StudyImporterWood.importLinks(IOUtils.toInputStream(firstFewLines()));
+        final List<Map<String, String>> maps = new ArrayList<Map<String, String>>();
+
+        StudyImporterWood.importLinks(IOUtils.toInputStream(firstFewLines()), new InteractionListener() {
+
+            @Override
+            public void newLink(final Map<String, String> properties) {
+                maps.add(properties);
+            }
+        });
         assertThat(maps.size(), is(5));
         Map<String, String> firstLink = maps.get(0);
         assertThat(firstLink.get("source_taxon_external_id"), is("ITIS:93294"));

@@ -43,17 +43,14 @@ public class StudyImporterSzoboszlai extends BaseStudyImporter {
         return null;
     }
 
-    protected List<Map<String, String>> importLinks(InputStream is) throws IOException {
+    protected void importLinks(InputStream is, InteractionListener interactionListener) throws IOException {
         LabeledCSVParser parser = new LabeledCSVParser(new CSVParser(is));
-
-        ArrayList<Map<String, String>> mappedLines = new ArrayList<Map<String, String>>();
         while (parser.getLine() != null) {
             Map<String, String> e = importLink(parser);
             if (e != null) {
-                mappedLines.add(e);
+                interactionListener.newLink(e);
             }
         }
-        return mappedLines;
     }
 
     protected Map<String, String> importLink(LabeledCSVParser parser) throws IOException {

@@ -14,6 +14,7 @@ import org.opengis.feature.simple.SimpleFeatureType;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -36,7 +37,13 @@ public class StudyImporterSzoboszlaiTest extends GraphDBTestCase {
     @Test
     public void importLines() throws IOException {
         StudyImporterSzoboszlai studyImporterSzoboszlai = new StudyImporterSzoboszlai(new ParserFactoryImpl(), nodeFactory);
-        List<Map<String, String>> maps = studyImporterSzoboszlai.importLinks(IOUtils.toInputStream(firstFewLines()));
+        final List<Map<String, String>> maps = new ArrayList<Map<String, String>>();
+        studyImporterSzoboszlai.importLinks(IOUtils.toInputStream(firstFewLines()), new InteractionListener(){
+            @Override
+            public void newLink(Map<String, String> properties) {
+                maps.add(properties);
+            }
+        });
         assertThat(maps.size(), is(4));
         Map<String, String> firstLink = maps.get(0);
         assertThat(firstLink.get("source_taxon_external_id"), is(nullValue()));

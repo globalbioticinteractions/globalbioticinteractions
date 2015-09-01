@@ -23,17 +23,15 @@ public class StudyImporterWood extends BaseStudyImporter {
         return null;
     }
 
-    public static List<Map<String, String>> importLinks(InputStream inputStream) throws IOException {
+    public static void importLinks(InputStream inputStream, InteractionListener interactionListener) throws IOException {
         LabeledCSVParser parser = new LabeledCSVParser(new CSVParser(inputStream));
 
-        ArrayList<Map<String, String>> mappedLines = new ArrayList<Map<String, String>>();
         while (parser.getLine() != null) {
             Map<String, String> e = importLink(parser);
             if (e != null) {
-                mappedLines.add(e);
+                interactionListener.newLink(e);
             }
         }
-        return mappedLines;
     }
 
 
