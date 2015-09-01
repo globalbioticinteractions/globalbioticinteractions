@@ -60,17 +60,16 @@ public class StudyImporterForTSV extends BaseStudyImporter {
     }
 
 
-    private void importRepository(String repo, String sourceCitation, String baseUrl) throws IOException, NodeFactoryException, StudyImporterException {
+    private void importRepository(String namespace, String sourceCitation, String baseUrl) throws IOException, NodeFactoryException, StudyImporterException {
         InteractionListenerNeo4j interactionListenerNeo4j = new InteractionListenerNeo4j(nodeFactory, getGeoNamesService(), getLogger());
-        String dataUrl = baseUrl + "/interactions.tsv";
-        LabeledCSVParser parser = parserFactory.createParser(dataUrl, "UTF-8");
+        LabeledCSVParser parser = parserFactory.createParser(baseUrl + "/interactions.tsv", "UTF-8");
         parser.changeDelimiter('\t');
         while (parser.getLine() != null) {
             final Map<String, String> link = new TreeMap<String, String>();
             link.put(REFERENCE_CITATION, parser.getValueByLabel(REFERENCE_CITATION));
             link.put(REFERENCE_DOI, StringUtils.replace(parser.getValueByLabel("referenceDoi"), " ", ""));
-            link.put(STUDY_SOURCE_CITATION, (sourceCitation == null ? "" : sourceCitation + ". ") + ReferenceUtil.createLastAccessedString(dataUrl));
-            link.put(REFERENCE_ID, repo + parser.getValueByLabel(REFERENCE_CITATION));
+            link.put(STUDY_SOURCE_CITATION, (sourceCitation == null ? "" : sourceCitation + ". ") + ReferenceUtil.createLastAccessedString(baseUrl + "/interactions.tsv"));
+            link.put(REFERENCE_ID, namespace + parser.getValueByLabel(REFERENCE_CITATION));
             link.put(SOURCE_TAXON_ID, StringUtils.trimToNull(parser.getValueByLabel(SOURCE_TAXON_ID)));
             link.put(SOURCE_TAXON_NAME, StringUtils.trim(parser.getValueByLabel(SOURCE_TAXON_NAME)));
             link.put(TARGET_TAXON_ID, StringUtils.trimToNull(parser.getValueByLabel(TARGET_TAXON_ID)));

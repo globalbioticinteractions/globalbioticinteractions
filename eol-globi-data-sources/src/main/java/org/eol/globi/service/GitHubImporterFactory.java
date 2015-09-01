@@ -63,19 +63,13 @@ public class GitHubImporterFactory {
                 final String sourceDOI = desc.has("doi") ? desc.get("doi").asText() : "";
                 String format = desc.has("format") ? desc.get("format").asText() : "globi";
                 if ("globi".equals(format)) {
-                    importer = new StudyImporterForTSV(parserFactory, nodeFactory) {
-                        {
-                            setBaseUrl(baseUrl);
-                            setSourceCitation(citation);
-                            setRepositoryName(repo);
-                        }
-                    };
+                    importer = createTSVImporter(repo, baseUrl, parserFactory, nodeFactory, citation);
                 } else if ("gomexsi".equals(format)) {
                     importer = createGoMexSIImporter(baseUrl, citation, parserFactory, nodeFactory);
                 } else if ("hechinger".equals(format)) {
                     importer = createHechingerImporter(repo, desc, citation, sourceDOI, parserFactory, nodeFactory);
                 } else if ("seltmann".equals(format)) {
-                    importer = getStudyImporterForSeltmann(repo, desc, parserFactory, nodeFactory);
+                    importer = createSeltmannImporter(repo, desc, parserFactory, nodeFactory);
                 } else {
                     throw new StudyImporterException("unsupported format [" + format + "]");
                 }
@@ -84,7 +78,19 @@ public class GitHubImporterFactory {
             return importer;
         }
 
-        private StudyImporterForSeltmann getStudyImporterForSeltmann(String repo, JsonNode desc,final ParserFactory parserFactory, final NodeFactory nodeFactory) throws StudyImporterException {
+    private StudyImporter createTSVImporter(final String repo, final String baseUrl, final ParserFactory parserFactory, final NodeFactory nodeFactory, final String citation) {
+        StudyImporter importer;
+        importer = new StudyImporterForTSV(parserFactory, nodeFactory) {
+            {
+                setBaseUrl(baseUrl);
+                setSourceCitation(citation);
+                setRepositoryName(repo);
+            }
+        };
+        return importer;
+    }
+
+    private StudyImporterForSeltmann createSeltmannImporter(String repo, JsonNode desc, final ParserFactory parserFactory, final NodeFactory nodeFactory) throws StudyImporterException {
             StudyImporterForSeltmann studyImporterForSeltmann = new StudyImporterForSeltmann(parserFactory, nodeFactory);
             final String archiveURL = desc.has("archiveURL") ? desc.get("archiveURL").asText() : "";
             if (StringUtils.isBlank(archiveURL)) {
