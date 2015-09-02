@@ -28,6 +28,7 @@ public class StudyImporterForStrona extends BaseStudyImporter {
             Study study = nodeFactory.getOrCreateStudy2("strona2013"
                     , SOURCE + " . " + ReferenceUtil.createLastAccessedString(RESOURCE_PATH)
                     , "http://dx.doi.org/10.1890/12-1419.1");
+            study.setCitationWithTx(SOURCE);
             while (dataParser.getLine() != null) {
                 if (importFilter.shouldImportRecord((long) dataParser.getLastLineNumber())) {
                     try {

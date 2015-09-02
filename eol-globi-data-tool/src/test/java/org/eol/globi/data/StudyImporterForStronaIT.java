@@ -32,7 +32,10 @@ public class StudyImporterForStronaIT extends GraphDBTestCase {
         assertThat(nodeFactory.findTaxonByName("Aidablennius sphynx"), is(notNullValue()));
         assertThat(nodeFactory.findTaxonByName("Acanthocephaloides incrassatus"), is(notNullValue()));
 
-        assertThat(allStudies.get(0).getSource(), containsString(" Accessed at"));
+        Study study = allStudies.get(0);
+        assertThat(study.getSource(), containsString(" Accessed at"));
+        assertThat(study.getCitation(), containsString("http://dx.doi.org/10.1890/12-1419.1"));
+        assertThat(study.getCitation(), containsString("Strona"));
     }
 
 
