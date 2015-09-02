@@ -1,6 +1,8 @@
 package org.eol.globi.data;
 
 import org.apache.commons.io.IOUtils;
+import org.eol.globi.domain.Term;
+import org.eol.globi.geo.LatLng;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -33,9 +35,12 @@ public class StudyImporterForWoodTest extends GraphDBTestCase {
 
     @Test
     public void importLines() throws IOException, StudyImporterException {
+        StudyImporterForWood wood = new StudyImporterForWood(new ParserFactoryImpl(), nodeFactory);
+        wood.setLocation(new LatLng(54.42972, -162.70889));
+        wood.setLocality(new Term("GEONAMES:5873327", "Sanak Island, Alaska, USA"));
         final List<Map<String, String>> maps = new ArrayList<Map<String, String>>();
 
-        StudyImporterForWood.importLinks(IOUtils.toInputStream(firstFewLines()), new InteractionListener() {
+        wood.importLinks(IOUtils.toInputStream(firstFewLines()), new InteractionListener() {
 
             @Override
             public void newLink(final Map<String, String> properties) {
@@ -59,8 +64,8 @@ public class StudyImporterForWoodTest extends GraphDBTestCase {
     protected void assertStaticInfo(Map<String, String> firstLink) {
         assertThat(firstLink.get(STUDY_SOURCE_CITATION), containsString("Wood SA, Russell R, Hanson D, Williams RJ, Dunne JA (2015) Data from: Effects of spatial scale of sampling on food web structure. Dryad Digital Repository. http://dx.doi.org/10.5061/dryad.g1qr6"));
         assertThat(firstLink.get(STUDY_SOURCE_CITATION), containsString("Accessed at"));
-        assertThat(firstLink.get(REFERENCE_CITATION), is("Wood SA, Russell R, Hanson D, Williams RJ, Dunne JA (2015) Effects of spatial scale of sampling on food web structure. Ecology and Evolution, online in advance of print. http://dx.doi.org/10.1002/ece3.1640"));
-        assertThat(firstLink.get(REFERENCE_DOI), is("doi:10.1002/ece3.1640"));
+        assertThat(firstLink.get(REFERENCE_CITATION), containsString("Wood SA, Russell R, Hanson D, Williams RJ, Dunne JA (2015) Data from: Effects of spatial scale of sampling on food web structure. Dryad Digital Repository. http://dx.doi.org/10.5061/dryad.g1qr6"));
+        assertThat(firstLink.get(REFERENCE_DOI), is("http://dx.doi.org/10.1002/ece3.1640"));
         assertThat(firstLink.get(REFERENCE_URL), is("http://dx.doi.org/10.1002/ece3.1640"));
         assertThat(firstLink.get(LOCALITY_NAME), is("Sanak Island, Alaska, USA"));
         assertThat(firstLink.get(LOCALITY_ID), is("GEONAMES:5873327"));

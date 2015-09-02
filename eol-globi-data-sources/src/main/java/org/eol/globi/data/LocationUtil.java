@@ -48,7 +48,7 @@ public class LocationUtil {
             double lng = Double.parseDouble(longitude);
             if (!isValidLatitude(lat)) {
                 throw new InvalidLocationException("range of latitude [" + latitude + "] not valid");
-            } else if (!isValidLatitude(lng)) {
+            } else if (!isValidLongitude(lng)) {
                 throw new InvalidLocationException("range of longitude [" + longitude + "] not valid");
             }
             if (isValidLatitude(lat) && isValidLongitude(lng)) {

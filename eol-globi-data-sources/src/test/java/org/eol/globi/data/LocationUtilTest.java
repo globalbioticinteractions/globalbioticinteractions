@@ -37,4 +37,11 @@ public class LocationUtilTest {
         assertThat(actual.getLng(), is(13.0));
     }
 
+    @Test
+    public void parseValidLngLat() throws InvalidLocationException {
+        LatLng actual = LocationUtil.parseLatLng("12.0", "-120.0");
+        assertThat(actual.getLat(), is(12.0));
+        assertThat(actual.getLng(), is(-120.0));
+    }
+
 }

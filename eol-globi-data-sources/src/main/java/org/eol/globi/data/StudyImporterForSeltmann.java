@@ -51,9 +51,7 @@ public class StudyImporterForSeltmann extends BaseStudyImporter {
                 .make();
 
         try {
-            LOG.info("download [" + getArchiveURL() + "] started...");
             InputStream inputStream = ResourceUtil.asInputStream(getArchiveURL(), StudyImporterForSeltmann.class);
-            LOG.info("download [" + getArchiveURL() + "] complete.");
             ZipInputStream zipInputStream = new ZipInputStream(inputStream);
             ZipEntry entry;
             File assocTempFile = null;
