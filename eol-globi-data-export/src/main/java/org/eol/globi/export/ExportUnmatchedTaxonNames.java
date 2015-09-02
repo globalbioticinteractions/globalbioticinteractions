@@ -1,23 +1,16 @@
 package org.eol.globi.export;
 
-import com.Ostermiller.util.CSVPrint;
-import com.Ostermiller.util.ExcelCSVPrinter;
 import org.eol.globi.domain.Study;
-import org.eol.globi.util.CSVUtil;
 import org.neo4j.cypher.javacompat.ExecutionEngine;
-import org.neo4j.cypher.javacompat.ExecutionResult;
 
 import java.io.IOException;
 import java.io.Writer;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class ExportUnmatchedTaxonNames implements StudyExporter {
 
     @Override
     public void exportStudy(final Study study, Writer writer, boolean includeHeader) throws IOException {
-        ExecutionEngine engine = new ExecutionEngine(study.getUnderlyingNode().getGraphDatabase());
 
         String query = "START study = node:studies(title={study_title}) " +
                 "MATCH study-[:COLLECTED]->specimen-[:CLASSIFIED_AS]->taxon " +
@@ -38,21 +31,7 @@ public class ExportUnmatchedTaxonNames implements StudyExporter {
             put("study_title", study.getTitle());
         }};
 
-        ExecutionResult rows = engine.execute(query, params);
-
-        CSVPrint printer = CSVUtil.createCSVPrint(writer);
-        List<String> columns = rows.columns();
-        if (includeHeader) {
-            printer.print(columns.toArray(new String[columns.size()]));
-        }
-
-        for (Map<String, Object> row : rows) {
-            printer.println();
-            for (String column : columns) {
-                Object value = row.get(column);
-                printer.print(value == null ? "" : value.toString());
-            }
-        }
+        ExportUtil.writeResults(writer, study.getUnderlyingNode().getGraphDatabase(), query, params);
     }
 
 }

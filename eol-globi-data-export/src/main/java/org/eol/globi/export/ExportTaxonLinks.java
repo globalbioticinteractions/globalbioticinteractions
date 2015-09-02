@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.HashMap;
 
-public class ExportTaxonNames implements StudyExporter {
+public class ExportTaxonLinks implements StudyExporter {
 
     @Override
     public void exportStudy(final Study study, Writer writer, boolean includeHeader) throws IOException {
@@ -19,17 +19,14 @@ public class ExportTaxonNames implements StudyExporter {
     protected void doExport(Study study, Writer writer) {
         String query = "START taxon = node:taxons('*:*')\n" +
                 "MATCH taxon-[?:SAME_AS*0..1]->linkedTaxon\n" +
-                "RETURN linkedTaxon.externalId? as id" +
-                ", linkedTaxon.name? as name" +
-                ", linkedTaxon.rank? as rank" +
-                ", linkedTaxon.commonNames? as commonNames" +
-                ", linkedTaxon.path? as path" +
-                ", linkedTaxon.pathIds? as pathIds" +
-                ", linkedTaxon.pathNames? as pathNames";
+                "WITH linkedTaxon\n" +
+                "MATCH linkedTaxon-[:SAME_AS*1..2]-otherLinkedTaxon\n" +
+                "RETURN linkedTaxon.externalId? as `taxonId`, otherLinkedTaxon.externalId? as `otherTaxonId`";
 
         HashMap<String, Object> params = new HashMap<String, Object>() {{
         }};
 
         ExportUtil.writeResults(writer, study.getUnderlyingNode().getGraphDatabase(), query, params);
     }
+
 }
