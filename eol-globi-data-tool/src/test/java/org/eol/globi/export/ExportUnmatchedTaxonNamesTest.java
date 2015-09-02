@@ -59,7 +59,7 @@ public class ExportUnmatchedTaxonNamesTest extends GraphDBTestCase {
         study.setCitationWithTx("citation my study");
 
         factory.getOrCreateTaxon("Homo sapiens");
-        Specimen predatorSpecimen = factory.createSpecimen(study, "Homo sapiens");
+        Specimen predatorSpecimen = factory.createSpecimen(study, "Homo sapiens", "TEST:1234");
         factory.getOrCreateTaxon("Canis lupus");
         Specimen preySpecimen6 = nodeFactory.createSpecimen(study, "Canis lupus");
         predatorSpecimen.interactsWith(preySpecimen6, InteractType.ATE);
@@ -89,10 +89,10 @@ public class ExportUnmatchedTaxonNamesTest extends GraphDBTestCase {
 
         StringWriter writer = new StringWriter();
         new ExportUnmatchedTaxonNames().exportStudy(study, writer, true);
-        assertThat(writer.toString(), is("unmatched taxon name(s),name status,similar to taxon name,similar to taxon path,similar to taxon id,study,source" +
-                        "\nCaniz,,,,,citation my study,my first source" +
-                        "\nHomo sapiens2,,,,,citation my study,my first source" +
-                        "\nHomo sapiens3,,,,,citation my study,my first source"
+        assertThat(writer.toString(), is("unmatched taxon name,unmatched taxon id,name status,similar to taxon name,similar to taxon path,similar to taxon id,study,source" +
+                        "\nCaniz,,,,,,citation my study,my first source" +
+                        "\nHomo sapiens2,,,,,,citation my study,my first source" +
+                        "\nHomo sapiens3,no:match,,,,,citation my study,my first source"
         ));
     }
 
@@ -141,10 +141,10 @@ public class ExportUnmatchedTaxonNamesTest extends GraphDBTestCase {
 
         StringWriter writer = new StringWriter();
         new ExportUnmatchedTaxonNames().exportStudy(study, writer, true);
-        assertThat(writer.toString(), is("unmatched taxon name(s),name status,similar to taxon name,similar to taxon path,similar to taxon id,study,source" +
-                        "\nHomo sapienz,,Homo sapiens,one | two | Homo sapiens,TESTING:123,,my first source" +
-                        "\nCaniz,,,,,,my first source" +
-                        "\nCanis,,,,,,my first source"
+        assertThat(writer.toString(), is("unmatched taxon name,unmatched taxon id,name status,similar to taxon name,similar to taxon path,similar to taxon id,study,source" +
+                        "\nHomo sapienz,,,Homo sapiens,one | two | Homo sapiens,TESTING:123,,my first source" +
+                        "\nCaniz,,,,,,,my first source" +
+                        "\nCanis,,,,,,,my first source"
         ));
     }
 

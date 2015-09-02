@@ -18,7 +18,8 @@ public class ExportUnmatchedTaxonNames implements StudyExporter {
                 "WHERE not(has(dtaxon.path)) AND otherTaxon = null " +
                 "WITH dtaxon, otherTaxon, study " +
                 "MATCH study-[:COLLECTED]->specimen-[:CLASSIFIED_AS]->dtaxon, specimen-[:ORIGINALLY_DESCRIBED_AS]->origTaxon, dtaxon-[?:SIMILAR_TO]->ftaxon\n" +
-                "RETURN distinct(origTaxon.name) as `unmatched taxon name(s)`" +
+                "RETURN distinct(origTaxon.name) as `unmatched taxon name`" +
+                ", origTaxon.externalId? as `unmatched taxon id`" +
                 ", dtaxon.statusLabel? as `name status`" +
                 ", ftaxon.name? as `similar to taxon name`" +
                 ", ftaxon.path? as `similar to taxon path`" +
