@@ -13,11 +13,13 @@ import java.util.Map;
 
 public final class ExportUtil {
 
-    public static void writeResults(Writer writer, GraphDatabaseService dbService, String query, HashMap<String, Object> params) {
+    public static void writeResults(Writer writer, GraphDatabaseService dbService, String query, HashMap<String, Object> params, boolean includeHeader) {
         ExecutionResult rows = new ExecutionEngine(dbService).execute(query, params);
         CSVPrint printer = CSVUtil.createCSVPrint(writer);
         List<String> columns = rows.columns();
-        printer.print(columns.toArray(new String[columns.size()]));
+        if (includeHeader) {
+            printer.print(columns.toArray(new String[columns.size()]));
+        }
 
         for (Map<String, Object> row : rows) {
             printer.println();

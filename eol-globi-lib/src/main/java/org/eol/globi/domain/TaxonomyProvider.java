@@ -38,6 +38,8 @@ public enum TaxonomyProvider {
     public static final String ID_PREFIX_USKI = "UKSI:";
     public static final String ID_PREFIX_GBIF = GBIF.getIdPrefix();
     public static final String ID_PREFIX_AUSTRALIAN_FAUNAL_DIRECTORY = AUSTRALIAN_FAUNAL_DIRECTORY.getIdPrefix();
+    public static final String ID_PREFIX_INDEX_FUNGORUM = INDEX_FUNGORUM.getIdPrefix();
+    public static final String ID_PREFIX_NCBI = NCBI.getIdPrefix();
     public static final String ID_PREFIX_NBN = NBN.getIdPrefix();
 
     public static final String ID_CMECS = "http://cmecscatalog.org/classification/aquaticSetting/";

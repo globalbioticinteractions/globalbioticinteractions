@@ -1,7 +1,6 @@
 package org.eol.globi.export;
 
 import org.eol.globi.domain.Study;
-import org.neo4j.cypher.javacompat.ExecutionEngine;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -30,6 +29,6 @@ public class ExportTaxonNames implements StudyExporter {
         HashMap<String, Object> params = new HashMap<String, Object>() {{
         }};
 
-        ExportUtil.writeResults(writer, study.getUnderlyingNode().getGraphDatabase(), query, params);
+        ExportUtil.writeResults(writer, study.getUnderlyingNode().getGraphDatabase(), query, params, true);
     }
 }
