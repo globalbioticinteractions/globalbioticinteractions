@@ -15,7 +15,7 @@ import java.util.TreeMap;
 
 public class StudyImporterForWood extends BaseStudyImporter {
 
-    private String archiveURL;
+    private String linksURL;
 
     private LatLng location;
     private Term locality;
@@ -24,15 +24,15 @@ public class StudyImporterForWood extends BaseStudyImporter {
         super(parserFactory, nodeFactory);
         setSourceCitation("Wood SA, Russell R, Hanson D, Williams RJ, Dunne JA (2015) Data from: Effects of spatial scale of sampling on food web structure. Dryad Digital Repository. http://dx.doi.org/10.5061/dryad.g1qr6");
         setSourceDOI("http://dx.doi.org/10.1002/ece3.1640");
-        setArchiveURL("http://datadryad.org/bitstream/handle/10255/dryad.93018/WoodEtal_Append1_v2.csv");
+        setLinksURL("http://datadryad.org/bitstream/handle/10255/dryad.93018/WoodEtal_Append1_v2.csv");
     }
 
     @Override
     public Study importStudy() throws StudyImporterException {
         try {
-            importLinks(ResourceUtil.asInputStream(getArchiveURL(), null), new InteractionListenerNeo4j(nodeFactory, getGeoNamesService(), getLogger()), getFilter());
+            importLinks(ResourceUtil.asInputStream(getLinksURL(), null), new InteractionListenerNeo4j(nodeFactory, getGeoNamesService(), getLogger()), getFilter());
         } catch (IOException e) {
-            throw new StudyImporterException("failed to find: [" + getArchiveURL() + "]");
+            throw new StudyImporterException("failed to find: [" + getLinksURL() + "]");
         }
         return null;
     }
@@ -55,7 +55,7 @@ public class StudyImporterForWood extends BaseStudyImporter {
         link.put(StudyImporterForTSV.SOURCE_TAXON_NAME, parser.getValueByLabel("PredName"));
         addTSN(parser, link, "PreyTSN", StudyImporterForTSV.TARGET_TAXON_ID);
         link.put(StudyImporterForTSV.TARGET_TAXON_NAME, parser.getValueByLabel("PreyName"));
-        link.put(StudyImporterForTSV.STUDY_SOURCE_CITATION, getSourceCitation() + ReferenceUtil.createLastAccessedString(getArchiveURL()));
+        link.put(StudyImporterForTSV.STUDY_SOURCE_CITATION, getSourceCitation() + ReferenceUtil.createLastAccessedString(getLinksURL()));
         link.put(StudyImporterForTSV.REFERENCE_CITATION, getSourceCitation());
         link.put(StudyImporterForTSV.REFERENCE_ID, getSourceDOI());
         link.put(StudyImporterForTSV.REFERENCE_DOI, getSourceDOI());
@@ -80,12 +80,12 @@ public class StudyImporterForWood extends BaseStudyImporter {
         }
     }
 
-    public void setArchiveURL(String archiveURL) {
-        this.archiveURL = archiveURL;
+    public void setLinksURL(String linksURL) {
+        this.linksURL = linksURL;
     }
 
-    public String getArchiveURL() {
-        return archiveURL;
+    public String getLinksURL() {
+        return linksURL;
     }
 
     public void setLocation(LatLng location) {

@@ -126,7 +126,12 @@ public class GitHubImporterFactory {
             }
             studyImporter.setLocation(parseLocation(desc));
             studyImporter.setLocality(parseLocality(desc));
-            studyImporter.setArchiveURL(archiveURL);
+            if (desc.has("resources")) {
+                JsonNode resources = desc.get("resources");
+                if (resources.has("links")) {
+                    studyImporter.setLinksURL(resources.get("links").asText());
+                }
+            }
         }
         return studyImporter;
     }

@@ -83,9 +83,8 @@ public class StudyImporterForSzoboszlaiTest extends GraphDBTestCase {
         assertThat(firstLink.get(REFERENCE_DOI), is(nullValue()));
         assertThat(firstLink.get(REFERENCE_URL), is(nullValue()));
         assertThat(firstLink.get(LOCALITY_NAME), is("USA, CA"));
-        assertThat(firstLink.get(LOCALITY_ID), is("SZOB:2361"));
-        assertThat(firstLink.get(DECIMAL_LONGITUDE), is(notNullValue()));
-        assertThat(firstLink.get(DECIMAL_LATITUDE), is(notNullValue()));
+        assertThat(firstLink.get(DECIMAL_LONGITUDE), is("-120.72716166720323"));
+        assertThat(firstLink.get(DECIMAL_LATITUDE), is("34.00824202376044"));
         assertThat(firstLink.get(INTERACTION_TYPE_ID), is("RO:0002439"));
         assertThat(firstLink.get(INTERACTION_TYPE_NAME), is("preysOn"));
     }
