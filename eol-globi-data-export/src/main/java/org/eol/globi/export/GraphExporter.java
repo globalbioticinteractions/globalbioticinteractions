@@ -35,21 +35,22 @@ public class GraphExporter {
         }
         List<Study> studies = NodeUtil.findAllStudies(graphService);
 //        exportDataOntology(studies, baseDir);
-        exportUnmatchedTaxa(studies, baseDir);
+        exportNames(studies, baseDir, new ExportUnmatchedTaxonNames(), "unmatchedTaxa.csv");
+        exportNames(studies, baseDir, new ExportTaxonNames(), "taxa.csv");
         exportDarwinCoreAggregatedByStudyRollUp(baseDir, studies);
         exportDarwinCoreAggregatedByStudy(baseDir, studies);
         exportDarwinCoreAll(baseDir, studies);
     }
 
-    private void exportUnmatchedTaxa(List<Study> studies, String baseDir) throws StudyImporterException {
+    private void exportNames(List<Study> studies, String baseDir, StudyExporter exporter, String filename) throws StudyImporterException {
         try {
-            String filePath = baseDir + "unmatchedTaxa.csv";
-            OutputStreamWriter writer1 = openStream(filePath);
-            for (Study importedStudy1 : studies) {
-                boolean includeHeader1 = studies.indexOf(importedStudy1) == 0;
-                new StudyExportUnmatchedTaxaForStudies().exportStudy(importedStudy1, writer1, includeHeader1);
+            String filePath = baseDir + filename;
+            OutputStreamWriter writer = openStream(filePath);
+            for (Study study : studies) {
+                boolean includeHeader = studies.indexOf(study) == 0;
+                exporter.exportStudy(study, writer, includeHeader);
             }
-            closeStream(filePath, writer1);
+            closeStream(filePath, writer);
         } catch (IOException e) {
             throw new StudyImporterException("failed to export unmatched source taxa", e);
         }

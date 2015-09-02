@@ -13,8 +13,10 @@ import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
+import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.service.PropertyEnricher;
 import org.eol.globi.service.TaxonUtil;
+import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Transaction;
@@ -27,9 +29,7 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
-public class StudyExportUnmatchedTaxaForStudiesTest extends GraphDBTestCase {
-
-    public static final String EXPECTED_HEADER = "original taxon name,original taxon external id,unmatched normalized taxon name,unmatched normalized taxon external id,study,source";
+public class ExportUnmatchedTaxonNamesTest extends GraphDBTestCase {
 
     @Test
     public void exportOnePredatorTwoPrey() throws NodeFactoryException, IOException {
@@ -56,6 +56,7 @@ public class StudyExportUnmatchedTaxaForStudiesTest extends GraphDBTestCase {
         NodeFactory factory = factory(taxonEnricher);
         String title = "my study\"";
         Study study = factory.getOrCreateStudy2(title, "my first source", null);
+        study.setCitationWithTx("citation my study");
 
         factory.getOrCreateTaxon("Homo sapiens");
         Specimen predatorSpecimen = factory.createSpecimen(study, "Homo sapiens");
@@ -76,6 +77,7 @@ public class StudyExportUnmatchedTaxaForStudiesTest extends GraphDBTestCase {
         predatorSpecimen22.interactsWith(preySpecimen3, InteractType.ATE);
 
         Study study2 = factory.getOrCreateStudy2("my study2", "my source2", null);
+        study2.setCitationWithTx("citation study2");
         Specimen predatorSpecimen21 = factory.createSpecimen(study2, "Homo sapiens2");
         Specimen preySpecimen2 = nodeFactory.createSpecimen(study2, "Canis lupus");
         predatorSpecimen21.interactsWith(preySpecimen2, InteractType.ATE);
@@ -86,11 +88,11 @@ public class StudyExportUnmatchedTaxaForStudiesTest extends GraphDBTestCase {
 
 
         StringWriter writer = new StringWriter();
-        new StudyExportUnmatchedTaxaForStudies().exportStudy(study, writer, true);
-        assertThat(writer.toString(), is(EXPECTED_HEADER + "\n" +
-                        "Caniz,,Caniz,no:match,\"my study\"\"\",my first source\n" +
-                        "Homo sapiens2,,Homo sapiens2,no:match,\"my study\"\"\",my first source\n" +
-                        "Homo sapiens3,no:match,Homo sapiens3,no:match,\"my study\"\"\",my first source\n"
+        new ExportUnmatchedTaxonNames().exportStudy(study, writer, true);
+        assertThat(writer.toString(), is("unmatched taxon name(s),name status,similar to taxon name,similar to taxon path,similar to taxon id,study,source" +
+                        "\nCaniz,,,,,citation my study,my first source" +
+                        "\nHomo sapiens2,,,,,citation my study,my first source" +
+                        "\nHomo sapiens3,,,,,citation my study,my first source"
         ));
     }
 
@@ -115,7 +117,11 @@ public class StudyExportUnmatchedTaxaForStudiesTest extends GraphDBTestCase {
         Study study = factory.getOrCreateStudy2("my study", "my first source", null);
 
         Specimen predatorSpecimen = factory.createSpecimen(study, "Homo sapienz");
-        assertNotNull(factory.getOrCreateTaxon("Homo sapienz"));
+        TaxonNode humanz = factory.getOrCreateTaxon("Homo sapienz");
+        TaxonImpl taxon = new TaxonImpl("Homo sapiens", "TESTING:123");
+        taxon.setPath("one | two | Homo sapiens");
+        NodeUtil.connectTaxa(taxon, humanz, getGraphDb(), RelTypes.SIMILAR_TO);
+        assertNotNull(humanz);
         Specimen preySpecimen = factory.createSpecimen(study, "Caniz");
         predatorSpecimen.interactsWith(preySpecimen, InteractType.ATE);
 
@@ -134,11 +140,11 @@ public class StudyExportUnmatchedTaxaForStudiesTest extends GraphDBTestCase {
         predatorSpecimen.ate(preySpecimen);
 
         StringWriter writer = new StringWriter();
-        new StudyExportUnmatchedTaxaForStudies().exportStudy(study, writer, true);
-        assertThat(writer.toString(), is(EXPECTED_HEADER + "\n" +
-                        "Homo sapienz,,Homo sapienz,no:match,my study,my first source\n" +
-                        "Caniz,,Caniz,no:match,my study,my first source\n" +
-                        "Canis,,Canis,no:match,my study,my first source\n"
+        new ExportUnmatchedTaxonNames().exportStudy(study, writer, true);
+        assertThat(writer.toString(), is("unmatched taxon name(s),name status,similar to taxon name,similar to taxon path,similar to taxon id,study,source" +
+                        "\nHomo sapienz,,Homo sapiens,one | two | Homo sapiens,TESTING:123,,my first source" +
+                        "\nCaniz,,,,,,my first source" +
+                        "\nCanis,,,,,,my first source"
         ));
     }
 
