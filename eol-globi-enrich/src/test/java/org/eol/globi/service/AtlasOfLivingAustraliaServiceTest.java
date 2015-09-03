@@ -1,7 +1,7 @@
 package org.eol.globi.service;
 
 import org.eol.globi.domain.PropertyAndValueDictionary;
-import org.junit.Ignore;
+import org.eol.globi.util.ExternalIdUtil;
 import org.junit.Test;
 
 import java.util.Collections;
@@ -69,6 +69,24 @@ public class AtlasOfLivingAustraliaServiceTest {
         assertThat(enrich.get(PropertyAndValueDictionary.PATH), is("Animalia | Chordata | Mammalia | Diprotodontia | Macropodidae | Macropus | Macropus rufus"));
         assertThat(enrich.get(PropertyAndValueDictionary.PATH_NAMES), is("kingdom | phylum | class | order | family | genus | species"));
         assertThat(enrich.get(PropertyAndValueDictionary.COMMON_NAMES), is("Red Kangaroo @en"));
+    }
+
+    @Test
+    public void lookupByNameYieldingInvalidBiodiversityAustraliaTaxon() throws PropertyEnricherException {
+        HashMap<String, String> props = new HashMap<String, String>();
+        props.put(PropertyAndValueDictionary.NAME, "Spermacoce");
+        Map<String, String> enrich = new AtlasOfLivingAustraliaService().enrich(props);
+
+        assertThat(enrich.get(PropertyAndValueDictionary.NAME), is("Spermacoce"));
+        String actualExternalId = enrich.get(PropertyAndValueDictionary.EXTERNAL_ID);
+        assertThat(actualExternalId, is("urn:lsid:biodiversity.org.au:apni.taxon:698136"));
+        assertThat(enrich.get(PropertyAndValueDictionary.PATH), is("Plantae | Charophyta | Equisetopsida | Gentianales | Rubiaceae | Spermacoce | "));
+        assertThat(enrich.get(PropertyAndValueDictionary.PATH_NAMES), is("kingdom | phylum | class | order | family | genus | species"));
+        assertThat(enrich.get(PropertyAndValueDictionary.COMMON_NAMES), is(nullValue()));
+
+        assertThat(ExternalIdUtil.urlForExternalId(actualExternalId), is("http://biodiversity.org.au/apni.taxon/698136"));
+        // seems to direct to https://biodiversity.org.au/nsl/services/instance/apni/750345
+        // however, the link at https://biodiversity.org.au/nsl/services/instance/apni/698136 describes "Soleirolia"
     }
 
     @Test
