@@ -1,6 +1,7 @@
 package org.eol.globi.service;
 
 import org.eol.globi.domain.PropertyAndValueDictionary;
+import org.eol.globi.util.ExternalIdUtil;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -30,6 +31,7 @@ public class GulfBaseServiceTest {
         assertThat(enrich.get(PropertyAndValueDictionary.PATH), is("Animalia | Chordata | Vertebrata | Actinopterygii | Siluriformes | Ariidae | Ariopsis | Ariopsis felis"));
         assertThat(enrich.get(PropertyAndValueDictionary.PATH_NAMES), is("kingdom | phylum | subphylum | class | order | family | genus | species"));
         assertThat(enrich.get(PropertyAndValueDictionary.EXTERNAL_ID), is("BioGoMx:Spp-75-0281"));
+        assertThat(ExternalIdUtil.urlForExternalId("BioGoMx:Spp-75-0281"), is("http://gulfbase.org/biogomx/biospecies.php?species=Spp-75-0281"));
     }
 
     @Test

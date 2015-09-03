@@ -12,23 +12,40 @@ import static org.junit.Assert.assertThat;
 
 public class TaxonLookupServiceImplTest {
 
-
     @Test
     public void createIndexDoLookup() throws IOException {
-        TaxonLookupServiceImpl taxonLookupServiceImpl = new TaxonLookupServiceImpl(new RAMDirectory());
+        TaxonLookupServiceImpl service = new TaxonLookupServiceImpl(new RAMDirectory());
 
-        TaxonImportListener listener = taxonLookupServiceImpl;
-        listener.start();
-        listener.addTerm(new TaxonImpl("Homo sapiens", "1234"));
-        listener.addTerm(new TaxonImpl("Prefix Homo sapiens suffix", "12346"));
-        listener.finish();
+        service.start();
+        TaxonImpl term = new TaxonImpl("Homo sapiens", "1234");
+        term.setPath("one | two | three");
+        term.setPathIds("1 | 2 | 3");
+        term.setPathNames("name1 | name2 | name3");
+        term.setCommonNames("Mensch");
+        service.addTerm(term);
+        TaxonImpl term1 = new TaxonImpl("Prefix Homo sapiens suffix", "12346");
+        term1.setPathIds("1 | 2 | 3");
+        service.addTerm(term1);
+        service.finish();
 
-        Taxon[] ids = taxonLookupServiceImpl.lookupTermsByName("Homo sapiens");
+        Taxon[] ids = service.lookupTermsByName("Homo sapiens");
 
         assertThat(ids.length, Is.is(1));
         assertThat(ids[0].getExternalId(), Is.is("1234"));
 
-        taxonLookupServiceImpl.destroy();
+        ids = service.lookupTermsById("1234");
+
+        assertThat(ids.length, Is.is(1));
+        assertThat(ids[0].getExternalId(), Is.is("1234"));
+        assertThat(ids[0].getName(), Is.is("Homo sapiens"));
+        assertThat(ids[0].getCommonNames(), Is.is("Mensch"));
+        assertThat(ids[0].getPathIds(), Is.is("1 | 2 | 3"));
+        assertThat(ids[0].getPath(), Is.is("one | two | three"));
+        assertThat(ids[0].getPathNames(), Is.is("name1 | name2 | name3"));
+
+        assertThat(service.lookupTermsById("12346")[0].getPathIds(), Is.is("1 | 2 | 3"));
+
+        service.destroy();
     }
 
     @Test

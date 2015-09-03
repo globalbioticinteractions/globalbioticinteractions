@@ -29,7 +29,9 @@ public class TaxonLookupServiceImpl implements TaxonImportListener, TaxonLookupS
 
     private static final String FIELD_ID = "id";
     private static final String FIELD_NAME = "name";
+    private static final String FIELD_COMMON_NAMES = "common_names";
     private static final String FIELD_RANK_PATH = "rank_path";
+    private static final String FIELD_RANK_PATH_IDS = "rank_path_ids";
     private static final String FIELD_RANK_PATH_NAMES = "rank_path_names";
     private static final String FIELD_RECOMMENDED_NAME = "recommended_name";
 
@@ -61,9 +63,17 @@ public class TaxonLookupServiceImpl implements TaxonImportListener, TaxonLookupS
             if (rankPath != null) {
                 doc.add(new Field(FIELD_RANK_PATH, rankPath, Field.Store.YES, Field.Index.NOT_ANALYZED_NO_NORMS));
             }
+            String rankPathIds = taxonTerm.getPathIds();
+            if (rankPathIds != null) {
+                doc.add(new Field(FIELD_RANK_PATH_IDS, rankPathIds, Field.Store.YES, Field.Index.NOT_ANALYZED_NO_NORMS));
+            }
             String rankPathNames = taxonTerm.getPathNames();
             if (rankPathNames != null) {
                 doc.add(new Field(FIELD_RANK_PATH_NAMES, rankPathNames, Field.Store.YES, Field.Index.NOT_ANALYZED_NO_NORMS));
+            }
+            String commonNames = taxonTerm.getCommonNames();
+            if (commonNames != null) {
+                doc.add(new Field(FIELD_COMMON_NAMES, commonNames, Field.Store.YES, Field.Index.NOT_ANALYZED_NO_NORMS));
             }
             try {
                 indexWriter.addDocument(doc);
@@ -75,10 +85,19 @@ public class TaxonLookupServiceImpl implements TaxonImportListener, TaxonLookupS
 
     @Override
     public Taxon[] lookupTermsByName(String taxonName) throws IOException {
+        return findTaxon(FIELD_NAME, taxonName);
+    }
+
+    @Override
+    public Taxon[] lookupTermsById(String taxonId) throws IOException {
+        return findTaxon(FIELD_ID, taxonId);
+    }
+
+    protected Taxon[] findTaxon(String fieldName1, String fieldValue) throws IOException {
         Taxon[] terms = new TaxonImpl[0];
-        if (StringUtils.isNotBlank(taxonName) && indexSearcher != null) {
+        if (StringUtils.isNotBlank(fieldValue) && indexSearcher != null) {
             PhraseQuery query = new PhraseQuery();
-            query.add(new Term(FIELD_NAME, taxonName));
+            query.add(new Term(fieldName1, fieldValue));
             int maxHits = 3;
             TopDocs docs = indexSearcher.search(query, maxHits);
 
@@ -96,9 +115,17 @@ public class TaxonLookupServiceImpl implements TaxonImportListener, TaxonLookupS
                     if (rankPathField != null) {
                         term.setPath(rankPathField.stringValue());
                     }
+                    Fieldable rankPathIdsField = foundDoc.getFieldable(FIELD_RANK_PATH_IDS);
+                    if (rankPathIdsField != null) {
+                        term.setPathIds(rankPathIdsField.stringValue());
+                    }
                     Fieldable rankPathNamesField = foundDoc.getFieldable(FIELD_RANK_PATH_NAMES);
-                    if (rankPathField != null) {
+                    if (rankPathNamesField != null) {
                         term.setPathNames(rankPathNamesField.stringValue());
+                    }
+                    Fieldable commonNamesFields = foundDoc.getFieldable(FIELD_COMMON_NAMES);
+                    if (commonNamesFields != null) {
+                        term.setCommonNames(commonNamesFields.stringValue());
                     }
                     Fieldable fieldName = foundDoc.getFieldable(FIELD_RECOMMENDED_NAME);
                     if (fieldName != null) {
