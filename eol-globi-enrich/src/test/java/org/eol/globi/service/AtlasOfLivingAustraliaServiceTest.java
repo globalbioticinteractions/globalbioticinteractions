@@ -72,7 +72,7 @@ public class AtlasOfLivingAustraliaServiceTest {
     }
 
     @Test
-    public void lookupByNameYieldingInvalidBiodiversityAustraliaTaxon() throws PropertyEnricherException {
+    public void lookupByNameSpermacoce() throws PropertyEnricherException {
         HashMap<String, String> props = new HashMap<String, String>();
         props.put(PropertyAndValueDictionary.NAME, "Spermacoce");
         Map<String, String> enrich = new AtlasOfLivingAustraliaService().enrich(props);
@@ -82,11 +82,10 @@ public class AtlasOfLivingAustraliaServiceTest {
         assertThat(actualExternalId, is("urn:lsid:biodiversity.org.au:apni.taxon:698136"));
         assertThat(enrich.get(PropertyAndValueDictionary.PATH), is("Plantae | Charophyta | Equisetopsida | Gentianales | Rubiaceae | Spermacoce | "));
         assertThat(enrich.get(PropertyAndValueDictionary.PATH_NAMES), is("kingdom | phylum | class | order | family | genus | species"));
+        assertThat(enrich.get(PropertyAndValueDictionary.PATH_IDS), is("urn:lsid:biodiversity.org.au:apni.taxon:661518 | urn:lsid:biodiversity.org.au:apni.taxon:412162 | urn:lsid:biodiversity.org.au:apni.taxon:406945 | urn:lsid:biodiversity.org.au:apni.taxon:407079 | urn:lsid:biodiversity.org.au:apni.taxon:399724 | urn:lsid:biodiversity.org.au:apni.taxon:698136 | "));
         assertThat(enrich.get(PropertyAndValueDictionary.COMMON_NAMES), is(nullValue()));
 
         assertThat(ExternalIdUtil.urlForExternalId(actualExternalId), is("http://biodiversity.org.au/apni.taxon/698136"));
-        // seems to direct to https://biodiversity.org.au/nsl/services/instance/apni/750345
-        // however, the link at https://biodiversity.org.au/nsl/services/instance/apni/698136 describes "Soleirolia"
     }
 
     @Test

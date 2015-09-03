@@ -28,20 +28,20 @@ public class AtlasOfLivingAustraliaService implements PropertyEnricher {
     @Override
     public Map<String, String> enrich(final Map<String, String> properties) throws PropertyEnricherException {
         Map<String, String> enrichedProperties = new HashMap<String, String>(properties);
-            String externalId = properties.get(PropertyAndValueDictionary.EXTERNAL_ID);
-            if (StringUtils.isBlank(externalId) || hasSupportedExternalId(externalId)) {
-                if (needsEnrichment(properties)) {
-                    String guid = StringUtils.replace(externalId, TaxonomyProvider.ID_PREFIX_AUSTRALIAN_FAUNAL_DIRECTORY, AFD_TSN_PREFIX);
-                    String taxonName = properties.get(PropertyAndValueDictionary.NAME);
-                    if (StringUtils.isBlank(guid) && StringUtils.length(taxonName) > 2) {
-                        guid = findTaxonGUIDByName(taxonName);
-                    }
-                    if (StringUtils.isNotBlank(guid)) {
-                        Map<String, String> taxonInfo = findTaxonInfoByGUID(guid);
-                        enrichedProperties.putAll(taxonInfo);
-                    }
+        String externalId = properties.get(PropertyAndValueDictionary.EXTERNAL_ID);
+        if (StringUtils.isBlank(externalId) || hasSupportedExternalId(externalId)) {
+            if (needsEnrichment(properties)) {
+                String guid = StringUtils.replace(externalId, TaxonomyProvider.ID_PREFIX_AUSTRALIAN_FAUNAL_DIRECTORY, AFD_TSN_PREFIX);
+                String taxonName = properties.get(PropertyAndValueDictionary.NAME);
+                if (StringUtils.isBlank(guid) && StringUtils.length(taxonName) > 2) {
+                    guid = findTaxonGUIDByName(taxonName);
+                }
+                if (StringUtils.isNotBlank(guid)) {
+                    Map<String, String> taxonInfo = findTaxonInfoByGUID(guid);
+                    enrichedProperties.putAll(taxonInfo);
                 }
             }
+        }
         return enrichedProperties;
     }
 
@@ -144,11 +144,6 @@ public class AtlasOfLivingAustraliaService implements PropertyEnricher {
             info.put(PropertyAndValueDictionary.NAME, classification.get("scientificName").getTextValue());
         }
 
-        String[] ranks = new String[]{
-                "kingdom", "phylum", "clazz", "order", "family", "genus", "species"
-        };
-        List<String> path = new ArrayList<String>();
-        List<String> pathNames = new ArrayList<String>();
         if (classification.has("rank")) {
             String rank = classification.get("rank").getTextValue();
             info.put(PropertyAndValueDictionary.RANK, getRankString(rank));
@@ -160,14 +155,29 @@ public class AtlasOfLivingAustraliaService implements PropertyEnricher {
             info.put(PropertyAndValueDictionary.EXTERNAL_ID, externalId);
         }
 
+        String[] ranks = new String[]{
+                "kingdom", "phylum", "clazz", "order", "family", "genus", "species"
+        };
+        List<String> path = new ArrayList<String>();
+        List<String> pathIds = new ArrayList<String>();
+        List<String> pathNames = new ArrayList<String>();
+
         for (String rank : ranks) {
             if (classification.has(rank)) {
                 String textValue = classification.get(rank).getTextValue();
                 path.add(StringUtils.capitalize(StringUtils.lowerCase(textValue)));
                 pathNames.add(getRankString(rank));
+                String guid = "";
+                String guidName = rank + "Guid";
+                if (classification.has(guidName)) {
+                    guid = StringUtils.trim(classification.get(guidName).asText());
+                }
+                pathIds.add(guid);
             }
         }
+
         info.put(PropertyAndValueDictionary.PATH, StringUtils.join(path, CharsetConstant.SEPARATOR));
+        info.put(PropertyAndValueDictionary.PATH_IDS, StringUtils.join(pathIds, CharsetConstant.SEPARATOR));
         info.put(PropertyAndValueDictionary.PATH_NAMES, StringUtils.join(pathNames, CharsetConstant.SEPARATOR));
         return info;
     }

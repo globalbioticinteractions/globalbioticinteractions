@@ -45,11 +45,11 @@ public class ExternalIdUtil {
             put(TaxonomyProvider.ID_PREFIX_GBIF, "http://www.gbif.org/species/");
             put(TaxonomyProvider.ID_PREFIX_INATURALIST, "http://www.inaturalist.org/observations/");
             put(TaxonomyProvider.ID_PREFIX_AUSTRALIAN_FAUNAL_DIRECTORY, "http://www.environment.gov.au/biodiversity/abrs/online-resources/fauna/afd/taxa/");
+            put(TaxonomyProvider.ID_PREFIX_BIODIVERSITY_AUSTRALIA, "http://biodiversity.org.au/apni.taxon/");
             put(TaxonomyProvider.ID_PREFIX_INDEX_FUNGORUM, "http://www.indexfungorum.org/names/NamesRecord.asp?RecordID=");
             put(TaxonomyProvider.ID_PREFIX_NCBI, "https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=");
             put(TaxonomyProvider.ID_PREFIX_NBN, "https://data.nbn.org.uk/Taxa/");
             put(TaxonomyProvider.ID_PREFIX_DOI, "http://dx.doi.org/");
-            put(TaxonomyProvider.ID_PREFIX_BIODIVERSITY_AUSTRALIA, "http://biodiversity.org.au/apni.taxon/");
             put(TaxonomyProvider.ID_PREFIX_HTTP, TaxonomyProvider.ID_PREFIX_HTTP);
         }};
     }
