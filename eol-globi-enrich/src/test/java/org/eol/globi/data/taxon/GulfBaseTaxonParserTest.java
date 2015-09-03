@@ -32,20 +32,13 @@ public class GulfBaseTaxonParserTest {
             }
         }
 
-        assertThat(terms.size(), is(10));
+        assertThat(terms.size(), is(1));
 
         Taxon taxonTerm = terms.get(0);
         assertThat(taxonTerm.getExternalId(), is("BioGoMx:Spp-29-0002"));
         assertThat(taxonTerm.getRank(), is(nullValue()));
         assertThat(taxonTerm.getName(), is("Carinoma tremaphoros"));
         assertThat(taxonTerm.getPath(), is("Animalia | Nemertea | Paleonemertea | Carinoma | Carinoma tremaphoros"));
-        assertThat(taxonTerm.getPathNames(), is("kingdom | phylum | order | genus | species"));
-
-        taxonTerm = terms.get(2);
-        assertThat(taxonTerm.getExternalId(), is("BioGoMx:Spp-29-0004"));
-        assertThat(taxonTerm.getRank(), is(nullValue()));
-        assertThat(taxonTerm.getName(), is("Tubulanus sp."));
-        assertThat(taxonTerm.getPath(), is("Animalia | Nemertea | Paleonemertea | Tubulanus | Tubulanus sp."));
         assertThat(taxonTerm.getPathNames(), is("kingdom | phylum | order | genus | species"));
 
         assertThat(listener.count, is(taxonParser.getExpectedMaxTerms()));
@@ -92,7 +85,7 @@ public class GulfBaseTaxonParserTest {
 
         @Override
         public void addTerm(Taxon taxonTerm) {
-            if (terms.size() < 10) {
+            if ("BioGoMx:Spp-29-0002".equals(taxonTerm.getExternalId())) {
                 terms.add(taxonTerm);
             }
             count++;
