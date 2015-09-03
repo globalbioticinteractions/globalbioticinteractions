@@ -5,6 +5,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.data.CharsetConstant;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
+import org.eol.globi.domain.TaxonomyProvider;
 import org.eol.globi.util.CSVUtil;
 
 import java.io.BufferedReader;
@@ -33,7 +34,7 @@ public class GulfBaseTaxonParser implements TaxonParser {
                 }
             }
             Taxon term = new TaxonImpl();
-            term.setExternalId(labeledCSVParser.getValueByLabel("Species number"));
+            term.setExternalId(TaxonomyProvider.ID_PREFIX_GULFBASE + labeledCSVParser.getValueByLabel("Species number"));
             String taxonName = labeledCSVParser.getValueByLabel("Scientific name");
             pathNames.add("species");
             path.add(taxonName);

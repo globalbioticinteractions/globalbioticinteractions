@@ -47,4 +47,17 @@ public class GulfBaseServiceTest {
         assertThat(enrich.get(PropertyAndValueDictionary.EXTERNAL_ID), is("BioGoMx:Spp-26-0003"));
     }
 
+    @Test
+    public void lookupById() throws PropertyEnricherException {
+        GulfBaseService gulfBaseService = new GulfBaseService();
+        HashMap<String, String> m = new HashMap<String, String>();
+        m.put(PropertyAndValueDictionary.EXTERNAL_ID, "BioGoMx:Spp-26-0003");
+        Map<String, String> properties = Collections.unmodifiableMap(m);
+        Map<String, String> enrich = gulfBaseService.enrich(properties);
+        assertThat(enrich.get(PropertyAndValueDictionary.NAME), is("Haplognathia rosea"));
+        assertThat(enrich.get(PropertyAndValueDictionary.PATH), is("Animalia | Gnathostomulida | Filospermoidea | Haplognathiidae | Haplognathia | Haplognathia rosea"));
+        assertThat(enrich.get(PropertyAndValueDictionary.PATH_NAMES), is("kingdom | phylum | order | family | genus | species"));
+        assertThat(enrich.get(PropertyAndValueDictionary.EXTERNAL_ID), is("BioGoMx:Spp-26-0003"));
+    }
+
 }

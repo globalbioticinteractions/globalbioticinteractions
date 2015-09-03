@@ -14,17 +14,4 @@ public class GulfBaseService extends OfflineService {
         return new TaxonomyImporter(new GulfBaseTaxonParser(), new GulfBaseTaxonReaderFactory());
     }
 
-    @Override
-    protected String getValueForPropertyName(String propertyName, Taxon term) {
-        String value = null;
-        if (PropertyAndValueDictionary.EXTERNAL_ID.equals(propertyName)) {
-            value = TaxonomyProvider.ID_PREFIX_GULFBASE + term.getExternalId();
-        } else if (PropertyAndValueDictionary.PATH.equals(propertyName)) {
-            value = term.getPath();
-        } else if (PropertyAndValueDictionary.PATH_NAMES.equals(propertyName)) {
-            value = term.getPathNames();
-        }
-        return value;
-    }
-
 }

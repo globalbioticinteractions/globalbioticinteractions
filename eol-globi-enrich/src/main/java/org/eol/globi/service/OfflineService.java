@@ -8,10 +8,8 @@ import org.eol.globi.data.taxon.TaxonLookupService;
 import org.eol.globi.data.taxon.TaxonomyImporter;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Taxon;
-import org.eol.globi.util.NodeUtil;
 
 import java.io.IOException;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,43 +19,59 @@ public abstract class OfflineService implements PropertyEnricher {
 
     @Override
     public Map<String, String> enrich(Map<String, String> properties) throws PropertyEnricherException {
-        Map<String, String> enrichedProperties = new HashMap<String, String>(properties);
-        String taxonName = properties.get(PropertyAndValueDictionary.NAME);
-        if (StringUtils.isNotBlank(taxonName)) {
-            lookupProperty(taxonName, enrichedProperties, PropertyAndValueDictionary.EXTERNAL_ID);
-            lookupProperty(taxonName, enrichedProperties, PropertyAndValueDictionary.PATH);
-            lookupProperty(taxonName, enrichedProperties, PropertyAndValueDictionary.PATH_NAMES);
-        }
-        return Collections.unmodifiableMap(new HashMap<String, String>(enrichedProperties));
-    }
-
-    private void lookupProperty(String taxonName, Map<String, String> properties, String propertyName) throws PropertyEnricherException {
         if (null == taxonLookupService) {
             lazyInit();
         }
-        try {
-            Taxon[] taxonTerms = taxonLookupService.lookupTermsByName(taxonName);
-            Taxon first = taxonTerms.length == 0 ? null : taxonTerms[0];
-            if (taxonTerms.length > 1) {
-                LOG.warn("found more than one matches for name [" + taxonName + "] in [" + getServiceName() + "], choosing first one with id [" + first.getExternalId() + "]");
-            }
-            String propertyValue = null;
-            if (first != null) {
-                propertyValue = getValueForPropertyName(propertyName, first);
-            }
-            if (StringUtils.isNotBlank(propertyValue)) {
-                properties.put(propertyName, propertyValue);
-            }
-        } catch (IOException e) {
-            throw new PropertyEnricherException("lookup for property with name [" + propertyName + "] failed for [" + getServiceName() + "].", e);
+        Map<String, String> enrichedProperties = enrichById(properties);
+        if (enrichedProperties == null) {
+            enrichedProperties = enrichByName(properties);
         }
+        return enrichedProperties == null ? new HashMap<String, String>(properties) : enrichedProperties;
+    }
+
+    protected Map<String, String> enrichByName(Map<String, String> properties) throws PropertyEnricherException {
+        Map<String, String> enrichedProperties = null;
+        String propertyName = PropertyAndValueDictionary.NAME;
+        String taxonName = properties.get(propertyName);
+        if (StringUtils.isNotBlank(taxonName)) {
+            try {
+                enrichedProperties = toEnrichedProperies(propertyName, taxonLookupService.lookupTermsByName(taxonName));
+            } catch (IOException e) {
+                throw new PropertyEnricherException("failed to lookup [" + taxonName + "]", e);
+            }
+        }
+        return enrichedProperties;
+    }
+
+    protected Map<String, String> enrichById(Map<String, String> properties) throws PropertyEnricherException {
+        Map<String, String> enrichedProperties = null;
+        String propertyName = PropertyAndValueDictionary.EXTERNAL_ID;
+        String taxonExternalId = properties.get(propertyName);
+        if (StringUtils.isNotBlank(taxonExternalId)) {
+            try {
+                enrichedProperties = toEnrichedProperies(propertyName, taxonLookupService.lookupTermsById(taxonExternalId));
+            } catch (IOException e) {
+                throw new PropertyEnricherException("failed to lookup [" + taxonExternalId + "]", e);
+            }
+        }
+        return enrichedProperties;
+    }
+
+    protected Map<String, String> toEnrichedProperies(String propertyValue, Taxon[] taxa) {
+        Map<String, String> enrichedProperties = null;
+        Taxon first = taxa.length == 0 ? null : taxa[0];
+        if (taxa.length > 1) {
+            LOG.warn("found more than one matches for [" + propertyValue + "] in [" + getServiceName() + "], choosing first one with id [" + first.getExternalId() + "]");
+        }
+        if (first != null) {
+            enrichedProperties = TaxonUtil.taxonToMap(first);
+        }
+        return enrichedProperties;
     }
 
     protected String getServiceName() {
         return getClass().getSimpleName();
     }
-
-    protected abstract String getValueForPropertyName(String propertyName, Taxon first);
 
     private void lazyInit() throws PropertyEnricherException {
         LOG.info("lazy init of taxonomy index [" + getServiceName() + "] started...");
@@ -78,14 +92,5 @@ public abstract class OfflineService implements PropertyEnricher {
         if (taxonLookupService != null) {
             taxonLookupService.destroy();
         }
-    }
-
-    public String lookupPropertyValueByTaxonName(String taxonName, final String propertyName) throws PropertyEnricherException {
-        HashMap<String, String> properties = new HashMap<String, String>() {{
-            put(propertyName, null);
-        }};
-        properties.put(PropertyAndValueDictionary.NAME, taxonName);
-        enrich(properties);
-        return properties.get(propertyName);
     }
 }
