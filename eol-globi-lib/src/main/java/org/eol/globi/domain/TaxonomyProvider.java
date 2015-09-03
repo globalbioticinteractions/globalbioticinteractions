@@ -11,6 +11,7 @@ public enum TaxonomyProvider {
     ENVO("ENVO:"),
     GBIF("GBIF:"),
     AUSTRALIAN_FAUNAL_DIRECTORY("AFD:"),
+    BIODIVERSITY_AUSTRALIA("urn:lsid:biodiversity.org.au:apni.taxon:"),
     INTERIM_REGISTER_OF_MARINE_AND_NONMARINE_GENERA("IRMNG:"),
     INDEX_FUNGORUM("IF:"),
     OPEN_TREE_OF_LIFE("OTT:");
@@ -38,6 +39,7 @@ public enum TaxonomyProvider {
     public static final String ID_PREFIX_USKI = "UKSI:";
     public static final String ID_PREFIX_GBIF = GBIF.getIdPrefix();
     public static final String ID_PREFIX_AUSTRALIAN_FAUNAL_DIRECTORY = AUSTRALIAN_FAUNAL_DIRECTORY.getIdPrefix();
+    public static final String ID_PREFIX_BIODIVERSITY_AUSTRALIA = BIODIVERSITY_AUSTRALIA.getIdPrefix();
     public static final String ID_PREFIX_INDEX_FUNGORUM = INDEX_FUNGORUM.getIdPrefix();
     public static final String ID_PREFIX_NCBI = NCBI.getIdPrefix();
     public static final String ID_PREFIX_NBN = NBN.getIdPrefix();

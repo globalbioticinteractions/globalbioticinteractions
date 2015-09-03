@@ -50,7 +50,7 @@ public class ExporterReferences extends ExporterBase {
         properties.put(IDENTIFIER, referenceIdForStudy(study));
         properties.put(FULL_REFERENCE, referenceForStudy(study));
         properties.put(DOI, study.getDOI());
-        properties.put(URI, ExternalIdUtil.infoURLForExternalId(study.getExternalId()));
+        properties.put(URI, ExternalIdUtil.urlForExternalId(study.getExternalId()));
         writeProperties(writer, properties);
     }
 

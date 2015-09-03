@@ -237,7 +237,7 @@ public class StudyImporterForBioInfo extends BaseStudyImporter implements StudyI
                 sourceCitation, null);
         if (study != null) {
             study.setCitationWithTx(citation);
-            study.setExternalId(ExternalIdUtil.infoURLForExternalId(bioInfoId));
+            study.setExternalId(ExternalIdUtil.urlForExternalId(bioInfoId));
         }
         return study;
     }

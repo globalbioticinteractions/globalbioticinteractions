@@ -56,7 +56,7 @@ public class LittleTurtleExporter implements StudyExporter {
             Location location = specimen.getSampleLocation();
             if (location != null) {
                 for (Environment env : location.getEnvironments()) {
-                    String envoId = ExternalIdUtil.infoURLForExternalId(env.getExternalId());
+                    String envoId = ExternalIdUtil.urlForExternalId(env.getExternalId());
                     if (StringUtils.isNotBlank(envoId)) {
                         addLocation(agent, model.createResource(envoId), model);
                     }
@@ -102,7 +102,7 @@ public class LittleTurtleExporter implements StudyExporter {
     public Resource getTaxonAsNamedIndividual(Node endNode, Model model1) {
         TaxonNode taxonNode = new TaxonNode(endNode);
         String externalId = taxonNode.getExternalId();
-        String uriString = ExternalIdUtil.infoURLForExternalId(externalId);
+        String uriString = ExternalIdUtil.urlForExternalId(externalId);
         return StringUtils.isBlank(uriString)
                 ? null
                 : model1.createResource(uriString);

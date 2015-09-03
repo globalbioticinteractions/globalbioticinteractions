@@ -23,7 +23,7 @@ public abstract class ExporterTaxa extends ExporterBase {
         String taxonId = (String) result.get("taxonId");
 
         properties.put(EOLDictionary.TAXON_ID, taxonId);
-        String infoURL = ExternalIdUtil.infoURLForExternalId(taxonId);
+        String infoURL = ExternalIdUtil.urlForExternalId(taxonId);
         if (infoURL != null) {
             properties.put(EOLDictionary.FURTHER_INFORMATION_URL, infoURL);
         }

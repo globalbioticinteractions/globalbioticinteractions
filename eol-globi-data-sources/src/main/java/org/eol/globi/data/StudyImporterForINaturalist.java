@@ -247,7 +247,7 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
             createInverseAssociation(observationId, interactionDataType, interactionType, observation, targetTaxonName, sourceTaxonName, study, observationDate);
         }
         StringBuilder citation = buildCitation(observation, interactionType, targetTaxonName, sourceTaxonName, observationDate);
-        String url = ExternalIdUtil.infoURLForExternalId(TaxonomyProvider.ID_PREFIX_INATURALIST + observationId);
+        String url = ExternalIdUtil.urlForExternalId(TaxonomyProvider.ID_PREFIX_INATURALIST + observationId);
         citation.append(ReferenceUtil.createLastAccessedString(url));
         study.setCitationWithTx(citation.toString());
         study.setExternalId(url);

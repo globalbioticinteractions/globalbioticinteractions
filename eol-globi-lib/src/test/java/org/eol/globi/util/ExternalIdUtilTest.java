@@ -10,12 +10,12 @@ public class ExternalIdUtilTest {
 
     @Test
     public void mapping() {
-        assertThat(ExternalIdUtil.infoURLForExternalId("http://blabla"), is("http://blabla"));
-        assertThat(ExternalIdUtil.infoURLForExternalId("doi:someDOI"), is("http://dx.doi.org/someDOI"));
-        assertThat(ExternalIdUtil.infoURLForExternalId("ENVO:00001995"), is("http://purl.obolibrary.org/obo/ENVO_00001995"));
-        assertThat(ExternalIdUtil.infoURLForExternalId("bioinfo:ref:147884"), is("http://bioinfo.org.uk/html/b147884.htm"));
-        assertThat(ExternalIdUtil.infoURLForExternalId("IF:700605"), is("http://www.indexfungorum.org/names/NamesRecord.asp?RecordID=700605"));
-        assertThat(ExternalIdUtil.infoURLForExternalId("NCBI:7215"), is("https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7215"));
+        assertThat(ExternalIdUtil.urlForExternalId("http://blabla"), is("http://blabla"));
+        assertThat(ExternalIdUtil.urlForExternalId("doi:someDOI"), is("http://dx.doi.org/someDOI"));
+        assertThat(ExternalIdUtil.urlForExternalId("ENVO:00001995"), is("http://purl.obolibrary.org/obo/ENVO_00001995"));
+        assertThat(ExternalIdUtil.urlForExternalId("bioinfo:ref:147884"), is("http://bioinfo.org.uk/html/b147884.htm"));
+        assertThat(ExternalIdUtil.urlForExternalId("IF:700605"), is("http://www.indexfungorum.org/names/NamesRecord.asp?RecordID=700605"));
+        assertThat(ExternalIdUtil.urlForExternalId("NCBI:7215"), is("https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7215"));
     }
 
     @Test

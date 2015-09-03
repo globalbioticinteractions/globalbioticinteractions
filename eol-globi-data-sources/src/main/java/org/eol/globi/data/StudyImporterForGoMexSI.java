@@ -150,7 +150,7 @@ public class StudyImporterForGoMexSI extends BaseStudyImporter {
         Transaction transaction = study.getUnderlyingNode().getGraphDatabase().beginTx();
         try {
             if (StringUtils.isNotBlank(externalId)) {
-                study.setExternalId(ExternalIdUtil.infoURLForExternalId(TaxonomyProvider.ID_PREFIX_GAME + externalId));
+                study.setExternalId(ExternalIdUtil.urlForExternalId(TaxonomyProvider.ID_PREFIX_GAME + externalId));
             }
             transaction.success();
         } finally {

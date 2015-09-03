@@ -81,7 +81,7 @@ public class Study extends NodeBacked {
     public void setDOI(String doi) {
         setProperty(DOI, doi);
         if (StringUtils.isBlank(getExternalId())) {
-            setExternalId(ExternalIdUtil.infoURLForExternalId(doi));
+            setExternalId(ExternalIdUtil.urlForExternalId(doi));
         }
     }
 

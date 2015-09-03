@@ -33,7 +33,7 @@ public class EOLTaxonImageService implements ImageSearch {
         }
 
         if (image == null) {
-            String infoURL = ExternalIdUtil.infoURLForExternalId(externalId);
+            String infoURL = ExternalIdUtil.urlForExternalId(externalId);
             if (StringUtils.isNotBlank(infoURL)) {
                 image = new TaxonImage();
                 image.setInfoURL(infoURL);
@@ -68,7 +68,7 @@ public class EOLTaxonImageService implements ImageSearch {
             PageInfo pageInfo = getPageInfo(eolPageId);
             if (null != pageInfo) {
                 taxonImage = new TaxonImage();
-                String infoURL = ExternalIdUtil.infoURLForExternalId(TaxonomyProvider.EOL.getIdPrefix() + eolPageId);
+                String infoURL = ExternalIdUtil.urlForExternalId(TaxonomyProvider.EOL.getIdPrefix() + eolPageId);
                 taxonImage.setInfoURL(infoURL);
                 taxonImage.setPageId(eolPageId);
                 taxonImage.setCommonName(pageInfo.getCommonName());

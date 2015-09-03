@@ -50,7 +50,7 @@ public class CypherProxyController {
     @RequestMapping(value = "/findExternalUrlForExternalId/{externalId}", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
     public String findExternalLinkForExternalId(@PathVariable("externalId") String externalId) {
-        return ExternalIdUtil.buildJsonUrl(ExternalIdUtil.infoURLForExternalId(externalId));
+        return ExternalIdUtil.buildJsonUrl(ExternalIdUtil.urlForExternalId(externalId));
     }
 
     @RequestMapping(value = "/shortestPathsBetweenTaxon/{startTaxon}/andTaxon/{endTaxon}", method = RequestMethod.GET)

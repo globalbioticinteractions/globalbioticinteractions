@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 public class ExternalIdUtil {
-    public static String infoURLForExternalId(String externalId) {
+    public static String urlForExternalId(String externalId) {
         String url = null;
         if (externalId != null) {
             for (Map.Entry<String, String> idPrefixToUrlPrefix : getURLPrefixMap().entrySet()) {
@@ -49,6 +49,7 @@ public class ExternalIdUtil {
             put(TaxonomyProvider.ID_PREFIX_NCBI, "https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=");
             put(TaxonomyProvider.ID_PREFIX_NBN, "https://data.nbn.org.uk/Taxa/");
             put(TaxonomyProvider.ID_PREFIX_DOI, "http://dx.doi.org/");
+            put(TaxonomyProvider.ID_PREFIX_BIODIVERSITY_AUSTRALIA, "http://biodiversity.org.au/apni.taxon/");
             put(TaxonomyProvider.ID_PREFIX_HTTP, TaxonomyProvider.ID_PREFIX_HTTP);
         }};
     }
@@ -86,7 +87,7 @@ public class ExternalIdUtil {
         } catch (IOException e) {
             // ignore
         }
-        return buildJsonUrl(infoURLForExternalId(externalId));
+        return buildJsonUrl(urlForExternalId(externalId));
     }
 
     public static String buildJsonUrl(String url) {
