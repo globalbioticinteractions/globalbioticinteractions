@@ -56,7 +56,7 @@ public class GulfBaseTaxonParserTest {
 
         TaxonParser taxonParser = new GulfBaseTaxonParser();
         final List<Taxon> terms = new ArrayList<Taxon>();
-        TestTaxonImportListener listener = new TestTaxonImportListener(terms);
+        TestTaxonImportListener2 listener = new TestTaxonImportListener2(terms);
         taxonParser.parse(threeFirstLinesFromAcanthocephala_O, listener);
 
         assertThat(terms.size(), is(3));
@@ -86,6 +86,33 @@ public class GulfBaseTaxonParserTest {
         @Override
         public void addTerm(Taxon taxonTerm) {
             if ("BioGoMx:Spp-29-0002".equals(taxonTerm.getExternalId())) {
+                terms.add(taxonTerm);
+            }
+            count++;
+        }
+
+        @Override
+        public void start() {
+
+        }
+
+        @Override
+        public void finish() {
+
+        }
+    }
+
+    private static class TestTaxonImportListener2 implements TaxonImportListener {
+        private final List<Taxon> terms;
+        int count = 0;
+
+        public TestTaxonImportListener2(List<Taxon> terms) {
+            this.terms = terms;
+        }
+
+        @Override
+        public void addTerm(Taxon taxonTerm) {
+            if (count < 10) {
                 terms.add(taxonTerm);
             }
             count++;
