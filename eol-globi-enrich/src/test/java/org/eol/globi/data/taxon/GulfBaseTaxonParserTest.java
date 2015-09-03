@@ -35,18 +35,18 @@ public class GulfBaseTaxonParserTest {
         assertThat(terms.size(), is(10));
 
         Taxon taxonTerm = terms.get(0);
-        assertThat(taxonTerm.getExternalId(), is("Spp-26-0003"));
+        assertThat(taxonTerm.getExternalId(), is("BioGoMx:Spp-29-0002"));
         assertThat(taxonTerm.getRank(), is(nullValue()));
-        assertThat(taxonTerm.getName(), is("Haplognathia rosea"));
-        assertThat(taxonTerm.getPath(), is("Animalia | Gnathostomulida | Filospermoidea | Haplognathiidae | Haplognathia | Haplognathia rosea"));
-        assertThat(taxonTerm.getPathNames(), is("kingdom | phylum | order | family | genus | species"));
+        assertThat(taxonTerm.getName(), is("Carinoma tremaphoros"));
+        assertThat(taxonTerm.getPath(), is("Animalia | Nemertea | Paleonemertea | Carinoma | Carinoma tremaphoros"));
+        assertThat(taxonTerm.getPathNames(), is("kingdom | phylum | order | genus | species"));
 
         taxonTerm = terms.get(2);
-        assertThat(taxonTerm.getExternalId(), is("Spp-26-0005"));
+        assertThat(taxonTerm.getExternalId(), is("BioGoMx:Spp-29-0004"));
         assertThat(taxonTerm.getRank(), is(nullValue()));
-        assertThat(taxonTerm.getName(), is("Haplognathia cf. ruberrima"));
-        assertThat(taxonTerm.getPath(), is("Animalia | Gnathostomulida | Filospermoidea | Haplognathiidae | Haplognathia | Haplognathia cf. ruberrima"));
-        assertThat(taxonTerm.getPathNames(), is("kingdom | phylum | order | family | genus | species"));
+        assertThat(taxonTerm.getName(), is("Tubulanus sp."));
+        assertThat(taxonTerm.getPath(), is("Animalia | Nemertea | Paleonemertea | Tubulanus | Tubulanus sp."));
+        assertThat(taxonTerm.getPathNames(), is("kingdom | phylum | order | genus | species"));
 
         assertThat(listener.count, is(taxonParser.getExpectedMaxTerms()));
     }
@@ -69,13 +69,14 @@ public class GulfBaseTaxonParserTest {
         assertThat(terms.size(), is(3));
 
         Taxon taxonTerm = terms.get(0);
-        assertThat(taxonTerm.getExternalId(), is("Spp-28-0004"));
+        assertThat(taxonTerm.getExternalId(), is("BioGoMx:Spp-28-0004"));
         assertThat(taxonTerm.getRank(), is(nullValue()));
         assertThat(taxonTerm.getName(), is("Caballerorhynchus lamothei"));
         assertThat(taxonTerm.getPath(), is("Animalia | Acanthocephala | Palaeacanthocephala | Echinorhynchida | Cavisomidae | Caballerorhynchus | Caballerorhynchus lamothei"));
+        assertThat(taxonTerm.getPathNames(), is("kingdom | phylum | class | order | family | genus | species"));
 
         taxonTerm = terms.get(2);
-        assertThat(taxonTerm.getExternalId(), is("Spp-28-0007"));
+        assertThat(taxonTerm.getExternalId(), is("BioGoMx:Spp-28-0007"));
         assertThat(taxonTerm.getRank(), is(nullValue()));
         assertThat(taxonTerm.getName(), is("Filisoma fidum"));
         assertThat(taxonTerm.getPath(), is("Animalia | Acanthocephala | Palaeacanthocephala | Echinorhynchida | Cavisomidae | Filisoma | Filisoma fidum"));
