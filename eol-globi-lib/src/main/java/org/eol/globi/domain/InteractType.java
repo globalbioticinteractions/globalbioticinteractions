@@ -85,8 +85,8 @@ public enum InteractType implements RelType {
     DISPERSAL_VECTOR_OF("http://eol.org/schema/terms/DispersalVector"),
     HAS_DISPERAL_VECTOR("http://eol.org/schema/terms/HasDispersalVector"),
 
-    KILLED_BY(PropertyAndValueDictionary.NO_MATCH),
-    KILLS(PropertyAndValueDictionary.NO_MATCH);
+    KILLED_BY("http://eol.org/schema/terms/isKilledBy"),
+    KILLS("http://eol.org/schema/terms/kills");
 
     String iri;
 
