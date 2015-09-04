@@ -3,6 +3,7 @@ package org.eol.globi.data;
 import org.eol.globi.domain.Study;
 import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
+import org.neo4j.graphdb.Relationship;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -45,16 +46,22 @@ public class StudyImporterForPlanqueIT extends GraphDBTestCase {
         });
         importer.importStudy();
 
+        int interactionCount = 0;
         List<Study> studies = NodeUtil.findAllStudies(getGraphDb());
-        assertThat(studies.size(), is(194));
-        assertThat(nodeFactory.findTaxonByName("Sagitta elegans"), is(notNullValue()));
+        for (Study study : studies) {
+            Iterable<Relationship> specimenRels = study.getSpecimens();
+            for (Relationship specimenRel : specimenRels) {
+                interactionCount++;
+            }
+        }
+        assertThat(interactionCount, is(4900));
 
-        assertThat(errorMessages, hasItems("no full ref for [Ponomarenko 2009] on line [287], using short instead",
-                "no full ref for [Ponomarenko 2009] on line [288], using short instead",
-                "no full ref for [Ponomarenko 2009] on line [289], using short instead"));
+        int uniqueReference = 236;
 
-
-        assertThat(errorMessages.size(), is(3));
+        // note that the +1 is for all links that had no reference associated to it
+        assertThat(studies.size(), is(uniqueReference + 1));
+        assertThat(nodeFactory.findTaxonByName("Trisopterus esmarkii"), is(notNullValue()));
+        assertThat(errorMessages.size(), is(0));
     }
 
 }

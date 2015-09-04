@@ -15,7 +15,6 @@ public class StudyImporterFactory {
         add(StudyImporterForStrona.class);
         add(StudyImporterForBell.class);
         add(StudyImporterForHafner.class);
-        add(StudyImporterForPlanque.class);
         add(StudyImporterForBrose.class);
         add(StudyImporterForSIAD.class);
         add(StudyImporterForHurlbert.class);

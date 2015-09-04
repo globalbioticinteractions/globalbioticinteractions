@@ -4,6 +4,7 @@ import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.data.StudyImporter;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.data.StudyImporterForGoMexSI;
+import org.eol.globi.data.StudyImporterForPlanque;
 import org.eol.globi.data.StudyImporterForSzoboszlai;
 import org.eol.globi.data.StudyImporterForWood;
 import org.junit.Test;
@@ -45,6 +46,18 @@ public class GitHubImporterFactoryIT {
         StudyImporterForWood importerz = (StudyImporterForWood) importer;
         assertThat(importerz.getSourceCitation(), containsString("Wood"));
         assertThat(importerz.getLinksURL(), is(notNullValue()));
+    }
+
+    @Test
+    public void createPlanque() throws URISyntaxException, NodeFactoryException, StudyImporterException, IOException {
+        StudyImporter importer = new GitHubImporterFactory().createImporter("globalbioticinteractions/planque2014", null, null);
+        assertThat(importer, is(notNullValue()));
+        assertThat(importer, is(instanceOf(StudyImporterForPlanque.class)));
+        StudyImporterForPlanque importerz = (StudyImporterForPlanque) importer;
+        assertThat(importerz.getSourceCitation(), containsString("Planque"));
+        assertThat(importerz.getLinks(), is(notNullValue()));
+        assertThat(importerz.getReferences(), is(notNullValue()));
+        assertThat(importerz.getReferencesForLinks(), is(notNullValue()));
     }
 
 }
