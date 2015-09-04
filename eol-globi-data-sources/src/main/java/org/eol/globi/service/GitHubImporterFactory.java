@@ -74,9 +74,9 @@ public class GitHubImporterFactory {
             } else if ("seltmann".equals(format)) {
                 importer = createSeltmannImporter(repo, desc, parserFactory, nodeFactory);
             } else if ("wood".equals(format)) {
-                importer = createWoodImporter(repo, desc, parserFactory, nodeFactory);
+                importer = createWoodImporter(desc, parserFactory, nodeFactory);
             } else if ("szoboszlai".equals(format)) {
-                importer = createSzoboszlaiImporter(repo, desc, parserFactory, nodeFactory);
+                importer = createSzoboszlaiImporter(desc, parserFactory, nodeFactory);
             } else {
                 throw new StudyImporterException("unsupported format [" + format + "]");
             }
@@ -112,31 +112,26 @@ public class GitHubImporterFactory {
         return studyImporterForSeltmann;
     }
 
-    private StudyImporter createWoodImporter(String repo, JsonNode desc, final ParserFactory parserFactory, final NodeFactory nodeFactory) throws StudyImporterException {
+    private StudyImporter createWoodImporter(JsonNode desc, final ParserFactory parserFactory, final NodeFactory nodeFactory) throws StudyImporterException {
         StudyImporterForWood studyImporter = new StudyImporterForWood(parserFactory, nodeFactory);
-        final String archiveURL = parseArchiveURL(desc);
-        if (StringUtils.isBlank(archiveURL)) {
-            throw new StudyImporterException("failed to import [" + repo + "]: no [archiveURL] specified");
-        } else {
-            if (desc.has("doi")) {
-                studyImporter.setSourceDOI(desc.get("doi").asText());
-            }
-            if (desc.has("citation")) {
-                studyImporter.setSourceCitation(desc.get("citation").asText());
-            }
-            studyImporter.setLocation(parseLocation(desc));
-            studyImporter.setLocality(parseLocality(desc));
-            if (desc.has("resources")) {
-                JsonNode resources = desc.get("resources");
-                if (resources.has("links")) {
-                    studyImporter.setLinksURL(resources.get("links").asText());
-                }
+        if (desc.has("doi")) {
+            studyImporter.setSourceDOI(desc.get("doi").asText());
+        }
+        if (desc.has("citation")) {
+            studyImporter.setSourceCitation(desc.get("citation").asText());
+        }
+        studyImporter.setLocation(parseLocation(desc));
+        studyImporter.setLocality(parseLocality(desc));
+        if (desc.has("resources")) {
+            JsonNode resources = desc.get("resources");
+            if (resources.has("links")) {
+                studyImporter.setLinksURL(resources.get("links").asText());
             }
         }
         return studyImporter;
     }
 
-    private StudyImporter createSzoboszlaiImporter(String repo, JsonNode desc, final ParserFactory parserFactory, final NodeFactory nodeFactory) throws StudyImporterException {
+    private StudyImporter createSzoboszlaiImporter(JsonNode desc, final ParserFactory parserFactory, final NodeFactory nodeFactory) throws StudyImporterException {
         StudyImporterForSzoboszlai studyImporter = new StudyImporterForSzoboszlai(parserFactory, nodeFactory);
         if (desc.has("doi")) {
             studyImporter.setSourceDOI(desc.get("doi").asText());
