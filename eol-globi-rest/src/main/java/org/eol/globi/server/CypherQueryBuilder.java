@@ -103,33 +103,34 @@ public class CypherQueryBuilder {
 
     public static final String TAXON_HTTP_PARAM_NAME = "taxon";
 
-    private static final Map<String, String> DIRECTIONAL_INTERACTION_TYPE_MAP = new TreeMap<String, String>() {
+    private static final Map<String, InteractType> DIRECTIONAL_INTERACTION_TYPE_MAP = new TreeMap<String, InteractType>() {
         {
-            put(INTERACTION_PREYS_ON, InteractType.PREYS_UPON.toString());
-            put(INTERACTION_PREYED_UPON_BY, InteractType.PREYED_UPON_BY.toString());
-            put(INTERACTION_EATS, InteractType.ATE + "|" + InteractType.PREYS_UPON);
-            put(INTERACTION_EATEN_BY, InteractType.EATEN_BY + "|" + InteractType.PREYED_UPON_BY);
+            put(INTERACTION_PREYS_ON, InteractType.PREYS_UPON);
+            put(INTERACTION_PREYED_UPON_BY, InteractType.PREYED_UPON_BY);
+            put(INTERACTION_EATS, InteractType.ATE);
+            put(INTERACTION_EATEN_BY, InteractType.EATEN_BY);
 
-            put(INTERACTION_KILLS, InteractType.KILLS + "|" + InteractType.PREYS_UPON);
-            put(INTERACTION_KILLED_BY, InteractType.KILLED_BY + "|" + InteractType.PREYED_UPON_BY);
+            put(INTERACTION_KILLS, InteractType.KILLS);
+            put(INTERACTION_KILLED_BY, InteractType.KILLED_BY);
 
-            put(INTERACTION_VISITS_FLOWERS_OF, InteractType.VISITS_FLOWERS_OF + "|" + InteractType.POLLINATES);
-            put(INTERACTION_FLOWERS_VISITED_BY, InteractType.FLOWERS_VISITED_BY + "|" + InteractType.POLLINATED_BY);
-            put(INTERACTION_POLLINATES, InteractType.POLLINATES.toString());
-            put(INTERACTION_POLLINATED_BY, InteractType.POLLINATED_BY.toString());
+            put(INTERACTION_VISITS_FLOWERS_OF, InteractType.VISITS_FLOWERS_OF);
+            put(INTERACTION_FLOWERS_VISITED_BY, InteractType.FLOWERS_VISITED_BY);
+            put(INTERACTION_POLLINATES, InteractType.POLLINATES);
+            put(INTERACTION_POLLINATED_BY, InteractType.POLLINATED_BY);
 
-            put(INTERACTION_PARASITE_OF, InteractType.PARASITE_OF.toString());
-            put(INTERACTION_HAS_PARASITE, InteractType.HAS_PARASITE.toString());
+            put(INTERACTION_PARASITE_OF, InteractType.PARASITE_OF);
+            put(INTERACTION_HAS_PARASITE, InteractType.HAS_PARASITE);
 
-            put(INTERACTION_PATHOGEN_OF, InteractType.PATHOGEN_OF.toString());
-            put(INTERACTION_HAS_PATHOGEN, InteractType.HAS_PATHOGEN.toString());
-            put(INTERACTION_HAS_VECTOR, InteractType.HAS_VECTOR.toString());
-            put(INTERACTION_VECTOR_OF, InteractType.VECTOR_OF.toString());
-            put(INTERACTION_HOST_OF, StringUtils.join(new String[]{InteractType.HOST_OF.toString(), InteractType.HAS_PARASITE.toString(), InteractType.HAS_PATHOGEN.toString()}, "|"));
-            put(INTERACTION_HAS_HOST, StringUtils.join(new String[]{InteractType.HAS_HOST.toString(), InteractType.PARASITE_OF.toString(), InteractType.PATHOGEN_OF.toString()}, "|"));
-            put(INTERACTION_SYMBIONT_OF, StringUtils.join(InteractType.values(), "|"));
+            put(INTERACTION_PATHOGEN_OF, InteractType.PATHOGEN_OF);
+            put(INTERACTION_HAS_PATHOGEN, InteractType.HAS_PATHOGEN);
+            put(INTERACTION_HAS_VECTOR, InteractType.HAS_VECTOR);
+            put(INTERACTION_VECTOR_OF, InteractType.VECTOR_OF);
+            put(INTERACTION_HOST_OF, InteractType.HOST_OF);
+            put(INTERACTION_HAS_HOST, InteractType.HAS_HOST);
 
-            put(INTERACTION_INTERACTS_WITH, StringUtils.join(InteractType.values(), "|"));
+            put(INTERACTION_SYMBIONT_OF, InteractType.SYMBIONT_OF);
+
+            put(INTERACTION_INTERACTS_WITH, InteractType.INTERACTS_WITH);
         }
     };
 
@@ -777,15 +778,19 @@ public class CypherQueryBuilder {
     }
 
     protected static String createInteractionTypeSelector(List<String> interactionTypeSelectors) {
-        List<String> cypherTypes = new ArrayList<String>();
+        List<InteractType> cypherTypes = new ArrayList<InteractType>();
         for (String type : interactionTypeSelectors) {
             if (DIRECTIONAL_INTERACTION_TYPE_MAP.containsKey(type)) {
-                cypherTypes.add(DIRECTIONAL_INTERACTION_TYPE_MAP.get(type));
+                InteractType interactType = DIRECTIONAL_INTERACTION_TYPE_MAP.get(type);
+                cypherTypes.addAll(InteractType.typesOf(interactType));
             } else if (StringUtils.isNotBlank(type)) {
                 throw new IllegalArgumentException("unsupported interaction type [" + type + "]");
             }
         }
-        return cypherTypes.isEmpty() ? InteractUtil.allInteractionsCypherClause() : StringUtils.join(cypherTypes, "|");
+        if (cypherTypes.isEmpty()) {
+            cypherTypes.addAll(InteractType.typesOf(InteractType.INTERACTS_WITH));
+        }
+        return StringUtils.join(cypherTypes, "|");
     }
 
     private static boolean noSearchCriteria(boolean spatialSearch, List<String> sourceTaxaSelectors, List<String> targetTaxaSelectors) {

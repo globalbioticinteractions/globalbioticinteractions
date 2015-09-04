@@ -1,6 +1,12 @@
 package org.eol.globi.util;
 
+import org.apache.commons.lang.StringUtils;
+import org.eol.globi.data.CharsetConstant;
 import org.eol.globi.domain.InteractType;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 public class InteractUtil {
 
@@ -8,13 +14,16 @@ public class InteractUtil {
         return interactionsCypherClause(InteractType.values());
     }
 
-    protected static String interactionsCypherClause(InteractType[] values) {
-        StringBuilder interactions = new StringBuilder();
-        for (int i = 0; i < values.length; i++) {
-            interactions.append(i == 0 ? "" : "|");
-            interactions.append(values[i]);
+    protected static String joinInteractTypes(Collection<InteractType> interactTypes) {
+        return StringUtils.join(interactTypes, CharsetConstant.SEPARATOR_CHAR);
+    }
+
+    public static String interactionsCypherClause(InteractType... values) {
+        List<InteractType> types = new ArrayList<InteractType>();
+        for (InteractType value : values) {
+            types.addAll(InteractType.typesOf(value));
         }
-        return interactions.toString();
+        return joinInteractTypes(types);
     }
 
 }

@@ -46,9 +46,9 @@ public class StudyImporterForBioInfo extends BaseStudyImporter implements StudyI
             put("Animal / inquiline", InteractType.GUEST_OF);
             put("Animal / kill", InteractType.KILLS);
             put("Animal / kleptoparasite", InteractType.PARASITE_OF);
-            put("Animal / parasite / ectoparasite / blood sucker", InteractType.PARASITE_OF);
-            put("Animal / parasite / ectoparasite / sweat sucker", InteractType.PARASITE_OF);
-            put("Animal / parasite / ectoparasite / tear sucker", InteractType.PARASITE_OF);
+            put("Animal / parasite / ectoparasite / blood sucker", InteractType.ECTOPARASITE_OF);
+            put("Animal / parasite / ectoparasite / sweat sucker", InteractType.ECTOPARASITE_OF);
+            put("Animal / parasite / ectoparasite / tear sucker", InteractType.ECTOPARASITE_OF);
             put("Animal / parasite / ectoparasite", InteractType.ECTOPARASITE_OF);
             put("Animal / parasite / endoparasite", InteractType.ENDOPARASITE_OF);
             put("Animal / parasite", InteractType.PARASITE_OF);

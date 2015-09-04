@@ -173,6 +173,7 @@ public enum InteractType implements RelType {
 
     public static Collection<InteractType> typesOf(InteractType type) {
         Collection<InteractType> inversePath = new ArrayList<InteractType>();
+        inversePath.add(type);
         for (InteractType interactType : values()) {
             if (hasTypes(interactType).contains(type)) {
                 inversePath.add(interactType);
