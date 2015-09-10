@@ -1,7 +1,7 @@
 language: java
 install: mvn --version
 before_script: mvn -pl eol-globi-parent versions:set -DnewVersion=0.4.$TRAVIS_BUILD_NUMBER
-script: mvn deploy scm:tag
+#script: mvn deploy scm:tag
 sudo: false
 cache:
   directories:
