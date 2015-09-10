@@ -1,8 +1,11 @@
 language: java
 install: mvn --version
-before_script: sh .travis.version_if_tag.sh
-after_script: sh .travis.deploy_if_tag.sh
+before_script: "./travis.version_if_tag.sh"
+after_script: "./travis.deploy_if_tag.sh"
 sudo: false
 cache:
   directories:
-    - $HOME/.m2
+  - "$HOME/.m2"
+env:
+  secure: "GGmbBoysyUXnl1tKtKNW5rXkAEBIUQYIFF3QPByla8KYvqIp+ssEe11YUX/wE50e38smOsdluUMCqktdTAaCx8YlVNGNfGMMuLVF1NFUYBKYi9rHCS530RduLrpFb9nHrI8QqphVTDGY1j4Eu52+dP/2F1d+ESlcBASWffC93b8="
+  secure: "VkWTuYV6aU1Ne0crbaoNMVtfJ53MclRwwX2llBZZPns/XeuuGj/sDbm8EgvzY6cxKrWaFR8GHtaksnUafY98w0LVvvqLuDa/ioF2kirKVBcgv/Gm8DnRgZoeexfb4HL41FIsL9vE08fMP197+6RH4BtQ89KukiTeGmU+myCIOy4="
