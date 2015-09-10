@@ -28,7 +28,7 @@ public class LinkerGlobalNamesTest extends GraphDBTestCase {
 
         new LinkerGlobalNames().link(getGraphDb());
 
-        LinkerTestUtil.assertHasOther("Homo sapiens", 4, nodeFactory, RelTypes.SAME_AS);
+        LinkerTestUtil.assertHasOther("Homo sapiens", 5, nodeFactory, RelTypes.SAME_AS);
         LinkerTestUtil.assertHasOther("Homo sapiens", 0, nodeFactory, RelTypes.SIMILAR_TO);
         LinkerTestUtil.assertHasOther("Canis lupus", 4, nodeFactory, RelTypes.SAME_AS);
         LinkerTestUtil.assertHasOther("Canis lupus", 0, nodeFactory, RelTypes.SIMILAR_TO);
@@ -42,7 +42,7 @@ public class LinkerGlobalNamesTest extends GraphDBTestCase {
 
         new LinkerGlobalNames().link(getGraphDb());
 
-        LinkerTestUtil.assertHasOther("Homo sapienz", 4, nodeFactory, RelTypes.SIMILAR_TO);
+        LinkerTestUtil.assertHasOther("Homo sapienz", 5, nodeFactory, RelTypes.SIMILAR_TO);
         LinkerTestUtil.assertHasOther("Homo sapienz", 0, nodeFactory, RelTypes.SAME_AS);
 
     }
