@@ -7,5 +7,6 @@ cache:
   directories:
   - "$HOME/.m2"
 env:
-  secure: "GGmbBoysyUXnl1tKtKNW5rXkAEBIUQYIFF3QPByla8KYvqIp+ssEe11YUX/wE50e38smOsdluUMCqktdTAaCx8YlVNGNfGMMuLVF1NFUYBKYi9rHCS530RduLrpFb9nHrI8QqphVTDGY1j4Eu52+dP/2F1d+ESlcBASWffC93b8="
-  secure: "VkWTuYV6aU1Ne0crbaoNMVtfJ53MclRwwX2llBZZPns/XeuuGj/sDbm8EgvzY6cxKrWaFR8GHtaksnUafY98w0LVvvqLuDa/ioF2kirKVBcgv/Gm8DnRgZoeexfb4HL41FIsL9vE08fMP197+6RH4BtQ89KukiTeGmU+myCIOy4="
+  global:
+    secure: "cvL+V1bsmFU3jXE2Hu5AWwRfY4EaONNk2h9ludFQCOpsicTIOE2JhCPSMiMHiNA+1LG0WnlDp/TERO+QwEwBlHBBDZ0ZqDy+lVH9aKARvCO9qynpa6W7WZkzQhN8HKXkzGnqRJvWAvJcIgXNgV8bIwGywaXs0uW+kVAgK47nH14="
+    secure: "eTtjY4LTxdm6gGd+hXfNb/ZzSgWwz1+3WIw1G79BB5dd93v6T3EgjO1s/Qb11fjkckXoduMCHYT9fu9qaFwZFh3fXcpFCto0qIMl03nR2w45tubTR7xjADlDvbzvVPflsl58EvHjFEXJO3TiKFxI+yqzPvCvnxeQ2i3xFPttkdI="
