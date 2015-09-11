@@ -20,12 +20,12 @@ public class RollUpAssociationsTest extends RollUpTest {
         StringWriter writer = new StringWriter();
         new RollUpAssociations().doExportStudy(myStudy, writer, true);
         String exported = writer.toString();
-        assertThat(exported, containsString("globi:assoc:1-genus_id_1-ATE-species_id_2,globi:occur:rsource:1-genus_id_1-ATE,http://eol.org/schema/terms/eats,globi:occur:rtarget:1-genus_id_1-ATE-species_id_2,,,,,,,,globi:ref:1"));
-        assertThat(exported, containsString("globi:assoc:1-species_id_1-ATE-family_id_2,globi:occur:rsource:1-species_id_1-ATE,http://eol.org/schema/terms/eats,globi:occur:rtarget:1-species_id_1-ATE-family_id_2,,,,,,,,globi:ref:1"));
-        assertThat(exported, containsString("globi:assoc:1-genus_id_1-ATE-family_id_2,globi:occur:rsource:1-genus_id_1-ATE,http://eol.org/schema/terms/eats,globi:occur:rtarget:1-genus_id_1-ATE-family_id_2,,,,,,,,globi:ref:1"));
-        assertThat(exported, containsString("globi:assoc:1-species_id_1-ATE-genus_id_2,globi:occur:rsource:1-species_id_1-ATE,http://eol.org/schema/terms/eats,globi:occur:rtarget:1-species_id_1-ATE-genus_id_2,,,,,,,,globi:ref:1"));
-        assertThat(exported, containsString("globi:assoc:1-species_id_1-ATE-species_id_2,globi:occur:rsource:1-species_id_1-ATE,http://eol.org/schema/terms/eats,globi:occur:rtarget:1-species_id_1-ATE-species_id_2,,,,,,,,globi:ref:1"));
-        assertThat(exported, containsString("globi:assoc:1-genus_id_1-ATE-genus_id_2,globi:occur:rsource:1-genus_id_1-ATE,http://eol.org/schema/terms/eats,globi:occur:rtarget:1-genus_id_1-ATE-genus_id_2,,,,,,,,globi:ref:1"));
+        assertThat(exported, containsString("globi:assoc:1-genus_id_1-ATE-species_id_2,globi:occur:rsource:1-genus_id_1-ATE,http://purl.obolibrary.org/obo/RO_0002470,globi:occur:rtarget:1-genus_id_1-ATE-species_id_2,,,,,,,,globi:ref:1"));
+        assertThat(exported, containsString("globi:assoc:1-species_id_1-ATE-family_id_2,globi:occur:rsource:1-species_id_1-ATE,http://purl.obolibrary.org/obo/RO_0002470,globi:occur:rtarget:1-species_id_1-ATE-family_id_2,,,,,,,,globi:ref:1"));
+        assertThat(exported, containsString("globi:assoc:1-genus_id_1-ATE-family_id_2,globi:occur:rsource:1-genus_id_1-ATE,http://purl.obolibrary.org/obo/RO_0002470,globi:occur:rtarget:1-genus_id_1-ATE-family_id_2,,,,,,,,globi:ref:1"));
+        assertThat(exported, containsString("globi:assoc:1-species_id_1-ATE-genus_id_2,globi:occur:rsource:1-species_id_1-ATE,http://purl.obolibrary.org/obo/RO_0002470,globi:occur:rtarget:1-species_id_1-ATE-genus_id_2,,,,,,,,globi:ref:1"));
+        assertThat(exported, containsString("globi:assoc:1-species_id_1-ATE-species_id_2,globi:occur:rsource:1-species_id_1-ATE,http://purl.obolibrary.org/obo/RO_0002470,globi:occur:rtarget:1-species_id_1-ATE-species_id_2,,,,,,,,globi:ref:1"));
+        assertThat(exported, containsString("globi:assoc:1-genus_id_1-ATE-genus_id_2,globi:occur:rsource:1-genus_id_1-ATE,http://purl.obolibrary.org/obo/RO_0002470,globi:occur:rtarget:1-genus_id_1-ATE-genus_id_2,,,,,,,,globi:ref:1"));
     }
 
     @Test
@@ -35,7 +35,7 @@ public class RollUpAssociationsTest extends RollUpTest {
         StringWriter writer = new StringWriter();
         new RollUpAssociations().doExportStudy(myStudy, writer, true);
         String exported = writer.toString();
-        assertThat(exported, containsString("globi:assoc:1-genus_id_1-ATE-species_id_2,globi:occur:rsource:1-genus_id_1-ATE,http://eol.org/schema/terms/eats,globi:occur:rtarget:1-genus_id_1-ATE-species_id_2,,,,,,,,globi:ref:1"));
+        assertThat(exported, containsString("globi:assoc:1-genus_id_1-ATE-species_id_2,globi:occur:rsource:1-genus_id_1-ATE,http://purl.obolibrary.org/obo/RO_0002470,globi:occur:rtarget:1-genus_id_1-ATE-species_id_2,,,,,,,,globi:ref:1"));
     }
 
     @Test
@@ -45,7 +45,7 @@ public class RollUpAssociationsTest extends RollUpTest {
         StringWriter writer = new StringWriter();
         new RollUpAssociations().doExportStudy(myStudy, writer, true);
         String exported = writer.toString();
-        assertThat(exported, containsString("globi:assoc:1-genus_id_1-ATE-species_id_2,globi:occur:rsource:1-genus_id_1-ATE,http://eol.org/schema/terms/eats,globi:occur:rtarget:1-genus_id_1-ATE-species_id_2,,,,,,,,globi:ref:1"));
+        assertThat(exported, containsString("globi:assoc:1-genus_id_1-ATE-species_id_2,globi:occur:rsource:1-genus_id_1-ATE,http://purl.obolibrary.org/obo/RO_0002470,globi:occur:rtarget:1-genus_id_1-ATE-species_id_2,,,,,,,,globi:ref:1"));
     }
 
 }
