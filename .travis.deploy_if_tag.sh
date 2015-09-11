@@ -1,4 +1,4 @@
 #!/bin/bash
 if [ -n "$TRAVIS_TAG" ]; then
-  mvn clean deploy --settings .travis.maven.settings.xml -DskipTests
+  mvn -s .travis.maven.settings.xml -DskipTests clean deploy
 fi
