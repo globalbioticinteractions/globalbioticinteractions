@@ -74,8 +74,8 @@ public class ExporterAssociationAggregatesTest extends GraphDBTestCase {
             exporter.exportStudy(myStudy1, row, false);
         }
 
-        String expected = "\nglobi:assoc:1-2-ATE-5,globi:occur:source:1-2-ATE,http://eol.org/schema/terms/eats,globi:occur:target:1-2-ATE-5,,,,,data source description,,,globi:ref:1" +
-                        "\nglobi:assoc:9-2-ATE-5,globi:occur:source:9-2-ATE,http://eol.org/schema/terms/eats,globi:occur:target:9-2-ATE-5,,,,,data source description,,,globi:ref:9";
+        String expected = "\nglobi:assoc:1-2-ATE-5,globi:occur:source:1-2-ATE,http://purl.obolibrary.org/obo/RO_0002470,globi:occur:target:1-2-ATE-5,,,,,data source description,,,globi:ref:1" +
+                        "\nglobi:assoc:9-2-ATE-5,globi:occur:source:9-2-ATE,http://purl.obolibrary.org/obo/RO_0002470,globi:occur:target:9-2-ATE-5,,,,,data source description,,,globi:ref:9";
         assertThat(row.getBuffer().toString(), equalTo(expected));
     }
 

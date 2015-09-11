@@ -1,6 +1,7 @@
 package org.eol.globi.export;
 
 import org.eol.globi.domain.InteractType;
+import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Study;
 
 import java.util.HashMap;
@@ -29,28 +30,15 @@ public abstract class ExporterAssociationsBase extends ExporterBase {
         return "http://eol.org/schema/Association";
     }
 
-    public static final String DEFAULT_INTERACT_TYPE = "http://eol.org/schema/terms/interactsWith";
-    private static final Map<String, String> GLOBI_EOL_INTERACT_MAP = new HashMap<String, String>() {
-        {
-            put(InteractType.ATE.name(), "http://eol.org/schema/terms/eats");
-            put(InteractType.INTERACTS_WITH.name(), DEFAULT_INTERACT_TYPE);
-            put(InteractType.HOST_OF.name(), "http://eol.org/schema/terms/hosts");
-            put(InteractType.PREYS_UPON.name(), "http://eol.org/schema/terms/preysUpon");
-            put(InteractType.HAS_HOST.name(), "http://eol.org/schema/terms/hasHost");
-            put(InteractType.POLLINATES.name(), "http://eol.org/schema/terms/pollinates");
-            put(InteractType.PERCHING_ON.name(), "http://eol.org/schema/terms/isFoundOn");
-            put(InteractType.PARASITE_OF.name(), "http://eol.org/schema/terms/parasitizes");
-            put(InteractType.PATHOGEN_OF.name(), InteractType.PATHOGEN_OF.getIRI());
-        }
-    };
-
     protected void addStudyInfo(Study study, Map<String, String> properties) {
         properties.put(EOLDictionary.SOURCE, study.getSource());
         properties.put(EOLDictionary.REFERENCE_ID, "globi:ref:" + study.getNodeID());
     }
 
     protected String getEOLTermFor(String interactionType) {
-        String eolInteractTerm = GLOBI_EOL_INTERACT_MAP.get(interactionType);
-        return eolInteractTerm == null ? DEFAULT_INTERACT_TYPE : eolInteractTerm;
+        InteractType interactType = InteractType.valueOf(interactionType);
+        return (interactType == null || PropertyAndValueDictionary.NO_MATCH.equals(interactType.getIRI()))
+                ? InteractType.INTERACTS_WITH.getIRI()
+                : interactType.getIRI();
     }
 }
