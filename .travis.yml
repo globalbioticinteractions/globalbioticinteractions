@@ -8,5 +8,5 @@ cache:
   - "$HOME/.m2"
 env:
   global:
-    secure: I9oMkVMfQBsJi69g4IfFI3+/FVqk/IkPc0JEBGcoSmpMdVrGAiyYuhghV1c0obPAOlQw5wasFtLqpMSjdrQeYSGkG9Spnc9vL/J3gTigzWGFtTkf2SLNIv7kWf51zl1RXUNDXt3ZCL6dZKqE1hrnc8+CCG7u/+SngZKAcN2Yk+E=
     secure: VWnTbc6QeNJIwea6O3v38dHgTQ60si46+ySiYCgKlykIgbitZc/94zyr9vUloSwSrJDFyTHP0It2yHD37LemkgpDR9+psp5S9MrCpQkzC+9QpmHBK8zoPIPWO2WumE6rhk9MB5ZtkwFqy/2qzXRx4dCRaq27uDk0oO2vSWyGyWg=
+    secure: I9oMkVMfQBsJi69g4IfFI3+/FVqk/IkPc0JEBGcoSmpMdVrGAiyYuhghV1c0obPAOlQw5wasFtLqpMSjdrQeYSGkG9Spnc9vL/J3gTigzWGFtTkf2SLNIv7kWf51zl1RXUNDXt3ZCL6dZKqE1hrnc8+CCG7u/+SngZKAcN2Yk+E=
