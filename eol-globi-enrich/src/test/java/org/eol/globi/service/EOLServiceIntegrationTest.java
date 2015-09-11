@@ -506,9 +506,7 @@ public class EOLServiceIntegrationTest {
         properties = eolService.enrich(properties);
         assertThat(properties.get(EXTERNAL_ID), is("EOL:223038"));
         assertThat(properties.get(PATH), containsString("Ariopsis felis"));
-        String encoded = "&#1089;&#1086;&#1084;&#32;&#1084;&#1086;&#1088;&#1089;&#1082;&#1086;&#1081;";
-        assertThat(properties.get(COMMON_NAMES), not(containsString(encoded)));
-        assertThat(properties.get(COMMON_NAMES), containsString("сом морской"));
+        assertThat(properties.get(COMMON_NAMES), containsString("галеихт"));
     }
 
     @Test
