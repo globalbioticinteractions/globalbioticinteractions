@@ -38,7 +38,6 @@ public class GraphExporter {
         exportNames(studies, baseDir, new ExportTaxonLinks(), "linkedTaxa.csv.gz");
         exportNames(studies, baseDir, new ExportUnmatchedTaxonNames(), "unmatchedTaxa.csv");
         exportNames(studies, baseDir, new ExportTaxonNames(), "taxa.csv.gz");
-        exportDarwinCoreAggregatedByStudyRollUp(baseDir, studies);
         exportDarwinCoreAggregatedByStudy(baseDir, studies);
         exportDarwinCoreAll(baseDir, studies);
     }
@@ -55,19 +54,6 @@ public class GraphExporter {
         } catch (IOException e) {
             throw new StudyImporterException("failed to export unmatched source taxa", e);
         }
-    }
-
-    private void exportDarwinCoreAggregatedByStudyRollUp(String baseDir, List<Study> studies) throws StudyImporterException {
-        exportDarwinCoreArchive(studies,
-                baseDir + "aggregatedByStudyRollUp/", new HashMap<String, DarwinCoreExporter>() {
-                    {
-                        put("association.csv", new RollUpAssociations());
-                        put("occurrence.csv", new RollUpOccurrence());
-                        put("references.csv", new ExporterReferences());
-                        put("taxa.csv", new RollUpDistinctTaxa());
-                    }
-                }
-        );
     }
 
     private void exportDarwinCoreAggregatedByStudy(String baseDir, List<Study> studies) throws StudyImporterException {
