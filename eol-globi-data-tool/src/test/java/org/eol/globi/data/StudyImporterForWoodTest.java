@@ -63,7 +63,7 @@ public class StudyImporterForWoodTest extends GraphDBTestCase {
 
     protected void assertStaticInfo(Map<String, String> firstLink) {
         assertThat(firstLink.get(STUDY_SOURCE_CITATION), containsString("Wood SA, Russell R, Hanson D, Williams RJ, Dunne JA (2015) Data from: Effects of spatial scale of sampling on food web structure. Dryad Digital Repository. http://dx.doi.org/10.5061/dryad.g1qr6"));
-        assertThat(firstLink.get(STUDY_SOURCE_CITATION), containsString("Accessed at"));
+        assertThat(firstLink.get(STUDY_SOURCE_CITATION), containsString(" Accessed at"));
         assertThat(firstLink.get(REFERENCE_CITATION), containsString("Wood SA, Russell R, Hanson D, Williams RJ, Dunne JA (2015) Data from: Effects of spatial scale of sampling on food web structure. Dryad Digital Repository. http://dx.doi.org/10.5061/dryad.g1qr6"));
         assertThat(firstLink.get(REFERENCE_DOI), is("http://dx.doi.org/10.1002/ece3.1640"));
         assertThat(firstLink.get(REFERENCE_URL), is("http://dx.doi.org/10.1002/ece3.1640"));
