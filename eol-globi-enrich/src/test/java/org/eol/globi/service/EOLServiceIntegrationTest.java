@@ -510,6 +510,17 @@ public class EOLServiceIntegrationTest {
     }
 
     @Test
+    public void lookupBrownCrust() throws PropertyEnricherException {
+        Map<String, String> properties = new HashMap<String, String>() {{
+        }};
+        properties.put(NAME, "Brown");
+        properties = eolService.enrich(properties);
+        assertThat(properties.get(COMMON_NAMES), containsString("галеихт"));
+        assertThat(properties.get(PATH), containsString("Ariopsis felis"));
+        assertThat(properties.get(EXTERNAL_ID), is("EOL:223038"));
+    }
+
+    @Test
     public void lookupTaxonPathByScientificName() throws PropertyEnricherException {
         Map<String, String> properties = new HashMap<String, String>();
         properties.put(NAME, "Homo sapiens");

@@ -30,6 +30,8 @@ public class StudyImporterForTSV extends BaseStudyImporter {
     public static final String REFERENCE_URL = "referenceUrl";
     public static final String LOCALITY_NAME = "localityName";
     public static final String INTERACTION_TYPE_NAME = "interactionTypeName";
+    public static final String SOURCE_LIFE_STAGE = "sourceLifeStage";
+    public static final String TARGET_LIFE_STAGE = "targetLifeStage";
     private String repositoryName;
 
     public String getBaseUrl() {
