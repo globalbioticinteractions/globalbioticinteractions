@@ -1,60 +1,67 @@
 package org.eol.globi.data;
 
-import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.eol.globi.domain.InteractType;
-import org.eol.globi.domain.TaxonImpl;
+import org.eol.globi.domain.Taxon;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.util.Map;
-import java.util.TreeMap;
 
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
 
 public class StudyImporterForFishbase2Test extends GraphDBTestCase {
 
     @Test
-    public void urls() {
-        assertThat(getReferenceFor(6160), is("http://fishbase.ropensci.org/refrens?RefNo=6160"));
-        assertThat(getCountryFor(736), is("http://fishbase.ropensci.org/countref?C_Code=736"));
-        assertThat(getTaxonFor(2), is("http://fishbase.ropensci.org/species/2"));
-
-        assertThat(getFoodItems(), is("http://fishbase.ropensci.org/fooditems"));
-        assertThat(getPredators(), is("http://fishbase.ropensci.org/predats"));
-    }
-
-    private String getPredators() {
-        return "http://fishbase.ropensci.org/predats";
-    }
-
-    private String getFoodItems() {
-        return "http://fishbase.ropensci.org/fooditems";
-    }
-
-
-    private String getReferenceFor(int i) {
-        return "http://fishbase.ropensci.org/refrens?RefNo=" + i;
-    }
-
-    private String getCountryFor(int i) {
-        return "http://fishbase.ropensci.org/countref?C_Code=" + i;
-    }
-
-    private String getTaxonFor(int i) {
-        return "http://fishbase.ropensci.org/species/" + i;
-    }
-
-
-    @Test
     public void parsePredats() throws IOException {
         JsonNode predats = new ObjectMapper().readTree(PREDATS_JSON);
-        Map<String, String> predatsMap = StudyImporterForFishbase2.parsePredatorPrey(predats);
+        Map<String, String> predatsMap = StudyImporterForFishbase2.parsePredatorPrey(predats, "FB:");
+        assertThat(predatsMap.toString(), is("{interactionTypeId=http://purl.obolibrary.org/obo/RO_0002439, interactionTypeName=preysOn, localityName=Not stated., sourceLifeStage=juv./adults, sourceTaxonId=FB:457, studyTitle=FB:REF:84, targetLifeStage=recruits/juv., targetTaxonId=FB:2}"));
+    }
 
-        assertThat(predatsMap.toString(), is("{interactionTypeId=http://purl.obolibrary.org/obo/RO_0002439, interactionTypeName=preysOn, localityName=Not stated., sourceTaxonId=juv./adults, studyTitle=FISHBASE_REFERENCE:84, targetTaxonId=recruits/juv.}"));
+    @Test
+    public void parsePredatsSeaLifeBase() throws IOException {
+        JsonNode predats = new ObjectMapper().readTree("{\n" +
+                "      \"autoctr\": 24235,\n" +
+                "      \"StockCode\": 26,\n" +
+                "      \"SpecCode\": 83456,\n" +
+                "      \"PredatsRefNo\": 97658,\n" +
+                "      \"Locality\": \"eastern Australia\",\n" +
+                "      \"C_Code\": \"036\",\n" +
+                "      \"Predatstage\": \"recruits/juv.\",\n" +
+                "      \"PredatorI\": \"finfish\",\n" +
+                "      \"PredatorII\": \"bony fish\",\n" +
+                "      \"PreyStage\": \"juv./adults\",\n" +
+                "      \"PredatorGroup\": \"Scombridae\",\n" +
+                "      \"DietP\": null,\n" +
+                "      \"StomachContent\": null,\n" +
+                "      \"PredatorName\": \"Euthynnus affinis\",\n" +
+                "      \"Predatcode\": 96,\n" +
+                "      \"PredatCodeDB\": \"FB\",\n" +
+                "      \"AlphaCode\": null,\n" +
+                "      \"MaxLength\": 40.2000007629395,\n" +
+                "      \"MaxLengthType\": \"FL\",\n" +
+                "      \"PredatTroph\": null,\n" +
+                "      \"PredatseTroph\": null,\n" +
+                "      \"PredatRef\": null,\n" +
+                "      \"Remarks\": null,\n" +
+                "      \"Entered\": 293,\n" +
+                "      \"DateEntered\": \"2014-11-11 00:00:00 +0000\",\n" +
+                "      \"Modified\": null,\n" +
+                "      \"DateModified\": \"2014-11-12 00:00:00 +0000\",\n" +
+                "      \"Expert\": null,\n" +
+                "      \"DateChecked\": null,\n" +
+                "      \"PredId\": 0,\n" +
+                "      \"E_Append\": null,\n" +
+                "      \"E_DateAppend\": null,\n" +
+                "      \"TS\": \"2015-05-11 10:19:19 +0000\"\n" +
+                "    }");
+        Map<String, String> predatsMap = StudyImporterForFishbase2.parsePredatorPrey(predats, "FB:");
+
+        assertThat(predatsMap.toString(), is("{interactionTypeId=http://purl.obolibrary.org/obo/RO_0002439, interactionTypeName=preysOn, localityId=036, localityName=eastern Australia, sourceLifeStage=recruits/juv., sourceTaxonId=FB:96, studyTitle=FB:REF:97658, targetLifeStage=juv./adults, targetTaxonId=FB:83456}"));
     }
 
     @Test
@@ -64,16 +71,16 @@ public class StudyImporterForFishbase2Test extends GraphDBTestCase {
 
         assertThat(country.get(StudyImporterForTSV.DECIMAL_LONGITUDE), is("32"));
         assertThat(country.get(StudyImporterForTSV.DECIMAL_LATITUDE), is("15"));
-        assertThat(country.get(StudyImporterForTSV.LOCALITY_ID), is(StudyImporterForFishbase2.PREFIX_FISHBASE_COUNTRY + "736"));
+        assertThat(country.get(StudyImporterForTSV.LOCALITY_ID), is("736"));
     }
 
     @Test
     public void parseTaxon() throws IOException {
         JsonNode jsonNode = new ObjectMapper().readTree(SPECIES_JSON);
-        TaxonImpl taxon = StudyImporterForFishbase2.parseTaxon(jsonNode);
+        Taxon taxon = StudyImporterForFishbase2.parseTaxon(jsonNode, "FB:");
 
         assertThat(taxon.getName(), is("Oreochromis niloticus"));
-        assertThat(taxon.getExternalId(), is("FISHBASE:2"));
+        assertThat(taxon.getExternalId(), is("FB:2"));
         assertThat(taxon.getCommonNames(), is("Nile tilapia @en"));
 
     }
@@ -81,8 +88,8 @@ public class StudyImporterForFishbase2Test extends GraphDBTestCase {
     @Test
     public void parseReference() throws IOException {
         JsonNode jsonNode = new ObjectMapper().readTree(REFERENCE_JSON);
-        Map<String, String> reference = StudyImporterForFishbase2.parseReference(jsonNode);
-        assertThat(reference.get(StudyImporterForTSV.REFERENCE_ID), is("FISHBASE_REFERENCE:6160"));
+        Map<String, String> reference = StudyImporterForFishbase2.parseReference(jsonNode, "FB:REF:");
+        assertThat(reference.get(StudyImporterForTSV.REFERENCE_ID), is("FB:REF:6160"));
         assertThat(reference.get(StudyImporterForTSV.REFERENCE_CITATION), is("Hickley, P. and R.G. Bailey. 1987. Food and feeding relationships of fish in the Sudd swamps (River Nile, southern Sudan).. J. Fish Biol. 30:147-159."));
         assertThat(reference.get(StudyImporterForTSV.REFERENCE_DOI), is(nullValue()));
     }
@@ -93,17 +100,67 @@ public class StudyImporterForFishbase2Test extends GraphDBTestCase {
         ObjectMapper mapper = new ObjectMapper();
         JsonNode foodItem = mapper.readTree(FOOD_ITEM_JSON);
 
-        Map<String, String> foodItemMap = StudyImporterForFishbase2.parseFoodItem(foodItem);
+        Map<String, String> foodItemMap = StudyImporterForFishbase2.parseFoodItem(foodItem, "FB:");
 
 
-        assertThat(foodItemMap.get(StudyImporterForTSV.SOURCE_TAXON_ID), is("FISHBASE:2"));
+        assertThat(foodItemMap.get(StudyImporterForTSV.SOURCE_TAXON_ID), is("FB:2"));
         assertThat(foodItemMap.get(StudyImporterForTSV.SOURCE_LIFE_STAGE), is("juv./adults"));
         assertThat(foodItemMap.get(StudyImporterForTSV.INTERACTION_TYPE_ID), is("http://purl.obolibrary.org/obo/RO_0002470"));
         assertThat(foodItemMap.get(StudyImporterForTSV.TARGET_LIFE_STAGE), is("n.a./others"));
         assertThat(foodItemMap.get(StudyImporterForTSV.TARGET_TAXON_ID), is(nullValue()));
         assertThat(foodItemMap.get(StudyImporterForTSV.TARGET_TAXON_NAME), is("unidentified > 1 mm organic debris"));
         assertThat(foodItemMap.get(StudyImporterForTSV.LOCALITY_NAME), is("Sudd swamps, River Nile."));
-        assertThat(foodItemMap.get(StudyImporterForTSV.REFERENCE_ID), is(StudyImporterForFishbase2.PREFIX_FISHBASE_REFERENCE + "6160"));
+        assertThat(foodItemMap.get(StudyImporterForTSV.REFERENCE_ID), is("FB:REF:6160"));
+    }
+
+    @Test
+    public void parseFoodItemsSeaLifeBase() throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode foodItem = mapper.readTree("{\n" +
+                "      \"autoctr\": 4460,\n" +
+                "      \"StockCode\": 5964,\n" +
+                "      \"SpecCode\": 69400,\n" +
+                "      \"Locality\": \"Not specified.\",\n" +
+                "      \"C_Code\": null,\n" +
+                "      \"FoodsRefNo\": 28499,\n" +
+                "      \"FoodI\": \"nekton\",\n" +
+                "      \"PreyStage\": \"juv./adults\",\n" +
+                "      \"FoodII\": \"finfish\",\n" +
+                "      \"FoodIII\": \"bony fish\",\n" +
+                "      \"Commoness\": null,\n" +
+                "      \"CommonessII\": null,\n" +
+                "      \"Foodgroup\": \"Anoplopomatidae\",\n" +
+                "      \"Foodname\": \"Anoplopoma fimbria\",\n" +
+                "      \"PreySpecCode\": 512,\n" +
+                "      \"PreySpecCodeDB\": \"FB\",\n" +
+                "      \"AlphaCode\": null,\n" +
+                "      \"PreyTroph\": 4.18,\n" +
+                "      \"PreySeTroph\": 0.024,\n" +
+                "      \"TrophRefNo\": 12626,\n" +
+                "      \"PredatorStage\": \"juv./adults\",\n" +
+                "      \"Locality2\": null,\n" +
+                "      \"Entered\": 1,\n" +
+                "      \"Dateentered\": \"2008-07-23 00:00:00 +0000\",\n" +
+                "      \"Modified\": null,\n" +
+                "      \"Datemodified\": \"2008-07-23 00:00:00 +0000\",\n" +
+                "      \"Expert\": null,\n" +
+                "      \"Datechecked\": null,\n" +
+                "      \"E_Append\": 31,\n" +
+                "      \"E_DateAppend\": \"2008-07-23\",\n" +
+                "      \"TS\": \"2015-05-11 10:17:16 +0000\"\n" +
+                "    }");
+
+        Map<String, String> foodItemMap = StudyImporterForFishbase2.parseFoodItem(foodItem, "SLB:");
+
+
+        assertThat(foodItemMap.get(StudyImporterForTSV.SOURCE_TAXON_ID), is("SLB:69400"));
+        assertThat(foodItemMap.get(StudyImporterForTSV.TARGET_TAXON_ID), is("FB:512"));
+        assertThat(foodItemMap.get(StudyImporterForTSV.SOURCE_LIFE_STAGE), is("juv./adults"));
+        assertThat(foodItemMap.get(StudyImporterForTSV.INTERACTION_TYPE_ID), is("http://purl.obolibrary.org/obo/RO_0002470"));
+        assertThat(foodItemMap.get(StudyImporterForTSV.TARGET_LIFE_STAGE), is("juv./adults"));
+        assertThat(foodItemMap.get(StudyImporterForTSV.TARGET_TAXON_NAME), is(nullValue()));
+        assertThat(foodItemMap.get(StudyImporterForTSV.LOCALITY_NAME), is("Not specified."));
+        assertThat(foodItemMap.get(StudyImporterForTSV.REFERENCE_ID), is("SLB:REF:28499"));
     }
 
     private static final String FOOD_ITEM_JSON = "{\n" +
