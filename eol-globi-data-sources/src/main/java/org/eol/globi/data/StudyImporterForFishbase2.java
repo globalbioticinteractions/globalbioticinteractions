@@ -213,7 +213,7 @@ public class StudyImporterForFishbase2 extends BaseStudyImporter {
     private void processEndpoints(String baseUrl, Map<String, NodeProcessor> endpointConfig, String namespace) throws StudyImporterException {
         for (Map.Entry<String, NodeProcessor> endpointParser : endpointConfig.entrySet()) {
             int returned;
-            int requested = 5000;
+            int requested = 500;
             int totalReturned = 0;
             String uri = "";
             try {

@@ -7,7 +7,7 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
 
-public class StudyImporterForFishbase2IT extends GraphDBTestCase {
+public class StudyImporterForFishbase2IntegrationTest extends GraphDBTestCase {
 
     @Test
     public void importAll() throws StudyImporterException, NodeFactoryException {
