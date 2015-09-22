@@ -44,8 +44,7 @@ public class StudyImporterForBell extends BaseStudyImporter {
             try {
                 parser = parserFactory.createParser(resource, "UTF-8");
                 while (parser.getLine() != null) {
-                    String sourceCitation = "Bell, K.C. 2014. Sucking lice and pinworms of western North American chipmunks. Unpublished raw data.";
-
+                    String sourceCitation = "Bell, K. C., Matek, D., Demboski, J. R., & Cook, J. A. (2015). Expanded Host Range of Sucking Lice and Pinworms of Western North American Chipmunks. Comparative Parasitology, 82(2), 312–321. doi:10.1654/4756.1 . Data provided by Kayce C. Bell.";
                     String guid = parser.getValueByLabel("GUID");
                     String externalId = "http://arctos.database.museum/guid/" + guid;
                     String description = null;
@@ -64,7 +63,7 @@ public class StudyImporterForBell extends BaseStudyImporter {
                         collectionId = "";
                     }
 
-                    Study study = nodeFactory.getOrCreateStudy("bell-" + collectionId, sourceCitation, null, ExternalIdUtil.toCitation(null, sourceCitation + " " + description, null));
+                    Study study = nodeFactory.getOrCreateStudy("bell-" + collectionId, sourceCitation, "http://dx.doi.org/10.1654/4756.1", ExternalIdUtil.toCitation(null, sourceCitation + " " + description, null));
 
                     String genus = parser.getValueByLabel("Genus");
                     String species = parser.getValueByLabel("Species");
