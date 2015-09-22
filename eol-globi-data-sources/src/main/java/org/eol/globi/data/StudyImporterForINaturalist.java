@@ -93,6 +93,8 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
         put("Interaction: egg(s) laid on/in", InteractType.PARASITE_OF);
         put("Interaction: Herbivory by", InteractType.EATEN_BY);
         put("Interaction: Carcass scavenged by", InteractType.EATEN_BY);
+        put("Kleptoparasite Host", InteractType.KLEPTOPARASITE_OF);
+        put("Kleptoparasite Forage", InteractType.ATE);
     }};
 
     private static final Map<String, InteractType> INVERSE_TYPE_MAPPING = new HashMap<String, InteractType>() {{
