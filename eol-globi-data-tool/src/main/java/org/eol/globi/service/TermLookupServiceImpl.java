@@ -43,7 +43,12 @@ public abstract class TermLookupServiceImpl implements TermLookupService {
 
         for (URI uri : uriList) {
             try {
-                String response = HttpUtil.getContent(uri);
+                String response;
+                if ("file".equals(uri.getScheme())) {
+                    response = IOUtils.toString(uri.toURL());
+                } else {
+                    response = HttpUtil.getContent(uri);
+                }
                 CSVParse parser = CSVUtil.createCSVParse(new StringReader(response));
                 parser.changeDelimiter(getDelimiter());
 
