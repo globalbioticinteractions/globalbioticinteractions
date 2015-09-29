@@ -10,8 +10,7 @@ public class EnvoLookupService extends TermLookupServiceImpl {
     protected List<URI> getMappingURIList() {
         return new ArrayList<URI>() {{
             try {
-                //add(new URI("http://purl.obolibrary.org/obo/envo/mappings/spire-mapping.txt"));
-                add(new URI("https://raw.githubusercontent.com/EnvironmentOntology/envo/master/mappings/spire-mapping.tsv"));
+                add(new URI(" http://purl.obolibrary.org/obo/envo/mappings/spire-mapping.tsv"));
             } catch (URISyntaxException e) {
                 // ignore
             }
