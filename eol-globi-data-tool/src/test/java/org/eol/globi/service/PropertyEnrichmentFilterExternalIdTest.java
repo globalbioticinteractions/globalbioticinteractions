@@ -2,6 +2,7 @@ package org.eol.globi.service;
 
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.TaxonomyProvider;
+import org.eol.globi.taxon.PropertyEnrichmentFilterExternalId;
 import org.junit.Test;
 
 import java.util.HashMap;

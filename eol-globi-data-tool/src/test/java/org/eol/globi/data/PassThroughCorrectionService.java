@@ -1,6 +1,6 @@
 package org.eol.globi.data;
 
-import org.eol.globi.data.taxon.CorrectionService;
+import org.eol.globi.taxon.CorrectionService;
 
 public class PassThroughCorrectionService implements CorrectionService {
     @Override

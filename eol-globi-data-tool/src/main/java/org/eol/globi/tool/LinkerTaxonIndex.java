@@ -2,7 +2,7 @@ package org.eol.globi.tool;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.data.CharsetConstant;
-import org.eol.globi.data.taxon.TaxonFuzzySearchIndex;
+import org.eol.globi.taxon.TaxonFuzzySearchIndex;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.TaxonNode;

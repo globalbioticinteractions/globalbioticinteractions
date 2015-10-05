@@ -24,7 +24,7 @@ import org.eol.globi.service.ORCIDResolverImpl;
 import org.eol.globi.service.QueryUtil;
 import org.eol.globi.service.TermLookupService;
 import org.eol.globi.service.TermLookupServiceException;
-import org.eol.globi.service.TermLookupServiceWithResource;
+import org.eol.globi.taxon.TermLookupServiceWithResource;
 import org.eol.globi.service.UberonLookupService;
 import org.eol.globi.util.NodeUtil;
 import org.neo4j.graphdb.Direction;

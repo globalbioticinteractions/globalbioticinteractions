@@ -1,7 +1,7 @@
 package org.eol.globi.data;
 
 import org.apache.commons.lang3.StringUtils;
-import org.eol.globi.data.taxon.TaxonIndexImpl;
+import org.eol.globi.taxon.TaxonIndexImpl;
 import org.eol.globi.domain.Term;
 import org.eol.globi.geo.Ecoregion;
 import org.eol.globi.geo.EcoregionFinder;

@@ -1,7 +1,7 @@
 package org.eol.globi.data;
 
-import org.eol.globi.data.taxon.CorrectionService;
-import org.eol.globi.data.taxon.TaxonIndexImpl;
+import org.eol.globi.taxon.CorrectionService;
+import org.eol.globi.taxon.TaxonIndexImpl;
 import org.hamcrest.core.Is;
 import org.junit.After;
 import org.junit.Before;

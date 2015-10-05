@@ -4,6 +4,7 @@ import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
+import org.eol.globi.taxon.TaxonEnricherImpl;
 import org.junit.Test;
 import org.mockito.Mockito;
 

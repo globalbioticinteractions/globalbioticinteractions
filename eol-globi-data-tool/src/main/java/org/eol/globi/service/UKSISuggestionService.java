@@ -5,7 +5,7 @@ import com.healthmarketscience.jackcess.Table;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.eol.globi.data.taxon.TaxonLookupServiceImpl;
+import org.eol.globi.taxon.TaxonLookupServiceImpl;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;

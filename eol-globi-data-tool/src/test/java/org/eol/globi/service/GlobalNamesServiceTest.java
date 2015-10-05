@@ -2,6 +2,9 @@ package org.eol.globi.service;
 
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Taxon;
+import org.eol.globi.taxon.GlobalNamesService;
+import org.eol.globi.taxon.GlobalNamesSources;
+import org.eol.globi.taxon.TermMatchListener;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -14,7 +17,6 @@ import static junit.framework.Assert.assertNotNull;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.isEmptyOrNullString;
 import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertThat;
 

@@ -1,5 +1,7 @@
 package org.eol.globi.service;
 
+import org.eol.globi.taxon.TermLookupServiceImpl;
+
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
