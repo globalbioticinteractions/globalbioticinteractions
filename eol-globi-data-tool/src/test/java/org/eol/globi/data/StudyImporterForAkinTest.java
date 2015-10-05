@@ -7,7 +7,7 @@ import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.service.TermLookupServiceException;
-import org.eol.globi.service.UberonLookupService;
+import org.eol.globi.taxon.UberonLookupService;
 import org.junit.Test;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;

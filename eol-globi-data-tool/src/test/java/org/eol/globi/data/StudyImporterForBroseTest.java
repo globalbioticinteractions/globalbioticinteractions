@@ -8,7 +8,7 @@ import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.service.TermLookupService;
-import org.eol.globi.service.UberonLookupService;
+import org.eol.globi.taxon.UberonLookupService;
 import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
 import org.neo4j.graphdb.Direction;

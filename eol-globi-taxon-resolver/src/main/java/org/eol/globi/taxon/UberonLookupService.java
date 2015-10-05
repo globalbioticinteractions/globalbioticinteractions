@@ -1,4 +1,4 @@
-package org.eol.globi.service;
+package org.eol.globi.taxon;
 
 import org.eol.globi.taxon.TermLookupServiceImpl;
 
