@@ -9,12 +9,11 @@ import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
+import org.eol.globi.util.ResourceUtil;
 import org.joda.time.DateTime;
 
 import java.io.IOException;
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -186,7 +185,7 @@ public class StudyImporterForFishbase2 extends BaseStudyImporter {
         FishBaseConfig[] configs = new FishBaseConfig[]{config, slbConfig};
 
         for (FishBaseConfig fishBaseConfig : configs) {
-            processEndpoints(fishBaseConfig.getURL(), new HashMap<String, NodeProcessor>() {
+            processEndpoints(fishBaseConfig.getURL(), new TreeMap<String, NodeProcessor>() {
                 {
                     put("refrens", references);
                     put("species", species);
@@ -202,7 +201,7 @@ public class StudyImporterForFishbase2 extends BaseStudyImporter {
 
     private void importStudy(final InteractionListener listener, final FishBaseConfig config) throws StudyImporterException {
 
-        processEndpoints(config.getURL(), new HashMap<String, NodeProcessor>() {
+        processEndpoints(config.getURL(), new TreeMap<String, NodeProcessor>() {
             {
                 put("fooditems", new ParserFood(listener, sourceCitation, config.getReferences(), config.getSpecies()));
                 put("predats", new ParserPredatorPrey(listener, sourceCitation, config.getReferences(), config.getSpecies()));
@@ -213,14 +212,13 @@ public class StudyImporterForFishbase2 extends BaseStudyImporter {
     private void processEndpoints(String baseUrl, Map<String, NodeProcessor> endpointConfig, String namespace) throws StudyImporterException {
         for (Map.Entry<String, NodeProcessor> endpointParser : endpointConfig.entrySet()) {
             int returned;
-            int requested = 500;
+            int requested = 1000;
             int totalReturned = 0;
             String uri = "";
             try {
                 do {
                     uri = baseUrl + endpointParser.getKey() + "?limit=" + requested + "&offset=" + totalReturned;
-                    LOG.info("downloading [" + uri + "] in progress...");
-                    JsonNode items = new ObjectMapper().readTree(new URL(uri));
+                    JsonNode items = new ObjectMapper().readTree(ResourceUtil.asInputStream(uri, getClass()));
                     if (items.has("data")) {
                         for (JsonNode item : items.get("data")) {
                             endpointParser.getValue().process(item, namespace);
@@ -228,7 +226,6 @@ public class StudyImporterForFishbase2 extends BaseStudyImporter {
                     }
                     returned = items.get("returned").asInt();
                     totalReturned += returned;
-                    LOG.info("downloading [" + uri + "] done.");
                 } while (returned == requested);
             } catch (IOException e) {
                 throw new StudyImporterException("failed to retrieve fishbase from [" + uri + "]", e);
