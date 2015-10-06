@@ -118,9 +118,9 @@ public class HttpUtil {
             stopwatch.start();
             String response = httpClient.execute(request, handler);
             stopwatch.stop();
-            if (stopwatch.getTime() > 3000) {
+            if (LOG.isDebugEnabled() && stopwatch.getTime() > 3000) {
                 String responseTime = "slowish http request (took " + stopwatch.getTime() + "ms) for [" + request.getURI().toString() + "]";
-                LOG.warn(responseTime);
+                LOG.debug(responseTime);
             }
 
             return response;
