@@ -147,7 +147,7 @@ public class StudyImporterForLifeWatchGreece extends BaseStudyImporter {
 
 
         public void foundInteraction(String predatorTaxonName, String preyTaxonName, String studyId, String studyReference) {
-            Study study = nodeFactory.getOrCreateStudy("http://polytraits.lifewatchgreece.eu/publication/" + studyId, "Polytraits, a database on biological traits of polychaetes. Available at http://polytraits.lifewatchgreece.eu.", ExternalIdUtil.toCitation(null, studyReference, null));
+            Study study = nodeFactory.getOrCreateStudy("http://polytraits.lifewatchgreece.eu/publication/" + studyId, "Faulwetter S, Markantonatou V, Pavloudi C, Papageorgiou N, Keklikoglou K, Chatzinikolaou E, Pafilis E, Chatzigeorgiou G, Vasileiadou K, Dailianis T, Fanini L, Koulouri P, Arvanitidis C (2014) Polytraits: A database on biological traits of marine polychaetes. Biodiversity Data Journal 2: e1024. doi:10.3897/BDJ.2.e1024 . Available at http://polytraits.lifewatchgreece.eu.", ExternalIdUtil.toCitation(null, studyReference, null));
             try {
                 Specimen predator = nodeFactory.createSpecimen(study, predatorTaxonName);
                 predator.ate(nodeFactory.createSpecimen(study, preyTaxonName));
