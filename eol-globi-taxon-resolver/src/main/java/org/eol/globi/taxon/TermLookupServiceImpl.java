@@ -45,12 +45,7 @@ public abstract class TermLookupServiceImpl implements TermLookupService {
 
         for (URI uri : uriList) {
             try {
-                String response;
-                if ("file".equals(uri.getScheme())) {
-                    response = IOUtils.toString(uri.toURL());
-                } else {
-                    response = HttpUtil.getContent(uri);
-                }
+                String response = contentToString(uri);
                 CSVParse parser = CSVUtil.createCSVParse(new StringReader(response));
                 parser.changeDelimiter(getDelimiter());
 
@@ -81,6 +76,16 @@ public abstract class TermLookupServiceImpl implements TermLookupService {
                 throw new TermLookupServiceException("failed to retrieve mapping from [" + uriList + "]", e);
             }
         }
+    }
+
+    protected static String contentToString(URI uri) throws IOException {
+        String response;
+        if ("file".equals(uri.getScheme()) || "jar".equals(uri.getScheme())) {
+            response = IOUtils.toString(uri.toURL());
+        } else {
+            response = HttpUtil.getContent(uri);
+        }
+        return response;
     }
 
     protected abstract boolean hasHeader();
