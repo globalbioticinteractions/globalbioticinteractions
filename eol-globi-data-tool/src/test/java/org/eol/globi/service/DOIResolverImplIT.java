@@ -9,6 +9,7 @@ import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
+import static org.junit.internal.matchers.StringContains.containsString;
 
 public class DOIResolverImplIT {
 
@@ -36,7 +37,7 @@ public class DOIResolverImplIT {
         assertThat(doi, is("http://dx.doi.org/10.2307/1552480"));
     }
 
-@Test
+    @Test
     public void resolveDOIByReferenceMatch3() throws IOException {
         String doi = new DOIResolverImpl().findDOIForReference("Hocking, B. 1968. Insect-flower associations in the high Arctic with special reference to nectar. Oikos 19:359-388.");
         assertThat(doi, is("http://dx.doi.org/10.2307/3565022"));
@@ -47,6 +48,15 @@ public class DOIResolverImplIT {
     public void resolveDOIBugFixedServerError() throws IOException {
         String citation = new DOIResolverImpl().findCitationForDOI("http://dx.doi.org/10.2307/4070736");
         assertThat(citation, is("Anon. McAtee’s “Food Habits of the Grosbeaks” Food Habits of the Grosbeaks W. L. McAtee. The Auk [Internet]. 1908 April;25(2):245–246. Available from: http://dx.doi.org/10.2307/4070736"));
+    }
+
+    @Test
+    public void resolveBioInfoCitation() throws IOException {
+        String doi = new DOIResolverImpl().findDOIForReference("Galea, V.J. & Price, T.V.. 1988. Infection of Lettuce by Microdochium panattonianum. Transactions of the British Mycological Society. Vol Vol 91 (3). pp 419-425");
+        String expectedDoi = "http://dx.doi.org/10.1016/s0007-1536(88)80117-7";
+        assertThat(doi, is(expectedDoi));
+        String citation = new DOIResolverImpl().findCitationForDOI(doi);
+        assertThat(citation, containsString("Galea VJ, Price TV"));
     }
 
     @Test
@@ -72,7 +82,8 @@ public class DOIResolverImplIT {
         String citationForDOI = new DOIResolverImpl().findCitationForDOI("http://dx.doi.org/10.1371/journal.pone.0052967");
         assertThat(citationForDOI, is("García-Robledo C, Erickson DL, Staines CL, Erwin TL, Kress WJ. Tropical Plant–Herbivore Networks: Reconstructing Species Interactions Using DNA Barcodes Heil M, editor. PLoS ONE [Internet]. 2013 January 8;8(1):e52967. Available from: http://dx.doi.org/10.1371/journal.pone.0052967"));
     }
-@Test
+
+    @Test
     public void findCitationForDOI3() throws IOException {
         String citationForDOI = new DOIResolverImpl().findCitationForDOI("http://dx.doi.org/10.2307/177149");
         assertThat(citationForDOI, is("Yodzis P. DIFFUSE EFFECTS IN FOOD WEBS. Ecology [Internet]. 2000 January;81(1):261–266. Available from: http://dx.doi.org/10.1890/0012-9658(2000)081[0261:DEIFW]2.0.CO;2"));

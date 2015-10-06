@@ -284,7 +284,7 @@ public class NodeFactoryImpl implements NodeFactory {
                         study.setCitation(doiResolver.findCitationForDOI(doi));
                     }
                 } catch (IOException e) {
-                    LOG.warn("failed to lookup doi for [" + title + "]", e);
+                    LOG.warn("failed to lookup doi for citation [" + citation + "] with id [" + title + "]", e);
                 }
             }
             studies.add(node, Study.TITLE, title);
