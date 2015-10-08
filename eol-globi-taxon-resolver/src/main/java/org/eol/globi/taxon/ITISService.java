@@ -65,7 +65,7 @@ public class ITISService implements PropertyEnricher {
         try {
             response = HttpUtil.executeWithTimer(get, responseHandler);
         } catch (IOException e) {
-            throw new PropertyEnricherException("failed to execute query to [ " + uri.toString() + "]", e);
+            throw new PropertyEnricherException("failed to execute query to [" + uri.toString() + "]", e);
         }
         return response;
     }

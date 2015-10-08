@@ -160,7 +160,7 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
                 httpGet.addHeader("accept", "application/json");
                 HttpResponse response = HttpUtil.getHttpClient().execute(httpGet);
                 if (response.getStatusLine().getStatusCode() != 200) {
-                    throw new StudyImporterException("failed to execute query to [ " + uri + "]: status code [" + response.getStatusLine().getStatusCode() + "]");
+                    throw new StudyImporterException("failed to execute query to [" + uri + "]: status code [" + response.getStatusLine().getStatusCode() + "]");
                 }
                 previousResultCount = parseJSON(response.getEntity().getContent());
                 pageNumber++;

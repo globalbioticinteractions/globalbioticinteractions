@@ -20,6 +20,7 @@ import java.util.TreeMap;
 
 public class StudyImporterForFishbase2 extends BaseStudyImporter {
     private static final Log LOG = LogFactory.getLog(StudyImporterForFishbase2.class);
+    public static final int BATCH_SIZE = 2000;
 
     public StudyImporterForFishbase2(ParserFactory parserFactory, NodeFactory nodeFactory) {
         super(parserFactory, nodeFactory);
@@ -212,7 +213,7 @@ public class StudyImporterForFishbase2 extends BaseStudyImporter {
     private void processEndpoints(String baseUrl, Map<String, NodeProcessor> endpointConfig, String namespace) throws StudyImporterException {
         for (Map.Entry<String, NodeProcessor> endpointParser : endpointConfig.entrySet()) {
             int returned;
-            int requested = 1000;
+            int requested = BATCH_SIZE;
             int totalReturned = 0;
             String uri = "";
             try {
@@ -272,9 +273,11 @@ public class StudyImporterForFishbase2 extends BaseStudyImporter {
         }
 
         private void addTaxonName(Map<String, String> link, String taxonIdLabel, String taxonNameLabel) {
-            String sourceTaxonId = link.get(taxonIdLabel);
-            Taxon taxon = species.taxonForId(sourceTaxonId);
-            if (taxon != null) {
+            String taxonId = link.get(taxonIdLabel);
+            Taxon taxon = species.taxonForId(taxonId);
+            if (taxon == null) {
+                LOG.warn("no taxon for taxon id [" + taxonId + "]");
+            } else {
                 link.put(taxonNameLabel, taxon.getName());
             }
         }
@@ -317,7 +320,7 @@ public class StudyImporterForFishbase2 extends BaseStudyImporter {
         }
 
         Taxon taxonForId(String externalId) {
-            return taxa.get(externalId);
+            return externalId == null ? null : taxa.get(externalId);
         }
     }
 
