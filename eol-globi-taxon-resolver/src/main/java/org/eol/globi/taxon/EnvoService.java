@@ -15,6 +15,7 @@ public class EnvoService extends BasePropertyEnricherService {
     public static final String ORGANIC_MATERIAL = ID_PREFIX_ENVO + "01000155";
     public static final String FECES = ID_PREFIX_ENVO + "00002003";
     public static final String WOOD = ID_PREFIX_ENVO + "00002040";
+    public static final String PLASTIC = ID_PREFIX_ENVO + "01000404";
     public static final String ROCK = ID_PREFIX_ENVO + "00001995";
     public static final String PIECE_OF_ROCK = ID_PREFIX_ENVO + "00000339";
 
@@ -30,6 +31,7 @@ public class EnvoService extends BasePropertyEnricherService {
         put("dung", FECES);
         put("animal dung", FECES);
         put("bovine or equine dung", FECES);
+        put("plastic", PLASTIC);
         put("rock", ROCK);
         put("organic matter", ORGANIC_MATERIAL);
         put("wood", WOOD);
@@ -46,6 +48,7 @@ public class EnvoService extends BasePropertyEnricherService {
         put(ORGANIC_MATERIAL, "environmental material | organic material");
         put(FECES, "environmental material | organic material | bodily fluid | excreta | feces");
         put(WOOD, "environmental material | organic material | wood");
+        put(PLASTIC, "environmental material | anthropogenic environmental material");
         put(ROCK, "environmental material");
         put(PIECE_OF_ROCK, "environmental feature | mesoscopic physical object | abiotic mesoscopic physical object | piece of rock");
     }};

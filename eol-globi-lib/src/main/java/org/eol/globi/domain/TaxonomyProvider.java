@@ -18,7 +18,7 @@ public enum TaxonomyProvider {
 
     private final String idPrefix;
 
-    private TaxonomyProvider(String idPrefix) {
+    TaxonomyProvider(String idPrefix) {
         this.idPrefix = idPrefix;
     }
 
