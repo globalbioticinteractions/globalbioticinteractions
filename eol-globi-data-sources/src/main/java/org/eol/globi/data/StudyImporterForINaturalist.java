@@ -155,7 +155,7 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
         int previousResultCount = 0;
         int pageNumber = 1;
         do {
-            String uri = "http://www.inaturalist.org/observation_field_values.json?type=taxon&page=" + pageNumber + "&per_page=100&license=any&quality_grade=research";
+            String uri = "http://www.inaturalist.org/observation_field_values.json?type=taxon&page=" + pageNumber + "&per_page=100&quality_grade=research";
             HttpGet httpGet = new HttpGet(uri);
             try {
                 httpGet.addHeader("accept", "application/json");
