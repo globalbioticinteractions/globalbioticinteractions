@@ -524,6 +524,38 @@ public class EOLServiceIntegrationTest {
     }
 
     @Test
+    public void lookupBluePlastic() throws PropertyEnricherException {
+        Map<String, String> properties = new HashMap<String, String>() {{
+        }};
+        properties.put(NAME, "blue plastic");
+        properties = eolService.enrich(properties);
+        assertThat(properties.get(NAME), is("blue plastic"));
+        assertThat(properties.size(), is(1));
+    }
+
+    @Test
+    @Ignore("re-enabled after EOL fixes https://github.com/jhpoelen/eol-globi-data/issues/175")
+    public void lookupBlue() throws PropertyEnricherException {
+        Map<String, String> properties = new HashMap<String, String>() {{
+        }};
+        properties.put(NAME, "blue");
+        properties = eolService.enrich(properties);
+        assertThat(properties.get(NAME), is("blue"));
+        assertThat(properties.size(), is(1));
+    }
+
+    @Test
+    @Ignore("re-enabled after EOL fixes https://github.com/jhpoelen/eol-globi-data/issues/175")
+    public void lookupWhite() throws PropertyEnricherException {
+        Map<String, String> properties = new HashMap<String, String>() {{
+        }};
+        properties.put(NAME, "white");
+        properties = eolService.enrich(properties);
+        assertThat(properties.get(NAME), is("white"));
+        assertThat(properties.size(), is(1));
+    }
+
+    @Test
     public void lookupTaxonPathByScientificName() throws PropertyEnricherException {
         Map<String, String> properties = new HashMap<String, String>();
         properties.put(NAME, "Homo sapiens");
