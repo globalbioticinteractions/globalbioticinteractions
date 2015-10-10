@@ -17,6 +17,10 @@ import java.util.List;
 
 public class ServiceUtil {
     public static String extractPath(String xmlContent, String elementName, String valuePrefix) throws PropertyEnricherException {
+        return extractPath(xmlContent, elementName, valuePrefix, "");
+    }
+
+    public static String extractPath(String xmlContent, String elementName, String valuePrefix, String valueSuffix) throws PropertyEnricherException {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         Document doc;
         try {
@@ -32,7 +36,7 @@ public class ServiceUtil {
                 if (null != firstChild) {
                     String nodeValue = firstChild.getNodeValue();
                     if (StringUtils.isNotBlank(nodeValue)) {
-                        ranks.add(valuePrefix + nodeValue);
+                        ranks.add(valuePrefix + nodeValue + valueSuffix);
                     }
                 }
             }
