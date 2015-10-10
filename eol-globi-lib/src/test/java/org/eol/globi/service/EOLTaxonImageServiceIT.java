@@ -34,13 +34,23 @@ public class EOLTaxonImageServiceIT {
 
     @Test
     public void imageLookupNCBI() throws URISyntaxException, IOException {
-        TaxonImage taxonImage = imageService.lookupImageURLs(TaxonomyProvider.NCBI, "28806");
+
+    }
+
+    @Test
+    public void imageURLLookupNCBI() throws URISyntaxException, IOException {
+        assertNCBIImage(imageService.lookupImageURLs(TaxonomyProvider.NCBI, "28806"));
+        assertNCBIImage(imageService.lookupImageForExternalId(TaxonomyProvider.ID_PREFIX_NCBI + "28806"));
+    }
+
+
+    protected void assertNCBIImage(TaxonImage taxonImage) {
         assertThat(taxonImage.getThumbnailURL(), endsWith(".jpg"));
         assertThat(taxonImage.getImageURL(), endsWith(".jpg"));
         assertThat(taxonImage.getPageId(), is("205157"));
         assertThat(taxonImage.getInfoURL(), is("http://eol.org/pages/205157"));
         assertThat(taxonImage.getScientificName(), is("Centropomus undecimalis"));
-        assertThat(taxonImage.getCommonName(), is("Common Snook"));
+        assertThat(taxonImage.getCommonName(), is("Thin Snook"));
     }
 
     @Test

@@ -30,6 +30,8 @@ public class EOLTaxonImageService implements ImageSearch {
             image = lookupImageURLs(TaxonomyProvider.WORMS, externalId.replace(TaxonomyProvider.ID_PREFIX_WORMS, ""));
         } else if (externalId.startsWith(TaxonomyProvider.ID_PREFIX_ITIS)) {
             image = lookupImageURLs(TaxonomyProvider.ITIS, externalId.replace(TaxonomyProvider.ID_PREFIX_ITIS, ""));
+        }else if (externalId.startsWith(TaxonomyProvider.ID_PREFIX_NCBI)) {
+            image = lookupImageURLs(TaxonomyProvider.NCBI, externalId.replace(TaxonomyProvider.ID_PREFIX_NCBI, ""));
         }
 
         if (image == null) {
@@ -50,7 +52,7 @@ public class EOLTaxonImageService implements ImageSearch {
         if (TaxonomyProvider.ITIS.equals(provider)) {
             eolProviderId = "903";
         } else if (TaxonomyProvider.NCBI.equals(provider)) {
-            eolProviderId = "759";
+            eolProviderId = "1172";
         } else if (TaxonomyProvider.WORMS.equals(provider)) {
             eolProviderId = "123";
         } else if (TaxonomyProvider.EOL.equals(provider)) {
