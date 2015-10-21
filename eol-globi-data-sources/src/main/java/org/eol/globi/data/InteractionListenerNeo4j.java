@@ -46,8 +46,8 @@ class InteractionListenerNeo4j implements InteractionListener {
         String sourceTaxonId = link.get(SOURCE_TAXON_ID);
         String targetTaxonName = link.get(TARGET_TAXON_NAME);
         String targetTaxonId = link.get(TARGET_TAXON_ID);
-        if (StringUtils.isNotBlank(sourceTaxonName)
-                && StringUtils.isNotBlank(targetTaxonName)) {
+        if ((StringUtils.isNotBlank(sourceTaxonName) || StringUtils.isNotBlank(sourceTaxonId))
+                && (StringUtils.isNotBlank(targetTaxonName) || StringUtils.isNotBlank(targetTaxonId))) {
             String interactionTypeId = link.get(INTERACTION_TYPE_ID);
             InteractType type = InteractType.typeOf(interactionTypeId);
             String referenceCitation = link.get(REFERENCE_CITATION);

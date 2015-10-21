@@ -18,7 +18,7 @@ import java.util.List;
 public interface NodeFactory {
     TaxonNode findTaxonByName(String taxonName) throws NodeFactoryException;
 
-    TaxonNode findTaxonById(String taxonName) throws NodeFactoryException;
+    TaxonNode findTaxonById(String taxonExternalId) throws NodeFactoryException;
 
     TaxonNode getOrCreateTaxon(String name) throws NodeFactoryException;
 

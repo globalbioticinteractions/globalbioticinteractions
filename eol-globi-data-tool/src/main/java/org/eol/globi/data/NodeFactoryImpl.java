@@ -98,8 +98,8 @@ public class NodeFactoryImpl implements NodeFactory {
     }
 
     @Override
-    public TaxonNode findTaxonById(String externalId) throws NodeFactoryException {
-        return getTaxonIndex().findTaxonById(externalId);
+    public TaxonNode findTaxonById(String taxonExternalId) throws NodeFactoryException {
+        return getTaxonIndex().findTaxonById(taxonExternalId);
     }
 
     @Override
