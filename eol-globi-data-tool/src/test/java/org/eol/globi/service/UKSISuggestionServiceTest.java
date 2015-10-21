@@ -35,7 +35,7 @@ public class UKSISuggestionServiceTest {
         HashMap<String, String> properties = new HashMap<String, String>();
         properties.put(PropertyAndValueDictionary.NAME, "Gaultheria procumbens");
         Map<String, String> enrichedProperties = uksiSuggestionService.enrich(properties);
-        assertThat(enrichedProperties.get(PropertyAndValueDictionary.NAME), is("Stellaria shallon"));
+        assertThat(enrichedProperties.get(PropertyAndValueDictionary.NAME), is("Gaultheria shallon"));
     }
 
     @Test
