@@ -29,6 +29,15 @@ public class UKSISuggestionServiceTest {
         assertThat(enrichedProperties.get(PropertyAndValueDictionary.EXTERNAL_ID), is("UKSI:NBNSYS0000157226"));
     }
 
+    // see https://github.com/globalbioticinteractions/globalbioticinteractions.github.io/issues/59
+    @Test
+    public void lookupNameWithCorrection2() throws PropertyEnricherException {
+        HashMap<String, String> properties = new HashMap<String, String>();
+        properties.put(PropertyAndValueDictionary.NAME, "Gaultheria procumbens");
+        Map<String, String> enrichedProperties = uksiSuggestionService.enrich(properties);
+        assertThat(enrichedProperties.get(PropertyAndValueDictionary.NAME), is("Stellaria shallon"));
+    }
+
     @Test
     public void lookupNameWithSuggestion() throws PropertyEnricherException {
         assertThat(uksiSuggestionService.suggest("Stellaria apetala"), is("Stellaria pallida"));
