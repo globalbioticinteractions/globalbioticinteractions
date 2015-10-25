@@ -50,11 +50,11 @@ public class WoRMSServiceTest {
 
     @Test
     public void lookupByAcceptedTaxonName() throws PropertyEnricherException {
-        String wormsId = new WoRMSService().lookupIdByName("Ariopsis felis");
+        String wormsId = new WoRMSService().lookupIdByName("Gadus morhua");
         HashMap<String, String> properties = new HashMap<String, String>();
         Map<String, String> enriched = new WoRMSService().enrichById(wormsId, properties);
-        assertThat(enriched.get(PropertyAndValueDictionary.COMMON_NAMES), containsString("bagre boca chica @es"));
-        assertThat(enriched.get(PropertyAndValueDictionary.COMMON_NAMES), containsString("hardhead catfish @en"));
+        assertThat(enriched.get(PropertyAndValueDictionary.COMMON_NAMES), containsString("Atlantic cod @en"));
+        assertThat(enriched.get(PropertyAndValueDictionary.COMMON_NAMES), containsString("bacalao @es"));
     }
 
     @Test

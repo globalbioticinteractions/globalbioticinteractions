@@ -17,7 +17,7 @@ import static org.junit.Assert.assertThat;
 import static org.junit.matchers.JUnitMatchers.containsString;
 import static org.mockito.Mockito.when;
 
-public class TaxonSearchImplTest {
+public class TaxonSearchImplIT {
 
     @Test
     public void nameSuggestions() throws IOException {
