@@ -49,6 +49,15 @@ public class WoRMSServiceTest {
     }
 
     @Test
+    public void lookupByAcceptedTaxonName() throws PropertyEnricherException {
+        String wormsId = new WoRMSService().lookupIdByName("Ariopsis felis");
+        HashMap<String, String> properties = new HashMap<String, String>();
+        Map<String, String> enriched = new WoRMSService().enrichById(wormsId, properties);
+        assertThat(enriched.get(PropertyAndValueDictionary.COMMON_NAMES), containsString("bagre boca chica @es"));
+        assertThat(enriched.get(PropertyAndValueDictionary.COMMON_NAMES), containsString("hardhead catfish @en"));
+    }
+
+    @Test
     public void lookupNonExistentTaxonPath() throws PropertyEnricherException {
         assertThat(new WoRMSService().lookupTaxonPathById("WORMS:EEEEEE"), is(nullValue()));
     }

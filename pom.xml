@@ -57,9 +57,9 @@
 
     <distributionManagement>
         <repository>
-            <id>globi-release</id>
-            <name>AWS Release Repository</name>
-            <url>s3://globi/release</url>
+            <id>globi-datasets</id>
+            <name>AWS Datasets Repository</name>
+            <url>s3://globi/datasets</url>
         </repository>
         <snapshotRepository>
             <id>globi-snapshot</id>

@@ -7,6 +7,7 @@ import org.apache.http.impl.client.BasicResponseHandler;
 import org.eol.globi.data.CharsetConstant;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.TaxonomyProvider;
+import org.eol.globi.service.LanguageCodeLookup;
 import org.eol.globi.service.PropertyEnricher;
 import org.eol.globi.service.PropertyEnricherException;
 import org.eol.globi.util.HttpUtil;
@@ -14,13 +15,22 @@ import org.eol.globi.util.HttpUtil;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class WoRMSService implements PropertyEnricher {
     public static final String RESPONSE_PREFIX = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><SOAP-ENV:Envelope SOAP-ENV:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\" xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:SOAP-ENC=\"http://schemas.xmlsoap.org/soap/encoding/\"><SOAP-ENV:Body><ns1:getAphiaIDResponse xmlns:ns1=\"http://tempuri.org/\"><return xsi:type=\"xsd:int\">";
     public static final String RESPONSE_SUFFIX = "</return></ns1:getAphiaIDResponse></SOAP-ENV:Body></SOAP-ENV:Envelope>";
+
+    private final LanguageCodeLookup languageLookup;
+
+    public WoRMSService() {
+        languageLookup = new LanguageCodeLookup();
+    }
 
     public String lookupIdByName(String taxonName) throws PropertyEnricherException {
         String response = getResponse("getAphiaID", "scientificname", taxonName);
@@ -90,10 +100,22 @@ public class WoRMSService implements PropertyEnricher {
                 value = ServiceUtil.extractPath(response1, "rank", "");
                 String[] ranks = StringUtils.split(value, CharsetConstant.SEPARATOR);
                 if (ranks != null && ranks.length > 0) {
-                    properties.put(PropertyAndValueDictionary.RANK, StringUtils.trim(StringUtils.lowerCase(ranks[ranks.length-1])));
+                    properties.put(PropertyAndValueDictionary.RANK, StringUtils.trim(StringUtils.lowerCase(ranks[ranks.length - 1])));
                 }
 
                 properties.put(PropertyAndValueDictionary.PATH_NAMES, StringUtils.isBlank(value) ? null : StringUtils.lowerCase(value));
+
+                response1 = getResponse("getAphiaVernacularsByID", "AphiaID", aphiaId.replace(TaxonomyProvider.ID_PREFIX_WORMS, ""));
+                String vernaculars = ServiceUtil.extractPath(response1, "vernacular", "");
+                String languageCodes = ServiceUtil.extractPath(response1, "language_code", "");
+                String[] commonNames = StringUtils.splitByWholeSeparator(vernaculars, CharsetConstant.SEPARATOR);
+                String[] langCodes = StringUtils.splitByWholeSeparator(languageCodes, CharsetConstant.SEPARATOR);
+                List<String> names = new ArrayList<String>();
+                for (int i = 0; i < commonNames.length && (langCodes.length == commonNames.length); i++) {
+                    String code = languageLookup.lookupLanguageCodeFor(langCodes[i]);
+                    names.add(commonNames[i] + " @" + (code == null ? langCodes[i] : code));
+                }
+                properties.put(PropertyAndValueDictionary.COMMON_NAMES, StringUtils.join(names, CharsetConstant.SEPARATOR));
             }
         }
 
