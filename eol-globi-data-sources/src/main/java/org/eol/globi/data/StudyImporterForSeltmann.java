@@ -173,7 +173,9 @@ public class StudyImporterForSeltmann extends BaseStudyImporter {
     private InteractType parseInteractType(LabeledCSVParser occurrence, Map<String, String> assoc) throws StudyImporterException {
         String interactionURI = assoc.get("aec:associatedRelationshipURI");
         InteractType interactType = null;
-        if (StringUtils.isNotBlank(interactionURI)) {
+        if (StringUtils.isBlank(interactionURI)) {
+          interactType = InteractType.INTERACTS_WITH;
+        } else {
             final Map<String, InteractType> assocInteractMap = new HashMap<String, InteractType>() {
                 {
                     // interaction types that could probably be more specific (e.g. found inside, found on, emerged from)
@@ -187,7 +189,6 @@ public class StudyImporterForSeltmann extends BaseStudyImporter {
             if (interactType == null) {
                 throw new StudyImporterException("found unsupported interactionURI: [" + interactionURI + "] related to" + getLineMsg(occurrence));
             }
-
         }
         return interactType;
     }
