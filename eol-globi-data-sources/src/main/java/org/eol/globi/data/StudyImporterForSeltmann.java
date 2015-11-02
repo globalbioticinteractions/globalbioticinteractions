@@ -130,9 +130,10 @@ public class StudyImporterForSeltmann extends BaseStudyImporter {
                         getLogger().warn(study, "found blank associated target taxon name" + getLineMsg(occurrence));
                     }
 
-                    if (StringUtils.isNotBlank(sourceName) && StringUtils.isNotBlank(targetName)) {
+                    InteractType interactType = parseInteractType(occurrence, assoc);
+                    if (interactType != null && StringUtils.isNotBlank(sourceName) && StringUtils.isNotBlank(targetName)) {
                         try {
-                            createInteraction(occurrence, study, assoc, targetName, sourceName, date);
+                            createInteraction(occurrence, study, assoc, targetName, sourceName, date, interactType);
                         } catch (NodeFactoryException ex) {
                             String message = "failed to import interaction because of [" + ex.getMessage() + "]" + getLineMsg(occurrence);
                             LOG.warn(message);
@@ -147,24 +148,10 @@ public class StudyImporterForSeltmann extends BaseStudyImporter {
         return null;
     }
 
-    protected void createInteraction(LabeledCSVParser occurrence, Study study, Map<String, String> assoc, String targetName, String sourceName, Date date) throws NodeFactoryException, StudyImporterException {
+    protected void createInteraction(LabeledCSVParser occurrence, Study study, Map<String, String> assoc, String targetName, String sourceName, Date date, InteractType interactType) throws NodeFactoryException, StudyImporterException {
+
         Specimen source = nodeFactory.createSpecimen(study, sourceName);
         Specimen target = nodeFactory.createSpecimen(study, targetName);
-        String interactionURI = assoc.get("aec:associatedRelationshipURI");
-        final Map<String, InteractType> assocInteractMap = new HashMap<String, InteractType>() {
-            {
-                // interaction types that could probably be more specific (e.g. found inside, found on, emerged from)
-                put("http://purl.obolibrary.org/obo/RO_0002220", InteractType.INTERACTS_WITH);
-                put("http://purl.obolibrary.org/obo/RO_0001025", InteractType.INTERACTS_WITH);
-                put("http://eol.org/schema/terms/emergedFrom", InteractType.INTERACTS_WITH);
-                put("http://eol.org/schema/terms/foundNear", InteractType.INTERACTS_WITH);
-            }
-        };
-        InteractType interactType = InteractType.typeOf(interactionURI);
-        interactType = interactType == null ? assocInteractMap.get(interactionURI) : interactType;
-        if (interactType == null) {
-            throw new StudyImporterException("found unsupported interactionURI: [" + interactionURI + "] related to" + getLineMsg(occurrence));
-        }
         source.interactsWith(target, interactType);
 
         String sourceBasisOfRecord = occurrence.getValueByLabel("basisOfRecord");
@@ -181,6 +168,28 @@ public class StudyImporterForSeltmann extends BaseStudyImporter {
             Location loc = nodeFactory.getOrCreateLocation(Double.parseDouble(latitude), Double.parseDouble(longitude), null);
             source.caughtIn(loc);
         }
+    }
+
+    private InteractType parseInteractType(LabeledCSVParser occurrence, Map<String, String> assoc) throws StudyImporterException {
+        String interactionURI = assoc.get("aec:associatedRelationshipURI");
+        InteractType interactType = null;
+        if (StringUtils.isNotBlank(interactionURI)) {
+            final Map<String, InteractType> assocInteractMap = new HashMap<String, InteractType>() {
+                {
+                    // interaction types that could probably be more specific (e.g. found inside, found on, emerged from)
+                    put("http://purl.obolibrary.org/obo/RO_0002220", InteractType.INTERACTS_WITH);
+                    put("http://purl.obolibrary.org/obo/RO_0001025", InteractType.INTERACTS_WITH);
+                    put("http://eol.org/schema/terms/emergedFrom", InteractType.INTERACTS_WITH);
+                }
+            };
+            interactType = InteractType.typeOf(interactionURI);
+            interactType = interactType == null ? assocInteractMap.get(interactionURI) : interactType;
+            if (interactType == null) {
+                throw new StudyImporterException("found unsupported interactionURI: [" + interactionURI + "] related to" + getLineMsg(occurrence));
+            }
+
+        }
+        return interactType;
     }
 
     private String getLineMsg(LabeledCSVParser occurrence) {
