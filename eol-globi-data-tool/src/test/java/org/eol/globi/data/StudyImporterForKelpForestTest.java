@@ -1,6 +1,7 @@
 package org.eol.globi.data;
 
 import org.eol.globi.domain.TaxonNode;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.hamcrest.core.Is.is;
@@ -9,6 +10,7 @@ import static org.junit.Assert.*;
 
 public class StudyImporterForKelpForestTest extends GraphDBTestCase {
 
+    @Ignore("kelp forest not available on 1 Nov 2015: Caused by: org.apache.http.conn.HttpHostConnectException: Connect to kelpforest.ucsc.edu:80 [kelpforest.ucsc.edu/128.114.235.111] failed: Operation timed out")
     @Test
     public void importAll() throws StudyImporterException, NodeFactoryException {
         StudyImporterForKelpForest importer = new StudyImporterForKelpForest(new ParserFactoryImpl(), nodeFactory);
