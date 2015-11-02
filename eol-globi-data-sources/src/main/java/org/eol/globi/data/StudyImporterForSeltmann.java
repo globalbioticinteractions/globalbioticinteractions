@@ -10,7 +10,6 @@ import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
-import org.eol.globi.domain.Term;
 import org.eol.globi.util.CSVUtil;
 import org.eol.globi.util.ResourceUtil;
 import org.joda.time.format.DateTimeFormat;
@@ -19,6 +18,7 @@ import org.mapdb.DB;
 import org.mapdb.DBMaker;
 import org.mapdb.HTreeMap;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -75,7 +75,8 @@ public class StudyImporterForSeltmann extends BaseStudyImporter {
                 throw new StudyImporterException("failed to find expected [occurrences.tsv] resource");
             }
 
-            LabeledCSVParser parser = CSVUtil.createLabeledCSVParser(FileUtils.getUncompressedBufferedReader(new FileInputStream(assocTempFile), CharsetConstant.UTF8));
+            BufferedReader assocReader = FileUtils.getUncompressedBufferedReader(new FileInputStream(assocTempFile), CharsetConstant.UTF8);
+            LabeledCSVParser parser = CSVUtil.createLabeledCSVParser(assocReader);
             parser.changeDelimiter('\t');
             while (parser.getLine() != null) {
                 Map<String, String> prop = new HashMap<String, String>();
@@ -105,10 +106,12 @@ public class StudyImporterForSeltmann extends BaseStudyImporter {
                 Map<String, String> assoc = assocMap.get(recordId);
                 if (assoc != null) {
                     String targetName = assoc.get("aec:associatedScientificName");
-                    String sourceName = occurrence.getValueByLabel("dwc:scientificName");
-                    String eventDate = occurrence.getValueByLabel("dwc:eventDate");
+                    String sourceName = occurrence.getValueByLabel("scientificName");
+                    String eventDate = occurrence.getValueByLabel("eventDate");
                     Date date = null;
                     if (StringUtils.equals(eventDate, "0000-00-00")) {
+                        getLogger().warn(study, "found suspicious event date [" + eventDate + "]" + getLineMsg(occurrence));
+                    } else if (StringUtils.isBlank(eventDate)) {
                         getLogger().warn(study, "found suspicious event date [" + eventDate + "]" + getLineMsg(occurrence));
                     } else {
                         DateTimeFormatter fmtDateTime1 = DateTimeFormat.forPattern("yyyy-MM-dd");
@@ -148,25 +151,23 @@ public class StudyImporterForSeltmann extends BaseStudyImporter {
         Specimen source = nodeFactory.createSpecimen(study, sourceName);
         Specimen target = nodeFactory.createSpecimen(study, targetName);
         String interactionURI = assoc.get("aec:associatedRelationshipURI");
-        final Map<String, InteractType> assocInteractMap = new HashMap<String, InteractType>() {{
-            put(InteractType.PARASITE_OF.getIRI(), InteractType.PARASITE_OF);
-            put(InteractType.HAS_PARASITE.getIRI(), InteractType.HAS_PARASITE);
-            put(InteractType.INTERACTS_WITH.getIRI(), InteractType.INTERACTS_WITH);
-
-            // interaction types that could probably be more specific (e.g. found inside, found on, emerged from)
-            put("http://purl.obolibrary.org/obo/RO_0002220", InteractType.INTERACTS_WITH);
-            put("http://purl.obolibrary.org/obo/RO_0001025", InteractType.INTERACTS_WITH);
-            put("http://eol.org/schema/terms/emergedFrom", InteractType.INTERACTS_WITH);
-            put("http://eol.org/schema/terms/foundNear", InteractType.INTERACTS_WITH);
-        }
+        final Map<String, InteractType> assocInteractMap = new HashMap<String, InteractType>() {
+            {
+                // interaction types that could probably be more specific (e.g. found inside, found on, emerged from)
+                put("http://purl.obolibrary.org/obo/RO_0002220", InteractType.INTERACTS_WITH);
+                put("http://purl.obolibrary.org/obo/RO_0001025", InteractType.INTERACTS_WITH);
+                put("http://eol.org/schema/terms/emergedFrom", InteractType.INTERACTS_WITH);
+                put("http://eol.org/schema/terms/foundNear", InteractType.INTERACTS_WITH);
+            }
         };
-        InteractType interactType = StringUtils.isBlank(interactionURI) ? InteractType.INTERACTS_WITH : assocInteractMap.get(interactionURI);
+        InteractType interactType = InteractType.typeOf(interactionURI);
+        interactType = interactType == null ? assocInteractMap.get(interactionURI) : interactType;
         if (interactType == null) {
-            throw new StudyImporterException("found unsupported interactionURI: [" + interactionURI +"] related to" + getLineMsg(occurrence));
+            throw new StudyImporterException("found unsupported interactionURI: [" + interactionURI + "] related to" + getLineMsg(occurrence));
         }
         source.interactsWith(target, interactType);
 
-        String sourceBasisOfRecord = occurrence.getValueByLabel("dwc:basisOfRecord");
+        String sourceBasisOfRecord = occurrence.getValueByLabel("basisOfRecord");
         source.setBasisOfRecord(nodeFactory.getOrCreateBasisOfRecord(sourceBasisOfRecord, sourceBasisOfRecord));
 
         String targetBasisOfRecord = assoc.get("dwc:basisOfRecord");
@@ -174,8 +175,8 @@ public class StudyImporterForSeltmann extends BaseStudyImporter {
 
         nodeFactory.setUnixEpochProperty(source, date);
         nodeFactory.setUnixEpochProperty(target, date);
-        String latitude = occurrence.getValueByLabel("dwc:decimalLatitude");
-        String longitude = occurrence.getValueByLabel("dwc:decimalLongitude");
+        String latitude = occurrence.getValueByLabel("decimalLatitude");
+        String longitude = occurrence.getValueByLabel("decimalLongitude");
         if (StringUtils.isNotBlank(latitude) && StringUtils.isNotBlank(longitude)) {
             Location loc = nodeFactory.getOrCreateLocation(Double.parseDouble(latitude), Double.parseDouble(longitude), null);
             source.caughtIn(loc);

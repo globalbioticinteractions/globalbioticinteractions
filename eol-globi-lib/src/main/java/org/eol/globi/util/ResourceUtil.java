@@ -27,7 +27,8 @@ public class ResourceUtil {
             LOG.info("caching of [" + resource + "] started...");
             is = getCachedRemoteInputStream(resource);
             LOG.info("caching of [" + resource + "] complete.");
-
+        } else if (StringUtils.startsWith(resource, "file://")) {
+            is = new FileInputStream(new File(URI.create(resource)));
         } else {
             is = clazz.getResourceAsStream(resource);
             if (is == null) {
