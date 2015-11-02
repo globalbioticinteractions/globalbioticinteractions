@@ -11,6 +11,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
@@ -32,6 +33,14 @@ public class NBNServiceTest {
         assertThat(enriched.get(PropertyAndValueDictionary.NAME), is("Endothenia pullana"));
         assertThat(enriched.get(PropertyAndValueDictionary.COMMON_NAMES), is("Woundwort Marble @en"));
         assertThat(enriched.get(PropertyAndValueDictionary.EXTERNAL_ID), is("NBN:NHMSYS0000502366"));
+    }
+
+    @Test
+    public void lookupByCode3() throws IOException, PropertyEnricherException {
+        Map<String, String> enriched = getTaxonInfo("NBNSYS0000159497");
+        assertThat(enriched.get(PropertyAndValueDictionary.NAME), is("Berberidaceae"));
+        assertThat(enriched.get(PropertyAndValueDictionary.COMMON_NAMES), is(nullValue()));
+        assertThat(enriched.get(PropertyAndValueDictionary.EXTERNAL_ID), is("NBN:NBNSYS0000159497"));
     }
 
     @Test
