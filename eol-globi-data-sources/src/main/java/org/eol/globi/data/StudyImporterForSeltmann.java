@@ -115,10 +115,11 @@ public class StudyImporterForSeltmann extends BaseStudyImporter {
                         getLogger().warn(study, "found suspicious event date [" + eventDate + "]" + getLineMsg(occurrence));
                     } else {
                         DateTimeFormatter fmtDateTime1 = DateTimeFormat.forPattern("yyyy-MM-dd");
+                        String dateString = eventDate.split("/")[0];
                         try {
-                            date = fmtDateTime1.parseDateTime(eventDate.split("/")[0]).toDate();
-                        } catch (org.joda.time.IllegalFieldValueException e) {
-                            throw new StudyImporterException("invalid date " + getLineMsg(occurrence), e);
+                            date = fmtDateTime1.parseDateTime(dateString).toDate();
+                        } catch (IllegalArgumentException e) {
+                            getLogger().warn(study, "invalid date [" + dateString + "] " + getLineMsg(occurrence));
                         }
                     }
 
