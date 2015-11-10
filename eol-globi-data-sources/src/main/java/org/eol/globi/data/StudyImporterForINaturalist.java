@@ -105,6 +105,7 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
         put("Interaction: Pathogen of", InteractType.PATHOGEN_OF);
         put("Prey ID", InteractType.PREYS_UPON);
         put("Parasitado por", InteractType.HAS_PARASITE);
+        put("Observado sobre", InteractType.INTERACTS_WITH);
     }};
 
     private static final Map<String, InteractType> INVERSE_TYPE_MAPPING = new HashMap<String, InteractType>() {{
