@@ -153,8 +153,21 @@ public class TaxonEnricherImplIT extends GraphDBTestCase {
     public void sediment() throws IOException, NodeFactoryException {
         assertThat(nodeFactory.getOrCreateTaxon("Sediment").getExternalId(), is("ENVO:00002007"));
         assertThat(nodeFactory.getOrCreateTaxon("sediment").getExternalId(), is("ENVO:00002007"));
-        assertThat(nodeFactory.getOrCreateTaxon("detritus").getExternalId(), is("ENVO:01000155"));
+        assertIsOrganicMaterial(nodeFactory.getOrCreateTaxon("detritus"));
+        assertIsOrganicMaterial(nodeFactory.getOrCreateTaxon("Detritus"));
         assertThat(nodeFactory.getOrCreateTaxon("Detritus").getExternalId(), is("ENVO:01000155"));
+    }
+
+    @Test
+    public void detritusById() throws IOException, NodeFactoryException {
+        TaxonNode someOrganicMaterial = nodeFactory.getOrCreateTaxon("somehing", "ENVO:01000155", null);
+        assertThat(someOrganicMaterial.getExternalId(), is("ENVO:01000155"));
+        assertThat(someOrganicMaterial.getPath(), is("environmental material | organic material"));
+    }
+
+    protected void assertIsOrganicMaterial(TaxonNode detritus) {
+        assertThat(detritus.getExternalId(), is("ENVO:01000155"));
+        assertThat(detritus.getPath(), is("environmental material | organic material"));
     }
 
     @Test
