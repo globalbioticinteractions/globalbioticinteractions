@@ -16,6 +16,7 @@ import org.eol.globi.domain.Study;
 import org.eol.globi.domain.TaxonomyProvider;
 import org.eol.globi.util.ExternalIdUtil;
 import org.eol.globi.util.HttpUtil;
+import org.eol.globi.util.ResourceUtil;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.format.ISODateTimeFormat;
@@ -25,116 +26,27 @@ import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
 public class StudyImporterForINaturalist extends BaseStudyImporter {
     private static final Log LOG = LogFactory.getLog(StudyImporterForINaturalist.class);
+    public static final String TYPE_IGNORED_URI_DEFAULT = "https://rawgit.com/globalbioticinteractions/inaturalist/master/interaction_types_ignored.csv";
+    public static final String TYPE_MAP_URI_DEFAULT = "https://rawgit.com/globalbioticinteractions/inaturalist/master/interaction_types.csv";
 
     public static final String INATURALIST_URL = "http://inaturalist.org";
 
-    private static final Map<String, InteractType> TYPE_MAPPING = new HashMap<String, InteractType>() {{
-        put("Eating", InteractType.ATE);
-        put("Feeding on:", InteractType.ATE);
-        put("Feeding on", InteractType.ATE);
-        put("Mariposas que alimenta", InteractType.ATE);
-        put("With the prey", InteractType.PREYS_UPON);
-        put("Interaction: Preyed upon", InteractType.PREYS_UPON);
-        put("Interaction: Ate fruit of", InteractType.ATE);
-        put("Interaction: Herbivore of", InteractType.ATE);
-        put("Interaction: Infected by", InteractType.PATHOGEN_OF);
-        put("Predating", InteractType.PREYS_UPON);
-        put("Depredando", InteractType.PREYS_UPON);
-        put("Alimentándose", InteractType.ATE);
-        put("Food Source", InteractType.ATE);
-        put("Interaction: Fruit eaten by", InteractType.ATE);
-        put("Host", InteractType.HAS_HOST);
-        put("Host plant NZ", InteractType.HAS_HOST);
-        put("host species with names lookup", InteractType.HAS_HOST);
-        put("parasitic fungus on hoast with names lookup", InteractType.HAS_PARASITE);
-        put("Hospedero", InteractType.HAS_PARASITE);
-        put("host to parasitic fungus", InteractType.PARASITE_OF);
-        put("Host animal", InteractType.HAS_HOST);
-        put("Interaction: Visited flower of", InteractType.VISITS_FLOWERS_OF);
-        put("Flower species", InteractType.POLLINATES);
-        put("Euphorbia pulcherrima", InteractType.POLLINATES);
-        put("Perching on", InteractType.PERCHING_ON);
-        put("Pollinating", InteractType.POLLINATES);
-        put("Other Species in Group", InteractType.INTERACTS_WITH);
-        put("associated species NZ", InteractType.INTERACTS_WITH);
-        put("Associated With", InteractType.INTERACTS_WITH);
-        put("Milkweed species", InteractType.INTERACTS_WITH);
-        put("second associated species", InteractType.INTERACTS_WITH);
-        put("associated species alien to NZ", InteractType.INTERACTS_WITH);
-        put("Associated species with names lookup", InteractType.INTERACTS_WITH);
-        put("2nd associated organism with names lookup", InteractType.INTERACTS_WITH);
-        put("Other other species in group", InteractType.INTERACTS_WITH);
-        put("Pollinating", InteractType.POLLINATES);
-        put("Butterfly & Moth Host Plant", InteractType.HAS_HOST);
-        put("Butterfly & Moth Nectar Plant", InteractType.HAS_HOST);
-        put("honey bee food plant", InteractType.HAS_HOST);
-        put("Drinking nectar from", InteractType.HAS_HOST);
-        put("Gall Inducer", InteractType.INTERACTS_WITH);
-        put("Forms gall on", InteractType.INTERACTS_WITH);
-        put("Insect Nectar Plant", InteractType.INTERACTS_WITH);
-        put("specified substrate of fungus", InteractType.INTERACTS_WITH);
-        put("Insect Host Plant", InteractType.HAS_HOST);
-        put("Hunting", InteractType.PREYS_UPON);
-        put("Predated by", InteractType.PREYED_UPON_BY);
-        put("Is Host For", InteractType.HOST_OF);
-        put("Being parasitized by", InteractType.HAS_PARASITE);
-        put("Parasitando a", InteractType.PARASITE_OF);
-        put("Interaction: Nested in", InteractType.INTERACTS_WITH);
-        put("Interaction: Nested in", InteractType.INTERACTS_WITH);
-        put("Interaction: Decomposer of", InteractType.INTERACTS_WITH);
-        put("Interaction: Parasite/parasitoid of", InteractType.PARASITE_OF);
-        put("Interaction: Flower visited by", InteractType.FLOWERS_VISITED_BY);
-        put("Interaction: Preyed upon by", InteractType.PREYED_UPON_BY);
-        put("Interaction: egg(s) laid on/in", InteractType.PARASITE_OF);
-        put("Interaction: Herbivory by", InteractType.EATEN_BY);
-        put("Interaction: Carcass scavenged by", InteractType.EATEN_BY);
-        put("Kleptoparasite Host", InteractType.KLEPTOPARASITE_OF);
-        put("Kleptoparasite Forage", InteractType.ATE);
-        put("Polinizando", InteractType.POLLINATES);
-        put("Especie visitada", InteractType.VISITS_FLOWERS_OF);
-        put("Interacciones", InteractType.VISITS_FLOWERS_OF);
-        put("Interaction: Ate seed of", InteractType.ATE);
-        put("Interaction: Parasitised by", InteractType.HAS_PARASITE);
-        put("Interaction: Egg(s) laid on/in", InteractType.INTERACTS_WITH);
-        put("Prey Speicies", InteractType.PREYS_UPON);
-        put("Interaction: Pathogen of", InteractType.PATHOGEN_OF);
-        put("Prey ID", InteractType.PREYS_UPON);
-        put("Parasitado por", InteractType.HAS_PARASITE);
-        put("Observado sobre", InteractType.INTERACTS_WITH);
-        put("Eaten by", InteractType.EATEN_BY);
-        put("Hunted by", InteractType.PREYED_UPON_BY);
-        put("Associated parasitic / pathogenic organism with names lookup", InteractType.HAS_PARASITE);
-        put("first nectar or pollen feeding insect", InteractType.POLLINATED_BY);
-        put("second nectar or pollen feeding insect", InteractType.POLLINATED_BY);
-    }};
 
-    public static final List<String> IGNORED_INTERACTION_TYPES = new ArrayList<String>() {{
-        // see https://github.com/jhpoelen/eol-globi-data/issues/56
-        add("Syntopic");
-        add("Syntop");
-        add("Target species");
-        add("Iconic taxon name");
-        add("Tree species");
-        add("associated fern plant, pteridophyte");
-        add("Order");
-        add("Class");
-        add("Phylum");
-        add("Unidentified");
-        add("Animal observed");
-        add("Interaction: Defended territory from");
-        add("Mobbing");
-    }};
     private final Map<Long, String> unsupportedInteractionTypes = new TreeMap<Long, String>();
+    private String typeIgnoredURI;
+    private String typeMapURI;
+    public static final String PREFIX_OBSERVATION_FIELD = "http://www.inaturalist.org/observation_fields/";
 
     public StudyImporterForINaturalist(ParserFactory parserFactory, NodeFactory nodeFactory) {
         super(parserFactory, nodeFactory);
+        setTypeMapURI(TYPE_MAP_URI_DEFAULT);
+        setTypeIgnoredURI(TYPE_IGNORED_URI_DEFAULT);
     }
 
     public static Map<Integer, InteractType> buildTypeMap(String resource, InputStream is) throws IOException {
@@ -163,6 +75,18 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
         return typeMap;
     }
 
+    public static List<Integer> buildTypesIgnored(InputStream is) throws IOException {
+        LabeledCSVParser parser = new LabeledCSVParser(new CSVParser(is));
+        List<Integer> typeMap1 = new ArrayList<Integer>();
+        while (parser.getLine() != null) {
+            String inatIdString = parser.getValueByLabel("observation_field_id");
+            if (StringUtils.startsWith(inatIdString, PREFIX_OBSERVATION_FIELD)) {
+                typeMap1.add(Integer.parseInt(inatIdString.replace(PREFIX_OBSERVATION_FIELD, "")));
+            }
+        }
+        return typeMap1;
+    }
+
     @Override
     public Study importStudy() throws StudyImporterException {
         unsupportedInteractionTypes.clear();
@@ -177,7 +101,7 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
                         .append(entry.getValue())
                         .append("]) ");
             }
-            String msg = "found unsupported (observationId, interactionType) pairs: " + unsupportedInteractions.toString();
+            String msg = "found unsupported (observationId, observationFieldNameId) pairs: " + unsupportedInteractions.toString();
             throw new StudyImporterException(msg);
         }
         return null;
@@ -189,6 +113,19 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
     }
 
     private int retrieveDataParseResults() throws StudyImporterException {
+        List<Integer> typesIgnored;
+        try {
+            typesIgnored = buildTypesIgnored(ResourceUtil.asInputStream(getTypeIgnoredURI(), null));
+        } catch (IOException e) {
+            throw new StudyImporterException("failed to load ignored interaction types from [" + getTypeIgnoredURI() +"]");
+        }
+        Map<Integer, InteractType> typeMap;
+        try {
+            typeMap = buildTypeMap(getTypeMapURI(), ResourceUtil.asInputStream(getTypeMapURI(),null));
+        } catch (IOException e) {
+            throw new StudyImporterException("failed to load interaction mapping from [" + getTypeMapURI() +"]");
+        }
+
         int totalInteractions = 0;
         int previousResultCount = 0;
         int pageNumber = 1;
@@ -201,7 +138,9 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
                 if (response.getStatusLine().getStatusCode() != 200) {
                     throw new StudyImporterException("failed to execute query to [" + uri + "]: status code [" + response.getStatusLine().getStatusCode() + "]");
                 }
-                previousResultCount = parseJSON(response.getEntity().getContent());
+                previousResultCount = parseJSON(response.getEntity().getContent(),
+                        typesIgnored,
+                        typeMap);
                 pageNumber++;
                 totalInteractions += previousResultCount;
             } catch (IOException e) {
@@ -214,7 +153,7 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
         return totalInteractions;
     }
 
-    protected int parseJSON(InputStream retargetAsStream) throws StudyImporterException {
+    protected int parseJSON(InputStream retargetAsStream, List<Integer> typesIgnored, Map<Integer, InteractType> typeMap) throws StudyImporterException {
         ObjectMapper mapper = new ObjectMapper();
         JsonNode array;
         try {
@@ -227,8 +166,10 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
         }
         for (int i = 0; i < array.size(); i++) {
             try {
-                parseSingleInteractions(array.get(i));
+                parseSingleInteractions(array.get(i), typesIgnored, typeMap);
             } catch (NodeFactoryException e) {
+                throw new StudyImporterException("failed to parse inaturalist interactions", e);
+            } catch (IOException e) {
                 throw new StudyImporterException("failed to parse inaturalist interactions", e);
             }
         }
@@ -240,7 +181,7 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
 
     }
 
-    private void parseSingleInteractions(JsonNode jsonNode) throws NodeFactoryException, StudyImporterException {
+    private void parseSingleInteractions(JsonNode jsonNode, List<Integer> typesIgnored, Map<Integer, InteractType> typeMap) throws NodeFactoryException, StudyImporterException, IOException {
         JsonNode targetTaxon = jsonNode.get("taxon");
         JsonNode targetTaxonNode = targetTaxon.get("name");
         long observationId = jsonNode.get("observation_id").getLongValue();
@@ -249,46 +190,42 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
         } else {
             JsonNode observationField = jsonNode.get("observation_field");
             String interactionDataType = observationField.get("datatype").getTextValue();
-            String interactionType = observationField.get("name").getTextValue();
-            if (isIgnoredInteractionType(interactionType)) {
-                LOG.warn("ignoring taxon observation field type [" + interactionType + "] for observation with id [" + observationId + "]");
+            String interactionTypeName = observationField.get("name").getTextValue();
+            Integer interactionTypeId = observationField.get("id").getIntValue();
+            if (typesIgnored.contains(interactionTypeId)) {
+                LOG.warn("ignoring taxon observation field type [" + interactionTypeName + "] with id [" + interactionTypeId + "] for observation with id [" + observationId + "]");
             } else {
-                handleObservation(jsonNode, targetTaxonNode, observationId, interactionDataType, interactionType);
+                InteractType interactType = typeMap.get(interactionTypeId);
+                if (interactType == null) {
+                    unsupportedInteractionTypes.put(observationId, interactionTypeName + ":" + interactionTypeId);
+                    LOG.warn("no interaction type associated with observation field type [" + interactionTypeName + "] with id [" + interactionTypeId + "] for observation with id [" + observationId + "]");
+                } else {
+                    handleObservation(jsonNode, targetTaxonNode, observationId, interactionDataType, interactType, interactionTypeName);
+                }
             }
         }
 
     }
 
-    private boolean isIgnoredInteractionType(String interactionType) {
-        return StringUtils.isBlank(interactionType) || IGNORED_INTERACTION_TYPES.contains(interactionType);
-    }
-
-
-    private void handleObservation(JsonNode jsonNode, JsonNode targetTaxonNode, long observationId, String interactionDataType, String interactionType) throws StudyImporterException, NodeFactoryException {
+    private void handleObservation(JsonNode jsonNode, JsonNode targetTaxonNode, long observationId, String interactionDataType, InteractType interactionTypeId, String interactionTypeName) throws StudyImporterException, NodeFactoryException {
         JsonNode observation = jsonNode.get("observation");
 
         JsonNode sourceTaxon = observation.get("taxon");
         if (sourceTaxon == null) {
             LOG.warn("cannot create interaction with missing source taxon name for observation with id [" + observation.get("id") + "]");
         } else {
-            if (TYPE_MAPPING.containsKey(interactionType)) {
-                importInteraction(targetTaxonNode, observationId, interactionDataType, interactionType, observation, sourceTaxon);
-            } else {
-                unsupportedInteractionTypes.put(observationId, interactionType);
-            }
+            importInteraction(targetTaxonNode, observationId, interactionDataType, interactionTypeId, observation, sourceTaxon, interactionTypeName);
         }
     }
 
-    private void importInteraction(JsonNode targetTaxonNode, long observationId, String interactionDataType, String interactionType, JsonNode observation, JsonNode sourceTaxon) throws StudyImporterException, NodeFactoryException {
+    private void importInteraction(JsonNode targetTaxonNode, long observationId, String interactionDataType, InteractType interactionTypeId, JsonNode observation, JsonNode sourceTaxon, String interactionTypeName) throws StudyImporterException, NodeFactoryException {
         Study study = nodeFactory.getOrCreateStudy2(TaxonomyProvider.ID_PREFIX_INATURALIST + observationId, getSourceString(), null);
         String targetTaxonName = targetTaxonNode.getTextValue();
         String sourceTaxonName = sourceTaxon.get("name").getTextValue();
         Date observationDate = getObservationDate(study, observationId, observation);
 
-        if (TYPE_MAPPING.containsKey(interactionType)) {
-            createAssociation(observationId, interactionDataType, interactionType, observation, targetTaxonName, sourceTaxonName, study, observationDate);
-        }
-        StringBuilder citation = buildCitation(observation, interactionType, targetTaxonName, sourceTaxonName, observationDate);
+        createAssociation(observationId, interactionDataType, interactionTypeId, observation, targetTaxonName, sourceTaxonName, study, observationDate);
+        StringBuilder citation = buildCitation(observation, interactionTypeName, targetTaxonName, sourceTaxonName, observationDate);
         String url = ExternalIdUtil.urlForExternalId(TaxonomyProvider.ID_PREFIX_INATURALIST + observationId);
         citation.append(ReferenceUtil.createLastAccessedString(url));
         study.setCitationWithTx(citation.toString());
@@ -330,13 +267,13 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
         return dateTime == null ? null : dateTime.toDate();
     }
 
-    private Specimen createAssociation(long observationId, String interactionDataType, String interactionType, JsonNode observation, String targetTaxonName, String sourceTaxonName, Study study, Date observationDate) throws StudyImporterException, NodeFactoryException {
+    private Specimen createAssociation(long observationId, String interactionDataType, InteractType interactType, JsonNode observation, String targetTaxonName, String sourceTaxonName, Study study, Date observationDate) throws StudyImporterException, NodeFactoryException {
         Specimen sourceSpecimen = getSourceSpecimen(observationId, interactionDataType, sourceTaxonName, study);
         setBasisOfRecord(sourceSpecimen);
         Specimen targetSpecimen = nodeFactory.createSpecimen(study, targetTaxonName);
         setBasisOfRecord(targetSpecimen);
 
-        sourceSpecimen.interactsWith(targetSpecimen, TYPE_MAPPING.get(interactionType));
+        sourceSpecimen.interactsWith(targetSpecimen, interactType);
         setCollectionDate(sourceSpecimen, targetSpecimen, observationDate);
         setCollectionDate(sourceSpecimen, sourceSpecimen, observationDate);
 
@@ -386,5 +323,21 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
     @Override
     public boolean shouldCrossCheckReference() {
         return false;
+    }
+
+    public void setTypeIgnoredURI(String typeIgnoredURI) {
+        this.typeIgnoredURI = typeIgnoredURI;
+    }
+
+    public String getTypeIgnoredURI() {
+        return typeIgnoredURI;
+    }
+
+    public void setTypeMapURI(String typeMapURI) {
+        this.typeMapURI = typeMapURI;
+    }
+
+    public String getTypeMapURI() {
+        return typeMapURI;
     }
 }

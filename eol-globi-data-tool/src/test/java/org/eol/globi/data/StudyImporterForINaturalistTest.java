@@ -18,6 +18,7 @@ import org.neo4j.graphdb.Relationship;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.any;
@@ -50,9 +51,8 @@ public class StudyImporterForINaturalistTest extends GraphDBTestCase {
 
     @Test
     public void loadInteractionMap() throws IOException {
-        String resource = "https://rawgit.com/globalbioticinteractions/inaturalist/master/interaction_types.csv";
-        InputStream is = ResourceUtil.asInputStream(resource, null);
-        Map<Integer, InteractType> typeMap = StudyImporterForINaturalist.buildTypeMap(resource, is);
+        InputStream is = ResourceUtil.asInputStream(StudyImporterForINaturalist.TYPE_MAP_URI_DEFAULT, null);
+        Map<Integer, InteractType> typeMap = StudyImporterForINaturalist.buildTypeMap(StudyImporterForINaturalist.TYPE_MAP_URI_DEFAULT, is);
 
         assertThat(typeMap.get(13), is(InteractType.ATE));
         assertThat(typeMap.get(1685), is(InteractType.ATE));
@@ -60,23 +60,25 @@ public class StudyImporterForINaturalistTest extends GraphDBTestCase {
 
     }
 
-    @Ignore(value = "see https://github.com/jhpoelen/eol-globi-data/issues/56")
     @Test
-    public void importTestResponseWithEcologicalInteraction() throws StudyImporterException, NodeFactoryException {
-        Study study = nodeFactory.createStudy("testing123");
-        importer.parseJSON(getClass().getResourceAsStream("inaturalist/response_with_ecological_interaction_field.json"));
-        assertThat(countSpecimen(study) > 86, is(true));
+    public void loadIgnoredInteractions() throws IOException {
+        String resource = StudyImporterForINaturalist.TYPE_IGNORED_URI_DEFAULT;
+        InputStream is = ResourceUtil.asInputStream(resource, null);
+        List<Integer> typeMap1 = StudyImporterForINaturalist.buildTypesIgnored(is);
+
+        assertThat(typeMap1.contains(13), is(false));
+        assertThat(typeMap1.contains(1378), is(true));
     }
 
     @Test
     public void importNotSupportedTestResponse() throws IOException, NodeFactoryException, StudyImporterException {
-        importer.parseJSON(getClass().getResourceAsStream("inaturalist/unsupported_interaction_type_inaturalist_response.json"));
+        importer.parseJSON(getClass().getResourceAsStream("inaturalist/unsupported_interaction_type_inaturalist_response.json"), StudyImporterForINaturalist.buildTypesIgnored(ResourceUtil.asInputStream(importer.getTypeIgnoredURI(), null)), StudyImporterForINaturalist.buildTypeMap(importer.getTypeMapURI(), null));
         assertThat(nodeFactory.findStudy("INAT:45209"), is(nullValue()));
     }
 
     @Test
     public void importTestResponse() throws IOException, NodeFactoryException, StudyImporterException {
-        importer.parseJSON(getClass().getResourceAsStream("inaturalist/sample_inaturalist_response.json"));
+        importer.parseJSON(getClass().getResourceAsStream("inaturalist/sample_inaturalist_response.json"), StudyImporterForINaturalist.buildTypesIgnored(ResourceUtil.asInputStream(importer.getTypeIgnoredURI(), null)), StudyImporterForINaturalist.buildTypeMap(importer.getTypeMapURI(), null));
 
         assertThat(NodeUtil.findAllStudies(getGraphDb()).size(), is(30));
 
