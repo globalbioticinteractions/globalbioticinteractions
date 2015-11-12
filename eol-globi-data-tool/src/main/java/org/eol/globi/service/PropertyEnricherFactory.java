@@ -4,6 +4,7 @@ import org.eol.globi.taxon.AtlasOfLivingAustraliaService;
 import org.eol.globi.taxon.EOLService;
 import org.eol.globi.taxon.EnvoService;
 import org.eol.globi.taxon.FunctionalGroupService;
+import org.eol.globi.taxon.GBIFService;
 import org.eol.globi.taxon.GulfBaseService;
 import org.eol.globi.taxon.ITISService;
 import org.eol.globi.taxon.NBNService;
@@ -24,6 +25,7 @@ public class PropertyEnricherFactory {
                 add(new NBNService());
                 add(new ITISService());
                 add(new NCBIService());
+                add(new GBIFService());
                 add(new EOLService());
                 add(new WoRMSService());
                 add(new GulfBaseService());

@@ -1,16 +1,18 @@
 package org.eol.globi.data;
 
+import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
+import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.domain.TaxonomyProvider;
 import org.eol.globi.service.PropertyEnricherException;
 import org.eol.globi.util.NodeUtil;
 import org.eol.globi.util.ResourceUtil;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
@@ -132,13 +134,42 @@ public class StudyImporterForINaturalistTest extends GraphDBTestCase {
         }
     }
 
-    private int countSpecimen(Study study) {
-        Iterable<Relationship> specimens = study.getSpecimens();
-        int count = 0;
-        for (Relationship specimen : specimens) {
-            count++;
-        }
-        return count;
+    @Test
+    public void parseTaxon() throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode array;
+        array = mapper.readTree(getClass().getResourceAsStream("inaturalist/response_with_taxon_ids.json"));
+        JsonNode first = array.get(0);
+        JsonNode taxonNode = first.get("taxon");
+        Taxon targetTaxon = StudyImporterForINaturalist.parseTaxon(taxonNode);
+        Taxon sourceTaxon = StudyImporterForINaturalist.parseTaxon(first.get("observation").get("taxon"));
+
+        assertThat(targetTaxon.getName(), is("Sophora prostrata"));
+        assertThat(targetTaxon.getExternalId(), is("GBIF:2959023"));
+        assertThat(sourceTaxon.getName(), is("Pseudoidium hardenbergiae"));
+        assertThat(sourceTaxon.getExternalId(), is("GBIF:7246356"));
+
+    }
+
+    @Test
+    public void importTestResponseWithTaxonId() throws IOException, NodeFactoryException, StudyImporterException {
+        importer.parseJSON(getClass().getResourceAsStream("inaturalist/response_with_taxon_ids.json"),
+                new ArrayList<Integer>() {{
+                }},
+                new HashMap<Integer, InteractType>() {
+                    {
+                        put(47, InteractType.HAS_HOST);
+                    }
+                });
+
+        assertThat(NodeUtil.findAllStudies(getGraphDb()).size(), is(10));
+
+        Study anotherStudy = nodeFactory.findStudy("INAT:2366807");
+        assertThat(anotherStudy, is(notNullValue()));
+        assertThat(anotherStudy.getExternalId(), is("http://www.inaturalist.org/observations/2366807"));
+
+        assertThat(nodeFactory.findTaxonById("GBIF:2959023"), is(notNullValue()));
+        assertThat(nodeFactory.findTaxonById("GBIF:7246356"), is(notNullValue()));
     }
 
 }
