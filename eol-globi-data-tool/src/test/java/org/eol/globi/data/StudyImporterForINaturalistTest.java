@@ -18,6 +18,8 @@ import org.neo4j.graphdb.Relationship;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -72,15 +74,25 @@ public class StudyImporterForINaturalistTest extends GraphDBTestCase {
 
     @Test
     public void importNotSupportedTestResponse() throws IOException, NodeFactoryException, StudyImporterException {
-        importer.parseJSON(getClass().getResourceAsStream("inaturalist/unsupported_interaction_type_inaturalist_response.json"), StudyImporterForINaturalist.buildTypesIgnored(ResourceUtil.asInputStream(importer.getTypeIgnoredURI(), null)), StudyImporterForINaturalist.buildTypeMap(importer.getTypeMapURI(), null));
+        importer.parseJSON(getClass().getResourceAsStream("inaturalist/unsupported_interaction_type_inaturalist_response.json"),
+                new ArrayList<Integer>(),
+                new HashMap<Integer, InteractType>());
         assertThat(nodeFactory.findStudy("INAT:45209"), is(nullValue()));
     }
 
     @Test
     public void importTestResponse() throws IOException, NodeFactoryException, StudyImporterException {
-        importer.parseJSON(getClass().getResourceAsStream("inaturalist/sample_inaturalist_response.json"), StudyImporterForINaturalist.buildTypesIgnored(ResourceUtil.asInputStream(importer.getTypeIgnoredURI(), null)), StudyImporterForINaturalist.buildTypeMap(importer.getTypeMapURI(), null));
+        importer.parseJSON(getClass().getResourceAsStream("inaturalist/sample_inaturalist_response.json"),
+                new ArrayList<Integer>() {{
+                    add(47);
+                }},
+                new HashMap<Integer, InteractType>() {
+                    {
+                        put(13, InteractType.ATE);
+                    }
+                });
 
-        assertThat(NodeUtil.findAllStudies(getGraphDb()).size(), is(30));
+        assertThat(NodeUtil.findAllStudies(getGraphDb()).size(), is(22));
 
         Study anotherStudy = nodeFactory.findStudy("INAT:831");
         assertThat(anotherStudy, is(notNullValue()));
