@@ -8,6 +8,7 @@ import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.domain.TaxonomyProvider;
 import org.eol.globi.service.PropertyEnricherException;
 import org.eol.globi.util.NodeUtil;
+import org.eol.globi.util.ResourceUtil;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -16,6 +17,8 @@ import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.any;
 import static org.hamcrest.CoreMatchers.not;
@@ -26,6 +29,7 @@ import static org.junit.Assert.assertThat;
 import static org.junit.matchers.JUnitMatchers.containsString;
 
 public class StudyImporterForINaturalistTest extends GraphDBTestCase {
+
     private StudyImporterForINaturalist importer;
 
     @Before
@@ -44,6 +48,18 @@ public class StudyImporterForINaturalistTest extends GraphDBTestCase {
         assertThat(NodeUtil.findAllStudies(getGraphDb()).size() > 150, is(true));
     }
 
+    @Test
+    public void loadInteractionMap() throws IOException {
+        String resource = "https://rawgit.com/globalbioticinteractions/inaturalist/master/interaction_types.csv";
+        InputStream is = ResourceUtil.asInputStream(resource, null);
+        Map<Integer, InteractType> typeMap = StudyImporterForINaturalist.buildTypeMap(resource, is);
+
+        assertThat(typeMap.get(13), is(InteractType.ATE));
+        assertThat(typeMap.get(1685), is(InteractType.ATE));
+        assertThat(typeMap.get(839), is(InteractType.PREYS_UPON));
+
+    }
+
     @Ignore(value = "see https://github.com/jhpoelen/eol-globi-data/issues/56")
     @Test
     public void importTestResponseWithEcologicalInteraction() throws StudyImporterException, NodeFactoryException {
@@ -58,7 +74,7 @@ public class StudyImporterForINaturalistTest extends GraphDBTestCase {
         assertThat(nodeFactory.findStudy("INAT:45209"), is(nullValue()));
     }
 
-        @Test
+    @Test
     public void importTestResponse() throws IOException, NodeFactoryException, StudyImporterException {
         importer.parseJSON(getClass().getResourceAsStream("inaturalist/sample_inaturalist_response.json"));
 
