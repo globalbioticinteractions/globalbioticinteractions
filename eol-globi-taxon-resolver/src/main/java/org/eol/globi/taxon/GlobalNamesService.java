@@ -36,7 +36,7 @@ public class GlobalNamesService implements PropertyEnricher {
     private static final Log LOG = LogFactory.getLog(GlobalNamesService.class);
 
     private final GlobalNamesSources source;
-    private boolean includeCommonNames = false;
+    private boolean includeCommonNames = true;
 
     public GlobalNamesService() {
         this(GlobalNamesSources.ITIS);
@@ -114,7 +114,7 @@ public class GlobalNamesService implements PropertyEnricher {
 
         List<NameValuePair> params = new ArrayList<NameValuePair>();
         params.add(new BasicNameValuePair("data", StringUtils.join(names, "\n")));
-        post.setEntity(new UrlEncodedFormEntity(params));
+        post.setEntity(new UrlEncodedFormEntity(params, CharsetConstant.UTF8));
 
         return httpClient.execute(post, new BasicResponseHandler());
     }
