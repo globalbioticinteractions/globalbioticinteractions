@@ -1,6 +1,5 @@
 package org.eol.globi.taxon;
 
-import org.apache.commons.lang.CharSet;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -44,31 +43,47 @@ public class GBIFService implements PropertyEnricher {
             addTaxonNode(enriched, jsonNode);
 
             LanguageCodeLookup languageCodeLookup = new LanguageCodeLookup();
-            String vernaculars = HttpUtil.getContent("http://api.gbif.org/v1/species/" + gbifSpeciesId + "/vernacularNames");
-            jsonNode = new ObjectMapper().readTree(vernaculars);
-            JsonNode results = jsonNode.get("results");
             List<String> commonNames = new ArrayList<String>();
-            if (results != null && results.isArray()) {
-                for (JsonNode result : results) {
-                    if (result.has("vernacularName") && result.has("language")) {
-                        JsonNode preferred = result.get("preferred");
-                        if (preferred == null || (preferred.isBoolean() && preferred.asBoolean())) {
-                            String commonName = result.get("vernacularName").asText();
-                            String language = result.get("language").asText();
-                            String shortCode = languageCodeLookup.lookupLanguageCodeFor(language);
-                            if (StringUtils.isNotBlank(commonName) && StringUtils.isNotBlank(shortCode)) {
-                                commonNames.add(commonName + " @" + shortCode);
-                            }
 
-                        }
-                    }
-                }
+            int limit = 20;
+            boolean askForMore = true;
+            for (int offset = 0; askForMore && offset < 10*limit; offset += limit) {
+                String vernaculars = getVernaculars(gbifSpeciesId, offset, limit);
+                jsonNode = new ObjectMapper().readTree(vernaculars);
+                commonNames.addAll(parseVernaculars(new ObjectMapper().readTree(vernaculars), languageCodeLookup));
+                askForMore = jsonNode.has("endOfRecords") && !jsonNode.get("endOfRecords").asBoolean();
             }
             enriched.put(PropertyAndValueDictionary.COMMON_NAMES, StringUtils.join(commonNames, CharsetConstant.SEPARATOR));
         } catch (IOException e) {
             throw new PropertyEnricherException("failed to lookup [" + externalId + "]", e);
         }
 
+    }
+
+    private String getVernaculars(String gbifSpeciesId, int offset, int limit) throws IOException {
+        return HttpUtil.getContent("http://api.gbif.org/v1/species/" + gbifSpeciesId + "/vernacularNames?limit=" + limit + "&offset=" + offset);
+    }
+
+    private List<String> parseVernaculars(JsonNode jsonNode, LanguageCodeLookup languageCodeLookup) {
+        JsonNode results = jsonNode.get("results");
+        List<String> commonNames = new ArrayList<String>();
+        if (results != null && results.isArray()) {
+            for (JsonNode result : results) {
+                if (result.has("vernacularName") && result.has("language")) {
+                    JsonNode preferred = result.get("preferred");
+                    if (preferred == null || (preferred.isBoolean() && preferred.asBoolean())) {
+                        String commonName = result.get("vernacularName").asText();
+                        String language = result.get("language").asText();
+                        String shortCode = languageCodeLookup.lookupLanguageCodeFor(language);
+                        if (StringUtils.isNotBlank(commonName) && StringUtils.isNotBlank(shortCode)) {
+                            commonNames.add(commonName + " @" + shortCode);
+                        }
+
+                    }
+                }
+            }
+        }
+        return commonNames;
     }
 
     protected void addTaxonNode(Map<String, String> enriched, JsonNode jsonNode) {
