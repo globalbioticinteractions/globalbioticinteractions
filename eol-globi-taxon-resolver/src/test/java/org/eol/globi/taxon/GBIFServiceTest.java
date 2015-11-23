@@ -14,6 +14,7 @@ import java.util.Map;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
+import static org.junit.internal.matchers.StringContains.containsString;
 
 public class GBIFServiceTest {
 
@@ -23,7 +24,9 @@ public class GBIFServiceTest {
         assertThat(enriched.get(PropertyAndValueDictionary.NAME), is("Gaultheria procumbens"));
         assertThat(enriched.get(PropertyAndValueDictionary.RANK), is("species"));
         assertThat(enriched.get(PropertyAndValueDictionary.EXTERNAL_ID), is("GBIF:2882753"));
-        assertThat(enriched.get(PropertyAndValueDictionary.COMMON_NAMES), is(nullValue()));
+        assertThat(enriched.get(PropertyAndValueDictionary.COMMON_NAMES), containsString("creeping wintergreen @en"));
+        // for some reason gbif api is returning funny characters
+        assertThat(enriched.get(PropertyAndValueDictionary.COMMON_NAMES), containsString("WintergrÃ\u0083Â¼n @de"));
         assertThat(enriched.get(PropertyAndValueDictionary.PATH_IDS), is("GBIF:6 | GBIF:49 | GBIF:220 | GBIF:1353 | GBIF:2505 | GBIF:2882751 | GBIF:2882753"));
         assertThat(enriched.get(PropertyAndValueDictionary.PATH_NAMES), is("kingdom | phylum | class | order | family | genus | species"));
         assertThat(enriched.get(PropertyAndValueDictionary.PATH), is("Plantae | Magnoliophyta | Magnoliopsida | Ericales | Ericaceae | Gaultheria | Gaultheria procumbens"));

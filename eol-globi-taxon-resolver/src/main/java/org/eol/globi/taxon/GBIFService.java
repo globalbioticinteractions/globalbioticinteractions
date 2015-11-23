@@ -1,5 +1,6 @@
 package org.eol.globi.taxon;
 
+import org.apache.commons.lang.CharSet;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -8,6 +9,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.data.CharsetConstant;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.TaxonomyProvider;
+import org.eol.globi.service.LanguageCodeLookup;
 import org.eol.globi.service.PropertyEnricher;
 import org.eol.globi.service.PropertyEnricherException;
 import org.eol.globi.util.HttpUtil;
@@ -40,6 +42,29 @@ public class GBIFService implements PropertyEnricher {
             String response = HttpUtil.getContent("http://api.gbif.org/v1/species/" + gbifSpeciesId);
             JsonNode jsonNode = new ObjectMapper().readTree(response);
             addTaxonNode(enriched, jsonNode);
+
+            LanguageCodeLookup languageCodeLookup = new LanguageCodeLookup();
+            String vernaculars = HttpUtil.getContent("http://api.gbif.org/v1/species/" + gbifSpeciesId + "/vernacularNames");
+            jsonNode = new ObjectMapper().readTree(vernaculars);
+            JsonNode results = jsonNode.get("results");
+            List<String> commonNames = new ArrayList<String>();
+            if (results != null && results.isArray()) {
+                for (JsonNode result : results) {
+                    if (result.has("vernacularName") && result.has("language")) {
+                        JsonNode preferred = result.get("preferred");
+                        if (preferred == null || (preferred.isBoolean() && preferred.asBoolean())) {
+                            String commonName = result.get("vernacularName").asText();
+                            String language = result.get("language").asText();
+                            String shortCode = languageCodeLookup.lookupLanguageCodeFor(language);
+                            if (StringUtils.isNotBlank(commonName) && StringUtils.isNotBlank(shortCode)) {
+                                commonNames.add(commonName + " @" + shortCode);
+                            }
+
+                        }
+                    }
+                }
+            }
+            enriched.put(PropertyAndValueDictionary.COMMON_NAMES, StringUtils.join(commonNames, CharsetConstant.SEPARATOR));
         } catch (IOException e) {
             throw new PropertyEnricherException("failed to lookup [" + externalId + "]", e);
         }
@@ -55,11 +80,6 @@ public class GBIFService implements PropertyEnricher {
         enriched.put(PropertyAndValueDictionary.NAME, name);
         enriched.put(PropertyAndValueDictionary.RANK, rank);
         enriched.put(PropertyAndValueDictionary.EXTERNAL_ID, externalId);
-
-        String commonName = jsonNode.has("vernacularName") ? jsonNode.get("vernacularName").asText() : "";
-        if (StringUtils.isNotBlank(commonName)) {
-            enriched.put(PropertyAndValueDictionary.COMMON_NAMES, commonName + " @en");
-        }
 
         String[] pathLabels = new String[]{
                 "kingdom",
