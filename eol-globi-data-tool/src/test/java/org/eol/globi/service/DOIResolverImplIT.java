@@ -112,4 +112,10 @@ public class DOIResolverImplIT {
         assertThat(citationForDOI, is(notNullValue()));
     }
 
+    @Test
+    public void findCitationForShortDOIUpperCase() throws IOException, URISyntaxException {
+        String citationForDOI = new DOIResolverImpl().findCitationForDOI("DOI:10.5962/bhl.title.2633");
+        assertThat(citationForDOI, is(notNullValue()));
+    }
+
 }
