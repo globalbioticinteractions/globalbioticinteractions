@@ -26,7 +26,7 @@ public class GBIFServiceTest {
         assertThat(enriched.get(PropertyAndValueDictionary.EXTERNAL_ID), is("GBIF:2882753"));
         assertThat(enriched.get(PropertyAndValueDictionary.COMMON_NAMES), containsString("creeping wintergreen @en"));
         // for some reason gbif api is returning funny characters
-        assertThat(enriched.get(PropertyAndValueDictionary.COMMON_NAMES), containsString("WintergrÃ\u0083Â¼n @de"));
+        assertThat(enriched.get(PropertyAndValueDictionary.COMMON_NAMES), containsString("Wintergr??n @de"));
         assertThat(enriched.get(PropertyAndValueDictionary.PATH_IDS), is("GBIF:6 | GBIF:49 | GBIF:220 | GBIF:1353 | GBIF:2505 | GBIF:2882751 | GBIF:2882753"));
         assertThat(enriched.get(PropertyAndValueDictionary.PATH_NAMES), is("kingdom | phylum | class | order | family | genus | species"));
         assertThat(enriched.get(PropertyAndValueDictionary.PATH), is("Plantae | Magnoliophyta | Magnoliopsida | Ericales | Ericaceae | Gaultheria | Gaultheria procumbens"));
