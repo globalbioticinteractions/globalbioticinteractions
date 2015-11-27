@@ -124,7 +124,7 @@ public class GlobalNamesServiceTest {
 
     @Test
     public void createTaxaListFromLongNameList4() throws PropertyEnricherException {
-        List<String> names = namesListWithMaximumOf(15);
+        List<String> names = namesListWithMaximumOf(100);
 
         final List<Taxon> foundTaxa = new ArrayList<Taxon>();
         GlobalNamesService service = new GlobalNamesService();
@@ -141,17 +141,6 @@ public class GlobalNamesServiceTest {
             fail("failed to lookup name with id: [" + names + "]");
         }
         assertThat(foundTaxa.size() > 2, is(true));
-    }
-
-    @Test(expected = PropertyEnricherException.class)
-    public void taxonListTimeout() throws PropertyEnricherException {
-        List<String> names = namesListWithMaximumOf(100);
-        new GlobalNamesService().findTermsForNames(names, new TermMatchListener() {
-            @Override
-            public void foundTaxonForName(Long id, String name, Taxon taxon, boolean isExactMatch) {
-                assertNotNull(id);
-            }
-        }, Arrays.asList(GlobalNamesSources.values()));
     }
 
     public List<String> namesListWithMaximumOf(int i1) {

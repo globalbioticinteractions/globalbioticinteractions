@@ -26,7 +26,7 @@ import java.util.Map;
 
 public class LinkerGlobalNames {
 
-    private static final int BATCH_SIZE = 10;
+    private static final int BATCH_SIZE = 100;
 
     private static final Log LOG = LogFactory.getLog(LinkerGlobalNames.class);
 

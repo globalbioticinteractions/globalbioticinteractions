@@ -36,7 +36,7 @@ public class GlobalNamesService implements PropertyEnricher {
     private static final Log LOG = LogFactory.getLog(GlobalNamesService.class);
 
     private final GlobalNamesSources source;
-    private boolean includeCommonNames = true;
+    private boolean includeCommonNames = false;
 
     public GlobalNamesService() {
         this(GlobalNamesSources.ITIS);
