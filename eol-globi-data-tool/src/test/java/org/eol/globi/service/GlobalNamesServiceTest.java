@@ -1,14 +1,10 @@
 package org.eol.globi.service;
 
-import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.domain.PropertyAndValueDictionary;
-import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.taxon.GlobalNamesService;
 import org.eol.globi.taxon.GlobalNamesSources;
 import org.eol.globi.taxon.TermMatchListener;
-import org.eol.globi.tool.LinkerGlobalNames;
-import org.eol.globi.tool.LinkerTestUtil;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -61,7 +57,7 @@ public class GlobalNamesServiceTest {
     public void createTaxaListFromLongNameList() throws PropertyEnricherException {
         String response = "4594759|Botryobasidium pruinatum|4594240|Bombus (Bombus) magnus|4595520|Botrytis byssoidea|4595788|Botrytis galanthina|4595533|Botrytis cinerea|4594249|Bombus (Bombus) cryptarum|4594257|Bombus (Psithyrus) campestris|4594269|Bombus (Melanobombus) lapidarius|4594279|Bombus (Pyrobombus) pratorum|4594789|Botryobasidium subcoronatum|4594786|Phlebia tremellosa|4594272|Bombus (Psithyrus) rupestris|4594528|Botryobasidium candicans|1019686|Lilium speciosum|4594282|Bombus (Psithyrus) sylvestris|4594792|Schizopora paradoxa|4594803|Botryobasidium vagum|4594289|Bombus (Pyrobombus) jonellus|4595070|Botryosphaeria quercuum|4594815|Choisya ternata|4594300|Bombus (Psithyrus) vestalis|4594812|Botryodiplodia fraxini|4594553|Botryobasidium conspersum|4594438|Atriplex|4595207|Gladiolus murielae|4594955|Brachypodium|4594441|Bothynoderes affinis|4595222|Botryotinia fuckeliana|4595478|Botrytis aclada|4594704|Botryobasidium intertextum|4594975|Botryosphaeria melanops|4594460|Beta|4594970|Botryosphaeria hyperborea|4594471|Heterocerus flexuosus|4594468|Botryandromyces heteroceri|4594465|Heterocerus fenestratus|4594721|Botryobasidium laeve|4594476|Augyles maritimus|4594988|Botryosphaeria obtusa|4594218|Bombus (Psithyrus)|4594230|Bombus (Bombus) lucorum|4594483|Botryobasidium aureum|4595507|Botrytis anthophila|4594746|Botryobasidium obtusisporum|4595003|Rhamnus|4594233|Bombus (Psithyrus) bohemicus|4594375|Persicaria alpina|4595652|Botrytis elliptica|4595649|Lilium candidum|4594382|Bostrychonema alpestre|4595151|Caltha palustris|3904181|Botrytis croci|4594389|Botanophila cuspidata|4594386|Epichloë|4595154|Botryotinia calthae|4595409|Botryotinia polyblastis|4595921|Asparagus officinalis|4594395|Botanophila dissecta|4595163|Botryotinia convoluta|4594904|Botryosphaeria festucae|4594404|Botanophila laterella|4595168|Botryotinia draytonii|4594670|Botryobasidium danicum|4594413|Botanophila latifrons|4595435|Botryotinia porri|4595432|Allium vineale|4594423|Botanophila phrenione|4594679|Botryobasidium ellipsosporum|4594418|Botanophila lobata|4595453|Botryotinia squamosa|4595450|Allium triquetrum|4594823|Botryohypochnus isabellinus|4595079|Botryosphaeria rhodorae|4594818|Botryodiplodia theobromae|4595843|Galanthus nivalis|4594318|Andrena (Zonandrena) flavipes|4594315|Bombylius discolor|4594312|Andrena (Melandrena) cineraria|4433042|Botryophialophora marina|4006631|Botrytis hyacinthi|4595357|Botryotinia globosa|4595354|Allium ursinum|4595096|Botryosphaeria ribis|4594342|Bopyrina ocellata|4594339|Hippolyte varians|4595363|Botryotinia narcissicola|4595360|Narcissus pseudonarcissus|4595105|Botryosphaeria stevensii|4594350|Spirontocaris|4595118|Botryosporium pulchrum|4594861|Botryosphaeria abietina|4594347|Bopyroides hippolytes|4594358|Bopyrus squillarum|4595126|Mentha arvensis|4594355|Palaemon serratus|4594867|Botryosphaeria dothidea|4594864|Rosa canina agg.|4595121|Cirsium palustre|4594363|Bostrichonema polygoni|4595640|Crocus";
         final List<Taxon> foundTaxa = new ArrayList<Taxon>();
-        assertAtLeastFortyFound(response, foundTaxa);
+        assertAtLeastFortyFound(response, foundTaxa, Arrays.asList(GlobalNamesSources.ITIS));
         assertThat(foundTaxa.size() > 40, is(true));
     }
 
@@ -92,7 +88,7 @@ public class GlobalNamesServiceTest {
                 "s|4474795|Xylocoris (Proxylocoris) galactinus|4475563|Zopfia rhizophila|4475572|Zopfiella erostrata|4474806|Xylocoris (X" +
                 "ylocoris) cursitans|4474545|Xylaria oxyacanthae|4474803|Bitoma crenata|4474809|Rhizophagus|4474298|Xerula pudens";
         final List<Taxon> foundTaxa = new ArrayList<Taxon>();
-        assertAtLeastFortyFound(response, foundTaxa);
+        assertAtLeastFortyFound(response, foundTaxa, Arrays.asList(GlobalNamesSources.ITIS));
         assertThat(foundTaxa.size() > 40, is(true));
     }
 
@@ -122,11 +118,54 @@ public class GlobalNamesServiceTest {
                 " rumicis|4472230|Ceratiomyxa fruticulosa|4472225|Arcyria nutans|4470441|Crustacea|4471209|Populus balsamifera|4470448|Ut" +
                 "ricularia minor|4470194|Ustilago serpens|4471738|Venturia chlorospora|4470459|Diaptomus";
         final List<Taxon> foundTaxa = new ArrayList<Taxon>();
-        assertAtLeastFortyFound(response, foundTaxa);
+        assertAtLeastFortyFound(response, foundTaxa, Arrays.asList(GlobalNamesSources.ITIS));
         assertThat(foundTaxa.size() > 20, is(true));
     }
 
-    public void assertAtLeastFortyFound(String response, final List<Taxon> foundTaxa) {
+    @Test
+    public void createTaxaListFromLongNameList4() throws PropertyEnricherException {
+        List<String> names = namesListWithMaximumOf(15);
+
+        final List<Taxon> foundTaxa = new ArrayList<Taxon>();
+        GlobalNamesService service = new GlobalNamesService();
+
+        try {
+            service.findTermsForNames(names, new TermMatchListener() {
+                @Override
+                public void foundTaxonForName(Long id, String name, Taxon taxon, boolean isExactMatch) {
+                    assertNotNull(id);
+                    foundTaxa.add(taxon);
+                }
+            }, Arrays.asList(GlobalNamesSources.values()));
+        } catch (PropertyEnricherException ex) {
+            fail("failed to lookup name with id: [" + names + "]");
+        }
+        assertThat(foundTaxa.size() > 2, is(true));
+    }
+
+    @Test(expected = PropertyEnricherException.class)
+    public void taxonListTimeout() throws PropertyEnricherException {
+        List<String> names = namesListWithMaximumOf(100);
+        new GlobalNamesService().findTermsForNames(names, new TermMatchListener() {
+            @Override
+            public void foundTaxonForName(Long id, String name, Taxon taxon, boolean isExactMatch) {
+                assertNotNull(id);
+            }
+        }, Arrays.asList(GlobalNamesSources.values()));
+    }
+
+    public List<String> namesListWithMaximumOf(int i1) {
+        String response = "76546|Bromus kalmii|4592968|Bromus commutatus|4593225|Triticum turgidum|4592981|Bromus hordeaceus|4593493|Bolbitius reticulatus var. pluteoides|2857788|Koeleria macrantha|4593502|Bolbitius titubans var. titubans|4592991|Bromus japonicus|4592986|Bromus interruptus|4594022|Boletus luridus var. luridus|4593765|Boletus fechtneri|4572257|Bromus|4593507|Boletopsis perplexa|4593004|Bromus madritensis|4593512|Boletus aereus|4593782|Boletus ferrugineus|4593009|Ceratochloa marginata|4593415|Boidinia permixta|4593157|Poa alpina|4013434|Bromus briziformis|4593166|Poa bulbosa|4592911|Apera spica-venti|4593420|Boidinia peroxydata|4592906|Anthoxanthum odoratum|4593943|Boletus luridiformis var. luridiformis|4593429|Bolacothrips jordani|4593938|Boletus luridiformis var. discolor|4593171|Poa compressa|4593683|Boletus cisalpinus|4593438|Bolbitius lacteus|4592925|Avena sterilis subsp. ludoviciana|4593181|Poa nemoralis|4592920|Avena fatua|4593176|Poa glauca|4013149|Bromus pectinatus|4592934|Avena strigosa|4593186|Poa palustris|4593443|Bolbitius reticulatus|4592943|Briza media|4593199|Puccinellia distans|4593719|Boletus edulis|4593716|Dryas octopetala|4593712|Boletus depilatus|491120|Bromus|4593212|Sesleria caerulea|4593976|Boletus luridus|4593095|Hordeum distichon sensu lato|4592834|Bloxamia leucophthalma|4593090|Hordelymus europaeus|4593858|Boletus impolitus|4013239|Bromus gracillimus|4593100|Hordeum jubatum|4593613|Boletus calopus|4013234|Bromus condensatus|4593110|Hordeum secalinum|4592855|Bloxamia truncata|4594128|Boletus pseudoregius|4593105|Hordeum murinum|4592862|Melastoma affine|4592859|Culicoides|4593883|Boletus legaliae|4594137|Boletus pseudosulphureus|4593378|Boidinia furfuracea|4592865|Artiodactyla|4592878|Agrostis stolonifera|4593909|Boletus luridiformis|4593139|Lolium temulentum|4592881|Blumeria graminis|4592893|Alopecurus myosuroides|4593658|Boletus chrysenteron|4594170|Boletus pulverulentus|4592888|Alopecurus geniculatus|4593144|Milium effusum|4593541|Boletus appendiculatus|4593026|Danthonia decumbens|4594051|Boletus luridus var. rubriceps|4592783|Trichia affinis|4593035|Digitaria sanguinalis|4013544|Bromus riparius|4593040|Elymus caninus|4593054|Festuca gigantea|4593823|Boletus fragrans|4592793|Trichia botrytis|4593049|Festuca arundinacea|4592807|Trichia varia|4594085|Boletus pinophilus|4593059|Festuca heterophylla|4594094|Boletus porosporus|4592812|Diderma effusum|4593068|Festuca pratensis|4593324|Blumeriella jaapii|4593578|Boletus armeniacus|4593832|Boletus immutatus|4592822|Symphyta|4593335|Prunus domestica|4592819|Blondelia nigripes|4593596|Boletus badius non sensu Persoon (1801)|4592829|Bloxamia bohemica|4593085|Holcus mollis|3923392|Boeremia telephii";
+        String[] idsNames = response.split("\\|");
+        List<String> names = new ArrayList<String>();
+        for (int i = 0; i < idsNames.length && i < i1 * 2; i += 2) {
+            names.add(idsNames[i] + "|" + idsNames[i + 1]);
+        }
+        return names;
+    }
+
+
+    public void assertAtLeastFortyFound(String response, final List<Taxon> foundTaxa, List<GlobalNamesSources> sources) {
         String[] idsNames = response.split("\\|");
         GlobalNamesService service = new GlobalNamesService();
 
@@ -141,7 +180,7 @@ public class GlobalNamesServiceTest {
                     assertNotNull(id);
                     foundTaxa.add(taxon);
                 }
-            }, Arrays.asList(GlobalNamesSources.ITIS));
+            }, sources);
         } catch (PropertyEnricherException ex) {
             fail("failed to lookup name with id: [" + names + "]");
         }
