@@ -17,6 +17,7 @@ public class TaxonEnricherImpl implements PropertyEnricher {
 
     private final List<PropertyEnricher> services = new ArrayList<PropertyEnricher>();
     private final HashMap<Class, Integer> errorCounts = new HashMap<Class, Integer>();
+    private boolean hasLoggedError = false;
 
     @Override
     public Map<String, String> enrich(final Map<String, String> properties) throws PropertyEnricherException {
@@ -47,7 +48,10 @@ public class TaxonEnricherImpl implements PropertyEnricher {
             PropertyEnricherException {
         Integer errorCount = errorCounts.get(service.getClass());
         if (errorCount != null && errorCount > 10) {
-            LOG.error("skipping taxon match against [" + service.getClass().toString() + "], error count [" + errorCount + "] too high.");
+            if (!hasLoggedError) {
+                LOG.error("skipping taxon match against [" + service.getClass().toString() + "], error count [" + errorCount + "] too high.");
+                hasLoggedError = true;
+            }
         } else {
             properties = enrichTaxon(errorCounts, service, errorCount, properties);
         }

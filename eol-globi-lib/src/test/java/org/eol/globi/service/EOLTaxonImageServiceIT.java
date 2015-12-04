@@ -101,4 +101,19 @@ public class EOLTaxonImageServiceIT {
         assertThat(taxonImage.getCommonName(), is("Mussels and Clams"));
         assertThat(taxonImage.getScientificName(), is("Bivalvia"));
     }
+
+    @Test
+    public void imageLookupEOL3() throws URISyntaxException, IOException {
+        assertEOLImage3(imageService.lookupImageURLs(TaxonomyProvider.EOL, "2774522"));
+        assertEOLImage3(imageService.lookupImageForExternalId(TaxonomyProvider.ID_PREFIX_EOL + "2774522"));
+    }
+
+    private void assertEOLImage3(TaxonImage taxonImage) {
+        assertThat(taxonImage.getPageId(), is("2774522"));
+        assertThat(taxonImage.getThumbnailURL(), containsString(".jpg"));
+        assertThat(taxonImage.getImageURL(), containsString(".jpg"));
+        assertThat(taxonImage.getInfoURL(), is("http://eol.org/pages/2774522"));
+        assertThat(taxonImage.getScientificName(), is("Chondrichthyes"));
+        assertThat(taxonImage.getCommonName(), is("Cartilaginous Fishes"));
+    }
 }

@@ -63,7 +63,7 @@ public class EOLTaxonImageService implements ImageSearch {
         }
 
         if (eolPageId == null) {
-            eolPageId = lookupEOLPageId(taxonId, eolPageId, eolProviderId);
+            eolPageId = lookupEOLPageId(taxonId, eolProviderId);
         }
 
         if (null != eolPageId) {
@@ -145,7 +145,8 @@ public class EOLTaxonImageService implements ImageSearch {
     }
 
 
-    private String lookupEOLPageId(String taxonId, String eolPageId, String eolProviderId) throws IOException {
+    private String lookupEOLPageId(String taxonId, String eolProviderId) throws IOException {
+        String eolPageId = null;
         String urlString = "http://eol.org/api/search_by_provider/1.0/" + taxonId + ".json?hierarchy_id=" + eolProviderId + "&cache_ttl=3600";
         HttpGet get = new HttpGet(urlString);
         try {
