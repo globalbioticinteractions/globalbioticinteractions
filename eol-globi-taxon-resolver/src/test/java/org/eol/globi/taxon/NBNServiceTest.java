@@ -23,7 +23,6 @@ public class NBNServiceTest {
         assertThat(enriched.get(PropertyAndValueDictionary.NAME), is("Abacarus hystrix"));
         assertThat(enriched.get(PropertyAndValueDictionary.EXTERNAL_ID), is("NBN:NHMSYS0020190380"));
         assertThat(enriched.get(PropertyAndValueDictionary.PATH_IDS), is("NBN:NBNSYS0100001342 | NBN:NHMSYS0020470198 | NBN:NHMSYS0021049469 | NBN:NBNSYS0000160799 | NBN:NBNSYS0000159970 | NBN:NHMSYS0020190379 | NBN:NHMSYS0020190380"));
-        assertThat(enriched.get(PropertyAndValueDictionary.PATH_NAMES), is("Kingdom | Phylum | Class | Order | Family | Genus | Species"));
         assertThat(enriched.get(PropertyAndValueDictionary.PATH), is("Animalia | Arthropoda | Arachnida | Prostigmata | Eriophyidae | Abacarus | Abacarus hystrix"));
     }
 

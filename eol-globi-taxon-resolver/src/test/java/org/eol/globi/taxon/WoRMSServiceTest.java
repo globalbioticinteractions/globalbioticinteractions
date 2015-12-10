@@ -43,9 +43,10 @@ public class WoRMSServiceTest {
         assertThat(enriched.get(PropertyAndValueDictionary.NAME), containsString("Lecithochirium"));
         assertThat(enriched.get(PropertyAndValueDictionary.EXTERNAL_ID), containsString("WORMS:726834"));
         assertThat(enriched.get(PropertyAndValueDictionary.RANK), is("species"));
-        assertThat(enriched.get(PropertyAndValueDictionary.PATH), is("Biota | Animalia | Platyhelminthes | Trematoda | Digenea | Plagiorchiida | Hemiurata | Hemiuroidea | Hemiuridae | Lecithochiriinae | Lecithochirium | Lecithochirium concavovesiculus"));
-        assertThat(enriched.get(PropertyAndValueDictionary.PATH_IDS), is("WORMS:1 | WORMS:2 | WORMS:793 | WORMS:19948 | WORMS:108400 | WORMS:108402 | WORMS:468918 | WORMS:108418 | WORMS:108471 | WORMS:724982 | WORMS:108758 | WORMS:726834"));
-        assertThat(enriched.get(PropertyAndValueDictionary.PATH_NAMES), is("superdomain | kingdom | phylum | class | subclass | order | suborder | superfamily | family | subfamily | genus | species"));
+        assertThat(enriched.get(PropertyAndValueDictionary.PATH), containsString("Lecithochirium concavovesiculus"));
+        assertThat(enriched.get(PropertyAndValueDictionary.PATH), containsString("Trematoda"));
+        assertThat(enriched.get(PropertyAndValueDictionary.PATH_IDS), containsString("WORMS:19948"));
+        assertThat(enriched.get(PropertyAndValueDictionary.PATH_NAMES), containsString("subfamily | genus | species"));
     }
 
     @Test
