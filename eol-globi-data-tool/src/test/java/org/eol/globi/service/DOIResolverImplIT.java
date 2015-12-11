@@ -1,5 +1,6 @@
 package org.eol.globi.service;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -104,6 +105,13 @@ public class DOIResolverImplIT {
     public void findCitationForDOIWithUnescapeChars() throws IOException, URISyntaxException {
         String citationForDOI = new DOIResolverImpl().findCitationForDOI("http://dx.doi.org/10.1642/0004-8038(2005)122[1182:baemfa]2.0.co;2");
         assertThat(citationForDOI, is(notNullValue()));
+    }
+
+    @Ignore("this test passes unreliably")
+    @Test
+    public void findCitationForDOIVariableInternalServerError() throws IOException, URISyntaxException {
+        assertThat(new DOIResolverImpl().findCitationForDOI("http://dx.doi.org/10.1007/s003000050412"), is(notNullValue()));
+        assertThat(new DOIResolverImpl().findCitationForDOI("http://dx.doi.org/10.1007/s003000050412"), is(nullValue()));
     }
 
     @Test

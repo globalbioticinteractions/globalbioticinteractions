@@ -75,7 +75,7 @@ public class DOIResolverImpl implements DOIResolver {
         return citation;
     }
 
-    public String resolveCitation( URI uri) throws IOException {
+    public String resolveCitation(URI uri) throws IOException {
         String citation = null;
         HttpGet request = new HttpGet(uri);
         request.setHeader("Accept", "text/x-bibliography; style=council-of-science-editors; charset=UTF-8");
