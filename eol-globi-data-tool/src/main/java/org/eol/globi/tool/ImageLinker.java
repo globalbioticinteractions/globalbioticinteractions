@@ -93,13 +93,13 @@ public class ImageLinker {
                 "WHERE not(has(taxon.thumbnailUrl)) AND has(taxon.externalId) AND taxon.externalId <> 'no:match'\n" +
                 "RETURN id(taxon) as `id`, taxon.externalId as `externalId`");
         for (Map<String, Object> externalIdMap : executionResult) {
-            TaxonImage taxonImage = null;
             final String externalId = (String) externalIdMap.get("externalId");
             final Long nodeId = (Long) externalIdMap.get("id");
+            TaxonImage taxonImage;
             try {
                 taxonImage = new EOLTaxonImageService().lookupImageForExternalId(externalId);
             } catch (IOException e) {
-                //
+                LOG.warn("failed to lookup externalId [" + externalId + "]", e);
             }
             final String infoURL = taxonImage == null ? "" : taxonImage.getInfoURL();
             final String thumbnailURL = taxonImage == null ? "" : taxonImage.getThumbnailURL();
