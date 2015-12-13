@@ -101,22 +101,26 @@ public class ImageLinker {
             } catch (IOException e) {
                 LOG.warn("failed to lookup externalId [" + externalId + "]", e);
             }
-            final String infoURL = taxonImage == null ? "" : taxonImage.getInfoURL();
-            final String thumbnailURL = taxonImage == null ? "" : taxonImage.getThumbnailURL();
-            final String imageURL = taxonImage == null ? "" : taxonImage.getImageURL();
+            if (taxonImage == null) {
+                System.out.println(StringUtils.join(Arrays.asList("EOL:12345", "", "", ""), "\t"));
+            } else {
+                final String infoURL = taxonImage.getInfoURL() == null ? "" : taxonImage.getInfoURL();
+                final String thumbnailURL = taxonImage.getThumbnailURL() == null ? "" : taxonImage.getThumbnailURL();
+                final String imageURL = taxonImage.getImageURL() == null ? "" : taxonImage.getImageURL();
 
-            ExecutionResult execute = engine.execute("START taxon = node({nodeId})\n" +
-                    "SET taxon.externalUrl={infoUrl}, taxon.imageUrl={imageUrl}, taxon.thumbnailUrl={thumbnailUrl}\n" +
-                    "RETURN taxon.externalId, taxon.externalUrl, taxon.thumbnailUrl, taxon.imageUrl",
-                    new HashMap<String, Object>() {{
-                        put("nodeId", nodeId);
-                        put("infoUrl", infoURL);
-                        put("imageUrl", imageURL);
-                        put("thumbnailUrl", thumbnailURL);
-                    }});
+                ExecutionResult execute = engine.execute("START taxon = node({nodeId})\n" +
+                                "SET taxon.externalUrl={infoUrl}, taxon.imageUrl={imageUrl}, taxon.thumbnailUrl={thumbnailUrl}\n" +
+                                "RETURN taxon.externalId, taxon.externalUrl, taxon.thumbnailUrl, taxon.imageUrl",
+                        new HashMap<String, Object>() {{
+                            put("nodeId", nodeId);
+                            put("infoUrl", infoURL);
+                            put("imageUrl", imageURL);
+                            put("thumbnailUrl", thumbnailURL);
+                        }});
 
-            for (Map<String, Object> stringObjectMap : execute) {
-                System.out.println(StringUtils.join(stringObjectMap.values(), "\t"));
+                for (Map<String, Object> stringObjectMap : execute) {
+                    System.out.println(StringUtils.join(stringObjectMap.values(), "\t"));
+                }
             }
 
         }

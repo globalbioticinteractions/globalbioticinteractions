@@ -15,7 +15,7 @@ public class ImageLinkerTest extends GraphDBTestCase {
     @Test
     public void linkSingleImage() throws NodeFactoryException {
         TaxonNode taxon = nodeFactory.getOrCreateTaxon(new TaxonImpl("Homo sapiens", "EOL:327955"));
-        nodeFactory.getOrCreateTaxon(new TaxonImpl("Whatevero whateverens", "EOL:111"));
+        nodeFactory.getOrCreateTaxon(new TaxonImpl("Whatevero whateverens", "EOL:8888888888"));
 
         assertNotNull(taxon);
 
