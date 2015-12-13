@@ -80,7 +80,6 @@ public class ImageLinker {
         final GraphDatabaseService graphService = GraphService.getGraphService("./");
         try {
             linkImages(graphService);
-
         } finally {
             graphService.shutdown();
             HttpUtil.shutdown();

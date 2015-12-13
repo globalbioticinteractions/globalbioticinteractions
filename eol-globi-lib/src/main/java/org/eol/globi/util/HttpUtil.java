@@ -54,8 +54,12 @@ public class HttpUtil {
 
     // should only be called once
     public static void shutdown() {
-        closeQuietly(HttpUtil.httpClient);
-        closeQuietly(HttpUtil.failFastHttpClient);
+        if (HttpUtil.httpClient != null) {
+            closeQuietly(HttpUtil.httpClient);
+        }
+        if (HttpUtil.failFastHttpClient != null) {
+            closeQuietly(HttpUtil.failFastHttpClient);
+        }
     }
 
     protected static void closeQuietly(CloseableHttpClient httpClient) {
