@@ -95,7 +95,7 @@ public class ImageLinker {
         for (Map<String, Object> externalIdMap : executionResult) {
             final String externalId = (String) externalIdMap.get("externalId");
             final Long nodeId = (Long) externalIdMap.get("id");
-            TaxonImage taxonImage;
+            TaxonImage taxonImage = null;
             try {
                 taxonImage = new EOLTaxonImageService().lookupImageForExternalId(externalId);
             } catch (IOException e) {
