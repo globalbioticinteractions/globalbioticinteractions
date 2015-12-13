@@ -56,17 +56,18 @@ public class HttpUtil {
     public static void shutdown() {
         if (HttpUtil.httpClient != null) {
             closeQuietly(HttpUtil.httpClient);
+            HttpUtil.httpClient = null;
         }
         if (HttpUtil.failFastHttpClient != null) {
             closeQuietly(HttpUtil.failFastHttpClient);
+            HttpUtil.failFastHttpClient = null;
         }
     }
 
     protected static void closeQuietly(CloseableHttpClient httpClient) {
         if (httpClient != null) {
             try {
-                HttpUtil.httpClient.close();
-                HttpUtil.httpClient = null;
+                httpClient.close();
             } catch (IOException e) {
                 // ignore
             }
