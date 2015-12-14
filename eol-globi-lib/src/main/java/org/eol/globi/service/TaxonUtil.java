@@ -4,8 +4,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.data.CharsetConstant;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Taxon;
+import org.eol.globi.domain.TaxonImage;
 import org.eol.globi.domain.TaxonImpl;
-import org.eol.globi.domain.TaxonNode;
+import org.eol.globi.domain.TaxonomyProvider;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -84,5 +85,40 @@ public class TaxonUtil {
             }
         }
         return pathMap;
+    }
+
+    public static TaxonImage enrichTaxonImageWithTaxon(Map<String, String> taxon, TaxonImage taxonImage) {
+        if (StringUtils.isBlank(taxonImage.getCommonName())) {
+            String commonName = taxon.get(PropertyAndValueDictionary.COMMON_NAMES);
+            if (StringUtils.isNotBlank(commonName)) {
+                String[] splits = StringUtils.split(commonName, CharsetConstant.SEPARATOR_CHAR);
+                for (String split : splits) {
+                    if (StringUtils.contains(split, "@en")) {
+                        taxonImage.setCommonName(StringUtils.trim(StringUtils.replace(split, "@en", "")));
+                    }
+                }
+            }
+        }
+
+        if (StringUtils.isBlank(taxonImage.getScientificName())) {
+            taxonImage.setScientificName(taxon.get(PropertyAndValueDictionary.NAME));
+        }
+        if (StringUtils.isBlank(taxonImage.getTaxonPath())) {
+            taxonImage.setTaxonPath(taxon.get(PropertyAndValueDictionary.PATH));
+        }
+        if (StringUtils.isBlank(taxonImage.getInfoURL())) {
+            taxonImage.setInfoURL(taxon.get(PropertyAndValueDictionary.EXTERNAL_URL));
+        }
+        if (StringUtils.isBlank(taxonImage.getThumbnailURL())) {
+            taxonImage.setThumbnailURL(taxon.get(PropertyAndValueDictionary.THUMBNAIL_URL));
+        }
+
+        if (StringUtils.isBlank(taxonImage.getPageId())) {
+            String externalId = taxon.get(PropertyAndValueDictionary.EXTERNAL_ID);
+            if (StringUtils.startsWith(externalId, TaxonomyProvider.ID_PREFIX_EOL)) {
+                taxonImage.setPageId(externalId.replace(TaxonomyProvider.ID_PREFIX_EOL, ""));
+            }
+        }
+        return taxonImage;
     }
 }

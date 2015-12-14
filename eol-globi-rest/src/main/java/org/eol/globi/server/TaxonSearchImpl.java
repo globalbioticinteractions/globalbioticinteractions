@@ -40,7 +40,10 @@ public class TaxonSearchImpl implements TaxonSearch {
     @RequestMapping(value = "/findTaxon/{taxonName}", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
     @ResponseBody
     public Map<String, String> findTaxon(@PathVariable("taxonName") final String taxonName, HttpServletRequest request) throws IOException {
-        String response = findTaxonProxy(taxonName, request);
+        return toMap(findTaxonProxy(taxonName));
+    }
+
+    public Map<String, String> toMap(String response) throws IOException {
         JsonNode node = new ObjectMapper().readTree(response);
         JsonNode dataNode = node.get("data");
         Map<String, String> props = NO_PROPERTIES;
@@ -52,6 +55,8 @@ public class TaxonSearchImpl implements TaxonSearch {
             props.put(PropertyAndValueDictionary.COMMON_NAMES, valueOrEmpty(first.get(1).getTextValue()));
             props.put(PropertyAndValueDictionary.PATH, valueOrEmpty(first.get(2).getTextValue()));
             props.put(PropertyAndValueDictionary.EXTERNAL_ID, valueOrEmpty(first.get(3).getTextValue()));
+            props.put(PropertyAndValueDictionary.EXTERNAL_URL, valueOrEmpty(first.get(4).getTextValue()));
+            props.put(PropertyAndValueDictionary.THUMBNAIL_URL, valueOrEmpty(first.get(5).getTextValue()));
         }
         return props;
     }
@@ -60,14 +65,26 @@ public class TaxonSearchImpl implements TaxonSearch {
         return StringUtils.isBlank(name) ? "" : name;
     }
 
-    public String findTaxonProxy(@PathVariable("taxonName") final String taxonName, HttpServletRequest request) throws IOException {
-        CypherQuery cypherQuery = new CypherQuery("START taxon = node:taxons(name={taxonName}) " +
-                "RETURN taxon.name? as `name`, taxon.commonNames? as `commonNames`, taxon.path? as `path`, taxon.externalId? as `externalId` LIMIT 1", new HashMap<String, String>() {
+    public String findTaxonProxy(@PathVariable("taxonName") final String taxonName) throws IOException {
+        CypherQuery cypherQuery = new CypherQuery(startClause() +
+                returnClause(), new HashMap<String, String>() {
             {
                 put("taxonName", taxonName);
             }
         });
         return CypherUtil.executeRemote(cypherQuery);
+    }
+
+    public Map<String, String> findTaxonWithImage(final String taxonName) throws IOException {
+        CypherQuery cypherQuery = new CypherQuery(startClause()
+                + " WHERE has(taxon." + PropertyAndValueDictionary.THUMBNAIL_URL + ") " +
+                "AND length(taxon." + PropertyAndValueDictionary.THUMBNAIL_URL + ") > 0" +
+                returnClause(), new HashMap<String, String>() {
+            {
+                put("taxonName", taxonName);
+            }
+        });
+        return toMap(CypherUtil.executeRemote(cypherQuery));
     }
 
     @RequestMapping(value = "/findCloseMatches", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
@@ -128,5 +145,18 @@ public class TaxonSearchImpl implements TaxonSearch {
         String queryString = builder.toString();
         LOG.info("query: [" + queryString + "]");
         return queryString;
+    }
+
+    public String startClause() {
+        return "START taxon = node:taxons(name={taxonName}) ";
+    }
+
+    private String returnClause() {
+        return "RETURN taxon.name? as `" + PropertyAndValueDictionary.NAME + "`" +
+                ", taxon.commonNames? as `" + PropertyAndValueDictionary.COMMON_NAMES + "`" +
+                ", taxon.path? as `" + PropertyAndValueDictionary.PATH + "`" +
+                ", taxon.externalId? as `" + PropertyAndValueDictionary.EXTERNAL_ID + "`" +
+                ", taxon.externalUrl? as `" + PropertyAndValueDictionary.EXTERNAL_URL + "`" +
+                ", taxon.thumbnailUrl? as `" + PropertyAndValueDictionary.THUMBNAIL_URL + "` LIMIT 1";
     }
 }

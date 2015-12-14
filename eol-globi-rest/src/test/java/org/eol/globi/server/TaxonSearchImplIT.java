@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.hamcrest.Matchers.startsWith;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.matchers.JUnitMatchers.containsString;
@@ -150,13 +151,15 @@ public class TaxonSearchImplIT {
 
     @Test
     public void findTaxonProxy() throws IOException {
-        String response = new TaxonSearchImpl().findTaxonProxy("Ariopsis felis", null);
+        String response = new TaxonSearchImpl().findTaxonProxy("Ariopsis felis");
         JsonNode resp = new ObjectMapper().readTree(response);
         JsonNode columns = resp.get("columns");
         assertThat(columns.get(0).getTextValue(), is("name"));
         assertThat(columns.get(1).getTextValue(), is("commonNames"));
         assertThat(columns.get(2).getTextValue(), is("path"));
         assertThat(columns.get(3).getTextValue(), is("externalId"));
+        assertThat(columns.get(4).getTextValue(), is("externalUrl"));
+        assertThat(columns.get(5).getTextValue(), is("thumbnailUrl"));
         JsonNode info = resp.get("data").get(0);
         assertThat(info.get(0).getTextValue(), is("Ariopsis felis"));
         assertThat(info.get(1).getTextValue(), StringContains.containsString("catfish"));
@@ -171,6 +174,17 @@ public class TaxonSearchImplIT {
         assertThat(props.get("commonNames"), StringContains.containsString("catfish"));
         assertThat(props.get("path"), StringContains.containsString("Actinopterygii"));
         assertThat(props.get("externalId"), StringContains.containsString(":"));
+    }
+
+    @Test
+    public void findTaxonAriopsisFelisWithThumbnail() throws IOException {
+        Map<String, String> props = new TaxonSearchImpl().findTaxonWithImage("Ariopsis felis");
+        assertThat(props.get("name"), is("Ariopsis felis"));
+        assertThat(props.get("commonNames"), StringContains.containsString("catfish"));
+        assertThat(props.get("path"), StringContains.containsString("Actinopterygii"));
+        assertThat(props.get("externalId"), StringContains.containsString(":"));
+        assertThat(props.get("externalUrl"), is("http://eol.org/pages/223038"));
+        assertThat(props.get("thumbnailUrl"), startsWith("http://media.eol.org"));
     }
 
     @Test

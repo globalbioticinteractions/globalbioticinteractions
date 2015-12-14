@@ -35,6 +35,11 @@ public class ImageServiceTest {
                     }
                 };
             }
+
+            @Override
+            public Map<String, String> findTaxonWithImage(String scientificName) throws IOException {
+                return null;
+            }
         });
 
         imageService.setImageSearch(new ImageSearch() {
@@ -80,6 +85,11 @@ public class ImageServiceTest {
                     }
                 };
             }
+
+            @Override
+            public Map<String, String> findTaxonWithImage(String scientificName) throws IOException {
+                return null;
+            }
         });
 
         imageService.setImageSearch(new ImageSearch() {
@@ -116,6 +126,11 @@ public class ImageServiceTest {
                         put(PropertyAndValueDictionary.NAME, "some latin name");
                     }
                 };
+            }
+
+            @Override
+            public Map<String, String> findTaxonWithImage(String scientificName) throws IOException {
+                return null;
             }
         });
 

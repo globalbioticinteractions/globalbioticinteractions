@@ -6,4 +6,5 @@ import java.util.Map;
 
 public interface TaxonSearch {
     Map<String,String> findTaxon(String scientificName, HttpServletRequest request) throws IOException;
+    Map<String,String> findTaxonWithImage(String scientificName) throws IOException;
 }
