@@ -30,7 +30,7 @@ public class ImageService {
     public TaxonImage findTaxonImagesForTaxonWithName(@PathVariable("scientificName") String scientificName) throws IOException {
         TaxonImage taxonImage = null;
         Map<String, String> taxonWithImage = taxonSearch.findTaxonWithImage(scientificName);
-        if (taxonWithImage.isEmpty()) {
+        if (taxonWithImage == null || taxonWithImage.isEmpty()) {
             Map<String, String> taxon = taxonSearch.findTaxon(scientificName, null);
             if (taxon != null) {
                 if (taxon.containsKey(PropertyAndValueDictionary.EXTERNAL_ID)) {
@@ -43,7 +43,6 @@ public class ImageService {
             }
         } else {
             taxonImage = TaxonUtil.enrichTaxonImageWithTaxon(taxonWithImage, new TaxonImage());
-
         }
 
         if (taxonImage == null) {
