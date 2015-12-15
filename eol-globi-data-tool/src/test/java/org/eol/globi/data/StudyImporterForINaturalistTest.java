@@ -79,6 +79,7 @@ public class StudyImporterForINaturalistTest extends GraphDBTestCase {
         importer.parseJSON(getClass().getResourceAsStream("inaturalist/unsupported_interaction_type_inaturalist_response.json"),
                 new ArrayList<Integer>(),
                 new HashMap<Integer, InteractType>());
+        resolveNames();
         assertThat(nodeFactory.findStudy("INAT:45209"), is(nullValue()));
     }
 
@@ -93,6 +94,7 @@ public class StudyImporterForINaturalistTest extends GraphDBTestCase {
                         put(13, InteractType.ATE);
                     }
                 });
+        resolveNames();
 
         assertThat(NodeUtil.findAllStudies(getGraphDb()).size(), is(22));
 
@@ -143,6 +145,7 @@ public class StudyImporterForINaturalistTest extends GraphDBTestCase {
         JsonNode taxonNode = first.get("taxon");
         Taxon targetTaxon = StudyImporterForINaturalist.parseTaxon(taxonNode);
         Taxon sourceTaxon = StudyImporterForINaturalist.parseTaxon(first.get("observation").get("taxon"));
+        resolveNames();
 
         assertThat(targetTaxon.getName(), is("Sophora prostrata"));
         assertThat(targetTaxon.getExternalId(), is("GBIF:2959023"));
@@ -161,7 +164,7 @@ public class StudyImporterForINaturalistTest extends GraphDBTestCase {
                         put(47, InteractType.HAS_HOST);
                     }
                 });
-
+        resolveNames();
         assertThat(NodeUtil.findAllStudies(getGraphDb()).size(), is(10));
 
         Study anotherStudy = nodeFactory.findStudy("INAT:2366807");

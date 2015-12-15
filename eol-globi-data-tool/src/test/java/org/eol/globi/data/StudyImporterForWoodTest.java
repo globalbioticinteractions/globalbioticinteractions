@@ -28,7 +28,7 @@ public class StudyImporterForWoodTest extends GraphDBTestCase {
                 return recordNumber < 500;
             }
         });
-        wood.importStudy();
+        importStudy(wood);
 
         assertThat(taxonIndex.findTaxonByName("Amphipoda"), is(notNullValue()));
     }
@@ -47,6 +47,7 @@ public class StudyImporterForWoodTest extends GraphDBTestCase {
                 maps.add(properties);
             }
         }, null);
+        resolveNames();
         assertThat(maps.size(), is(5));
         Map<String, String> firstLink = maps.get(0);
         assertThat(firstLink.get(StudyImporterForTSV.SOURCE_TAXON_ID), is("ITIS:93294"));

@@ -7,6 +7,7 @@ import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImage;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TaxonomyProvider;
+import org.eol.globi.domain.Term;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -22,6 +23,13 @@ public class TaxonUtil {
         properties.put(PropertyAndValueDictionary.PATH_IDS, taxon.getPathIds());
         properties.put(PropertyAndValueDictionary.PATH_NAMES, taxon.getPathNames());
         properties.put(PropertyAndValueDictionary.COMMON_NAMES, taxon.getCommonNames());
+        Term status = taxon.getStatus();
+        if (status != null
+                && StringUtils.isNotBlank(status.getId())
+                && StringUtils.isNotBlank(status.getName())) {
+            properties.put(PropertyAndValueDictionary.STATUS_ID, status.getId());
+            properties.put(PropertyAndValueDictionary.STATUS_LABEL, status.getName());
+        }
         return Collections.unmodifiableMap(properties);
     }
 
@@ -33,6 +41,12 @@ public class TaxonUtil {
         taxon.setPathIds(properties.get(PropertyAndValueDictionary.PATH_IDS));
         taxon.setPathNames(properties.get(PropertyAndValueDictionary.PATH_NAMES));
         taxon.setCommonNames(properties.get(PropertyAndValueDictionary.COMMON_NAMES));
+
+        String statusId = properties.get(PropertyAndValueDictionary.STATUS_ID);
+        String statusLabel = properties.get(PropertyAndValueDictionary.STATUS_LABEL);
+        if (StringUtils.isNotBlank(statusId) && StringUtils.isNotBlank(statusLabel)) {
+            taxon.setStatus(new Term(statusId, statusLabel));
+        }
     }
 
     public static boolean isResolved(Map<String, String> properties) {
@@ -58,6 +72,11 @@ public class TaxonUtil {
         TaxonImpl taxonCopy = new TaxonImpl();
         mapToTaxon(taxonToMap(taxon), taxonCopy);
         return taxonCopy;
+    }
+
+    public static Taxon copy(Taxon srcTaxon, Taxon targetTaxon) {
+        mapToTaxon(taxonToMap(srcTaxon), targetTaxon);
+        return targetTaxon;
     }
 
     public static boolean likelyHomonym(Taxon taxonA, Taxon taxonB) {

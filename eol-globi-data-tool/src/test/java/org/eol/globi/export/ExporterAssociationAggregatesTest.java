@@ -13,6 +13,8 @@ import org.eol.globi.domain.Term;
 import org.eol.globi.service.PropertyEnricher;
 import org.eol.globi.service.PropertyEnricherException;
 import org.eol.globi.service.TaxonUtil;
+import org.eol.globi.taxon.CorrectionService;
+import org.eol.globi.taxon.TaxonIndexImpl;
 import org.eol.globi.util.ExternalIdUtil;
 import org.junit.Before;
 import org.junit.Test;
@@ -46,7 +48,13 @@ public class ExporterAssociationAggregatesTest extends GraphDBTestCase {
 
             }
         };
-        nodeFactory = new NodeFactoryImpl(getGraphDb());
+        taxonIndex = new TaxonIndexImpl(taxonEnricher, new CorrectionService() {
+
+            @Override
+            public String correct(String taxonName) {
+                return taxonName;
+            }
+        }, getGraphDb());
     }
 
     @Test
@@ -56,6 +64,7 @@ public class ExporterAssociationAggregatesTest extends GraphDBTestCase {
         for (String studyTitle : studyTitles) {
             createTestData(null, studyTitle);
         }
+        resolveNames();
 
         nodeFactory.findStudy("myStudy1").setExternalId("some:id");
 
@@ -66,8 +75,8 @@ public class ExporterAssociationAggregatesTest extends GraphDBTestCase {
             exporter.exportStudy(myStudy1, row, false);
         }
 
-        String expected = "\nglobi:assoc:1-2-ATE-5,globi:occur:source:1-2-ATE,http://purl.obolibrary.org/obo/RO_0002470,globi:occur:target:1-2-ATE-5,,,,,data source description,,,globi:ref:1" +
-                        "\nglobi:assoc:9-2-ATE-5,globi:occur:source:9-2-ATE,http://purl.obolibrary.org/obo/RO_0002470,globi:occur:target:9-2-ATE-5,,,,,data source description,,,globi:ref:9";
+        String expected = "\nglobi:assoc:1-14-ATE-13,globi:occur:source:1-14-ATE,http://purl.obolibrary.org/obo/RO_0002470,globi:occur:target:1-14-ATE-13,,,,,data source description,,,globi:ref:1" +
+                "\nglobi:assoc:8-14-ATE-13,globi:occur:source:8-14-ATE,http://purl.obolibrary.org/obo/RO_0002470,globi:occur:target:8-14-ATE-13,,,,,data source description,,,globi:ref:8";
         assertThat(row.getBuffer().toString(), equalTo(expected));
     }
 
@@ -80,6 +89,7 @@ public class ExporterAssociationAggregatesTest extends GraphDBTestCase {
             Specimen specimen = nodeFactory.createSpecimen(myStudy, PropertyAndValueDictionary.NO_MATCH);
             specimen.ate(nodeFactory.createSpecimen(myStudy, PropertyAndValueDictionary.NO_MATCH));
         }
+        resolveNames();
 
         ExporterAssociationAggregates exporter = new ExporterAssociationAggregates();
         StringWriter row = new StringWriter();

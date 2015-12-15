@@ -1,13 +1,11 @@
 package org.eol.globi.domain;
 
+import org.apache.commons.lang3.StringUtils;
 import org.neo4j.graphdb.Node;
 
 import static org.eol.globi.domain.PropertyAndValueDictionary.*;
 
 public class TaxonNode extends NamedNode implements Taxon {
-
-    private static final String STATUS_ID = "statusId";
-    private static final String STATUS_LABEL = "statusLabel";
 
     public TaxonNode(Node node) {
         super(node);
@@ -86,7 +84,9 @@ public class TaxonNode extends NamedNode implements Taxon {
 
     @Override
     public void setStatus(Term status) {
-        if (status != null) {
+        if (status != null
+                && StringUtils.isNotBlank(status.getId())
+                && StringUtils.isNotBlank(status.getName())) {
             getUnderlyingNode().setProperty(STATUS_ID, status.getId());
             getUnderlyingNode().setProperty(STATUS_LABEL, status.getName());
         }

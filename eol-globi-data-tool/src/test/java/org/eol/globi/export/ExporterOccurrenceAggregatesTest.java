@@ -22,12 +22,12 @@ public class ExporterOccurrenceAggregatesTest extends GraphDBTestCase {
 
     private String getExpectedData() {
         return "\n" +
-                "globi:occur:source:1-2-ATE,EOL:333,,,,,,,,,,,,,,,,,,,,,,,,,,,\n" +
-                "globi:occur:target:1-2-ATE-5,EOL:555,,,,,,,,,,,,,,,,,,,,,,,,,,,\n" +
-                "globi:occur:target:1-2-ATE-8,EOL:666,,,,,,,,,,,,,,,,,,,,,,,,,,,\n" +
-                "globi:occur:source:1-25-ATE,EOL:123,,,,,,,,,,,,,,,,,,,,,,,,,,,\n" +
-                "globi:occur:target:1-25-ATE-5,EOL:555,,,,,,,,,,,,,,,,,,,,,,,,,,,\n" +
-                "globi:occur:target:1-25-ATE-8,EOL:666,,,,,,,,,,,,,,,,,,,,,,,,,,,"
+                "globi:occur:source:1-65-ATE,EOL:333,,,,,,,,,,,,,,,,,,,,,,,,,,,\n" +
+                "globi:occur:target:1-65-ATE-63,EOL:555,,,,,,,,,,,,,,,,,,,,,,,,,,,\n" +
+                "globi:occur:target:1-65-ATE-74,EOL:666,,,,,,,,,,,,,,,,,,,,,,,,,,,\n" +
+                "globi:occur:source:1-64-ATE,EOL:123,,,,,,,,,,,,,,,,,,,,,,,,,,,\n" +
+                "globi:occur:target:1-64-ATE-63,EOL:555,,,,,,,,,,,,,,,,,,,,,,,,,,,\n" +
+                "globi:occur:target:1-64-ATE-74,EOL:666,,,,,,,,,,,,,,,,,,,,,,,,,,,"
                 ;
     }
 
@@ -39,6 +39,7 @@ public class ExporterOccurrenceAggregatesTest extends GraphDBTestCase {
     public void exportNoMatchName() throws NodeFactoryException, IOException {
         Study myStudy = nodeFactory.createStudy("myStudy");
         nodeFactory.createSpecimen(myStudy, PropertyAndValueDictionary.NO_MATCH, "some externalid");
+        resolveNames();
 
         StringWriter row = new StringWriter();
         exportOccurrences().exportStudy(myStudy, row, false);
@@ -48,7 +49,7 @@ public class ExporterOccurrenceAggregatesTest extends GraphDBTestCase {
     @Test
     public void exportToCSVNoHeader() throws NodeFactoryException, IOException, ParseException {
         createTestData(123.0);
-
+        resolveNames();
 
         Study myStudy1 = nodeFactory.findStudy("myStudy");
 

@@ -12,7 +12,6 @@ import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
-import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.domain.Term;
 import org.eol.globi.geo.Ecoregion;
 import org.eol.globi.geo.EcoregionFinder;
@@ -160,18 +159,17 @@ public class NodeFactoryImpl implements NodeFactory {
     }
 
     @Override
-    public Specimen createSpecimen(Study study, Taxon origTaxon) throws NodeFactoryException {
+    public Specimen createSpecimen(Study study, Taxon taxon) throws NodeFactoryException {
         if (null == study) {
             throw new NodeFactoryException("specimen needs study, but none is specified");
         }
 
-        //TaxonNode taxonNode = getOrCreateTaxon(origTaxon);
-        Specimen specimen = createSpecimen(null);
+        Specimen specimen = createSpecimen();
         study.createRelationshipTo(specimen, RelTypes.COLLECTED);
 
-        specimen.setOriginalTaxonDescription(origTaxon.getName(), origTaxon.getExternalId());
-        if (StringUtils.isNotBlank(origTaxon.getName())) {
-            extractTerms(origTaxon.getName(), specimen);
+        specimen.setOriginalTaxonDescription(taxon);
+        if (StringUtils.isNotBlank(taxon.getName())) {
+            extractTerms(taxon.getName(), specimen);
         }
         return specimen;
     }
@@ -213,14 +211,11 @@ public class NodeFactoryImpl implements NodeFactory {
     }
 
 
-    private Specimen createSpecimen(TaxonNode taxon) {
+    private Specimen createSpecimen() {
         Transaction transaction = graphDb.beginTx();
         Specimen specimen;
         try {
             specimen = new Specimen(graphDb.createNode(), null);
-            if (taxon != null) {
-                specimen.classifyAs(taxon);
-            }
             transaction.success();
         } finally {
             transaction.finish();

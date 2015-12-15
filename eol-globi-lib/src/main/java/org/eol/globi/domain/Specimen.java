@@ -1,5 +1,6 @@
 package org.eol.globi.domain;
 
+import org.eol.globi.service.TaxonUtil;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
@@ -126,16 +127,16 @@ public class Specimen extends NodeBacked {
         return singleRelationship == null ? null : new TaxonNode(singleRelationship.getEndNode()).getName();
     }
 
-    public void setOriginalTaxonDescription(String taxonName, String taxonExternalId) {
+    public void setOriginalTaxonDescription(Taxon taxon) {
         Transaction transaction = getUnderlyingNode().getGraphDatabase().beginTx();
-        try {
-            TaxonNode taxon = new TaxonNode(getUnderlyingNode().getGraphDatabase().createNode(), taxonName);
-            taxon.setExternalId(taxonExternalId);
-            createRelationshipTo(taxon, RelTypes.ORIGINALLY_DESCRIBED_AS);
-            transaction.success();
-        } finally {
-            transaction.finish();
-        }
+                try {
+                    TaxonNode taxonNode = new TaxonNode(getUnderlyingNode().getGraphDatabase().createNode(), taxon.getName());
+                    TaxonUtil.copy(taxon, taxonNode);
+                    createRelationshipTo(taxonNode, RelTypes.ORIGINALLY_DESCRIBED_AS);
+                    transaction.success();
+                } finally {
+                    transaction.finish();
+                }
     }
 
     public void setLifeStage(List<Term> lifeStages) {

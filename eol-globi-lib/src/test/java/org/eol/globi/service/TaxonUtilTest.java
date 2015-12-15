@@ -4,6 +4,7 @@ import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImage;
 import org.eol.globi.domain.TaxonImpl;
+import org.eol.globi.domain.Term;
 import org.junit.Test;
 
 import java.util.Map;
@@ -28,6 +29,16 @@ public class TaxonUtilTest {
         otherTaxon.setPathNames("class|family|genus");
 
         assertThat(TaxonUtil.likelyHomonym(taxon, otherTaxon), is(true));
+    }
+
+    @Test
+    public void copyTaxon() {
+        Taxon src = new TaxonImpl("name", "id");
+        src.setStatus(new Term("statusId", "statusLabel"));
+        Taxon target = new TaxonImpl();
+        TaxonUtil.copy(src, target);
+        assertThat(target.getStatus().getId(), is("statusId"));
+        assertThat(target.getStatus().getName(), is("statusLabel"));
     }
 
     @Test

@@ -24,9 +24,9 @@ public class ExporterMeasurementOrFactTest extends GraphDBTestCase {
         createTestData(null, "Canis lupus", "Homo sapiens");
 
         String expected =
-                "\nglobi:occur:stomach_volume:3,globi:occur:3,yes,,,stomach volume,666.0,http://purl.obolibrary.org/obo/UO_0000098,,,1992-03-30T08:00:00Z,,,,myStudy,,,globi:ref:1"
-                        + "\nglobi:occur:volume:6,globi:occur:6,yes,,,volume,124.0,http://purl.obolibrary.org/obo/UO_0000098,,,1992-03-30T08:00:00Z,,,,myStudy,,,globi:ref:1"
-                        + "\nglobi:occur:volume:8,globi:occur:8,yes,,,volume,18.0,http://purl.obolibrary.org/obo/UO_0000098,,,1992-03-30T08:00:00Z,,,,myStudy,,,globi:ref:1";
+                "\nglobi:occur:stomach_volume:2,globi:occur:2,yes,,,stomach volume,666.0,http://purl.obolibrary.org/obo/UO_0000098,,,1992-03-30T08:00:00Z,,,,myStudy,,,globi:ref:1"
+                        + "\nglobi:occur:volume:4,globi:occur:4,yes,,,volume,124.0,http://purl.obolibrary.org/obo/UO_0000098,,,1992-03-30T08:00:00Z,,,,myStudy,,,globi:ref:1"
+                        + "\nglobi:occur:volume:6,globi:occur:6,yes,,,volume,18.0,http://purl.obolibrary.org/obo/UO_0000098,,,1992-03-30T08:00:00Z,,,,myStudy,,,globi:ref:1";
 
 
         Study myStudy1 = nodeFactory.findStudy("myStudy");
@@ -60,7 +60,7 @@ public class ExporterMeasurementOrFactTest extends GraphDBTestCase {
 
     @Test
     public void noMatchTargetTaxon() throws IOException, NodeFactoryException, ParseException {
-        assertResult(PropertyAndValueDictionary.NO_MATCH, "Homo sapiens", "\nglobi:occur:stomach_volume:3,globi:occur:3,yes,,,stomach volume,666.0,http://purl.obolibrary.org/obo/UO_0000098,,,1992-03-30T08:00:00Z,,,,myStudy,,,globi:ref:1");
+        assertResult(PropertyAndValueDictionary.NO_MATCH, "Homo sapiens", "\nglobi:occur:stomach_volume:2,globi:occur:2,yes,,,stomach volume,666.0,http://purl.obolibrary.org/obo/UO_0000098,,,1992-03-30T08:00:00Z,,,,myStudy,,,globi:ref:1");
     }
 
     private void createTestData(Double length, String targetTaxonName, String sourceTaxonName) throws NodeFactoryException, ParseException {
@@ -85,6 +85,7 @@ public class ExporterMeasurementOrFactTest extends GraphDBTestCase {
 
         Location location = nodeFactory.getOrCreateLocation(22.0, 129.9, -60.0);
         specimen.caughtIn(location);
+        resolveNames();
     }
 
 

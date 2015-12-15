@@ -12,6 +12,8 @@ public class PropertyAndValueDictionary {
     public static final String EXTERNAL_URL = "externalUrl";
     public static final String INVERTED = "inverted";
     public static final String RO_NAMESPACE = "http://purl.obolibrary.org/obo/RO_";
+    public static final String STATUS_ID = "statusId";
+    public static final String STATUS_LABEL = "statusLabel";
     protected final static String TYPE = "type";
     public static final String RANK = "rank";
     public static final String NO_NAME = "no name";

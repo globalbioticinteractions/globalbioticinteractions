@@ -61,10 +61,10 @@ public class StudyImporterForWrastTest extends GraphDBTestCase {
         contentMap.put(StudyImporterForWrast.LAVACA_BAY_DATA_SOURCE, csvString);
         contentMap.put(StudyImporterForWrast.LAVACA_BAY_ENVIRONMENTAL, envString);
 
-        StudyImporterForWrast studyImporterFor = new StudyImporterForWrast(new TestParserFactory(contentMap), nodeFactory);
+        StudyImporterForWrast importer = new StudyImporterForWrast(new TestParserFactory(contentMap), nodeFactory);
 
 
-        Study study = studyImporterFor.importStudy();
+        Study study = importStudy(importer);
 
         int specimenCount = 0;
         for (Relationship specimen : study.getSpecimens()) {

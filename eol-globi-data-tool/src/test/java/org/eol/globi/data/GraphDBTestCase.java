@@ -37,7 +37,7 @@ public abstract class GraphDBTestCase {
 
         taxonIndex = new TaxonIndexImpl(enricher,
                 new PassThroughCorrectionService(), getGraphDb());
-        nodeFactory = createNodeFactory(taxonIndex);
+        nodeFactory = createNodeFactory();
     }
 
     protected Study importStudy(StudyImporter importer) throws StudyImporterException {
@@ -51,7 +51,7 @@ public abstract class GraphDBTestCase {
     }
 
 
-    protected NodeFactory createNodeFactory(TaxonIndex taxonIndex) {
+    private NodeFactory createNodeFactory() {
         NodeFactoryImpl nodeFactoryImpl = new NodeFactoryImpl(getGraphDb());
         nodeFactoryImpl.setEcoregionFinder(new EcoregionFinder() {
 
@@ -85,7 +85,6 @@ public abstract class GraphDBTestCase {
                 return StringUtils.isBlank(doi) ? null : "citation:" + doi;
             }
         });
-
         return nodeFactoryImpl;
     }
 

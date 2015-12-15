@@ -24,9 +24,10 @@ public class ExporterAssociationsTest extends GraphDBTestCase {
     @Test
     public void exportWithoutHeader() throws IOException, NodeFactoryException, ParseException {
         createTestData(null);
+        resolveNames();
 
-        String expected = "\nglobi:assoc:6,globi:occur:source:3,http://purl.obolibrary.org/obo/RO_0002470,globi:occur:target:6,,,,,data source description,,,globi:ref:1" +
-                "\nglobi:assoc:10,globi:occur:source:3,http://purl.obolibrary.org/obo/RO_0002470,globi:occur:target:6,,,,,data source description,,,globi:ref:1";
+        String expected = "\nglobi:assoc:4,globi:occur:source:2,http://purl.obolibrary.org/obo/RO_0002470,globi:occur:target:4,,,,,data source description,,,globi:ref:1" +
+                "\nglobi:assoc:6,globi:occur:source:2,http://purl.obolibrary.org/obo/RO_0002470,globi:occur:target:4,,,,,data source description,,,globi:ref:1";
 
 
         Study myStudy1 = nodeFactory.findStudy("myStudy");

@@ -94,8 +94,8 @@ public class LinkerGlobalNamesTest extends GraphDBTestCase {
 
             }
         };
-        NodeFactory nodeFactory = createNodeFactory(new TaxonIndexImpl(genus,
-                new PassThroughCorrectionService(), getGraphDb()));
+        taxonIndex = new TaxonIndexImpl(genus,
+                new PassThroughCorrectionService(), getGraphDb());
         TaxonNode lestes = taxonIndex.getOrCreateTaxon("Lestes");
         assertThat(lestes.getPath(), is("Animalia | Insecta | Lestes"));
         new LinkerGlobalNames().link(getGraphDb());

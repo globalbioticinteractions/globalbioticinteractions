@@ -14,6 +14,8 @@ import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.service.PropertyEnricher;
 import org.eol.globi.service.TaxonUtil;
+import org.eol.globi.taxon.CorrectionService;
+import org.eol.globi.taxon.TaxonIndexImpl;
 import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
 import org.neo4j.graphdb.Node;
@@ -51,39 +53,40 @@ public class ExportUnmatchedTaxonNamesTest extends GraphDBTestCase {
 
             }
         };
-        NodeFactory factory = factory(taxonEnricher);
+        configureTaxonIndex(taxonEnricher);
+
         String title = "my study\"";
-        Study study = factory.getOrCreateStudy2(title, "my first source", null);
+        Study study = nodeFactory.getOrCreateStudy2(title, "my first source", null);
         study.setCitationWithTx("citation my study");
 
         taxonIndex.getOrCreateTaxon("Homo sapiens");
-        Specimen predatorSpecimen = factory.createSpecimen(study, "Homo sapiens", "TEST:1234");
+        Specimen predatorSpecimen = nodeFactory.createSpecimen(study, "Homo sapiens", "TEST:1234");
         taxonIndex.getOrCreateTaxon("Canis lupus");
         Specimen preySpecimen6 = nodeFactory.createSpecimen(study, "Canis lupus");
         predatorSpecimen.interactsWith(preySpecimen6, InteractType.ATE);
         Specimen preySpecimen5 = nodeFactory.createSpecimen(study, "Canis lupus");
         predatorSpecimen.interactsWith(preySpecimen5, InteractType.ATE);
-        Specimen preySpecimen = factory.createSpecimen(study, "Caniz");
+        Specimen preySpecimen = nodeFactory.createSpecimen(study, "Caniz");
         predatorSpecimen.ate(preySpecimen);
 
-        Specimen predatorSpecimen23 = factory.createSpecimen(study, "Homo sapiens2");
+        Specimen predatorSpecimen23 = nodeFactory.createSpecimen(study, "Homo sapiens2");
         Specimen preySpecimen4 = nodeFactory.createSpecimen(study, "Canis lupus");
         predatorSpecimen23.interactsWith(preySpecimen4, InteractType.ATE);
 
-        Specimen predatorSpecimen22 = factory.createSpecimen(study, "Homo sapiens2");
+        Specimen predatorSpecimen22 = nodeFactory.createSpecimen(study, "Homo sapiens2");
         Specimen preySpecimen3 = nodeFactory.createSpecimen(study, "Canis lupus");
         predatorSpecimen22.interactsWith(preySpecimen3, InteractType.ATE);
 
-        Study study2 = factory.getOrCreateStudy2("my study2", "my source2", null);
+        Study study2 = nodeFactory.getOrCreateStudy2("my study2", "my source2", null);
         study2.setCitationWithTx("citation study2");
-        Specimen predatorSpecimen21 = factory.createSpecimen(study2, "Homo sapiens2");
+        Specimen predatorSpecimen21 = nodeFactory.createSpecimen(study2, "Homo sapiens2");
         Specimen preySpecimen2 = nodeFactory.createSpecimen(study2, "Canis lupus");
         predatorSpecimen21.interactsWith(preySpecimen2, InteractType.ATE);
 
-        Specimen predatorSpecimen2 = factory.createSpecimen(study, "Homo sapiens3", PropertyAndValueDictionary.NO_MATCH);
+        Specimen predatorSpecimen2 = nodeFactory.createSpecimen(study, "Homo sapiens3", PropertyAndValueDictionary.NO_MATCH);
         Specimen preySpecimen1 = nodeFactory.createSpecimen(study, "Canis lupus");
         predatorSpecimen2.interactsWith(preySpecimen1, InteractType.ATE);
-
+        resolveNames();
 
         StringWriter writer = new StringWriter();
         new ExportUnmatchedTaxonNames().exportStudy(study, writer, true);
@@ -92,6 +95,15 @@ public class ExportUnmatchedTaxonNamesTest extends GraphDBTestCase {
                         "\nHomo sapiens2,,,,,,citation my study,my first source" +
                         "\nHomo sapiens3,no:match,,,,,citation my study,my first source"
         ));
+    }
+
+    public void configureTaxonIndex(PropertyEnricher taxonEnricher) {
+        taxonIndex = new TaxonIndexImpl(taxonEnricher, new CorrectionService() {
+                    @Override
+                    public String correct(String taxonName) {
+                        return taxonName;
+                    }
+                }, getGraphDb());
     }
 
     @Test
@@ -111,19 +123,20 @@ public class ExportUnmatchedTaxonNamesTest extends GraphDBTestCase {
 
             }
         };
-        NodeFactory factory = factory(taxonEnricher);
-        Study study = factory.getOrCreateStudy2("my study", "my first source", null);
+        configureTaxonIndex(taxonEnricher);
 
-        Specimen predatorSpecimen = factory.createSpecimen(study, "Homo sapienz");
+        Study study = nodeFactory.getOrCreateStudy2("my study", "my first source", null);
+
+        Specimen predatorSpecimen = nodeFactory.createSpecimen(study, "Homo sapienz");
         TaxonNode humanz = taxonIndex.getOrCreateTaxon("Homo sapienz");
         TaxonImpl taxon = new TaxonImpl("Homo sapiens", "TESTING:123");
         taxon.setPath("one | two | Homo sapiens");
         NodeUtil.connectTaxa(taxon, humanz, getGraphDb(), RelTypes.SIMILAR_TO);
         assertNotNull(humanz);
-        Specimen preySpecimen = factory.createSpecimen(study, "Caniz");
+        Specimen preySpecimen = nodeFactory.createSpecimen(study, "Caniz");
         predatorSpecimen.interactsWith(preySpecimen, InteractType.ATE);
 
-        predatorSpecimen = factory.createSpecimen(study, "Homo sapiens");
+        predatorSpecimen = nodeFactory.createSpecimen(study, "Homo sapiens");
         Node synonymNode = taxonIndex.getOrCreateTaxon("Homo sapiens Synonym").getUnderlyingNode();
         Node node = taxonIndex.getOrCreateTaxon("Homo sapiens").getUnderlyingNode();
         Transaction tx = getGraphDb().beginTx();
@@ -134,9 +147,9 @@ public class ExportUnmatchedTaxonNamesTest extends GraphDBTestCase {
             tx.finish();
         }
 
-        preySpecimen = factory.createSpecimen(study, "Canis");
+        preySpecimen = nodeFactory.createSpecimen(study, "Canis");
         predatorSpecimen.ate(preySpecimen);
-
+        resolveNames();
         StringWriter writer = new StringWriter();
         new ExportUnmatchedTaxonNames().exportStudy(study, writer, true);
         assertThat(writer.toString(), is("unmatched taxon name,unmatched taxon id,name status,similar to taxon name,similar to taxon path,similar to taxon id,study,source" +
@@ -144,10 +157,6 @@ public class ExportUnmatchedTaxonNamesTest extends GraphDBTestCase {
                         "\nCaniz,,,,,,,my first source" +
                         "\nCanis,,,,,,,my first source"
         ));
-    }
-
-    private NodeFactoryImpl factory(PropertyEnricher enricher) {
-        return new NodeFactoryImpl(getGraphDb());
     }
 
 }

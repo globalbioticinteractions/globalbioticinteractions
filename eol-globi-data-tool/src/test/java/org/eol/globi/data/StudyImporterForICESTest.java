@@ -47,9 +47,9 @@ public class StudyImporterForICESTest extends GraphDBTestCase {
                 "Exccoddatsto_815,55.25,8.5,Yes,01/01/1981 00:00:00,1981,1,1,1,,,26,26,,,,,39F8,Demersal sampling,Gadus morhua,8791030402,125,,,100,150,29,26,0,0,2,28,,Nereis,5001240400,5.3,,,1,2\n" +
                 "Exccoddatsto_815,55.25,8.5,Yes,01/01/1981 00:00:00,1981,1,1,1,,,26,26,,,,,39F8,Demersal sampling,Gadus morhua,8791030402,125,,,100,150,29,26,0,0,2,28,,,5515290302,4.8,,,2,3";
 
-        StudyImporterForICES studyImporterFor = new StudyImporterForICES(new TestParserFactory(firstBunchOfLines), nodeFactory);
+        StudyImporterForICES importer = new StudyImporterForICES(new TestParserFactory(firstBunchOfLines), nodeFactory);
 
-        Study study = studyImporterFor.importStudy();
+        Study study = importStudy(importer);
         assertNotNull(taxonIndex.findTaxonByName("Gadus morhua"));
         assertNotNull(taxonIndex.findTaxonByName("Polychaeta"));
         assertNotNull(taxonIndex.findTaxonByName("Nereis"));

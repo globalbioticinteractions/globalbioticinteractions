@@ -33,9 +33,9 @@ public class StudyImporterForJRFerrerParisTest extends GraphDBTestCase {
                 "\"27387\",\"Pieridae\",\"Mylothris agathina\",\"Santalales\",\"?Loranthus? spp.\",\"Kenya, Tanzania, South Africa\",\"Braby 2005\"\n" +
                 "\"27388\",\"Pieridae\",\"Mylothris chloris\",\"Santalales\",\"?Loranthus? spp.\",\"Kenya\",\"Braby 2005\"";
 
-        StudyImporterForJRFerrerParis studyImporterFor = new StudyImporterForJRFerrerParis(new TestParserFactory(csvContent), nodeFactory);
+        StudyImporterForJRFerrerParis importer = new StudyImporterForJRFerrerParis(new TestParserFactory(csvContent), nodeFactory);
 
-        Study study = studyImporterFor.importStudy();
+        Study study = importStudy(importer);
         assertNotNull(taxonIndex.findTaxonByName("Hesperocharis anguitia"));
 
         Iterable<Relationship> collectedRels = study.getSpecimens();

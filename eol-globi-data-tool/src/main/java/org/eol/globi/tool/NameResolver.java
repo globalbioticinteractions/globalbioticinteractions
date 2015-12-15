@@ -10,6 +10,7 @@ import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TaxonNode;
+import org.eol.globi.domain.Term;
 import org.eol.globi.service.PropertyEnricher;
 import org.eol.globi.service.PropertyEnricherFactory;
 import org.eol.globi.taxon.CorrectionService;
@@ -21,6 +22,9 @@ import org.neo4j.graphdb.GraphDatabaseService;
 
 import java.util.Collection;
 import java.util.Map;
+
+import static org.eol.globi.domain.PropertyAndValueDictionary.*;
+import static org.eol.globi.domain.PropertyAndValueDictionary.STATUS_ID;
 
 public class NameResolver {
     private static final Log LOG = LogFactory.getLog(NameResolver.class);
@@ -47,22 +51,29 @@ public class NameResolver {
         ExecutionEngine engine = new ExecutionEngine(graphService);
         ExecutionResult result = engine.execute("START study = node:studies('*:*') " +
                 "MATCH study-[:COLLECTED]->specimen-[:ORIGINALLY_DESCRIBED_AS]->taxon " +
-                "RETURN distinct(taxon.externalId?) as `externalId`, taxon.name? as `name`, collect(id(specimen)) as `specimenIds`");
+                "RETURN distinct(taxon." + EXTERNAL_ID + "?) as `" + EXTERNAL_ID + "`" +
+                ", taxon." + NAME + "? as `" + NAME + "`" +
+                ", taxon." + STATUS_ID + "? as `" + STATUS_ID + "`" +
+                ", taxon." + STATUS_LABEL + "? as `" + STATUS_LABEL + "`" +
+                ", collect(id(specimen)) as `specimenIds`");
         int count = 0;
         StopWatch watch = new StopWatch();
         watch.start();
         for (Map<String, Object> row : result) {
-            String name = row.containsKey(PropertyAndValueDictionary.NAME) ? (String) row.get(PropertyAndValueDictionary.NAME) : null;
-            String externalId = row.containsKey(PropertyAndValueDictionary.EXTERNAL_ID) ? (String) row.get(PropertyAndValueDictionary.EXTERNAL_ID) : null;
+            String name = row.containsKey(NAME) ? (String) row.get(NAME) : null;
+            String externalId = row.containsKey(EXTERNAL_ID) ? (String) row.get(EXTERNAL_ID) : null;
+            String statusId = row.containsKey(STATUS_ID) ? (String) row.get(STATUS_ID) : null;
+            String statusLabel = row.containsKey(STATUS_LABEL) ? (String) row.get(STATUS_LABEL) : null;
             Collection<Long> specimenIds = row.containsKey("specimenIds") ? (Collection<Long>) row.get("specimenIds") : null;
             if (specimenIds != null) {
                 for (Long specimenId : specimenIds) {
                     Specimen specimen = new Specimen(graphService.getNodeById(specimenId));
                     Taxon taxon = new TaxonImpl(name, externalId);
+                    taxon.setStatus(new Term(statusId, statusLabel));
                     try {
-                        TaxonNode taxonNode = taxonIndex.getOrCreateTaxon(taxon);
-                        if (taxonNode != null) {
-                            specimen.classifyAs(taxonNode);
+                        TaxonNode resolvedTaxon = taxonIndex.getOrCreateTaxon(taxon);
+                        if (resolvedTaxon != null) {
+                            specimen.classifyAs(resolvedTaxon);
                         }
                     } catch (NodeFactoryException e) {
                         LOG.warn("failed to create taxon with name [" + taxon.getName() + "] and id [" + taxon.getExternalId() + "]", e);

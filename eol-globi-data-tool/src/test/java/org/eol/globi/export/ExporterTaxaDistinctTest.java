@@ -26,6 +26,7 @@ public class ExporterTaxaDistinctTest extends GraphDBTestCase {
         taxonIndex.getOrCreateTaxon("Canis lupus", "EOL:123", null);
         taxonIndex.getOrCreateTaxon("Canis", "EOL:126", null);
         taxonIndex.getOrCreateTaxon("ThemFishes", "no:match", null);
+        resolveNames();
 
         Study myStudy1 = nodeFactory.findStudy("myStudy");
 

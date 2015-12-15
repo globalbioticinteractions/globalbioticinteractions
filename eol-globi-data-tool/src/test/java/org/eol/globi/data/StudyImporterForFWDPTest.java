@@ -48,7 +48,7 @@ public class StudyImporterForFWDPTest extends GraphDBTestCase {
         FileOutputStream fos = new FileOutputStream(tempCsvExport);
         CSVPrint csvOut = CSVUtil.createCSVPrint(fos);
         csvOut.write(new String[]{"predator specimen id (cruise6-PDID-CATNUM)", "predator taxon (pdscinam)", "predator length in mm (PDLEN * 10.0)", "prey taxon (PYNAM)", "year (year)", "month (month)", "ecoRegion (derived from declat;declon)"});
-        Study study = studyImporter.importStudy();
+        Study study = importStudy(studyImporter);
         Iterable<Relationship> collected = study.getSpecimens();
         for (Relationship coll : collected) {
             Specimen specimen = new Specimen(coll.getEndNode());
@@ -126,9 +126,9 @@ public class StudyImporterForFWDPTest extends GraphDBTestCase {
                 "7,CRUSTACEA,CRUSTA,CRUSTA,CRUSTACEA,CRUSTA,CRUSTACEA,45,1,58,10,.,,197702,13,M,4.94,4.49,1610,35,11.5,10,3549,7504,,,3,24,1977,10,SPRING,1977.5,1977,1980,1970s,MAB,35.8167,75.0667,24,12,.,.,4.78,4.34,MUSTELUS CANIS,SMOOTH DOGFISH\n";
 
 
-        StudyImporterForFWDP studyImporter = new StudyImporterForFWDP(new TestParserFactory(aFewLines), nodeFactory);
+        StudyImporterForFWDP importer = new StudyImporterForFWDP(new TestParserFactory(aFewLines), nodeFactory);
 
-        studyImporter.importStudy();
+        importStudy(importer);
 
         assertThat(taxonIndex.findTaxonByName("Mustelus canis"), is(notNullValue()));
 

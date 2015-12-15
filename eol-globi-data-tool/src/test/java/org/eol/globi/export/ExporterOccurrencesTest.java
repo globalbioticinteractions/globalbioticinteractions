@@ -21,6 +21,7 @@ public class ExporterOccurrencesTest extends GraphDBTestCase {
     @Test
     public void exportMissingLength() throws IOException, NodeFactoryException, ParseException {
         createTestData(null);
+        resolveNames();
         String expected = getExpectedHeader();
         expected += getExpectedData();
 
@@ -34,9 +35,9 @@ public class ExporterOccurrencesTest extends GraphDBTestCase {
     }
 
     private String getExpectedData() {
-        return "\nglobi:occur:3,EOL:327955,,,,,JUVENILE,,,,,,,,,,,,,1992-03-30T08:00:00Z,,,12.0,-1.0,,,-60.0 m,DIGESTATE,BONE" +
-                "\nglobi:occur:8,EOL:328607,,,,,,,,,,,,,,,,,,1992-03-30T08:00:00Z,,,12.0,-1.0,,,-60.0 m,," +
-                "\nglobi:occur:10,EOL:328607,,,,,,,,,,,,,,,,,,1992-03-30T08:00:00Z,,,12.0,-1.0,,,-60.0 m,,";
+        return "\nglobi:occur:2,EOL:327955,,,,,JUVENILE,,,,,,,,,,,,,1992-03-30T08:00:00Z,,,12.0,-1.0,,,-60.0 m,DIGESTATE,BONE" +
+                "\nglobi:occur:6,EOL:328607,,,,,,,,,,,,,,,,,,1992-03-30T08:00:00Z,,,12.0,-1.0,,,-60.0 m,," +
+                "\nglobi:occur:8,EOL:328607,,,,,,,,,,,,,,,,,,1992-03-30T08:00:00Z,,,12.0,-1.0,,,-60.0 m,,";
     }
 
     private String getExpectedHeader() {
@@ -46,6 +47,7 @@ public class ExporterOccurrencesTest extends GraphDBTestCase {
     @Test
     public void exportNoHeader() throws IOException, NodeFactoryException, ParseException {
         createTestData(null);
+        resolveNames();
         String expected = getExpectedData();
 
         Study myStudy1 = nodeFactory.findStudy("myStudy");
@@ -64,6 +66,7 @@ public class ExporterOccurrencesTest extends GraphDBTestCase {
     @Test
     public void exportToCSV() throws NodeFactoryException, IOException, ParseException {
         createTestData(123.0);
+        resolveNames();
         String expected = "";
         expected += getExpectedHeader();
         expected += getExpectedData();
@@ -83,6 +86,7 @@ public class ExporterOccurrencesTest extends GraphDBTestCase {
         Study myStudy = nodeFactory.createStudy("myStudy");
         Specimen specimen = nodeFactory.createSpecimen(myStudy, "Homo sapiens", "EOL:123");
         specimen.setBasisOfRecord(new Term("test:123", "aBasisOfRecord"));
+        resolveNames();
 
         StringWriter row = new StringWriter();
 
@@ -90,7 +94,7 @@ public class ExporterOccurrencesTest extends GraphDBTestCase {
 
         String expected = "";
         expected += getExpectedHeader();
-        expected += "\nglobi:occur:3,EOL:123,,,,,,,,,,,,,aBasisOfRecord,,,,,,,,,,,,,,";
+        expected += "\nglobi:occur:2,EOL:123,,,,,,,,,,,,,aBasisOfRecord,,,,,,,,,,,,,,";
 
         assertThat(row.getBuffer().toString(), equalTo(expected));
     }

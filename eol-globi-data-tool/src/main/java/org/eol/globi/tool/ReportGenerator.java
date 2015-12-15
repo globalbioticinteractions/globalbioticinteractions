@@ -189,8 +189,10 @@ public class ReportGenerator {
                 }
             }
             Relationship classifiedAs = specimen.getEndNode().getSingleRelationship(RelTypes.CLASSIFIED_AS, Direction.OUTGOING);
-            Node taxonNode = classifiedAs.getEndNode();
-            ids.add(taxonNode.getId());
+            if (classifiedAs != null) {
+                Node taxonNode = classifiedAs.getEndNode();
+                ids.add(taxonNode.getId());
+            }
         }
     }
 

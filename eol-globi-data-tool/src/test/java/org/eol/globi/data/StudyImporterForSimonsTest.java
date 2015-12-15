@@ -51,10 +51,9 @@ public class StudyImporterForSimonsTest extends GraphDBTestCase {
         csvString += "1, 1, 16, 3, 2, 6, 6, 205.5, 1, \"Ampelisca agassizi\", 1, \"Summer\", 60, \"Chandeleur Islands\", \"aabd\", 47.11, \"C2\", 348078.84, 3257617.25, 313, \"201-300\", \"Rhynchoconger flavus\"\n";
         csvString += "2, 11, 2, 1, 1, 20, 15, 592.5, 6, \"Ampelisca sp. (abdita complex)\", 1, \"Summer\", 20, \"Chandeleur Islands\", \"aabd\", 47.11, \"C1\", 344445.31, 3323087.25, 144, \"26-50\", \"Halieutichthys aculeatus\"\n";
 
-        StudyImporterForSimons studyImporterFor = new StudyImporterForSimons(new TestParserFactory(csvString), nodeFactory);
+        StudyImporterForSimons importer = new StudyImporterForSimons(new TestParserFactory(csvString), nodeFactory);
 
-        studyImporterFor.importStudy();
-        studyImporterFor.importStudy();
+        importStudy(importer);
 
         assertNotNull(taxonIndex.findTaxonByName("Rhynchoconger flavus"));
         assertNotNull(taxonIndex.findTaxonByName("Halieutichthys aculeatus"));

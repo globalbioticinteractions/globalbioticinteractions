@@ -21,6 +21,7 @@ public class ReportGeneratorTest extends GraphDBTestCase {
 
         Study study = createStudy("a title", "a third source");
         study.setDOIWithTx("doi:12345");
+        resolveNames();
 
         new ReportGenerator(getGraphDb()).generateReportForStudies();
 
@@ -55,6 +56,7 @@ public class ReportGeneratorTest extends GraphDBTestCase {
         createStudy("a title", "az source");
         createStudy("another title", "az source");
         createStudy("yet another title", "zother source", null);
+        resolveNames();
 
         new ReportGenerator(getGraphDb()).generateReportForStudySources();
 
@@ -78,6 +80,7 @@ public class ReportGeneratorTest extends GraphDBTestCase {
     public void generateCollectionReport() throws NodeFactoryException {
         createStudy("a title", "source");
         createStudy("another title", "another source");
+        resolveNames();
 
         new ReportGenerator(getGraphDb()).generateReportForCollection();
 
