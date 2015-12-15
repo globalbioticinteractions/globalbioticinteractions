@@ -16,8 +16,6 @@ import org.eol.globi.data.ParserFactoryImpl;
 import org.eol.globi.data.StudyImporter;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.data.StudyImporterFactory;
-import org.eol.globi.taxon.TaxonIndexImpl;
-import org.eol.globi.taxon.TaxonNameCorrector;
 import org.eol.globi.db.GraphService;
 import org.eol.globi.export.GraphExporter;
 import org.eol.globi.geo.EcoregionFinder;
@@ -26,7 +24,6 @@ import org.eol.globi.opentree.OpenTreeTaxonIndex;
 import org.eol.globi.service.DOIResolverImpl;
 import org.eol.globi.service.EcoregionFinderProxy;
 import org.eol.globi.service.PropertyEnricherException;
-import org.eol.globi.service.PropertyEnricherFactory;
 import org.eol.globi.util.HttpUtil;
 import org.neo4j.graphdb.GraphDatabaseService;
 
@@ -176,8 +173,6 @@ public class Normalizer {
 
 
     private void importData(GraphDatabaseService graphService, Collection<Class<? extends StudyImporter>> importers) {
-        TaxonIndexImpl taxonService = new TaxonIndexImpl(PropertyEnricherFactory.createTaxonEnricher()
-                , new TaxonNameCorrector(), graphService);
         NodeFactoryImpl factory = new NodeFactoryImpl(graphService);
         for (Class<? extends StudyImporter> importer : importers) {
             try {
