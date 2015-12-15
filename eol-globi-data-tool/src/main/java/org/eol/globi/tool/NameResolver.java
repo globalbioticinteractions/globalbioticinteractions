@@ -52,12 +52,12 @@ public class NameResolver {
         ExecutionEngine engine = new ExecutionEngine(graphService);
         ExecutionResult result = engine.execute("START study = node:studies('*:*') " +
                 "MATCH study-[:COLLECTED]->specimen-[:ORIGINALLY_DESCRIBED_AS]->taxon " +
-                "RETURN distinct(taxon." + EXTERNAL_ID + "?) as `" + EXTERNAL_ID + "`" +
+                "RETURN taxon." + EXTERNAL_ID + "? as `" + EXTERNAL_ID + "`" +
                 ", taxon." + NAME + "? as `" + NAME + "`" +
                 ", taxon." + STATUS_ID + "? as `" + STATUS_ID + "`" +
                 ", taxon." + STATUS_LABEL + "? as `" + STATUS_LABEL + "`" +
                 ", id(specimen) as `specimenId`");
-        int count = 0;
+        int count = 1;
         StopWatch watch = new StopWatch();
         watch.start();
         ResourceIterator<Map<String, Object>> iterator = result.iterator();
@@ -83,7 +83,7 @@ public class NameResolver {
             }
 
             if (count % 100 == 0) {
-                if (count > 0) {
+                if (count > 1) {
                     LOG.info("name resolving update: resolved [" + count + "] names at " + getProgressMsg(count, watch));
                 }
             }
@@ -91,7 +91,7 @@ public class NameResolver {
         }
         iterator.close();
 
-        LOG.info("name resolving completed in " + getProgressMsg(count, watch));
+        LOG.info("resolved [" + count + "] names in " + getProgressMsg(count, watch));
 
         LOG.info("building interaction indexes...");
         engine.execute("START study = node:studies('*:*') " +
@@ -103,11 +103,8 @@ public class NameResolver {
     }
 
     public String getProgressMsg(int count, StopWatch watch) {
-        watch.stop();
-        double totalTimeMins = 1000 * 60.0 / watch.getTime();
-        String msg = String.format("[%.1f] taxon/min over [%.1f] min", (count / totalTimeMins), watch.getTime() / (1000 * 60.0));
-        watch.resume();
-        return msg;
+        double totalTimeMins = watch.getTime() /  1000 * 60.0;
+        return String.format("[%.1f] taxon/min over [%.1f] min", (count / totalTimeMins), watch.getTime() / (1000 * 60.0));
 
     }
 }
