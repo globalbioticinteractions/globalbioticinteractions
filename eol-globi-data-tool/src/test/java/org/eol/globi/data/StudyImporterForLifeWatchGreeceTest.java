@@ -31,7 +31,7 @@ public class StudyImporterForLifeWatchGreeceTest extends GraphDBTestCase {
                 "778,\"Hartmann-Schröder, G. (1996) Annelida, Borstenwürmer, Polychaeta. Gustav Fischer Verlag, Jena. 648pp.\",\"Glycera rouxi\",\"http://polytraits.lifewatchgreece.eu/terms/SM_YES\",\"Organisms that undergo sexual metamorphosis\",\"http://polytraits.lifewatchgreece.eu/terms/SM\",\"Conspicuous change in the organism's body structure prior to reproduction.\",2,1\n" +
                 "429,\"Simpson, M. (1962) Reproduction of the Polychaete Glycera Dibranchiata at Solomons, Maryland. <i>The Biological Bulletin</i>, 123:396-411.\",\"Glycera tesselata\",\"http://polytraits.lifewatchgreece.eu/terms/SM_YES\",\"Organisms that undergo sexual metamorphosis\",\"http://polytraits.lifewatchgreece.eu/terms/SM\",\"Conspicuous change in the organism's body structure prior to reproduction.\",2,1\n"), nodeFactory);
 
-        importer.importStudy();
+        importStudy(importer);
     }
 
 
@@ -41,7 +41,7 @@ public class StudyImporterForLifeWatchGreeceTest extends GraphDBTestCase {
         assertThat(studies.size(), is(0));
 
         StudyImporterForLifeWatchGreece importer = new StudyImporterForLifeWatchGreece(null, nodeFactory);
-        importer.importStudy();
+        importStudy(importer);
 
         studies = NodeUtil.findAllStudies(getGraphDb());
         assertThat(studies.size(), is(146));

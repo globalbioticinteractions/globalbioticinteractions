@@ -18,10 +18,10 @@ public class StudyImporterForRobledoTest extends GraphDBTestCase {
     public void createAndPopulateStudy() throws StudyImporterException, NodeFactoryException {
         StudyImporterForRobledo importer = new StudyImporterForRobledo(new ParserFactoryImpl(), nodeFactory);
 
-        Study study = importer.importStudy();
+        Study study = importStudy(importer);
 
-        assertNotNull(nodeFactory.findTaxonByName("Heliconia imbricata"));
-        assertNotNull(nodeFactory.findTaxonByName("Renealmia alpinia"));
+        assertNotNull(taxonIndex.findTaxonByName("Heliconia imbricata"));
+        assertNotNull(taxonIndex.findTaxonByName("Renealmia alpinia"));
 
         assertNotNull(nodeFactory.findStudy(study.getTitle()));
 

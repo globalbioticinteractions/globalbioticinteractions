@@ -61,9 +61,9 @@ public class StudyImporterForBroseTest extends GraphDBTestCase {
             }
         });
         StudyImporter importer = new StudyImporterForBrose(parserFactory, nodeFactory);
-        importer.importStudy();
+        importStudy(importer);
 
-        TaxonNode taxon = nodeFactory.findTaxonByName("Praon dorsale");
+        TaxonNode taxon = taxonIndex.findTaxonByName("Praon dorsale");
         Iterable<Relationship> relationships = taxon.getUnderlyingNode().getRelationships(Direction.INCOMING, RelTypes.CLASSIFIED_AS);
         for (Relationship relationship : relationships) {
             Node predatorSpecimenNode = relationship.getStartNode();
@@ -72,7 +72,7 @@ public class StudyImporterForBroseTest extends GraphDBTestCase {
 
         }
         assertThat(taxon, is(notNullValue()));
-        assertThat(nodeFactory.findTaxonByName("Aphelinus abdominalis"), is(notNullValue()));
+        assertThat(taxonIndex.findTaxonByName("Aphelinus abdominalis"), is(notNullValue()));
 
         Location location = nodeFactory.findLocation(51.24, -0.34, null);
         assertThat("missing location", location, is(notNullValue()));

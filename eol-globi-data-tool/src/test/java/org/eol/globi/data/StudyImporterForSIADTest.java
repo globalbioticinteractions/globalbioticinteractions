@@ -21,10 +21,10 @@ public class StudyImporterForSIADTest extends GraphDBTestCase {
         List<Study> allStudies = NodeUtil.findAllStudies(getGraphDb());
         assertThat(allStudies.size() > 1, is(true));
 
-        TaxonNode taxon = nodeFactory.findTaxonByName("Anisakis");
+        TaxonNode taxon = taxonIndex.findTaxonByName("Anisakis");
         assertThat(taxon, is(notNullValue())) ;
 
-        taxon = nodeFactory.findTaxonByName("Abbreviata");
+        taxon = taxonIndex.findTaxonByName("Abbreviata");
         assertThat(taxon, is(notNullValue())) ;
     }
 

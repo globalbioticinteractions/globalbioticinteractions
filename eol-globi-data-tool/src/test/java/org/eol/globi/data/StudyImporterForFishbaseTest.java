@@ -47,12 +47,12 @@ public class StudyImporterForFishbaseTest extends GraphDBTestCase {
 
         assertThat(citations, hasItem("citation:doi:ICES. 2012. Stomach Dataset."));
 
-        assertThat(nodeFactory.findTaxonByName("n.a./others"), is(notNullValue()));
-        assertThat(nodeFactory.findTaxonByName("benthic algae/weeds"), is(notNullValue()));
-        assertThat(nodeFactory.findTaxonByName("bony fish"), is(nullValue()));
-        assertThat(nodeFactory.findTaxonByName("debris"), is(notNullValue()));
-        assertThat(nodeFactory.findTaxonByName("Pomatoschistus minutus"), is(notNullValue()));
-        assertThat(nodeFactory.findTaxonByName("Oreochromis niloticus"), is(notNullValue()));
+        assertThat(taxonIndex.findTaxonByName("n.a./others"), is(notNullValue()));
+        assertThat(taxonIndex.findTaxonByName("benthic algae/weeds"), is(notNullValue()));
+        assertThat(taxonIndex.findTaxonByName("bony fish"), is(nullValue()));
+        assertThat(taxonIndex.findTaxonByName("debris"), is(notNullValue()));
+        assertThat(taxonIndex.findTaxonByName("Pomatoschistus minutus"), is(notNullValue()));
+        assertThat(taxonIndex.findTaxonByName("Oreochromis niloticus"), is(notNullValue()));
 
         assertThat(nodeFactory.findLocation(52.8763053517,	-1.69182449421, null), is(notNullValue()));
     }

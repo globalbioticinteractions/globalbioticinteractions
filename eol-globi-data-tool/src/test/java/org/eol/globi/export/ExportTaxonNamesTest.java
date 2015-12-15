@@ -4,8 +4,6 @@ import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.NodeFactory;
 import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.data.NodeFactoryImpl;
-import org.eol.globi.taxon.CorrectionService;
-import org.eol.globi.taxon.TaxonIndexImpl;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.Taxon;
@@ -51,8 +49,8 @@ public class ExportTaxonNamesTest extends GraphDBTestCase {
         NodeFactory factory = factory(taxonEnricher);
 
         Study study = factory.getOrCreateStudy("title", "source", "citation");
-        TaxonNode human = factory.getOrCreateTaxon("Homo sapiens");
-        factory.getOrCreateTaxon("Canis lupus");
+        TaxonNode human = taxonIndex.getOrCreateTaxon("Homo sapiens");
+        taxonIndex.getOrCreateTaxon("Canis lupus");
         NodeUtil.connectTaxa(new TaxonImpl("Alternate Homo sapiens", "alt:123"), human, getGraphDb(), RelTypes.SAME_AS);
         NodeUtil.connectTaxa(new TaxonImpl("Similar Homo sapiens", "alt:456"), human, getGraphDb(), RelTypes.SIMILAR_TO);
 
@@ -65,12 +63,7 @@ public class ExportTaxonNamesTest extends GraphDBTestCase {
     }
 
     private NodeFactoryImpl factory(PropertyEnricher enricher) {
-        return new NodeFactoryImpl(getGraphDb(), new TaxonIndexImpl(enricher, new CorrectionService() {
-            @Override
-            public String correct(String taxonName) {
-                return taxonName;
-            }
-        }, getGraphDb()));
+        return new NodeFactoryImpl(getGraphDb());
     }
 
 }

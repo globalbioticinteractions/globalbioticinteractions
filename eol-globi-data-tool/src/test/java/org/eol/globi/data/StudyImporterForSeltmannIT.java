@@ -38,7 +38,7 @@ public class StudyImporterForSeltmannIT extends GraphDBTestCase {
     protected void importArchive(String archiveName) throws StudyImporterException, NodeFactoryException {
         StudyImporterForSeltmann importer = new StudyImporterForSeltmann(null, nodeFactory);
         importer.setArchiveURL(ARCHIVE_URI_PREFIX + archiveName);
-        importer.importStudy();
+        importStudy(importer);
 
         List<Study> allStudies = NodeUtil.findAllStudies(getGraphDb());
         for (Study allStudy : allStudies) {
@@ -53,7 +53,7 @@ public class StudyImporterForSeltmannIT extends GraphDBTestCase {
             }
         }
 
-        assertThat(nodeFactory.findTaxonByName("Megandrena mentzeliae"), is(notNullValue()));
-        assertThat(nodeFactory.findTaxonByName("Mentzelia tricuspis"), is(notNullValue()));
+        assertThat(taxonIndex.findTaxonByName("Megandrena mentzeliae"), is(notNullValue()));
+        assertThat(taxonIndex.findTaxonByName("Mentzelia tricuspis"), is(notNullValue()));
     }
 }

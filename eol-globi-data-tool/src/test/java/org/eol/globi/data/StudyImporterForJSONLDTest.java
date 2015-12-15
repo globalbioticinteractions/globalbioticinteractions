@@ -22,14 +22,14 @@ public class StudyImporterForJSONLDTest extends GraphDBTestCase {
                 setResourceUrl("globi-jsonld/globi-dataset.jsonld");
             }
         };
-        importer.importStudy();
+        importStudy(importer);
         List<Study> allStudies = NodeUtil.findAllStudies(getGraphDb());
         for (Study allStudy : allStudies) {
             assertThat(allStudy.getExternalId(), is("http://dx.doi.org/http://arctos.database.museum/guid/CUMV:Bird:25225"));
             assertThat(allStudy.getCitation(), is("citation:doi:http://arctos.database.museum/guid/CUMV:Bird:25225"));
             assertThat(allStudy.getSource(), startsWith("Christopher Mungall. 2015. Accessed at globi-jsonld/globi-dataset.jsonld on "));
         }
-        assertThat(nodeFactory.findTaxonById("NCBI:8782"), not(is(nullValue())));
+        assertThat(taxonIndex.findTaxonById("NCBI:8782"), not(is(nullValue())));
     }
 
 }

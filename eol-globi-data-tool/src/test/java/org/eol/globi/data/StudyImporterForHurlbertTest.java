@@ -17,11 +17,11 @@ public class StudyImporterForHurlbertTest extends GraphDBTestCase {
     @Test
     public void importAll() throws StudyImporterException, NodeFactoryException {
         StudyImporter importer = new StudyImporterForHurlbert(new ParserFactoryImpl(), nodeFactory);
-        importer.importStudy();
+        importStudy(importer);
         List<Study> allStudies = NodeUtil.findAllStudies(getGraphDb());
         assertThat(allStudies.size() > 10, is(true));
 
-        TaxonNode formicidae = nodeFactory.findTaxonByName("Formicidae");
+        TaxonNode formicidae = taxonIndex.findTaxonByName("Formicidae");
         assertThat(formicidae.getStatus(), is(notNullValue()));
     }
 
@@ -30,7 +30,7 @@ public class StudyImporterForHurlbertTest extends GraphDBTestCase {
         String csvString = aFewLines();
         TestParserFactory factory = new TestParserFactory(csvString);
         StudyImporter importer = new StudyImporterForHurlbert(factory, nodeFactory);
-        importer.importStudy();
+        importStudy(importer);
 
         List<Study> allStudies = NodeUtil.findAllStudies(getGraphDb());
         assertThat(allStudies.size(), is(1));
@@ -39,10 +39,10 @@ public class StudyImporterForHurlbertTest extends GraphDBTestCase {
         assertThat(study.getSource(), containsString("Allen Hurlbert. Avian Diet Database (https://github.com/hurlbertlab/dietdatabase/). Accessed at https://raw.githubusercontent.com/hurlbertlab/dietdatabase/master/AvianDietDatabase.txt"));
         assertThat(study.getCitation(), is("Strong, A. M. 2000. Divergent foraging strategies of two neotropical migrant warblers: Implications for winter habitat use. Auk 117(2):381-392."));
 
-        assertThat(nodeFactory.findTaxonByName("Seiurus aurocapillus"), is(notNullValue()));
-        TaxonNode formicidae = nodeFactory.findTaxonByName("Formicidae");
+        assertThat(taxonIndex.findTaxonByName("Seiurus aurocapillus"), is(notNullValue()));
+        TaxonNode formicidae = taxonIndex.findTaxonByName("Formicidae");
         assertThat(formicidae, is(notNullValue()));
-        assertThat(nodeFactory.findTaxonByName("Coleoptera"), is(notNullValue()));
+        assertThat(taxonIndex.findTaxonByName("Coleoptera"), is(notNullValue()));
 
     }
 

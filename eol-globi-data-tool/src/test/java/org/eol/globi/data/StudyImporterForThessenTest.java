@@ -28,7 +28,7 @@ public class StudyImporterForThessenTest extends GraphDBTestCase {
                 return recordNumber % 1000 == 0;
             }
         });
-        Study study = importer.importStudy();
+        Study study = importStudy(importer);
         assertThat(study.getExternalId(), containsString("github"));
         Iterable<Relationship> specimens = study.getSpecimens();
         int specimenCount = 0;
@@ -46,7 +46,7 @@ public class StudyImporterForThessenTest extends GraphDBTestCase {
         assertThat(study.getTitle(), is(notNullValue()));
 
         for (String taxonId : taxonIds) {
-            TaxonNode taxon = nodeFactory.getTaxonIndex().findTaxonById(taxonId);
+            TaxonNode taxon = taxonIndex.findTaxonById(taxonId);
             assertThat(taxon, is(notNullValue()));
             assertThat(taxon.getName(), is(notNullValue()));
         }

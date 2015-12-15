@@ -31,12 +31,12 @@ public class StudyImporterForAkinTest extends GraphDBTestCase {
     @Test
     public void importAll() throws StudyImporterException, NodeFactoryException {
         StudyImporter importer = new StudyImporterFactory(new ParserFactoryImpl(), nodeFactory).instantiateImporter(StudyImporterForAkin.class);
-        importer.importStudy();
+        importStudy(importer);
 
-        assertNotNull(nodeFactory.findTaxonByName("Sciaenops ocellatus"));
-        assertNotNull(nodeFactory.findTaxonByName("Paralichthys lethostigma"));
-        assertNotNull(nodeFactory.findTaxonByName("Adinia xenica"));
-        assertNotNull(nodeFactory.findTaxonByName("Citharichthys spilopterus"));
+        assertNotNull(taxonIndex.findTaxonByName("Sciaenops ocellatus"));
+        assertNotNull(taxonIndex.findTaxonByName("Paralichthys lethostigma"));
+        assertNotNull(taxonIndex.findTaxonByName("Adinia xenica"));
+        assertNotNull(taxonIndex.findTaxonByName("Citharichthys spilopterus"));
     }
 
     @Test
@@ -54,8 +54,8 @@ public class StudyImporterForAkinTest extends GraphDBTestCase {
                 ",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,\n" +
                 ",9,\"Leiostomus xanthurus\",\"03.07.98\",,6,26.7,0,,\"Seine\",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,\"EMPTY\",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,";
         StudyImporter importer = new StudyImporterFactory(new TestParserFactory(csvString), nodeFactory).instantiateImporter((Class) StudyImporterForAkin.class);
-        importer.importStudy();
-        TaxonNode taxon = nodeFactory.findTaxonByName("Leiostomus xanthurus");
+        importStudy(importer);
+        TaxonNode taxon = taxonIndex.findTaxonByName("Leiostomus xanthurus");
         assertNotNull(taxon);
 
     }
@@ -66,8 +66,8 @@ public class StudyImporterForAkinTest extends GraphDBTestCase {
                 ",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,\n" +
                 ",1,\"Pogonias cromis\",\"03.07.98\",,1,226,3,,\"Gillnet\",,0.15,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,0.6,,,,,,0.45,,,,,,,,,,,,,,,,,,1.35,0.45,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,";
         StudyImporter importer = new StudyImporterFactory(new TestParserFactory(csvString), nodeFactory).instantiateImporter((Class) StudyImporterForAkin.class);
-        Study study = importer.importStudy();
-        TaxonNode taxon = nodeFactory.findTaxonByName("Pogonias cromis");
+        Study study = importStudy(importer);
+        TaxonNode taxon = taxonIndex.findTaxonByName("Pogonias cromis");
         assertNotNull(taxon);
 
         Iterable<Relationship> specimens = study.getSpecimens();

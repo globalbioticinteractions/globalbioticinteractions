@@ -26,7 +26,7 @@ public class StudyImporterForTSVTest extends GraphDBTestCase {
     @Test
     public void importFewLines() throws StudyImporterException, NodeFactoryException {
         StudyImporterForTSV importer = new StudyImporterForTSV(new TestParserFactory(firstFewLines), nodeFactory);
-        importer.importStudy();
+        importStudy(importer);
 
         assertExists("Leptoconchus incycloseris");
         assertExists("Sandalolitha dentata");
@@ -35,16 +35,16 @@ public class StudyImporterForTSVTest extends GraphDBTestCase {
     @Test
     public void importMinimal() throws StudyImporterException, NodeFactoryException {
         StudyImporterForTSV importer = new StudyImporterForTSV(new TestParserFactory(minimalLines), nodeFactory);
-        importer.importStudy();
+        importStudy(importer);
 
-        TaxonNode taxon = nodeFactory.findTaxonById("EOL:123");
+        TaxonNode taxon = taxonIndex.findTaxonById("EOL:123");
         assertThat(taxon, is(notNullValue()));
         assertThat(taxon.getName(), is("no:match"));
         assertThat(taxon.getExternalId(), is("EOL:123"));
     }
 
     protected void assertExists(String taxonName) throws NodeFactoryException {
-        TaxonNode taxon = nodeFactory.findTaxonByName(taxonName);
+        TaxonNode taxon = taxonIndex.findTaxonByName(taxonName);
         assertThat(taxon, is(notNullValue()));
         assertThat(taxon.getName(), is(taxonName));
     }

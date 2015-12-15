@@ -4,8 +4,6 @@ import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.NodeFactory;
 import org.eol.globi.data.NodeFactoryImpl;
 import org.eol.globi.data.NodeFactoryException;
-import org.eol.globi.taxon.CorrectionService;
-import org.eol.globi.taxon.TaxonIndexImpl;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.RelTypes;
@@ -58,9 +56,9 @@ public class ExportUnmatchedTaxonNamesTest extends GraphDBTestCase {
         Study study = factory.getOrCreateStudy2(title, "my first source", null);
         study.setCitationWithTx("citation my study");
 
-        factory.getOrCreateTaxon("Homo sapiens");
+        taxonIndex.getOrCreateTaxon("Homo sapiens");
         Specimen predatorSpecimen = factory.createSpecimen(study, "Homo sapiens", "TEST:1234");
-        factory.getOrCreateTaxon("Canis lupus");
+        taxonIndex.getOrCreateTaxon("Canis lupus");
         Specimen preySpecimen6 = nodeFactory.createSpecimen(study, "Canis lupus");
         predatorSpecimen.interactsWith(preySpecimen6, InteractType.ATE);
         Specimen preySpecimen5 = nodeFactory.createSpecimen(study, "Canis lupus");
@@ -117,7 +115,7 @@ public class ExportUnmatchedTaxonNamesTest extends GraphDBTestCase {
         Study study = factory.getOrCreateStudy2("my study", "my first source", null);
 
         Specimen predatorSpecimen = factory.createSpecimen(study, "Homo sapienz");
-        TaxonNode humanz = factory.getOrCreateTaxon("Homo sapienz");
+        TaxonNode humanz = taxonIndex.getOrCreateTaxon("Homo sapienz");
         TaxonImpl taxon = new TaxonImpl("Homo sapiens", "TESTING:123");
         taxon.setPath("one | two | Homo sapiens");
         NodeUtil.connectTaxa(taxon, humanz, getGraphDb(), RelTypes.SIMILAR_TO);
@@ -126,8 +124,8 @@ public class ExportUnmatchedTaxonNamesTest extends GraphDBTestCase {
         predatorSpecimen.interactsWith(preySpecimen, InteractType.ATE);
 
         predatorSpecimen = factory.createSpecimen(study, "Homo sapiens");
-        Node synonymNode = factory.getOrCreateTaxon("Homo sapiens Synonym").getUnderlyingNode();
-        Node node = factory.getOrCreateTaxon("Homo sapiens").getUnderlyingNode();
+        Node synonymNode = taxonIndex.getOrCreateTaxon("Homo sapiens Synonym").getUnderlyingNode();
+        Node node = taxonIndex.getOrCreateTaxon("Homo sapiens").getUnderlyingNode();
         Transaction tx = getGraphDb().beginTx();
         try {
             node.createRelationshipTo(synonymNode, RelTypes.SAME_AS);
@@ -149,12 +147,7 @@ public class ExportUnmatchedTaxonNamesTest extends GraphDBTestCase {
     }
 
     private NodeFactoryImpl factory(PropertyEnricher enricher) {
-        return new NodeFactoryImpl(getGraphDb(), new TaxonIndexImpl(enricher, new CorrectionService() {
-            @Override
-            public String correct(String taxonName) {
-                return taxonName;
-            }
-        }, getGraphDb()));
+        return new NodeFactoryImpl(getGraphDb());
     }
 
 }

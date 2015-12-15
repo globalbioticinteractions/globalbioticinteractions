@@ -29,7 +29,7 @@ public class StudyImporterForRaymondIT extends GraphDBTestCase {
             }
 
         });
-        importer.importStudy();
+        importStudy(importer);
 
         importer.setGeoNamesService(new GeoNamesServiceImpl());
 

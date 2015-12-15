@@ -4,8 +4,6 @@ import org.eol.globi.data.CharsetConstant;
 import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.NodeFactoryImpl;
 import org.eol.globi.data.NodeFactoryException;
-import org.eol.globi.taxon.TaxonNameCorrector;
-import org.eol.globi.taxon.TaxonIndexImpl;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Taxon;
@@ -31,29 +29,29 @@ public class TaxonEnricherImplIT extends GraphDBTestCase {
     @Before
     public void start() {
         enricher = PropertyEnricherFactory.createTaxonEnricher();
-        nodeFactory = new NodeFactoryImpl(getGraphDb(), new TaxonIndexImpl(enricher, new TaxonNameCorrector(), getGraphDb()));
+        nodeFactory = new NodeFactoryImpl(getGraphDb());
     }
 
     @Test
     public void enrichTwoTaxons() throws NodeFactoryException, IOException {
-        TaxonNode taxon = nodeFactory.getOrCreateTaxon("Homo sapiens", "blabla", null);
+        TaxonNode taxon = taxonIndex.getOrCreateTaxon("Homo sapiens", "blabla", null);
         assertThat(taxon.getExternalId(), is("EOL:327955"));
         assertThat(taxon.getPath(), containsString("Animalia"));
         assertThat(taxon.getRank(), containsString("Species"));
 
-        taxon = nodeFactory.getOrCreateTaxon("Homo sapiens");
+        taxon = taxonIndex.getOrCreateTaxon("Homo sapiens");
         assertThat(taxon.getExternalId(), is("EOL:327955"));
         assertThat(taxon.getPath(), containsString("Animalia"));
 
 
-        taxon = nodeFactory.getOrCreateTaxon("Ariopsis felis");
+        taxon = taxonIndex.getOrCreateTaxon("Ariopsis felis");
         assertThat(taxon.getExternalId(), is("EOL:223038"));
         assertThat(taxon.getPath(), containsString("Animalia"));
 
-        TaxonNode sameTaxon = nodeFactory.getOrCreateTaxon("Ariopsis felis");
+        TaxonNode sameTaxon = taxonIndex.getOrCreateTaxon("Ariopsis felis");
         assertThat(taxon.getNodeID(), is(sameTaxon.getNodeID()));
 
-        taxon = nodeFactory.getOrCreateTaxon("Pitar fulminatus");
+        taxon = taxonIndex.getOrCreateTaxon("Pitar fulminatus");
         assertThat(taxon.getExternalId(), is("EOL:448962"));
         assertThat(taxon.getPath(), is(not(PropertyAndValueDictionary.NO_MATCH)));
     }
@@ -61,7 +59,7 @@ public class TaxonEnricherImplIT extends GraphDBTestCase {
     @Test
     // see https://github.com/jhpoelen/eol-globi-data/issues/12
     public void foraminifera() throws IOException, NodeFactoryException {
-        TaxonNode taxon = nodeFactory.getOrCreateTaxon("Foraminifera");
+        TaxonNode taxon = taxonIndex.getOrCreateTaxon("Foraminifera");
         assertThat(taxon.getExternalId(), is("EOL:4888"));
         assertThat(taxon.getName(), is("Foraminifera"));
         assertThat(taxon.getPath(), containsString(CharsetConstant.SEPARATOR + "Foraminifera"));
@@ -71,14 +69,14 @@ public class TaxonEnricherImplIT extends GraphDBTestCase {
 
     @Test
     public void unacceptedWoRMSSpecies() throws IOException, NodeFactoryException {
-        TaxonNode taxon = nodeFactory.getOrCreateTaxon("Sterrhurus concavovesiculus");
+        TaxonNode taxon = taxonIndex.getOrCreateTaxon("Sterrhurus concavovesiculus");
         assertUnacceptedWoRMS(taxon);
     }
 
     @Test
     public void resolveAcceptedNameStartingFromUnacceptedITISTSN() throws IOException, NodeFactoryException {
         // related to issue https://github.com/jhpoelen/eol-globi-data/issues/110
-        TaxonNode taxon = nodeFactory.getOrCreateTaxon(null, "ITIS:167353", null);
+        TaxonNode taxon = taxonIndex.getOrCreateTaxon(null, "ITIS:167353", null);
         assertThat(taxon.getExternalId(), is("ITIS:692068"));
         assertThat(taxon.getName(), is("Scorpaenichthys marmoratus"));
     }
@@ -95,7 +93,7 @@ public class TaxonEnricherImplIT extends GraphDBTestCase {
     @Test
     public void unacceptedWoRMSSpeciesById() throws IOException, NodeFactoryException {
         // note that the ID takes precedence over the name
-        TaxonNode taxon = nodeFactory.getOrCreateTaxon("donald duckus", "WORMS:729172", null);
+        TaxonNode taxon = taxonIndex.getOrCreateTaxon("donald duckus", "WORMS:729172", null);
         assertUnacceptedWoRMS(taxon);
     }
 
@@ -110,7 +108,7 @@ public class TaxonEnricherImplIT extends GraphDBTestCase {
     @Test
     // see https://github.com/jhpoelen/eol-globi-data/issues/59
     public void greySmoothhound() throws IOException, NodeFactoryException {
-        TaxonNode taxon = nodeFactory.getOrCreateTaxon("Grey Smoothhound");
+        TaxonNode taxon = taxonIndex.getOrCreateTaxon("Grey Smoothhound");
         assertThat(taxon.getExternalId(), is("EOL:207918"));
         assertThat(taxon.getName(), is("Mustelus californicus"));
     }
@@ -118,14 +116,14 @@ public class TaxonEnricherImplIT extends GraphDBTestCase {
     @Test
     // see https://github.com/jhpoelen/eol-globi-data/issues/60
     public void gallTissue() throws IOException, NodeFactoryException {
-        TaxonNode taxon = nodeFactory.getOrCreateTaxon("gall tissue (Q. robur)");
+        TaxonNode taxon = taxonIndex.getOrCreateTaxon("gall tissue (Q. robur)");
         assertThat(taxon.getName(), is("Quercus robur"));
         assertThat(taxon.getExternalId(), is("EOL:1151323"));
     }
 
     @Test
     public void chromatomyiaScabiosae() throws IOException, NodeFactoryException {
-        TaxonNode taxon = nodeFactory.getOrCreateTaxon("Chromatomyia scabiosae");
+        TaxonNode taxon = taxonIndex.getOrCreateTaxon("Chromatomyia scabiosae");
         assertThat(taxon.getExternalId(), is("EOL:3492979"));
         assertThat(taxon.getName(), is("Chromatomyia scabiosae"));
         assertThat(taxon.getPath(), is("Animalia | Arthropoda | Insecta | Diptera | Agromyzidae | Chromatomyia | Chromatomyia scabiosae"));
@@ -134,7 +132,7 @@ public class TaxonEnricherImplIT extends GraphDBTestCase {
 
     @Test
     public void sphyrnaMokarran() throws IOException, NodeFactoryException {
-        TaxonNode taxon = nodeFactory.getOrCreateTaxon("Sphyrna mokarran");
+        TaxonNode taxon = taxonIndex.getOrCreateTaxon("Sphyrna mokarran");
         assertThat(taxon.getName(), is("Sphyrna mokarran"));
         assertThat(taxon.getPath(), is("Animalia | Chordata | Elasmobranchii | Carcharhiniformes | Sphyrnidae | Sphyrna | Sphyrna mokarran"));
         assertThat(taxon.getExternalId(), is("EOL:224168"));
@@ -143,7 +141,7 @@ public class TaxonEnricherImplIT extends GraphDBTestCase {
     @Ignore("Other suspension feeders resolves to Other, which is an alternate name for  http://eol.org/pages/2913255/overview")
     @Test
     public void otherSuspensionFeeders() throws IOException, NodeFactoryException {
-        TaxonNode taxon = nodeFactory.getOrCreateTaxon("Other suspension feeders");
+        TaxonNode taxon = taxonIndex.getOrCreateTaxon("Other suspension feeders");
         assertThat(taxon.getExternalId(), is(PropertyAndValueDictionary.NO_MATCH));
         assertThat(taxon.getName(), is(PropertyAndValueDictionary.NO_MATCH));
         assertThat(taxon.getPath(), is(PropertyAndValueDictionary.NO_MATCH));
@@ -151,16 +149,16 @@ public class TaxonEnricherImplIT extends GraphDBTestCase {
 
     @Test
     public void sediment() throws IOException, NodeFactoryException {
-        assertThat(nodeFactory.getOrCreateTaxon("Sediment").getExternalId(), is("ENVO:00002007"));
-        assertThat(nodeFactory.getOrCreateTaxon("sediment").getExternalId(), is("ENVO:00002007"));
-        assertIsOrganicMaterial(nodeFactory.getOrCreateTaxon("detritus"));
-        assertIsOrganicMaterial(nodeFactory.getOrCreateTaxon("Detritus"));
-        assertThat(nodeFactory.getOrCreateTaxon("Detritus").getExternalId(), is("ENVO:01000155"));
+        assertThat(taxonIndex.getOrCreateTaxon("Sediment").getExternalId(), is("ENVO:00002007"));
+        assertThat(taxonIndex.getOrCreateTaxon("sediment").getExternalId(), is("ENVO:00002007"));
+        assertIsOrganicMaterial(taxonIndex.getOrCreateTaxon("detritus"));
+        assertIsOrganicMaterial(taxonIndex.getOrCreateTaxon("Detritus"));
+        assertThat(taxonIndex.getOrCreateTaxon("Detritus").getExternalId(), is("ENVO:01000155"));
     }
 
     @Test
     public void detritusById() throws IOException, NodeFactoryException {
-        TaxonNode someOrganicMaterial = nodeFactory.getOrCreateTaxon("somehing", "ENVO:01000155", null);
+        TaxonNode someOrganicMaterial = taxonIndex.getOrCreateTaxon("somehing", "ENVO:01000155", null);
         assertThat(someOrganicMaterial.getExternalId(), is("ENVO:01000155"));
         assertThat(someOrganicMaterial.getPath(), is("environmental material | organic material"));
     }

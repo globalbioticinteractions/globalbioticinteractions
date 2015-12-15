@@ -12,9 +12,9 @@ public class StudyImporterForHafnerTest extends GraphDBTestCase {
     public void importAll() throws StudyImporterException, NodeFactoryException {
 
         StudyImporter importer = new StudyImporterForHafner(new ParserFactoryImpl(), nodeFactory);
-        importer.importStudy();
+        importStudy(importer);
 
 
-        assertThat(nodeFactory.findTaxonByName("Orthogeomys_cherriei"), is(notNullValue()));
+        assertThat(taxonIndex.findTaxonByName("Orthogeomys_cherriei"), is(notNullValue()));
     }
 }

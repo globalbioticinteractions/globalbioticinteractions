@@ -32,12 +32,12 @@ public class LinkerTaxonIndexTest extends GraphDBTestCase {
 
     @Test
     public void linking() throws NodeFactoryException {
-        TaxonNode taxon = nodeFactory.getOrCreateTaxon("Homo sapiens", "Bar:123", "Animalia | Mammalia | Homo sapiens");
+        TaxonNode taxon = taxonIndex.getOrCreateTaxon("Homo sapiens", "Bar:123", "Animalia | Mammalia | Homo sapiens");
         TaxonImpl taxon1 = new TaxonImpl("Homo sapiens also", "FOO:444");
         taxon1.setPathIds("BARZ:111 | FOOZ:777");
         NodeUtil.connectTaxa(taxon1, taxon, getGraphDb(), RelTypes.SAME_AS);
 
-        taxon = nodeFactory.getOrCreateTaxon("Bla blaus");
+        taxon = taxonIndex.getOrCreateTaxon("Bla blaus");
         taxon.setExternalId("FOO 1234");
 
         new LinkerTaxonIndex().link(getGraphDb());
@@ -55,7 +55,7 @@ public class LinkerTaxonIndexTest extends GraphDBTestCase {
         assertSingleHit(PropertyAndValueDictionary.PATH + ":Homo");
         assertSingleHit(PropertyAndValueDictionary.PATH + ":\"Homo sapiens\"");
 
-        TaxonNode node = nodeFactory.findTaxonByName("Homo sapiens");
+        TaxonNode node = taxonIndex.findTaxonByName("Homo sapiens");
         assertThat(node.getUnderlyingNode().getProperty(PropertyAndValueDictionary.EXTERNAL_IDS).toString()
                 , is("Bar:123 | Animalia | Mammalia | Homo sapiens | FOO:444 | BARZ:111 | FOOZ:777"));
 

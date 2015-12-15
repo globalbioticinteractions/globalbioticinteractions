@@ -16,16 +16,6 @@ import java.util.Date;
 import java.util.List;
 
 public interface NodeFactory {
-    TaxonNode findTaxonByName(String taxonName) throws NodeFactoryException;
-
-    TaxonNode findTaxonById(String taxonExternalId) throws NodeFactoryException;
-
-    TaxonNode getOrCreateTaxon(String name) throws NodeFactoryException;
-
-    TaxonNode getOrCreateTaxon(String name, String externalId, String path) throws NodeFactoryException;
-
-    TaxonNode getOrCreateTaxon(Taxon taxon) throws NodeFactoryException;
-
     Location findLocation(Double latitude, Double longitude, Double altitude);
 
     Season createSeason(String seasonNameLower);
@@ -67,8 +57,6 @@ public interface NodeFactory {
     TermLookupService getTermLookupService();
 
     EcoregionFinder getEcoregionFinder();
-
-    TaxonIndex getTaxonIndex();
 
     AuthorIdResolver getAuthorResolver();
 

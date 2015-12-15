@@ -28,11 +28,11 @@ public class StudyImporterForCookTest extends GraphDBTestCase {
 
 
         StudyImporterForCook importer = new StudyImporterForCook(new TestParserFactory(firstFiveLines), nodeFactory);
-        Study study = importer.importStudy();
+        Study study = importStudy(importer);
 
-        TaxonNode hostTaxon = nodeFactory.findTaxonByName("Micropogonias undulatus");
+        TaxonNode hostTaxon = taxonIndex.findTaxonByName("Micropogonias undulatus");
         assertThat(hostTaxon, is(notNullValue()));
-        TaxonNode parasiteTaxon = nodeFactory.findTaxonByName("Cymothoa excisa");
+        TaxonNode parasiteTaxon = taxonIndex.findTaxonByName("Cymothoa excisa");
         assertThat(parasiteTaxon, is(notNullValue()));
         assertThat("missing location", nodeFactory.findLocation(27.85, -(97.0 + 8.0 / 60.0), -3.0), is(notNullValue()));
 
@@ -66,7 +66,7 @@ public class StudyImporterForCookTest extends GraphDBTestCase {
     @Test
     public void importAll() throws StudyImporterException {
         StudyImporterForCook importer = new StudyImporterForCook(new ParserFactoryImpl(), nodeFactory);
-        Study study = importer.importStudy();
+        Study study = importStudy(importer);
         Iterable<Relationship> specimens = study.getSpecimens();
         int count = 0;
         for (Relationship specimen : specimens) {

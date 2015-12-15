@@ -35,11 +35,11 @@ public class StudyImporterForGeminaTest extends GraphDBTestCase {
     @Test
     public void importFewLines() throws StudyImporterException, NodeFactoryException {
         StudyImporterForGemina importer = new StudyImporterForGemina(new TestParserFactory(firstFewLines), nodeFactory);
-        importer.importStudy();
+        importStudy(importer);
 
         assertHuman();
 
-        TaxonNode taxon = nodeFactory.findTaxonByName("Bacillus anthracis");
+        TaxonNode taxon = taxonIndex.findTaxonByName("Bacillus anthracis");
         assertThat(taxon, is(notNullValue()));
         assertThat(taxon.getExternalId(), is("NCBI:1392"));
 
@@ -61,7 +61,7 @@ public class StudyImporterForGeminaTest extends GraphDBTestCase {
     @Test
     public void importAll() throws StudyImporterException, NodeFactoryException {
         StudyImporterForGemina importer = new StudyImporterForGemina(new ParserFactoryImpl(), nodeFactory);
-        importer.importStudy();
+        importStudy(importer);
         assertHuman();
 
         Index<Node> taxons = getGraphDb().index().forNodes("taxons");
@@ -73,7 +73,7 @@ public class StudyImporterForGeminaTest extends GraphDBTestCase {
     }
 
     protected void assertHuman() throws NodeFactoryException {
-        TaxonNode taxon = nodeFactory.findTaxonByName("Homo sapiens");
+        TaxonNode taxon = taxonIndex.findTaxonByName("Homo sapiens");
         assertThat(taxon, is(notNullValue()));
         assertThat(taxon.getExternalId(), is("NCBI:9606"));
     }

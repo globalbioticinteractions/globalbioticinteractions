@@ -41,7 +41,7 @@ public class StudyImporterForSzoboszlaiTest extends GraphDBTestCase {
     @Test
     public void importAll() throws StudyImporterException, NodeFactoryException {
         StudyImporter importer = new StudyImporterForSzoboszlai(new ParserFactoryImpl(), nodeFactory);
-        importer.importStudy();
+        importStudy(importer);
 
         List<Study> allStudies = NodeUtil.findAllStudies(getGraphDb());
         assertThat(allStudies.size(), is(not(0)));
@@ -55,7 +55,7 @@ public class StudyImporterForSzoboszlaiTest extends GraphDBTestCase {
             assertThat(sampleLocation.getLongitude(), is(notNullValue()));
         }
 
-        assertThat(nodeFactory.findTaxonByName("Thunnus thynnus"), is(notNullValue()));
+        assertThat(taxonIndex.findTaxonByName("Thunnus thynnus"), is(notNullValue()));
         assertThat(nodeFactory.findLocation(34.00824202376044, -120.72716166720323, null), is(notNullValue()));
     }
 

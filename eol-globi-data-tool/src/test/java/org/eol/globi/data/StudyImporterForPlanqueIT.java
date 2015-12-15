@@ -44,7 +44,7 @@ public class StudyImporterForPlanqueIT extends GraphDBTestCase {
 
             }
         });
-        importer.importStudy();
+        importStudy(importer);
 
         int interactionCount = 0;
         List<Study> studies = NodeUtil.findAllStudies(getGraphDb());
@@ -60,7 +60,7 @@ public class StudyImporterForPlanqueIT extends GraphDBTestCase {
 
         // note that the +1 is for all links that had no reference associated to it
         assertThat(studies.size(), is(uniqueReference + 1));
-        assertThat(nodeFactory.findTaxonByName("Trisopterus esmarkii"), is(notNullValue()));
+        assertThat(taxonIndex.findTaxonByName("Trisopterus esmarkii"), is(notNullValue()));
         assertThat(errorMessages.size(), is(0));
     }
 

@@ -36,8 +36,8 @@ public class StudyImporterForGoMexSIIT extends GraphDBTestCase {
     @Test
     public void createAndPopulateStudyGitHubMostRecent() throws StudyImporterException, NodeFactoryException, IOException, URISyntaxException {
         String baseUrlLastCommit = GitHubUtil.getBaseUrlLastCommit("gomexsi/interaction-data");
-        StudyImporterForGoMexSI importer = importWithCommit(baseUrlLastCommit);
-        assertThatSomeDataIsImported(nodeFactory);
+        importWithCommit(baseUrlLastCommit);
+        assertThatSomeDataIsImported(nodeFactory, taxonIndex);
     }
 
     @Test
@@ -74,7 +74,7 @@ public class StudyImporterForGoMexSIIT extends GraphDBTestCase {
         importer.setBaseUrl(baseUrlLastCommit);
         importer.setSourceCitation("testing source citation");
 
-        importer.importStudy();
+        importStudy(importer);
         return importer;
     }
 
@@ -85,7 +85,7 @@ public class StudyImporterForGoMexSIIT extends GraphDBTestCase {
         assertThat(values.next().toString(), is(Integer.toString(expectedCount)));
     }
 
-    private static void assertThatSomeDataIsImported(NodeFactory nodeFactory) throws StudyImporterException, NodeFactoryException {
+    private static void assertThatSomeDataIsImported(NodeFactory nodeFactory, TaxonIndex taxonIndex) throws StudyImporterException, NodeFactoryException {
 
 
         Study study = nodeFactory.findStudy("Divita et al 1983");
@@ -98,13 +98,13 @@ public class StudyImporterForGoMexSIIT extends GraphDBTestCase {
         assertThat(study.getCitation(), is("citation:doi:Regina Divita, Mischelle Creel, Peter Sheridan. 1983. Foods of coastal fishes during brown shrimp Penaeus aztecus, migration from Texas estuaries (June - July 1981)."));
         assertNotNull(nodeFactory.findStudy("Beaumariage 1973"));
 
-        assertNotNull(nodeFactory.findTaxonByName("Chloroscombrus chrysurus"));
-        assertNotNull(nodeFactory.findTaxonByName("Micropogonias undulatus"));
+        assertNotNull(taxonIndex.findTaxonByName("Chloroscombrus chrysurus"));
+        assertNotNull(taxonIndex.findTaxonByName("Micropogonias undulatus"));
 
-        assertNotNull(nodeFactory.findTaxonByName("Amphipoda"));
-        assertNotNull(nodeFactory.findTaxonByName("Crustacea"));
+        assertNotNull(taxonIndex.findTaxonByName("Amphipoda"));
+        assertNotNull(taxonIndex.findTaxonByName("Crustacea"));
 
-        TaxonNode taxon = nodeFactory.findTaxonByName("Scomberomorus cavalla");
+        TaxonNode taxon = taxonIndex.findTaxonByName("Scomberomorus cavalla");
         List<String> preyList = new ArrayList<String>();
         final List<String> titles = new ArrayList<String>();
         Iterable<Relationship> classifiedAsRels = taxon.getUnderlyingNode().getRelationships(Direction.INCOMING, RelTypes.CLASSIFIED_AS);

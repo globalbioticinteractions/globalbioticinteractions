@@ -47,15 +47,6 @@ public class NodeFactoryImplTest extends GraphDBTestCase {
         specimen.interactsWith(specimen1, InteractType.SYMBIONT_OF);
         assertThat(specimen.getUnderlyingNode().getRelationships(Direction.OUTGOING, InteractType.SYMBIONT_OF).iterator().hasNext(), is(true));
         assertThat(specimen1.getUnderlyingNode().getRelationships(Direction.OUTGOING, InteractType.SYMBIONT_OF).iterator().hasNext(), is(true));
-
-        TaxonNode taxon = new TaxonNode(specimen.getClassifications().iterator().next().getEndNode());
-        TaxonNode taxon1 = new TaxonNode(specimen1.getClassifications().iterator().next().getEndNode());
-        Relationship taxonRel = taxon.getUnderlyingNode().getSingleRelationship(InteractType.SYMBIONT_OF, Direction.OUTGOING);
-        assertThat(taxonRel, is(notNullValue()));
-        Relationship taxon1Rel = taxon1.getUnderlyingNode().getSingleRelationship(InteractType.SYMBIONT_OF, Direction.OUTGOING);
-        assertThat(taxonRel.getEndNode(), is(taxon1.getUnderlyingNode()));
-        assertThat(taxon1Rel, is(notNullValue()));
-        assertThat(taxon1Rel.getEndNode(), is(taxon.getUnderlyingNode()));
     }
 
     @Test
@@ -190,9 +181,7 @@ public class NodeFactoryImplTest extends GraphDBTestCase {
     @Test
     public void specimenWithNoName() throws NodeFactoryException {
         Specimen specimen = getNodeFactory().createSpecimen(getNodeFactory().createStudy("bla"), null, "bla:123");
-
-        Relationship next = specimen.getClassifications().iterator().next();
-        assertThat(new TaxonNode(next.getEndNode()).getExternalId(), is("bla:123"));
+        assertThat(specimen.getClassifications().iterator().hasNext(), is(false));
     }
 
     @Test
@@ -214,14 +203,6 @@ public class NodeFactoryImplTest extends GraphDBTestCase {
         assertThat(specimen.getBasisOfRecord().getId(), is("TEST:theBasis"));
     }
 
-    @Test
-    public void describeAndClassifySpecimenImplicit() throws NodeFactoryException {
-        initTaxonService();
-        Specimen specimen = getNodeFactory().createSpecimen(getNodeFactory().createStudy("bla"), "mickey");
-        assertThat(specimen.getOriginalTaxonDescription(), is("mickey"));
-        assertThat("original taxon descriptions are indexed", getNodeFactory().findTaxonByName("mickey").getName(), is("mickey"));
-    }
-
     protected void initTaxonService() {
         CorrectionService correctionService = new CorrectionService() {
             @Override
@@ -232,7 +213,7 @@ public class NodeFactoryImplTest extends GraphDBTestCase {
         TaxonIndex taxonIndex = new TaxonIndexImpl(new PassThroughEnricher(),
                 correctionService, getGraphDb()
         );
-        getNodeFactory().setTaxonIndex(taxonIndex);
+        this.taxonIndex = taxonIndex;
     }
 
 

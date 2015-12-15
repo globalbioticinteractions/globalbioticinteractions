@@ -1,7 +1,7 @@
 package org.eol.globi.tool;
 
-import org.eol.globi.data.NodeFactory;
 import org.eol.globi.data.NodeFactoryException;
+import org.eol.globi.data.TaxonIndex;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.TaxonNode;
 import org.neo4j.graphdb.Direction;
@@ -15,9 +15,9 @@ import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
 
 public class LinkerTestUtil {
-    public static List<String> assertHasOther(String name, int expectedCount, NodeFactory nodeFactory, RelTypes relType) throws NodeFactoryException {
+    public static List<String> assertHasOther(String name, int expectedCount, TaxonIndex taxonIndex, RelTypes relType) throws NodeFactoryException {
         List<String> externalIds = new ArrayList<String>();
-        TaxonNode taxon1 = nodeFactory.findTaxonByName(name);
+        TaxonNode taxon1 = taxonIndex.findTaxonByName(name);
         assertThat(taxon1, is(notNullValue()));
         assertThat(taxon1.getName(), is(name));
         Iterable<Relationship> rels = taxon1.getUnderlyingNode().getRelationships(relType, Direction.OUTGOING);

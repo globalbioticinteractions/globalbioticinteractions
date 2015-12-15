@@ -49,7 +49,7 @@ public class StudyImporterForINaturalistTest extends GraphDBTestCase {
 
     @Test
     public void importUsingINatAPI() throws StudyImporterException, PropertyEnricherException {
-        importer.importStudy();
+        importStudy(importer);
         assertThat(NodeUtil.findAllStudies(getGraphDb()).size() > 150, is(true));
     }
 
@@ -107,7 +107,7 @@ public class StudyImporterForINaturalistTest extends GraphDBTestCase {
         assertThat(anotherStudy.getExternalId(), is("http://www.inaturalist.org/observations/97380"));
 
 
-        TaxonNode sourceTaxonNode = nodeFactory.findTaxonByName("Arenaria interpres");
+        TaxonNode sourceTaxonNode = taxonIndex.findTaxonByName("Arenaria interpres");
 
         assertThat(sourceTaxonNode, is(not(nullValue())));
         Iterable<Relationship> relationships = sourceTaxonNode.getUnderlyingNode().getRelationships(Direction.INCOMING, RelTypes.CLASSIFIED_AS);
@@ -168,8 +168,8 @@ public class StudyImporterForINaturalistTest extends GraphDBTestCase {
         assertThat(anotherStudy, is(notNullValue()));
         assertThat(anotherStudy.getExternalId(), is("http://www.inaturalist.org/observations/2366807"));
 
-        assertThat(nodeFactory.findTaxonById("GBIF:2959023"), is(notNullValue()));
-        assertThat(nodeFactory.findTaxonById("GBIF:7246356"), is(notNullValue()));
+        assertThat(taxonIndex.findTaxonById("GBIF:2959023"), is(notNullValue()));
+        assertThat(taxonIndex.findTaxonById("GBIF:7246356"), is(notNullValue()));
     }
 
 }

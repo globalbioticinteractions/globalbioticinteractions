@@ -62,7 +62,7 @@ public class OpenTreeTaxonIndex {
                 .createHashMap("ottIdMap")
                 .make();
 
-        OpenTreeListener testTaxonListener = new OpenTreeListener() {
+        OpenTreeListener taxonListener = new OpenTreeListener() {
             @Override
             public void taxonSameAs(String ottId, String nonOttId) {
                 long value = Long.parseLong(ottId);
@@ -78,7 +78,7 @@ public class OpenTreeTaxonIndex {
             if (openTreeTaxonomyUrl == null) {
                 LOG.error("failed to import open tree taxonomy: no taxonomy input stream");
             } else {
-                OpenTreeUtil.readTaxonomy(testTaxonListener, openTreeTaxonomyUrl.openStream());
+                OpenTreeUtil.readTaxonomy(taxonListener, openTreeTaxonomyUrl.openStream());
             }
         } catch (IOException e) {
             LOG.error("failed to build open tree taxon map map", e);

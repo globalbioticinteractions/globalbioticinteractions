@@ -66,9 +66,8 @@ public class NodeFactoryImpl implements NodeFactory {
 
     private DOIResolver doiResolver;
     private EcoregionFinder ecoregionFinder;
-    private TaxonIndex taxonIndex;
 
-    public NodeFactoryImpl(GraphDatabaseService graphDb, TaxonIndex taxonIndex) {
+    public NodeFactoryImpl(GraphDatabaseService graphDb) {
         this.graphDb = graphDb;
 
         this.termLookupService = new UberonLookupService();
@@ -83,40 +82,10 @@ public class NodeFactoryImpl implements NodeFactory {
         this.ecoregions = graphDb.index().forNodes("ecoregions");
         this.ecoregionPaths = graphDb.index().forNodes("ecoregionPaths", MapUtil.stringMap(IndexManager.PROVIDER, "lucene", "type", "fulltext"));
         this.ecoregionSuggestions = graphDb.index().forNodes("ecoregionSuggestions");
-
-        this.taxonIndex = taxonIndex;
-
     }
 
     public GraphDatabaseService getGraphDb() {
         return graphDb;
-    }
-
-    @Override
-    public TaxonNode findTaxonByName(String taxonName) throws NodeFactoryException {
-        return getTaxonIndex().findTaxonByName(taxonName);
-    }
-
-    @Override
-    public TaxonNode findTaxonById(String taxonExternalId) throws NodeFactoryException {
-        return getTaxonIndex().findTaxonById(taxonExternalId);
-    }
-
-    @Override
-    public TaxonNode getOrCreateTaxon(String name) throws NodeFactoryException {
-        return getOrCreateTaxon(new TaxonImpl(name));
-    }
-
-    @Override
-    public TaxonNode getOrCreateTaxon(String name, String externalId, String path) throws NodeFactoryException {
-        Taxon taxon = new TaxonImpl(name, externalId);
-        taxon.setPath(path);
-        return getOrCreateTaxon(taxon);
-    }
-
-    @Override
-    public TaxonNode getOrCreateTaxon(Taxon taxon) throws NodeFactoryException {
-        return getTaxonIndex().getOrCreateTaxon(taxon);
     }
 
     @Override
@@ -196,8 +165,8 @@ public class NodeFactoryImpl implements NodeFactory {
             throw new NodeFactoryException("specimen needs study, but none is specified");
         }
 
-        TaxonNode taxonNode = getOrCreateTaxon(origTaxon);
-        Specimen specimen = createSpecimen(taxonNode);
+        //TaxonNode taxonNode = getOrCreateTaxon(origTaxon);
+        Specimen specimen = createSpecimen(null);
         study.createRelationshipTo(specimen, RelTypes.COLLECTED);
 
         specimen.setOriginalTaxonDescription(origTaxon.getName(), origTaxon.getExternalId());
@@ -579,15 +548,6 @@ public class NodeFactoryImpl implements NodeFactory {
 
     public IndexHits<Node> suggestEcoregionByName(String wholeOrPartialEcoregionNameOrPath) {
         return ecoregionSuggestions.query("name:\"" + wholeOrPartialEcoregionNameOrPath + "\"");
-    }
-
-    public void setTaxonIndex(TaxonIndex taxonIndex) {
-        this.taxonIndex = taxonIndex;
-    }
-
-    @Override
-    public TaxonIndex getTaxonIndex() {
-        return taxonIndex;
     }
 
     @Override

@@ -1,13 +1,7 @@
 package org.eol.globi.domain;
 
 import org.eol.globi.data.GraphDBTestCase;
-import org.eol.globi.data.NodeFactory;
-import org.eol.globi.data.NodeFactoryImpl;
 import org.eol.globi.data.NodeFactoryException;
-import org.eol.globi.data.PassThroughEnricher;
-import org.eol.globi.taxon.TaxonIndexImpl;
-import org.eol.globi.taxon.TaxonNameCorrector;
-import org.junit.Before;
 import org.junit.Test;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
@@ -22,37 +16,30 @@ public class StudyTest extends GraphDBTestCase {
     public static final String CARCHARODON_CARCHARIAS = CARCHARODON + " carcharias";
     public static final String CARASSIUS_AURATUS_AURATUS = "Carassius auratus auratus";
 
-    private NodeFactory factory;
-
-    @Before
-    public void createFactory() {
-        factory = new NodeFactoryImpl(getGraphDb(), new TaxonIndexImpl(new PassThroughEnricher(),
-                new TaxonNameCorrector(), getGraphDb()));
-    }
-
     @Test
     public void populateStudy() throws NodeFactoryException {
-        Study study = factory.createStudy("Our first study");
+        Study study = nodeFactory.createStudy("Our first study");
 
-        factory.getOrCreateTaxon(CARCHARODON_CARCHARIAS);
+        taxonIndex.getOrCreateTaxon(CARCHARODON_CARCHARIAS);
 
-        Specimen goldFish = factory.createSpecimen(study, CARASSIUS_AURATUS_AURATUS);
+        Specimen goldFish = nodeFactory.createSpecimen(study, CARASSIUS_AURATUS_AURATUS);
 
-        Specimen shark = factory.createSpecimen(study, CARCHARODON_CARCHARIAS);
-        Specimen fuzzyShark = factory.createSpecimen(study, CARCHARODON);
+        Specimen shark = nodeFactory.createSpecimen(study, CARCHARODON_CARCHARIAS);
+        Specimen fuzzyShark = nodeFactory.createSpecimen(study, CARCHARODON);
 
         shark.ate(goldFish);
         fuzzyShark.ate(goldFish);
 
-        Location bolinasBay = factory.getOrCreateLocation(12.2d, 12.1d, -100.0d);
+        Location bolinasBay = nodeFactory.getOrCreateLocation(12.2d, 12.1d, -100.0d);
         shark.caughtIn(bolinasBay);
 
-        Season winter = factory.createSeason("winter");
+        Season winter = nodeFactory.createSeason("winter");
         shark.caughtDuring(winter);
 
         shark.setLengthInMm(1.2d);
+        resolveNames();
 
-        Study foundStudy = this.factory.findStudy("Our first study");
+        Study foundStudy = this.nodeFactory.findStudy("Our first study");
 
         assertEquals(study.getTitle(), foundStudy.getTitle());
 

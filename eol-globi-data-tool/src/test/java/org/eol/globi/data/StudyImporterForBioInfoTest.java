@@ -77,7 +77,7 @@ public class StudyImporterForBioInfoTest extends GraphDBTestCase {
                         || (recordNumber > 24220 && recordNumber < 24340);
             }
         });
-        importer.importStudy();
+        importStudy(importer);
 
         Study study = nodeFactory.findStudy(TaxonomyProvider.BIO_INFO + "ref:60527");
         Iterable<Relationship> collectedRels = study.getSpecimens();
@@ -112,7 +112,7 @@ public class StudyImporterForBioInfoTest extends GraphDBTestCase {
     @Test
     public void parseSomeRelations() throws IOException, NodeFactoryException, StudyImporterException {
 
-        assertThat(nodeFactory.findTaxonByName("Homo sapiens"), is(nullValue()));
+        assertThat(taxonIndex.findTaxonByName("Homo sapiens"), is(nullValue()));
 
         LabeledCSVParser labeledCSVParser = createParser(RELATIONS_STRING);
 
@@ -121,6 +121,7 @@ public class StudyImporterForBioInfoTest extends GraphDBTestCase {
             put("60527", "citation A");
             put("60536", "citation B");
         }}, new HashMap<String, Taxon>());
+        resolveNames();
 
         Study study = nodeFactory.findStudy(TaxonomyProvider.BIO_INFO + "ref:60536");
         assertNotNull(study);
@@ -145,8 +146,8 @@ public class StudyImporterForBioInfoTest extends GraphDBTestCase {
         assertThat((String) classifiedAs.getEndNode().getProperty(PropertyAndValueDictionary.EXTERNAL_ID), is("NBN:NBNSYS0000003949"));
         assertThat(specimenList.get(1).getSingleRelationship(RelTypes.CLASSIFIED_AS, Direction.OUTGOING), is(notNullValue()));
 
-        assertThat(nodeFactory.findTaxonById(TaxonomyProvider.NBN.getIdPrefix() + "NBNSYS0000024889"), is(notNullValue()));
-        assertThat(nodeFactory.findTaxonById(TaxonomyProvider.NBN.getIdPrefix() + "NBNSYS0000024891"), is(notNullValue()));
+        assertThat(taxonIndex.findTaxonById(TaxonomyProvider.NBN.getIdPrefix() + "NBNSYS0000024889"), is(notNullValue()));
+        assertThat(taxonIndex.findTaxonById(TaxonomyProvider.NBN.getIdPrefix() + "NBNSYS0000024891"), is(notNullValue()));
     }
 
     private LabeledCSVParser createParser(String csvString) throws IOException {

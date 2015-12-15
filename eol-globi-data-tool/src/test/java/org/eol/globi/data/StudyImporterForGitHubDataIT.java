@@ -38,7 +38,7 @@ public class StudyImporterForGitHubDataIT extends GraphDBTestCase {
                 return new LatLng(10, 10);
             }
         });
-        importer.importStudy();
+        importStudy(importer);
 
         List<Study> allStudies = NodeUtil.findAllStudies(getGraphDb());
         List<String> refs = new ArrayList<String>();
@@ -62,9 +62,9 @@ public class StudyImporterForGitHubDataIT extends GraphDBTestCase {
         assertThat(sources, hasItem(containsString("http://gomexsi.tamucc.edu")));
         assertThat(geoTerms, hasItem("GEONAMES:8556192"));
 
-        assertThat(nodeFactory.findTaxonByName("Leptoconchus incycloseris"), is(notNullValue()));
-        assertThat(nodeFactory.findTaxonByName("Sandalolitha dentata"), is(notNullValue()));
-        assertThat(nodeFactory.findTaxonByName("Pterois volitans/miles"), is(notNullValue()));
+        assertThat(taxonIndex.findTaxonByName("Leptoconchus incycloseris"), is(notNullValue()));
+        assertThat(taxonIndex.findTaxonByName("Sandalolitha dentata"), is(notNullValue()));
+        assertThat(taxonIndex.findTaxonByName("Pterois volitans/miles"), is(notNullValue()));
 
     }
 
@@ -75,7 +75,7 @@ public class StudyImporterForGitHubDataIT extends GraphDBTestCase {
         List<Study> allStudies = NodeUtil.findAllStudies(getGraphDb());
         assertThat(allStudies.size(), is(1));
         assertThat(allStudies.get(0).getSource(), containsString("Miller"));
-        assertThat(nodeFactory.findTaxonByName("Garrulus glandarius"), is(notNullValue()));
+        assertThat(taxonIndex.findTaxonByName("Garrulus glandarius"), is(notNullValue()));
     }
 
     @Test
@@ -94,7 +94,7 @@ public class StudyImporterForGitHubDataIT extends GraphDBTestCase {
         assertThat(doi, startsWith("doi:Raboy"));
 
         assertThat(allStudies.get(0).getSource(), containsString("Miller"));
-        assertThat(nodeFactory.findTaxonByName("Leontopithecus chrysomelas"), is(notNullValue()));
+        assertThat(taxonIndex.findTaxonByName("Leontopithecus chrysomelas"), is(notNullValue()));
     }
 
     @Test
@@ -103,7 +103,7 @@ public class StudyImporterForGitHubDataIT extends GraphDBTestCase {
         importer.importData("globalbioticinteractions/digital-bee-collections-network");
         List<Study> allStudies = NodeUtil.findAllStudies(getGraphDb());
         assertThat(allStudies.size(), is(1));
-        assertThat(nodeFactory.findTaxonByName("Garrulus glandarius"), is(notNullValue()));
+        assertThat(taxonIndex.findTaxonByName("Garrulus glandarius"), is(notNullValue()));
     }
 
     @Test
@@ -112,7 +112,7 @@ public class StudyImporterForGitHubDataIT extends GraphDBTestCase {
         importer.importData("millerse/Bird-Parasite");
         List<Study> allStudies = NodeUtil.findAllStudies(getGraphDb());
         assertThat(allStudies.size(), is(1));
-        assertThat(nodeFactory.findTaxonByName("Bombycilla cedrorum"), is(notNullValue()));
+        assertThat(taxonIndex.findTaxonByName("Bombycilla cedrorum"), is(notNullValue()));
     }
 
     @Test
@@ -121,7 +121,7 @@ public class StudyImporterForGitHubDataIT extends GraphDBTestCase {
         importer.importData("millerse/Caribbean-food-web");
         List<Study> allStudies = NodeUtil.findAllStudies(getGraphDb());
         assertThat(allStudies.size(), is(1));
-        assertThat(nodeFactory.findTaxonByName("Scarus coelestinus"), is(notNullValue()));
+        assertThat(taxonIndex.findTaxonByName("Scarus coelestinus"), is(notNullValue()));
     }
 
     @Test
@@ -130,7 +130,7 @@ public class StudyImporterForGitHubDataIT extends GraphDBTestCase {
         importer.importData("globalbioticinteractions/jsonld-template-dataset");
         List<Study> allStudies = NodeUtil.findAllStudies(getGraphDb());
         assertThat(allStudies.size(), is(1));
-        assertThat(nodeFactory.findTaxonById("NCBI:8782"), is(notNullValue()));
+        assertThat(taxonIndex.findTaxonById("NCBI:8782"), is(notNullValue()));
     }
 
     @Test

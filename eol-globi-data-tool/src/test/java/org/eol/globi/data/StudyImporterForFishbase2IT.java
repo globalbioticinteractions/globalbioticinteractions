@@ -16,8 +16,8 @@ public class StudyImporterForFishbase2IT extends GraphDBTestCase {
         assertThat(study, is(notNullValue()));
         assertThat(study.getCitation(), is("citation bla"));
         assertThat(study.getSource(), is("source bla"));
-        assertThat(nodeFactory.findTaxonByName("Eledone cirrhosa"), is(notNullValue()));
-        assertThat(nodeFactory.findTaxonByName("Gadus morhua"), is(notNullValue()));
+        assertThat(taxonIndex.findTaxonByName("Eledone cirrhosa"), is(notNullValue()));
+        assertThat(taxonIndex.findTaxonByName("Gadus morhua"), is(notNullValue()));
     }
 
 }

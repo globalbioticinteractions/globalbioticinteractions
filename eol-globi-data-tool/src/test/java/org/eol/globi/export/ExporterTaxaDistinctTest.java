@@ -23,9 +23,9 @@ public class ExporterTaxaDistinctTest extends GraphDBTestCase {
     @Test
     public void exportMissingLength() throws IOException, NodeFactoryException, ParseException {
         ExportTestUtil.createTestData(null, nodeFactory);
-        nodeFactory.getOrCreateTaxon("Canis lupus", "EOL:123", null);
-        nodeFactory.getOrCreateTaxon("Canis", "EOL:126", null);
-        nodeFactory.getOrCreateTaxon("ThemFishes", "no:match", null);
+        taxonIndex.getOrCreateTaxon("Canis lupus", "EOL:123", null);
+        taxonIndex.getOrCreateTaxon("Canis", "EOL:126", null);
+        taxonIndex.getOrCreateTaxon("ThemFishes", "no:match", null);
 
         Study myStudy1 = nodeFactory.findStudy("myStudy");
 

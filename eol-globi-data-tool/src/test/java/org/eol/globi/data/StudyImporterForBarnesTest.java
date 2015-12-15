@@ -55,9 +55,9 @@ public class StudyImporterForBarnesTest extends GraphDBTestCase {
             }
         });
         StudyImporterForBarnes importer = new StudyImporterForBarnes(parserFactory, nodeFactory);
-        importer.importStudy();
+        importStudy(importer);
 
-        TaxonNode taxon = nodeFactory.findTaxonByName("Zeus faber");
+        TaxonNode taxon = taxonIndex.findTaxonByName("Zeus faber");
         Iterable<Relationship> relationships = taxon.getUnderlyingNode().getRelationships(Direction.INCOMING, RelTypes.CLASSIFIED_AS);
         for (Relationship relationship : relationships) {
             Node predatorSpecimenNode = relationship.getStartNode();
@@ -66,7 +66,7 @@ public class StudyImporterForBarnesTest extends GraphDBTestCase {
 
         }
         assertThat(taxon, is(notNullValue()));
-        assertThat(nodeFactory.findTaxonByName("Rhizoprionodon terraenovae"), is(notNullValue()));
+        assertThat(taxonIndex.findTaxonByName("Rhizoprionodon terraenovae"), is(notNullValue()));
         assertThat("missing location", nodeFactory.findLocation(38.0, 23.0, -75.0), is(notNullValue()));
 
     }

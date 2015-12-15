@@ -41,7 +41,7 @@ public class StudyImporterForByrnesTest extends GraphDBTestCase {
 
         assertThat("found duplicates in citation list", citationList.size(), is(citations.size()));
 
-        assertNotNull(nodeFactory.findTaxonByName("Anisotremus davidsonii"));
+        assertNotNull(taxonIndex.findTaxonByName("Anisotremus davidsonii"));
 
         assertThat(citations, hasItem("Pennings, S. C. 1990. Size-related shifts in herbivory: specialization in the sea hare Aplysia californica Cooper. Journal of Experimental Marine Biology and Ecology 142:43-61."));
         assertThat(citations, hasItem("Barry, J. and M. Ehret. 1993. Diet, food preference, and algal availability for fishes and crabs on intertidal reef communities in southern California. Environmental Biology of Fishes 37:75-95."));

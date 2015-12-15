@@ -23,14 +23,14 @@ public class StudyImporterForStronaIT extends GraphDBTestCase {
                 return recordNumber < 200;
             }
         });
-        importer.importStudy();
+        importStudy(importer);
 
         List<Study> allStudies = NodeUtil.findAllStudies(getGraphDb());
         assertThat(allStudies.size(), is(1));
 
 
-        assertThat(nodeFactory.findTaxonByName("Aidablennius sphynx"), is(notNullValue()));
-        assertThat(nodeFactory.findTaxonByName("Acanthocephaloides incrassatus"), is(notNullValue()));
+        assertThat(taxonIndex.findTaxonByName("Aidablennius sphynx"), is(notNullValue()));
+        assertThat(taxonIndex.findTaxonByName("Acanthocephaloides incrassatus"), is(notNullValue()));
 
         Study study = allStudies.get(0);
         assertThat(study.getSource(), containsString(" Accessed at"));

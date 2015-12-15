@@ -10,6 +10,7 @@ import org.eol.globi.domain.Study;
 import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.service.TermLookupService;
 import org.eol.globi.taxon.UberonLookupService;
+import org.eol.globi.tool.NameResolver;
 import org.junit.Test;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
@@ -47,7 +48,8 @@ public class StudyImporterForBlewettTest extends GraphDBTestCase {
     @Test
     public void importAll() throws StudyImporterException, NodeFactoryException {
         StudyImporter importer = new StudyImporterFactory(new ParserFactoryImpl(), nodeFactory).instantiateImporter((Class) StudyImporterForBlewett.class);
-        Study study = importer.importStudy();
+        Study study = importStudy(importer);
+
         Iterable<Relationship> specimens = study.getSpecimens();
         int count = 0;
         for (Relationship specimen : specimens) {
@@ -56,10 +58,10 @@ public class StudyImporterForBlewettTest extends GraphDBTestCase {
         assertThat(count, is(1824));
 
 
-        assertNotNull(nodeFactory.findTaxonByName("Centropomus undecimalis"));
-        TaxonNode taxonOfType = nodeFactory.findTaxonByName("Cal sapidus");
+        assertNotNull(taxonIndex.findTaxonByName("Centropomus undecimalis"));
+        TaxonNode taxonOfType = taxonIndex.findTaxonByName("Cal sapidus");
         assertThat(taxonOfType.getName(), is("Cal sapidus"));
-        assertNotNull(nodeFactory.findTaxonByName("Ort chrysoptera"));
+        assertNotNull(taxonIndex.findTaxonByName("Ort chrysoptera"));
     }
 
     @Test
@@ -100,7 +102,7 @@ public class StudyImporterForBlewettTest extends GraphDBTestCase {
         };
 
         StudyImporter importer = new StudyImporterFactory(testFactory, nodeFactory).instantiateImporter((Class) StudyImporterForBlewett.class);
-        Study study = importer.importStudy();
+        Study study = importStudy(importer);
         assertNotNull(study);
 
         Iterable<Relationship> collectedRels = study.getSpecimens();

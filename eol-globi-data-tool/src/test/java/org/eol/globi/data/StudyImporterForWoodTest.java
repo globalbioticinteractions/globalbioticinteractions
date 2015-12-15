@@ -30,7 +30,7 @@ public class StudyImporterForWoodTest extends GraphDBTestCase {
         });
         wood.importStudy();
 
-        assertThat(nodeFactory.findTaxonByName("Amphipoda"), is(notNullValue()));
+        assertThat(taxonIndex.findTaxonByName("Amphipoda"), is(notNullValue()));
     }
 
     @Test

@@ -107,10 +107,6 @@ public class Specimen extends NodeBacked {
         Transaction tx = getUnderlyingNode().getGraphDatabase().beginTx();
         try {
             createInteraction(this, recipientSpecimen, relType);
-            Relationship classifiedAs = recipientSpecimen.getUnderlyingNode().getSingleRelationship(RelTypes.CLASSIFIED_AS, Direction.OUTGOING);
-            Relationship classifiedAs1 = this.getUnderlyingNode().getSingleRelationship(RelTypes.CLASSIFIED_AS, Direction.OUTGOING);
-            createInteraction(new TaxonNode(classifiedAs1.getEndNode()), new TaxonNode(classifiedAs.getEndNode()), relType);
-
             tx.success();
         } finally {
             tx.finish();

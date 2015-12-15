@@ -50,8 +50,8 @@ public class LittleTurtleExporterTest extends GraphDBTestCase {
         List<Study> studies = NodeUtil.findAllStudies(getGraphDb());
 
 
-        TaxonNode taxon = nodeFactory.getOrCreateTaxon("some taxon");
-        TaxonNode sameAsTaxon = nodeFactory.getOrCreateTaxon("bugus same as taxon", "EOL:123", null);
+        TaxonNode taxon = taxonIndex.getOrCreateTaxon("some taxon");
+        TaxonNode sameAsTaxon = taxonIndex.getOrCreateTaxon("bugus same as taxon", "EOL:123", null);
 
         Transaction tx = getGraphDb().beginTx();
         try {

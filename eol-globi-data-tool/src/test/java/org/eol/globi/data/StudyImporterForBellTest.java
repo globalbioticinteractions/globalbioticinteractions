@@ -18,7 +18,7 @@ public class StudyImporterForBellTest extends GraphDBTestCase {
     @Test
     public void importAll() throws StudyImporterException, NodeFactoryException {
         StudyImporter importer = new StudyImporterForBell(new ParserFactoryImpl(), nodeFactory);
-        importer.importStudy();
+        importStudy(importer);
         List<Study> allStudies = NodeUtil.findAllStudies(getGraphDb());
         assertThat(allStudies.size(), is(6));
         for (Study study : allStudies) {
@@ -29,8 +29,8 @@ public class StudyImporterForBellTest extends GraphDBTestCase {
         ExecutionResult execute = new ExecutionEngine(getGraphDb()).execute("START taxon = node:taxons('*:*') RETURN taxon.name");
         String actual = execute.dumpToString();
         assertThat(actual, containsString("Tamias"));
-        assertThat(nodeFactory.findTaxonByName("Tamias speciosus"), is(notNullValue()));
-        assertThat(nodeFactory.findTaxonByName("Hoplopleura arboricola"), is(notNullValue()));
+        assertThat(taxonIndex.findTaxonByName("Tamias speciosus"), is(notNullValue()));
+        assertThat(taxonIndex.findTaxonByName("Hoplopleura arboricola"), is(notNullValue()));
         assertThat(nodeFactory.findStudy("bell-"), is(notNullValue()));
     }
 }

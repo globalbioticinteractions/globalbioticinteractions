@@ -95,9 +95,9 @@ public class StudyImporterForSPIRETest extends GraphDBTestCase {
         properties.put(StudyImporterForSPIRE.OF_HABITAT, spireHabitat);
         studyImporterForSPIRE.importTrophicLink(properties);
 
-        TaxonNode dog = nodeFactory.findTaxonByName("dog");
+        TaxonNode dog = taxonIndex.findTaxonByName("dog");
         assertThat(dog, is(notNullValue()));
-        TaxonNode man = nodeFactory.findTaxonByName("man");
+        TaxonNode man = taxonIndex.findTaxonByName("man");
         assertThat(man, is(notNullValue()));
         Iterable<Relationship> specimenRels = man.getUnderlyingNode().getRelationships(Direction.INCOMING, RelTypes.CLASSIFIED_AS);
 
@@ -149,7 +149,7 @@ public class StudyImporterForSPIRETest extends GraphDBTestCase {
                 }
             }
         });
-        importer.importStudy();
+        importStudy(importer);
         assertThat(predators, hasItem("phytoplankton"));
     }
 
@@ -159,7 +159,7 @@ public class StudyImporterForSPIRETest extends GraphDBTestCase {
         StudyImporterForSPIRE importer = createImporter();
         TestInteractionListener listener = new TestInteractionListener();
         importer.setInteractionListener(listener);
-        importer.importStudy();
+        importStudy(importer);
 
         assertGAZMapping(listener);
 

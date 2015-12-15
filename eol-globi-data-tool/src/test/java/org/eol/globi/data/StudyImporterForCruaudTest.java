@@ -29,14 +29,14 @@ public class StudyImporterForCruaudTest extends GraphDBTestCase {
                 return new LatLng(0,0);
             }
         });
-        importer.importStudy();
+        importStudy(importer);
 
         List<Study> allStudies = NodeUtil.findAllStudies(getGraphDb());
         assertThat(allStudies.size(), is(1));
 
 
-        assertThat(nodeFactory.findTaxonByName("Agaon sp."), is(notNullValue()));
-        assertThat(nodeFactory.findTaxonByName("Ficus chapaensis"), is(notNullValue()));
+        assertThat(taxonIndex.findTaxonByName("Agaon sp."), is(notNullValue()));
+        assertThat(taxonIndex.findTaxonByName("Ficus chapaensis"), is(notNullValue()));
 
         assertThat(allStudies.get(0).getSource(), is(notNullValue()));
     }

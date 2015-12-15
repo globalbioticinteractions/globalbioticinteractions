@@ -56,9 +56,9 @@ public class StudyImporterForSimonsTest extends GraphDBTestCase {
         studyImporterFor.importStudy();
         studyImporterFor.importStudy();
 
-        assertNotNull(nodeFactory.findTaxonByName("Rhynchoconger flavus"));
-        assertNotNull(nodeFactory.findTaxonByName("Halieutichthys aculeatus"));
-        assertNotNull(nodeFactory.findTaxonByName("Ampelisca sp. (abdita complex)"));
+        assertNotNull(taxonIndex.findTaxonByName("Rhynchoconger flavus"));
+        assertNotNull(taxonIndex.findTaxonByName("Halieutichthys aculeatus"));
+        assertNotNull(taxonIndex.findTaxonByName("Ampelisca sp. (abdita complex)"));
 
         assertNotNull(nodeFactory.findStudy("Simons 1997"));
 

@@ -1,6 +1,7 @@
 package org.eol.globi.data;
 
 import org.apache.commons.lang3.StringUtils;
+import org.eol.globi.domain.Study;
 import org.eol.globi.taxon.TaxonIndexImpl;
 import org.eol.globi.domain.Term;
 import org.eol.globi.geo.Ecoregion;
@@ -10,6 +11,7 @@ import org.eol.globi.service.DOIResolver;
 import org.eol.globi.service.PropertyEnricher;
 import org.eol.globi.service.TermLookupService;
 import org.eol.globi.service.TermLookupServiceException;
+import org.eol.globi.tool.NameResolver;
 import org.junit.After;
 import org.junit.Before;
 import org.neo4j.graphdb.GraphDatabaseService;
@@ -26,16 +28,31 @@ public abstract class GraphDBTestCase {
 
     protected NodeFactory nodeFactory;
 
+    protected TaxonIndex taxonIndex;
+
     @Before
     public void startGraphDb() throws IOException {
         graphDb = new TestGraphDatabaseFactory().newImpermanentDatabase();
         PropertyEnricher enricher = new PassThroughEnricher();
-        nodeFactory = createNodeFactory(enricher);
+
+        taxonIndex = new TaxonIndexImpl(enricher,
+                new PassThroughCorrectionService(), getGraphDb());
+        nodeFactory = createNodeFactory(taxonIndex);
     }
 
-    protected NodeFactory createNodeFactory(PropertyEnricher enricher) {
-        NodeFactoryImpl nodeFactoryImpl = new NodeFactoryImpl(getGraphDb(), new TaxonIndexImpl(enricher,
-                new PassThroughCorrectionService(), getGraphDb()));
+    protected Study importStudy(StudyImporter importer) throws StudyImporterException {
+        Study study = importer.importStudy();
+        resolveNames();
+        return study;
+    }
+
+    protected void resolveNames() {
+        new NameResolver(getGraphDb(), taxonIndex).resolve();
+    }
+
+
+    protected NodeFactory createNodeFactory(TaxonIndex taxonIndex) {
+        NodeFactoryImpl nodeFactoryImpl = new NodeFactoryImpl(getGraphDb());
         nodeFactoryImpl.setEcoregionFinder(new EcoregionFinder() {
 
             @Override

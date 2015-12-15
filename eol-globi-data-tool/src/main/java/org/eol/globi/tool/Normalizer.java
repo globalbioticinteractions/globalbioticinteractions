@@ -40,6 +40,7 @@ public class Normalizer {
     private static final Log LOG = LogFactory.getLog(Normalizer.class);
     public static final String OPTION_HELP = "h";
     public static final String OPTION_SKIP_IMPORT = "skipImport";
+    public static final String OPTION_SKIP_RESOLVE = "skipResolve";
     public static final String OPTION_SKIP_EXPORT = "skipExport";
     public static final String OPTION_SKIP_LINK = "skipLink";
     public static final String OPTION_SKIP_REPORT = "skipReport";
@@ -91,6 +92,13 @@ public class Normalizer {
                 importData(graphService, importers);
             } else {
                 LOG.info("skipping data import...");
+            }
+
+            if (cmdLine == null || !cmdLine.hasOption(OPTION_SKIP_RESOLVE)) {
+                new NameResolver(graphService).resolve();
+
+            } else {
+                LOG.info("skipping taxa resolving ...");
             }
 
             if (cmdLine == null || !cmdLine.hasOption(OPTION_SKIP_LINK)) {
@@ -160,7 +168,7 @@ public class Normalizer {
     private void importData(GraphDatabaseService graphService, Collection<Class<? extends StudyImporter>> importers) {
         TaxonIndexImpl taxonService = new TaxonIndexImpl(PropertyEnricherFactory.createTaxonEnricher()
                 , new TaxonNameCorrector(), graphService);
-        NodeFactoryImpl factory = new NodeFactoryImpl(graphService, taxonService);
+        NodeFactoryImpl factory = new NodeFactoryImpl(graphService);
         for (Class<? extends StudyImporter> importer : importers) {
             try {
                 importData(importer, factory);

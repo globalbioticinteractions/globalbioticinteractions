@@ -130,7 +130,7 @@ public class StudyImporterForFWDPTest extends GraphDBTestCase {
 
         studyImporter.importStudy();
 
-        assertThat(nodeFactory.findTaxonByName("Mustelus canis"), is(notNullValue()));
+        assertThat(taxonIndex.findTaxonByName("Mustelus canis"), is(notNullValue()));
 
     }
 

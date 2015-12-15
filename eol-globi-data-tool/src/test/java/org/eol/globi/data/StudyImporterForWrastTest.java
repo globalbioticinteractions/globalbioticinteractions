@@ -74,10 +74,10 @@ public class StudyImporterForWrastTest extends GraphDBTestCase {
         assertThat(specimenCount, is(5));
 
 
-        assertNotNull(nodeFactory.findTaxonByName("Sciaenops ocellatus"));
-        assertNotNull(nodeFactory.findTaxonByName("Arius felis"));
+        assertNotNull(taxonIndex.findTaxonByName("Sciaenops ocellatus"));
+        assertNotNull(taxonIndex.findTaxonByName("Arius felis"));
 
-        assertNotNull(nodeFactory.findTaxonByName("Aegathoa oculata"));
+        assertNotNull(taxonIndex.findTaxonByName("Aegathoa oculata"));
 
         assertNotNull(nodeFactory.findSeason("spring"));
         assertNotNull(nodeFactory.findSeason("fall"));
@@ -154,7 +154,7 @@ public class StudyImporterForWrastTest extends GraphDBTestCase {
     @Test
     public void testImportFullFile() throws StudyImporterException, NodeFactoryException {
         StudyImporterForWrast importer = new StudyImporterForWrast(new ParserFactoryImpl(), nodeFactory);
-        importer.importStudy();
+        importStudy(importer);
     }
 
     @Test

@@ -33,6 +33,26 @@ public class TaxonIndexImpl implements TaxonIndex {
     }
 
     @Override
+    public TaxonNode getOrCreateTaxon(String name) throws NodeFactoryException {
+       return getOrCreateTaxon(new TaxonImpl(name));
+    }
+
+    @Override
+    public TaxonNode getOrCreateTaxon(String name, String externalId) throws NodeFactoryException {
+        return getOrCreateTaxon(new TaxonImpl(name, externalId));
+    }
+
+    @Override
+    public TaxonNode getOrCreateTaxon(String name, String externalId, String path) throws NodeFactoryException {
+        TaxonNode taxon = getOrCreateTaxon(new TaxonImpl(name, externalId));
+        if (taxon != null) {
+            taxon.setPath(path);
+        }
+        return taxon;
+    }
+
+
+    @Override
     public TaxonNode getOrCreateTaxon(Taxon taxon) throws NodeFactoryException {
         if (StringUtils.isBlank(taxon.getExternalId()) && StringUtils.length(taxon.getName()) < 3) {
             throw new NodeFactoryException("taxon name [" + taxon.getName() + "] too short and no externalId is provided");

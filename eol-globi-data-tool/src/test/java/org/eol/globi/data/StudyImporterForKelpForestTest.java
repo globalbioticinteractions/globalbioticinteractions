@@ -14,12 +14,12 @@ public class StudyImporterForKelpForestTest extends GraphDBTestCase {
     @Test
     public void importAll() throws StudyImporterException, NodeFactoryException {
         StudyImporterForKelpForest importer = new StudyImporterForKelpForest(new ParserFactoryImpl(), nodeFactory);
-        importer.importStudy();
+        importStudy(importer);
         assertSeaOtter();
     }
 
     protected void assertSeaOtter() throws NodeFactoryException {
-        TaxonNode taxon = nodeFactory.findTaxonByName("sea otter");
+        TaxonNode taxon = taxonIndex.findTaxonByName("sea otter");
         assertThat(taxon, is(notNullValue()));
         assertThat(taxon.getExternalId(), is("ITIS:180547"));
     }
