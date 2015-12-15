@@ -50,6 +50,8 @@
                         <argument>${normalizer.arg.1}</argument>
                         <argument>${normalizer.arg.2}</argument>
                         <argument>${normalizer.arg.3}</argument>
+                        <argument>${normalizer.arg.4}</argument>
+                        <argument>${normalizer.arg.5}</argument>
                     </arguments>
                     <workingDirectory>${data.dir}</workingDirectory>
                 </configuration>
@@ -90,6 +92,8 @@
                 <normalizer.arg.1>-skipExport</normalizer.arg.1>
                 <normalizer.arg.2>-skipExport</normalizer.arg.2>
                 <normalizer.arg.3>-skipExport</normalizer.arg.3>
+                <normalizer.arg.4>-skipExport</normalizer.arg.4>
+                <normalizer.arg.5>-skipExport</normalizer.arg.5>
             </properties>
             <build>
                 <plugins>
@@ -196,8 +200,11 @@
             <id>export-all</id>
             <properties>
                 <normalizer.arg.1>-skipImport</normalizer.arg.1>
-                <normalizer.arg.2>-skipLink</normalizer.arg.2>
-                <normalizer.arg.3>-skipReport</normalizer.arg.3>
+                <normalizer.arg.2>-skipImport</normalizer.arg.2>
+                <!--<normalizer.arg.2>-skipResolve</normalizer.arg.2>-->
+                <normalizer.arg.3>-skipLink</normalizer.arg.3>
+                <normalizer.arg.4>-skipLinkThumbnails</normalizer.arg.4>
+                <normalizer.arg.5>-skipReport</normalizer.arg.5>
             </properties>
             <build>
                 <plugins>

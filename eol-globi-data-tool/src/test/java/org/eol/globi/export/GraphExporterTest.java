@@ -27,6 +27,7 @@ public class GraphExporterTest extends GraphDBTestCase {
 
         Specimen human = nodeFactory.createSpecimen(study, "Homo sapiens", "BLA:123");
         human.ate(nodeFactory.createSpecimen(study, "Canis familiaris", "BLA:444"));
+        resolveNames();
         try {
             new GraphExporter().export(getGraphDb(), tmpDirPath.getAbsolutePath() + "/");
             assertThat(tmpDirPath.list().length, is(5));

@@ -19,6 +19,7 @@ import org.eol.globi.taxon.TaxonNameCorrector;
 import org.neo4j.cypher.javacompat.ExecutionEngine;
 import org.neo4j.cypher.javacompat.ExecutionResult;
 import org.neo4j.graphdb.GraphDatabaseService;
+import org.neo4j.graphdb.ResourceIterator;
 
 import java.util.Collection;
 import java.util.Map;
@@ -59,7 +60,9 @@ public class NameResolver {
         int count = 0;
         StopWatch watch = new StopWatch();
         watch.start();
-        for (Map<String, Object> row : result) {
+        ResourceIterator<Map<String, Object>> iterator = result.iterator();
+        while (iterator.hasNext()) {
+            Map<String, Object> row = iterator.next();
             String name = row.containsKey(NAME) ? (String) row.get(NAME) : null;
             String externalId = row.containsKey(EXTERNAL_ID) ? (String) row.get(EXTERNAL_ID) : null;
             String statusId = row.containsKey(STATUS_ID) ? (String) row.get(STATUS_ID) : null;
@@ -88,6 +91,8 @@ public class NameResolver {
             }
             count++;
         }
+        iterator.close();
+
         LOG.info("name resolving completed in " + getProgressMsg(count, watch));
 
         LOG.info("building interaction indexes...");
@@ -100,7 +105,11 @@ public class NameResolver {
     }
 
     public String getProgressMsg(int count, StopWatch watch) {
+        watch.stop();
         double totalTimeMins = 1000 * 60.0 / watch.getTime();
-        return String.format("[%.1f] taxon/min over [%.1f] min", (count / totalTimeMins), watch.getTime() / (1000 * 60.0));
+        String msg = String.format("[%.1f] taxon/min over [%.1f] min", (count / totalTimeMins), watch.getTime() / (1000 * 60.0));
+        watch.start();
+        return msg;
+
     }
 }
