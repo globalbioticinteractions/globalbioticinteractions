@@ -56,7 +56,7 @@ public class NameResolver {
                 ", taxon." + NAME + "? as `" + NAME + "`" +
                 ", taxon." + STATUS_ID + "? as `" + STATUS_ID + "`" +
                 ", taxon." + STATUS_LABEL + "? as `" + STATUS_LABEL + "`" +
-                ", collect(id(specimen)) as `specimenIds`");
+                ", id(specimen)) as `specimenId`");
         int count = 0;
         StopWatch watch = new StopWatch();
         watch.start();
@@ -67,20 +67,18 @@ public class NameResolver {
             String externalId = row.containsKey(EXTERNAL_ID) ? (String) row.get(EXTERNAL_ID) : null;
             String statusId = row.containsKey(STATUS_ID) ? (String) row.get(STATUS_ID) : null;
             String statusLabel = row.containsKey(STATUS_LABEL) ? (String) row.get(STATUS_LABEL) : null;
-            Collection<Long> specimenIds = row.containsKey("specimenIds") ? (Collection<Long>) row.get("specimenIds") : null;
-            if (specimenIds != null) {
-                for (Long specimenId : specimenIds) {
-                    Specimen specimen = new Specimen(graphService.getNodeById(specimenId));
-                    Taxon taxon = new TaxonImpl(name, externalId);
-                    taxon.setStatus(new Term(statusId, statusLabel));
-                    try {
-                        TaxonNode resolvedTaxon = taxonIndex.getOrCreateTaxon(taxon);
-                        if (resolvedTaxon != null) {
-                            specimen.classifyAs(resolvedTaxon);
-                        }
-                    } catch (NodeFactoryException e) {
-                        LOG.warn("failed to create taxon with name [" + taxon.getName() + "] and id [" + taxon.getExternalId() + "]", e);
+            Long specimenId = row.containsKey("specimenId") ? (Long) row.get("specimenId") : null;
+            if (specimenId != null) {
+                Specimen specimen = new Specimen(graphService.getNodeById(specimenId));
+                Taxon taxon = new TaxonImpl(name, externalId);
+                taxon.setStatus(new Term(statusId, statusLabel));
+                try {
+                    TaxonNode resolvedTaxon = taxonIndex.getOrCreateTaxon(taxon);
+                    if (resolvedTaxon != null) {
+                        specimen.classifyAs(resolvedTaxon);
                     }
+                } catch (NodeFactoryException e) {
+                    LOG.warn("failed to create taxon with name [" + taxon.getName() + "] and id [" + taxon.getExternalId() + "]", e);
                 }
             }
 
@@ -108,7 +106,7 @@ public class NameResolver {
         watch.stop();
         double totalTimeMins = 1000 * 60.0 / watch.getTime();
         String msg = String.format("[%.1f] taxon/min over [%.1f] min", (count / totalTimeMins), watch.getTime() / (1000 * 60.0));
-        watch.start();
+        watch.resume();
         return msg;
 
     }
