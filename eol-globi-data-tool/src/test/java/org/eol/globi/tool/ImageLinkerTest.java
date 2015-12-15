@@ -19,7 +19,7 @@ public class ImageLinkerTest extends GraphDBTestCase {
 
         assertNotNull(taxon);
 
-        new ImageLinker().linkImages(getGraphDb());
+        new ImageLinker().linkImages(getGraphDb(), System.out);
 
         TaxonNode enrichedTaxon = taxonIndex.findTaxonById("EOL:327955");
         assertThat((String)enrichedTaxon.getUnderlyingNode().getProperty("thumbnailUrl"), is("http://media.eol.org/content/2014/08/07/23/02836_98_68.jpg"));
@@ -33,7 +33,7 @@ public class ImageLinkerTest extends GraphDBTestCase {
 
         assertNotNull(taxon);
 
-        new ImageLinker().linkImages(getGraphDb());
+        new ImageLinker().linkImages(getGraphDb(), System.out);
 
         TaxonNode enrichedTaxon = taxonIndex.findTaxonById("DUCK:123");
         assertThat(enrichedTaxon.getUnderlyingNode().hasProperty("thumbnailUrl"), is(false));

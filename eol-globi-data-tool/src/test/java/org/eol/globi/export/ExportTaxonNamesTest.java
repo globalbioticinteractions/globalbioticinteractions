@@ -46,9 +46,8 @@ public class ExportTaxonNamesTest extends GraphDBTestCase {
 
             }
         };
-        NodeFactory factory = factory(taxonEnricher);
-
-        Study study = factory.getOrCreateStudy("title", "source", "citation");
+        taxonIndex = ExportTestUtil.taxonIndexWithEnricher(taxonEnricher, getGraphDb());
+        Study study = nodeFactory.getOrCreateStudy("title", "source", "citation");
         TaxonNode human = taxonIndex.getOrCreateTaxon("Homo sapiens");
         taxonIndex.getOrCreateTaxon("Canis lupus");
         NodeUtil.connectTaxa(new TaxonImpl("Alternate Homo sapiens", "alt:123"), human, getGraphDb(), RelTypes.SAME_AS);
@@ -60,10 +59,6 @@ public class ExportTaxonNamesTest extends GraphDBTestCase {
                 "\nhomoSapiensId,Homo sapiens,,,one two three,," +
                 "\nalt:123,Alternate Homo sapiens,,,,," +
                 "\ncanisLupusId,Canis lupus,,,four five six,,"));
-    }
-
-    private NodeFactoryImpl factory(PropertyEnricher enricher) {
-        return new NodeFactoryImpl(getGraphDb());
     }
 
 }

@@ -1,8 +1,6 @@
 package org.eol.globi.export;
 
 import org.eol.globi.data.GraphDBTestCase;
-import org.eol.globi.data.NodeFactory;
-import org.eol.globi.data.NodeFactoryImpl;
 import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.PropertyAndValueDictionary;
@@ -14,8 +12,6 @@ import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.service.PropertyEnricher;
 import org.eol.globi.service.TaxonUtil;
-import org.eol.globi.taxon.CorrectionService;
-import org.eol.globi.taxon.TaxonIndexImpl;
 import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
 import org.neo4j.graphdb.Node;
@@ -53,7 +49,7 @@ public class ExportUnmatchedTaxonNamesTest extends GraphDBTestCase {
 
             }
         };
-        configureTaxonIndex(taxonEnricher);
+        taxonIndex = ExportTestUtil.taxonIndexWithEnricher(taxonEnricher, getGraphDb());
 
         String title = "my study\"";
         Study study = nodeFactory.getOrCreateStudy2(title, "my first source", null);
@@ -97,15 +93,6 @@ public class ExportUnmatchedTaxonNamesTest extends GraphDBTestCase {
         ));
     }
 
-    public void configureTaxonIndex(PropertyEnricher taxonEnricher) {
-        taxonIndex = new TaxonIndexImpl(taxonEnricher, new CorrectionService() {
-                    @Override
-                    public String correct(String taxonName) {
-                        return taxonName;
-                    }
-                }, getGraphDb());
-    }
-
     @Test
     public void exportOnePredatorNoPathButWithSameAs() throws NodeFactoryException, IOException {
         final PropertyEnricher taxonEnricher = new PropertyEnricher() {
@@ -123,7 +110,7 @@ public class ExportUnmatchedTaxonNamesTest extends GraphDBTestCase {
 
             }
         };
-        configureTaxonIndex(taxonEnricher);
+        taxonIndex = ExportTestUtil.taxonIndexWithEnricher(taxonEnricher, getGraphDb());
 
         Study study = nodeFactory.getOrCreateStudy2("my study", "my first source", null);
 

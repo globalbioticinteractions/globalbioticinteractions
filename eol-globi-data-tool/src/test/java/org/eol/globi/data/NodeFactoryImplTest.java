@@ -210,10 +210,9 @@ public class NodeFactoryImplTest extends GraphDBTestCase {
                 return "mickey corrected";
             }
         };
-        TaxonIndex taxonIndex = new TaxonIndexImpl(new PassThroughEnricher(),
+        this.taxonIndex = new TaxonIndexImpl(new PassThroughEnricher(),
                 correctionService, getGraphDb()
         );
-        this.taxonIndex = taxonIndex;
     }
 
 

@@ -3,10 +3,15 @@ package org.eol.globi.export;
 import org.eol.globi.data.NodeFactory;
 import org.eol.globi.data.NodeFactoryImpl;
 import org.eol.globi.data.NodeFactoryException;
+import org.eol.globi.data.TaxonIndex;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.Term;
+import org.eol.globi.service.PropertyEnricher;
+import org.eol.globi.taxon.CorrectionService;
+import org.eol.globi.taxon.TaxonIndexImpl;
+import org.neo4j.graphdb.GraphDatabaseService;
 
 import javax.xml.bind.DatatypeConverter;
 import java.text.ParseException;
@@ -51,5 +56,15 @@ public class ExportTestUtil {
     protected static Date utcTestDate() {
         Calendar calendar = DatatypeConverter.parseDateTime("1992-03-30T08:00:00Z");
         return calendar.getTime();
+    }
+
+    public static TaxonIndex taxonIndexWithEnricher(PropertyEnricher taxonEnricher, GraphDatabaseService graphDb) {
+        return new TaxonIndexImpl(taxonEnricher, new CorrectionService() {
+
+            @Override
+            public String correct(String taxonName) {
+                return taxonName;
+            }
+        }, graphDb);
     }
 }

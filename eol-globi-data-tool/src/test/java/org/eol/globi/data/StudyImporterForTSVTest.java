@@ -39,7 +39,7 @@ public class StudyImporterForTSVTest extends GraphDBTestCase {
 
         TaxonNode taxon = taxonIndex.findTaxonById("EOL:123");
         assertThat(taxon, is(notNullValue()));
-        assertThat(taxon.getName(), is("no:match"));
+        assertThat(taxon.getName(), is("no name"));
         assertThat(taxon.getExternalId(), is("EOL:123"));
     }
 

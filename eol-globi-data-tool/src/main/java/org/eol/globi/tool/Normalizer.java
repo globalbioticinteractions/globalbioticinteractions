@@ -42,6 +42,7 @@ public class Normalizer {
     public static final String OPTION_SKIP_IMPORT = "skipImport";
     public static final String OPTION_SKIP_RESOLVE = "skipResolve";
     public static final String OPTION_SKIP_EXPORT = "skipExport";
+    public static final String OPTION_SKIP_LINK_THUMBNAILS = "skipLinkThumbnails";
     public static final String OPTION_SKIP_LINK = "skipLink";
     public static final String OPTION_SKIP_REPORT = "skipReport";
     public static final String OPTION_USE_DARK_DATA = "useDarkData";
@@ -68,9 +69,12 @@ public class Normalizer {
         Options options = new Options();
         options.addOption(OPTION_SKIP_IMPORT, false, "skip the import of all GloBI datasets");
         options.addOption(OPTION_SKIP_EXPORT, false, "skip the export for GloBI datasets to aggregated archives.");
+        options.addOption(OPTION_SKIP_RESOLVE, false, "skip taxon name resolve to external taxonomies");
+        options.addOption(OPTION_SKIP_LINK_THUMBNAILS, false, "skip linking of names to thumbnails");
         options.addOption(OPTION_SKIP_LINK, false, "skip taxa cross-reference step");
         options.addOption(OPTION_SKIP_REPORT, false, "skip report generation step");
         options.addOption(OPTION_USE_DARK_DATA, false, "use only dark datasets (requires permission)");
+
         Option helpOpt = new Option(OPTION_HELP, "help", false, "print this help information");
         options.addOption(helpOpt);
         return options;
@@ -96,7 +100,6 @@ public class Normalizer {
 
             if (cmdLine == null || !cmdLine.hasOption(OPTION_SKIP_RESOLVE)) {
                 new NameResolver(graphService).resolve();
-
             } else {
                 LOG.info("skipping taxa resolving ...");
             }
@@ -106,6 +109,13 @@ public class Normalizer {
             } else {
                 LOG.info("skipping taxa linking ...");
             }
+
+            if (cmdLine == null || !cmdLine.hasOption(OPTION_SKIP_LINK_THUMBNAILS)) {
+                new ImageLinker().linkImages(graphService, null);
+            } else {
+                LOG.info("skipping linking of taxa to thumbnails ...");
+            }
+
 
             if (cmdLine == null || !cmdLine.hasOption(OPTION_SKIP_REPORT)) {
                 new ReportGenerator(graphService).run();
