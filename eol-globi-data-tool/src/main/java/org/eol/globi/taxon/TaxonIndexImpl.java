@@ -44,9 +44,9 @@ public class TaxonIndexImpl implements TaxonIndex {
 
     @Override
     public TaxonNode getOrCreateTaxon(String name, String externalId, String path) throws NodeFactoryException {
-        TaxonImpl taxon1 = new TaxonImpl(name, externalId);
-        taxon1.setPath(path);
-        return getOrCreateTaxon(taxon1);
+        TaxonImpl taxon = new TaxonImpl(name, externalId);
+        taxon.setPath(path);
+        return getOrCreateTaxon(taxon);
     }
 
     @Override
@@ -98,11 +98,8 @@ public class TaxonIndexImpl implements TaxonIndex {
     }
 
     private TaxonNode createTaxon(final Taxon origTaxon) throws NodeFactoryException {
-        Taxon taxon = new TaxonImpl();
+        Taxon taxon = TaxonUtil.copy(origTaxon);
         taxon.setName(corrector.correct(origTaxon.getName()));
-        taxon.setExternalId(origTaxon.getExternalId());
-        taxon.setPath(origTaxon.getPath());
-        taxon.setStatus(origTaxon.getStatus());
 
         TaxonNode taxonNode = findTaxon(taxon.getName(), taxon.getExternalId());
         while (taxonNode == null) {
@@ -166,11 +163,9 @@ public class TaxonIndexImpl implements TaxonIndex {
     }
 
     private TaxonNode addNoMatchTaxon(Taxon origTaxon) throws NodeFactoryException {
-        Taxon noMatchTaxon = new TaxonImpl();
+        Taxon noMatchTaxon = TaxonUtil.copy(origTaxon);
         noMatchTaxon.setName(StringUtils.isBlank(origTaxon.getName()) ? PropertyAndValueDictionary.NO_MATCH : origTaxon.getName());
         noMatchTaxon.setExternalId(StringUtils.isBlank(origTaxon.getExternalId()) ? PropertyAndValueDictionary.NO_MATCH : origTaxon.getExternalId());
-        noMatchTaxon.setPath(origTaxon.getPath());
-        noMatchTaxon.setStatus(origTaxon.getStatus());
         return createAndIndexTaxon(noMatchTaxon);
     }
 
@@ -179,14 +174,7 @@ public class TaxonIndexImpl implements TaxonIndex {
         Transaction transaction = graphDbService.beginTx();
         try {
             taxonNode = new TaxonNode(graphDbService.createNode(), taxon.getName());
-            taxonNode.setExternalId(taxon.getExternalId());
-            taxonNode.setPath(taxon.getPath());
-            taxonNode.setPathNames(taxon.getPathNames());
-            taxonNode.setPathIds(taxon.getPathIds());
-            taxonNode.setCommonNames(taxon.getCommonNames());
-            taxonNode.setRank(taxon.getRank());
-            taxonNode.setStatus(taxon.getStatus());
-            addToIndeces(taxonNode, taxon.getName());
+            addToIndeces((TaxonNode)TaxonUtil.copy(taxon, taxonNode), taxon.getName());
             transaction.success();
         } finally {
             transaction.finish();

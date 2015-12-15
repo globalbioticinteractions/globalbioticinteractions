@@ -13,46 +13,53 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.eol.globi.domain.PropertyAndValueDictionary.*;
+import static org.eol.globi.domain.PropertyAndValueDictionary.EXTERNAL_URL;
+
 public class TaxonUtil {
     public static Map<String, String> taxonToMap(Taxon taxon) {
         Map<String, String> properties = new HashMap<String, String>();
-        properties.put(PropertyAndValueDictionary.NAME, taxon.getName());
-        properties.put(PropertyAndValueDictionary.RANK, taxon.getRank());
-        properties.put(PropertyAndValueDictionary.EXTERNAL_ID, taxon.getExternalId());
-        properties.put(PropertyAndValueDictionary.PATH, taxon.getPath());
-        properties.put(PropertyAndValueDictionary.PATH_IDS, taxon.getPathIds());
-        properties.put(PropertyAndValueDictionary.PATH_NAMES, taxon.getPathNames());
-        properties.put(PropertyAndValueDictionary.COMMON_NAMES, taxon.getCommonNames());
+        properties.put(NAME, taxon.getName());
+        properties.put(RANK, taxon.getRank());
+        properties.put(EXTERNAL_ID, taxon.getExternalId());
+        properties.put(PATH, taxon.getPath());
+        properties.put(PATH_IDS, taxon.getPathIds());
+        properties.put(PATH_NAMES, taxon.getPathNames());
+        properties.put(COMMON_NAMES, taxon.getCommonNames());
+        properties.put(EXTERNAL_URL, taxon.getExternalUrl());
+        properties.put(THUMBNAIL_URL, taxon.getThumbnailUrl());
         Term status = taxon.getStatus();
         if (status != null
                 && StringUtils.isNotBlank(status.getId())
                 && StringUtils.isNotBlank(status.getName())) {
-            properties.put(PropertyAndValueDictionary.STATUS_ID, status.getId());
-            properties.put(PropertyAndValueDictionary.STATUS_LABEL, status.getName());
+            properties.put(STATUS_ID, status.getId());
+            properties.put(STATUS_LABEL, status.getName());
         }
         return Collections.unmodifiableMap(properties);
     }
 
     public static void mapToTaxon(Map<String, String> properties, Taxon taxon) {
-        taxon.setName(properties.get(PropertyAndValueDictionary.NAME));
-        taxon.setRank(properties.get(PropertyAndValueDictionary.RANK));
-        taxon.setExternalId(properties.get(PropertyAndValueDictionary.EXTERNAL_ID));
-        taxon.setPath(properties.get(PropertyAndValueDictionary.PATH));
-        taxon.setPathIds(properties.get(PropertyAndValueDictionary.PATH_IDS));
-        taxon.setPathNames(properties.get(PropertyAndValueDictionary.PATH_NAMES));
-        taxon.setCommonNames(properties.get(PropertyAndValueDictionary.COMMON_NAMES));
+        taxon.setName(properties.get(NAME));
+        taxon.setRank(properties.get(RANK));
+        taxon.setExternalId(properties.get(EXTERNAL_ID));
+        taxon.setPath(properties.get(PATH));
+        taxon.setPathIds(properties.get(PATH_IDS));
+        taxon.setPathNames(properties.get(PATH_NAMES));
+        taxon.setCommonNames(properties.get(COMMON_NAMES));
+        taxon.setExternalUrl(properties.get(EXTERNAL_URL));
+        taxon.setThumbnailUrl(properties.get(THUMBNAIL_URL));
 
-        String statusId = properties.get(PropertyAndValueDictionary.STATUS_ID);
-        String statusLabel = properties.get(PropertyAndValueDictionary.STATUS_LABEL);
+        String statusId = properties.get(STATUS_ID);
+        String statusLabel = properties.get(STATUS_LABEL);
         if (StringUtils.isNotBlank(statusId) && StringUtils.isNotBlank(statusLabel)) {
             taxon.setStatus(new Term(statusId, statusLabel));
         }
     }
 
     public static boolean isResolved(Map<String, String> properties) {
-        return StringUtils.isNotBlank(properties.get(PropertyAndValueDictionary.NAME))
-                && StringUtils.isNotBlank(properties.get(PropertyAndValueDictionary.EXTERNAL_ID))
-                && StringUtils.isNotBlank(properties.get(PropertyAndValueDictionary.PATH));
+        return StringUtils.isNotBlank(properties.get(NAME))
+                && StringUtils.isNotBlank(properties.get(EXTERNAL_ID))
+                && StringUtils.isNotBlank(properties.get(PATH));
     }
 
     public static Taxon enrich(PropertyEnricher enricher, Taxon taxon) throws PropertyEnricherException {
@@ -108,7 +115,7 @@ public class TaxonUtil {
 
     public static TaxonImage enrichTaxonImageWithTaxon(Map<String, String> taxon, TaxonImage taxonImage) {
         if (StringUtils.isBlank(taxonImage.getCommonName())) {
-            String commonName = taxon.get(PropertyAndValueDictionary.COMMON_NAMES);
+            String commonName = taxon.get(COMMON_NAMES);
             if (StringUtils.isNotBlank(commonName)) {
                 String[] splits = StringUtils.split(commonName, CharsetConstant.SEPARATOR_CHAR);
                 for (String split : splits) {
@@ -120,20 +127,20 @@ public class TaxonUtil {
         }
 
         if (StringUtils.isBlank(taxonImage.getScientificName())) {
-            taxonImage.setScientificName(taxon.get(PropertyAndValueDictionary.NAME));
+            taxonImage.setScientificName(taxon.get(NAME));
         }
         if (StringUtils.isBlank(taxonImage.getTaxonPath())) {
-            taxonImage.setTaxonPath(taxon.get(PropertyAndValueDictionary.PATH));
+            taxonImage.setTaxonPath(taxon.get(PATH));
         }
         if (StringUtils.isBlank(taxonImage.getInfoURL())) {
-            taxonImage.setInfoURL(taxon.get(PropertyAndValueDictionary.EXTERNAL_URL));
+            taxonImage.setInfoURL(taxon.get(EXTERNAL_URL));
         }
         if (StringUtils.isBlank(taxonImage.getThumbnailURL())) {
-            taxonImage.setThumbnailURL(taxon.get(PropertyAndValueDictionary.THUMBNAIL_URL));
+            taxonImage.setThumbnailURL(taxon.get(THUMBNAIL_URL));
         }
 
         if (StringUtils.isBlank(taxonImage.getPageId())) {
-            String externalId = taxon.get(PropertyAndValueDictionary.EXTERNAL_ID);
+            String externalId = taxon.get(EXTERNAL_ID);
             if (StringUtils.startsWith(externalId, TaxonomyProvider.ID_PREFIX_EOL)) {
                 taxonImage.setPageId(externalId.replace(TaxonomyProvider.ID_PREFIX_EOL, ""));
             }

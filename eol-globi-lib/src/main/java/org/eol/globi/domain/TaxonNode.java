@@ -101,4 +101,30 @@ public class TaxonNode extends NamedNode implements Taxon {
         }
         return status;
     }
+
+    @Override
+    public void setExternalUrl(String externalUrl) {
+        if (externalUrl != null) {
+            getUnderlyingNode().setProperty(EXTERNAL_URL, externalUrl);
+        }
+    }
+
+    @Override
+    public void setThumbnailUrl(String thumbnailUrl) {
+        if (thumbnailUrl != null) {
+            getUnderlyingNode().setProperty(THUMBNAIL_URL, thumbnailUrl);
+        }
+    }
+
+    @Override
+    public String getThumbnailUrl() {
+        return getUnderlyingNode().hasProperty(THUMBNAIL_URL) ?
+                (String) getUnderlyingNode().getProperty(THUMBNAIL_URL) : null;
+    }
+
+    @Override
+    public String getExternalUrl() {
+        return getUnderlyingNode().hasProperty(EXTERNAL_URL) ?
+                (String) getUnderlyingNode().getProperty(EXTERNAL_URL) : null;
+    }
 }

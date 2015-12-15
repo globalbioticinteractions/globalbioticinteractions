@@ -1,10 +1,7 @@
 package org.eol.globi.export;
 
 import org.eol.globi.data.GraphDBTestCase;
-import org.eol.globi.data.NodeFactory;
 import org.eol.globi.data.NodeFactoryException;
-import org.eol.globi.data.NodeFactoryImpl;
-import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.Taxon;
@@ -14,17 +11,15 @@ import org.eol.globi.service.PropertyEnricher;
 import org.eol.globi.service.TaxonUtil;
 import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
-import org.neo4j.graphdb.Transaction;
 
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.Map;
 
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
-public class ExportTaxonNamesTest extends GraphDBTestCase {
+public class ExportTaxonMapsTest extends GraphDBTestCase {
 
     @Test
     public void exportOnePredatorTwoPrey() throws NodeFactoryException, IOException {
@@ -53,17 +48,19 @@ public class ExportTaxonNamesTest extends GraphDBTestCase {
         Taxon taxon = new TaxonImpl("Homo sapiens");
         taxon.setExternalUrl("http://some/thing");
         taxon.setThumbnailUrl("http://thing/some");
+        nodeFactory.createSpecimen(study, taxon);
         TaxonNode human = taxonIndex.getOrCreateTaxon(taxon);
-        taxonIndex.getOrCreateTaxon("Canis lupus");
+        nodeFactory.createSpecimen(study, new TaxonImpl("Canis lupus"));
         NodeUtil.connectTaxa(new TaxonImpl("Alternate Homo sapiens", "alt:123"), human, getGraphDb(), RelTypes.SAME_AS);
         NodeUtil.connectTaxa(new TaxonImpl("Similar Homo sapiens", "alt:456"), human, getGraphDb(), RelTypes.SIMILAR_TO);
+        resolveNames();
 
         StringWriter writer = new StringWriter();
-        new ExportTaxonNames().exportStudy(study, writer, true);
-        assertThat(writer.toString(), is("id,name,rank,commonNames,path,pathIds,pathNames,externalUrl,thumbnailUrl" +
-                "\nhomoSapiensId,Homo sapiens,,,one two three,,,http://some/thing,http://thing/some" +
-                "\nalt:123,Alternate Homo sapiens,,,,,,http://some/thing,http://thing/some" +
-                "\ncanisLupusId,Canis lupus,,,four five six,,,,"));
+        new ExportTaxonMaps().exportStudy(study, writer, true);
+        assertThat(writer.toString(), is("providedId,providedName,resolvedId,resolvedName" +
+                "\n\"\",Homo sapiens,homoSapiensId,Homo sapiens" +
+                "\n\"\",Homo sapiens,alt:123,Alternate Homo sapiens" +
+                "\n\"\",Canis lupus,canisLupusId,Canis lupus"));
     }
 
 }

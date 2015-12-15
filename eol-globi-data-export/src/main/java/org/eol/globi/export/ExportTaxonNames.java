@@ -24,7 +24,9 @@ public class ExportTaxonNames implements StudyExporter {
                 ", linkedTaxon.commonNames? as commonNames" +
                 ", linkedTaxon.path? as path" +
                 ", linkedTaxon.pathIds? as pathIds" +
-                ", linkedTaxon.pathNames? as pathNames";
+                ", linkedTaxon.pathNames? as pathNames" +
+                ", taxon.externalUrl? as externalUrl" +
+                ", taxon.thumbnailUrl? as thumbnailUrl";
 
         HashMap<String, Object> params = new HashMap<String, Object>() {{
         }};

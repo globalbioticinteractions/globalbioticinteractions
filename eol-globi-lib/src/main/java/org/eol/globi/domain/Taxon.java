@@ -32,4 +32,12 @@ public interface Taxon {
     void setStatus(Term status);
 
     Term getStatus();
+
+    void setExternalUrl(String externalUrl);
+
+    void setThumbnailUrl(String thumbnailUrl);
+
+    String getThumbnailUrl();
+
+    String getExternalUrl();
 }

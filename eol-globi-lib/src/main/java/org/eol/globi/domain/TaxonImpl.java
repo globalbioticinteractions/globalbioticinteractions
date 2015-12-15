@@ -9,6 +9,8 @@ public class TaxonImpl implements Taxon {
     private String rank;
     private String pathIds;
     private Term status;
+    private String thumbnailUrl;
+    private String externalUrl;
 
     public TaxonImpl(String name, String externalId) {
         this.name = name;
@@ -96,6 +98,26 @@ public class TaxonImpl implements Taxon {
     @Override
     public Term getStatus() {
         return status;
+    }
+
+    @Override
+    public void setExternalUrl(String externalUrl) {
+        this.externalUrl = externalUrl;
+    }
+
+    @Override
+    public void setThumbnailUrl(String thumbnailUrl) {
+        this.thumbnailUrl = thumbnailUrl;
+    }
+
+    @Override
+    public String getThumbnailUrl() {
+        return thumbnailUrl;
+    }
+
+    @Override
+    public String getExternalUrl() {
+        return externalUrl;
     }
 
     @Override
