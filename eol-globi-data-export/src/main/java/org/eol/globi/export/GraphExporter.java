@@ -35,9 +35,9 @@ public class GraphExporter {
         }
         List<Study> studies = NodeUtil.findAllStudies(graphService);
 //        exportDataOntology(studies, baseDir);
-        exportNames(studies, baseDir, new ExportTaxonMaps(), "taxaLinked.csv.gz");
-        exportNames(studies, baseDir, new ExportUnmatchedTaxonNames(), "taxaUnmatched.csv");
-        exportNames(studies, baseDir, new ExportTaxonNames(), "taxa.csv.gz");
+        exportNames(studies, baseDir, new ExportTaxonMaps(), "taxa/taxaLinked.csv.gz");
+        exportNames(studies, baseDir, new ExportTaxonNames(), "taxa/taxa.csv.gz");
+        exportNames(studies, baseDir, new ExportUnmatchedTaxonNames(), "taxa/taxaUnmatched.csv");
         exportDarwinCoreAggregatedByStudy(baseDir, studies);
         exportDarwinCoreAll(baseDir, studies);
     }

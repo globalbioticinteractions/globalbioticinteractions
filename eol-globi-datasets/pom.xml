@@ -64,7 +64,7 @@
                     <url>s3://globi/snapshot</url>
                     <skip>${skipTests}</skip>
                     <includes>
-                        **/*axa.csv*,**/${project.artifactId}-${project.version}*.tar.gz,**/${project.artifactId}-${project.version}*.zip
+                        **/taxa/*,**/${project.artifactId}-${project.version}*.tar.gz,**/${project.artifactId}-${project.version}*.zip
                     </includes>
                 </configuration>
                 <executions>
@@ -252,6 +252,7 @@
                         <version>2.4</version>
                         <configuration>
                             <descriptors>
+                                <descriptor>src/assembly/taxa.xml</descriptor>
                                 <descriptor>src/assembly/neo4j-graph-db.xml</descriptor>
                                 <descriptor>src/assembly/darwin-core.xml</descriptor>
                                 <descriptor>src/assembly/darwin-core-aggregated.xml</descriptor>
