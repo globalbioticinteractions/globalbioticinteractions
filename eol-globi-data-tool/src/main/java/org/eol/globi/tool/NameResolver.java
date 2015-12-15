@@ -56,7 +56,7 @@ public class NameResolver {
                 ", taxon." + NAME + "? as `" + NAME + "`" +
                 ", taxon." + STATUS_ID + "? as `" + STATUS_ID + "`" +
                 ", taxon." + STATUS_LABEL + "? as `" + STATUS_LABEL + "`" +
-                ", id(specimen)) as `specimenId`");
+                ", id(specimen) as `specimenId`");
         int count = 0;
         StopWatch watch = new StopWatch();
         watch.start();
