@@ -26,7 +26,8 @@ import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.junit.internal.matchers.StringContains.containsString;
 
-public class EOLServiceIntegrationTest {
+// test fail randonmly because EOL API is producing intermittent errors, see
+public class EOLServiceIT {
 
     private final EOLService eolService = new EOLService();
 

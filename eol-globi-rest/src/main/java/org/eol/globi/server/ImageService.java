@@ -2,6 +2,7 @@ package org.eol.globi.server;
 
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.TaxonImage;
+import org.eol.globi.domain.TaxonomyProvider;
 import org.eol.globi.service.EOLTaxonImageService;
 import org.eol.globi.service.ImageSearch;
 import org.eol.globi.service.TaxonUtil;
@@ -20,7 +21,17 @@ import java.util.Map;
 
 @Controller
 public class ImageService {
-    private ImageSearch imageSearch = new EOLTaxonImageService();
+    private ImageSearch imageSearch = new ImageSearch() {
+        @Override
+        public TaxonImage lookupImageForExternalId(String externalId) throws IOException {
+            return null;
+        }
+
+        @Override
+        public TaxonImage lookupImageURLs(TaxonomyProvider provider, String taxonId) throws IOException {
+            return null;
+        }
+    }; //new EOLTaxonImageService();
 
     @Autowired
     private TaxonSearch taxonSearch;

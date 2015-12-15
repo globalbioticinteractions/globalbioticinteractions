@@ -66,8 +66,7 @@ public class ImageServiceTest {
 
     @Test
     public void imagesForName() throws IOException {
-        TaxonImage image = imageService.findTaxonImagesForTaxonWithName("Homo sapiens");
-        assertThat(image, is(notNullValue()));
+        assertThat(imageService.findTaxonImagesForTaxonWithName("Homo sapiens"), is(notNullValue()));
     }
 
     @Test
