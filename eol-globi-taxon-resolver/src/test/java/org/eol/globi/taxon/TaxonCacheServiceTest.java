@@ -56,5 +56,19 @@ public class TaxonCacheServiceTest {
         assertThat(enrichedTaxon.getExternalId(), is("EOL:1276240"));
     }
 
+     @Test
+    public void enrichByIdGzip() throws PropertyEnricherException {
+        Map<String, String> properties = new HashMap<String, String>() {
+            {
+                put(PropertyAndValueDictionary.EXTERNAL_ID, "EOL:1276240");
+            }
+        };
+        final TaxonCacheService taxonCacheService = new TaxonCacheService("taxonCache.csv.gz", "taxonMap.csv.gz");
+        Map<String, String> enrich = taxonCacheService.enrich(properties);
+        Taxon enrichedTaxon = TaxonUtil.mapToTaxon(enrich);
+        assertThat(enrichedTaxon.getName(), is("Anas crecca carolinensis"));
+        assertThat(enrichedTaxon.getExternalId(), is("EOL:1276240"));
+    }
+
 
 }

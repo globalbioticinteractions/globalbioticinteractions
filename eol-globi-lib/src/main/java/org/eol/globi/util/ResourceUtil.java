@@ -15,6 +15,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.util.zip.GZIPInputStream;
 
 public class ResourceUtil {
 
@@ -40,6 +41,9 @@ public class ResourceUtil {
                     is = new FileInputStream(new File(uri));
                 }
             }
+        }
+        if (StringUtils.endsWith(resource, ".gz")) {
+            is = new GZIPInputStream(is);
         }
         return is;
     }

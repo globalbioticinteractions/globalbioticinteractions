@@ -30,7 +30,7 @@ public class GraphExporterTest extends GraphDBTestCase {
         resolveNames();
         try {
             new GraphExporter().export(getGraphDb(), tmpDirPath.getAbsolutePath() + "/");
-            assertThat(tmpDirPath.list().length, is(5));
+            assertThat(tmpDirPath.list().length, is(3));
         } finally {
             FileUtils.deleteQuietly(tmpDirPath);
         }
