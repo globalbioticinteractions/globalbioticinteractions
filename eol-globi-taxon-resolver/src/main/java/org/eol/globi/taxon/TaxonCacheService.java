@@ -25,7 +25,6 @@ public class TaxonCacheService implements PropertyEnricher {
     private static final Log LOG = LogFactory.getLog(TaxonCacheService.class);
 
     private HTreeMap<String, Map<String, String>> taxaById = null;
-    private HTreeMap<String, Map<String, String>> taxaByName = null;
     private HTreeMap<String, List<Map<String, String>>> taxaMapById = null;
     private HTreeMap<String, List<Map<String, String>>> taxaMapByName = null;
     private String taxonCacheResource;
@@ -66,7 +65,7 @@ public class TaxonCacheService implements PropertyEnricher {
     }
 
     public void lazyInit() throws PropertyEnricherException {
-        if (taxaById == null || taxaByName == null) {
+        if (taxaById == null || taxaMapById == null || taxaMapByName == null) {
             init();
         }
     }
