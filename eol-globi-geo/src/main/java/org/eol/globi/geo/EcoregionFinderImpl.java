@@ -6,6 +6,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eol.globi.data.CharsetConstant;
+import org.eol.globi.util.ResourceUtil;
 import org.geotools.data.FileDataStore;
 import org.geotools.data.FileDataStoreFinder;
 import org.geotools.data.simple.SimpleFeatureCollection;
@@ -15,7 +16,6 @@ import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
@@ -133,13 +133,9 @@ public class EcoregionFinderImpl implements EcoregionFinder {
     }
 
     private URL getDataStoreURLForShapeFile(String shapeFile) {
-        URI resourceURI = null;
+
         try {
-            String shapeFileDir = System.getProperty("shapefiles.dir");
-            if (StringUtils.isNotBlank(shapeFileDir)) {
-                File file = new File(shapeFileDir + shapeFile);
-                resourceURI = file.toURI();
-            }
+            URI resourceURI = ResourceUtil.inShapeFileDir(shapeFile);
 
             if (null == resourceURI) {
                 resourceURI = EcoregionFinderFactoryImpl.class.getResource(shapeFile).toURI();

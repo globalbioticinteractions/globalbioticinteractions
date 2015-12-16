@@ -51,7 +51,8 @@ public class NameResolver {
         LOG.info("name resolving started...");
         ExecutionEngine engine = new ExecutionEngine(graphService);
         ExecutionResult result = engine.execute("START study = node:studies('*:*') " +
-                "MATCH study-[:COLLECTED]->specimen-[:ORIGINALLY_DESCRIBED_AS]->taxon " +
+                "MATCH study-[:COLLECTED]->specimen-[:ORIGINALLY_DESCRIBED_AS]->taxon, specimen-[?:CLASSIFIED_AS]->resolvedTaxon " +
+                "WHERE not(has(resolvedTaxon.name)) " +
                 "RETURN taxon." + EXTERNAL_ID + "? as `" + EXTERNAL_ID + "`" +
                 ", taxon." + NAME + "? as `" + NAME + "`" +
                 ", taxon." + STATUS_ID + "? as `" + STATUS_ID + "`" +

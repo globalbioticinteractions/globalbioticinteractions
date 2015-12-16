@@ -43,7 +43,7 @@ public class TaxonomyImporter {
     }
 
     protected String formatProgressString(double avg) {
-        return String.format("%d (%.1f%%), %.1f terms/s", getCounter(), 100.0 * (float) getCounter() / (float) getParser().getExpectedMaxTerms(), avg);
+        return String.format("%d  %.1f terms/s", getCounter(), avg);
     }
 
     private void count() {

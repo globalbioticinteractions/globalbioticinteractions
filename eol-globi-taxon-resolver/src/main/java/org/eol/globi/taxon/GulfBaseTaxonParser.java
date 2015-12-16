@@ -48,8 +48,4 @@ public class GulfBaseTaxonParser implements TaxonParser {
 
     }
 
-    @Override
-    public int getExpectedMaxTerms() {
-        return 14469;
-    }
 }

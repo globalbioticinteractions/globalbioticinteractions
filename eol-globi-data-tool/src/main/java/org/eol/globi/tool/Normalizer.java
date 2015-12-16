@@ -24,6 +24,8 @@ import org.eol.globi.opentree.OpenTreeTaxonIndex;
 import org.eol.globi.service.DOIResolverImpl;
 import org.eol.globi.service.EcoregionFinderProxy;
 import org.eol.globi.service.PropertyEnricherException;
+import org.eol.globi.taxon.TaxonCacheService;
+import org.eol.globi.taxon.CorrectionService;
 import org.eol.globi.util.HttpUtil;
 import org.neo4j.graphdb.GraphDatabaseService;
 
@@ -37,6 +39,7 @@ public class Normalizer {
     private static final Log LOG = LogFactory.getLog(Normalizer.class);
     public static final String OPTION_HELP = "h";
     public static final String OPTION_SKIP_IMPORT = "skipImport";
+    public static final String OPTION_SKIP_TAXON_CACHE = "skipTaxonCache";
     public static final String OPTION_SKIP_RESOLVE = "skipResolve";
     public static final String OPTION_SKIP_EXPORT = "skipExport";
     public static final String OPTION_SKIP_LINK_THUMBNAILS = "skipLinkThumbnails";
@@ -66,6 +69,7 @@ public class Normalizer {
         Options options = new Options();
         options.addOption(OPTION_SKIP_IMPORT, false, "skip the import of all GloBI datasets");
         options.addOption(OPTION_SKIP_EXPORT, false, "skip the export for GloBI datasets to aggregated archives.");
+        options.addOption(OPTION_SKIP_TAXON_CACHE, false, "skip usage of taxon cache");
         options.addOption(OPTION_SKIP_RESOLVE, false, "skip taxon name resolve to external taxonomies");
         options.addOption(OPTION_SKIP_LINK_THUMBNAILS, false, "skip linking of names to thumbnails");
         options.addOption(OPTION_SKIP_LINK, false, "skip taxa cross-reference step");
@@ -80,56 +84,80 @@ public class Normalizer {
     public void run(CommandLine cmdLine) throws StudyImporterException {
         final GraphDatabaseService graphService = GraphService.getGraphService("./");
         try {
-
-            if (cmdLine == null || !cmdLine.hasOption(OPTION_SKIP_IMPORT)) {
-                Collection<Class<? extends StudyImporter>> importers = StudyImporterFactory.getOpenImporters();
-                if (shouldUseDarkData(cmdLine)) {
-                    LOG.info("adding dark importers...");
-                    ArrayList<Class<? extends StudyImporter>> list = new ArrayList<Class<? extends StudyImporter>>();
-                    list.addAll(importers);
-                    list.addAll(StudyImporterFactory.getDarkImporters());
-                    importers = Collections.unmodifiableList(list);
-                }
-                importData(graphService, importers);
-            } else {
-                LOG.info("skipping data import...");
-            }
-
-            if (cmdLine == null || !cmdLine.hasOption(OPTION_SKIP_RESOLVE)) {
-                new NameResolver(graphService).resolve();
-            } else {
-                LOG.info("skipping taxa resolving ...");
-            }
-
-            if (cmdLine == null || !cmdLine.hasOption(OPTION_SKIP_LINK)) {
-                linkTaxa(graphService);
-            } else {
-                LOG.info("skipping taxa linking ...");
-            }
-
-            if (cmdLine == null || !cmdLine.hasOption(OPTION_SKIP_LINK_THUMBNAILS)) {
-                new ImageLinker().linkImages(graphService, null);
-            } else {
-                LOG.info("skipping linking of taxa to thumbnails ...");
-            }
-
-
-            if (cmdLine == null || !cmdLine.hasOption(OPTION_SKIP_REPORT)) {
-                new ReportGenerator(graphService).run();
-            } else {
-                LOG.info("skipping report generation ...");
-            }
-
-            if (cmdLine == null || !cmdLine.hasOption(OPTION_SKIP_EXPORT)) {
-                exportData(graphService, "./");
-            } else {
-                LOG.info("skipping data export...");
-            }
+            importDatasets(cmdLine, graphService);
+            resolveAndLinkTaxa(cmdLine, graphService);
+            generateReports(cmdLine, graphService);
+            exportData(cmdLine, graphService);
         } finally {
             graphService.shutdown();
             HttpUtil.shutdown();
         }
 
+    }
+
+    public void exportData(CommandLine cmdLine, GraphDatabaseService graphService) throws StudyImporterException {
+        if (cmdLine == null || !cmdLine.hasOption(OPTION_SKIP_EXPORT)) {
+            exportData(graphService, "./");
+        } else {
+            LOG.info("skipping data export...");
+        }
+    }
+
+    public void generateReports(CommandLine cmdLine, GraphDatabaseService graphService) {
+        if (cmdLine == null || !cmdLine.hasOption(OPTION_SKIP_REPORT)) {
+            new ReportGenerator(graphService).run();
+        } else {
+            LOG.info("skipping report generation ...");
+        }
+    }
+
+    public void importDatasets(CommandLine cmdLine, GraphDatabaseService graphService) {
+        if (cmdLine == null || !cmdLine.hasOption(OPTION_SKIP_IMPORT)) {
+            Collection<Class<? extends StudyImporter>> importers = StudyImporterFactory.getOpenImporters();
+            if (shouldUseDarkData(cmdLine)) {
+                LOG.info("adding dark importers...");
+                ArrayList<Class<? extends StudyImporter>> list = new ArrayList<Class<? extends StudyImporter>>();
+                list.addAll(importers);
+                list.addAll(StudyImporterFactory.getDarkImporters());
+                importers = Collections.unmodifiableList(list);
+            }
+            importData(graphService, importers);
+        } else {
+            LOG.info("skipping data import...");
+        }
+    }
+
+    public void resolveAndLinkTaxa(CommandLine cmdLine, GraphDatabaseService graphService) {
+        if (cmdLine == null || !cmdLine.hasOption(OPTION_SKIP_TAXON_CACHE)) {
+            LOG.info("resolving names with taxon cache ...");
+            new NameResolver(graphService, new TaxonCacheService("taxa/taxonCache.csv.gz", "taxa/taxonMap.csv.gz"), new CorrectionService() {
+                @Override
+                public String correct(String taxonName) {
+                    return taxonName;
+                }
+            }).resolve();
+            LOG.info("resolving names with taxon cache done.");
+        } else {
+            LOG.info("skipping taxon cache ...");
+        }
+
+        if (cmdLine == null || !cmdLine.hasOption(OPTION_SKIP_RESOLVE)) {
+            new NameResolver(graphService).resolve();
+        } else {
+            LOG.info("skipping taxa resolving ...");
+        }
+
+        if (cmdLine == null || !cmdLine.hasOption(OPTION_SKIP_LINK)) {
+            linkTaxa(graphService);
+        } else {
+            LOG.info("skipping taxa linking ...");
+        }
+
+        if (cmdLine == null || !cmdLine.hasOption(OPTION_SKIP_LINK_THUMBNAILS)) {
+            new ImageLinker().linkImages(graphService, null);
+        } else {
+            LOG.info("skipping linking of taxa to thumbnails ...");
+        }
     }
 
     protected boolean shouldUseDarkData(CommandLine cmdLine) {

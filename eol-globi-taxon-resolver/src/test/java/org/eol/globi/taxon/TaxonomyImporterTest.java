@@ -18,11 +18,6 @@ public class TaxonomyImporterTest {
             public void parse(BufferedReader reader, TaxonImportListener listener) throws IOException {
 
             }
-
-            @Override
-            public int getExpectedMaxTerms() {
-                return 798595;
-            }
         }, new TaxonReaderFactory() {
             @Override
             public Map<String, BufferedReader> getAllReaders() throws IOException {
@@ -32,11 +27,11 @@ public class TaxonomyImporterTest {
         taxonomyImporter.setCounter(123);
         String s = taxonomyImporter.formatProgressString(12.2);
 
-        assertThat(s, is("123 (0.0%), 12.2 terms/s"));
+        assertThat(s, is("123 12.2 terms/s"));
 
-        taxonomyImporter.setCounter(taxonomyImporter.getParser().getExpectedMaxTerms());
+        taxonomyImporter.setCounter(798595);
         s = taxonomyImporter.formatProgressString(12.2);
-        assertThat(s, is("798595 (100.0%), 12.2 terms/s"));
+        assertThat(s, is("798595 12.2 terms/s"));
     }
 
 }

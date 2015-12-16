@@ -69,4 +69,9 @@ public class CSVUtil {
     public static void escapeQuotes(StringBuilder resultBuilder, JsonNode node) {
         resultBuilder.append(StringUtils.replace(node.asText(), "\"", "\"\""));
     }
+
+    public static String valueOrNull(LabeledCSVParser labeledCSVParser, String columnName) {
+        String value = labeledCSVParser.getValueByLabel(columnName);
+        return StringUtils.isBlank(value) ? null : value;
+    }
 }

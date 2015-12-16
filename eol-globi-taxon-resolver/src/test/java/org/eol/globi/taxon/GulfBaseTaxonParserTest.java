@@ -41,7 +41,6 @@ public class GulfBaseTaxonParserTest {
         assertThat(taxonTerm.getPath(), is("Animalia | Nemertea | Paleonemertea | Carinoma | Carinoma tremaphoros"));
         assertThat(taxonTerm.getPathNames(), is("kingdom | phylum | order | genus | species"));
 
-        assertThat(listener.count, is(taxonParser.getExpectedMaxTerms()));
     }
 
     @Test

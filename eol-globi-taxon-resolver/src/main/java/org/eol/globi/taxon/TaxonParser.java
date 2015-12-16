@@ -5,6 +5,4 @@ import java.io.IOException;
 
 public interface TaxonParser {
     void parse(BufferedReader reader, TaxonImportListener listener) throws IOException;
-
-    int getExpectedMaxTerms();
 }

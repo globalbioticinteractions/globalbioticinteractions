@@ -39,9 +39,9 @@ public class GraphExporter {
         } catch (IOException e) {
             throw new StudyImporterException("failed to create output dir [" + baseDir + "]", e);
         }
-        exportNames(studies, baseDir, new ExportTaxonMaps(), "taxa/taxaLinked.csv.gz");
-        exportNames(studies, baseDir, new ExportTaxonNames(), "taxa/taxa.csv.gz");
-        exportNames(studies, baseDir, new ExportUnmatchedTaxonNames(), "taxa/taxaUnmatched.csv");
+        exportNames(studies, baseDir, new ExportTaxonMaps(), "taxa/taxonMap.csv.gz");
+        exportNames(studies, baseDir, new ExportTaxonNames(), "taxa/taxonCache.csv.gz");
+        exportNames(studies, baseDir, new ExportUnmatchedTaxonNames(), "taxa/taxonUnmatched.csv");
         //exportDataOntology(studies, baseDir);
         exportDarwinCoreAggregatedByStudy(baseDir, studies);
         exportDarwinCoreAll(baseDir, studies);

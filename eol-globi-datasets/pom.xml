@@ -16,6 +16,7 @@
 
     <properties>
         <globi.tool.version>0.6-SNAPSHOT</globi.tool.version>
+        <globl.taxa.version>1.0-SNAPSHOT</globl.taxa.version>
         <shapefiles.dir>${project.build.directory}/shapefiles</shapefiles.dir>
         <data.dir>${project.build.directory}/data</data.dir>
     </properties>
@@ -66,7 +67,7 @@
                     <url>s3://globi/snapshot</url>
                     <skip>${skipTests}</skip>
                     <includes>
-                        **/taxa/*,**/${project.artifactId}-${project.version}*.tar.gz,**/${project.artifactId}-${project.version}*.zip
+                        **/taxa/taxon*,**/${project.artifactId}-${project.version}*.tar.gz,**/${project.artifactId}-${project.version}*.zip
                     </includes>
                 </configuration>
                 <executions>
@@ -167,6 +168,15 @@
                                             <type>tar.gz</type>
                                             <overWrite>false</overWrite>
                                             <outputDirectory>${shapefiles.dir}</outputDirectory>
+                                        </artifactItem>
+                                        <artifactItem>
+                                            <groupId>org.eol.globi</groupId>
+                                            <artifactId>eol-globi-datasets</artifactId>
+                                            <version>${globi.taxa.version}</version>
+                                            <classifier>taxa</classifier>
+                                            <type>tar.gz</type>
+                                            <overWrite>false</overWrite>
+                                            <outputDirectory>${shapefiles.dir}/taxa</outputDirectory>
                                         </artifactItem>
                                     </artifactItems>
                                     <outputDirectory>${project.build.directory}</outputDirectory>

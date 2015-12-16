@@ -18,6 +18,7 @@ import java.net.URI;
 
 public class ResourceUtil {
 
+    public static final String SHAPEFILES_DIR = "shapefiles.dir";
     private static final Log LOG = LogFactory.getLog(ResourceUtil.class);
 
     public static InputStream asInputStream(String resource, Class clazz) throws IOException {
@@ -32,7 +33,12 @@ public class ResourceUtil {
         } else {
             is = clazz.getResourceAsStream(resource);
             if (is == null) {
-                throw new IOException("failed to open study resource [" + resource + "]");
+                final URI uri = inShapeFileDir(resource);
+                if (uri == null) {
+                    throw new IOException("failed to open study resource [" + resource + "]");
+                } else {
+                    is = new FileInputStream(new File(uri));
+                }
             }
         }
         return is;
@@ -63,5 +69,15 @@ public class ResourceUtil {
         fos.flush();
         IOUtils.closeQuietly(fos);
         return new FileInputStream(tempFile);
+    }
+
+    public static URI inShapeFileDir(String shapeFile) {
+        URI resourceURI = null;
+        String shapeFileDir = System.getProperty(SHAPEFILES_DIR);
+        if (StringUtils.isNotBlank(shapeFileDir)) {
+            File file = new File(shapeFileDir + shapeFile);
+            resourceURI = file.toURI();
+        }
+        return resourceURI;
     }
 }
