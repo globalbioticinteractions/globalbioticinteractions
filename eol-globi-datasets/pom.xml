@@ -96,7 +96,7 @@
                 <normalizer.arg.3>-skipExport</normalizer.arg.3>
                 <normalizer.arg.4>-skipExport</normalizer.arg.4>
                 <normalizer.arg.5>-skipExport</normalizer.arg.5>
-                <normalizer.arg.5>-skipExport</normalizer.arg.5>
+                <normalizer.arg.6>-skipExport</normalizer.arg.6>
             </properties>
             <build>
                 <plugins>
