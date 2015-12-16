@@ -170,8 +170,8 @@
                                             <outputDirectory>${shapefiles.dir}</outputDirectory>
                                         </artifactItem>
                                         <artifactItem>
-                                            <groupId>org.eol.globi</groupId>
-                                            <artifactId>eol-globi-datasets</artifactId>
+                                            <groupId>${project.groupId}</groupId>
+                                            <artifactId>${project.artifactId}</artifactId>
                                             <version>${globi.taxa.version}</version>
                                             <classifier>taxa</classifier>
                                             <type>tar.gz</type>
@@ -250,7 +250,7 @@
                                     <artifactItems>
                                         <artifactItem>
                                             <groupId>${project.groupId}</groupId>
-                                            <artifactId>eol-globi-datasets</artifactId>
+                                            <artifactId>${project.artifactId}</artifactId>
                                             <version>${project.version}</version>
                                             <classifier>neo4j-graph-db</classifier>
                                             <type>tar.gz</type>
@@ -258,8 +258,8 @@
                                             <outputDirectory>${data.dir}</outputDirectory>
                                         </artifactItem>
                                         <artifactItem>
-                                            <groupId>org.eol.globi</groupId>
-                                            <artifactId>eol-globi-datasets</artifactId>
+                                            <groupId>${project.groupId}</groupId>
+                                            <artifactId>${project.artifactId}</artifactId>
                                             <version>${globi.taxa.version}</version>
                                             <classifier>taxa</classifier>
                                             <type>tar.gz</type>
