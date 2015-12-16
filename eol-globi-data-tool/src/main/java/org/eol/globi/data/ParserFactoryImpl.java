@@ -13,13 +13,7 @@ public class ParserFactoryImpl implements ParserFactory {
     public LabeledCSVParser createParser(String studyResource, String characterEncoding) throws IOException {
         InputStream is = ResourceUtil.asInputStream(studyResource, ParserFactoryImpl.class);
 
-        Reader reader;
-        if (studyResource.endsWith(".gz")) {
-            reader = FileUtils.getBufferedReader(is, characterEncoding);
-        } else {
-            reader = FileUtils.getUncompressedBufferedReader(is, characterEncoding);
-        }
-        return CSVUtil.createLabeledCSVParser(reader);
+        return CSVUtil.createLabeledCSVParser(FileUtils.getUncompressedBufferedReader(is, characterEncoding));
 
     }
 

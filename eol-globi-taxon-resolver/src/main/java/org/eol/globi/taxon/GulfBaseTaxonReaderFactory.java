@@ -2,6 +2,7 @@ package org.eol.globi.taxon;
 
 import org.eol.globi.data.CharsetConstant;
 import org.eol.globi.data.FileUtils;
+import org.eol.globi.util.ResourceUtil;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -28,11 +29,11 @@ public class GulfBaseTaxonReaderFactory implements TaxonReaderFactory {
         Map<String, BufferedReader> readers = new HashMap<String, BufferedReader>();
         for (String filename : DATA_FILES) {
             String resourceName = "gulfbase/" + filename;
-            InputStream resourceAsStream = getClass().getResourceAsStream(resourceName);
+            InputStream resourceAsStream = ResourceUtil.asInputStream(resourceName, GulfBaseTaxonReaderFactory.class);
             if (null == resourceAsStream) {
                 throw new IOException("failed to open resource with name [" + resourceName + "]");
             }
-            readers.put(resourceName, FileUtils.getBufferedReader(resourceAsStream, CharsetConstant.UTF8));
+            readers.put(resourceName, FileUtils.getUncompressedBufferedReader(resourceAsStream, CharsetConstant.UTF8));
         }
         return readers;
     }
