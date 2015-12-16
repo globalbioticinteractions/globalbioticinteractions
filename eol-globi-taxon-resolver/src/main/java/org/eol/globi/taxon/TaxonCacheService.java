@@ -77,13 +77,13 @@ public class TaxonCacheService implements PropertyEnricher {
                 .compressionEnable()
                 .transactionDisable()
                 .make();
-        final HTreeMap<String, Map<String, String>> lookupById = db
+        taxaById = db
                 .createHashMap("taxonCacheById")
                 .make();
-        final HTreeMap<String, List<Map<String, String>>> mappingById = db
+        taxaMapById = db
                 .createHashMap("taxonMappingById")
                 .make();
-        final HTreeMap<String, List<Map<String, String>>> mappingByName = db
+        taxaMapByName = db
                 .createHashMap("taxonMappingByName")
                 .make();
 
@@ -97,13 +97,12 @@ public class TaxonCacheService implements PropertyEnricher {
             public void addTaxon(Taxon taxon) {
                 final String externalId = taxon.getExternalId();
                 if (StringUtils.isNotBlank(externalId)) {
-                    lookupById.put(externalId, TaxonUtil.taxonToMap(taxon));
+                    taxaById.put(externalId, TaxonUtil.taxonToMap(taxon));
                 }
             }
 
             @Override
             public void finish() {
-                taxaById = lookupById;
             }
         };
         try {
@@ -124,14 +123,15 @@ public class TaxonCacheService implements PropertyEnricher {
 
                 @Override
                 public void addMapping(final Taxon srcTaxon, Taxon targetTaxon) {
-                    populate(srcTaxon.getExternalId(), targetTaxon.getExternalId(), taxaById, mappingById);
-                    populate(srcTaxon.getName(), targetTaxon.getExternalId(), taxaById, mappingByName);
+                    populate(srcTaxon.getExternalId(), targetTaxon.getExternalId(), taxaById, taxaMapById);
+                    populate(srcTaxon.getName(), targetTaxon.getExternalId(), taxaById, taxaMapByName);
                 }
 
                 @Override
                 public void finish() {
-                    taxaMapById = mappingById;
-                    taxaMapByName = mappingByName;
+                    LOG.info("taxon cache contains [" + taxaById.size() + "] items");
+                    LOG.info("taxon cache id map has [" + taxaMapById.size() + "] mappings");
+                    LOG.info("taxon cache name map has [" + taxaMapByName.size() + "] mappings");
                 }
             });
         } catch (IOException e) {
