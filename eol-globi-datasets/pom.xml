@@ -53,6 +53,7 @@
                         <argument>${normalizer.arg.3}</argument>
                         <argument>${normalizer.arg.4}</argument>
                         <argument>${normalizer.arg.5}</argument>
+                        <argument>${normalizer.arg.6}</argument>
                     </arguments>
                     <workingDirectory>${data.dir}</workingDirectory>
                 </configuration>
@@ -94,6 +95,7 @@
                 <normalizer.arg.2>-skipExport</normalizer.arg.2>
                 <normalizer.arg.3>-skipExport</normalizer.arg.3>
                 <normalizer.arg.4>-skipExport</normalizer.arg.4>
+                <normalizer.arg.5>-skipExport</normalizer.arg.5>
                 <normalizer.arg.5>-skipExport</normalizer.arg.5>
             </properties>
             <build>
@@ -214,6 +216,7 @@
                 <normalizer.arg.3>-skipLink</normalizer.arg.3>
                 <normalizer.arg.4>-skipLinkThumbnails</normalizer.arg.4>
                 <normalizer.arg.5>-skipReport</normalizer.arg.5>
+                <normalizer.arg.6>-skipTaxonCache</normalizer.arg.6>
             </properties>
             <build>
                 <plugins>
@@ -256,15 +259,6 @@
                                             <type>tar.gz</type>
                                             <overWrite>false</overWrite>
                                             <outputDirectory>${data.dir}</outputDirectory>
-                                        </artifactItem>
-                                        <artifactItem>
-                                            <groupId>${project.groupId}</groupId>
-                                            <artifactId>${project.artifactId}</artifactId>
-                                            <version>${globi.taxa.version}</version>
-                                            <classifier>taxa</classifier>
-                                            <type>tar.gz</type>
-                                            <overWrite>false</overWrite>
-                                            <outputDirectory>${shapefiles.dir}/taxa</outputDirectory>
                                         </artifactItem>
                                     </artifactItems>
                                     <outputDirectory>${project.build.directory}</outputDirectory>
