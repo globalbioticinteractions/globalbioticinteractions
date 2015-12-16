@@ -82,12 +82,6 @@ public class NameResolver {
                     LOG.warn("failed to create taxon with name [" + taxon.getName() + "] and id [" + taxon.getExternalId() + "]", e);
                 }
             }
-
-            if (count % 100 == 0) {
-                if (count > 1) {
-                    LOG.info("name resolving update: resolved [" + count + "] names at " + getProgressMsg(count, watch));
-                }
-            }
             count++;
         }
         iterator.close();
