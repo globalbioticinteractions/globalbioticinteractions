@@ -1,6 +1,8 @@
 package org.eol.globi.taxon;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.service.PropertyEnricher;
@@ -20,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 public class TaxonCacheService implements PropertyEnricher {
+    private static final Log LOG = LogFactory.getLog(TaxonCacheService.class);
 
     private HTreeMap<String, Map<String, String>> taxaById = null;
     private HTreeMap<String, Map<String, String>> taxaByName = null;
@@ -64,71 +67,78 @@ public class TaxonCacheService implements PropertyEnricher {
 
     public void lazyInit() throws PropertyEnricherException {
         if (taxaById == null || taxaByName == null) {
-            DB db = DBMaker
-                    .newMemoryDirectDB()
-                    .compressionEnable()
-                    .transactionDisable()
-                    .make();
-            final HTreeMap<String, Map<String, String>> lookupById = db
-                    .createHashMap("taxonCacheById")
-                    .make();
-            final HTreeMap<String, List<Map<String, String>>> mappingById = db
-                    .createHashMap("taxonMappingById")
-                    .make();
-            final HTreeMap<String, List<Map<String, String>>> mappingByName = db
-                    .createHashMap("taxonMappingByName")
-                    .make();
+            init();
+        }
+    }
 
-            TaxonCacheListener taxonListener = new TaxonCacheListener() {
+    public void init() throws PropertyEnricherException {
+        LOG.info("taxon cache initializing...");
+        DB db = DBMaker
+                .newMemoryDirectDB()
+                .compressionEnable()
+                .transactionDisable()
+                .make();
+        final HTreeMap<String, Map<String, String>> lookupById = db
+                .createHashMap("taxonCacheById")
+                .make();
+        final HTreeMap<String, List<Map<String, String>>> mappingById = db
+                .createHashMap("taxonMappingById")
+                .make();
+        final HTreeMap<String, List<Map<String, String>>> mappingByName = db
+                .createHashMap("taxonMappingByName")
+                .make();
+
+        TaxonCacheListener taxonListener = new TaxonCacheListener() {
+            @Override
+            public void start() {
+
+            }
+
+            @Override
+            public void addTaxon(Taxon taxon) {
+                final String externalId = taxon.getExternalId();
+                if (StringUtils.isNotBlank(externalId)) {
+                    lookupById.put(externalId, TaxonUtil.taxonToMap(taxon));
+                }
+            }
+
+            @Override
+            public void finish() {
+                taxaById = lookupById;
+            }
+        };
+        try {
+            BufferedReader reader = createBufferedReader(taxonCacheResource);
+            new TaxonCacheParser().parse(reader, taxonListener);
+        } catch (IOException e) {
+            throw new PropertyEnricherException("failed to parse [" + taxonCacheResource + "]", e);
+        }
+
+        try {
+            BufferedReader reader = createBufferedReader(taxonMapResource);
+            new TaxonMapParser().parse(reader, new TaxonMapListener() {
+
                 @Override
                 public void start() {
 
                 }
 
                 @Override
-                public void addTaxon(Taxon taxon) {
-                    lookupById.put(taxon.getExternalId(), TaxonUtil.taxonToMap(taxon));
+                public void addMapping(final Taxon srcTaxon, Taxon targetTaxon) {
+                    populate(srcTaxon.getExternalId(), targetTaxon.getExternalId(), taxaById, mappingById);
+                    populate(srcTaxon.getName(), targetTaxon.getExternalId(), taxaById, mappingByName);
                 }
 
                 @Override
                 public void finish() {
-                    taxaById = lookupById;
+                    taxaMapById = mappingById;
+                    taxaMapByName = mappingByName;
                 }
-            };
-            try {
-                BufferedReader reader = createBufferedReader(taxonCacheResource);
-                new TaxonCacheParser().parse(reader, taxonListener);
-            } catch (IOException e) {
-                throw new PropertyEnricherException("failed to parse [" + taxonCacheResource + "]", e);
-            }
-
-            try {
-                BufferedReader reader = createBufferedReader(taxonMapResource);
-                new TaxonMapParser().parse(reader, new TaxonMapListener() {
-
-                    @Override
-                    public void start() {
-
-                    }
-
-                    @Override
-                    public void addMapping(final Taxon srcTaxon, Taxon targetTaxon) {
-                        populate(srcTaxon.getExternalId(), targetTaxon.getExternalId(), taxaById, mappingById);
-                        populate(srcTaxon.getName(), targetTaxon.getExternalId(), taxaById, mappingByName);
-                    }
-
-                    @Override
-                    public void finish() {
-                        taxaMapById = mappingById;
-                        taxaMapByName = mappingByName;
-                    }
-                });
-            } catch (IOException e) {
-                throw new PropertyEnricherException("failed to parse [" + taxonCacheResource + "]", e);
-            }
-
-
+            });
+        } catch (IOException e) {
+            throw new PropertyEnricherException("failed to parse [" + taxonCacheResource + "]", e);
         }
+        LOG.info("taxon cache initialized.");
     }
 
     public void populate(String sourceValue, String targetValue, Map<String, Map<String, String>> taxaBy, Map<String, List<Map<String, String>>> mappingBy) {
