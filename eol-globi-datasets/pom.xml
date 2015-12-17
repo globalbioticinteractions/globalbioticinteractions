@@ -86,7 +86,7 @@
 
     <profiles>
         <profile>
-            <id>import</id>
+            <id>compile</id>
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
@@ -175,7 +175,7 @@
                         <version>2.4</version>
                         <configuration>
                             <descriptors>
-                                <descriptor>src/assembly/neo4j-graph-db.xml</descriptor>
+                                <descriptor>src/assembly/neo4j-compiled.xml</descriptor>
                             </descriptors>
                         </configuration>
                         <executions>
@@ -193,7 +193,7 @@
             </build>
         </profile>
         <profile>
-            <id>link-and-report</id>
+            <id>link</id>
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
@@ -242,7 +242,7 @@
                                             <groupId>${project.groupId}</groupId>
                                             <artifactId>${project.artifactId}</artifactId>
                                             <version>${project.version}</version>
-                                            <classifier>neo4j-graph-db</classifier>
+                                            <classifier>neo4j-compiled</classifier>
                                             <type>tar.gz</type>
                                             <overWrite>false</overWrite>
                                             <outputDirectory>${data.dir}</outputDirectory>
