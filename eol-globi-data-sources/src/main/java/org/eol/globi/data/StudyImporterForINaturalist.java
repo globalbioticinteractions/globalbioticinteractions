@@ -219,7 +219,7 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
         }
         long observationId = jsonNode.get("observation_id").getLongValue();
         if (targetTaxon == null) {
-            LOG.warn("skipping interaction with missing target taxon name for observation [" + observationId + "]");
+            LOG.debug("skipping interaction with missing target taxon name for observation [" + observationId + "]");
         } else if (sourceTaxon == null) {
             LOG.warn("cannot create interaction with missing source taxon name for observation with id [" + observationId + "]");
         } else {
@@ -228,12 +228,12 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
             String interactionTypeName = observationField.get("name").getTextValue();
             Integer interactionTypeId = observationField.get("id").getIntValue();
             if (typesIgnored.contains(interactionTypeId)) {
-                LOG.warn("ignoring taxon observation field type [" + interactionTypeName + "] with id [" + interactionTypeId + "] for observation with id [" + observationId + "]");
+                LOG.debug("ignoring taxon observation field type [" + interactionTypeName + "] with id [" + interactionTypeId + "] for observation with id [" + observationId + "]");
             } else {
                 InteractType interactType = typeMap.get(interactionTypeId);
                 if (interactType == null) {
                     unsupportedInteractionTypes.put(observationId, interactionTypeName + ":" + interactionTypeId);
-                    LOG.warn("no interaction type associated with observation field type [" + interactionTypeName + "] with id [" + interactionTypeId + "] for observation with id [" + observationId + "]");
+                    LOG.debug("no interaction type associated with observation field type [" + interactionTypeName + "] with id [" + interactionTypeId + "] for observation with id [" + observationId + "]");
                 } else {
                     handleObservation(jsonNode, targetTaxon, observationId, interactionDataType, interactType, interactionTypeName, sourceTaxon);
                 }
