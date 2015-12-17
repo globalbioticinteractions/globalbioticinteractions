@@ -54,7 +54,7 @@
                                 <artifactItem>
                                     <groupId>org.eol.globi.opentree</groupId>
                                     <artifactId>opentree-trees</artifactId>
-                                    <version>0.1</version>
+                                    <version>4.0</version>
                                     <type>tar.gz</type>
                                     <overWrite>false</overWrite>
                                     <outputDirectory>${shapefiles.dir}</outputDirectory>

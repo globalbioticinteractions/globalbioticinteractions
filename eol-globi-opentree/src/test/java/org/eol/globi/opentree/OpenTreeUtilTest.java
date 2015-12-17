@@ -14,10 +14,10 @@ public class OpenTreeUtilTest {
     @Test
     public void extractIdsFromTree() {
         TestTaxonListener listener = new TestTaxonListener();
-        InputStream inputStream = getClass().getResourceAsStream("/draftversion1.tre");
+        InputStream inputStream = getClass().getResourceAsStream("/otl.tre");
         assertThat(inputStream, is(notNullValue()));
         OpenTreeUtil.extractIdsFromTree(listener, inputStream);
-        assertThat(listener.getCount(), is(2426905));
+        assertThat(listener.getCount(), is(2628157));
 
     }
 
@@ -27,7 +27,7 @@ public class OpenTreeUtilTest {
         InputStream inputStream = getClass().getResourceAsStream("/ott/taxonomy.tsv");
         assertThat(inputStream, is(notNullValue()));
         OpenTreeUtil.readTaxonomy(testTaxonListener, inputStream);
-        assertThat(testTaxonListener.getCount(), is(5510152));
+        assertThat(testTaxonListener.getCount(), is(5579788));
     }
 
     private class TestTaxonListener implements TaxonListener {
