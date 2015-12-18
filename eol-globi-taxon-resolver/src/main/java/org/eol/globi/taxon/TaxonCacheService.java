@@ -31,7 +31,8 @@ public class TaxonCacheService implements PropertyEnricher {
     private HTreeMap<String, List<Map<String, String>>> taxaMapByName = null;
     private String taxonCacheResource;
     private final String taxonMapResource;
-    private String cacheFilename;
+
+    private File cacheDir = new File("./mapdb/");
 
     public TaxonCacheService(String taxonCacheResource, String taxonMapResource) {
         this.taxonCacheResource = taxonCacheResource;
@@ -75,9 +76,13 @@ public class TaxonCacheService implements PropertyEnricher {
 
     public void init() throws PropertyEnricherException {
         LOG.info("taxon cache initializing...");
-        cacheFilename = "./mapdb/taxoncache";
+        if (!cacheDir.exists()) {
+            if (!cacheDir.mkdirs()) {
+                throw new PropertyEnricherException("failed to create cache dir at [" + cacheDir.getAbsolutePath() + "]");
+            }
+        }
         DB db = DBMaker
-                .newFileDB(new File(cacheFilename))
+                .newFileDB(new File(cacheDir, "taxonCache"))
                 .compressionEnable()
                 .transactionDisable()
                 .closeOnJvmShutdown()
@@ -178,9 +183,13 @@ public class TaxonCacheService implements PropertyEnricher {
         if (taxaMapByName != null) {
             taxaMapByName.close();
         }
-        final File cacheDirectory = new File(cacheFilename);
-        if (cacheDirectory.exists()) {
-            FileUtils.deleteQuietly(cacheDirectory);
+        if (cacheDir != null && cacheDir.exists()) {
+            FileUtils.deleteQuietly(cacheDir);
         }
     }
+
+    public void setCacheDir(File cacheFilename) {
+        this.cacheDir = cacheFilename;
+    }
+
 }
