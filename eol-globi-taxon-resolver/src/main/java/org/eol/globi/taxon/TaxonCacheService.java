@@ -84,7 +84,6 @@ public class TaxonCacheService implements PropertyEnricher {
         }
         DB db = DBMaker
                 .newFileDB(new File(cacheDir, "taxonCache"))
-                .compressionEnable()
                 .transactionDisable()
                 .closeOnJvmShutdown()
                 .make();
