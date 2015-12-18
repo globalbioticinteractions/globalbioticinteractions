@@ -10,6 +10,7 @@ import org.eol.globi.service.PropertyEnricher;
 import org.eol.globi.service.PropertyEnricherException;
 import org.eol.globi.service.TaxonUtil;
 import org.eol.globi.util.ResourceUtil;
+import org.mapdb.BTreeMap;
 import org.mapdb.DB;
 import org.mapdb.DBMaker;
 import org.mapdb.HTreeMap;
@@ -26,9 +27,9 @@ import java.util.Map;
 public class TaxonCacheService implements PropertyEnricher {
     private static final Log LOG = LogFactory.getLog(TaxonCacheService.class);
 
-    private HTreeMap<String, Map<String, String>> taxaById = null;
-    private HTreeMap<String, List<Map<String, String>>> taxaMapById = null;
-    private HTreeMap<String, List<Map<String, String>>> taxaMapByName = null;
+    private BTreeMap<String, Map<String, String>> taxaById = null;
+    private BTreeMap<String, List<Map<String, String>>> taxaMapById = null;
+    private BTreeMap<String, List<Map<String, String>>> taxaMapByName = null;
     private String taxonCacheResource;
     private final String taxonMapResource;
 
@@ -88,13 +89,13 @@ public class TaxonCacheService implements PropertyEnricher {
                 .closeOnJvmShutdown()
                 .make();
         taxaById = db
-                .createHashMap("taxonCacheById")
+                .createTreeMap("taxonCacheById")
                 .make();
         taxaMapById = db
-                .createHashMap("taxonMappingById")
+                .createTreeMap("taxonMappingById")
                 .make();
         taxaMapByName = db
-                .createHashMap("taxonMappingByName")
+                .createTreeMap("taxonMappingByName")
                 .make();
 
         TaxonCacheListener taxonListener = new TaxonCacheListener() {
