@@ -130,12 +130,14 @@ public class Normalizer {
     public void resolveAndLinkTaxa(CommandLine cmdLine, GraphDatabaseService graphService) {
         if (cmdLine == null || !cmdLine.hasOption(OPTION_SKIP_TAXON_CACHE)) {
             LOG.info("resolving names with taxon cache ...");
-            new NameResolver(graphService, new TaxonCacheService("/taxa/taxonCache.csv.gz", "/taxa/taxonMap.csv.gz"), new CorrectionService() {
+            final TaxonCacheService enricher = new TaxonCacheService("/taxa/taxonCache.csv.gz", "/taxa/taxonMap.csv.gz");
+            new NameResolver(graphService, enricher, new CorrectionService() {
                 @Override
                 public String correct(String taxonName) {
                     return taxonName;
                 }
             }).resolve();
+            enricher.shutdown();
             LOG.info("resolving names with taxon cache done.");
         } else {
             LOG.info("skipping taxon cache ...");

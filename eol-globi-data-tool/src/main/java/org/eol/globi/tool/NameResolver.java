@@ -5,7 +5,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.data.TaxonIndex;
-import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
@@ -21,7 +20,8 @@ import org.neo4j.cypher.javacompat.ExecutionResult;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.ResourceIterator;
 
-import java.util.Collection;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import static org.eol.globi.domain.PropertyAndValueDictionary.*;
@@ -33,6 +33,11 @@ public class NameResolver {
     private final GraphDatabaseService graphService;
 
     private final TaxonIndex taxonIndex;
+    public static final List<String> KNOWN_BAD_NAMES = new ArrayList<String>() {
+        {
+            add("sp");
+        }
+    };
 
     public NameResolver(GraphDatabaseService graphService) {
         this(graphService, PropertyEnricherFactory.createTaxonEnricher(), new TaxonNameCorrector());
@@ -69,7 +74,7 @@ public class NameResolver {
             String statusId = row.containsKey(STATUS_ID) ? (String) row.get(STATUS_ID) : null;
             String statusLabel = row.containsKey(STATUS_LABEL) ? (String) row.get(STATUS_LABEL) : null;
             Long specimenId = row.containsKey("specimenId") ? (Long) row.get("specimenId") : null;
-            if (specimenId != null) {
+            if (specimenId != null && seeminglyGoodNameOrId(name, externalId)) {
                 Specimen specimen = new Specimen(graphService.getNodeById(specimenId));
                 Taxon taxon = new TaxonImpl(name, externalId);
                 taxon.setStatus(new Term(statusId, statusLabel));
@@ -95,6 +100,10 @@ public class NameResolver {
                 "CREATE UNIQUE taxon-[otherR:interactType]->otherTaxon " +
                 "RETURN type(otherR)");
         LOG.info("building interaction indexes done.");
+    }
+
+    public static boolean seeminglyGoodNameOrId(String name, String externalId) {
+        return externalId != null || (name != null && name.length() > 1 && !KNOWN_BAD_NAMES.contains(name));
     }
 
     public String getProgressMsg(int count, StopWatch watch) {

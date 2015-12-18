@@ -1,5 +1,6 @@
 package org.eol.globi.taxon;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -14,6 +15,7 @@ import org.mapdb.DBMaker;
 import org.mapdb.HTreeMap;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -29,6 +31,7 @@ public class TaxonCacheService implements PropertyEnricher {
     private HTreeMap<String, List<Map<String, String>>> taxaMapByName = null;
     private String taxonCacheResource;
     private final String taxonMapResource;
+    private String cacheFilename;
 
     public TaxonCacheService(String taxonCacheResource, String taxonMapResource) {
         this.taxonCacheResource = taxonCacheResource;
@@ -72,10 +75,12 @@ public class TaxonCacheService implements PropertyEnricher {
 
     public void init() throws PropertyEnricherException {
         LOG.info("taxon cache initializing...");
+        cacheFilename = "./mapdb/taxoncache";
         DB db = DBMaker
-                .newMemoryDirectDB()
+                .newFileDB(new File(cacheFilename))
                 .compressionEnable()
                 .transactionDisable()
+                .closeOnJvmShutdown()
                 .make();
         taxaById = db
                 .createHashMap("taxonCacheById")
@@ -164,6 +169,18 @@ public class TaxonCacheService implements PropertyEnricher {
 
     @Override
     public void shutdown() {
-
+        if (taxaById != null) {
+            taxaById.close();
+        }
+        if (taxaMapById != null) {
+            taxaMapById.close();
+        }
+        if (taxaMapByName != null) {
+            taxaMapByName.close();
+        }
+        final File cacheDirectory = new File(cacheFilename);
+        if (cacheDirectory.exists()) {
+            FileUtils.deleteQuietly(cacheDirectory);
+        }
     }
 }

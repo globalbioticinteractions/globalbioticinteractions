@@ -21,9 +21,11 @@ import java.util.Map;
 
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import static org.junit.matchers.JUnitMatchers.hasItems;
 
 public class NameResolverTest extends GraphDBTestCase {
@@ -67,6 +69,14 @@ public class NameResolverTest extends GraphDBTestCase {
         assertNotNull(animalia);
         assertThat(animalia.getName(), is("Animalia"));
         assertThat(animalia.getPath(), is("Animalia"));
+    }
+
+    @Test
+    public void seeminglyGoodName() {
+        assertFalse(NameResolver.seeminglyGoodNameOrId("sp", null));
+        assertTrue(NameResolver.seeminglyGoodNameOrId("sp", "EOL:1234"));
+        assertTrue(NameResolver.seeminglyGoodNameOrId("something long", null));
+        assertTrue(NameResolver.seeminglyGoodNameOrId(null, "EOL:123"));
     }
 
 }
