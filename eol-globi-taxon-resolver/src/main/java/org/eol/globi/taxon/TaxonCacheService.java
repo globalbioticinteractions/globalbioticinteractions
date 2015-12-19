@@ -13,7 +13,6 @@ import org.eol.globi.util.ResourceUtil;
 import org.mapdb.BTreeMap;
 import org.mapdb.DB;
 import org.mapdb.DBMaker;
-import org.mapdb.HTreeMap;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -43,15 +42,35 @@ public class TaxonCacheService implements PropertyEnricher {
     @Override
     public Map<String, String> enrich(Map<String, String> properties) throws PropertyEnricherException {
         lazyInit();
-        Taxon taxon = TaxonUtil.mapToTaxon(properties);
+        String externalId = getExternalId(properties);
         Map<String, String> enriched = null;
-        if (StringUtils.isNotBlank(taxon.getExternalId())) {
-            enriched = getFirst(taxaMapById.get(taxon.getExternalId()));
+        if (StringUtils.isNotBlank(externalId)) {
+            enriched = getFirst(taxaMapById.get(externalId));
         }
-        if (enriched == null && StringUtils.isNotBlank(taxon.getName())) {
-            enriched = getFirst(taxaMapByName.get(taxon.getName()));
+        if (enriched == null) {
+            String name = getName(properties);
+            if (StringUtils.isNotBlank(name)) {
+                enriched = getFirst(taxaMapByName.get(name));
+            }
+
         }
         return enriched == null ? Collections.unmodifiableMap(properties) : enriched;
+    }
+
+    public String getName(Map<String, String> properties) {
+        String name = null;
+        if (properties.containsKey(PropertyAndValueDictionary.NAME)) {
+            name = properties.get(PropertyAndValueDictionary.NAME);
+        }
+        return name;
+    }
+
+    public String getExternalId(Map<String, String> properties) {
+        String externalId = null;
+        if (properties.containsKey(PropertyAndValueDictionary.EXTERNAL_ID)) {
+            externalId = properties.get(PropertyAndValueDictionary.EXTERNAL_ID);
+        }
+        return externalId;
     }
 
     public Map<String, String> getFirst(List<Map<String, String>> targets) {
@@ -59,7 +78,7 @@ public class TaxonCacheService implements PropertyEnricher {
         if (targets != null) {
             for (Map<String, String> target : targets) {
                 if (target != null) {
-                    enriched = taxaById.get(TaxonUtil.mapToTaxon(target).getExternalId());
+                    enriched = taxaById.get(getExternalId(target));
                     if (enriched != null) {
                         break;
                     }
