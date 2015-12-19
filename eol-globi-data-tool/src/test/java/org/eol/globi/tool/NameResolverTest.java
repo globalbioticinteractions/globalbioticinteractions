@@ -41,7 +41,9 @@ public class NameResolverTest extends GraphDBTestCase {
         assertNull(taxonIndex.findTaxonById("EOL:1"));
         assertNull(taxonIndex.findTaxonByName("Homo sapiens"));
 
-        new NameResolver(getGraphDb()).resolve();
+        final NameResolver nameResolver = new NameResolver(getGraphDb());
+        nameResolver.setBatchSize(1L);
+        nameResolver.resolve();
 
         assertAnimalia(taxonIndex.findTaxonById("EOL:1"));
 
