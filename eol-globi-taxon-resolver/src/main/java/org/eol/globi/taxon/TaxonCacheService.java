@@ -1,7 +1,9 @@
 package org.eol.globi.taxon;
 
+import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.StopWatch;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eol.globi.domain.PropertyAndValueDictionary;
@@ -9,26 +11,27 @@ import org.eol.globi.domain.Taxon;
 import org.eol.globi.service.PropertyEnricher;
 import org.eol.globi.service.PropertyEnricherException;
 import org.eol.globi.service.TaxonUtil;
+import org.eol.globi.util.CSVUtil;
 import org.eol.globi.util.ResourceUtil;
+import org.mapdb.BTreeKeySerializer;
 import org.mapdb.BTreeMap;
 import org.mapdb.DB;
 import org.mapdb.DBMaker;
+import org.mapdb.Fun;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
+import java.util.Iterator;
 import java.util.Map;
 
 public class TaxonCacheService implements PropertyEnricher {
     private static final Log LOG = LogFactory.getLog(TaxonCacheService.class);
 
-    private BTreeMap<String, Map<String, String>> taxaById = null;
-    private BTreeMap<String, List<Map<String, String>>> taxaMapById = null;
-    private BTreeMap<String, List<Map<String, String>>> taxaMapByName = null;
+    private BTreeMap<String, Map<String, String>> resolvedIdToTaxonMap = null;
+    private BTreeMap<String, String> providedToResolvedMap = null;
     private String taxonCacheResource;
     private final String taxonMapResource;
 
@@ -42,19 +45,22 @@ public class TaxonCacheService implements PropertyEnricher {
     @Override
     public Map<String, String> enrich(Map<String, String> properties) throws PropertyEnricherException {
         lazyInit();
-        String externalId = getExternalId(properties);
-        Map<String, String> enriched = null;
-        if (StringUtils.isNotBlank(externalId)) {
-            enriched = getFirst(taxaMapById.get(externalId));
-        }
+        Map<String, String> enriched = getTaxon(getExternalId(properties));
         if (enriched == null) {
-            String name = getName(properties);
-            if (StringUtils.isNotBlank(name)) {
-                enriched = getFirst(taxaMapByName.get(name));
-            }
-
+            enriched = getTaxon(getName(properties));
         }
         return enriched == null ? Collections.unmodifiableMap(properties) : enriched;
+    }
+
+    public Map<String, String> getTaxon(String value) {
+        Map<String, String> enriched = null;
+        if (isNonEmptyValue(value)) {
+            final String key = providedToResolvedMap.get(value);
+            if (isNonEmptyValue(key)) {
+                enriched = resolvedIdToTaxonMap.get(key);
+            }
+        }
+        return enriched;
     }
 
     public String getName(Map<String, String> properties) {
@@ -73,23 +79,8 @@ public class TaxonCacheService implements PropertyEnricher {
         return externalId;
     }
 
-    public Map<String, String> getFirst(List<Map<String, String>> targets) {
-        Map<String, String> enriched = null;
-        if (targets != null) {
-            for (Map<String, String> target : targets) {
-                if (target != null) {
-                    enriched = taxaById.get(getExternalId(target));
-                    if (enriched != null) {
-                        break;
-                    }
-                }
-            }
-        }
-        return enriched;
-    }
-
     public void lazyInit() throws PropertyEnricherException {
-        if (taxaById == null || taxaMapById == null || taxaMapByName == null) {
+        if (resolvedIdToTaxonMap == null || providedToResolvedMap == null) {
             init();
         }
     }
@@ -103,88 +94,113 @@ public class TaxonCacheService implements PropertyEnricher {
         }
         DB db = DBMaker
                 .newFileDB(new File(cacheDir, "taxonCache"))
-                .transactionDisable()
+                .mmapFileEnableIfSupported()
                 .closeOnJvmShutdown()
-                .make();
-        taxaById = db
-                .createTreeMap("taxonCacheById")
-                .make();
-        taxaMapById = db
-                .createTreeMap("taxonMappingById")
-                .make();
-        taxaMapByName = db
-                .createTreeMap("taxonMappingByName")
+                .transactionDisable()
                 .make();
 
-        TaxonCacheListener taxonListener = new TaxonCacheListener() {
-            @Override
-            public void start() {
-
-            }
-
-            @Override
-            public void addTaxon(Taxon taxon) {
-                final String externalId = taxon.getExternalId();
-                if (StringUtils.isNotBlank(externalId)) {
-                    taxaById.put(externalId, TaxonUtil.taxonToMap(taxon));
-                }
-            }
-
-            @Override
-            public void finish() {
-            }
-        };
+        StopWatch watch = new StopWatch();
+        watch.start();
         try {
-            BufferedReader reader = createBufferedReader(taxonCacheResource);
-            new TaxonCacheParser().parse(reader, taxonListener);
+            resolvedIdToTaxonMap = db
+                    .createTreeMap("taxonCacheById")
+                    .pumpPresort(100000)
+                    .pumpIgnoreDuplicates()
+                    .pumpSource(createTaxonCacheSource(taxonCacheResource))
+                    .keySerializer(BTreeKeySerializer.STRING)
+                    .make();
         } catch (IOException e) {
-            throw new PropertyEnricherException("failed to parse [" + taxonCacheResource + "]", e);
+            throw new PropertyEnricherException("failed to instantiate taxonCache", e);
         }
-
+        watch.stop();
+        logCacheLoadStats(watch.getTime(), resolvedIdToTaxonMap.size());
+        watch.reset();
+        watch.start();
         try {
-            BufferedReader reader = createBufferedReader(taxonMapResource);
-            new TaxonMapParser().parse(reader, new TaxonMapListener() {
-
-                @Override
-                public void start() {
-
-                }
-
-                @Override
-                public void addMapping(final Taxon srcTaxon, Taxon targetTaxon) {
-                    populate(srcTaxon.getExternalId(), targetTaxon.getExternalId(), taxaById, taxaMapById);
-                    populate(srcTaxon.getName(), targetTaxon.getExternalId(), taxaById, taxaMapByName);
-                }
-
-                @Override
-                public void finish() {
-                    LOG.info("taxon cache contains [" + taxaById.size() + "] items");
-                    LOG.info("taxon cache id map has [" + taxaMapById.size() + "] mappings");
-                    LOG.info("taxon cache name map has [" + taxaMapByName.size() + "] mappings");
-                }
-            });
+            providedToResolvedMap = db
+                    .createTreeMap("taxonMappingById")
+                    .pumpSource(createTaxonMappingSource(taxonMapResource))
+                    .pumpPresort(100000)
+                    .pumpIgnoreDuplicates()
+                    .keySerializer(BTreeKeySerializer.STRING)
+                    .make();
         } catch (IOException e) {
-            throw new PropertyEnricherException("failed to parse [" + taxonCacheResource + "]", e);
+            throw new PropertyEnricherException("failed to build taxon cache map", e);
         }
+        watch.stop();
+        logCacheLoadStats(watch.getTime(), providedToResolvedMap.size());
+
         LOG.info("taxon cache initialized.");
     }
 
-    public void populate(String sourceValue, String targetValue, Map<String, Map<String, String>> taxaBy, Map<String, List<Map<String, String>>> mappingBy) {
-        if (StringUtils.isNotBlank(sourceValue)
-                && !StringUtils.equals(sourceValue, PropertyAndValueDictionary.NO_MATCH)
-                && !StringUtils.equals(sourceValue, PropertyAndValueDictionary.NO_NAME)
-                && StringUtils.isNotBlank(targetValue)) {
+    public Iterator<Fun.Tuple2<String, String>> createTaxonMappingSource(final String resource) throws IOException {
+        return new Iterator<Fun.Tuple2<String, String>>() {
+            private BufferedReader reader = createBufferedReader(resource);
+            private final LabeledCSVParser labeledCSVParser = CSVUtil.createLabeledCSVParser(reader);
+            private boolean processing = false;
 
-            final Map<String, String> target = taxaBy.get(targetValue);
-            if (target != null) {
-                final List<Map<String, String>> currentTargets = mappingBy.get(sourceValue);
-                final List<Map<String, String>> newTargets = currentTargets == null
-                        ? new ArrayList<Map<String, String>>()
-                        : new ArrayList<Map<String, String>>(currentTargets);
-                newTargets.add(target);
-                mappingBy.put(sourceValue, newTargets);
+            @Override
+            public boolean hasNext() {
+                try {
+                    return processing || labeledCSVParser.getLine() != null;
+                } catch (IOException e) {
+                    return false;
+                }
             }
-        }
+
+            @Override
+            public Fun.Tuple2<String, String> next() {
+                final Taxon resolvedTaxon = TaxonMapParser.parseResolvedTaxon(labeledCSVParser);
+                final Taxon providedTaxon = TaxonMapParser.parseProvidedTaxon(labeledCSVParser);
+                final String key = processing ? providedTaxon.getExternalId() : providedTaxon.getName();
+                processing = !processing;
+                return new Fun.Tuple2<String, String>(valueOrNoMatch(key), valueOrNoMatch(resolvedTaxon.getExternalId()));
+            }
+        };
+    }
+
+    private String valueOrNoMatch(String value) {
+        return isNonEmptyValue(value) ? value : PropertyAndValueDictionary.NO_MATCH;
+    }
+
+    public Iterator<Fun.Tuple2<String, Map<String, String>>> createTaxonCacheSource(final String resource) throws IOException {
+
+        return new Iterator<Fun.Tuple2<String, Map<String, String>>>() {
+            private BufferedReader reader = createBufferedReader(resource);
+            private final LabeledCSVParser labeledCSVParser = CSVUtil.createLabeledCSVParser(reader);
+
+            @Override
+            public boolean hasNext() {
+                try {
+                    return labeledCSVParser.getLine() != null;
+                } catch (IOException e) {
+                    LOG.error("failed to get next line", e);
+                    return false;
+                }
+            }
+
+            @Override
+            public Fun.Tuple2<String, Map<String, String>> next() {
+                final Taxon taxon = TaxonCacheParser.parseLine(labeledCSVParser);
+                return new Fun.Tuple2<String, Map<String, String>>(valueOrNoMatch(taxon.getExternalId()), TaxonUtil.taxonToMap(taxon));
+            }
+        };
+    }
+
+    public void logCacheLoadStats(long time, int numberOfItems) {
+        final double avgRate = numberOfItems * 1000.0 / time;
+        final double timeElapsedInSeconds = time / 1000.0;
+        final String msg = String.format("cache with [%d]" + " items built in [%.1f] s or [%.1f] items/s.",
+                numberOfItems,
+                timeElapsedInSeconds,
+                avgRate);
+        LOG.info(msg);
+    }
+
+    public boolean isNonEmptyValue(String sourceValue) {
+        return StringUtils.isNotBlank(sourceValue)
+                && !StringUtils.equals(sourceValue, PropertyAndValueDictionary.NO_MATCH)
+                && !StringUtils.equals(sourceValue, PropertyAndValueDictionary.NO_NAME);
     }
 
     public BufferedReader createBufferedReader(String taxonResourceUrl) throws IOException {
@@ -193,14 +209,11 @@ public class TaxonCacheService implements PropertyEnricher {
 
     @Override
     public void shutdown() {
-        if (taxaById != null) {
-            taxaById.close();
+        if (resolvedIdToTaxonMap != null) {
+            resolvedIdToTaxonMap.close();
         }
-        if (taxaMapById != null) {
-            taxaMapById.close();
-        }
-        if (taxaMapByName != null) {
-            taxaMapByName.close();
+        if (providedToResolvedMap != null) {
+            providedToResolvedMap.close();
         }
         if (cacheDir != null && cacheDir.exists()) {
             FileUtils.deleteQuietly(cacheDir);

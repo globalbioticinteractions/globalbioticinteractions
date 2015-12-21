@@ -1,6 +1,8 @@
 package org.eol.globi.taxon;
 
+import com.Ostermiller.util.LabeledCSVParser;
 import org.eol.globi.domain.Taxon;
+import org.eol.globi.util.CSVUtil;
 import org.junit.Test;
 
 import java.io.BufferedReader;
@@ -8,8 +10,6 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.Is.is;
@@ -17,6 +17,17 @@ import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
 
 public class TaxonMapParserTest {
+
+    public static void parse(BufferedReader reader, TaxonMapListener listener) throws IOException {
+            LabeledCSVParser labeledCSVParser = CSVUtil.createLabeledCSVParser(reader);
+            listener.start();
+            while (labeledCSVParser.getLine() != null) {
+                Taxon providedTaxon = TaxonMapParser.parseProvidedTaxon(labeledCSVParser);
+                Taxon resolvedTaxon = TaxonMapParser.parseResolvedTaxon(labeledCSVParser);
+                listener.addMapping(providedTaxon, resolvedTaxon);
+            }
+            listener.finish();
+        }
 
     @Test
     public void readThreeLine() throws IOException {
@@ -31,7 +42,7 @@ public class TaxonMapParserTest {
 
         TaxonMapParser taxonParser = new TaxonMapParser();
         final List<String> taxa = new ArrayList<String>();
-        taxonParser.parse(someLines, new TaxonMapListener() {
+        parse(someLines, new TaxonMapListener() {
             @Override
             public void addMapping(Taxon srcTaxon, Taxon targetTaxon) {
                 taxa.add(srcTaxon.getExternalId() + srcTaxon.getName() + "-->" + targetTaxon.getExternalId() + targetTaxon.getName());

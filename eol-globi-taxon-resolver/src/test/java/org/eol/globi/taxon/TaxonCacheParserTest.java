@@ -1,6 +1,8 @@
 package org.eol.globi.taxon;
 
+import com.Ostermiller.util.LabeledCSVParser;
 import org.eol.globi.domain.Taxon;
+import org.eol.globi.util.CSVUtil;
 import org.junit.Test;
 
 import java.io.BufferedReader;
@@ -16,6 +18,16 @@ import static org.junit.Assert.*;
 
 public class TaxonCacheParserTest {
 
+    public static void parse(BufferedReader reader, TaxonCacheListener listener) throws IOException {
+        LabeledCSVParser labeledCSVParser = CSVUtil.createLabeledCSVParser(reader);
+        listener.start();
+        while (labeledCSVParser.getLine() != null) {
+            Taxon taxa = TaxonCacheParser.parseLine(labeledCSVParser);
+            listener.addTaxon(taxa);
+        }
+        listener.finish();
+    }
+
     @Test
     public void readThreeLine() throws IOException {
         BufferedReader someLines = new BufferedReader(new StringReader(
@@ -29,7 +41,7 @@ public class TaxonCacheParserTest {
 
         TaxonCacheParser taxonParser = new TaxonCacheParser();
         final List<Taxon> taxa = new ArrayList<Taxon>();
-        taxonParser.parse(someLines, new TaxonCacheListener() {
+        parse(someLines, new TaxonCacheListener() {
             @Override
             public void addTaxon(Taxon taxon) {
                 taxa.add(taxon);
