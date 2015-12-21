@@ -44,7 +44,7 @@ public class NameResolver {
         this.batchSize = batchSize;
     }
 
-    private Long batchSize = 10000L;
+    private Long batchSize = 100L;
 
     public NameResolver(GraphDatabaseService graphService) {
         this(graphService, PropertyEnricherFactory.createTaxonEnricher(), new TaxonNameCorrector());
@@ -137,6 +137,7 @@ public class NameResolver {
                 offset += count;
             }
             if (count > 0) {
+                watch.stop();
                 LOG.info("resolved [" + count + "] names in " + getProgressMsg(count, watch));
             }
         }
@@ -155,7 +156,7 @@ public class NameResolver {
 
     public String getProgressMsg(Long count, StopWatch watch) {
         double totalTimeMins = watch.getTime() / (1000 * 60.0);
-        return String.format("[%.1f] taxon/min over [%.1f] min", (count / totalTimeMins), watch.getTime() / (1000 * 60.0));
+        return String.format("[%.1f] taxon/min over [%.1f] min", (count / totalTimeMins), totalTimeMins);
 
     }
 }
