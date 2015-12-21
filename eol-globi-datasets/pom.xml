@@ -40,7 +40,7 @@
                     <skip>${skipTests}</skip>
                     <executable>java</executable>
                     <arguments>
-                        <argument>-Xmx2G</argument>
+                        <argument>-Xmx4G</argument>
                         <argument>-Dshapefiles.dir=${shapefiles.dir}</argument>
                         <argument>-Dott.file=${shapefiles.dir}/ott/taxonomy.tsv</argument>
                         <argument>-classpath</argument>
