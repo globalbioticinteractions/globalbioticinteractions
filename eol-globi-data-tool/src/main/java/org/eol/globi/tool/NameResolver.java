@@ -45,6 +45,7 @@ public class NameResolver {
     }
 
     private Long batchSize = 10000L;
+    private Long batchSizeIndex = 1000L;
 
     public NameResolver(GraphDatabaseService graphService) {
         this(graphService, PropertyEnricherFactory.createTaxonEnricher(), new TaxonNameCorrector());
@@ -75,19 +76,22 @@ public class NameResolver {
                     "WITH taxon, otherTaxon, type(r) as interactType " +
                     "CREATE UNIQUE taxon-[otherR:interactType]->otherTaxon " +
                     "RETURN type(otherR)";
-            final ExecutionResult execute = executeQueryPage(engine, offset, query);
+            StopWatch watch = new StopWatch();
+            watch.start();
+            final ExecutionResult execute = executeQueryPage(engine, query, getPagingParams(offset));
             final ResourceIterator<Map<String, Object>> iterator = execute.iterator();
             hasMore = iterator.hasNext();
-            while(iterator.hasNext()) {
+            while (iterator.hasNext()) {
                 iterator.next();
                 offset++;
             }
+            LOG.info("built [" + offset + "] taxon level interactions in " + getProgressMsg(offset, watch));
         }
         LOG.info("building interaction indexes done.");
     }
 
-    public ExecutionResult executeQueryPage(ExecutionEngine engine, Long offset, String query) {
-        return engine.execute(query + " SKIP {offset} LIMIT {batchSize}", getPagingParams(offset));
+    public ExecutionResult executeQueryPage(ExecutionEngine engine, String query, HashMap<String, Object> pagingParams) {
+        return engine.execute(query + " SKIP {offset} LIMIT {batchSize}", pagingParams);
     }
 
     public void resolveNames(ExecutionEngine engine) {
@@ -95,17 +99,17 @@ public class NameResolver {
         boolean hasMore = true;
         while (hasMore) {
             String query = "START study = node:studies('*:*') " +
-                                "MATCH study-[:COLLECTED]->specimen-[:ORIGINALLY_DESCRIBED_AS]->taxon, specimen-[?:CLASSIFIED_AS]->resolvedTaxon " +
-                                "WHERE not(has(resolvedTaxon.name)) " +
-                                "RETURN taxon." + EXTERNAL_ID + "? as `" + EXTERNAL_ID + "`" +
-                                ", taxon." + NAME + "? as `" + NAME + "`" +
-                                ", taxon." + STATUS_ID + "? as `" + STATUS_ID + "`" +
-                                ", taxon." + STATUS_LABEL + "? as `" + STATUS_LABEL + "`" +
-                                ", id(specimen) as `specimenId`";
-            ExecutionResult result = executeQueryPage(engine, offset, query);
-            Long count = 0L;
+                    "MATCH study-[:COLLECTED]->specimen-[:ORIGINALLY_DESCRIBED_AS]->taxon, specimen-[?:CLASSIFIED_AS]->resolvedTaxon " +
+                    "WHERE not(has(resolvedTaxon.name)) " +
+                    "RETURN taxon." + EXTERNAL_ID + "? as `" + EXTERNAL_ID + "`" +
+                    ", taxon." + NAME + "? as `" + NAME + "`" +
+                    ", taxon." + STATUS_ID + "? as `" + STATUS_ID + "`" +
+                    ", taxon." + STATUS_LABEL + "? as `" + STATUS_LABEL + "`" +
+                    ", id(specimen) as `specimenId`";
             StopWatch watch = new StopWatch();
             watch.start();
+            ExecutionResult result = executeQueryPage(engine, query, getPagingParams(offset, batchSizeIndex));
+            Long count = 0L;
             ResourceIterator<Map<String, Object>> iterator = result.iterator();
             while (iterator.hasNext()) {
                 Map<String, Object> row = iterator.next();
@@ -142,11 +146,15 @@ public class NameResolver {
         }
     }
 
-    public HashMap<String, Object> getPagingParams(Long offset) {
+    public HashMap<String, Object> getPagingParams(Long offset, Long batchSize) {
         HashMap<String, Object> params = new HashMap<String, Object>();
         params.put("offset", offset);
         params.put("batchSize", batchSize);
         return params;
+    }
+
+    public HashMap<String, Object> getPagingParams(Long offset) {
+        return getPagingParams(offset, batchSize);
     }
 
     public static boolean seeminglyGoodNameOrId(String name, String externalId) {
