@@ -107,12 +107,11 @@ public class DOIResolverImplIT {
         assertThat(citationForDOI, is(notNullValue()));
     }
 
-    @Ignore("this test passes unreliably")
     @Test
     public void findCitationForDOIVariableInternalServerError() throws IOException, URISyntaxException {
         // see https://github.com/CrossRef/rest-api-doc/issues/93
         assertThat(new DOIResolverImpl().findCitationForDOI("http://dx.doi.org/10.1007/s003000050412"), is(notNullValue()));
-        assertThat(new DOIResolverImpl().findCitationForDOI("http://dx.doi.org/10.1007/s003000050412"), is(nullValue()));
+        assertThat(new DOIResolverImpl().findCitationForDOI("http://dx.doi.org/10.1007/s003000050412"), is(notNullValue()));
     }
 
     @Test
