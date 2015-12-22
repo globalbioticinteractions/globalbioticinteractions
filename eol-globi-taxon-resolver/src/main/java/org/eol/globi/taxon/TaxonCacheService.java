@@ -156,6 +156,10 @@ public class TaxonCacheService implements PropertyEnricher {
                 processing = !processing;
                 return new Fun.Tuple2<String, String>(valueOrNoMatch(key), valueOrNoMatch(resolvedTaxon.getExternalId()));
             }
+
+            public void remove() {
+                    throw new UnsupportedOperationException("remove");
+                }
         };
     }
 
@@ -184,6 +188,10 @@ public class TaxonCacheService implements PropertyEnricher {
                 final Taxon taxon = TaxonCacheParser.parseLine(labeledCSVParser);
                 return new Fun.Tuple2<String, Map<String, String>>(valueOrNoMatch(taxon.getExternalId()), TaxonUtil.taxonToMap(taxon));
             }
+
+            public void remove() {
+                                throw new UnsupportedOperationException("remove");
+                            }
         };
     }
 
