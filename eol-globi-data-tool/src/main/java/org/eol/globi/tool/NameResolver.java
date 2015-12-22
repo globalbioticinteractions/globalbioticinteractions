@@ -75,36 +75,35 @@ public class NameResolver {
             final Study study1 = new Study(studyNode);
             final Iterable<Relationship> specimens = study1.getSpecimens();
             for (Relationship collected : specimens) {
-                count = classifySpecimenAndIndexTaxonInteraction(batchSize, watch, count, new Specimen(collected.getEndNode()));
+                Specimen specimen = new Specimen(collected.getEndNode());
+                final Relationship classifiedAs = specimen.getUnderlyingNode().getSingleRelationship(RelTypes.CLASSIFIED_AS, Direction.OUTGOING);
+                if (classifiedAs == null) {
+                    final Relationship describedAs = specimen.getUnderlyingNode().getSingleRelationship(RelTypes.ORIGINALLY_DESCRIBED_AS, Direction.OUTGOING);
+                    final TaxonNode describedAsTaxon = new TaxonNode(describedAs.getEndNode());
+                    try {
+                        if (seeminglyGoodNameOrId(describedAsTaxon.getName(), describedAsTaxon.getExternalId())) {
+                            TaxonNode resolvedTaxon = taxonIndex.getOrCreateTaxon(describedAsTaxon);
+                            if (resolvedTaxon != null) {
+                                specimen.classifyAs(resolvedTaxon);
+                                indexTaxonInteractionIfNeeded(specimen, resolvedTaxon);
+                            }
+                        }
+                    } catch (NodeFactoryException e) {
+                        LOG.warn("failed to create taxon with name [" + describedAsTaxon.getName() + "] and id [" + describedAsTaxon.getExternalId() + "]", e);
+                    } finally {
+                        count++;
+                        watch.stop();
+                        if (count % batchSize == 0) {
+                            LOG.info("resolved [" + batchSize + "] names in " + getProgressMsg(batchSize, watch));
+                        }
+                        watch.reset();
+                        watch.start();
+                    }
+                }
+
             }
         }
         studies.close();
-    }
-
-    public Long classifySpecimenAndIndexTaxonInteraction(Long batchSize, StopWatch watch, Long count, Specimen specimen) {
-        final Relationship classifiedAs = specimen.getUnderlyingNode().getSingleRelationship(RelTypes.CLASSIFIED_AS, Direction.OUTGOING);
-        if (classifiedAs == null) {
-            final Relationship describedAs = specimen.getUnderlyingNode().getSingleRelationship(RelTypes.ORIGINALLY_DESCRIBED_AS, Direction.OUTGOING);
-            final TaxonNode describedAsTaxon = new TaxonNode(describedAs.getEndNode());
-            try {
-                TaxonNode resolvedTaxon = taxonIndex.getOrCreateTaxon(describedAsTaxon);
-                if (resolvedTaxon != null) {
-                    specimen.classifyAs(resolvedTaxon);
-                    indexTaxonInteractionIfNeeded(specimen, resolvedTaxon);
-                }
-            } catch (NodeFactoryException e) {
-                LOG.warn("failed to create taxon with name [" + describedAsTaxon.getName() + "] and id [" + describedAsTaxon.getExternalId() + "]", e);
-            } finally {
-                count++;
-                watch.stop();
-                if (count > 0 && (count % batchSize == 0)) {
-                    LOG.info("resolved [" + batchSize + "] names in " + getProgressMsg(batchSize, watch));
-                }
-                watch.reset();
-                watch.start();
-            }
-        }
-        return count;
     }
 
     public void indexTaxonInteractionIfNeeded(Specimen specimen, TaxonNode resolvedTaxon) {
@@ -143,8 +142,8 @@ public class NameResolver {
     }
 
     public String getProgressMsg(Long count, StopWatch watch) {
-        double totalTimeMins = watch.getTime() / (1000 * 60.0);
-        return String.format("[%.1f] taxon/min over [%.1f] min", (count / totalTimeMins), watch.getTime() / (1000 * 60.0));
+        double durationSeconds = (double) watch.getTime() / 1000.0;
+        return String.format("[%.1f] taxon/s over [%.1f] s", (count / durationSeconds), durationSeconds);
 
     }
 }
