@@ -5,28 +5,26 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.data.TaxonIndex;
+import org.eol.globi.domain.InteractType;
+import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Specimen;
-import org.eol.globi.domain.Taxon;
-import org.eol.globi.domain.TaxonImpl;
+import org.eol.globi.domain.Study;
 import org.eol.globi.domain.TaxonNode;
-import org.eol.globi.domain.Term;
 import org.eol.globi.service.PropertyEnricher;
 import org.eol.globi.service.PropertyEnricherFactory;
 import org.eol.globi.taxon.CorrectionService;
 import org.eol.globi.taxon.TaxonIndexImpl;
 import org.eol.globi.taxon.TaxonNameCorrector;
-import org.neo4j.cypher.javacompat.ExecutionEngine;
-import org.neo4j.cypher.javacompat.ExecutionResult;
+import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.GraphDatabaseService;
-import org.neo4j.graphdb.ResourceIterator;
+import org.neo4j.graphdb.Node;
+import org.neo4j.graphdb.Relationship;
+import org.neo4j.graphdb.Transaction;
+import org.neo4j.graphdb.index.Index;
+import org.neo4j.graphdb.index.IndexHits;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
-import static org.eol.globi.domain.PropertyAndValueDictionary.*;
-import static org.eol.globi.domain.PropertyAndValueDictionary.STATUS_ID;
 
 public class NameResolver {
     private static final Log LOG = LogFactory.getLog(NameResolver.class);
@@ -61,105 +59,83 @@ public class NameResolver {
     }
 
     public void resolve() {
-        ExecutionEngine engine = new ExecutionEngine(graphService);
         LOG.info("name resolving started...");
-        resolveNames(engine, batchSize);
+        resolveNames(batchSize);
         LOG.info("name resolving complete.");
-
-        LOG.info("building interaction indexes...");
-        buildTaxonInteractionIndex(engine, batchSizeIndex);
-        LOG.info("building interaction indexes done.");
     }
 
-    public void buildTaxonInteractionIndex(ExecutionEngine engine, Long batchSize) {
-        boolean hasMore = true;
-        Long offset = 0L;
-        while (hasMore) {
-            Long count = 0L;
-            final String query = "START study = node:studies('*:*') " +
-                    "MATCH study-[:COLLECTED]->specimen-[:CLASSIFIED_AS]->taxon, specimen-[r]->otherSpecimen-[:CLASSIFIED_AS]->otherTaxon " +
-                    "WITH taxon, otherTaxon, type(r) as interactType " +
-                    "CREATE UNIQUE taxon-[otherR:interactType]->otherTaxon " +
-                    "RETURN type(otherR)";
-            StopWatch watch = new StopWatch();
-            watch.start();
-            final ExecutionResult execute = executeQueryPage(engine, query, getPagingParams(offset, batchSize));
-            final ResourceIterator<Map<String, Object>> iterator = execute.iterator();
-            hasMore = iterator.hasNext();
-            while (iterator.hasNext()) {
-                iterator.next();
-                count++;
+    public void resolveNames(Long batchSize) {
+        StopWatch watch = new StopWatch();
+        watch.start();
+        Long count = 0L;
+
+        Index<Node> studyIndex = graphService.index().forNodes("studies");
+        IndexHits<Node> studies = studyIndex.query("title", "*");
+        for (Node studyNode : studies) {
+            final Study study1 = new Study(studyNode);
+            final Iterable<Relationship> specimens = study1.getSpecimens();
+            for (Relationship collected : specimens) {
+                count = classifySpecimenAndIndexTaxonInteraction(batchSize, watch, count, new Specimen(collected.getEndNode()));
             }
-            offset += count;
-            LOG.info("built [" + count + "] taxon level interactions in " + getProgressMsg(count, watch));
         }
+        studies.close();
     }
 
-    public ExecutionResult executeQueryPage(ExecutionEngine engine, String query, HashMap<String, Object> pagingParams) {
-        return engine.execute(query + " SKIP {offset} LIMIT {batchSize}", pagingParams);
+    public Long classifySpecimenAndIndexTaxonInteraction(Long batchSize, StopWatch watch, Long count, Specimen specimen) {
+        final Relationship classifiedAs = specimen.getUnderlyingNode().getSingleRelationship(RelTypes.CLASSIFIED_AS, Direction.OUTGOING);
+        if (classifiedAs == null) {
+            final Relationship describedAs = specimen.getUnderlyingNode().getSingleRelationship(RelTypes.ORIGINALLY_DESCRIBED_AS, Direction.OUTGOING);
+            final TaxonNode describedAsTaxon = new TaxonNode(describedAs.getEndNode());
+            try {
+                TaxonNode resolvedTaxon = taxonIndex.getOrCreateTaxon(describedAsTaxon);
+                if (resolvedTaxon != null) {
+                    specimen.classifyAs(resolvedTaxon);
+                    indexTaxonInteractionIfNeeded(specimen, resolvedTaxon);
+                }
+            } catch (NodeFactoryException e) {
+                LOG.warn("failed to create taxon with name [" + describedAsTaxon.getName() + "] and id [" + describedAsTaxon.getExternalId() + "]", e);
+            } finally {
+                count++;
+                watch.stop();
+                if (count > 0 && (count % batchSize == 0)) {
+                    LOG.info("resolved [" + batchSize + "] names in " + getProgressMsg(batchSize, watch));
+                }
+                watch.reset();
+                watch.start();
+            }
+        }
+        return count;
     }
 
-    public void resolveNames(ExecutionEngine engine, Long batchSize) {
-        Long offset = 0L;
-        boolean hasMore = true;
-        while (hasMore) {
-            String query = "START study = node:studies('*:*') " +
-                    "MATCH study-[:COLLECTED]->specimen-[:ORIGINALLY_DESCRIBED_AS]->taxon, specimen-[?:CLASSIFIED_AS]->resolvedTaxon " +
-                    "WHERE not(has(resolvedTaxon.name)) " +
-                    "RETURN taxon." + EXTERNAL_ID + "? as `" + EXTERNAL_ID + "`" +
-                    ", taxon." + NAME + "? as `" + NAME + "`" +
-                    ", taxon." + STATUS_ID + "? as `" + STATUS_ID + "`" +
-                    ", taxon." + STATUS_LABEL + "? as `" + STATUS_LABEL + "`" +
-                    ", id(specimen) as `specimenId`";
-            StopWatch watch = new StopWatch();
-            watch.start();
-            ExecutionResult result = executeQueryPage(engine, query, getPagingParams(offset, batchSize));
-            Long count = 0L;
-            ResourceIterator<Map<String, Object>> iterator = result.iterator();
-            while (iterator.hasNext()) {
-                Map<String, Object> row = iterator.next();
-                String name = row.containsKey(NAME) ? (String) row.get(NAME) : null;
-                String externalId = row.containsKey(EXTERNAL_ID) ? (String) row.get(EXTERNAL_ID) : null;
-                String statusId = row.containsKey(STATUS_ID) ? (String) row.get(STATUS_ID) : null;
-                String statusLabel = row.containsKey(STATUS_LABEL) ? (String) row.get(STATUS_LABEL) : null;
-                Long specimenId = row.containsKey("specimenId") ? (Long) row.get("specimenId") : null;
-                if (specimenId != null && seeminglyGoodNameOrId(name, externalId)) {
-                    Specimen specimen = new Specimen(graphService.getNodeById(specimenId));
-                    Taxon taxon = new TaxonImpl(name, externalId);
-                    taxon.setStatus(new Term(statusId, statusLabel));
-                    try {
-                        TaxonNode resolvedTaxon = taxonIndex.getOrCreateTaxon(taxon);
-                        if (resolvedTaxon != null) {
-                            specimen.classifyAs(resolvedTaxon);
+    public void indexTaxonInteractionIfNeeded(Specimen specimen, TaxonNode resolvedTaxon) {
+        Transaction tx = null;
+        try {
+            final Iterable<Relationship> interactions = specimen.getUnderlyingNode().getRelationships(Direction.OUTGOING, InteractType.values());
+            for (Relationship interaction : interactions) {
+                final Relationship interactorClassifiedAs = interaction.getEndNode().getSingleRelationship(RelTypes.CLASSIFIED_AS, Direction.OUTGOING);
+                if (interactorClassifiedAs != null) {
+                    final Node endNode = interactorClassifiedAs.getEndNode();
+                    final Node startNode = resolvedTaxon.getUnderlyingNode();
+                    final Iterable<Relationship> relationships = startNode.getRelationships(Direction.OUTGOING, InteractType.values());
+                    for (Relationship relationship : relationships) {
+                        if (relationship.isType(interaction.getType())
+                                && (relationship.getEndNode().getId() != endNode.getId())) {
+                            if (tx == null) {
+                                tx = graphService.beginTx();
+                            }
+                            startNode.createRelationshipTo(endNode, interaction.getType());
                         }
-                    } catch (NodeFactoryException e) {
-                        LOG.warn("failed to create taxon with name [" + taxon.getName() + "] and id [" + taxon.getExternalId() + "]", e);
+                    }
+                    if (tx != null) {
+                        tx.success();
                     }
                 }
-                count++;
             }
-            iterator.close();
-
-            if (count < batchSize) {
-                hasMore = false;
-            } else {
-                offset += count;
-            }
-            if (count > 0) {
-                LOG.info("resolved [" + count + "] names in " + getProgressMsg(count, watch));
+        } finally {
+            if (tx != null) {
+                tx.finish();
             }
         }
-    }
-
-    public HashMap<String, Object> getPagingParams(Long offset, Long batchSize) {
-        HashMap<String, Object> params = new HashMap<String, Object>();
-        params.put("offset", offset);
-        params.put("batchSize", batchSize);
-        return params;
-    }
-
-    public HashMap<String, Object> getPagingParams(Long offset) {
-        return getPagingParams(offset, batchSize);
     }
 
     public static boolean seeminglyGoodNameOrId(String name, String externalId) {
