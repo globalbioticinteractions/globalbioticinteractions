@@ -105,6 +105,8 @@ public class TaxonIndexImplTest extends GraphDBTestCase {
                     taxon.setPath("a path");
                     taxon.setExternalId("anExternalId");
                     taxon.setCommonNames(EXPECTED_COMMON_NAMES);
+                    taxon.setExternalUrl("someInfoUrl");
+                    taxon.setThumbnailUrl("someThumbnailUrl");
                 }
                 return TaxonUtil.taxonToMap(taxon);
             }
@@ -119,6 +121,8 @@ public class TaxonIndexImplTest extends GraphDBTestCase {
         assertEquals("bla", taxon.getName());
         assertEquals("a path", taxon.getPath());
         assertEquals("anExternalId", taxon.getExternalId());
+        assertEquals("someInfoUrl", taxon.getExternalUrl());
+        assertEquals("someThumbnailUrl", taxon.getThumbnailUrl());
 
         taxon = taxonService.getOrCreateTaxon(new TaxonImpl("bla bla boo"));
         assertEquals("bla", taxon.getName());

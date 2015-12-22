@@ -5,10 +5,9 @@ import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.util.CSVUtil;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-
 public class TaxonCacheParser {
+
+    public static final String MISSING_THUMBNAIL = "";
 
     public static Taxon parseLine(LabeledCSVParser labeledCSVParser) {
         Taxon taxa = new TaxonImpl();
@@ -19,7 +18,7 @@ public class TaxonCacheParser {
         taxa.setPathIds(CSVUtil.valueOrNull(labeledCSVParser, "pathIds"));
         taxa.setPathNames(CSVUtil.valueOrNull(labeledCSVParser, "pathNames"));
         taxa.setExternalUrl(CSVUtil.valueOrNull(labeledCSVParser, "externalUrl"));
-        taxa.setThumbnailUrl(CSVUtil.valueOrNull(labeledCSVParser, "thumbnailUrl"));
+        taxa.setThumbnailUrl(CSVUtil.valueOrDefault(labeledCSVParser, "thumbnailUrl", MISSING_THUMBNAIL));
         return taxa;
     }
 

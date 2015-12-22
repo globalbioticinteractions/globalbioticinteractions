@@ -70,8 +70,12 @@ public class CSVUtil {
         resultBuilder.append(StringUtils.replace(node.asText(), "\"", "\"\""));
     }
 
-    public static String valueOrNull(LabeledCSVParser labeledCSVParser, String columnName) {
+    public static String valueOrNull(LabeledCSVParser labeledCSVParser, String columnName){
+        return valueOrDefault(labeledCSVParser, columnName, null);
+    }
+
+    public static String valueOrDefault(LabeledCSVParser labeledCSVParser, String columnName, String defaultValue) {
         String value = labeledCSVParser.getValueByLabel(columnName);
-        return StringUtils.isBlank(value) ? null : value;
+        return StringUtils.isBlank(value) ? defaultValue : value;
     }
 }

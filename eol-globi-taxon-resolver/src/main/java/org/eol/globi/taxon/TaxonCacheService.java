@@ -56,9 +56,9 @@ public class TaxonCacheService implements PropertyEnricher {
     public Map<String, String> getTaxon(String value) {
         Map<String, String> enriched = null;
         if (isNonEmptyValue(value)) {
-            final String key = providedToResolvedMap.get(value);
-            if (isNonEmptyValue(key)) {
-                enriched = resolvedIdToTaxonMap.get(key);
+            final String externalId = providedToResolvedMap.get(value);
+            if (isNonEmptyValue(externalId)) {
+                enriched = resolvedIdToTaxonMap.get(externalId);
             }
         }
         return enriched;

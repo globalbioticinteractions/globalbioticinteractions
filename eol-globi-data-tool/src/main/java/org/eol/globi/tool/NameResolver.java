@@ -64,8 +64,10 @@ public class NameResolver {
     }
 
     public void resolveNames(Long batchSize) {
-        StopWatch watch = new StopWatch();
-        watch.start();
+        StopWatch watchForEntireRun = new StopWatch();
+        watchForEntireRun.start();
+        StopWatch watchForBatch = new StopWatch();
+        watchForBatch.start();
         int count = 0;
 
         Index<Node> studyIndex = graphService.index().forNodes("studies");
@@ -92,13 +94,13 @@ public class NameResolver {
                     } finally {
                         count++;
                         if (count % batchSize == 0) {
-                            watch.stop();
-                            final long duration = watch.getTime();
+                            watchForBatch.stop();
+                            final long duration = watchForBatch.getTime();
                             if (duration > 0) {
-                                LOG.info("resolved [" + batchSize + "] names in " + getProgressMsg(batchSize, duration));
+                                LOG.info("resolved batch of [" + batchSize + "] names in " + getProgressMsg(batchSize, duration));
                             }
-                            watch.reset();
-                            watch.start();
+                            watchForBatch.reset();
+                            watchForBatch.start();
                         }
                     }
                 }
@@ -106,6 +108,9 @@ public class NameResolver {
             }
         }
         studies.close();
+        watchForEntireRun.stop();
+        LOG.info("resolved [" + count + "] names in " + getProgressMsg(batchSize, watchForEntireRun.getTime()));
+
     }
 
     public void indexTaxonInteractionIfNeeded(Specimen specimen, TaxonNode resolvedTaxon) {

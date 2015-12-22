@@ -37,9 +37,6 @@ public class TaxonCacheParserTest {
                         "EOL:1022449,Anisogammarus confervicolus,Species,,Animalia | Arthropoda | Malacostraca | Amphipoda | Anisogammaridae | Anisogammarus | Anisogammarus confervicolus,EOL:1 | EOL:164 | EOL:1157 | EOL:1158 | EOL:1343 | EOL:40790 | EOL:1022449,kingdom | phylum | class | order | family | genus | species,http://eol.org/pages/1022449,"));
 
         assertThat(someLines, is(notNullValue()));
-
-
-        TaxonCacheParser taxonParser = new TaxonCacheParser();
         final List<Taxon> taxa = new ArrayList<Taxon>();
         parse(someLines, new TaxonCacheListener() {
             @Override
@@ -78,8 +75,7 @@ public class TaxonCacheParserTest {
         assertThat(taxonTerm.getPathIds(), is("EOL:1 | EOL:164 | EOL:1157 | EOL:1158 | EOL:1343 | EOL:40790 | EOL:1022449"));
         assertThat(taxonTerm.getPathNames(), is("kingdom | phylum | class | order | family | genus | species"));
         assertThat(taxonTerm.getExternalUrl(), is("http://eol.org/pages/1022449"));
-        assertThat(taxonTerm.getThumbnailUrl(), is(nullValue()));
-
+        assertThat(taxonTerm.getThumbnailUrl(), is(""));
     }
 
 }
