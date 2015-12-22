@@ -2,14 +2,13 @@ package org.eol.globi.service;
 
 import org.eol.globi.data.CharsetConstant;
 import org.eol.globi.data.GraphDBTestCase;
-import org.eol.globi.data.NodeFactoryImpl;
 import org.eol.globi.data.NodeFactoryException;
+import org.eol.globi.data.TaxonIndex;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TaxonNode;
-import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.neo4j.graphdb.Relationship;
@@ -24,17 +23,16 @@ import static org.junit.internal.matchers.StringContains.containsString;
 
 public class TaxonEnricherImplIT extends GraphDBTestCase {
 
-    private PropertyEnricher enricher;
-
-    @Before
-    public void start() {
-        enricher = PropertyEnricherFactory.createTaxonEnricher();
-        nodeFactory = new NodeFactoryImpl(getGraphDb());
+    @Override
+    protected TaxonIndex createTaxonIndex() {
+        return super.createTaxonIndex(PropertyEnricherFactory.createTaxonEnricher());
     }
 
     @Test
     public void enrichTwoTaxons() throws NodeFactoryException, IOException {
-        TaxonNode taxon = taxonIndex.getOrCreateTaxon("Homo sapiens", "blabla", null);
+        final TaxonImpl blabla = new TaxonImpl("Homo sapiens", "blabla");
+        blabla.setPath(null);
+        TaxonNode taxon = taxonIndex.getOrCreateTaxon(blabla);
         assertThat(taxon.getExternalId(), is("EOL:327955"));
         assertThat(taxon.getPath(), containsString("Animalia"));
         assertThat(taxon.getRank(), containsString("Species"));
@@ -99,7 +97,7 @@ public class TaxonEnricherImplIT extends GraphDBTestCase {
 
     @Test
     public void emptyTaxon() throws IOException, NodeFactoryException, PropertyEnricherException {
-        Taxon enrich = TaxonUtil.enrich(enricher, new TaxonImpl("", ""));
+        Taxon enrich = TaxonUtil.enrich(PropertyEnricherFactory.createTaxonEnricher(), new TaxonImpl("", ""));
         assertThat(enrich.getName(), is(""));
         assertThat(enrich.getExternalId(), is(""));
     }

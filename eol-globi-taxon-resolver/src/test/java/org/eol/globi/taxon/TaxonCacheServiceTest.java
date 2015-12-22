@@ -45,6 +45,7 @@ public class TaxonCacheServiceTest {
         Taxon enrichedTaxon = TaxonUtil.mapToTaxon(enrich);
         assertThat(enrichedTaxon.getName(), is("Anas crecca carolinensis"));
         assertThat(enrichedTaxon.getExternalId(), is("EOL:1276240"));
+        assertThat(enrichedTaxon.getThumbnailUrl(), is("http://media.eol.org/content/2012/11/04/08/35791_98_68.jpg"));
     }
 
     public TaxonCacheService getTaxonCacheService() {
@@ -57,13 +58,13 @@ public class TaxonCacheServiceTest {
     public void enrichPassThrough() throws PropertyEnricherException {
         Map<String, String> properties = new HashMap<String, String>() {
             {
-                put(PropertyAndValueDictionary.NAME, "no name");
+                put(PropertyAndValueDictionary.NAME, "some name");
                 put(PropertyAndValueDictionary.EXTERNAL_ID, "some cached externalId");
             }
         };
         Map<String, String> enrich = getTaxonCacheService().enrich(properties);
         Taxon enrichedTaxon = TaxonUtil.mapToTaxon(enrich);
-        assertThat(enrichedTaxon.getName(), is("no name"));
+        assertThat(enrichedTaxon.getName(), is("some name"));
         assertThat(enrichedTaxon.getExternalId(), is("some cached externalId"));
     }
 

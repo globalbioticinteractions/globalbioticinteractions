@@ -32,12 +32,30 @@ public abstract class GraphDBTestCase {
 
     @Before
     public void startGraphDb() throws IOException {
-        graphDb = new TestGraphDatabaseFactory().newImpermanentDatabase();
-        PropertyEnricher enricher = new PassThroughEnricher();
-
-        taxonIndex = new TaxonIndexImpl(enricher,
-                new PassThroughCorrectionService(), getGraphDb());
         nodeFactory = createNodeFactory();
+        createTaxonIndex();
+    }
+
+    protected TaxonIndex createTaxonIndex() {
+        if (taxonIndex == null) {
+            taxonIndex = createTaxonIndex(new PassThroughEnricher());
+        }
+        return taxonIndex;
+    }
+
+    protected TaxonIndex createTaxonIndex(PropertyEnricher enricher) {
+        if (taxonIndex == null) {
+            taxonIndex = new TaxonIndexImpl(enricher,
+                    new PassThroughCorrectionService(), getGraphDb());
+        }
+        return taxonIndex;
+    }
+
+    protected GraphDatabaseService getGraphDb() {
+        if (graphDb == null) {
+            graphDb = new TestGraphDatabaseFactory().newImpermanentDatabase();
+        }
+        return graphDb;
     }
 
     protected Study importStudy(StudyImporter importer) throws StudyImporterException {
@@ -47,7 +65,7 @@ public abstract class GraphDBTestCase {
     }
 
     protected void resolveNames() {
-        new NameResolver(getGraphDb(), taxonIndex).resolve();
+        new NameResolver(getGraphDb(), createTaxonIndex()).resolve();
     }
 
 
@@ -99,10 +117,6 @@ public abstract class GraphDBTestCase {
     @After
     public void shutdownGraphDb() {
         graphDb.shutdown();
-    }
-
-    protected GraphDatabaseService getGraphDb() {
-        return graphDb;
     }
 
     private static class TestTermLookupService implements TermLookupService {

@@ -226,9 +226,7 @@ public class TaxonCacheService implements PropertyEnricher {
             close(providedToResolvedMap.getEngine());
             resolvedIdToTaxonMap = null;
         }
-        if (cacheDir != null && cacheDir.exists()) {
-            FileUtils.deleteQuietly(cacheDir);
-        }
+        FileUtils.deleteQuietly(cacheDir);
     }
 
     public void close(Engine engine) {
