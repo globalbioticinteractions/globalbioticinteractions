@@ -68,7 +68,7 @@ public class NameResolver {
         watchForEntireRun.start();
         StopWatch watchForBatch = new StopWatch();
         watchForBatch.start();
-        int count = 0;
+        Long count = 0L;
 
         Index<Node> studyIndex = graphService.index().forNodes("studies");
         IndexHits<Node> studies = studyIndex.query("title", "*");
@@ -109,7 +109,7 @@ public class NameResolver {
         }
         studies.close();
         watchForEntireRun.stop();
-        LOG.info("resolved [" + count + "] names in " + getProgressMsg(batchSize, watchForEntireRun.getTime()));
+        LOG.info("resolved [" + count + "] names in " + getProgressMsg(count, watchForEntireRun.getTime()));
 
     }
 
