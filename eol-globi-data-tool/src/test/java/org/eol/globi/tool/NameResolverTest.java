@@ -76,7 +76,7 @@ public class NameResolverTest extends GraphDBTestCase {
 
     @Test
     public void progressMessage() {
-        assertThat(NameResolver.getProgressMsg(10000L, 10), is("bla"));
+        assertThat(NameResolver.getProgressMsg(10000L, 10), is("[1000.0] taxon/ms over [10] ms"));
     }
 
 }

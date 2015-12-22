@@ -65,7 +65,7 @@ public class NameResolver {
 
     public void resolveNames(Long batchSize) {
         StopWatch watch = new StopWatch();
-        watch.start();
+
         int count = 0;
 
         Index<Node> studyIndex = graphService.index().forNodes("studies");
@@ -91,15 +91,15 @@ public class NameResolver {
                         LOG.warn("failed to create taxon with name [" + describedAsTaxon.getName() + "] and id [" + describedAsTaxon.getExternalId() + "]", e);
                     } finally {
                         count++;
-                        watch.stop();
                         if (count % batchSize == 0) {
+                            watch.stop();
                             final long duration = watch.getTime();
                             if (duration > 0) {
                                 LOG.info("resolved [" + batchSize + "] names in " + getProgressMsg(batchSize, duration));
                             }
+                            watch.reset();
+                            watch.start();
                         }
-                        watch.reset();
-                        watch.start();
                     }
                 }
 
