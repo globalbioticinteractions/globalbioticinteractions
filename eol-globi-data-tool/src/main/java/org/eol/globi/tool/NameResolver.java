@@ -63,11 +63,15 @@ public class NameResolver {
     public void resolve() {
         ExecutionEngine engine = new ExecutionEngine(graphService);
         LOG.info("name resolving started...");
-        resolveNames(engine);
+        resolveNames(engine, batchSize);
         LOG.info("name resolving complete.");
 
         LOG.info("building interaction indexes...");
+        buildTaxonInteractionIndex(engine, batchSizeIndex);
+        LOG.info("building interaction indexes done.");
+    }
 
+    public void buildTaxonInteractionIndex(ExecutionEngine engine, Long batchSize) {
         boolean hasMore = true;
         Long offset = 0L;
         while (hasMore) {
@@ -78,7 +82,7 @@ public class NameResolver {
                     "RETURN type(otherR)";
             StopWatch watch = new StopWatch();
             watch.start();
-            final ExecutionResult execute = executeQueryPage(engine, query, getPagingParams(offset));
+            final ExecutionResult execute = executeQueryPage(engine, query, getPagingParams(offset, batchSize));
             final ResourceIterator<Map<String, Object>> iterator = execute.iterator();
             hasMore = iterator.hasNext();
             while (iterator.hasNext()) {
@@ -87,14 +91,13 @@ public class NameResolver {
             }
             LOG.info("built [" + offset + "] taxon level interactions in " + getProgressMsg(offset, watch));
         }
-        LOG.info("building interaction indexes done.");
     }
 
     public ExecutionResult executeQueryPage(ExecutionEngine engine, String query, HashMap<String, Object> pagingParams) {
         return engine.execute(query + " SKIP {offset} LIMIT {batchSize}", pagingParams);
     }
 
-    public void resolveNames(ExecutionEngine engine) {
+    public void resolveNames(ExecutionEngine engine, Long batchSize) {
         Long offset = 0L;
         boolean hasMore = true;
         while (hasMore) {
@@ -108,7 +111,7 @@ public class NameResolver {
                     ", id(specimen) as `specimenId`";
             StopWatch watch = new StopWatch();
             watch.start();
-            ExecutionResult result = executeQueryPage(engine, query, getPagingParams(offset, batchSizeIndex));
+            ExecutionResult result = executeQueryPage(engine, query, getPagingParams(offset, batchSize));
             Long count = 0L;
             ResourceIterator<Map<String, Object>> iterator = result.iterator();
             while (iterator.hasNext()) {
