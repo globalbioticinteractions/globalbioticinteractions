@@ -24,6 +24,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -31,6 +32,10 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 public class StudyImporterForSeltmann extends BaseStudyImporter {
+    public static final String FIELD_ASSOCIATED_GENUS = "aec:associatedGenus";
+    public static final String FIELD_ASSOCIATED_SPECIFIC_EPITHET = "aec:associatedSpecificEpithet";
+    public static final String FIELD_ASSOCIATED_SCIENTIFIC_NAME = "aec:associatedScientificName";
+
     private static final Log LOG = LogFactory.getLog(StudyImporterForSeltmann.class);
 
     private String archiveURL = "seltmann/testArchive.zip";
@@ -82,7 +87,9 @@ public class StudyImporterForSeltmann extends BaseStudyImporter {
                 Map<String, String> prop = new HashMap<String, String>();
                 addKeyValue(parser, prop, "dwc:coreid");
                 addKeyValue(parser, prop, "dwc:basisOfRecord");
-                addKeyValue(parser, prop, "aec:associatedScientificName");
+                addKeyValue(parser, prop, FIELD_ASSOCIATED_GENUS);
+                addKeyValue(parser, prop, FIELD_ASSOCIATED_SPECIFIC_EPITHET);
+                addKeyValue(parser, prop, FIELD_ASSOCIATED_SCIENTIFIC_NAME);
                 addKeyValue(parser, prop, "dwc:basisOfRecord");
                 addKeyValue(parser, prop, "aec:associatedRelationshipTerm");
                 addKeyValue(parser, prop, "aec:associatedRelationshipURI");
@@ -105,7 +112,7 @@ public class StudyImporterForSeltmann extends BaseStudyImporter {
                 String recordId = occurrence.getValueByLabel("idigbio:recordID");
                 Map<String, String> assoc = assocMap.get(recordId);
                 if (assoc != null) {
-                    String targetName = assoc.get("aec:associatedScientificName");
+                    String targetName = getTargetNameFromAssocMap(assoc);
                     String sourceName = occurrence.getValueByLabel("scientificName");
                     String eventDate = occurrence.getValueByLabel("eventDate");
                     Date date = null;
@@ -147,6 +154,18 @@ public class StudyImporterForSeltmann extends BaseStudyImporter {
             throw new StudyImporterException(e);
         }
         return null;
+    }
+
+    public static String getTargetNameFromAssocMap(Map<String, String> assoc) {
+        final String genus = assoc.get(FIELD_ASSOCIATED_GENUS);
+        final String specificEpithet = assoc.get(FIELD_ASSOCIATED_SPECIFIC_EPITHET);
+        String targetName;
+        if (StringUtils.isNotBlank(genus) && StringUtils.isNotBlank(specificEpithet)) {
+            targetName = StringUtils.join(Arrays.asList(genus, specificEpithet), " ");
+        } else {
+            targetName = assoc.get(FIELD_ASSOCIATED_SCIENTIFIC_NAME);
+        }
+        return targetName;
     }
 
     protected void createInteraction(LabeledCSVParser occurrence, Study study, Map<String, String> assoc, String targetName, String sourceName, Date date, InteractType interactType) throws NodeFactoryException, StudyImporterException {

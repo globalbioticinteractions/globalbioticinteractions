@@ -9,6 +9,8 @@ import org.neo4j.graphdb.Relationship;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import static org.hamcrest.Matchers.either;
 import static org.hamcrest.Matchers.is;
@@ -40,5 +42,27 @@ public class StudyImporterForSeltmannTest extends GraphDBTestCase {
         assertThat(taxonIndex.findTaxonByName("Megandrena mentzeliae"), is(notNullValue()));
         assertThat(taxonIndex.findTaxonByName("Mentzelia tricuspis"), is(notNullValue()));
 
+    }
+
+    @Test
+    public void extractAssociatedNameGenusAndSpecificEpithet() {
+        Map<String, String> assocMap = new TreeMap<String, String>() {{
+            put(StudyImporterForSeltmann.FIELD_ASSOCIATED_GENUS, "Donald");
+            put(StudyImporterForSeltmann.FIELD_ASSOCIATED_SPECIFIC_EPITHET, "duckus");
+            put(StudyImporterForSeltmann.FIELD_ASSOCIATED_SCIENTIFIC_NAME, "Donaldduckus");
+        }
+        };
+        final String targetName = StudyImporterForSeltmann.getTargetNameFromAssocMap(assocMap);
+        assertThat(targetName, is("Donald duckus"));
+    }
+
+    @Test
+    public void extractAssociatedNameScientificNameOnly() {
+        Map<String, String> assocMap = new TreeMap<String, String>() {{
+            put(StudyImporterForSeltmann.FIELD_ASSOCIATED_SCIENTIFIC_NAME, "Donaldidae");
+        }
+        };
+        final String targetName = StudyImporterForSeltmann.getTargetNameFromAssocMap(assocMap);
+        assertThat(targetName, is("Donaldidae"));
     }
 }
