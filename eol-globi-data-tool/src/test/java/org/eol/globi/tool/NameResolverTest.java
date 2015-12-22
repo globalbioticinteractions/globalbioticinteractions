@@ -1,23 +1,16 @@
 package org.eol.globi.tool;
 
+import org.apache.commons.lang.time.StopWatch;
 import org.eol.globi.data.GraphDBTestCase;
-import org.eol.globi.data.NodeFactory;
 import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.domain.InteractType;
-import org.eol.globi.domain.PropertyAndValueDictionary;
-import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TaxonNode;
-import org.eol.globi.service.PropertyEnricher;
 import org.eol.globi.service.PropertyEnricherException;
 import org.junit.Test;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Relationship;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
@@ -79,6 +72,11 @@ public class NameResolverTest extends GraphDBTestCase {
         assertTrue(NameResolver.seeminglyGoodNameOrId("sp", "EOL:1234"));
         assertTrue(NameResolver.seeminglyGoodNameOrId("something long", null));
         assertTrue(NameResolver.seeminglyGoodNameOrId(null, "EOL:123"));
+    }
+
+    @Test
+    public void progressMessage() {
+        assertThat(NameResolver.getProgressMsg(10000L, 10), is("bla"));
     }
 
 }
