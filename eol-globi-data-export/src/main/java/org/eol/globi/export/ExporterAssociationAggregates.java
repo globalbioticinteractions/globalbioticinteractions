@@ -24,13 +24,13 @@ public class ExporterAssociationAggregates extends ExporterAssociationsBase {
     }
 
     private void populateRow(Study study, Writer writer, Map<String, String> properties, Map<String, Object> result) throws IOException {
-        Node sourceTaxon = (Node) result.get(QUERY_PARAM_SOURCE_TAXON);
-        Wrappers.SeqWrapper<Node> targetTaxa = (Wrappers.SeqWrapper) result.get(QUERY_PARAM_TARGET_TAXA);
+        Long sourceTaxonId = (Long) result.get(QUERY_PARAM_SOURCE_TAXON_ID);
+        Wrappers.SeqWrapper<Long> targetTaxonIds = (Wrappers.SeqWrapper) result.get(QUERY_PARAM_TARGET_TAXON_IDS);
         String interactionType = (String) result.get(QUERY_PARAM_INTERACTION_TYPE);
 
-        for (Node preyTaxon : targetTaxa) {
-            String sourceOccurrenceId = referenceId(study) + "-" + sourceTaxon.getId() + "-" + interactionType;
-            String assocIdAndTargetOccurrenceIdId = sourceOccurrenceId + "-" + preyTaxon.getId();
+        for (Long targetTaxonId : targetTaxonIds) {
+            String sourceOccurrenceId = referenceId(study) + "-" + sourceTaxonId + "-" + interactionType;
+            String assocIdAndTargetOccurrenceIdId = sourceOccurrenceId + "-" + targetTaxonId;
             properties.put(EOLDictionary.ASSOCIATION_ID, "globi:assoc:" + assocIdAndTargetOccurrenceIdId);
             properties.put(EOLDictionary.OCCURRENCE_ID, "globi:occur:source:" + sourceOccurrenceId);
             properties.put(EOLDictionary.TARGET_OCCURRENCE_ID, "globi:occur:target:" + assocIdAndTargetOccurrenceIdId);

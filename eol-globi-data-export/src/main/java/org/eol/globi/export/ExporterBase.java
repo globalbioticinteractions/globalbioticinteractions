@@ -1,7 +1,6 @@
 package org.eol.globi.export;
 
 import com.Ostermiller.util.CSVPrint;
-import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.domain.NodeBacked;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
@@ -28,6 +27,8 @@ public abstract class ExporterBase extends DarwinCoreExporter {
     public static final String QUERY_PARAM_SOURCE_TAXON = "sourceTaxon";
     public static final String QUERY_PARAM_TARGET_TAXA = "targetTaxa";
     public static final String QUERY_PARAM_INTERACTION_TYPE = "interactionType";
+    public static final String QUERY_PARAM_SOURCE_TAXON_ID = "sourceTaxonId";
+    public static final String QUERY_PARAM_TARGET_TAXON_IDS = "targetTaxonIds";
 
     protected static ExecutionResult executeQueryForDistinctTargetTaxaForPreyByStudy(ExecutionEngine engine, final String title) {
         return engine.execute(getQueryForDistinctTargetTaxaForPreyBySourceTaxa(), new HashMap<String, Object>() {
@@ -46,9 +47,9 @@ public abstract class ExporterBase extends DarwinCoreExporter {
                 "' AND targetTaxon.externalId? <> '" + NO_MATCH +
                 "' AND targetTaxon.name? <> '" + NO_MATCH + "' " +
                 " AND not(has(r." + INVERTED + ")) " +
-                "RETURN distinct(sourceTaxon) as " + QUERY_PARAM_SOURCE_TAXON +
+                "RETURN distinct(id(sourceTaxon)) as " + QUERY_PARAM_SOURCE_TAXON_ID +
                 ", type(r) as " + QUERY_PARAM_INTERACTION_TYPE +
-                ", collect(distinct(targetTaxon)) as " + QUERY_PARAM_TARGET_TAXA;
+                ", collect(distinct(id(targetTaxon))) as " + QUERY_PARAM_TARGET_TAXON_IDS;
     }
 
     protected static void addProperty(Map<String, String> properties, PropertyContainer node, String propertyName, String fieldName) throws IOException {

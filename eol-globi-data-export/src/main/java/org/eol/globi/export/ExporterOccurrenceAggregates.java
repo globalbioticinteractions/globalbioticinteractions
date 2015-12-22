@@ -4,7 +4,6 @@ import org.eol.globi.domain.Study;
 import org.eol.globi.domain.TaxonNode;
 import org.neo4j.cypher.javacompat.ExecutionEngine;
 import org.neo4j.cypher.javacompat.ExecutionResult;
-import org.neo4j.graphdb.Node;
 import scala.collection.convert.Wrappers;
 
 import java.io.IOException;
@@ -26,16 +25,17 @@ public class ExporterOccurrenceAggregates extends ExporterOccurrencesBase {
     }
 
     private void populateRow(Study study, Writer writer, Map<String, Object> result, Map<String, String> properties) throws IOException {
-        TaxonNode sourceTaxon = new TaxonNode((Node) result.get(QUERY_PARAM_SOURCE_TAXON));
+        Long sourceTaxonId = (Long) result.get(QUERY_PARAM_SOURCE_TAXON_ID);
         String relationshipType = (String) result.get(QUERY_PARAM_INTERACTION_TYPE);
 
-        String sourceOccurrenceId = study.getUnderlyingNode().getId() + "-" + sourceTaxon.getNodeID() + "-" + relationshipType;
+        String sourceOccurrenceId = study.getUnderlyingNode().getId() + "-" + sourceTaxonId + "-" + relationshipType;
+        TaxonNode sourceTaxon = new TaxonNode(study.getUnderlyingNode().getGraphDatabase().getNodeById(sourceTaxonId));
         writeRow(writer, properties, sourceTaxon, "globi:occur:source:" + sourceOccurrenceId);
 
-        Wrappers.SeqWrapper<Node> targetTaxa = (Wrappers.SeqWrapper<Node>) result.get(QUERY_PARAM_TARGET_TAXA);
-        for (Node targetTaxon : targetTaxa) {
-            TaxonNode taxon = new TaxonNode(targetTaxon);
-            String targetOccurrenceId = sourceOccurrenceId + "-" + taxon.getNodeID();
+        Wrappers.SeqWrapper<Long> targetTaxonIds = (Wrappers.SeqWrapper<Long>) result.get(QUERY_PARAM_TARGET_TAXON_IDS);
+        for (Long targetTaxonId : targetTaxonIds) {
+            String targetOccurrenceId = sourceOccurrenceId + "-" + targetTaxonId;
+            TaxonNode taxon = new TaxonNode(study.getUnderlyingNode().getGraphDatabase().getNodeById(targetTaxonId));
             writeRow(writer, properties, taxon, "globi:occur:target:" + targetOccurrenceId);
         }
     }
