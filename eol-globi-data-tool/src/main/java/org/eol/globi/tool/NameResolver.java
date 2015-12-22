@@ -75,6 +75,7 @@ public class NameResolver {
         boolean hasMore = true;
         Long offset = 0L;
         while (hasMore) {
+            Long count = 0L;
             final String query = "START study = node:studies('*:*') " +
                     "MATCH study-[:COLLECTED]->specimen-[:CLASSIFIED_AS]->taxon, specimen-[r]->otherSpecimen-[:CLASSIFIED_AS]->otherTaxon " +
                     "WITH taxon, otherTaxon, type(r) as interactType " +
@@ -87,9 +88,10 @@ public class NameResolver {
             hasMore = iterator.hasNext();
             while (iterator.hasNext()) {
                 iterator.next();
-                offset++;
+                count++;
             }
-            LOG.info("built [" + offset + "] taxon level interactions in " + getProgressMsg(offset, watch));
+            offset += count;
+            LOG.info("built [" + count + "] taxon level interactions in " + getProgressMsg(count, watch));
         }
     }
 
