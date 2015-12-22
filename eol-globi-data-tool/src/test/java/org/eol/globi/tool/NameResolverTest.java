@@ -1,6 +1,5 @@
 package org.eol.globi.tool;
 
-import org.apache.commons.lang.time.StopWatch;
 import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.domain.InteractType;
@@ -19,7 +18,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
-import static org.junit.matchers.JUnitMatchers.hasItems;
 
 public class NameResolverTest extends GraphDBTestCase {
 
@@ -76,7 +74,7 @@ public class NameResolverTest extends GraphDBTestCase {
 
     @Test
     public void progressMessage() {
-        assertThat(NameResolver.getProgressMsg(10000L, 10), is("[1000.0] taxon/ms over [10] ms"));
+        assertThat(NameResolver.getProgressMsg(10000L, 5555), is("[1800.18] taxon/s over [5.56] s"));
     }
 
 }

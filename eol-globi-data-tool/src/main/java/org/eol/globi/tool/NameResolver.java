@@ -65,7 +65,7 @@ public class NameResolver {
 
     public void resolveNames(Long batchSize) {
         StopWatch watch = new StopWatch();
-
+        watch.start();
         int count = 0;
 
         Index<Node> studyIndex = graphService.index().forNodes("studies");
@@ -144,7 +144,6 @@ public class NameResolver {
     }
 
     public static String getProgressMsg(Long count, long duration) {
-        return String.format("[%.1f] taxon/ms over [%d] ms", (float) count / duration, duration);
-
+        return String.format("[%.2f] taxon/s over [%.2f] s", (float) count * 1000.0 / duration, duration / 1000.0);
     }
 }
