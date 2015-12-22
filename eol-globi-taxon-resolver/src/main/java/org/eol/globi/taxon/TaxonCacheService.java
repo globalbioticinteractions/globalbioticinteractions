@@ -17,6 +17,7 @@ import org.mapdb.BTreeKeySerializer;
 import org.mapdb.BTreeMap;
 import org.mapdb.DB;
 import org.mapdb.DBMaker;
+import org.mapdb.Engine;
 import org.mapdb.Fun;
 
 import java.io.BufferedReader;
@@ -158,8 +159,8 @@ public class TaxonCacheService implements PropertyEnricher {
             }
 
             public void remove() {
-                    throw new UnsupportedOperationException("remove");
-                }
+                throw new UnsupportedOperationException("remove");
+            }
         };
     }
 
@@ -190,8 +191,8 @@ public class TaxonCacheService implements PropertyEnricher {
             }
 
             public void remove() {
-                                throw new UnsupportedOperationException("remove");
-                            }
+                throw new UnsupportedOperationException("remove");
+            }
         };
     }
 
@@ -218,13 +219,21 @@ public class TaxonCacheService implements PropertyEnricher {
     @Override
     public void shutdown() {
         if (resolvedIdToTaxonMap != null) {
-            resolvedIdToTaxonMap.close();
+            close(resolvedIdToTaxonMap.getEngine());
+            resolvedIdToTaxonMap = null;
         }
         if (providedToResolvedMap != null) {
-            providedToResolvedMap.close();
+            close(providedToResolvedMap.getEngine());
+            resolvedIdToTaxonMap = null;
         }
         if (cacheDir != null && cacheDir.exists()) {
             FileUtils.deleteQuietly(cacheDir);
+        }
+    }
+
+    public void close(Engine engine) {
+        if (!engine.isClosed()) {
+            engine.close();
         }
     }
 

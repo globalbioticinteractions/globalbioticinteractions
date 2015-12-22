@@ -74,10 +74,12 @@ public class TaxonCacheServiceTest {
                 put(PropertyAndValueDictionary.EXTERNAL_ID, "EOL:1276240");
             }
         };
-        Map<String, String> enrich = getTaxonCacheService().enrich(properties);
+        final TaxonCacheService taxonCacheService = getTaxonCacheService();
+        Map<String, String> enrich = taxonCacheService.enrich(properties);
         Taxon enrichedTaxon = TaxonUtil.mapToTaxon(enrich);
         assertThat(enrichedTaxon.getName(), is("Anas crecca carolinensis"));
         assertThat(enrichedTaxon.getExternalId(), is("EOL:1276240"));
+        taxonCacheService.shutdown();
     }
 
     @Test
