@@ -73,6 +73,12 @@ public class DOIResolverImplIT {
     }
 
     @Test
+    public void findCitationForDOITRex() throws IOException {
+        String citationForDOI = new DOIResolverImpl().findCitationForDOI("doi:10.1073/pnas.1216534110");
+        assertThat(citationForDOI, is("DePalma RA, Burnham DA, Martin LD, Rothschild BM, Larson PL. Physical evidence of predatory behavior in Tyrannosaurus rex. Proceedings of the National Academy of Sciences [Internet]. 2013 July 15;110(31):12560–12564. Available from: http://dx.doi.org/10.1073/pnas.1216534110"));
+    }
+
+    @Test
     public void findCitationForDOIEscaped() throws IOException {
         String citationForDOI = new DOIResolverImpl().findCitationForDOI("http://dx.doi.org/10.1577/1548-8659(1973)102<511:fhojmf>2.0.co;2");
         assertThat(citationForDOI, is("Carr WES, Adams CA. Food Habits of Juvenile Marine Fishes Occupying Seagrass Beds in the Estuarine Zone near Crystal River, Florida. Transactions of the American Fisheries Society [Internet]. 1973 July;102(3):511–540. Available from: http://dx.doi.org/10.1577/1548-8659(1973)102<511:fhojmf>2.0.co;2"));

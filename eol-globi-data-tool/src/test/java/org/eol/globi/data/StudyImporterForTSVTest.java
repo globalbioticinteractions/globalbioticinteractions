@@ -1,7 +1,12 @@
 package org.eol.globi.data;
 
+import org.eol.globi.domain.Study;
 import org.eol.globi.domain.TaxonNode;
+import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.core.Is.is;
@@ -26,21 +31,34 @@ public class StudyImporterForTSVTest extends GraphDBTestCase {
     @Test
     public void importFewLines() throws StudyImporterException, NodeFactoryException {
         StudyImporterForTSV importer = new StudyImporterForTSV(new TestParserFactory(firstFewLines), nodeFactory);
+        importer.setRepositoryName("someRepo");
         importStudy(importer);
 
         assertExists("Leptoconchus incycloseris");
         assertExists("Sandalolitha dentata");
+
+        assertStudyTitles("someRepodoi:10.1007/s13127-011-0039-1");
+    }
+
+    public void assertStudyTitles(String element) {
+        final List<Study> allStudies = NodeUtil.findAllStudies(getGraphDb());
+        final List<String> titles = new ArrayList<String>();
+        for (Study study : allStudies) {
+            titles.add(study.getTitle());
+        }
+        assertThat(titles, hasItem(element));
     }
 
     @Test
     public void importMinimal() throws StudyImporterException, NodeFactoryException {
         StudyImporterForTSV importer = new StudyImporterForTSV(new TestParserFactory(minimalLines), nodeFactory);
+        importer.setRepositoryName("someRepo");
         importStudy(importer);
-
         TaxonNode taxon = taxonIndex.findTaxonById("EOL:123");
         assertThat(taxon, is(notNullValue()));
         assertThat(taxon.getName(), is("no name"));
         assertThat(taxon.getExternalId(), is("EOL:123"));
+        assertStudyTitles("someRepoGittenberger, A., Gittenberger, E. (2011). Cryptic, adaptive radiation of endoparasitic snails: sibling species of Leptoconchus (Gastropoda: Coralliophilidae) in corals. Org Divers Evol, 11(1), 21–41. doi:10.1007/s13127-011-0039-1");
     }
 
     protected void assertExists(String taxonName) throws NodeFactoryException {

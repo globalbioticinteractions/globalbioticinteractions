@@ -69,7 +69,7 @@ public abstract class GraphDBTestCase {
     }
 
 
-    private NodeFactory createNodeFactory() {
+    NodeFactory createNodeFactory() {
         NodeFactoryImpl nodeFactoryImpl = new NodeFactoryImpl(getGraphDb());
         nodeFactoryImpl.setEcoregionFinder(new EcoregionFinder() {
 

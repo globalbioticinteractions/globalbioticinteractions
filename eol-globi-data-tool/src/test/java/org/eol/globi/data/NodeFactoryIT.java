@@ -2,6 +2,7 @@ package org.eol.globi.data;
 
 import org.eol.globi.domain.LogMessage;
 import org.eol.globi.domain.Study;
+import org.eol.globi.service.DOIResolverImpl;
 import org.eol.globi.util.ExternalIdUtil;
 import org.junit.Test;
 
@@ -30,5 +31,15 @@ public class NodeFactoryIT extends GraphDBTestCase {
         assertThat(study.getDOI(), is("http://dx.doi.org/10.1111/j.1469-7998.1966.tb02907.x"));
         assertThat(study.getCitation(), is("citation:http://dx.doi.org/10.1111/j.1469-7998.1966.tb02907.x"));
     }
+
+    @Test
+    public void createStudyWithDOIResolving() {
+        NodeFactoryImpl fullNodeFactory = new NodeFactoryImpl(getGraphDb());
+        fullNodeFactory.setDoiResolver(new DOIResolverImpl());
+        Study study = fullNodeFactory.getOrCreateStudy("bla", "source", "doi:10.1073/pnas.1216534110", "");
+        assertThat(study.getCitation(), is("DePalma RA, Burnham DA, Martin LD, Rothschild BM, Larson PL. Physical evidence of predatory behavior in Tyrannosaurus rex. Proceedings of the National Academy of Sciences [Internet]. 2013 July 15;110(31):12560–12564. Available from: http://dx.doi.org/10.1073/pnas.1216534110"));
+        assertThat(study.getDOI(), is("doi:10.1073/pnas.1216534110"));
+    }
+
 
 }

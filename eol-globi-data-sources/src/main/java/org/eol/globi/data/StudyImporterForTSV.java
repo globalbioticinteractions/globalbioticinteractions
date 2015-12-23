@@ -68,10 +68,12 @@ public class StudyImporterForTSV extends BaseStudyImporter {
         parser.changeDelimiter('\t');
         while (parser.getLine() != null) {
             final Map<String, String> link = new TreeMap<String, String>();
-            link.put(REFERENCE_CITATION, parser.getValueByLabel(REFERENCE_CITATION));
-            link.put(REFERENCE_DOI, StringUtils.replace(parser.getValueByLabel("referenceDoi"), " ", ""));
+            final String referenceDoi = StringUtils.replace(parser.getValueByLabel(REFERENCE_DOI), " ", "");
+            final String referenceCitation = parser.getValueByLabel(REFERENCE_CITATION);
+            link.put(REFERENCE_CITATION, referenceCitation);
+            link.put(REFERENCE_DOI, referenceDoi);
             link.put(STUDY_SOURCE_CITATION, (sourceCitation == null ? "" : sourceCitation + ". ") + ReferenceUtil.createLastAccessedString(baseUrl + "/interactions.tsv"));
-            link.put(REFERENCE_ID, namespace + parser.getValueByLabel(REFERENCE_CITATION));
+            link.put(REFERENCE_ID, namespace + (StringUtils.isBlank(referenceDoi) ? referenceCitation : referenceDoi));
             link.put(SOURCE_TAXON_ID, StringUtils.trimToNull(parser.getValueByLabel(SOURCE_TAXON_ID)));
             link.put(SOURCE_TAXON_NAME, StringUtils.trim(parser.getValueByLabel(SOURCE_TAXON_NAME)));
             link.put(TARGET_TAXON_ID, StringUtils.trimToNull(parser.getValueByLabel(TARGET_TAXON_ID)));
