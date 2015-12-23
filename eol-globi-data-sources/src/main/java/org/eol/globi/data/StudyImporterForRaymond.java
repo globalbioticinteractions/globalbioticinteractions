@@ -49,7 +49,7 @@ public class StudyImporterForRaymond extends BaseStudyImporter {
     private static final String NORTH = "NORTH";
     private static final String SOURCES_CSV = "sources.csv";
     private static final String DIET_CSV = "diet.csv";
-    private static final String RESOURCE_URL = "https://www1.data.antarctica.gov.au/aadc/trophic/trophic.zip";
+    private static final String RESOURCE_URL = "https://data.aad.gov.au/aadc/trophic/trophic.zip";
     private static final String RESOURCE_URL_FALLBACK = "https://s3.amazonaws.com/globi/datasets/org/eol/globi/data/raymond2011/0.2/raymond2011-0.2.zip";
 
     private static final int MAX_ATTEMPT = 3;
