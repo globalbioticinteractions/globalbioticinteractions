@@ -145,6 +145,7 @@ public class Normalizer {
 
         if (cmdLine == null || !cmdLine.hasOption(OPTION_SKIP_RESOLVE)) {
             new NameResolver(graphService).resolve();
+            new TaxonInteractionIndexer(graphService).index();
         } else {
             LOG.info("skipping taxa resolving ...");
         }

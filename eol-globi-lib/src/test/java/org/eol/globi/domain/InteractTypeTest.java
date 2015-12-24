@@ -92,4 +92,9 @@ public class InteractTypeTest {
         assertThat(InteractType.inverseOf(ATE), is(EATEN_BY));
     }
 
+    @Test
+    public void nameToType() {
+        assertThat(InteractType.valueOf(ATE.name()), is(ATE));
+    }
+
 }

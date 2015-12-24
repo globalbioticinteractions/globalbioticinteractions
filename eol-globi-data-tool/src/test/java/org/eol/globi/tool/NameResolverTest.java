@@ -48,16 +48,6 @@ public class NameResolverTest extends GraphDBTestCase {
         TaxonNode homoSapiens = taxonIndex.findTaxonByName("Homo sapiens");
         assertNotNull(homoSapiens);
         assertThat(homoSapiens.getExternalId(), is("EOL:327955"));
-
-        Iterable<Relationship> rels = homoSapiens.getUnderlyingNode().getRelationships(Direction.OUTGOING, InteractType.ATE);
-        List<String> humanFood = new ArrayList<String>();
-        for (Relationship rel : rels) {
-            humanFood.add((String) rel.getEndNode().getProperty("name"));
-        }
-
-        assertThat(humanFood.size(), is(2));
-        assertThat(humanFood, hasItems("Ariopsis felis", "Animalia"));
-
     }
 
     public void assertAnimalia(TaxonNode animalia) {
