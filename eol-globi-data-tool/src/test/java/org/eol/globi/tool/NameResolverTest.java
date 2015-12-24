@@ -11,6 +11,9 @@ import org.junit.Test;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Relationship;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertFalse;
@@ -18,6 +21,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+import static org.junit.internal.matchers.IsCollectionContaining.hasItems;
 
 public class NameResolverTest extends GraphDBTestCase {
 
@@ -46,15 +50,13 @@ public class NameResolverTest extends GraphDBTestCase {
         assertThat(homoSapiens.getExternalId(), is("EOL:327955"));
 
         Iterable<Relationship> rels = homoSapiens.getUnderlyingNode().getRelationships(Direction.OUTGOING, InteractType.ATE);
-        int count = 0;
+        List<String> humanFood = new ArrayList<String>();
         for (Relationship rel : rels) {
-            count++;
-            if (count == 0) {
-                assertThat((String) rel.getEndNode().getProperty("name"), is("Animalia"));
-            } else {
-                assertThat((String) rel.getEndNode().getProperty("name"), is("Ariopsis felis"));
-            }
+            humanFood.add((String) rel.getEndNode().getProperty("name"));
         }
+
+        assertThat(humanFood.size(), is(2));
+        assertThat(humanFood, hasItems("Ariopsis felis", "Animalia"));
 
     }
 

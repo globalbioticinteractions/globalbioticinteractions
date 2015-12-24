@@ -5,7 +5,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.data.TaxonIndex;
-import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
@@ -19,7 +18,6 @@ import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
-import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.IndexHits;
 
@@ -86,7 +84,6 @@ public class NameResolver {
                             TaxonNode resolvedTaxon = taxonIndex.getOrCreateTaxon(describedAsTaxon);
                             if (resolvedTaxon != null) {
                                 specimen.classifyAs(resolvedTaxon);
-                                indexTaxonInteractionIfNeeded(specimen, resolvedTaxon);
                             }
                         }
                     } catch (NodeFactoryException e) {
@@ -110,38 +107,6 @@ public class NameResolver {
         studies.close();
         watchForEntireRun.stop();
         LOG.info("resolved [" + count + "] names in " + getProgressMsg(count, watchForEntireRun.getTime()));
-
-    }
-
-    public void indexTaxonInteractionIfNeeded(Specimen specimen, TaxonNode resolvedTaxon) {
-        Transaction tx = null;
-        try {
-            final Iterable<Relationship> interactions = specimen.getUnderlyingNode().getRelationships(Direction.OUTGOING, InteractType.values());
-            for (Relationship interaction : interactions) {
-                final Relationship interactorClassifiedAs = interaction.getEndNode().getSingleRelationship(RelTypes.CLASSIFIED_AS, Direction.OUTGOING);
-                if (interactorClassifiedAs != null) {
-                    final Node endNode = interactorClassifiedAs.getEndNode();
-                    final Node startNode = resolvedTaxon.getUnderlyingNode();
-                    final Iterable<Relationship> relationships = startNode.getRelationships(Direction.OUTGOING, InteractType.values());
-                    for (Relationship relationship : relationships) {
-                        if (relationship.isType(interaction.getType())
-                                && (relationship.getEndNode().getId() != endNode.getId())) {
-                            if (tx == null) {
-                                tx = graphService.beginTx();
-                            }
-                            startNode.createRelationshipTo(endNode, interaction.getType());
-                        }
-                    }
-                    if (tx != null) {
-                        tx.success();
-                    }
-                }
-            }
-        } finally {
-            if (tx != null) {
-                tx.finish();
-            }
-        }
     }
 
     public static boolean seeminglyGoodNameOrId(String name, String externalId) {

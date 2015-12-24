@@ -65,6 +65,7 @@ public class TaxonCacheParserTest {
         assertThat(taxonTerm.getPathIds(), is("EOL:1 | EOL:694 | EOL:695 | EOL:8024 | EOL:8027 | EOL:17930 | EOL:1048951 | EOL:1276240"));
         assertThat(taxonTerm.getPathNames(), is("kingdom | phylum | class | order | family | genus | species | infraspecies"));
         assertThat(taxonTerm.getExternalUrl(), is("http://eol.org/pages/1276240"));
+        assertThat(taxonTerm.getCommonNames(), is("Green-winged Teal @en | Sarcelle à ailes vertes @fr | Amerikaanse Wintertaling @nl |"));
         assertThat(taxonTerm.getThumbnailUrl(), is("http://media.eol.org/content/2012/11/04/08/35791_98_68.jpg"));
 
         taxonTerm = taxa.get(2);

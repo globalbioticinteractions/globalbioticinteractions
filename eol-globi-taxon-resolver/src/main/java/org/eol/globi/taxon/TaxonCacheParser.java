@@ -17,6 +17,7 @@ public class TaxonCacheParser {
         taxa.setPath(CSVUtil.valueOrNull(labeledCSVParser, "path"));
         taxa.setPathIds(CSVUtil.valueOrNull(labeledCSVParser, "pathIds"));
         taxa.setPathNames(CSVUtil.valueOrNull(labeledCSVParser, "pathNames"));
+        taxa.setCommonNames(CSVUtil.valueOrNull(labeledCSVParser, "commonNames"));
         taxa.setExternalUrl(CSVUtil.valueOrNull(labeledCSVParser, "externalUrl"));
         taxa.setThumbnailUrl(CSVUtil.valueOrDefault(labeledCSVParser, "thumbnailUrl", MISSING_THUMBNAIL));
         return taxa;

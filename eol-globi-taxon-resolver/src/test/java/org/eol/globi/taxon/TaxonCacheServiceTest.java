@@ -60,6 +60,7 @@ public class TaxonCacheServiceTest {
         Taxon enrichedTaxon = TaxonUtil.mapToTaxon(enrich);
         assertThat(enrichedTaxon.getName(), is("Acteocina inculta"));
         assertThat(enrichedTaxon.getExternalId(), is("EOL:455065"));
+        assertThat(enrichedTaxon.getCommonNames(), is("rude barrel-bubble @en |"));
         assertThat(enrichedTaxon.getThumbnailUrl(), is(""));
     }
 

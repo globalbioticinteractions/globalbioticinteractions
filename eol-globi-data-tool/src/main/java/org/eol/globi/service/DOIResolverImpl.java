@@ -109,10 +109,9 @@ public class DOIResolverImpl implements DOIResolver {
                     }
                     path = builder.toString();
                 }
-
                 uri = new URI("http", host, path, null);
             } else {
-                uri = new URI("http", doi.replace("http:", ""), null);
+                uri = new URI("http", "dx.doi.org", "/" + StringUtils.trim(doi), null);
             }
         }
         return uri;
