@@ -2,8 +2,6 @@ package org.eol.globi.data;
 
 import junit.framework.Assert;
 import org.apache.commons.lang.StringUtils;
-import org.eol.globi.taxon.CorrectionService;
-import org.eol.globi.taxon.TaxonIndexImpl;
 import org.eol.globi.domain.Environment;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.Location;
@@ -11,11 +9,12 @@ import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
-import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.domain.Term;
 import org.eol.globi.service.DOIResolver;
 import org.eol.globi.service.TermLookupService;
 import org.eol.globi.service.TermLookupServiceException;
+import org.eol.globi.taxon.CorrectionService;
+import org.eol.globi.taxon.TaxonIndexImpl;
 import org.eol.globi.util.ExternalIdUtil;
 import org.junit.Test;
 import org.neo4j.graphdb.Direction;
@@ -50,7 +49,7 @@ public class NodeFactoryImplTest extends GraphDBTestCase {
     }
 
     @Test
-    public void createStudyDOIlookup() {
+    public void createStudyDOIlookup() throws NodeFactoryException {
         getNodeFactory().setDoiResolver(new DOIResolver() {
             @Override
             public String findDOIForReference(String reference) throws IOException {
@@ -135,7 +134,7 @@ public class NodeFactoryImplTest extends GraphDBTestCase {
 
 
     @Test
-    public void addDOIToStudy() {
+    public void addDOIToStudy() throws NodeFactoryException {
         getNodeFactory().setDoiResolver(new DOIResolver() {
             @Override
             public String findDOIForReference(String reference) throws IOException {
@@ -172,7 +171,7 @@ public class NodeFactoryImplTest extends GraphDBTestCase {
     }
 
     @Test
-    public void createStudy() {
+    public void createStudy() throws NodeFactoryException {
         Study study = getNodeFactory().getOrCreateStudy2("myTitle", "mySource", "doi:myDoi");
         assertThat(study.getDOI(), is("doi:myDoi"));
         assertThat(study.getExternalId(), is("http://dx.doi.org/myDoi"));

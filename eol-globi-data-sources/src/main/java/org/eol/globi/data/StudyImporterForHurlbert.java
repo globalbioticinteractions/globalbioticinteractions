@@ -64,6 +64,8 @@ public class StudyImporterForHurlbert extends BaseStudyImporter {
             }
         } catch (IOException e) {
             throw new StudyImporterException("failed to import [" + RESOURCE + "]", e);
+        } catch (NodeFactoryException e) {
+            throw new StudyImporterException("failed to import [" + RESOURCE + "]", e);
         }
 
         LOG.info("unmapped habitats [" + StringUtils.join(habitats.iterator(), ";") + "]");

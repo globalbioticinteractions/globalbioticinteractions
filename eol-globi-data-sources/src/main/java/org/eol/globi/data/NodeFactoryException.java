@@ -1,6 +1,6 @@
 package org.eol.globi.data;
 
-public class NodeFactoryException extends Throwable {
+public class NodeFactoryException extends StudyImporterException {
     public NodeFactoryException(String msg) {
         super(msg);
     }

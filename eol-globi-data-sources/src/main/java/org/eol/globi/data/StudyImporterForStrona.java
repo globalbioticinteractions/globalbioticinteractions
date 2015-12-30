@@ -49,8 +49,8 @@ public class StudyImporterForStrona extends BaseStudyImporter {
             }
         } catch (IOException e) {
             throw new StudyImporterException("problem importing [" + RESOURCE_PATH + "]", e);
-
-
+        } catch (NodeFactoryException e) {
+            throw new StudyImporterException("problem importing [" + RESOURCE_PATH + "]", e);
         }
         return null;
     }

@@ -152,6 +152,8 @@ public class StudyImporterForSeltmann extends BaseStudyImporter {
             }
         } catch (IOException e) {
             throw new StudyImporterException(e);
+        } catch (NodeFactoryException e) {
+            throw new StudyImporterException(e);
         }
         return null;
     }

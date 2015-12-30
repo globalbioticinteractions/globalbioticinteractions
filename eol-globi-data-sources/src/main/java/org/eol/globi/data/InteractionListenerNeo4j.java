@@ -52,7 +52,9 @@ class InteractionListenerNeo4j implements InteractionListener {
             InteractType type = InteractType.typeOf(interactionTypeId);
             String referenceCitation = link.get(REFERENCE_CITATION);
             Study study = nodeFactory.getOrCreateStudy(link.get(REFERENCE_ID), link.get(STUDY_SOURCE_CITATION), link.get(REFERENCE_DOI), referenceCitation);
-            study.setCitationWithTx(referenceCitation);
+            if (StringUtils.isBlank(study.getCitation())) {
+                study.setCitationWithTx(referenceCitation);
+            }
             if (type == null) {
                 study.appendLogMessage("unsupported interaction type id [" + interactionTypeId + "]", Level.WARNING);
             } else {

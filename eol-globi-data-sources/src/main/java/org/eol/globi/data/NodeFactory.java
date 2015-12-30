@@ -28,11 +28,11 @@ public interface NodeFactory {
 
     Study createStudy(String title);
 
-    Study getOrCreateStudy(String title, String source, String citation);
+    Study getOrCreateStudy(String title, String source, String citation) throws NodeFactoryException;
 
-    Study getOrCreateStudy(String title, String source, String doi, String citation);
+    Study getOrCreateStudy(String title, String source, String doi, String citation) throws NodeFactoryException;
 
-    Study getOrCreateStudy2(String title, String source, String doi);
+    Study getOrCreateStudy2(String title, String source, String doi) throws NodeFactoryException;
 
     Study findStudy(String title);
 

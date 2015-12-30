@@ -290,7 +290,7 @@ public class StudyImporterForRaymond extends BaseStudyImporter {
         return sourceMap;
     }
 
-    private Study getOrCreateStudy(String citation) {
+    private Study getOrCreateStudy(String citation) throws NodeFactoryException {
         String title = StringUtils.abbreviate(citation, 16) + MD5.getHashString(citation);
         return nodeFactory.getOrCreateStudy(title, "Raymond, B., Marshall, M., Nevitt, G., Gillies, C., van den Hoff, J., Stark, J.S., Losekoot, M., Woehler, E.J., and Constable, A.J. (2011) A Southern Ocean dietary database. Ecology 92(5):1188. Available from http://dx.doi.org/10.1890/10-1907.1 . Data set supplied by Ben Raymond. " + ReferenceUtil.createLastAccessedString(RESOURCE_URL), citation);
     }

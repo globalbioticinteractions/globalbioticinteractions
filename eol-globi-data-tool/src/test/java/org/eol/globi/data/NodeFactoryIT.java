@@ -26,14 +26,14 @@ public class NodeFactoryIT extends GraphDBTestCase {
     }
 
     @Test
-    public void createStudy() {
+    public void createStudy() throws NodeFactoryException {
         Study study = nodeFactory.getOrCreateStudy("bla", "source", "http://dx.doi.org/10.1111/j.1469-7998.1966.tb02907.x", ExternalIdUtil.toCitation(null, "descr", null));
         assertThat(study.getDOI(), is("http://dx.doi.org/10.1111/j.1469-7998.1966.tb02907.x"));
         assertThat(study.getCitation(), is("citation:http://dx.doi.org/10.1111/j.1469-7998.1966.tb02907.x"));
     }
 
     @Test
-    public void createStudyWithDOIResolving() {
+    public void createStudyWithDOIResolving() throws NodeFactoryException {
         NodeFactoryImpl fullNodeFactory = new NodeFactoryImpl(getGraphDb());
         fullNodeFactory.setDoiResolver(new DOIResolverImpl());
         Study study = fullNodeFactory.getOrCreateStudy("bla", "source", "doi:10.1073/pnas.1216534110", "");

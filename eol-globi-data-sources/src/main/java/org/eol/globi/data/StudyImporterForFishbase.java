@@ -102,7 +102,7 @@ public class StudyImporterForFishbase extends BaseStudyImporter {
         return consumer;
     }
 
-    private Study parseStudy(LabeledCSVParser parser) {
+    private Study parseStudy(LabeledCSVParser parser) throws NodeFactoryException {
         String author = StringUtils.replace(parser.getValueByLabel("author"), "NULL", "");
         String year = StringUtils.replace(parser.getValueByLabel("year"), "NULL", "");
         String title = StringUtils.replace(parser.getValueByLabel("title"), "NULL", "");

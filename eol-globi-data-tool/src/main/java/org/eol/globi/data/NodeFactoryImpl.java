@@ -261,12 +261,18 @@ public class NodeFactoryImpl implements NodeFactory {
     }
 
     @Override
-    public Study getOrCreateStudy(String title, String source, String citation) {
+    public Study getOrCreateStudy(String title, String source, String citation) throws NodeFactoryException {
         return getOrCreateStudy(title, source, null, citation);
     }
 
     @Override
-    public Study getOrCreateStudy(String title, String source, String doi, String citation) {
+    public Study getOrCreateStudy(String title, String source, String doi, String citation) throws NodeFactoryException {
+        if (StringUtils.isBlank(title)) {
+            throw new NodeFactoryException("null or empty study title");
+        }
+        if (StringUtils.isBlank(source)) {
+            throw new NodeFactoryException("null or empty study source");
+        }
         Study study = findStudy(title);
         if (null == study) {
             study = createStudy(title, source, doi, citation);
@@ -275,13 +281,14 @@ public class NodeFactoryImpl implements NodeFactory {
     }
 
     @Override
-    public Study getOrCreateStudy2(String title, String source, String doi) {
+    public Study getOrCreateStudy2(String title, String source, String doi) throws NodeFactoryException {
         return getOrCreateStudy(title, source, doi, null);
     }
 
     @Override
     public Study findStudy(String title) {
-        Node foundStudyNode = studies.get(Study.TITLE, title).getSingle();
+        final IndexHits<Node> nodes = title == null ? null : studies.get(Study.TITLE, title);
+        Node foundStudyNode = nodes != null ? nodes.getSingle() : null;
         return foundStudyNode == null ? null : new Study(foundStudyNode);
     }
 

@@ -202,7 +202,7 @@ public class StudyImporterForHechinger extends BaseStudyImporter {
         consumer.interactsWith(resource, interactType);
     }
 
-    private Study createStudy() {
+    private Study createStudy() throws NodeFactoryException {
         return nodeFactory.getOrCreateStudy2(namespace, getSourceCitation(), getSourceDOI());
     }
 

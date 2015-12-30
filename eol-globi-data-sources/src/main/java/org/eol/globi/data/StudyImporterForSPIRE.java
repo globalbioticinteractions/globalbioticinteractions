@@ -32,7 +32,7 @@ public class StudyImporterForSPIRE extends BaseStudyImporter {
 
     private InteractionListener interactionListener = new InteractionListener() {
         @Override
-        public void newLink(Map<String, String> properties) {
+        public void newLink(Map<String, String> properties) throws StudyImporterException {
             importTrophicLink(properties);
         }
     };
@@ -139,7 +139,7 @@ public class StudyImporterForSPIRE extends BaseStudyImporter {
         }
     }
 
-    protected void importTrophicLink(Map<String, String> properties) {
+    protected void importTrophicLink(Map<String, String> properties) throws NodeFactoryException {
         if (isValid(properties)) {
             importValidLink(properties);
         }
@@ -153,7 +153,7 @@ public class StudyImporterForSPIRE extends BaseStudyImporter {
         return properties.containsKey(Study.TITLE) && !invalidInteraction;
     }
 
-    private void importValidLink(Map<String, String> properties) {
+    private void importValidLink(Map<String, String> properties) throws NodeFactoryException {
         Study study = nodeFactory.getOrCreateStudy(properties.get(Study.TITLE),
                 SOURCE_SPIRE, properties.get(Study.DESCRIPTION));
         try {
