@@ -15,7 +15,7 @@ import static org.junit.matchers.JUnitMatchers.containsString;
 public class StudyImporterForHurlbertTest extends GraphDBTestCase {
 
     @Test
-    public void importAll() throws StudyImporterException, NodeFactoryException {
+    public void importAll() throws StudyImporterException {
         StudyImporter importer = new StudyImporterForHurlbert(new ParserFactoryImpl(), nodeFactory);
         importStudy(importer);
         List<Study> allStudies = NodeUtil.findAllStudies(getGraphDb());
@@ -26,7 +26,7 @@ public class StudyImporterForHurlbertTest extends GraphDBTestCase {
     }
 
     @Test
-    public void importSome() throws StudyImporterException, NodeFactoryException {
+    public void importSome() throws StudyImporterException {
         String csvString = aFewLines();
         TestParserFactory factory = new TestParserFactory(csvString);
         StudyImporter importer = new StudyImporterForHurlbert(factory, nodeFactory);

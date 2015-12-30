@@ -41,25 +41,10 @@ public class StudyImporterForHurlbert extends BaseStudyImporter {
             parser.changeDelimiter('\t');
             while (parser.getLine() != null) {
                 String sourceCitation = parser.getValueByLabel("Source");
-                Study study = nodeFactory.getOrCreateStudy(sourceCitation, "Allen Hurlbert. Avian Diet Database (https://github.com/hurlbertlab/dietdatabase/). " + ReferenceUtil.createLastAccessedString(RESOURCE), null, ExternalIdUtil.toCitation(null, sourceCitation, null));
-                study.setCitationWithTx(sourceCitation);
-
-                //ID,Common_Name,Scientific_Name,,,,Prey_Common_Name,Fraction_Diet_By_Wt_or_Vol,Fraction_Diet_By_Items,Fraction_Occurrence,Fraction_Diet_Unspecified,Item Sample Size,Bird Sample size,Sites,Study Type,Notes,Source
-
-                String preyLabels[] = {"Prey_Kingdom", "Prey_Phylum", "Prey_Class", "Prey_Order", "Prey_Suborder", "Prey_Family", "Prey_Genus", "Prey_Scientific_Name"};
-                ArrayUtils.reverse(preyLabels);
-                String preyTaxonName = null;
-                for (String preyLabel : preyLabels) {
-                    preyTaxonName = parser.getValueByLabel(preyLabel);
-                    if (StringUtils.isNotBlank(preyTaxonName) && !"NA".equalsIgnoreCase(preyTaxonName)) {
-                        break;
-                    }
-                }
-
-                String predatorTaxonName = StringUtils.trim(parser.getValueByLabel("Scientific_Name"));
-                if (StringUtils.isNotBlank(StringUtils.trim(predatorTaxonName))
-                        && StringUtils.isNotBlank(StringUtils.trim(preyTaxonName))) {
-                    importInteraction(regions, locales, habitats, parser, study, preyTaxonName, predatorTaxonName);
+                if (StringUtils.isBlank(sourceCitation)) {
+                    LOG.warn("missing source on line [" + (parser.getLastLineNumber() + 1) + "]");
+                } else {
+                    importRecords(regions, locales, habitats, parser, sourceCitation);
                 }
             }
         } catch (IOException e) {
@@ -72,6 +57,29 @@ public class StudyImporterForHurlbert extends BaseStudyImporter {
         LOG.info("unmapped locales [" + StringUtils.join(locales.iterator(), ";") + "]");
         LOG.info("unmapped regions [" + StringUtils.join(regions.iterator(), ";") + "]");
         return null;
+    }
+
+    public void importRecords(Set<String> regions, Set<String> locales, Set<String> habitats, LabeledCSVParser parser, String sourceCitation) throws StudyImporterException {
+        Study study = nodeFactory.getOrCreateStudy(sourceCitation, "Allen Hurlbert. Avian Diet Database (https://github.com/hurlbertlab/dietdatabase/). " + ReferenceUtil.createLastAccessedString(RESOURCE), null, ExternalIdUtil.toCitation(null, sourceCitation, null));
+        study.setCitationWithTx(sourceCitation);
+
+        //ID,Common_Name,Scientific_Name,,,,Prey_Common_Name,Fraction_Diet_By_Wt_or_Vol,Fraction_Diet_By_Items,Fraction_Occurrence,Fraction_Diet_Unspecified,Item Sample Size,Bird Sample size,Sites,Study Type,Notes,Source
+
+        String preyLabels[] = {"Prey_Kingdom", "Prey_Phylum", "Prey_Class", "Prey_Order", "Prey_Suborder", "Prey_Family", "Prey_Genus", "Prey_Scientific_Name"};
+        ArrayUtils.reverse(preyLabels);
+        String preyTaxonName = null;
+        for (String preyLabel : preyLabels) {
+            preyTaxonName = parser.getValueByLabel(preyLabel);
+            if (StringUtils.isNotBlank(preyTaxonName) && !"NA".equalsIgnoreCase(preyTaxonName)) {
+                break;
+            }
+        }
+
+        String predatorTaxonName = StringUtils.trim(parser.getValueByLabel("Scientific_Name"));
+        if (StringUtils.isNotBlank(StringUtils.trim(predatorTaxonName))
+                && StringUtils.isNotBlank(StringUtils.trim(preyTaxonName))) {
+            importInteraction(regions, locales, habitats, parser, study, preyTaxonName, predatorTaxonName);
+        }
     }
 
     protected void importInteraction(Set<String> regions, Set<String> locales, Set<String> habitats, LabeledCSVParser parser, Study study, String preyTaxonName, String predatorName) throws StudyImporterException {
