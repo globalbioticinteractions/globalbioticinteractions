@@ -146,7 +146,7 @@ public class NodeFactoryImplTest extends GraphDBTestCase {
                 return "my citation";
             }
         });
-        Study study = getNodeFactory().getOrCreateStudy("my title", null, ExternalIdUtil.toCitation("my contr", "some description", null));
+        Study study = getNodeFactory().getOrCreateStudy("my title", "some source", ExternalIdUtil.toCitation("my contr", "some description", null));
         assertThat(study.getDOI(), is("doi:1234"));
         assertThat(study.getExternalId(), is("http://dx.doi.org/1234"));
         assertThat(study.getCitation(), is("my citation"));
@@ -162,7 +162,7 @@ public class NodeFactoryImplTest extends GraphDBTestCase {
                 throw new IOException("kaboom!");
             }
         });
-        study = getNodeFactory().getOrCreateStudy("my other title", null, ExternalIdUtil.toCitation("my contr", "some description", null));
+        study = getNodeFactory().getOrCreateStudy("my other title", "some source", ExternalIdUtil.toCitation("my contr", "some description", null));
         assertThat(study.getDOI(), nullValue());
         assertThat(study.getExternalId(), nullValue());
         assertThat(study.getCitation(), is("my contr. some description"));
