@@ -24,8 +24,6 @@ import static org.eol.globi.domain.PropertyAndValueDictionary.NO_MATCH;
 
 public abstract class ExporterBase extends DarwinCoreExporter {
 
-    public static final String QUERY_PARAM_SOURCE_TAXON = "sourceTaxon";
-    public static final String QUERY_PARAM_TARGET_TAXA = "targetTaxa";
     public static final String QUERY_PARAM_INTERACTION_TYPE = "interactionType";
     public static final String QUERY_PARAM_SOURCE_TAXON_ID = "sourceTaxonId";
     public static final String QUERY_PARAM_TARGET_TAXON_IDS = "targetTaxonIds";

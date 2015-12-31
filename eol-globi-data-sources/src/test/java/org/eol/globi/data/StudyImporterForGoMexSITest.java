@@ -53,10 +53,12 @@ public class StudyImporterForGoMexSITest {
                 "24d,2689,PL,NA,Divita et al 1983,Divita,NA,Regina,NA,NA,NA,NA,NA,1983,\"Foods of coastal fishes during brown shrimp Penaeus aztecus, migration from Texas estuaries (June - July 1981). \",NA,NA,NA,Fisheries Bulletin,81,2,396,404,,NA,NA,NA,NA,NA,NA,NA,NA,81,NA\n" +
                 "24d,2689,PL,NA,Divita et al 1983,Creel,NA,Mischelle,NA,NA,NA,NA,NA,1983,\"Foods of coastal fishes during brown shrimp Penaeus aztecus, migration from Texas estuaries (June - July 1981). \",NA,NA,NA,Fisheries Bulletin,81,2,396,404,,NA,NA,NA,NA,NA,NA,NA,NA,81,NA\n" +
                 "24d,2689,PL,NA,Divita et al 1983,Sheridan,NA,Peter,F,NA,NA,NA,NA,1983,\"Foods of coastal fishes during brown shrimp Penaeus aztecus, migration from Texas estuaries (June - July 1981). \",NA,NA,NA,Fisheries Bulletin,81,2,396,404,,NA,NA,NA,NA,NA,NA,NA,NA,81,NA\n" +
+                "17g,2746,PL,NA,\"Giménez et al, 2001\",Moreno,NA,Víctor,NA,NA,NA,NA,NA,2001,Aspectos d    e la conducta alimentaria del mero (Epinephelus morio) del Banco de Campeche,NA,NA,N    A,Ciencia Pesquera,NA,14,165,170,NA,INAPESCA,Del Benito,Juárez,MX,NA,NA,NA,NA,1,NA\n" +
                 "17b,2550,GR,NA,Beaumariage 1973,Beaumariage,NA,Dale,S,NA,NA,NA,NA,1973,\"Age, growth, and reproduction of king mackerel, Scomberomorus cavalla, in Florida.  \",NA,NA,NA,Florida Marine Research Publications,NA,1,1,45,,\"Marine Research Laboratory, Florida Department of Natural Resources\",St. Petersburg,FL,US,NA,NA,NA,NA,1,NA";
 
         Map<String, String> contributorMap = StudyImporterForGoMexSI.collectContributors("bla", new LabeledCSVParser(new CSVParser(new StringReader(someReferences))));
 
+        assertThat(contributorMap.get("17g"), is("Víctor Moreno"));
         assertThat(contributorMap.get("16r"), is("Robert Rogers"));
         assertThat(contributorMap.get("24d"), is("Regina Divita, Mischelle Creel, Peter Sheridan"));
         assertThat(contributorMap.get("17b"), is("Dale Beaumariage"));

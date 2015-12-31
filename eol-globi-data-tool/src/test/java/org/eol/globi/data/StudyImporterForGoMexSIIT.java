@@ -40,18 +40,6 @@ public class StudyImporterForGoMexSIIT extends GraphDBTestCase {
         assertThatSomeDataIsImported(nodeFactory, taxonIndex);
     }
 
-    @Test
-    public void createAndPopulateStudyGitHub2June2015() throws StudyImporterException, NodeFactoryException, IOException, URISyntaxException {
-        importWithCommit(GitHubUtil.getBaseUrl("gomexsi/interaction-data", "c00b359b220be168e0396f1b357949f428226474"));
-        assertInteractionCount(53495);
-    }
-
-    @Test
-    public void createAndPopulateStudyGitHub9June2015() throws StudyImporterException, NodeFactoryException, IOException, URISyntaxException {
-        importWithCommit(GitHubUtil.getBaseUrl("gomexsi/interaction-data", "e51f18e016f26627d4c264797869c910f1baefdd"));
-        assertInteractionCount(55150);
-    }
-
     protected StudyImporterForGoMexSI importWithCommit(String baseUrlLastCommit) throws StudyImporterException {
         StudyImporterForGoMexSI importer = new StudyImporterForGoMexSI(new ParserFactoryImpl(), nodeFactory);
         final List<String> msgs = new ArrayList<String>();
@@ -78,16 +66,7 @@ public class StudyImporterForGoMexSIIT extends GraphDBTestCase {
         return importer;
     }
 
-    protected void assertInteractionCount(int expectedCount) {
-        ExecutionEngine engine = new ExecutionEngine(getGraphDb());
-        ExecutionResult result = engine.execute("START study = node:studies('*:*') MATCH study-[:COLLECTED]->specimen-[rel:ATE|PREYS_ON]->prey RETURN count(rel) as count");
-        ResourceIterator<Object> values = result.columnAs("count");
-        assertThat(values.next().toString(), is(Integer.toString(expectedCount)));
-    }
-
     private static void assertThatSomeDataIsImported(NodeFactory nodeFactory, TaxonIndex taxonIndex) throws StudyImporterException, NodeFactoryException {
-
-
         Study study = nodeFactory.findStudy("Divita et al 1983");
 
         assertSpecimenProperties(study.getUnderlyingNode().getGraphDatabase());

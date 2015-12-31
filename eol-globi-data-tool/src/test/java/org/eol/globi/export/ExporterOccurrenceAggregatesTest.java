@@ -22,17 +22,18 @@ public class ExporterOccurrenceAggregatesTest extends GraphDBTestCase {
 
     private String getExpectedData() {
         return "\n" +
-                "globi:occur:source:1-62-ATE,EOL:333,,,,,,,,,,,,,,,,,,,,,,,,,,,\n" +
-                "globi:occur:target:1-62-ATE-63,EOL:555,,,,,,,,,,,,,,,,,,,,,,,,,,,\n" +
-                "globi:occur:target:1-62-ATE-64,EOL:666,,,,,,,,,,,,,,,,,,,,,,,,,,,\n" +
-                "globi:occur:source:1-67-ATE,EOL:123,,,,,,,,,,,,,,,,,,,,,,,,,,,\n" +
-                "globi:occur:target:1-67-ATE-63,EOL:555,,,,,,,,,,,,,,,,,,,,,,,,,,,\n" +
-                "globi:occur:target:1-67-ATE-64,EOL:666,,,,,,,,,,,,,,,,,,,,,,,,,,,"
-                ;
-    }
-
-    private ExporterOccurrencesBase exportOccurrences() {
-        return new ExporterOccurrenceAggregates();
+                "globi:occur:source:1-EOL:123-ATE,EOL:123,,,,,,,,,,,,,,,,,,,,,,,,,,,\n" +
+                "globi:occur:target:1-EOL:123-ATE-EOL:555,EOL:555,,,,,,,,,,,,,,,,,,,,,,,,,,,\n" +
+                "globi:occur:target:1-EOL:123-ATE-EOL:666,EOL:666,,,,,,,,,,,,,,,,,,,,,,,,,,,\n" +
+                "globi:occur:source:1-EOL:333-ATE,EOL:333,,,,,,,,,,,,,,,,,,,,,,,,,,,\n" +
+                "globi:occur:target:1-EOL:333-ATE-EOL:555,EOL:555,,,,,,,,,,,,,,,,,,,,,,,,,,,\n" +
+                "globi:occur:target:1-EOL:333-ATE-EOL:666,EOL:666,,,,,,,,,,,,,,,,,,,,,,,,,,,\n" +
+                "globi:occur:source:36-EOL:888-ATE,EOL:888,,,,,,,,,,,,,,,,,,,,,,,,,,,\n" +
+                "globi:occur:target:36-EOL:888-ATE-EOL:555,EOL:555,,,,,,,,,,,,,,,,,,,,,,,,,,,\n" +
+                "globi:occur:target:36-EOL:888-ATE-EOL:666,EOL:666,,,,,,,,,,,,,,,,,,,,,,,,,,,\n" +
+                "globi:occur:source:45-EOL:888-ATE,EOL:888,,,,,,,,,,,,,,,,,,,,,,,,,,,\n" +
+                "globi:occur:target:45-EOL:888-ATE-EOL:555,EOL:555,,,,,,,,,,,,,,,,,,,,,,,,,,,\n" +
+                "globi:occur:target:45-EOL:888-ATE-EOL:666,EOL:666,,,,,,,,,,,,,,,,,,,,,,,,,,,";
     }
 
     @Test
@@ -42,7 +43,7 @@ public class ExporterOccurrenceAggregatesTest extends GraphDBTestCase {
         resolveNames();
 
         StringWriter row = new StringWriter();
-        exportOccurrences().exportStudy(myStudy, row, false);
+        new ExporterOccurrenceAggregates().exportDistinct(myStudy, row);
         assertThat(row.toString(), equalTo(""));
     }
 
@@ -55,12 +56,12 @@ public class ExporterOccurrenceAggregatesTest extends GraphDBTestCase {
 
         StringWriter row = new StringWriter();
 
-        exportOccurrences().exportStudy(myStudy1, row, false);
+        new ExporterOccurrenceAggregates().exportDistinct(myStudy1, row);
 
         String expectedData = getExpectedData();
 
         int linesPerHeader = 1;
-        int numberOfExpectedDistinctSourceTargetInteractions = 6;
+        int numberOfExpectedDistinctSourceTargetInteractions = 12;
         String actualData = row.getBuffer().toString();
         assertThat(actualData, equalTo(expectedData));
         assertThat(actualData.split("\n").length, Is.is(linesPerHeader + numberOfExpectedDistinctSourceTargetInteractions));
