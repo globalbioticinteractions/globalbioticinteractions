@@ -5,6 +5,7 @@ import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
+import org.eol.globi.domain.Term;
 import org.eol.globi.geo.LatLng;
 import org.eol.globi.service.GeoNamesService;
 import org.eol.globi.util.InvalidLocationException;
@@ -59,9 +60,19 @@ class InteractionListenerNeo4j implements InteractionListener {
                 study.appendLogMessage("unsupported interaction type id [" + interactionTypeId + "]", Level.WARNING);
             } else {
                 Specimen source = nodeFactory.createSpecimen(study, sourceTaxonName, sourceTaxonId);
+                setBasisOfRecordIfAvailable(link, source);
                 Specimen target = nodeFactory.createSpecimen(study, targetTaxonName, targetTaxonId);
+                setBasisOfRecordIfAvailable(link, target);
                 source.interactsWith(target, type, getOrCreateLocation(study, link));
             }
+        }
+    }
+
+    private void setBasisOfRecordIfAvailable(Map<String, String> link, Specimen specimen) {
+        final String basisOfRecordName = link.get(BASIS_OF_RECORD_NAME);
+        final String basisOfRecordId = link.get(BASIS_OF_RECORD_ID);
+        if (StringUtils.isNotBlank(basisOfRecordName) || StringUtils.isNotBlank(basisOfRecordId)) {
+            specimen.setBasisOfRecord(new Term(basisOfRecordId, basisOfRecordName));
         }
     }
 

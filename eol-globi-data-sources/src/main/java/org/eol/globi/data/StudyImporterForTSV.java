@@ -24,6 +24,8 @@ public class StudyImporterForTSV extends BaseStudyImporter {
     public static final String REFERENCE_ID = "studyTitle";
     public static final String REFERENCE_DOI = "referenceDoi";
     public static final String REFERENCE_CITATION = "referenceCitation";
+    public static final String BASIS_OF_RECORD_ID = "basisOfRecordId";
+    public static final String BASIS_OF_RECORD_NAME = "basisOfRecordName";
     public static final String DECIMAL_LATITUDE = "decimalLatitude";
     public static final String DECIMAL_LONGITUDE = "decimalLongitude";
     public static final String LOCALITY_ID = "localityId";

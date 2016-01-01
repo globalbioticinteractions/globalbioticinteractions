@@ -12,6 +12,7 @@ import org.eol.globi.data.ParserFactory;
 import org.eol.globi.data.StudyImporter;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.data.StudyImporterForGoMexSI;
+import org.eol.globi.data.StudyImporterForGray;
 import org.eol.globi.data.StudyImporterForHechinger;
 import org.eol.globi.data.StudyImporterForJSONLD;
 import org.eol.globi.data.StudyImporterForPlanque;
@@ -78,8 +79,10 @@ public class GitHubImporterFactory {
                 importer = createWoodImporter(desc, parserFactory, nodeFactory);
             } else if ("szoboszlai".equals(format)) {
                 importer = createSzoboszlaiImporter(desc, parserFactory, nodeFactory);
-            }else if ("planque".equals(format)) {
+            } else if ("planque".equals(format)) {
                 importer = createPlanqueImporter(desc, parserFactory, nodeFactory);
+            } else if ("gray".equals(format)) {
+                importer = createGrayImporter(desc, parserFactory, nodeFactory);
             } else {
                 throw new StudyImporterException("unsupported format [" + format + "]");
             }
@@ -125,6 +128,23 @@ public class GitHubImporterFactory {
         }
         studyImporter.setLocation(parseLocation(desc));
         studyImporter.setLocality(parseLocality(desc));
+        if (desc.has("resources")) {
+            JsonNode resources = desc.get("resources");
+            if (resources.has("links")) {
+                studyImporter.setLinksURL(resources.get("links").asText());
+            }
+        }
+        return studyImporter;
+    }
+
+    private StudyImporter createGrayImporter(JsonNode desc, final ParserFactory parserFactory, final NodeFactory nodeFactory) throws StudyImporterException {
+        StudyImporterForGray studyImporter = new StudyImporterForGray(parserFactory, nodeFactory);
+        if (desc.has("doi")) {
+            studyImporter.setSourceDOI(desc.get("doi").asText());
+        }
+        if (desc.has("citation")) {
+            studyImporter.setSourceCitation(desc.get("citation").asText());
+        }
         if (desc.has("resources")) {
             JsonNode resources = desc.get("resources");
             if (resources.has("links")) {
