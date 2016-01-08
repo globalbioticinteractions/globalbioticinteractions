@@ -134,16 +134,31 @@ public class TaxonCacheService implements PropertyEnricher {
         LOG.info("taxon cache initialized.");
     }
 
+    private enum ProcessingState {
+        PROVIDED_NAME,
+        PROVIDED_ID,
+        RESOLVED_NAME,
+        RESOLVED_ID,
+        DONE
+    }
+
     public Iterator<Fun.Tuple2<String, String>> createTaxonMappingSource(final String resource) throws IOException {
         return new Iterator<Fun.Tuple2<String, String>>() {
             private BufferedReader reader = createBufferedReader(resource);
             private final LabeledCSVParser labeledCSVParser = CSVUtil.createLabeledCSVParser(reader);
-            private boolean processing = false;
+            private ProcessingState state = ProcessingState.DONE;
 
             @Override
             public boolean hasNext() {
                 try {
-                    return processing || labeledCSVParser.getLine() != null;
+                    boolean hasNext = (state != ProcessingState.DONE);
+                    if (ProcessingState.DONE == state) {
+                        if (labeledCSVParser.getLine() != null) {
+                            state = ProcessingState.PROVIDED_NAME;
+                            hasNext = true;
+                        }
+                    }
+                    return hasNext;
                 } catch (IOException e) {
                     return false;
                 }
@@ -153,8 +168,25 @@ public class TaxonCacheService implements PropertyEnricher {
             public Fun.Tuple2<String, String> next() {
                 final Taxon resolvedTaxon = TaxonMapParser.parseResolvedTaxon(labeledCSVParser);
                 final Taxon providedTaxon = TaxonMapParser.parseProvidedTaxon(labeledCSVParser);
-                final String key = processing ? providedTaxon.getExternalId() : providedTaxon.getName();
-                processing = !processing;
+                String key = null;
+                switch (state) {
+                    case PROVIDED_NAME:
+                        key = providedTaxon.getName();
+                        state = ProcessingState.PROVIDED_ID;
+                        break;
+                    case PROVIDED_ID:
+                        key = providedTaxon.getExternalId();
+                        state = ProcessingState.RESOLVED_NAME;
+                        break;
+                    case RESOLVED_NAME:
+                        key = resolvedTaxon.getName();
+                        state = ProcessingState.RESOLVED_ID;
+                        break;
+                    case RESOLVED_ID:
+                        key = resolvedTaxon.getExternalId();
+                        state = ProcessingState.DONE;
+                        break;
+                }
                 return new Fun.Tuple2<String, String>(valueOrNoMatch(key), valueOrNoMatch(resolvedTaxon.getExternalId()));
             }
 
