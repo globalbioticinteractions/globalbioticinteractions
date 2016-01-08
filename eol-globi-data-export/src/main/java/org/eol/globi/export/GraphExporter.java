@@ -42,7 +42,7 @@ public class GraphExporter {
         exportNames(studies, baseDir, new ExportTaxonMaps(), "taxa/taxonMap.csv.gz");
         exportNames(studies, baseDir, new ExportTaxonNames(), "taxa/taxonCache.csv.gz");
         exportNames(studies, baseDir, new ExportUnmatchedTaxonNames(), "taxa/taxonUnmatched.csv");
-        //exportDataOntology(studies, baseDir);
+        exportDataOntology(studies, baseDir);
         exportDarwinCoreAggregatedByStudy(baseDir, studies);
         exportDarwinCoreAll(baseDir, studies);
     }

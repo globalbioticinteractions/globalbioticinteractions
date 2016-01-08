@@ -18,7 +18,7 @@ import static org.junit.Assert.assertThat;
 public class GraphExporterTest extends GraphDBTestCase {
 
     @Test
-    public void exportAll() throws StudyImporterException, NodeFactoryException, IOException {
+    public void exportAll() throws StudyImporterException, IOException {
         File tmpDir = FileUtils.getTempDirectory();
         File tmpDirPath = new File(tmpDir, "test" + new Random().nextLong());
         FileUtils.forceMkdir(tmpDirPath);
@@ -30,7 +30,7 @@ public class GraphExporterTest extends GraphDBTestCase {
         resolveNames();
         try {
             new GraphExporter().export(getGraphDb(), tmpDirPath.getAbsolutePath() + "/");
-            assertThat(tmpDirPath.list().length, is(3));
+            assertThat(tmpDirPath.list().length, is(4));
         } finally {
             FileUtils.deleteQuietly(tmpDirPath);
         }
