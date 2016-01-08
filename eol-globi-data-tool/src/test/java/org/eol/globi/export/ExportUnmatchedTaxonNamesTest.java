@@ -112,7 +112,8 @@ public class ExportUnmatchedTaxonNamesTest extends GraphDBTestCase {
         };
         taxonIndex = ExportTestUtil.taxonIndexWithEnricher(taxonEnricher, getGraphDb());
 
-        Study study = nodeFactory.getOrCreateStudy2("my study", "my first source", null);
+        Study study = nodeFactory.getOrCreateStudy2("my, study", "my first, source", null);
+        study.setCitationWithTx("cite, study");
 
         Specimen predatorSpecimen = nodeFactory.createSpecimen(study, "Homo sapienz");
         TaxonNode humanz = taxonIndex.getOrCreateTaxon("Homo sapienz");
@@ -140,9 +141,9 @@ public class ExportUnmatchedTaxonNamesTest extends GraphDBTestCase {
         StringWriter writer = new StringWriter();
         new ExportUnmatchedTaxonNames().exportStudy(study, writer, true);
         assertThat(writer.toString(), is("unmatched taxon name,unmatched taxon id,name status,similar to taxon name,similar to taxon path,similar to taxon id,study,source" +
-                        "\nHomo sapienz,,,Homo sapiens,one | two | Homo sapiens,TESTING:123,,my first source" +
-                        "\nCaniz,,,,,,,my first source" +
-                        "\nCanis,,,,,,,my first source"
+                        "\nHomo sapienz,,,Homo sapiens,one | two | Homo sapiens,TESTING:123,\"cite, study\",\"my first, source\"" +
+                        "\nCaniz,,,,,,\"cite, study\",\"my first, source\"" +
+                        "\nCanis,,,,,,\"cite, study\",\"my first, source\""
         ));
     }
 
