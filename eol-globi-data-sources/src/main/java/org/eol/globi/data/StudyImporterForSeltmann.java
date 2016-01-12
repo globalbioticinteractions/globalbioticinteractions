@@ -21,7 +21,6 @@ import org.mapdb.HTreeMap;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
@@ -63,9 +62,9 @@ public class StudyImporterForSeltmann extends BaseStudyImporter {
             File occTempFile = null;
             while ((entry = zipInputStream.getNextEntry()) != null) {
                 if (entry.getName().matches("(^|(.*/))associatedTaxa.tsv$")) {
-                    assocTempFile = saveToTmpFile(zipInputStream, entry);
+                    assocTempFile = FileUtils.saveToTmpFile(zipInputStream, entry);
                 } else if (entry.getName().matches("(^|(.*/))occurrences.tsv$")) {
-                    occTempFile = saveToTmpFile(zipInputStream, entry);
+                    occTempFile = FileUtils.saveToTmpFile(zipInputStream, entry);
                 } else {
                     IOUtils.copy(zipInputStream, new NullOutputStream());
                 }
@@ -217,16 +216,6 @@ public class StudyImporterForSeltmann extends BaseStudyImporter {
 
     private String getLineMsg(LabeledCSVParser occurrence) {
         return " on line [" + (occurrence.getLastLineNumber() + 1) + "]";
-    }
-
-    protected File saveToTmpFile(ZipInputStream zipInputStream, ZipEntry entry) throws IOException {
-        File tempFile = File.createTempFile(entry.getName(), "tmp");
-        tempFile.deleteOnExit();
-        FileOutputStream fos = new FileOutputStream(tempFile);
-        IOUtils.copy(zipInputStream, fos);
-        fos.flush();
-        IOUtils.closeQuietly(fos);
-        return tempFile;
     }
 
     protected void addKeyValue(LabeledCSVParser parser, Map<String, String> prop, String key) {

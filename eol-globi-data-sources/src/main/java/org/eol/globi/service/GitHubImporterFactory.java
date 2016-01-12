@@ -11,6 +11,7 @@ import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.data.ParserFactory;
 import org.eol.globi.data.StudyImporter;
 import org.eol.globi.data.StudyImporterException;
+import org.eol.globi.data.StudyImporterForCoetzer;
 import org.eol.globi.data.StudyImporterForGoMexSI;
 import org.eol.globi.data.StudyImporterForGray;
 import org.eol.globi.data.StudyImporterForHechinger;
@@ -64,17 +65,19 @@ public class GitHubImporterFactory {
         StudyImporter importer = null;
         if (StringUtils.isNotBlank(descriptor)) {
             JsonNode desc = new ObjectMapper().readTree(descriptor);
-            final String citation = desc.has("citation") ? desc.get("citation").asText() : baseUrl;
+            final String sourceCitation = desc.has("citation") ? desc.get("citation").asText() : baseUrl;
             final String sourceDOI = parseDOI(desc);
             String format = desc.has("format") ? desc.get("format").asText() : "globi";
             if ("globi".equals(format)) {
-                importer = createTSVImporter(repo, baseUrl, parserFactory, nodeFactory, citation);
+                importer = createTSVImporter(repo, baseUrl, parserFactory, nodeFactory, sourceCitation);
             } else if ("gomexsi".equals(format)) {
-                importer = createGoMexSIImporter(baseUrl, citation, parserFactory, nodeFactory);
+                importer = createGoMexSIImporter(baseUrl, sourceCitation, parserFactory, nodeFactory);
             } else if ("hechinger".equals(format)) {
-                importer = createHechingerImporter(repo, desc, citation, sourceDOI, parserFactory, nodeFactory);
+                importer = createHechingerImporter(repo, desc, sourceCitation, sourceDOI, parserFactory, nodeFactory);
             } else if ("seltmann".equals(format)) {
                 importer = createSeltmannImporter(repo, desc, parserFactory, nodeFactory);
+            } else if ("coetzer".equals(format)) {
+                importer = createCoetzerImporter(repo, desc, parserFactory, nodeFactory, sourceCitation, sourceDOI);
             } else if ("wood".equals(format)) {
                 importer = createWoodImporter(desc, parserFactory, nodeFactory);
             } else if ("szoboszlai".equals(format)) {
@@ -116,6 +119,19 @@ public class GitHubImporterFactory {
             studyImporterForSeltmann.setArchiveURL(archiveURL);
         }
         return studyImporterForSeltmann;
+    }
+
+    private StudyImporterForCoetzer createCoetzerImporter(String repo, JsonNode desc, final ParserFactory parserFactory, final NodeFactory nodeFactory, String sourceCitation, String sourceDOI) throws StudyImporterException {
+        StudyImporterForCoetzer studyImporter = new StudyImporterForCoetzer(parserFactory, nodeFactory);
+        studyImporter.setSourceCitation(sourceCitation);
+        studyImporter.setSourceDOI(sourceDOI);
+        final String archiveURL = parseArchiveURL(desc);
+        if (StringUtils.isBlank(archiveURL)) {
+            throw new StudyImporterException("failed to import [" + repo + "]: no [archiveURL] specified");
+        } else {
+            studyImporter.setArchiveURL(archiveURL);
+        }
+        return studyImporter;
     }
 
     private StudyImporter createWoodImporter(JsonNode desc, final ParserFactory parserFactory, final NodeFactory nodeFactory) throws StudyImporterException {
