@@ -3,6 +3,7 @@ package org.eol.globi.service;
 import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.data.StudyImporter;
 import org.eol.globi.data.StudyImporterException;
+import org.eol.globi.data.StudyImporterForArthopodEasyCapture;
 import org.eol.globi.data.StudyImporterForGoMexSI;
 import org.eol.globi.data.StudyImporterForPlanque;
 import org.eol.globi.data.StudyImporterForSzoboszlai;
@@ -21,7 +22,7 @@ import static org.junit.internal.matchers.StringContains.containsString;
 public class GitHubImporterFactoryIT {
 
     @Test
-    public void createGoMexSI() throws URISyntaxException, NodeFactoryException, StudyImporterException, IOException {
+    public void createGoMexSI() throws URISyntaxException, StudyImporterException, IOException {
         StudyImporter importer = new GitHubImporterFactory().createImporter("gomexsi/interaction-data", null, null);
         assertThat(importer, is(notNullValue()));
         assertThat(importer, is(instanceOf(StudyImporterForGoMexSI.class)));
@@ -30,7 +31,7 @@ public class GitHubImporterFactoryIT {
     }
 
     @Test
-    public void createSzoboszlai() throws URISyntaxException, NodeFactoryException, StudyImporterException, IOException {
+    public void createSzoboszlai() throws URISyntaxException, StudyImporterException, IOException {
         StudyImporter importer = new GitHubImporterFactory().createImporter("globalbioticinteractions/szoboszlai2015", null, null);
         assertThat(importer, is(notNullValue()));
         assertThat(importer, is(instanceOf(StudyImporterForSzoboszlai.class)));
@@ -39,7 +40,7 @@ public class GitHubImporterFactoryIT {
     }
 
     @Test
-    public void createWood() throws URISyntaxException, NodeFactoryException, StudyImporterException, IOException {
+    public void createWood() throws URISyntaxException, StudyImporterException, IOException {
         StudyImporter importer = new GitHubImporterFactory().createImporter("globalbioticinteractions/wood2015", null, null);
         assertThat(importer, is(notNullValue()));
         assertThat(importer, is(instanceOf(StudyImporterForWood.class)));
@@ -49,7 +50,7 @@ public class GitHubImporterFactoryIT {
     }
 
     @Test
-    public void createPlanque() throws URISyntaxException, NodeFactoryException, StudyImporterException, IOException {
+    public void createPlanque() throws URISyntaxException, StudyImporterException, IOException {
         StudyImporter importer = new GitHubImporterFactory().createImporter("globalbioticinteractions/planque2014", null, null);
         assertThat(importer, is(notNullValue()));
         assertThat(importer, is(instanceOf(StudyImporterForPlanque.class)));
@@ -58,6 +59,14 @@ public class GitHubImporterFactoryIT {
         assertThat(importerz.getLinks(), is(notNullValue()));
         assertThat(importerz.getReferences(), is(notNullValue()));
         assertThat(importerz.getReferencesForLinks(), is(notNullValue()));
+    }
+
+    @Test
+    public void createArthopodEasyCapture() throws URISyntaxException, StudyImporterException, IOException {
+        StudyImporter importer = new GitHubImporterFactory().createImporter("globalbioticinteractions/arthropodEasyCaptureAMNH", null, null);
+        assertThat(importer, is(notNullValue()));
+        assertThat(importer, is(instanceOf(StudyImporterForArthopodEasyCapture.class)));
+        assertThat(((StudyImporterForArthopodEasyCapture)importer).getRssFeedUrlString(), is(notNullValue()));
     }
 
 }

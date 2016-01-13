@@ -11,6 +11,7 @@ import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.data.ParserFactory;
 import org.eol.globi.data.StudyImporter;
 import org.eol.globi.data.StudyImporterException;
+import org.eol.globi.data.StudyImporterForArthopodEasyCapture;
 import org.eol.globi.data.StudyImporterForCoetzer;
 import org.eol.globi.data.StudyImporterForGoMexSI;
 import org.eol.globi.data.StudyImporterForGray;
@@ -76,6 +77,8 @@ public class GitHubImporterFactory {
                 importer = createHechingerImporter(repo, desc, sourceCitation, sourceDOI, parserFactory, nodeFactory);
             } else if ("seltmann".equals(format)) {
                 importer = createSeltmannImporter(repo, desc, parserFactory, nodeFactory);
+            } else if ("arthropodEasyCapture".equals(format)) {
+                importer = createArthropodEasyCaptureImporter(repo, desc, parserFactory, nodeFactory);
             } else if ("coetzer".equals(format)) {
                 importer = createCoetzerImporter(repo, desc, parserFactory, nodeFactory, sourceCitation, sourceDOI);
             } else if ("wood".equals(format)) {
@@ -119,6 +122,18 @@ public class GitHubImporterFactory {
             studyImporterForSeltmann.setArchiveURL(archiveURL);
         }
         return studyImporterForSeltmann;
+    }
+
+    private StudyImporter createArthropodEasyCaptureImporter(String repo, JsonNode desc, final ParserFactory parserFactory, final NodeFactory nodeFactory) throws StudyImporterException {
+        StudyImporterForArthopodEasyCapture importer = new StudyImporterForArthopodEasyCapture(parserFactory, nodeFactory);
+        final String rssFeedURLName = "rssFeedURL";
+        final String rssFeedUrl = desc.has(rssFeedURLName) ? desc.get(rssFeedURLName).asText() : "";
+        if (StringUtils.isBlank(rssFeedUrl)) {
+            throw new StudyImporterException("failed to import [" + repo + "]: no [" + rssFeedURLName + "] specified");
+        } else {
+            importer.setRssFeedUrlString(rssFeedUrl);
+        }
+        return importer;
     }
 
     private StudyImporterForCoetzer createCoetzerImporter(String repo, JsonNode desc, final ParserFactory parserFactory, final NodeFactory nodeFactory, String sourceCitation, String sourceDOI) throws StudyImporterException {
