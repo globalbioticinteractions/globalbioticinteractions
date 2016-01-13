@@ -136,17 +136,9 @@ public class StudyImporterForCoetzer extends BaseStudyImporter {
                     }
                 }
             }
-        } catch (
-                IOException e
-                )
-
-        {
+        } catch (IOException e) {
             throw new StudyImporterException(e);
-        } catch (
-                NodeFactoryException e
-                )
-
-        {
+        } catch (NodeFactoryException e) {
             throw new StudyImporterException(e);
         }
 
