@@ -56,7 +56,7 @@ public class TaxonCacheService implements PropertyEnricher {
     public Map<String, String> getTaxon(String value) {
         Map<String, String> enriched = null;
         if (isNonEmptyValue(value)) {
-            final String externalId = providedToResolvedMap.get(value);
+            String externalId = providedToResolvedMap.get(value);
             if (isNonEmptyValue(externalId)) {
                 enriched = resolvedIdToTaxonMap.get(externalId);
             }
@@ -120,7 +120,7 @@ public class TaxonCacheService implements PropertyEnricher {
         try {
             providedToResolvedMap = db
                     .createTreeMap("taxonMappingById")
-                    .pumpSource(createTaxonMappingSource(taxonMapResource))
+                    .pumpSource(createTaxonMappingSource(taxonMapResource, new UnresolvedLineSkipper()))
                     .pumpPresort(100000)
                     .pumpIgnoreDuplicates()
                     .keySerializer(BTreeKeySerializer.STRING)
@@ -142,7 +142,19 @@ public class TaxonCacheService implements PropertyEnricher {
         DONE
     }
 
-    public Iterator<Fun.Tuple2<String, String>> createTaxonMappingSource(final String resource) throws IOException {
+    interface LineSkipper {
+        boolean shouldSkipLine(LabeledCSVParser parser);
+    }
+
+    class UnresolvedLineSkipper implements LineSkipper {
+
+        @Override
+        public boolean shouldSkipLine(LabeledCSVParser parser) {
+            return !resolvedTaxon(TaxonMapParser.parseResolvedTaxon(parser));
+        }
+    }
+
+    public Iterator<Fun.Tuple2<String, String>> createTaxonMappingSource(final String resource, final LineSkipper skipper) throws IOException {
         return new Iterator<Fun.Tuple2<String, String>>() {
             private BufferedReader reader = createBufferedReader(resource);
             private final LabeledCSVParser labeledCSVParser = CSVUtil.createLabeledCSVParser(reader);
@@ -153,10 +165,10 @@ public class TaxonCacheService implements PropertyEnricher {
                 try {
                     boolean hasNext = (state != ProcessingState.DONE);
                     if (ProcessingState.DONE == state) {
-                        if (labeledCSVParser.getLine() != null) {
-                            state = ProcessingState.PROVIDED_NAME;
-                            hasNext = true;
-                        }
+                        do {
+                            hasNext = labeledCSVParser.getLine() != null;
+                        } while (hasNext && skipper.shouldSkipLine(labeledCSVParser));
+                        state = ProcessingState.PROVIDED_NAME;
                     }
                     return hasNext;
                 } catch (IOException e) {
@@ -194,6 +206,10 @@ public class TaxonCacheService implements PropertyEnricher {
                 throw new UnsupportedOperationException("remove");
             }
         };
+    }
+
+    public boolean resolvedTaxon(Taxon providedTaxon) {
+        return !StringUtils.equals(PropertyAndValueDictionary.NO_MATCH, providedTaxon.getExternalId());
     }
 
     private String valueOrNoMatch(String value) {

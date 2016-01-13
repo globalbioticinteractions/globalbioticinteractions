@@ -155,4 +155,34 @@ public class TaxonCacheServiceTest {
         assertThat(enrichedTaxon.getExternalId(), is("EOL:327955"));
         taxonCacheService.shutdown();
     }
+
+    @Test
+    public void resolveSecondary() throws PropertyEnricherException {
+        Map<String, String> properties = new HashMap<String, String>() {
+            {
+                put(PropertyAndValueDictionary.NAME, "Felis catus");
+            }
+        };
+        final TaxonCacheService taxonCacheService = getTaxonCacheService();
+        Map<String, String> enrich = taxonCacheService.enrich(properties);
+        Taxon enrichedTaxon = TaxonUtil.mapToTaxon(enrich);
+        assertThat(enrichedTaxon.getName(), is("Felis catus"));
+        assertThat(enrichedTaxon.getExternalId(), is("EOL:1037781"));
+        taxonCacheService.shutdown();
+    }
+
+    @Test
+    public void resolveUnresolvedOnly() throws PropertyEnricherException {
+        Map<String, String> properties = new HashMap<String, String>() {
+            {
+                put(PropertyAndValueDictionary.NAME, "Canis lupus dingo");
+            }
+        };
+        final TaxonCacheService taxonCacheService = getTaxonCacheService();
+        Map<String, String> enrich = taxonCacheService.enrich(properties);
+        Taxon enrichedTaxon = TaxonUtil.mapToTaxon(enrich);
+        assertThat(enrichedTaxon.getName(), is("Canis lupus dingo"));
+        assertThat(enrichedTaxon.getExternalId(), is(nullValue()));
+        taxonCacheService.shutdown();
+    }
 }

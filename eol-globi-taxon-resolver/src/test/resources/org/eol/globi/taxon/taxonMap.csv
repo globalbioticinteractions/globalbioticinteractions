@@ -3,3 +3,6 @@ EOL:1276240,Green-winged teal,EOL:1276240,Anas crecca carolinensis
 EOL:1276240,no name,EOL:1276240,Anas crecca carolinensis
 EOL:455065,Acteocina inculcata,EOL:455065,Acteocina inculta
 foo,bar,EOL:327955,Homo sapiens
+,Felis catus,no:match,Felis catus
+,Felis catus,EOL:1037781,Felis catus
+,Canis lupus dingo,no:match,Canis lupus dingo

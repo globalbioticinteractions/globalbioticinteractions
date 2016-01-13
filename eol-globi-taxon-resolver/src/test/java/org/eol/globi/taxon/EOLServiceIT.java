@@ -642,6 +642,17 @@ public class EOLServiceIT {
         assertThat(properties.get(PATH), is("Animalia | Chordata | Aves | Accipitriformes | Accipitridae | Buteo | Buteo buteo | Buteo buteo pojana"));
     }
 
+ @Test
+    public void lookupUnresolved() throws PropertyEnricherException {
+        Map<String, String> properties = new HashMap<String, String>();
+        properties.put(NAME, "Platostoma africanum");
+        properties = eolService.enrich(properties);
+        assertThat(properties.get(NAME), is("Platostoma africanum"));
+        assertThat(properties.get(EXTERNAL_ID), is("EOL:5382900"));
+        assertThat(properties.get(PATH_NAMES), is(notNullValue()));
+        assertThat(properties.get(PATH), is(notNullValue()));
+    }
+
     @Test
     public void lookupExternalIdAndPathByNonScientificName() throws PropertyEnricherException {
         Map<String, String> properties = new HashMap<String, String>();

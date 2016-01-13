@@ -18,7 +18,11 @@ public class ExternalIdUtil {
             for (Map.Entry<String, String> idPrefixToUrlPrefix : getURLPrefixMap().entrySet()) {
                 String idPrefix = idPrefixToUrlPrefix.getKey();
                 if (StringUtils.startsWith(externalId, idPrefix)) {
-                    url = idPrefixToUrlPrefix.getValue() + externalId.replaceAll(idPrefix, "");
+                    if (isIRMNG(idPrefix)) {
+                        url = urlForIRMNG(externalId, idPrefix);
+                    } else {
+                        url = idPrefixToUrlPrefix.getValue() + externalId.replaceAll(idPrefix, "");
+                    }
                     String suffix = getURLSuffixMap().get(idPrefix);
                     if (StringUtils.isNotBlank(suffix)) {
                         url = url + suffix;
@@ -28,6 +32,23 @@ public class ExternalIdUtil {
                     break;
                 }
             }
+        }
+        return url;
+    }
+
+    public static boolean isIRMNG(String idPrefix) {
+        return StringUtils.equals(TaxonomyProvider.INTERIM_REGISTER_OF_MARINE_AND_NONMARINE_GENERA.getIdPrefix(), idPrefix);
+    }
+
+    public static String urlForIRMNG(String externalId, String idPrefix) {
+        String url;
+        final String id = externalId.replaceAll(idPrefix, "");
+        if (id.length() == 6) {
+            url = "http://www.marine.csiro.au/mirrorsearch/ir_search.list_genera?fam_id=" + id;
+        } else if (id.length() == 7) {
+            url = "http://www.marine.csiro.au/mirrorsearch/ir_search.list_species?gen_id=" + id;
+        } else {
+            url = "http://www.marine.csiro.au/mirrorsearch/ir_search.list_species?sp_id=" + id;
         }
         return url;
     }
@@ -50,6 +71,8 @@ public class ExternalIdUtil {
             put(TaxonomyProvider.ID_PREFIX_NCBI, "https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=");
             put(TaxonomyProvider.ID_PREFIX_NBN, "https://data.nbn.org.uk/Taxa/");
             put(TaxonomyProvider.ID_PREFIX_DOI, "http://dx.doi.org/");
+            put(TaxonomyProvider.INTERIM_REGISTER_OF_MARINE_AND_NONMARINE_GENERA.getIdPrefix(), "http://www.marine.csiro.au/mirrorsearch/ir_search.list_species?sp_id=");
+            put(TaxonomyProvider.OPEN_TREE_OF_LIFE.getIdPrefix(), "https://tree.opentreeoflife.org/taxonomy/browse?id=");
             put(TaxonomyProvider.ID_PREFIX_HTTP, TaxonomyProvider.ID_PREFIX_HTTP);
         }};
     }

@@ -16,6 +16,12 @@ public class ExternalIdUtilTest {
         assertThat(ExternalIdUtil.urlForExternalId("bioinfo:ref:147884"), is("http://bioinfo.org.uk/html/b147884.htm"));
         assertThat(ExternalIdUtil.urlForExternalId("IF:700605"), is("http://www.indexfungorum.org/names/NamesRecord.asp?RecordID=700605"));
         assertThat(ExternalIdUtil.urlForExternalId("NCBI:7215"), is("https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7215"));
+        assertThat(ExternalIdUtil.urlForExternalId("OTT:563163"), is("https://tree.opentreeoflife.org/taxonomy/browse?id=563163"));
+        assertThat(ExternalIdUtil.urlForExternalId("GBIF:2435035"), is("http://www.gbif.org/species/2435035"));
+        assertThat(ExternalIdUtil.urlForExternalId("NBN:NHMSYS0000080189"), is("https://data.nbn.org.uk/Taxa/NHMSYS0000080189"));
+        assertThat(ExternalIdUtil.urlForExternalId("IRMNG:10201332"), is("http://www.marine.csiro.au/mirrorsearch/ir_search.list_species?sp_id=10201332"));
+        assertThat(ExternalIdUtil.urlForExternalId("IRMNG:1012185"), is("http://www.marine.csiro.au/mirrorsearch/ir_search.list_species?gen_id=1012185"));
+        assertThat(ExternalIdUtil.urlForExternalId("IRMNG:104889"), is("http://www.marine.csiro.au/mirrorsearch/ir_search.list_genera?fam_id=104889"));
     }
 
     @Test
