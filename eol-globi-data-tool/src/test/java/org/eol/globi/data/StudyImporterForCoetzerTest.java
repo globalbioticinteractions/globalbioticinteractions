@@ -34,6 +34,7 @@ public class StudyImporterForCoetzerTest extends GraphDBTestCase {
 
         assertThat(taxonIndex.findTaxonByName("Agrostis tremula"), is(notNullValue()));
         assertThat(taxonIndex.findTaxonByName("Coelioxys erythrura"), is(notNullValue()));
+        assertThat(taxonIndex.findTaxonByName("Patellapis namaquensis"), is(notNullValue()));
 
     }
 

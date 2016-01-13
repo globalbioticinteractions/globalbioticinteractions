@@ -146,7 +146,7 @@ public class StudyImporterForCoetzer extends BaseStudyImporter {
     }
 
     protected static String nameFor(String[] line) {
-        String genus = StringUtils.trim(line[16]);
+        String genus = StringUtils.trim(line[15]);
         String specificEpithet = StringUtils.trim(line[17]);
         final String speciesName = StringUtils.trim(StringUtils.join(Arrays.asList(genus, specificEpithet), " "));
         return StringUtils.isBlank(speciesName) ? StringUtils.trim(line[4]) : speciesName;
