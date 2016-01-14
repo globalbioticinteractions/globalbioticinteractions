@@ -9,6 +9,7 @@ import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.server.util.ResultField;
 import org.eol.globi.util.CypherQuery;
 import org.eol.globi.util.CypherUtil;
+import org.eol.globi.util.ExternalIdUtil;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -54,8 +55,16 @@ public class TaxonSearchImpl implements TaxonSearch {
             props.put(PropertyAndValueDictionary.NAME, valueOrEmpty(first.get(0).getTextValue()));
             props.put(PropertyAndValueDictionary.COMMON_NAMES, valueOrEmpty(first.get(1).getTextValue()));
             props.put(PropertyAndValueDictionary.PATH, valueOrEmpty(first.get(2).getTextValue()));
-            props.put(PropertyAndValueDictionary.EXTERNAL_ID, valueOrEmpty(first.get(3).getTextValue()));
-            props.put(PropertyAndValueDictionary.EXTERNAL_URL, valueOrEmpty(first.get(4).getTextValue()));
+            final String externalId = valueOrEmpty(first.get(3).getTextValue());
+            props.put(PropertyAndValueDictionary.EXTERNAL_ID, externalId);
+
+            final String externalURL = valueOrEmpty(first.get(4).getTextValue());
+            if (StringUtils.isNotBlank(externalId) && StringUtils.isBlank(externalURL)) {
+                props.put(PropertyAndValueDictionary.EXTERNAL_URL, valueOrEmpty(ExternalIdUtil.urlForExternalId(externalId)));
+            } else {
+                props.put(PropertyAndValueDictionary.EXTERNAL_URL, externalURL);
+            }
+
             props.put(PropertyAndValueDictionary.THUMBNAIL_URL, valueOrEmpty(first.get(5).getTextValue()));
         }
         return props;

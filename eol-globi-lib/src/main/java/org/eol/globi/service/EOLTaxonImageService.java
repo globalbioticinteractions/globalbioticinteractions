@@ -16,9 +16,20 @@ import org.eol.globi.util.ExternalIdUtil;
 import org.eol.globi.util.HttpUtil;
 
 import java.io.IOException;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 public class EOLTaxonImageService implements ImageSearch {
     private static final Log LOG = LogFactory.getLog(EOLTaxonImageService.class);
+
+    public static final Map<TaxonomyProvider, String> EOL_TAXON_PROVIDER_MAP =  Collections.unmodifiableMap(new HashMap<TaxonomyProvider, String>() {{
+        put(TaxonomyProvider.ITIS, "903");
+        put(TaxonomyProvider.NCBI, "1172");
+        put(TaxonomyProvider.WORMS, "123");
+        put(TaxonomyProvider.GBIF, "800");
+        put(TaxonomyProvider.INDEX_FUNGORUM, "596");
+    }});
 
     public TaxonImage lookupImageForExternalId(String externalId) throws IOException {
         TaxonImage image = null;
@@ -30,8 +41,12 @@ public class EOLTaxonImageService implements ImageSearch {
             image = lookupImageURLs(TaxonomyProvider.WORMS, externalId.replace(TaxonomyProvider.ID_PREFIX_WORMS, ""));
         } else if (externalId.startsWith(TaxonomyProvider.ID_PREFIX_ITIS)) {
             image = lookupImageURLs(TaxonomyProvider.ITIS, externalId.replace(TaxonomyProvider.ID_PREFIX_ITIS, ""));
-        }else if (externalId.startsWith(TaxonomyProvider.ID_PREFIX_NCBI)) {
+        } else if (externalId.startsWith(TaxonomyProvider.ID_PREFIX_NCBI)) {
             image = lookupImageURLs(TaxonomyProvider.NCBI, externalId.replace(TaxonomyProvider.ID_PREFIX_NCBI, ""));
+        } else if (externalId.startsWith(TaxonomyProvider.ID_PREFIX_GBIF)) {
+            image = lookupImageURLs(TaxonomyProvider.GBIF, externalId.replace(TaxonomyProvider.ID_PREFIX_GBIF, ""));
+        } else if (externalId.startsWith(TaxonomyProvider.ID_PREFIX_INDEX_FUNGORUM)) {
+            image = lookupImageURLs(TaxonomyProvider.INDEX_FUNGORUM, externalId.replace(TaxonomyProvider.ID_PREFIX_INDEX_FUNGORUM, ""));
         }
 
         if (image == null) {
@@ -47,19 +62,15 @@ public class EOLTaxonImageService implements ImageSearch {
     public TaxonImage lookupImageURLs(TaxonomyProvider provider, String taxonId) throws IOException {
         TaxonImage taxonImage = null;
         String eolPageId = null;
-        String eolProviderId = "627";
 
-        if (TaxonomyProvider.ITIS.equals(provider)) {
-            eolProviderId = "903";
-        } else if (TaxonomyProvider.NCBI.equals(provider)) {
-            eolProviderId = "1172";
-        } else if (TaxonomyProvider.WORMS.equals(provider)) {
-            eolProviderId = "123";
-        } else if (TaxonomyProvider.EOL.equals(provider)) {
-            // no need to lookup, because the page id is already in the taxon id
-            eolPageId = taxonId.replace(TaxonomyProvider.ID_PREFIX_EOL, "");
-        } else {
-            throw new UnsupportedOperationException("unsupported taxonomy provider [" + provider + "]");
+        String eolProviderId = EOL_TAXON_PROVIDER_MAP.get(provider);
+        if (StringUtils.isBlank(eolProviderId)) {
+            if (TaxonomyProvider.EOL.equals(provider)) {
+                // no need to lookup, because the page id is already in the taxon id
+                eolPageId = taxonId.replace(TaxonomyProvider.ID_PREFIX_EOL, "");
+            } else {
+                throw new UnsupportedOperationException("unsupported taxonomy provider [" + provider + "]");
+            }
         }
 
         if (eolPageId == null) {
@@ -75,6 +86,7 @@ public class EOLTaxonImageService implements ImageSearch {
                 taxonImage.setPageId(eolPageId);
                 taxonImage.setCommonName(pageInfo.getCommonName());
                 taxonImage.setScientificName(pageInfo.getScientificName());
+                taxonImage.setThumbnailURL(pageInfo.getThumbnailURL());
                 taxonImage.setThumbnailURL(pageInfo.getThumbnailURL());
                 taxonImage.setImageURL(pageInfo.getImageURL());
             }

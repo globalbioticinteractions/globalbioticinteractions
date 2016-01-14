@@ -7,6 +7,7 @@ import org.junit.Test;
 import java.io.IOException;
 import java.net.URISyntaxException;
 
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.Matchers.endsWith;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
@@ -106,6 +107,17 @@ public class EOLTaxonImageServiceIT {
     public void imageLookupEOL3() throws URISyntaxException, IOException {
         assertEOLImage3(imageService.lookupImageURLs(TaxonomyProvider.EOL, "2774522"));
         assertEOLImage3(imageService.lookupImageForExternalId(TaxonomyProvider.ID_PREFIX_EOL + "2774522"));
+    }
+
+    @Test
+    public void imageLookupGBIF() throws URISyntaxException, IOException {
+        TaxonImage taxonImage = imageService.lookupImageForExternalId("GBIF:7270064");
+        assertThat(taxonImage.getPageId(), is(nullValue()));
+        assertThat(taxonImage.getThumbnailURL(), is(nullValue()));
+        assertThat(taxonImage.getImageURL(), is(nullValue()));
+        assertThat(taxonImage.getInfoURL(), is("http://www.gbif.org/species/7270064"));
+        assertThat(taxonImage.getScientificName(), is(nullValue()));
+        assertThat(taxonImage.getCommonName(), is(nullValue()));
     }
 
     private void assertEOLImage3(TaxonImage taxonImage) {
