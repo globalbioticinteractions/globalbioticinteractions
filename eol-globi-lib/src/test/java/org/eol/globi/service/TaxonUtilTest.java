@@ -42,6 +42,17 @@ public class TaxonUtilTest {
     }
 
     @Test
+    public void copyTaxonPrefillExternalURL() {
+        Taxon src = new TaxonImpl("name", "GBIF:123");
+        src.setStatus(new Term("statusId", "statusLabel"));
+        Taxon target = new TaxonImpl();
+        TaxonUtil.copy(src, target);
+        assertThat(target.getStatus().getId(), is("statusId"));
+        assertThat(target.getStatus().getName(), is("statusLabel"));
+        assertThat(target.getExternalUrl(), is("http://www.gbif.org/species/123"));
+    }
+
+    @Test
     public void notHomonym() {
         TaxonImpl taxon = new TaxonImpl();
         taxon.setName("Lestes");

@@ -8,6 +8,7 @@ import org.eol.globi.domain.TaxonImage;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TaxonomyProvider;
 import org.eol.globi.domain.Term;
+import org.eol.globi.util.ExternalIdUtil;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -26,7 +27,12 @@ public class TaxonUtil {
         properties.put(PATH_IDS, taxon.getPathIds());
         properties.put(PATH_NAMES, taxon.getPathNames());
         properties.put(COMMON_NAMES, taxon.getCommonNames());
-        properties.put(EXTERNAL_URL, taxon.getExternalUrl());
+        if (StringUtils.isBlank(taxon.getExternalUrl()) && StringUtils.isNotBlank(taxon.getExternalId())) {
+            properties.put(EXTERNAL_URL, ExternalIdUtil.urlForExternalId(taxon.getExternalId()));
+        } else {
+            properties.put(EXTERNAL_URL, taxon.getExternalUrl());
+        }
+
         properties.put(THUMBNAIL_URL, taxon.getThumbnailUrl());
         Term status = taxon.getStatus();
         if (status != null
@@ -41,12 +47,20 @@ public class TaxonUtil {
     public static void mapToTaxon(Map<String, String> properties, Taxon taxon) {
         taxon.setName(properties.get(NAME));
         taxon.setRank(properties.get(RANK));
-        taxon.setExternalId(properties.get(EXTERNAL_ID));
+        final String externalId = properties.get(EXTERNAL_ID);
+        taxon.setExternalId(externalId);
         taxon.setPath(properties.get(PATH));
         taxon.setPathIds(properties.get(PATH_IDS));
         taxon.setPathNames(properties.get(PATH_NAMES));
         taxon.setCommonNames(properties.get(COMMON_NAMES));
-        taxon.setExternalUrl(properties.get(EXTERNAL_URL));
+
+        final String externalUrl = properties.get(EXTERNAL_URL);
+        if (StringUtils.isBlank(externalUrl) && StringUtils.isNotBlank(externalId)) {
+            taxon.setExternalUrl(ExternalIdUtil.urlForExternalId(externalId));
+        } else {
+            taxon.setExternalUrl(externalUrl);
+        }
+
         taxon.setThumbnailUrl(properties.get(THUMBNAIL_URL));
 
         String statusId = properties.get(STATUS_ID);
