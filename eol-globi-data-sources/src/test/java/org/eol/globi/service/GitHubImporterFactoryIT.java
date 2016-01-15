@@ -1,6 +1,5 @@
 package org.eol.globi.service;
 
-import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.data.StudyImporter;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.data.StudyImporterForArthopodEasyCapture;
@@ -17,7 +16,7 @@ import java.net.URISyntaxException;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsInstanceOf.instanceOf;
 import static org.hamcrest.core.IsNull.notNullValue;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
 import static org.junit.internal.matchers.StringContains.containsString;
 
 public class GitHubImporterFactoryIT {
@@ -76,6 +75,8 @@ public class GitHubImporterFactoryIT {
         assertThat(importer, is(notNullValue()));
         assertThat(importer, is(instanceOf(StudyImporterForMetaTable.class)));
         assertThat(((StudyImporterForMetaTable)importer).getConfig(), is(notNullValue()));
+
+        importer.importStudy();
     }
 
 }

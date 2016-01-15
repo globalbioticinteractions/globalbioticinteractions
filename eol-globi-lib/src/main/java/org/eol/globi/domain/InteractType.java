@@ -28,8 +28,8 @@ public enum InteractType implements RelType {
 
     HAS_VECTOR("http://purl.obolibrary.org/obo/RO_0002460"),
     VECTOR_OF("http://purl.obolibrary.org/obo/RO_0002459"),
-    FLOWERS_VISITED_BY("http://eol.org/schema/terms/FlowersVisitedBy"),
-    VISITS_FLOWERS_OF("http://eol.org/schema/terms/VisitsFlowersOf"),
+    FLOWERS_VISITED_BY("http://purl.obolibrary.org/obo/RO_0002622"),
+    VISITS_FLOWERS_OF("http://purl.obolibrary.org/obo/RO_0002623"),
 
     INHABITED_BY(PropertyAndValueDictionary.NO_MATCH),
     INHABITS(PropertyAndValueDictionary.NO_MATCH),
@@ -48,17 +48,17 @@ public enum InteractType implements RelType {
 
     LIVES_WITH(PropertyAndValueDictionary.NO_MATCH),
 
-    ENDOPARASITE_OF(PropertyAndValueDictionary.NO_MATCH),
-    HAS_ENDOPARASITE(PropertyAndValueDictionary.NO_MATCH),
+    ENDOPARASITE_OF("http://purl.obolibrary.org/obo/RO_0002634"),
+    HAS_ENDOPARASITE("http://purl.obolibrary.org/obo/RO_0002635"),
 
-    HYPERPARASITE_OF(PropertyAndValueDictionary.NO_MATCH),
-    HAS_HYPERPARASITE(PropertyAndValueDictionary.NO_MATCH),
+    HYPERPARASITE_OF("http://purl.obolibrary.org/obo/RO_0002553"),
+    HAS_HYPERPARASITE("http://purl.obolibrary.org/obo/RO_0002554"),
 
     HYPERPARASITOID_OF(PropertyAndValueDictionary.NO_MATCH),
     HAS_HYPERPARASITOID(PropertyAndValueDictionary.NO_MATCH),
 
-    ECTOPARASITE_OF(PropertyAndValueDictionary.NO_MATCH),
-    HAS_ECTOPARASITE(PropertyAndValueDictionary.NO_MATCH),
+    ECTOPARASITE_OF("http://purl.obolibrary.org/obo/RO_0002632"),
+    HAS_ECTOPARASITE("http://purl.obolibrary.org/obo/RO_0002633"),
 
     KLEPTOPARASITE_OF(PropertyAndValueDictionary.NO_MATCH),
     HAS_KLEPTOPARASITE(PropertyAndValueDictionary.NO_MATCH),
