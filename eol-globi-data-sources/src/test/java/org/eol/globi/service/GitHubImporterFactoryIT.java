@@ -75,8 +75,6 @@ public class GitHubImporterFactoryIT {
         assertThat(importer, is(notNullValue()));
         assertThat(importer, is(instanceOf(StudyImporterForMetaTable.class)));
         assertThat(((StudyImporterForMetaTable)importer).getConfig(), is(notNullValue()));
-
-        importer.importStudy();
     }
 
 }
