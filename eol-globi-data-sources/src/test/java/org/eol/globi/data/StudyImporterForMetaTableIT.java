@@ -39,7 +39,7 @@ public class StudyImporterForMetaTableIT {
 
         StudyImporterForMetaTable.importAll(interactionListener, columnNames, csvParse);
 
-        assertThat(links.size() > 0, is(true));
+        assertThat(links.size() > 10, is(true));
 
     }
 
