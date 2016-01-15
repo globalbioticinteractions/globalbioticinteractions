@@ -195,4 +195,13 @@ public class TaxonSearchImplIT {
         assertThat(props.get("path"), StringContains.containsString("Actinopterygii"));
         assertThat(props.get("externalId"), StringContains.containsString(":"));
     }
+
+    @Test
+    public void populateInfoURL() throws IOException {
+        Map<String, String> props = new TaxonSearchImpl().findTaxon("Exacum divaricatum", null);
+        assertThat(props.get("name"), is("Exacum divaricatum"));
+        assertThat(props.get("path"), StringContains.containsString("Plantae"));
+        assertThat(props.get("externalId"), StringContains.containsString(":"));
+        assertThat(props.get("externalUrl"), StringContains.containsString(":"));
+    }
 }

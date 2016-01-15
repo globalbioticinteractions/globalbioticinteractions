@@ -1,0 +1,168 @@
+{
+  "@context": ["http://www.w3.org/ns/csvw", {"@language": "en"}],
+  "rdfs:comment": ["inspired by https://www.w3.org/TR/2015/REC-tabular-data-model-20151217/"],
+  "dcterms:bibliographicCitation": "Seltzer, Carrie; Wysocki, William; Palacios, Melissa; Eickhoff, Anna; Pilla, Hannah; Aungst, Jordan; Mercer, Aaron; Quicho, Jamie; Voss, Neil; Xu, Man; J. Ndangalasi, Henry; C. Lovett, Jon; J. Cordeiro, Norbert (2015): Plant-animal interactions from Africa. figshare. https://dx.doi.org/10.6084/m9.figshare.1526128",
+  "url": "https://ndownloader.figshare.com/files/2231424",
+  "headerRowCount": 1,
+  "null": ["NULL",""],
+  "tableSchema": {
+    "columns": [{
+      "name": "interactionTypeName",
+      "titles": "intertype",
+      "datatype": "string"
+    }, {
+      "name": "basisOfRecordName",
+      "titles": "obstype",
+      "datatype": "string"
+    }, {
+      "name": "effunit",
+      "titles": "effunit",
+      "datatype": "string"
+    }, {
+      "name": "effort",
+      "titles": "effort",
+      "datatype": "string"
+    },{
+      "name": "obsunit",
+      "titles": "obsunit",
+      "datatype": "string"
+    }, {
+      "name": "obsquant",
+      "titles": "obsquant",
+      "datatype": "string"
+    },{
+      "name": "germnotes",
+      "titles": "germnotes",
+      "datatype": "string"
+    },{
+      "name": "notes",
+      "titles": "REPLACE(Interaction.notes, ',', ';')",
+      "datatype": "string"
+    },{
+      "name": "AnimalNumber",
+      "titles": "AnimalNumber",
+      "datatype": "string"
+    },{
+      "name": "sourceTaxonClass",
+      "titles": "AnimalClass",
+      "datatype": "string"
+    },{
+      "name": "sourceTaxonOrder",
+      "titles": "AnimalOrder",
+      "datatype": "string"
+    },{
+      "name": "sourceTaxonFamily",
+      "titles": "AnimalFamily",
+      "datatype": "string"
+    },{
+      "name": "sourceTaxonGenus",
+      "titles": "AnimalGenus",
+      "datatype": "string"
+    },{
+      "name": "sourceTaxonSpecificEpithet",
+      "titles": "AnimalSpecies",
+      "datatype": "string"
+    },{
+      "name": "sourceTaxonSubspecificEpithet",
+      "titles": "AnimalSubSpecies",
+      "datatype": "string"
+    },{
+      "name": "AnimalType",
+      "titles": "AnimalType",
+      "datatype": "string"
+    },{
+      "name": "AnimalCommonName",
+      "titles": "AnimalCommonName",
+      "datatype": "string"
+    },{
+      "name": "PlantNumber",
+      "titles": "PlantNumber",
+      "datatype": "string"
+    },{
+      "name": "targetTaxonFamily",
+      "titles": "PlantFamily",
+      "datatype": "string"
+    },{
+      "name": "targetTaxonGenus",
+      "titles": "PlantGenus",
+      "datatype": "string"
+    },{
+      "name": "targetTaxonSpecificEpithet",
+      "titles": "PlantSpecies",
+      "datatype": "string"
+    },{
+      "name": "targetTaxonSubspecificEpithet",
+      "titles": "PlantSubSpecies",
+      "datatype": "string"
+    },{
+      "name": "country",
+      "titles": "country",
+      "datatype": "string"
+    },{
+      "name": "region",
+      "titles": "region",
+      "datatype": "string"
+    },{
+      "name": "ProvinceDistrictCity",
+      "titles": "ProvinceDistrictCity",
+      "datatype": "string"
+    },{
+      "name": "ProtectedArea",
+      "titles": "ProtectedArea",
+      "datatype": "string"
+    },{
+      "name": "HabitatWhite",
+      "titles": "HabitatWhite",
+      "datatype": "string"
+    },{
+      "name": "HabitatAuthor",
+      "titles": "HabitatAuthor",
+      "datatype": "string"
+    },{
+      "name": "author",
+      "titles": "author",
+      "datatype": "string"
+    },{
+      "name": "title",
+      "titles": "title",
+      "datatype": "string"
+    },{
+      "name": "year",
+      "titles": "year",
+      "datatype": "string"
+    },{
+      "name": "journal",
+      "titles": "journal",
+      "datatype": "string"
+    },{
+      "name": "volume",
+      "titles": "volume",
+      "datatype": "string"
+    },{
+      "name": "number",
+      "titles": "number",
+      "datatype": "string"
+    },{
+      "name": "pages",
+      "titles": "pages",
+      "datatype": "string"
+    },{
+      "name": "USER",
+      "titles": "USER",
+      "datatype": "string"
+    },{
+      "name": "DEF_timestamp",
+      "titles": "DEF_timestamp",
+      "datatype": "string"
+    },{
+      "name": "noName1",
+      "datatype": "string"
+    },{
+      "name": "noName2",
+      "datatype": "string"
+    },{
+      "name": "noName3",
+      "datatype": "string"
+    }]
+  }
+}

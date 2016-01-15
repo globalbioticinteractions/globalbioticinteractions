@@ -5,6 +5,7 @@ import org.eol.globi.data.StudyImporter;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.data.StudyImporterForArthopodEasyCapture;
 import org.eol.globi.data.StudyImporterForGoMexSI;
+import org.eol.globi.data.StudyImporterForMetaTable;
 import org.eol.globi.data.StudyImporterForPlanque;
 import org.eol.globi.data.StudyImporterForSzoboszlai;
 import org.eol.globi.data.StudyImporterForWood;
@@ -67,6 +68,14 @@ public class GitHubImporterFactoryIT {
         assertThat(importer, is(notNullValue()));
         assertThat(importer, is(instanceOf(StudyImporterForArthopodEasyCapture.class)));
         assertThat(((StudyImporterForArthopodEasyCapture)importer).getRssFeedUrlString(), is(notNullValue()));
+    }
+
+    @Test
+    public void createMetaTable() throws URISyntaxException, StudyImporterException, IOException {
+        StudyImporter importer = new GitHubImporterFactory().createImporter("globalbioticinteractions/AfricaTreeDatabase", null, null);
+        assertThat(importer, is(notNullValue()));
+        assertThat(importer, is(instanceOf(StudyImporterForMetaTable.class)));
+        assertThat(((StudyImporterForMetaTable)importer).getConfig(), is(notNullValue()));
     }
 
 }
