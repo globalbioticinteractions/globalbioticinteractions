@@ -32,7 +32,8 @@ public class StudyImporterForBascompteTest extends GraphDBTestCase {
 
         assertThat(references, hasItem("citation:doi:Arroyo, M.T.K., R. Primack & J.J. Armesto. 1982. Community studies in pollination ecology in the high temperate Andes of central Chile. I. Pollination mechanisms and altitudinal variation. Amer. J. Bot. 69:82-97."));
         assertThat(taxonIndex.findTaxonByName("Diplopterys pubipetala"), is(notNullValue()));
-
+        assertThat(taxonIndex.findTaxonByName("Juniperus communis"), is(notNullValue()));
+        assertThat(taxonIndex.findTaxonByName("Turdus torquatus"), is(notNullValue()));
     }
 
     @Test

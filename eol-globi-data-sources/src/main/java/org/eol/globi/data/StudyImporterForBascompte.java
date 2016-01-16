@@ -87,7 +87,7 @@ public class StudyImporterForBascompte extends BaseStudyImporter {
                 if (!networkTempFileMap.containsKey(networkId)) {
                     throw new StudyImporterException("found network id [" + networkId + "], but no associated data.");
                 }
-                final Study study = nodeFactory.getOrCreateStudy("bascompte:" + networkId, sourceCitation, citation);
+                final Study study = nodeFactory.getOrCreateStudy("bascompte:" + citation, sourceCitation, citation);
                 importNetwork(parseInteractionType(parser),
                         parseLocation(parser), study, networkTempFileMap.get(networkId));
             }
@@ -138,8 +138,8 @@ public class StudyImporterForBascompte extends BaseStudyImporter {
         List<String> ignoredLabels = Arrays.asList("number of hosts sampled", "");
         for (String targetLabel : targetLabels) {
             String trimmedLabel = StringUtils.trim(targetLabel);
-            if (StringUtils.isBlank(targetLabel) || ignoredLabels.contains(trimmedLabel)) {
-                targetTaxonNames.add(trimmedLabel);
+            if (StringUtils.isNotBlank(targetLabel) || !ignoredLabels.contains(trimmedLabel)) {
+                targetTaxonNames.add(targetLabel);
             }
         }
 
@@ -149,9 +149,12 @@ public class StudyImporterForBascompte extends BaseStudyImporter {
             final Specimen sourceSpecimen = nodeFactory.createSpecimen(study, sourceTaxonName);
             sourceSpecimen.caughtIn(networkLocation);
             for (String targetTaxonName : targetTaxonNames) {
-                final Specimen targetSpecimen = nodeFactory.createSpecimen(study, targetTaxonName);
-                targetSpecimen.caughtIn(networkLocation);
-                sourceSpecimen.interactsWith(targetSpecimen, interactType1);
+                final String valueByLabel = StringUtils.trim(interactions.getValueByLabel(targetTaxonName));
+                if (StringUtils.isNotBlank(valueByLabel) && !StringUtils.equals("0", valueByLabel)) {
+                    final Specimen targetSpecimen = nodeFactory.createSpecimen(study, targetTaxonName);
+                    targetSpecimen.caughtIn(networkLocation);
+                    sourceSpecimen.interactsWith(targetSpecimen, interactType1);
+                }
             }
         }
     }
