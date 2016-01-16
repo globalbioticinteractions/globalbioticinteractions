@@ -103,8 +103,8 @@ public class StudyImporterForBascompte extends BaseStudyImporter {
         final String interactionTypeString = parser.getValueByLabel("Type of interactions");
         final Map<String, InteractType> interactionTypeMap = new HashMap<String, InteractType>() {
             {
-                put("Pollination", InteractType.POLLINATES);
-                put("Seed Dispersal", InteractType.DISPERSAL_VECTOR_OF);
+                put("Pollination", InteractType.POLLINATED_BY);
+                put("Seed Dispersal", InteractType.HAS_DISPERAL_VECTOR);
                 put("Host-Parasite", InteractType.HAS_PARASITE);
             }
         };
