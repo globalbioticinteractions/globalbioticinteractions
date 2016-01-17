@@ -90,6 +90,11 @@ public enum InteractType implements RelType {
 
     String iri;
 
+    private static final Map<String, InteractType> SYNONYMS = new HashMap<String, InteractType>() {{
+        put("http://eol.org/schema/terms/FlowersVisitedBy", FLOWERS_VISITED_BY);
+        put("http://eol.org/schema/terms/VisitsFlowersOf", VISITS_FLOWERS_OF);
+    }};
+
     InteractType(String iri) {
         this.iri = iri;
     }
@@ -104,7 +109,7 @@ public enum InteractType implements RelType {
                 return interactType;
             }
         }
-        return null;
+        return SYNONYMS.get(iri);
     }
 
     public String getIRI() {
