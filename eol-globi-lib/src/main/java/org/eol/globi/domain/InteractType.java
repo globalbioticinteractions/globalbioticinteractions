@@ -93,6 +93,8 @@ public enum InteractType implements RelType {
     private static final Map<String, InteractType> SYNONYMS = new HashMap<String, InteractType>() {{
         put("http://eol.org/schema/terms/FlowersVisitedBy", FLOWERS_VISITED_BY);
         put("http://eol.org/schema/terms/VisitsFlowersOf", VISITS_FLOWERS_OF);
+        put("http://eol.org/schema/terms/kills", KILLS);
+        put("http://eol.org/schema/terms/isKilledBy", KILLED_BY);
     }};
 
     InteractType(String iri) {
