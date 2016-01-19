@@ -453,7 +453,7 @@ public class CypherQueryBuilderTest {
     @Test
     public void findWithDispersalInteractionType2() throws IOException {
         final String typeSelector = CypherQueryBuilder.createInteractionTypeSelector(Arrays.asList("hasDispersalVector"));
-        assertThat(typeSelector, is("DISPERSAL_VECTOR_OF"));
+        assertThat(typeSelector, is("HAS_DISPERAL_VECTOR"));
     }
 
     @Test
