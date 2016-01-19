@@ -20,6 +20,9 @@ public enum InteractionTypeExternal {
     HAS_PATHOGEN(CypherQueryBuilder.INTERACTION_HAS_PATHOGEN, "host", "pathogen", InteractType.HAS_PATHOGEN),
     VECTOR_OF(CypherQueryBuilder.INTERACTION_VECTOR_OF, "vector", "pathogen", InteractType.VECTOR_OF),
     HAS_VECTOR(CypherQueryBuilder.INTERACTION_HAS_VECTOR, "pathogen", "vector", InteractType.HAS_VECTOR),
+    DISPERSAL_VECTOR_OF(CypherQueryBuilder.INTERACTION_DISPERSAL_VECTOR_OF, "vector", "seed", InteractType.DISPERSAL_VECTOR_OF),
+    HAS_DISPERSAL_VECTOR(CypherQueryBuilder.INTERACTION_HAS_DISPERSAL_VECTOR, "seed", "vector", InteractType.HAS_DISPERAL_VECTOR),
+
     SYMBIONT_OF(CypherQueryBuilder.INTERACTION_SYMBIONT_OF, "source", "target", InteractType.SYMBIONT_OF),
     FLOWERS_VISITED_BY(CypherQueryBuilder.INTERACTION_FLOWERS_VISITED_BY, "plant", "visitor", InteractType.FLOWERS_VISITED_BY),
     VISITS_FLOWERS_OF(CypherQueryBuilder.INTERACTION_VISITS_FLOWERS_OF, "visitor", "plant", InteractType.VISITS_FLOWERS_OF),

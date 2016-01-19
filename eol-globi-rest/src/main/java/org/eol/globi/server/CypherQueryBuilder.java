@@ -85,6 +85,8 @@ public class CypherQueryBuilder {
 
     public static final String INTERACTION_VECTOR_OF = "vectorOf";
     public static final String INTERACTION_HAS_VECTOR = "hasVector";
+    public static final String INTERACTION_DISPERSAL_VECTOR_OF = "dispersalVectorOf";
+    public static final String INTERACTION_HAS_DISPERSAL_VECTOR = "hasDispersalVector";
 
     public static final String INTERACTION_HOST_OF = "hostOf";
     public static final String INTERACTION_HAS_HOST = "hasHost";
@@ -115,6 +117,7 @@ public class CypherQueryBuilder {
 
             put(INTERACTION_VISITS_FLOWERS_OF, InteractType.VISITS_FLOWERS_OF);
             put(INTERACTION_FLOWERS_VISITED_BY, InteractType.FLOWERS_VISITED_BY);
+
             put(INTERACTION_POLLINATES, InteractType.POLLINATES);
             put(INTERACTION_POLLINATED_BY, InteractType.POLLINATED_BY);
 
@@ -156,6 +159,10 @@ public class CypherQueryBuilder {
             put(InteractType.HAS_PATHOGEN.toString(), InteractionTypeExternal.HAS_PATHOGEN);
             put(InteractType.VECTOR_OF.toString(), InteractionTypeExternal.VECTOR_OF);
             put(InteractType.HAS_VECTOR.toString(), InteractionTypeExternal.HAS_VECTOR);
+            put(InteractType.DISPERSAL_VECTOR_OF.toString(), InteractionTypeExternal.DISPERSAL_VECTOR_OF);
+            put(InteractType.HAS_DISPERAL_VECTOR.toString(), InteractionTypeExternal.HAS_DISPERSAL_VECTOR);
+
+
             put(InteractType.SYMBIONT_OF.toString(), InteractionTypeExternal.SYMBIONT_OF);
 
             put(InteractType.INTERACTS_WITH.toString(), InteractionTypeExternal.INTERACTS_WITH);
@@ -172,8 +179,12 @@ public class CypherQueryBuilder {
             put(INTERACTION_PREYED_UPON_BY, InteractType.PREYED_UPON_BY.toString());
             put(INTERACTION_PARASITE_OF, InteractType.PARASITE_OF.toString());
             put(INTERACTION_HAS_PARASITE, InteractType.HAS_PARASITE.toString());
+
             put(INTERACTION_VECTOR_OF, InteractType.VECTOR_OF.toString());
             put(INTERACTION_HAS_VECTOR, InteractType.HAS_VECTOR.toString());
+            put(INTERACTION_DISPERSAL_VECTOR_OF, InteractType.DISPERSAL_VECTOR_OF + "|" + InteractType.VECTOR_OF);
+            put(INTERACTION_HAS_DISPERSAL_VECTOR, InteractType.HAS_DISPERAL_VECTOR + "|" + InteractType.HAS_VECTOR);
+
             put(INTERACTION_PATHOGEN_OF, InteractType.PATHOGEN_OF.toString());
             put(INTERACTION_HAS_PATHOGEN, InteractType.HAS_PATHOGEN.toString());
             put(INTERACTION_INTERACTS_WITH, InteractType.INTERACTS_WITH.toString());
