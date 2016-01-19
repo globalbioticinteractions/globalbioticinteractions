@@ -128,6 +128,8 @@ public class CypherQueryBuilder {
             put(INTERACTION_HAS_PATHOGEN, InteractType.HAS_PATHOGEN);
             put(INTERACTION_HAS_VECTOR, InteractType.HAS_VECTOR);
             put(INTERACTION_VECTOR_OF, InteractType.VECTOR_OF);
+            put(INTERACTION_HAS_DISPERSAL_VECTOR, InteractType.HAS_DISPERAL_VECTOR);
+            put(INTERACTION_DISPERSAL_VECTOR_OF, InteractType.DISPERSAL_VECTOR_OF);
             put(INTERACTION_HOST_OF, InteractType.HOST_OF);
             put(INTERACTION_HAS_HOST, InteractType.HAS_HOST);
 
