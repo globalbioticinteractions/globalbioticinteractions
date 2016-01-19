@@ -180,10 +180,10 @@ public class CypherQueryBuilder {
             put(INTERACTION_PARASITE_OF, InteractType.PARASITE_OF.toString());
             put(INTERACTION_HAS_PARASITE, InteractType.HAS_PARASITE.toString());
 
-            put(INTERACTION_VECTOR_OF, InteractType.VECTOR_OF.toString());
-            put(INTERACTION_HAS_VECTOR, InteractType.HAS_VECTOR.toString());
             put(INTERACTION_DISPERSAL_VECTOR_OF, InteractType.DISPERSAL_VECTOR_OF + "|" + InteractType.VECTOR_OF);
             put(INTERACTION_HAS_DISPERSAL_VECTOR, InteractType.HAS_DISPERAL_VECTOR + "|" + InteractType.HAS_VECTOR);
+            put(INTERACTION_VECTOR_OF, InteractType.VECTOR_OF.toString());
+            put(INTERACTION_HAS_VECTOR, InteractType.HAS_VECTOR.toString());
 
             put(INTERACTION_PATHOGEN_OF, InteractType.PATHOGEN_OF.toString());
             put(INTERACTION_HAS_PATHOGEN, InteractType.HAS_PATHOGEN.toString());
