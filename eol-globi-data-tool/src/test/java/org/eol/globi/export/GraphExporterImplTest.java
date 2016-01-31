@@ -31,7 +31,7 @@ public class GraphExporterImplTest extends GraphDBTestCase {
             new GraphExporterImpl().export(getGraphDb(), tmpDirPath.getAbsolutePath() + "/");
             assertThat(tmpDirPath.list().length, is(5));
         } finally {
-            FileUtils.deleteQuietly(tmpDirPath);
+            //FileUtils.deleteQuietly(tmpDirPath);
         }
 
     }
