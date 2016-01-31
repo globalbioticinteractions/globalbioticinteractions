@@ -17,7 +17,7 @@ import org.eol.globi.data.StudyImporter;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.data.StudyImporterFactory;
 import org.eol.globi.db.GraphService;
-import org.eol.globi.export.GraphExporter;
+import org.eol.globi.export.GraphExporterImpl;
 import org.eol.globi.geo.EcoregionFinder;
 import org.eol.globi.geo.EcoregionFinderFactoryImpl;
 import org.eol.globi.opentree.OpenTreeTaxonIndex;
@@ -199,7 +199,7 @@ public class Normalizer {
     }
 
     protected void exportData(GraphDatabaseService graphService, String baseDir) throws StudyImporterException {
-        new GraphExporter().export(graphService, baseDir);
+        new GraphExporterImpl().export(graphService, baseDir);
     }
 
 

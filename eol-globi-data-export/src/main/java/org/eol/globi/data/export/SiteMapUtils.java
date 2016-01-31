@@ -3,6 +3,8 @@ package org.eol.globi.data.export;
 import com.redfin.sitemapgenerator.ChangeFreq;
 import com.redfin.sitemapgenerator.WebSitemapGenerator;
 import com.redfin.sitemapgenerator.WebSitemapUrl;
+import org.apache.commons.io.FileUtils;
+import org.eol.globi.data.StudyImporterException;
 
 import java.io.File;
 import java.io.IOException;
@@ -33,5 +35,15 @@ public class SiteMapUtils {
         final List<File> maps = wsg.write();
         wsg.writeSitemapsWithIndex();
         return maps;
+    }
+
+    public static void generateSiteMap(Set<String> names, String baseDirPath, String queryParamName) throws StudyImporterException {
+        try {
+            final File baseDir = new File(baseDirPath);
+            FileUtils.forceMkdir(baseDir);
+            generateSiteMapFor(queryParamName, names, baseDir);
+        } catch (IOException e) {
+            throw new StudyImporterException("failed to generate site map", e);
+        }
     }
 }
