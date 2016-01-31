@@ -113,7 +113,7 @@ public class EOLService implements PropertyEnricher {
 
     protected void addTaxonInfo(Long pageId, Map<String, String> properties) throws PropertyEnricherException {
         try {
-            URI uri = new URI("http", null, "eol.org", 80, "/api/pages/1.0/" + pageId + ".json", "images=0&videos=0&sounds=0&maps=0&text=0&iucn=false&subjects=overview&licenses=all&details=false&common_names=true&synonyms=false&references=false&format=json", null);
+            URI uri = new URI("http", null, "eol.org", 80, "/api/pages/1.0/" + pageId + ".json", "images=0&videos=0&sounds=0&maps=0&text=0&iucn=false&subjects=overview&licenses=all&details=false&common_names=true&synonyms=false&references=false&taxonomy=true&format=json", null);
             String response = getResponse(uri);
             if (response != null) {
                 addCanonicalNamesAndRanks(properties, response);
@@ -144,7 +144,14 @@ public class EOLService implements PropertyEnricher {
             Long resolvedPageId = node.get("identifier").asLong();
             addExternalId(properties, resolvedPageId);
         }
+        if (node.has("taxonConcepts")) {
+            handleTaxonConcept(properties, ranks, rankNames, rankIds, node);
+        }
+    }
+
+    private void handleTaxonConcept(Map<String, String> properties, List<String> ranks, List<String> rankNames, List<String> rankIds, JsonNode node) throws URISyntaxException, PropertyEnricherException, IOException {
         JsonNode taxonConcepts = node.get("taxonConcepts");
+
         String firstConceptId = null;
         for (JsonNode taxonConcept : taxonConcepts) {
             if (taxonConcept.has("identifier")) {
@@ -172,7 +179,6 @@ public class EOLService implements PropertyEnricher {
         if (firstConceptId != null) {
             addRanks(firstConceptId, ranks, rankNames, rankIds);
         }
-
         if (ranks.size() > 0) {
             properties.put(PropertyAndValueDictionary.PATH, StringUtils.join(ranks, CharsetConstant.SEPARATOR));
             if (rankNames.size() == ranks.size()) {
@@ -182,8 +188,6 @@ public class EOLService implements PropertyEnricher {
                 properties.put(PropertyAndValueDictionary.PATH_IDS, StringUtils.join(rankIds, CharsetConstant.SEPARATOR));
             }
         }
-
-
     }
 
     // workaround related to https://github.com/jhpoelen/gomexsi/issues/92 - fishbase species names do not have taxonRank
