@@ -16,6 +16,7 @@ class ExporterSiteMapForCitations implements GraphExporter {
     @Override
     public void export(GraphDatabaseService graphDb, String baseDirName) throws StudyImporterException {
         Set<String> accordingToHits = new HashSet<String>();
+        accordingToHits.add("gomexsi");
         // just do it once
         final List<Study> allStudies = NodeUtil.findAllStudies(graphDb);
         for (Study allStudy : allStudies) {

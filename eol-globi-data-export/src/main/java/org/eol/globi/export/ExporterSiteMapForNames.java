@@ -8,6 +8,7 @@ import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.util.NodeUtil;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.GraphDatabaseService;
+import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 
 import java.io.File;
@@ -20,6 +21,7 @@ class ExporterSiteMapForNames implements GraphExporter {
     @Override
     public void export(GraphDatabaseService graphDatabase, String baseDir) throws StudyImporterException {
         Set<String> names = new HashSet<String>();
+        names.add("Homo sapiens");
         // just do it once
         final List<Study> allStudies = NodeUtil.findAllStudies(graphDatabase);
         for (Study allStudy : allStudies) {
@@ -27,7 +29,8 @@ class ExporterSiteMapForNames implements GraphExporter {
             for (Relationship specimen : specimens) {
                 final Iterable<Relationship> relationships = specimen.getEndNode().getRelationships(Direction.OUTGOING, RelTypes.CLASSIFIED_AS);
                 if (relationships.iterator().hasNext()) {
-                    final TaxonNode taxonNode = new TaxonNode(relationships.iterator().next().getEndNode());
+                    final Node endNode = relationships.iterator().next().getEndNode();
+                    final TaxonNode taxonNode = new TaxonNode(endNode);
                     names.add(taxonNode.getName());
                 }
             }
