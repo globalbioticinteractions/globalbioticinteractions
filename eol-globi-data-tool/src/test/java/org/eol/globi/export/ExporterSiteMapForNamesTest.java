@@ -17,6 +17,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Map;
+import java.util.zip.GZIPInputStream;
 
 import static junit.framework.Assert.assertFalse;
 import static org.hamcrest.core.Is.is;
@@ -63,9 +64,9 @@ public class ExporterSiteMapForNamesTest extends GraphDBTestCase {
     }
 
     public void assertSiteMap(File baseDirCitations, String substring) throws IOException {
-        final File file = new File(baseDirCitations, "sitemap.xml");
+        final File file = new File(baseDirCitations, "sitemap.xml.gz");
         assertThat(file.exists(), is(true));
-        final String siteMapString = IOUtils.toString(new FileInputStream(file));
+        final String siteMapString = IOUtils.toString(new GZIPInputStream(new FileInputStream(file)));
         assertThat(siteMapString,
                 containsString(substring));
         assertThat(new File(baseDirCitations, "sitemap_index.xml").exists(), is(true));

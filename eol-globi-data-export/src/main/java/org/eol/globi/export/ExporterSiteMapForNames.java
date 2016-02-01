@@ -11,7 +11,6 @@ import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 
-import java.io.File;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;

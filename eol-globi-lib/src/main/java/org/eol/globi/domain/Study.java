@@ -86,9 +86,12 @@ public class Study extends NodeBacked {
     }
 
     public void setDOIWithTx(String doi) {
-        setPropertyWithTx(DOI, doi);
-        if (getExternalId() == null) {
-            setExternalId(doi);
+        Transaction transaction = getUnderlyingNode().getGraphDatabase().beginTx();
+        try {
+            setDOI(doi);
+            transaction.success();
+        } finally {
+            transaction.finish();
         }
     }
 

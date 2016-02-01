@@ -20,13 +20,10 @@ class ExporterSiteMapForCitations implements GraphExporter {
         // just do it once
         final List<Study> allStudies = NodeUtil.findAllStudies(graphDb);
         for (Study allStudy : allStudies) {
-            final String doi = allStudy.getDOI();
+            final String doi = allStudy.getExternalId();
             if (StringUtils.isNotBlank(doi)) {
                 accordingToHits.add(doi);
-            } else if (StringUtils.isNotBlank(allStudy.getCitation())) {
-                accordingToHits.add(allStudy.getCitation());
             }
-            accordingToHits.add(allStudy.getSource());
         }
         SiteMapUtils.generateSiteMap(accordingToHits, baseDirName, "accordingTo=");
     }

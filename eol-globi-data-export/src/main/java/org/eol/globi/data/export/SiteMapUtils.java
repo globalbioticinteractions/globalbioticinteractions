@@ -19,7 +19,7 @@ public class SiteMapUtils {
         final String hostname = "www.globalbioticinteractions.org";
         final String baseUrl = "http://" + hostname;
         WebSitemapGenerator wsg = WebSitemapGenerator.builder(baseUrl, baseDir)
-                //.gzip(true)
+                .gzip(true)
                 .build();
         for (String accordingTo : queryParamValues) {
             URI uri;
