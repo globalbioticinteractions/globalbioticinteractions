@@ -10,7 +10,7 @@ import java.io.IOException;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
-public class ExporterSiteMapForCitationsForNamesTest extends ExporterSiteMapForNamesTest {
+public class ExporterSiteMapForCitationsTest extends ExporterSiteMapForNamesTest {
 
     @Test
     public void writeSiteMapWithCitations() throws StudyImporterException, IOException {
@@ -24,7 +24,7 @@ public class ExporterSiteMapForCitationsForNamesTest extends ExporterSiteMapForN
         siteMapForCitationsExporter.export(getGraphDb(), baseDirCitations.getAbsolutePath());
 
         final String substring = "http://www.globalbioticinteractions.org/?accordingTo=http://dx.doi.org/citation123";
-        assertSiteMap(baseDirCitations, substring);
+        assertSiteMap(baseDirCitations, substring, "https://globi.s3.amazonaws.com/snapshot/target/data/sitemap/citations/sitemap.xml.gz");
     }
 
 }

@@ -3,7 +3,6 @@ package org.eol.globi.export;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.eol.globi.data.GraphDBTestCase;
-import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
@@ -60,16 +59,19 @@ public class ExporterSiteMapForNamesTest extends GraphDBTestCase {
 
         final GraphExporter siteMapForNames = new ExporterSiteMapForNames();
         siteMapForNames.export(getGraphDb(), baseDirNames.getAbsolutePath());
-        assertSiteMap(baseDirNames, "http://www.globalbioticinteractions.org/?interactionType=interactsWith&sourceTaxon=Homo%20sapiens");
+        assertSiteMap(baseDirNames, "http://www.globalbioticinteractions.org/?interactionType=interactsWith&sourceTaxon=Homo%20sapiens", "https://globi.s3.amazonaws.com/snapshot/target/data/sitemap/names/sitemap.xml.gz");
     }
 
-    public void assertSiteMap(File baseDirCitations, String substring) throws IOException {
+    public void assertSiteMap(File baseDirCitations, String substring, String siteMapLocation) throws IOException {
         final File file = new File(baseDirCitations, "sitemap.xml.gz");
         assertThat(file.exists(), is(true));
         final String siteMapString = IOUtils.toString(new GZIPInputStream(new FileInputStream(file)));
         assertThat(siteMapString,
                 containsString(substring));
-        assertThat(new File(baseDirCitations, "sitemap_index.xml").exists(), is(true));
+        final File sitemapIndex = new File(baseDirCitations, "sitemap_index.xml");
+        assertThat(sitemapIndex.exists(), is(true));
+        final String sitemapIndexString = IOUtils.toString(new FileInputStream(sitemapIndex));
+        assertThat(sitemapIndexString, containsString(siteMapLocation));
     }
 
     public File createBaseDir(String pathname) throws IOException {
