@@ -22,6 +22,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -137,7 +138,7 @@ public class TaxonSearchImpl implements TaxonSearch {
 
     @RequestMapping(value = "/taxonLinks/{taxonPath}", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public CypherQuery taxonLinks(@PathVariable("taxonPath") final String taxonPath, HttpServletRequest request) throws IOException {
+    public Collection<String> taxonLinks(@PathVariable("taxonPath") final String taxonPath, HttpServletRequest request) throws IOException {
         final String pathQuery = CypherQueryBuilder.lucenePathQuery(Collections.singletonList(taxonPath), "name:\\\"");
         StringBuilder query = new StringBuilder("START someTaxon = node:taxons({pathQuery}) ");
 
@@ -158,11 +159,24 @@ public class TaxonSearchImpl implements TaxonSearch {
 
         query.append(" MATCH someTaxon-[:SAME_AS*0..1]->taxon WHERE has(taxon.externalUrl) WITH DISTINCT(taxon.externalUrl) as externalUrl ");
         CypherQueryBuilder.appendReturnClausez(query, CypherQueryBuilder.actualReturnFields(requestedFields, Arrays.asList(returnFieldsCloseMatches), selectors.keySet()), selectors);
-        final CypherQuery query1 = new CypherQuery(query.toString(), new HashMap(){{
-            put("pathQuery", pathQuery);
-        }
+        final CypherQuery query1 = new CypherQuery(query.toString(), new HashMap() {
+            {
+                put("pathQuery", pathQuery);
+            }
         });
-        return CypherQueryBuilder.createPagedQuery(request, query1, 15);
+        final CypherQuery pagedQuery = CypherQueryBuilder.createPagedQuery(request, query1, 15);
+        final String response = CypherUtil.executeRemote(pagedQuery);
+        JsonNode node = new ObjectMapper().readTree(response);
+        JsonNode dataNode = node.get("data");
+        Collection<String> links = new ArrayList<String>();
+        if (dataNode != null) {
+            for (JsonNode jsonNode : dataNode) {
+                if (jsonNode.isArray() && jsonNode.size() > 0) {
+                    links.add(jsonNode.get(0).asText());
+                }
+            }
+        }
+        return links;
     }
 
     private String buildLuceneQuery(String taxonName, String name) {

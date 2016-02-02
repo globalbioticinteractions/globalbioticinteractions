@@ -9,6 +9,7 @@ import org.mockito.Mockito;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,6 +17,7 @@ import static org.hamcrest.Matchers.startsWith;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.matchers.JUnitMatchers.containsString;
+import static org.junit.matchers.JUnitMatchers.hasItem;
 import static org.mockito.Mockito.when;
 
 public class TaxonSearchImplIT {
@@ -93,9 +95,8 @@ public class TaxonSearchImplIT {
 
     @Test
     public void taxonLinks() throws IOException {
-        CypherQuery cypherQuery = new TaxonSearchImpl().taxonLinks("Homo sapiens", null);
-        String response = new CypherQueryExecutor(cypherQuery.getQuery(), cypherQuery.getParams()).execute(null);
-        assertThat(response, containsString("http://eol.org/pages/327955"));
+        Collection<String> links = new TaxonSearchImpl().taxonLinks("Homo sapiens", null);
+        assertThat(links, hasItem("http://eol.org/pages/327955"));
     }
 
     @Test
