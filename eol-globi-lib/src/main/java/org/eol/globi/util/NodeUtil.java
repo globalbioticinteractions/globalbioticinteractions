@@ -5,6 +5,7 @@ import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonNode;
+import org.eol.globi.service.TaxonUtil;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Transaction;
@@ -36,13 +37,7 @@ public class NodeUtil {
         Transaction tx = graphDb.beginTx();
         try {
             TaxonNode sameAsTaxon = new TaxonNode(graphDb.createNode());
-            sameAsTaxon.setName(taxon.getName());
-            sameAsTaxon.setPath(taxon.getPath());
-            sameAsTaxon.setPathIds(taxon.getPathIds());
-            sameAsTaxon.setPathNames(taxon.getPathNames());
-            sameAsTaxon.setRank(taxon.getRank());
-            sameAsTaxon.setExternalId(taxon.getExternalId());
-            sameAsTaxon.setExternalUrl(ExternalIdUtil.getUrlFromExternalId(taxon.getExternalId()));
+            TaxonUtil.copy(taxon, sameAsTaxon);
             taxonNode.getUnderlyingNode().createRelationshipTo(sameAsTaxon.getUnderlyingNode(), relType);
             tx.success();
         } finally {
