@@ -1,5 +1,6 @@
 package org.eol.globi.server;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -21,6 +22,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -131,6 +133,36 @@ public class TaxonSearchImpl implements TaxonSearch {
         }
         CypherQueryBuilder.appendReturnClausez(query, CypherQueryBuilder.actualReturnFields(requestedFields, Arrays.asList(returnFieldsCloseMatches), selectors.keySet()), selectors);
         return CypherQueryBuilder.createPagedQuery(request, new CypherQuery(query.toString(), null), 15);
+    }
+
+    @RequestMapping(value = "/taxonLinks/{taxonPath}", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public CypherQuery taxonLinks(@PathVariable("taxonPath") final String taxonPath, HttpServletRequest request) throws IOException {
+        final String pathQuery = CypherQueryBuilder.lucenePathQuery(Collections.singletonList(taxonPath), "path:\\\"");
+        StringBuilder query = new StringBuilder("START someTaxon = node:taxonPaths({pathQuery}) ");
+
+        Map<ResultField, String> selectors = new HashMap<ResultField, String>() {
+            {
+                put(ResultField.TAXON_EXTERNAL_URL, "externalUrl");
+            }
+        };
+
+        ResultField[] returnFieldsCloseMatches = new ResultField[]{
+                ResultField.TAXON_EXTERNAL_URL
+        };
+
+        List<String> requestedFields = new ArrayList<String>();
+        if (request != null) {
+            requestedFields.addAll(CypherQueryBuilder.collectRequestedFields(request.getParameterMap()));
+        }
+
+        query.append(" MATCH someTaxon-[:SAME_AS*0..1]->taxon WHERE has(taxon.externalUrl) WITH DISTINCT(taxon.externalUrl) as externalUrl ");
+        CypherQueryBuilder.appendReturnClausez(query, CypherQueryBuilder.actualReturnFields(requestedFields, Arrays.asList(returnFieldsCloseMatches), selectors.keySet()), selectors);
+        final CypherQuery query1 = new CypherQuery(query.toString(), new HashMap(){{
+            put("pathQuery", pathQuery);
+        }
+        });
+        return CypherQueryBuilder.createPagedQuery(request, query1, 15);
     }
 
     private String buildLuceneQuery(String taxonName, String name) {

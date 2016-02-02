@@ -92,6 +92,13 @@ public class TaxonSearchImplIT {
     }
 
     @Test
+    public void taxonLinks() throws IOException {
+        CypherQuery cypherQuery = new TaxonSearchImpl().taxonLinks("Homo sapiens", null);
+        String response = new CypherQueryExecutor(cypherQuery.getQuery(), cypherQuery.getParams()).execute(null);
+        assertThat(response, containsString("http://eol.org/pages/327955"));
+    }
+
+    @Test
     public void findCloseMatchesCommonNameFoxFrenchType() throws IOException {
         CypherQuery cypherQuery = new TaxonSearchImpl().findCloseMatchesForCommonAndScientificNamesNew("reinard", null);
         String response = new CypherQueryExecutor(cypherQuery.getQuery(), cypherQuery.getParams()).execute(null);

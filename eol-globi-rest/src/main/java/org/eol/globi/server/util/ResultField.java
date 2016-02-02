@@ -48,6 +48,8 @@ public enum ResultField {
     TAXON_NAME("taxon_name"),
     TAXON_COMMON_NAMES("taxon_common_names"),
     TAXON_EXTERNAL_ID("taxon_external_id"),
+
+    TAXON_EXTERNAL_URL("taxon_external_url"),
     TAXON_PATH("taxon_path"),
     TAXON_PATH_IDS("taxon_path_ids"),
     TAXON_PATH_RANKS("taxon_path_ranks"),
