@@ -42,6 +42,7 @@ public class NodeUtil {
             sameAsTaxon.setPathNames(taxon.getPathNames());
             sameAsTaxon.setRank(taxon.getRank());
             sameAsTaxon.setExternalId(taxon.getExternalId());
+            sameAsTaxon.setExternalUrl(ExternalIdUtil.getUrlFromExternalId(taxon.getExternalId()));
             taxonNode.getUnderlyingNode().createRelationshipTo(sameAsTaxon.getUnderlyingNode(), relType);
             tx.success();
         } finally {
