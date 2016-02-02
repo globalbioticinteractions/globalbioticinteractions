@@ -138,8 +138,8 @@ public class TaxonSearchImpl implements TaxonSearch {
     @RequestMapping(value = "/taxonLinks/{taxonPath}", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
     @ResponseBody
     public CypherQuery taxonLinks(@PathVariable("taxonPath") final String taxonPath, HttpServletRequest request) throws IOException {
-        final String pathQuery = CypherQueryBuilder.lucenePathQuery(Collections.singletonList(taxonPath), "path:\\\"");
-        StringBuilder query = new StringBuilder("START someTaxon = node:taxonPaths({pathQuery}) ");
+        final String pathQuery = CypherQueryBuilder.lucenePathQuery(Collections.singletonList(taxonPath), "name:\\\"");
+        StringBuilder query = new StringBuilder("START someTaxon = node:taxons({pathQuery}) ");
 
         Map<ResultField, String> selectors = new HashMap<ResultField, String>() {
             {
