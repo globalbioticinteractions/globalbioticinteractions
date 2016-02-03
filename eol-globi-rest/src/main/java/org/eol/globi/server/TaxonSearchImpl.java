@@ -94,7 +94,7 @@ public class TaxonSearchImpl implements TaxonSearch {
     public Map<String, String> findTaxonWithImage(final String taxonName) throws IOException {
         CypherQuery cypherQuery = new CypherQuery(queryPrefix()
                 + " AND has(taxon." + PropertyAndValueDictionary.THUMBNAIL_URL + ") " +
-                "AND length(taxon." + PropertyAndValueDictionary.THUMBNAIL_URL + ") > 0" +
+                "AND length(taxon." + PropertyAndValueDictionary.THUMBNAIL_URL + ") > 0 " +
                 returnClause(), paramForName(taxonName));
         return toMap(CypherUtil.executeRemote(cypherQuery));
     }
@@ -205,8 +205,8 @@ public class TaxonSearchImpl implements TaxonSearch {
     public String queryPrefix() {
         return "START taxon = node:taxonPaths({taxonPathQuery}) " +
                 "MATCH taxon-[:SAME_AS*0..1]->otherTaxon\n" +
-                "WHERE (has(otherTaxon.name) AND otherTaxon.name = {taxonName}) \n" +
-                "OR (has(otherTaxon.externalId) AND otherTaxon.externalId = {taxonName})\n";
+                "WHERE ((has(otherTaxon.name) AND otherTaxon.name = {taxonName})\n" +
+                "OR (has(otherTaxon.externalId) AND otherTaxon.externalId = {taxonName}))\n";
     }
 
     private String returnClause() {
