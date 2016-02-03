@@ -22,6 +22,7 @@ public class ExternalIdUtilTest {
         assertThat(ExternalIdUtil.urlForExternalId("IRMNG:10201332"), is("http://www.marine.csiro.au/mirrorsearch/ir_search.list_species?sp_id=10201332"));
         assertThat(ExternalIdUtil.urlForExternalId("IRMNG:1012185"), is("http://www.marine.csiro.au/mirrorsearch/ir_search.list_species?gen_id=1012185"));
         assertThat(ExternalIdUtil.urlForExternalId("IRMNG:104889"), is("http://www.marine.csiro.au/mirrorsearch/ir_search.list_genera?fam_id=104889"));
+        assertThat(ExternalIdUtil.urlForExternalId("ITIS:104889"), is("http://www.itis.gov/servlet/SingleRpt/SingleRpt?search_topic=TSN&search_value=104889"));
     }
 
     @Test
