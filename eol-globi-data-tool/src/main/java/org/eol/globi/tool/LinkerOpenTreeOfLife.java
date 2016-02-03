@@ -9,6 +9,7 @@ import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.domain.TaxonomyProvider;
 import org.eol.globi.opentree.OpenTreeTaxonIndex;
 import org.eol.globi.service.TaxonUtil;
+import org.eol.globi.util.ExternalIdUtil;
 import org.eol.globi.util.NodeUtil;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.GraphDatabaseService;
@@ -69,8 +70,7 @@ public class LinkerOpenTreeOfLife {
                 Long ottId = index.findOpenTreeTaxonIdFor(externalId);
                 if (ottId != null) {
                     if (ottIds.size() == 0) {
-                        Taxon taxonCopy = TaxonUtil.copy(taxonNode);
-                        taxonCopy.setExternalId(TaxonomyProvider.OPEN_TREE_OF_LIFE.getIdPrefix() + ottId);
+                        Taxon taxonCopy = copyAndLinkToOpenTreeTaxon(taxonNode, ottId);
                         NodeUtil.connectTaxa(taxonCopy, new TaxonNode(rel.getStartNode()), graphDb, RelTypes.SAME_AS);
                     }
                     ottIds.put(externalId, ottId);
@@ -78,4 +78,12 @@ public class LinkerOpenTreeOfLife {
             }
             return hasPrexistingLink;
         }
+
+    protected static Taxon copyAndLinkToOpenTreeTaxon(Taxon taxon, Long ottId) {
+        Taxon taxonCopy = TaxonUtil.copy(taxon);
+        final String externalId = TaxonomyProvider.OPEN_TREE_OF_LIFE.getIdPrefix() + ottId;
+        taxonCopy.setExternalId(externalId);
+        taxonCopy.setExternalUrl(ExternalIdUtil.urlForExternalId(externalId));
+        return taxonCopy;
+    }
 }

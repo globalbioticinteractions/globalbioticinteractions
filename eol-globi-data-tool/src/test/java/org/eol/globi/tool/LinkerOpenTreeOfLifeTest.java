@@ -3,6 +3,8 @@ package org.eol.globi.tool;
 import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.domain.RelTypes;
+import org.eol.globi.domain.Taxon;
+import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TaxonomyProvider;
 import org.eol.globi.opentree.OpenTreeTaxonIndex;
 import org.eol.globi.service.PropertyEnricherException;
@@ -10,6 +12,7 @@ import org.junit.Test;
 
 import java.util.List;
 
+import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.matchers.JUnitMatchers.hasItem;
 
@@ -40,6 +43,15 @@ public class LinkerOpenTreeOfLifeTest extends GraphDBTestCase {
                 index.destroy();
             }
         }
+    }
+
+    @Test
+    public void copyAndLink() {
+        final TaxonImpl taxon = new TaxonImpl();
+        taxon.setExternalId("GBIF:123");
+        final Taxon linkedTaxon = LinkerOpenTreeOfLife.copyAndLinkToOpenTreeTaxon(taxon, 555L);
+        assertThat(linkedTaxon.getExternalId(), is("OTT:555"));
+        assertThat(linkedTaxon.getExternalUrl(), is("https://tree.opentreeoflife.org/taxonomy/browse?id=555"));
     }
 
 }
