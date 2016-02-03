@@ -1,6 +1,5 @@
 package org.eol.globi.server;
 
-import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -78,36 +77,37 @@ public class TaxonSearchImpl implements TaxonSearch {
     }
 
     public String findTaxonProxy(@PathVariable("taxonName") final String taxonName) throws IOException {
-        CypherQuery cypherQuery = new CypherQuery(startClause() +
-                returnClause(), new HashMap<String, String>() {
-            {
-                put("taxonName", taxonName);
-            }
-        });
+        CypherQuery cypherQuery = new CypherQuery(queryPrefix() +
+                returnClause(), paramForName(taxonName));
         return CypherUtil.executeRemote(cypherQuery);
     }
 
-    public Map<String, String> findTaxonWithImage(final String taxonName) throws IOException {
-        CypherQuery cypherQuery = new CypherQuery(startClause()
-                + " WHERE has(taxon." + PropertyAndValueDictionary.THUMBNAIL_URL + ") " +
-                "AND length(taxon." + PropertyAndValueDictionary.THUMBNAIL_URL + ") > 0" +
-                returnClause(), new HashMap<String, String>() {
+    public HashMap<String, String> paramForName(@PathVariable("taxonName") final String taxonName) {
+        return new HashMap<String, String>() {
             {
+                put("taxonPathQuery", "path:\\\"" + taxonName + "\\\"");
                 put("taxonName", taxonName);
             }
-        });
+        };
+    }
+
+    public Map<String, String> findTaxonWithImage(final String taxonName) throws IOException {
+        CypherQuery cypherQuery = new CypherQuery(queryPrefix()
+                + " AND has(taxon." + PropertyAndValueDictionary.THUMBNAIL_URL + ") " +
+                "AND length(taxon." + PropertyAndValueDictionary.THUMBNAIL_URL + ") > 0" +
+                returnClause(), paramForName(taxonName));
         return toMap(CypherUtil.executeRemote(cypherQuery));
     }
 
     @RequestMapping(value = "/findCloseMatches", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
     @ResponseBody
     public CypherQuery findCloseMatches(@RequestParam("taxonName") final String taxonName, HttpServletRequest request) throws IOException {
-        return findCloseMatchesForCommonAndScientificNamesNew(taxonName, request);
+        return findCloseMatchesForCommonAndScientificNames(taxonName, request);
     }
 
     @RequestMapping(value = "/findCloseMatchesForTaxon/{taxonName}", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public CypherQuery findCloseMatchesForCommonAndScientificNamesNew(@PathVariable("taxonName") final String taxonName, HttpServletRequest request) throws IOException {
+    public CypherQuery findCloseMatchesForCommonAndScientificNames(@PathVariable("taxonName") final String taxonName, HttpServletRequest request) throws IOException {
         String luceneQuery = buildLuceneQuery(taxonName, "name");
         StringBuilder query = new StringBuilder("START taxon = node:taxonNameSuggestions('" + luceneQuery + "') ");
 
@@ -202,8 +202,11 @@ public class TaxonSearchImpl implements TaxonSearch {
         return queryString;
     }
 
-    public String startClause() {
-        return "START taxon = node:taxons(name={taxonName}) ";
+    public String queryPrefix() {
+        return "START taxon = node:taxonPaths({taxonPathQuery}) " +
+                "MATCH taxon-[:SAME_AS*0..1]->otherTaxon\n" +
+                "WHERE (has(otherTaxon.name) AND otherTaxon.name = {taxonName}) \n" +
+                "OR (has(otherTaxon.externalId) AND otherTaxon.externalId = {taxonName})\n";
     }
 
     private String returnClause() {
