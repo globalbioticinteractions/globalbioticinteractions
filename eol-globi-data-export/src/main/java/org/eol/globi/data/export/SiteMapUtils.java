@@ -5,6 +5,7 @@ import com.redfin.sitemapgenerator.SitemapIndexGenerator;
 import com.redfin.sitemapgenerator.WebSitemapGenerator;
 import com.redfin.sitemapgenerator.WebSitemapUrl;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.eol.globi.data.StudyImporterException;
 
 import java.io.File;
@@ -29,7 +30,7 @@ public class SiteMapUtils {
             } catch (URISyntaxException e) {
                 throw new IOException("unexpected malformed uri", e);
             }
-            WebSitemapUrl url = new WebSitemapUrl.Options(uri.toString())
+            WebSitemapUrl url = new WebSitemapUrl.Options(StringEscapeUtils.escapeXml(uri.toString()))
                     .lastMod(new Date()).priority(1.0).changeFreq(ChangeFreq.WEEKLY).build();
             wsg.addUrl(url);
         }

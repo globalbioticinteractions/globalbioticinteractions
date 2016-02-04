@@ -1,5 +1,6 @@
 package org.eol.globi.export;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.domain.Study;
 import org.junit.Test;
@@ -14,8 +15,8 @@ public class ExporterSiteMapForCitationsTest extends ExporterSiteMapForNamesTest
 
     @Test
     public void writeSiteMapWithCitations() throws StudyImporterException, IOException {
-        final Study study = nodeFactory.getOrCreateStudy("title", "source", "citation123");
-        assertThat(study.getExternalId(), is("http://dx.doi.org/citation123"));
+        final Study study = nodeFactory.getOrCreateStudy("title", "source", "citation123&bla");
+        assertThat(study.getExternalId(), is("http://dx.doi.org/citation123&bla"));
 
         final File baseDirCitations = createBaseDir("target/sitemap/citations");
 
@@ -23,7 +24,9 @@ public class ExporterSiteMapForCitationsTest extends ExporterSiteMapForNamesTest
 
         siteMapForCitationsExporter.export(getGraphDb(), baseDirCitations.getAbsolutePath());
 
-        final String substring = "http://www.globalbioticinteractions.org/?accordingTo=http://dx.doi.org/citation123";
+        final String escapedString = StringEscapeUtils.escapeXml("http://dx.doi.org/citation123&bla");
+
+        final String substring = "http://www.globalbioticinteractions.org/?accordingTo=" + escapedString;
         assertSiteMap(baseDirCitations, substring, "https://globi.s3.amazonaws.com/snapshot/target/data/sitemap/citations/sitemap.xml.gz");
     }
 
