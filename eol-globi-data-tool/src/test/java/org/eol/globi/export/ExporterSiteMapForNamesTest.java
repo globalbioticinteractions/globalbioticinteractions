@@ -2,6 +2,7 @@ package org.eol.globi.export;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.domain.Specimen;
@@ -18,10 +19,8 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.zip.GZIPInputStream;
 
-import static junit.framework.Assert.assertFalse;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
 import static org.junit.internal.matchers.StringContains.containsString;
 
 public class ExporterSiteMapForNamesTest extends GraphDBTestCase {
@@ -67,7 +66,7 @@ public class ExporterSiteMapForNamesTest extends GraphDBTestCase {
         assertThat(file.exists(), is(true));
         final String siteMapString = IOUtils.toString(new GZIPInputStream(new FileInputStream(file)));
         assertThat(siteMapString,
-                containsString(substring));
+                containsString(StringEscapeUtils.escapeXml(substring)));
         final File sitemapIndex = new File(baseDirCitations, "sitemap_index.xml");
         assertThat(sitemapIndex.exists(), is(true));
         final String sitemapIndexString = IOUtils.toString(new FileInputStream(sitemapIndex));

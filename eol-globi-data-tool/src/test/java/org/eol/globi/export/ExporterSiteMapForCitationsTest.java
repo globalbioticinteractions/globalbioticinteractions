@@ -1,6 +1,5 @@
 package org.eol.globi.export;
 
-import org.apache.commons.lang.StringEscapeUtils;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.domain.Study;
 import org.junit.Test;
@@ -24,9 +23,7 @@ public class ExporterSiteMapForCitationsTest extends ExporterSiteMapForNamesTest
 
         siteMapForCitationsExporter.export(getGraphDb(), baseDirCitations.getAbsolutePath());
 
-        final String escapedString = StringEscapeUtils.escapeXml("http://dx.doi.org/citation123&bla");
-
-        final String substring = "http://www.globalbioticinteractions.org/?accordingTo=" + escapedString;
+        final String substring = "http://www.globalbioticinteractions.org/?accordingTo=" + "http://dx.doi.org/citation123&bla";
         assertSiteMap(baseDirCitations, substring, "https://globi.s3.amazonaws.com/snapshot/target/data/sitemap/citations/sitemap.xml.gz");
     }
 
