@@ -27,8 +27,11 @@ public enum ResultField {
     SOURCE_TAXON_PATH_IDS("source_taxon_path_ids"),
 
     TARGET_SPECIMEN_TOTAL_FREQUENCY_OF_OCCURRENCE("target_specimen_frequency_of_occurrence"),
+    TARGET_SPECIMEN_TOTAL_FREQUENCY_OF_OCCURRENCE_PERCENT("target_specimen_frequency_of_occurrence_percent"),
     TARGET_SPECIMEN_TOTAL_VOLUME_ML("target_specimen_total_volume_ml"),
+    TARGET_SPECIMEN_TOTAL_VOLUME_PERCENT("target_specimen_total_volume_ml_percent"),
     TARGET_SPECIMEN_TOTAL_COUNT("target_specimen_total_count"),
+    TARGET_SPECIMEN_TOTAL_COUNT_PERCENT("target_specimen_total_count_percent"),
 
     TARGET_SPECIMEN_ID("tmp_and_unique_target_specimen_id"),
     SOURCE_SPECIMEN_ID("tmp_and_unique_source_specimen_id"),

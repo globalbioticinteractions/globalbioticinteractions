@@ -389,8 +389,11 @@ public class StudyImporterForGoMexSI extends BaseStudyImporter {
             addOptionalProperty(parser, "PHYSIOLOG_STATE", Specimen.PHYSIOLOGICAL_STATE_LABEL, properties);
             addOptionalProperty(parser, "PREY_PARTS", Specimen.BODY_PART_LABEL, properties);
             addOptionalProperty(parser, "N_CONS", Specimen.TOTAL_COUNT, properties);
+            addOptionalProperty(parser, "PCT_N_CONS", Specimen.TOTAL_COUNT_PERCENT, properties);
             addOptionalProperty(parser, "VOL_CONS", Specimen.TOTAL_VOLUME_IN_ML, properties);
+            addOptionalProperty(parser, "PCT_VOL_CONS", Specimen.TOTAL_VOLUME_PERCENT, properties);
             addOptionalProperty(parser, "FREQ_OCC", Specimen.FREQUENCY_OF_OCCURRENCE, properties);
+            addOptionalProperty(parser, "PCT_FREQ_OCC", Specimen.FREQUENCY_OF_OCCURRENCE_PERCENT, properties);
             properties.put(PropertyAndValueDictionary.NAME, getMandatoryValue(datafile, parser, scientificNameLabel));
 
             String refId = getMandatoryValue(datafile, parser, "REF_ID");

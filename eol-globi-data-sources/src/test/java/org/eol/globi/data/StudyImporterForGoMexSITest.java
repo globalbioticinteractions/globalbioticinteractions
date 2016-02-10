@@ -4,6 +4,7 @@ import com.Ostermiller.util.CSVParser;
 import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.io.IOUtils;
 import org.eol.globi.domain.Location;
+import org.eol.globi.domain.Specimen;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -46,6 +47,35 @@ public class StudyImporterForGoMexSITest {
 
         assertThat(parsedProperties.get("name"), is("Crustacea"));
         assertThat(parsedProperties.get("GOMEXSI:SOURCE_PREY_NAME"), is("Crustacea"));
+    }
+
+    @Test
+    public void importSinglePreyWithPCTValues() throws IOException, StudyImporterException {
+        final Map<String, String> parsedProperties = new HashMap<String, String>();
+        String predOneLine = "REF_ID,PRED_ID,SOURCE_PREY_NAME,DATABASE_PREY_NAME,PHYSIOLOG_STATE,SED_ORIGIN,PREY_PARTS,LIFE_HIST_STAGE,COND_INDEX,SEX,SEX_RATIO,LEN_TYPE,MIN_LEN,MAX_LEN,MN_LEN,BIOMASS,PCT_BIOMASS,N_CONS,PCT_N_CONS,VOL_CONS,PCT_VOL_CONS,FREQ_OCC,PCT_FREQ_OCC,IRI,PCT_IRI,IRIa,IIR,E,PREY_NOTES,FB_FOOD_I,FB_FOOD_II,FB_FOOD_III,FB_STAGE\n" +
+                "16r,Cchr.1,Crustacea,Crustacea,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,0.6,0.5,0.4,0.3,0.2,0.1,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA";
+        StudyImporterForGoMexSI.parseSpecimen("test.txt", "DATABASE_PREY_NAME", new ParseEventHandler() {
+            @Override
+            public void onSpecimen(String predatorUID, Map<String, String> properties) {
+                parsedProperties.putAll(properties);
+            }
+        }, new LabeledCSVParser(new CSVParser(new StringReader(predOneLine))));
+
+        assertThat(parsedProperties.get("name"), is("Crustacea"));
+        assertThat(parsedProperties.get("GOMEXSI:SOURCE_PREY_NAME"), is("Crustacea"));
+        assertThat(parsedProperties.get("GOMEXSI:N_CONS"), is("0.6"));
+        assertThat(parsedProperties.get("GOMEXSI:PCT_N_CONS"), is("0.5"));
+        assertThat(parsedProperties.get("GOMEXSI:VOL_CONS"), is("0.4"));
+        assertThat(parsedProperties.get("GOMEXSI:PCT_VOL_CONS"), is("0.3"));
+        assertThat(parsedProperties.get("GOMEXSI:FREQ_OCC"), is("0.2"));
+        assertThat(parsedProperties.get("GOMEXSI:PCT_FREQ_OCC"), is("0.1"));
+
+        assertThat(parsedProperties.get(Specimen.TOTAL_COUNT), is("0.6"));
+        assertThat(parsedProperties.get(Specimen.TOTAL_COUNT_PERCENT), is("0.5"));
+        assertThat(parsedProperties.get(Specimen.TOTAL_VOLUME_IN_ML), is("0.4"));
+        assertThat(parsedProperties.get(Specimen.TOTAL_VOLUME_PERCENT), is("0.3"));
+        assertThat(parsedProperties.get(Specimen.FREQUENCY_OF_OCCURRENCE), is("0.2"));
+        assertThat(parsedProperties.get(Specimen.FREQUENCY_OF_OCCURRENCE_PERCENT), is("0.1"));
     }
 
     @Test

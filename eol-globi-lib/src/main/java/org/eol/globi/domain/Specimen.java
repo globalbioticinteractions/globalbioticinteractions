@@ -23,8 +23,11 @@ public class Specimen extends NodeBacked {
     public static final String BODY_PART_LABEL = "bodyPartLabel";
     public static final String BODY_PART_ID = "bodyPartId";
     public static final String TOTAL_COUNT = "totalNumberConsumed";
+    public static final String TOTAL_COUNT_PERCENT = "totalNumberConsumedPercent";
     public static final String TOTAL_VOLUME_IN_ML = "totalVolumeInMl";
+    public static final String TOTAL_VOLUME_PERCENT = "totalVolumePercent";
     public static final String FREQUENCY_OF_OCCURRENCE = "frequencyOfOccurrence";
+    public static final String FREQUENCY_OF_OCCURRENCE_PERCENT = "frequencyOfOccurrencePercent";
 
     public Specimen(Node node) {
         super(node);
