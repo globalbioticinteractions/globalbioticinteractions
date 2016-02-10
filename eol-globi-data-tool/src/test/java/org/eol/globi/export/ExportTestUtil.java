@@ -1,10 +1,9 @@
 package org.eol.globi.export;
 
 import org.eol.globi.data.NodeFactory;
-import org.eol.globi.data.NodeFactoryImpl;
 import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.data.TaxonIndex;
-import org.eol.globi.domain.Location;
+import org.eol.globi.domain.LocationNode;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.Term;
@@ -43,7 +42,7 @@ public class ExportTestUtil {
             specimen.setLengthInMm(length);
         }
 
-        Location location = factory.getOrCreateLocation(88.0, -120.0, -60.0);
+        LocationNode location = factory.getOrCreateLocation(88.0, -120.0, -60.0);
         specimen.caughtIn(location);
         return myStudy;
     }

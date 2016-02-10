@@ -2,7 +2,7 @@ package org.eol.globi.data;
 
 import com.Ostermiller.util.LabeledCSVParser;
 import org.eol.globi.domain.InteractType;
-import org.eol.globi.domain.Location;
+import org.eol.globi.domain.LocationNode;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.util.ExternalIdUtil;
@@ -37,7 +37,7 @@ public class StudyImporterForCook extends BaseStudyImporter {
             Double latitude = LocationUtil.parseDegrees("27º51'N");
             Double longitude = LocationUtil.parseDegrees("97º8'W");
 
-            Location sampleLocation = nodeFactory.getOrCreateLocation(latitude, longitude, -3.0);
+            LocationNode sampleLocation = nodeFactory.getOrCreateLocation(latitude, longitude, -3.0);
 
             try {
                 while (parser.getLine() != null) {
@@ -67,7 +67,7 @@ public class StudyImporterForCook extends BaseStudyImporter {
         return study;
     }
 
-    private void addParasites(LabeledCSVParser parser, Study study, Location sampleLocation, Specimen host, Date collectionDate, String isoCol) throws NodeFactoryException {
+    private void addParasites(LabeledCSVParser parser, Study study, LocationNode sampleLocation, Specimen host, Date collectionDate, String isoCol) throws NodeFactoryException {
         try {
             String valueByLabel = parser.getValueByLabel(isoCol);
             boolean parasiteDetected = !"0".equals(valueByLabel);

@@ -47,16 +47,16 @@ public class Specimen extends NodeBacked {
         return getUnderlyingNode().getRelationships(InteractType.ATE, Direction.OUTGOING);
     }
 
-    public Location getSampleLocation() {
+    public LocationNode getSampleLocation() {
         Relationship singleRelationship = getUnderlyingNode().getSingleRelationship(RelTypes.COLLECTED_AT, Direction.OUTGOING);
-        return singleRelationship == null ? null : new Location(singleRelationship.getEndNode());
+        return singleRelationship == null ? null : new LocationNode(singleRelationship.getEndNode());
     }
 
     public void ate(Specimen specimen) {
         interactsWith(specimen, InteractType.ATE);
     }
 
-    public void caughtIn(Location sampleLocation) {
+    public void caughtIn(LocationNode sampleLocation) {
         if (null != sampleLocation) {
             createRelationshipTo(sampleLocation, RelTypes.COLLECTED_AT);
         }
@@ -98,7 +98,7 @@ public class Specimen extends NodeBacked {
         setPropertyWithTx(STOMACH_VOLUME_ML, volumeInMilliLiter);
     }
 
-    public void interactsWith(Specimen target, InteractType type, Location centroid) {
+    public void interactsWith(Specimen target, InteractType type, LocationNode centroid) {
         caughtIn(centroid);
         target.caughtIn(centroid);
         interactsWith(target, type);

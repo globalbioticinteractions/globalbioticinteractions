@@ -1,7 +1,7 @@
 package org.eol.globi.data;
 
 import org.eol.globi.domain.InteractType;
-import org.eol.globi.domain.Location;
+import org.eol.globi.domain.LocationNode;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
@@ -123,8 +123,8 @@ public class StudyImporterForAkinTest extends GraphDBTestCase {
         assertThat((Double) mollusca.get(Specimen.VOLUME_IN_ML), is(0.45d));
 
         Node locationNode = specimenNode.getSingleRelationship(RelTypes.COLLECTED_AT, Direction.OUTGOING).getEndNode();
-        assertThat((Double) locationNode.getProperty(Location.LATITUDE), is(28.645202d));
-        assertThat((Double) locationNode.getProperty(Location.LONGITUDE), is(-96.099923d));
+        assertThat((Double) locationNode.getProperty(LocationNode.LATITUDE), is(28.645202d));
+        assertThat((Double) locationNode.getProperty(LocationNode.LONGITUDE), is(-96.099923d));
     }
 
 }

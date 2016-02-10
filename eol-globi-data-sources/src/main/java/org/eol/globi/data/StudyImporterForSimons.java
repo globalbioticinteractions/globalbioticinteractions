@@ -1,7 +1,7 @@
 package org.eol.globi.data;
 
 import com.Ostermiller.util.LabeledCSVParser;
-import org.eol.globi.domain.Location;
+import org.eol.globi.domain.LocationNode;
 import org.eol.globi.domain.Season;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
@@ -81,7 +81,7 @@ public class StudyImporterForSimons extends BaseStudyImporter {
         String seasonName = csvParser.getValueByLabel(columnToNormalizedTermMapper.get(SEASON));
         Specimen prey = createAndClassifySpecimen(csvParser.getValueByLabel(columnToNormalizedTermMapper.get(PREY_SPECIES)), study);
 
-        Location sampleLocation = getOrCreateSampleLocation(csvParser, columnToNormalizedTermMapper);
+        LocationNode sampleLocation = getOrCreateSampleLocation(csvParser, columnToNormalizedTermMapper);
         prey.caughtIn(sampleLocation);
         prey.caughtDuring(getOrCreateSeason(seasonName));
 
@@ -119,7 +119,7 @@ public class StudyImporterForSimons extends BaseStudyImporter {
         return season;
     }
 
-    private Location getOrCreateSampleLocation(LabeledCSVParser csvParser, Map<String, String> columnToNormalizedTermMapper) throws StudyImporterException {
+    private LocationNode getOrCreateSampleLocation(LabeledCSVParser csvParser, Map<String, String> columnToNormalizedTermMapper) throws StudyImporterException {
         Double northing = parseAsDouble(csvParser, columnToNormalizedTermMapper.get(NORTHING));
         Double easting = parseAsDouble(csvParser, columnToNormalizedTermMapper.get(EASTING));
 

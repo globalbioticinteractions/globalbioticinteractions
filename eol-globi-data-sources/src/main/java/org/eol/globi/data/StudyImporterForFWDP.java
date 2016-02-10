@@ -4,7 +4,7 @@ import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.eol.globi.domain.Location;
+import org.eol.globi.domain.LocationNode;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.util.ExternalIdUtil;
@@ -44,7 +44,7 @@ public class StudyImporterForFWDP extends BaseStudyImporter {
                     Specimen predator = getPredatorSpecimen(study, predatorSpecimenMap, parser);
                     Specimen prey = associatePreySpecimen(study, parser, predator);
                     try {
-                        Location location = getLocation(parser);
+                        LocationNode location = getLocation(parser);
                         predator.caughtIn(location);
                         prey.caughtIn(location);
 
@@ -120,7 +120,7 @@ public class StudyImporterForFWDP extends BaseStudyImporter {
         return predatorSpecimen;
     }
 
-    private Location getLocation(LabeledCSVParser parser) throws NodeFactoryException {
+    private LocationNode getLocation(LabeledCSVParser parser) throws NodeFactoryException {
         String latString = parser.getValueByLabel("declat");
         String lngString = parser.getValueByLabel("declon");
         Double lng = new Double(lngString);

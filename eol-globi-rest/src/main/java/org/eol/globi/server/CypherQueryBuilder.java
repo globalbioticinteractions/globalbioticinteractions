@@ -6,7 +6,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.validator.routines.UrlValidator;
 import org.eol.globi.domain.InteractType;
-import org.eol.globi.domain.Location;
+import org.eol.globi.domain.LocationNode;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.server.util.InteractionTypeExternal;
@@ -700,10 +700,10 @@ public class CypherQueryBuilder {
             {
                 addSourceTaxonFields(sourceTaxonPrefix);
                 addTargetTaxonFields(targetTaxonPrefix);
-                put(LATITUDE, "loc." + Location.LATITUDE + "?");
-                put(LATITUDE, "loc." + Location.LATITUDE + "?");
-                put(LONGITUDE, "loc." + Location.LONGITUDE + "?");
-                put(ALTITUDE, "loc." + Location.ALTITUDE + "?");
+                put(LATITUDE, "loc." + LocationNode.LATITUDE + "?");
+                put(LATITUDE, "loc." + LocationNode.LATITUDE + "?");
+                put(LONGITUDE, "loc." + LocationNode.LONGITUDE + "?");
+                put(ALTITUDE, "loc." + LocationNode.ALTITUDE + "?");
                 put(SOURCE_SPECIMEN_LIFE_STAGE, "sourceSpecimen." + Specimen.LIFE_STAGE_LABEL + "?");
                 put(TARGET_SPECIMEN_LIFE_STAGE, "targetSpecimen." + Specimen.LIFE_STAGE_LABEL + "?");
                 put(SOURCE_SPECIMEN_BODY_PART, "sourceSpecimen." + Specimen.BODY_PART_LABEL + "?");

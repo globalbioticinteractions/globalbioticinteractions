@@ -2,7 +2,7 @@ package org.eol.globi.data;
 
 import org.apache.commons.lang.StringUtils;
 import org.eol.globi.domain.Environment;
-import org.eol.globi.domain.Location;
+import org.eol.globi.domain.LocationNode;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
@@ -74,7 +74,7 @@ public class StudyImporterForBroseTest extends GraphDBTestCase {
         assertThat(taxon, is(notNullValue()));
         assertThat(taxonIndex.findTaxonByName("Aphelinus abdominalis"), is(notNullValue()));
 
-        Location location = nodeFactory.findLocation(51.24, -0.34, null);
+        LocationNode location = nodeFactory.findLocation(51.24, -0.34, null);
         assertThat("missing location", location, is(notNullValue()));
 
         List<Environment> environments = location.getEnvironments();

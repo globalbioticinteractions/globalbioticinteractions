@@ -2,17 +2,11 @@ package org.eol.globi.data;
 
 import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.lang.StringUtils;
-import org.eol.globi.domain.InteractType;
-import org.eol.globi.domain.Location;
-import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
-import org.eol.globi.geo.LatLng;
-import org.eol.globi.util.InvalidLocationException;
 
 import java.io.IOException;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.logging.Level;
 
 public class StudyImporterForTSV extends BaseStudyImporter {
     public static final String INTERACTION_TYPE_ID = "interactionTypeId";

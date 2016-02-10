@@ -1,10 +1,9 @@
 package org.eol.globi.data;
 
 import com.Ostermiller.util.LabeledCSVParser;
-import org.eol.globi.domain.Location;
+import org.eol.globi.domain.LocationNode;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
-import org.eol.globi.util.ExternalIdUtil;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -26,7 +25,7 @@ public class StudyImporterForRobledo extends BaseStudyImporter {
         // spatial location from: http://www.ots.ac.cr/index.php?option=com_content&task=view&id=163&Itemid=348
         Double latitude = LocationUtil.parseDegrees("10°26'N");
         Double longitude = LocationUtil.parseDegrees("83°59'W");
-        Location location;
+        LocationNode location;
         try {
             location = nodeFactory.getOrCreateLocation(latitude, longitude, 35.0);
         } catch (NodeFactoryException e) {

@@ -4,7 +4,7 @@ import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.eol.globi.domain.Location;
+import org.eol.globi.domain.LocationNode;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.Term;
@@ -84,7 +84,7 @@ public class StudyImporterForBarnes extends BaseStudyImporter {
         Double longitude = LocationUtil.parseDegrees(parser.getValueByLabel("Longitude"));
         String depth = parser.getValueByLabel("Depth");
         Double altitudeInMeters = -1.0 * Double.parseDouble(depth);
-        Location location = nodeFactory.getOrCreateLocation(latitude, longitude, altitudeInMeters);
+        LocationNode location = nodeFactory.getOrCreateLocation(latitude, longitude, altitudeInMeters);
         predator.caughtIn(location);
 
         String preyName = parser.getValueByLabel("Prey");

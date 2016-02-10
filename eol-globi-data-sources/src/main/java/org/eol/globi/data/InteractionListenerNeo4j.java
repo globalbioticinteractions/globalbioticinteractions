@@ -2,7 +2,7 @@ package org.eol.globi.data;
 
 import org.apache.commons.lang.StringUtils;
 import org.eol.globi.domain.InteractType;
-import org.eol.globi.domain.Location;
+import org.eol.globi.domain.LocationNode;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.Term;
@@ -76,7 +76,7 @@ class InteractionListenerNeo4j implements InteractionListener {
         }
     }
 
-    private Location getOrCreateLocation(Study study, Map<String, String> link) throws IOException, NodeFactoryException {
+    private LocationNode getOrCreateLocation(Study study, Map<String, String> link) throws IOException, NodeFactoryException {
         LatLng centroid = null;
         String latitude = link.get(DECIMAL_LATITUDE);
         String longitude = link.get(DECIMAL_LONGITUDE);

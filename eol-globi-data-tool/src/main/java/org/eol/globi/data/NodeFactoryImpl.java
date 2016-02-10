@@ -5,6 +5,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eol.globi.domain.Environment;
 import org.eol.globi.domain.Location;
+import org.eol.globi.domain.LocationImpl;
+import org.eol.globi.domain.LocationNode;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Season;
@@ -43,6 +45,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+
+import static org.eol.globi.domain.LocationUtil.*;
 
 public class NodeFactoryImpl implements NodeFactory {
 
@@ -88,30 +92,35 @@ public class NodeFactoryImpl implements NodeFactory {
     }
 
     @Override
-    public Location findLocation(Double latitude, Double longitude, Double altitude) {
-        QueryContext queryOrQueryObject = QueryContext.numericRange(Location.LATITUDE, latitude, latitude);
+    public LocationNode findLocation(Location location) {
+        QueryContext queryOrQueryObject = QueryContext.numericRange(LocationNode.LATITUDE, location.getLatitude(), location.getLatitude());
         IndexHits<Node> matchingLocations = locations.query(queryOrQueryObject);
         Node matchingLocation = null;
         for (Node node : matchingLocations) {
-            Double foundLongitude = (Double) node.getProperty(Location.LONGITUDE);
+            final LocationNode foundLocation = new LocationNode(node);
 
-            boolean altitudeMatches = false;
-            if (node.hasProperty(Location.ALTITUDE)) {
-                Double foundAltitude = (Double) node.getProperty(Location.ALTITUDE);
-                altitudeMatches = altitude != null && altitude.equals(foundAltitude);
-            } else if (null == altitude) {
-                // explicit null value matches
-                altitudeMatches = true;
-            }
 
-            if (longitude.equals(foundLongitude) && altitudeMatches) {
+            boolean altitudeMatches = foundLocation.getAltitude() == null && location.getAltitude() == null
+                    || location.getAltitude() != null && location.getAltitude().equals(foundLocation.getAltitude());
+
+            boolean footprintWKTMatches = foundLocation.getFootprintWKT() == null && location.getFootprintWKT() == null
+                    || location.getFootprintWKT() != null && location.getFootprintWKT().equals(foundLocation.getFootprintWKT());
+
+            if (location.getLongitude().equals(foundLocation.getLongitude())
+                    && altitudeMatches
+                    && footprintWKTMatches) {
                 matchingLocation = node;
                 break;
             }
 
         }
         matchingLocations.close();
-        return matchingLocation == null ? null : new Location(matchingLocation);
+        return matchingLocation == null ? null : new LocationNode(matchingLocation);
+    }
+
+    @Override
+    public LocationNode findLocation(Double latitude, Double longitude, Double altitude) {
+        return findLocation(new LocationImpl(latitude, longitude, altitude, null));
     }
 
     @Override
@@ -129,22 +138,25 @@ public class NodeFactoryImpl implements NodeFactory {
         return season;
     }
 
-    private Location createLocation(Double latitude, Double longitude, Double altitude) {
+    private LocationNode createLocation(final Location location) {
         Transaction transaction = graphDb.beginTx();
-        Location location;
+        LocationNode locationNode;
         try {
             Node node = graphDb.createNode();
-            location = new Location(node, latitude, longitude, altitude);
-            locations.add(node, Location.LATITUDE, ValueContext.numeric(latitude));
-            locations.add(node, Location.LONGITUDE, ValueContext.numeric(longitude));
-            if (altitude != null) {
-                locations.add(node, Location.ALTITUDE, ValueContext.numeric(altitude));
+            locationNode = new LocationNode(node, fromLocation(location));
+            locations.add(node, LocationNode.LATITUDE, ValueContext.numeric(location.getLatitude()));
+            locations.add(node, LocationNode.LONGITUDE, ValueContext.numeric(location.getLongitude()));
+            if (location.getAltitude() != null) {
+                locations.add(node, LocationNode.ALTITUDE, ValueContext.numeric(location.getAltitude()));
+            }
+            if (StringUtils.isNotBlank(location.getFootprintWKT())) {
+                locations.add(node, LocationNode.FOOTPRINT_WKT, location.getFootprintWKT());
             }
             transaction.success();
         } finally {
             transaction.finish();
         }
-        return location;
+        return locationNode;
     }
 
 
@@ -301,30 +313,37 @@ public class NodeFactoryImpl implements NodeFactory {
     }
 
     @Override
-    public Location getOrCreateLocation(Double latitude, Double longitude, Double altitude) throws NodeFactoryException {
-        Location location = null;
-        if (latitude != null && longitude != null) {
-            validate(latitude, longitude);
-            location = findLocation(latitude, longitude, altitude);
-            if (null == location) {
-                location = createLocation(latitude, longitude, altitude);
+    public LocationNode getOrCreateLocation(org.eol.globi.domain.Location location) throws NodeFactoryException {
+        LocationNode locationNode = null;
+        final Double latitude = location.getLatitude();
+        final Double longitude = location.getLongitude();
+        if (location.getLatitude() != null && location.getLongitude() != null) {
+            validate(location);
+            locationNode = findLocation(location);
+            if (null == locationNode) {
+                locationNode = createLocation(location);
                 try {
-                    enrichLocationWithEcoRegions(location);
+                    enrichLocationWithEcoRegions(locationNode);
                 } catch (NodeFactoryException e) {
-                    LOG.error("failed to create eco region for location (" + location.getLatitude() + ", " + location.getLongitude() + ")", e);
+                    LOG.error("failed to create eco region for location (" + latitude + ", " + longitude + ")", e);
                 }
             }
         }
-        return location;
+        return locationNode;
     }
 
-    private void validate(Double latitude, Double longitude) throws NodeFactoryException {
+    @Override
+    public LocationNode getOrCreateLocation(Double latitude, Double longitude, Double altitude) throws NodeFactoryException {
+        return getOrCreateLocation(new LocationImpl(latitude, longitude, altitude, null));
 
-        if (!LocationUtil.isValidLatitude(latitude)) {
-            throw new NodeFactoryException("found invalid latitude [" + latitude + "]");
+    }
+
+    private void validate(Location location) throws NodeFactoryException {
+        if (!LocationUtil.isValidLatitude(location.getLatitude())) {
+            throw new NodeFactoryException("found invalid latitude [" + location.getLatitude() + "]");
         }
-        if (!LocationUtil.isValidLongitude(longitude)) {
-            throw new NodeFactoryException("found invalid longitude [" + longitude + "]");
+        if (!LocationUtil.isValidLongitude(location.getLongitude())) {
+            throw new NodeFactoryException("found invalid longitude [" + location.getLongitude() + "]");
         }
     }
 
@@ -363,7 +382,7 @@ public class NodeFactoryImpl implements NodeFactory {
     }
 
     @Override
-    public List<Environment> getOrCreateEnvironments(Location location, String externalId, String name) throws NodeFactoryException {
+    public List<Environment> getOrCreateEnvironments(LocationNode location, String externalId, String name) throws NodeFactoryException {
         List<org.eol.globi.domain.Term> terms;
         try {
             terms = envoLookupService.lookupTermByName(name);
@@ -378,7 +397,7 @@ public class NodeFactoryImpl implements NodeFactory {
     }
 
     @Override
-    public List<Environment> addEnvironmentToLocation(Location location, List<Term> terms) {
+    public List<Environment> addEnvironmentToLocation(LocationNode location, List<Term> terms) {
         List<Environment> normalizedEnvironments = new ArrayList<Environment>();
         for (Term term : terms) {
             Environment environment = findEnvironment(term.getName());
@@ -416,12 +435,12 @@ public class NodeFactoryImpl implements NodeFactory {
         return ecoregions;
     }
 
-    public List<Ecoregion> enrichLocationWithEcoRegions(Location location) throws NodeFactoryException {
+    public List<Ecoregion> enrichLocationWithEcoRegions(LocationNode location) throws NodeFactoryException {
         List<Ecoregion> associatedEcoregions = getEcoRegions(location.getUnderlyingNode());
         return associatedEcoregions == null ? associateWithEcoRegions(location) : associatedEcoregions;
     }
 
-    private List<Ecoregion> associateWithEcoRegions(Location location) throws NodeFactoryException {
+    private List<Ecoregion> associateWithEcoRegions(LocationNode location) throws NodeFactoryException {
         List<Ecoregion> associatedEcoregions = new ArrayList<Ecoregion>();
         try {
             EcoregionFinder finder = getEcoregionFinder();
@@ -438,7 +457,7 @@ public class NodeFactoryImpl implements NodeFactory {
         return associatedEcoregions;
     }
 
-    private void associateLocationWithEcoRegion(Location location, Ecoregion ecoregion) {
+    private void associateLocationWithEcoRegion(LocationNode location, Ecoregion ecoregion) {
         Node ecoregionNode = findEcoRegion(ecoregion);
         Transaction tx = graphDb.beginTx();
         try {

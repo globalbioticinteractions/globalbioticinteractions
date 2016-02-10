@@ -2,6 +2,8 @@ package org.eol.globi.data;
 
 import com.Ostermiller.util.CSVParser;
 import com.Ostermiller.util.LabeledCSVParser;
+import org.apache.commons.io.IOUtils;
+import org.eol.globi.domain.Location;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -62,6 +64,27 @@ public class StudyImporterForGoMexSITest {
         assertThat(contributorMap.get("16r"), is("Robert Rogers"));
         assertThat(contributorMap.get("24d"), is("Regina Divita, Mischelle Creel, Peter Sheridan"));
         assertThat(contributorMap.get("17b"), is("Dale Beaumariage"));
+    }
+
+    @Test
+    public void polyCoordToWKT() {
+        assertThat(StudyImporterForGoMexSI.polyCoordsToWKT("((-92.6729107838999,29.3941413332999),(-92.5604838626999,29.2066775354))")
+                , is("POLYGON((-92.6729107838999 29.3941413332999),(-92.5604838626999 29.2066775354))"));
+    }
+
+    @Test
+    public void parseLocation() throws IOException, StudyImporterException {
+        final String locationLines = "REF_ID,PRED_ID,LOC_ID,LME_CODE,COUNTRY,STATE,GULF_OCTANT,LOCALE_NAME,LOCALE_TYPE,BAY_HIERARC_LEVEL,SAMP_DEP_REALM,LOC_CENTR_LAT,LOC_CENTR_LONG,LOC_POLY_COORDS,LOC_POLY_SOURCE,LOC_POLY_CONF,MAJOR_LOC_NAME,MAJOR_LOC_TYPE,MIN_DEP_LOC,MAX_DEP_LOC,MN_DEP_LOC,MIN_DEP_SAMP,MAX_DEP_SAMP,MN_DEP_SAMP,TIME_ZONE,START_YEAR,START_MON,START_DAY,START_TIME,START_SEAS,END_YEAR,END_MON,END_DAY,END_TIME,END_SEAS,HAB_SYSTEM,HAB_SUBSYSTEM,TIDAL_ZONE,REALM,PROVINCE,ECOREGION,SYS_CONF,LOC_NOTES,NUM_SAMPS,STA_DATA\n" +
+                "16r,Cchr.1,16r.1,GOM,US,LA,NNW,Louisiana inner continental shelf,Continental shelf,NA,Demersal,29.346953,-92.980614,\"((-92.6729107838999,29.3941413332999),(-92.5604838626999,29.2066775354),(-92.7326173694,29.1150784684999),(-92.9638307704999,29.1171045174),(-93.3169089704999,29.3616452463),(-93.4007435505999,29.5222620776999),(-93.3169089704999,29.6243402981),(-93.1045280342,29.6340566488),(-92.6729107838999,29.3941413332999))\",Inferred from station locations,high,Louisiana continental shelf,Gulf/Ocean waters,9.094,18.188,13.641,9.094,18.188,13.641,CDST,1970,7,NA,0:00,summer,1973,2,NA,0:00,winter,Marine,Nearshore,Subtidal,TNA,WTNA,43,NA,NA,NA,yes\n" +
+                "16r,Cchr.1,16r.2,GOM,US,LA,NNW,Louisiana mid continental shelf,Continental shelf,NA,Demersal,29.032598,-92.287009,\"((-92.1815365767999,29.1068886358999),(-92.200079333,29.0069336331),(-92.3030548952999,28.9075567952),(-92.4770626883999,28.8892759983999),(-92.5999700862,28.9468493538999),(-92.6034249349,29.0088070450999),(-92.5255192441999,29.0774757406),(-92.3918542331,29.148292841),(-92.2231376575,29.1384141105999),(-92.1815365767999,29.1068886358999))\",Inferred from station locations,high,Louisiana continental shelf,Gulf/Ocean waters,18.188,54.564,36.376,18.188,54.564,36.376,CDST,1970,7,NA,0:00,summer,1973,2,NA,0:00,winter,Marine,Offshore,Subtidal,TNA,WTNA,43,NA,NA,NA,yes\n";
+
+        final LabeledCSVParser parser = new LabeledCSVParser(new CSVParser(IOUtils.toInputStream(locationLines)));
+        parser.getLine();
+        final Location location = StudyImporterForGoMexSI.parseLocation("someresropuce.csv", parser);
+        assertThat(location.getLatitude(), is(29.346953d));
+        assertThat(location.getLongitude(), is(-92.980614d));
+        assertThat(location.getAltitude(), is(-13.641d));
+        assertThat(location.getFootprintWKT(), is("POLYGON((-92.6729107838999 29.3941413332999),(-92.5604838626999 29.2066775354),(-92.7326173694 29.1150784684999),(-92.9638307704999 29.1171045174),(-93.3169089704999 29.3616452463),(-93.4007435505999 29.5222620776999),(-93.3169089704999 29.6243402981),(-93.1045280342 29.6340566488),(-92.6729107838999 29.3941413332999))"));
     }
 
 }

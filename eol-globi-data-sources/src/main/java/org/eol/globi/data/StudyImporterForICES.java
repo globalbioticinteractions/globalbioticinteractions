@@ -2,7 +2,7 @@ package org.eol.globi.data;
 
 import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.lang3.StringUtils;
-import org.eol.globi.domain.Location;
+import org.eol.globi.domain.LocationNode;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.util.ExternalIdUtil;
@@ -31,7 +31,7 @@ public class StudyImporterForICES extends BaseStudyImporter {
             while ((parser.getLine()) != null) {
                 if (importFilter.shouldImportRecord((long) parser.getLastLineNumber())) {
                     Date date = parseDate(parser);
-                    Location location = parseLocation(parser);
+                    LocationNode location = parseLocation(parser);
 
                     String currentStomachId = parser.getValueByLabel("ICES StomachID");
                     if (lastStomachId == null || !lastStomachId.equals(currentStomachId)) {
@@ -95,7 +95,7 @@ public class StudyImporterForICES extends BaseStudyImporter {
         return date;
     }
 
-    private Location parseLocation(LabeledCSVParser parser) throws StudyImporterException {
+    private LocationNode parseLocation(LabeledCSVParser parser) throws StudyImporterException {
         Double lat = parseDoubleField(parser, "Latitude");
         Double lon = parseDoubleField(parser, "Longitude");
         Double depth = parseDoubleField(parser, "Depth");

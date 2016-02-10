@@ -11,7 +11,7 @@ import org.apache.jena.riot.RDFDataMgr;
 import org.apache.jena.riot.RDFFormat;
 import org.eol.globi.domain.Environment;
 import org.eol.globi.domain.InteractType;
-import org.eol.globi.domain.Location;
+import org.eol.globi.domain.LocationNode;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
@@ -53,7 +53,7 @@ public class LittleTurtleExporter implements StudyExporter {
             // is this OK?
             Resource agent = model.createResource();
 
-            Location location = specimen.getSampleLocation();
+            LocationNode location = specimen.getSampleLocation();
             if (location != null) {
                 for (Environment env : location.getEnvironments()) {
                     String envoId = ExternalIdUtil.urlForExternalId(env.getExternalId());

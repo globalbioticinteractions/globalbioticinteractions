@@ -5,7 +5,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eol.globi.domain.InteractType;
-import org.eol.globi.domain.Location;
+import org.eol.globi.domain.LocationNode;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.Term;
@@ -111,7 +111,7 @@ public class StudyImporterForBrose extends BaseStudyImporter {
 
     private void addInteractionForConsumer(LabeledCSVParser parser, Study localStudy, String predatorName) throws NodeFactoryException, StudyImporterException {
 
-        Location location = null;
+        LocationNode location = null;
         String locationString = parser.getValueByLabel("Geographic location");
         LatLng latLng = LOC_MAP.get(StringUtils.trim(locationString));
         if (latLng == null) {

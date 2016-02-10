@@ -2,7 +2,7 @@ package org.eol.globi.data;
 
 import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.lang3.StringUtils;
-import org.eol.globi.domain.Location;
+import org.eol.globi.domain.LocationNode;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.service.TermLookupServiceException;
@@ -35,7 +35,7 @@ public class StudyImporterForBlewett extends BaseStudyImporter {
         study.setCitationWithTx("Blewett DA, Hensley RA, and Stevens PW, Feeding Habits of Common Snook, Centropomus Undecimalis, in Charlotte Harbor, Florida, Gulf and Caribbean Research Vol 18, 1–13, 2006");
         study.setExternalId("http://research.myfwc.com/engine/download_redirection_process.asp?file=06blewett_0718.pdf&objid=50963&dltype=publication");
         try {
-            Map<String, Location> collectionLocationMap = new HashMap<String, Location>();
+            Map<String, LocationNode> collectionLocationMap = new HashMap<String, LocationNode>();
             Map<String, Date> collectionTimeMap = new HashMap<String, Date>();
             buildLocationTimeMaps(collectionLocationMap, collectionTimeMap, study);
             parsePredatorPreyInteraction(study, collectionLocationMap, collectionTimeMap);
@@ -50,7 +50,7 @@ public class StudyImporterForBlewett extends BaseStudyImporter {
         return study;
     }
 
-    private void buildLocationTimeMaps(Map<String, Location> collectionLocationMap, Map<String, Date> collectionTimeMap, Study study) throws IOException, StudyImporterException {
+    private void buildLocationTimeMaps(Map<String, LocationNode> collectionLocationMap, Map<String, Date> collectionTimeMap, Study study) throws IOException, StudyImporterException {
         LabeledCSVParser locationParser = parserFactory.createParser("blewett/SnookDietData2000_02_Charlotte_Harbor_FL_Blewett_date_and_abiotic.csv", CharsetConstant.UTF8);
         String[] line;
         while ((line = locationParser.getLine()) != null) {
@@ -69,7 +69,7 @@ public class StudyImporterForBlewett extends BaseStudyImporter {
             if (StringUtils.isBlank(longitude)) {
                 getLogger().warn(study, "blank value for longitude for line: [" + locationParser.getLastLineNumber() + "]");
             }
-            Location location;
+            LocationNode location;
             try {
                 location = nodeFactory.getOrCreateLocation(Double.parseDouble(latitude), Double.parseDouble(longitude), 0.0);
             } catch (NodeFactoryException e) {
@@ -112,7 +112,7 @@ public class StudyImporterForBlewett extends BaseStudyImporter {
         return fmtDateTime.print(dateTime);
     }
 
-    private void parsePredatorPreyInteraction(Study study, Map<String, Location> locationMap, Map<String, Date> collectionTimeMap) throws IOException, NodeFactoryException, TermLookupServiceException {
+    private void parsePredatorPreyInteraction(Study study, Map<String, LocationNode> locationMap, Map<String, Date> collectionTimeMap) throws IOException, NodeFactoryException, TermLookupServiceException {
         LabeledCSVParser parser = parserFactory.createParser("blewett/SnookDietData2000_02_Charlotte_Harbor_FL_Blewett_numeric_abundance.csv", CharsetConstant.UTF8);
         String[] header = parser.getLabels();
 
@@ -149,9 +149,9 @@ public class StudyImporterForBlewett extends BaseStudyImporter {
         return predatorSpecimen;
     }
 
-    private void setLocationAndDate(Map<String, Location> locationMap, Map<String, Date> collectionTimeMap, List<Specimen> items, String collectionCode) throws NodeFactoryException {
+    private void setLocationAndDate(Map<String, LocationNode> locationMap, Map<String, Date> collectionTimeMap, List<Specimen> items, String collectionCode) throws NodeFactoryException {
         String collectionCodeTrim = collectionCode.trim();
-        Location location = locationMap.get(collectionCodeTrim);
+        LocationNode location = locationMap.get(collectionCodeTrim);
         if (location != null) {
             for (Specimen item : items) {
                 item.caughtIn(location);

@@ -2,7 +2,7 @@ package org.eol.globi.data;
 
 import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.lang3.StringUtils;
-import org.eol.globi.domain.Location;
+import org.eol.globi.domain.LocationNode;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.geo.LatLng;
@@ -33,7 +33,7 @@ public class StudyImporterForRoopnarine extends BaseStudyImporter {
                 , "http://dx.doi.org/10.7167/2013/857470");
         for (Map.Entry<String, LatLng> resourceLatLngEntry : resourceLocation.entrySet()) {
             LatLng latLng = resourceLatLngEntry.getValue();
-            Location location;
+            LocationNode location;
             try {
                 location = nodeFactory.getOrCreateLocation(latLng.getLat(), latLng.getLng(), 0.0);
             } catch (NodeFactoryException e) {
@@ -59,7 +59,7 @@ public class StudyImporterForRoopnarine extends BaseStudyImporter {
         return resourceLocation;
     }
 
-    private List<Specimen> importTrophicInteractions(String trophicGuildLookup, Map<Integer, List<String>> trophicGuildNumberToSpeciesMap, String studyResource, Study study, Location location) throws StudyImporterException {
+    private List<Specimen> importTrophicInteractions(String trophicGuildLookup, Map<Integer, List<String>> trophicGuildNumberToSpeciesMap, String studyResource, Study study, LocationNode location) throws StudyImporterException {
         try {
             LabeledCSVParser parser = parserFactory.createParser(studyResource, CharsetConstant.UTF8);
             List<Specimen> predatorSpecimen = new ArrayList<Specimen>();
@@ -109,7 +109,7 @@ public class StudyImporterForRoopnarine extends BaseStudyImporter {
         return trophicGuildNumberToSpeciesMap;
     }
 
-    private List<Specimen> importPredatorSpecimen(String trophicGuildLookup, Map<Integer, List<String>> trophicGuildNumberToSpeciesMap, LabeledCSVParser parser, List<String> preyTaxonList, Study study, Location location) throws StudyImporterException, NodeFactoryException {
+    private List<Specimen> importPredatorSpecimen(String trophicGuildLookup, Map<Integer, List<String>> trophicGuildNumberToSpeciesMap, LabeledCSVParser parser, List<String> preyTaxonList, Study study, LocationNode location) throws StudyImporterException, NodeFactoryException {
         Integer predatorGuildNumber = parseGuildNumber(trophicGuildLookup, parser);
         List<Specimen> predatorSpecimenList = new ArrayList<Specimen>();
         List<String> predatorTaxaList = trophicGuildNumberToSpeciesMap.get(predatorGuildNumber);

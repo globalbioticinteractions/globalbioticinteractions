@@ -2,7 +2,7 @@ package org.eol.globi.export;
 
 import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.NodeFactoryException;
-import org.eol.globi.domain.Location;
+import org.eol.globi.domain.LocationNode;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
@@ -83,7 +83,7 @@ public class ExporterMeasurementOrFactTest extends GraphDBTestCase {
             specimen.setLengthInMm(length);
         }
 
-        Location location = nodeFactory.getOrCreateLocation(22.0, 129.9, -60.0);
+        LocationNode location = nodeFactory.getOrCreateLocation(22.0, 129.9, -60.0);
         specimen.caughtIn(location);
         resolveNames();
     }

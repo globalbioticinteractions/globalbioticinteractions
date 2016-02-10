@@ -9,7 +9,7 @@ import org.apache.commons.logging.LogFactory;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.domain.InteractType;
-import org.eol.globi.domain.Location;
+import org.eol.globi.domain.LocationNode;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.util.CSVUtil;
@@ -115,8 +115,8 @@ public class StudyImporterForBascompte extends BaseStudyImporter {
         return interactType1 == null ? InteractType.INTERACTS_WITH : interactType1;
     }
 
-    public Location parseLocation(LabeledCSVParser parser) throws StudyImporterException {
-        Location networkLocation = null;
+    public LocationNode parseLocation(LabeledCSVParser parser) throws StudyImporterException {
+        LocationNode networkLocation = null;
         final String latitude = parser.getValueByLabel("Latitude");
         final String longitude = parser.getValueByLabel("Longitude");
         if (StringUtils.isNotBlank(latitude) && StringUtils.isNotBlank(longitude)) {
@@ -131,7 +131,7 @@ public class StudyImporterForBascompte extends BaseStudyImporter {
         return networkLocation;
     }
 
-    public void importNetwork(InteractType interactType1, Location networkLocation, Study study, File file) throws IOException, NodeFactoryException {
+    public void importNetwork(InteractType interactType1, LocationNode networkLocation, Study study, File file) throws IOException, NodeFactoryException {
         LabeledCSVParser interactions = CSVUtil.createLabeledCSVParser(new FileInputStream(file));
         final String[] targetLabels = interactions.getLabels();
         List<String> targetTaxonNames = new ArrayList<String>();

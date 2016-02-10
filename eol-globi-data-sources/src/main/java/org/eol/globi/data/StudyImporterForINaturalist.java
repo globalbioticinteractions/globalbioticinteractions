@@ -10,7 +10,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.domain.InteractType;
-import org.eol.globi.domain.Location;
+import org.eol.globi.domain.LocationNode;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.Taxon;
@@ -304,7 +304,7 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
         setCollectionDate(sourceSpecimen, targetSpecimen, observationDate);
         setCollectionDate(sourceSpecimen, sourceSpecimen, observationDate);
 
-        Location location = parseLocation(observation);
+        LocationNode location = parseLocation(observation);
         sourceSpecimen.caughtIn(location);
         targetSpecimen.caughtIn(location);
 
@@ -315,8 +315,8 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
         sourceSpecimen.setBasisOfRecord(nodeFactory.getOrCreateBasisOfRecord("http://rs.tdwg.org/dwc/dwctype/HumanObservation", "HumanObservation"));
     }
 
-    private Location parseLocation(JsonNode observation) throws NodeFactoryException {
-        Location location = null;
+    private LocationNode parseLocation(JsonNode observation) throws NodeFactoryException {
+        LocationNode location = null;
         String latitudeString = observation.get("latitude").getTextValue();
         String longitudeString = observation.get("longitude").getTextValue();
         if (latitudeString != null && longitudeString != null) {

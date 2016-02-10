@@ -2,7 +2,7 @@ package org.eol.globi.data;
 
 import com.Ostermiller.util.LabeledCSVParser;
 import org.eol.globi.domain.InteractType;
-import org.eol.globi.domain.Location;
+import org.eol.globi.domain.LocationNode;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Specimen;
@@ -10,7 +10,6 @@ import org.eol.globi.domain.Study;
 import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.service.TermLookupService;
 import org.eol.globi.taxon.UberonLookupService;
-import org.eol.globi.tool.NameResolver;
 import org.junit.Test;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
@@ -138,7 +137,7 @@ public class StudyImporterForBlewettTest extends GraphDBTestCase {
         ate = predatorNode.getRelationships(InteractType.ATE, Direction.OUTGOING);
         assertThat(ate.iterator().hasNext(), is(false));
 
-        Location location = nodeFactory.findLocation(26.651833, -82.103833, 0.0);
+        LocationNode location = nodeFactory.findLocation(26.651833, -82.103833, 0.0);
         assertThat(location, is(not(nullValue())));
         Iterable<Relationship> specimenCaughtHere = location.getSpecimenCaughtHere();
         Iterator<Relationship> iterator = specimenCaughtHere.iterator();

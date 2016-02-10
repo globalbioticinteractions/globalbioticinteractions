@@ -1,7 +1,7 @@
 package org.eol.globi.data;
 
 import org.eol.globi.domain.InteractType;
-import org.eol.globi.domain.Location;
+import org.eol.globi.domain.LocationNode;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
@@ -69,8 +69,8 @@ public class StudyImporterForBaremoreTest extends GraphDBTestCase {
             assertNotNull(collectedAtRelationship);
             Node locationNode = collectedAtRelationship.getEndNode();
             assertNotNull(locationNode);
-            assertThat((Double) locationNode.getProperty(Location.LATITUDE), is(29.219302));
-            assertThat((Double) locationNode.getProperty(Location.LONGITUDE), is(-87.06665));
+            assertThat((Double) locationNode.getProperty(LocationNode.LATITUDE), is(29.219302));
+            assertThat((Double) locationNode.getProperty(LocationNode.LONGITUDE), is(-87.06665));
             totalRels++;
         }
         return totalRels;

@@ -1,7 +1,7 @@
 package org.eol.globi.data;
 
 import org.apache.commons.io.IOUtils;
-import org.eol.globi.domain.Location;
+import org.eol.globi.domain.LocationNode;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.geo.LatLng;
@@ -19,7 +19,6 @@ import static org.eol.globi.data.StudyImporterForTSV.DECIMAL_LATITUDE;
 import static org.eol.globi.data.StudyImporterForTSV.DECIMAL_LONGITUDE;
 import static org.eol.globi.data.StudyImporterForTSV.INTERACTION_TYPE_ID;
 import static org.eol.globi.data.StudyImporterForTSV.INTERACTION_TYPE_NAME;
-import static org.eol.globi.data.StudyImporterForTSV.LOCALITY_ID;
 import static org.eol.globi.data.StudyImporterForTSV.LOCALITY_NAME;
 import static org.eol.globi.data.StudyImporterForTSV.REFERENCE_CITATION;
 import static org.eol.globi.data.StudyImporterForTSV.REFERENCE_DOI;
@@ -49,7 +48,7 @@ public class StudyImporterForSzoboszlaiTest extends GraphDBTestCase {
         Iterable<Relationship> specimens = firstStudy.getSpecimens();
         for (Relationship specimen : specimens) {
             Specimen specimenNode = new Specimen(specimen.getEndNode());
-            Location sampleLocation = specimenNode.getSampleLocation();
+            LocationNode sampleLocation = specimenNode.getSampleLocation();
             assertThat(sampleLocation, is(notNullValue()));
             assertThat(sampleLocation.getLatitude(), is(notNullValue()));
             assertThat(sampleLocation.getLongitude(), is(notNullValue()));

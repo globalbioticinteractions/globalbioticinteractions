@@ -2,7 +2,7 @@ package org.eol.globi.data;
 
 import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.lang3.StringUtils;
-import org.eol.globi.domain.Location;
+import org.eol.globi.domain.LocationNode;
 import org.eol.globi.domain.Season;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
@@ -123,7 +123,7 @@ public class StudyImporterForWrast extends BaseStudyImporter {
                 getLogger().warn(study, createMsgPrefix(csvParser) + " failed to find depth for habitat, region, site and season: [" + createDepthId(seasonName, region, site, habitat) + "], skipping entry");
             }
 
-            Location sampleLocation;
+            LocationNode sampleLocation;
             try {
                 sampleLocation = nodeFactory.getOrCreateLocation(latLng1.getLat(), latLng1.getLng(), altitude);
             } catch (NodeFactoryException e) {
@@ -153,7 +153,7 @@ public class StudyImporterForWrast extends BaseStudyImporter {
         }
     }
 
-    private Specimen addPredatorSpecimen(LabeledCSVParser csvParser, Study study, LengthParser lengthParser, String seasonName, Location sampleLocation, String speciesName, String predatorId, Map<String, Specimen> predatorMap) throws StudyImporterException {
+    private Specimen addPredatorSpecimen(LabeledCSVParser csvParser, Study study, LengthParser lengthParser, String seasonName, LocationNode sampleLocation, String speciesName, String predatorId, Map<String, Specimen> predatorMap) throws StudyImporterException {
         Specimen predator = createAndClassifySpecimen(speciesName, study);
         predatorMap.put(predatorId, predator);
         predator.setLengthInMm(lengthParser.parseLengthInMm(csvParser));

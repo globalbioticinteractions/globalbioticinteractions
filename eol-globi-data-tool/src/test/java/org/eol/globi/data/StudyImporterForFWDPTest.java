@@ -1,11 +1,10 @@
 package org.eol.globi.data;
 
 import com.Ostermiller.util.CSVPrint;
-import com.Ostermiller.util.ExcelCSVPrinter;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.eol.globi.domain.Location;
+import org.eol.globi.domain.LocationNode;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.geo.Ecoregion;
@@ -52,7 +51,7 @@ public class StudyImporterForFWDPTest extends GraphDBTestCase {
         Iterable<Relationship> collected = study.getSpecimens();
         for (Relationship coll : collected) {
             Specimen specimen = new Specimen(coll.getEndNode());
-            Location sampleLocation = specimen.getSampleLocation();
+            LocationNode sampleLocation = specimen.getSampleLocation();
             assertNotNull(sampleLocation);
             assertThat(sampleLocation.getLatitude() > 0, is(true));
             assertThat(sampleLocation.getLongitude() < 0, is(true));

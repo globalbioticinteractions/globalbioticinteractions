@@ -3,6 +3,8 @@ package org.eol.globi.data;
 import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.domain.Location;
+import org.eol.globi.domain.LocationImpl;
+import org.eol.globi.domain.LocationNode;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
@@ -94,9 +96,6 @@ public class StudyImporterForGoMexSI extends BaseStudyImporter {
         });
         addReferences(referenceIdToStudy);
         addObservations(predatorIdToPredatorNames, referenceIdToStudy, predatorIdToPreyNames, study);
-
-        // TODO figure out a way to introduce the separation of study and reference.
-
         return study;
     }
 
@@ -171,21 +170,19 @@ public class StudyImporterForGoMexSI extends BaseStudyImporter {
                 } else {
                     Study study = refIdToStudyMap.get(refId);
                     String specimenId = getMandatoryValue(locationResource, parser, "PRED_ID");
-                    Double latitude = getMandatoryDoubleValue(locationResource, parser, "LOC_CENTR_LAT");
-                    Double longitude = getMandatoryDoubleValue(locationResource, parser, "LOC_CENTR_LONG");
-                    Double depth = getMandatoryDoubleValue(locationResource, parser, "MN_DEP_SAMP");
-                    String habitatSystem = getMandatoryValue(locationResource, parser, "HAB_SYSTEM");
-                    String habitatSubsystem = getMandatoryValue(locationResource, parser, "HAB_SUBSYSTEM");
-                    String habitatTidalZone = getMandatoryValue(locationResource, parser, "TIDAL_ZONE");
 
-                    Location location = getLocation(metaStudy, locationResource, cmecsService, parser, latitude, longitude, depth, habitatSystem, habitatSubsystem, habitatTidalZone);
+                    Location location = parseLocation(locationResource, parser);
+
+                    LocationNode locationNode = nodeFactory.getOrCreateLocation(location);
+
+                    enrichLocation(metaStudy, locationResource, cmecsService, parser, locationNode);
 
                     String predatorId = refId + specimenId;
                     Map<String, String> predatorProperties = predatorIdToPredatorSpecimen.get(predatorId);
                     if (predatorProperties == null) {
-                        getLogger().warn(study, "failed to lookup location for predator [" + refId + ":" + specimenId + "] from [" + locationResource + ":" + parser.getLastLineNumber() + "]");
+                        getLogger().warn(study, "failed to lookup predator [" + refId + ":" + specimenId + "] for location at [" + locationResource + ":" + (parser.getLastLineNumber() + 1) + "]");
                     } else {
-                        addObservation(predatorUIToPreyLists, metaStudy, parser, study, location, predatorId, predatorProperties);
+                        addObservation(predatorUIToPreyLists, metaStudy, parser, study, locationNode, predatorId, predatorProperties);
                     }
                 }
             }
@@ -195,16 +192,34 @@ public class StudyImporterForGoMexSI extends BaseStudyImporter {
 
     }
 
-    private Location getLocation(Study metaStudy, String locationResource, TermLookupService cmecsService, LabeledCSVParser parser, Double latitude, Double longitude, Double depth, String habitatSystem, String habitatSubsystem, String habitatTidalZone) {
-        Location location = null;
-        try {
-            location = nodeFactory.getOrCreateLocation(latitude, longitude, depth == null ? null : -depth);
-        } catch (NodeFactoryException e) {
-            //
+    private void enrichLocation(Study metaStudy, String locationResource, TermLookupService cmecsService, LabeledCSVParser parser, LocationNode location) throws StudyImporterException {
+        String habitatSystem = getMandatoryValue(locationResource, parser, "HAB_SYSTEM");
+        String habitatSubsystem = getMandatoryValue(locationResource, parser, "HAB_SUBSYSTEM");
+        String habitatTidalZone = getMandatoryValue(locationResource, parser, "TIDAL_ZONE");
+        enrichLocation(metaStudy, locationResource, cmecsService, parser, location, habitatSystem, habitatSubsystem, habitatTidalZone);
+    }
+
+    protected static Location parseLocation(String locationResource, LabeledCSVParser parser) throws StudyImporterException {
+        Double latitude = getMandatoryDoubleValue(locationResource, parser, "LOC_CENTR_LAT");
+        Double longitude = getMandatoryDoubleValue(locationResource, parser, "LOC_CENTR_LONG");
+        Double depth = getMandatoryDoubleValue(locationResource, parser, "MN_DEP_SAMP");
+        final String polyCoords = parser.getValueByLabel("LOC_POLY_COORDS");
+        String footprintWKT = polyCoordsToWKT(polyCoords);
+        return new LocationImpl(latitude, longitude
+                , depth == null ? null : -depth
+                , StringUtils.isBlank(footprintWKT) ? null : StringUtils.trim(footprintWKT));
+    }
+
+    protected static String polyCoordsToWKT(String polyCoords) {
+        String footprintWKT = null;
+        if (StringUtils.isNotBlank(polyCoords)) {
+            footprintWKT = "POLYGON" + polyCoords.replace(" ", "").replace(",", " ").replace(") (", "),(");
         }
-        if (location == null) {
-            getLogger().warn(metaStudy, "failed to find location for [" + latitude + "], longitude" + " [" + longitude + "] in [" + locationResource + ":" + parser.getLastLineNumber() + "]");
-        } else {
+        return footprintWKT;
+    }
+
+    private LocationNode enrichLocation(Study metaStudy, String locationResource, TermLookupService cmecsService, LabeledCSVParser parser, LocationNode location, String habitatSystem, String habitatSubsystem, String habitatTidalZone) {
+        if (location != null) {
             List<Term> terms;
             String cmecsLabel = habitatSystem + " " + habitatSubsystem + " " + habitatTidalZone;
             String msg = "failed to map CMECS habitat [" + cmecsLabel + "] on line [" + parser.lastLineNumber() + "] of image [" + locationResource + "]";
@@ -222,7 +237,7 @@ public class StudyImporterForGoMexSI extends BaseStudyImporter {
         return location;
     }
 
-    private void addObservation(Map<String, List<Map<String, String>>> predatorUIToPreyLists, Study metaStudy, LabeledCSVParser parser, Study study, Location location, String predatorId, Map<String, String> predatorProperties) throws StudyImporterException {
+    private void addObservation(Map<String, List<Map<String, String>>> predatorUIToPreyLists, Study metaStudy, LabeledCSVParser parser, Study study, LocationNode location, String predatorId, Map<String, String> predatorProperties) throws StudyImporterException {
         try {
             Specimen predatorSpecimen = createSpecimen(study, predatorProperties);
             setBasisOfRecordAsLiterature(predatorSpecimen);
@@ -345,7 +360,7 @@ public class StudyImporterForGoMexSI extends BaseStudyImporter {
         }
     }
 
-    private Double getMandatoryDoubleValue(String locationResource, LabeledCSVParser parser, String label) throws StudyImporterException {
+    private static Double getMandatoryDoubleValue(String locationResource, LabeledCSVParser parser, String label) throws StudyImporterException {
         String value = getMandatoryValue(locationResource, parser, label);
         try {
             return "NA".equals(value) || value == null || value.trim().length() == 0 ? null : Double.parseDouble(value);

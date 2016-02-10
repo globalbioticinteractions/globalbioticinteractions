@@ -5,7 +5,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eol.globi.domain.InteractType;
-import org.eol.globi.domain.Location;
+import org.eol.globi.domain.LocationNode;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.util.ExternalIdUtil;
@@ -71,7 +71,7 @@ public class StudyImporterForBell extends BaseStudyImporter {
                     String parasiteName = StringUtils.join(new String[]{StringUtils.trim(genus), StringUtils.trim(species)}, " ");
                     Specimen parasite = nodeFactory.createSpecimen(study, parasiteName);
                     parasite.setExternalId(externalId);
-                    Location location = getLocation(parser, parasite);
+                    LocationNode location = getLocation(parser, parasite);
                     parasite.caughtIn(location);
 
                     String scientificName = parser.getValueByLabel("SCIENTIFIC_NAME");
@@ -130,10 +130,10 @@ public class StudyImporterForBell extends BaseStudyImporter {
     }
 
 
-    protected Location getLocation(LabeledCSVParser parser, Specimen parasite) throws NodeFactoryException {
+    protected LocationNode getLocation(LabeledCSVParser parser, Specimen parasite) throws NodeFactoryException {
         String latitude = parser.getValueByLabel("DEC_LAT");
         String longitude = parser.getValueByLabel("DEC_LONG");
-        Location location = null;
+        LocationNode location = null;
         if (StringUtils.isNotBlank(latitude) && StringUtils.isNotBlank(longitude)) {
             location = nodeFactory.getOrCreateLocation(Double.parseDouble(latitude), Double.parseDouble(longitude), null);
         }

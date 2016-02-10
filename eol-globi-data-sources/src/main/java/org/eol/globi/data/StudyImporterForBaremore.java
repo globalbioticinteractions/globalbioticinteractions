@@ -2,7 +2,7 @@ package org.eol.globi.data;
 
 import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.lang.StringUtils;
-import org.eol.globi.domain.Location;
+import org.eol.globi.domain.LocationNode;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.Term;
@@ -35,7 +35,7 @@ public class StudyImporterForBaremore extends BaseStudyImporter {
 
             study = nodeFactory.getOrCreateStudy("Baremore 2010",
                     StudyImporterForGoMexSI.GOMEXI_SOURCE_DESCRIPTION, ExternalIdUtil.toCitation("Ivy E. Baremore", "Prey Selection By The Atlantic Angel Shark Squatina Dumeril In The Northeastern Gulf Of Mexico.", "2010"));
-            Location collectionLocation = nodeFactory.getOrCreateLocation(29.219302, -87.06665, null);
+            LocationNode collectionLocation = nodeFactory.getOrCreateLocation(29.219302, -87.06665, null);
 
             Map<Integer, Specimen> specimenMap = new HashMap<Integer, Specimen>();
 

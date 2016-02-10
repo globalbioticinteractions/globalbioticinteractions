@@ -3,7 +3,7 @@ package org.eol.globi.data;
 import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.lang.StringUtils;
 import org.eol.globi.domain.InteractType;
-import org.eol.globi.domain.Location;
+import org.eol.globi.domain.LocationNode;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.Term;
@@ -110,9 +110,9 @@ public class StudyImporterForHechinger extends BaseStudyImporter {
             LabeledCSVParser links = parserFactory.createParser(getLinkResource(), CharsetConstant.UTF8);
             links.changeDelimiter(getDelimiter());
             while (links.getLine() != null) {
-                List<Location> locations = new ArrayList<Location>();
+                List<LocationNode> locations = new ArrayList<LocationNode>();
                 if (getLocation() != null) {
-                    Location loc = nodeFactory.getOrCreateLocation(getLocation().getLat(), getLocation().getLng(), null);
+                    LocationNode loc = nodeFactory.getOrCreateLocation(getLocation().getLat(), getLocation().getLng(), null);
                     if (loc != null) {
                         locations.add(loc);
                     }
@@ -130,7 +130,7 @@ public class StudyImporterForHechinger extends BaseStudyImporter {
                     locations.add(nodeFactory.getOrCreateLocation(30.378207, -115.938835, null));
                 }
 
-                for (Location location : locations) {
+                for (LocationNode location : locations) {
                     addLink(study, stageForNode, taxonForNode, links, location);
                 }
             }
@@ -182,7 +182,7 @@ public class StudyImporterForHechinger extends BaseStudyImporter {
         return name;
     }
 
-    private void addLink(Study study, Map<Integer, Term> stageForNode, Map<Integer, String> taxonForNode, LabeledCSVParser links, Location location) throws StudyImporterException, NodeFactoryException {
+    private void addLink(Study study, Map<Integer, Term> stageForNode, Map<Integer, String> taxonForNode, LabeledCSVParser links, LocationNode location) throws StudyImporterException, NodeFactoryException {
         Integer consumerNodeID = Integer.parseInt(links.getValueByLabel("ConsumerNodeID"));
         Integer resourceNodeID = Integer.parseInt(links.getValueByLabel("ResourceNodeID"));
         String linkType = links.getValueByLabel("LinkType");

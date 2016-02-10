@@ -2,7 +2,7 @@ package org.eol.globi.data;
 
 
 import org.eol.globi.domain.InteractType;
-import org.eol.globi.domain.Location;
+import org.eol.globi.domain.LocationNode;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Specimen;
@@ -96,9 +96,9 @@ public class StudyImporterForSimonsTest extends GraphDBTestCase {
             } else if ("Ampelisca sp. (abdita complex)".equals(scientificName)) {
                 Node locationNode = specimen.getSingleRelationship(RelTypes.COLLECTED_AT, Direction.OUTGOING).getEndNode();
                 assertNotNull(locationNode);
-                assertTrue(locationNode.hasProperty(Location.LONGITUDE));
-                assertTrue(locationNode.hasProperty(Location.ALTITUDE));
-                assertTrue(locationNode.hasProperty(Location.LATITUDE));
+                assertTrue(locationNode.hasProperty(LocationNode.LONGITUDE));
+                assertTrue(locationNode.hasProperty(LocationNode.ALTITUDE));
+                assertTrue(locationNode.hasProperty(LocationNode.LATITUDE));
             } else if ("Ampelisca agassizi".equals(scientificName)) {
                 assertPreySpecimen(specimen, LONG_1, LAT_1, -60.0);
             } else {
@@ -111,9 +111,9 @@ public class StudyImporterForSimonsTest extends GraphDBTestCase {
     private void assertSpecimen(Node firstSpecimen, double longitude, double lat, double alt, String seasonName, String genusName, double length) {
         Node locationNode = firstSpecimen.getSingleRelationship(RelTypes.COLLECTED_AT, Direction.OUTGOING).getEndNode();
         assertNotNull(locationNode);
-        assertEquals(longitude, locationNode.getProperty(Location.LONGITUDE));
-        assertEquals(alt, locationNode.getProperty(Location.ALTITUDE));
-        assertEquals(lat, locationNode.getProperty(Location.LATITUDE));
+        assertEquals(longitude, locationNode.getProperty(LocationNode.LONGITUDE));
+        assertEquals(alt, locationNode.getProperty(LocationNode.ALTITUDE));
+        assertEquals(lat, locationNode.getProperty(LocationNode.LATITUDE));
 
         Relationship stomachContents = firstSpecimen.getRelationships(InteractType.ATE, Direction.OUTGOING).iterator().next();
         Node taxonNode = stomachContents.getEndNode().getSingleRelationship(RelTypes.CLASSIFIED_AS, Direction.OUTGOING).getEndNode();
@@ -129,9 +129,9 @@ public class StudyImporterForSimonsTest extends GraphDBTestCase {
     private void assertPreySpecimen(Node firstSpecimen, double longitude, double lat, double alt) {
         Node locationNode = firstSpecimen.getSingleRelationship(RelTypes.COLLECTED_AT, Direction.OUTGOING).getEndNode();
         assertNotNull(locationNode);
-        assertEquals(longitude, locationNode.getProperty(Location.LONGITUDE));
-        assertEquals(alt, locationNode.getProperty(Location.ALTITUDE));
-        assertEquals(lat, locationNode.getProperty(Location.LATITUDE));
+        assertEquals(longitude, locationNode.getProperty(LocationNode.LONGITUDE));
+        assertEquals(alt, locationNode.getProperty(LocationNode.ALTITUDE));
+        assertEquals(lat, locationNode.getProperty(LocationNode.LATITUDE));
     }
 
 }

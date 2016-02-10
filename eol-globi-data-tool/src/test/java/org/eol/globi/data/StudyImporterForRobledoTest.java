@@ -1,7 +1,7 @@
 package org.eol.globi.data;
 
 
-import org.eol.globi.domain.Location;
+import org.eol.globi.domain.LocationNode;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.junit.Test;
@@ -29,7 +29,7 @@ public class StudyImporterForRobledoTest extends GraphDBTestCase {
         Iterable<Relationship> specimenRels = study.getSpecimens();
         for (Relationship specimenRel : specimenRels) {
             Specimen specimen1 = new Specimen(specimenRel.getEndNode());
-            Location sampleLocation = specimen1.getSampleLocation();
+            LocationNode sampleLocation = specimen1.getSampleLocation();
             assertThat(sampleLocation, is(notNullValue()));
             assertThat(sampleLocation.getAltitude(), is(35.0));
             assertThat(Math.round(sampleLocation.getLongitude()), is(-84L));

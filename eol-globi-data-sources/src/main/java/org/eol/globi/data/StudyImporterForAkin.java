@@ -3,7 +3,7 @@ package org.eol.globi.data;
 import com.Ostermiller.util.CSVParser;
 import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.lang3.StringUtils;
-import org.eol.globi.domain.Location;
+import org.eol.globi.domain.LocationNode;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.Term;
@@ -57,7 +57,7 @@ public class StudyImporterForAkin extends BaseStudyImporter {
         try {
             Specimen specimen = addSpecimen(study, parser, header, line);
             if (specimen != null) {
-                Location location = parseLocation(findSiteInfo(header, line, siteInfos, parser));
+                LocationNode location = parseLocation(findSiteInfo(header, line, siteInfos, parser));
                 specimen.caughtIn(location);
                 addPrey(study, parser, header, line, specimen, location);
             }
@@ -84,7 +84,7 @@ public class StudyImporterForAkin extends BaseStudyImporter {
         return siteInfo;
     }
 
-    private Location parseLocation(String[] siteInfo) throws StudyImporterException, IOException, NodeFactoryException {
+    private LocationNode parseLocation(String[] siteInfo) throws StudyImporterException, IOException, NodeFactoryException {
         Double longitude;
         Double latitude;
         // TODO note that this study was taken in shallow water ~ 0.7m, probably better to include a depth range?
@@ -106,7 +106,7 @@ public class StudyImporterForAkin extends BaseStudyImporter {
         return nodeFactory.getOrCreateLocation(latitude, longitude, altitude);
     }
 
-    private void addPrey(Study study, LabeledCSVParser parser, String[] header, String[] line, Specimen specimen, Location location) throws StudyImporterException, NodeFactoryException {
+    private void addPrey(Study study, LabeledCSVParser parser, String[] header, String[] line, Specimen specimen, LocationNode location) throws StudyImporterException, NodeFactoryException {
         int firstPreyIndex = findIndexForColumnWithNameThrowOnMissing("Detritus", header);
         for (int i = firstPreyIndex; i < line.length; i++) {
             String preySpeciesName = header[i];

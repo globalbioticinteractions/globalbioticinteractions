@@ -1,6 +1,6 @@
 package org.eol.globi.export;
 
-import org.eol.globi.domain.Location;
+import org.eol.globi.domain.LocationNode;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Specimen;
@@ -68,10 +68,10 @@ public class ExporterOccurrences extends ExporterOccurrencesBase {
         addProperty(properties, specimenNode, Specimen.LIFE_STAGE_LABEL, EOLDictionary.LIFE_STAGE);
         addProperty(properties, specimenNode, Specimen.PHYSIOLOGICAL_STATE_LABEL, EOLDictionary.PHYSIOLOGICAL_STATE);
         addProperty(properties, specimenNode, Specimen.BODY_PART_LABEL, EOLDictionary.BODY_PART);
-        addProperty(properties, locationNode, Location.LATITUDE, EOLDictionary.DECIMAL_LATITUDE);
-        addProperty(properties, locationNode, Location.LONGITUDE, EOLDictionary.DECIMAL_LONGITUDE);
-        if (locationNode != null && locationNode.hasProperty(Location.ALTITUDE)) {
-            properties.put(EOLDictionary.VERBATIM_ELEVATION, locationNode.getProperty(Location.ALTITUDE).toString() + " m");
+        addProperty(properties, locationNode, LocationNode.LATITUDE, EOLDictionary.DECIMAL_LATITUDE);
+        addProperty(properties, locationNode, LocationNode.LONGITUDE, EOLDictionary.DECIMAL_LONGITUDE);
+        if (locationNode != null && locationNode.hasProperty(LocationNode.ALTITUDE)) {
+            properties.put(EOLDictionary.VERBATIM_ELEVATION, locationNode.getProperty(LocationNode.ALTITUDE).toString() + " m");
         }
         addProperty(properties, study.getUnderlyingNode(), Study.TITLE, EOLDictionary.EVENT_ID);
 

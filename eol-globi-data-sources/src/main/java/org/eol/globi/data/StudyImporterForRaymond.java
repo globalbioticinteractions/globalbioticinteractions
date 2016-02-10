@@ -14,7 +14,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
-import org.eol.globi.domain.Location;
+import org.eol.globi.domain.LocationNode;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.geo.GeoUtil;
@@ -165,7 +165,7 @@ public class StudyImporterForRaymond extends BaseStudyImporter {
             dietParser.getValueByLabel("DEPTH_MIN");
             dietParser.getValueByLabel("DEPTH_MAX");
 
-            Location sampleLocation = parseLocation(dietParser, study);
+            LocationNode sampleLocation = parseLocation(dietParser, study);
             predator.caughtIn(sampleLocation);
 
             Specimen prey = getSpecimen(dietParser, "PREY_NAME", "PREY_LIFE_STAGE", study);
@@ -206,7 +206,7 @@ public class StudyImporterForRaymond extends BaseStudyImporter {
         return date;
     }
 
-    private Location parseLocation(LabeledCSVParser dietParser, Study study) throws StudyImporterException {
+    private LocationNode parseLocation(LabeledCSVParser dietParser, Study study) throws StudyImporterException {
         /**
          * left, top ------- right, top
          *  |                 |
@@ -220,7 +220,7 @@ public class StudyImporterForRaymond extends BaseStudyImporter {
         String northString = dietParser.getValueByLabel(NORTH);
         String southString = dietParser.getValueByLabel(SOUTH);
 
-        Location loc = null;
+        LocationNode loc = null;
         if (StringUtils.isBlank(westString) || StringUtils.isBlank(eastString) || StringUtils.isBlank(northString) || StringUtils.isBlank(southString)) {
             try {
                 loc = locationFromLocale(dietParser, study);
@@ -243,8 +243,8 @@ public class StudyImporterForRaymond extends BaseStudyImporter {
         return loc;
     }
 
-    private Location locationFromLocale(LabeledCSVParser dietParser, Study study) throws NodeFactoryException {
-        Location loc = null;
+    private LocationNode locationFromLocale(LabeledCSVParser dietParser, Study study) throws NodeFactoryException {
+        LocationNode loc = null;
         LatLng centroid;
         String location = dietParser.getValueByLabel("LOCATION");
         if (StringUtils.isNotBlank(location)) {

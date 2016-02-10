@@ -1,7 +1,7 @@
 package org.eol.globi.data;
 
 import com.Ostermiller.util.LabeledCSVParser;
-import org.eol.globi.domain.Location;
+import org.eol.globi.domain.LocationNode;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Study;
 import org.hamcrest.core.Is;
@@ -99,8 +99,8 @@ public class StudyImporterForRoopnarineTest extends GraphDBTestCase {
             assertNotNull("missing location information", collectedAtRelationship);
             Node locationNode = collectedAtRelationship.getEndNode();
             assertNotNull(locationNode);
-            assertTrue(locationNode.hasProperty(Location.LATITUDE));
-            assertTrue(locationNode.hasProperty(Location.LONGITUDE));
+            assertTrue(locationNode.hasProperty(LocationNode.LATITUDE));
+            assertTrue(locationNode.hasProperty(LocationNode.LONGITUDE));
             totalRels++;
         }
         return totalRels;
