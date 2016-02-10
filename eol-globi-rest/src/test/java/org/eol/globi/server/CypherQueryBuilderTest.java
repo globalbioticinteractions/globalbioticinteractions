@@ -19,6 +19,7 @@ import static org.eol.globi.server.CypherQueryBuilder.QueryType.SINGLE_TAXON_ALL
 import static org.eol.globi.server.CypherQueryBuilder.QueryType.SINGLE_TAXON_DISTINCT;
 import static org.eol.globi.server.CypherQueryBuilder.appendMatchAndWhereClause;
 import static org.eol.globi.server.CypherQueryBuilder.buildInteractionQuery;
+import static org.eol.globi.server.CypherQueryBuilder.locations;
 import static org.eol.globi.server.CypherQueryBuilder.spatialInfo;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
@@ -32,6 +33,7 @@ public class CypherQueryBuilderTest {
     public static final String RETURN_PREYS_ON_CLAUSE = expectedReturnClause("preysOn");
     public static final String RETURN_KILLS_CLAUSE = expectedReturnClause("kills");
     public static final String RETURN_PARASITE_OF_CLAUSE = expectedReturnClause("parasiteOf");
+    public static final String EXPECTED_ACCORDING_TO_START_CLAUSE = "START study = node:studies('*:*') WHERE (has(study.externalId) AND study.externalId =~ {accordingTo}) OR (has(study.citation) AND study.citation =~ {accordingTo}) OR (has(study.source) AND study.source =~ {accordingTo}) WITH study ";
 
     private static String expectedReturnClause(String interactionType) {
         return "RETURN sourceTaxon.name as source_taxon_name,'" + interactionType + "' as interaction_type,targetTaxon.name as target_taxon_name,loc.latitude? as latitude,loc.longitude? as longitude,loc.altitude? as altitude,study.title as study_title,collected_rel.dateInUnixEpoch? as collection_time_in_unix_epoch,ID(sourceSpecimen) as tmp_and_unique_source_specimen_id,ID(targetSpecimen) as tmp_and_unique_target_specimen_id,sourceSpecimen.lifeStageLabel? as source_specimen_life_stage,targetSpecimen.lifeStageLabel? as target_specimen_life_stage,sourceSpecimen.basisOfRecordLabel? as source_specimen_basis_of_record,targetSpecimen.basisOfRecordLabel? as target_specimen_basis_of_record,sourceSpecimen.bodyPartLabel? as source_specimen_body_part,targetSpecimen.bodyPartLabel? as target_specimen_body_part,sourceSpecimen.physiologicalStateLabel? as source_specimen_physiological_state,targetSpecimen.physiologicalStateLabel? as target_specimen_physiological_state,targetSpecimen.totalNumberConsumed? as target_specimen_total_count,targetSpecimen.totalVolumeInMl? as target_specimen_total_volume_ml,targetSpecimen.frequencyOfOccurrence? as target_specimen_frequency_of_occurrence";
@@ -208,7 +210,7 @@ public class CypherQueryBuilderTest {
 
 
         CypherQuery query = buildInteractionQuery(params, MULTI_TAXON_DISTINCT);
-        assertThat(query.getQuery(), is("START study = node:studies('*:*') WHERE (has(study.externalId) AND study.externalId =~ {accordingTo}) OR (has(study.citation) AND study.citation =~ {accordingTo}) OR (has(study.source) AND study.source =~ {accordingTo}) WITH study " +
+        assertThat(query.getQuery(), is(EXPECTED_ACCORDING_TO_START_CLAUSE +
                 EXPECTED_MATCH_CLAUSE_DISTINCT +
                 "WHERE (has(targetTaxon.path) AND targetTaxon.path =~ '(.*(Arthropoda).*)' AND has(sourceTaxon.path) AND sourceTaxon.path =~ '(.*(Arthropoda).*)' ) " +
                 "WITH distinct targetTaxon as tTaxon, type(interaction) as iType, sourceTaxon as sTaxon RETURN sTaxon.name as source_taxon_name,tTaxon.name as target_taxon_name"));
@@ -885,6 +887,25 @@ public class CypherQueryBuilderTest {
         }}, params, new StringBuilder(), CypherQueryBuilder.QueryType.MULTI_TAXON_ALL).toString()
                 , is(" MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen-[interaction:PREYS_UPON]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon" +
                 ", sourceSpecimen<-[collected_rel:COLLECTED]-study, sourceSpecimen-[?:COLLECTED_AT]->loc "));
+    }
+
+    @Test
+    public void locationsNoConstraints() {
+        assertThat(locations().getQuery(), is("START loc = node:locations('latitude:*') RETURN loc.latitude, loc.longitude"));
+    }
+
+    @Test
+    public void locationsAccordingTo() {
+        Map<String, String> params = new HashMap<String, String>() {
+            {
+                put("accordingTo", "some source");
+            }
+        };
+
+        final CypherQuery locationsQuery = locations(params);
+
+        assertThat(locationsQuery.getQuery(), is(EXPECTED_ACCORDING_TO_START_CLAUSE + "MATCH study-[:COLLECTED]->specimen-[:COLLECTED_AT]->location WITH DISTINCT(location) as loc RETURN loc.latitude, loc.longitude"));
+        assertThat(locationsQuery.getParams().toString(), is("{accordingTo=.*(\\\\Qsome source\\\\E).*}"));
     }
 
 }

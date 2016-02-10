@@ -18,7 +18,7 @@ public class CypherProxyController {
     @RequestMapping(value = "/locations", method = RequestMethod.GET)
     @ResponseBody
     public CypherQuery locationsNew(HttpServletRequest request) throws IOException {
-        return CypherQueryBuilder.locations();
+        return CypherQueryBuilder.locations(request == null ? null : request.getParameterMap());
     }
 
     @RequestMapping(value = "/findExternalUrlForTaxon/{taxonName}", method = RequestMethod.GET, produces = "application/json")

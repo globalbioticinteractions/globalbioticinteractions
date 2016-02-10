@@ -245,6 +245,7 @@ public class CypherQueryBuilder {
             TARGET_SPECIMEN_TOTAL_FREQUENCY_OF_OCCURRENCE
     };
     public static final long DEFAULT_LIMIT = 1024L;
+    public static final String ALL_LOCATIONS_INDEX_SELECTOR = " loc = node:locations('latitude:*')";
 
     static public CypherQuery createDistinctTaxaInLocationQuery(Map<String, String[]> params) {
         StringBuilder builder = new StringBuilder();
@@ -426,8 +427,21 @@ public class CypherQueryBuilder {
     }
 
     public static CypherQuery locations() {
-        String query = "START loc = node:locations('latitude:*') RETURN loc.latitude, loc.longitude";
-        return new CypherQuery(query);
+        return locations(null);
+    }
+
+    public static CypherQuery locations(Map params) {
+        StringBuilder query = new StringBuilder();
+        final List<String> accordingTo = collectParamValues(params, "accordingTo");
+        if (accordingTo.size() > 0) {
+            appendStartClause2(params, Collections.<String>emptyList(), Collections.<String>emptyList(), query);
+            query.append(" MATCH study-[:COLLECTED]->specimen-[:COLLECTED_AT]->location");
+            query.append(" WITH DISTINCT(location) as loc");
+        } else {
+            query.append("START " + ALL_LOCATIONS_INDEX_SELECTOR);
+        }
+        query.append(" RETURN loc.latitude, loc.longitude");
+        return new CypherQuery(query.toString(), getParams(null, null, accordingTo, false));
     }
 
     public static CypherQuery buildInteractionQuery(final String sourceTaxonName, final String interactionType, final String targetTaxonName, Map parameterMap, QueryType queryType) {
@@ -642,7 +656,7 @@ public class CypherQueryBuilder {
         } else if (noSearchCriteria(RequestHelper.isSpatialSearch(parameterMap), sourceTaxa, targetTaxa)) {
             query.append(" study = node:studies('*:*')");
         } else if (sourceTaxa.size() == 0 && targetTaxa.size() == 0) {
-            query.append(" loc = node:locations('latitude:*')");
+            query.append(ALL_LOCATIONS_INDEX_SELECTOR);
         } else {
             boolean exactNameMatchesOnly = shouldIncludeExactNameMatchesOnly(parameterMap);
             if (sourceTaxa.size() > 0) {
@@ -823,10 +837,10 @@ public class CypherQueryBuilder {
         }
     }
 
-    protected static List<String> collectParamValues(Map parameterMap, String taxonSearchKey) {
+    protected static List<String> collectParamValues(Map parameterMap, String key) {
         List<String> taxa = new ArrayList<String>();
-        if (parameterMap.containsKey(taxonSearchKey)) {
-            Object paramObject = parameterMap.get(taxonSearchKey);
+        if (parameterMap != null && parameterMap.containsKey(key)) {
+            Object paramObject = parameterMap.get(key);
             if (paramObject instanceof String[]) {
                 Collections.addAll(taxa, (String[]) paramObject);
             } else if (paramObject instanceof String) {
