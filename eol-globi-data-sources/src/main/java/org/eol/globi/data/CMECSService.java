@@ -43,7 +43,7 @@ public class CMECSService implements TermLookupService {
 
     private static Map<String, Term> buildTermMap() throws IOException {
         LOG.info(CMECSService.class.getSimpleName() + " instantiating...");
-        String uri = "http://cmecscatalog.org/docs/cmecs4.accdb";
+        String uri = "http://cmecscatalog.org/documents/cmecs4.accdb";
         LOG.info("CMECS data [" + uri + "] downloading ...");
         HttpGet get = new HttpGet(uri);
         try {
