@@ -62,7 +62,7 @@ public class NodeBacked {
         return getUnderlyingNode().getId();
     }
 
-    protected void setPropertyWithTx(String propertyName, Object propertyValue) {
+    public void setPropertyWithTx(String propertyName, Object propertyValue) {
         if (propertyValue != null) {
             Transaction transaction = getUnderlyingNode().getGraphDatabase().beginTx();
             try {

@@ -189,7 +189,6 @@ public class Specimen extends NodeBacked {
 
     public void setTotalVolumeInMl(Double totalVolumeInMl) {
         setPropertyWithTx(Specimen.TOTAL_VOLUME_IN_ML, totalVolumeInMl);
-
     }
 
     public Term getLifeStage() {

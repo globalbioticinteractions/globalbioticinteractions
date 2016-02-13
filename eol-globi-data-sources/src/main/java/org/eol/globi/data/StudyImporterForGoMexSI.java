@@ -303,12 +303,15 @@ public class StudyImporterForGoMexSI extends BaseStudyImporter {
         }
     }
 
-    private Specimen createSpecimen(Study study, Map<String, String> properties) throws NodeFactoryException, StudyImporterException {
+    private Specimen createSpecimen(Study study, Map<String, String> properties) throws StudyImporterException {
         Specimen specimen = nodeFactory.createSpecimen(study, properties.get(PropertyAndValueDictionary.NAME));
         specimen.setLengthInMm(doubleValueOrNull(properties, Specimen.LENGTH_IN_MM));
         specimen.setFrequencyOfOccurrence(doubleValueOrNull(properties, Specimen.FREQUENCY_OF_OCCURRENCE));
+        setSpecimenProperty(specimen, Specimen.FREQUENCY_OF_OCCURRENCE_PERCENT, properties);
         specimen.setTotalCount(integerValueOrNull(properties, Specimen.TOTAL_COUNT));
+        setSpecimenProperty(specimen, Specimen.TOTAL_COUNT_PERCENT, properties);
         specimen.setTotalVolumeInMl(doubleValueOrNull(properties, Specimen.TOTAL_VOLUME_IN_ML));
+        setSpecimenProperty(specimen, Specimen.TOTAL_VOLUME_PERCENT, properties);
         addLifeStage(properties, specimen);
         addPhysiologicalState(properties, specimen);
         addBodyPart(properties, specimen);
@@ -328,6 +331,10 @@ public class StudyImporterForGoMexSI extends BaseStudyImporter {
 
 
         return specimen;
+    }
+
+    private void setSpecimenProperty(Specimen specimen, String name, Map<String, String> properties) throws StudyImporterException {
+        specimen.setPropertyWithTx(name, doubleValueOrNull(properties, name));
     }
 
     private void addLifeStage(Map<String, String> properties, Specimen specimen) throws StudyImporterException {
