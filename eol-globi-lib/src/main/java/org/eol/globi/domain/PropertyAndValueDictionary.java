@@ -24,4 +24,6 @@ public class PropertyAndValueDictionary {
     public static final java.lang.String NUMBER_OF_SOURCES = "nSources";
     public static final java.lang.String NUMBER_OF_STUDIES = "nStudies";
     public static final String COLLECTION = "collection";
+    public static final String LABEL = "label";
+    public static final String IRI = "iri";
 }

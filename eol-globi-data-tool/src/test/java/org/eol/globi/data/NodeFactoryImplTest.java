@@ -25,6 +25,7 @@ import org.neo4j.graphdb.index.IndexHits;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.nullValue;
@@ -45,7 +46,11 @@ public class NodeFactoryImplTest extends GraphDBTestCase {
         Specimen specimen = getNodeFactory().createSpecimen(study, "Donalda duckus");
         Specimen specimen1 = getNodeFactory().createSpecimen(study, "Mickeya mouseus");
         specimen.interactsWith(specimen1, InteractType.SYMBIONT_OF);
-        assertThat(specimen.getUnderlyingNode().getRelationships(Direction.OUTGOING, InteractType.SYMBIONT_OF).iterator().hasNext(), is(true));
+        final Iterator<Relationship> relIter = specimen.getUnderlyingNode().getRelationships(Direction.OUTGOING, InteractType.SYMBIONT_OF).iterator();
+        assertThat(relIter.hasNext(), is(true));
+        final Relationship rel = relIter.next();
+        assertThat(rel.getProperty("iri").toString(), is("http://purl.obolibrary.org/obo/RO_0002440"));
+        assertThat(rel.getProperty("label").toString(), is("bla"));
         assertThat(specimen1.getUnderlyingNode().getRelationships(Direction.OUTGOING, InteractType.SYMBIONT_OF).iterator().hasNext(), is(true));
     }
 

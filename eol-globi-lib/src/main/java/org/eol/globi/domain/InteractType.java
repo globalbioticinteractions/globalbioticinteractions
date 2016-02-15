@@ -9,27 +9,27 @@ import java.util.HashMap;
 import java.util.Map;
 
 public enum InteractType implements RelType {
-    PREYS_UPON("http://purl.obolibrary.org/obo/RO_0002439"),
-    PARASITE_OF("http://purl.obolibrary.org/obo/RO_0002444"),
-    HAS_HOST("http://purl.obolibrary.org/obo/RO_0002454"),
-    INTERACTS_WITH("http://purl.obolibrary.org/obo/RO_0002437"),
-    HOST_OF("http://purl.obolibrary.org/obo/RO_0002453"),
-    POLLINATES("http://purl.obolibrary.org/obo/RO_0002455"),
+    PREYS_UPON("http://purl.obolibrary.org/obo/RO_0002439", "preysOn"),
+    PARASITE_OF("http://purl.obolibrary.org/obo/RO_0002444", "parasiteOf"),
+    HAS_HOST("http://purl.obolibrary.org/obo/RO_0002454", "hasHost"),
+    INTERACTS_WITH("http://purl.obolibrary.org/obo/RO_0002437", "interactsWith"),
+    HOST_OF("http://purl.obolibrary.org/obo/RO_0002453", "hostOf"),
+    POLLINATES("http://purl.obolibrary.org/obo/RO_0002455", "pollinates"),
     PERCHING_ON(PropertyAndValueDictionary.NO_MATCH),
-    ATE("http://purl.obolibrary.org/obo/RO_0002470"),
-    SYMBIONT_OF("http://purl.obolibrary.org/obo/RO_0002440"),
-    PREYED_UPON_BY("http://purl.obolibrary.org/obo/RO_0002458"),
-    POLLINATED_BY("http://purl.obolibrary.org/obo/RO_0002456"),
-    EATEN_BY("http://purl.obolibrary.org/obo/RO_0002471"),
-    HAS_PARASITE("http://purl.obolibrary.org/obo/RO_0002445"),
+    ATE("http://purl.obolibrary.org/obo/RO_0002470", "eats"),
+    SYMBIONT_OF("http://purl.obolibrary.org/obo/RO_0002440", "symbiontOf"),
+    PREYED_UPON_BY("http://purl.obolibrary.org/obo/RO_0002458", "preyedUponBy"),
+    POLLINATED_BY("http://purl.obolibrary.org/obo/RO_0002456", "pollinatedBy"),
+    EATEN_BY("http://purl.obolibrary.org/obo/RO_0002471", "eatenBy"),
+    HAS_PARASITE("http://purl.obolibrary.org/obo/RO_0002445", "hasParasite"),
     PERCHED_ON_BY(PropertyAndValueDictionary.NO_MATCH),
-    HAS_PATHOGEN("http://purl.obolibrary.org/obo/RO_0002557"),
-    PATHOGEN_OF("http://purl.obolibrary.org/obo/RO_0002556"),
+    HAS_PATHOGEN("http://purl.obolibrary.org/obo/RO_0002557", "hasPathogen"),
+    PATHOGEN_OF("http://purl.obolibrary.org/obo/RO_0002556", "pathogenOf"),
 
-    HAS_VECTOR("http://purl.obolibrary.org/obo/RO_0002460"),
-    VECTOR_OF("http://purl.obolibrary.org/obo/RO_0002459"),
-    FLOWERS_VISITED_BY("http://purl.obolibrary.org/obo/RO_0002622"),
-    VISITS_FLOWERS_OF("http://purl.obolibrary.org/obo/RO_0002623"),
+    HAS_VECTOR("http://purl.obolibrary.org/obo/RO_0002460", "hasVector"),
+    VECTOR_OF("http://purl.obolibrary.org/obo/RO_0002459", "vectorOf"),
+    FLOWERS_VISITED_BY("http://purl.obolibrary.org/obo/RO_0002622", "flowersVisitedBy"),
+    VISITS_FLOWERS_OF("http://purl.obolibrary.org/obo/RO_0002623", "visitsFlowersOf"),
 
     INHABITED_BY(PropertyAndValueDictionary.NO_MATCH),
     INHABITS(PropertyAndValueDictionary.NO_MATCH),
@@ -82,13 +82,14 @@ public enum InteractType implements RelType {
     DAMAGED_BY(PropertyAndValueDictionary.NO_MATCH),
     DAMAGES(PropertyAndValueDictionary.NO_MATCH),
 
-    DISPERSAL_VECTOR_OF("http://eol.org/schema/terms/DispersalVector"),
-    HAS_DISPERAL_VECTOR("http://eol.org/schema/terms/HasDispersalVector"),
+    DISPERSAL_VECTOR_OF("http://eol.org/schema/terms/DispersalVector", "dispersalVectorOf"),
+    HAS_DISPERAL_VECTOR("http://eol.org/schema/terms/HasDispersalVector", "hasDispersalVector"),
 
-    KILLED_BY("http://purl.obolibrary.org/obo/RO_0002627"),
-    KILLS("http://purl.obolibrary.org/obo/RO_0002626");
+    KILLED_BY("http://purl.obolibrary.org/obo/RO_0002627","killedBy"),
+    KILLS("http://purl.obolibrary.org/obo/RO_0002626","kills");
 
     String iri;
+    String label;
 
     private static final Map<String, InteractType> SYNONYMS = new HashMap<String, InteractType>() {{
         put("http://eol.org/schema/terms/FlowersVisitedBy", FLOWERS_VISITED_BY);
@@ -97,8 +98,14 @@ public enum InteractType implements RelType {
         put("http://eol.org/schema/terms/isKilledBy", KILLED_BY);
     }};
 
+
     InteractType(String iri) {
+        this(iri, null);
+    }
+
+    InteractType(String iri, String label) {
         this.iri = iri;
+        this.label = StringUtils.isBlank(label) ? name() : label;
     }
 
     public static InteractType typeOf(String iri) {
@@ -120,6 +127,10 @@ public enum InteractType implements RelType {
         return iri;
     }
 
+    public String getLabel() {
+        return label;
+    }
+
     public static Collection<InteractType> hasTypes(InteractType type) {
         final Map<InteractType, Collection<InteractType>> pathMap = new HashMap<InteractType, Collection<InteractType>>() {
             {
@@ -134,13 +145,13 @@ public enum InteractType implements RelType {
                 put(PARASITOID_OF, Arrays.asList(PARASITE_OF, HAS_HOST, ATE, KILLS, LIVES_WITH, SYMBIONT_OF, INTERACTS_WITH));
                 put(ENDOPARASITOID_OF, Arrays.asList(PARASITOID_OF, PARASITE_OF, HAS_HOST, ATE, KILLS, LIVES_WITH, SYMBIONT_OF, INTERACTS_WITH));
                 put(ECTOPARASITOID_OF, Arrays.asList(PARASITOID_OF, PARASITE_OF, HAS_HOST, ATE, KILLS, LIVES_WITH, SYMBIONT_OF, INTERACTS_WITH));
-                put(HYPERPARASITOID_OF, Arrays.asList(PARASITOID_OF, PARASITE_OF,HAS_HOST,  ATE, KILLS, LIVES_WITH, SYMBIONT_OF, INTERACTS_WITH));
+                put(HYPERPARASITOID_OF, Arrays.asList(PARASITOID_OF, PARASITE_OF, HAS_HOST, ATE, KILLS, LIVES_WITH, SYMBIONT_OF, INTERACTS_WITH));
                 put(PARASITE_OF, Arrays.asList(ATE, DAMAGES, LIVES_WITH, HAS_HOST, SYMBIONT_OF, INTERACTS_WITH));
                 put(HYPERPARASITE_OF, Arrays.asList(PARASITE_OF, ATE, DAMAGES, HAS_HOST, LIVES_WITH, SYMBIONT_OF, INTERACTS_WITH));
                 put(ENDOPARASITE_OF, Arrays.asList(PARASITE_OF, LIVES_INSIDE_OF, HAS_HOST, ATE, DAMAGES, SYMBIONT_OF, INTERACTS_WITH));
                 put(ECTOPARASITE_OF, Arrays.asList(PARASITE_OF, LIVES_ON, ATE, HAS_HOST, DAMAGES, SYMBIONT_OF, INTERACTS_WITH));
                 put(POLLINATES, Arrays.asList(VISITS_FLOWERS_OF, ATE, HAS_HOST, SYMBIONT_OF, INTERACTS_WITH));
-                put(VISITS_FLOWERS_OF, Arrays.asList(HAS_HOST,INTERACTS_WITH));
+                put(VISITS_FLOWERS_OF, Arrays.asList(HAS_HOST, INTERACTS_WITH));
                 put(HOST_OF, Arrays.asList(SYMBIONT_OF, INTERACTS_WITH));
                 put(KLEPTOPARASITE_OF, Arrays.asList(INTERACTS_WITH));
                 put(INHABITS, Arrays.asList(INTERACTS_WITH));
@@ -235,4 +246,6 @@ public enum InteractType implements RelType {
 
         return inverseMap.get(type);
     }
+
+
 }

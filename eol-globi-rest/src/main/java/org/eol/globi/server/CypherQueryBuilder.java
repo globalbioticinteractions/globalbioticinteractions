@@ -71,37 +71,37 @@ import static org.eol.globi.server.util.ResultField.TAXON_PATH_RANKS;
 public class CypherQueryBuilder {
     private static final Log LOG = LogFactory.getLog(CypherQueryBuilder.class);
 
-    public static final String INTERACTION_PREYS_ON = "preysOn";
-    public static final String INTERACTION_PREYED_UPON_BY = "preyedUponBy";
+    public static final String INTERACTION_PREYS_ON = InteractType.PREYS_UPON.getLabel();
+    public static final String INTERACTION_PREYED_UPON_BY = InteractType.PREYED_UPON_BY.getLabel();
 
-    public static final String INTERACTION_EATS = "eats";
-    public static final String INTERACTION_EATEN_BY = "eatenBy";
+    public static final String INTERACTION_EATS = InteractType.ATE.getLabel();
+    public static final String INTERACTION_EATEN_BY = InteractType.EATEN_BY.getLabel();
 
-    public static final String INTERACTION_PARASITE_OF = "parasiteOf";
-    public static final String INTERACTION_HAS_PARASITE = "hasParasite";
+    public static final String INTERACTION_PARASITE_OF = InteractType.PARASITE_OF.getLabel();
+    public static final String INTERACTION_HAS_PARASITE = InteractType.HAS_PARASITE.getLabel();
 
-    public static final String INTERACTION_POLLINATES = "pollinates";
-    public static final String INTERACTION_POLLINATED_BY = "pollinatedBy";
+    public static final String INTERACTION_POLLINATES = InteractType.POLLINATES.getLabel();
+    public static final String INTERACTION_POLLINATED_BY = InteractType.POLLINATED_BY.getLabel();
 
-    public static final String INTERACTION_PATHOGEN_OF = "pathogenOf";
-    public static final String INTERACTION_HAS_PATHOGEN = "hasPathogen";
+    public static final String INTERACTION_PATHOGEN_OF = InteractType.PATHOGEN_OF.getLabel();
+    public static final String INTERACTION_HAS_PATHOGEN = InteractType.HAS_PATHOGEN.getLabel();;
 
-    public static final String INTERACTION_VECTOR_OF = "vectorOf";
-    public static final String INTERACTION_HAS_VECTOR = "hasVector";
-    public static final String INTERACTION_DISPERSAL_VECTOR_OF = "dispersalVectorOf";
-    public static final String INTERACTION_HAS_DISPERSAL_VECTOR = "hasDispersalVector";
+    public static final String INTERACTION_VECTOR_OF = InteractType.VECTOR_OF.getLabel();
+    public static final String INTERACTION_HAS_VECTOR = InteractType.HAS_VECTOR.getLabel();
+    public static final String INTERACTION_DISPERSAL_VECTOR_OF = InteractType.DISPERSAL_VECTOR_OF.getLabel();
+    public static final String INTERACTION_HAS_DISPERSAL_VECTOR = InteractType.HAS_DISPERAL_VECTOR.getLabel();
 
-    public static final String INTERACTION_HOST_OF = "hostOf";
-    public static final String INTERACTION_HAS_HOST = "hasHost";
+    public static final String INTERACTION_HOST_OF = InteractType.HOST_OF.getLabel();
+    public static final String INTERACTION_HAS_HOST = InteractType.HAS_HOST.getLabel();
 
-    public static final String INTERACTION_VISITS_FLOWERS_OF = "visitsFlowersOf";
-    public static final String INTERACTION_FLOWERS_VISITED_BY = "flowersVisitedBy";
+    public static final String INTERACTION_VISITS_FLOWERS_OF = InteractType.VISITS_FLOWERS_OF.getLabel();
+    public static final String INTERACTION_FLOWERS_VISITED_BY = InteractType.FLOWERS_VISITED_BY.getLabel();
 
-    public static final String INTERACTION_SYMBIONT_OF = "symbiontOf";
-    public static final String INTERACTION_INTERACTS_WITH = "interactsWith";
+    public static final String INTERACTION_SYMBIONT_OF = InteractType.SYMBIONT_OF.getLabel();
+    public static final String INTERACTION_INTERACTS_WITH = InteractType.INTERACTS_WITH.getLabel();
 
-    public static final String INTERACTION_KILLS = "kills";
-    public static final String INTERACTION_KILLED_BY = "killedBy";
+    public static final String INTERACTION_KILLS = InteractType.KILLS.getLabel();
+    public static final String INTERACTION_KILLED_BY = InteractType.KILLED_BY.getLabel();
 
     private static final String SOURCE_TAXON_HTTP_PARAM_NAME = "sourceTaxon";
     private static final String TARGET_TAXON_HTTP_PARAM_NAME = "targetTaxon";

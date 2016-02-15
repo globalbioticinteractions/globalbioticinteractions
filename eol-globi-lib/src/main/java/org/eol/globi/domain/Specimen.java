@@ -118,10 +118,21 @@ public class Specimen extends NodeBacked {
     }
 
     protected static void createInteraction(NodeBacked donorSpecimen, NodeBacked recipientSpecimen, InteractType relType) {
-        donorSpecimen.createRelationshipToNoTx(recipientSpecimen, relType);
-        Relationship inverseRel = recipientSpecimen.createRelationshipToNoTx(donorSpecimen, InteractType.inverseOf(relType));
-        if (inverseRel != null) {
-            inverseRel.setProperty(PropertyAndValueDictionary.INVERTED, PropertyAndValueDictionary.TRUE);
+        final Relationship interactRel = donorSpecimen.createRelationshipToNoTx(recipientSpecimen, relType);
+        enrichWithInteractProps(relType, interactRel);
+
+        final InteractType inverseRelType = InteractType.inverseOf(relType);
+        Relationship inverseInteractRel = recipientSpecimen.createRelationshipToNoTx(donorSpecimen, inverseRelType);
+        if (inverseInteractRel != null) {
+            enrichWithInteractProps(inverseRelType, inverseInteractRel);
+            inverseInteractRel.setProperty(PropertyAndValueDictionary.INVERTED, PropertyAndValueDictionary.TRUE);
+        }
+    }
+
+    private static void enrichWithInteractProps(final InteractType interactType, final Relationship interactRel) {
+        if (interactRel != null && interactType != null) {
+            interactRel.setProperty(PropertyAndValueDictionary.LABEL, interactType.name());
+            interactRel.setProperty(PropertyAndValueDictionary.IRI, interactType.getIRI());
         }
     }
 
@@ -132,14 +143,14 @@ public class Specimen extends NodeBacked {
 
     public void setOriginalTaxonDescription(Taxon taxon) {
         Transaction transaction = getUnderlyingNode().getGraphDatabase().beginTx();
-                try {
-                    TaxonNode taxonNode = new TaxonNode(getUnderlyingNode().getGraphDatabase().createNode(), taxon.getName());
-                    TaxonUtil.copy(taxon, taxonNode);
-                    createRelationshipTo(taxonNode, RelTypes.ORIGINALLY_DESCRIBED_AS);
-                    transaction.success();
-                } finally {
-                    transaction.finish();
-                }
+        try {
+            TaxonNode taxonNode = new TaxonNode(getUnderlyingNode().getGraphDatabase().createNode(), taxon.getName());
+            TaxonUtil.copy(taxon, taxonNode);
+            createRelationshipTo(taxonNode, RelTypes.ORIGINALLY_DESCRIBED_AS);
+            transaction.success();
+        } finally {
+            transaction.finish();
+        }
     }
 
     public void setLifeStage(List<Term> lifeStages) {
