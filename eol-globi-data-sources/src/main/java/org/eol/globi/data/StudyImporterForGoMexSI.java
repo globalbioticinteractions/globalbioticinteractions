@@ -2,6 +2,8 @@ package org.eol.globi.data;
 
 import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.LocationImpl;
 import org.eol.globi.domain.LocationNode;
@@ -23,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 
 public class StudyImporterForGoMexSI extends BaseStudyImporter {
+    private static final Log LOG = LogFactory.getLog(StudyImporterForGoMexSI.class);
     public static final String GOMEXI_SOURCE_DESCRIPTION = "http://gomexsi.tamucc.edu";
     public static final String STOMACH_COUNT_TOTAL = "stomachCountTotal";
     public static final String STOMACH_COUNT_WITH_FOOD = "stomachCountWithFood";
@@ -34,6 +37,12 @@ public class StudyImporterForGoMexSI extends BaseStudyImporter {
         add("> .001");
         add("tr");
         add("< 2");
+        add("> .005");
+        add("< .005");
+        add("< 0.0001");
+        add("*");
+        add("< 0.01");
+        add("< 0.05");
     }};
 
     private static final Collection KNOWN_INVALID_INTEGER_STRINGS = new ArrayList<String>() {{
@@ -299,7 +308,8 @@ public class StudyImporterForGoMexSI extends BaseStudyImporter {
         try {
             return StringUtils.isBlank(value) || KNOWN_INVALID_DOUBLE_STRINGS.contains(StringUtils.lowerCase(value)) ? null : Double.parseDouble(value);
         } catch (NumberFormatException ex) {
-            throw new StudyImporterException("failed to parse key [" + key + "] with value [" + value + "]", ex);
+            final String msg = "failed to parse key [" + key + "] with value [" + value + "]";
+            throw new StudyImporterException(msg, ex);
         }
     }
 

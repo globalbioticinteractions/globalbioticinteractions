@@ -33,7 +33,7 @@ import static org.junit.matchers.JUnitMatchers.hasItem;
 public class StudyImporterForGoMexSIIT extends GraphDBTestCase {
 
     @Test
-    public void createAndPopulateStudyGitHubMostRecent() throws StudyImporterException, NodeFactoryException, IOException, URISyntaxException {
+    public void createAndPopulateStudyGitHubMostRecent() throws StudyImporterException, IOException, URISyntaxException {
         importWithCommit(GitHubUtil.getBaseUrlLastCommit("gomexsi/interaction-data"));
         assertThatSomeDataIsImported(nodeFactory, taxonIndex);
     }
