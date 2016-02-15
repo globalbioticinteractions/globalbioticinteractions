@@ -9,6 +9,7 @@ import org.junit.Test;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -456,6 +457,18 @@ public class CypherQueryBuilderTest {
     public void findWithDispersalInteractionType2() throws IOException {
         final String typeSelector = CypherQueryBuilder.createInteractionTypeSelector(Arrays.asList("hasDispersalVector"));
         assertThat(typeSelector, is("HAS_DISPERAL_VECTOR"));
+    }
+
+    @Test
+    public void findWithDispersalInteractionTypeParasitoidByInternalName() throws IOException {
+        final String typeSelector = CypherQueryBuilder.createInteractionTypeSelector(Collections.singletonList("HAS_PARASITOID"));
+        assertThat(typeSelector, is("HAS_PARASITOID|HAS_HYPERPARASITOID|HAS_ENDOPARASITOID|HAS_ECTOPARASITOID"));
+    }
+
+    @Test
+    public void findWithDispersalInteractionTypeParasitoidByIRI() throws IOException {
+        final String typeSelector = CypherQueryBuilder.createInteractionTypeSelector(Collections.singletonList("http://purl.obolibrary.org/obo/RO_0002632"));
+        assertThat(typeSelector, is("ECTOPARASITE_OF"));
     }
 
     @Test

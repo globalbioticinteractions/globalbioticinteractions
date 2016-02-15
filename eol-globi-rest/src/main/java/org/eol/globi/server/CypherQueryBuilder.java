@@ -820,7 +820,15 @@ public class CypherQueryBuilder {
                 InteractType interactType = DIRECTIONAL_INTERACTION_TYPE_MAP.get(type);
                 cypherTypes.addAll(InteractType.typesOf(interactType));
             } else if (StringUtils.isNotBlank(type)) {
-                throw new IllegalArgumentException("unsupported interaction type [" + type + "]");
+                InteractType interactType = InteractType.typeOf(type);
+                if (interactType == null) {
+                    interactType = InteractType.valueOf(type);
+                }
+                if (interactType == null) {
+                    throw new IllegalArgumentException("unsupported interaction type [" + type + "]");
+                } else {
+                    cypherTypes.addAll(InteractType.typesOf(interactType));
+                }
             }
         }
         if (cypherTypes.isEmpty()) {
