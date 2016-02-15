@@ -42,6 +42,13 @@ public class InteractionControllerIT extends ITBase {
     }
 
     @Test
+    public void listEndoParasiteOf() throws IOException {
+        String uri = getURLPrefix() + "taxon/Homo%20sapiens/PARASITE_OF";
+        String response = HttpUtil.getRemoteJson(uri);
+        assertThat(response, is(not(nullValue())));
+    }
+
+    @Test
     public void listPreyForPredatorLocation() throws IOException {
         String uri = getURLPrefix() + "taxon/Homo%20sapiens/preysOn?lat=12.4&lng=54.4";
         HttpGet httpGet = new HttpGet(uri);

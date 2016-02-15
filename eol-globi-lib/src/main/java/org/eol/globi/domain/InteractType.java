@@ -109,6 +109,8 @@ public enum InteractType implements RelType {
         for (InteractType interactType : values) {
             if (StringUtils.equals(iri, interactType.getIRI())) {
                 return interactType;
+            } else if (StringUtils.equals(iri, interactType.name())) {
+                return interactType;
             }
         }
         return SYNONYMS.get(iri);

@@ -822,9 +822,6 @@ public class CypherQueryBuilder {
             } else if (StringUtils.isNotBlank(type)) {
                 InteractType interactType = InteractType.typeOf(type);
                 if (interactType == null) {
-                    interactType = InteractType.valueOf(type);
-                }
-                if (interactType == null) {
                     throw new IllegalArgumentException("unsupported interaction type [" + type + "]");
                 } else {
                     cypherTypes.addAll(InteractType.typesOf(interactType));
