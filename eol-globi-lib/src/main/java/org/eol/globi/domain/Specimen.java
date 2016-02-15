@@ -131,7 +131,7 @@ public class Specimen extends NodeBacked {
 
     private static void enrichWithInteractProps(final InteractType interactType, final Relationship interactRel) {
         if (interactRel != null && interactType != null) {
-            interactRel.setProperty(PropertyAndValueDictionary.LABEL, interactType.name());
+            interactRel.setProperty(PropertyAndValueDictionary.LABEL, interactType.getLabel());
             interactRel.setProperty(PropertyAndValueDictionary.IRI, interactType.getIRI());
         }
     }

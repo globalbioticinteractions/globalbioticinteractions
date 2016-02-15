@@ -50,7 +50,7 @@ public class NodeFactoryImplTest extends GraphDBTestCase {
         assertThat(relIter.hasNext(), is(true));
         final Relationship rel = relIter.next();
         assertThat(rel.getProperty("iri").toString(), is("http://purl.obolibrary.org/obo/RO_0002440"));
-        assertThat(rel.getProperty("label").toString(), is("bla"));
+        assertThat(rel.getProperty("label").toString(), is("symbiontOf"));
         assertThat(specimen1.getUnderlyingNode().getRelationships(Direction.OUTGOING, InteractType.SYMBIONT_OF).iterator().hasNext(), is(true));
     }
 
