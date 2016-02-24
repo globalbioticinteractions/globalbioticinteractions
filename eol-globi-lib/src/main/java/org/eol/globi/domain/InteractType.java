@@ -15,14 +15,14 @@ public enum InteractType implements RelType {
     INTERACTS_WITH("http://purl.obolibrary.org/obo/RO_0002437", "interactsWith"),
     HOST_OF("http://purl.obolibrary.org/obo/RO_0002453", "hostOf"),
     POLLINATES("http://purl.obolibrary.org/obo/RO_0002455", "pollinates"),
-    PERCHING_ON(PropertyAndValueDictionary.NO_MATCH),
+    PERCHING_ON(PropertyAndValueDictionary.NO_MATCH, "perchingOn"),
     ATE("http://purl.obolibrary.org/obo/RO_0002470", "eats"),
     SYMBIONT_OF("http://purl.obolibrary.org/obo/RO_0002440", "symbiontOf"),
     PREYED_UPON_BY("http://purl.obolibrary.org/obo/RO_0002458", "preyedUponBy"),
     POLLINATED_BY("http://purl.obolibrary.org/obo/RO_0002456", "pollinatedBy"),
     EATEN_BY("http://purl.obolibrary.org/obo/RO_0002471", "eatenBy"),
     HAS_PARASITE("http://purl.obolibrary.org/obo/RO_0002445", "hasParasite"),
-    PERCHED_ON_BY(PropertyAndValueDictionary.NO_MATCH),
+    PERCHED_ON_BY(PropertyAndValueDictionary.NO_MATCH, "perchedOnBy"),
     HAS_PATHOGEN("http://purl.obolibrary.org/obo/RO_0002557", "hasPathogen"),
     PATHOGEN_OF("http://purl.obolibrary.org/obo/RO_0002556", "pathogenOf"),
 
@@ -31,56 +31,56 @@ public enum InteractType implements RelType {
     FLOWERS_VISITED_BY("http://purl.obolibrary.org/obo/RO_0002622", "flowersVisitedBy"),
     VISITS_FLOWERS_OF("http://purl.obolibrary.org/obo/RO_0002623", "visitsFlowersOf"),
 
-    INHABITED_BY(PropertyAndValueDictionary.NO_MATCH),
-    INHABITS(PropertyAndValueDictionary.NO_MATCH),
+    INHABITED_BY(PropertyAndValueDictionary.NO_MATCH, "inhabitedBy"),
+    INHABITS(PropertyAndValueDictionary.NO_MATCH, "inhabits"),
 
-    LIVED_ON_BY(PropertyAndValueDictionary.NO_MATCH),
-    LIVES_ON(PropertyAndValueDictionary.NO_MATCH),
+    LIVED_ON_BY(PropertyAndValueDictionary.NO_MATCH, "livedOnBy"),
+    LIVES_ON(PropertyAndValueDictionary.NO_MATCH, "livesOn"),
 
-    LIVED_INSIDE_OF_BY(PropertyAndValueDictionary.NO_MATCH),
-    LIVES_INSIDE_OF(PropertyAndValueDictionary.NO_MATCH),
+    LIVED_INSIDE_OF_BY(PropertyAndValueDictionary.NO_MATCH, "livedInsideOfBy"),
+    LIVES_INSIDE_OF(PropertyAndValueDictionary.NO_MATCH, "livesInsideOf"),
 
-    LIVED_NEAR_BY(PropertyAndValueDictionary.NO_MATCH),
-    LIVES_NEAR(PropertyAndValueDictionary.NO_MATCH),
+    LIVED_NEAR_BY(PropertyAndValueDictionary.NO_MATCH, "livedNearBy"),
+    LIVES_NEAR(PropertyAndValueDictionary.NO_MATCH, "livesNear"),
 
-    LIVED_UNDER_BY(PropertyAndValueDictionary.NO_MATCH),
-    LIVES_UNDER(PropertyAndValueDictionary.NO_MATCH),
+    LIVED_UNDER_BY(PropertyAndValueDictionary.NO_MATCH, "livedUnderBy"),
+    LIVES_UNDER(PropertyAndValueDictionary.NO_MATCH, "livesUnder"),
 
-    LIVES_WITH(PropertyAndValueDictionary.NO_MATCH),
+    LIVES_WITH(PropertyAndValueDictionary.NO_MATCH, "livesWith"),
 
-    ENDOPARASITE_OF("http://purl.obolibrary.org/obo/RO_0002634"),
-    HAS_ENDOPARASITE("http://purl.obolibrary.org/obo/RO_0002635"),
+    ENDOPARASITE_OF("http://purl.obolibrary.org/obo/RO_0002634", "endoparasiteOf"),
+    HAS_ENDOPARASITE("http://purl.obolibrary.org/obo/RO_0002635", "hasEndoparasite"),
 
-    HYPERPARASITE_OF("http://purl.obolibrary.org/obo/RO_0002553"),
-    HAS_HYPERPARASITE("http://purl.obolibrary.org/obo/RO_0002554"),
+    HYPERPARASITE_OF("http://purl.obolibrary.org/obo/RO_0002553", "hyperparasiteOf"),
+    HAS_HYPERPARASITE("http://purl.obolibrary.org/obo/RO_0002554", "hasHyperparasite"),
 
-    HYPERPARASITOID_OF(PropertyAndValueDictionary.NO_MATCH),
-    HAS_HYPERPARASITOID(PropertyAndValueDictionary.NO_MATCH),
+    HYPERPARASITOID_OF(PropertyAndValueDictionary.NO_MATCH, "hyperparasitoidOf"),
+    HAS_HYPERPARASITOID(PropertyAndValueDictionary.NO_MATCH, "hasHyperparasitoid"),
 
-    ECTOPARASITE_OF("http://purl.obolibrary.org/obo/RO_0002632"),
-    HAS_ECTOPARASITE("http://purl.obolibrary.org/obo/RO_0002633"),
+    ECTOPARASITE_OF("http://purl.obolibrary.org/obo/RO_0002632", "ectoParasiteOf"),
+    HAS_ECTOPARASITE("http://purl.obolibrary.org/obo/RO_0002633", "hasEctoparasite"),
 
-    KLEPTOPARASITE_OF(PropertyAndValueDictionary.NO_MATCH),
-    HAS_KLEPTOPARASITE(PropertyAndValueDictionary.NO_MATCH),
+    KLEPTOPARASITE_OF(PropertyAndValueDictionary.NO_MATCH, "kleptoparasiteOf"),
+    HAS_KLEPTOPARASITE(PropertyAndValueDictionary.NO_MATCH, "hasKleptoparasite"),
 
-    PARASITOID_OF(PropertyAndValueDictionary.NO_MATCH),
-    HAS_PARASITOID(PropertyAndValueDictionary.NO_MATCH),
+    PARASITOID_OF(PropertyAndValueDictionary.NO_MATCH, "parasitoidOf"),
+    HAS_PARASITOID(PropertyAndValueDictionary.NO_MATCH, "hasParasitoid"),
 
-    ENDOPARASITOID_OF(PropertyAndValueDictionary.NO_MATCH),
-    HAS_ENDOPARASITOID(PropertyAndValueDictionary.NO_MATCH),
+    ENDOPARASITOID_OF(PropertyAndValueDictionary.NO_MATCH, "endoparasitoidOf"),
+    HAS_ENDOPARASITOID(PropertyAndValueDictionary.NO_MATCH, "hasEndoparasitoid"),
 
-    ECTOPARASITOID_OF(PropertyAndValueDictionary.NO_MATCH),
-    HAS_ECTOPARASITOID(PropertyAndValueDictionary.NO_MATCH),
+    ECTOPARASITOID_OF(PropertyAndValueDictionary.NO_MATCH, "ectoParasitoid"),
+    HAS_ECTOPARASITOID(PropertyAndValueDictionary.NO_MATCH, "hasEctoparasitoid"),
 
     // living in something that is not the body.
-    GUEST_OF(PropertyAndValueDictionary.NO_MATCH),
-    HAS_GUEST_OF(PropertyAndValueDictionary.NO_MATCH),
+    GUEST_OF(PropertyAndValueDictionary.NO_MATCH, "guestOf"),
+    HAS_GUEST_OF(PropertyAndValueDictionary.NO_MATCH, "hasGuestOf"),
 
-    FARMED_BY(PropertyAndValueDictionary.NO_MATCH),
-    FARMS(PropertyAndValueDictionary.NO_MATCH),
+    FARMED_BY(PropertyAndValueDictionary.NO_MATCH, "farmedBy"),
+    FARMS(PropertyAndValueDictionary.NO_MATCH, "farms"),
 
-    DAMAGED_BY(PropertyAndValueDictionary.NO_MATCH),
-    DAMAGES(PropertyAndValueDictionary.NO_MATCH),
+    DAMAGED_BY(PropertyAndValueDictionary.NO_MATCH, "damagedBy"),
+    DAMAGES(PropertyAndValueDictionary.NO_MATCH, "damages"),
 
     DISPERSAL_VECTOR_OF("http://eol.org/schema/terms/DispersalVector", "dispersalVectorOf"),
     HAS_DISPERAL_VECTOR("http://eol.org/schema/terms/HasDispersalVector", "hasDispersalVector"),
