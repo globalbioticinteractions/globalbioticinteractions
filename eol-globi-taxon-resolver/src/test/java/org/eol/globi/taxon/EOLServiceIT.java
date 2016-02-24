@@ -82,7 +82,7 @@ public class EOLServiceIT {
         properties.put(NAME, "Armandia agilis");
         Map<String, String> props = eolService.enrich(properties);
         assertThat(props.get(EXTERNAL_ID), is(notNullValue()));
-        assertThat(props.get(PATH),is(notNullValue()));
+        assertThat(props.get(PATH), is(notNullValue()));
         assertThat(props.get(PATH), not(containsString("Not")));
         assertThat(props.get(PATH_IDS), is(notNullValue()));
         assertThat(props.get(PATH_IDS), not(containsString("EOL:16833350")));
@@ -94,6 +94,14 @@ public class EOLServiceIT {
     public void nonTaxonPage() throws PropertyEnricherException {
         HashMap<String, String> properties = new HashMap<String, String>();
         properties.put(EXTERNAL_ID, "EOL:29725463");
+        Map<String, String> enrich = new EOLService().enrich(properties);
+        assertThat(enrich.get(EXTERNAL_ID), is(nullValue()));
+    }
+
+    @Test
+    public void zikaVirus() throws PropertyEnricherException {
+        HashMap<String, String> properties = new HashMap<String, String>();
+        properties.put(EXTERNAL_ID, "EOL:541190");
         Map<String, String> enrich = new EOLService().enrich(properties);
         assertThat(enrich.get(EXTERNAL_ID), is(nullValue()));
     }
@@ -156,12 +164,12 @@ public class EOLServiceIT {
     @Test
     public void lookupCalyptridium() throws PropertyEnricherException {
         HashMap<String, String> properties = new HashMap<String, String>();
-        properties.put(NAME, "Calyptridium");
+        properties.put(EXTERNAL_ID, "EOL:754947");
         Map<String, String> enrich = eolService.enrich(properties);
-        assertThat(enrich.get(EXTERNAL_ID), is("EOL:2500577"));
+        assertThat(enrich.get(EXTERNAL_ID), is("EOL:754947"));
+        assertThat(enrich.get(PATH), is("Cellular organisms | Eukaryota | Viridiplantae | Streptophyta | Streptophytina | Embryophyta | Tracheophyta | Euphyllophyta | Spermatophyta | Magnoliophyta | Mesangiospermae | Eudicotyledons | Gunneridae | Pentapetalae | Caryophyllales | Cactineae | Montiaceae | Calyptridium"));
         assertThat(enrich.get(NAME), is("Calyptridium"));
         assertThat(enrich.get(RANK), is("Genus"));
-        assertThat(enrich.get(PATH), is("Cellular organisms | Eukaryota | Viridiplantae | Streptophyta | Streptophytina | Embryophyta | Tracheophyta | Euphyllophyta | Spermatophyta | Magnoliophyta | Mesangiospermae | Eudicotyledons | Gunneridae | Pentapetalae | Caryophyllales | Cactineae | Montiaceae | Calyptridium"));
         assertThat(enrich.get(PATH_NAMES), is(" | superkingdom | kingdom | phylum |  |  |  |  |  |  |  |  |  |  | order | suborder | family | genus"));
         assertThat(enrich.get(PATH_IDS), is("EOL:6061725 | EOL:2908256 | EOL:8654492 | EOL:11823577 | EOL:11824138 | EOL:2913521 | EOL:4077 | EOL:11830053 | EOL:6152932 | EOL:282 | EOL:39835629 | EOL:39865587 | EOL:39868843 | EOL:39868886 | EOL:4223 | EOL:21203680 | EOL:6360216 | EOL:2500577"));
     }
@@ -282,7 +290,7 @@ public class EOLServiceIT {
 
     }
 
-    @Ignore ("for some reason, the assumption that pageId based lookup is faster than a name->pageId based lookup does not hold (anymore)")
+    @Ignore("for some reason, the assumption that pageId based lookup is faster than a name->pageId based lookup does not hold (anymore)")
     @Test
     public void enrichUsingPreExistingEOLPageId() throws PropertyEnricherException {
         //warm up
@@ -642,7 +650,7 @@ public class EOLServiceIT {
         assertThat(properties.get(PATH), is("Animalia | Chordata | Aves | Accipitriformes | Accipitridae | Buteo | Buteo buteo | Buteo buteo pojana"));
     }
 
- @Test
+    @Test
     public void lookupUnresolved() throws PropertyEnricherException {
         Map<String, String> properties = new HashMap<String, String>();
         properties.put(NAME, "Platostoma africanum");

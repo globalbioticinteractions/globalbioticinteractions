@@ -174,38 +174,6 @@ public class CypherQueryBuilder {
         }
     };
 
-    private static final Map<String, String> TRANSLATION_MAP = new LinkedHashMap<String, String>() {
-        {
-            put(INTERACTION_POLLINATES, InteractType.POLLINATES.toString());
-            put(INTERACTION_POLLINATED_BY, InteractType.POLLINATED_BY.toString());
-            put(INTERACTION_VISITS_FLOWERS_OF, InteractType.VISITS_FLOWERS_OF + "|" + InteractType.POLLINATES);
-            put(INTERACTION_FLOWERS_VISITED_BY, InteractType.FLOWERS_VISITED_BY + "|" + InteractType.POLLINATED_BY);
-            put(INTERACTION_PREYS_ON, InteractType.PREYS_UPON.toString());
-            put(INTERACTION_PREYED_UPON_BY, InteractType.PREYED_UPON_BY.toString());
-            put(INTERACTION_PARASITE_OF, InteractType.PARASITE_OF.toString());
-            put(INTERACTION_HAS_PARASITE, InteractType.HAS_PARASITE.toString());
-
-            put(INTERACTION_DISPERSAL_VECTOR_OF, InteractType.DISPERSAL_VECTOR_OF + "|" + InteractType.VECTOR_OF);
-            put(INTERACTION_HAS_DISPERSAL_VECTOR, InteractType.HAS_DISPERAL_VECTOR + "|" + InteractType.HAS_VECTOR);
-            put(INTERACTION_VECTOR_OF, InteractType.VECTOR_OF.toString());
-            put(INTERACTION_HAS_VECTOR, InteractType.HAS_VECTOR.toString());
-
-            put(INTERACTION_PATHOGEN_OF, InteractType.PATHOGEN_OF.toString());
-            put(INTERACTION_HAS_PATHOGEN, InteractType.HAS_PATHOGEN.toString());
-            put(INTERACTION_INTERACTS_WITH, InteractType.INTERACTS_WITH.toString());
-            put(INTERACTION_SYMBIONT_OF, InteractType.SYMBIONT_OF.toString());
-            put(INTERACTION_HOST_OF, InteractType.HOST_OF.toString());
-            put(INTERACTION_HAS_HOST, InteractType.HAS_HOST.toString());
-
-            put(INTERACTION_EATEN_BY, InteractType.EATEN_BY + "|" + InteractType.PREYED_UPON_BY);
-            put(INTERACTION_EATS, InteractType.ATE + "|" + InteractType.PREYS_UPON);
-
-            put(INTERACTION_KILLS, InteractType.KILLS + "|" + InteractType.ATE);
-            put(INTERACTION_KILLED_BY, InteractType.KILLED_BY + "|" + InteractType.PREYED_UPON_BY);
-
-        }
-    };
-
     static final Map<String, String> EMPTY_PARAMS = new TreeMap<String, String>();
     public static final List<ResultField> TAXON_FIELDS = Collections.unmodifiableList(new ArrayList<ResultField>() {{
         add(TAXON_NAME);
@@ -541,7 +509,7 @@ public class CypherQueryBuilder {
                 Map<ResultField, String> selectors = appendSpecimenFields(
                         appendStudyFields(new HashMap<ResultField, String>(defaultSelectors()) {
                             {
-                                put(INTERACTION_TYPE, "'" + interactionType.get(0) + "'");
+                                put(INTERACTION_TYPE, "interaction.label");
                                 put(COLLECTION_TIME_IN_UNIX_EPOCH, "collected_rel.dateInUnixEpoch?");
 
                             }
@@ -552,9 +520,7 @@ public class CypherQueryBuilder {
                 selectors = appendSpecimenFields(
                         appendStudyFields(new HashMap<ResultField, String>(defaultSelectors()) {
                             {
-                                StringBuilder interactionBuilder = new StringBuilder();
-                                appendInteractionTypeReturn(interactionBuilder, "type(interaction)");
-                                put(INTERACTION_TYPE, interactionBuilder.toString());
+                                put(INTERACTION_TYPE, "interaction.label");
                             }
                         }));
                 appendReturnClausez(query, actualReturnFields(requestedReturnFields, Arrays.asList(RETURN_FIELDS_MULTI_TAXON_DEFAULT), selectors.keySet()), selectors);
@@ -567,7 +533,7 @@ public class CypherQueryBuilder {
                         put(SOURCE_TAXON_PATH, "sTaxon.path?");
                         put(SOURCE_SPECIMEN_LIFE_STAGE, "NULL");
                         put(SOURCE_SPECIMEN_BASIS_OF_RECORD, "NULL");
-                        put(INTERACTION_TYPE, appendInteractionTypeReturn(new StringBuilder(), "iType").toString());
+                        put(INTERACTION_TYPE, "iType");
                         put(TARGET_TAXON_EXTERNAL_ID, "tTaxon.externalId?");
                         put(TARGET_TAXON_NAME, "tTaxon.name");
                         put(TARGET_TAXON_PATH, "tTaxon.path?");
@@ -779,28 +745,8 @@ public class CypherQueryBuilder {
         appendReturnFields(query, returnFields, selectors);
     }
 
-    protected static StringBuilder appendInteractionTypeReturn(StringBuilder query, String interactionTypeValue) {
-        int terms = 0;
-        StringBuilder suffix = new StringBuilder();
-        for (Map.Entry<String, String> interactMap : TRANSLATION_MAP.entrySet()) {
-            String externalType = interactMap.getKey();
-            String[] internalTypes = interactMap.getValue().split("\\|");
-
-            for (String internalType : internalTypes) {
-                suffix.append(",'").append(internalType).append("','").append(externalType).append("')");
-                terms++;
-            }
-
-        }
-
-        query.append(StringUtils.repeat("replace(", terms));
-        query.append(interactionTypeValue);
-        query.append(suffix);
-        return query;
-    }
-
     protected static void appendReturnClauseDistinctz(StringBuilder query, List<ResultField> returnFields, Map<ResultField, String> selectors) {
-        query.append("WITH distinct targetTaxon as tTaxon, type(interaction) as iType, sourceTaxon as sTaxon ");
+        query.append("WITH distinct targetTaxon as tTaxon, interaction.label as iType, sourceTaxon as sTaxon ");
         query.append("RETURN ");
         appendReturnFields(query, returnFields, selectors);
     }

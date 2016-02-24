@@ -64,11 +64,24 @@ public class TaxonEnricherImplIT extends GraphDBTestCase {
     }
 
 
-
     @Test
     public void unacceptedWoRMSSpecies() throws IOException, NodeFactoryException {
         TaxonNode taxon = taxonIndex.getOrCreateTaxon("Sterrhurus concavovesiculus");
         assertUnacceptedWoRMS(taxon);
+    }
+
+    @Test
+    public void someTest() throws IOException, NodeFactoryException {
+        TaxonNode taxon = taxonIndex.getOrCreateTaxon("Aedes furcifer", "EOL:754947");
+        assertThat(taxon.getPathIds(), is("WORMS:1 | WORMS:2 | WORMS:793 | WORMS:19948 | WORMS:108400 | WORMS:108402 | WORMS:468918 | WORMS:108418 | WORMS:108471 | WORMS:724982 | WORMS:108758 | WORMS:726834"));
+
+    }
+
+    @Test
+    public void zikaVirus() throws IOException, NodeFactoryException {
+        TaxonNode taxon = taxonIndex.getOrCreateTaxon("Zika virus (ZIKV)", "EOL:541190");
+        assertThat(taxon.getPath(), is("Viruses |  |  |  | Flaviviridae | Flavivirus | Zika virus"));
+
     }
 
     @Test

@@ -33,6 +33,7 @@ public class StudyImporterForSeltmannTest extends GraphDBTestCase {
             Iterable<Relationship> specimens = allStudy.getSpecimens();
             for (Relationship specimen : specimens) {
                 Specimen spec = new Specimen(specimen.getEndNode());
+                assertThat((String)spec.getUnderlyingNode().getProperty("occurrenceId"), is("bla"));
                 Term basisOfRecord = spec.getBasisOfRecord();
                 assertThat(basisOfRecord.getId(), either(is("TEST:PreservedSpecimen")).or(is("TEST:LabelObservation")));
                 assertThat(basisOfRecord.getName(), either(is("PreservedSpecimen")).or(is("LabelObservation")));
