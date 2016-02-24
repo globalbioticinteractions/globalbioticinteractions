@@ -713,7 +713,7 @@ public class CypherQueryBuilder {
         Map<ResultField, String> selectors = new HashMap<ResultField, String>() {
             {
                 put(SOURCE_TAXON_NAME, "sourceTaxon.name");
-                put(INTERACTION_TYPE, "'" + interactionType + "'");
+                put(INTERACTION_TYPE, "interaction.label");
                 put(TARGET_TAXON_NAME, "collect(distinct(targetTaxon.name))");
             }
         };
