@@ -36,6 +36,9 @@ public class StudyImporterForSeltmann extends BaseStudyImporter {
     public static final String FIELD_ASSOCIATED_SCIENTIFIC_NAME = "aec:associatedScientificName";
 
     private static final Log LOG = LogFactory.getLog(StudyImporterForSeltmann.class);
+    public static final String FIELD_IDIGBIO_RECORD_ID = "idigbio:recordID";
+    public static final String FIELD_OCCURRENCE_ID = "occurrenceID";
+    public static final String FIELD_CATALOG_NUMBER = "catalogNumber";
 
     private String archiveURL = "seltmann/testArchive.zip";
 
@@ -86,6 +89,7 @@ public class StudyImporterForSeltmann extends BaseStudyImporter {
                 Map<String, String> prop = new HashMap<String, String>();
                 addKeyValue(parser, prop, "dwc:coreid");
                 addKeyValue(parser, prop, "dwc:basisOfRecord");
+                addKeyValue(parser, prop, FIELD_IDIGBIO_RECORD_ID);
                 addKeyValue(parser, prop, FIELD_ASSOCIATED_GENUS);
                 addKeyValue(parser, prop, FIELD_ASSOCIATED_SPECIFIC_EPITHET);
                 addKeyValue(parser, prop, FIELD_ASSOCIATED_SCIENTIFIC_NAME);
@@ -108,7 +112,7 @@ public class StudyImporterForSeltmann extends BaseStudyImporter {
                 String references = occurrence.getValueByLabel("dcterms:references");
 
                 Study study = nodeFactory.getOrCreateStudy("seltmann" + references, references + ". " + ReferenceUtil.createLastAccessedString(getArchiveURL()), references);
-                String recordId = occurrence.getValueByLabel("idigbio:recordID");
+                String recordId = occurrence.getValueByLabel(FIELD_IDIGBIO_RECORD_ID);
                 Map<String, String> assoc = assocMap.get(recordId);
                 if (assoc != null) {
                     String targetName = getTargetNameFromAssocMap(assoc);
@@ -177,9 +181,17 @@ public class StudyImporterForSeltmann extends BaseStudyImporter {
 
         String sourceBasisOfRecord = occurrence.getValueByLabel("basisOfRecord");
         source.setBasisOfRecord(nodeFactory.getOrCreateBasisOfRecord(sourceBasisOfRecord, sourceBasisOfRecord));
+        final String recordId = occurrence.getValueByLabel(FIELD_IDIGBIO_RECORD_ID);
+        source.setPropertyWithTx(FIELD_IDIGBIO_RECORD_ID, recordId);
+        source.setExternalId(recordId);
+        source.setPropertyWithTx(FIELD_OCCURRENCE_ID, occurrence.getValueByLabel(FIELD_OCCURRENCE_ID));
+        source.setPropertyWithTx(FIELD_CATALOG_NUMBER, occurrence.getValueByLabel(FIELD_CATALOG_NUMBER));
 
         String targetBasisOfRecord = assoc.get("dwc:basisOfRecord");
         target.setBasisOfRecord(nodeFactory.getOrCreateBasisOfRecord(targetBasisOfRecord, targetBasisOfRecord));
+        final String assocRecordId = assoc.get(FIELD_IDIGBIO_RECORD_ID);
+        target.setPropertyWithTx(FIELD_IDIGBIO_RECORD_ID, assocRecordId);
+        target.setExternalId(assocRecordId);
 
         nodeFactory.setUnixEpochProperty(source, date);
         nodeFactory.setUnixEpochProperty(target, date);
