@@ -63,8 +63,8 @@ public enum InteractType implements RelType {
     KLEPTOPARASITE_OF(PropertyAndValueDictionary.NO_MATCH, "kleptoparasiteOf"),
     HAS_KLEPTOPARASITE(PropertyAndValueDictionary.NO_MATCH, "hasKleptoparasite"),
 
-    PARASITOID_OF(PropertyAndValueDictionary.NO_MATCH, "parasitoidOf"),
-    HAS_PARASITOID(PropertyAndValueDictionary.NO_MATCH, "hasParasitoid"),
+    PARASITOID_OF("http://purl.obolibrary.org/obo/RO_0002208", "parasitoidOf"),
+    HAS_PARASITOID("http://purl.obolibrary.org/obo/RO_0002209", "hasParasitoid"),
 
     ENDOPARASITOID_OF(PropertyAndValueDictionary.NO_MATCH, "endoparasitoidOf"),
     HAS_ENDOPARASITOID(PropertyAndValueDictionary.NO_MATCH, "hasEndoparasitoid"),
