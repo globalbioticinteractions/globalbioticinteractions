@@ -414,7 +414,7 @@ public class CypherQueryBuilder {
         } else {
             query.append("START " + ALL_LOCATIONS_INDEX_SELECTOR);
         }
-        query.append(" RETURN loc.latitude, loc.longitude");
+        query.append(" RETURN loc.latitude as latitude, loc.longitude as longitude, loc.footprintWKT? as footprintWKT");
         return new CypherQuery(query.toString(), getParams(null, null, accordingTo, false));
     }
 
