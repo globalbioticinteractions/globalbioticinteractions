@@ -890,7 +890,7 @@ public class CypherQueryBuilderTest {
 
     @Test
     public void locationsNoConstraints() {
-        assertThat(locations().getQuery(), is("START loc = node:locations('latitude:*') RETURN loc.latitude, loc.longitude"));
+        assertThat(locations().getQuery(), is("START loc = node:locations('latitude:*') RETURN loc.latitude as latitude, loc.longitude as longitude, loc.footprintWKT?ic as footprintWKT"));
     }
 
     @Test
