@@ -103,7 +103,9 @@ public class EOLServiceIT {
         HashMap<String, String> properties = new HashMap<String, String>();
         properties.put(EXTERNAL_ID, "EOL:541190");
         Map<String, String> enrich = new EOLService().enrich(properties);
-        assertThat(enrich.get(EXTERNAL_ID), is(nullValue()));
+        assertThat(enrich.get(PATH_IDS), containsString("EOL:541190"));
+        assertThat(enrich.get(PATH), containsString("Zika virus"));
+        assertThat(enrich.get(EXTERNAL_ID), is("EOL:541190"));
     }
 
 
