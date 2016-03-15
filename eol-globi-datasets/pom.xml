@@ -199,7 +199,7 @@
                 <normalizer.arg.2>-skipImport</normalizer.arg.2>
                 <normalizer.arg.3>-skipImport</normalizer.arg.3>
                 <normalizer.arg.4>-skipImport</normalizer.arg.4>
-                <normalizer.arg.5>-skipImport</normalizer.arg.5>
+                <normalizer.arg.5>-skipTaxonCache</normalizer.arg.5>
                 <normalizer.arg.6>-skipExport</normalizer.arg.6>
             </properties>
             <build>
