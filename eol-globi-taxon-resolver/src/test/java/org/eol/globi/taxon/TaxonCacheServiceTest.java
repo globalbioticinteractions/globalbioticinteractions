@@ -122,7 +122,7 @@ public class TaxonCacheServiceTest {
         final TaxonCacheService taxonCacheService = getTaxonCacheService();
         Map<String, String> enrich = taxonCacheService.enrich(properties);
         Taxon enrichedTaxon = TaxonUtil.mapToTaxon(enrich);
-        assertThat(enrichedTaxon.getName(), is("Zika virus (ZIKV)"));
+        assertThat(enrichedTaxon.getName(), is(nullValue()));
         assertThat(enrichedTaxon.getExternalId(), is("EOL:541190"));
         taxonCacheService.shutdown();
     }

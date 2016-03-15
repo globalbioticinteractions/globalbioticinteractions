@@ -107,7 +107,13 @@ public class TaxonCacheService implements PropertyEnricher {
                     .createTreeMap("taxonCacheById")
                     .pumpPresort(100000)
                     .pumpIgnoreDuplicates()
-                    .pumpSource(createTaxonCacheSource(taxonCacheResource))
+                    .pumpSource(createTaxonCacheSource(taxonCacheResource, new LineSkipper() {
+                        @Override
+                        public boolean shouldSkipLine(LabeledCSVParser parser) {
+                            final Taxon taxon = TaxonCacheParser.parseLine(parser);
+                            return StringUtils.isBlank(taxon.getPath());
+                        }
+                    }))
                     .keySerializer(BTreeKeySerializer.STRING)
                     .make();
         } catch (IOException e) {
@@ -216,7 +222,7 @@ public class TaxonCacheService implements PropertyEnricher {
         return isNonEmptyValue(value) ? value : PropertyAndValueDictionary.NO_MATCH;
     }
 
-    public Iterator<Fun.Tuple2<String, Map<String, String>>> createTaxonCacheSource(final String resource) throws IOException {
+    public Iterator<Fun.Tuple2<String, Map<String, String>>> createTaxonCacheSource(final String resource, final LineSkipper skipper) throws IOException {
 
         return new Iterator<Fun.Tuple2<String, Map<String, String>>>() {
             private BufferedReader reader = createBufferedReader(resource);
@@ -225,7 +231,12 @@ public class TaxonCacheService implements PropertyEnricher {
             @Override
             public boolean hasNext() {
                 try {
-                    return labeledCSVParser.getLine() != null;
+                    boolean hasNext;
+                    do {
+                        hasNext = labeledCSVParser.getLine() != null;
+                    } while (hasNext && skipper.shouldSkipLine(labeledCSVParser));
+
+                    return hasNext;
                 } catch (IOException e) {
                     LOG.error("failed to get next line", e);
                     return false;
