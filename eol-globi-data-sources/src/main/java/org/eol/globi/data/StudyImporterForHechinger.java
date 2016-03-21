@@ -7,7 +7,6 @@ import org.eol.globi.domain.LocationNode;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.Term;
-import org.eol.globi.geo.LatLng;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -15,7 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class StudyImporterForHechinger extends BaseStudyImporter {
+public class StudyImporterForHechinger extends StudyImporterNodesAndLinks {
 
     private static final Map<String, InteractType> interactionMapping = new HashMap<String, InteractType>() {{
         put("commensalism", InteractType.INTERACTS_WITH);
@@ -55,12 +54,6 @@ public class StudyImporterForHechinger extends BaseStudyImporter {
         put("facultative micropredation", InteractType.PREYS_UPON);
 
     }};
-    private String linkResource;
-    private String nodeResource;
-
-    private String namespace;
-    private LatLng location;
-    private char delimiter = '\t';
 
     public StudyImporterForHechinger(ParserFactory parserFactory, NodeFactory nodeFactory) {
         super(parserFactory, nodeFactory);
@@ -145,14 +138,6 @@ public class StudyImporterForHechinger extends BaseStudyImporter {
         return study;
     }
 
-    protected char getDelimiter() {
-        return delimiter;
-    }
-
-    public void setDelimiter(char delimiter) {
-        this.delimiter = delimiter;
-    }
-
     protected Integer getNodeId(LabeledCSVParser nodes) {
         String nodeID = nodes.getValueByLabel("NodeID");
         if (StringUtils.isBlank(nodeID)) {
@@ -202,40 +187,4 @@ public class StudyImporterForHechinger extends BaseStudyImporter {
         consumer.interactsWith(resource, interactType);
     }
 
-    private Study createStudy() throws NodeFactoryException {
-        return nodeFactory.getOrCreateStudy2(namespace, getSourceCitation(), getSourceDOI());
-    }
-
-    public String getLinkResource() {
-        return linkResource;
-    }
-
-    public String getNodeResource() {
-        return nodeResource;
-    }
-
-    public void setNodeResource(String nodeResource) {
-        this.nodeResource = nodeResource;
-    }
-
-    public void setLinkResource(String linkResource) {
-        this.linkResource = linkResource;
-    }
-
-    public String getNamespace() {
-        return namespace;
-    }
-
-    public void setNamespace(String namespace) {
-        this.namespace = namespace;
-    }
-
-
-    public void setLocation(LatLng location) {
-        this.location = location;
-    }
-
-    public LatLng getLocation() {
-        return location;
-    }
 }

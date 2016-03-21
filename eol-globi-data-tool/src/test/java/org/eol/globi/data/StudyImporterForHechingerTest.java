@@ -25,7 +25,7 @@ public class StudyImporterForHechingerTest extends GraphDBTestCase {
     private static final Log LOG = LogFactory.getLog(StudyImporterForHechingerTest.class);
 
     @Test
-    public void importStudy() throws StudyImporterException, NodeFactoryException {
+    public void importStudy() throws StudyImporterException {
         StudyImporter importer = new StudyImporterForHechinger(new ParserFactoryImpl(), nodeFactory);
         importer.setLogger(new ImportLogger() {
             @Override
@@ -92,6 +92,8 @@ public class StudyImporterForHechingerTest extends GraphDBTestCase {
 
         assertThat(actualPrey.size(), is(0));
     }
+
+
 
 
     // see https://github.com/jhpoelen/eol-globi-data/issues/67

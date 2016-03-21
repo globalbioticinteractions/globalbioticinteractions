@@ -8,11 +8,13 @@ import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.data.NodeFactory;
 import org.eol.globi.data.NodeFactoryException;
+import org.eol.globi.data.StudyImporterNodesAndLinks;
 import org.eol.globi.data.ParserFactory;
 import org.eol.globi.data.StudyImporter;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.data.StudyImporterForArthopodEasyCapture;
 import org.eol.globi.data.StudyImporterForCoetzer;
+import org.eol.globi.data.StudyImporterForDunne;
 import org.eol.globi.data.StudyImporterForGoMexSI;
 import org.eol.globi.data.StudyImporterForGray;
 import org.eol.globi.data.StudyImporterForHechinger;
@@ -92,6 +94,8 @@ public class GitHubImporterFactory {
             importer = createGoMexSIImporter(baseUrl, sourceCitation, parserFactory, nodeFactory);
         } else if ("hechinger".equals(format)) {
             importer = createHechingerImporter(repo, desc, sourceCitation, sourceDOI, parserFactory, nodeFactory);
+        } else if ("dunne".equals(format)) {
+            importer = createDunneImporter(repo, desc, sourceCitation, sourceDOI, parserFactory, nodeFactory);
         } else if ("seltmann".equals(format)) {
             importer = createSeltmannImporter(repo, desc, parserFactory, nodeFactory);
         } else if ("arthropodEasyCapture".equals(format)) {
@@ -276,6 +280,17 @@ public class GitHubImporterFactory {
 
     private StudyImporterForHechinger createHechingerImporter(String repo, JsonNode desc, String sourceCitation, String sourceDOI, final ParserFactory parserFactory, final NodeFactory nodeFactory) {
         StudyImporterForHechinger importer = new StudyImporterForHechinger(parserFactory, nodeFactory);
+        populateImporter(repo, desc, sourceCitation, sourceDOI, importer);
+        return importer;
+    }
+
+    private StudyImporterForDunne createDunneImporter(String repo, JsonNode desc, String sourceCitation, String sourceDOI, final ParserFactory parserFactory, final NodeFactory nodeFactory) {
+        StudyImporterForDunne importer = new StudyImporterForDunne(parserFactory, nodeFactory);
+        populateImporter(repo, desc, sourceCitation, sourceDOI, importer);
+        return importer;
+    }
+
+    private void populateImporter(String repo, JsonNode desc, String sourceCitation, String sourceDOI, StudyImporterNodesAndLinks importer) {
         JsonNode resources = desc.get("resources");
         if (resources.has("links")) {
             importer.setLinkResource(resources.get("links").asText());
@@ -297,7 +312,6 @@ public class GitHubImporterFactory {
                 importer.setDelimiter(StringUtils.trim(delimiter).charAt(0));
             }
         }
-        return importer;
     }
 
     private LatLng parseLocation(JsonNode desc) {
