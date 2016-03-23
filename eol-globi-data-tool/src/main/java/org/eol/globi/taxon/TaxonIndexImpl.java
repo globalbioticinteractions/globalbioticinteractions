@@ -54,20 +54,8 @@ public class TaxonIndexImpl implements TaxonIndex {
         if (StringUtils.isBlank(taxon.getExternalId()) && StringUtils.length(taxon.getName()) < 3) {
             throw new NodeFactoryException("taxon name [" + taxon.getName() + "] too short and no externalId is provided");
         }
-        TaxonNode taxonNode = findTaxon(taxon.getName(), taxon.getExternalId());
-        return taxonNode != null ? taxonNode : createTaxon(taxon);
-    }
-
-    private TaxonNode findTaxon(String name, String externalId) throws NodeFactoryException {
-        TaxonNode taxon = null;
-        if (StringUtils.isBlank(externalId)) {
-            if (StringUtils.length(name) > 1) {
-                taxon = findTaxonByName(name);
-            }
-        } else {
-            taxon = findTaxonById(externalId);
-        }
-        return taxon;
+        TaxonNode taxonNode = findTaxon(taxon);
+        return taxonNode == null ? createTaxon(taxon) : taxonNode;
     }
 
     @Override
@@ -101,16 +89,16 @@ public class TaxonIndexImpl implements TaxonIndex {
         Taxon taxon = TaxonUtil.copy(origTaxon);
         taxon.setName(corrector.correct(origTaxon.getName()));
 
-        TaxonNode taxonNode = findTaxon(taxon.getName(), taxon.getExternalId());
+        TaxonNode taxonNode = findTaxon(taxon);
         while (taxonNode == null) {
             try {
                 taxon = TaxonUtil.enrich(enricher, taxon);
             } catch (PropertyEnricherException e) {
                 throw new NodeFactoryException("failed to enrich taxon with name [" + taxon.getName() + "]", e);
             }
-            taxonNode = findTaxon(taxon.getName(), taxon.getExternalId());
+            taxonNode = findTaxon(taxon);
             if (taxonNode == null) {
-                if (TaxonMatchValidator.hasMatch(taxon)) {
+                if (TaxonMatchValidator.isResolved(taxon)) {
                     taxonNode = createAndIndexTaxon(taxon);
                 } else {
                     String truncatedName = NodeUtil.truncateTaxonName(taxon.getName());
@@ -127,6 +115,20 @@ public class TaxonIndexImpl implements TaxonIndex {
         indexOriginalNameForTaxon(origTaxon.getName(), taxon, taxonNode);
         indexOriginalExternalIdForTaxon(origTaxon.getExternalId(), taxon, taxonNode);
         return taxonNode;
+    }
+
+    private TaxonNode findTaxon(Taxon taxon) throws NodeFactoryException {
+        String name = taxon.getName();
+        String externalId = taxon.getExternalId();
+        TaxonNode taxon1 = null;
+        if (StringUtils.isBlank(externalId)) {
+            if (StringUtils.length(name) > 1) {
+                taxon1 = findTaxonByName(name);
+            }
+        } else {
+            taxon1 = findTaxonById(externalId);
+        }
+        return taxon1;
     }
 
     private void indexOriginalNameForTaxon(String name, Taxon taxon, TaxonNode taxonNode) throws NodeFactoryException {

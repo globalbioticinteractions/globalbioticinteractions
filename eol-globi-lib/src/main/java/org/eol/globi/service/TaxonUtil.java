@@ -70,12 +70,6 @@ public class TaxonUtil {
         }
     }
 
-    public static boolean isResolved(Map<String, String> properties) {
-        return StringUtils.isNotBlank(properties.get(NAME))
-                && StringUtils.isNotBlank(properties.get(EXTERNAL_ID))
-                && StringUtils.isNotBlank(properties.get(PATH));
-    }
-
     public static Taxon enrich(PropertyEnricher enricher, Taxon taxon) throws PropertyEnricherException {
         Map<String, String> properties = taxonToMap(taxon);
         Taxon enrichedTaxon = new TaxonImpl();
