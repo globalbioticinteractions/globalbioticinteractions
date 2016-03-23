@@ -23,7 +23,7 @@ import java.util.Map;
 public class EOLTaxonImageService implements ImageSearch {
     private static final Log LOG = LogFactory.getLog(EOLTaxonImageService.class);
 
-    public static final Map<TaxonomyProvider, String> EOL_TAXON_PROVIDER_MAP =  Collections.unmodifiableMap(new HashMap<TaxonomyProvider, String>() {{
+    public static final Map<TaxonomyProvider, String> EOL_TAXON_PROVIDER_MAP = Collections.unmodifiableMap(new HashMap<TaxonomyProvider, String>() {{
         put(TaxonomyProvider.ITIS, "903");
         put(TaxonomyProvider.NCBI, "1172");
         put(TaxonomyProvider.WORMS, "123");
@@ -101,6 +101,8 @@ public class EOLTaxonImageService implements ImageSearch {
             HttpResponse response = HttpUtil.getFailFastHttpClient().execute(request);
             String responseString = EntityUtils.toString(response.getEntity(), "UTF-8");
             return 200 == response.getStatusLine().getStatusCode() ? parsePageInfo(responseString) : null;
+        } catch (IOException ex) {
+            throw new IOException("failed to access [" + pageUrlString + "]", ex);
         } finally {
             request.releaseConnection();
         }

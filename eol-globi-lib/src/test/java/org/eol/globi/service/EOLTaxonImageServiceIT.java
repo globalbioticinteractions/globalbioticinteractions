@@ -25,6 +25,7 @@ public class EOLTaxonImageServiceIT {
     }
 
     private void assertITISImage(TaxonImage taxonImage) {
+        assertThat(taxonImage, is(notNullValue()));
         assertThat(taxonImage.getThumbnailURL(), containsString(".jpg"));
         assertThat(taxonImage.getImageURL(), containsString(".jpg"));
         assertThat(taxonImage.getPageId(), is("207614"));
@@ -46,6 +47,7 @@ public class EOLTaxonImageServiceIT {
 
 
     protected void assertNCBIImage(TaxonImage taxonImage) {
+        assertThat(taxonImage, is(notNullValue()));
         assertThat(taxonImage.getThumbnailURL(), endsWith(".jpg"));
         assertThat(taxonImage.getImageURL(), endsWith(".jpg"));
         assertThat(taxonImage.getPageId(), is("205157"));
@@ -67,6 +69,7 @@ public class EOLTaxonImageServiceIT {
     }
 
     private void assertWoRMSImage(TaxonImage taxonImage) {
+        assertThat(taxonImage, is(notNullValue()));
         assertThat(taxonImage.getThumbnailURL(), is("http://media.eol.org/content/2009/11/17/11/81513_98_68.jpg"));
         assertThat(taxonImage.getImageURL(), is("http://media.eol.org/content/2009/11/17/11/81513_orig.jpg"));
         assertThat(taxonImage.getPageId(), is("210779"));
@@ -82,6 +85,7 @@ public class EOLTaxonImageServiceIT {
     }
 
     private void assertEOLImage(TaxonImage taxonImage) {
+        assertThat(taxonImage, is(notNullValue()));
         assertThat(taxonImage.getThumbnailURL(), containsString(".jpg"));
         assertThat(taxonImage.getImageURL(), containsString(".jpg"));
         assertThat(taxonImage.getPageId(), is("1045608"));
@@ -97,6 +101,7 @@ public class EOLTaxonImageServiceIT {
     }
 
     private void assertEOLImage2(TaxonImage taxonImage) {
+        assertThat(taxonImage, is(notNullValue()));
         assertThat(taxonImage.getPageId(), is("2215"));
         assertThat(taxonImage.getInfoURL(), is("http://eol.org/pages/2215"));
         assertThat(taxonImage.getCommonName(), is("Mussels and Clams"));
@@ -121,6 +126,7 @@ public class EOLTaxonImageServiceIT {
     }
 
     private void assertEOLImage3(TaxonImage taxonImage) {
+        assertThat(taxonImage, is(notNullValue()));
         assertThat(taxonImage.getPageId(), is("2774522"));
         assertThat(taxonImage.getThumbnailURL(), containsString(".jpg"));
         assertThat(taxonImage.getImageURL(), containsString(".jpg"));
