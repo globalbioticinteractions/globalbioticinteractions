@@ -95,10 +95,10 @@ public class EOLTaxonImageService implements ImageSearch {
     }
 
     private PageInfo getPageInfo(String eolPageId) throws IOException {
-        String pageUrlString = "http://eol.org/api/pages/1.0/" + eolPageId + ".json?images=1&videos=0&sounds=0&maps=0&text=0&iucn=false&subjects=overview&licenses=all&details=true&common_names=true&references=false&vetted=0&cache_ttl=";
+        String pageUrlString = "http://eol.org/api/pages/1.0/" + eolPageId + ".json?common_names=true&videos_per_page=0&texts_per_page=0";
         HttpGet request = new HttpGet(pageUrlString);
         try {
-            HttpResponse response = HttpUtil.getFailFastHttpClient().execute(request);
+            HttpResponse response = HttpUtil.getHttpClient().execute(request);
             String responseString = EntityUtils.toString(response.getEntity(), "UTF-8");
             return 200 == response.getStatusLine().getStatusCode() ? parsePageInfo(responseString) : null;
         } catch (IOException ex) {
@@ -108,7 +108,21 @@ public class EOLTaxonImageService implements ImageSearch {
         }
     }
 
-    private PageInfo parsePageInfo(String responseString) throws IOException {
+    private PageInfo getDataObjectInfo(String dataObjectVersionId) throws IOException {
+        String pageUrlString = "http://eol.org/api/data_objects/1.0/" + dataObjectVersionId + ".json?taxonomy=false";
+        HttpGet request = new HttpGet(pageUrlString);
+        try {
+            HttpResponse response = HttpUtil.getHttpClient().execute(request);
+            String responseString = EntityUtils.toString(response.getEntity(), "UTF-8");
+            return 200 == response.getStatusLine().getStatusCode() ? parseDataObject(responseString) : null;
+        } catch (IOException ex) {
+            throw new IOException("failed to access [" + pageUrlString + "]", ex);
+        } finally {
+            request.releaseConnection();
+        }
+    }
+
+    private PageInfo parseDataObject(String responseString) throws IOException {
         PageInfo pageInfo = new PageInfo();
         ObjectMapper mapper = new ObjectMapper();
         JsonNode array = mapper.readTree(responseString);
@@ -122,10 +136,16 @@ public class EOLTaxonImageService implements ImageSearch {
                 if (dataObject.has("eolThumbnailURL")) {
                     pageInfo.setThumbnailURL(dataObject.get("eolThumbnailURL").asText());
                 }
-
                 break;
             }
         }
+        return pageInfo;
+    }
+
+    private PageInfo parsePageInfo(String responseString) throws IOException {
+        PageInfo pageInfo = new PageInfo();
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode array = mapper.readTree(responseString);
 
         JsonNode commonNames = array.findValue("vernacularNames");
         if (commonNames != null && commonNames.size() > 0) {
@@ -137,7 +157,6 @@ public class EOLTaxonImageService implements ImageSearch {
                         String vernacularName = commonNameNode.get("vernacularName").getTextValue();
                         String commonName = vernacularName.replaceAll("\\(.*\\)", "");
                         String capitalize = WordUtils.capitalize(commonName);
-
                         pageInfo.setCommonName(capitalize.replaceAll("\\sAnd\\s", " and "));
                         break;
                     }
@@ -155,6 +174,22 @@ public class EOLTaxonImageService implements ImageSearch {
                 }
             }
         }
+
+        JsonNode dataObjects = array.findValue("dataObjects");
+        for (JsonNode dataObject : dataObjects) {
+            String dataType = dataObject.has("dataType") ? dataObject.get("dataType").asText() : "";
+            if ("http://purl.org/dc/dcmitype/StillImage".equals(dataType)) {
+                if (dataObject.has("dataObjectVersionID")) {
+                    PageInfo imageInfo = getDataObjectInfo(dataObject.get("dataObjectVersionID").asText());
+                    if (imageInfo != null) {
+                        pageInfo.setImageURL(imageInfo.getImageURL());
+                        pageInfo.setThumbnailURL(imageInfo.getThumbnailURL());
+                    }
+                }
+                break;
+            }
+        }
+
         return pageInfo;
     }
 
