@@ -34,8 +34,8 @@ import java.util.TreeMap;
 
 public class StudyImporterForINaturalist extends BaseStudyImporter {
     private static final Log LOG = LogFactory.getLog(StudyImporterForINaturalist.class);
-    public static final String TYPE_IGNORED_URI_DEFAULT = "https://rawgit.com/globalbioticinteractions/inaturalist/master/interaction_types_ignored.csv";
-    public static final String TYPE_MAP_URI_DEFAULT = "https://rawgit.com/globalbioticinteractions/inaturalist/master/interaction_types.csv";
+    public static final String TYPE_IGNORED_URI_DEFAULT = "https://raw.githubusercontent.com/globalbioticinteractions/inaturalist/master/interaction_types_ignored.csv";
+    public static final String TYPE_MAP_URI_DEFAULT = "https://raw.githubusercontent.com/globalbioticinteractions/inaturalist/master/interaction_types.csv";
 
     public static final String INATURALIST_URL = "http://inaturalist.org";
 
