@@ -99,7 +99,7 @@ public class StudyImporterForGoMexSITest {
     @Test
     public void polyCoordToWKT() {
         assertThat(StudyImporterForGoMexSI.polyCoordsToWKT("((-92.6729107838999,29.3941413332999),(-92.5604838626999,29.2066775354))")
-                , is("POLYGON((-92.6729107838999 29.3941413332999),(-92.5604838626999 29.2066775354))"));
+                , is("POLYGON((-92.6729107838999 29.3941413332999,-92.5604838626999 29.2066775354))"));
     }
 
     @Test

@@ -222,7 +222,7 @@ public class StudyImporterForGoMexSI extends BaseStudyImporter {
     protected static String polyCoordsToWKT(String polyCoords) {
         String footprintWKT = null;
         if (StringUtils.isNotBlank(polyCoords)) {
-            footprintWKT = "POLYGON" + polyCoords.replace(" ", "").replace(",", " ").replace(") (", "),(");
+            footprintWKT = "POLYGON" + polyCoords.replace(" ", "").replace(",", " ").replace(") (", ",");
         }
         return footprintWKT;
     }
