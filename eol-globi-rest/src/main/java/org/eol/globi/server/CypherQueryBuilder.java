@@ -21,7 +21,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -278,6 +277,18 @@ public class CypherQueryBuilder {
         return requestedFields;
     }
 
+    public static String selectorPrefixForName(String name, boolean isExactMatch) {
+        String prefix = "path:";
+        if (isExactMatch) {
+            if (isExternalId(name)) {
+                prefix = "externalId:";
+            } else  {
+                prefix = "name:";
+            }
+        }
+        return prefix;
+    }
+
     public enum QueryType {
         SINGLE_TAXON_DISTINCT, SINGLE_TAXON_ALL, MULTI_TAXON_DISTINCT, MULTI_TAXON_ALL
     }
@@ -288,14 +299,18 @@ public class CypherQueryBuilder {
         }
     }
 
-    public static String lucenePathQuery(List<String> taxonNames, String prefix) {
+    public static String lucenePathQuery(List<String> taxonNames, boolean isExactMatch) {
         int count = 0;
         StringBuilder lucenePathQuery = new StringBuilder();
-        for (String taxonName : taxonNames) {
+        for (String taxonSelector : taxonNames) {
             if (count > 0) {
                 lucenePathQuery.append(" OR ");
             }
-            lucenePathQuery.append(prefix).append(taxonName).append("\\\"");
+            lucenePathQuery
+                    .append(selectorPrefixForName(taxonSelector, isExactMatch))
+                    .append("\\\"")
+                    .append(taxonSelector)
+                    .append("\\\"");
             count++;
         }
         return lucenePathQuery.toString();
@@ -315,13 +330,12 @@ public class CypherQueryBuilder {
 
     private static Map<String, String> getParams(List<String> sourceTaxonNames, List<String> targetTaxonNames, List<String> accordingTo, boolean exactNameMatchesOnly) {
         Map<String, String> paramMap = new HashMap<String, String>();
-        String prefix = exactNameMatchesOnly ? "name:\\\"" : "path:\\\"";
         if (sourceTaxonNames != null && sourceTaxonNames.size() > 0) {
-            paramMap.put(SOURCE_TAXON_NAME.getLabel(), lucenePathQuery(sourceTaxonNames, prefix));
+            paramMap.put(SOURCE_TAXON_NAME.getLabel(), lucenePathQuery(sourceTaxonNames, exactNameMatchesOnly));
         }
 
         if (targetTaxonNames != null && targetTaxonNames.size() > 0) {
-            paramMap.put(TARGET_TAXON_NAME.getLabel(), lucenePathQuery(targetTaxonNames, prefix));
+            paramMap.put(TARGET_TAXON_NAME.getLabel(), lucenePathQuery(targetTaxonNames, exactNameMatchesOnly));
         }
 
         if (accordingTo != null && accordingTo.size() > 0) {
@@ -453,7 +467,7 @@ public class CypherQueryBuilder {
         return new CypherQuery(query
                 , new HashMap<String, String>() {
             {
-                put(TAXON_NAME.getLabel(), lucenePathQuery(taxa, "path:\\\""));
+                put(TAXON_NAME.getLabel(), lucenePathQuery(taxa, false));
             }
         });
     }
@@ -578,20 +592,10 @@ public class CypherQueryBuilder {
         boolean exactNameMatchesOnly = shouldIncludeExactNameMatchesOnly(parameterMap);
         if (collectParamValues(parameterMap, "accordingTo").size() > 0) {
             appendAndOrWhere(targetTaxa, query, spatialSearch);
-            if (targetTaxa.size() > 0) {
-                query.append("(");
-            }
-
             appendTaxonSelector(query, "targetTaxon", targetTaxa, exactNameMatchesOnly);
 
             appendAndOrWhere(sourceTaxa, query, spatialSearch || targetTaxa.size() > 0);
-            if (targetTaxa.size() == 0 && sourceTaxa.size() > 0) {
-                query.append("(");
-            }
             appendTaxonSelector(query, "sourceTaxon", sourceTaxa, exactNameMatchesOnly);
-            if (sourceTaxa.size() > 0 || targetTaxa.size() > 0) {
-                query.append(") ");
-            }
         } else if (sourceTaxa.size() > 0) {
             appendAndOrWhere(targetTaxa, query, spatialSearch);
             appendTaxonSelector(query, "targetTaxon", targetTaxa, exactNameMatchesOnly);
@@ -787,14 +791,39 @@ public class CypherQueryBuilder {
     private static void appendTaxonSelector(StringBuilder query, String taxonLabel, List<String> taxonNames, boolean exactNameMatchesOnly) {
         if (taxonNames.size() > 0) {
             if (exactNameMatchesOnly) {
-                query.append("has(").append(taxonLabel).append(".name) AND ");
-                query.append(taxonLabel).append(".name IN ['").append(StringUtils.join(taxonNames, "','")).append("'] ");
+                List<String> ids = new ArrayList<String>();
+                List<String> names = new ArrayList<String>();
+                for (String taxonName : taxonNames) {
+                    if (isExternalId(taxonName)) {
+                        ids.add(taxonName);
+                    } else {
+                        names.add(taxonName);
+                    }
+                }
+                if (names.size() > 0) {
+                    appendNameWhereClause(query, taxonLabel, names, "name");
+                }
+                if (ids.size() > 0) {
+                    if (names.size() > 0) {
+                        query.append(" OR ");
+                    }
+                    appendNameWhereClause(query, taxonLabel, ids, "externalId");
+                }
             } else {
-                query.append("has(").append(taxonLabel).append(".path) AND ").append(taxonLabel).append(".path =~ '(.*(");
+                query.append("(has(").append(taxonLabel).append(".path) AND ").append(taxonLabel).append(".path =~ '(.*(");
                 query.append(StringUtils.join(taxonNames, "|"));
-                query.append(").*)' ");
+                query.append(").*)') ");
             }
         }
+    }
+
+    private static void appendNameWhereClause(StringBuilder query, String taxonLabel, List<String> taxonNames, String property) {
+        query.append("(has(").append(taxonLabel).append("." + property + ") AND ");
+        query.append(taxonLabel).append("." + property +" IN ['").append(StringUtils.join(taxonNames, "','")).append("']) ");
+    }
+
+    private static boolean isExternalId(String taxonName) {
+        return StringUtils.contains(taxonName, ":");
     }
 
     protected static List<String> collectParamValues(Map parameterMap, String key) {
