@@ -28,6 +28,7 @@ import java.util.regex.Pattern;
 
 import static org.eol.globi.server.util.ResultField.ALTITUDE;
 import static org.eol.globi.server.util.ResultField.COLLECTION_TIME_IN_UNIX_EPOCH;
+import static org.eol.globi.server.util.ResultField.FOOTPRINT_WKT;
 import static org.eol.globi.server.util.ResultField.INTERACTION_TYPE;
 import static org.eol.globi.server.util.ResultField.LATITUDE;
 import static org.eol.globi.server.util.ResultField.LONGITUDE;
@@ -215,7 +216,8 @@ public class CypherQueryBuilder {
             TARGET_SPECIMEN_TOTAL_VOLUME_ML,
             TARGET_SPECIMEN_TOTAL_VOLUME_PERCENT,
             TARGET_SPECIMEN_TOTAL_FREQUENCY_OF_OCCURRENCE,
-            TARGET_SPECIMEN_TOTAL_FREQUENCY_OF_OCCURRENCE_PERCENT
+            TARGET_SPECIMEN_TOTAL_FREQUENCY_OF_OCCURRENCE_PERCENT,
+            FOOTPRINT_WKT
     };
     public static final long DEFAULT_LIMIT = 1024L;
     public static final String ALL_LOCATIONS_INDEX_SELECTOR = " loc = node:locations('latitude:*')";
@@ -680,9 +682,9 @@ public class CypherQueryBuilder {
                 addSourceTaxonFields(sourceTaxonPrefix);
                 addTargetTaxonFields(targetTaxonPrefix);
                 put(LATITUDE, "loc." + LocationNode.LATITUDE + "?");
-                put(LATITUDE, "loc." + LocationNode.LATITUDE + "?");
                 put(LONGITUDE, "loc." + LocationNode.LONGITUDE + "?");
                 put(ALTITUDE, "loc." + LocationNode.ALTITUDE + "?");
+                put(FOOTPRINT_WKT, "loc." + LocationNode.FOOTPRINT_WKT + "?");
                 put(SOURCE_SPECIMEN_LIFE_STAGE, "sourceSpecimen." + Specimen.LIFE_STAGE_LABEL + "?");
                 put(TARGET_SPECIMEN_LIFE_STAGE, "targetSpecimen." + Specimen.LIFE_STAGE_LABEL + "?");
                 put(SOURCE_SPECIMEN_BODY_PART, "sourceSpecimen." + Specimen.BODY_PART_LABEL + "?");

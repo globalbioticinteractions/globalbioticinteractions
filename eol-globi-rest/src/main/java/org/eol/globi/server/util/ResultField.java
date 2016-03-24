@@ -4,6 +4,7 @@ public enum ResultField {
     LATITUDE("latitude"),
     LONGITUDE("longitude"),
     ALTITUDE("altitude"),
+    FOOTPRINT_WKT("footprintWKT"),
     COLLECTION_TIME_IN_UNIX_EPOCH("collection_time_in_unix_epoch"),
     STUDY_TITLE("study_title"),
     INTERACTION_TYPE("interaction_type"),
