@@ -208,7 +208,6 @@ public class TaxonCacheServiceTest {
                 put(PropertyAndValueDictionary.EXTERNAL_ID, "EOL:541190");
             }
         };
-        };
         final TaxonCacheService taxonCacheService = getTaxonCacheService();
         Map<String, String> enrich = taxonCacheService.enrich(properties);
         Taxon enrichedTaxon = TaxonUtil.mapToTaxon(enrich);
