@@ -1,5 +1,6 @@
 package org.eol.globi.domain;
 
+import org.apache.commons.lang3.StringUtils;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
@@ -13,6 +14,7 @@ public class LocationNode extends NodeBacked implements Location {
     public static final String ALTITUDE = "altitude";
     public static final String LATITUDE = "latitude";
     public static final String FOOTPRINT_WKT = "footprintWKT";
+    public static final String LOCALITY = "locality";
 
     public LocationNode(Node node) {
         super(node);
@@ -29,20 +31,24 @@ public class LocationNode extends NodeBacked implements Location {
         getUnderlyingNode().setProperty(LATITUDE, location.getLatitude());
         getUnderlyingNode().setProperty(LONGITUDE, location.getLongitude());
         getUnderlyingNode().setProperty(PropertyAndValueDictionary.TYPE, LocationNode.class.getSimpleName());
+        if (StringUtils.isNotBlank(location.getLocality())) {
+            getUnderlyingNode().setProperty(LOCALITY, location.getLocality());
+        }
     }
 
     public LocationNode(Node node, Double latitude, Double longitude, Double altitude) {
         this(node, new LocationImpl(altitude, longitude, latitude, null));
     }
 
-    public void setFootprintWKT(String footprintWKT) {
-        setPropertyWithTx(FOOTPRINT_WKT, footprintWKT);
-    }
-
     @Override
     public String getFootprintWKT() {
         return (String) getPropertyValueOrNull(FOOTPRINT_WKT);
     }
+
+    @Override
+    public String getLocality()  {
+            return (String) getPropertyValueOrNull(LOCALITY);
+        }
 
     @Override
     public Double getAltitude() {

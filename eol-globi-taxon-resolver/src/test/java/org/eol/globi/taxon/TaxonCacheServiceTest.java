@@ -200,4 +200,20 @@ public class TaxonCacheServiceTest {
         assertThat(enrichedTaxon.getExternalId(), is(nullValue()));
         taxonCacheService.shutdown();
     }
+
+    @Test
+    public void resolveZika() throws PropertyEnricherException {
+        Map<String, String> properties = new HashMap<String, String>() {
+            {
+                put(PropertyAndValueDictionary.EXTERNAL_ID, "EOL:541190");
+            }
+        };
+        };
+        final TaxonCacheService taxonCacheService = getTaxonCacheService();
+        Map<String, String> enrich = taxonCacheService.enrich(properties);
+        Taxon enrichedTaxon = TaxonUtil.mapToTaxon(enrich);
+        assertThat(enrichedTaxon.getName(), is(nullValue()));
+        assertThat(enrichedTaxon.getExternalId(), is("EOL:541190"));
+        taxonCacheService.shutdown();
+    }
 }

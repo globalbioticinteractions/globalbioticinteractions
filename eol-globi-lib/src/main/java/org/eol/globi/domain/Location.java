@@ -8,4 +8,7 @@ public interface Location  {
     Double getLatitude();
 
     String getFootprintWKT();
+
+    // see http://rs.tdwg.org/dwc/terms/#locality
+    String getLocality();
 }

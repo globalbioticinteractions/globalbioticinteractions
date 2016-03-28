@@ -5,12 +5,14 @@ public class LocationImpl implements Location {
     private Double longitude;
     private Double latitude;
     private String footprintWKT;
+    private String locality;
 
     public LocationImpl(Double latitude, Double longitude, Double altitude, String footprintWKT) {
         this.altitude = altitude;
         this.longitude = longitude;
         this.latitude = latitude;
         this.footprintWKT = footprintWKT;
+        this.locality = null;
     }
 
 
@@ -32,5 +34,14 @@ public class LocationImpl implements Location {
     @Override
     public String getFootprintWKT() {
         return footprintWKT;
+    }
+
+    @Override
+    public String getLocality() {
+        return locality;
+    }
+
+    public void setLocality(String locality) {
+        this.locality = locality;
     }
 }

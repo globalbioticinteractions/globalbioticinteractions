@@ -212,11 +212,16 @@ public class StudyImporterForGoMexSI extends BaseStudyImporter {
         Double latitude = getMandatoryDoubleValue(locationResource, parser, "LOC_CENTR_LAT");
         Double longitude = getMandatoryDoubleValue(locationResource, parser, "LOC_CENTR_LONG");
         Double depth = getMandatoryDoubleValue(locationResource, parser, "MN_DEP_SAMP");
+        final String locality = parser.getValueByLabel("LOCALE_NAME");
         final String polyCoords = parser.getValueByLabel("LOC_POLY_COORDS");
         String footprintWKT = polyCoordsToWKT(polyCoords);
-        return new LocationImpl(latitude, longitude
+        final LocationImpl location = new LocationImpl(latitude, longitude
                 , depth == null ? null : -depth
                 , StringUtils.isBlank(footprintWKT) ? null : StringUtils.trim(footprintWKT));
+        if (StringUtils.isNotBlank(locality)) {
+            location.setLocality(locality);
+        }
+        return location;
     }
 
     protected static String polyCoordsToWKT(String polyCoords) {

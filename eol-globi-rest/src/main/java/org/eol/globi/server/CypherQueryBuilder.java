@@ -26,11 +26,13 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.regex.Pattern;
 
+import static org.eol.globi.server.util.ResultField.*;
 import static org.eol.globi.server.util.ResultField.ALTITUDE;
 import static org.eol.globi.server.util.ResultField.COLLECTION_TIME_IN_UNIX_EPOCH;
 import static org.eol.globi.server.util.ResultField.FOOTPRINT_WKT;
 import static org.eol.globi.server.util.ResultField.INTERACTION_TYPE;
 import static org.eol.globi.server.util.ResultField.LATITUDE;
+import static org.eol.globi.server.util.ResultField.LOCALITY;
 import static org.eol.globi.server.util.ResultField.LONGITUDE;
 import static org.eol.globi.server.util.ResultField.SOURCE_SPECIMEN_BASIS_OF_RECORD;
 import static org.eol.globi.server.util.ResultField.SOURCE_SPECIMEN_BODY_PART;
@@ -217,7 +219,8 @@ public class CypherQueryBuilder {
             TARGET_SPECIMEN_TOTAL_VOLUME_PERCENT,
             TARGET_SPECIMEN_TOTAL_FREQUENCY_OF_OCCURRENCE,
             TARGET_SPECIMEN_TOTAL_FREQUENCY_OF_OCCURRENCE_PERCENT,
-            FOOTPRINT_WKT
+            FOOTPRINT_WKT,
+            LOCALITY
     };
     public static final long DEFAULT_LIMIT = 1024L;
     public static final String ALL_LOCATIONS_INDEX_SELECTOR = " loc = node:locations('latitude:*')";
@@ -487,10 +490,10 @@ public class CypherQueryBuilder {
         return new HashMap<ResultField, String>(selectors) {
             {
                 put(STUDY_TITLE, "study.title");
-                put(ResultField.STUDY_URL, "study.externalId?");
-                put(ResultField.STUDY_DOI, "study.doi?");
-                put(ResultField.STUDY_CITATION, "study.citation?");
-                put(ResultField.STUDY_SOURCE_CITATION, "study.source?");
+                put(STUDY_URL, "study.externalId?");
+                put(STUDY_DOI, "study.doi?");
+                put(STUDY_CITATION, "study.citation?");
+                put(STUDY_SOURCE_CITATION, "study.source?");
             }
         };
     }
@@ -558,10 +561,10 @@ public class CypherQueryBuilder {
                         put(LATITUDE, "NULL");
                         put(LONGITUDE, "NULL");
                         put(STUDY_TITLE, "NULL");
-                        put(ResultField.STUDY_URL, "NULL");
-                        put(ResultField.STUDY_DOI, "NULL");
-                        put(ResultField.STUDY_CITATION, "NULL");
-                        put(ResultField.STUDY_SOURCE_CITATION, "NULL");
+                        put(STUDY_URL, "NULL");
+                        put(STUDY_DOI, "NULL");
+                        put(STUDY_CITATION, "NULL");
+                        put(STUDY_SOURCE_CITATION, "NULL");
                     }
                 };
                 List<ResultField> returnFields = actualReturnFields(requestedReturnFields, Arrays.asList(RETURN_FIELDS_MULTI_TAXON_DEFAULT), selectors.keySet());
@@ -575,7 +578,7 @@ public class CypherQueryBuilder {
     protected static List<ResultField> actualReturnFields(List<String> requestedReturnFields, List<ResultField> defaultReturnFields, Collection<ResultField> availableReturnFields) {
         List<ResultField> returnFields = new ArrayList<ResultField>();
         for (String requestedReturnField : requestedReturnFields) {
-            for (ResultField resultField : ResultField.values()) {
+            for (ResultField resultField : values()) {
                 if (resultField.getLabel().equals(requestedReturnField)) {
                     if (availableReturnFields.contains(resultField)) {
                         returnFields.add(resultField);
@@ -685,6 +688,7 @@ public class CypherQueryBuilder {
                 put(LONGITUDE, "loc." + LocationNode.LONGITUDE + "?");
                 put(ALTITUDE, "loc." + LocationNode.ALTITUDE + "?");
                 put(FOOTPRINT_WKT, "loc." + LocationNode.FOOTPRINT_WKT + "?");
+                put(LOCALITY, "loc." + LocationNode.LOCALITY + "?");
                 put(SOURCE_SPECIMEN_LIFE_STAGE, "sourceSpecimen." + Specimen.LIFE_STAGE_LABEL + "?");
                 put(TARGET_SPECIMEN_LIFE_STAGE, "targetSpecimen." + Specimen.LIFE_STAGE_LABEL + "?");
                 put(SOURCE_SPECIMEN_BODY_PART, "sourceSpecimen." + Specimen.BODY_PART_LABEL + "?");
