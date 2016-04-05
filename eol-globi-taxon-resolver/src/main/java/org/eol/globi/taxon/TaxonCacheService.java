@@ -88,11 +88,7 @@ public class TaxonCacheService implements PropertyEnricher {
 
     public void init() throws PropertyEnricherException {
         LOG.info("taxon cache initializing...");
-        if (!cacheDir.exists()) {
-            if (!cacheDir.mkdirs()) {
-                throw new PropertyEnricherException("failed to create cache dir at [" + cacheDir.getAbsolutePath() + "]");
-            }
-        }
+        createCacheDir(cacheDir);
         DB db = DBMaker
                 .newFileDB(new File(cacheDir, "taxonCache"))
                 .mmapFileEnableIfSupported()
@@ -140,6 +136,15 @@ public class TaxonCacheService implements PropertyEnricher {
         LOG.info("taxon cache initialized.");
     }
 
+    static public void createCacheDir(File cacheDir) throws PropertyEnricherException {
+        FileUtils.deleteQuietly(cacheDir);
+        if (!cacheDir.exists()) {
+            if (!cacheDir.mkdirs()) {
+                throw new PropertyEnricherException("failed to create cache dir at [" + cacheDir.getAbsolutePath() + "]");
+            }
+        }
+    }
+
     private enum ProcessingState {
         PROVIDED_NAME,
         PROVIDED_ID,
@@ -160,7 +165,7 @@ public class TaxonCacheService implements PropertyEnricher {
         }
     }
 
-    public Iterator<Fun.Tuple2<String, String>> createTaxonMappingSource(final String resource, final LineSkipper skipper) throws IOException {
+    public static Iterator<Fun.Tuple2<String, String>> createTaxonMappingSource(final String resource, final LineSkipper skipper) throws IOException {
         return new Iterator<Fun.Tuple2<String, String>>() {
             private BufferedReader reader = createBufferedReader(resource);
             private final LabeledCSVParser labeledCSVParser = CSVUtil.createLabeledCSVParser(reader);
@@ -218,11 +223,11 @@ public class TaxonCacheService implements PropertyEnricher {
         return !StringUtils.equals(PropertyAndValueDictionary.NO_MATCH, providedTaxon.getExternalId());
     }
 
-    private String valueOrNoMatch(String value) {
+    static private String valueOrNoMatch(String value) {
         return isNonEmptyValue(value) ? value : PropertyAndValueDictionary.NO_MATCH;
     }
 
-    public Iterator<Fun.Tuple2<String, Map<String, String>>> createTaxonCacheSource(final String resource, final LineSkipper skipper) throws IOException {
+    static public Iterator<Fun.Tuple2<String, Map<String, String>>> createTaxonCacheSource(final String resource, final LineSkipper skipper) throws IOException {
 
         return new Iterator<Fun.Tuple2<String, Map<String, String>>>() {
             private BufferedReader reader = createBufferedReader(resource);
@@ -255,23 +260,27 @@ public class TaxonCacheService implements PropertyEnricher {
         };
     }
 
-    public void logCacheLoadStats(long time, int numberOfItems) {
+    static public void logCacheLoadStats(long time, int numberOfItems) {
+        logCacheLoadStats(time, numberOfItems, LOG);
+    }
+
+    public static void logCacheLoadStats(long time, int numberOfItems, Log log) {
         final double avgRate = numberOfItems * 1000.0 / time;
         final double timeElapsedInSeconds = time / 1000.0;
         final String msg = String.format("cache with [%d]" + " items built in [%.1f] s or [%.1f] items/s.",
                 numberOfItems,
                 timeElapsedInSeconds,
                 avgRate);
-        LOG.info(msg);
+        log.info(msg);
     }
 
-    public boolean isNonEmptyValue(String sourceValue) {
+    static public boolean isNonEmptyValue(String sourceValue) {
         return StringUtils.isNotBlank(sourceValue)
                 && !StringUtils.equals(sourceValue, PropertyAndValueDictionary.NO_MATCH)
                 && !StringUtils.equals(sourceValue, PropertyAndValueDictionary.NO_NAME);
     }
 
-    public BufferedReader createBufferedReader(String taxonResourceUrl) throws IOException {
+    public static BufferedReader createBufferedReader(String taxonResourceUrl) throws IOException {
         return new BufferedReader(new InputStreamReader(ResourceUtil.asInputStream(taxonResourceUrl, TaxonCacheService.class)));
     }
 
@@ -288,7 +297,7 @@ public class TaxonCacheService implements PropertyEnricher {
         FileUtils.deleteQuietly(cacheDir);
     }
 
-    public void close(Engine engine) {
+    static public void close(Engine engine) {
         if (!engine.isClosed()) {
             engine.close();
         }
