@@ -39,7 +39,7 @@ public class NODCTaxonServiceTest {
         });
 
         assertThat(enriched.get(PropertyAndValueDictionary.EXTERNAL_ID), is("ITIS:552761"));
-        assertThat(enriched.get(PropertyAndValueDictionary.PATH), is("Pecari tajacu"));
+        assertThat(enriched.get(PropertyAndValueDictionary.PATH), containsString("Pecari tajacu"));
         assertThat(enriched.get(PropertyAndValueDictionary.PATH_IDS), containsString("ITIS:552761"));
         assertThat(enriched.get(PropertyAndValueDictionary.PATH), not(containsString("Pecari tajacu angulatus")));
     }
