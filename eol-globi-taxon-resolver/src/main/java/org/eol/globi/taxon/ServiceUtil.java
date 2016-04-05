@@ -20,7 +20,18 @@ public class ServiceUtil {
         return extractPath(xmlContent, elementName, valuePrefix, "");
     }
 
+    public static List<String> extractPathNoJoin(String xmlContent, String elementName, String valuePrefix) throws PropertyEnricherException {
+        return extractPathNoJoin(xmlContent, elementName, valuePrefix, "");
+    }
+
     public static String extractPath(String xmlContent, String elementName, String valuePrefix, String valueSuffix) throws PropertyEnricherException {
+        List<String> ranks = extractPathNoJoin(xmlContent, elementName, valuePrefix, valueSuffix);
+        return StringUtils.join(ranks, CharsetConstant.SEPARATOR);
+    }
+
+    public static List<String> extractPathNoJoin(String xmlContent, String elementName, String valuePrefix, String valueSuffix) throws PropertyEnricherException {
+        List<String> ranks = new ArrayList<String>();
+
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         Document doc;
         try {
@@ -28,7 +39,6 @@ public class ServiceUtil {
             XPathFactory xPathfactory = XPathFactory.newInstance();
             XPath xpath = xPathfactory.newXPath();
             Object result = xpath.compile("//*[local-name() = '" + elementName + "']").evaluate(doc, XPathConstants.NODESET);
-            List<String> ranks = new ArrayList<String>();
             NodeList nodes = (NodeList) result;
             for (int i = 0; i < nodes.getLength(); i++) {
                 Node item = nodes.item(i);
@@ -40,10 +50,11 @@ public class ServiceUtil {
                     }
                 }
             }
-            return StringUtils.join(ranks, CharsetConstant.SEPARATOR);
+
         } catch (Exception e) {
             throw new PropertyEnricherException("failed to handle response [" + xmlContent + "]", e);
         }
+        return ranks;
     }
 
     public static String extractName(String xmlContent, String elementName) throws PropertyEnricherException {

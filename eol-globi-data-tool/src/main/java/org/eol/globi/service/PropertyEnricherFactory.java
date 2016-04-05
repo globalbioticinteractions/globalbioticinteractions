@@ -9,6 +9,7 @@ import org.eol.globi.taxon.GulfBaseService;
 import org.eol.globi.taxon.ITISService;
 import org.eol.globi.taxon.NBNService;
 import org.eol.globi.taxon.NCBIService;
+import org.eol.globi.taxon.NODCTaxonService;
 import org.eol.globi.taxon.TaxonEnricherImpl;
 import org.eol.globi.taxon.WoRMSService;
 
@@ -23,6 +24,7 @@ public class PropertyEnricherFactory {
                 add(new EnvoService());
                 add(new FunctionalGroupService());
                 add(new NBNService());
+                add(new NODCTaxonService());
                 add(new ITISService());
                 add(new NCBIService());
                 add(new GBIFService());

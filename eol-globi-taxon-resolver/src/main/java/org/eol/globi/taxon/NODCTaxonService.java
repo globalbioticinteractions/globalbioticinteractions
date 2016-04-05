@@ -19,20 +19,15 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
 public class NODCTaxonService implements PropertyEnricher {
     private static final Log LOG = LogFactory.getLog(NODCTaxonService.class);
 
-    private String baseDir;
     private File cacheDir = new File("./nodc.mapdb");
     private BTreeMap<String, String> nodc2itis = null;
-
-    public NODCTaxonService(String baseDir) {
-        this.baseDir = baseDir;
-    }
+    private PropertyEnricher itisService = new ITISService();
 
     @Override
     public Map<String, String> enrich(Map<String, String> properties) throws PropertyEnricherException {
@@ -45,6 +40,7 @@ public class NODCTaxonService implements PropertyEnricher {
             final String tsn = nodc2itis.get(externalId);
             if (StringUtils.isNotBlank(tsn)) {
                 enriched.put(PropertyAndValueDictionary.EXTERNAL_ID, tsn);
+                enriched = itisService.enrich(enriched);
             }
         }
         return enriched;
@@ -55,18 +51,22 @@ public class NODCTaxonService implements PropertyEnricher {
     }
 
     private void lazyInit() throws PropertyEnricherException {
-        final String nodcResource = "/0050418/1.1/data/0-data/NODC_TaxonomicCode_V8_CD-ROM/TAXBRIEF.DAT";
+        String nodcFilename = System.getProperty("nodc.file");
+        if (StringUtils.isBlank(nodcFilename)) {
+            throw new PropertyEnricherException("cannot initialize NODC enricher: failed to find NODC taxon file. Did you install the NODC taxonomy and set -DnodcFile=...?");
+        }
         try {
-            NODCTaxonParser parser = new NODCTaxonParser(new BufferedReader(new InputStreamReader(ResourceUtil.asInputStream(baseDir + nodcResource, null))));
+            NODCTaxonParser parser = new NODCTaxonParser(new BufferedReader(new InputStreamReader(ResourceUtil.asInputStream(nodcFilename, null))));
             init(parser);
         } catch (IOException e) {
-            throw new PropertyEnricherException("failed to read from NODC resource [" + nodcResource + "]", e);
+            throw new PropertyEnricherException("failed to read from NODC resource [" + nodcFilename + "]", e);
         }
     }
 
     protected void init(NODCTaxonParser parser) throws PropertyEnricherException {
         TaxonCacheService.createCacheDir(cacheDir);
 
+        LOG.info("NODC taxonomy importing...");
         StopWatch watch = new StopWatch();
         watch.start();
 
@@ -87,6 +87,7 @@ public class NODCTaxonService implements PropertyEnricher {
 
         watch.stop();
         TaxonCacheService.logCacheLoadStats(watch.getTime(), nodc2itis.size(), LOG);
+        LOG.info("NODC taxonomy imported.");
     }
 
     @Override

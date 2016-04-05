@@ -6,13 +6,14 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
+import static org.junit.matchers.JUnitMatchers.containsString;
 
 public class NODCTaxonServiceTest {
 
@@ -20,7 +21,7 @@ public class NODCTaxonServiceTest {
 
     @Before
     public void init() throws IOException, PropertyEnricherException {
-        nodcTaxonService = new NODCTaxonService(File.createTempFile("globi-nodc", ".cache").getAbsolutePath());
+        nodcTaxonService = new NODCTaxonService();
         nodcTaxonService.init(NODCTaxonParserTest.getTestParser());
     }
 
@@ -35,10 +36,12 @@ public class NODCTaxonServiceTest {
             {
                 put(PropertyAndValueDictionary.EXTERNAL_ID, "NODC:9227040101");
             }
-
         });
 
-        assertThat(enriched.get(PropertyAndValueDictionary.EXTERNAL_ID), is("ITIS:180725"));
+        assertThat(enriched.get(PropertyAndValueDictionary.EXTERNAL_ID), is("ITIS:552761"));
+        assertThat(enriched.get(PropertyAndValueDictionary.PATH), is("Pecari tajacu"));
+        assertThat(enriched.get(PropertyAndValueDictionary.PATH_IDS), containsString("ITIS:552761"));
+        assertThat(enriched.get(PropertyAndValueDictionary.PATH), not(containsString("Pecari tajacu angulatus")));
     }
 
 }
