@@ -83,7 +83,7 @@ public class StudyImporterForMetaTableIT {
         final String resource = "https://raw.githubusercontent.com/globalbioticinteractions/noaa-reem/master/globi.json";
         importAll(interactionListener, tableFactory, resource);
 
-        assertThat(links.size() > 10, is(true));
+        assertThat(links.size(), is(12));
 
         final Map<String, String> firstLine = links.get(0);
         assertThat(firstLine.get(StudyImporterForTSV.TARGET_TAXON_ID), is("NODC:9999999998"));
@@ -98,7 +98,11 @@ public class StudyImporterForMetaTableIT {
     static public void importAll(InteractionListener interactionListener, StudyImporterForMetaTable.TableParserFactory tableFactory, String resource) throws IOException, StudyImporterException {
         final InputStream inputStream = ResourceUtil.asInputStream(resource, null);
         final JsonNode config = new ObjectMapper().readTree(inputStream);
-        StudyImporterForMetaTable.importAll(interactionListener, tableFactory, config);
+
+        for (JsonNode table : StudyImporterForMetaTable.collectTables(config)) {
+            StudyImporterForMetaTable.importTable(interactionListener, tableFactory, table);
+        }
+
     }
 
 

@@ -59,7 +59,10 @@ public class StudyImporterForMetaTable extends BaseStudyImporter {
     @Override
     public Study importStudy() throws StudyImporterException {
         try {
-            importRepository();
+            for (JsonNode table : collectTables(getConfig())) {
+                final InteractionListener listener = new InteractionListenerProxy(getBaseUrl(), table, new InteractionListenerNeo4j(nodeFactory, getGeoNamesService(), getLogger()));
+                importTable(listener, new TableParserFactoryImpl(), table);
+            }
         } catch (IOException e) {
             throw new StudyImporterException("problem importing from [" + getBaseUrl() + "]", e);
         } catch (NodeFactoryException e) {
@@ -68,19 +71,6 @@ public class StudyImporterForMetaTable extends BaseStudyImporter {
         return null;
     }
 
-
-    private void importRepository() throws IOException, StudyImporterException {
-        final InteractionListener listener = new InteractionListenerProxy(getBaseUrl(), getConfig(), new InteractionListenerNeo4j(nodeFactory, getGeoNamesService(), getLogger()));
-        importAll(listener,
-                new TableParserFactoryImpl(),
-                getConfig());
-    }
-
-    static public void importAll(InteractionListener interactionListener, TableParserFactory tableFactory, JsonNode config) throws IOException, StudyImporterException {
-        for (JsonNode table : collectTables(config)) {
-            importTable(interactionListener, tableFactory, table);
-        }
-    }
 
     static public List<JsonNode> collectTables(JsonNode config) {
         List<JsonNode> tableList = new ArrayList<JsonNode>();
