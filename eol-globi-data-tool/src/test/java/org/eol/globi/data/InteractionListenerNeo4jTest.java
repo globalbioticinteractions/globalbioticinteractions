@@ -1,10 +1,16 @@
 package org.eol.globi.data;
 
+import org.eol.globi.domain.LocationNode;
+import org.eol.globi.domain.RelTypes;
+import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
+import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.service.DOIResolverImpl;
 import org.eol.globi.util.ExternalIdUtil;
 import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
+import org.neo4j.graphdb.Direction;
+import org.neo4j.graphdb.Relationship;
 
 import java.util.HashMap;
 import java.util.List;
@@ -18,6 +24,7 @@ import static org.eol.globi.data.StudyImporterForTSV.STUDY_SOURCE_CITATION;
 import static org.eol.globi.data.StudyImporterForTSV.TARGET_TAXON_ID;
 import static org.eol.globi.data.StudyImporterForTSV.TARGET_TAXON_NAME;
 import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
 
 public class InteractionListenerNeo4jTest extends GraphDBTestCase {
@@ -30,6 +37,10 @@ public class InteractionListenerNeo4jTest extends GraphDBTestCase {
         link.put(SOURCE_TAXON_ID, "duck");
         link.put(TARGET_TAXON_NAME, "mini");
         link.put(TARGET_TAXON_ID, "mouse");
+        link.put(StudyImporterForMetaTable.EVENT_DATE, "20160404T21:31:40Z");
+        link.put(StudyImporterForMetaTable.LATITUDE, "12.1");
+        link.put(StudyImporterForMetaTable.LONGITUDE, "13.2");
+        link.put(StudyImporterForTSV.INTERACTION_TYPE_ID, "http://purl.obolibrary.org/obo/RO_0002470");
         link.put(REFERENCE_ID, "123");
         link.put(STUDY_SOURCE_CITATION, "some source ref");
         link.put(REFERENCE_CITATION, "");
@@ -38,8 +49,42 @@ public class InteractionListenerNeo4jTest extends GraphDBTestCase {
 
         final List<Study> allStudies = NodeUtil.findAllStudies(getGraphDb());
         assertThat(allStudies.size(), is(1));
-        assertThat(allStudies.get(0).getCitation(), is("citation:doi:1234"));
+        final Study study = allStudies.get(0);
+        assertThat(study.getCitation(), is("citation:doi:1234"));
 
+        boolean foundPair = false;
+        for (Relationship specimenRel : study.getSpecimens()) {
+            final Specimen predator = new Specimen(specimenRel.getEndNode());
+            for (Relationship stomachRel : predator.getStomachContents()) {
+                final Specimen prey = new Specimen(stomachRel.getEndNode());
+                final TaxonNode preyTaxon = getOrigTaxon(prey);
+                final TaxonNode predTaxon = getOrigTaxon(predator);
+                assertThat(preyTaxon.getName(), is("mini"));
+                assertThat(preyTaxon.getExternalId(), is("mouse"));
+                assertThat(predTaxon.getName(), is("donald"));
+                assertThat(predTaxon.getExternalId(), is("duck"));
+
+                assertLocation(predator.getSampleLocation());
+                assertLocation(prey.getSampleLocation());
+                foundPair = true;
+
+                assertThat(specimenRel.getProperty(Specimen.DATE_IN_UNIX_EPOCH), is(notNullValue()));
+            }
+
+
+        }
+        assertThat(foundPair, is(true));
+    }
+
+    public void assertLocation(LocationNode sampleLocation) {
+        assertThat(sampleLocation.getLatitude(), is(12.1d));
+        assertThat(sampleLocation.getLongitude(), is(13.2d));
+    }
+
+    public TaxonNode getOrigTaxon(Specimen predator) {
+        return new TaxonNode(predator.getUnderlyingNode()
+                .getRelationships(Direction.OUTGOING, RelTypes.ORIGINALLY_DESCRIBED_AS)
+                .iterator().next().getEndNode());
     }
 
 }

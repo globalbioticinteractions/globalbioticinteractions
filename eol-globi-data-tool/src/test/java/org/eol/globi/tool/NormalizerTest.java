@@ -100,21 +100,6 @@ public class NormalizerTest extends GraphDBTestCase {
         Normalizer dataNormalizationTool = createNormalizer();
 
         GraphDatabaseService graphService = getGraphDb();
-        final PropertyEnricher taxonEnricher = new PropertyEnricher() {
-
-            @Override
-            public Map<String, String> enrich(Map<String, String> properties) throws PropertyEnricherException {
-                Taxon taxon = new TaxonImpl();
-                TaxonUtil.mapToTaxon(properties, taxon);
-                taxon.setExternalId("test-taxon:" + System.currentTimeMillis());
-                return TaxonUtil.taxonToMap(taxon);
-            }
-
-            @Override
-            public void shutdown() {
-
-            }
-        };
         dataNormalizationTool.importData(StudyImporterForSimons.class, new NodeFactoryImpl(graphService));
 
 

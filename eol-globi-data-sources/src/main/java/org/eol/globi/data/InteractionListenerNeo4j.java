@@ -9,12 +9,28 @@ import org.eol.globi.domain.Term;
 import org.eol.globi.geo.LatLng;
 import org.eol.globi.service.GeoNamesService;
 import org.eol.globi.util.InvalidLocationException;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.ISODateTimeFormat;
 
 import java.io.IOException;
 import java.util.Map;
 import java.util.logging.Level;
 
-import static org.eol.globi.data.StudyImporterForTSV.*;
+import static org.eol.globi.data.StudyImporterForTSV.BASIS_OF_RECORD_ID;
+import static org.eol.globi.data.StudyImporterForTSV.BASIS_OF_RECORD_NAME;
+import static org.eol.globi.data.StudyImporterForTSV.DECIMAL_LATITUDE;
+import static org.eol.globi.data.StudyImporterForTSV.DECIMAL_LONGITUDE;
+import static org.eol.globi.data.StudyImporterForTSV.INTERACTION_TYPE_ID;
+import static org.eol.globi.data.StudyImporterForTSV.LOCALITY_ID;
+import static org.eol.globi.data.StudyImporterForTSV.REFERENCE_CITATION;
+import static org.eol.globi.data.StudyImporterForTSV.REFERENCE_DOI;
+import static org.eol.globi.data.StudyImporterForTSV.REFERENCE_ID;
+import static org.eol.globi.data.StudyImporterForTSV.SOURCE_TAXON_ID;
+import static org.eol.globi.data.StudyImporterForTSV.SOURCE_TAXON_NAME;
+import static org.eol.globi.data.StudyImporterForTSV.STUDY_SOURCE_CITATION;
+import static org.eol.globi.data.StudyImporterForTSV.TARGET_TAXON_ID;
+import static org.eol.globi.data.StudyImporterForTSV.TARGET_TAXON_NAME;
 
 class InteractionListenerNeo4j implements InteractionListener {
 
@@ -30,7 +46,7 @@ class InteractionListenerNeo4j implements InteractionListener {
     }
 
     @Override
-    public void newLink(Map<String, String> properties) throws StudyImporterException  {
+    public void newLink(Map<String, String> properties) throws StudyImporterException {
         try {
             if (properties != null) {
                 importLink(properties);
@@ -42,7 +58,7 @@ class InteractionListenerNeo4j implements InteractionListener {
         }
     }
 
-    private void importLink(Map<String, String> link) throws NodeFactoryException, IOException {
+    private void importLink(Map<String, String> link) throws StudyImporterException, IOException {
         String sourceTaxonName = link.get(SOURCE_TAXON_NAME);
         String sourceTaxonId = link.get(SOURCE_TAXON_ID);
         String targetTaxonName = link.get(TARGET_TAXON_NAME);
@@ -61,11 +77,29 @@ class InteractionListenerNeo4j implements InteractionListener {
             } else {
                 Specimen source = nodeFactory.createSpecimen(study, sourceTaxonName, sourceTaxonId);
                 setBasisOfRecordIfAvailable(link, source);
+                setDateTimeIfAvailable(link, source);
                 Specimen target = nodeFactory.createSpecimen(study, targetTaxonName, targetTaxonId);
                 setBasisOfRecordIfAvailable(link, target);
+                setDateTimeIfAvailable(link, target);
                 source.interactsWith(target, type, getOrCreateLocation(study, link));
             }
         }
+    }
+
+    private void setDateTimeIfAvailable(Map<String, String> link, Specimen target) throws StudyImporterException {
+        final String eventDate = link.get(StudyImporterForMetaTable.EVENT_DATE);
+        if (StringUtils.isNotBlank(eventDate)) {
+            try {
+                final DateTime dateTime = ISODateTimeFormat.dateTimeParser().parseDateTime(eventDate);
+                nodeFactory.setUnixEpochProperty(target, dateTime.toDate());
+            } catch (IllegalArgumentException ex) {
+                throw new StudyImporterException("invalid date string [" + eventDate + "]", ex);
+            } catch (NodeFactoryException e) {
+                throw new StudyImporterException("failed to set time for [" + eventDate + "]", e);
+            }
+
+        }
+
     }
 
     private void setBasisOfRecordIfAvailable(Map<String, String> link, Specimen specimen) {
@@ -78,8 +112,12 @@ class InteractionListenerNeo4j implements InteractionListener {
 
     private LocationNode getOrCreateLocation(Study study, Map<String, String> link) throws IOException, NodeFactoryException {
         LatLng centroid = null;
-        String latitude = link.get(DECIMAL_LATITUDE);
-        String longitude = link.get(DECIMAL_LONGITUDE);
+        String[] latitudes = {DECIMAL_LATITUDE, StudyImporterForMetaTable.LATITUDE};
+        String latitude = getFirstValueForTerms(link, latitudes);
+
+        String[] longitudes = {DECIMAL_LONGITUDE, StudyImporterForMetaTable.LONGITUDE};
+        String longitude = getFirstValueForTerms(link, longitudes);
+
         if (StringUtils.isNotBlank(latitude) && StringUtils.isNotBlank(longitude)) {
             try {
                 centroid = LocationUtil.parseLatLng(latitude, longitude);
@@ -96,13 +134,23 @@ class InteractionListenerNeo4j implements InteractionListener {
         return centroid == null ? null : nodeFactory.getOrCreateLocation(centroid.getLat(), centroid.getLng(), null);
     }
 
+    private String getFirstValueForTerms(Map<String, String> link, String[] latitudes) {
+        String latitude = null;
+        for (String latitudeTerm : latitudes) {
+            if (StringUtils.isBlank(latitude)) {
+                latitude = link.get(latitudeTerm);
+            }
+        }
+        return latitude;
+    }
+
     public GeoNamesService getGeoNamesService() {
         return geoNamesService;
     }
 
     public ImportLogger getLogger() {
-            return logger;
-        }
+        return logger;
+    }
 
 
 }

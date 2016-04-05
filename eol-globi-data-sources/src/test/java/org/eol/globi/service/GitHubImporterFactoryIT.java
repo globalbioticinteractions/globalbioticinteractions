@@ -1,5 +1,6 @@
 package org.eol.globi.service;
 
+import org.codehaus.jackson.JsonNode;
 import org.eol.globi.data.StudyImporter;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.data.StudyImporterForArthopodEasyCapture;
@@ -75,6 +76,16 @@ public class GitHubImporterFactoryIT {
         assertThat(importer, is(notNullValue()));
         assertThat(importer, is(instanceOf(StudyImporterForMetaTable.class)));
         assertThat(((StudyImporterForMetaTable)importer).getConfig(), is(notNullValue()));
+    }
+
+    @Test
+    public void createMetaTableREEM() throws URISyntaxException, StudyImporterException, IOException {
+        StudyImporter importer = new GitHubImporterFactory().createImporter("globalbioticinteractions/noaa-reem", null, null);
+        assertThat(importer, is(notNullValue()));
+        assertThat(importer, is(instanceOf(StudyImporterForMetaTable.class)));
+        final JsonNode config = ((StudyImporterForMetaTable) importer).getConfig();
+        assertThat(config, is(notNullValue()));
+        assertThat(config.get("interactionTypeId").asText(), is ("http://purl.obolibrary.org/obo/RO_0002470"));
     }
 
 }

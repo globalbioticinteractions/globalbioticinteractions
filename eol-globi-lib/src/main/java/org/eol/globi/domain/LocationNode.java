@@ -36,10 +36,6 @@ public class LocationNode extends NodeBacked implements Location {
         }
     }
 
-    public LocationNode(Node node, Double latitude, Double longitude, Double altitude) {
-        this(node, new LocationImpl(altitude, longitude, latitude, null));
-    }
-
     @Override
     public String getFootprintWKT() {
         return (String) getPropertyValueOrNull(FOOTPRINT_WKT);
@@ -63,18 +59,6 @@ public class LocationNode extends NodeBacked implements Location {
     @Override
     public Double getLatitude() {
         return (Double) getUnderlyingNode().getProperty(LATITUDE);
-    }
-
-    @Override
-    public String toString() {
-        StringBuffer sb = new StringBuffer();
-        sb.append(" Lat: ");
-        sb.append(getLatitude());
-        sb.append(" Lng: ");
-        sb.append(getLongitude());
-        sb.append(" Alt: ");
-        sb.append(getAltitude());
-        return sb.toString();
     }
 
     public Iterable<Relationship> getSpecimenCaughtHere() {

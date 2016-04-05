@@ -23,7 +23,7 @@ public class StudyImporterForMetaTableTest {
         final InputStream inputStream = ResourceUtil.asInputStream("test-meta-globi.json", StudyImporterForMetaTable.class);
         final JsonNode config = new ObjectMapper().readTree(inputStream);
 
-        List<String> columnNames = StudyImporterForMetaTable.columnNamesForMetaTable(config);
+        List<StudyImporterForMetaTable.Column> columnNames = StudyImporterForMetaTable.columnNamesForMetaTable(config);
         assertThat(columnNames.size(), is(40));
 
     }

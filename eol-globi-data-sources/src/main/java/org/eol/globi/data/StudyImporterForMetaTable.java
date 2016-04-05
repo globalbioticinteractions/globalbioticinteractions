@@ -3,10 +3,15 @@ package org.eol.globi.data;
 import com.Ostermiller.util.CSVParse;
 import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.Study;
+import org.eol.globi.domain.TaxonomyProvider;
 import org.eol.globi.util.CSVUtil;
 import org.eol.globi.util.ResourceUtil;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.ISODateTimeFormat;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -39,6 +44,11 @@ public class StudyImporterForMetaTable extends BaseStudyImporter {
     public static final String VOLUME = "volume";
     public static final String NUMBER = "number";
     public static final String PAGES = "pages";
+
+    public static final String LONGITUDE = "http://rs.tdwg.org/dwc/terms/decimalLongitude";
+    public static final String LATITUDE = "http://rs.tdwg.org/dwc/terms/decimalLatitude";
+    public static final String EVENT_DATE = "http://rs.tdwg.org/dwc/terms/eventDate";
+
     private String baseUrl;
     private JsonNode config;
 
@@ -49,7 +59,7 @@ public class StudyImporterForMetaTable extends BaseStudyImporter {
     @Override
     public Study importStudy() throws StudyImporterException {
         try {
-            importRepository(getBaseUrl());
+            importRepository();
         } catch (IOException e) {
             throw new StudyImporterException("problem importing from [" + getBaseUrl() + "]", e);
         } catch (NodeFactoryException e) {
@@ -59,40 +69,49 @@ public class StudyImporterForMetaTable extends BaseStudyImporter {
     }
 
 
-    private void importRepository(String baseUrl) throws IOException, StudyImporterException {
-        final String dataSourceCitation = generateSourceCitation(baseUrl, getConfig());
-        final JsonNode nullValues = getConfig().get("null");
-        final List<String> nullValueArray = parseNullValues(nullValues);
-        final InteractionListener interactionListener = new InteractionListener() {
-            final InteractionListenerNeo4j interactionListenerNeo4j = new InteractionListenerNeo4j(nodeFactory, getGeoNamesService(), getLogger());
-
-            @Override
-            public void newLink(final Map<String, String> properties) throws StudyImporterException {
-                removeNulls(properties, nullValueArray);
-
-                final HashMap<String, String> properties1 = new HashMap<String, String>() {
-                    {
-                        putAll(properties);
-                        put(StudyImporterForTSV.STUDY_SOURCE_CITATION, dataSourceCitation);
-                        final String referenceCitation = generateReferenceCitation(properties);
-                        put(StudyImporterForTSV.REFERENCE_ID, dataSourceCitation + referenceCitation);
-                        put(StudyImporterForTSV.REFERENCE_CITATION, referenceCitation);
-                        put(StudyImporterForTSV.SOURCE_TAXON_NAME, generateSourceTaxonName(properties));
-                        put(StudyImporterForTSV.TARGET_TAXON_NAME, generateTargetTaxonName(properties));
-                        InteractType type = generateInteractionType(properties);
-                        if (type != null) {
-                            put(StudyImporterForTSV.INTERACTION_TYPE_ID, type.getIRI());
-                            put(StudyImporterForTSV.INTERACTION_TYPE_NAME, type.name());
-                        }
-                    }
-                };
-                interactionListenerNeo4j.newLink(properties1);
-            }
-        };
-        importAll(interactionListener,
-                columnNamesForMetaTable(getConfig()),
-                createCsvParser(config));
+    private void importRepository() throws IOException, StudyImporterException {
+        final InteractionListener listener = new InteractionListenerProxy(getBaseUrl(), getConfig(), new InteractionListenerNeo4j(nodeFactory, getGeoNamesService(), getLogger()));
+        importAll(listener,
+                new TableParserFactoryImpl(),
+                getConfig());
     }
+
+    static public void importAll(InteractionListener interactionListener, TableParserFactory tableFactory, JsonNode config) throws IOException, StudyImporterException {
+        for (JsonNode table : collectTables(config)) {
+            importTable(interactionListener, tableFactory, table);
+        }
+    }
+
+    static public List<JsonNode> collectTables(JsonNode config) {
+        List<JsonNode> tableList = new ArrayList<JsonNode>();
+        if (config.has("tables")) {
+            JsonNode tables = config.get("tables");
+            for (JsonNode table : tables) {
+                tableList.add(table);
+            }
+        } else {
+            tableList.add(config);
+        }
+        return tableList;
+    }
+
+    static public void importTable(InteractionListener interactionListener, TableParserFactory tableFactory, JsonNode table) throws IOException, StudyImporterException {
+        if (table.has("tableSchema")) {
+            final JsonNode tableSchema = table.get("tableSchema");
+            List<Column> columnNames = tableSchema.isValueNode() ?
+                    columnsFromExternalSchema(tableSchema) :
+                    columnNamesForMetaTable(table);
+            final CSVParse csvParse = tableFactory.createParser(table);
+            importAll(interactionListener, columnNames, csvParse);
+        }
+    }
+
+    static public List<Column> columnsFromExternalSchema(JsonNode tableSchema) throws IOException {
+        String tableSchemaURL = tableSchema.asText();
+        final JsonNode schema = new ObjectMapper().readTree(ResourceUtil.asInputStream(tableSchemaURL, null));
+        return columnNamesForSchema(schema);
+    }
+
 
     private List<String> parseNullValues(JsonNode nullValues) {
         final List<String> nullValueArray = new ArrayList<String>();
@@ -192,8 +211,16 @@ public class StudyImporterForMetaTable extends BaseStudyImporter {
             put("neutral", null);
             put("unknown", null);
         }};
-        return StringUtils.isNotBlank(interactionTypeName) ? mappedTypes.get(interactionTypeName) : null;
+        return StringUtils.isNotBlank(interactionTypeName)
+                ? mappedTypes.get(interactionTypeName)
+                : null;
     }
+
+    private InteractType defaultInteractionType(JsonNode config) {
+        final JsonNode interactionTypeId = config.get(StudyImporterForTSV.INTERACTION_TYPE_ID);
+        return interactionTypeId == null ? null : InteractType.typeOf(interactionTypeId.asText());
+    }
+
 
     protected static String generateSourceCitation(String baseUrl, JsonNode config) throws StudyImporterException {
         final String fieldName = "dcterms:bibliographicCitation";
@@ -228,50 +255,181 @@ public class StudyImporterForMetaTable extends BaseStudyImporter {
 
 
     public static void importAll(InteractionListener interactionListener,
-                                 List<String> columnNames,
+                                 List<Column> columnNames,
                                  CSVParse csvParse) throws IOException, StudyImporterException {
         String[] line;
         while ((line = csvParse.getLine()) != null) {
             Map<String, String> mappedLine = new HashMap<String, String>();
             if (line.length != columnNames.size()) {
-                throw new StudyImporterException("read [" + line.length + "] columns, but only found [" + columnNames.size() + "] column definitions.");
+                throw new StudyImporterException("read [" + line.length + "] columns, but found [" + columnNames.size() + "] column definitions.");
             }
             for (int i = 0; i < line.length; i++) {
-                mappedLine.put(columnNames.get(i), line[i]);
+                final String value = line[i];
+                final Column column = columnNames.get(i);
+                mappedLine.put(column.getName(), parseValue(value, column));
             }
             interactionListener.newLink(mappedLine);
         }
     }
 
-    public static CSVParse createCsvParser(JsonNode config) throws IOException {
-        final JsonNode headerRowCount = config.get("headerRowCount");
-        final JsonNode delimiter = config.get("delimiter");
-        final String delimiterString = delimiter == null ? "," : delimiter.asText();
-        final char delimiterChar = delimiterString.length() == 0 ? ',' : delimiterString.charAt(0);
-        final JsonNode dataUrl = config.get("url");
-        int headerCount = headerRowCount == null ? 0 : headerRowCount.asInt();
-
-        final CSVParse csvParse = CSVUtil.createCSVParse(ResourceUtil.asInputStream(dataUrl.asText(), null));
-        csvParse.changeDelimiter(delimiterChar);
-        for (int i = 0; i < headerCount; i++) {
-            csvParse.getLine();
+    public static String parseValue(String value, Column column) {
+        String convertedValue = null;
+        if (StringUtils.isNotBlank(value)) {
+            if ("https://marinemetadata.org/references/nodctaxacodes".equals(column.getDataTypeId())) {
+                final String[] parts = value.trim().split("[^0-9]");
+                convertedValue = TaxonomyProvider.NATIONAL_OCEANOGRAPHIC_DATA_CENTER.getIdPrefix() + parts[0].replace("00", "");
+            } else if ("date".equals(column.getDataTypeBase())) {
+                final DateTimeFormatter dateTimeFormatter = StringUtils.isNotBlank(column.getDataTypeFormat())
+                        ? DateTimeFormat.forPattern(column.getDataTypeFormat())
+                        : DateTimeFormat.fullDateTime();
+                convertedValue = dateTimeFormatter
+                        .parseDateTime(value)
+                        .toString(ISODateTimeFormat.basicDateTime().withZoneUTC());
+            } else {
+                convertedValue = value;
+            }
         }
-        return csvParse;
+        return StringUtils.trim(convertedValue);
     }
 
-    public static List<String> columnNamesForMetaTable(JsonNode config) {
-        List<String> columnNames = new ArrayList<String>();
+    interface TableParserFactory {
+        CSVParse createParser(JsonNode config) throws IOException;
+    }
+
+    static class TableParserFactoryImpl implements TableParserFactory {
+
+        @Override
+        public CSVParse createParser(JsonNode config) throws IOException {
+            final JsonNode headerRowCount = config.get("headerRowCount");
+            final JsonNode delimiter = config.get("delimiter");
+            final String delimiterString = delimiter == null ? "," : delimiter.asText();
+            final char delimiterChar = delimiterString.length() == 0 ? ',' : delimiterString.charAt(0);
+            final JsonNode dataUrl = config.get("url");
+            int headerCount = headerRowCount == null ? 0 : headerRowCount.asInt();
+
+            final CSVParse csvParse = CSVUtil.createCSVParse(ResourceUtil.asInputStream(dataUrl.asText(), null));
+            csvParse.changeDelimiter(delimiterChar);
+            for (int i = 0; i < headerCount; i++) {
+                csvParse.getLine();
+            }
+            return csvParse;
+        }
+    }
+
+    public static List<Column> columnNamesForMetaTable(JsonNode config) {
+        List<Column> columnNames = new ArrayList<Column>();
         final JsonNode tableSchema = config.get("tableSchema");
         if (tableSchema != null) {
-            final JsonNode columns = tableSchema.get("columns");
-            for (JsonNode column : columns) {
-                final JsonNode columnName = column.get("name");
-                if (columnName != null) {
-                    columnNames.add(columnName.asText());
+            columnNames = columnNamesForSchema(tableSchema);
+        }
+        return columnNames;
+    }
+
+    public static List<Column> columnNamesForSchema(JsonNode tableSchema) {
+        List<Column> columnNames = new ArrayList<Column>();
+        final JsonNode columns = tableSchema.get("columns");
+        for (JsonNode column : columns) {
+            final JsonNode columnName = column.get("name");
+            if (columnName != null) {
+                String dataTypeId = null;
+                final JsonNode dataType = column.get("datatype");
+                if (dataType.isValueNode()) {
+                    dataTypeId = dataType.asText();
+                } else {
+                    if (dataType.has("id")) {
+                        dataTypeId = dataType.get("id").asText();
+                    }
                 }
+                final Column col = new Column(columnName.asText(), dataTypeId == null ? "string" : dataTypeId);
+                col.setDataTypeFormat(dataType.has("format") ? dataType.get("format").asText() : null);
+                col.setDataTypeBase(dataType.has("base") ? dataType.get("base").asText() : null);
+                columnNames.add(col);
             }
         }
         return columnNames;
     }
 
+    static class Column {
+        private String name;
+        private String dataTypeId;
+        private String dataTypeFormat;
+        private String dataTypeBase;
+
+        Column(String name, String dataTypeId) {
+            this.name = name;
+            this.dataTypeId = dataTypeId;
+        }
+
+        public String getDataTypeId() {
+            return dataTypeId;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+
+        public String getDataTypeFormat() {
+            return dataTypeFormat;
+        }
+
+        public void setDataTypeFormat(String dataTypeFormat) {
+            this.dataTypeFormat = dataTypeFormat;
+        }
+
+        public String getDataTypeBase() {
+            return dataTypeBase;
+        }
+
+        public void setDataTypeBase(String dataTypeBase) {
+            this.dataTypeBase = dataTypeBase;
+        }
+    }
+
+    private class InteractionListenerProxy implements InteractionListener {
+        final InteractionListenerNeo4j interactionListenerNeo4j;
+        private final String baseUrl;
+        private final JsonNode config;
+
+        public InteractionListenerProxy(String baseUrl, JsonNode config, InteractionListenerNeo4j interactionListenerNeo4j) {
+            this.baseUrl = baseUrl;
+            this.config = config;
+            this.interactionListenerNeo4j = interactionListenerNeo4j;
+        }
+
+        @Override
+        public void newLink(final Map<String, String> properties) throws StudyImporterException {
+            final String dataSourceCitation = generateSourceCitation(baseUrl, config);
+            final JsonNode nullValues = getConfig().get("null");
+            removeNulls(properties, parseNullValues(nullValues));
+
+            final HashMap<String, String> enrichedProperties = new HashMap<String, String>() {
+                {
+                    putAll(properties);
+                    put(StudyImporterForTSV.STUDY_SOURCE_CITATION, dataSourceCitation);
+                    final String referenceCitation = generateReferenceCitation(properties);
+                    put(StudyImporterForTSV.REFERENCE_ID, dataSourceCitation + referenceCitation);
+                    put(StudyImporterForTSV.REFERENCE_CITATION, referenceCitation);
+
+                    if (!properties.containsKey(StudyImporterForTSV.SOURCE_TAXON_NAME)) {
+                        put(StudyImporterForTSV.SOURCE_TAXON_NAME, generateSourceTaxonName(properties));
+                    }
+                    if (!properties.containsKey(StudyImporterForTSV.TARGET_TAXON_NAME)) {
+                        put(StudyImporterForTSV.TARGET_TAXON_NAME, generateTargetTaxonName(properties));
+                    }
+
+                    InteractType type = generateInteractionType(properties);
+                    if (type == null) {
+                        type = defaultInteractionType(config);
+                    }
+
+                    if (type != null) {
+                        put(StudyImporterForTSV.INTERACTION_TYPE_ID, type.getIRI());
+                        put(StudyImporterForTSV.INTERACTION_TYPE_NAME, type.name());
+                    }
+                }
+            };
+            interactionListenerNeo4j.newLink(enrichedProperties);
+        }
+    }
 }

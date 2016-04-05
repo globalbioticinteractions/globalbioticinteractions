@@ -14,7 +14,8 @@ public enum TaxonomyProvider {
     BIODIVERSITY_AUSTRALIA("urn:lsid:biodiversity.org.au:apni.taxon:"),
     INTERIM_REGISTER_OF_MARINE_AND_NONMARINE_GENERA("IRMNG:"),
     INDEX_FUNGORUM("IF:"),
-    OPEN_TREE_OF_LIFE("OTT:");
+    OPEN_TREE_OF_LIFE("OTT:"),
+    NATIONAL_OCEANOGRAPHIC_DATA_CENTER("NODC:");
 
     private final String idPrefix;
 
