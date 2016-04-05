@@ -47,4 +47,11 @@ public class NODCTaxonParser implements Iterator<Fun.Tuple2<String, String>> {
                 TaxonomyProvider.NATIONAL_OCEANOGRAPHIC_DATA_CENTER.getIdPrefix() + nodcCode.replace("00", ""),
                 TaxonomyProvider.ID_PREFIX_ITIS + tsn.replaceFirst("^0+", ""));
     }
+
+    @Override
+    public void remove() {
+            throw new UnsupportedOperationException("remove");
+        }
+
+
 }
