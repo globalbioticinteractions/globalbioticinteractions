@@ -43,7 +43,7 @@
                         <argument>-Xmx4G</argument>
                         <argument>-Dshapefiles.dir=${shapefiles.dir}</argument>
                         <argument>-Dott.file=${shapefiles.dir}/ott/taxonomy.tsv</argument>
-                        <argument>-Dnocb.file=${shapefiles.dir}/0050418/1.1/data/0-data/NODC_TaxonomicCode_V8_CD-ROM/TAXBRIEF.DAT</argument>
+                        <argument>-Dnodc.file=${shapefiles.dir}/0050418/1.1/data/0-data/NODC_TaxonomicCode_V8_CD-ROM/TAXBRIEF.DAT</argument>
                         <argument>-classpath</argument>
                         <argument>
                             ${project.build.directory}/eol-globi-data-tool-${globi.tool.version}-jar-with-dependencies.jar
