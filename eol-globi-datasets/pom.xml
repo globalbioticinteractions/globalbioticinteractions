@@ -261,11 +261,19 @@
                                             <overWrite>false</overWrite>
                                             <outputDirectory>${shapefiles.dir}</outputDirectory>
                                         </artifactItem>
+                                        <!--<artifactItem>-->
+                                            <!--<groupId>${project.groupId}</groupId>-->
+                                            <!--<artifactId>${project.artifactId}</artifactId>-->
+                                            <!--<version>${globi.taxa.version}</version>-->
+                                            <!--<classifier>taxa</classifier>-->
+                                            <!--<type>tar.gz</type>-->
+                                            <!--<overWrite>false</overWrite>-->
+                                            <!--<outputDirectory>${shapefiles.dir}/taxa</outputDirectory>-->
+                                        <!--</artifactItem>-->
                                         <artifactItem>
-                                            <groupId>${project.groupId}</groupId>
-                                            <artifactId>${project.artifactId}</artifactId>
-                                            <version>${globi.taxa.version}</version>
-                                            <classifier>taxa</classifier>
+                                            <groupId>org.eol.globi.</groupId>
+                                            <artifactId>taxon-cache</artifactId>
+                                            <version>0.1</version>
                                             <type>tar.gz</type>
                                             <overWrite>false</overWrite>
                                             <outputDirectory>${shapefiles.dir}/taxa</outputDirectory>
