@@ -271,7 +271,7 @@
                                             <!--<outputDirectory>${shapefiles.dir}/taxa</outputDirectory>-->
                                         <!--</artifactItem>-->
                                         <artifactItem>
-                                            <groupId>org.eol.globi.</groupId>
+                                            <groupId>org.eol.globi</groupId>
                                             <artifactId>taxon-cache</artifactId>
                                             <version>0.1</version>
                                             <type>tar.gz</type>
