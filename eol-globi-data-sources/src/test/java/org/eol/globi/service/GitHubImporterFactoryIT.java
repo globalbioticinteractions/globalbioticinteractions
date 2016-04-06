@@ -85,7 +85,6 @@ public class GitHubImporterFactoryIT {
         assertThat(importer, is(instanceOf(StudyImporterForMetaTable.class)));
         final JsonNode config = ((StudyImporterForMetaTable) importer).getConfig();
         assertThat(config, is(notNullValue()));
-        assertThat(config.get("interactionTypeId").asText(), is ("http://purl.obolibrary.org/obo/RO_0002470"));
     }
 
 }

@@ -1,6 +1,8 @@
 package org.eol.globi.data;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.LocationNode;
 import org.eol.globi.domain.Specimen;
@@ -33,6 +35,7 @@ import static org.eol.globi.data.StudyImporterForTSV.TARGET_TAXON_ID;
 import static org.eol.globi.data.StudyImporterForTSV.TARGET_TAXON_NAME;
 
 class InteractionListenerNeo4j implements InteractionListener {
+    private final Log LOG = LogFactory.getLog(InteractionListenerNeo4j.class);
 
     private final NodeFactory nodeFactory;
     private final GeoNamesService geoNamesService;
@@ -74,6 +77,7 @@ class InteractionListenerNeo4j implements InteractionListener {
             }
             if (type == null) {
                 study.appendLogMessage("unsupported interaction type id [" + interactionTypeId + "]", Level.WARNING);
+                LOG.info("no interaction type found, skipping");
             } else {
                 Specimen source = nodeFactory.createSpecimen(study, sourceTaxonName, sourceTaxonId);
                 setBasisOfRecordIfAvailable(link, source);

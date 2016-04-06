@@ -60,7 +60,7 @@ public class StudyImporterForMetaTable extends BaseStudyImporter {
     public Study importStudy() throws StudyImporterException {
         try {
             for (JsonNode table : collectTables(getConfig())) {
-                final InteractionListener listener = new InteractionListenerProxy(getBaseUrl(), table, new InteractionListenerNeo4j(nodeFactory, getGeoNamesService(), getLogger()));
+                final InteractionListener listener = new TableInteractionListenerProxy(getBaseUrl(), table, new InteractionListenerNeo4j(nodeFactory, getGeoNamesService(), getLogger()));
                 importTable(listener, new TableParserFactoryImpl(), table);
             }
         } catch (IOException e) {
@@ -92,7 +92,7 @@ public class StudyImporterForMetaTable extends BaseStudyImporter {
                     columnsFromExternalSchema(tableSchema) :
                     columnNamesForMetaTable(table);
             final CSVParse csvParse = tableFactory.createParser(table);
-            importAll(interactionListener, columnNames, csvParse);
+            importAll(interactionListener, columnNames, csvParse, table);
         }
     }
 
@@ -103,7 +103,7 @@ public class StudyImporterForMetaTable extends BaseStudyImporter {
     }
 
 
-    private List<String> parseNullValues(JsonNode nullValues) {
+    static private List<String> parseNullValues(JsonNode nullValues) {
         final List<String> nullValueArray = new ArrayList<String>();
         if (nullValues != null) {
             if (nullValues.isArray()) {
@@ -117,7 +117,7 @@ public class StudyImporterForMetaTable extends BaseStudyImporter {
         return nullValueArray;
     }
 
-    public void removeNulls(Map<String, String> properties, List<String> nullValueArray) {
+    static public void removeNulls(Map<String, String> properties, List<String> nullValueArray) {
         List<String> nullKeys = new ArrayList<String>();
         for (Map.Entry<String, String> entry : properties.entrySet()) {
             if (nullValueArray.contains(StringUtils.trim(entry.getValue()))) {
@@ -206,7 +206,7 @@ public class StudyImporterForMetaTable extends BaseStudyImporter {
                 : null;
     }
 
-    private InteractType defaultInteractionType(JsonNode config) {
+    static private InteractType defaultInteractionType(JsonNode config) {
         final JsonNode interactionTypeId = config.get(StudyImporterForTSV.INTERACTION_TYPE_ID);
         return interactionTypeId == null ? null : InteractType.typeOf(interactionTypeId.asText());
     }
@@ -221,7 +221,7 @@ public class StudyImporterForMetaTable extends BaseStudyImporter {
 
         final JsonNode url = config.get("url");
         if (url == null) {
-            throw new StudyImporterException("missing citation, please define [url] in [" + baseUrl + "]");
+            throw new StudyImporterException("missing resource url, please define [url] in [" + baseUrl + "]");
         }
 
         return citation.asText() + " . " + ReferenceUtil.createLastAccessedString(url.asText());
@@ -246,19 +246,30 @@ public class StudyImporterForMetaTable extends BaseStudyImporter {
 
     public static void importAll(InteractionListener interactionListener,
                                  List<Column> columnNames,
-                                 CSVParse csvParse) throws IOException, StudyImporterException {
+                                 CSVParse csvParse, JsonNode config) throws IOException, StudyImporterException {
         String[] line;
         while ((line = csvParse.getLine()) != null) {
             Map<String, String> mappedLine = new HashMap<String, String>();
             if (line.length != columnNames.size()) {
                 throw new StudyImporterException("read [" + line.length + "] columns, but found [" + columnNames.size() + "] column definitions.");
             }
+            final JsonNode nullValues = config.get("null");
+            final List<String> nullValueArray = parseNullValues(nullValues);
+
             for (int i = 0; i < line.length; i++) {
-                final String value = line[i];
+                final String value = nullValueArray.contains(line[i]) ? null : line[i];
                 final Column column = columnNames.get(i);
                 mappedLine.put(column.getName(), parseValue(value, column));
             }
+            setInteractionType(mappedLine, defaultInteractionType(config));
             interactionListener.newLink(mappedLine);
+        }
+    }
+
+    static public void setInteractionType(Map<String, String> properties, InteractType type) {
+        if (type != null) {
+            properties.put(StudyImporterForTSV.INTERACTION_TYPE_ID, type.getIRI());
+            properties.put(StudyImporterForTSV.INTERACTION_TYPE_NAME, type.getLabel());
         }
     }
 
@@ -274,7 +285,7 @@ public class StudyImporterForMetaTable extends BaseStudyImporter {
                         : DateTimeFormat.fullDateTime();
                 convertedValue = dateTimeFormatter
                         .parseDateTime(value)
-                        .toString(ISODateTimeFormat.basicDateTime().withZoneUTC());
+                        .toString(ISODateTimeFormat.dateTime().withZoneUTC());
             } else {
                 convertedValue = value;
             }
@@ -376,50 +387,4 @@ public class StudyImporterForMetaTable extends BaseStudyImporter {
         }
     }
 
-    private class InteractionListenerProxy implements InteractionListener {
-        final InteractionListenerNeo4j interactionListenerNeo4j;
-        private final String baseUrl;
-        private final JsonNode config;
-
-        public InteractionListenerProxy(String baseUrl, JsonNode config, InteractionListenerNeo4j interactionListenerNeo4j) {
-            this.baseUrl = baseUrl;
-            this.config = config;
-            this.interactionListenerNeo4j = interactionListenerNeo4j;
-        }
-
-        @Override
-        public void newLink(final Map<String, String> properties) throws StudyImporterException {
-            final String dataSourceCitation = generateSourceCitation(baseUrl, config);
-            final JsonNode nullValues = getConfig().get("null");
-            removeNulls(properties, parseNullValues(nullValues));
-
-            final HashMap<String, String> enrichedProperties = new HashMap<String, String>() {
-                {
-                    putAll(properties);
-                    put(StudyImporterForTSV.STUDY_SOURCE_CITATION, dataSourceCitation);
-                    final String referenceCitation = generateReferenceCitation(properties);
-                    put(StudyImporterForTSV.REFERENCE_ID, dataSourceCitation + referenceCitation);
-                    put(StudyImporterForTSV.REFERENCE_CITATION, referenceCitation);
-
-                    if (!properties.containsKey(StudyImporterForTSV.SOURCE_TAXON_NAME)) {
-                        put(StudyImporterForTSV.SOURCE_TAXON_NAME, generateSourceTaxonName(properties));
-                    }
-                    if (!properties.containsKey(StudyImporterForTSV.TARGET_TAXON_NAME)) {
-                        put(StudyImporterForTSV.TARGET_TAXON_NAME, generateTargetTaxonName(properties));
-                    }
-
-                    InteractType type = generateInteractionType(properties);
-                    if (type == null) {
-                        type = defaultInteractionType(config);
-                    }
-
-                    if (type != null) {
-                        put(StudyImporterForTSV.INTERACTION_TYPE_ID, type.getIRI());
-                        put(StudyImporterForTSV.INTERACTION_TYPE_NAME, type.name());
-                    }
-                }
-            };
-            interactionListenerNeo4j.newLink(enrichedProperties);
-        }
-    }
 }

@@ -87,6 +87,8 @@ public class StudyImporterForMetaTableIT {
         assertThat(links.size(), is(12));
 
         final Map<String, String> firstLine = links.get(0);
+        assertThat(firstLine.get(StudyImporterForTSV.INTERACTION_TYPE_ID), is("http://purl.obolibrary.org/obo/RO_0002470"));
+        assertThat(firstLine.get(StudyImporterForTSV.INTERACTION_TYPE_NAME), is("eats"));
         assertThat(firstLine.get(StudyImporterForTSV.TARGET_TAXON_ID), is(nullValue()));
         assertThat(firstLine.get(StudyImporterForTSV.TARGET_TAXON_NAME), is("Rocks"));
         assertThat(firstLine.get(StudyImporterForTSV.SOURCE_TAXON_ID), is("NODC:8791030401"));

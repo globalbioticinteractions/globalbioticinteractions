@@ -6,6 +6,7 @@ import org.eol.globi.service.GeoNamesService;
 import org.eol.globi.util.NodeUtil;
 import org.hamcrest.Matchers;
 import org.junit.Test;
+import org.neo4j.graphdb.Relationship;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -23,7 +24,7 @@ import static org.junit.internal.matchers.IsCollectionContaining.hasItem;
 public class StudyImporterForGitHubDataIT extends GraphDBTestCase {
 
     @Test
-    public void importAll() throws StudyImporterException, NodeFactoryException {
+    public void importAll() throws StudyImporterException {
         StudyImporterForGitHubData importer = new StudyImporterForGitHubData(new ParserFactoryImpl(), nodeFactory);
         final List<String> geoTerms = new ArrayList<String>();
         importer.setGeoNamesService(new GeoNamesService() {
@@ -69,7 +70,7 @@ public class StudyImporterForGitHubDataIT extends GraphDBTestCase {
     }
 
     @Test
-    public void importWeidinger() throws StudyImporterException, NodeFactoryException {
+    public void importWeidinger() throws StudyImporterException {
         StudyImporterForGitHubData importer = new StudyImporterForGitHubData(new ParserFactoryImpl(), nodeFactory);
         importer.importData("millerse/Weidinger-et-al.-2009");
         List<Study> allStudies = NodeUtil.findAllStudies(getGraphDb());
@@ -79,7 +80,7 @@ public class StudyImporterForGitHubDataIT extends GraphDBTestCase {
     }
 
     @Test
-    public void importSmithsonian() throws StudyImporterException, NodeFactoryException {
+    public void importSmithsonian() throws StudyImporterException {
         StudyImporterForGitHubData importer = new StudyImporterForGitHubData(new ParserFactoryImpl(), nodeFactory);
         importer.importData("millerse/Smithsonian-Repository-Interactions");
         List<Study> allStudies = NodeUtil.findAllStudies(getGraphDb());
@@ -98,7 +99,7 @@ public class StudyImporterForGitHubDataIT extends GraphDBTestCase {
     }
 
     @Test
-    public void importSeltmann() throws StudyImporterException, NodeFactoryException {
+    public void importSeltmann() throws StudyImporterException {
         StudyImporterForGitHubData importer = new StudyImporterForGitHubData(new ParserFactoryImpl(), nodeFactory);
         importer.importData("globalbioticinteractions/digital-bee-collections-network");
         List<Study> allStudies = NodeUtil.findAllStudies(getGraphDb());
@@ -107,7 +108,7 @@ public class StudyImporterForGitHubDataIT extends GraphDBTestCase {
     }
 
     @Test
-    public void importMillerSE() throws StudyImporterException, NodeFactoryException {
+    public void importMillerSE() throws StudyImporterException {
         StudyImporterForGitHubData importer = new StudyImporterForGitHubData(new ParserFactoryImpl(), nodeFactory);
         importer.importData("millerse/Bird-Parasite");
         List<Study> allStudies = NodeUtil.findAllStudies(getGraphDb());
@@ -116,7 +117,7 @@ public class StudyImporterForGitHubDataIT extends GraphDBTestCase {
     }
 
     @Test
-    public void importMillerSECarribean() throws StudyImporterException, NodeFactoryException {
+    public void importMillerSECarribean() throws StudyImporterException {
         StudyImporterForGitHubData importer = new StudyImporterForGitHubData(new ParserFactoryImpl(), nodeFactory);
         importer.importData("millerse/Caribbean-food-web");
         List<Study> allStudies = NodeUtil.findAllStudies(getGraphDb());
@@ -125,7 +126,7 @@ public class StudyImporterForGitHubDataIT extends GraphDBTestCase {
     }
 
     @Test
-    public void importJSONLD() throws StudyImporterException, NodeFactoryException {
+    public void importJSONLD() throws StudyImporterException {
         StudyImporterForGitHubData importer = new StudyImporterForGitHubData(new ParserFactoryImpl(), nodeFactory);
         importer.importData("globalbioticinteractions/jsonld-template-dataset");
         List<Study> allStudies = NodeUtil.findAllStudies(getGraphDb());
@@ -134,7 +135,7 @@ public class StudyImporterForGitHubDataIT extends GraphDBTestCase {
     }
 
     @Test
-    public void importGoMexSI() throws StudyImporterException, NodeFactoryException {
+    public void importGoMexSI() throws StudyImporterException {
         StudyImporterForGitHubData importer = new StudyImporterForGitHubData(new ParserFactoryImpl(), nodeFactory);
 
         importer.importData("gomexsi/interaction-data");
@@ -142,6 +143,23 @@ public class StudyImporterForGitHubDataIT extends GraphDBTestCase {
         for (Study study : allStudies) {
             assertThat(study.getSource(), is(Matchers.notNullValue()));
         }
+    }
+
+    @Test
+    public void importREEM() throws StudyImporterException {
+        StudyImporterForGitHubData importer = new StudyImporterForGitHubData(new ParserFactoryImpl(), nodeFactory);
+
+        importer.importData("globalbioticinteractions/noaa-reem");
+        List<Study> allStudies = NodeUtil.findAllStudies(getGraphDb());
+        assertThat(allStudies.size(), is(3));
+        int specimenCount = 0;
+        for (Study study : allStudies) {
+            final Iterable<Relationship> specimens = study.getSpecimens();
+            for (Relationship specimen : specimens) {
+                specimenCount++;
+            }
+        }
+        assertThat(specimenCount > 0, is(true));
     }
 
     @Test
