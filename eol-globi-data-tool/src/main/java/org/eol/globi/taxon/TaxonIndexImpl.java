@@ -24,6 +24,7 @@ public class TaxonIndexImpl implements TaxonIndex {
     private final Index<Node> taxons;
     private CorrectionService corrector;
     private PropertyEnricher enricher;
+    private boolean indexResolvedOnly;
 
     public TaxonIndexImpl(PropertyEnricher enricher, CorrectionService correctionService, GraphDatabaseService graphDbService) {
         this.enricher = enricher;
@@ -89,32 +90,38 @@ public class TaxonIndexImpl implements TaxonIndex {
         Taxon taxon = TaxonUtil.copy(origTaxon);
         taxon.setName(corrector.correct(origTaxon.getName()));
 
-        TaxonNode taxonNode = findTaxon(taxon);
-        while (taxonNode == null) {
+        TaxonNode indexedTaxon = findTaxon(taxon);
+        while (indexedTaxon == null) {
             try {
                 taxon = TaxonUtil.enrich(enricher, taxon);
             } catch (PropertyEnricherException e) {
                 throw new NodeFactoryException("failed to enrich taxon with name [" + taxon.getName() + "]", e);
             }
-            taxonNode = findTaxon(taxon);
-            if (taxonNode == null) {
+            indexedTaxon = findTaxon(taxon);
+            if (indexedTaxon == null) {
                 if (TaxonUtil.isResolved(taxon)) {
-                    taxonNode = createAndIndexTaxon(taxon);
+                    indexedTaxon = createAndIndexTaxon(taxon);
                 } else {
                     String truncatedName = NodeUtil.truncateTaxonName(taxon.getName());
                     if (truncatedName == null || StringUtils.length(truncatedName) < 3) {
-                        taxonNode = addNoMatchTaxon(origTaxon);
+                        if (indexResolvedOnly) {
+                            break;
+                        } else {
+                            indexedTaxon = addNoMatchTaxon(origTaxon);
+                        }
                     } else {
                         taxon = new TaxonImpl();
                         taxon.setName(truncatedName);
-                        taxonNode = findTaxonByName(taxon.getName());
+                        indexedTaxon = findTaxonByName(taxon.getName());
                     }
                 }
             }
         }
-        indexOriginalNameForTaxon(origTaxon.getName(), taxon, taxonNode);
-        indexOriginalExternalIdForTaxon(origTaxon.getExternalId(), taxon, taxonNode);
-        return taxonNode;
+        if (indexedTaxon != null) {
+            indexOriginalNameForTaxon(origTaxon.getName(), taxon, indexedTaxon);
+            indexOriginalExternalIdForTaxon(origTaxon.getExternalId(), taxon, indexedTaxon);
+        }
+        return indexedTaxon;
     }
 
     private TaxonNode findTaxon(Taxon taxon) throws NodeFactoryException {
@@ -176,7 +183,7 @@ public class TaxonIndexImpl implements TaxonIndex {
         Transaction transaction = graphDbService.beginTx();
         try {
             taxonNode = new TaxonNode(graphDbService.createNode(), taxon.getName());
-            addToIndeces((TaxonNode)TaxonUtil.copy(taxon, taxonNode), taxon.getName());
+            addToIndeces((TaxonNode) TaxonUtil.copy(taxon, taxonNode), taxon.getName());
             transaction.success();
         } finally {
             transaction.finish();
@@ -224,4 +231,11 @@ public class TaxonIndexImpl implements TaxonIndex {
     }
 
 
+    public void setIndexResolvedTaxaOnly(boolean indexResolvedOnly) {
+        this.indexResolvedOnly = indexResolvedOnly;
+    }
+
+    public boolean isIndexResolvedOnly() {
+        return indexResolvedOnly;
+    }
 }

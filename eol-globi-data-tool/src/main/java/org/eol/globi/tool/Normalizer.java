@@ -26,6 +26,7 @@ import org.eol.globi.service.EcoregionFinderProxy;
 import org.eol.globi.service.PropertyEnricherException;
 import org.eol.globi.taxon.TaxonCacheService;
 import org.eol.globi.taxon.CorrectionService;
+import org.eol.globi.taxon.TaxonIndexImpl;
 import org.eol.globi.util.HttpUtil;
 import org.neo4j.graphdb.GraphDatabaseService;
 
@@ -131,12 +132,16 @@ public class Normalizer {
         if (cmdLine == null || !cmdLine.hasOption(OPTION_SKIP_TAXON_CACHE)) {
             LOG.info("resolving names with taxon cache ...");
             final TaxonCacheService enricher = new TaxonCacheService("/taxa/taxonCache.csv.gz", "/taxa/taxonMap.csv.gz");
-            new NameResolver(graphService, enricher, new CorrectionService() {
+            TaxonIndexImpl index = new TaxonIndexImpl(enricher, new CorrectionService() {
                 @Override
                 public String correct(String taxonName) {
                     return taxonName;
                 }
-            }).resolve();
+            }, graphService);
+            index.setIndexResolvedTaxaOnly(true);
+
+            new NameResolver(graphService, index).resolve();
+
             enricher.shutdown();
             LOG.info("resolving names with taxon cache done.");
         } else {

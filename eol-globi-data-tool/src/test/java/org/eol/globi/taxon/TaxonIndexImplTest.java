@@ -18,7 +18,10 @@ import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.index.IndexHits;
 
 import java.util.Map;
+import java.util.TreeMap;
 
+import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertNotNull;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
@@ -169,6 +172,36 @@ public class TaxonIndexImplTest extends GraphDBTestCase {
 
         TaxonNode taxonMatch = taxonService.findTaxonByName("bla corrected");
         assertThat(taxonMatch.getName(), is("bla corrected"));
+    }
+
+    @Test
+    public void indexResolvedOnly() throws NodeFactoryException {
+        TaxonNode unresolvedTaxon = getIndex().getOrCreateTaxon(new TaxonImpl("not resolved"));
+        assertNotNull(unresolvedTaxon);
+        assertFalse(TaxonUtil.isResolved(unresolvedTaxon));
+
+        final TaxonIndexImpl indexResolvedOnly = getIndex();
+        indexResolvedOnly.setIndexResolvedTaxaOnly(true);
+        assertNull(indexResolvedOnly.getOrCreateTaxon("no resolving either"));
+    }
+
+    public TaxonIndexImpl getIndex() {
+        return new TaxonIndexImpl(new PropertyEnricher() {
+                    @Override
+                    public Map<String, String> enrich(Map<String, String> properties) throws PropertyEnricherException {
+                        return new TreeMap<String, String>(properties);
+                    }
+
+                    @Override
+                    public void shutdown() {
+
+                    }
+                }, new CorrectionService() {
+                    @Override
+                    public String correct(String taxonName) {
+                        return taxonName;
+                    }
+                }, getGraphDb());
     }
 
     @Test
