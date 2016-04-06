@@ -152,6 +152,9 @@ public class NodeFactoryImpl implements NodeFactory {
             if (StringUtils.isNotBlank(location.getFootprintWKT())) {
                 locations.add(node, LocationNode.FOOTPRINT_WKT, location.getFootprintWKT());
             }
+            if (StringUtils.isNotBlank(location.getLocality())) {
+                locations.add(node, LocationNode.LOCALITY, location.getLocality());
+            }
             transaction.success();
         } finally {
             transaction.finish();
