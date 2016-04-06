@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.HashMap;
 
-public class ExportTaxonMaps implements StudyExporter {
+public class ExportTaxonMap implements StudyExporter {
 
     @Override
     public void exportStudy(final Study study, Writer writer, boolean includeHeader) throws IOException {
@@ -20,6 +20,7 @@ public class ExportTaxonMaps implements StudyExporter {
                 "MATCH study-[:COLLECTED]->specimen-[:ORIGINALLY_DESCRIBED_AS]->origTaxon, specimen-[:CLASSIFIED_AS]->taxon " +
                 "WITH distinct(origTaxon.name) as origName, origTaxon.externalId? as origId, taxon " +
                 "MATCH taxon-[?:SAME_AS*0..1]->linkedTaxon " +
+                "WHERE has(linkedTaxon.path) " +
                 "RETURN origId as providedTaxonId" +
                 ", origName as providedTaxonName" +
                 ", linkedTaxon.externalId? as resolvedTaxonId" +

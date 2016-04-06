@@ -19,7 +19,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -65,8 +64,8 @@ public class GraphExporterImpl implements GraphExporter {
         } catch (IOException e) {
             throw new StudyImporterException("failed to create output dir [" + baseDir + "]", e);
         }
-        exportNames(studies, baseDir, new ExportTaxonMaps(), "taxa/taxonMap.csv.gz");
-        exportNames(studies, baseDir, new ExportTaxonNames(), "taxa/taxonCache.csv.gz");
+        exportNames(studies, baseDir, new ExportTaxonMap(), "taxa/taxonMap.csv.gz");
+        exportNames(studies, baseDir, new ExportTaxonCache(), "taxa/taxonCache.csv.gz");
         exportNames(studies, baseDir, new ExportUnmatchedTaxonNames(), "taxa/taxonUnmatched.csv");
     }
 

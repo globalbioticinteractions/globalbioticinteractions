@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.HashMap;
 
-public class ExportTaxonNames implements StudyExporter {
+public class ExportTaxonCache implements StudyExporter {
 
     @Override
     public void exportStudy(final Study study, Writer writer, boolean includeHeader) throws IOException {
@@ -16,8 +16,9 @@ public class ExportTaxonNames implements StudyExporter {
     }
 
     protected void doExport(Study study, Writer writer) {
-        String query = "START taxon = node:taxons('*:*')\n" +
-                "MATCH taxon-[?:SAME_AS*0..1]->linkedTaxon\n" +
+        String query = "START taxon = node:taxons('*:*') " +
+                "MATCH taxon-[?:SAME_AS*0..1]->linkedTaxon " +
+                "WHERE has(linkedTaxon.path) " +
                 "RETURN linkedTaxon.externalId? as id" +
                 ", linkedTaxon.name? as name" +
                 ", linkedTaxon.rank? as rank" +

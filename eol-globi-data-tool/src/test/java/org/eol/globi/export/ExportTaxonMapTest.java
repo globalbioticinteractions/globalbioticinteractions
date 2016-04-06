@@ -19,7 +19,7 @@ import java.util.Map;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
-public class ExportTaxonMapsTest extends GraphDBTestCase {
+public class ExportTaxonMapTest extends GraphDBTestCase {
 
     @Test
     public void exportOnePredatorTwoPrey() throws NodeFactoryException, IOException {
@@ -51,12 +51,15 @@ public class ExportTaxonMapsTest extends GraphDBTestCase {
         nodeFactory.createSpecimen(study, taxon);
         TaxonNode human = taxonIndex.getOrCreateTaxon(taxon);
         nodeFactory.createSpecimen(study, new TaxonImpl("Canis lupus"));
-        NodeUtil.connectTaxa(new TaxonImpl("Alternate Homo sapiens", "alt:123"), human, getGraphDb(), RelTypes.SAME_AS);
+        final TaxonImpl altTaxonWithPath = new TaxonImpl("Alternate Homo sapiens", "alt:123");
+        altTaxonWithPath.setPath("some path here");
+        NodeUtil.connectTaxa(altTaxonWithPath, human, getGraphDb(), RelTypes.SAME_AS);
+        NodeUtil.connectTaxa(new TaxonImpl("Alternate Homo sapiens no path", "alt:123"), human, getGraphDb(), RelTypes.SAME_AS);
         NodeUtil.connectTaxa(new TaxonImpl("Similar Homo sapiens", "alt:456"), human, getGraphDb(), RelTypes.SIMILAR_TO);
         resolveNames();
 
         StringWriter writer = new StringWriter();
-        new ExportTaxonMaps().exportStudy(study, writer, true);
+        new ExportTaxonMap().exportStudy(study, writer, true);
         assertThat(writer.toString(), is("providedTaxonId,providedTaxonName,resolvedTaxonId,resolvedTaxonName" +
                 "\n\"\",Homo sapiens,homoSapiensId,Homo sapiens" +
                 "\n\"\",Homo sapiens,alt:123,Alternate Homo sapiens" +
