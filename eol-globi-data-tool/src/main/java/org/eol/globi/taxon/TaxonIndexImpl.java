@@ -98,7 +98,7 @@ public class TaxonIndexImpl implements TaxonIndex {
             }
             taxonNode = findTaxon(taxon);
             if (taxonNode == null) {
-                if (TaxonMatchValidator.isResolved(taxon)) {
+                if (TaxonUtil.isResolved(taxon)) {
                     taxonNode = createAndIndexTaxon(taxon);
                 } else {
                     String truncatedName = NodeUtil.truncateTaxonName(taxon.getName());

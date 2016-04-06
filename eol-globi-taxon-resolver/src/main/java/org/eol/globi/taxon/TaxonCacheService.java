@@ -103,7 +103,7 @@ public class TaxonCacheService implements PropertyEnricher {
                     .createTreeMap("taxonCacheById")
                     .pumpPresort(100000)
                     .pumpIgnoreDuplicates()
-                    .pumpSource(createTaxonCacheSource(taxonCacheResource, new LineSkipper() {
+                    .pumpSource(taxonCacheIterator(taxonCacheResource, new LineSkipper() {
                         @Override
                         public boolean shouldSkipLine(LabeledCSVParser parser) {
                             final Taxon taxon = TaxonCacheParser.parseLine(parser);
@@ -122,7 +122,7 @@ public class TaxonCacheService implements PropertyEnricher {
         try {
             providedToResolvedMap = db
                     .createTreeMap("taxonMappingById")
-                    .pumpSource(createTaxonMappingSource(taxonMapResource, new UnresolvedLineSkipper()))
+                    .pumpSource(taxonMapIterator(taxonMapResource, new UnresolvedLineSkipper()))
                     .pumpPresort(100000)
                     .pumpIgnoreDuplicates()
                     .keySerializer(BTreeKeySerializer.STRING)
@@ -165,7 +165,7 @@ public class TaxonCacheService implements PropertyEnricher {
         }
     }
 
-    public static Iterator<Fun.Tuple2<String, String>> createTaxonMappingSource(final String resource, final LineSkipper skipper) throws IOException {
+    public static Iterator<Fun.Tuple2<String, String>> taxonMapIterator(final String resource, final LineSkipper skipper) throws IOException {
         return new Iterator<Fun.Tuple2<String, String>>() {
             private BufferedReader reader = createBufferedReader(resource);
             private final LabeledCSVParser labeledCSVParser = CSVUtil.createLabeledCSVParser(reader);
@@ -227,7 +227,7 @@ public class TaxonCacheService implements PropertyEnricher {
         return isNonEmptyValue(value) ? value : PropertyAndValueDictionary.NO_MATCH;
     }
 
-    static public Iterator<Fun.Tuple2<String, Map<String, String>>> createTaxonCacheSource(final String resource, final LineSkipper skipper) throws IOException {
+    static public Iterator<Fun.Tuple2<String, Map<String, String>>> taxonCacheIterator(final String resource, final LineSkipper skipper) throws IOException {
 
         return new Iterator<Fun.Tuple2<String, Map<String, String>>>() {
             private BufferedReader reader = createBufferedReader(resource);

@@ -155,4 +155,18 @@ public class TaxonUtil {
         }
         return taxonImage;
     }
+
+    public static boolean isResolved(Taxon taxon) {
+        return taxon != null
+                && StringUtils.isNotBlank(taxon.getPath())
+                && StringUtils.isNotBlank(taxon.getName())
+                && StringUtils.isNotBlank(taxon.getExternalId());
+    }
+
+    public static boolean isResolved(Map<String, String> properties) {
+        return properties != null
+                && StringUtils.isNotBlank(properties.get(NAME))
+                && StringUtils.isNotBlank(properties.get(EXTERNAL_ID))
+                && StringUtils.isNotBlank(properties.get(PATH));
+    }
 }

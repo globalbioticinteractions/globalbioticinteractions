@@ -80,8 +80,8 @@ public class TaxonEnricherImplIT extends GraphDBTestCase {
     @Test
     public void zikaVirus() throws IOException, NodeFactoryException {
         TaxonNode taxon = taxonIndex.getOrCreateTaxon("Zika virus (ZIKV)", "EOL:541190");
-        assertThat(taxon.getPath(), is("Viruses |  |  |  | Flaviviridae | Flavivirus | Zika virus"));
-
+        assertThat(taxon.getPath(), containsString("Flaviviridae"));
+        assertThat(TaxonUtil.isResolved(taxon), is(true));
     }
 
     @Test

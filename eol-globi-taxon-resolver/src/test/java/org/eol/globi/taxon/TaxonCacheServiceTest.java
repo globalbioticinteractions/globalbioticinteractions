@@ -123,6 +123,7 @@ public class TaxonCacheServiceTest {
         Map<String, String> enrich = taxonCacheService.enrich(properties);
         Taxon enrichedTaxon = TaxonUtil.mapToTaxon(enrich);
         assertThat(enrichedTaxon.getName(), is(nullValue()));
+        assertThat(enrichedTaxon.getPath(), is(nullValue()));
         assertThat(enrichedTaxon.getExternalId(), is("EOL:541190"));
         taxonCacheService.shutdown();
     }

@@ -14,6 +14,8 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.Random;
 
+import static junit.framework.Assert.assertNull;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
@@ -44,6 +46,5 @@ public class TaxonCacheServiceIT {
         final Map<String, String> enriched = cacheService.enrich(TaxonUtil.taxonToMap(taxon));
         assertThat(TaxonUtil.mapToTaxon(enriched).getPath(), is("Animalia | Chordata | Aves | Columbiformes | Columbidae | Turtur | Turtur tympanistria"));
         watch.stop();
-        //assertThat(watch.getTime(), is(10L));
     }
 }

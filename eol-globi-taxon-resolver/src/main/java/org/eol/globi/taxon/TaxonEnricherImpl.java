@@ -4,6 +4,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eol.globi.service.PropertyEnricher;
 import org.eol.globi.service.PropertyEnricherException;
+import org.eol.globi.service.TaxonUtil;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -24,7 +25,7 @@ public class TaxonEnricherImpl implements PropertyEnricher {
         for (PropertyEnricher service : services) {
             try {
                 enrichedProperties = enrichTaxonWithPropertyValue(errorCounts, service, properties);
-                if (TaxonMatchValidator.isResolved(enrichedProperties)) {
+                if (TaxonUtil.isResolved(enrichedProperties)) {
                     break;
                 }
             } catch (PropertyEnricherException e) {
