@@ -66,7 +66,7 @@ public class NCBIServiceTest {
     }
 
     @Test
-    public void lookupPathByUnmatchedId() throws PropertyEnricherException {
+    public void lookupPathByPreviouslyUnmatchedId() throws PropertyEnricherException {
         PropertyEnricher enricher = new NCBIService();
         HashMap<String, String> props = new HashMap<String, String>() {{
             put(PropertyAndValueDictionary.EXTERNAL_ID, "NCBI:235106");
@@ -74,7 +74,7 @@ public class NCBIServiceTest {
         Map<String, String> enrich = enricher.enrich(props);
         assertThat(enrich.get(PropertyAndValueDictionary.NAME), is("Influenza A virus (A/Taiwan/0562/1995(H1N1))"));
         assertThat(enrich.get(PropertyAndValueDictionary.PATH), containsString("Influenzavirus"));
-        assertThat(enrich.get(PropertyAndValueDictionary.EXTERNAL_ID), is(nullValue()));
+        assertThat(enrich.get(PropertyAndValueDictionary.EXTERNAL_ID), is("NCBI:235106"));
     }
 
 
