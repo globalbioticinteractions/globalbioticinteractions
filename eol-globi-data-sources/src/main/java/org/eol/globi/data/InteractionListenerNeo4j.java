@@ -76,8 +76,8 @@ class InteractionListenerNeo4j implements InteractionListener {
                 study.setCitationWithTx(referenceCitation);
             }
             if (type == null) {
-                study.appendLogMessage("unsupported interaction type id [" + interactionTypeId + "]", Level.WARNING);
-                LOG.info("no interaction type found, skipping");
+                final String msg = "unsupported interaction type id [" + interactionTypeId + "]";
+                study.appendLogMessage(msg, Level.WARNING);
             } else {
                 Specimen source = nodeFactory.createSpecimen(study, sourceTaxonName, sourceTaxonId);
                 setBasisOfRecordIfAvailable(link, source);
