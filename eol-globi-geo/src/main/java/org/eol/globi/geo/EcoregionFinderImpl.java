@@ -135,7 +135,7 @@ public class EcoregionFinderImpl implements EcoregionFinder {
     private URL getDataStoreURLForShapeFile(String shapeFile) {
 
         try {
-            URI resourceURI = ResourceUtil.inShapeFileDir(shapeFile);
+            URI resourceURI = ResourceUtil.fromShapefileDir(shapeFile);
 
             if (null == resourceURI) {
                 resourceURI = EcoregionFinderFactoryImpl.class.getResource(shapeFile).toURI();

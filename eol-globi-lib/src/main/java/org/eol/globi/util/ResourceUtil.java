@@ -23,7 +23,7 @@ public class ResourceUtil {
     private static final Log LOG = LogFactory.getLog(ResourceUtil.class);
 
     public static InputStream asInputStream(String resource, Class clazz) throws IOException {
-        InputStream is;
+        InputStream is = null;
         if (StringUtils.startsWith(resource, "http://")
                 || StringUtils.startsWith(resource, "https://")) {
             LOG.info("caching of [" + resource + "] started...");
@@ -31,15 +31,20 @@ public class ResourceUtil {
             LOG.info("caching of [" + resource + "] complete.");
         } else if (StringUtils.startsWith(resource, "file://")) {
             is = new FileInputStream(new File(URI.create(resource)));
-        } else {
+        } else if (clazz != null) {
             is = clazz.getResourceAsStream(resource);
-            if (is == null) {
-                final URI uri = inShapeFileDir(resource);
-                if (uri == null) {
-                    throw new IOException("failed to open study resource [" + resource + "]");
-                } else {
-                    is = new FileInputStream(new File(uri));
-                }
+        }
+        if (is == null) {
+            URI uri;
+            if (StringUtils.startsWith(resource, "/")) {
+                uri = new File(resource).toURI();
+            } else {
+                uri = fromShapefileDir(resource);
+            }
+            if (uri == null) {
+                throw new IOException("failed to open resource [" + resource + "]");
+            } else {
+                is = new FileInputStream(new File(uri));
             }
         }
         if (StringUtils.endsWith(resource, ".gz")) {
@@ -75,7 +80,7 @@ public class ResourceUtil {
         return new FileInputStream(tempFile);
     }
 
-    public static URI inShapeFileDir(String shapeFile) {
+    public static URI fromShapefileDir(String shapeFile) {
         URI resourceURI = null;
         String shapeFileDir = System.getProperty(SHAPEFILES_DIR);
         if (StringUtils.isNotBlank(shapeFileDir)) {
