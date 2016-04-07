@@ -51,7 +51,7 @@ public class NODCTaxonService implements PropertyEnricher {
     }
 
     private void lazyInit() throws PropertyEnricherException {
-        String nodcFilename = System.getProperty("nodc.url");
+        String nodcFilename = System.getProperty("nodc.file");
         if (StringUtils.isBlank(nodcFilename)) {
             throw new PropertyEnricherException("cannot initialize NODC enricher: failed to find NODC taxon file. Did you install the NODC taxonomy and set -DnodcFile=...?");
         }
