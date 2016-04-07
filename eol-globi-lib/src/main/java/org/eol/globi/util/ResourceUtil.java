@@ -35,12 +35,7 @@ public class ResourceUtil {
             is = clazz.getResourceAsStream(resource);
         }
         if (is == null) {
-            URI uri;
-            if (StringUtils.startsWith(resource, "/")) {
-                uri = new File(resource).toURI();
-            } else {
-                uri = fromShapefileDir(resource);
-            }
+            final URI uri = fromShapefileDir(resource);
             if (uri == null) {
                 throw new IOException("failed to open resource [" + resource + "]");
             } else {

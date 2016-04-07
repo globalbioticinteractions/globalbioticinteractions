@@ -138,7 +138,7 @@
                     <arguments>
                         <argument>-Xmx2G</argument>
                         <argument>-Dshapefiles.dir=${shapefiles.dir}</argument>
-                        <argument>-Dott.file=${shapefiles.dir}/ott/taxonomy.tsv</argument>
+                        <argument>-Dott.url=file://${shapefiles.dir}/ott/taxonomy.tsv</argument>
                         <argument>-classpath</argument>
                         <argument>
                             ${project.build.outputDirectory}${path.separator}${project.build.directory}/eol-globi-data-tool-${globi.tool.version}-jar-with-dependencies.jar

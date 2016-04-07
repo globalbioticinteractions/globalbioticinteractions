@@ -32,6 +32,8 @@ import org.neo4j.graphdb.GraphDatabaseService;
 
 import java.io.File;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -179,12 +181,14 @@ public class Normalizer {
             LOG.warn("Problem linking taxa using Global Names Resolver", e);
         }
 
-        String ottFile = System.getProperty("ott.file");
+        String ottUrl = System.getProperty("ott.url");
         try {
-            if (StringUtils.isNotBlank(ottFile)) {
-                new LinkerOpenTreeOfLife().link(graphService, new OpenTreeTaxonIndex(new File(ottFile).toURI().toURL()));
+            if (StringUtils.isNotBlank(ottUrl)) {
+                new LinkerOpenTreeOfLife().link(graphService, new OpenTreeTaxonIndex(new URI(ottUrl).toURL()));
             }
         } catch (MalformedURLException e) {
+            LOG.warn("failed to link against OpenTreeOfLife", e);
+        } catch (URISyntaxException e) {
             LOG.warn("failed to link against OpenTreeOfLife", e);
         }
 

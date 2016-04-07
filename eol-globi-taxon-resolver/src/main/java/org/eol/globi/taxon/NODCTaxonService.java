@@ -28,6 +28,7 @@ public class NODCTaxonService implements PropertyEnricher {
     private File cacheDir = new File("./nodc.mapdb");
     private BTreeMap<String, String> nodc2itis = null;
     private PropertyEnricher itisService = new ITISService();
+    private String nodcResourceUrl = System.getProperty("nodc.url");
 
     @Override
     public Map<String, String> enrich(Map<String, String> properties) throws PropertyEnricherException {
@@ -50,9 +51,18 @@ public class NODCTaxonService implements PropertyEnricher {
         return nodc2itis == null;
     }
 
+    public String getNodcResourceUrl() {
+        return nodcResourceUrl;
+    }
+
+    public void setNodcResourceUrl(String nodcResourceUrl) {
+        this.nodcResourceUrl = nodcResourceUrl;
+    }
+
+
     private void lazyInit() throws PropertyEnricherException {
-        String nodcFilename = System.getProperty("nodc.file");
-        if (StringUtils.isBlank(nodcFilename)) {
+        String nodcFilename = getNodcResourceUrl();
+        if (StringUtils.isBlank(nodcResourceUrl)) {
             throw new PropertyEnricherException("cannot initialize NODC enricher: failed to find NODC taxon file. Did you install the NODC taxonomy and set -DnodcFile=...?");
         }
         try {
