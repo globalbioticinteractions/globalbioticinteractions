@@ -110,6 +110,14 @@ public class NodeFactoryImplTest extends GraphDBTestCase {
 
         final LocationNode locationWithFootprintWKT = getNodeFactory().getOrCreateLocation(otherLocation);
         assertThat(locationWithFootprintWKT.getFootprintWKT(), is(expectedFootprintWKT));
+        assertThat(getNodeFactory().findLocation(otherLocation).getFootprintWKT(), is(expectedFootprintWKT));
+
+        final LocationImpl yetAnotherLocation = new LocationImpl(location.getAltitude(), location.getLongitude(), location.getLatitude(),
+                expectedFootprintWKT);
+        yetAnotherLocation.setLocality("this is my place");
+        getNodeFactory().getOrCreateLocation(yetAnotherLocation);
+
+        assertThat(getNodeFactory().findLocation(yetAnotherLocation).getLocality(), is("this is my place"));
     }
 
     @Test(expected = NodeFactoryException.class)

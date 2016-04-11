@@ -99,16 +99,19 @@ public class NodeFactoryImpl implements NodeFactory {
         for (Node node : matchingLocations) {
             final LocationNode foundLocation = new LocationNode(node);
 
-
             boolean altitudeMatches = foundLocation.getAltitude() == null && location.getAltitude() == null
                     || location.getAltitude() != null && location.getAltitude().equals(foundLocation.getAltitude());
 
             boolean footprintWKTMatches = foundLocation.getFootprintWKT() == null && location.getFootprintWKT() == null
                     || location.getFootprintWKT() != null && location.getFootprintWKT().equals(foundLocation.getFootprintWKT());
 
+            boolean localityMatches = foundLocation.getLocality() == null && location.getLocality() == null
+                    || location.getLocality() != null && location.getLocality().equals(foundLocation.getLocality());
+
             if (location.getLongitude().equals(foundLocation.getLongitude())
                     && altitudeMatches
-                    && footprintWKTMatches) {
+                    && footprintWKTMatches
+                    && localityMatches) {
                 matchingLocation = node;
                 break;
             }
