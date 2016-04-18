@@ -150,7 +150,7 @@ public enum InteractType implements RelType {
                 put(HYPERPARASITE_OF, Arrays.asList(PARASITE_OF, ATE, DAMAGES, HAS_HOST, LIVES_WITH, SYMBIONT_OF, INTERACTS_WITH));
                 put(ENDOPARASITE_OF, Arrays.asList(PARASITE_OF, LIVES_INSIDE_OF, HAS_HOST, ATE, DAMAGES, SYMBIONT_OF, INTERACTS_WITH));
                 put(ECTOPARASITE_OF, Arrays.asList(PARASITE_OF, LIVES_ON, ATE, HAS_HOST, DAMAGES, SYMBIONT_OF, INTERACTS_WITH));
-                put(POLLINATES, Arrays.asList(VISITS_FLOWERS_OF, ATE, HAS_HOST, SYMBIONT_OF, INTERACTS_WITH));
+                put(POLLINATES, Arrays.asList(VISITS_FLOWERS_OF, HAS_HOST, SYMBIONT_OF, INTERACTS_WITH));
                 put(VISITS_FLOWERS_OF, Arrays.asList(HAS_HOST, INTERACTS_WITH));
                 put(HOST_OF, Arrays.asList(SYMBIONT_OF, INTERACTS_WITH));
                 put(KLEPTOPARASITE_OF, Arrays.asList(INTERACTS_WITH));
