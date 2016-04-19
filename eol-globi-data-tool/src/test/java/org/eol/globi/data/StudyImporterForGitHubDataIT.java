@@ -3,6 +3,7 @@ package org.eol.globi.data;
 import org.eol.globi.domain.Study;
 import org.eol.globi.geo.LatLng;
 import org.eol.globi.service.GeoNamesService;
+import org.eol.globi.tool.NameResolver;
 import org.eol.globi.util.NodeUtil;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -129,6 +130,7 @@ public class StudyImporterForGitHubDataIT extends GraphDBTestCase {
     public void importJSONLD() throws StudyImporterException {
         StudyImporterForGitHubData importer = new StudyImporterForGitHubData(new ParserFactoryImpl(), nodeFactory);
         importer.importData("globalbioticinteractions/jsonld-template-dataset");
+        resolveNames();
         List<Study> allStudies = NodeUtil.findAllStudies(getGraphDb());
         assertThat(allStudies.size(), is(1));
         assertThat(taxonIndex.findTaxonById("NCBI:8782"), is(notNullValue()));
