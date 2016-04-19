@@ -86,7 +86,8 @@ public class CypherQueryBuilder {
     public static final String INTERACTION_POLLINATED_BY = InteractType.POLLINATED_BY.getLabel();
 
     public static final String INTERACTION_PATHOGEN_OF = InteractType.PATHOGEN_OF.getLabel();
-    public static final String INTERACTION_HAS_PATHOGEN = InteractType.HAS_PATHOGEN.getLabel();;
+    public static final String INTERACTION_HAS_PATHOGEN = InteractType.HAS_PATHOGEN.getLabel();
+    ;
 
     public static final String INTERACTION_VECTOR_OF = InteractType.VECTOR_OF.getLabel();
     public static final String INTERACTION_HAS_VECTOR = InteractType.HAS_VECTOR.getLabel();
@@ -109,40 +110,6 @@ public class CypherQueryBuilder {
     private static final String TARGET_TAXON_HTTP_PARAM_NAME = "targetTaxon";
 
     public static final String TAXON_HTTP_PARAM_NAME = "taxon";
-
-    private static final Map<String, InteractType> DIRECTIONAL_INTERACTION_TYPE_MAP = new TreeMap<String, InteractType>() {
-        {
-            put(INTERACTION_PREYS_ON, InteractType.PREYS_UPON);
-            put(INTERACTION_PREYED_UPON_BY, InteractType.PREYED_UPON_BY);
-            put(INTERACTION_EATS, InteractType.ATE);
-            put(INTERACTION_EATEN_BY, InteractType.EATEN_BY);
-
-            put(INTERACTION_KILLS, InteractType.KILLS);
-            put(INTERACTION_KILLED_BY, InteractType.KILLED_BY);
-
-            put(INTERACTION_VISITS_FLOWERS_OF, InteractType.VISITS_FLOWERS_OF);
-            put(INTERACTION_FLOWERS_VISITED_BY, InteractType.FLOWERS_VISITED_BY);
-
-            put(INTERACTION_POLLINATES, InteractType.POLLINATES);
-            put(INTERACTION_POLLINATED_BY, InteractType.POLLINATED_BY);
-
-            put(INTERACTION_PARASITE_OF, InteractType.PARASITE_OF);
-            put(INTERACTION_HAS_PARASITE, InteractType.HAS_PARASITE);
-
-            put(INTERACTION_PATHOGEN_OF, InteractType.PATHOGEN_OF);
-            put(INTERACTION_HAS_PATHOGEN, InteractType.HAS_PATHOGEN);
-            put(INTERACTION_HAS_VECTOR, InteractType.HAS_VECTOR);
-            put(INTERACTION_VECTOR_OF, InteractType.VECTOR_OF);
-            put(INTERACTION_HAS_DISPERSAL_VECTOR, InteractType.HAS_DISPERAL_VECTOR);
-            put(INTERACTION_DISPERSAL_VECTOR_OF, InteractType.DISPERSAL_VECTOR_OF);
-            put(INTERACTION_HOST_OF, InteractType.HOST_OF);
-            put(INTERACTION_HAS_HOST, InteractType.HAS_HOST);
-
-            put(INTERACTION_SYMBIONT_OF, InteractType.SYMBIONT_OF);
-
-            put(INTERACTION_INTERACTS_WITH, InteractType.INTERACTS_WITH);
-        }
-    };
 
     public static final Map<String, InteractionTypeExternal> INTERACTION_TYPE_INTERNAL_EXTERNAL_MAP = new TreeMap<String, InteractionTypeExternal>() {
         {
@@ -287,7 +254,7 @@ public class CypherQueryBuilder {
         if (isExactMatch) {
             if (isExternalId(name)) {
                 prefix = "externalId:";
-            } else  {
+            } else {
                 prefix = "name:";
             }
         }
@@ -772,10 +739,7 @@ public class CypherQueryBuilder {
     protected static String createInteractionTypeSelector(List<String> interactionTypeSelectors) {
         List<InteractType> cypherTypes = new ArrayList<InteractType>();
         for (String type : interactionTypeSelectors) {
-            if (DIRECTIONAL_INTERACTION_TYPE_MAP.containsKey(type)) {
-                InteractType interactType = DIRECTIONAL_INTERACTION_TYPE_MAP.get(type);
-                cypherTypes.addAll(InteractType.typesOf(interactType));
-            } else if (StringUtils.isNotBlank(type)) {
+            if (StringUtils.isNotBlank(type)) {
                 InteractType interactType = InteractType.typeOf(type);
                 if (interactType == null) {
                     throw new IllegalArgumentException("unsupported interaction type [" + type + "]");
@@ -825,7 +789,7 @@ public class CypherQueryBuilder {
 
     private static void appendNameWhereClause(StringBuilder query, String taxonLabel, List<String> taxonNames, String property) {
         query.append("(has(").append(taxonLabel).append("." + property + ") AND ");
-        query.append(taxonLabel).append("." + property +" IN ['").append(StringUtils.join(taxonNames, "','")).append("']) ");
+        query.append(taxonLabel).append("." + property + " IN ['").append(StringUtils.join(taxonNames, "','")).append("']) ");
     }
 
     private static boolean isExternalId(String taxonName) {

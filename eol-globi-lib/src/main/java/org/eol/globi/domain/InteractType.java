@@ -118,6 +118,8 @@ public enum InteractType implements RelType {
                 return interactType;
             } else if (StringUtils.equals(iri, interactType.name())) {
                 return interactType;
+            } else if (StringUtils.equals(iri, interactType.getLabel())) {
+                return interactType;
             }
         }
         return SYNONYMS.get(iri);

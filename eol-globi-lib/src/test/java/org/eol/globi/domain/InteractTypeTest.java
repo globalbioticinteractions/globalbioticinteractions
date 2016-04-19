@@ -56,6 +56,12 @@ public class InteractTypeTest {
         assertThat(typeOf("http://eol.org/schema/terms/FlowersVisitedBy"), is(FLOWERS_VISITED_BY));
         assertThat(typeOf("http://eol.org/schema/terms/VisitsFlowersOf"), is(VISITS_FLOWERS_OF));
         assertThat(typeOf("VISITS_FLOWERS_OF"), is(VISITS_FLOWERS_OF));
+
+        assertThat(typeOf("hasParasite"), is(HAS_PARASITE));
+
+        assertThat(typeOf("HAS_ECTOPARASITE"), is(HAS_ECTOPARASITE));
+        assertThat(typeOf("hasEctoparasite"), is(HAS_ECTOPARASITE));
+
     }
 
     @Test
