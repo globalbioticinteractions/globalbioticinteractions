@@ -40,9 +40,9 @@ public abstract class ExporterTaxa extends ExporterBase {
 
     private static void addHigherOrderTaxa(Map<String, String> properties, Map<String, Object> result, Map<String, String> rankMap) {
         if (result.containsKey("pathNames")) {
-            String[] names = StringUtils.split((String) result.get("pathNames"), "|");
+            String[] names = StringUtils.splitPreserveAllTokens((String) result.get("pathNames"), "|");
             if (result.containsKey("path")) {
-                String[] values = StringUtils.split((String) result.get("path"), "|");
+                String[] values = StringUtils.splitPreserveAllTokens((String) result.get("path"), "|");
                 if (values != null && names != null && values.length == names.length) {
                     for (int i = 0; i < values.length; i++) {
                         String colName = rankMap.get(StringUtils.lowerCase(StringUtils.trim(names[i])));

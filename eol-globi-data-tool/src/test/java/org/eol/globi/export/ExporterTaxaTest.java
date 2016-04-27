@@ -6,6 +6,7 @@ import org.junit.Test;
 import java.io.IOException;
 import java.util.HashMap;
 
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
@@ -37,6 +38,32 @@ public class ExporterTaxaTest {
             }
         };
         assertHigherOrdersPresent(result);
+    }
+
+    @Test
+    public void includeHigherOrderRanksMissingTaxa() throws NodeFactoryException, IOException {
+        HashMap<String, Object> result = new HashMap<String, Object>() {
+            {
+                put("rank", "Species");
+                put("pathNames", "| superkingdom | kingdom | phylum |  |  |  |  |  |  |  |  |  | order | family | genus | species");
+                put("path", "Cellular organisms | Eukaryota | Viridiplantae | Streptophyta | Streptophytina | Embryophyta | Tracheophyta | Euphyllophyta | Spermatophyta | Magnoliophyta | Mesangiospermae | Eudicotyledons | Stem eudicotyledons | Proteales | Proteaceae | Persoonia | Persoonia linearis");
+                put("scientificName", "Persoonia linearis");
+                put("taxonId", "EOL:2927271");
+            }
+        };
+        HashMap<String, String> rowFields = new HashMap<String, String>();
+        ExporterTaxa.resultsToRow(rowFields, result);
+
+        assertThat(rowFields.get(EOLDictionary.TAXON_ID), is("EOL:2927271"));
+        assertThat(rowFields.get(EOLDictionary.SCIENTIFIC_NAME), is("Persoonia linearis"));
+        assertThat(rowFields.get(EOLDictionary.TAXON_RANK), is("species"));
+        assertThat(rowFields.get(EOLDictionary.KINGDOM), is("Viridiplantae"));
+        assertThat(rowFields.get(EOLDictionary.PHYLUM), is("Streptophyta"));
+        assertThat(rowFields.get(EOLDictionary.CLASS), is(nullValue()));
+        assertThat(rowFields.get(EOLDictionary.ORDER), is("Proteales"));
+        assertThat(rowFields.get(EOLDictionary.FAMILY), is("Proteaceae"));
+        assertThat(rowFields.get(EOLDictionary.GENUS), is("Persoonia"));
+        assertThat(rowFields.get(EOLDictionary.FURTHER_INFORMATION_URL), is("http://eol.org/pages/2927271"));
     }
 
     public void assertHigherOrdersPresent(HashMap<String, Object> result) {
