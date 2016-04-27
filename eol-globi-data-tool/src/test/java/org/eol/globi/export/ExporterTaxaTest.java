@@ -22,6 +22,24 @@ public class ExporterTaxaTest {
                 put("taxonId", "EOL:1234");
             }
         };
+        assertHigherOrdersPresent(result);
+    }
+
+    @Test
+    public void includeHigherOrderRanksUpperCase() throws NodeFactoryException, IOException {
+        HashMap<String, Object> result = new HashMap<String, Object>() {
+            {
+                put("rank", "the taxon rank");
+                put("pathNames", "Kingdom | Phylum | Class | Order | Family | Genus");
+                put("path", "the kingdom | the phylum | the class | the order | the family | the genus");
+                put("scientificName", "Some namus");
+                put("taxonId", "EOL:1234");
+            }
+        };
+        assertHigherOrdersPresent(result);
+    }
+
+    public void assertHigherOrdersPresent(HashMap<String, Object> result) {
         HashMap<String, String> rowFields = new HashMap<String, String>();
         ExporterTaxa.resultsToRow(rowFields, result);
 

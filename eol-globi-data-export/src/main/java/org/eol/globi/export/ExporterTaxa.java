@@ -45,7 +45,7 @@ public abstract class ExporterTaxa extends ExporterBase {
                 String[] values = StringUtils.split((String) result.get("path"), "|");
                 if (values != null && names != null && values.length == names.length) {
                     for (int i = 0; i < values.length; i++) {
-                        String colName = rankMap.get(StringUtils.trim(names[i]));
+                        String colName = rankMap.get(StringUtils.lowerCase(StringUtils.trim(names[i])));
                         if (colName != null) {
                             properties.put(colName, StringUtils.trim(values[i]));
                         }
