@@ -128,4 +128,18 @@ public class ExternalIdUtil {
         }
         return StringUtils.join(nonBlanks, ". ").trim();
     }
+
+    public static String selectValue(Map<String, String> link, String[] candidateIdsInIncreasingPreference) {
+        String propertyName = null;
+        for (String candidateId : candidateIdsInIncreasingPreference) {
+            if (hasProperty(link, candidateId)) {
+                propertyName = candidateId;
+            }
+        }
+        return propertyName == null ? "" : link.get(propertyName);
+    }
+
+    public static boolean hasProperty(Map<String, String> link, String propertyName) {
+        return link.containsKey(propertyName) && org.apache.commons.lang.StringUtils.isNotBlank(link.get(propertyName));
+    }
 }

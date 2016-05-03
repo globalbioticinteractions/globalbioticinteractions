@@ -3,6 +3,8 @@ package org.eol.globi.data;
 import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.lang.StringUtils;
 import org.eol.globi.domain.Study;
+import org.eol.globi.util.CSVUtil;
+import org.eol.globi.util.ExternalIdUtil;
 
 import java.io.IOException;
 import java.util.Map;
@@ -65,20 +67,38 @@ public class StudyImporterForTSV extends BaseStudyImporter {
         while (parser.getLine() != null) {
             final Map<String, String> link = new TreeMap<String, String>();
             final String referenceDoi = StringUtils.replace(parser.getValueByLabel(REFERENCE_DOI), " ", "");
-            final String referenceCitation = parser.getValueByLabel(REFERENCE_CITATION);
-            link.put(REFERENCE_CITATION, referenceCitation);
-            link.put(REFERENCE_DOI, referenceDoi);
-            link.put(STUDY_SOURCE_CITATION, (sourceCitation == null ? "" : sourceCitation + ". ") + ReferenceUtil.createLastAccessedString(baseUrl + "/interactions.tsv"));
-            link.put(REFERENCE_ID, namespace + (StringUtils.isBlank(referenceDoi) ? referenceCitation : referenceDoi));
-            link.put(SOURCE_TAXON_ID, StringUtils.trimToNull(parser.getValueByLabel(SOURCE_TAXON_ID)));
-            link.put(SOURCE_TAXON_NAME, StringUtils.trim(parser.getValueByLabel(SOURCE_TAXON_NAME)));
-            link.put(TARGET_TAXON_ID, StringUtils.trimToNull(parser.getValueByLabel(TARGET_TAXON_ID)));
-            link.put(TARGET_TAXON_NAME, StringUtils.trim(parser.getValueByLabel(TARGET_TAXON_NAME)));
-            link.put(INTERACTION_TYPE_ID, StringUtils.trim(parser.getValueByLabel(INTERACTION_TYPE_ID)));
-            link.put(DECIMAL_LATITUDE, StringUtils.trim(parser.getValueByLabel(DECIMAL_LATITUDE)));
-            link.put(DECIMAL_LONGITUDE, StringUtils.trim(parser.getValueByLabel(DECIMAL_LONGITUDE)));
-            link.put(LOCALITY_ID, StringUtils.trim(parser.getValueByLabel(LOCALITY_ID)));
+            putNotBlank(link, REFERENCE_DOI, referenceDoi);
+            putNotBlank(link, REFERENCE_CITATION, CSVUtil.valueOrNull(parser, REFERENCE_CITATION));
+            putNotBlank(link, REFERENCE_URL, CSVUtil.valueOrNull(parser, REFERENCE_URL));
+            putNotBlank(link, STUDY_SOURCE_CITATION, (sourceCitation == null ? "" : sourceCitation + ". ") + ReferenceUtil.createLastAccessedString(baseUrl + "/interactions.tsv"));
+
+            putNotBlank(link, SOURCE_TAXON_ID, StringUtils.trimToNull(parser.getValueByLabel(SOURCE_TAXON_ID)));
+            putNotBlank(link, SOURCE_TAXON_NAME, StringUtils.trim(parser.getValueByLabel(SOURCE_TAXON_NAME)));
+            putNotBlank(link, TARGET_TAXON_ID, StringUtils.trimToNull(parser.getValueByLabel(TARGET_TAXON_ID)));
+            putNotBlank(link, TARGET_TAXON_NAME, StringUtils.trim(parser.getValueByLabel(TARGET_TAXON_NAME)));
+            putNotBlank(link, INTERACTION_TYPE_ID, StringUtils.trim(parser.getValueByLabel(INTERACTION_TYPE_ID)));
+            putNotBlank(link, DECIMAL_LATITUDE, StringUtils.trim(parser.getValueByLabel(DECIMAL_LATITUDE)));
+            putNotBlank(link, DECIMAL_LONGITUDE, StringUtils.trim(parser.getValueByLabel(DECIMAL_LONGITUDE)));
+            putNotBlank(link, LOCALITY_ID, StringUtils.trim(parser.getValueByLabel(LOCALITY_ID)));
+
+            attemptToGenerateReferencePropertiesIfMissing(namespace, link);
+
             interactionListenerNeo4j.newLink(link);
+        }
+    }
+
+    private void attemptToGenerateReferencePropertiesIfMissing(String namespace, Map<String, String> link) {
+        if (!ExternalIdUtil.hasProperty(link, REFERENCE_CITATION)) {
+            putNotBlank(link, REFERENCE_CITATION, generateReferenceCitation(link));
+        }
+        if (!ExternalIdUtil.hasProperty(link, REFERENCE_ID)) {
+            putNotBlank(link, REFERENCE_ID, namespace + generateReferenceId(link));
+        }
+    }
+
+    private void putNotBlank(Map<String, String> link, String key, String value) {
+        if (StringUtils.isNotBlank(value)) {
+            link.put(key, value);
         }
     }
 
@@ -89,5 +109,25 @@ public class StudyImporterForTSV extends BaseStudyImporter {
     public void setRepositoryName(String repositoryName) {
         this.repositoryName = repositoryName;
     }
+
+    protected static String generateReferenceId(Map<String, String> props) {
+            String[] candidateIdsInIncreasingPreference = {STUDY_SOURCE_CITATION,
+                    REFERENCE_CITATION,
+                    REFERENCE_URL,
+                    REFERENCE_DOI,
+                    REFERENCE_ID};
+            return ExternalIdUtil.selectValue(props, candidateIdsInIncreasingPreference);
+        }
+
+        protected static String generateReferenceCitation(Map<String, String> props) {
+            String[] candidateIdsInIncreasingPreference = {
+                    STUDY_SOURCE_CITATION,
+                    REFERENCE_ID,
+                    REFERENCE_URL,
+                    REFERENCE_DOI,
+                    REFERENCE_CITATION
+            };
+            return ExternalIdUtil.selectValue(props, candidateIdsInIncreasingPreference);
+        }
 
 }
