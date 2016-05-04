@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import static junit.framework.Assert.fail;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
@@ -70,6 +71,27 @@ public class NodeFactoryImplTest extends GraphDBTestCase {
         Study study = getNodeFactory().getOrCreateStudy("title", "some source", "some citation");
         assertThat(study.getSource(), is("some source"));
         assertThat(study.getCitation(), is("some citation"));
+        assertThat(study.getTitle(), is("title"));
+    }
+
+    @Test
+    public void createStudyDOIlookupCitationWithURL() throws NodeFactoryException {
+        getNodeFactory().setDoiResolver(new DOIResolver() {
+            @Override
+            public String findDOIForReference(String reference) throws IOException {
+                fail("should not call this");
+                return "bla";
+            }
+
+            @Override
+            public String findCitationForDOI(String doi) throws IOException {
+                fail("should not call this");
+                return "bla";
+            }
+        });
+        Study study = getNodeFactory().getOrCreateStudy("title", "some source", "http://bla");
+        assertThat(study.getSource(), is("some source"));
+        assertThat(study.getCitation(), is("http://bla"));
         assertThat(study.getTitle(), is("title"));
     }
 

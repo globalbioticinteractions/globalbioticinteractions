@@ -257,7 +257,7 @@ public class NodeFactoryImpl implements NodeFactory {
             study.setCitation(citation);
             if (doiResolver != null) {
                 try {
-                    if (StringUtils.isBlank(doi)) {
+                    if (StringUtils.isBlank(doi) && citationLikeString(citation)) {
                         doi = doiResolver.findDOIForReference(citation);
                     }
 
@@ -276,6 +276,10 @@ public class NodeFactoryImpl implements NodeFactory {
         }
 
         return study;
+    }
+
+    private boolean citationLikeString(String citation) {
+        return !StringUtils.startsWith(citation, "http://");
     }
 
     @Override
