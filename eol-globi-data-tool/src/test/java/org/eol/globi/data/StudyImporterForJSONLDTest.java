@@ -16,7 +16,7 @@ import static org.junit.Assert.assertThat;
 public class StudyImporterForJSONLDTest extends GraphDBTestCase {
 
     @Test
-    public void importStatic() throws StudyImporterException, NodeFactoryException, URISyntaxException {
+    public void importStatic() throws StudyImporterException, URISyntaxException {
         StudyImporter importer = new StudyImporterForJSONLD(null, nodeFactory) {
             {
                 setResourceUrl("globi-jsonld/globi-dataset.jsonld");
@@ -24,10 +24,10 @@ public class StudyImporterForJSONLDTest extends GraphDBTestCase {
         };
         importStudy(importer);
         List<Study> allStudies = NodeUtil.findAllStudies(getGraphDb());
-        for (Study allStudy : allStudies) {
-            assertThat(allStudy.getExternalId(), is("http://dx.doi.org/http://arctos.database.museum/guid/CUMV:Bird:25225"));
-            assertThat(allStudy.getCitation(), is("citation:doi:http://arctos.database.museum/guid/CUMV:Bird:25225"));
-            assertThat(allStudy.getSource(), startsWith("Christopher Mungall. 2015. Accessed at globi-jsonld/globi-dataset.jsonld on "));
+        for (Study study : allStudies) {
+            assertThat(study.getExternalId(), is("http://arctos.database.museum/guid/CUMV:Bird:25225"));
+            assertThat(study.getCitation(), is("http://arctos.database.museum/guid/CUMV:Bird:25225"));
+            assertThat(study.getSource(), startsWith("Christopher Mungall. 2015. Accessed at globi-jsonld/globi-dataset.jsonld on "));
         }
         assertThat(taxonIndex.findTaxonById("NCBI:8782"), not(is(nullValue())));
     }

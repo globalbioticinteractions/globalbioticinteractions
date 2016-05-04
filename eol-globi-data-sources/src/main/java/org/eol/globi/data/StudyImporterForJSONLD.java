@@ -70,7 +70,7 @@ public class StudyImporterForJSONLD extends BaseStudyImporter {
                     throw new StudyImporterException("failed to resolve author URI [" + authorURI + "]");
                 }
                 Study study = nodeFactory.getOrCreateStudy(getResourceUrl() + subj, author + ". " + new DateTime(parseDate(creationDate)).getYear() + ". " + ReferenceUtil.createLastAccessedString(getResourceUrl()), subj);
-
+                study.setExternalId(subj);
                 Specimen source = createSpecimen(solution, study, "subjTaxon");
                 Specimen target = createSpecimen(solution, study, "targetTaxon");
 
