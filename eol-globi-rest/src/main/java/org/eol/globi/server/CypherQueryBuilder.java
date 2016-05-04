@@ -295,7 +295,7 @@ public class CypherQueryBuilder {
     protected static String regexStrict(List<String> terms) {
         List<String> quotedTerms = new ArrayList<String>();
         for (String term : terms) {
-            quotedTerms.add(Pattern.quote(term).replace("\\Q", "\\\\Q").replace("\\E", "\\\\E"));
+            quotedTerms.add(Pattern.quote(term).replace("\\Q", "\\\\Q").replace("\\E", "\\\\E").replace("\"", "\\\""));
         }
         return "(" + StringUtils.join(quotedTerms, "|") + ")";
     }
