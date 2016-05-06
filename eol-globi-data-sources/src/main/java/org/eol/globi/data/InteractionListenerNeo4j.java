@@ -28,6 +28,7 @@ import static org.eol.globi.data.StudyImporterForTSV.LOCALITY_ID;
 import static org.eol.globi.data.StudyImporterForTSV.REFERENCE_CITATION;
 import static org.eol.globi.data.StudyImporterForTSV.REFERENCE_DOI;
 import static org.eol.globi.data.StudyImporterForTSV.REFERENCE_ID;
+import static org.eol.globi.data.StudyImporterForTSV.REFERENCE_URL;
 import static org.eol.globi.data.StudyImporterForTSV.SOURCE_TAXON_ID;
 import static org.eol.globi.data.StudyImporterForTSV.SOURCE_TAXON_NAME;
 import static org.eol.globi.data.StudyImporterForTSV.STUDY_SOURCE_CITATION;
@@ -72,6 +73,10 @@ class InteractionListenerNeo4j implements InteractionListener {
             InteractType type = InteractType.typeOf(interactionTypeId);
             String referenceCitation = link.get(REFERENCE_CITATION);
             Study study = nodeFactory.getOrCreateStudy(link.get(REFERENCE_ID), link.get(STUDY_SOURCE_CITATION), link.get(REFERENCE_DOI), referenceCitation);
+            final String referenceUrl = link.get(REFERENCE_URL);
+            if (StringUtils.isBlank(study.getExternalId()) && StringUtils.isNotBlank(referenceUrl)) {
+                study.setExternalId(referenceUrl);
+            }
             if (StringUtils.isBlank(study.getCitation())) {
                 study.setCitationWithTx(referenceCitation);
             }

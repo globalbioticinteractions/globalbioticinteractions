@@ -86,7 +86,15 @@ public class StudyImporterForTSVTest extends GraphDBTestCase {
         assertThat(taxon, is(notNullValue()));
         assertThat(taxon.getName(), is("bacillus subtilis"));
         assertThat(taxon.getExternalId(), is("EOL:2912748"));
-        assertStudyTitles("someRepohttp://www.ncbi.nlm.nih.gov/nuccore/100172732");
+        final List<Study> allStudies = NodeUtil.findAllStudies(getGraphDb());
+        final List<String> titles = new ArrayList<String>();
+        final List<String> ids = new ArrayList<String>();
+        for (Study study : allStudies) {
+            titles.add(study.getTitle());
+            ids.add(study.getExternalId());
+        }
+        assertThat(titles, hasItem("someRepohttp://www.ncbi.nlm.nih.gov/nuccore/100172732"));
+        assertThat(ids, hasItem("http://www.ncbi.nlm.nih.gov/nuccore/100172732"));
 
     }
 
