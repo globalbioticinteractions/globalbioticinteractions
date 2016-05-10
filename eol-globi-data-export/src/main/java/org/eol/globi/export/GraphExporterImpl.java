@@ -64,9 +64,10 @@ public class GraphExporterImpl implements GraphExporter {
         exportNames(studies, baseDir, new ExportTaxonCache(), "taxa/taxonCache.csv.gz");
         exportNames(studies, baseDir, new ExportUnmatchedTaxonNames(), "taxa/taxonUnmatched.csv");
 
-        mkdir(baseDir, "ncbi");
-        exportNames(studies, baseDir, new ExportNCBIIdentityFile(), "ncbi-link-out/providerinfo.xml");
-        exportNames(studies, baseDir, new ExportNCBIResourceFile(), "ncbi-link-out/resources.xml");
+        final String ncbiDir = "ncbi-link-out";
+        mkdir(baseDir, ncbiDir);
+        exportNames(studies, baseDir, new ExportNCBIIdentityFile(), ncbiDir + "/providerinfo.xml");
+        exportNames(studies, baseDir, new ExportNCBIResourceFile(), ncbiDir + "/resources.xml");
     }
 
     public void mkdir(String baseDir, String subdirName) throws StudyImporterException {
