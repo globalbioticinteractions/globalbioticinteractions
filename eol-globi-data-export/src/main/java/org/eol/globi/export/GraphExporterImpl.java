@@ -59,14 +59,22 @@ public class GraphExporterImpl implements GraphExporter {
     }
 
     public void exportNames(String baseDir, List<Study> studies) throws StudyImporterException {
-        try {
-            FileUtils.forceMkdir(new File(baseDir + "taxa"));
-        } catch (IOException e) {
-            throw new StudyImporterException("failed to create output dir [" + baseDir + "]", e);
-        }
+        mkdir(baseDir, "taxa");
         exportNames(studies, baseDir, new ExportTaxonMap(), "taxa/taxonMap.csv.gz");
         exportNames(studies, baseDir, new ExportTaxonCache(), "taxa/taxonCache.csv.gz");
         exportNames(studies, baseDir, new ExportUnmatchedTaxonNames(), "taxa/taxonUnmatched.csv");
+
+        mkdir(baseDir, "ncbi");
+        exportNames(studies, baseDir, new ExportNCBIIdentityFile(), "ncbi-link-out/providerinfo.xml");
+        exportNames(studies, baseDir, new ExportNCBIResourceFile(), "ncbi-link-out/resources.xml");
+    }
+
+    public void mkdir(String baseDir, String subdirName) throws StudyImporterException {
+        try {
+            FileUtils.forceMkdir(new File(baseDir + subdirName));
+        } catch (IOException e) {
+            throw new StudyImporterException("failed to create output dir [" + baseDir + "]", e);
+        }
     }
 
     private void exportNames(List<Study> studies, String baseDir, StudyExporter exporter, String filename) throws StudyImporterException {

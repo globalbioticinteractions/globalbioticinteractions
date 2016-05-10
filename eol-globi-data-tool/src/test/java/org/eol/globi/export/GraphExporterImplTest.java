@@ -24,12 +24,12 @@ public class GraphExporterImplTest extends GraphDBTestCase {
         assertThat(tmpDirPath.list().length, is(0));
         Study study = nodeFactory.getOrCreateStudy2("a study", "a source", "doi:12345L");
 
-        Specimen human = nodeFactory.createSpecimen(study, "Homo sapiens", "BLA:123");
+        Specimen human = nodeFactory.createSpecimen(study, "Homo sapiens", "NCBI:123");
         human.ate(nodeFactory.createSpecimen(study, "Canis familiaris", "BLA:444"));
         resolveNames();
         try {
             new GraphExporterImpl().export(getGraphDb(), tmpDirPath.getAbsolutePath() + "/");
-            assertThat(tmpDirPath.list().length, is(5));
+            assertThat(tmpDirPath.list().length, is(6));
         } finally {
             //FileUtils.deleteQuietly(tmpDirPath);
         }
