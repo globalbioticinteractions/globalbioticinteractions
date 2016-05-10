@@ -1,17 +1,14 @@
 package org.eol.globi.export;
 
-import org.apache.commons.lang.StringUtils;
 import org.eol.globi.domain.Study;
-import org.eol.globi.domain.TaxonomyProvider;
 
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Writer;
-import java.util.Map;
 
 public class ExportNCBIIdentityFile implements StudyExporter {
 
-    public static final String providerId = "XXXX";
+    public static final String PROVIDER_ID = "7777";
 
     @Override
     public void exportStudy(final Study study, Writer writer, boolean includeHeader) throws IOException {
@@ -30,10 +27,9 @@ public class ExportNCBIIdentityFile implements StudyExporter {
                         "    <Name>Global Biotic Interactions</Name>\n" +
                         "    <NameAbbr>GloBI</NameAbbr>\n" +
                         "    <SubjectType>taxonomy/phylogenetic</SubjectType>\n" +
-                        "    <Attribute>registration required</Attribute>\n" +
                         "    <Url>http://www.globalbioticinteractions.org</Url>\n" +
-                        "    <Brief>helps access to existing species interaction datasets</Brief>\n" +
-                        "</Provider>\n", providerId));
+                        "    <Brief>helps access existing species interaction datasets</Brief>\n" +
+                        "</Provider>\n", PROVIDER_ID));
 
         printWriter.flush();
     }

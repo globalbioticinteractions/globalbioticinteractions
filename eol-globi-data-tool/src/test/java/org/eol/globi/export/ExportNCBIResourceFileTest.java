@@ -45,7 +45,7 @@ public class ExportNCBIResourceFileTest extends GraphDBTestCase {
         taxon.setPath("some path");
         taxonIndex.getOrCreateTaxon(taxon);
 
-        taxon = new TaxonImpl("Homo sapiens", "NCBI:123");
+        taxon = new TaxonImpl("Enhydra lutris", "NCBI:34882");
         taxon.setPath("some path");
         taxonIndex.getOrCreateTaxon(taxon);
 
@@ -58,7 +58,7 @@ public class ExportNCBIResourceFileTest extends GraphDBTestCase {
                 "<LinkSet>\n" +
                 " <Link>\n" +
                 "   <LinkId>NCBI:9606</LinkId>\n" +
-                "   <ProviderId>XXXX</ProviderId>\n" +
+                "   <ProviderId>7777</ProviderId>\n" +
                 "   <ObjectSelector>\n" +
                 "     <Database>Taxonomy</Database>\n" +
                 "     <ObjectList>\n" +
@@ -71,12 +71,12 @@ public class ExportNCBIResourceFileTest extends GraphDBTestCase {
                 "   </ObjectUrl>\n" +
                 " </Link>\n" +
                 " <Link>\n" +
-                "   <LinkId>NCBI:123</LinkId>\n" +
-                "   <ProviderId>XXXX</ProviderId>\n" +
+                "   <LinkId>NCBI:34882</LinkId>\n" +
+                "   <ProviderId>7777</ProviderId>\n" +
                 "   <ObjectSelector>\n" +
                 "     <Database>Taxonomy</Database>\n" +
                 "     <ObjectList>\n" +
-                "         <ObjId>123</ObjId>\n" +
+                "         <ObjId>34882</ObjId>\n" +
                 "      </ObjectList>\n" +
                 "   </ObjectSelector>\n" +
                 "   <ObjectUrl>\n" +

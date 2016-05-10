@@ -49,7 +49,7 @@ public class ExportNCBIResourceFile implements StudyExporter {
                 String ncbiTaxonId = StringUtils.replace(taxonId, TaxonomyProvider.ID_PREFIX_NCBI, "");
                 printWriter.print(String.format(" <Link>\n" +
                         "   <LinkId>%s</LinkId>\n" +
-                        "   <ProviderId>XXXX</ProviderId>\n" +
+                        "   <ProviderId>%s</ProviderId>\n" +
                         "   <ObjectSelector>\n" +
                         "     <Database>Taxonomy</Database>\n" +
                         "     <ObjectList>\n" +
@@ -60,7 +60,7 @@ public class ExportNCBIResourceFile implements StudyExporter {
                         "      <Base>&base.url;</Base>\n" +
                         "      <Rule>sourceTaxon=NCBI:&lo.id;</Rule>\n" +
                         "   </ObjectUrl>\n" +
-                        " </Link>", taxonId, ncbiTaxonId));
+                        " </Link>", taxonId, ExportNCBIIdentityFile.PROVIDER_ID, ncbiTaxonId));
             }
         }
         printWriter.append("\n</LinkSet>");
