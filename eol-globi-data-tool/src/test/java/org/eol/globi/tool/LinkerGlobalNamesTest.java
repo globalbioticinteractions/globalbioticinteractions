@@ -10,14 +10,17 @@ import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.service.PropertyEnricher;
 import org.eol.globi.service.PropertyEnricherException;
 import org.eol.globi.taxon.TaxonIndexImpl;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
+import static org.junit.matchers.JUnitMatchers.hasItem;
 import static org.junit.matchers.JUnitMatchers.hasItems;
 
 public class LinkerGlobalNamesTest extends GraphDBTestCase {
@@ -70,6 +73,19 @@ public class LinkerGlobalNamesTest extends GraphDBTestCase {
         assertThat(ids, hasItems("ITIS:173423"
                 , "NCBI:8342", "IRMNG:10211", "GBIF:952"
                 , "IRMNG:1284513", "GBIF:3242458", "GBIF:3089470"));
+
+    }
+
+    @Test
+    @Ignore
+    // see https://github.com/GlobalNamesArchitecture/gnparser/issues/291
+    public void exactMatchExcludeStrains() throws NodeFactoryException, PropertyEnricherException {
+        taxonIndex.getOrCreateTaxon("Phytophthora infestans");
+        new LinkerGlobalNames().link(getGraphDb());
+        List<String> ids = LinkerTestUtil.assertHasOther("Phytophthora infestans", 6, taxonIndex, RelTypes.SAME_AS);
+
+        assertThat(ids, hasItem("NCBI:4787"));
+        assertThat(ids, not(hasItem("NCBI:403677")));
 
     }
 
