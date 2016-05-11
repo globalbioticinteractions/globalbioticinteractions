@@ -19,9 +19,17 @@
         <globi.taxa.version>1.0-SNAPSHOT</globi.taxa.version>
         <shapefiles.dir>${project.build.directory}/shapefiles</shapefiles.dir>
         <data.dir>${project.build.directory}/data</data.dir>
+        <wagon-maven-plugin.version>1.0</wagon-maven-plugin.version>
     </properties>
 
     <build>
+        <extensions>
+            <extension>
+                <groupId>org.apache.maven.wagon</groupId>
+                <artifactId>wagon-ftp</artifactId>
+                <version>2.10</version>
+            </extension>
+        </extensions>
         <plugins>
 
             <plugin>
@@ -43,7 +51,9 @@
                         <argument>-Xmx4G</argument>
                         <argument>-Dshapefiles.dir=${shapefiles.dir}</argument>
                         <argument>-Dott.url=file://${shapefiles.dir}/ott/taxonomy.tsv</argument>
-                        <argument>-Dnodc.url=file://${shapefiles.dir}/0050418/1.1/data/0-data/NODC_TaxonomicCode_V8_CD-ROM/TAXBRIEF.DAT</argument>
+                        <argument>
+                            -Dnodc.url=file://${shapefiles.dir}/0050418/1.1/data/0-data/NODC_TaxonomicCode_V8_CD-ROM/TAXBRIEF.DAT
+                        </argument>
                         <argument>-classpath</argument>
                         <argument>
                             ${project.build.directory}/eol-globi-data-tool-${globi.tool.version}-jar-with-dependencies.jar
@@ -63,7 +73,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>wagon-maven-plugin</artifactId>
-                <version>1.0-beta-4</version>
+                <version>${wagon-maven-plugin.version}</version>
                 <configuration>
                     <serverId>globi-snapshot</serverId>
                     <url>s3://globi/snapshot</url>
@@ -384,6 +394,74 @@
                 </plugins>
             </build>
         </profile>
+        <profile>
+            <id>deploy-remote</id>
+            <!-- distributes artifact to remote, non-mvn, repositories -->
+            <build>
+
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-dependency-plugin</artifactId>
+                        <version>2.8</version>
+                        <executions>
+                            <execution>
+                                <id>copy-unpack-nbci-link-out</id>
+                                <phase>generate-resources</phase>
+                                <goals>
+                                    <goal>unpack</goal>
+                                </goals>
+                                <configuration>
+                                    <artifactItems>
+                                        <artifactItem>
+                                            <groupId>${project.groupId}</groupId>
+                                            <artifactId>${project.artifactId}</artifactId>
+                                            <version>${project.version}</version>
+                                            <classifier>ncbi-link-out</classifier>
+                                            <type>tar.gz</type>
+                                            <overWrite>false</overWrite>
+                                            <outputDirectory>${data.dir}</outputDirectory>
+                                        </artifactItem>
+                                    </artifactItems>
+                                    <outputDirectory>${project.build.directory}</outputDirectory>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>wagon-maven-plugin</artifactId>
+                        <version>${wagon-maven-plugin.version}</version>
+                        <executions>
+                            <execution>
+                                <id>upload-resources</id>
+                                <phase>install</phase>
+                                <goals>
+                                    <goal>upload</goal>
+                                </goals>
+                                <configuration>
+                                    <fromDir>${data.dir}</fromDir>
+                                    <includes>providerinfo.xml,resources_*.xml</includes>
+                                    <url>ftp://ftp-private.ncbi.nlm.nih.gov</url>
+                                    <toDir>/holdings</toDir>
+                                    <serverId>ncbi-link-out</serverId>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <!-- disable default exec configuration -->
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <version>1.2.1</version>
+                        <configuration>
+                            <skip>true</skip>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
     </profiles>
 
 
