@@ -61,14 +61,14 @@ public class GraphExporterImpl implements GraphExporter {
     }
 
     public void exportNCBILinkOut(GraphDatabaseService graphService, String baseDir, List<Study> studies) throws StudyImporterException {
-        final String ncbiDir = "ncbi-link-out";
-        mkdir(baseDir, ncbiDir);
-        exportNames(studies, baseDir, new ExportNCBIIdentityFile(), ncbiDir + "/providerinfo.xml");
+        final String ncbiDir = baseDir + "ncbi-link-out/";
+        mkdir(ncbiDir);
+        new ExportNCBIIdentityFile().export(graphService, ncbiDir);
 
         new ExportNCBIResourceFile().export(graphService, new ExportNCBIResourceFile.OutputStreamFactory() {
             @Override
             public OutputStream create(int i) throws IOException {
-                return new FileOutputStream(ncbiDir + String.format("/resources_%d.xml", i));
+                return new FileOutputStream(ncbiDir + String.format("resources_%d.xml", i));
             }
         });
     }
@@ -82,10 +82,14 @@ public class GraphExporterImpl implements GraphExporter {
     }
 
     public void mkdir(String baseDir, String subdirName) throws StudyImporterException {
+        mkdir(baseDir + subdirName);
+    }
+
+    public void mkdir(String dir) throws StudyImporterException {
         try {
-            FileUtils.forceMkdir(new File(baseDir + subdirName));
+            FileUtils.forceMkdir(new File(dir));
         } catch (IOException e) {
-            throw new StudyImporterException("failed to create output dir [" + baseDir + "]", e);
+            throw new StudyImporterException("failed to create output dir [" + dir + "]", e);
         }
     }
 

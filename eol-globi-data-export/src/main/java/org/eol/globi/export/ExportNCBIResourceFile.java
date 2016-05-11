@@ -1,5 +1,6 @@
 package org.eol.globi.export;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.eol.globi.data.StudyImporterException;
@@ -8,6 +9,7 @@ import org.neo4j.cypher.javacompat.ExecutionEngine;
 import org.neo4j.cypher.javacompat.ExecutionResult;
 import org.neo4j.graphdb.GraphDatabaseService;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -29,6 +31,10 @@ public class ExportNCBIResourceFile implements GraphExporter {
         OutputStreamFactory fileFactory = new OutputStreamFactory() {
             @Override
             public OutputStream create(int i) throws IOException {
+                final File parentDir = new File(baseDir);
+                if (!parentDir.exists()) {
+                    FileUtils.forceMkdir(parentDir);
+                }
                 return new FileOutputStream(nameForResourceFile(baseDir, i));
             }
         };
