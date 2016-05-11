@@ -43,7 +43,7 @@ public class ExportNCBIIdentityFileTest extends GraphDBTestCase {
                 "<!DOCTYPE Provider PUBLIC \"-//NLM//DTD LinkOut 1.0//EN\"\n" +
                 "\"http://www.ncbi.nlm.nih.gov/projects/linkout/doc/LinkOut.dtd\">\n" +
                 "<Provider>\n" +
-                "    <ProviderId>7777</ProviderId>\n" +
+                "    <ProviderId>9426</ProviderId>\n" +
                 "    <Name>Global Biotic Interactions</Name>\n" +
                 "    <NameAbbr>GloBI</NameAbbr>\n" +
                 "    <SubjectType>taxonomy/phylogenetic</SubjectType>\n" +
