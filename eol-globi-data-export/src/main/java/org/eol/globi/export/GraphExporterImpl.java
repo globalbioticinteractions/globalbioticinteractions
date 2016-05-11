@@ -53,9 +53,24 @@ public class GraphExporterImpl implements GraphExporter {
 
         List<Study> studies = NodeUtil.findAllStudies(graphService);
         exportNames(baseDir, studies);
+        exportNCBILinkOut(graphService, baseDir, studies);
+
         exportDataOntology(studies, baseDir);
         exportDarwinCoreAggregatedByStudy(baseDir, studies);
         exportDarwinCoreAll(baseDir, studies);
+    }
+
+    public void exportNCBILinkOut(GraphDatabaseService graphService, String baseDir, List<Study> studies) throws StudyImporterException {
+        final String ncbiDir = "ncbi-link-out";
+        mkdir(baseDir, ncbiDir);
+        exportNames(studies, baseDir, new ExportNCBIIdentityFile(), ncbiDir + "/providerinfo.xml");
+
+        new ExportNCBIResourceFile().export(graphService, new ExportNCBIResourceFile.OutputStreamFactory() {
+            @Override
+            public OutputStream create(int i) throws IOException {
+                return new FileOutputStream(ncbiDir + String.format("/resources_%d.xml", i));
+            }
+        });
     }
 
     public void exportNames(String baseDir, List<Study> studies) throws StudyImporterException {
@@ -64,10 +79,6 @@ public class GraphExporterImpl implements GraphExporter {
         exportNames(studies, baseDir, new ExportTaxonCache(), "taxa/taxonCache.csv.gz");
         exportNames(studies, baseDir, new ExportUnmatchedTaxonNames(), "taxa/taxonUnmatched.csv");
 
-        final String ncbiDir = "ncbi-link-out";
-        mkdir(baseDir, ncbiDir);
-        exportNames(studies, baseDir, new ExportNCBIIdentityFile(), ncbiDir + "/providerinfo.xml");
-        exportNames(studies, baseDir, new ExportNCBIResourceFile(), ncbiDir + "/resources.xml");
     }
 
     public void mkdir(String baseDir, String subdirName) throws StudyImporterException {

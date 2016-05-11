@@ -8,7 +8,7 @@ import java.io.Writer;
 
 public class ExportNCBIIdentityFile implements StudyExporter {
 
-    public static final String PROVIDER_ID = "7777";
+    public static final String PROVIDER_ID = "9426";
 
     @Override
     public void exportStudy(final Study study, Writer writer, boolean includeHeader) throws IOException {

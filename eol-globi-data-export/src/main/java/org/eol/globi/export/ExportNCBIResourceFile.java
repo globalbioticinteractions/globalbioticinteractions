@@ -1,68 +1,117 @@
 package org.eol.globi.export;
 
-import com.Ostermiller.util.CSVPrint;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
-import org.eol.globi.domain.Study;
+import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.domain.TaxonomyProvider;
-import org.eol.globi.util.CSVUtil;
 import org.neo4j.cypher.javacompat.ExecutionEngine;
 import org.neo4j.cypher.javacompat.ExecutionResult;
+import org.neo4j.graphdb.GraphDatabaseService;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.Writer;
+import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ExportNCBIResourceFile implements StudyExporter {
+public class ExportNCBIResourceFile implements GraphExporter {
 
-    @Override
-    public void exportStudy(final Study study, Writer writer, boolean includeHeader) throws IOException {
-        if (includeHeader) {
-            doExport(study, writer);
-        }
+    private int linksPerResourceFile = 5000;
+
+    interface OutputStreamFactory {
+        OutputStream create(int i) throws IOException;
     }
 
-    protected void doExport(Study study, Writer writer) {
+
+    @Override
+    public void export(GraphDatabaseService graphService, final String baseDir) throws StudyImporterException {
+        OutputStreamFactory fileFactory = new OutputStreamFactory() {
+            @Override
+            public OutputStream create(int i) throws IOException {
+                return new FileOutputStream(nameForResourceFile(baseDir, i));
+            }
+        };
+
+        export(graphService, fileFactory);
+
+    }
+
+    protected void export(GraphDatabaseService graphService, OutputStreamFactory fileFactory) throws StudyImporterException {
         String query = "START taxon = node:taxons('*:*') " +
                 "MATCH taxon-[?:SAME_AS*0..1]->linkedTaxon " +
                 "WHERE has(linkedTaxon.externalId) AND linkedTaxon.externalId =~ 'NCBI:.*'" +
                 "RETURN distinct(linkedTaxon.externalId) as id";
 
-        HashMap<String, Object> params = new HashMap<String, Object>();
+        ExecutionResult rows = new ExecutionEngine(graphService).execute(query, new HashMap<String, Object>());
 
-        ExecutionResult rows = new ExecutionEngine(study.getUnderlyingNode().getGraphDatabase()).execute(query, params);
-        CSVPrint printer = CSVUtil.createCSVPrint(writer);
-        List<String> columns = rows.columns();
-        final PrintWriter printWriter = new PrintWriter(writer);
-        printWriter.print("<?xml version=\"1.0\"?>\n" +
+        int rowCount = 0;
+        OutputStream os = null;
+        try {
+            List<String> columns = rows.columns();
+            for (Map<String, Object> row : rows) {
+                if (rowCount % getLinksPerResourceFile() == 0) {
+                    close(os);
+                    os = null;
+                }
+
+                for (String column : columns) {
+                    String taxonId = row.get(column).toString();
+                    String ncbiTaxonId = StringUtils.replace(taxonId, TaxonomyProvider.ID_PREFIX_NCBI, "");
+                    String aLink = String.format(" <Link>\n" +
+                            "   <LinkId>%s</LinkId>\n" +
+                            "   <ProviderId>%s</ProviderId>\n" +
+                            "   <ObjectSelector>\n" +
+                            "     <Database>Taxonomy</Database>\n" +
+                            "     <ObjectList>\n" +
+                            "         <ObjId>%s</ObjId>\n" +
+                            "      </ObjectList>\n" +
+                            "   </ObjectSelector>\n" +
+                            "   <ObjectUrl>\n" +
+                            "      <Base>&base.url;</Base>\n" +
+                            "      <Rule>sourceTaxon=NCBI:&lo.id;</Rule>\n" +
+                            "   </ObjectUrl>\n" +
+                            " </Link>", taxonId, ExportNCBIIdentityFile.PROVIDER_ID, ncbiTaxonId);
+
+                    IOUtils.write(aLink, os == null ? (os = open(fileFactory, rowCount)) : os);
+                }
+                rowCount++;
+            }
+            close(os);
+        } catch (IOException e) {
+            throw new StudyImporterException("failed to export ncbi resources", e);
+        }
+    }
+
+    private OutputStream open(OutputStreamFactory fileFactory, int rowCount) throws IOException {
+        OutputStream os;
+        os = fileFactory.create(rowCount / getLinksPerResourceFile());
+        IOUtils.write("<?xml version=\"1.0\"?>\n" +
                 "<!DOCTYPE LinkSet PUBLIC \"-//NLM//DTD LinkOut 1.0//EN\"\n" +
                 "\"http://www.ncbi.nlm.nih.gov/projects/linkout/doc/LinkOut.dtd\"\n" +
                 "[<!ENTITY base.url \"http://www.globalbioticinteractions.org?\">]>\n" +
-                "<LinkSet>");
-
-        for (Map<String, Object> row : rows) {
-            printer.println();
-            for (String column : columns) {
-                String taxonId = row.get(column).toString();
-                String ncbiTaxonId = StringUtils.replace(taxonId, TaxonomyProvider.ID_PREFIX_NCBI, "");
-                printWriter.print(String.format(" <Link>\n" +
-                        "   <LinkId>%s</LinkId>\n" +
-                        "   <ProviderId>%s</ProviderId>\n" +
-                        "   <ObjectSelector>\n" +
-                        "     <Database>Taxonomy</Database>\n" +
-                        "     <ObjectList>\n" +
-                        "         <ObjId>%s</ObjId>\n" +
-                        "      </ObjectList>\n" +
-                        "   </ObjectSelector>\n" +
-                        "   <ObjectUrl>\n" +
-                        "      <Base>&base.url;</Base>\n" +
-                        "      <Rule>sourceTaxon=NCBI:&lo.id;</Rule>\n" +
-                        "   </ObjectUrl>\n" +
-                        " </Link>", taxonId, ExportNCBIIdentityFile.PROVIDER_ID, ncbiTaxonId));
-            }
-        }
-        printWriter.append("\n</LinkSet>");
+                "<LinkSet>\n", os);
+        return os;
     }
+
+    private void close(OutputStream os) throws IOException {
+        if (os != null) {
+            IOUtils.write("\n</LinkSet>", os);
+            IOUtils.closeQuietly(os);
+        }
+    }
+
+    protected String nameForResourceFile(String baseDir, int i) {
+        return baseDir + "resources_" + i + ".xml";
+    }
+
+    public int getLinksPerResourceFile() {
+        return linksPerResourceFile;
+    }
+
+    public void setLinksPerResourceFile(int linksPerResourceFile) {
+        this.linksPerResourceFile = linksPerResourceFile;
+    }
+
+
 }
