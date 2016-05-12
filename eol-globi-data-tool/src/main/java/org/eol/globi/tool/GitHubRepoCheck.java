@@ -31,7 +31,7 @@ public class GitHubRepoCheck {
                     ", specimen-[inter]->otherSpecimen-[:ORIGINALLY_DESCRIBED_AS]->otherOrigTaxon" +
                     ", specimen-[:CLASSIFIED_AS]->taxon" +
                     ", otherSpecimen-[:CLASSIFIED_AS]->otherTaxon " +
-                    " WHERE not(has(inter.inverted)) + " +
+                    " WHERE not(has(inter.inverted)) " +
                     "RETURN taxon.name as providedSourceTaxonName, taxon.externalId as providedSourceTaxonId" +
                     ", taxon.name as resolvedSourceTaxonName, taxon.externalId? as resolvedSourceTaxonId" +
                     ", inter.iri as interactionTypeId, inter.label as interactionTypeLabel " +
