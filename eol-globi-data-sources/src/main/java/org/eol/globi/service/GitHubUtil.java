@@ -23,13 +23,17 @@ public class GitHubUtil {
     }
 
     protected static boolean hasInteractionData(String repoName, String globiFilename) throws IOException {
-        HttpHead request = new HttpHead("https://raw.githubusercontent.com/" + repoName + "/master/" + globiFilename);
+        HttpHead request = new HttpHead(getBaseUrlMaster(repoName) + "/" + globiFilename);
         try {
             HttpResponse execute = HttpUtil.getHttpClient().execute(request);
             return execute.getStatusLine().getStatusCode() == 200;
         } finally {
             request.releaseConnection();
         }
+    }
+
+    public static String getBaseUrlMaster(String repoName) {
+        return getBaseUrl(repoName, "master");
     }
 
     public static List<String> find() throws URISyntaxException, IOException {

@@ -35,8 +35,11 @@ import java.net.URISyntaxException;
 public class GitHubImporterFactory {
 
     public StudyImporter createImporter(String repo, final ParserFactory parserFactory, final NodeFactory nodeFactory) throws IOException, URISyntaxException, StudyImporterException, NodeFactoryException {
+        return createImporter(repo, GitHubUtil.getBaseUrlLastCommit(repo), parserFactory, nodeFactory);
+    }
+
+    public StudyImporter createImporter(String repo, String baseUrl, final ParserFactory parserFactory, final NodeFactory nodeFactory) throws IOException, StudyImporterException {
         StudyImporter importer = null;
-        final String baseUrl = GitHubUtil.getBaseUrlLastCommit(repo);
         final String resourceUrl = baseUrl + "/globi.json";
         if (resourceExists(resourceUrl)) {
             importer = createImporter(repo, baseUrl, getContent(resourceUrl), parserFactory, nodeFactory);

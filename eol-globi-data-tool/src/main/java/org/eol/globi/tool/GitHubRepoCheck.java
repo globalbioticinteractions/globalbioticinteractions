@@ -18,11 +18,12 @@ import java.net.URISyntaxException;
 public class GitHubRepoCheck {
 
     public static void main(final String[] args) throws IOException, URISyntaxException, StudyImporterException {
-        String arg = args[0];
         final File tmpDir = File.createTempFile("graph", ".db", FileUtils.getTempDirectory());
         try {
             final GraphDatabaseService graphService = GraphService.getGraphService(tmpDir.getAbsolutePath());
-            final StudyImporter importer = new GitHubImporterFactory().createImporter(arg, new ParserFactoryImpl(), new NodeFactoryImpl(graphService));
+            final String repoName = args[0];
+            final String repoBaseDir = args[1];
+            final StudyImporter importer = new GitHubImporterFactory().createImporter(repoName, repoBaseDir, new ParserFactoryImpl(), new NodeFactoryImpl(graphService));
             importer.importStudy();
             new NameResolver(graphService).resolve();
 

@@ -22,6 +22,12 @@ public class GitHubUtilTest {
         assertThat(GitHubUtil.isGloBIRepository("ropensci/rgbif"), is(false));
     }
 
+@Test
+    public void baseUrlMaster() throws IOException {
+        assertThat(GitHubUtil.getBaseUrlMaster("globalbioticinteractions/template-dataset"),
+                is("https://raw.githubusercontent.com/globalbioticinteractions/template-dataset/master"));
+    }
+
 
 
 }
