@@ -8,26 +8,19 @@ import org.eol.globi.data.NodeFactoryImpl;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.data.StudyImporterForSimons;
 import org.eol.globi.domain.Study;
-import org.eol.globi.domain.Taxon;
-import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.geo.Ecoregion;
 import org.eol.globi.geo.EcoregionFinder;
 import org.eol.globi.geo.EcoregionFinderException;
-import org.eol.globi.service.PropertyEnricher;
-import org.eol.globi.service.PropertyEnricherException;
-import org.eol.globi.service.TaxonUtil;
 import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
 import org.neo4j.graphdb.GraphDatabaseService;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 import static junit.framework.Assert.assertNotNull;
 import static org.hamcrest.core.Is.is;
@@ -58,12 +51,7 @@ public class NormalizerTest extends GraphDBTestCase {
 
     @Test
     public void doSingleImport() throws IOException, StudyImporterException {
-        Normalizer dataNormalizationTool = createNormalizer();
-
-        dataNormalizationTool.importData(StudyImporterForSimons.class, new NodeFactoryImpl(getGraphDb()
-        ));
-
-
+        createNormalizer().importData(StudyImporterForSimons.class, new NodeFactoryImpl(getGraphDb()));
         GraphDatabaseService graphService = getGraphDb();
 
         List<Study> allStudies = NodeUtil.findAllStudies(graphService);

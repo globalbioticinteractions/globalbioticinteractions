@@ -24,32 +24,6 @@ import static org.eol.globi.domain.PropertyAndValueDictionary.NO_MATCH;
 
 public abstract class ExporterBase extends DarwinCoreExporter {
 
-    public static final String QUERY_PARAM_INTERACTION_TYPE = "interactionType";
-    public static final String QUERY_PARAM_SOURCE_TAXON_ID = "sourceTaxonId";
-    public static final String QUERY_PARAM_TARGET_TAXON_IDS = "targetTaxonIds";
-
-    protected static ExecutionResult executeQueryForDistinctTargetTaxaForPreyByStudy(ExecutionEngine engine, final String title) {
-        return engine.execute(getQueryForDistinctTargetTaxaForPreyBySourceTaxa(), new HashMap<String, Object>() {
-            {
-                put("studyTitle", title);
-            }
-        });
-    }
-
-    private static String getQueryForDistinctTargetTaxaForPreyBySourceTaxa() {
-        return "START study = node:studies(title={studyTitle}) " +
-                "MATCH study-[:COLLECTED]->sourceSpecimen-[:CLASSIFIED_AS]->sourceTaxon, " +
-                "sourceSpecimen-[r:" + InteractUtil.allInteractionsCypherClause() + "]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon  " +
-                "WHERE sourceTaxon.externalId? <> '" + NO_MATCH +
-                "' AND sourceTaxon.name? <> '" + NO_MATCH +
-                "' AND targetTaxon.externalId? <> '" + NO_MATCH +
-                "' AND targetTaxon.name? <> '" + NO_MATCH + "' " +
-                " AND not(has(r." + INVERTED + ")) " +
-                "RETURN distinct(id(sourceTaxon)) as " + QUERY_PARAM_SOURCE_TAXON_ID +
-                ", type(r) as " + QUERY_PARAM_INTERACTION_TYPE +
-                ", collect(distinct(id(targetTaxon))) as " + QUERY_PARAM_TARGET_TAXON_IDS;
-    }
-
     protected static void addProperty(Map<String, String> properties, PropertyContainer node, String propertyName, String fieldName) throws IOException {
         if (node != null && node.hasProperty(propertyName)) {
             properties.put(fieldName, node.getProperty(propertyName).toString());
