@@ -64,20 +64,9 @@ public class ExportNCBIResourceFile implements GraphExporter {
                 for (String column : columns) {
                     String taxonId = row.get(column).toString();
                     String ncbiTaxonId = StringUtils.replace(taxonId, TaxonomyProvider.ID_PREFIX_NCBI, "");
-                    String aLink = String.format(" <Link>\n" +
-                            "   <LinkId>%s</LinkId>\n" +
-                            "   <ProviderId>%s</ProviderId>\n" +
-                            "   <ObjectSelector>\n" +
-                            "     <Database>Taxonomy</Database>\n" +
-                            "     <ObjectList>\n" +
-                            "         <ObjId>%s</ObjId>\n" +
-                            "      </ObjectList>\n" +
-                            "   </ObjectSelector>\n" +
-                            "   <ObjectUrl>\n" +
-                            "      <Base>&base.url;</Base>\n" +
-                            "      <Rule>sourceTaxon=NCBI:&lo.id;</Rule>\n" +
-                            "   </ObjectUrl>\n" +
-                            " </Link>", taxonId, ExportNCBIIdentityFile.PROVIDER_ID, ncbiTaxonId);
+                    String aLink = String.format(
+                            "         <ObjId>%s</ObjId>\n"
+                            , ncbiTaxonId);
 
                     IOUtils.write(aLink, os == null ? (os = open(fileFactory, rowCount)) : os);
                 }
@@ -91,17 +80,35 @@ public class ExportNCBIResourceFile implements GraphExporter {
 
     private OutputStream open(OutputStreamFactory fileFactory, int rowCount) throws IOException {
         OutputStream os;
-        os = fileFactory.create(rowCount / getLinksPerResourceFile());
-        IOUtils.write("<?xml version=\"1.0\"?>\n" +
+        os = fileFactory.create(linkBatch(rowCount));
+        IOUtils.write(String.format("<?xml version=\"1.0\"?>\n" +
                 "<!DOCTYPE LinkSet PUBLIC \"-//NLM//DTD LinkOut 1.0//EN\"\n" +
                 "\"http://www.ncbi.nlm.nih.gov/projects/linkout/doc/LinkOut.dtd\"\n" +
                 "[<!ENTITY base.url \"http://www.globalbioticinteractions.org?\">]>\n" +
-                "<LinkSet>\n", os);
+                "<LinkSet>\n" +
+                " <Link>\n" +
+                "   <LinkId>%d</LinkId>\n" +
+                "   <ProviderId>%s</ProviderId>\n" +
+                "   <ObjectSelector>\n" +
+                "     <Database>Taxonomy</Database>\n" +
+                "     <ObjectList>\n", linkBatch(rowCount), ExportNCBIIdentityFile.PROVIDER_ID), os);
         return os;
+    }
+
+    private int linkBatch(int rowCount) {
+        return rowCount / getLinksPerResourceFile();
     }
 
     private void close(OutputStream os) throws IOException {
         if (os != null) {
+            IOUtils.write("      </ObjectList>\n" +
+                    "   </ObjectSelector>\n" +
+                    "   <ObjectUrl>\n" +
+                    "      <Base>&base.url;</Base>\n" +
+                    "      <Rule>sourceTaxon=NCBI:&lo.id;</Rule>\n" +
+                    "      <UrlName>helps access existing species interaction datasets</UrlName>\n" +
+                    "   </ObjectUrl>\n" +
+                    " </Link>", os);
             IOUtils.write("\n</LinkSet>", os);
             IOUtils.closeQuietly(os);
         }
