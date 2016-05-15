@@ -33,10 +33,10 @@ public class GitHubRepoCheck {
                     ", specimen-[:CLASSIFIED_AS]->taxon" +
                     ", otherSpecimen-[:CLASSIFIED_AS]->otherTaxon " +
                     " WHERE not(has(inter.inverted)) " +
-                    "RETURN taxon.name as providedSourceTaxonName, taxon.externalId as providedSourceTaxonId" +
+                    "RETURN origTaxon.name as providedSourceTaxonName, origTaxon.externalId? as providedSourceTaxonId" +
                     ", taxon.name as resolvedSourceTaxonName, taxon.externalId? as resolvedSourceTaxonId" +
                     ", inter.iri as interactionTypeId, inter.label as interactionTypeLabel " +
-                    ", otherTaxon.name as providedTargetTaxonName, otherTaxon.externalId? as providedTargetTaxonId" +
+                    ", otherOrigTaxon.name as providedTargetTaxonName, otherOrigTaxon.externalId? as providedTargetTaxonId" +
                     ", otherTaxon.name as resolvedTargetTaxonName, otherTaxon.externalId? as resolvedTargetTaxonId" +
                     ", study.citation, study.source");
             System.out.println(execute.dumpToString());

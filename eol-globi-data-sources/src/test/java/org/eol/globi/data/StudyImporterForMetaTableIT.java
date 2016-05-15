@@ -100,6 +100,46 @@ public class StudyImporterForMetaTableIT {
         assertThat(firstLine.get(StudyImporterForMetaTable.LONGITUDE), is("178.81999999999999"));
     }
 
+    @Test
+    public void importDapstromWithStaticCSV() throws IOException, StudyImporterException {
+        final List<Map<String, String>> links = new ArrayList<Map<String, String>>();
+        final InteractionListener interactionListener = new InteractionListener() {
+
+            @Override
+            public void newLink(Map<String, String> properties) throws StudyImporterException {
+                links.add(properties);
+            }
+        };
+
+        final StudyImporterForMetaTable.TableParserFactory tableFactory = new StudyImporterForMetaTable.TableParserFactory() {
+
+            public CSVParse createParser(JsonNode config) throws IOException {
+                String firstFewLines = "HAUL ID,Year,Date,Sea,Ices division,Predator Latin name,Predator common name,Pooled,Mean length of predator,Prey Latin name,Prey common name,Prey group,Predator ID,Number of stomachs,Prey Length,Minimum number\n" +
+                        "PORT-ERIN-1919-A1,1919,06/08/1919,Irish Sea,VIIa,SCOMBER SCOMBRUS,(EUROPEAN) MACKEREL,y,,ACARTIA CLAUSI,ACARTIA CLAUSI,Copepod ,PORT-ERIN-1919-A1/MAC-1,6,,310\n" +
+                        "CIROL03-86-31,1986,18/03/1986,Celtic Sea,VIIj,SCOMBER SCOMBRUS,(EUROPEAN) MACKEREL,n,40.8,CRUSTACEA,MARINE CRUSTACEANS,Crustacean,CIROL03-86-31\\MAC-1007926,1,,1\n" +
+                        "CIROL03-86-31,1986,18/03/1986,Celtic Sea,VIIj,SCOMBER SCOMBRUS,(EUROPEAN) MACKEREL,n,39.4,CRUSTACEA,MARINE CRUSTACEANS,Crustacean,CIROL03-86-31\\MAC-1007933,1,,1\n" +
+                        "CIROL03-86-31,1986,18/03/1986,Celtic Sea,VIIj,SCOMBER SCOMBRUS,(EUROPEAN) MACKEREL,n,43.4,CRUSTACEA,MARINE CRUSTACEANS,Crustacean,CIROL03-86-31\\MAC-1007936,1,,1\n";
+
+                return new LabeledCSVParser(new CSVParser(IOUtils.toInputStream(firstFewLines)));
+            }
+        };
+
+        final String baseUrl = "https://raw.githubusercontent.com/jhpoelen/Dapstrom-test/master";
+        final String resource = baseUrl + "/globi.json";
+        importAll(interactionListener, tableFactory, baseUrl, resource);
+
+        assertThat(links.size(), is(8));
+
+        final Map<String, String> firstLine = links.get(0);
+        assertThat(firstLine.get(StudyImporterForTSV.INTERACTION_TYPE_ID), is("http://purl.obolibrary.org/obo/RO_0002470"));
+        assertThat(firstLine.get(StudyImporterForTSV.INTERACTION_TYPE_NAME), is("eats"));
+        assertThat(firstLine.get(StudyImporterForTSV.TARGET_TAXON_ID), is(nullValue()));
+        assertThat(firstLine.get(StudyImporterForTSV.TARGET_TAXON_NAME), is("ACARTIA CLAUSI"));
+        assertThat(firstLine.get(StudyImporterForTSV.SOURCE_TAXON_ID), is(nullValue()));
+        assertThat(firstLine.get(StudyImporterForTSV.SOURCE_TAXON_NAME), is("SCOMBER SCOMBRUS"));
+        assertThat(firstLine.get(StudyImporterForMetaTable.EVENT_DATE), startsWith("1919-01-01"));
+    }
+
     static public void importAll(InteractionListener interactionListener, StudyImporterForMetaTable.TableParserFactory tableFactory, String baseUrl, String resource) throws IOException, StudyImporterException {
         final InputStream inputStream = ResourceUtil.asInputStream(resource, null);
         final JsonNode config = new ObjectMapper().readTree(inputStream);
