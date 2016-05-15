@@ -32,8 +32,16 @@ public class StudyImporterForMetaTableTest {
 
     @Test
     public void parseColumnNamesFromExternalSchema() throws IOException, StudyImporterException {
+        assertExpectedColumnCount("test-meta-globi-external-schema.json");
+    }
+
+    @Test
+    public void parseColumnNamesFromDefaultExternalSchema() throws IOException, StudyImporterException {
+        assertExpectedColumnCount("test-meta-globi-default-external-schema.json");
+    }
+
+    public void assertExpectedColumnCount(String metaTableDef) throws IOException {
         final Class<StudyImporterForMetaTable> clazz = StudyImporterForMetaTable.class;
-        final String metaTableDef = "test-meta-globi-external-schema.json";
         final URL resource = clazz.getResource(metaTableDef);
         assertNotNull(resource);
 
