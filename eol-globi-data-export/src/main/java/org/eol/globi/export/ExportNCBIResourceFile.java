@@ -106,7 +106,7 @@ public class ExportNCBIResourceFile implements GraphExporter {
                     "   <ObjectUrl>\n" +
                     "      <Base>&base.url;</Base>\n" +
                     "      <Rule>sourceTaxon=NCBI:&lo.id;</Rule>\n" +
-                    "      <UrlName>helps access existing species interaction datasets</UrlName>\n" +
+                    "      <UrlName>Show Biotic Interactions</UrlName>\n" +
                     "   </ObjectUrl>\n" +
                     " </Link>", os);
             IOUtils.write("\n</LinkSet>", os);
