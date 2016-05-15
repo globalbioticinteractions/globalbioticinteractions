@@ -64,7 +64,7 @@ public class ExportNCBIResourceFileTest extends GraphDBTestCase {
                 "   <ObjectUrl>\n" +
                 "      <Base>&base.url;</Base>\n" +
                 "      <Rule>sourceTaxon=NCBI:&lo.id;</Rule>\n" +
-                "      <UrlName>helps access existing species interaction datasets</UrlName>\n" +
+                "      <UrlName>Show Biotic Interactions</UrlName>\n" +
                 "   </ObjectUrl>\n" +
                 " </Link>\n" +
                 "</LinkSet>"));
@@ -86,7 +86,7 @@ public class ExportNCBIResourceFileTest extends GraphDBTestCase {
                 "   <ObjectUrl>\n" +
                 "      <Base>&base.url;</Base>\n" +
                 "      <Rule>sourceTaxon=NCBI:&lo.id;</Rule>\n" +
-                "      <UrlName>helps access existing species interaction datasets</UrlName>\n" +
+                "      <UrlName>Show Biotic Interactions</UrlName>\n" +
                 "   </ObjectUrl>\n" +
                 " </Link>\n" +
                 "</LinkSet>"));
@@ -128,7 +128,7 @@ public class ExportNCBIResourceFileTest extends GraphDBTestCase {
                 "   <ObjectUrl>\n" +
                 "      <Base>&base.url;</Base>\n" +
                 "      <Rule>sourceTaxon=NCBI:&lo.id;</Rule>\n" +
-                "      <UrlName>helps access existing species interaction datasets</UrlName>\n" +
+                "      <UrlName>Show Biotic Interactions</UrlName>\n" +
                 "   </ObjectUrl>\n" +
                 " </Link>\n" +
                 "</LinkSet>"));
