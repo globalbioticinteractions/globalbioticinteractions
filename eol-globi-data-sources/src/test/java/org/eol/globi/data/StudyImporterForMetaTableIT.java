@@ -51,9 +51,10 @@ public class StudyImporterForMetaTableIT {
         };
 
 
-        final String resource = "https://raw.githubusercontent.com/globalbioticinteractions/AfricaTreeDatabase/master/globi.json";
+        final String baseUrl = "https://raw.githubusercontent.com/globalbioticinteractions/AfricaTreeDatabase/master";
+        final String resource = baseUrl + "/globi.json";
 
-        importAll(interactionListener, tableFactory, resource);
+        importAll(interactionListener, tableFactory, baseUrl, resource);
         assertThat(links.size(), is(9));
     }
 
@@ -81,8 +82,9 @@ public class StudyImporterForMetaTableIT {
             }
         };
 
-        final String resource = "https://raw.githubusercontent.com/globalbioticinteractions/noaa-reem/master/globi.json";
-        importAll(interactionListener, tableFactory, resource);
+        final String baseUrl = "https://raw.githubusercontent.com/globalbioticinteractions/noaa-reem/master";
+        final String resource = baseUrl + "/globi.json";
+        importAll(interactionListener, tableFactory, baseUrl, resource);
 
         assertThat(links.size(), is(12));
 
@@ -93,17 +95,17 @@ public class StudyImporterForMetaTableIT {
         assertThat(firstLine.get(StudyImporterForTSV.TARGET_TAXON_NAME), is("Rocks"));
         assertThat(firstLine.get(StudyImporterForTSV.SOURCE_TAXON_ID), is("NODC:8791030401"));
         assertThat(firstLine.get(StudyImporterForTSV.SOURCE_TAXON_NAME), is("Pacific cod Gadus macrocephalus"));
-        assertThat(firstLine.get(StudyImporterForMetaTable.EVENT_DATE), startsWith("19940711"));
+        assertThat(firstLine.get(StudyImporterForMetaTable.EVENT_DATE), startsWith("1994-07-11"));
         assertThat(firstLine.get(StudyImporterForMetaTable.LATITUDE), is("51.43"));
         assertThat(firstLine.get(StudyImporterForMetaTable.LONGITUDE), is("178.81999999999999"));
     }
 
-    static public void importAll(InteractionListener interactionListener, StudyImporterForMetaTable.TableParserFactory tableFactory, String resource) throws IOException, StudyImporterException {
+    static public void importAll(InteractionListener interactionListener, StudyImporterForMetaTable.TableParserFactory tableFactory, String baseUrl, String resource) throws IOException, StudyImporterException {
         final InputStream inputStream = ResourceUtil.asInputStream(resource, null);
         final JsonNode config = new ObjectMapper().readTree(inputStream);
 
         for (JsonNode table : StudyImporterForMetaTable.collectTables(config)) {
-            StudyImporterForMetaTable.importTable(interactionListener, tableFactory, table);
+            StudyImporterForMetaTable.importTable(interactionListener, tableFactory, table, baseUrl);
         }
 
     }

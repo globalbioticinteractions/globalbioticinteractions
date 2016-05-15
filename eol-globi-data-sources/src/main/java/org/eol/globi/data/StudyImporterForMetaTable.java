@@ -61,7 +61,7 @@ public class StudyImporterForMetaTable extends BaseStudyImporter {
         try {
             for (JsonNode table : collectTables(getConfig())) {
                 final InteractionListener listener = new TableInteractionListenerProxy(getBaseUrl(), table, new InteractionListenerNeo4j(nodeFactory, getGeoNamesService(), getLogger()));
-                importTable(listener, new TableParserFactoryImpl(), table);
+                importTable(listener, new TableParserFactoryImpl(), table, getBaseUrl());
             }
         } catch (IOException e) {
             throw new StudyImporterException("problem importing from [" + getBaseUrl() + "]", e);
@@ -85,21 +85,37 @@ public class StudyImporterForMetaTable extends BaseStudyImporter {
         return tableList;
     }
 
-    static public void importTable(InteractionListener interactionListener, TableParserFactory tableFactory, JsonNode table) throws IOException, StudyImporterException {
+    static public void importTable(InteractionListener interactionListener, TableParserFactory tableFactory, JsonNode table, String baseUrl) throws IOException, StudyImporterException {
         if (table.has("tableSchema")) {
-            final JsonNode tableSchema = table.get("tableSchema");
-            List<Column> columnNames = tableSchema.isValueNode() ?
-                    columnsFromExternalSchema(tableSchema) :
-                    columnNamesForMetaTable(table);
+            List<Column> columns = columnsForSchema(table, baseUrl, table.get("tableSchema"));
             final CSVParse csvParse = tableFactory.createParser(table);
-            importAll(interactionListener, columnNames, csvParse, table);
+            importAll(interactionListener, columns, csvParse, table);
         }
     }
 
-    static public List<Column> columnsFromExternalSchema(JsonNode tableSchema) throws IOException {
-        String tableSchemaURL = tableSchema.asText();
+    public static List<Column> columnsForSchema(JsonNode table, String baseUrl, JsonNode tableSchema) throws IOException {
+        return tableSchema.isValueNode() ?
+                columnsFromExternalSchema(tableSchema, baseUrl) :
+                columnNamesForMetaTable(table);
+    }
+
+    static public List<Column> columnsFromExternalSchema(JsonNode tableSchema, String baseUrl) throws IOException {
+        String tableSchemaURL = getTableSchemaURL(tableSchema, baseUrl);
         final JsonNode schema = new ObjectMapper().readTree(ResourceUtil.asInputStream(tableSchemaURL, null));
         return columnNamesForSchema(schema);
+    }
+
+    public static String getTableSchemaURL(JsonNode tableSchema, String baseUrl) {
+        String tableSchemaLocation = tableSchema.asText();
+        StringBuilder tableSchemaURL = new StringBuilder();
+        if (StringUtils.isNotBlank(baseUrl) && !ResourceUtil.isURL(tableSchemaLocation)) {
+            tableSchemaURL.append(baseUrl);
+            if (!StringUtils.endsWith(baseUrl, "/")) {
+                tableSchemaURL.append("/");
+            }
+        }
+        tableSchemaURL.append(tableSchemaLocation);
+        return tableSchemaURL.toString();
     }
 
 

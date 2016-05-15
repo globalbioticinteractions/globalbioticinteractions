@@ -8,11 +8,11 @@ import org.junit.Test;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
+import static junit.framework.Assert.assertNotNull;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.StringStartsWith.startsWith;
@@ -28,6 +28,21 @@ public class StudyImporterForMetaTableTest {
         List<StudyImporterForMetaTable.Column> columnNames = StudyImporterForMetaTable.columnNamesForMetaTable(config);
         assertThat(columnNames.size(), is(40));
 
+    }
+
+    @Test
+    public void parseColumnNamesFromExternalSchema() throws IOException, StudyImporterException {
+        final Class<StudyImporterForMetaTable> clazz = StudyImporterForMetaTable.class;
+        final String metaTableDef = "test-meta-globi-external-schema.json";
+        final URL resource = clazz.getResource(metaTableDef);
+        assertNotNull(resource);
+
+        final InputStream inputStream = ResourceUtil.asInputStream(metaTableDef, clazz);
+        final JsonNode config = new ObjectMapper().readTree(inputStream);
+
+        String baseUrl = resource.toExternalForm().replaceFirst(metaTableDef + "$", "");
+        List<StudyImporterForMetaTable.Column> columnNames = StudyImporterForMetaTable.columnsFromExternalSchema(config.get("tableSchema"), baseUrl);
+        assertThat(columnNames.size(), is(40));
     }
 
     @Test

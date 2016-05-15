@@ -14,7 +14,9 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.net.URI;
+import java.net.URL;
 import java.util.zip.GZIPInputStream;
 
 public class ResourceUtil {
@@ -29,7 +31,7 @@ public class ResourceUtil {
             LOG.info("caching of [" + resource + "] started...");
             is = getCachedRemoteInputStream(resource);
             LOG.info("caching of [" + resource + "] complete.");
-        } else if (StringUtils.startsWith(resource, "file://")) {
+        } else if (StringUtils.startsWith(resource, "file:/")) {
             is = new FileInputStream(new File(URI.create(resource)));
         } else if (clazz != null) {
             is = clazz.getResourceAsStream(resource);
@@ -83,5 +85,14 @@ public class ResourceUtil {
             resourceURI = file.toURI();
         }
         return resourceURI;
+    }
+
+    public static boolean isURL(String tableSchemaLocation) {
+        try {
+            new URL(tableSchemaLocation);
+            return true;
+        } catch (MalformedURLException e) {
+            return false;
+        }
     }
 }
