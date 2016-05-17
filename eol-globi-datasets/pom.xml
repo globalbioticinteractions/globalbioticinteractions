@@ -251,7 +251,7 @@
                                             <artifactId>${project.artifactId}</artifactId>
                                             <version>${project.version}</version>
                                             <classifier>neo4j-compiled</classifier>
-                                            <type>tar.gz</type>
+                                            <type>zip</type>
                                             <overWrite>false</overWrite>
                                             <outputDirectory>${data.dir}</outputDirectory>
                                         </artifactItem>
@@ -356,7 +356,7 @@
                                             <artifactId>${project.artifactId}</artifactId>
                                             <version>${project.version}</version>
                                             <classifier>neo4j-graph-db</classifier>
-                                            <type>tar.gz</type>
+                                            <type>zip</type>
                                             <overWrite>false</overWrite>
                                             <outputDirectory>${data.dir}</outputDirectory>
                                         </artifactItem>
