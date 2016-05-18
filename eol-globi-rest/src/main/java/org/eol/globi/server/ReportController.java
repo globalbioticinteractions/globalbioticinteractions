@@ -3,12 +3,14 @@ package org.eol.globi.server;
 import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.server.util.ResultField;
 import org.eol.globi.util.CypherQuery;
+import org.eol.globi.util.CypherUtil;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -18,7 +20,7 @@ public class ReportController {
 
     @RequestMapping(value = "/reports/studies", method = RequestMethod.GET)
     @ResponseBody
-    public CypherQuery studies(@RequestParam(required = false) final String source) throws IOException {
+    public CypherQuery studies(@RequestParam(required = false) final String source, final HttpServletRequest request) throws IOException {
         String cypherQuery = "START report = node:reports(" + (StringUtils.isBlank(source) ? "'source:*'" : "source={source}") + ") "
                 + " WHERE has(report.title) "
                 + " RETURN report.citation? as " + ResultField.STUDY_CITATION
@@ -33,12 +35,12 @@ public class ReportController {
             put("source", source);
         }};
 
-        return new CypherQuery(cypherQuery, params);
+        return CypherQueryBuilder.createPagedQuery(request, new CypherQuery(cypherQuery, params));
     }
 
     @RequestMapping(value = "/reports/sources", method = RequestMethod.GET)
     @ResponseBody
-    public CypherQuery sources(@RequestParam(required = false) final String source) throws IOException {
+    public CypherQuery sources(@RequestParam(required = false) final String source, final HttpServletRequest request) throws IOException {
         String cypherQuery = "START report = node:reports(" + (StringUtils.isBlank(source) ? "'source:*'" : "source={source}") + ") "
                 + " WHERE not(has(report.title)) AND has(report.source)"
                 + " RETURN report.citation? as " + ResultField.STUDY_CITATION
@@ -54,7 +56,7 @@ public class ReportController {
             put("source", source);
         }};
 
-        return new CypherQuery(cypherQuery, params);
+        return CypherQueryBuilder.createPagedQuery(request, new CypherQuery(cypherQuery, params));
     }
 
     @RequestMapping(value = "/reports/collections", method = RequestMethod.GET)
