@@ -55,7 +55,7 @@ public class GraphExporterImpl implements GraphExporter {
         exportNames(baseDir, studies);
         exportNCBILinkOut(graphService, baseDir, studies);
 
-        exportDataOntology(studies, baseDir);
+        // exportDataOntology(studies, baseDir);
         exportDarwinCoreAggregatedByStudy(baseDir, studies);
         exportDarwinCoreAll(baseDir, studies);
     }
