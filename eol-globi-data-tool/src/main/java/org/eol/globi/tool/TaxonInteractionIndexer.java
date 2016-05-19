@@ -16,6 +16,7 @@ import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.IndexHits;
 
+import java.util.Map;
 import java.util.Set;
 
 public class TaxonInteractionIndexer {
@@ -39,8 +40,8 @@ public class TaxonInteractionIndexer {
                 .compressionEnable()
                 .transactionDisable()
                 .make();
-        final Set<Fun.Tuple3<Long, String, Long>> taxonInteractions = db
-                .createTreeSet("ottIdMap")
+        final Map<Fun.Tuple3<Long, String, Long>, Long> taxonInteractions = db
+                .createTreeMap("ottIdMap")
                 .make();
 
         collectTaxonInteractions(taxonInteractions);
@@ -49,13 +50,13 @@ public class TaxonInteractionIndexer {
         db.close();
     }
 
-    public void createTaxonInteractions(Set<Fun.Tuple3<Long, String, Long>> taxonInteractions) {
+    public void createTaxonInteractions(Map<Fun.Tuple3<Long, String, Long>, Long> taxonInteractions) {
         StopWatch watchForEntireRun = new StopWatch();
         watchForEntireRun.start();
 
         long count = 0;
         Transaction tx = null;
-        for (Fun.Tuple3<Long, String, Long> uniqueTaxonInteraction : taxonInteractions) {
+        for (Fun.Tuple3<Long, String, Long> uniqueTaxonInteraction : taxonInteractions.keySet()) {
             if (count % 1000 == 0) {
                 finalizeTx(tx);
                 tx = graphService.beginTx();
@@ -63,7 +64,8 @@ public class TaxonInteractionIndexer {
             final Node sourceTaxon = graphService.getNodeById(uniqueTaxonInteraction.a);
             final Node targetTaxon = graphService.getNodeById(uniqueTaxonInteraction.c);
             if (sourceTaxon != null && targetTaxon != null) {
-                sourceTaxon.createRelationshipTo(targetTaxon, InteractType.valueOf(uniqueTaxonInteraction.b));
+                final Relationship rel = sourceTaxon.createRelationshipTo(targetTaxon, InteractType.valueOf(uniqueTaxonInteraction.b));
+                rel.setProperty("count", taxonInteractions.get(uniqueTaxonInteraction));
             }
             count++;
         }
@@ -80,7 +82,7 @@ public class TaxonInteractionIndexer {
         }
     }
 
-    public void collectTaxonInteractions(Set<Fun.Tuple3<Long, String, Long>> taxonInteractions) {
+    public void collectTaxonInteractions(Map<Fun.Tuple3<Long, String, Long>, Long> taxonInteractions) {
         StopWatch watchForEntireRun = new StopWatch();
         watchForEntireRun.start();
         StopWatch watchForBatch = new StopWatch();
@@ -100,7 +102,9 @@ public class TaxonInteractionIndexer {
                     final Iterable<Relationship> targetClassifications = interaction.getEndNode().getRelationships(Direction.OUTGOING, RelTypes.CLASSIFIED_AS);
                     for (Relationship targetClassification : targetClassifications) {
                         final Node targetTaxonNode = targetClassification.getEndNode();
-                        taxonInteractions.add(new Fun.Tuple3<Long, String, Long>(sourceTaxon.getId(), interaction.getType().name(), targetTaxonNode.getId()));
+                        final Fun.Tuple3<Long, String, Long> interactionKey = new Fun.Tuple3<Long, String, Long>(sourceTaxon.getId(), interaction.getType().name(), targetTaxonNode.getId());
+                        final Long distinctInteractions = taxonInteractions.get(interactionKey);
+                        taxonInteractions.put(interactionKey, distinctInteractions == null ? 1L : (distinctInteractions + 1L));
                         count++;
                     }
                 }

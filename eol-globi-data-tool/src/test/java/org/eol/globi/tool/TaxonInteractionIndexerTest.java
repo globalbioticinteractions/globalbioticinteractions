@@ -46,11 +46,14 @@ public class TaxonInteractionIndexerTest extends GraphDBTestCase {
 
         Iterable<Relationship> rels = homoSapiens.getUnderlyingNode().getRelationships(Direction.OUTGOING, InteractType.ATE);
         List<String> humanFood = new ArrayList<String>();
+        List<Long> counts = new ArrayList<Long>();
         for (Relationship rel : rels) {
             humanFood.add((String) rel.getEndNode().getProperty("name"));
+            counts.add((Long) rel.getProperty("count"));
         }
         assertThat(humanFood.size(), is(2));
         assertThat(humanFood, hasItems("Ariopsis felis", "Animalia"));
+        assertThat(counts, hasItems(10L, 1L));
     }
 
 }
