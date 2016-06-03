@@ -20,6 +20,7 @@
         <shapefiles.dir>${project.build.directory}/shapefiles</shapefiles.dir>
         <data.dir>${project.build.directory}/data</data.dir>
         <wagon-maven-plugin.version>1.0</wagon-maven-plugin.version>
+        <maven-assembly-plugin.version>2.5</maven-assembly-plugin.version>
     </properties>
 
     <build>
@@ -183,7 +184,7 @@
                     </plugin>
                     <plugin>
                         <artifactId>maven-assembly-plugin</artifactId>
-                        <version>2.4</version>
+                        <version>${maven-assembly-plugin.version}</version>
                         <configuration>
                             <descriptors>
                                 <descriptor>src/assembly/neo4j-compiled.xml</descriptor>
@@ -288,7 +289,7 @@
                     </plugin>
                     <plugin>
                         <artifactId>maven-assembly-plugin</artifactId>
-                        <version>2.4</version>
+                        <version>${maven-assembly-plugin.version}</version>
                         <configuration>
                             <descriptors>
                                 <descriptor>src/assembly/neo4j-graph-db.xml</descriptor>
@@ -368,7 +369,7 @@
                     </plugin>
                     <plugin>
                         <artifactId>maven-assembly-plugin</artifactId>
-                        <version>2.4</version>
+                        <version>${maven-assembly-plugin.version}</version>
                         <configuration>
                             <descriptors>
                                 <descriptor>src/assembly/ncbi-link-out.xml</descriptor>
