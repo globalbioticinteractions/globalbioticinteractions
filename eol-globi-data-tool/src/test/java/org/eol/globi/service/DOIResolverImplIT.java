@@ -57,6 +57,13 @@ public class DOIResolverImplIT {
     }
 
     @Test
+    public void resolveWithCrossRefIntermittentRuntimeError() throws IOException {
+        // see https://github.com/CrossRef/rest-api-doc/issues/93
+        String citation = new DOIResolverImpl().findCitationForDOI("http://dx.doi.org/10.1017/s0266467499000760");
+        assertThat(citation, is("Poulin B, Wright SJ, Lefebvre G, Calderón O. Interspecific synchrony and asynchrony in the fruiting phenologies of congeneric bird-dispersed plants in Panama. Journal of Tropical Ecology [Internet]. 1999 March;15(2):213–227. Available from: http://dx.doi.org/10.1017/s0266467499000760"));
+    }
+
+    @Test
     public void resolveBioInfoCitation() throws IOException {
         String doi = new DOIResolverImpl().findDOIForReference("Galea, V.J. & Price, T.V.. 1988. Infection of Lettuce by Microdochium panattonianum. Transactions of the British Mycological Society. Vol Vol 91 (3). pp 419-425");
         String expectedDoi = "http://dx.doi.org/10.1016/s0007-1536(88)80117-7";
