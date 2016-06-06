@@ -12,7 +12,7 @@
 
     <fileSets>
         <fileSet>
-            <directory>${project.build.directory}/data/all</directory>
+            <directory>${data.dir}/all</directory>
             <outputDirectory>/</outputDirectory>
             <includes>
                 <include>**/*.csv</include>

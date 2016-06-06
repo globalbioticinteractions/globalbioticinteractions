@@ -12,7 +12,7 @@
     <fileSets>
 
         <fileSet>
-            <directory>${project.build.directory}/data/</directory>
+            <directory>${data.dir}</directory>
             <outputDirectory>/</outputDirectory>
             <includes>
                 <include>**/*.ttl</include>

@@ -11,7 +11,7 @@
 
     <fileSets>
         <fileSet>
-            <directory>${project.build.directory}/data/graph.db</directory>
+            <directory>${neo4j.data.dir}</directory>
             <outputDirectory>graph.db</outputDirectory>
             <includes>
                 <include>**</include>

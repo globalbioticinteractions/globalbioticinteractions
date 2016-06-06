@@ -19,6 +19,7 @@
         <globi.taxa.version>1.0-SNAPSHOT</globi.taxa.version>
         <shapefiles.dir>${project.build.directory}/shapefiles</shapefiles.dir>
         <data.dir>${project.build.directory}/data</data.dir>
+        <neo4j.data.dir>${data.dir}/graph.db</neo4j.data.dir>
         <wagon-maven-plugin.version>1.0</wagon-maven-plugin.version>
         <maven-assembly-plugin.version>2.5</maven-assembly-plugin.version>
     </properties>
