@@ -53,6 +53,9 @@ public class GraphExporterImpl implements GraphExporter {
 
         List<Study> studies = NodeUtil.findAllStudies(graphService);
         exportNames(baseDir, studies);
+        // export to taxa for now, to avoid additional assemblies
+        new ExportFlatInteractions().export(graphService, "taxa");
+
         exportNCBILinkOut(graphService, baseDir, studies);
 
         // exportDataOntology(studies, baseDir);
