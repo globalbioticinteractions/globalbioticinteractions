@@ -140,6 +140,7 @@ public enum InteractType implements RelType {
         final Map<InteractType, Collection<InteractType>> pathMap = new HashMap<InteractType, Collection<InteractType>>() {
             {
                 put(INTERACTS_WITH, new ArrayList<InteractType>());
+                put(ADJACENT_TO, Collections.singletonList(INTERACTS_WITH));
                 put(PERCHING_ON, Arrays.asList(LIVES_ON, INTERACTS_WITH));
                 put(ATE, Collections.singletonList(INTERACTS_WITH));
                 put(SYMBIONT_OF, Collections.singletonList(INTERACTS_WITH));
