@@ -1,5 +1,6 @@
 package org.eol.globi.export;
 
+import org.apache.commons.io.IOUtils;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.util.InteractUtil;
 import org.neo4j.graphdb.GraphDatabaseService;
@@ -22,6 +23,8 @@ public class ExportFlatInteractions implements GraphExporter {
             GZIPOutputStream os = new GZIPOutputStream(out);
             final OutputStreamWriter writer = new OutputStreamWriter(os, "UTF-8");
             export(graphService, writer);
+            IOUtils.closeQuietly(writer);
+            IOUtils.closeQuietly(os);
         } catch (IOException e) {
             throw new StudyImporterException("failed to export interactions", e);
         }
@@ -38,7 +41,7 @@ public class ExportFlatInteractions implements GraphExporter {
                         ", sourceTaxon.rank? as sourceTaxonRank" +
                         ", sourceTaxon.path? as sourceTaxonPathNames" +
                         ", sourceTaxon.pathIds? as sourceTaxonPathIds" +
-                        ", sourceTaxon.pathNames? as sourceTaxonPathNames" +
+                        ", sourceTaxon.pathNames? as sourceTaxonPathRankNames" +
                         ", r.label as interactionTypeName" +
                         ", r.iri as interactionTypeId" +
                         ", targetTaxon.externalId? as targetTaxonId" +
@@ -46,7 +49,7 @@ public class ExportFlatInteractions implements GraphExporter {
                         ", targetTaxon.rank? as targetTaxonRank" +
                         ", targetTaxon.path? as targetTaxonPathNames" +
                         ", targetTaxon.pathIds? as targetTaxonPathIds" +
-                        ", targetTaxon.pathNames? as targetTaxonPathNames" +
+                        ", targetTaxon.pathNames? as targetTaxonPathRankNames" +
                         ", loc.latitude? as decimalLatitude" +
                         ", loc.longitude? as decimalLongitude" +
                         ", loc.locality? as locality" +

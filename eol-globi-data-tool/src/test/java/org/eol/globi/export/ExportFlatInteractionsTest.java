@@ -31,8 +31,8 @@ public class ExportFlatInteractionsTest extends GraphDBTestCase {
         final String actualExport = writer.toString();
         final String[] actualExportLines = actualExport.split("\\n");
         assertThat(actualExportLines.length, is(22));
-        final String header = "sourceTaxonId,sourceTaxonName,sourceTaxonRank,sourceTaxonPathNames,sourceTaxonPathIds,sourceTaxonPathNames,interactionTypeName,interactionTypeId,targetTaxonId,targetTaxonName,targetTaxonRank,targetTaxonPathNames,targetTaxonPathIds,targetTaxonPathNames,decimalLatitude,decimalLongitude,locality,eventDateUnixEpoch,referenceCitation,referenceDoi,referenceUrl,sourceCitation";
-        final String first = "EOL:333,Homo sapiens,,,,,eats,http://purl.obolibrary.org/obo/RO_0002470,EOL:555,Canis lupus,,,,,12.0,-45.9,,701942400000,,,,";
+        final String header = "sourceTaxonId,sourceTaxonName,sourceTaxonRank,sourceTaxonPathNames,sourceTaxonPathIds,sourceTaxonPathRankNames,interactionTypeName,interactionTypeId,targetTaxonId,targetTaxonName,targetTaxonRank,targetTaxonPathNames,targetTaxonPathIds,targetTaxonPathRankNames,decimalLatitude,decimalLongitude,locality,eventDateUnixEpoch,referenceCitation,referenceDoi,referenceUrl,sourceCitation";
+        final String first = "EOL:333,Homo sapiens,,pathElem1 | pathElem 2,,,eats,http://purl.obolibrary.org/obo/RO_0002470,EOL:555,Canis lupus,,preyPathElem1 | preyPathElem2,,,12.0,-45.9,,701942400000,,,,";
         assertThat(actualExportLines[0], is(header));
         assertThat(actualExportLines[1], is(first));
     }

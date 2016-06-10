@@ -81,7 +81,7 @@
                     <url>s3://globi/snapshot</url>
                     <skip>${skipTests}</skip>
                     <includes>
-                        **/sitemap/**,**/taxa/taxon*,**/${project.artifactId}-${project.version}*.tar.gz,**/${project.artifactId}-${project.version}*.zip
+                        **/sitemap/**,**/taxa/taxon*,**/taxon/interactions.csv.gz,**/${project.artifactId}-${project.version}*.tar.gz,**/${project.artifactId}-${project.version}*.zip
                     </includes>
                 </configuration>
                 <executions>
