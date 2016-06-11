@@ -5,6 +5,7 @@ import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.util.InteractUtil;
 import org.neo4j.graphdb.GraphDatabaseService;
 
+import java.io.BufferedWriter;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -21,8 +22,10 @@ public class ExportFlatInteractions implements GraphExporter {
             ExportUtil.mkdirIfNeeded(baseDir);
             final FileOutputStream out = new FileOutputStream(baseDir + "/interactions.csv.gz");
             GZIPOutputStream os = new GZIPOutputStream(out);
-            final OutputStreamWriter writer = new OutputStreamWriter(os, "UTF-8");
+            final Writer writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
             export(graphService, writer);
+            writer.flush();
+            os.finish();
             IOUtils.closeQuietly(writer);
             IOUtils.closeQuietly(os);
         } catch (IOException e) {
