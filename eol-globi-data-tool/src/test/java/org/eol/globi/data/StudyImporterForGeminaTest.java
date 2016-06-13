@@ -33,7 +33,7 @@ public class StudyImporterForGeminaTest extends GraphDBTestCase {
             "TI:0000006\tBacillus anthracis\t1392\tair\t\tindirect: airborne\tBubalus bubalis\t89462\tAnthrax\trespiratory system\t\n";
 
     @Test
-    public void importFewLines() throws StudyImporterException, NodeFactoryException {
+    public void importFewLines() throws StudyImporterException {
         StudyImporterForGemina importer = new StudyImporterForGemina(new TestParserFactory(firstFewLines), nodeFactory);
         importStudy(importer);
 
