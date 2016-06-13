@@ -53,8 +53,8 @@ public class EnvoService implements PropertyEnricher {
         put(ORGANIC_MATERIAL, new String[]{"environmental material | organic material", "ENVO:00010483 | ENVO:01000155"});
         put(FECES, new String[]{"environmental material | organic material | bodily fluid | excreta | feces", "ENVO:00010483 | ENVO:01000155 | ENVO:02000019 | ENVO:02000022 | ENVO:00002003"});
         put(WOOD, new String[]{"environmental material | organic material | wood", "ENVO:00010483 | ENVO:01000155 | ENVO:00002040"});
-        put(PLASTIC, new String[]{"environmental material | anthropogenic environmental material", "ENVO:00010483 | ENVO:0010001"});
-        put(ROCK, new String[]{"environmental material", "ENVO:00010483"});
+        put(PLASTIC, new String[]{"environmental material | anthropogenic environmental material | plastic", "ENVO:00010483 | ENVO:0010001"});
+        put(ROCK, new String[]{"environmental material | rock", "ENVO:00010483"});
         put(PIECE_OF_ROCK, new String[]{"environmental feature | mesoscopic physical object | abiotic mesoscopic physical object | piece of rock", "ENVO:00002297 | ENVO:00002004 | ENVO:01000010 | ENVO:00000339"});
     }};
 
