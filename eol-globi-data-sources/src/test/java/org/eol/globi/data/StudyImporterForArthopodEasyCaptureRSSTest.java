@@ -1,13 +1,10 @@
 package org.eol.globi.data;
 
-import com.sun.syndication.io.FeedException;
 import org.junit.Test;
 
-import java.io.IOException;
 import java.util.List;
 
 import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
 
 public class StudyImporterForArthopodEasyCaptureRSSTest {

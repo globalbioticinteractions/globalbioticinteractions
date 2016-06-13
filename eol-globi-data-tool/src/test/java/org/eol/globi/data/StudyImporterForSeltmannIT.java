@@ -21,21 +21,21 @@ public class StudyImporterForSeltmannIT extends GraphDBTestCase {
     private final static String ARCHIVE_URI_PREFIX = "http://amnh.begoniasociety.org/dwc/";
 
     @Test
-    public void importBees() throws StudyImporterException, NodeFactoryException, IOException {
+    public void importBees() throws StudyImporterException, IOException {
         importArchive("AEC-DBCNet_DwC-A20151028.zip");
     }
 
     @Test
-    public void importPlantBugs() throws StudyImporterException, NodeFactoryException, IOException {
-        importArchive("AEC-NA_PlantBugPBI_DwC-A20151028.zip");
+    public void importPlantBugs() throws StudyImporterException, IOException {
+        importArchive("AEC-NA_PlantBugPBI_DwC-A20160308.zip");
     }
 
     @Test
-    public void importTriTrophic() throws StudyImporterException, NodeFactoryException, IOException {
+    public void importTriTrophic() throws StudyImporterException, IOException {
         importArchive("AEC-TTD-TCN_DwC-A20151028.zip");
     }
 
-    protected void importArchive(String archiveName) throws StudyImporterException, NodeFactoryException {
+    protected void importArchive(String archiveName) throws StudyImporterException {
         StudyImporterForSeltmann importer = new StudyImporterForSeltmann(null, nodeFactory);
         importer.setArchiveURL(ARCHIVE_URI_PREFIX + archiveName);
         importStudy(importer);
