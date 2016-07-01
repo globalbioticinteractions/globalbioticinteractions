@@ -51,7 +51,7 @@ public class LinkerOpenTreeOfLifeTest extends GraphDBTestCase {
         taxon.setExternalId("GBIF:123");
         final Taxon linkedTaxon = LinkerOpenTreeOfLife.copyAndLinkToOpenTreeTaxon(taxon, 555L);
         assertThat(linkedTaxon.getExternalId(), is("OTT:555"));
-        assertThat(linkedTaxon.getExternalUrl(), is("https://tree.opentreeoflife.org/taxonomy/browse?id=555"));
+        assertThat(linkedTaxon.getExternalUrl(), is("https://tree.opentreeoflife.org/opentree/ottol@555"));
     }
 
 }
