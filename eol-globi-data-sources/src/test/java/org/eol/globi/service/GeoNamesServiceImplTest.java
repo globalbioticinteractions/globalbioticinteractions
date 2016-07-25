@@ -65,8 +65,8 @@ public class GeoNamesServiceImplTest {
     @Test
     public void assertPacific() throws IOException {
         LatLng point = new GeoNamesServiceImpl().findLatLng("Country: Pacific");
-        assertThat(point.getLat(), is(0.0));
-        assertThat(point.getLng(), is(180.0));
+        assertThat(point.getLat(), is(3.51342));
+        assertThat(point.getLng(), is(-132.1875));
     }
 
     @Test

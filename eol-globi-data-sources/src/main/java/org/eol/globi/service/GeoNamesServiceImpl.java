@@ -40,7 +40,7 @@ public class GeoNamesServiceImpl implements GeoNamesService {
         put("Country: USA;   State: Pennsylvania", new Term(GEONAMES.getIdPrefix() + "6254927", "Pennsylvania"));
         put("Country: Costa Rica", new Term(GEONAMES.getIdPrefix() + "3624060", "Costa Rica"));
         put("Costa Rica", new Term(GEONAMES.getIdPrefix() + "3624060", "Costa Rica"));
-        put("Country: Pacific", new Term(GEONAMES.getIdPrefix() + "8411083", "Pacific Ocean"));
+        put("Country: Pacific", new Term(GEONAMES.getIdPrefix() + "2363254", "Pacific Ocean"));
         put("Country: USA;   State: California;   Locality: Cabrillo Point", new Term(GEONAMES.getIdPrefix() + "5332459", "Cabrillo Point"));
         put("Country: USA;   State: Texas", new Term(GEONAMES.getIdPrefix() + "4736286", "Texas"));
         put("Country: Portugal", new Term(GEONAMES.getIdPrefix() + "2264397", "Portugal"));
