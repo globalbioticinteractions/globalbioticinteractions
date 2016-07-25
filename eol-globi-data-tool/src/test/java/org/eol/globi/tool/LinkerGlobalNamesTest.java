@@ -90,6 +90,26 @@ public class LinkerGlobalNamesTest extends GraphDBTestCase {
     }
 
     @Test
+    public void hasFishBaseLinks() throws NodeFactoryException, PropertyEnricherException {
+        taxonIndex.getOrCreateTaxon("Ariopsis felis");
+        new LinkerGlobalNames().link(getGraphDb());
+        List<String> ids = LinkerTestUtil.assertHasOther("Ariopsis felis", 6, taxonIndex, RelTypes.SAME_AS);
+
+        assertThat(ids, hasItem("FBC:FB:SpecCode:947"));
+
+    }
+
+    @Test
+    public void hasSeaLifeBaseLinks() throws NodeFactoryException, PropertyEnricherException {
+        taxonIndex.getOrCreateTaxon("Enhydra lutris");
+        new LinkerGlobalNames().link(getGraphDb());
+        List<String> ids = LinkerTestUtil.assertHasOther("Enhydra lutris", 6, taxonIndex, RelTypes.SAME_AS);
+
+        assertThat(ids, hasItem("FBC:SLB:SpecCode:69195"));
+
+    }
+
+    @Test
     public void lestesExcludeSuspectedHomonyms() throws NodeFactoryException, PropertyEnricherException {
         final PropertyEnricher genus = new PropertyEnricher() {
             @Override

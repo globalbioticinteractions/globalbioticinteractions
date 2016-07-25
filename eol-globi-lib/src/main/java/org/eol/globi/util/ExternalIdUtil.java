@@ -75,6 +75,8 @@ public class ExternalIdUtil {
             put(TaxonomyProvider.OPEN_TREE_OF_LIFE.getIdPrefix(), "https://tree.opentreeoflife.org/opentree/ottol@");
             put(TaxonomyProvider.ID_PREFIX_HTTP, TaxonomyProvider.ID_PREFIX_HTTP);
             put(TaxonomyProvider.ID_PREFIX_ITIS, "http://www.itis.gov/servlet/SingleRpt/SingleRpt?search_topic=TSN&search_value=");
+            put(TaxonomyProvider.FISHBASE_CACHE.getIdPrefix() + "FB:SpecCode:", "http://fishbase.org/summary/");
+            put(TaxonomyProvider.FISHBASE_CACHE.getIdPrefix() + "SLB:SpecCode:", "http://sealifebase.org/summary/");
         }};
     }
 

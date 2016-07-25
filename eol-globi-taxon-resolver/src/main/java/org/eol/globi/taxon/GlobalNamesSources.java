@@ -8,6 +8,7 @@ public enum GlobalNamesSources {
     IRMNG(8, TaxonomyProvider.INTERIM_REGISTER_OF_MARINE_AND_NONMARINE_GENERA),
     IF(5, TaxonomyProvider.INDEX_FUNGORUM),
     ITIS(3, TaxonomyProvider.ITIS),
+    FISHBASE_CACHE(177, TaxonomyProvider.FISHBASE_CACHE),
     WORMS(9, TaxonomyProvider.WORMS);
 
     private final int id;

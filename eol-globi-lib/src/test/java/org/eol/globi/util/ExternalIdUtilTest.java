@@ -26,6 +26,12 @@ public class ExternalIdUtilTest {
     }
 
     @Test
+    public void fishBaseMapping() {
+        assertThat(ExternalIdUtil.urlForExternalId("FBC:SLB:SpecCode:69195"), is("http://sealifebase.org/summary/69195"));
+        assertThat(ExternalIdUtil.urlForExternalId("FBC:FB:SpecCode:947"), is("http://fishbase.org/summary/947"));
+    }
+
+    @Test
     public void getExternalId() {
         assertThat(ExternalIdUtil.getUrlFromExternalId("{ \"data\": [[]]}"), is("{}"));
         assertThat(ExternalIdUtil.getUrlFromExternalId("{ \"data\": []}"), is("{}"));
