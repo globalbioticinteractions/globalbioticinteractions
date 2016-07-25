@@ -9,9 +9,12 @@ import org.codehaus.jackson.JsonProcessingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.data.CharsetConstant;
 import org.eol.globi.domain.PropertyAndValueDictionary;
+import org.eol.globi.domain.Taxon;
+import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TaxonomyProvider;
 import org.eol.globi.service.PropertyEnricher;
 import org.eol.globi.service.PropertyEnricherException;
+import org.eol.globi.service.TaxonUtil;
 import org.eol.globi.util.HttpUtil;
 
 import java.io.IOException;
@@ -77,9 +80,9 @@ public class AtlasOfLivingAustraliaService implements PropertyEnricher {
                 if (searchResults.has("results")) {
                     JsonNode results = searchResults.get("results");
                     for (JsonNode result : results) {
-                        if (result.has("name") && result.has("idxType") && result.has("guid")) {
+                        if (result.has("name") && result.has("idxtype") && result.has("guid")) {
                             if (StringUtils.equals(taxonName, result.get("name").getTextValue())
-                                    && StringUtils.equals("TAXON", result.get("idxType").getTextValue())) {
+                                    && StringUtils.equals("TAXON", result.get("idxtype").getTextValue())) {
                                 guid = result.get("guid").getTextValue();
                                 break;
                             }
@@ -108,8 +111,16 @@ public class AtlasOfLivingAustraliaService implements PropertyEnricher {
                 ObjectMapper mapper = new ObjectMapper();
                 JsonNode node = mapper.readTree(response);
                 info = new HashMap<String, String>();
+                if (node.has("taxonConcept")) {
+                    info.putAll(parseTaxonConcept(node.get("taxonConcept")));
+                }
                 if (node.has("classification")) {
                     info.putAll(parseClassification(node.get("classification")));
+                    final Taxon taxon = TaxonUtil.mapToTaxon(info);
+                    taxon.setPath(taxon.getPath() + CharsetConstant.SEPARATOR + taxon.getName());
+                    taxon.setPathIds(taxon.getPathIds() + CharsetConstant.SEPARATOR + taxon.getExternalId());
+                    taxon.setPathNames(taxon.getPathNames() + CharsetConstant.SEPARATOR + taxon.getRank());
+                    info.putAll(TaxonUtil.taxonToMap(taxon));
                 }
                 if (node.has("commonNames")) {
                     info.putAll(parseCommonName(node.get("commonNames")));
@@ -126,39 +137,25 @@ public class AtlasOfLivingAustraliaService implements PropertyEnricher {
     }
 
     private Map<String, String> parseCommonName(JsonNode commonNames) {
-        Map<String, String> info = Collections.emptyMap();
+        final List<String> commonNameList = new ArrayList<String>();
         for (final JsonNode commonName : commonNames) {
-            if (commonName.has("nameString")
-                    && commonName.has("isPreferred")
-                    && commonName.get("isPreferred").getBooleanValue()) {
-                info = new HashMap<String, String>() {{
-                    put(PropertyAndValueDictionary.COMMON_NAMES,
-                            commonName.get("nameString").getTextValue() + " @en");
-                }};
+            if (commonName.has("nameString") && commonName.has("language")) {
+                commonNameList.add(commonName.get("nameString").getTextValue() + " @"  + commonName.get("language").getTextValue().split("-")[0]);
             }
         }
-        return info;
+        return new HashMap<String, String>() {{
+            if (commonNameList.size() > 0) {
+                put(PropertyAndValueDictionary.COMMON_NAMES,
+                        StringUtils.join(commonNameList, CharsetConstant.SEPARATOR));
+            }
+        }};
     }
 
     private Map<String, String> parseClassification(JsonNode classification) {
         Map<String, String> info = new HashMap<String, String>();
-        if (classification.has("scientificName")) {
-            info.put(PropertyAndValueDictionary.NAME, classification.get("scientificName").getTextValue());
-        }
-
-        if (classification.has("rank")) {
-            String rank = classification.get("rank").getTextValue();
-            info.put(PropertyAndValueDictionary.RANK, getRankString(rank));
-        }
-
-        if (classification.has("guid")) {
-            String guid = classification.get("guid").getTextValue();
-            String externalId = StringUtils.replace(guid, AFD_TSN_PREFIX, TaxonomyProvider.ID_PREFIX_AUSTRALIAN_FAUNAL_DIRECTORY);
-            info.put(PropertyAndValueDictionary.EXTERNAL_ID, externalId);
-        }
 
         String[] ranks = new String[]{
-                "kingdom", "phylum", "clazz", "order", "family", "genus", "species"
+                "kingdom", "phylum", "subphylum", "class", "subclass", "order", "suborder", "superfamily", "family", "subfamily", "genus", "species"
         };
         List<String> path = new ArrayList<String>();
         List<String> pathIds = new ArrayList<String>();
@@ -181,6 +178,26 @@ public class AtlasOfLivingAustraliaService implements PropertyEnricher {
         info.put(PropertyAndValueDictionary.PATH, StringUtils.join(path, CharsetConstant.SEPARATOR));
         info.put(PropertyAndValueDictionary.PATH_IDS, StringUtils.join(pathIds, CharsetConstant.SEPARATOR));
         info.put(PropertyAndValueDictionary.PATH_NAMES, StringUtils.join(pathNames, CharsetConstant.SEPARATOR));
+        return info;
+    }
+
+    private Map<String, String> parseTaxonConcept(JsonNode classification) {
+        Map<String, String> info = new HashMap<String, String>();
+        if (classification.has("nameString")) {
+            info.put(PropertyAndValueDictionary.NAME, classification.get("nameString").getTextValue());
+        }
+
+        if (classification.has("rankString")) {
+            String rank = classification.get("rankString").getTextValue();
+            info.put(PropertyAndValueDictionary.RANK, getRankString(rank));
+        }
+
+        if (classification.has("guid")) {
+            String guid = classification.get("guid").getTextValue();
+            String externalId = StringUtils.replace(guid, AFD_TSN_PREFIX, TaxonomyProvider.ID_PREFIX_AUSTRALIAN_FAUNAL_DIRECTORY);
+            info.put(PropertyAndValueDictionary.EXTERNAL_ID, externalId);
+        }
+
         return info;
     }
 
