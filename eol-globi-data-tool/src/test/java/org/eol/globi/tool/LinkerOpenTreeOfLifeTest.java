@@ -25,7 +25,7 @@ public class LinkerOpenTreeOfLifeTest extends GraphDBTestCase {
 
     @Test
     public void ariopsisFelis() throws NodeFactoryException, PropertyEnricherException {
-        assertOTTLink("Ariopsis felis", 6, "139650");
+        assertOTTLink("Ariopsis felis", 7, "139650");
     }
 
     protected void assertOTTLink(String name, int expectedCount, String ottId) throws NodeFactoryException, PropertyEnricherException {
