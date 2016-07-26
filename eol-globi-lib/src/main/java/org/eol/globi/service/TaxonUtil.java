@@ -101,7 +101,7 @@ public class TaxonUtil {
 
     public static boolean hasHigherOrderTaxaMismatch(Map<String, String> pathMapA, Map<String, String> pathMapB) {
         boolean likelyHomonym = false;
-        String[] ranks = new String[]{"kingdom", "phylum", "class"};
+        String[] ranks = new String[]{"phylum", "class"};
         for (String rank : ranks) {
             if (pathMapA.containsKey(rank) && pathMapB.containsKey(rank)) {
                 if (!StringUtils.equals(pathMapA.get(rank), pathMapB.get(rank))) {
