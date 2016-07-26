@@ -1,5 +1,7 @@
 package org.eol.globi.service;
 
+import org.apache.commons.lang.StringUtils;
+import org.eol.globi.data.CharsetConstant;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.taxon.GlobalNamesService;
@@ -214,6 +216,31 @@ public class GlobalNamesServiceTest {
         assertThat(enrich.get(PropertyAndValueDictionary.PATH_NAMES), is("superkingdom | kingdom | phylum | subphylum | class | superorder | order | suborder | infraorder | parvorder | superfamily | family | subfamily | genus | species"));
         assertThat(enrich.get(PropertyAndValueDictionary.RANK), is("species"));
         assertThat(enrich.get(PropertyAndValueDictionary.EXTERNAL_ID), is("NCBI:9606"));
+        assertThat(enrich.get(PropertyAndValueDictionary.COMMON_NAMES), is(nullValue()));
+    }
+
+    @Test
+    public void lookupNCBIBacteria() throws PropertyEnricherException {
+        GlobalNamesService service = new GlobalNamesService(GlobalNamesSources.NCBI);
+        HashMap<String, String> props1 = new HashMap<String, String>();
+        props1.put(PropertyAndValueDictionary.NAME, "Bacteria");
+        Map<String, String> enrich = service.enrich(props1);
+        assertThat(enrich.get(PropertyAndValueDictionary.NAME), is("Bacteria"));
+
+        final String path = enrich.get(PropertyAndValueDictionary.PATH);
+        assertThat(path, is(" | Eukaryota | Opisthokonta | Metazoa | Eumetazoa | Bilateria | Protostomia | Ecdysozoa | Panarthropoda | Arthropoda | Mandibulata | Pancrustacea | Hexapoda | Insecta | Dicondylia | Pterygota | Neoptera | Orthopteroidea | Phasmatodea | Verophasmatodea | Anareolatae | Diapheromeridae | Diapheromerinae | Diapheromerini | Bacteria"));
+
+        final String pathNames = enrich.get(PropertyAndValueDictionary.PATH_NAMES);
+        assertThat(pathNames, is(" | superkingdom |  | kingdom |  |  |  |  |  | phylum |  |  | superclass | class |  |  | subclass | infraclass | order | suborder | infraorder | family | subfamily | tribe | genus"));
+
+        final String pathIds = enrich.get(PropertyAndValueDictionary.PATH_IDS);
+        assertThat(pathIds, is("NCBI:131567 | NCBI:2759 | NCBI:33154 | NCBI:33208 | NCBI:6072 | NCBI:33213 | NCBI:33317 | NCBI:1206794 | NCBI:88770 | NCBI:6656 | NCBI:197563 | NCBI:197562 | NCBI:6960 | NCBI:50557 | NCBI:85512 | NCBI:7496 | NCBI:33340 | NCBI:33341 | NCBI:7020 | NCBI:213547 | NCBI:523720 | NCBI:409189 | NCBI:524135 | NCBI:524136 | NCBI:629395"));
+
+        assertThat(StringUtils.split(path, CharsetConstant.SEPARATOR_CHAR).length, is(25));
+        assertThat(StringUtils.split(pathIds, CharsetConstant.SEPARATOR_CHAR).length, is(25));
+        assertThat(StringUtils.split(pathNames, CharsetConstant.SEPARATOR_CHAR).length, is(25));
+
+        assertThat(enrich.get(PropertyAndValueDictionary.EXTERNAL_ID), is("NCBI:629395"));
         assertThat(enrich.get(PropertyAndValueDictionary.COMMON_NAMES), is(nullValue()));
     }
 

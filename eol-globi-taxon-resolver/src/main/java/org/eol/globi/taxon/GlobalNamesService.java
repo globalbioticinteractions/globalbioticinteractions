@@ -149,7 +149,7 @@ public class GlobalNamesService implements PropertyEnricher {
     }
 
     private String parseList(String list, String prefix) {
-        String[] split = StringUtils.split(list, "|");
+        String[] split = StringUtils.splitPreserveAllTokens(list, "|");
         List<String> parsedList = Collections.emptyList();
         if (split != null) {
             parsedList = Arrays.asList(split);

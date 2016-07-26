@@ -5,6 +5,7 @@ import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImage;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.Term;
+import org.hamcrest.Matchers;
 import org.junit.Test;
 
 import java.util.Map;
@@ -27,6 +28,22 @@ public class TaxonUtilTest {
         otherTaxon.setName("Lestes");
         otherTaxon.setPath("Mammalia|Mesonychidae|Lestes");
         otherTaxon.setPathNames("class|family|genus");
+
+        assertThat(TaxonUtil.likelyHomonym(taxon, otherTaxon), is(true));
+    }
+
+    @Test
+    public void homonymBacteria() {
+        TaxonImpl taxon = new TaxonImpl();
+
+        taxon.setName("Bacteria");
+        taxon.setPath(" | Eukaryota | Opisthokonta | Metazoa | Eumetazoa | Bilateria | Protostomia | Ecdysozoa | Panarthropoda | Arthropoda | Mandibulata | Pancrustacea | Hexapoda | Insecta | Dicondylia | Pterygota | Neoptera | Orthopteroidea | Phasmatodea | Verophasmatodea | Anareolatae | Diapheromeridae | Diapheromerinae | Diapheromerini | Bacteria");
+        taxon.setPathNames(" | superkingdom |  | kingdom |  |  |  |  |  | phylum |  |  | superclass | class |  |  | subclass | infraclass | order | suborder | infraorder | family | subfamily | tribe | genus");
+
+        TaxonImpl otherTaxon = new TaxonImpl();
+        otherTaxon.setName("Bacteria");
+        otherTaxon.setPath("Bacteria");
+        otherTaxon.setPathNames("kingdom");
 
         assertThat(TaxonUtil.likelyHomonym(taxon, otherTaxon), is(true));
     }

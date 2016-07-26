@@ -2,7 +2,6 @@ package org.eol.globi.service;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.data.CharsetConstant;
-import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImage;
 import org.eol.globi.domain.TaxonImpl;
@@ -95,9 +94,13 @@ public class TaxonUtil {
     }
 
     public static boolean likelyHomonym(Taxon taxonA, Taxon taxonB) {
-        boolean likelyHomonym = false;
         Map<String, String> pathMapA = toPathMap(taxonA);
         Map<String, String> pathMapB = toPathMap(taxonB);
+        return hasHigherOrderTaxaMismatch(pathMapA, pathMapB);
+    }
+
+    public static boolean hasHigherOrderTaxaMismatch(Map<String, String> pathMapA, Map<String, String> pathMapB) {
+        boolean likelyHomonym = false;
         String[] ranks = new String[]{"kingdom", "phylum", "class"};
         for (String rank : ranks) {
             if (pathMapA.containsKey(rank) && pathMapB.containsKey(rank)) {

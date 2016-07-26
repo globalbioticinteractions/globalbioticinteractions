@@ -77,6 +77,16 @@ public class LinkerGlobalNamesTest extends GraphDBTestCase {
     }
 
     @Test
+    public void bacteria() throws NodeFactoryException, PropertyEnricherException {
+        taxonIndex.getOrCreateTaxon("Bacteria");
+        new LinkerGlobalNames().link(getGraphDb());
+        List<String> ids = LinkerTestUtil.assertHasOther("Bacteria", 10, taxonIndex, RelTypes.SAME_AS);
+
+        assertThat(ids, not(hasItem("NCBI:629395")));
+
+    }
+
+    @Test
     @Ignore
     // see https://github.com/GlobalNamesArchitecture/gnparser/issues/291
     public void exactMatchExcludeStrains() throws NodeFactoryException, PropertyEnricherException {
