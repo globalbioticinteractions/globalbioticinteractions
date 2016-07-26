@@ -102,14 +102,18 @@ public class TaxonUtil {
     public static boolean hasHigherOrderTaxaMismatch(Map<String, String> pathMapA, Map<String, String> pathMapB) {
         boolean likelyHomonym = false;
         String[] ranks = new String[]{"phylum", "class"};
+        int matches = 0;
         for (String rank : ranks) {
             if (pathMapA.containsKey(rank) && pathMapB.containsKey(rank)) {
-                if (!StringUtils.equals(pathMapA.get(rank), pathMapB.get(rank))) {
+                if (StringUtils.equals(pathMapA.get(rank), pathMapB.get(rank))) {
+                    matches++;
+                }   else {
                     likelyHomonym = true;
                 }
+
             }
         }
-        return likelyHomonym;
+        return likelyHomonym || matches == 0;
     }
 
     protected static Map<String, String> toPathMap(Taxon taxonA) {
