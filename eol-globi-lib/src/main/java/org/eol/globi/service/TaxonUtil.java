@@ -96,24 +96,26 @@ public class TaxonUtil {
     public static boolean likelyHomonym(Taxon taxonA, Taxon taxonB) {
         Map<String, String> pathMapA = toPathMap(taxonA);
         Map<String, String> pathMapB = toPathMap(taxonB);
-        return hasHigherOrderTaxaMismatch(pathMapA, pathMapB);
+        return hasHigherOrderTaxaMismatch(pathMapA, pathMapB)
+                || taxonPathLengthMismatch(pathMapA, pathMapB);
     }
 
     public static boolean hasHigherOrderTaxaMismatch(Map<String, String> pathMapA, Map<String, String> pathMapB) {
         boolean likelyHomonym = false;
         String[] ranks = new String[]{"phylum", "class"};
-        int matches = 0;
         for (String rank : ranks) {
             if (pathMapA.containsKey(rank) && pathMapB.containsKey(rank)) {
-                if (StringUtils.equals(pathMapA.get(rank), pathMapB.get(rank))) {
-                    matches++;
-                }   else {
+                if (!StringUtils.equals(pathMapA.get(rank), pathMapB.get(rank))) {
                     likelyHomonym = true;
                 }
 
             }
         }
-        return likelyHomonym || matches == 0;
+        return likelyHomonym;
+    }
+
+    public static boolean taxonPathLengthMismatch(Map<String, String> pathMapA, Map<String, String> pathMapB) {
+        return Math.min(pathMapA.size(), pathMapB.size()) == 1 && Math.max(pathMapA.size(), pathMapB.size()) > 4;
     }
 
     protected static Map<String, String> toPathMap(Taxon taxonA) {
