@@ -24,9 +24,9 @@ public class ExporterMeasurementOrFactTest extends GraphDBTestCase {
         createTestData(null, "Canis lupus", "Homo sapiens");
 
         String expected =
-                "\nglobi:occur:stomach_volume:2,globi:occur:2,yes,,,stomach volume,666.0,http://purl.obolibrary.org/obo/UO_0000098,,,1992-03-30T08:00:00Z,,,,myStudy,,,globi:ref:1"
-                        + "\nglobi:occur:volume:4,globi:occur:4,yes,,,volume,124.0,http://purl.obolibrary.org/obo/UO_0000098,,,1992-03-30T08:00:00Z,,,,myStudy,,,globi:ref:1"
-                        + "\nglobi:occur:volume:6,globi:occur:6,yes,,,volume,18.0,http://purl.obolibrary.org/obo/UO_0000098,,,1992-03-30T08:00:00Z,,,,myStudy,,,globi:ref:1";
+                "\nglobi:occur:stomach_volume:2\tglobi:occur:2\tyes\t\t\tstomach volume\t666.0\thttp://purl.obolibrary.org/obo/UO_0000098\t\t\t1992-03-30T08:00:00Z\t\t\t\tmyStudy\t\t\tglobi:ref:1"
+                        + "\nglobi:occur:volume:4\tglobi:occur:4\tyes\t\t\tvolume\t124.0\thttp://purl.obolibrary.org/obo/UO_0000098\t\t\t1992-03-30T08:00:00Z\t\t\t\tmyStudy\t\t\tglobi:ref:1"
+                        + "\nglobi:occur:volume:6\tglobi:occur:6\tyes\t\t\tvolume\t18.0\thttp://purl.obolibrary.org/obo/UO_0000098\t\t\t1992-03-30T08:00:00Z\t\t\t\tmyStudy\t\t\tglobi:ref:1";
 
 
         Study myStudy1 = nodeFactory.findStudy("myStudy");
@@ -60,7 +60,7 @@ public class ExporterMeasurementOrFactTest extends GraphDBTestCase {
 
     @Test
     public void noMatchTargetTaxon() throws IOException, NodeFactoryException, ParseException {
-        assertResult(PropertyAndValueDictionary.NO_MATCH, "Homo sapiens", "\nglobi:occur:stomach_volume:2,globi:occur:2,yes,,,stomach volume,666.0,http://purl.obolibrary.org/obo/UO_0000098,,,1992-03-30T08:00:00Z,,,,myStudy,,,globi:ref:1");
+        assertResult(PropertyAndValueDictionary.NO_MATCH, "Homo sapiens", "\nglobi:occur:stomach_volume:2\tglobi:occur:2\tyes\t\t\tstomach volume\t666.0\thttp://purl.obolibrary.org/obo/UO_0000098\t\t\t1992-03-30T08:00:00Z\t\t\t\tmyStudy\t\t\tglobi:ref:1");
     }
 
     private void createTestData(Double length, String targetTaxonName, String sourceTaxonName) throws NodeFactoryException, ParseException {
@@ -91,11 +91,7 @@ public class ExporterMeasurementOrFactTest extends GraphDBTestCase {
 
     @Test
     public void darwinCoreMetaTable() throws IOException {
-        ExporterMeasurementOrFact exporter = new ExporterMeasurementOrFact();
-        StringWriter writer = new StringWriter();
-        exporter.exportDarwinCoreMetaTable(writer, "testtest.csv");
-
-        assertThat(writer.toString(), is(exporter.getMetaTablePrefix() + "testtest.csv" + exporter.getMetaTableSuffix()));
+        ExportTestUtil.assertFileInMeta(new ExporterMeasurementOrFact());
     }
 
 }

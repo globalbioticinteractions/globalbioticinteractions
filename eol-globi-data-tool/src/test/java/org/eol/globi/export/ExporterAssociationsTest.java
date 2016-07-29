@@ -26,8 +26,8 @@ public class ExporterAssociationsTest extends GraphDBTestCase {
         createTestData(null);
         resolveNames();
 
-        String expected = "\nglobi:assoc:4,globi:occur:2,http://purl.obolibrary.org/obo/RO_0002470,globi:occur:4,,,,,data source description,,,globi:ref:1" +
-                "\nglobi:assoc:6,globi:occur:2,http://purl.obolibrary.org/obo/RO_0002470,globi:occur:4,,,,,data source description,,,globi:ref:1";
+        String expected = "\nglobi:assoc:4\tglobi:occur:2\thttp://purl.obolibrary.org/obo/RO_0002470\tglobi:occur:4\t\t\t\t\tdata source description\t\t\tglobi:ref:1" +
+                "\nglobi:assoc:6\tglobi:occur:2\thttp://purl.obolibrary.org/obo/RO_0002470\tglobi:occur:4\t\t\t\t\tdata source description\t\t\tglobi:ref:1";
 
 
         Study myStudy1 = nodeFactory.findStudy("myStudy");
@@ -68,11 +68,7 @@ public class ExporterAssociationsTest extends GraphDBTestCase {
 
     @Test
     public void darwinCoreMetaTable() throws IOException {
-        ExporterAssociations exporter = new ExporterAssociations();
-        StringWriter writer = new StringWriter();
-        exporter.exportDarwinCoreMetaTable(writer, "testtest.csv");
-
-        assertThat(writer.toString(), is(exporter.getMetaTablePrefix() + "testtest.csv" + exporter.getMetaTableSuffix()));
+        ExportTestUtil.assertFileInMeta(new ExporterAssociations());
     }
 
 }

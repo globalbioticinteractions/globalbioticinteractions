@@ -47,6 +47,12 @@ public class CSVUtil {
         return new LabeledCSVParser(new CSVParser(reader));
     }
 
+    public static LabeledCSVParser createLabeledTSVParser(Reader reader) throws IOException {
+        final LabeledCSVParser parser = new LabeledCSVParser(new CSVParser(reader));
+        parser.changeDelimiter('\t');
+        return parser;
+    }
+
     public static LabeledCSVParser createLabeledCSVParser(CSVParse parser) throws IOException {
         return new LabeledCSVParser(parser);
     }

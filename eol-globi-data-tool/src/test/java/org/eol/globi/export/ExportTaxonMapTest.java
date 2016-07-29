@@ -60,10 +60,10 @@ public class ExportTaxonMapTest extends GraphDBTestCase {
 
         StringWriter writer = new StringWriter();
         new ExportTaxonMap().exportStudy(study, writer, true);
-        assertThat(writer.toString(), is("providedTaxonId,providedTaxonName,resolvedTaxonId,resolvedTaxonName" +
-                "\n\"\",Homo sapiens,homoSapiensId,Homo sapiens" +
-                "\n\"\",Homo sapiens,alt:123,Alternate Homo sapiens" +
-                "\n\"\",Canis lupus,canisLupusId,Canis lupus"));
+        assertThat(writer.toString(), is("providedTaxonId\tprovidedTaxonName\tresolvedTaxonId\tresolvedTaxonName" +
+                "\n\tHomo sapiens\thomoSapiensId\tHomo sapiens" +
+                "\n\tHomo sapiens\talt:123\tAlternate Homo sapiens" +
+                "\n\tCanis lupus\tcanisLupusId\tCanis lupus"));
     }
 
 }

@@ -33,7 +33,7 @@ public class ExportFlatInteractions implements GraphExporter {
         }
     }
 
-    public void export(GraphDatabaseService graphService, Writer writer) {
+    public void export(GraphDatabaseService graphService, Writer writer) throws IOException {
         String query = "START study = node:studies('*:*') " +
                         "MATCH study-[c:COLLECTED]->sourceSpecimen-[:CLASSIFIED_AS]->sourceTaxon, " +
                         "sourceSpecimen-[?:COLLECTED_AT]->loc, " +

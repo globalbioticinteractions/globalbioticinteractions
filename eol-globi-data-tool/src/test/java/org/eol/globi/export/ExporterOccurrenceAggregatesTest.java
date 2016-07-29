@@ -22,18 +22,18 @@ public class ExporterOccurrenceAggregatesTest extends GraphDBTestCase {
 
     private String getExpectedData() {
         return "\n" +
-                "globi:occur:source:1-EOL:123-ATE,EOL:123,,,,,,,,,,,,,,,,,,,,,,,,,,,\n" +
-                "globi:occur:target:1-EOL:123-ATE-EOL:555,EOL:555,,,,,,,,,,,,,,,,,,,,,,,,,,,\n" +
-                "globi:occur:target:1-EOL:123-ATE-EOL:666,EOL:666,,,,,,,,,,,,,,,,,,,,,,,,,,,\n" +
-                "globi:occur:source:1-EOL:333-ATE,EOL:333,,,,,,,,,,,,,,,,,,,,,,,,,,,\n" +
-                "globi:occur:target:1-EOL:333-ATE-EOL:555,EOL:555,,,,,,,,,,,,,,,,,,,,,,,,,,,\n" +
-                "globi:occur:target:1-EOL:333-ATE-EOL:666,EOL:666,,,,,,,,,,,,,,,,,,,,,,,,,,,\n" +
-                "globi:occur:source:36-EOL:888-ATE,EOL:888,,,,,,,,,,,,,,,,,,,,,,,,,,,\n" +
-                "globi:occur:target:36-EOL:888-ATE-EOL:555,EOL:555,,,,,,,,,,,,,,,,,,,,,,,,,,,\n" +
-                "globi:occur:target:36-EOL:888-ATE-EOL:666,EOL:666,,,,,,,,,,,,,,,,,,,,,,,,,,,\n" +
-                "globi:occur:source:45-EOL:888-ATE,EOL:888,,,,,,,,,,,,,,,,,,,,,,,,,,,\n" +
-                "globi:occur:target:45-EOL:888-ATE-EOL:555,EOL:555,,,,,,,,,,,,,,,,,,,,,,,,,,,\n" +
-                "globi:occur:target:45-EOL:888-ATE-EOL:666,EOL:666,,,,,,,,,,,,,,,,,,,,,,,,,,,";
+                "globi:occur:source:1-EOL:123-ATE\tEOL:123\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\n" +
+                "globi:occur:target:1-EOL:123-ATE-EOL:555\tEOL:555\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\n" +
+                "globi:occur:target:1-EOL:123-ATE-EOL:666\tEOL:666\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\n" +
+                "globi:occur:source:1-EOL:333-ATE\tEOL:333\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\n" +
+                "globi:occur:target:1-EOL:333-ATE-EOL:555\tEOL:555\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\n" +
+                "globi:occur:target:1-EOL:333-ATE-EOL:666\tEOL:666\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\n" +
+                "globi:occur:source:36-EOL:888-ATE\tEOL:888\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\n" +
+                "globi:occur:target:36-EOL:888-ATE-EOL:555\tEOL:555\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\n" +
+                "globi:occur:target:36-EOL:888-ATE-EOL:666\tEOL:666\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\n" +
+                "globi:occur:source:45-EOL:888-ATE\tEOL:888\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\n" +
+                "globi:occur:target:45-EOL:888-ATE-EOL:555\tEOL:555\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\n" +
+                "globi:occur:target:45-EOL:888-ATE-EOL:666\tEOL:666\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t";
     }
 
     @Test

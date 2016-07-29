@@ -25,13 +25,13 @@ public class ExporterReferencesTest extends GraphDBTestCase {
 
         new ExporterReferences().exportStudy(myStudy, row, true);
 
-        assertThat(row.getBuffer().toString().trim(), equalTo(getExpectedData()));
+        assertThat(row.getBuffer().toString(), equalTo(getExpectedData()));
 
         row = new StringWriter();
 
         new ExporterReferences().exportStudy(myStudy, row, false);
 
-        assertThat(row.getBuffer().toString().trim(), equalTo(getExpectedRow()));
+        assertThat(row.getBuffer().toString(), equalTo(getExpectedRow()));
     }
 
     @Test
@@ -39,7 +39,7 @@ public class ExporterReferencesTest extends GraphDBTestCase {
         Study myStudy = nodeFactory.createStudy("myStudy");
         StringWriter row = new StringWriter();
         new ExporterReferences().exportStudy(myStudy, row, false);
-        assertThat(row.getBuffer().toString().trim(), equalTo("globi:ref:1,,myStudy,,,,,,,,,,,,,,,"));
+        assertThat(row.getBuffer().toString(), equalTo("\nglobi:ref:1\t\tmyStudy\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t"));
     }
 
     @Test
@@ -48,26 +48,22 @@ public class ExporterReferencesTest extends GraphDBTestCase {
         myStudy.setCitationWithTx("bla \"one\"");
         StringWriter row = new StringWriter();
         new ExporterReferences().exportStudy(myStudy, row, false);
-        assertThat(row.getBuffer().toString().trim(), equalTo("globi:ref:1,,\"bla \"\"one\"\"\",,,,,,,,,,,,,,,"));
+        assertThat(row.getBuffer().toString(), equalTo("\nglobi:ref:1\t\tbla \"one\"\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t"));
     }
 
 
     private String getExpectedData() {
-        return "\"identifier\",\"publicationType\",\"full_reference\",\"primaryTitle\",\"title\",\"pages\",\"pageStart\",\"pageEnd\",\"volume\",\"edition\",\"publisher\",\"authorList\",\"editorList\",\"created\",\"language\",\"uri\",\"doi\",\"schema#localityName\""
-                + "\n" + getExpectedRow();
+        return "identifier\tpublicationType\tfull_reference\tprimaryTitle\ttitle\tpages\tpageStart\tpageEnd\tvolume\tedition\tpublisher\tauthorList\teditorList\tcreated\tlanguage\turi\tdoi\tschema#localityName"
+                + getExpectedRow();
     }
 
     private String getExpectedRow() {
-        return "globi:ref:1,,citation:doi:John Doe. 1927. description study 1,,,,,,,,,,,,,https://public.myfwc.com/FWRI/GAME/Survey.aspx?id=444,doi:1234,";
+        return "\nglobi:ref:1\t\tcitation:doi:John Doe. 1927. description study 1\t\t\t\t\t\t\t\t\t\t\t\t\thttps://public.myfwc.com/FWRI/GAME/Survey.aspx?id=444\tdoi:1234\t";
     }
 
     @Test
     public void darwinCoreMetaTable() throws IOException {
-        ExporterReferences exporter = new ExporterReferences();
-        StringWriter writer = new StringWriter();
-        exporter.exportDarwinCoreMetaTable(writer, "testtest.csv");
-
-        assertThat(writer.toString(), is(exporter.getMetaTablePrefix() + "testtest.csv" + exporter.getMetaTableSuffix()));
+        ExportTestUtil.assertFileInMeta(new ExporterReferences());
     }
 
 }

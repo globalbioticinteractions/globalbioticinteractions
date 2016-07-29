@@ -31,9 +31,9 @@ public class ExporterTaxaDistinctTest extends GraphDBTestCase {
         Study myStudy1 = nodeFactory.findStudy("myStudy");
 
         String actual = exportStudy(myStudy1);
-        assertThat(actual, containsString("EOL:123,Canis lupus,,,,,,,,,http://eol.org/pages/123,,,,"));
-        assertThat(actual, containsString("EOL:45634,Homo sapiens,,,,,,,,,http://eol.org/pages/45634,,,,"));
-        assertThat(actual, not(containsString("no:match,ThemFishes,,,,,,,,,,,,,")));
+        assertThat(actual, containsString("EOL:123\tCanis lupus\t\t\t\t\t\t\t\t\thttp://eol.org/pages/123\t\t\t\t"));
+        assertThat(actual, containsString("EOL:45634\tHomo sapiens\t\t\t\t\t\t\t\t\thttp://eol.org/pages/45634\t\t\t\t"));
+        assertThat(actual, not(containsString("no:match\tThemFishes\t\t\t\t\t\t\t\t\t\t\t\t\t")));
 
         assertThatNoTaxaAreExportedOnMissingHeader(myStudy1, new StringWriter());
     }
@@ -60,11 +60,7 @@ public class ExporterTaxaDistinctTest extends GraphDBTestCase {
 
     @Test
     public void darwinCoreMetaTable() throws IOException {
-        ExporterTaxaDistinct exporter = new ExporterTaxaDistinct();
-        StringWriter writer = new StringWriter();
-        exporter.exportDarwinCoreMetaTable(writer, "testtest.csv");
-
-        assertThat(writer.toString(), is(exporter.getMetaTablePrefix() + "testtest.csv" + exporter.getMetaTableSuffix()));
+        ExportTestUtil.assertFileInMeta(new ExporterTaxaDistinct());
     }
 
 }

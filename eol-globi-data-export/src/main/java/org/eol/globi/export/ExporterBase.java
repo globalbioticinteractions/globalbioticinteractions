@@ -1,6 +1,7 @@
 package org.eol.globi.export;
 
 import com.Ostermiller.util.CSVPrint;
+import org.apache.commons.lang.StringUtils;
 import org.eol.globi.domain.NodeBacked;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
@@ -58,11 +59,9 @@ public abstract class ExporterBase extends DarwinCoreExporter {
     }
 
     private void writeHeaderField(Writer writer, String[] fields, int i, String field) throws IOException {
-        writer.write("\"");
         writer.write(field);
-        writer.write("\"");
         if (i < (fields.length - 1)) {
-            writer.write(",");
+            writer.write("\t");
         }
     }
 
@@ -86,7 +85,7 @@ public abstract class ExporterBase extends DarwinCoreExporter {
 
     @Override
     protected String getMetaTablePrefix() {
-        return "<table encoding=\"UTF-8\" fieldsTerminatedBy=\",\" linesTerminatedBy=\"\\n\" fieldsEnclosedBy=\"&quot;\" ignoreHeaderLines=\"1\" rowType=\"" + getRowType() + "\">\n" +
+        return "<table encoding=\"UTF-8\" fieldsTerminatedBy=\"\\t\" linesTerminatedBy=\"\\n\" fieldsEnclosedBy=\"\" ignoreHeaderLines=\"1\" rowType=\"" + getRowType() + "\">\n" +
                 "    <files>\n" +
                 "      <location>";
     }
@@ -98,16 +97,15 @@ public abstract class ExporterBase extends DarwinCoreExporter {
     }
 
     protected static void writeProperties(Writer writer, Map<String, String> properties, String[] fields) throws IOException {
-        CSVPrint csvPrinter = CSVUtil.createCSVPrint(writer);
         String values[] = new String[fields.length];
         for (int i = 0; i < fields.length; i++) {
             if (properties.containsKey(fields[i])) {
-                values[i] = (properties.get(fields[i]));
+                values[i] = properties.get(fields[i]);
             } else {
-                values[i] = ("");
+                values[i] = "";
             }
         }
-        csvPrinter.write(values);
+        writer.write(StringUtils.join(values, '\t'));
     }
 
 

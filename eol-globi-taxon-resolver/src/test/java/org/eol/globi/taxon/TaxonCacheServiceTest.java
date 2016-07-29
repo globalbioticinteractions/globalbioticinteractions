@@ -65,7 +65,7 @@ public class TaxonCacheServiceTest {
     }
 
     public TaxonCacheService getTaxonCacheService() {
-        final TaxonCacheService cacheService = new TaxonCacheService("taxonCache.csv", "taxonMap.csv");
+        final TaxonCacheService cacheService = new TaxonCacheService("taxonCache.tsv", "taxonMap.tsv");
         cacheService.setCacheDir(mapdbDir);
         return cacheService;
     }

@@ -78,9 +78,9 @@ public class GraphExporterImpl implements GraphExporter {
 
     public void exportNames(String baseDir, List<Study> studies) throws StudyImporterException {
         mkdir(baseDir, "taxa");
-        exportNames(studies, baseDir, new ExportTaxonMap(), "taxa/taxonMap.csv.gz");
-        exportNames(studies, baseDir, new ExportTaxonCache(), "taxa/taxonCache.csv.gz");
-        exportNames(studies, baseDir, new ExportUnmatchedTaxonNames(), "taxa/taxonUnmatched.csv");
+        exportNames(studies, baseDir, new ExportTaxonMap(), "taxa/taxonMap.tsv.gz");
+        exportNames(studies, baseDir, new ExportTaxonCache(), "taxa/taxonCache.tsv.gz");
+        exportNames(studies, baseDir, new ExportUnmatchedTaxonNames(), "taxa/taxonUnmatched.tsv");
 
     }
 
@@ -114,10 +114,10 @@ public class GraphExporterImpl implements GraphExporter {
         exportDarwinCoreArchive(studies,
                 baseDir + "aggregatedByStudy/", new HashMap<String, DarwinCoreExporter>() {
                     {
-                        put("association.csv", new ExporterAssociationAggregates());
-                        put("occurrence.csv", new ExporterOccurrenceAggregates());
-                        put("references.csv", new ExporterReferences());
-                        put("taxa.csv", new ExporterTaxaDistinct());
+                        put("association.tsv", new ExporterAssociationAggregates());
+                        put("occurrence.tsv", new ExporterOccurrenceAggregates());
+                        put("references.tsv", new ExporterReferences());
+                        put("taxa.tsv", new ExporterTaxaDistinct());
                     }
                 }
         );
@@ -126,11 +126,11 @@ public class GraphExporterImpl implements GraphExporter {
     private void exportDarwinCoreAll(String baseDir, List<Study> studies) throws StudyImporterException {
         exportDarwinCoreArchive(studies, baseDir + "all/", new HashMap<String, DarwinCoreExporter>() {
             {
-                put("association.csv", new ExporterAssociations());
-                put("occurrence.csv", new ExporterOccurrences());
-                put("references.csv", new ExporterReferences());
-                put("taxa.csv", new ExporterTaxaDistinct());
-                put("measurementOrFact.csv", new ExporterMeasurementOrFact());
+                put("association.tsv", new ExporterAssociations());
+                put("occurrence.tsv", new ExporterOccurrences());
+                put("references.tsv", new ExporterReferences());
+                put("taxa.tsv", new ExporterTaxaDistinct());
+                put("measurementOrFact.tsv", new ExporterMeasurementOrFact());
             }
         });
     }

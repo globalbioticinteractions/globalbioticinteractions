@@ -64,9 +64,9 @@ public class ExporterAssociationAggregatesTest extends GraphDBTestCase {
         StringWriter row = new StringWriter();
         exporter.exportStudy(myStudy1, row, true);
 
-        String expected = "\"associationID\",\"occurrenceID\",\"associationType\",\"targetOccurrenceID\",\"measurementDeterminedDate\",\"measurementDeterminedBy\",\"measurementMethod\",\"measurementRemarks\",\"source\",\"bibliographicCitation\",\"contributor\",\"referenceID\"" +
-                "\nglobi:assoc:1-Homo sapiensid-ATE-Canis lupusid,globi:occur:source:1-Homo sapiensid-ATE,http://purl.obolibrary.org/obo/RO_0002470,globi:occur:target:1-Homo sapiensid-ATE-Canis lupusid,,,,,data source description,,,globi:ref:1" +
-                "\nglobi:assoc:8-Homo sapiensid-ATE-Canis lupusid,globi:occur:source:8-Homo sapiensid-ATE,http://purl.obolibrary.org/obo/RO_0002470,globi:occur:target:8-Homo sapiensid-ATE-Canis lupusid,,,,,data source description,,,globi:ref:8";
+        String expected = "associationID\toccurrenceID\tassociationType\ttargetOccurrenceID\tmeasurementDeterminedDate\tmeasurementDeterminedBy\tmeasurementMethod\tmeasurementRemarks\tsource\tbibliographicCitation\tcontributor\treferenceID" +
+                "\nglobi:assoc:1-Homo sapiensid-ATE-Canis lupusid\tglobi:occur:source:1-Homo sapiensid-ATE\thttp://purl.obolibrary.org/obo/RO_0002470\tglobi:occur:target:1-Homo sapiensid-ATE-Canis lupusid\t\t\t\t\tdata source description\t\t\tglobi:ref:1" +
+                "\nglobi:assoc:8-Homo sapiensid-ATE-Canis lupusid\tglobi:occur:source:8-Homo sapiensid-ATE\thttp://purl.obolibrary.org/obo/RO_0002470\tglobi:occur:target:8-Homo sapiensid-ATE-Canis lupusid\t\t\t\t\tdata source description\t\t\tglobi:ref:8";
         assertThat(row.getBuffer().toString(), equalTo(expected));
     }
 

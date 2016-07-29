@@ -36,7 +36,7 @@ public class TaxonCacheServiceIT {
 
     @Test
     public void init10k() throws PropertyEnricherException {
-        final TaxonCacheService cacheService = new TaxonCacheService("taxonCache10k.csv.gz", "taxonMap10k.csv.gz");
+        final TaxonCacheService cacheService = new TaxonCacheService("taxonCache10k.tsv.gz", "taxonMap10k.tsv.gz");
         cacheService.setCacheDir(mapdbDir);
         StopWatch watch = new StopWatch();
         final TaxonImpl taxon = new TaxonImpl();

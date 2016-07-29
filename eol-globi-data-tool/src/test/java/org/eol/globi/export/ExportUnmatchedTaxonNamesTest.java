@@ -86,10 +86,10 @@ public class ExportUnmatchedTaxonNamesTest extends GraphDBTestCase {
 
         StringWriter writer = new StringWriter();
         new ExportUnmatchedTaxonNames().exportStudy(study, writer, true);
-        assertThat(writer.toString(), is("unmatched taxon name,unmatched taxon id,name status,similar to taxon name,similar to taxon path,similar to taxon id,study,source" +
-                        "\nCaniz,,,,,,citation my study,my first source" +
-                        "\nHomo sapiens2,,,,,,citation my study,my first source" +
-                        "\nHomo sapiens3,no:match,,,,,citation my study,my first source"
+        assertThat(writer.toString(), is("unmatched taxon name\tunmatched taxon id\tname status\tsimilar to taxon name\tsimilar to taxon path\tsimilar to taxon id\tstudy\tsource" +
+                        "\nCaniz\t\t\t\t\t\tcitation my study\tmy first source" +
+                        "\nHomo sapiens2\t\t\t\t\t\tcitation my study\tmy first source" +
+                        "\nHomo sapiens3\tno:match\t\t\t\t\tcitation my study\tmy first source"
         ));
     }
 
@@ -140,10 +140,10 @@ public class ExportUnmatchedTaxonNamesTest extends GraphDBTestCase {
         resolveNames();
         StringWriter writer = new StringWriter();
         new ExportUnmatchedTaxonNames().exportStudy(study, writer, true);
-        assertThat(writer.toString(), is("unmatched taxon name,unmatched taxon id,name status,similar to taxon name,similar to taxon path,similar to taxon id,study,source" +
-                        "\nHomo sapienz,,,Homo sapiens,one | two | Homo sapiens,TESTING:123,\"cite, study\",\"my first, source\"" +
-                        "\nCaniz,,,,,,\"cite, study\",\"my first, source\"" +
-                        "\nCanis,,,,,,\"cite, study\",\"my first, source\""
+        assertThat(writer.toString(), is("unmatched taxon name\tunmatched taxon id\tname status\tsimilar to taxon name\tsimilar to taxon path\tsimilar to taxon id\tstudy\tsource" +
+                        "\nHomo sapienz\t\t\tHomo sapiens\tone | two | Homo sapiens\tTESTING:123\tcite, study\tmy first, source" +
+                        "\nCaniz\t\t\t\t\t\tcite, study\tmy first, source" +
+                        "\nCanis\t\t\t\t\t\tcite, study\tmy first, source"
         ));
     }
 

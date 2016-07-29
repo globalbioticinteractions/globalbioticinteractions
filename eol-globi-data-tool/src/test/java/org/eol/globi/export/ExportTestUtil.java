@@ -13,9 +13,14 @@ import org.eol.globi.taxon.TaxonIndexImpl;
 import org.neo4j.graphdb.GraphDatabaseService;
 
 import javax.xml.bind.DatatypeConverter;
+import java.io.IOException;
+import java.io.StringWriter;
 import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
+
+import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertThat;
 
 public class ExportTestUtil {
     public static Study createTestData( NodeFactory factory) throws NodeFactoryException, ParseException {
@@ -65,5 +70,12 @@ public class ExportTestUtil {
                 return taxonName;
             }
         }, graphDb);
+    }
+
+    public static void assertFileInMeta(ExporterBase exporter) throws IOException {
+        StringWriter writer = new StringWriter();
+        exporter.exportDarwinCoreMetaTable(writer, "testtest.tsv");
+
+        assertThat(writer.toString(), is(exporter.getMetaTablePrefix() + "testtest.tsv" + exporter.getMetaTableSuffix()));
     }
 }

@@ -13,13 +13,13 @@ import static org.junit.Assert.assertThat;
 public class ExporterBaseTest {
 
     @Test
-    public void ensureCommeasAreEscaped() throws IOException {
+    public void ensureCommasAreNotEscaped() throws IOException {
         StringWriter writer = new StringWriter();
         Map<String, String> properties = new HashMap<String, String>();
         properties.put("one", "bunch, of, comma, as");
         properties.put("two", "no commas");
         ExporterBase.writeProperties(writer, properties, new String[]{"one", "two"});
-        assertThat(writer.toString(), Is.is("\"bunch, of, comma, as\",no commas"));
+        assertThat(writer.toString(), Is.is("bunch, of, comma, as\tno commas"));
     }
 
 }

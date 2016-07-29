@@ -59,10 +59,10 @@ public class ExportTaxonCacheTest extends GraphDBTestCase {
 
         StringWriter writer = new StringWriter();
         new ExportTaxonCache().exportStudy(study, writer, true);
-        assertThat(writer.toString(), is("id,name,rank,commonNames,path,pathIds,pathNames,externalUrl,thumbnailUrl" +
-                "\nhomoSapiensId,Homo sapiens,,,one two three,,,http://some/thing,http://thing/some" +
-                "\nalt:123,Alternate Homo sapiens,,,some path here,,,http://some/thing,http://thing/some" +
-                "\ncanisLupusId,Canis lupus,,,four five six,,,,"));
+        assertThat(writer.toString(), is("id\tname\trank\tcommonNames\tpath\tpathIds\tpathNames\texternalUrl\tthumbnailUrl" +
+                "\nhomoSapiensId\tHomo sapiens\t\t\tone two three\t\t\thttp://some/thing\thttp://thing/some" +
+                "\nalt:123\tAlternate Homo sapiens\t\t\tsome path here\t\t\thttp://some/thing\thttp://thing/some" +
+                "\ncanisLupusId\tCanis lupus\t\t\tfour five six\t\t\t\t"));
     }
 
 }

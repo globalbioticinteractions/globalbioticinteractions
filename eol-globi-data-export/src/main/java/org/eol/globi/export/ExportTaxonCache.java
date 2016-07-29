@@ -15,7 +15,7 @@ public class ExportTaxonCache implements StudyExporter {
         }
     }
 
-    protected void doExport(Study study, Writer writer) {
+    protected void doExport(Study study, Writer writer) throws IOException {
         String query = "START taxon = node:taxons('*:*') " +
                 "MATCH taxon-[?:SAME_AS*0..1]->linkedTaxon " +
                 "WHERE has(linkedTaxon.path) " +

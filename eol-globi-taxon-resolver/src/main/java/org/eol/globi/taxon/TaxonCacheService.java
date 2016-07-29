@@ -168,7 +168,7 @@ public class TaxonCacheService implements PropertyEnricher {
     public static Iterator<Fun.Tuple2<String, String>> taxonMapIterator(final String resource, final LineSkipper skipper) throws IOException {
         return new Iterator<Fun.Tuple2<String, String>>() {
             private BufferedReader reader = createBufferedReader(resource);
-            private final LabeledCSVParser labeledCSVParser = CSVUtil.createLabeledCSVParser(reader);
+            private final LabeledCSVParser labeledCSVParser = CSVUtil.createLabeledTSVParser(reader);
             private ProcessingState state = ProcessingState.DONE;
 
             @Override
@@ -231,7 +231,7 @@ public class TaxonCacheService implements PropertyEnricher {
 
         return new Iterator<Fun.Tuple2<String, Map<String, String>>>() {
             private BufferedReader reader = createBufferedReader(resource);
-            private final LabeledCSVParser labeledCSVParser = CSVUtil.createLabeledCSVParser(reader);
+            private final LabeledCSVParser labeledCSVParser = CSVUtil.createLabeledTSVParser(reader);
 
             @Override
             public boolean hasNext() {

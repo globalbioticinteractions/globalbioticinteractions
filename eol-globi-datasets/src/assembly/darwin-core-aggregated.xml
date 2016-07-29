@@ -15,7 +15,7 @@
             <directory>${data.dir}/aggregatedByStudy</directory>
             <outputDirectory>/</outputDirectory>
             <includes>
-                <include>**/*.csv</include>
+                <include>**/*.tsv</include>
                 <include>**/*.xml</include>
             </includes>
         </fileSet>

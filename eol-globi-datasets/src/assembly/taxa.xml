@@ -11,8 +11,8 @@
             <directory>${data.dir}/taxa</directory>
             <outputDirectory>/</outputDirectory>
             <includes>
-                <include>**/*.csv</include>
-                <include>**/*.csv.gz</include>
+                <include>**/*.tsv</include>
+                <include>**/*.tsv.gz</include>
             </includes>
         </fileSet>
     </fileSets>

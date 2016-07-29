@@ -35,13 +35,13 @@ public class ExporterOccurrencesTest extends GraphDBTestCase {
     }
 
     private String getExpectedData() {
-        return "\nglobi:occur:2,EOL:327955,,,,,JUVENILE,,,,,,,,,,,,,1992-03-30T08:00:00Z,,,12.0,-1.0,,,-60.0 m,DIGESTATE,BONE" +
-                "\nglobi:occur:6,EOL:328607,,,,,,,,,,,,,,,,,,1992-03-30T08:00:00Z,,,12.0,-1.0,,,-60.0 m,," +
-                "\nglobi:occur:8,EOL:328607,,,,,,,,,,,,,,,,,,1992-03-30T08:00:00Z,,,12.0,-1.0,,,-60.0 m,,";
+        return "\nglobi:occur:2\tEOL:327955\t\t\t\t\tJUVENILE\t\t\t\t\t\t\t\t\t\t\t\t\t1992-03-30T08:00:00Z\t\t\t12.0\t-1.0\t\t\t-60.0 m\tDIGESTATE\tBONE" +
+                "\nglobi:occur:6\tEOL:328607\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t1992-03-30T08:00:00Z\t\t\t12.0\t-1.0\t\t\t-60.0 m\t\t" +
+                "\nglobi:occur:8\tEOL:328607\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t1992-03-30T08:00:00Z\t\t\t12.0\t-1.0\t\t\t-60.0 m\t\t";
     }
 
     private String getExpectedHeader() {
-        return "\"occurrenceID\",\"taxonID\",\"institutionCode\",\"collectionCode\",\"catalogNumber\",\"sex\",\"lifeStage\",\"reproductiveCondition\",\"behavior\",\"establishmentMeans\",\"occurrenceRemarks\",\"individualCount\",\"preparations\",\"fieldNotes\",\"basisOfRecord\",\"samplingProtocol\",\"samplingEffort\",\"identifiedBy\",\"dateIdentified\",\"eventDate\",\"modified\",\"locality\",\"decimalLatitude\",\"decimalLongitude\",\"verbatimLatitude\",\"verbatimLongitude\",\"verbatimElevation\",\"physiologicalState\",\"bodyPart\"";
+        return "occurrenceID\ttaxonID\tinstitutionCode\tcollectionCode\tcatalogNumber\tsex\tlifeStage\treproductiveCondition\tbehavior\testablishmentMeans\toccurrenceRemarks\tindividualCount\tpreparations\tfieldNotes\tbasisOfRecord\tsamplingProtocol\tsamplingEffort\tidentifiedBy\tdateIdentified\teventDate\tmodified\tlocality\tdecimalLatitude\tdecimalLongitude\tverbatimLatitude\tverbatimLongitude\tverbatimElevation\tphysiologicalState\tbodyPart";
     }
 
     @Test
@@ -94,7 +94,7 @@ public class ExporterOccurrencesTest extends GraphDBTestCase {
 
         String expected = "";
         expected += getExpectedHeader();
-        expected += "\nglobi:occur:2,EOL:123,,,,,,,,,,,,,aBasisOfRecord,,,,,,,,,,,,,,";
+        expected += "\nglobi:occur:2\tEOL:123\t\t\t\t\t\t\t\t\t\t\t\t\taBasisOfRecord\t\t\t\t\t\t\t\t\t\t\t\t\t\t";
 
         assertThat(row.getBuffer().toString(), equalTo(expected));
     }
@@ -130,11 +130,7 @@ public class ExporterOccurrencesTest extends GraphDBTestCase {
 
     @Test
     public void darwinCoreMetaTable() throws IOException {
-        ExporterOccurrences exporter = exportOccurrences();
-        StringWriter writer = new StringWriter();
-        exporter.exportDarwinCoreMetaTable(writer, "testtest.csv");
-
-        assertThat(writer.toString(), is(exporter.getMetaTablePrefix() + "testtest.csv" + exporter.getMetaTableSuffix()));
+        ExportTestUtil.assertFileInMeta(exportOccurrences());
     }
 
 }
