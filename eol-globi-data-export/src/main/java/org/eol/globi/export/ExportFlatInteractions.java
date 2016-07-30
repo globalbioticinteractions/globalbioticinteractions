@@ -20,7 +20,7 @@ public class ExportFlatInteractions implements GraphExporter {
     public void export(GraphDatabaseService graphService, String baseDir) throws StudyImporterException {
         try {
             ExportUtil.mkdirIfNeeded(baseDir);
-            final FileOutputStream out = new FileOutputStream(baseDir + "/interactions.csv.gz");
+            final FileOutputStream out = new FileOutputStream(baseDir + "/interactions.tsv.gz");
             GZIPOutputStream os = new GZIPOutputStream(out);
             final Writer writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
             export(graphService, writer);
