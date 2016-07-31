@@ -76,6 +76,10 @@ public class CSVUtil {
         resultBuilder.append(StringUtils.replace(node.asText(), "\"", "\"\""));
     }
 
+    public static void escapeTSV(StringBuilder resultBuilder, JsonNode node) {
+        resultBuilder.append(StringUtils.replace(node.asText(), "\t", " "));
+    }
+
     public static String valueOrNull(LabeledCSVParser labeledCSVParser, String columnName){
         return valueOrDefault(labeledCSVParser, columnName, null);
     }

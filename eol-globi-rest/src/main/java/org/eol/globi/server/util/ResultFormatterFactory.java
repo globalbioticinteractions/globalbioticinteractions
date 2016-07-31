@@ -11,6 +11,7 @@ public class ResultFormatterFactory {
         put(MediaType.parseMediaType("application/json;charset=UTF-8"), new ResultFormatterJSON());
         put(MediaType.parseMediaType("application/ld+json;charset=UTF-8"), new ResultFormatterJSONLD());
         put(MediaType.parseMediaType("text/csv;charset=UTF-8"), new ResultFormatterCSV());
+        put(MediaType.parseMediaType("text/tab-separated-values;charset=UTF-8"), new ResultFormatterTSV());
         // a trick to distinguish JSONv2 from JSON
         put(MediaType.parseMediaType("text/html;charset=UTF-8"), new ResultFormatterJSONv2());
         put(MediaType.parseMediaType("text/vnd.graphviz;charset=UTF-8"), new ResultFormatterDOT());

@@ -29,6 +29,7 @@
                 json=application/json;charset=UTF-8
                 jsonld=application/ld+json;charset=UTF-8
                 csv=text/csv;charset=UTF-8
+                tsv=text/tab-separated-values;charset=UTF-8
                 dot=text/vnd.graphviz;charset=UTF-8
             </value>
         </property>

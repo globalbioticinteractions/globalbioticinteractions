@@ -8,6 +8,7 @@ public class ResultTestFormatterFactory {
     private final static Map<String, ResultFormatter> TYPE_TO_FORMATTER_MAP = new HashMap<String, ResultFormatter>() {{
         put("json", new ResultFormatterJSON());
         put("csv", new ResultFormatterCSV());
+        put("tsv", new ResultFormatterTSV());
         put("json.v2", new ResultFormatterJSONv2());
         put("dot", new ResultFormatterDOT());
     }};
