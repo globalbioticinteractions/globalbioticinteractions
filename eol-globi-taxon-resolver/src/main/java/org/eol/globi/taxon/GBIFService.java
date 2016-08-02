@@ -38,8 +38,10 @@ public class GBIFService implements PropertyEnricher {
     protected void enrichWithExternalId(Map<String, String> enriched, String externalId) throws PropertyEnricherException {
         try {
             String gbifSpeciesId = StringUtils.replace(externalId, TaxonomyProvider.GBIF.getIdPrefix(), "");
-            String response = HttpUtil.getContent("http://api.gbif.org/v1/species/" + gbifSpeciesId);
-            JsonNode jsonNode = new ObjectMapper().readTree(response);
+            JsonNode jsonNode = getSpeciesInfo(gbifSpeciesId);
+            if (jsonNode.has("acceptedKey")) {
+                jsonNode = getSpeciesInfo(jsonNode.get("acceptedKey").asText());
+            }
             addTaxonNode(enriched, jsonNode);
 
             LanguageCodeLookup languageCodeLookup = new LanguageCodeLookup();
@@ -58,6 +60,11 @@ public class GBIFService implements PropertyEnricher {
             throw new PropertyEnricherException("failed to lookup [" + externalId + "]", e);
         }
 
+    }
+
+    private JsonNode getSpeciesInfo(String gbifSpeciesId) throws IOException {
+        String response = HttpUtil.getContent("http://api.gbif.org/v1/species/" + gbifSpeciesId);
+        return new ObjectMapper().readTree(response);
     }
 
     private String getVernaculars(String gbifSpeciesId, int offset, int limit) throws IOException {
