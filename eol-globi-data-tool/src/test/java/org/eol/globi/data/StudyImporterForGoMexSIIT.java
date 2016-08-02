@@ -1,6 +1,8 @@
 package org.eol.globi.data;
 
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.eol.globi.domain.Environment;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.LocationImpl;
@@ -18,6 +20,7 @@ import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.index.Index;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -32,9 +35,18 @@ import static org.junit.matchers.JUnitMatchers.hasItem;
 
 public class StudyImporterForGoMexSIIT extends GraphDBTestCase {
 
+    private static final Log LOG = LogFactory.getLog(StudyImporterForGoMexSIIT.class);
+    public static final String WKT_FOOTPRINT2 = "POLYGON((-92.6729107838999 29.3941413332999,-92.5604838626999 29.2066775354,-92.7326173694 29.1150784684999,-92.9638307704999 29.1171045174,-93.3169089704999 29.3616452463,-93.4007435505999 29.5222620776999,-93.3169089704999 29.6243402981,-93.1045280342 29.6340566488,-92.6729107838999 29.3941413332999))";
+
     @Test
     public void createAndPopulateStudyGitHubMostRecent() throws StudyImporterException, IOException, URISyntaxException {
         importWithCommit(GitHubUtil.getBaseUrlLastCommit("gomexsi/interaction-data"));
+        assertThatSomeDataIsImported(nodeFactory, taxonIndex);
+    }
+
+    @Test
+    public void createAndPopulateStudyWithStatic() throws StudyImporterException, IOException, URISyntaxException {
+        importWithCommit(new File(getClass().getResource("gomexsi/Prey.csv").toURI()).getParentFile().toURI().toString());
         assertThatSomeDataIsImported(nodeFactory, taxonIndex);
     }
 
@@ -44,16 +56,19 @@ public class StudyImporterForGoMexSIIT extends GraphDBTestCase {
         importer.setLogger(new ImportLogger() {
             @Override
             public void warn(Study study, String message) {
+                LOG.warn(message);
                 msgs.add("warn: " + message);
             }
 
             @Override
             public void info(Study study, String message) {
+                LOG.info(message);
                 msgs.add("info: " + message);
             }
 
             @Override
             public void severe(Study study, String message) {
+                LOG.error(message);
                 msgs.add("severe: " + message);
             }
         });
@@ -113,8 +128,9 @@ public class StudyImporterForGoMexSIIT extends GraphDBTestCase {
 
         assertNotNull(taxon);
 
-        final String footprintWKT = "POLYGON((-92.6729107838999 29.3941413332999,-92.5604838626999 29.2066775354,-92.7326173694 29.1150784684999,-92.9638307704999 29.1171045174,-93.3169089704999 29.3616452463,-93.4007435505999 29.5222620776999,-93.3169089704999 29.6243402981,-93.1045280342 29.6340566488,-92.6729107838999 29.3941413332999))";
+        final String footprintWKT = WKT_FOOTPRINT2;
         LocationImpl expectedLocation = new LocationImpl(29.346953, -92.980614, -13.641, footprintWKT);
+        expectedLocation.setLocality("Louisiana inner continental shelf");
         LocationNode location = nodeFactory.findLocation(expectedLocation);
         assertThat(location, is(notNullValue()));
         assertThat(location.getFootprintWKT(), is(footprintWKT));
@@ -153,8 +169,8 @@ public class StudyImporterForGoMexSIIT extends GraphDBTestCase {
                 detectedAtLeastOneFrequencyOfOccurrence |= specimenNode.hasProperty(Specimen.FREQUENCY_OF_OCCURRENCE);
                 detectedAtLeastOneTotalNumberConsumed |= specimenNode.hasProperty(Specimen.TOTAL_COUNT);
                 detectedAtLeastOneTotalVolume |= specimenNode.hasProperty(Specimen.TOTAL_VOLUME_IN_ML);
-                detectedAtLeastOneGoMexSIProperty |= specimenNode.hasProperty(StudyImporterForGoMexSI.GOMEXSI_NAMESPACE + "PRED_SCI_NAME");
-                detectedAtLeastOneGoMexSIProperty |= specimenNode.hasProperty(StudyImporterForGoMexSI.GOMEXSI_NAMESPACE + "DATABASE_PREY_NAME");
+                detectedAtLeastOneGoMexSIProperty |= specimenNode.hasProperty(StudyImporterForGoMexSI.GOMEXSI_NAMESPACE + "PRED_DATABASE_NAME");
+                detectedAtLeastOneGoMexSIProperty |= specimenNode.hasProperty(StudyImporterForGoMexSI.GOMEXSI_NAMESPACE + "PREY_DATABASE_NAME");
                 if (specimenNode.hasRelationship(Direction.INCOMING, RelTypes.COLLECTED)) {
                     detectedAtLeastOneLocation = true;
                 }
