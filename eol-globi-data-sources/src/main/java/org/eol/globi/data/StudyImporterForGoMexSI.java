@@ -86,13 +86,13 @@ public class StudyImporterForGoMexSI extends BaseStudyImporter {
         final Map<String, Map<String, String>> predatorIdToPredatorNames = new HashMap<String, Map<String, String>>();
         final Map<String, List<Map<String, String>>> predatorIdToPreyNames = new HashMap<String, List<Map<String, String>>>();
         Map<String, Study> referenceIdToStudy = new HashMap<String, Study>();
-        addSpecimen(getPredatorResourcePath(), "PRED_", new ParseEventHandler() {
+        addSpecimen(getPredatorResourcePath(), "PRED_SCI_NAME", new ParseEventHandler() {
             @Override
             public void onSpecimen(String predatorUID, Map<String, String> properties) {
                 predatorIdToPredatorNames.put(predatorUID, properties);
             }
         });
-        addSpecimen(getPreyResourcePath(), "PREY_", new ParseEventHandler() {
+        addSpecimen(getPreyResourcePath(), "DATABASE_PREY_NAME", new ParseEventHandler() {
             @Override
             public void onSpecimen(String predatorUID, Map<String, String> properties) {
                 List<Map<String, String>> preyList = predatorIdToPreyNames.get(predatorUID);
@@ -117,7 +117,7 @@ public class StudyImporterForGoMexSI extends BaseStudyImporter {
 
             parser = parserFactory.createParser(referenceResource, CharsetConstant.UTF8);
             while (parser.getLine() != null) {
-                String refId = getMandatoryValue(referenceResource, parser, "DATA_ID");
+                String refId = getMandatoryValue(referenceResource, parser, "REF_ID");
                 Study study = referenceIdToStudy.get(refId);
                 if (study == null) {
                     addNewStudy(referenceIdToStudy, referenceResource, parser, refId, studyContributorMap.get(refId));
@@ -132,7 +132,7 @@ public class StudyImporterForGoMexSI extends BaseStudyImporter {
     protected static Map<String, String> collectContributors(String referenceResource, LabeledCSVParser parser) throws IOException, StudyImporterException {
         Map<String, String> studyContributorMap = new HashMap<String, String>();
         while (parser.getLine() != null) {
-            String refId = getMandatoryValue(referenceResource, parser, "DATA_ID");
+            String refId = getMandatoryValue(referenceResource, parser, "REF_ID");
             String lastName = getMandatoryValue(referenceResource, parser, "AUTH_L_NAME");
             String firstName = getMandatoryValue(referenceResource, parser, "AUTH_F_NAME");
             String contributors = studyContributorMap.get(refId);
@@ -173,7 +173,7 @@ public class StudyImporterForGoMexSI extends BaseStudyImporter {
             TermLookupService cmecsService = new CMECSService();
             LabeledCSVParser parser = parserFactory.createParser(locationResource, CharsetConstant.UTF8);
             while (parser.getLine() != null) {
-                String refId = getMandatoryValue(locationResource, parser, "DATA_ID");
+                String refId = getMandatoryValue(locationResource, parser, "REF_ID");
                 if (!refIdToStudyMap.containsKey(refId)) {
                     getLogger().warn(metaStudy, "failed to find study for ref id [" + refId + "] on related to observation location in [" + locationResource + ":" + parser.getLastLineNumber() + "]");
                 } else {
@@ -401,25 +401,25 @@ public class StudyImporterForGoMexSI extends BaseStudyImporter {
         }
     }
 
-    protected static void parseSpecimen(String datafile, String columnNamePrefix, ParseEventHandler specimenListener, LabeledCSVParser parser) throws IOException, StudyImporterException {
+    protected static void parseSpecimen(String datafile, String scientificNameLabel, ParseEventHandler specimenListener, LabeledCSVParser parser) throws IOException, StudyImporterException {
         while (parser.getLine() != null) {
             Map<String, String> properties = new HashMap<String, String>();
             addOptionalProperty(parser, "TOT_WO_FD", STOMACH_COUNT_WITHOUT_FOOD, properties);
             addOptionalProperty(parser, "TOT_W_FD", STOMACH_COUNT_WITH_FOOD, properties);
             addOptionalProperty(parser, "TOT_PRED_STOM_EXAM", STOMACH_COUNT_TOTAL, properties);
-            addOptionalProperty(parser, columnNamePrefix + "MN_LEN", Specimen.LENGTH_IN_MM, properties);
-            addOptionalProperty(parser, columnNamePrefix + "LIFE_HIST_STAGE", Specimen.LIFE_STAGE_LABEL, properties);
+            addOptionalProperty(parser, "MN_LEN", Specimen.LENGTH_IN_MM, properties);
+            addOptionalProperty(parser, "LIFE_HIST_STAGE", Specimen.LIFE_STAGE_LABEL, properties);
             addOptionalProperty(parser, "PHYSIOLOG_STATE", Specimen.PHYSIOLOGICAL_STATE_LABEL, properties);
-            addOptionalProperty(parser, columnNamePrefix + "PARTS", Specimen.BODY_PART_LABEL, properties);
+            addOptionalProperty(parser, "PREY_PARTS", Specimen.BODY_PART_LABEL, properties);
             addOptionalProperty(parser, "N_CONS", Specimen.TOTAL_COUNT, properties);
             addOptionalProperty(parser, "PCT_N_CONS", Specimen.TOTAL_COUNT_PERCENT, properties);
             addOptionalProperty(parser, "VOL_CONS", Specimen.TOTAL_VOLUME_IN_ML, properties);
             addOptionalProperty(parser, "PCT_VOL_CONS", Specimen.TOTAL_VOLUME_PERCENT, properties);
             addOptionalProperty(parser, "FREQ_OCC", Specimen.FREQUENCY_OF_OCCURRENCE, properties);
             addOptionalProperty(parser, "PCT_FREQ_OCC", Specimen.FREQUENCY_OF_OCCURRENCE_PERCENT, properties);
-            properties.put(PropertyAndValueDictionary.NAME, getMandatoryValue(datafile, parser, columnNamePrefix + "DATABASE_NAME"));
+            properties.put(PropertyAndValueDictionary.NAME, getMandatoryValue(datafile, parser, scientificNameLabel));
 
-            String refId = getMandatoryValue(datafile, parser, "DATA_ID");
+            String refId = getMandatoryValue(datafile, parser, "REF_ID");
             String specimenId = getMandatoryValue(datafile, parser, "PRED_ID");
             String predatorUID = refId + specimenId;
 
