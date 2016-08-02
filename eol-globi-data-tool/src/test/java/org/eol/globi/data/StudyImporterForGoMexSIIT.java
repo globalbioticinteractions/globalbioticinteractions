@@ -115,6 +115,8 @@ public class StudyImporterForGoMexSIIT extends GraphDBTestCase {
 
         final String footprintWKT = "POLYGON((-92.6729107838999 29.3941413332999,-92.5604838626999 29.2066775354,-92.7326173694 29.1150784684999,-92.9638307704999 29.1171045174,-93.3169089704999 29.3616452463,-93.4007435505999 29.5222620776999,-93.3169089704999 29.6243402981,-93.1045280342 29.6340566488,-92.6729107838999 29.3941413332999))";
         LocationImpl expectedLocation = new LocationImpl(29.346953, -92.980614, -13.641, footprintWKT);
+        expectedLocation.setLocality("Louisiana inner continental shelf");
+
         LocationNode location = nodeFactory.findLocation(expectedLocation);
         assertThat(location, is(notNullValue()));
         assertThat(location.getFootprintWKT(), is(footprintWKT));
