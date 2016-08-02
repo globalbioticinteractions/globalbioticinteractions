@@ -3,7 +3,7 @@ package org.eol.globi.taxon;
 import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.data.CharsetConstant;
-import org.eol.globi.service.NameSuggestor;
+import org.eol.globi.service.NameSuggester;
 import org.eol.globi.util.CSVUtil;
 
 import java.io.BufferedReader;
@@ -12,7 +12,7 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ManualSuggestor implements NameSuggestor {
+public class ManualSuggester implements NameSuggester {
     private Map<String, String> corrections;
 
     @Override

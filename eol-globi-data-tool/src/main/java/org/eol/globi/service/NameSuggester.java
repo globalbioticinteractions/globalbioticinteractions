@@ -1,5 +1,5 @@
 package org.eol.globi.service;
 
-public interface NameSuggestor {
+public interface NameSuggester {
     String suggest(String name);
 }

@@ -20,7 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.zip.GZIPInputStream;
 
-public class UKSISuggestionService implements PropertyEnricher, NameSuggestor {
+public class UKSISuggestionService implements PropertyEnricher, NameSuggester {
     private static final Log LOG = LogFactory.getLog(UKSISuggestionService.class);
 
     private TaxonLookupServiceImpl service;

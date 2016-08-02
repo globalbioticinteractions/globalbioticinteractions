@@ -6,6 +6,6 @@ public class ManualSuggestorTest {
 
     @Test
     public void throwOnDuplicates() {
-        new ManualSuggestor().suggest("bla");
+        new ManualSuggester().suggest("bla");
     }
 }
