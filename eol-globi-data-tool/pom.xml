@@ -21,7 +21,7 @@
 
         <dependency>
             <groupId>org.globalnames</groupId>
-            <artifactId>gnparser_2.11</artifactId>
+            <artifactId>gnparser_2.10</artifactId>
             <version>0.3.2</version>
         </dependency>
 
