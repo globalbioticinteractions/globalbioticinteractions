@@ -24,7 +24,7 @@ public class StudyImporterForGoMexSI2Test {
         final Map<String, String> parsedProperties = new HashMap<String, String>();
         String predOneLine = "DATA_ID,PRED_ID,DATA_AGGR_CODE,PRED_SOURCE_NAME,PRED_DATABASE_NAME,PRED_TOT_STOM_EXAM,TOT_W_FD,PCT_W_FD,TOT_WO_FD,PCT_WO_FD,PRED_DEN,PRED_SEX,PRED_SEX_RATIO,PRED_LIFE_HIST_STAGE,PRED_LEN_TYPE_1,PRED_MIN_LEN_1,PRED_MAX_LEN_1,PRED_MN_LEN_1,PRED_LEN_TYPE_2,PRED_MIN_LEN_2,PRED_MAX_LEN_2,PRED_MN_LEN_2,PRED_LEN_TYPE_3,PRED_MIN_LEN_3,PRED_MAX_LEN_3,PRED_MN_LEN_3,PRED_MIN_AGE,PRED_MAX_AGE,PRED_MN_AGE,PRED_MIN_WT,PRED_MAX_WT,PRED_MN_WT,PRED_TOT_WT,BIOMASS_DEN,STOM_PCT_FULL,STOM_COND_INDEX,TOT_FD_BIOMASS,TOT_FD_VOL,PREDATOR_NOTES,POP_TOT_PRED,POP_PRED_DEN,POP_SEX_RATIO,POP_LIFE_HIST_STAGE,POP_LEN_TYPE,POP_MIN_LEN,POP_MAX_LEN,POP_MN_LEN,POP_MIN_AGE,POP_MAX_AGE,POP_MN_AGE,POP_MIN_WT,POP_MAX_WT,POP_MN_WT,POP_TOT_WT,POP_BIOMASS_DEN,ENTRY_DATE,ENTRY_PERSON,EDITED_DATE,DATA_EDITOR,MODIFY_DATE,DATA_MODIFIER\n" +
                 "ACT_16R,Cchr.1,complete,Chloroscombrus chrysurus,Chloroscombrus chrysurus,66,61,0.9242,5,0.0758,NA,NA,NA,adult,SL,101,150,125.5,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,8.3,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Jim Simons,NA,Jim Simons,27/06/2016,Theresa Mitchell\n";
-        StudyImporterForGoMexSI.parseSpecimen("test.txt", "PRED_", new ParseEventHandler() {
+        StudyImporterForGoMexSI2.parseSpecimen("test.txt", "PRED_", new ParseEventHandler() {
             @Override
             public void onSpecimen(String predatorUID, Map<String, String> properties) {
                 parsedProperties.putAll(properties);
@@ -40,7 +40,7 @@ public class StudyImporterForGoMexSI2Test {
         final Map<String, String> parsedProperties = new HashMap<String, String>();
         String predOneLine = "DATA_ID,PRED_ID,PREY_SOURCE_NAME,PREY_DATABASE_NAME,PHYSIOLOG_STATE,SED_ORIGIN,PREY_PARTS,PREY_LIFE_HIST_STAGE,PREY_COND_INDEX,PREY_SEX,PREY_SEX_RATIO,PREY_LEN_TYPE,PREY_MIN_LEN,PREY_MAX_LEN,PREY_MN_LEN,PREY_MIN_WIDTH,PREY_MAX_WIDTH,PREY_MN_WIDTH,BIOMASS,BIOMASS_QUALIFIER,PCT_BIOMASS,PCT_BIOMASS_QUALIFIER,N_CONS,N_CONS_QUALIFIER,PCT_N_CONS,PCT_N_CONS_QUALIFIER,VOL_CONS,VOL_CONS_QUALIFIER,PCT_VOL_CONS,PCT_VOL_CONS_QUALIFIER,FREQ_OCC,FREQ_OCC_QUALIFIER,PCT_FREQ_OCC,PCT_FREQ_OCC_QUALIFIER,IRI,PCT_IRI,IRIa,IIR,E,PREY_NOTES,ENTRY_DATE,ENTRY_PERSON,EDITED_DATE,DATA_EDITOR,MODIFY_DATE,DATA_MODIFIER\n" +
                 "ACT_16R,Cchr.1,Crustacea,Crustacea,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,1.245,NA,0.15,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Jim Simons,NA,Jim Simons,27/06/2016,Theresa Mitchell\n";
-        StudyImporterForGoMexSI.parseSpecimen("test.txt", "PREY_", new ParseEventHandler() {
+        StudyImporterForGoMexSI2.parseSpecimen("test.txt", "PREY_", new ParseEventHandler() {
             @Override
             public void onSpecimen(String predatorUID, Map<String, String> properties) {
                 parsedProperties.putAll(properties);
@@ -56,7 +56,7 @@ public class StudyImporterForGoMexSI2Test {
         final Map<String, String> parsedProperties = new HashMap<String, String>();
         String predOneLine = "DATA_ID,PRED_ID,PREY_SOURCE_NAME,PREY_DATABASE_NAME,PHYSIOLOG_STATE,SED_ORIGIN,PREY_PARTS,PREY_LIFE_HIST_STAGE,PREY_COND_INDEX,PREY_SEX,PREY_SEX_RATIO,PREY_LEN_TYPE,PREY_MIN_LEN,PREY_MAX_LEN,PREY_MN_LEN,PREY_MIN_WIDTH,PREY_MAX_WIDTH,PREY_MN_WIDTH,BIOMASS,BIOMASS_QUALIFIER,PCT_BIOMASS,PCT_BIOMASS_QUALIFIER,N_CONS,N_CONS_QUALIFIER,PCT_N_CONS,PCT_N_CONS_QUALIFIER,VOL_CONS,VOL_CONS_QUALIFIER,PCT_VOL_CONS,PCT_VOL_CONS_QUALIFIER,FREQ_OCC,FREQ_OCC_QUALIFIER,PCT_FREQ_OCC,PCT_FREQ_OCC_QUALIFIER,IRI,PCT_IRI,IRIa,IIR,E,PREY_NOTES,ENTRY_DATE,ENTRY_PERSON,EDITED_DATE,DATA_EDITOR,MODIFY_DATE,DATA_MODIFIER\n" +
                 "ACT_16R,Cchr.1,Crustacea,Crustacea,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,0.6,NA,0.5,NA,0.4,NA,0.3,NA,0.2,NA,0.1,NA,NA,NA,NA,NA,NA,NA,NA,Jim Simons,NA,Jim Simons,27/06/2016,Theresa Mitchell\n";
-        StudyImporterForGoMexSI.parseSpecimen("test.txt", "PREY_", new ParseEventHandler() {
+        StudyImporterForGoMexSI2.parseSpecimen("test.txt", "PREY_", new ParseEventHandler() {
             @Override
             public void onSpecimen(String predatorUID, Map<String, String> properties) {
                 parsedProperties.putAll(properties);
@@ -94,7 +94,7 @@ public class StudyImporterForGoMexSI2Test {
                 "ACT_18B,ACT_18B,pred/prey,3178,GR,NA,\"Beaumariage and Bullock, 1976\",Beaumariage,NA,D,S,1976,Biological Research on Snappers and Groupers as Related to Fishery Management Requirements,\"Bullis, Jr.\",Harvey,R,Proceedings: Colloquium on Snapper-Grouper Fishery Resources of the Western Central Atlantic Ocean,1976,17,86,94,NA,Florida Sea Grant College Program,St. Petersberg,FL,US,NA,NA,NA,NA,NA,English,NA,NA,NA,06/11/2013,Theresa Mitchell,29/01/2014,Theresa Mitchell,15/06/2016,Theresa Mitchell\n" +
                 "ACT_18B,ACT_18B,pred/prey,3178,GR,NA,\"Beaumariage and Bullock, 1976\",Beaumariage,NA,D,S,1976,Biological Research on Snappers and Groupers as Related to Fishery Management Requirements,Jones,Albert,C,Proceedings: Colloquium on Snapper-Grouper Fishery Resources of the Western Central Atlantic Ocean,1976,17,86,94,NA,Florida Sea Grant College Program,St. Petersberg,FL,US,NA,NA,NA,NA,NA,English,NA,NA,NA,06/11/2013,Theresa Mitchell,29/01/2014,Theresa Mitchell,15/06/2016,Theresa Mitchell\n";
 
-        Map<String, String> contributorMap = StudyImporterForGoMexSI.collectContributors("bla", new LabeledCSVParser(new CSVParser(new StringReader(someReferences))));
+        Map<String, String> contributorMap = StudyImporterForGoMexSI2.collectContributors("bla", new LabeledCSVParser(new CSVParser(new StringReader(someReferences))));
 
         assertThat(contributorMap.get("ACT_5A"), is("A Adams, W Kendall"));
         assertThat(contributorMap.get("ACT_14A"), is("Adlemy Alarcon Sosa"));
@@ -107,7 +107,7 @@ public class StudyImporterForGoMexSI2Test {
 
     @Test
     public void polyCoordToWKT() {
-        assertThat(StudyImporterForGoMexSI.polyCoordsToWKT("((-92.6729107838999,29.3941413332999),(-92.5604838626999,29.2066775354))")
+        assertThat(StudyImporterForGoMexSI2.polyCoordsToWKT("((-92.6729107838999,29.3941413332999),(-92.5604838626999,29.2066775354))")
                 , is("POLYGON((-92.6729107838999 29.3941413332999,-92.5604838626999 29.2066775354))"));
     }
 
@@ -121,7 +121,7 @@ public class StudyImporterForGoMexSI2Test {
 
         final LabeledCSVParser parser = new LabeledCSVParser(new CSVParser(IOUtils.toInputStream(locationLines)));
         parser.getLine();
-        final Location location = StudyImporterForGoMexSI.parseLocation("someMickeyMouseresource.csv", parser);
+        final Location location = StudyImporterForGoMexSI2.parseLocation("someMickeyMouseresource.csv", parser);
         assertThat(location.getLatitude(), is(29.346953d));
         assertThat(location.getLongitude(), is(-92.980614d));
         assertThat(location.getAltitude(), is(-13.641d));

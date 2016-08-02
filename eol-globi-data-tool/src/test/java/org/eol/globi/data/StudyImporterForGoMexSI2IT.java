@@ -49,8 +49,8 @@ public class StudyImporterForGoMexSI2IT extends GraphDBTestCase {
         assertThatSomeDataIsImported(nodeFactory, taxonIndex);
     }
 
-    protected StudyImporterForGoMexSI importWithCommit(String baseUrlLastCommit) throws StudyImporterException {
-        StudyImporterForGoMexSI importer = new StudyImporterForGoMexSI(new ParserFactoryImpl(), nodeFactory);
+    protected StudyImporterForGoMexSI2 importWithCommit(String baseUrlLastCommit) throws StudyImporterException {
+        StudyImporterForGoMexSI2 importer = new StudyImporterForGoMexSI2(new ParserFactoryImpl(), nodeFactory);
         final List<String> msgs = new ArrayList<String>();
         importer.setLogger(new ImportLogger() {
             @Override
