@@ -18,6 +18,7 @@ import java.util.Map;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.StringStartsWith.startsWith;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
 public class StudyImporterForMetaTableIT {
@@ -98,6 +99,35 @@ public class StudyImporterForMetaTableIT {
         assertThat(firstLine.get(StudyImporterForMetaTable.EVENT_DATE), startsWith("1994-07-11"));
         assertThat(firstLine.get(StudyImporterForMetaTable.LATITUDE), is("51.43"));
         assertThat(firstLine.get(StudyImporterForMetaTable.LONGITUDE), is("178.81999999999999"));
+    }
+
+
+    @Test
+    public void importAPSNET() throws IOException, StudyImporterException {
+        final List<Map<String, String>> links = new ArrayList<Map<String, String>>();
+        final InteractionListener interactionListener = new InteractionListener() {
+
+            @Override
+            public void newLink(Map<String, String> properties) throws StudyImporterException {
+                links.add(properties);
+            }
+        };
+
+        final String baseUrl = "https://raw.githubusercontent.com/globalbioticinteractions/apsnet-common-names-plant-diseases/master";
+        final String resource = baseUrl + "/globi.json";
+        importAll(interactionListener, new StudyImporterForMetaTable.TableParserFactoryImpl(), baseUrl, resource);
+
+        assertThat(links.size(), is(9659));
+
+        final Map<String, String> firstLine = links.get(0);
+        assertThat(firstLine.get(StudyImporterForTSV.INTERACTION_TYPE_ID), startsWith("http://purl.obolibrary.org/obo/RO_"));
+        assertNotNull(firstLine.get(StudyImporterForTSV.INTERACTION_TYPE_NAME));
+        assertThat(firstLine.get(StudyImporterForTSV.TARGET_TAXON_ID), is(nullValue()));
+        assertNotNull(firstLine.get(StudyImporterForTSV.TARGET_TAXON_NAME));
+        assertThat(firstLine.get(StudyImporterForTSV.SOURCE_TAXON_ID), is(nullValue()));
+        assertNotNull(firstLine.get(StudyImporterForTSV.SOURCE_TAXON_NAME));
+        assertNotNull(firstLine.get(StudyImporterForTSV.REFERENCE_URL));
+        assertNotNull(firstLine.get(StudyImporterForTSV.REFERENCE_CITATION));
     }
 
     @Test
