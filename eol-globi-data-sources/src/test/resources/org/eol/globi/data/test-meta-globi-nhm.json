@@ -1,0 +1,107 @@
+{
+  "@context": ["http://www.w3.org/ns/csvw", {"@language": "en"}],
+  "rdfs:comment": ["inspired by https://www.w3.org/TR/2015/REC-tabular-data-model-20151217/"],
+  "url": "http://data.nhm.ac.uk/api/3/action/package_show?id=nhm-ib",
+  "headerRowCount": 1,
+  "null": [""],
+  "tableSchema": {
+    "columns": [{
+      "name": "InteractionID",
+      "titles": "InteractionID",
+      "datatype": "string"
+    }, {
+      "name": "InteractionURL",
+      "titles": "InteractionURL",
+      "datatype": "string"
+    }, {
+      "name": "Species1UUID",
+      "titles": "Species1UUID",
+      "datatype": "string"
+    }, {
+      "name": "Species1Name",
+      "titles": "Species1Name",
+      "datatype": "string"
+    },{
+      "name": "Species1LifeCycleStage",
+      "titles": "Species1LifeCycleStage",
+      "datatype": "string"
+    }, {
+      "name": "Species1OrganismPart",
+      "titles": "Species1OrganismPart",
+      "datatype": "string"
+    },{
+      "name": "Species1Status",
+      "titles": "Species1Status",
+      "datatype": "string"
+    },{
+      "name": "InteractionType",
+      "titles": "InteractionType",
+      "datatype": "string"
+    },{
+      "name": "InteractionOntologyURL",
+      "titles": "InteractionOntologyURL",
+      "datatype": "string"
+    },{
+      "name": "Species2UUID",
+      "titles": "Species2UUID",
+      "datatype": "string"
+    },{
+      "name": "Species2Name",
+      "titles": "Species2Name",
+      "datatype": "string"
+    },{
+      "name": "Species2LifeCycleStage",
+      "titles": "Species2LifeCycleStage",
+      "datatype": "string"
+    },{
+      "name": "Species2OrganismPart",
+      "titles": "Species2OrganismPart",
+      "datatype": "string"
+    },{
+      "name": "Species2Status",
+      "titles": "Species2Status",
+      "datatype": "string"
+    },{
+      "name": "LocationUUID",
+      "titles": "LocationUUID",
+      "datatype": "string"
+    },{
+      "name": "LocationName",
+      "titles": "LocationName",
+      "datatype": "string"
+    },{
+      "name": "LocationCountryName",
+      "titles": "LocationCountryName",
+      "datatype": "string"
+    },{
+      "name": "ISO2",
+      "titles": "ISO2",
+      "datatype": "string"
+    },{
+      "name": "Importance",
+      "titles": "Importance",
+      "datatype": "string"
+    },{
+      "name": "InteractionRecordType",
+      "titles": "InteractionRecordType",
+      "datatype": "string"
+    },{
+      "name": "Reference",
+      "titles": "Reference",
+      "datatype": "string",
+      "default": "some default reference"
+    },{
+      "name": "ReferenceDOI",
+      "titles": "ReferenceDOI",
+      "datatype": "string"
+    },{
+      "name": "Reference Page",
+      "titles": "Reference Page",
+      "datatype": "string"
+    },{
+      "name": "Notes",
+      "titles": "Notes",
+      "datatype": "string"
+    }]
+  }
+}

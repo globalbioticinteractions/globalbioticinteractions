@@ -72,17 +72,50 @@ public class StudyImporterForMetaTable extends BaseStudyImporter {
     }
 
 
-    static public List<JsonNode> collectTables(JsonNode config) {
+    static public List<JsonNode> collectTables(JsonNode config) throws StudyImporterException {
         List<JsonNode> tableList = new ArrayList<JsonNode>();
         if (config.has("tables")) {
             JsonNode tables = config.get("tables");
             for (JsonNode table : tables) {
                 tableList.add(table);
             }
+        } else if (isNHMResource(config)) {
+            generateTablesForNHMResources(config, tableList);
         } else {
             tableList.add(config);
         }
         return tableList;
+    }
+
+    public static void generateTablesForNHMResources(JsonNode config, List<JsonNode> tableList) throws StudyImporterException {
+        String nhmUrl = config.get("url").asText();
+        try {
+            final JsonNode nhmResourceSchema = new ObjectMapper().readTree(ResourceUtil.asInputStream(nhmUrl, null));
+            final JsonNode result = nhmResourceSchema.get("result");
+            String title = result.get("title").asText();
+            String author = result.get("author").asText();
+            String doi = result.get("doi").asText();
+            String year = result.get("metadata_modified").asText().substring(0, 4);
+            for (JsonNode resource : result.get("resources")) {
+                Map<String, Object> table = new HashMap<String, Object>();
+                table.put("dcterms:bibliographicCitation", author + " (" + year + "). " + title + ". http://dx.doi.org/" + doi);
+                table.put("url", resource.get("url").asText());
+                if (config.has("headerRowCount")) {
+                    table.put("headerRowCount", config.get("headerRowCount"));
+                }
+                if (config.has("null")) {
+                    table.put("null", new ObjectMapper().valueToTree(config.get("null")));
+                }
+                table.put("tableSchema", new ObjectMapper().valueToTree(config.get("tableSchema")));
+                tableList.add(new ObjectMapper().valueToTree(table));
+            }
+        } catch (IOException e) {
+            throw new StudyImporterException("failed to retrieve meta-data from [" + nhmUrl + "]", e);
+        }
+    }
+
+    public static boolean isNHMResource(JsonNode config) {
+        return config.has("url") && StringUtils.startsWith(config.get("url").asText(), "http://data.nhm.ac.uk/api");
     }
 
     static public void importTable(InteractionListener interactionListener, TableParserFactory tableFactory, JsonNode table, String baseUrl) throws IOException, StudyImporterException {
@@ -275,11 +308,15 @@ public class StudyImporterForMetaTable extends BaseStudyImporter {
             for (int i = 0; i < line.length; i++) {
                 final String value = nullValueArray.contains(line[i]) ? null : line[i];
                 final Column column = columnNames.get(i);
-                mappedLine.put(column.getName(), parseValue(value, column));
+                mappedLine.put(column.getName(), parseValue(valueOrDefault(value, column), column));
             }
             setInteractionType(mappedLine, defaultInteractionType(config));
             interactionListener.newLink(mappedLine);
         }
+    }
+
+    static public String valueOrDefault(String value, Column column) {
+        return (value == null && StringUtils.isNotBlank(column.getDefaultValue())) ? column.getDefaultValue() : value;
     }
 
     static public void setInteractionType(Map<String, String> properties, InteractType type) {
@@ -360,6 +397,7 @@ public class StudyImporterForMetaTable extends BaseStudyImporter {
                 final Column col = new Column(columnName.asText(), dataTypeId == null ? "string" : dataTypeId);
                 col.setDataTypeFormat(dataType.has("format") ? dataType.get("format").asText() : null);
                 col.setDataTypeBase(dataType.has("base") ? dataType.get("base").asText() : null);
+                col.setDefaultValue(column.has("default") ? column.get("default").asText() : null);
                 columnNames.add(col);
             }
         }
@@ -371,6 +409,7 @@ public class StudyImporterForMetaTable extends BaseStudyImporter {
         private String dataTypeId;
         private String dataTypeFormat;
         private String dataTypeBase;
+        private String defaultValue;
 
         Column(String name, String dataTypeId) {
             this.name = name;
@@ -400,6 +439,14 @@ public class StudyImporterForMetaTable extends BaseStudyImporter {
 
         public void setDataTypeBase(String dataTypeBase) {
             this.dataTypeBase = dataTypeBase;
+        }
+
+        public void setDefaultValue(String defaultValue) {
+            this.defaultValue = defaultValue;
+        }
+
+        public String getDefaultValue() {
+            return defaultValue;
         }
     }
 

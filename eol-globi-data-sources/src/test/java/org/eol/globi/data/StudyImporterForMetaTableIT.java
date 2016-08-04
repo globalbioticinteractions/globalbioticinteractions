@@ -131,6 +131,52 @@ public class StudyImporterForMetaTableIT {
     }
 
     @Test
+    public void importNHM() throws IOException, StudyImporterException {
+        final List<Map<String, String>> links = new ArrayList<Map<String, String>>();
+        final InteractionListener interactionListener = new InteractionListener() {
+
+            @Override
+            public void newLink(Map<String, String> properties) throws StudyImporterException {
+                links.add(properties);
+            }
+        };
+
+        final StudyImporterForMetaTable.TableParserFactory tableFactory = new StudyImporterForMetaTable.TableParserFactory() {
+
+            public CSVParse createParser(JsonNode config) throws IOException {
+                String firstFewLines = "\"InteractionID\",\"InteractionURL\",\"Species1UUID\",\"Species1Name\",\"Species1LifeCycleStage\",\"Species1OrganismPart\",\"Species1Status\",\"InteractionType\",\"InteractionOntologyURL\",\"Species2UUID\",\"Species2Name\",\"Species2LifeCycleStage\",\"Species2OrganismPart\",\"Species2Status\",\"LocationUUID\",\"LocationName\",\"LocationCountryName\",\"ISO2\",\"Importance\",\"InteractionRecordType\",\"Reference\",\"ReferenceDOI\",\"Reference Page\",\"Notes\"\n" +
+                        "\"f38baed7-002b-4ac1-a113-17d04d969172\",\"http://phasmida.myspecies.info/node/338\",\"f8fab31d-0b94-49a6-861d-682952aa912b\",\"Hermagoras sigillatus\",\"\",\"\",\"\",\"eats\",\"http://purl.obolibrary.org/obo/RO_0002470\",\"88fff3e3-8090-4392-9a48-c2c2d45c72df\",\"Ixora\",\"\",\"\",\"\",\"72f79476-c914-4ee2-8deb-7d4f8cb49f71\",\"Borneo\",\"\",\"\",\"\",\"\",\"F.  Seow-Choen, A Taxonomic Guide to the Stick Insects of Borneo. Kota Kinabalu: Natural History Publications (Borneo), 2016.\",\"\",\"290\",\"\"\n" +
+                        "\"da5d7396-a570-4850-a54b-eafea5983078\",\"http://phasmida.myspecies.info/node/337\",\"f8fab31d-0b94-49a6-861d-682952aa912b\",\"Hermagoras sigillatus\",\"\",\"\",\"\",\"eats\",\"http://purl.obolibrary.org/obo/RO_0002470\",\"1550c7a9-16f4-4001-a8a0-19ddf50bf152\",\"Stachytarpheta indica\",\"\",\"\",\"\",\"72f79476-c914-4ee2-8deb-7d4f8cb49f71\",\"Borneo\",\"\",\"\",\"\",\"\",\"F.  Seow-Choen, A Taxonomic Guide to the Stick Insects of Borneo. Kota Kinabalu: Natural History Publications (Borneo), 2016.\",\"\",\"290\",\"\"\n" +
+                        "\"00f31e25-afd3-4c24-a572-786db7b1b5ab\",\"http://phasmida.myspecies.info/node/336\",\"f8fab31d-0b94-49a6-861d-682952aa912b\",\"Hermagoras sigillatus\",\"\",\"\",\"\",\"eats\",\"http://purl.obolibrary.org/obo/RO_0002470\",\"70cbb822-afb3-4300-a2f5-e3c6917cd144\",\"Rubus moluccanus\",\"\",\"\",\"\",\"72f79476-c914-4ee2-8deb-7d4f8cb49f71\",\"Borneo\",\"\",\"\",\"\",\"\",\"F.  Seow-Choen, A Taxonomic Guide to the Stick Insects of Borneo. Kota Kinabalu: Natural History Publications (Borneo), 2016.\",\"\",\"290\",\"\"\n" +
+                        "\"739f6a75-3f68-4e76-8be5-62f74d77cf89\",\"http://phasmida.myspecies.info/node/335\",\"dfd90fa3-a1ca-4d55-8e7a-32d980af3cd3\",\"Hermagoras matangensis\",\"\",\"\",\"\",\"eats\",\"http://purl.obolibrary.org/obo/RO_0002470\",\"1550c7a9-16f4-4001-a8a0-19ddf50bf152\",\"Stachytarpheta indica\",\"\",\"\",\"\",\"72f79476-c914-4ee2-8deb-7d4f8cb49f71\",\"Borneo\",\"\",\"\",\"\",\"\",\"F.  Seow-Choen, A Taxonomic Guide to the Stick Insects of Borneo. Kota Kinabalu: Natural History Publications (Borneo), 2016.\",\"\",\"288\",\"\"\n" +
+                        "\"7081688b-6e36-4b84-b843-5ddd519de2ff\",\"http://phthiraptera.info/node/81842\",\"ac5107a5-699a-4766-beeb-b1a60f3cb20c\",\"Schizophthirus graphiuri\",\"\",\"\",\"\",\"ectoparasite of\",\"\",\"ad71cce0-408c-415b-958b-9456e4147470\",\"Graphiurus kelleni\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\"\n" +
+                        "\"85852351-67ae-4974-baf6-5e82bd93be1c\",\"http://phthiraptera.info/node/81843\",\"04dcab2e-c4d1-441f-863a-412f681b4232\",\"Schizophthirus gliris\",\"\",\"\",\"\",\"ectoparasite of\",\"\",\"80668c3d-cda2-4591-82de-6ca90537b125\",\"Myoxus glis\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\"\n" +
+                        "\"e03d291d-1869-4324-bbf5-599074a5239d\",\"http://phthiraptera.info/node/81844\",\"18feb94e-6801-4013-b75e-a6853ecdd447\",\"Schizophthirus dryomydis\",\"\",\"\",\"\",\"ectoparasite of\",\"\",\"b0e26119-26a9-4b0b-a0ff-6f4a1de2197b\",\"Dryomys nitedula\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\"\n" +
+                        "\"3710cc00-018b-4023-aa79-26085e76a9f7\",\"http://phthiraptera.info/node/81845\",\"2f8cbf09-c5d1-402d-a6b7-3c145fd277d4\",\"Schizophthirus aethogliris\",\"\",\"\",\"\",\"ectoparasite of\",\"\",\"edfb5863-3328-4ae1-a624-8d126447381b\",\"Graphiurus hueti\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\"\n" +
+                        "\"8e3effa1-bdf3-4bfa-b4ea-2c4f413df8e5\",\"http://phthiraptera.info/node/81846\",\"66114a3a-16a7-45b0-8cb3-25bbe2215851\",\"Sathrax durus\",\"\",\"\",\"\",\"ectoparasite of\",\"\",\"9d9da32a-1bbe-448b-a979-c3dbad41d14d\",\"Tupaia glis\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\"\n";
+
+                return new LabeledCSVParser(new CSVParser(IOUtils.toInputStream(firstFewLines)));
+            }
+        };
+
+        final String baseUrl = "https://raw.githubusercontent.com/globalbioticinteractions/natural-history-museum-london-interactions-bank/master";
+        final String resource = baseUrl + "/globi.json";
+        importAll(interactionListener, tableFactory, baseUrl, resource);
+
+        assertThat(links.size(), is(9));
+
+        for (Map<String, String> firstLine : links) {
+            assertNotNull(firstLine.get(StudyImporterForTSV.INTERACTION_TYPE_NAME));
+            assertNotNull(firstLine.get(StudyImporterForTSV.TARGET_TAXON_ID));
+            assertNotNull(firstLine.get(StudyImporterForTSV.TARGET_TAXON_NAME));
+            assertNotNull(firstLine.get(StudyImporterForTSV.SOURCE_TAXON_ID));
+            assertNotNull(firstLine.get(StudyImporterForTSV.SOURCE_TAXON_NAME));
+            assertNotNull(firstLine.get(StudyImporterForTSV.REFERENCE_URL));
+            assertNotNull(firstLine.get(StudyImporterForTSV.REFERENCE_CITATION));
+        }
+    }
+
+    @Test
     public void importDapstromWithStaticCSV() throws IOException, StudyImporterException {
         final List<Map<String, String>> links = new ArrayList<Map<String, String>>();
         final InteractionListener interactionListener = new InteractionListener() {

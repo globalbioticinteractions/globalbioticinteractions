@@ -9,6 +9,7 @@ import org.junit.Test;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -17,6 +18,7 @@ import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.StringStartsWith.startsWith;
 import static org.junit.Assert.assertThat;
+import static org.junit.matchers.JUnitMatchers.hasItem;
 
 public class StudyImporterForMetaTableTest {
 
@@ -27,12 +29,37 @@ public class StudyImporterForMetaTableTest {
 
         List<StudyImporterForMetaTable.Column> columnNames = StudyImporterForMetaTable.columnNamesForMetaTable(config);
         assertThat(columnNames.size(), is(40));
-
+        assertThat(columnNames.get(0).getDefaultValue(), is("some default interaction name"));
+        assertThat(columnNames.get(1).getDefaultValue(), is(nullValue()));
     }
 
     @Test
     public void parseColumnNamesFromExternalSchema() throws IOException, StudyImporterException {
         assertExpectedColumnCount("test-meta-globi-external-schema.json");
+    }
+
+    @Test
+    public void parseNaturalHistoryMuseum() throws IOException, StudyImporterException {
+        final Class<StudyImporterForMetaTable> clazz = StudyImporterForMetaTable.class;
+        final String name = "test-meta-globi-nhm.json";
+        final URL resource = clazz.getResource(name);
+        assertNotNull(resource);
+
+        final InputStream inputStream = ResourceUtil.asInputStream(name, clazz);
+        final JsonNode config = new ObjectMapper().readTree(inputStream);
+
+        final List<JsonNode> tables = StudyImporterForMetaTable.collectTables(config);
+        assertThat(tables.size(), is(1));
+        JsonNode firstTable = tables.get(0);
+        String bibliographicCitation = firstTable.get("dcterms:bibliographicCitation").asText();
+        assertThat(bibliographicCitation, startsWith("Ed Baker; Vincent S. Smith (2016). NHM Interactions Bank. http://dx.doi.org/10.5519/0060767"));
+
+        String resourceUrl = firstTable.get("url").asText();
+        assertThat(resourceUrl, is("http://data.nhm.ac.uk/dataset/82e807f0-6273-4f19-be0a-7f7558442a25/resource/1f64e2cf-d738-4a7c-9e81-a1951eac635f/download/output.csv"));
+        assertThat(firstTable.get("headerRowCount").asInt(), is(1));
+        assertThat(firstTable.has("tableSchema"), is(true));
+        assertThat(firstTable.has("null"), is(true));
+        assertThat(firstTable.get("tableSchema").has("columns"), is(true));
     }
 
     @Test
@@ -108,6 +135,15 @@ public class StudyImporterForMetaTableTest {
         assertThat(StudyImporterForMetaTable.generateInteractionType(interactMap("pollinator")), is(InteractType.POLLINATES));
     }
 
+    @Test
+    public void valueOrDefault() {
+        assertThat(StudyImporterForMetaTable.valueOrDefault(null, new StudyImporterForMetaTable.Column("foo", "bar")), is(nullValue()));
+        final StudyImporterForMetaTable.Column columnWithDefault = new StudyImporterForMetaTable.Column("foo", "bar");
+        columnWithDefault.setDefaultValue("bla");
+        assertThat(StudyImporterForMetaTable.valueOrDefault(null, columnWithDefault), is("bla"));
+        assertThat(StudyImporterForMetaTable.valueOrDefault("boo", columnWithDefault), is("boo"));
+    }
+
     public HashMap<String, String> interactMap(final String donald) {
         return new HashMap<String, String>() {
             {
@@ -117,7 +153,6 @@ public class StudyImporterForMetaTableTest {
     }
 
     @Test
-
     public void generateReferenceAndReferenceId() {
         final HashMap<String, String> properties = new HashMap<String, String>() {
             {
@@ -138,7 +173,6 @@ public class StudyImporterForMetaTableTest {
         assertThat(StudyImporterForMetaTable.generateReferenceCitation(properties), is("Johnny, 1981. My first pony. journal of bla, 123(11), pp.33."));
 
     }
-
 
 
 }

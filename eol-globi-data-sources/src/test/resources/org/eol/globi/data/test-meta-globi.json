@@ -9,7 +9,8 @@
     "columns": [{
       "name": "interactionTypeName",
       "titles": "intertype",
-      "datatype": "string"
+      "datatype": "string",
+      "default": "some default interaction name"
     }, {
       "name": "basisOfRecordName",
       "titles": "obstype",
