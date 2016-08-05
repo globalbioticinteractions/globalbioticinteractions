@@ -26,7 +26,7 @@ public class TableInteractionListenerProxy implements InteractionListener {
             {
                 putAll(properties);
                 put(StudyImporterForTSV.STUDY_SOURCE_CITATION, dataSourceCitation);
-                final String referenceCitation = StudyImporterForMetaTable.generateReferenceCitation(properties);
+                final String referenceCitation = StringUtils.isBlank(properties.get(StudyImporterForTSV.REFERENCE_CITATION)) ? StudyImporterForMetaTable.generateReferenceCitation(properties) : properties.get(StudyImporterForTSV.REFERENCE_CITATION);
                 put(StudyImporterForTSV.REFERENCE_ID, dataSourceCitation + referenceCitation);
                 put(StudyImporterForTSV.REFERENCE_CITATION, StringUtils.isBlank(referenceCitation) ? dataSourceCitation : referenceCitation);
 
