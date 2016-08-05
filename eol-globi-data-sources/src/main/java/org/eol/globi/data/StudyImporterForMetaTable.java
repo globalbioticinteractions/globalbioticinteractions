@@ -273,7 +273,16 @@ public class StudyImporterForMetaTable extends BaseStudyImporter {
             throw new StudyImporterException("missing resource url, please define [url] in [" + baseUrl + "]");
         }
 
-        return citation.asText() + " . " + ReferenceUtil.createLastAccessedString(url.asText());
+        final String citationPart = citation.asText();
+        return citationPart + separatorFor(citationPart) + ReferenceUtil.createLastAccessedString(url.asText());
+    }
+
+    private static String separatorFor(String citationPart) {
+        String separator = " ";
+        if (!StringUtils.endsWith(StringUtils.trim(citationPart), ".")) {
+            separator = " . ";
+        }
+        return separator;
     }
 
     public JsonNode getConfig() {
