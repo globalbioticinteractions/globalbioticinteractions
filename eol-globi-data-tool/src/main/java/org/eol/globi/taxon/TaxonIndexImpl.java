@@ -103,7 +103,7 @@ public class TaxonIndexImpl implements TaxonIndex {
                     indexedTaxon = createAndIndexTaxon(taxon);
                 } else {
                     String truncatedName = NodeUtil.truncateTaxonName(taxon.getName());
-                    if (truncatedName == null || StringUtils.length(truncatedName) < 3) {
+                    if (StringUtils.equals(truncatedName, taxon.getName())) {
                         if (indexResolvedOnly) {
                             break;
                         } else {

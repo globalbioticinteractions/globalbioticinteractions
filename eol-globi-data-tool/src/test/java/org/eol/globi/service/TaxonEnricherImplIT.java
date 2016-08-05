@@ -15,9 +15,11 @@ import org.neo4j.graphdb.Relationship;
 
 import java.io.IOException;
 
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNot.not;
 import static org.hamcrest.core.IsNull.notNullValue;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.internal.matchers.StringContains.containsString;
 
@@ -75,6 +77,12 @@ public class TaxonEnricherImplIT extends GraphDBTestCase {
         TaxonNode taxon = taxonIndex.getOrCreateTaxon("Aedes furcifer", "EOL:754947");
         assertThat(taxon.getPathIds(), is("WORMS:1 | WORMS:2 | WORMS:793 | WORMS:19948 | WORMS:108400 | WORMS:108402 | WORMS:468918 | WORMS:108418 | WORMS:108471 | WORMS:724982 | WORMS:108758 | WORMS:726834"));
 
+    }
+
+    @Test
+    public void barleyMosaicVirus() throws IOException, NodeFactoryException {
+        TaxonNode taxon = taxonIndex.getOrCreateTaxon("Barley mosaic virus (Japan)");
+        assertThat(taxon.getPath(), is(nullValue()));
     }
 
     @Test
