@@ -144,6 +144,13 @@ public class StudyImporterForMetaTableTest {
         assertThat(StudyImporterForMetaTable.valueOrDefault("boo", columnWithDefault), is("boo"));
     }
 
+    @Test
+    public void parseValue() {
+        final StudyImporterForMetaTable.Column column = new StudyImporterForMetaTable.Column("foo", "bar");
+        final String parsedValue = StudyImporterForMetaTable.parseValue(null, column);
+        assertThat(parsedValue, is(nullValue()));
+    }
+
     public HashMap<String, String> interactMap(final String donald) {
         return new HashMap<String, String>() {
             {

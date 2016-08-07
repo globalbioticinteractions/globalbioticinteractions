@@ -263,7 +263,12 @@ public class NodeFactoryImpl implements NodeFactory {
 
                     if (StringUtils.isNotBlank(doi)) {
                         study.setDOI(doi);
-                        study.setCitation(doiResolver.findCitationForDOI(doi));
+                        final String citationForDOI = doiResolver.findCitationForDOI(doi);
+                        if (StringUtils.isNotBlank(citationForDOI)) {
+                            study.setCitation(citationForDOI);
+                        } else {
+                            LOG.warn("failed to find citation for doi [" + doi + "], using [" + citation + "] instead.");
+                        }
                     }
                 } catch (IOException e) {
                     LOG.warn("failed to lookup doi for citation [" + citation + "] with id [" + title + "]", e);

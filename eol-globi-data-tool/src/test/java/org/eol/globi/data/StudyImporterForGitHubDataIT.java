@@ -148,6 +148,27 @@ public class StudyImporterForGitHubDataIT extends GraphDBTestCase {
     }
 
     @Test
+    public void importNHM() throws StudyImporterException {
+        StudyImporterForGitHubData importer = new StudyImporterForGitHubData(new ParserFactoryImpl(), nodeFactory);
+        importer.importData("globalbioticinteractions/natural-history-museum-london-interactions-bank");
+        resolveNames();
+        List<Study> allStudies = NodeUtil.findAllStudies(getGraphDb());
+        assertThat(taxonIndex.findTaxonByName("Magnifera indica"), is(notNullValue()));
+        assertThat(taxonIndex.findTaxonByName("Hermagoras sigillatus"), is(notNullValue()));
+        List<String> citations = new ArrayList<String>();
+        List<String> dois = new ArrayList<String>();
+        for (Study study : allStudies) {
+            assertThat(study.getSource(), is(Matchers.notNullValue()));
+            assertThat(study.getCitation(), is(Matchers.notNullValue()));
+            citations.add(study.getCitation());
+            dois.add(study.getDOI());
+        }
+
+        assertThat(citations, hasItem("citation:doi:F.  Seow-Choen, A Taxonomic Guide to the Stick Insects of Borneo. Kota Kinabalu: Natural History Publications (Borneo), 2016."));
+        assertThat(dois, hasItem("10.2307/3503496"));
+    }
+
+    @Test
     public void importREEM() throws StudyImporterException {
         StudyImporterForGitHubData importer = new StudyImporterForGitHubData(new ParserFactoryImpl(), nodeFactory);
 

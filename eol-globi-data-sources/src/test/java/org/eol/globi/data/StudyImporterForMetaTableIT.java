@@ -131,7 +131,7 @@ public class StudyImporterForMetaTableIT {
     }
 
     @Test
-    public void importNHM() throws IOException, StudyImporterException {
+    public void importNHMStatic() throws IOException, StudyImporterException {
         final List<Map<String, String>> links = new ArrayList<Map<String, String>>();
         final InteractionListener interactionListener = new InteractionListener() {
 
