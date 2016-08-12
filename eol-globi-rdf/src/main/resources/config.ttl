@@ -39,8 +39,8 @@
 <#globi>    rdf:type ja:RDFDataset ;
     rdfs:label "GloBI" ;
     ja:defaultGraph 
-      [ rdfs:label "globi.ttl.gz" ;
+      [ rdfs:label "globi.nq.gz" ;
         a ja:MemoryModel ;
-        ja:content [ja:externalContent <file:Data/globi.ttl.gz> ] ;
+        ja:content [ja:externalContent <file:Data/globi.nq.gz> ] ;
       ] ;
     .

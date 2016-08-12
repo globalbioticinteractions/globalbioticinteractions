@@ -41,7 +41,7 @@
                                     <groupId>${project.groupId}</groupId>
                                     <artifactId>eol-globi-datasets</artifactId>
                                     <version>${globi.data.version}</version>
-                                    <classifier>ttl</classifier>
+                                    <classifier>nq</classifier>
                                     <type>tar.gz</type>
                                     <outputDirectory>${fuseki.dir}/Data</outputDirectory>
                                 </artifactItem>
