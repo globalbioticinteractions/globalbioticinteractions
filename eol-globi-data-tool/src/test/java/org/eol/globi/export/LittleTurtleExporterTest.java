@@ -104,7 +104,7 @@ public class LittleTurtleExporterTest extends GraphDBTestCase {
             String content = IOUtils.toString(new FileInputStream(file));
             System.out.println(content);
             assertThat(content, not(containsString("no:match")));
-            assertThat(content, containsString("http://purl.obolibrary.org/obo/ENVO_00000447"));
+            assertThat(content, containsString("http://purl.obolibrary.org/obo/ENVO_"));
         } finally {
             FileUtils.deleteQuietly(file);
         }
