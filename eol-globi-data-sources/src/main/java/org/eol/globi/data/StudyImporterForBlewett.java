@@ -30,7 +30,7 @@ public class StudyImporterForBlewett extends BaseStudyImporter {
     @Override
     public Study importStudy() throws StudyImporterException {
         Study study = nodeFactory.getOrCreateStudy("Blewett 2006",
-                StudyImporterForGoMexSI.GOMEXI_SOURCE_DESCRIPTION, ExternalIdUtil.toCitation("David A. Blewett", "Blewett DA, Hensley RA, and Stevens PW, Feeding Habits of Common Snook, Centropomus Undecimalis, in Charlotte Harbor, Florida, Gulf and Caribbean Research Vol 18, 1–13, 2006", "2006"));
+                StudyImporterForGoMexSI2.GOMEXI_SOURCE_DESCRIPTION, ExternalIdUtil.toCitation("David A. Blewett", "Blewett DA, Hensley RA, and Stevens PW, Feeding Habits of Common Snook, Centropomus Undecimalis, in Charlotte Harbor, Florida, Gulf and Caribbean Research Vol 18, 1–13, 2006", "2006"));
 
         study.setCitationWithTx("Blewett DA, Hensley RA, and Stevens PW, Feeding Habits of Common Snook, Centropomus Undecimalis, in Charlotte Harbor, Florida, Gulf and Caribbean Research Vol 18, 1–13, 2006");
         try {

@@ -34,7 +34,7 @@ public class StudyImporterForBaremore extends BaseStudyImporter {
             String[] line;
 
             study = nodeFactory.getOrCreateStudy("Baremore 2010",
-                    StudyImporterForGoMexSI.GOMEXI_SOURCE_DESCRIPTION, ExternalIdUtil.toCitation("Ivy E. Baremore", "Prey Selection By The Atlantic Angel Shark Squatina Dumeril In The Northeastern Gulf Of Mexico.", "2010"));
+                    StudyImporterForGoMexSI2.GOMEXI_SOURCE_DESCRIPTION, ExternalIdUtil.toCitation("Ivy E. Baremore", "Prey Selection By The Atlantic Angel Shark Squatina Dumeril In The Northeastern Gulf Of Mexico.", "2010"));
             LocationNode collectionLocation = nodeFactory.getOrCreateLocation(29.219302, -87.06665, null);
 
             Map<Integer, Specimen> specimenMap = new HashMap<Integer, Specimen>();

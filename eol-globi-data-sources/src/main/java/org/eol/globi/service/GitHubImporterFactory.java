@@ -8,14 +8,13 @@ import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.data.NodeFactory;
 import org.eol.globi.data.NodeFactoryException;
-import org.eol.globi.data.StudyImporterNodesAndLinks;
 import org.eol.globi.data.ParserFactory;
 import org.eol.globi.data.StudyImporter;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.data.StudyImporterForArthopodEasyCapture;
 import org.eol.globi.data.StudyImporterForCoetzer;
 import org.eol.globi.data.StudyImporterForDunne;
-import org.eol.globi.data.StudyImporterForGoMexSI;
+import org.eol.globi.data.StudyImporterForGoMexSI2;
 import org.eol.globi.data.StudyImporterForGray;
 import org.eol.globi.data.StudyImporterForHechinger;
 import org.eol.globi.data.StudyImporterForJSONLD;
@@ -25,6 +24,7 @@ import org.eol.globi.data.StudyImporterForSeltmann;
 import org.eol.globi.data.StudyImporterForSzoboszlai;
 import org.eol.globi.data.StudyImporterForTSV;
 import org.eol.globi.data.StudyImporterForWood;
+import org.eol.globi.data.StudyImporterNodesAndLinks;
 import org.eol.globi.domain.Term;
 import org.eol.globi.geo.LatLng;
 import org.eol.globi.util.HttpUtil;
@@ -274,8 +274,8 @@ public class GitHubImporterFactory {
         return desc.has("archiveURL") ? desc.get("archiveURL").asText() : "";
     }
 
-    private StudyImporterForGoMexSI createGoMexSIImporter(String baseUrl, String sourceCitation, final ParserFactory parserFactory, final NodeFactory nodeFactory) {
-        StudyImporterForGoMexSI importer = new StudyImporterForGoMexSI(parserFactory, nodeFactory);
+    private StudyImporterForGoMexSI2 createGoMexSIImporter(String baseUrl, String sourceCitation, final ParserFactory parserFactory, final NodeFactory nodeFactory) {
+        StudyImporterForGoMexSI2 importer = new StudyImporterForGoMexSI2(parserFactory, nodeFactory);
         importer.setBaseUrl(baseUrl);
         importer.setSourceCitation(sourceCitation);
         return importer;

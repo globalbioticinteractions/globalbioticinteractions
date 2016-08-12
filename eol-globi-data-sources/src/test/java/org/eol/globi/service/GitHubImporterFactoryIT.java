@@ -4,7 +4,7 @@ import org.codehaus.jackson.JsonNode;
 import org.eol.globi.data.StudyImporter;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.data.StudyImporterForArthopodEasyCapture;
-import org.eol.globi.data.StudyImporterForGoMexSI;
+import org.eol.globi.data.StudyImporterForGoMexSI2;
 import org.eol.globi.data.StudyImporterForMetaTable;
 import org.eol.globi.data.StudyImporterForPlanque;
 import org.eol.globi.data.StudyImporterForSzoboszlai;
@@ -26,8 +26,8 @@ public class GitHubImporterFactoryIT {
     public void createGoMexSI() throws URISyntaxException, StudyImporterException, IOException {
         StudyImporter importer = new GitHubImporterFactory().createImporter("gomexsi/interaction-data", null, null);
         assertThat(importer, is(notNullValue()));
-        assertThat(importer, is(instanceOf(StudyImporterForGoMexSI.class)));
-        StudyImporterForGoMexSI gomexsiImporter = (StudyImporterForGoMexSI) importer;
+        assertThat(importer, is(instanceOf(StudyImporterForGoMexSI2.class)));
+        StudyImporterForGoMexSI2 gomexsiImporter = (StudyImporterForGoMexSI2) importer;
         assertThat(gomexsiImporter.getSourceCitation(), is("http://gomexsi.tamucc.edu"));
     }
 

@@ -168,8 +168,8 @@ public class StudyImporterForGoMexSI2IT extends GraphDBTestCase {
                 detectedAtLeastOneFrequencyOfOccurrence |= specimenNode.hasProperty(Specimen.FREQUENCY_OF_OCCURRENCE);
                 detectedAtLeastOneTotalNumberConsumed |= specimenNode.hasProperty(Specimen.TOTAL_COUNT);
                 detectedAtLeastOneTotalVolume |= specimenNode.hasProperty(Specimen.TOTAL_VOLUME_IN_ML);
-                detectedAtLeastOneGoMexSIProperty |= specimenNode.hasProperty(StudyImporterForGoMexSI.GOMEXSI_NAMESPACE + "PRED_DATABASE_NAME");
-                detectedAtLeastOneGoMexSIProperty |= specimenNode.hasProperty(StudyImporterForGoMexSI.GOMEXSI_NAMESPACE + "PREY_DATABASE_NAME");
+                detectedAtLeastOneGoMexSIProperty |= specimenNode.hasProperty(StudyImporterForGoMexSI2.GOMEXSI_NAMESPACE + "PRED_DATABASE_NAME");
+                detectedAtLeastOneGoMexSIProperty |= specimenNode.hasProperty(StudyImporterForGoMexSI2.GOMEXSI_NAMESPACE + "PREY_DATABASE_NAME");
                 if (specimenNode.hasRelationship(Direction.INCOMING, RelTypes.COLLECTED)) {
                     detectedAtLeastOneLocation = true;
                 }

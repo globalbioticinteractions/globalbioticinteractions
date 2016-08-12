@@ -73,7 +73,7 @@ public class StudyImporterForWrast extends BaseStudyImporter {
     @Override
     public Study importStudy() throws StudyImporterException {
         Study study = nodeFactory.getOrCreateStudy("Wrast 2008",
-                StudyImporterForGoMexSI.GOMEXI_SOURCE_DESCRIPTION, ExternalIdUtil.toCitation("Jenny L. Wrast", "Spatiotemporal And Habitat-mediated Food Web Dynamics in Lavaca Bay, Texas.", "2008"));
+                StudyImporterForGoMexSI2.GOMEXI_SOURCE_DESCRIPTION, ExternalIdUtil.toCitation("Jenny L. Wrast", "Spatiotemporal And Habitat-mediated Food Web Dynamics in Lavaca Bay, Texas.", "2008"));
         study.setCitationWithTx("Wrast JL. Spatiotemporal And Habitat-mediated Food Web Dynamics in Lavaca Bay, Texas. 2008. Master Thesis.");
         study.setExternalId("http://www.fisheries.tamucc.edu/people_files/FINAL%20WRAST%20THESIS.pdf");
         try {
