@@ -34,10 +34,10 @@ public class GBIFServiceTest {
 
     @Test
     public void lookupByCodeSynonym() throws IOException, PropertyEnricherException {
-        Map<String, String> enriched = getTaxonInfo("5405201");
-        assertThat(enriched.get(PropertyAndValueDictionary.NAME), is("Anaphalioides trinervis"));
+        Map<String, String> enriched = getTaxonInfo("2344811");
+        assertThat(enriched.get(PropertyAndValueDictionary.EXTERNAL_ID), is("GBIF:5202927"));
+        assertThat(enriched.get(PropertyAndValueDictionary.NAME), is("Ariopsis felis"));
         assertThat(enriched.get(PropertyAndValueDictionary.RANK), is("species"));
-        assertThat(enriched.get(PropertyAndValueDictionary.EXTERNAL_ID), is("GBIF:3096980"));
     }
 
     @Test
