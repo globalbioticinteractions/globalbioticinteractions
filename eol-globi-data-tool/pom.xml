@@ -64,13 +64,6 @@
             <type>test-jar</type>
             <scope>test</scope>
         </dependency>
-
-        <dependency>
-            <groupId>org.apache.jena</groupId>
-            <artifactId>jena-tdb</artifactId>
-            <version>${jena.version}</version>
-            <scope>test</scope>
-        </dependency>
     </dependencies>
 
 
