@@ -14,6 +14,7 @@ import static org.junit.Assert.assertThat;
 
 public class CMECSServiceTest {
 
+    @Ignore
     @Test
     public void lookupCMECSTerms() throws IOException, TermLookupServiceException {
         TermLookupService service = new CMECSService();
