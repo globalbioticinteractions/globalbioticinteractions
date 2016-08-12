@@ -33,10 +33,11 @@ public class SPARQLTest extends GraphDBTestCase {
         StringWriter writer = new StringWriter();
         Study study = ExportTestUtil.createTestData(nodeFactory);
         exporter.exportStudy(study, writer, true);
-        exporter.exportDataOntology(writer);
 
         Model model = ModelFactory.createDefaultModel();
-        model.read(new ByteArrayInputStream(writer.toString().getBytes("UTF-8")), null, "TTL");
+        model.read(new ByteArrayInputStream(writer.toString().getBytes("UTF-8")), null, "N-TRIPLE");
+
+        System.out.println(writer.toString());
 
         String queryString =
                 "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> " +
@@ -47,13 +48,14 @@ public class SPARQLTest extends GraphDBTestCase {
         QueryExecution exec = QueryExecutionFactory.create(query, model);
         try {
             ResultSet results = exec.execSelect();
-            int counter = 0;
+            int numberOfOrganisms = 0;
             while (results.hasNext()) {
                 QuerySolution solution = results.nextSolution();
                 assertThat(solution.get("individual"), is(notNullValue()));
-                counter++;
+                numberOfOrganisms++;
             }
-            assertThat(counter, is(7));
+            final int expectedNumberOfOrganisms = 3;
+            assertThat(numberOfOrganisms, is(expectedNumberOfOrganisms));
         } finally {
             exec.close();
         }

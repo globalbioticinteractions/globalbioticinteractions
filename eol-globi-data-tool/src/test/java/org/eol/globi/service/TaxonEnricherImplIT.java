@@ -26,8 +26,8 @@ import static org.junit.internal.matchers.StringContains.containsString;
 public class TaxonEnricherImplIT extends GraphDBTestCase {
 
     @Override
-    protected TaxonIndex createTaxonIndex() {
-        return super.createTaxonIndex(PropertyEnricherFactory.createTaxonEnricher());
+    protected TaxonIndex getOrCreateTaxonIndex() {
+        return super.getOrCreateTaxonIndex(PropertyEnricherFactory.createTaxonEnricher());
     }
 
     @Test

@@ -1,9 +1,5 @@
 package org.eol.globi.export;
 
-import com.hp.hpl.jena.query.Dataset;
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.tdb.TDB;
-import com.hp.hpl.jena.tdb.TDBFactory;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -58,7 +54,7 @@ public class GraphExporterImpl implements GraphExporter {
 
         exportNCBILinkOut(graphService, baseDir, studies);
 
-        // exportDataOntology(studies, baseDir);
+        exportDataOntology(studies, baseDir);
         exportDarwinCoreAggregatedByStudy(baseDir, studies);
         exportDarwinCoreAll(baseDir, studies);
     }
@@ -137,12 +133,8 @@ public class GraphExporterImpl implements GraphExporter {
 
     private void exportDataOntology(List<Study> studies, String baseDir) throws StudyImporterException {
         try {
-            String directory = baseDir + "jena-tdb-tmp";
-            FileUtils.deleteQuietly(new File(directory));
-            Dataset dataset = TDBFactory.createDataset(directory);
-            Model model = dataset.getDefaultModel();
-            LittleTurtleExporter studyExporter = new LittleTurtleExporter(model);
-            OutputStreamWriter writer = openStream(baseDir + "globi.ttl.gz");
+            LittleTurtleExporter studyExporter = new LittleTurtleExporter();
+            OutputStreamWriter writer = openStream(baseDir + "globi.nq.gz");
             int total = studies.size();
             int count = 1;
             for (Study study : studies) {
@@ -154,11 +146,8 @@ public class GraphExporterImpl implements GraphExporter {
             }
             LOG.info("adding triples for [" + total + "] of [" + total + "] studies.");
 
-            TDB.sync(dataset);
-            LOG.info("writing turtle archive...");
-            studyExporter.exportDataOntology(writer);
-            closeStream(baseDir + "globi.ttl.gz", writer);
-            FileUtils.deleteQuietly(new File(directory));
+            LOG.info("writing nquads archive...");
+            closeStream(baseDir + "globi.nq.gz", writer);
         } catch (IOException e) {
             throw new StudyImporterException("failed to export as owl", e);
         }

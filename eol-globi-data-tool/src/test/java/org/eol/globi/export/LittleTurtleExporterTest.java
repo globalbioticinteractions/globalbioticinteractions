@@ -4,13 +4,19 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.ImportFilter;
-import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.data.StudyImporterForSPIRE;
+import org.eol.globi.data.TaxonIndex;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Study;
+import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonNode;
+import org.eol.globi.domain.TaxonomyProvider;
 import org.eol.globi.service.EnvoLookupService;
+import org.eol.globi.service.PropertyEnricher;
+import org.eol.globi.service.PropertyEnricherException;
+import org.eol.globi.service.PropertyEnricherFactory;
+import org.eol.globi.service.TaxonUtil;
 import org.eol.globi.service.TermLookupService;
 import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
@@ -22,6 +28,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.List;
+import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.core.Is.is;
@@ -37,16 +44,36 @@ public class LittleTurtleExporterTest extends GraphDBTestCase {
         return new EnvoLookupService();
     }
 
+    @Override
+    protected TaxonIndex getOrCreateTaxonIndex() {
+        return getOrCreateTaxonIndex(new PropertyEnricher() {
+            @Override
+            public Map<String, String> enrich(Map<String, String> properties) throws PropertyEnricherException {
+                Taxon taxon = TaxonUtil.mapToTaxon(properties);
+                taxon.setPath("one | two | " + taxon.getName());
+                taxon.setExternalId(TaxonomyProvider.ID_PREFIX_EOL + taxon.getName());
+                taxon.setExternalUrl("http://host/" + taxon.getName());
+                return TaxonUtil.taxonToMap(taxon);
+            }
+
+            @Override
+            public void shutdown() {
+
+            }
+        });
+    }
+
     @Test
-    public void exportSPIRE() throws IOException, StudyImporterException, NodeFactoryException {
+    public void exportSPIRE() throws IOException, StudyImporterException {
         StudyImporterForSPIRE importer = new StudyImporterForSPIRE(null, nodeFactory);
         importer.setFilter(new ImportFilter() {
             @Override
             public boolean shouldImportRecord(Long recordNumber) {
-                return recordNumber < 100;
+                return recordNumber < 5;
             }
         });
-        importer.importStudy();
+        importStudy(importer);
+
         List<Study> studies = NodeUtil.findAllStudies(getGraphDb());
 
 
@@ -69,15 +96,15 @@ public class LittleTurtleExporterTest extends GraphDBTestCase {
             for (Study study : studies) {
                 turtleExporter.exportStudy(study, writer, true);
             }
-            turtleExporter.exportDataOntology(writer);
             writer.flush();
             writer.close();
 
             assertTrue(file.exists());
 
             String content = IOUtils.toString(new FileInputStream(file));
+            System.out.println(content);
             assertThat(content, not(containsString("no:match")));
-            assertThat(content, containsString("OBO:ENVO_00000447"));
+            assertThat(content, containsString("http://purl.obolibrary.org/obo/ENVO_00000447"));
         } finally {
             FileUtils.deleteQuietly(file);
         }

@@ -13,7 +13,7 @@
     <name>EOL's Global Biotic Interaction Data Import/Export Tool</name>
 
     <dependencies>
-         <dependency>
+        <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>eol-globi-taxon-resolver</artifactId>
             <version>${project.version}</version>
@@ -62,6 +62,13 @@
             <artifactId>neo4j-kernel</artifactId>
             <version>${neo4j.version}</version>
             <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.jena</groupId>
+            <artifactId>jena-tdb</artifactId>
+            <version>${jena.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

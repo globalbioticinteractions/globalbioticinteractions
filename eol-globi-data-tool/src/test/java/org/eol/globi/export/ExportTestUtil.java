@@ -29,26 +29,26 @@ public class ExportTestUtil {
 
     public static Study createTestData(Double length, NodeFactory factory) throws NodeFactoryException, ParseException {
         Study myStudy = factory.createStudy("myStudy");
-        Specimen specimen = factory.createSpecimen(myStudy, "Homo sapiens", "EOL:45634");
-        specimen.setStomachVolumeInMilliLiter(666.0);
-        specimen.setLifeStage(new Term("GLOBI:JUVENILE", "JUVENILE"));
-        specimen.setPhysiologicalState(new Term("GLOBI:DIGESTATE", "DIGESTATE"));
-        specimen.setBodyPart(new Term("GLOBI:BONE", "BONE"));
-        factory.setUnixEpochProperty(specimen, ExportTestUtil.utcTestDate());
-        Specimen otherSpecimen = factory.createSpecimen(myStudy, "Canis lupus", "EOL:123");
-        otherSpecimen.setVolumeInMilliLiter(124.0);
+        Specimen specimen1 = factory.createSpecimen(myStudy, "Homo sapiens", "EOL:45634");
+        specimen1.setStomachVolumeInMilliLiter(666.0);
+        specimen1.setLifeStage(new Term("GLOBI:JUVENILE", "JUVENILE"));
+        specimen1.setPhysiologicalState(new Term("GLOBI:DIGESTATE", "DIGESTATE"));
+        specimen1.setBodyPart(new Term("GLOBI:BONE", "BONE"));
+        factory.setUnixEpochProperty(specimen1, ExportTestUtil.utcTestDate());
+        final Specimen specimen2 = factory.createSpecimen(myStudy, "Canis lupus", "EOL:123");
+        specimen2.setVolumeInMilliLiter(124.0);
 
-        specimen.ate(otherSpecimen);
+        specimen1.ate(specimen2);
 
-        otherSpecimen = factory.createSpecimen(myStudy, "Canis lupus", "EOL:123");
-        otherSpecimen.setVolumeInMilliLiter(18.0);
-        specimen.ate(otherSpecimen);
+        final Specimen specimen3 = factory.createSpecimen(myStudy, "Canis lupus", "EOL:123");
+        specimen3.setVolumeInMilliLiter(18.0);
+        specimen1.ate(specimen3);
         if (null != length) {
-            specimen.setLengthInMm(length);
+            specimen1.setLengthInMm(length);
         }
 
         LocationNode location = factory.getOrCreateLocation(88.0, -120.0, -60.0);
-        specimen.caughtIn(location);
+        specimen1.caughtIn(location);
         return myStudy;
     }
 

@@ -33,17 +33,17 @@ public abstract class GraphDBTestCase {
     @Before
     public void startGraphDb() throws IOException {
         nodeFactory = createNodeFactory();
-        createTaxonIndex();
+        getOrCreateTaxonIndex();
     }
 
-    protected TaxonIndex createTaxonIndex() {
+    protected TaxonIndex getOrCreateTaxonIndex() {
         if (taxonIndex == null) {
-            taxonIndex = createTaxonIndex(new PassThroughEnricher());
+            taxonIndex = getOrCreateTaxonIndex(new PassThroughEnricher());
         }
         return taxonIndex;
     }
 
-    protected TaxonIndex createTaxonIndex(PropertyEnricher enricher) {
+    protected TaxonIndex getOrCreateTaxonIndex(PropertyEnricher enricher) {
         if (taxonIndex == null) {
             taxonIndex = new TaxonIndexImpl(enricher,
                     new PassThroughCorrectionService(), getGraphDb());
@@ -65,7 +65,7 @@ public abstract class GraphDBTestCase {
     }
 
     protected void resolveNames() {
-        new NameResolver(getGraphDb(), createTaxonIndex()).resolve();
+        new NameResolver(getGraphDb(), getOrCreateTaxonIndex()).resolve();
     }
 
 
