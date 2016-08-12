@@ -17,8 +17,8 @@
 
     <properties>
         <globi.data.version>1.0-SNAPSHOT</globi.data.version>
-        <fuseki.version>0.2.7</fuseki.version>
-        <fuseki.artifactId>jena-fuseki</fuseki.artifactId>
+        <fuseki.version>2.4.0</fuseki.version>
+        <fuseki.artifactId>apache-jena-fuseki</fuseki.artifactId>
         <fuseki.dir>${project.build.directory}/${fuseki.artifactId}-${fuseki.version}</fuseki.dir>
     </properties>
 
@@ -60,7 +60,6 @@
                                 <artifactItem>
                                     <groupId>org.apache.jena</groupId>
                                     <artifactId>${fuseki.artifactId}</artifactId>
-                                    <classifier>distribution</classifier>
                                     <type>tar.gz</type>
                                     <version>${fuseki.version}</version>
                                     <outputDirectory>${project.build.directory}</outputDirectory>
