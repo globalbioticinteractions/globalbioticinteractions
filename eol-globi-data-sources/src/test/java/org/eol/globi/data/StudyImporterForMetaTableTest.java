@@ -18,6 +18,7 @@ import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.StringStartsWith.startsWith;
 import static org.junit.Assert.assertThat;
+import static org.junit.internal.matchers.StringContains.containsString;
 import static org.junit.matchers.JUnitMatchers.hasItem;
 
 public class StudyImporterForMetaTableTest {
@@ -52,7 +53,7 @@ public class StudyImporterForMetaTableTest {
         assertThat(tables.size(), is(1));
         JsonNode firstTable = tables.get(0);
         String bibliographicCitation = firstTable.get("dcterms:bibliographicCitation").asText();
-        assertThat(bibliographicCitation, startsWith("Ed Baker; Vincent S. Smith (2016). NHM Interactions Bank. http://dx.doi.org/10.5519/0060767"));
+        assertThat(bibliographicCitation, containsString("NHM Interactions Bank. http://dx.doi.org/10.5519/0060767"));
 
         String resourceUrl = firstTable.get("url").asText();
         assertThat(resourceUrl, is("http://data.nhm.ac.uk/dataset/82e807f0-6273-4f19-be0a-7f7558442a25/resource/1f64e2cf-d738-4a7c-9e81-a1951eac635f/download/output.csv"));
