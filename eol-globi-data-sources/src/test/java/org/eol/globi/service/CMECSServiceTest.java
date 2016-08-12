@@ -3,6 +3,7 @@ package org.eol.globi.service;
 import org.eol.globi.data.CMECSService;
 import org.eol.globi.domain.Term;
 import org.eol.globi.util.ExternalIdUtil;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -13,6 +14,7 @@ import static org.junit.Assert.assertThat;
 
 public class CMECSServiceTest {
 
+    @Ignore
     @Test
     public void lookupCMECSTerms() throws IOException, TermLookupServiceException {
         TermLookupService service = new CMECSService();
