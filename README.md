@@ -6,7 +6,7 @@ Please see http://github.com/jhpoelen/eol-globi-data/wiki for more information .
 
 ## Tests
 
-We're happy to be using http://travis-cli.org to run our automated tests. Our current build status:
+We're happy to be using http://travis-ci.org to run our automated tests. Our current build status:
 
 [![Build Status](https://travis-ci.org/jhpoelen/eol-globi-data.png)](https://travis-ci.org/jhpoelen/eol-globi-data)
 
