@@ -31,6 +31,7 @@ public class NCBIServiceTest {
         assertThat(enrich.get(PropertyAndValueDictionary.COMMON_NAMES), is("man @en | human @en"));
     }
 
+
     @Test
     public void lookupPathByNonNumericTaxonId() throws PropertyEnricherException {
         PropertyEnricher enricher = new NCBIService();
@@ -45,13 +46,23 @@ public class NCBIServiceTest {
     @Test
     public void lookupPathByNonExistentTaxonId() throws PropertyEnricherException {
         PropertyEnricher enricher = new NCBIService();
-        final String nonExistentId = "NCBI:111111111111111111111111111";
+        final String nonExistentId = "NCBI:11111111";
         HashMap<String, String> props = new HashMap<String, String>() {{
             put(PropertyAndValueDictionary.EXTERNAL_ID, nonExistentId);
         }};
         Map<String, String> enrich = enricher.enrich(props);
         assertThat(enrich.get(PropertyAndValueDictionary.EXTERNAL_ID), is(nonExistentId));
         assertThat(enrich.get(PropertyAndValueDictionary.NAME), is(nullValue()));
+    }
+
+    @Test(expected = PropertyEnricherException.class)
+    public void lookupPathByInvalidTaxonId() throws PropertyEnricherException {
+        PropertyEnricher enricher = new NCBIService();
+        final String nonExistentId = "NCBI:111111111111111111111111111";
+        HashMap<String, String> props = new HashMap<String, String>() {{
+            put(PropertyAndValueDictionary.EXTERNAL_ID, nonExistentId);
+        }};
+        enricher.enrich(props);
     }
 
     @Test
