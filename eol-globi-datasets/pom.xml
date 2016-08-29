@@ -278,7 +278,7 @@
                                             <artifactId>${project.artifactId}</artifactId>
                                             <version>${globi.taxa.version}</version>
                                             <classifier>taxa</classifier>
-                                            <type>tar.gz</type>
+                                            <type>zip</type>
                                             <overWrite>false</overWrite>
                                             <outputDirectory>${shapefiles.dir}/taxa</outputDirectory>
                                         </artifactItem>
