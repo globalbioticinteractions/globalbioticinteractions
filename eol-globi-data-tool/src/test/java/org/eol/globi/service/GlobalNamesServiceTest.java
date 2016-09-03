@@ -4,6 +4,7 @@ import org.apache.commons.lang.StringUtils;
 import org.eol.globi.data.CharsetConstant;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Taxon;
+import org.eol.globi.domain.TaxonomyProvider;
 import org.eol.globi.taxon.GlobalNamesService;
 import org.eol.globi.taxon.GlobalNamesSources;
 import org.eol.globi.taxon.TermMatchListener;
@@ -52,10 +53,8 @@ public class GlobalNamesServiceTest {
             }
         }, Arrays.asList(GlobalNamesSources.NCBI));
 
-        for (Taxon taxon : foundTaxa) {
-            System.out.println(taxon.getExternalId());
-        }
-        assertThat(foundTaxa.size(), is(2));
+        assertThat(foundTaxa.size(), is(1));
+        assertThat(foundTaxa.get(0).getExternalId(), is(TaxonomyProvider.NCBI.getIdPrefix() + "3760"));
     }
 
     @Test
