@@ -93,11 +93,11 @@ public class LinkerGlobalNamesTest extends GraphDBTestCase {
     }
 
     @Test
+    // see //see https://github.com/jhpoelen/eol-globi-data/issues/249
     public void exactMatchMedicagoSativa() throws NodeFactoryException, PropertyEnricherException {
         Taxon nbnTaxon = new TaxonImpl("Medicago sativa", "NBN:NBNSYS0000013971");
         nbnTaxon.setPath("Biota | Plantae | Tracheophyta | Magnoliopsida | Fabales | Fabaceae | Medicago | Medicago sativa");
         nbnTaxon.setPathNames("Unranked | Kingdom | Phylum | Class | Order | Family | Genus | Species");
-        nbnTaxon.setPathIds("NBN:NHMSYS0021048735 | NBN:NHMSYS0021059028 | NBN:NHMSYS0020787695 | NBN:NBNSYS0100003871 | NBN:NHMSYS0000066094 | NBN:NBNSYS0000003201 | NBN:NHMSYS0000460628 | NBN:NBNSYS0000013971");
         taxonIndex.getOrCreateTaxon(nbnTaxon);
 
         final TaxonNode taxonCreated = taxonIndex.getOrCreateTaxon("Medicago sativa L.");

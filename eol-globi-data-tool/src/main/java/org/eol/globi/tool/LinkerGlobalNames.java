@@ -67,9 +67,7 @@ public class LinkerGlobalNames {
                     @Override
                     public void foundTaxonForName(Long id, String name, Taxon taxon, boolean isExactMatch) {
                         TaxonNode taxonNode = nodeMap.get(id);
-                        if (TaxonUtil.likelyHomonym(taxon, taxonNode)) {
-                            System.out.println("found homonym");
-                        } else {
+                        if (!TaxonUtil.likelyHomonym(taxon, taxonNode)) {
                             if (isExactMatch) {
                                 NodeUtil.connectTaxa(taxon, taxonNode, graphDb, RelTypes.SAME_AS);
                             } else {
@@ -81,10 +79,10 @@ public class LinkerGlobalNames {
             }
 
         } catch (PropertyEnricherException ex) {
-            LOG.error(msgPrefix + " problem matching terms: [" + StringUtils.join(names,"|") + "]", ex);
+            LOG.error(msgPrefix + " problem matching terms: [" + StringUtils.join(names, "|") + "]", ex);
         }
         stopWatch.stop();
-        LOG.info(msgPrefix + " completed in [" + stopWatch.getTime() + "] ms (" + (1.0*stopWatch.getTime() / BATCH_SIZE) + " ms/name )");
+        LOG.info(msgPrefix + " completed in [" + stopWatch.getTime() + "] ms (" + (1.0 * stopWatch.getTime() / BATCH_SIZE) + " ms/name )");
 
         nodeMap.clear();
     }

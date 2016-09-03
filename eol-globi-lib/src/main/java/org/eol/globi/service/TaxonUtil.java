@@ -101,19 +101,21 @@ public class TaxonUtil {
     }
 
     public static boolean hasHigherOrderTaxaMismatch(Map<String, String> pathMapA, Map<String, String> pathMapB) {
-        boolean hasMismatch = true;
+        boolean hasAtLeastOneMatchingRank = false;
+        boolean hasAtLeastOneSharedRank = false;
         String[] ranks = new String[]{"phylum", "class", "order", "family"};
         for (String rank : ranks) {
             if (pathMapA.containsKey(rank) && pathMapB.containsKey(rank)) {
                 final String rankValueA = pathMapA.get(rank);
                 final String rankValueB = pathMapB.get(rank);
+                hasAtLeastOneSharedRank = true;
                 if (StringUtils.equals(rankValueA, rankValueB)) {
-                    hasMismatch = false;
+                    hasAtLeastOneMatchingRank = true;
                     break;
                 }
             }
         }
-        return hasMismatch;
+        return hasAtLeastOneSharedRank && !hasAtLeastOneMatchingRank;
     }
 
     public static boolean taxonPathLengthMismatch(Map<String, String> pathMapA, Map<String, String> pathMapB) {

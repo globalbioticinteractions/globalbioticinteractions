@@ -14,6 +14,7 @@ import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 public class TaxonUtilTest {
 
@@ -29,7 +30,22 @@ public class TaxonUtilTest {
         otherTaxon.setPath("Mammalia|Mesonychidae|Lestes");
         otherTaxon.setPathNames("class|family|genus");
 
-        assertThat(TaxonUtil.likelyHomonym(taxon, otherTaxon), is(true));
+        assertTrue(TaxonUtil.likelyHomonym(taxon, otherTaxon));
+    }
+
+    @Test
+    public void noHomonymNotEnoughPathInfo() {
+        TaxonImpl taxon = new TaxonImpl();
+        taxon.setName("Lestes");
+        taxon.setPath("x|y|z");
+        taxon.setPathNames("a|b|c");
+
+        TaxonImpl otherTaxon = new TaxonImpl();
+        otherTaxon.setName("Lestes");
+        otherTaxon.setPath("Mammalia|Mesonychidae|Lestes");
+        otherTaxon.setPathNames("class|family|genus");
+
+        assertFalse(TaxonUtil.likelyHomonym(taxon, otherTaxon));
     }
 
     @Test
@@ -85,6 +101,7 @@ public class TaxonUtilTest {
     }
 
     @Test
+    //see https://github.com/jhpoelen/eol-globi-data/issues/249
     public void notHomonymSparseHigherOrderRanks() {
         TaxonImpl taxon = new TaxonImpl();
         taxon.setName("Medicago sativa");
