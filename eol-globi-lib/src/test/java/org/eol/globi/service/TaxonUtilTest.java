@@ -5,7 +5,6 @@ import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImage;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.Term;
-import org.hamcrest.Matchers;
 import org.junit.Test;
 
 import java.util.Map;
@@ -13,7 +12,8 @@ import java.util.TreeMap;
 
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
 
 public class TaxonUtilTest {
 
@@ -82,6 +82,20 @@ public class TaxonUtilTest {
         otherTaxon.setPathNames("class|family|genus");
 
         assertThat(TaxonUtil.likelyHomonym(taxon, otherTaxon), is(false));
+    }
+
+    @Test
+    public void notHomonymSparseHigherOrderRanks() {
+        TaxonImpl taxon = new TaxonImpl();
+        taxon.setName("Medicago sativa");
+        taxon.setPath("Biota | Plantae | Tracheophyta | Magnoliopsida | Fabales | Fabaceae | Medicago | Medicago sativa");
+        taxon.setPathNames("Unranked|Kingdom|Phylum|Class|Order|Family|Genus|Species");
+
+        TaxonImpl otherTaxon = new TaxonImpl();
+        otherTaxon.setName("Medicago sativa");
+        otherTaxon.setPath("Eukaryota|Streptophyta|Medicago|Medicago sativa|Papilionoideae|Trifolieae||Fabaceae|Viridiplantae|Fabales");
+        otherTaxon.setPathNames("superkingdom|phylum|genus|species|subfamily|tribe|subclass|family|kingdom|order");
+        assertFalse(TaxonUtil.likelyHomonym(taxon, otherTaxon));
     }
 
     @Test

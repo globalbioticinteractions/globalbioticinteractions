@@ -55,8 +55,6 @@ public class GlobalNamesService implements PropertyEnricher {
         return this.includeCommonNames;
     }
 
-
-
     @Override
     public Map<String, String> enrich(Map<String, String> properties) throws PropertyEnricherException {
         Map<String, String> enrichedProperties = new HashMap<String, String>();

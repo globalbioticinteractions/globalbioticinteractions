@@ -12,5 +12,4 @@ public class LanguageCodeLookupTest {
         assertThat(new LanguageCodeLookup().lookupLanguageCodeFor("spa"), is("es"));
         assertThat(new LanguageCodeLookup().lookupLanguageCodeFor("eng"), is("en"));
     }
-
 }

@@ -91,7 +91,7 @@ public class EnvoService implements PropertyEnricher {
             taxon.setPath(path[0]);
             taxon.setPathIds(path[1]);
             if (StringUtils.isBlank(taxon.getName())) {
-                String[] split = StringUtils.split(taxon.getPath(), CharsetConstant.SEPARATOR_CHAR);
+                String[] split = StringUtils.splitPreserveAllTokens(taxon.getPath(), CharsetConstant.SEPARATOR_CHAR);
                 if (split != null) {
                     taxon.setName(StringUtils.trim(split[split.length - 1]));
                 }

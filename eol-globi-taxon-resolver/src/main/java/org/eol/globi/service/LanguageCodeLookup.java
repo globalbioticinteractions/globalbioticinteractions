@@ -21,7 +21,7 @@ public class LanguageCodeLookup {
         String line;
         try {
             while ((line = reader.readLine()) != null) {
-                String[] row = StringUtils.split(line, '\t');
+                String[] row = StringUtils.splitPreserveAllTokens(line, '\t');
                 if (row.length > 3) {
                     iso_639_3_to_639_1.put(row[0], row[3]);
                 }

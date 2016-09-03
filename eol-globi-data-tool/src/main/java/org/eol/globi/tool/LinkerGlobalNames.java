@@ -67,7 +67,9 @@ public class LinkerGlobalNames {
                     @Override
                     public void foundTaxonForName(Long id, String name, Taxon taxon, boolean isExactMatch) {
                         TaxonNode taxonNode = nodeMap.get(id);
-                        if (!TaxonUtil.likelyHomonym(taxon, taxonNode)) {
+                        if (TaxonUtil.likelyHomonym(taxon, taxonNode)) {
+                            System.out.println("found homonym");
+                        } else {
                             if (isExactMatch) {
                                 NodeUtil.connectTaxa(taxon, taxonNode, graphDb, RelTypes.SAME_AS);
                             } else {

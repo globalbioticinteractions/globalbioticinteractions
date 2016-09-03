@@ -6,12 +6,15 @@ import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.data.PassThroughCorrectionService;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.RelTypes;
+import org.eol.globi.domain.Taxon;
+import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.service.PropertyEnricher;
 import org.eol.globi.service.PropertyEnricherException;
 import org.eol.globi.taxon.TaxonIndexImpl;
 import org.junit.Ignore;
 import org.junit.Test;
+import scala.util.Random;
 
 import java.util.HashMap;
 import java.util.List;
@@ -87,6 +90,34 @@ public class LinkerGlobalNamesTest extends GraphDBTestCase {
         assertThat(ids, hasItem("NCBI:4787"));
         assertThat(ids, not(hasItem("NCBI:403677")));
 
+    }
+
+    @Test
+    public void exactMatchMedicagoSativa() throws NodeFactoryException, PropertyEnricherException {
+        Taxon nbnTaxon = new TaxonImpl("Medicago sativa", "NBN:NBNSYS0000013971");
+        nbnTaxon.setPath("Biota | Plantae | Tracheophyta | Magnoliopsida | Fabales | Fabaceae | Medicago | Medicago sativa");
+        nbnTaxon.setPathNames("Unranked | Kingdom | Phylum | Class | Order | Family | Genus | Species");
+        nbnTaxon.setPathIds("NBN:NHMSYS0021048735 | NBN:NHMSYS0021059028 | NBN:NHMSYS0020787695 | NBN:NBNSYS0100003871 | NBN:NHMSYS0000066094 | NBN:NBNSYS0000003201 | NBN:NHMSYS0000460628 | NBN:NBNSYS0000013971");
+        taxonIndex.getOrCreateTaxon(nbnTaxon);
+
+        final TaxonNode taxonCreated = taxonIndex.getOrCreateTaxon("Medicago sativa L.");
+        assertThat(taxonCreated.getName(), is("Medicago sativa"));
+        new LinkerGlobalNames().link(getGraphDb());
+        List<String> ids = LinkerTestUtil.assertHasOther(taxonCreated.getName(), 7, taxonIndex, RelTypes.SAME_AS);
+
+        assertThat(ids, hasItem("ITIS:183623"));
+        assertThat(ids, hasItem("NCBI:3879"));
+
+    }
+
+    @Test
+    public void exactMatchMonodelphisAmericana() throws NodeFactoryException, PropertyEnricherException {
+        final TaxonNode taxonCreated = taxonIndex.getOrCreateTaxon("Monodelphis americana");
+        assertThat(taxonCreated.getName(), is("Monodelphis americana"));
+        new LinkerGlobalNames().link(getGraphDb());
+        List<String> ids = LinkerTestUtil.assertHasOther(taxonCreated.getName(), 4, taxonIndex, RelTypes.SAME_AS);
+
+        assertThat(ids, hasItems("ITIS:552569", "NCBI:694061", "IRMNG:11060619", "GBIF:2439970"));
     }
 
     @Test

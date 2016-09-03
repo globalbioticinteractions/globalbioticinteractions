@@ -41,6 +41,24 @@ public class GlobalNamesServiceTest {
     }
 
     @Test
+    public void createTaxaListFromNameListNCBI() throws PropertyEnricherException {
+        GlobalNamesService service = new GlobalNamesService();
+        final List<Taxon> foundTaxa = new ArrayList<Taxon>();
+        service.findTermsForNames(Arrays.asList("1|Prunus persicus L."), new TermMatchListener() {
+            @Override
+            public void foundTaxonForName(Long id, String name, Taxon taxon, boolean isExactMatch) {
+                assertNotNull(id);
+                foundTaxa.add(taxon);
+            }
+        }, Arrays.asList(GlobalNamesSources.NCBI));
+
+        for (Taxon taxon : foundTaxa) {
+            System.out.println(taxon.getExternalId());
+        }
+        assertThat(foundTaxa.size(), is(2));
+    }
+
+    @Test
     public void createTaxaListFromNameWithSpecialCharacter() throws PropertyEnricherException {
         GlobalNamesService service = new GlobalNamesService();
         final List<Taxon> foundTaxa = new ArrayList<Taxon>();

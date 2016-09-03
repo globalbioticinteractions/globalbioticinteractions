@@ -98,7 +98,7 @@ public class WoRMSService implements PropertyEnricher {
                 value = ServiceUtil.extractPath(response1, "AphiaID", TaxonomyProvider.ID_PREFIX_WORMS);
                 properties.put(PropertyAndValueDictionary.PATH_IDS, StringUtils.isBlank(value) ? null : value);
                 value = ServiceUtil.extractPath(response1, "rank", "");
-                String[] ranks = StringUtils.split(value, CharsetConstant.SEPARATOR);
+                String[] ranks = StringUtils.splitPreserveAllTokens(value, CharsetConstant.SEPARATOR);
                 if (ranks != null && ranks.length > 0) {
                     properties.put(PropertyAndValueDictionary.RANK, StringUtils.trim(StringUtils.lowerCase(ranks[ranks.length - 1])));
                 }

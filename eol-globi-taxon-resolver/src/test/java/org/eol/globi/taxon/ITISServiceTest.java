@@ -69,7 +69,7 @@ public class ITISServiceTest {
     }
 
     public int getLength(Map<String, String> enrich, String pathIds) {
-        return StringUtils.split(enrich.get(pathIds), CharsetConstant.SEPARATOR_CHAR).length;
+        return StringUtils.splitPreserveAllTokens(enrich.get(pathIds), CharsetConstant.SEPARATOR_CHAR).length;
     }
 
     @Test
