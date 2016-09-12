@@ -36,4 +36,10 @@ public class StudyImporterForBascompteIT extends GraphDBTestCase {
         assertThat(references, hasItem("citation:doi:Arroyo, M.T.K., R. Primack & J.J. Armesto. 1982. Community studies in pollination ecology in the high temperate Andes of central Chile. I. Pollination mechanisms and altitudinal variation. Amer. J. Bot. 69:82-97."));
         assertThat(taxonIndex.findTaxonByName("Diplopterys pubipetala"), is(notNullValue()));
     }
+
+    @Test
+    public void getNetworkNames() throws IOException {
+        final List<String> networkNames = StudyImporterForBascompte.getNetworkNames();
+        assertThat(networkNames, hasItem("A_HP_001"));
+    }
 }

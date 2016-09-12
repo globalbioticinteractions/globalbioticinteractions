@@ -20,7 +20,7 @@ public class StudyImporterForBascompteTest extends GraphDBTestCase {
     @Test
     public void importSome() throws StudyImporterException, IOException {
         StudyImporterForBascompte importer = new StudyImporterForBascompte(null, nodeFactory);
-        importer.importNetworks("bascompte/web-of-life_2016-01-15_192434.zip");
+        importer.importNetworks("bascompte/web-of-life_2016-01-15_192434.zip", "Web of Life. " + ReferenceUtil.createLastAccessedString("http://www.web-of-life.es/"));
         resolveNames();
 
         List<Study> allStudies = NodeUtil.findAllStudies(getGraphDb());

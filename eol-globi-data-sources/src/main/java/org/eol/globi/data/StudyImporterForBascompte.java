@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,7 +31,8 @@ import java.util.zip.ZipInputStream;
 
 public class StudyImporterForBascompte extends BaseStudyImporter {
     private static final Log LOG = LogFactory.getLog(StudyImporterForBascompte.class);
-    public static final String WEB_OF_LIFE_BASE_URL = "http://www.web-of-life.es";
+    public static final String WEB_OF_LIFE_BASE_URL = "http://www.web-of-life.es/2.0";
+    public static final int NETWORK_BATCH_SIZE = 20;
 
     public StudyImporterForBascompte(ParserFactory parserFactory, NodeFactory nodeFactory) {
         super(parserFactory, nodeFactory);
@@ -38,17 +40,35 @@ public class StudyImporterForBascompte extends BaseStudyImporter {
 
     @Override
     public Study importStudy() throws StudyImporterException {
-        final String archiveURL;
         try {
-            archiveURL = generateArchiveURL(getNetworkNames());
+            List<StudyImporterException> errors = new ArrayList<>();
+            final String sourceCitation = "Web of Life. " + ReferenceUtil.createLastAccessedString("http://www.web-of-life.es/");
+            final List<String> networkNames = getNetworkNames();
+            LOG.info("found [" + networkNames.size() + "] networks.");
+            for (String networkName : networkNames) {
+                final List<String> networkNames1 = Collections.singletonList(networkName);
+                LOG.info("networks [" + networkNames1 + "] importing...");
+                try {
+                    importNetworks(generateArchiveURL(networkNames1), sourceCitation);
+                    LOG.info("networks [" + networkNames1 + "] imported.");
+                } catch (StudyImporterException e) {
+                    errors.add(new StudyImporterException("networks [" + networkNames1 + "] import failed.", e));
+                    LOG.error("networks [" + networkNames1 + "] import failed.", e);
+                }
+            }
+            if (!errors.isEmpty()) {
+                throw new StudyImporterException("found at least one import exception", errors.get(0));
+            }
+
         } catch (IOException e) {
-            throw new StudyImporterException("failed to retrieve network names", e);
+            throw new StudyImporterException("failed to retrieve network names or import networks", e);
         }
 
-        return importNetworks(archiveURL);
+
+        return null;
     }
 
-    public Study importNetworks(String archiveURL) throws StudyImporterException {
+    public void importNetworks(String archiveURL, String sourceCitation) throws StudyImporterException {
         try {
             InputStream inputStream = ResourceUtil.asInputStream(archiveURL, StudyImporterForBascompte.class);
             ZipInputStream zipInputStream = new ZipInputStream(inputStream);
@@ -67,14 +87,12 @@ public class StudyImporterForBascompte extends BaseStudyImporter {
             IOUtils.closeQuietly(zipInputStream);
 
             if (referencesTempFile == null) {
-                throw new StudyImporterException("failed to find expected [references.csv] resource");
+                throw new StudyImporterException("failed to find expected [references.csv] resource in [" + archiveURL + "]");
             }
 
             if (networkTempFileMap.size() == 0) {
                 throw new StudyImporterException("failed to find expected network csv files");
             }
-
-            final String sourceCitation = "Web of Life. " + ReferenceUtil.createLastAccessedString("http://www.web-of-life.es/");
 
             BufferedReader assocReader = FileUtils.getUncompressedBufferedReader(new FileInputStream(referencesTempFile), CharsetConstant.UTF8);
             LabeledCSVParser parser = CSVUtil.createLabeledCSVParser(assocReader);
@@ -96,7 +114,6 @@ public class StudyImporterForBascompte extends BaseStudyImporter {
         } catch (NodeFactoryException e) {
             throw new StudyImporterException(e);
         }
-        return null;
     }
 
     public InteractType parseInteractionType(LabeledCSVParser parser) throws StudyImporterException {
@@ -106,6 +123,7 @@ public class StudyImporterForBascompte extends BaseStudyImporter {
                 put("Pollination", InteractType.POLLINATED_BY);
                 put("Seed Dispersal", InteractType.HAS_DISPERAL_VECTOR);
                 put("Host-Parasite", InteractType.HAS_PARASITE);
+                put("Plant-Herbivore", InteractType.EATEN_BY);
             }
         };
         final InteractType interactType1 = interactionTypeMap.get(interactionTypeString);
