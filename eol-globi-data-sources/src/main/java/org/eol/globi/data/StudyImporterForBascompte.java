@@ -41,16 +41,14 @@ public class StudyImporterForBascompte extends BaseStudyImporter {
     @Override
     public Study importStudy() throws StudyImporterException {
         try {
-            List<StudyImporterException> errors = new ArrayList<>();
+            List<StudyImporterException> errors = new ArrayList<StudyImporterException>();
             final String sourceCitation = "Web of Life. " + ReferenceUtil.createLastAccessedString("http://www.web-of-life.es/");
             final List<String> networkNames = getNetworkNames();
             LOG.info("found [" + networkNames.size() + "] networks.");
             for (String networkName : networkNames) {
                 final List<String> networkNames1 = Collections.singletonList(networkName);
-                LOG.info("networks [" + networkNames1 + "] importing...");
                 try {
                     importNetworks(generateArchiveURL(networkNames1), sourceCitation);
-                    LOG.info("networks [" + networkNames1 + "] imported.");
                 } catch (StudyImporterException e) {
                     errors.add(new StudyImporterException("networks [" + networkNames1 + "] import failed.", e));
                     LOG.error("networks [" + networkNames1 + "] import failed.", e);
