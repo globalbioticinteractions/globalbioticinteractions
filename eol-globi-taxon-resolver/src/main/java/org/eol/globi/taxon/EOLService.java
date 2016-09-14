@@ -273,7 +273,7 @@ public class EOLService implements PropertyEnricher {
             }
             rankNames.add(taxonRank);
 
-            if (accordingToNCBI(accordingTo)) {
+            if (accordingToNCBI(accordingTo) || StringUtils.containsIgnoreCase(scientificName, "virus")) {
                 ranks.add(scientificName);
             } else {
                 String[] split = scientificName.split(" ");

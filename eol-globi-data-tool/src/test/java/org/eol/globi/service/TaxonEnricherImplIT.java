@@ -85,6 +85,12 @@ public class TaxonEnricherImplIT extends GraphDBTestCase {
     }
 
     @Test
+    public void alfalfaMosaicVirus() throws IOException, NodeFactoryException {
+        TaxonNode taxon = taxonIndex.getOrCreateTaxon("Alfalfa mosaic virus");
+        assertThat(taxon.getPath(), containsString("Alfalfa mosaic virus"));
+    }
+
+    @Test
     public void zikaVirus() throws IOException, NodeFactoryException {
         TaxonNode taxon = taxonIndex.getOrCreateTaxon("Zika virus (ZIKV)", "EOL:541190");
         assertThat(taxon.getPath(), containsString("Flaviviridae"));

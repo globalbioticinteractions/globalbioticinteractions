@@ -137,6 +137,16 @@ public class EOLServiceIT {
         assertThat(enrich.get(RANK), is("Species"));
     }
 
+    @Test
+    public void lookupAlfalfaMosaicVirus() throws PropertyEnricherException {
+        HashMap<String, String> properties = new HashMap<String, String>();
+        properties.put(NAME, "Alfalfa mosaic virus");
+        Map<String, String> enrich = eolService.enrich(properties);
+        assertThat(enrich.get(NAME), is("Alfalfa mosaic virus"));
+        assertThat(enrich.get(PATH), containsString("Alfalfa mosaic virus"));
+        assertThat(enrich.get(RANK), is("Species"));
+    }
+
     @Ignore("for some reason UTF8 characters do not result in exact matches")
     @Test
     public void lookupByAcheloussprinicarpusUTF8() throws PropertyEnricherException {
