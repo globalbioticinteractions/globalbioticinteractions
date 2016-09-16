@@ -24,7 +24,7 @@ public class ResultFormatterSVG implements ResultFormatter {
             throw new ResultFormattingException("failed to parse", e);
         }
         JsonNode rows = results.get("data");
-        String badge = rows != null && rows.size() > 0 ? "known.vsg" : "unknown.svg";
+        String badge = rows != null && rows.size() > 0 ? "known.svg" : "unknown.svg";
         try {
             return IOUtils.toString(getClass().getResourceAsStream(badge), Charsets.UTF_8);
         } catch (IOException e) {
