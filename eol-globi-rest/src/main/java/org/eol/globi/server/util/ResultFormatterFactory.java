@@ -15,6 +15,7 @@ public class ResultFormatterFactory {
         // a trick to distinguish JSONv2 from JSON
         put(MediaType.parseMediaType("text/html;charset=UTF-8"), new ResultFormatterJSONv2());
         put(MediaType.parseMediaType("text/vnd.graphviz;charset=UTF-8"), new ResultFormatterDOT());
+        put(MediaType.parseMediaType("image/svg+xml;charset=UTF-8"), new ResultFormatterSVG());
     }};
     public static final MediaType JSON = MediaType.parseMediaType("application/json;charset=UTF-8");
 

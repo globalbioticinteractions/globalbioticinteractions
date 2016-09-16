@@ -20,7 +20,8 @@ public class CypherHttpMessageConverter extends AbstractHttpMessageConverter<Cyp
                 MediaType.parseMediaType("text/html;charset=UTF-8"),
                 MediaType.parseMediaType("text/vnd.graphviz;charset=UTF-8"),
                 MediaType.parseMediaType("text/tab-separated-values;charset=UTF-8"),
-                MediaType.parseMediaType("text/csv;charset=UTF-8"));
+                MediaType.parseMediaType("text/csv;charset=UTF-8"),
+                MediaType.parseMediaType("image/svg+xml;charset=UTF-8"));
     }
 
     @Override
