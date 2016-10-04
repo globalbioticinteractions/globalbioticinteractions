@@ -15,7 +15,6 @@ import org.eol.globi.domain.TaxonomyProvider;
 import org.eol.globi.service.EnvoLookupService;
 import org.eol.globi.service.PropertyEnricher;
 import org.eol.globi.service.PropertyEnricherException;
-import org.eol.globi.service.PropertyEnricherFactory;
 import org.eol.globi.service.TaxonUtil;
 import org.eol.globi.service.TermLookupService;
 import org.eol.globi.util.NodeUtil;
@@ -37,7 +36,7 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.matchers.JUnitMatchers.containsString;
 
-public class LittleTurtleExporterTest extends GraphDBTestCase {
+public class ExporterRDFTest extends GraphDBTestCase {
 
     @Override
     protected TermLookupService getEnvoLookupService() {
@@ -89,10 +88,10 @@ public class LittleTurtleExporterTest extends GraphDBTestCase {
             tx.finish();
         }
 
-        File file = File.createTempFile("spire-as-light-globi", ".ttl");
+        File file = File.createTempFile("spire-as-light-globi", ".nq");
         try {
             Writer writer = new FileWriter(file);
-            LittleTurtleExporter turtleExporter = new LittleTurtleExporter();
+            ExporterRDF turtleExporter = new ExporterRDF();
             for (Study study : studies) {
                 turtleExporter.exportStudy(study, writer, true);
             }

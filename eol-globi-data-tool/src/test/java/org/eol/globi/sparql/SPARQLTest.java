@@ -13,7 +13,7 @@ import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.domain.Study;
 import org.eol.globi.export.ExportTestUtil;
-import org.eol.globi.export.LittleTurtleExporter;
+import org.eol.globi.export.ExporterRDF;
 import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
@@ -29,7 +29,7 @@ public class SPARQLTest extends GraphDBTestCase {
 
     @Test
     public void executeQuerySampleGloBIData() throws NodeFactoryException, ParseException, IOException {
-        LittleTurtleExporter exporter = new LittleTurtleExporter();
+        ExporterRDF exporter = new ExporterRDF();
         StringWriter writer = new StringWriter();
         Study study = ExportTestUtil.createTestData(nodeFactory);
         exporter.exportStudy(study, writer, true);

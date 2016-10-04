@@ -8,13 +8,7 @@ import org.eol.globi.domain.Study;
 import org.eol.globi.util.NodeUtil;
 import org.neo4j.graphdb.GraphDatabaseService;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
+import java.io.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -133,7 +127,7 @@ public class GraphExporterImpl implements GraphExporter {
 
     private void exportDataOntology(List<Study> studies, String baseDir) throws StudyImporterException {
         try {
-            LittleTurtleExporter studyExporter = new LittleTurtleExporter();
+            ExporterRDF studyExporter = new ExporterRDF();
             OutputStreamWriter writer = openStream(baseDir + "globi.nq.gz");
             int total = studies.size();
             int count = 1;

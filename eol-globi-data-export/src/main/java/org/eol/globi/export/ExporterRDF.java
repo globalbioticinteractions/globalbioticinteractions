@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class LittleTurtleExporter implements StudyExporter {
+public class ExporterRDF implements StudyExporter {
 
     public static final String OBO_PREFIX = "http://purl.obolibrary.org/obo/";
     public static final String OCCURS_IN = OBO_PREFIX + "BFO_0000066";
