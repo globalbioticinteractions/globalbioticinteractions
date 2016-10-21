@@ -29,8 +29,8 @@ public enum InteractType implements RelType {
 
     HAS_VECTOR("http://purl.obolibrary.org/obo/RO_0002460", "hasVector"),
     VECTOR_OF("http://purl.obolibrary.org/obo/RO_0002459", "vectorOf"),
-    FLOWERS_VISITED_BY("http://purl.obolibrary.org/obo/RO_0002622", "flowersVisitedBy"),
-    VISITS_FLOWERS_OF("http://purl.obolibrary.org/obo/RO_0002623", "visitsFlowersOf"),
+    FLOWERS_VISITED_BY("http://purl.obolibrary.org/obo/RO_0002623", "flowersVisitedBy"),
+    VISITS_FLOWERS_OF("http://purl.obolibrary.org/obo/RO_0002622", "visitsFlowersOf"),
 
     INHABITED_BY(PropertyAndValueDictionary.NO_MATCH, "inhabitedBy"),
     INHABITS(PropertyAndValueDictionary.NO_MATCH, "inhabits"),

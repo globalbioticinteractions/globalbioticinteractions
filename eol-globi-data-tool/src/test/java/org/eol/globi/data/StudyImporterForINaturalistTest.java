@@ -155,7 +155,7 @@ public class StudyImporterForINaturalistTest extends GraphDBTestCase {
     }
 
     @Test
-    public void importTestResponseWithTaxonId() throws IOException, NodeFactoryException, StudyImporterException {
+    public void importTestResponseWithTaxonId() throws IOException, StudyImporterException {
         importer.parseJSON(getClass().getResourceAsStream("inaturalist/response_with_taxon_ids.json"),
                 new ArrayList<Integer>() {{
                 }},
@@ -171,8 +171,10 @@ public class StudyImporterForINaturalistTest extends GraphDBTestCase {
         assertThat(anotherStudy, is(notNullValue()));
         assertThat(anotherStudy.getExternalId(), is("http://www.inaturalist.org/observations/2366807"));
 
-        assertThat(taxonIndex.findTaxonById("GBIF:2959023"), is(notNullValue()));
-        assertThat(taxonIndex.findTaxonById("GBIF:7246356"), is(notNullValue()));
+        assertThat(taxonIndex.findTaxonById("GBIF:2959023"), is(nullValue()));
+        assertThat(taxonIndex.findTaxonById("GBIF:7246356"), is(nullValue()));
+        assertThat(taxonIndex.findTaxonById("INAT_TAXON:406089"), is(notNullValue()));
+        assertThat(taxonIndex.findTaxonById("INAT_TAXON:480390"), is(notNullValue()));
     }
 
 }
