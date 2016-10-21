@@ -16,6 +16,7 @@ import org.eol.globi.domain.Study;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TaxonomyProvider;
+import org.eol.globi.service.TaxonUtil;
 import org.eol.globi.util.ExternalIdUtil;
 import org.eol.globi.util.HttpUtil;
 import org.eol.globi.util.ResourceUtil;
@@ -89,7 +90,7 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
         return typeMap1;
     }
 
-    public static Taxon parseTaxon(JsonNode taxonNode) {
+    static Taxon parseTaxon(JsonNode taxonNode) {
         String name = null;
         String externalId = null;
 
@@ -98,18 +99,11 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
             name = nameNode.asText();
         }
 
-        JsonNode targetTaxa = taxonNode.get("taxon_scheme_taxa");
-        if (targetTaxa != null) {
-            for (JsonNode targetTaxonNode : targetTaxa) {
-                JsonNode taxonScheme = targetTaxonNode.get("taxon_scheme_id");
-                if (taxonScheme != null && "27".equals(taxonScheme.asText())) {
-                    JsonNode schemeId = targetTaxonNode.get("source_identifier");
-                    if (schemeId != null && !schemeId.isNull()) {
-                        externalId = TaxonomyProvider.ID_PREFIX_GBIF + schemeId.asText();
-                    }
-                }
-            }
+        JsonNode idNode = taxonNode.get("id");
+        if (null != idNode) {
+            externalId = TaxonomyProvider.INATURALIST_TAXON.getIdPrefix() + idNode.asText();
         }
+
         return (name == null && externalId == null) ? null : new TaxonImpl(name, externalId);
     }
 

@@ -75,7 +75,7 @@ public class StudyImporterForINaturalistTest extends GraphDBTestCase {
     }
 
     @Test
-    public void importNotSupportedTestResponse() throws IOException, NodeFactoryException, StudyImporterException {
+    public void importNotSupportedTestResponse() throws IOException, StudyImporterException {
         importer.parseJSON(getClass().getResourceAsStream("inaturalist/unsupported_interaction_type_inaturalist_response.json"),
                 new ArrayList<Integer>(),
                 new HashMap<Integer, InteractType>());
@@ -84,7 +84,7 @@ public class StudyImporterForINaturalistTest extends GraphDBTestCase {
     }
 
     @Test
-    public void importTestResponse() throws IOException, NodeFactoryException, StudyImporterException {
+    public void importTestResponse() throws IOException, StudyImporterException {
         importer.parseJSON(getClass().getResourceAsStream("inaturalist/sample_inaturalist_response.json"),
                 new ArrayList<Integer>() {{
                     add(47);
@@ -108,10 +108,10 @@ public class StudyImporterForINaturalistTest extends GraphDBTestCase {
         assertThat(anotherStudy.getCitation(), containsString("annetanne. 2012. Misumena vatia eating Eristalis nemorum."));
         assertThat(anotherStudy.getExternalId(), is("http://www.inaturalist.org/observations/97380"));
 
-
         TaxonNode sourceTaxonNode = taxonIndex.findTaxonByName("Arenaria interpres");
 
         assertThat(sourceTaxonNode, is(not(nullValue())));
+
         Iterable<Relationship> relationships = sourceTaxonNode.getUnderlyingNode().getRelationships(Direction.INCOMING, RelTypes.CLASSIFIED_AS);
         for (Relationship relationship : relationships) {
             Node sourceSpecimen = relationship.getStartNode();
@@ -148,9 +148,9 @@ public class StudyImporterForINaturalistTest extends GraphDBTestCase {
         resolveNames();
 
         assertThat(targetTaxon.getName(), is("Sophora prostrata"));
-        assertThat(targetTaxon.getExternalId(), is("GBIF:2959023"));
+        assertThat(targetTaxon.getExternalId(), is("INAT_TAXON:406089"));
         assertThat(sourceTaxon.getName(), is("Pseudoidium hardenbergiae"));
-        assertThat(sourceTaxon.getExternalId(), is("GBIF:7246356"));
+        assertThat(sourceTaxon.getExternalId(), is("INAT_TAXON:480390"));
 
     }
 

@@ -16,6 +16,7 @@ public enum TaxonomyProvider {
     INDEX_FUNGORUM("IF:"),
     OPEN_TREE_OF_LIFE("OTT:"),
     NATIONAL_OCEANOGRAPHIC_DATA_CENTER("NODC:"),
+    INATURALIST_TAXON("INAT_TAXON:"),
     FISHBASE_CACHE("FBC:");
 
     private final String idPrefix;
