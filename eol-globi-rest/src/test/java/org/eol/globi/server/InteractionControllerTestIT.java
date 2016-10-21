@@ -29,51 +29,6 @@ public class InteractionControllerTestIT {
     }
 
     @Test
-    public void findSupportedInteractionTypes() throws IOException, URISyntaxException {
-        HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
-        when(request.getParameterMap()).thenReturn(new HashMap<String, String[]>() {
-            {
-                put("taxon", new String[]{"Phocidae"});
-            }
-        });
-        when(request.getParameter("taxon")).thenReturn("something");
-        when(request.getParameter("type")).thenReturn("csv");
-        String list = new InteractionController().getInteractionTypes(request);
-        assertThat(list, not(containsString("pollinate")));
-        assertThat(list, containsString("preysOn"));
-    }
-
-    @Test
-    public void findSupportedInteractionTypesById() throws IOException, URISyntaxException {
-        HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
-        when(request.getParameterMap()).thenReturn(new HashMap<String, String[]>() {
-            {
-                put("taxon", new String[]{"EOL:7666"});
-            }
-        });
-        when(request.getParameter("taxon")).thenReturn("something");
-        when(request.getParameter("type")).thenReturn("csv");
-        String list = new InteractionController().getInteractionTypes(request);
-        assertThat(list, not(containsString("pollinate")));
-        assertThat(list, containsString("preysOn"));
-    }
-
-    @Test
-    public void findSupportedInteractionTypesBees() throws IOException, URISyntaxException {
-        HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
-        when(request.getParameterMap()).thenReturn(new HashMap<String, String[]>() {
-            {
-                put("taxon", new String[]{"Apidae"});
-            }
-        });
-        when(request.getParameter("taxon")).thenReturn("something");
-        when(request.getParameter("type")).thenReturn("csv");
-        String list = new InteractionController().getInteractionTypes(request);
-        assertThat(list, containsString("pollinate"));
-        assertThat(list, not(containsString("pathogenOf")));
-    }
-
-    @Test
     public void findPreyExternalId() throws IOException, URISyntaxException {
         String list = new CypherQueryExecutor(new InteractionController().findInteractionsNew(null, "OTT:770315", CypherQueryBuilder.INTERACTION_PREYS_ON, null)).execute(null);
         assertThat(list, containsString("Homo sapiens"));

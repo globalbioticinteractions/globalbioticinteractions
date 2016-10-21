@@ -18,17 +18,17 @@ import static org.junit.Assert.assertThat;
 import static org.junit.matchers.JUnitMatchers.containsString;
 import static org.mockito.Mockito.when;
 
-public class InteractionControllerTest {
+public class SchemaControllerTest {
 
     @Test
     public void interactionTypes() throws IOException {
-        String interactionTypes = new InteractionController().getInteractionTypes(null);
+        String interactionTypes = new SchemaController().getInteractionTypes(null);
         assertThat(interactionTypes, is(notNullValue()));
     }
 
     @Test
     public void interactionFieldsJson() throws IOException {
-        String interactionFields = new InteractionController().getInteractionFields(null);
+        String interactionFields = new SchemaController().getInteractionFields(null);
         JsonNode jsonNode = new ObjectMapper().readTree(interactionFields);
         assertThat(jsonNode.get(ResultField.TAXON_NAME.getLabel()).get("description").asText(), is(notNullValue()));
     }
@@ -38,7 +38,7 @@ public class InteractionControllerTest {
         HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
         when(request.getParameter("type")).thenReturn("csv");
 
-        String interactionFields = new InteractionController().getInteractionFields(request);
+        String interactionFields = new SchemaController().getInteractionFields(request);
         assertThat(interactionFields, containsString("name,description"));
     }
 
@@ -47,7 +47,7 @@ public class InteractionControllerTest {
         HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
         when(request.getParameter("type")).thenReturn("csv");
 
-        String interactionTypes = new InteractionController().getInteractionTypes(request);
+        String interactionTypes = new SchemaController().getInteractionTypes(request);
         LabeledCSVParser parser = CSVUtil.createLabeledCSVParser(IOUtils.toInputStream(interactionTypes));
         assertThat(parser.getLabels(), is(new String[]{"interaction", "source", "target", "termIRI"}));
         while (parser.getLine() != null) {
@@ -60,7 +60,7 @@ public class InteractionControllerTest {
 
     @Test
     public void findSupportedInteractionTypes() throws IOException {
-        String interactionTypes = new InteractionController().getInteractionTypes(null);
+        String interactionTypes = new SchemaController().getInteractionTypes(null);
         ObjectMapper mapper = new ObjectMapper();
         JsonNode jsonNode = mapper.readTree(interactionTypes);
         for (JsonNode interactionType : jsonNode) {
