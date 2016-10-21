@@ -79,4 +79,28 @@ public class SchemaControllerTest {
         assertThat(jsonNode.has(CypherQueryBuilder.INTERACTION_KILLED_BY), is(true));
     }
 
+    @Test
+    public void prefixesCSV() throws IOException {
+        HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
+        when(request.getParameter("type")).thenReturn("csv");
+
+        String prefixes = new SchemaController().getPrefixes(request);
+        assertThat(prefixes, containsString("id_prefix,url_prefix,url_suffix"));
+        assertThat(prefixes, containsString("EOL:,http://eol.org/pages/,"));
+    }
+
+    @Test
+    public void prefixesJSON() throws IOException {
+        HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
+        when(request.getParameter("type")).thenReturn("json");
+
+        String prefixes = new SchemaController().getPrefixes(request);
+        JsonNode jsonNode = new ObjectMapper().readTree(prefixes);
+        assertThat(jsonNode.has("EOL:"), is(true));
+        assertThat(jsonNode.get("EOL:").get("url_prefix").asText(), is("http://eol.org/pages/"));
+        assertThat(jsonNode.get("EOL:").get("url_suffix").asText(), is(""));
+        assertThat(jsonNode.get("bioinfo:ref:").get("url_suffix").asText(), is(".htm"));
+    }
+
+
 }

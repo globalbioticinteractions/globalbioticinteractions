@@ -6,6 +6,7 @@ import org.eol.globi.server.util.ResultField;
 import org.eol.globi.server.util.ResultFormatterCSV;
 import org.eol.globi.util.CypherQuery;
 import org.eol.globi.util.CypherUtil;
+import org.eol.globi.util.ExternalIdUtil;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,6 +16,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.*;
+
+import static org.eol.globi.util.ExternalIdUtil.getURLPrefixMap;
+import static org.eol.globi.util.ExternalIdUtil.getURLSuffixMap;
 
 @Controller
 public class SchemaController {
@@ -90,4 +94,40 @@ public class SchemaController {
         return builder.toString();
     }
 
+    @RequestMapping(value = "/prefixes", method = RequestMethod.GET)
+    @ResponseBody
+    public String getPrefixes(HttpServletRequest request) {
+        return "csv".equals(getRequestType(request)) ? csvPrefixes() : jsonPrefixes();
+    }
+
+    private String csvPrefixes() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("id_prefix,url_prefix,url_suffix\n");
+        Map<String, String> urlPrefixMap = getURLPrefixMap();
+        Map<String, String> urlSuffixMap = getURLSuffixMap();
+        for (String idPrefix : urlPrefixMap.keySet()) {
+            builder.append(idPrefix);
+            builder.append(",").append(urlPrefixMap.getOrDefault(idPrefix, ""));
+            builder.append(",").append(urlSuffixMap.getOrDefault(idPrefix, ""));
+            builder.append("\n");
+        }
+        return builder.toString();
+    }
+
+    private String jsonPrefixes() {
+        List<String> prefixes = new ArrayList<String>();
+        Map<String, String> urlPrefixMap = getURLPrefixMap();
+        Map<String, String> urlSuffixMap = getURLSuffixMap();
+        for (String idPrefix : urlPrefixMap.keySet()) {
+            String builder = "\"" +
+                    idPrefix +
+                    "\":{\"url_prefix\":\"" +
+                    urlPrefixMap.getOrDefault(idPrefix, "") +
+                    "\",\"url_suffix\":\"" +
+                    urlSuffixMap.getOrDefault(idPrefix, "") +
+                    "\"}";
+            prefixes.add(builder);
+        }
+        return "{" + StringUtils.join(prefixes, ",") + "}";
+    }
 }
