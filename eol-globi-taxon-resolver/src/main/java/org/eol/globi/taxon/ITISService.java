@@ -71,7 +71,7 @@ public class ITISService implements PropertyEnricher {
     private String getResponse(String methodName, String queryString) throws PropertyEnricherException {
         URI uri;
         try {
-            uri = new URI("http", null, "www.itis.gov", 80, "/ITISWebService/services/ITISService/" + methodName, queryString, null);
+            uri = new URI("https", null, "www.itis.gov", 443, "/ITISWebService/services/ITISService/" + methodName, queryString, null);
         } catch (URISyntaxException e) {
             throw new PropertyEnricherException("failed to create uri", e);
         }
