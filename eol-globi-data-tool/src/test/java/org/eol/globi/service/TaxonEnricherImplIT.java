@@ -122,6 +122,17 @@ public class TaxonEnricherImplIT extends GraphDBTestCase {
     }
 
     @Test
+    public void inaturalistTaxon() throws IOException, NodeFactoryException {
+        TaxonNode taxon = taxonIndex.getOrCreateTaxon("Celtis laevigata", "INAT_TAXON:81792", null);
+        assertThat(taxon.getExternalId(), is("INAT_TAXON:81792"));
+        assertThat(taxon.getName(), is("Celtis laevigata"));
+        assertThat(taxon.getPathIds(), is("INAT_TAXON:47126 | INAT_TAXON:211194 | INAT_TAXON:47125 | INAT_TAXON:47124 | INAT_TAXON:47132 | INAT_TAXON:53781 | INAT_TAXON:54858 | INAT_TAXON:81792"));
+        assertThat(taxon.getPath(), containsString(CharsetConstant.SEPARATOR + "Celtis"));
+        assertThat(taxon.getRank(), is("species"));
+        assertThat(taxon.getPathNames(), containsString(CharsetConstant.SEPARATOR + "species"));
+    }
+
+    @Test
     public void emptyTaxon() throws IOException, NodeFactoryException, PropertyEnricherException {
         Taxon enrich = TaxonUtil.enrich(PropertyEnricherFactory.createTaxonEnricher(), new TaxonImpl("", ""));
         assertThat(enrich.getName(), is(""));

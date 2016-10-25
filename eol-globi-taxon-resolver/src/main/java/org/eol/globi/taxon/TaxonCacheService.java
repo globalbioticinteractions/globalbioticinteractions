@@ -46,10 +46,10 @@ public class TaxonCacheService implements PropertyEnricher {
     @Override
     public Map<String, String> enrich(Map<String, String> properties) throws PropertyEnricherException {
         lazyInit();
-        Map<String, String> enriched = getTaxon(getExternalId(properties));
-        if (enriched == null) {
-            enriched = getTaxon(getName(properties));
-        }
+        String externalId = getExternalId(properties);
+        Map<String, String> enriched = StringUtils.isBlank(externalId)
+                ? getTaxon(getName(properties))
+                : getTaxon(externalId);
         return enriched == null ? Collections.unmodifiableMap(properties) : enriched;
     }
 

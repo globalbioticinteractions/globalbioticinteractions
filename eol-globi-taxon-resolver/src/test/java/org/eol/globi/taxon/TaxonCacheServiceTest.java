@@ -113,6 +113,23 @@ public class TaxonCacheServiceTest {
     }
 
     @Test
+    public void enrichByNameAndId() throws PropertyEnricherException {
+        Map<String, String> properties = new HashMap<String, String>() {
+            {
+                put(PropertyAndValueDictionary.NAME, "Anas crecca carolinensis");
+                put(PropertyAndValueDictionary.EXTERNAL_ID, "SOME:123");
+            }
+        };
+        final TaxonCacheService taxonCacheService = getTaxonCacheService();
+        Map<String, String> enrich = taxonCacheService.enrich(properties);
+        Taxon enrichedTaxon = TaxonUtil.mapToTaxon(enrich);
+        assertThat(enrichedTaxon.getName(), is("Anas crecca carolinensis"));
+        assertThat(enrichedTaxon.getExternalId(), is("SOME:123"));
+        assertThat(TaxonUtil.isResolved(enrichedTaxon), is(false));
+        taxonCacheService.shutdown();
+    }
+
+    @Test
     public void enrichByIdZikaNoCachedPath() throws PropertyEnricherException {
         Map<String, String> properties = new HashMap<String, String>() {
             {
