@@ -14,7 +14,7 @@ public class InteractUtil {
         return interactionsCypherClause(InteractType.values());
     }
 
-    protected static String joinInteractTypes(Collection<InteractType> interactTypes) {
+    public static String joinInteractTypes(Collection<InteractType> interactTypes) {
         return StringUtils.join(interactTypes, CharsetConstant.SEPARATOR_CHAR);
     }
 

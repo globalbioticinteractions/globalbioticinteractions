@@ -106,11 +106,6 @@ public class CypherQueryBuilder {
     public static final String INTERACTION_KILLS = InteractType.KILLS.getLabel();
     public static final String INTERACTION_KILLED_BY = InteractType.KILLED_BY.getLabel();
 
-    private static final String SOURCE_TAXON_HTTP_PARAM_NAME = "sourceTaxon";
-    private static final String TARGET_TAXON_HTTP_PARAM_NAME = "targetTaxon";
-
-    public static final String TAXON_HTTP_PARAM_NAME = "taxon";
-
     public static final Map<String, InteractionTypeExternal> INTERACTION_TYPE_INTERNAL_EXTERNAL_MAP = new TreeMap<String, InteractionTypeExternal>() {
         {
             put(InteractType.ATE.toString(), InteractionTypeExternal.EATS);
@@ -194,7 +189,7 @@ public class CypherQueryBuilder {
 
     static public CypherQuery createDistinctTaxaInLocationQuery(Map<String, String[]> params) {
         StringBuilder builder = new StringBuilder();
-        List<String> interactionTypes = collectParamValues(params, "interactionType");
+        List<String> interactionTypes = collectParamValues(params, ParamName.INTERACTION_TYPE);
 
         if (RequestHelper.isSpatialSearch(params)) {
             appendSpatialStartWhereWith(params, builder);
@@ -234,9 +229,9 @@ public class CypherQueryBuilder {
     }
 
     protected static List<String> collectRequestedFields(Map params) {
-        List<String> requestedFields = collectParamValues(params, "field");
+        List<String> requestedFields = collectParamValues(params, ParamName.FIELD);
         if (requestedFields.isEmpty()) {
-            List<String> fields = collectParamValues(params, "fields");
+            List<String> fields = collectParamValues(params, ParamName.FIELDS);
             if (fields.size() > 0) {
                 String[] requestedFieldsSplit = StringUtils.split(fields.get(0), ',');
                 if (requestedFieldsSplit != null) {
@@ -262,7 +257,7 @@ public class CypherQueryBuilder {
     }
 
     public enum QueryType {
-        SINGLE_TAXON_DISTINCT, SINGLE_TAXON_ALL, MULTI_TAXON_DISTINCT, MULTI_TAXON_ALL
+        SINGLE_TAXON_DISTINCT, SINGLE_TAXON_ALL, MULTI_TAXON_DISTINCT, MULTI_TAXON_DISTINCT_BY_NAME_ONLY, MULTI_TAXON_ALL
     }
 
     public static void addLocationClausesIfNecessary(StringBuilder query, Map parameterMap, QueryType queryType) {
@@ -392,7 +387,7 @@ public class CypherQueryBuilder {
 
     public static CypherQuery locations(Map params) {
         StringBuilder query = new StringBuilder();
-        final List<String> accordingTo = collectParamValues(params, "accordingTo");
+        final List<String> accordingTo = collectParamValues(params, ParamName.ACCORDING_TO);
         if (accordingTo.size() > 0) {
             appendStartClause2(params, Collections.<String>emptyList(), Collections.<String>emptyList(), query);
             query.append(" MATCH study-[:COLLECTED]->specimen-[:COLLECTED_AT]->location");
@@ -428,12 +423,12 @@ public class CypherQueryBuilder {
     protected static CypherQuery interactionObservations(List<String> sourceTaxa, List<String> interactionTypes, List<String> targetTaxa, Map parameterMap, QueryType queryType) {
         StringBuilder query = appendStartMatchWhereClauses(sourceTaxa, interactionTypes, targetTaxa, parameterMap, queryType);
         appendReturnClause(interactionTypes, query, queryType, collectRequestedFields(parameterMap));
-        return new CypherQuery(query.toString(), getParams(sourceTaxa, targetTaxa, collectParamValues(parameterMap, "accordingTo"), shouldIncludeExactNameMatchesOnly(parameterMap)));
+        return new CypherQuery(query.toString(), getParams(sourceTaxa, targetTaxa, collectParamValues(parameterMap, ParamName.ACCORDING_TO), shouldIncludeExactNameMatchesOnly(parameterMap)));
     }
 
 
     public static CypherQuery buildInteractionTypeQuery(Map parameterMap) {
-        final List<String> taxa = collectParamValues(parameterMap, TAXON_HTTP_PARAM_NAME);
+        final List<String> taxa = collectParamValues(parameterMap, ParamName.TAXON);
         String query = "START taxon = " + getTaxonPathSelector(TAXON_NAME.getLabel(), false)
                 + " MATCH taxon-[rel:" + InteractUtil.allInteractionsCypherClause() + "]->otherTaxon RETURN distinct(type(rel)) as " + INTERACTION_TYPE;
         return new CypherQuery(query
@@ -446,9 +441,9 @@ public class CypherQueryBuilder {
 
 
     public static CypherQuery buildInteractionQuery(Map parameterMap, QueryType queryType) {
-        List<String> sourceTaxa = collectParamValues(parameterMap, SOURCE_TAXON_HTTP_PARAM_NAME);
-        List<String> targetTaxa = collectParamValues(parameterMap, TARGET_TAXON_HTTP_PARAM_NAME);
-        List<String> interactionTypeSelectors = collectParamValues(parameterMap, "interactionType");
+        List<String> sourceTaxa = collectParamValues(parameterMap, ParamName.SOURCE_TAXON);
+        List<String> targetTaxa = collectParamValues(parameterMap, ParamName.TARGET_TAXON);
+        List<String> interactionTypeSelectors = collectParamValues(parameterMap, ParamName.INTERACTION_TYPE);
         return interactionObservations(sourceTaxa, interactionTypeSelectors, targetTaxa, parameterMap, queryType);
     }
 
@@ -537,6 +532,26 @@ public class CypherQueryBuilder {
                 List<ResultField> returnFields = actualReturnFields(requestedReturnFields, Arrays.asList(RETURN_FIELDS_MULTI_TAXON_DEFAULT), selectors.keySet());
                 appendReturnClauseDistinctz(query, returnFields, selectors);
                 break;
+            case MULTI_TAXON_DISTINCT_BY_NAME_ONLY:
+                selectors = new HashMap<ResultField, String>(defaultSelectors()) {
+                    {
+                        put(NUMBER_OF_INTERACTIONS, "interaction.count");
+                        put(SOURCE_SPECIMEN_LIFE_STAGE, "NULL");
+                        put(SOURCE_SPECIMEN_BASIS_OF_RECORD, "NULL");
+                        put(TARGET_SPECIMEN_LIFE_STAGE, "NULL");
+                        put(TARGET_SPECIMEN_BASIS_OF_RECORD, "NULL");
+                        put(LATITUDE, "NULL");
+                        put(LONGITUDE, "NULL");
+                        put(STUDY_TITLE, "NULL");
+                        put(STUDY_URL, "NULL");
+                        put(STUDY_DOI, "NULL");
+                        put(STUDY_CITATION, "NULL");
+                        put(STUDY_SOURCE_CITATION, "NULL");
+                    }
+                };
+                appendReturnClausez(query, actualReturnFields(requestedReturnFields, Arrays.asList(RETURN_FIELDS_MULTI_TAXON_DEFAULT), selectors.keySet()), selectors);
+                break;
+
             default:
                 throw new IllegalArgumentException("invalid option [" + returnType + "]");
         }
@@ -559,10 +574,10 @@ public class CypherQueryBuilder {
     }
 
 
-    protected static StringBuilder appendTaxonWherClauseIfNecessary(Map parameterMap, List<String> sourceTaxa, List<String> targetTaxa, StringBuilder query) {
+    protected static StringBuilder appendTaxonWhereClauseIfNecessary(Map parameterMap, List<String> sourceTaxa, List<String> targetTaxa, StringBuilder query) {
         boolean spatialSearch = RequestHelper.isSpatialSearch(parameterMap);
         boolean exactNameMatchesOnly = shouldIncludeExactNameMatchesOnly(parameterMap);
-        if (collectParamValues(parameterMap, "accordingTo").size() > 0) {
+        if (hasAccordingTo(parameterMap)) {
             appendAndOrWhere(targetTaxa, query, spatialSearch);
             appendTaxonSelector(query, "targetTaxon", targetTaxa, exactNameMatchesOnly);
 
@@ -575,10 +590,14 @@ public class CypherQueryBuilder {
         return query;
     }
 
+    private static boolean hasAccordingTo(Map parameterMap) {
+        return collectParamValues(parameterMap, ParamName.ACCORDING_TO).size() > 0;
+    }
+
     private static boolean shouldIncludeExactNameMatchesOnly(Map parameterMap) {
         List<String> trueValues = Arrays.asList("t", "T", "true", "TRUE");
-        boolean b = CollectionUtils.containsAny(collectParamValues(parameterMap, "exactNameMatchOnly"), trueValues);
-        return b || CollectionUtils.containsAny(collectParamValues(parameterMap, "excludeChildTaxa"), trueValues);
+        boolean b = CollectionUtils.containsAny(collectParamValues(parameterMap, ParamName.EXACT_NAME_MATCH_ONLY), trueValues);
+        return b || CollectionUtils.containsAny(collectParamValues(parameterMap, ParamName.EXCLUDE_CHILD_TAXA), trueValues);
     }
 
     private static void appendAndOrWhere(List<String> taxa, StringBuilder query, boolean hasWhereClause) {
@@ -593,7 +612,7 @@ public class CypherQueryBuilder {
 
     protected static StringBuilder appendStartClause2(Map parameterMap, List<String> sourceTaxa, List<String> targetTaxa, StringBuilder query) {
         query.append("START");
-        List<String> accordingToParams = collectParamValues(parameterMap, "accordingTo");
+        List<String> accordingToParams = collectParamValues(parameterMap, ParamName.ACCORDING_TO);
         if (accordingToParams.size() > 0) {
             String whereClause;
             if (hasAtLeastOneURL(accordingToParams)) {
@@ -633,8 +652,15 @@ public class CypherQueryBuilder {
     private static StringBuilder appendStartMatchWhereClauses(List<String> sourceTaxa, List<String> interactionTypes, List<String> targetTaxa, Map parameterMap, QueryType queryType) {
         StringBuilder query = new StringBuilder();
         appendStartClause2(parameterMap, sourceTaxa, targetTaxa, query);
-        appendMatchAndWhereClause(interactionTypes, parameterMap, query, queryType);
-        return appendTaxonWherClauseIfNecessary(parameterMap, sourceTaxa, targetTaxa, query);
+        if (QueryType.MULTI_TAXON_DISTINCT_BY_NAME_ONLY == queryType) {
+            String interactionMatch = "MATCH sourceTaxon-[interaction:" + createInteractionTypeSelector(interactionTypes) + "]->targetTaxon ";
+            query
+                    .append(" ")
+                    .append(interactionMatch);
+        } else {
+            appendMatchAndWhereClause(interactionTypes, parameterMap, query, queryType);
+        }
+        return appendTaxonWhereClauseIfNecessary(parameterMap, sourceTaxa, targetTaxa, query);
     }
 
     protected static void appendReturnClause(StringBuilder query, List<ResultField> returnFields, Map<ResultField, String> selectors) {
@@ -796,10 +822,10 @@ public class CypherQueryBuilder {
         return StringUtils.contains(taxonName, ":");
     }
 
-    protected static List<String> collectParamValues(Map parameterMap, String key) {
+    protected static List<String> collectParamValues(Map parameterMap, ParamName name) {
         List<String> taxa = new ArrayList<String>();
-        if (parameterMap != null && parameterMap.containsKey(key)) {
-            Object paramObject = parameterMap.get(key);
+        if (parameterMap != null && parameterMap.containsKey(name.getName())) {
+            Object paramObject = parameterMap.get(name.getName());
             if (paramObject instanceof String[]) {
                 Collections.addAll(taxa, (String[]) paramObject);
             } else if (paramObject instanceof String) {

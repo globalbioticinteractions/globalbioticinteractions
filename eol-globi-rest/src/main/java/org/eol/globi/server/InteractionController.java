@@ -1,11 +1,6 @@
 package org.eol.globi.server;
 
-import org.apache.commons.lang.StringUtils;
-import org.eol.globi.server.util.InteractionTypeExternal;
-import org.eol.globi.server.util.ResultField;
-import org.eol.globi.server.util.ResultFormatterCSV;
 import org.eol.globi.util.CypherQuery;
-import org.eol.globi.util.CypherUtil;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,9 +10,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -28,9 +20,13 @@ public class InteractionController {
     @ResponseBody
     protected CypherQuery findInteractionsNew(HttpServletRequest request) {
         Map parameterMap = request.getParameterMap();
-        CypherQueryBuilder.QueryType queryType = shouldIncludeObservations(request, parameterMap)
-                ? CypherQueryBuilder.QueryType.MULTI_TAXON_ALL
-                : CypherQueryBuilder.QueryType.MULTI_TAXON_DISTINCT;
+        CypherQueryBuilder.QueryType queryType = CypherQueryBuilder.QueryType.MULTI_TAXON_DISTINCT;
+
+        if (shouldIncludeObservations(request, parameterMap)) {
+            queryType = CypherQueryBuilder.QueryType.MULTI_TAXON_ALL;
+        } else if (isTaxonQueryOnly(parameterMap)) {
+            queryType = CypherQueryBuilder.QueryType.MULTI_TAXON_DISTINCT_BY_NAME_ONLY;
+        }
         CypherQuery query = CypherQueryBuilder.buildInteractionQuery(parameterMap, queryType);
         return CypherQueryBuilder.createPagedQuery(request, query);
     }
@@ -67,8 +63,14 @@ public class InteractionController {
     }
 
     private boolean shouldIncludeObservations(HttpServletRequest request, Map parameterMap) {
-        String includeObservations = parameterMap == null ? null : request.getParameter("includeObservations");
+        String includeObservations = parameterMap == null ? null : request.getParameter(ParamName.INCLUDE_OBSERVATIONS.getName());
         return "t".equalsIgnoreCase(includeObservations) || "true".equalsIgnoreCase(includeObservations);
+    }
+
+    private boolean isTaxonQueryOnly(Map parameterMap) {
+        List<String> accordingTo = CypherQueryBuilder.collectParamValues(parameterMap, ParamName.ACCORDING_TO);
+        List<String> bbox = CypherQueryBuilder.collectParamValues(parameterMap, ParamName.BBOX);
+        return accordingTo.isEmpty() && bbox.isEmpty();
     }
 
     public static CypherQuery createQuery(final String sourceTaxonName, String interactionType, final String targetTaxonName, Map parameterMap, CypherQueryBuilder.QueryType queryType) throws IOException {

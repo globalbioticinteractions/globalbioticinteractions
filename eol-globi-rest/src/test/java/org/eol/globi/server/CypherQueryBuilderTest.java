@@ -14,10 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.eol.globi.domain.InteractType.*;
-import static org.eol.globi.server.CypherQueryBuilder.QueryType.MULTI_TAXON_ALL;
-import static org.eol.globi.server.CypherQueryBuilder.QueryType.MULTI_TAXON_DISTINCT;
-import static org.eol.globi.server.CypherQueryBuilder.QueryType.SINGLE_TAXON_ALL;
-import static org.eol.globi.server.CypherQueryBuilder.QueryType.SINGLE_TAXON_DISTINCT;
+import static org.eol.globi.server.CypherQueryBuilder.QueryType.*;
 import static org.eol.globi.server.CypherQueryBuilder.appendMatchAndWhereClause;
 import static org.eol.globi.server.CypherQueryBuilder.buildInteractionQuery;
 import static org.eol.globi.server.CypherQueryBuilder.locations;
@@ -241,6 +238,107 @@ public class CypherQueryBuilderTest {
     }
 
     @Test
+    public void findInteractionsTaxaInteractionIndexTargetTaxaOnly() throws IOException {
+        HashMap<String, String[]> params = new HashMap<String, String[]>() {
+            {
+                put("targetTaxon", new String[]{"Arthropoda"});
+                put("field", new String[]{"source_taxon_name", "target_taxon_name"});
+            }
+        };
+
+        CypherQuery query = buildInteractionQuery(params, MULTI_TAXON_DISTINCT_BY_NAME_ONLY);
+        assertThat(query.getQuery(), is("START targetTaxon = node:taxonPaths({target_taxon_name}) " +
+                "MATCH sourceTaxon-[interaction:" + InteractUtil.interactionsCypherClause(INTERACTS_WITH) + "]->targetTaxon " +
+                "RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name"));
+        Map<String, String> expected = new HashMap<String, String>() {{
+            put("target_taxon_name", "path:\\\"Arthropoda\\\"");
+        }};
+        assertThat(query.getParams(), is(expected));
+    }
+
+    @Test
+    public void findInteractionsTaxaInteractionIndexTargetTaxaNumberOfInteractions() throws IOException {
+        HashMap<String, String[]> params = new HashMap<String, String[]>() {
+            {
+                put("targetTaxon", new String[]{"Arthropoda"});
+                put("field", new String[]{"source_taxon_name", "target_taxon_name", "number_of_interactions"});
+            }
+        };
+
+        CypherQuery query = buildInteractionQuery(params, MULTI_TAXON_DISTINCT_BY_NAME_ONLY);
+        assertThat(query.getQuery(), is("START targetTaxon = node:taxonPaths({target_taxon_name}) " +
+                "MATCH sourceTaxon-[interaction:" + InteractUtil.interactionsCypherClause(INTERACTS_WITH) + "]->targetTaxon " +
+                "RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name,interaction.count as number_of_interactions"));
+        Map<String, String> expected = new HashMap<String, String>() {{
+            put("target_taxon_name", "path:\\\"Arthropoda\\\"");
+        }};
+        assertThat(query.getParams(), is(expected));
+    }
+
+    @Test
+    public void findInteractionsTaxaInteractionIndexTargetTaxaNumberOfInteractionsExcludeChildTaxa() throws IOException {
+        HashMap<String, String[]> params = new HashMap<String, String[]>() {
+            {
+                put("excludeChildTaxa", new String[]{"true"});
+                put("targetTaxon", new String[]{"Arthropoda"});
+                put("field", new String[]{"source_taxon_name", "target_taxon_name", "number_of_interactions"});
+            }
+        };
+
+        CypherQuery query = buildInteractionQuery(params, MULTI_TAXON_DISTINCT_BY_NAME_ONLY);
+        assertThat(query.getQuery(), is("START targetTaxon = node:taxons({target_taxon_name}) " +
+                "MATCH sourceTaxon-[interaction:" + InteractUtil.interactionsCypherClause(INTERACTS_WITH) + "]->targetTaxon " +
+                "RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name,interaction.count as number_of_interactions"));
+        Map<String, String> expected = new HashMap<String, String>() {{
+            put("target_taxon_name", "name:\\\"Arthropoda\\\"");
+        }};
+        assertThat(query.getParams(), is(expected));
+    }
+
+    @Test
+    public void findInteractionsTaxaInteractionIndexTargetTaxaNumberOfInteractionsExactNameMatchOnly() throws IOException {
+        HashMap<String, String[]> params = new HashMap<String, String[]>() {
+            {
+                put("exactNameMatchOnly", new String[]{"true"});
+                put("targetTaxon", new String[]{"Arthropoda"});
+                put("field", new String[]{"source_taxon_name", "target_taxon_name", "number_of_interactions"});
+            }
+        };
+
+        CypherQuery query = buildInteractionQuery(params, MULTI_TAXON_DISTINCT_BY_NAME_ONLY);
+        assertThat(query.getQuery(), is("START targetTaxon = node:taxons({target_taxon_name}) " +
+                "MATCH sourceTaxon-[interaction:" + InteractUtil.interactionsCypherClause(INTERACTS_WITH) + "]->targetTaxon " +
+                "RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name,interaction.count as number_of_interactions"));
+        Map<String, String> expected = new HashMap<String, String>() {{
+            put("target_taxon_name", "name:\\\"Arthropoda\\\"");
+        }};
+        assertThat(query.getParams(), is(expected));
+    }
+
+    @Test
+    public void findInteractionsTaxaInteractionIndexInteractionTypeTargetTaxaNumberOfInteractions() throws IOException {
+        HashMap<String, String[]> params = new HashMap<String, String[]>() {
+            {
+                put("sourceTaxon", new String[]{"Mammalia"});
+                put("targetTaxon", new String[]{"Arthropoda"});
+                put("interactionType", new String[]{"endoparasiteOf"});
+                put("field", new String[]{"source_taxon_name", "target_taxon_name", "number_of_interactions"});
+            }
+        };
+
+        CypherQuery query = buildInteractionQuery(params, MULTI_TAXON_DISTINCT_BY_NAME_ONLY);
+        assertThat(query.getQuery(), is("START sourceTaxon = node:taxonPaths({source_taxon_name}) " +
+                "MATCH sourceTaxon-[interaction:ENDOPARASITE_OF]->targetTaxon " +
+                "WHERE (has(targetTaxon.path) AND targetTaxon.path =~ '(.*(Arthropoda).*)') " +
+                "RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name,interaction.count as number_of_interactions"));
+        Map<String, String> expected = new HashMap<String, String>() {{
+            put("source_taxon_name", "path:\\\"Mammalia\\\"");
+            put("target_taxon_name", "path:\\\"Arthropoda\\\"");
+        }};
+        assertThat(query.getParams(), is(expected));
+    }
+
+    @Test
     public void findInteractionsAccordingToWithTargetTaxaOnly3() throws IOException {
         HashMap<String, String[]> params = new HashMap<String, String[]>() {
             {
@@ -339,7 +437,9 @@ public class CypherQueryBuilderTest {
         assertThat(CypherQueryBuilder.selectorPrefixForName("bla:123", false), is("path:"));
         assertThat(CypherQueryBuilder.selectorPrefixForName("bla name", false), is("path:"));
         assertThat(CypherQueryBuilder.selectorPrefixForName("bla name", true), is("name:"));
-    };
+    }
+
+    ;
 
 
     @Test
@@ -924,8 +1024,8 @@ public class CypherQueryBuilderTest {
     protected void assertLocationMatchAndWhereClause(String clause) {
         assertThat(clause.replaceAll("\\s+", " ")
                 , is(" MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen-[interaction:PREYS_UPON]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon" +
-                ", sourceSpecimen<-[collected_rel:COLLECTED]-study, sourceSpecimen-[:COLLECTED_AT]->loc" +
-                " WHERE loc.latitude < 23.32 AND loc.longitude > -67.87 AND loc.latitude > 12.79 AND loc.longitude < -57.08 "));
+                        ", sourceSpecimen<-[collected_rel:COLLECTED]-study, sourceSpecimen-[:COLLECTED_AT]->loc" +
+                        " WHERE loc.latitude < 23.32 AND loc.longitude > -67.87 AND loc.latitude > 12.79 AND loc.longitude < -57.08 "));
     }
 
     @Test
@@ -949,10 +1049,10 @@ public class CypherQueryBuilderTest {
         };
 
         assertThat(appendMatchAndWhereClause(new ArrayList<String>() {{
-            add("preysOn");
-        }}, params, new StringBuilder(), CypherQueryBuilder.QueryType.MULTI_TAXON_ALL).toString()
+                    add("preysOn");
+                }}, params, new StringBuilder(), CypherQueryBuilder.QueryType.MULTI_TAXON_ALL).toString()
                 , is(" MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen-[interaction:PREYS_UPON]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon" +
-                ", sourceSpecimen<-[collected_rel:COLLECTED]-study, sourceSpecimen-[?:COLLECTED_AT]->loc "));
+                        ", sourceSpecimen<-[collected_rel:COLLECTED]-study, sourceSpecimen-[?:COLLECTED_AT]->loc "));
     }
 
     @Test

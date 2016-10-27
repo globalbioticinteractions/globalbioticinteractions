@@ -6,9 +6,7 @@ import org.eol.globi.server.util.ResultField;
 import org.eol.globi.server.util.ResultFormatterCSV;
 import org.eol.globi.util.CypherQuery;
 import org.eol.globi.util.CypherUtil;
-import org.eol.globi.util.ExternalIdUtil;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -28,7 +26,7 @@ public class SchemaController {
     public String getInteractionTypes(HttpServletRequest request) throws IOException {
         Collection<InteractionTypeExternal> availableTypes = Arrays.asList(InteractionTypeExternal.values());
         if (request != null) {
-            if (StringUtils.isNotBlank(request.getParameter(CypherQueryBuilder.TAXON_HTTP_PARAM_NAME))) {
+            if (StringUtils.isNotBlank(request.getParameter(ParamName.TAXON.getName()))) {
                 CypherQuery cypherQuery = CypherQueryBuilder.buildInteractionTypeQuery(request.getParameterMap());
                 String interactionTypes = new ResultFormatterCSV().format(CypherUtil.executeRemote(cypherQuery));
                 String[] interactionType = StringUtils.replace(interactionTypes, "\"", "").split("\n");

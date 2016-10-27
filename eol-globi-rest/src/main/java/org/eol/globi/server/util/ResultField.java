@@ -62,19 +62,25 @@ public enum ResultField {
     STUDY_DOI("study_doi"),
     STUDY_CITATION("study_citation"),
     STUDY_SOURCE_CITATION("study_source_citation"),
-    NUMBER_OF_DISTINCT_TAXA("number_of_distinct_taxa"),
-    NUMBER_OF_SOURCES("number_of_sources"),
-    NUMBER_OF_STUDIES("number_of_studies"),
-    NUMBER_OF_INTERACTIONS("number_of_interactions");
+    NUMBER_OF_DISTINCT_TAXA("number_of_distinct_taxa", "only available for /reports/* queries"),
+    NUMBER_OF_SOURCES("number_of_sources", "only available for /reports/* queries"),
+    NUMBER_OF_STUDIES("number_of_studies", "only available for /reports/* queries"),
+    NUMBER_OF_INTERACTIONS("number_of_interactions", "available for /interaction queries by source/target taxon name and/or interactionType only");
 
     public String getLabel() {
         return label;
     }
 
     private final String label;
+    private final String description;
 
-    private ResultField(String label) {
+    ResultField(String label) {
+        this(label, "a description of " + label);
+    }
+
+    ResultField(String label, String description) {
         this.label = label;
+        this.description = description;
     }
 
     public String toString() {
@@ -82,6 +88,6 @@ public enum ResultField {
     }
 
     public String getDescription() {
-        return "a description of " + getLabel();
+        return description;
     }
 }
