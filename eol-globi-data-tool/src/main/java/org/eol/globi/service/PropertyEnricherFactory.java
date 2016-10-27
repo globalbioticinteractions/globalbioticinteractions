@@ -17,7 +17,7 @@ public class PropertyEnricherFactory {
                 add(new ITISService());
                 add(new NCBIService());
                 add(new GBIFService());
-                add(new INatTaxonService());
+                add(new INaturalistTaxonService());
                 add(new EOLService());
                 add(new WoRMSService());
                 add(new GulfBaseService());

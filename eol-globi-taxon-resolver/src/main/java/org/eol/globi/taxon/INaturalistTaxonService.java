@@ -10,7 +10,6 @@ import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TaxonomyProvider;
-import org.eol.globi.service.LanguageCodeLookup;
 import org.eol.globi.service.PropertyEnricher;
 import org.eol.globi.service.PropertyEnricherException;
 import org.eol.globi.service.TaxonUtil;
@@ -20,9 +19,7 @@ import java.io.IOException;
 import java.util.*;
 import java.util.function.BinaryOperator;
 
-public class INatTaxonService implements PropertyEnricher {
-
-    private static final Log LOG = LogFactory.getLog(INatTaxonService.class);
+public class INaturalistTaxonService implements PropertyEnricher {
 
     @Override
     public Map<String, String> enrich(Map<String, String> properties) throws PropertyEnricherException {

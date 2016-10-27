@@ -15,14 +15,14 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.internal.matchers.StringContains.containsString;
 
-public class INatTaxonServiceTest {
+public class INaturalistTaxonServiceTest {
 
     @Test
     public void lookupByCode() throws IOException, PropertyEnricherException {
         Map<String, String> props = Collections.unmodifiableMap(new HashMap<String, String>() {{
             put(PropertyAndValueDictionary.EXTERNAL_ID, TaxonomyProvider.INATURALIST_TAXON.getIdPrefix() + "406089");
         }});
-        PropertyEnricher propertyEnricher = new INatTaxonService();
+        PropertyEnricher propertyEnricher = new INaturalistTaxonService();
         Map<String, String> enriched = propertyEnricher.enrich(props);
         assertThat(enriched.get(PropertyAndValueDictionary.NAME), is("Sophora prostrata"));
         assertThat(enriched.get(PropertyAndValueDictionary.RANK), is("species"));
