@@ -326,7 +326,7 @@ public class CypherQueryBuilderTest {
         CypherQuery query = buildInteractionQuery(params, MULTI_TAXON_DISTINCT_BY_NAME_ONLY);
         assertThat(query.getQuery(), is("START targetTaxon = node:taxonPaths({target_taxon_name}) " +
                 "MATCH sourceTaxon-[interaction:" + InteractUtil.interactionsCypherClause(INTERACTS_WITH) + "]->targetTaxon " +
-                "RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name,interaction.label as interaction_type"));
+                "RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name,interaction.label? as interaction_type"));
         Map<String, String> expected = new HashMap<String, String>() {{
             put("target_taxon_name", "path:\\\"Arthropoda\\\"");
         }};
