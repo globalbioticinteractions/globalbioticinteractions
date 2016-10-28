@@ -314,6 +314,24 @@ public class CypherQueryBuilderTest {
         }};
         assertThat(query.getParams(), is(expected));
     }
+    @Test
+    public void findInteractionsTaxaInteractionIndexTargetTaxaNumberOfInteractionsInteractionType() throws IOException {
+        HashMap<String, String[]> params = new HashMap<String, String[]>() {
+            {
+                put("targetTaxon", new String[]{"Arthropoda"});
+                put("field", new String[]{"source_taxon_name", "target_taxon_name", "interaction_type"});
+            }
+        };
+
+        CypherQuery query = buildInteractionQuery(params, MULTI_TAXON_DISTINCT_BY_NAME_ONLY);
+        assertThat(query.getQuery(), is("START targetTaxon = node:taxonPaths({target_taxon_name}) " +
+                "MATCH sourceTaxon-[interaction:" + InteractUtil.interactionsCypherClause(INTERACTS_WITH) + "]->targetTaxon " +
+                "RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name,interaction.label as interaction_type"));
+        Map<String, String> expected = new HashMap<String, String>() {{
+            put("target_taxon_name", "path:\\\"Arthropoda\\\"");
+        }};
+        assertThat(query.getParams(), is(expected));
+    }
 
     @Test
     public void findInteractionsTaxaInteractionIndexInteractionTypeTargetTaxaNumberOfInteractions() throws IOException {

@@ -535,6 +535,7 @@ public class CypherQueryBuilder {
             case MULTI_TAXON_DISTINCT_BY_NAME_ONLY:
                 selectors = new HashMap<ResultField, String>(defaultSelectors()) {
                     {
+                        put(INTERACTION_TYPE, "interaction.label");
                         put(NUMBER_OF_INTERACTIONS, "interaction.count");
                         put(SOURCE_SPECIMEN_LIFE_STAGE, "NULL");
                         put(SOURCE_SPECIMEN_BASIS_OF_RECORD, "NULL");
