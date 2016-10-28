@@ -1,5 +1,6 @@
 package org.eol.globi.server;
 
+import org.eol.globi.server.util.ResultField;
 import org.eol.globi.util.CypherQuery;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -70,7 +71,11 @@ public class InteractionController {
     private boolean isTaxonQueryOnly(Map parameterMap) {
         List<String> accordingTo = CypherQueryBuilder.collectParamValues(parameterMap, ParamName.ACCORDING_TO);
         List<String> bbox = CypherQueryBuilder.collectParamValues(parameterMap, ParamName.BBOX);
-        return accordingTo.isEmpty() && bbox.isEmpty();
+        List<String> fields = CypherQueryBuilder.collectRequestedFields(parameterMap);
+        return accordingTo.isEmpty()
+                && bbox.isEmpty()
+                && !fields.contains(ResultField.INTERACTION_TYPE.getLabel()
+        );
     }
 
     public static CypherQuery createQuery(final String sourceTaxonName, String interactionType, final String targetTaxonName, Map parameterMap, CypherQueryBuilder.QueryType queryType) throws IOException {

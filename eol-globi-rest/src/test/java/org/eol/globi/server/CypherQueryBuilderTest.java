@@ -4,6 +4,7 @@ import org.eol.globi.domain.InteractType;
 import org.eol.globi.server.util.ResultField;
 import org.eol.globi.util.CypherQuery;
 import org.eol.globi.util.InteractUtil;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -314,6 +315,7 @@ public class CypherQueryBuilderTest {
         }};
         assertThat(query.getParams(), is(expected));
     }
+
     @Test
     public void findInteractionsTaxaInteractionIndexTargetTaxaNumberOfInteractionsInteractionType() throws IOException {
         HashMap<String, String[]> params = new HashMap<String, String[]>() {
