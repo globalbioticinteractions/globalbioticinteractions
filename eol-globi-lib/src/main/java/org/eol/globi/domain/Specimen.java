@@ -6,6 +6,8 @@ import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.Transaction;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class Specimen extends NodeBacked {
@@ -117,22 +119,23 @@ public class Specimen extends NodeBacked {
         }
     }
 
-    protected static void createInteraction(NodeBacked donorSpecimen, NodeBacked recipientSpecimen, InteractType relType) {
+    public static List<Relationship> createInteraction(NodeBacked donorSpecimen, NodeBacked recipientSpecimen, InteractType relType) {
         final Relationship interactRel = donorSpecimen.createRelationshipToNoTx(recipientSpecimen, relType);
-        enrichWithInteractProps(relType, interactRel);
+        enrichWithInteractProps(relType, interactRel, false);
 
         final InteractType inverseRelType = InteractType.inverseOf(relType);
         Relationship inverseInteractRel = recipientSpecimen.createRelationshipToNoTx(donorSpecimen, inverseRelType);
-        if (inverseInteractRel != null) {
-            enrichWithInteractProps(inverseRelType, inverseInteractRel);
-            inverseInteractRel.setProperty(PropertyAndValueDictionary.INVERTED, PropertyAndValueDictionary.TRUE);
-        }
+        enrichWithInteractProps(relType, inverseInteractRel, true);
+        return inverseInteractRel == null ? Collections.singletonList(interactRel) : Arrays.asList(interactRel, interactRel);
     }
 
-    private static void enrichWithInteractProps(final InteractType interactType, final Relationship interactRel) {
+    public static void enrichWithInteractProps(final InteractType interactType, final Relationship interactRel, boolean inverted) {
         if (interactRel != null && interactType != null) {
             interactRel.setProperty(PropertyAndValueDictionary.LABEL, interactType.getLabel());
             interactRel.setProperty(PropertyAndValueDictionary.IRI, interactType.getIRI());
+            if (inverted) {
+                interactRel.setProperty(PropertyAndValueDictionary.INVERTED, PropertyAndValueDictionary.TRUE);
+            }
         }
     }
 

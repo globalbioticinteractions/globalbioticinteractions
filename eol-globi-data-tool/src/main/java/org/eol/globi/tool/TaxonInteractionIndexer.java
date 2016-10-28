@@ -5,6 +5,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.RelTypes;
+import org.eol.globi.domain.Specimen;
 import org.mapdb.DB;
 import org.mapdb.DBMaker;
 import org.mapdb.Fun;
@@ -17,7 +18,6 @@ import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.IndexHits;
 
 import java.util.Map;
-import java.util.Set;
 
 public class TaxonInteractionIndexer {
     private static final Log LOG = LogFactory.getLog(TaxonInteractionIndexer.class);
@@ -64,8 +64,10 @@ public class TaxonInteractionIndexer {
             final Node sourceTaxon = graphService.getNodeById(uniqueTaxonInteraction.a);
             final Node targetTaxon = graphService.getNodeById(uniqueTaxonInteraction.c);
             if (sourceTaxon != null && targetTaxon != null) {
-                final Relationship rel = sourceTaxon.createRelationshipTo(targetTaxon, InteractType.valueOf(uniqueTaxonInteraction.b));
-                rel.setProperty("count", taxonInteractions.get(uniqueTaxonInteraction));
+                final InteractType relType = InteractType.valueOf(uniqueTaxonInteraction.b);
+                final Long interactionCount = taxonInteractions.get(uniqueTaxonInteraction);
+                createInteraction(sourceTaxon, targetTaxon, relType, false, interactionCount);
+                createInteraction(targetTaxon, sourceTaxon, InteractType.inverseOf(relType), true, interactionCount);
             }
             count++;
         }
@@ -73,6 +75,12 @@ public class TaxonInteractionIndexer {
 
         watchForEntireRun.stop();
         LOG.info("created [" + count + "] taxon interactions in " + getProgressMsg(count, watchForEntireRun.getTime()));
+    }
+
+    public void createInteraction(Node sourceTaxon, Node targetTaxon, InteractType relType, boolean inverted, Long interactionCount) {
+        final Relationship interactRel = sourceTaxon.createRelationshipTo(targetTaxon, relType);
+        Specimen.enrichWithInteractProps(relType, interactRel, inverted);
+        interactRel.setProperty("count", interactionCount);
     }
 
     public void finalizeTx(Transaction tx) {
