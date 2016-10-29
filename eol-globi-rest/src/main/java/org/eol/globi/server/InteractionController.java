@@ -71,11 +71,7 @@ public class InteractionController {
     private boolean isTaxonQueryOnly(Map parameterMap) {
         List<String> accordingTo = CypherQueryBuilder.collectParamValues(parameterMap, ParamName.ACCORDING_TO);
         List<String> bbox = CypherQueryBuilder.collectParamValues(parameterMap, ParamName.BBOX);
-        List<String> fields = CypherQueryBuilder.collectRequestedFields(parameterMap);
-        return accordingTo.isEmpty()
-                && bbox.isEmpty()
-                && !fields.contains(ResultField.INTERACTION_TYPE.getLabel()
-        );
+        return accordingTo.isEmpty() && bbox.isEmpty();
     }
 
     public static CypherQuery createQuery(final String sourceTaxonName, String interactionType, final String targetTaxonName, Map parameterMap, CypherQueryBuilder.QueryType queryType) throws IOException {
