@@ -17,6 +17,8 @@ import org.eol.globi.data.StudyImporter;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.data.StudyImporterFactory;
 import org.eol.globi.db.GraphService;
+import org.eol.globi.domain.Taxon;
+import org.eol.globi.domain.TaxonomyProvider;
 import org.eol.globi.export.GraphExporterImpl;
 import org.eol.globi.geo.EcoregionFinder;
 import org.eol.globi.geo.EcoregionFinderFactoryImpl;
@@ -27,6 +29,7 @@ import org.eol.globi.service.PropertyEnricherException;
 import org.eol.globi.taxon.TaxonCacheService;
 import org.eol.globi.taxon.CorrectionService;
 import org.eol.globi.taxon.TaxonIndexImpl;
+import org.eol.globi.taxon.TaxonomyImporter;
 import org.eol.globi.util.HttpUtil;
 import org.neo4j.graphdb.GraphDatabaseService;
 
@@ -142,7 +145,19 @@ public class Normalizer {
             }, graphService);
             index.setIndexResolvedTaxaOnly(true);
 
-            new NameResolver(graphService, index).resolve();
+            TaxonFilter taxonCacheFilter = new TaxonFilter() {
+
+                private KnownBadNameFilter knownBadNameFilter = new KnownBadNameFilter();
+
+                @Override
+                public boolean shouldInclude(Taxon taxon) {
+                    return taxon != null
+                            && knownBadNameFilter.shouldInclude(taxon)
+                            && (!StringUtils.startsWith(taxon.getExternalId(), TaxonomyProvider.INATURALIST_TAXON.getIdPrefix()));
+                }
+            };
+
+            new NameResolver(graphService, index, taxonCacheFilter).resolve();
 
             enricher.shutdown();
             LOG.info("resolving names with taxon cache done.");

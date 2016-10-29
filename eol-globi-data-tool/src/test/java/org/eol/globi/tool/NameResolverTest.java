@@ -2,17 +2,11 @@ package org.eol.globi.tool;
 
 import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.NodeFactoryException;
-import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.service.PropertyEnricherException;
 import org.junit.Test;
-import org.neo4j.graphdb.Direction;
-import org.neo4j.graphdb.Relationship;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
@@ -57,11 +51,23 @@ public class NameResolverTest extends GraphDBTestCase {
     }
 
     @Test
-    public void seeminglyGoodName() {
-        assertFalse(NameResolver.seeminglyGoodNameOrId("sp", null));
-        assertTrue(NameResolver.seeminglyGoodNameOrId("sp", "EOL:1234"));
-        assertTrue(NameResolver.seeminglyGoodNameOrId("something long", null));
-        assertTrue(NameResolver.seeminglyGoodNameOrId(null, "EOL:123"));
+    public void iNaturalistTaxon() throws NodeFactoryException {
+        Specimen someOrganism = nodeFactory.createSpecimen(nodeFactory.createStudy("bla1"), new TaxonImpl("Heterotheca grandiflora", null));
+        Specimen someOtherOrganism = nodeFactory.createSpecimen(nodeFactory.createStudy("bla"), new TaxonImpl("Blaus bla", "INAT_TAXON:58831"));
+        Specimen someOtherOrganism2 = nodeFactory.createSpecimen(nodeFactory.createStudy("bla"), new TaxonImpl("Redus rha", "INAT_TAXON:126777"));
+        someOtherOrganism.ate(someOtherOrganism2);
+
+        final NameResolver nameResolver = new NameResolver(getGraphDb());
+        nameResolver.setBatchSize(1L);
+        nameResolver.resolve();
+
+        TaxonNode resolvedTaxon = taxonIndex.findTaxonById("INAT_TAXON:58831");
+        assertThat(resolvedTaxon, is(notNullValue()));
+        assertThat(resolvedTaxon.getExternalId(), is("INAT_TAXON:58831"));
+        assertThat(resolvedTaxon.getName(), is("Heterotheca grandiflora"));
+        TaxonNode resolvedTaxon2 = taxonIndex.findTaxonByName("Heterotheca grandiflora");
+        assertThat(resolvedTaxon2, is(notNullValue()));
+        assertThat(resolvedTaxon2.getExternalId(), is("EOL:578180"));
     }
 
     @Test

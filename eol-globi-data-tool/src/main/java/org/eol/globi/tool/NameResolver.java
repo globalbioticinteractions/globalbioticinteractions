@@ -5,10 +5,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.data.TaxonIndex;
-import org.eol.globi.domain.RelTypes;
-import org.eol.globi.domain.Specimen;
-import org.eol.globi.domain.Study;
-import org.eol.globi.domain.TaxonNode;
+import org.eol.globi.domain.*;
 import org.eol.globi.service.PropertyEnricher;
 import org.eol.globi.service.PropertyEnricherFactory;
 import org.eol.globi.taxon.CorrectionService;
@@ -21,20 +18,13 @@ import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.IndexHits;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class NameResolver {
     private static final Log LOG = LogFactory.getLog(NameResolver.class);
 
     private final GraphDatabaseService graphService;
 
     private final TaxonIndex taxonIndex;
-    public static final List<String> KNOWN_BAD_NAMES = new ArrayList<String>() {
-        {
-            add("sp");
-        }
-    };
+    private final TaxonFilter taxonFilter;
 
     public void setBatchSize(Long batchSize) {
         this.batchSize = batchSize;
@@ -47,8 +37,12 @@ public class NameResolver {
     }
 
     public NameResolver(GraphDatabaseService graphService, TaxonIndex index) {
+        this(graphService, index, new KnownBadNameFilter());
+    }
+    public NameResolver(GraphDatabaseService graphService, TaxonIndex index, TaxonFilter taxonFilter) {
         this.graphService = graphService;
         this.taxonIndex = index;
+        this.taxonFilter = taxonFilter;
     }
 
     public NameResolver(GraphDatabaseService graphService, PropertyEnricher enricher, CorrectionService corrector) {
@@ -80,7 +74,7 @@ public class NameResolver {
                     final Relationship describedAs = specimen.getUnderlyingNode().getSingleRelationship(RelTypes.ORIGINALLY_DESCRIBED_AS, Direction.OUTGOING);
                     final TaxonNode describedAsTaxon = new TaxonNode(describedAs.getEndNode());
                     try {
-                        if (seeminglyGoodNameOrId(describedAsTaxon.getName(), describedAsTaxon.getExternalId())) {
+                        if (taxonFilter.shouldInclude(describedAsTaxon)) {
                             TaxonNode resolvedTaxon = taxonIndex.getOrCreateTaxon(describedAsTaxon);
                             if (resolvedTaxon != null) {
                                 specimen.classifyAs(resolvedTaxon);
@@ -109,11 +103,8 @@ public class NameResolver {
         LOG.info("resolved [" + count + "] names in " + getProgressMsg(count, watchForEntireRun.getTime()));
     }
 
-    public static boolean seeminglyGoodNameOrId(String name, String externalId) {
-        return externalId != null || (name != null && name.length() > 1 && !KNOWN_BAD_NAMES.contains(name));
-    }
-
     public static String getProgressMsg(Long count, long duration) {
         return String.format("[%.2f] taxon/s over [%.2f] s", (float) count * 1000.0 / duration, duration / 1000.0);
     }
+
 }

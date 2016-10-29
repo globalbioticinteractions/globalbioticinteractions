@@ -1,0 +1,27 @@
+package org.eol.globi.tool;
+
+import org.eol.globi.domain.Taxon;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class KnownBadNameFilter implements TaxonFilter {
+    private static final List<String> KNOWN_BAD_NAMES = new ArrayList<String>() {
+        {
+            add("sp");
+            add("G.");
+            add("NA");
+        }
+    };
+
+    @Override
+    public boolean shouldInclude(Taxon taxon) {
+        return taxon != null
+                && seeminglyGoodNameOrId(taxon.getName(), taxon.getExternalId());
+    }
+
+    static boolean seeminglyGoodNameOrId(String name, String externalId) {
+        return externalId != null || (name != null && name.length() > 1 && !KNOWN_BAD_NAMES.contains(name));
+    }
+
+}
