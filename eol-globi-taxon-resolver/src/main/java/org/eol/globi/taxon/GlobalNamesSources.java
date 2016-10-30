@@ -9,6 +9,7 @@ public enum GlobalNamesSources {
     IF(5, TaxonomyProvider.INDEX_FUNGORUM),
     ITIS(3, TaxonomyProvider.ITIS),
     FISHBASE_CACHE(177, TaxonomyProvider.FISHBASE_CACHE),
+    INATURALIST(180, TaxonomyProvider.INATURALIST_TAXON),
     WORMS(9, TaxonomyProvider.WORMS);
 
     private final int id;
