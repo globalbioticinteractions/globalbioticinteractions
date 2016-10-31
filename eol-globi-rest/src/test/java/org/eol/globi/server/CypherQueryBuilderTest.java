@@ -41,7 +41,7 @@ public class CypherQueryBuilderTest {
     }
 
     private static String hasTaxon(String taxonName, String sourceOrTarget) {
-        return "(has(" + sourceOrTarget + "Taxon.path) AND " + sourceOrTarget + "Taxon.path =~ '(.*(" + taxonName + ").*)') ";
+        return "(has(" + sourceOrTarget + "Taxon.externalIds) AND " + sourceOrTarget + "Taxon.externalIds =~ '(.*(" + taxonName + ").*)') ";
     }
 
     private static String expectedReturnClause() {
