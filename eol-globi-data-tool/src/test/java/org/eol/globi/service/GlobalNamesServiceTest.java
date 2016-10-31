@@ -292,9 +292,12 @@ public class GlobalNamesServiceTest {
         props.put(PropertyAndValueDictionary.NAME, "Homo sapiens");
         Map<String, String> enrich = service.enrich(props);
         assertThat(enrich.get(PropertyAndValueDictionary.NAME), is("Homo sapiens"));
-        assertThat(enrich.get(PropertyAndValueDictionary.PATH), is("Animalia | Bilateria | Deuterostomia | Chordata | Vertebrata | Gnathostomata | Tetrapoda | Mammalia | Theria | Eutheria | Primates | Hominidae | Homo | Homo sapiens"));
-        assertThat(enrich.get(PropertyAndValueDictionary.PATH_IDS), is("ITIS:202423 | ITIS:914154 | ITIS:914156 | ITIS:158852 | ITIS:331030 | ITIS:914179 | ITIS:914181 | ITIS:179913 | ITIS:179916 | ITIS:179925 | ITIS:180089 | ITIS:180090 | ITIS:180091 | ITIS:180092"));
-        assertThat(enrich.get(PropertyAndValueDictionary.PATH_NAMES), is("Kingdom | Subkingdom | Infrakingdom | Phylum | Subphylum | Infraphylum | Superclass | Class | Subclass | Infraclass | Order | Family | Genus | Species"));
+        String expectedPath = "Animalia | Bilateria | Deuterostomia | Chordata | Vertebrata | Gnathostomata | Tetrapoda | Mammalia | Theria | Eutheria | Primates | Haplorrhini | Simiiformes | Hominoidea | Hominidae | Homininae | Homo | Homo sapiens";
+        assertThat(enrich.get(PropertyAndValueDictionary.PATH), is(expectedPath));
+        String expectedIds = "ITIS:202423 | ITIS:914154 | ITIS:914156 | ITIS:158852 | ITIS:331030 | ITIS:914179 | ITIS:914181 | ITIS:179913 | ITIS:179916 | ITIS:179925 | ITIS:180089 | ITIS:943773 | ITIS:943778 | ITIS:943782 | ITIS:180090 | ITIS:943805 | ITIS:180091 | ITIS:180092";
+        assertThat(enrich.get(PropertyAndValueDictionary.PATH_IDS), is(expectedIds));
+        String expectedRanks = "Kingdom | Subkingdom | Infrakingdom | Phylum | Subphylum | Infraphylum | Superclass | Class | Subclass | Infraclass | Order | Suborder | Infraorder | Superfamily | Family | Subfamily | Genus | Species";
+        assertThat(enrich.get(PropertyAndValueDictionary.PATH_NAMES), is(expectedRanks));
         assertThat(enrich.get(PropertyAndValueDictionary.RANK), is("Species"));
         return enrich;
     }
