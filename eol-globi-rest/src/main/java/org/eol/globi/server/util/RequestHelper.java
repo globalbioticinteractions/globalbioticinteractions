@@ -14,15 +14,6 @@ import java.util.Map;
 
 public class RequestHelper {
 
-    private static final List<String> SQUARE_PARAMS = new ArrayList<String>() {
-        {
-            add("nw_lat");
-            add("nw_lng");
-            add("se_lat");
-            add("se_lng");
-        }
-    };
-
     private static final List<String> POINT_PARAM = new ArrayList<String>() {
         {
             add("lat");
@@ -49,9 +40,6 @@ public class RequestHelper {
             addPoints(parameterMap, latLngs, POINT_PARAM);
         }
 
-        if (hasNoSpatialParams(latLngs)) {
-            addPoints(parameterMap, latLngs, SQUARE_PARAMS);
-        }
         return latLngs;
     }
 

@@ -60,17 +60,6 @@ public class InteractionControllerIT extends ITBase {
     }
 
     @Test
-    public void listPreyForPredatorLocationJsonV2() throws IOException {
-        String uri = getURLPrefix() + "interaction?type=json.v2&nw_lat=41.574361&nw_lng=-125.53344800000002&se_lat=32.750323&se_lng=-114.74487299999998&sourceTaxon=Animalia&targetTaxon=Insecta";
-        HttpGet httpGet = new HttpGet(uri);
-        HttpUtil.addJsonHeaders(httpGet);
-        HttpResponse execute = HttpUtil.getHttpClient().execute(httpGet);
-        String response = IOUtils.toString(execute.getEntity().getContent());
-        assertThat(MediaType.parseMediaType(execute.getHeaders("Content-Type")[0].getValue()), is(MediaType.parseMediaType("text/html;charset=UTF-8")));
-        assertThat(response, not(containsString("columns")));
-    }
-
-    @Test
     public void listPreyForPredatorDOT() throws IOException {
         String uri = getURLPrefix() + "taxon/Homo%20sapiens/preysOn?type=dot";
         HttpGet httpGet = new HttpGet(uri);
@@ -179,13 +168,6 @@ public class InteractionControllerIT extends ITBase {
         String uri = getURLPrefix() + "taxon/Homo%20sapiens/preysOn?includeObservations=true&lat=12.3&lng=12.5";
         String response = HttpUtil.getRemoteJson(uri);
         assertThat(response, is(not(nullValue())));
-    }
-
-    @Test
-    public void listPreyObservationsSearchBox() throws IOException {
-        String uri = getURLPrefix() + "taxon/Ariopsis%20felis/preysOn?includeObservations=true&nw_lat=29.3&nw_lng=-97.0&se_lat=26.3&se_lng=96.1";
-        String response = HttpUtil.getRemoteJson(uri);
-        assertThat(response, containsString("Hymenoptera"));
     }
 
 }

@@ -36,28 +36,6 @@ public class RequestHelperTest {
                 " AND loc.longitude = 12.1"));
     }
 
-    @Test
-    public void parseSearchSquare() {
-        Map<String, String[]> paramMap = new HashMap<String, String[]>();
-
-        /**
-         * NW (0)  --->    NE
-
-         *    ^              |
-         *    |              |
-         *    |              V
-         *
-         * SW      <---    SE (1)
-         *
-         * assuming that four points make a rectangle
-         */
-        paramMap.put("nw_lat", new String[]{"10"});
-        paramMap.put("nw_lng", new String[]{"-20"});
-        paramMap.put("se_lat", new String[]{"-10"});
-        paramMap.put("se_lng", new String[]{"20"});
-        assertLocationQuery(paramMap);
-    }
-
     private void assertLocationQuery(Map<String, String[]> paramMap) {
         List<LatLng> points = RequestHelper.parseSpatialSearchParams(paramMap);
         assertThat(points.size(), Is.is(2));

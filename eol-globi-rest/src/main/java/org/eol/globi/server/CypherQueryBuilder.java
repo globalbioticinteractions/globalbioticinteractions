@@ -481,7 +481,7 @@ public class CypherQueryBuilder {
     }
 
 
-    private static void appendReturnClause(final List<String> interactionType, StringBuilder query, QueryType returnType, List<String> requestedReturnFields) {
+    protected static void appendReturnClause(final List<String> interactionType, StringBuilder query, QueryType returnType, List<String> requestedReturnFields) {
         switch (returnType) {
             case SINGLE_TAXON_DISTINCT:
                 appendReturnClauseDistinct(interactionType.get(0), query, Arrays.asList(SOURCE_TAXON_NAME, INTERACTION_TYPE, TARGET_TAXON_NAME));

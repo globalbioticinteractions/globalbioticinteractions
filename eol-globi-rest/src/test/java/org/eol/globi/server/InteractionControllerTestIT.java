@@ -60,20 +60,6 @@ public class InteractionControllerTestIT {
         return request;
     }
 
-    private HttpServletRequest getLocationBoxRequest() {
-        HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
-        when(request.getParameterMap()).thenReturn(new HashMap<String, String[]>() {
-            {
-                put("nw_lat", new String[]{"18.34"});
-                put("nw_lng", new String[]{"-66.50"});
-                put("se_lat", new String[]{"18.14"});
-                put("se_lng", new String[]{"-66.48"});
-            }
-        });
-        return request;
-    }
-
-
     @Test
     public void findPreyAtLocationNoLongitude() throws IOException, URISyntaxException {
         String list = new CypherQueryExecutor(new InteractionController().findInteractionsNew(null, "Homo sapiens", CypherQueryBuilder.INTERACTION_PREYS_ON, null)).execute(null);
@@ -201,26 +187,6 @@ public class InteractionControllerTestIT {
 
         list = new CypherQueryExecutor(new InteractionController().findInteractionsNew(null, "Ariopsis felis", CypherQueryBuilder.INTERACTION_PREYS_ON, "Rattus rattus")).execute(null);
         assertThat(list, is(notNullValue()));
-    }
-
-    @Test
-    public void findInteractions() throws IOException {
-        HttpServletRequest request = getLocationRequest();
-        CypherQuery query = new InteractionController().findInteractionsNew(request);
-        String externalLink = new CypherQueryExecutor(query.getQuery(), query.getParams()).execute(request);
-        assertThat(externalLink, containsString("ate"));
-        assertThat(externalLink, containsString(ResultField.SOURCE_TAXON_PATH.getLabel()));
-        assertThat(externalLink, containsString(ResultField.TARGET_TAXON_PATH.getLabel()));
-    }
-
-    @Test
-    public void findInteractionsBox() throws IOException {
-        HttpServletRequest request = getLocationBoxRequest();
-        CypherQuery query = new InteractionController().findInteractionsNew(request);
-        String externalLink = new CypherQueryExecutor(query.getQuery(), query.getParams()).execute(request);
-        assertThat(externalLink, containsString("ate"));
-        assertThat(externalLink, containsString(ResultField.SOURCE_TAXON_PATH.getLabel()));
-        assertThat(externalLink, containsString(ResultField.TARGET_TAXON_PATH.getLabel()));
     }
 
 
