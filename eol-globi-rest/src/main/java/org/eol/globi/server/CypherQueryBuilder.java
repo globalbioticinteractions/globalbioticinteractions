@@ -422,18 +422,8 @@ public class CypherQueryBuilder {
 
     protected static CypherQuery interactionObservations(List<String> sourceTaxa, List<String> interactionTypes, List<String> targetTaxa, Map parameterMap, QueryType queryType) {
         StringBuilder query = appendStartMatchWhereClauses(sourceTaxa, interactionTypes, targetTaxa, parameterMap, queryType);
-        appendReturnClause(interactionTypes, query, queryType, parameterMap);
-        Map<String, String> params = getParams(sourceTaxa, targetTaxa,
-                collectParamValues(parameterMap, ParamName.ACCORDING_TO),
-                shouldIncludeExactNameMatchesOnly(parameterMap));
-
-        List<String> taxonIdPrefix = collectParamValues(parameterMap, ParamName.TAXON_EXTERNAL_ID_PREFIX);
-        if (taxonIdPrefix.size() > 0) {
-            String prefixRegex = taxonIdPrefix.get(0) + ".*";
-            params.put("source_taxon_external_id_prefix", prefixRegex);
-            params.put("target_taxon_external_id_prefix", prefixRegex);
-        }
-        return new CypherQuery(query.toString(), params);
+        appendReturnClause(interactionTypes, query, queryType, collectRequestedFields(parameterMap));
+        return new CypherQuery(query.toString(), getParams(sourceTaxa, targetTaxa, collectParamValues(parameterMap, ParamName.ACCORDING_TO), shouldIncludeExactNameMatchesOnly(parameterMap)));
     }
 
 
@@ -491,8 +481,7 @@ public class CypherQueryBuilder {
     }
 
 
-    private static void appendReturnClause(final List<String> interactionType, StringBuilder query, QueryType returnType, Map parameterMap) {
-        List<String> requestedReturnFields = collectRequestedFields(parameterMap);
+    private static void appendReturnClause(final List<String> interactionType, StringBuilder query, QueryType returnType, List<String> requestedReturnFields) {
         switch (returnType) {
             case SINGLE_TAXON_DISTINCT:
                 appendReturnClauseDistinct(interactionType.get(0), query, Arrays.asList(SOURCE_TAXON_NAME, INTERACTION_TYPE, TARGET_TAXON_NAME));
@@ -506,9 +495,7 @@ public class CypherQueryBuilder {
 
                             }
                         }));
-                appendReturnClause(query,
-                        actualReturnFields(requestedReturnFields, Arrays.asList(RETURN_FIELDS_SINGLE_TAXON_DEFAULT), selectors.keySet()),
-                        selectors);
+                appendReturnClause(query, actualReturnFields(requestedReturnFields, Arrays.asList(RETURN_FIELDS_SINGLE_TAXON_DEFAULT), selectors.keySet()), selectors);
                 break;
             case MULTI_TAXON_ALL:
                 selectors = appendSpecimenFields(
@@ -517,9 +504,7 @@ public class CypherQueryBuilder {
                                 put(INTERACTION_TYPE, "interaction.label");
                             }
                         }));
-                appendReturnClausez(query,
-                        actualReturnFields(requestedReturnFields, Arrays.asList(RETURN_FIELDS_MULTI_TAXON_DEFAULT), selectors.keySet()),
-                        selectors);
+                appendReturnClausez(query, actualReturnFields(requestedReturnFields, Arrays.asList(RETURN_FIELDS_MULTI_TAXON_DEFAULT), selectors.keySet()), selectors);
                 break;
             case MULTI_TAXON_DISTINCT:
                 selectors = new HashMap<ResultField, String>(defaultSelectors("sTaxon", "tTaxon")) {
@@ -545,7 +530,7 @@ public class CypherQueryBuilder {
                     }
                 };
                 List<ResultField> returnFields = actualReturnFields(requestedReturnFields, Arrays.asList(RETURN_FIELDS_MULTI_TAXON_DEFAULT), selectors.keySet());
-                appendReturnClauseDistinctz(query, returnFields, selectors, hasTaxonIdPrefix(parameterMap));
+                appendReturnClauseDistinctz(query, returnFields, selectors);
                 break;
             case MULTI_TAXON_DISTINCT_BY_NAME_ONLY:
                 selectors = new HashMap<ResultField, String>(defaultSelectors()) {
@@ -571,10 +556,6 @@ public class CypherQueryBuilder {
             default:
                 throw new IllegalArgumentException("invalid option [" + returnType + "]");
         }
-    }
-
-    private static boolean hasTaxonIdPrefix(Map parameterMap) {
-        return collectParamValues(parameterMap, ParamName.TAXON_EXTERNAL_ID_PREFIX).size() > 0;
     }
 
     protected static List<ResultField> actualReturnFields(List<String> requestedReturnFields, List<ResultField> defaultReturnFields, Collection<ResultField> availableReturnFields) {
@@ -768,20 +749,10 @@ public class CypherQueryBuilder {
         appendReturnFields(query, returnFields, selectors);
     }
 
-    protected static void appendReturnClauseDistinctz(StringBuilder query, List<ResultField> returnFields, Map<ResultField, String> selectors, boolean hasTaxonExternalIdPrefix) {
+    protected static void appendReturnClauseDistinctz(StringBuilder query, List<ResultField> returnFields, Map<ResultField, String> selectors) {
         query.append("WITH distinct targetTaxon as tTaxon, interaction.label as iType, sourceTaxon as sTaxon ");
-        if (hasTaxonExternalIdPrefix) {
-            query.append(taxonIdPrefixClause() +
-                    "WITH tTaxonSameAs as tTaxon, sTaxonSameAs as sTaxon, iType as iType "
-            );
-        }
         query.append("RETURN ");
         appendReturnFields(query, returnFields, selectors);
-    }
-
-    private static String taxonIdPrefixClause() {
-        return " MATCH s = sTaxon-[:SAME_AS*0..1]->sTaxonSameAs, t = tTaxon-[:SAME_AS*0..1]->tTaxonSameAs \n" +
-                "WHERE sTaxonSameAs.externalId =~ {source_taxon_prefix} AND tTaxonSameAs.externalId =~ {target_taxon_prefix} \n";
     }
 
     private static void appendReturnFields(StringBuilder query, List<ResultField> fields, Map<ResultField, String> selectors) {

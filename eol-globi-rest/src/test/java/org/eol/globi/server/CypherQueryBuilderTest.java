@@ -7,7 +7,11 @@ import org.eol.globi.util.InteractUtil;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.eol.globi.domain.InteractType.*;
 import static org.eol.globi.server.CypherQueryBuilder.QueryType.*;
@@ -25,7 +29,7 @@ public class CypherQueryBuilderTest {
     public static final String EXPECTED_MATCH_CLAUSE_DISTINCT = expectedMatchClause(EXPECTED_INTERACTION_CLAUSE_ALL_INTERACTIONS, false, false);
     public static final String EXPECTED_MATCH_CLAUSE_SPATIAL = expectedMatchClause(EXPECTED_INTERACTION_CLAUSE_ALL_INTERACTIONS, true, true);
     public static final String EXPECTED_ACCORDING_TO_START_CLAUSE = "START study = node:studies('*:*') WHERE (has(study.externalId) AND study.externalId =~ {accordingTo}) OR (has(study.citation) AND study.citation =~ {accordingTo}) OR (has(study.source) AND study.source =~ {accordingTo}) WITH study ";
-    public static final String EXPECTED_WHERE_CLAUSE_MAMMALIA = "WHERE " + hasTargetTaxon("Mammalia");
+    public static final String EXTERNAL_WHERE_CLAUSE_MAMMALIA = "WHERE " + hasTargetTaxon("Mammalia");
     public static final String HAS_TARGET_TAXON_PLANTAE = hasTargetTaxon("Plantae");
 
     private static String hasTargetTaxon(String taxonName) {
@@ -68,49 +72,21 @@ public class CypherQueryBuilderTest {
             "loc.longitude? as longitude," +
             "study.title as study_title";
 
-    public static final String EXPECTED_RETURN_CLAUSE_DISTINCT_WITH = "WITH distinct targetTaxon as tTaxon, interaction.label as iType, sourceTaxon as sTaxon ";
-
-    public static final String EXPECTED_RETURN_CLAUSE_DISTINCT_SUFFIX =
+    public static final String EXPECTED_RETURN_CLAUSE_DISTINCT = "WITH distinct targetTaxon as tTaxon, interaction.label as iType, sourceTaxon as sTaxon " +
             "RETURN sTaxon.externalId? as source_taxon_external_id," +
-                    "sTaxon.name as source_taxon_name," +
-                    "sTaxon.path? as source_taxon_path," +
-                    "NULL as source_specimen_life_stage," +
-                    "NULL as source_specimen_basis_of_record," +
-                    "iType as interaction_type," +
-                    "tTaxon.externalId? as target_taxon_external_id," +
-                    "tTaxon.name as target_taxon_name," +
-                    "tTaxon.path? as target_taxon_path," +
-                    "NULL as target_specimen_life_stage," +
-                    "NULL as target_specimen_basis_of_record," +
-                    "NULL as latitude," +
-                    "NULL as longitude," +
-                    "NULL as study_title";
-    public static final String EXPECTED_RETURN_CLAUSE_DISTINCT = EXPECTED_RETURN_CLAUSE_DISTINCT_WITH + EXPECTED_RETURN_CLAUSE_DISTINCT_SUFFIX;
-
-    public static String taxonIdPrefixWithDistinct(String sourceTaxonLabel, String targetTaxonLabel) {
-        return taxonIdPrefixWithMatch(sourceTaxonLabel, targetTaxonLabel) +
-                "WITH " + targetTaxonLabel + "SameAs as " + targetTaxonLabel + ", " + sourceTaxonLabel + "SameAs as " + sourceTaxonLabel + ", iType as iType ";
-    }
-
-    public static String taxonIdPrefixWith2(String sourceTaxonLabel, String targetTaxonLabel) {
-        return taxonIdPrefixWithMatch(sourceTaxonLabel, targetTaxonLabel) +
-                "WITH " + sourceTaxonLabel + "SameAs as " + sourceTaxonLabel +
-                ", sourceSpecimen" +
-                ", " + targetTaxonLabel + "SameAs as " + targetTaxonLabel +
-                ", targetSpecimen" +
-                ", iType " +
-                ", loc" +
-                ", study ";
-    }
-
-    private static String taxonIdPrefixWithMatch(String sourceTaxonLabel, String targetTaxonLabel) {
-        return "MATCH s = " + sourceTaxonLabel + "-[:SAME_AS*0..1]->" + sourceTaxonLabel + "SameAs, t = " + targetTaxonLabel + "-[:SAME_AS*0..1]->" + targetTaxonLabel + "SameAs " +
-                "WHERE " + sourceTaxonLabel + "SameAs.externalId =~ {source_taxon_prefix} AND " + targetTaxonLabel + "SameAs.externalId =~ {target_taxon_prefix} ";
-    }
-
-    public static final String EXPECTED_RETURN_CLAUSE_DISTINCT_TAXONPROVIDER = EXPECTED_RETURN_CLAUSE_DISTINCT_WITH
-            + taxonIdPrefixWithDistinct("sTaxon", "tTaxon") +
-            EXPECTED_RETURN_CLAUSE_DISTINCT_SUFFIX;
+            "sTaxon.name as source_taxon_name," +
+            "sTaxon.path? as source_taxon_path," +
+            "NULL as source_specimen_life_stage," +
+            "NULL as source_specimen_basis_of_record," +
+            "iType as interaction_type," +
+            "tTaxon.externalId? as target_taxon_external_id," +
+            "tTaxon.name as target_taxon_name," +
+            "tTaxon.path? as target_taxon_path," +
+            "NULL as target_specimen_life_stage," +
+            "NULL as target_specimen_basis_of_record," +
+            "NULL as latitude," +
+            "NULL as longitude," +
+            "NULL as study_title";
 
     @Test
     public void findInteractionForSourceAndTargetTaxaLocations() throws IOException {
@@ -814,7 +790,7 @@ public class CypherQueryBuilderTest {
 
         String expectedQuery = "START sourceTaxon = node:taxonPaths({source_taxon_name}) " +
                 expectedMatchClause(expectedInteractionClause(PREYS_UPON, PARASITE_OF), false, true) +
-                EXPECTED_WHERE_CLAUSE_MAMMALIA +
+                EXTERNAL_WHERE_CLAUSE_MAMMALIA +
                 EXPECTED_RETURN_CLAUSE;
         CypherQuery query = buildInteractionQuery(params, MULTI_TAXON_ALL);
         assertThat(query.getQuery(), is(expectedQuery));
@@ -833,36 +809,11 @@ public class CypherQueryBuilderTest {
 
         String expectedQuery = "START sourceTaxon = node:taxonPaths({source_taxon_name}) " +
                 expectedMatchClause(expectedInteractionClause(PREYS_UPON, PARASITE_OF), false, false) +
-                EXPECTED_WHERE_CLAUSE_MAMMALIA +
+                EXTERNAL_WHERE_CLAUSE_MAMMALIA +
                 EXPECTED_RETURN_CLAUSE_DISTINCT;
         CypherQuery query = buildInteractionQuery(params, MULTI_TAXON_DISTINCT);
         assertThat(query.getQuery(), is(expectedQuery));
         assertThat(query.getParams().toString(), is("{source_taxon_name=path:\\\"Arthropoda\\\", target_taxon_name=path:\\\"Mammalia\\\"}"));
-    }
-
-    @Test
-    public void findInteractionDistinctNameProvider() throws IOException {
-        HashMap<String, String[]> params = new HashMap<String, String[]>() {
-            {
-                put("sourceTaxon", new String[]{"Arthropoda"});
-                put("targetTaxon", new String[]{"Mammalia"});
-                put("interactionType", new String[]{"preysOn"});
-                put("taxonExternalIdPrefix", new String[]{"SOME_PREFIX"});
-            }
-        };
-
-        String expectedQuery = "START sourceTaxon = node:taxonPaths({source_taxon_name}) " +
-                expectedMatchClause(expectedInteractionClause(PREYS_UPON), false, false) +
-                EXPECTED_WHERE_CLAUSE_MAMMALIA +
-                EXPECTED_RETURN_CLAUSE_DISTINCT_TAXONPROVIDER;
-        CypherQuery query = buildInteractionQuery(params, MULTI_TAXON_DISTINCT);
-        assertThat(query.getQuery(), is(expectedQuery));
-        assertThat(query.getParams(), is((Map<String, String>) new TreeMap<String, String>() {{
-            put("source_taxon_name", "path:\\\"Arthropoda\\\"");
-            put("target_taxon_name", "path:\\\"Mammalia\\\"");
-            put("source_taxon_external_id_prefix", "SOME_PREFIX.*");
-            put("target_taxon_external_id_prefix", "SOME_PREFIX.*");
-        }}));
     }
 
 
@@ -878,7 +829,7 @@ public class CypherQueryBuilderTest {
 
         String expectedQuery = "START sourceTaxon = node:taxonPaths({source_taxon_name}) " +
                 expectedMatchClause(expectedInteractionClause(POLLINATED_BY), false, true) +
-                EXPECTED_WHERE_CLAUSE_MAMMALIA +
+                EXTERNAL_WHERE_CLAUSE_MAMMALIA +
                 EXPECTED_RETURN_CLAUSE;
         CypherQuery query = buildInteractionQuery(params, MULTI_TAXON_ALL);
         assertThat(query.getQuery(), is(expectedQuery));
@@ -897,7 +848,7 @@ public class CypherQueryBuilderTest {
 
         String expectedQuery = "START sourceTaxon = node:taxonPaths({source_taxon_name}) " +
                 expectedMatchClause(expectedInteractionClause(SYMBIONT_OF), false, true) +
-                EXPECTED_WHERE_CLAUSE_MAMMALIA +
+                EXTERNAL_WHERE_CLAUSE_MAMMALIA +
                 EXPECTED_RETURN_CLAUSE;
         CypherQuery query = buildInteractionQuery(params, MULTI_TAXON_ALL);
         assertThat(query.getQuery(), is(expectedQuery));
@@ -916,7 +867,7 @@ public class CypherQueryBuilderTest {
 
         String expectedQuery = "START sourceTaxon = node:taxonPaths({source_taxon_name}) " +
                 expectedMatchClause(EXPECTED_INTERACTION_CLAUSE_ALL_INTERACTIONS, false, true) +
-                EXPECTED_WHERE_CLAUSE_MAMMALIA +
+                EXTERNAL_WHERE_CLAUSE_MAMMALIA +
                 EXPECTED_RETURN_CLAUSE;
         CypherQuery query = buildInteractionQuery(params, MULTI_TAXON_ALL);
         assertThat(query.getQuery(), is(expectedQuery));
@@ -948,7 +899,7 @@ public class CypherQueryBuilderTest {
 
         String expectedQuery = "START sourceTaxon = node:taxonPaths({source_taxon_name}) " +
                 expectedMatchClause(EXPECTED_INTERACTION_CLAUSE_ALL_INTERACTIONS, false, true) +
-                EXPECTED_WHERE_CLAUSE_MAMMALIA +
+                EXTERNAL_WHERE_CLAUSE_MAMMALIA +
                 EXPECTED_RETURN_CLAUSE;
         CypherQuery query = buildInteractionQuery(params, MULTI_TAXON_ALL);
         assertThat(query.getQuery(), is(expectedQuery));
