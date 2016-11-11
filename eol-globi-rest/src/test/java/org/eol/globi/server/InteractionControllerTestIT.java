@@ -158,6 +158,42 @@ public class InteractionControllerTestIT {
     }
 
     @Test
+    public void findIdPrefix() throws IOException, URISyntaxException {
+        HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
+        when(request.getParameter("taxonIdPrefix")).thenReturn("EOL");
+        when(request.getParameter("sourceTaxon")).thenReturn("Quercus");
+        when(request.getParameterMap()).thenReturn(new HashMap<String, String[]>() {
+            {
+                put("taxonIdPrefix", new String[]{"EOL"});
+                put("sourceTaxon", new String[]{"Quercus"});
+            }
+        });
+
+        String list = new CypherQueryExecutor(new InteractionController().findInteractionsNew(request)).execute(request);
+        assertThat(list, containsString("\"source\":"));
+        assertThat(list, containsString("\"target\":"));
+        assertThat(list, containsString("\"type\":\"preysOn\""));
+    }
+
+    @Test
+    public void findIdPrefixIncludeObservations() throws IOException, URISyntaxException {
+        HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
+        when(request.getParameter("taxonIdPrefix")).thenReturn("NCBI");
+        when(request.getParameter("sourceTaxon")).thenReturn("Quercus");
+        when(request.getParameter("includeObservations")).thenReturn("true");
+        when(request.getParameterMap()).thenReturn(new HashMap<String, String[]>() {
+            {
+                put("taxonIdPrefix", new String[]{"NCBI"});
+                put("sourceTaxon", new String[]{"Quercus"});
+                put("includeObservations", new String[]{"true"});
+            }
+        });
+
+        String list = new CypherQueryExecutor(new InteractionController().findInteractionsNew(request)).execute(request);
+        assertThat(list, containsString("Viridiplantae"));
+    }
+
+    @Test
     public void findPreyOfJSONv2() throws IOException, URISyntaxException {
         HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
         when(request.getParameter("type")).thenReturn("json.v2");

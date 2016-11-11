@@ -1,6 +1,5 @@
 package org.eol.globi.server;
 
-import org.eol.globi.server.util.ResultField;
 import org.eol.globi.util.CypherQuery;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;

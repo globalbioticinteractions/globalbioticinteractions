@@ -284,8 +284,8 @@ public class CypherQueryBuilderTest {
         CypherQuery query = buildInteractionQuery(params, MULTI_TAXON_DISTINCT_BY_NAME_ONLY);
         Map<String, String> expected = new HashMap<String, String>() {{
             put("target_taxon_name", "path:\\\"Arthropoda\\\"");
-            put("source_taxon_prefix", "(\\QsomePrefix\\E).*");
-            put("target_taxon_prefix", "(\\QsomePrefix\\E).*");
+            put("source_taxon_prefix", "somePrefix.*");
+            put("target_taxon_prefix", "somePrefix.*");
         }};
         assertThat(query.getParams(), is(expected));
     }

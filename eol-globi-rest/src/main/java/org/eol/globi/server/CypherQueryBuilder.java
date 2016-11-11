@@ -221,7 +221,7 @@ public class CypherQueryBuilder {
     }
 
     public static String regexPrefixNotLucene(List<String> terms) {
-        return regexStrict(terms, false) + ".*";
+        return regexStrict(terms) + ".*";
     }
 
     public static String regexWildcard(List<String> terms) {
@@ -260,8 +260,9 @@ public class CypherQueryBuilder {
 
         List<String> prefix = collectParamValues(parameterMap, ParamName.TAXON_ID_PREFIX);
         if (prefix != null && prefix.size() > 0) {
-            paramMap.put("source_taxon_prefix", regexPrefixNotLucene(prefix));
-            paramMap.put("target_taxon_prefix", regexPrefixNotLucene(prefix));
+            String firstPrefix = prefix.get(0) + ".*";
+            paramMap.put("source_taxon_prefix", firstPrefix);
+            paramMap.put("target_taxon_prefix", firstPrefix);
         }
 
         return paramMap;
