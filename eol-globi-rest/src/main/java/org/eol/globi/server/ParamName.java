@@ -19,7 +19,9 @@ public enum ParamName {
     TARGET_TAXON("targetTaxon"),
     TAXON("taxon"),
 
-    BBOX("bbox");
+    BBOX("bbox"),
+
+    TAXON_ID_PREFIX("taxonIdPrefix");
 
     private String name;
 

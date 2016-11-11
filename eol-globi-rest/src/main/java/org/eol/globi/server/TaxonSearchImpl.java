@@ -132,7 +132,7 @@ public class TaxonSearchImpl implements TaxonSearch {
         if (request != null) {
             requestedFields.addAll(CypherQueryBuilder.collectRequestedFields(request.getParameterMap()));
         }
-        CypherQueryBuilder.appendReturnClausez(query, CypherQueryBuilder.actualReturnFields(requestedFields, Arrays.asList(returnFieldsCloseMatches), selectors.keySet()), selectors);
+        CypherReturnClauseBuilder.appendReturnClauseDistinctz(query, CypherReturnClauseBuilder.actualReturnFields(requestedFields, Arrays.asList(returnFieldsCloseMatches), selectors.keySet()), selectors);
         return CypherQueryBuilder.createPagedQuery(request, new CypherQuery(query.toString(), null), 15);
     }
 
@@ -158,7 +158,7 @@ public class TaxonSearchImpl implements TaxonSearch {
         }
 
         query.append(" MATCH someTaxon-[:SAME_AS*0..1]->taxon WHERE has(taxon.externalUrl) WITH DISTINCT(taxon.externalUrl) as externalUrl ");
-        CypherQueryBuilder.appendReturnClausez(query, CypherQueryBuilder.actualReturnFields(requestedFields, Arrays.asList(returnFieldsCloseMatches), selectors.keySet()), selectors);
+        CypherReturnClauseBuilder.appendReturnClauseDistinctz(query, CypherReturnClauseBuilder.actualReturnFields(requestedFields, Arrays.asList(returnFieldsCloseMatches), selectors.keySet()), selectors);
         final CypherQuery query1 = new CypherQuery(query.toString(), new HashMap() {
             {
                 put("pathQuery", pathQuery);
