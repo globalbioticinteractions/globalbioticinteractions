@@ -271,6 +271,26 @@ public class CypherQueryBuilderTest {
     }
 
     @Test
+    public void findInteractionsTaxaInteractionIndexTargetTaxaOnlyTaxonIdPrefix() throws IOException {
+        HashMap<String, String[]> params = new HashMap<String, String[]>() {
+            {
+                put("targetTaxon", new String[]{"Arthropoda"});
+                put("interactionType", new String[]{"preyedUponBy"});
+                put("taxonIdPrefix", new String[]{"somePrefix"});
+                put("field", new String[]{"source_taxon_name", "target_taxon_name"});
+            }
+        };
+
+        CypherQuery query = buildInteractionQuery(params, MULTI_TAXON_DISTINCT_BY_NAME_ONLY);
+        Map<String, String> expected = new HashMap<String, String>() {{
+            put("target_taxon_name", "path:\\\"Arthropoda\\\"");
+            put("source_taxon_prefix", "somePrefix");
+            put("target_taxon_prefix", "somePrefix");
+        }};
+        assertThat(query.getParams(), is(expected));
+    }
+
+    @Test
     public void findInteractionsTaxaInteractionIndexTargetTaxaNumberOfInteractions() throws IOException {
         HashMap<String, String[]> params = new HashMap<String, String[]>() {
             {
