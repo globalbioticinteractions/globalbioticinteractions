@@ -161,6 +161,18 @@ public class CypherReturnClauseBuilderTest {
     }
 
     @Test
+    public void multiTaxonDistinctByNameOnly() {
+        StringBuilder query = new StringBuilder();
+        CypherReturnClauseBuilder.appendReturnClauseMap(
+                query,
+                CypherQueryBuilder.QueryType.MULTI_TAXON_DISTINCT_BY_NAME_ONLY,
+                knownFields());
+        assertThat(query.toString(), is("RETURN " +
+                "sourceTaxon.name as source_taxon_name," +
+                "targetTaxon.name as target_taxon_name"));
+    }
+
+    @Test
     public void multiTaxonDistinctUnknownReturnFields() {
         StringBuilder query = new StringBuilder();
         CypherReturnClauseBuilder.appendReturnClauseMap(

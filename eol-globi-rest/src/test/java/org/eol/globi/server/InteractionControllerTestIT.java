@@ -162,13 +162,13 @@ public class InteractionControllerTestIT {
             {
                 put("taxonIdPrefix", new String[]{"EOL"});
                 put("sourceTaxon", new String[]{"Quercus"});
+                put("interactionType", new String[]{"hasPathogen"});
             }
         });
 
         String list = new CypherQueryExecutor(new InteractionController().findInteractions(request)).execute(request);
-        assertThat(list, containsString("\"source\":"));
-        assertThat(list, containsString("\"target\":"));
-        assertThat(list, containsString("\"type\":\"preysOn\""));
+        assertThat(list, containsString("Plantae"));
+        assertThat(list, containsString("hasPathogen"));
     }
 
     @Test

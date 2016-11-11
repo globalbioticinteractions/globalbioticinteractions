@@ -82,11 +82,12 @@ public class CypherReturnClauseBuilder {
     }
 
     static void appendReturnClauseMap(StringBuilder query, CypherQueryBuilder.QueryType queryType, Map parameterMap) {
-        if (isDistinct(queryType)) {
+        if (isDistinct(queryType) && usesSpecimenData(queryType)) {
             query.append("WITH distinct " + ResultObject.TARGET_TAXON.getLabel() + " as " + ResultObject.TARGET_TAXON_DISTINCT.getLabel() + ", "
                     + ResultObject.INTERACTION.getLabel() + ".label as " + ResultObject.INTERACTION_TYPE.getLabel() + ", " +
-                    ResultObject.SOURCE_TAXON.getLabel() + " as " + ResultObject.SOURCE_TAXON_DISTINCT.getLabel() + " ");
+                    ResultObject.SOURCE_TAXON.getLabel() + " as " + ResultObject.SOURCE_TAXON_DISTINCT.getLabel());
         }
+        query.append(" ");
         appendTaxonIdPrefixClause(query, queryType, parameterMap);
         appendReturnClause(query, queryType, CypherQueryBuilder.collectRequestedFields(parameterMap));
     }
@@ -99,12 +100,13 @@ public class CypherReturnClauseBuilder {
 
             String sourceLabel = sourcePrefix + "Taxon";
             String targetLabel = targetPrefix + "Taxon";
+            String interactionLabel = isDistinct(queryType)
+                    ? ResultObject.INTERACTION_TYPE.getLabel()
+                    : ResultObject.INTERACTION.getLabel();
 
             query.append("WITH ");
             List<String> inParams;
-            if (isDistinct(queryType)) {
-                inParams = Arrays.asList(sourceLabel, ResultObject.INTERACTION_TYPE.getLabel(), targetLabel);
-            } else {
+            if (usesSpecimenData(queryType) && !isDistinct(queryType)) {
                 inParams = Arrays.asList(sourceLabel,
                         ResultObject.SOURCE_SPECIMEN.getLabel(),
                         ResultObject.INTERACTION.getLabel(),
@@ -112,15 +114,15 @@ public class CypherReturnClauseBuilder {
                         ResultObject.TARGET_SPECIMEN.getLabel(),
                         ResultObject.LOCATION.getLabel(),
                         ResultObject.STUDY.getLabel());
+            } else {
+                inParams = Arrays.asList(sourceLabel, interactionLabel, targetLabel);
             }
             query.append(StringUtils.join(inParams, ", ")).append(" ");
             query.append(taxonIdPrefixWithMatch(sourceLabel, targetLabel));
 
             query.append("WITH ");
             List<String> outParams;
-            if (isDistinct(queryType)) {
-                outParams = Arrays.asList(sameAs(sourceLabel), ResultObject.INTERACTION_TYPE.getLabel(), sameAs(targetLabel));
-            } else {
+            if (usesSpecimenData(queryType) && !isDistinct(queryType)) {
                 outParams = Arrays.asList(sameAs(sourceLabel),
                         ResultObject.SOURCE_SPECIMEN.getLabel(),
                         ResultObject.INTERACTION.getLabel(),
@@ -128,10 +130,20 @@ public class CypherReturnClauseBuilder {
                         ResultObject.TARGET_SPECIMEN.getLabel(),
                         ResultObject.LOCATION.getLabel(),
                         ResultObject.STUDY.getLabel());
+            } else {
+                outParams = Arrays.asList(sameAs(sourceLabel), interactionLabel, sameAs(targetLabel));
             }
 
             query.append(StringUtils.join(outParams, ", ")).append(" ");
         }
+    }
+
+    private static boolean usesSpecimenData(CypherQueryBuilder.QueryType queryType) {
+        List<CypherQueryBuilder.QueryType> queryTypes = Arrays.asList(
+                CypherQueryBuilder.QueryType.MULTI_TAXON_ALL,
+                CypherQueryBuilder.QueryType.MULTI_TAXON_DISTINCT
+        );
+        return queryTypes.contains(queryType);
     }
 
     private static String sameAs(String sourceLabel) {
