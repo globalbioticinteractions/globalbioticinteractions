@@ -1,8 +1,6 @@
 package org.eol.globi.server;
 
 import org.apache.commons.lang3.ArrayUtils;
-import org.eol.globi.server.util.ResultField;
-import org.eol.globi.util.CypherQuery;
 import org.eol.globi.util.CypherUtil;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -24,20 +22,20 @@ public class InteractionControllerTestIT {
 
     @Test
     public void findPrey() throws IOException, URISyntaxException {
-        String list = new CypherQueryExecutor(new InteractionController().findInteractionsNew(null, "Homo sapiens", CypherQueryBuilder.INTERACTION_PREYS_ON, null)).execute(null);
+        String list = new CypherQueryExecutor(new InteractionController().findInteractions(null, "Homo sapiens", CypherQueryBuilder.INTERACTION_PREYS_ON, null)).execute(null);
         assertThat(list, containsString("Homo sapiens"));
     }
 
     @Test
     public void findPreyExternalId() throws IOException, URISyntaxException {
-        String list = new CypherQueryExecutor(new InteractionController().findInteractionsNew(null, "OTT:770315", CypherQueryBuilder.INTERACTION_PREYS_ON, null)).execute(null);
+        String list = new CypherQueryExecutor(new InteractionController().findInteractions(null, "OTT:770315", CypherQueryBuilder.INTERACTION_PREYS_ON, null)).execute(null);
         assertThat(list, containsString("Homo sapiens"));
     }
 
     @Test
     public void findThunnusPrey() throws IOException, URISyntaxException {
         // see https://github.com/jhpoelen/eol-globi-data/issues/11
-        String list = new CypherQueryExecutor(new InteractionController().findInteractionsNew(null, "Thunnus", CypherQueryBuilder.INTERACTION_EATS, null)).execute(null);
+        String list = new CypherQueryExecutor(new InteractionController().findInteractions(null, "Thunnus", CypherQueryBuilder.INTERACTION_EATS, null)).execute(null);
         assertThat(list, containsString("Thunnus alalunga"));
         assertThat(list, containsString("Thunnus albacares"));
     }
@@ -45,7 +43,7 @@ public class InteractionControllerTestIT {
     @Test
     public void findPreyAtLocation() throws IOException, URISyntaxException {
         HttpServletRequest request = getLocationRequest();
-        String list = new CypherQueryExecutor(new InteractionController().findInteractionsNew(request, "Homo sapiens", CypherQueryBuilder.INTERACTION_EATS, null)).execute(request);
+        String list = new CypherQueryExecutor(new InteractionController().findInteractions(request, "Homo sapiens", CypherQueryBuilder.INTERACTION_EATS, null)).execute(request);
         assertThat(list, is(notNullValue()));
     }
 
@@ -62,13 +60,13 @@ public class InteractionControllerTestIT {
 
     @Test
     public void findPreyAtLocationNoLongitude() throws IOException, URISyntaxException {
-        String list = new CypherQueryExecutor(new InteractionController().findInteractionsNew(null, "Homo sapiens", CypherQueryBuilder.INTERACTION_PREYS_ON, null)).execute(null);
+        String list = new CypherQueryExecutor(new InteractionController().findInteractions(null, "Homo sapiens", CypherQueryBuilder.INTERACTION_PREYS_ON, null)).execute(null);
         assertThat(list, is(notNullValue()));
     }
 
     @Test
     public void findPreyAtLocationNoLatitude() throws IOException, URISyntaxException {
-        String list = new CypherQueryExecutor(new InteractionController().findInteractionsNew(null, "Homo sapiens", CypherQueryBuilder.INTERACTION_PREYS_ON, null)).execute(null);
+        String list = new CypherQueryExecutor(new InteractionController().findInteractions(null, "Homo sapiens", CypherQueryBuilder.INTERACTION_PREYS_ON, null)).execute(null);
         assertThat(list, is(notNullValue()));
     }
 
@@ -87,9 +85,9 @@ public class InteractionControllerTestIT {
 
     @Test
     public void findPredatorObservations() throws IOException, URISyntaxException {
-        String list = new CypherQueryExecutor(new InteractionController().findInteractionsNew(null, "Ariopsis felis", CypherQueryBuilder.INTERACTION_PREYS_ON, null)).execute(null);
+        String list = new CypherQueryExecutor(new InteractionController().findInteractions(null, "Ariopsis felis", CypherQueryBuilder.INTERACTION_PREYS_ON, null)).execute(null);
         assertThat(list, is(notNullValue()));
-        list = new CypherQueryExecutor(new InteractionController().findInteractionsNew(null, "Rattus rattus", CypherQueryBuilder.INTERACTION_PREYS_ON, null)).execute(null);
+        list = new CypherQueryExecutor(new InteractionController().findInteractions(null, "Rattus rattus", CypherQueryBuilder.INTERACTION_PREYS_ON, null)).execute(null);
         assertThat(list, is(notNullValue()));
     }
 
@@ -98,7 +96,7 @@ public class InteractionControllerTestIT {
         HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
         when(request.getParameter("type")).thenReturn("csv");
 
-        String list = new CypherQueryExecutor(new InteractionController().findInteractionsNew(request, "Ariopsis felis", CypherQueryBuilder.INTERACTION_EATS, null)).execute(request);
+        String list = new CypherQueryExecutor(new InteractionController().findInteractions(request, "Ariopsis felis", CypherQueryBuilder.INTERACTION_EATS, null)).execute(request);
         String[] rows = list.split("\n");
         String[] rows_no_header = ArrayUtils.remove(rows, 0);
         assertThat(rows_no_header.length > 0, is(true));
@@ -122,7 +120,7 @@ public class InteractionControllerTestIT {
         when(request.getParameter("type")).thenReturn("csv");
         when(request.getParameter("includeObservations")).thenReturn("true");
 
-        String list = new CypherQueryExecutor(new InteractionController().findInteractionsNew(request, "Ariopsis felis", CypherQueryBuilder.INTERACTION_PREYS_ON, null)).execute(request);
+        String list = new CypherQueryExecutor(new InteractionController().findInteractions(request, "Ariopsis felis", CypherQueryBuilder.INTERACTION_PREYS_ON, null)).execute(request);
         assertThat(list, allOf(containsString("\"latitude\",\"longitude\""), not(containsString(",null,"))));
     }
 
@@ -132,7 +130,7 @@ public class InteractionControllerTestIT {
         when(request.getParameter("type")).thenReturn("json.v2");
         when(request.getParameter("includeObservations")).thenReturn("true");
 
-        String list = new CypherQueryExecutor(new InteractionController().findInteractionsNew(request, "Ariopsis felis", CypherQueryBuilder.INTERACTION_EATS, null)).execute(request);
+        String list = new CypherQueryExecutor(new InteractionController().findInteractions(request, "Ariopsis felis", CypherQueryBuilder.INTERACTION_EATS, null)).execute(request);
         assertThat(list, containsString("\"source\":"));
         assertThat(list, containsString("\"target\":"));
         assertThat(list, containsString("\"type\":\"eats\""));
@@ -151,7 +149,7 @@ public class InteractionControllerTestIT {
             }
         });
 
-        String list = new CypherQueryExecutor(new InteractionController().findInteractionsNew(request)).execute(request);
+        String list = new CypherQueryExecutor(new InteractionController().findInteractions(request)).execute(request);
         assertThat(list, containsString("\"source\":"));
         assertThat(list, containsString("\"target\":"));
         assertThat(list, containsString("\"type\":\"preysOn\""));
@@ -160,8 +158,6 @@ public class InteractionControllerTestIT {
     @Test
     public void findIdPrefix() throws IOException, URISyntaxException {
         HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
-        when(request.getParameter("taxonIdPrefix")).thenReturn("EOL");
-        when(request.getParameter("sourceTaxon")).thenReturn("Quercus");
         when(request.getParameterMap()).thenReturn(new HashMap<String, String[]>() {
             {
                 put("taxonIdPrefix", new String[]{"EOL"});
@@ -169,7 +165,7 @@ public class InteractionControllerTestIT {
             }
         });
 
-        String list = new CypherQueryExecutor(new InteractionController().findInteractionsNew(request)).execute(request);
+        String list = new CypherQueryExecutor(new InteractionController().findInteractions(request)).execute(request);
         assertThat(list, containsString("\"source\":"));
         assertThat(list, containsString("\"target\":"));
         assertThat(list, containsString("\"type\":\"preysOn\""));
@@ -189,7 +185,7 @@ public class InteractionControllerTestIT {
             }
         });
 
-        String list = new CypherQueryExecutor(new InteractionController().findInteractionsNew(request)).execute(request);
+        String list = new CypherQueryExecutor(new InteractionController().findInteractions(request)).execute(request);
         assertThat(list, containsString("Viridiplantae"));
     }
 
@@ -198,7 +194,7 @@ public class InteractionControllerTestIT {
         HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
         when(request.getParameter("type")).thenReturn("json.v2");
 
-        String list = new CypherQueryExecutor(new InteractionController().findInteractionsNew(request, "Ariopsis felis", CypherQueryBuilder.INTERACTION_EATS, null)).execute(request);
+        String list = new CypherQueryExecutor(new InteractionController().findInteractions(request, "Ariopsis felis", CypherQueryBuilder.INTERACTION_EATS, null)).execute(request);
         assertThat(list, allOf(containsString("\"source\":"), containsString("\"target\":"), containsString("\"type\":\"eats\"")));
     }
 
@@ -208,20 +204,20 @@ public class InteractionControllerTestIT {
         when(request.getParameter("includeObservations")).thenReturn("true");
 
 
-        String list = new CypherQueryExecutor(new InteractionController().findInteractionsNew(request, "Rattus rattus", CypherQueryBuilder.INTERACTION_PREYED_UPON_BY, null)).execute(request);
+        String list = new CypherQueryExecutor(new InteractionController().findInteractions(request, "Rattus rattus", CypherQueryBuilder.INTERACTION_PREYED_UPON_BY, null)).execute(request);
         assertThat(list, is(notNullValue()));
 
-        list = new CypherQueryExecutor(new InteractionController().findInteractionsNew(request, "Ariopsis felis", CypherQueryBuilder.INTERACTION_PREYED_UPON_BY, null)).execute(request);
+        list = new CypherQueryExecutor(new InteractionController().findInteractions(request, "Ariopsis felis", CypherQueryBuilder.INTERACTION_PREYED_UPON_BY, null)).execute(request);
         assertThat(list, is(notNullValue()));
     }
 
 
     @Test
     public void findPredatorPreyObservations() throws IOException, URISyntaxException {
-        String list = new CypherQueryExecutor(new InteractionController().findInteractionsNew(null, "Rattus rattus", CypherQueryBuilder.INTERACTION_PREYED_UPON_BY, "Homo sapiens")).execute(null);
+        String list = new CypherQueryExecutor(new InteractionController().findInteractions(null, "Rattus rattus", CypherQueryBuilder.INTERACTION_PREYED_UPON_BY, "Homo sapiens")).execute(null);
         assertThat(list, is(notNullValue()));
 
-        list = new CypherQueryExecutor(new InteractionController().findInteractionsNew(null, "Ariopsis felis", CypherQueryBuilder.INTERACTION_PREYS_ON, "Rattus rattus")).execute(null);
+        list = new CypherQueryExecutor(new InteractionController().findInteractions(null, "Ariopsis felis", CypherQueryBuilder.INTERACTION_PREYS_ON, "Rattus rattus")).execute(null);
         assertThat(list, is(notNullValue()));
     }
 
