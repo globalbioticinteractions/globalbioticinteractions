@@ -83,7 +83,7 @@ public class CypherReturnClauseBuilder {
 
     static void appendReturnClauseMap(StringBuilder query, CypherQueryBuilder.QueryType queryType, Map parameterMap) {
         if (isDistinct(queryType) && usesSpecimenData(queryType)) {
-            query.append("WITH distinct " + ResultObject.TARGET_TAXON.getLabel() + " as " + ResultObject.TARGET_TAXON_DISTINCT.getLabel() + ", "
+            query.append(" WITH distinct " + ResultObject.TARGET_TAXON.getLabel() + " as " + ResultObject.TARGET_TAXON_DISTINCT.getLabel() + ", "
                     + ResultObject.INTERACTION.getLabel() + ".label as " + ResultObject.INTERACTION_TYPE.getLabel() + ", " +
                     ResultObject.SOURCE_TAXON.getLabel() + " as " + ResultObject.SOURCE_TAXON_DISTINCT.getLabel());
         }
