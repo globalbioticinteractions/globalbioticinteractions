@@ -220,14 +220,25 @@ public class CypherQueryBuilder {
         return lucenePathQuery.toString();
     }
 
+    public static String regexPrefixNotLucene(List<String> terms) {
+        return regexStrict(terms, false) + ".*";
+    }
+
     public static String regexWildcard(List<String> terms) {
         return ".*" + regexStrict(terms) + ".*";
     }
 
     protected static String regexStrict(List<String> terms) {
+        return regexStrict(terms, true);
+    }
+
+    protected static String regexStrict(List<String> terms, boolean isPartOfLuceneQuery) {
         List<String> quotedTerms = new ArrayList<String>();
         for (String term : terms) {
-            quotedTerms.add(Pattern.quote(term).replace("\\Q", "\\\\Q").replace("\\E", "\\\\E").replace("\"", "\\\""));
+            String quote = Pattern.quote(term);
+            quotedTerms.add(isPartOfLuceneQuery
+                    ? quote.replace("\\Q", "\\\\Q").replace("\\E", "\\\\E").replace("\"", "\\\"")
+                    : quote);
         }
         return "(" + StringUtils.join(quotedTerms, "|") + ")";
     }
@@ -249,9 +260,8 @@ public class CypherQueryBuilder {
 
         List<String> prefix = collectParamValues(parameterMap, ParamName.TAXON_ID_PREFIX);
         if (prefix != null && prefix.size() > 0) {
-            String firstPrefix = prefix.get(0);
-            paramMap.put("source_taxon_prefix", firstPrefix);
-            paramMap.put("target_taxon_prefix", firstPrefix);
+            paramMap.put("source_taxon_prefix", regexPrefixNotLucene(prefix));
+            paramMap.put("target_taxon_prefix", regexPrefixNotLucene(prefix));
         }
 
         return paramMap;
