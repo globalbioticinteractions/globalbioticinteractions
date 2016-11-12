@@ -46,13 +46,19 @@ public class NodeFactoryImplTest extends GraphDBTestCase {
         Study study = getNodeFactory().createStudy("bla");
         Specimen specimen = getNodeFactory().createSpecimen(study, "Donalda duckus");
         Specimen specimen1 = getNodeFactory().createSpecimen(study, "Mickeya mouseus");
-        specimen.interactsWith(specimen1, InteractType.SYMBIONT_OF);
-        final Iterator<Relationship> relIter = specimen.getUnderlyingNode().getRelationships(Direction.OUTGOING, InteractType.SYMBIONT_OF).iterator();
+        specimen.interactsWith(specimen1, InteractType.ATE);
+        final Iterator<Relationship> relIter = specimen.getUnderlyingNode().getRelationships(Direction.OUTGOING, InteractType.ATE).iterator();
         assertThat(relIter.hasNext(), is(true));
         final Relationship rel = relIter.next();
-        assertThat(rel.getProperty("iri").toString(), is("http://purl.obolibrary.org/obo/RO_0002440"));
-        assertThat(rel.getProperty("label").toString(), is("symbiontOf"));
-        assertThat(specimen1.getUnderlyingNode().getRelationships(Direction.OUTGOING, InteractType.SYMBIONT_OF).iterator().hasNext(), is(true));
+        assertThat(rel.getProperty("iri").toString(), is("http://purl.obolibrary.org/obo/RO_0002470"));
+        assertThat(rel.getProperty("label").toString(), is("eats"));
+
+        Iterable<Relationship> relationships = specimen1.getUnderlyingNode().getRelationships(Direction.OUTGOING, InteractType.EATEN_BY);
+        Iterator<Relationship> iterator = relationships.iterator();
+        assertThat(iterator.hasNext(), is(true));
+        Relationship relInverted = iterator.next();
+        assertThat(relInverted.getProperty("iri").toString(), is("http://purl.obolibrary.org/obo/RO_0002471"));
+        assertThat(relInverted.getProperty("label").toString(), is("eatenBy"));
     }
 
     @Test

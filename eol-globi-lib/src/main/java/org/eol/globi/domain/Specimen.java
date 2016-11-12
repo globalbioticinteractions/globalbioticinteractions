@@ -125,7 +125,7 @@ public class Specimen extends NodeBacked {
 
         final InteractType inverseRelType = InteractType.inverseOf(relType);
         Relationship inverseInteractRel = recipientSpecimen.createRelationshipToNoTx(donorSpecimen, inverseRelType);
-        enrichWithInteractProps(relType, inverseInteractRel, true);
+        enrichWithInteractProps(inverseRelType, inverseInteractRel, true);
         return inverseInteractRel == null ? Collections.singletonList(interactRel) : Arrays.asList(interactRel, interactRel);
     }
 
