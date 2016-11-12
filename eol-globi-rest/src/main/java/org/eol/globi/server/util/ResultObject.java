@@ -6,7 +6,7 @@ import java.util.TreeMap;
 public enum ResultObject {
 
     SOURCE_TAXON("sourceTaxon"),
-    SOURCE_TAXON_DISTINCT("sTaxon"),
+    SOURCE_TAXON_DISTINCT("sourceTaxon"),
     SOURCE_SPECIMEN("sourceSpecimen"),
 
     INTERACTION("interaction"),
@@ -14,7 +14,7 @@ public enum ResultObject {
     COLLECTED_REL("collected_rel"),
 
     TARGET_TAXON("targetTaxon"),
-    TARGET_TAXON_DISTINCT("tTaxon"),
+    TARGET_TAXON_DISTINCT("targetTaxon"),
     TARGET_SPECIMEN("targetSpecimen"),
 
     LOCATION("loc"),

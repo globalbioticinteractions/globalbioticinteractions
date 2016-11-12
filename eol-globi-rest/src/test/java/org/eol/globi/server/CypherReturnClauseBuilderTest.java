@@ -132,18 +132,18 @@ public class CypherReturnClauseBuilderTest {
                 CypherQueryBuilder.QueryType.MULTI_TAXON_DISTINCT,
                 knownFieldsWithTaxonomy());
         assertThat(query.toString(), is(
-                " WITH distinct targetTaxon as tTaxon, " +
+                " WITH distinct targetTaxon, " +
                         "interaction.label as iType, " +
-                        "sourceTaxon as sTaxon " +
+                        "sourceTaxon " +
                         "WITH " +
-                        "sTaxon, iType, tTaxon " +
-                        "MATCH sTaxon-[:SAME_AS*0..1]->sTaxonSameAs, tTaxon-[:SAME_AS*0..1]->tTaxonSameAs " +
+                         "sourceTaxon, iType, targetTaxon " +
+                        "MATCH sourceTaxon-[:SAME_AS*0..1]->sourceTaxonSameAs, targetTaxon-[:SAME_AS*0..1]->targetTaxonSameAs " +
                         "WHERE " +
-                        "sTaxonSameAs.externalId =~ {source_taxon_prefix} AND " +
-                        "tTaxonSameAs.externalId =~ {target_taxon_prefix} " +
-                        "WITH sTaxonSameAs as sTaxon, iType, tTaxonSameAs as tTaxon " +
-                        "RETURN sTaxon.name as source_taxon_name," +
-                        "tTaxon.name as target_taxon_name"));
+                         "sourceTaxonSameAs.externalId =~ {source_taxon_prefix} AND " +
+                         "targetTaxonSameAs.externalId =~ {target_taxon_prefix} " +
+                        "WITH sourceTaxonSameAs as sourceTaxon, iType, targetTaxonSameAs as targetTaxon " +
+                        "RETURN sourceTaxon.name as source_taxon_name," +
+                         "targetTaxon.name as target_taxon_name"));
     }
 
     @Test
@@ -153,11 +153,11 @@ public class CypherReturnClauseBuilderTest {
                 query,
                 CypherQueryBuilder.QueryType.MULTI_TAXON_DISTINCT,
                 knownFields());
-        assertThat(query.toString(), is(" WITH distinct targetTaxon as tTaxon, " +
+        assertThat(query.toString(), is(" WITH distinct targetTaxon, " +
                 "interaction.label as iType, " +
-                "sourceTaxon as sTaxon " +
-                "RETURN sTaxon.name as source_taxon_name," +
-                "tTaxon.name as target_taxon_name"));
+                "sourceTaxon " +
+                "RETURN sourceTaxon.name as source_taxon_name," +
+                "targetTaxon.name as target_taxon_name"));
     }
 
     @Test
@@ -179,18 +179,18 @@ public class CypherReturnClauseBuilderTest {
                 query,
                 CypherQueryBuilder.QueryType.MULTI_TAXON_DISTINCT,
                 unknownFields());
-        assertThat(query.toString(), is(" WITH distinct targetTaxon as tTaxon, " +
+        assertThat(query.toString(), is(" WITH distinct targetTaxon, " +
                 "interaction.label as iType, " +
-                "sourceTaxon as sTaxon " +
-                "RETURN sTaxon.externalId? as source_taxon_external_id," +
-                "sTaxon.name as source_taxon_name," +
-                "sTaxon.path? as source_taxon_path," +
+                "sourceTaxon " +
+                "RETURN sourceTaxon.externalId? as source_taxon_external_id," +
+                "sourceTaxon.name as source_taxon_name," +
+                "sourceTaxon.path? as source_taxon_path," +
                 "NULL as source_specimen_life_stage," +
                 "NULL as source_specimen_basis_of_record," +
                 "iType as interaction_type," +
-                "tTaxon.externalId? as target_taxon_external_id," +
-                "tTaxon.name as target_taxon_name," +
-                "tTaxon.path? as target_taxon_path," +
+                "targetTaxon.externalId? as target_taxon_external_id," +
+                "targetTaxon.name as target_taxon_name," +
+                "targetTaxon.path? as target_taxon_path," +
                 "NULL as target_specimen_life_stage," +
                 "NULL as target_specimen_basis_of_record," +
                 "NULL as latitude," +

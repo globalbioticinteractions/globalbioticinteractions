@@ -83,9 +83,9 @@ public class CypherReturnClauseBuilder {
 
     static void appendReturnClauseMap(StringBuilder query, CypherQueryBuilder.QueryType queryType, Map parameterMap) {
         if (isDistinct(queryType) && usesSpecimenData(queryType)) {
-            query.append(" WITH distinct " + ResultObject.TARGET_TAXON.getLabel() + " as " + ResultObject.TARGET_TAXON_DISTINCT.getLabel() + ", "
+            query.append(" WITH distinct " + ResultObject.TARGET_TAXON.getLabel() + ", "
                     + ResultObject.INTERACTION.getLabel() + ".label as " + ResultObject.INTERACTION_TYPE.getLabel() + ", " +
-                    ResultObject.SOURCE_TAXON.getLabel() + " as " + ResultObject.SOURCE_TAXON_DISTINCT.getLabel());
+                    ResultObject.SOURCE_TAXON.getLabel());
         }
         query.append(" ");
         appendTaxonIdPrefixClause(query, queryType, parameterMap);
@@ -95,14 +95,13 @@ public class CypherReturnClauseBuilder {
     private static void appendTaxonIdPrefixClause(StringBuilder query, CypherQueryBuilder.QueryType queryType, Map parameterMap) {
         List<String> prefixes = CypherQueryBuilder.collectParamValues(parameterMap, ParamName.TAXON_ID_PREFIX);
         if (!prefixes.isEmpty()) {
-            String sourcePrefix = isDistinct(queryType) ? "s" : "source";
-            String targetPrefix = isDistinct(queryType) ? "t" : "target";
+            String sourceLabel = ResultObject.SOURCE_TAXON.getLabel();
 
-            String sourceLabel = sourcePrefix + "Taxon";
-            String targetLabel = targetPrefix + "Taxon";
             String interactionLabel = isDistinct(queryType)
                     ? ResultObject.INTERACTION_TYPE.getLabel()
                     : ResultObject.INTERACTION.getLabel();
+
+            String targetLabel = ResultObject.TARGET_TAXON.getLabel();
 
             query.append("WITH ");
             List<String> inParams;
