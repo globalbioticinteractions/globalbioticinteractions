@@ -17,10 +17,11 @@
 
     <properties>
         <globi.data.version>1.0-SNAPSHOT</globi.data.version>
-        <rdfstore.groupId>com.blazegraph</rdfstore.groupId>
-        <rdfstore.artifactId>blazegraph-jar</rdfstore.artifactId>
+        <rdfstore.name>blazegraph</rdfstore.name>
+        <rdfstore.groupId>com.${rdfstore.name}</rdfstore.groupId>
+        <rdfstore.artifactId>${rdfstore.name}-jar</rdfstore.artifactId>
         <rdfstore.version>2.1.4</rdfstore.version>
-        <rdfstore.dir>${project.build.directory}/${rdfstore.artifactId}-${rdfstore.version}</rdfstore.dir>
+        <rdfstore.dir>${project.build.directory}/${rdfstore.name}</rdfstore.dir>
     </properties>
 
     <build>
@@ -44,7 +45,7 @@
                                     <version>${globi.data.version}</version>
                                     <classifier>nq</classifier>
                                     <type>tar.gz</type>
-                                    <outputDirectory>${rdfstore.dir}/Data</outputDirectory>
+                                    <outputDirectory>${rdfstore.dir}/data</outputDirectory>
                                 </artifactItem>
                             </artifactItems>
                             <!-- no need to install the data when skipping the tests -->
@@ -82,7 +83,7 @@
                             <goal>copy-resources</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>${rdfstore.dir}</outputDirectory>
+                            <outputDirectory>${rdfstore.dir}/conf</outputDirectory>
                             <resources>
                                 <resource>
                                     <directory>src/main/resources</directory>
