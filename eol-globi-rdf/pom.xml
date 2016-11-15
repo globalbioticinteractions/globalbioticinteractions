@@ -17,11 +17,9 @@
 
     <properties>
         <globi.data.version>1.0-SNAPSHOT</globi.data.version>
-        <rdfstore.name>blazegraph</rdfstore.name>
-        <rdfstore.groupId>com.${rdfstore.name}</rdfstore.groupId>
-        <rdfstore.artifactId>${rdfstore.name}-jar</rdfstore.artifactId>
-        <rdfstore.version>2.1.4</rdfstore.version>
-        <rdfstore.dir>${project.build.directory}/${rdfstore.name}</rdfstore.dir>
+        <fuseki.version>2.4.0</fuseki.version>
+        <fuseki.artifactId>apache-jena-fuseki</fuseki.artifactId>
+        <fuseki.dir>${project.build.directory}/${fuseki.artifactId}-${fuseki.version}</fuseki.dir>
     </properties>
 
     <build>
@@ -45,7 +43,7 @@
                                     <version>${globi.data.version}</version>
                                     <classifier>nq</classifier>
                                     <type>tar.gz</type>
-                                    <outputDirectory>${rdfstore.dir}/data</outputDirectory>
+                                    <outputDirectory>${fuseki.dir}/Data</outputDirectory>
                                 </artifactItem>
                             </artifactItems>
                             <!-- no need to install the data when skipping the tests -->
@@ -53,16 +51,17 @@
                         </configuration>
                     </execution>
                     <execution>
-                        <id>install-rdfstore</id>
+                        <id>install-fuseki-server</id>
                         <goals>
-                            <goal>copy</goal>
+                            <goal>unpack</goal>
                         </goals>
                         <configuration>
                             <artifactItems>
                                 <artifactItem>
-                                    <groupId>${rdfstore.groupId}</groupId>
-                                    <artifactId>${rdfstore.artifactId}</artifactId>
-                                    <version>${rdfstore.version}</version>
+                                    <groupId>org.apache.jena</groupId>
+                                    <artifactId>${fuseki.artifactId}</artifactId>
+                                    <type>tar.gz</type>
+                                    <version>${fuseki.version}</version>
                                     <outputDirectory>${project.build.directory}</outputDirectory>
                                 </artifactItem>
                             </artifactItems>
@@ -83,7 +82,7 @@
                             <goal>copy-resources</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>${rdfstore.dir}/conf</outputDirectory>
+                            <outputDirectory>${fuseki.dir}</outputDirectory>
                             <resources>
                                 <resource>
                                     <directory>src/main/resources</directory>
@@ -98,7 +97,7 @@
 
     <repositories>
         <repository>
-            <id>globi-releases</id>
+            <id>globi</id>
             <name>GloBI Release</name>
             <url>https://s3.amazonaws.com/globi/release/</url>
             <snapshots>
@@ -106,17 +105,6 @@
             </snapshots>
             <releases>
                 <enabled>true</enabled>
-            </releases>
-        </repository>
-        <repository>
-            <id>globi-snapshots</id>
-            <name>GloBI Snapshots</name>
-            <url>https://s3.amazonaws.com/globi/snapshot</url>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-            <releases>
-                <enabled>false</enabled>
             </releases>
         </repository>
     </repositories>
