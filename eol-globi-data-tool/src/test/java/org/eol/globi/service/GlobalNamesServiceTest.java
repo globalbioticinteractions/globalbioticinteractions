@@ -342,9 +342,9 @@ public class GlobalNamesServiceTest {
         assertThat(enrich.get(PropertyAndValueDictionary.PATH_NAMES), is("kingdom | phylum | class | order"));
         assertThat(enrich.get(PropertyAndValueDictionary.RANK), is("order"));
         assertThat(enrich.get(PropertyAndValueDictionary.EXTERNAL_ID), is("GBIF:952"));
-        assertThat(enrich.get(PropertyAndValueDictionary.COMMON_NAMES), containsString("Kikkers @nl"));
-        assertThat(enrich.get(PropertyAndValueDictionary.COMMON_NAMES), containsString("Бесхвостые @ru"));
-        assertThat(enrich.get(PropertyAndValueDictionary.COMMON_NAMES), not(containsString("Frogs @en")));
+//        assertThat(enrich.get(PropertyAndValueDictionary.COMMON_NAMES), containsString("Бесхвостые @ru"));
+        assertThat(enrich.get(PropertyAndValueDictionary.COMMON_NAMES), containsString("\u0416\u0430\u0431\u044b @ru"));
+        assertThat(enrich.get(PropertyAndValueDictionary.COMMON_NAMES), containsString("Frogs @en"));
     }
 
     @Test
