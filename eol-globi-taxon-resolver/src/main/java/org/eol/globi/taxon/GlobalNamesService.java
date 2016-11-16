@@ -4,7 +4,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.NameValuePair;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
@@ -13,7 +12,9 @@ import org.apache.http.message.BasicNameValuePair;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.data.CharsetConstant;
+import org.eol.globi.domain.NameType;
 import org.eol.globi.domain.PropertyAndValueDictionary;
+import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TaxonomyProvider;
@@ -58,19 +59,25 @@ public class GlobalNamesService implements PropertyEnricher {
     @Override
     public Map<String, String> enrich(Map<String, String> properties) throws PropertyEnricherException {
         Map<String, String> enrichedProperties = new HashMap<String, String>();
-        final List<Taxon> taxa = new ArrayList<Taxon>();
+        final List<Taxon> exactMatches = new ArrayList<Taxon>();
+        final List<Taxon> synonyms = new ArrayList<Taxon>();
         findTermsForNames(Collections.singletonList(properties.get(PropertyAndValueDictionary.NAME)), new TermMatchListener() {
             @Override
-            public void foundTaxonForName(Long id, String name, Taxon taxon, boolean isExactMatch) {
-                if (isExactMatch) {
-                    taxa.add(taxon);
+            public void foundTaxonForName(Long id, String name, Taxon taxon, NameType nameType) {
+                if (NameType.SAME_AS.equals(nameType)) {
+                    exactMatches.add(taxon);
+                } else if (NameType.SYNONYM_OF.equals(nameType)) {
+                    synonyms.add(taxon);
                 }
             }
         }, Collections.singletonList(source));
 
-        if (taxa.size() > 0) {
-            enrichedProperties.putAll(TaxonUtil.taxonToMap(taxa.get(0)));
+        if (exactMatches.size() > 0) {
+            enrichedProperties.putAll(TaxonUtil.taxonToMap(exactMatches.get(0)));
+        } else if (synonyms.size() == 1) {
+            enrichedProperties.putAll(TaxonUtil.taxonToMap(synonyms.get(0)));
         }
+
         return Collections.unmodifiableMap(enrichedProperties);
     }
 
@@ -82,8 +89,6 @@ public class GlobalNamesService implements PropertyEnricher {
         try {
             String result = queryForNames(names, sources);
             parseResult(termMatchListener, result);
-        } catch (ClientProtocolException e) {
-            throw new PropertyEnricherException("Failed to query", e);
         } catch (IOException e) {
             throw new PropertyEnricherException("Failed to query", e);
         } catch (URISyntaxException e) {
@@ -200,7 +205,12 @@ public class GlobalNamesService implements PropertyEnricher {
 
             boolean isExactMatch = aResult.has("match_type")
                     && aResult.get("match_type").getIntValue() < 3;
-            termMatchListener.foundTaxonForName(suppliedId, suppliedNameString, taxon, isExactMatch);
+
+            NameType nameType = isExactMatch ? NameType.SAME_AS : NameType.SIMILAR_TO;
+            if (isExactMatch && aResult.has("current_name_string")) {
+                nameType = NameType.SYNONYM_OF;
+            }
+            termMatchListener.foundTaxonForName(suppliedId, suppliedNameString, taxon, nameType);
         }
 
         if (aResult.has("vernaculars")) {

@@ -71,11 +71,17 @@ public class LinkerGlobalNamesTest extends GraphDBTestCase {
     public void anura() throws NodeFactoryException, PropertyEnricherException {
         taxonIndex.getOrCreateTaxon("Anura");
         new LinkerGlobalNames().link(getGraphDb());
-        List<String> ids = LinkerTestUtil.assertHasOther("Anura", 14, taxonIndex, RelTypes.SAME_AS);
+        List<String> ids = LinkerTestUtil.assertHasOther("Anura", 6, taxonIndex, RelTypes.SAME_AS);
 
         assertThat(ids, hasItems("ITIS:173423"
                 , "NCBI:8342", "IRMNG:10211", "GBIF:952"
-                , "IRMNG:1284513", "GBIF:3242458", "GBIF:3089470"));
+                , "IRMNG:1284513", "GBIF:3242458"));
+
+        List<String> synonymIds = LinkerTestUtil.assertHasOther("Anura", 8, taxonIndex, RelTypes.SYNONYM_OF);
+
+        assertThat(synonymIds, not(hasItems("ITIS:173423"
+                , "NCBI:8342", "IRMNG:10211", "GBIF:952"
+                , "IRMNG:1284513", "GBIF:3242458")));
 
     }
 
@@ -103,7 +109,7 @@ public class LinkerGlobalNamesTest extends GraphDBTestCase {
         final TaxonNode taxonCreated = taxonIndex.getOrCreateTaxon("Medicago sativa L.");
         assertThat(taxonCreated.getName(), is("Medicago sativa"));
         new LinkerGlobalNames().link(getGraphDb());
-        List<String> ids = LinkerTestUtil.assertHasOther(taxonCreated.getName(), 8, taxonIndex, RelTypes.SAME_AS);
+        List<String> ids = LinkerTestUtil.assertHasOther(taxonCreated.getName(), 9, taxonIndex, RelTypes.SAME_AS);
 
         assertThat(ids, hasItem("ITIS:183623"));
         assertThat(ids, hasItem("NCBI:3879"));
@@ -167,8 +173,8 @@ public class LinkerGlobalNamesTest extends GraphDBTestCase {
         TaxonNode lestes = taxonIndex.getOrCreateTaxon("Lestes");
         assertThat(lestes.getPath(), is("Animalia | Insecta | Lestes"));
         new LinkerGlobalNames().link(getGraphDb());
-        List<String> ids = LinkerTestUtil.assertHasOther("Lestes", 6, taxonIndex, RelTypes.SAME_AS);
-        assertThat(ids, hasItems("NCBI:181491", "ITIS:102061", "IRMNG:1320006", "GBIF:7235838", "GBIF:1423980"));
+        List<String> ids = LinkerTestUtil.assertHasOther("Lestes", 5, taxonIndex, RelTypes.SAME_AS);
+        assertThat(ids, hasItems("NCBI:181491", "ITIS:102061", "IRMNG:1320006", "GBIF:1423980"));
         assertThat(ids, hasItems("INAT_TAXON:89475"));
     }
 

@@ -2,7 +2,9 @@ package org.eol.globi.service;
 
 import org.apache.commons.lang.StringUtils;
 import org.eol.globi.data.CharsetConstant;
+import org.eol.globi.domain.NameType;
 import org.eol.globi.domain.PropertyAndValueDictionary;
+import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonomyProvider;
 import org.eol.globi.taxon.GlobalNamesService;
@@ -32,7 +34,7 @@ public class GlobalNamesServiceTest {
         final List<Taxon> foundTaxa = new ArrayList<Taxon>();
         service.findTermsForNames(Arrays.asList("1|Homo sapiens", "2|Ariopsis felis"), new TermMatchListener() {
             @Override
-            public void foundTaxonForName(Long id, String name, Taxon taxon, boolean isExactMatch) {
+            public void foundTaxonForName(Long id, String name, Taxon taxon, NameType nameType) {
                 assertNotNull(id);
                 foundTaxa.add(taxon);
             }
@@ -47,7 +49,7 @@ public class GlobalNamesServiceTest {
         final List<Taxon> foundTaxa = new ArrayList<Taxon>();
         service.findTermsForNames(Arrays.asList("1|Prunus persicus L."), new TermMatchListener() {
             @Override
-            public void foundTaxonForName(Long id, String name, Taxon taxon, boolean isExactMatch) {
+            public void foundTaxonForName(Long id, String name, Taxon taxon, NameType nameType) {
                 assertNotNull(id);
                 foundTaxa.add(taxon);
             }
@@ -63,7 +65,7 @@ public class GlobalNamesServiceTest {
         final List<Taxon> foundTaxa = new ArrayList<Taxon>();
         service.findTermsForNames(Arrays.asList("4594386|Epichloë"), new TermMatchListener() {
             @Override
-            public void foundTaxonForName(Long id, String name, Taxon taxon, boolean isExactMatch) {
+            public void foundTaxonForName(Long id, String name, Taxon taxon, NameType nameType) {
                 assertNotNull(id);
                 foundTaxa.add(taxon);
             }
@@ -151,7 +153,7 @@ public class GlobalNamesServiceTest {
         try {
             service.findTermsForNames(names, new TermMatchListener() {
                 @Override
-                public void foundTaxonForName(Long id, String name, Taxon taxon, boolean isExactMatch) {
+                public void foundTaxonForName(Long id, String name, Taxon taxon, NameType nameType) {
                     assertNotNull(id);
                     foundTaxa.add(taxon);
                 }
@@ -184,7 +186,7 @@ public class GlobalNamesServiceTest {
         try {
             service.findTermsForNames(names, new TermMatchListener() {
                 @Override
-                public void foundTaxonForName(Long id, String name, Taxon taxon, boolean isExactMatch) {
+                public void foundTaxonForName(Long id, String name, Taxon taxon, NameType nameType) {
                     assertNotNull(id);
                     foundTaxa.add(taxon);
                 }
@@ -360,7 +362,7 @@ public class GlobalNamesServiceTest {
         final List<Taxon> taxa = new ArrayList<Taxon>();
         service.findTermsForNames(Arrays.asList("Homo sapiens"), new TermMatchListener() {
             @Override
-            public void foundTaxonForName(Long id, String name, Taxon taxon, boolean isExactMatch) {
+            public void foundTaxonForName(Long id, String name, Taxon taxon, NameType nameType) {
                 taxa.add(taxon);
             }
         }, Arrays.asList(GlobalNamesSources.GBIF, GlobalNamesSources.ITIS));
