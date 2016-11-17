@@ -1,5 +1,9 @@
 package org.eol.globi.server;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.eol.globi.server.util.ResultField;
+
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -35,7 +39,13 @@ public enum QueryType {
     private static boolean isTaxonQueryOnly(Map parameterMap) {
         List<String> accordingTo = CypherQueryBuilder.collectParamValues(parameterMap, ParamName.ACCORDING_TO);
         List<String> bbox = CypherQueryBuilder.collectParamValues(parameterMap, ParamName.BBOX);
-        return accordingTo.isEmpty() && bbox.isEmpty();
+        List<String> fields = CypherQueryBuilder.collectRequestedFields(parameterMap);
+        return accordingTo.isEmpty() && bbox.isEmpty() && noAggregatesRequested(fields);
+    }
+
+    private static boolean noAggregatesRequested(List<String> fields) {
+        List<String> aggregateCounters = Arrays.asList(ResultField.NUMBER_OF_SOURCES.getLabel(), ResultField.NUMBER_OF_INTERACTIONS.getLabel(), ResultField.NUMBER_OF_STUDIES.getLabel());
+        return CollectionUtils.intersection(fields, aggregateCounters).isEmpty();
     }
 
     public static boolean usesSpecimenData(QueryType queryType) {
