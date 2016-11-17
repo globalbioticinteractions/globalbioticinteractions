@@ -172,6 +172,41 @@ public class InteractionControllerTestIT {
     }
 
     @Test
+    public void findNumberOfStudies() throws IOException, URISyntaxException {
+        HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
+        when(request.getParameterMap()).thenReturn(new HashMap<String, String[]>() {
+            {
+                put("sourceTaxon", new String[]{"Quercus"});
+                put("interactionType", new String[]{"hasPathogen"});
+                put("accordingTo", new String[]{"inaturalist"});
+                put("field", new String[]{"source_taxon_name", "interaction_type", "target_taxon_name", "number_of_studies"});
+            }
+        });
+
+        String list = new CypherQueryExecutor(new InteractionController().findInteractions(request)).execute(request);
+        assertThat(list, containsString("Quercus"));
+        assertThat(list, containsString("hasPathogen"));
+    }
+
+    @Test
+    public void findNumberOfStudiesWithPrefix() throws IOException, URISyntaxException {
+        HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
+        when(request.getParameterMap()).thenReturn(new HashMap<String, String[]>() {
+            {
+                put("taxonIdPrefix", new String[]{"INAT_TAXON"});
+                put("sourceTaxon", new String[]{"Quercus"});
+                put("interactionType", new String[]{"hasPathogen"});
+                put("accordingTo", new String[]{"inaturalist"});
+                put("field", new String[]{"source_taxon_name", "interaction_type", "target_taxon_name", "number_of_studies"});
+            }
+        });
+
+        String list = new CypherQueryExecutor(new InteractionController().findInteractions(request)).execute(request);
+        assertThat(list, containsString("Quercus"));
+        assertThat(list, containsString("hasPathogen"));
+    }
+
+    @Test
     public void findIdPrefixIncludeObservations() throws IOException, URISyntaxException {
         HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
         when(request.getParameter("taxonIdPrefix")).thenReturn("NCBI");

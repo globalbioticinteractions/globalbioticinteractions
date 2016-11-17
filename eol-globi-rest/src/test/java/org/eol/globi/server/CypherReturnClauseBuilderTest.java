@@ -107,6 +107,61 @@ public class CypherReturnClauseBuilderTest {
                 "targetTaxon.name as target_taxon_name"));
     }
 
+    @Test
+    public void multiTaxonAllWithNumberOfStudies() {
+        StringBuilder query = new StringBuilder();
+        CypherReturnClauseBuilder.appendReturnClauseMap(
+                query,
+                QueryType.MULTI_TAXON_DISTINCT,
+                new TreeMap<String, String[]>() {
+                    {
+                        put("field", new String[]{"source_taxon_name", "target_taxon_name", "number_of_studies"});
+                        put("accordingTo", new String[]{"someSource"});
+                    }
+                });
+        assertThat(query.toString(), is(" WITH distinct targetTaxon, interaction.label as iType, sourceTaxon, count(distinct(id(study))) as studyCount " +
+                "RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name,studyCount as number_of_studies"));
+    }
+
+    @Test
+    public void multiTaxonAllWithNumberOfStudiesIncludeObservations() {
+        StringBuilder query = new StringBuilder();
+        CypherReturnClauseBuilder.appendReturnClauseMap(
+                query,
+                QueryType.MULTI_TAXON_ALL,
+                new TreeMap<String, String[]>() {
+                    {
+                        put("field", new String[]{"source_taxon_name", "target_taxon_name", "number_of_studies"});
+                        put("accordingTo", new String[]{"someSource"});
+                    }
+                });
+        assertThat(query.toString(), is(" RETURN " +
+                "sourceTaxon.name as source_taxon_name," +
+                "targetTaxon.name as target_taxon_name," +
+                "1 as number_of_studies"));
+    }
+
+    @Test
+    public void multiTaxonAllWithNumberOfStudiesWithIdPrefix() {
+        StringBuilder query = new StringBuilder();
+        CypherReturnClauseBuilder.appendReturnClauseMap(
+                query,
+                QueryType.MULTI_TAXON_DISTINCT,
+                new TreeMap<String, String[]>() {
+                    {
+                        put("field", new String[]{"source_taxon_name", "target_taxon_name", "number_of_studies"});
+                        put("accordingTo", new String[]{"someSource"});
+                        put("taxonIdPrefix", new String[]{"somePrefix"});
+                    }
+                });
+        assertThat(query.toString(), is(" WITH distinct targetTaxon, interaction.label as iType, sourceTaxon, count(distinct(id(study))) as studyCount " +
+                "WITH sourceTaxon, iType, targetTaxon, studyCount " +
+                "MATCH sourceTaxon-[:SAME_AS*0..1]->sourceTaxonSameAs, targetTaxon-[:SAME_AS*0..1]->targetTaxonSameAs " +
+                "WHERE sourceTaxonSameAs.externalId =~ {source_taxon_prefix} AND targetTaxonSameAs.externalId =~ {target_taxon_prefix} " +
+                "WITH sourceTaxonSameAs as sourceTaxon, iType, targetTaxonSameAs as targetTaxon, studyCount " +
+                "RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name,studyCount as number_of_studies"));
+    }
+
     private TreeMap<String, String[]> knownFieldsWithTaxonomy() {
         return new TreeMap<String, String[]>(knownFields()) {
             {

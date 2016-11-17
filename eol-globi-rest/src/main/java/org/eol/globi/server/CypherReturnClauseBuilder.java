@@ -79,17 +79,49 @@ public class CypherReturnClauseBuilder {
     }
 
     static void appendReturnClauseMap(StringBuilder query, QueryType queryType, Map parameterMap) {
+        List<String> requestedReturnFields = CypherQueryBuilder.collectRequestedFields(parameterMap);
+
         if (QueryType.isDistinct(queryType) && QueryType.usesSpecimenData(queryType)) {
-            query.append(" WITH distinct " + ResultObject.TARGET_TAXON.getLabel() + ", "
-                    + ResultObject.INTERACTION.getLabel() + ".label as " + ResultObject.INTERACTION_TYPE.getLabel() + ", " +
-                    ResultObject.SOURCE_TAXON.getLabel());
+            query.append(" WITH distinct ")
+                    .append(ResultObject.TARGET_TAXON.getLabel())
+                    .append(", ")
+                    .append(ResultObject.INTERACTION.getLabel())
+                    .append(".label as ")
+                    .append(ResultObject.INTERACTION_TYPE.getLabel())
+                    .append(", ")
+                    .append(ResultObject.SOURCE_TAXON.getLabel());
+
+            appendAggregateCountersIfNeeded(query, requestedReturnFields);
         }
+
+
         query.append(" ");
-        appendTaxonIdPrefixClause(query, queryType, parameterMap);
-        appendReturnClause(query, queryType, CypherQueryBuilder.collectRequestedFields(parameterMap));
+
+        appendTaxonIdPrefixClause(query, queryType, parameterMap, requestedReturnFields);
+        appendReturnClause(query, queryType, requestedReturnFields);
     }
 
-    private static void appendTaxonIdPrefixClause(StringBuilder query, QueryType queryType, Map parameterMap) {
+    private static void appendAggregateCountersIfNeeded(StringBuilder query, List<String> requestedFields) {
+        if (requestedFields.contains(ResultField.NUMBER_OF_INTERACTIONS.getLabel())) {
+            query.append(", count(").append(ResultObject.INTERACTION.getLabel())
+                    .append(") as ")
+                    .append(ResultObject.INTERACTION_COUNT.getLabel());
+        }
+
+        if (requestedFields.contains(ResultField.NUMBER_OF_STUDIES.getLabel())) {
+            query.append(", count(distinct(id(").append(ResultObject.STUDY.getLabel())
+                    .append("))) as ")
+                    .append(ResultObject.STUDY_COUNT.getLabel());
+        }
+
+        if (requestedFields.contains(ResultField.NUMBER_OF_SOURCES.getLabel())) {
+            query.append(", count(distinct(").append(ResultObject.STUDY.getLabel())
+                    .append(".source?)) as ")
+                    .append(ResultObject.STUDY_SOURCE_COUNT.getLabel());
+        }
+    }
+
+    private static void appendTaxonIdPrefixClause(StringBuilder query, QueryType queryType, Map parameterMap, List<String> requestedReturnFields) {
         List<String> prefixes = CypherQueryBuilder.collectParamValues(parameterMap, ParamName.TAXON_ID_PREFIX);
         if (!prefixes.isEmpty()) {
             String sourceLabel = ResultObject.SOURCE_TAXON.getLabel();
@@ -111,7 +143,8 @@ public class CypherReturnClauseBuilder {
                         ResultObject.LOCATION.getLabel(),
                         ResultObject.STUDY.getLabel());
             } else {
-                inParams = Arrays.asList(sourceLabel, interactionLabel, targetLabel);
+                List<String> defaultInParams = Arrays.asList(sourceLabel, interactionLabel, targetLabel);
+                inParams = appendCountersIfNeeded(requestedReturnFields, defaultInParams);
             }
             query.append(StringUtils.join(inParams, ", ")).append(" ");
             query.append(taxonIdPrefixWithMatch(sourceLabel, targetLabel));
@@ -127,11 +160,29 @@ public class CypherReturnClauseBuilder {
                         ResultObject.LOCATION.getLabel(),
                         ResultObject.STUDY.getLabel());
             } else {
-                outParams = Arrays.asList(sameAs(sourceLabel), interactionLabel, sameAs(targetLabel));
+                List<String> defaultOutParams = Arrays.asList(sameAs(sourceLabel), interactionLabel, sameAs(targetLabel));
+                outParams = appendCountersIfNeeded(requestedReturnFields, defaultOutParams);
             }
 
             query.append(StringUtils.join(outParams, ", ")).append(" ");
         }
+    }
+
+    private static List<String> appendCountersIfNeeded(List<String> requestedReturnFields, List<String> defaultInParams) {
+        List<String> inParams;
+        inParams = new ArrayList<>(defaultInParams);
+        if (requestedReturnFields.contains(ResultField.NUMBER_OF_INTERACTIONS.getLabel())) {
+            inParams.add(ResultObject.INTERACTION_COUNT.getLabel());
+        }
+
+        if (requestedReturnFields.contains(ResultField.NUMBER_OF_STUDIES.getLabel())) {
+            inParams.add(ResultObject.STUDY_COUNT.getLabel());
+        }
+
+        if (requestedReturnFields.contains(ResultField.NUMBER_OF_SOURCES.getLabel())) {
+            inParams.add(ResultObject.STUDY_SOURCE_COUNT.getLabel());
+        }
+        return inParams;
     }
 
     private static String sameAs(String sourceLabel) {
@@ -171,6 +222,9 @@ public class CypherReturnClauseBuilder {
                         appendStudyFields(new HashMap<ResultField, String>(defaultSelectors()) {
                             {
                                 put(INTERACTION_TYPE, ResultObject.INTERACTION.getLabel() + ".label");
+                                put(NUMBER_OF_INTERACTIONS, "1");
+                                put(NUMBER_OF_STUDIES, "1");
+                                put(NUMBER_OF_SOURCES, "1");
                             }
                         }));
                 appendReturnClauseDistinctz(query, actualReturnFields(requestedReturnFields, Arrays.asList(RETURN_FIELDS_MULTI_TAXON_DEFAULT), selectors.keySet()), selectors);
@@ -185,6 +239,9 @@ public class CypherReturnClauseBuilder {
                         put(SOURCE_SPECIMEN_LIFE_STAGE, "NULL");
                         put(SOURCE_SPECIMEN_BASIS_OF_RECORD, "NULL");
                         put(INTERACTION_TYPE, ResultObject.INTERACTION_TYPE.getLabel());
+                        put(NUMBER_OF_INTERACTIONS, ResultObject.INTERACTION_COUNT.getLabel());
+                        put(NUMBER_OF_STUDIES, ResultObject.STUDY_COUNT.getLabel());
+                        put(NUMBER_OF_SOURCES, ResultObject.STUDY_SOURCE_COUNT.getLabel());
                         put(TARGET_TAXON_EXTERNAL_ID, ResultObject.TARGET_TAXON_DISTINCT.getLabel() + ".externalId?");
                         put(TARGET_TAXON_NAME, ResultObject.TARGET_TAXON_DISTINCT.getLabel() + ".name");
                         put(TARGET_TAXON_PATH, ResultObject.TARGET_TAXON_DISTINCT.getLabel() + ".path?");

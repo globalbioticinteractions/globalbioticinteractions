@@ -6,9 +6,6 @@ import java.util.Map;
 
 public enum QueryType {
     SINGLE_TAXON_DISTINCT, SINGLE_TAXON_ALL, MULTI_TAXON_DISTINCT, MULTI_TAXON_DISTINCT_BY_NAME_ONLY, MULTI_TAXON_ALL;
-    public static final List<QueryType> QUERY_TYPES_DISTINCT = Arrays.asList(
-            MULTI_TAXON_DISTINCT
-    );
 
 
     public static QueryType forParams(Map parameterMap) {
@@ -50,6 +47,6 @@ public enum QueryType {
     }
 
     public static boolean isDistinct(QueryType queryType) {
-        return QUERY_TYPES_DISTINCT.contains(queryType);
+        return MULTI_TAXON_DISTINCT.equals(queryType);
     }
 }

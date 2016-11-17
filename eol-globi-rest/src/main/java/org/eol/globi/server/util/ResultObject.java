@@ -11,6 +11,10 @@ public enum ResultObject {
 
     INTERACTION("interaction"),
     INTERACTION_TYPE("iType"),
+    INTERACTION_COUNT("interactionCount"),
+
+
+
     COLLECTED_REL("collected_rel"),
 
     TARGET_TAXON("targetTaxon"),
@@ -19,6 +23,9 @@ public enum ResultObject {
 
     LOCATION("loc"),
     STUDY("study"),
+    STUDY_COUNT("studyCount"),
+    STUDY_SOURCE_COUNT("sourceCount"),
+
     TAXON("taxon");
 
     public static ResultObject forField(ResultField field) {
