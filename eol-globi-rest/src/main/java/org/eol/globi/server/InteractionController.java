@@ -22,7 +22,7 @@ public class InteractionController {
         Map parameterMap = request.getParameterMap();
         CypherQueryBuilder.QueryType queryType = CypherQueryBuilder.QueryType.MULTI_TAXON_DISTINCT;
 
-        if (shouldIncludeObservations(request, parameterMap)) {
+        if (shouldIncludeObservations(parameterMap)) {
             queryType = CypherQueryBuilder.QueryType.MULTI_TAXON_ALL;
         } else if (isTaxonQueryOnly(parameterMap)) {
             queryType = CypherQueryBuilder.QueryType.MULTI_TAXON_DISTINCT_BY_NAME_ONLY;
@@ -55,16 +55,17 @@ public class InteractionController {
                                         @PathVariable("targetTaxonName") String targetTaxonName)
             throws IOException {
         Map parameterMap = request == null ? null : request.getParameterMap();
-        CypherQueryBuilder.QueryType queryType = shouldIncludeObservations(request, parameterMap)
+        CypherQueryBuilder.QueryType queryType = shouldIncludeObservations(parameterMap)
                 ? CypherQueryBuilder.QueryType.SINGLE_TAXON_ALL
                 : CypherQueryBuilder.QueryType.SINGLE_TAXON_DISTINCT;
         CypherQuery query = createQuery(sourceTaxonName, interactionType, targetTaxonName, parameterMap, queryType);
         return CypherQueryBuilder.createPagedQuery(request, query);
     }
 
-    private boolean shouldIncludeObservations(HttpServletRequest request, Map parameterMap) {
-        String includeObservations = parameterMap == null ? null : request.getParameter(ParamName.INCLUDE_OBSERVATIONS.getName());
-        return "t".equalsIgnoreCase(includeObservations) || "true".equalsIgnoreCase(includeObservations);
+    private static boolean shouldIncludeObservations(Map parameterMap) {
+        List<String> includeObservations = CypherQueryBuilder.collectParamValues(parameterMap, ParamName.INCLUDE_OBSERVATIONS);
+        return includeObservations.size() > 0
+                && ("t".equalsIgnoreCase(includeObservations.get(0)) || "true".equalsIgnoreCase(includeObservations.get(0)));
     }
 
     private boolean isTaxonQueryOnly(Map parameterMap) {
