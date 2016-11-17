@@ -1,12 +1,15 @@
 package org.eol.globi.server;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.ListUtils;
 import org.eol.globi.server.util.ResultField;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public enum QueryType {
     SINGLE_TAXON_DISTINCT, SINGLE_TAXON_ALL, MULTI_TAXON_DISTINCT, MULTI_TAXON_DISTINCT_BY_NAME_ONLY, MULTI_TAXON_ALL;
@@ -40,12 +43,16 @@ public enum QueryType {
         List<String> accordingTo = CypherQueryBuilder.collectParamValues(parameterMap, ParamName.ACCORDING_TO);
         List<String> bbox = CypherQueryBuilder.collectParamValues(parameterMap, ParamName.BBOX);
         List<String> fields = CypherQueryBuilder.collectRequestedFields(parameterMap);
-        return accordingTo.isEmpty() && bbox.isEmpty() && noAggregatesRequested(fields);
+        return accordingTo.isEmpty() && bbox.isEmpty() && !containsAggregateCounters(fields);
     }
 
-    private static boolean noAggregatesRequested(List<String> fields) {
-        List<String> aggregateCounters = Arrays.asList(ResultField.NUMBER_OF_SOURCES.getLabel(), ResultField.NUMBER_OF_INTERACTIONS.getLabel(), ResultField.NUMBER_OF_STUDIES.getLabel());
-        return CollectionUtils.intersection(fields, aggregateCounters).isEmpty();
+    public static boolean containsAggregateCounters(List<String> fields) {
+        return !aggregateCountersIn(fields).isEmpty();
+    }
+
+    public static List<String> aggregateCountersIn(List<String> fields) {
+        List<String> aggregateCounters = Arrays.asList(ResultField.NUMBER_OF_SOURCES.getLabel(), ResultField.NUMBER_OF_STUDIES.getLabel(), ResultField.NUMBER_OF_INTERACTIONS.getLabel());
+        return aggregateCounters.stream().filter(fields::contains).collect(Collectors.toList());
     }
 
     public static boolean usesSpecimenData(QueryType queryType) {

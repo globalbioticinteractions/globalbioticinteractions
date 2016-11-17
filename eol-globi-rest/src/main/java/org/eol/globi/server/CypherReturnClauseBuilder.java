@@ -13,6 +13,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static org.eol.globi.server.util.ResultField.*;
 
@@ -99,6 +100,13 @@ public class CypherReturnClauseBuilder {
 
         appendTaxonIdPrefixClause(query, queryType, parameterMap, requestedReturnFields);
         appendReturnClause(query, queryType, requestedReturnFields);
+
+        List<String> counters = QueryType.aggregateCountersIn(requestedReturnFields);
+        if (!counters.isEmpty()) {
+            query.append(" ORDER BY ");
+            query.append(StringUtils.join(counters.stream().map(c -> c + " DESC").collect(Collectors.toList()), ", "));
+
+        }
     }
 
     private static void appendAggregateCountersIfNeeded(StringBuilder query, List<String> requestedFields) {

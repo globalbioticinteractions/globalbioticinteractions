@@ -120,7 +120,8 @@ public class CypherReturnClauseBuilderTest {
                     }
                 });
         assertThat(query.toString(), is(" WITH distinct targetTaxon, interaction.label as iType, sourceTaxon, count(distinct(id(study))) as studyCount " +
-                "RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name,studyCount as number_of_studies"));
+                "RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name,studyCount as number_of_studies " +
+                "ORDER BY number_of_studies DESC"));
     }
 
     @Test
@@ -138,7 +139,8 @@ public class CypherReturnClauseBuilderTest {
         assertThat(query.toString(), is(" RETURN " +
                 "sourceTaxon.name as source_taxon_name," +
                 "targetTaxon.name as target_taxon_name," +
-                "1 as number_of_studies"));
+                "1 as number_of_studies " +
+                "ORDER BY number_of_studies DESC"));
     }
 
     @Test
@@ -159,7 +161,8 @@ public class CypherReturnClauseBuilderTest {
                 "MATCH sourceTaxon-[:SAME_AS*0..1]->sourceTaxonSameAs, targetTaxon-[:SAME_AS*0..1]->targetTaxonSameAs " +
                 "WHERE sourceTaxonSameAs.externalId =~ {source_taxon_prefix} AND targetTaxonSameAs.externalId =~ {target_taxon_prefix} " +
                 "WITH sourceTaxonSameAs as sourceTaxon, iType, targetTaxonSameAs as targetTaxon, studyCount " +
-                "RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name,studyCount as number_of_studies"));
+                "RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name,studyCount as number_of_studies " +
+                "ORDER BY number_of_studies DESC"));
     }
 
     private TreeMap<String, String[]> knownFieldsWithTaxonomy() {
