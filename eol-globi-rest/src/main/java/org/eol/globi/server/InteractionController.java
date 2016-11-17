@@ -20,14 +20,7 @@ public class InteractionController {
     @ResponseBody
     protected CypherQuery findInteractions(HttpServletRequest request) {
         Map parameterMap = request.getParameterMap();
-        CypherQueryBuilder.QueryType queryType = CypherQueryBuilder.QueryType.MULTI_TAXON_DISTINCT;
-
-        if (shouldIncludeObservations(parameterMap)) {
-            queryType = CypherQueryBuilder.QueryType.MULTI_TAXON_ALL;
-        } else if (isTaxonQueryOnly(parameterMap)) {
-            queryType = CypherQueryBuilder.QueryType.MULTI_TAXON_DISTINCT_BY_NAME_ONLY;
-        }
-        CypherQuery query = CypherQueryBuilder.buildInteractionQuery(parameterMap, queryType);
+        CypherQuery query = CypherQueryBuilder.buildInteractionQuery(parameterMap, QueryType.forParams(parameterMap));
         return CypherQueryBuilder.createPagedQuery(request, query);
     }
 
@@ -55,26 +48,11 @@ public class InteractionController {
                                         @PathVariable("targetTaxonName") String targetTaxonName)
             throws IOException {
         Map parameterMap = request == null ? null : request.getParameterMap();
-        CypherQueryBuilder.QueryType queryType = shouldIncludeObservations(parameterMap)
-                ? CypherQueryBuilder.QueryType.SINGLE_TAXON_ALL
-                : CypherQueryBuilder.QueryType.SINGLE_TAXON_DISTINCT;
-        CypherQuery query = createQuery(sourceTaxonName, interactionType, targetTaxonName, parameterMap, queryType);
+        CypherQuery query = createQuery(sourceTaxonName, interactionType, targetTaxonName, parameterMap);
         return CypherQueryBuilder.createPagedQuery(request, query);
     }
 
-    private static boolean shouldIncludeObservations(Map parameterMap) {
-        List<String> includeObservations = CypherQueryBuilder.collectParamValues(parameterMap, ParamName.INCLUDE_OBSERVATIONS);
-        return includeObservations.size() > 0
-                && ("t".equalsIgnoreCase(includeObservations.get(0)) || "true".equalsIgnoreCase(includeObservations.get(0)));
-    }
-
-    private boolean isTaxonQueryOnly(Map parameterMap) {
-        List<String> accordingTo = CypherQueryBuilder.collectParamValues(parameterMap, ParamName.ACCORDING_TO);
-        List<String> bbox = CypherQueryBuilder.collectParamValues(parameterMap, ParamName.BBOX);
-        return accordingTo.isEmpty() && bbox.isEmpty();
-    }
-
-    public static CypherQuery createQuery(final String sourceTaxonName, String interactionType, final String targetTaxonName, Map parameterMap, CypherQueryBuilder.QueryType queryType) throws IOException {
+    public static CypherQuery createQuery(final String sourceTaxonName, String interactionType, final String targetTaxonName, Map parameterMap) throws IOException {
         List<String> sourceTaxa = new ArrayList<String>() {{
             if (sourceTaxonName != null) {
                 add(sourceTaxonName);
@@ -85,6 +63,7 @@ public class InteractionController {
                 add(targetTaxonName);
             }
         }};
+        QueryType queryType = QueryType.forParamsSingle(parameterMap);
         return CypherQueryBuilder.buildInteractionQuery(sourceTaxa, interactionType, targetTaxa, parameterMap, queryType);
     }
 }

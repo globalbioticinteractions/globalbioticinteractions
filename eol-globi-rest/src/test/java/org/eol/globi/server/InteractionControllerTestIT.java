@@ -72,13 +72,13 @@ public class InteractionControllerTestIT {
 
     @Test
     public void findPredator() throws IOException, URISyntaxException {
-        String list = CypherUtil.executeRemote(InteractionController.createQuery(null, CypherQueryBuilder.INTERACTION_PREYS_ON, "Hemiramphus brasiliensis", null, CypherQueryBuilder.QueryType.SINGLE_TAXON_DISTINCT));
+        String list = CypherUtil.executeRemote(InteractionController.createQuery(null, CypherQueryBuilder.INTERACTION_PREYS_ON, "Hemiramphus brasiliensis", null));
         assertThat(list, is(notNullValue()));
     }
 
     @Test
     public void findTargetsForSource() throws IOException, URISyntaxException {
-        String list = CypherUtil.executeRemote(InteractionController.createQuery("Homo sapiens", CypherQueryBuilder.INTERACTION_PREYS_ON, "Hemiramphus brasiliensis", null, CypherQueryBuilder.QueryType.SINGLE_TAXON_DISTINCT));
+        String list = CypherUtil.executeRemote(InteractionController.createQuery("Homo sapiens", CypherQueryBuilder.INTERACTION_PREYS_ON, "Hemiramphus brasiliensis", null));
         assertThat(list, is(notNullValue()));
     }
 

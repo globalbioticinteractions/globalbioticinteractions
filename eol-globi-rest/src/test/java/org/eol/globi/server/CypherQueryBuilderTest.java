@@ -14,7 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.eol.globi.domain.InteractType.*;
-import static org.eol.globi.server.CypherQueryBuilder.QueryType.*;
+import static org.eol.globi.server.QueryType.*;
 import static org.eol.globi.server.CypherQueryBuilder.appendMatchAndWhereClause;
 import static org.eol.globi.server.CypherQueryBuilder.buildInteractionQuery;
 import static org.eol.globi.server.CypherQueryBuilder.locations;
@@ -1075,7 +1075,7 @@ public class CypherQueryBuilderTest {
         };
         String clause = appendMatchAndWhereClause(new ArrayList<String>() {{
             add("preysOn");
-        }}, params, new StringBuilder(), CypherQueryBuilder.QueryType.MULTI_TAXON_ALL).toString();
+        }}, params, new StringBuilder(), MULTI_TAXON_ALL).toString();
         assertLocationMatchAndWhereClause(clause);
     }
 
@@ -1095,7 +1095,7 @@ public class CypherQueryBuilderTest {
         };
         String clause = appendMatchAndWhereClause(new ArrayList<String>() {{
             add("preysOn");
-        }}, params, new StringBuilder(), CypherQueryBuilder.QueryType.MULTI_TAXON_ALL).toString();
+        }}, params, new StringBuilder(), MULTI_TAXON_ALL).toString();
         assertLocationMatchAndWhereClause(clause);
     }
 
@@ -1108,7 +1108,7 @@ public class CypherQueryBuilderTest {
 
         assertThat(appendMatchAndWhereClause(new ArrayList<String>() {{
                     add("preysOn");
-                }}, params, new StringBuilder(), CypherQueryBuilder.QueryType.MULTI_TAXON_ALL).toString()
+                }}, params, new StringBuilder(), MULTI_TAXON_ALL).toString()
                 , is(" MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen-[interaction:PREYS_UPON]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon" +
                         ", sourceSpecimen<-[collected_rel:COLLECTED]-study, sourceSpecimen-[?:COLLECTED_AT]->loc "));
     }

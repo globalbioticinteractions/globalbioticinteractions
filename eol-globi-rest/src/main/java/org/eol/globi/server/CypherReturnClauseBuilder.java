@@ -45,9 +45,6 @@ public class CypherReturnClauseBuilder {
             FOOTPRINT_WKT,
             LOCALITY
     };
-    public static final List<CypherQueryBuilder.QueryType> QUERY_TYPES_DISTINCT = Arrays.asList(
-             CypherQueryBuilder.QueryType.MULTI_TAXON_DISTINCT
-    );
 
     private static Map<ResultField, String> appendStudyFields(Map<ResultField, String> selectors) {
         return new HashMap<ResultField, String>(selectors) {
@@ -81,8 +78,8 @@ public class CypherReturnClauseBuilder {
         };
     }
 
-    static void appendReturnClauseMap(StringBuilder query, CypherQueryBuilder.QueryType queryType, Map parameterMap) {
-        if (isDistinct(queryType) && usesSpecimenData(queryType)) {
+    static void appendReturnClauseMap(StringBuilder query, QueryType queryType, Map parameterMap) {
+        if (QueryType.isDistinct(queryType) && QueryType.usesSpecimenData(queryType)) {
             query.append(" WITH distinct " + ResultObject.TARGET_TAXON.getLabel() + ", "
                     + ResultObject.INTERACTION.getLabel() + ".label as " + ResultObject.INTERACTION_TYPE.getLabel() + ", " +
                     ResultObject.SOURCE_TAXON.getLabel());
@@ -92,12 +89,12 @@ public class CypherReturnClauseBuilder {
         appendReturnClause(query, queryType, CypherQueryBuilder.collectRequestedFields(parameterMap));
     }
 
-    private static void appendTaxonIdPrefixClause(StringBuilder query, CypherQueryBuilder.QueryType queryType, Map parameterMap) {
+    private static void appendTaxonIdPrefixClause(StringBuilder query, QueryType queryType, Map parameterMap) {
         List<String> prefixes = CypherQueryBuilder.collectParamValues(parameterMap, ParamName.TAXON_ID_PREFIX);
         if (!prefixes.isEmpty()) {
             String sourceLabel = ResultObject.SOURCE_TAXON.getLabel();
 
-            String interactionLabel = isDistinct(queryType)
+            String interactionLabel = QueryType.isDistinct(queryType)
                     ? ResultObject.INTERACTION_TYPE.getLabel()
                     : ResultObject.INTERACTION.getLabel();
 
@@ -105,7 +102,7 @@ public class CypherReturnClauseBuilder {
 
             query.append("WITH ");
             List<String> inParams;
-            if (usesSpecimenData(queryType) && !isDistinct(queryType)) {
+            if (QueryType.usesSpecimenData(queryType) && !QueryType.isDistinct(queryType)) {
                 inParams = Arrays.asList(sourceLabel,
                         ResultObject.SOURCE_SPECIMEN.getLabel(),
                         ResultObject.INTERACTION.getLabel(),
@@ -121,7 +118,7 @@ public class CypherReturnClauseBuilder {
 
             query.append("WITH ");
             List<String> outParams;
-            if (usesSpecimenData(queryType) && !isDistinct(queryType)) {
+            if (QueryType.usesSpecimenData(queryType) && !QueryType.isDistinct(queryType)) {
                 outParams = Arrays.asList(sameAs(sourceLabel),
                         ResultObject.SOURCE_SPECIMEN.getLabel(),
                         ResultObject.INTERACTION.getLabel(),
@@ -137,14 +134,6 @@ public class CypherReturnClauseBuilder {
         }
     }
 
-    private static boolean usesSpecimenData(CypherQueryBuilder.QueryType queryType) {
-        List<CypherQueryBuilder.QueryType> queryTypes = Arrays.asList(
-                CypherQueryBuilder.QueryType.MULTI_TAXON_ALL,
-                CypherQueryBuilder.QueryType.MULTI_TAXON_DISTINCT
-        );
-        return queryTypes.contains(queryType);
-    }
-
     private static String sameAs(String sourceLabel) {
         return sameAsLabel(sourceLabel) + " as " + sourceLabel;
     }
@@ -153,11 +142,7 @@ public class CypherReturnClauseBuilder {
         return label + "SameAs";
     }
 
-    private static boolean isDistinct(CypherQueryBuilder.QueryType queryType) {
-        return QUERY_TYPES_DISTINCT.contains(queryType);
-    }
-
-    private static void appendReturnClause(StringBuilder query, CypherQueryBuilder.QueryType queryType, List<String> requestedReturnFields) {
+    private static void appendReturnClause(StringBuilder query, QueryType queryType, List<String> requestedReturnFields) {
         switch (queryType) {
             case SINGLE_TAXON_DISTINCT:
                 Map<ResultField, String> selectors1 = new HashMap<ResultField, String>() {

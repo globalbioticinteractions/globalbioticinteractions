@@ -14,7 +14,7 @@ public class CypherReturnClauseBuilderTest {
         StringBuilder query = new StringBuilder();
         CypherReturnClauseBuilder.appendReturnClauseMap(
                 query,
-                CypherQueryBuilder.QueryType.MULTI_TAXON_ALL,
+                QueryType.MULTI_TAXON_ALL,
                 unknownFields());
         assertThat(query.toString(), is(" RETURN " +
                 "sourceTaxon.externalId? as source_taxon_external_id," +
@@ -38,7 +38,7 @@ public class CypherReturnClauseBuilderTest {
         StringBuilder query = new StringBuilder();
         CypherReturnClauseBuilder.appendReturnClauseMap(
                 query,
-                CypherQueryBuilder.QueryType.MULTI_TAXON_ALL,
+                QueryType.MULTI_TAXON_ALL,
                 taxonomyOnly());
         assertThat(query.toString(), is(" WITH " +
                 "sourceTaxon, " +
@@ -81,7 +81,7 @@ public class CypherReturnClauseBuilderTest {
         StringBuilder query = new StringBuilder();
         CypherReturnClauseBuilder.appendReturnClauseMap(
                 query,
-                CypherQueryBuilder.QueryType.MULTI_TAXON_ALL,
+                QueryType.MULTI_TAXON_ALL,
                 knownFieldsWithTaxonomy());
         assertThat(query.toString(), is(" WITH " +
                 "sourceTaxon, sourceSpecimen, interaction, targetTaxon, targetSpecimen, loc, study " +
@@ -100,7 +100,7 @@ public class CypherReturnClauseBuilderTest {
         StringBuilder query = new StringBuilder();
         CypherReturnClauseBuilder.appendReturnClauseMap(
                 query,
-                CypherQueryBuilder.QueryType.MULTI_TAXON_ALL,
+                QueryType.MULTI_TAXON_ALL,
                 knownFields());
         assertThat(query.toString(), is(" RETURN " +
                 "sourceTaxon.name as source_taxon_name," +
@@ -129,7 +129,7 @@ public class CypherReturnClauseBuilderTest {
         StringBuilder query = new StringBuilder();
         CypherReturnClauseBuilder.appendReturnClauseMap(
                 query,
-                CypherQueryBuilder.QueryType.MULTI_TAXON_DISTINCT,
+                QueryType.MULTI_TAXON_DISTINCT,
                 knownFieldsWithTaxonomy());
         assertThat(query.toString(), is(
                 " WITH distinct targetTaxon, " +
@@ -151,7 +151,7 @@ public class CypherReturnClauseBuilderTest {
         StringBuilder query = new StringBuilder();
         CypherReturnClauseBuilder.appendReturnClauseMap(
                 query,
-                CypherQueryBuilder.QueryType.MULTI_TAXON_DISTINCT,
+                QueryType.MULTI_TAXON_DISTINCT,
                 knownFields());
         assertThat(query.toString(), is(" WITH distinct targetTaxon, " +
                 "interaction.label as iType, " +
@@ -165,7 +165,7 @@ public class CypherReturnClauseBuilderTest {
         StringBuilder query = new StringBuilder();
         CypherReturnClauseBuilder.appendReturnClauseMap(
                 query,
-                CypherQueryBuilder.QueryType.MULTI_TAXON_DISTINCT_BY_NAME_ONLY,
+                QueryType.MULTI_TAXON_DISTINCT_BY_NAME_ONLY,
                 knownFields());
         assertThat(query.toString(), is(" RETURN " +
                 "sourceTaxon.name as source_taxon_name," +
@@ -177,7 +177,7 @@ public class CypherReturnClauseBuilderTest {
         StringBuilder query = new StringBuilder();
         CypherReturnClauseBuilder.appendReturnClauseMap(
                 query,
-                CypherQueryBuilder.QueryType.MULTI_TAXON_DISTINCT,
+                QueryType.MULTI_TAXON_DISTINCT,
                 unknownFields());
         assertThat(query.toString(), is(" WITH distinct targetTaxon, " +
                 "interaction.label as iType, " +

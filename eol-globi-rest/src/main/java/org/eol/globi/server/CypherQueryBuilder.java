@@ -193,10 +193,6 @@ public class CypherQueryBuilder {
         return prefix;
     }
 
-    public enum QueryType {
-        SINGLE_TAXON_DISTINCT, SINGLE_TAXON_ALL, MULTI_TAXON_DISTINCT, MULTI_TAXON_DISTINCT_BY_NAME_ONLY, MULTI_TAXON_ALL
-    }
-
     public static void addLocationClausesIfNecessary(StringBuilder query, Map parameterMap, QueryType queryType) {
         if (parameterMap != null) {
             RequestHelper.appendSpatialClauses(parameterMap, query, queryType);
@@ -218,10 +214,6 @@ public class CypherQueryBuilder {
             count++;
         }
         return lucenePathQuery.toString();
-    }
-
-    public static String regexPrefixNotLucene(List<String> terms) {
-        return regexStrict(terms) + ".*";
     }
 
     public static String regexWildcard(List<String> terms) {
