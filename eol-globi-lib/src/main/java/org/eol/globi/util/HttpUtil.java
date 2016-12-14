@@ -4,6 +4,7 @@ import org.apache.commons.lang3.time.StopWatch;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.HttpRequestRetryHandler;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpGet;
@@ -11,9 +12,11 @@ import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.conn.ssl.AllowAllHostnameVerifier;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.DefaultHttpRequestRetryHandler;
 import org.apache.http.impl.client.DefaultServiceUnavailableRetryStrategy;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.protocol.HttpContext;
 
 import java.io.IOException;
 import java.net.URI;
@@ -41,9 +44,10 @@ public class HttpUtil {
                     .setConnectTimeout(FIVE_SECONDS)
                     .build();
 
-            HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
+            HttpClientBuilder httpClientBuilder = HttpClientBuilder
+                    .create();
             failFastHttpClient = httpClientBuilder
-                            .setDefaultRequestConfig(config).build();
+                    .setDefaultRequestConfig(config).build();
         }
         return failFastHttpClient;
     }
@@ -81,6 +85,7 @@ public class HttpUtil {
                 .build();
 
         return HttpClientBuilder.create()
+                .setRetryHandler(new DefaultHttpRequestRetryHandler(3, true))
                 .setServiceUnavailableRetryStrategy(new DefaultServiceUnavailableRetryStrategy(10, 5 * 1000))
                 .setDefaultRequestConfig(config).build();
     }
