@@ -17,6 +17,7 @@ public class TaxonIdLookup {
     public static void main(String args[]) {
         String externalId = args[0];
         try {
+            System.err.println("externalId [" + externalId + "] resolving...");
             Map<String, String> enrich = PropertyEnricherFactory.createTaxonEnricher().enrich(TaxonUtil.taxonToMap(new TaxonImpl(null, externalId)));
             TaxonImage taxonImage = new EOLTaxonImageService().lookupImageForExternalId(externalId);
             Taxon taxon = TaxonUtil.mapToTaxon(enrich);
@@ -32,10 +33,11 @@ public class TaxonIdLookup {
                     taxon.getPath(),
                     taxon.getPathIds(),
                     taxon.getPathNames(),
-                    taxon.getThumbnailUrl(),
                     taxon.getExternalUrl(),
+                    taxon.getThumbnailUrl()
             };
             System.out.println(StringUtils.join(row, "\t"));
+            System.err.println("externalId [" + externalId + "] resolved.");
         } catch (PropertyEnricherException | IOException e) {
             System.err.println("failed to resolve taxon id [" + externalId + "]: [" + e.getMessage());
         }
