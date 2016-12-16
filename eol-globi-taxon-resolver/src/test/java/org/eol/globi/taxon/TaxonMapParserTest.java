@@ -39,8 +39,6 @@ public class TaxonMapParserTest {
 
         assertThat(someLines, is(notNullValue()));
 
-
-        TaxonMapParser taxonParser = new TaxonMapParser();
         final List<String> taxa = new ArrayList<String>();
         parse(someLines, new TaxonMapListener() {
             @Override

@@ -144,6 +144,15 @@ public class GlobalNamesServiceTest {
     }
 
     @Test
+    public void createTaxaListFromLongNameList5() throws PropertyEnricherException {
+        String response = "8231805|Aeshna grandis|8231804|Syrphetodes obtusus|8231807|Argia immunda|8231806|Gomphus kurilis|8231801|Accipiter cooperii|8231800|Cladonia macilenta|8231803|Eucalyptus|8231802|Branta canadensis|8231797|Mactridae|8231796|Stereum|8231799|Bryopsida|8231798|Hemigrapsus oregonensis|8231793|Hedera helix|8231792|Trigonospila brevifacies|8231795|Strix varia|8231794|Vinca minor|8231789|Formica obscuripes|8231788|Aphis fabae|8231791|Rubus armeniacus|8231790|Heracleum maximum|8231785|Malus ×domestica|8231784|Sitta canadensis|8231787|Walshomyia|8231786|Juniperus|8231781|Corylus avellana|8231780|Tremella foliacea|8231783|Eucalyptus globulus|8231782|Canis familiaris|8231777|Elymus repens|8231776|Auricularia auricula-judae|8231779|Stereum hirsutum|8231778|Claviceps purpurea|8231773|Equisetum hyemale|8231772|Stamnaria americana|8231775|Oxalis articulata|8231774|Viscum album album|8231769|Puccinia oxalidis|8231768|Oxalis debilis corymbosa|8231771|Gymnosporangium sabinae|8231770|Pyrus communis|8231765|Philaeus chrysops|8231764|Calliphora|8231767|Polistes dominula|8231766|Muscidae|8231761|Acridotheres tristis|8231760|Hemidactylus persicus|8231763|Pandion haliaetus|8231762|Atherinopsis californiensis|8231757|Metacarcinus|8231756|Loxorhynchus grandis|8231759|Aphidoidea|8231758|Nassarius fossatus|8231753|Metacarcinus magister|8231752|Cancer productus|8231755|Enhydra lutris kenyoni|8231754|Octopus|8231749|Cancridae|8231748|Crassadoma gigantea|8231751|Romaleon antennarium|8231750|Carcinus maenas|8231745|Mytilus californianus|8231744|Tresus nuttallii|8231747|Enhydra lutris|8231746|Saxidomus|8231741|Mytilus|8231740|Coluber flagellum testaceus|8231743|Bivalvia|8231742|Enhydra lutris nereis|8231737|Sciurus carolinensis|8231736|Manduca|8231739|Agapostemon splendens|8231738|Larus occidentalis|8231732|Fraxinus|8231833|Lantana|8231832|Gomphrena globosa|8231834|Bidens aristosa|8231829|Cercyonis pegala|8231828|Eriogonum|8231831|Papilio rumiko|8231830|Euphilotes enoptes bayensis|8231825|Felicia|8231824|Ichthyostomum pygmaeum|8231827|Junonia hierta|8231826|Gazania|8231821|Weinmannia racemosa|8231820|Coleosporium tussilaginis|8231823|Knightia excelsa|8231822|Tmesipteris tannensis|8231817|Verbena brasiliensis|8231816|Mantodea|8231819|Senecio minimus|8231818|Tmetolophota steropastis|8231813|Celithemis ornata|8231812|Argia tibialis|8231815|Araneus bicentenarius|8231814|Argiope|8231809|Microstylum morosum|8231808|Orthetrum sabina|8231811|Calopteryx maculata|8231810|Micrathyria hagenii";
+        final List<Taxon> foundTaxa = new ArrayList<Taxon>();
+        assertAtLeastFortyFound(response, foundTaxa, Arrays.asList(GlobalNamesSources.ITIS));
+        assertThat(foundTaxa.size() > 20, is(true));
+    }
+
+
+    @Test
     public void createTaxaListFromLongNameList4() throws PropertyEnricherException {
         List<String> names = namesListWithMaximumOf(100);
 
