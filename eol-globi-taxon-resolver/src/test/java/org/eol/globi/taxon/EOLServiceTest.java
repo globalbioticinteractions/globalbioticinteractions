@@ -2,10 +2,14 @@ package org.eol.globi.taxon;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.data.CharsetConstant;
+import org.eol.globi.domain.TaxonomyProvider;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
@@ -39,12 +43,4 @@ public class EOLServiceTest {
                         + "species"));
 
     }
-
-
-    @Test
-    public void liveHierarchyTest() {
-
-    }
-
-
 }

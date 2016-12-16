@@ -39,7 +39,7 @@ public class EOLServiceIT {
     @Test
     public void lookupByName() throws PropertyEnricherException {
         assertThat(lookupPageIdByName("Actinopterygii"), is("EOL:1905"));
-        assertThat(lookupPageIdByName("Catfish"), is("EOL:206165"));
+        assertThat(lookupPageIdByName("Catfish"), is("EOL:5083"));
         assertThat(lookupPageIdByName("Hygrocybe pratensis var. pallida"), is("EOL:6676627"));
 
         assertThat(lookupPageIdByName("Homo sapiens"), is("EOL:327955"));
@@ -121,13 +121,6 @@ public class EOLServiceIT {
     }
 
     @Test
-    // see https://github.com/jhpoelen/eol-globi-data/issues/60
-    public void gallTissue() throws PropertyEnricherException {
-        assertThat(lookupPageIdByName("gall tissue"), is(nullValue()));
-        assertThat(lookupPageIdByName("gall"), is("EOL:210208"));
-    }
-
-    @Test
     public void lookupBySquatLobster() throws PropertyEnricherException {
         HashMap<String, String> properties = new HashMap<String, String>();
         properties.put(NAME, "Squat lobster");
@@ -161,9 +154,9 @@ public class EOLServiceIT {
     }
 
     @Test
-    public void lookupPickleweed() throws PropertyEnricherException {
+    public void lookupGlasswortFormerlyPickleweed() throws PropertyEnricherException {
         HashMap<String, String> properties = new HashMap<String, String>();
-        properties.put(NAME, "Pickleweed");
+        properties.put(NAME, "glasswort");
         Map<String, String> enrich = eolService.enrich(properties);
         assertThat(enrich.get(EXTERNAL_ID), is("EOL:61812"));
         assertThat(enrich.get(NAME), is("Salicornia"));
@@ -174,6 +167,7 @@ public class EOLServiceIT {
     }
 
     @Test
+    @Ignore("suspected re-use of \"stable\" page id, see https://github.com/jhpoelen/eol-globi-data/issues/268")
     public void lookupCalyptridium() throws PropertyEnricherException {
         HashMap<String, String> properties = new HashMap<String, String>();
         properties.put(EXTERNAL_ID, "EOL:754947");
@@ -238,8 +232,8 @@ public class EOLServiceIT {
         HashMap<String, String> properties = new HashMap<String, String>();
         properties.put(NAME, "Hake");
         Map<String, String> enrich = eolService.enrich(properties);
-        assertThat(enrich.get(EXTERNAL_ID), is("EOL:205098"));
-        assertThat(enrich.get(NAME), is("Merluccius bilinearis"));
+        assertThat(enrich.get(EXTERNAL_ID), is("EOL:206057"));
+        assertThat(enrich.get(NAME), is("Urophycis cirrata"));
     }
 
     @Test
@@ -517,7 +511,7 @@ public class EOLServiceIT {
         properties.put(NAME, "Todarodes pacificus");
         properties = eolService.enrich(properties);
         assertThat(properties.get(EXTERNAL_ID), is("EOL:590939"));
-        assertThat(properties.get(COMMON_NAMES), containsString("flying squid"));
+        assertThat(properties.get(COMMON_NAMES), containsString("Flying squid"));
         assertThat(properties.get(PATH), containsString("Animalia"));
     }
 
@@ -695,7 +689,7 @@ public class EOLServiceIT {
         assertThat(properties.get(PATH), containsString("Rodentia" + CharsetConstant.SEPARATOR));
         assertThat(properties.get(PATH), containsString("Rattus" + CharsetConstant.SEPARATOR + "Rattus rattus"));
         String commonNames = properties.get(COMMON_NAMES);
-        String expected = "Huisrot @af" + CharsetConstant.SEPARATOR + "جرذ المنزل @ar" + CharsetConstant.SEPARATOR + "Hausratte @de" + CharsetConstant.SEPARATOR + "black rat @en" + CharsetConstant.SEPARATOR + "Rata negra @es" + CharsetConstant.SEPARATOR + "rat noir @fr" + CharsetConstant.SEPARATOR + "Чёрная крыса @ru" + CharsetConstant.SEPARATOR + "家鼠 @zh" + CharsetConstant.SEPARATOR + "屋顶鼠 @zh-Hans" + CharsetConstant.SEPARATOR + "";
+        String expected = "Huisrot @af | Hausratte @de | black rat @en";
         String[] names = expected.split(CharsetConstant.SEPARATOR);
         for (String name : names) {
             assertThat(commonNames, containsString(name));

@@ -2,7 +2,6 @@ package org.eol.globi.server;
 
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.TaxonImage;
-import org.eol.globi.domain.TaxonomyProvider;
 import org.eol.globi.service.ImageSearch;
 import org.junit.Before;
 import org.junit.Test;
@@ -51,10 +50,6 @@ public class ImageServiceTest {
                 return taxonImage;
             }
 
-            @Override
-            public TaxonImage lookupImageURLs(TaxonomyProvider provider, String taxonId) throws IOException {
-                return null;
-            }
         });
     }
 
@@ -100,10 +95,6 @@ public class ImageServiceTest {
                 return taxonImage;
             }
 
-            @Override
-            public TaxonImage lookupImageURLs(TaxonomyProvider provider, String taxonId) throws IOException {
-                return null;
-            }
         });
 
         TaxonImage image = imageService.findTaxonImagesForTaxonWithName("some name");
@@ -140,10 +131,6 @@ public class ImageServiceTest {
                 return null;
             }
 
-            @Override
-            public TaxonImage lookupImageURLs(TaxonomyProvider provider, String taxonId) throws IOException {
-                return null;
-            }
         });
 
         TaxonImage image = imageService.findTaxonImagesForTaxonWithName("some name");

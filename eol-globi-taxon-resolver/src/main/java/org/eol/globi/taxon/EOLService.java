@@ -2,16 +2,19 @@ package org.eol.globi.taxon;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpResponseException;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.BasicResponseHandler;
+import org.apache.http.util.EntityUtils;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.JsonProcessingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.data.CharsetConstant;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.TaxonomyProvider;
+import org.eol.globi.service.PageInfo;
 import org.eol.globi.service.PropertyEnricher;
 import org.eol.globi.service.PropertyEnricherException;
 import org.eol.globi.service.PropertyEnrichmentFilter;
@@ -24,13 +27,57 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class EOLService implements PropertyEnricher {
 
+    private static final Map<TaxonomyProvider, Integer> EOL_TAXON_PROVIDER_MAP = Collections.unmodifiableMap(new HashMap<TaxonomyProvider, Integer>() {{
+        put(TaxonomyProvider.ITIS, 903);
+        put(TaxonomyProvider.NCBI, 1172);
+        put(TaxonomyProvider.WORMS, 123);
+        put(TaxonomyProvider.GBIF, 800);
+        put(TaxonomyProvider.INDEX_FUNGORUM, 596);
+    }});
+
+
     private PropertyEnrichmentFilter filter = new PropertyEnrichmentFilterExternalId();
+
+    public static PageInfo getDataObjectInfo(String dataObjectVersionId) throws IOException {
+        String pageUrlString = "http://eol.org/api/data_objects/1.0/" + dataObjectVersionId + ".json?taxonomy=false";
+        HttpGet request = new HttpGet(pageUrlString);
+        try {
+            HttpResponse response = HttpUtil.getHttpClient().execute(request);
+            String responseString = EntityUtils.toString(response.getEntity(), "UTF-8");
+            return 200 == response.getStatusLine().getStatusCode() ? parseDataObject(responseString) : null;
+        } catch (IOException ex) {
+            throw new IOException("failed to access [" + pageUrlString + "]", ex);
+        } finally {
+            request.releaseConnection();
+        }
+    }
+
+    private static PageInfo parseDataObject(String responseString) throws IOException {
+        PageInfo pageInfo = new PageInfo();
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode array = mapper.readTree(responseString);
+        JsonNode dataObjects = array.findValue("dataObjects");
+        for (JsonNode dataObject : dataObjects) {
+            String dataType = dataObject.has("dataType") ? dataObject.get("dataType").asText() : "";
+            if ("http://purl.org/dc/dcmitype/StillImage".equals(dataType)) {
+                if (dataObject.has("eolMediaURL")) {
+                    pageInfo.setImageURL(dataObject.get("eolMediaURL").asText());
+                }
+                if (dataObject.has("eolThumbnailURL")) {
+                    pageInfo.setThumbnailURL(dataObject.get("eolThumbnailURL").asText());
+                }
+                break;
+            }
+        }
+        return pageInfo;
+    }
 
     @Override
     public Map<String, String> enrich(final Map<String, String> properties) throws PropertyEnricherException {
@@ -54,24 +101,23 @@ public class EOLService implements PropertyEnricher {
     }
 
     private Long getEOLPageId(String name, String externalId) throws PropertyEnricherException {
-        Long id = null;
-        if (ExternalIdUtil.isSupported(externalId)) {
-            if (externalId.startsWith(TaxonomyProvider.ID_PREFIX_EOL)) {
-                String eolPageIdString = externalId.replaceFirst(TaxonomyProvider.ID_PREFIX_EOL, "");
+        Long eolPageId = null;
+        TaxonomyProvider taxonomyProvider = ExternalIdUtil.taxonomyProviderFor(externalId);
+        if (taxonomyProvider != null) {
+            String idNoPrefix = ExternalIdUtil.stripPrefix(taxonomyProvider, externalId);
+            if (taxonomyProvider == TaxonomyProvider.EOL) {
                 try {
-                    id = Long.parseLong(eolPageIdString);
+                    eolPageId = Long.parseLong(idNoPrefix);
                 } catch (NumberFormatException ex) {
-                    throw new PropertyEnricherException("failed to parse eol id [" + eolPageIdString + "]");
+                    throw new PropertyEnricherException("failed to parse eol id [" + idNoPrefix + "]");
                 }
-            } else if (externalId.startsWith(TaxonomyProvider.NCBI.getIdPrefix())) {
-                id = getPageIdFromProvider(1172, externalId.replace(TaxonomyProvider.NCBI.getIdPrefix(), ""));
-            } else if (externalId.startsWith(TaxonomyProvider.ITIS.getIdPrefix())) {
-                id = getPageIdFromProvider(903, externalId.replace(TaxonomyProvider.ITIS.getIdPrefix(), ""));
+            } else if (EOL_TAXON_PROVIDER_MAP.containsKey(taxonomyProvider)){
+                eolPageId = getPageIdFromProvider(EOL_TAXON_PROVIDER_MAP.get(taxonomyProvider), idNoPrefix);
             }
         } else if (StringUtils.isNotBlank(name) && !PropertyAndValueDictionary.NO_NAME.equals(name)) {
-            id = getPageId(name, true);
+            eolPageId = getPageId(name, true);
         }
-        return id;
+        return eolPageId;
     }
 
     private Long getPageIdFromProvider(int eolProviderId, String providerTaxonId) throws PropertyEnricherException {
@@ -113,7 +159,7 @@ public class EOLService implements PropertyEnricher {
 
     protected void addTaxonInfo(Long pageId, Map<String, String> properties) throws PropertyEnricherException {
         try {
-            URI uri = new URI("http", null, "eol.org", 80, "/api/pages/1.0/" + pageId + ".json", "images=0&videos=0&sounds=0&maps=0&text=0&iucn=false&subjects=overview&licenses=all&details=false&common_names=true&synonyms=false&references=false&taxonomy=true&format=json", null);
+            URI uri = new URI("http", null, "eol.org", 80, "/api/pages/1.0/" + pageId + ".json", "images=1&videos=0&sounds=0&maps=0&text=0&iucn=false&subjects=overview&licenses=all&details=false&common_names=true&synonyms=false&references=false&taxonomy=true&format=json", null);
             String response = getResponse(uri);
             if (response != null) {
                 addCanonicalNamesAndRanks(properties, response);
@@ -147,7 +193,25 @@ public class EOLService implements PropertyEnricher {
         if (node.has("taxonConcepts")) {
             handleTaxonConcept(properties, ranks, rankNames, rankIds, node);
         }
+
+        if (node.has("dataObjects")) {
+            JsonNode dataObjects = node.get("dataObjects");
+            for (JsonNode dataObject : dataObjects) {
+                String dataType = dataObject.has("dataType") ? dataObject.get("dataType").asText() : "";
+                if ("http://purl.org/dc/dcmitype/StillImage".equals(dataType)) {
+                    if (dataObject.has("dataObjectVersionID")) {
+                        PageInfo imageInfo = getDataObjectInfo(dataObject.get("dataObjectVersionID").asText());
+                        if (imageInfo != null) {
+                            properties.put(PropertyAndValueDictionary.THUMBNAIL_URL, imageInfo.getThumbnailURL());
+                        }
+                    }
+                    break;
+                }
+            }
+        }
+
     }
+
 
     private void handleTaxonConcept(Map<String, String> properties, List<String> ranks, List<String> rankNames, List<String> rankIds, JsonNode node) throws URISyntaxException, PropertyEnricherException, IOException {
         JsonNode taxonConcepts = node.get("taxonConcepts");
@@ -229,7 +293,8 @@ public class EOLService implements PropertyEnricher {
                 String commonName = vernacularName.get("vernacularName").asText();
                 if (StringUtils.isNotBlank(languageCode) && StringUtils.isNotBlank(commonName)) {
                     commonNames.append(StringEscapeUtils.unescapeHtml(commonName));
-                    commonNames.append(" @");
+                    commonNames.append(" ");
+                    commonNames.append(CharsetConstant.LANG_SEPARATOR_CHAR);
                     commonNames.append(languageCode);
                     commonNames.append(CharsetConstant.SEPARATOR);
                 }

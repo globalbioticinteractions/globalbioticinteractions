@@ -7,6 +7,4 @@ import java.io.IOException;
 
 public interface ImageSearch {
     TaxonImage lookupImageForExternalId(String externalId) throws IOException;
-
-    TaxonImage lookupImageURLs(TaxonomyProvider provider, String taxonId) throws IOException;
 }

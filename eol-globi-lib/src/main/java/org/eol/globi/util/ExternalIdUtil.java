@@ -88,15 +88,20 @@ public class ExternalIdUtil {
     }
 
     public static boolean isSupported(String externalId) {
-        boolean supported = false;
+        return taxonomyProviderFor(externalId) != null;
+    }
+
+    public static TaxonomyProvider taxonomyProviderFor(String externalId) {
+        TaxonomyProvider provider = null;
         if (StringUtils.isNotBlank(externalId)) {
             for (TaxonomyProvider prefix : TaxonomyProvider.values()) {
                 if (StringUtils.startsWith(externalId, prefix.getIdPrefix())) {
-                    supported = true;
+                    provider = prefix;
+                    break;
                 }
             }
         }
-        return supported;
+        return provider;
     }
 
     public static String getUrlFromExternalId(String result) {
@@ -144,5 +149,9 @@ public class ExternalIdUtil {
 
     public static boolean hasProperty(Map<String, String> link, String propertyName) {
         return link.containsKey(propertyName) && org.apache.commons.lang.StringUtils.isNotBlank(link.get(propertyName));
+    }
+
+    public static String stripPrefix(TaxonomyProvider provider, String externalId) {
+        return StringUtils.replace(externalId, provider.getIdPrefix(), "");
     }
 }

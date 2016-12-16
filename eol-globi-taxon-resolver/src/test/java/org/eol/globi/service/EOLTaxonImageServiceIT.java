@@ -21,7 +21,6 @@ public class EOLTaxonImageServiceIT {
 
     @Test
     public void imageLookupITIS() throws URISyntaxException, IOException {
-        assertITISImage(imageService.lookupImageURLs(TaxonomyProvider.ITIS, "165653"));
         assertITISImage(imageService.lookupImageForExternalId(TaxonomyProvider.ID_PREFIX_ITIS + "165653"));
     }
 
@@ -30,7 +29,7 @@ public class EOLTaxonImageServiceIT {
         assertThat(taxonImage.getThumbnailURL(), containsString(".jpg"));
         assertThat(taxonImage.getImageURL(), containsString(".jpg"));
         assertThat(taxonImage.getPageId(), is("207614"));
-        assertThat(taxonImage.getInfoURL(), is("http://eol.org/pages/207614"));
+        assertThat(taxonImage.getInfoURL(), is("http://www.itis.gov/servlet/SingleRpt/SingleRpt?search_topic=TSN&search_value=165653"));
         assertThat(taxonImage.getScientificName(), is("Fundulus jenkinsi"));
         assertThat(taxonImage.getCommonName(), is("Topminnows"));
     }
@@ -42,7 +41,6 @@ public class EOLTaxonImageServiceIT {
 
     @Test
     public void imageURLLookupNCBI() throws URISyntaxException, IOException {
-        assertNCBIImage(imageService.lookupImageURLs(TaxonomyProvider.NCBI, "28806"));
         assertNCBIImage(imageService.lookupImageForExternalId(TaxonomyProvider.ID_PREFIX_NCBI + "28806"));
     }
 
@@ -52,7 +50,7 @@ public class EOLTaxonImageServiceIT {
         assertThat(taxonImage.getThumbnailURL(), endsWith(".jpg"));
         assertThat(taxonImage.getImageURL(), endsWith(".jpg"));
         assertThat(taxonImage.getPageId(), is("205157"));
-        assertThat(taxonImage.getInfoURL(), is("http://eol.org/pages/205157"));
+        assertThat(taxonImage.getInfoURL(), is("https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=28806"));
         assertThat(taxonImage.getScientificName(), is("Centropomus undecimalis"));
         assertThat(taxonImage.getCommonName(), is("Snoek"));
     }
@@ -60,7 +58,6 @@ public class EOLTaxonImageServiceIT {
     @Test
     @Ignore
     public void imageLookupWoRMS() throws URISyntaxException, IOException {
-        assertWoRMSImage(imageService.lookupImageURLs(TaxonomyProvider.WORMS, "276287"));
         assertWoRMSImage(imageService.lookupImageForExternalId(TaxonomyProvider.ID_PREFIX_WORMS + "276287"));
     }
 
@@ -82,7 +79,6 @@ public class EOLTaxonImageServiceIT {
 
     @Test
     public void imageLookupEOL() throws URISyntaxException, IOException {
-        assertEOLImage(imageService.lookupImageURLs(TaxonomyProvider.EOL, "1045608"));
         assertEOLImage(imageService.lookupImageForExternalId(TaxonomyProvider.ID_PREFIX_EOL + "1045608"));
     }
 
@@ -98,7 +94,6 @@ public class EOLTaxonImageServiceIT {
 
     @Test
     public void imageLookupEOL2() throws URISyntaxException, IOException {
-        assertEOLImage2(imageService.lookupImageURLs(TaxonomyProvider.EOL, "2215"));
         assertEOLImage2(imageService.lookupImageForExternalId(TaxonomyProvider.ID_PREFIX_EOL + "2215"));
     }
 
@@ -112,7 +107,6 @@ public class EOLTaxonImageServiceIT {
 
     @Test
     public void imageLookupEOL3() throws URISyntaxException, IOException {
-        assertEOLImage3(imageService.lookupImageURLs(TaxonomyProvider.EOL, "2774522"));
         assertEOLImage3(imageService.lookupImageForExternalId(TaxonomyProvider.ID_PREFIX_EOL + "2774522"));
     }
 
