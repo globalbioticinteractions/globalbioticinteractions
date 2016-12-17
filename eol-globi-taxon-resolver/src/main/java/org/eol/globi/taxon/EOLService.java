@@ -45,39 +45,7 @@ public class EOLService implements PropertyEnricher {
 
     private PropertyEnrichmentFilter filter = new PropertyEnrichmentFilterExternalId();
 
-    public static PageInfo getDataObjectInfo(String dataObjectVersionId) throws IOException {
-        String pageUrlString = "http://eol.org/api/data_objects/1.0/" + dataObjectVersionId + ".json?taxonomy=false";
-        HttpGet request = new HttpGet(pageUrlString);
-        try {
-            HttpResponse response = HttpUtil.getHttpClient().execute(request);
-            String responseString = EntityUtils.toString(response.getEntity(), "UTF-8");
-            return 200 == response.getStatusLine().getStatusCode() ? parseDataObject(responseString) : null;
-        } catch (IOException ex) {
-            throw new IOException("failed to access [" + pageUrlString + "]", ex);
-        } finally {
-            request.releaseConnection();
-        }
-    }
 
-    private static PageInfo parseDataObject(String responseString) throws IOException {
-        PageInfo pageInfo = new PageInfo();
-        ObjectMapper mapper = new ObjectMapper();
-        JsonNode array = mapper.readTree(responseString);
-        JsonNode dataObjects = array.findValue("dataObjects");
-        for (JsonNode dataObject : dataObjects) {
-            String dataType = dataObject.has("dataType") ? dataObject.get("dataType").asText() : "";
-            if ("http://purl.org/dc/dcmitype/StillImage".equals(dataType)) {
-                if (dataObject.has("eolMediaURL")) {
-                    pageInfo.setImageURL(dataObject.get("eolMediaURL").asText());
-                }
-                if (dataObject.has("eolThumbnailURL")) {
-                    pageInfo.setThumbnailURL(dataObject.get("eolThumbnailURL").asText());
-                }
-                break;
-            }
-        }
-        return pageInfo;
-    }
 
     @Override
     public Map<String, String> enrich(final Map<String, String> properties) throws PropertyEnricherException {
@@ -99,6 +67,15 @@ public class EOLService implements PropertyEnricher {
         }
         return enrichedProperties;
     }
+
+    @Override
+    public void shutdown() {}
+
+    public void setFilter(PropertyEnrichmentFilter filter) {
+        this.filter = filter;
+    }
+
+
 
     private Long getEOLPageId(String name, String externalId) throws PropertyEnricherException {
         Long eolPageId = null;
@@ -454,11 +431,38 @@ public class EOLService implements PropertyEnricher {
         return smallestPageId;
     }
 
-    public void setFilter(PropertyEnrichmentFilter filter) {
-        this.filter = filter;
+    private static PageInfo getDataObjectInfo(String dataObjectVersionId) throws IOException {
+        String pageUrlString = "http://eol.org/api/data_objects/1.0/" + dataObjectVersionId + ".json?taxonomy=false";
+        HttpGet request = new HttpGet(pageUrlString);
+        try {
+            HttpResponse response = HttpUtil.getHttpClient().execute(request);
+            String responseString = EntityUtils.toString(response.getEntity(), "UTF-8");
+            return 200 == response.getStatusLine().getStatusCode() ? parseDataObject(responseString) : null;
+        } catch (IOException ex) {
+            throw new IOException("failed to access [" + pageUrlString + "]", ex);
+        } finally {
+            request.releaseConnection();
+        }
     }
 
-    public void shutdown() {
-
+    private static PageInfo parseDataObject(String responseString) throws IOException {
+        PageInfo pageInfo = new PageInfo();
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode array = mapper.readTree(responseString);
+        JsonNode dataObjects = array.findValue("dataObjects");
+        for (JsonNode dataObject : dataObjects) {
+            String dataType = dataObject.has("dataType") ? dataObject.get("dataType").asText() : "";
+            if ("http://purl.org/dc/dcmitype/StillImage".equals(dataType)) {
+                if (dataObject.has("eolMediaURL")) {
+                    pageInfo.setImageURL(dataObject.get("eolMediaURL").asText());
+                }
+                if (dataObject.has("eolThumbnailURL")) {
+                    pageInfo.setThumbnailURL(dataObject.get("eolThumbnailURL").asText());
+                }
+                break;
+            }
+        }
+        return pageInfo;
     }
+
 }

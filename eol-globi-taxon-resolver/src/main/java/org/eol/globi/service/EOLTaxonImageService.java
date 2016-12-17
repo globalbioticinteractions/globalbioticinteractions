@@ -8,6 +8,7 @@ import org.eol.globi.domain.TaxonImage;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TaxonomyProvider;
 import org.eol.globi.taxon.EOLService;
+import org.eol.globi.util.ExternalIdUtil;
 
 import java.io.IOException;
 import java.util.Map;
@@ -16,13 +17,18 @@ public class EOLTaxonImageService implements ImageSearch {
 
     public TaxonImage lookupImageForExternalId(String externalId) throws IOException {
         try {
-            Map<String, String> enrich = new EOLService().enrich(TaxonUtil.taxonToMap(new TaxonImpl(null, externalId)));
-            Taxon taxon = TaxonUtil.mapToTaxon(enrich);
-            return taxonToTaxonImage(taxon);
-
+            return ExternalIdUtil.isSupported(externalId) ? lookupImage(externalId) : null;
         } catch (PropertyEnricherException e) {
             throw new IOException(e);
         }
+    }
+
+    private TaxonImage lookupImage(String externalId) throws PropertyEnricherException {
+        TaxonImage image;
+        Map<String, String> enrich = new EOLService().enrich(TaxonUtil.taxonToMap(new TaxonImpl(null, externalId)));
+        Taxon taxon = TaxonUtil.mapToTaxon(enrich);
+        image = taxonToTaxonImage(taxon);
+        return image;
     }
 
     private static TaxonImage taxonToTaxonImage(Taxon taxon) {

@@ -20,9 +20,7 @@ import java.util.Map;
 
 import static junit.framework.Assert.assertNotNull;
 import static org.hamcrest.CoreMatchers.nullValue;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
@@ -279,10 +277,10 @@ public class GlobalNamesServiceTest {
         props1.put(PropertyAndValueDictionary.NAME, "Ariopsis felis");
         Map<String, String> enrich = service.enrich(props1);
         assertThat(enrich.get(PropertyAndValueDictionary.NAME), is("Ariopsis felis"));
-        assertThat(enrich.get(PropertyAndValueDictionary.PATH), is("Animalia | Chordata | Actinopterygii | Siluriformes | Ariidae | Ariopsis | Ariopsis felis"));
-        assertThat(enrich.get(PropertyAndValueDictionary.PATH_IDS), is(" |  |  |  |  |  | WORMS:158709"));
-        assertThat(enrich.get(PropertyAndValueDictionary.PATH_NAMES), is("kingdom | phylum | class | order | family | genus | species"));
-        assertThat(enrich.get(PropertyAndValueDictionary.RANK), is("species"));
+        assertThat(enrich.get(PropertyAndValueDictionary.PATH), containsString("Siluriformes | Ariidae | Ariopsis"));
+        assertThat(enrich.get(PropertyAndValueDictionary.PATH_IDS), is(""));
+        assertThat(enrich.get(PropertyAndValueDictionary.PATH_NAMES), containsString("order | family | genus"));
+        assertThat(enrich.get(PropertyAndValueDictionary.RANK), is("Species"));
         assertThat(enrich.get(PropertyAndValueDictionary.EXTERNAL_ID), is("WORMS:158709"));
         assertThat(enrich.get(PropertyAndValueDictionary.COMMON_NAMES), not(containsString("hardhead catfish @en")));
         assertThat(enrich.get(PropertyAndValueDictionary.COMMON_NAMES), not(containsString("bagre boca chica @en")));
@@ -294,7 +292,7 @@ public class GlobalNamesServiceTest {
         HashMap<String, String> props1 = new HashMap<String, String>();
         props1.put(PropertyAndValueDictionary.NAME, "Gadus morhua");
         Map<String, String> enrich = service.enrich(props1);
-        assertThat(enrich.get(PropertyAndValueDictionary.PATH), containsString("Animalia | Chordata | Actinopterygii | Gadiformes | Gadidae | Gadus | Gadus morhua"));
+        assertThat(enrich.get(PropertyAndValueDictionary.PATH), containsString("Gadiformes | Gadidae | Gadus | Gadus morhua"));
         assertThat(enrich.get(PropertyAndValueDictionary.COMMON_NAMES), is(nullValue()));
     }
 
@@ -362,7 +360,7 @@ public class GlobalNamesServiceTest {
         HashMap<String, String> props = new HashMap<String, String>();
         props.put(PropertyAndValueDictionary.NAME, "Anura");
         Map<String, String> enrich = service.enrich(props);
-        assertThat(enrich.get(PropertyAndValueDictionary.NAME), is(nullValue()));
+        assertThat(enrich.get(PropertyAndValueDictionary.NAME), is("Anura"));
     }
 
     @Test
