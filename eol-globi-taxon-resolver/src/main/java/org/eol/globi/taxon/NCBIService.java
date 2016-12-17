@@ -40,14 +40,14 @@ public class NCBIService implements PropertyEnricher {
 
     protected void parseAndPopulate(Map<String, String> enriched, String tsn, String fullHierarchy) throws PropertyEnricherException {
         enriched.put(PropertyAndValueDictionary.EXTERNAL_ID, TaxonomyProvider.ID_PREFIX_NCBI + tsn);
-        String taxonNames = ServiceUtil.extractPath(fullHierarchy, "ScientificName", "");
+        String taxonNames = XmlUtil.extractPath(fullHierarchy, "ScientificName", "");
 
         enriched.put(PropertyAndValueDictionary.PATH, firstWillBeLast(taxonNames));
-        String rankNames = ServiceUtil.extractPath(fullHierarchy, "Rank", "");
+        String rankNames = XmlUtil.extractPath(fullHierarchy, "Rank", "");
         enriched.put(PropertyAndValueDictionary.PATH_NAMES, firstWillBeLast(rankNames).replaceAll("no rank", ""));
-        enriched.put(PropertyAndValueDictionary.PATH_IDS, firstWillBeLast(ServiceUtil.extractPath(fullHierarchy, "TaxId", TaxonomyProvider.ID_PREFIX_NCBI)));
-        String genBankCommonName = ServiceUtil.extractPath(fullHierarchy, "GenbankCommonName", "", " @en");
-        String commonName = ServiceUtil.extractPath(fullHierarchy, "CommonName", "", " @en");
+        enriched.put(PropertyAndValueDictionary.PATH_IDS, firstWillBeLast(XmlUtil.extractPath(fullHierarchy, "TaxId", TaxonomyProvider.ID_PREFIX_NCBI)));
+        String genBankCommonName = XmlUtil.extractPath(fullHierarchy, "GenbankCommonName", "", " @en");
+        String commonName = XmlUtil.extractPath(fullHierarchy, "CommonName", "", " @en");
         enriched.put(PropertyAndValueDictionary.COMMON_NAMES, commonName + CharsetConstant.SEPARATOR + genBankCommonName);
 
         setPropertyToFirstValue(PropertyAndValueDictionary.NAME, taxonNames, enriched);

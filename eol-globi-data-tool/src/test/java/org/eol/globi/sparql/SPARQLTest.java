@@ -40,7 +40,7 @@ public class SPARQLTest extends GraphDBTestCase {
         System.out.println(writer.toString());
 
         String queryString =
-                "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> " +
+                "PREFIX_GITHUB_RELATION rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> " +
                         "SELECT ?individual WHERE { " +
                         " ?individual rdf:type <http://purl.obolibrary.org/obo/CARO_0010004> . " +
                         "}";
@@ -69,7 +69,7 @@ public class SPARQLTest extends GraphDBTestCase {
         model.read(getClass().getResourceAsStream("data.ttl"), null, "TTL");
 
         String queryString =
-                "PREFIX foaf: <http://xmlns.com/foaf/0.1/> " +
+                "PREFIX_GITHUB_RELATION foaf: <http://xmlns.com/foaf/0.1/> " +
                         "SELECT ?name WHERE { " +
                         " ?person foaf:mbox <mailto:alice@example.org> . " +
                         " ?person foaf:name ?name . " +

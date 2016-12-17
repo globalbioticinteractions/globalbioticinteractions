@@ -33,7 +33,7 @@ public class ITISService implements PropertyEnricher {
             String fullHierarchy = getResponse("getFullHierarchyFromTSN", "tsn=" + tsn);
             final String taxonId = TaxonomyProvider.ID_PREFIX_ITIS + tsn;
             enriched.put(PropertyAndValueDictionary.EXTERNAL_ID, taxonId);
-            final List<String> pathIds = ServiceUtil.extractPathNoJoin(fullHierarchy, "tsn", "ITIS:");
+            final List<String> pathIds = XmlUtil.extractPathNoJoin(fullHierarchy, "tsn", "ITIS:");
             List<String> pathIdsTail = pathIds;
             if (pathIdsTail.size() > 1) {
                 pathIdsTail = pathIds.subList(1, pathIds.size());
@@ -41,10 +41,10 @@ public class ITISService implements PropertyEnricher {
             final int taxonIdIndex = pathIdsTail.lastIndexOf(taxonId);
             enriched.put(PropertyAndValueDictionary.PATH_IDS, subJoin(taxonIdIndex, pathIdsTail));
 
-            String taxonNames = subJoin(taxonIdIndex, ServiceUtil.extractPathNoJoin(fullHierarchy, "taxonName", ""));
+            String taxonNames = subJoin(taxonIdIndex, XmlUtil.extractPathNoJoin(fullHierarchy, "taxonName", ""));
             enriched.put(PropertyAndValueDictionary.PATH, taxonNames);
 
-            String rankNames = subJoin(taxonIdIndex, ServiceUtil.extractPathNoJoin(fullHierarchy, "rankName", ""));
+            String rankNames = subJoin(taxonIdIndex, XmlUtil.extractPathNoJoin(fullHierarchy, "rankName", ""));
             enriched.put(PropertyAndValueDictionary.PATH_NAMES, rankNames);
 
             setPropertyToLastValue(PropertyAndValueDictionary.NAME, taxonNames, enriched);

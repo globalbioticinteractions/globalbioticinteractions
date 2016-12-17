@@ -211,7 +211,6 @@ public class StudyImporterForSPIRE extends BaseStudyImporter {
         specimen.setLifeStage(terms);
     }
 
-
     private Model buildModel() throws IOException {
         Model model = ModelFactory.createDefaultModel();
         BufferedReader bufferedReader = FileUtils.getUncompressedBufferedReader(getClass().getResourceAsStream("spire/allFoodWebStudies.owl"), CharsetConstant.UTF8);
