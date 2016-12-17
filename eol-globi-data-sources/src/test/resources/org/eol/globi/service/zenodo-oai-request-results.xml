@@ -1,0 +1,60 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<?xml-stylesheet type="text/xsl" href="/static/xsl/oai2.v1.0.xsl"?>
+<OAI-PMH xmlns="http://www.openarchives.org/OAI/2.0/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/ http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd">
+    <responseDate>2016-12-17T04:42:31Z</responseDate>
+    <request verb="ListRecords" set="user-globalbioticinteractions" metadataPrefix="oai_datacite3">
+        https://zenodo.org/oai2d
+    </request>
+    <ListRecords>
+        <record>
+            <header>
+                <identifier>oai:zenodo.org:207958</identifier>
+                <datestamp>2016-12-17T03:48:12Z</datestamp>
+                <setSpec>user-globalbioticinteractions</setSpec>
+            </header>
+            <metadata>
+                <oai_datacite xmlns="http://schema.datacite.org/oai/oai-1.0/"
+                              xsi:schemaLocation="http://schema.datacite.org/oai/oai-1.0/ oai_datacite.xsd">
+                    <isReferenceQuality>true</isReferenceQuality>
+                    <schemaVersion>3.1</schemaVersion>
+                    <datacentreSymbol>CERN.ZENODO</datacentreSymbol>
+                    <payload>
+                        <resource xmlns="http://datacite.org/schema/kernel-3"
+                                  xsi:schemaLocation="http://datacite.org/schema/kernel-3 http://schema.datacite.org/meta/kernel-3/metadata.xsd">
+                            <identifier identifierType="DOI">10.5281/zenodo.207958</identifier>
+                            <creators>
+                                <creator>
+                                    <creatorName>Jorrit Poelen</creatorName>
+                                </creator>
+                            </creators>
+                            <titles>
+                                <title>Globalbioticinteractions/Template-Dataset: Dataset Description Now Includes
+                                    Zenodo Instructions And Badges
+                                </title>
+                            </titles>
+                            <publisher>Zenodo</publisher>
+                            <publicationYear>2016</publicationYear>
+                            <dates>
+                                <date dateType="Issued">2016-12-17</date>
+                            </dates>
+                            <resourceType resourceTypeGeneral="Software"/>
+                            <relatedIdentifiers>
+                                <relatedIdentifier relatedIdentifierType="URL" relationType="IsSupplementTo">
+                                    https://github.com/globalbioticinteractions/template-dataset/tree/0.0.2
+                                </relatedIdentifier>
+                            </relatedIdentifiers>
+                            <rightsList>
+                                <rights rightsURI="info:eu-repo/semantics/openAccess">Open Access</rights>
+                            </rightsList>
+                            <descriptions>
+                                <description descriptionType="Abstract">&lt;p&gt;Template species interaction data
+                                    repository compatible with globalbioticinteractions.org&lt;/p&gt;</description>
+                            </descriptions>
+                        </resource>
+                    </payload>
+                </oai_datacite>
+            </metadata>
+        </record>
+    </ListRecords>
+</OAI-PMH>
