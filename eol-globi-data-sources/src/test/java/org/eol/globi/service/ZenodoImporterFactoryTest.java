@@ -88,7 +88,7 @@ public class ZenodoImporterFactoryTest {
         for (int i = 0; i < nodes.getLength(); i++) {
             Node item = nodes.item(i);
             if (item.hasChildNodes()) {
-                String nodeValue = item.getFirstChild().getNodeValue();
+                String nodeValue = StringUtils.trim(item.getFirstChild().getNodeValue());
                 if (StringUtils.startsWith(nodeValue, PREFIX_GITHUB_RELATION)) {
                     refs.add(nodeValue);
                 }
