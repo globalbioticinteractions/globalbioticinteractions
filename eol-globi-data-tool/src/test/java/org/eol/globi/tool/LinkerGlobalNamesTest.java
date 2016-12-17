@@ -71,13 +71,13 @@ public class LinkerGlobalNamesTest extends GraphDBTestCase {
     public void anura() throws NodeFactoryException, PropertyEnricherException {
         taxonIndex.getOrCreateTaxon("Anura");
         new LinkerGlobalNames().link(getGraphDb());
-        List<String> ids = LinkerTestUtil.assertHasOther("Anura", 6, taxonIndex, RelTypes.SAME_AS);
+        List<String> ids = LinkerTestUtil.assertHasOther("Anura", 7, taxonIndex, RelTypes.SAME_AS);
 
         assertThat(ids, hasItems("ITIS:173423"
                 , "NCBI:8342", "IRMNG:10211", "GBIF:952"
                 , "IRMNG:1284513", "GBIF:3242458"));
 
-        List<String> synonymIds = LinkerTestUtil.assertHasOther("Anura", 8, taxonIndex, RelTypes.SYNONYM_OF);
+        List<String> synonymIds = LinkerTestUtil.assertHasOther("Anura", 9, taxonIndex, RelTypes.SYNONYM_OF);
 
         assertThat(synonymIds, not(hasItems("ITIS:173423"
                 , "NCBI:8342", "IRMNG:10211", "GBIF:952"
