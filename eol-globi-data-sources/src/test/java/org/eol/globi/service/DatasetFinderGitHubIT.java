@@ -12,7 +12,7 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNot.not;
 import static org.junit.Assert.assertThat;
 
-public class DatasetFinderGitHubTest {
+public class DatasetFinderGitHubIT {
 
     @Test
     public void discoverDatasetsInGitHub() throws DatasetFinderException {
