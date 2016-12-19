@@ -14,7 +14,6 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.data.CharsetConstant;
 import org.eol.globi.domain.NameType;
 import org.eol.globi.domain.PropertyAndValueDictionary;
-import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TaxonomyProvider;
@@ -87,17 +86,39 @@ public class GlobalNamesService implements PropertyEnricher {
         }
 
         try {
-            String result = queryForNames(names, sources);
-            parseResult(termMatchListener, result);
-        } catch (IOException e) {
-            throw new PropertyEnricherException("Failed to query", e);
+            URI uri = buildPostRequestURI(sources);
+            try {
+                parseResult(termMatchListener, executeQuery(names, uri));
+            } catch (IOException e) {
+                if (names.size() > 1) {
+                    LOG.warn("retrying names query one name at a time: failed to perform batch query for [" +  names.size() + "] names: [" + StringUtils.join(names, "\n") + ']', e);
+                    for (String name : names) {
+                        try {
+                            parseResult(termMatchListener, executeQuery(Collections.singletonList(name), uri));
+                        } catch (IOException e1) {
+                            throw new PropertyEnricherException("Failed to execute individual name query for [" + name + "]", e1);
+                        }
+                    }
+                }
+            }
         } catch (URISyntaxException e) {
             throw new PropertyEnricherException("Failed to query", e);
         }
 
     }
 
-    protected String queryForNames(List<String> names, List<GlobalNamesSources> sources) throws URISyntaxException, IOException {
+    private String executeQuery(List<String> names, URI uri) throws IOException {
+        HttpClient httpClient = HttpUtil.getHttpClient();
+        HttpPost post = new HttpPost(uri);
+
+        List<NameValuePair> params = new ArrayList<NameValuePair>();
+        params.add(new BasicNameValuePair("data", StringUtils.join(names, "\n")));
+        post.setEntity(new UrlEncodedFormEntity(params, CharsetConstant.UTF8));
+
+        return httpClient.execute(post, new BasicResponseHandler());
+    }
+
+    private URI buildPostRequestURI(List<GlobalNamesSources> sources) throws URISyntaxException {
         List<String> sourceIds = new ArrayList<String>();
         for (GlobalNamesSources globalNamesSources : sources) {
             sourceIds.add(Integer.toString(globalNamesSources.getId()));
@@ -108,23 +129,21 @@ public class GlobalNamesService implements PropertyEnricher {
             query = "with_vernaculars=true&" + query;
         }
 
-        HttpClient httpClient = HttpUtil.getHttpClient();
-        URI uri = new URI("http", "resolver.globalnames.org"
+        return new URI("http", "resolver.globalnames.org"
                 , "/name_resolvers.json"
                 , query
                 , null);
-        HttpPost post = new HttpPost(uri);
-
-        List<NameValuePair> params = new ArrayList<NameValuePair>();
-        params.add(new BasicNameValuePair("data", StringUtils.join(names, "\n")));
-        post.setEntity(new UrlEncodedFormEntity(params, CharsetConstant.UTF8));
-
-        return httpClient.execute(post, new BasicResponseHandler());
     }
 
-    protected void parseResult(TermMatchListener termMatchListener, String result) throws IOException {
-        ObjectMapper mapper = new ObjectMapper();
-        JsonNode jsonNode = mapper.readTree(result);
+    private void parseResult(TermMatchListener termMatchListener, String result) throws PropertyEnricherException {
+        try {
+            parseResultNode(termMatchListener, new ObjectMapper().readTree(result));
+        } catch (IOException ex) {
+            throw new PropertyEnricherException("failed to parse json string [" + result + "]", ex);
+        }
+    }
+
+    private void parseResultNode(TermMatchListener termMatchListener, JsonNode jsonNode) {
         JsonNode dataList = jsonNode.get("data");
         if (dataList != null && dataList.isArray()) {
             for (JsonNode data : dataList) {
