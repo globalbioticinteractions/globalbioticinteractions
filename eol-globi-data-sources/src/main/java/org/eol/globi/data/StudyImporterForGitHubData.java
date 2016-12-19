@@ -41,7 +41,7 @@ public class StudyImporterForGitHubData extends BaseStudyImporter {
         return repositories;
     }
 
-    private void importData(String repo) throws StudyImporterException {
+    public void importData(String repo) throws StudyImporterException {
         try {
             StudyImporter importer = new GitHubImporterFactory().createImporter(repo, parserFactory, nodeFactory);
             if (importer != null) {
