@@ -86,6 +86,7 @@ public class HttpUtil {
 
         return HttpClientBuilder.create()
                 .setRetryHandler(new DefaultHttpRequestRetryHandler(3, true))
+                .setUserAgent("globalbioticinteractions")
                 .setServiceUnavailableRetryStrategy(new DefaultServiceUnavailableRetryStrategy(10, 5 * 1000))
                 .setDefaultRequestConfig(config).build();
     }
@@ -116,6 +117,8 @@ public class HttpUtil {
     protected static String executeAndRelease(HttpGet get) throws IOException {
         try {
             return HttpUtil.getHttpClient().execute(get, new BasicResponseHandler());
+        } catch (IOException ex) {
+            throw new IOException("failed to get [" + get.getURI() + "]", ex);
         } finally {
             get.releaseConnection();
         }

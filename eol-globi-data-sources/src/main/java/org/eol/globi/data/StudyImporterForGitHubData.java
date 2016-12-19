@@ -31,19 +31,17 @@ public class StudyImporterForGitHubData extends BaseStudyImporter {
         return null;
     }
 
-    protected List<String> discoverDataRepositories() throws StudyImporterException {
+    private List<String> discoverDataRepositories() throws StudyImporterException {
         List<String> repositories;
         try {
             repositories = GitHubUtil.find();
-        } catch (IOException e) {
-            throw new StudyImporterException("failed to discover github data repositories", e);
-        } catch (URISyntaxException e) {
+        } catch (IOException | URISyntaxException e) {
             throw new StudyImporterException("failed to discover github data repositories", e);
         }
         return repositories;
     }
 
-    protected void importData(String repo) throws StudyImporterException {
+    private void importData(String repo) throws StudyImporterException {
         try {
             StudyImporter importer = new GitHubImporterFactory().createImporter(repo, parserFactory, nodeFactory);
             if (importer != null) {
@@ -52,11 +50,7 @@ public class StudyImporterForGitHubData extends BaseStudyImporter {
                 }
                 importer.importStudy();
             }
-        } catch (IOException e) {
-            throw new StudyImporterException("failed to import repo [" + repo + "]", e);
-        } catch (NodeFactoryException e) {
-            throw new StudyImporterException("failed to import repo [" + repo + "]", e);
-        } catch (URISyntaxException e) {
+        } catch (IOException | NodeFactoryException | URISyntaxException e) {
             throw new StudyImporterException("failed to import repo [" + repo + "]", e);
         }
     }

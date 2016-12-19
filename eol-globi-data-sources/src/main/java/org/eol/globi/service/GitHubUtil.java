@@ -1,5 +1,6 @@
 package org.eol.globi.service;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.HttpResponse;
@@ -18,11 +19,11 @@ import java.util.List;
 public class GitHubUtil {
     private static final Log LOG = LogFactory.getLog(GitHubUtil.class);
 
-    protected static String httpGet(String path, String query) throws URISyntaxException, IOException {
-        return HttpUtil.getContent(new URI("https", null, "api.github.com", 443, path, query, null));
+    private static String httpGet(String path, String query) throws URISyntaxException, IOException {
+        return HttpUtil.getContent(new URI("https", null, "api.github.com", -1, path, appendAuth(query), null));
     }
 
-    protected static boolean hasInteractionData(String repoName, String globiFilename) throws IOException {
+    private static boolean hasInteractionData(String repoName, String globiFilename) throws IOException {
         HttpHead request = new HttpHead(getBaseUrlMaster(repoName) + "/" + globiFilename);
         try {
             HttpResponse execute = HttpUtil.getHttpClient().execute(request);
@@ -68,11 +69,11 @@ public class GitHubUtil {
         return reposWithData;
     }
 
-    protected static boolean isGloBIRepository(String globiRepo) throws IOException {
+    static boolean isGloBIRepository(String globiRepo) throws IOException {
         return hasInteractionData(globiRepo, "globi.json") || hasInteractionData(globiRepo, "globi-dataset.jsonld");
     }
 
-    public static String lastCommitSHA(String repository) throws IOException, URISyntaxException {
+    static String lastCommitSHA(String repository) throws IOException, URISyntaxException {
         String lastCommitSHA = null;
         String response = httpGet("/repos/" + repository + "/commits", null);
         JsonNode commits = new ObjectMapper().readTree(response);
@@ -85,7 +86,28 @@ public class GitHubUtil {
         return lastCommitSHA;
     }
 
-    public static String getBaseUrl(String repo, String lastCommitSHA) {
+    private static String appendAuth() {
+        return appendAuth(null);
+    }
+
+    private static String appendAuth(String query) {
+        String propertyNameGitHubClientId = "github_client_id";
+        String propertyNameGitHubClientSecret = "github_client_secret";
+        String clientId = System.getProperty(propertyNameGitHubClientId);
+        String clientSecret = System.getProperty(propertyNameGitHubClientSecret);
+
+        if (StringUtils.isBlank(clientId)) {
+            LOG.warn("variable [" + propertyNameGitHubClientId + "] is not set: this lowers the rate limits");
+        } else  if (StringUtils.isBlank(clientSecret)) {
+            LOG.warn("variable [" + propertyNameGitHubClientSecret + "] is not set: this lowers the rate limits");
+        } else {
+            String auth = "client_id=" + clientId + "&client_secret=" + clientSecret;
+            query = StringUtils.isBlank(query) ? auth : query + "&" + auth;
+        }
+        return query;
+    }
+
+    private static String getBaseUrl(String repo, String lastCommitSHA) {
         return "https://raw.githubusercontent.com/" + repo + "/" + lastCommitSHA;
     }
 
