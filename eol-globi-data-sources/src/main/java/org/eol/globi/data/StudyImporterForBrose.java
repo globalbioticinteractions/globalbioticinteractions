@@ -80,7 +80,7 @@ public class StudyImporterForBrose extends BaseStudyImporter {
         try {
             String shortReference = StringUtils.trim(parser.getValueByLabel("Link reference"));
             if (!refMap.containsKey(shortReference)) {
-                throw new StudyImporterException("failed to find ref [" + shortReference + "] on line [" + parser.lastLineNumber() + "]");
+                throw new StudyImporterException("failed to findNamespaces ref [" + shortReference + "] on line [" + parser.lastLineNumber() + "]");
             }
             String longReference = refMap.get(shortReference);
             localStudy = nodeFactory.getOrCreateStudy("BROSE-" + StringUtils.abbreviate(longReference, 20), SOURCE, ExternalIdUtil.toCitation(null, longReference, null));
@@ -115,7 +115,7 @@ public class StudyImporterForBrose extends BaseStudyImporter {
         String locationString = parser.getValueByLabel("Geographic location");
         LatLng latLng = LOC_MAP.get(StringUtils.trim(locationString));
         if (latLng == null) {
-            getLogger().warn(localStudy, "failed to find location for [" + locationString + "]");
+            getLogger().warn(localStudy, "failed to findNamespaces location for [" + locationString + "]");
         } else {
             location = nodeFactory.getOrCreateLocation(latLng.getLat(), latLng.getLng(), null);
             String habitat = StringUtils.join(parser.getValueByLabel("General habitat"), " ", parser.getValueByLabel("Specific habitat"));

@@ -30,25 +30,31 @@ import org.eol.globi.geo.LatLng;
 import org.eol.globi.util.HttpUtil;
 
 import java.io.IOException;
+import java.net.URI;
 import java.net.URISyntaxException;
 
 public class GitHubImporterFactory {
 
-    public StudyImporter createImporter(String repo, final ParserFactory parserFactory, final NodeFactory nodeFactory) throws IOException, URISyntaxException, StudyImporterException, NodeFactoryException {
-        return createImporter(repo, GitHubUtil.getBaseUrlLastCommit(repo), parserFactory, nodeFactory);
+    public StudyImporter createImporter(String repo, final ParserFactory parserFactory, final NodeFactory nodeFactory) throws IOException, URISyntaxException, StudyImporterException {
+        try {
+            Dataset dataset = new DatasetFinderGitHubRemote().datasetFor(repo);
+            return createImporter(dataset, parserFactory, nodeFactory);
+        } catch (DatasetFinderException e) {
+            throw new StudyImporterException("failed to locate archive url for [" + repo + "]", e);
+        }
     }
 
-    public StudyImporter createImporter(String repo, String baseUrl, final ParserFactory parserFactory, final NodeFactory nodeFactory) throws IOException, StudyImporterException {
+    public StudyImporter createImporter(Dataset dataset, final ParserFactory parserFactory, final NodeFactory nodeFactory) throws IOException, StudyImporterException {
         StudyImporter importer = null;
-        final String resourceUrl = baseUrl + "/globi.json";
+        final URI resourceUrl = dataset.getResourceURI("/globi.json");
         if (resourceExists(resourceUrl)) {
-            importer = createImporter(repo, baseUrl, getContent(resourceUrl), parserFactory, nodeFactory);
+            importer = createImporter(dataset, getContent(resourceUrl), parserFactory, nodeFactory);
         } else {
-            final String jsonldResourceUrl = baseUrl + "/globi-dataset.jsonld";
+            final URI jsonldResourceUrl = dataset.getResourceURI("/globi-dataset.jsonld");
             if (resourceExists(jsonldResourceUrl)) {
                 importer = new StudyImporterForJSONLD(parserFactory, nodeFactory) {
                     {
-                        setResourceUrl(jsonldResourceUrl);
+                        setResourceURI(jsonldResourceUrl);
                     }
                 };
 
@@ -57,7 +63,7 @@ public class GitHubImporterFactory {
         return importer;
     }
 
-    private boolean resourceExists(String descriptor) {
+    private boolean resourceExists(URI descriptor) {
         boolean exists = false;
         try {
             HttpResponse resp = HttpUtil.getHttpClient().execute(new HttpHead(descriptor));
@@ -68,7 +74,11 @@ public class GitHubImporterFactory {
         return exists;
     }
 
-    protected StudyImporter createImporter(final String repo, final String baseUrl, final String descriptor, final ParserFactory parserFactory, final NodeFactory nodeFactory) throws IOException, StudyImporterException, NodeFactoryException {
+    public StudyImporter createImporter(String repo, String basedir, final ParserFactory parserFactory, final NodeFactory nodeFactory) throws IOException, StudyImporterException, NodeFactoryException {
+        return createImporter(new Dataset(repo, URI.create(basedir)), parserFactory, nodeFactory);
+    }
+
+    protected StudyImporter createImporter(Dataset dataset, final String descriptor, final ParserFactory parserFactory, final NodeFactory nodeFactory) throws IOException, StudyImporterException, NodeFactoryException {
         StudyImporter importer = null;
         if (StringUtils.isNotBlank(descriptor)) {
             JsonNode desc = new ObjectMapper().readTree(descriptor);
@@ -76,18 +86,22 @@ public class GitHubImporterFactory {
             if (isMetaTableImporter(desc)) {
                 final StudyImporterForMetaTable studyImporterForMetaTable = new StudyImporterForMetaTable(parserFactory, nodeFactory);
                 studyImporterForMetaTable.setConfig(desc);
-                studyImporterForMetaTable.setBaseUrl(baseUrl);
+                studyImporterForMetaTable.setBaseUrl(dataset.getArchiveURI().toString());
                 importer = studyImporterForMetaTable;
             } else {
-                importer = createImporterForFormat(repo, baseUrl, parserFactory, nodeFactory, desc);
+                importer = createImporterForFormat(dataset, parserFactory, nodeFactory, desc);
             }
         }
 
         return importer;
     }
 
-    private StudyImporter createImporterForFormat(String repo, String baseUrl, ParserFactory parserFactory, NodeFactory nodeFactory, JsonNode desc) throws StudyImporterException {
+    private StudyImporter createImporterForFormat(Dataset dataset, ParserFactory parserFactory, NodeFactory nodeFactory, JsonNode desc) throws StudyImporterException {
         StudyImporter importer;
+
+        String repo = dataset.getNamespace();
+        String baseUrl = dataset.getArchiveURI().toString();
+
         final String sourceCitation = desc.has("citation") ? desc.get("citation").asText() : baseUrl;
         final String sourceDOI = parseDOI(desc);
         String format = desc.has("format") ? desc.get("format").asText() : "globi";
@@ -345,11 +359,11 @@ public class GitHubImporterFactory {
         return locality;
     }
 
-    private String getContent(String uri) throws IOException {
+    private String getContent(URI uri) throws IOException {
         try {
             return HttpUtil.getContent(uri);
         } catch (IOException ex) {
-            throw new IOException("failed to find [" + uri + "]", ex);
+            throw new IOException("failed to findNamespaces [" + uri + "]", ex);
         }
     }
 }

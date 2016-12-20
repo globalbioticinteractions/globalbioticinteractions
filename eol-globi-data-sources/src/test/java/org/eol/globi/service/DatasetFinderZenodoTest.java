@@ -8,7 +8,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
+import java.net.URI;
 import java.util.Collection;
 
 import static org.hamcrest.core.Is.is;
@@ -36,9 +36,9 @@ public class DatasetFinderZenodoTest {
 
     @Test
     public void extractGitHubReposArchives() throws DatasetFinderException {
-        URL refs1 = new DatasetFinderZenodo().archiveUrlFor("globalbioticinteractions/template-dataset");
-        assertThat(refs1, is(notNullValue()));
-        assertThat(refs1.toString(), is("https://zenodo.org/record/207958/files/globalbioticinteractions/template-dataset-0.0.2.zip"));
+        URI uri = new DatasetFinderZenodo().datasetFor("globalbioticinteractions/template-dataset").getArchiveURI();
+        assertThat(uri, is(notNullValue()));
+        assertThat(uri.toString(), is("https://zenodo.org/record/207958/files/globalbioticinteractions/template-dataset-0.0.2.zip"));
     }
 
 

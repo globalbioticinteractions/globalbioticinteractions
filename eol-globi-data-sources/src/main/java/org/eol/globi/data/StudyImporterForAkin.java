@@ -206,7 +206,7 @@ public class StudyImporterForAkin extends BaseStudyImporter {
     private int findIndexForColumnWithNameThrowOnMissing(String name, String[] header) throws StudyImporterException {
         int index = findIndexForColumnWithName(name, header);
         if (index == -1) {
-            throw new StudyImporterException("failed to find column with name [" + name + "]");
+            throw new StudyImporterException("failed to findNamespaces column with name [" + name + "]");
         }
         return index;
     }
@@ -232,7 +232,7 @@ public class StudyImporterForAkin extends BaseStudyImporter {
             String[][] siteInfo = loadSampleSiteLocations();
             importAkinStudyFile(siteInfo, studyResource, study);
         } catch (IOException e) {
-            throw new StudyImporterException("failed to find resource [" + studyResource + "]", e);
+            throw new StudyImporterException("failed to findNamespaces resource [" + studyResource + "]", e);
         } catch (NodeFactoryException e) {
             throw new StudyImporterException("failed to parse resource [" + studyResource + "]", e);
         }

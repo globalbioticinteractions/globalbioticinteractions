@@ -75,11 +75,11 @@ public class StudyImporterForSeltmann extends BaseStudyImporter {
             IOUtils.closeQuietly(zipInputStream);
 
             if (assocTempFile == null) {
-                throw new StudyImporterException("failed to find expected [associatedTaxa.tsv] resource");
+                throw new StudyImporterException("failed to findNamespaces expected [associatedTaxa.tsv] resource");
             }
 
             if (occTempFile == null) {
-                throw new StudyImporterException("failed to find expected [occurrences.tsv] resource");
+                throw new StudyImporterException("failed to findNamespaces expected [occurrences.tsv] resource");
             }
 
             BufferedReader assocReader = FileUtils.getUncompressedBufferedReader(new FileInputStream(assocTempFile), CharsetConstant.UTF8);

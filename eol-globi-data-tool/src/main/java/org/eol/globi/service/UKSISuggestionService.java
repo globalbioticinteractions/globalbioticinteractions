@@ -32,7 +32,7 @@ public class UKSISuggestionService implements PropertyEnricher, NameSuggester {
             Taxon match = findMatch(name);
             suggestion = match == null ? name : match.getName();
         } catch (PropertyEnricherException e) {
-            LOG.warn("failed to find suggestion for name [" + name + "]", e);
+            LOG.warn("failed to findNamespaces suggestion for name [" + name + "]", e);
         }
         return suggestion;
     }

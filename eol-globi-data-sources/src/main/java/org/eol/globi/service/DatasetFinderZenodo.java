@@ -14,7 +14,7 @@ import javax.xml.xpath.XPathExpressionException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.URI;
 import java.util.Collection;
 import java.util.HashSet;
 
@@ -22,8 +22,8 @@ public class DatasetFinderZenodo implements DatasetFinder {
     private static final String PREFIX_GITHUB_RELATION = "https://github.com/";
     private static final String PREFIX_ZENODO = "oai:zenodo.org:";
 
-    static URL findZenodoGitHubArchives(NodeList nodes, String requestedRepo) throws XPathExpressionException, MalformedURLException {
-        URL archiveUrl = null;
+    static URI findZenodoGitHubArchives(NodeList nodes, String requestedRepo) throws XPathExpressionException, MalformedURLException {
+        URI archiveURI = null;
         for (int i = 0; i < nodes.getLength(); i++) {
             Node item = nodes.item(i);
             String fullId = (String) XmlUtil.applyXPath(item, "//header/identifier", XPathConstants.STRING);
@@ -36,13 +36,13 @@ public class DatasetFinderZenodo implements DatasetFinder {
                     if (split.length > 3) {
                         String githubRepo = split[0] + "/" + split[1];
                         if (StringUtils.equals(githubRepo, requestedRepo)) {
-                            archiveUrl = new URL("https://zenodo.org/record/" + id + "/files/" + githubRepo + "-" + split[3] + ".zip");
+                            archiveURI = URI.create("https://zenodo.org/record/" + id + "/files/" + githubRepo + "-" + split[3] + ".zip");
                         }
                     }
                 }
             }
         }
-        return archiveUrl;
+        return archiveURI;
     }
 
     static Collection<String> findPublishedGitHubRepos(Collection<String> refs) {
@@ -76,7 +76,7 @@ public class DatasetFinderZenodo implements DatasetFinder {
         try {
             return (NodeList) XmlUtil.applyXPath(is, "//*[local-name()='relatedIdentifier']", XPathConstants.NODESET);
         } catch (SAXException | IOException | ParserConfigurationException | XPathExpressionException e) {
-            throw new DatasetFinderException("failed to find published github repos in zenodo", e);
+            throw new DatasetFinderException("failed to findNamespaces published github repos in zenodo", e);
         }
     }
 
@@ -85,12 +85,12 @@ public class DatasetFinderZenodo implements DatasetFinder {
             String feedString = HttpUtil.getContent("https://zenodo.org/oai2d?verb=ListRecords&set=user-globalbioticinteractions&metadataPrefix=oai_datacite3");
             return IOUtils.toInputStream(feedString);
         } catch (IOException e) {
-            throw new DatasetFinderException("failed to find published github repos in zenodo", e);
+            throw new DatasetFinderException("failed to findNamespaces published github repos in zenodo", e);
         }
     }
 
     @Override
-    public Collection<String> find() throws DatasetFinderException {
+    public Collection<String> findNamespaces() throws DatasetFinderException {
         return find(getFeed());
     }
 
@@ -103,11 +103,11 @@ public class DatasetFinderZenodo implements DatasetFinder {
     }
 
     @Override
-    public URL archiveUrlFor(String repo) throws DatasetFinderException {
+    public Dataset datasetFor(String namespace) throws DatasetFinderException {
         try {
-            return findZenodoGitHubArchives(getRelationsNodeList(getFeed()), repo);
+            return new Dataset(namespace, findZenodoGitHubArchives(getRelationsNodeList(getFeed()), namespace));
         } catch (XPathExpressionException | MalformedURLException e) {
-            throw new DatasetFinderException("failed to resolve archive url for [" + repo + "]", e);
+            throw new DatasetFinderException("failed to resolve archive url for [" + namespace + "]", e);
         }
     }
 

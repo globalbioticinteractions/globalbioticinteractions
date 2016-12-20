@@ -121,10 +121,10 @@ public class StudyImporterForRaymond extends BaseStudyImporter {
                 }
             }
             if (sourcesParser == null) {
-                throw new StudyImporterException("failed to find [" + SOURCES_CSV + "] in [" + RESOURCE_URL + "]");
+                throw new StudyImporterException("failed to findNamespaces [" + SOURCES_CSV + "] in [" + RESOURCE_URL + "]");
             }
             if (dietParser == null) {
-                throw new StudyImporterException("failed to find [" + DIET_CSV + "] in [" + RESOURCE_URL + "]");
+                throw new StudyImporterException("failed to findNamespaces [" + DIET_CSV + "] in [" + RESOURCE_URL + "]");
             }
             importData(sourcesParser, dietParser);
         } catch (IOException e) {

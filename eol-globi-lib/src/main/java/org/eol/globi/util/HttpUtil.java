@@ -111,7 +111,7 @@ public class HttpUtil {
     }
 
     public static String getContent(String uri) throws IOException {
-        return executeAndRelease(new HttpGet(uri));
+        return getContent(URI.create(uri));
     }
 
     protected static String executeAndRelease(HttpGet get) throws IOException {

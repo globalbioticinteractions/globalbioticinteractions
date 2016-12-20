@@ -24,7 +24,11 @@ public class ResourceUtil {
     public static final String SHAPEFILES_DIR = "shapefiles.dir";
     private static final Log LOG = LogFactory.getLog(ResourceUtil.class);
 
-    public static InputStream asInputStream(String resource, Class clazz) throws IOException {
+    public static InputStream asInputStream(URI resource, Class clazz) throws IOException {
+        return asInputStream(resource.toString(), clazz);
+    }
+
+    public static InputStream asInputStream(final String resource, Class clazz) throws IOException {
         InputStream is = null;
         if (StringUtils.startsWith(resource, "http://")
                 || StringUtils.startsWith(resource, "https://")) {
@@ -34,7 +38,11 @@ public class ResourceUtil {
         } else if (StringUtils.startsWith(resource, "file:/")) {
             is = new FileInputStream(new File(URI.create(resource)));
         } else if (clazz != null) {
-            is = clazz.getResourceAsStream(resource);
+            String classpathResource = resource;
+            if (StringUtils.startsWith(resource, "classpath:")) {
+                classpathResource = StringUtils.replace(resource, "classpath:", "");
+            }
+            is = clazz.getResourceAsStream(classpathResource);
         }
         if (is == null) {
             final URI uri = fromShapefileDir(resource);

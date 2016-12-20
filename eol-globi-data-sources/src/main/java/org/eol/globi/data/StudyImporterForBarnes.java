@@ -55,7 +55,7 @@ public class StudyImporterForBarnes extends BaseStudyImporter {
         try {
             String shortReference = StringUtils.trim(parser.getValueByLabel("Reference"));
             if (!refMap.containsKey(shortReference)) {
-                throw new StudyImporterException("failed to find ref [" + shortReference + "] on line [" + parser.lastLineNumber() + "]");
+                throw new StudyImporterException("failed to findNamespaces ref [" + shortReference + "] on line [" + parser.lastLineNumber() + "]");
             }
             String longReference = refMap.get(shortReference);
             localStudy = nodeFactory.getOrCreateStudy("BARNES-" + shortReference, SOURCE, ExternalIdUtil.toCitation(null, longReference, null));

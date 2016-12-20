@@ -56,7 +56,7 @@ public class StudyTest extends GraphDBTestCase {
                     assertEquals(new Double(-100.0d), specimen.getSampleLocation().getAltitude());
                     assertEquals(new Double(1.2d), specimen.getLengthInMm());
                 } else {
-                    fail("expected to find a specimen");
+                    fail("expected to findNamespaces a specimen");
                 }
             } else if (specimen.equals(goldFish)) {
                 Node genusNode = specimen.getClassifications().iterator().next().getEndNode();

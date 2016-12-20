@@ -64,7 +64,7 @@ public class StudyImporterForSzoboszlai extends BaseStudyImporter {
                     , new InteractionListenerNeo4j(nodeFactory, getGeoNamesService(), getLogger())
                     , localeMap);
         } catch (IOException e) {
-            throw new StudyImporterException("failed to find: [" + getLinkArchiveURL() + "]");
+            throw new StudyImporterException("failed to findNamespaces: [" + getLinkArchiveURL() + "]");
         }
         return null;
     }

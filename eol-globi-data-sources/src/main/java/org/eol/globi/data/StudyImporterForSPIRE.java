@@ -161,7 +161,7 @@ public class StudyImporterForSPIRE extends BaseStudyImporter {
             String locality = properties.get(LOCALITY_ORIGINAL);
             LatLng latLng = getGeoNamesService().findLatLng(locality);
             if (latLng == null) {
-                getLogger().warn(study, "failed to find location for county [" + locality + "]");
+                getLogger().warn(study, "failed to findNamespaces location for county [" + locality + "]");
             } else {
                 LocationNode location = nodeFactory.getOrCreateLocation(latLng.getLat(), latLng.getLng(), null);
                 predator.caughtIn(location);

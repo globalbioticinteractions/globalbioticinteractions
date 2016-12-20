@@ -32,7 +32,7 @@ public class StudyImporterForGray extends BaseStudyImporter {
         try {
             importLinks(ResourceUtil.asInputStream(getLinksURL(), null), new InteractionListenerNeo4j(nodeFactory, getGeoNamesService(), getLogger()), getFilter());
         } catch (IOException e) {
-            throw new StudyImporterException("failed to find: [" + getLinksURL() + "]");
+            throw new StudyImporterException("failed to findNamespaces: [" + getLinksURL() + "]");
         }
         return null;
     }

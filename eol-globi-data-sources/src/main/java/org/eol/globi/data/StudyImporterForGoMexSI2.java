@@ -175,7 +175,7 @@ public class StudyImporterForGoMexSI2 extends BaseStudyImporter {
             while (parser.getLine() != null) {
                 String refId = getMandatoryValue(locationResource, parser, "DATA_ID");
                 if (!refIdToStudyMap.containsKey(refId)) {
-                    getLogger().warn(metaStudy, "failed to find study for ref id [" + refId + "] on related to observation location in [" + locationResource + ":" + parser.getLastLineNumber() + "]");
+                    getLogger().warn(metaStudy, "failed to findNamespaces study for ref id [" + refId + "] on related to observation location in [" + locationResource + ":" + parser.getLastLineNumber() + "]");
                 } else {
                     Study study = refIdToStudyMap.get(refId);
                     String specimenId = getMandatoryValue(locationResource, parser, "PRED_ID");

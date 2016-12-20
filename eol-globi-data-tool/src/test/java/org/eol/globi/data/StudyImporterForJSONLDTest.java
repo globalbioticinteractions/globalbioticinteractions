@@ -4,6 +4,7 @@ import org.eol.globi.domain.Study;
 import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
 
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 
@@ -19,7 +20,7 @@ public class StudyImporterForJSONLDTest extends GraphDBTestCase {
     public void importStatic() throws StudyImporterException, URISyntaxException {
         StudyImporter importer = new StudyImporterForJSONLD(null, nodeFactory) {
             {
-                setResourceUrl("globi-jsonld/globi-dataset.jsonld");
+                setResourceURI(URI.create("classpath:globi-jsonld/globi-dataset.jsonld"));
             }
         };
         importStudy(importer);
@@ -27,7 +28,7 @@ public class StudyImporterForJSONLDTest extends GraphDBTestCase {
         for (Study study : allStudies) {
             assertThat(study.getExternalId(), is("http://arctos.database.museum/guid/CUMV:Bird:25225"));
             assertThat(study.getCitation(), is("http://arctos.database.museum/guid/CUMV:Bird:25225"));
-            assertThat(study.getSource(), startsWith("Christopher Mungall. 2015. Accessed at globi-jsonld/globi-dataset.jsonld on "));
+            assertThat(study.getSource(), startsWith("Christopher Mungall. 2015. Accessed at classpath:globi-jsonld/globi-dataset.jsonld on "));
         }
         assertThat(taxonIndex.findTaxonById("NCBI:8782"), not(is(nullValue())));
     }

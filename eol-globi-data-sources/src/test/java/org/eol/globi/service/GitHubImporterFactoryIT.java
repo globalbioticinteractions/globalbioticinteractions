@@ -8,6 +8,7 @@ import org.eol.globi.data.StudyImporterForGoMexSI2;
 import org.eol.globi.data.StudyImporterForMetaTable;
 import org.eol.globi.data.StudyImporterForPlanque;
 import org.eol.globi.data.StudyImporterForSzoboszlai;
+import org.eol.globi.data.StudyImporterForTSV;
 import org.eol.globi.data.StudyImporterForWood;
 import org.junit.Test;
 
@@ -17,6 +18,7 @@ import java.net.URISyntaxException;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsInstanceOf.instanceOf;
 import static org.hamcrest.core.IsNull.notNullValue;
+import static org.hamcrest.core.StringStartsWith.startsWith;
 import static org.junit.Assert.assertThat;
 import static org.junit.internal.matchers.StringContains.containsString;
 
@@ -76,6 +78,15 @@ public class GitHubImporterFactoryIT {
         assertThat(importer, is(notNullValue()));
         assertThat(importer, is(instanceOf(StudyImporterForMetaTable.class)));
         assertThat(((StudyImporterForMetaTable)importer).getConfig(), is(notNullValue()));
+        assertThat(((StudyImporterForMetaTable)importer).getBaseUrl(), startsWith("https://raw.githubusercontent.com/globalbioticinteractions/AfricaTreeDatabase/"));
+    }
+
+    @Test
+    public void defaultTSVImporter() throws URISyntaxException, StudyImporterException, IOException {
+        StudyImporter importer = new GitHubImporterFactory().createImporter("globalbioticinteractions/template-dataset", null, null);
+        assertThat(importer, is(notNullValue()));
+        assertThat(importer, is(instanceOf(StudyImporterForTSV.class)));
+        assertThat(((StudyImporterForTSV)importer).getBaseUrl(), startsWith("https://raw.githubusercontent.com/globalbioticinteractions/template-dataset/"));
     }
 
     @Test

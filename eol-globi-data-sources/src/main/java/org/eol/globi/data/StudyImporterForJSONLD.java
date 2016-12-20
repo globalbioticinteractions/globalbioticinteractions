@@ -19,21 +19,22 @@ import org.eol.globi.util.ResourceUtil;
 import org.joda.time.DateTime;
 
 import java.io.IOException;
+import java.net.URI;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class StudyImporterForJSONLD extends BaseStudyImporter {
 
-    public String getResourceUrl() {
-        return resourceUrl;
+    public URI getResourceURI() {
+        return resourceURI;
     }
 
-    public void setResourceUrl(String resourceUrl) {
-        this.resourceUrl = resourceUrl;
+    public void setResourceURI(URI resourceURI) {
+        this.resourceURI = resourceURI;
     }
 
-    private String resourceUrl;
+    private URI resourceURI;
 
     public StudyImporterForJSONLD(ParserFactory parserFactory, NodeFactory nodeFactory) {
         super(parserFactory, nodeFactory);
@@ -45,14 +46,14 @@ public class StudyImporterForJSONLD extends BaseStudyImporter {
         try {
             model = buildModel();
         } catch (IOException e) {
-            throw new StudyImporterException("failed to import [" + getResourceUrl() + "]", e);
+            throw new StudyImporterException("failed to import [" + getResourceURI() + "]", e);
         }
 
         Query query;
         try {
             query = QueryFactory.create(IOUtils.toString(ResourceUtil.asInputStream("/org/eol/globi/data/find-jsonld-interactions.rq", getClass()), CharsetConstant.UTF8));
         } catch (IOException e) {
-            throw new StudyImporterException("failed to find sparql query", e);
+            throw new StudyImporterException("failed to findNamespaces sparql query", e);
         }
 
         QueryExecution exec = QueryExecutionFactory.create(query, model);
@@ -69,7 +70,7 @@ public class StudyImporterForJSONLD extends BaseStudyImporter {
                 } catch (IOException e) {
                     throw new StudyImporterException("failed to resolve author URI [" + authorURI + "]");
                 }
-                Study study = nodeFactory.getOrCreateStudy(getResourceUrl() + subj, author + ". " + new DateTime(parseDate(creationDate)).getYear() + ". " + ReferenceUtil.createLastAccessedString(getResourceUrl()), subj);
+                Study study = nodeFactory.getOrCreateStudy(getResourceURI() + subj, author + ". " + new DateTime(parseDate(creationDate)).getYear() + ". " + ReferenceUtil.createLastAccessedString(getResourceURI().toString()), subj);
                 study.setExternalId(subj);
                 Specimen source = createSpecimen(solution, study, "subjTaxon");
                 Specimen target = createSpecimen(solution, study, "targetTaxon");
@@ -90,7 +91,7 @@ public class StudyImporterForJSONLD extends BaseStudyImporter {
                 source.interactsWith(target,interactType1);
             }
         } catch (NodeFactoryException e) {
-            throw new StudyImporterException("failed to import jsonld data in [" + getResourceUrl() + "]", e);
+            throw new StudyImporterException("failed to import jsonld data in [" + getResourceURI() + "]", e);
         } finally {
             exec.close();
         }
@@ -99,13 +100,11 @@ public class StudyImporterForJSONLD extends BaseStudyImporter {
 
     protected Date parseDate(String collTime) throws StudyImporterException {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yy-MM-DD");
-        Date date = null;
         try {
-            date = dateFormat.parse(collTime);
+            return dateFormat.parse(collTime);
         } catch (ParseException e) {
             throw new StudyImporterException("not setting collection date, because [" + collTime + "] could not be read as date.", e);
         }
-        return date;
     }
 
     protected Specimen createSpecimen(QuerySolution solution, Study study, String targetTaxon1) throws NodeFactoryException {
@@ -116,7 +115,7 @@ public class StudyImporterForJSONLD extends BaseStudyImporter {
 
     private Model buildModel() throws IOException {
         Model model = ModelFactory.createDefaultModel();
-        model.read(ResourceUtil.asInputStream(getResourceUrl(), getClass()), getResourceUrl(), "JSON-LD");
+        model.read(ResourceUtil.asInputStream(getResourceURI(), getClass()), getResourceURI().toString(), "JSON-LD");
         return model;
     }
 

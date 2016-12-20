@@ -267,7 +267,7 @@ public class NodeFactoryImpl implements NodeFactory {
                         if (StringUtils.isNotBlank(citationForDOI)) {
                             study.setCitation(citationForDOI);
                         } else {
-                            LOG.warn("failed to find citation for doi [" + doi + "], using [" + citation + "] instead.");
+                            LOG.warn("failed to findNamespaces citation for doi [" + doi + "], using [" + citation + "] instead.");
                         }
                     }
                 } catch (IOException e) {
