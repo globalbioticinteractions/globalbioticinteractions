@@ -32,7 +32,6 @@ import java.util.zip.ZipInputStream;
 public class StudyImporterForBascompte extends BaseStudyImporter {
     private static final Log LOG = LogFactory.getLog(StudyImporterForBascompte.class);
     public static final String WEB_OF_LIFE_BASE_URL = "http://www.web-of-life.es/2.0";
-    public static final int NETWORK_BATCH_SIZE = 20;
 
     public StudyImporterForBascompte(ParserFactory parserFactory, NodeFactory nodeFactory) {
         super(parserFactory, nodeFactory);
