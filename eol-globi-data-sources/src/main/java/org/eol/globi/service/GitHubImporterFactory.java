@@ -1,9 +1,6 @@
 package org.eol.globi.service;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.client.methods.HttpHead;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.data.BaseStudyImporter;
@@ -25,9 +22,8 @@ import org.eol.globi.data.StudyImporterForSeltmann;
 import org.eol.globi.data.StudyImporterForSzoboszlai;
 import org.eol.globi.data.StudyImporterForTSV;
 import org.eol.globi.data.StudyImporterForWood;
-import org.eol.globi.domain.Term;
-import org.eol.globi.geo.LatLng;
 import org.eol.globi.util.HttpUtil;
+import org.eol.globi.util.ResourceUtil;
 
 import java.io.IOException;
 import java.net.URI;
@@ -46,86 +42,73 @@ public class GitHubImporterFactory {
 
     public StudyImporter createImporter(Dataset dataset, final ParserFactory parserFactory, final NodeFactory nodeFactory) throws IOException, StudyImporterException {
         StudyImporter importer = null;
-        final URI resourceUrl = dataset.getResourceURI("/globi.json");
-        if (resourceExists(resourceUrl)) {
-            importer = createImporter(dataset, getContent(resourceUrl), parserFactory, nodeFactory);
+        final URI configURI = dataset.getResourceURI("/globi.json");
+        if (ResourceUtil.resourceExists(configURI)) {
+            Dataset dataset1 = configureDataset(dataset, configURI);
+            importer = dataset1 == null ? null : createImporterForFormat(dataset1, parserFactory, nodeFactory);
         } else {
             final URI jsonldResourceUrl = dataset.getResourceURI("/globi-dataset.jsonld");
-            if (resourceExists(jsonldResourceUrl)) {
-                importer = new StudyImporterForJSONLD(parserFactory, nodeFactory) {
-                    {
-                        setResourceURI(jsonldResourceUrl);
-                    }
-                };
+            if (ResourceUtil.resourceExists(jsonldResourceUrl)) {
+                importer = new StudyImporterForJSONLD(parserFactory, nodeFactory);
+                Dataset datasetLd = new Dataset(dataset.getNamespace(), dataset.getArchiveURI());
+                datasetLd.setConfigURI(jsonldResourceUrl);
+                importer.setDataset(datasetLd);
 
             }
         }
         return importer;
-    }
-
-    private boolean resourceExists(URI descriptor) {
-        boolean exists = false;
-        try {
-            HttpResponse resp = HttpUtil.getHttpClient().execute(new HttpHead(descriptor));
-            exists = resp.getStatusLine().getStatusCode() == HttpStatus.SC_OK;
-        } catch (IOException e) {
-            // ignore
-        }
-        return exists;
     }
 
     public StudyImporter createImporter(String repo, String basedir, final ParserFactory parserFactory, final NodeFactory nodeFactory) throws IOException, StudyImporterException, NodeFactoryException {
         return createImporter(new Dataset(repo, URI.create(basedir)), parserFactory, nodeFactory);
     }
 
-    protected StudyImporter createImporter(Dataset dataset, final String descriptor, final ParserFactory parserFactory, final NodeFactory nodeFactory) throws IOException, StudyImporterException, NodeFactoryException {
-        StudyImporter importer = null;
+    private Dataset configureDataset(Dataset dataset, URI configURI) throws IOException {
+        Dataset dataset1 = null;
+        String descriptor = getContent(configURI);
         if (StringUtils.isNotBlank(descriptor)) {
             JsonNode desc = new ObjectMapper().readTree(descriptor);
-            Dataset dataset1 = new Dataset(dataset.getNamespace(), dataset.getArchiveURI());
+            dataset1 = new Dataset(dataset.getNamespace(), dataset.getArchiveURI());
             dataset1.setConfig(desc);
-
-            if (isMetaTableImporter(desc)) {
-                final StudyImporterForMetaTable studyImporterForMetaTable = new StudyImporterForMetaTable(parserFactory, nodeFactory);
-                studyImporterForMetaTable.setDataset(dataset1);
-                importer = studyImporterForMetaTable;
-            } else {
-                importer = createImporterForFormat(dataset1, parserFactory, nodeFactory);
-            }
+            dataset1.setConfigURI(configURI);
         }
-
-        return importer;
+        return dataset1;
     }
 
     private StudyImporter createImporterForFormat(Dataset dataset, ParserFactory parserFactory, NodeFactory nodeFactory) throws StudyImporterException {
         StudyImporter importer;
 
-        JsonNode desc = dataset.getConfig();
-        final String format = dataset.getFormat();
-        if ("globi".equals(format)) {
-            importer = createTSVImporter(dataset, parserFactory, nodeFactory);
-        } else if ("gomexsi".equals(format)) {
-            importer = createGoMexSIImporter(dataset, parserFactory, nodeFactory);
-        } else if ("hechinger".equals(format)) {
-            importer = createHechingerImporter(dataset, parserFactory, nodeFactory);
-        } else if ("dunne".equals(format)) {
-            importer = createDunneImporter(dataset, parserFactory, nodeFactory);
-        } else if ("seltmann".equals(format)) {
-            importer = createSeltmannImporter(dataset, parserFactory, nodeFactory);
-        } else if ("arthropodEasyCapture".equals(format)) {
-            importer = createArthropodEasyCaptureImporter(dataset, parserFactory, nodeFactory);
-        } else if ("coetzer".equals(format)) {
-            importer = createCoetzerImporter(dataset, parserFactory, nodeFactory);
-        } else if ("wood".equals(format)) {
-            importer = createWoodImporter(dataset, parserFactory, nodeFactory);
-        } else if ("szoboszlai".equals(format)) {
-            importer = createSzoboszlaiImporter(dataset, parserFactory, nodeFactory);
-        } else if ("planque".equals(format)) {
-            importer = createPlanqueImporter(dataset, parserFactory, nodeFactory);
-        } else if ("gray".equals(format)) {
-            importer = createGrayImporter(dataset, parserFactory, nodeFactory);
+        if (isMetaTableImporter(dataset.getConfig())) {
+            final StudyImporterForMetaTable studyImporterForMetaTable = new StudyImporterForMetaTable(parserFactory, nodeFactory);
+            studyImporterForMetaTable.setDataset(dataset);
+            importer = studyImporterForMetaTable;
         } else {
-            throw new StudyImporterException("unsupported format [" + format + "]");
+            final String format = dataset.getFormat();
+            if ("globi".equals(format)) {
+                importer = createTSVImporter(dataset, parserFactory, nodeFactory);
+            } else if ("gomexsi".equals(format)) {
+                importer = createGoMexSIImporter(dataset, parserFactory, nodeFactory);
+            } else if ("hechinger".equals(format)) {
+                importer = createHechingerImporter(dataset, parserFactory, nodeFactory);
+            } else if ("dunne".equals(format)) {
+                importer = createDunneImporter(dataset, parserFactory, nodeFactory);
+            } else if ("seltmann".equals(format)) {
+                importer = createSeltmannImporter(dataset, parserFactory, nodeFactory);
+            } else if ("arthropodEasyCapture".equals(format)) {
+                importer = createArthropodEasyCaptureImporter(dataset, parserFactory, nodeFactory);
+            } else if ("coetzer".equals(format)) {
+                importer = createCoetzerImporter(dataset, parserFactory, nodeFactory);
+            } else if ("wood".equals(format)) {
+                importer = createWoodImporter(dataset, parserFactory, nodeFactory);
+            } else if ("szoboszlai".equals(format)) {
+                importer = createSzoboszlaiImporter(dataset, parserFactory, nodeFactory);
+            } else if ("planque".equals(format)) {
+                importer = createPlanqueImporter(dataset, parserFactory, nodeFactory);
+            } else if ("gray".equals(format)) {
+                importer = createGrayImporter(dataset, parserFactory, nodeFactory);
+            } else {
+                throw new StudyImporterException("unsupported format [" + format + "]");
+            }
         }
         return importer;
     }
@@ -233,37 +216,6 @@ public class GitHubImporterFactory {
         StudyImporterForDunne importer = new StudyImporterForDunne(parserFactory, nodeFactory);
         importer.setDataset(dataset);
         return importer;
-    }
-
-    public static LatLng parseLocation(JsonNode desc) {
-        LatLng loc = null;
-        if (desc.has("location")) {
-            JsonNode location = desc.get("location");
-            if (location.has("latitude") && location.has("longitude")) {
-                JsonNode latitude = location.get("latitude");
-                JsonNode longitude = location.get("longitude");
-                if (latitude != null && latitude.isNumber() && longitude != null && longitude.isNumber()) {
-                    loc = new LatLng(latitude.asDouble(), longitude.asDouble());
-                }
-            }
-        }
-        return loc;
-    }
-
-    public static Term parseLocality(JsonNode desc) {
-        Term locality = null;
-        JsonNode location = desc.get("location");
-        if (location != null) {
-            JsonNode locale = location.get("locality");
-            if (locale != null) {
-                JsonNode id = locale.get("id");
-                JsonNode name = locale.get("name");
-                if (id != null && name != null) {
-                    locality = new Term(id.asText(), name.asText());
-                }
-            }
-        }
-        return locality;
     }
 
     private String getContent(URI uri) throws IOException {

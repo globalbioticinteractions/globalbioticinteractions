@@ -49,7 +49,7 @@ public class GitHubImporterFactoryIT {
         assertThat(importer, is(instanceOf(StudyImporterForWood.class)));
         StudyImporterForWood importerz = (StudyImporterForWood) importer;
         assertThat(importerz.getSourceCitation(), containsString("Wood"));
-        assertThat(importerz.getLinksURL(), is(notNullValue()));
+        assertThat(importerz.getLinkResource(), is(notNullValue()));
     }
 
     @Test

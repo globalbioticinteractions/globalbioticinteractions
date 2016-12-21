@@ -1,6 +1,7 @@
 package org.eol.globi.data;
 
 import org.eol.globi.domain.Study;
+import org.eol.globi.service.Dataset;
 
 public interface StudyImporter {
 
@@ -9,6 +10,8 @@ public interface StudyImporter {
     void setFilter(ImportFilter importFilter);
 
     void setLogger(ImportLogger importLogger);
+
+    void setDataset(Dataset dataset);
 
     boolean shouldCrossCheckReference();
 }

@@ -14,6 +14,7 @@ public class Dataset {
     private URI archiveURI;
     private JsonNode config;
     private String format;
+    private URI configURI;
 
     public Dataset(String namespace, URI archiveURI) {
         this.namespace = namespace;
@@ -73,4 +74,11 @@ public class Dataset {
         return getOrDefault("doi", "");
     }
 
+    public void setConfigURI(URI configURI) {
+        this.configURI = configURI;
+    }
+
+    public URI getConfigURI() {
+        return configURI;
+    }
 }

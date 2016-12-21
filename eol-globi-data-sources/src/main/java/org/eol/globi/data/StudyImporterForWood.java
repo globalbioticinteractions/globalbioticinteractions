@@ -3,10 +3,7 @@ package org.eol.globi.data;
 import com.Ostermiller.util.CSVParser;
 import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.lang3.StringUtils;
-import org.codehaus.jackson.JsonNode;
 import org.eol.globi.domain.Study;
-import org.eol.globi.domain.Term;
-import org.eol.globi.geo.LatLng;
 import org.eol.globi.util.ResourceUtil;
 
 import java.io.IOException;
@@ -14,10 +11,7 @@ import java.io.InputStream;
 import java.util.Map;
 import java.util.TreeMap;
 
-import static org.eol.globi.service.GitHubImporterFactory.parseLocality;
-import static org.eol.globi.service.GitHubImporterFactory.parseLocation;
-
-public class StudyImporterForWood extends BaseStudyImporter {
+public class StudyImporterForWood extends StudyImporterNodesAndLinks {
 
     public StudyImporterForWood(ParserFactory parserFactory, NodeFactory nodeFactory) {
         super(parserFactory, nodeFactory);
@@ -26,9 +20,9 @@ public class StudyImporterForWood extends BaseStudyImporter {
     @Override
     public Study importStudy() throws StudyImporterException {
         try {
-            importLinks(ResourceUtil.asInputStream(getLinksURL(), null), new InteractionListenerNeo4j(nodeFactory, getGeoNamesService(), getLogger()), getFilter());
+            importLinks(ResourceUtil.asInputStream(getLinkResource(), null), new InteractionListenerNeo4j(nodeFactory, getGeoNamesService(), getLogger()), getFilter());
         } catch (IOException e) {
-            throw new StudyImporterException("failed to findNamespaces: [" + getLinksURL() + "]");
+            throw new StudyImporterException("failed to findNamespaces: [" + getLinkResource() + "]");
         }
         return null;
     }
@@ -51,7 +45,7 @@ public class StudyImporterForWood extends BaseStudyImporter {
         link.put(StudyImporterForTSV.SOURCE_TAXON_NAME, parser.getValueByLabel("PredName"));
         addTSN(parser, link, "PreyTSN", StudyImporterForTSV.TARGET_TAXON_ID);
         link.put(StudyImporterForTSV.TARGET_TAXON_NAME, parser.getValueByLabel("PreyName"));
-        link.put(StudyImporterForTSV.STUDY_SOURCE_CITATION, getSourceCitation() + " . " + ReferenceUtil.createLastAccessedString(getLinksURL()));
+        link.put(StudyImporterForTSV.STUDY_SOURCE_CITATION, getSourceCitation() + " . " + ReferenceUtil.createLastAccessedString(getLinkResource()));
         link.put(StudyImporterForTSV.REFERENCE_CITATION, getSourceCitation());
         link.put(StudyImporterForTSV.REFERENCE_ID, getSourceDOI());
         link.put(StudyImporterForTSV.REFERENCE_DOI, getSourceDOI());
@@ -74,26 +68,6 @@ public class StudyImporterForWood extends BaseStudyImporter {
         if (!StringUtils.startsWith(tsnValue, "san")) {
             link.put(tsnLabel, "ITIS:" + tsnValue);
         }
-    }
-
-    public String getLinksURL() {
-        String linksURL = null;
-        JsonNode desc = getDataset().getConfig();
-        if (desc.has("resources")) {
-            JsonNode resources = desc.get("resources");
-            if (resources.has("links")) {
-                linksURL = resources.get("links").asText();
-            }
-        }
-        return linksURL;
-    }
-
-    public LatLng getLocation() {
-        return parseLocation(getDataset().getConfig());
-    }
-
-    public Term getLocality() {
-        return parseLocality(getDataset().getConfig());
     }
 
 }

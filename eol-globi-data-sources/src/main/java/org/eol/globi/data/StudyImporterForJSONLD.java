@@ -27,14 +27,8 @@ import java.util.Date;
 public class StudyImporterForJSONLD extends BaseStudyImporter {
 
     public URI getResourceURI() {
-        return resourceURI;
+        return getDataset().getConfigURI();
     }
-
-    public void setResourceURI(URI resourceURI) {
-        this.resourceURI = resourceURI;
-    }
-
-    private URI resourceURI;
 
     public StudyImporterForJSONLD(ParserFactory parserFactory, NodeFactory nodeFactory) {
         super(parserFactory, nodeFactory);
@@ -98,7 +92,7 @@ public class StudyImporterForJSONLD extends BaseStudyImporter {
         return null;
     }
 
-    protected Date parseDate(String collTime) throws StudyImporterException {
+    private Date parseDate(String collTime) throws StudyImporterException {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yy-MM-DD");
         try {
             return dateFormat.parse(collTime);

@@ -5,9 +5,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
 import org.apache.http.StatusLine;
 import org.apache.http.client.HttpResponseException;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpHead;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -102,5 +104,16 @@ public class ResourceUtil {
         } catch (MalformedURLException e) {
             return false;
         }
+    }
+
+    public static boolean resourceExists(URI descriptor) {
+        boolean exists = false;
+        try {
+            HttpResponse resp = HttpUtil.getHttpClient().execute(new HttpHead(descriptor));
+            exists = resp.getStatusLine().getStatusCode() == HttpStatus.SC_OK;
+        } catch (IOException e) {
+            // ignore
+        }
+        return exists;
     }
 }
