@@ -4,6 +4,7 @@ import org.codehaus.jackson.JsonNode;
 import org.eol.globi.data.StudyImporter;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.data.StudyImporterForArthopodEasyCapture;
+import org.eol.globi.data.StudyImporterForCoetzer;
 import org.eol.globi.data.StudyImporterForGoMexSI2;
 import org.eol.globi.data.StudyImporterForMetaTable;
 import org.eol.globi.data.StudyImporterForPlanque;
@@ -79,6 +80,15 @@ public class GitHubImporterFactoryIT {
         assertThat(importer, is(instanceOf(StudyImporterForMetaTable.class)));
         assertThat(((StudyImporterForMetaTable)importer).getConfig(), is(notNullValue()));
         assertThat(((StudyImporterForMetaTable)importer).getBaseUrl(), startsWith("https://raw.githubusercontent.com/globalbioticinteractions/AfricaTreeDatabase/"));
+    }
+
+    @Test
+    public void createAfrotropicalBees() throws URISyntaxException, StudyImporterException, IOException {
+        StudyImporter importer = new GitHubImporterFactory().createImporter("globalbioticinteractions/Catalogue-of-Afrotropical-Bees", null, null);
+        assertThat(importer, is(notNullValue()));
+        assertThat(importer, is(instanceOf(StudyImporterForCoetzer.class)));
+        assertThat(((StudyImporterForCoetzer)importer).getDataset(), is(notNullValue()));
+        assertThat(((StudyImporterForCoetzer)importer).getArchiveURL(), is("https://dl.dropboxusercontent.com/u/13322685/CatalogueOfAfrotropicalBees.zip"));
     }
 
     @Test

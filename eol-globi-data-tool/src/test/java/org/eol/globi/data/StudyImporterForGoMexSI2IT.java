@@ -3,6 +3,8 @@ package org.eol.globi.data;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.domain.Environment;
 import org.eol.globi.domain.LocationImpl;
 import org.eol.globi.domain.LocationNode;
@@ -10,6 +12,7 @@ import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.TaxonNode;
+import org.eol.globi.service.Dataset;
 import org.eol.globi.service.GitHubUtil;
 import org.eol.globi.util.ExternalIdUtil;
 import org.junit.Test;
@@ -21,6 +24,7 @@ import org.neo4j.graphdb.index.Index;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
@@ -49,7 +53,7 @@ public class StudyImporterForGoMexSI2IT extends GraphDBTestCase {
         assertThatSomeDataIsImported(nodeFactory, taxonIndex);
     }
 
-    protected StudyImporterForGoMexSI2 importWithCommit(String baseUrlLastCommit) throws StudyImporterException {
+    protected StudyImporterForGoMexSI2 importWithCommit(String baseUrlLastCommit) throws StudyImporterException, IOException {
         StudyImporterForGoMexSI2 importer = new StudyImporterForGoMexSI2(new ParserFactoryImpl(), nodeFactory);
         final List<String> msgs = new ArrayList<String>();
         importer.setLogger(new ImportLogger() {
@@ -71,8 +75,14 @@ public class StudyImporterForGoMexSI2IT extends GraphDBTestCase {
                 msgs.add("severe: " + message);
             }
         });
-        importer.setBaseUrl(baseUrlLastCommit);
-        importer.setSourceCitation("testing source citation");
+
+        JsonNode config = new ObjectMapper().readTree("{ \n" +
+                "  \"citation\": \"testing source citation\",\n" +
+                "  \"format\": \"gomexsi\"\n" +
+                "}");
+        Dataset dataset = new Dataset("some/namespace", URI.create(baseUrlLastCommit));
+        importer.setDataset(dataset);
+        dataset.setConfig(config);
 
         importStudy(importer);
         return importer;

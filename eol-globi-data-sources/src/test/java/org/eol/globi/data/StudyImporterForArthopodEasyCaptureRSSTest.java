@@ -1,7 +1,9 @@
 package org.eol.globi.data;
 
+import org.eol.globi.service.Dataset;
 import org.junit.Test;
 
+import java.net.URI;
 import java.util.List;
 
 import static org.hamcrest.core.Is.is;
@@ -15,7 +17,9 @@ public class StudyImporterForArthopodEasyCaptureRSSTest {
         final NodeFactory nodeFactory = null;
         final String rssUrlString = "http://amnh.begoniasociety.org/dwc/rss.xml";
 
-        List<StudyImporter> importers = StudyImporterForArthopodEasyCapture.getStudyImportersForRSSFeed(parserFactory, nodeFactory, rssUrlString);
+        final Dataset dataset = new Dataset("some/namespace", URI.create("http://example.com"));
+
+        List<StudyImporter> importers = StudyImporterForArthopodEasyCapture.getStudyImportersForRSSFeed(dataset, parserFactory, nodeFactory, rssUrlString);
 
         assertThat(importers.size(), is(3));
 

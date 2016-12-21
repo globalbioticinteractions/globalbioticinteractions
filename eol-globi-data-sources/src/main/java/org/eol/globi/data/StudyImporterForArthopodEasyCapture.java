@@ -35,7 +35,7 @@ public class StudyImporterForArthopodEasyCapture extends BaseStudyImporter {
 
         final String msgPrefix = "importing archive(s) from [" + getRssFeedUrlString() + "]";
         LOG.info(msgPrefix + "...");
-        final List<StudyImporter> studyImporters = getStudyImportersForRSSFeed(parserFactory, nodeFactory, getRssFeedUrlString());
+        final List<StudyImporter> studyImporters = getStudyImportersForRSSFeed(getDataset(), parserFactory, nodeFactory, getRssFeedUrlString());
         for (StudyImporter importer : studyImporters) {
             if (importer != null) {
                 if (getLogger() != null) {
@@ -52,7 +52,7 @@ public class StudyImporterForArthopodEasyCapture extends BaseStudyImporter {
         return getDataset().getOrDefault("rssFeedURL", "");
     }
 
-    public static List<StudyImporter> getStudyImportersForRSSFeed(ParserFactory parserFactory, NodeFactory
+    public static List<StudyImporter> getStudyImportersForRSSFeed(Dataset datasetOrig, ParserFactory parserFactory, NodeFactory
             nodeFactory, String rssUrlString) throws StudyImporterException {
         SyndFeedInput input = new SyndFeedInput();
         SyndFeed feed;
@@ -70,7 +70,8 @@ public class StudyImporterForArthopodEasyCapture extends BaseStudyImporter {
                 final StudyImporterForSeltmann studyImporter = new StudyImporterForSeltmann(parserFactory, nodeFactory);
                 ObjectNode objectNode = new ObjectMapper().createObjectNode();
                 objectNode.put("citation", StringUtils.trim(syndEntry.getDescription().getValue()));
-                Dataset dataset = new Dataset(null, URI.create(StringUtils.trim(syndEntry.getLink())));
+                URI archiveURI = URI.create(StringUtils.trim(syndEntry.getLink()));
+                Dataset dataset = new Dataset(datasetOrig.getNamespace(), archiveURI);
                 dataset.setConfig(objectNode);
                 studyImporter.setDataset(dataset);
                 importers.add(studyImporter);

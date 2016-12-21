@@ -204,8 +204,8 @@ public class StudyImporterForFishbase2 extends BaseStudyImporter {
 
         processEndpoints(config.getURL(), new TreeMap<String, NodeProcessor>() {
             {
-                put("fooditems", new ParserFood(listener, sourceCitation, config.getReferences(), config.getSpecies()));
-                put("predats", new ParserPredatorPrey(listener, sourceCitation, config.getReferences(), config.getSpecies()));
+                put("fooditems", new ParserFood(listener, getSourceCitation(), config.getReferences(), config.getSpecies()));
+                put("predats", new ParserPredatorPrey(listener, getSourceCitation(), config.getReferences(), config.getSpecies()));
             }
         }, config.getNamespace());
     }

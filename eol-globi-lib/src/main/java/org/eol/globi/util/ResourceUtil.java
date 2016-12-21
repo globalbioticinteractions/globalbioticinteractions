@@ -116,4 +116,12 @@ public class ResourceUtil {
         }
         return exists;
     }
+
+    public static String getContent(URI uri) throws IOException {
+        try {
+            return HttpUtil.getContent(uri);
+        } catch (IOException ex) {
+            throw new IOException("failed to findNamespaces [" + uri + "]", ex);
+        }
+    }
 }

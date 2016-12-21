@@ -52,9 +52,6 @@ public class StudyImporterForGoMexSI2 extends BaseStudyImporter {
         add("several");
     }};
 
-    private String baseUrl = "gomexsi";
-
-
     public StudyImporterForGoMexSI2(ParserFactory parserFactory, NodeFactory nodeFactory) {
         super(parserFactory, nodeFactory);
     }
@@ -64,7 +61,7 @@ public class StudyImporterForGoMexSI2 extends BaseStudyImporter {
     }
 
     private String getBaseUrl() {
-        return baseUrl;
+        return getDataset().getArchiveURI().toString();
     }
 
     protected String getPredatorResourcePath() {
@@ -447,11 +444,6 @@ public class StudyImporterForGoMexSI2 extends BaseStudyImporter {
             throw new StudyImporterException("missing mandatory column [" + label + "] in [" + datafile + "]:[" + parser.getLastLineNumber() + "]");
         }
         return "NA".equals(value) ? "" : value;
-    }
-
-
-    public void setBaseUrl(String baseUrl) {
-        this.baseUrl = baseUrl;
     }
 
 }

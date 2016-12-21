@@ -1,6 +1,5 @@
 package org.eol.globi.data;
 
-import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.service.Dataset;
@@ -15,9 +14,6 @@ public abstract class BaseStudyImporter extends BaseImporter implements StudyImp
             return true;
         }
     };
-    protected String sourceCitation;
-
-    protected String sourceDOI;
 
     private Dataset dataset;
 
@@ -76,21 +72,12 @@ public abstract class BaseStudyImporter extends BaseImporter implements StudyImp
         return geoNamesService;
     }
 
-    public void setSourceCitation(String sourceCitation) {
-        this.sourceCitation = sourceCitation;
-    }
-
     public String getSourceCitation() {
-        return StringUtils.isBlank(sourceCitation) ?
-                (dataset == null ? null : dataset.getCitation()) : sourceCitation;
+        return dataset == null ? null : dataset.getCitation();
     }
 
     public String getSourceDOI() {
-        return StringUtils.isBlank(sourceDOI) ? (dataset == null ? null : dataset.getDOI()) : sourceDOI;
-    }
-
-    public void setSourceDOI(String sourceDOI) {
-        this.sourceDOI = sourceDOI;
+        return dataset == null ? null : dataset.getDOI();
     }
 
     protected void setBasisOfRecordAsLiterature(Specimen specimen) throws NodeFactoryException {
@@ -100,6 +87,7 @@ public abstract class BaseStudyImporter extends BaseImporter implements StudyImp
     public void setDataset(Dataset dataset) {
         this.dataset = dataset;
     }
+
     public Dataset getDataset() {
         return dataset;
     }
