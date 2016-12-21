@@ -32,11 +32,12 @@ public class Dataset {
     }
 
     private URI getURIAddSlashIfNeeded(String resourceName) {
-        if (!StringUtils.startsWith(resourceName, "/") && !StringUtils.endsWith(getArchiveURI().toString(), "/")) {
-            return URI.create(archiveURI + "/" + resourceName);
-        } else {
-            return URI.create(archiveURI + resourceName);
-        }
+        String separator = (StringUtils.isNotBlank(resourceName)
+                && !StringUtils.startsWith(resourceName, "/")
+                && !StringUtils.endsWith(getArchiveURI().toString(), "/"))
+                ? "/"
+                : "";
+        return URI.create(archiveURI + separator + resourceName);
     }
 
 

@@ -104,7 +104,7 @@ public class GitHubImporterFactory {
         Class<? extends StudyImporter> anImporter;
         if (dataset.getConfigURI().toString().endsWith(".jsonld")) {
             anImporter = StudyImporterForJSONLD.class;
-        } else if (isMetaTableImporter(dataset.getConfig())){
+        } else if (isMetaTableImporter(dataset.getConfig())) {
             anImporter = StudyImporterForMetaTable.class;
         } else {
             anImporter = lookupImporterByFormat(dataset);
@@ -168,7 +168,8 @@ public class GitHubImporterFactory {
     private Dataset configureArchiveURI(Dataset dataset) {
         JsonNode desc = dataset.getConfig();
         String archiveURL = desc.has("archiveURL") ? desc.get("archiveURL").asText() : "";
-        Dataset dataset1 = new Dataset(dataset.getNamespace(), StringUtils.isBlank(archiveURL) ? dataset.getArchiveURI() : URI.create(archiveURL));
+        URI archiveURI = dataset.getResourceURI(archiveURL);
+        Dataset dataset1 = new Dataset(dataset.getNamespace(), archiveURI);
         dataset1.setConfig(dataset.getConfig());
         dataset1.setConfigURI(dataset.getConfigURI());
         return dataset1;

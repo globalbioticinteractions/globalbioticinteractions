@@ -14,11 +14,13 @@ import org.eol.globi.data.StudyImporterForWood;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.net.URI;
 import java.net.URISyntaxException;
 
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsInstanceOf.instanceOf;
 import static org.hamcrest.core.IsNull.notNullValue;
+import static org.hamcrest.core.StringEndsWith.endsWith;
 import static org.hamcrest.core.StringStartsWith.startsWith;
 import static org.junit.Assert.assertThat;
 import static org.junit.internal.matchers.StringContains.containsString;
@@ -88,7 +90,9 @@ public class GitHubImporterFactoryIT {
         assertThat(importer, is(notNullValue()));
         assertThat(importer, is(instanceOf(StudyImporterForCoetzer.class)));
         assertThat(((StudyImporterForCoetzer)importer).getDataset(), is(notNullValue()));
-        assertThat(((StudyImporterForCoetzer)importer).getArchiveURL(), is("https://dl.dropboxusercontent.com/u/13322685/CatalogueOfAfrotropicalBees.zip"));
+        String archiveURL = ((StudyImporterForCoetzer) importer).getArchiveURL();
+        assertThat(archiveURL, endsWith("CatalogueOfAfrotropicalBees.zip"));
+        assertThat(URI.create(archiveURL).isAbsolute(), is(true));
     }
 
     @Test

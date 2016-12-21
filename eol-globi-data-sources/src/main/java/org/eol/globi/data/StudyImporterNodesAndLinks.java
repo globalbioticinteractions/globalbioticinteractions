@@ -22,27 +22,27 @@ public abstract class StudyImporterNodesAndLinks extends BaseStudyImporter {
     }
 
     public String getLinkResource() {
-        String linkResource2 = null;
+        String linkResource = null;
         JsonNode config = getDataset().getConfig();
         if (config.has("resources")) {
             JsonNode resources = config.get("resources");
             if (resources != null && resources.has("links")) {
-                linkResource2 = resources.get("links").asText();
+                linkResource = resources.get("links").asText();
             }
         }
-        return linkResource2;
+        return linkResource;
     }
 
     public String getNodeResource() {
-        String linkResource2 = null;
+        String nodeResource = null;
         JsonNode config = getDataset().getConfig();
         if (config.has("resources")) {
             JsonNode resources = config.get("resources");
             if (resources != null && resources.has("nodes")) {
-                linkResource2 = resources.get("nodes").asText();
+                nodeResource = resources.get("nodes").asText();
             }
         }
-        return linkResource2;
+        return nodeResource;
     }
 
     public String getNamespace() {
