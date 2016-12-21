@@ -220,23 +220,7 @@ public class GitHubImporterFactory {
 
     private StudyImporter createPlanqueImporter(Dataset dataset, final ParserFactory parserFactory, final NodeFactory nodeFactory) throws StudyImporterException {
         StudyImporterForPlanque studyImporter = new StudyImporterForPlanque(parserFactory, nodeFactory);
-
-        JsonNode desc = dataset.getConfig();
-        if (desc.has("citation")) {
-            studyImporter.setSourceCitation(desc.get("citation").asText());
-        }
-        if (desc.has("resources")) {
-            JsonNode resources = desc.get("resources");
-            if (resources.has("links")) {
-                studyImporter.setLinks(resources.get("links").asText());
-            }
-            if (resources.has("references")) {
-                studyImporter.setReferences(resources.get("references").asText());
-            }
-            if (resources.has("referencesForLinks")) {
-                studyImporter.setReferencesForLinks(resources.get("referencesForLinks").asText());
-            }
-        }
+        studyImporter.setDataset(dataset);
         return studyImporter;
     }
 

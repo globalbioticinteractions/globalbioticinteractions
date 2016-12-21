@@ -6,6 +6,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.codehaus.jackson.JsonNode;
 import org.eol.globi.domain.LocationNode;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
@@ -24,16 +25,8 @@ import static org.apache.commons.lang3.StringUtils.replace;
 public class StudyImporterForPlanque extends BaseStudyImporter {
     private final static Log LOG = LogFactory.getLog(StudyImporterForPlanque.class);
 
-    private String links;
-    private String references;
-    private String referencesForLinks;
-
     public StudyImporterForPlanque(ParserFactory parserFactory, NodeFactory nodeFactory) {
         super(parserFactory, nodeFactory);
-        setSourceCitation("Benjamin Planque, Raul Primicerio, Kathrine Michalsen, Michaela Aschan, Grégoire Certain, Padmini Dalpadado, Harald Gjøsæater, Cecilie Hansen, Edda Johannesen, Lis Lindal Jørgensen, Ina Kolsum, Susanne Kortsch, Lise-Marie Leclerc, Lena Omli, Mette Skern-Mauritzen, and Magnus Wiedmann 2014. Who eats whom in the Barents Sea: a food web topology from plankton to whales. Ecology 95:1430–1430. http://dx.doi.org/10.1890/13-1062.1");
-        setLinks("http://www.esapubs.org/archive/ecol/E095/124/revised/PairwiseList.txt");
-        setReferences("http://www.esapubs.org/archive/ecol/E095/124/revised/References.txt");
-        setReferencesForLinks("http://www.esapubs.org/archive/ecol/E095/124/revised/PairWise2References.txt");
     }
 
     protected static String normalizeName(String taxonName) {
@@ -159,27 +152,41 @@ public class StudyImporterForPlanque extends BaseStudyImporter {
         }
     }
 
-    public void setLinks(String links) {
-        this.links = links;
-    }
-
     public String getLinks() {
+        String links = null;
+        JsonNode desc = getDataset().getConfig();
+        if (desc.has("resources")) {
+            JsonNode resources = desc.get("resources");
+            if (resources.has("links")) {
+                links = resources.get("links").asText();
+            }
+        }
         return links;
     }
 
-    public void setReferences(String references) {
-        this.references = references;
-    }
-
     public String getReferences() {
+        String references = null;
+        JsonNode desc = getDataset().getConfig();
+        if (desc.has("resources")) {
+            JsonNode resources = desc.get("resources");
+            if (resources.has("references")) {
+                references = resources.get("references").asText();
+            }
+        }
+
+
         return references;
     }
 
-    public void setReferencesForLinks(String referencesForLinks) {
-        this.referencesForLinks = referencesForLinks;
-    }
-
     public String getReferencesForLinks() {
+        String referencesForLinks = null;
+        JsonNode desc = getDataset().getConfig();
+        if (desc.has("resources")) {
+            JsonNode resources = desc.get("resources");
+            if (resources.has("referencesForLinks")) {
+                referencesForLinks = resources.get("referencesForLinks").asText();
+            }
+        }
         return referencesForLinks;
     }
 }
