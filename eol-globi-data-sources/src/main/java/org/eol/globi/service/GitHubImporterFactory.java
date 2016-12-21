@@ -53,7 +53,7 @@ public class GitHubImporterFactory {
         return configureArchiveURI(datasetConfigured);
     }
 
-    public StudyImporter createImporter(Dataset dataset, final ParserFactory parserFactory, final NodeFactory nodeFactory) throws IOException, StudyImporterException {
+    private StudyImporter createImporter(Dataset dataset, final ParserFactory parserFactory, final NodeFactory nodeFactory) throws IOException, StudyImporterException {
         Class<? extends StudyImporter> anImporter = findImporterFor(dataset);
         try {
             Constructor<? extends StudyImporter> constructor = anImporter.getConstructor(ParserFactory.class, NodeFactory.class);
@@ -65,7 +65,7 @@ public class GitHubImporterFactory {
         }
     }
 
-    Dataset configureDataset(Dataset dataset) throws IOException {
+    private Dataset configureDataset(Dataset dataset) throws IOException {
         Dataset datasetConfigured1 = null;
         final URI configURI = dataset.getResourceURI("/globi.json");
         if (ResourceUtil.resourceExists(configURI)) {
@@ -74,7 +74,7 @@ public class GitHubImporterFactory {
         return datasetConfigured1;
     }
 
-    Dataset configureDatasetLD(Dataset dataset) {
+    private Dataset configureDatasetLD(Dataset dataset) {
         Dataset datasetConfigured = null;
         final URI jsonldResourceUrl = dataset.getResourceURI("/globi-dataset.jsonld");
         if (ResourceUtil.resourceExists(jsonldResourceUrl)) {
@@ -114,6 +114,10 @@ public class GitHubImporterFactory {
 
     private static Class<? extends StudyImporter> lookupImporterByFormat(Dataset dataset) throws StudyImporterException {
         final String format = dataset.getFormat();
+        if (StringUtils.isBlank(format)) {
+            throw new StudyImporterException("provide specify format for [" + dataset.getConfigURI() + "]");
+        }
+
         HashMap<String, Class<? extends StudyImporter>> supportedFormats = new HashMap<String, Class<? extends StudyImporter>>() {
             {
                 put("globi", StudyImporterForTSV.class);
