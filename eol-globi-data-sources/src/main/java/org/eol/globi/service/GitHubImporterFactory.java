@@ -35,7 +35,8 @@ public class GitHubImporterFactory {
     public StudyImporter createImporter(String repo, final ParserFactory parserFactory, final NodeFactory nodeFactory) throws IOException, URISyntaxException, StudyImporterException {
         try {
             Dataset dataset = new DatasetFinderGitHubRemote().datasetFor(repo);
-            return createImporter(configDataset(dataset), parserFactory, nodeFactory);
+            Dataset datasetConfigured = configDataset(dataset);
+            return createImporter(datasetConfigured, parserFactory, nodeFactory);
         } catch (DatasetFinderException e) {
             throw new StudyImporterException("failed to locate archive url for [" + repo + "]", e);
         }
@@ -84,9 +85,6 @@ public class GitHubImporterFactory {
         return datasetConfigured;
     }
 
-    public StudyImporter createImporter(String repo, String basedir, final ParserFactory parserFactory, final NodeFactory nodeFactory) throws IOException, StudyImporterException, NodeFactoryException {
-        return createImporter(new Dataset(repo, URI.create(basedir)), parserFactory, nodeFactory);
-    }
 
     private Dataset configureDataset(Dataset dataset, URI configURI) throws IOException {
         Dataset datasetConfigured = null;

@@ -13,7 +13,6 @@ public class Dataset {
     private String namespace;
     private URI archiveURI;
     private JsonNode config;
-    private String format;
     private URI configURI;
 
     public Dataset(String namespace, URI archiveURI) {

@@ -3,12 +3,13 @@ package org.eol.globi.data;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eol.globi.domain.Study;
+import org.eol.globi.service.DatasetFinderException;
+import org.eol.globi.service.DatasetFinderGitHubRemote;
 import org.eol.globi.service.GitHubImporterFactory;
-import org.eol.globi.service.GitHubUtil;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.List;
+import java.util.Collection;
 
 public class StudyImporterForGitHubData extends BaseStudyImporter {
     private static final Log LOG = LogFactory.getLog(StudyImporterForGitHubData.class);
@@ -19,7 +20,14 @@ public class StudyImporterForGitHubData extends BaseStudyImporter {
 
     @Override
     public Study importStudy() throws StudyImporterException {
-        for (String repository : discoverDataRepositories()) {
+        Collection<String> repositories;
+        try {
+            repositories = new DatasetFinderGitHubRemote().findNamespaces();
+        } catch (DatasetFinderException e) {
+            throw new StudyImporterException("failed to discover datasets", e);
+        }
+
+        for (String repository : repositories) {
             try {
                 LOG.info("importing github repo [" + repository + "]...");
                 importData(repository);
@@ -29,16 +37,6 @@ public class StudyImporterForGitHubData extends BaseStudyImporter {
             }
         }
         return null;
-    }
-
-    private List<String> discoverDataRepositories() throws StudyImporterException {
-        List<String> repositories;
-        try {
-            repositories = GitHubUtil.find();
-        } catch (IOException | URISyntaxException e) {
-            throw new StudyImporterException("failed to discover github data repositories", e);
-        }
-        return repositories;
     }
 
     public void importData(String repo) throws StudyImporterException {
