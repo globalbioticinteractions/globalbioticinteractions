@@ -1,9 +1,13 @@
 package org.eol.globi.data;
 
 import org.apache.commons.io.IOUtils;
+import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.eol.globi.service.Dataset;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -21,8 +25,8 @@ import static org.junit.internal.matchers.StringContains.containsString;
 public class StudyImporterForGrayTest extends GraphDBTestCase {
 
     @Test
-    public void importFirst500() throws StudyImporterException {
-        StudyImporterForGray gray = new StudyImporterForGray(new ParserFactoryImpl(), nodeFactory);
+    public void importFirst500() throws StudyImporterException, IOException {
+        StudyImporterForGray gray = createImporter();
         gray.setFilter(new ImportFilter() {
             @Override
             public boolean shouldImportRecord(Long recordNumber) {
@@ -34,9 +38,25 @@ public class StudyImporterForGrayTest extends GraphDBTestCase {
         assertThat(taxonIndex.findTaxonByName("Staurosira elliptica"), is(notNullValue()));
     }
 
+    private StudyImporterForGray createImporter() throws IOException {
+        StudyImporterForGray gray = new StudyImporterForGray(new ParserFactoryImpl(), nodeFactory);
+
+        JsonNode config = new ObjectMapper().readTree("{ \"citation\": \"Gray C, Ma A, Perkins D, Hudson L, Figueroa D, Woodward G (2015). Database of trophic interactions. Zenodo. http://dx.doi.org/10.5281/zenodo.13751\",\n" +
+                "  \"doi\": \"http://dx.doi.org/10.5281/zenodo.13751\",\n" +
+                "  \"format\": \"gray\",\n" +
+                "  \"resources\": {\n" +
+                "    \"links\": \"https://zenodo.org/record/13751/files/trophic.links.2014-11-10.csv\"  \n" +
+                "  }\n" +
+                "}");
+        Dataset dataset = new Dataset("some/namespace", URI.create("http://example.com"));
+        dataset.setConfig(config);
+        gray.setDataset(dataset);
+        return gray;
+    }
+
     @Test
     public void importLines() throws IOException, StudyImporterException {
-        StudyImporterForGray gray = new StudyImporterForGray(new ParserFactoryImpl(), nodeFactory);
+        StudyImporterForGray gray = createImporter();
         final List<Map<String, String>> maps = new ArrayList<Map<String, String>>();
 
         gray.importLinks(IOUtils.toInputStream(firstFewLines()), new InteractionListener() {

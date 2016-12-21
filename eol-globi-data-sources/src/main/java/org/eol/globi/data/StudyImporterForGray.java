@@ -3,9 +3,8 @@ package org.eol.globi.data;
 import com.Ostermiller.util.CSVParser;
 import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.lang3.StringUtils;
+import org.codehaus.jackson.JsonNode;
 import org.eol.globi.domain.Study;
-import org.eol.globi.domain.Term;
-import org.eol.globi.geo.LatLng;
 import org.eol.globi.util.ResourceUtil;
 
 import java.io.IOException;
@@ -15,16 +14,8 @@ import java.util.TreeMap;
 
 public class StudyImporterForGray extends BaseStudyImporter {
 
-    private String linksURL;
-
-    private LatLng location;
-    private Term locality;
-
     public StudyImporterForGray(ParserFactory parserFactory, NodeFactory nodeFactory) {
         super(parserFactory, nodeFactory);
-        setSourceCitation("Gray C, Ma A, Perkins D, Hudson L, Figueroa D, Woodward G (2015). Database of trophic interactions. Zenodo. http://dx.doi.org/10.5281/zenodo.13751");
-        setSourceDOI("http://dx.doi.org/10.5281/zenodo.13751");
-        setLinksURL("https://zenodo.org/record/13751/files/trophic.links.2014-11-10.csv");
     }
 
     @Override
@@ -50,7 +41,7 @@ public class StudyImporterForGray extends BaseStudyImporter {
 
 
     private Map<String, String> importLink(LabeledCSVParser parser) {
-        Map<String, String> link = new TreeMap<String, String>();
+        Map<String, String> link = new TreeMap<>();
         link.put(StudyImporterForTSV.SOURCE_TAXON_NAME, parser.getValueByLabel("consumer"));
         link.put(StudyImporterForTSV.SOURCE_LIFE_STAGE, nonNAValueOrNull(parser.getValueByLabel("consumer.lifestage")));
         link.put(StudyImporterForTSV.TARGET_TAXON_NAME, parser.getValueByLabel("resource"));
@@ -68,28 +59,16 @@ public class StudyImporterForGray extends BaseStudyImporter {
         return StringUtils.equals("NA", value) ? null : value;
     }
 
-    public void setLinksURL(String linksURL) {
-        this.linksURL = linksURL;
-    }
-
-    public String getLinksURL() {
+    private String getLinksURL() {
+        String linksURL = null;
+        JsonNode desc = getDataset().getConfig();
+        if (desc.has("resources")) {
+            JsonNode resources = desc.get("resources");
+            if (resources.has("links")) {
+                linksURL = resources.get("links").asText();
+            }
+        }
         return linksURL;
-    }
-
-    public void setLocation(LatLng location) {
-        this.location = location;
-    }
-
-    public void setLocality(Term locality) {
-        this.locality = locality;
-    }
-
-    public LatLng getLocation() {
-        return location;
-    }
-
-    public Term getLocality() {
-        return locality;
     }
 
 }

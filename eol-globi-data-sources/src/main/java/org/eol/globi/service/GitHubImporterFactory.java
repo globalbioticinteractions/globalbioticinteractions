@@ -214,20 +214,7 @@ public class GitHubImporterFactory {
 
     private StudyImporter createGrayImporter(Dataset dataset, final ParserFactory parserFactory, final NodeFactory nodeFactory) throws StudyImporterException {
         StudyImporterForGray studyImporter = new StudyImporterForGray(parserFactory, nodeFactory);
-
-        JsonNode desc = dataset.getConfig();
-        if (desc.has("doi")) {
-            studyImporter.setSourceDOI(desc.get("doi").asText());
-        }
-        if (desc.has("citation")) {
-            studyImporter.setSourceCitation(desc.get("citation").asText());
-        }
-        if (desc.has("resources")) {
-            JsonNode resources = desc.get("resources");
-            if (resources.has("links")) {
-                studyImporter.setLinksURL(resources.get("links").asText());
-            }
-        }
+        studyImporter.setDataset(dataset);
         return studyImporter;
     }
 
