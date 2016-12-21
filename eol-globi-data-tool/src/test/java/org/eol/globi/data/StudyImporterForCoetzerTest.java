@@ -1,20 +1,17 @@
 package org.eol.globi.data;
 
-import org.eol.globi.domain.Specimen;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.node.ObjectNode;
 import org.eol.globi.domain.Study;
-import org.eol.globi.domain.Term;
+import org.eol.globi.service.Dataset;
 import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
-import org.neo4j.graphdb.Relationship;
 
 import java.io.IOException;
+import java.net.URI;
 import java.util.List;
 
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.either;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.hamcrest.Matchers.startsWith;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 
 public class StudyImporterForCoetzerTest extends GraphDBTestCase {
@@ -22,8 +19,11 @@ public class StudyImporterForCoetzerTest extends GraphDBTestCase {
     @Test
     public void importSome() throws StudyImporterException, IOException {
         StudyImporterForCoetzer importer = new StudyImporterForCoetzer(null, nodeFactory);
-        importer.setSourceCitation("source citation");
-        importer.setArchiveURL("coetzer/CatalogOfAfrotropicalBees.zip");
+        Dataset dataset = new Dataset(null, URI.create("classpath:coetzer/CatalogOfAfrotropicalBees.zip"));
+        ObjectNode objectNode = new ObjectMapper().createObjectNode();
+        objectNode.put("citation", "source citation");
+        dataset.setConfig(objectNode);
+        importer.setDataset(dataset);
         importStudy(importer);
 
         List<Study> allStudies = NodeUtil.findAllStudies(getGraphDb());

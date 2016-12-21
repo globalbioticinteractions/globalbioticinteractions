@@ -3,24 +3,24 @@ package org.eol.globi.data;
 import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jackson.JsonNode;
 import org.eol.globi.domain.InteractType;
+import org.eol.globi.service.Dataset;
 
+import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
 public class TableInteractionListenerProxy implements InteractionListener {
-    final InteractionListener interactionListener;
-    private final String baseUrl;
-    private final JsonNode config;
+    private final InteractionListener interactionListener;
+    private final Dataset dataset;
 
-    public TableInteractionListenerProxy(String baseUrl, JsonNode config, InteractionListener interactionListener) {
-        this.baseUrl = baseUrl;
-        this.config = config;
+    public TableInteractionListenerProxy(Dataset dataset, InteractionListener interactionListener) {
+        this.dataset = dataset;
         this.interactionListener = interactionListener;
     }
 
     @Override
     public void newLink(final Map<String, String> properties) throws StudyImporterException {
-        final String dataSourceCitation = StudyImporterForMetaTable.generateSourceCitation(baseUrl, config);
+        final String dataSourceCitation = StudyImporterForMetaTable.generateSourceCitation(dataset);
 
         final HashMap<String, String> enrichedProperties = new HashMap<String, String>() {
             {

@@ -68,13 +68,6 @@ public class StudyImporterForGray extends BaseStudyImporter {
         return StringUtils.equals("NA", value) ? null : value;
     }
 
-    private static void addTSN(LabeledCSVParser parser, Map<String, String> link, String tsn, String tsnLabel) {
-        String tsnValue = parser.getValueByLabel(tsn);
-        if (!StringUtils.startsWith(tsnValue, "san")) {
-            link.put(tsnLabel, "ITIS:" + tsnValue);
-        }
-    }
-
     public void setLinksURL(String linksURL) {
         this.linksURL = linksURL;
     }

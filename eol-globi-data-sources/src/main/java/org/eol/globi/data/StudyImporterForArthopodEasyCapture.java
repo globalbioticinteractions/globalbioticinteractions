@@ -8,9 +8,13 @@ import com.sun.syndication.io.XmlReader;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.node.ObjectNode;
 import org.eol.globi.domain.Study;
+import org.eol.globi.service.Dataset;
 
 import java.io.IOException;
+import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,17 +22,20 @@ import java.util.List;
 public class StudyImporterForArthopodEasyCapture extends BaseStudyImporter {
     private static final Log LOG = LogFactory.getLog(StudyImporterForArthopodEasyCapture.class);
 
-    private String rssFeedUrlString;
-
     public StudyImporterForArthopodEasyCapture(ParserFactory parserFactory, NodeFactory nodeFactory) {
         super(parserFactory, nodeFactory);
     }
 
     @Override
     public Study importStudy() throws StudyImporterException {
-        final String msgPrefix = "importing archive(s) from [" + rssFeedUrlString + "]";
+        final String rssFeedUrl = getRssFeedUrlString();
+        if (org.apache.commons.lang.StringUtils.isBlank(rssFeedUrl)) {
+            throw new StudyImporterException("failed to import [" + getDataset().getNamespace() + "]: no [" + "rssFeedURL" + "] specified");
+        }
+
+        final String msgPrefix = "importing archive(s) from [" + getRssFeedUrlString() + "]";
         LOG.info(msgPrefix + "...");
-        final List<StudyImporter> studyImporters = getStudyImportersForRSSFeed(parserFactory, nodeFactory, rssFeedUrlString);
+        final List<StudyImporter> studyImporters = getStudyImportersForRSSFeed(parserFactory, nodeFactory, getRssFeedUrlString());
         for (StudyImporter importer : studyImporters) {
             if (importer != null) {
                 if (getLogger() != null) {
@@ -41,12 +48,8 @@ public class StudyImporterForArthopodEasyCapture extends BaseStudyImporter {
         return null;
     }
 
-    public void setRssFeedUrlString(String rssFeedUrlString) {
-        this.rssFeedUrlString = rssFeedUrlString;
-    }
-
     public String getRssFeedUrlString() {
-        return rssFeedUrlString;
+        return getDataset().getOrDefault("rssFeedURL", "");
     }
 
     public static List<StudyImporter> getStudyImportersForRSSFeed(ParserFactory parserFactory, NodeFactory
@@ -55,9 +58,7 @@ public class StudyImporterForArthopodEasyCapture extends BaseStudyImporter {
         SyndFeed feed;
         try {
             feed = input.build(new XmlReader(new URL(rssUrlString)));
-        } catch (FeedException e) {
-            throw new StudyImporterException("failed to read rss feed [" + rssUrlString + "]", e);
-        } catch (IOException e) {
+        } catch (FeedException | IOException e) {
             throw new StudyImporterException("failed to read rss feed [" + rssUrlString + "]", e);
         }
 
@@ -67,8 +68,11 @@ public class StudyImporterForArthopodEasyCapture extends BaseStudyImporter {
             if (entry instanceof SyndEntry) {
                 SyndEntry syndEntry = (SyndEntry) entry;
                 final StudyImporterForSeltmann studyImporter = new StudyImporterForSeltmann(parserFactory, nodeFactory);
-                studyImporter.setArchiveURL(StringUtils.trim(syndEntry.getLink()));
-                studyImporter.setSourceCitation(StringUtils.trim(syndEntry.getDescription().getValue()));
+                ObjectNode objectNode = new ObjectMapper().createObjectNode();
+                objectNode.put("citation", StringUtils.trim(syndEntry.getDescription().getValue()));
+                Dataset dataset = new Dataset(null, URI.create(StringUtils.trim(syndEntry.getLink())));
+                dataset.setConfig(objectNode);
+                studyImporter.setDataset(dataset);
                 importers.add(studyImporter);
             }
         }

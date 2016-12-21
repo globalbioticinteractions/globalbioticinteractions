@@ -3,27 +3,26 @@ package org.eol.globi.data;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.Term;
+import org.eol.globi.service.Dataset;
 import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
 import org.neo4j.graphdb.Relationship;
 
 import java.io.IOException;
+import java.net.URI;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import static org.hamcrest.Matchers.either;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.hamcrest.Matchers.startsWith;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 
 public class StudyImporterForSeltmannTest extends GraphDBTestCase {
 
     @Test
-    public void importSome() throws StudyImporterException, NodeFactoryException, IOException {
+    public void importSome() throws StudyImporterException, IOException {
         StudyImporterForSeltmann importer = new StudyImporterForSeltmann(null, nodeFactory);
-        importer.setArchiveURL("seltmann/testArchive.zip");
+        importer.setDataset(new Dataset(null, URI.create("classpath:seltmann/testArchive.zip")));
         importStudy(importer);
 
         List<Study> allStudies = NodeUtil.findAllStudies(getGraphDb());

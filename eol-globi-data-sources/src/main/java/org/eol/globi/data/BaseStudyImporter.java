@@ -1,7 +1,9 @@
 package org.eol.globi.data;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
+import org.eol.globi.service.Dataset;
 import org.eol.globi.service.GeoNamesService;
 import org.eol.globi.service.GeoNamesServiceImpl;
 
@@ -16,6 +18,8 @@ public abstract class BaseStudyImporter extends BaseImporter implements StudyImp
     protected String sourceCitation;
 
     protected String sourceDOI;
+
+    private Dataset dataset;
 
     private GeoNamesService geoNamesService = new GeoNamesServiceImpl();
 
@@ -77,11 +81,12 @@ public abstract class BaseStudyImporter extends BaseImporter implements StudyImp
     }
 
     public String getSourceCitation() {
-        return sourceCitation;
+        return StringUtils.isBlank(sourceCitation) ?
+                (dataset == null ? null : dataset.getCitation()) : sourceCitation;
     }
 
     public String getSourceDOI() {
-        return sourceDOI;
+        return StringUtils.isBlank(sourceDOI) ? (dataset == null ? null : dataset.getDOI()) : sourceDOI;
     }
 
     public void setSourceDOI(String sourceDOI) {
@@ -90,5 +95,12 @@ public abstract class BaseStudyImporter extends BaseImporter implements StudyImp
 
     protected void setBasisOfRecordAsLiterature(Specimen specimen) throws NodeFactoryException {
         specimen.setBasisOfRecord(nodeFactory.getOrCreateBasisOfRecord("http://gbif.github.io/gbif-api/apidocs/org/gbif/api/vocabulary/BasisOfRecord.html#LITERATURE", "Literature"));
+    }
+
+    public void setDataset(Dataset dataset) {
+        this.dataset = dataset;
+    }
+    public Dataset getDataset() {
+        return dataset;
     }
 }

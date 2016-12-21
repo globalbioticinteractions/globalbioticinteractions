@@ -27,9 +27,6 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 public class StudyImporterForCoetzer extends BaseStudyImporter {
-    private static final Log LOG = LogFactory.getLog(StudyImporterForCoetzer.class);
-
-    private String archiveURL = "seltmann/testArchive.zip";
 
     public StudyImporterForCoetzer(ParserFactory parserFactory, NodeFactory nodeFactory) {
         super(parserFactory, nodeFactory);
@@ -37,6 +34,10 @@ public class StudyImporterForCoetzer extends BaseStudyImporter {
 
     @Override
     public Study importStudy() throws StudyImporterException {
+        if (org.apache.commons.lang.StringUtils.isBlank(getArchiveURL())) {
+            throw new StudyImporterException("failed to import [" + getDataset().getNamespace() + "]: no [archiveURL] specified");
+        }
+
         DB db = DBMaker
                 .newMemoryDirectDB()
                 .compressionEnable()
@@ -136,9 +137,7 @@ public class StudyImporterForCoetzer extends BaseStudyImporter {
                     }
                 }
             }
-        } catch (IOException e) {
-            throw new StudyImporterException(e);
-        } catch (NodeFactoryException e) {
+        } catch (IOException | NodeFactoryException e) {
             throw new StudyImporterException(e);
         }
 
@@ -153,11 +152,7 @@ public class StudyImporterForCoetzer extends BaseStudyImporter {
     }
 
     public String getArchiveURL() {
-        return archiveURL;
-    }
-
-    public void setArchiveURL(String archiveURL) {
-        this.archiveURL = archiveURL;
+        return getDataset().getArchiveURI().toString();
     }
 
 }

@@ -2,9 +2,11 @@ package org.eol.globi.data;
 
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.TaxonNode;
+import org.eol.globi.service.Dataset;
 import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -29,7 +31,7 @@ public class StudyImporterForTSVTest extends GraphDBTestCase {
     @Test
     public void importFewLines() throws StudyImporterException {
         StudyImporterForTSV importer = new StudyImporterForTSV(new TestParserFactory(firstFewLines), nodeFactory);
-        importer.setRepositoryName("someRepo");
+        importer.setDataset(new Dataset("someRepo", URI.create("http://example.com")));
         importStudy(importer);
 
         assertExists("Leptoconchus incycloseris");
@@ -56,7 +58,7 @@ public class StudyImporterForTSVTest extends GraphDBTestCase {
                 "EOL:912\t\tRO:0002444\t\tEOL:444\t\t\t\t\t\t\t\tGittenberger, A., Gittenberger, E. (2011). Cryptic, adaptive radiation of endoparasitic snails: sibling species of Leptoconchus (Gastropoda: Coralliophilidae) in corals. Org Divers Evol, 11(1), 21–41. doi:10.1007/s13127-011-0039-1\n";
 
         StudyImporterForTSV importer = new StudyImporterForTSV(new TestParserFactory(minimalLines), nodeFactory);
-        importer.setRepositoryName("someRepo");
+        importer.setDataset(new Dataset("someRepo", URI.create("http://example.com")));
         importStudy(importer);
         TaxonNode taxon = taxonIndex.findTaxonById("EOL:123");
         assertThat(taxon, is(notNullValue()));
@@ -80,7 +82,7 @@ public class StudyImporterForTSVTest extends GraphDBTestCase {
                 "EOL:12141292\tichthyophonus hoferi\tRO:0002454\thasHost\tEOL:205418\tlimanda ferruginea\t\t\t\t\t\thttp://www.ncbi.nlm.nih.gov/nuccore/1002422\tdoi: 10.1038/sdata.2015.49\tWardeh, M. et al. Database of host-pathogen and related species interactions, and their global distribution. Sci. Data 2:150049 doi: 10.1038/sdata.2015.49 (2015)\n";
 
         StudyImporterForTSV importer = new StudyImporterForTSV(new TestParserFactory(firstFewLines), nodeFactory);
-        importer.setRepositoryName("someRepo");
+        importer.setDataset(new Dataset("someRepo", URI.create("http://example.com")));
         importStudy(importer);
         TaxonNode taxon = taxonIndex.findTaxonById("EOL:2912748");
         assertThat(taxon, is(notNullValue()));

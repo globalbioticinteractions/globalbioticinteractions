@@ -3,11 +3,13 @@ package org.eol.globi.data;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.Term;
+import org.eol.globi.service.Dataset;
 import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
 import org.neo4j.graphdb.Relationship;
 
 import java.io.IOException;
+import java.net.URI;
 import java.util.List;
 
 import static org.hamcrest.Matchers.either;
@@ -37,7 +39,7 @@ public class StudyImporterForSeltmannIT extends GraphDBTestCase {
 
     protected void importArchive(String archiveName) throws StudyImporterException {
         StudyImporterForSeltmann importer = new StudyImporterForSeltmann(null, nodeFactory);
-        importer.setArchiveURL(ARCHIVE_URI_PREFIX + archiveName);
+        importer.setDataset(new Dataset(null, URI.create(ARCHIVE_URI_PREFIX + archiveName)));
         importStudy(importer);
 
         List<Study> allStudies = NodeUtil.findAllStudies(getGraphDb());

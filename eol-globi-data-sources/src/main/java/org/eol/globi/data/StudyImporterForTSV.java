@@ -33,15 +33,8 @@ public class StudyImporterForTSV extends BaseStudyImporter {
     private String repositoryName;
 
     public String getBaseUrl() {
-        return baseUrl;
+        return getDataset().getArchiveURI().toString();
     }
-
-    public void setBaseUrl(String baseUrl) {
-        this.baseUrl = baseUrl;
-    }
-
-    private String baseUrl;
-
 
     public StudyImporterForTSV(ParserFactory parserFactory, NodeFactory nodeFactory) {
         super(parserFactory, nodeFactory);
@@ -51,9 +44,7 @@ public class StudyImporterForTSV extends BaseStudyImporter {
     public Study importStudy() throws StudyImporterException {
         try {
             importRepository(getRepositoryName(), getSourceCitation(), getBaseUrl());
-        } catch (IOException e) {
-            throw new StudyImporterException("problem importing from [" + getBaseUrl() + "]", e);
-        } catch (NodeFactoryException e) {
+        } catch (IOException | NodeFactoryException e) {
             throw new StudyImporterException("problem importing from [" + getBaseUrl() + "]", e);
         }
         return null;
@@ -103,11 +94,7 @@ public class StudyImporterForTSV extends BaseStudyImporter {
     }
 
     public String getRepositoryName() {
-        return repositoryName;
-    }
-
-    public void setRepositoryName(String repositoryName) {
-        this.repositoryName = repositoryName;
+        return getDataset().getNamespace();
     }
 
     protected static String generateReferenceId(Map<String, String> props) {

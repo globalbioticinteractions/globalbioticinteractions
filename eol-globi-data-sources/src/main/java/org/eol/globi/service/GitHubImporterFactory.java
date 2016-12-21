@@ -6,6 +6,7 @@ import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.HttpHead;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.eol.globi.data.BaseStudyImporter;
 import org.eol.globi.data.NodeFactory;
 import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.data.ParserFactory;
@@ -24,7 +25,6 @@ import org.eol.globi.data.StudyImporterForSeltmann;
 import org.eol.globi.data.StudyImporterForSzoboszlai;
 import org.eol.globi.data.StudyImporterForTSV;
 import org.eol.globi.data.StudyImporterForWood;
-import org.eol.globi.data.StudyImporterNodesAndLinks;
 import org.eol.globi.domain.Term;
 import org.eol.globi.geo.LatLng;
 import org.eol.globi.util.HttpUtil;
@@ -82,51 +82,48 @@ public class GitHubImporterFactory {
         StudyImporter importer = null;
         if (StringUtils.isNotBlank(descriptor)) {
             JsonNode desc = new ObjectMapper().readTree(descriptor);
+            Dataset dataset1 = new Dataset(dataset.getNamespace(), dataset.getArchiveURI());
+            dataset1.setConfig(desc);
 
             if (isMetaTableImporter(desc)) {
                 final StudyImporterForMetaTable studyImporterForMetaTable = new StudyImporterForMetaTable(parserFactory, nodeFactory);
-                studyImporterForMetaTable.setConfig(desc);
-                studyImporterForMetaTable.setBaseUrl(dataset.getArchiveURI().toString());
+                studyImporterForMetaTable.setDataset(dataset1);
                 importer = studyImporterForMetaTable;
             } else {
-                importer = createImporterForFormat(dataset, parserFactory, nodeFactory, desc);
+                importer = createImporterForFormat(dataset1, parserFactory, nodeFactory);
             }
         }
 
         return importer;
     }
 
-    private StudyImporter createImporterForFormat(Dataset dataset, ParserFactory parserFactory, NodeFactory nodeFactory, JsonNode desc) throws StudyImporterException {
+    private StudyImporter createImporterForFormat(Dataset dataset, ParserFactory parserFactory, NodeFactory nodeFactory) throws StudyImporterException {
         StudyImporter importer;
 
-        String repo = dataset.getNamespace();
-        String baseUrl = dataset.getArchiveURI().toString();
-
-        final String sourceCitation = desc.has("citation") ? desc.get("citation").asText() : baseUrl;
-        final String sourceDOI = parseDOI(desc);
-        String format = desc.has("format") ? desc.get("format").asText() : "globi";
+        JsonNode desc = dataset.getConfig();
+        final String format = dataset.getFormat();
         if ("globi".equals(format)) {
-            importer = createTSVImporter(repo, baseUrl, parserFactory, nodeFactory, sourceCitation);
+            importer = createTSVImporter(dataset, parserFactory, nodeFactory);
         } else if ("gomexsi".equals(format)) {
-            importer = createGoMexSIImporter(baseUrl, sourceCitation, parserFactory, nodeFactory);
+            importer = createGoMexSIImporter(dataset, parserFactory, nodeFactory);
         } else if ("hechinger".equals(format)) {
-            importer = createHechingerImporter(repo, desc, sourceCitation, sourceDOI, parserFactory, nodeFactory);
+            importer = createHechingerImporter(dataset, parserFactory, nodeFactory);
         } else if ("dunne".equals(format)) {
-            importer = createDunneImporter(repo, desc, sourceCitation, sourceDOI, parserFactory, nodeFactory);
+            importer = createDunneImporter(dataset, parserFactory, nodeFactory);
         } else if ("seltmann".equals(format)) {
-            importer = createSeltmannImporter(repo, desc, parserFactory, nodeFactory);
+            importer = createSeltmannImporter(dataset, parserFactory, nodeFactory);
         } else if ("arthropodEasyCapture".equals(format)) {
-            importer = createArthropodEasyCaptureImporter(repo, desc, parserFactory, nodeFactory);
+            importer = createArthropodEasyCaptureImporter(dataset, parserFactory, nodeFactory);
         } else if ("coetzer".equals(format)) {
-            importer = createCoetzerImporter(repo, desc, parserFactory, nodeFactory, sourceCitation, sourceDOI);
+            importer = createCoetzerImporter(dataset, parserFactory, nodeFactory);
         } else if ("wood".equals(format)) {
-            importer = createWoodImporter(desc, parserFactory, nodeFactory);
+            importer = createWoodImporter(dataset, parserFactory, nodeFactory);
         } else if ("szoboszlai".equals(format)) {
-            importer = createSzoboszlaiImporter(desc, parserFactory, nodeFactory);
+            importer = createSzoboszlaiImporter(dataset, parserFactory, nodeFactory);
         } else if ("planque".equals(format)) {
-            importer = createPlanqueImporter(desc, parserFactory, nodeFactory);
+            importer = createPlanqueImporter(dataset, parserFactory, nodeFactory);
         } else if ("gray".equals(format)) {
-            importer = createGrayImporter(desc, parserFactory, nodeFactory);
+            importer = createGrayImporter(dataset, parserFactory, nodeFactory);
         } else {
             throw new StudyImporterException("unsupported format [" + format + "]");
         }
@@ -158,58 +155,46 @@ public class GitHubImporterFactory {
         return isMetaTable;
     }
 
-    private String parseDOI(JsonNode desc) {
-        return desc.has("doi") ? desc.get("doi").asText() : "";
-    }
-
-    private StudyImporter createTSVImporter(final String repo, final String baseUrl, final ParserFactory parserFactory, final NodeFactory nodeFactory, final String citation) {
+    private StudyImporter createTSVImporter(final Dataset dataset, final ParserFactory parserFactory, final NodeFactory nodeFactory) {
         return new StudyImporterForTSV(parserFactory, nodeFactory) {
             {
-                setBaseUrl(baseUrl);
-                setSourceCitation(citation);
-                setRepositoryName(repo);
+                setDataset(dataset);
             }
         };
     }
 
-    private StudyImporterForSeltmann createSeltmannImporter(String repo, JsonNode desc, final ParserFactory parserFactory, final NodeFactory nodeFactory) throws StudyImporterException {
+    private StudyImporterForSeltmann createSeltmannImporter(Dataset dataset, final ParserFactory parserFactory, final NodeFactory nodeFactory) throws StudyImporterException {
         StudyImporterForSeltmann studyImporterForSeltmann = new StudyImporterForSeltmann(parserFactory, nodeFactory);
-        final String archiveURL = parseArchiveURL(desc);
-        if (StringUtils.isBlank(archiveURL)) {
-            throw new StudyImporterException("failed to import [" + repo + "]: no [archiveURL] specified");
-        } else {
-            studyImporterForSeltmann.setArchiveURL(archiveURL);
-        }
+        setDatasetWithArchiveURL(dataset, studyImporterForSeltmann);
         return studyImporterForSeltmann;
     }
 
-    private StudyImporter createArthropodEasyCaptureImporter(String repo, JsonNode desc, final ParserFactory parserFactory, final NodeFactory nodeFactory) throws StudyImporterException {
+    private StudyImporter createArthropodEasyCaptureImporter(Dataset dataset, final ParserFactory parserFactory, final NodeFactory nodeFactory) throws StudyImporterException {
         StudyImporterForArthopodEasyCapture importer = new StudyImporterForArthopodEasyCapture(parserFactory, nodeFactory);
-        final String rssFeedURLName = "rssFeedURL";
-        final String rssFeedUrl = desc.has(rssFeedURLName) ? desc.get(rssFeedURLName).asText() : "";
-        if (StringUtils.isBlank(rssFeedUrl)) {
-            throw new StudyImporterException("failed to import [" + repo + "]: no [" + rssFeedURLName + "] specified");
-        } else {
-            importer.setRssFeedUrlString(rssFeedUrl);
-        }
+        importer.setDataset(dataset);
         return importer;
     }
 
-    private StudyImporterForCoetzer createCoetzerImporter(String repo, JsonNode desc, final ParserFactory parserFactory, final NodeFactory nodeFactory, String sourceCitation, String sourceDOI) throws StudyImporterException {
+    private StudyImporterForCoetzer createCoetzerImporter(Dataset dataset, final ParserFactory parserFactory, final NodeFactory nodeFactory) throws StudyImporterException {
         StudyImporterForCoetzer studyImporter = new StudyImporterForCoetzer(parserFactory, nodeFactory);
-        studyImporter.setSourceCitation(sourceCitation);
-        studyImporter.setSourceDOI(sourceDOI);
-        final String archiveURL = parseArchiveURL(desc);
-        if (StringUtils.isBlank(archiveURL)) {
-            throw new StudyImporterException("failed to import [" + repo + "]: no [archiveURL] specified");
-        } else {
-            studyImporter.setArchiveURL(archiveURL);
-        }
+        setDatasetWithArchiveURL(dataset, studyImporter);
         return studyImporter;
     }
 
-    private StudyImporter createWoodImporter(JsonNode desc, final ParserFactory parserFactory, final NodeFactory nodeFactory) throws StudyImporterException {
+    private void setDatasetWithArchiveURL(Dataset dataset, BaseStudyImporter studyImporter) throws StudyImporterException {
+        JsonNode desc = dataset.getConfig();
+        String archiveURL = desc.has("archiveURL") ? desc.get("archiveURL").asText() : "";
+        if (StringUtils.isBlank(archiveURL)) {
+            throw new StudyImporterException("dataset with name [" + dataset.getNamespace() + "] has no archiveURI");
+        }
+        Dataset dataset1 = new Dataset(dataset.getNamespace(), URI.create(archiveURL));
+        dataset1.setConfig(dataset.getConfig());
+        studyImporter.setDataset(dataset1);
+    }
+
+    private StudyImporter createWoodImporter(Dataset dataset, final ParserFactory parserFactory, final NodeFactory nodeFactory) throws StudyImporterException {
         StudyImporterForWood studyImporter = new StudyImporterForWood(parserFactory, nodeFactory);
+        JsonNode desc = dataset.getConfig();
         if (desc.has("doi")) {
             studyImporter.setSourceDOI(desc.get("doi").asText());
         }
@@ -227,8 +212,10 @@ public class GitHubImporterFactory {
         return studyImporter;
     }
 
-    private StudyImporter createGrayImporter(JsonNode desc, final ParserFactory parserFactory, final NodeFactory nodeFactory) throws StudyImporterException {
+    private StudyImporter createGrayImporter(Dataset dataset, final ParserFactory parserFactory, final NodeFactory nodeFactory) throws StudyImporterException {
         StudyImporterForGray studyImporter = new StudyImporterForGray(parserFactory, nodeFactory);
+
+        JsonNode desc = dataset.getConfig();
         if (desc.has("doi")) {
             studyImporter.setSourceDOI(desc.get("doi").asText());
         }
@@ -244,8 +231,10 @@ public class GitHubImporterFactory {
         return studyImporter;
     }
 
-    private StudyImporter createPlanqueImporter(JsonNode desc, final ParserFactory parserFactory, final NodeFactory nodeFactory) throws StudyImporterException {
+    private StudyImporter createPlanqueImporter(Dataset dataset, final ParserFactory parserFactory, final NodeFactory nodeFactory) throws StudyImporterException {
         StudyImporterForPlanque studyImporter = new StudyImporterForPlanque(parserFactory, nodeFactory);
+
+        JsonNode desc = dataset.getConfig();
         if (desc.has("citation")) {
             studyImporter.setSourceCitation(desc.get("citation").asText());
         }
@@ -264,86 +253,44 @@ public class GitHubImporterFactory {
         return studyImporter;
     }
 
-    private StudyImporter createSzoboszlaiImporter(JsonNode desc, final ParserFactory parserFactory, final NodeFactory nodeFactory) throws StudyImporterException {
+    private StudyImporter createSzoboszlaiImporter(Dataset dataset, final ParserFactory parserFactory, final NodeFactory nodeFactory) throws StudyImporterException {
         StudyImporterForSzoboszlai studyImporter = new StudyImporterForSzoboszlai(parserFactory, nodeFactory);
-        if (desc.has("doi")) {
-            studyImporter.setSourceDOI(desc.get("doi").asText());
-        }
-        if (desc.has("citation")) {
-            studyImporter.setSourceCitation(desc.get("citation").asText());
-        }
-        if (desc.has("resources")) {
-            JsonNode resources = desc.get("resources");
-            if (resources.has("links")) {
-                studyImporter.setLinkArchiveURL(resources.get("links").asText());
-            }
-            if (resources.has("shapes")) {
-                studyImporter.setShapeArchiveURL(resources.get("shapes").asText());
-            }
-        }
+        studyImporter.setDataset(dataset);
         return studyImporter;
     }
 
-    private String parseArchiveURL(JsonNode desc) {
-        return desc.has("archiveURL") ? desc.get("archiveURL").asText() : "";
+    private StudyImporterForGoMexSI2 createGoMexSIImporter(Dataset dataset, final ParserFactory parserFactory, final NodeFactory nodeFactory) {
+        return new StudyImporterForGoMexSI2(parserFactory, nodeFactory) {{
+            setBaseUrl(dataset.getArchiveURI().toString());
+            setSourceCitation(dataset.getCitation());
+        }};
     }
 
-    private StudyImporterForGoMexSI2 createGoMexSIImporter(String baseUrl, String sourceCitation, final ParserFactory parserFactory, final NodeFactory nodeFactory) {
-        StudyImporterForGoMexSI2 importer = new StudyImporterForGoMexSI2(parserFactory, nodeFactory);
-        importer.setBaseUrl(baseUrl);
-        importer.setSourceCitation(sourceCitation);
-        return importer;
-    }
-
-    private StudyImporterForHechinger createHechingerImporter(String repo, JsonNode desc, String sourceCitation, String sourceDOI, final ParserFactory parserFactory, final NodeFactory nodeFactory) {
+    private StudyImporterForHechinger createHechingerImporter(Dataset dataset, final ParserFactory parserFactory, final NodeFactory nodeFactory) {
         StudyImporterForHechinger importer = new StudyImporterForHechinger(parserFactory, nodeFactory);
-        populateImporter(repo, desc, sourceCitation, sourceDOI, importer);
+        importer.setDataset(dataset);
         return importer;
     }
 
-    private StudyImporterForDunne createDunneImporter(String repo, JsonNode desc, String sourceCitation, String sourceDOI, final ParserFactory parserFactory, final NodeFactory nodeFactory) {
+    private StudyImporterForDunne createDunneImporter(Dataset dataset, final ParserFactory parserFactory, final NodeFactory nodeFactory) {
         StudyImporterForDunne importer = new StudyImporterForDunne(parserFactory, nodeFactory);
-        populateImporter(repo, desc, sourceCitation, sourceDOI, importer);
+        importer.setDataset(dataset);
         return importer;
     }
 
-    private void populateImporter(String repo, JsonNode desc, String sourceCitation, String sourceDOI, StudyImporterNodesAndLinks importer) {
-        JsonNode resources = desc.get("resources");
-        if (resources.has("links")) {
-            importer.setLinkResource(resources.get("links").asText());
-        }
-        if (resources.has("nodes")) {
-            importer.setNodeResource(resources.get("nodes").asText());
-        }
-        LatLng loc = parseLocation(desc);
-        if (loc != null) {
-            importer.setLocation(loc);
-        }
-
-        importer.setNamespace(repo);
-        importer.setSourceCitation(sourceCitation);
-        importer.setSourceDOI(sourceDOI);
-        if (desc.has("delimiter")) {
-            String delimiter = desc.get("delimiter").asText();
-            if (delimiter.length() > 0) {
-                importer.setDelimiter(StringUtils.trim(delimiter).charAt(0));
-            }
-        }
-    }
-
-    private LatLng parseLocation(JsonNode desc) {
+    public static LatLng parseLocation(JsonNode desc) {
         LatLng loc = null;
         JsonNode location = desc.get("location");
         JsonNode latitude = location.get("latitude");
         JsonNode longitude = location.get("longitude");
-        if (latitude != null && latitude.isDouble() && longitude != null && longitude.isDouble()) {
+        if (latitude != null && latitude.isNumber() && longitude != null && longitude.isNumber()) {
             loc = new LatLng(latitude.asDouble(), longitude.asDouble());
 
         }
         return loc;
     }
 
-    private Term parseLocality(JsonNode desc) {
+    public static Term parseLocality(JsonNode desc) {
         Term locality = null;
         JsonNode location = desc.get("location");
         if (location != null) {

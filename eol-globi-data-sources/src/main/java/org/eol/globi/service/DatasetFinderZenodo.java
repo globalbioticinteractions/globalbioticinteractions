@@ -22,6 +22,20 @@ public class DatasetFinderZenodo implements DatasetFinder {
     private static final String PREFIX_GITHUB_RELATION = "https://github.com/";
     private static final String PREFIX_ZENODO = "oai:zenodo.org:";
 
+    @Override
+    public Collection<String> findNamespaces() throws DatasetFinderException {
+        return find(getFeed());
+    }
+
+    @Override
+    public Dataset datasetFor(String namespace) throws DatasetFinderException {
+        try {
+            return new Dataset(namespace, findZenodoGitHubArchives(getRelationsNodeList(getFeed()), namespace));
+        } catch (XPathExpressionException | MalformedURLException e) {
+            throw new DatasetFinderException("failed to resolve archive url for [" + namespace + "]", e);
+        }
+    }
+
     static URI findZenodoGitHubArchives(NodeList nodes, String requestedRepo) throws XPathExpressionException, MalformedURLException {
         URI archiveURI = null;
         for (int i = 0; i < nodes.getLength(); i++) {
@@ -89,26 +103,13 @@ public class DatasetFinderZenodo implements DatasetFinder {
         }
     }
 
-    @Override
-    public Collection<String> findNamespaces() throws DatasetFinderException {
-        return find(getFeed());
-    }
 
-    public Collection<String> find(InputStream xmlFeed) throws DatasetFinderException {
+    private Collection<String> find(InputStream xmlFeed) throws DatasetFinderException {
         return findPublishedGitHubRepos(getRelations(xmlFeed));
     }
 
     static Collection<String> getRelations(InputStream is) throws DatasetFinderException {
         return getRelations(getRelationsNodeList(is));
-    }
-
-    @Override
-    public Dataset datasetFor(String namespace) throws DatasetFinderException {
-        try {
-            return new Dataset(namespace, findZenodoGitHubArchives(getRelationsNodeList(getFeed()), namespace));
-        } catch (XPathExpressionException | MalformedURLException e) {
-            throw new DatasetFinderException("failed to resolve archive url for [" + namespace + "]", e);
-        }
     }
 
 }

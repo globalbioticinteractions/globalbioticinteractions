@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
@@ -40,14 +41,17 @@ public class StudyImporterForSeltmann extends BaseStudyImporter {
     public static final String FIELD_OCCURRENCE_ID = "occurrenceID";
     public static final String FIELD_CATALOG_NUMBER = "catalogNumber";
 
-    private String archiveURL = "seltmann/testArchive.zip";
-
     public StudyImporterForSeltmann(ParserFactory parserFactory, NodeFactory nodeFactory) {
         super(parserFactory, nodeFactory);
     }
 
     @Override
     public Study importStudy() throws StudyImporterException {
+        final String archiveURL = getDataset().getArchiveURI().toString();
+        if (org.apache.commons.lang.StringUtils.isBlank(archiveURL)) {
+            throw new StudyImporterException("failed to import [" + getDataset().getNamespace() + "]: no [archiveURL] specified");
+        }
+
         DB db = DBMaker
                 .newMemoryDirectDB()
                 .compressionEnable()
@@ -58,7 +62,7 @@ public class StudyImporterForSeltmann extends BaseStudyImporter {
                 .make();
 
         try {
-            InputStream inputStream = ResourceUtil.asInputStream(getArchiveURL(), StudyImporterForSeltmann.class);
+            InputStream inputStream = ResourceUtil.asInputStream(getDataset().getArchiveURI(), StudyImporterForSeltmann.class);
             ZipInputStream zipInputStream = new ZipInputStream(inputStream);
             ZipEntry entry;
             File assocTempFile = null;
@@ -153,9 +157,7 @@ public class StudyImporterForSeltmann extends BaseStudyImporter {
                     }
                 }
             }
-        } catch (IOException e) {
-            throw new StudyImporterException(e);
-        } catch (NodeFactoryException e) {
+        } catch (IOException | NodeFactoryException e) {
             throw new StudyImporterException(e);
         }
         return null;
@@ -235,11 +237,8 @@ public class StudyImporterForSeltmann extends BaseStudyImporter {
     }
 
     public String getArchiveURL() {
-        return archiveURL;
-    }
-
-    public void setArchiveURL(String archiveURL) {
-        this.archiveURL = archiveURL;
+        URI archiveURI = getDataset().getArchiveURI();
+        return archiveURI == null ? "" : archiveURI.toString();
     }
 
     @Override

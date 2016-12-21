@@ -8,6 +8,7 @@ import com.vividsolutions.jts.geom.Point;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.codehaus.jackson.JsonNode;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.TaxonomyProvider;
 import org.eol.globi.geo.LatLng;
@@ -45,15 +46,9 @@ import static org.eol.globi.data.StudyImporterForTSV.TARGET_TAXON_ID;
 import static org.eol.globi.data.StudyImporterForTSV.TARGET_TAXON_NAME;
 
 public class StudyImporterForSzoboszlai extends BaseStudyImporter {
-    private String shapeArchiveURL;
-    private String linkArchiveURL;
 
     public StudyImporterForSzoboszlai(ParserFactory parserFactory, NodeFactory nodeFactory) {
         super(parserFactory, nodeFactory);
-        setSourceCitation("Szoboszlai AI, Thayer JA, Wood SA, Sydeman WJ, Koehn LE (2015) Data from: Forage species in predator diets: synthesis of data from the California Current. Dryad Digital Repository. http://dx.doi.org/10.5061/dryad.nv5d2");
-        setSourceDOI("http://dx.doi.org/10.5061/dryad.nv5d2");
-        setShapeArchiveURL("http://datadryad.org/bitstream/handle/10255/dryad.94535/CCPDDlocationdata_v1.zip");
-        setLinkArchiveURL("http://datadryad.org/bitstream/handle/10255/dryad.94536/CCPDDlinkdata_v1.csv");
     }
 
     @Override
@@ -141,20 +136,28 @@ public class StudyImporterForSzoboszlai extends BaseStudyImporter {
         return link;
     }
 
-    public void setShapeArchiveURL(String shapeArchiveURL) {
-        this.shapeArchiveURL = shapeArchiveURL;
-    }
-
-    public void setLinkArchiveURL(String linkArchiveURL) {
-        this.linkArchiveURL = linkArchiveURL;
-    }
-
     public String getLinkArchiveURL() {
-        return linkArchiveURL;
+        String linkURL = null;
+        JsonNode desc = getDataset().getConfig();
+        if (desc.has("resources")) {
+            JsonNode resources = desc.get("resources");
+            if (resources.has("links")) {
+                linkURL = resources.get("links").asText();
+            }
+        }
+        return linkURL;
     }
 
     public String getShapeArchiveURL() {
-        return shapeArchiveURL;
+        String linkShapeURL = null;
+        JsonNode desc = getDataset().getConfig();
+        if (desc.has("resources")) {
+            JsonNode resources = desc.get("resources");
+            if (resources.has("shapes")) {
+                linkShapeURL = resources.get("shapes").asText();
+            }
+        }
+        return linkShapeURL;
     }
 
     protected Map<Integer, LatLng> importShapes() throws StudyImporterException {

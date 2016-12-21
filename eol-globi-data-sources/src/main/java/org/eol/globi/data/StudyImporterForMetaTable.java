@@ -7,6 +7,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.TaxonomyProvider;
+import org.eol.globi.service.Dataset;
 import org.eol.globi.util.CSVUtil;
 import org.eol.globi.util.ResourceUtil;
 import org.joda.time.format.DateTimeFormat;
@@ -14,6 +15,7 @@ import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
 
 import java.io.IOException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -49,8 +51,7 @@ public class StudyImporterForMetaTable extends BaseStudyImporter {
     public static final String LATITUDE = "http://rs.tdwg.org/dwc/terms/decimalLatitude";
     public static final String EVENT_DATE = "http://rs.tdwg.org/dwc/terms/eventDate";
 
-    private String baseUrl;
-    private JsonNode config;
+    private Dataset dataset;
 
     public StudyImporterForMetaTable(ParserFactory parserFactory, NodeFactory nodeFactory) {
         super(parserFactory, nodeFactory);
@@ -60,12 +61,14 @@ public class StudyImporterForMetaTable extends BaseStudyImporter {
     public Study importStudy() throws StudyImporterException {
         try {
             for (JsonNode table : collectTables(getConfig())) {
-                final InteractionListener listener = new TableInteractionListenerProxy(getBaseUrl(), table, new InteractionListenerNeo4j(nodeFactory, getGeoNamesService(), getLogger()));
-                importTable(listener, new TableParserFactoryImpl(), table, getBaseUrl());
+                Dataset dataset = new Dataset(getDataset().getNamespace(), getDataset().getArchiveURI());
+                dataset.setConfig(table);
+
+                InteractionListenerNeo4j interractionListener = new InteractionListenerNeo4j(nodeFactory, getGeoNamesService(), getLogger());
+                final InteractionListener listener = new TableInteractionListenerProxy(dataset, interractionListener);
+                importTable(listener, new TableParserFactoryImpl(), table, dataset);
             }
-        } catch (IOException e) {
-            throw new StudyImporterException("problem importing from [" + getBaseUrl() + "]", e);
-        } catch (NodeFactoryException e) {
+        } catch (IOException | NodeFactoryException e) {
             throw new StudyImporterException("problem importing from [" + getBaseUrl() + "]", e);
         }
         return null;
@@ -118,39 +121,25 @@ public class StudyImporterForMetaTable extends BaseStudyImporter {
         return config.has("url") && StringUtils.startsWith(config.get("url").asText(), "http://data.nhm.ac.uk/api");
     }
 
-    static public void importTable(InteractionListener interactionListener, TableParserFactory tableFactory, JsonNode table, String baseUrl) throws IOException, StudyImporterException {
+    static public void importTable(InteractionListener interactionListener, TableParserFactory tableFactory, JsonNode table, Dataset dataset) throws IOException, StudyImporterException {
         if (table.has("tableSchema")) {
-            List<Column> columns = columnsForSchema(table, baseUrl, table.get("tableSchema"));
+            List<Column> columns = columnsForSchema(table, table.get("tableSchema"), dataset);
             final CSVParse csvParse = tableFactory.createParser(table);
             importAll(interactionListener, columns, csvParse, table);
         }
     }
 
-    public static List<Column> columnsForSchema(JsonNode table, String baseUrl, JsonNode tableSchema) throws IOException {
+    public static List<Column> columnsForSchema(JsonNode table, JsonNode tableSchema, Dataset dataset) throws IOException {
         return tableSchema.isValueNode() ?
-                columnsFromExternalSchema(tableSchema, baseUrl) :
+                columnsFromExternalSchema(tableSchema, dataset) :
                 columnNamesForMetaTable(table);
     }
 
-    static public List<Column> columnsFromExternalSchema(JsonNode tableSchema, String baseUrl) throws IOException {
-        String tableSchemaURL = getTableSchemaURL(tableSchema, baseUrl);
-        final JsonNode schema = new ObjectMapper().readTree(ResourceUtil.asInputStream(tableSchemaURL, null));
+    static public List<Column> columnsFromExternalSchema(JsonNode tableSchema, Dataset dataset) throws IOException {
+        String tableSchemaLocation = tableSchema.asText();
+        final JsonNode schema = new ObjectMapper().readTree(dataset.getResource(tableSchemaLocation));
         return columnNamesForSchema(schema);
     }
-
-    public static String getTableSchemaURL(JsonNode tableSchema, String baseUrl) {
-        String tableSchemaLocation = tableSchema.asText();
-        StringBuilder tableSchemaURL = new StringBuilder();
-        if (StringUtils.isNotBlank(baseUrl) && !ResourceUtil.isURL(tableSchemaLocation)) {
-            tableSchemaURL.append(baseUrl);
-            if (!StringUtils.endsWith(baseUrl, "/")) {
-                tableSchemaURL.append("/");
-            }
-        }
-        tableSchemaURL.append(tableSchemaLocation);
-        return tableSchemaURL.toString();
-    }
-
 
     static private List<String> parseNullValues(JsonNode nullValues) {
         final List<String> nullValueArray = new ArrayList<String>();
@@ -261,16 +250,17 @@ public class StudyImporterForMetaTable extends BaseStudyImporter {
     }
 
 
-    protected static String generateSourceCitation(String baseUrl, JsonNode config) throws StudyImporterException {
+    protected static String generateSourceCitation(Dataset dataset) throws StudyImporterException {
         final String fieldName = "dcterms:bibliographicCitation";
-        final JsonNode citation = config.get(fieldName);
+        final JsonNode citation = dataset.getConfig().get(fieldName);
+
         if (citation == null) {
-            throw new StudyImporterException("missing citation, please define [" + fieldName + "] in [" + baseUrl + "]");
+            throw new StudyImporterException("missing citation, please define [" + fieldName + "] in [" + dataset.getArchiveURI().toString() + "]");
         }
 
-        final JsonNode url = config.get("url");
+        final JsonNode url = dataset.getConfig().get("url");
         if (url == null) {
-            throw new StudyImporterException("missing resource url, please define [url] in [" + baseUrl + "]");
+            throw new StudyImporterException("missing resource url, please define [url] in [" + dataset.getArchiveURI().toString() + "]");
         }
 
         final String citationPart = citation.asText();
@@ -286,21 +276,12 @@ public class StudyImporterForMetaTable extends BaseStudyImporter {
     }
 
     public JsonNode getConfig() {
-        return config;
-    }
-
-    public void setConfig(JsonNode config) {
-        this.config = config;
+        return getDataset().getConfig();
     }
 
     public String getBaseUrl() {
-        return baseUrl;
+        return getDataset().getArchiveURI().toString();
     }
-
-    public void setBaseUrl(String baseUrl) {
-        this.baseUrl = baseUrl;
-    }
-
 
     public static void importAll(InteractionListener interactionListener,
                                  List<Column> columnNames,
@@ -353,6 +334,14 @@ public class StudyImporterForMetaTable extends BaseStudyImporter {
             }
         }
         return StringUtils.trim(convertedValue);
+    }
+
+    public void setDataset(Dataset dataset) {
+        this.dataset = dataset;
+    }
+
+    public Dataset getDataset() {
+        return dataset;
     }
 
     interface TableParserFactory {

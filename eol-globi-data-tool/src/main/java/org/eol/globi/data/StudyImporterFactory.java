@@ -22,7 +22,6 @@ public class StudyImporterFactory {
         add(StudyImporterForByrnes.class);
         add(StudyImporterForRaymond.class);
         add(StudyImporterForLifeWatchGreece.class);
-        add(StudyImporterForHechinger.class);
         add(StudyImporterForRoopnarine.class);
         add(StudyImporterForSimons.class);
         add(StudyImporterForWrast.class);

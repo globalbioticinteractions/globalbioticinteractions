@@ -1,15 +1,20 @@
 package org.eol.globi.data;
 
 import org.apache.commons.io.IOUtils;
+import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.domain.LocationNode;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.geo.LatLng;
+import org.eol.globi.service.Dataset;
+import org.eol.globi.service.GitHubImporterFactory;
 import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
 import org.neo4j.graphdb.Relationship;
 
 import java.io.IOException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -38,8 +43,21 @@ import static org.junit.internal.matchers.StringContains.containsString;
 public class StudyImporterForSzoboszlaiTest extends GraphDBTestCase {
 
     @Test
-    public void importAll() throws StudyImporterException, NodeFactoryException {
-        StudyImporter importer = new StudyImporterForSzoboszlai(new ParserFactoryImpl(), nodeFactory);
+    public void importAll() throws StudyImporterException, IOException {
+        JsonNode config = new ObjectMapper().readTree("{ \"citation\": \"Szoboszlai AI, Thayer JA, Wood SA, Sydeman WJ, Koehn LE (2015) Data from: Forage species in predator diets: synthesis of data from the California Current. Dryad Digital Repository. http://dx.doi.org/10.5061/dryad.nv5d2\",\n" +
+                "  \"doi\": \"http://dx.doi.org/10.5061/dryad.nv5d2\",\n" +
+                "  \"format\": \"szoboszlai\",\n" +
+                "  \"resources\": {\n" +
+                "    \"links\": \"http://datadryad.org/bitstream/handle/10255/dryad.94536/CCPDDlinkdata_v1.csv\",\n" +
+                "    \"shapes\": \"http://datadryad.org/bitstream/handle/10255/dryad.94535/CCPDDlocationdata_v1.zip\"\n" +
+                "  }\n" +
+                "}");
+
+        StudyImporterForSzoboszlai importer = new StudyImporterForSzoboszlai(new ParserFactoryImpl(), nodeFactory);
+        Dataset dataset = new Dataset("someRepo", URI.create("http://example.com"));
+        dataset.setConfig(config);
+        importer.setDataset(dataset);
+
         importStudy(importer);
 
         List<Study> allStudies = NodeUtil.findAllStudies(getGraphDb());
@@ -89,9 +107,21 @@ public class StudyImporterForSzoboszlaiTest extends GraphDBTestCase {
     }
 
     @Test
-    public void importShapes() throws StudyImporterException {
+    public void importShapes() throws StudyImporterException, IOException {
+        JsonNode config = new ObjectMapper().readTree("{ \"citation\": \"Szoboszlai AI, Thayer JA, Wood SA, Sydeman WJ, Koehn LE (2015) Data from: Forage species in predator diets: synthesis of data from the California Current. Dryad Digital Repository. http://dx.doi.org/10.5061/dryad.nv5d2\",\n" +
+                "  \"doi\": \"http://dx.doi.org/10.5061/dryad.nv5d2\",\n" +
+                "  \"format\": \"szoboszlai\",\n" +
+                "  \"resources\": {\n" +
+                "    \"links\": \"http://datadryad.org/bitstream/handle/10255/dryad.94536/CCPDDlinkdata_v1.csv\",\n" +
+                "    \"shapes\": \"classpath:szoboszlai/CCPDDlocationdata_test.zip\"\n" +
+                "  }\n" +
+                "}");
+
+
         StudyImporterForSzoboszlai studyImporterForSzoboszlai = new StudyImporterForSzoboszlai(new ParserFactoryImpl(), nodeFactory);
-        studyImporterForSzoboszlai.setShapeArchiveURL("szoboszlai/CCPDDlocationdata_test.zip");
+        Dataset dataset = new Dataset("some/namespace", URI.create("http://example.com"));
+        dataset.setConfig(config);
+        studyImporterForSzoboszlai.setDataset(dataset);
 
         Map<Integer, LatLng> localityMap = studyImporterForSzoboszlai.importShapes();
 

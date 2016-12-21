@@ -6,11 +6,13 @@ import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.io.IOUtils;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.eol.globi.service.Dataset;
 import org.eol.globi.util.ResourceUtil;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -173,7 +175,7 @@ public class StudyImporterForMetaTableIT {
         final JsonNode config = new ObjectMapper().readTree(inputStream);
 
         for (JsonNode table : StudyImporterForMetaTable.collectTables(config)) {
-            StudyImporterForMetaTable.importTable(interactionListener, tableFactory, table, baseUrl);
+            StudyImporterForMetaTable.importTable(interactionListener, tableFactory, table, new Dataset(null, URI.create(baseUrl)));
         }
 
     }
