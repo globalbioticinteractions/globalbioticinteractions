@@ -280,12 +280,15 @@ public class GitHubImporterFactory {
 
     public static LatLng parseLocation(JsonNode desc) {
         LatLng loc = null;
-        JsonNode location = desc.get("location");
-        JsonNode latitude = location.get("latitude");
-        JsonNode longitude = location.get("longitude");
-        if (latitude != null && latitude.isNumber() && longitude != null && longitude.isNumber()) {
-            loc = new LatLng(latitude.asDouble(), longitude.asDouble());
-
+        if (desc.has("location")) {
+            JsonNode location = desc.get("location");
+            if (desc.has("latitude") && desc.has("longitude")) {
+                JsonNode latitude = location.get("latitude");
+                JsonNode longitude = location.get("longitude");
+                if (latitude != null && latitude.isNumber() && longitude != null && longitude.isNumber()) {
+                    loc = new LatLng(latitude.asDouble(), longitude.asDouble());
+                }
+            }
         }
         return loc;
     }
