@@ -194,21 +194,7 @@ public class GitHubImporterFactory {
 
     private StudyImporter createWoodImporter(Dataset dataset, final ParserFactory parserFactory, final NodeFactory nodeFactory) throws StudyImporterException {
         StudyImporterForWood studyImporter = new StudyImporterForWood(parserFactory, nodeFactory);
-        JsonNode desc = dataset.getConfig();
-        if (desc.has("doi")) {
-            studyImporter.setSourceDOI(desc.get("doi").asText());
-        }
-        if (desc.has("citation")) {
-            studyImporter.setSourceCitation(desc.get("citation").asText());
-        }
-        studyImporter.setLocation(parseLocation(desc));
-        studyImporter.setLocality(parseLocality(desc));
-        if (desc.has("resources")) {
-            JsonNode resources = desc.get("resources");
-            if (resources.has("links")) {
-                studyImporter.setLinksURL(resources.get("links").asText());
-            }
-        }
+        studyImporter.setDataset(dataset);
         return studyImporter;
     }
 
@@ -253,7 +239,7 @@ public class GitHubImporterFactory {
         LatLng loc = null;
         if (desc.has("location")) {
             JsonNode location = desc.get("location");
-            if (desc.has("latitude") && desc.has("longitude")) {
+            if (location.has("latitude") && location.has("longitude")) {
                 JsonNode latitude = location.get("latitude");
                 JsonNode longitude = location.get("longitude");
                 if (latitude != null && latitude.isNumber() && longitude != null && longitude.isNumber()) {

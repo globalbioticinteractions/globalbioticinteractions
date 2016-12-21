@@ -3,6 +3,7 @@ package org.eol.globi.data;
 import com.Ostermiller.util.CSVParser;
 import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.lang3.StringUtils;
+import org.codehaus.jackson.JsonNode;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.Term;
 import org.eol.globi.geo.LatLng;
@@ -13,18 +14,13 @@ import java.io.InputStream;
 import java.util.Map;
 import java.util.TreeMap;
 
+import static org.eol.globi.service.GitHubImporterFactory.parseLocality;
+import static org.eol.globi.service.GitHubImporterFactory.parseLocation;
+
 public class StudyImporterForWood extends BaseStudyImporter {
-
-    private String linksURL;
-
-    private LatLng location;
-    private Term locality;
 
     public StudyImporterForWood(ParserFactory parserFactory, NodeFactory nodeFactory) {
         super(parserFactory, nodeFactory);
-        setSourceCitation("Wood SA, Russell R, Hanson D, Williams RJ, Dunne JA (2015) Data from: Effects of spatial scale of sampling on food web structure. Dryad Digital Repository. http://dx.doi.org/10.5061/dryad.g1qr6");
-        setSourceDOI("http://dx.doi.org/10.1002/ece3.1640");
-        setLinksURL("http://datadryad.org/bitstream/handle/10255/dryad.93018/WoodEtal_Append1_v2.csv");
     }
 
     @Override
@@ -80,28 +76,24 @@ public class StudyImporterForWood extends BaseStudyImporter {
         }
     }
 
-    public void setLinksURL(String linksURL) {
-        this.linksURL = linksURL;
-    }
-
     public String getLinksURL() {
+        String linksURL = null;
+        JsonNode desc = getDataset().getConfig();
+        if (desc.has("resources")) {
+            JsonNode resources = desc.get("resources");
+            if (resources.has("links")) {
+                linksURL = resources.get("links").asText();
+            }
+        }
         return linksURL;
     }
 
-    public void setLocation(LatLng location) {
-        this.location = location;
-    }
-
-    public void setLocality(Term locality) {
-        this.locality = locality;
-    }
-
     public LatLng getLocation() {
-        return location;
+        return parseLocation(getDataset().getConfig());
     }
 
     public Term getLocality() {
-        return locality;
+        return parseLocality(getDataset().getConfig());
     }
 
 }

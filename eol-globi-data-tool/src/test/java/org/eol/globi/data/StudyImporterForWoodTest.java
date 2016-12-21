@@ -1,11 +1,15 @@
 package org.eol.globi.data;
 
 import org.apache.commons.io.IOUtils;
+import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.domain.Term;
 import org.eol.globi.geo.LatLng;
+import org.eol.globi.service.Dataset;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -20,8 +24,9 @@ import static org.junit.internal.matchers.StringContains.containsString;
 public class StudyImporterForWoodTest extends GraphDBTestCase {
 
     @Test
-    public void importFirst500() throws StudyImporterException, NodeFactoryException {
-        StudyImporterForWood wood = new StudyImporterForWood(new ParserFactoryImpl(), nodeFactory);
+    public void importFirst500() throws StudyImporterException, IOException {
+        StudyImporterForWood wood = createImporter();
+
         wood.setFilter(new ImportFilter() {
             @Override
             public boolean shouldImportRecord(Long recordNumber) {
@@ -33,11 +38,33 @@ public class StudyImporterForWoodTest extends GraphDBTestCase {
         assertThat(taxonIndex.findTaxonByName("Amphipoda"), is(notNullValue()));
     }
 
+    StudyImporterForWood createImporter() throws IOException {
+        StudyImporterForWood wood = new StudyImporterForWood(new ParserFactoryImpl(), nodeFactory);
+
+        JsonNode config = new ObjectMapper().readTree("{ \"citation\": \"Wood SA, Russell R, Hanson D, Williams RJ, Dunne JA (2015) Data from: Effects of spatial scale of sampling on food web structure. Dryad Digital Repository. http://dx.doi.org/10.5061/dryad.g1qr6\",\n" +
+                "  \"doi\": \"http://dx.doi.org/10.5061/dryad.g1qr6\",\n" +
+                "  \"format\": \"wood\",\n" +
+                "  \"resources\": {\n" +
+                "    \"links\": \"http://datadryad.org/bitstream/handle/10255/dryad.93018/WoodEtal_Append1_v2.csv\"  \n" +
+                "  },\n" +
+                "  \"location\": {\n" +
+                "    \"locality\": {\n" +
+                "      \"id\": \"GEONAMES:5873327\",\n" +
+                "      \"name\": \"Sanak Island, Alaska, USA\"\n" +
+                "    },\n" +
+                "    \"latitude\": 54.42972,\n" +
+                "    \"longitude\": -162.70889\n" +
+                "  }\n" +
+                "}");
+        Dataset dataset = new Dataset("some/namespace", URI.create("http://example.com"));
+        dataset.setConfig(config);
+        wood.setDataset(dataset);
+        return wood;
+    }
+
     @Test
     public void importLines() throws IOException, StudyImporterException {
-        StudyImporterForWood wood = new StudyImporterForWood(new ParserFactoryImpl(), nodeFactory);
-        wood.setLocation(new LatLng(54.42972, -162.70889));
-        wood.setLocality(new Term("GEONAMES:5873327", "Sanak Island, Alaska, USA"));
+        StudyImporterForWood wood = createImporter();
         final List<Map<String, String>> maps = new ArrayList<Map<String, String>>();
 
         wood.importLinks(IOUtils.toInputStream(firstFewLines()), new InteractionListener() {
@@ -66,8 +93,8 @@ public class StudyImporterForWoodTest extends GraphDBTestCase {
         assertThat(firstLink.get(STUDY_SOURCE_CITATION), containsString("Wood SA, Russell R, Hanson D, Williams RJ, Dunne JA (2015) Data from: Effects of spatial scale of sampling on food web structure. Dryad Digital Repository. http://dx.doi.org/10.5061/dryad.g1qr6"));
         assertThat(firstLink.get(STUDY_SOURCE_CITATION), containsString(" Accessed at"));
         assertThat(firstLink.get(REFERENCE_CITATION), containsString("Wood SA, Russell R, Hanson D, Williams RJ, Dunne JA (2015) Data from: Effects of spatial scale of sampling on food web structure. Dryad Digital Repository. http://dx.doi.org/10.5061/dryad.g1qr6"));
-        assertThat(firstLink.get(REFERENCE_DOI), is("http://dx.doi.org/10.1002/ece3.1640"));
-        assertThat(firstLink.get(REFERENCE_URL), is("http://dx.doi.org/10.1002/ece3.1640"));
+        assertThat(firstLink.get(REFERENCE_DOI), is("http://dx.doi.org/10.5061/dryad.g1qr6"));
+        assertThat(firstLink.get(REFERENCE_URL), is("http://dx.doi.org/10.5061/dryad.g1qr6"));
         assertThat(firstLink.get(LOCALITY_NAME), is("Sanak Island, Alaska, USA"));
         assertThat(firstLink.get(LOCALITY_ID), is("GEONAMES:5873327"));
         assertThat(firstLink.get(DECIMAL_LONGITUDE), is("-162.70889"));
