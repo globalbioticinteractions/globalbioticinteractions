@@ -117,8 +117,8 @@ public class ResourceUtil {
     }
 
     static boolean isHttpURI(String descriptor) {
-        return StringUtils.startsWith("http:/", descriptor)
-                || StringUtils.equals("https:/", descriptor);
+        return StringUtils.startsWith(descriptor, "http:/")
+                || StringUtils.startsWith(descriptor, "https:/");
     }
 
     static boolean isHttpURI(URI descriptor) {

@@ -20,7 +20,7 @@ public class DatasetFinderCachingTest {
     public void cacheDatasetGitHub() throws DatasetFinderException, IOException {
         Dataset dataset = new DatasetFinderGitHubArchive()
                 .datasetFor("globalbioticinteractions/template-dataset");
-        File archiveCache = DatasetFinderCaching.cache(dataset, "target/datasets/cache");
+        File archiveCache = DatasetFinderCaching.cache(dataset, "target/cache/dataset");
         assertThat(archiveCache.exists(), is(true));
         assertThat(archiveCache.toURI().toString(), startsWith("file:/"));
     }
