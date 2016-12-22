@@ -4,11 +4,10 @@ import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.NullOutputStream;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
+import org.eol.globi.service.DatasetUtil;
 import org.eol.globi.util.CSVUtil;
 import org.eol.globi.util.ResourceUtil;
 import org.mapdb.DB;
@@ -152,7 +151,7 @@ public class StudyImporterForCoetzer extends BaseStudyImporter {
     }
 
     public String getArchiveURL() {
-        return getDataset().getArchiveURI().toString();
+        return DatasetUtil.getDataArchiveURI(getDataset());
     }
 
 }

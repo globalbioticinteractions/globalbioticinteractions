@@ -12,6 +12,8 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ObjectNode;
 import org.eol.globi.domain.Study;
 import org.eol.globi.service.Dataset;
+import org.eol.globi.service.DatasetRemote;
+import org.eol.globi.service.DatasetUtil;
 
 import java.io.IOException;
 import java.net.URI;
@@ -49,7 +51,7 @@ public class StudyImporterForArthopodEasyCapture extends BaseStudyImporter {
     }
 
     public String getRssFeedUrlString() {
-        return getDataset().getOrDefault("rssFeedURL", "");
+        return DatasetUtil.getResourceURI(getDataset(), "rss");
     }
 
     public static List<StudyImporter> getStudyImportersForRSSFeed(Dataset datasetOrig, ParserFactory parserFactory, NodeFactory
@@ -67,17 +69,28 @@ public class StudyImporterForArthopodEasyCapture extends BaseStudyImporter {
         for (Object entry : entries) {
             if (entry instanceof SyndEntry) {
                 SyndEntry syndEntry = (SyndEntry) entry;
+                DatasetRemote dataset = datasetFor(datasetOrig, syndEntry);
+
                 final StudyImporterForSeltmann studyImporter = new StudyImporterForSeltmann(parserFactory, nodeFactory);
-                ObjectNode objectNode = new ObjectMapper().createObjectNode();
-                objectNode.put("citation", StringUtils.trim(syndEntry.getDescription().getValue()));
-                URI archiveURI = URI.create(StringUtils.trim(syndEntry.getLink()));
-                Dataset dataset = new Dataset(datasetOrig.getNamespace(), archiveURI);
-                dataset.setConfig(objectNode);
                 studyImporter.setDataset(dataset);
+
                 importers.add(studyImporter);
             }
         }
         return importers;
+    }
+
+    static DatasetRemote datasetFor(Dataset datasetOrig, SyndEntry syndEntry) {
+        ObjectNode config = new ObjectMapper().createObjectNode();
+        config.put("citation", StringUtils.trim(syndEntry.getDescription().getValue()));
+        URI archiveURI = URI.create(StringUtils.trim(syndEntry.getLink()));
+        ObjectNode referencesNode = new ObjectMapper().createObjectNode();
+        referencesNode.put("archive", archiveURI.toString());
+        config.put("references", referencesNode);
+
+        DatasetRemote dataset = new DatasetRemote(datasetOrig.getNamespace(), datasetOrig.getArchiveURI());
+        dataset.setConfig(config);
+        return dataset;
     }
 
 }

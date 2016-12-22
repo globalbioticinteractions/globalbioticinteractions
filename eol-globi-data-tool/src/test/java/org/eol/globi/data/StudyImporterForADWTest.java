@@ -4,7 +4,7 @@ import com.healthmarketscience.jackcess.Column;
 import com.healthmarketscience.jackcess.Database;
 import com.healthmarketscience.jackcess.JetFormat;
 import com.healthmarketscience.jackcess.Table;
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.junit.Test;
 
 import java.io.File;

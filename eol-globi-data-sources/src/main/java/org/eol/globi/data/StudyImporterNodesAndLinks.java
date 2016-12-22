@@ -5,6 +5,7 @@ import org.codehaus.jackson.JsonNode;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.Term;
 import org.eol.globi.geo.LatLng;
+import org.eol.globi.service.DatasetUtil;
 
 public abstract class StudyImporterNodesAndLinks extends BaseStudyImporter {
 
@@ -22,27 +23,11 @@ public abstract class StudyImporterNodesAndLinks extends BaseStudyImporter {
     }
 
     public String getLinkResource() {
-        String linkResource = null;
-        JsonNode config = getDataset().getConfig();
-        if (config.has("resources")) {
-            JsonNode resources = config.get("resources");
-            if (resources != null && resources.has("links")) {
-                linkResource = resources.get("links").asText();
-            }
-        }
-        return linkResource;
+        return DatasetUtil.getResourceURI(getDataset(), "links");
     }
 
     public String getNodeResource() {
-        String nodeResource = null;
-        JsonNode config = getDataset().getConfig();
-        if (config.has("resources")) {
-            JsonNode resources = config.get("resources");
-            if (resources != null && resources.has("nodes")) {
-                nodeResource = resources.get("nodes").asText();
-            }
-        }
-        return nodeResource;
+        return DatasetUtil.getResourceURI(getDataset(), "nodes");
     }
 
     public String getNamespace() {

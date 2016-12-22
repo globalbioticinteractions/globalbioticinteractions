@@ -10,6 +10,7 @@ import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.LocationNode;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
+import org.eol.globi.service.DatasetUtil;
 import org.eol.globi.util.CSVUtil;
 import org.eol.globi.util.ResourceUtil;
 import org.joda.time.format.DateTimeFormat;
@@ -23,7 +24,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
@@ -47,7 +47,7 @@ public class StudyImporterForSeltmann extends BaseStudyImporter {
 
     @Override
     public Study importStudy() throws StudyImporterException {
-        final String archiveURL = getDataset().getArchiveURI().toString();
+        final String archiveURL = getArchiveURL();
         if (org.apache.commons.lang.StringUtils.isBlank(archiveURL)) {
             throw new StudyImporterException("failed to import [" + getDataset().getNamespace() + "]: no [archiveURL] specified");
         }
@@ -62,7 +62,7 @@ public class StudyImporterForSeltmann extends BaseStudyImporter {
                 .make();
 
         try {
-            InputStream inputStream = ResourceUtil.asInputStream(getDataset().getArchiveURI(), StudyImporterForSeltmann.class);
+            InputStream inputStream = ResourceUtil.asInputStream(getArchiveURL(), StudyImporterForSeltmann.class);
             ZipInputStream zipInputStream = new ZipInputStream(inputStream);
             ZipEntry entry;
             File assocTempFile = null;
@@ -79,11 +79,11 @@ public class StudyImporterForSeltmann extends BaseStudyImporter {
             IOUtils.closeQuietly(zipInputStream);
 
             if (assocTempFile == null) {
-                throw new StudyImporterException("failed to findNamespaces expected [associatedTaxa.tsv] resource");
+                throw new StudyImporterException("failed to find expected [associatedTaxa.tsv] resource");
             }
 
             if (occTempFile == null) {
-                throw new StudyImporterException("failed to findNamespaces expected [occurrences.tsv] resource");
+                throw new StudyImporterException("failed to find expected [occurrences.tsv] resource");
             }
 
             BufferedReader assocReader = FileUtils.getUncompressedBufferedReader(new FileInputStream(assocTempFile), CharsetConstant.UTF8);
@@ -237,8 +237,7 @@ public class StudyImporterForSeltmann extends BaseStudyImporter {
     }
 
     public String getArchiveURL() {
-        URI archiveURI = getDataset().getArchiveURI();
-        return archiveURI == null ? "" : archiveURI.toString();
+        return DatasetUtil.getDataArchiveURI(getDataset());
     }
 
     @Override

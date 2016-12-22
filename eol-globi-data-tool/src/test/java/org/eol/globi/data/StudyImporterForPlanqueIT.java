@@ -3,7 +3,7 @@ package org.eol.globi.data;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.domain.Study;
-import org.eol.globi.service.Dataset;
+import org.eol.globi.service.DatasetRemote;
 import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
 import org.neo4j.graphdb.Relationship;
@@ -11,19 +11,12 @@ import org.neo4j.graphdb.Relationship;
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
-import static com.Ostermiller.util.StringHelper.containsAny;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.junit.internal.matchers.IsCollectionContaining.hasItems;
-import static org.junit.matchers.JUnitMatchers.containsString;
 
 public class StudyImporterForPlanqueIT extends GraphDBTestCase {
 
@@ -42,7 +35,7 @@ public class StudyImporterForPlanqueIT extends GraphDBTestCase {
                 "    \"referencesForLinks\": \"http://www.esapubs.org/archive/ecol/E095/124/revised/PairWise2References.txt\"\n" +
                 "  }\n" +
                 "}");
-        Dataset dataset = new Dataset("some/namespace", URI.create("http://example.com"));
+        DatasetRemote dataset = new DatasetRemote("some/namespace", URI.create("http://example.com"));
         dataset.setConfig(config);
         importer.setDataset(dataset);
 

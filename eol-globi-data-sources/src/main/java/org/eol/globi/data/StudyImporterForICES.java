@@ -25,7 +25,7 @@ public class StudyImporterForICES extends BaseStudyImporter {
 
         Study study = nodeFactory.getOrCreateStudy("ICES",
                 "International Council for the Exploration of the Sea. Available at http://www.ices.dk/products/cooperative.asp .",
-                "Cooperative Research Report No. 164; Cooperative Research Report No. 219, ICES Stomach Dataset, ICES");
+                "Cooperative Research Report No. 164; Cooperative Research Report No. 219, ICES Stomach DatasetRemote, ICES");
         study.setExternalId("http://ecosystemdata.ices.dk/stomachdata/");
         try {
             Specimen predator = null;

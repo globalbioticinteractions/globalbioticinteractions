@@ -8,7 +8,7 @@ import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.geo.LatLng;
 import org.eol.globi.service.Dataset;
-import org.eol.globi.service.GitHubImporterFactory;
+import org.eol.globi.service.DatasetRemote;
 import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
 import org.neo4j.graphdb.Relationship;
@@ -54,7 +54,7 @@ public class StudyImporterForSzoboszlaiTest extends GraphDBTestCase {
                 "}");
 
         StudyImporterForSzoboszlai importer = new StudyImporterForSzoboszlai(new ParserFactoryImpl(), nodeFactory);
-        Dataset dataset = new Dataset("someRepo", URI.create("http://example.com"));
+        DatasetRemote dataset = new DatasetRemote("someRepo", URI.create("http://example.com"));
         dataset.setConfig(config);
         importer.setDataset(dataset);
 
@@ -129,7 +129,7 @@ public class StudyImporterForSzoboszlaiTest extends GraphDBTestCase {
                 "    \"shapes\": \"classpath:szoboszlai/CCPDDlocationdata_test.zip\"\n" +
                 "  }\n" +
                 "}");
-        Dataset dataset = new Dataset("some/namespace", URI.create("http://example.com"));
+        DatasetRemote dataset = new DatasetRemote("some/namespace", URI.create("http://example.com"));
         dataset.setConfig(config);
         return dataset;
     }

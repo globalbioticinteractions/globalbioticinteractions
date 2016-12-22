@@ -12,6 +12,7 @@ import org.codehaus.jackson.JsonNode;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.TaxonomyProvider;
 import org.eol.globi.geo.LatLng;
+import org.eol.globi.service.DatasetUtil;
 import org.eol.globi.util.ResourceUtil;
 import org.geotools.data.FeatureReader;
 import org.geotools.data.FileDataStore;
@@ -137,31 +138,15 @@ public class StudyImporterForSzoboszlai extends BaseStudyImporter {
     }
 
     public String getLinkArchiveURL() {
-        String linkURL = null;
-        JsonNode desc = getDataset().getConfig();
-        if (desc.has("resources")) {
-            JsonNode resources = desc.get("resources");
-            if (resources.has("links")) {
-                linkURL = resources.get("links").asText();
-            }
-        }
-        return linkURL;
+        return DatasetUtil.getResourceURI(getDataset(), "links");
     }
 
     public String getShapeArchiveURL() {
-        String linkShapeURL = null;
-        JsonNode desc = getDataset().getConfig();
-        if (desc.has("resources")) {
-            JsonNode resources = desc.get("resources");
-            if (resources.has("shapes")) {
-                linkShapeURL = resources.get("shapes").asText();
-            }
-        }
-        return linkShapeURL;
+        return DatasetUtil.getResourceURI(getDataset(), "shapes");
     }
 
     protected Map<Integer, LatLng> importShapes() throws StudyImporterException {
-        Map<Integer, LatLng> localityMap = new TreeMap<Integer, LatLng>();
+        Map<Integer, LatLng> localityMap = new TreeMap<>();
         FileDataStore dataStore = null;
         try {
             InputStream shapeZipArchive = ResourceUtil.asInputStream(getShapeArchiveURL(), getClass());

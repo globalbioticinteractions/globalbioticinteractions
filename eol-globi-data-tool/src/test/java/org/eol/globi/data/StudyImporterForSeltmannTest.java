@@ -1,9 +1,12 @@
 package org.eol.globi.data;
 
+import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.Term;
 import org.eol.globi.service.Dataset;
+import org.eol.globi.service.DatasetRemote;
 import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
 import org.neo4j.graphdb.Relationship;
@@ -22,7 +25,10 @@ public class StudyImporterForSeltmannTest extends GraphDBTestCase {
     @Test
     public void importSome() throws StudyImporterException, IOException {
         StudyImporterForSeltmann importer = new StudyImporterForSeltmann(null, nodeFactory);
-        importer.setDataset(new Dataset(null, URI.create("classpath:seltmann/testArchive.zip")));
+        Dataset dataset = new DatasetRemote("some/namespace", URI.create("http://example.com"));
+        JsonNode config = new ObjectMapper().readTree("{\"citation\": \"some citation\", \"resources\": {\"archive\": \"classpath:seltmann/testArchive.zip\"}}");
+        dataset.setConfig(config);
+        importer.setDataset(dataset);
         importStudy(importer);
 
         List<Study> allStudies = NodeUtil.findAllStudies(getGraphDb());

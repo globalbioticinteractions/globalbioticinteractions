@@ -2,7 +2,7 @@ package org.eol.globi.data;
 
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.eol.globi.service.Dataset;
+import org.eol.globi.service.DatasetRemote;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -22,7 +22,7 @@ public class TableInteractionListenerProxyTest {
     public void interactionListenerTest() throws IOException, StudyImporterException {
         final List<Map<String, String>> links = new ArrayList<Map<String, String>>();
         JsonNode config = new ObjectMapper().readTree("{ \"dcterms:bibliographicCitation\":\"some citation\", \"url\":\"some resource url\" }");
-        Dataset dataset = new Dataset(null, URI.create("http://someurl"));
+        DatasetRemote dataset = new DatasetRemote(null, URI.create("http://someurl"));
         dataset.setConfig(config);
         final TableInteractionListenerProxy listener = new TableInteractionListenerProxy(dataset, new InteractionListener() {
             @Override
@@ -41,7 +41,7 @@ public class TableInteractionListenerProxyTest {
     public void interactionListener2Test() throws IOException, StudyImporterException {
         final List<Map<String, String>> links = new ArrayList<Map<String, String>>();
         JsonNode config = new ObjectMapper().readTree("{ \"dcterms:bibliographicCitation\":\"some citation\", \"url\":\"some resource url\" }");
-        Dataset dataset = new Dataset(null, URI.create("http://someurl"));
+        DatasetRemote dataset = new DatasetRemote(null, URI.create("http://someurl"));
         dataset.setConfig(config);
         final TableInteractionListenerProxy listener = new TableInteractionListenerProxy(dataset, new InteractionListener() {
             @Override

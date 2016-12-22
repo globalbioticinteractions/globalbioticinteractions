@@ -12,7 +12,7 @@ import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.TaxonNode;
-import org.eol.globi.service.Dataset;
+import org.eol.globi.service.DatasetRemote;
 import org.eol.globi.service.GitHubUtil;
 import org.eol.globi.util.ExternalIdUtil;
 import org.junit.Test;
@@ -80,7 +80,7 @@ public class StudyImporterForGoMexSI2IT extends GraphDBTestCase {
                 "  \"citation\": \"testing source citation\",\n" +
                 "  \"format\": \"gomexsi\"\n" +
                 "}");
-        Dataset dataset = new Dataset("some/namespace", URI.create(baseUrlLastCommit));
+        DatasetRemote dataset = new DatasetRemote("some/namespace", URI.create(baseUrlLastCommit));
         importer.setDataset(dataset);
         dataset.setConfig(config);
 

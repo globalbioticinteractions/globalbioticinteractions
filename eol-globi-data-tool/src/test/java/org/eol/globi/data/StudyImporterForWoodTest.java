@@ -3,9 +3,7 @@ package org.eol.globi.data;
 import org.apache.commons.io.IOUtils;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.eol.globi.domain.Term;
-import org.eol.globi.geo.LatLng;
-import org.eol.globi.service.Dataset;
+import org.eol.globi.service.DatasetRemote;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -56,7 +54,7 @@ public class StudyImporterForWoodTest extends GraphDBTestCase {
                 "    \"longitude\": -162.70889\n" +
                 "  }\n" +
                 "}");
-        Dataset dataset = new Dataset("some/namespace", URI.create("http://example.com"));
+        DatasetRemote dataset = new DatasetRemote("some/namespace", URI.create("http://example.com"));
         dataset.setConfig(config);
         wood.setDataset(dataset);
         return wood;

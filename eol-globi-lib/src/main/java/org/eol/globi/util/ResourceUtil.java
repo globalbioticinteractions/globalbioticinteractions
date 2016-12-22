@@ -32,13 +32,14 @@ public class ResourceUtil {
 
     public static InputStream asInputStream(final String resource, Class clazz) throws IOException {
         InputStream is = null;
-        if (StringUtils.startsWith(resource, "http://")
-                || StringUtils.startsWith(resource, "https://")) {
+        if (isHttpURI(URI.create(resource))) {
             LOG.info("caching of [" + resource + "] started...");
             is = getCachedRemoteInputStream(resource);
             LOG.info("caching of [" + resource + "] complete.");
         } else if (StringUtils.startsWith(resource, "file:/")) {
             is = new FileInputStream(new File(URI.create(resource)));
+        } else if (StringUtils.startsWith(resource, "jar:file:/")) {
+            is = URI.create(resource).toURL().openStream();
         } else if (clazz != null) {
             String classpathResource = resource;
             if (StringUtils.startsWith(resource, "classpath:")) {
@@ -97,31 +98,53 @@ public class ResourceUtil {
         return resourceURI;
     }
 
-    public static boolean isURL(String tableSchemaLocation) {
-        try {
-            new URL(tableSchemaLocation);
-            return true;
-        } catch (MalformedURLException e) {
-            return false;
-        }
-    }
-
     public static boolean resourceExists(URI descriptor) {
         boolean exists = false;
         try {
-            HttpResponse resp = HttpUtil.getHttpClient().execute(new HttpHead(descriptor));
-            exists = resp.getStatusLine().getStatusCode() == HttpStatus.SC_OK;
+            if (isHttpURI(descriptor)) {
+                HttpResponse resp = HttpUtil.getHttpClient().execute(new HttpHead(descriptor));
+                exists = resp.getStatusLine().getStatusCode() == HttpStatus.SC_OK;
+            } else {
+                InputStream input = asInputStream(descriptor, ResourceUtil.class);
+                IOUtils.closeQuietly(input);
+                exists = input != null;
+            }
         } catch (IOException e) {
-            // ignore
+            //
         }
         return exists;
+
+    }
+
+    static boolean isHttpURI(URI descriptor) {
+        return StringUtils.equals("http", descriptor.getScheme())
+                || StringUtils.equals("https", descriptor.getScheme());
     }
 
     public static String getContent(URI uri) throws IOException {
         try {
-            return HttpUtil.getContent(uri);
+            return IOUtils.toString(asInputStream(uri, null));
         } catch (IOException ex) {
             throw new IOException("failed to findNamespaces [" + uri + "]", ex);
         }
+    }
+
+    public static URI getAbsoluteResourceURI(URI context, String resourceName) {
+        URI resourceURI = URI.create(resourceName);
+        return resourceURI.isAbsolute()
+                ? resourceURI
+                : absoluteURIFor(context, resourceName);
+    }
+
+    public static URI absoluteURIFor(URI context, String resourceName) {
+        String resourceNameNoSlashPrefix = StringUtils.startsWith(resourceName, "/")
+                ? StringUtils.substring(resourceName, 1)
+                : resourceName;
+        String contextString = context.toString();
+        String contextNoSlashSuffix = StringUtils.endsWith(contextString, "/")
+                ? StringUtils.substring(contextString, 0, contextString.length() - 1)
+                : contextString;
+
+        return URI.create(contextNoSlashSuffix + "/" + resourceNameNoSlashPrefix);
     }
 }

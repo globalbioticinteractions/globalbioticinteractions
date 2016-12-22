@@ -2,7 +2,7 @@ package org.eol.globi.data;
 
 import com.Ostermiller.util.LabeledCSVParser;
 import com.Ostermiller.util.MD5;
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -10,6 +10,7 @@ import org.codehaus.jackson.JsonNode;
 import org.eol.globi.domain.LocationNode;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
+import org.eol.globi.service.DatasetUtil;
 import org.eol.globi.util.ExternalIdUtil;
 
 import java.io.IOException;
@@ -153,40 +154,14 @@ public class StudyImporterForPlanque extends BaseStudyImporter {
     }
 
     public String getLinks() {
-        String links = null;
-        JsonNode desc = getDataset().getConfig();
-        if (desc.has("resources")) {
-            JsonNode resources = desc.get("resources");
-            if (resources.has("links")) {
-                links = resources.get("links").asText();
-            }
-        }
-        return links;
+        return DatasetUtil.getResourceURI(getDataset(), "links");
     }
 
     public String getReferences() {
-        String references = null;
-        JsonNode desc = getDataset().getConfig();
-        if (desc.has("resources")) {
-            JsonNode resources = desc.get("resources");
-            if (resources.has("references")) {
-                references = resources.get("references").asText();
-            }
-        }
-
-
-        return references;
+        return DatasetUtil.getResourceURI(getDataset(), "references");
     }
 
     public String getReferencesForLinks() {
-        String referencesForLinks = null;
-        JsonNode desc = getDataset().getConfig();
-        if (desc.has("resources")) {
-            JsonNode resources = desc.get("resources");
-            if (resources.has("referencesForLinks")) {
-                referencesForLinks = resources.get("referencesForLinks").asText();
-            }
-        }
-        return referencesForLinks;
+        return DatasetUtil.getResourceURI(getDataset(), "referencesForLinks");
     }
 }

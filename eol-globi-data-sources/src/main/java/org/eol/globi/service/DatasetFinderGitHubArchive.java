@@ -10,7 +10,7 @@ public class DatasetFinderGitHubArchive extends DatasetFinderGitHub {
     public Dataset datasetFor(String namespace) throws DatasetFinderException {
         try {
             String commitSha = GitHubUtil.lastCommitSHA(namespace);
-            return new Dataset(namespace, URI.create("https://github.com/" + namespace + "/archive/" + commitSha + ".zip"));
+            return new DatasetRemote(namespace, URI.create("https://github.com/" + namespace + "/archive/" + commitSha + ".zip"));
         } catch (URISyntaxException | IOException e) {
             throw new DatasetFinderException(e);
         }

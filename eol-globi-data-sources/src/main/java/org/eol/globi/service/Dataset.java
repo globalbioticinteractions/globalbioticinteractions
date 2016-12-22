@@ -1,84 +1,33 @@
 package org.eol.globi.service;
 
-import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jackson.JsonNode;
-import org.eol.globi.util.ResourceUtil;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 
-public class Dataset {
+public interface Dataset {
+    InputStream getResource(String resourceName) throws IOException;
 
-    private String namespace;
-    private URI archiveURI;
-    private JsonNode config;
-    private URI configURI;
+    URI getResourceURI(String resourceName);
 
-    public Dataset(String namespace, URI archiveURI) {
-        this.namespace = namespace;
-        this.archiveURI = archiveURI;
-    }
+    URI getArchiveURI();
 
-    public InputStream getResource(String resourceName) throws IOException {
-        return ResourceUtil.asInputStream(archiveURI + resourceName, Dataset.class);
-    }
+    String getNamespace();
 
-    public URI getResourceURI(String resourceName) {
-        return ResourceUtil.isURL(resourceName)
-                ? URI.create(resourceName)
-                : getURIAddSlashIfNeeded(resourceName);
-    }
+    JsonNode getConfig();
 
-    private URI getURIAddSlashIfNeeded(String resourceName) {
-        String separator = (StringUtils.isNotBlank(resourceName)
-                && !StringUtils.startsWith(resourceName, "/")
-                && !StringUtils.endsWith(getArchiveURI().toString(), "/"))
-                ? "/"
-                : "";
-        return URI.create(archiveURI + separator + resourceName);
-    }
+    String getCitation();
 
+    String getFormat();
 
-    public URI getArchiveURI() {
-        return archiveURI;
-    }
+    String getOrDefault(String key, String defaultValue);
 
-    public String getNamespace() {
-        return namespace;
-    }
+    String getDOI();
 
-    public void setConfig(JsonNode node) {
-        this.config = node;
-    }
+    URI getConfigURI();
 
-    public JsonNode getConfig() {
-        return config;
-    }
+    void setConfig(JsonNode config);
 
-    public String getCitation() {
-        return getOrDefault("citation", getArchiveURI().toString());
-    }
-
-    public String getFormat() {
-        return getOrDefault("format", "globi");
-    }
-
-    public String getOrDefault(String key, String defaultValue) {
-        return getConfig() == null
-                ? defaultValue
-                : (getConfig().has(key) ? getConfig().get(key).asText() : defaultValue);
-    }
-
-    public String getDOI() {
-        return getOrDefault("doi", "");
-    }
-
-    public void setConfigURI(URI configURI) {
-        this.configURI = configURI;
-    }
-
-    public URI getConfigURI() {
-        return configURI;
-    }
+    void setConfigURI(URI configURI);
 }

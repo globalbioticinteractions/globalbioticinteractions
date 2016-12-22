@@ -2,20 +2,13 @@ package org.eol.globi.data;
 
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.node.ObjectNode;
 import org.eol.globi.domain.Study;
-import org.eol.globi.geo.LatLng;
-import org.eol.globi.service.Dataset;
+import org.eol.globi.service.DatasetRemote;
 import org.junit.Test;
-import org.neo4j.cypher.javacompat.ExecutionEngine;
-import org.neo4j.cypher.javacompat.ExecutionResult;
 import org.neo4j.graphdb.Relationship;
 
 import java.io.IOException;
 import java.net.URI;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
 
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.core.Is.is;
@@ -46,7 +39,7 @@ public class StudyImporterForDunneTest extends GraphDBTestCase {
                 "  }\n" +
                 "}";
         JsonNode jsonNode = new ObjectMapper().readTree(configJson);
-        Dataset dunne2016 = new Dataset("dunne2016", URI.create("http://example.com"));
+        DatasetRemote dunne2016 = new DatasetRemote("dunne2016", URI.create("http://example.com"));
         dunne2016.setConfig(jsonNode);
         importer.setDataset(dunne2016);
 
@@ -82,7 +75,7 @@ public class StudyImporterForDunneTest extends GraphDBTestCase {
                 "  }\n" +
                 "}";
         StudyImporterForDunne importer = new StudyImporterForDunne(new ParserFactoryImpl(), nodeFactory);
-        Dataset dunne2016 = new Dataset("dunne2016", URI.create("http://example.com"));
+        DatasetRemote dunne2016 = new DatasetRemote("dunne2016", URI.create("http://example.com"));
         dunne2016.setConfig(new ObjectMapper().readTree(configJson));
         importer.setDataset(dunne2016);
 

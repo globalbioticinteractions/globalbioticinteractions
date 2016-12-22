@@ -3,7 +3,7 @@ package org.eol.globi.data;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.domain.InteractType;
-import org.eol.globi.service.Dataset;
+import org.eol.globi.service.DatasetRemote;
 import org.eol.globi.util.ResourceUtil;
 import org.junit.Test;
 
@@ -79,7 +79,7 @@ public class StudyImporterForMetaTableTest {
         final JsonNode config = new ObjectMapper().readTree(inputStream);
 
         String baseUrl = resource.toExternalForm().replaceFirst(metaTableDef + "$", "");
-        List<StudyImporterForMetaTable.Column> columnNames = StudyImporterForMetaTable.columnsFromExternalSchema(config.get("tableSchema"), new Dataset(null, URI.create(baseUrl)));
+        List<StudyImporterForMetaTable.Column> columnNames = StudyImporterForMetaTable.columnsFromExternalSchema(config.get("tableSchema"), new DatasetRemote(null, URI.create(baseUrl)));
         assertThat(columnNames.size(), is(40));
     }
 
@@ -87,7 +87,7 @@ public class StudyImporterForMetaTableTest {
     public void generateSourceCitation() throws IOException, StudyImporterException {
         final InputStream inputStream = ResourceUtil.asInputStream("test-meta-globi.json", StudyImporterForMetaTable.class);
 
-        Dataset dataset = new Dataset(null, URI.create("http://base"));
+        DatasetRemote dataset = new DatasetRemote(null, URI.create("http://base"));
         dataset.setConfig(new ObjectMapper().readTree(inputStream));
 
         String citation = StudyImporterForMetaTable.generateSourceCitation(dataset);

@@ -1,7 +1,7 @@
 package org.eol.globi.data;
 
 import org.eol.globi.domain.Study;
-import org.eol.globi.service.Dataset;
+import org.eol.globi.service.DatasetRemote;
 import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
 
@@ -20,7 +20,7 @@ public class StudyImporterForJSONLDTest extends GraphDBTestCase {
     @Test
     public void importStatic() throws StudyImporterException, URISyntaxException {
         StudyImporter importer = new StudyImporterForJSONLD(null, nodeFactory);
-        Dataset dataset = new Dataset("some/namespace", URI.create("http://example.com"));
+        DatasetRemote dataset = new DatasetRemote("some/namespace", URI.create("http://example.com"));
         dataset.setConfigURI(URI.create("classpath:globi-jsonld/globi-dataset.jsonld"));
         importer.setDataset(dataset);
 

@@ -5,6 +5,7 @@ import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jackson.JsonNode;
 import org.eol.globi.domain.Study;
+import org.eol.globi.service.DatasetUtil;
 import org.eol.globi.util.ResourceUtil;
 
 import java.io.IOException;
@@ -60,15 +61,7 @@ public class StudyImporterForGray extends BaseStudyImporter {
     }
 
     private String getLinksURL() {
-        String linksURL = null;
-        JsonNode desc = getDataset().getConfig();
-        if (desc.has("resources")) {
-            JsonNode resources = desc.get("resources");
-            if (resources.has("links")) {
-                linksURL = resources.get("links").asText();
-            }
-        }
-        return linksURL;
+        return DatasetUtil.getResourceURI(getDataset(), "links");
     }
 
 }

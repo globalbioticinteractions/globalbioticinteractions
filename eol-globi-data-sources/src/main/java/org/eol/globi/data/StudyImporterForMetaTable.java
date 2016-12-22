@@ -8,6 +8,7 @@ import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.TaxonomyProvider;
 import org.eol.globi.service.Dataset;
+import org.eol.globi.service.DatasetRemote;
 import org.eol.globi.util.CSVUtil;
 import org.eol.globi.util.ResourceUtil;
 import org.joda.time.format.DateTimeFormat;
@@ -15,7 +16,6 @@ import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
 
 import java.io.IOException;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -61,7 +61,7 @@ public class StudyImporterForMetaTable extends BaseStudyImporter {
     public Study importStudy() throws StudyImporterException {
         try {
             for (JsonNode table : collectTables(getConfig())) {
-                Dataset dataset = new Dataset(getDataset().getNamespace(), getDataset().getArchiveURI());
+                DatasetRemote dataset = new DatasetRemote(getDataset().getNamespace(), getDataset().getArchiveURI());
                 dataset.setConfig(table);
 
                 InteractionListenerNeo4j interractionListener = new InteractionListenerNeo4j(nodeFactory, getGeoNamesService(), getLogger());

@@ -1,11 +1,9 @@
 package org.eol.globi.data;
 
 import org.apache.commons.lang3.StringUtils;
-import org.codehaus.jackson.JsonNode;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.service.Dataset;
 
-import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 

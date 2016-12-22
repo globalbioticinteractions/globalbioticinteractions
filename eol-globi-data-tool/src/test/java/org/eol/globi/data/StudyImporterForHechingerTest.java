@@ -5,7 +5,7 @@ import org.apache.commons.logging.LogFactory;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.domain.Study;
-import org.eol.globi.service.Dataset;
+import org.eol.globi.service.DatasetRemote;
 import org.junit.Test;
 import org.neo4j.cypher.javacompat.ExecutionEngine;
 import org.neo4j.cypher.javacompat.ExecutionResult;
@@ -42,7 +42,7 @@ public class StudyImporterForHechingerTest extends GraphDBTestCase {
                 "  }\n" +
                 "}");
 
-        Dataset dataset = new Dataset("some/namespace", URI.create("http://example.com"));
+        DatasetRemote dataset = new DatasetRemote("some/namespace", URI.create("http://example.com"));
         dataset.setConfig(config);
         importer.setDataset(dataset);
 
