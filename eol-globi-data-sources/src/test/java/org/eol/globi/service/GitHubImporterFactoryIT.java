@@ -95,18 +95,37 @@ public class GitHubImporterFactoryIT {
         assertThat(importer, is(notNullValue()));
         assertThat(importer, is(instanceOf(StudyImporterForCoetzer.class)));
         assertThat(((StudyImporterForCoetzer)importer).getDataset(), is(notNullValue()));
-        String archiveURL = ((StudyImporterForCoetzer) importer).getArchiveURL();
+        String archiveURL = ((StudyImporterForCoetzer) importer).getResourceArchiveURI();
         assertThat(archiveURL, endsWith("CatalogueOfAfrotropicalBees.zip"));
         assertThat(URI.create(archiveURL).isAbsolute(), is(true));
     }
 
     @Test
-    public void defaultTSVImporter() throws StudyImporterException, DatasetFinderException  {
-        final DatasetFinderGitHubRemote datasetFinderGitHubRemote = new DatasetFinderGitHubRemote();
-        StudyImporter importer = new GitHubImporterFactory().createImporter(DatasetFactory.datasetFor("globalbioticinteractions/template-dataset", datasetFinderGitHubRemote), null, null);
+    public void defaultTSVImporterCached() throws StudyImporterException, DatasetFinderException  {
+        final DatasetFinder datasetFinder = new DatasetFinderCaching(new DatasetFinderGitHubArchive());
+        StudyImporter importer = getTemplateImporter(datasetFinder);
+        assertThat(((StudyImporterForTSV)importer).getBaseUrl(), startsWith("https://github.com/globalbioticinteractions/template-dataset/"));
+        String actual = ((StudyImporterForTSV) importer).getDataset().getResourceURI("this/is/relative").toString();
+        assertThat(actual, startsWith("jar:file:"));
+        assertThat(actual, endsWith("this/is/relative"));
+    }
+
+    @Test
+    public void defaultTSVImporterNotCached() throws StudyImporterException, DatasetFinderException  {
+        final DatasetFinder datasetFinder = new DatasetFinderGitHubRemote();
+        StudyImporter importer = getTemplateImporter(datasetFinder);
+        assertThat(((StudyImporterForTSV)importer).getBaseUrl(), startsWith("https://raw.githubusercontent.com/globalbioticinteractions/template-dataset/"));
+        String actual = ((StudyImporterForTSV) importer).getDataset().getResourceURI("this/is/relative").toString();
+        assertThat(actual, startsWith("https:/"));
+        assertThat(actual, endsWith("this/is/relative"));
+    }
+
+    StudyImporter getTemplateImporter(DatasetFinder datasetFinder) throws DatasetFinderException, StudyImporterException {
+        Dataset dataset = DatasetFactory.datasetFor("globalbioticinteractions/template-dataset", datasetFinder);
+        StudyImporter importer = new GitHubImporterFactory().createImporter(dataset, null, null);
         assertThat(importer, is(notNullValue()));
         assertThat(importer, is(instanceOf(StudyImporterForTSV.class)));
-        assertThat(((StudyImporterForTSV)importer).getBaseUrl(), startsWith("https://raw.githubusercontent.com/globalbioticinteractions/template-dataset/"));
+        return importer;
     }
 
     @Test

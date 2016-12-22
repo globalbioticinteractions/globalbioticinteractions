@@ -47,7 +47,7 @@ public class StudyImporterForSeltmann extends BaseStudyImporter {
 
     @Override
     public Study importStudy() throws StudyImporterException {
-        final String archiveURL = getArchiveURL();
+        final String archiveURL = DatasetUtil.getResourceURI(getDataset(), "archive");
         if (org.apache.commons.lang.StringUtils.isBlank(archiveURL)) {
             throw new StudyImporterException("failed to import [" + getDataset().getNamespace() + "]: no [archiveURL] specified");
         }
@@ -62,7 +62,7 @@ public class StudyImporterForSeltmann extends BaseStudyImporter {
                 .make();
 
         try {
-            InputStream inputStream = ResourceUtil.asInputStream(getArchiveURL(), StudyImporterForSeltmann.class);
+            InputStream inputStream = DatasetUtil.getResourceStream(getDataset(), "archive");
             ZipInputStream zipInputStream = new ZipInputStream(inputStream);
             ZipEntry entry;
             File assocTempFile = null;
@@ -114,8 +114,7 @@ public class StudyImporterForSeltmann extends BaseStudyImporter {
             occurrence.changeDelimiter('\t');
             while (occurrence.getLine() != null) {
                 String references = occurrence.getValueByLabel("dcterms:references");
-
-                Study study = nodeFactory.getOrCreateStudy("seltmann" + references, references + ". " + ReferenceUtil.createLastAccessedString(getArchiveURL()), references);
+                Study study = nodeFactory.getOrCreateStudy("seltmann" + references, references + ". " + ReferenceUtil.createLastAccessedString(getDataset().getArchiveURI().toString()), references);
                 String recordId = occurrence.getValueByLabel(FIELD_IDIGBIO_RECORD_ID);
                 Map<String, String> assoc = assocMap.get(recordId);
                 if (assoc != null) {
@@ -234,10 +233,6 @@ public class StudyImporterForSeltmann extends BaseStudyImporter {
 
     protected void addKeyValue(LabeledCSVParser parser, Map<String, String> prop, String key) {
         prop.put(key, parser.getValueByLabel(key));
-    }
-
-    public String getArchiveURL() {
-        return DatasetUtil.getDataArchiveURI(getDataset());
     }
 
     @Override

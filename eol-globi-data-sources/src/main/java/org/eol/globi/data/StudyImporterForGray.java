@@ -3,7 +3,6 @@ package org.eol.globi.data;
 import com.Ostermiller.util.CSVParser;
 import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.lang3.StringUtils;
-import org.codehaus.jackson.JsonNode;
 import org.eol.globi.domain.Study;
 import org.eol.globi.service.DatasetUtil;
 import org.eol.globi.util.ResourceUtil;
@@ -22,9 +21,9 @@ public class StudyImporterForGray extends BaseStudyImporter {
     @Override
     public Study importStudy() throws StudyImporterException {
         try {
-            importLinks(ResourceUtil.asInputStream(getLinksURL(), null), new InteractionListenerNeo4j(nodeFactory, getGeoNamesService(), getLogger()), getFilter());
+            importLinks(DatasetUtil.getResourceStream(getDataset(), "links"), new InteractionListenerNeo4j(nodeFactory, getGeoNamesService(), getLogger()), getFilter());
         } catch (IOException e) {
-            throw new StudyImporterException("failed to findNamespaces: [" + getLinksURL() + "]");
+            throw new StudyImporterException("failed to find: [" + DatasetUtil.getResourceURI(getDataset(), "links") + "]");
         }
         return null;
     }
@@ -47,7 +46,7 @@ public class StudyImporterForGray extends BaseStudyImporter {
         link.put(StudyImporterForTSV.SOURCE_LIFE_STAGE, nonNAValueOrNull(parser.getValueByLabel("consumer.lifestage")));
         link.put(StudyImporterForTSV.TARGET_TAXON_NAME, parser.getValueByLabel("resource"));
         link.put(StudyImporterForTSV.TARGET_LIFE_STAGE, nonNAValueOrNull(parser.getValueByLabel("resource.lifestage")));
-        link.put(StudyImporterForTSV.STUDY_SOURCE_CITATION, getSourceCitation() + " . " + ReferenceUtil.createLastAccessedString(getLinksURL()));
+        link.put(StudyImporterForTSV.STUDY_SOURCE_CITATION, getSourceCitation() + " . " + ReferenceUtil.createLastAccessedString(getDataset().getArchiveURI().toString()));
         link.put(StudyImporterForTSV.REFERENCE_CITATION, parser.getValueByLabel("full.source"));
         link.put(StudyImporterForTSV.REFERENCE_ID, getSourceDOI() + "/source.id/" + parser.getValueByLabel("source.id"));
         link.put(StudyImporterForTSV.BASIS_OF_RECORD_NAME, parser.getValueByLabel("link.evidence"));
@@ -58,10 +57,6 @@ public class StudyImporterForGray extends BaseStudyImporter {
 
     private String nonNAValueOrNull(String value) {
         return StringUtils.equals("NA", value) ? null : value;
-    }
-
-    private String getLinksURL() {
-        return DatasetUtil.getResourceURI(getDataset(), "links");
     }
 
 }

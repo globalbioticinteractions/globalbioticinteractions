@@ -9,7 +9,6 @@ import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.service.DatasetUtil;
 import org.eol.globi.util.CSVUtil;
-import org.eol.globi.util.ResourceUtil;
 import org.mapdb.DB;
 import org.mapdb.DBMaker;
 import org.mapdb.HTreeMap;
@@ -33,7 +32,7 @@ public class StudyImporterForCoetzer extends BaseStudyImporter {
 
     @Override
     public Study importStudy() throws StudyImporterException {
-        if (org.apache.commons.lang.StringUtils.isBlank(getArchiveURL())) {
+        if (org.apache.commons.lang.StringUtils.isBlank(getResourceArchiveURI())) {
             throw new StudyImporterException("failed to import [" + getDataset().getNamespace() + "]: no [archiveURL] specified");
         }
 
@@ -52,7 +51,7 @@ public class StudyImporterForCoetzer extends BaseStudyImporter {
 
 
         try {
-            InputStream inputStream = ResourceUtil.asInputStream(getArchiveURL(), StudyImporterForCoetzer.class);
+            InputStream inputStream = DatasetUtil.getResourceStream(getDataset(), "archive");
             ZipInputStream zipInputStream = new ZipInputStream(inputStream);
             ZipEntry entry;
             File taxonTempFile = null;
@@ -124,7 +123,7 @@ public class StudyImporterForCoetzer extends BaseStudyImporter {
                         final String reference = refMap.get(taxonId);
                         final String sourceTaxonName = taxonMap.get(taxonId);
                         if (StringUtils.isNotBlank(reference) && StringUtils.isNotBlank(sourceTaxonName)) {
-                            final Study study = nodeFactory.getOrCreateStudy(getSourceCitation() + reference, getSourceCitation() + ". " + ReferenceUtil.createLastAccessedString(getArchiveURL()), reference);
+                            final Study study = nodeFactory.getOrCreateStudy(getSourceCitation() + reference, getSourceCitation() + ". " + ReferenceUtil.createLastAccessedString(getDataset().getArchiveURI().toString()), reference);
                             final Specimen source = nodeFactory.createSpecimen(study, StringUtils.trim(sourceTaxonName));
                             final Specimen target = nodeFactory.createSpecimen(study, StringUtils.trim(targetTaxonName));
                             final InteractType relType = interactTypeMap.get(interactionString);
@@ -150,8 +149,8 @@ public class StudyImporterForCoetzer extends BaseStudyImporter {
         return StringUtils.isBlank(speciesName) ? StringUtils.trim(line[4]) : speciesName;
     }
 
-    public String getArchiveURL() {
-        return DatasetUtil.getDataArchiveURI(getDataset());
+    public String getResourceArchiveURI() {
+        return DatasetUtil.getResourceURI(getDataset(), "archive");
     }
 
 }
