@@ -86,13 +86,9 @@ public class GitHubUtil {
         return lastCommitSHA;
     }
 
-    private static String appendAuth() {
-        return appendAuth(null);
-    }
-
     private static String appendAuth(String query) {
-        String propertyNameGitHubClientId = "github_client_id";
-        String propertyNameGitHubClientSecret = "github_client_secret";
+        String propertyNameGitHubClientId = "github.client.id";
+        String propertyNameGitHubClientSecret = "github.client.secret";
         String clientId = System.getProperty(propertyNameGitHubClientId);
         String clientSecret = System.getProperty(propertyNameGitHubClientSecret);
 
