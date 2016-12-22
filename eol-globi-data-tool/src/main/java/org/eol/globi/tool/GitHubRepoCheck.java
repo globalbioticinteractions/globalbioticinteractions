@@ -7,6 +7,7 @@ import org.eol.globi.data.StudyImporter;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.db.GraphService;
 import org.eol.globi.service.DatasetFactory;
+import org.eol.globi.service.DatasetFinderException;
 import org.eol.globi.service.DatasetFinderGitHubRemote;
 import org.eol.globi.service.GitHubImporterFactory;
 import org.neo4j.cypher.javacompat.ExecutionEngine;
@@ -19,7 +20,7 @@ import java.net.URISyntaxException;
 
 public class GitHubRepoCheck {
 
-    public static void main(final String[] args) throws IOException, URISyntaxException, StudyImporterException {
+    public static void main(final String[] args) throws IOException, StudyImporterException, DatasetFinderException {
         final File tmpDir = File.createTempFile("graph", ".db", FileUtils.getTempDirectory());
         try {
             final GraphDatabaseService graphService = GraphService.getGraphService(tmpDir.getAbsolutePath());
