@@ -63,7 +63,7 @@ public class StudyImporterForGitHubData extends BaseStudyImporter {
                 }
                 importer.importStudy();
             }
-        } catch (IOException | NodeFactoryException | URISyntaxException e) {
+        } catch (IOException | NodeFactoryException e) {
             throw new StudyImporterException("failed to import repo [" + repo + "]", e);
         }
     }
