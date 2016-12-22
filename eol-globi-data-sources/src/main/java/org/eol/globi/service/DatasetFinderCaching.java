@@ -2,6 +2,8 @@ package org.eol.globi.service;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.eol.globi.util.ResourceUtil;
 
 import java.io.File;
@@ -14,6 +16,8 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 public class DatasetFinderCaching implements DatasetFinder {
+
+    private final static Log LOG = LogFactory.getLog(DatasetFinderCaching.class);
 
     private final DatasetFinder finder;
 
@@ -61,13 +65,17 @@ public class DatasetFinderCaching implements DatasetFinder {
     static File cache(Dataset dataset, String pathname) throws IOException {
         File cacheDir = new File(pathname);
         FileUtils.forceMkdir(cacheDir);
-
-        InputStream is = ResourceUtil.asInputStream(dataset.getArchiveURI(), null);
+        URI sourceURI = dataset.getArchiveURI();
+        InputStream sourceStream = ResourceUtil.asInputStream(sourceURI, null);
         File directory = new File(cacheDir, dataset.getNamespace());
         FileUtils.forceMkdir(directory);
-        File archiveCache =  new File(directory, "archive.zip");
-        FileUtils.copyInputStreamToFile(is, archiveCache);
-        IOUtils.closeQuietly(is);
-        return archiveCache;
+
+        File destinationFile =  new File(directory, "archive.zip");
+        String msg = "caching [" + sourceURI + "] at [" + destinationFile.toURI() + "]";
+        LOG.info(msg + " started...");
+        FileUtils.copyInputStreamToFile(sourceStream, destinationFile);
+        IOUtils.closeQuietly(sourceStream);
+        LOG.info(msg + " complete.");
+        return destinationFile;
     }
 }
