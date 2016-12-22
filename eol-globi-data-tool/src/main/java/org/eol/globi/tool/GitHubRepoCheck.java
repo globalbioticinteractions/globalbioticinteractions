@@ -22,7 +22,7 @@ public class GitHubRepoCheck {
         try {
             final GraphDatabaseService graphService = GraphService.getGraphService(tmpDir.getAbsolutePath());
             final String repoName = args[0];
-            final StudyImporter importer = new GitHubImporterFactory().createImporter(repoName, new ParserFactoryImpl(), new NodeFactoryImpl(graphService));
+            final StudyImporter importer = GitHubImporterFactory.createImporter(repoName, new ParserFactoryImpl(), new NodeFactoryImpl(graphService));
             importer.importStudy();
             new NameResolver(graphService).resolve();
 

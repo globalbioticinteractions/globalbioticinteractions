@@ -28,16 +28,16 @@ import java.util.HashMap;
 
 public class GitHubImporterFactory {
 
-    public StudyImporter createImporter(String repo, final ParserFactory parserFactory, final NodeFactory nodeFactory) throws IOException, URISyntaxException, StudyImporterException {
+    public static StudyImporter createImporter(String repo, final ParserFactory parserFactory, final NodeFactory nodeFactory) throws IOException, URISyntaxException, StudyImporterException {
         try {
             Dataset dataset = DatasetFactory.datasetFor(repo, new DatasetFinderGitHubRemote());
-            return createImporter(dataset, parserFactory, nodeFactory);
+            return new GitHubImporterFactory().createImporter(dataset, parserFactory, nodeFactory);
         } catch (DatasetFinderException e) {
             throw new StudyImporterException("failed to locate archive url for [" + repo + "]", e);
         }
     }
 
-    private StudyImporter createImporter(Dataset dataset, final ParserFactory parserFactory, final NodeFactory nodeFactory) throws IOException, StudyImporterException {
+    public StudyImporter createImporter(Dataset dataset, final ParserFactory parserFactory, final NodeFactory nodeFactory) throws IOException, StudyImporterException {
         Class<? extends StudyImporter> anImporter = findImporterFor(dataset);
         try {
             Constructor<? extends StudyImporter> constructor = anImporter.getConstructor(ParserFactory.class, NodeFactory.class);

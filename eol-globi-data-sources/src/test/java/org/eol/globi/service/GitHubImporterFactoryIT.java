@@ -29,7 +29,7 @@ public class GitHubImporterFactoryIT {
 
     @Test
     public void createGoMexSI() throws URISyntaxException, StudyImporterException, IOException {
-        StudyImporter importer = new GitHubImporterFactory().createImporter("gomexsi/interaction-data", null, null);
+        StudyImporter importer = GitHubImporterFactory.createImporter("gomexsi/interaction-data", null, null);
         assertThat(importer, is(notNullValue()));
         assertThat(importer, is(instanceOf(StudyImporterForGoMexSI2.class)));
         StudyImporterForGoMexSI2 gomexsiImporter = (StudyImporterForGoMexSI2) importer;
@@ -38,7 +38,7 @@ public class GitHubImporterFactoryIT {
 
     @Test
     public void createSzoboszlai() throws URISyntaxException, StudyImporterException, IOException {
-        StudyImporter importer = new GitHubImporterFactory().createImporter("globalbioticinteractions/szoboszlai2015", null, null);
+        StudyImporter importer = GitHubImporterFactory.createImporter("globalbioticinteractions/szoboszlai2015", null, null);
         assertThat(importer, is(notNullValue()));
         assertThat(importer, is(instanceOf(StudyImporterForSzoboszlai.class)));
         StudyImporterForSzoboszlai importerz = (StudyImporterForSzoboszlai) importer;
@@ -47,7 +47,7 @@ public class GitHubImporterFactoryIT {
 
     @Test
     public void createWood() throws URISyntaxException, StudyImporterException, IOException {
-        StudyImporter importer = new GitHubImporterFactory().createImporter("globalbioticinteractions/wood2015", null, null);
+        StudyImporter importer = GitHubImporterFactory.createImporter("globalbioticinteractions/wood2015", null, null);
         assertThat(importer, is(notNullValue()));
         assertThat(importer, is(instanceOf(StudyImporterForWood.class)));
         StudyImporterForWood importerz = (StudyImporterForWood) importer;
@@ -57,7 +57,7 @@ public class GitHubImporterFactoryIT {
 
     @Test
     public void createPlanque() throws URISyntaxException, StudyImporterException, IOException {
-        StudyImporter importer = new GitHubImporterFactory().createImporter("globalbioticinteractions/planque2014", null, null);
+        StudyImporter importer = GitHubImporterFactory.createImporter("globalbioticinteractions/planque2014", null, null);
         assertThat(importer, is(notNullValue()));
         assertThat(importer, is(instanceOf(StudyImporterForPlanque.class)));
         StudyImporterForPlanque importerz = (StudyImporterForPlanque) importer;
@@ -69,7 +69,7 @@ public class GitHubImporterFactoryIT {
 
     @Test
     public void createArthopodEasyCapture() throws URISyntaxException, StudyImporterException, IOException {
-        StudyImporter importer = new GitHubImporterFactory().createImporter("globalbioticinteractions/arthropodEasyCaptureAMNH", null, null);
+        StudyImporter importer = GitHubImporterFactory.createImporter("globalbioticinteractions/arthropodEasyCaptureAMNH", null, null);
         assertThat(importer, is(notNullValue()));
         assertThat(importer, is(instanceOf(StudyImporterForArthopodEasyCapture.class)));
         assertThat(((StudyImporterForArthopodEasyCapture)importer).getRssFeedUrlString(), is(notNullValue()));
@@ -77,7 +77,7 @@ public class GitHubImporterFactoryIT {
 
     @Test
     public void createMetaTable() throws URISyntaxException, StudyImporterException, IOException {
-        StudyImporter importer = new GitHubImporterFactory().createImporter("globalbioticinteractions/AfricaTreeDatabase", null, null);
+        StudyImporter importer = GitHubImporterFactory.createImporter("globalbioticinteractions/AfricaTreeDatabase", null, null);
         assertThat(importer, is(notNullValue()));
         assertThat(importer, is(instanceOf(StudyImporterForMetaTable.class)));
         assertThat(((StudyImporterForMetaTable)importer).getConfig(), is(notNullValue()));
@@ -86,7 +86,7 @@ public class GitHubImporterFactoryIT {
 
     @Test
     public void createAfrotropicalBees() throws URISyntaxException, StudyImporterException, IOException {
-        StudyImporter importer = new GitHubImporterFactory().createImporter("globalbioticinteractions/Catalogue-of-Afrotropical-Bees", null, null);
+        StudyImporter importer = GitHubImporterFactory.createImporter("globalbioticinteractions/Catalogue-of-Afrotropical-Bees", null, null);
         assertThat(importer, is(notNullValue()));
         assertThat(importer, is(instanceOf(StudyImporterForCoetzer.class)));
         assertThat(((StudyImporterForCoetzer)importer).getDataset(), is(notNullValue()));
@@ -97,7 +97,7 @@ public class GitHubImporterFactoryIT {
 
     @Test
     public void defaultTSVImporter() throws URISyntaxException, StudyImporterException, IOException {
-        StudyImporter importer = new GitHubImporterFactory().createImporter("globalbioticinteractions/template-dataset", null, null);
+        StudyImporter importer = GitHubImporterFactory.createImporter("globalbioticinteractions/template-dataset", null, null);
         assertThat(importer, is(notNullValue()));
         assertThat(importer, is(instanceOf(StudyImporterForTSV.class)));
         assertThat(((StudyImporterForTSV)importer).getBaseUrl(), startsWith("https://raw.githubusercontent.com/globalbioticinteractions/template-dataset/"));
@@ -105,7 +105,7 @@ public class GitHubImporterFactoryIT {
 
     @Test
     public void createMetaTableREEM() throws URISyntaxException, StudyImporterException, IOException {
-        StudyImporter importer = new GitHubImporterFactory().createImporter("globalbioticinteractions/noaa-reem", null, null);
+        StudyImporter importer = GitHubImporterFactory.createImporter("globalbioticinteractions/noaa-reem", null, null);
         assertThat(importer, is(notNullValue()));
         assertThat(importer, is(instanceOf(StudyImporterForMetaTable.class)));
         final JsonNode config = ((StudyImporterForMetaTable) importer).getConfig();
