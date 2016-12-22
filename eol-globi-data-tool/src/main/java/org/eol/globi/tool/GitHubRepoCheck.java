@@ -6,6 +6,8 @@ import org.eol.globi.data.ParserFactoryImpl;
 import org.eol.globi.data.StudyImporter;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.db.GraphService;
+import org.eol.globi.service.DatasetFactory;
+import org.eol.globi.service.DatasetFinderGitHubRemote;
 import org.eol.globi.service.GitHubImporterFactory;
 import org.neo4j.cypher.javacompat.ExecutionEngine;
 import org.neo4j.cypher.javacompat.ExecutionResult;
@@ -22,7 +24,8 @@ public class GitHubRepoCheck {
         try {
             final GraphDatabaseService graphService = GraphService.getGraphService(tmpDir.getAbsolutePath());
             final String repoName = args[0];
-            final StudyImporter importer = GitHubImporterFactory.createImporter(repoName, new ParserFactoryImpl(), new NodeFactoryImpl(graphService));
+            final DatasetFinderGitHubRemote datasetFinderGitHubRemote = new DatasetFinderGitHubRemote();
+            final StudyImporter importer = new GitHubImporterFactory().createImporter(DatasetFactory.datasetFor(repoName, datasetFinderGitHubRemote), new ParserFactoryImpl(), new NodeFactoryImpl(graphService));
             importer.importStudy();
             new NameResolver(graphService).resolve();
 

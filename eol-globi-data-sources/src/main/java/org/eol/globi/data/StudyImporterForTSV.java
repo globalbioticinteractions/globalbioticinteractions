@@ -30,7 +30,6 @@ public class StudyImporterForTSV extends BaseStudyImporter {
     public static final String INTERACTION_TYPE_NAME = "interactionTypeName";
     public static final String SOURCE_LIFE_STAGE = "sourceLifeStage";
     public static final String TARGET_LIFE_STAGE = "targetLifeStage";
-    private String repositoryName;
 
     public String getBaseUrl() {
         return getDataset().getArchiveURI().toString();
@@ -43,7 +42,7 @@ public class StudyImporterForTSV extends BaseStudyImporter {
     @Override
     public Study importStudy() throws StudyImporterException {
         try {
-            importRepository(getRepositoryName(), getSourceCitation(), getBaseUrl());
+            importRepository(getRepositoryName(), getSourceCitation());
         } catch (IOException | NodeFactoryException e) {
             throw new StudyImporterException("problem importing from [" + getBaseUrl() + "]", e);
         }
@@ -51,7 +50,7 @@ public class StudyImporterForTSV extends BaseStudyImporter {
     }
 
 
-    private void importRepository(String namespace, String sourceCitation, String baseUrl) throws IOException, NodeFactoryException, StudyImporterException {
+    private void importRepository(String namespace, String sourceCitation) throws IOException, StudyImporterException {
         InteractionListenerNeo4j interactionListenerNeo4j = new InteractionListenerNeo4j(nodeFactory, getGeoNamesService(), getLogger());
         LabeledCSVParser parser = parserFactory.createParser(getDataset().getResourceURI("/interactions.tsv").toString(), "UTF-8");
         parser.changeDelimiter('\t');
@@ -61,7 +60,7 @@ public class StudyImporterForTSV extends BaseStudyImporter {
             putNotBlank(link, REFERENCE_DOI, referenceDoi);
             putNotBlank(link, REFERENCE_CITATION, CSVUtil.valueOrNull(parser, REFERENCE_CITATION));
             putNotBlank(link, REFERENCE_URL, CSVUtil.valueOrNull(parser, REFERENCE_URL));
-            putNotBlank(link, STUDY_SOURCE_CITATION, (sourceCitation == null ? "" : sourceCitation + ". ") + ReferenceUtil.createLastAccessedString(baseUrl + "/interactions.tsv"));
+            putNotBlank(link, STUDY_SOURCE_CITATION, (sourceCitation == null ? "" : sourceCitation + ". ") + ReferenceUtil.createLastAccessedString(getBaseUrl() + "/interactions.tsv"));
 
             putNotBlank(link, SOURCE_TAXON_ID, StringUtils.trimToNull(parser.getValueByLabel(SOURCE_TAXON_ID)));
             putNotBlank(link, SOURCE_TAXON_NAME, StringUtils.trim(parser.getValueByLabel(SOURCE_TAXON_NAME)));

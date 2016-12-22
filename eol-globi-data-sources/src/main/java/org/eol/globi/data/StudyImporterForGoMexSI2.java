@@ -57,23 +57,23 @@ public class StudyImporterForGoMexSI2 extends BaseStudyImporter {
     }
 
     protected String getPreyResourcePath() {
-        return getBaseUrl() + "/Prey.csv";
+        return getResourcePath("/Prey.csv");
     }
 
-    private String getBaseUrl() {
-        return getDataset().getArchiveURI().toString();
+    private String getResourcePath(String resourceName) {
+        return getDataset().getResourceURI(resourceName).toString();
     }
 
     protected String getPredatorResourcePath() {
-        return getBaseUrl() + "/Predators.csv";
+        return getResourcePath("/Predators.csv");
     }
 
     protected String getReferencesResourcePath() {
-        return getBaseUrl() + "/References.csv";
+        return getResourcePath("/References.csv");
     }
 
     protected String getLocationsResourcePath() {
-        return getBaseUrl() + "/Locations.csv";
+        return getResourcePath("/Locations.csv");
     }
 
     @Override

@@ -13,7 +13,6 @@ import org.eol.globi.service.DatasetFinderProxy;
 import org.eol.globi.service.DatasetFinderZenodo;
 import org.eol.globi.service.GitHubImporterFactory;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -31,13 +30,14 @@ public class StudyImporterForGitHubData extends BaseStudyImporter {
         Collection<String> repositories;
         try {
             repositories = getDatasetFinder().findNamespaces();
-
         } catch (DatasetFinderException e) {
             throw new StudyImporterException("failed to discover datasets", e);
         }
 
-        for (String repository : repositories)
+        for (String repository : repositories) {
             importData(repository);
+        }
+
         return null;
     }
 
@@ -61,16 +61,12 @@ public class StudyImporterForGitHubData extends BaseStudyImporter {
     }
 
     public void importData(Dataset repo) throws StudyImporterException {
-        try {
-            StudyImporter importer = new GitHubImporterFactory().createImporter(repo, parserFactory, nodeFactory);
-            if (importer != null) {
-                if (getLogger() != null) {
-                    importer.setLogger(getLogger());
-                }
-                importer.importStudy();
+        StudyImporter importer = new GitHubImporterFactory().createImporter(repo, parserFactory, nodeFactory);
+        if (importer != null) {
+            if (getLogger() != null) {
+                importer.setLogger(getLogger());
             }
-        } catch (IOException | NodeFactoryException e) {
-            throw new StudyImporterException("failed to import repo [" + repo + "]", e);
+            importer.importStudy();
         }
     }
 

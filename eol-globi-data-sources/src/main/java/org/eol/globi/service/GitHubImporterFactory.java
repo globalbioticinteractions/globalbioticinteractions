@@ -28,16 +28,7 @@ import java.util.HashMap;
 
 public class GitHubImporterFactory {
 
-    public static StudyImporter createImporter(String repo, final ParserFactory parserFactory, final NodeFactory nodeFactory) throws IOException, URISyntaxException, StudyImporterException {
-        try {
-            Dataset dataset = DatasetFactory.datasetFor(repo, new DatasetFinderGitHubRemote());
-            return new GitHubImporterFactory().createImporter(dataset, parserFactory, nodeFactory);
-        } catch (DatasetFinderException e) {
-            throw new StudyImporterException("failed to locate archive url for [" + repo + "]", e);
-        }
-    }
-
-    public StudyImporter createImporter(Dataset dataset, final ParserFactory parserFactory, final NodeFactory nodeFactory) throws IOException, StudyImporterException {
+    public StudyImporter createImporter(Dataset dataset, final ParserFactory parserFactory, final NodeFactory nodeFactory) throws StudyImporterException {
         Class<? extends StudyImporter> anImporter = findImporterFor(dataset);
         try {
             Constructor<? extends StudyImporter> constructor = anImporter.getConstructor(ParserFactory.class, NodeFactory.class);
