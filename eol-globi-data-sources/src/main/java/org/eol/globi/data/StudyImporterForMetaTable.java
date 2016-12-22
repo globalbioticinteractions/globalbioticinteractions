@@ -10,7 +10,6 @@ import org.eol.globi.domain.TaxonomyProvider;
 import org.eol.globi.service.Dataset;
 import org.eol.globi.service.DatasetRemote;
 import org.eol.globi.util.CSVUtil;
-import org.eol.globi.util.ResourceUtil;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
@@ -60,13 +59,13 @@ public class StudyImporterForMetaTable extends BaseStudyImporter {
     @Override
     public Study importStudy() throws StudyImporterException {
         try {
-            for (JsonNode table : collectTables(getConfig())) {
+            for (JsonNode tableConfig : collectTables(dataset)) {
                 DatasetRemote dataset = new DatasetRemote(getDataset().getNamespace(), getDataset().getArchiveURI());
-                dataset.setConfig(table);
+                dataset.setConfig(tableConfig);
 
-                InteractionListenerNeo4j interractionListener = new InteractionListenerNeo4j(nodeFactory, getGeoNamesService(), getLogger());
-                final InteractionListener listener = new TableInteractionListenerProxy(dataset, interractionListener);
-                importTable(listener, new TableParserFactoryImpl(), table, dataset);
+                InteractionListenerNeo4j interactionListener = new InteractionListenerNeo4j(nodeFactory, getGeoNamesService(), getLogger());
+                final InteractionListener listener = new TableInteractionListenerProxy(dataset, interactionListener);
+                importTable(listener, new TableParserFactoryImpl(), tableConfig, dataset);
             }
         } catch (IOException | NodeFactoryException e) {
             throw new StudyImporterException("problem importing from [" + getBaseUrl() + "]", e);
@@ -75,7 +74,8 @@ public class StudyImporterForMetaTable extends BaseStudyImporter {
     }
 
 
-    static public List<JsonNode> collectTables(JsonNode config) throws StudyImporterException {
+    static public List<JsonNode> collectTables(Dataset dataset) throws StudyImporterException {
+        JsonNode config = dataset.getConfig();
         List<JsonNode> tableList = new ArrayList<JsonNode>();
         if (config.has("tables")) {
             JsonNode tables = config.get("tables");
@@ -83,17 +83,18 @@ public class StudyImporterForMetaTable extends BaseStudyImporter {
                 tableList.add(table);
             }
         } else if (isNHMResource(config)) {
-            generateTablesForNHMResources(config, tableList);
+            generateTablesForNHMResources(tableList, dataset);
         } else {
             tableList.add(config);
         }
         return tableList;
     }
 
-    public static void generateTablesForNHMResources(JsonNode config, List<JsonNode> tableList) throws StudyImporterException {
+    public static void generateTablesForNHMResources(List<JsonNode> tableList, Dataset dataset) throws StudyImporterException {
+        JsonNode config = dataset.getConfig();
         String nhmUrl = config.get("url").asText();
         try {
-            final JsonNode nhmResourceSchema = new ObjectMapper().readTree(ResourceUtil.asInputStream(nhmUrl, null));
+            final JsonNode nhmResourceSchema = new ObjectMapper().readTree(dataset.getResource(nhmUrl));
             final JsonNode result = nhmResourceSchema.get("result");
             String title = result.get("title").asText();
             String author = result.get("author").asText();
@@ -121,11 +122,11 @@ public class StudyImporterForMetaTable extends BaseStudyImporter {
         return config.has("url") && StringUtils.startsWith(config.get("url").asText(), "http://data.nhm.ac.uk/api");
     }
 
-    static public void importTable(InteractionListener interactionListener, TableParserFactory tableFactory, JsonNode table, Dataset dataset) throws IOException, StudyImporterException {
-        if (table.has("tableSchema")) {
-            List<Column> columns = columnsForSchema(table, table.get("tableSchema"), dataset);
-            final CSVParse csvParse = tableFactory.createParser(table);
-            importAll(interactionListener, columns, csvParse, table);
+    static public void importTable(InteractionListener interactionListener, TableParserFactory tableFactory, JsonNode tableConfig, Dataset dataset) throws IOException, StudyImporterException {
+        if (tableConfig.has("tableSchema")) {
+            List<Column> columns = columnsForSchema(tableConfig, tableConfig.get("tableSchema"), dataset);
+            final CSVParse csvParse = tableFactory.createParser(tableConfig, dataset);
+            importAll(interactionListener, columns, csvParse, tableConfig);
         }
     }
 
@@ -345,13 +346,13 @@ public class StudyImporterForMetaTable extends BaseStudyImporter {
     }
 
     interface TableParserFactory {
-        CSVParse createParser(JsonNode config) throws IOException;
+        CSVParse createParser(JsonNode config, Dataset dataset) throws IOException;
     }
 
     static class TableParserFactoryImpl implements TableParserFactory {
 
         @Override
-        public CSVParse createParser(JsonNode config) throws IOException {
+        public CSVParse createParser(JsonNode config, Dataset dataset) throws IOException {
             final JsonNode headerRowCount = config.get("headerRowCount");
             final JsonNode delimiter = config.get("delimiter");
             final String delimiterString = delimiter == null ? "," : delimiter.asText();
@@ -359,7 +360,7 @@ public class StudyImporterForMetaTable extends BaseStudyImporter {
             final JsonNode dataUrl = config.get("url");
             int headerCount = headerRowCount == null ? 0 : headerRowCount.asInt();
 
-            final CSVParse csvParse = CSVUtil.createCSVParse(ResourceUtil.asInputStream(dataUrl.asText(), null));
+            final CSVParse csvParse = CSVUtil.createCSVParse(dataset.getResource(dataUrl.asText()));
             csvParse.changeDelimiter(delimiterChar);
             for (int i = 0; i < headerCount; i++) {
                 csvParse.getLine();

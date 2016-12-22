@@ -20,7 +20,6 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.StringStartsWith.startsWith;
 import static org.junit.Assert.assertThat;
 import static org.junit.internal.matchers.StringContains.containsString;
-import static org.junit.matchers.JUnitMatchers.hasItem;
 
 public class StudyImporterForMetaTableTest {
 
@@ -49,8 +48,9 @@ public class StudyImporterForMetaTableTest {
 
         final InputStream inputStream = ResourceUtil.asInputStream(name, clazz);
         final JsonNode config = new ObjectMapper().readTree(inputStream);
-
-        final List<JsonNode> tables = StudyImporterForMetaTable.collectTables(config);
+        DatasetRemote dataset = new DatasetRemote("some/namespace", URI.create("http://example.com"));
+        dataset.setConfig(config);
+        final List<JsonNode> tables = StudyImporterForMetaTable.collectTables(dataset);
         assertThat(tables.size(), is(1));
         JsonNode firstTable = tables.get(0);
         String bibliographicCitation = firstTable.get("dcterms:bibliographicCitation").asText();

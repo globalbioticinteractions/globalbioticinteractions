@@ -6,6 +6,7 @@ import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.io.IOUtils;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.eol.globi.service.Dataset;
 import org.eol.globi.service.DatasetRemote;
 import org.eol.globi.util.ResourceUtil;
 import org.junit.Test;
@@ -37,7 +38,7 @@ public class StudyImporterForMetaTableIT {
         };
         final StudyImporterForMetaTable.TableParserFactory tableFactory = new StudyImporterForMetaTable.TableParserFactory() {
 
-            public CSVParse createParser(JsonNode config) throws IOException {
+            public CSVParse createParser(JsonNode config, Dataset dataset) throws IOException {
                 String firstFewLines = "intertype,obstype,effunit,effort,obsunit,obsquant,germnotes,\"REPLACE(Interaction.notes, ',', ';')\",AnimalNumber,AnimalClass,AnimalOrder,AnimalFamily,AnimalGenus,AnimalSpecies,AnimalSubSpecies,AnimalType,AnimalCommonName,PlantNumber,PlantFamily,PlantGenus,PlantSpecies,PlantSubSpecies,country,region,ProvinceDistrictCity,ProtectedArea,HabitatWhite,HabitatAuthor,author,title,year,journal,volume,number,pages,USER,DEF_timestamp,,,\n" +
                         "seed disperser,direct observation,months,4,dung density,,,Article focused on elephant density per habitat type based on seed/plant types identified in dung at the various research locations. All identified plant types are being assumed to be dispersed by the elephants,1441,Mammalia,Proboscidea,Elephantidae,Loxodonta,africana,,NULL,African Bush Elephant,4035,Poaceae,Cynodon,dactylon,NULL,Mozambique,NULL,NULL,yes,forest transitions and mosaics,mangroves dune grass plains forest woodland riverine,\"De Boer, W.F. and Ntumi, C.P. and Correia, A.U. and Mafuca, J.M.\",Diet and distribution of elephant in the Maputo Elephant Reserve; Mozambique,2000,African Journal of Ecology,38,3,188-201,Mary,0000-00-00 00:00:00,,,\n" +
                         "seed disperser,direct observation,months,4,dung density,,,Article focused on elephant density per habitat type based on seed/plant types identified in dung at the various research locations. All identified plant types are being assumed to be dispersed by the elephants,1441,Mammalia,Proboscidea,Elephantidae,Loxodonta,africana,,NULL,African Bush Elephant,3639,Poaceae,Aristida,canescens,NULL,Mozambique,NULL,NULL,yes,forest transitions and mosaics,mangroves dune grass plains forest woodland riverine,\"De Boer, W.F. and Ntumi, C.P. and Correia, A.U. and Mafuca, J.M.\",Diet and distribution of elephant in the Maputo Elephant Reserve; Mozambique,2000,African Journal of Ecology,38,3,188-201,Mary,0000-00-00 00:00:00,,,\n" +
@@ -74,7 +75,7 @@ public class StudyImporterForMetaTableIT {
 
         final StudyImporterForMetaTable.TableParserFactory tableFactory = new StudyImporterForMetaTable.TableParserFactory() {
 
-            public CSVParse createParser(JsonNode config) throws IOException {
+            public CSVParse createParser(JsonNode config, Dataset dataset) throws IOException {
                 String firstFewLines = "Hauljoin,\" Pred_nodc\",\" Pred_specn\",\" Prey_nodc\",\" Pred_len\",\" Year\",\" Month\",\" day\",\" region\",\" Pred_name\",\" Prey_Name\",\" Vessel\",\" Cruise\",\" Haul\",\" Rlat\",\" Rlong\",\" Gear_depth\",\" Bottom_depth\",\" Start_hour\",\" Surface_temp\",\" Gear_temp\",\" INPFC_Area\",\" Stationid\",\" Start_date\",\" Prey_sz1\",\" Prey_sex\"\n" +
                         "11012118.0,8791030401.0,5.0,9999999998.0,53.0,1994.0,7.0,11.0,AI,\"Pacific cod Gadus macrocephalus\",\"Rocks \",95.0,199401.0,148.0,51.43,178.81999999999999,222.0,228.0,11.0,0.63,0.41999999999999998,542.0,118-11,\"1994-07-11 00:00:00\",3.0,\n" +
                         "11012118.0,8791030401.0,8.0,9999999998.0,53.0,1994.0,7.0,11.0,AI,\"Pacific cod Gadus macrocephalus\",\"Rocks \",95.0,199401.0,148.0,51.43,178.81999999999999,222.0,228.0,11.0,0.63,0.41999999999999998,542.0,118-11,\"1994-07-11 00:00:00\",3.0,\n" +
@@ -145,7 +146,7 @@ public class StudyImporterForMetaTableIT {
 
         final StudyImporterForMetaTable.TableParserFactory tableFactory = new StudyImporterForMetaTable.TableParserFactory() {
 
-            public CSVParse createParser(JsonNode config) throws IOException {
+            public CSVParse createParser(JsonNode config, Dataset dataset) throws IOException {
                 String firstFewLines = "\"InteractionID\",\"InteractionURL\",\"Species1UUID\",\"Species1Name\",\"Species1LifeCycleStage\",\"Species1OrganismPart\",\"Species1Status\",\"InteractionType\",\"InteractionOntologyURL\",\"Species2UUID\",\"Species2Name\",\"Species2LifeCycleStage\",\"Species2OrganismPart\",\"Species2Status\",\"LocationUUID\",\"LocationName\",\"LocationCountryName\",\"ISO2\",\"Importance\",\"InteractionRecordType\",\"Reference\",\"ReferenceDOI\",\"Reference Page\",\"Notes\"\n" +
                         "\"4bee827f-c9f5-4c0e-9db3-e40a6e4d8008\",\"http://phthiraptera.info/node/94209\",\"c8faa033-237b-40b9-9b76-d9e7fcff9238\",\"Menacanthus alaudae\",\"\",\"\",\"\",\"ectoparasite of\",\"http://purl.obolibrary.org/obo/RO_0002632\",\"e275d77c-e993-4de0-981f-b3f39fd4da9b\",\"Acanthis flavirostris\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"310\",\"[REF: Palma, Price & Hellenthal, 1998:310]\"\n" +
                         "\"80e66e7c-75db-467f-9a89-a11f94d58eb3\",\"http://phthiraptera.info/node/94210\",\"fe5b2e50-b414-41d9-840d-189e732b2ea5\",\"Ricinus fringillae flammeae\",\"\",\"\",\"\",\"ectoparasite of\",\"http://purl.obolibrary.org/obo/RO_0002632\",\"f26a1199-c0bb-4d7c-a511-2fe6284c5378\",\"Acanthis flammea flammea\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"Self citation to checklist added. Requires page number.\"\n" +
@@ -173,8 +174,9 @@ public class StudyImporterForMetaTableIT {
     static public void importAll(InteractionListener interactionListener, StudyImporterForMetaTable.TableParserFactory tableFactory, String baseUrl, String resource) throws IOException, StudyImporterException {
         final InputStream inputStream = ResourceUtil.asInputStream(resource, null);
         final JsonNode config = new ObjectMapper().readTree(inputStream);
-
-        for (JsonNode table : StudyImporterForMetaTable.collectTables(config)) {
+        final Dataset dataset = new DatasetRemote("some/namespace", URI.create("http://example.com"));
+        dataset.setConfig(config);
+        for (JsonNode table : StudyImporterForMetaTable.collectTables(dataset)) {
             StudyImporterForMetaTable.importTable(interactionListener, tableFactory, table, new DatasetRemote(null, URI.create(baseUrl)));
         }
 
