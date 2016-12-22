@@ -14,13 +14,13 @@ import org.eol.globi.service.DatasetFinderZenodo;
 import org.eol.globi.service.GitHubImporterFactory;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
 public class StudyImporterForGitHubData extends BaseStudyImporter {
     private static final Log LOG = LogFactory.getLog(StudyImporterForGitHubData.class);
+    private DatasetFinder finder = null;
 
     public StudyImporterForGitHubData(ParserFactory parserFactory, NodeFactory nodeFactory) {
         super(parserFactory, nodeFactory);
@@ -28,30 +28,36 @@ public class StudyImporterForGitHubData extends BaseStudyImporter {
 
     @Override
     public Study importStudy() throws StudyImporterException {
-        DatasetFinderCaching finder = createDatasetFinder();
         Collection<String> repositories;
         try {
-            repositories = finder.findNamespaces();
+            repositories = getDatasetFinder().findNamespaces();
 
         } catch (DatasetFinderException e) {
             throw new StudyImporterException("failed to discover datasets", e);
         }
 
         for (String repository : repositories)
-            try {
-                LOG.info("importing github repo [" + repository + "]...");
-                Dataset dataset = DatasetFactory.datasetFor(repository, finder);
-                importData(dataset);
-                LOG.info("importing github repo [" + repository + "] done.");
-            } catch (StudyImporterException | DatasetFinderException ex) {
-                LOG.error("failed to import data from repo [" + repository + "]", ex);
-            }
+            importData(repository);
         return null;
     }
 
-    private DatasetFinderCaching createDatasetFinder() {
-        List<DatasetFinder> finders = Arrays.asList(new DatasetFinderZenodo(), new DatasetFinderGitHubArchive());
-        return new DatasetFinderCaching(new DatasetFinderProxy(finders));
+    public void importData(String repository) {
+        try {
+            LOG.info("importing github repo [" + repository + "]...");
+            Dataset dataset = DatasetFactory.datasetFor(repository, getDatasetFinder());
+            importData(dataset);
+            LOG.info("importing github repo [" + repository + "] done.");
+        } catch (StudyImporterException | DatasetFinderException ex) {
+            LOG.error("failed to import data from repo [" + repository + "]", ex);
+        }
+    }
+
+    private DatasetFinder getDatasetFinder() {
+        if (finder == null) {
+            List<DatasetFinder> finders = Arrays.asList(new DatasetFinderZenodo(), new DatasetFinderGitHubArchive());
+            finder = new DatasetFinderCaching(new DatasetFinderProxy(finders));
+        }
+        return finder;
     }
 
     public void importData(Dataset repo) throws StudyImporterException {

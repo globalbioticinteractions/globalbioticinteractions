@@ -82,7 +82,7 @@ public class StudyImporterForGitHubDataIT extends GraphDBTestCase {
     @Test
     public void importSmithsonian() throws StudyImporterException {
         StudyImporterForGitHubData importer = new StudyImporterForGitHubData(new ParserFactoryImpl(), nodeFactory);
-        importer.importData("millerse/Smithsonian-Repository-Interactions");
+        importer.importData( "millerse/Smithsonian-Repository-Interactions");
         List<Study> allStudies = NodeUtil.findAllStudies(getGraphDb());
         Map<String, String> citationDOIs = new TreeMap<String, String>();
         for (Study study : allStudies) {
@@ -101,7 +101,7 @@ public class StudyImporterForGitHubDataIT extends GraphDBTestCase {
     @Test
     public void importSeltmann() throws StudyImporterException {
         StudyImporterForGitHubData importer = new StudyImporterForGitHubData(new ParserFactoryImpl(), nodeFactory);
-        importer.importData("globalbioticinteractions/digital-bee-collections-network");
+        importer.importData( "globalbioticinteractions/digital-bee-collections-network");
         List<Study> allStudies = NodeUtil.findAllStudies(getGraphDb());
         assertThat(allStudies.size(), is(1));
         assertThat(taxonIndex.findTaxonByName("Garrulus glandarius"), is(notNullValue()));
@@ -110,7 +110,7 @@ public class StudyImporterForGitHubDataIT extends GraphDBTestCase {
     @Test
     public void importMillerSE() throws StudyImporterException {
         StudyImporterForGitHubData importer = new StudyImporterForGitHubData(new ParserFactoryImpl(), nodeFactory);
-        importer.importData("millerse/Bird-Parasite");
+        importer.importData( "millerse/Bird-Parasite");
         List<Study> allStudies = NodeUtil.findAllStudies(getGraphDb());
         assertThat(allStudies.size(), is(1));
         assertThat(taxonIndex.findTaxonByName("Bombycilla cedrorum"), is(notNullValue()));
@@ -119,7 +119,7 @@ public class StudyImporterForGitHubDataIT extends GraphDBTestCase {
     @Test
     public void importMillerSECarribean() throws StudyImporterException {
         StudyImporterForGitHubData importer = new StudyImporterForGitHubData(new ParserFactoryImpl(), nodeFactory);
-        importer.importData("millerse/Caribbean-food-web");
+        importer.importData( "millerse/Caribbean-food-web");
         List<Study> allStudies = NodeUtil.findAllStudies(getGraphDb());
         assertThat(allStudies.size(), is(1));
         assertThat(taxonIndex.findTaxonByName("Scarus coelestinus"), is(notNullValue()));
@@ -128,7 +128,7 @@ public class StudyImporterForGitHubDataIT extends GraphDBTestCase {
     @Test
     public void importJSONLD() throws StudyImporterException {
         StudyImporterForGitHubData importer = new StudyImporterForGitHubData(new ParserFactoryImpl(), nodeFactory);
-        importer.importData("globalbioticinteractions/jsonld-template-dataset");
+        importer.importData( "globalbioticinteractions/jsonld-template-dataset");
         resolveNames();
         List<Study> allStudies = NodeUtil.findAllStudies(getGraphDb());
         assertThat(allStudies.size(), is(1));
@@ -139,7 +139,7 @@ public class StudyImporterForGitHubDataIT extends GraphDBTestCase {
     public void importGoMexSI() throws StudyImporterException {
         StudyImporterForGitHubData importer = new StudyImporterForGitHubData(new ParserFactoryImpl(), nodeFactory);
 
-        importer.importData("gomexsi/interaction-data");
+        importer.importData( "gomexsi/interaction-data");
         List<Study> allStudies = NodeUtil.findAllStudies(getGraphDb());
         for (Study study : allStudies) {
             assertThat(study.getSource(), is(Matchers.notNullValue()));
@@ -149,7 +149,7 @@ public class StudyImporterForGitHubDataIT extends GraphDBTestCase {
     @Test
     public void importNHM() throws StudyImporterException {
         StudyImporterForGitHubData importer = new StudyImporterForGitHubData(new ParserFactoryImpl(), nodeFactory);
-        importer.importData("globalbioticinteractions/natural-history-museum-london-interactions-bank");
+        importer.importData( "globalbioticinteractions/natural-history-museum-london-interactions-bank");
         resolveNames();
         List<Study> allStudies = NodeUtil.findAllStudies(getGraphDb());
         assertThat(taxonIndex.findTaxonByName("Magnifera indica"), is(notNullValue()));
@@ -171,7 +171,7 @@ public class StudyImporterForGitHubDataIT extends GraphDBTestCase {
     public void importREEM() throws StudyImporterException {
         StudyImporterForGitHubData importer = new StudyImporterForGitHubData(new ParserFactoryImpl(), nodeFactory);
 
-        importer.importData("globalbioticinteractions/noaa-reem");
+        importer.importData( "globalbioticinteractions/noaa-reem");
         List<Study> allStudies = NodeUtil.findAllStudies(getGraphDb());
         assertThat(allStudies.size(), is(3));
         int specimenCount = 0;
@@ -193,7 +193,7 @@ public class StudyImporterForGitHubDataIT extends GraphDBTestCase {
         for (String dataset : datasetsUsingHechingerFormat) {
             try {
                 StudyImporterForGitHubData importer = new StudyImporterForGitHubData(new ParserFactoryImpl(), nodeFactory);
-                importer.importData("globalbioticinteractions/" + dataset);
+                importer.importData( ("globalbioticinteractions/" + dataset));
                 List<Study> allStudies = NodeUtil.findAllStudies(getGraphDb());
                 assertThat(allStudies.size(), is(studyCount + 1));
                 studyCount += 1;
