@@ -17,6 +17,9 @@
     <properties>
         <globi.tool.version>0.6-SNAPSHOT</globi.tool.version>
         <globi.taxa.version>1.0-SNAPSHOT</globi.taxa.version>
+        <github.client.id>specified on commandline</github.client.id>
+        <github.client.secret>specified on commandline</github.client.secret>
+        <shapefiles.dir>${project.build.directory}/shapefiles</shapefiles.dir>
         <shapefiles.dir>${project.build.directory}/shapefiles</shapefiles.dir>
         <data.dir>${project.build.directory}/data</data.dir>
         <neo4j.data.dir>${data.dir}/graph.db</neo4j.data.dir>
@@ -51,6 +54,9 @@
                     <executable>java</executable>
                     <arguments>
                         <argument>-Xmx4G</argument>
+                        <argument>-Dgithub.client.id=${github.client.id}</argument>
+                        <argument>-Dgithub.client.secret=${github.client.secret}</argument>
+                        <argument>-Dshapefiles.dir=${shapefiles.dir}</argument>
                         <argument>-Dshapefiles.dir=${shapefiles.dir}</argument>
                         <argument>-Dott.url=file://${shapefiles.dir}/ott/taxonomy.tsv</argument>
                         <argument>
