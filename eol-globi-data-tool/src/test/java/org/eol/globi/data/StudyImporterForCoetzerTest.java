@@ -21,7 +21,7 @@ public class StudyImporterForCoetzerTest extends GraphDBTestCase {
     public void importSome() throws StudyImporterException, IOException {
         StudyImporterForCoetzer importer = new StudyImporterForCoetzer(null, nodeFactory);
         DatasetRemote dataset = new DatasetRemote("some/namespace", URI.create("http://example.com"));
-        JsonNode config = new ObjectMapper().readTree("{\"citation\": \"source citation\", \"resources\": {\"archive\": \"classpath:coetzer/CatalogOfAfrotropicalBees.zip\"}}");
+        JsonNode config = new ObjectMapper().readTree("{\"citation\": \"source citation\", \"resources\": {\"archive\": \"classpath:/org/eol/globi/data/coetzer/CatalogOfAfrotropicalBees.zip\"}}");
         dataset.setConfig(config);
         importer.setDataset(dataset);
         importStudy(importer);

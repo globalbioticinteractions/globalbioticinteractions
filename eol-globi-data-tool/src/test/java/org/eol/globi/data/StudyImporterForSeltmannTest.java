@@ -26,7 +26,7 @@ public class StudyImporterForSeltmannTest extends GraphDBTestCase {
     public void importSome() throws StudyImporterException, IOException {
         StudyImporterForSeltmann importer = new StudyImporterForSeltmann(null, nodeFactory);
         Dataset dataset = new DatasetRemote("some/namespace", URI.create("http://example.com"));
-        JsonNode config = new ObjectMapper().readTree("{\"citation\": \"some citation\", \"resources\": {\"archive\": \"classpath:seltmann/testArchive.zip\"}}");
+        JsonNode config = new ObjectMapper().readTree("{\"citation\": \"some citation\", \"resources\": {\"archive\": \"classpath:/org/eol/globi/data/seltmann/testArchive.zip\"}}");
         dataset.setConfig(config);
         importer.setDataset(dataset);
         importStudy(importer);
