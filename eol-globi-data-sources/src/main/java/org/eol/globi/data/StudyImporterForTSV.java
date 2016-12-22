@@ -53,7 +53,7 @@ public class StudyImporterForTSV extends BaseStudyImporter {
 
     private void importRepository(String namespace, String sourceCitation, String baseUrl) throws IOException, NodeFactoryException, StudyImporterException {
         InteractionListenerNeo4j interactionListenerNeo4j = new InteractionListenerNeo4j(nodeFactory, getGeoNamesService(), getLogger());
-        LabeledCSVParser parser = parserFactory.createParser(baseUrl + "/interactions.tsv", "UTF-8");
+        LabeledCSVParser parser = parserFactory.createParser(getDataset().getResourceURI("/interactions.tsv").toString(), "UTF-8");
         parser.changeDelimiter('\t');
         while (parser.getLine() != null) {
             final Map<String, String> link = new TreeMap<String, String>();
