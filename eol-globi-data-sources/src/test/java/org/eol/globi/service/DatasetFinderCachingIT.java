@@ -1,6 +1,10 @@
 package org.eol.globi.service;
 
+import org.hamcrest.CoreMatchers;
 import org.junit.Test;
+
+import java.io.File;
+import java.io.IOException;
 
 import static org.hamcrest.Matchers.startsWith;
 import static org.hamcrest.core.Is.is;
@@ -19,6 +23,15 @@ public class DatasetFinderCachingIT {
         assertThat(dataset.getResourceURI("globi.json").toString(), startsWith("jar:file:/"));
         assertThat(dataset.getCitation(), is("Jorrit H. Poelen. 2014. Species associations manually extracted from literature."));
 
+    }
+
+    @Test
+    public void cacheDatasetGitHub() throws DatasetFinderException, IOException {
+        Dataset dataset = new DatasetFinderGitHubArchive()
+                .datasetFor("globalbioticinteractions/template-dataset");
+        File archiveCache = DatasetFinderCaching.cache(dataset, "target/cache/dataset");
+        assertThat(archiveCache.exists(), CoreMatchers.is(true));
+        assertThat(archiveCache.toURI().toString(), startsWith("file:/"));
     }
 
     @Test
