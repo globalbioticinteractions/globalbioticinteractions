@@ -38,7 +38,7 @@ public class DatasetFinderCaching implements DatasetFinder {
     }
 
     static Dataset cache(Dataset dataset) throws IOException {
-        File cache = cache(dataset, "cache/datasets");
+        File cache = cache(dataset, "target/cache/datasets");
         return cacheArchive(dataset, cache);
     }
 

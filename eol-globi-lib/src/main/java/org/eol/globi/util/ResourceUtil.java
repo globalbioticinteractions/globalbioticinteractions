@@ -32,7 +32,7 @@ public class ResourceUtil {
 
     public static InputStream asInputStream(final String resource, Class clazz) throws IOException {
         InputStream is = null;
-        if (isHttpURI(URI.create(resource))) {
+        if (isHttpURI(resource)) {
             LOG.info("caching of [" + resource + "] started...");
             is = getCachedRemoteInputStream(resource);
             LOG.info("caching of [" + resource + "] complete.");
@@ -116,9 +116,13 @@ public class ResourceUtil {
 
     }
 
+    static boolean isHttpURI(String descriptor) {
+        return StringUtils.startsWith("http:/", descriptor)
+                || StringUtils.equals("https:/", descriptor);
+    }
+
     static boolean isHttpURI(URI descriptor) {
-        return StringUtils.equals("http", descriptor.getScheme())
-                || StringUtils.equals("https", descriptor.getScheme());
+        return isHttpURI(descriptor.toString());
     }
 
     public static String getContent(URI uri) throws IOException {
