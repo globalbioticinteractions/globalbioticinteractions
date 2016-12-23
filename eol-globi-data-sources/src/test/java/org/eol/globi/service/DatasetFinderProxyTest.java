@@ -61,7 +61,7 @@ public class DatasetFinderProxyTest {
 
         @Override
         public Dataset datasetFor(String namespace) throws DatasetFinderException {
-            return new DatasetRemote(StringUtils.join(findNamespaces(), "|"), URI.create("http://example.com/" + findNamespaces().size()));
+            return new DatasetImpl(StringUtils.join(findNamespaces(), "|"), URI.create("http://example.com/" + findNamespaces().size()));
         }
     }
 }

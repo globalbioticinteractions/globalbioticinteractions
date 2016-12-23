@@ -3,7 +3,7 @@ package org.eol.globi.data;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.domain.Study;
-import org.eol.globi.service.DatasetRemote;
+import org.eol.globi.service.DatasetImpl;
 import org.junit.Test;
 import org.neo4j.graphdb.Relationship;
 
@@ -39,7 +39,7 @@ public class StudyImporterForDunneTest extends GraphDBTestCase {
                 "  }\n" +
                 "}";
         JsonNode jsonNode = new ObjectMapper().readTree(configJson);
-        DatasetRemote dunne2016 = new DatasetRemote("dunne2016", URI.create("http://example.com"));
+        DatasetImpl dunne2016 = new DatasetImpl("dunne2016", URI.create("http://example.com"));
         dunne2016.setConfig(jsonNode);
         importer.setDataset(dunne2016);
 
@@ -75,7 +75,7 @@ public class StudyImporterForDunneTest extends GraphDBTestCase {
                 "  }\n" +
                 "}";
         StudyImporterForDunne importer = new StudyImporterForDunne(new ParserFactoryImpl(), nodeFactory);
-        DatasetRemote dunne2016 = new DatasetRemote("dunne2016", URI.create("http://example.com"));
+        DatasetImpl dunne2016 = new DatasetImpl("dunne2016", URI.create("http://example.com"));
         dunne2016.setConfig(new ObjectMapper().readTree(configJson));
         importer.setDataset(dunne2016);
 

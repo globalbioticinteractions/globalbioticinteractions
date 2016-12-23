@@ -6,7 +6,7 @@ import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.Term;
 import org.eol.globi.service.Dataset;
-import org.eol.globi.service.DatasetRemote;
+import org.eol.globi.service.DatasetImpl;
 import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
 import org.neo4j.graphdb.Relationship;
@@ -25,7 +25,7 @@ public class StudyImporterForSeltmannTest extends GraphDBTestCase {
     @Test
     public void importSome() throws StudyImporterException, IOException {
         StudyImporterForSeltmann importer = new StudyImporterForSeltmann(null, nodeFactory);
-        Dataset dataset = new DatasetRemote("some/namespace", URI.create("http://example.com"));
+        Dataset dataset = new DatasetImpl("some/namespace", URI.create("http://example.com"));
         JsonNode config = new ObjectMapper().readTree("{\"citation\": \"some citation\", \"resources\": {\"archive\": \"classpath:/org/eol/globi/data/seltmann/testArchive.zip\"}}");
         dataset.setConfig(config);
         importer.setDataset(dataset);

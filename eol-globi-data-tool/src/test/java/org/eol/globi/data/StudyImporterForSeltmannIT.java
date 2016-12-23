@@ -3,7 +3,7 @@ package org.eol.globi.data;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.Term;
-import org.eol.globi.service.DatasetRemote;
+import org.eol.globi.service.DatasetImpl;
 import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
 import org.neo4j.graphdb.Relationship;
@@ -39,7 +39,7 @@ public class StudyImporterForSeltmannIT extends GraphDBTestCase {
 
     protected void importArchive(String archiveName) throws StudyImporterException {
         StudyImporterForSeltmann importer = new StudyImporterForSeltmann(null, nodeFactory);
-        importer.setDataset(new DatasetRemote(null, URI.create(ARCHIVE_URI_PREFIX + archiveName)));
+        importer.setDataset(new DatasetImpl(null, URI.create(ARCHIVE_URI_PREFIX + archiveName)));
         importStudy(importer);
 
         List<Study> allStudies = NodeUtil.findAllStudies(getGraphDb());

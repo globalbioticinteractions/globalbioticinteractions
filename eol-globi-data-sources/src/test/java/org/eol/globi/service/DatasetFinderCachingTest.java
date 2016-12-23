@@ -19,7 +19,7 @@ public class DatasetFinderCachingTest {
 
     @Test
     public void cacheDatasetLocal() throws DatasetFinderException, IOException, URISyntaxException {
-        Dataset dataset = new DatasetRemote("some/namespace", URI.create("http://example.com"));
+        Dataset dataset = new DatasetImpl("some/namespace", URI.create("http://example.com"));
         Dataset datasetCached = DatasetFinderCaching.cacheArchive(dataset, new File(getClass().getResource("archive.zip").toURI()));
 
         URI uri = datasetCached.getResourceURI("globi.json");

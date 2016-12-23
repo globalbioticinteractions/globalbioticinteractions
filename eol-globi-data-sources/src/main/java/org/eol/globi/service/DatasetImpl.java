@@ -7,21 +7,21 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 
-public class DatasetRemote implements Dataset {
+public class DatasetImpl implements Dataset {
 
     private String namespace;
     private URI archiveURI;
     private JsonNode config;
     private URI configURI;
 
-    public DatasetRemote(String namespace, URI archiveURI) {
+    public DatasetImpl(String namespace, URI archiveURI) {
         this.namespace = namespace;
         this.archiveURI = archiveURI;
     }
 
     @Override
     public InputStream getResource(String resourceName) throws IOException {
-        return ResourceUtil.asInputStream(getResourceURI(resourceName), DatasetRemote.class);
+        return ResourceUtil.asInputStream(getResourceURI(resourceName), DatasetImpl.class);
     }
 
     @Override

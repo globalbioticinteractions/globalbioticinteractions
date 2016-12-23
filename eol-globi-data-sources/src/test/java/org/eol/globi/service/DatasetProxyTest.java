@@ -49,7 +49,7 @@ public class DatasetProxyTest {
 
     @Test
     public void getLocalJarResource() {
-        DatasetRemote dataset = new DatasetRemote("some/namespace", URI.create("jar:file:/home/homer/dataset.zip!"));
+        DatasetImpl dataset = new DatasetImpl("some/namespace", URI.create("jar:file:/home/homer/dataset.zip!"));
         DatasetProxy datasetProxy = new DatasetProxy(dataset);
         assertThat(datasetProxy.getResourceURI("somefile.json"), is(URI.create("jar:file:/home/homer/dataset.zip!/somefile.json")));
         assertThat(datasetProxy.getResourceURI("http://example.com/somefile.json"), is(URI.create("http://example.com/somefile.json")));
@@ -60,7 +60,7 @@ public class DatasetProxyTest {
     }
 
     public DatasetProxy getTestDataset(JsonNode config, JsonNode configProxy) {
-        DatasetRemote dataset = new DatasetRemote("some/namespace", URI.create("http://example.com"));
+        DatasetImpl dataset = new DatasetImpl("some/namespace", URI.create("http://example.com"));
         dataset.setConfig(config);
 
         DatasetProxy datasetProxy = new DatasetProxy(dataset);

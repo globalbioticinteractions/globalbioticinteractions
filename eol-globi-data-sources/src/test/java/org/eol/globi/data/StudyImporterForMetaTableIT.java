@@ -6,7 +6,7 @@ import org.apache.commons.io.IOUtils;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.service.Dataset;
-import org.eol.globi.service.DatasetRemote;
+import org.eol.globi.service.DatasetImpl;
 import org.eol.globi.util.ResourceUtil;
 import org.junit.Test;
 
@@ -140,10 +140,10 @@ public class StudyImporterForMetaTableIT {
     static public void importAll(InteractionListener interactionListener, StudyImporterForMetaTable.TableParserFactory tableFactory, String baseUrl, String resource) throws IOException, StudyImporterException {
         final InputStream inputStream = ResourceUtil.asInputStream(resource, null);
         final JsonNode config = new ObjectMapper().readTree(inputStream);
-        final Dataset dataset = new DatasetRemote("some/namespace", URI.create("http://example.com"));
+        final Dataset dataset = new DatasetImpl("some/namespace", URI.create("http://example.com"));
         dataset.setConfig(config);
         for (JsonNode table : StudyImporterForMetaTable.collectTables(dataset)) {
-            StudyImporterForMetaTable.importTable(interactionListener, tableFactory, table, new DatasetRemote(null, URI.create(baseUrl)));
+            StudyImporterForMetaTable.importTable(interactionListener, tableFactory, table, new DatasetImpl(null, URI.create(baseUrl)));
         }
 
     }
