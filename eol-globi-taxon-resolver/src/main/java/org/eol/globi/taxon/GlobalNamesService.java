@@ -91,13 +91,19 @@ public class GlobalNamesService implements PropertyEnricher {
                 parseResult(termMatchListener, executeQuery(names, uri));
             } catch (IOException e) {
                 if (names.size() > 1) {
-                    LOG.warn("retrying names query one name at a time: failed to perform batch query for [" +  names.size() + "] names: [" + StringUtils.join(names, "\n") + ']', e);
+                    LOG.warn("retrying names query one name at a time: failed to perform batch query for [" + names.size() + "] names: [" + StringUtils.join(names, "\n") + ']', e);
+                    List<String> namesFailed = new ArrayList<>();
+                    List<String> namesSuccess = new ArrayList<>();
                     for (String name : names) {
                         try {
                             parseResult(termMatchListener, executeQuery(Collections.singletonList(name), uri));
+                            namesSuccess.add(name);
                         } catch (IOException e1) {
-                            throw new PropertyEnricherException("Failed to execute individual name query for [" + name + "]", e1);
+                            namesFailed.add(name);
                         }
+                    }
+                    if (namesFailed.size() > 0) {
+                        throw new PropertyEnricherException("Failed to execute individual name queries for [" + StringUtils.join(namesFailed, "|") + "], the following names succeeded: [" + StringUtils.join(namesSuccess, "|") + "]", e);
                     }
                 }
             }
