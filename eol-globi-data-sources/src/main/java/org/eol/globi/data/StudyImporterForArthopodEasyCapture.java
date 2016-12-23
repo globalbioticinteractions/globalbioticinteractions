@@ -13,6 +13,7 @@ import org.codehaus.jackson.node.ObjectNode;
 import org.eol.globi.domain.Study;
 import org.eol.globi.service.Dataset;
 import org.eol.globi.service.DatasetImpl;
+import org.eol.globi.service.DatasetProxy;
 import org.eol.globi.service.DatasetUtil;
 
 import java.io.IOException;
@@ -93,7 +94,7 @@ public class StudyImporterForArthopodEasyCapture extends BaseStudyImporter {
         referencesNode.put("archive", embeddedArchiveURI.toString());
         config.put("resources", referencesNode);
 
-        DatasetImpl dataset = new DatasetImpl(datasetOrig.getNamespace(), datasetOrig.getArchiveURI());
+        DatasetProxy dataset = new DatasetProxy(datasetOrig);
         dataset.setConfig(config);
         return dataset;
     }
