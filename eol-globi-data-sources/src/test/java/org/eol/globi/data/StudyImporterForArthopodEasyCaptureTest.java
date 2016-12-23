@@ -33,7 +33,7 @@ public class StudyImporterForArthopodEasyCaptureTest {
     public void embeddedDataset() throws IOException {
         Dataset embeddedDataset = StudyImporterForArthopodEasyCapture.embeddedDatasetFor(getDatasetGroup(), "some other citation", URI.create("http://example.com/archive.zip"));
         assertThat(embeddedDataset.getCitation(), is("some other citation"));
-        assertThat(DatasetUtil.getResourceURI(embeddedDataset, "archive"), is("http://example.com/archive.zip"));
+        assertThat(DatasetUtil.getNamedResourceURI(embeddedDataset, "archive"), is("http://example.com/archive.zip"));
     }
 
     private DatasetRemote getDatasetGroup() throws IOException {

@@ -61,9 +61,7 @@ public class DatasetRemote implements Dataset {
 
     @Override
     public String getOrDefault(String key, String defaultValue) {
-        return getConfig() == null
-                ? defaultValue
-                : (getConfig().has(key) ? getConfig().get(key).asText() : defaultValue);
+        return DatasetUtil.getValueOrDefault(getConfig(), key, defaultValue);
     }
 
     @Override

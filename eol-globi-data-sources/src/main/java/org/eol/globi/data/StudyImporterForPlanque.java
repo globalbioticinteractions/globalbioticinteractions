@@ -6,7 +6,6 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.codehaus.jackson.JsonNode;
 import org.eol.globi.domain.LocationNode;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
@@ -154,14 +153,14 @@ public class StudyImporterForPlanque extends BaseStudyImporter {
     }
 
     public String getLinks() {
-        return DatasetUtil.getResourceURI(getDataset(), "links");
+        return DatasetUtil.getNamedResourceURI(getDataset(), "links");
     }
 
     public String getReferences() {
-        return DatasetUtil.getResourceURI(getDataset(), "references");
+        return DatasetUtil.getNamedResourceURI(getDataset(), "references");
     }
 
     public String getReferencesForLinks() {
-        return DatasetUtil.getResourceURI(getDataset(), "referencesForLinks");
+        return DatasetUtil.getNamedResourceURI(getDataset(), "referencesForLinks");
     }
 }

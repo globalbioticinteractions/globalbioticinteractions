@@ -5,7 +5,6 @@ import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.domain.Study;
 import org.eol.globi.service.DatasetUtil;
-import org.eol.globi.util.ResourceUtil;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -21,9 +20,9 @@ public class StudyImporterForGray extends BaseStudyImporter {
     @Override
     public Study importStudy() throws StudyImporterException {
         try {
-            importLinks(DatasetUtil.getResourceStream(getDataset(), "links"), new InteractionListenerNeo4j(nodeFactory, getGeoNamesService(), getLogger()), getFilter());
+            importLinks(DatasetUtil.getNamedResourceStream(getDataset(), "links"), new InteractionListenerNeo4j(nodeFactory, getGeoNamesService(), getLogger()), getFilter());
         } catch (IOException e) {
-            throw new StudyImporterException("failed to find: [" + DatasetUtil.getResourceURI(getDataset(), "links") + "]");
+            throw new StudyImporterException("failed to find: [" + DatasetUtil.getNamedResourceURI(getDataset(), "links") + "]");
         }
         return null;
     }

@@ -51,7 +51,7 @@ public class StudyImporterForCoetzer extends BaseStudyImporter {
 
 
         try {
-            InputStream inputStream = DatasetUtil.getResourceStream(getDataset(), "archive");
+            InputStream inputStream = DatasetUtil.getNamedResourceStream(getDataset(), "archive");
             ZipInputStream zipInputStream = new ZipInputStream(inputStream);
             ZipEntry entry;
             File taxonTempFile = null;
@@ -150,7 +150,7 @@ public class StudyImporterForCoetzer extends BaseStudyImporter {
     }
 
     public String getResourceArchiveURI() {
-        return DatasetUtil.getResourceURI(getDataset(), "archive");
+        return DatasetUtil.getNamedResourceURI(getDataset(), "archive");
     }
 
 }

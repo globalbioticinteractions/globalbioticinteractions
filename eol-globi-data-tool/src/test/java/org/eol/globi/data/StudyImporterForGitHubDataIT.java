@@ -80,6 +80,16 @@ public class StudyImporterForGitHubDataIT extends GraphDBTestCase {
     }
 
     @Test
+    public void importDapstom() throws StudyImporterException {
+        StudyImporterForGitHubData importer = new StudyImporterForGitHubData(new ParserFactoryImpl(), nodeFactory);
+        importer.importData("millerse/Dapstrom-integrated-database-and-portal-for-fish-stomach-records");
+        List<Study> allStudies = NodeUtil.findAllStudies(getGraphDb());
+        assertThat(allStudies.size(), is(1));
+        assertThat(allStudies.get(0).getSource(), containsString("Miller"));
+        assertThat(taxonIndex.findTaxonByName("Garrulus glandarius"), is(notNullValue()));
+    }
+
+    @Test
     public void importSmithsonian() throws StudyImporterException {
         StudyImporterForGitHubData importer = new StudyImporterForGitHubData(new ParserFactoryImpl(), nodeFactory);
         importer.importData( "millerse/Smithsonian-Repository-Interactions");

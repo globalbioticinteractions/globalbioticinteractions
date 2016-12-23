@@ -23,11 +23,11 @@ public abstract class StudyImporterNodesAndLinks extends BaseStudyImporter {
     }
 
     public String getLinkResource() {
-        return DatasetUtil.getResourceURI(getDataset(), "links");
+        return DatasetUtil.getNamedResourceURI(getDataset(), "links");
     }
 
     public String getNodeResource() {
-        return DatasetUtil.getResourceURI(getDataset(), "nodes");
+        return DatasetUtil.getNamedResourceURI(getDataset(), "nodes");
     }
 
     public String getNamespace() {

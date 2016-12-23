@@ -8,7 +8,7 @@ import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.TaxonomyProvider;
 import org.eol.globi.service.Dataset;
-import org.eol.globi.service.DatasetRemote;
+import org.eol.globi.service.DatasetProxy;
 import org.eol.globi.util.CSVUtil;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -60,12 +60,12 @@ public class StudyImporterForMetaTable extends BaseStudyImporter {
     public Study importStudy() throws StudyImporterException {
         try {
             for (JsonNode tableConfig : collectTables(dataset)) {
-                DatasetRemote dataset = new DatasetRemote(getDataset().getNamespace(), getDataset().getArchiveURI());
-                dataset.setConfig(tableConfig);
+                Dataset datasetProxy = new DatasetProxy(dataset);
+                datasetProxy.setConfig(tableConfig);
 
                 InteractionListenerNeo4j interactionListener = new InteractionListenerNeo4j(nodeFactory, getGeoNamesService(), getLogger());
-                final InteractionListener listener = new TableInteractionListenerProxy(dataset, interactionListener);
-                importTable(listener, new TableParserFactoryImpl(), tableConfig, dataset);
+                final InteractionListener listener = new TableInteractionListenerProxy(datasetProxy, interactionListener);
+                importTable(listener, new TableParserFactoryImpl(), tableConfig, datasetProxy);
             }
         } catch (IOException | NodeFactoryException e) {
             throw new StudyImporterException("problem importing from [" + getBaseUrl() + "]", e);

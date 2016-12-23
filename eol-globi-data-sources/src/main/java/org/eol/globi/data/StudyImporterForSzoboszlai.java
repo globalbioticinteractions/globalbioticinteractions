@@ -8,7 +8,6 @@ import com.vividsolutions.jts.geom.Point;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.codehaus.jackson.JsonNode;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.TaxonomyProvider;
 import org.eol.globi.geo.LatLng;
@@ -138,11 +137,11 @@ public class StudyImporterForSzoboszlai extends BaseStudyImporter {
     }
 
     public String getLinkArchiveURL() {
-        return DatasetUtil.getResourceURI(getDataset(), "links");
+        return DatasetUtil.getNamedResourceURI(getDataset(), "links");
     }
 
     public String getShapeArchiveURL() {
-        return DatasetUtil.getResourceURI(getDataset(), "shapes");
+        return DatasetUtil.getNamedResourceURI(getDataset(), "shapes");
     }
 
     protected Map<Integer, LatLng> importShapes() throws StudyImporterException {

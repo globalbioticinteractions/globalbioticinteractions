@@ -8,20 +8,20 @@ import java.io.InputStream;
 
 public final class DatasetUtil {
 
-    public static String getResourceURI(Dataset dataset, String resourceName) {
-        String resourceValue = getResource(dataset, resourceName);
+    public static String getNamedResourceURI(Dataset dataset, String resourceName) {
+        String resourceValue = getNamedResource(dataset, resourceName);
         return resourceValue == null ? null : dataset.getResourceURI(resourceValue).toString();
     }
 
-    public static InputStream getResourceStream(Dataset dataset, String resourceName) throws IOException {
-        String resourceValue = getResource(dataset, resourceName);
+    public static InputStream getNamedResourceStream(Dataset dataset, String resourceName) throws IOException {
+        String resourceValue = getNamedResource(dataset, resourceName);
         if (StringUtils.isBlank(resourceValue)) {
             throw new IOException("no resource found for [" + resourceName + "] in [" + dataset.getNamespace() + "]");
         }
         return dataset.getResource(resourceValue);
     }
 
-    private static String getResource(Dataset dataset, String resourceName) {
+    private static String getNamedResource(Dataset dataset, String resourceName) {
         String resourceValue = null;
         if (dataset != null) {
             JsonNode config = dataset.getConfig();
@@ -33,5 +33,11 @@ public final class DatasetUtil {
             }
         }
         return resourceValue;
+    }
+
+    public static String getValueOrDefault(JsonNode config, String key, String defaultValue) {
+        return config == null
+                ? defaultValue
+                : (config.has(key) ? config.get(key).asText() : defaultValue);
     }
 }

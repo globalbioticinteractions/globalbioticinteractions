@@ -56,7 +56,7 @@ public class StudyImporterForArthopodEasyCapture extends BaseStudyImporter {
     }
 
     static String getRss(Dataset dataset) {
-        return DatasetUtil.getResourceURI(dataset, "rss");
+        return DatasetUtil.getNamedResourceURI(dataset, "rss");
     }
 
     public static List<StudyImporter> getStudyImportersForRSSFeed(Dataset datasetOrig, ParserFactory parserFactory, NodeFactory

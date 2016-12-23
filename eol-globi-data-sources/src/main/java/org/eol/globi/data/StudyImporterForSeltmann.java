@@ -12,7 +12,6 @@ import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.service.DatasetUtil;
 import org.eol.globi.util.CSVUtil;
-import org.eol.globi.util.ResourceUtil;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.mapdb.DB;
@@ -47,7 +46,7 @@ public class StudyImporterForSeltmann extends BaseStudyImporter {
 
     @Override
     public Study importStudy() throws StudyImporterException {
-        final String archiveURL = DatasetUtil.getResourceURI(getDataset(), "archive");
+        final String archiveURL = DatasetUtil.getNamedResourceURI(getDataset(), "archive");
         if (org.apache.commons.lang.StringUtils.isBlank(archiveURL)) {
             throw new StudyImporterException("failed to import [" + getDataset().getNamespace() + "]: no [archiveURL] specified");
         }
@@ -62,7 +61,7 @@ public class StudyImporterForSeltmann extends BaseStudyImporter {
                 .make();
 
         try {
-            InputStream inputStream = DatasetUtil.getResourceStream(getDataset(), "archive");
+            InputStream inputStream = DatasetUtil.getNamedResourceStream(getDataset(), "archive");
             ZipInputStream zipInputStream = new ZipInputStream(inputStream);
             ZipEntry entry;
             File assocTempFile = null;
