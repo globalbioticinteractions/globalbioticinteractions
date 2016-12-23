@@ -37,7 +37,7 @@ public class StudyImporterForArthopodEasyCapture extends BaseStudyImporter {
 
         final String msgPrefix = "importing archive(s) from [" + getRssFeedUrlString() + "]";
         LOG.info(msgPrefix + "...");
-        final List<StudyImporter> studyImporters = getStudyImportersForRSSFeed(getDataset(), parserFactory, nodeFactory, getRssFeedUrlString());
+        final List<StudyImporter> studyImporters = getStudyImportersForRSSFeed(getDataset(), parserFactory, nodeFactory);
         for (StudyImporter importer : studyImporters) {
             if (importer != null) {
                 if (getLogger() != null) {
@@ -51,17 +51,23 @@ public class StudyImporterForArthopodEasyCapture extends BaseStudyImporter {
     }
 
     public String getRssFeedUrlString() {
-        return DatasetUtil.getResourceURI(getDataset(), "rss");
+        Dataset dataset = getDataset();
+        return getRss(dataset);
+    }
+
+    static String getRss(Dataset dataset) {
+        return DatasetUtil.getResourceURI(dataset, "rss");
     }
 
     public static List<StudyImporter> getStudyImportersForRSSFeed(Dataset datasetOrig, ParserFactory parserFactory, NodeFactory
-            nodeFactory, String rssUrlString) throws StudyImporterException {
+            nodeFactory) throws StudyImporterException {
         SyndFeedInput input = new SyndFeedInput();
         SyndFeed feed;
+        String rss = getRss(datasetOrig);
         try {
-            feed = input.build(new XmlReader(new URL(rssUrlString)));
+            feed = input.build(new XmlReader(new URL(rss)));
         } catch (FeedException | IOException e) {
-            throw new StudyImporterException("failed to read rss feed [" + rssUrlString + "]", e);
+            throw new StudyImporterException("failed to read rss feed [" + rss + "]", e);
         }
 
         List<StudyImporter> importers = new ArrayList<StudyImporter>();
@@ -69,7 +75,7 @@ public class StudyImporterForArthopodEasyCapture extends BaseStudyImporter {
         for (Object entry : entries) {
             if (entry instanceof SyndEntry) {
                 SyndEntry syndEntry = (SyndEntry) entry;
-                DatasetRemote dataset = datasetFor(datasetOrig, syndEntry);
+                Dataset dataset = embeddedDatasetFor(datasetOrig, StringUtils.trim(syndEntry.getDescription().getValue()), URI.create(StringUtils.trim(syndEntry.getLink())));
 
                 final StudyImporterForSeltmann studyImporter = new StudyImporterForSeltmann(parserFactory, nodeFactory);
                 studyImporter.setDataset(dataset);
@@ -80,13 +86,12 @@ public class StudyImporterForArthopodEasyCapture extends BaseStudyImporter {
         return importers;
     }
 
-    static DatasetRemote datasetFor(Dataset datasetOrig, SyndEntry syndEntry) {
+    static Dataset embeddedDatasetFor(Dataset datasetOrig, String embeddedCitation, URI embeddedArchiveURI) {
         ObjectNode config = new ObjectMapper().createObjectNode();
-        config.put("citation", StringUtils.trim(syndEntry.getDescription().getValue()));
-        URI archiveURI = URI.create(StringUtils.trim(syndEntry.getLink()));
+        config.put("citation", embeddedCitation);
         ObjectNode referencesNode = new ObjectMapper().createObjectNode();
-        referencesNode.put("archive", archiveURI.toString());
-        config.put("references", referencesNode);
+        referencesNode.put("archive", embeddedArchiveURI.toString());
+        config.put("resources", referencesNode);
 
         DatasetRemote dataset = new DatasetRemote(datasetOrig.getNamespace(), datasetOrig.getArchiveURI());
         dataset.setConfig(config);
