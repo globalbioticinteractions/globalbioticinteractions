@@ -62,10 +62,10 @@ public class ReferenceUtil {
         return sourceCitationLastAccessed(dataset, dataset.getCitation());
     }
 
-    private static String separatorFor(String citationPart) {
+    public static String separatorFor(String citationPart) {
         String separator = " ";
         if (!StringUtils.endsWith(StringUtils.trim(citationPart), ".")) {
-            separator = " . ";
+            separator = ". ";
         }
         return separator;
     }

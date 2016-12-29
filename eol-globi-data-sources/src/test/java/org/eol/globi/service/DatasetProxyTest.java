@@ -26,10 +26,10 @@ public class DatasetProxyTest {
         JsonNode configProxy = new ObjectMapper().readTree("{ \"citation\": \"some citation\" }");
         assertThat(getTestDataset(null, configProxy).getCitation(), Is.is("some citation"));
 
-        JsonNode config = new ObjectMapper().readTree("{ \"citation\": \"some proxied citation\" }");
+        JsonNode config = new ObjectMapper().readTree("{ \"citation\": \"some proxied citation.\" }");
         assertThat(getTestDataset(config, configProxy).getCitation(), Is.is("some citation"));
 
-        assertThat(getTestDataset(config, null).getCitation(), Is.is("some proxied citation"));
+        assertThat(getTestDataset(config, null).getCitation(), Is.is("some proxied citation."));
     }
 
     @Test
