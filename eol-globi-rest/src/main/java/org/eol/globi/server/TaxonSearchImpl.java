@@ -54,26 +54,22 @@ public class TaxonSearchImpl implements TaxonSearch {
         if (dataNode != null && dataNode.size() > 0) {
             props = new HashMap<String, String>();
             JsonNode first = dataNode.get(0);
-            props.put(PropertyAndValueDictionary.NAME, valueOrEmpty(first.get(0).getTextValue()));
-            props.put(PropertyAndValueDictionary.COMMON_NAMES, valueOrEmpty(first.get(1).getTextValue()));
-            props.put(PropertyAndValueDictionary.PATH, valueOrEmpty(first.get(2).getTextValue()));
-            final String externalId = valueOrEmpty(first.get(3).getTextValue());
+            props.put(PropertyAndValueDictionary.NAME, StringUtils.defaultString(first.get(0).getTextValue()));
+            props.put(PropertyAndValueDictionary.COMMON_NAMES, StringUtils.defaultString(first.get(1).getTextValue()));
+            props.put(PropertyAndValueDictionary.PATH, StringUtils.defaultString(first.get(2).getTextValue()));
+            final String externalId = StringUtils.defaultString(first.get(3).getTextValue());
             props.put(PropertyAndValueDictionary.EXTERNAL_ID, externalId);
 
-            final String externalURL = valueOrEmpty(first.get(4).getTextValue());
+            final String externalURL = StringUtils.defaultString(first.get(4).getTextValue());
             if (StringUtils.isNotBlank(externalId) && StringUtils.isBlank(externalURL)) {
-                props.put(PropertyAndValueDictionary.EXTERNAL_URL, valueOrEmpty(ExternalIdUtil.urlForExternalId(externalId)));
+                props.put(PropertyAndValueDictionary.EXTERNAL_URL, StringUtils.defaultString(ExternalIdUtil.urlForExternalId(externalId)));
             } else {
                 props.put(PropertyAndValueDictionary.EXTERNAL_URL, externalURL);
             }
 
-            props.put(PropertyAndValueDictionary.THUMBNAIL_URL, valueOrEmpty(first.get(5).getTextValue()));
+            props.put(PropertyAndValueDictionary.THUMBNAIL_URL, StringUtils.defaultString(first.get(5).getTextValue()));
         }
         return props;
-    }
-
-    protected String valueOrEmpty(String name) {
-        return StringUtils.isBlank(name) ? "" : name;
     }
 
     public String findTaxonProxy(@PathVariable("taxonName") final String taxonName) throws IOException {

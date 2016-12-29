@@ -30,7 +30,7 @@ public class DatasetFinderZenodo implements DatasetFinder {
     @Override
     public Dataset datasetFor(String namespace) throws DatasetFinderException {
         try {
-            return new DatasetImpl(namespace, findZenodoGitHubArchives(getRelationsNodeList(getFeed()), namespace));
+            return new DatasetZenodo(namespace, findZenodoGitHubArchives(getRelationsNodeList(getFeed()), namespace));
         } catch (XPathExpressionException | MalformedURLException e) {
             throw new DatasetFinderException("failed to resolve archive url for [" + namespace + "]", e);
         }

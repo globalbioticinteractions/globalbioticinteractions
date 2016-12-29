@@ -104,10 +104,19 @@ public class GitHubImporterFactoryIT {
     public void defaultTSVImporterCached() throws StudyImporterException, DatasetFinderException  {
         final DatasetFinder datasetFinder = new DatasetFinderCaching(new DatasetFinderGitHubArchive());
         StudyImporter importer = getTemplateImporter(datasetFinder);
-        assertThat(((StudyImporterForTSV)importer).getBaseUrl(), startsWith("https://github.com/globalbioticinteractions/template-dataset/"));
-        String actual = ((StudyImporterForTSV) importer).getDataset().getResourceURI("this/is/relative").toString();
+        StudyImporterForTSV importerTSV = (StudyImporterForTSV) importer;
+        assertThat(importerTSV.getBaseUrl(), startsWith("https://github.com/globalbioticinteractions/template-dataset/"));
+        String actual = importerTSV.getDataset().getResourceURI("this/is/relative").toString();
         assertThat(actual, startsWith("jar:file:"));
         assertThat(actual, endsWith("this/is/relative"));
+    }
+
+    @Test
+    public void defaultTSVImporterCachedZenodo() throws StudyImporterException, DatasetFinderException  {
+        final DatasetFinder datasetFinder = new DatasetFinderCaching(new DatasetFinderZenodo());
+        StudyImporter importer = getTemplateImporter(datasetFinder);
+        StudyImporterForTSV importerTSV = (StudyImporterForTSV) importer;
+        assertThat(importerTSV.getSourceCitation(), containsString("doi.org"));
     }
 
     @Test
