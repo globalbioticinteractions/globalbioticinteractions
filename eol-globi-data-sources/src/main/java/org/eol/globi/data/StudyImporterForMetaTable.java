@@ -251,31 +251,6 @@ public class StudyImporterForMetaTable extends BaseStudyImporter {
     }
 
 
-    protected static String generateSourceCitation(Dataset dataset) throws StudyImporterException {
-        final String fieldName = "dcterms:bibliographicCitation";
-        final JsonNode citation = dataset.getConfig().get(fieldName);
-
-        if (citation == null) {
-            throw new StudyImporterException("missing citation, please define [" + fieldName + "] in [" + dataset.getArchiveURI().toString() + "]");
-        }
-
-        final JsonNode url = dataset.getConfig().get("url");
-        if (url == null) {
-            throw new StudyImporterException("missing resource url, please define [url] in [" + dataset.getArchiveURI().toString() + "]");
-        }
-
-        final String citationPart = citation.asText();
-        return citationPart + separatorFor(citationPart) + ReferenceUtil.createLastAccessedString(url.asText());
-    }
-
-    private static String separatorFor(String citationPart) {
-        String separator = " ";
-        if (!StringUtils.endsWith(StringUtils.trim(citationPart), ".")) {
-            separator = " . ";
-        }
-        return separator;
-    }
-
     public JsonNode getConfig() {
         return getDataset().getConfig();
     }

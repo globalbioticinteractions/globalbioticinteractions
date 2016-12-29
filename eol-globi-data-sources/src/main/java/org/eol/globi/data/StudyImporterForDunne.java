@@ -24,7 +24,7 @@ public class StudyImporterForDunne extends StudyImporterNodesAndLinks {
 
     @Override
     Study createStudy() throws NodeFactoryException {
-        return nodeFactory.getOrCreateStudy2(getNamespace(), getSourceCitation() + " " + ReferenceUtil.createLastAccessedString(getNodeResource() + " and " + getLinkResource()), getSourceDOI());
+        return nodeFactory.getOrCreateStudy2(getNamespace(), ReferenceUtil.sourceCitationLastAccessed(getDataset()), getSourceDOI());
     }
 
     @Override

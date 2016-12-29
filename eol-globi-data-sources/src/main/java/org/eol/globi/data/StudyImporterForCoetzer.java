@@ -123,7 +123,7 @@ public class StudyImporterForCoetzer extends BaseStudyImporter {
                         final String reference = refMap.get(taxonId);
                         final String sourceTaxonName = taxonMap.get(taxonId);
                         if (StringUtils.isNotBlank(reference) && StringUtils.isNotBlank(sourceTaxonName)) {
-                            final Study study = nodeFactory.getOrCreateStudy(getSourceCitation() + reference, getSourceCitation() + ". " + ReferenceUtil.createLastAccessedString(getDataset().getArchiveURI().toString()), reference);
+                            final Study study = nodeFactory.getOrCreateStudy(getSourceCitation() + reference, ReferenceUtil.sourceCitationLastAccessed(getDataset()), reference);
                             final Specimen source = nodeFactory.createSpecimen(study, StringUtils.trim(sourceTaxonName));
                             final Specimen target = nodeFactory.createSpecimen(study, StringUtils.trim(targetTaxonName));
                             final InteractType relType = interactTypeMap.get(interactionString);

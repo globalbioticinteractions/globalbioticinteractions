@@ -18,7 +18,7 @@ public class TableInteractionListenerProxy implements InteractionListener {
 
     @Override
     public void newLink(final Map<String, String> properties) throws StudyImporterException {
-        final String dataSourceCitation = StudyImporterForMetaTable.generateSourceCitation(dataset);
+        final String dataSourceCitation = ReferenceUtil.sourceCitationLastAccessed(dataset);
 
         final HashMap<String, String> enrichedProperties = new HashMap<String, String>() {
             {

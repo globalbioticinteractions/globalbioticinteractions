@@ -4,6 +4,8 @@ import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.codehaus.jackson.JsonNode;
+import org.eol.globi.service.Dataset;
 import org.joda.time.DateTime;
 
 import java.io.IOException;
@@ -49,5 +51,22 @@ public class ReferenceUtil {
 
     public static String createLastAccessedString(String reference) {
         return "Accessed at " + reference + " on " + new DateTime().toString("dd MMM YYYY") + ".";
+    }
+
+    public static String sourceCitationLastAccessed(Dataset dataset, String sourceCitation) {
+        String resourceURI = dataset.getOrDefault("url", dataset.getArchiveURI().toString());
+        return StringUtils.trim(sourceCitation) + separatorFor(sourceCitation) + createLastAccessedString(resourceURI);
+    }
+
+    public static String sourceCitationLastAccessed(Dataset dataset) {
+        return sourceCitationLastAccessed(dataset, dataset.getCitation());
+    }
+
+    private static String separatorFor(String citationPart) {
+        String separator = " ";
+        if (!StringUtils.endsWith(StringUtils.trim(citationPart), ".")) {
+            separator = " . ";
+        }
+        return separator;
     }
 }

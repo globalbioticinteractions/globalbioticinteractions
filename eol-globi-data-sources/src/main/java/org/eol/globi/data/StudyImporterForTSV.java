@@ -60,7 +60,7 @@ public class StudyImporterForTSV extends BaseStudyImporter {
             putNotBlank(link, REFERENCE_DOI, referenceDoi);
             putNotBlank(link, REFERENCE_CITATION, CSVUtil.valueOrNull(parser, REFERENCE_CITATION));
             putNotBlank(link, REFERENCE_URL, CSVUtil.valueOrNull(parser, REFERENCE_URL));
-            putNotBlank(link, STUDY_SOURCE_CITATION, (sourceCitation == null ? "" : sourceCitation + ". ") + ReferenceUtil.createLastAccessedString(getBaseUrl() + "/interactions.tsv"));
+            putNotBlank(link, STUDY_SOURCE_CITATION, ReferenceUtil.sourceCitationLastAccessed(getDataset(), sourceCitation == null ? "" : sourceCitation + ". "));
 
             putNotBlank(link, SOURCE_TAXON_ID, StringUtils.trimToNull(parser.getValueByLabel(SOURCE_TAXON_ID)));
             putNotBlank(link, SOURCE_TAXON_NAME, StringUtils.trim(parser.getValueByLabel(SOURCE_TAXON_NAME)));

@@ -79,13 +79,7 @@ public abstract class BaseStudyImporter extends BaseImporter implements StudyImp
     }
 
     public String getSourceCitation() {
-        return getDataset() == null ? null : compileCitation();
-    }
-
-    public String compileCitation() {
-        List<String> citationParts = Arrays.asList(defaultString(getDataset().getCitation()),
-                defaultString(getDataset().getDOI()));
-        return join(citationParts, ". ");
+        return getDataset() == null ? null : getDataset().getCitation();
     }
 
     public String getSourceDOI() {

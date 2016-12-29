@@ -83,16 +83,7 @@ public class StudyImporterForMetaTableTest {
         assertThat(columnNames.size(), is(40));
     }
 
-    @Test
-    public void generateSourceCitation() throws IOException, StudyImporterException {
-        final InputStream inputStream = ResourceUtil.asInputStream("test-meta-globi.json", StudyImporterForMetaTable.class);
 
-        DatasetImpl dataset = new DatasetImpl(null, URI.create("http://base"));
-        dataset.setConfig(new ObjectMapper().readTree(inputStream));
-
-        String citation = StudyImporterForMetaTable.generateSourceCitation(dataset);
-        assertThat(citation, startsWith("Seltzer, Carrie; Wysocki, William; Palacios, Melissa; Eickhoff, Anna; Pilla, Hannah; Aungst, Jordan; Mercer, Aaron; Quicho, Jamie; Voss, Neil; Xu, Man; J. Ndangalasi, Henry; C. Lovett, Jon; J. Cordeiro, Norbert (2015): Plant-animal interactions from Africa. figshare. https://dx.doi.org/10.6084/m9.figshare.1526128 . Accessed at https://ndownloader.figshare.com/files/2231424"));
-    }
 
     @Test
     public void generateSourceTaxon() throws IOException, StudyImporterException {
