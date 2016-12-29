@@ -33,8 +33,8 @@ public class TableInteractionListenerProxyTest {
         listener.newLink(new HashMap<>());
 
         assertThat(links.size(), is(1));
-        assertThat(links.get(0).get(StudyImporterForTSV.STUDY_SOURCE_CITATION), startsWith("some citation . Accessed at some resource url on "));
-        assertThat(links.get(0).get(StudyImporterForTSV.REFERENCE_CITATION), startsWith("some citation . Accessed at some resource url on "));
+        assertThat(links.get(0).get(StudyImporterForTSV.STUDY_SOURCE_CITATION), startsWith("some citation. Accessed at <some resource url> on "));
+        assertThat(links.get(0).get(StudyImporterForTSV.REFERENCE_CITATION), startsWith("some citation. Accessed at <some resource url> on "));
     }
 
     @Test
@@ -56,7 +56,7 @@ public class TableInteractionListenerProxyTest {
         });
 
         assertThat(links.size(), is(1));
-        assertThat(links.get(0).get(StudyImporterForTSV.STUDY_SOURCE_CITATION), startsWith("some citation . Accessed at some resource url on "));
+        assertThat(links.get(0).get(StudyImporterForTSV.STUDY_SOURCE_CITATION), startsWith("some citation. Accessed at <some resource url> on "));
         assertThat(links.get(0).get(StudyImporterForTSV.REFERENCE_CITATION), startsWith("some ref"));
     }
 

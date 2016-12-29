@@ -50,7 +50,7 @@ public class ReferenceUtil {
     }
 
     public static String createLastAccessedString(String reference) {
-        return "Accessed at " + reference + " on " + new DateTime().toString("dd MMM YYYY") + ".";
+        return "Accessed at <" + StringUtils.trim(reference) + "> on " + new DateTime().toString("dd MMM YYYY") + ".";
     }
 
     public static String sourceCitationLastAccessed(Dataset dataset, String sourceCitation) {
