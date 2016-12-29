@@ -21,7 +21,7 @@ public class DatasetProxyTest {
 
     @Test
     public void getCitation() throws IOException {
-        assertThat(getTestDataset().getCitation(), Is.is("http://example.com"));
+        assertThat(getTestDataset().getCitation(), Is.is("<http://example.com>."));
 
         JsonNode configProxy = new ObjectMapper().readTree("{ \"citation\": \"some citation\" }");
         assertThat(getTestDataset(null, configProxy).getCitation(), Is.is("some citation"));
