@@ -58,9 +58,13 @@ public class DatasetImpl implements Dataset {
     @Override
     public String getCitation() {
         String citation = getOrDefault("dcterms:bibliographicCitation", getOrDefault("citation", getArchiveURI().toString()));
-        List<String> citationParts = Arrays.asList(StringUtils.trim(defaultString(citation)),
-                defaultString(getDOI()));
-        return join(citationParts, ". ");
+
+        if (!StringUtils.contains(citation, "doi.org") && !StringUtils.contains(citation, "doi:")) {
+            List<String> citationParts = Arrays.asList(StringUtils.trim(defaultString(citation)),
+                    defaultString(getDOI()));
+            citation = join(citationParts, ". ");
+        }
+        return citation;
     }
 
     @Override
