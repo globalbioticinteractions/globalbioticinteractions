@@ -84,11 +84,11 @@ public class StudyImporterForBascompte extends BaseStudyImporter {
             IOUtils.closeQuietly(zipInputStream);
 
             if (referencesTempFile == null) {
-                throw new StudyImporterException("failed to findNamespaces expected [references.csv] resource in [" + archiveURL + "]");
+                throw new StudyImporterException("failed to find expected [references.csv] resource in [" + archiveURL + "]");
             }
 
             if (networkTempFileMap.size() == 0) {
-                throw new StudyImporterException("failed to findNamespaces expected network csv files");
+                throw new StudyImporterException("failed to find expected network csv files");
             }
 
             BufferedReader assocReader = FileUtils.getUncompressedBufferedReader(new FileInputStream(referencesTempFile), CharsetConstant.UTF8);

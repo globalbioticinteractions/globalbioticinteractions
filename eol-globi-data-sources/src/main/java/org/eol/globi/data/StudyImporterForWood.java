@@ -22,7 +22,7 @@ public class StudyImporterForWood extends StudyImporterNodesAndLinks {
         try {
             importLinks(ResourceUtil.asInputStream(getLinkResource(), null), new InteractionListenerNeo4j(nodeFactory, getGeoNamesService(), getLogger()), getFilter());
         } catch (IOException e) {
-            throw new StudyImporterException("failed to findNamespaces: [" + getLinkResource() + "]");
+            throw new StudyImporterException("failed to find: [" + getLinkResource() + "]");
         }
         return null;
     }

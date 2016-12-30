@@ -120,7 +120,7 @@ public class StudyImporterForWrast extends BaseStudyImporter {
 
             Double altitude = depth == null ? null : -depth;
             if (depth == null) {
-                getLogger().warn(study, createMsgPrefix(csvParser) + " failed to findNamespaces depth for habitat, region, site and season: [" + createDepthId(seasonName, region, site, habitat) + "], skipping entry");
+                getLogger().warn(study, createMsgPrefix(csvParser) + " failed to find depth for habitat, region, site and season: [" + createDepthId(seasonName, region, site, habitat) + "], skipping entry");
             }
 
             LocationNode sampleLocation;

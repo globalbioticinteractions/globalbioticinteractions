@@ -63,7 +63,7 @@ public class StudyImporterForDunne extends StudyImporterNodesAndLinks {
             }
 
         } catch (IOException e) {
-            throw new StudyImporterException("failed to findNamespaces data file(s)", e);
+            throw new StudyImporterException("failed to find data file(s)", e);
         } catch (NodeFactoryException e) {
             throw new StudyImporterException("failed to create nodes", e);
         }

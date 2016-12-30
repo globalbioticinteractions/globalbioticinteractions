@@ -74,19 +74,19 @@ public class StudyImporterForCoetzer extends BaseStudyImporter {
             IOUtils.closeQuietly(zipInputStream);
 
             if (taxonTempFile == null) {
-                throw new StudyImporterException("failed to findNamespaces expected [taxon.txt] resource");
+                throw new StudyImporterException("failed to find expected [taxon.txt] resource");
             }
 
             if (assocTempFile == null) {
-                throw new StudyImporterException("failed to findNamespaces expected [description.txt] resource");
+                throw new StudyImporterException("failed to find expected [description.txt] resource");
             }
 
             if (referencesTempFile == null) {
-                throw new StudyImporterException("failed to findNamespaces expected [references.txt] resource");
+                throw new StudyImporterException("failed to find expected [references.txt] resource");
             }
 
             if (distributionTempFile == null) {
-                throw new StudyImporterException("failed to findNamespaces expected [distribution.txt] resource");
+                throw new StudyImporterException("failed to find expected [distribution.txt] resource");
             }
 
             BufferedReader assocReader = FileUtils.getUncompressedBufferedReader(new FileInputStream(taxonTempFile), CharsetConstant.UTF8);

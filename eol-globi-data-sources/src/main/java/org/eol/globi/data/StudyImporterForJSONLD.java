@@ -47,7 +47,7 @@ public class StudyImporterForJSONLD extends BaseStudyImporter {
         try {
             query = QueryFactory.create(IOUtils.toString(ResourceUtil.asInputStream("/org/eol/globi/data/find-jsonld-interactions.rq", getClass()), CharsetConstant.UTF8));
         } catch (IOException e) {
-            throw new StudyImporterException("failed to findNamespaces sparql query", e);
+            throw new StudyImporterException("failed to find sparql query", e);
         }
 
         QueryExecution exec = QueryExecutionFactory.create(query, model);

@@ -90,7 +90,7 @@ public class DatasetFinderZenodo implements DatasetFinder {
         try {
             return (NodeList) XmlUtil.applyXPath(is, "//*[local-name()='relatedIdentifier']", XPathConstants.NODESET);
         } catch (SAXException | IOException | ParserConfigurationException | XPathExpressionException e) {
-            throw new DatasetFinderException("failed to findNamespaces published github repos in zenodo", e);
+            throw new DatasetFinderException("failed to find published github repos in zenodo", e);
         }
     }
 
@@ -99,7 +99,7 @@ public class DatasetFinderZenodo implements DatasetFinder {
             String feedString = HttpUtil.getContent("https://zenodo.org/oai2d?verb=ListRecords&set=user-globalbioticinteractions&metadataPrefix=oai_datacite3");
             return IOUtils.toInputStream(feedString);
         } catch (IOException e) {
-            throw new DatasetFinderException("failed to findNamespaces published github repos in zenodo", e);
+            throw new DatasetFinderException("failed to find published github repos in zenodo", e);
         }
     }
 

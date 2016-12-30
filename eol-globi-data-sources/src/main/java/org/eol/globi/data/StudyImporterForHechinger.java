@@ -78,7 +78,7 @@ public class StudyImporterForHechinger extends StudyImporterNodesAndLinks {
                     if (StringUtils.isBlank(name)) {
                         name = nodes.getValueByLabel("WorkingName");
                         if (StringUtils.isBlank(name)) {
-                            getLogger().warn(study, "failed to findNamespaces name for node on line [" + nodes.lastLineNumber() + "]");
+                            getLogger().warn(study, "failed to find name for node on line [" + nodes.lastLineNumber() + "]");
                         }
                     }
 
@@ -123,7 +123,7 @@ public class StudyImporterForHechinger extends StudyImporterNodesAndLinks {
             }
 
         } catch (IOException e) {
-            throw new StudyImporterException("failed to findNamespaces data file(s)", e);
+            throw new StudyImporterException("failed to find data file(s)", e);
         } catch (NodeFactoryException e) {
             throw new StudyImporterException("failed to create nodes", e);
         }

@@ -129,7 +129,7 @@ public class ResourceUtil {
         try {
             return IOUtils.toString(asInputStream(uri, null));
         } catch (IOException ex) {
-            throw new IOException("failed to findNamespaces [" + uri + "]", ex);
+            throw new IOException("failed to find [" + uri + "]", ex);
         }
     }
 
