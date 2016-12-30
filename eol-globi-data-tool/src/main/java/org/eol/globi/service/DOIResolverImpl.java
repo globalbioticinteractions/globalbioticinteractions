@@ -39,7 +39,7 @@ public class DOIResolverImpl implements DOIResolver {
         post.setHeader("Content-Type", "application/json");
         StringEntity entity = new StringEntity(mapper.writeValueAsString(new ArrayList<String>() {{
             add(reference);
-        }}));
+        }}), "UTF-8");
         post.setEntity(entity);
 
         BasicResponseHandler handler = new BasicResponseHandler();
