@@ -12,6 +12,8 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.TreeMap;
 
+import static org.apache.commons.lang3.StringUtils.defaultString;
+
 public class ReferenceUtil {
     private static final Log LOG = LogFactory.getLog(ReferenceUtil.class);
 
@@ -68,5 +70,16 @@ public class ReferenceUtil {
             separator = ". ";
         }
         return separator;
+    }
+
+    public static String citationFor(Dataset dataset) {
+        String citation = dataset.getOrDefault("dcterms:bibliographicCitation", dataset.getOrDefault("citation", "<" + dataset.getArchiveURI().toString() + ">"));
+
+        if (!StringUtils.contains(citation, "doi.org") && !StringUtils.contains(citation, "doi:")) {
+            String citationTrimmed = StringUtils.trim(defaultString(citation));
+            String doiTrimmed = defaultString(dataset.getDOI());
+            citation = citationTrimmed + separatorFor(citationTrimmed) + doiTrimmed;
+        }
+        return StringUtils.trim(citation);
     }
 }

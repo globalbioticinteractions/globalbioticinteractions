@@ -1,6 +1,5 @@
 package org.eol.globi.service;
 
-import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jackson.JsonNode;
 import org.eol.globi.data.ReferenceUtil;
 import org.eol.globi.util.ResourceUtil;
@@ -8,8 +7,6 @@ import org.eol.globi.util.ResourceUtil;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
-import java.util.Arrays;
-import java.util.List;
 
 import static org.apache.commons.lang3.StringUtils.defaultString;
 import static org.apache.commons.lang3.StringUtils.join;
@@ -58,14 +55,7 @@ public class DatasetImpl implements Dataset {
 
     @Override
     public String getCitation() {
-        String citation = getOrDefault("dcterms:bibliographicCitation", getOrDefault("citation", "<" + getArchiveURI().toString() + ">"));
-
-        if (!StringUtils.contains(citation, "doi.org") && !StringUtils.contains(citation, "doi:")) {
-            String citationTrimmed = StringUtils.trim(defaultString(citation));
-            String doiTrimmed = defaultString(getDOI());
-            citation = citationTrimmed + ReferenceUtil.separatorFor(citationTrimmed) + doiTrimmed;
-        }
-        return StringUtils.trim(citation);
+        return ReferenceUtil.citationFor(this);
     }
 
     @Override

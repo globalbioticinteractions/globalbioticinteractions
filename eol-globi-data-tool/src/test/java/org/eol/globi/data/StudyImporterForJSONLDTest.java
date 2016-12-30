@@ -29,7 +29,7 @@ public class StudyImporterForJSONLDTest extends GraphDBTestCase {
         for (Study study : allStudies) {
             assertThat(study.getExternalId(), is("http://arctos.database.museum/guid/CUMV:Bird:25225"));
             assertThat(study.getCitation(), is("http://arctos.database.museum/guid/CUMV:Bird:25225"));
-            assertThat(study.getSource(), startsWith("Christopher Mungall. 2015. Accessed at classpath:globi-jsonld/globi-dataset.jsonld on "));
+            assertThat(study.getSource(), startsWith("Christopher Mungall. 2015. Accessed at <classpath:globi-jsonld/globi-dataset.jsonld> on "));
         }
         assertThat(taxonIndex.findTaxonById("NCBI:8782"), not(is(nullValue())));
     }

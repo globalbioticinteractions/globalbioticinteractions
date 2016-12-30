@@ -85,8 +85,8 @@ public class StudyImporterForGrayTest extends GraphDBTestCase {
     }
 
     protected void assertStaticInfo(Map<String, String> firstLink) {
-        assertThat(firstLink.get(STUDY_SOURCE_CITATION), containsString("Gray C, Ma A, Perkins D, Hudson L, Figueroa D, Woodward G (2015). Database of trophic interactions. Zenodo. http://dx.doi.org/10.5281/zenodo.13751 "));
-        assertThat(firstLink.get(STUDY_SOURCE_CITATION), containsString(" Accessed at"));
+        assertThat(firstLink.get(STUDY_SOURCE_CITATION), containsString("Gray C, Ma A, Perkins D, Hudson L, Figueroa D, Woodward G (2015). Database of trophic interactions. Zenodo. http://dx.doi.org/10.5281/zenodo.13751."));
+        assertThat(firstLink.get(STUDY_SOURCE_CITATION), containsString(" Accessed at <http://example.com>"));
         assertThat(firstLink.get(REFERENCE_CITATION), containsString("Ledger"));
         assertThat(firstLink.get(INTERACTION_TYPE_ID), is("RO:0002470"));
         assertThat(firstLink.get(INTERACTION_TYPE_NAME), is("eats"));

@@ -100,7 +100,7 @@ public class StudyImporterForINaturalistTest extends GraphDBTestCase {
 
         Study anotherStudy = nodeFactory.findStudy("INAT:831");
         assertThat(anotherStudy, is(notNullValue()));
-        assertThat(anotherStudy.getCitation(), containsString("Ken-ichi Ueda. 2008. Argiope eating Orthoptera. iNaturalist.org. Accessed at http://www.inaturalist.org/observations/831 on "));
+        assertThat(anotherStudy.getCitation(), containsString("Ken-ichi Ueda. 2008. Argiope eating Orthoptera. iNaturalist.org. Accessed at <http://www.inaturalist.org/observations/831> on "));
         assertThat(anotherStudy.getExternalId(), is("http://www.inaturalist.org/observations/831"));
 
         anotherStudy = nodeFactory.findStudy("INAT:97380");
