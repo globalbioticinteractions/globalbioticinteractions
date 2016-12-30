@@ -19,15 +19,19 @@ public class InteractionController {
     @RequestMapping(value = "/interaction", method = RequestMethod.GET)
     @ResponseBody
     protected CypherQuery findInteractions(HttpServletRequest request) {
-        Map parameterMap = request.getParameterMap();
+        Map parameterMap = getParamMap(request);
         CypherQuery query = CypherQueryBuilder.buildInteractionQuery(parameterMap, QueryType.forParams(parameterMap));
         return CypherQueryBuilder.createPagedQuery(request, query);
+    }
+
+    private static Map getParamMap(HttpServletRequest request) {
+        return request.getParameterMap();
     }
 
     @RequestMapping(value = "/taxon", method = RequestMethod.GET, headers = "content-type=*/*")
     @ResponseBody
     public CypherQuery findDistinctTaxa(HttpServletRequest request) throws IOException {
-        CypherQuery query = CypherQueryBuilder.createDistinctTaxaInLocationQuery((Map<String, String[]>) request.getParameterMap());
+        CypherQuery query = CypherQueryBuilder.createDistinctTaxaInLocationQuery((Map<String, String[]>) getParamMap(request));
         return CypherQueryBuilder.createPagedQuery(request, query);
     }
 
@@ -47,7 +51,7 @@ public class InteractionController {
                                         @PathVariable("interactionType") String interactionType,
                                         @PathVariable("targetTaxonName") String targetTaxonName)
             throws IOException {
-        Map parameterMap = request == null ? null : request.getParameterMap();
+        Map parameterMap = request == null ? null : getParamMap(request);
         CypherQuery query = createQuery(sourceTaxonName, interactionType, targetTaxonName, parameterMap);
         return CypherQueryBuilder.createPagedQuery(request, query);
     }

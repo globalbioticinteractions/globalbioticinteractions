@@ -1161,4 +1161,16 @@ public class CypherQueryBuilderTest {
         assertThat(locationsQuery.getParams().toString(), is("{accordingTo=.*(\\\\Qsome source\\\\E).*}"));
     }
 
+    @Test
+    public void regexAccordingToINaturalist() {
+        String regex = CypherQueryBuilder.regexForAccordingTo(Arrays.asList("https://inaturalist.org/observations/1234"));
+        assertThat(regex, is("(\\\\Qhttps://inaturalist.org/observations/1234\\\\E|\\\\Qhttp://inaturalist.org/observations/1234\\\\E)"));
+
+        regex = CypherQueryBuilder.regexForAccordingTo(Arrays.asList("https://inaturalist.org/observations/1234", "https://example.com"));
+        assertThat(regex, is("(\\\\Qhttps://inaturalist.org/observations/1234\\\\E|\\\\Qhttps://example.com\\\\E|\\\\Qhttp://inaturalist.org/observations/1234\\\\E)"));
+
+        regex = CypherQueryBuilder.regexForAccordingTo(Arrays.asList("https://example.com"));
+        assertThat(regex, is("(\\\\Qhttps://example.com\\\\E)"));
+    }
+
 }

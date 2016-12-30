@@ -8,10 +8,12 @@ import org.apache.commons.validator.routines.UrlValidator;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Specimen;
+import org.eol.globi.domain.TaxonomyProvider;
 import org.eol.globi.server.util.InteractionTypeExternal;
 import org.eol.globi.server.util.RequestHelper;
 import org.eol.globi.server.util.ResultField;
 import org.eol.globi.util.CypherQuery;
+import org.eol.globi.util.ExternalIdUtil;
 import org.eol.globi.util.InteractUtil;
 
 import javax.servlet.http.HttpServletRequest;
@@ -23,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import static org.eol.globi.server.util.ResultField.INTERACTION_TYPE;
 import static org.eol.globi.server.util.ResultField.SOURCE_TAXON_NAME;
@@ -247,7 +250,7 @@ public class CypherQueryBuilder {
 
         List<String> accordingTo = collectParamValues(parameterMap, ParamName.ACCORDING_TO);
         if (accordingTo != null && accordingTo.size() > 0) {
-            paramMap.put("accordingTo", hasAtLeastOneURL(accordingTo) ? regexStrict(accordingTo) : regexWildcard(accordingTo));
+            paramMap.put("accordingTo", regexForAccordingTo(accordingTo));
         }
 
         List<String> prefix = collectParamValues(parameterMap, ParamName.TAXON_ID_PREFIX);
@@ -258,6 +261,16 @@ public class CypherQueryBuilder {
         }
 
         return paramMap;
+    }
+
+    static String regexForAccordingTo(List<String> accordingTo) {
+        List<String> expandedList = new ArrayList<>(accordingTo);
+        expandedList.addAll(accordingTo.stream()
+                .filter(s -> StringUtils.startsWith(s, "https://www.inaturalist.org/observations/") || StringUtils.startsWith(s, "https://inaturalist.org/observations/"))
+                .map(s -> StringUtils.replace(s, "https:", "http:"))
+                .collect(Collectors.toList()));
+
+        return hasAtLeastOneURL(expandedList) ? regexStrict(expandedList) : regexWildcard(expandedList);
     }
 
     static void appendTaxonSelectors(boolean includeSourceTaxon, boolean includeTargetTaxon, StringBuilder query, boolean exactNameMatchesOnly) {
