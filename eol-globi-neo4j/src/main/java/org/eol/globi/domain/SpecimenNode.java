@@ -64,7 +64,7 @@ public class SpecimenNode extends NodeBacked implements Specimen {
     @Override
     public void caughtIn(Location sampleLocation) {
         if (null != sampleLocation && (sampleLocation instanceof LocationNode)) {
-            createRelationshipTo((LocationNode)sampleLocation, RelTypes.COLLECTED_AT);
+            createRelationshipTo(sampleLocation, RelTypes.COLLECTED_AT);
         }
     }
 
@@ -125,12 +125,6 @@ public class SpecimenNode extends NodeBacked implements Specimen {
                 tx.finish();
             }
         }
-    }
-
-    @Override
-    public String getOriginalTaxonDescription() {
-        Relationship singleRelationship = getUnderlyingNode().getSingleRelationship(NodeUtil.asNeo4j(RelTypes.ORIGINALLY_DESCRIBED_AS), Direction.OUTGOING);
-        return singleRelationship == null ? null : new TaxonNode(singleRelationship.getEndNode()).getName();
     }
 
     @Override

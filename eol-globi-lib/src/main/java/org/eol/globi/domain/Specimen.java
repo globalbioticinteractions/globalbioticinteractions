@@ -28,8 +28,6 @@ public interface Specimen extends WithId {
 
     void interactsWith(Specimen recipientSpecimen, InteractType relType);
 
-    String getOriginalTaxonDescription();
-
     void setOriginalTaxonDescription(Taxon taxon);
 
     void setLifeStage(List<Term> lifeStages);
