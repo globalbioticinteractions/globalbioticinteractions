@@ -2,7 +2,7 @@ package org.eol.globi.data;
 
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.RelTypes;
-import org.eol.globi.domain.SpecimenNode;
+import org.eol.globi.domain.SpecimenConstant;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.TaxonNode;
 import org.junit.Test;
@@ -40,17 +40,17 @@ public class StudyImporterForCookTest extends GraphDBTestCase {
         boolean foundFirstHost = false;
         Iterable<Relationship> specimens = study.getSpecimens();
         for (Relationship collected_rel : specimens) {
-            assertThat(collected_rel.getProperty(SpecimenNode.DATE_IN_UNIX_EPOCH), is(notNullValue()));
+            assertThat(collected_rel.getProperty(SpecimenConstant.DATE_IN_UNIX_EPOCH), is(notNullValue()));
             Node specimen = collected_rel.getEndNode();
-            if (specimen.hasProperty(SpecimenNode.LENGTH_IN_MM)) {
-                Object property = specimen.getProperty(SpecimenNode.LENGTH_IN_MM);
+            if (specimen.hasProperty(SpecimenConstant.LENGTH_IN_MM)) {
+                Object property = specimen.getProperty(SpecimenConstant.LENGTH_IN_MM);
                 if (new Double(156.0).equals(property)) {
                     assertTaxonClassification(specimen, hostTaxon.getUnderlyingNode());
                     foundFirstHost = true;
                     Iterable<Relationship> parasiteRel = specimen.getRelationships(Direction.INCOMING, InteractType.PARASITE_OF);
                     for (Relationship relationship : parasiteRel) {
                         Node parasite = relationship.getStartNode();
-                        assertThat(parasite.hasProperty(SpecimenNode.LENGTH_IN_MM), is(false));
+                        assertThat(parasite.hasProperty(SpecimenConstant.LENGTH_IN_MM), is(false));
                         assertTaxonClassification(parasite, parasiteTaxon.getUnderlyingNode());
                     }
                 }

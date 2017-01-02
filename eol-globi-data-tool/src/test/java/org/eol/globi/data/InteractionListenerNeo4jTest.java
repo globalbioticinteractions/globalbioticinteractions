@@ -2,6 +2,7 @@ package org.eol.globi.data;
 
 import org.eol.globi.domain.LocationNode;
 import org.eol.globi.domain.RelTypes;
+import org.eol.globi.domain.SpecimenConstant;
 import org.eol.globi.domain.SpecimenNode;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.TaxonNode;
@@ -66,7 +67,7 @@ public class InteractionListenerNeo4jTest extends GraphDBTestCase {
                 assertLocation(prey.getSampleLocation());
                 foundPair = true;
 
-                assertThat(specimenRel.getProperty(SpecimenNode.DATE_IN_UNIX_EPOCH), is(notNullValue()));
+                assertThat(specimenRel.getProperty(SpecimenConstant.DATE_IN_UNIX_EPOCH), is(notNullValue()));
             }
 
 

@@ -12,25 +12,6 @@ import java.util.List;
 
 public class SpecimenNode extends NodeBacked implements Specimen {
 
-    public static final String LENGTH_IN_MM = "lengthInMm";
-    public static final String VOLUME_IN_ML = "volumeInMilliLiter";
-    public static final String STOMACH_VOLUME_ML = "stomachVolumeInMilliLiter";
-    public static final String DATE_IN_UNIX_EPOCH = "dateInUnixEpoch";
-    public static final String BASIS_OF_RECORD_LABEL = "basisOfRecordLabel";
-    public static final String BASIS_OF_RECORD_ID = "basisOfRecordId";
-    public static final String LIFE_STAGE_LABEL = "lifeStageLabel";
-    public static final String LIFE_STAGE_ID = "lifeStageId";
-    public static final String PHYSIOLOGICAL_STATE_LABEL = "physiologicalStateLabel";
-    private static final String PHYSIOLOGICAL_STATE_ID = "physiologicalStateId";
-    public static final String BODY_PART_LABEL = "bodyPartLabel";
-    public static final String BODY_PART_ID = "bodyPartId";
-    public static final String TOTAL_COUNT = "totalNumberConsumed";
-    public static final String TOTAL_COUNT_PERCENT = "totalNumberConsumedPercent";
-    public static final String TOTAL_VOLUME_IN_ML = "totalVolumeInMl";
-    public static final String TOTAL_VOLUME_PERCENT = "totalVolumePercent";
-    public static final String FREQUENCY_OF_OCCURRENCE = "frequencyOfOccurrence";
-    public static final String FREQUENCY_OF_OCCURRENCE_PERCENT = "frequencyOfOccurrencePercent";
-
     public SpecimenNode(Node node) {
         super(node);
     }
@@ -39,7 +20,7 @@ public class SpecimenNode extends NodeBacked implements Specimen {
         this(node);
         getUnderlyingNode().setProperty(PropertyAndValueDictionary.TYPE, SpecimenNode.class.getSimpleName());
         if (null != lengthInMm) {
-            getUnderlyingNode().setProperty(LENGTH_IN_MM, lengthInMm);
+            getUnderlyingNode().setProperty(SpecimenConstant.LENGTH_IN_MM, lengthInMm);
         }
     }
 
@@ -104,8 +85,8 @@ public class SpecimenNode extends NodeBacked implements Specimen {
 
     @Override
     public Double getLengthInMm() {
-        return getUnderlyingNode().hasProperty(LENGTH_IN_MM) ?
-                (Double) getUnderlyingNode().getProperty(LENGTH_IN_MM) : null;
+        return getUnderlyingNode().hasProperty(SpecimenConstant.LENGTH_IN_MM) ?
+                (Double) getUnderlyingNode().getProperty(SpecimenConstant.LENGTH_IN_MM) : null;
     }
 
     @Override
@@ -121,18 +102,18 @@ public class SpecimenNode extends NodeBacked implements Specimen {
     @Override
     public void setLengthInMm(Double lengthInMm) {
         if (lengthInMm != null) {
-            setPropertyWithTx(LENGTH_IN_MM, lengthInMm);
+            setPropertyWithTx(SpecimenConstant.LENGTH_IN_MM, lengthInMm);
         }
     }
 
     @Override
     public void setVolumeInMilliLiter(Double volumeInMm3) {
-        setPropertyWithTx(VOLUME_IN_ML, volumeInMm3);
+        setPropertyWithTx(SpecimenConstant.VOLUME_IN_ML, volumeInMm3);
     }
 
     @Override
     public void setStomachVolumeInMilliLiter(Double volumeInMilliLiter) {
-        setPropertyWithTx(STOMACH_VOLUME_ML, volumeInMilliLiter);
+        setPropertyWithTx(SpecimenConstant.STOMACH_VOLUME_ML, volumeInMilliLiter);
     }
 
     @Override
@@ -183,14 +164,14 @@ public class SpecimenNode extends NodeBacked implements Specimen {
 
     @Override
     public void setLifeStage(Term lifeStage) {
-        setPropertyWithTx(SpecimenNode.LIFE_STAGE_LABEL, lifeStage.getName());
-        setPropertyWithTx(SpecimenNode.LIFE_STAGE_ID, lifeStage.getId());
+        setPropertyWithTx(SpecimenConstant.LIFE_STAGE_LABEL, lifeStage.getName());
+        setPropertyWithTx(SpecimenConstant.LIFE_STAGE_ID, lifeStage.getId());
     }
 
     @Override
     public void setPhysiologicalState(Term physiologicalState) {
-        setPropertyWithTx(SpecimenNode.PHYSIOLOGICAL_STATE_LABEL, physiologicalState.getName());
-        setPropertyWithTx(SpecimenNode.PHYSIOLOGICAL_STATE_ID, physiologicalState.getId());
+        setPropertyWithTx(SpecimenConstant.PHYSIOLOGICAL_STATE_LABEL, physiologicalState.getName());
+        setPropertyWithTx(SpecimenConstant.PHYSIOLOGICAL_STATE_ID, physiologicalState.getId());
     }
 
     @Override
@@ -202,45 +183,45 @@ public class SpecimenNode extends NodeBacked implements Specimen {
 
     @Override
     public void setBodyPart(Term bodyPart) {
-        setPropertyWithTx(SpecimenNode.BODY_PART_LABEL, bodyPart.getName());
-        setPropertyWithTx(SpecimenNode.BODY_PART_ID, bodyPart.getId());
+        setPropertyWithTx(SpecimenConstant.BODY_PART_LABEL, bodyPart.getName());
+        setPropertyWithTx(SpecimenConstant.BODY_PART_ID, bodyPart.getId());
     }
 
     @Override
     public void setBasisOfRecord(Term basisOfRecord) {
-        setPropertyWithTx(SpecimenNode.BASIS_OF_RECORD_LABEL, basisOfRecord.getName());
-        setPropertyWithTx(SpecimenNode.BASIS_OF_RECORD_ID, basisOfRecord.getId());
+        setPropertyWithTx(SpecimenConstant.BASIS_OF_RECORD_LABEL, basisOfRecord.getName());
+        setPropertyWithTx(SpecimenConstant.BASIS_OF_RECORD_ID, basisOfRecord.getId());
     }
 
     @Override
     public Term getBasisOfRecord() {
-        return new Term(getPropertyStringValueOrNull(BASIS_OF_RECORD_ID), getPropertyStringValueOrNull(BASIS_OF_RECORD_LABEL));
+        return new Term(getPropertyStringValueOrNull(SpecimenConstant.BASIS_OF_RECORD_ID), getPropertyStringValueOrNull(SpecimenConstant.BASIS_OF_RECORD_LABEL));
     }
 
     @Override
     public void setFrequencyOfOccurrence(Double frequencyOfOccurrence) {
-        setPropertyWithTx(SpecimenNode.FREQUENCY_OF_OCCURRENCE, frequencyOfOccurrence);
+        setPropertyWithTx(SpecimenConstant.FREQUENCY_OF_OCCURRENCE, frequencyOfOccurrence);
     }
 
     @Override
     public void setTotalCount(Integer totalCount) {
-        setPropertyWithTx(SpecimenNode.TOTAL_COUNT, totalCount);
+        setPropertyWithTx(SpecimenConstant.TOTAL_COUNT, totalCount);
     }
 
 
     @Override
     public void setTotalVolumeInMl(Double totalVolumeInMl) {
-        setPropertyWithTx(SpecimenNode.TOTAL_VOLUME_IN_ML, totalVolumeInMl);
+        setPropertyWithTx(SpecimenConstant.TOTAL_VOLUME_IN_ML, totalVolumeInMl);
     }
 
     @Override
     public Term getLifeStage() {
-        return new Term(getPropertyStringValueOrNull(LIFE_STAGE_ID), getPropertyStringValueOrNull(LIFE_STAGE_LABEL));
+        return new Term(getPropertyStringValueOrNull(SpecimenConstant.LIFE_STAGE_ID), getPropertyStringValueOrNull(SpecimenConstant.LIFE_STAGE_LABEL));
     }
 
     @Override
     public Term getBodyPart() {
-        return new Term(getPropertyStringValueOrNull(BODY_PART_ID), getPropertyStringValueOrNull(BODY_PART_LABEL));
+        return new Term(getPropertyStringValueOrNull(SpecimenConstant.BODY_PART_ID), getPropertyStringValueOrNull(SpecimenConstant.BODY_PART_LABEL));
     }
 
 }

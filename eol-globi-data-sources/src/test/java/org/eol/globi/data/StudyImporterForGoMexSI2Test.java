@@ -4,7 +4,7 @@ import com.Ostermiller.util.CSVParser;
 import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.io.IOUtils;
 import org.eol.globi.domain.Location;
-import org.eol.globi.domain.SpecimenNode;
+import org.eol.globi.domain.SpecimenConstant;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -72,12 +72,12 @@ public class StudyImporterForGoMexSI2Test {
         assertThat(parsedProperties.get("GOMEXSI:FREQ_OCC"), is("0.2"));
         assertThat(parsedProperties.get("GOMEXSI:PCT_FREQ_OCC"), is("0.1"));
 
-        assertThat(parsedProperties.get(SpecimenNode.TOTAL_COUNT), is("0.6"));
-        assertThat(parsedProperties.get(SpecimenNode.TOTAL_COUNT_PERCENT), is("0.5"));
-        assertThat(parsedProperties.get(SpecimenNode.TOTAL_VOLUME_IN_ML), is("0.4"));
-        assertThat(parsedProperties.get(SpecimenNode.TOTAL_VOLUME_PERCENT), is("0.3"));
-        assertThat(parsedProperties.get(SpecimenNode.FREQUENCY_OF_OCCURRENCE), is("0.2"));
-        assertThat(parsedProperties.get(SpecimenNode.FREQUENCY_OF_OCCURRENCE_PERCENT), is("0.1"));
+        assertThat(parsedProperties.get(SpecimenConstant.TOTAL_COUNT), is("0.6"));
+        assertThat(parsedProperties.get(SpecimenConstant.TOTAL_COUNT_PERCENT), is("0.5"));
+        assertThat(parsedProperties.get(SpecimenConstant.TOTAL_VOLUME_IN_ML), is("0.4"));
+        assertThat(parsedProperties.get(SpecimenConstant.TOTAL_VOLUME_PERCENT), is("0.3"));
+        assertThat(parsedProperties.get(SpecimenConstant.FREQUENCY_OF_OCCURRENCE), is("0.2"));
+        assertThat(parsedProperties.get(SpecimenConstant.FREQUENCY_OF_OCCURRENCE_PERCENT), is("0.1"));
     }
 
     @Test

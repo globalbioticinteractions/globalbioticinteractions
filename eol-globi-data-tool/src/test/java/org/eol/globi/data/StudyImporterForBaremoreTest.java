@@ -3,7 +3,7 @@ package org.eol.globi.data;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.LocationNode;
 import org.eol.globi.domain.RelTypes;
-import org.eol.globi.domain.SpecimenNode;
+import org.eol.globi.domain.SpecimenConstant;
 import org.eol.globi.domain.Study;
 import org.hamcrest.core.Is;
 import org.junit.Test;
@@ -57,13 +57,13 @@ public class StudyImporterForBaremoreTest extends GraphDBTestCase {
     private int validateSpecimen(Iterable<Relationship> collectedRels) {
         int totalRels = 0;
         for (Relationship rel : collectedRels) {
-            assertTrue(rel.hasProperty(SpecimenNode.DATE_IN_UNIX_EPOCH));
+            assertTrue(rel.hasProperty(SpecimenConstant.DATE_IN_UNIX_EPOCH));
             Node specimen = rel.getEndNode();
             assertNotNull(specimen);
             Iterable<Relationship> rels = specimen.getRelationships(Direction.OUTGOING, InteractType.ATE);
             for (Relationship relationship : rels) {
-                assertTrue(specimen.hasProperty(SpecimenNode.LENGTH_IN_MM));
-                assertTrue(specimen.hasProperty(SpecimenNode.LIFE_STAGE_LABEL));
+                assertTrue(specimen.hasProperty(SpecimenConstant.LENGTH_IN_MM));
+                assertTrue(specimen.hasProperty(SpecimenConstant.LIFE_STAGE_LABEL));
             }
             Relationship collectedAtRelationship = specimen.getSingleRelationship(RelTypes.COLLECTED_AT, Direction.OUTGOING);
             assertNotNull(collectedAtRelationship);

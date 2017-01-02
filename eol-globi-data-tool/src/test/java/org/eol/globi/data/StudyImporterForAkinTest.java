@@ -4,6 +4,7 @@ import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.LocationNode;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Specimen;
+import org.eol.globi.domain.SpecimenConstant;
 import org.eol.globi.domain.SpecimenNode;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.TaxonNode;
@@ -77,11 +78,11 @@ public class StudyImporterForAkinTest extends GraphDBTestCase {
 
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
         Date expectedDate = formatter.parse("1998-03-07");
-        assertThat((Long)rel.getProperty(SpecimenNode.DATE_IN_UNIX_EPOCH), is(expectedDate.getTime()));
+        assertThat((Long)rel.getProperty(SpecimenConstant.DATE_IN_UNIX_EPOCH), is(expectedDate.getTime()));
 
         Node specimenNode = rel.getEndNode();
-        assertThat((Double) specimenNode.getProperty(SpecimenNode.LENGTH_IN_MM), is(226.0));
-        assertThat((Double) specimenNode.getProperty(SpecimenNode.STOMACH_VOLUME_ML), is(3.0));
+        assertThat((Double) specimenNode.getProperty(SpecimenConstant.LENGTH_IN_MM), is(226.0));
+        assertThat((Double) specimenNode.getProperty(SpecimenConstant.STOMACH_VOLUME_ML), is(3.0));
 
         Specimen specimen = new SpecimenNode(specimenNode);
         assertThat(specimen.getSampleLocation().getAltitude(), is(-0.7));
@@ -96,32 +97,32 @@ public class StudyImporterForAkinTest extends GraphDBTestCase {
             String name = (String) taxonNode.getProperty("name");
             HashMap<String, Object> propertyMap = new HashMap<String, Object>();
             propertyMap.put("name", name);
-            propertyMap.put(SpecimenNode.VOLUME_IN_ML, preyNode.getProperty(SpecimenNode.VOLUME_IN_ML));
+            propertyMap.put(SpecimenConstant.VOLUME_IN_ML, preyNode.getProperty(SpecimenConstant.VOLUME_IN_ML));
             preys.put(name, propertyMap);
         }
         Map<String, Object> sand = preys.get("Sand");
         assertThat(sand, is(notNullValue()));
         assertThat((String) sand.get("name"), is("Sand"));
-        assertThat((Double) sand.get(SpecimenNode.VOLUME_IN_ML), is(0.15d));
+        assertThat((Double) sand.get(SpecimenConstant.VOLUME_IN_ML), is(0.15d));
         Map<String, Object> chironomidae = preys.get("Chironomidae larvae");
         assertThat(chironomidae, is(notNullValue()));
         assertThat((String) chironomidae.get("name"), is("Chironomidae larvae"));
-        assertThat((Double) chironomidae.get(SpecimenNode.VOLUME_IN_ML), is(0.6d));
+        assertThat((Double) chironomidae.get(SpecimenConstant.VOLUME_IN_ML), is(0.6d));
 
         Map<String, Object> amphipoda = preys.get("Amphipoda(Gammarus spp.)");
         assertThat(amphipoda, is(notNullValue()));
         assertThat((String) amphipoda.get("name"), is("Amphipoda(Gammarus spp.)"));
-        assertThat((Double) amphipoda.get(SpecimenNode.VOLUME_IN_ML), is(0.45d));
+        assertThat((Double) amphipoda.get(SpecimenConstant.VOLUME_IN_ML), is(0.45d));
 
         Map<String, Object> insecta = preys.get("Unidentified insects");
         assertThat(insecta, is(notNullValue()));
         assertThat((String) insecta.get("name"), is("Unidentified insects"));
-        assertThat((Double) insecta.get(SpecimenNode.VOLUME_IN_ML), is(1.35d));
+        assertThat((Double) insecta.get(SpecimenConstant.VOLUME_IN_ML), is(1.35d));
 
         Map<String, Object> mollusca = preys.get("Mollusks (Oyster)");
         assertThat(mollusca, is(notNullValue()));
         assertThat((String) mollusca.get("name"), is("Mollusks (Oyster)"));
-        assertThat((Double) mollusca.get(SpecimenNode.VOLUME_IN_ML), is(0.45d));
+        assertThat((Double) mollusca.get(SpecimenConstant.VOLUME_IN_ML), is(0.45d));
 
         Node locationNode = specimenNode.getSingleRelationship(RelTypes.COLLECTED_AT, Direction.OUTGOING).getEndNode();
         assertThat((Double) locationNode.getProperty(LocationNode.LATITUDE), is(28.645202d));

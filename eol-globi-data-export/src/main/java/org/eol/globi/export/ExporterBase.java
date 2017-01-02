@@ -2,9 +2,8 @@ package org.eol.globi.export;
 
 import org.apache.commons.lang.StringUtils;
 import org.eol.globi.domain.NodeBacked;
-import org.eol.globi.domain.SpecimenNode;
+import org.eol.globi.domain.SpecimenConstant;
 import org.eol.globi.domain.Study;
-import org.eol.globi.domain.StudyNode;
 import org.neo4j.graphdb.PropertyContainer;
 import org.neo4j.graphdb.Relationship;
 
@@ -103,8 +102,8 @@ public abstract class ExporterBase extends DarwinCoreExporter {
 
     protected void addCollectionDate(Map<String, String> writer, Relationship collectedRelationship, String datePropertyName) throws IOException {
         Calendar instance;
-        if (collectedRelationship.hasProperty(SpecimenNode.DATE_IN_UNIX_EPOCH)) {
-            Long epoch = (Long) collectedRelationship.getProperty(SpecimenNode.DATE_IN_UNIX_EPOCH);
+        if (collectedRelationship.hasProperty(SpecimenConstant.DATE_IN_UNIX_EPOCH)) {
+            Long epoch = (Long) collectedRelationship.getProperty(SpecimenConstant.DATE_IN_UNIX_EPOCH);
             Date date = new Date(epoch);
             instance = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
             instance.setTime(date);

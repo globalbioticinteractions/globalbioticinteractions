@@ -13,6 +13,7 @@ import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.SeasonNode;
 import org.eol.globi.domain.Specimen;
+import org.eol.globi.domain.SpecimenConstant;
 import org.eol.globi.domain.SpecimenNode;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyNode;
@@ -372,7 +373,7 @@ public class NodeFactoryImpl implements NodeFactory {
             Relationship rel = getCollectedRel(specimen);
             Transaction tx = rel.getGraphDatabase().beginTx();
             try {
-                rel.setProperty(SpecimenNode.DATE_IN_UNIX_EPOCH, date.getTime());
+                rel.setProperty(SpecimenConstant.DATE_IN_UNIX_EPOCH, date.getTime());
                 tx.success();
             } finally {
                 tx.finish();
@@ -392,8 +393,8 @@ public class NodeFactoryImpl implements NodeFactory {
     public Date getUnixEpochProperty(Specimen specimen) throws NodeFactoryException {
         Date date = null;
         Relationship rel = getCollectedRel(specimen);
-        if (rel.hasProperty(SpecimenNode.DATE_IN_UNIX_EPOCH)) {
-            Long unixEpoch = (Long) rel.getProperty(SpecimenNode.DATE_IN_UNIX_EPOCH);
+        if (rel.hasProperty(SpecimenConstant.DATE_IN_UNIX_EPOCH)) {
+            Long unixEpoch = (Long) rel.getProperty(SpecimenConstant.DATE_IN_UNIX_EPOCH);
             date = new Date(unixEpoch);
         }
 

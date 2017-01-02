@@ -5,7 +5,7 @@ import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.LocationNode;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.RelTypes;
-import org.eol.globi.domain.SpecimenNode;
+import org.eol.globi.domain.SpecimenConstant;
 import org.eol.globi.domain.Study;
 import org.hamcrest.core.Is;
 import org.junit.Test;
@@ -123,7 +123,7 @@ public class StudyImporterForSimonsTest extends GraphDBTestCase {
         String season = (String) endNode.getProperty("title");
         assertEquals(seasonName, season);
 
-        assertEquals(length, firstSpecimen.getProperty(SpecimenNode.LENGTH_IN_MM));
+        assertEquals(length, firstSpecimen.getProperty(SpecimenConstant.LENGTH_IN_MM));
     }
 
     private void assertPreySpecimen(Node firstSpecimen, double longitude, double lat, double alt) {

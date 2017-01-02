@@ -5,6 +5,7 @@ import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.LocationNode;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.RelTypes;
+import org.eol.globi.domain.SpecimenConstant;
 import org.eol.globi.domain.SpecimenNode;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.TaxonNode;
@@ -112,9 +113,9 @@ public class StudyImporterForBlewettTest extends GraphDBTestCase {
         assertThat(StudyImporterForBlewett.dateToString(unixEpochProperty), is("01-Mar-00 10:55:00 Central Standard Time"));
 
         Node predatorNode = collectedRel.getEndNode();
-        assertThat((String) predatorNode.getProperty(SpecimenNode.LIFE_STAGE_LABEL), is("post-juvenile adult stage"));
-        assertThat((String) predatorNode.getProperty(SpecimenNode.LIFE_STAGE_ID), is("UBERON:0000113"));
-        assertThat((Double) predatorNode.getProperty(SpecimenNode.LENGTH_IN_MM), is(549.0));
+        assertThat((String) predatorNode.getProperty(SpecimenConstant.LIFE_STAGE_LABEL), is("post-juvenile adult stage"));
+        assertThat((String) predatorNode.getProperty(SpecimenConstant.LIFE_STAGE_ID), is("UBERON:0000113"));
+        assertThat((Double) predatorNode.getProperty(SpecimenConstant.LENGTH_IN_MM), is(549.0));
 
         Node predatorTaxonNode = predatorNode.getRelationships(RelTypes.CLASSIFIED_AS, Direction.OUTGOING).iterator().next().getEndNode();
         assertThat((String) predatorTaxonNode.getProperty(PropertyAndValueDictionary.NAME), is("Centropomus undecimalis"));
@@ -132,7 +133,7 @@ public class StudyImporterForBlewettTest extends GraphDBTestCase {
         i.next();
         collectedRel = i.next();
         predatorNode = collectedRel.getEndNode();
-        assertThat((Double) predatorNode.getProperty(SpecimenNode.LENGTH_IN_MM), is(548.0));
+        assertThat((Double) predatorNode.getProperty(SpecimenConstant.LENGTH_IN_MM), is(548.0));
 
         ate = predatorNode.getRelationships(InteractType.ATE, Direction.OUTGOING);
         assertThat(ate.iterator().hasNext(), is(false));

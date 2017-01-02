@@ -6,9 +6,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.LocationImpl;
-import org.eol.globi.domain.LocationNode;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Specimen;
+import org.eol.globi.domain.SpecimenConstant;
 import org.eol.globi.domain.SpecimenNode;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyNode;
@@ -320,13 +320,13 @@ public class StudyImporterForGoMexSI2 extends BaseStudyImporter {
 
     private SpecimenNode createSpecimen(Study study, Map<String, String> properties) throws StudyImporterException {
         SpecimenNode specimen = nodeFactory.createSpecimen(study, properties.get(PropertyAndValueDictionary.NAME));
-        specimen.setLengthInMm(doubleValueOrNull(properties, SpecimenNode.LENGTH_IN_MM));
-        specimen.setFrequencyOfOccurrence(doubleValueOrNull(properties, SpecimenNode.FREQUENCY_OF_OCCURRENCE));
-        setSpecimenProperty(specimen, SpecimenNode.FREQUENCY_OF_OCCURRENCE_PERCENT, properties);
-        specimen.setTotalCount(integerValueOrNull(properties, SpecimenNode.TOTAL_COUNT));
-        setSpecimenProperty(specimen, SpecimenNode.TOTAL_COUNT_PERCENT, properties);
-        specimen.setTotalVolumeInMl(doubleValueOrNull(properties, SpecimenNode.TOTAL_VOLUME_IN_ML));
-        setSpecimenProperty(specimen, SpecimenNode.TOTAL_VOLUME_PERCENT, properties);
+        specimen.setLengthInMm(doubleValueOrNull(properties, SpecimenConstant.LENGTH_IN_MM));
+        specimen.setFrequencyOfOccurrence(doubleValueOrNull(properties, SpecimenConstant.FREQUENCY_OF_OCCURRENCE));
+        setSpecimenProperty(specimen, SpecimenConstant.FREQUENCY_OF_OCCURRENCE_PERCENT, properties);
+        specimen.setTotalCount(integerValueOrNull(properties, SpecimenConstant.TOTAL_COUNT));
+        setSpecimenProperty(specimen, SpecimenConstant.TOTAL_COUNT_PERCENT, properties);
+        specimen.setTotalVolumeInMl(doubleValueOrNull(properties, SpecimenConstant.TOTAL_VOLUME_IN_ML));
+        setSpecimenProperty(specimen, SpecimenConstant.TOTAL_VOLUME_PERCENT, properties);
         addLifeStage(properties, specimen);
         addPhysiologicalState(properties, specimen);
         addBodyPart(properties, specimen);
@@ -354,7 +354,7 @@ public class StudyImporterForGoMexSI2 extends BaseStudyImporter {
 
     private void addLifeStage(Map<String, String> properties, Specimen specimen) throws StudyImporterException {
         try {
-            String lifeStageName = properties.get(SpecimenNode.LIFE_STAGE_LABEL);
+            String lifeStageName = properties.get(SpecimenConstant.LIFE_STAGE_LABEL);
             Term term = nodeFactory.getOrCreateLifeStage(GOMEXSI_NAMESPACE + lifeStageName, lifeStageName);
             specimen.setLifeStage(term);
         } catch (NodeFactoryException e) {
@@ -364,7 +364,7 @@ public class StudyImporterForGoMexSI2 extends BaseStudyImporter {
 
     private void addPhysiologicalState(Map<String, String> properties, Specimen specimen) throws StudyImporterException {
         try {
-            String name = properties.get(SpecimenNode.PHYSIOLOGICAL_STATE_LABEL);
+            String name = properties.get(SpecimenConstant.PHYSIOLOGICAL_STATE_LABEL);
             Term term = nodeFactory.getOrCreatePhysiologicalState(GOMEXSI_NAMESPACE + name, name);
             specimen.setPhysiologicalState(term);
         } catch (NodeFactoryException e) {
@@ -374,7 +374,7 @@ public class StudyImporterForGoMexSI2 extends BaseStudyImporter {
 
     private void addBodyPart(Map<String, String> properties, Specimen specimen) throws StudyImporterException {
         try {
-            String name = properties.get(SpecimenNode.BODY_PART_LABEL);
+            String name = properties.get(SpecimenConstant.BODY_PART_LABEL);
             Term term = nodeFactory.getOrCreateBodyPart(GOMEXSI_NAMESPACE + name, name);
             specimen.setBodyPart(term);
         } catch (NodeFactoryException e) {
@@ -406,16 +406,16 @@ public class StudyImporterForGoMexSI2 extends BaseStudyImporter {
             addOptionalProperty(parser, "TOT_WO_FD", STOMACH_COUNT_WITHOUT_FOOD, properties);
             addOptionalProperty(parser, "TOT_W_FD", STOMACH_COUNT_WITH_FOOD, properties);
             addOptionalProperty(parser, "TOT_PRED_STOM_EXAM", STOMACH_COUNT_TOTAL, properties);
-            addOptionalProperty(parser, columnNamePrefix + "MN_LEN", SpecimenNode.LENGTH_IN_MM, properties);
-            addOptionalProperty(parser, columnNamePrefix + "LIFE_HIST_STAGE", SpecimenNode.LIFE_STAGE_LABEL, properties);
-            addOptionalProperty(parser, "PHYSIOLOG_STATE", SpecimenNode.PHYSIOLOGICAL_STATE_LABEL, properties);
-            addOptionalProperty(parser, columnNamePrefix + "PARTS", SpecimenNode.BODY_PART_LABEL, properties);
-            addOptionalProperty(parser, "N_CONS", SpecimenNode.TOTAL_COUNT, properties);
-            addOptionalProperty(parser, "PCT_N_CONS", SpecimenNode.TOTAL_COUNT_PERCENT, properties);
-            addOptionalProperty(parser, "VOL_CONS", SpecimenNode.TOTAL_VOLUME_IN_ML, properties);
-            addOptionalProperty(parser, "PCT_VOL_CONS", SpecimenNode.TOTAL_VOLUME_PERCENT, properties);
-            addOptionalProperty(parser, "FREQ_OCC", SpecimenNode.FREQUENCY_OF_OCCURRENCE, properties);
-            addOptionalProperty(parser, "PCT_FREQ_OCC", SpecimenNode.FREQUENCY_OF_OCCURRENCE_PERCENT, properties);
+            addOptionalProperty(parser, columnNamePrefix + "MN_LEN", SpecimenConstant.LENGTH_IN_MM, properties);
+            addOptionalProperty(parser, columnNamePrefix + "LIFE_HIST_STAGE", SpecimenConstant.LIFE_STAGE_LABEL, properties);
+            addOptionalProperty(parser, "PHYSIOLOG_STATE", SpecimenConstant.PHYSIOLOGICAL_STATE_LABEL, properties);
+            addOptionalProperty(parser, columnNamePrefix + "PARTS", SpecimenConstant.BODY_PART_LABEL, properties);
+            addOptionalProperty(parser, "N_CONS", SpecimenConstant.TOTAL_COUNT, properties);
+            addOptionalProperty(parser, "PCT_N_CONS", SpecimenConstant.TOTAL_COUNT_PERCENT, properties);
+            addOptionalProperty(parser, "VOL_CONS", SpecimenConstant.TOTAL_VOLUME_IN_ML, properties);
+            addOptionalProperty(parser, "PCT_VOL_CONS", SpecimenConstant.TOTAL_VOLUME_PERCENT, properties);
+            addOptionalProperty(parser, "FREQ_OCC", SpecimenConstant.FREQUENCY_OF_OCCURRENCE, properties);
+            addOptionalProperty(parser, "PCT_FREQ_OCC", SpecimenConstant.FREQUENCY_OF_OCCURRENCE_PERCENT, properties);
             properties.put(PropertyAndValueDictionary.NAME, getMandatoryValue(datafile, parser, columnNamePrefix + "DATABASE_NAME"));
 
             String refId = getMandatoryValue(datafile, parser, "DATA_ID");

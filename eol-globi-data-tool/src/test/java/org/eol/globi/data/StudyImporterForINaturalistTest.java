@@ -4,6 +4,7 @@ import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.RelTypes;
+import org.eol.globi.domain.SpecimenConstant;
 import org.eol.globi.domain.SpecimenNode;
 import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.Taxon;
@@ -131,7 +132,7 @@ public class StudyImporterForINaturalistTest extends GraphDBTestCase {
             assertThat((Double) locationRel.getEndNode().getProperty("longitude"), is(-72.542556));
 
             Relationship collectedRel = sourceSpecimen.getSingleRelationship(RelTypes.COLLECTED, Direction.INCOMING);
-            assertThat((Long) collectedRel.getProperty(SpecimenNode.DATE_IN_UNIX_EPOCH), is(any(Long.class)));
+            assertThat((Long) collectedRel.getProperty(SpecimenConstant.DATE_IN_UNIX_EPOCH), is(any(Long.class)));
 
         }
     }

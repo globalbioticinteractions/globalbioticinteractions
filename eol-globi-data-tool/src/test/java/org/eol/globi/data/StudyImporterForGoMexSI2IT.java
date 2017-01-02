@@ -10,6 +10,7 @@ import org.eol.globi.domain.LocationImpl;
 import org.eol.globi.domain.LocationNode;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Specimen;
+import org.eol.globi.domain.SpecimenConstant;
 import org.eol.globi.domain.SpecimenNode;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyNode;
@@ -173,13 +174,13 @@ public class StudyImporterForGoMexSI2IT extends GraphDBTestCase {
             Iterable<Relationship> classifiedAs = taxonNode.getRelationships(Direction.INCOMING, RelTypes.CLASSIFIED_AS);
             for (Relationship classifiedA : classifiedAs) {
                 Node specimenNode = classifiedA.getStartNode();
-                detectedAtLeastOneLifeState |= specimenNode.hasProperty(SpecimenNode.LIFE_STAGE_LABEL);
-                detectedAtLeastOnePhysiologicalState |= specimenNode.hasProperty(SpecimenNode.PHYSIOLOGICAL_STATE_LABEL);
-                detectedAtLeastOnePreyBodyPart |= specimenNode.hasProperty(SpecimenNode.BODY_PART_LABEL);
-                detectedAtLeastOneBodyLength |= specimenNode.hasProperty(SpecimenNode.LENGTH_IN_MM);
-                detectedAtLeastOneFrequencyOfOccurrence |= specimenNode.hasProperty(SpecimenNode.FREQUENCY_OF_OCCURRENCE);
-                detectedAtLeastOneTotalNumberConsumed |= specimenNode.hasProperty(SpecimenNode.TOTAL_COUNT);
-                detectedAtLeastOneTotalVolume |= specimenNode.hasProperty(SpecimenNode.TOTAL_VOLUME_IN_ML);
+                detectedAtLeastOneLifeState |= specimenNode.hasProperty(SpecimenConstant.LIFE_STAGE_LABEL);
+                detectedAtLeastOnePhysiologicalState |= specimenNode.hasProperty(SpecimenConstant.PHYSIOLOGICAL_STATE_LABEL);
+                detectedAtLeastOnePreyBodyPart |= specimenNode.hasProperty(SpecimenConstant.BODY_PART_LABEL);
+                detectedAtLeastOneBodyLength |= specimenNode.hasProperty(SpecimenConstant.LENGTH_IN_MM);
+                detectedAtLeastOneFrequencyOfOccurrence |= specimenNode.hasProperty(SpecimenConstant.FREQUENCY_OF_OCCURRENCE);
+                detectedAtLeastOneTotalNumberConsumed |= specimenNode.hasProperty(SpecimenConstant.TOTAL_COUNT);
+                detectedAtLeastOneTotalVolume |= specimenNode.hasProperty(SpecimenConstant.TOTAL_VOLUME_IN_ML);
                 detectedAtLeastOneGoMexSIProperty |= specimenNode.hasProperty(StudyImporterForGoMexSI2.GOMEXSI_NAMESPACE + "PRED_DATABASE_NAME");
                 detectedAtLeastOneGoMexSIProperty |= specimenNode.hasProperty(StudyImporterForGoMexSI2.GOMEXSI_NAMESPACE + "PREY_DATABASE_NAME");
                 if (specimenNode.hasRelationship(Direction.INCOMING, RelTypes.COLLECTED)) {

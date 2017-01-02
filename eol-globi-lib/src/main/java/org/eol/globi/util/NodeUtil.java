@@ -49,7 +49,7 @@ public class NodeUtil {
     public static List<Study> findAllStudies(GraphDatabaseService graphService) {
         final List<Study> studies = new ArrayList<Study>();
         findStudies(graphService, new StudyListener() {
-            public void onStudy(StudyNode study) {
+            public void onStudy(Study study) {
                 studies.add(study);
             }
         });
