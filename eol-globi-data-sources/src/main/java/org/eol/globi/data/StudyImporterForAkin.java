@@ -6,6 +6,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
+import org.eol.globi.domain.StudyImpl;
+import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.Term;
 import org.eol.globi.service.TermLookupService;
 import org.eol.globi.service.TermLookupServiceException;
@@ -116,7 +118,7 @@ public class StudyImporterForAkin extends BaseStudyImporter {
                     if (StringUtils.isNotBlank(preyVolumeString)) {
                         double volume = Double.parseDouble(preyVolumeString);
                         if (volume > 0) {
-                            Specimen prey = nodeFactory.createSpecimen(study, preySpeciesName);
+                            Specimen prey = nodeFactory.createSpecimen(study, new TaxonImpl(preySpeciesName, null));
                             prey.setLifeStage(parseLifeStage(nodeFactory.getTermLookupService(), preySpeciesName));
                             prey.setVolumeInMilliLiter(volume);
                             prey.caughtIn(location);
@@ -149,7 +151,7 @@ public class StudyImporterForAkin extends BaseStudyImporter {
         int speciesIndex = findIndexForColumnWithNameThrowOnMissing("Fish Species", header);
         String speciesName = line[speciesIndex];
         if (StringUtils.isNotBlank(speciesName)) {
-            specimen = nodeFactory.createSpecimen(study, speciesName);
+            specimen = nodeFactory.createSpecimen(study, new TaxonImpl(speciesName, null));
             addSpecimenLength(parser, header, line, specimen, study);
             addStomachVolume(parser, header, line, specimen, study);
             addCollectionDate(study, parser, header, line, specimen);
@@ -225,9 +227,9 @@ public class StudyImporterForAkin extends BaseStudyImporter {
     private Study importStudy(String studyResource) throws StudyImporterException {
         Study study;
         try {
-            study = nodeFactory.getOrCreateStudy("Akin et al 2006",
-                    StudyImporterForGoMexSI2.GOMEXI_SOURCE_DESCRIPTION, null, ExternalIdUtil.toCitation("Senol Akin", "S. Akin, K. O. Winemiller, Seasonal variation in food web composition and structure in a temperate tidal estuary, Estuaries and Coasts" +
-                            "; August 2006, Volume 29, Issue 4, pp 552-567", "2006"));
+            study = nodeFactory.getOrCreateStudy(
+                    new StudyImpl("Akin et al 2006", StudyImporterForGoMexSI2.GOMEXI_SOURCE_DESCRIPTION, null, ExternalIdUtil.toCitation("Senol Akin", "S. Akin, K. O. Winemiller, Seasonal variation in food web composition and structure in a temperate tidal estuary, Estuaries and Coasts" +
+                                        "; August 2006, Volume 29, Issue 4, pp 552-567", "2006")));
             study.setDOIWithTx("http://dx.doi.org/10.1007/BF02784282");
             String[][] siteInfo = loadSampleSiteLocations();
             importAkinStudyFile(siteInfo, studyResource, study);

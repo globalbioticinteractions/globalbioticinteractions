@@ -6,6 +6,7 @@ import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
+import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.Term;
 
 import java.io.IOException;
@@ -169,12 +170,12 @@ public class StudyImporterForHechinger extends StudyImporterNodesAndLinks {
         if (interactType == null) {
             throw new StudyImporterException("failed to map interaction type [" + linkType + "] in line [" + links.lastLineNumber() + "]");
         }
-        Specimen consumer = nodeFactory.createSpecimen(study, taxonForNode.get(consumerNodeID));
+        Specimen consumer = nodeFactory.createSpecimen(study, new TaxonImpl(taxonForNode.get(consumerNodeID), null));
         consumer.setLifeStage(stageForNode.get(consumerNodeID));
         consumer.setExternalId(getNamespace() + ":NodeID:" + consumerNodeID);
         consumer.caughtIn(location);
         String resourceName = taxonForNode.get(resourceNodeID);
-        Specimen resource = nodeFactory.createSpecimen(study, resourceName);
+        Specimen resource = nodeFactory.createSpecimen(study, new TaxonImpl(resourceName, null));
         resource.setLifeStage(stageForNode.get(resourceNodeID));
         resource.setExternalId(getNamespace() + ":NodeID:" + resourceNodeID);
         resource.caughtIn(location);

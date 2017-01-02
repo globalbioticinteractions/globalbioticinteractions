@@ -7,6 +7,8 @@ import org.apache.commons.logging.LogFactory;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
+import org.eol.globi.domain.StudyImpl;
+import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TaxonomyProvider;
 import org.eol.globi.domain.Term;
 
@@ -29,7 +31,7 @@ public class StudyImporterForKelpForest extends BaseStudyImporter {
     public Study importStudy() throws StudyImporterException {
         try {
             String source = "Beas-Luna, R., Novak, M., Carr, M. H., Tinker, M. T., Black, A., Caselle, J. E., … Iles, A. (2014). An Online Database for Informing Ecological Network Models: http://kelpforest.ucsc.edu. PLoS ONE, 9(10), e109356. doi:10.1371/journal.pone.0109356";
-            Study study = nodeFactory.getOrCreateStudy2(source, source, "doi:10.1371/journal.pone.0109356");
+            Study study = nodeFactory.getOrCreateStudy(new StudyImpl(source, source, "doi:10.1371/journal.pone.0109356", null));
             study.setCitationWithTx(source);
 
             LabeledCSVParser parser = parserFactory.createParser(NODES, "UTF-8");
@@ -82,7 +84,7 @@ public class StudyImporterForKelpForest extends BaseStudyImporter {
         String sourceName = parser.getValueByLabel(nameLabel);
         Long id = nameToId.get(sourceName);
         String taxonExternalId = id == null ? null : TaxonomyProvider.ID_PREFIX_ITIS + id;
-        Specimen sourceSpecimen = nodeFactory.createSpecimen(study, sourceName, taxonExternalId);
+        Specimen sourceSpecimen = nodeFactory.createSpecimen(study, new TaxonImpl(sourceName, taxonExternalId));
         String sourceLifeStage = parser.getValueByLabel(stageLabel);
         Term orCreateLifeStage = nodeFactory.getOrCreateLifeStage("KELP:" + sourceLifeStage, sourceLifeStage);
         sourceSpecimen.setLifeStage(orCreateLifeStage);

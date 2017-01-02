@@ -4,7 +4,7 @@ import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Study;
-import org.eol.globi.domain.StudyNode;
+import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TaxonNode;
@@ -45,7 +45,7 @@ public class ExportTaxonMapTest extends GraphDBTestCase {
             }
         };
         taxonIndex = ExportTestUtil.taxonIndexWithEnricher(taxonEnricher, getGraphDb());
-        Study study = nodeFactory.getOrCreateStudy("title", "source", "citation");
+        Study study = nodeFactory.getOrCreateStudy(new StudyImpl("title", "source", null, "citation"));
         Taxon taxon = new TaxonImpl("Homo sapiens");
         taxon.setExternalUrl("http://some/thing");
         taxon.setThumbnailUrl("http://thing/some");

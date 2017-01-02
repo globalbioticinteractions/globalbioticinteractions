@@ -2,8 +2,7 @@ package org.eol.globi.data;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.domain.Study;
-import org.eol.globi.domain.StudyNode;
-import org.eol.globi.taxon.TaxonIndexImpl;
+import org.eol.globi.taxon.TaxonIndexNeo4j;
 import org.eol.globi.domain.Term;
 import org.eol.globi.geo.Ecoregion;
 import org.eol.globi.geo.EcoregionFinder;
@@ -46,7 +45,7 @@ public abstract class GraphDBTestCase {
 
     protected TaxonIndex getOrCreateTaxonIndex(PropertyEnricher enricher) {
         if (taxonIndex == null) {
-            taxonIndex = new TaxonIndexImpl(enricher,
+            taxonIndex = new TaxonIndexNeo4j(enricher,
                     new PassThroughCorrectionService(), getGraphDb());
         }
         return taxonIndex;
@@ -71,8 +70,8 @@ public abstract class GraphDBTestCase {
 
 
     NodeFactory createNodeFactory() {
-        NodeFactoryImpl nodeFactoryImpl = new NodeFactoryImpl(getGraphDb());
-        nodeFactoryImpl.setEcoregionFinder(new EcoregionFinder() {
+        NodeFactoryNeo4j nodeFactoryNeo4j = new NodeFactoryNeo4j(getGraphDb());
+        nodeFactoryNeo4j.setEcoregionFinder(new EcoregionFinder() {
 
             @Override
             public Collection<Ecoregion> findEcoregion(double lat, double lng) throws EcoregionFinderException {
@@ -91,9 +90,9 @@ public abstract class GraphDBTestCase {
 
             }
         });
-        nodeFactoryImpl.setEnvoLookupService(getEnvoLookupService());
-        nodeFactoryImpl.setTermLookupService(getTermLookupService());
-        nodeFactoryImpl.setDoiResolver(new DOIResolver() {
+        nodeFactoryNeo4j.setEnvoLookupService(getEnvoLookupService());
+        nodeFactoryNeo4j.setTermLookupService(getTermLookupService());
+        nodeFactoryNeo4j.setDoiResolver(new DOIResolver() {
             @Override
             public String findDOIForReference(String reference) throws IOException {
                 return StringUtils.isBlank(reference) ? null : "doi:" + reference;
@@ -104,7 +103,7 @@ public abstract class GraphDBTestCase {
                 return StringUtils.isBlank(doi) ? null : "citation:" + doi;
             }
         });
-        return nodeFactoryImpl;
+        return nodeFactoryNeo4j;
     }
 
     protected TermLookupService getTermLookupService() {

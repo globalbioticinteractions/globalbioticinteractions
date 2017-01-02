@@ -3,6 +3,7 @@ package org.eol.globi.export;
 import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.domain.Study;
+import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.util.ExternalIdUtil;
 import org.junit.Test;
 
@@ -17,7 +18,7 @@ public class ExporterReferencesTest extends GraphDBTestCase {
 
     @Test
     public void exportReference() throws IOException, NodeFactoryException, ParseException {
-        Study myStudy = nodeFactory.getOrCreateStudy("myStudy", "a source", ExternalIdUtil.toCitation("John Doe", "description study 1", "1927"));
+        Study myStudy = nodeFactory.getOrCreateStudy(new StudyImpl("myStudy", "a source", null, ExternalIdUtil.toCitation("John Doe", "description study 1", "1927")));
         myStudy.setDOIWithTx("doi:1234");
         myStudy.setExternalId("GAME:444");
         StringWriter row = new StringWriter();
@@ -35,7 +36,7 @@ public class ExporterReferencesTest extends GraphDBTestCase {
 
     @Test
     public void exportReferenceNoDescription() throws IOException, NodeFactoryException, ParseException {
-        Study myStudy = nodeFactory.createStudy("myStudy");
+        Study myStudy = nodeFactory.createStudy(new StudyImpl("myStudy", null, null, null));
         StringWriter row = new StringWriter();
         new ExporterReferences().exportStudy(myStudy, row, false);
         assertThat(row.getBuffer().toString(), equalTo("\nglobi:ref:1\t\tmyStudy\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t"));
@@ -43,7 +44,7 @@ public class ExporterReferencesTest extends GraphDBTestCase {
 
     @Test
     public void exportReferenceEscapeCharacters() throws IOException, NodeFactoryException, ParseException {
-        Study myStudy = nodeFactory.createStudy("myStudy");
+        Study myStudy = nodeFactory.createStudy(new StudyImpl("myStudy", null, null, null));
         myStudy.setCitationWithTx("bla \"one\"");
         StringWriter row = new StringWriter();
         new ExporterReferences().exportStudy(myStudy, row, false);

@@ -32,7 +32,7 @@ public class LinkerOpenTreeOfLifeTest extends GraphDBTestCase {
         OpenTreeTaxonIndex index = null;
         try {
             index = new OpenTreeTaxonIndex(getClass().getResource("taxonomy-small.tsv"));
-            taxonIndex.getOrCreateTaxon(name);
+            taxonIndex.getOrCreateTaxon(new TaxonImpl(name, null));
             LinkerGlobalNames linkerGlobalNames = new LinkerGlobalNames();
             linkerGlobalNames.link(getGraphDb());
             new LinkerOpenTreeOfLife().link(getGraphDb(), index);

@@ -5,6 +5,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
+import org.eol.globi.domain.StudyImpl;
+import org.eol.globi.domain.TaxonImpl;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -22,9 +24,8 @@ public class StudyImporterForICES extends BaseStudyImporter {
         LabeledCSVParser parser = createParser();
 
 
-        Study study = nodeFactory.getOrCreateStudy("ICES",
-                "International Council for the Exploration of the Sea. Available at http://www.ices.dk/products/cooperative.asp .",
-                "Cooperative Research Report No. 164; Cooperative Research Report No. 219, ICES Stomach DatasetImpl, ICES");
+        Study study = nodeFactory.getOrCreateStudy(
+                new StudyImpl("ICES", "International Council for the Exploration of the Sea. Available at http://www.ices.dk/products/cooperative.asp .", null, "Cooperative Research Report No. 164; Cooperative Research Report No. 219, ICES Stomach DatasetImpl, ICES"));
         study.setExternalId("http://ecosystemdata.ices.dk/stomachdata/");
         try {
             Specimen predator = null;
@@ -69,7 +70,7 @@ public class StudyImporterForICES extends BaseStudyImporter {
 
     private Specimen addPredator(LabeledCSVParser parser, Study study) throws StudyImporterException {
         Specimen predatorSpecimen;
-        predatorSpecimen = nodeFactory.createSpecimen(study, parser.getValueByLabel("Predator"));
+        predatorSpecimen = nodeFactory.createSpecimen(study, new TaxonImpl(parser.getValueByLabel("Predator"), null));
         predatorSpecimen.setLengthInMm(parseDoubleField(parser, "Predator (mean) Lengh"));
         return predatorSpecimen;
     }
@@ -108,7 +109,7 @@ public class StudyImporterForICES extends BaseStudyImporter {
     }
 
     private Specimen atePrey(Specimen predatorSpecimen, String preyName, Study study) throws NodeFactoryException {
-        Specimen preySpecimen = nodeFactory.createSpecimen(study, preyName);
+        Specimen preySpecimen = nodeFactory.createSpecimen(study, new TaxonImpl(preyName, null));
         predatorSpecimen.ate(preySpecimen);
         return preySpecimen;
     }

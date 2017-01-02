@@ -7,6 +7,8 @@ import org.codehaus.swizzle.stream.StringTokenHandler;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
+import org.eol.globi.domain.StudyImpl;
+import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.util.CSVUtil;
 import org.eol.globi.util.ExternalIdUtil;
 
@@ -90,9 +92,9 @@ public class StudyImporterForFishbase extends BaseStudyImporter {
                 getLogger().warn(study, "found blank food item name on line [" + parser.lastLineNumber() + 1 + "]");
             }
             if (StringUtils.isNotBlank(consumerName) && StringUtils.isNotBlank(foodName)) {
-                consumer = nodeFactory.createSpecimen(study, consumerName);
+                consumer = nodeFactory.createSpecimen(study, new TaxonImpl(consumerName, null));
                 consumer.caughtIn(location);
-                Specimen food = nodeFactory.createSpecimen(study, foodName);
+                Specimen food = nodeFactory.createSpecimen(study, new TaxonImpl(foodName, null));
                 food.caughtIn(location);
                 consumer.ate(food);
             }
@@ -106,8 +108,8 @@ public class StudyImporterForFishbase extends BaseStudyImporter {
         String author = StringUtils.replace(parser.getValueByLabel("author"), "NULL", "");
         String year = StringUtils.replace(parser.getValueByLabel("year"), "NULL", "");
         String title = StringUtils.replace(parser.getValueByLabel("title"), "NULL", "");
-        return nodeFactory.getOrCreateStudy(StringUtils.join("Fishbase-", author, year),
-                "Database export shared by http://fishbase.org in December 2013. For use by Brian Hayden and Jorrit Poelen only.", null, ExternalIdUtil.toCitation(author, title, year));
+        return nodeFactory.getOrCreateStudy(
+                new StudyImpl(StringUtils.join("Fishbase-", author, year), "Database export shared by http://fishbase.org in December 2013. For use by Brian Hayden and Jorrit Poelen only.", null, ExternalIdUtil.toCitation(author, title, year)));
     }
 
     private String parseFoodName(LabeledCSVParser parser) {

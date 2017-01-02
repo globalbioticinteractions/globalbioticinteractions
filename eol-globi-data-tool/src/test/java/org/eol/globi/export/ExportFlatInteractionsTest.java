@@ -6,6 +6,7 @@ import org.eol.globi.domain.Location;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
+import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.Term;
 import org.junit.Test;
@@ -38,13 +39,13 @@ public class ExportFlatInteractionsTest extends GraphDBTestCase {
     }
 
     private void createTestData(Double length) throws NodeFactoryException, ParseException {
-        Study myStudy = nodeFactory.createStudy("myStudy");
+        Study myStudy = nodeFactory.createStudy(new StudyImpl("myStudy", null, null, null));
         specimenEatCatAndDog(length, myStudy, "Homo sapiens", "EOL:333");
         specimenEatCatAndDog(length, myStudy, "Homo sapiens", "EOL:333");
         specimenEatCatAndDog(length, myStudy, "Homo erectus", "EOL:123");
         specimenEatCatAndDog(length, myStudy, "Homo erectus", "EOL:123");
-        specimenEatCatAndDog(length, nodeFactory.createStudy("yourStudy"), "Homo erectus", "EOL:888");
-        specimenEatCatAndDog(length, nodeFactory.createStudy("yourStudy2"), "Homo erectus", "EOL:888");
+        specimenEatCatAndDog(length, nodeFactory.createStudy(new StudyImpl("yourStudy", null, null, null)), "Homo erectus", "EOL:888");
+        specimenEatCatAndDog(length, nodeFactory.createStudy(new StudyImpl("yourStudy2", null, null, null)), "Homo erectus", "EOL:888");
         specimenEatCatAndDog(length, myStudy, "Blo blaaus", PropertyAndValueDictionary.NO_MATCH);
     }
 

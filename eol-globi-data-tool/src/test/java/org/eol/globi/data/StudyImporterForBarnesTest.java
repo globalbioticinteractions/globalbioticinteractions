@@ -1,10 +1,10 @@
 package org.eol.globi.data;
 
+import org.eol.globi.domain.LocationImpl;
 import org.eol.globi.domain.NodeBacked;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.SpecimenConstant;
 import org.eol.globi.domain.Taxon;
-import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.service.TermLookupService;
 import org.eol.globi.taxon.UberonLookupService;
 import org.eol.globi.util.NodeUtil;
@@ -70,7 +70,7 @@ public class StudyImporterForBarnesTest extends GraphDBTestCase {
         }
         assertThat(taxon, is(notNullValue()));
         assertThat(taxonIndex.findTaxonByName("Rhizoprionodon terraenovae"), is(notNullValue()));
-        assertThat("missing location", nodeFactory.findLocation(38.0, 23.0, -75.0), is(notNullValue()));
+        assertThat("missing location", nodeFactory.findLocation(new LocationImpl(38.0, 23.0, -75.0, null)), is(notNullValue()));
 
     }
 

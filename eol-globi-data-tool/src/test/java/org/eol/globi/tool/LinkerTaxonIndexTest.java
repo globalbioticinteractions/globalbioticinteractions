@@ -16,8 +16,8 @@ import org.eol.globi.service.PropertyEnricher;
 import org.eol.globi.service.PropertyEnricherException;
 import org.eol.globi.service.TaxonUtil;
 import org.eol.globi.taxon.TaxonFuzzySearchIndex;
-import org.eol.globi.taxon.TaxonIndexImpl;
-import org.eol.globi.taxon.TaxonIndexImplTest;
+import org.eol.globi.taxon.TaxonIndexNeo4j;
+import org.eol.globi.taxon.TaxonIndexNeo4jTest;
 import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
 import org.neo4j.graphdb.Node;
@@ -33,12 +33,14 @@ public class LinkerTaxonIndexTest extends GraphDBTestCase {
 
     @Test
     public void linking() throws NodeFactoryException {
-        Taxon taxon = taxonIndex.getOrCreateTaxon("Homo sapiens", "Bar:123", "Animalia | Mammalia | Homo sapiens");
+        Taxon taxonFound = new TaxonImpl("Homo sapiens", "Bar:123");
+        taxonFound.setPath("Animalia | Mammalia | Homo sapiens");
+        Taxon taxon = taxonIndex.getOrCreateTaxon(taxonFound);
         TaxonImpl taxon1 = new TaxonImpl("Homo sapiens also", "FOO:444");
         taxon1.setPathIds("BARZ:111 | FOOZ:777");
         NodeUtil.connectTaxa(taxon1, (TaxonNode)taxon, getGraphDb(), RelTypes.SAME_AS);
 
-        taxon = taxonIndex.getOrCreateTaxon("Bla blaus");
+        taxon = taxonIndex.getOrCreateTaxon(new TaxonImpl("Bla blaus", null));
         taxon.setExternalId("FOO 1234");
         resolveNames();
 
@@ -73,7 +75,7 @@ public class LinkerTaxonIndexTest extends GraphDBTestCase {
                 Taxon taxon = TaxonUtil.mapToTaxon(properties);
                 taxon.setPath("kingdom" + CharsetConstant.SEPARATOR + "phylum" + CharsetConstant.SEPARATOR + "Homo sapiens" + CharsetConstant.SEPARATOR);
                 taxon.setExternalId("anExternalId");
-                taxon.setCommonNames(TaxonIndexImplTest.EXPECTED_COMMON_NAMES);
+                taxon.setCommonNames(TaxonIndexNeo4jTest.EXPECTED_COMMON_NAMES);
                 taxon.setName("this is the actual name");
                 return TaxonUtil.taxonToMap(taxon);
             }
@@ -83,7 +85,7 @@ public class LinkerTaxonIndexTest extends GraphDBTestCase {
 
             }
         };
-        TaxonIndexImpl taxonService = TaxonIndexImplTest.createTaxonService(getGraphDb());
+        TaxonIndexNeo4j taxonService = TaxonIndexNeo4jTest.createTaxonService(getGraphDb());
         taxonService.setEnricher(enricher);
         taxonService.getOrCreateTaxon(new TaxonImpl("Homo sapiens"));
         resolveNames();

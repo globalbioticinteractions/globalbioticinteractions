@@ -1,12 +1,12 @@
 package org.eol.globi.data;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
+import org.eol.globi.domain.StudyImpl;
+import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.Term;
 import org.eol.globi.geo.LatLng;
 import org.eol.globi.service.GeoNamesService;
@@ -69,7 +69,7 @@ class InteractionListenerImpl implements InteractionListener {
             String interactionTypeId = link.get(INTERACTION_TYPE_ID);
             InteractType type = InteractType.typeOf(interactionTypeId);
             String referenceCitation = link.get(REFERENCE_CITATION);
-            Study study = nodeFactory.getOrCreateStudy(link.get(REFERENCE_ID), link.get(STUDY_SOURCE_CITATION), link.get(REFERENCE_DOI), referenceCitation);
+            Study study = nodeFactory.getOrCreateStudy(new StudyImpl(link.get(REFERENCE_ID), link.get(STUDY_SOURCE_CITATION), link.get(REFERENCE_DOI), referenceCitation));
             final String referenceUrl = link.get(REFERENCE_URL);
             if (StringUtils.isBlank(study.getExternalId()) && StringUtils.isNotBlank(referenceUrl)) {
                 study.setExternalId(referenceUrl);
@@ -81,10 +81,10 @@ class InteractionListenerImpl implements InteractionListener {
                 final String msg = "unsupported interaction type id [" + interactionTypeId + "]";
                 study.appendLogMessage(msg, Level.WARNING);
             } else {
-                Specimen source = nodeFactory.createSpecimen(study, sourceTaxonName, sourceTaxonId);
+                Specimen source = nodeFactory.createSpecimen(study, new TaxonImpl(sourceTaxonName, sourceTaxonId));
                 setBasisOfRecordIfAvailable(link, source);
                 setDateTimeIfAvailable(link, source);
-                Specimen target = nodeFactory.createSpecimen(study, targetTaxonName, targetTaxonId);
+                Specimen target = nodeFactory.createSpecimen(study, new TaxonImpl(targetTaxonName, targetTaxonId));
                 setBasisOfRecordIfAvailable(link, target);
                 setDateTimeIfAvailable(link, target);
                 source.interactsWith(target, type, getOrCreateLocation(study, link));

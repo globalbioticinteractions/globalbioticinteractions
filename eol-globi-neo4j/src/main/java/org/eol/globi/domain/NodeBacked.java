@@ -94,4 +94,20 @@ public class NodeBacked {
         return propertyValueOrNull == null ? null : (String) propertyValueOrNull;
     }
 
+    protected void setProperty(String name, String value) {
+        if (value != null) {
+            getUnderlyingNode().setProperty(name, value);
+        }
+    }
+
+    protected String getProperty(String propertyName) {
+        Object value = null;
+        if (getUnderlyingNode().hasProperty(propertyName)) {
+            value = getUnderlyingNode().getProperty(propertyName);
+        }
+        return value == null ? "" : value.toString();
+
+    }
+
+
 }

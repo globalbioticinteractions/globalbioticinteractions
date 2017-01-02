@@ -5,6 +5,8 @@ import org.eol.globi.domain.Location;
 import org.eol.globi.domain.Season;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
+import org.eol.globi.domain.StudyImpl;
+import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.util.ExternalIdUtil;
 import uk.me.jstott.jcoord.LatLng;
 import uk.me.jstott.jcoord.UTMRef;
@@ -61,8 +63,8 @@ public class StudyImporterForSimons extends BaseStudyImporter {
     }
 
     private Study importStudy(ParserFactory parserFactory, String studyResource) throws StudyImporterException {
-        Study study = nodeFactory.getOrCreateStudy("Simons 1997",
-                StudyImporterForGoMexSI2.GOMEXI_SOURCE_DESCRIPTION, null, ExternalIdUtil.toCitation("James D. Simons", "Food habits and trophic structure of the demersal fish assemblages on the Mississippi-Alabama continental shelf.", "1997"));
+        Study study = nodeFactory.getOrCreateStudy(
+                new StudyImpl("Simons 1997", StudyImporterForGoMexSI2.GOMEXI_SOURCE_DESCRIPTION, null, ExternalIdUtil.toCitation("James D. Simons", "Food habits and trophic structure of the demersal fish assemblages on the Mississippi-Alabama continental shelf.", "1997")));
         try {
             LabeledCSVParser csvParser = parserFactory.createParser(studyResource, CharsetConstant.UTF8);
             Map<String, String> columnMapper = COLUMN_MAPPER;
@@ -148,7 +150,7 @@ public class StudyImporterForSimons extends BaseStudyImporter {
 
     private Specimen createAndClassifySpecimen(final String speciesName, Study study) throws StudyImporterException {
         try {
-            return nodeFactory.createSpecimen(study, speciesName);
+            return nodeFactory.createSpecimen(study, new TaxonImpl(speciesName, null));
         } catch (NodeFactoryException e) {
             throw new StudyImporterException("failed to classify specimen", e);
         }

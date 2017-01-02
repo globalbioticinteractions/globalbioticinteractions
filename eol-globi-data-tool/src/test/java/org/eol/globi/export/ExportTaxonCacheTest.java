@@ -4,7 +4,7 @@ import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Study;
-import org.eol.globi.domain.StudyNode;
+import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TaxonNode;
@@ -46,12 +46,12 @@ public class ExportTaxonCacheTest extends GraphDBTestCase {
             }
         };
         taxonIndex = ExportTestUtil.taxonIndexWithEnricher(taxonEnricher, getGraphDb());
-        Study study = nodeFactory.getOrCreateStudy("title", "source", "citation");
+        Study study = nodeFactory.getOrCreateStudy(new StudyImpl("title", "source", null, "citation"));
         Taxon taxon = new TaxonImpl("Homo sapiens");
         taxon.setExternalUrl("http://some/thing");
         taxon.setThumbnailUrl("http://thing/some");
         Taxon human = taxonIndex.getOrCreateTaxon(taxon);
-        taxonIndex.getOrCreateTaxon("Canis lupus");
+        taxonIndex.getOrCreateTaxon(new TaxonImpl("Canis lupus", null));
         NodeUtil.connectTaxa(new TaxonImpl("Alternate Homo sapiens no path", "alt:123"), (TaxonNode)human, getGraphDb(), RelTypes.SAME_AS);
         final TaxonImpl altTaxonWithPath = new TaxonImpl("Alternate Homo sapiens", "alt:123");
         altTaxonWithPath.setPath("some path here");

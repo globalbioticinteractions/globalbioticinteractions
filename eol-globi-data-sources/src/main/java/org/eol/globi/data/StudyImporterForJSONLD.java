@@ -14,6 +14,8 @@ import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
+import org.eol.globi.domain.StudyImpl;
+import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TaxonomyProvider;
 import org.eol.globi.util.ResourceUtil;
 import org.joda.time.DateTime;
@@ -64,7 +66,8 @@ public class StudyImporterForJSONLD extends BaseStudyImporter {
                 } catch (IOException e) {
                     throw new StudyImporterException("failed to resolve author URI [" + authorURI + "]");
                 }
-                Study study = nodeFactory.getOrCreateStudy(getResourceURI() + subj, author + ". " + new DateTime(parseDate(creationDate)).getYear() + ". " + ReferenceUtil.createLastAccessedString(getResourceURI().toString()), subj);
+                final String source1 = author + ". " + new DateTime(parseDate(creationDate)).getYear() + ". " + ReferenceUtil.createLastAccessedString(getResourceURI().toString());
+                Study study = nodeFactory.getOrCreateStudy(new StudyImpl(getResourceURI() + subj, source1, null, subj));
                 study.setExternalId(subj);
                 Specimen source = createSpecimen(solution, study, "subjTaxon");
                 Specimen target = createSpecimen(solution, study, "targetTaxon");
@@ -104,7 +107,7 @@ public class StudyImporterForJSONLD extends BaseStudyImporter {
     protected Specimen createSpecimen(QuerySolution solution, Study study, String targetTaxon1) throws NodeFactoryException {
         String targetTaxon = solution.get(targetTaxon1).asResource().getLocalName();
         String taxonId = targetTaxon.replaceAll("NCBITaxon_", TaxonomyProvider.NCBI.getIdPrefix());
-        return nodeFactory.createSpecimen(study, null, taxonId);
+        return nodeFactory.createSpecimen(study, new TaxonImpl(null, taxonId));
     }
 
     private Model buildModel() throws IOException {

@@ -19,14 +19,14 @@ public class StudyTest extends GraphDBTestCase {
 
     @Test
     public void populateStudy() throws NodeFactoryException {
-        Study study = nodeFactory.createStudy("Our first study");
+        Study study = nodeFactory.createStudy(new StudyImpl("Our first study", null, null, null));
 
-        taxonIndex.getOrCreateTaxon(CARCHARODON_CARCHARIAS);
+        taxonIndex.getOrCreateTaxon(new TaxonImpl(CARCHARODON_CARCHARIAS, null));
 
-        Specimen goldFish = nodeFactory.createSpecimen(study, CARASSIUS_AURATUS_AURATUS);
+        Specimen goldFish = nodeFactory.createSpecimen(study, new TaxonImpl(CARASSIUS_AURATUS_AURATUS, null));
 
-        Specimen shark = nodeFactory.createSpecimen(study, CARCHARODON_CARCHARIAS);
-        Specimen fuzzyShark = nodeFactory.createSpecimen(study, CARCHARODON);
+        Specimen shark = nodeFactory.createSpecimen(study, new TaxonImpl(CARCHARODON_CARCHARIAS, null));
+        Specimen fuzzyShark = nodeFactory.createSpecimen(study, new TaxonImpl(CARCHARODON, null));
 
         shark.ate(goldFish);
         fuzzyShark.ate(goldFish);

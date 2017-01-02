@@ -3,7 +3,7 @@ package org.eol.globi.data;
 import com.Ostermiller.util.LabeledCSVParser;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.Location;
-import org.eol.globi.domain.LocationNode;
+import org.eol.globi.domain.LocationImpl;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.SpecimenConstant;
@@ -140,7 +140,7 @@ public class StudyImporterForBlewettTest extends GraphDBTestCase {
         ate = predatorNode.getRelationships(NodeUtil.asNeo4j(InteractType.ATE), Direction.OUTGOING);
         assertThat(ate.iterator().hasNext(), is(false));
 
-        Location location = nodeFactory.findLocation(26.651833, -82.103833, 0.0);
+        Location location = nodeFactory.findLocation(new LocationImpl(26.651833, -82.103833, 0.0, null));
         assertThat(location, is(not(nullValue())));
         Iterable<Relationship> specimenCaughtHere = NodeUtil.getSpecimenCaughtHere(location);
         Iterator<Relationship> iterator = specimenCaughtHere.iterator();

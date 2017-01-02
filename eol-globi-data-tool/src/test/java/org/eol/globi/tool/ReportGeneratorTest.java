@@ -6,7 +6,8 @@ import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyConstant;
-import org.eol.globi.domain.StudyNode;
+import org.eol.globi.domain.StudyImpl;
+import org.eol.globi.domain.TaxonImpl;
 import org.junit.Test;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.index.IndexHits;
@@ -100,12 +101,12 @@ public class ReportGeneratorTest extends GraphDBTestCase {
     }
 
     protected Study createStudy(String title, String source, String citation) throws NodeFactoryException {
-        Study study = nodeFactory.getOrCreateStudy(title, source, citation);
-        Specimen monkey = nodeFactory.createSpecimen(study, "Monkey");
-        monkey.ate(nodeFactory.createSpecimen(study, "Banana"));
-        monkey.ate(nodeFactory.createSpecimen(study, "Banana"));
-        monkey.ate(nodeFactory.createSpecimen(study, "Banana"));
-        monkey.ate(nodeFactory.createSpecimen(study, "Apple"));
+        Study study = nodeFactory.getOrCreateStudy(new StudyImpl(title, source, null, citation));
+        Specimen monkey = nodeFactory.createSpecimen(study, new TaxonImpl("Monkey", null));
+        monkey.ate(nodeFactory.createSpecimen(study, new TaxonImpl("Banana", null)));
+        monkey.ate(nodeFactory.createSpecimen(study, new TaxonImpl("Banana", null)));
+        monkey.ate(nodeFactory.createSpecimen(study, new TaxonImpl("Banana", null)));
+        monkey.ate(nodeFactory.createSpecimen(study, new TaxonImpl("Apple", null)));
         return study;
     }
 

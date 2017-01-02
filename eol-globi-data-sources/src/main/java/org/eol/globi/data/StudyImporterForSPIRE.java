@@ -12,6 +12,8 @@ import org.eol.globi.domain.Location;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyConstant;
+import org.eol.globi.domain.StudyImpl;
+import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.Term;
 import org.eol.globi.geo.LatLng;
 
@@ -155,8 +157,8 @@ public class StudyImporterForSPIRE extends BaseStudyImporter {
     }
 
     private void importValidLink(Map<String, String> properties) throws NodeFactoryException {
-        Study study = nodeFactory.getOrCreateStudy(properties.get(StudyConstant.TITLE),
-                SOURCE_SPIRE, properties.get(StudyConstant.DESCRIPTION));
+        Study study = nodeFactory.getOrCreateStudy(
+                new StudyImpl(properties.get(StudyConstant.TITLE), SOURCE_SPIRE, null, properties.get(StudyConstant.DESCRIPTION)));
         try {
             Specimen predator = createSpecimen(properties.get(PREDATOR_NAME), study);
             String locality = properties.get(LOCALITY_ORIGINAL);
@@ -186,7 +188,7 @@ public class StudyImporterForSPIRE extends BaseStudyImporter {
 
     private Specimen createSpecimen(String taxonName, Study study) throws NodeFactoryException {
         taxonName = taxonName.replaceAll("_", " ");
-        Specimen specimen = nodeFactory.createSpecimen(study, taxonName);
+        Specimen specimen = nodeFactory.createSpecimen(study, new TaxonImpl(taxonName, null));
 
         if (taxonName.contains("adult")) {
             addLifeStage(specimen, "adult");

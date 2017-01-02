@@ -11,6 +11,7 @@ import org.eol.globi.domain.NodeBacked;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.Taxon;
+import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TaxonomyProvider;
 import org.eol.globi.service.EnvoLookupService;
 import org.eol.globi.service.PropertyEnricher;
@@ -76,8 +77,8 @@ public class ExporterRDFTest extends GraphDBTestCase {
         List<Study> studies = NodeUtil.findAllStudies(getGraphDb());
 
 
-        Taxon taxon = taxonIndex.getOrCreateTaxon("some taxon");
-        Taxon sameAsTaxon = taxonIndex.getOrCreateTaxon("bugus same as taxon", "EOL:123", null);
+        Taxon taxon = taxonIndex.getOrCreateTaxon(new TaxonImpl("some taxon", null));
+        Taxon sameAsTaxon = taxonIndex.getOrCreateTaxon(new TaxonImpl("bugus same as taxon", "EOL:123"));
 
         Transaction tx = getGraphDb().beginTx();
         try {

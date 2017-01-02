@@ -18,9 +18,9 @@ import org.eol.globi.domain.SpecimenConstant;
 import org.eol.globi.domain.SpecimenNode;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyConstant;
+import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.Taxon;
-import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.Term;
 import org.eol.globi.geo.Ecoregion;
 import org.eol.globi.geo.EcoregionFinder;
@@ -55,9 +55,9 @@ import java.util.List;
 
 import static org.eol.globi.domain.LocationUtil.fromLocation;
 
-public class NodeFactoryImpl implements NodeFactory {
+public class NodeFactoryNeo4j implements NodeFactory {
 
-    private static final Log LOG = LogFactory.getLog(NodeFactoryImpl.class);
+    private static final Log LOG = LogFactory.getLog(NodeFactoryNeo4j.class);
     public static final org.eol.globi.domain.Term NO_MATCH_TERM = new org.eol.globi.domain.Term(PropertyAndValueDictionary.NO_MATCH, PropertyAndValueDictionary.NO_MATCH);
 
     private GraphDatabaseService graphDb;
@@ -77,7 +77,7 @@ public class NodeFactoryImpl implements NodeFactory {
     private DOIResolver doiResolver;
     private EcoregionFinder ecoregionFinder;
 
-    public NodeFactoryImpl(GraphDatabaseService graphDb) {
+    public NodeFactoryNeo4j(GraphDatabaseService graphDb) {
         this.graphDb = graphDb;
 
         this.termLookupService = new UberonLookupService();
@@ -129,11 +129,6 @@ public class NodeFactoryImpl implements NodeFactory {
     }
 
     @Override
-    public LocationNode findLocation(Double latitude, Double longitude, Double altitude) {
-        return findLocation(new LocationImpl(latitude, longitude, altitude, null));
-    }
-
-    @Override
     public SeasonNode createSeason(String seasonNameLower) {
         Transaction transaction = graphDb.beginTx();
         SeasonNode season;
@@ -170,17 +165,6 @@ public class NodeFactoryImpl implements NodeFactory {
             transaction.finish();
         }
         return locationNode;
-    }
-
-
-    @Override
-    public SpecimenNode createSpecimen(Study study, String taxonName, String taxonExternalId) throws NodeFactoryException {
-        return createSpecimen(study, new TaxonImpl(taxonName, taxonExternalId));
-    }
-
-    @Override
-    public SpecimenNode createSpecimen(Study study, String taxonName) throws NodeFactoryException {
-        return createSpecimen(study, new TaxonImpl(taxonName, null));
     }
 
     @Override
@@ -250,44 +234,41 @@ public class NodeFactoryImpl implements NodeFactory {
 
 
     @Override
-    public StudyNode createStudy(String title) {
-        return createStudy(title, null, null, null);
-    }
-
-    private StudyNode createStudy(String title, String source, String doi, String citation) {
+    public StudyNode createStudy(Study study) {
         Transaction transaction = graphDb.beginTx();
-        StudyNode study;
+        StudyNode studyNode;
         try {
             Node node = graphDb.createNode();
-            study = new StudyNode(node, title);
-            study.setSource(source);
-            study.setCitation(citation);
+            studyNode = new StudyNode(node, study.getTitle());
+            studyNode.setSource(study.getSource());
+            studyNode.setCitation(study.getCitation());
             if (doiResolver != null) {
                 try {
-                    if (StringUtils.isBlank(doi) && citationLikeString(citation)) {
-                        doi = doiResolver.findDOIForReference(citation);
+                    String doiResolved = study.getDOI();
+                    if (StringUtils.isBlank(study.getDOI()) && citationLikeString(study.getCitation())) {
+                        doiResolved = doiResolver.findDOIForReference(study.getCitation());
                     }
 
-                    if (StringUtils.isNotBlank(doi)) {
-                        study.setDOI(doi);
-                        final String citationForDOI = doiResolver.findCitationForDOI(doi);
+                    if (StringUtils.isNotBlank(doiResolved)) {
+                        studyNode.setDOI(doiResolved);
+                        final String citationForDOI = doiResolver.findCitationForDOI(doiResolved);
                         if (StringUtils.isNotBlank(citationForDOI)) {
-                            study.setCitation(citationForDOI);
+                            studyNode.setCitation(citationForDOI);
                         } else {
-                            LOG.warn("failed to find citation for doi [" + doi + "], using [" + citation + "] instead.");
+                            LOG.warn("failed to find citation for doi [" + doiResolved + "], using [" + study.getDOI() + "] instead.");
                         }
                     }
                 } catch (IOException e) {
-                    LOG.warn("failed to lookup doi for citation [" + citation + "] with id [" + title + "]", e);
+                    LOG.warn("failed to lookup doi for citation [" + study.getCitation() + "] with id [" + study.getTitle() + "]", e);
                 }
             }
-            studies.add(node, StudyConstant.TITLE, title);
+            studies.add(node, StudyConstant.TITLE, study.getTitle());
             transaction.success();
         } finally {
             transaction.finish();
         }
 
-        return study;
+        return studyNode;
     }
 
     private boolean citationLikeString(String citation) {
@@ -295,28 +276,18 @@ public class NodeFactoryImpl implements NodeFactory {
     }
 
     @Override
-    public StudyNode getOrCreateStudy(String title, String source, String citation) throws NodeFactoryException {
-        return getOrCreateStudy(title, source, null, citation);
-    }
-
-    @Override
-    public StudyNode getOrCreateStudy(String title, String source, String doi, String citation) throws NodeFactoryException {
-        if (StringUtils.isBlank(title)) {
+    public StudyNode getOrCreateStudy(Study study) throws NodeFactoryException {
+        if (StringUtils.isBlank(study.getTitle())) {
             throw new NodeFactoryException("null or empty study title");
         }
-        if (StringUtils.isBlank(source)) {
+        if (StringUtils.isBlank(study.getSource())) {
             throw new NodeFactoryException("null or empty study source");
         }
-        StudyNode study = findStudy(title);
-        if (null == study) {
-            study = createStudy(title, source, doi, citation);
+        StudyNode studyNode = findStudy(study.getTitle());
+        if (null == studyNode) {
+            studyNode = createStudy(new StudyImpl(study.getTitle(), study.getSource(), study.getDOI(), study.getCitation()));
         }
-        return study;
-    }
-
-    @Override
-    public StudyNode getOrCreateStudy2(String title, String source, String doi) throws NodeFactoryException {
-        return getOrCreateStudy(title, source, doi, null);
+        return studyNode;
     }
 
     @Override

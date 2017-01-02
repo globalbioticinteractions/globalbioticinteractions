@@ -1,7 +1,7 @@
 package org.eol.globi.tool;
 
 import org.apache.commons.io.FileUtils;
-import org.eol.globi.data.NodeFactoryImpl;
+import org.eol.globi.data.NodeFactoryNeo4j;
 import org.eol.globi.data.ParserFactoryImpl;
 import org.eol.globi.data.StudyImporter;
 import org.eol.globi.data.StudyImporterException;
@@ -16,7 +16,6 @@ import org.neo4j.graphdb.GraphDatabaseService;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URISyntaxException;
 
 public class GitHubRepoCheck {
 
@@ -26,7 +25,7 @@ public class GitHubRepoCheck {
             final GraphDatabaseService graphService = GraphService.getGraphService(tmpDir.getAbsolutePath());
             final String repoName = args[0];
             final DatasetFinderGitHubRemote datasetFinderGitHubRemote = new DatasetFinderGitHubRemote();
-            final StudyImporter importer = new GitHubImporterFactory().createImporter(DatasetFactory.datasetFor(repoName, datasetFinderGitHubRemote), new ParserFactoryImpl(), new NodeFactoryImpl(graphService));
+            final StudyImporter importer = new GitHubImporterFactory().createImporter(DatasetFactory.datasetFor(repoName, datasetFinderGitHubRemote), new ParserFactoryImpl(), new NodeFactoryNeo4j(graphService));
             importer.importStudy();
             new NameResolver(graphService).resolve();
 

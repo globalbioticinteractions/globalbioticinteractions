@@ -14,13 +14,15 @@ import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.SpecimenNode;
 import org.eol.globi.domain.Study;
+import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.StudyNode;
+import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.Term;
 import org.eol.globi.service.DOIResolver;
 import org.eol.globi.service.TermLookupService;
 import org.eol.globi.service.TermLookupServiceException;
 import org.eol.globi.taxon.CorrectionService;
-import org.eol.globi.taxon.TaxonIndexImpl;
+import org.eol.globi.taxon.TaxonIndexNeo4j;
 import org.eol.globi.util.ExternalIdUtil;
 import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
@@ -40,7 +42,7 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
 
-public class NodeFactoryImplTest extends GraphDBTestCase {
+public class NodeFactoryNeo4jTest extends GraphDBTestCase {
 
     @Test
     public void toCitation() {
@@ -49,9 +51,9 @@ public class NodeFactoryImplTest extends GraphDBTestCase {
 
     @Test
     public void createInteraction() throws NodeFactoryException {
-        StudyNode study = getNodeFactory().createStudy("bla");
-        SpecimenNode specimen = getNodeFactory().createSpecimen(study, "Donalda duckus");
-        SpecimenNode specimen1 = getNodeFactory().createSpecimen(study, "Mickeya mouseus");
+        StudyNode study = getNodeFactory().createStudy(new StudyImpl("bla", null, null, null));
+        SpecimenNode specimen = getNodeFactory().createSpecimen(study, new TaxonImpl("Donalda duckus", null));
+        SpecimenNode specimen1 = getNodeFactory().createSpecimen(study, new TaxonImpl("Mickeya mouseus", null));
         specimen.interactsWith(specimen1, InteractType.ATE);
         final Iterator<Relationship> relIter = specimen.getUnderlyingNode().getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j(InteractType.ATE)).iterator();
         assertThat(relIter.hasNext(), is(true));
@@ -80,7 +82,7 @@ public class NodeFactoryImplTest extends GraphDBTestCase {
                 throw new IOException("kaboom!");
             }
         });
-        Study study = getNodeFactory().getOrCreateStudy("title", "some source", "some citation");
+        Study study = getNodeFactory().getOrCreateStudy(new StudyImpl("title", "some source", null, "some citation"));
         assertThat(study.getSource(), is("some source"));
         assertThat(study.getCitation(), is("some citation"));
         assertThat(study.getTitle(), is("title"));
@@ -101,7 +103,7 @@ public class NodeFactoryImplTest extends GraphDBTestCase {
                 return "bla";
             }
         });
-        Study study = getNodeFactory().getOrCreateStudy("title", "some source", "http://bla");
+        Study study = getNodeFactory().getOrCreateStudy(new StudyImpl("title", "some source", null, "http://bla"));
         assertThat(study.getSource(), is("some source"));
         assertThat(study.getCitation(), is("http://bla"));
         assertThat(study.getTitle(), is("title"));
@@ -115,9 +117,9 @@ public class NodeFactoryImplTest extends GraphDBTestCase {
         getNodeFactory().getOrCreateLocation(1.2d, 2.4d, -1.0d);
         Location locationNoDepth = getNodeFactory().getOrCreateLocation(1.5d, 2.8d, null);
         Assert.assertNotNull(location);
-        Location location1 = getNodeFactory().findLocation(location.getLatitude(), location.getLongitude(), location.getAltitude());
+        Location location1 = getNodeFactory().findLocation(new LocationImpl(location.getLatitude(), location.getLongitude(), location.getAltitude(), null));
         Assert.assertNotNull(location1);
-        Location foundLocationNoDepth = getNodeFactory().findLocation(locationNoDepth.getLatitude(), locationNoDepth.getLongitude(), null);
+        Location foundLocationNoDepth = getNodeFactory().findLocation(new LocationImpl(locationNoDepth.getLatitude(), locationNoDepth.getLongitude(), null, null));
         Assert.assertNotNull(foundLocationNoDepth);
     }
 
@@ -128,9 +130,9 @@ public class NodeFactoryImplTest extends GraphDBTestCase {
         getNodeFactory().getOrCreateLocation(1.2d, 2.4d, -1.0d);
         Location locationNoDepth = getNodeFactory().getOrCreateLocation(1.5d, 2.8d, null);
         Assert.assertNotNull(location);
-        LocationNode location1 = getNodeFactory().findLocation(location.getLatitude(), location.getLongitude(), location.getAltitude());
+        LocationNode location1 = getNodeFactory().findLocation(new LocationImpl(location.getLatitude(), location.getLongitude(), location.getAltitude(), null));
         Assert.assertNotNull(location1);
-        LocationNode foundLocationNoDepth = getNodeFactory().findLocation(locationNoDepth.getLatitude(), locationNoDepth.getLongitude(), null);
+        LocationNode foundLocationNoDepth = getNodeFactory().findLocation(new LocationImpl(locationNoDepth.getLatitude(), locationNoDepth.getLongitude(), null, null));
         Assert.assertNotNull(foundLocationNoDepth);
     }
 
@@ -162,8 +164,8 @@ public class NodeFactoryImplTest extends GraphDBTestCase {
         getNodeFactory().getOrCreateLocation(-20.0d, 300.0d, -1.0d);
     }
 
-    private NodeFactoryImpl getNodeFactory() {
-        return (NodeFactoryImpl) nodeFactory;
+    private NodeFactoryNeo4j getNodeFactory() {
+        return (NodeFactoryNeo4j) nodeFactory;
     }
 
     @Test
@@ -221,7 +223,7 @@ public class NodeFactoryImplTest extends GraphDBTestCase {
                 return "my citation";
             }
         });
-        StudyNode study = getNodeFactory().getOrCreateStudy("my title", "some source", ExternalIdUtil.toCitation("my contr", "some description", null));
+        StudyNode study = getNodeFactory().getOrCreateStudy(new StudyImpl("my title", "some source", null, ExternalIdUtil.toCitation("my contr", "some description", null)));
         assertThat(study.getDOI(), is("doi:1234"));
         assertThat(study.getExternalId(), is("http://dx.doi.org/1234"));
         assertThat(study.getCitation(), is("my citation"));
@@ -237,7 +239,7 @@ public class NodeFactoryImplTest extends GraphDBTestCase {
                 throw new IOException("kaboom!");
             }
         });
-        study = getNodeFactory().getOrCreateStudy("my other title", "some source", ExternalIdUtil.toCitation("my contr", "some description", null));
+        study = getNodeFactory().getOrCreateStudy(new StudyImpl("my other title", "some source", null, ExternalIdUtil.toCitation("my contr", "some description", null)));
         assertThat(study.getDOI(), nullValue());
         assertThat(study.getExternalId(), nullValue());
         assertThat(study.getCitation(), is("my contr. some description"));
@@ -247,21 +249,21 @@ public class NodeFactoryImplTest extends GraphDBTestCase {
 
     @Test
     public void createStudy() throws NodeFactoryException {
-        StudyNode study = getNodeFactory().getOrCreateStudy2("myTitle", "mySource", "doi:myDoi");
+        StudyNode study = getNodeFactory().getOrCreateStudy(new StudyImpl("myTitle", "mySource", "doi:myDoi", null));
         assertThat(study.getDOI(), is("doi:myDoi"));
         assertThat(study.getExternalId(), is("http://dx.doi.org/myDoi"));
     }
 
     @Test
     public void specimenWithNoName() throws NodeFactoryException {
-        Specimen specimen = getNodeFactory().createSpecimen(getNodeFactory().createStudy("bla"), null, "bla:123");
+        Specimen specimen = getNodeFactory().createSpecimen(getNodeFactory().createStudy(new StudyImpl("bla", null, null, null)), new TaxonImpl(null, "bla:123"));
         assertThat(NodeUtil.getClassifications(specimen).iterator().hasNext(), is(false));
     }
 
     @Test
     public void specimenWithLifeStageInName() throws NodeFactoryException {
         initTaxonService();
-        Specimen specimen = getNodeFactory().createSpecimen(getNodeFactory().createStudy("bla"), "mickey eggs scales");
+        Specimen specimen = getNodeFactory().createSpecimen(getNodeFactory().createStudy(new StudyImpl("bla", null, null, null)), new TaxonImpl("mickey eggs scales", null));
         assertThat(specimen.getLifeStage().getName(), is("egg"));
         assertThat(specimen.getLifeStage().getId(), is("UBERON:0007379"));
         assertThat(specimen.getBodyPart().getName(), is("scale"));
@@ -271,7 +273,7 @@ public class NodeFactoryImplTest extends GraphDBTestCase {
     @Test
     public void specimenWithBasisOfRecord() throws NodeFactoryException {
         initTaxonService();
-        Specimen specimen = getNodeFactory().createSpecimen(getNodeFactory().createStudy("bla"), "mickey mouse");
+        Specimen specimen = getNodeFactory().createSpecimen(getNodeFactory().createStudy(new StudyImpl("bla", null, null, null)), new TaxonImpl("mickey mouse", null));
         specimen.setBasisOfRecord(getNodeFactory().getOrCreateBasisOfRecord("something:123", "theBasis"));
         assertThat(specimen.getBasisOfRecord().getName(), is("theBasis"));
         assertThat(specimen.getBasisOfRecord().getId(), is("TEST:theBasis"));
@@ -284,7 +286,7 @@ public class NodeFactoryImplTest extends GraphDBTestCase {
                 return "mickey corrected";
             }
         };
-        this.taxonIndex = new TaxonIndexImpl(new PassThroughEnricher(),
+        this.taxonIndex = new TaxonIndexNeo4j(new PassThroughEnricher(),
                 correctionService, getGraphDb()
         );
     }

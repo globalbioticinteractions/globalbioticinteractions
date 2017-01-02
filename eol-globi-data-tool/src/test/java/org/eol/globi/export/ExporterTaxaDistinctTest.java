@@ -4,16 +4,15 @@ import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Specimen;
-import org.eol.globi.domain.SpecimenNode;
 import org.eol.globi.domain.Study;
-import org.eol.globi.domain.StudyNode;
+import org.eol.globi.domain.StudyImpl;
+import org.eol.globi.domain.TaxonImpl;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.io.StringWriter;
 import java.text.ParseException;
 
-import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
@@ -24,9 +23,9 @@ public class ExporterTaxaDistinctTest extends GraphDBTestCase {
     @Test
     public void exportMissingLength() throws IOException, NodeFactoryException, ParseException {
         ExportTestUtil.createTestData(null, nodeFactory);
-        taxonIndex.getOrCreateTaxon("Canis lupus", "EOL:123", null);
-        taxonIndex.getOrCreateTaxon("Canis", "EOL:126", null);
-        taxonIndex.getOrCreateTaxon("ThemFishes", "no:match", null);
+        taxonIndex.getOrCreateTaxon(new TaxonImpl("Canis lupus", "EOL:123"));
+        taxonIndex.getOrCreateTaxon(new TaxonImpl("Canis", "EOL:126"));
+        taxonIndex.getOrCreateTaxon(new TaxonImpl("ThemFishes", "no:match"));
         resolveNames();
 
         Study myStudy1 = nodeFactory.findStudy("myStudy");
@@ -47,9 +46,9 @@ public class ExporterTaxaDistinctTest extends GraphDBTestCase {
 
     @Test
     public void excludeNoMatchNames() throws NodeFactoryException, IOException {
-        Study study = nodeFactory.createStudy("bla");
-        Specimen predator = nodeFactory.createSpecimen(study, PropertyAndValueDictionary.NO_MATCH, "EOL:1234");
-        Specimen prey = nodeFactory.createSpecimen(study, PropertyAndValueDictionary.NO_MATCH, "EOL:122");
+        Study study = nodeFactory.createStudy(new StudyImpl("bla", null, null, null));
+        Specimen predator = nodeFactory.createSpecimen(study, new TaxonImpl(PropertyAndValueDictionary.NO_MATCH, "EOL:1234"));
+        Specimen prey = nodeFactory.createSpecimen(study, new TaxonImpl(PropertyAndValueDictionary.NO_MATCH, "EOL:122"));
         predator.ate(prey);
         assertThat(exportStudy(study), not(containsString(PropertyAndValueDictionary.NO_MATCH)));
     }

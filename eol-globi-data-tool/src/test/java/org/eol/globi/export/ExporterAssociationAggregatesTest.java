@@ -6,6 +6,7 @@ import org.eol.globi.domain.Location;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
+import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.Term;
@@ -75,9 +76,9 @@ public class ExporterAssociationAggregatesTest extends GraphDBTestCase {
         String[] studyTitles = {"myStudy1", "myStudy2"};
 
         for (String studyTitle : studyTitles) {
-            Study myStudy = nodeFactory.getOrCreateStudy(studyTitle, "data source description", ExternalIdUtil.toCitation("contributor", "description", "pubYear"));
-            Specimen specimen = nodeFactory.createSpecimen(myStudy, PropertyAndValueDictionary.NO_MATCH);
-            specimen.ate(nodeFactory.createSpecimen(myStudy, PropertyAndValueDictionary.NO_MATCH));
+            Study myStudy = nodeFactory.getOrCreateStudy(new StudyImpl(studyTitle, "data source description", null, ExternalIdUtil.toCitation("contributor", "description", "pubYear")));
+            Specimen specimen = nodeFactory.createSpecimen(myStudy, new TaxonImpl(PropertyAndValueDictionary.NO_MATCH, null));
+            specimen.ate(nodeFactory.createSpecimen(myStudy, new TaxonImpl(PropertyAndValueDictionary.NO_MATCH, null)));
         }
         resolveNames();
 
@@ -93,14 +94,14 @@ public class ExporterAssociationAggregatesTest extends GraphDBTestCase {
     }
 
     private void createTestData(Double length, String studyTitle) throws NodeFactoryException, ParseException {
-        Study myStudy = nodeFactory.getOrCreateStudy(studyTitle, "data source description", ExternalIdUtil.toCitation("contributor", "description", "pubYear"));
-        Specimen specimen = nodeFactory.createSpecimen(myStudy, "Homo sapiens");
+        Study myStudy = nodeFactory.getOrCreateStudy(new StudyImpl(studyTitle, "data source description", null, ExternalIdUtil.toCitation("contributor", "description", "pubYear")));
+        Specimen specimen = nodeFactory.createSpecimen(myStudy, new TaxonImpl("Homo sapiens", null));
         specimen.setStomachVolumeInMilliLiter(666.0);
         specimen.setLifeStage(new Term("GlOBI:JUVENILE", "JUVENILE"));
         specimen.setPhysiologicalState(new Term("GlOBI:DIGESTATE", "DIGESTATE"));
         specimen.setBodyPart(new Term("GLOBI:BONE", "BONE"));
         nodeFactory.setUnixEpochProperty(specimen, new Date(ExportTestUtil.utcTestTime()));
-        Specimen otherSpecimen = nodeFactory.createSpecimen(myStudy, "Canis lupus");
+        Specimen otherSpecimen = nodeFactory.createSpecimen(myStudy, new TaxonImpl("Canis lupus", null));
         otherSpecimen.setVolumeInMilliLiter(124.0);
 
         specimen.ate(otherSpecimen);

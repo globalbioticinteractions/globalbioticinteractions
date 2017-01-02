@@ -6,7 +6,8 @@ import org.eol.globi.domain.Location;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
-import org.eol.globi.domain.StudyNode;
+import org.eol.globi.domain.StudyImpl;
+import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.Term;
 import org.eol.globi.util.ExternalIdUtil;
 import org.junit.Test;
@@ -40,8 +41,8 @@ public class ExporterAssociationsTest extends GraphDBTestCase {
     }
 
     private void createTestData(Double length) throws NodeFactoryException, ParseException {
-        Study myStudy = nodeFactory.getOrCreateStudy("myStudy", "data source description", ExternalIdUtil.toCitation("contributor", "description", "pubYear"));
-        Specimen specimen = nodeFactory.createSpecimen(myStudy, "Homo sapiens", "EOL:123");
+        Study myStudy = nodeFactory.getOrCreateStudy(new StudyImpl("myStudy", "data source description", null, ExternalIdUtil.toCitation("contributor", "description", "pubYear")));
+        Specimen specimen = nodeFactory.createSpecimen(myStudy, new TaxonImpl("Homo sapiens", "EOL:123"));
         specimen.setStomachVolumeInMilliLiter(666.0);
         specimen.setLifeStage(new Term("GLOBI:JUVENILE", "JUVENILE"));
         specimen.setPhysiologicalState(new Term("GLOBI:DIGESTATE", "DIGESTATE"));
@@ -58,7 +59,7 @@ public class ExporterAssociationsTest extends GraphDBTestCase {
     }
 
     private void eats(Specimen specimen, String scientificName, String taxonExternalId, Study study) throws NodeFactoryException {
-        Specimen otherSpecimen = nodeFactory.createSpecimen(study, scientificName, taxonExternalId);
+        Specimen otherSpecimen = nodeFactory.createSpecimen(study, new TaxonImpl(scientificName, taxonExternalId));
         otherSpecimen.setVolumeInMilliLiter(124.0);
 
         specimen.ate(otherSpecimen);

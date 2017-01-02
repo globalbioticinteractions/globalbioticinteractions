@@ -12,6 +12,8 @@ import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
+import org.eol.globi.domain.StudyImpl;
+import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.util.CSVUtil;
 import org.eol.globi.util.ResourceUtil;
 
@@ -102,7 +104,7 @@ public class StudyImporterForBascompte extends BaseStudyImporter {
                 if (!networkTempFileMap.containsKey(networkId)) {
                     throw new StudyImporterException("found network id [" + networkId + "], but no associated data.");
                 }
-                final Study study = nodeFactory.getOrCreateStudy("bascompte:" + citation, sourceCitation, citation);
+                final Study study = nodeFactory.getOrCreateStudy(new StudyImpl("bascompte:" + citation, sourceCitation, null, citation));
                 importNetwork(parseInteractionType(parser),
                         parseLocation(parser), study, networkTempFileMap.get(networkId));
             }
@@ -161,12 +163,12 @@ public class StudyImporterForBascompte extends BaseStudyImporter {
         String[] line;
         while ((line = interactions.getLine()) != null) {
             String sourceTaxonName = line[0];
-            final Specimen sourceSpecimen = nodeFactory.createSpecimen(study, sourceTaxonName);
+            final Specimen sourceSpecimen = nodeFactory.createSpecimen(study, new TaxonImpl(sourceTaxonName, null));
             sourceSpecimen.caughtIn(networkLocation);
             for (String targetTaxonName : targetTaxonNames) {
                 final String valueByLabel = StringUtils.trim(interactions.getValueByLabel(targetTaxonName));
                 if (StringUtils.isNotBlank(valueByLabel) && !StringUtils.equals("0", valueByLabel)) {
-                    final Specimen targetSpecimen = nodeFactory.createSpecimen(study, targetTaxonName);
+                    final Specimen targetSpecimen = nodeFactory.createSpecimen(study, new TaxonImpl(targetTaxonName, null));
                     targetSpecimen.caughtIn(networkLocation);
                     sourceSpecimen.interactsWith(targetSpecimen, interactType1);
                 }

@@ -4,6 +4,7 @@ import org.apache.commons.io.IOUtils;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.domain.Location;
+import org.eol.globi.domain.LocationImpl;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.SpecimenNode;
 import org.eol.globi.domain.Study;
@@ -62,7 +63,7 @@ public class StudyImporterForSzoboszlaiTest extends GraphDBTestCase {
         }
 
         assertThat(taxonIndex.findTaxonByName("Thunnus thynnus"), is(notNullValue()));
-        assertThat(nodeFactory.findLocation(34.00824202376044, -120.72716166720323, null), is(notNullValue()));
+        assertThat(nodeFactory.findLocation(new LocationImpl(34.00824202376044, -120.72716166720323, null, null)), is(notNullValue()));
     }
 
     @Test

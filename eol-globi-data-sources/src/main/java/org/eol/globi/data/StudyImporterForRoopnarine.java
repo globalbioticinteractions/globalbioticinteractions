@@ -5,6 +5,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
+import org.eol.globi.domain.StudyImpl;
+import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.geo.LatLng;
 
 import java.io.IOException;
@@ -28,9 +30,8 @@ public class StudyImporterForRoopnarine extends BaseStudyImporter {
 
         Map<String, LatLng> resourceLocation = resourceLocationMap(suffix, prefix);
 
-        Study study = nodeFactory.getOrCreateStudy2("Roopnarine et al 2013"
-                , "Roopnarine, P.D. & Hertog, R., 2013. Detailed Food Web Networks of Three Greater Antillean Coral Reef Systems: The Cayman Islands, Cuba, and Jamaica. DatasetImpl Papers in Ecology, 2013, pp.1–9. Available at: http://dx.doi.org/10.7167/2013/857470."
-                , "http://dx.doi.org/10.7167/2013/857470");
+        Study study = nodeFactory.getOrCreateStudy(
+                new StudyImpl("Roopnarine et al 2013", "Roopnarine, P.D. & Hertog, R., 2013. Detailed Food Web Networks of Three Greater Antillean Coral Reef Systems: The Cayman Islands, Cuba, and Jamaica. DatasetImpl Papers in Ecology, 2013, pp.1–9. Available at: http://dx.doi.org/10.7167/2013/857470.", "http://dx.doi.org/10.7167/2013/857470", null));
         for (Map.Entry<String, LatLng> resourceLatLngEntry : resourceLocation.entrySet()) {
             LatLng latLng = resourceLatLngEntry.getValue();
             Location location;
@@ -121,14 +122,14 @@ public class StudyImporterForRoopnarine extends BaseStudyImporter {
             if (StringUtils.isBlank(predatorTaxa)) {
                 getLogger().info(study, "found blank predator name on line [" + parser.lastLineNumber() + "]");
             } else {
-                Specimen predatorSpecimen = nodeFactory.createSpecimen(study, predatorTaxa);
+                Specimen predatorSpecimen = nodeFactory.createSpecimen(study, new TaxonImpl(predatorTaxa, null));
                 predatorSpecimen.caughtIn(location);
                 predatorSpecimenList.add(predatorSpecimen);
                 for (String preyTaxonName : preyTaxonList) {
                     if (StringUtils.isBlank(preyTaxonName)) {
                         getLogger().info(study, "found blank prey name for predator [" + predatorTaxa + "] on line [" + parser.lastLineNumber() + "]");
                     } else {
-                        Specimen preySpecimen = nodeFactory.createSpecimen(study, preyTaxonName);
+                        Specimen preySpecimen = nodeFactory.createSpecimen(study, new TaxonImpl(preyTaxonName, null));
                         preySpecimen.caughtIn(location);
                         predatorSpecimen.ate(preySpecimen);
                     }

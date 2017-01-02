@@ -5,6 +5,8 @@ import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
+import org.eol.globi.domain.StudyImpl;
+import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.util.ExternalIdUtil;
 
 import java.io.IOException;
@@ -28,7 +30,7 @@ public class StudyImporterForCook extends BaseStudyImporter {
             throw new StudyImporterException("failed to read resource", e);
         }
 
-        Study study = nodeFactory.getOrCreateStudy("Cook 2012", "Data provided by Colt W. Cook. Also available from  http://repositories.lib.utexas.edu/handle/2152/ETD-UT-2012-08-6285.", null, ExternalIdUtil.toCitation("Colt W. Cook", "The Early Life History and Reproductive Biology of Cymothoa excisa, a Marine Isopod Parasitizing Atlantic Croaker, (Micropogonias undulatus), along the Texas Coast. 2012. Master Thesis.", "2012"));
+        Study study = nodeFactory.getOrCreateStudy(new StudyImpl("Cook 2012", "Data provided by Colt W. Cook. Also available from  http://repositories.lib.utexas.edu/handle/2152/ETD-UT-2012-08-6285.", null, ExternalIdUtil.toCitation("Colt W. Cook", "The Early Life History and Reproductive Biology of Cymothoa excisa, a Marine Isopod Parasitizing Atlantic Croaker, (Micropogonias undulatus), along the Texas Coast. 2012. Master Thesis.", "2012")));
         study.setCitationWithTx("Cook CW. The Early Life History and Reproductive Biology of Cymothoa excisa, a Marine Isopod Parasitizing Atlantic Croaker, (Micropogonias undulatus), along the Texas Coast. 2012. Master Thesis. Available from http://repositories.lib.utexas.edu/handle/2152/ETD-UT-2012-08-6285.");
         study.setExternalId("http://repositories.lib.utexas.edu/handle/2152/ETD-UT-2012-08-6285");
 
@@ -41,7 +43,7 @@ public class StudyImporterForCook extends BaseStudyImporter {
 
             try {
                 while (parser.getLine() != null) {
-                    Specimen host = nodeFactory.createSpecimen(study, "Micropogonias undulatus");
+                    Specimen host = nodeFactory.createSpecimen(study, new TaxonImpl("Micropogonias undulatus", null));
                     host.setLengthInMm(Double.parseDouble(parser.getValueByLabel("Fish Length")) * 10.0);
 
                     String dateString = parser.getValueByLabel("Date");
@@ -74,7 +76,7 @@ public class StudyImporterForCook extends BaseStudyImporter {
             boolean lengthAvailable = parasiteDetected && !"NA".equals(valueByLabel);
 
             if (parasiteDetected) {
-                Specimen parasite = nodeFactory.createSpecimen(study, "Cymothoa excisa");
+                Specimen parasite = nodeFactory.createSpecimen(study, new TaxonImpl("Cymothoa excisa", null));
                 parasite.caughtIn(sampleLocation);
                 if (lengthAvailable) {
                     double parasiteLengthCm = Double.parseDouble(valueByLabel);

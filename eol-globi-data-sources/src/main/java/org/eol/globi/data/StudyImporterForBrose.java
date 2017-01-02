@@ -8,6 +8,8 @@ import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
+import org.eol.globi.domain.StudyImpl;
+import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.Term;
 import org.eol.globi.geo.LatLng;
 import org.eol.globi.service.TermLookupServiceException;
@@ -83,7 +85,7 @@ public class StudyImporterForBrose extends BaseStudyImporter {
                 throw new StudyImporterException("failed to find ref [" + shortReference + "] on line [" + parser.lastLineNumber() + "]");
             }
             String longReference = refMap.get(shortReference);
-            localStudy = nodeFactory.getOrCreateStudy("BROSE-" + StringUtils.abbreviate(longReference, 20), SOURCE, ExternalIdUtil.toCitation(null, longReference, null));
+            localStudy = nodeFactory.getOrCreateStudy(new StudyImpl("BROSE-" + StringUtils.abbreviate(longReference, 20), SOURCE, null, ExternalIdUtil.toCitation(null, longReference, null)));
 
             String name = getName(parser, "Taxonomy consumer", "Common name(s) consumer");
             if (StringUtils.isBlank(name)) {
@@ -123,7 +125,7 @@ public class StudyImporterForBrose extends BaseStudyImporter {
             nodeFactory.getOrCreateEnvironments(location, habitatId, habitat);
         }
 
-        Specimen consumer = nodeFactory.createSpecimen(localStudy, predatorName);
+        Specimen consumer = nodeFactory.createSpecimen(localStudy, new TaxonImpl(predatorName, null));
         consumer.caughtIn(location);
         addLifeStage(parser, consumer, "Lifestage consumer");
 
@@ -134,7 +136,7 @@ public class StudyImporterForBrose extends BaseStudyImporter {
             LOG.warn(message);
             getLogger().warn(localStudy, message);
         } else {
-            Specimen resource = nodeFactory.createSpecimen(localStudy, name);
+            Specimen resource = nodeFactory.createSpecimen(localStudy, new TaxonImpl(name, null));
             resource.caughtIn(location);
             addLifeStage(parser, resource, "Lifestage - resource");
             String interactionType = parser.getValueByLabel("Type of feeding interaction");

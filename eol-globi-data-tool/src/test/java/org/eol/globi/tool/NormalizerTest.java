@@ -4,7 +4,7 @@ import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.io.FileUtils;
 import org.eol.globi.data.GraphDBTestCase;
-import org.eol.globi.data.NodeFactoryImpl;
+import org.eol.globi.data.NodeFactoryNeo4j;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.data.StudyImporterForSimons;
 import org.eol.globi.domain.Study;
@@ -50,7 +50,7 @@ public class NormalizerTest extends GraphDBTestCase {
 
     @Test
     public void doSingleImport() throws IOException, StudyImporterException {
-        createNormalizer().importData(StudyImporterForSimons.class, new NodeFactoryImpl(getGraphDb()));
+        createNormalizer().importData(StudyImporterForSimons.class, new NodeFactoryNeo4j(getGraphDb()));
         GraphDatabaseService graphService = getGraphDb();
 
         List<Study> allStudies = NodeUtil.findAllStudies(graphService);
@@ -89,7 +89,7 @@ public class NormalizerTest extends GraphDBTestCase {
         Normalizer dataNormalizationTool = createNormalizer();
 
         GraphDatabaseService graphService = getGraphDb();
-        dataNormalizationTool.importData(StudyImporterForSimons.class, new NodeFactoryImpl(graphService));
+        dataNormalizationTool.importData(StudyImporterForSimons.class, new NodeFactoryNeo4j(graphService));
 
 
         String baseDir = "./target/normalizer-test/";

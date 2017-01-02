@@ -1,12 +1,12 @@
 package org.eol.globi.data;
 
 import org.eol.globi.domain.InteractType;
+import org.eol.globi.domain.LocationImpl;
 import org.eol.globi.domain.NodeBacked;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.SpecimenConstant;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.Taxon;
-import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
 import org.neo4j.graphdb.Direction;
@@ -37,7 +37,7 @@ public class StudyImporterForCookTest extends GraphDBTestCase {
         assertThat(hostTaxon, is(notNullValue()));
         Taxon parasiteTaxon = taxonIndex.findTaxonByName("Cymothoa excisa");
         assertThat(parasiteTaxon, is(notNullValue()));
-        assertThat("missing location", nodeFactory.findLocation(27.85, -(97.0 + 8.0 / 60.0), -3.0), is(notNullValue()));
+        assertThat("missing location", nodeFactory.findLocation(new LocationImpl(27.85, -(97.0 + 8.0 / 60.0), -3.0, null)), is(notNullValue()));
 
         int count = 0;
         boolean foundFirstHost = false;

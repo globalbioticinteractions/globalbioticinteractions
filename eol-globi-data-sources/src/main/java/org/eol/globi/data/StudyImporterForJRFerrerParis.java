@@ -4,6 +4,8 @@ import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
+import org.eol.globi.domain.StudyImpl;
+import org.eol.globi.domain.TaxonImpl;
 
 import java.io.IOException;
 import java.util.logging.Level;
@@ -20,7 +22,7 @@ public class StudyImporterForJRFerrerParis extends BaseStudyImporter {
     @Override
     public Study importStudy() throws StudyImporterException {
         String citation = "Ferrer-Paris, José R.; Sánchez-Mercado, Ada Y.; Lozano, Cecilia; Zambrano, Liset; Soto, José; Baettig, Jessica; Leal, María (2014): A compilation of larval host-plant records for six families of butterflies (Lepidoptera: Papilionoidea) from available electronic resources. figshare. http://dx.doi.org/10.6084/m9.figshare.1168861 . " + ReferenceUtil.createLastAccessedString(RESOURCE);
-        Study study = nodeFactory.getOrCreateStudy2("Ferrer-Paris 2014", citation, "http://dx.doi.org/10.6084/m9.figshare.1168861");
+        Study study = nodeFactory.getOrCreateStudy(new StudyImpl("Ferrer-Paris 2014", citation, "http://dx.doi.org/10.6084/m9.figshare.1168861", null));
         study.setCitationWithTx(citation);
         try {
             LabeledCSVParser parser = parserFactory.createParser(RESOURCE, CharsetConstant.UTF8);
@@ -41,13 +43,13 @@ public class StudyImporterForJRFerrerParis extends BaseStudyImporter {
     private void addAssociation(Study study, LabeledCSVParser parser, String butterflyName, String plantName) throws StudyImporterException {
         Specimen instigatorSpecimen;
         try {
-            instigatorSpecimen = nodeFactory.createSpecimen(study, butterflyName);
+            instigatorSpecimen = nodeFactory.createSpecimen(study, new TaxonImpl(butterflyName, null));
         } catch (NodeFactoryException e) {
             throw new StudyImporterException("failed to create butterfly specimen [" + butterflyName + "] on line [" + parser.lastLineNumber() + "]", e);
         }
         Specimen targetSpecimen;
         try {
-            targetSpecimen = nodeFactory.createSpecimen(study, plantName);
+            targetSpecimen = nodeFactory.createSpecimen(study, new TaxonImpl(plantName, null));
             instigatorSpecimen.ate(targetSpecimen);
         } catch (NodeFactoryException e) {
             throw new StudyImporterException("failed to associate butterfly [" + butterflyName + "] to plant [" + plantName + "] on line [" + parser.lastLineNumber() + "]", e);

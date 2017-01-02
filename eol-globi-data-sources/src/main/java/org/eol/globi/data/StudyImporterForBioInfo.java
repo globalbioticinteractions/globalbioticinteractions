@@ -5,6 +5,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
+import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TaxonomyProvider;
@@ -233,8 +234,8 @@ public class StudyImporterForBioInfo extends BaseStudyImporter implements StudyI
     protected Study createStudy(String refId, String citation) throws NodeFactoryException {
         String sourceCitation = "Food Webs and Species Interactions in the Biodiversity of UK and Ireland (Online). 2015. Data provided by Malcolm Storey. Also available from " + BIOINFO_URL + ".";
         String bioInfoId = TaxonomyProvider.BIO_INFO + "ref:" + refId;
-        Study study = nodeFactory.getOrCreateStudy2(bioInfoId,
-                sourceCitation, null);
+        Study study = nodeFactory.getOrCreateStudy(
+                new StudyImpl(bioInfoId, sourceCitation, null, null));
         if (study != null) {
             study.setCitationWithTx(citation);
             study.setExternalId(ExternalIdUtil.urlForExternalId(bioInfoId));
@@ -296,7 +297,7 @@ public class StudyImporterForBioInfo extends BaseStudyImporter implements StudyI
                 if (taxon == null) {
                     getLogger().warn(study, "no taxon for id [" + bioTaxonId + "] on line [" + parser.lastLineNumber() + 1 + "]");
                 } else {
-                    specimen = nodeFactory.createSpecimen(study, taxon.getName(), TaxonomyProvider.BIO_INFO + "taxon:" + bioTaxonId);
+                    specimen = nodeFactory.createSpecimen(study, new TaxonImpl(taxon.getName(), TaxonomyProvider.BIO_INFO + "taxon:" + bioTaxonId));
                     setSpecimenExternalId(parser, specimen);
                 }
             } catch (NodeFactoryException e) {
@@ -346,7 +347,7 @@ public class StudyImporterForBioInfo extends BaseStudyImporter implements StudyI
 
     private Specimen createSpecimen(Study study, LabeledCSVParser labeledCSVParser, String externalId) throws StudyImporterException {
         try {
-            Specimen specimen = nodeFactory.createSpecimen(study, null, TaxonomyProvider.NBN.getIdPrefix() + externalId);
+            Specimen specimen = nodeFactory.createSpecimen(study, new TaxonImpl(null, TaxonomyProvider.NBN.getIdPrefix() + externalId));
             setSpecimenExternalId(labeledCSVParser, specimen);
             return specimen;
         } catch (NodeFactoryException e) {

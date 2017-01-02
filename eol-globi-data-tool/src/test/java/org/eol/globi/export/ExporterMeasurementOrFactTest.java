@@ -5,9 +5,9 @@ import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Specimen;
-import org.eol.globi.domain.SpecimenNode;
 import org.eol.globi.domain.Study;
-import org.eol.globi.domain.StudyNode;
+import org.eol.globi.domain.StudyImpl;
+import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.Term;
 import org.junit.Test;
 
@@ -41,9 +41,9 @@ public class ExporterMeasurementOrFactTest extends GraphDBTestCase {
 
     @Test
     public void noMatchNames() throws IOException, NodeFactoryException, ParseException {
-        Study myStudy = nodeFactory.createStudy("myStudy");
-        nodeFactory.createSpecimen(myStudy, PropertyAndValueDictionary.NO_NAME, "externalId1");
-        nodeFactory.createSpecimen(myStudy, "Some namus", PropertyAndValueDictionary.NO_MATCH);
+        Study myStudy = nodeFactory.createStudy(new StudyImpl("myStudy", null, null, null));
+        nodeFactory.createSpecimen(myStudy, new TaxonImpl(PropertyAndValueDictionary.NO_NAME, "externalId1"));
+        nodeFactory.createSpecimen(myStudy, new TaxonImpl("Some namus", PropertyAndValueDictionary.NO_MATCH));
 
         Study myStudy1 = nodeFactory.findStudy("myStudy");
         StringWriter row = new StringWriter();
@@ -65,19 +65,19 @@ public class ExporterMeasurementOrFactTest extends GraphDBTestCase {
     }
 
     private void createTestData(Double length, String targetTaxonName, String sourceTaxonName) throws NodeFactoryException, ParseException {
-        Study myStudy = nodeFactory.createStudy("myStudy");
-        Specimen specimen = nodeFactory.createSpecimen(myStudy, sourceTaxonName, "externalId1");
+        Study myStudy = nodeFactory.createStudy(new StudyImpl("myStudy", null, null, null));
+        Specimen specimen = nodeFactory.createSpecimen(myStudy, new TaxonImpl(sourceTaxonName, "externalId1"));
         specimen.setStomachVolumeInMilliLiter(666.0);
         specimen.setLifeStage(new Term("GLOBI:JUVENILE", "JUVENILE"));
         specimen.setPhysiologicalState(new Term("GLOBI:DIGESTATE", "DIGESTATE"));
         specimen.setBodyPart(new Term("GLOBI:BONE", "BONE"));
         nodeFactory.setUnixEpochProperty(specimen, ExportTestUtil.utcTestDate());
-        Specimen otherSpecimen = nodeFactory.createSpecimen(myStudy, targetTaxonName, "externalId2");
+        Specimen otherSpecimen = nodeFactory.createSpecimen(myStudy, new TaxonImpl(targetTaxonName, "externalId2"));
         otherSpecimen.setVolumeInMilliLiter(124.0);
 
         specimen.ate(otherSpecimen);
 
-        otherSpecimen = nodeFactory.createSpecimen(myStudy, targetTaxonName, "externalId2");
+        otherSpecimen = nodeFactory.createSpecimen(myStudy, new TaxonImpl(targetTaxonName, "externalId2"));
         otherSpecimen.setVolumeInMilliLiter(18.0);
         specimen.ate(otherSpecimen);
         if (null != length) {

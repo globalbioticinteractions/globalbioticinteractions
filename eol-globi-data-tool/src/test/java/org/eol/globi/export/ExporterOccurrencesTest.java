@@ -3,11 +3,10 @@ package org.eol.globi.export;
 import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.domain.Location;
-import org.eol.globi.domain.LocationNode;
 import org.eol.globi.domain.Specimen;
-import org.eol.globi.domain.SpecimenNode;
 import org.eol.globi.domain.Study;
-import org.eol.globi.domain.StudyNode;
+import org.eol.globi.domain.StudyImpl;
+import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.Term;
 import org.junit.Test;
 
@@ -86,8 +85,8 @@ public class ExporterOccurrencesTest extends GraphDBTestCase {
 
     @Test
     public void dontExportToCSVSpecimenEmptyStomach() throws NodeFactoryException, IOException {
-        Study myStudy = nodeFactory.createStudy("myStudy");
-        Specimen specimen = nodeFactory.createSpecimen(myStudy, "Homo sapiens", "EOL:123");
+        Study myStudy = nodeFactory.createStudy(new StudyImpl("myStudy", null, null, null));
+        Specimen specimen = nodeFactory.createSpecimen(myStudy, new TaxonImpl("Homo sapiens", "EOL:123"));
         specimen.setBasisOfRecord(new Term("test:123", "aBasisOfRecord"));
         resolveNames();
 
@@ -103,8 +102,8 @@ public class ExporterOccurrencesTest extends GraphDBTestCase {
     }
 
     private void createTestData(Double length) throws NodeFactoryException, ParseException {
-        Study myStudy = nodeFactory.createStudy("myStudy");
-        Specimen specimen = nodeFactory.createSpecimen(myStudy, "Homo sapiens", "EOL:327955");
+        Study myStudy = nodeFactory.createStudy(new StudyImpl("myStudy", null, null, null));
+        Specimen specimen = nodeFactory.createSpecimen(myStudy, new TaxonImpl("Homo sapiens", "EOL:327955"));
         specimen.setStomachVolumeInMilliLiter(666.0);
         specimen.setLifeStage(new Term("GLOBI:JUVENILE", "JUVENILE"));
         specimen.setPhysiologicalState(new Term("GLOBI:DIGESTATE", "DIGESTATE"));
@@ -123,7 +122,7 @@ public class ExporterOccurrencesTest extends GraphDBTestCase {
     }
 
     private Specimen eatWolf(Specimen specimen, Study study) throws NodeFactoryException {
-        Specimen otherSpecimen = nodeFactory.createSpecimen(study, "Canis lupus", "EOL:328607");
+        Specimen otherSpecimen = nodeFactory.createSpecimen(study, new TaxonImpl("Canis lupus", "EOL:328607"));
         otherSpecimen.setVolumeInMilliLiter(124.0);
         nodeFactory.setUnixEpochProperty(otherSpecimen, ExportTestUtil.utcTestDate());
         specimen.ate(otherSpecimen);

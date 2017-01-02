@@ -10,6 +10,8 @@ import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
+import org.eol.globi.domain.StudyImpl;
+import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.service.DatasetUtil;
 import org.eol.globi.util.CSVUtil;
 import org.joda.time.format.DateTimeFormat;
@@ -113,7 +115,7 @@ public class StudyImporterForSeltmann extends BaseStudyImporter {
             occurrence.changeDelimiter('\t');
             while (occurrence.getLine() != null) {
                 String references = occurrence.getValueByLabel("dcterms:references");
-                Study study = nodeFactory.getOrCreateStudy("seltmann" + references, ReferenceUtil.sourceCitationLastAccessed(this.getDataset(), references), references);
+                Study study = nodeFactory.getOrCreateStudy(new StudyImpl("seltmann" + references, ReferenceUtil.sourceCitationLastAccessed(this.getDataset(), references), null, references));
                 String recordId = occurrence.getValueByLabel(FIELD_IDIGBIO_RECORD_ID);
                 Map<String, String> assoc = assocMap.get(recordId);
                 if (assoc != null) {
@@ -175,8 +177,8 @@ public class StudyImporterForSeltmann extends BaseStudyImporter {
 
     protected void createInteraction(LabeledCSVParser occurrence, Study study, Map<String, String> assoc, String targetName, String sourceName, Date date, InteractType interactType) throws StudyImporterException {
 
-        Specimen source = nodeFactory.createSpecimen(study, sourceName);
-        Specimen target = nodeFactory.createSpecimen(study, targetName);
+        Specimen source = nodeFactory.createSpecimen(study, new TaxonImpl(sourceName, null));
+        Specimen target = nodeFactory.createSpecimen(study, new TaxonImpl(targetName, null));
         source.interactsWith(target, interactType);
 
         String sourceBasisOfRecord = occurrence.getValueByLabel("basisOfRecord");

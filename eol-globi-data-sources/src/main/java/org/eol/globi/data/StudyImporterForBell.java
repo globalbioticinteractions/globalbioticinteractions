@@ -8,6 +8,8 @@ import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
+import org.eol.globi.domain.StudyImpl;
+import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.util.ExternalIdUtil;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
@@ -63,20 +65,20 @@ public class StudyImporterForBell extends BaseStudyImporter {
                         collectionId = "";
                     }
 
-                    Study study = nodeFactory.getOrCreateStudy("bell-" + collectionId, sourceCitation, "http://dx.doi.org/10.1654/4756.1", ExternalIdUtil.toCitation(null, sourceCitation + " " + description, null));
+                    Study study = nodeFactory.getOrCreateStudy(new StudyImpl("bell-" + collectionId, sourceCitation, "http://dx.doi.org/10.1654/4756.1", ExternalIdUtil.toCitation(null, sourceCitation + " " + description, null)));
 
                     String genus = parser.getValueByLabel("Genus");
                     String species = parser.getValueByLabel("Species");
 
                     String parasiteName = StringUtils.join(new String[]{StringUtils.trim(genus), StringUtils.trim(species)}, " ");
-                    Specimen parasite = nodeFactory.createSpecimen(study, parasiteName);
+                    Specimen parasite = nodeFactory.createSpecimen(study, new TaxonImpl(parasiteName, null));
                     parasite.setExternalId(externalId);
                     Location location = getLocation(parser, parasite);
                     parasite.caughtIn(location);
 
                     String scientificName = parser.getValueByLabel("SCIENTIFIC_NAME");
                     String hostName = StringUtils.trim(scientificName);
-                    Specimen host = nodeFactory.createSpecimen(study, hostName);
+                    Specimen host = nodeFactory.createSpecimen(study, new TaxonImpl(hostName, null));
                     host.caughtIn(location);
                     host.setExternalId(externalId);
                     parasite.interactsWith(host, InteractType.PARASITE_OF);

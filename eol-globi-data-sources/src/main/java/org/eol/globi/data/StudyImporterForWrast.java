@@ -6,6 +6,8 @@ import org.eol.globi.domain.Location;
 import org.eol.globi.domain.Season;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
+import org.eol.globi.domain.StudyImpl;
+import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.geo.LatLng;
 import org.eol.globi.util.ExternalIdUtil;
 
@@ -72,8 +74,8 @@ public class StudyImporterForWrast extends BaseStudyImporter {
 
     @Override
     public Study importStudy() throws StudyImporterException {
-        Study study = nodeFactory.getOrCreateStudy("Wrast 2008",
-                StudyImporterForGoMexSI2.GOMEXI_SOURCE_DESCRIPTION, ExternalIdUtil.toCitation("Jenny L. Wrast", "Spatiotemporal And Habitat-mediated Food Web Dynamics in Lavaca Bay, Texas.", "2008"));
+        Study study = nodeFactory.getOrCreateStudy(
+                new StudyImpl("Wrast 2008", StudyImporterForGoMexSI2.GOMEXI_SOURCE_DESCRIPTION, null, ExternalIdUtil.toCitation("Jenny L. Wrast", "Spatiotemporal And Habitat-mediated Food Web Dynamics in Lavaca Bay, Texas.", "2008")));
         study.setCitationWithTx("Wrast JL. Spatiotemporal And Habitat-mediated Food Web Dynamics in Lavaca Bay, Texas. 2008. Master Thesis.");
         study.setExternalId("http://www.fisheries.tamucc.edu/people_files/FINAL%20WRAST%20THESIS.pdf");
         try {
@@ -324,7 +326,7 @@ public class StudyImporterForWrast extends BaseStudyImporter {
 
     private Specimen createAndClassifySpecimen(final String speciesName, Study study) throws StudyImporterException {
         try {
-            return nodeFactory.createSpecimen(study, speciesName);
+            return nodeFactory.createSpecimen(study, new TaxonImpl(speciesName, null));
         } catch (NodeFactoryException e) {
             throw new StudyImporterException("failed to classify specimen with name [" + speciesName + "]", e);
         }

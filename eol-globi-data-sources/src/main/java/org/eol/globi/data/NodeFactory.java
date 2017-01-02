@@ -17,23 +17,13 @@ import java.util.List;
 public interface NodeFactory {
     Location findLocation(Location location);
 
-    Location findLocation(Double latitude, Double longitude, Double altitude);
-
     Season createSeason(String seasonNameLower);
 
     Specimen createSpecimen(Study study, Taxon taxon) throws NodeFactoryException;
 
-    Specimen createSpecimen(Study study, String taxonName) throws NodeFactoryException;
+    Study createStudy(Study study);
 
-    Specimen createSpecimen(Study study, String taxonName, String taxonExternalId) throws NodeFactoryException;
-
-    Study createStudy(String title);
-
-    Study getOrCreateStudy(String title, String source, String citation) throws NodeFactoryException;
-
-    Study getOrCreateStudy(String title, String source, String doi, String citation) throws NodeFactoryException;
-
-    Study getOrCreateStudy2(String title, String source, String doi) throws NodeFactoryException;
+    Study getOrCreateStudy(Study study) throws NodeFactoryException;
 
     Study findStudy(String title);
 

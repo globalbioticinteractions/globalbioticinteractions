@@ -8,7 +8,7 @@ import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.data.TaxonIndex;
 import org.eol.globi.taxon.TaxonNameCorrector;
-import org.eol.globi.taxon.TaxonIndexImpl;
+import org.eol.globi.taxon.TaxonIndexNeo4j;
 import org.eol.globi.db.GraphService;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.service.PropertyEnricherFactory;
@@ -46,7 +46,7 @@ public class Indexer {
         ExecutionEngine executionEngine = new ExecutionEngine(previousGraphService);
 
         final GraphDatabaseService freshGraphService = GraphService.startNeo4j(baseDir);
-        TaxonIndex taxonIndex = new TaxonIndexImpl(PropertyEnricherFactory.createTaxonEnricher()
+        TaxonIndex taxonIndex = new TaxonIndexNeo4j(PropertyEnricherFactory.createTaxonEnricher()
                 , new TaxonNameCorrector()
                 , freshGraphService);
         indexUsingExternalIds(executionEngine, taxonIndex);

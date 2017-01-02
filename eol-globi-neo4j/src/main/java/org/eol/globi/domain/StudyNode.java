@@ -33,34 +33,6 @@ public class StudyNode extends NodeBacked implements Study {
     @Override
     public String getName() { return getTitle(); }
 
-    @Override
-    @Deprecated
-    // citation / doi's are used to convey the source
-    public void setContributor(String contributor) {
-        setProperty(StudyConstant.CONTRIBUTOR, contributor);
-    }
-
-    protected void setProperty(String name, String value) {
-        if (value != null) {
-            getUnderlyingNode().setProperty(name, value);
-        }
-    }
-
-    @Override
-    @Deprecated
-    // use citation instead
-    public String getDescription() {
-        return getProperty(StudyConstant.DESCRIPTION);
-    }
-
-    private String getProperty(String propertyName) {
-        Object value = null;
-        if (getUnderlyingNode().hasProperty(propertyName)) {
-            value = getUnderlyingNode().getProperty(propertyName);
-        }
-        return value == null ? "" : value.toString();
-
-    }
 
     @Override
     public String getSource() {

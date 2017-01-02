@@ -7,6 +7,7 @@ import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
+import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.service.PropertyEnricher;
@@ -48,9 +49,9 @@ public class ExporterSiteMapForNamesTest extends GraphDBTestCase {
             }
         };
         taxonIndex = ExportTestUtil.taxonIndexWithEnricher(taxonEnricher, getGraphDb());
-        Study study = nodeFactory.getOrCreateStudy("title", "source", "citation 123");
-        final Specimen human = nodeFactory.createSpecimen(study, "Homo sapiens");
-        final Specimen dog = nodeFactory.createSpecimen(study, "Canis familiaris");
+        Study study = nodeFactory.getOrCreateStudy(new StudyImpl("title", "source", null, "citation 123"));
+        final Specimen human = nodeFactory.createSpecimen(study, new TaxonImpl("Homo sapiens", null));
+        final Specimen dog = nodeFactory.createSpecimen(study, new TaxonImpl("Canis familiaris", null));
         human.ate(dog);
         resolveNames();
 

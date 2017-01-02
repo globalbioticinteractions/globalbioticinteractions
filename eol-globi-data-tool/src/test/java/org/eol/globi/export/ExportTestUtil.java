@@ -4,15 +4,14 @@ import org.eol.globi.data.NodeFactory;
 import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.data.TaxonIndex;
 import org.eol.globi.domain.Location;
-import org.eol.globi.domain.LocationNode;
 import org.eol.globi.domain.Specimen;
-import org.eol.globi.domain.SpecimenNode;
 import org.eol.globi.domain.Study;
-import org.eol.globi.domain.StudyNode;
+import org.eol.globi.domain.StudyImpl;
+import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.Term;
 import org.eol.globi.service.PropertyEnricher;
 import org.eol.globi.taxon.CorrectionService;
-import org.eol.globi.taxon.TaxonIndexImpl;
+import org.eol.globi.taxon.TaxonIndexNeo4j;
 import org.neo4j.graphdb.GraphDatabaseService;
 
 import javax.xml.bind.DatatypeConverter;
@@ -31,19 +30,19 @@ public class ExportTestUtil {
     }
 
     public static Study createTestData(Double length, NodeFactory factory) throws NodeFactoryException, ParseException {
-        Study myStudy = factory.createStudy("myStudy");
-        Specimen specimen1 = factory.createSpecimen(myStudy, "Homo sapiens", "EOL:45634");
+        Study myStudy = factory.createStudy(new StudyImpl("myStudy", null, null, null));
+        Specimen specimen1 = factory.createSpecimen(myStudy, new TaxonImpl("Homo sapiens", "EOL:45634"));
         specimen1.setStomachVolumeInMilliLiter(666.0);
         specimen1.setLifeStage(new Term("GLOBI:JUVENILE", "JUVENILE"));
         specimen1.setPhysiologicalState(new Term("GLOBI:DIGESTATE", "DIGESTATE"));
         specimen1.setBodyPart(new Term("GLOBI:BONE", "BONE"));
         factory.setUnixEpochProperty(specimen1, ExportTestUtil.utcTestDate());
-        final Specimen specimen2 = factory.createSpecimen(myStudy, "Canis lupus", "EOL:123");
+        final Specimen specimen2 = factory.createSpecimen(myStudy, new TaxonImpl("Canis lupus", "EOL:123"));
         specimen2.setVolumeInMilliLiter(124.0);
 
         specimen1.ate(specimen2);
 
-        final Specimen specimen3 = factory.createSpecimen(myStudy, "Canis lupus", "EOL:123");
+        final Specimen specimen3 = factory.createSpecimen(myStudy, new TaxonImpl("Canis lupus", "EOL:123"));
         specimen3.setVolumeInMilliLiter(18.0);
         specimen1.ate(specimen3);
         if (null != length) {
@@ -66,7 +65,7 @@ public class ExportTestUtil {
     }
 
     public static TaxonIndex taxonIndexWithEnricher(PropertyEnricher taxonEnricher, GraphDatabaseService graphDb) {
-        return new TaxonIndexImpl(taxonEnricher, new CorrectionService() {
+        return new TaxonIndexNeo4j(taxonEnricher, new CorrectionService() {
 
             @Override
             public String correct(String taxonName) {

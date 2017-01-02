@@ -3,13 +3,12 @@ package org.eol.globi.data;
 import org.apache.commons.lang.StringUtils;
 import org.eol.globi.domain.Environment;
 import org.eol.globi.domain.Location;
-import org.eol.globi.domain.LocationNode;
+import org.eol.globi.domain.LocationImpl;
 import org.eol.globi.domain.NodeBacked;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.SpecimenConstant;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.Taxon;
-import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.service.TermLookupService;
 import org.eol.globi.taxon.UberonLookupService;
 import org.eol.globi.util.NodeUtil;
@@ -77,7 +76,7 @@ public class StudyImporterForBroseTest extends GraphDBTestCase {
         assertThat(taxon, is(notNullValue()));
         assertThat(taxonIndex.findTaxonByName("Aphelinus abdominalis"), is(notNullValue()));
 
-        Location location = nodeFactory.findLocation(51.24, -0.34, null);
+        Location location = nodeFactory.findLocation(new LocationImpl(51.24, -0.34, null, null));
         assertThat("missing location", location, is(notNullValue()));
 
         List<Environment> environments = location.getEnvironments();

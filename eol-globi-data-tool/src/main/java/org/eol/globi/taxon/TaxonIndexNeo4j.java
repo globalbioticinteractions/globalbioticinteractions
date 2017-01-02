@@ -19,35 +19,18 @@ import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.IndexHits;
 
-public class TaxonIndexImpl implements TaxonIndex {
+public class TaxonIndexNeo4j implements TaxonIndex {
     private final GraphDatabaseService graphDbService;
     private final Index<Node> taxons;
     private CorrectionService corrector;
     private PropertyEnricher enricher;
     private boolean indexResolvedOnly;
 
-    public TaxonIndexImpl(PropertyEnricher enricher, CorrectionService correctionService, GraphDatabaseService graphDbService) {
+    public TaxonIndexNeo4j(PropertyEnricher enricher, CorrectionService correctionService, GraphDatabaseService graphDbService) {
         this.enricher = enricher;
         this.corrector = correctionService;
         this.graphDbService = graphDbService;
         this.taxons = graphDbService.index().forNodes("taxons");
-    }
-
-    @Override
-    public TaxonNode getOrCreateTaxon(String name) throws NodeFactoryException {
-        return getOrCreateTaxon(new TaxonImpl(name));
-    }
-
-    @Override
-    public TaxonNode getOrCreateTaxon(String name, String externalId) throws NodeFactoryException {
-        return getOrCreateTaxon(new TaxonImpl(name, externalId));
-    }
-
-    @Override
-    public TaxonNode getOrCreateTaxon(String name, String externalId, String path) throws NodeFactoryException {
-        TaxonImpl taxon = new TaxonImpl(name, externalId);
-        taxon.setPath(path);
-        return getOrCreateTaxon(taxon);
     }
 
     @Override

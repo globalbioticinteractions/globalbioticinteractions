@@ -1,20 +1,17 @@
 package org.eol.globi.tool;
 
 import org.eol.globi.data.GraphDBTestCase;
-import org.eol.globi.data.NodeFactory;
 import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.data.PassThroughCorrectionService;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
-import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.service.PropertyEnricher;
 import org.eol.globi.service.PropertyEnricherException;
-import org.eol.globi.taxon.TaxonIndexImpl;
+import org.eol.globi.taxon.TaxonIndexNeo4j;
 import org.junit.Ignore;
 import org.junit.Test;
-import scala.util.Random;
 
 import java.util.HashMap;
 import java.util.List;
@@ -30,9 +27,9 @@ public class LinkerGlobalNamesTest extends GraphDBTestCase {
 
     @Test
     public void threeTaxa() throws NodeFactoryException, PropertyEnricherException {
-        taxonIndex.getOrCreateTaxon("Homo sapiens");
-        taxonIndex.getOrCreateTaxon("Ariopsis felis");
-        taxonIndex.getOrCreateTaxon("Canis lupus");
+        taxonIndex.getOrCreateTaxon(new TaxonImpl("Homo sapiens", null));
+        taxonIndex.getOrCreateTaxon(new TaxonImpl("Ariopsis felis", null));
+        taxonIndex.getOrCreateTaxon(new TaxonImpl("Canis lupus", null));
 
         new LinkerGlobalNames().link(getGraphDb());
 
@@ -46,7 +43,7 @@ public class LinkerGlobalNamesTest extends GraphDBTestCase {
 
     @Test
     public void oneSimilarTaxon() throws NodeFactoryException, PropertyEnricherException {
-        taxonIndex.getOrCreateTaxon("Homo sapienz");
+        taxonIndex.getOrCreateTaxon(new TaxonImpl("Homo sapienz", null));
 
         new LinkerGlobalNames().link(getGraphDb());
 
@@ -57,8 +54,8 @@ public class LinkerGlobalNamesTest extends GraphDBTestCase {
 
     @Test
     public void australianTaxa() throws NodeFactoryException, PropertyEnricherException {
-        taxonIndex.getOrCreateTaxon("Gilippus hostilis");
-        taxonIndex.getOrCreateTaxon("Euander lacertosus");
+        taxonIndex.getOrCreateTaxon(new TaxonImpl("Gilippus hostilis", null));
+        taxonIndex.getOrCreateTaxon(new TaxonImpl("Euander lacertosus", null));
 
         new LinkerGlobalNames().link(getGraphDb());
 
@@ -69,7 +66,7 @@ public class LinkerGlobalNamesTest extends GraphDBTestCase {
 
     @Test
     public void anura() throws NodeFactoryException, PropertyEnricherException {
-        taxonIndex.getOrCreateTaxon("Anura");
+        taxonIndex.getOrCreateTaxon(new TaxonImpl("Anura", null));
         new LinkerGlobalNames().link(getGraphDb());
         List<String> ids = LinkerTestUtil.assertHasOther("Anura", 7, taxonIndex, RelTypes.SAME_AS);
 
@@ -89,7 +86,7 @@ public class LinkerGlobalNamesTest extends GraphDBTestCase {
     @Ignore
     // see https://github.com/GlobalNamesArchitecture/gnparser/issues/291
     public void exactMatchExcludeStrains() throws NodeFactoryException, PropertyEnricherException {
-        taxonIndex.getOrCreateTaxon("Phytophthora infestans");
+        taxonIndex.getOrCreateTaxon(new TaxonImpl("Phytophthora infestans", null));
         new LinkerGlobalNames().link(getGraphDb());
         List<String> ids = LinkerTestUtil.assertHasOther("Phytophthora infestans", 6, taxonIndex, RelTypes.SAME_AS);
 
@@ -106,7 +103,7 @@ public class LinkerGlobalNamesTest extends GraphDBTestCase {
         nbnTaxon.setPathNames("Unranked | Kingdom | Phylum | Class | Order | Family | Genus | Species");
         taxonIndex.getOrCreateTaxon(nbnTaxon);
 
-        final Taxon taxonCreated = taxonIndex.getOrCreateTaxon("Medicago sativa L.");
+        final Taxon taxonCreated = taxonIndex.getOrCreateTaxon(new TaxonImpl("Medicago sativa L.", null));
         assertThat(taxonCreated.getName(), is("Medicago sativa"));
         new LinkerGlobalNames().link(getGraphDb());
         List<String> ids = LinkerTestUtil.assertHasOther(taxonCreated.getName(), 9, taxonIndex, RelTypes.SAME_AS);
@@ -118,7 +115,7 @@ public class LinkerGlobalNamesTest extends GraphDBTestCase {
 
     @Test
     public void exactMatchMonodelphisAmericana() throws NodeFactoryException, PropertyEnricherException {
-        final Taxon taxonCreated = taxonIndex.getOrCreateTaxon("Monodelphis americana");
+        final Taxon taxonCreated = taxonIndex.getOrCreateTaxon(new TaxonImpl("Monodelphis americana", null));
         assertThat(taxonCreated.getName(), is("Monodelphis americana"));
         new LinkerGlobalNames().link(getGraphDb());
         List<String> ids = LinkerTestUtil.assertHasOther(taxonCreated.getName(), 4, taxonIndex, RelTypes.SAME_AS);
@@ -128,7 +125,7 @@ public class LinkerGlobalNamesTest extends GraphDBTestCase {
 
     @Test
     public void hasFishBaseLinks() throws NodeFactoryException, PropertyEnricherException {
-        taxonIndex.getOrCreateTaxon("Ariopsis felis");
+        taxonIndex.getOrCreateTaxon(new TaxonImpl("Ariopsis felis", null));
         new LinkerGlobalNames().link(getGraphDb());
         List<String> ids = LinkerTestUtil.assertHasOther("Ariopsis felis", 7, taxonIndex, RelTypes.SAME_AS);
 
@@ -139,7 +136,7 @@ public class LinkerGlobalNamesTest extends GraphDBTestCase {
 
     @Test
     public void hasSeaLifeBaseLinks() throws NodeFactoryException, PropertyEnricherException {
-        taxonIndex.getOrCreateTaxon("Enhydra lutris");
+        taxonIndex.getOrCreateTaxon(new TaxonImpl("Enhydra lutris", null));
         new LinkerGlobalNames().link(getGraphDb());
         List<String> ids = LinkerTestUtil.assertHasOther("Enhydra lutris", 7, taxonIndex, RelTypes.SAME_AS);
 
@@ -168,9 +165,9 @@ public class LinkerGlobalNamesTest extends GraphDBTestCase {
 
             }
         };
-        taxonIndex = new TaxonIndexImpl(genus,
+        taxonIndex = new TaxonIndexNeo4j(genus,
                 new PassThroughCorrectionService(), getGraphDb());
-        Taxon lestes = taxonIndex.getOrCreateTaxon("Lestes");
+        Taxon lestes = taxonIndex.getOrCreateTaxon(new TaxonImpl("Lestes", null));
         assertThat(lestes.getPath(), is("Animalia | Insecta | Lestes"));
         new LinkerGlobalNames().link(getGraphDb());
         List<String> ids = LinkerTestUtil.assertHasOther("Lestes", 5, taxonIndex, RelTypes.SAME_AS);

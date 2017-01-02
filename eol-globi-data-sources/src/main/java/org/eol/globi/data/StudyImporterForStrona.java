@@ -5,6 +5,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
+import org.eol.globi.domain.StudyImpl;
+import org.eol.globi.domain.TaxonImpl;
 
 import java.io.IOException;
 
@@ -25,9 +27,8 @@ public class StudyImporterForStrona extends BaseStudyImporter {
             throw new StudyImporterException("failed to read resource [" + RESOURCE_PATH + "]", e);
         }
         try {
-            Study study = nodeFactory.getOrCreateStudy2("strona2013"
-                    , SOURCE + " . " + ReferenceUtil.createLastAccessedString(RESOURCE_PATH)
-                    , "http://dx.doi.org/10.1890/12-1419.1");
+            Study study = nodeFactory.getOrCreateStudy(
+                    new StudyImpl("strona2013", SOURCE + " . " + ReferenceUtil.createLastAccessedString(RESOURCE_PATH), "http://dx.doi.org/10.1890/12-1419.1", null));
             study.setCitationWithTx(SOURCE);
             while (dataParser.getLine() != null) {
                 if (importFilter.shouldImportRecord((long) dataParser.getLastLineNumber())) {
@@ -35,8 +36,8 @@ public class StudyImporterForStrona extends BaseStudyImporter {
                         String parasiteName = StringUtils.trim(dataParser.getValueByLabel("P_SP"));
                         String hostName = StringUtils.trim(dataParser.getValueByLabel("H_SP"));
                         if (areNamesAvailable(parasiteName, hostName)) {
-                            Specimen parasite = nodeFactory.createSpecimen(study, parasiteName);
-                            Specimen host = nodeFactory.createSpecimen(study, hostName);
+                            Specimen parasite = nodeFactory.createSpecimen(study, new TaxonImpl(parasiteName, null));
+                            Specimen host = nodeFactory.createSpecimen(study, new TaxonImpl(hostName, null));
                             parasite.interactsWith(host, InteractType.PARASITE_OF);
                         }
                     } catch (NodeFactoryException e) {

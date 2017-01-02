@@ -5,6 +5,8 @@ import org.apache.commons.lang.StringUtils;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
+import org.eol.globi.domain.StudyImpl;
+import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.Term;
 import org.eol.globi.service.TermLookupServiceException;
 import org.eol.globi.util.ExternalIdUtil;
@@ -33,8 +35,8 @@ public class StudyImporterForBaremore extends BaseStudyImporter {
             LabeledCSVParser parser = parserFactory.createParser(DATA_SOURCE, CharsetConstant.UTF8);
             String[] line;
 
-            study = nodeFactory.getOrCreateStudy("Baremore 2010",
-                    StudyImporterForGoMexSI2.GOMEXI_SOURCE_DESCRIPTION, ExternalIdUtil.toCitation("Ivy E. Baremore", "Prey Selection By The Atlantic Angel Shark Squatina Dumeril In The Northeastern Gulf Of Mexico.", "2010"));
+            study = nodeFactory.getOrCreateStudy(
+                    new StudyImpl("Baremore 2010", StudyImporterForGoMexSI2.GOMEXI_SOURCE_DESCRIPTION, null, ExternalIdUtil.toCitation("Ivy E. Baremore", "Prey Selection By The Atlantic Angel Shark Squatina Dumeril In The Northeastern Gulf Of Mexico.", "2010")));
             Location collectionLocation = nodeFactory.getOrCreateLocation(29.219302, -87.06665, null);
 
             Map<Integer, Specimen> specimenMap = new HashMap<Integer, Specimen>();
@@ -47,7 +49,7 @@ public class StudyImporterForBaremore extends BaseStudyImporter {
                 } else {
                     Specimen predatorSpecimen = specimenMap.get(sharkId);
                     if (predatorSpecimen == null) {
-                        predatorSpecimen = nodeFactory.createSpecimen(study, "Squatina dumeril");
+                        predatorSpecimen = nodeFactory.createSpecimen(study, new TaxonImpl("Squatina dumeril", null));
                         predatorSpecimen.caughtIn(collectionLocation);
                         addLifeStage(parser, predatorSpecimen);
 
@@ -70,7 +72,7 @@ public class StudyImporterForBaremore extends BaseStudyImporter {
                     if (StringUtils.isBlank(preySpeciesDescription)) {
                         getLogger().info(study, "found blank prey species description [" + preySpeciesDescription + "] on line [" + parser.lastLineNumber() + "]");
                     } else {
-                        Specimen preySpecimen = nodeFactory.createSpecimen(study, preySpeciesDescription);
+                        Specimen preySpecimen = nodeFactory.createSpecimen(study, new TaxonImpl(preySpeciesDescription, null));
                         preySpecimen.caughtIn(collectionLocation);
                         predatorSpecimen.ate(preySpecimen);
                         nodeFactory.setUnixEpochProperty(preySpecimen, nodeFactory.getUnixEpochProperty(predatorSpecimen));

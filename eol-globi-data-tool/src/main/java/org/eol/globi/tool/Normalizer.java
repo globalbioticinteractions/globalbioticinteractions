@@ -10,7 +10,7 @@ import org.apache.commons.cli.ParseException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.eol.globi.data.NodeFactoryImpl;
+import org.eol.globi.data.NodeFactoryNeo4j;
 import org.eol.globi.data.ParserFactory;
 import org.eol.globi.data.ParserFactoryImpl;
 import org.eol.globi.data.StudyImporter;
@@ -28,18 +28,14 @@ import org.eol.globi.service.EcoregionFinderProxy;
 import org.eol.globi.service.PropertyEnricherException;
 import org.eol.globi.taxon.TaxonCacheService;
 import org.eol.globi.taxon.CorrectionService;
-import org.eol.globi.taxon.TaxonIndexImpl;
-import org.eol.globi.taxon.TaxonomyImporter;
+import org.eol.globi.taxon.TaxonIndexNeo4j;
 import org.eol.globi.util.HttpUtil;
 import org.neo4j.graphdb.GraphDatabaseService;
 
-import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 
 public class Normalizer {
     private static final Log LOG = LogFactory.getLog(Normalizer.class);
@@ -130,7 +126,7 @@ public class Normalizer {
         if (cmdLine == null || !cmdLine.hasOption(OPTION_SKIP_TAXON_CACHE)) {
             LOG.info("resolving names with taxon cache ...");
             final TaxonCacheService enricher = new TaxonCacheService("/taxa/taxonCache.tsv.gz", "/taxa/taxonMap.tsv.gz");
-            TaxonIndexImpl index = new TaxonIndexImpl(enricher, new CorrectionService() {
+            TaxonIndexNeo4j index = new TaxonIndexNeo4j(enricher, new CorrectionService() {
                 @Override
                 public String correct(String taxonName) {
                     return taxonName;
@@ -221,7 +217,7 @@ public class Normalizer {
 
 
     private void importData(GraphDatabaseService graphService, Collection<Class<? extends StudyImporter>> importers) {
-        NodeFactoryImpl factory = new NodeFactoryImpl(graphService);
+        NodeFactoryNeo4j factory = new NodeFactoryNeo4j(graphService);
         for (Class<? extends StudyImporter> importer : importers) {
             try {
                 importData(importer, factory);
@@ -235,14 +231,14 @@ public class Normalizer {
         }
     }
 
-    protected void importData(Class<? extends StudyImporter> importer, NodeFactoryImpl factory) throws StudyImporterException {
+    protected void importData(Class<? extends StudyImporter> importer, NodeFactoryNeo4j factory) throws StudyImporterException {
         StudyImporter studyImporter = createStudyImporter(importer, factory);
         LOG.info("[" + importer + "] importing ...");
         studyImporter.importStudy();
         LOG.info("[" + importer + "] imported.");
     }
 
-    private StudyImporter createStudyImporter(Class<? extends StudyImporter> studyImporter, NodeFactoryImpl factory) throws StudyImporterException {
+    private StudyImporter createStudyImporter(Class<? extends StudyImporter> studyImporter, NodeFactoryNeo4j factory) throws StudyImporterException {
         factory.setEcoregionFinder(getEcoregionFinder());
         ParserFactory parserFactory = new ParserFactoryImpl();
         StudyImporter importer = new StudyImporterFactory(parserFactory, factory).instantiateImporter(studyImporter);

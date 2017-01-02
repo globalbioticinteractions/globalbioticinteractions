@@ -1,6 +1,7 @@
 package org.eol.globi.data;
 
 import org.apache.commons.io.IOUtils;
+import org.eol.globi.domain.LocationImpl;
 import org.eol.globi.domain.Study;
 import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
@@ -55,6 +56,6 @@ public class StudyImporterForFishbaseTest extends GraphDBTestCase {
         assertThat(taxonIndex.findTaxonByName("Pomatoschistus minutus"), is(notNullValue()));
         assertThat(taxonIndex.findTaxonByName("Oreochromis niloticus"), is(notNullValue()));
 
-        assertThat(nodeFactory.findLocation(52.8763053517,	-1.69182449421, null), is(notNullValue()));
+        assertThat(nodeFactory.findLocation(new LocationImpl(52.8763053517, -1.69182449421, null, null)), is(notNullValue()));
     }
 }

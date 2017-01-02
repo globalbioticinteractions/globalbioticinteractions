@@ -9,7 +9,7 @@ import org.eol.globi.domain.*;
 import org.eol.globi.service.PropertyEnricher;
 import org.eol.globi.service.PropertyEnricherFactory;
 import org.eol.globi.taxon.CorrectionService;
-import org.eol.globi.taxon.TaxonIndexImpl;
+import org.eol.globi.taxon.TaxonIndexNeo4j;
 import org.eol.globi.taxon.TaxonNameCorrector;
 import org.eol.globi.util.NodeUtil;
 import org.neo4j.graphdb.Direction;
@@ -47,7 +47,7 @@ public class NameResolver {
     }
 
     public NameResolver(GraphDatabaseService graphService, PropertyEnricher enricher, CorrectionService corrector) {
-        this(graphService, new TaxonIndexImpl(enricher, corrector, graphService));
+        this(graphService, new TaxonIndexNeo4j(enricher, corrector, graphService));
     }
 
     public void resolve() {

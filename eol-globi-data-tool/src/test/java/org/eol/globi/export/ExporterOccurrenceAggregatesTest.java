@@ -5,9 +5,9 @@ import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Specimen;
-import org.eol.globi.domain.SpecimenNode;
 import org.eol.globi.domain.Study;
-import org.eol.globi.domain.StudyNode;
+import org.eol.globi.domain.StudyImpl;
+import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.Term;
 import org.hamcrest.core.Is;
 import org.junit.Test;
@@ -40,8 +40,8 @@ public class ExporterOccurrenceAggregatesTest extends GraphDBTestCase {
 
     @Test
     public void exportNoMatchName() throws NodeFactoryException, IOException {
-        Study myStudy = nodeFactory.createStudy("myStudy");
-        nodeFactory.createSpecimen(myStudy, PropertyAndValueDictionary.NO_MATCH, "some externalid");
+        Study myStudy = nodeFactory.createStudy(new StudyImpl("myStudy", null, null, null));
+        nodeFactory.createSpecimen(myStudy, new TaxonImpl(PropertyAndValueDictionary.NO_MATCH, "some externalid"));
         resolveNames();
 
         StringWriter row = new StringWriter();
@@ -72,13 +72,13 @@ public class ExporterOccurrenceAggregatesTest extends GraphDBTestCase {
 
 
     private void createTestData(Double length) throws NodeFactoryException, ParseException {
-        Study myStudy = nodeFactory.createStudy("myStudy");
+        Study myStudy = nodeFactory.createStudy(new StudyImpl("myStudy", null, null, null));
         specimenEatCatAndDog(length, myStudy, "Homo sapiens", "EOL:333");
         specimenEatCatAndDog(length, myStudy, "Homo sapiens", "EOL:333");
         specimenEatCatAndDog(length, myStudy, "Homo erectus", "EOL:123");
         specimenEatCatAndDog(length, myStudy, "Homo erectus", "EOL:123");
-        specimenEatCatAndDog(length, nodeFactory.createStudy("yourStudy"), "Homo erectus", "EOL:888");
-        specimenEatCatAndDog(length, nodeFactory.createStudy("yourStudy2"), "Homo erectus", "EOL:888");
+        specimenEatCatAndDog(length, nodeFactory.createStudy(new StudyImpl("yourStudy", null, null, null)), "Homo erectus", "EOL:888");
+        specimenEatCatAndDog(length, nodeFactory.createStudy(new StudyImpl("yourStudy2", null, null, null)), "Homo erectus", "EOL:888");
         specimenEatCatAndDog(length, myStudy, "Blo blaaus", PropertyAndValueDictionary.NO_MATCH);
     }
 
@@ -96,7 +96,7 @@ public class ExporterOccurrenceAggregatesTest extends GraphDBTestCase {
     }
 
     private Specimen collectSpecimen(Study myStudy, String scientificName, String externalId) throws NodeFactoryException {
-        Specimen specimen = nodeFactory.createSpecimen(myStudy, scientificName, externalId);
+        Specimen specimen = nodeFactory.createSpecimen(myStudy, new TaxonImpl(scientificName, externalId));
         specimen.setStomachVolumeInMilliLiter(666.0);
         specimen.setLifeStage(new Term("GLOBI:JUVENILE", "JUVENILE"));
         specimen.setPhysiologicalState(new Term("GLOBI:DIGESTATE", "DIGESTATE"));
@@ -106,7 +106,7 @@ public class ExporterOccurrenceAggregatesTest extends GraphDBTestCase {
     }
 
     private Specimen eatPrey(Specimen specimen, String scientificName, String externalId, Study study) throws NodeFactoryException {
-        Specimen otherSpecimen = nodeFactory.createSpecimen(study, scientificName, externalId);
+        Specimen otherSpecimen = nodeFactory.createSpecimen(study, new TaxonImpl(scientificName, externalId));
         otherSpecimen.setVolumeInMilliLiter(124.0);
         specimen.ate(otherSpecimen);
         return otherSpecimen;

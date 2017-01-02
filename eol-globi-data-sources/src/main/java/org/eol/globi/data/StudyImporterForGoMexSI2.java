@@ -10,6 +10,8 @@ import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.SpecimenConstant;
 import org.eol.globi.domain.Study;
+import org.eol.globi.domain.StudyImpl;
+import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TaxonomyProvider;
 import org.eol.globi.domain.Term;
 import org.eol.globi.service.TermLookupService;
@@ -77,8 +79,8 @@ public class StudyImporterForGoMexSI2 extends BaseStudyImporter {
 
     @Override
     public Study importStudy() throws StudyImporterException {
-        Study study = nodeFactory.getOrCreateStudy("GoMexSI",
-                GOMEXI_SOURCE_DESCRIPTION, null, ExternalIdUtil.toCitation("James D. Simons", "<a href=\"http://www.ingentaconnect.com/content/umrsmas/bullmar/2013/00000089/00000001/art00009\">Building a Fisheries Trophic Interaction Database for Management and Modeling Research in the Gulf of Mexico Large Marine Ecosystem.</a>", null));
+        Study study = nodeFactory.getOrCreateStudy(
+                new StudyImpl("GoMexSI", GOMEXI_SOURCE_DESCRIPTION, null, ExternalIdUtil.toCitation("James D. Simons", "<a href=\"http://www.ingentaconnect.com/content/umrsmas/bullmar/2013/00000089/00000001/art00009\">Building a Fisheries Trophic Interaction Database for Management and Modeling Research in the Gulf of Mexico Large Marine Ecosystem.</a>", null)));
         final Map<String, Map<String, String>> predatorIdToPredatorNames = new HashMap<String, Map<String, String>>();
         final Map<String, List<Map<String, String>>> predatorIdToPreyNames = new HashMap<String, List<Map<String, String>>>();
         Map<String, Study> referenceIdToStudy = new HashMap<String, Study>();
@@ -149,8 +151,8 @@ public class StudyImporterForGoMexSI2 extends BaseStudyImporter {
         String description = getMandatoryValue(referenceResource, parser, "TITLE_REF");
         String publicationYear = getMandatoryValue(referenceResource, parser, "YEAR_PUB");
 
-        study = nodeFactory.getOrCreateStudy(refTag,
-                getSourceCitation(), null, ExternalIdUtil.toCitation(contributors, description, publicationYear));
+        study = nodeFactory.getOrCreateStudy(
+                new StudyImpl(refTag, getSourceCitation(), null, ExternalIdUtil.toCitation(contributors, description, publicationYear)));
         if (StringUtils.isNotBlank(externalId)) {
             study.setExternalId(ExternalIdUtil.urlForExternalId(TaxonomyProvider.ID_PREFIX_GAME + externalId));
         }
@@ -310,7 +312,7 @@ public class StudyImporterForGoMexSI2 extends BaseStudyImporter {
     }
 
     private Specimen createSpecimen(Study study, Map<String, String> properties) throws StudyImporterException {
-        Specimen specimen = nodeFactory.createSpecimen(study, properties.get(PropertyAndValueDictionary.NAME));
+        Specimen specimen = nodeFactory.createSpecimen(study, new TaxonImpl(properties.get(PropertyAndValueDictionary.NAME), null));
         specimen.setLengthInMm(doubleValueOrNull(properties, SpecimenConstant.LENGTH_IN_MM));
         specimen.setFrequencyOfOccurrence(doubleValueOrNull(properties, SpecimenConstant.FREQUENCY_OF_OCCURRENCE));
         setSpecimenProperty(specimen, SpecimenConstant.FREQUENCY_OF_OCCURRENCE_PERCENT, properties);

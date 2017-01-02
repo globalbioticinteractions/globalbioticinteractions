@@ -7,6 +7,8 @@ import org.apache.commons.logging.LogFactory;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
+import org.eol.globi.domain.StudyImpl;
+import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.Term;
 import org.eol.globi.service.TermLookupServiceException;
 import org.eol.globi.util.ExternalIdUtil;
@@ -58,7 +60,7 @@ public class StudyImporterForBarnes extends BaseStudyImporter {
                 throw new StudyImporterException("failed to find ref [" + shortReference + "] on line [" + parser.lastLineNumber() + "]");
             }
             String longReference = refMap.get(shortReference);
-            localStudy = nodeFactory.getOrCreateStudy("BARNES-" + shortReference, SOURCE, ExternalIdUtil.toCitation(null, longReference, null));
+            localStudy = nodeFactory.getOrCreateStudy(new StudyImpl("BARNES-" + shortReference, SOURCE, null, ExternalIdUtil.toCitation(null, longReference, null)));
 
             String predatorName = parser.getValueByLabel("Predator");
             if (StringUtils.isBlank(predatorName)) {
@@ -77,7 +79,7 @@ public class StudyImporterForBarnes extends BaseStudyImporter {
     }
 
     private void addInteractionForPredator(LabeledCSVParser parser, Study localStudy, String predatorName) throws NodeFactoryException, StudyImporterException {
-        Specimen predator = nodeFactory.createSpecimen(localStudy, predatorName);
+        Specimen predator = nodeFactory.createSpecimen(localStudy, new TaxonImpl(predatorName, null));
         addLifeStage(parser, predator);
 
         Double latitude = LocationUtil.parseDegrees(parser.getValueByLabel("Latitude"));
@@ -91,7 +93,7 @@ public class StudyImporterForBarnes extends BaseStudyImporter {
         if (StringUtils.isBlank(preyName)) {
             getLogger().warn(localStudy, "found empty prey name on line [" + parser.lastLineNumber() + "]");
         } else {
-            Specimen prey = nodeFactory.createSpecimen(localStudy, preyName);
+            Specimen prey = nodeFactory.createSpecimen(localStudy, new TaxonImpl(preyName, null));
             prey.caughtIn(location);
             predator.ate(prey);
         }

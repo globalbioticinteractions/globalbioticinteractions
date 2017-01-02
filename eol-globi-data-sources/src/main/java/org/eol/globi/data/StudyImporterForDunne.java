@@ -5,6 +5,7 @@ import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
+import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TaxonomyProvider;
@@ -24,7 +25,7 @@ public class StudyImporterForDunne extends StudyImporterNodesAndLinks {
 
     @Override
     Study createStudy() throws NodeFactoryException {
-        return nodeFactory.getOrCreateStudy2(getNamespace(), ReferenceUtil.sourceCitationLastAccessed(getDataset()), getSourceDOI());
+        return nodeFactory.getOrCreateStudy(new StudyImpl(getNamespace(), ReferenceUtil.sourceCitationLastAccessed(getDataset()), getSourceDOI(), null));
     }
 
     @Override

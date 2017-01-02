@@ -4,6 +4,8 @@ import com.Ostermiller.util.LabeledCSVParser;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
+import org.eol.globi.domain.StudyImpl;
+import org.eol.globi.domain.TaxonImpl;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -92,14 +94,14 @@ public class StudyImporterForSIAD extends BaseStudyImporter {
                 String title = "SIAD-" + ref;
                 Study study = nodeFactory.findStudy(title);
                 if (study == null) {
-                    study = nodeFactory.getOrCreateStudy2(title, source, null);
+                    study = nodeFactory.getOrCreateStudy(new StudyImpl(title, source, null, null));
                     study.setCitationWithTx("ABRS 2009. Australian Faunal Directory. " + name + ". Australian Biological Resources StudyNode, Canberra. " + ReferenceUtil.createLastAccessedString(ref));
                     study.setExternalId(ref);
                 }
 
-                Specimen specimen = nodeFactory.createSpecimen(study, name);
+                Specimen specimen = nodeFactory.createSpecimen(study, new TaxonImpl(name, null));
                 String hostName = labeledCSVParser.getValueByLabel("host name");
-                Specimen hostSpecimen = nodeFactory.createSpecimen(study, hostName);
+                Specimen hostSpecimen = nodeFactory.createSpecimen(study, new TaxonImpl(hostName, null));
                 InteractType type = map.get(labeledCSVParser.getValueByLabel("interaction"));
                 specimen.interactsWith(hostSpecimen, type);
             }

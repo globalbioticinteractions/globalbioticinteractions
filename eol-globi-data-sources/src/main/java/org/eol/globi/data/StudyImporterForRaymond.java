@@ -17,6 +17,8 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
+import org.eol.globi.domain.StudyImpl;
+import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.geo.GeoUtil;
 import org.eol.globi.geo.LatLng;
 import org.eol.globi.util.CSVUtil;
@@ -182,7 +184,7 @@ public class StudyImporterForRaymond extends BaseStudyImporter {
 
     private Specimen getSpecimen(LabeledCSVParser dietParser, String nameLabel, String lifeStageLabel, Study study) throws NodeFactoryException {
         String predatorName = dietParser.getValueByLabel(nameLabel);
-        Specimen predator = nodeFactory.createSpecimen(study, predatorName);
+        Specimen predator = nodeFactory.createSpecimen(study, new TaxonImpl(predatorName, null));
         String predatorLifeStage = dietParser.getValueByLabel(lifeStageLabel);
         predator.setLifeStage(nodeFactory.getOrCreateLifeStage("RAYMOND:" + predatorLifeStage, predatorLifeStage));
         return predator;
@@ -292,7 +294,7 @@ public class StudyImporterForRaymond extends BaseStudyImporter {
 
     private Study getOrCreateStudy(String citation) throws NodeFactoryException {
         String title = StringUtils.abbreviate(citation, 16) + MD5.getHashString(citation);
-        return nodeFactory.getOrCreateStudy(title, "Raymond, B., Marshall, M., Nevitt, G., Gillies, C., van den Hoff, J., Stark, J.S., Losekoot, M., Woehler, E.J., and Constable, A.J. (2011) A Southern Ocean dietary database. Ecology 92(5):1188. Available from http://dx.doi.org/10.1890/10-1907.1 . Data set supplied by Ben Raymond. " + ReferenceUtil.createLastAccessedString(RESOURCE_URL), citation);
+        return nodeFactory.getOrCreateStudy(new StudyImpl(title, "Raymond, B., Marshall, M., Nevitt, G., Gillies, C., van den Hoff, J., Stark, J.S., Losekoot, M., Woehler, E.J., and Constable, A.J. (2011) A Southern Ocean dietary database. Ecology 92(5):1188. Available from http://dx.doi.org/10.1890/10-1907.1 . Data set supplied by Ben Raymond. " + ReferenceUtil.createLastAccessedString(RESOURCE_URL), null, citation));
     }
 
 

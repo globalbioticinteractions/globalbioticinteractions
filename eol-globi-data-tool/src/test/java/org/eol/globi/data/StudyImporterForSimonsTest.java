@@ -3,6 +3,7 @@ package org.eol.globi.data;
 
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.LocationConstant;
+import org.eol.globi.domain.LocationImpl;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.SpecimenConstant;
@@ -60,8 +61,8 @@ public class StudyImporterForSimonsTest extends GraphDBTestCase {
 
         assertNotNull(nodeFactory.findStudy("Simons 1997"));
 
-        assertNotNull(nodeFactory.findLocation(LAT_1, LONG_1, -60.0d));
-        assertNotNull(nodeFactory.findLocation(LAT_2, LONG_2, -20.0d));
+        assertNotNull(nodeFactory.findLocation(new LocationImpl(LAT_1, LONG_1, -60.0d, null)));
+        assertNotNull(nodeFactory.findLocation(new LocationImpl(LAT_2, LONG_2, -20.0d, null)));
 
         assertNotNull(nodeFactory.findSeason("summer"));
 
