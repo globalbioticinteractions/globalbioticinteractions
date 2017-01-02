@@ -3,10 +3,10 @@ package org.eol.globi.tool;
 import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.domain.InteractType;
+import org.eol.globi.domain.NodeBacked;
 import org.eol.globi.domain.Specimen;
-import org.eol.globi.domain.SpecimenNode;
+import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
-import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.service.PropertyEnricherException;
 import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
@@ -25,10 +25,10 @@ public class TaxonInteractionIndexerTest extends GraphDBTestCase {
     @Test
     public void buildTaxonInterIndex() throws NodeFactoryException, PropertyEnricherException {
         Specimen human = nodeFactory.createSpecimen(nodeFactory.createStudy("bla"), new TaxonImpl("Homo sapiens", null));
-        SpecimenNode animal = nodeFactory.createSpecimen(nodeFactory.createStudy("bla"), new TaxonImpl("Canis lupus", "EOL:1"));
+        Specimen animal = nodeFactory.createSpecimen(nodeFactory.createStudy("bla"), new TaxonImpl("Canis lupus", "EOL:1"));
         human.ate(animal);
         for (int i=0; i< 10; i++) {
-            SpecimenNode fish = nodeFactory.createSpecimen(nodeFactory.createStudy("bla"), new TaxonImpl("Arius felis", null));
+            Specimen fish = nodeFactory.createSpecimen(nodeFactory.createStudy("bla"), new TaxonImpl("Arius felis", null));
             human.ate(fish);
         }
 
@@ -38,10 +38,10 @@ public class TaxonInteractionIndexerTest extends GraphDBTestCase {
         new NameResolver(getGraphDb()).resolve();
         new TaxonInteractionIndexer(getGraphDb()).index();
 
-        TaxonNode homoSapiens = taxonIndex.findTaxonByName("Homo sapiens");
+        Taxon homoSapiens = taxonIndex.findTaxonByName("Homo sapiens");
         assertNotNull(homoSapiens);
 
-        Iterable<Relationship> rels = homoSapiens.getUnderlyingNode().getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j(InteractType.ATE));
+        Iterable<Relationship> rels = ((NodeBacked)homoSapiens).getUnderlyingNode().getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j(InteractType.ATE));
         List<String> humanFood = new ArrayList<String>();
         List<Long> counts = new ArrayList<Long>();
         List<String> labels = new ArrayList<>();

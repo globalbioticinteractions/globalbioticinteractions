@@ -10,7 +10,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ObjectNode;
-import org.eol.globi.domain.StudyNode;
+import org.eol.globi.domain.Study;
 import org.eol.globi.service.Dataset;
 import org.eol.globi.service.DatasetProxy;
 import org.eol.globi.service.DatasetUtil;
@@ -29,7 +29,7 @@ public class StudyImporterForArthopodEasyCapture extends BaseStudyImporter {
     }
 
     @Override
-    public StudyNode importStudy() throws StudyImporterException {
+    public Study importStudy() throws StudyImporterException {
         final String rssFeedUrl = getRssFeedUrlString();
         if (org.apache.commons.lang.StringUtils.isBlank(rssFeedUrl)) {
             throw new StudyImporterException("failed to import [" + getDataset().getNamespace() + "]: no [" + "rssFeedURL" + "] specified");

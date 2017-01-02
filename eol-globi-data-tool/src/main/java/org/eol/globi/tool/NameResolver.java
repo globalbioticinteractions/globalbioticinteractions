@@ -76,7 +76,7 @@ public class NameResolver {
                     final TaxonNode describedAsTaxon = new TaxonNode(describedAs.getEndNode());
                     try {
                         if (taxonFilter.shouldInclude(describedAsTaxon)) {
-                            TaxonNode resolvedTaxon = taxonIndex.getOrCreateTaxon(describedAsTaxon);
+                            Taxon resolvedTaxon = taxonIndex.getOrCreateTaxon(describedAsTaxon);
                             if (resolvedTaxon != null) {
                                 specimen.classifyAs(resolvedTaxon);
                             }

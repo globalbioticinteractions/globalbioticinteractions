@@ -5,11 +5,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.Location;
-import org.eol.globi.domain.LocationNode;
 import org.eol.globi.domain.Specimen;
-import org.eol.globi.domain.SpecimenNode;
 import org.eol.globi.domain.Study;
-import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.Term;
 import org.eol.globi.geo.LatLng;
 import org.eol.globi.service.GeoNamesService;
@@ -74,7 +71,7 @@ class InteractionListenerNeo4j implements InteractionListener {
             String interactionTypeId = link.get(INTERACTION_TYPE_ID);
             InteractType type = InteractType.typeOf(interactionTypeId);
             String referenceCitation = link.get(REFERENCE_CITATION);
-            StudyNode study = nodeFactory.getOrCreateStudy(link.get(REFERENCE_ID), link.get(STUDY_SOURCE_CITATION), link.get(REFERENCE_DOI), referenceCitation);
+            Study study = nodeFactory.getOrCreateStudy(link.get(REFERENCE_ID), link.get(STUDY_SOURCE_CITATION), link.get(REFERENCE_DOI), referenceCitation);
             final String referenceUrl = link.get(REFERENCE_URL);
             if (StringUtils.isBlank(study.getExternalId()) && StringUtils.isNotBlank(referenceUrl)) {
                 study.setExternalId(referenceUrl);
@@ -86,10 +83,10 @@ class InteractionListenerNeo4j implements InteractionListener {
                 final String msg = "unsupported interaction type id [" + interactionTypeId + "]";
                 study.appendLogMessage(msg, Level.WARNING);
             } else {
-                SpecimenNode source = nodeFactory.createSpecimen(study, sourceTaxonName, sourceTaxonId);
+                Specimen source = nodeFactory.createSpecimen(study, sourceTaxonName, sourceTaxonId);
                 setBasisOfRecordIfAvailable(link, source);
                 setDateTimeIfAvailable(link, source);
-                SpecimenNode target = nodeFactory.createSpecimen(study, targetTaxonName, targetTaxonId);
+                Specimen target = nodeFactory.createSpecimen(study, targetTaxonName, targetTaxonId);
                 setBasisOfRecordIfAvailable(link, target);
                 setDateTimeIfAvailable(link, target);
                 source.interactsWith(target, type, getOrCreateLocation(study, link));
@@ -97,7 +94,7 @@ class InteractionListenerNeo4j implements InteractionListener {
         }
     }
 
-    private void setDateTimeIfAvailable(Map<String, String> link, SpecimenNode target) throws StudyImporterException {
+    private void setDateTimeIfAvailable(Map<String, String> link, Specimen target) throws StudyImporterException {
         final String eventDate = link.get(StudyImporterForMetaTable.EVENT_DATE);
         if (StringUtils.isNotBlank(eventDate)) {
             try {

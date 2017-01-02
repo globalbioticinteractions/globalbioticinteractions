@@ -6,9 +6,7 @@ import org.apache.lucene.search.TermQuery;
 import org.eol.globi.data.CharsetConstant;
 import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.NodeFactoryException;
-import org.eol.globi.taxon.TaxonFuzzySearchIndex;
-import org.eol.globi.taxon.TaxonIndexImpl;
-import org.eol.globi.taxon.TaxonIndexImplTest;
+import org.eol.globi.domain.NodeBacked;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Taxon;
@@ -17,6 +15,9 @@ import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.service.PropertyEnricher;
 import org.eol.globi.service.PropertyEnricherException;
 import org.eol.globi.service.TaxonUtil;
+import org.eol.globi.taxon.TaxonFuzzySearchIndex;
+import org.eol.globi.taxon.TaxonIndexImpl;
+import org.eol.globi.taxon.TaxonIndexImplTest;
 import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
 import org.neo4j.graphdb.Node;
@@ -32,10 +33,10 @@ public class LinkerTaxonIndexTest extends GraphDBTestCase {
 
     @Test
     public void linking() throws NodeFactoryException {
-        TaxonNode taxon = taxonIndex.getOrCreateTaxon("Homo sapiens", "Bar:123", "Animalia | Mammalia | Homo sapiens");
+        Taxon taxon = taxonIndex.getOrCreateTaxon("Homo sapiens", "Bar:123", "Animalia | Mammalia | Homo sapiens");
         TaxonImpl taxon1 = new TaxonImpl("Homo sapiens also", "FOO:444");
         taxon1.setPathIds("BARZ:111 | FOOZ:777");
-        NodeUtil.connectTaxa(taxon1, taxon, getGraphDb(), RelTypes.SAME_AS);
+        NodeUtil.connectTaxa(taxon1, (TaxonNode)taxon, getGraphDb(), RelTypes.SAME_AS);
 
         taxon = taxonIndex.getOrCreateTaxon("Bla blaus");
         taxon.setExternalId("FOO 1234");
@@ -56,8 +57,8 @@ public class LinkerTaxonIndexTest extends GraphDBTestCase {
         assertSingleHit(PropertyAndValueDictionary.PATH + ":Homo");
         assertSingleHit(PropertyAndValueDictionary.PATH + ":\"Homo sapiens\"");
 
-        TaxonNode node = taxonIndex.findTaxonByName("Homo sapiens");
-        assertThat(node.getUnderlyingNode().getProperty(PropertyAndValueDictionary.EXTERNAL_IDS).toString()
+        Taxon node = taxonIndex.findTaxonByName("Homo sapiens");
+        assertThat(((NodeBacked)node).getUnderlyingNode().getProperty(PropertyAndValueDictionary.EXTERNAL_IDS).toString()
                 , is("Bar:123 | Animalia | Mammalia | Homo sapiens | FOO:444 | BARZ:111 | FOOZ:777"));
 
         assertThat(new TaxonFuzzySearchIndex(getGraphDb()).query("name:sapienz~").size(), is(1));

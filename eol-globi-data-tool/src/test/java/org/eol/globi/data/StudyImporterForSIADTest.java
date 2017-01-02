@@ -1,6 +1,7 @@
 package org.eol.globi.data;
 
 import org.eol.globi.domain.Study;
+import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
@@ -21,7 +22,7 @@ public class StudyImporterForSIADTest extends GraphDBTestCase {
         List<Study> allStudies = NodeUtil.findAllStudies(getGraphDb());
         assertThat(allStudies.size() > 1, is(true));
 
-        TaxonNode taxon = taxonIndex.findTaxonByName("Anisakis");
+        Taxon taxon = taxonIndex.findTaxonByName("Anisakis");
         assertThat(taxon, is(notNullValue())) ;
 
         taxon = taxonIndex.findTaxonByName("Abbreviata");

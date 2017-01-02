@@ -5,6 +5,7 @@ import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.SpecimenConstant;
 import org.eol.globi.domain.Study;
+import org.eol.globi.domain.StudyConstant;
 import org.eol.globi.domain.StudyNode;
 import org.eol.globi.util.NodeUtil;
 import org.neo4j.graphdb.Direction;
@@ -75,7 +76,7 @@ public class ExporterOccurrences extends ExporterOccurrencesBase {
         if (locationNode != null && locationNode.hasProperty(LocationConstant.ALTITUDE)) {
             properties.put(EOLDictionary.VERBATIM_ELEVATION, locationNode.getProperty(LocationConstant.ALTITUDE).toString() + " m");
         }
-        addProperty(properties, ((StudyNode)study).getUnderlyingNode(), StudyNode.TITLE, EOLDictionary.EVENT_ID);
+        addProperty(properties, ((StudyNode)study).getUnderlyingNode(), StudyConstant.TITLE, EOLDictionary.EVENT_ID);
 
         addCollectionDate(properties, collectedRelationship, EOLDictionary.EVENT_DATE);
     }

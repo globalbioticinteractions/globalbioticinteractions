@@ -63,8 +63,6 @@ public class StudyImporterFactory {
 
     public static ArrayList<Class<? extends StudyImporter>> getDarkImporters() {
         return new ArrayList<Class<? extends StudyImporter>>() {{
-            add(StudyImporterForFWDP.class);
-            add(StudyImporterForFishbase.class);
         }};
     }
 }

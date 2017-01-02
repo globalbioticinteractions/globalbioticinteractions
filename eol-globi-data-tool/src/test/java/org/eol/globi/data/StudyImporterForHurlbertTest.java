@@ -1,6 +1,7 @@
 package org.eol.globi.data;
 
 import org.eol.globi.domain.Study;
+import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
@@ -21,7 +22,7 @@ public class StudyImporterForHurlbertTest extends GraphDBTestCase {
         List<Study> allStudies = NodeUtil.findAllStudies(getGraphDb());
         assertThat(allStudies.size() > 10, is(true));
 
-        TaxonNode formicidae = taxonIndex.findTaxonByName("Formicidae");
+        Taxon formicidae = taxonIndex.findTaxonByName("Formicidae");
         assertThat(formicidae.getStatus(), is(notNullValue()));
     }
 
@@ -40,7 +41,7 @@ public class StudyImporterForHurlbertTest extends GraphDBTestCase {
         assertThat(study.getCitation(), is("Strong, A. M. 2000. Divergent foraging strategies of two neotropical migrant warblers: Implications for winter habitat use. Auk 117(2):381-392."));
 
         assertThat(taxonIndex.findTaxonByName("Seiurus aurocapillus"), is(notNullValue()));
-        TaxonNode formicidae = taxonIndex.findTaxonByName("Formicidae");
+        Taxon formicidae = taxonIndex.findTaxonByName("Formicidae");
         assertThat(formicidae, is(notNullValue()));
         assertThat(formicidae.getStatus().getId(), is("HURLBERT:someStatus"));
         assertThat(formicidae.getStatus().getName(), is("someStatus"));

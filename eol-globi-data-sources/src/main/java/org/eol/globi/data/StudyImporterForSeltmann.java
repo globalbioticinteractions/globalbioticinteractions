@@ -8,9 +8,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.Location;
-import org.eol.globi.domain.LocationNode;
-import org.eol.globi.domain.SpecimenNode;
-import org.eol.globi.domain.StudyNode;
+import org.eol.globi.domain.Specimen;
+import org.eol.globi.domain.Study;
 import org.eol.globi.service.DatasetUtil;
 import org.eol.globi.util.CSVUtil;
 import org.joda.time.format.DateTimeFormat;
@@ -46,7 +45,7 @@ public class StudyImporterForSeltmann extends BaseStudyImporter {
     }
 
     @Override
-    public StudyNode importStudy() throws StudyImporterException {
+    public Study importStudy() throws StudyImporterException {
         final String archiveURL = DatasetUtil.getNamedResourceURI(getDataset(), "archive");
         if (org.apache.commons.lang.StringUtils.isBlank(archiveURL)) {
             throw new StudyImporterException("failed to import [" + getDataset().getNamespace() + "]: no [archiveURL] specified");
@@ -114,7 +113,7 @@ public class StudyImporterForSeltmann extends BaseStudyImporter {
             occurrence.changeDelimiter('\t');
             while (occurrence.getLine() != null) {
                 String references = occurrence.getValueByLabel("dcterms:references");
-                StudyNode study = nodeFactory.getOrCreateStudy("seltmann" + references, ReferenceUtil.sourceCitationLastAccessed(this.getDataset(), references), references);
+                Study study = nodeFactory.getOrCreateStudy("seltmann" + references, ReferenceUtil.sourceCitationLastAccessed(this.getDataset(), references), references);
                 String recordId = occurrence.getValueByLabel(FIELD_IDIGBIO_RECORD_ID);
                 Map<String, String> assoc = assocMap.get(recordId);
                 if (assoc != null) {
@@ -174,24 +173,24 @@ public class StudyImporterForSeltmann extends BaseStudyImporter {
         return targetName;
     }
 
-    protected void createInteraction(LabeledCSVParser occurrence, StudyNode study, Map<String, String> assoc, String targetName, String sourceName, Date date, InteractType interactType) throws NodeFactoryException, StudyImporterException {
+    protected void createInteraction(LabeledCSVParser occurrence, Study study, Map<String, String> assoc, String targetName, String sourceName, Date date, InteractType interactType) throws StudyImporterException {
 
-        SpecimenNode source = nodeFactory.createSpecimen(study, sourceName);
-        SpecimenNode target = nodeFactory.createSpecimen(study, targetName);
+        Specimen source = nodeFactory.createSpecimen(study, sourceName);
+        Specimen target = nodeFactory.createSpecimen(study, targetName);
         source.interactsWith(target, interactType);
 
         String sourceBasisOfRecord = occurrence.getValueByLabel("basisOfRecord");
         source.setBasisOfRecord(nodeFactory.getOrCreateBasisOfRecord(sourceBasisOfRecord, sourceBasisOfRecord));
         final String recordId = occurrence.getValueByLabel(FIELD_IDIGBIO_RECORD_ID);
-        source.setPropertyWithTx(FIELD_IDIGBIO_RECORD_ID, recordId);
+        source.setProperty(FIELD_IDIGBIO_RECORD_ID, recordId);
         source.setExternalId(recordId);
-        source.setPropertyWithTx(FIELD_OCCURRENCE_ID, occurrence.getValueByLabel(FIELD_OCCURRENCE_ID));
-        source.setPropertyWithTx(FIELD_CATALOG_NUMBER, occurrence.getValueByLabel(FIELD_CATALOG_NUMBER));
+        source.setProperty(FIELD_OCCURRENCE_ID, occurrence.getValueByLabel(FIELD_OCCURRENCE_ID));
+        source.setProperty(FIELD_CATALOG_NUMBER, occurrence.getValueByLabel(FIELD_CATALOG_NUMBER));
 
         String targetBasisOfRecord = assoc.get("dwc:basisOfRecord");
         target.setBasisOfRecord(nodeFactory.getOrCreateBasisOfRecord(targetBasisOfRecord, targetBasisOfRecord));
         final String assocRecordId = assoc.get(FIELD_IDIGBIO_RECORD_ID);
-        target.setPropertyWithTx(FIELD_IDIGBIO_RECORD_ID, assocRecordId);
+        target.setProperty(FIELD_IDIGBIO_RECORD_ID, assocRecordId);
         target.setExternalId(assocRecordId);
 
         nodeFactory.setUnixEpochProperty(source, date);

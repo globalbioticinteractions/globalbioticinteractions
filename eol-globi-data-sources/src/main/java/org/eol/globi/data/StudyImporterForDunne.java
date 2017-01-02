@@ -3,8 +3,8 @@ package org.eol.globi.data;
 import com.Ostermiller.util.LabeledCSVParser;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.Location;
-import org.eol.globi.domain.SpecimenNode;
-import org.eol.globi.domain.StudyNode;
+import org.eol.globi.domain.Specimen;
+import org.eol.globi.domain.Study;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TaxonomyProvider;
@@ -23,13 +23,13 @@ public class StudyImporterForDunne extends StudyImporterNodesAndLinks {
     }
 
     @Override
-    StudyNode createStudy() throws NodeFactoryException {
+    Study createStudy() throws NodeFactoryException {
         return nodeFactory.getOrCreateStudy2(getNamespace(), ReferenceUtil.sourceCitationLastAccessed(getDataset()), getSourceDOI());
     }
 
     @Override
-    public StudyNode importStudy() throws StudyImporterException {
-        StudyNode study = createStudy();
+    public Study importStudy() throws StudyImporterException {
+        Study study = createStudy();
         try {
             LabeledCSVParser nodes = parserFactory.createParser(getNodeResource(), CharsetConstant.UTF8);
             nodes.changeDelimiter(getDelimiter());
@@ -77,13 +77,13 @@ public class StudyImporterForDunne extends StudyImporterNodesAndLinks {
         return nodeID == null ? null : Integer.parseInt(nodeID);
     }
 
-    private void addLink(StudyNode study, Map<Integer, Taxon> taxonForNode, LabeledCSVParser links, Location location) throws StudyImporterException {
+    private void addLink(Study study, Map<Integer, Taxon> taxonForNode, LabeledCSVParser links, Location location) throws StudyImporterException {
         Integer consumerNodeID = Integer.parseInt(links.getValueByLabel("Consumer"));
         Integer resourceNodeID = Integer.parseInt(links.getValueByLabel("Resource"));
-        SpecimenNode consumer = nodeFactory.createSpecimen(study, taxonForNode.get(consumerNodeID));
+        Specimen consumer = nodeFactory.createSpecimen(study, taxonForNode.get(consumerNodeID));
         consumer.setExternalId(getNamespace() + ":NodeID:" + consumerNodeID);
         consumer.caughtIn(location);
-        SpecimenNode resource = nodeFactory.createSpecimen(study, taxonForNode.get(resourceNodeID));
+        Specimen resource = nodeFactory.createSpecimen(study, taxonForNode.get(resourceNodeID));
         resource.setExternalId(getNamespace() + ":NodeID:" + resourceNodeID);
         resource.caughtIn(location);
         consumer.interactsWith(resource, InteractType.ATE);

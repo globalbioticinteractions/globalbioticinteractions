@@ -3,12 +3,13 @@ package org.eol.globi.data;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.domain.InteractType;
+import org.eol.globi.domain.NodeBacked;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.SpecimenConstant;
 import org.eol.globi.domain.SpecimenNode;
+import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.Taxon;
-import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.domain.TaxonomyProvider;
 import org.eol.globi.service.PropertyEnricherException;
 import org.eol.globi.util.NodeUtil;
@@ -26,9 +27,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.hamcrest.CoreMatchers.any;
-import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
@@ -99,7 +98,7 @@ public class StudyImporterForINaturalistTest extends GraphDBTestCase {
 
         assertThat(NodeUtil.findAllStudies(getGraphDb()).size(), is(22));
 
-        StudyNode anotherStudy = nodeFactory.findStudy("INAT:831");
+        Study anotherStudy = nodeFactory.findStudy("INAT:831");
         assertThat(anotherStudy, is(notNullValue()));
         assertThat(anotherStudy.getCitation(), containsString("Ken-ichi Ueda. 2008. Argiope eating Orthoptera. iNaturalist.org. Accessed at <https://www.inaturalist.org/observations/831> on "));
         assertThat(anotherStudy.getExternalId(), is("https://www.inaturalist.org/observations/831"));
@@ -109,11 +108,11 @@ public class StudyImporterForINaturalistTest extends GraphDBTestCase {
         assertThat(anotherStudy.getCitation(), containsString("annetanne. 2012. Misumena vatia eating Eristalis nemorum."));
         assertThat(anotherStudy.getExternalId(), is("https://www.inaturalist.org/observations/97380"));
 
-        TaxonNode sourceTaxonNode = taxonIndex.findTaxonByName("Arenaria interpres");
+        Taxon sourceTaxonNode = taxonIndex.findTaxonByName("Arenaria interpres");
 
         assertThat(sourceTaxonNode, is(not(nullValue())));
 
-        Iterable<Relationship> relationships = sourceTaxonNode.getUnderlyingNode().getRelationships(Direction.INCOMING, NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS));
+        Iterable<Relationship> relationships = ((NodeBacked)sourceTaxonNode).getUnderlyingNode().getRelationships(Direction.INCOMING, NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS));
         for (Relationship relationship : relationships) {
             Node sourceSpecimen = relationship.getStartNode();
 
@@ -168,7 +167,7 @@ public class StudyImporterForINaturalistTest extends GraphDBTestCase {
         resolveNames();
         assertThat(NodeUtil.findAllStudies(getGraphDb()).size(), is(10));
 
-        StudyNode anotherStudy = nodeFactory.findStudy("INAT:2366807");
+        Study anotherStudy = nodeFactory.findStudy("INAT:2366807");
         assertThat(anotherStudy, is(notNullValue()));
         assertThat(anotherStudy.getExternalId(), is("https://www.inaturalist.org/observations/2366807"));
 

@@ -2,6 +2,7 @@ package org.eol.globi.util;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.domain.InteractType;
+import org.eol.globi.domain.Location;
 import org.eol.globi.domain.NodeBacked;
 import org.eol.globi.domain.RelType;
 import org.eol.globi.domain.RelTypes;
@@ -82,21 +83,26 @@ public class NodeUtil {
 
     public static RelationshipType[] asNeo4j(InteractType[] values) {
         RelationshipType[] types = new RelationshipType[values.length];
-        for (int i=0; i< values.length; i++) {
+        for (int i = 0; i < values.length; i++) {
             types[i] = asNeo4j(values[i]);
         }
         return types;
     }
 
     public static Iterable<Relationship> getSpecimens(Study study) {
-        return ((NodeBacked)study).getUnderlyingNode().getRelationships(Direction.OUTGOING, asNeo4j(RelTypes.COLLECTED));
+        return ((NodeBacked) study).getUnderlyingNode().getRelationships(Direction.OUTGOING, asNeo4j(RelTypes.COLLECTED));
     }
 
     public static Iterable<Relationship> getClassifications(Specimen specimen) {
-        return ((NodeBacked)specimen).getUnderlyingNode().getRelationships(Direction.OUTGOING, asNeo4j(RelTypes.CLASSIFIED_AS));
+        return ((NodeBacked) specimen).getUnderlyingNode().getRelationships(Direction.OUTGOING, asNeo4j(RelTypes.CLASSIFIED_AS));
     }
 
     public static Iterable<Relationship> getStomachContents(Specimen specimen) {
-        return ((NodeBacked)specimen).getUnderlyingNode().getRelationships(asNeo4j(InteractType.ATE), Direction.OUTGOING);
+        return ((NodeBacked) specimen).getUnderlyingNode().getRelationships(asNeo4j(InteractType.ATE), Direction.OUTGOING);
+    }
+
+    public static Iterable<Relationship> getSpecimenCaughtHere(Location location) {
+        return ((NodeBacked)location).getUnderlyingNode().getRelationships(NodeUtil.asNeo4j(RelTypes.COLLECTED_AT), Direction.INCOMING);
+
     }
 }

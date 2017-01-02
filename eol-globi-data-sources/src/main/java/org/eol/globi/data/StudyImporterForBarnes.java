@@ -5,10 +5,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eol.globi.domain.Location;
-import org.eol.globi.domain.LocationNode;
 import org.eol.globi.domain.Specimen;
-import org.eol.globi.domain.SpecimenNode;
-import org.eol.globi.domain.StudyNode;
+import org.eol.globi.domain.Study;
 import org.eol.globi.domain.Term;
 import org.eol.globi.service.TermLookupServiceException;
 import org.eol.globi.util.ExternalIdUtil;
@@ -29,7 +27,7 @@ public class StudyImporterForBarnes extends BaseStudyImporter {
     }
 
     @Override
-    public StudyNode importStudy() throws StudyImporterException {
+    public Study importStudy() throws StudyImporterException {
         LabeledCSVParser dataParser;
         try {
             dataParser = parserFactory.createParser(RESOURCE_PATH, CharsetConstant.UTF8);
@@ -53,7 +51,7 @@ public class StudyImporterForBarnes extends BaseStudyImporter {
     }
 
     private void importLine(LabeledCSVParser parser, Map<String, String> refMap) throws StudyImporterException {
-        StudyNode localStudy = null;
+        Study localStudy = null;
         try {
             String shortReference = StringUtils.trim(parser.getValueByLabel("Reference"));
             if (!refMap.containsKey(shortReference)) {
@@ -78,7 +76,7 @@ public class StudyImporterForBarnes extends BaseStudyImporter {
         }
     }
 
-    private void addInteractionForPredator(LabeledCSVParser parser, StudyNode localStudy, String predatorName) throws NodeFactoryException, StudyImporterException {
+    private void addInteractionForPredator(LabeledCSVParser parser, Study localStudy, String predatorName) throws NodeFactoryException, StudyImporterException {
         Specimen predator = nodeFactory.createSpecimen(localStudy, predatorName);
         addLifeStage(parser, predator);
 
@@ -93,7 +91,7 @@ public class StudyImporterForBarnes extends BaseStudyImporter {
         if (StringUtils.isBlank(preyName)) {
             getLogger().warn(localStudy, "found empty prey name on line [" + parser.lastLineNumber() + "]");
         } else {
-            SpecimenNode prey = nodeFactory.createSpecimen(localStudy, preyName);
+            Specimen prey = nodeFactory.createSpecimen(localStudy, preyName);
             prey.caughtIn(location);
             predator.ate(prey);
         }

@@ -120,13 +120,6 @@ public class Normalizer {
     public void importDatasets(CommandLine cmdLine, GraphDatabaseService graphService) {
         if (cmdLine == null || !cmdLine.hasOption(OPTION_SKIP_IMPORT)) {
             Collection<Class<? extends StudyImporter>> importers = StudyImporterFactory.getOpenImporters();
-            if (shouldUseDarkData(cmdLine)) {
-                LOG.info("adding dark importers...");
-                ArrayList<Class<? extends StudyImporter>> list = new ArrayList<Class<? extends StudyImporter>>();
-                list.addAll(importers);
-                list.addAll(StudyImporterFactory.getDarkImporters());
-                importers = Collections.unmodifiableList(list);
-            }
             importData(graphService, importers);
         } else {
             LOG.info("skipping data import...");

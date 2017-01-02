@@ -1,9 +1,11 @@
 package org.eol.globi.data;
 
 import org.eol.globi.domain.InteractType;
+import org.eol.globi.domain.NodeBacked;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.SpecimenConstant;
 import org.eol.globi.domain.Study;
+import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
@@ -31,9 +33,9 @@ public class StudyImporterForCookTest extends GraphDBTestCase {
         StudyImporterForCook importer = new StudyImporterForCook(new TestParserFactory(firstFiveLines), nodeFactory);
         Study study = importStudy(importer);
 
-        TaxonNode hostTaxon = taxonIndex.findTaxonByName("Micropogonias undulatus");
+        Taxon hostTaxon = taxonIndex.findTaxonByName("Micropogonias undulatus");
         assertThat(hostTaxon, is(notNullValue()));
-        TaxonNode parasiteTaxon = taxonIndex.findTaxonByName("Cymothoa excisa");
+        Taxon parasiteTaxon = taxonIndex.findTaxonByName("Cymothoa excisa");
         assertThat(parasiteTaxon, is(notNullValue()));
         assertThat("missing location", nodeFactory.findLocation(27.85, -(97.0 + 8.0 / 60.0), -3.0), is(notNullValue()));
 
@@ -46,13 +48,13 @@ public class StudyImporterForCookTest extends GraphDBTestCase {
             if (specimen.hasProperty(SpecimenConstant.LENGTH_IN_MM)) {
                 Object property = specimen.getProperty(SpecimenConstant.LENGTH_IN_MM);
                 if (new Double(156.0).equals(property)) {
-                    assertTaxonClassification(specimen, hostTaxon.getUnderlyingNode());
+                    assertTaxonClassification(specimen, ((NodeBacked)hostTaxon).getUnderlyingNode());
                     foundFirstHost = true;
                     Iterable<Relationship> parasiteRel = specimen.getRelationships(Direction.INCOMING, NodeUtil.asNeo4j(InteractType.PARASITE_OF));
                     for (Relationship relationship : parasiteRel) {
                         Node parasite = relationship.getStartNode();
                         assertThat(parasite.hasProperty(SpecimenConstant.LENGTH_IN_MM), is(false));
-                        assertTaxonClassification(parasite, parasiteTaxon.getUnderlyingNode());
+                        assertTaxonClassification(parasite, ((NodeBacked)parasiteTaxon).getUnderlyingNode());
                     }
                 }
             }

@@ -7,7 +7,7 @@ import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.SpecimenConstant;
 import org.eol.globi.domain.SpecimenNode;
 import org.eol.globi.domain.Study;
-import org.eol.globi.domain.TaxonNode;
+import org.eol.globi.domain.Taxon;
 import org.eol.globi.service.TermLookupServiceException;
 import org.eol.globi.taxon.UberonLookupService;
 import org.eol.globi.util.NodeUtil;
@@ -58,7 +58,7 @@ public class StudyImporterForAkinTest extends GraphDBTestCase {
                 ",9,\"Leiostomus xanthurus\",\"03.07.98\",,6,26.7,0,,\"Seine\",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,\"EMPTY\",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,";
         StudyImporter importer = new StudyImporterFactory(new TestParserFactory(csvString), nodeFactory).instantiateImporter((Class) StudyImporterForAkin.class);
         importStudy(importer);
-        TaxonNode taxon = taxonIndex.findTaxonByName("Leiostomus xanthurus");
+        Taxon taxon = taxonIndex.findTaxonByName("Leiostomus xanthurus");
         assertNotNull(taxon);
 
     }
@@ -70,7 +70,7 @@ public class StudyImporterForAkinTest extends GraphDBTestCase {
                 ",1,\"Pogonias cromis\",\"03.07.98\",,1,226,3,,\"Gillnet\",,0.15,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,0.6,,,,,,0.45,,,,,,,,,,,,,,,,,,1.35,0.45,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,";
         StudyImporter importer = new StudyImporterFactory(new TestParserFactory(csvString), nodeFactory).instantiateImporter((Class) StudyImporterForAkin.class);
         Study study = importStudy(importer);
-        TaxonNode taxon = taxonIndex.findTaxonByName("Pogonias cromis");
+        Taxon taxon = taxonIndex.findTaxonByName("Pogonias cromis");
         assertNotNull(taxon);
 
         Iterable<Relationship> specimens = NodeUtil.getSpecimens(study);

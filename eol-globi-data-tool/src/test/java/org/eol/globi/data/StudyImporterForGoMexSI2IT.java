@@ -6,15 +6,16 @@ import org.apache.commons.logging.LogFactory;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.domain.Environment;
+import org.eol.globi.domain.Location;
 import org.eol.globi.domain.LocationImpl;
 import org.eol.globi.domain.LocationNode;
+import org.eol.globi.domain.NodeBacked;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.SpecimenConstant;
 import org.eol.globi.domain.SpecimenNode;
 import org.eol.globi.domain.Study;
-import org.eol.globi.domain.StudyNode;
-import org.eol.globi.domain.TaxonNode;
+import org.eol.globi.domain.Taxon;
 import org.eol.globi.service.DatasetImpl;
 import org.eol.globi.service.GitHubUtil;
 import org.eol.globi.util.ExternalIdUtil;
@@ -93,9 +94,9 @@ public class StudyImporterForGoMexSI2IT extends GraphDBTestCase {
     }
 
     private static void assertThatSomeDataIsImported(NodeFactory nodeFactory, TaxonIndex taxonIndex) throws StudyImporterException, NodeFactoryException {
-        StudyNode study = nodeFactory.findStudy("Divita et al 1983");
+        Study study = nodeFactory.findStudy("Divita et al 1983");
 
-        assertSpecimenProperties(study.getUnderlyingNode().getGraphDatabase());
+        assertSpecimenProperties(((NodeBacked)study).getUnderlyingNode().getGraphDatabase());
 
         assertNotNull(study);
         assertThat(study.getTitle(), is("Divita et al 1983"));
@@ -110,10 +111,10 @@ public class StudyImporterForGoMexSI2IT extends GraphDBTestCase {
         assertNotNull(taxonIndex.findTaxonByName("Amphipoda"));
         assertNotNull(taxonIndex.findTaxonByName("Crustacea"));
 
-        TaxonNode taxon = taxonIndex.findTaxonByName("Scomberomorus cavalla");
+        Taxon taxon = taxonIndex.findTaxonByName("Scomberomorus cavalla");
         List<String> preyList = new ArrayList<String>();
         final List<String> titles = new ArrayList<String>();
-        Iterable<Relationship> classifiedAsRels = taxon.getUnderlyingNode().getRelationships(Direction.INCOMING, NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS));
+        Iterable<Relationship> classifiedAsRels = ((NodeBacked)taxon).getUnderlyingNode().getRelationships(Direction.INCOMING, NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS));
         int count = 0;
         for (Relationship classifiedAsRel : classifiedAsRels) {
             Node predatorSpecimen = classifiedAsRel.getStartNode();
@@ -144,7 +145,7 @@ public class StudyImporterForGoMexSI2IT extends GraphDBTestCase {
         final String footprintWKT = WKT_FOOTPRINT2;
         LocationImpl expectedLocation = new LocationImpl(29.346953, -92.980614, -13.641, footprintWKT);
         expectedLocation.setLocality("Louisiana inner continental shelf");
-        LocationNode location = nodeFactory.findLocation(expectedLocation);
+        Location location = nodeFactory.findLocation(expectedLocation);
         assertThat(location, is(notNullValue()));
         assertThat(location.getFootprintWKT(), is(footprintWKT));
         assertThat(location.getLocality(), is("Louisiana inner continental shelf"));

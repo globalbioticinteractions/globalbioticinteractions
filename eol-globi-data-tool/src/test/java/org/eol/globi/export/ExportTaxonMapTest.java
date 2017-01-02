@@ -3,6 +3,7 @@ package org.eol.globi.export;
 import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.domain.RelTypes;
+import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
@@ -44,18 +45,18 @@ public class ExportTaxonMapTest extends GraphDBTestCase {
             }
         };
         taxonIndex = ExportTestUtil.taxonIndexWithEnricher(taxonEnricher, getGraphDb());
-        StudyNode study = nodeFactory.getOrCreateStudy("title", "source", "citation");
+        Study study = nodeFactory.getOrCreateStudy("title", "source", "citation");
         Taxon taxon = new TaxonImpl("Homo sapiens");
         taxon.setExternalUrl("http://some/thing");
         taxon.setThumbnailUrl("http://thing/some");
         nodeFactory.createSpecimen(study, taxon);
-        TaxonNode human = taxonIndex.getOrCreateTaxon(taxon);
+        Taxon human = taxonIndex.getOrCreateTaxon(taxon);
         nodeFactory.createSpecimen(study, new TaxonImpl("Canis lupus"));
         final TaxonImpl altTaxonWithPath = new TaxonImpl("Alternate Homo sapiens", "alt:123");
         altTaxonWithPath.setPath("some path here");
-        NodeUtil.connectTaxa(altTaxonWithPath, human, getGraphDb(), RelTypes.SAME_AS);
-        NodeUtil.connectTaxa(new TaxonImpl("Alternate Homo sapiens no path", "alt:123"), human, getGraphDb(), RelTypes.SAME_AS);
-        NodeUtil.connectTaxa(new TaxonImpl("Similar Homo sapiens", "alt:456"), human, getGraphDb(), RelTypes.SIMILAR_TO);
+        NodeUtil.connectTaxa(altTaxonWithPath, (TaxonNode)human, getGraphDb(), RelTypes.SAME_AS);
+        NodeUtil.connectTaxa(new TaxonImpl("Alternate Homo sapiens no path", "alt:123"), (TaxonNode)human, getGraphDb(), RelTypes.SAME_AS);
+        NodeUtil.connectTaxa(new TaxonImpl("Similar Homo sapiens", "alt:456"), (TaxonNode)human, getGraphDb(), RelTypes.SIMILAR_TO);
         resolveNames();
 
         StringWriter writer = new StringWriter();

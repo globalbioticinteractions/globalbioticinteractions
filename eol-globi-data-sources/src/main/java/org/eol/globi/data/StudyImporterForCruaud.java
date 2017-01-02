@@ -6,10 +6,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.Location;
-import org.eol.globi.domain.LocationNode;
 import org.eol.globi.domain.Specimen;
-import org.eol.globi.domain.SpecimenNode;
-import org.eol.globi.domain.StudyNode;
+import org.eol.globi.domain.Study;
 import org.eol.globi.geo.LatLng;
 
 import java.io.IOException;
@@ -26,7 +24,7 @@ public class StudyImporterForCruaud extends BaseStudyImporter {
     }
 
     @Override
-    public StudyNode importStudy() throws StudyImporterException {
+    public Study importStudy() throws StudyImporterException {
         LabeledCSVParser dataParser;
         try {
             dataParser = parserFactory.createParser(RESOURCE_PATH, CharsetConstant.UTF8);
@@ -34,7 +32,7 @@ public class StudyImporterForCruaud extends BaseStudyImporter {
             throw new StudyImporterException("failed to read resource [" + RESOURCE_PATH + "]", e);
         }
         try {
-            StudyNode study = nodeFactory.getOrCreateStudy2("cruaud"
+            Study study = nodeFactory.getOrCreateStudy2("cruaud"
                     , SOURCE
                     , "http://dx.doi.org/10.1093/sysbio/sys068");
             while (dataParser.getLine() != null) {
@@ -45,7 +43,7 @@ public class StudyImporterForCruaud extends BaseStudyImporter {
                         hostName = StringUtils.replace(hostName, "F.", "Ficus");
                         if (areNamesAvailable(parasiteName, hostName)) {
                             Specimen parasite = nodeFactory.createSpecimen(study, parasiteName);
-                            SpecimenNode host = nodeFactory.createSpecimen(study, hostName);
+                            Specimen host = nodeFactory.createSpecimen(study, hostName);
                             parasite.interactsWith(host, InteractType.PARASITE_OF);
                             String samplingLocation = StringUtils.trim(dataParser.getValueByLabel("Sampling location"));
                             if (getGeoNamesService().hasTermForLocale(samplingLocation)) {

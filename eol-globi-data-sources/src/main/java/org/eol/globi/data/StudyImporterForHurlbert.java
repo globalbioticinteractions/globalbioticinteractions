@@ -5,9 +5,8 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.eol.globi.domain.SpecimenNode;
+import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
-import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.Term;
@@ -31,7 +30,7 @@ public class StudyImporterForHurlbert extends BaseStudyImporter {
     }
 
     @Override
-    public StudyNode importStudy() throws StudyImporterException {
+    public Study importStudy() throws StudyImporterException {
         Set<String> regions = new HashSet<String>();
         Set<String> locales = new HashSet<String>();
         Set<String> habitats = new HashSet<String>();
@@ -61,7 +60,7 @@ public class StudyImporterForHurlbert extends BaseStudyImporter {
     }
 
     public void importRecords(Set<String> regions, Set<String> locales, Set<String> habitats, LabeledCSVParser parser, String sourceCitation) throws StudyImporterException {
-        StudyNode study = nodeFactory.getOrCreateStudy(sourceCitation, "Allen Hurlbert. Avian Diet Database (https://github.com/hurlbertlab/dietdatabase/). " + ReferenceUtil.createLastAccessedString(RESOURCE), null, ExternalIdUtil.toCitation(null, sourceCitation, null));
+        Study study = nodeFactory.getOrCreateStudy(sourceCitation, "Allen Hurlbert. Avian Diet Database (https://github.com/hurlbertlab/dietdatabase/). " + ReferenceUtil.createLastAccessedString(RESOURCE), null, ExternalIdUtil.toCitation(null, sourceCitation, null));
         study.setCitationWithTx(sourceCitation);
 
         //ID,Common_Name,Scientific_Name,,,,Prey_Common_Name,Fraction_Diet_By_Wt_or_Vol,Fraction_Diet_By_Items,Fraction_Occurrence,Fraction_Diet_Unspecified,Item Sample Size,Bird Sample size,Sites,StudyNode Type,Notes,Source
@@ -83,10 +82,10 @@ public class StudyImporterForHurlbert extends BaseStudyImporter {
         }
     }
 
-    protected void importInteraction(Set<String> regions, Set<String> locales, Set<String> habitats, LabeledCSVParser parser, StudyNode study, String preyTaxonName, String predatorName) throws StudyImporterException {
+    protected void importInteraction(Set<String> regions, Set<String> locales, Set<String> habitats, LabeledCSVParser parser, Study study, String preyTaxonName, String predatorName) throws StudyImporterException {
         try {
             Taxon predatorTaxon = new TaxonImpl(predatorName);
-            SpecimenNode predatorSpecimen = nodeFactory.createSpecimen(study, predatorTaxon);
+            Specimen predatorSpecimen = nodeFactory.createSpecimen(study, predatorTaxon);
             setBasisOfRecordAsLiterature(predatorSpecimen);
 
             Taxon preyTaxon = new TaxonImpl(preyTaxonName);
@@ -94,7 +93,7 @@ public class StudyImporterForHurlbert extends BaseStudyImporter {
             if (StringUtils.isNotBlank(preyNameStatus)) {
                 preyTaxon.setStatus(new Term("HURLBERT:" + preyNameStatus, preyNameStatus));
             }
-            SpecimenNode preySpecimen = nodeFactory.createSpecimen(study, preyTaxon);
+            Specimen preySpecimen = nodeFactory.createSpecimen(study, preyTaxon);
             setBasisOfRecordAsLiterature(preySpecimen);
 
             String preyStage = StringUtils.trim(parser.getValueByLabel("Prey_Stage"));

@@ -4,8 +4,7 @@ import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.Specimen;
-import org.eol.globi.domain.SpecimenNode;
-import org.eol.globi.domain.StudyNode;
+import org.eol.globi.domain.Study;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -19,16 +18,16 @@ public class StudyImporterForICES extends BaseStudyImporter {
     }
 
     @Override
-    public StudyNode importStudy() throws StudyImporterException {
+    public Study importStudy() throws StudyImporterException {
         LabeledCSVParser parser = createParser();
 
 
-        StudyNode study = nodeFactory.getOrCreateStudy("ICES",
+        Study study = nodeFactory.getOrCreateStudy("ICES",
                 "International Council for the Exploration of the Sea. Available at http://www.ices.dk/products/cooperative.asp .",
                 "Cooperative Research Report No. 164; Cooperative Research Report No. 219, ICES Stomach DatasetImpl, ICES");
         study.setExternalId("http://ecosystemdata.ices.dk/stomachdata/");
         try {
-            SpecimenNode predator = null;
+            Specimen predator = null;
             String lastStomachId = null;
             while ((parser.getLine()) != null) {
                 if (importFilter.shouldImportRecord((long) parser.getLastLineNumber())) {
@@ -42,7 +41,7 @@ public class StudyImporterForICES extends BaseStudyImporter {
                         predator.caughtIn(location);
                     }
 
-                    SpecimenNode prey = addPrey(parser, predator, study);
+                    Specimen prey = addPrey(parser, predator, study);
                     if (prey != null) {
                         nodeFactory.setUnixEpochProperty(prey, date);
                         prey.caughtIn(location);
@@ -59,17 +58,17 @@ public class StudyImporterForICES extends BaseStudyImporter {
         return study;
     }
 
-    private SpecimenNode addPrey(LabeledCSVParser parser, Specimen predatorSpecimen, StudyNode study) throws NodeFactoryException {
+    private Specimen addPrey(LabeledCSVParser parser, Specimen predatorSpecimen, Study study) throws NodeFactoryException {
         String preyName = parser.getValueByLabel("Prey Species Name");
-        SpecimenNode specimen = null;
+        Specimen specimen = null;
         if (StringUtils.isNotBlank(preyName)) {
             specimen = atePrey(predatorSpecimen, preyName, study);
         }
         return specimen;
     }
 
-    private SpecimenNode addPredator(LabeledCSVParser parser, StudyNode study) throws NodeFactoryException, StudyImporterException {
-        SpecimenNode predatorSpecimen;
+    private Specimen addPredator(LabeledCSVParser parser, Study study) throws StudyImporterException {
+        Specimen predatorSpecimen;
         predatorSpecimen = nodeFactory.createSpecimen(study, parser.getValueByLabel("Predator"));
         predatorSpecimen.setLengthInMm(parseDoubleField(parser, "Predator (mean) Lengh"));
         return predatorSpecimen;
@@ -108,8 +107,8 @@ public class StudyImporterForICES extends BaseStudyImporter {
         }
     }
 
-    private SpecimenNode atePrey(Specimen predatorSpecimen, String preyName, StudyNode study) throws NodeFactoryException {
-        SpecimenNode preySpecimen = nodeFactory.createSpecimen(study, preyName);
+    private Specimen atePrey(Specimen predatorSpecimen, String preyName, Study study) throws NodeFactoryException {
+        Specimen preySpecimen = nodeFactory.createSpecimen(study, preyName);
         predatorSpecimen.ate(preySpecimen);
         return preySpecimen;
     }

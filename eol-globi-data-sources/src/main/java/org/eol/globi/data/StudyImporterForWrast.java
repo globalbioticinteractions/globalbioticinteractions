@@ -3,12 +3,9 @@ package org.eol.globi.data;
 import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.domain.Location;
-import org.eol.globi.domain.LocationNode;
-import org.eol.globi.domain.SeasonNode;
+import org.eol.globi.domain.Season;
 import org.eol.globi.domain.Specimen;
-import org.eol.globi.domain.SpecimenNode;
 import org.eol.globi.domain.Study;
-import org.eol.globi.domain.StudyNode;
 import org.eol.globi.geo.LatLng;
 import org.eol.globi.util.ExternalIdUtil;
 
@@ -74,8 +71,8 @@ public class StudyImporterForWrast extends BaseStudyImporter {
     }
 
     @Override
-    public StudyNode importStudy() throws StudyImporterException {
-        StudyNode study = nodeFactory.getOrCreateStudy("Wrast 2008",
+    public Study importStudy() throws StudyImporterException {
+        Study study = nodeFactory.getOrCreateStudy("Wrast 2008",
                 StudyImporterForGoMexSI2.GOMEXI_SOURCE_DESCRIPTION, ExternalIdUtil.toCitation("Jenny L. Wrast", "Spatiotemporal And Habitat-mediated Food Web Dynamics in Lavaca Bay, Texas.", "2008"));
         study.setCitationWithTx("Wrast JL. Spatiotemporal And Habitat-mediated Food Web Dynamics in Lavaca Bay, Texas. 2008. Master Thesis.");
         study.setExternalId("http://www.fisheries.tamucc.edu/people_files/FINAL%20WRAST%20THESIS.pdf");
@@ -95,13 +92,13 @@ public class StudyImporterForWrast extends BaseStudyImporter {
     }
 
 
-    private void addNextRecordToStudy(LabeledCSVParser csvParser, StudyNode study, Map<String, String> columnToNormalizedTermMapper, LengthParser lengthParser) throws StudyImporterException {
+    private void addNextRecordToStudy(LabeledCSVParser csvParser, Study study, Map<String, String> columnToNormalizedTermMapper, LengthParser lengthParser) throws StudyImporterException {
         String seasonName = csvParser.getValueByLabel(columnToNormalizedTermMapper.get(SEASON));
         String preyItem = csvParser.getValueByLabel(columnToNormalizedTermMapper.get(PREY_SPECIES));
         if (preyItem == null) {
             getLogger().warn(study, "no prey name for line [" + csvParser.getLastLineNumber() + "]");
         } else {
-            SpecimenNode prey = createAndClassifySpecimen(preyItem, study);
+            Specimen prey = createAndClassifySpecimen(preyItem, study);
 
             String habitat = csvParser.getValueByLabel(COLUMN_MAPPER.get(HABITAT));
             String site = csvParser.getValueByLabel(COLUMN_MAPPER.get(SITE));
@@ -156,8 +153,8 @@ public class StudyImporterForWrast extends BaseStudyImporter {
         }
     }
 
-    private SpecimenNode addPredatorSpecimen(LabeledCSVParser csvParser, StudyNode study, LengthParser lengthParser, String seasonName, Location sampleLocation, String speciesName, String predatorId, Map<String, Specimen> predatorMap) throws StudyImporterException {
-        SpecimenNode predator = createAndClassifySpecimen(speciesName, study);
+    private Specimen addPredatorSpecimen(LabeledCSVParser csvParser, Study study, LengthParser lengthParser, String seasonName, Location sampleLocation, String speciesName, String predatorId, Map<String, Specimen> predatorMap) throws StudyImporterException {
+        Specimen predator = createAndClassifySpecimen(speciesName, study);
         predatorMap.put(predatorId, predator);
         predator.setLengthInMm(lengthParser.parseLengthInMm(csvParser));
 
@@ -236,9 +233,9 @@ public class StudyImporterForWrast extends BaseStudyImporter {
         return createLocationId(habitat, region, site) + seasonString;
     }
 
-    private SeasonNode getOrCreateSeason(String seasonName) {
+    private Season getOrCreateSeason(String seasonName) {
         String seasonNameLower = seasonName.toLowerCase().trim();
-        SeasonNode season = nodeFactory.findSeason(seasonNameLower);
+        Season season = nodeFactory.findSeason(seasonNameLower);
         if (null == season) {
             season = nodeFactory.createSeason(seasonNameLower);
         }
@@ -325,7 +322,7 @@ public class StudyImporterForWrast extends BaseStudyImporter {
         return habitateDef.trim() + regionDef.trim() + siteDef.trim();
     }
 
-    private SpecimenNode createAndClassifySpecimen(final String speciesName, StudyNode study) throws StudyImporterException {
+    private Specimen createAndClassifySpecimen(final String speciesName, Study study) throws StudyImporterException {
         try {
             return nodeFactory.createSpecimen(study, speciesName);
         } catch (NodeFactoryException e) {

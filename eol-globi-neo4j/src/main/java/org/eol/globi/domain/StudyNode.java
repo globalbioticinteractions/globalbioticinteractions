@@ -15,17 +15,9 @@ import java.util.logging.Level;
 
 public class StudyNode extends NodeBacked implements Study {
 
-    public static final String TITLE = "title";
-    public static final String CONTRIBUTOR = "contributor";
-    public static final String DESCRIPTION = "description";
-    public static final String PUBLICATION_YEAR = "publicationYear";
-    public static final String SOURCE = "source";
-    public static final String CITATION = "citation";
-    public static final String DOI = "doi";
-
     public StudyNode(Node node, String title) {
         this(node);
-        setProperty(TITLE, title);
+        setProperty(StudyConstant.TITLE, title);
         setProperty(PropertyAndValueDictionary.TYPE, StudyNode.class.getSimpleName());
     }
 
@@ -45,7 +37,7 @@ public class StudyNode extends NodeBacked implements Study {
     @Deprecated
     // citation / doi's are used to convey the source
     public void setContributor(String contributor) {
-        setProperty(CONTRIBUTOR, contributor);
+        setProperty(StudyConstant.CONTRIBUTOR, contributor);
     }
 
     protected void setProperty(String name, String value) {
@@ -58,7 +50,7 @@ public class StudyNode extends NodeBacked implements Study {
     @Deprecated
     // use citation instead
     public String getDescription() {
-        return getProperty(DESCRIPTION);
+        return getProperty(StudyConstant.DESCRIPTION);
     }
 
     private String getProperty(String propertyName) {
@@ -72,17 +64,17 @@ public class StudyNode extends NodeBacked implements Study {
 
     @Override
     public String getSource() {
-        return getProperty(SOURCE);
+        return getProperty(StudyConstant.SOURCE);
     }
 
     @Override
     public void setSource(String source) {
-        setProperty(SOURCE, source);
+        setProperty(StudyConstant.SOURCE, source);
     }
 
     @Override
     public void setDOI(String doi) {
-        setProperty(DOI, doi);
+        setProperty(StudyConstant.DOI, doi);
         if (StringUtils.isBlank(getExternalId())) {
             setExternalId(ExternalIdUtil.urlForExternalId(doi));
         }
@@ -101,23 +93,23 @@ public class StudyNode extends NodeBacked implements Study {
 
     @Override
     public String getDOI() {
-        String value = getProperty(DOI);
+        String value = getProperty(StudyConstant.DOI);
         return StringUtils.isBlank(value) ? null : value;
     }
 
     @Override
     public void setCitation(String citation) {
-        setProperty(CITATION, citation);
+        setProperty(StudyConstant.CITATION, citation);
     }
 
     @Override
     public void setCitationWithTx(String citation) {
-        setPropertyWithTx(CITATION, citation);
+        setPropertyWithTx(StudyConstant.CITATION, citation);
     }
 
     @Override
     public String getCitation() {
-        return getUnderlyingNode().hasProperty(CITATION) ? getProperty(CITATION) : null;
+        return getUnderlyingNode().hasProperty(StudyConstant.CITATION) ? getProperty(StudyConstant.CITATION) : null;
     }
 
     @Override

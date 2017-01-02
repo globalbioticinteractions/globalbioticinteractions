@@ -2,7 +2,7 @@ package org.eol.globi.data;
 
 import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.lang.StringUtils;
-import org.eol.globi.domain.StudyNode;
+import org.eol.globi.domain.Study;
 import org.eol.globi.util.CSVUtil;
 import org.eol.globi.util.ExternalIdUtil;
 
@@ -40,7 +40,7 @@ public class StudyImporterForTSV extends BaseStudyImporter {
     }
 
     @Override
-    public StudyNode importStudy() throws StudyImporterException {
+    public Study importStudy() throws StudyImporterException {
         try {
             importRepository(getRepositoryName(), getSourceCitation());
         } catch (IOException | NodeFactoryException e) {

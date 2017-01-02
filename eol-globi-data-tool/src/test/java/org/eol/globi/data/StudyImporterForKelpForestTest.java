@@ -1,5 +1,6 @@
 package org.eol.globi.data;
 
+import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonNode;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -19,7 +20,7 @@ public class StudyImporterForKelpForestTest extends GraphDBTestCase {
     }
 
     protected void assertSeaOtter() throws NodeFactoryException {
-        TaxonNode taxon = taxonIndex.findTaxonByName("sea otter");
+        Taxon taxon = taxonIndex.findTaxonByName("sea otter");
         assertThat(taxon, is(notNullValue()));
         assertThat(taxon.getExternalId(), is("ITIS:180547"));
     }

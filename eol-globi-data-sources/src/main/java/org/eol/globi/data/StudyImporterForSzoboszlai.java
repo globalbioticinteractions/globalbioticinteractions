@@ -8,7 +8,7 @@ import com.vividsolutions.jts.geom.Point;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.eol.globi.domain.StudyNode;
+import org.eol.globi.domain.Study;
 import org.eol.globi.domain.TaxonomyProvider;
 import org.eol.globi.geo.LatLng;
 import org.eol.globi.service.DatasetUtil;
@@ -32,18 +32,7 @@ import java.util.UUID;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import static org.eol.globi.data.StudyImporterForTSV.DECIMAL_LATITUDE;
-import static org.eol.globi.data.StudyImporterForTSV.DECIMAL_LONGITUDE;
-import static org.eol.globi.data.StudyImporterForTSV.INTERACTION_TYPE_ID;
-import static org.eol.globi.data.StudyImporterForTSV.INTERACTION_TYPE_NAME;
-import static org.eol.globi.data.StudyImporterForTSV.LOCALITY_NAME;
-import static org.eol.globi.data.StudyImporterForTSV.REFERENCE_CITATION;
-import static org.eol.globi.data.StudyImporterForTSV.REFERENCE_ID;
-import static org.eol.globi.data.StudyImporterForTSV.SOURCE_TAXON_ID;
-import static org.eol.globi.data.StudyImporterForTSV.SOURCE_TAXON_NAME;
-import static org.eol.globi.data.StudyImporterForTSV.STUDY_SOURCE_CITATION;
-import static org.eol.globi.data.StudyImporterForTSV.TARGET_TAXON_ID;
-import static org.eol.globi.data.StudyImporterForTSV.TARGET_TAXON_NAME;
+import static org.eol.globi.data.StudyImporterForTSV.*;
 
 public class StudyImporterForSzoboszlai extends BaseStudyImporter {
 
@@ -52,7 +41,7 @@ public class StudyImporterForSzoboszlai extends BaseStudyImporter {
     }
 
     @Override
-    public StudyNode importStudy() throws StudyImporterException {
+    public Study importStudy() throws StudyImporterException {
         try {
             Map<Integer, LatLng> localeMap = importShapes();
             importLinks(ResourceUtil.asInputStream(getLinkArchiveURL(), null)

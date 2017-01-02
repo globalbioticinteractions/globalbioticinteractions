@@ -2,7 +2,7 @@ package org.eol.globi.domain;
 
 import java.util.List;
 
-public interface Specimen {
+public interface Specimen extends WithId {
 
     Location getSampleLocation();
 
@@ -55,4 +55,6 @@ public interface Specimen {
     Term getLifeStage();
 
     Term getBodyPart();
+
+    void setProperty(String name, Object value);
 }

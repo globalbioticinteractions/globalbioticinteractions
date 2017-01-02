@@ -17,6 +17,7 @@ import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.SpecimenConstant;
 import org.eol.globi.domain.SpecimenNode;
 import org.eol.globi.domain.Study;
+import org.eol.globi.domain.StudyConstant;
 import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
@@ -280,7 +281,7 @@ public class NodeFactoryImpl implements NodeFactory {
                     LOG.warn("failed to lookup doi for citation [" + citation + "] with id [" + title + "]", e);
                 }
             }
-            studies.add(node, StudyNode.TITLE, title);
+            studies.add(node, StudyConstant.TITLE, title);
             transaction.success();
         } finally {
             transaction.finish();
@@ -320,7 +321,7 @@ public class NodeFactoryImpl implements NodeFactory {
 
     @Override
     public StudyNode findStudy(String title) {
-        final IndexHits<Node> nodes = title == null ? null : studies.get(StudyNode.TITLE, title);
+        final IndexHits<Node> nodes = title == null ? null : studies.get(StudyConstant.TITLE, title);
         Node foundStudyNode = nodes != null ? nodes.getSingle() : null;
         return foundStudyNode == null ? null : new StudyNode(foundStudyNode);
     }

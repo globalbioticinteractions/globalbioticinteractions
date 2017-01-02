@@ -5,7 +5,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eol.globi.domain.Specimen;
-import org.eol.globi.domain.StudyNode;
+import org.eol.globi.domain.Study;
 import org.eol.globi.util.ExternalIdUtil;
 
 import java.io.IOException;
@@ -24,7 +24,7 @@ public class StudyImporterForLifeWatchGreece extends BaseStudyImporter {
     }
 
     @Override
-    public StudyNode importStudy() throws StudyImporterException {
+    public Study importStudy() throws StudyImporterException {
         try {
             InteractionListener interactionListener = new InteractionListener();
             interactionListener.setListener(new ParsedInteractionListener(nodeFactory));
@@ -148,7 +148,7 @@ public class StudyImporterForLifeWatchGreece extends BaseStudyImporter {
 
         public void foundInteraction(String predatorTaxonName, String preyTaxonName, String studyId, String studyReference) {
             try {
-                StudyNode study = nodeFactory.getOrCreateStudy("http://polytraits.lifewatchgreece.eu/publication/" + studyId, "Faulwetter S, Markantonatou V, Pavloudi C, Papageorgiou N, Keklikoglou K, Chatzinikolaou E, Pafilis E, Chatzigeorgiou G, Vasileiadou K, Dailianis T, Fanini L, Koulouri P, Arvanitidis C (2014) Polytraits: A database on biological traits of marine polychaetes. Biodiversity Data Journal 2: e1024. doi:10.3897/BDJ.2.e1024 . Available at http://polytraits.lifewatchgreece.eu.", ExternalIdUtil.toCitation(null, studyReference, null));
+                Study study = nodeFactory.getOrCreateStudy("http://polytraits.lifewatchgreece.eu/publication/" + studyId, "Faulwetter S, Markantonatou V, Pavloudi C, Papageorgiou N, Keklikoglou K, Chatzinikolaou E, Pafilis E, Chatzigeorgiou G, Vasileiadou K, Dailianis T, Fanini L, Koulouri P, Arvanitidis C (2014) Polytraits: A database on biological traits of marine polychaetes. Biodiversity Data Journal 2: e1024. doi:10.3897/BDJ.2.e1024 . Available at http://polytraits.lifewatchgreece.eu.", ExternalIdUtil.toCitation(null, studyReference, null));
                 Specimen predator = nodeFactory.createSpecimen(study, predatorTaxonName);
                 predator.ate(nodeFactory.createSpecimen(study, preyTaxonName));
             } catch (NodeFactoryException e) {

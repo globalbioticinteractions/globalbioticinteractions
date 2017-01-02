@@ -3,10 +3,8 @@ package org.eol.globi.data;
 import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.domain.Location;
-import org.eol.globi.domain.LocationNode;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
-import org.eol.globi.domain.StudyNode;
 import org.eol.globi.service.TermLookupServiceException;
 import org.eol.globi.util.ExternalIdUtil;
 import org.joda.time.DateTime;
@@ -30,8 +28,8 @@ public class StudyImporterForBlewett extends BaseStudyImporter {
     }
 
     @Override
-    public StudyNode importStudy() throws StudyImporterException {
-        StudyNode study = nodeFactory.getOrCreateStudy("Blewett 2006",
+    public Study importStudy() throws StudyImporterException {
+        Study study = nodeFactory.getOrCreateStudy("Blewett 2006",
                 StudyImporterForGoMexSI2.GOMEXI_SOURCE_DESCRIPTION, ExternalIdUtil.toCitation("David A. Blewett", "Blewett DA, Hensley RA, and Stevens PW, Feeding Habits of Common Snook, Centropomus Undecimalis, in Charlotte Harbor, Florida, Gulf and Caribbean Research Vol 18, 1–13, 2006", "2006"));
 
         study.setCitationWithTx("Blewett DA, Hensley RA, and Stevens PW, Feeding Habits of Common Snook, Centropomus Undecimalis, in Charlotte Harbor, Florida, Gulf and Caribbean Research Vol 18, 1–13, 2006");
@@ -113,7 +111,7 @@ public class StudyImporterForBlewett extends BaseStudyImporter {
         return fmtDateTime.print(dateTime);
     }
 
-    private void parsePredatorPreyInteraction(StudyNode study, Map<String, Location> locationMap, Map<String, Date> collectionTimeMap) throws IOException, NodeFactoryException, TermLookupServiceException {
+    private void parsePredatorPreyInteraction(Study study, Map<String, Location> locationMap, Map<String, Date> collectionTimeMap) throws IOException, NodeFactoryException, TermLookupServiceException {
         LabeledCSVParser parser = parserFactory.createParser("blewett/SnookDietData2000_02_Charlotte_Harbor_FL_Blewett_numeric_abundance.csv", CharsetConstant.UTF8);
         String[] header = parser.getLabels();
 
@@ -136,7 +134,7 @@ public class StudyImporterForBlewett extends BaseStudyImporter {
         }
     }
 
-    private Specimen addPredator(StudyNode study, LabeledCSVParser parser, String[] line) throws NodeFactoryException, TermLookupServiceException {
+    private Specimen addPredator(Study study, LabeledCSVParser parser, String[] line) throws NodeFactoryException, TermLookupServiceException {
         Specimen predatorSpecimen = nodeFactory.createSpecimen(study, "Centropomus undecimalis");
 
         predatorSpecimen.setLifeStage(nodeFactory.getTermLookupService().lookupTermByName("adult"));
@@ -167,7 +165,7 @@ public class StudyImporterForBlewett extends BaseStudyImporter {
         }
     }
 
-    private List<Specimen> addPreyForPredator(String[] header, String[] line, StudyNode study) throws NodeFactoryException {
+    private List<Specimen> addPreyForPredator(String[] header, String[] line, Study study) throws NodeFactoryException {
         List<Specimen> preyItems = new ArrayList<Specimen>();
         int preyColumn = 4;
         for (int i = preyColumn; i < header.length; i++) {

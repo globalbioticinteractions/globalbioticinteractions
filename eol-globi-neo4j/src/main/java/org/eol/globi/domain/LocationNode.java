@@ -56,9 +56,6 @@ public class LocationNode extends NodeBacked implements Location {
         return (Double) getUnderlyingNode().getProperty(LocationConstant.LATITUDE);
     }
 
-    public Iterable<Relationship> getSpecimenCaughtHere() {
-        return getUnderlyingNode().getRelationships(NodeUtil.asNeo4j(RelTypes.COLLECTED_AT), Direction.INCOMING);
-    }
 
     public void addEnvironment(Environment environment) {
         boolean needsAssociation = true;

@@ -19,11 +19,11 @@ public class StudyTest extends GraphDBTestCase {
 
     @Test
     public void populateStudy() throws NodeFactoryException {
-        StudyNode study = nodeFactory.createStudy("Our first study");
+        Study study = nodeFactory.createStudy("Our first study");
 
         taxonIndex.getOrCreateTaxon(CARCHARODON_CARCHARIAS);
 
-        SpecimenNode goldFish = nodeFactory.createSpecimen(study, CARASSIUS_AURATUS_AURATUS);
+        Specimen goldFish = nodeFactory.createSpecimen(study, CARASSIUS_AURATUS_AURATUS);
 
         Specimen shark = nodeFactory.createSpecimen(study, CARCHARODON_CARCHARIAS);
         Specimen fuzzyShark = nodeFactory.createSpecimen(study, CARCHARODON);
@@ -34,7 +34,7 @@ public class StudyTest extends GraphDBTestCase {
         Location bolinasBay = nodeFactory.getOrCreateLocation(12.2d, 12.1d, -100.0d);
         shark.caughtIn(bolinasBay);
 
-        SeasonNode winter = nodeFactory.createSeason("winter");
+        Season winter = nodeFactory.createSeason("winter");
         shark.caughtDuring(winter);
 
         shark.setLengthInMm(1.2d);

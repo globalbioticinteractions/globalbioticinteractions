@@ -2,6 +2,7 @@ package org.eol.globi.data;
 
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyNode;
+import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.service.DatasetImpl;
 import org.eol.globi.util.NodeUtil;
@@ -61,7 +62,7 @@ public class StudyImporterForTSVTest extends GraphDBTestCase {
         StudyImporterForTSV importer = new StudyImporterForTSV(new TestParserFactory(minimalLines), nodeFactory);
         importer.setDataset(new DatasetImpl("someRepo", URI.create("http://example.com")));
         importStudy(importer);
-        TaxonNode taxon = taxonIndex.findTaxonById("EOL:123");
+        Taxon taxon = taxonIndex.findTaxonById("EOL:123");
         assertThat(taxon, is(notNullValue()));
         assertThat(taxon.getName(), is("no name"));
         assertThat(taxon.getExternalId(), is("EOL:123"));
@@ -69,7 +70,7 @@ public class StudyImporterForTSVTest extends GraphDBTestCase {
     }
 
     protected void assertExists(String taxonName) throws NodeFactoryException {
-        TaxonNode taxon = taxonIndex.findTaxonByName(taxonName);
+        Taxon taxon = taxonIndex.findTaxonByName(taxonName);
         assertThat(taxon, is(notNullValue()));
         assertThat(taxon.getName(), is(taxonName));
     }
@@ -85,7 +86,7 @@ public class StudyImporterForTSVTest extends GraphDBTestCase {
         StudyImporterForTSV importer = new StudyImporterForTSV(new TestParserFactory(firstFewLines), nodeFactory);
         importer.setDataset(new DatasetImpl("someRepo", URI.create("http://example.com")));
         importStudy(importer);
-        TaxonNode taxon = taxonIndex.findTaxonById("EOL:2912748");
+        Taxon taxon = taxonIndex.findTaxonById("EOL:2912748");
         assertThat(taxon, is(notNullValue()));
         assertThat(taxon.getName(), is("bacillus subtilis"));
         assertThat(taxon.getExternalId(), is("EOL:2912748"));

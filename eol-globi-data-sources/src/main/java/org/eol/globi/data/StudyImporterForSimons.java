@@ -2,10 +2,9 @@ package org.eol.globi.data;
 
 import com.Ostermiller.util.LabeledCSVParser;
 import org.eol.globi.domain.Location;
-import org.eol.globi.domain.SeasonNode;
+import org.eol.globi.domain.Season;
 import org.eol.globi.domain.Specimen;
-import org.eol.globi.domain.SpecimenNode;
-import org.eol.globi.domain.StudyNode;
+import org.eol.globi.domain.Study;
 import org.eol.globi.util.ExternalIdUtil;
 import uk.me.jstott.jcoord.LatLng;
 import uk.me.jstott.jcoord.UTMRef;
@@ -47,22 +46,22 @@ public class StudyImporterForSimons extends BaseStudyImporter {
     }
 
     @Override
-    public StudyNode importStudy() throws StudyImporterException {
+    public Study importStudy() throws StudyImporterException {
         return importStudy(MISSISSIPPI_ALABAMA_DATA_SOURCE);
     }
 
-    private StudyNode importStudy(String studyResource) throws StudyImporterException {
+    private Study importStudy(String studyResource) throws StudyImporterException {
         return createAndPopulateStudy(parserFactory, studyResource);
     }
 
 
-    private StudyNode createAndPopulateStudy(ParserFactory parserFactory, String studyResource) throws StudyImporterException {
+    private Study createAndPopulateStudy(ParserFactory parserFactory, String studyResource) throws StudyImporterException {
         getPredatorSpecimenMap().clear();
         return importStudy(parserFactory, studyResource);
     }
 
-    private StudyNode importStudy(ParserFactory parserFactory, String studyResource) throws StudyImporterException {
-        StudyNode study = nodeFactory.getOrCreateStudy("Simons 1997",
+    private Study importStudy(ParserFactory parserFactory, String studyResource) throws StudyImporterException {
+        Study study = nodeFactory.getOrCreateStudy("Simons 1997",
                 StudyImporterForGoMexSI2.GOMEXI_SOURCE_DESCRIPTION, null, ExternalIdUtil.toCitation("James D. Simons", "Food habits and trophic structure of the demersal fish assemblages on the Mississippi-Alabama continental shelf.", "1997"));
         try {
             LabeledCSVParser csvParser = parserFactory.createParser(studyResource, CharsetConstant.UTF8);
@@ -77,9 +76,9 @@ public class StudyImporterForSimons extends BaseStudyImporter {
         return study;
     }
 
-    private void addNextRecordToStudy(LabeledCSVParser csvParser, StudyNode study, Map<String, String> columnToNormalizedTermMapper, LengthParser lengthParser) throws StudyImporterException {
+    private void addNextRecordToStudy(LabeledCSVParser csvParser, Study study, Map<String, String> columnToNormalizedTermMapper, LengthParser lengthParser) throws StudyImporterException {
         String seasonName = csvParser.getValueByLabel(columnToNormalizedTermMapper.get(SEASON));
-        SpecimenNode prey = createAndClassifySpecimen(csvParser.getValueByLabel(columnToNormalizedTermMapper.get(PREY_SPECIES)), study);
+        Specimen prey = createAndClassifySpecimen(csvParser.getValueByLabel(columnToNormalizedTermMapper.get(PREY_SPECIES)), study);
 
         Location sampleLocation = getOrCreateSampleLocation(csvParser, columnToNormalizedTermMapper);
         prey.caughtIn(sampleLocation);
@@ -110,9 +109,9 @@ public class StudyImporterForSimons extends BaseStudyImporter {
         return predatorSpecimenMap;
     }
 
-    private SeasonNode getOrCreateSeason(String seasonName) {
+    private Season getOrCreateSeason(String seasonName) {
         String seasonNameLower = seasonName.toLowerCase().trim();
-        SeasonNode season = nodeFactory.findSeason(seasonNameLower);
+        Season season = nodeFactory.findSeason(seasonNameLower);
         if (null == season) {
             season = nodeFactory.createSeason(seasonNameLower);
         }
@@ -147,7 +146,7 @@ public class StudyImporterForSimons extends BaseStudyImporter {
         return valueByLabel == null ? null : Double.parseDouble(valueByLabel);
     }
 
-    private SpecimenNode createAndClassifySpecimen(final String speciesName, StudyNode study) throws StudyImporterException {
+    private Specimen createAndClassifySpecimen(final String speciesName, Study study) throws StudyImporterException {
         try {
             return nodeFactory.createSpecimen(study, speciesName);
         } catch (NodeFactoryException e) {

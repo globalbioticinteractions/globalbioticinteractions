@@ -1,7 +1,9 @@
 package org.eol.globi.data;
 
 import org.eol.globi.domain.InteractType;
+import org.eol.globi.domain.NodeBacked;
 import org.eol.globi.domain.RelTypes;
+import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
@@ -40,12 +42,12 @@ public class StudyImporterForGeminaTest extends GraphDBTestCase {
 
         assertHuman();
 
-        TaxonNode taxon = taxonIndex.findTaxonByName("Bacillus anthracis");
+        Taxon taxon = taxonIndex.findTaxonByName("Bacillus anthracis");
         assertThat(taxon, is(notNullValue()));
         assertThat(taxon.getExternalId(), is("NCBI:1392"));
 
         List<String> antraxHosts = new ArrayList<String>();
-        Iterable<Relationship> relationships = taxon.getUnderlyingNode().getRelationships(NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS), Direction.INCOMING);
+        Iterable<Relationship> relationships = ((NodeBacked)taxon).getUnderlyingNode().getRelationships(NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS), Direction.INCOMING);
         for (Relationship rel : relationships) {
             Node specimen = rel.getStartNode();
             Iterable<Relationship> pathogenRels = specimen.getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j(InteractType.PATHOGEN_OF));
@@ -74,7 +76,7 @@ public class StudyImporterForGeminaTest extends GraphDBTestCase {
     }
 
     protected void assertHuman() throws NodeFactoryException {
-        TaxonNode taxon = taxonIndex.findTaxonByName("Homo sapiens");
+        Taxon taxon = taxonIndex.findTaxonByName("Homo sapiens");
         assertThat(taxon, is(notNullValue()));
         assertThat(taxon.getExternalId(), is("NCBI:9606"));
     }

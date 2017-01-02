@@ -1,11 +1,11 @@
 package org.eol.globi.data;
 
-import org.eol.globi.domain.StudyNode;
+import org.eol.globi.domain.Study;
 import org.eol.globi.service.Dataset;
 
 public interface StudyImporter {
 
-    StudyNode importStudy() throws StudyImporterException;
+    Study importStudy() throws StudyImporterException;
 
     void setFilter(ImportFilter importFilter);
 

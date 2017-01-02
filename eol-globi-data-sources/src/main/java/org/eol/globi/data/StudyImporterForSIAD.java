@@ -3,8 +3,7 @@ package org.eol.globi.data;
 import com.Ostermiller.util.LabeledCSVParser;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.Specimen;
-import org.eol.globi.domain.SpecimenNode;
-import org.eol.globi.domain.StudyNode;
+import org.eol.globi.domain.Study;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -73,7 +72,7 @@ public class StudyImporterForSIAD extends BaseStudyImporter {
 
 
     @Override
-    public StudyNode importStudy() throws StudyImporterException {
+    public Study importStudy() throws StudyImporterException {
         String source = "Species Interactions of Australia Database (SIAD): Helping us to understand species interactions in Australia and beyond. "
                 + ReferenceUtil.createLastAccessedString("http://www.discoverlife.org/siad/");
         for (String resource : RESOURCES) {
@@ -91,7 +90,7 @@ public class StudyImporterForSIAD extends BaseStudyImporter {
 
                 String ref = labeledCSVParser.getValueByLabel("source");
                 String title = "SIAD-" + ref;
-                StudyNode study = nodeFactory.findStudy(title);
+                Study study = nodeFactory.findStudy(title);
                 if (study == null) {
                     study = nodeFactory.getOrCreateStudy2(title, source, null);
                     study.setCitationWithTx("ABRS 2009. Australian Faunal Directory. " + name + ". Australian Biological Resources StudyNode, Canberra. " + ReferenceUtil.createLastAccessedString(ref));
@@ -100,7 +99,7 @@ public class StudyImporterForSIAD extends BaseStudyImporter {
 
                 Specimen specimen = nodeFactory.createSpecimen(study, name);
                 String hostName = labeledCSVParser.getValueByLabel("host name");
-                SpecimenNode hostSpecimen = nodeFactory.createSpecimen(study, hostName);
+                Specimen hostSpecimen = nodeFactory.createSpecimen(study, hostName);
                 InteractType type = map.get(labeledCSVParser.getValueByLabel("interaction"));
                 specimen.interactsWith(hostSpecimen, type);
             }

@@ -2,10 +2,13 @@ package org.eol.globi.data;
 
 import org.apache.commons.lang.StringUtils;
 import org.eol.globi.domain.Environment;
+import org.eol.globi.domain.Location;
 import org.eol.globi.domain.LocationNode;
+import org.eol.globi.domain.NodeBacked;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.SpecimenConstant;
 import org.eol.globi.domain.Study;
+import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.service.TermLookupService;
 import org.eol.globi.taxon.UberonLookupService;
@@ -63,8 +66,8 @@ public class StudyImporterForBroseTest extends GraphDBTestCase {
         StudyImporter importer = new StudyImporterForBrose(parserFactory, nodeFactory);
         importStudy(importer);
 
-        TaxonNode taxon = taxonIndex.findTaxonByName("Praon dorsale");
-        Iterable<Relationship> relationships = taxon.getUnderlyingNode().getRelationships(Direction.INCOMING, NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS));
+        Taxon taxon = taxonIndex.findTaxonByName("Praon dorsale");
+        Iterable<Relationship> relationships = ((NodeBacked)taxon).getUnderlyingNode().getRelationships(Direction.INCOMING, NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS));
         for (Relationship relationship : relationships) {
             Node predatorSpecimenNode = relationship.getStartNode();
             assertThat((String) predatorSpecimenNode.getProperty(SpecimenConstant.LIFE_STAGE_LABEL), is("post-juvenile adult stage"));
@@ -74,7 +77,7 @@ public class StudyImporterForBroseTest extends GraphDBTestCase {
         assertThat(taxon, is(notNullValue()));
         assertThat(taxonIndex.findTaxonByName("Aphelinus abdominalis"), is(notNullValue()));
 
-        LocationNode location = nodeFactory.findLocation(51.24, -0.34, null);
+        Location location = nodeFactory.findLocation(51.24, -0.34, null);
         assertThat("missing location", location, is(notNullValue()));
 
         List<Environment> environments = location.getEnvironments();

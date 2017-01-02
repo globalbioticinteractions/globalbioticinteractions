@@ -1,6 +1,7 @@
 package org.eol.globi.data;
 
 import org.apache.commons.lang3.StringUtils;
+import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyNode;
 import org.eol.globi.taxon.TaxonIndexImpl;
 import org.eol.globi.domain.Term;
@@ -58,8 +59,8 @@ public abstract class GraphDBTestCase {
         return graphDb;
     }
 
-    protected StudyNode importStudy(StudyImporter importer) throws StudyImporterException {
-        StudyNode study = importer.importStudy();
+    protected Study importStudy(StudyImporter importer) throws StudyImporterException {
+        Study study = importer.importStudy();
         resolveNames();
         return study;
     }

@@ -4,8 +4,7 @@ import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.lang.StringUtils;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.Specimen;
-import org.eol.globi.domain.SpecimenNode;
-import org.eol.globi.domain.StudyNode;
+import org.eol.globi.domain.Study;
 import org.eol.globi.domain.TaxonomyProvider;
 
 import java.io.IOException;
@@ -19,10 +18,10 @@ public class StudyImporterForGemina extends BaseStudyImporter {
     }
 
     @Override
-    public StudyNode importStudy() throws StudyImporterException {
+    public Study importStudy() throws StudyImporterException {
         try {
             String source = "Schriml, L. M., Arze, C., Nadendla, S., Ganapathy, A., Felix, V., Mahurkar, A., … Hall, N. (2009). GeMInA, Genomic Metadata for Infectious Agents, a geospatial surveillance pathogen database. Nucleic Acids Research, 38(Database), D754–D764. doi:10.1093/nar/gkp832";
-            StudyNode study = nodeFactory.getOrCreateStudy2(source, source, "doi:10.1093/nar/gkp832");
+            Study study = nodeFactory.getOrCreateStudy2(source, source, "doi:10.1093/nar/gkp832");
             study.setCitationWithTx(source);
 
             LabeledCSVParser parser = parserFactory.createParser(RESOURCE, "UTF-8");
@@ -35,7 +34,7 @@ public class StudyImporterForGemina extends BaseStudyImporter {
                     Specimen pathogen = nodeFactory.createSpecimen(study, parser.getValueByLabel("Pathogen"), pathogenExternalId);
                     String hostId = line[7];
                     String hostReservoirExternalId = StringUtils.isBlank(hostId) ? null : TaxonomyProvider.NCBI.getIdPrefix() + hostId;
-                    SpecimenNode host = nodeFactory.createSpecimen(study, parser.getValueByLabel("Host/Reservoir"), hostReservoirExternalId);
+                    Specimen host = nodeFactory.createSpecimen(study, parser.getValueByLabel("Host/Reservoir"), hostReservoirExternalId);
                     pathogen.interactsWith(host, InteractType.PATHOGEN_OF);
                 }
             }

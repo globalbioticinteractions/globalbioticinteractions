@@ -7,7 +7,6 @@ import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.SpecimenNode;
 import org.eol.globi.domain.Study;
-import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonomyProvider;
 import org.eol.globi.util.CSVUtil;
@@ -30,9 +29,7 @@ import java.util.Map;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.hamcrest.core.IsNull.nullValue;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.*;
 import static org.junit.matchers.JUnitMatchers.containsString;
 import static org.junit.matchers.JUnitMatchers.hasItem;
 
@@ -125,7 +122,7 @@ public class StudyImporterForBioInfoTest extends GraphDBTestCase {
         }}, new HashMap<String, Taxon>());
         resolveNames();
 
-        StudyNode study = nodeFactory.findStudy(TaxonomyProvider.BIO_INFO + "ref:60536");
+        Study study = nodeFactory.findStudy(TaxonomyProvider.BIO_INFO + "ref:60536");
         assertNotNull(study);
         assertThat(study.getExternalId(), is("http://bioinfo.org.uk/html/b60536.htm"));
         assertNull(nodeFactory.findStudy(TaxonomyProvider.BIO_INFO + "ref:bla"));

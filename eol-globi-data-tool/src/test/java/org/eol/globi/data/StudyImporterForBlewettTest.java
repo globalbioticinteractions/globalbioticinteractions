@@ -2,13 +2,14 @@ package org.eol.globi.data;
 
 import com.Ostermiller.util.LabeledCSVParser;
 import org.eol.globi.domain.InteractType;
+import org.eol.globi.domain.Location;
 import org.eol.globi.domain.LocationNode;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.SpecimenConstant;
 import org.eol.globi.domain.SpecimenNode;
 import org.eol.globi.domain.Study;
-import org.eol.globi.domain.TaxonNode;
+import org.eol.globi.domain.Taxon;
 import org.eol.globi.service.TermLookupService;
 import org.eol.globi.taxon.UberonLookupService;
 import org.eol.globi.util.NodeUtil;
@@ -60,7 +61,7 @@ public class StudyImporterForBlewettTest extends GraphDBTestCase {
 
 
         assertNotNull(taxonIndex.findTaxonByName("Centropomus undecimalis"));
-        TaxonNode taxonOfType = taxonIndex.findTaxonByName("Cal sapidus");
+        Taxon taxonOfType = taxonIndex.findTaxonByName("Cal sapidus");
         assertThat(taxonOfType.getName(), is("Cal sapidus"));
         assertNotNull(taxonIndex.findTaxonByName("Ort chrysoptera"));
     }
@@ -139,9 +140,9 @@ public class StudyImporterForBlewettTest extends GraphDBTestCase {
         ate = predatorNode.getRelationships(NodeUtil.asNeo4j(InteractType.ATE), Direction.OUTGOING);
         assertThat(ate.iterator().hasNext(), is(false));
 
-        LocationNode location = nodeFactory.findLocation(26.651833, -82.103833, 0.0);
+        Location location = nodeFactory.findLocation(26.651833, -82.103833, 0.0);
         assertThat(location, is(not(nullValue())));
-        Iterable<Relationship> specimenCaughtHere = location.getSpecimenCaughtHere();
+        Iterable<Relationship> specimenCaughtHere = NodeUtil.getSpecimenCaughtHere(location);
         Iterator<Relationship> iterator = specimenCaughtHere.iterator();
         assertThat(iterator.hasNext(), is(true));
         iterator.next();

@@ -4,6 +4,7 @@ import org.apache.commons.io.FileUtils;
 import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.domain.Specimen;
+import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyNode;
 import org.junit.Test;
 
@@ -22,7 +23,7 @@ public class GraphExporterImplTest extends GraphDBTestCase {
         File tmpDirPath = new File(tmpDir, "test" + new Random().nextLong());
         FileUtils.forceMkdir(tmpDirPath);
         assertThat(tmpDirPath.list().length, is(0));
-        StudyNode study = nodeFactory.getOrCreateStudy2("a study", "a source", "doi:12345L");
+        Study study = nodeFactory.getOrCreateStudy2("a study", "a source", "doi:12345L");
 
         Specimen human = nodeFactory.createSpecimen(study, "Homo sapiens", "NCBI:123");
         human.ate(nodeFactory.createSpecimen(study, "Canis familiaris", "BLA:444"));

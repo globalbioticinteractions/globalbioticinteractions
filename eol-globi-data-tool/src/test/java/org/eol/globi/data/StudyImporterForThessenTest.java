@@ -2,8 +2,8 @@ package org.eol.globi.data;
 
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.RelTypes;
-import org.eol.globi.domain.StudyNode;
-import org.eol.globi.domain.TaxonNode;
+import org.eol.globi.domain.Study;
+import org.eol.globi.domain.Taxon;
 import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
 import org.neo4j.graphdb.Direction;
@@ -29,7 +29,7 @@ public class StudyImporterForThessenTest extends GraphDBTestCase {
                 return recordNumber % 1000 == 0;
             }
         });
-        StudyNode study = importStudy(importer);
+        Study study = importStudy(importer);
         assertThat(study.getExternalId(), containsString("github"));
         Iterable<Relationship> specimens = NodeUtil.getSpecimens(study);
         int specimenCount = 0;
@@ -47,7 +47,7 @@ public class StudyImporterForThessenTest extends GraphDBTestCase {
         assertThat(study.getTitle(), is(notNullValue()));
 
         for (String taxonId : taxonIds) {
-            TaxonNode taxon = taxonIndex.findTaxonById(taxonId);
+            Taxon taxon = taxonIndex.findTaxonById(taxonId);
             assertThat(taxon, is(notNullValue()));
             assertThat(taxon.getName(), is(notNullValue()));
         }

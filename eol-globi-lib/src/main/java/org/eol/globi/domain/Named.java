@@ -1,7 +1,6 @@
 package org.eol.globi.domain;
 
-public interface Named {
+public interface Named extends WithId {
     String getName();
 
-    String getExternalId();
 }

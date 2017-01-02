@@ -3,10 +3,8 @@ package org.eol.globi.data;
 import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.lang.StringUtils;
 import org.eol.globi.domain.Location;
-import org.eol.globi.domain.LocationNode;
 import org.eol.globi.domain.Specimen;
-import org.eol.globi.domain.SpecimenNode;
-import org.eol.globi.domain.StudyNode;
+import org.eol.globi.domain.Study;
 import org.eol.globi.domain.Term;
 import org.eol.globi.service.TermLookupServiceException;
 import org.eol.globi.util.ExternalIdUtil;
@@ -29,8 +27,8 @@ public class StudyImporterForBaremore extends BaseStudyImporter {
     }
 
     @Override
-    public StudyNode importStudy() throws StudyImporterException {
-        StudyNode study;
+    public Study importStudy() throws StudyImporterException {
+        Study study;
         try {
             LabeledCSVParser parser = parserFactory.createParser(DATA_SOURCE, CharsetConstant.UTF8);
             String[] line;
@@ -72,7 +70,7 @@ public class StudyImporterForBaremore extends BaseStudyImporter {
                     if (StringUtils.isBlank(preySpeciesDescription)) {
                         getLogger().info(study, "found blank prey species description [" + preySpeciesDescription + "] on line [" + parser.lastLineNumber() + "]");
                     } else {
-                        SpecimenNode preySpecimen = nodeFactory.createSpecimen(study, preySpeciesDescription);
+                        Specimen preySpecimen = nodeFactory.createSpecimen(study, preySpeciesDescription);
                         preySpecimen.caughtIn(collectionLocation);
                         predatorSpecimen.ate(preySpecimen);
                         nodeFactory.setUnixEpochProperty(preySpecimen, nodeFactory.getUnixEpochProperty(predatorSpecimen));

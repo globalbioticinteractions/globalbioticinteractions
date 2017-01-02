@@ -4,9 +4,7 @@ import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.Specimen;
-import org.eol.globi.domain.SpecimenNode;
 import org.eol.globi.domain.Study;
-import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TaxonomyProvider;
@@ -217,7 +215,7 @@ public class StudyImporterForBioInfo extends BaseStudyImporter implements StudyI
     }
 
     @Override
-    public StudyNode importStudy() throws StudyImporterException {
+    public Study importStudy() throws StudyImporterException {
         Map<String, String> refMap;
 
         LabeledCSVParser relationsParser;
@@ -232,10 +230,10 @@ public class StudyImporterForBioInfo extends BaseStudyImporter implements StudyI
         return null;
     }
 
-    protected StudyNode createStudy(String refId, String citation) throws NodeFactoryException {
+    protected Study createStudy(String refId, String citation) throws NodeFactoryException {
         String sourceCitation = "Food Webs and Species Interactions in the Biodiversity of UK and Ireland (Online). 2015. Data provided by Malcolm Storey. Also available from " + BIOINFO_URL + ".";
         String bioInfoId = TaxonomyProvider.BIO_INFO + "ref:" + refId;
-        StudyNode study = nodeFactory.getOrCreateStudy2(bioInfoId,
+        Study study = nodeFactory.getOrCreateStudy2(bioInfoId,
                 sourceCitation, null);
         if (study != null) {
             study.setCitationWithTx(citation);
@@ -254,7 +252,7 @@ public class StudyImporterForBioInfo extends BaseStudyImporter implements StudyI
                         String[] ids = StringUtils.split(refIds, ";");
                         for (String id : ids) {
                             String trimmedId = StringUtils.trim(id);
-                            StudyNode study = createStudy(trimmedId, refMap.get(trimmedId));
+                            Study study = createStudy(trimmedId, refMap.get(trimmedId));
                             String relationship = parser.getValueByLabel("relationship");
                             if (StringUtils.isBlank(relationship)) {
                                 getLogger().warn(study, "no relationship for record on line [" + (parser.lastLineNumber() + 1) + "]");
@@ -275,10 +273,10 @@ public class StudyImporterForBioInfo extends BaseStudyImporter implements StudyI
         }
     }
 
-    private void importInteraction(LabeledCSVParser parser, StudyNode study, InteractType interactType, Map<String, Taxon> taxonMap) throws StudyImporterException {
+    private void importInteraction(LabeledCSVParser parser, Study study, InteractType interactType, Map<String, Taxon> taxonMap) throws StudyImporterException {
         String passiveId = parser.getValueByLabel("passive NBN Code");
         String activeId = parser.getValueByLabel("active NBN Code");
-        SpecimenNode donorSpecimen = createSpecimen(parser, study, taxonMap, passiveId, parser.getValueByLabel("my passive taxon id"));
+        Specimen donorSpecimen = createSpecimen(parser, study, taxonMap, passiveId, parser.getValueByLabel("my passive taxon id"));
         Specimen recipientSpecimen = createSpecimen(parser, study, taxonMap, activeId, parser.getValueByLabel("my active taxon id"));
 
         if (donorSpecimen != null && recipientSpecimen != null) {
@@ -290,8 +288,8 @@ public class StudyImporterForBioInfo extends BaseStudyImporter implements StudyI
         }
     }
 
-    private SpecimenNode createSpecimen(LabeledCSVParser parser, StudyNode study, Map<String, Taxon> taxonMap, String nbnId, String bioTaxonId) throws StudyImporterException {
-        SpecimenNode specimen = null;
+    private Specimen createSpecimen(LabeledCSVParser parser, Study study, Map<String, Taxon> taxonMap, String nbnId, String bioTaxonId) throws StudyImporterException {
+        Specimen specimen = null;
         if (StringUtils.isBlank(nbnId)) {
             try {
                 Taxon taxon = taxonMap.get(bioTaxonId);
@@ -346,9 +344,9 @@ public class StudyImporterForBioInfo extends BaseStudyImporter implements StudyI
 
     }
 
-    private SpecimenNode createSpecimen(StudyNode study, LabeledCSVParser labeledCSVParser, String externalId) throws StudyImporterException {
+    private Specimen createSpecimen(Study study, LabeledCSVParser labeledCSVParser, String externalId) throws StudyImporterException {
         try {
-            SpecimenNode specimen = nodeFactory.createSpecimen(study, null, TaxonomyProvider.NBN.getIdPrefix() + externalId);
+            Specimen specimen = nodeFactory.createSpecimen(study, null, TaxonomyProvider.NBN.getIdPrefix() + externalId);
             setSpecimenExternalId(labeledCSVParser, specimen);
             return specimen;
         } catch (NodeFactoryException e) {
@@ -356,7 +354,7 @@ public class StudyImporterForBioInfo extends BaseStudyImporter implements StudyI
         }
     }
 
-    private void setSpecimenExternalId(LabeledCSVParser labeledCSVParser, SpecimenNode specimen) {
+    private void setSpecimenExternalId(LabeledCSVParser labeledCSVParser, Specimen specimen) {
         specimen.setExternalId(TaxonomyProvider.BIO_INFO + "rel:" + labeledCSVParser.lastLineNumber());
     }
 

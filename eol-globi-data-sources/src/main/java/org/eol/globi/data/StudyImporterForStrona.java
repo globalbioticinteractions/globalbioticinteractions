@@ -4,8 +4,7 @@ import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.Specimen;
-import org.eol.globi.domain.SpecimenNode;
-import org.eol.globi.domain.StudyNode;
+import org.eol.globi.domain.Study;
 
 import java.io.IOException;
 
@@ -18,7 +17,7 @@ public class StudyImporterForStrona extends BaseStudyImporter {
     }
 
     @Override
-    public StudyNode importStudy() throws StudyImporterException {
+    public Study importStudy() throws StudyImporterException {
         LabeledCSVParser dataParser;
         try {
             dataParser = parserFactory.createParser(RESOURCE_PATH, CharsetConstant.UTF8);
@@ -26,7 +25,7 @@ public class StudyImporterForStrona extends BaseStudyImporter {
             throw new StudyImporterException("failed to read resource [" + RESOURCE_PATH + "]", e);
         }
         try {
-            StudyNode study = nodeFactory.getOrCreateStudy2("strona2013"
+            Study study = nodeFactory.getOrCreateStudy2("strona2013"
                     , SOURCE + " . " + ReferenceUtil.createLastAccessedString(RESOURCE_PATH)
                     , "http://dx.doi.org/10.1890/12-1419.1");
             study.setCitationWithTx(SOURCE);
@@ -37,7 +36,7 @@ public class StudyImporterForStrona extends BaseStudyImporter {
                         String hostName = StringUtils.trim(dataParser.getValueByLabel("H_SP"));
                         if (areNamesAvailable(parasiteName, hostName)) {
                             Specimen parasite = nodeFactory.createSpecimen(study, parasiteName);
-                            SpecimenNode host = nodeFactory.createSpecimen(study, hostName);
+                            Specimen host = nodeFactory.createSpecimen(study, hostName);
                             parasite.interactsWith(host, InteractType.PARASITE_OF);
                         }
                     } catch (NodeFactoryException e) {

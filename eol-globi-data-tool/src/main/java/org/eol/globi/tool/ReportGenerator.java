@@ -6,6 +6,7 @@ import org.apache.commons.logging.LogFactory;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.RelTypes;
+import org.eol.globi.domain.StudyConstant;
 import org.eol.globi.domain.StudyNode;
 import org.eol.globi.util.NodeUtil;
 import org.eol.globi.util.StudyNodeListener;
@@ -69,24 +70,24 @@ public class ReportGenerator {
         Transaction tx = getGraphDb().beginTx();
         try {
             Node node = getGraphDb().createNode();
-            node.setProperty(StudyNode.SOURCE, study.getSource());
+            node.setProperty(StudyConstant.SOURCE, study.getSource());
             if (StringUtils.isNotBlank(study.getCitation())) {
-                node.setProperty(StudyNode.CITATION, study.getCitation());
+                node.setProperty(StudyConstant.CITATION, study.getCitation());
             }
             if (StringUtils.isNotBlank(study.getDOI())) {
-                node.setProperty(StudyNode.DOI, study.getDOI());
+                node.setProperty(StudyConstant.DOI, study.getDOI());
             }
             if (StringUtils.isNotBlank(study.getExternalId())) {
                 node.setProperty(PropertyAndValueDictionary.EXTERNAL_ID, study.getExternalId());
             }
-            node.setProperty(StudyNode.TITLE, study.getTitle());
+            node.setProperty(StudyConstant.TITLE, study.getTitle());
             node.setProperty(PropertyAndValueDictionary.COLLECTION, GLOBI_COLLECTION_NAME);
             node.setProperty(PropertyAndValueDictionary.NUMBER_OF_INTERACTIONS, interactionCounter.getCount() / 2);
             node.setProperty(PropertyAndValueDictionary.NUMBER_OF_DISTINCT_TAXA, ids.size());
             node.setProperty(PropertyAndValueDictionary.NUMBER_OF_STUDIES, 1);
             node.setProperty(PropertyAndValueDictionary.NUMBER_OF_SOURCES, 1);
-            getGraphDb().index().forNodes("reports").add(node, StudyNode.TITLE, study.getTitle());
-            getGraphDb().index().forNodes("reports").add(node, StudyNode.SOURCE, study.getTitle());
+            getGraphDb().index().forNodes("reports").add(node, StudyConstant.TITLE, study.getTitle());
+            getGraphDb().index().forNodes("reports").add(node, StudyConstant.SOURCE, study.getTitle());
             tx.success();
         } finally {
             tx.finish();
@@ -122,14 +123,14 @@ public class ReportGenerator {
             Transaction tx = getGraphDb().beginTx();
             try {
                 final Node node = getGraphDb().createNode();
-                node.setProperty(StudyNode.SOURCE, source);
+                node.setProperty(StudyConstant.SOURCE, source);
                 node.setProperty(PropertyAndValueDictionary.COLLECTION, GLOBI_COLLECTION_NAME);
                 node.setProperty(PropertyAndValueDictionary.NUMBER_OF_INTERACTIONS, counter.getCount() / 2);
                 node.setProperty(PropertyAndValueDictionary.NUMBER_OF_DISTINCT_TAXA, distinctTaxonIds.size());
                 node.setProperty(PropertyAndValueDictionary.NUMBER_OF_STUDIES, studyCounter.getCount());
                 node.setProperty(PropertyAndValueDictionary.NUMBER_OF_SOURCES, 1);
 
-                getGraphDb().index().forNodes("reports").add(node, StudyNode.SOURCE, source);
+                getGraphDb().index().forNodes("reports").add(node, StudyConstant.SOURCE, source);
                 tx.success();
             } finally {
                 tx.finish();

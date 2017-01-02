@@ -9,15 +9,12 @@ import org.eol.globi.domain.LocationImpl;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.SpecimenConstant;
-import org.eol.globi.domain.SpecimenNode;
 import org.eol.globi.domain.Study;
-import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.TaxonomyProvider;
 import org.eol.globi.domain.Term;
 import org.eol.globi.service.TermLookupService;
 import org.eol.globi.service.TermLookupServiceException;
 import org.eol.globi.util.ExternalIdUtil;
-import org.neo4j.graphdb.Transaction;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -79,8 +76,8 @@ public class StudyImporterForGoMexSI2 extends BaseStudyImporter {
     }
 
     @Override
-    public StudyNode importStudy() throws StudyImporterException {
-        StudyNode study = nodeFactory.getOrCreateStudy("GoMexSI",
+    public Study importStudy() throws StudyImporterException {
+        Study study = nodeFactory.getOrCreateStudy("GoMexSI",
                 GOMEXI_SOURCE_DESCRIPTION, null, ExternalIdUtil.toCitation("James D. Simons", "<a href=\"http://www.ingentaconnect.com/content/umrsmas/bullmar/2013/00000089/00000001/art00009\">Building a Fisheries Trophic Interaction Database for Management and Modeling Research in the Gulf of Mexico Large Marine Ecosystem.</a>", null));
         final Map<String, Map<String, String>> predatorIdToPredatorNames = new HashMap<String, Map<String, String>>();
         final Map<String, List<Map<String, String>>> predatorIdToPreyNames = new HashMap<String, List<Map<String, String>>>();
@@ -146,7 +143,7 @@ public class StudyImporterForGoMexSI2 extends BaseStudyImporter {
     }
 
     private void addNewStudy(Map<String, Study> referenceIdToStudy, String referenceResource, LabeledCSVParser parser, String refId, String contributors) throws StudyImporterException {
-        StudyNode study;
+        Study study;
         String refTag = getMandatoryValue(referenceResource, parser, "REF_TAG");
         String externalId = getMandatoryValue(referenceResource, parser, "GAME_ID");
         String description = getMandatoryValue(referenceResource, parser, "TITLE_REF");
@@ -154,14 +151,8 @@ public class StudyImporterForGoMexSI2 extends BaseStudyImporter {
 
         study = nodeFactory.getOrCreateStudy(refTag,
                 getSourceCitation(), null, ExternalIdUtil.toCitation(contributors, description, publicationYear));
-        Transaction transaction = study.getUnderlyingNode().getGraphDatabase().beginTx();
-        try {
-            if (StringUtils.isNotBlank(externalId)) {
-                study.setExternalId(ExternalIdUtil.urlForExternalId(TaxonomyProvider.ID_PREFIX_GAME + externalId));
-            }
-            transaction.success();
-        } finally {
-            transaction.finish();
+        if (StringUtils.isNotBlank(externalId)) {
+            study.setExternalId(ExternalIdUtil.urlForExternalId(TaxonomyProvider.ID_PREFIX_GAME + externalId));
         }
         referenceIdToStudy.put(refId, study);
     }
@@ -253,7 +244,7 @@ public class StudyImporterForGoMexSI2 extends BaseStudyImporter {
 
     private void addObservation(Map<String, List<Map<String, String>>> predatorUIToPreyLists, LabeledCSVParser parser, Study study, Location location, String predatorId, Map<String, String> predatorProperties) throws StudyImporterException {
         try {
-            SpecimenNode predatorSpecimen = createSpecimen(study, predatorProperties);
+            Specimen predatorSpecimen = createSpecimen(study, predatorProperties);
             setBasisOfRecordAsLiterature(predatorSpecimen);
             predatorSpecimen.setExternalId(predatorId);
             if (location == null) {
@@ -267,7 +258,7 @@ public class StudyImporterForGoMexSI2 extends BaseStudyImporter {
                 for (Map<String, String> preyProperties : preyList) {
                     if (preyProperties != null) {
                         try {
-                            SpecimenNode prey = createSpecimen(study, preyProperties);
+                            Specimen prey = createSpecimen(study, preyProperties);
                             setBasisOfRecordAsLiterature(prey);
                             prey.caughtIn(location);
                             predatorSpecimen.ate(prey);
@@ -318,8 +309,8 @@ public class StudyImporterForGoMexSI2 extends BaseStudyImporter {
         }
     }
 
-    private SpecimenNode createSpecimen(Study study, Map<String, String> properties) throws StudyImporterException {
-        SpecimenNode specimen = nodeFactory.createSpecimen(study, properties.get(PropertyAndValueDictionary.NAME));
+    private Specimen createSpecimen(Study study, Map<String, String> properties) throws StudyImporterException {
+        Specimen specimen = nodeFactory.createSpecimen(study, properties.get(PropertyAndValueDictionary.NAME));
         specimen.setLengthInMm(doubleValueOrNull(properties, SpecimenConstant.LENGTH_IN_MM));
         specimen.setFrequencyOfOccurrence(doubleValueOrNull(properties, SpecimenConstant.FREQUENCY_OF_OCCURRENCE));
         setSpecimenProperty(specimen, SpecimenConstant.FREQUENCY_OF_OCCURRENCE_PERCENT, properties);
@@ -332,24 +323,16 @@ public class StudyImporterForGoMexSI2 extends BaseStudyImporter {
         addBodyPart(properties, specimen);
 
         // add all original GoMexSI properties for completeness
-        Transaction tx = specimen.getUnderlyingNode().getGraphDatabase().beginTx();
-        try {
-            for (Map.Entry<String, String> entry : properties.entrySet()) {
-                if (entry.getKey().startsWith(GOMEXSI_NAMESPACE)) {
-                    specimen.getUnderlyingNode().setProperty(entry.getKey(), entry.getValue());
-                }
-                tx.success();
+        for (Map.Entry<String, String> entry : properties.entrySet()) {
+            if (entry.getKey().startsWith(GOMEXSI_NAMESPACE)) {
+                specimen.setProperty(entry.getKey(), entry.getValue());
             }
-        } finally {
-            tx.finish();
         }
-
-
         return specimen;
     }
 
-    private void setSpecimenProperty(SpecimenNode specimen, String name, Map<String, String> properties) throws StudyImporterException {
-        specimen.setPropertyWithTx(name, doubleValueOrNull(properties, name));
+    private void setSpecimenProperty(Specimen specimen, String name, Map<String, String> properties) throws StudyImporterException {
+        specimen.setProperty(name, doubleValueOrNull(properties, name));
     }
 
     private void addLifeStage(Map<String, String> properties, Specimen specimen) throws StudyImporterException {

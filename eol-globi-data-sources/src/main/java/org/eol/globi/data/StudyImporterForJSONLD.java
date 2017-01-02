@@ -12,9 +12,8 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.Location;
-import org.eol.globi.domain.LocationNode;
-import org.eol.globi.domain.SpecimenNode;
-import org.eol.globi.domain.StudyNode;
+import org.eol.globi.domain.Specimen;
+import org.eol.globi.domain.Study;
 import org.eol.globi.domain.TaxonomyProvider;
 import org.eol.globi.util.ResourceUtil;
 import org.joda.time.DateTime;
@@ -36,7 +35,7 @@ public class StudyImporterForJSONLD extends BaseStudyImporter {
     }
 
     @Override
-    public StudyNode importStudy() throws StudyImporterException {
+    public Study importStudy() throws StudyImporterException {
         Model model;
         try {
             model = buildModel();
@@ -65,10 +64,10 @@ public class StudyImporterForJSONLD extends BaseStudyImporter {
                 } catch (IOException e) {
                     throw new StudyImporterException("failed to resolve author URI [" + authorURI + "]");
                 }
-                StudyNode study = nodeFactory.getOrCreateStudy(getResourceURI() + subj, author + ". " + new DateTime(parseDate(creationDate)).getYear() + ". " + ReferenceUtil.createLastAccessedString(getResourceURI().toString()), subj);
+                Study study = nodeFactory.getOrCreateStudy(getResourceURI() + subj, author + ". " + new DateTime(parseDate(creationDate)).getYear() + ". " + ReferenceUtil.createLastAccessedString(getResourceURI().toString()), subj);
                 study.setExternalId(subj);
-                SpecimenNode source = createSpecimen(solution, study, "subjTaxon");
-                SpecimenNode target = createSpecimen(solution, study, "targetTaxon");
+                Specimen source = createSpecimen(solution, study, "subjTaxon");
+                Specimen target = createSpecimen(solution, study, "targetTaxon");
 
                 String interactType = solution.get("p").asResource().getLocalName();
                 InteractType interactType1 = InteractType.typeOf(StringUtils.replace(interactType, "RO_", "RO:"));
@@ -102,7 +101,7 @@ public class StudyImporterForJSONLD extends BaseStudyImporter {
         }
     }
 
-    protected SpecimenNode createSpecimen(QuerySolution solution, StudyNode study, String targetTaxon1) throws NodeFactoryException {
+    protected Specimen createSpecimen(QuerySolution solution, Study study, String targetTaxon1) throws NodeFactoryException {
         String targetTaxon = solution.get(targetTaxon1).asResource().getLocalName();
         String taxonId = targetTaxon.replaceAll("NCBITaxon_", TaxonomyProvider.NCBI.getIdPrefix());
         return nodeFactory.createSpecimen(study, null, taxonId);

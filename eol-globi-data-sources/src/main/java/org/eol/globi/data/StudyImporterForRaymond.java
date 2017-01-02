@@ -15,18 +15,16 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.eol.globi.domain.Location;
-import org.eol.globi.domain.LocationNode;
-import org.eol.globi.domain.SpecimenNode;
+import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
-import org.eol.globi.domain.StudyNode;
 import org.eol.globi.geo.GeoUtil;
+import org.eol.globi.geo.LatLng;
 import org.eol.globi.util.CSVUtil;
 import org.eol.globi.util.ExternalIdUtil;
 import org.eol.globi.util.HttpUtil;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
-import org.eol.globi.geo.LatLng;
 
 import java.io.File;
 import java.io.IOException;
@@ -62,7 +60,7 @@ public class StudyImporterForRaymond extends BaseStudyImporter {
     }
 
     @Override
-    public StudyNode importStudy() throws StudyImporterException {
+    public Study importStudy() throws StudyImporterException {
 
         if (!retrieveAndImport(RESOURCE_URL)) {
             retrieveAndImport(RESOURCE_URL_FALLBACK);
@@ -150,16 +148,16 @@ public class StudyImporterForRaymond extends BaseStudyImporter {
             if (StringUtils.isBlank(citation)) {
                 LOG.error("no source found for id [" + sourceId + "]: line [" + dietParser.lastLineNumber() + "]");
             } else {
-                StudyNode study = getOrCreateStudy(citation);
+                Study study = getOrCreateStudy(citation);
                 parseDietObservation(dietParser, study);
             }
 
         }
     }
 
-    private void parseDietObservation(LabeledCSVParser dietParser, StudyNode study) throws StudyImporterException {
+    private void parseDietObservation(LabeledCSVParser dietParser, Study study) throws StudyImporterException {
         try {
-            SpecimenNode predator = getSpecimen(dietParser, "PREDATOR_NAME", "PREDATOR_LIFE_STAGE", study);
+            Specimen predator = getSpecimen(dietParser, "PREDATOR_NAME", "PREDATOR_LIFE_STAGE", study);
 
             dietParser.getValueByLabel("ALTITUDE_MIN");
             dietParser.getValueByLabel("ALTITUDE_MAX");
@@ -170,7 +168,7 @@ public class StudyImporterForRaymond extends BaseStudyImporter {
             Location sampleLocation = parseLocation(dietParser, study);
             predator.caughtIn(sampleLocation);
 
-            SpecimenNode prey = getSpecimen(dietParser, "PREY_NAME", "PREY_LIFE_STAGE", study);
+            Specimen prey = getSpecimen(dietParser, "PREY_NAME", "PREY_LIFE_STAGE", study);
             prey.caughtIn(sampleLocation);
             predator.ate(prey);
 
@@ -182,9 +180,9 @@ public class StudyImporterForRaymond extends BaseStudyImporter {
         }
     }
 
-    private SpecimenNode getSpecimen(LabeledCSVParser dietParser, String nameLabel, String lifeStageLabel, StudyNode study) throws NodeFactoryException {
+    private Specimen getSpecimen(LabeledCSVParser dietParser, String nameLabel, String lifeStageLabel, Study study) throws NodeFactoryException {
         String predatorName = dietParser.getValueByLabel(nameLabel);
-        SpecimenNode predator = nodeFactory.createSpecimen(study, predatorName);
+        Specimen predator = nodeFactory.createSpecimen(study, predatorName);
         String predatorLifeStage = dietParser.getValueByLabel(lifeStageLabel);
         predator.setLifeStage(nodeFactory.getOrCreateLifeStage("RAYMOND:" + predatorLifeStage, predatorLifeStage));
         return predator;
@@ -292,7 +290,7 @@ public class StudyImporterForRaymond extends BaseStudyImporter {
         return sourceMap;
     }
 
-    private StudyNode getOrCreateStudy(String citation) throws NodeFactoryException {
+    private Study getOrCreateStudy(String citation) throws NodeFactoryException {
         String title = StringUtils.abbreviate(citation, 16) + MD5.getHashString(citation);
         return nodeFactory.getOrCreateStudy(title, "Raymond, B., Marshall, M., Nevitt, G., Gillies, C., van den Hoff, J., Stark, J.S., Losekoot, M., Woehler, E.J., and Constable, A.J. (2011) A Southern Ocean dietary database. Ecology 92(5):1188. Available from http://dx.doi.org/10.1890/10-1907.1 . Data set supplied by Ben Raymond. " + ReferenceUtil.createLastAccessedString(RESOURCE_URL), citation);
     }

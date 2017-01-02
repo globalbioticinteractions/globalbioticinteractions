@@ -215,4 +215,9 @@ public class SpecimenNode extends NodeBacked implements Specimen {
         return new Term(getPropertyStringValueOrNull(SpecimenConstant.BODY_PART_ID), getPropertyStringValueOrNull(SpecimenConstant.BODY_PART_LABEL));
     }
 
+    @Override
+    public void setProperty(String name, Object value) {
+        setPropertyWithTx(name, value);
+    }
+
 }

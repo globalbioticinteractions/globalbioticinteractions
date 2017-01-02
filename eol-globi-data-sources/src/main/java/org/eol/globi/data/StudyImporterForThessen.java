@@ -3,8 +3,7 @@ package org.eol.globi.data;
 import com.Ostermiller.util.LabeledCSVParser;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.Specimen;
-import org.eol.globi.domain.SpecimenNode;
-import org.eol.globi.domain.StudyNode;
+import org.eol.globi.domain.Study;
 
 import java.io.IOException;
 
@@ -17,9 +16,9 @@ public class StudyImporterForThessen extends BaseStudyImporter {
     }
 
     @Override
-    public StudyNode importStudy() throws StudyImporterException {
+    public Study importStudy() throws StudyImporterException {
         String citation = "A. Thessen. 2014. Species associations extracted from EOL text data objects via text mining. " + ReferenceUtil.createLastAccessedString(RESOURCE);
-        StudyNode study = nodeFactory.getOrCreateStudy2("Thessen 2014", citation, null);
+        Study study = nodeFactory.getOrCreateStudy2("Thessen 2014", citation, null);
         study.setExternalId("https://github.com/EOL/pseudonitzchia");
         study.setCitationWithTx(citation);
         try {
@@ -31,7 +30,7 @@ public class StudyImporterForThessen extends BaseStudyImporter {
                     if (line.length == 2) {
                         try {
                             Specimen source = nodeFactory.createSpecimen(study, null, "EOL:" + line[0]);
-                            SpecimenNode target = nodeFactory.createSpecimen(study, null, "EOL:" + line[1]);
+                            Specimen target = nodeFactory.createSpecimen(study, null, "EOL:" + line[1]);
                             source.interactsWith(target, InteractType.INTERACTS_WITH);
                         } catch (NodeFactoryException e) {
                             throw new StudyImporterException("failed to create nodes on line [" + parser.getLastLineNumber() + "]", e);
