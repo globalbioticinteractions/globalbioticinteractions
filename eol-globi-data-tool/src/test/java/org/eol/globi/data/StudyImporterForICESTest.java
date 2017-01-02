@@ -1,7 +1,7 @@
 package org.eol.globi.data;
 
 import org.eol.globi.domain.InteractType;
-import org.eol.globi.domain.LocationNode;
+import org.eol.globi.domain.LocationConstant;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.SpecimenConstant;
 import org.eol.globi.domain.Study;
@@ -71,8 +71,8 @@ public class StudyImporterForICESTest extends GraphDBTestCase {
             assertNotNull(collectedAtRelationship);
             Node locationNode = collectedAtRelationship.getEndNode();
             assertNotNull(locationNode);
-            assertThat((Double) locationNode.getProperty(LocationNode.LATITUDE), is(55.25));
-            assertThat((Double) locationNode.getProperty(LocationNode.LONGITUDE), is(8.5));
+            assertThat((Double) locationNode.getProperty(LocationConstant.LATITUDE), is(55.25));
+            assertThat((Double) locationNode.getProperty(LocationConstant.LONGITUDE), is(8.5));
             specimenCollected++;
 
         }

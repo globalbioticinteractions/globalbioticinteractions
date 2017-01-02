@@ -1,5 +1,6 @@
 package org.eol.globi.data;
 
+import org.eol.globi.domain.Location;
 import org.eol.globi.domain.LocationNode;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Season;
@@ -18,9 +19,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.fail;
+import static junit.framework.Assert.*;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.Is.is;
@@ -98,7 +97,7 @@ public class StudyImporterForWrastTest extends GraphDBTestCase {
                 TaxonNode taxon = new TaxonNode(rel.getEndNode().getSingleRelationship(RelTypes.CLASSIFIED_AS, Direction.OUTGOING).getEndNode());
                 String scientificName = taxon.getName();
                 if ("Sciaenops ocellatus".equals(scientificName)) {
-                    LocationNode location = specimen.getSampleLocation();
+                    Location location = specimen.getSampleLocation();
                     assertThat(location, is(not(nullValue())));
                     assertThat(location.getLatitude(), is((28.595267 + 28.596233) / 2.0));
                     assertThat(location.getLongitude(), is((-96.477033 - 96.476483) / 2.0));
@@ -120,7 +119,7 @@ public class StudyImporterForWrastTest extends GraphDBTestCase {
 
 
                 } else if ("Arius felis".equals(scientificName)) {
-                    LocationNode location = specimen.getSampleLocation();
+                    Location location = specimen.getSampleLocation();
                     assertThat(location, is(not(nullValue())));
                     assertThat(location.getLatitude(), is((28.608417 + 28.607217) / 2.0));
                     assertThat(location.getLongitude(), is((-96.475517 - 96.474500) / 2.0));
@@ -140,7 +139,7 @@ public class StudyImporterForWrastTest extends GraphDBTestCase {
 
                     assertEquals(176.0d, specimen.getLengthInMm());
                 } else if ("Missing depth".equals(scientificName)) {
-                    LocationNode location = specimen.getSampleLocation();
+                    Location location = specimen.getSampleLocation();
                     assertThat(location, is(not(nullValue())));
                     assertThat(location.getAltitude(), is(nullValue()));
                 } else {

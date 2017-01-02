@@ -48,15 +48,15 @@ public class NodeUtil {
 
     public static List<Study> findAllStudies(GraphDatabaseService graphService) {
         final List<Study> studies = new ArrayList<Study>();
-        findStudies(graphService, new StudyListener() {
-            public void onStudy(Study study) {
+        findStudies(graphService, new StudyNodeListener() {
+            public void onStudy(StudyNode study) {
                 studies.add(study);
             }
         });
         return studies;
     }
 
-    public static void findStudies(GraphDatabaseService graphService, StudyListener listener) {
+    public static void findStudies(GraphDatabaseService graphService, StudyNodeListener listener) {
         Index<Node> studyIndex = graphService.index().forNodes("studies");
         IndexHits<Node> hits = studyIndex.query("title", "*");
         for (Node hit : hits) {

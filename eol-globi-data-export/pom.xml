@@ -19,9 +19,9 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.neo4j</groupId>
-            <artifactId>neo4j</artifactId>
-            <version>${neo4j.version}</version>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>eol-globi-neo4j</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.mapdb</groupId>

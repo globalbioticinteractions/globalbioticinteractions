@@ -6,6 +6,7 @@ import org.apache.commons.logging.LogFactory;
 import org.eol.globi.domain.Environment;
 import org.eol.globi.domain.EnvironmentNode;
 import org.eol.globi.domain.Location;
+import org.eol.globi.domain.LocationConstant;
 import org.eol.globi.domain.LocationImpl;
 import org.eol.globi.domain.LocationNode;
 import org.eol.globi.domain.NodeBacked;
@@ -98,7 +99,7 @@ public class NodeFactoryImpl implements NodeFactory {
 
     @Override
     public LocationNode findLocation(Location location) {
-        QueryContext queryOrQueryObject = QueryContext.numericRange(LocationNode.LATITUDE, location.getLatitude(), location.getLatitude());
+        QueryContext queryOrQueryObject = QueryContext.numericRange(LocationConstant.LATITUDE, location.getLatitude(), location.getLatitude());
         IndexHits<Node> matchingLocations = locations.query(queryOrQueryObject);
         Node matchingLocation = null;
         for (Node node : matchingLocations) {
@@ -152,16 +153,16 @@ public class NodeFactoryImpl implements NodeFactory {
         try {
             Node node = graphDb.createNode();
             locationNode = new LocationNode(node, fromLocation(location));
-            locations.add(node, LocationNode.LATITUDE, ValueContext.numeric(location.getLatitude()));
-            locations.add(node, LocationNode.LONGITUDE, ValueContext.numeric(location.getLongitude()));
+            locations.add(node, LocationConstant.LATITUDE, ValueContext.numeric(location.getLatitude()));
+            locations.add(node, LocationConstant.LONGITUDE, ValueContext.numeric(location.getLongitude()));
             if (location.getAltitude() != null) {
-                locations.add(node, LocationNode.ALTITUDE, ValueContext.numeric(location.getAltitude()));
+                locations.add(node, LocationConstant.ALTITUDE, ValueContext.numeric(location.getAltitude()));
             }
             if (StringUtils.isNotBlank(location.getFootprintWKT())) {
-                locations.add(node, LocationNode.FOOTPRINT_WKT, location.getFootprintWKT());
+                locations.add(node, LocationConstant.FOOTPRINT_WKT, location.getFootprintWKT());
             }
             if (StringUtils.isNotBlank(location.getLocality())) {
-                locations.add(node, LocationNode.LOCALITY, location.getLocality());
+                locations.add(node, LocationConstant.LOCALITY, location.getLocality());
             }
             transaction.success();
         } finally {

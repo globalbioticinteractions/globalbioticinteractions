@@ -10,12 +10,6 @@ import java.util.List;
 
 public class LocationNode extends NodeBacked implements Location {
 
-    public static final String LONGITUDE = "longitude";
-    public static final String ALTITUDE = "altitude";
-    public static final String LATITUDE = "latitude";
-    public static final String FOOTPRINT_WKT = "footprintWKT";
-    public static final String LOCALITY = "locality";
-
     public LocationNode(Node node) {
         super(node);
     }
@@ -23,42 +17,42 @@ public class LocationNode extends NodeBacked implements Location {
     public LocationNode(Node node, Location location) {
         this(node);
         if (location.getAltitude() != null) {
-            getUnderlyingNode().setProperty(ALTITUDE, location.getAltitude());
+            getUnderlyingNode().setProperty(LocationConstant.ALTITUDE, location.getAltitude());
         }
         if (location.getFootprintWKT() != null) {
-            getUnderlyingNode().setProperty(FOOTPRINT_WKT, location.getFootprintWKT());
+            getUnderlyingNode().setProperty(LocationConstant.FOOTPRINT_WKT, location.getFootprintWKT());
         }
-        getUnderlyingNode().setProperty(LATITUDE, location.getLatitude());
-        getUnderlyingNode().setProperty(LONGITUDE, location.getLongitude());
+        getUnderlyingNode().setProperty(LocationConstant.LATITUDE, location.getLatitude());
+        getUnderlyingNode().setProperty(LocationConstant.LONGITUDE, location.getLongitude());
         getUnderlyingNode().setProperty(PropertyAndValueDictionary.TYPE, LocationNode.class.getSimpleName());
         if (StringUtils.isNotBlank(location.getLocality())) {
-            getUnderlyingNode().setProperty(LOCALITY, location.getLocality());
+            getUnderlyingNode().setProperty(LocationConstant.LOCALITY, location.getLocality());
         }
     }
 
     @Override
     public String getFootprintWKT() {
-        return (String) getPropertyValueOrNull(FOOTPRINT_WKT);
+        return (String) getPropertyValueOrNull(LocationConstant.FOOTPRINT_WKT);
     }
 
     @Override
     public String getLocality()  {
-            return (String) getPropertyValueOrNull(LOCALITY);
+            return (String) getPropertyValueOrNull(LocationConstant.LOCALITY);
         }
 
     @Override
     public Double getAltitude() {
-        return getUnderlyingNode().hasProperty(ALTITUDE) ? (Double) getUnderlyingNode().getProperty(ALTITUDE) : null;
+        return getUnderlyingNode().hasProperty(LocationConstant.ALTITUDE) ? (Double) getUnderlyingNode().getProperty(LocationConstant.ALTITUDE) : null;
     }
 
     @Override
     public Double getLongitude() {
-        return (Double) getUnderlyingNode().getProperty(LONGITUDE);
+        return (Double) getUnderlyingNode().getProperty(LocationConstant.LONGITUDE);
     }
 
     @Override
     public Double getLatitude() {
-        return (Double) getUnderlyingNode().getProperty(LATITUDE);
+        return (Double) getUnderlyingNode().getProperty(LocationConstant.LATITUDE);
     }
 
     public Iterable<Relationship> getSpecimenCaughtHere() {

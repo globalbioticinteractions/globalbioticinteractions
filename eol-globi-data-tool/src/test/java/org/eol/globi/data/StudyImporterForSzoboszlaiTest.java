@@ -3,6 +3,7 @@ package org.eol.globi.data;
 import org.apache.commons.io.IOUtils;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.eol.globi.domain.Location;
 import org.eol.globi.domain.LocationNode;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.SpecimenNode;
@@ -67,7 +68,7 @@ public class StudyImporterForSzoboszlaiTest extends GraphDBTestCase {
         Iterable<Relationship> specimens = firstStudy.getSpecimens();
         for (Relationship specimen : specimens) {
             Specimen specimenNode = new SpecimenNode(specimen.getEndNode());
-            LocationNode sampleLocation = specimenNode.getSampleLocation();
+            Location sampleLocation = specimenNode.getSampleLocation();
             assertThat(sampleLocation, is(notNullValue()));
             assertThat(sampleLocation.getLatitude(), is(notNullValue()));
             assertThat(sampleLocation.getLongitude(), is(notNullValue()));

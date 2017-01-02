@@ -1,7 +1,7 @@
 package org.eol.globi.server;
 
 import org.apache.commons.lang3.StringUtils;
-import org.eol.globi.domain.LocationNode;
+import org.eol.globi.domain.LocationConstant;
 import org.eol.globi.domain.SpecimenConstant;
 import org.eol.globi.server.util.ResultField;
 import org.eol.globi.server.util.ResultObject;
@@ -323,11 +323,11 @@ public class CypherReturnClauseBuilder {
             {
                 addSourceTaxonFields(sourceTaxonPrefix);
                 addTargetTaxonFields(targetTaxonPrefix);
-                put(LATITUDE, ResultObject.LOCATION.getLabel() + "." + LocationNode.LATITUDE + "?");
-                put(LONGITUDE, ResultObject.LOCATION.getLabel() + "." + LocationNode.LONGITUDE + "?");
-                put(ALTITUDE, ResultObject.LOCATION.getLabel() + "." + LocationNode.ALTITUDE + "?");
-                put(FOOTPRINT_WKT, ResultObject.LOCATION.getLabel() + "." + LocationNode.FOOTPRINT_WKT + "?");
-                put(LOCALITY, ResultObject.LOCATION.getLabel() + "." + LocationNode.LOCALITY + "?");
+                put(LATITUDE, ResultObject.LOCATION.getLabel() + "." + LocationConstant.LATITUDE + "?");
+                put(LONGITUDE, ResultObject.LOCATION.getLabel() + "." + LocationConstant.LONGITUDE + "?");
+                put(ALTITUDE, ResultObject.LOCATION.getLabel() + "." + LocationConstant.ALTITUDE + "?");
+                put(FOOTPRINT_WKT, ResultObject.LOCATION.getLabel() + "." + LocationConstant.FOOTPRINT_WKT + "?");
+                put(LOCALITY, ResultObject.LOCATION.getLabel() + "." + LocationConstant.LOCALITY + "?");
                 put(SOURCE_SPECIMEN_LIFE_STAGE, ResultObject.SOURCE_SPECIMEN.getLabel() + "." + SpecimenConstant.LIFE_STAGE_LABEL + "?");
                 put(TARGET_SPECIMEN_LIFE_STAGE, ResultObject.TARGET_SPECIMEN.getLabel() + "." + SpecimenConstant.LIFE_STAGE_LABEL + "?");
                 put(SOURCE_SPECIMEN_BODY_PART, ResultObject.SOURCE_SPECIMEN.getLabel() + "." + SpecimenConstant.BODY_PART_LABEL + "?");

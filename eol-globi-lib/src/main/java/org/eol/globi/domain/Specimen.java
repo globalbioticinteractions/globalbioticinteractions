@@ -8,7 +8,7 @@ public interface Specimen {
 
     Iterable<Relationship> getStomachContents();
 
-    LocationNode getSampleLocation();
+    Location getSampleLocation();
 
     void ate(Specimen specimen);
 

@@ -8,7 +8,7 @@ import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.StudyNode;
 import org.eol.globi.util.NodeUtil;
-import org.eol.globi.util.StudyListener;
+import org.eol.globi.util.StudyNodeListener;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
@@ -48,7 +48,7 @@ public class ReportGenerator {
     }
 
     public void generateReportForStudies() {
-        NodeUtil.findStudies(getGraphDb(), new StudyListener() {
+        NodeUtil.findStudies(getGraphDb(), new StudyNodeListener() {
             @Override
             public void onStudy(StudyNode study) {
                 generateReportForStudy(study);
@@ -95,7 +95,7 @@ public class ReportGenerator {
 
     void generateReportForStudySources() {
         final Set<String> sources = new HashSet<String>();
-        NodeUtil.findStudies(getGraphDb(), new StudyListener() {
+        NodeUtil.findStudies(getGraphDb(), new StudyNodeListener() {
             @Override
             public void onStudy(StudyNode study) {
                 sources.add(study.getSource());
@@ -107,7 +107,7 @@ public class ReportGenerator {
             final Counter counter = new Counter();
             final Counter studyCounter = new Counter();
 
-            NodeUtil.findStudies(getGraphDb(), new StudyListener() {
+            NodeUtil.findStudies(getGraphDb(), new StudyNodeListener() {
                 @Override
                 public void onStudy(StudyNode study) {
                     if (StringUtils.equals(study.getSource(), source)) {
@@ -147,7 +147,7 @@ public class ReportGenerator {
         final Counter studyCounter = new Counter();
         final Set<String> distinctSources = new HashSet<String>();
 
-        NodeUtil.findStudies(getGraphDb(), new StudyListener() {
+        NodeUtil.findStudies(getGraphDb(), new StudyNodeListener() {
             @Override
             public void onStudy(StudyNode study) {
                 Iterable<Relationship> specimens = study.getSpecimens();

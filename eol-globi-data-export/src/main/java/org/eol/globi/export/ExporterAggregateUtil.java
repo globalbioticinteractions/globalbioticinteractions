@@ -7,7 +7,7 @@ import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.util.NodeUtil;
-import org.eol.globi.util.StudyListener;
+import org.eol.globi.util.StudyNodeListener;
 import org.mapdb.DB;
 import org.mapdb.DBMaker;
 import org.mapdb.Fun;
@@ -31,7 +31,7 @@ public class ExporterAggregateUtil {
                 .make();
         final Map<Fun.Tuple3<Long, String, String>, List<String>> studyOccAggregate = db.createTreeMap("studyOccAggregate").make();
 
-        NodeUtil.findStudies(graphDatabase, new StudyListener() {
+        NodeUtil.findStudies(graphDatabase, new StudyNodeListener() {
             @Override
             public void onStudy(StudyNode aStudy) {
                 collectDistinctInteractions(aStudy, studyOccAggregate);
