@@ -30,7 +30,7 @@ public class StudyImporterForWrastTest extends GraphDBTestCase {
     @Test
     public void createAndPopulateStudyFromLavacaBay() throws StudyImporterException, ParseException {
         String csvString =
-                "\"Month\",\"Day\",\"Year\",\"Region\",\"SeasonNode\",\"Habitat\",\"Site\",\"Family\",\"Predator Species\",\"TL (mm)\",\"Prey Item Species\",\"Prey item\",\"Number\",\"Condition Index\",\"Volume\",\"Percent Content\",\"Prey Item Trophic Level\",\"Notes\",\"Call #\"\n";
+                "\"Month\",\"Day\",\"Year\",\"Region\",\"Season\",\"Habitat\",\"Site\",\"Family\",\"Predator Species\",\"TL (mm)\",\"Prey Item Species\",\"Prey item\",\"Number\",\"Condition Index\",\"Volume\",\"Percent Content\",\"Prey Item Trophic Level\",\"Notes\",\"Call #\"\n";
         csvString += "7,24,2001,\"Lower\",\"Fall\",\"Marsh\",1,\"Sciaenidae\",\"Sciaenops ocellatus\",420,\"Acrididae spp. \",\"Acrididae \",1,\"III\",0.4,3.2520325203,2.5,,1\n";
         csvString += "7,25,2001,\"Lower\",\"Spring\",\"Non-Veg \",1,\"Ariidae\",\"Arius felis\",176,\"Aegathoa oculata \",\"Aegathoa oculata\",4,\"I\",0.01,3.3333333333,2.1,,2\n";
         csvString += "7,26,2001,\"Upper\",\"Spring\",\"Reef\",2,\"Depth\",\"Missing depth\",176,\"Aegathoa oculata \",\"Aegathoa oculata\",4,\"I\",0.01,3.3333333333,2.1,,2\n";
@@ -47,7 +47,7 @@ public class StudyImporterForWrastTest extends GraphDBTestCase {
                 "\"LNV2B\",28.590883,-96.484133,,\"Lower\",\"Non-Veg \",2\n" +
                 "\"UR2B\",28.656483,-96.597217,,\"Upper\",\"Reef\",2";
 
-        String envString = "\"Date\",\"SeasonNode\",\"Upper/Lower\",\"Habitat\",\"Site\",\"Air Temp (ºC)\",\"Wind Chill (ºC)\",\"Relative Humidity (%)\",\"Heat Index (ºC)\",\"Dew Point (ºC)\",\"Max Wind intensity (mph)\",\"Ave Wind intensity (mph)\",\"Wind Direction\",\"Cloud Cover (%)\",\"Rain?\",\"Depth (m)\",\"Temp (ºC) Surface\",\"Temp (ºC) Bottom\",\"Mean Temp Surface/Bottom\",\"pH Surface\",\"pH Bottom\",\"Mean pH Surface/Bottom\",\"DO (mg/L) Surface\",\"DO (mg/L) Bottom\",\"Mean DO Surface/Bottom\",\"Sal (o/oo) Surface\",\"Sal (o/oo) Bottom\",\"Mean Sal Surface/Bottom\",\"Secchi (m)\"\n" +
+        String envString = "\"Date\",\"Season\",\"Upper/Lower\",\"Habitat\",\"Site\",\"Air Temp (ºC)\",\"Wind Chill (ºC)\",\"Relative Humidity (%)\",\"Heat Index (ºC)\",\"Dew Point (ºC)\",\"Max Wind intensity (mph)\",\"Ave Wind intensity (mph)\",\"Wind Direction\",\"Cloud Cover (%)\",\"Rain?\",\"Depth (m)\",\"Temp (ºC) Surface\",\"Temp (ºC) Bottom\",\"Mean Temp Surface/Bottom\",\"pH Surface\",\"pH Bottom\",\"Mean pH Surface/Bottom\",\"DO (mg/L) Surface\",\"DO (mg/L) Bottom\",\"Mean DO Surface/Bottom\",\"Sal (o/oo) Surface\",\"Sal (o/oo) Bottom\",\"Mean Sal Surface/Bottom\",\"Secchi (m)\"\n" +
                 "7/24/2006,\"Summer\",\"L\",\"R\",1,\"81.3 (F)\",\"81.5 (F)\",71.8,\"86.2 (F)\",\"70.6 (F)\",8.5,8.1,\"SE\",75,\"Yes\",1.9,30.79,30.34,30.565,8.11,8.13,8.12,5.16,4.8,4.98,22.8,23.07,22.935,0.4\n" +
                 "7/24/2006,\"Summer\",\"L\",\"R\",2,\"81.3 (F)\",\"81.5 (F)\",71.8,\"86.2 (F)\",\"70.6 (F)\",8.5,8.1,\"SE\",75,\"Yes\",2.1,31.07,30.14,30.605,8.11,8.1,8.105,5.14,4.64,4.89,23.37,23.84,23.605,0.48\n" +
                 "10/26/2006,\"Fall\",\"L\",\"M\",1,26.8,26.5,78,30,22.4,17.9,15,\"S \",95,\"No\",0.8,25.57,,25.57,8.29,,8.29,8.32,,8.32,21.26,,21.26,\"Bottom\"\n" +
