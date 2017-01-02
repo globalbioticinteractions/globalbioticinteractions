@@ -16,6 +16,7 @@
         <module>eol-globi-data-export</module>
         <module>eol-globi-taxon-resolver</module>
         <module>eol-globi-geo</module>
+        <module>eol-globi-neo4j</module>
         <module>eol-globi-data-tool</module>
         <module>eol-globi-opentree</module>
         <module>eol-globi-rest</module>

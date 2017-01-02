@@ -2,7 +2,7 @@ package org.eol.globi.data;
 
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.RelTypes;
-import org.eol.globi.domain.Study;
+import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.TaxonNode;
 import org.junit.Test;
 import org.neo4j.graphdb.Direction;
@@ -28,7 +28,7 @@ public class StudyImporterForThessenTest extends GraphDBTestCase {
                 return recordNumber % 1000 == 0;
             }
         });
-        Study study = importStudy(importer);
+        StudyNode study = importStudy(importer);
         assertThat(study.getExternalId(), containsString("github"));
         Iterable<Relationship> specimens = study.getSpecimens();
         int specimenCount = 0;

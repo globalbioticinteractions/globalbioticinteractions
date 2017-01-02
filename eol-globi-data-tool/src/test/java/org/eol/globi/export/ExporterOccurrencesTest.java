@@ -2,9 +2,11 @@ package org.eol.globi.export;
 
 import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.NodeFactoryException;
+import org.eol.globi.domain.Location;
 import org.eol.globi.domain.LocationNode;
 import org.eol.globi.domain.Specimen;
-import org.eol.globi.domain.Study;
+import org.eol.globi.domain.SpecimenNode;
+import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.Term;
 import org.junit.Test;
 
@@ -25,7 +27,7 @@ public class ExporterOccurrencesTest extends GraphDBTestCase {
         String expected = getExpectedHeader();
         expected += getExpectedData();
 
-        Study myStudy1 = nodeFactory.findStudy("myStudy");
+        StudyNode myStudy1 = nodeFactory.findStudy("myStudy");
 
         StringWriter row = new StringWriter();
 
@@ -50,7 +52,7 @@ public class ExporterOccurrencesTest extends GraphDBTestCase {
         resolveNames();
         String expected = getExpectedData();
 
-        Study myStudy1 = nodeFactory.findStudy("myStudy");
+        StudyNode myStudy1 = nodeFactory.findStudy("myStudy");
 
         StringWriter row = new StringWriter();
 
@@ -71,7 +73,7 @@ public class ExporterOccurrencesTest extends GraphDBTestCase {
         expected += getExpectedHeader();
         expected += getExpectedData();
 
-        Study myStudy1 = nodeFactory.findStudy("myStudy");
+        StudyNode myStudy1 = nodeFactory.findStudy("myStudy");
 
         StringWriter row = new StringWriter();
 
@@ -83,7 +85,7 @@ public class ExporterOccurrencesTest extends GraphDBTestCase {
 
     @Test
     public void dontExportToCSVSpecimenEmptyStomach() throws NodeFactoryException, IOException {
-        Study myStudy = nodeFactory.createStudy("myStudy");
+        StudyNode myStudy = nodeFactory.createStudy("myStudy");
         Specimen specimen = nodeFactory.createSpecimen(myStudy, "Homo sapiens", "EOL:123");
         specimen.setBasisOfRecord(new Term("test:123", "aBasisOfRecord"));
         resolveNames();
@@ -100,8 +102,8 @@ public class ExporterOccurrencesTest extends GraphDBTestCase {
     }
 
     private void createTestData(Double length) throws NodeFactoryException, ParseException {
-        Study myStudy = nodeFactory.createStudy("myStudy");
-        Specimen specimen = nodeFactory.createSpecimen(myStudy, "Homo sapiens", "EOL:327955");
+        StudyNode myStudy = nodeFactory.createStudy("myStudy");
+        SpecimenNode specimen = nodeFactory.createSpecimen(myStudy, "Homo sapiens", "EOL:327955");
         specimen.setStomachVolumeInMilliLiter(666.0);
         specimen.setLifeStage(new Term("GLOBI:JUVENILE", "JUVENILE"));
         specimen.setPhysiologicalState(new Term("GLOBI:DIGESTATE", "DIGESTATE"));
@@ -111,7 +113,7 @@ public class ExporterOccurrencesTest extends GraphDBTestCase {
             specimen.setLengthInMm(length);
         }
 
-        LocationNode location = nodeFactory.getOrCreateLocation(12.0, -1.0, -60.0);
+        Location location = nodeFactory.getOrCreateLocation(12.0, -1.0, -60.0);
         specimen.caughtIn(location);
         Specimen wolf1 = eatWolf(specimen, myStudy);
         wolf1.caughtIn(location);
@@ -119,8 +121,8 @@ public class ExporterOccurrencesTest extends GraphDBTestCase {
         wolf2.caughtIn(location);
     }
 
-    private Specimen eatWolf(Specimen specimen, Study study) throws NodeFactoryException {
-        Specimen otherSpecimen = nodeFactory.createSpecimen(study, "Canis lupus", "EOL:328607");
+    private Specimen eatWolf(Specimen specimen, StudyNode study) throws NodeFactoryException {
+        SpecimenNode otherSpecimen = nodeFactory.createSpecimen(study, "Canis lupus", "EOL:328607");
         otherSpecimen.setVolumeInMilliLiter(124.0);
         nodeFactory.setUnixEpochProperty(otherSpecimen, ExportTestUtil.utcTestDate());
         specimen.ate(otherSpecimen);

@@ -14,9 +14,11 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.eol.globi.domain.Location;
 import org.eol.globi.domain.LocationNode;
-import org.eol.globi.domain.Specimen;
+import org.eol.globi.domain.SpecimenNode;
 import org.eol.globi.domain.Study;
+import org.eol.globi.domain.StudyNode;
 import org.eol.globi.geo.GeoUtil;
 import org.eol.globi.util.CSVUtil;
 import org.eol.globi.util.ExternalIdUtil;
@@ -60,7 +62,7 @@ public class StudyImporterForRaymond extends BaseStudyImporter {
     }
 
     @Override
-    public Study importStudy() throws StudyImporterException {
+    public StudyNode importStudy() throws StudyImporterException {
 
         if (!retrieveAndImport(RESOURCE_URL)) {
             retrieveAndImport(RESOURCE_URL_FALLBACK);
@@ -148,16 +150,16 @@ public class StudyImporterForRaymond extends BaseStudyImporter {
             if (StringUtils.isBlank(citation)) {
                 LOG.error("no source found for id [" + sourceId + "]: line [" + dietParser.lastLineNumber() + "]");
             } else {
-                Study study = getOrCreateStudy(citation);
+                StudyNode study = getOrCreateStudy(citation);
                 parseDietObservation(dietParser, study);
             }
 
         }
     }
 
-    private void parseDietObservation(LabeledCSVParser dietParser, Study study) throws StudyImporterException {
+    private void parseDietObservation(LabeledCSVParser dietParser, StudyNode study) throws StudyImporterException {
         try {
-            Specimen predator = getSpecimen(dietParser, "PREDATOR_NAME", "PREDATOR_LIFE_STAGE", study);
+            SpecimenNode predator = getSpecimen(dietParser, "PREDATOR_NAME", "PREDATOR_LIFE_STAGE", study);
 
             dietParser.getValueByLabel("ALTITUDE_MIN");
             dietParser.getValueByLabel("ALTITUDE_MAX");
@@ -165,10 +167,10 @@ public class StudyImporterForRaymond extends BaseStudyImporter {
             dietParser.getValueByLabel("DEPTH_MIN");
             dietParser.getValueByLabel("DEPTH_MAX");
 
-            LocationNode sampleLocation = parseLocation(dietParser, study);
+            Location sampleLocation = parseLocation(dietParser, study);
             predator.caughtIn(sampleLocation);
 
-            Specimen prey = getSpecimen(dietParser, "PREY_NAME", "PREY_LIFE_STAGE", study);
+            SpecimenNode prey = getSpecimen(dietParser, "PREY_NAME", "PREY_LIFE_STAGE", study);
             prey.caughtIn(sampleLocation);
             predator.ate(prey);
 
@@ -180,9 +182,9 @@ public class StudyImporterForRaymond extends BaseStudyImporter {
         }
     }
 
-    private Specimen getSpecimen(LabeledCSVParser dietParser, String nameLabel, String lifeStageLabel, Study study) throws NodeFactoryException {
+    private SpecimenNode getSpecimen(LabeledCSVParser dietParser, String nameLabel, String lifeStageLabel, StudyNode study) throws NodeFactoryException {
         String predatorName = dietParser.getValueByLabel(nameLabel);
-        Specimen predator = nodeFactory.createSpecimen(study, predatorName);
+        SpecimenNode predator = nodeFactory.createSpecimen(study, predatorName);
         String predatorLifeStage = dietParser.getValueByLabel(lifeStageLabel);
         predator.setLifeStage(nodeFactory.getOrCreateLifeStage("RAYMOND:" + predatorLifeStage, predatorLifeStage));
         return predator;
@@ -206,7 +208,7 @@ public class StudyImporterForRaymond extends BaseStudyImporter {
         return date;
     }
 
-    private LocationNode parseLocation(LabeledCSVParser dietParser, Study study) throws StudyImporterException {
+    private Location parseLocation(LabeledCSVParser dietParser, Study study) throws StudyImporterException {
         /**
          * left, top ------- right, top
          *  |                 |
@@ -220,7 +222,7 @@ public class StudyImporterForRaymond extends BaseStudyImporter {
         String northString = dietParser.getValueByLabel(NORTH);
         String southString = dietParser.getValueByLabel(SOUTH);
 
-        LocationNode loc = null;
+        Location loc = null;
         if (StringUtils.isBlank(westString) || StringUtils.isBlank(eastString) || StringUtils.isBlank(northString) || StringUtils.isBlank(southString)) {
             try {
                 loc = locationFromLocale(dietParser, study);
@@ -243,8 +245,8 @@ public class StudyImporterForRaymond extends BaseStudyImporter {
         return loc;
     }
 
-    private LocationNode locationFromLocale(LabeledCSVParser dietParser, Study study) throws NodeFactoryException {
-        LocationNode loc = null;
+    private Location locationFromLocale(LabeledCSVParser dietParser, Study study) throws NodeFactoryException {
+        Location loc = null;
         LatLng centroid;
         String location = dietParser.getValueByLabel("LOCATION");
         if (StringUtils.isNotBlank(location)) {
@@ -290,7 +292,7 @@ public class StudyImporterForRaymond extends BaseStudyImporter {
         return sourceMap;
     }
 
-    private Study getOrCreateStudy(String citation) throws NodeFactoryException {
+    private StudyNode getOrCreateStudy(String citation) throws NodeFactoryException {
         String title = StringUtils.abbreviate(citation, 16) + MD5.getHashString(citation);
         return nodeFactory.getOrCreateStudy(title, "Raymond, B., Marshall, M., Nevitt, G., Gillies, C., van den Hoff, J., Stark, J.S., Losekoot, M., Woehler, E.J., and Constable, A.J. (2011) A Southern Ocean dietary database. Ecology 92(5):1188. Available from http://dx.doi.org/10.1890/10-1907.1 . Data set supplied by Ben Raymond. " + ReferenceUtil.createLastAccessedString(RESOURCE_URL), citation);
     }

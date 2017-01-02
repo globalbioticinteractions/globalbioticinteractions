@@ -1,14 +1,10 @@
 package org.eol.globi.export;
 
-import com.Ostermiller.util.CSVPrint;
 import org.apache.commons.lang.StringUtils;
 import org.eol.globi.domain.NodeBacked;
-import org.eol.globi.domain.Specimen;
+import org.eol.globi.domain.SpecimenNode;
 import org.eol.globi.domain.Study;
-import org.eol.globi.util.CSVUtil;
-import org.eol.globi.util.InteractUtil;
-import org.neo4j.cypher.javacompat.ExecutionEngine;
-import org.neo4j.cypher.javacompat.ExecutionResult;
+import org.eol.globi.domain.StudyNode;
 import org.neo4j.graphdb.PropertyContainer;
 import org.neo4j.graphdb.Relationship;
 
@@ -16,12 +12,8 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.TimeZone;
-
-import static org.eol.globi.domain.PropertyAndValueDictionary.INVERTED;
-import static org.eol.globi.domain.PropertyAndValueDictionary.NO_MATCH;
 
 public abstract class ExporterBase extends DarwinCoreExporter {
 
@@ -111,8 +103,8 @@ public abstract class ExporterBase extends DarwinCoreExporter {
 
     protected void addCollectionDate(Map<String, String> writer, Relationship collectedRelationship, String datePropertyName) throws IOException {
         Calendar instance;
-        if (collectedRelationship.hasProperty(Specimen.DATE_IN_UNIX_EPOCH)) {
-            Long epoch = (Long) collectedRelationship.getProperty(Specimen.DATE_IN_UNIX_EPOCH);
+        if (collectedRelationship.hasProperty(SpecimenNode.DATE_IN_UNIX_EPOCH)) {
+            Long epoch = (Long) collectedRelationship.getProperty(SpecimenNode.DATE_IN_UNIX_EPOCH);
             Date date = new Date(epoch);
             instance = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
             instance.setTime(date);

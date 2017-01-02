@@ -4,7 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.RelTypes;
-import org.eol.globi.domain.Study;
+import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.util.NodeUtil;
 import org.eol.globi.util.StudyListener;
@@ -33,7 +33,7 @@ public class ExporterAggregateUtil {
 
         NodeUtil.findStudies(graphDatabase, new StudyListener() {
             @Override
-            public void onStudy(Study aStudy) {
+            public void onStudy(StudyNode aStudy) {
                 collectDistinctInteractions(aStudy, studyOccAggregate);
             }
         });
@@ -41,7 +41,7 @@ public class ExporterAggregateUtil {
         for (Map.Entry<Fun.Tuple3<Long, String, String>, List<String>> distinctInteractions : studyOccAggregate.entrySet()) {
             rowWriter.writeRow(
                     writer,
-                    new Study(graphDatabase.getNodeById(distinctInteractions.getKey().a)),
+                    new StudyNode(graphDatabase.getNodeById(distinctInteractions.getKey().a)),
                     distinctInteractions.getKey().b,
                     distinctInteractions.getKey().c,
                     distinctInteractions.getValue()
@@ -50,10 +50,10 @@ public class ExporterAggregateUtil {
         db.close();
     }
 
-    public static void collectDistinctInteractions(Study aStudy, Map<Fun.Tuple3<Long, String, String>, List<String>> studyOccAggregate) {
+    public static void collectDistinctInteractions(StudyNode aStudy, Map<Fun.Tuple3<Long, String, String>, List<String>> studyOccAggregate) {
         final Iterable<Relationship> specimens = aStudy.getSpecimens();
         for (Relationship specimen : specimens) {
-            final Iterable<Relationship> interactions = specimen.getEndNode().getRelationships(Direction.OUTGOING, InteractType.values());
+            final Iterable<Relationship> interactions = specimen.getEndNode().getRelationships(Direction.OUTGOING, InteractType.toNeo4j());
             for (Relationship interaction : interactions) {
                 if (!interaction.hasProperty(PropertyAndValueDictionary.INVERTED)) {
                     final Node targetSpecimen = interaction.getEndNode();
@@ -91,6 +91,6 @@ public class ExporterAggregateUtil {
     }
 
     public interface RowWriter {
-        void writeRow(Writer writer, Study studyId, String sourceTaxonId, String relationshipType, List<String> targetTaxonIds) throws IOException;
+        void writeRow(Writer writer, StudyNode studyId, String sourceTaxonId, String relationshipType, List<String> targetTaxonIds) throws IOException;
     }
 }

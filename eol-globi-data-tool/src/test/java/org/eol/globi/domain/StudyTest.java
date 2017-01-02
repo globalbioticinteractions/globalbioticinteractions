@@ -18,11 +18,11 @@ public class StudyTest extends GraphDBTestCase {
 
     @Test
     public void populateStudy() throws NodeFactoryException {
-        Study study = nodeFactory.createStudy("Our first study");
+        StudyNode study = nodeFactory.createStudy("Our first study");
 
         taxonIndex.getOrCreateTaxon(CARCHARODON_CARCHARIAS);
 
-        Specimen goldFish = nodeFactory.createSpecimen(study, CARASSIUS_AURATUS_AURATUS);
+        SpecimenNode goldFish = nodeFactory.createSpecimen(study, CARASSIUS_AURATUS_AURATUS);
 
         Specimen shark = nodeFactory.createSpecimen(study, CARCHARODON_CARCHARIAS);
         Specimen fuzzyShark = nodeFactory.createSpecimen(study, CARCHARODON);
@@ -30,10 +30,10 @@ public class StudyTest extends GraphDBTestCase {
         shark.ate(goldFish);
         fuzzyShark.ate(goldFish);
 
-        LocationNode bolinasBay = nodeFactory.getOrCreateLocation(12.2d, 12.1d, -100.0d);
+        Location bolinasBay = nodeFactory.getOrCreateLocation(12.2d, 12.1d, -100.0d);
         shark.caughtIn(bolinasBay);
 
-        Season winter = nodeFactory.createSeason("winter");
+        SeasonNode winter = nodeFactory.createSeason("winter");
         shark.caughtDuring(winter);
 
         shark.setLengthInMm(1.2d);
@@ -44,11 +44,11 @@ public class StudyTest extends GraphDBTestCase {
         assertEquals(study.getTitle(), foundStudy.getTitle());
 
         for (Relationship rel : study.getSpecimens()) {
-            Specimen specimen = new Specimen(rel.getEndNode());
+            Specimen specimen = new SpecimenNode(rel.getEndNode());
             Relationship caughtDuringRel = rel.getEndNode().getSingleRelationship(RelTypes.CAUGHT_DURING, Direction.OUTGOING);
             if (caughtDuringRel != null) {
                 Node seasonNode = caughtDuringRel.getEndNode();
-                if (seasonNode != null && seasonNode.getProperty(Season.TITLE).equals("winter")) {
+                if (seasonNode != null && seasonNode.getProperty(SeasonNode.TITLE).equals("winter")) {
                     Relationship next = specimen.getClassifications().iterator().next();
                     Node endNode = next.getEndNode();
                     String speciesName = (String) endNode.getProperty("name");

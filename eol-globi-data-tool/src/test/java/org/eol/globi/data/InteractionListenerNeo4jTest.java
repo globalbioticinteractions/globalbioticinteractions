@@ -2,11 +2,9 @@ package org.eol.globi.data;
 
 import org.eol.globi.domain.LocationNode;
 import org.eol.globi.domain.RelTypes;
-import org.eol.globi.domain.Specimen;
+import org.eol.globi.domain.SpecimenNode;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.TaxonNode;
-import org.eol.globi.service.DOIResolverImpl;
-import org.eol.globi.util.ExternalIdUtil;
 import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
 import org.neo4j.graphdb.Direction;
@@ -54,9 +52,9 @@ public class InteractionListenerNeo4jTest extends GraphDBTestCase {
 
         boolean foundPair = false;
         for (Relationship specimenRel : study.getSpecimens()) {
-            final Specimen predator = new Specimen(specimenRel.getEndNode());
+            final SpecimenNode predator = new SpecimenNode(specimenRel.getEndNode());
             for (Relationship stomachRel : predator.getStomachContents()) {
-                final Specimen prey = new Specimen(stomachRel.getEndNode());
+                final SpecimenNode prey = new SpecimenNode(stomachRel.getEndNode());
                 final TaxonNode preyTaxon = getOrigTaxon(prey);
                 final TaxonNode predTaxon = getOrigTaxon(predator);
                 assertThat(preyTaxon.getName(), is("mini"));
@@ -68,7 +66,7 @@ public class InteractionListenerNeo4jTest extends GraphDBTestCase {
                 assertLocation(prey.getSampleLocation());
                 foundPair = true;
 
-                assertThat(specimenRel.getProperty(Specimen.DATE_IN_UNIX_EPOCH), is(notNullValue()));
+                assertThat(specimenRel.getProperty(SpecimenNode.DATE_IN_UNIX_EPOCH), is(notNullValue()));
             }
 
 
@@ -81,7 +79,7 @@ public class InteractionListenerNeo4jTest extends GraphDBTestCase {
         assertThat(sampleLocation.getLongitude(), is(13.2d));
     }
 
-    public TaxonNode getOrigTaxon(Specimen predator) {
+    public TaxonNode getOrigTaxon(SpecimenNode predator) {
         return new TaxonNode(predator.getUnderlyingNode()
                 .getRelationships(Direction.OUTGOING, RelTypes.ORIGINALLY_DESCRIBED_AS)
                 .iterator().next().getEndNode());

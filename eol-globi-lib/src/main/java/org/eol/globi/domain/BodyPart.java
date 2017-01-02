@@ -1,5 +1,0 @@
-package org.eol.globi.domain;
-
-public enum BodyPart {
-    SCALES, BONE, SPINE, POLLEN_GRAIN, TUBE, OPERCULUM, CAUDAL_SPINE, SHELL, NEEDLE, SEED_POD, KERNEL, WOOD, FEATHER, UNKNOWN
-}

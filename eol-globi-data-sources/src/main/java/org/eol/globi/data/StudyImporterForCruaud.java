@@ -5,9 +5,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eol.globi.domain.InteractType;
+import org.eol.globi.domain.Location;
 import org.eol.globi.domain.LocationNode;
 import org.eol.globi.domain.Specimen;
-import org.eol.globi.domain.Study;
+import org.eol.globi.domain.SpecimenNode;
+import org.eol.globi.domain.StudyNode;
 import org.eol.globi.geo.LatLng;
 
 import java.io.IOException;
@@ -24,7 +26,7 @@ public class StudyImporterForCruaud extends BaseStudyImporter {
     }
 
     @Override
-    public Study importStudy() throws StudyImporterException {
+    public StudyNode importStudy() throws StudyImporterException {
         LabeledCSVParser dataParser;
         try {
             dataParser = parserFactory.createParser(RESOURCE_PATH, CharsetConstant.UTF8);
@@ -32,7 +34,7 @@ public class StudyImporterForCruaud extends BaseStudyImporter {
             throw new StudyImporterException("failed to read resource [" + RESOURCE_PATH + "]", e);
         }
         try {
-            Study study = nodeFactory.getOrCreateStudy2("cruaud"
+            StudyNode study = nodeFactory.getOrCreateStudy2("cruaud"
                     , SOURCE
                     , "http://dx.doi.org/10.1093/sysbio/sys068");
             while (dataParser.getLine() != null) {
@@ -43,7 +45,7 @@ public class StudyImporterForCruaud extends BaseStudyImporter {
                         hostName = StringUtils.replace(hostName, "F.", "Ficus");
                         if (areNamesAvailable(parasiteName, hostName)) {
                             Specimen parasite = nodeFactory.createSpecimen(study, parasiteName);
-                            Specimen host = nodeFactory.createSpecimen(study, hostName);
+                            SpecimenNode host = nodeFactory.createSpecimen(study, hostName);
                             parasite.interactsWith(host, InteractType.PARASITE_OF);
                             String samplingLocation = StringUtils.trim(dataParser.getValueByLabel("Sampling location"));
                             if (getGeoNamesService().hasTermForLocale(samplingLocation)) {
@@ -51,7 +53,7 @@ public class StudyImporterForCruaud extends BaseStudyImporter {
                                 if (pointForLocality == null) {
                                     LOG.warn("no location associated with locality [" + samplingLocation + "]");
                                 } else {
-                                    LocationNode location = nodeFactory.getOrCreateLocation(pointForLocality.getLat(), pointForLocality.getLng(), null);
+                                    Location location = nodeFactory.getOrCreateLocation(pointForLocality.getLat(), pointForLocality.getLng(), null);
                                     parasite.caughtIn(location);
                                     host.caughtIn(location);
                                 }

@@ -5,9 +5,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eol.globi.domain.InteractType;
+import org.eol.globi.domain.Location;
 import org.eol.globi.domain.LocationNode;
 import org.eol.globi.domain.Specimen;
-import org.eol.globi.domain.Study;
+import org.eol.globi.domain.SpecimenNode;
+import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.Term;
 import org.eol.globi.geo.LatLng;
 import org.eol.globi.service.TermLookupServiceException;
@@ -51,7 +53,7 @@ public class StudyImporterForBrose extends BaseStudyImporter {
     }
 
     @Override
-    public Study importStudy() throws StudyImporterException {
+    public StudyNode importStudy() throws StudyImporterException {
         LabeledCSVParser dataParser;
         try {
             dataParser = parserFactory.createParser(RESOURCE_PATH, CharsetConstant.UTF8);
@@ -76,7 +78,7 @@ public class StudyImporterForBrose extends BaseStudyImporter {
     }
 
     private void importLine(LabeledCSVParser parser, Map<String, String> refMap) throws StudyImporterException {
-        Study localStudy = null;
+        StudyNode localStudy = null;
         try {
             String shortReference = StringUtils.trim(parser.getValueByLabel("Link reference"));
             if (!refMap.containsKey(shortReference)) {
@@ -109,9 +111,9 @@ public class StudyImporterForBrose extends BaseStudyImporter {
         return name;
     }
 
-    private void addInteractionForConsumer(LabeledCSVParser parser, Study localStudy, String predatorName) throws NodeFactoryException, StudyImporterException {
+    private void addInteractionForConsumer(LabeledCSVParser parser, StudyNode localStudy, String predatorName) throws NodeFactoryException, StudyImporterException {
 
-        LocationNode location = null;
+        Location location = null;
         String locationString = parser.getValueByLabel("Geographic location");
         LatLng latLng = LOC_MAP.get(StringUtils.trim(locationString));
         if (latLng == null) {
@@ -134,7 +136,7 @@ public class StudyImporterForBrose extends BaseStudyImporter {
             LOG.warn(message);
             getLogger().warn(localStudy, message);
         } else {
-            Specimen resource = nodeFactory.createSpecimen(localStudy, name);
+            SpecimenNode resource = nodeFactory.createSpecimen(localStudy, name);
             resource.caughtIn(location);
             addLifeStage(parser, resource, "Lifestage - resource");
             String interactionType = parser.getValueByLabel("Type of feeding interaction");

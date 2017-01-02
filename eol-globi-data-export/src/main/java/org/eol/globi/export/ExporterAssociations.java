@@ -3,6 +3,7 @@ package org.eol.globi.export;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Study;
+import org.eol.globi.domain.StudyNode;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
@@ -27,7 +28,7 @@ public class ExporterAssociations extends ExporterAssociationsBase {
     }
 
     private void handleSpecimen(Study study, Writer writer, Map<String, String> properties, Node specimenNode) throws IOException {
-        Iterable<Relationship> interactRelationships = specimenNode.getRelationships(Direction.OUTGOING, InteractType.values());
+        Iterable<Relationship> interactRelationships = specimenNode.getRelationships(Direction.OUTGOING, InteractType.toNeo4j());
         if (interactRelationships.iterator().hasNext()) {
             for (Relationship interactRel : interactRelationships) {
                 if (!interactRel.hasProperty(PropertyAndValueDictionary.INVERTED)) {

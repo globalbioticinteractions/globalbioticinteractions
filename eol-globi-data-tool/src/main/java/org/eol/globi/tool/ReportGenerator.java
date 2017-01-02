@@ -6,7 +6,7 @@ import org.apache.commons.logging.LogFactory;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.RelTypes;
-import org.eol.globi.domain.Study;
+import org.eol.globi.domain.StudyNode;
 import org.eol.globi.util.NodeUtil;
 import org.eol.globi.util.StudyListener;
 import org.neo4j.graphdb.Direction;
@@ -50,43 +50,43 @@ public class ReportGenerator {
     public void generateReportForStudies() {
         NodeUtil.findStudies(getGraphDb(), new StudyListener() {
             @Override
-            public void onStudy(Study study) {
+            public void onStudy(StudyNode study) {
                 generateReportForStudy(study);
             }
         });
 
     }
 
-    protected void generateReportForStudy(Study study) {
+    protected void generateReportForStudy(StudyNode study) {
         Set<Long> ids = new HashSet<Long>();
         generateReportForStudy(study, ids, new Counter());
     }
 
-    protected void generateReportForStudy(Study study, Set<Long> ids, Counter interactionCounter) {
+    protected void generateReportForStudy(StudyNode study, Set<Long> ids, Counter interactionCounter) {
         Iterable<Relationship> specimens = study.getSpecimens();
         countInteractionsAndTaxa(specimens, ids, interactionCounter);
 
         Transaction tx = getGraphDb().beginTx();
         try {
             Node node = getGraphDb().createNode();
-            node.setProperty(Study.SOURCE, study.getSource());
+            node.setProperty(StudyNode.SOURCE, study.getSource());
             if (StringUtils.isNotBlank(study.getCitation())) {
-                node.setProperty(Study.CITATION, study.getCitation());
+                node.setProperty(StudyNode.CITATION, study.getCitation());
             }
             if (StringUtils.isNotBlank(study.getDOI())) {
-                node.setProperty(Study.DOI, study.getDOI());
+                node.setProperty(StudyNode.DOI, study.getDOI());
             }
             if (StringUtils.isNotBlank(study.getExternalId())) {
                 node.setProperty(PropertyAndValueDictionary.EXTERNAL_ID, study.getExternalId());
             }
-            node.setProperty(Study.TITLE, study.getTitle());
+            node.setProperty(StudyNode.TITLE, study.getTitle());
             node.setProperty(PropertyAndValueDictionary.COLLECTION, GLOBI_COLLECTION_NAME);
             node.setProperty(PropertyAndValueDictionary.NUMBER_OF_INTERACTIONS, interactionCounter.getCount() / 2);
             node.setProperty(PropertyAndValueDictionary.NUMBER_OF_DISTINCT_TAXA, ids.size());
             node.setProperty(PropertyAndValueDictionary.NUMBER_OF_STUDIES, 1);
             node.setProperty(PropertyAndValueDictionary.NUMBER_OF_SOURCES, 1);
-            getGraphDb().index().forNodes("reports").add(node, Study.TITLE, study.getTitle());
-            getGraphDb().index().forNodes("reports").add(node, Study.SOURCE, study.getTitle());
+            getGraphDb().index().forNodes("reports").add(node, StudyNode.TITLE, study.getTitle());
+            getGraphDb().index().forNodes("reports").add(node, StudyNode.SOURCE, study.getTitle());
             tx.success();
         } finally {
             tx.finish();
@@ -97,7 +97,7 @@ public class ReportGenerator {
         final Set<String> sources = new HashSet<String>();
         NodeUtil.findStudies(getGraphDb(), new StudyListener() {
             @Override
-            public void onStudy(Study study) {
+            public void onStudy(StudyNode study) {
                 sources.add(study.getSource());
             }
         });
@@ -109,7 +109,7 @@ public class ReportGenerator {
 
             NodeUtil.findStudies(getGraphDb(), new StudyListener() {
                 @Override
-                public void onStudy(Study study) {
+                public void onStudy(StudyNode study) {
                     if (StringUtils.equals(study.getSource(), source)) {
                         Iterable<Relationship> specimens = study.getSpecimens();
                         countInteractionsAndTaxa(specimens, distinctTaxonIds, counter);
@@ -122,14 +122,14 @@ public class ReportGenerator {
             Transaction tx = getGraphDb().beginTx();
             try {
                 final Node node = getGraphDb().createNode();
-                node.setProperty(Study.SOURCE, source);
+                node.setProperty(StudyNode.SOURCE, source);
                 node.setProperty(PropertyAndValueDictionary.COLLECTION, GLOBI_COLLECTION_NAME);
                 node.setProperty(PropertyAndValueDictionary.NUMBER_OF_INTERACTIONS, counter.getCount() / 2);
                 node.setProperty(PropertyAndValueDictionary.NUMBER_OF_DISTINCT_TAXA, distinctTaxonIds.size());
                 node.setProperty(PropertyAndValueDictionary.NUMBER_OF_STUDIES, studyCounter.getCount());
                 node.setProperty(PropertyAndValueDictionary.NUMBER_OF_SOURCES, 1);
 
-                getGraphDb().index().forNodes("reports").add(node, Study.SOURCE, source);
+                getGraphDb().index().forNodes("reports").add(node, StudyNode.SOURCE, source);
                 tx.success();
             } finally {
                 tx.finish();
@@ -149,7 +149,7 @@ public class ReportGenerator {
 
         NodeUtil.findStudies(getGraphDb(), new StudyListener() {
             @Override
-            public void onStudy(Study study) {
+            public void onStudy(StudyNode study) {
                 Iterable<Relationship> specimens = study.getSpecimens();
                 countInteractionsAndTaxa(specimens, distinctTaxonIds, counter);
                 studyCounter.count();

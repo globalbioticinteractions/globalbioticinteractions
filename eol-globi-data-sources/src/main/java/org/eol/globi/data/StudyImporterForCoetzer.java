@@ -6,7 +6,8 @@ import org.apache.commons.io.output.NullOutputStream;
 import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.Specimen;
-import org.eol.globi.domain.Study;
+import org.eol.globi.domain.SpecimenNode;
+import org.eol.globi.domain.StudyNode;
 import org.eol.globi.service.DatasetUtil;
 import org.eol.globi.util.CSVUtil;
 import org.mapdb.DB;
@@ -31,7 +32,7 @@ public class StudyImporterForCoetzer extends BaseStudyImporter {
     }
 
     @Override
-    public Study importStudy() throws StudyImporterException {
+    public StudyNode importStudy() throws StudyImporterException {
         if (org.apache.commons.lang.StringUtils.isBlank(getResourceArchiveURI())) {
             throw new StudyImporterException("failed to import [" + getDataset().getNamespace() + "]: no [archiveURL] specified");
         }
@@ -123,9 +124,9 @@ public class StudyImporterForCoetzer extends BaseStudyImporter {
                         final String reference = refMap.get(taxonId);
                         final String sourceTaxonName = taxonMap.get(taxonId);
                         if (StringUtils.isNotBlank(reference) && StringUtils.isNotBlank(sourceTaxonName)) {
-                            final Study study = nodeFactory.getOrCreateStudy(getSourceCitation() + reference, ReferenceUtil.sourceCitationLastAccessed(getDataset()), reference);
+                            final StudyNode study = nodeFactory.getOrCreateStudy(getSourceCitation() + reference, ReferenceUtil.sourceCitationLastAccessed(getDataset()), reference);
                             final Specimen source = nodeFactory.createSpecimen(study, StringUtils.trim(sourceTaxonName));
-                            final Specimen target = nodeFactory.createSpecimen(study, StringUtils.trim(targetTaxonName));
+                            final SpecimenNode target = nodeFactory.createSpecimen(study, StringUtils.trim(targetTaxonName));
                             final InteractType relType = interactTypeMap.get(interactionString);
                             if (relType == null) {
                                 throw new StudyImporterException("found unsupported interaction type [" + interactionString + "]");

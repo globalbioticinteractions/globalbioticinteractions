@@ -9,6 +9,7 @@ import org.eol.globi.data.StudyImporterForSPIRE;
 import org.eol.globi.data.TaxonIndex;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Study;
+import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.domain.TaxonomyProvider;
@@ -101,7 +102,6 @@ public class ExporterRDFTest extends GraphDBTestCase {
             assertTrue(file.exists());
 
             String content = IOUtils.toString(new FileInputStream(file));
-            System.out.println(content);
             assertThat(content, not(containsString("no:match")));
             assertThat(content, containsString("http://purl.obolibrary.org/obo/ENVO_"));
         } finally {

@@ -4,14 +4,18 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eol.globi.domain.Environment;
+import org.eol.globi.domain.EnvironmentNode;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.LocationImpl;
 import org.eol.globi.domain.LocationNode;
+import org.eol.globi.domain.NodeBacked;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.RelTypes;
-import org.eol.globi.domain.Season;
+import org.eol.globi.domain.SeasonNode;
 import org.eol.globi.domain.Specimen;
+import org.eol.globi.domain.SpecimenNode;
 import org.eol.globi.domain.Study;
+import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.Term;
@@ -46,7 +50,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
-import static org.eol.globi.domain.LocationUtil.*;
+import static org.eol.globi.domain.LocationUtil.fromLocation;
 
 public class NodeFactoryImpl implements NodeFactory {
 
@@ -127,13 +131,13 @@ public class NodeFactoryImpl implements NodeFactory {
     }
 
     @Override
-    public Season createSeason(String seasonNameLower) {
+    public SeasonNode createSeason(String seasonNameLower) {
         Transaction transaction = graphDb.beginTx();
-        Season season;
+        SeasonNode season;
         try {
             Node node = graphDb.createNode();
-            season = new Season(node, seasonNameLower);
-            seasons.add(node, Season.TITLE, seasonNameLower);
+            season = new SeasonNode(node, seasonNameLower);
+            seasons.add(node, SeasonNode.TITLE, seasonNameLower);
             transaction.success();
         } finally {
             transaction.finish();
@@ -167,23 +171,23 @@ public class NodeFactoryImpl implements NodeFactory {
 
 
     @Override
-    public Specimen createSpecimen(Study study, String taxonName, String taxonExternalId) throws NodeFactoryException {
+    public SpecimenNode createSpecimen(Study study, String taxonName, String taxonExternalId) throws NodeFactoryException {
         return createSpecimen(study, new TaxonImpl(taxonName, taxonExternalId));
     }
 
     @Override
-    public Specimen createSpecimen(Study study, String taxonName) throws NodeFactoryException {
+    public SpecimenNode createSpecimen(Study study, String taxonName) throws NodeFactoryException {
         return createSpecimen(study, new TaxonImpl(taxonName, null));
     }
 
     @Override
-    public Specimen createSpecimen(Study study, Taxon taxon) throws NodeFactoryException {
+    public SpecimenNode createSpecimen(Study study, Taxon taxon) throws NodeFactoryException {
         if (null == study) {
             throw new NodeFactoryException("specimen needs study, but none is specified");
         }
 
-        Specimen specimen = createSpecimen();
-        study.createRelationshipTo(specimen, RelTypes.COLLECTED);
+        SpecimenNode specimen = createSpecimen();
+        ((StudyNode) study).createRelationshipTo(specimen, RelTypes.COLLECTED);
 
         specimen.setOriginalTaxonDescription(taxon);
         if (StringUtils.isNotBlank(taxon.getName())) {
@@ -229,11 +233,11 @@ public class NodeFactoryImpl implements NodeFactory {
     }
 
 
-    private Specimen createSpecimen() {
+    private SpecimenNode createSpecimen() {
         Transaction transaction = graphDb.beginTx();
-        Specimen specimen;
+        SpecimenNode specimen;
         try {
-            specimen = new Specimen(graphDb.createNode(), null);
+            specimen = new SpecimenNode(graphDb.createNode(), null);
             transaction.success();
         } finally {
             transaction.finish();
@@ -243,16 +247,16 @@ public class NodeFactoryImpl implements NodeFactory {
 
 
     @Override
-    public Study createStudy(String title) {
+    public StudyNode createStudy(String title) {
         return createStudy(title, null, null, null);
     }
 
-    private Study createStudy(String title, String source, String doi, String citation) {
+    private StudyNode createStudy(String title, String source, String doi, String citation) {
         Transaction transaction = graphDb.beginTx();
-        Study study;
+        StudyNode study;
         try {
             Node node = graphDb.createNode();
-            study = new Study(node, title);
+            study = new StudyNode(node, title);
             study.setSource(source);
             study.setCitation(citation);
             if (doiResolver != null) {
@@ -274,7 +278,7 @@ public class NodeFactoryImpl implements NodeFactory {
                     LOG.warn("failed to lookup doi for citation [" + citation + "] with id [" + title + "]", e);
                 }
             }
-            studies.add(node, Study.TITLE, title);
+            studies.add(node, StudyNode.TITLE, title);
             transaction.success();
         } finally {
             transaction.finish();
@@ -288,19 +292,19 @@ public class NodeFactoryImpl implements NodeFactory {
     }
 
     @Override
-    public Study getOrCreateStudy(String title, String source, String citation) throws NodeFactoryException {
+    public StudyNode getOrCreateStudy(String title, String source, String citation) throws NodeFactoryException {
         return getOrCreateStudy(title, source, null, citation);
     }
 
     @Override
-    public Study getOrCreateStudy(String title, String source, String doi, String citation) throws NodeFactoryException {
+    public StudyNode getOrCreateStudy(String title, String source, String doi, String citation) throws NodeFactoryException {
         if (StringUtils.isBlank(title)) {
             throw new NodeFactoryException("null or empty study title");
         }
         if (StringUtils.isBlank(source)) {
             throw new NodeFactoryException("null or empty study source");
         }
-        Study study = findStudy(title);
+        StudyNode study = findStudy(title);
         if (null == study) {
             study = createStudy(title, source, doi, citation);
         }
@@ -308,23 +312,23 @@ public class NodeFactoryImpl implements NodeFactory {
     }
 
     @Override
-    public Study getOrCreateStudy2(String title, String source, String doi) throws NodeFactoryException {
+    public StudyNode getOrCreateStudy2(String title, String source, String doi) throws NodeFactoryException {
         return getOrCreateStudy(title, source, doi, null);
     }
 
     @Override
-    public Study findStudy(String title) {
-        final IndexHits<Node> nodes = title == null ? null : studies.get(Study.TITLE, title);
+    public StudyNode findStudy(String title) {
+        final IndexHits<Node> nodes = title == null ? null : studies.get(StudyNode.TITLE, title);
         Node foundStudyNode = nodes != null ? nodes.getSingle() : null;
-        return foundStudyNode == null ? null : new Study(foundStudyNode);
+        return foundStudyNode == null ? null : new StudyNode(foundStudyNode);
     }
 
     @Override
-    public Season findSeason(String seasonName) {
-        IndexHits<Node> nodeIndexHits = seasons.get(Season.TITLE, seasonName);
+    public SeasonNode findSeason(String seasonName) {
+        IndexHits<Node> nodeIndexHits = seasons.get(SeasonNode.TITLE, seasonName);
         Node seasonHit = nodeIndexHits.getSingle();
         nodeIndexHits.close();
-        return seasonHit == null ? null : new Season(seasonHit);
+        return seasonHit == null ? null : new SeasonNode(seasonHit);
     }
 
     @Override
@@ -348,7 +352,7 @@ public class NodeFactoryImpl implements NodeFactory {
     }
 
     @Override
-    public LocationNode getOrCreateLocation(Double latitude, Double longitude, Double altitude) throws NodeFactoryException {
+    public Location getOrCreateLocation(Double latitude, Double longitude, Double altitude) throws NodeFactoryException {
         return getOrCreateLocation(new LocationImpl(latitude, longitude, altitude, null));
 
     }
@@ -368,7 +372,7 @@ public class NodeFactoryImpl implements NodeFactory {
             Relationship rel = getCollectedRel(specimen);
             Transaction tx = rel.getGraphDatabase().beginTx();
             try {
-                rel.setProperty(Specimen.DATE_IN_UNIX_EPOCH, date.getTime());
+                rel.setProperty(SpecimenNode.DATE_IN_UNIX_EPOCH, date.getTime());
                 tx.success();
             } finally {
                 tx.finish();
@@ -377,7 +381,7 @@ public class NodeFactoryImpl implements NodeFactory {
     }
 
     protected Relationship getCollectedRel(Specimen specimen) throws NodeFactoryException {
-        Relationship rel = specimen.getUnderlyingNode().getSingleRelationship(RelTypes.COLLECTED, Direction.INCOMING);
+        Relationship rel = ((NodeBacked) specimen).getUnderlyingNode().getSingleRelationship(RelTypes.COLLECTED, Direction.INCOMING);
         if (null == rel) {
             throw new NodeFactoryException("specimen not associated with study");
         }
@@ -388,8 +392,8 @@ public class NodeFactoryImpl implements NodeFactory {
     public Date getUnixEpochProperty(Specimen specimen) throws NodeFactoryException {
         Date date = null;
         Relationship rel = getCollectedRel(specimen);
-        if (rel.hasProperty(Specimen.DATE_IN_UNIX_EPOCH)) {
-            Long unixEpoch = (Long) rel.getProperty(Specimen.DATE_IN_UNIX_EPOCH);
+        if (rel.hasProperty(SpecimenNode.DATE_IN_UNIX_EPOCH)) {
+            Long unixEpoch = (Long) rel.getProperty(SpecimenNode.DATE_IN_UNIX_EPOCH);
             date = new Date(unixEpoch);
         }
 
@@ -397,7 +401,7 @@ public class NodeFactoryImpl implements NodeFactory {
     }
 
     @Override
-    public List<Environment> getOrCreateEnvironments(LocationNode location, String externalId, String name) throws NodeFactoryException {
+    public List<Environment> getOrCreateEnvironments(Location location, String externalId, String name) throws NodeFactoryException {
         List<org.eol.globi.domain.Term> terms;
         try {
             terms = envoLookupService.lookupTermByName(name);
@@ -412,16 +416,17 @@ public class NodeFactoryImpl implements NodeFactory {
     }
 
     @Override
-    public List<Environment> addEnvironmentToLocation(LocationNode location, List<Term> terms) {
+    public List<Environment> addEnvironmentToLocation(Location location, List<Term> terms) {
         List<Environment> normalizedEnvironments = new ArrayList<Environment>();
         for (Term term : terms) {
             Environment environment = findEnvironment(term.getName());
             if (environment == null) {
                 Transaction transaction = graphDb.beginTx();
                 try {
-                    environment = new Environment(graphDb.createNode(), term.getId(), term.getName());
-                    environments.add(environment.getUnderlyingNode(), PropertyAndValueDictionary.NAME, term.getName());
+                    EnvironmentNode environmentNode = new EnvironmentNode(graphDb.createNode(), term.getId(), term.getName());
+                    environments.add(environmentNode.getUnderlyingNode(), PropertyAndValueDictionary.NAME, term.getName());
                     transaction.success();
+                    environment = environmentNode;
                 } finally {
                     transaction.finish();
                 }
@@ -450,12 +455,13 @@ public class NodeFactoryImpl implements NodeFactory {
         return ecoregions;
     }
 
-    public List<Ecoregion> enrichLocationWithEcoRegions(LocationNode location) throws NodeFactoryException {
-        List<Ecoregion> associatedEcoregions = getEcoRegions(location.getUnderlyingNode());
-        return associatedEcoregions == null ? associateWithEcoRegions(location) : associatedEcoregions;
+    public List<Ecoregion> enrichLocationWithEcoRegions(Location location) throws NodeFactoryException {
+        LocationNode locationNode = (LocationNode) location;
+        List<Ecoregion> associatedEcoregions = getEcoRegions(locationNode.getUnderlyingNode());
+        return associatedEcoregions == null ? associateWithEcoRegions(locationNode) : associatedEcoregions;
     }
 
-    private List<Ecoregion> associateWithEcoRegions(LocationNode location) throws NodeFactoryException {
+    private List<Ecoregion> associateWithEcoRegions(Location location) throws NodeFactoryException {
         List<Ecoregion> associatedEcoregions = new ArrayList<Ecoregion>();
         try {
             EcoregionFinder finder = getEcoregionFinder();
@@ -472,14 +478,14 @@ public class NodeFactoryImpl implements NodeFactory {
         return associatedEcoregions;
     }
 
-    private void associateLocationWithEcoRegion(LocationNode location, Ecoregion ecoregion) {
+    private void associateLocationWithEcoRegion(Location location, Ecoregion ecoregion) {
         Node ecoregionNode = findEcoRegion(ecoregion);
         Transaction tx = graphDb.beginTx();
         try {
             if (ecoregionNode == null) {
                 ecoregionNode = addAndIndexEcoRegion(ecoregion);
             }
-            location.getUnderlyingNode().createRelationshipTo(ecoregionNode, RelTypes.IN_ECOREGION);
+            ((NodeBacked) location).getUnderlyingNode().createRelationshipTo(ecoregionNode, RelTypes.IN_ECOREGION);
             tx.success();
         } finally {
             tx.finish();
@@ -513,12 +519,12 @@ public class NodeFactoryImpl implements NodeFactory {
         return node;
     }
 
-    protected Environment findEnvironment(String name) {
+    protected EnvironmentNode findEnvironment(String name) {
         String query = "name:\"" + name + "\"";
         IndexHits<Node> matches = environments.query(query);
-        Environment firstMatchingEnvironment = null;
+        EnvironmentNode firstMatchingEnvironment = null;
         if (matches.hasNext()) {
-            firstMatchingEnvironment = new Environment(matches.next());
+            firstMatchingEnvironment = new EnvironmentNode(matches.next());
         }
         matches.close();
         return firstMatchingEnvironment;

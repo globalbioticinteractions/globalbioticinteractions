@@ -2,10 +2,11 @@ package org.eol.globi.export;
 
 import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.NodeFactoryException;
+import org.eol.globi.domain.Location;
 import org.eol.globi.domain.LocationNode;
 import org.eol.globi.domain.PropertyAndValueDictionary;
-import org.eol.globi.domain.Specimen;
-import org.eol.globi.domain.Study;
+import org.eol.globi.domain.SpecimenNode;
+import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.Term;
 import org.junit.Test;
 
@@ -29,7 +30,7 @@ public class ExporterMeasurementOrFactTest extends GraphDBTestCase {
                         + "\nglobi:occur:volume:6\tglobi:occur:6\tyes\t\t\tvolume\t18.0\thttp://purl.obolibrary.org/obo/UO_0000098\t\t\t1992-03-30T08:00:00Z\t\t\t\tmyStudy\t\t\tglobi:ref:1";
 
 
-        Study myStudy1 = nodeFactory.findStudy("myStudy");
+        StudyNode myStudy1 = nodeFactory.findStudy("myStudy");
 
         StringWriter row = new StringWriter();
 
@@ -40,11 +41,11 @@ public class ExporterMeasurementOrFactTest extends GraphDBTestCase {
 
     @Test
     public void noMatchNames() throws IOException, NodeFactoryException, ParseException {
-        Study myStudy = nodeFactory.createStudy("myStudy");
+        StudyNode myStudy = nodeFactory.createStudy("myStudy");
         nodeFactory.createSpecimen(myStudy, PropertyAndValueDictionary.NO_NAME, "externalId1");
         nodeFactory.createSpecimen(myStudy, "Some namus", PropertyAndValueDictionary.NO_MATCH);
 
-        Study myStudy1 = nodeFactory.findStudy("myStudy");
+        StudyNode myStudy1 = nodeFactory.findStudy("myStudy");
         StringWriter row = new StringWriter();
         new ExporterMeasurementOrFact().exportStudy(myStudy1, row, false);
         assertThat(row.getBuffer().toString(), equalTo(""));
@@ -52,7 +53,7 @@ public class ExporterMeasurementOrFactTest extends GraphDBTestCase {
 
     protected void assertResult(String targetTaxonName, String sourceTaxonName, String expected) throws NodeFactoryException, ParseException, IOException {
         createTestData(null, targetTaxonName, sourceTaxonName);
-        Study myStudy1 = nodeFactory.findStudy("myStudy");
+        StudyNode myStudy1 = nodeFactory.findStudy("myStudy");
         StringWriter row = new StringWriter();
         new ExporterMeasurementOrFact().exportStudy(myStudy1, row, false);
         assertThat(row.getBuffer().toString(), equalTo(expected));
@@ -64,14 +65,14 @@ public class ExporterMeasurementOrFactTest extends GraphDBTestCase {
     }
 
     private void createTestData(Double length, String targetTaxonName, String sourceTaxonName) throws NodeFactoryException, ParseException {
-        Study myStudy = nodeFactory.createStudy("myStudy");
-        Specimen specimen = nodeFactory.createSpecimen(myStudy, sourceTaxonName, "externalId1");
+        StudyNode myStudy = nodeFactory.createStudy("myStudy");
+        SpecimenNode specimen = nodeFactory.createSpecimen(myStudy, sourceTaxonName, "externalId1");
         specimen.setStomachVolumeInMilliLiter(666.0);
         specimen.setLifeStage(new Term("GLOBI:JUVENILE", "JUVENILE"));
         specimen.setPhysiologicalState(new Term("GLOBI:DIGESTATE", "DIGESTATE"));
         specimen.setBodyPart(new Term("GLOBI:BONE", "BONE"));
         nodeFactory.setUnixEpochProperty(specimen, ExportTestUtil.utcTestDate());
-        Specimen otherSpecimen = nodeFactory.createSpecimen(myStudy, targetTaxonName, "externalId2");
+        SpecimenNode otherSpecimen = nodeFactory.createSpecimen(myStudy, targetTaxonName, "externalId2");
         otherSpecimen.setVolumeInMilliLiter(124.0);
 
         specimen.ate(otherSpecimen);
@@ -83,7 +84,7 @@ public class ExporterMeasurementOrFactTest extends GraphDBTestCase {
             specimen.setLengthInMm(length);
         }
 
-        LocationNode location = nodeFactory.getOrCreateLocation(22.0, 129.9, -60.0);
+        Location location = nodeFactory.getOrCreateLocation(22.0, 129.9, -60.0);
         specimen.caughtIn(location);
         resolveNames();
     }

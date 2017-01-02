@@ -1,10 +1,8 @@
 package org.eol.globi.export;
 
-import org.eol.globi.domain.InteractType;
-import org.eol.globi.domain.PropertyAndValueDictionary;
-import org.eol.globi.domain.Specimen;
+import org.eol.globi.domain.SpecimenNode;
 import org.eol.globi.domain.Study;
-import org.neo4j.graphdb.Direction;
+import org.eol.globi.domain.StudyNode;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 
@@ -61,8 +59,8 @@ public class ExporterMeasurementOrFact extends ExporterBase {
     }
 
     private void writeProperties(Writer writer, Map<String, String> properties, Node specimenNode, Relationship collectedRel, Study study) throws IOException {
-        if (specimenNode.hasProperty(Specimen.LENGTH_IN_MM)) {
-            Object property = specimenNode.getProperty(Specimen.LENGTH_IN_MM);
+        if (specimenNode.hasProperty(SpecimenNode.LENGTH_IN_MM)) {
+            Object property = specimenNode.getProperty(SpecimenNode.LENGTH_IN_MM);
             properties.put(EOLDictionary.MEASUREMENT_VALUE, property.toString());
             properties.put(EOLDictionary.MEASUREMENT_TYPE, "specimen length");
             properties.put(EOLDictionary.MEASUREMENT_ID, "globi:occur:length:" + specimenNode.getId());
@@ -72,8 +70,8 @@ public class ExporterMeasurementOrFact extends ExporterBase {
             writeProperties(writer, properties);
         }
 
-        if (specimenNode.hasProperty(Specimen.STOMACH_VOLUME_ML)) {
-            Object property = specimenNode.getProperty(Specimen.STOMACH_VOLUME_ML);
+        if (specimenNode.hasProperty(SpecimenNode.STOMACH_VOLUME_ML)) {
+            Object property = specimenNode.getProperty(SpecimenNode.STOMACH_VOLUME_ML);
             properties.put(EOLDictionary.MEASUREMENT_VALUE, property.toString());
             properties.put(EOLDictionary.MEASUREMENT_TYPE, "stomach volume");
             properties.put(EOLDictionary.MEASUREMENT_OF_TAXON, "yes");
@@ -83,8 +81,8 @@ public class ExporterMeasurementOrFact extends ExporterBase {
             writeProperties(writer, properties);
         }
 
-        if (specimenNode.hasProperty(Specimen.VOLUME_IN_ML)) {
-            Object property = specimenNode.getProperty(Specimen.VOLUME_IN_ML);
+        if (specimenNode.hasProperty(SpecimenNode.VOLUME_IN_ML)) {
+            Object property = specimenNode.getProperty(SpecimenNode.VOLUME_IN_ML);
             properties.put(EOLDictionary.MEASUREMENT_VALUE, property.toString());
             properties.put(EOLDictionary.MEASUREMENT_TYPE, "volume");
             properties.put(EOLDictionary.MEASUREMENT_ID, "globi:occur:volume:" + specimenNode.getId());

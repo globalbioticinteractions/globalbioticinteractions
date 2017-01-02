@@ -2,7 +2,7 @@ package org.eol.globi.server;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.domain.LocationNode;
-import org.eol.globi.domain.Specimen;
+import org.eol.globi.domain.SpecimenNode;
 import org.eol.globi.server.util.ResultField;
 import org.eol.globi.server.util.ResultObject;
 
@@ -64,16 +64,16 @@ public class CypherReturnClauseBuilder {
             {
                 put(SOURCE_SPECIMEN_ID, "ID(" + ResultObject.SOURCE_SPECIMEN.getLabel() + ")");
                 put(TARGET_SPECIMEN_ID, "ID(" + ResultObject.TARGET_SPECIMEN.getLabel() + ")");
-                put(TARGET_SPECIMEN_TOTAL_COUNT, ResultObject.TARGET_SPECIMEN.getLabel() + "." + Specimen.TOTAL_COUNT + "?");
-                put(TARGET_SPECIMEN_TOTAL_COUNT_PERCENT, ResultObject.TARGET_SPECIMEN.getLabel() + "." + Specimen.TOTAL_COUNT_PERCENT + "?");
-                put(TARGET_SPECIMEN_TOTAL_VOLUME_ML, ResultObject.TARGET_SPECIMEN.getLabel() + "." + Specimen.TOTAL_VOLUME_IN_ML + "?");
-                put(TARGET_SPECIMEN_TOTAL_VOLUME_PERCENT, ResultObject.TARGET_SPECIMEN.getLabel() + "." + Specimen.TOTAL_VOLUME_PERCENT + "?");
-                put(TARGET_SPECIMEN_TOTAL_FREQUENCY_OF_OCCURRENCE, ResultObject.TARGET_SPECIMEN.getLabel() + "." + Specimen.FREQUENCY_OF_OCCURRENCE + "?");
-                put(TARGET_SPECIMEN_TOTAL_FREQUENCY_OF_OCCURRENCE_PERCENT, ResultObject.TARGET_SPECIMEN.getLabel() + "." + Specimen.FREQUENCY_OF_OCCURRENCE_PERCENT + "?");
-                put(SOURCE_SPECIMEN_LIFE_STAGE, ResultObject.SOURCE_SPECIMEN.getLabel() + "." + Specimen.LIFE_STAGE_LABEL + "?");
-                put(SOURCE_SPECIMEN_BASIS_OF_RECORD, ResultObject.SOURCE_SPECIMEN.getLabel() + "." + Specimen.BASIS_OF_RECORD_LABEL + "?");
-                put(TARGET_SPECIMEN_LIFE_STAGE, ResultObject.TARGET_SPECIMEN.getLabel() + "." + Specimen.LIFE_STAGE_LABEL + "?");
-                put(TARGET_SPECIMEN_BASIS_OF_RECORD, ResultObject.TARGET_SPECIMEN.getLabel() + "." + Specimen.BASIS_OF_RECORD_LABEL + "?");
+                put(TARGET_SPECIMEN_TOTAL_COUNT, ResultObject.TARGET_SPECIMEN.getLabel() + "." + SpecimenNode.TOTAL_COUNT + "?");
+                put(TARGET_SPECIMEN_TOTAL_COUNT_PERCENT, ResultObject.TARGET_SPECIMEN.getLabel() + "." + SpecimenNode.TOTAL_COUNT_PERCENT + "?");
+                put(TARGET_SPECIMEN_TOTAL_VOLUME_ML, ResultObject.TARGET_SPECIMEN.getLabel() + "." + SpecimenNode.TOTAL_VOLUME_IN_ML + "?");
+                put(TARGET_SPECIMEN_TOTAL_VOLUME_PERCENT, ResultObject.TARGET_SPECIMEN.getLabel() + "." + SpecimenNode.TOTAL_VOLUME_PERCENT + "?");
+                put(TARGET_SPECIMEN_TOTAL_FREQUENCY_OF_OCCURRENCE, ResultObject.TARGET_SPECIMEN.getLabel() + "." + SpecimenNode.FREQUENCY_OF_OCCURRENCE + "?");
+                put(TARGET_SPECIMEN_TOTAL_FREQUENCY_OF_OCCURRENCE_PERCENT, ResultObject.TARGET_SPECIMEN.getLabel() + "." + SpecimenNode.FREQUENCY_OF_OCCURRENCE_PERCENT + "?");
+                put(SOURCE_SPECIMEN_LIFE_STAGE, ResultObject.SOURCE_SPECIMEN.getLabel() + "." + SpecimenNode.LIFE_STAGE_LABEL + "?");
+                put(SOURCE_SPECIMEN_BASIS_OF_RECORD, ResultObject.SOURCE_SPECIMEN.getLabel() + "." + SpecimenNode.BASIS_OF_RECORD_LABEL + "?");
+                put(TARGET_SPECIMEN_LIFE_STAGE, ResultObject.TARGET_SPECIMEN.getLabel() + "." + SpecimenNode.LIFE_STAGE_LABEL + "?");
+                put(TARGET_SPECIMEN_BASIS_OF_RECORD, ResultObject.TARGET_SPECIMEN.getLabel() + "." + SpecimenNode.BASIS_OF_RECORD_LABEL + "?");
 
             }
         };
@@ -328,14 +328,14 @@ public class CypherReturnClauseBuilder {
                 put(ALTITUDE, ResultObject.LOCATION.getLabel() + "." + LocationNode.ALTITUDE + "?");
                 put(FOOTPRINT_WKT, ResultObject.LOCATION.getLabel() + "." + LocationNode.FOOTPRINT_WKT + "?");
                 put(LOCALITY, ResultObject.LOCATION.getLabel() + "." + LocationNode.LOCALITY + "?");
-                put(SOURCE_SPECIMEN_LIFE_STAGE, ResultObject.SOURCE_SPECIMEN.getLabel() + "." + Specimen.LIFE_STAGE_LABEL + "?");
-                put(TARGET_SPECIMEN_LIFE_STAGE, ResultObject.TARGET_SPECIMEN.getLabel() + "." + Specimen.LIFE_STAGE_LABEL + "?");
-                put(SOURCE_SPECIMEN_BODY_PART, ResultObject.SOURCE_SPECIMEN.getLabel() + "." + Specimen.BODY_PART_LABEL + "?");
-                put(TARGET_SPECIMEN_BODY_PART, ResultObject.TARGET_SPECIMEN.getLabel() + "." + Specimen.BODY_PART_LABEL + "?");
-                put(SOURCE_SPECIMEN_PHYSIOLOGICAL_STATE, ResultObject.SOURCE_SPECIMEN.getLabel() + "." + Specimen.PHYSIOLOGICAL_STATE_LABEL + "?");
-                put(TARGET_SPECIMEN_PHYSIOLOGICAL_STATE, ResultObject.TARGET_SPECIMEN.getLabel() + "." + Specimen.PHYSIOLOGICAL_STATE_LABEL + "?");
-                put(SOURCE_SPECIMEN_BASIS_OF_RECORD, ResultObject.SOURCE_SPECIMEN.getLabel() + "." + Specimen.BASIS_OF_RECORD_LABEL + "?");
-                put(TARGET_SPECIMEN_BASIS_OF_RECORD, ResultObject.TARGET_SPECIMEN.getLabel() + "." + Specimen.BASIS_OF_RECORD_LABEL + "?");
+                put(SOURCE_SPECIMEN_LIFE_STAGE, ResultObject.SOURCE_SPECIMEN.getLabel() + "." + SpecimenNode.LIFE_STAGE_LABEL + "?");
+                put(TARGET_SPECIMEN_LIFE_STAGE, ResultObject.TARGET_SPECIMEN.getLabel() + "." + SpecimenNode.LIFE_STAGE_LABEL + "?");
+                put(SOURCE_SPECIMEN_BODY_PART, ResultObject.SOURCE_SPECIMEN.getLabel() + "." + SpecimenNode.BODY_PART_LABEL + "?");
+                put(TARGET_SPECIMEN_BODY_PART, ResultObject.TARGET_SPECIMEN.getLabel() + "." + SpecimenNode.BODY_PART_LABEL + "?");
+                put(SOURCE_SPECIMEN_PHYSIOLOGICAL_STATE, ResultObject.SOURCE_SPECIMEN.getLabel() + "." + SpecimenNode.PHYSIOLOGICAL_STATE_LABEL + "?");
+                put(TARGET_SPECIMEN_PHYSIOLOGICAL_STATE, ResultObject.TARGET_SPECIMEN.getLabel() + "." + SpecimenNode.PHYSIOLOGICAL_STATE_LABEL + "?");
+                put(SOURCE_SPECIMEN_BASIS_OF_RECORD, ResultObject.SOURCE_SPECIMEN.getLabel() + "." + SpecimenNode.BASIS_OF_RECORD_LABEL + "?");
+                put(TARGET_SPECIMEN_BASIS_OF_RECORD, ResultObject.TARGET_SPECIMEN.getLabel() + "." + SpecimenNode.BASIS_OF_RECORD_LABEL + "?");
             }
 
             private void addTargetTaxonFields(String prefix) {

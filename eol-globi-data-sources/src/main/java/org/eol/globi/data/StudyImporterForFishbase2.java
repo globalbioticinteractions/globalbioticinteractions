@@ -6,7 +6,7 @@ import org.apache.commons.logging.LogFactory;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.domain.InteractType;
-import org.eol.globi.domain.Study;
+import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.util.ResourceUtil;
@@ -153,7 +153,7 @@ public class StudyImporterForFishbase2 extends BaseStudyImporter {
     }
 
     @Override
-    public Study importStudy() throws StudyImporterException {
+    public StudyNode importStudy() throws StudyImporterException {
         InteractionListenerNeo4j listener = new InteractionListenerNeo4j(nodeFactory, getGeoNamesService(), getLogger());
         importStudy(listener);
         return null;

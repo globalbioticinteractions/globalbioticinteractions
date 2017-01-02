@@ -1,6 +1,7 @@
 package org.eol.globi.domain;
 
 import org.apache.commons.lang3.StringUtils;
+import org.neo4j.graphdb.RelationshipType;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -102,13 +103,17 @@ public enum InteractType implements RelType {
     }};
 
 
-    InteractType(String iri) {
-        this(iri, null);
-    }
-
     InteractType(String iri, String label) {
         this.iri = iri;
         this.label = StringUtils.isBlank(label) ? name() : label;
+    }
+
+    public String getIRI() {
+        return iri;
+    }
+
+    public String getLabel() {
+        return label;
     }
 
     public static InteractType typeOf(String iri) {
@@ -126,14 +131,6 @@ public enum InteractType implements RelType {
             }
         }
         return SYNONYMS.get(iri);
-    }
-
-    public String getIRI() {
-        return iri;
-    }
-
-    public String getLabel() {
-        return label;
     }
 
     public static Collection<InteractType> hasTypes(InteractType type) {
@@ -252,6 +249,19 @@ public enum InteractType implements RelType {
         inverseMap.putAll(swappedMap);
 
         return inverseMap.get(type);
+    }
+
+    public static RelationshipType toNeo4j(InteractType type) {
+        return type::name;
+    }
+
+    public static RelationshipType[] toNeo4j() {
+        InteractType[] values = InteractType.values();
+        RelationshipType[] types = new RelationshipType[values.length];
+        for (int i=0; i< values.length; i++) {
+            types[i] = values[i];
+        }
+        return types;
     }
 
 

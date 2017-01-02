@@ -4,7 +4,7 @@ import org.apache.commons.lang.StringUtils;
 import org.eol.globi.domain.Environment;
 import org.eol.globi.domain.LocationNode;
 import org.eol.globi.domain.RelTypes;
-import org.eol.globi.domain.Specimen;
+import org.eol.globi.domain.SpecimenNode;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.service.TermLookupService;
@@ -67,8 +67,8 @@ public class StudyImporterForBroseTest extends GraphDBTestCase {
         Iterable<Relationship> relationships = taxon.getUnderlyingNode().getRelationships(Direction.INCOMING, RelTypes.CLASSIFIED_AS);
         for (Relationship relationship : relationships) {
             Node predatorSpecimenNode = relationship.getStartNode();
-            assertThat((String) predatorSpecimenNode.getProperty(Specimen.LIFE_STAGE_LABEL), is("post-juvenile adult stage"));
-            assertThat((String) predatorSpecimenNode.getProperty(Specimen.LIFE_STAGE_ID), is("UBERON:0000113"));
+            assertThat((String) predatorSpecimenNode.getProperty(SpecimenNode.LIFE_STAGE_LABEL), is("post-juvenile adult stage"));
+            assertThat((String) predatorSpecimenNode.getProperty(SpecimenNode.LIFE_STAGE_ID), is("UBERON:0000113"));
 
         }
         assertThat(taxon, is(notNullValue()));

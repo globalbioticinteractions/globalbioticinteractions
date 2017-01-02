@@ -1,6 +1,7 @@
 package org.eol.globi.export;
 
 import org.eol.globi.domain.Study;
+import org.eol.globi.domain.StudyNode;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -18,12 +19,12 @@ public class ExporterOccurrenceAggregates extends ExporterOccurrencesBase {
     }
 
     public void exportDistinct(Study study, Writer writer) throws IOException {
-        ExporterAggregateUtil.exportDistinctInteractionsByStudy(writer, study.getUnderlyingNode().getGraphDatabase(), new OccurrenceRowWriter());
+        ExporterAggregateUtil.exportDistinctInteractionsByStudy(writer, ((StudyNode)study).getUnderlyingNode().getGraphDatabase(), new OccurrenceRowWriter());
     }
 
     class OccurrenceRowWriter implements ExporterAggregateUtil.RowWriter {
         @Override
-        public void writeRow(Writer writer, Study study, String sourceTaxonId, String relationshipType, List<String> targetTaxonIds) throws IOException {
+        public void writeRow(Writer writer, StudyNode study, String sourceTaxonId, String relationshipType, List<String> targetTaxonIds) throws IOException {
             HashMap<String, String> properties = new HashMap<String, String>();
             String sourceOccurrenceId = study.getNodeID() + "-" + sourceTaxonId + "-" + relationshipType;
             writeRow(writer, properties, "globi:occur:source:" + sourceOccurrenceId, sourceTaxonId);

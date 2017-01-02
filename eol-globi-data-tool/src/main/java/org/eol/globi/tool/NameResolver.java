@@ -65,10 +65,10 @@ public class NameResolver {
         Index<Node> studyIndex = graphService.index().forNodes("studies");
         IndexHits<Node> studies = studyIndex.query("title", "*");
         for (Node studyNode : studies) {
-            final Study study1 = new Study(studyNode);
+            final Study study1 = new StudyNode(studyNode);
             final Iterable<Relationship> specimens = study1.getSpecimens();
             for (Relationship collected : specimens) {
-                Specimen specimen = new Specimen(collected.getEndNode());
+                SpecimenNode specimen = new SpecimenNode(collected.getEndNode());
                 final Relationship classifiedAs = specimen.getUnderlyingNode().getSingleRelationship(RelTypes.CLASSIFIED_AS, Direction.OUTGOING);
                 if (classifiedAs == null) {
                     final Relationship describedAs = specimen.getUnderlyingNode().getSingleRelationship(RelTypes.ORIGINALLY_DESCRIBED_AS, Direction.OUTGOING);

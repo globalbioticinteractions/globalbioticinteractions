@@ -3,7 +3,7 @@ package org.eol.globi.data;
 import com.Ostermiller.util.CSVParser;
 import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.lang3.StringUtils;
-import org.eol.globi.domain.Study;
+import org.eol.globi.domain.StudyNode;
 import org.eol.globi.util.ResourceUtil;
 
 import java.io.IOException;
@@ -18,7 +18,7 @@ public class StudyImporterForWood extends StudyImporterNodesAndLinks {
     }
 
     @Override
-    public Study importStudy() throws StudyImporterException {
+    public StudyNode importStudy() throws StudyImporterException {
         try {
             importLinks(ResourceUtil.asInputStream(getLinkResource(), null), new InteractionListenerNeo4j(nodeFactory, getGeoNamesService(), getLogger()), getFilter());
         } catch (IOException e) {

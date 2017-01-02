@@ -2,7 +2,7 @@ package org.eol.globi.data;
 
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.JsonNode;
-import org.eol.globi.domain.Study;
+import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.Term;
 import org.eol.globi.geo.LatLng;
 import org.eol.globi.service.DatasetUtil;
@@ -18,7 +18,7 @@ public abstract class StudyImporterNodesAndLinks extends BaseStudyImporter {
         return StringUtils.isBlank(delimiter) ? '\t' : StringUtils.trim(delimiter).charAt(0);
     }
 
-    Study createStudy() throws NodeFactoryException {
+    StudyNode createStudy() throws NodeFactoryException {
         return nodeFactory.getOrCreateStudy2(getNamespace(), getSourceCitation(), getSourceDOI());
     }
 

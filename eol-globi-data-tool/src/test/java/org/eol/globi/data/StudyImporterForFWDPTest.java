@@ -6,6 +6,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eol.globi.domain.LocationNode;
 import org.eol.globi.domain.Specimen;
+import org.eol.globi.domain.SpecimenNode;
 import org.eol.globi.domain.Study;
 import org.eol.globi.geo.Ecoregion;
 import org.eol.globi.geo.EcoregionFinderException;
@@ -50,7 +51,7 @@ public class StudyImporterForFWDPTest extends GraphDBTestCase {
         Study study = importStudy(studyImporter);
         Iterable<Relationship> collected = study.getSpecimens();
         for (Relationship coll : collected) {
-            Specimen specimen = new Specimen(coll.getEndNode());
+            SpecimenNode specimen = new SpecimenNode(coll.getEndNode());
             LocationNode sampleLocation = specimen.getSampleLocation();
             assertNotNull(sampleLocation);
             assertThat(sampleLocation.getLatitude() > 0, is(true));
@@ -61,12 +62,12 @@ public class StudyImporterForFWDPTest extends GraphDBTestCase {
                 ecoregionId = ecoregion.getId();
             }
 
-            Long property = (Long) coll.getProperty(Specimen.DATE_IN_UNIX_EPOCH);
+            Long property = (Long) coll.getProperty(SpecimenNode.DATE_IN_UNIX_EPOCH);
             DateTime dateTime = new DateTime(property);
 
             Iterable<Relationship> stomachContents = specimen.getStomachContents();
             for (Relationship preyRel : stomachContents) {
-                Specimen preySpecimen = new Specimen(preyRel.getEndNode());
+                Specimen preySpecimen = new SpecimenNode(preyRel.getEndNode());
                 csvOut.writeln();
                 csvOut.write(specimen.getExternalId());
                 csvOut.write(specimen.getOriginalTaxonDescription());

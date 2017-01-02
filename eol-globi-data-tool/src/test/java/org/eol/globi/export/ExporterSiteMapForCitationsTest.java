@@ -1,7 +1,7 @@
 package org.eol.globi.export;
 
 import org.eol.globi.data.StudyImporterException;
-import org.eol.globi.domain.Study;
+import org.eol.globi.domain.StudyNode;
 import org.junit.Test;
 
 import java.io.File;
@@ -14,7 +14,7 @@ public class ExporterSiteMapForCitationsTest extends ExporterSiteMapForNamesTest
 
     @Test
     public void writeSiteMapWithCitations() throws StudyImporterException, IOException {
-        final Study study = nodeFactory.getOrCreateStudy("title", "source", "citation123&bla");
+        final StudyNode study = nodeFactory.getOrCreateStudy("title", "source", "citation123&bla");
         assertThat(study.getExternalId(), is("http://dx.doi.org/citation123&bla"));
 
         final File baseDirCitations = createBaseDir("target/sitemap/citations");

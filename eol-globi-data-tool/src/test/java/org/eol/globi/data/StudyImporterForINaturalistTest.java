@@ -4,8 +4,8 @@ import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.RelTypes;
-import org.eol.globi.domain.Specimen;
-import org.eol.globi.domain.Study;
+import org.eol.globi.domain.SpecimenNode;
+import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.domain.TaxonomyProvider;
@@ -98,7 +98,7 @@ public class StudyImporterForINaturalistTest extends GraphDBTestCase {
 
         assertThat(NodeUtil.findAllStudies(getGraphDb()).size(), is(22));
 
-        Study anotherStudy = nodeFactory.findStudy("INAT:831");
+        StudyNode anotherStudy = nodeFactory.findStudy("INAT:831");
         assertThat(anotherStudy, is(notNullValue()));
         assertThat(anotherStudy.getCitation(), containsString("Ken-ichi Ueda. 2008. Argiope eating Orthoptera. iNaturalist.org. Accessed at <https://www.inaturalist.org/observations/831> on "));
         assertThat(anotherStudy.getExternalId(), is("https://www.inaturalist.org/observations/831"));
@@ -116,9 +116,9 @@ public class StudyImporterForINaturalistTest extends GraphDBTestCase {
         for (Relationship relationship : relationships) {
             Node sourceSpecimen = relationship.getStartNode();
 
-            assertThat(new Specimen(sourceSpecimen).getBasisOfRecord().getName(), is("HumanObservation"));
-            assertThat(new Specimen(sourceSpecimen).getBasisOfRecord().getId(), is("TEST:HumanObservation"));
-            assertThat(new Specimen(sourceSpecimen).getExternalId(), containsString(TaxonomyProvider.ID_PREFIX_INATURALIST));
+            assertThat(new SpecimenNode(sourceSpecimen).getBasisOfRecord().getName(), is("HumanObservation"));
+            assertThat(new SpecimenNode(sourceSpecimen).getBasisOfRecord().getId(), is("TEST:HumanObservation"));
+            assertThat(new SpecimenNode(sourceSpecimen).getExternalId(), containsString(TaxonomyProvider.ID_PREFIX_INATURALIST));
             Relationship ateRel = sourceSpecimen.getSingleRelationship(InteractType.ATE, Direction.OUTGOING);
             Node preySpecimen = ateRel.getEndNode();
             assertThat(preySpecimen, is(not(nullValue())));
@@ -131,7 +131,7 @@ public class StudyImporterForINaturalistTest extends GraphDBTestCase {
             assertThat((Double) locationRel.getEndNode().getProperty("longitude"), is(-72.542556));
 
             Relationship collectedRel = sourceSpecimen.getSingleRelationship(RelTypes.COLLECTED, Direction.INCOMING);
-            assertThat((Long) collectedRel.getProperty(Specimen.DATE_IN_UNIX_EPOCH), is(any(Long.class)));
+            assertThat((Long) collectedRel.getProperty(SpecimenNode.DATE_IN_UNIX_EPOCH), is(any(Long.class)));
 
         }
     }
@@ -167,7 +167,7 @@ public class StudyImporterForINaturalistTest extends GraphDBTestCase {
         resolveNames();
         assertThat(NodeUtil.findAllStudies(getGraphDb()).size(), is(10));
 
-        Study anotherStudy = nodeFactory.findStudy("INAT:2366807");
+        StudyNode anotherStudy = nodeFactory.findStudy("INAT:2366807");
         assertThat(anotherStudy, is(notNullValue()));
         assertThat(anotherStudy.getExternalId(), is("https://www.inaturalist.org/observations/2366807"));
 

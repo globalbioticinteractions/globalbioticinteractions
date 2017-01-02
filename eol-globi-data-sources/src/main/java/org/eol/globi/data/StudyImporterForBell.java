@@ -5,9 +5,11 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eol.globi.domain.InteractType;
+import org.eol.globi.domain.Location;
 import org.eol.globi.domain.LocationNode;
 import org.eol.globi.domain.Specimen;
-import org.eol.globi.domain.Study;
+import org.eol.globi.domain.SpecimenNode;
+import org.eol.globi.domain.StudyNode;
 import org.eol.globi.util.ExternalIdUtil;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
@@ -38,7 +40,7 @@ public class StudyImporterForBell extends BaseStudyImporter {
     }
 
     @Override
-    public Study importStudy() throws StudyImporterException {
+    public StudyNode importStudy() throws StudyImporterException {
         for (String resource : RESOURCE) {
             LabeledCSVParser parser = null;
             try {
@@ -63,20 +65,20 @@ public class StudyImporterForBell extends BaseStudyImporter {
                         collectionId = "";
                     }
 
-                    Study study = nodeFactory.getOrCreateStudy("bell-" + collectionId, sourceCitation, "http://dx.doi.org/10.1654/4756.1", ExternalIdUtil.toCitation(null, sourceCitation + " " + description, null));
+                    StudyNode study = nodeFactory.getOrCreateStudy("bell-" + collectionId, sourceCitation, "http://dx.doi.org/10.1654/4756.1", ExternalIdUtil.toCitation(null, sourceCitation + " " + description, null));
 
                     String genus = parser.getValueByLabel("Genus");
                     String species = parser.getValueByLabel("Species");
 
                     String parasiteName = StringUtils.join(new String[]{StringUtils.trim(genus), StringUtils.trim(species)}, " ");
-                    Specimen parasite = nodeFactory.createSpecimen(study, parasiteName);
+                    SpecimenNode parasite = nodeFactory.createSpecimen(study, parasiteName);
                     parasite.setExternalId(externalId);
-                    LocationNode location = getLocation(parser, parasite);
+                    Location location = getLocation(parser, parasite);
                     parasite.caughtIn(location);
 
                     String scientificName = parser.getValueByLabel("SCIENTIFIC_NAME");
                     String hostName = StringUtils.trim(scientificName);
-                    Specimen host = nodeFactory.createSpecimen(study, hostName);
+                    SpecimenNode host = nodeFactory.createSpecimen(study, hostName);
                     host.caughtIn(location);
                     host.setExternalId(externalId);
                     parasite.interactsWith(host, InteractType.PARASITE_OF);
@@ -130,10 +132,10 @@ public class StudyImporterForBell extends BaseStudyImporter {
     }
 
 
-    protected LocationNode getLocation(LabeledCSVParser parser, Specimen parasite) throws NodeFactoryException {
+    protected Location getLocation(LabeledCSVParser parser, Specimen parasite) throws NodeFactoryException {
         String latitude = parser.getValueByLabel("DEC_LAT");
         String longitude = parser.getValueByLabel("DEC_LONG");
-        LocationNode location = null;
+        Location location = null;
         if (StringUtils.isNotBlank(latitude) && StringUtils.isNotBlank(longitude)) {
             location = nodeFactory.getOrCreateLocation(Double.parseDouble(latitude), Double.parseDouble(longitude), null);
         }

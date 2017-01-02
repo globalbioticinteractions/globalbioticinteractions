@@ -1,6 +1,6 @@
 package org.eol.globi.data;
 
-import org.eol.globi.domain.Study;
+import org.eol.globi.domain.StudyNode;
 
 public class StudyImporterFelder extends BaseStudyImporter {
 
@@ -9,7 +9,7 @@ public class StudyImporterFelder extends BaseStudyImporter {
     }
 
     @Override
-    public Study importStudy() throws StudyImporterException {
+    public StudyNode importStudy() throws StudyImporterException {
         return null;
     }
 }

@@ -2,9 +2,11 @@ package org.eol.globi.data;
 
 import com.hp.hpl.jena.rdf.model.impl.RDFDefaultErrorHandler;
 import org.eol.globi.domain.Environment;
+import org.eol.globi.domain.EnvironmentNode;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Specimen;
-import org.eol.globi.domain.Study;
+import org.eol.globi.domain.SpecimenNode;
+import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.domain.Term;
 import org.eol.globi.service.GeoNamesService;
@@ -38,8 +40,8 @@ public class StudyImporterForSPIRETest extends GraphDBTestCase {
     public void parseIllegalTitle() throws StudyImporterException {
         HashMap<String, String> properties = new HashMap<String, String>();
         StudyImporterForSPIRE.parseTitlesAndAuthors("this is really not supported, and is unformatted", properties);
-        assertThat(properties.get(Study.TITLE), is("this is really not su...e9154c16f07ad2470849d90a8a0b9dab"));
-        assertThat(properties.get(Study.DESCRIPTION), is("this is really not supported, and is unformatted"));
+        assertThat(properties.get(StudyNode.TITLE), is("this is really not su...e9154c16f07ad2470849d90a8a0b9dab"));
+        assertThat(properties.get(StudyNode.DESCRIPTION), is("this is really not supported, and is unformatted"));
 
     }
 
@@ -48,16 +50,16 @@ public class StudyImporterForSPIRETest extends GraphDBTestCase {
         Map<String, String> properties = new HashMap<String, String>();
         String titlesAndAuthors = "G. A. Knox, Antarctic marine ecosystems. In: Antarctic Ecology, M. W. Holdgate, Ed. (Academic Press, New York, 1970) 1:69-96, from p. 87.";
         StudyImporterForSPIRE.parseTitlesAndAuthors(titlesAndAuthors, properties);
-        assertThat(properties.get(Study.DESCRIPTION), is("G. A. Knox, Antarctic marine ecosystems. In: Antarctic Ecology, M. W. Holdgate, Ed. (Academic Press, New York, 1970) 1:69-96, from p. 87."));
-        assertThat(properties.get(Study.TITLE), is("Knox, Antarctic marin...984ae066666743823ac7b57da0e01f2d"));
+        assertThat(properties.get(StudyNode.DESCRIPTION), is("G. A. Knox, Antarctic marine ecosystems. In: Antarctic Ecology, M. W. Holdgate, Ed. (Academic Press, New York, 1970) 1:69-96, from p. 87."));
+        assertThat(properties.get(StudyNode.TITLE), is("Knox, Antarctic marin...984ae066666743823ac7b57da0e01f2d"));
     }
 
     @Test
     public void parseAnotherYetOtherTitlesAndAuthorsFormat() throws StudyImporterException {
         Map<String, String> properties = new HashMap<String, String>();
         StudyImporterForSPIRE.parseTitlesAndAuthors("B. A. Hawkins and R. D. Goeden, 1984.  Organization of a parasitoid community associated with a complex of galls on Atriplex spp. in southern California.  Ecol. Entomol. 9:271-292, from p. 274.", properties);
-        assertThat(properties.get(Study.TITLE), is("Hawkins and Goeden, 1...fcebc21f82937fa4ab9f77a0ecbd62e3"));
-        assertThat(properties.get(Study.DESCRIPTION), is("B. A. Hawkins and R. D. Goeden, 1984.  Organization of a parasitoid community associated with a complex of galls on Atriplex spp. in southern California.  Ecol. Entomol. 9:271-292, from p. 274."));
+        assertThat(properties.get(StudyNode.TITLE), is("Hawkins and Goeden, 1...fcebc21f82937fa4ab9f77a0ecbd62e3"));
+        assertThat(properties.get(StudyNode.DESCRIPTION), is("B. A. Hawkins and R. D. Goeden, 1984.  Organization of a parasitoid community associated with a complex of galls on Atriplex spp. in southern California.  Ecol. Entomol. 9:271-292, from p. 274."));
     }
 
     @Test
@@ -67,16 +69,16 @@ public class StudyImporterForSPIRETest extends GraphDBTestCase {
         StudyImporterForSPIRE.parseTitlesAndAuthors("G. W. Minshall, Role of allochthonous detritus in the trophic structure\n" +
                 " of a woodland springbrook community, Ecology 48(1):139-149, from p. 148 (1967).\n" +
                 "", properties);
-        assertThat(properties.get(Study.DESCRIPTION), is("G. W. Minshall, 1967.  Role of allochthonous detritus in the trophic structure of a woodland springbrook community.  Ecology 48:139-149, from pp. 145, 148."));
-        assertThat(properties.get(Study.TITLE), is("Minshall, 196 Role of...e40765a49c84da8d9e0c2a527f1fd111"));
+        assertThat(properties.get(StudyNode.DESCRIPTION), is("G. W. Minshall, 1967.  Role of allochthonous detritus in the trophic structure of a woodland springbrook community.  Ecology 48:139-149, from pp. 145, 148."));
+        assertThat(properties.get(StudyNode.TITLE), is("Minshall, 196 Role of...e40765a49c84da8d9e0c2a527f1fd111"));
     }
 
     @Test
     public void parseYetOtherTitlesAndAuthorsFormat() throws StudyImporterException {
         Map<String, String> properties = new HashMap<String, String>();
         StudyImporterForSPIRE.parseTitlesAndAuthors("Townsend, CR, Thompson, RM, McIntosh, AR, Kilroy, C, Edwards, ED, Scarsbrook, MR. 1998.  Disturbance, resource supply and food-web architecture in streams.  Ecology Letters 1:200-209.", properties);
-        assertThat(properties.get(Study.TITLE), is("Townsend, CR, Thompso...db61dcc043a135ac2fa8b440e11165e3"));
-        assertThat(properties.get(Study.DESCRIPTION), is("Townsend, CR, Thompson, RM, McIntosh, AR, Kilroy, C, Edwards, ED, Scarsbrook, MR. 1998.  Disturbance, resource supply and food-web architecture in streams.  Ecology Letters 1:200-209."));
+        assertThat(properties.get(StudyNode.TITLE), is("Townsend, CR, Thompso...db61dcc043a135ac2fa8b440e11165e3"));
+        assertThat(properties.get(StudyNode.DESCRIPTION), is("Townsend, CR, Thompson, RM, McIntosh, AR, Kilroy, C, Edwards, ED, Scarsbrook, MR. 1998.  Disturbance, resource supply and food-web architecture in streams.  Ecology Letters 1:200-209."));
     }
 
     @Test
@@ -88,7 +90,7 @@ public class StudyImporterForSPIRETest extends GraphDBTestCase {
     private void assertSingleImport(String spireHabitat, String envoId, String envoLabel) throws NodeFactoryException {
         StudyImporterForSPIRE studyImporterForSPIRE = createImporter();
         HashMap<String, String> properties = new HashMap<String, String>();
-        properties.put(Study.TITLE, "the study of men eating dogs");
+        properties.put(StudyNode.TITLE, "the study of men eating dogs");
         properties.put(StudyImporterForSPIRE.PREY_NAME, "dog");
         properties.put(StudyImporterForSPIRE.PREDATOR_NAME, "man");
         properties.put(StudyImporterForSPIRE.LOCALITY_ORIGINAL, "something");
@@ -105,7 +107,7 @@ public class StudyImporterForSPIRETest extends GraphDBTestCase {
         int count = 0;
         for (Relationship specimenRel : specimenRels) {
             count++;
-            Specimen specimen = new Specimen(specimenRel.getStartNode());
+            Specimen specimen = new SpecimenNode(specimenRel.getStartNode());
             assertThat(specimen.getSampleLocation().getLatitude(), is(1.0));
             assertThat(specimen.getSampleLocation().getLongitude(), is(2.0));
 
@@ -364,21 +366,21 @@ public class StudyImporterForSPIRETest extends GraphDBTestCase {
                 localities.add(properties.get(StudyImporterForSPIRE.LOCALITY_ORIGINAL));
             }
 
-            if (properties.containsKey(Study.DESCRIPTION)) {
-                descriptions.add(properties.get(Study.DESCRIPTION));
+            if (properties.containsKey(StudyNode.DESCRIPTION)) {
+                descriptions.add(properties.get(StudyNode.DESCRIPTION));
             }
-            if (properties.containsKey(Study.TITLE)) {
-                titles.add(properties.get(Study.TITLE));
+            if (properties.containsKey(StudyNode.TITLE)) {
+                titles.add(properties.get(StudyNode.TITLE));
             }
 
-            if (properties.containsKey(Study.TITLE)) {
-                titles.add(properties.get(Study.TITLE));
+            if (properties.containsKey(StudyNode.TITLE)) {
+                titles.add(properties.get(StudyNode.TITLE));
             }
             if (properties.containsKey(StudyImporterForSPIRE.OF_HABITAT)) {
                 environments.add(properties.get(StudyImporterForSPIRE.OF_HABITAT));
             }
-            if (properties.containsKey(Study.PUBLICATION_YEAR)) {
-                publicationYears.add(properties.get(Study.PUBLICATION_YEAR));
+            if (properties.containsKey(StudyNode.PUBLICATION_YEAR)) {
+                publicationYears.add(properties.get(StudyNode.PUBLICATION_YEAR));
             }
 
 

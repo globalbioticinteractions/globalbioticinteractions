@@ -2,6 +2,7 @@ package org.eol.globi.export;
 
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Study;
+import org.eol.globi.domain.StudyNode;
 import org.neo4j.cypher.javacompat.ExecutionEngine;
 import org.neo4j.cypher.javacompat.ExecutionResult;
 import org.neo4j.graphdb.GraphDatabaseService;
@@ -17,7 +18,7 @@ public class ExporterTaxaDistinct extends ExporterTaxa {
     public void doExportStudy(Study study, Writer writer, boolean includeHeader) throws IOException {
         if (includeHeader) {
             // only write the taxa once, because they are unique across studies...
-            exportAllDistinctTaxa(writer, study.getUnderlyingNode().getGraphDatabase());
+            exportAllDistinctTaxa(writer, ((StudyNode)study).getUnderlyingNode().getGraphDatabase());
         }
     }
 

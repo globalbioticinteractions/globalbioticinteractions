@@ -3,9 +3,11 @@ package org.eol.globi.data;
 import com.Ostermiller.util.CSVParser;
 import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.lang3.StringUtils;
-import org.eol.globi.domain.LocationNode;
+import org.eol.globi.domain.Location;
 import org.eol.globi.domain.Specimen;
+import org.eol.globi.domain.SpecimenNode;
 import org.eol.globi.domain.Study;
+import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.Term;
 import org.eol.globi.service.TermLookupService;
 import org.eol.globi.service.TermLookupServiceException;
@@ -25,12 +27,12 @@ public class StudyImporterForAkin extends BaseStudyImporter {
     }
 
     @Override
-    public Study importStudy() throws StudyImporterException {
+    public StudyNode importStudy() throws StudyImporterException {
         importStudy("akin/Senol akin (mad island) data edited-sheet3-winter2.csv");
         return importStudy("akin/Senol akin (mad island) data edited-sheet4-summer2.csv");
     }
 
-    private Study importAkinStudyFile(String[][] siteInfos, String studyResource, Study study) throws IOException, StudyImporterException, NodeFactoryException {
+    private Study importAkinStudyFile(String[][] siteInfos, String studyResource, StudyNode study) throws IOException, StudyImporterException, NodeFactoryException {
         LabeledCSVParser parser = parserFactory.createParser(studyResource, CharsetConstant.UTF8);
         String[] header = parser.getLabels();
         String[] line;
@@ -53,11 +55,11 @@ public class StudyImporterForAkin extends BaseStudyImporter {
     }
 
 
-    private void parseLine(String[][] siteInfos, String studyResource, Study study, LabeledCSVParser parser, String[] header, String[] line) throws NodeFactoryException, IOException {
+    private void parseLine(String[][] siteInfos, String studyResource, StudyNode study, LabeledCSVParser parser, String[] header, String[] line) throws NodeFactoryException, IOException {
         try {
             Specimen specimen = addSpecimen(study, parser, header, line);
             if (specimen != null) {
-                LocationNode location = parseLocation(findSiteInfo(header, line, siteInfos, parser));
+                Location location = parseLocation(findSiteInfo(header, line, siteInfos, parser));
                 specimen.caughtIn(location);
                 addPrey(study, parser, header, line, specimen, location);
             }
@@ -84,7 +86,7 @@ public class StudyImporterForAkin extends BaseStudyImporter {
         return siteInfo;
     }
 
-    private LocationNode parseLocation(String[] siteInfo) throws StudyImporterException, IOException, NodeFactoryException {
+    private Location parseLocation(String[] siteInfo) throws StudyImporterException, IOException, NodeFactoryException {
         Double longitude;
         Double latitude;
         // TODO note that this study was taken in shallow water ~ 0.7m, probably better to include a depth range?
@@ -106,7 +108,7 @@ public class StudyImporterForAkin extends BaseStudyImporter {
         return nodeFactory.getOrCreateLocation(latitude, longitude, altitude);
     }
 
-    private void addPrey(Study study, LabeledCSVParser parser, String[] header, String[] line, Specimen specimen, LocationNode location) throws StudyImporterException, NodeFactoryException {
+    private void addPrey(StudyNode study, LabeledCSVParser parser, String[] header, String[] line, Specimen specimen, Location location) throws StudyImporterException {
         int firstPreyIndex = findIndexForColumnWithNameThrowOnMissing("Detritus", header);
         for (int i = firstPreyIndex; i < line.length; i++) {
             String preySpeciesName = header[i];
@@ -116,7 +118,7 @@ public class StudyImporterForAkin extends BaseStudyImporter {
                     if (StringUtils.isNotBlank(preyVolumeString)) {
                         double volume = Double.parseDouble(preyVolumeString);
                         if (volume > 0) {
-                            Specimen prey = nodeFactory.createSpecimen(study, preySpeciesName);
+                            SpecimenNode prey = nodeFactory.createSpecimen(study, preySpeciesName);
                             prey.setLifeStage(parseLifeStage(nodeFactory.getTermLookupService(), preySpeciesName));
                             prey.setVolumeInMilliLiter(volume);
                             prey.caughtIn(location);
@@ -144,8 +146,8 @@ public class StudyImporterForAkin extends BaseStudyImporter {
         return terms;
     }
 
-    private Specimen addSpecimen(Study study, LabeledCSVParser parser, String[] header, String[] line) throws StudyImporterException, NodeFactoryException {
-        Specimen specimen = null;
+    private Specimen addSpecimen(StudyNode study, LabeledCSVParser parser, String[] header, String[] line) throws StudyImporterException, NodeFactoryException {
+        SpecimenNode specimen = null;
         int speciesIndex = findIndexForColumnWithNameThrowOnMissing("Fish Species", header);
         String speciesName = line[speciesIndex];
         if (StringUtils.isNotBlank(speciesName)) {
@@ -159,7 +161,7 @@ public class StudyImporterForAkin extends BaseStudyImporter {
         return specimen;
     }
 
-    private void addCollectionDate(Study study, LabeledCSVParser parser, String[] header, String[] line, Specimen specimen, Study study1) throws StudyImporterException {
+    private void addCollectionDate(Study study, LabeledCSVParser parser, String[] header, String[] line, SpecimenNode specimen, Study study1) throws StudyImporterException {
         int dateIndex = findIndexForColumnWithNameThrowOnMissing("Date", header);
         String dateString = line[dateIndex];
         if (!StringUtils.isBlank(dateString)) {
@@ -222,8 +224,8 @@ public class StudyImporterForAkin extends BaseStudyImporter {
         return index;
     }
 
-    private Study importStudy(String studyResource) throws StudyImporterException {
-        Study study;
+    private StudyNode importStudy(String studyResource) throws StudyImporterException {
+        StudyNode study;
         try {
             study = nodeFactory.getOrCreateStudy("Akin et al 2006",
                     StudyImporterForGoMexSI2.GOMEXI_SOURCE_DESCRIPTION, null, ExternalIdUtil.toCitation("Senol Akin", "S. Akin, K. O. Winemiller, Seasonal variation in food web composition and structure in a temperate tidal estuary, Estuaries and Coasts" +

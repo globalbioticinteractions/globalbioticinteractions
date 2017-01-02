@@ -5,7 +5,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.RelTypes;
-import org.eol.globi.domain.Specimen;
+import org.eol.globi.domain.SpecimenNode;
 import org.mapdb.DB;
 import org.mapdb.DBMaker;
 import org.mapdb.Fun;
@@ -79,7 +79,7 @@ public class TaxonInteractionIndexer {
 
     public void createInteraction(Node sourceTaxon, Node targetTaxon, InteractType relType, boolean inverted, Long interactionCount) {
         final Relationship interactRel = sourceTaxon.createRelationshipTo(targetTaxon, relType);
-        Specimen.enrichWithInteractProps(relType, interactRel, inverted);
+        SpecimenNode.enrichWithInteractProps(relType, interactRel, inverted);
         interactRel.setProperty("count", interactionCount);
     }
 

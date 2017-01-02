@@ -2,9 +2,9 @@ package org.eol.globi.data;
 
 import com.Ostermiller.util.LabeledCSVParser;
 import org.eol.globi.domain.InteractType;
-import org.eol.globi.domain.LocationNode;
-import org.eol.globi.domain.Specimen;
-import org.eol.globi.domain.Study;
+import org.eol.globi.domain.Location;
+import org.eol.globi.domain.SpecimenNode;
+import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TaxonomyProvider;
@@ -23,13 +23,13 @@ public class StudyImporterForDunne extends StudyImporterNodesAndLinks {
     }
 
     @Override
-    Study createStudy() throws NodeFactoryException {
+    StudyNode createStudy() throws NodeFactoryException {
         return nodeFactory.getOrCreateStudy2(getNamespace(), ReferenceUtil.sourceCitationLastAccessed(getDataset()), getSourceDOI());
     }
 
     @Override
-    public Study importStudy() throws StudyImporterException {
-        Study study = createStudy();
+    public StudyNode importStudy() throws StudyImporterException {
+        StudyNode study = createStudy();
         try {
             LabeledCSVParser nodes = parserFactory.createParser(getNodeResource(), CharsetConstant.UTF8);
             nodes.changeDelimiter(getDelimiter());
@@ -49,15 +49,15 @@ public class StudyImporterForDunne extends StudyImporterNodesAndLinks {
             links.changeDelimiter(getDelimiter());
 
             while (links.getLine() != null) {
-                List<LocationNode> locations = new ArrayList<LocationNode>();
+                List<Location> locations = new ArrayList<>();
                 if (getLocation() != null) {
-                    LocationNode loc = nodeFactory.getOrCreateLocation(getLocation().getLat(), getLocation().getLng(), null);
+                    Location loc = nodeFactory.getOrCreateLocation(getLocation().getLat(), getLocation().getLng(), null);
                     if (loc != null) {
                         locations.add(loc);
                     }
                 }
 
-                for (LocationNode location : locations) {
+                for (Location location : locations) {
                     addLink(study, taxonForNode, links, location);
                 }
             }
@@ -77,13 +77,13 @@ public class StudyImporterForDunne extends StudyImporterNodesAndLinks {
         return nodeID == null ? null : Integer.parseInt(nodeID);
     }
 
-    private void addLink(Study study, Map<Integer, Taxon> taxonForNode, LabeledCSVParser links, LocationNode location) throws StudyImporterException {
+    private void addLink(StudyNode study, Map<Integer, Taxon> taxonForNode, LabeledCSVParser links, Location location) throws StudyImporterException {
         Integer consumerNodeID = Integer.parseInt(links.getValueByLabel("Consumer"));
         Integer resourceNodeID = Integer.parseInt(links.getValueByLabel("Resource"));
-        Specimen consumer = nodeFactory.createSpecimen(study, taxonForNode.get(consumerNodeID));
+        SpecimenNode consumer = nodeFactory.createSpecimen(study, taxonForNode.get(consumerNodeID));
         consumer.setExternalId(getNamespace() + ":NodeID:" + consumerNodeID);
         consumer.caughtIn(location);
-        Specimen resource = nodeFactory.createSpecimen(study, taxonForNode.get(resourceNodeID));
+        SpecimenNode resource = nodeFactory.createSpecimen(study, taxonForNode.get(resourceNodeID));
         resource.setExternalId(getNamespace() + ":NodeID:" + resourceNodeID);
         resource.caughtIn(location);
         consumer.interactsWith(resource, InteractType.ATE);

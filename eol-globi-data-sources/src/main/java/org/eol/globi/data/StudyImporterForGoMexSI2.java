@@ -9,7 +9,9 @@ import org.eol.globi.domain.LocationImpl;
 import org.eol.globi.domain.LocationNode;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Specimen;
+import org.eol.globi.domain.SpecimenNode;
 import org.eol.globi.domain.Study;
+import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.TaxonomyProvider;
 import org.eol.globi.domain.Term;
 import org.eol.globi.service.TermLookupService;
@@ -77,8 +79,8 @@ public class StudyImporterForGoMexSI2 extends BaseStudyImporter {
     }
 
     @Override
-    public Study importStudy() throws StudyImporterException {
-        Study study = nodeFactory.getOrCreateStudy("GoMexSI",
+    public StudyNode importStudy() throws StudyImporterException {
+        StudyNode study = nodeFactory.getOrCreateStudy("GoMexSI",
                 GOMEXI_SOURCE_DESCRIPTION, null, ExternalIdUtil.toCitation("James D. Simons", "<a href=\"http://www.ingentaconnect.com/content/umrsmas/bullmar/2013/00000089/00000001/art00009\">Building a Fisheries Trophic Interaction Database for Management and Modeling Research in the Gulf of Mexico Large Marine Ecosystem.</a>", null));
         final Map<String, Map<String, String>> predatorIdToPredatorNames = new HashMap<String, Map<String, String>>();
         final Map<String, List<Map<String, String>>> predatorIdToPreyNames = new HashMap<String, List<Map<String, String>>>();
@@ -144,7 +146,7 @@ public class StudyImporterForGoMexSI2 extends BaseStudyImporter {
     }
 
     private void addNewStudy(Map<String, Study> referenceIdToStudy, String referenceResource, LabeledCSVParser parser, String refId, String contributors) throws StudyImporterException {
-        Study study;
+        StudyNode study;
         String refTag = getMandatoryValue(referenceResource, parser, "REF_TAG");
         String externalId = getMandatoryValue(referenceResource, parser, "GAME_ID");
         String description = getMandatoryValue(referenceResource, parser, "TITLE_REF");
@@ -179,7 +181,7 @@ public class StudyImporterForGoMexSI2 extends BaseStudyImporter {
 
                     Location location = parseLocation(locationResource, parser);
 
-                    LocationNode locationNode = nodeFactory.getOrCreateLocation(location);
+                    Location locationNode = nodeFactory.getOrCreateLocation(location);
 
                     enrichLocation(metaStudy, locationResource, cmecsService, parser, locationNode);
 
@@ -188,7 +190,7 @@ public class StudyImporterForGoMexSI2 extends BaseStudyImporter {
                     if (predatorProperties == null) {
                         getLogger().warn(study, "failed to lookup predator [" + refId + ":" + specimenId + "] for location at [" + locationResource + ":" + (parser.getLastLineNumber() + 1) + "]");
                     } else {
-                        addObservation(predatorUIToPreyLists, metaStudy, parser, study, locationNode, predatorId, predatorProperties);
+                        addObservation(predatorUIToPreyLists, parser, study, locationNode, predatorId, predatorProperties);
                     }
                 }
             }
@@ -198,7 +200,7 @@ public class StudyImporterForGoMexSI2 extends BaseStudyImporter {
 
     }
 
-    private void enrichLocation(Study metaStudy, String locationResource, TermLookupService cmecsService, LabeledCSVParser parser, LocationNode location) throws StudyImporterException {
+    private void enrichLocation(Study metaStudy, String locationResource, TermLookupService cmecsService, LabeledCSVParser parser, Location location) throws StudyImporterException {
         String habitatSystem = getMandatoryValue(locationResource, parser, "HAB_SYSTEM");
         String habitatSubsystem = getMandatoryValue(locationResource, parser, "HAB_SUBSYSTEM");
         String habitatTidalZone = getMandatoryValue(locationResource, parser, "TIDAL_ZONE");
@@ -230,7 +232,7 @@ public class StudyImporterForGoMexSI2 extends BaseStudyImporter {
         return footprintWKT;
     }
 
-    private LocationNode enrichLocation(Study metaStudy, String locationResource, TermLookupService cmecsService, LabeledCSVParser parser, LocationNode location, String habitatSystem, String habitatSubsystem, String habitatTidalZone) {
+    private Location enrichLocation(Study metaStudy, String locationResource, TermLookupService cmecsService, LabeledCSVParser parser, Location location, String habitatSystem, String habitatSubsystem, String habitatTidalZone) {
         if (location != null) {
             List<Term> terms;
             String cmecsLabel = habitatSystem + " " + habitatSubsystem + " " + habitatTidalZone;
@@ -249,9 +251,9 @@ public class StudyImporterForGoMexSI2 extends BaseStudyImporter {
         return location;
     }
 
-    private void addObservation(Map<String, List<Map<String, String>>> predatorUIToPreyLists, Study metaStudy, LabeledCSVParser parser, Study study, LocationNode location, String predatorId, Map<String, String> predatorProperties) throws StudyImporterException {
+    private void addObservation(Map<String, List<Map<String, String>>> predatorUIToPreyLists, LabeledCSVParser parser, Study study, Location location, String predatorId, Map<String, String> predatorProperties) throws StudyImporterException {
         try {
-            Specimen predatorSpecimen = createSpecimen(study, predatorProperties);
+            SpecimenNode predatorSpecimen = createSpecimen(study, predatorProperties);
             setBasisOfRecordAsLiterature(predatorSpecimen);
             predatorSpecimen.setExternalId(predatorId);
             if (location == null) {
@@ -265,7 +267,7 @@ public class StudyImporterForGoMexSI2 extends BaseStudyImporter {
                 for (Map<String, String> preyProperties : preyList) {
                     if (preyProperties != null) {
                         try {
-                            Specimen prey = createSpecimen(study, preyProperties);
+                            SpecimenNode prey = createSpecimen(study, preyProperties);
                             setBasisOfRecordAsLiterature(prey);
                             prey.caughtIn(location);
                             predatorSpecimen.ate(prey);
@@ -316,15 +318,15 @@ public class StudyImporterForGoMexSI2 extends BaseStudyImporter {
         }
     }
 
-    private Specimen createSpecimen(Study study, Map<String, String> properties) throws StudyImporterException {
-        Specimen specimen = nodeFactory.createSpecimen(study, properties.get(PropertyAndValueDictionary.NAME));
-        specimen.setLengthInMm(doubleValueOrNull(properties, Specimen.LENGTH_IN_MM));
-        specimen.setFrequencyOfOccurrence(doubleValueOrNull(properties, Specimen.FREQUENCY_OF_OCCURRENCE));
-        setSpecimenProperty(specimen, Specimen.FREQUENCY_OF_OCCURRENCE_PERCENT, properties);
-        specimen.setTotalCount(integerValueOrNull(properties, Specimen.TOTAL_COUNT));
-        setSpecimenProperty(specimen, Specimen.TOTAL_COUNT_PERCENT, properties);
-        specimen.setTotalVolumeInMl(doubleValueOrNull(properties, Specimen.TOTAL_VOLUME_IN_ML));
-        setSpecimenProperty(specimen, Specimen.TOTAL_VOLUME_PERCENT, properties);
+    private SpecimenNode createSpecimen(Study study, Map<String, String> properties) throws StudyImporterException {
+        SpecimenNode specimen = nodeFactory.createSpecimen(study, properties.get(PropertyAndValueDictionary.NAME));
+        specimen.setLengthInMm(doubleValueOrNull(properties, SpecimenNode.LENGTH_IN_MM));
+        specimen.setFrequencyOfOccurrence(doubleValueOrNull(properties, SpecimenNode.FREQUENCY_OF_OCCURRENCE));
+        setSpecimenProperty(specimen, SpecimenNode.FREQUENCY_OF_OCCURRENCE_PERCENT, properties);
+        specimen.setTotalCount(integerValueOrNull(properties, SpecimenNode.TOTAL_COUNT));
+        setSpecimenProperty(specimen, SpecimenNode.TOTAL_COUNT_PERCENT, properties);
+        specimen.setTotalVolumeInMl(doubleValueOrNull(properties, SpecimenNode.TOTAL_VOLUME_IN_ML));
+        setSpecimenProperty(specimen, SpecimenNode.TOTAL_VOLUME_PERCENT, properties);
         addLifeStage(properties, specimen);
         addPhysiologicalState(properties, specimen);
         addBodyPart(properties, specimen);
@@ -346,13 +348,13 @@ public class StudyImporterForGoMexSI2 extends BaseStudyImporter {
         return specimen;
     }
 
-    private void setSpecimenProperty(Specimen specimen, String name, Map<String, String> properties) throws StudyImporterException {
+    private void setSpecimenProperty(SpecimenNode specimen, String name, Map<String, String> properties) throws StudyImporterException {
         specimen.setPropertyWithTx(name, doubleValueOrNull(properties, name));
     }
 
     private void addLifeStage(Map<String, String> properties, Specimen specimen) throws StudyImporterException {
         try {
-            String lifeStageName = properties.get(Specimen.LIFE_STAGE_LABEL);
+            String lifeStageName = properties.get(SpecimenNode.LIFE_STAGE_LABEL);
             Term term = nodeFactory.getOrCreateLifeStage(GOMEXSI_NAMESPACE + lifeStageName, lifeStageName);
             specimen.setLifeStage(term);
         } catch (NodeFactoryException e) {
@@ -362,7 +364,7 @@ public class StudyImporterForGoMexSI2 extends BaseStudyImporter {
 
     private void addPhysiologicalState(Map<String, String> properties, Specimen specimen) throws StudyImporterException {
         try {
-            String name = properties.get(Specimen.PHYSIOLOGICAL_STATE_LABEL);
+            String name = properties.get(SpecimenNode.PHYSIOLOGICAL_STATE_LABEL);
             Term term = nodeFactory.getOrCreatePhysiologicalState(GOMEXSI_NAMESPACE + name, name);
             specimen.setPhysiologicalState(term);
         } catch (NodeFactoryException e) {
@@ -372,7 +374,7 @@ public class StudyImporterForGoMexSI2 extends BaseStudyImporter {
 
     private void addBodyPart(Map<String, String> properties, Specimen specimen) throws StudyImporterException {
         try {
-            String name = properties.get(Specimen.BODY_PART_LABEL);
+            String name = properties.get(SpecimenNode.BODY_PART_LABEL);
             Term term = nodeFactory.getOrCreateBodyPart(GOMEXSI_NAMESPACE + name, name);
             specimen.setBodyPart(term);
         } catch (NodeFactoryException e) {
@@ -404,16 +406,16 @@ public class StudyImporterForGoMexSI2 extends BaseStudyImporter {
             addOptionalProperty(parser, "TOT_WO_FD", STOMACH_COUNT_WITHOUT_FOOD, properties);
             addOptionalProperty(parser, "TOT_W_FD", STOMACH_COUNT_WITH_FOOD, properties);
             addOptionalProperty(parser, "TOT_PRED_STOM_EXAM", STOMACH_COUNT_TOTAL, properties);
-            addOptionalProperty(parser, columnNamePrefix + "MN_LEN", Specimen.LENGTH_IN_MM, properties);
-            addOptionalProperty(parser, columnNamePrefix + "LIFE_HIST_STAGE", Specimen.LIFE_STAGE_LABEL, properties);
-            addOptionalProperty(parser, "PHYSIOLOG_STATE", Specimen.PHYSIOLOGICAL_STATE_LABEL, properties);
-            addOptionalProperty(parser, columnNamePrefix + "PARTS", Specimen.BODY_PART_LABEL, properties);
-            addOptionalProperty(parser, "N_CONS", Specimen.TOTAL_COUNT, properties);
-            addOptionalProperty(parser, "PCT_N_CONS", Specimen.TOTAL_COUNT_PERCENT, properties);
-            addOptionalProperty(parser, "VOL_CONS", Specimen.TOTAL_VOLUME_IN_ML, properties);
-            addOptionalProperty(parser, "PCT_VOL_CONS", Specimen.TOTAL_VOLUME_PERCENT, properties);
-            addOptionalProperty(parser, "FREQ_OCC", Specimen.FREQUENCY_OF_OCCURRENCE, properties);
-            addOptionalProperty(parser, "PCT_FREQ_OCC", Specimen.FREQUENCY_OF_OCCURRENCE_PERCENT, properties);
+            addOptionalProperty(parser, columnNamePrefix + "MN_LEN", SpecimenNode.LENGTH_IN_MM, properties);
+            addOptionalProperty(parser, columnNamePrefix + "LIFE_HIST_STAGE", SpecimenNode.LIFE_STAGE_LABEL, properties);
+            addOptionalProperty(parser, "PHYSIOLOG_STATE", SpecimenNode.PHYSIOLOGICAL_STATE_LABEL, properties);
+            addOptionalProperty(parser, columnNamePrefix + "PARTS", SpecimenNode.BODY_PART_LABEL, properties);
+            addOptionalProperty(parser, "N_CONS", SpecimenNode.TOTAL_COUNT, properties);
+            addOptionalProperty(parser, "PCT_N_CONS", SpecimenNode.TOTAL_COUNT_PERCENT, properties);
+            addOptionalProperty(parser, "VOL_CONS", SpecimenNode.TOTAL_VOLUME_IN_ML, properties);
+            addOptionalProperty(parser, "PCT_VOL_CONS", SpecimenNode.TOTAL_VOLUME_PERCENT, properties);
+            addOptionalProperty(parser, "FREQ_OCC", SpecimenNode.FREQUENCY_OF_OCCURRENCE, properties);
+            addOptionalProperty(parser, "PCT_FREQ_OCC", SpecimenNode.FREQUENCY_OF_OCCURRENCE_PERCENT, properties);
             properties.put(PropertyAndValueDictionary.NAME, getMandatoryValue(datafile, parser, columnNamePrefix + "DATABASE_NAME"));
 
             String refId = getMandatoryValue(datafile, parser, "DATA_ID");

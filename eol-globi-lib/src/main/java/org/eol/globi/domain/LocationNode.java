@@ -69,7 +69,7 @@ public class LocationNode extends NodeBacked implements Location {
         boolean needsAssociation = true;
         Iterable<Relationship> relationships = getUnderlyingNode().getRelationships(RelTypes.HAS_ENVIRONMENT, Direction.OUTGOING);
         for (Relationship relationship : relationships) {
-            if (relationship.getEndNode().getId() == environment.getNodeID()) {
+            if (relationship.getEndNode().getId() == ((NodeBacked)environment).getNodeID()) {
                 needsAssociation = false;
                 break;
             }
@@ -83,7 +83,7 @@ public class LocationNode extends NodeBacked implements Location {
         Iterable<Relationship> relationships = getUnderlyingNode().getRelationships(RelTypes.HAS_ENVIRONMENT, Direction.OUTGOING);
         List<Environment> environments = new ArrayList<Environment>();
         for (Relationship relationship : relationships) {
-            environments.add(new Environment(relationship.getEndNode()));
+            environments.add(new EnvironmentNode(relationship.getEndNode()));
         }
         return environments;
 

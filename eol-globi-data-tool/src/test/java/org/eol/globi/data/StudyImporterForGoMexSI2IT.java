@@ -10,7 +10,9 @@ import org.eol.globi.domain.LocationImpl;
 import org.eol.globi.domain.LocationNode;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Specimen;
+import org.eol.globi.domain.SpecimenNode;
 import org.eol.globi.domain.Study;
+import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.service.DatasetImpl;
 import org.eol.globi.service.GitHubUtil;
@@ -89,7 +91,7 @@ public class StudyImporterForGoMexSI2IT extends GraphDBTestCase {
     }
 
     private static void assertThatSomeDataIsImported(NodeFactory nodeFactory, TaxonIndex taxonIndex) throws StudyImporterException, NodeFactoryException {
-        Study study = nodeFactory.findStudy("Divita et al 1983");
+        StudyNode study = nodeFactory.findStudy("Divita et al 1983");
 
         assertSpecimenProperties(study.getUnderlyingNode().getGraphDatabase());
 
@@ -113,7 +115,7 @@ public class StudyImporterForGoMexSI2IT extends GraphDBTestCase {
         int count = 0;
         for (Relationship classifiedAsRel : classifiedAsRels) {
             Node predatorSpecimen = classifiedAsRel.getStartNode();
-            Specimen predator = new Specimen(predatorSpecimen);
+            Specimen predator = new SpecimenNode(predatorSpecimen);
             Iterable<Relationship> stomachContents = predator.getStomachContents();
             for (Relationship prey : stomachContents) {
                 Relationship singleRelationship = prey.getEndNode().getSingleRelationship(RelTypes.CLASSIFIED_AS, Direction.OUTGOING);
@@ -171,13 +173,13 @@ public class StudyImporterForGoMexSI2IT extends GraphDBTestCase {
             Iterable<Relationship> classifiedAs = taxonNode.getRelationships(Direction.INCOMING, RelTypes.CLASSIFIED_AS);
             for (Relationship classifiedA : classifiedAs) {
                 Node specimenNode = classifiedA.getStartNode();
-                detectedAtLeastOneLifeState |= specimenNode.hasProperty(Specimen.LIFE_STAGE_LABEL);
-                detectedAtLeastOnePhysiologicalState |= specimenNode.hasProperty(Specimen.PHYSIOLOGICAL_STATE_LABEL);
-                detectedAtLeastOnePreyBodyPart |= specimenNode.hasProperty(Specimen.BODY_PART_LABEL);
-                detectedAtLeastOneBodyLength |= specimenNode.hasProperty(Specimen.LENGTH_IN_MM);
-                detectedAtLeastOneFrequencyOfOccurrence |= specimenNode.hasProperty(Specimen.FREQUENCY_OF_OCCURRENCE);
-                detectedAtLeastOneTotalNumberConsumed |= specimenNode.hasProperty(Specimen.TOTAL_COUNT);
-                detectedAtLeastOneTotalVolume |= specimenNode.hasProperty(Specimen.TOTAL_VOLUME_IN_ML);
+                detectedAtLeastOneLifeState |= specimenNode.hasProperty(SpecimenNode.LIFE_STAGE_LABEL);
+                detectedAtLeastOnePhysiologicalState |= specimenNode.hasProperty(SpecimenNode.PHYSIOLOGICAL_STATE_LABEL);
+                detectedAtLeastOnePreyBodyPart |= specimenNode.hasProperty(SpecimenNode.BODY_PART_LABEL);
+                detectedAtLeastOneBodyLength |= specimenNode.hasProperty(SpecimenNode.LENGTH_IN_MM);
+                detectedAtLeastOneFrequencyOfOccurrence |= specimenNode.hasProperty(SpecimenNode.FREQUENCY_OF_OCCURRENCE);
+                detectedAtLeastOneTotalNumberConsumed |= specimenNode.hasProperty(SpecimenNode.TOTAL_COUNT);
+                detectedAtLeastOneTotalVolume |= specimenNode.hasProperty(SpecimenNode.TOTAL_VOLUME_IN_ML);
                 detectedAtLeastOneGoMexSIProperty |= specimenNode.hasProperty(StudyImporterForGoMexSI2.GOMEXSI_NAMESPACE + "PRED_DATABASE_NAME");
                 detectedAtLeastOneGoMexSIProperty |= specimenNode.hasProperty(StudyImporterForGoMexSI2.GOMEXSI_NAMESPACE + "PREY_DATABASE_NAME");
                 if (specimenNode.hasRelationship(Direction.INCOMING, RelTypes.COLLECTED)) {

@@ -3,8 +3,9 @@ package org.eol.globi.export;
 import org.eol.globi.domain.LocationNode;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.RelTypes;
-import org.eol.globi.domain.Specimen;
+import org.eol.globi.domain.SpecimenNode;
 import org.eol.globi.domain.Study;
+import org.eol.globi.domain.StudyNode;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
@@ -64,16 +65,16 @@ public class ExporterOccurrences extends ExporterOccurrencesBase {
         }
 
         properties.put(EOLDictionary.OCCURRENCE_ID, "globi:occur:" + specimenNode.getId());
-        addProperty(properties, specimenNode, Specimen.BASIS_OF_RECORD_LABEL, EOLDictionary.BASIS_OF_RECORD);
-        addProperty(properties, specimenNode, Specimen.LIFE_STAGE_LABEL, EOLDictionary.LIFE_STAGE);
-        addProperty(properties, specimenNode, Specimen.PHYSIOLOGICAL_STATE_LABEL, EOLDictionary.PHYSIOLOGICAL_STATE);
-        addProperty(properties, specimenNode, Specimen.BODY_PART_LABEL, EOLDictionary.BODY_PART);
+        addProperty(properties, specimenNode, SpecimenNode.BASIS_OF_RECORD_LABEL, EOLDictionary.BASIS_OF_RECORD);
+        addProperty(properties, specimenNode, SpecimenNode.LIFE_STAGE_LABEL, EOLDictionary.LIFE_STAGE);
+        addProperty(properties, specimenNode, SpecimenNode.PHYSIOLOGICAL_STATE_LABEL, EOLDictionary.PHYSIOLOGICAL_STATE);
+        addProperty(properties, specimenNode, SpecimenNode.BODY_PART_LABEL, EOLDictionary.BODY_PART);
         addProperty(properties, locationNode, LocationNode.LATITUDE, EOLDictionary.DECIMAL_LATITUDE);
         addProperty(properties, locationNode, LocationNode.LONGITUDE, EOLDictionary.DECIMAL_LONGITUDE);
         if (locationNode != null && locationNode.hasProperty(LocationNode.ALTITUDE)) {
             properties.put(EOLDictionary.VERBATIM_ELEVATION, locationNode.getProperty(LocationNode.ALTITUDE).toString() + " m");
         }
-        addProperty(properties, study.getUnderlyingNode(), Study.TITLE, EOLDictionary.EVENT_ID);
+        addProperty(properties, ((StudyNode)study).getUnderlyingNode(), StudyNode.TITLE, EOLDictionary.EVENT_ID);
 
         addCollectionDate(properties, collectedRelationship, EOLDictionary.EVENT_DATE);
     }

@@ -3,8 +3,8 @@ package org.eol.globi.export;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Study;
+import org.eol.globi.domain.StudyNode;
 
-import java.util.HashMap;
 import java.util.Map;
 
 public abstract class ExporterAssociationsBase extends ExporterBase {
@@ -32,7 +32,7 @@ public abstract class ExporterAssociationsBase extends ExporterBase {
 
     protected void addStudyInfo(Study study, Map<String, String> properties) {
         properties.put(EOLDictionary.SOURCE, study.getSource());
-        properties.put(EOLDictionary.REFERENCE_ID, "globi:ref:" + study.getNodeID());
+        properties.put(EOLDictionary.REFERENCE_ID, "globi:ref:" + ((StudyNode)study).getNodeID());
     }
 
     protected String getEOLTermFor(String interactionType) {

@@ -2,7 +2,7 @@ package org.eol.globi.data;
 
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.eol.globi.domain.Specimen;
+import org.eol.globi.domain.SpecimenNode;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.Term;
 import org.eol.globi.service.Dataset;
@@ -37,7 +37,7 @@ public class StudyImporterForSeltmannTest extends GraphDBTestCase {
             assertThat(allStudy.getCitation(), is("citation:doi:Digital Bee Collections Network, 2014 (and updates). Version: 2015-03-18. National Science Foundation grant DBI 0956388"));
             Iterable<Relationship> specimens = allStudy.getSpecimens();
             for (Relationship specimen : specimens) {
-                Specimen spec = new Specimen(specimen.getEndNode());
+                SpecimenNode spec = new SpecimenNode(specimen.getEndNode());
                 final String recordId = (String) spec.getUnderlyingNode().getProperty("idigbio:recordID");
                 assertThat(recordId, is(notNullValue()));
                 assertThat(spec.getExternalId(), is(recordId));

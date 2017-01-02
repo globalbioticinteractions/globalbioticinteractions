@@ -4,9 +4,11 @@ import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.eol.globi.domain.Location;
 import org.eol.globi.domain.LocationNode;
 import org.eol.globi.domain.Specimen;
-import org.eol.globi.domain.Study;
+import org.eol.globi.domain.SpecimenNode;
+import org.eol.globi.domain.StudyNode;
 import org.eol.globi.util.ExternalIdUtil;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormatter;
@@ -30,8 +32,8 @@ public class StudyImporterForFWDP extends BaseStudyImporter {
     }
 
     @Override
-    public Study importStudy() throws StudyImporterException {
-        Study study = nodeFactory.getOrCreateStudy("NOAA; Northeast Fisheries Science Center; Food Web Dynamics Program",
+    public StudyNode importStudy() throws StudyImporterException {
+        StudyNode study = nodeFactory.getOrCreateStudy("NOAA; Northeast Fisheries Science Center; Food Web Dynamics Program",
                 "http://www.nefsc.noaa.gov/femad/pbio/fwdp/", ExternalIdUtil.toCitation("Brian Smith", "Food Habits Database of Food Web Dynamics Program, Northeast Fisheries Science Center, National Oceanic and Atmospheric Administration (NOAA).", null));
         String studyResource = "fwdp/NEshelf/NEshelf_diet.csv.gz";
 
@@ -41,10 +43,10 @@ public class StudyImporterForFWDP extends BaseStudyImporter {
             while (parser.getLine() != null) {
                 int lastLineNumber = parser.getLastLineNumber();
                 if (importFilter.shouldImportRecord((long) lastLineNumber)) {
-                    Specimen predator = getPredatorSpecimen(study, predatorSpecimenMap, parser);
-                    Specimen prey = associatePreySpecimen(study, parser, predator);
+                    SpecimenNode predator = getPredatorSpecimen(study, predatorSpecimenMap, parser);
+                    SpecimenNode prey = associatePreySpecimen(study, parser, predator);
                     try {
-                        LocationNode location = getLocation(parser);
+                        Location location = getLocation(parser);
                         predator.caughtIn(location);
                         prey.caughtIn(location);
 
@@ -79,10 +81,10 @@ public class StudyImporterForFWDP extends BaseStudyImporter {
         return study;
     }
 
-    private Specimen associatePreySpecimen(Study study, LabeledCSVParser parser, Specimen predatorSpecimen) throws StudyImporterException {
+    private SpecimenNode associatePreySpecimen(StudyNode study, LabeledCSVParser parser, Specimen predatorSpecimen) throws StudyImporterException {
         try {
             String prey = parseTaxonName(parser, "PYNAM");
-            Specimen preySpecimen = nodeFactory.createSpecimen(study, prey);
+            SpecimenNode preySpecimen = nodeFactory.createSpecimen(study, prey);
             String preyLength = parser.getValueByLabel("pylen");
             if (StringUtils.isNotBlank(preyLength)) {
                 predatorSpecimen.setLengthInMm(new Double(preyLength));
@@ -93,15 +95,15 @@ public class StudyImporterForFWDP extends BaseStudyImporter {
         }
     }
 
-    private Specimen getPredatorSpecimen(Study study, Map<String, Long> predatorSpecimenMap, LabeledCSVParser parser) throws StudyImporterException {
-        Specimen predatorSpecimen = null;
+    private SpecimenNode getPredatorSpecimen(StudyNode study, Map<String, Long> predatorSpecimenMap, LabeledCSVParser parser) throws StudyImporterException {
+        SpecimenNode predatorSpecimen = null;
         try {
             String uniquePredatorId = parser.getValueByLabel("cruise6") + "-" + parser.getValueByLabel("PDID") + "-" + parser.getValueByLabel("CATNUM");
             Long nodeId = predatorSpecimenMap.get(uniquePredatorId);
             if (nodeId != null) {
                 Node nodeById = study.getUnderlyingNode().getGraphDatabase().getNodeById(nodeId);
                 if (nodeById != null) {
-                    predatorSpecimen = new Specimen(nodeById);
+                    predatorSpecimen = new SpecimenNode(nodeById);
                 }
             }
             if (predatorSpecimen == null) {
@@ -120,7 +122,7 @@ public class StudyImporterForFWDP extends BaseStudyImporter {
         return predatorSpecimen;
     }
 
-    private LocationNode getLocation(LabeledCSVParser parser) throws NodeFactoryException {
+    private Location getLocation(LabeledCSVParser parser) throws NodeFactoryException {
         String latString = parser.getValueByLabel("declat");
         String lngString = parser.getValueByLabel("declon");
         Double lng = new Double(lngString);

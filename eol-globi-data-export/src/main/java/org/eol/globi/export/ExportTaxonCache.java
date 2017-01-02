@@ -1,6 +1,7 @@
 package org.eol.globi.export;
 
 import org.eol.globi.domain.Study;
+import org.eol.globi.domain.StudyNode;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -32,6 +33,6 @@ public class ExportTaxonCache implements StudyExporter {
         HashMap<String, Object> params = new HashMap<String, Object>() {{
         }};
 
-        ExportUtil.writeResults(writer, study.getUnderlyingNode().getGraphDatabase(), query, params, true);
+        ExportUtil.writeResults(writer, ((StudyNode)study).getUnderlyingNode().getGraphDatabase(), query, params, true);
     }
 }

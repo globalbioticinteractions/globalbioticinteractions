@@ -3,9 +3,11 @@ package org.eol.globi.data;
 import org.eol.globi.domain.Environment;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.LocationNode;
-import org.eol.globi.domain.Season;
+import org.eol.globi.domain.SeasonNode;
 import org.eol.globi.domain.Specimen;
+import org.eol.globi.domain.SpecimenNode;
 import org.eol.globi.domain.Study;
+import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.Term;
 import org.eol.globi.geo.EcoregionFinder;
@@ -20,37 +22,37 @@ public interface NodeFactory {
 
     LocationNode findLocation(Double latitude, Double longitude, Double altitude);
 
-    Season createSeason(String seasonNameLower);
+    SeasonNode createSeason(String seasonNameLower);
 
-    Specimen createSpecimen(Study study, Taxon taxon) throws NodeFactoryException;
+    SpecimenNode createSpecimen(Study study, Taxon taxon) throws NodeFactoryException;
 
-    Specimen createSpecimen(Study study, String taxonName) throws NodeFactoryException;
+    SpecimenNode createSpecimen(Study study, String taxonName) throws NodeFactoryException;
 
-    Specimen createSpecimen(Study study, String taxonName, String taxonExternalId) throws NodeFactoryException;
+    SpecimenNode createSpecimen(Study study, String taxonName, String taxonExternalId) throws NodeFactoryException;
 
-    Study createStudy(String title);
+    StudyNode createStudy(String title);
 
-    Study getOrCreateStudy(String title, String source, String citation) throws NodeFactoryException;
+    StudyNode getOrCreateStudy(String title, String source, String citation) throws NodeFactoryException;
 
-    Study getOrCreateStudy(String title, String source, String doi, String citation) throws NodeFactoryException;
+    StudyNode getOrCreateStudy(String title, String source, String doi, String citation) throws NodeFactoryException;
 
-    Study getOrCreateStudy2(String title, String source, String doi) throws NodeFactoryException;
+    StudyNode getOrCreateStudy2(String title, String source, String doi) throws NodeFactoryException;
 
-    Study findStudy(String title);
+    StudyNode findStudy(String title);
 
-    Season findSeason(String seasonName);
+    SeasonNode findSeason(String seasonName);
 
-    LocationNode getOrCreateLocation(Location location) throws NodeFactoryException;
+    Location getOrCreateLocation(Location location) throws NodeFactoryException;
 
-    LocationNode getOrCreateLocation(Double latitude, Double longitude, Double altitude) throws NodeFactoryException;
+    Location getOrCreateLocation(Double latitude, Double longitude, Double altitude) throws NodeFactoryException;
 
     void setUnixEpochProperty(Specimen specimen, Date date) throws NodeFactoryException;
 
     Date getUnixEpochProperty(Specimen specimen) throws NodeFactoryException;
 
-    List<Environment> getOrCreateEnvironments(LocationNode location, String externalId, String name) throws NodeFactoryException;
+    List<Environment> getOrCreateEnvironments(Location location, String externalId, String name) throws NodeFactoryException;
 
-    List<Environment> addEnvironmentToLocation(LocationNode location, List<Term> terms);
+    List<Environment> addEnvironmentToLocation(Location location, List<Term> terms);
 
     Term getOrCreateBodyPart(String externalId, String name) throws NodeFactoryException;
 

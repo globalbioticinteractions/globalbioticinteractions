@@ -4,7 +4,8 @@ import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.Specimen;
-import org.eol.globi.domain.Study;
+import org.eol.globi.domain.SpecimenNode;
+import org.eol.globi.domain.StudyNode;
 import org.eol.globi.util.ExternalIdUtil;
 
 import java.io.IOException;
@@ -20,7 +21,7 @@ public class StudyImporterForByrnes extends BaseStudyImporter {
     }
 
     @Override
-    public Study importStudy() throws StudyImporterException {
+    public StudyNode importStudy() throws StudyImporterException {
         LabeledCSVParser dataParser;
         try {
             dataParser = parserFactory.createParser(RESOURCE_PATH, CharsetConstant.UTF8);
@@ -47,7 +48,7 @@ public class StudyImporterForByrnes extends BaseStudyImporter {
     }
 
     private void importLine(LabeledCSVParser parser, Map<String, String> refMap) throws StudyImporterException {
-        Study localStudy = null;
+        StudyNode localStudy = null;
         try {
             String refList = StringUtils.trim(parser.getValueByLabel("Reference"));
             String[] refs;
@@ -79,14 +80,14 @@ public class StudyImporterForByrnes extends BaseStudyImporter {
         }
     }
 
-    private void addInteractionForPredator(LabeledCSVParser parser, Study localStudy, String predatorName) throws NodeFactoryException, StudyImporterException {
+    private void addInteractionForPredator(LabeledCSVParser parser, StudyNode localStudy, String predatorName) throws NodeFactoryException, StudyImporterException {
         Specimen predator = nodeFactory.createSpecimen(localStudy, predatorName);
 
         String preyName = parser.getValueByLabel("Prey");
         if (StringUtils.isBlank(preyName)) {
             getLogger().warn(localStudy, "found empty prey name on line [" + parser.lastLineNumber() + "]");
         } else {
-            Specimen prey = nodeFactory.createSpecimen(localStudy, preyName);
+            SpecimenNode prey = nodeFactory.createSpecimen(localStudy, preyName);
             String feedingLink = parser.getValueByLabel("Feeding Link?");
             if (StringUtils.equals("1", StringUtils.trim(feedingLink))) {
                 predator.ate(prey);

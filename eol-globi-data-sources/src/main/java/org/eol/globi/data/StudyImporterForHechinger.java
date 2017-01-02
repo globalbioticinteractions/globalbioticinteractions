@@ -3,9 +3,10 @@ package org.eol.globi.data;
 import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.lang.StringUtils;
 import org.eol.globi.domain.InteractType;
+import org.eol.globi.domain.Location;
 import org.eol.globi.domain.LocationNode;
-import org.eol.globi.domain.Specimen;
-import org.eol.globi.domain.Study;
+import org.eol.globi.domain.SpecimenNode;
+import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.Term;
 
 import java.io.IOException;
@@ -60,8 +61,8 @@ public class StudyImporterForHechinger extends StudyImporterNodesAndLinks {
     }
 
     @Override
-    public Study importStudy() throws StudyImporterException {
-        Study study = createStudy();
+    public StudyNode importStudy() throws StudyImporterException {
+        StudyNode study = createStudy();
         try {
             LabeledCSVParser nodes = parserFactory.createParser(getNodeResource(), CharsetConstant.UTF8);
 
@@ -97,9 +98,9 @@ public class StudyImporterForHechinger extends StudyImporterNodesAndLinks {
             LabeledCSVParser links = parserFactory.createParser(getLinkResource(), CharsetConstant.UTF8);
             links.changeDelimiter(getDelimiter());
             while (links.getLine() != null) {
-                List<LocationNode> locations = new ArrayList<LocationNode>();
+                List<Location> locations = new ArrayList<>();
                 if (getLocation() != null) {
-                    LocationNode loc = nodeFactory.getOrCreateLocation(getLocation().getLat(), getLocation().getLng(), null);
+                    Location loc = nodeFactory.getOrCreateLocation(getLocation().getLat(), getLocation().getLng(), null);
                     if (loc != null) {
                         locations.add(loc);
                     }
@@ -117,7 +118,7 @@ public class StudyImporterForHechinger extends StudyImporterNodesAndLinks {
                     locations.add(nodeFactory.getOrCreateLocation(30.378207, -115.938835, null));
                 }
 
-                for (LocationNode location : locations) {
+                for (Location location : locations) {
                     addLink(study, stageForNode, taxonForNode, links, location);
                 }
             }
@@ -161,7 +162,7 @@ public class StudyImporterForHechinger extends StudyImporterNodesAndLinks {
         return name;
     }
 
-    private void addLink(Study study, Map<Integer, Term> stageForNode, Map<Integer, String> taxonForNode, LabeledCSVParser links, LocationNode location) throws StudyImporterException, NodeFactoryException {
+    private void addLink(StudyNode study, Map<Integer, Term> stageForNode, Map<Integer, String> taxonForNode, LabeledCSVParser links, Location location) throws StudyImporterException, NodeFactoryException {
         Integer consumerNodeID = Integer.parseInt(links.getValueByLabel("ConsumerNodeID"));
         Integer resourceNodeID = Integer.parseInt(links.getValueByLabel("ResourceNodeID"));
         String linkType = links.getValueByLabel("LinkType");
@@ -169,12 +170,12 @@ public class StudyImporterForHechinger extends StudyImporterNodesAndLinks {
         if (interactType == null) {
             throw new StudyImporterException("failed to map interaction type [" + linkType + "] in line [" + links.lastLineNumber() + "]");
         }
-        Specimen consumer = nodeFactory.createSpecimen(study, taxonForNode.get(consumerNodeID));
+        SpecimenNode consumer = nodeFactory.createSpecimen(study, taxonForNode.get(consumerNodeID));
         consumer.setLifeStage(stageForNode.get(consumerNodeID));
         consumer.setExternalId(getNamespace() + ":NodeID:" + consumerNodeID);
         consumer.caughtIn(location);
         String resourceName = taxonForNode.get(resourceNodeID);
-        Specimen resource = nodeFactory.createSpecimen(study, resourceName);
+        SpecimenNode resource = nodeFactory.createSpecimen(study, resourceName);
         resource.setLifeStage(stageForNode.get(resourceNodeID));
         resource.setExternalId(getNamespace() + ":NodeID:" + resourceNodeID);
         resource.caughtIn(location);

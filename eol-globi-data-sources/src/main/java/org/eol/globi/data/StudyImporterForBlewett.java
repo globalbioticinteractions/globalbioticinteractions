@@ -2,9 +2,11 @@ package org.eol.globi.data;
 
 import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.lang3.StringUtils;
+import org.eol.globi.domain.Location;
 import org.eol.globi.domain.LocationNode;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
+import org.eol.globi.domain.StudyNode;
 import org.eol.globi.service.TermLookupServiceException;
 import org.eol.globi.util.ExternalIdUtil;
 import org.joda.time.DateTime;
@@ -28,13 +30,13 @@ public class StudyImporterForBlewett extends BaseStudyImporter {
     }
 
     @Override
-    public Study importStudy() throws StudyImporterException {
-        Study study = nodeFactory.getOrCreateStudy("Blewett 2006",
+    public StudyNode importStudy() throws StudyImporterException {
+        StudyNode study = nodeFactory.getOrCreateStudy("Blewett 2006",
                 StudyImporterForGoMexSI2.GOMEXI_SOURCE_DESCRIPTION, ExternalIdUtil.toCitation("David A. Blewett", "Blewett DA, Hensley RA, and Stevens PW, Feeding Habits of Common Snook, Centropomus Undecimalis, in Charlotte Harbor, Florida, Gulf and Caribbean Research Vol 18, 1–13, 2006", "2006"));
 
         study.setCitationWithTx("Blewett DA, Hensley RA, and Stevens PW, Feeding Habits of Common Snook, Centropomus Undecimalis, in Charlotte Harbor, Florida, Gulf and Caribbean Research Vol 18, 1–13, 2006");
         try {
-            Map<String, LocationNode> collectionLocationMap = new HashMap<String, LocationNode>();
+            Map<String, Location> collectionLocationMap = new HashMap<>();
             Map<String, Date> collectionTimeMap = new HashMap<String, Date>();
             buildLocationTimeMaps(collectionLocationMap, collectionTimeMap, study);
             parsePredatorPreyInteraction(study, collectionLocationMap, collectionTimeMap);
@@ -49,7 +51,7 @@ public class StudyImporterForBlewett extends BaseStudyImporter {
         return study;
     }
 
-    private void buildLocationTimeMaps(Map<String, LocationNode> collectionLocationMap, Map<String, Date> collectionTimeMap, Study study) throws IOException, StudyImporterException {
+    private void buildLocationTimeMaps(Map<String, Location> collectionLocationMap, Map<String, Date> collectionTimeMap, Study study) throws IOException, StudyImporterException {
         LabeledCSVParser locationParser = parserFactory.createParser("blewett/SnookDietData2000_02_Charlotte_Harbor_FL_Blewett_date_and_abiotic.csv", CharsetConstant.UTF8);
         String[] line;
         while ((line = locationParser.getLine()) != null) {
@@ -68,7 +70,7 @@ public class StudyImporterForBlewett extends BaseStudyImporter {
             if (StringUtils.isBlank(longitude)) {
                 getLogger().warn(study, "blank value for longitude for line: [" + locationParser.getLastLineNumber() + "]");
             }
-            LocationNode location;
+            Location location;
             try {
                 location = nodeFactory.getOrCreateLocation(Double.parseDouble(latitude), Double.parseDouble(longitude), 0.0);
             } catch (NodeFactoryException e) {
@@ -111,7 +113,7 @@ public class StudyImporterForBlewett extends BaseStudyImporter {
         return fmtDateTime.print(dateTime);
     }
 
-    private void parsePredatorPreyInteraction(Study study, Map<String, LocationNode> locationMap, Map<String, Date> collectionTimeMap) throws IOException, NodeFactoryException, TermLookupServiceException {
+    private void parsePredatorPreyInteraction(StudyNode study, Map<String, Location> locationMap, Map<String, Date> collectionTimeMap) throws IOException, NodeFactoryException, TermLookupServiceException {
         LabeledCSVParser parser = parserFactory.createParser("blewett/SnookDietData2000_02_Charlotte_Harbor_FL_Blewett_numeric_abundance.csv", CharsetConstant.UTF8);
         String[] header = parser.getLabels();
 
@@ -134,7 +136,7 @@ public class StudyImporterForBlewett extends BaseStudyImporter {
         }
     }
 
-    private Specimen addPredator(Study study, LabeledCSVParser parser, String[] line) throws NodeFactoryException, TermLookupServiceException {
+    private Specimen addPredator(StudyNode study, LabeledCSVParser parser, String[] line) throws NodeFactoryException, TermLookupServiceException {
         Specimen predatorSpecimen = nodeFactory.createSpecimen(study, "Centropomus undecimalis");
 
         predatorSpecimen.setLifeStage(nodeFactory.getTermLookupService().lookupTermByName("adult"));
@@ -148,9 +150,9 @@ public class StudyImporterForBlewett extends BaseStudyImporter {
         return predatorSpecimen;
     }
 
-    private void setLocationAndDate(Map<String, LocationNode> locationMap, Map<String, Date> collectionTimeMap, List<Specimen> items, String collectionCode) throws NodeFactoryException {
+    private void setLocationAndDate(Map<String, Location> locationMap, Map<String, Date> collectionTimeMap, List<Specimen> items, String collectionCode) throws NodeFactoryException {
         String collectionCodeTrim = collectionCode.trim();
-        LocationNode location = locationMap.get(collectionCodeTrim);
+        Location location = locationMap.get(collectionCodeTrim);
         if (location != null) {
             for (Specimen item : items) {
                 item.caughtIn(location);
@@ -165,7 +167,7 @@ public class StudyImporterForBlewett extends BaseStudyImporter {
         }
     }
 
-    private List<Specimen> addPreyForPredator(String[] header, String[] line, Study study) throws NodeFactoryException {
+    private List<Specimen> addPreyForPredator(String[] header, String[] line, StudyNode study) throws NodeFactoryException {
         List<Specimen> preyItems = new ArrayList<Specimen>();
         int preyColumn = 4;
         for (int i = preyColumn; i < header.length; i++) {

@@ -240,7 +240,7 @@ public class StudyImporterForFishbase2Test extends GraphDBTestCase {
             "      \"LengthFreq\": 0,\n" +
             "      \"Strains\": 0,\n" +
             "      \"Larvae\": 0,\n" +
-            "      \"Environment\": 0,\n" +
+            "      \"EnvironmentNode\": 0,\n" +
             "      \"Stocks\": 0,\n" +
             "      \"Genetics\": 0,\n" +
             "      \"Spawning\": 0,\n" +

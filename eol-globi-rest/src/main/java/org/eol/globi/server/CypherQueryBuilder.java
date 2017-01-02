@@ -7,13 +7,11 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.commons.validator.routines.UrlValidator;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.PropertyAndValueDictionary;
-import org.eol.globi.domain.Specimen;
-import org.eol.globi.domain.TaxonomyProvider;
+import org.eol.globi.domain.SpecimenNode;
 import org.eol.globi.server.util.InteractionTypeExternal;
 import org.eol.globi.server.util.RequestHelper;
 import org.eol.globi.server.util.ResultField;
 import org.eol.globi.util.CypherQuery;
-import org.eol.globi.util.ExternalIdUtil;
 import org.eol.globi.util.InteractUtil;
 
 import javax.servlet.http.HttpServletRequest;
@@ -656,7 +654,7 @@ public class CypherQueryBuilder {
                 .append(", count(distinct(sourceTaxon.name)) as `number of distinct source taxa (e.g. predators)`")
                 .append(", count(distinct(targetTaxon.name)) as `number of distinct target taxa (e.g. prey)`")
                 .append(", count(distinct(study.source)) as `number of distinct study sources`")
-                .append(", count(c." + Specimen.DATE_IN_UNIX_EPOCH + "?) as `number of interactions with timestamp`")
+                .append(", count(c." + SpecimenNode.DATE_IN_UNIX_EPOCH + "?) as `number of interactions with timestamp`")
         ;
         if (RequestHelper.isSpatialSearch(parameterMap)) {
             query.append(", count(distinct(loc))");

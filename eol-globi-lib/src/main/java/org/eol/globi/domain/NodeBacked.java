@@ -30,15 +30,16 @@ public class NodeBacked {
                 underlyingNode.equals(((NodeBacked) o).getUnderlyingNode());
     }
 
-    public Relationship createRelationshipTo(NodeBacked endNode, RelType relType) {
+    public Relationship createRelationshipTo(Object endNode, RelType relType) {
         Transaction tx = getUnderlyingNode().getGraphDatabase().beginTx();
         Relationship rel = null;
         try {
-            rel = createRelationshipToNoTx(endNode, relType);
+            rel = createRelationshipToNoTx((NodeBacked)endNode, relType);
             tx.success();
         } finally {
             tx.finish();
         }
+
         return rel;
     }
 

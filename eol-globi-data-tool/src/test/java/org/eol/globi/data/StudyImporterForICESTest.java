@@ -3,7 +3,7 @@ package org.eol.globi.data;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.LocationNode;
 import org.eol.globi.domain.RelTypes;
-import org.eol.globi.domain.Specimen;
+import org.eol.globi.domain.SpecimenNode;
 import org.eol.globi.domain.Study;
 import org.hamcrest.core.Is;
 import org.junit.Test;
@@ -58,12 +58,12 @@ public class StudyImporterForICESTest extends GraphDBTestCase {
         int specimenCollected = 0;
         int preyEaten = 0;
         for (Relationship rel : collectedRels) {
-            assertThat((Long) rel.getProperty(Specimen.DATE_IN_UNIX_EPOCH), is(new SimpleDateFormat("yyyy").parse("1981").getTime()));
+            assertThat((Long) rel.getProperty(SpecimenNode.DATE_IN_UNIX_EPOCH), is(new SimpleDateFormat("yyyy").parse("1981").getTime()));
             Node specimen = rel.getEndNode();
             assertNotNull(specimen);
             Iterable<Relationship> relationships = specimen.getRelationships(Direction.OUTGOING, InteractType.ATE);
             for (Relationship relationship : relationships) {
-                assertThat((Double) specimen.getProperty(Specimen.LENGTH_IN_MM), is(125.0));
+                assertThat((Double) specimen.getProperty(SpecimenNode.LENGTH_IN_MM), is(125.0));
                 preyEaten++;
             }
 

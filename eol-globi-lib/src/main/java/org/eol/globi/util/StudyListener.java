@@ -1,7 +1,7 @@
 package org.eol.globi.util;
 
-import org.eol.globi.domain.Study;
+import org.eol.globi.domain.StudyNode;
 
 public interface StudyListener {
-    void onStudy(Study study);
+    void onStudy(StudyNode study);
 }

@@ -7,9 +7,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eol.globi.domain.InteractType;
+import org.eol.globi.domain.Location;
 import org.eol.globi.domain.LocationNode;
-import org.eol.globi.domain.Specimen;
-import org.eol.globi.domain.Study;
+import org.eol.globi.domain.SpecimenNode;
+import org.eol.globi.domain.StudyNode;
 import org.eol.globi.service.DatasetUtil;
 import org.eol.globi.util.CSVUtil;
 import org.joda.time.format.DateTimeFormat;
@@ -45,7 +46,7 @@ public class StudyImporterForSeltmann extends BaseStudyImporter {
     }
 
     @Override
-    public Study importStudy() throws StudyImporterException {
+    public StudyNode importStudy() throws StudyImporterException {
         final String archiveURL = DatasetUtil.getNamedResourceURI(getDataset(), "archive");
         if (org.apache.commons.lang.StringUtils.isBlank(archiveURL)) {
             throw new StudyImporterException("failed to import [" + getDataset().getNamespace() + "]: no [archiveURL] specified");
@@ -113,7 +114,7 @@ public class StudyImporterForSeltmann extends BaseStudyImporter {
             occurrence.changeDelimiter('\t');
             while (occurrence.getLine() != null) {
                 String references = occurrence.getValueByLabel("dcterms:references");
-                Study study = nodeFactory.getOrCreateStudy("seltmann" + references, ReferenceUtil.sourceCitationLastAccessed(this.getDataset(), references), references);
+                StudyNode study = nodeFactory.getOrCreateStudy("seltmann" + references, ReferenceUtil.sourceCitationLastAccessed(this.getDataset(), references), references);
                 String recordId = occurrence.getValueByLabel(FIELD_IDIGBIO_RECORD_ID);
                 Map<String, String> assoc = assocMap.get(recordId);
                 if (assoc != null) {
@@ -173,10 +174,10 @@ public class StudyImporterForSeltmann extends BaseStudyImporter {
         return targetName;
     }
 
-    protected void createInteraction(LabeledCSVParser occurrence, Study study, Map<String, String> assoc, String targetName, String sourceName, Date date, InteractType interactType) throws NodeFactoryException, StudyImporterException {
+    protected void createInteraction(LabeledCSVParser occurrence, StudyNode study, Map<String, String> assoc, String targetName, String sourceName, Date date, InteractType interactType) throws NodeFactoryException, StudyImporterException {
 
-        Specimen source = nodeFactory.createSpecimen(study, sourceName);
-        Specimen target = nodeFactory.createSpecimen(study, targetName);
+        SpecimenNode source = nodeFactory.createSpecimen(study, sourceName);
+        SpecimenNode target = nodeFactory.createSpecimen(study, targetName);
         source.interactsWith(target, interactType);
 
         String sourceBasisOfRecord = occurrence.getValueByLabel("basisOfRecord");
@@ -198,14 +199,14 @@ public class StudyImporterForSeltmann extends BaseStudyImporter {
         String latitude = occurrence.getValueByLabel("decimalLatitude");
         String longitude = occurrence.getValueByLabel("decimalLongitude");
         if (StringUtils.isNotBlank(latitude) && StringUtils.isNotBlank(longitude)) {
-            LocationNode loc = nodeFactory.getOrCreateLocation(Double.parseDouble(latitude), Double.parseDouble(longitude), null);
+            Location loc = nodeFactory.getOrCreateLocation(Double.parseDouble(latitude), Double.parseDouble(longitude), null);
             source.caughtIn(loc);
         }
     }
 
     private InteractType parseInteractType(LabeledCSVParser occurrence, Map<String, String> assoc) throws StudyImporterException {
         String interactionURI = assoc.get("aec:associatedRelationshipURI");
-        InteractType interactType = null;
+        InteractType interactType;
         if (StringUtils.isBlank(interactionURI)) {
           interactType = InteractType.INTERACTS_WITH;
         } else {

@@ -3,13 +3,18 @@ package org.eol.globi.data;
 import junit.framework.Assert;
 import org.apache.commons.lang.StringUtils;
 import org.eol.globi.domain.Environment;
+import org.eol.globi.domain.EnvironmentNode;
 import org.eol.globi.domain.InteractType;
+import org.eol.globi.domain.Location;
 import org.eol.globi.domain.LocationImpl;
 import org.eol.globi.domain.LocationNode;
+import org.eol.globi.domain.NodeBacked;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Specimen;
+import org.eol.globi.domain.SpecimenNode;
 import org.eol.globi.domain.Study;
+import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.Term;
 import org.eol.globi.service.DOIResolver;
 import org.eol.globi.service.TermLookupService;
@@ -43,9 +48,9 @@ public class NodeFactoryImplTest extends GraphDBTestCase {
 
     @Test
     public void createInteraction() throws NodeFactoryException {
-        Study study = getNodeFactory().createStudy("bla");
-        Specimen specimen = getNodeFactory().createSpecimen(study, "Donalda duckus");
-        Specimen specimen1 = getNodeFactory().createSpecimen(study, "Mickeya mouseus");
+        StudyNode study = getNodeFactory().createStudy("bla");
+        SpecimenNode specimen = getNodeFactory().createSpecimen(study, "Donalda duckus");
+        SpecimenNode specimen1 = getNodeFactory().createSpecimen(study, "Mickeya mouseus");
         specimen.interactsWith(specimen1, InteractType.ATE);
         final Iterator<Relationship> relIter = specimen.getUnderlyingNode().getRelationships(Direction.OUTGOING, InteractType.ATE).iterator();
         assertThat(relIter.hasNext(), is(true));
@@ -104,23 +109,23 @@ public class NodeFactoryImplTest extends GraphDBTestCase {
 
     @Test
     public void createFindLocation() throws NodeFactoryException {
-        LocationNode location = getNodeFactory().getOrCreateLocation(1.2d, 1.4d, -1.0d);
+        Location location = getNodeFactory().getOrCreateLocation(1.2d, 1.4d, -1.0d);
         getNodeFactory().getOrCreateLocation(2.2d, 1.4d, -1.0d);
         getNodeFactory().getOrCreateLocation(1.2d, 2.4d, -1.0d);
-        LocationNode locationNoDepth = getNodeFactory().getOrCreateLocation(1.5d, 2.8d, null);
+        Location locationNoDepth = getNodeFactory().getOrCreateLocation(1.5d, 2.8d, null);
         Assert.assertNotNull(location);
-        LocationNode location1 = getNodeFactory().findLocation(location.getLatitude(), location.getLongitude(), location.getAltitude());
+        Location location1 = getNodeFactory().findLocation(location.getLatitude(), location.getLongitude(), location.getAltitude());
         Assert.assertNotNull(location1);
-        LocationNode foundLocationNoDepth = getNodeFactory().findLocation(locationNoDepth.getLatitude(), locationNoDepth.getLongitude(), null);
+        Location foundLocationNoDepth = getNodeFactory().findLocation(locationNoDepth.getLatitude(), locationNoDepth.getLongitude(), null);
         Assert.assertNotNull(foundLocationNoDepth);
     }
 
     @Test
     public void createFindLocationWith() throws NodeFactoryException {
-        LocationNode location = getNodeFactory().getOrCreateLocation(1.2d, 1.4d, -1.0d);
+        Location location = getNodeFactory().getOrCreateLocation(1.2d, 1.4d, -1.0d);
         getNodeFactory().getOrCreateLocation(2.2d, 1.4d, -1.0d);
         getNodeFactory().getOrCreateLocation(1.2d, 2.4d, -1.0d);
-        LocationNode locationNoDepth = getNodeFactory().getOrCreateLocation(1.5d, 2.8d, null);
+        Location locationNoDepth = getNodeFactory().getOrCreateLocation(1.5d, 2.8d, null);
         Assert.assertNotNull(location);
         LocationNode location1 = getNodeFactory().findLocation(location.getLatitude(), location.getLongitude(), location.getAltitude());
         Assert.assertNotNull(location1);
@@ -130,7 +135,7 @@ public class NodeFactoryImplTest extends GraphDBTestCase {
 
     @Test
     public void createFindLocationWKT() throws NodeFactoryException {
-        LocationNode location = getNodeFactory().getOrCreateLocation(2.0d, 1.0d, -1.0d);
+        Location location = getNodeFactory().getOrCreateLocation(2.0d, 1.0d, -1.0d);
         assertThat(location.getFootprintWKT(), is(nullValue()));
         final String expectedFootprintWKT = "POLYGON((10 20, 11 20, 11 21, 10 21, 10 20))";
         final LocationImpl otherLocation = new LocationImpl(location.getAltitude(), location.getLongitude(), location.getLatitude(),
@@ -170,33 +175,35 @@ public class NodeFactoryImplTest extends GraphDBTestCase {
                 return terms;
             }
         });
-        LocationNode location = getNodeFactory().getOrCreateLocation(0.0, 1.0, 2.0);
+        Location location = getNodeFactory().getOrCreateLocation(0.0, 1.0, 2.0);
         List<Environment> first = getNodeFactory().getOrCreateEnvironments(location, "BLA:123", "this and that");
         location = getNodeFactory().getOrCreateLocation(0.0, 1.0, 2.0);
         List<Environment> second = getNodeFactory().getOrCreateEnvironments(location, "BLA:123", "this and that");
         assertThat(first.size(), is(second.size()));
-        assertThat(first.get(0).getNodeID(), is(second.get(0).getNodeID()));
-        Environment foundEnvironment = getNodeFactory().findEnvironment("this_and_that");
+        assertThat(((NodeBacked)first.get(0)).getNodeID(), is(((NodeBacked)second.get(0)).getNodeID()));
+        EnvironmentNode foundEnvironment = getNodeFactory().findEnvironment("this_and_that");
         assertThat(foundEnvironment, is(notNullValue()));
 
         List<Environment> environments = location.getEnvironments();
         assertThat(environments.size(), is(1));
         Environment environment = environments.get(0);
-        assertThat(environment.getNodeID(), is(foundEnvironment.getNodeID()));
+        NodeBacked environmentNode = (NodeBacked) environment;
+        assertThat(environmentNode.getNodeID(), is(foundEnvironment.getNodeID()));
         assertThat(environment.getName(), is("this_and_that"));
         assertThat(environment.getExternalId(), is("NS:this and that"));
 
-        LocationNode anotherLocation = getNodeFactory().getOrCreateLocation(48.2, 123.1, null);
-        assertThat(anotherLocation.getEnvironments().size(), is(0));
-        anotherLocation.addEnvironment(environment);
-        assertThat(anotherLocation.getEnvironments().size(), is(1));
+        Location anotherLocation = getNodeFactory().getOrCreateLocation(48.2, 123.1, null);
+        LocationNode anotherLocationNode = (LocationNode) anotherLocation;
+        assertThat(anotherLocationNode.getEnvironments().size(), is(0));
+        anotherLocationNode.addEnvironment((EnvironmentNode)environment);
+        assertThat(anotherLocationNode.getEnvironments().size(), is(1));
 
         // don't add environment that has already been associated
-        anotherLocation.addEnvironment(environment);
-        assertThat(anotherLocation.getEnvironments().size(), is(1));
+        anotherLocationNode.addEnvironment(environment);
+        assertThat(anotherLocationNode.getEnvironments().size(), is(1));
 
         getNodeFactory().getOrCreateEnvironments(anotherLocation, "BLA:124", "that");
-        assertThat(anotherLocation.getEnvironments().size(), is(2));
+        assertThat(anotherLocationNode.getEnvironments().size(), is(2));
     }
 
 
@@ -213,7 +220,7 @@ public class NodeFactoryImplTest extends GraphDBTestCase {
                 return "my citation";
             }
         });
-        Study study = getNodeFactory().getOrCreateStudy("my title", "some source", ExternalIdUtil.toCitation("my contr", "some description", null));
+        StudyNode study = getNodeFactory().getOrCreateStudy("my title", "some source", ExternalIdUtil.toCitation("my contr", "some description", null));
         assertThat(study.getDOI(), is("doi:1234"));
         assertThat(study.getExternalId(), is("http://dx.doi.org/1234"));
         assertThat(study.getCitation(), is("my citation"));
@@ -239,7 +246,7 @@ public class NodeFactoryImplTest extends GraphDBTestCase {
 
     @Test
     public void createStudy() throws NodeFactoryException {
-        Study study = getNodeFactory().getOrCreateStudy2("myTitle", "mySource", "doi:myDoi");
+        StudyNode study = getNodeFactory().getOrCreateStudy2("myTitle", "mySource", "doi:myDoi");
         assertThat(study.getDOI(), is("doi:myDoi"));
         assertThat(study.getExternalId(), is("http://dx.doi.org/myDoi"));
     }
@@ -284,7 +291,7 @@ public class NodeFactoryImplTest extends GraphDBTestCase {
 
     @Test
     public void createEcoRegion() throws NodeFactoryException {
-        LocationNode locationA = getNodeFactory().getOrCreateLocation(37.689254, -122.295799, null);
+        Location locationA = getNodeFactory().getOrCreateLocation(37.689254, -122.295799, null);
         // ensure that no duplicate node are created ...
         getNodeFactory().getOrCreateLocation(37.689255, -122.295798, null);
         assertEcoRegions(locationA);
@@ -292,7 +299,7 @@ public class NodeFactoryImplTest extends GraphDBTestCase {
         assertEcoRegions(locationA);
 
         // check that multiple locations are associated to single eco region
-        LocationNode locationB = getNodeFactory().getOrCreateLocation(37.689255, -122.295799, null);
+        Location locationB = getNodeFactory().getOrCreateLocation(37.689255, -122.295799, null);
         assertEcoRegions(locationB);
 
         IndexHits<Node> hits = getNodeFactory().findCloseMatchesForEcoregion("some elo egion");
@@ -316,12 +323,12 @@ public class NodeFactoryImplTest extends GraphDBTestCase {
 
     }
 
-    private void assertEcoRegions(LocationNode location) {
-        Iterable<Relationship> relationships = location.getUnderlyingNode().getRelationships(Direction.OUTGOING, RelTypes.IN_ECOREGION);
+    private void assertEcoRegions(Location location) {
+        Iterable<Relationship> relationships = ((NodeBacked)location).getUnderlyingNode().getRelationships(Direction.OUTGOING, RelTypes.IN_ECOREGION);
         int count = 0;
         for (Relationship relationship : relationships) {
             Node associatedEcoRegion = relationship.getEndNode();
-            assertThat((String) associatedEcoRegion.getProperty("name"), is("some eco region"));
+            assertThat(associatedEcoRegion.getProperty("name"), is("some eco region"));
             count++;
         }
         assertThat(count, is(1));

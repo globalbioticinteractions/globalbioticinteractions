@@ -2,10 +2,12 @@ package org.eol.globi.export;
 
 import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.NodeFactoryException;
+import org.eol.globi.domain.Location;
 import org.eol.globi.domain.LocationNode;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Specimen;
-import org.eol.globi.domain.Study;
+import org.eol.globi.domain.SpecimenNode;
+import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.Term;
 import org.junit.Test;
@@ -38,7 +40,7 @@ public class ExportFlatInteractionsTest extends GraphDBTestCase {
     }
 
     private void createTestData(Double length) throws NodeFactoryException, ParseException {
-        Study myStudy = nodeFactory.createStudy("myStudy");
+        StudyNode myStudy = nodeFactory.createStudy("myStudy");
         specimenEatCatAndDog(length, myStudy, "Homo sapiens", "EOL:333");
         specimenEatCatAndDog(length, myStudy, "Homo sapiens", "EOL:333");
         specimenEatCatAndDog(length, myStudy, "Homo erectus", "EOL:123");
@@ -49,7 +51,7 @@ public class ExportFlatInteractionsTest extends GraphDBTestCase {
     }
 
 
-    private void specimenEatCatAndDog(Double length, Study myStudy, String scientificName, String externalId) throws NodeFactoryException {
+    private void specimenEatCatAndDog(Double length, StudyNode myStudy, String scientificName, String externalId) throws NodeFactoryException {
         Specimen specimen = collectSpecimen(myStudy, scientificName, externalId);
         eatPrey(specimen, "Canis lupus", "EOL:555", myStudy);
         eatPrey(specimen, "Felis domesticus", "EOL:666", myStudy);
@@ -58,14 +60,14 @@ public class ExportFlatInteractionsTest extends GraphDBTestCase {
             specimen.setLengthInMm(length);
         }
 
-        LocationNode location = nodeFactory.getOrCreateLocation(12.0, -45.9, -60.0);
+        Location location = nodeFactory.getOrCreateLocation(12.0, -45.9, -60.0);
         specimen.caughtIn(location);
     }
 
-    private Specimen collectSpecimen(Study myStudy, String scientificName, String externalId) throws NodeFactoryException {
+    private Specimen collectSpecimen(StudyNode myStudy, String scientificName, String externalId) throws NodeFactoryException {
         final TaxonImpl taxon = new TaxonImpl(scientificName, externalId);
         taxon.setPath("pathElem1 | pathElem 2");
-        Specimen specimen = nodeFactory.createSpecimen(myStudy, taxon);
+        SpecimenNode specimen = nodeFactory.createSpecimen(myStudy, taxon);
         specimen.setStomachVolumeInMilliLiter(666.0);
         specimen.setLifeStage(new Term("GLOBI:JUVENILE", "JUVENILE"));
         specimen.setPhysiologicalState(new Term("GLOBI:DIGESTATE", "DIGESTATE"));
@@ -75,10 +77,10 @@ public class ExportFlatInteractionsTest extends GraphDBTestCase {
     }
 
 
-    private Specimen eatPrey(Specimen specimen, String scientificName, String externalId, Study study) throws NodeFactoryException {
+    private Specimen eatPrey(Specimen specimen, String scientificName, String externalId, StudyNode study) throws NodeFactoryException {
         final TaxonImpl preyTaxon = new TaxonImpl(scientificName, externalId);
         preyTaxon.setPath("preyPathElem1 | preyPathElem2");
-        Specimen otherSpecimen = nodeFactory.createSpecimen(study, preyTaxon);
+        SpecimenNode otherSpecimen = nodeFactory.createSpecimen(study, preyTaxon);
         otherSpecimen.setVolumeInMilliLiter(124.0);
         specimen.ate(otherSpecimen);
         return otherSpecimen;

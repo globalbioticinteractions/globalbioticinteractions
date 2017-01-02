@@ -5,8 +5,9 @@ import org.apache.commons.lang.StringUtils;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.RelTypes;
-import org.eol.globi.domain.Specimen;
+import org.eol.globi.domain.SpecimenNode;
 import org.eol.globi.domain.Study;
+import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonomyProvider;
 import org.eol.globi.util.CSVUtil;
@@ -82,7 +83,7 @@ public class StudyImporterForBioInfoTest extends GraphDBTestCase {
         Study study = nodeFactory.findStudy(TaxonomyProvider.BIO_INFO + "ref:60527");
         Iterable<Relationship> collectedRels = study.getSpecimens();
         for (Relationship collectedRel : collectedRels) {
-            Specimen specimen = new Specimen(collectedRel.getEndNode());
+            SpecimenNode specimen = new SpecimenNode(collectedRel.getEndNode());
             String externalId = specimen.getExternalId();
             assertThat(externalId, is(notNullValue()));
             assertThat(externalId, containsString(TaxonomyProvider.BIO_INFO + "rel:"));
@@ -123,7 +124,7 @@ public class StudyImporterForBioInfoTest extends GraphDBTestCase {
         }}, new HashMap<String, Taxon>());
         resolveNames();
 
-        Study study = nodeFactory.findStudy(TaxonomyProvider.BIO_INFO + "ref:60536");
+        StudyNode study = nodeFactory.findStudy(TaxonomyProvider.BIO_INFO + "ref:60536");
         assertNotNull(study);
         assertThat(study.getExternalId(), is("http://bioinfo.org.uk/html/b60536.htm"));
         assertNull(nodeFactory.findStudy(TaxonomyProvider.BIO_INFO + "ref:bla"));

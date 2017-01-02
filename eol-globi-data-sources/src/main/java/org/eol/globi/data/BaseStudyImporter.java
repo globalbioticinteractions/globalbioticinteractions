@@ -1,16 +1,10 @@
 package org.eol.globi.data;
 
-import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.service.Dataset;
 import org.eol.globi.service.GeoNamesService;
 import org.eol.globi.service.GeoNamesServiceImpl;
-
-import java.util.Arrays;
-import java.util.List;
-
-import static org.apache.commons.lang3.StringUtils.*;
 
 public abstract class BaseStudyImporter extends BaseImporter implements StudyImporter {
     protected ParserFactory parserFactory;

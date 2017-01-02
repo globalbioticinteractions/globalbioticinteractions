@@ -1,14 +1,14 @@
 package org.eol.globi.data;
 
 import com.Ostermiller.util.LabeledCSVParser;
-import org.eol.globi.domain.LocationNode;
-import org.eol.globi.domain.Season;
+import org.eol.globi.domain.Location;
+import org.eol.globi.domain.SeasonNode;
 import org.eol.globi.domain.Specimen;
-import org.eol.globi.domain.Study;
-
+import org.eol.globi.domain.SpecimenNode;
+import org.eol.globi.domain.StudyNode;
 import org.eol.globi.util.ExternalIdUtil;
-import uk.me.jstott.jcoord.UTMRef;
 import uk.me.jstott.jcoord.LatLng;
+import uk.me.jstott.jcoord.UTMRef;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -47,22 +47,22 @@ public class StudyImporterForSimons extends BaseStudyImporter {
     }
 
     @Override
-    public Study importStudy() throws StudyImporterException {
+    public StudyNode importStudy() throws StudyImporterException {
         return importStudy(MISSISSIPPI_ALABAMA_DATA_SOURCE);
     }
 
-    private Study importStudy(String studyResource) throws StudyImporterException {
+    private StudyNode importStudy(String studyResource) throws StudyImporterException {
         return createAndPopulateStudy(parserFactory, studyResource);
     }
 
 
-    private Study createAndPopulateStudy(ParserFactory parserFactory, String studyResource) throws StudyImporterException {
+    private StudyNode createAndPopulateStudy(ParserFactory parserFactory, String studyResource) throws StudyImporterException {
         getPredatorSpecimenMap().clear();
         return importStudy(parserFactory, studyResource);
     }
 
-    private Study importStudy(ParserFactory parserFactory, String studyResource) throws StudyImporterException {
-        Study study = nodeFactory.getOrCreateStudy("Simons 1997",
+    private StudyNode importStudy(ParserFactory parserFactory, String studyResource) throws StudyImporterException {
+        StudyNode study = nodeFactory.getOrCreateStudy("Simons 1997",
                 StudyImporterForGoMexSI2.GOMEXI_SOURCE_DESCRIPTION, null, ExternalIdUtil.toCitation("James D. Simons", "Food habits and trophic structure of the demersal fish assemblages on the Mississippi-Alabama continental shelf.", "1997"));
         try {
             LabeledCSVParser csvParser = parserFactory.createParser(studyResource, CharsetConstant.UTF8);
@@ -77,11 +77,11 @@ public class StudyImporterForSimons extends BaseStudyImporter {
         return study;
     }
 
-    private void addNextRecordToStudy(LabeledCSVParser csvParser, Study study, Map<String, String> columnToNormalizedTermMapper, LengthParser lengthParser) throws StudyImporterException {
+    private void addNextRecordToStudy(LabeledCSVParser csvParser, StudyNode study, Map<String, String> columnToNormalizedTermMapper, LengthParser lengthParser) throws StudyImporterException {
         String seasonName = csvParser.getValueByLabel(columnToNormalizedTermMapper.get(SEASON));
-        Specimen prey = createAndClassifySpecimen(csvParser.getValueByLabel(columnToNormalizedTermMapper.get(PREY_SPECIES)), study);
+        SpecimenNode prey = createAndClassifySpecimen(csvParser.getValueByLabel(columnToNormalizedTermMapper.get(PREY_SPECIES)), study);
 
-        LocationNode sampleLocation = getOrCreateSampleLocation(csvParser, columnToNormalizedTermMapper);
+        Location sampleLocation = getOrCreateSampleLocation(csvParser, columnToNormalizedTermMapper);
         prey.caughtIn(sampleLocation);
         prey.caughtDuring(getOrCreateSeason(seasonName));
 
@@ -110,16 +110,16 @@ public class StudyImporterForSimons extends BaseStudyImporter {
         return predatorSpecimenMap;
     }
 
-    private Season getOrCreateSeason(String seasonName) {
+    private SeasonNode getOrCreateSeason(String seasonName) {
         String seasonNameLower = seasonName.toLowerCase().trim();
-        Season season = nodeFactory.findSeason(seasonNameLower);
+        SeasonNode season = nodeFactory.findSeason(seasonNameLower);
         if (null == season) {
             season = nodeFactory.createSeason(seasonNameLower);
         }
         return season;
     }
 
-    private LocationNode getOrCreateSampleLocation(LabeledCSVParser csvParser, Map<String, String> columnToNormalizedTermMapper) throws StudyImporterException {
+    private Location getOrCreateSampleLocation(LabeledCSVParser csvParser, Map<String, String> columnToNormalizedTermMapper) throws StudyImporterException {
         Double northing = parseAsDouble(csvParser, columnToNormalizedTermMapper.get(NORTHING));
         Double easting = parseAsDouble(csvParser, columnToNormalizedTermMapper.get(EASTING));
 
@@ -147,7 +147,7 @@ public class StudyImporterForSimons extends BaseStudyImporter {
         return valueByLabel == null ? null : Double.parseDouble(valueByLabel);
     }
 
-    private Specimen createAndClassifySpecimen(final String speciesName, Study study) throws StudyImporterException {
+    private SpecimenNode createAndClassifySpecimen(final String speciesName, StudyNode study) throws StudyImporterException {
         try {
             return nodeFactory.createSpecimen(study, speciesName);
         } catch (NodeFactoryException e) {

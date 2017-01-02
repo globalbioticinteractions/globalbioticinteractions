@@ -5,8 +5,9 @@ import org.eol.globi.domain.Environment;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.LocationNode;
 import org.eol.globi.domain.RelTypes;
-import org.eol.globi.domain.Specimen;
+import org.eol.globi.domain.SpecimenNode;
 import org.eol.globi.domain.Study;
+import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.util.ExternalIdUtil;
 import org.neo4j.graphdb.Direction;
@@ -36,7 +37,7 @@ public class ExporterRDF implements StudyExporter {
 
         for (Relationship r : study.getSpecimens()) {
             Node agentNode = r.getEndNode();
-            for (Relationship ixnR : agentNode.getRelationships(Direction.OUTGOING, InteractType.values())) {
+            for (Relationship ixnR : agentNode.getRelationships(Direction.OUTGOING, InteractType.toNeo4j())) {
                 writeStatement(writer, Arrays.asList(blankNode(ixnR), iriNode(HAS_TYPE), iriNode(INTERACTION)));
                 writeParticipantStatements(writer, ixnR, ixnR.getEndNode());
                 writeParticipantStatements(writer, ixnR, agentNode);
@@ -50,7 +51,7 @@ public class ExporterRDF implements StudyExporter {
         writeStatement(writer, Arrays.asList(blankNode(participant1), iriNode(HAS_TYPE), iriNode(ORGANISM)));
         writeStatements(writer, taxonOfSpecimen(participant1));
 
-        LocationNode location = new Specimen(participant1).getSampleLocation();
+        LocationNode location = new SpecimenNode(participant1).getSampleLocation();
         if (location != null) {
             for (Environment env : location.getEnvironments()) {
                 String envoId = ExternalIdUtil.urlForExternalId(env.getExternalId());

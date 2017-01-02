@@ -6,9 +6,12 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.eol.globi.domain.Location;
 import org.eol.globi.domain.LocationNode;
 import org.eol.globi.domain.Specimen;
+import org.eol.globi.domain.SpecimenNode;
 import org.eol.globi.domain.Study;
+import org.eol.globi.domain.StudyNode;
 import org.eol.globi.service.DatasetUtil;
 import org.eol.globi.util.ExternalIdUtil;
 
@@ -35,7 +38,7 @@ public class StudyImporterForPlanque extends BaseStudyImporter {
     }
 
     @Override
-    public Study importStudy() throws StudyImporterException {
+    public StudyNode importStudy() throws StudyImporterException {
         LabeledCSVParser dataParser;
         try {
             dataParser = parserFactory.createParser(getLinks(), CharsetConstant.UTF8);
@@ -124,7 +127,7 @@ public class StudyImporterForPlanque extends BaseStudyImporter {
 
         for (String longReference : longReferences) {
             String studyId = "PLANQUE-" + StringUtils.abbreviate(longReference, 20) + MD5.getHashString(longReference);
-            Study localStudy = nodeFactory.getOrCreateStudy(studyId, getSourceCitation(), ExternalIdUtil.toCitation(null, longReference, null));
+            StudyNode localStudy = nodeFactory.getOrCreateStudy(studyId, getSourceCitation(), ExternalIdUtil.toCitation(null, longReference, null));
 
             String predatorName = parser.getValueByLabel("PREDATOR");
             if (StringUtils.isBlank(predatorName)) {
@@ -136,17 +139,17 @@ public class StudyImporterForPlanque extends BaseStudyImporter {
 
     }
 
-    private void addInteractionForPredator(LabeledCSVParser parser, Study localStudy, String predatorName) throws NodeFactoryException, StudyImporterException {
+    private void addInteractionForPredator(LabeledCSVParser parser, StudyNode localStudy, String predatorName) throws NodeFactoryException, StudyImporterException {
         Specimen predator = nodeFactory.createSpecimen(localStudy, normalizeName(predatorName));
         // from http://www.geonames.org/630674/barents-sea.html
-        LocationNode location = nodeFactory.getOrCreateLocation(74.0, 36.0, null);
+        Location location = nodeFactory.getOrCreateLocation(74.0, 36.0, null);
         predator.caughtIn(location);
 
         String preyName = parser.getValueByLabel("PREY");
         if (StringUtils.isBlank(preyName)) {
             getLogger().warn(localStudy, "found empty prey name on line [" + parser.lastLineNumber() + "]");
         } else {
-            Specimen prey = nodeFactory.createSpecimen(localStudy, normalizeName(preyName));
+            SpecimenNode prey = nodeFactory.createSpecimen(localStudy, normalizeName(preyName));
             prey.caughtIn(location);
             predator.ate(prey);
         }

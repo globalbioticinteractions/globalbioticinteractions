@@ -2,6 +2,7 @@ package org.eol.globi.data;
 
 
 import org.eol.globi.domain.Specimen;
+import org.eol.globi.domain.SpecimenNode;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.util.NodeUtil;
@@ -24,7 +25,7 @@ public class StudyImporterForLifeWatchGreeceTest extends GraphDBTestCase {
 
     @Test
     public void importCoupleOfLines() throws StudyImporterException {
-        StudyImporterForLifeWatchGreece importer = new StudyImporterForLifeWatchGreece(new TestParserFactory("122,\"Fauchald, K., Jumars, P.A. (1979) The Diet of Worms: A Study of Polychaete Feeding Guilds. <i>Oceanography and Marine Biology: Annual Review</i>, 17:193-284.\",\"Schistomeringos rudolphii\",\"http://www.owl-ontologies.com/unnamed.owl#Algae\",\"Algae as food source.\",\"http://eol.org/schema/terms/preysUpon\",\"The type of food an organism prefers.\",1,1\n" +
+        StudyImporterForLifeWatchGreece importer = new StudyImporterForLifeWatchGreece(new TestParserFactory("122,\"Fauchald, K., Jumars, P.A. (1979) The Diet of Worms: A StudyNode of Polychaete Feeding Guilds. <i>Oceanography and Marine Biology: Annual Review</i>, 17:193-284.\",\"Schistomeringos rudolphii\",\"http://www.owl-ontologies.com/unnamed.owl#Algae\",\"Algae as food source.\",\"http://eol.org/schema/terms/preysUpon\",\"The type of food an organism prefers.\",1,1\n" +
                 "429,\"Simpson, M. (1962) Reproduction of the Polychaete Glycera Dibranchiata at Solomons, Maryland. <i>The Biological Bulletin</i>, 123:396-411.\",\"Glycera alba\",\"http://polytraits.lifewatchgreece.eu/terms/EPKY_YES\",\"The organism undergoes epitokous metamorphosis.\",\"http://polytraits.lifewatchgreece.eu/terms/EPKY\",\"Form of reproduction of marine polychates in which the new individual arises by modification and separation from the posterior end of the worm in order to leave the bottom and reproduce [1292].\",2,1\n" +
                 "543,\"Rouse, G.W., Pleijel, F. (2001) Polychaetes. Oxford University Press,Oxford.354pp.\",\"Glycera alba\",\"http://polytraits.lifewatchgreece.eu/terms/EPKY_YES\",\"The organism undergoes epitokous metamorphosis.\",\"http://polytraits.lifewatchgreece.eu/terms/EPKY\",\"Form of reproduction of marine polychates in which the new individual arises by modification and separation from the posterior end of the worm in order to leave the bottom and reproduce [1292].\",2,1\n" +
                 "429,\"Simpson, M. (1962) Reproduction of the Polychaete Glycera Dibranchiata at Solomons, Maryland. <i>The Biological Bulletin</i>, 123:396-411.\",\"Glycera rouxi\",\"http://polytraits.lifewatchgreece.eu/terms/SM_YES\",\"Organisms that undergo sexual metamorphosis\",\"http://polytraits.lifewatchgreece.eu/terms/SM\",\"Conspicuous change in the organism's body structure prior to reproduction.\",2,1\n" +
@@ -56,7 +57,7 @@ public class StudyImporterForLifeWatchGreeceTest extends GraphDBTestCase {
             Iterable<Relationship> specimens = study.getSpecimens();
             for (Relationship collectedRel : specimens) {
                 addTaxonNameForSpecimenNode(taxa, collectedRel.getEndNode());
-                Specimen predatorSpecimen = new Specimen(collectedRel.getEndNode());
+                Specimen predatorSpecimen = new SpecimenNode(collectedRel.getEndNode());
                 Iterable<Relationship> prey = predatorSpecimen.getStomachContents();
                 for (Relationship ateRel : prey) {
                     totalPredatorPreyRelationships++;
@@ -69,7 +70,7 @@ public class StudyImporterForLifeWatchGreeceTest extends GraphDBTestCase {
     }
 
     private void addTaxonNameForSpecimenNode(Set<String> taxa, Node startNode) {
-        Specimen predatorSpecimen = new Specimen(startNode);
+        Specimen predatorSpecimen = new SpecimenNode(startNode);
         Iterable<Relationship> classifications = predatorSpecimen.getClassifications();
         for (Relationship classification : classifications) {
             taxa.add(new TaxonNode(classification.getEndNode()).getName());

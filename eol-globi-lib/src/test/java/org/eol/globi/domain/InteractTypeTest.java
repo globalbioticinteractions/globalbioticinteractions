@@ -4,7 +4,6 @@ import org.junit.Test;
 
 import static org.eol.globi.domain.InteractType.ATE;
 import static org.eol.globi.domain.InteractType.DAMAGED_BY;
-import static org.eol.globi.domain.InteractType.DAMAGES;
 import static org.eol.globi.domain.InteractType.DISPERSAL_VECTOR_OF;
 import static org.eol.globi.domain.InteractType.EATEN_BY;
 import static org.eol.globi.domain.InteractType.ECTOPARASITE_OF;

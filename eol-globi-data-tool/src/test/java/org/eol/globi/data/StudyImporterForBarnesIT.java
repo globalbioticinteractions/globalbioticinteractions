@@ -1,20 +1,12 @@
 package org.eol.globi.data;
 
 import org.apache.commons.lang.StringUtils;
-import org.eol.globi.domain.RelTypes;
-import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
-import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.service.TermLookupService;
 import org.eol.globi.taxon.UberonLookupService;
 import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
-import org.neo4j.graphdb.Direction;
-import org.neo4j.graphdb.Node;
-import org.neo4j.graphdb.Relationship;
 
-import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
 
 import static junit.framework.Assert.assertTrue;

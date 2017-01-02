@@ -3,6 +3,7 @@ package org.eol.globi.util;
 import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Study;
+import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.service.TaxonUtil;
@@ -48,7 +49,7 @@ public class NodeUtil {
     public static List<Study> findAllStudies(GraphDatabaseService graphService) {
         final List<Study> studies = new ArrayList<Study>();
         findStudies(graphService, new StudyListener() {
-            public void onStudy(Study study) {
+            public void onStudy(StudyNode study) {
                 studies.add(study);
             }
         });
@@ -59,7 +60,7 @@ public class NodeUtil {
         Index<Node> studyIndex = graphService.index().forNodes("studies");
         IndexHits<Node> hits = studyIndex.query("title", "*");
         for (Node hit : hits) {
-            listener.onStudy(new Study(hit));
+            listener.onStudy(new StudyNode(hit));
         }
         hits.close();
     }

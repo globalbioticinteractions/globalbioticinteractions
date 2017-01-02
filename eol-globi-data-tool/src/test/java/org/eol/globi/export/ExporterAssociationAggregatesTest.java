@@ -2,10 +2,12 @@ package org.eol.globi.export;
 
 import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.NodeFactoryException;
+import org.eol.globi.domain.Location;
 import org.eol.globi.domain.LocationNode;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Specimen;
-import org.eol.globi.domain.Study;
+import org.eol.globi.domain.SpecimenNode;
+import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.Term;
@@ -60,7 +62,7 @@ public class ExporterAssociationAggregatesTest extends GraphDBTestCase {
         nodeFactory.findStudy("myStudy1").setExternalId("some:id");
 
         ExporterAssociationAggregates exporter = new ExporterAssociationAggregates();
-        Study myStudy1 = nodeFactory.findStudy("myStudy1");
+        StudyNode myStudy1 = nodeFactory.findStudy("myStudy1");
         StringWriter row = new StringWriter();
         exporter.exportStudy(myStudy1, row, true);
 
@@ -75,7 +77,7 @@ public class ExporterAssociationAggregatesTest extends GraphDBTestCase {
         String[] studyTitles = {"myStudy1", "myStudy2"};
 
         for (String studyTitle : studyTitles) {
-            Study myStudy = nodeFactory.getOrCreateStudy(studyTitle, "data source description", ExternalIdUtil.toCitation("contributor", "description", "pubYear"));
+            StudyNode myStudy = nodeFactory.getOrCreateStudy(studyTitle, "data source description", ExternalIdUtil.toCitation("contributor", "description", "pubYear"));
             Specimen specimen = nodeFactory.createSpecimen(myStudy, PropertyAndValueDictionary.NO_MATCH);
             specimen.ate(nodeFactory.createSpecimen(myStudy, PropertyAndValueDictionary.NO_MATCH));
         }
@@ -84,7 +86,7 @@ public class ExporterAssociationAggregatesTest extends GraphDBTestCase {
         ExporterAssociationAggregates exporter = new ExporterAssociationAggregates();
         StringWriter row = new StringWriter();
         for (String studyTitle : studyTitles) {
-            Study myStudy1 = nodeFactory.findStudy(studyTitle);
+            StudyNode myStudy1 = nodeFactory.findStudy(studyTitle);
             exporter.exportStudy(myStudy1, row, false);
         }
 
@@ -93,14 +95,14 @@ public class ExporterAssociationAggregatesTest extends GraphDBTestCase {
     }
 
     private void createTestData(Double length, String studyTitle) throws NodeFactoryException, ParseException {
-        Study myStudy = nodeFactory.getOrCreateStudy(studyTitle, "data source description", ExternalIdUtil.toCitation("contributor", "description", "pubYear"));
-        Specimen specimen = nodeFactory.createSpecimen(myStudy, "Homo sapiens");
+        StudyNode myStudy = nodeFactory.getOrCreateStudy(studyTitle, "data source description", ExternalIdUtil.toCitation("contributor", "description", "pubYear"));
+        SpecimenNode specimen = nodeFactory.createSpecimen(myStudy, "Homo sapiens");
         specimen.setStomachVolumeInMilliLiter(666.0);
         specimen.setLifeStage(new Term("GlOBI:JUVENILE", "JUVENILE"));
         specimen.setPhysiologicalState(new Term("GlOBI:DIGESTATE", "DIGESTATE"));
         specimen.setBodyPart(new Term("GLOBI:BONE", "BONE"));
         nodeFactory.setUnixEpochProperty(specimen, new Date(ExportTestUtil.utcTestTime()));
-        Specimen otherSpecimen = nodeFactory.createSpecimen(myStudy, "Canis lupus");
+        SpecimenNode otherSpecimen = nodeFactory.createSpecimen(myStudy, "Canis lupus");
         otherSpecimen.setVolumeInMilliLiter(124.0);
 
         specimen.ate(otherSpecimen);
@@ -109,7 +111,7 @@ public class ExporterAssociationAggregatesTest extends GraphDBTestCase {
             specimen.setLengthInMm(length);
         }
 
-        LocationNode location = nodeFactory.getOrCreateLocation(44.0, 120.0, -60.0);
+        Location location = nodeFactory.getOrCreateLocation(44.0, 120.0, -60.0);
         specimen.caughtIn(location);
     }
 

@@ -1,11 +1,15 @@
 package org.eol.globi.domain;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class LocationImpl implements Location {
     private Double altitude;
     private Double longitude;
     private Double latitude;
     private String footprintWKT;
     private String locality;
+    private final List<Environment> environments = new ArrayList<>();
 
     public LocationImpl(Double latitude, Double longitude, Double altitude, String footprintWKT) {
         this.altitude = altitude;
@@ -40,6 +44,14 @@ public class LocationImpl implements Location {
     public String getLocality() {
         return locality;
     }
+
+    @Override
+    public void addEnvironment(Environment environment) {
+        environments.add(environment);
+    }
+
+    @Override
+    public List<Environment> getEnvironments() { return environments; }
 
     public void setLocality(String locality) {
         this.locality = locality;

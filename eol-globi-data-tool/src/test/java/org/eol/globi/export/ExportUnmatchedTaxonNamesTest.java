@@ -6,7 +6,8 @@ import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Specimen;
-import org.eol.globi.domain.Study;
+import org.eol.globi.domain.SpecimenNode;
+import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TaxonNode;
@@ -52,35 +53,35 @@ public class ExportUnmatchedTaxonNamesTest extends GraphDBTestCase {
         taxonIndex = ExportTestUtil.taxonIndexWithEnricher(taxonEnricher, getGraphDb());
 
         String title = "my study\"";
-        Study study = nodeFactory.getOrCreateStudy2(title, "my first source", null);
+        StudyNode study = nodeFactory.getOrCreateStudy2(title, "my first source", null);
         study.setCitationWithTx("citation my study");
 
         taxonIndex.getOrCreateTaxon("Homo sapiens");
         Specimen predatorSpecimen = nodeFactory.createSpecimen(study, "Homo sapiens", "TEST:1234");
         taxonIndex.getOrCreateTaxon("Canis lupus");
-        Specimen preySpecimen6 = nodeFactory.createSpecimen(study, "Canis lupus");
+        SpecimenNode preySpecimen6 = nodeFactory.createSpecimen(study, "Canis lupus");
         predatorSpecimen.interactsWith(preySpecimen6, InteractType.ATE);
-        Specimen preySpecimen5 = nodeFactory.createSpecimen(study, "Canis lupus");
+        SpecimenNode preySpecimen5 = nodeFactory.createSpecimen(study, "Canis lupus");
         predatorSpecimen.interactsWith(preySpecimen5, InteractType.ATE);
-        Specimen preySpecimen = nodeFactory.createSpecimen(study, "Caniz");
+        SpecimenNode preySpecimen = nodeFactory.createSpecimen(study, "Caniz");
         predatorSpecimen.ate(preySpecimen);
 
         Specimen predatorSpecimen23 = nodeFactory.createSpecimen(study, "Homo sapiens2");
-        Specimen preySpecimen4 = nodeFactory.createSpecimen(study, "Canis lupus");
+        SpecimenNode preySpecimen4 = nodeFactory.createSpecimen(study, "Canis lupus");
         predatorSpecimen23.interactsWith(preySpecimen4, InteractType.ATE);
 
         Specimen predatorSpecimen22 = nodeFactory.createSpecimen(study, "Homo sapiens2");
-        Specimen preySpecimen3 = nodeFactory.createSpecimen(study, "Canis lupus");
+        SpecimenNode preySpecimen3 = nodeFactory.createSpecimen(study, "Canis lupus");
         predatorSpecimen22.interactsWith(preySpecimen3, InteractType.ATE);
 
-        Study study2 = nodeFactory.getOrCreateStudy2("my study2", "my source2", null);
+        StudyNode study2 = nodeFactory.getOrCreateStudy2("my study2", "my source2", null);
         study2.setCitationWithTx("citation study2");
         Specimen predatorSpecimen21 = nodeFactory.createSpecimen(study2, "Homo sapiens2");
-        Specimen preySpecimen2 = nodeFactory.createSpecimen(study2, "Canis lupus");
+        SpecimenNode preySpecimen2 = nodeFactory.createSpecimen(study2, "Canis lupus");
         predatorSpecimen21.interactsWith(preySpecimen2, InteractType.ATE);
 
         Specimen predatorSpecimen2 = nodeFactory.createSpecimen(study, "Homo sapiens3", PropertyAndValueDictionary.NO_MATCH);
-        Specimen preySpecimen1 = nodeFactory.createSpecimen(study, "Canis lupus");
+        SpecimenNode preySpecimen1 = nodeFactory.createSpecimen(study, "Canis lupus");
         predatorSpecimen2.interactsWith(preySpecimen1, InteractType.ATE);
         resolveNames();
 
@@ -112,7 +113,7 @@ public class ExportUnmatchedTaxonNamesTest extends GraphDBTestCase {
         };
         taxonIndex = ExportTestUtil.taxonIndexWithEnricher(taxonEnricher, getGraphDb());
 
-        Study study = nodeFactory.getOrCreateStudy2("my, study", "my first, source", null);
+        StudyNode study = nodeFactory.getOrCreateStudy2("my, study", "my first, source", null);
         study.setCitationWithTx("cite, study");
 
         Specimen predatorSpecimen = nodeFactory.createSpecimen(study, "Homo sapienz");
@@ -121,7 +122,7 @@ public class ExportUnmatchedTaxonNamesTest extends GraphDBTestCase {
         taxon.setPath("one | two | Homo sapiens");
         NodeUtil.connectTaxa(taxon, humanz, getGraphDb(), RelTypes.SIMILAR_TO);
         assertNotNull(humanz);
-        Specimen preySpecimen = nodeFactory.createSpecimen(study, "Caniz");
+        SpecimenNode preySpecimen = nodeFactory.createSpecimen(study, "Caniz");
         predatorSpecimen.interactsWith(preySpecimen, InteractType.ATE);
 
         predatorSpecimen = nodeFactory.createSpecimen(study, "Homo sapiens");

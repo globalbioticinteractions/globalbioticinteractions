@@ -2,6 +2,7 @@ package org.eol.globi.export;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.domain.Study;
+import org.eol.globi.domain.StudyNode;
 import org.eol.globi.util.ExternalIdUtil;
 
 import java.io.IOException;
@@ -55,7 +56,7 @@ public class ExporterReferences extends ExporterBase {
     }
 
     public static String referenceIdForStudy(Study study) {
-        return "globi:ref:" + referenceId(study);
+        return "globi:ref:" + referenceId((StudyNode)study);
     }
 
     private String referenceForStudy(Study study) {

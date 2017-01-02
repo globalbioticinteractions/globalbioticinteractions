@@ -4,9 +4,10 @@ import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.lang3.StringUtils;
 import org.codehaus.swizzle.stream.FixedTokenReplacementInputStream;
 import org.codehaus.swizzle.stream.StringTokenHandler;
-import org.eol.globi.domain.LocationNode;
+import org.eol.globi.domain.Location;
 import org.eol.globi.domain.Specimen;
-import org.eol.globi.domain.Study;
+import org.eol.globi.domain.SpecimenNode;
+import org.eol.globi.domain.StudyNode;
 import org.eol.globi.util.CSVUtil;
 import org.eol.globi.util.ExternalIdUtil;
 
@@ -20,7 +21,7 @@ public class StudyImporterForFishbase extends BaseStudyImporter {
     }
 
     @Override
-    public Study importStudy() throws StudyImporterException {
+    public StudyNode importStudy() throws StudyImporterException {
         String studyResource = "fishbase/fooditems.tsv";
         try {
             importStudy(getClass().getResourceAsStream(studyResource));
@@ -36,8 +37,8 @@ public class StudyImporterForFishbase extends BaseStudyImporter {
         while (parser.getLine() != null) {
             int lastLineNumber = parser.getLastLineNumber();
             if (importFilter.shouldImportRecord((long) lastLineNumber)) {
-                Study study = parseStudy(parser);
-                LocationNode location = parseLocation(parser);
+                StudyNode study = parseStudy(parser);
+                Location location = parseLocation(parser);
                 parseInteraction(parser, study, location);
             }
         }
@@ -56,13 +57,13 @@ public class StudyImporterForFishbase extends BaseStudyImporter {
         return parser;
     }
 
-    private LocationNode parseLocation(LabeledCSVParser parser) throws StudyImporterException {
+    private Location parseLocation(LabeledCSVParser parser) throws StudyImporterException {
         parser.getValueByLabel("locality");
         parser.getValueByLabel("countryCode");
         String latitude = StringUtils.replace(parser.getValueByLabel("latitude"), "NULL", "");
         String longitude = StringUtils.replace(parser.getValueByLabel("longitude"), "NULL", "");
 
-        LocationNode location = null;
+        Location location = null;
         if (StringUtils.isNotBlank(latitude) && StringUtils.isNotBlank(longitude)) {
             try {
                 location = nodeFactory.getOrCreateLocation(Double.parseDouble(latitude),
@@ -77,7 +78,7 @@ public class StudyImporterForFishbase extends BaseStudyImporter {
         return location;
     }
 
-    private Specimen parseInteraction(LabeledCSVParser parser, Study study, LocationNode location) throws StudyImporterException {
+    private Specimen parseInteraction(LabeledCSVParser parser, StudyNode study, Location location) throws StudyImporterException {
         Specimen consumer = null;
         try {
             String consumerName = StringUtils.join(new String[]{parser.getValueByLabel("consumer genus"),
@@ -92,7 +93,7 @@ public class StudyImporterForFishbase extends BaseStudyImporter {
             if (StringUtils.isNotBlank(consumerName) && StringUtils.isNotBlank(foodName)) {
                 consumer = nodeFactory.createSpecimen(study, consumerName);
                 consumer.caughtIn(location);
-                Specimen food = nodeFactory.createSpecimen(study, foodName);
+                SpecimenNode food = nodeFactory.createSpecimen(study, foodName);
                 food.caughtIn(location);
                 consumer.ate(food);
             }
@@ -102,7 +103,7 @@ public class StudyImporterForFishbase extends BaseStudyImporter {
         return consumer;
     }
 
-    private Study parseStudy(LabeledCSVParser parser) throws NodeFactoryException {
+    private StudyNode parseStudy(LabeledCSVParser parser) throws NodeFactoryException {
         String author = StringUtils.replace(parser.getValueByLabel("author"), "NULL", "");
         String year = StringUtils.replace(parser.getValueByLabel("year"), "NULL", "");
         String title = StringUtils.replace(parser.getValueByLabel("title"), "NULL", "");

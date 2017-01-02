@@ -8,9 +8,11 @@ import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.Statement;
 import com.hp.hpl.jena.rdf.model.StmtIterator;
 import org.apache.commons.lang3.StringUtils;
+import org.eol.globi.domain.Location;
 import org.eol.globi.domain.LocationNode;
 import org.eol.globi.domain.Specimen;
-import org.eol.globi.domain.Study;
+import org.eol.globi.domain.SpecimenNode;
+import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.Term;
 import org.eol.globi.geo.LatLng;
 
@@ -55,8 +57,8 @@ public class StudyImporterForSPIRE extends BaseStudyImporter {
 
         String shortened = StringUtils.abbreviate(titlesAndAuthors1.
                 replaceAll("(\\w(\\. )+)", "").trim(), 24);
-        properties.put(Study.TITLE, shortened + MD5.getHashString(titlesAndAuthors1));
-        properties.put(Study.DESCRIPTION, titlesAndAuthors1);
+        properties.put(StudyNode.TITLE, shortened + MD5.getHashString(titlesAndAuthors1));
+        properties.put(StudyNode.DESCRIPTION, titlesAndAuthors1);
     }
 
     public InteractionListener getInteractionListener() {
@@ -69,7 +71,7 @@ public class StudyImporterForSPIRE extends BaseStudyImporter {
 
 
     @Override
-    public Study importStudy() throws StudyImporterException {
+    public StudyNode importStudy() throws StudyImporterException {
         Model model;
         try {
             model = buildModel();
@@ -150,12 +152,12 @@ public class StudyImporterForSPIRE extends BaseStudyImporter {
         boolean invalidInteraction = "Enhydra_lutris".equals(properties.get(PREDATOR_NAME)) && "Castor_canadensis".equals(properties.get(PREY_NAME));
         // phytoplankton are unlikely predators as suggested in http://dx.doi.org/10.6084/m9.figshare.1414253
         invalidInteraction = invalidInteraction || "phytoplankton".equals(properties.get(PREDATOR_NAME));
-        return properties.containsKey(Study.TITLE) && !invalidInteraction;
+        return properties.containsKey(StudyNode.TITLE) && !invalidInteraction;
     }
 
     private void importValidLink(Map<String, String> properties) throws NodeFactoryException {
-        Study study = nodeFactory.getOrCreateStudy(properties.get(Study.TITLE),
-                SOURCE_SPIRE, properties.get(Study.DESCRIPTION));
+        StudyNode study = nodeFactory.getOrCreateStudy(properties.get(StudyNode.TITLE),
+                SOURCE_SPIRE, properties.get(StudyNode.DESCRIPTION));
         try {
             Specimen predator = createSpecimen(properties.get(PREDATOR_NAME), study);
             String locality = properties.get(LOCALITY_ORIGINAL);
@@ -163,14 +165,14 @@ public class StudyImporterForSPIRE extends BaseStudyImporter {
             if (latLng == null) {
                 getLogger().warn(study, "failed to find location for county [" + locality + "]");
             } else {
-                LocationNode location = nodeFactory.getOrCreateLocation(latLng.getLat(), latLng.getLng(), null);
+                Location location = nodeFactory.getOrCreateLocation(latLng.getLat(), latLng.getLng(), null);
                 predator.caughtIn(location);
                 String habitat = properties.get(OF_HABITAT);
                 if (StringUtils.isNotBlank(habitat)) {
                     addEnvironment(location, "SPIRE:" + habitat, habitat);
                 }
             }
-            Specimen prey = createSpecimen(properties.get(PREY_NAME), study);
+            SpecimenNode prey = createSpecimen(properties.get(PREY_NAME), study);
             predator.ate(prey);
         } catch (NodeFactoryException e) {
             getLogger().warn(study, "failed to import trophic link with properties [" + properties + "]: " + e.getMessage());
@@ -179,13 +181,13 @@ public class StudyImporterForSPIRE extends BaseStudyImporter {
         }
     }
 
-    private void addEnvironment(LocationNode location, String id, String name) throws NodeFactoryException {
+    private void addEnvironment(Location location, String id, String name) throws NodeFactoryException {
         nodeFactory.getOrCreateEnvironments(location, id, name);
     }
 
-    private Specimen createSpecimen(String taxonName, Study study) throws NodeFactoryException {
+    private SpecimenNode createSpecimen(String taxonName, StudyNode study) throws NodeFactoryException {
         taxonName = taxonName.replaceAll("_", " ");
-        Specimen specimen = nodeFactory.createSpecimen(study, taxonName);
+        SpecimenNode specimen = nodeFactory.createSpecimen(study, taxonName);
 
         if (taxonName.contains("adult")) {
             addLifeStage(specimen, "adult");

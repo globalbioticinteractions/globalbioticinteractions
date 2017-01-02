@@ -1,6 +1,7 @@
 package org.eol.globi.export;
 
 import org.eol.globi.domain.Study;
+import org.eol.globi.domain.StudyNode;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -31,7 +32,7 @@ public class ExportUnmatchedTaxonNames implements StudyExporter {
             put("study_title", study.getTitle());
         }};
 
-        ExportUtil.writeResults(writer, study.getUnderlyingNode().getGraphDatabase(), query, params, includeHeader);
+        ExportUtil.writeResults(writer, ((StudyNode)study).getUnderlyingNode().getGraphDatabase(), query, params, includeHeader);
     }
 
 }
