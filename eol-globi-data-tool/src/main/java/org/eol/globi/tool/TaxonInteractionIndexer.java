@@ -6,6 +6,7 @@ import org.apache.commons.logging.LogFactory;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.SpecimenNode;
+import org.eol.globi.util.NodeUtil;
 import org.mapdb.DB;
 import org.mapdb.DBMaker;
 import org.mapdb.Fun;
@@ -78,7 +79,7 @@ public class TaxonInteractionIndexer {
     }
 
     public void createInteraction(Node sourceTaxon, Node targetTaxon, InteractType relType, boolean inverted, Long interactionCount) {
-        final Relationship interactRel = sourceTaxon.createRelationshipTo(targetTaxon, relType);
+        final Relationship interactRel = sourceTaxon.createRelationshipTo(targetTaxon, NodeUtil.asNeo4j(relType));
         SpecimenNode.enrichWithInteractProps(relType, interactRel, inverted);
         interactRel.setProperty("count", interactionCount);
     }
@@ -102,12 +103,12 @@ public class TaxonInteractionIndexer {
         Index<Node> taxonIndex = graphService.index().forNodes("taxons");
         IndexHits<Node> taxa = taxonIndex.query("name", "*");
         for (Node sourceTaxon : taxa) {
-            final Iterable<Relationship> classifiedAs = sourceTaxon.getRelationships(Direction.INCOMING, RelTypes.CLASSIFIED_AS);
+            final Iterable<Relationship> classifiedAs = sourceTaxon.getRelationships(Direction.INCOMING, NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS));
             for (Relationship classifiedA : classifiedAs) {
                 Node specimenNode = classifiedA.getStartNode();
-                final Iterable<Relationship> interactions = specimenNode.getRelationships(Direction.OUTGOING, InteractType.values());
+                final Iterable<Relationship> interactions = specimenNode.getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j(InteractType.values()));
                 for (Relationship interaction : interactions) {
-                    final Iterable<Relationship> targetClassifications = interaction.getEndNode().getRelationships(Direction.OUTGOING, RelTypes.CLASSIFIED_AS);
+                    final Iterable<Relationship> targetClassifications = interaction.getEndNode().getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS));
                     for (Relationship targetClassification : targetClassifications) {
                         final Node targetTaxonNode = targetClassification.getEndNode();
                         final Fun.Tuple3<Long, String, Long> interactionKey = new Fun.Tuple3<Long, String, Long>(sourceTaxon.getId(), interaction.getType().name(), targetTaxonNode.getId());

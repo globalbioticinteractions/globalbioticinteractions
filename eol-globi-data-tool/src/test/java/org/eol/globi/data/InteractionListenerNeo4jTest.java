@@ -82,7 +82,7 @@ public class InteractionListenerNeo4jTest extends GraphDBTestCase {
 
     public TaxonNode getOrigTaxon(SpecimenNode predator) {
         return new TaxonNode(predator.getUnderlyingNode()
-                .getRelationships(Direction.OUTGOING, RelTypes.ORIGINALLY_DESCRIBED_AS)
+                .getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j(RelTypes.ORIGINALLY_DESCRIBED_AS))
                 .iterator().next().getEndNode());
     }
 

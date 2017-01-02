@@ -4,6 +4,7 @@ import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.data.TaxonIndex;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.TaxonNode;
+import org.eol.globi.util.NodeUtil;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Relationship;
 
@@ -20,7 +21,7 @@ public class LinkerTestUtil {
         TaxonNode taxon1 = taxonIndex.findTaxonByName(name);
         assertThat(taxon1, is(notNullValue()));
         assertThat(taxon1.getName(), is(name));
-        Iterable<Relationship> rels = taxon1.getUnderlyingNode().getRelationships(relType, Direction.OUTGOING);
+        Iterable<Relationship> rels = taxon1.getUnderlyingNode().getRelationships(NodeUtil.asNeo4j(relType), Direction.OUTGOING);
         int counter = 0;
         for (Relationship rel : rels) {
             counter++;

@@ -130,7 +130,7 @@ public class ExportUnmatchedTaxonNamesTest extends GraphDBTestCase {
         Node node = taxonIndex.getOrCreateTaxon("Homo sapiens").getUnderlyingNode();
         Transaction tx = getGraphDb().beginTx();
         try {
-            node.createRelationshipTo(synonymNode, RelTypes.SAME_AS);
+            node.createRelationshipTo(synonymNode, NodeUtil.asNeo4j(RelTypes.SAME_AS));
             tx.success();
         } finally {
             tx.finish();

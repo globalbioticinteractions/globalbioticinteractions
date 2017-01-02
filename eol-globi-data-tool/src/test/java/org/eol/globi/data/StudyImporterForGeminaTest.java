@@ -3,6 +3,7 @@ package org.eol.globi.data;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.TaxonNode;
+import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
@@ -44,12 +45,12 @@ public class StudyImporterForGeminaTest extends GraphDBTestCase {
         assertThat(taxon.getExternalId(), is("NCBI:1392"));
 
         List<String> antraxHosts = new ArrayList<String>();
-        Iterable<Relationship> relationships = taxon.getUnderlyingNode().getRelationships(RelTypes.CLASSIFIED_AS, Direction.INCOMING);
+        Iterable<Relationship> relationships = taxon.getUnderlyingNode().getRelationships(NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS), Direction.INCOMING);
         for (Relationship rel : relationships) {
             Node specimen = rel.getStartNode();
-            Iterable<Relationship> pathogenRels = specimen.getRelationships(Direction.OUTGOING, InteractType.PATHOGEN_OF);
+            Iterable<Relationship> pathogenRels = specimen.getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j(InteractType.PATHOGEN_OF));
             for (Relationship pathogenRel : pathogenRels) {
-                Relationship singleRelationship = pathogenRel.getEndNode().getSingleRelationship(RelTypes.CLASSIFIED_AS, Direction.OUTGOING);
+                Relationship singleRelationship = pathogenRel.getEndNode().getSingleRelationship(NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS), Direction.OUTGOING);
                 antraxHosts.add(new TaxonNode(singleRelationship.getEndNode()).getName());
             }
 

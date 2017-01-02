@@ -1,7 +1,6 @@
 package org.eol.globi.export;
 
 import org.apache.commons.lang3.StringUtils;
-import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.StudyNode;
@@ -53,7 +52,7 @@ public class ExporterAggregateUtil {
     public static void collectDistinctInteractions(StudyNode aStudy, Map<Fun.Tuple3<Long, String, String>, List<String>> studyOccAggregate) {
         final Iterable<Relationship> specimens = aStudy.getSpecimens();
         for (Relationship specimen : specimens) {
-            final Iterable<Relationship> interactions = specimen.getEndNode().getRelationships(Direction.OUTGOING, InteractType.toNeo4j());
+            final Iterable<Relationship> interactions = specimen.getEndNode().getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j());
             for (Relationship interaction : interactions) {
                 if (!interaction.hasProperty(PropertyAndValueDictionary.INVERTED)) {
                     final Node targetSpecimen = interaction.getEndNode();
@@ -77,7 +76,7 @@ public class ExporterAggregateUtil {
     }
 
     public static String getExternalIdForTaxonOf(Node targetSpecimen) {
-        final Iterable<Relationship> classifiedAs = targetSpecimen.getRelationships(Direction.OUTGOING, RelTypes.CLASSIFIED_AS);
+        final Iterable<Relationship> classifiedAs = targetSpecimen.getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS));
         for (Relationship classifiedA : classifiedAs) {
             final TaxonNode taxonNode = new TaxonNode(classifiedA.getEndNode());
             if (!StringUtils.equals(taxonNode.getExternalId(), PropertyAndValueDictionary.NO_MATCH)

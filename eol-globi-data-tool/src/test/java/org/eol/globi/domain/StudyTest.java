@@ -2,6 +2,7 @@ package org.eol.globi.domain;
 
 import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.NodeFactoryException;
+import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
@@ -45,7 +46,7 @@ public class StudyTest extends GraphDBTestCase {
 
         for (Relationship rel : study.getSpecimens()) {
             Specimen specimen = new SpecimenNode(rel.getEndNode());
-            Relationship caughtDuringRel = rel.getEndNode().getSingleRelationship(RelTypes.CAUGHT_DURING, Direction.OUTGOING);
+            Relationship caughtDuringRel = rel.getEndNode().getSingleRelationship(NodeUtil.asNeo4j(RelTypes.CAUGHT_DURING), Direction.OUTGOING);
             if (caughtDuringRel != null) {
                 Node seasonNode = caughtDuringRel.getEndNode();
                 if (seasonNode != null && seasonNode.getProperty(SeasonNode.TITLE).equals("winter")) {

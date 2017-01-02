@@ -6,6 +6,7 @@ import org.eol.globi.taxon.TaxonFuzzySearchIndex;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.TaxonNode;
+import org.eol.globi.util.NodeUtil;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
@@ -34,7 +35,7 @@ public class LinkerTaxonIndex {
             TaxonNode taxonNode = new TaxonNode(hit);
             collectIds(externalIds, taxonNode);
             addToFuzzyIndex(graphDb, fuzzySearchIndex, hit, taxonNode);
-            Iterable<Relationship> rels = hit.getRelationships(Direction.OUTGOING, RelTypes.SAME_AS);
+            Iterable<Relationship> rels = hit.getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j(RelTypes.SAME_AS));
             for (Relationship rel : rels) {
                 TaxonNode sameAsTaxon = new TaxonNode(rel.getEndNode());
                 collectIds(externalIds, sameAsTaxon);

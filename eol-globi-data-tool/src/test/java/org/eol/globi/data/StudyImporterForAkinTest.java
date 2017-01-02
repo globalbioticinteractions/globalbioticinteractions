@@ -10,6 +10,7 @@ import org.eol.globi.domain.Study;
 import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.service.TermLookupServiceException;
 import org.eol.globi.taxon.UberonLookupService;
+import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
@@ -87,13 +88,13 @@ public class StudyImporterForAkinTest extends GraphDBTestCase {
         Specimen specimen = new SpecimenNode(specimenNode);
         assertThat(specimen.getSampleLocation().getAltitude(), is(-0.7));
 
-        Node speciesNode = specimenNode.getSingleRelationship(RelTypes.CLASSIFIED_AS, Direction.OUTGOING).getEndNode();
+        Node speciesNode = specimenNode.getSingleRelationship(NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS), Direction.OUTGOING).getEndNode();
         assertThat((String) speciesNode.getProperty("name"), is("Pogonias cromis"));
-        Iterable<Relationship> ateRels = specimenNode.getRelationships(InteractType.ATE, Direction.OUTGOING);
+        Iterable<Relationship> ateRels = specimenNode.getRelationships(NodeUtil.asNeo4j(InteractType.ATE), Direction.OUTGOING);
         Map<String, Map<String, Object>> preys = new HashMap<String, Map<String, Object>>();
         for (Relationship ateRel : ateRels) {
             Node preyNode = ateRel.getEndNode();
-            Node taxonNode = preyNode.getSingleRelationship(RelTypes.CLASSIFIED_AS, Direction.OUTGOING).getEndNode();
+            Node taxonNode = preyNode.getSingleRelationship(NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS), Direction.OUTGOING).getEndNode();
             String name = (String) taxonNode.getProperty("name");
             HashMap<String, Object> propertyMap = new HashMap<String, Object>();
             propertyMap.put("name", name);
@@ -124,7 +125,7 @@ public class StudyImporterForAkinTest extends GraphDBTestCase {
         assertThat((String) mollusca.get("name"), is("Mollusks (Oyster)"));
         assertThat((Double) mollusca.get(SpecimenConstant.VOLUME_IN_ML), is(0.45d));
 
-        Node locationNode = specimenNode.getSingleRelationship(RelTypes.COLLECTED_AT, Direction.OUTGOING).getEndNode();
+        Node locationNode = specimenNode.getSingleRelationship(NodeUtil.asNeo4j(RelTypes.COLLECTED_AT), Direction.OUTGOING).getEndNode();
         assertThat((Double) locationNode.getProperty(LocationConstant.LATITUDE), is(28.645202d));
         assertThat((Double) locationNode.getProperty(LocationConstant.LONGITUDE), is(-96.099923d));
     }

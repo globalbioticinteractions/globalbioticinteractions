@@ -2,6 +2,7 @@ package org.eol.globi.domain;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.util.ExternalIdUtil;
+import org.eol.globi.util.NodeUtil;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
@@ -42,7 +43,7 @@ public class StudyNode extends NodeBacked implements Study {
 
     @Override
     public Iterable<Relationship> getSpecimens() {
-        return getUnderlyingNode().getRelationships(Direction.OUTGOING, RelTypes.COLLECTED);
+        return getUnderlyingNode().getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j(RelTypes.COLLECTED));
 
     }
 
@@ -131,7 +132,7 @@ public class StudyNode extends NodeBacked implements Study {
         Transaction tx = graphDb.beginTx();
         try {
             LogMessageImpl msg = new LogMessageImpl(graphDb.createNode(), message, warning);
-            getUnderlyingNode().createRelationshipTo(msg.getUnderlyingNode(), RelTypes.HAS_LOG_MESSAGE);
+            getUnderlyingNode().createRelationshipTo(msg.getUnderlyingNode(), NodeUtil.asNeo4j(RelTypes.HAS_LOG_MESSAGE));
             tx.success();
         } finally {
             tx.finish();
@@ -140,7 +141,7 @@ public class StudyNode extends NodeBacked implements Study {
 
     @Override
     public List<LogMessage> getLogMessages() {
-        Iterable<Relationship> rels = getUnderlyingNode().getRelationships(RelTypes.HAS_LOG_MESSAGE, Direction.OUTGOING);
+        Iterable<Relationship> rels = getUnderlyingNode().getRelationships(NodeUtil.asNeo4j(RelTypes.HAS_LOG_MESSAGE), Direction.OUTGOING);
         List<LogMessage> msgs = new ArrayList<LogMessage>();
         for (Relationship rel : rels) {
             msgs.add(new LogMessageImpl(rel.getEndNode()));

@@ -1,6 +1,8 @@
 package org.eol.globi.util;
 
 import org.apache.commons.lang3.StringUtils;
+import org.eol.globi.domain.InteractType;
+import org.eol.globi.domain.RelType;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyNode;
@@ -9,6 +11,7 @@ import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.service.TaxonUtil;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
+import org.neo4j.graphdb.RelationshipType;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.IndexHits;
@@ -39,7 +42,7 @@ public class NodeUtil {
         try {
             TaxonNode sameAsTaxon = new TaxonNode(graphDb.createNode());
             TaxonUtil.copy(taxon, sameAsTaxon);
-            taxonNode.getUnderlyingNode().createRelationshipTo(sameAsTaxon.getUnderlyingNode(), relType);
+            taxonNode.getUnderlyingNode().createRelationshipTo(sameAsTaxon.getUnderlyingNode(), asNeo4j(relType));
             tx.success();
         } finally {
             tx.finish();
@@ -63,5 +66,21 @@ public class NodeUtil {
             listener.onStudy(new StudyNode(hit));
         }
         hits.close();
+    }
+
+    public static RelationshipType asNeo4j(RelType type) {
+        return () -> type.name();
+    }
+
+    public static RelationshipType[] asNeo4j() {
+        return asNeo4j(InteractType.values());
+    }
+
+    public static RelationshipType[] asNeo4j(InteractType[] values) {
+        RelationshipType[] types = new RelationshipType[values.length];
+        for (int i=0; i< values.length; i++) {
+            types[i] = asNeo4j(values[i]);
+        }
+        return types;
     }
 }

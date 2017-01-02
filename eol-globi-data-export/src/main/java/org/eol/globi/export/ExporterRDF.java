@@ -7,9 +7,9 @@ import org.eol.globi.domain.LocationNode;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.SpecimenNode;
 import org.eol.globi.domain.Study;
-import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.util.ExternalIdUtil;
+import org.eol.globi.util.NodeUtil;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
@@ -37,7 +37,7 @@ public class ExporterRDF implements StudyExporter {
 
         for (Relationship r : study.getSpecimens()) {
             Node agentNode = r.getEndNode();
-            for (Relationship ixnR : agentNode.getRelationships(Direction.OUTGOING, InteractType.toNeo4j())) {
+            for (Relationship ixnR : agentNode.getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j())) {
                 writeStatement(writer, Arrays.asList(blankNode(ixnR), iriNode(HAS_TYPE), iriNode(INTERACTION)));
                 writeParticipantStatements(writer, ixnR, ixnR.getEndNode());
                 writeParticipantStatements(writer, ixnR, agentNode);
@@ -85,7 +85,7 @@ public class ExporterRDF implements StudyExporter {
 
     protected List<String> addSameAsTaxaFor(Node taxon) {
         List<String> sameAsTaxaIRIs = new ArrayList<String>();
-        Iterable<Relationship> sameAsRels = taxon.getRelationships(RelTypes.SAME_AS, Direction.OUTGOING);
+        Iterable<Relationship> sameAsRels = taxon.getRelationships(NodeUtil.asNeo4j(RelTypes.SAME_AS), Direction.OUTGOING);
         for (Relationship sameAsRel : sameAsRels) {
             String taxonIRI = taxonIRI(sameAsRel.getEndNode());
             if (StringUtils.isNotBlank(taxonIRI)) {
@@ -97,7 +97,7 @@ public class ExporterRDF implements StudyExporter {
 
     public List<List<String>> taxonOfSpecimen(Node specimen) {
         List<List<String>> statements = new ArrayList<List<String>>();
-        Relationship singleRelationship = specimen.getSingleRelationship(RelTypes.CLASSIFIED_AS, Direction.OUTGOING);
+        Relationship singleRelationship = specimen.getSingleRelationship(NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS), Direction.OUTGOING);
         if (singleRelationship != null) {
             Node taxonNode = singleRelationship.getEndNode();
             List<String> sameAsTaxa = addSameAsTaxaFor(taxonNode);

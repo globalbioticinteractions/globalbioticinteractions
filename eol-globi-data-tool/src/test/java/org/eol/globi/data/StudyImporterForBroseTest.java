@@ -64,7 +64,7 @@ public class StudyImporterForBroseTest extends GraphDBTestCase {
         importStudy(importer);
 
         TaxonNode taxon = taxonIndex.findTaxonByName("Praon dorsale");
-        Iterable<Relationship> relationships = taxon.getUnderlyingNode().getRelationships(Direction.INCOMING, RelTypes.CLASSIFIED_AS);
+        Iterable<Relationship> relationships = taxon.getUnderlyingNode().getRelationships(Direction.INCOMING, NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS));
         for (Relationship relationship : relationships) {
             Node predatorSpecimenNode = relationship.getStartNode();
             assertThat((String) predatorSpecimenNode.getProperty(SpecimenConstant.LIFE_STAGE_LABEL), is("post-juvenile adult stage"));

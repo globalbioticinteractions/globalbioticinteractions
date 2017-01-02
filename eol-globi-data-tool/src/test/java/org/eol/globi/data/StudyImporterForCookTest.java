@@ -5,6 +5,7 @@ import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.SpecimenConstant;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.TaxonNode;
+import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
@@ -47,7 +48,7 @@ public class StudyImporterForCookTest extends GraphDBTestCase {
                 if (new Double(156.0).equals(property)) {
                     assertTaxonClassification(specimen, hostTaxon.getUnderlyingNode());
                     foundFirstHost = true;
-                    Iterable<Relationship> parasiteRel = specimen.getRelationships(Direction.INCOMING, InteractType.PARASITE_OF);
+                    Iterable<Relationship> parasiteRel = specimen.getRelationships(Direction.INCOMING, NodeUtil.asNeo4j(InteractType.PARASITE_OF));
                     for (Relationship relationship : parasiteRel) {
                         Node parasite = relationship.getStartNode();
                         assertThat(parasite.hasProperty(SpecimenConstant.LENGTH_IN_MM), is(false));
@@ -77,7 +78,7 @@ public class StudyImporterForCookTest extends GraphDBTestCase {
     }
 
     private void assertTaxonClassification(Node parasite, Node underlyingNode) {
-        Iterable<Relationship> classifiedAsRels = parasite.getRelationships(Direction.OUTGOING, RelTypes.CLASSIFIED_AS);
+        Iterable<Relationship> classifiedAsRels = parasite.getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS));
         for (Relationship classifiedAsRel : classifiedAsRels) {
             assertThat(classifiedAsRel.getEndNode(), is(underlyingNode));
         }

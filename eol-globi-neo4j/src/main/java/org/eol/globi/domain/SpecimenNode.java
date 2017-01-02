@@ -1,6 +1,7 @@
 package org.eol.globi.domain;
 
 import org.eol.globi.service.TaxonUtil;
+import org.eol.globi.util.NodeUtil;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
@@ -51,12 +52,12 @@ public class SpecimenNode extends NodeBacked implements Specimen {
 
     @Override
     public Iterable<Relationship> getStomachContents() {
-        return getUnderlyingNode().getRelationships(InteractType.ATE, Direction.OUTGOING);
+        return getUnderlyingNode().getRelationships(NodeUtil.asNeo4j(InteractType.ATE), Direction.OUTGOING);
     }
 
     @Override
     public LocationNode getSampleLocation() {
-        Relationship singleRelationship = getUnderlyingNode().getSingleRelationship(RelTypes.COLLECTED_AT, Direction.OUTGOING);
+        Relationship singleRelationship = getUnderlyingNode().getSingleRelationship(NodeUtil.asNeo4j(RelTypes.COLLECTED_AT), Direction.OUTGOING);
         return singleRelationship == null ? null : new LocationNode(singleRelationship.getEndNode());
     }
 
@@ -74,7 +75,7 @@ public class SpecimenNode extends NodeBacked implements Specimen {
 
     @Override
     public Season getSeason() {
-        Relationship singleRelationship = getUnderlyingNode().getSingleRelationship(RelTypes.CAUGHT_DURING, Direction.OUTGOING);
+        Relationship singleRelationship = getUnderlyingNode().getSingleRelationship(NodeUtil.asNeo4j(RelTypes.CAUGHT_DURING), Direction.OUTGOING);
         return singleRelationship == null ? null : new SeasonNode(singleRelationship.getEndNode());
     }
 
@@ -91,7 +92,7 @@ public class SpecimenNode extends NodeBacked implements Specimen {
 
     @Override
     public Iterable<Relationship> getClassifications() {
-        return getUnderlyingNode().getRelationships(Direction.OUTGOING, RelTypes.CLASSIFIED_AS);
+        return getUnderlyingNode().getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS));
     }
 
     @Override
@@ -138,7 +139,7 @@ public class SpecimenNode extends NodeBacked implements Specimen {
 
     @Override
     public String getOriginalTaxonDescription() {
-        Relationship singleRelationship = getUnderlyingNode().getSingleRelationship(RelTypes.ORIGINALLY_DESCRIBED_AS, Direction.OUTGOING);
+        Relationship singleRelationship = getUnderlyingNode().getSingleRelationship(NodeUtil.asNeo4j(RelTypes.ORIGINALLY_DESCRIBED_AS), Direction.OUTGOING);
         return singleRelationship == null ? null : new TaxonNode(singleRelationship.getEndNode()).getName();
     }
 

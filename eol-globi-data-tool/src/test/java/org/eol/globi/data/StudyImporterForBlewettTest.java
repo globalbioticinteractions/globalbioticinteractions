@@ -11,6 +11,7 @@ import org.eol.globi.domain.Study;
 import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.service.TermLookupService;
 import org.eol.globi.taxon.UberonLookupService;
+import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
@@ -117,14 +118,14 @@ public class StudyImporterForBlewettTest extends GraphDBTestCase {
         assertThat((String) predatorNode.getProperty(SpecimenConstant.LIFE_STAGE_ID), is("UBERON:0000113"));
         assertThat((Double) predatorNode.getProperty(SpecimenConstant.LENGTH_IN_MM), is(549.0));
 
-        Node predatorTaxonNode = predatorNode.getRelationships(RelTypes.CLASSIFIED_AS, Direction.OUTGOING).iterator().next().getEndNode();
+        Node predatorTaxonNode = predatorNode.getRelationships(NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS), Direction.OUTGOING).iterator().next().getEndNode();
         assertThat((String) predatorTaxonNode.getProperty(PropertyAndValueDictionary.NAME), is("Centropomus undecimalis"));
 
-        Iterable<Relationship> ate = predatorNode.getRelationships(InteractType.ATE, Direction.OUTGOING);
+        Iterable<Relationship> ate = predatorNode.getRelationships(NodeUtil.asNeo4j(InteractType.ATE), Direction.OUTGOING);
         Node preyNode = ate.iterator().next().getEndNode();
         assertThat(preyNode, is(not(nullValue())));
 
-        Node taxonNode = preyNode.getRelationships(RelTypes.CLASSIFIED_AS, Direction.OUTGOING).iterator().next().getEndNode();
+        Node taxonNode = preyNode.getRelationships(NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS), Direction.OUTGOING).iterator().next().getEndNode();
         assertThat(taxonNode, is(not(nullValue())));
 
         assertThat((String) taxonNode.getProperty(PropertyAndValueDictionary.NAME), is("Lag rhomboides"));
@@ -135,7 +136,7 @@ public class StudyImporterForBlewettTest extends GraphDBTestCase {
         predatorNode = collectedRel.getEndNode();
         assertThat((Double) predatorNode.getProperty(SpecimenConstant.LENGTH_IN_MM), is(548.0));
 
-        ate = predatorNode.getRelationships(InteractType.ATE, Direction.OUTGOING);
+        ate = predatorNode.getRelationships(NodeUtil.asNeo4j(InteractType.ATE), Direction.OUTGOING);
         assertThat(ate.iterator().hasNext(), is(false));
 
         LocationNode location = nodeFactory.findLocation(26.651833, -82.103833, 0.0);

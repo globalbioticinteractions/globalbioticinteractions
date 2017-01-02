@@ -26,7 +26,7 @@ class ExporterSiteMapForNames implements GraphExporter {
         for (Study allStudy : allStudies) {
             final Iterable<Relationship> specimens = allStudy.getSpecimens();
             for (Relationship specimen : specimens) {
-                final Iterable<Relationship> relationships = specimen.getEndNode().getRelationships(Direction.OUTGOING, RelTypes.CLASSIFIED_AS);
+                final Iterable<Relationship> relationships = specimen.getEndNode().getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS));
                 if (relationships.iterator().hasNext()) {
                     final Node endNode = relationships.iterator().next().getEndNode();
                     final TaxonNode taxonNode = new TaxonNode(endNode);

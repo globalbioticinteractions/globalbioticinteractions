@@ -18,6 +18,7 @@ import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.service.DatasetImpl;
 import org.eol.globi.service.GitHubUtil;
 import org.eol.globi.util.ExternalIdUtil;
+import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.GraphDatabaseService;
@@ -112,19 +113,19 @@ public class StudyImporterForGoMexSI2IT extends GraphDBTestCase {
         TaxonNode taxon = taxonIndex.findTaxonByName("Scomberomorus cavalla");
         List<String> preyList = new ArrayList<String>();
         final List<String> titles = new ArrayList<String>();
-        Iterable<Relationship> classifiedAsRels = taxon.getUnderlyingNode().getRelationships(Direction.INCOMING, RelTypes.CLASSIFIED_AS);
+        Iterable<Relationship> classifiedAsRels = taxon.getUnderlyingNode().getRelationships(Direction.INCOMING, NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS));
         int count = 0;
         for (Relationship classifiedAsRel : classifiedAsRels) {
             Node predatorSpecimen = classifiedAsRel.getStartNode();
             Specimen predator = new SpecimenNode(predatorSpecimen);
             Iterable<Relationship> stomachContents = predator.getStomachContents();
             for (Relationship prey : stomachContents) {
-                Relationship singleRelationship = prey.getEndNode().getSingleRelationship(RelTypes.CLASSIFIED_AS, Direction.OUTGOING);
+                Relationship singleRelationship = prey.getEndNode().getSingleRelationship(NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS), Direction.OUTGOING);
                 preyList.add((String) singleRelationship.getEndNode().getProperty("name"));
             }
             count++;
 
-            Relationship collectedBy = predatorSpecimen.getSingleRelationship(RelTypes.COLLECTED, Direction.INCOMING);
+            Relationship collectedBy = predatorSpecimen.getSingleRelationship(NodeUtil.asNeo4j(RelTypes.COLLECTED), Direction.INCOMING);
             assertThat(collectedBy, is(notNullValue()));
             String title = (String) collectedBy.getStartNode().getProperty("title");
             titles.add(title);
@@ -171,7 +172,7 @@ public class StudyImporterForGoMexSI2IT extends GraphDBTestCase {
         assertThat(taxa, is(notNullValue()));
 
         for (Node taxonNode : taxa.query("name", "*")) {
-            Iterable<Relationship> classifiedAs = taxonNode.getRelationships(Direction.INCOMING, RelTypes.CLASSIFIED_AS);
+            Iterable<Relationship> classifiedAs = taxonNode.getRelationships(Direction.INCOMING, NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS));
             for (Relationship classifiedA : classifiedAs) {
                 Node specimenNode = classifiedA.getStartNode();
                 detectedAtLeastOneLifeState |= specimenNode.hasProperty(SpecimenConstant.LIFE_STAGE_LABEL);
@@ -183,7 +184,7 @@ public class StudyImporterForGoMexSI2IT extends GraphDBTestCase {
                 detectedAtLeastOneTotalVolume |= specimenNode.hasProperty(SpecimenConstant.TOTAL_VOLUME_IN_ML);
                 detectedAtLeastOneGoMexSIProperty |= specimenNode.hasProperty(StudyImporterForGoMexSI2.GOMEXSI_NAMESPACE + "PRED_DATABASE_NAME");
                 detectedAtLeastOneGoMexSIProperty |= specimenNode.hasProperty(StudyImporterForGoMexSI2.GOMEXSI_NAMESPACE + "PREY_DATABASE_NAME");
-                if (specimenNode.hasRelationship(Direction.INCOMING, RelTypes.COLLECTED)) {
+                if (specimenNode.hasRelationship(Direction.INCOMING, NodeUtil.asNeo4j(RelTypes.COLLECTED))) {
                     detectedAtLeastOneLocation = true;
                 }
             }

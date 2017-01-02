@@ -1,13 +1,13 @@
 package org.eol.globi.data;
 
 import org.eol.globi.domain.Location;
-import org.eol.globi.domain.LocationNode;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Season;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.SpecimenNode;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.TaxonNode;
+import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
@@ -94,7 +94,7 @@ public class StudyImporterForWrastTest extends GraphDBTestCase {
             Specimen specimen = new SpecimenNode(rel.getEndNode());
 
             for (Relationship ateRel : specimen.getStomachContents()) {
-                TaxonNode taxon = new TaxonNode(rel.getEndNode().getSingleRelationship(RelTypes.CLASSIFIED_AS, Direction.OUTGOING).getEndNode());
+                TaxonNode taxon = new TaxonNode(rel.getEndNode().getSingleRelationship(NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS), Direction.OUTGOING).getEndNode());
                 String scientificName = taxon.getName();
                 if ("Sciaenops ocellatus".equals(scientificName)) {
                     Location location = specimen.getSampleLocation();
@@ -106,7 +106,7 @@ public class StudyImporterForWrastTest extends GraphDBTestCase {
                     Iterable<Relationship> stomachContents = specimen.getStomachContents();
                     int count = 0;
                     for (Relationship containsRel : stomachContents) {
-                        Node endNode = containsRel.getEndNode().getSingleRelationship(RelTypes.CLASSIFIED_AS, Direction.OUTGOING).getEndNode();
+                        Node endNode = containsRel.getEndNode().getSingleRelationship(NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS), Direction.OUTGOING).getEndNode();
                         Object name = endNode.getProperty("name");
                         String name1 = (String) name;
                         assertThat(name1.replaceAll("\\W", ""), is("Acrididae"));
@@ -128,7 +128,7 @@ public class StudyImporterForWrastTest extends GraphDBTestCase {
                     Iterable<Relationship> stomachContents = specimen.getStomachContents();
                     int count = 0;
                     for (Relationship containsRel : stomachContents) {
-                        Object name = containsRel.getEndNode().getSingleRelationship(RelTypes.CLASSIFIED_AS, Direction.OUTGOING).getEndNode().getProperty("name");
+                        Object name = containsRel.getEndNode().getSingleRelationship(NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS), Direction.OUTGOING).getEndNode().getProperty("name");
                         assertEquals("Aegathoa oculata", name);
                         count++;
                     }

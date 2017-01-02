@@ -2,19 +2,19 @@ package org.eol.globi.data;
 
 import com.hp.hpl.jena.rdf.model.impl.RDFDefaultErrorHandler;
 import org.eol.globi.domain.Environment;
-import org.eol.globi.domain.EnvironmentNode;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.SpecimenNode;
 import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.domain.Term;
+import org.eol.globi.geo.LatLng;
 import org.eol.globi.service.GeoNamesService;
 import org.eol.globi.service.GeoNamesServiceImpl;
+import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Relationship;
-import org.eol.globi.geo.LatLng;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -26,8 +26,6 @@ import java.util.Set;
 import java.util.TreeMap;
 
 import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.CoreMatchers.nullValue;
-import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
@@ -102,7 +100,7 @@ public class StudyImporterForSPIRETest extends GraphDBTestCase {
         assertThat(dog, is(notNullValue()));
         TaxonNode man = taxonIndex.findTaxonByName("man");
         assertThat(man, is(notNullValue()));
-        Iterable<Relationship> specimenRels = man.getUnderlyingNode().getRelationships(Direction.INCOMING, RelTypes.CLASSIFIED_AS);
+        Iterable<Relationship> specimenRels = man.getUnderlyingNode().getRelationships(Direction.INCOMING, NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS));
 
         int count = 0;
         for (Relationship specimenRel : specimenRels) {

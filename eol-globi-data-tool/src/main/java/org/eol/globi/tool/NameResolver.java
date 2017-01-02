@@ -11,6 +11,7 @@ import org.eol.globi.service.PropertyEnricherFactory;
 import org.eol.globi.taxon.CorrectionService;
 import org.eol.globi.taxon.TaxonIndexImpl;
 import org.eol.globi.taxon.TaxonNameCorrector;
+import org.eol.globi.util.NodeUtil;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
@@ -69,9 +70,9 @@ public class NameResolver {
             final Iterable<Relationship> specimens = study1.getSpecimens();
             for (Relationship collected : specimens) {
                 SpecimenNode specimen = new SpecimenNode(collected.getEndNode());
-                final Relationship classifiedAs = specimen.getUnderlyingNode().getSingleRelationship(RelTypes.CLASSIFIED_AS, Direction.OUTGOING);
+                final Relationship classifiedAs = specimen.getUnderlyingNode().getSingleRelationship(NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS), Direction.OUTGOING);
                 if (classifiedAs == null) {
-                    final Relationship describedAs = specimen.getUnderlyingNode().getSingleRelationship(RelTypes.ORIGINALLY_DESCRIBED_AS, Direction.OUTGOING);
+                    final Relationship describedAs = specimen.getUnderlyingNode().getSingleRelationship(NodeUtil.asNeo4j(RelTypes.ORIGINALLY_DESCRIBED_AS), Direction.OUTGOING);
                     final TaxonNode describedAsTaxon = new TaxonNode(describedAs.getEndNode());
                     try {
                         if (taxonFilter.shouldInclude(describedAsTaxon)) {

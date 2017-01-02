@@ -9,7 +9,6 @@ import org.eol.globi.data.StudyImporterForSPIRE;
 import org.eol.globi.data.TaxonIndex;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Study;
-import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.domain.TaxonomyProvider;
@@ -83,7 +82,7 @@ public class ExporterRDFTest extends GraphDBTestCase {
         Transaction tx = getGraphDb().beginTx();
         try {
             assertThat(taxon, is(notNullValue()));
-            taxon.getUnderlyingNode().createRelationshipTo(sameAsTaxon.getUnderlyingNode(), RelTypes.SAME_AS);
+            taxon.getUnderlyingNode().createRelationshipTo(sameAsTaxon.getUnderlyingNode(), NodeUtil.asNeo4j(RelTypes.SAME_AS));
             tx.success();
         } finally {
             tx.finish();

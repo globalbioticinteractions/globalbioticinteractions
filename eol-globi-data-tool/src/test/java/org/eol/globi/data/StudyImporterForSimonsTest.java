@@ -7,6 +7,7 @@ import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.SpecimenConstant;
 import org.eol.globi.domain.Study;
+import org.eol.globi.util.NodeUtil;
 import org.hamcrest.core.Is;
 import org.junit.Test;
 import org.neo4j.graphdb.Direction;
@@ -18,9 +19,7 @@ import uk.me.jstott.jcoord.UTMRef;
 import java.util.ArrayList;
 import java.util.List;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.fail;
+import static junit.framework.Assert.*;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
@@ -70,7 +69,7 @@ public class StudyImporterForSimonsTest extends GraphDBTestCase {
         assertNotNull(foundStudy);
         for (Relationship rel : foundStudy.getSpecimens()) {
             Node specimen = rel.getEndNode();
-            Node speciesNode = specimen.getSingleRelationship(RelTypes.CLASSIFIED_AS, Direction.OUTGOING).getEndNode();
+            Node speciesNode = specimen.getSingleRelationship(NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS), Direction.OUTGOING).getEndNode();
             String scientificName = (String) speciesNode.getProperty("name");
             if ("Rhynchoconger flavus".equals(scientificName)) {
                 String seasonName = "summer";
@@ -78,11 +77,11 @@ public class StudyImporterForSimonsTest extends GraphDBTestCase {
 
                 double length = (201.0d + 300.0d) / 2.0d;
                 assertSpecimen(specimen, LONG_1, LAT_1, -60.0, seasonName, genusName, length);
-                Iterable<Relationship> ateRelationships = specimen.getRelationships(Direction.OUTGOING, InteractType.ATE);
+                Iterable<Relationship> ateRelationships = specimen.getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j(InteractType.ATE));
                 List<String> preyNames = new ArrayList<String>();
 
                 for (Relationship ateRel : ateRelationships) {
-                    Node preyTaxonNode = ateRel.getEndNode().getRelationships(Direction.OUTGOING, RelTypes.CLASSIFIED_AS).iterator().next().getEndNode();
+                    Node preyTaxonNode = ateRel.getEndNode().getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS)).iterator().next().getEndNode();
                     preyNames.add(preyTaxonNode.getProperty(PropertyAndValueDictionary.NAME).toString());
                 }
                 assertThat(preyNames, hasItem("Ampelisca sp. (abdita complex)"));
@@ -94,7 +93,7 @@ public class StudyImporterForSimonsTest extends GraphDBTestCase {
                 double length = (26.0d + 50.0d) / 2.0d;
                 assertSpecimen(specimen, LONG_2, LAT_2, -20.0, seasonName, genusName, length);
             } else if ("Ampelisca sp. (abdita complex)".equals(scientificName)) {
-                Node locationNode = specimen.getSingleRelationship(RelTypes.COLLECTED_AT, Direction.OUTGOING).getEndNode();
+                Node locationNode = specimen.getSingleRelationship(NodeUtil.asNeo4j(RelTypes.COLLECTED_AT), Direction.OUTGOING).getEndNode();
                 assertNotNull(locationNode);
                 assertTrue(locationNode.hasProperty(LocationConstant.LONGITUDE));
                 assertTrue(locationNode.hasProperty(LocationConstant.ALTITUDE));
@@ -109,17 +108,17 @@ public class StudyImporterForSimonsTest extends GraphDBTestCase {
     }
 
     private void assertSpecimen(Node firstSpecimen, double longitude, double lat, double alt, String seasonName, String genusName, double length) {
-        Node locationNode = firstSpecimen.getSingleRelationship(RelTypes.COLLECTED_AT, Direction.OUTGOING).getEndNode();
+        Node locationNode = firstSpecimen.getSingleRelationship(NodeUtil.asNeo4j(RelTypes.COLLECTED_AT), Direction.OUTGOING).getEndNode();
         assertNotNull(locationNode);
         assertEquals(longitude, locationNode.getProperty(LocationConstant.LONGITUDE));
         assertEquals(alt, locationNode.getProperty(LocationConstant.ALTITUDE));
         assertEquals(lat, locationNode.getProperty(LocationConstant.LATITUDE));
 
-        Relationship stomachContents = firstSpecimen.getRelationships(InteractType.ATE, Direction.OUTGOING).iterator().next();
-        Node taxonNode = stomachContents.getEndNode().getSingleRelationship(RelTypes.CLASSIFIED_AS, Direction.OUTGOING).getEndNode();
+        Relationship stomachContents = firstSpecimen.getRelationships(NodeUtil.asNeo4j(InteractType.ATE), Direction.OUTGOING).iterator().next();
+        Node taxonNode = stomachContents.getEndNode().getSingleRelationship(NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS), Direction.OUTGOING).getEndNode();
         assertThat((String)taxonNode.getProperty("name"), is(genusName));
 
-        Node endNode = firstSpecimen.getSingleRelationship(RelTypes.CAUGHT_DURING, Direction.OUTGOING).getEndNode();
+        Node endNode = firstSpecimen.getSingleRelationship(NodeUtil.asNeo4j(RelTypes.CAUGHT_DURING), Direction.OUTGOING).getEndNode();
         String season = (String) endNode.getProperty("title");
         assertEquals(seasonName, season);
 
@@ -127,7 +126,7 @@ public class StudyImporterForSimonsTest extends GraphDBTestCase {
     }
 
     private void assertPreySpecimen(Node firstSpecimen, double longitude, double lat, double alt) {
-        Node locationNode = firstSpecimen.getSingleRelationship(RelTypes.COLLECTED_AT, Direction.OUTGOING).getEndNode();
+        Node locationNode = firstSpecimen.getSingleRelationship(NodeUtil.asNeo4j(RelTypes.COLLECTED_AT), Direction.OUTGOING).getEndNode();
         assertNotNull(locationNode);
         assertEquals(longitude, locationNode.getProperty(LocationConstant.LONGITUDE));
         assertEquals(alt, locationNode.getProperty(LocationConstant.ALTITUDE));

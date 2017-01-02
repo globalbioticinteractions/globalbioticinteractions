@@ -113,25 +113,25 @@ public class StudyImporterForINaturalistTest extends GraphDBTestCase {
 
         assertThat(sourceTaxonNode, is(not(nullValue())));
 
-        Iterable<Relationship> relationships = sourceTaxonNode.getUnderlyingNode().getRelationships(Direction.INCOMING, RelTypes.CLASSIFIED_AS);
+        Iterable<Relationship> relationships = sourceTaxonNode.getUnderlyingNode().getRelationships(Direction.INCOMING, NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS));
         for (Relationship relationship : relationships) {
             Node sourceSpecimen = relationship.getStartNode();
 
             assertThat(new SpecimenNode(sourceSpecimen).getBasisOfRecord().getName(), is("HumanObservation"));
             assertThat(new SpecimenNode(sourceSpecimen).getBasisOfRecord().getId(), is("TEST:HumanObservation"));
             assertThat(new SpecimenNode(sourceSpecimen).getExternalId(), containsString(TaxonomyProvider.ID_PREFIX_INATURALIST));
-            Relationship ateRel = sourceSpecimen.getSingleRelationship(InteractType.ATE, Direction.OUTGOING);
+            Relationship ateRel = sourceSpecimen.getSingleRelationship(NodeUtil.asNeo4j(InteractType.ATE), Direction.OUTGOING);
             Node preySpecimen = ateRel.getEndNode();
             assertThat(preySpecimen, is(not(nullValue())));
-            Relationship preyClassification = preySpecimen.getSingleRelationship(RelTypes.CLASSIFIED_AS, Direction.OUTGOING);
+            Relationship preyClassification = preySpecimen.getSingleRelationship(NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS), Direction.OUTGOING);
             String actualPreyName = (String) preyClassification.getEndNode().getProperty("name");
             assertThat(actualPreyName, is("Crepidula fornicata"));
 
-            Relationship locationRel = sourceSpecimen.getSingleRelationship(RelTypes.COLLECTED_AT, Direction.OUTGOING);
+            Relationship locationRel = sourceSpecimen.getSingleRelationship(NodeUtil.asNeo4j(RelTypes.COLLECTED_AT), Direction.OUTGOING);
             assertThat((Double) locationRel.getEndNode().getProperty("latitude"), is(41.249813));
             assertThat((Double) locationRel.getEndNode().getProperty("longitude"), is(-72.542556));
 
-            Relationship collectedRel = sourceSpecimen.getSingleRelationship(RelTypes.COLLECTED, Direction.INCOMING);
+            Relationship collectedRel = sourceSpecimen.getSingleRelationship(NodeUtil.asNeo4j(RelTypes.COLLECTED), Direction.INCOMING);
             assertThat((Long) collectedRel.getProperty(SpecimenConstant.DATE_IN_UNIX_EPOCH), is(any(Long.class)));
 
         }

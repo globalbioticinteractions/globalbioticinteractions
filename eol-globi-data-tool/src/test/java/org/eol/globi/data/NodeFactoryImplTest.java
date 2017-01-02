@@ -22,6 +22,7 @@ import org.eol.globi.service.TermLookupServiceException;
 import org.eol.globi.taxon.CorrectionService;
 import org.eol.globi.taxon.TaxonIndexImpl;
 import org.eol.globi.util.ExternalIdUtil;
+import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
@@ -52,13 +53,13 @@ public class NodeFactoryImplTest extends GraphDBTestCase {
         SpecimenNode specimen = getNodeFactory().createSpecimen(study, "Donalda duckus");
         SpecimenNode specimen1 = getNodeFactory().createSpecimen(study, "Mickeya mouseus");
         specimen.interactsWith(specimen1, InteractType.ATE);
-        final Iterator<Relationship> relIter = specimen.getUnderlyingNode().getRelationships(Direction.OUTGOING, InteractType.ATE).iterator();
+        final Iterator<Relationship> relIter = specimen.getUnderlyingNode().getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j(InteractType.ATE)).iterator();
         assertThat(relIter.hasNext(), is(true));
         final Relationship rel = relIter.next();
         assertThat(rel.getProperty("iri").toString(), is("http://purl.obolibrary.org/obo/RO_0002470"));
         assertThat(rel.getProperty("label").toString(), is("eats"));
 
-        Iterable<Relationship> relationships = specimen1.getUnderlyingNode().getRelationships(Direction.OUTGOING, InteractType.EATEN_BY);
+        Iterable<Relationship> relationships = specimen1.getUnderlyingNode().getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j(InteractType.EATEN_BY));
         Iterator<Relationship> iterator = relationships.iterator();
         assertThat(iterator.hasNext(), is(true));
         Relationship relInverted = iterator.next();
@@ -324,7 +325,7 @@ public class NodeFactoryImplTest extends GraphDBTestCase {
     }
 
     private void assertEcoRegions(Location location) {
-        Iterable<Relationship> relationships = ((NodeBacked)location).getUnderlyingNode().getRelationships(Direction.OUTGOING, RelTypes.IN_ECOREGION);
+        Iterable<Relationship> relationships = ((NodeBacked)location).getUnderlyingNode().getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j(RelTypes.IN_ECOREGION));
         int count = 0;
         for (Relationship relationship : relationships) {
             Node associatedEcoRegion = relationship.getEndNode();

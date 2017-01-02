@@ -31,7 +31,7 @@ public class LinkerOpenTreeOfLife {
             Index<Node> taxons = graphDb.index().forNodes("taxons");
             IndexHits<Node> hits = taxons.query("*:*");
             for (Node hit : hits) {
-                Iterable<Relationship> rels = hit.getRelationships(Direction.OUTGOING, RelTypes.SAME_AS);
+                Iterable<Relationship> rels = hit.getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j(RelTypes.SAME_AS));
                 Map<String, Long> ottIds = new HashMap<String, Long>();
                 for (Relationship rel : rels) {
                     if (link(graphDb, index, ottIds, rel)) {

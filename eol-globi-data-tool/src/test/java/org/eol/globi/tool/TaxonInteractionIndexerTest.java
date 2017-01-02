@@ -8,6 +8,7 @@ import org.eol.globi.domain.SpecimenNode;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.service.PropertyEnricherException;
+import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Relationship;
@@ -16,12 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.IsNull.notNullValue;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.junit.internal.matchers.IsCollectionContaining.hasItems;
 
 public class TaxonInteractionIndexerTest extends GraphDBTestCase {
@@ -45,7 +41,7 @@ public class TaxonInteractionIndexerTest extends GraphDBTestCase {
         TaxonNode homoSapiens = taxonIndex.findTaxonByName("Homo sapiens");
         assertNotNull(homoSapiens);
 
-        Iterable<Relationship> rels = homoSapiens.getUnderlyingNode().getRelationships(Direction.OUTGOING, InteractType.ATE);
+        Iterable<Relationship> rels = homoSapiens.getUnderlyingNode().getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j(InteractType.ATE));
         List<String> humanFood = new ArrayList<String>();
         List<Long> counts = new ArrayList<Long>();
         List<String> labels = new ArrayList<>();

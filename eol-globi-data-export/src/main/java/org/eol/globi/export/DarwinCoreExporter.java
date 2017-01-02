@@ -2,6 +2,7 @@ package org.eol.globi.export;
 
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.RelTypes;
+import org.eol.globi.util.NodeUtil;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
@@ -14,7 +15,7 @@ public abstract class DarwinCoreExporter implements StudyExporter {
 
     protected static boolean isSpecimenClassified(Node specimenNode) {
         boolean classified = false;
-        Relationship classifiedAs = specimenNode.getSingleRelationship(RelTypes.CLASSIFIED_AS, Direction.OUTGOING);
+        Relationship classifiedAs = specimenNode.getSingleRelationship(NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS), Direction.OUTGOING);
         if (classifiedAs != null) {
             Node taxonNode = classifiedAs.getEndNode();
             if (hasMatchForProperty(taxonNode, PropertyAndValueDictionary.EXTERNAL_ID)

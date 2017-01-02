@@ -383,7 +383,7 @@ public class NodeFactoryImpl implements NodeFactory {
     }
 
     protected Relationship getCollectedRel(Specimen specimen) throws NodeFactoryException {
-        Relationship rel = ((NodeBacked) specimen).getUnderlyingNode().getSingleRelationship(RelTypes.COLLECTED, Direction.INCOMING);
+        Relationship rel = ((NodeBacked) specimen).getUnderlyingNode().getSingleRelationship(NodeUtil.asNeo4j(RelTypes.COLLECTED), Direction.INCOMING);
         if (null == rel) {
             throw new NodeFactoryException("specimen not associated with study");
         }
@@ -440,7 +440,7 @@ public class NodeFactoryImpl implements NodeFactory {
     }
 
     private List<Ecoregion> getEcoRegions(Node locationNode) {
-        Iterable<Relationship> relationships = locationNode.getRelationships(RelTypes.IN_ECOREGION, Direction.OUTGOING);
+        Iterable<Relationship> relationships = locationNode.getRelationships(NodeUtil.asNeo4j(RelTypes.IN_ECOREGION), Direction.OUTGOING);
         List<Ecoregion> ecoregions = null;
         for (Relationship relationship : relationships) {
             Node ecoregionNode = relationship.getEndNode();
@@ -487,7 +487,7 @@ public class NodeFactoryImpl implements NodeFactory {
             if (ecoregionNode == null) {
                 ecoregionNode = addAndIndexEcoRegion(ecoregion);
             }
-            ((NodeBacked) location).getUnderlyingNode().createRelationshipTo(ecoregionNode, RelTypes.IN_ECOREGION);
+            ((NodeBacked) location).getUnderlyingNode().createRelationshipTo(ecoregionNode, NodeUtil.asNeo4j(RelTypes.IN_ECOREGION));
             tx.success();
         } finally {
             tx.finish();

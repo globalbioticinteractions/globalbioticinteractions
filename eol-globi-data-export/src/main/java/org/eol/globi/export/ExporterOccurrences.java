@@ -6,6 +6,7 @@ import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.SpecimenConstant;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyNode;
+import org.eol.globi.util.NodeUtil;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
@@ -30,7 +31,7 @@ public class ExporterOccurrences extends ExporterOccurrencesBase {
     }
 
     private void handleSpecimen(Study study, Writer writer, Relationship collectedRel, Node specimenNode) throws IOException {
-        Iterable<Relationship> collectedAt = specimenNode.getRelationships(Direction.OUTGOING, RelTypes.COLLECTED_AT);
+        Iterable<Relationship> collectedAt = specimenNode.getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j(RelTypes.COLLECTED_AT));
         Node locationNode = null;
         for (Relationship relationship1 : collectedAt) {
             locationNode = relationship1.getEndNode();
@@ -42,7 +43,7 @@ public class ExporterOccurrences extends ExporterOccurrencesBase {
 
     private void addOccurrenceProperties(Node locationNode, Relationship collectedRelationship, Map<String, String> properties, Node specimenNode, Study study) throws IOException {
         if (specimenNode != null) {
-            Iterable<Relationship> relationships = specimenNode.getRelationships(Direction.OUTGOING, RelTypes.CLASSIFIED_AS);
+            Iterable<Relationship> relationships = specimenNode.getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS));
             Iterator<Relationship> iterator = relationships.iterator();
             if (iterator.hasNext()) {
                 Relationship classifiedAs = iterator.next();

@@ -11,6 +11,7 @@ import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonomyProvider;
 import org.eol.globi.util.CSVUtil;
+import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
 import org.neo4j.cypher.javacompat.ExecutionEngine;
 import org.neo4j.cypher.javacompat.ExecutionResult;
@@ -134,18 +135,18 @@ public class StudyImporterForBioInfoTest extends GraphDBTestCase {
         Iterable<Relationship> specimens = study1.getSpecimens();
         List<Node> specimenList = new ArrayList<Node>();
         for (Relationship specimen : specimens) {
-            assertThat(specimen.getEndNode().getSingleRelationship(RelTypes.CLASSIFIED_AS, Direction.OUTGOING), is(notNullValue()));
-            assertThat(specimen.getEndNode().getSingleRelationship(InteractType.INTERACTS_WITH, Direction.OUTGOING), is(notNullValue()));
-            assertThat(specimen.getEndNode().getSingleRelationship(InteractType.INTERACTS_WITH, Direction.INCOMING), is(notNullValue()));
-            assertThat(specimen.getEndNode().getSingleRelationship(InteractType.INTERACTS_WITH, Direction.INCOMING), is(notNullValue()));
+            assertThat(specimen.getEndNode().getSingleRelationship(NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS), Direction.OUTGOING), is(notNullValue()));
+            assertThat(specimen.getEndNode().getSingleRelationship(NodeUtil.asNeo4j(InteractType.INTERACTS_WITH), Direction.OUTGOING), is(notNullValue()));
+            assertThat(specimen.getEndNode().getSingleRelationship(NodeUtil.asNeo4j(InteractType.INTERACTS_WITH), Direction.INCOMING), is(notNullValue()));
+            assertThat(specimen.getEndNode().getSingleRelationship(NodeUtil.asNeo4j(InteractType.INTERACTS_WITH), Direction.INCOMING), is(notNullValue()));
             specimenList.add(specimen.getEndNode());
         }
 
         assertThat(specimenList.size(), is(16));
-        Relationship classifiedAs = specimenList.get(0).getSingleRelationship(RelTypes.CLASSIFIED_AS, Direction.OUTGOING);
+        Relationship classifiedAs = specimenList.get(0).getSingleRelationship(NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS), Direction.OUTGOING);
         assertThat(classifiedAs, is(notNullValue()));
         assertThat((String) classifiedAs.getEndNode().getProperty(PropertyAndValueDictionary.EXTERNAL_ID), is("NBN:NBNSYS0000003949"));
-        assertThat(specimenList.get(1).getSingleRelationship(RelTypes.CLASSIFIED_AS, Direction.OUTGOING), is(notNullValue()));
+        assertThat(specimenList.get(1).getSingleRelationship(NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS), Direction.OUTGOING), is(notNullValue()));
 
         assertThat(taxonIndex.findTaxonById(TaxonomyProvider.NBN.getIdPrefix() + "NBNSYS0000024889"), is(notNullValue()));
         assertThat(taxonIndex.findTaxonById(TaxonomyProvider.NBN.getIdPrefix() + "NBNSYS0000024891"), is(notNullValue()));

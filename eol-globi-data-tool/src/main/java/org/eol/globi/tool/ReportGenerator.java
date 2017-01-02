@@ -182,13 +182,13 @@ public class ReportGenerator {
             for (Relationship relationship : relationships) {
                 InteractType[] types = InteractType.values();
                 for (InteractType type : types) {
-                    if (relationship.isType(type) && !relationship.hasProperty(PropertyAndValueDictionary.INVERTED)) {
+                    if (relationship.isType(NodeUtil.asNeo4j(type)) && !relationship.hasProperty(PropertyAndValueDictionary.INVERTED)) {
                         interactionCounter.count();
                         break;
                     }
                 }
             }
-            Relationship classifiedAs = specimen.getEndNode().getSingleRelationship(RelTypes.CLASSIFIED_AS, Direction.OUTGOING);
+            Relationship classifiedAs = specimen.getEndNode().getSingleRelationship(NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS), Direction.OUTGOING);
             if (classifiedAs != null) {
                 Node taxonNode = classifiedAs.getEndNode();
                 ids.add(taxonNode.getId());

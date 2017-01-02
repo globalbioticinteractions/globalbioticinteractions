@@ -5,6 +5,7 @@ import org.eol.globi.domain.LocationConstant;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.SpecimenConstant;
 import org.eol.globi.domain.Study;
+import org.eol.globi.util.NodeUtil;
 import org.hamcrest.core.Is;
 import org.junit.Test;
 import org.neo4j.graphdb.Direction;
@@ -60,12 +61,12 @@ public class StudyImporterForBaremoreTest extends GraphDBTestCase {
             assertTrue(rel.hasProperty(SpecimenConstant.DATE_IN_UNIX_EPOCH));
             Node specimen = rel.getEndNode();
             assertNotNull(specimen);
-            Iterable<Relationship> rels = specimen.getRelationships(Direction.OUTGOING, InteractType.ATE);
+            Iterable<Relationship> rels = specimen.getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j(InteractType.ATE));
             for (Relationship relationship : rels) {
                 assertTrue(specimen.hasProperty(SpecimenConstant.LENGTH_IN_MM));
                 assertTrue(specimen.hasProperty(SpecimenConstant.LIFE_STAGE_LABEL));
             }
-            Relationship collectedAtRelationship = specimen.getSingleRelationship(RelTypes.COLLECTED_AT, Direction.OUTGOING);
+            Relationship collectedAtRelationship = specimen.getSingleRelationship(NodeUtil.asNeo4j(RelTypes.COLLECTED_AT), Direction.OUTGOING);
             assertNotNull(collectedAtRelationship);
             Node locationNode = collectedAtRelationship.getEndNode();
             assertNotNull(locationNode);

@@ -5,6 +5,7 @@ import org.eol.globi.domain.SpecimenConstant;
 import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.service.TermLookupService;
 import org.eol.globi.taxon.UberonLookupService;
+import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
@@ -58,7 +59,7 @@ public class StudyImporterForBarnesTest extends GraphDBTestCase {
         importStudy(importer);
 
         TaxonNode taxon = taxonIndex.findTaxonByName("Zeus faber");
-        Iterable<Relationship> relationships = taxon.getUnderlyingNode().getRelationships(Direction.INCOMING, RelTypes.CLASSIFIED_AS);
+        Iterable<Relationship> relationships = taxon.getUnderlyingNode().getRelationships(Direction.INCOMING, NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS));
         for (Relationship relationship : relationships) {
             Node predatorSpecimenNode = relationship.getStartNode();
             assertThat((String) predatorSpecimenNode.getProperty(SpecimenConstant.LIFE_STAGE_LABEL), is("post-juvenile adult stage"));

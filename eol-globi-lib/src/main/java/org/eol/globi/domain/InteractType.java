@@ -251,18 +251,5 @@ public enum InteractType implements RelType {
         return inverseMap.get(type);
     }
 
-    public static RelationshipType toNeo4j(InteractType type) {
-        return type::name;
-    }
-
-    public static RelationshipType[] toNeo4j() {
-        InteractType[] values = InteractType.values();
-        RelationshipType[] types = new RelationshipType[values.length];
-        for (int i=0; i< values.length; i++) {
-            types[i] = values[i];
-        }
-        return types;
-    }
-
 
 }

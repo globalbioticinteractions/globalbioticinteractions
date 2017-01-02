@@ -4,6 +4,7 @@ import com.Ostermiller.util.LabeledCSVParser;
 import org.eol.globi.domain.LocationConstant;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Study;
+import org.eol.globi.util.NodeUtil;
 import org.hamcrest.core.Is;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -95,7 +96,7 @@ public class StudyImporterForRoopnarineTest extends GraphDBTestCase {
         for (Relationship rel : collectedRels) {
             Node specimen = rel.getEndNode();
             assertNotNull(specimen);
-            Relationship collectedAtRelationship = specimen.getSingleRelationship(RelTypes.COLLECTED_AT, Direction.OUTGOING);
+            Relationship collectedAtRelationship = specimen.getSingleRelationship(NodeUtil.asNeo4j(RelTypes.COLLECTED_AT), Direction.OUTGOING);
             assertNotNull("missing location information", collectedAtRelationship);
             Node locationNode = collectedAtRelationship.getEndNode();
             assertNotNull(locationNode);

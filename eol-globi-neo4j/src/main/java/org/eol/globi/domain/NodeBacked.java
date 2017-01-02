@@ -46,14 +46,14 @@ public class NodeBacked {
     protected Relationship createRelationshipToNoTx(NodeBacked endNode, RelType relType) {
         Relationship rel = null;
         if (!this.equals(endNode)) {
-            Iterable<Relationship> relationships = getUnderlyingNode().getRelationships(Direction.OUTGOING, relType);
+            Iterable<Relationship> relationships = getUnderlyingNode().getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j(relType));
             boolean hasRelationship = false;
             while (relationships.iterator().hasNext() && !hasRelationship) {
                 Relationship relationship = relationships.iterator().next();
                 hasRelationship = endNode.equals(relationship.getEndNode());
             }
             if (!hasRelationship) {
-                rel = getUnderlyingNode().createRelationshipTo(endNode.getUnderlyingNode(), relType);
+                rel = getUnderlyingNode().createRelationshipTo(endNode.getUnderlyingNode(), NodeUtil.asNeo4j(relType));
             }
         }
         return rel;

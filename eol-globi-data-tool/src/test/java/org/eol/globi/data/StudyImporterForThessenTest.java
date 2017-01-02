@@ -4,6 +4,7 @@ import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.TaxonNode;
+import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
@@ -36,7 +37,7 @@ public class StudyImporterForThessenTest extends GraphDBTestCase {
         while (specimens.iterator().hasNext()) {
             Node sourceSpecimen = specimens.iterator().next().getEndNode();
             specimenCount++;
-            Node taxonNode = sourceSpecimen.getSingleRelationship(RelTypes.CLASSIFIED_AS, Direction.OUTGOING).getEndNode();
+            Node taxonNode = sourceSpecimen.getSingleRelationship(NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS), Direction.OUTGOING).getEndNode();
             taxonIds.add((String) taxonNode.getProperty(PropertyAndValueDictionary.EXTERNAL_ID));
         }
 

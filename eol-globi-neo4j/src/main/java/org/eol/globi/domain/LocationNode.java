@@ -1,6 +1,7 @@
 package org.eol.globi.domain;
 
 import org.apache.commons.lang3.StringUtils;
+import org.eol.globi.util.NodeUtil;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
@@ -56,12 +57,12 @@ public class LocationNode extends NodeBacked implements Location {
     }
 
     public Iterable<Relationship> getSpecimenCaughtHere() {
-        return getUnderlyingNode().getRelationships(RelTypes.COLLECTED_AT, Direction.INCOMING);
+        return getUnderlyingNode().getRelationships(NodeUtil.asNeo4j(RelTypes.COLLECTED_AT), Direction.INCOMING);
     }
 
     public void addEnvironment(Environment environment) {
         boolean needsAssociation = true;
-        Iterable<Relationship> relationships = getUnderlyingNode().getRelationships(RelTypes.HAS_ENVIRONMENT, Direction.OUTGOING);
+        Iterable<Relationship> relationships = getUnderlyingNode().getRelationships(NodeUtil.asNeo4j(RelTypes.HAS_ENVIRONMENT), Direction.OUTGOING);
         for (Relationship relationship : relationships) {
             if (relationship.getEndNode().getId() == ((NodeBacked)environment).getNodeID()) {
                 needsAssociation = false;
@@ -74,7 +75,7 @@ public class LocationNode extends NodeBacked implements Location {
     }
 
     public List<Environment> getEnvironments() {
-        Iterable<Relationship> relationships = getUnderlyingNode().getRelationships(RelTypes.HAS_ENVIRONMENT, Direction.OUTGOING);
+        Iterable<Relationship> relationships = getUnderlyingNode().getRelationships(NodeUtil.asNeo4j(RelTypes.HAS_ENVIRONMENT), Direction.OUTGOING);
         List<Environment> environments = new ArrayList<Environment>();
         for (Relationship relationship : relationships) {
             environments.add(new EnvironmentNode(relationship.getEndNode()));
