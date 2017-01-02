@@ -8,17 +8,7 @@ public interface Study extends Named {
 
     String getSource();
 
-    void setSource(String source);
-
-    void setDOI(String doi);
-
-    void setDOIWithTx(String doi);
-
     String getDOI();
-
-    void setCitation(String citation);
-
-    void setCitationWithTx(String citation);
 
     String getCitation();
 

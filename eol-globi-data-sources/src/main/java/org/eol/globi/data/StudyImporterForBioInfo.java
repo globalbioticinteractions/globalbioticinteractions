@@ -234,13 +234,9 @@ public class StudyImporterForBioInfo extends BaseStudyImporter implements StudyI
     protected Study createStudy(String refId, String citation) throws NodeFactoryException {
         String sourceCitation = "Food Webs and Species Interactions in the Biodiversity of UK and Ireland (Online). 2015. Data provided by Malcolm Storey. Also available from " + BIOINFO_URL + ".";
         String bioInfoId = TaxonomyProvider.BIO_INFO + "ref:" + refId;
-        Study study = nodeFactory.getOrCreateStudy(
-                new StudyImpl(bioInfoId, sourceCitation, null, null));
-        if (study != null) {
-            study.setCitationWithTx(citation);
-            study.setExternalId(ExternalIdUtil.urlForExternalId(bioInfoId));
-        }
-        return study;
+        StudyImpl study1 = new StudyImpl(bioInfoId, sourceCitation, null, citation);
+        study1.setExternalId(ExternalIdUtil.urlForExternalId(bioInfoId));
+        return nodeFactory.getOrCreateStudy(study1);
     }
 
     protected void createRelations(LabeledCSVParser parser, Map<String, String> refMap, Map<String, Taxon> taxonMap) throws StudyImporterException {

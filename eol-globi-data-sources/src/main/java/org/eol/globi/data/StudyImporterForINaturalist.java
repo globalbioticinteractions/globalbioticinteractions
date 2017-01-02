@@ -242,15 +242,17 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
     }
 
     private void importInteraction(Taxon targetTaxon, long observationId, String interactionDataType, InteractType interactionTypeId, JsonNode observation, Taxon sourceTaxon, String interactionTypeName) throws StudyImporterException, NodeFactoryException {
-        Study study = nodeFactory.getOrCreateStudy(new StudyImpl(TaxonomyProvider.ID_PREFIX_INATURALIST + observationId, getSourceString(), null, null));
-        Date observationDate = getObservationDate(study, observationId, observation);
+        Date observationDate = getObservationDate(observation);
 
-        createAssociation(observationId, interactionDataType, interactionTypeId, observation, targetTaxon, sourceTaxon, study, observationDate);
         StringBuilder citation = buildCitation(observation, interactionTypeName, targetTaxon.getName(), sourceTaxon.getName(), observationDate);
         String url = ExternalIdUtil.urlForExternalId(TaxonomyProvider.ID_PREFIX_INATURALIST + observationId);
         citation.append(ReferenceUtil.createLastAccessedString(url));
-        study.setCitationWithTx(citation.toString());
-        study.setExternalId(url);
+
+        StudyImpl study1 = new StudyImpl(TaxonomyProvider.ID_PREFIX_INATURALIST + observationId, getSourceString(), null, citation.toString());
+        study1.setExternalId(url);
+
+        Study study = nodeFactory.getOrCreateStudy(study1);
+        createAssociation(observationId, interactionDataType, interactionTypeId, observation, targetTaxon, sourceTaxon, study, observationDate);
     }
 
     private StringBuilder buildCitation(JsonNode observationNode, String interactionType, String targetTaxonName, String sourceTaxonName, Date observationDate) {
@@ -276,13 +278,11 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
         return citation;
     }
 
-    private Date getObservationDate(Study study, long observationId, JsonNode observation) {
+    private Date getObservationDate(JsonNode observation) {
         DateTime dateTime = null;
         String timeObservedAtUtc = observation.get("time_observed_at_utc").getTextValue();
         timeObservedAtUtc = timeObservedAtUtc == null ? observation.get("observed_on").getTextValue() : timeObservedAtUtc;
-        if (timeObservedAtUtc == null) {
-            getLogger().warn(study, "failed to retrieve observation time for observation [" + observationId + "]");
-        } else {
+        if (timeObservedAtUtc != null) {
             dateTime = parseUTCDateTime(timeObservedAtUtc);
         }
         return dateTime == null ? null : dateTime.toDate();

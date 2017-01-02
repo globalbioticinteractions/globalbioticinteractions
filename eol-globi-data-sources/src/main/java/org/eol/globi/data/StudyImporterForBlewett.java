@@ -31,10 +31,12 @@ public class StudyImporterForBlewett extends BaseStudyImporter {
 
     @Override
     public Study importStudy() throws StudyImporterException {
+        String citation = "Blewett DA, Hensley RA, and Stevens PW, Feeding Habits of Common Snook, Centropomus Undecimalis, in Charlotte Harbor, Florida, Gulf and Caribbean Research Vol 18, 1–13, 2006";
         Study study = nodeFactory.getOrCreateStudy(
-                new StudyImpl("Blewett 2006", StudyImporterForGoMexSI2.GOMEXI_SOURCE_DESCRIPTION, null, ExternalIdUtil.toCitation("David A. Blewett", "Blewett DA, Hensley RA, and Stevens PW, Feeding Habits of Common Snook, Centropomus Undecimalis, in Charlotte Harbor, Florida, Gulf and Caribbean Research Vol 18, 1–13, 2006", "2006")));
-
-        study.setCitationWithTx("Blewett DA, Hensley RA, and Stevens PW, Feeding Habits of Common Snook, Centropomus Undecimalis, in Charlotte Harbor, Florida, Gulf and Caribbean Research Vol 18, 1–13, 2006");
+                new StudyImpl("Blewett 2006",
+                        StudyImporterForGoMexSI2.GOMEXI_SOURCE_DESCRIPTION,
+                        null,
+                        citation));
         try {
             Map<String, Location> collectionLocationMap = new HashMap<>();
             Map<String, Date> collectionTimeMap = new HashMap<String, Date>();

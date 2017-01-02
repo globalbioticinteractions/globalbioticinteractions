@@ -20,10 +20,10 @@ public class ReportGeneratorTest extends GraphDBTestCase {
 
     @Test
     public void generateStudyReport() throws NodeFactoryException {
-        createStudy("a second title", "a third source", null);
+        createStudy(new StudyImpl("a second title", "a third source", null, null));
 
-        Study study = createStudy("a title", "a third source");
-        study.setDOIWithTx("doi:12345");
+        StudyImpl studyWithDoi = new StudyImpl("a title", "a third source", "doi:12345", "citation");
+        createStudy(studyWithDoi);
         resolveNames();
 
         new ReportGenerator(getGraphDb()).generateReportForStudies();
@@ -56,9 +56,9 @@ public class ReportGeneratorTest extends GraphDBTestCase {
 
     @Test
     public void generateStudySourceReport() throws NodeFactoryException {
-        createStudy("a title", "az source");
-        createStudy("another title", "az source");
-        createStudy("yet another title", "zother source", null);
+        createStudy(new StudyImpl("a title", "az source", null, "citation"));
+        createStudy(new StudyImpl("another title", "az source", null, "citation"));
+        createStudy(new StudyImpl("yet another title", "zother source", null, null));
         resolveNames();
 
         new ReportGenerator(getGraphDb()).generateReportForStudySources();
@@ -81,8 +81,8 @@ public class ReportGeneratorTest extends GraphDBTestCase {
 
     @Test
     public void generateCollectionReport() throws NodeFactoryException {
-        createStudy("a title", "source");
-        createStudy("another title", "another source");
+        createStudy(new StudyImpl("a title", "source", null, "citation"));
+        createStudy(new StudyImpl("another title", "another source", null, "citation"));
         resolveNames();
 
         new ReportGenerator(getGraphDb()).generateReportForCollection();
@@ -96,12 +96,8 @@ public class ReportGeneratorTest extends GraphDBTestCase {
         assertThat((Integer) reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_DISTINCT_TAXA), is(3));
     }
 
-    protected Study createStudy(String title, String source) throws NodeFactoryException {
-        return createStudy(title, source, "citation");
-    }
-
-    protected Study createStudy(String title, String source, String citation) throws NodeFactoryException {
-        Study study = nodeFactory.getOrCreateStudy(new StudyImpl(title, source, null, citation));
+    protected Study createStudy(Study study1) throws NodeFactoryException {
+        Study study = nodeFactory.getOrCreateStudy(study1);
         Specimen monkey = nodeFactory.createSpecimen(study, new TaxonImpl("Monkey", null));
         monkey.ate(nodeFactory.createSpecimen(study, new TaxonImpl("Banana", null)));
         monkey.ate(nodeFactory.createSpecimen(study, new TaxonImpl("Banana", null)));

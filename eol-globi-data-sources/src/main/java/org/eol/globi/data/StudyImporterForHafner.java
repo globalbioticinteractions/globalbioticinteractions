@@ -24,8 +24,7 @@ public class StudyImporterForHafner extends BaseStudyImporter {
             LabeledCSVParser parser = parserFactory.createParser(RESOURCE, "UTF-8");
             while (parser.getLine() != null) {
                 String sourceCitation = "Mark S. Hafner, Philip D. Sudman, Francis X. Villablanca, Theresa A. Spradling, James W. Demastes, Steven A. Nadler. (1994). Disparate Rates of Molecular Evolution in Cospeciating Hosts and Parasites. Science 265: 1087-1090.";
-                Study study = nodeFactory.getOrCreateStudy(new StudyImpl("hafner1994", "Shan Kothari, Pers. Comm. 2014.", null, ExternalIdUtil.toCitation(null, sourceCitation, null)));
-                study.setCitationWithTx(sourceCitation);
+                Study study = nodeFactory.getOrCreateStudy(new StudyImpl("hafner1994", "Shan Kothari, Pers. Comm. 2014.", null, sourceCitation));
 
                 String hostName = parser.getValueByLabel("Host");
                 String parasiteName = parser.getValueByLabel("Parasite");

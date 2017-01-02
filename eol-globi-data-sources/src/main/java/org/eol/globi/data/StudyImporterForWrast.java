@@ -74,10 +74,12 @@ public class StudyImporterForWrast extends BaseStudyImporter {
 
     @Override
     public Study importStudy() throws StudyImporterException {
-        Study study = nodeFactory.getOrCreateStudy(
-                new StudyImpl("Wrast 2008", StudyImporterForGoMexSI2.GOMEXI_SOURCE_DESCRIPTION, null, ExternalIdUtil.toCitation("Jenny L. Wrast", "Spatiotemporal And Habitat-mediated Food Web Dynamics in Lavaca Bay, Texas.", "2008")));
-        study.setCitationWithTx("Wrast JL. Spatiotemporal And Habitat-mediated Food Web Dynamics in Lavaca Bay, Texas. 2008. Master Thesis.");
-        study.setExternalId("http://www.fisheries.tamucc.edu/people_files/FINAL%20WRAST%20THESIS.pdf");
+        String citation = "Wrast JL. Spatiotemporal And Habitat-mediated Food Web Dynamics in Lavaca Bay, Texas. 2008. Master Thesis.";
+        StudyImpl study1 = new StudyImpl("Wrast 2008", StudyImporterForGoMexSI2.GOMEXI_SOURCE_DESCRIPTION,
+                null,
+                citation);
+        study1.setExternalId("http://www.fisheries.tamucc.edu/people_files/FINAL%20WRAST%20THESIS.pdf");
+        Study study = nodeFactory.getOrCreateStudy(study1);
         try {
             LabeledCSVParser csvParser = parserFactory.createParser(LAVACA_BAY_DATA_SOURCE, CharsetConstant.UTF8);
             LengthParser parser = new LengthParserImpl(COLUMN_MAPPER.get(LENGTH_IN_MM));

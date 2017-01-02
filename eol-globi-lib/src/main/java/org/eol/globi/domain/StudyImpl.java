@@ -50,26 +50,10 @@ public class StudyImpl implements Study {
     }
 
     @Override
-    public void setSource(String source) {
-        this.source = source;
-    }
-
-    @Override
-    public void setDOI(String doi) {
-        this.doi = doi;
-    }
-
-    @Override
-    public void setDOIWithTx(String doi) {
-        setDOI(doi);
-    }
-
-    @Override
     public String getDOI() {
         return this.doi;
     }
 
-    @Override
     public void setCitation(String citation) {
         this.citation = citation;
     }

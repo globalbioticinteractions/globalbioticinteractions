@@ -30,9 +30,13 @@ public class StudyImporterForCook extends BaseStudyImporter {
             throw new StudyImporterException("failed to read resource", e);
         }
 
-        Study study = nodeFactory.getOrCreateStudy(new StudyImpl("Cook 2012", "Data provided by Colt W. Cook. Also available from  http://repositories.lib.utexas.edu/handle/2152/ETD-UT-2012-08-6285.", null, ExternalIdUtil.toCitation("Colt W. Cook", "The Early Life History and Reproductive Biology of Cymothoa excisa, a Marine Isopod Parasitizing Atlantic Croaker, (Micropogonias undulatus), along the Texas Coast. 2012. Master Thesis.", "2012")));
-        study.setCitationWithTx("Cook CW. The Early Life History and Reproductive Biology of Cymothoa excisa, a Marine Isopod Parasitizing Atlantic Croaker, (Micropogonias undulatus), along the Texas Coast. 2012. Master Thesis. Available from http://repositories.lib.utexas.edu/handle/2152/ETD-UT-2012-08-6285.");
-        study.setExternalId("http://repositories.lib.utexas.edu/handle/2152/ETD-UT-2012-08-6285");
+        String citation = "Cook CW. The Early Life History and Reproductive Biology of Cymothoa excisa, a Marine Isopod Parasitizing Atlantic Croaker, (Micropogonias undulatus), along the Texas Coast. 2012. Master Thesis. Available from http://repositories.lib.utexas.edu/handle/2152/ETD-UT-2012-08-6285.";
+        StudyImpl study1 = new StudyImpl("Cook 2012",
+                "Data provided by Colt W. Cook. Also available from  http://repositories.lib.utexas.edu/handle/2152/ETD-UT-2012-08-6285.",
+                null,
+                citation);
+        study1.setExternalId("http://repositories.lib.utexas.edu/handle/2152/ETD-UT-2012-08-6285");
+        Study study = nodeFactory.getOrCreateStudy(study1);
 
         try {
 

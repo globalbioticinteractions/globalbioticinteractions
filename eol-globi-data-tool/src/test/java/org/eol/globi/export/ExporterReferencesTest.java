@@ -18,8 +18,8 @@ public class ExporterReferencesTest extends GraphDBTestCase {
 
     @Test
     public void exportReference() throws IOException, NodeFactoryException, ParseException {
-        Study myStudy = nodeFactory.getOrCreateStudy(new StudyImpl("myStudy", "a source", null, ExternalIdUtil.toCitation("John Doe", "description study 1", "1927")));
-        myStudy.setDOIWithTx("doi:1234");
+        StudyImpl myStudy1 = new StudyImpl("myStudy", "a source", "doi:1234", ExternalIdUtil.toCitation("John Doe", "description study 1", "1927"));
+        Study myStudy = nodeFactory.getOrCreateStudy(myStudy1);
         myStudy.setExternalId("GAME:444");
         StringWriter row = new StringWriter();
 
@@ -44,8 +44,7 @@ public class ExporterReferencesTest extends GraphDBTestCase {
 
     @Test
     public void exportReferenceEscapeCharacters() throws IOException, NodeFactoryException, ParseException {
-        Study myStudy = nodeFactory.createStudy(new StudyImpl("myStudy", null, null, null));
-        myStudy.setCitationWithTx("bla \"one\"");
+        Study myStudy = nodeFactory.createStudy(new StudyImpl("myStudy", null, null, "bla \"one\""));
         StringWriter row = new StringWriter();
         new ExporterReferences().exportStudy(myStudy, row, false);
         assertThat(row.getBuffer().toString(), equalTo("\nglobi:ref:1\t\tbla \"one\"\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t"));

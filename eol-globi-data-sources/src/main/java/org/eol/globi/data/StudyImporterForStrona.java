@@ -28,8 +28,7 @@ public class StudyImporterForStrona extends BaseStudyImporter {
         }
         try {
             Study study = nodeFactory.getOrCreateStudy(
-                    new StudyImpl("strona2013", SOURCE + " . " + ReferenceUtil.createLastAccessedString(RESOURCE_PATH), "http://dx.doi.org/10.1890/12-1419.1", null));
-            study.setCitationWithTx(SOURCE);
+                    new StudyImpl("strona2013", SOURCE + " . " + ReferenceUtil.createLastAccessedString(RESOURCE_PATH), "http://dx.doi.org/10.1890/12-1419.1", SOURCE));
             while (dataParser.getLine() != null) {
                 if (importFilter.shouldImportRecord((long) dataParser.getLastLineNumber())) {
                     try {
@@ -40,17 +39,13 @@ public class StudyImporterForStrona extends BaseStudyImporter {
                             Specimen host = nodeFactory.createSpecimen(study, new TaxonImpl(hostName, null));
                             parasite.interactsWith(host, InteractType.PARASITE_OF);
                         }
-                    } catch (NodeFactoryException e) {
-                        throw new StudyImporterException("failed to import line [" + (dataParser.lastLineNumber() + 1) + "]", e);
-                    } catch (NumberFormatException e) {
+                    } catch (NodeFactoryException | NumberFormatException e) {
                         throw new StudyImporterException("failed to import line [" + (dataParser.lastLineNumber() + 1) + "]", e);
                     }
                 }
 
             }
-        } catch (IOException e) {
-            throw new StudyImporterException("problem importing [" + RESOURCE_PATH + "]", e);
-        } catch (NodeFactoryException e) {
+        } catch (IOException | NodeFactoryException e) {
             throw new StudyImporterException("problem importing [" + RESOURCE_PATH + "]", e);
         }
         return null;

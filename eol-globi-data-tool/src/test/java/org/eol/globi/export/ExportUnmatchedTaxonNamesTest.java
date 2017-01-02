@@ -54,8 +54,8 @@ public class ExportUnmatchedTaxonNamesTest extends GraphDBTestCase {
         taxonIndex = ExportTestUtil.taxonIndexWithEnricher(taxonEnricher, getGraphDb());
 
         String title = "my study\"";
-        Study study = nodeFactory.getOrCreateStudy(new StudyImpl(title, "my first source", null, null));
-        study.setCitationWithTx("citation my study");
+        String citation = "citation my study";
+        Study study = nodeFactory.getOrCreateStudy(new StudyImpl(title, "my first source", null, citation));
 
         taxonIndex.getOrCreateTaxon(new TaxonImpl("Homo sapiens", null));
         Specimen predatorSpecimen = nodeFactory.createSpecimen(study, new TaxonImpl("Homo sapiens", "TEST:1234"));
@@ -75,8 +75,7 @@ public class ExportUnmatchedTaxonNamesTest extends GraphDBTestCase {
         Specimen preySpecimen3 = nodeFactory.createSpecimen(study, new TaxonImpl("Canis lupus", null));
         predatorSpecimen22.interactsWith(preySpecimen3, InteractType.ATE);
 
-        Study study2 = nodeFactory.getOrCreateStudy(new StudyImpl("my study2", "my source2", null, null));
-        study2.setCitationWithTx("citation study2");
+        Study study2 = nodeFactory.getOrCreateStudy(new StudyImpl("my study2", "my source2", null, "citation study2"));
         Specimen predatorSpecimen21 = nodeFactory.createSpecimen(study2, new TaxonImpl("Homo sapiens2", null));
         Specimen preySpecimen2 = nodeFactory.createSpecimen(study2, new TaxonImpl("Canis lupus", null));
         predatorSpecimen21.interactsWith(preySpecimen2, InteractType.ATE);
@@ -114,8 +113,8 @@ public class ExportUnmatchedTaxonNamesTest extends GraphDBTestCase {
         };
         taxonIndex = ExportTestUtil.taxonIndexWithEnricher(taxonEnricher, getGraphDb());
 
-        Study study = nodeFactory.getOrCreateStudy(new StudyImpl("my, study", "my first, source", null, null));
-        study.setCitationWithTx("cite, study");
+        String citation = "cite, study";
+        Study study = nodeFactory.getOrCreateStudy(new StudyImpl("my, study", "my first, source", null, citation));
 
         Specimen predatorSpecimen = nodeFactory.createSpecimen(study, new TaxonImpl("Homo sapienz", null));
         Taxon humanz = taxonIndex.getOrCreateTaxon(new TaxonImpl("Homo sapienz", null));

@@ -68,15 +68,8 @@ class InteractionListenerImpl implements InteractionListener {
                 && (StringUtils.isNotBlank(targetTaxonName) || StringUtils.isNotBlank(targetTaxonId))) {
             String interactionTypeId = link.get(INTERACTION_TYPE_ID);
             InteractType type = InteractType.typeOf(interactionTypeId);
-            String referenceCitation = link.get(REFERENCE_CITATION);
-            Study study = nodeFactory.getOrCreateStudy(new StudyImpl(link.get(REFERENCE_ID), link.get(STUDY_SOURCE_CITATION), link.get(REFERENCE_DOI), referenceCitation));
-            final String referenceUrl = link.get(REFERENCE_URL);
-            if (StringUtils.isBlank(study.getExternalId()) && StringUtils.isNotBlank(referenceUrl)) {
-                study.setExternalId(referenceUrl);
-            }
-            if (StringUtils.isBlank(study.getCitation())) {
-                study.setCitationWithTx(referenceCitation);
-            }
+
+            Study study = nodeFactory.getOrCreateStudy(studyFromLink(link));
             if (type == null) {
                 final String msg = "unsupported interaction type id [" + interactionTypeId + "]";
                 study.appendLogMessage(msg, Level.WARNING);
@@ -90,6 +83,21 @@ class InteractionListenerImpl implements InteractionListener {
                 source.interactsWith(target, type, getOrCreateLocation(study, link));
             }
         }
+    }
+
+    private StudyImpl studyFromLink(Map<String, String> link) {
+        String referenceCitation = link.get(REFERENCE_CITATION);
+        StudyImpl study1 = new StudyImpl(link.get(REFERENCE_ID),
+                link.get(STUDY_SOURCE_CITATION),
+                link.get(REFERENCE_DOI),
+                referenceCitation);
+
+        final String referenceUrl = link.get(REFERENCE_URL);
+        if (StringUtils.isBlank(study1.getExternalId()) && StringUtils.isNotBlank(referenceUrl)) {
+            study1.setExternalId(referenceUrl);
+        }
+
+        return study1;
     }
 
     private void setDateTimeIfAvailable(Map<String, String> link, Specimen target) throws StudyImporterException {
