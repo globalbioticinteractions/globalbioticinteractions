@@ -59,11 +59,6 @@ public class StudyImpl implements Study {
     }
 
     @Override
-    public void setCitationWithTx(String citation) {
-        setCitation(citation);
-    }
-
-    @Override
     public String getCitation() {
         return citation;
     }
