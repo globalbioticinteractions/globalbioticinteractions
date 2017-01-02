@@ -4,7 +4,6 @@ import org.apache.commons.io.IOUtils;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.domain.Location;
-import org.eol.globi.domain.LocationNode;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.SpecimenNode;
 import org.eol.globi.domain.Study;
@@ -22,19 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.eol.globi.data.StudyImporterForTSV.DECIMAL_LATITUDE;
-import static org.eol.globi.data.StudyImporterForTSV.DECIMAL_LONGITUDE;
-import static org.eol.globi.data.StudyImporterForTSV.INTERACTION_TYPE_ID;
-import static org.eol.globi.data.StudyImporterForTSV.INTERACTION_TYPE_NAME;
-import static org.eol.globi.data.StudyImporterForTSV.LOCALITY_NAME;
-import static org.eol.globi.data.StudyImporterForTSV.REFERENCE_CITATION;
-import static org.eol.globi.data.StudyImporterForTSV.REFERENCE_DOI;
-import static org.eol.globi.data.StudyImporterForTSV.REFERENCE_URL;
-import static org.eol.globi.data.StudyImporterForTSV.SOURCE_TAXON_ID;
-import static org.eol.globi.data.StudyImporterForTSV.SOURCE_TAXON_NAME;
-import static org.eol.globi.data.StudyImporterForTSV.STUDY_SOURCE_CITATION;
-import static org.eol.globi.data.StudyImporterForTSV.TARGET_TAXON_ID;
-import static org.eol.globi.data.StudyImporterForTSV.TARGET_TAXON_NAME;
+import static org.eol.globi.data.StudyImporterForTSV.*;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.Is.is;
@@ -65,7 +52,7 @@ public class StudyImporterForSzoboszlaiTest extends GraphDBTestCase {
         List<Study> allStudies = NodeUtil.findAllStudies(getGraphDb());
         assertThat(allStudies.size(), is(not(0)));
         Study firstStudy = allStudies.get(0);
-        Iterable<Relationship> specimens = firstStudy.getSpecimens();
+        Iterable<Relationship> specimens = NodeUtil.getSpecimens(firstStudy);
         for (Relationship specimen : specimens) {
             Specimen specimenNode = new SpecimenNode(specimen.getEndNode());
             Location sampleLocation = specimenNode.getSampleLocation();

@@ -70,7 +70,7 @@ public class StudyImporterForRoopnarineTest extends GraphDBTestCase {
         assertNotNull(taxonIndex.findTaxonByName("Carcharhinus perezi"));
         assertNotNull(taxonIndex.findTaxonByName("Galeocerdo cuvieri"));
 
-        Iterable<Relationship> collectedRels = study.getSpecimens();
+        Iterable<Relationship> collectedRels = NodeUtil.getSpecimens(study);
         int totalRels = validateSpecimen(collectedRels);
 
         assertThat(totalRels, Is.is(51));
@@ -83,7 +83,7 @@ public class StudyImporterForRoopnarineTest extends GraphDBTestCase {
 
         Study study = studyImporterFor.importStudy();
 
-        Iterable<Relationship> collectedRels = study.getSpecimens();
+        Iterable<Relationship> collectedRels = NodeUtil.getSpecimens(study);
         int totalRels = validateSpecimen(collectedRels);
         assertThat(totalRels, Is.is(1939));
 

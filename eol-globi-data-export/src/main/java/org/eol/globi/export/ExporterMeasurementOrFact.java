@@ -2,6 +2,7 @@ package org.eol.globi.export;
 
 import org.eol.globi.domain.SpecimenConstant;
 import org.eol.globi.domain.Study;
+import org.eol.globi.util.NodeUtil;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 
@@ -44,7 +45,7 @@ public class ExporterMeasurementOrFact extends ExporterBase {
     public void doExportStudy(Study study, Writer writer, boolean includeHeader) throws IOException {
         Map<String, String> properties = new HashMap<String, String>();
 
-        Iterable<Relationship> specimens = study.getSpecimens();
+        Iterable<Relationship> specimens = NodeUtil.getSpecimens(study);
         for (Relationship collectedRel : specimens) {
             Node specimenNode = collectedRel.getEndNode();
             if (isSpecimenClassified(specimenNode)) {

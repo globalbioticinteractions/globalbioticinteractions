@@ -1,14 +1,10 @@
 package org.eol.globi.domain;
 
-import org.neo4j.graphdb.Relationship;
-
 import java.util.List;
 import java.util.logging.Level;
 
 public interface Study extends Named {
     String getTitle();
-
-    Iterable<Relationship> getSpecimens();
 
     @Deprecated
     // citation / doi's are used to convey the source

@@ -1,12 +1,8 @@
 package org.eol.globi.domain;
 
-import org.neo4j.graphdb.Relationship;
-
 import java.util.List;
 
 public interface Specimen {
-
-    Iterable<Relationship> getStomachContents();
 
     Location getSampleLocation();
 
@@ -19,8 +15,6 @@ public interface Specimen {
     void caughtDuring(Season season);
 
     Double getLengthInMm();
-
-    Iterable<Relationship> getClassifications();
 
     void classifyAs(Taxon taxon);
 

@@ -67,7 +67,7 @@ public class StudyImporterForSimonsTest extends GraphDBTestCase {
 
         Study foundStudy = nodeFactory.findStudy("Simons 1997");
         assertNotNull(foundStudy);
-        for (Relationship rel : foundStudy.getSpecimens()) {
+        for (Relationship rel : NodeUtil.getSpecimens(foundStudy)) {
             Node specimen = rel.getEndNode();
             Node speciesNode = specimen.getSingleRelationship(NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS), Direction.OUTGOING).getEndNode();
             String scientificName = (String) speciesNode.getProperty("name");

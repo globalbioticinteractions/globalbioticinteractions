@@ -12,6 +12,7 @@ import org.eol.globi.domain.Study;
 import org.eol.globi.geo.Ecoregion;
 import org.eol.globi.geo.EcoregionFinderException;
 import org.eol.globi.util.CSVUtil;
+import org.eol.globi.util.NodeUtil;
 import org.joda.time.DateTime;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -50,7 +51,7 @@ public class StudyImporterForFWDPTest extends GraphDBTestCase {
         CSVPrint csvOut = CSVUtil.createCSVPrint(fos);
         csvOut.write(new String[]{"predator specimen id (cruise6-PDID-CATNUM)", "predator taxon (pdscinam)", "predator length in mm (PDLEN * 10.0)", "prey taxon (PYNAM)", "year (year)", "month (month)", "ecoRegion (derived from declat;declon)"});
         Study study = importStudy(studyImporter);
-        Iterable<Relationship> collected = study.getSpecimens();
+        Iterable<Relationship> collected = NodeUtil.getSpecimens(study);
         for (Relationship coll : collected) {
             SpecimenNode specimen = new SpecimenNode(coll.getEndNode());
             LocationNode sampleLocation = specimen.getSampleLocation();
@@ -66,7 +67,7 @@ public class StudyImporterForFWDPTest extends GraphDBTestCase {
             Long property = (Long) coll.getProperty(SpecimenConstant.DATE_IN_UNIX_EPOCH);
             DateTime dateTime = new DateTime(property);
 
-            Iterable<Relationship> stomachContents = specimen.getStomachContents();
+            Iterable<Relationship> stomachContents = NodeUtil.getStomachContents(specimen);
             for (Relationship preyRel : stomachContents) {
                 Specimen preySpecimen = new SpecimenNode(preyRel.getEndNode());
                 csvOut.writeln();

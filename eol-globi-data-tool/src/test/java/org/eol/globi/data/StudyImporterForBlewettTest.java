@@ -51,7 +51,7 @@ public class StudyImporterForBlewettTest extends GraphDBTestCase {
         StudyImporter importer = new StudyImporterFactory(new ParserFactoryImpl(), nodeFactory).instantiateImporter((Class) StudyImporterForBlewett.class);
         Study study = importStudy(importer);
 
-        Iterable<Relationship> specimens = study.getSpecimens();
+        Iterable<Relationship> specimens = NodeUtil.getSpecimens(study);
         int count = 0;
         for (Relationship specimen : specimens) {
             count++;
@@ -106,7 +106,7 @@ public class StudyImporterForBlewettTest extends GraphDBTestCase {
         Study study = importStudy(importer);
         assertNotNull(study);
 
-        Iterable<Relationship> collectedRels = study.getSpecimens();
+        Iterable<Relationship> collectedRels = NodeUtil.getSpecimens(study);
 
         Relationship collectedRel = collectedRels.iterator().next();
         Date unixEpochProperty = nodeFactory.getUnixEpochProperty(new SpecimenNode(collectedRel.getEndNode()));

@@ -32,7 +32,7 @@ public class StudyImporterForICESTest extends GraphDBTestCase {
         });
         Study study = studyImporterFor.importStudy();
 
-        Iterator<Relationship> specimens = study.getSpecimens().iterator();
+        Iterator<Relationship> specimens = NodeUtil.getSpecimens(study).iterator();
         int specimenCount = 0;
         while (specimens.hasNext()) {
             specimens.next();
@@ -55,7 +55,7 @@ public class StudyImporterForICESTest extends GraphDBTestCase {
         assertNotNull(taxonIndex.findTaxonByName("Polychaeta"));
         assertNotNull(taxonIndex.findTaxonByName("Nereis"));
 
-        Iterable<Relationship> collectedRels = study.getSpecimens();
+        Iterable<Relationship> collectedRels = NodeUtil.getSpecimens(study);
         int specimenCollected = 0;
         int preyEaten = 0;
         for (Relationship rel : collectedRels) {

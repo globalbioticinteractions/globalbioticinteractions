@@ -35,7 +35,7 @@ public class ExporterRDF implements StudyExporter {
     public void exportStudy(Study study, Writer writer, boolean includeHeader)
             throws IOException {
 
-        for (Relationship r : study.getSpecimens()) {
+        for (Relationship r : NodeUtil.getSpecimens(study)) {
             Node agentNode = r.getEndNode();
             for (Relationship ixnR : agentNode.getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j())) {
                 writeStatement(writer, Arrays.asList(blankNode(ixnR), iriNode(HAS_TYPE), iriNode(INTERACTION)));

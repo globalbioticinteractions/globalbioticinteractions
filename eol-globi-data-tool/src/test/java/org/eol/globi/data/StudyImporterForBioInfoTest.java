@@ -82,7 +82,7 @@ public class StudyImporterForBioInfoTest extends GraphDBTestCase {
         importStudy(importer);
 
         Study study = nodeFactory.findStudy(TaxonomyProvider.BIO_INFO + "ref:60527");
-        Iterable<Relationship> collectedRels = study.getSpecimens();
+        Iterable<Relationship> collectedRels = NodeUtil.getSpecimens(study);
         for (Relationship collectedRel : collectedRels) {
             SpecimenNode specimen = new SpecimenNode(collectedRel.getEndNode());
             String externalId = specimen.getExternalId();
@@ -96,7 +96,7 @@ public class StudyImporterForBioInfoTest extends GraphDBTestCase {
         List<String> interactions = new ArrayList<String>();
         while (iterator.hasNext()) {
             Map<String, Object> next = iterator.next();
-            interactions.add((String)next.get("interaction"));
+            interactions.add((String) next.get("interaction"));
         }
         assertThat(interactions, hasItem("NBN:NHMSYS0000455771 interacts_with NBN:NBNSYS0000024890"));
         assertThat(interactions, hasItem("NBN:NBNSYS0000030148 endoparasitoid_of NBN:NHMSYS0000502366"));
@@ -132,7 +132,7 @@ public class StudyImporterForBioInfoTest extends GraphDBTestCase {
         Study study1 = nodeFactory.findStudy(TaxonomyProvider.BIO_INFO + "ref:60527");
         assertThat(study1.getCitation(), is("citation A"));
         assertThat(study1, is(notNullValue()));
-        Iterable<Relationship> specimens = study1.getSpecimens();
+        Iterable<Relationship> specimens = NodeUtil.getSpecimens(study1);
         List<Node> specimenList = new ArrayList<Node>();
         for (Relationship specimen : specimens) {
             assertThat(specimen.getEndNode().getSingleRelationship(NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS), Direction.OUTGOING), is(notNullValue()));

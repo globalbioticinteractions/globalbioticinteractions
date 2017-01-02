@@ -50,7 +50,7 @@ public class ExporterAggregateUtil {
     }
 
     public static void collectDistinctInteractions(StudyNode aStudy, Map<Fun.Tuple3<Long, String, String>, List<String>> studyOccAggregate) {
-        final Iterable<Relationship> specimens = aStudy.getSpecimens();
+        final Iterable<Relationship> specimens = NodeUtil.getSpecimens(aStudy);
         for (Relationship specimen : specimens) {
             final Iterable<Relationship> interactions = specimen.getEndNode().getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j());
             for (Relationship interaction : interactions) {

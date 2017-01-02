@@ -6,6 +6,7 @@ import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.domain.Study;
 import org.eol.globi.service.DatasetImpl;
+import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
 import org.neo4j.cypher.javacompat.ExecutionEngine;
 import org.neo4j.cypher.javacompat.ExecutionResult;
@@ -66,7 +67,7 @@ public class StudyImporterForHechingerTest extends GraphDBTestCase {
 
         assertThat(study, is(notNullValue()));
 
-        Iterable<Relationship> specimens = study.getSpecimens();
+        Iterable<Relationship> specimens = NodeUtil.getSpecimens(study);
         int count = 0;
         for (Relationship specimen : specimens) {
             count++;

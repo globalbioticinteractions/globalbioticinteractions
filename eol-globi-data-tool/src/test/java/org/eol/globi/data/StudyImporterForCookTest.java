@@ -39,7 +39,7 @@ public class StudyImporterForCookTest extends GraphDBTestCase {
 
         int count = 0;
         boolean foundFirstHost = false;
-        Iterable<Relationship> specimens = study.getSpecimens();
+        Iterable<Relationship> specimens = NodeUtil.getSpecimens(study);
         for (Relationship collected_rel : specimens) {
             assertThat(collected_rel.getProperty(SpecimenConstant.DATE_IN_UNIX_EPOCH), is(notNullValue()));
             Node specimen = collected_rel.getEndNode();
@@ -68,7 +68,7 @@ public class StudyImporterForCookTest extends GraphDBTestCase {
     public void importAll() throws StudyImporterException {
         StudyImporterForCook importer = new StudyImporterForCook(new ParserFactoryImpl(), nodeFactory);
         Study study = importStudy(importer);
-        Iterable<Relationship> specimens = study.getSpecimens();
+        Iterable<Relationship> specimens = NodeUtil.getSpecimens(study);
         int count = 0;
         for (Relationship specimen : specimens) {
             count++;

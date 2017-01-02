@@ -118,7 +118,7 @@ public class StudyImporterForGoMexSI2IT extends GraphDBTestCase {
         for (Relationship classifiedAsRel : classifiedAsRels) {
             Node predatorSpecimen = classifiedAsRel.getStartNode();
             Specimen predator = new SpecimenNode(predatorSpecimen);
-            Iterable<Relationship> stomachContents = predator.getStomachContents();
+            Iterable<Relationship> stomachContents = NodeUtil.getStomachContents(predator);
             for (Relationship prey : stomachContents) {
                 Relationship singleRelationship = prey.getEndNode().getSingleRelationship(NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS), Direction.OUTGOING);
                 preyList.add((String) singleRelationship.getEndNode().getProperty("name"));

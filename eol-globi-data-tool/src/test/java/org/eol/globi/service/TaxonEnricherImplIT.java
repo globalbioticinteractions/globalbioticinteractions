@@ -9,6 +9,7 @@ import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TaxonNode;
+import org.eol.globi.util.NodeUtil;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.neo4j.graphdb.Relationship;
@@ -217,7 +218,7 @@ public class TaxonEnricherImplIT extends GraphDBTestCase {
     public void noNameButExternalId() throws NodeFactoryException {
         Specimen specimen = nodeFactory.createSpecimen(nodeFactory.createStudy("testing123"), PropertyAndValueDictionary.NO_NAME, "EOL:223038");
         assertThat(specimen, is(notNullValue()));
-        Iterable<Relationship> classifications = specimen.getClassifications();
+        Iterable<Relationship> classifications = NodeUtil.getClassifications(specimen);
         int count = 0;
         for (Relationship classification : classifications) {
             TaxonNode taxonNode = new TaxonNode(classification.getEndNode());
@@ -233,7 +234,7 @@ public class TaxonEnricherImplIT extends GraphDBTestCase {
     public void atlasOfLivingAustralia() throws NodeFactoryException {
         Specimen specimen = nodeFactory.createSpecimen(nodeFactory.createStudy("testing123"), null, "urn:lsid:biodiversity.org.au:afd.taxon:31a9b8b8-4e8f-4343-a15f-2ed24e0bf1ae");
         assertThat(specimen, is(notNullValue()));
-        Iterable<Relationship> classifications = specimen.getClassifications();
+        Iterable<Relationship> classifications = NodeUtil.getClassifications(specimen);
         int count = 0;
         for (Relationship classification : classifications) {
             TaxonNode taxonNode = new TaxonNode(classification.getEndNode());

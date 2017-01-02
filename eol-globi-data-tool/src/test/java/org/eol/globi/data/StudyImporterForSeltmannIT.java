@@ -47,7 +47,7 @@ public class StudyImporterForSeltmannIT extends GraphDBTestCase {
         for (Study allStudy : allStudies) {
             assertThat(allStudy.getSource(), startsWith("Digital Bee Collections Network, 2014 (and updates). Version: 2015-03-18. National Science Foundation grant DBI 0956388"));
             assertThat(allStudy.getCitation(), is("citation:doi:Digital Bee Collections Network, 2014 (and updates). Version: 2015-03-18. National Science Foundation grant DBI 0956388"));
-            Iterable<Relationship> specimens = allStudy.getSpecimens();
+            Iterable<Relationship> specimens = NodeUtil.getSpecimens(allStudy);
             for (Relationship specimen : specimens) {
                 Specimen spec = new SpecimenNode(specimen.getEndNode());
                 Term basisOfRecord = spec.getBasisOfRecord();

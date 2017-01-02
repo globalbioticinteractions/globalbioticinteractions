@@ -67,7 +67,7 @@ public class StudyImporterForWrastTest extends GraphDBTestCase {
         Study study = importStudy(importer);
 
         int specimenCount = 0;
-        for (Relationship specimen : study.getSpecimens()) {
+        for (Relationship specimen : NodeUtil.getSpecimens(study)) {
             specimenCount++;
         }
 
@@ -84,7 +84,7 @@ public class StudyImporterForWrastTest extends GraphDBTestCase {
 
         Study foundStudy = nodeFactory.findStudy("Wrast 2008");
         assertNotNull(foundStudy);
-        for (Relationship rel : study.getSpecimens()) {
+        for (Relationship rel : NodeUtil.getSpecimens(study)) {
             Date unixEpochProperty = nodeFactory.getUnixEpochProperty(new SpecimenNode(rel.getEndNode()));
             SimpleDateFormat simpleDateFormat = StudyImporterForWrast.getSimpleDateFormat();
             Date endDate = simpleDateFormat.parse("7/27/2001");
@@ -93,7 +93,7 @@ public class StudyImporterForWrastTest extends GraphDBTestCase {
             assertThat(unixEpochProperty.after(startDate), is(true));
             Specimen specimen = new SpecimenNode(rel.getEndNode());
 
-            for (Relationship ateRel : specimen.getStomachContents()) {
+            for (Relationship ateRel : NodeUtil.getStomachContents(specimen)) {
                 TaxonNode taxon = new TaxonNode(rel.getEndNode().getSingleRelationship(NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS), Direction.OUTGOING).getEndNode());
                 String scientificName = taxon.getName();
                 if ("Sciaenops ocellatus".equals(scientificName)) {
@@ -103,7 +103,7 @@ public class StudyImporterForWrastTest extends GraphDBTestCase {
                     assertThat(location.getLongitude(), is((-96.477033 - 96.476483) / 2.0));
                     assertThat(location.getAltitude(), is(-0.8));
 
-                    Iterable<Relationship> stomachContents = specimen.getStomachContents();
+                    Iterable<Relationship> stomachContents = NodeUtil.getStomachContents(specimen);
                     int count = 0;
                     for (Relationship containsRel : stomachContents) {
                         Node endNode = containsRel.getEndNode().getSingleRelationship(NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS), Direction.OUTGOING).getEndNode();
@@ -125,7 +125,7 @@ public class StudyImporterForWrastTest extends GraphDBTestCase {
                     assertThat(location.getLongitude(), is((-96.475517 - 96.474500) / 2.0));
                     assertThat(location.getAltitude(), is(-2.0d));
 
-                    Iterable<Relationship> stomachContents = specimen.getStomachContents();
+                    Iterable<Relationship> stomachContents = NodeUtil.getStomachContents(specimen);
                     int count = 0;
                     for (Relationship containsRel : stomachContents) {
                         Object name = containsRel.getEndNode().getSingleRelationship(NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS), Direction.OUTGOING).getEndNode().getProperty("name");

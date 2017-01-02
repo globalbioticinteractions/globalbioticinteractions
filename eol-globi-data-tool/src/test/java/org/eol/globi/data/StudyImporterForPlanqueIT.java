@@ -16,7 +16,6 @@ import java.util.List;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
-import static org.junit.internal.matchers.IsCollectionContaining.hasItems;
 
 public class StudyImporterForPlanqueIT extends GraphDBTestCase {
 
@@ -60,7 +59,7 @@ public class StudyImporterForPlanqueIT extends GraphDBTestCase {
         int interactionCount = 0;
         List<Study> studies = NodeUtil.findAllStudies(getGraphDb());
         for (Study study : studies) {
-            Iterable<Relationship> specimenRels = study.getSpecimens();
+            Iterable<Relationship> specimenRels = NodeUtil.getSpecimens(study);
             for (Relationship specimenRel : specimenRels) {
                 interactionCount++;
             }

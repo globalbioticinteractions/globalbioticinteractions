@@ -63,7 +63,7 @@ public class ReportGenerator {
     }
 
     protected void generateReportForStudy(StudyNode study, Set<Long> ids, Counter interactionCounter) {
-        Iterable<Relationship> specimens = study.getSpecimens();
+        Iterable<Relationship> specimens = NodeUtil.getSpecimens(study);
         countInteractionsAndTaxa(specimens, ids, interactionCounter);
 
         Transaction tx = getGraphDb().beginTx();
@@ -111,7 +111,7 @@ public class ReportGenerator {
                 @Override
                 public void onStudy(StudyNode study) {
                     if (StringUtils.equals(study.getSource(), source)) {
-                        Iterable<Relationship> specimens = study.getSpecimens();
+                        Iterable<Relationship> specimens = NodeUtil.getSpecimens(study);
                         countInteractionsAndTaxa(specimens, distinctTaxonIds, counter);
                         studyCounter.count();
                     }
@@ -150,7 +150,7 @@ public class ReportGenerator {
         NodeUtil.findStudies(getGraphDb(), new StudyNodeListener() {
             @Override
             public void onStudy(StudyNode study) {
-                Iterable<Relationship> specimens = study.getSpecimens();
+                Iterable<Relationship> specimens = NodeUtil.getSpecimens(study);
                 countInteractionsAndTaxa(specimens, distinctTaxonIds, counter);
                 studyCounter.count();
                 distinctSources.add(study.getSource());

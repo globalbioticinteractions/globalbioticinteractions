@@ -51,11 +51,6 @@ public class SpecimenNode extends NodeBacked implements Specimen {
     }
 
     @Override
-    public Iterable<Relationship> getStomachContents() {
-        return getUnderlyingNode().getRelationships(NodeUtil.asNeo4j(InteractType.ATE), Direction.OUTGOING);
-    }
-
-    @Override
     public LocationNode getSampleLocation() {
         Relationship singleRelationship = getUnderlyingNode().getSingleRelationship(NodeUtil.asNeo4j(RelTypes.COLLECTED_AT), Direction.OUTGOING);
         return singleRelationship == null ? null : new LocationNode(singleRelationship.getEndNode());
@@ -88,11 +83,6 @@ public class SpecimenNode extends NodeBacked implements Specimen {
     public Double getLengthInMm() {
         return getUnderlyingNode().hasProperty(SpecimenConstant.LENGTH_IN_MM) ?
                 (Double) getUnderlyingNode().getProperty(SpecimenConstant.LENGTH_IN_MM) : null;
-    }
-
-    @Override
-    public Iterable<Relationship> getClassifications() {
-        return getUnderlyingNode().getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS));
     }
 
     @Override

@@ -17,7 +17,7 @@ public class ExporterAssociations extends ExporterAssociationsBase {
     @Override
     public void doExportStudy(Study study, Writer writer, boolean includeHeader) throws IOException {
         Map<String, String> properties = new HashMap<String, String>();
-        Iterable<Relationship> specimens = study.getSpecimens();
+        Iterable<Relationship> specimens = NodeUtil.getSpecimens(study);
         for (Relationship collectedRel : specimens) {
             Node specimenNode = collectedRel.getEndNode();
             if (isSpecimenClassified(specimenNode)) {

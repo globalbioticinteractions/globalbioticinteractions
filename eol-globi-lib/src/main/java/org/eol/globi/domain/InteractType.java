@@ -1,7 +1,6 @@
 package org.eol.globi.domain;
 
 import org.apache.commons.lang3.StringUtils;
-import org.neo4j.graphdb.RelationshipType;
 
 import java.util.ArrayList;
 import java.util.Arrays;

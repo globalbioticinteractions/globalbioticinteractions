@@ -2,16 +2,15 @@ package org.eol.globi.data;
 
 import com.Ostermiller.util.LabeledCSVParser;
 import org.eol.globi.domain.Study;
+import org.eol.globi.geo.LatLng;
 import org.eol.globi.util.CSVUtil;
 import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
-import org.eol.globi.geo.LatLng;
 
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.List;
 
-import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
@@ -53,7 +52,7 @@ public class StudyImporterForRaymondTest extends GraphDBTestCase {
     protected void assertThatAllStudiesHaveAtLeastOneInteraction() {
         List<Study> studies = NodeUtil.findAllStudies(getGraphDb());
         for (Study study : studies) {
-            assertThat(study.getSpecimens().iterator().hasNext(), is(true));
+            assertThat(NodeUtil.getSpecimens(study).iterator().hasNext(), is(true));
         }
     }
 

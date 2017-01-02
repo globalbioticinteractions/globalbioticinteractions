@@ -44,13 +44,13 @@ public class StudyTest extends GraphDBTestCase {
 
         assertEquals(study.getTitle(), foundStudy.getTitle());
 
-        for (Relationship rel : study.getSpecimens()) {
+        for (Relationship rel : NodeUtil.getSpecimens(study)) {
             Specimen specimen = new SpecimenNode(rel.getEndNode());
             Relationship caughtDuringRel = rel.getEndNode().getSingleRelationship(NodeUtil.asNeo4j(RelTypes.CAUGHT_DURING), Direction.OUTGOING);
             if (caughtDuringRel != null) {
                 Node seasonNode = caughtDuringRel.getEndNode();
                 if (seasonNode != null && seasonNode.getProperty(SeasonNode.TITLE).equals("winter")) {
-                    Relationship next = specimen.getClassifications().iterator().next();
+                    Relationship next = NodeUtil.getClassifications(specimen).iterator().next();
                     Node endNode = next.getEndNode();
                     String speciesName = (String) endNode.getProperty("name");
                     assertEquals(CARCHARODON_CARCHARIAS, speciesName);
@@ -60,10 +60,10 @@ public class StudyTest extends GraphDBTestCase {
                     fail("expected to findNamespaces a specimen");
                 }
             } else if (specimen.equals(goldFish)) {
-                Node genusNode = specimen.getClassifications().iterator().next().getEndNode();
+                Node genusNode = NodeUtil.getClassifications(specimen).iterator().next().getEndNode();
                 assertEquals(CARASSIUS_AURATUS_AURATUS, genusNode.getProperty("name"));
             } else if (specimen.equals(fuzzyShark)) {
-                Node genusNode = specimen.getClassifications().iterator().next().getEndNode();
+                Node genusNode = NodeUtil.getClassifications(specimen).iterator().next().getEndNode();
                 assertEquals(CARCHARODON, genusNode.getProperty("name"));
             } else {
                 fail("found unexpected specimen [" + specimen + "] in study");

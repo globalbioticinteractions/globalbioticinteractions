@@ -52,9 +52,9 @@ public class InteractionListenerNeo4jTest extends GraphDBTestCase {
         assertThat(study.getCitation(), is("citation:doi:1234"));
 
         boolean foundPair = false;
-        for (Relationship specimenRel : study.getSpecimens()) {
+        for (Relationship specimenRel : NodeUtil.getSpecimens(study)) {
             final SpecimenNode predator = new SpecimenNode(specimenRel.getEndNode());
-            for (Relationship stomachRel : predator.getStomachContents()) {
+            for (Relationship stomachRel : NodeUtil.getStomachContents(predator)) {
                 final SpecimenNode prey = new SpecimenNode(stomachRel.getEndNode());
                 final TaxonNode preyTaxon = getOrigTaxon(prey);
                 final TaxonNode predTaxon = getOrigTaxon(predator);

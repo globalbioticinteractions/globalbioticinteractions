@@ -31,7 +31,7 @@ public class StudyImporterForThessenTest extends GraphDBTestCase {
         });
         StudyNode study = importStudy(importer);
         assertThat(study.getExternalId(), containsString("github"));
-        Iterable<Relationship> specimens = study.getSpecimens();
+        Iterable<Relationship> specimens = NodeUtil.getSpecimens(study);
         int specimenCount = 0;
         Set<String> taxonIds = new HashSet<String>();
         while (specimens.iterator().hasNext()) {

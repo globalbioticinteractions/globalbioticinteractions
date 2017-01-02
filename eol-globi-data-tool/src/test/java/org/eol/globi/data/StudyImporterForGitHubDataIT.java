@@ -185,7 +185,7 @@ public class StudyImporterForGitHubDataIT extends GraphDBTestCase {
         assertThat(allStudies.size(), is(3));
         int specimenCount = 0;
         for (Study study : allStudies) {
-            final Iterable<Relationship> specimens = study.getSpecimens();
+            final Iterable<Relationship> specimens = NodeUtil.getSpecimens(study);
             for (Relationship specimen : specimens) {
                 specimenCount++;
             }

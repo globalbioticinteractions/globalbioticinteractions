@@ -255,7 +255,7 @@ public class NodeFactoryImplTest extends GraphDBTestCase {
     @Test
     public void specimenWithNoName() throws NodeFactoryException {
         Specimen specimen = getNodeFactory().createSpecimen(getNodeFactory().createStudy("bla"), null, "bla:123");
-        assertThat(specimen.getClassifications().iterator().hasNext(), is(false));
+        assertThat(NodeUtil.getClassifications(specimen).iterator().hasNext(), is(false));
     }
 
     @Test

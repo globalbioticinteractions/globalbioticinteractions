@@ -2,15 +2,19 @@ package org.eol.globi.util;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.domain.InteractType;
+import org.eol.globi.domain.NodeBacked;
 import org.eol.globi.domain.RelType;
 import org.eol.globi.domain.RelTypes;
+import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.service.TaxonUtil;
+import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
+import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.RelationshipType;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.index.Index;
@@ -82,5 +86,17 @@ public class NodeUtil {
             types[i] = asNeo4j(values[i]);
         }
         return types;
+    }
+
+    public static Iterable<Relationship> getSpecimens(Study study) {
+        return ((NodeBacked)study).getUnderlyingNode().getRelationships(Direction.OUTGOING, asNeo4j(RelTypes.COLLECTED));
+    }
+
+    public static Iterable<Relationship> getClassifications(Specimen specimen) {
+        return ((NodeBacked)specimen).getUnderlyingNode().getRelationships(Direction.OUTGOING, asNeo4j(RelTypes.CLASSIFIED_AS));
+    }
+
+    public static Iterable<Relationship> getStomachContents(Specimen specimen) {
+        return ((NodeBacked)specimen).getUnderlyingNode().getRelationships(asNeo4j(InteractType.ATE), Direction.OUTGOING);
     }
 }

@@ -15,7 +15,6 @@ import java.util.List;
 import java.util.Set;
 
 import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
@@ -54,11 +53,11 @@ public class StudyImporterForLifeWatchGreeceTest extends GraphDBTestCase {
         for (Study study : studies) {
             assertThat(study.getCitation(), is(notNullValue()));
             assertThat(study.getTitle(), containsString("greece"));
-            Iterable<Relationship> specimens = study.getSpecimens();
+            Iterable<Relationship> specimens = NodeUtil.getSpecimens(study);
             for (Relationship collectedRel : specimens) {
                 addTaxonNameForSpecimenNode(taxa, collectedRel.getEndNode());
                 Specimen predatorSpecimen = new SpecimenNode(collectedRel.getEndNode());
-                Iterable<Relationship> prey = predatorSpecimen.getStomachContents();
+                Iterable<Relationship> prey = NodeUtil.getStomachContents(predatorSpecimen);
                 for (Relationship ateRel : prey) {
                     totalPredatorPreyRelationships++;
                     addTaxonNameForSpecimenNode(taxa, ateRel.getEndNode());
@@ -71,7 +70,7 @@ public class StudyImporterForLifeWatchGreeceTest extends GraphDBTestCase {
 
     private void addTaxonNameForSpecimenNode(Set<String> taxa, Node startNode) {
         Specimen predatorSpecimen = new SpecimenNode(startNode);
-        Iterable<Relationship> classifications = predatorSpecimen.getClassifications();
+        Iterable<Relationship> classifications = NodeUtil.getClassifications(predatorSpecimen);
         for (Relationship classification : classifications) {
             taxa.add(new TaxonNode(classification.getEndNode()).getName());
         }

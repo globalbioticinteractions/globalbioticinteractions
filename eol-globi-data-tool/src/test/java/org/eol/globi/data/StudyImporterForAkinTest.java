@@ -73,7 +73,7 @@ public class StudyImporterForAkinTest extends GraphDBTestCase {
         TaxonNode taxon = taxonIndex.findTaxonByName("Pogonias cromis");
         assertNotNull(taxon);
 
-        Iterable<Relationship> specimens = study.getSpecimens();
+        Iterable<Relationship> specimens = NodeUtil.getSpecimens(study);
         Relationship rel = specimens.iterator().next();
         assertThat(rel, is(not(nullValue())));
 

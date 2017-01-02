@@ -67,7 +67,7 @@ public class NameResolver {
         IndexHits<Node> studies = studyIndex.query("title", "*");
         for (Node studyNode : studies) {
             final Study study1 = new StudyNode(studyNode);
-            final Iterable<Relationship> specimens = study1.getSpecimens();
+            final Iterable<Relationship> specimens = NodeUtil.getSpecimens(study1);
             for (Relationship collected : specimens) {
                 SpecimenNode specimen = new SpecimenNode(collected.getEndNode());
                 final Relationship classifiedAs = specimen.getUnderlyingNode().getSingleRelationship(NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS), Direction.OUTGOING);

@@ -21,7 +21,7 @@ public class ExporterOccurrences extends ExporterOccurrencesBase {
 
     @Override
     public void doExportStudy(Study study, Writer writer, boolean includeHeader) throws IOException {
-        Iterable<Relationship> specimens = study.getSpecimens();
+        Iterable<Relationship> specimens = NodeUtil.getSpecimens(study);
         for (Relationship collectedRel : specimens) {
             Node specimenNode = collectedRel.getEndNode();
             if (isSpecimenClassified(specimenNode)) {

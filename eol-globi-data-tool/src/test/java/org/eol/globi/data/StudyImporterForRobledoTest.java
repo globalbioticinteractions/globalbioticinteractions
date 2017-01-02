@@ -6,6 +6,7 @@ import org.eol.globi.domain.LocationNode;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.SpecimenNode;
 import org.eol.globi.domain.Study;
+import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
 import org.neo4j.graphdb.Relationship;
 
@@ -28,7 +29,7 @@ public class StudyImporterForRobledoTest extends GraphDBTestCase {
         assertNotNull(nodeFactory.findStudy(study.getTitle()));
 
         int count = 0;
-        Iterable<Relationship> specimenRels = study.getSpecimens();
+        Iterable<Relationship> specimenRels = NodeUtil.getSpecimens(study);
         for (Relationship specimenRel : specimenRels) {
             Specimen specimen1 = new SpecimenNode(specimenRel.getEndNode());
             Location sampleLocation = specimen1.getSampleLocation();

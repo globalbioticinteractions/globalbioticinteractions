@@ -42,12 +42,6 @@ public class StudyNode extends NodeBacked implements Study {
     public String getName() { return getTitle(); }
 
     @Override
-    public Iterable<Relationship> getSpecimens() {
-        return getUnderlyingNode().getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j(RelTypes.COLLECTED));
-
-    }
-
-    @Override
     @Deprecated
     // citation / doi's are used to convey the source
     public void setContributor(String contributor) {
