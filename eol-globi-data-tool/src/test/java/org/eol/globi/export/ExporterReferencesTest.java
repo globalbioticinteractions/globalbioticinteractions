@@ -19,8 +19,8 @@ public class ExporterReferencesTest extends GraphDBTestCase {
     @Test
     public void exportReference() throws IOException, NodeFactoryException, ParseException {
         StudyImpl myStudy1 = new StudyImpl("myStudy", "a source", "doi:1234", ExternalIdUtil.toCitation("John Doe", "description study 1", "1927"));
+        myStudy1.setExternalId("GAME:444");
         Study myStudy = nodeFactory.getOrCreateStudy(myStudy1);
-        myStudy.setExternalId("GAME:444");
         StringWriter row = new StringWriter();
 
         new ExporterReferences().exportStudy(myStudy, row, true);
@@ -47,7 +47,7 @@ public class ExporterReferencesTest extends GraphDBTestCase {
         Study myStudy = nodeFactory.createStudy(new StudyImpl("myStudy", null, null, "bla \"one\""));
         StringWriter row = new StringWriter();
         new ExporterReferences().exportStudy(myStudy, row, false);
-        assertThat(row.getBuffer().toString(), equalTo("\nglobi:ref:1\t\tbla \"one\"\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t"));
+        assertThat(row.getBuffer().toString(), equalTo("\nglobi:ref:1\t\tcitation:doi:bla \"one\"\t\t\t\t\t\t\t\t\t\t\t\t\thttp://dx.doi.org/bla \"one\"\tdoi:bla \"one\"\t"));
     }
 
 
@@ -57,7 +57,7 @@ public class ExporterReferencesTest extends GraphDBTestCase {
     }
 
     private String getExpectedRow() {
-        return "\nglobi:ref:1\t\tcitation:doi:John Doe. 1927. description study 1\t\t\t\t\t\t\t\t\t\t\t\t\thttps://public.myfwc.com/FWRI/GAME/Survey.aspx?id=444\tdoi:1234\t";
+        return "\nglobi:ref:1\t\tcitation:doi:1234\t\t\t\t\t\t\t\t\t\t\t\t\thttps://public.myfwc.com/FWRI/GAME/Survey.aspx?id=444\tdoi:1234\t";
     }
 
     @Test

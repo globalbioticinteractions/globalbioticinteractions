@@ -99,7 +99,6 @@ public class StudyImporterForTSVTest extends GraphDBTestCase {
         }
         assertThat(titles, hasItem("someRepohttp://www.ncbi.nlm.nih.gov/nuccore/100172732"));
         assertThat(ids, hasItem("http://www.ncbi.nlm.nih.gov/nuccore/100172732"));
-
     }
 
     @Test

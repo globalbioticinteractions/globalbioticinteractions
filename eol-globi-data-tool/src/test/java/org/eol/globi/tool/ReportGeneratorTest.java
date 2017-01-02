@@ -33,9 +33,9 @@ public class ReportGeneratorTest extends GraphDBTestCase {
         Node reportNode = reports.getSingle();
         assertThat((String) reportNode.getProperty(StudyConstant.TITLE), is("a title"));
         assertThat((String) reportNode.getProperty(StudyConstant.SOURCE), is("a third source"));
-        assertThat((String) reportNode.getProperty(StudyConstant.CITATION), is("citation:doi:citation"));
+        assertThat((String) reportNode.getProperty(StudyConstant.CITATION), is("citation:doi:12345"));
         assertThat((String) reportNode.getProperty(StudyConstant.DOI), is("doi:12345"));
-        assertThat((String) reportNode.getProperty(PropertyAndValueDictionary.EXTERNAL_ID), is("http://dx.doi.org/citation"));
+        assertThat((String) reportNode.getProperty(PropertyAndValueDictionary.EXTERNAL_ID), is("http://dx.doi.org/12345"));
         assertThat((Integer) reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_INTERACTIONS), is(4));
         assertThat((Integer) reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_DISTINCT_TAXA), is(3));
         reports.close();

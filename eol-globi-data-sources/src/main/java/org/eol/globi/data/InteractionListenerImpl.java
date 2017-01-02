@@ -52,9 +52,7 @@ class InteractionListenerImpl implements InteractionListener {
             if (properties != null) {
                 importLink(properties);
             }
-        } catch (NodeFactoryException e) {
-            throw new StudyImporterException("failed to import: " + properties, e);
-        } catch (IOException e) {
+        } catch (NodeFactoryException | IOException e) {
             throw new StudyImporterException("failed to import: " + properties, e);
         }
     }

@@ -242,6 +242,8 @@ public class NodeFactoryNeo4j implements NodeFactory {
             studyNode = new StudyNode(node, study.getTitle());
             studyNode.setSource(study.getSource());
             studyNode.setCitation(study.getCitation());
+            studyNode.setExternalId(study.getExternalId());
+            studyNode.setDOI(study.getDOI());
             if (doiResolver != null) {
                 try {
                     String doiResolved = study.getDOI();
@@ -284,10 +286,7 @@ public class NodeFactoryNeo4j implements NodeFactory {
             throw new NodeFactoryException("null or empty study source");
         }
         StudyNode studyNode = findStudy(study.getTitle());
-        if (null == studyNode) {
-            studyNode = createStudy(new StudyImpl(study.getTitle(), study.getSource(), study.getDOI(), study.getCitation()));
-        }
-        return studyNode;
+        return null == studyNode ? createStudy(study) : studyNode;
     }
 
     @Override
