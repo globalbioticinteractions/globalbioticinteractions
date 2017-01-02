@@ -39,27 +39,14 @@ public class StudyNode extends NodeBacked implements Study {
         return getProperty(StudyConstant.SOURCE);
     }
 
-    @Override
     public void setSource(String source) {
         setProperty(StudyConstant.SOURCE, source);
     }
 
-    @Override
     public void setDOI(String doi) {
         setProperty(StudyConstant.DOI, doi);
         if (StringUtils.isBlank(getExternalId())) {
             setExternalId(ExternalIdUtil.urlForExternalId(doi));
-        }
-    }
-
-    @Override
-    public void setDOIWithTx(String doi) {
-        Transaction transaction = getUnderlyingNode().getGraphDatabase().beginTx();
-        try {
-            setDOI(doi);
-            transaction.success();
-        } finally {
-            transaction.finish();
         }
     }
 
@@ -69,14 +56,8 @@ public class StudyNode extends NodeBacked implements Study {
         return StringUtils.isBlank(value) ? null : value;
     }
 
-    @Override
     public void setCitation(String citation) {
         setProperty(StudyConstant.CITATION, citation);
-    }
-
-    @Override
-    public void setCitationWithTx(String citation) {
-        setPropertyWithTx(StudyConstant.CITATION, citation);
     }
 
     @Override
