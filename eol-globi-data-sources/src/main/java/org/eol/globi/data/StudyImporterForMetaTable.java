@@ -63,7 +63,7 @@ public class StudyImporterForMetaTable extends BaseStudyImporter {
                 Dataset datasetProxy = new DatasetProxy(dataset);
                 datasetProxy.setConfig(tableConfig);
 
-                InteractionListenerNeo4j interactionListener = new InteractionListenerNeo4j(nodeFactory, getGeoNamesService(), getLogger());
+                InteractionListenerImpl interactionListener = new InteractionListenerImpl(nodeFactory, getGeoNamesService(), getLogger());
                 final InteractionListener listener = new TableInteractionListenerProxy(datasetProxy, interactionListener);
                 importTable(listener, new TableParserFactoryImpl(), tableConfig, datasetProxy);
             }

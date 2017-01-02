@@ -20,7 +20,7 @@ public class StudyImporterForGray extends BaseStudyImporter {
     @Override
     public Study importStudy() throws StudyImporterException {
         try {
-            importLinks(DatasetUtil.getNamedResourceStream(getDataset(), "links"), new InteractionListenerNeo4j(nodeFactory, getGeoNamesService(), getLogger()), getFilter());
+            importLinks(DatasetUtil.getNamedResourceStream(getDataset(), "links"), new InteractionListenerImpl(nodeFactory, getGeoNamesService(), getLogger()), getFilter());
         } catch (IOException e) {
             throw new StudyImporterException("failed to find: [" + DatasetUtil.getNamedResourceURI(getDataset(), "links") + "]");
         }

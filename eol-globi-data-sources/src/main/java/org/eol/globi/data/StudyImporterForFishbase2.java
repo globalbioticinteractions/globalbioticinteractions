@@ -154,7 +154,7 @@ public class StudyImporterForFishbase2 extends BaseStudyImporter {
 
     @Override
     public Study importStudy() throws StudyImporterException {
-        InteractionListenerNeo4j listener = new InteractionListenerNeo4j(nodeFactory, getGeoNamesService(), getLogger());
+        InteractionListenerImpl listener = new InteractionListenerImpl(nodeFactory, getGeoNamesService(), getLogger());
         importStudy(listener);
         return null;
     }

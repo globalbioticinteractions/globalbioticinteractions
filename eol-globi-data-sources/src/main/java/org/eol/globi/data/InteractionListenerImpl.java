@@ -34,15 +34,13 @@ import static org.eol.globi.data.StudyImporterForTSV.STUDY_SOURCE_CITATION;
 import static org.eol.globi.data.StudyImporterForTSV.TARGET_TAXON_ID;
 import static org.eol.globi.data.StudyImporterForTSV.TARGET_TAXON_NAME;
 
-class InteractionListenerNeo4j implements InteractionListener {
-    private final Log LOG = LogFactory.getLog(InteractionListenerNeo4j.class);
-
+class InteractionListenerImpl implements InteractionListener {
     private final NodeFactory nodeFactory;
     private final GeoNamesService geoNamesService;
 
     private final ImportLogger logger;
 
-    public InteractionListenerNeo4j(NodeFactory nodeFactory, GeoNamesService geoNamesService, ImportLogger logger) {
+    public InteractionListenerImpl(NodeFactory nodeFactory, GeoNamesService geoNamesService, ImportLogger logger) {
         this.nodeFactory = nodeFactory;
         this.geoNamesService = geoNamesService;
         this.logger = logger;

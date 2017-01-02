@@ -51,7 +51,7 @@ public class StudyImporterForTSV extends BaseStudyImporter {
 
 
     private void importRepository(String namespace, String sourceCitation) throws IOException, StudyImporterException {
-        InteractionListenerNeo4j interactionListenerNeo4j = new InteractionListenerNeo4j(nodeFactory, getGeoNamesService(), getLogger());
+        InteractionListenerImpl interactionListenerImpl = new InteractionListenerImpl(nodeFactory, getGeoNamesService(), getLogger());
         LabeledCSVParser parser = parserFactory.createParser(getDataset().getResourceURI("/interactions.tsv").toString(), "UTF-8");
         parser.changeDelimiter('\t');
         while (parser.getLine() != null) {
@@ -73,7 +73,7 @@ public class StudyImporterForTSV extends BaseStudyImporter {
 
             attemptToGenerateReferencePropertiesIfMissing(namespace, link);
 
-            interactionListenerNeo4j.newLink(link);
+            interactionListenerImpl.newLink(link);
         }
     }
 

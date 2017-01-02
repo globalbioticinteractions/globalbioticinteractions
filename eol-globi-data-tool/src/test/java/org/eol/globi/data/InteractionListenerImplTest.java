@@ -26,11 +26,11 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
 
-public class InteractionListenerNeo4jTest extends GraphDBTestCase {
+public class InteractionListenerImplTest extends GraphDBTestCase {
 
     @Test
     public void importBlankCitation() throws StudyImporterException {
-        final InteractionListenerNeo4j listener = new InteractionListenerNeo4j(nodeFactory, null, null);
+        final InteractionListenerImpl listener = new InteractionListenerImpl(nodeFactory, null, null);
         final HashMap<String, String> link = new HashMap<String, String>();
         link.put(SOURCE_TAXON_NAME, "donald");
         link.put(SOURCE_TAXON_ID, "duck");

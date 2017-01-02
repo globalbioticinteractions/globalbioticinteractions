@@ -20,7 +20,7 @@ public class StudyImporterForWood extends StudyImporterNodesAndLinks {
     @Override
     public Study importStudy() throws StudyImporterException {
         try {
-            importLinks(ResourceUtil.asInputStream(getLinkResource(), null), new InteractionListenerNeo4j(nodeFactory, getGeoNamesService(), getLogger()), getFilter());
+            importLinks(ResourceUtil.asInputStream(getLinkResource(), null), new InteractionListenerImpl(nodeFactory, getGeoNamesService(), getLogger()), getFilter());
         } catch (IOException e) {
             throw new StudyImporterException("failed to find: [" + getLinkResource() + "]");
         }

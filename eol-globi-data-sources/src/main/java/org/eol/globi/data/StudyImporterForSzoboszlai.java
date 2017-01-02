@@ -45,7 +45,7 @@ public class StudyImporterForSzoboszlai extends BaseStudyImporter {
         try {
             Map<Integer, LatLng> localeMap = importShapes();
             importLinks(ResourceUtil.asInputStream(getLinkArchiveURL(), null)
-                    , new InteractionListenerNeo4j(nodeFactory, getGeoNamesService(), getLogger())
+                    , new InteractionListenerImpl(nodeFactory, getGeoNamesService(), getLogger())
                     , localeMap);
         } catch (IOException e) {
             throw new StudyImporterException("failed to find: [" + getLinkArchiveURL() + "]");
