@@ -28,7 +28,7 @@ import static org.junit.Assert.assertThat;
 public class StudyImporterForWrastTest extends GraphDBTestCase {
 
     @Test
-    public void createAndPopulateStudyFromLavacaBay() throws StudyImporterException, NodeFactoryException, ParseException {
+    public void createAndPopulateStudyFromLavacaBay() throws StudyImporterException, ParseException {
         String csvString =
                 "\"Month\",\"Day\",\"Year\",\"Region\",\"SeasonNode\",\"Habitat\",\"Site\",\"Family\",\"Predator Species\",\"TL (mm)\",\"Prey Item Species\",\"Prey item\",\"Number\",\"Condition Index\",\"Volume\",\"Percent Content\",\"Prey Item Trophic Level\",\"Notes\",\"Call #\"\n";
         csvString += "7,24,2001,\"Lower\",\"Fall\",\"Marsh\",1,\"Sciaenidae\",\"Sciaenops ocellatus\",420,\"Acrididae spp. \",\"Acrididae \",1,\"III\",0.4,3.2520325203,2.5,,1\n";
@@ -152,7 +152,7 @@ public class StudyImporterForWrastTest extends GraphDBTestCase {
     }
 
     @Test
-    public void testImportFullFile() throws StudyImporterException, NodeFactoryException {
+    public void testImportFullFile() throws StudyImporterException {
         StudyImporterForWrast importer = new StudyImporterForWrast(new ParserFactoryImpl(), nodeFactory);
         importStudy(importer);
     }

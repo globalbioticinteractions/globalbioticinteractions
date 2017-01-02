@@ -36,7 +36,7 @@ public class StudyImporterForWrast extends BaseStudyImporter {
 
     static final HashMap<String, String> COLUMN_MAPPER = new HashMap<String, String>() {
         {
-            put(SEASON, "SeasonNode");
+            put(SEASON, "Season");
             put(PREY_SPECIES, "Prey item");
             put(PREDATOR_SPECIES, "Predator Species");
             put(LENGTH_IN_MM, "TL (mm)");
@@ -189,9 +189,9 @@ public class StudyImporterForWrast extends BaseStudyImporter {
         Map<String, Double> depthMap;
         try {
             LabeledCSVParser depthParser = parserFactory.createParser(LAVACA_BAY_ENVIRONMENTAL, CharsetConstant.UTF8);
-            depthMap = new HashMap<String, Double>();
+            depthMap = new HashMap<>();
             while (depthParser.getLine() != null) {
-                String seasonDepth = depthParser.getValueByLabel("SeasonNode");
+                String seasonDepth = depthParser.getValueByLabel("Season");
                 String regionDepth = depthParser.getValueByLabel("Upper/Lower");
                 String siteDepth = depthParser.getValueByLabel("Site");
                 String habitatDepth = depthParser.getValueByLabel("Habitat");
@@ -204,7 +204,7 @@ public class StudyImporterForWrast extends BaseStudyImporter {
                         getLogger().warn(study, createMsgPrefix(depthParser) + "failed to parse depth for depthId [" + depthId + "], skipping entry");
                     }
                 } else {
-                    throw new StudyImporterException(createMsgPrefix(depthParser) + " found duplicate entries for unique combination of season,region,site and habitat: [" + seasonDepth + ", " + regionDepth + ", " + siteDepth + ", " + seasonDepth);
+                    throw new StudyImporterException(createMsgPrefix(depthParser) + " found duplicate entries for unique combination of season,region,site and habitat: [" + seasonDepth + ", " + regionDepth + ", " + siteDepth + ", " + seasonDepth + "]");
                 }
             }
 
