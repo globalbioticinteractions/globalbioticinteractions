@@ -161,7 +161,6 @@ public class StudyImporterForSeltmann extends BaseStudyImporter {
         } catch (IOException | NodeFactoryException e) {
             throw new StudyImporterException(e);
         }
-        return null;
     }
 
     public static String getTargetNameFromAssocMap(Map<String, String> assoc) {

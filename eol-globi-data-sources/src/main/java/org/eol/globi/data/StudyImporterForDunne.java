@@ -69,9 +69,6 @@ public class StudyImporterForDunne extends StudyImporterNodesAndLinks {
         } catch (NodeFactoryException e) {
             throw new StudyImporterException("failed to create nodes", e);
         }
-
-
-        return study;
     }
 
     protected Integer getNodeId(LabeledCSVParser nodes) {

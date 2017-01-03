@@ -106,9 +106,6 @@ public class StudyImporterForSPIRE extends BaseStudyImporter {
             }
             subjectCounter++;
         }
-
-        // should probably retire this . . .
-        return null;
     }
 
     private void parseStudyInfo(Map<String, String> properties, Statement observedInStudy) throws StudyImporterException {

@@ -124,7 +124,6 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
             String msg = "found unsupported (observationId, observationFieldNameId) pairs: " + unsupportedInteractions.toString();
             throw new StudyImporterException(msg);
         }
-        return null;
     }
 
     protected String getSourceString() {

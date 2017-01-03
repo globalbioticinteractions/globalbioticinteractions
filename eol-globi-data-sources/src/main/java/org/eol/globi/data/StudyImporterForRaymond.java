@@ -64,11 +64,9 @@ public class StudyImporterForRaymond extends BaseStudyImporter {
 
     @Override
     public void importStudy() throws StudyImporterException {
-
         if (!retrieveAndImport(RESOURCE_URL)) {
             retrieveAndImport(RESOURCE_URL_FALLBACK);
         }
-        return null;
     }
 
     protected boolean retrieveAndImport(String resourceUrl) throws StudyImporterException {

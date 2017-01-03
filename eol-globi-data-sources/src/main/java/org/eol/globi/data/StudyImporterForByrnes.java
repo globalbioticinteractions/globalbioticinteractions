@@ -40,7 +40,6 @@ public class StudyImporterForByrnes extends BaseStudyImporter {
         } catch (IOException e) {
             throw new StudyImporterException("problem importing study at line [" + dataParser.lastLineNumber() + "]", e);
         }
-        return null;
     }
 
     private Map<String, String> buildRefMap() throws StudyImporterException {

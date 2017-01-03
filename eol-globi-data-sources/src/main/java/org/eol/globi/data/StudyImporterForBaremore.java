@@ -82,11 +82,7 @@ public class StudyImporterForBaremore extends BaseStudyImporter {
             }
         } catch (IOException e) {
             throw new StudyImporterException("failed to parse labels", e);
-        } catch (NodeFactoryException e) {
-            throw new StudyImporterException("failed to create node", e);
         }
-
-        return study;
     }
 
     private void addLifeStage(LabeledCSVParser parser, Specimen predatorSpecimen) throws StudyImporterException {

@@ -93,7 +93,6 @@ public class StudyImporterForJSONLD extends BaseStudyImporter {
         } finally {
             exec.close();
         }
-        return null;
     }
 
     private Date parseDate(String collTime) throws StudyImporterException {

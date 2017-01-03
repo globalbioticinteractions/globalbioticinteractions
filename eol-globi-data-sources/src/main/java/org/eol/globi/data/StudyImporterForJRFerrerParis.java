@@ -35,8 +35,6 @@ public class StudyImporterForJRFerrerParis extends BaseStudyImporter {
         } catch (IOException e) {
             throw new StudyImporterException("failed to access resource [" + RESOURCE + "]");
         }
-
-        return study;
     }
 
     private void addAssociation(Study study, LabeledCSVParser parser, String butterflyName, String plantName) throws StudyImporterException {

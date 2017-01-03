@@ -228,7 +228,6 @@ public class StudyImporterForBioInfo extends BaseStudyImporter implements StudyI
         } catch (IOException e1) {
             throw new StudyImporterException("problem reading trophic relations file [" + RELATIONS_DATA_FILE + "]", e1);
         }
-        return null;
     }
 
     protected Study createStudy(String refId, String citation) throws NodeFactoryException {

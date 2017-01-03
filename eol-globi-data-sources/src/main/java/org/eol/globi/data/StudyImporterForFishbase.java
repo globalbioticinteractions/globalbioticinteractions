@@ -30,8 +30,6 @@ public class StudyImporterForFishbase extends BaseStudyImporter {
         } catch (IOException e) {
             throw new StudyImporterException("failed to access resource [" + studyResource + "]");
         }
-
-        return null;
     }
 
     protected void importStudy(InputStream inputStream) throws IOException, StudyImporterException {

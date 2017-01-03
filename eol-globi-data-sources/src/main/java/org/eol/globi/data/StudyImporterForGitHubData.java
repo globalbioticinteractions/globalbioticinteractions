@@ -49,7 +49,6 @@ public class StudyImporterForGitHubData extends BaseStudyImporter {
         if (repositoriesWithIssues.size() > 0) {
             throw new StudyImporterException("failed to import one or more repositories: [" + StringUtils.join(repositoriesWithIssues, ", ") + "]");
         }
-        return null;
     }
 
     public void importData(String repository) throws StudyImporterException {

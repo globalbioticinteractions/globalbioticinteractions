@@ -69,7 +69,6 @@ public class StudyImporterForMetaTable extends BaseStudyImporter {
         } catch (IOException | NodeFactoryException e) {
             throw new StudyImporterException("problem importing from [" + getBaseUrl() + "]", e);
         }
-        return null;
     }
 
 

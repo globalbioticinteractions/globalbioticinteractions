@@ -34,8 +34,6 @@ public class StudyImporterForLifeWatchGreece extends BaseStudyImporter {
         } catch (IOException e) {
             throw new StudyImporterException("failed to import study", e);
         }
-
-        return null;
     }
 
     protected void handleTable(RowListener listener, String tableName) throws IOException {

@@ -80,7 +80,6 @@ public class StudyImporterForSIAD extends BaseStudyImporter {
         for (String resource : RESOURCES) {
             downloadAndImportResource(resource, source);
         }
-        return null;
     }
 
     private void downloadAndImportResource(String resource, String source) throws StudyImporterException {

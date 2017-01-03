@@ -70,7 +70,6 @@ public class StudyImporterForCook extends BaseStudyImporter {
         } catch (NodeFactoryException e) {
             throw new StudyImporterException("failed to create host and parasite taxons", e);
         }
-        return study;
     }
 
     private void addParasites(LabeledCSVParser parser, Study study, Location sampleLocation, Specimen host, Date collectionDate, String isoCol) throws NodeFactoryException {

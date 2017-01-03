@@ -39,13 +39,9 @@ public class StudyImporterForGemina extends BaseStudyImporter {
                     pathogen.interactsWith(host, InteractType.PATHOGEN_OF);
                 }
             }
-        } catch (IOException e) {
-            throw new StudyImporterException("failed to import [" + RESOURCE + "]", e);
-        } catch (NodeFactoryException e) {
+        } catch (IOException | NodeFactoryException e) {
             throw new StudyImporterException("failed to import [" + RESOURCE + "]", e);
         }
-
-        return null;
     }
 
 }

@@ -63,9 +63,6 @@ public class StudyImporterForBascompte extends BaseStudyImporter {
         } catch (IOException e) {
             throw new StudyImporterException("failed to retrieve network names or import networks", e);
         }
-
-
-        return null;
     }
 
     public void importNetworks(String archiveURL, String sourceCitation) throws StudyImporterException {

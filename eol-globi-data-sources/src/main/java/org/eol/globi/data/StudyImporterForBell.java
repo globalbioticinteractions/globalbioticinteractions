@@ -92,9 +92,6 @@ public class StudyImporterForBell extends BaseStudyImporter {
                 throw new StudyImporterException(getErrorMessage(resource, parser), e);
             }
         }
-
-
-        return null;
     }
 
     protected java.util.Date parseDate(LabeledCSVParser parser) throws StudyImporterException {

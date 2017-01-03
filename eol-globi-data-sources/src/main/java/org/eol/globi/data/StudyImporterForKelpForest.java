@@ -64,18 +64,11 @@ public class StudyImporterForKelpForest extends BaseStudyImporter {
                         Specimen targetSpecimen = createSpecimen(parser, nameToId, "node_2_working_name", "node2_stage", study);
                         sourceSpecimen.interactsWith(targetSpecimen, interactType);
                     }
-
                 }
             }
-
-
-        } catch (IOException e) {
-            throw new StudyImporterException("failed to import", e);
-        } catch (NodeFactoryException e) {
+        } catch (IOException | NodeFactoryException e) {
             throw new StudyImporterException("failed to import", e);
         }
-
-        return null;
     }
 
     protected Specimen createSpecimen(LabeledCSVParser parser, Map<String, Long> nameToId, String nameLabel, String stageLabel, Study study) throws NodeFactoryException {

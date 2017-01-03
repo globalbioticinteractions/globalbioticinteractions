@@ -74,8 +74,6 @@ public class StudyImporterForBrose extends BaseStudyImporter {
         } catch (IOException e) {
             throw new StudyImporterException("problem importing study at line [" + dataParser.lastLineNumber() + "]", e);
         }
-
-        return null;
     }
 
     private void importLine(LabeledCSVParser parser, Map<String, String> refMap) throws StudyImporterException {

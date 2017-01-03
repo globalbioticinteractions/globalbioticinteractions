@@ -46,7 +46,6 @@ public class StudyImporterForRoopnarine extends BaseStudyImporter {
             List<Specimen> predatorSpecimen = importTrophicInteractions(trophicGuildLookup, trophicGuildNumberToSpeciesMap, studyResource, study, location);
             getLogger().info(study, "import of [" + studyResource + "] done.");
         }
-        return study;
     }
 
     private Map<String, LatLng> resourceLocationMap(String suffix, String prefix) {

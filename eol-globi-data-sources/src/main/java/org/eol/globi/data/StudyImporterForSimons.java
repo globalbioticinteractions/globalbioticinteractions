@@ -50,7 +50,7 @@ public class StudyImporterForSimons extends BaseStudyImporter {
 
     @Override
     public void importStudy() throws StudyImporterException {
-        return importStudy(MISSISSIPPI_ALABAMA_DATA_SOURCE);
+        importStudy(MISSISSIPPI_ALABAMA_DATA_SOURCE);
     }
 
     private Study importStudy(String studyResource) throws StudyImporterException {

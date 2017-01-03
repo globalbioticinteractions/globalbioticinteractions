@@ -92,7 +92,6 @@ public class StudyImporterForWrast extends BaseStudyImporter {
         } finally {
             getPredatorSpecimenMap().clear();
         }
-        return study;
     }
 
 

@@ -61,20 +61,14 @@ public class StudyImporterForCruaud extends BaseStudyImporter {
                                 LOG.warn("no location associated with locality [" + samplingLocation + "]");
                             }
                         }
-                    } catch (NodeFactoryException e) {
-                        throw new StudyImporterException("failed to import line [" + (dataParser.lastLineNumber() + 1) + "]", e);
-                    } catch (NumberFormatException e) {
+                    } catch (NodeFactoryException | NumberFormatException e) {
                         throw new StudyImporterException("failed to import line [" + (dataParser.lastLineNumber() + 1) + "]", e);
                     }
                 }
-
             }
         } catch (IOException e) {
             throw new StudyImporterException("problem importing [" + RESOURCE_PATH + "]", e);
-
-
         }
-        return null;
     }
 
     protected boolean areNamesAvailable(String parasiteName, String hostName) {

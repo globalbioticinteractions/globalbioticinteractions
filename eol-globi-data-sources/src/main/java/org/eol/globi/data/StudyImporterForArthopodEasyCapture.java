@@ -46,7 +46,6 @@ public class StudyImporterForArthopodEasyCapture extends BaseStudyImporter {
             }
         }
         LOG.info(msgPrefix + " done.");
-        return null;
     }
 
     public String getRssFeedUrlString() {

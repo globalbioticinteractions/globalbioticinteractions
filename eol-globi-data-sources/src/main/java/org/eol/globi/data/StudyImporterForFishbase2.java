@@ -155,7 +155,6 @@ public class StudyImporterForFishbase2 extends BaseStudyImporter {
     public void importStudy() throws StudyImporterException {
         InteractionListenerImpl listener = new InteractionListenerImpl(nodeFactory, getGeoNamesService(), getLogger());
         importStudy(listener);
-        return null;
     }
 
     protected void importStudy(InteractionListener listener) throws StudyImporterException {

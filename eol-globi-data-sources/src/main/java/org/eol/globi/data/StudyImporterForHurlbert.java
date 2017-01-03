@@ -56,7 +56,6 @@ public class StudyImporterForHurlbert extends BaseStudyImporter {
         LOG.info("unmapped habitats [" + StringUtils.join(habitats.iterator(), ";") + "]");
         LOG.info("unmapped locales [" + StringUtils.join(locales.iterator(), ";") + "]");
         LOG.info("unmapped regions [" + StringUtils.join(regions.iterator(), ";") + "]");
-        return null;
     }
 
     public void importRecords(Set<String> regions, Set<String> locales, Set<String> habitats, LabeledCSVParser parser, String sourceCitation) throws StudyImporterException {

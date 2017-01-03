@@ -124,14 +124,9 @@ public class StudyImporterForHechinger extends StudyImporterNodesAndLinks {
                 }
             }
 
-        } catch (IOException e) {
-            throw new StudyImporterException("failed to find data file(s)", e);
-        } catch (NodeFactoryException e) {
-            throw new StudyImporterException("failed to create nodes", e);
+        } catch (IOException | NodeFactoryException e) {
+            throw new StudyImporterException("failed import study", e);
         }
-
-
-        return study;
     }
 
     protected Integer getNodeId(LabeledCSVParser nodes) {

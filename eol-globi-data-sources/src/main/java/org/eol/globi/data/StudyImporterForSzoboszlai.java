@@ -49,7 +49,6 @@ public class StudyImporterForSzoboszlai extends BaseStudyImporter {
         } catch (IOException e) {
             throw new StudyImporterException("failed to find: [" + getLinkArchiveURL() + "]");
         }
-        return null;
     }
 
     protected void importLinks(InputStream is, InteractionListener interactionListener, Map<Integer, LatLng> localeMap) throws IOException, StudyImporterException {

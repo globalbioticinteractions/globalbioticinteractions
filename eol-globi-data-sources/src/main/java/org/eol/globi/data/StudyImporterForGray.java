@@ -23,7 +23,6 @@ public class StudyImporterForGray extends BaseStudyImporter {
         } catch (IOException e) {
             throw new StudyImporterException("failed to find: [" + DatasetUtil.getNamedResourceURI(getDataset(), "links") + "]");
         }
-        return null;
     }
 
     public void importLinks(InputStream inputStream, InteractionListener interactionListener, ImportFilter filter) throws IOException, StudyImporterException {

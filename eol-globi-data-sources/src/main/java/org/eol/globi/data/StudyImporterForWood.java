@@ -23,7 +23,6 @@ public class StudyImporterForWood extends StudyImporterNodesAndLinks {
         } catch (IOException e) {
             throw new StudyImporterException("failed to find: [" + getLinkResource() + "]");
         }
-        return null;
     }
 
     public void importLinks(InputStream inputStream, InteractionListener interactionListener, ImportFilter filter) throws IOException, StudyImporterException {

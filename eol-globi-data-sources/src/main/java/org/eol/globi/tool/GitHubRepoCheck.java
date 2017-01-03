@@ -123,8 +123,13 @@ public class GitHubRepoCheck {
 
                 @Override
                 public void interactsWith(Specimen target, InteractType type, Location centroid) {
+                    if (counter % 10 == 0) {
+                        System.out.print(".");
+                    }
+                    if (counter % 1000 == 0) {
+                        System.out.println();
+                    }
                     counter++;
-                    System.out.print(".");
                 }
 
                 @Override

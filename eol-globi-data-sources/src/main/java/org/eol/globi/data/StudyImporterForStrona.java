@@ -48,7 +48,6 @@ public class StudyImporterForStrona extends BaseStudyImporter {
         } catch (IOException | NodeFactoryException e) {
             throw new StudyImporterException("problem importing [" + RESOURCE_PATH + "]", e);
         }
-        return null;
     }
 
     protected boolean areNamesAvailable(String parasiteName, String hostName) {

@@ -65,9 +65,6 @@ public class StudyImporterForRobledo extends BaseStudyImporter {
         } catch (NodeFactoryException e) {
             throw new StudyImporterException("cannot create specimens from [" + studyResource + "]", e);
         }
-
-
-        return study;
     }
 
     private Map<String, String> buildPlantLookup() {

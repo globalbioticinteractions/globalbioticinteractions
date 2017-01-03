@@ -49,8 +49,6 @@ public class StudyImporterForBlewett extends BaseStudyImporter {
         } catch (TermLookupServiceException e) {
             throw new StudyImporterException("failed to map terms", e);
         }
-
-        return study;
     }
 
     private void buildLocationTimeMaps(Map<String, Location> collectionLocationMap, Map<String, Date> collectionTimeMap, Study study) throws IOException, StudyImporterException {

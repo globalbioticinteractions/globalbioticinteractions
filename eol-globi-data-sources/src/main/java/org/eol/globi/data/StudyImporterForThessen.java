@@ -44,7 +44,6 @@ public class StudyImporterForThessen extends BaseStudyImporter {
         } catch (IOException e) {
             throw new StudyImporterException("failed to access [" + RESOURCE + "]", e);
         }
-        return study;
     }
 
 }

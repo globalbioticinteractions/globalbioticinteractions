@@ -103,7 +103,6 @@ public class StudyImporterForGoMexSI2 extends BaseStudyImporter {
         });
         addReferences(referenceIdToStudy);
         addObservations(predatorIdToPredatorNames, referenceIdToStudy, predatorIdToPreyNames, study);
-        return study;
     }
 
     protected void addReferences(Map<String, Study> referenceIdToStudy) throws StudyImporterException {

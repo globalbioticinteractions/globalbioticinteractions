@@ -31,13 +31,9 @@ public class StudyImporterForHafner extends BaseStudyImporter {
                 Specimen parasite = nodeFactory.createSpecimen(study, new TaxonImpl(parasiteName, null));
                 parasite.interactsWith(host, InteractType.PARASITE_OF);
             }
-        } catch (IOException e) {
-            throw new StudyImporterException("failed to import [" + RESOURCE + "]", e);
-        } catch (NodeFactoryException e) {
+        } catch (IOException | NodeFactoryException e) {
             throw new StudyImporterException("failed to import [" + RESOURCE + "]", e);
         }
-
-        return null;
     }
 
 }

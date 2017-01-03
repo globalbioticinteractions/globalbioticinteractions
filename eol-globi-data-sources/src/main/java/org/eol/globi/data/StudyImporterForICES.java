@@ -51,13 +51,10 @@ public class StudyImporterForICES extends BaseStudyImporter {
                     lastStomachId = currentStomachId;
                 }
             }
-        } catch (IOException e) {
-            throw new StudyImporterException("problem parsing datasource", e);
-        } catch (NodeFactoryException e) {
+        } catch (IOException | NodeFactoryException e) {
             throw new StudyImporterException("problem parsing datasource", e);
         }
 
-        return study;
     }
 
     private Specimen addPrey(LabeledCSVParser parser, Specimen predatorSpecimen, Study study) throws NodeFactoryException {
