@@ -38,13 +38,13 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
     public static final String TYPE_IGNORED_URI_DEFAULT = "https://raw.githubusercontent.com/globalbioticinteractions/inaturalist/master/interaction_types_ignored.csv";
     public static final String TYPE_MAP_URI_DEFAULT = "https://raw.githubusercontent.com/globalbioticinteractions/inaturalist/master/interaction_types.csv";
 
-    public static final String INATURALIST_URL = "http://inaturalist.org";
+    public static final String INATURALIST_URL = "https://www.inaturalist.org";
 
 
     private final Map<Long, String> unsupportedInteractionTypes = new TreeMap<Long, String>();
     private String typeIgnoredURI;
     private String typeMapURI;
-    public static final String PREFIX_OBSERVATION_FIELD = "http://www.inaturalist.org/observation_fields/";
+    public static final String PREFIX_OBSERVATION_FIELD = INATURALIST_URL + "/observation_fields/";
 
     public StudyImporterForINaturalist(ParserFactory parserFactory, NodeFactory nodeFactory) {
         super(parserFactory, nodeFactory);
@@ -58,7 +58,7 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
         while (parser.getLine() != null) {
             String inatIdString = parser.getValueByLabel("observation_field_id");
             Integer inatId = null;
-            String prefix = "http://www.inaturalist.org/observation_fields/";
+            String prefix = PREFIX_OBSERVATION_FIELD;
             if (StringUtils.startsWith(inatIdString, prefix)) {
                 inatId = Integer.parseInt(inatIdString.replace(prefix, ""));
             }
@@ -149,7 +149,7 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
         int previousResultCount = 0;
         int pageNumber = 1;
         do {
-            String uri = "http://www.inaturalist.org/observation_field_values.json?type=taxon&page=" + pageNumber + "&per_page=100&quality_grade=research";
+            String uri = INATURALIST_URL + "/observation_field_values.json?type=taxon&page=" + pageNumber + "&per_page=100&quality_grade=research";
             HttpGet httpGet = new HttpGet(uri);
             try {
                 httpGet.addHeader("accept", "application/json");
@@ -163,7 +163,7 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
                 pageNumber++;
                 totalInteractions += previousResultCount;
             } catch (IOException e) {
-                throw new StudyImporterException("failed to import iNaturalist", e);
+                throw new StudyImporterException("failed to import iNaturalist at [" + uri + "]", e);
             } finally {
                 httpGet.releaseConnection();
             }
