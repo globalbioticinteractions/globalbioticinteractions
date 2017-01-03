@@ -1,7 +1,11 @@
 package org.eol.globi.tool;
 
+import com.Ostermiller.util.LabeledCSVParser;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.eol.globi.data.NodeFactory;
 import org.eol.globi.data.NodeFactoryException;
+import org.eol.globi.data.ParserFactory;
 import org.eol.globi.data.ParserFactoryImpl;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.data.StudyImporterForGitHubData;
@@ -22,7 +26,6 @@ import org.eol.globi.service.DatasetFinderCaching;
 import org.eol.globi.service.DatasetFinderException;
 import org.eol.globi.service.DatasetFinderGitHubArchive;
 import org.eol.globi.service.DatasetFinderProxy;
-import org.eol.globi.service.DatasetFinderZenodo;
 import org.eol.globi.service.TermLookupService;
 import org.eol.globi.service.TermLookupServiceException;
 
@@ -34,17 +37,21 @@ import java.util.Date;
 import java.util.List;
 
 public class GitHubRepoCheck {
+    private final static Log LOG = LogFactory.getLog(GitHubRepoCheck.class);
 
     public static void main(final String[] args) throws IOException, StudyImporterException, DatasetFinderException {
         final String repoName = args[0];
-        NodeFactory nodeFactory = new NodeFactoryLogging();
-        StudyImporterForGitHubData studyImporterForGitHubData = new StudyImporterForGitHubData(new ParserFactoryImpl(), nodeFactory);
+        NodeFactoryLogging nodeFactory = new NodeFactoryLogging();
         List<DatasetFinder> finders = Collections.singletonList(new DatasetFinderGitHubArchive());
-        studyImporterForGitHubData.setFinder(new DatasetFinderCaching(new DatasetFinderProxy(finders)));
+        DatasetFinderCaching finder = new DatasetFinderCaching(new DatasetFinderProxy(finders));
+        StudyImporterForGitHubData studyImporterForGitHubData = new StudyImporterForGitHubData(new ParserFactoryImpl(), nodeFactory);
+        studyImporterForGitHubData.setFinder(finder);
         studyImporterForGitHubData.importData(repoName);
+        LOG.info("found [" + nodeFactory.counter + "] interactions in [" + repoName + "]");
     }
 
     private static class NodeFactoryLogging implements NodeFactory {
+        int counter = 0;
 
         @Override
         public Location findLocation(Location location) {
@@ -71,7 +78,7 @@ public class GitHubRepoCheck {
 
                 @Override
                 public void ate(Specimen specimen) {
-
+                    interactsWith(specimen, InteractType.ATE);
                 }
 
                 @Override
@@ -116,6 +123,7 @@ public class GitHubRepoCheck {
 
                 @Override
                 public void interactsWith(Specimen target, InteractType type, Location centroid) {
+                    counter++;
                     System.out.print(".");
                 }
 
