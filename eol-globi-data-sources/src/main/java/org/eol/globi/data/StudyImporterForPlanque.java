@@ -7,6 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eol.globi.domain.Location;
+import org.eol.globi.domain.LocationImpl;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyImpl;
@@ -139,7 +140,7 @@ public class StudyImporterForPlanque extends BaseStudyImporter {
     private void addInteractionForPredator(LabeledCSVParser parser, Study localStudy, String predatorName) throws NodeFactoryException, StudyImporterException {
         Specimen predator = nodeFactory.createSpecimen(localStudy, new TaxonImpl(normalizeName(predatorName), null));
         // from http://www.geonames.org/630674/barents-sea.html
-        Location location = nodeFactory.getOrCreateLocation(74.0, 36.0, null);
+        Location location = nodeFactory.getOrCreateLocation(new LocationImpl(74.0, 36.0, null, null));
         predator.caughtIn(location);
 
         String preyName = parser.getValueByLabel("PREY");

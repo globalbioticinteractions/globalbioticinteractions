@@ -10,6 +10,7 @@ import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.Location;
+import org.eol.globi.domain.LocationImpl;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyImpl;
@@ -140,7 +141,7 @@ public class StudyImporterForBascompte extends BaseStudyImporter {
             try {
                 final double lat = Double.parseDouble(latitude);
                 final double lng = Double.parseDouble(longitude);
-                networkLocation = nodeFactory.getOrCreateLocation(lat, lng, null);
+                networkLocation = nodeFactory.getOrCreateLocation(new LocationImpl(lat, lng, null, null));
             } catch (NumberFormatException ex) {
                 throw new StudyImporterException("found invalid lat,lng pair: [" + latitude + "], [" + longitude + "] on line [" + parser.lastLineNumber() + "] in [references.csv]");
             }

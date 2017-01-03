@@ -3,6 +3,7 @@ package org.eol.globi.data;
 import com.Ostermiller.util.LabeledCSVParser;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.Location;
+import org.eol.globi.domain.LocationImpl;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyImpl;
@@ -52,7 +53,7 @@ public class StudyImporterForDunne extends StudyImporterNodesAndLinks {
             while (links.getLine() != null) {
                 List<Location> locations = new ArrayList<>();
                 if (getLocation() != null) {
-                    Location loc = nodeFactory.getOrCreateLocation(getLocation().getLat(), getLocation().getLng(), null);
+                    Location loc = nodeFactory.getOrCreateLocation(new LocationImpl(getLocation().getLat(), getLocation().getLng(), null, null));
                     if (loc != null) {
                         locations.add(loc);
                     }

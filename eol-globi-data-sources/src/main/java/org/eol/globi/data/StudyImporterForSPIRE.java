@@ -9,6 +9,7 @@ import com.hp.hpl.jena.rdf.model.Statement;
 import com.hp.hpl.jena.rdf.model.StmtIterator;
 import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.domain.Location;
+import org.eol.globi.domain.LocationImpl;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyConstant;
@@ -166,7 +167,7 @@ public class StudyImporterForSPIRE extends BaseStudyImporter {
             if (latLng == null) {
                 getLogger().warn(study, "failed to find location for county [" + locality + "]");
             } else {
-                Location location = nodeFactory.getOrCreateLocation(latLng.getLat(), latLng.getLng(), null);
+                Location location = nodeFactory.getOrCreateLocation(new LocationImpl(latLng.getLat(), latLng.getLng(), null, null));
                 predator.caughtIn(location);
                 String habitat = properties.get(OF_HABITAT);
                 if (StringUtils.isNotBlank(habitat)) {

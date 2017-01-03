@@ -11,6 +11,7 @@ import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.Location;
+import org.eol.globi.domain.LocationImpl;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyImpl;
@@ -316,7 +317,7 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
         if (latitudeString != null && longitudeString != null) {
             double latitude = Double.parseDouble(latitudeString);
             double longitude = Double.parseDouble(longitudeString);
-            location = nodeFactory.getOrCreateLocation(latitude, longitude, null);
+            location = nodeFactory.getOrCreateLocation(new LocationImpl(latitude, longitude, null, null));
 
         }
         return location;

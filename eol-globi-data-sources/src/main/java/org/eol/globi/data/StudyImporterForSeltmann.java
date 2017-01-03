@@ -8,6 +8,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.Location;
+import org.eol.globi.domain.LocationImpl;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyImpl;
@@ -200,7 +201,7 @@ public class StudyImporterForSeltmann extends BaseStudyImporter {
         String latitude = occurrence.getValueByLabel("decimalLatitude");
         String longitude = occurrence.getValueByLabel("decimalLongitude");
         if (StringUtils.isNotBlank(latitude) && StringUtils.isNotBlank(longitude)) {
-            Location loc = nodeFactory.getOrCreateLocation(Double.parseDouble(latitude), Double.parseDouble(longitude), null);
+            Location loc = nodeFactory.getOrCreateLocation(new LocationImpl(Double.parseDouble(latitude), Double.parseDouble(longitude), null, null));
             source.caughtIn(loc);
         }
     }

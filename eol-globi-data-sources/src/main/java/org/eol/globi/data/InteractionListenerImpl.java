@@ -3,6 +3,7 @@ package org.eol.globi.data;
 import org.apache.commons.lang.StringUtils;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.Location;
+import org.eol.globi.domain.LocationImpl;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyImpl;
@@ -143,7 +144,7 @@ class InteractionListenerImpl implements InteractionListener {
                 centroid = getGeoNamesService().findLatLng(localityId);
             }
         }
-        return centroid == null ? null : nodeFactory.getOrCreateLocation(centroid.getLat(), centroid.getLng(), null);
+        return centroid == null ? null : nodeFactory.getOrCreateLocation(new LocationImpl(centroid.getLat(), centroid.getLng(), null, null));
     }
 
     private String getFirstValueForTerms(Map<String, String> link, String[] latitudes) {

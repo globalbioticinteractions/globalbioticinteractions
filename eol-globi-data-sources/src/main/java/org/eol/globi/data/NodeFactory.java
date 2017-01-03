@@ -31,8 +31,6 @@ public interface NodeFactory {
 
     Location getOrCreateLocation(Location location) throws NodeFactoryException;
 
-    Location getOrCreateLocation(Double latitude, Double longitude, Double altitude) throws NodeFactoryException;
-
     void setUnixEpochProperty(Specimen specimen, Date date) throws NodeFactoryException;
 
     Date getUnixEpochProperty(Specimen specimen) throws NodeFactoryException;

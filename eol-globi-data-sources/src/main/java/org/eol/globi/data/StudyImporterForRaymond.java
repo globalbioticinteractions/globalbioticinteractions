@@ -15,6 +15,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.eol.globi.domain.Location;
+import org.eol.globi.domain.LocationImpl;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyImpl;
@@ -236,7 +237,7 @@ public class StudyImporterForRaymond extends BaseStudyImporter {
             double bottom = Double.parseDouble(southString);
             LatLng centroid = calculateCentroidOfBBox(left, top, right, bottom);
             try {
-                loc = nodeFactory.getOrCreateLocation(centroid.getLat(), centroid.getLng(), null);
+                loc = nodeFactory.getOrCreateLocation(new LocationImpl(centroid.getLat(), centroid.getLng(), null, null));
             } catch (NodeFactoryException ex) {
                 String locationString = StringUtils.join(Arrays.asList(westString, northString, eastString, southString), ",");
                 LOG.warn("found invalid locations [" + locationString + "] on line [" + (dietParser.lastLineNumber() + 1) + "]: " + ex.getMessage());
@@ -257,7 +258,7 @@ public class StudyImporterForRaymond extends BaseStudyImporter {
                 if (centroid == null) {
                     getLogger().warn(study, "missing lat/lng bounding box [" + dietParser.lastLineNumber() + "] and attempted to using location [" + location + "] failed.");
                 } else {
-                    loc = nodeFactory.getOrCreateLocation(centroid.getLat(), centroid.getLng(), null);
+                    loc = nodeFactory.getOrCreateLocation(new LocationImpl(centroid.getLat(), centroid.getLng(), null, null));
                 }
             } catch (IOException e) {
                 getLogger().warn(study, "failed to lookup point for location [" + location + "] on line [" + dietParser.lastLineNumber() + "]");

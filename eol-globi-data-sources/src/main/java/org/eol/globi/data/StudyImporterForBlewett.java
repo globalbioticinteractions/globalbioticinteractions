@@ -3,12 +3,12 @@ package org.eol.globi.data;
 import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.domain.Location;
+import org.eol.globi.domain.LocationImpl;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.service.TermLookupServiceException;
-import org.eol.globi.util.ExternalIdUtil;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormat;
@@ -74,7 +74,7 @@ public class StudyImporterForBlewett extends BaseStudyImporter {
             }
             Location location;
             try {
-                location = nodeFactory.getOrCreateLocation(Double.parseDouble(latitude), Double.parseDouble(longitude), 0.0);
+                location = nodeFactory.getOrCreateLocation(new LocationImpl(Double.parseDouble(latitude), Double.parseDouble(longitude), 0.0, null));
             } catch (NodeFactoryException e) {
                 throw new StudyImporterException("failed to create location", e);
             }

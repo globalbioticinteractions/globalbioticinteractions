@@ -3,6 +3,7 @@ package org.eol.globi.data;
 import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.lang.StringUtils;
 import org.eol.globi.domain.Location;
+import org.eol.globi.domain.LocationImpl;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyImpl;
@@ -37,7 +38,7 @@ public class StudyImporterForBaremore extends BaseStudyImporter {
 
             study = nodeFactory.getOrCreateStudy(
                     new StudyImpl("Baremore 2010", StudyImporterForGoMexSI2.GOMEXI_SOURCE_DESCRIPTION, null, ExternalIdUtil.toCitation("Ivy E. Baremore", "Prey Selection By The Atlantic Angel Shark Squatina Dumeril In The Northeastern Gulf Of Mexico.", "2010")));
-            Location collectionLocation = nodeFactory.getOrCreateLocation(29.219302, -87.06665, null);
+            Location collectionLocation = nodeFactory.getOrCreateLocation(new LocationImpl(29.219302, -87.06665, null, null));
 
             Map<Integer, Specimen> specimenMap = new HashMap<Integer, Specimen>();
 
@@ -101,8 +102,9 @@ public class StudyImporterForBaremore extends BaseStudyImporter {
         }
     }
 
-    private void addCollectionDate(String s, Specimen specimen) throws ParseException, NodeFactoryException {
+    private Date addCollectionDate(String s, Specimen specimen) throws ParseException, NodeFactoryException {
         Date collectionDate = new SimpleDateFormat("MM/dd/yyyy").parse(s);
         nodeFactory.setUnixEpochProperty(specimen, collectionDate);
+        return collectionDate;
     }
 }

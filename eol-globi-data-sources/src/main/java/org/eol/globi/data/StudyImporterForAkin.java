@@ -4,6 +4,7 @@ import com.Ostermiller.util.CSVParser;
 import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.domain.Location;
+import org.eol.globi.domain.LocationImpl;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyImpl;
@@ -105,7 +106,7 @@ public class StudyImporterForAkin extends BaseStudyImporter {
             throw new StudyImporterException("failed to parse longitude [" + longitudeString + "]");
         }
 
-        return nodeFactory.getOrCreateLocation(latitude, longitude, altitude);
+        return nodeFactory.getOrCreateLocation(new LocationImpl(latitude, longitude, altitude, null));
     }
 
     private void addPrey(Study study, LabeledCSVParser parser, String[] header, String[] line, Specimen specimen, Location location) throws StudyImporterException {

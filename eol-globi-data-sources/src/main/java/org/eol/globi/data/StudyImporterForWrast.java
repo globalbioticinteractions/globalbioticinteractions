@@ -3,13 +3,13 @@ package org.eol.globi.data;
 import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.domain.Location;
+import org.eol.globi.domain.LocationImpl;
 import org.eol.globi.domain.Season;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.geo.LatLng;
-import org.eol.globi.util.ExternalIdUtil;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -129,7 +129,7 @@ public class StudyImporterForWrast extends BaseStudyImporter {
 
             Location sampleLocation;
             try {
-                sampleLocation = nodeFactory.getOrCreateLocation(latLng1.getLat(), latLng1.getLng(), altitude);
+                sampleLocation = nodeFactory.getOrCreateLocation(new LocationImpl(latLng1.getLat(), latLng1.getLng(), altitude, null));
             } catch (NodeFactoryException e) {
                 throw new StudyImporterException("failed to create location", e);
             }

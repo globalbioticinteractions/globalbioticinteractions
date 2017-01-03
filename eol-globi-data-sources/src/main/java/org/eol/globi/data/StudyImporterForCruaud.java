@@ -6,6 +6,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.Location;
+import org.eol.globi.domain.LocationImpl;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyImpl;
@@ -52,7 +53,7 @@ public class StudyImporterForCruaud extends BaseStudyImporter {
                                 if (pointForLocality == null) {
                                     LOG.warn("no location associated with locality [" + samplingLocation + "]");
                                 } else {
-                                    Location location = nodeFactory.getOrCreateLocation(pointForLocality.getLat(), pointForLocality.getLng(), null);
+                                    Location location = nodeFactory.getOrCreateLocation(new LocationImpl(pointForLocality.getLat(), pointForLocality.getLng(), null, null));
                                     parasite.caughtIn(location);
                                     host.caughtIn(location);
                                 }

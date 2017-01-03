@@ -112,10 +112,10 @@ public class NodeFactoryNeo4jTest extends GraphDBTestCase {
 
     @Test
     public void createFindLocation() throws NodeFactoryException {
-        Location location = getNodeFactory().getOrCreateLocation(1.2d, 1.4d, -1.0d);
-        getNodeFactory().getOrCreateLocation(2.2d, 1.4d, -1.0d);
-        getNodeFactory().getOrCreateLocation(1.2d, 2.4d, -1.0d);
-        Location locationNoDepth = getNodeFactory().getOrCreateLocation(1.5d, 2.8d, null);
+        Location location = getNodeFactory().getOrCreateLocation(new LocationImpl(1.2d, 1.4d, -1.0d, null));
+        getNodeFactory().getOrCreateLocation(new LocationImpl(2.2d, 1.4d, -1.0d, null));
+        getNodeFactory().getOrCreateLocation(new LocationImpl(1.2d, 2.4d, -1.0d, null));
+        Location locationNoDepth = getNodeFactory().getOrCreateLocation(new LocationImpl(1.5d, 2.8d, null, null));
         Assert.assertNotNull(location);
         Location location1 = getNodeFactory().findLocation(new LocationImpl(location.getLatitude(), location.getLongitude(), location.getAltitude(), null));
         Assert.assertNotNull(location1);
@@ -125,10 +125,10 @@ public class NodeFactoryNeo4jTest extends GraphDBTestCase {
 
     @Test
     public void createFindLocationWith() throws NodeFactoryException {
-        Location location = getNodeFactory().getOrCreateLocation(1.2d, 1.4d, -1.0d);
-        getNodeFactory().getOrCreateLocation(2.2d, 1.4d, -1.0d);
-        getNodeFactory().getOrCreateLocation(1.2d, 2.4d, -1.0d);
-        Location locationNoDepth = getNodeFactory().getOrCreateLocation(1.5d, 2.8d, null);
+        Location location = getNodeFactory().getOrCreateLocation(new LocationImpl(1.2d, 1.4d, -1.0d, null));
+        getNodeFactory().getOrCreateLocation(new LocationImpl(2.2d, 1.4d, -1.0d, null));
+        getNodeFactory().getOrCreateLocation(new LocationImpl(1.2d, 2.4d, -1.0d, null));
+        Location locationNoDepth = getNodeFactory().getOrCreateLocation(new LocationImpl(1.5d, 2.8d, null, null));
         Assert.assertNotNull(location);
         LocationNode location1 = getNodeFactory().findLocation(new LocationImpl(location.getLatitude(), location.getLongitude(), location.getAltitude(), null));
         Assert.assertNotNull(location1);
@@ -138,7 +138,7 @@ public class NodeFactoryNeo4jTest extends GraphDBTestCase {
 
     @Test
     public void createFindLocationWKT() throws NodeFactoryException {
-        Location location = getNodeFactory().getOrCreateLocation(2.0d, 1.0d, -1.0d);
+        Location location = getNodeFactory().getOrCreateLocation(new LocationImpl(2.0d, 1.0d, -1.0d, null));
         assertThat(location.getFootprintWKT(), is(nullValue()));
         final String expectedFootprintWKT = "POLYGON((10 20, 11 20, 11 21, 10 21, 10 20))";
         final LocationImpl otherLocation = new LocationImpl(location.getAltitude(), location.getLongitude(), location.getLatitude(),
@@ -158,10 +158,10 @@ public class NodeFactoryNeo4jTest extends GraphDBTestCase {
 
     @Test(expected = NodeFactoryException.class)
     public void createInvalidLocation() throws NodeFactoryException {
-        getNodeFactory().getOrCreateLocation(91.3d, -104.0d, -1.0d);
-        getNodeFactory().getOrCreateLocation(-100.3d, 104d, -1.0d);
-        getNodeFactory().getOrCreateLocation(-10.3d, -200.0d, -1.0d);
-        getNodeFactory().getOrCreateLocation(-20.0d, 300.0d, -1.0d);
+        getNodeFactory().getOrCreateLocation(new LocationImpl(91.3d, -104.0d, -1.0d, null));
+        getNodeFactory().getOrCreateLocation(new LocationImpl(-100.3d, 104d, -1.0d, null));
+        getNodeFactory().getOrCreateLocation(new LocationImpl(-10.3d, -200.0d, -1.0d, null));
+        getNodeFactory().getOrCreateLocation(new LocationImpl(-20.0d, 300.0d, -1.0d, null));
     }
 
     private NodeFactoryNeo4j getNodeFactory() {
@@ -178,9 +178,9 @@ public class NodeFactoryNeo4jTest extends GraphDBTestCase {
                 return terms;
             }
         });
-        Location location = getNodeFactory().getOrCreateLocation(0.0, 1.0, 2.0);
+        Location location = getNodeFactory().getOrCreateLocation(new LocationImpl(0.0, 1.0, 2.0, null));
         List<Environment> first = getNodeFactory().getOrCreateEnvironments(location, "BLA:123", "this and that");
-        location = getNodeFactory().getOrCreateLocation(0.0, 1.0, 2.0);
+        location = getNodeFactory().getOrCreateLocation(new LocationImpl(0.0, 1.0, 2.0, null));
         List<Environment> second = getNodeFactory().getOrCreateEnvironments(location, "BLA:123", "this and that");
         assertThat(first.size(), is(second.size()));
         assertThat(((NodeBacked)first.get(0)).getNodeID(), is(((NodeBacked)second.get(0)).getNodeID()));
@@ -195,7 +195,7 @@ public class NodeFactoryNeo4jTest extends GraphDBTestCase {
         assertThat(environment.getName(), is("this_and_that"));
         assertThat(environment.getExternalId(), is("NS:this and that"));
 
-        Location anotherLocation = getNodeFactory().getOrCreateLocation(48.2, 123.1, null);
+        Location anotherLocation = getNodeFactory().getOrCreateLocation(new LocationImpl(48.2, 123.1, null, null));
         LocationNode anotherLocationNode = (LocationNode) anotherLocation;
         assertThat(anotherLocationNode.getEnvironments().size(), is(0));
         anotherLocationNode.addEnvironment((EnvironmentNode)environment);
@@ -294,15 +294,15 @@ public class NodeFactoryNeo4jTest extends GraphDBTestCase {
 
     @Test
     public void createEcoRegion() throws NodeFactoryException {
-        Location locationA = getNodeFactory().getOrCreateLocation(37.689254, -122.295799, null);
+        Location locationA = getNodeFactory().getOrCreateLocation(new LocationImpl(37.689254, -122.295799, null, null));
         // ensure that no duplicate node are created ...
-        getNodeFactory().getOrCreateLocation(37.689255, -122.295798, null);
+        getNodeFactory().getOrCreateLocation(new LocationImpl(37.689255, -122.295798, null, null));
         assertEcoRegions(locationA);
         getNodeFactory().enrichLocationWithEcoRegions(locationA);
         assertEcoRegions(locationA);
 
         // check that multiple locations are associated to single eco region
-        Location locationB = getNodeFactory().getOrCreateLocation(37.689255, -122.295799, null);
+        Location locationB = getNodeFactory().getOrCreateLocation(new LocationImpl(37.689255, -122.295799, null, null));
         assertEcoRegions(locationB);
 
         IndexHits<Node> hits = getNodeFactory().findCloseMatchesForEcoregion("some elo egion");

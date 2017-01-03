@@ -4,6 +4,7 @@ import org.eol.globi.data.NodeFactory;
 import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.data.TaxonIndex;
 import org.eol.globi.domain.Location;
+import org.eol.globi.domain.LocationImpl;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyImpl;
@@ -49,7 +50,7 @@ public class ExportTestUtil {
             specimen1.setLengthInMm(length);
         }
 
-        Location location = factory.getOrCreateLocation(88.0, -120.0, -60.0);
+        Location location = factory.getOrCreateLocation(new LocationImpl(88.0, -120.0, -60.0, null));
         specimen1.caughtIn(location);
         return myStudy;
     }

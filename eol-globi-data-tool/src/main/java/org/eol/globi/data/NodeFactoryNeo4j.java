@@ -7,7 +7,6 @@ import org.eol.globi.domain.Environment;
 import org.eol.globi.domain.EnvironmentNode;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.LocationConstant;
-import org.eol.globi.domain.LocationImpl;
 import org.eol.globi.domain.LocationNode;
 import org.eol.globi.domain.NodeBacked;
 import org.eol.globi.domain.PropertyAndValueDictionary;
@@ -18,7 +17,6 @@ import org.eol.globi.domain.SpecimenConstant;
 import org.eol.globi.domain.SpecimenNode;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyConstant;
-import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.Term;
@@ -322,12 +320,6 @@ public class NodeFactoryNeo4j implements NodeFactory {
             }
         }
         return locationNode;
-    }
-
-    @Override
-    public Location getOrCreateLocation(Double latitude, Double longitude, Double altitude) throws NodeFactoryException {
-        return getOrCreateLocation(new LocationImpl(latitude, longitude, altitude, null));
-
     }
 
     private void validate(Location location) throws NodeFactoryException {

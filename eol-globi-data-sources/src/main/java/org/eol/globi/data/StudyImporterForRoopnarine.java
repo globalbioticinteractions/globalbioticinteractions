@@ -3,6 +3,7 @@ package org.eol.globi.data;
 import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.domain.Location;
+import org.eol.globi.domain.LocationImpl;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyImpl;
@@ -36,7 +37,7 @@ public class StudyImporterForRoopnarine extends BaseStudyImporter {
             LatLng latLng = resourceLatLngEntry.getValue();
             Location location;
             try {
-                location = nodeFactory.getOrCreateLocation(latLng.getLat(), latLng.getLng(), 0.0);
+                location = nodeFactory.getOrCreateLocation(new LocationImpl(latLng.getLat(), latLng.getLng(), 0.0, null));
             } catch (NodeFactoryException e) {
                 throw new StudyImporterException("failed to create location", e);
             }

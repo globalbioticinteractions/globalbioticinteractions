@@ -3,6 +3,7 @@ package org.eol.globi.export;
 import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.domain.Location;
+import org.eol.globi.domain.LocationImpl;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyImpl;
@@ -113,7 +114,7 @@ public class ExporterOccurrencesTest extends GraphDBTestCase {
             specimen.setLengthInMm(length);
         }
 
-        Location location = nodeFactory.getOrCreateLocation(12.0, -1.0, -60.0);
+        Location location = nodeFactory.getOrCreateLocation(new LocationImpl(12.0, -1.0, -60.0, null));
         specimen.caughtIn(location);
         Specimen wolf1 = eatWolf(specimen, myStudy);
         wolf1.caughtIn(location);

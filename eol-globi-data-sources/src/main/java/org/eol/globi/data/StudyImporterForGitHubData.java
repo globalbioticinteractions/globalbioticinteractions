@@ -19,6 +19,7 @@ import java.util.List;
 
 public class StudyImporterForGitHubData extends BaseStudyImporter {
     private static final Log LOG = LogFactory.getLog(StudyImporterForGitHubData.class);
+
     private DatasetFinder finder = null;
 
     public StudyImporterForGitHubData(ParserFactory parserFactory, NodeFactory nodeFactory) {
@@ -58,6 +59,10 @@ public class StudyImporterForGitHubData extends BaseStudyImporter {
             finder = new DatasetFinderCaching(new DatasetFinderProxy(finders));
         }
         return finder;
+    }
+
+    public void setFinder(DatasetFinder finder) {
+        this.finder = finder;
     }
 
     public void importData(Dataset repo) throws StudyImporterException {

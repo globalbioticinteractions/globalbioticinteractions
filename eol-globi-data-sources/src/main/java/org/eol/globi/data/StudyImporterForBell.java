@@ -6,6 +6,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.Location;
+import org.eol.globi.domain.LocationImpl;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyImpl;
@@ -137,7 +138,7 @@ public class StudyImporterForBell extends BaseStudyImporter {
         String longitude = parser.getValueByLabel("DEC_LONG");
         Location location = null;
         if (StringUtils.isNotBlank(latitude) && StringUtils.isNotBlank(longitude)) {
-            location = nodeFactory.getOrCreateLocation(Double.parseDouble(latitude), Double.parseDouble(longitude), null);
+            location = nodeFactory.getOrCreateLocation(new LocationImpl(Double.parseDouble(latitude), Double.parseDouble(longitude), null, null));
         }
         return location;
     }

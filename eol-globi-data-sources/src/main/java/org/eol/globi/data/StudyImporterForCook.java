@@ -3,11 +3,11 @@ package org.eol.globi.data;
 import com.Ostermiller.util.LabeledCSVParser;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.Location;
+import org.eol.globi.domain.LocationImpl;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.TaxonImpl;
-import org.eol.globi.util.ExternalIdUtil;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -43,7 +43,7 @@ public class StudyImporterForCook extends BaseStudyImporter {
             Double latitude = LocationUtil.parseDegrees("27º51'N");
             Double longitude = LocationUtil.parseDegrees("97º8'W");
 
-            Location sampleLocation = nodeFactory.getOrCreateLocation(latitude, longitude, -3.0);
+            Location sampleLocation = nodeFactory.getOrCreateLocation(new LocationImpl(latitude, longitude, -3.0, null));
 
             try {
                 while (parser.getLine() != null) {

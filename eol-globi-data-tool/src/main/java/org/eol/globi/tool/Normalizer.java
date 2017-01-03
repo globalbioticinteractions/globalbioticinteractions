@@ -174,10 +174,6 @@ public class Normalizer {
         }
     }
 
-    protected boolean shouldUseDarkData(CommandLine cmdLine) {
-        return cmdLine != null && cmdLine.hasOption(OPTION_USE_DARK_DATA);
-    }
-
     private void linkTaxa(GraphDatabaseService graphService) {
         try {
             new LinkerGlobalNames().link(graphService);

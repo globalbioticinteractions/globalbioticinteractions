@@ -12,6 +12,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.Location;
+import org.eol.globi.domain.LocationImpl;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyImpl;
@@ -81,8 +82,8 @@ public class StudyImporterForJSONLD extends BaseStudyImporter {
                 Date date = parseDate(collTime);
                 nodeFactory.setUnixEpochProperty(source, date);
                                     nodeFactory.setUnixEpochProperty(target, date);
-                Location loc = nodeFactory.getOrCreateLocation(solution.get("collLat").asLiteral().getDouble(),
-                        solution.get("collLng").asLiteral().getDouble(), null);
+                Location loc = nodeFactory.getOrCreateLocation(
+                        new LocationImpl(solution.get("collLat").asLiteral().getDouble(), solution.get("collLng").asLiteral().getDouble(), null, null));
                 target.caughtIn(loc);
                 source.caughtIn(loc);
                 source.interactsWith(target,interactType1);

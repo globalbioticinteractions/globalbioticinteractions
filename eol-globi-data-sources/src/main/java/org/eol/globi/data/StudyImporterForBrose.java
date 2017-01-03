@@ -6,6 +6,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.Location;
+import org.eol.globi.domain.LocationImpl;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyImpl;
@@ -119,7 +120,7 @@ public class StudyImporterForBrose extends BaseStudyImporter {
         if (latLng == null) {
             getLogger().warn(localStudy, "failed to find location for [" + locationString + "]");
         } else {
-            location = nodeFactory.getOrCreateLocation(latLng.getLat(), latLng.getLng(), null);
+            location = nodeFactory.getOrCreateLocation(new LocationImpl(latLng.getLat(), latLng.getLng(), null, null));
             String habitat = StringUtils.join(parser.getValueByLabel("General habitat"), " ", parser.getValueByLabel("Specific habitat"));
             String habitatId = "BROSE:" + habitat.replaceAll("\\W", "_");
             nodeFactory.getOrCreateEnvironments(location, habitatId, habitat);

@@ -61,8 +61,4 @@ public class StudyImporterFactory {
         return IMPORTERS;
     }
 
-    public static ArrayList<Class<? extends StudyImporter>> getDarkImporters() {
-        return new ArrayList<Class<? extends StudyImporter>>() {{
-        }};
-    }
 }

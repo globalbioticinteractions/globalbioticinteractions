@@ -2,6 +2,7 @@ package org.eol.globi.data;
 
 import com.Ostermiller.util.LabeledCSVParser;
 import org.eol.globi.domain.Location;
+import org.eol.globi.domain.LocationImpl;
 import org.eol.globi.domain.Season;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
@@ -136,7 +137,7 @@ public class StudyImporterForSimons extends BaseStudyImporter {
         Double depth = parseAsDouble(csvParser, columnToNormalizedTermMapper.get(DEPTH));
         Double altitude = depth == null ? null : -depth;
         try {
-            return nodeFactory.getOrCreateLocation(latitude, longitude, altitude);
+            return nodeFactory.getOrCreateLocation(new LocationImpl(latitude, longitude, altitude, null));
         } catch (NodeFactoryException e) {
             throw new StudyImporterException("failed to create location", e);
         }

@@ -2,6 +2,7 @@ package org.eol.globi.data;
 
 import com.Ostermiller.util.LabeledCSVParser;
 import org.eol.globi.domain.Location;
+import org.eol.globi.domain.LocationImpl;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyImpl;
@@ -30,7 +31,7 @@ public class StudyImporterForRobledo extends BaseStudyImporter {
         Double longitude = LocationUtil.parseDegrees("83°59'W");
         Location location;
         try {
-            location = nodeFactory.getOrCreateLocation(latitude, longitude, 35.0);
+            location = nodeFactory.getOrCreateLocation(new LocationImpl(latitude, longitude, 35.0, null));
         } catch (NodeFactoryException e) {
             throw new StudyImporterException("failed to create location", e);
         }

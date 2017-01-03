@@ -4,6 +4,7 @@ import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.lang.StringUtils;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.Location;
+import org.eol.globi.domain.LocationImpl;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.TaxonImpl;
@@ -100,22 +101,22 @@ public class StudyImporterForHechinger extends StudyImporterNodesAndLinks {
             while (links.getLine() != null) {
                 List<Location> locations = new ArrayList<>();
                 if (getLocation() != null) {
-                    Location loc = nodeFactory.getOrCreateLocation(getLocation().getLat(), getLocation().getLng(), null);
+                    Location loc = nodeFactory.getOrCreateLocation(new LocationImpl(getLocation().getLat(), getLocation().getLng(), null, null));
                     if (loc != null) {
                         locations.add(loc);
                     }
                 }
 
                 if (StringUtils.equals("1", links.getValueByLabel("PresentAtCSM"))) {
-                    locations.add(nodeFactory.getOrCreateLocation(34.403511, -119.537873, null));
+                    locations.add(nodeFactory.getOrCreateLocation(new LocationImpl(34.403511, -119.537873, null, null)));
                 }
 
                 if (StringUtils.equals("1", links.getValueByLabel("PresentAtEPB"))) {
-                    locations.add(nodeFactory.getOrCreateLocation(31.748606, -116.626854, null));
+                    locations.add(nodeFactory.getOrCreateLocation(new LocationImpl(31.748606, -116.626854, null, null)));
                 }
 
                 if (StringUtils.equals("1", links.getValueByLabel("PresentAtBSQ"))) {
-                    locations.add(nodeFactory.getOrCreateLocation(30.378207, -115.938835, null));
+                    locations.add(nodeFactory.getOrCreateLocation(new LocationImpl(30.378207, -115.938835, null, null)));
                 }
 
                 for (Location location : locations) {
