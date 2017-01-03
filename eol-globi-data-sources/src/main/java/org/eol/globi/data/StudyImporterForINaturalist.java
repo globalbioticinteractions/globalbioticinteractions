@@ -162,7 +162,7 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
                         typeMap);
                 pageNumber++;
                 totalInteractions += previousResultCount;
-            } catch (IOException e) {
+            } catch (IOException | StudyImporterException e) {
                 throw new StudyImporterException("failed to import iNaturalist at [" + uri + "]", e);
             } finally {
                 httpGet.releaseConnection();
