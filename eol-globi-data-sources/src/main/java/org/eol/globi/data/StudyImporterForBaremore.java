@@ -30,7 +30,7 @@ public class StudyImporterForBaremore extends BaseStudyImporter {
     }
 
     @Override
-    public Study importStudy() throws StudyImporterException {
+    public void importStudy() throws StudyImporterException {
         Study study;
         try {
             LabeledCSVParser parser = parserFactory.createParser(DATA_SOURCE, CharsetConstant.UTF8);

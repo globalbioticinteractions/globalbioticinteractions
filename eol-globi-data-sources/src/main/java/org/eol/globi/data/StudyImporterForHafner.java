@@ -6,7 +6,6 @@ import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.TaxonImpl;
-import org.eol.globi.util.ExternalIdUtil;
 
 import java.io.IOException;
 
@@ -19,7 +18,7 @@ public class StudyImporterForHafner extends BaseStudyImporter {
     }
 
     @Override
-    public Study importStudy() throws StudyImporterException {
+    public void importStudy() throws StudyImporterException {
         try {
             LabeledCSVParser parser = parserFactory.createParser(RESOURCE, "UTF-8");
             while (parser.getLine() != null) {

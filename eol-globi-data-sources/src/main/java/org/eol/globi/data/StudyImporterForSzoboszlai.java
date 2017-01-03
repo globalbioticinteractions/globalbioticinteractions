@@ -8,7 +8,6 @@ import com.vividsolutions.jts.geom.Point;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.eol.globi.domain.Study;
 import org.eol.globi.domain.TaxonomyProvider;
 import org.eol.globi.geo.LatLng;
 import org.eol.globi.service.DatasetUtil;
@@ -41,7 +40,7 @@ public class StudyImporterForSzoboszlai extends BaseStudyImporter {
     }
 
     @Override
-    public Study importStudy() throws StudyImporterException {
+    public void importStudy() throws StudyImporterException {
         try {
             Map<Integer, LatLng> localeMap = importShapes();
             importLinks(ResourceUtil.asInputStream(getLinkArchiveURL(), null)

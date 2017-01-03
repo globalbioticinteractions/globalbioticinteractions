@@ -5,7 +5,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.domain.InteractType;
-import org.eol.globi.domain.Study;
 import org.eol.globi.domain.TaxonomyProvider;
 import org.eol.globi.service.Dataset;
 import org.eol.globi.service.DatasetProxy;
@@ -57,7 +56,7 @@ public class StudyImporterForMetaTable extends BaseStudyImporter {
     }
 
     @Override
-    public Study importStudy() throws StudyImporterException {
+    public void importStudy() throws StudyImporterException {
         try {
             for (JsonNode tableConfig : collectTables(dataset)) {
                 Dataset datasetProxy = new DatasetProxy(dataset);

@@ -3,7 +3,6 @@ package org.eol.globi.data;
 import com.Ostermiller.util.CSVParser;
 import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.lang3.StringUtils;
-import org.eol.globi.domain.Study;
 import org.eol.globi.service.DatasetUtil;
 
 import java.io.IOException;
@@ -18,7 +17,7 @@ public class StudyImporterForGray extends BaseStudyImporter {
     }
 
     @Override
-    public Study importStudy() throws StudyImporterException {
+    public void importStudy() throws StudyImporterException {
         try {
             importLinks(DatasetUtil.getNamedResourceStream(getDataset(), "links"), new InteractionListenerImpl(nodeFactory, getGeoNamesService(), getLogger()), getFilter());
         } catch (IOException e) {

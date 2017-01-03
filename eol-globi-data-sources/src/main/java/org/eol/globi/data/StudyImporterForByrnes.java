@@ -7,7 +7,6 @@ import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.TaxonImpl;
-import org.eol.globi.util.ExternalIdUtil;
 
 import java.io.IOException;
 import java.util.Map;
@@ -22,7 +21,7 @@ public class StudyImporterForByrnes extends BaseStudyImporter {
     }
 
     @Override
-    public Study importStudy() throws StudyImporterException {
+    public void importStudy() throws StudyImporterException {
         LabeledCSVParser dataParser;
         try {
             dataParser = parserFactory.createParser(RESOURCE_PATH, CharsetConstant.UTF8);

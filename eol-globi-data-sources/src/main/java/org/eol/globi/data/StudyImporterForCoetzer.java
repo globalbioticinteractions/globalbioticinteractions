@@ -33,7 +33,7 @@ public class StudyImporterForCoetzer extends BaseStudyImporter {
     }
 
     @Override
-    public Study importStudy() throws StudyImporterException {
+    public void importStudy() throws StudyImporterException {
         if (org.apache.commons.lang.StringUtils.isBlank(getResourceArchiveURI())) {
             throw new StudyImporterException("failed to import [" + getDataset().getNamespace() + "]: no [archiveURL] specified");
         }

@@ -23,7 +23,7 @@ public class StudyImporterForRoopnarine extends BaseStudyImporter {
     }
 
     @Override
-    public Study importStudy() throws StudyImporterException {
+    public void importStudy() throws StudyImporterException {
         String suffix = ".csv";
         String prefix = "roopnarine/857470.item.";
         String trophicGuildLookup = prefix + 4 + suffix;

@@ -73,7 +73,7 @@ public class StudyImporterForWrast extends BaseStudyImporter {
     }
 
     @Override
-    public Study importStudy() throws StudyImporterException {
+    public void importStudy() throws StudyImporterException {
         String citation = "Wrast JL. Spatiotemporal And Habitat-mediated Food Web Dynamics in Lavaca Bay, Texas. 2008. Master Thesis.";
         StudyImpl study1 = new StudyImpl("Wrast 2008", StudyImporterForGoMexSI2.GOMEXI_SOURCE_DESCRIPTION,
                 null,

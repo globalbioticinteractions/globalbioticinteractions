@@ -73,7 +73,7 @@ public class StudyImporterForSPIRE extends BaseStudyImporter {
 
 
     @Override
-    public Study importStudy() throws StudyImporterException {
+    public void importStudy() throws StudyImporterException {
         Model model;
         try {
             model = buildModel();

@@ -11,7 +11,6 @@ import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.Term;
-import org.eol.globi.util.ExternalIdUtil;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -31,7 +30,7 @@ public class StudyImporterForHurlbert extends BaseStudyImporter {
     }
 
     @Override
-    public Study importStudy() throws StudyImporterException {
+    public void importStudy() throws StudyImporterException {
         Set<String> regions = new HashSet<String>();
         Set<String> locales = new HashSet<String>();
         Set<String> habitats = new HashSet<String>();

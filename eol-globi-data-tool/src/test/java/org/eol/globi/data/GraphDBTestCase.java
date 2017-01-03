@@ -59,9 +59,9 @@ public abstract class GraphDBTestCase {
     }
 
     protected Study importStudy(StudyImporter importer) throws StudyImporterException {
-        Study study = importer.importStudy();
+        importer.importStudy();
         resolveNames();
-        return study;
+        return null;
     }
 
     protected void resolveNames() {

@@ -10,7 +10,7 @@ import static org.junit.Assert.assertThat;
 public class StudyImporterForFishbase2IT extends GraphDBTestCase {
 
     @Test
-    public void importAll() throws StudyImporterException, NodeFactoryException {
+    public void importAll() throws StudyImporterException {
         new StudyImporterForFishbase2(null, nodeFactory).importStudy();
         Study study = nodeFactory.findStudy("FB:REF:6160");
         assertThat(study, is(notNullValue()));

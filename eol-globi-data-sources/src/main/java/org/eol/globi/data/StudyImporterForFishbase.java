@@ -23,7 +23,7 @@ public class StudyImporterForFishbase extends BaseStudyImporter {
     }
 
     @Override
-    public Study importStudy() throws StudyImporterException {
+    public void importStudy() throws StudyImporterException {
         String studyResource = "fishbase/fooditems.tsv";
         try {
             importStudy(getClass().getResourceAsStream(studyResource));

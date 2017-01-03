@@ -49,7 +49,7 @@ public class StudyImporterForSimons extends BaseStudyImporter {
     }
 
     @Override
-    public Study importStudy() throws StudyImporterException {
+    public void importStudy() throws StudyImporterException {
         return importStudy(MISSISSIPPI_ALABAMA_DATA_SOURCE);
     }
 

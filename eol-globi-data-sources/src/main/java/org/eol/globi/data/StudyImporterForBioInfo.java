@@ -216,7 +216,7 @@ public class StudyImporterForBioInfo extends BaseStudyImporter implements StudyI
     }
 
     @Override
-    public Study importStudy() throws StudyImporterException {
+    public void importStudy() throws StudyImporterException {
         Map<String, String> refMap;
 
         LabeledCSVParser relationsParser;

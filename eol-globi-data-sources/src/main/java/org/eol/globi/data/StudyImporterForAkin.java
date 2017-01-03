@@ -28,7 +28,7 @@ public class StudyImporterForAkin extends BaseStudyImporter {
     }
 
     @Override
-    public Study importStudy() throws StudyImporterException {
+    public void importStudy() throws StudyImporterException {
         importStudy("akin/Senol akin (mad island) data edited-sheet3-winter2.csv");
         return importStudy("akin/Senol akin (mad island) data edited-sheet4-summer2.csv");
     }

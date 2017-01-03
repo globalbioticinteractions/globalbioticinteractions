@@ -41,7 +41,7 @@ public class StudyImporterForBell extends BaseStudyImporter {
     }
 
     @Override
-    public Study importStudy() throws StudyImporterException {
+    public void importStudy() throws StudyImporterException {
         for (String resource : RESOURCE) {
             LabeledCSVParser parser = null;
             try {

@@ -15,8 +15,10 @@ import org.neo4j.graphdb.Relationship;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Iterator;
+import java.util.List;
 
 import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertTrue;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
@@ -30,7 +32,11 @@ public class StudyImporterForICESTest extends GraphDBTestCase {
                 return recordNumber % 1000 == 0;
             }
         });
-        Study study = studyImporterFor.importStudy();
+        studyImporterFor.importStudy();
+
+        List<Study> studies = NodeUtil.findAllStudies(getGraphDb());
+        assertThat(studies.size(), is(1));
+        Study study = studies.get(0);
 
         Iterator<Relationship> specimens = NodeUtil.getSpecimens(study).iterator();
         int specimenCount = 0;

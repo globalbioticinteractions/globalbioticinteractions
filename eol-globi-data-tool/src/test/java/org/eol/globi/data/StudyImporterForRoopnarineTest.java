@@ -13,9 +13,11 @@ import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 
 import java.io.IOException;
+import java.util.List;
 
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
+import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
 public class StudyImporterForRoopnarineTest extends GraphDBTestCase {
@@ -78,10 +80,14 @@ public class StudyImporterForRoopnarineTest extends GraphDBTestCase {
 
     @Ignore ("roopnarine imports eats more memory that other study imports")
     @Test
-    public void importAll() throws StudyImporterException, NodeFactoryException {
+    public void importAll() throws StudyImporterException {
         StudyImporterForRoopnarine studyImporterFor = new StudyImporterForRoopnarine(new ParserFactoryImpl(), nodeFactory);
 
-        Study study = studyImporterFor.importStudy();
+        studyImporterFor.importStudy();
+
+        List<Study> studies = NodeUtil.findAllStudies(getGraphDb());
+        assertThat(studies.size(), is(1));
+        Study study = studies.get(0);
 
         Iterable<Relationship> collectedRels = NodeUtil.getSpecimens(study);
         int totalRels = validateSpecimen(collectedRels);

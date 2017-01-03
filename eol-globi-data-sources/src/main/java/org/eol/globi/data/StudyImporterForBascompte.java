@@ -41,7 +41,7 @@ public class StudyImporterForBascompte extends BaseStudyImporter {
     }
 
     @Override
-    public Study importStudy() throws StudyImporterException {
+    public void importStudy() throws StudyImporterException {
         try {
             List<StudyImporterException> errors = new ArrayList<StudyImporterException>();
             final String sourceCitation = "Web of Life. " + ReferenceUtil.createLastAccessedString("http://www.web-of-life.es/");

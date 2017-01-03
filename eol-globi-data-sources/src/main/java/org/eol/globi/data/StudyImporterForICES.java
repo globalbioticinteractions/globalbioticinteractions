@@ -21,7 +21,7 @@ public class StudyImporterForICES extends BaseStudyImporter {
     }
 
     @Override
-    public Study importStudy() throws StudyImporterException {
+    public void importStudy() throws StudyImporterException {
         LabeledCSVParser parser = createParser();
 
 

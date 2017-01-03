@@ -26,7 +26,7 @@ public class StudyImporterForLifeWatchGreece extends BaseStudyImporter {
     }
 
     @Override
-    public Study importStudy() throws StudyImporterException {
+    public void importStudy() throws StudyImporterException {
         try {
             InteractionListener interactionListener = new InteractionListener();
             interactionListener.setListener(new ParsedInteractionListener(nodeFactory));

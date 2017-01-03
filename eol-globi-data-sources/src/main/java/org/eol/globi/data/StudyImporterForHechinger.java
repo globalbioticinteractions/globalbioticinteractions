@@ -62,7 +62,7 @@ public class StudyImporterForHechinger extends StudyImporterNodesAndLinks {
     }
 
     @Override
-    public Study importStudy() throws StudyImporterException {
+    public void importStudy() throws StudyImporterException {
         Study study = createStudy();
         try {
             LabeledCSVParser nodes = parserFactory.createParser(getNodeResource(), CharsetConstant.UTF8);

@@ -74,7 +74,7 @@ public class StudyImporterForSIAD extends BaseStudyImporter {
 
 
     @Override
-    public Study importStudy() throws StudyImporterException {
+    public void importStudy() throws StudyImporterException {
         String source = "Species Interactions of Australia Database (SIAD): Helping us to understand species interactions in Australia and beyond. "
                 + ReferenceUtil.createLastAccessedString("http://www.discoverlife.org/siad/");
         for (String resource : RESOURCES) {

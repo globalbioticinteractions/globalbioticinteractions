@@ -22,7 +22,7 @@ public class StudyImporterForCook extends BaseStudyImporter {
     }
 
     @Override
-    public Study importStudy() throws StudyImporterException {
+    public void importStudy() throws StudyImporterException {
         LabeledCSVParser parser;
         try {
             parser = parserFactory.createParser(DATASET_RESOURCE_NAME, CharsetConstant.UTF8);

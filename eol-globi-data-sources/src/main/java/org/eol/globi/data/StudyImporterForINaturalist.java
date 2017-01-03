@@ -109,7 +109,7 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
     }
 
     @Override
-    public Study importStudy() throws StudyImporterException {
+    public void importStudy() throws StudyImporterException {
         unsupportedInteractionTypes.clear();
         retrieveDataParseResults();
         if (unsupportedInteractionTypes.size() > 0) {

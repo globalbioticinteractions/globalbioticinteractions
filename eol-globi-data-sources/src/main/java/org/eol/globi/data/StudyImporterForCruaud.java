@@ -27,7 +27,7 @@ public class StudyImporterForCruaud extends BaseStudyImporter {
     }
 
     @Override
-    public Study importStudy() throws StudyImporterException {
+    public void importStudy() throws StudyImporterException {
         LabeledCSVParser dataParser;
         try {
             dataParser = parserFactory.createParser(RESOURCE_PATH, CharsetConstant.UTF8);
