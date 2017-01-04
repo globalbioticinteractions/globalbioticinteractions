@@ -63,7 +63,9 @@ public class StudyImporterForHechingerTest extends GraphDBTestCase {
                 LOG.error(message);
             }
         });
-        Study study = importStudy(importer);
+        importStudy(importer);
+
+        Study study = getStudySingleton(getGraphDb());
 
         assertThat(study, is(notNullValue()));
 

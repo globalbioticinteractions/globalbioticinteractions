@@ -48,9 +48,11 @@ public class StudyImporterForBlewettTest extends GraphDBTestCase {
     }
 
     @Test
-    public void importAll() throws StudyImporterException, NodeFactoryException {
+    public void importAll() throws StudyImporterException {
         StudyImporter importer = new StudyImporterFactory(new ParserFactoryImpl(), nodeFactory).instantiateImporter((Class) StudyImporterForBlewett.class);
-        Study study = importStudy(importer);
+        importStudy(importer);
+
+        Study study = getStudySingleton(getGraphDb());
 
         Iterable<Relationship> specimens = NodeUtil.getSpecimens(study);
         int count = 0;
@@ -104,8 +106,9 @@ public class StudyImporterForBlewettTest extends GraphDBTestCase {
         };
 
         StudyImporter importer = new StudyImporterFactory(testFactory, nodeFactory).instantiateImporter((Class) StudyImporterForBlewett.class);
-        Study study = importStudy(importer);
-        assertNotNull(study);
+        importStudy(importer);
+
+        Study study = getStudySingleton(getGraphDb());
 
         Iterable<Relationship> collectedRels = NodeUtil.getSpecimens(study);
 

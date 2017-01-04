@@ -44,7 +44,10 @@ public class StudyImporterForJRFerrerParisTest extends GraphDBTestCase {
 
         StudyImporterForJRFerrerParis importer = new StudyImporterForJRFerrerParis(new TestParserFactory(csvContent), nodeFactory);
 
-        Study study = importStudy(importer);
+        importStudy(importer);
+
+        Study study = getStudySingleton(getGraphDb());
+
         assertNotNull(taxonIndex.findTaxonByName("Hesperocharis anguitia"));
 
         Iterable<Relationship> collectedRels = NodeUtil.getSpecimens(study);

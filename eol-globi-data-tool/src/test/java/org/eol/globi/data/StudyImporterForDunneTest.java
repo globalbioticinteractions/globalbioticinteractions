@@ -42,7 +42,9 @@ public class StudyImporterForDunneTest extends GraphDBTestCase {
         dunne2016.setConfig(jsonNode);
         importer.setDataset(dunne2016);
 
-        Study study = importStudy(importer);
+        importStudy(importer);
+
+        Study study = getStudySingleton(getGraphDb());
 
         assertThat(study, is(notNullValue()));
 
@@ -78,7 +80,10 @@ public class StudyImporterForDunneTest extends GraphDBTestCase {
         dunne2016.setConfig(new ObjectMapper().readTree(configJson));
         importer.setDataset(dunne2016);
 
-        Study study = importStudy(importer);
+        importStudy(importer);
+
+        Study study = getStudySingleton(getGraphDb());
+
         assertThat(study, is(notNullValue()));
 
         assertThat(study.getSource(), containsString("Accessed at "));

@@ -29,7 +29,9 @@ public class StudyImporterForThessenTest extends GraphDBTestCase {
                 return recordNumber % 1000 == 0;
             }
         });
-        Study study = importStudy(importer);
+        importStudy(importer);
+        Study study = getStudySingleton(getGraphDb());
+
         assertThat(study.getExternalId(), containsString("github"));
         Iterable<Relationship> specimens = NodeUtil.getSpecimens(study);
         int specimenCount = 0;

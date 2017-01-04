@@ -64,7 +64,9 @@ public class StudyImporterForWrastTest extends GraphDBTestCase {
         StudyImporterForWrast importer = new StudyImporterForWrast(new TestParserFactory(contentMap), nodeFactory);
 
 
-        Study study = importStudy(importer);
+        importStudy(importer);
+        Study study = getStudySingleton(getGraphDb());
+
 
         int specimenCount = 0;
         for (Relationship specimen : NodeUtil.getSpecimens(study)) {

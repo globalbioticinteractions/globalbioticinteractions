@@ -11,7 +11,6 @@ import org.eol.globi.domain.Study;
 import org.eol.globi.geo.Ecoregion;
 import org.eol.globi.geo.EcoregionFinder;
 import org.eol.globi.geo.EcoregionFinderException;
-import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
 import org.neo4j.graphdb.GraphDatabaseService;
 
@@ -19,7 +18,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 import static junit.framework.Assert.assertNotNull;
 import static org.hamcrest.core.Is.is;
@@ -53,9 +51,8 @@ public class NormalizerTest extends GraphDBTestCase {
         createNormalizer().importData(StudyImporterForSimons.class, new NodeFactoryNeo4j(getGraphDb()));
         GraphDatabaseService graphService = getGraphDb();
 
-        List<Study> allStudies = NodeUtil.findAllStudies(graphService);
-        assertThat(allStudies.size(), is(1));
-        assertThat(allStudies.get(0).getTitle(), is("Simons 1997"));
+        Study study = getStudySingleton(graphService);
+        assertThat(study.getTitle(), is("Simons 1997"));
 
         assertNotNull(graphService.getNodeById(1));
         assertNotNull(graphService.getNodeById(200));

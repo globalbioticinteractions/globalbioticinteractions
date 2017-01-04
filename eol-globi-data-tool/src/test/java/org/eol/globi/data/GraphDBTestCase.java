@@ -12,6 +12,7 @@ import org.eol.globi.service.PropertyEnricher;
 import org.eol.globi.service.TermLookupService;
 import org.eol.globi.service.TermLookupServiceException;
 import org.eol.globi.tool.NameResolver;
+import org.eol.globi.util.NodeUtil;
 import org.junit.After;
 import org.junit.Before;
 import org.neo4j.graphdb.GraphDatabaseService;
@@ -22,6 +23,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
+
 public abstract class GraphDBTestCase {
 
     private GraphDatabaseService graphDb;
@@ -29,6 +34,14 @@ public abstract class GraphDBTestCase {
     protected NodeFactory nodeFactory;
 
     protected TaxonIndex taxonIndex;
+
+    public static Study getStudySingleton(GraphDatabaseService graphService) {
+        List<Study> allStudies = NodeUtil.findAllStudies(graphService);
+        assertThat(allStudies.size(), is(1));
+        Study study = allStudies.get(0);
+        assertNotNull(study);
+        return study;
+    }
 
     @Before
     public void startGraphDb() throws IOException {
@@ -58,10 +71,9 @@ public abstract class GraphDBTestCase {
         return graphDb;
     }
 
-    protected Study importStudy(StudyImporter importer) throws StudyImporterException {
+    protected void importStudy(StudyImporter importer) throws StudyImporterException {
         importer.importStudy();
         resolveNames();
-        return null;
     }
 
     protected void resolveNames() {

@@ -31,7 +31,8 @@ public class StudyImporterForCookTest extends GraphDBTestCase {
 
 
         StudyImporterForCook importer = new StudyImporterForCook(new TestParserFactory(firstFiveLines), nodeFactory);
-        Study study = importStudy(importer);
+        importStudy(importer);
+        Study study = getStudySingleton(getGraphDb());
 
         Taxon hostTaxon = taxonIndex.findTaxonByName("Micropogonias undulatus");
         assertThat(hostTaxon, is(notNullValue()));
@@ -69,7 +70,9 @@ public class StudyImporterForCookTest extends GraphDBTestCase {
     @Test
     public void importAll() throws StudyImporterException {
         StudyImporterForCook importer = new StudyImporterForCook(new ParserFactoryImpl(), nodeFactory);
-        Study study = importStudy(importer);
+        importStudy(importer);
+        Study study = getStudySingleton(getGraphDb());
+
         Iterable<Relationship> specimens = NodeUtil.getSpecimens(study);
         int count = 0;
         for (Relationship specimen : specimens) {

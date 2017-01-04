@@ -67,7 +67,10 @@ public class StudyImporterForRoopnarineTest extends GraphDBTestCase {
             }
         }, nodeFactory);
 
-        Study study = importStudy(importer);
+        importStudy(importer);
+
+        Study study = getStudySingleton(getGraphDb());
+
         assertNotNull(taxonIndex.findTaxonByName("Negaprion brevirostris"));
         assertNotNull(taxonIndex.findTaxonByName("Carcharhinus perezi"));
         assertNotNull(taxonIndex.findTaxonByName("Galeocerdo cuvieri"));

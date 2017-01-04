@@ -56,7 +56,9 @@ public class StudyImporterForICESTest extends GraphDBTestCase {
 
         StudyImporterForICES importer = new StudyImporterForICES(new TestParserFactory(firstBunchOfLines), nodeFactory);
 
-        Study study = importStudy(importer);
+        importStudy(importer);
+        Study study = getStudySingleton(getGraphDb());
+
         assertNotNull(taxonIndex.findTaxonByName("Gadus morhua"));
         assertNotNull(taxonIndex.findTaxonByName("Polychaeta"));
         assertNotNull(taxonIndex.findTaxonByName("Nereis"));
