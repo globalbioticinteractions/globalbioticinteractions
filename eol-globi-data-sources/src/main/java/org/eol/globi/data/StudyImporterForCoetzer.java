@@ -140,6 +140,8 @@ public class StudyImporterForCoetzer extends BaseStudyImporter {
         } catch (IOException | NodeFactoryException e) {
             throw new StudyImporterException(e);
         }
+
+        db.close();
     }
 
     protected static String nameFor(String[] line) {
