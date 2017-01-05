@@ -1,15 +1,11 @@
-Welcome to the Global Biotic Interactions (GloBI) project.
+Welcome to the Global Biotic Interactions (GloBI)
 ======================================
 
 This mission of this project is to find efficient ways to normalize and integrate species interaction data to enable researchers and enthusiasts to answer questions like: Which species does an Angel Shark ( _Squatina squatina_ ) eat in the Gulf of Mexico? 
 
 Please see http://globalbioticinteractions.org or http://github.com/jhpoelen/eol-globi-data/wiki for more information .
 
-## Tests
-
-We're happy to be using http://travis-ci.org to run our automated tests. Our current build status:
-
-[![Build Status](https://travis-ci.org/jhpoelen/eol-globi-data.png)](https://travis-ci.org/jhpoelen/eol-globi-data)
+[![Build Status](https://travis-ci.org/jhpoelen/eol-globi-data.png)](https://travis-ci.org/jhpoelen/eol-globi-data) [![DOI](https://zenodo.org/badge/2478263.svg)](https://zenodo.org/badge/latestdoi/2478263)
 
 ## Citing GloBI
 
