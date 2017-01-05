@@ -6,7 +6,7 @@ import org.junit.Test;
 
 import java.io.IOException;
 
-public class GitHubRepoCheckIT {
+public class GitHubRepoCheckTest {
 
     @Test
     public void doSingleImportArgs() throws DatasetFinderException, StudyImporterException, IOException {
