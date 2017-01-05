@@ -20,7 +20,7 @@ public class StudyImporterForBascompteIT extends GraphDBTestCase {
 
     @Test
     public void importAll() throws StudyImporterException, IOException {
-        StudyImporterForBascompte importer = new StudyImporterForBascompte(null, nodeFactory);
+        StudyImporterForWebOfLife importer = new StudyImporterForWebOfLife(null, nodeFactory);
         importStudy(importer);
 
         List<Study> allStudies = NodeUtil.findAllStudies(getGraphDb());
@@ -39,7 +39,7 @@ public class StudyImporterForBascompteIT extends GraphDBTestCase {
 
     @Test
     public void getNetworkNames() throws IOException {
-        final List<String> networkNames = StudyImporterForBascompte.getNetworkNames();
+        final List<String> networkNames = StudyImporterForWebOfLife.getNetworkNames();
         assertThat(networkNames, hasItem("A_HP_001"));
     }
 }

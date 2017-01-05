@@ -15,11 +15,11 @@ import static org.hamcrest.Matchers.startsWith;
 import static org.junit.Assert.assertThat;
 import static org.junit.internal.matchers.IsCollectionContaining.hasItem;
 
-public class StudyImporterForBascompteTest extends GraphDBTestCase {
+public class StudyImporterForWebOfLifeTest extends GraphDBTestCase {
 
     @Test
     public void importSome() throws StudyImporterException, IOException {
-        StudyImporterForBascompte importer = new StudyImporterForBascompte(null, nodeFactory);
+        StudyImporterForWebOfLife importer = new StudyImporterForWebOfLife(null, nodeFactory);
         importer.importNetworks("bascompte/web-of-life_2016-01-15_192434.zip", "Web of Life. " + ReferenceUtil.createLastAccessedString("http://www.web-of-life.es/"));
         resolveNames();
 
@@ -38,7 +38,7 @@ public class StudyImporterForBascompteTest extends GraphDBTestCase {
 
     @Test
     public void retrieveNetworkList() throws IOException {
-        final List<String> networkNames = StudyImporterForBascompte.getNetworkNames();
+        final List<String> networkNames = StudyImporterForWebOfLife.getNetworkNames();
 
         assertThat(networkNames, hasItem("A_HP_002"));
         assertThat(networkNames.size() > 50, is(true));
@@ -47,7 +47,7 @@ public class StudyImporterForBascompteTest extends GraphDBTestCase {
     @Test
     public void generateArchiveURL() {
         final List<String> networkNames = Arrays.asList("A_HP_002", "A_HP_003");
-        String generatedArchiveURL = StudyImporterForBascompte.generateArchiveURL(networkNames);
+        String generatedArchiveURL = StudyImporterForWebOfLife.generateArchiveURL(networkNames);
 
         String expectedArchiveURL = "http://www.web-of-life.es/2.0/map_download_fast2.php?format=csv&networks=" + "A_HP_002,A_HP_003" + "&species=yes&type=All&data=All&speciesrange=&interactionsrange=&searchbox=&checked=false";
 

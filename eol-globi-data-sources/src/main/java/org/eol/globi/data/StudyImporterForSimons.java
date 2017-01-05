@@ -157,6 +157,10 @@ public class StudyImporterForSimons extends BaseStudyImporter {
         }
     }
 
+    @Override
+    public boolean shouldCrossCheckReference() {
+        return false;
+    }
 }
 
 

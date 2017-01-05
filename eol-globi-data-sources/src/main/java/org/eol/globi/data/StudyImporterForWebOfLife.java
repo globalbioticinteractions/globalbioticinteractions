@@ -32,11 +32,11 @@ import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-public class StudyImporterForBascompte extends BaseStudyImporter {
-    private static final Log LOG = LogFactory.getLog(StudyImporterForBascompte.class);
+public class StudyImporterForWebOfLife extends BaseStudyImporter {
+    private static final Log LOG = LogFactory.getLog(StudyImporterForWebOfLife.class);
     public static final String WEB_OF_LIFE_BASE_URL = "http://www.web-of-life.es/2.0";
 
-    public StudyImporterForBascompte(ParserFactory parserFactory, NodeFactory nodeFactory) {
+    public StudyImporterForWebOfLife(ParserFactory parserFactory, NodeFactory nodeFactory) {
         super(parserFactory, nodeFactory);
     }
 
@@ -67,7 +67,7 @@ public class StudyImporterForBascompte extends BaseStudyImporter {
 
     public void importNetworks(String archiveURL, String sourceCitation) throws StudyImporterException {
         try {
-            InputStream inputStream = ResourceUtil.asInputStream(archiveURL, StudyImporterForBascompte.class);
+            InputStream inputStream = ResourceUtil.asInputStream(archiveURL, StudyImporterForWebOfLife.class);
             ZipInputStream zipInputStream = new ZipInputStream(inputStream);
             ZipEntry entry;
             File referencesTempFile = null;

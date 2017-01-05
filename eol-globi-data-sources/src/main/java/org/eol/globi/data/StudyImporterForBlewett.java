@@ -31,7 +31,7 @@ public class StudyImporterForBlewett extends BaseStudyImporter {
 
     @Override
     public void importStudy() throws StudyImporterException {
-        String citation = "Blewett DA, Hensley RA, and Stevens PW, Feeding Habits of Common Snook, Centropomus Undecimalis, in Charlotte Harbor, Florida, Gulf and Caribbean Research Vol 18, 1–13, 2006";
+        String citation = "Blewett DA, Hensley RA, and Stevens PW, Feeding Habits of Common Snook, Centropomus Undecimalis, in Charlotte Harbor, Florida, Gulf and Caribbean Research Vol 18, 1–13, 2006. doi:10.18785/gcr.1801.01 ";
         Study study = nodeFactory.getOrCreateStudy(
                 new StudyImpl("Blewett 2006",
                         StudyImporterForGoMexSI2.GOMEXI_SOURCE_DESCRIPTION,
