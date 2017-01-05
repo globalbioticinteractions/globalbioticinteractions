@@ -265,7 +265,7 @@ public class CypherQueryBuilder {
         List<String> expandedList = new ArrayList<>(accordingTo);
         expandedList.addAll(accordingTo.stream()
                 .filter(s -> StringUtils.startsWith(s, "http://gomexsi.tamucc.edu"))
-                .map(s -> "http://gomexsi.tamucc.edu")
+                .map(s -> "http://gomexsi.tamucc.edu.")
                 .collect(Collectors.toList()));
 
         return hasAtLeastOneURL(expandedList) ? regexStrict(expandedList) : regexWildcard(expandedList);
