@@ -1,11 +1,10 @@
 package org.eol.globi.tool;
 
-import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.eol.globi.data.ImportLogger;
 import org.eol.globi.data.NodeFactory;
 import org.eol.globi.data.NodeFactoryException;
-import org.eol.globi.data.ParserFactory;
 import org.eol.globi.data.ParserFactoryImpl;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.data.StudyImporterForGitHubData;
@@ -35,23 +34,69 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class GitHubRepoCheck {
     private final static Log LOG = LogFactory.getLog(GitHubRepoCheck.class);
 
     public static void main(final String[] args) throws IOException, StudyImporterException, DatasetFinderException {
         final String repoName = args[0];
+        final AtomicInteger warnings = new AtomicInteger(0);
+        final AtomicInteger errors = new AtomicInteger(0);
+        final AtomicInteger infos = new AtomicInteger(0);
+
         NodeFactoryLogging nodeFactory = new NodeFactoryLogging();
         List<DatasetFinder> finders = Collections.singletonList(new DatasetFinderGitHubArchive());
         DatasetFinderCaching finder = new DatasetFinderCaching(new DatasetFinderProxy(finders));
         StudyImporterForGitHubData studyImporterForGitHubData = new StudyImporterForGitHubData(new ParserFactoryImpl(), nodeFactory);
+        studyImporterForGitHubData.setLogger(new ImportLogger() {
+            @Override
+            public void info(Study study, String message) {
+                int count = infos.incrementAndGet();
+                if (count == 500) {
+                    LOG.info("> 500 info messages, turning off logging.");
+                } else if (count < 500) {
+                    LOG.info(msgForRepo(message));
+                }
+            }
+
+            @Override
+            public void warn(Study study, String message) {
+                int count = warnings.incrementAndGet();
+                if (count == 500) {
+                    LOG.warn("> 500 warnings, turning off logging.");
+                } else if (count < 500) {
+                    LOG.warn(msgForRepo(message));
+                }
+            }
+
+            @Override
+            public void severe(Study study, String message) {
+                int count = errors.incrementAndGet();
+                if (count == 500) {
+                    LOG.error("> 500 error messages, turning off logging.");
+                } else if (count < 500) {
+                    LOG.error(msgForRepo(message));
+                }
+            }
+
+            String msgForRepo(String message) {
+                return "[" + repoName + "]: [" + message + "]";
+            }
+
+        });
         studyImporterForGitHubData.setFinder(finder);
         studyImporterForGitHubData.importData(repoName);
-        LOG.info("found [" + nodeFactory.counter + "] interactions in [" + repoName + "]");
+        LOG.info("found [" + NodeFactoryLogging.counter.get() + "] interactions in [" + repoName + "]");
+        String msgErrorsAndWarnings = "found [" + warnings.get() + "] warnings and [" + errors.get() + "] errors";
+        LOG.info(msgErrorsAndWarnings);
+        if (warnings.get() > 0 || errors.get() > 0) {
+            throw new StudyImporterException(msgErrorsAndWarnings + ", please check your log.");
+        }
     }
 
     private static class NodeFactoryLogging implements NodeFactory {
-        int counter = 0;
+        final static AtomicInteger counter = new AtomicInteger(0);
 
         @Override
         public Location findLocation(Location location) {
@@ -123,13 +168,13 @@ public class GitHubRepoCheck {
 
                 @Override
                 public void interactsWith(Specimen target, InteractType type, Location centroid) {
-                    if (counter % 10 == 0) {
+                    if (counter.get() % 10 == 0) {
                         System.out.print(".");
                     }
-                    if (counter % 1000 == 0) {
+                    if (counter.get() % 1000 == 0) {
                         System.out.println();
                     }
-                    counter++;
+                    counter.getAndIncrement();
                 }
 
                 @Override
