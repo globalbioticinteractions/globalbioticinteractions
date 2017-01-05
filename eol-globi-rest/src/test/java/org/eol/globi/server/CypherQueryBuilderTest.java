@@ -1162,12 +1162,12 @@ public class CypherQueryBuilderTest {
     }
 
     @Test
-    public void regexAccordingToINaturalist() {
-        String regex = CypherQueryBuilder.regexForAccordingTo(Arrays.asList("https://inaturalist.org/observations/1234"));
-        assertThat(regex, is("(\\\\Qhttps://inaturalist.org/observations/1234\\\\E|\\\\Qhttp://inaturalist.org/observations/1234\\\\E)"));
+    public void regexAccordingToGoMexSI() {
+        String regex = CypherQueryBuilder.regexForAccordingTo(Arrays.asList("http://gomexsi.tamucc.edu."));
+        assertThat(regex, is("(\\\\Qhttp://gomexsi.tamucc.edu.\\\\E|\\\\Qhttp://gomexsi.tamucc.edu\\\\E)"));
 
-        regex = CypherQueryBuilder.regexForAccordingTo(Arrays.asList("https://inaturalist.org/observations/1234", "https://example.com"));
-        assertThat(regex, is("(\\\\Qhttps://inaturalist.org/observations/1234\\\\E|\\\\Qhttps://example.com\\\\E|\\\\Qhttp://inaturalist.org/observations/1234\\\\E)"));
+        regex = CypherQueryBuilder.regexForAccordingTo(Arrays.asList("http://gomexsi.tamucc.edu.", "https://example.com"));
+        assertThat(regex, is("(\\\\Qhttp://gomexsi.tamucc.edu.\\\\E|\\\\Qhttps://example.com\\\\E|\\\\Qhttp://gomexsi.tamucc.edu\\\\E)"));
 
         regex = CypherQueryBuilder.regexForAccordingTo(Arrays.asList("https://example.com"));
         assertThat(regex, is("(\\\\Qhttps://example.com\\\\E)"));
