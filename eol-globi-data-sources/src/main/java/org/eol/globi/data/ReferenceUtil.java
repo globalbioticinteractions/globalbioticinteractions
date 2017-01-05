@@ -78,7 +78,11 @@ public class ReferenceUtil {
         if (!StringUtils.contains(citation, "doi.org") && !StringUtils.contains(citation, "doi:")) {
             String citationTrimmed = StringUtils.trim(defaultString(citation));
             String doiTrimmed = defaultString(dataset.getDOI());
-            citation = citationTrimmed + separatorFor(citationTrimmed) + doiTrimmed;
+            if (StringUtils.isBlank(doiTrimmed)) {
+                citation = citationTrimmed;
+            } else {
+                citation = citationTrimmed + separatorFor(citationTrimmed) + doiTrimmed;
+            }
         }
         return StringUtils.trim(citation);
     }

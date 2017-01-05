@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.core.StringEndsWith.endsWith;
 import static org.hamcrest.core.StringStartsWith.startsWith;
 import static org.junit.Assert.assertThat;
@@ -48,5 +49,16 @@ public class ReferenceUtilTest {
         String citation = ReferenceUtil.sourceCitationLastAccessed(dataset);
         assertThat(citation, startsWith("Seltzer, Carrie; Wysocki, William; Palacios, Melissa; Eickhoff, Anna; Pilla, Hannah; Aungst, Jordan; Mercer, Aaron; Quicho, Jamie; Voss, Neil; Xu, Man; J. Ndangalasi, Henry; C. Lovett, Jon; J. Cordeiro, Norbert (2015): Plant-animal interactions from Africa. figshare. https://dx.doi.org/10.6084/m9.figshare.1526128. Accessed at <https://ndownloader.figshare.com/files/2231424>"));
     }
+
+    @Test
+    public void citationFor() throws IOException, StudyImporterException {
+        DatasetImpl dataset = new DatasetImpl(null, URI.create("http://base"));
+        dataset.setConfig(new ObjectMapper().readTree("{ \"citation\": \"http://gomexsi.tamucc.edu\" }"));
+
+        String citation = ReferenceUtil.citationFor(dataset);
+        assertThat(citation, is("http://gomexsi.tamucc.edu"));
+    }
+
+
 
 }
