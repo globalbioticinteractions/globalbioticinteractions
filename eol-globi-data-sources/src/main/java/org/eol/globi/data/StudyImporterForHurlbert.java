@@ -123,15 +123,9 @@ public class StudyImporterForHurlbert extends BaseStudyImporter {
     }
 
     private Date addCollectionDate(LabeledCSVParser parser, Study study) {
-        //Observation_Month_Begin,Observation_Year_Begin,Observation_Month_End,Observation_Year_End
-        String dateString = null;
-        String year = parser.getValueByLabel("Observation_Year_Begin");
-        if (StringUtils.isNotBlank(year)) {
-            dateString = StringUtils.trim(year);
-        }
-        String month = parser.getValueByLabel("Observation_Month_Begin");
-        if (StringUtils.isNotBlank(month)) {
-            dateString += "-" + StringUtils.trim(month);
+        String dateString = getDateString(parser, "Observation_Year_Begin", "Observation_Month_Begin");
+        if (StringUtils.isBlank(dateString)) {
+            dateString = getDateString(parser, "Observation_Year_End", "Observation_Month_End");
         }
 
         Date date = null;
@@ -144,6 +138,23 @@ public class StudyImporterForHurlbert extends BaseStudyImporter {
             }
         }
         return date;
+    }
+
+    private String getDateString(LabeledCSVParser parser, String yearLabel, String monthLabel) {
+        String dateString = "";
+        String year = parser.getValueByLabel(yearLabel);
+        if (notBlankOrNA(year)) {
+            dateString = StringUtils.trim(year);
+        }
+        String month = parser.getValueByLabel(monthLabel);
+        if (notBlankOrNA(month)) {
+            dateString += "-" + StringUtils.trim(month);
+        }
+        return dateString;
+    }
+
+    private boolean notBlankOrNA(String str) {
+        return StringUtils.isNotBlank(str) && !StringUtils.equalsIgnoreCase(StringUtils.trim(str), "NA");
     }
 
 }
