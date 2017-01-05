@@ -114,4 +114,8 @@ public class GitHubUtil {
         }
         return getBaseUrl(repo, lastCommitSHA);
     }
+
+    public static Dataset getArchiveDataset(String namespace, String commitSha) {
+        return new DatasetImpl(namespace, URI.create("https://github.com/" + namespace + "/archive/" + commitSha + ".zip"));
+    }
 }

@@ -23,7 +23,7 @@ import org.eol.globi.service.AuthorIdResolver;
 import org.eol.globi.service.DatasetFinder;
 import org.eol.globi.service.DatasetFinderCaching;
 import org.eol.globi.service.DatasetFinderException;
-import org.eol.globi.service.DatasetFinderGitHubArchive;
+import org.eol.globi.service.DatasetFinderGitHubArchiveMaster;
 import org.eol.globi.service.DatasetFinderProxy;
 import org.eol.globi.service.TermLookupService;
 import org.eol.globi.service.TermLookupServiceException;
@@ -40,13 +40,16 @@ public class GitHubRepoCheck {
     private final static Log LOG = LogFactory.getLog(GitHubRepoCheck.class);
 
     public static void main(final String[] args) throws IOException, StudyImporterException, DatasetFinderException {
+        if (args.length == 0) {
+            throw new StudyImporterException("please provide at least one github repository short name (e.g. globalbioticinteractions/template-dataset) as an argument");
+        }
         final String repoName = args[0];
         final AtomicInteger warnings = new AtomicInteger(0);
         final AtomicInteger errors = new AtomicInteger(0);
         final AtomicInteger infos = new AtomicInteger(0);
 
         NodeFactoryLogging nodeFactory = new NodeFactoryLogging();
-        List<DatasetFinder> finders = Collections.singletonList(new DatasetFinderGitHubArchive());
+        List<DatasetFinder> finders = Collections.singletonList(new DatasetFinderGitHubArchiveMaster(Arrays.asList(args)));
         DatasetFinderCaching finder = new DatasetFinderCaching(new DatasetFinderProxy(finders));
         StudyImporterForGitHubData studyImporterForGitHubData = new StudyImporterForGitHubData(new ParserFactoryImpl(), nodeFactory);
         studyImporterForGitHubData.setLogger(new ImportLogger() {
