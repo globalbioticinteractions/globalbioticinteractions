@@ -33,6 +33,7 @@ import org.eol.globi.data.StudyImporterForMetaTable;
 import org.eol.globi.data.StudyImporterForPlanque;
 import org.eol.globi.data.StudyImporterForRaymond;
 import org.eol.globi.data.StudyImporterForRobledo;
+import org.eol.globi.data.StudyImporterForRoopnarine;
 import org.eol.globi.data.StudyImporterForSIAD;
 import org.eol.globi.data.StudyImporterForSeltmann;
 import org.eol.globi.data.StudyImporterForSimons;
@@ -43,10 +44,8 @@ import org.eol.globi.data.StudyImporterForWebOfLife;
 import org.eol.globi.data.StudyImporterForWood;
 import org.eol.globi.data.StudyImporterForWrast;
 
-import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.net.URISyntaxException;
 import java.util.HashMap;
 
 public class GitHubImporterFactory {
@@ -75,12 +74,16 @@ public class GitHubImporterFactory {
         return anImporter;
     }
 
-    private static Class<? extends StudyImporter> lookupImporterByFormat(Dataset dataset) throws StudyImporterException {
+    static Class<? extends StudyImporter> lookupImporterByFormat(Dataset dataset) throws StudyImporterException {
         final String format = dataset.getFormat();
         if (StringUtils.isBlank(format)) {
             throw new StudyImporterException("provide specify format for [" + dataset.getConfigURI() + "]");
         }
 
+        return importerForFormat(format);
+    }
+
+    static Class<? extends StudyImporter> importerForFormat(String format) throws StudyImporterException {
         HashMap<String, Class<? extends StudyImporter>> supportedFormats = new HashMap<String, Class<? extends StudyImporter>>() {
             {
                 put("globi", StudyImporterForTSV.class);
@@ -111,8 +114,9 @@ public class GitHubImporterFactory {
                 put("inaturalist", StudyImporterForINaturalist.class);
                 put("kelpforest", StudyImporterForKelpForest.class);
                 put("life-watch-greece", StudyImporterForLifeWatchGreece.class);
-                put("robledo", StudyImporterForRobledo.class);
                 put("raymond", StudyImporterForRaymond.class);
+                put("robledo", StudyImporterForRobledo.class);
+                put("roopnarine", StudyImporterForRoopnarine.class);
                 put("simons", StudyImporterForSimons.class);
                 put("said", StudyImporterForSIAD.class);
                 put("spire", StudyImporterForSimons.class);
@@ -121,7 +125,7 @@ public class GitHubImporterFactory {
                 put("web-of-life", StudyImporterForWebOfLife.class);
             }
         };
-        Class<? extends StudyImporter> anImporter = supportedFormats.get(dataset.getFormat());
+        Class<? extends StudyImporter> anImporter = supportedFormats.get(format);
         if (anImporter == null) {
             throw new StudyImporterException("unsupported format [" + format + "]");
         }
