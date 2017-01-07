@@ -2,6 +2,7 @@ package org.eol.globi.data;
 
 import com.Ostermiller.util.CSVParser;
 import com.Ostermiller.util.LabeledCSVParser;
+import junit.framework.Assert;
 import org.apache.commons.io.IOUtils;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -13,6 +14,7 @@ import org.junit.Test;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -22,8 +24,36 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.StringStartsWith.startsWith;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
+import static org.junit.internal.matchers.StringContains.containsString;
 
 public class StudyImporterForMetaTableIT {
+
+    @Test
+    public void parseNaturalHistoryMuseum() throws IOException, StudyImporterException {
+        final Class<StudyImporterForMetaTable> clazz = StudyImporterForMetaTable.class;
+        final String name = "test-meta-globi-nhm.json";
+        final URL resource = clazz.getResource(name);
+        Assert.assertNotNull(resource);
+
+        final InputStream inputStream = ResourceUtil.asInputStream(name, clazz);
+        final JsonNode config = new ObjectMapper().readTree(inputStream);
+        DatasetImpl dataset = new DatasetImpl("some/namespace", URI.create("http://example.com"));
+        dataset.setConfig(config);
+        final List<JsonNode> tables = StudyImporterForMetaTable.collectTables(dataset);
+        assertThat(tables.size(), is(1));
+        JsonNode firstTable = tables.get(0);
+        String bibliographicCitation = firstTable.get("dcterms:bibliographicCitation").asText();
+        assertThat(bibliographicCitation, containsString("NHM Interactions Bank. http://dx.doi.org/10.5519/0060767"));
+
+        String resourceUrl = firstTable.get("url").asText();
+        // see https://github.com/jhpoelen/eol-globi-data/issues/266
+        //assertThat(resourceUrl, is("http://data.nhm.ac.uk/dataset/82e807f0-6273-4f19-be0a-7f7558442a25/resource/1f64e2cf-d738-4a7c-9e81-a1951eac635f/download/output.csv"));
+        assertThat(firstTable.get("headerRowCount").asInt(), is(1));
+        assertThat(firstTable.has("tableSchema"), is(true));
+        assertThat(firstTable.has("null"), is(true));
+        assertThat(firstTable.get("tableSchema").has("columns"), is(true));
+    }
+
 
     @Test
     public void importAll() throws IOException, StudyImporterException {

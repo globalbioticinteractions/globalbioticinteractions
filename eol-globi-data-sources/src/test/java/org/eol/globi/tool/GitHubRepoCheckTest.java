@@ -13,9 +13,4 @@ public class GitHubRepoCheckTest {
         GitHubRepoCheck.main(new String[]{"globalbioticinteractions/template-dataset"});
     }
 
-    @Test
-    public void inaturalist() throws DatasetFinderException, StudyImporterException, IOException {
-        GitHubRepoCheck.main(new String[]{"globalbioticinteractions/inaturalist"});
-    }
-
 }

@@ -8,6 +8,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import javax.swing.plaf.basic.BasicInternalFrameTitlePane;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
@@ -30,20 +31,20 @@ public class DatasetFinderZenodo implements DatasetFinder {
     @Override
     public Dataset datasetFor(String namespace) throws DatasetFinderException {
         try {
-            return new DatasetZenodo(namespace, findZenodoGitHubArchives(getRelationsNodeList(getFeed()), namespace));
+            return new DatasetZenodo(namespace, findZenodoGitHubArchives(getRecordNodeList(getFeed()), namespace));
         } catch (XPathExpressionException | MalformedURLException e) {
             throw new DatasetFinderException("failed to resolve archive url for [" + namespace + "]", e);
         }
     }
 
-    static URI findZenodoGitHubArchives(NodeList nodes, String requestedRepo) throws XPathExpressionException, MalformedURLException {
+    static URI findZenodoGitHubArchives(NodeList records, String requestedRepo) throws XPathExpressionException, MalformedURLException {
         URI archiveURI = null;
-        for (int i = 0; i < nodes.getLength(); i++) {
-            Node item = nodes.item(i);
-            String fullId = (String) XmlUtil.applyXPath(item, "//header/identifier", XPathConstants.STRING);
+        for (int i = 0; i < records.getLength(); i++) {
+            Node item = records.item(i);
+            String fullId = (String) XmlUtil.applyXPath(item, "header/identifier", XPathConstants.STRING);
             if (StringUtils.startsWith(fullId, PREFIX_ZENODO)) {
                 String id = StringUtils.replace(fullId, PREFIX_ZENODO, "");
-                String relatedIdentifier = StringUtils.trim((String) XmlUtil.applyXPath(item, "//*[local-name()='relatedIdentifier']", XPathConstants.STRING));
+                String relatedIdentifier = StringUtils.trim((String) XmlUtil.applyXPath(item, ".//*[local-name()='relatedIdentifier']", XPathConstants.STRING));
                 if (StringUtils.startsWith(relatedIdentifier, PREFIX_GITHUB_RELATION)) {
                     String replace = StringUtils.replace(StringUtils.trim(relatedIdentifier), PREFIX_GITHUB_RELATION, "");
                     String[] split = StringUtils.split(replace, "/");
@@ -51,6 +52,7 @@ public class DatasetFinderZenodo implements DatasetFinder {
                         String githubRepo = split[0] + "/" + split[1];
                         if (StringUtils.equals(githubRepo, requestedRepo)) {
                             archiveURI = URI.create("https://zenodo.org/record/" + id + "/files/" + githubRepo + "-" + split[3] + ".zip");
+                            break;
                         }
                     }
                 }
@@ -86,7 +88,16 @@ public class DatasetFinderZenodo implements DatasetFinder {
         return refs;
     }
 
-    private static NodeList getRelationsNodeList(InputStream is) throws DatasetFinderException {
+    static NodeList getRecordNodeList(InputStream is) throws DatasetFinderException {
+        try {
+            return (NodeList) XmlUtil.applyXPath(is, "//*[local-name()='record']", XPathConstants.NODESET);
+        } catch (SAXException | IOException | ParserConfigurationException | XPathExpressionException e) {
+            throw new DatasetFinderException("failed to find published github repos in zenodo", e);
+        }
+    }
+
+
+    static NodeList getRelationsNodeList(InputStream is) throws DatasetFinderException {
         try {
             return (NodeList) XmlUtil.applyXPath(is, "//*[local-name()='relatedIdentifier']", XPathConstants.NODESET);
         } catch (SAXException | IOException | ParserConfigurationException | XPathExpressionException e) {

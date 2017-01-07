@@ -1,0 +1,141 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<?xml-stylesheet type="text/xsl" href="/static/xsl/oai2.v1.0.xsl"?>
+<OAI-PMH xmlns="http://www.openarchives.org/OAI/2.0/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/ http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd">
+  <responseDate>2017-01-07T01:36:39Z</responseDate>
+  <request verb="ListRecords" set="user-globalbioticinteractions" metadataPrefix="oai_datacite3">https://zenodo.org/oai2d</request>
+  <ListRecords>
+    <record>
+      <header>
+        <identifier>oai:zenodo.org:232498</identifier>
+        <datestamp>2017-01-06T19:59:58Z</datestamp>
+        <setSpec>openaire_data</setSpec>
+        <setSpec>user-globalbioticinteractions</setSpec>
+      </header>
+      <metadata>
+        <oai_datacite xmlns="http://schema.datacite.org/oai/oai-1.0/" xsi:schemaLocation="http://schema.datacite.org/oai/oai-1.0/ oai_datacite.xsd">
+          <isReferenceQuality>true</isReferenceQuality>
+          <schemaVersion>3.1</schemaVersion>
+          <datacentreSymbol>CERN.ZENODO</datacentreSymbol>
+          <payload>
+            <resource xmlns="http://datacite.org/schema/kernel-3" xsi:schemaLocation="http://datacite.org/schema/kernel-3 http://schema.datacite.org/meta/kernel-3/metadata.xsd">
+              <identifier identifierType="DOI">10.5281/zenodo.232498</identifier>
+              <creators>
+                <creator>
+                  <creatorName>Jorrit Poelen</creatorName>
+                </creator>
+                <creator>
+                  <creatorName>Jen Hammock</creatorName>
+                  <affiliation>Encyclopedia of Life</affiliation>
+                </creator>
+              </creators>
+              <titles>
+                <title>Jhammock/Layman-And-Allgeier-Lionfish 1.0</title>
+              </titles>
+              <publisher>Zenodo</publisher>
+              <publicationYear>2017</publicationYear>
+              <dates>
+                <date dateType="Issued">2017-01-06</date>
+              </dates>
+              <resourceType resourceTypeGeneral="Dataset"/>
+              <relatedIdentifiers>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsSupplementTo">https://github.com/jhammock/Layman-and-Allgeier-Lionfish/tree/1.0</relatedIdentifier>
+              </relatedIdentifiers>
+              <rightsList>
+                <rights rightsURI="info:eu-repo/semantics/openAccess">Open Access</rights>
+              </rightsList>
+              <descriptions>
+                <description descriptionType="Abstract">&lt;p&gt;Jen's practice dataset&lt;/p&gt;</description>
+              </descriptions>
+            </resource>
+          </payload>
+        </oai_datacite>
+      </metadata>
+    </record>
+    <record>
+      <header>
+        <identifier>oai:zenodo.org:207958</identifier>
+        <datestamp>2016-12-17T19:59:37Z</datestamp>
+        <setSpec>software</setSpec>
+        <setSpec>user-globalbioticinteractions</setSpec>
+      </header>
+      <metadata>
+        <oai_datacite xmlns="http://schema.datacite.org/oai/oai-1.0/" xsi:schemaLocation="http://schema.datacite.org/oai/oai-1.0/ oai_datacite.xsd">
+          <isReferenceQuality>true</isReferenceQuality>
+          <schemaVersion>3.1</schemaVersion>
+          <datacentreSymbol>CERN.ZENODO</datacentreSymbol>
+          <payload>
+            <resource xmlns="http://datacite.org/schema/kernel-3" xsi:schemaLocation="http://datacite.org/schema/kernel-3 http://schema.datacite.org/meta/kernel-3/metadata.xsd">
+              <identifier identifierType="DOI">10.5281/zenodo.207958</identifier>
+              <creators>
+                <creator>
+                  <creatorName>Jorrit Poelen</creatorName>
+                </creator>
+              </creators>
+              <titles>
+                <title>Globalbioticinteractions/Template-Dataset: Dataset Description Now Includes Zenodo Instructions And Badges</title>
+              </titles>
+              <publisher>Zenodo</publisher>
+              <publicationYear>2016</publicationYear>
+              <dates>
+                <date dateType="Issued">2016-12-17</date>
+              </dates>
+              <resourceType resourceTypeGeneral="Software"/>
+              <relatedIdentifiers>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsSupplementTo">https://github.com/globalbioticinteractions/template-dataset/tree/0.0.2</relatedIdentifier>
+              </relatedIdentifiers>
+              <rightsList>
+                <rights rightsURI="info:eu-repo/semantics/openAccess">Open Access</rights>
+              </rightsList>
+              <descriptions>
+                <description descriptionType="Abstract">&lt;p&gt;Template species interaction data repository compatible with globalbioticinteractions.org&lt;/p&gt;</description>
+              </descriptions>
+            </resource>
+          </payload>
+        </oai_datacite>
+      </metadata>
+    </record>
+    <record>
+      <header>
+        <identifier>oai:zenodo.org:229547</identifier>
+        <datestamp>2017-01-04T09:59:55Z</datestamp>
+        <setSpec>openaire_data</setSpec>
+        <setSpec>user-globalbioticinteractions</setSpec>
+      </header>
+      <metadata>
+        <oai_datacite xmlns="http://schema.datacite.org/oai/oai-1.0/" xsi:schemaLocation="http://schema.datacite.org/oai/oai-1.0/ oai_datacite.xsd">
+          <isReferenceQuality>true</isReferenceQuality>
+          <schemaVersion>3.1</schemaVersion>
+          <datacentreSymbol>CERN.ZENODO</datacentreSymbol>
+          <payload>
+            <resource xmlns="http://datacite.org/schema/kernel-3" xsi:schemaLocation="http://datacite.org/schema/kernel-3 http://schema.datacite.org/meta/kernel-3/metadata.xsd">
+              <identifier identifierType="DOI">10.5281/zenodo.229547</identifier>
+              <creators>
+                <creator>
+                  <creatorName>Jorrit Poelen</creatorName>
+                </creator>
+              </creators>
+              <titles>
+                <title>Globalbioticinteractions/Africatreedatabase: Prepare For Publication To Zenodo</title>
+              </titles>
+              <publisher>Zenodo</publisher>
+              <publicationYear>2017</publicationYear>
+              <dates>
+                <date dateType="Issued">2017-01-03</date>
+              </dates>
+              <resourceType resourceTypeGeneral="Dataset"/>
+              <relatedIdentifiers>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsSupplementTo">https://github.com/globalbioticinteractions/AfricaTreeDatabase/tree/v0.1</relatedIdentifier>
+              </relatedIdentifiers>
+              <rightsList>
+                <rights rightsURI="info:eu-repo/semantics/openAccess">Open Access</rights>
+              </rightsList>
+              <descriptions>
+                <description descriptionType="Abstract">&lt;p&gt;Seltzer, Carrie; Wysocki, William; Palacios, Melissa; Eickhoff, Anna; Pilla, Hannah; Aungst, Jordan; Mercer, Aaron; Quicho, Jamie; Voss, Neil; Xu, Man; J. Ndangalasi, Henry; C. Lovett, Jon; J. Cordeiro, Norbert (2015): Plant-animal interactions from Africa. figshare. https://dx.doi.org/10.6084/m9.figshare.1526128 . To be included in http://globalbioticinteractions.org .&lt;/p&gt;</description>
+              </descriptions>
+            </resource>
+          </payload>
+        </oai_datacite>
+      </metadata>
+    </record>
+  </ListRecords>
+</OAI-PMH>
