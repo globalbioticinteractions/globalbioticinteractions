@@ -2,6 +2,7 @@ package org.eol.globi.tool;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.eol.globi.Version;
 import org.eol.globi.data.ImportLogger;
 import org.eol.globi.data.NodeFactory;
 import org.eol.globi.data.NodeFactoryException;
@@ -43,6 +44,7 @@ public class GitHubRepoCheck {
         if (args.length == 0) {
             throw new StudyImporterException("please provide at least one github repository short name (e.g. globalbioticinteractions/template-dataset) as an argument");
         }
+        LOG.info(Version.getVersionInfo(GitHubRepoCheck.class));
         final String repoName = args[0];
         final AtomicInteger warnings = new AtomicInteger(0);
         final AtomicInteger errors = new AtomicInteger(0);
