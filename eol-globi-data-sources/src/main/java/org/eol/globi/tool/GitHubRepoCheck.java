@@ -354,7 +354,12 @@ public class GitHubRepoCheck {
 
         @Override
         public AuthorIdResolver getAuthorResolver() {
-            return null;
+            return new AuthorIdResolver() {
+                @Override
+                public String findFullName(String authorURI) throws IOException {
+                    return "echo-[" + authorURI + "]";
+                }
+            };
         }
 
         @Override
