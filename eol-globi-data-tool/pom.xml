@@ -80,6 +80,12 @@
                         <manifest>
                             <mainClass>org.eol.globi.tool.Normalizer</mainClass>
                         </manifest>
+                        <manifestEntries>
+                            <Implementation-Version>${project.version}@${mvngit.commit.sha}</Implementation-Version>
+                            <Git-Commit-Sha>${mvngit.commit.sha}</Git-Commit-Sha>
+                            <Git-Commit-Date>${mvngit.commit.committer.date}</Git-Commit-Date>
+                            <Project-Version>${project.version}</Project-Version>
+                        </manifestEntries>
                     </archive>
                 </configuration>
                 <executions>

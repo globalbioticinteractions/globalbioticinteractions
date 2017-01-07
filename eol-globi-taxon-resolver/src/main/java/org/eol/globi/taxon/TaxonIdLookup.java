@@ -1,6 +1,7 @@
 package org.eol.globi.taxon;
 
 import org.apache.commons.lang.StringUtils;
+import org.eol.globi.Version;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.service.PropertyEnricherException;
@@ -14,6 +15,7 @@ public class TaxonIdLookup {
     public static void main(String args[]) {
         String externalId = args[0];
         try {
+            System.err.println(Version.getVersionInfo(TaxonIdLookup.class));
             System.err.println("externalId [" + externalId + "] resolving...");
             Map<String, String> enriched = PropertyEnricherFactory
                     .createTaxonEnricher()

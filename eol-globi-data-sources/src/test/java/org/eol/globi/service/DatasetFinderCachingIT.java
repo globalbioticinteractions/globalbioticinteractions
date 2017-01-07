@@ -21,7 +21,7 @@ public class DatasetFinderCachingIT {
 
         assertThat(dataset.getArchiveURI().toString(), containsString("zenodo.org"));
         assertThat(dataset.getResourceURI("globi.json").toString(), startsWith("jar:file:/"));
-        assertThat(dataset.getCitation(), is("Jorrit H. Poelen. 2014. Species associations manually extracted from literature."));
+        assertThat(dataset.getCitation(), is("Jorrit H. Poelen. 2014. Species associations manually extracted from literature. https://doi.org/10.5281/zenodo.207958"));
 
     }
 

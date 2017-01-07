@@ -10,6 +10,7 @@ import org.apache.commons.cli.ParseException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.eol.globi.Version;
 import org.eol.globi.data.NodeFactoryNeo4j;
 import org.eol.globi.data.ParserFactory;
 import org.eol.globi.data.ParserFactoryImpl;
@@ -52,6 +53,8 @@ public class Normalizer {
     private EcoregionFinder ecoregionFinder = null;
 
     public static void main(final String[] args) throws StudyImporterException, ParseException {
+        String o = Version.getVersionInfo(Normalizer.class);
+        LOG.info(o);
         CommandLine cmdLine = parseOptions(args);
         if (cmdLine.hasOption(OPTION_HELP)) {
             HelpFormatter formatter = new HelpFormatter();
