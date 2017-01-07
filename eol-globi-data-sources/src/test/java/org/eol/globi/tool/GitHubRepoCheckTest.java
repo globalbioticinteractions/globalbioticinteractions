@@ -10,8 +10,12 @@ public class GitHubRepoCheckTest {
 
     @Test
     public void doSingleImportArgs() throws DatasetFinderException, StudyImporterException, IOException {
-        final String repoName = "globalbioticinteractions/template-dataset";
-        GitHubRepoCheck.main(new String[]{repoName});
+        GitHubRepoCheck.main(new String[]{"globalbioticinteractions/template-dataset"});
+    }
+
+    @Test
+    public void inaturalist() throws DatasetFinderException, StudyImporterException, IOException {
+        GitHubRepoCheck.main(new String[]{"globalbioticinteractions/inaturalist"});
     }
 
 }

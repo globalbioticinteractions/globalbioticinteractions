@@ -171,11 +171,11 @@ public class GitHubRepoCheck {
 
                 @Override
                 public void interactsWith(Specimen target, InteractType type, Location centroid) {
+                    if (counter.get() > 0 && counter.get() % 1000 == 0) {
+                        System.out.println();
+                    }
                     if (counter.get() % 10 == 0) {
                         System.out.print(".");
-                    }
-                    if (counter.get() % 1000 == 0) {
-                        System.out.println();
                     }
                     counter.getAndIncrement();
                 }

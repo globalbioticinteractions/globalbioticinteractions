@@ -1,6 +1,7 @@
 package org.eol.globi.data;
 
 import com.Ostermiller.util.LabeledCSVParser;
+import org.eol.globi.service.Dataset;
 import org.eol.globi.util.CSVUtil;
 import org.eol.globi.util.ResourceUtil;
 
