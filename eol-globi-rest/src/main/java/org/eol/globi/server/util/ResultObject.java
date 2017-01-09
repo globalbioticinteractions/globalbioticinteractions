@@ -87,6 +87,7 @@ public enum ResultObject {
             put(ResultField.TAXON_PATH_RANKS, TAXON);
 
             put(ResultField.NUMBER_OF_DISTINCT_TAXA, TAXON);
+            put(ResultField.NUMBER_OF_DISTINCT_TAXA_NO_MATCH, TAXON);
             put(ResultField.NUMBER_OF_SOURCES, STUDY);
             put(ResultField.NUMBER_OF_STUDIES, STUDY);
 
