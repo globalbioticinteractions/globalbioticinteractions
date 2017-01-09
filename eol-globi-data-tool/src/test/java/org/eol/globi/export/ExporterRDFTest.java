@@ -13,6 +13,7 @@ import org.eol.globi.domain.Study;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TaxonomyProvider;
+import org.eol.globi.service.DatasetLocal;
 import org.eol.globi.service.EnvoLookupService;
 import org.eol.globi.service.PropertyEnricher;
 import org.eol.globi.service.PropertyEnricherException;
@@ -72,6 +73,7 @@ public class ExporterRDFTest extends GraphDBTestCase {
                 return recordNumber < 5;
             }
         });
+        importer.setDataset(new DatasetLocal());
         importStudy(importer);
 
         List<Study> studies = NodeUtil.findAllStudies(getGraphDb());
