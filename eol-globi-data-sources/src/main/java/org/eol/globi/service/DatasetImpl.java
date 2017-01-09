@@ -9,9 +9,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 
-import static org.apache.commons.lang3.StringUtils.defaultString;
-import static org.apache.commons.lang3.StringUtils.join;
-
 public class DatasetImpl implements Dataset {
 
     private String namespace;
@@ -26,14 +23,14 @@ public class DatasetImpl implements Dataset {
 
     @Override
     public InputStream getResource(String resourceName) throws IOException {
-        String mappedResource = mapResourceNameIfRequested(resourceName);
+        String mappedResource = mapResourceNameIfRequested(resourceName, getConfig());
         return ResourceUtil.asInputStream(getResourceURI(mappedResource), DatasetImpl.class);
     }
 
-    public String mapResourceNameIfRequested(String resourceName) {
+    public static String mapResourceNameIfRequested(String resourceName, JsonNode config) {
         String mappedResource = resourceName;
-        if (getConfig() != null && getConfig().has("resources")) {
-            JsonNode resources = getConfig().get("resources");
+        if (config != null && config.has("resources")) {
+            JsonNode resources = config.get("resources");
             if (resources.isObject() && resources.has(resourceName)) {
                 JsonNode resourceName1 = resources.get(resourceName);
                 if (resourceName1.isTextual()) {
@@ -47,7 +44,7 @@ public class DatasetImpl implements Dataset {
 
     @Override
     public URI getResourceURI(String resourceName) {
-        String mappedResourceName = mapResourceNameIfRequested(resourceName);
+        String mappedResourceName = mapResourceNameIfRequested(resourceName, getConfig());
         return ResourceUtil.getAbsoluteResourceURI(getArchiveURI(), mappedResourceName);
     }
 

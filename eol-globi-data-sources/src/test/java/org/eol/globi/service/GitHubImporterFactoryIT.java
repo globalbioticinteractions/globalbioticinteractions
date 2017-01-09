@@ -6,6 +6,7 @@ import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.data.StudyImporterForArthopodEasyCapture;
 import org.eol.globi.data.StudyImporterForCoetzer;
 import org.eol.globi.data.StudyImporterForGoMexSI2;
+import org.eol.globi.data.StudyImporterForHafner;
 import org.eol.globi.data.StudyImporterForMetaTable;
 import org.eol.globi.data.StudyImporterForPlanque;
 import org.eol.globi.data.StudyImporterForSzoboszlai;
@@ -33,6 +34,15 @@ public class GitHubImporterFactoryIT {
         assertThat(importer, is(instanceOf(StudyImporterForGoMexSI2.class)));
         StudyImporterForGoMexSI2 gomexsiImporter = (StudyImporterForGoMexSI2) importer;
         assertThat(gomexsiImporter.getSourceCitation(), is("http://gomexsi.tamucc.edu"));
+    }
+
+    @Test
+    public void createHafner() throws StudyImporterException, DatasetFinderException  {
+        final DatasetFinder datasetFinderGitHubRemote = new DatasetFinderGitHubRemote();
+        StudyImporter importer = new GitHubImporterFactory().createImporter(DatasetFactory.datasetFor("globalbioticinteractions/hafner", datasetFinderGitHubRemote), null);
+        assertThat(importer, is(notNullValue()));
+        StudyImporterForHafner gomexsiImporter = (StudyImporterForHafner) importer;
+        assertThat(gomexsiImporter.getDataset().getResourceURI("hafner/gopher_lice_int.csv"), is("gopher_lice_int.csv"));
     }
 
     @Test

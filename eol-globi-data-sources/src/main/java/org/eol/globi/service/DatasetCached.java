@@ -19,12 +19,12 @@ public class DatasetCached implements Dataset {
 
     @Override
     public InputStream getResource(String resourceName) throws IOException {
-        return ResourceUtil.asInputStream(getResourceURI(resourceName), DatasetImpl.class);
+        return ResourceUtil.asInputStream(getResourceURI(DatasetImpl.mapResourceNameIfRequested(resourceName, getConfig())), DatasetImpl.class);
     }
 
     @Override
     public URI getResourceURI(String resourceName) {
-        return ResourceUtil.getAbsoluteResourceURI(archiveCacheURI, resourceName);
+        return ResourceUtil.getAbsoluteResourceURI(archiveCacheURI, DatasetImpl.mapResourceNameIfRequested(resourceName, getConfig()));
     }
 
     @Override
