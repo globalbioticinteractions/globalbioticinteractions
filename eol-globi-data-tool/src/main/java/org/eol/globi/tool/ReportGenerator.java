@@ -60,12 +60,13 @@ public class ReportGenerator {
 
     protected void generateReportForStudy(StudyNode study) {
         Set<Long> ids = new HashSet<Long>();
-        generateReportForStudy(study, ids, new Counter());
+        HashSet<Long> idsNoMatch1 = new HashSet<>();
+        generateReportForStudy(study, ids, new Counter(), idsNoMatch1);
     }
 
-    protected void generateReportForStudy(StudyNode study, Set<Long> ids, Counter interactionCounter) {
+    protected void generateReportForStudy(StudyNode study, Set<Long> ids, Counter interactionCounter, HashSet<Long> idsNoMatch) {
         Iterable<Relationship> specimens = NodeUtil.getSpecimens(study);
-        countInteractionsAndTaxa(specimens, ids, interactionCounter);
+        countInteractionsAndTaxa(specimens, ids, interactionCounter, idsNoMatch);
 
         Transaction tx = getGraphDb().beginTx();
         try {
@@ -84,6 +85,7 @@ public class ReportGenerator {
             node.setProperty(PropertyAndValueDictionary.COLLECTION, GLOBI_COLLECTION_NAME);
             node.setProperty(PropertyAndValueDictionary.NUMBER_OF_INTERACTIONS, interactionCounter.getCount() / 2);
             node.setProperty(PropertyAndValueDictionary.NUMBER_OF_DISTINCT_TAXA, ids.size());
+            node.setProperty(PropertyAndValueDictionary.NUMBER_OF_DISTINCT_TAXA_NO_MATCH, idsNoMatch.size());
             node.setProperty(PropertyAndValueDictionary.NUMBER_OF_STUDIES, 1);
             node.setProperty(PropertyAndValueDictionary.NUMBER_OF_SOURCES, 1);
             getGraphDb().index().forNodes("reports").add(node, StudyConstant.TITLE, study.getTitle());
@@ -104,7 +106,8 @@ public class ReportGenerator {
         });
 
         for (final String source : sources) {
-            final Set<Long> distinctTaxonIds = new HashSet<Long>();
+            final Set<Long> distinctTaxonIds = new HashSet<>();
+            final Set<Long> distinctTaxonIdsNoMatch = new HashSet<>();
             final Counter counter = new Counter();
             final Counter studyCounter = new Counter();
 
@@ -113,7 +116,7 @@ public class ReportGenerator {
                 public void onStudy(StudyNode study) {
                     if (StringUtils.equals(study.getSource(), source)) {
                         Iterable<Relationship> specimens = NodeUtil.getSpecimens(study);
-                        countInteractionsAndTaxa(specimens, distinctTaxonIds, counter);
+                        countInteractionsAndTaxa(specimens, distinctTaxonIds, counter, distinctTaxonIdsNoMatch);
                         studyCounter.count();
                     }
 
@@ -127,6 +130,7 @@ public class ReportGenerator {
                 node.setProperty(PropertyAndValueDictionary.COLLECTION, GLOBI_COLLECTION_NAME);
                 node.setProperty(PropertyAndValueDictionary.NUMBER_OF_INTERACTIONS, counter.getCount() / 2);
                 node.setProperty(PropertyAndValueDictionary.NUMBER_OF_DISTINCT_TAXA, distinctTaxonIds.size());
+                node.setProperty(PropertyAndValueDictionary.NUMBER_OF_DISTINCT_TAXA_NO_MATCH, distinctTaxonIdsNoMatch.size());
                 node.setProperty(PropertyAndValueDictionary.NUMBER_OF_STUDIES, studyCounter.getCount());
                 node.setProperty(PropertyAndValueDictionary.NUMBER_OF_SOURCES, 1);
 
@@ -144,6 +148,7 @@ public class ReportGenerator {
 
 
         final Set<Long> distinctTaxonIds = new HashSet<Long>();
+        final Set<Long> distinctTaxonIdsNoMatch = new HashSet<Long>();
         final Counter counter = new Counter();
         final Counter studyCounter = new Counter();
         final Set<String> distinctSources = new HashSet<String>();
@@ -152,7 +157,7 @@ public class ReportGenerator {
             @Override
             public void onStudy(StudyNode study) {
                 Iterable<Relationship> specimens = NodeUtil.getSpecimens(study);
-                countInteractionsAndTaxa(specimens, distinctTaxonIds, counter);
+                countInteractionsAndTaxa(specimens, distinctTaxonIds, counter, distinctTaxonIdsNoMatch);
                 studyCounter.count();
                 distinctSources.add(study.getSource());
 
@@ -165,6 +170,7 @@ public class ReportGenerator {
             node.setProperty(PropertyAndValueDictionary.COLLECTION, GLOBI_COLLECTION_NAME);
             node.setProperty(PropertyAndValueDictionary.NUMBER_OF_INTERACTIONS, counter.getCount() / 2);
             node.setProperty(PropertyAndValueDictionary.NUMBER_OF_DISTINCT_TAXA, distinctTaxonIds.size());
+            node.setProperty(PropertyAndValueDictionary.NUMBER_OF_DISTINCT_TAXA_NO_MATCH, distinctTaxonIdsNoMatch.size());
             node.setProperty(PropertyAndValueDictionary.NUMBER_OF_STUDIES, studyCounter.getCount());
             node.setProperty(PropertyAndValueDictionary.NUMBER_OF_SOURCES, distinctSources.size());
             getGraphDb().index().forNodes("reports").add(node, PropertyAndValueDictionary.COLLECTION, GLOBI_COLLECTION_NAME);
@@ -177,7 +183,7 @@ public class ReportGenerator {
     }
 
 
-    private void countInteractionsAndTaxa(Iterable<Relationship> specimens, Set<Long> ids, Counter interactionCounter) {
+    private void countInteractionsAndTaxa(Iterable<Relationship> specimens, Set<Long> ids, Counter interactionCounter, Set<Long> idsNoMatch) {
         for (Relationship specimen : specimens) {
             Iterable<Relationship> relationships = specimen.getEndNode().getRelationships();
             for (Relationship relationship : relationships) {
@@ -193,6 +199,10 @@ public class ReportGenerator {
             if (classifiedAs != null) {
                 Node taxonNode = classifiedAs.getEndNode();
                 ids.add(taxonNode.getId());
+                if (!taxonNode.hasProperty(PropertyAndValueDictionary.EXTERNAL_ID) ||
+                StringUtils.equals((CharSequence) taxonNode.getProperty(PropertyAndValueDictionary.EXTERNAL_ID), PropertyAndValueDictionary.NO_MATCH)) {
+                    idsNoMatch.add(taxonNode.getId());
+                }
             }
         }
     }

@@ -38,6 +38,7 @@ public class ReportGeneratorTest extends GraphDBTestCase {
         assertThat((String) reportNode.getProperty(PropertyAndValueDictionary.EXTERNAL_ID), is("http://dx.doi.org/12345"));
         assertThat((Integer) reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_INTERACTIONS), is(4));
         assertThat((Integer) reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_DISTINCT_TAXA), is(3));
+        assertThat((Integer) reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_DISTINCT_TAXA_NO_MATCH), is(2));
         reports.close();
 
         reports = getGraphDb().index().forNodes("reports").get(StudyConstant.TITLE, "a second title");
@@ -50,6 +51,7 @@ public class ReportGeneratorTest extends GraphDBTestCase {
         assertThat(reportNode.hasProperty(PropertyAndValueDictionary.EXTERNAL_ID), is(false));
         assertThat((Integer) reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_INTERACTIONS), is(4));
         assertThat((Integer) reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_DISTINCT_TAXA), is(3));
+        assertThat((Integer) reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_DISTINCT_TAXA_NO_MATCH), is(2));
         reports.close();
     }
 
@@ -68,6 +70,7 @@ public class ReportGeneratorTest extends GraphDBTestCase {
         assertThat((Integer) reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_STUDIES), is(2));
         assertThat((Integer) reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_INTERACTIONS), is(8));
         assertThat((Integer) reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_DISTINCT_TAXA), is(3));
+        assertThat((Integer) reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_DISTINCT_TAXA_NO_MATCH), is(2));
         assertThat((String) reportNode.getProperty(StudyConstant.SOURCE), is("az source"));
         reports.close();
 
@@ -77,6 +80,7 @@ public class ReportGeneratorTest extends GraphDBTestCase {
         assertThat((Integer) otherReport.getProperty(PropertyAndValueDictionary.NUMBER_OF_STUDIES), is(1));
         assertThat((Integer) otherReport.getProperty(PropertyAndValueDictionary.NUMBER_OF_INTERACTIONS), is(4));
         assertThat((Integer) otherReport.getProperty(PropertyAndValueDictionary.NUMBER_OF_DISTINCT_TAXA), is(3));
+        assertThat((Integer) otherReport.getProperty(PropertyAndValueDictionary.NUMBER_OF_DISTINCT_TAXA_NO_MATCH), is(2));
     }
 
     @Test
@@ -94,15 +98,16 @@ public class ReportGeneratorTest extends GraphDBTestCase {
         assertThat((Integer) reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_STUDIES), is(2));
         assertThat((Integer) reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_INTERACTIONS), is(8));
         assertThat((Integer) reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_DISTINCT_TAXA), is(3));
+        assertThat((Integer) reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_DISTINCT_TAXA_NO_MATCH), is(2));
     }
 
     protected Study createStudy(Study study1) throws NodeFactoryException {
         Study study = nodeFactory.getOrCreateStudy(study1);
-        Specimen monkey = nodeFactory.createSpecimen(study, new TaxonImpl("Monkey", null));
-        monkey.ate(nodeFactory.createSpecimen(study, new TaxonImpl("Banana", null)));
-        monkey.ate(nodeFactory.createSpecimen(study, new TaxonImpl("Banana", null)));
-        monkey.ate(nodeFactory.createSpecimen(study, new TaxonImpl("Banana", null)));
-        monkey.ate(nodeFactory.createSpecimen(study, new TaxonImpl("Apple", null)));
+        Specimen monkey = nodeFactory.createSpecimen(study, new TaxonImpl("Monkey"));
+        monkey.ate(nodeFactory.createSpecimen(study, new TaxonImpl("Banana")));
+        monkey.ate(nodeFactory.createSpecimen(study, new TaxonImpl("Banana")));
+        monkey.ate(nodeFactory.createSpecimen(study, new TaxonImpl("Banana")));
+        monkey.ate(nodeFactory.createSpecimen(study, new TaxonImpl("Apple", "some:id")));
         return study;
     }
 

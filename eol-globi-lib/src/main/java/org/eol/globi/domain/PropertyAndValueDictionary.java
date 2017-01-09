@@ -26,4 +26,5 @@ public class PropertyAndValueDictionary {
     public static final String COLLECTION = "collection";
     public static final String LABEL = "label";
     public static final String IRI = "iri";
+    public static final String NUMBER_OF_DISTINCT_TAXA_NO_MATCH = "nTaxaNoMatch";
 }

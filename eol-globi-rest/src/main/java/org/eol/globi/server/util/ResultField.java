@@ -63,6 +63,7 @@ public enum ResultField {
     STUDY_CITATION("study_citation"),
     STUDY_SOURCE_CITATION("study_source_citation"),
     NUMBER_OF_DISTINCT_TAXA("number_of_distinct_taxa", "only available for /reports/* queries"),
+    NUMBER_OF_DISTINCT_TAXA_NO_MATCH("number_of_distinct_taxa_no_match", "only available for /reports/* queries"),
     NUMBER_OF_SOURCES("number_of_sources", "only available for /reports/* queries"),
     NUMBER_OF_STUDIES("number_of_studies", "only available for /reports/* queries"),
     NUMBER_OF_INTERACTIONS("number_of_interactions", "available for /interaction queries by source/target taxon name and/or interactionType only");

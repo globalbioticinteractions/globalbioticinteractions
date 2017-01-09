@@ -30,7 +30,8 @@ public class ReportController {
                 + ", report.nInteractions as " + ResultField.NUMBER_OF_INTERACTIONS
                 + ", report.nTaxa as " + ResultField.NUMBER_OF_DISTINCT_TAXA
                 + ", report.nStudies? as " + ResultField.NUMBER_OF_STUDIES
-                + ", report.nSources? as " + ResultField.NUMBER_OF_SOURCES;
+                + ", report.nSources? as " + ResultField.NUMBER_OF_SOURCES
+                + ", report.nTaxaNoMatch? as " + ResultField.NUMBER_OF_DISTINCT_TAXA_NO_MATCH;
         Map<String, String> params = StringUtils.isBlank(source) ? CypherQueryBuilder.EMPTY_PARAMS : new HashMap<String, String>() {{
             put("source", source);
         }};
@@ -50,7 +51,8 @@ public class ReportController {
                 + ", report.nInteractions as " + ResultField.NUMBER_OF_INTERACTIONS
                 + ", report.nTaxa as " + ResultField.NUMBER_OF_DISTINCT_TAXA
                 + ", report.nStudies? as " + ResultField.NUMBER_OF_STUDIES
-                + ", report.nSources? as " + ResultField.NUMBER_OF_SOURCES;
+                + ", report.nSources? as " + ResultField.NUMBER_OF_SOURCES
+                + ", report.nTaxaNoMatch? as " + ResultField.NUMBER_OF_DISTINCT_TAXA_NO_MATCH;
 
         Map<String, String> params = StringUtils.isBlank(source) ? CypherQueryBuilder.EMPTY_PARAMS : new HashMap<String, String>() {{
             put("source", source);
@@ -71,7 +73,8 @@ public class ReportController {
                 + ", report.nInteractions as " + ResultField.NUMBER_OF_INTERACTIONS
                 + ", report.nTaxa as " + ResultField.NUMBER_OF_DISTINCT_TAXA
                 + ", report.nStudies? as " + ResultField.NUMBER_OF_STUDIES
-                + ", report.nSources? as " + ResultField.NUMBER_OF_SOURCES;
+                + ", report.nSources? as " + ResultField.NUMBER_OF_SOURCES
+                + ", report.nTaxaNoMatch? as " + ResultField.NUMBER_OF_DISTINCT_TAXA_NO_MATCH;
         return new CypherQuery(cypherQuery);
     }
 
