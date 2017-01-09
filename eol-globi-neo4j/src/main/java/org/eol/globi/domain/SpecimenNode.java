@@ -119,7 +119,7 @@ public class SpecimenNode extends NodeBacked implements Specimen {
         if (recipientSpecimen instanceof NodeBacked) {
             Transaction tx = getUnderlyingNode().getGraphDatabase().beginTx();
             try {
-                createInteraction(this, (NodeBacked)recipientSpecimen, relType);
+                createInteraction(this, (NodeBacked) recipientSpecimen, relType);
                 tx.success();
             } finally {
                 tx.finish();
@@ -149,14 +149,18 @@ public class SpecimenNode extends NodeBacked implements Specimen {
 
     @Override
     public void setLifeStage(Term lifeStage) {
-        setPropertyWithTx(SpecimenConstant.LIFE_STAGE_LABEL, lifeStage.getName());
-        setPropertyWithTx(SpecimenConstant.LIFE_STAGE_ID, lifeStage.getId());
+        if (lifeStage != null) {
+            setPropertyWithTx(SpecimenConstant.LIFE_STAGE_LABEL, lifeStage.getName());
+            setPropertyWithTx(SpecimenConstant.LIFE_STAGE_ID, lifeStage.getId());
+        }
     }
 
     @Override
     public void setPhysiologicalState(Term physiologicalState) {
-        setPropertyWithTx(SpecimenConstant.PHYSIOLOGICAL_STATE_LABEL, physiologicalState.getName());
-        setPropertyWithTx(SpecimenConstant.PHYSIOLOGICAL_STATE_ID, physiologicalState.getId());
+        if (physiologicalState != null) {
+            setPropertyWithTx(SpecimenConstant.PHYSIOLOGICAL_STATE_LABEL, physiologicalState.getName());
+            setPropertyWithTx(SpecimenConstant.PHYSIOLOGICAL_STATE_ID, physiologicalState.getId());
+        }
     }
 
     @Override
@@ -168,14 +172,18 @@ public class SpecimenNode extends NodeBacked implements Specimen {
 
     @Override
     public void setBodyPart(Term bodyPart) {
-        setPropertyWithTx(SpecimenConstant.BODY_PART_LABEL, bodyPart.getName());
-        setPropertyWithTx(SpecimenConstant.BODY_PART_ID, bodyPart.getId());
+        if (bodyPart != null) {
+            setPropertyWithTx(SpecimenConstant.BODY_PART_LABEL, bodyPart.getName());
+            setPropertyWithTx(SpecimenConstant.BODY_PART_ID, bodyPart.getId());
+        }
     }
 
     @Override
     public void setBasisOfRecord(Term basisOfRecord) {
-        setPropertyWithTx(SpecimenConstant.BASIS_OF_RECORD_LABEL, basisOfRecord.getName());
-        setPropertyWithTx(SpecimenConstant.BASIS_OF_RECORD_ID, basisOfRecord.getId());
+        if (basisOfRecord != null) {
+            setPropertyWithTx(SpecimenConstant.BASIS_OF_RECORD_LABEL, basisOfRecord.getName());
+            setPropertyWithTx(SpecimenConstant.BASIS_OF_RECORD_ID, basisOfRecord.getId());
+        }
     }
 
     @Override
