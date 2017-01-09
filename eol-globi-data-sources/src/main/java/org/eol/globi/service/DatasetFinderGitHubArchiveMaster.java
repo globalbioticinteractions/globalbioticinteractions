@@ -6,6 +6,10 @@ import java.util.Collections;
 public class DatasetFinderGitHubArchiveMaster implements DatasetFinder {
     private final Collection<String> namespaces;
 
+    public DatasetFinderGitHubArchiveMaster() {
+        this(Collections.emptyList());
+    }
+
     public DatasetFinderGitHubArchiveMaster(Collection<String> namespaces) {
         this.namespaces = Collections.unmodifiableCollection(namespaces);
     }

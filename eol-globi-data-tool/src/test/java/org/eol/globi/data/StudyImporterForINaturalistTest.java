@@ -1,6 +1,5 @@
 package org.eol.globi.data;
 
-import com.Ostermiller.util.CSVParser;
 import com.Ostermiller.util.LabeledCSVParser;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -12,9 +11,13 @@ import org.eol.globi.domain.SpecimenNode;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonomyProvider;
+import org.eol.globi.service.Dataset;
+import org.eol.globi.service.DatasetFinder;
+import org.eol.globi.service.DatasetFinderCaching;
+import org.eol.globi.service.DatasetFinderException;
+import org.eol.globi.service.DatasetFinderGitHubArchiveMaster;
 import org.eol.globi.service.PropertyEnricherException;
 import org.eol.globi.util.NodeUtil;
-import org.eol.globi.util.ResourceUtil;
 import org.junit.Before;
 import org.junit.Test;
 import org.neo4j.graphdb.Direction;
@@ -22,7 +25,6 @@ import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -39,8 +41,12 @@ public class StudyImporterForINaturalistTest extends GraphDBTestCase {
     private StudyImporterForINaturalist importer;
 
     @Before
-    public void setup() {
-        importer = new StudyImporterForINaturalist(new ParserFactoryLocal(), nodeFactory);
+    public void setup() throws DatasetFinderException {
+        DatasetFinder finder = new DatasetFinderCaching(new DatasetFinderGitHubArchiveMaster());
+        Dataset dataset = finder.datasetFor("globalbioticinteractions/inaturalist");
+        ParserFactory parserFactory = new ParserFactoryForDataset(dataset);
+        importer = new StudyImporterForINaturalist(parserFactory, nodeFactory);
+        importer.setDataset(dataset);
     }
 
     @Test
@@ -56,8 +62,9 @@ public class StudyImporterForINaturalistTest extends GraphDBTestCase {
 
     @Test
     public void loadInteractionMap() throws IOException {
-        InputStream is = ResourceUtil.asInputStream(StudyImporterForINaturalist.TYPE_MAP_URI_DEFAULT, null);
-        Map<Integer, InteractType> typeMap = StudyImporterForINaturalist.buildTypeMap(StudyImporterForINaturalist.TYPE_MAP_URI_DEFAULT, new LabeledCSVParser(new CSVParser(is)));
+        String resourceName = StudyImporterForINaturalist.TYPE_MAP_URI_DEFAULT;
+        LabeledCSVParser labeledCSVParser = importer.parserFactory.createParser(resourceName, CharsetConstant.UTF8);
+        Map<Integer, InteractType> typeMap = StudyImporterForINaturalist.buildTypeMap(resourceName, labeledCSVParser);
 
         assertThat(typeMap.get(13), is(InteractType.ATE));
         assertThat(typeMap.get(1685), is(InteractType.ATE));
@@ -67,9 +74,8 @@ public class StudyImporterForINaturalistTest extends GraphDBTestCase {
 
     @Test
     public void loadIgnoredInteractions() throws IOException {
-        String resource = StudyImporterForINaturalist.TYPE_IGNORED_URI_DEFAULT;
-        InputStream is = ResourceUtil.asInputStream(resource, null);
-        List<Integer> typeMap1 = StudyImporterForINaturalist.buildTypesIgnored(new LabeledCSVParser(new CSVParser(is)));
+        LabeledCSVParser labeledCSVParser = importer.parserFactory.createParser(StudyImporterForINaturalist.TYPE_IGNORED_URI_DEFAULT, CharsetConstant.UTF8);
+        List<Integer> typeMap1 = StudyImporterForINaturalist.buildTypesIgnored(labeledCSVParser);
 
         assertThat(typeMap1.contains(13), is(false));
         assertThat(typeMap1.contains(1378), is(true));
@@ -78,8 +84,8 @@ public class StudyImporterForINaturalistTest extends GraphDBTestCase {
     @Test
     public void importNotSupportedTestResponse() throws IOException, StudyImporterException {
         importer.parseJSON(getClass().getResourceAsStream("inaturalist/unsupported_interaction_type_inaturalist_response.json"),
-                new ArrayList<Integer>(),
-                new HashMap<Integer, InteractType>());
+                new ArrayList<>(),
+                new HashMap<>());
         resolveNames();
         assertThat(nodeFactory.findStudy("INAT:45209"), is(nullValue()));
     }

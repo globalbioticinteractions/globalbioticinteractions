@@ -1,6 +1,5 @@
 package org.eol.globi.data;
 
-import com.Ostermiller.util.CSVParser;
 import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
@@ -20,7 +19,6 @@ import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TaxonomyProvider;
 import org.eol.globi.util.ExternalIdUtil;
 import org.eol.globi.util.HttpUtil;
-import org.eol.globi.util.ResourceUtil;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.format.ISODateTimeFormat;
@@ -36,8 +34,8 @@ import java.util.TreeMap;
 
 public class StudyImporterForINaturalist extends BaseStudyImporter {
     private static final Log LOG = LogFactory.getLog(StudyImporterForINaturalist.class);
-    public static final String TYPE_IGNORED_URI_DEFAULT = "https://raw.githubusercontent.com/globalbioticinteractions/inaturalist/master/interaction_types_ignored.csv";
-    public static final String TYPE_MAP_URI_DEFAULT = "https://raw.githubusercontent.com/globalbioticinteractions/inaturalist/master/interaction_types.csv";
+    public static final String TYPE_IGNORED_URI_DEFAULT = "interaction_types_ignored.csv";
+    public static final String TYPE_MAP_URI_DEFAULT = "interaction_types.csv";
 
     public static final String INATURALIST_URL = "https://www.inaturalist.org";
 
