@@ -28,7 +28,6 @@ public class StudyImporterFactory {
         add(StudyImporterForSimons.class);
         add(StudyImporterForWrast.class);
         add(StudyImporterForBlewett.class);
-        add(StudyImporterForAkin.class);
         add(StudyImporterForBaremore.class);
         add(StudyImporterForJRFerrerParis.class);
         add(StudyImporterForSPIRE.class);
