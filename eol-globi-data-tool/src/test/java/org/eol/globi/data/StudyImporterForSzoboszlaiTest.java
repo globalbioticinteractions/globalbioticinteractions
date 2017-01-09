@@ -11,6 +11,7 @@ import org.eol.globi.domain.Study;
 import org.eol.globi.geo.LatLng;
 import org.eol.globi.service.Dataset;
 import org.eol.globi.service.DatasetImpl;
+import org.eol.globi.service.DatasetLocal;
 import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
 import org.neo4j.graphdb.Relationship;
@@ -100,8 +101,10 @@ public class StudyImporterForSzoboszlaiTest extends GraphDBTestCase {
 
     @Test
     public void importShapes() throws StudyImporterException, IOException {
-        StudyImporterForSzoboszlai studyImporterForSzoboszlai = new StudyImporterForSzoboszlai(new ParserFactoryLocal(), nodeFactory);
-        studyImporterForSzoboszlai.setDataset(getTestDataset());
+        Dataset testDataset = getTestDataset();
+        ParserFactory parserFactory = new ParserFactoryForDataset(testDataset);
+        StudyImporterForSzoboszlai studyImporterForSzoboszlai = new StudyImporterForSzoboszlai(parserFactory, nodeFactory);
+        studyImporterForSzoboszlai.setDataset(testDataset);
 
         Map<Integer, LatLng> localityMap = studyImporterForSzoboszlai.importShapes();
 
@@ -116,11 +119,11 @@ public class StudyImporterForSzoboszlaiTest extends GraphDBTestCase {
                 "  \"doi\": \"http://dx.doi.org/10.5061/dryad.nv5d2\",\n" +
                 "  \"format\": \"szoboszlai\",\n" +
                 "  \"resources\": {\n" +
-                "    \"links\": \"classpath:szoboszlai/CCPDDlinkdata_v2.csv\",\n" +
-                "    \"shapes\": \"classpath:szoboszlai/CCPDDlocationdata_test.zip\"\n" +
+                "    \"links\": \"szoboszlai/CCPDDlinkdata_v2.csv\",\n" +
+                "    \"shapes\": \"szoboszlai/CCPDDlocationdata_test.zip\"\n" +
                 "  }\n" +
                 "}");
-        DatasetImpl dataset = new DatasetImpl("some/namespace", URI.create("http://example.com"));
+        Dataset dataset = new DatasetLocal();
         dataset.setConfig(config);
         return dataset;
     }
