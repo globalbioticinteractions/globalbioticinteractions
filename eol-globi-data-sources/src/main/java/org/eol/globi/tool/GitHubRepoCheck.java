@@ -6,7 +6,7 @@ import org.eol.globi.Version;
 import org.eol.globi.data.ImportLogger;
 import org.eol.globi.data.NodeFactory;
 import org.eol.globi.data.NodeFactoryException;
-import org.eol.globi.data.ParserFactoryImpl;
+import org.eol.globi.data.ParserFactoryLocal;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.data.StudyImporterForGitHubData;
 import org.eol.globi.domain.Environment;
@@ -53,7 +53,7 @@ public class GitHubRepoCheck {
         NodeFactoryLogging nodeFactory = new NodeFactoryLogging();
         List<DatasetFinder> finders = Collections.singletonList(new DatasetFinderGitHubArchiveMaster(Arrays.asList(args)));
         DatasetFinderCaching finder = new DatasetFinderCaching(new DatasetFinderProxy(finders));
-        StudyImporterForGitHubData studyImporterForGitHubData = new StudyImporterForGitHubData(new ParserFactoryImpl(), nodeFactory);
+        StudyImporterForGitHubData studyImporterForGitHubData = new StudyImporterForGitHubData(new ParserFactoryLocal(), nodeFactory);
         studyImporterForGitHubData.setLogger(new ImportLogger() {
             @Override
             public void info(Study study, String message) {

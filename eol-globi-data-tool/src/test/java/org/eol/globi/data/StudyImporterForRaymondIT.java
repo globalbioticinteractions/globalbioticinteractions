@@ -16,7 +16,7 @@ public class StudyImporterForRaymondIT extends GraphDBTestCase {
 
     @Test
     public void importStudy() throws StudyImporterException {
-        StudyImporterForRaymond importer = new StudyImporterForRaymond(new ParserFactoryImpl(), nodeFactory);
+        StudyImporterForRaymond importer = new StudyImporterForRaymond(new ParserFactoryLocal(), nodeFactory);
         importer.setGeoNamesService(new GeoNamesService() {
             @Override
             public boolean hasTermForLocale(String locality) {

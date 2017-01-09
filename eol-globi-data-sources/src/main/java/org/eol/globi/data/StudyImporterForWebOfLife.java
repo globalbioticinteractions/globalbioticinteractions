@@ -45,7 +45,7 @@ public class StudyImporterForWebOfLife extends BaseStudyImporter {
         try {
             List<StudyImporterException> errors = new ArrayList<StudyImporterException>();
             final String sourceCitation = "Web of Life. " + ReferenceUtil.createLastAccessedString("http://www.web-of-life.es/");
-            final List<String> networkNames = getNetworkNames();
+            final List<String> networkNames = getNetworkNames(getDataset().getResource(WEB_OF_LIFE_BASE_URL + "/networkslist.php?type=All&data=All"));
             LOG.info("found [" + networkNames.size() + "] networks.");
             for (String networkName : networkNames) {
                 final List<String> networkNames1 = Collections.singletonList(networkName);
@@ -67,7 +67,7 @@ public class StudyImporterForWebOfLife extends BaseStudyImporter {
 
     public void importNetworks(String archiveURL, String sourceCitation) throws StudyImporterException {
         try {
-            InputStream inputStream = ResourceUtil.asInputStream(archiveURL, StudyImporterForWebOfLife.class);
+            InputStream inputStream = getDataset().getResource(archiveURL);
             ZipInputStream zipInputStream = new ZipInputStream(inputStream);
             ZipEntry entry;
             File referencesTempFile = null;
@@ -174,8 +174,7 @@ public class StudyImporterForWebOfLife extends BaseStudyImporter {
         }
     }
 
-    public static List<String> getNetworkNames() throws IOException {
-        final InputStream networkList = ResourceUtil.asInputStream(WEB_OF_LIFE_BASE_URL + "/networkslist.php?type=All&data=All", null);
+    public static List<String> getNetworkNames(InputStream networkList) throws IOException {
         final JsonNode networks = new ObjectMapper().readTree(networkList);
         final List<String> networkNames = new ArrayList<String>();
         for (JsonNode network : networks) {

@@ -13,7 +13,7 @@ import org.apache.commons.logging.LogFactory;
 import org.eol.globi.Version;
 import org.eol.globi.data.NodeFactoryNeo4j;
 import org.eol.globi.data.ParserFactory;
-import org.eol.globi.data.ParserFactoryImpl;
+import org.eol.globi.data.ParserFactoryLocal;
 import org.eol.globi.data.StudyImporter;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.data.StudyImporterFactory;
@@ -118,7 +118,7 @@ public class Normalizer {
 
     public void importDatasets(CommandLine cmdLine, GraphDatabaseService graphService) {
         if (cmdLine == null || !cmdLine.hasOption(OPTION_SKIP_IMPORT)) {
-            Collection<Class<? extends StudyImporter>> importers = StudyImporterFactory.getOpenImporters();
+            Collection<Class<? extends StudyImporter>> importers = StudyImporterFactory.getImporters();
             importData(graphService, importers);
         } else {
             LOG.info("skipping data import...");
@@ -239,8 +239,7 @@ public class Normalizer {
 
     private StudyImporter createStudyImporter(Class<? extends StudyImporter> studyImporter, NodeFactoryNeo4j factory) throws StudyImporterException {
         factory.setEcoregionFinder(getEcoregionFinder());
-        ParserFactory parserFactory = new ParserFactoryImpl();
-        StudyImporter importer = new StudyImporterFactory(parserFactory, factory).instantiateImporter(studyImporter);
+        StudyImporter importer = new StudyImporterFactory(factory).instantiateImporter(studyImporter);
         if (importer.shouldCrossCheckReference()) {
             factory.setDoiResolver(new DOIResolverImpl());
         } else {

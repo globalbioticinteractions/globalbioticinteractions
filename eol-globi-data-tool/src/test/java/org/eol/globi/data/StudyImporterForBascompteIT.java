@@ -2,6 +2,7 @@ package org.eol.globi.data;
 
 import org.eol.globi.domain.Study;
 import org.eol.globi.util.NodeUtil;
+import org.eol.globi.util.ResourceUtil;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -39,7 +40,7 @@ public class StudyImporterForBascompteIT extends GraphDBTestCase {
 
     @Test
     public void getNetworkNames() throws IOException {
-        final List<String> networkNames = StudyImporterForWebOfLife.getNetworkNames();
+        final List<String> networkNames = StudyImporterForWebOfLife.getNetworkNames(ResourceUtil.asInputStream(StudyImporterForWebOfLife.WEB_OF_LIFE_BASE_URL + "/networkslist.php?type=All&data=All", null));
         assertThat(networkNames, hasItem("A_HP_001"));
     }
 }

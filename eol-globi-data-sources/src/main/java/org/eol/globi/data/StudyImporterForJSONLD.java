@@ -18,6 +18,7 @@ import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TaxonomyProvider;
+import org.eol.globi.service.DatasetLocal;
 import org.eol.globi.util.ResourceUtil;
 import org.joda.time.DateTime;
 
@@ -48,7 +49,7 @@ public class StudyImporterForJSONLD extends BaseStudyImporter {
 
         Query query;
         try {
-            query = QueryFactory.create(IOUtils.toString(ResourceUtil.asInputStream("/org/eol/globi/data/find-jsonld-interactions.rq", getClass()), CharsetConstant.UTF8));
+            query = QueryFactory.create(IOUtils.toString(new DatasetLocal().getResource("find-jsonld-interactions.rq"), CharsetConstant.UTF8));
         } catch (IOException e) {
             throw new StudyImporterException("failed to find sparql query", e);
         }

@@ -8,7 +8,6 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.domain.Environment;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.LocationImpl;
-import org.eol.globi.domain.LocationNode;
 import org.eol.globi.domain.NodeBacked;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Specimen;
@@ -59,7 +58,7 @@ public class StudyImporterForGoMexSI2IT extends GraphDBTestCase {
     }
 
     protected StudyImporterForGoMexSI2 importWithCommit(String baseUrlLastCommit) throws StudyImporterException, IOException {
-        StudyImporterForGoMexSI2 importer = new StudyImporterForGoMexSI2(new ParserFactoryImpl(), nodeFactory);
+        StudyImporterForGoMexSI2 importer = new StudyImporterForGoMexSI2(new ParserFactoryLocal(), nodeFactory);
         final List<String> msgs = new ArrayList<String>();
         importer.setLogger(new ImportLogger() {
             @Override

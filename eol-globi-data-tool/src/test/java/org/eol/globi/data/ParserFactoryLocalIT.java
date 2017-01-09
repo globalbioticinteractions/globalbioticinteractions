@@ -9,11 +9,11 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
 
-public class ParserFactoryImplIT {
+public class ParserFactoryLocalIT {
 
     @Test
     public void retrieveRemoteResource() throws IOException {
-        LabeledCSVParser parser = new ParserFactoryImpl().createParser("http://www.esapubs.org/archive/ecol/E095/124/PairwiseList.txt", "UTF-8");
+        LabeledCSVParser parser = new ParserFactoryLocal().createParser("http://www.esapubs.org/archive/ecol/E095/124/PairwiseList.txt", "UTF-8");
         parser.changeDelimiter('\t');
         parser.getLine();
         assertThat(parser.getValueByLabel("PREDATOR"), is(notNullValue()));

@@ -33,7 +33,7 @@ public class StudyImporterForAkinTest extends GraphDBTestCase {
 
     @Test
     public void importAll() throws StudyImporterException {
-        StudyImporter importer = new StudyImporterFactory(new ParserFactoryImpl(), nodeFactory)
+        StudyImporter importer = new StudyImporterFactory(nodeFactory)
                 .instantiateImporter(StudyImporterForAkin.class);
         importStudy(importer);
 

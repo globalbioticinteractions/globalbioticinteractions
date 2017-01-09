@@ -25,7 +25,7 @@ import static org.junit.Assert.assertThat;
 public class StudyImporterForICESTest extends GraphDBTestCase {
     @Test
     public void importOneEveryThousandLines() throws StudyImporterException {
-        StudyImporterForICES studyImporterFor = new StudyImporterForICES(new ParserFactoryImpl(), nodeFactory);
+        StudyImporterForICES studyImporterFor = new StudyImporterForICES(new ParserFactoryLocal(), nodeFactory);
         studyImporterFor.setFilter(new ImportFilter() {
             @Override
             public boolean shouldImportRecord(Long recordNumber) {

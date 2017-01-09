@@ -17,7 +17,7 @@ public class StudyImporterForBellTest extends GraphDBTestCase {
 
     @Test
     public void importAll() throws StudyImporterException, NodeFactoryException {
-        StudyImporter importer = new StudyImporterForBell(new ParserFactoryImpl(), nodeFactory);
+        StudyImporter importer = new StudyImporterForBell(new ParserFactoryLocal(), nodeFactory);
         importStudy(importer);
         List<Study> allStudies = NodeUtil.findAllStudies(getGraphDb());
         assertThat(allStudies.size(), is(6));

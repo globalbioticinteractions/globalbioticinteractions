@@ -2,7 +2,6 @@ package org.eol.globi.data;
 
 
 import org.eol.globi.domain.Location;
-import org.eol.globi.domain.LocationNode;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.SpecimenNode;
 import org.eol.globi.domain.Study;
@@ -19,7 +18,7 @@ public class StudyImporterForRobledoTest extends GraphDBTestCase {
 
     @Test
     public void createAndPopulateStudy() throws StudyImporterException, NodeFactoryException {
-        StudyImporterForRobledo importer = new StudyImporterForRobledo(new ParserFactoryImpl(), nodeFactory);
+        StudyImporterForRobledo importer = new StudyImporterForRobledo(new ParserFactoryLocal(), nodeFactory);
 
         importStudy(importer);
         Study study = getStudySingleton(getGraphDb());

@@ -8,8 +8,10 @@ import java.io.IOException;
 import java.io.StringReader;
 
 import static junit.framework.Assert.assertEquals;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 
-public class ParserFactoryImplTest {
+public class ParserFactoryLocalTest {
 
     @Test
     public void parse() throws IOException {
@@ -38,7 +40,7 @@ public class ParserFactoryImplTest {
     public void parseCompressedDataSet() throws IOException {
         LabeledCSVParser labeledCSVParser = null;
         try {
-            labeledCSVParser = new ParserFactoryImpl().createParser(StudyImporterForSimons.MISSISSIPPI_ALABAMA_DATA_SOURCE, "UTF-8");
+            labeledCSVParser = new ParserFactoryLocal().createParser(StudyImporterForSimons.MISSISSIPPI_ALABAMA_DATA_SOURCE, "UTF-8");
             labeledCSVParser.getLine();
             assertFirstLine(labeledCSVParser);
             labeledCSVParser.getLine();

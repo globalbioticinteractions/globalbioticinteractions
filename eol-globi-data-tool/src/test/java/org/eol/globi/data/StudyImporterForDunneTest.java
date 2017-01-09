@@ -20,7 +20,7 @@ public class StudyImporterForDunneTest extends GraphDBTestCase {
 
     @Test
     public void importStudy() throws StudyImporterException, IOException {
-        StudyImporterForDunne importer = new StudyImporterForDunne(new ParserFactoryImpl(), nodeFactory);
+        StudyImporterForDunne importer = new StudyImporterForDunne(new ParserFactoryLocal(), nodeFactory);
 
         String configJson = "{ \"citation\": \"blabla\",\n" +
                 "  \"format\": \"dunne\",\n" +
@@ -75,7 +75,7 @@ public class StudyImporterForDunneTest extends GraphDBTestCase {
                 "    \"longitude\": 60\n" +
                 "  }\n" +
                 "}";
-        StudyImporterForDunne importer = new StudyImporterForDunne(new ParserFactoryImpl(), nodeFactory);
+        StudyImporterForDunne importer = new StudyImporterForDunne(new ParserFactoryLocal(), nodeFactory);
         DatasetImpl dunne2016 = new DatasetImpl("dunne2016", URI.create("http://example.com"));
         dunne2016.setConfig(new ObjectMapper().readTree(configJson));
         importer.setDataset(dunne2016);

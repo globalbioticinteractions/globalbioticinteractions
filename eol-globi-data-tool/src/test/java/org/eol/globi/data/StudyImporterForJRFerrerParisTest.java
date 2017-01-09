@@ -19,7 +19,7 @@ public class StudyImporterForJRFerrerParisTest extends GraphDBTestCase {
     @Ignore(value = "too slow for regular use")
     @Test
     public void testFullImport() throws StudyImporterException {
-        StudyImporterForJRFerrerParis studyImporterForJRFerrerParis = new StudyImporterForJRFerrerParis(new ParserFactoryImpl(), nodeFactory);
+        StudyImporterForJRFerrerParis studyImporterForJRFerrerParis = new StudyImporterForJRFerrerParis(new ParserFactoryLocal(), nodeFactory);
         studyImporterForJRFerrerParis.importStudy();
 
         List<Study> studies = NodeUtil.findAllStudies(getGraphDb());

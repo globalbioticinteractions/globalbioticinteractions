@@ -16,7 +16,7 @@ public class StudyImporterForStronaIT extends GraphDBTestCase {
 
     @Test
     public void importFirst200() throws NodeFactoryException, StudyImporterException {
-        StudyImporter importer = new StudyImporterForStrona(new ParserFactoryImpl(), nodeFactory);
+        StudyImporter importer = new StudyImporterForStrona(new ParserFactoryLocal(), nodeFactory);
         importer.setFilter(new ImportFilter() {
             @Override
             public boolean shouldImportRecord(Long recordNumber) {

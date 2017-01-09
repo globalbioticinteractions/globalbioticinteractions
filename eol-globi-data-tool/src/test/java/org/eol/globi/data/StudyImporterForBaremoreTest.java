@@ -46,7 +46,7 @@ public class StudyImporterForBaremoreTest extends GraphDBTestCase {
 
     @Test
     public void importAll() throws StudyImporterException, NodeFactoryException {
-        StudyImporterForBaremore studyImporter = new StudyImporterForBaremore(new ParserFactoryImpl(), nodeFactory);
+        StudyImporterForBaremore studyImporter = new StudyImporterForBaremore(new ParserFactoryLocal(), nodeFactory);
 
         importStudy(studyImporter);
 

@@ -10,8 +10,6 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.domain.TaxonomyProvider;
 import org.eol.globi.geo.LatLng;
-import org.eol.globi.service.DatasetUtil;
-import org.eol.globi.util.ResourceUtil;
 import org.geotools.data.FeatureReader;
 import org.geotools.data.FileDataStore;
 import org.geotools.data.FileDataStoreFinder;
@@ -43,11 +41,11 @@ public class StudyImporterForSzoboszlai extends BaseStudyImporter {
     public void importStudy() throws StudyImporterException {
         try {
             Map<Integer, LatLng> localeMap = importShapes();
-            importLinks(ResourceUtil.asInputStream(getLinkArchiveURL(), null)
+            importLinks(getDataset().getResource("links")
                     , new InteractionListenerImpl(nodeFactory, getGeoNamesService(), getLogger())
                     , localeMap);
         } catch (IOException e) {
-            throw new StudyImporterException("failed to find: [" + getLinkArchiveURL() + "]");
+            throw new StudyImporterException("failed to import [" + getDataset().getArchiveURI().toString() + "]");
         }
     }
 
@@ -117,31 +115,23 @@ public class StudyImporterForSzoboszlai extends BaseStudyImporter {
                     link.put(DECIMAL_LONGITUDE, Double.toString(latLng.getLng()));
                 }
             } catch (NumberFormatException ex) {
-                throw new StudyImporterException("found invalid LocalNum [" + locatNum + "] in [" + getLinkArchiveURL() + "]:" + parser.lastLineNumber(), ex);
+                throw new StudyImporterException("found invalid LocalNum [" + locatNum + "] " + parser.lastLineNumber(), ex);
             }
         }
         return link;
-    }
-
-    public String getLinkArchiveURL() {
-        return DatasetUtil.getNamedResourceURI(getDataset(), "links");
-    }
-
-    public String getShapeArchiveURL() {
-        return DatasetUtil.getNamedResourceURI(getDataset(), "shapes");
     }
 
     protected Map<Integer, LatLng> importShapes() throws StudyImporterException {
         Map<Integer, LatLng> localityMap = new TreeMap<>();
         FileDataStore dataStore = null;
         try {
-            InputStream shapeZipArchive = ResourceUtil.asInputStream(getShapeArchiveURL(), getClass());
+            InputStream shapeZipArchive = getDataset().getResource("shapes");
             File tmpFolder = new File(FileUtils.getTempDirectory(), UUID.randomUUID().toString());
             tmpFolder.deleteOnExit();
             unpackZip(shapeZipArchive, tmpFolder);
             dataStore = FileDataStoreFinder.getDataStore(new File(tmpFolder, "LocatPolygonsPoints.shp"));
             if (dataStore == null) {
-                throw new StudyImporterException("failed to parse shapefiles [" + getShapeArchiveURL() + "]");
+                throw new StudyImporterException("failed to parse shapefiles");
             }
             FeatureReader<SimpleFeatureType, SimpleFeature> featureReader = dataStore.getFeatureReader();
             while (featureReader.hasNext()) {
@@ -158,7 +148,7 @@ public class StudyImporterForSzoboszlai extends BaseStudyImporter {
             }
             featureReader.close();
         } catch (IOException e) {
-            throw new StudyImporterException("failed to import [" + getShapeArchiveURL() + "]", e);
+            throw new StudyImporterException(e);
         } finally {
             if (dataStore != null) {
                 dataStore.dispose();

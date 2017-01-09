@@ -47,8 +47,8 @@ public class StudyImporterForBioInfoTest extends GraphDBTestCase {
             "\"4029\",\"Foodplant / open feeder\",\"grazes on\",\"is grazed by\",\"102829\",\"NHMSYS0020480647\",\"www.bioinfo.org.uk/html/Abia_sericea.htm\",\"\",\"\",\"\",\"larva\",\"\",\"\",\"\",\"leaf\",\"\",\"\",\"\",\" \",\"\",\"\",\"\",\"\",\"\",\"larva of <active> grazes on leaf of <passive>\",\"leaf of <passive> is grazed by larva of <active>\",\"1283\",\"NBNSYS0000004352\",\"www.bioinfo.org.uk/html/Succisa_pratensis.htm\",\"\",\"60536\"\n";
 
     @Test
-    public void importAbout600Records() throws StudyImporterException, NodeFactoryException {
-        StudyImporter importer = new StudyImporterFactory(new ParserFactoryImpl(), nodeFactory).instantiateImporter((Class) StudyImporterForBioInfo.class);
+    public void importAbout600Records() throws StudyImporterException {
+        StudyImporter importer = new StudyImporterFactory(nodeFactory).instantiateImporter((Class) StudyImporterForBioInfo.class);
         final List<String> msgs = new ArrayList<String>();
         importer.setLogger(new ImportLogger() {
             @Override
@@ -115,7 +115,7 @@ public class StudyImporterForBioInfoTest extends GraphDBTestCase {
 
         LabeledCSVParser labeledCSVParser = createParser(RELATIONS_STRING);
 
-        StudyImporterForBioInfo importer = new StudyImporterForBioInfo(new ParserFactoryImpl(), nodeFactory);
+        StudyImporterForBioInfo importer = new StudyImporterForBioInfo(new ParserFactoryLocal(), nodeFactory);
         importer.createRelations(labeledCSVParser, new HashMap<String, String>() {{
             put("60527", "citation A");
             put("60536", "citation B");

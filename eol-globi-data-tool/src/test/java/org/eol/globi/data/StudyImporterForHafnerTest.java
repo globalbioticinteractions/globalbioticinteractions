@@ -11,7 +11,7 @@ public class StudyImporterForHafnerTest extends GraphDBTestCase {
     @Test
     public void importAll() throws StudyImporterException, NodeFactoryException {
 
-        StudyImporter importer = new StudyImporterForHafner(new ParserFactoryImpl(), nodeFactory);
+        StudyImporter importer = new StudyImporterForHafner(new ParserFactoryLocal(), nodeFactory);
         importStudy(importer);
 
 

@@ -96,7 +96,7 @@ public class StudyImporterForHechinger extends StudyImporterNodesAndLinks {
                 }
             }
 
-            LabeledCSVParser links = parserFactory.createParser(getLinkResource(), CharsetConstant.UTF8);
+            LabeledCSVParser links = parserFactory.createParser(getLinksResourceName(), CharsetConstant.UTF8);
             links.changeDelimiter(getDelimiter());
             while (links.getLine() != null) {
                 List<Location> locations = new ArrayList<>();

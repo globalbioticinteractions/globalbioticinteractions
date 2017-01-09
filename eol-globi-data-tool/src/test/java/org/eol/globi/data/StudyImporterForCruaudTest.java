@@ -17,7 +17,7 @@ public class StudyImporterForCruaudTest extends GraphDBTestCase {
 
     @Test
     public void importAll() throws NodeFactoryException, StudyImporterException {
-        StudyImporterForCruaud importer = new StudyImporterForCruaud(new ParserFactoryImpl(), nodeFactory);
+        StudyImporterForCruaud importer = new StudyImporterForCruaud(new ParserFactoryLocal(), nodeFactory);
         importer.setGeoNamesService(new GeoNamesService() {
             @Override
             public boolean hasTermForLocale(String locality) {

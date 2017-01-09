@@ -36,7 +36,7 @@ public class DatasetProxyTest {
     public void getResource() throws IOException {
         JsonNode configProxy = new ObjectMapper().readTree("{ \"resources\": { \"archive\": \"archive.zip\" } }");
         DatasetProxy testDataset = getTestDataset(null, configProxy);
-        assertThat(testDataset.getResourceURI("someResource.txt").toString(), Is.is("http://example.com/someResource.txt"));
+        assertThat(testDataset.getResourceURI("someResource.csv").toString(), Is.is("http://example.com/someResource.csv"));
         assertThat(DatasetUtil.getNamedResourceURI(testDataset, "archive"), Is.is("http://example.com/archive.zip"));
 
         JsonNode config = new ObjectMapper().readTree("{ \"resources\": { \"archive\": \"someOtherArchive.zip\" } }");

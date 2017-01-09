@@ -155,7 +155,7 @@ public class StudyImporterForWrastTest extends GraphDBTestCase {
 
     @Test
     public void testImportFullFile() throws StudyImporterException {
-        StudyImporterForWrast importer = new StudyImporterForWrast(new ParserFactoryImpl(), nodeFactory);
+        StudyImporterForWrast importer = new StudyImporterForWrast(new ParserFactoryLocal(), nodeFactory);
         importStudy(importer);
     }
 

@@ -19,9 +19,9 @@ public class StudyImporterForWood extends StudyImporterNodesAndLinks {
     @Override
     public void importStudy() throws StudyImporterException {
         try {
-            importLinks(ResourceUtil.asInputStream(getLinkResource(), null), new InteractionListenerImpl(nodeFactory, getGeoNamesService(), getLogger()), getFilter());
+            importLinks(getDataset().getResource(getLinksResourceName()), new InteractionListenerImpl(nodeFactory, getGeoNamesService(), getLogger()), getFilter());
         } catch (IOException e) {
-            throw new StudyImporterException("failed to find: [" + getLinkResource() + "]");
+            throw new StudyImporterException(e);
         }
     }
 

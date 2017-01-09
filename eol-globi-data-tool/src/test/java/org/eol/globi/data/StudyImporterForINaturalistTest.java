@@ -1,5 +1,7 @@
 package org.eol.globi.data;
 
+import com.Ostermiller.util.CSVParser;
+import com.Ostermiller.util.LabeledCSVParser;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.domain.InteractType;
@@ -8,7 +10,6 @@ import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.SpecimenConstant;
 import org.eol.globi.domain.SpecimenNode;
 import org.eol.globi.domain.Study;
-import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonomyProvider;
 import org.eol.globi.service.PropertyEnricherException;
@@ -39,7 +40,7 @@ public class StudyImporterForINaturalistTest extends GraphDBTestCase {
 
     @Before
     public void setup() {
-        importer = new StudyImporterForINaturalist(null, nodeFactory);
+        importer = new StudyImporterForINaturalist(new ParserFactoryLocal(), nodeFactory);
     }
 
     @Test
@@ -56,7 +57,7 @@ public class StudyImporterForINaturalistTest extends GraphDBTestCase {
     @Test
     public void loadInteractionMap() throws IOException {
         InputStream is = ResourceUtil.asInputStream(StudyImporterForINaturalist.TYPE_MAP_URI_DEFAULT, null);
-        Map<Integer, InteractType> typeMap = StudyImporterForINaturalist.buildTypeMap(StudyImporterForINaturalist.TYPE_MAP_URI_DEFAULT, is);
+        Map<Integer, InteractType> typeMap = StudyImporterForINaturalist.buildTypeMap(StudyImporterForINaturalist.TYPE_MAP_URI_DEFAULT, new LabeledCSVParser(new CSVParser(is)));
 
         assertThat(typeMap.get(13), is(InteractType.ATE));
         assertThat(typeMap.get(1685), is(InteractType.ATE));
@@ -68,7 +69,7 @@ public class StudyImporterForINaturalistTest extends GraphDBTestCase {
     public void loadIgnoredInteractions() throws IOException {
         String resource = StudyImporterForINaturalist.TYPE_IGNORED_URI_DEFAULT;
         InputStream is = ResourceUtil.asInputStream(resource, null);
-        List<Integer> typeMap1 = StudyImporterForINaturalist.buildTypesIgnored(is);
+        List<Integer> typeMap1 = StudyImporterForINaturalist.buildTypesIgnored(new LabeledCSVParser(new CSVParser(is)));
 
         assertThat(typeMap1.contains(13), is(false));
         assertThat(typeMap1.contains(1378), is(true));

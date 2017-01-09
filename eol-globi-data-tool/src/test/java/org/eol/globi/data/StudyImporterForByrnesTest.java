@@ -24,7 +24,7 @@ public class StudyImporterForByrnesTest extends GraphDBTestCase {
 
     @Test
     public void importAll() throws StudyImporterException {
-        StudyImporterForByrnes studyImporterForByrnes = new StudyImporterForByrnes(new ParserFactoryImpl(), nodeFactory);
+        StudyImporterForByrnes studyImporterForByrnes = new StudyImporterForByrnes(new ParserFactoryLocal(), nodeFactory);
         studyImporterForByrnes.importStudy();
         resolveNames();
 

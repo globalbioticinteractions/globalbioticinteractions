@@ -37,7 +37,6 @@ public class StudyImporterForWoodTest extends GraphDBTestCase {
     }
 
     StudyImporterForWood createImporter() throws IOException {
-        StudyImporterForWood wood = new StudyImporterForWood(new ParserFactoryImpl(), nodeFactory);
 
         JsonNode config = new ObjectMapper().readTree("{ \"citation\": \"Wood SA, Russell R, Hanson D, Williams RJ, Dunne JA (2015) Data from: Effects of spatial scale of sampling on food web structure. Dryad Digital Repository. http://dx.doi.org/10.5061/dryad.g1qr6\",\n" +
                 "  \"doi\": \"http://dx.doi.org/10.5061/dryad.g1qr6\",\n" +
@@ -56,6 +55,8 @@ public class StudyImporterForWoodTest extends GraphDBTestCase {
                 "}");
         DatasetImpl dataset = new DatasetImpl("some/namespace", URI.create("http://example.com"));
         dataset.setConfig(config);
+
+        StudyImporterForWood wood = new StudyImporterForWood(new ParserFactoryForDataset(dataset), nodeFactory);
         wood.setDataset(dataset);
         return wood;
     }

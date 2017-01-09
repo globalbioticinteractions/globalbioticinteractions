@@ -1,10 +1,14 @@
 package org.eol.globi.data;
 
 import org.eol.globi.domain.Study;
+import org.eol.globi.service.DatasetImpl;
+import org.eol.globi.service.DatasetLocal;
 import org.eol.globi.util.NodeUtil;
+import org.eol.globi.util.ResourceUtil;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -20,6 +24,7 @@ public class StudyImporterForWebOfLifeTest extends GraphDBTestCase {
     @Test
     public void importSome() throws StudyImporterException, IOException {
         StudyImporterForWebOfLife importer = new StudyImporterForWebOfLife(null, nodeFactory);
+        importer.setDataset(new DatasetLocal());
         importer.importNetworks("bascompte/web-of-life_2016-01-15_192434.zip", "Web of Life. " + ReferenceUtil.createLastAccessedString("http://www.web-of-life.es/"));
         resolveNames();
 
@@ -38,7 +43,7 @@ public class StudyImporterForWebOfLifeTest extends GraphDBTestCase {
 
     @Test
     public void retrieveNetworkList() throws IOException {
-        final List<String> networkNames = StudyImporterForWebOfLife.getNetworkNames();
+        final List<String> networkNames = StudyImporterForWebOfLife.getNetworkNames(ResourceUtil.asInputStream(StudyImporterForWebOfLife.WEB_OF_LIFE_BASE_URL + "/networkslist.php?type=All&data=All", null));
 
         assertThat(networkNames, hasItem("A_HP_002"));
         assertThat(networkNames.size() > 50, is(true));

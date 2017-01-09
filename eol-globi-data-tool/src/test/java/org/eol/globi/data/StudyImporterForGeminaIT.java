@@ -10,7 +10,7 @@ public class StudyImporterForGeminaIT extends GraphDBTestCase {
 
     @Test
     public void createAndPopulateStudyGitHubMostRecent() throws StudyImporterException, IOException, URISyntaxException {
-        StudyImporterForGemina importer = new StudyImporterForGemina(new ParserFactoryImpl(), nodeFactory);
+        StudyImporterForGemina importer = new StudyImporterForGemina(new ParserFactoryLocal(), nodeFactory);
         importStudy(importer);
     }
 

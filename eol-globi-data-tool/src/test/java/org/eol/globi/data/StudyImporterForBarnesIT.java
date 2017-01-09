@@ -23,7 +23,7 @@ public class StudyImporterForBarnesIT extends GraphDBTestCase {
 
     @Test
     public void importOnceInAWhile() throws StudyImporterException {
-        StudyImporterForBarnes studyImporterForBarnes = new StudyImporterForBarnes(new ParserFactoryImpl(), nodeFactory);
+        StudyImporterForBarnes studyImporterForBarnes = new StudyImporterForBarnes(new ParserFactoryLocal(), nodeFactory);
         studyImporterForBarnes.setFilter(new ImportFilter() {
             @Override
             public boolean shouldImportRecord(Long recordNumber) {

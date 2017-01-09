@@ -10,8 +10,8 @@ public class StudyImporterFactoryTest {
 
     @Test
     public void checkStudyImporters() throws StudyImporterException {
-        for (Class importer : StudyImporterFactory.getOpenImporters()) {
-            assertThat("failed to instantiate [" + importer.getSimpleName() + "] found", new StudyImporterFactory(null, null).instantiateImporter(importer), is(notNullValue()));
+        for (Class importer : StudyImporterFactory.getImporters()) {
+            assertThat("failed to instantiate [" + importer.getSimpleName() + "] found", new StudyImporterFactory(null).instantiateImporter(importer), is(notNullValue()));
         }
     }
 

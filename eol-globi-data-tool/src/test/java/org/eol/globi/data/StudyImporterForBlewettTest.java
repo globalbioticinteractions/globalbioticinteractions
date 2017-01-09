@@ -49,7 +49,7 @@ public class StudyImporterForBlewettTest extends GraphDBTestCase {
 
     @Test
     public void importAll() throws StudyImporterException {
-        StudyImporter importer = new StudyImporterFactory(new ParserFactoryImpl(), nodeFactory).instantiateImporter((Class) StudyImporterForBlewett.class);
+        StudyImporter importer = new StudyImporterFactory(nodeFactory).instantiateImporter((Class) StudyImporterForBlewett.class);
         importStudy(importer);
 
         Study study = getStudySingleton(getGraphDb());

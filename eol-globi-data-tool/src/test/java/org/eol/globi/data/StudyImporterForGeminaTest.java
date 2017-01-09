@@ -63,7 +63,7 @@ public class StudyImporterForGeminaTest extends GraphDBTestCase {
 
     @Test
     public void importAll() throws StudyImporterException, NodeFactoryException {
-        StudyImporterForGemina importer = new StudyImporterForGemina(new ParserFactoryImpl(), nodeFactory);
+        StudyImporterForGemina importer = new StudyImporterForGemina(new ParserFactoryLocal(), nodeFactory);
         importStudy(importer);
         assertHuman();
 

@@ -53,8 +53,8 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
         setTypeIgnoredURI(TYPE_IGNORED_URI_DEFAULT);
     }
 
-    public static Map<Integer, InteractType> buildTypeMap(String resource, InputStream is) throws IOException {
-        LabeledCSVParser parser = new LabeledCSVParser(new CSVParser(is));
+    public static Map<Integer, InteractType> buildTypeMap(String resource, LabeledCSVParser labeledCSVParser) throws IOException {
+        LabeledCSVParser parser = labeledCSVParser;
         Map<Integer, InteractType> typeMap = new TreeMap<Integer, InteractType>();
         while (parser.getLine() != null) {
             String inatIdString = parser.getValueByLabel("observation_field_id");
@@ -79,8 +79,8 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
         return typeMap;
     }
 
-    public static List<Integer> buildTypesIgnored(InputStream is) throws IOException {
-        LabeledCSVParser parser = new LabeledCSVParser(new CSVParser(is));
+    public static List<Integer> buildTypesIgnored(LabeledCSVParser labeledCSVParser) throws IOException {
+        LabeledCSVParser parser = labeledCSVParser;
         List<Integer> typeMap1 = new ArrayList<Integer>();
         while (parser.getLine() != null) {
             String inatIdString = parser.getValueByLabel("observation_field_id");
@@ -134,13 +134,14 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
     private int retrieveDataParseResults() throws StudyImporterException {
         List<Integer> typesIgnored;
         try {
-            typesIgnored = buildTypesIgnored(ResourceUtil.asInputStream(getTypeIgnoredURI(), null));
+            typesIgnored = buildTypesIgnored(parserFactory.createParser(getTypeIgnoredURI(), CharsetConstant.UTF8));
         } catch (IOException e) {
             throw new StudyImporterException("failed to load ignored interaction types from [" + getTypeIgnoredURI() + "]");
         }
         Map<Integer, InteractType> typeMap;
         try {
-            typeMap = buildTypeMap(getTypeMapURI(), ResourceUtil.asInputStream(getTypeMapURI(), null));
+            LabeledCSVParser labeledCSVParser = parserFactory.createParser(getTypeMapURI(), CharsetConstant.UTF8);
+            typeMap = buildTypeMap(getTypeMapURI(), labeledCSVParser);
         } catch (IOException e) {
             throw new StudyImporterException("failed to load interaction mapping from [" + getTypeMapURI() + "]");
         }

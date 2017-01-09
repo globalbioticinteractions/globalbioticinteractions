@@ -69,7 +69,7 @@ public class StudyImporterForCookTest extends GraphDBTestCase {
 
     @Test
     public void importAll() throws StudyImporterException {
-        StudyImporterForCook importer = new StudyImporterForCook(new ParserFactoryImpl(), nodeFactory);
+        StudyImporterForCook importer = new StudyImporterForCook(new ParserFactoryLocal(), nodeFactory);
         importStudy(importer);
         Study study = getStudySingleton(getGraphDb());
 

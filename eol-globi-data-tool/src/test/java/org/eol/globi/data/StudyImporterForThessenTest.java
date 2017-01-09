@@ -22,7 +22,7 @@ public class StudyImporterForThessenTest extends GraphDBTestCase {
 
     @Test
     public void importSome() throws StudyImporterException, NodeFactoryException {
-        StudyImporterForThessen importer = new StudyImporterForThessen(new ParserFactoryImpl(), nodeFactory);
+        StudyImporterForThessen importer = new StudyImporterForThessen(new ParserFactoryLocal(), nodeFactory);
         importer.setFilter(new ImportFilter() {
             @Override
             public boolean shouldImportRecord(Long recordNumber) {
