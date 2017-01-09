@@ -9,18 +9,23 @@ public class Version {
 
     public static String getVersion() {
         InputStream resourceAsStream = Version.class.getResourceAsStream("/META-INF/MANIFEST.MF");
+        String version = versionFromStream(resourceAsStream);
+
+        return version == null ? "dev" : version;
+    }
+
+    public static String versionFromStream(InputStream resourceAsStream) {
         String version = null;
         if (resourceAsStream != null) {
             try {
                 Manifest manifest = new Manifest(resourceAsStream);
                 Attributes attributes = manifest.getMainAttributes();
-                version = (String) attributes.get("Implementation-Version");
+                version = attributes.getValue("Implementation-Version");
             } catch (IOException e) {
                 //
             }
         }
-
-        return version == null ? "dev" : version;
+        return version;
     }
 
     public static String getVersionInfo(Class mainClass) {
