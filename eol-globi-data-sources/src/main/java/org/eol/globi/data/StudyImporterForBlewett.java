@@ -106,13 +106,6 @@ public class StudyImporterForBlewett extends BaseStudyImporter {
         return dateTimeWithZone.toDate();
     }
 
-    static String dateToString(Date time) {
-        DateTime dateTime = new DateTime(time);
-        DateTimeFormatter fmtDateTime = DateTimeFormat.forPattern("dd-MMM-yy HH:mm:ss zzzz");
-        fmtDateTime = fmtDateTime.withZone(DateTimeZone.forID("US/Central"));
-        return fmtDateTime.print(dateTime);
-    }
-
     private void parsePredatorPreyInteraction(Study study, Map<String, Location> locationMap, Map<String, Date> collectionTimeMap) throws IOException, NodeFactoryException, TermLookupServiceException {
         LabeledCSVParser parser = parserFactory.createParser("blewett/SnookDietData2000_02_Charlotte_Harbor_FL_Blewett_numeric_abundance.csv", CharsetConstant.UTF8);
         String[] header = parser.getLabels();

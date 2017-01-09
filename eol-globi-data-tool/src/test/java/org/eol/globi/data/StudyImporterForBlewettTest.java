@@ -13,6 +13,11 @@ import org.eol.globi.domain.Taxon;
 import org.eol.globi.service.TermLookupService;
 import org.eol.globi.taxon.UberonLookupService;
 import org.eol.globi.util.NodeUtil;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.ISODateTimeFormat;
 import org.junit.Test;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
@@ -32,6 +37,12 @@ import static org.junit.Assert.assertThat;
 
 public class StudyImporterForBlewettTest extends GraphDBTestCase {
 
+    static String dateToString(Date time) {
+        DateTime dateTime = new DateTime(time);
+        DateTimeFormatter dateTimeFormatter = ISODateTimeFormat.dateTime();
+        return dateTimeFormatter.withZone(DateTimeZone.forID("US/Central")).print(dateTime);
+    }
+
     @Override
     protected TermLookupService getTermLookupService() {
         return new UberonLookupService();
@@ -44,7 +55,7 @@ public class StudyImporterForBlewettTest extends GraphDBTestCase {
         instance.setTime(date);
         assertThat(instance.get(Calendar.YEAR), is(2000));
         assertThat(instance.get(Calendar.MONTH), is(Calendar.MARCH));
-        assertThat(StudyImporterForBlewett.dateToString(date), is("01-Mar-00 10:55:00 Central Standard Time"));
+        assertThat(dateToString(date), is("2000-03-01T10:55:00.000-06:00"));
     }
 
     @Test
@@ -115,7 +126,7 @@ public class StudyImporterForBlewettTest extends GraphDBTestCase {
         Relationship collectedRel = collectedRels.iterator().next();
         Date unixEpochProperty = nodeFactory.getUnixEpochProperty(new SpecimenNode(collectedRel.getEndNode()));
         assertThat(unixEpochProperty, is(not(nullValue())));
-        assertThat(StudyImporterForBlewett.dateToString(unixEpochProperty), is("01-Mar-00 10:55:00 Central Standard Time"));
+        assertThat(dateToString(unixEpochProperty), is("2000-03-01T10:55:00.000-06:00"));
 
         Node predatorNode = collectedRel.getEndNode();
         assertThat((String) predatorNode.getProperty(SpecimenConstant.LIFE_STAGE_LABEL), is("post-juvenile adult stage"));
