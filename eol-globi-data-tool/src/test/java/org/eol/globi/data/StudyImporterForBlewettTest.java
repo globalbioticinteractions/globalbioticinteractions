@@ -44,7 +44,7 @@ public class StudyImporterForBlewettTest extends GraphDBTestCase {
         instance.setTime(date);
         assertThat(instance.get(Calendar.YEAR), is(2000));
         assertThat(instance.get(Calendar.MONTH), is(Calendar.MARCH));
-        assertThat(StudyImporterForBlewett.dateToString(date), is("01-Mar-00 10:55:00 -06:00"));
+        assertThat(StudyImporterForBlewett.dateToString(date), is("01-Mar-00 10:55:00 Central Standard Time"));
     }
 
     @Test
@@ -69,7 +69,7 @@ public class StudyImporterForBlewettTest extends GraphDBTestCase {
     }
 
     @Test
-    public void importLines() throws StudyImporterException {
+    public void importLines() throws StudyImporterException, NodeFactoryException {
         String predatorPreyMapping = "\"Collection #\",\"Sp#\",\"Standard Length\",\"ID\",\"Far duoraum\",\"Cal sapidus\",\"Unid fish\",\"Anchoa spp\",\"Mug gyrans\",\"Bai chrysoura\",\"Portunus spp\",\"Bivalves\",\"Portunidae\",\"Lag rhomboides\",\"Xanthidae\",\"Palaemonidae\",\"Eucinostomus spp\",\"Mugil spp\",\"Alpheidae\",\"Atherinidae\",\"Syn foetens\",\"Ort chrysoptera\",\"Snails\",\"Euc gula\",\"Cynoscion spp\",\"Cyp. Variegatus\",\"Fun majalis\",\"Poe latipinna\",\"Unid crab\",\"Har jaguana\",\"Arm mierii\",\"Fun grandis\",\"Mic gulosus\",\"Ari felis\",\"Clupeidae\",\"Fundulus spp\",\"Diapterus/Eugerres spp\",\"Isopods\",\"Cyn nebulosus\",\"Opi oglinum\",\"Flo carpio\",\"Luc parva\",\"Uca spp\",\"Majidae\",\"Mug cephalus\",\"Squ empusa\",\"Opi robinsi\",\"Ariidae\",\"Sci ocellatus\",\"Unid shrimp\",\"Uca thayeri\",\"Grapsidae\",\"Lei xanthurus\",\"Elo saurus\",\"Brevoortia spp\"\n" +
                 "\"CHD01101502\",1,549,,,,,,,,,,,1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,\n" +
                 "\"CHD01102504\",1,548,\"E\",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,\n" +
@@ -95,7 +95,7 @@ public class StudyImporterForBlewettTest extends GraphDBTestCase {
         ParserFactory testFactory = new ParserFactory() {
             @Override
             public LabeledCSVParser createParser(String studyResource, String characterEncoding) throws IOException {
-                LabeledCSVParser parser;
+                LabeledCSVParser parser = null;
                 if (studyResource.contains("abundance")) {
                     parser = preyPredatorFactory.createParser(studyResource, characterEncoding);
                 } else {
@@ -115,7 +115,7 @@ public class StudyImporterForBlewettTest extends GraphDBTestCase {
         Relationship collectedRel = collectedRels.iterator().next();
         Date unixEpochProperty = nodeFactory.getUnixEpochProperty(new SpecimenNode(collectedRel.getEndNode()));
         assertThat(unixEpochProperty, is(not(nullValue())));
-        assertThat(StudyImporterForBlewett.dateToString(unixEpochProperty), is("01-Mar-00 10:55:00 -06:00"));
+        assertThat(StudyImporterForBlewett.dateToString(unixEpochProperty), is("01-Mar-00 10:55:00 Central Standard Time"));
 
         Node predatorNode = collectedRel.getEndNode();
         assertThat((String) predatorNode.getProperty(SpecimenConstant.LIFE_STAGE_LABEL), is("post-juvenile adult stage"));
