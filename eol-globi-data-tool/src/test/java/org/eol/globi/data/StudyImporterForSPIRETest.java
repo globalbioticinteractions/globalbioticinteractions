@@ -10,6 +10,7 @@ import org.eol.globi.domain.StudyConstant;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.Term;
 import org.eol.globi.geo.LatLng;
+import org.eol.globi.service.DatasetLocal;
 import org.eol.globi.service.GeoNamesService;
 import org.eol.globi.service.GeoNamesServiceImpl;
 import org.eol.globi.util.NodeUtil;
@@ -121,6 +122,7 @@ public class StudyImporterForSPIRETest extends GraphDBTestCase {
 
     private StudyImporterForSPIRE createImporter() {
         StudyImporterForSPIRE studyImporterForSPIRE = new StudyImporterForSPIRE(null, nodeFactory);
+        studyImporterForSPIRE.setDataset(new DatasetLocal());
         studyImporterForSPIRE.setGeoNamesService(new GeoNamesService() {
 
             @Override
