@@ -5,6 +5,7 @@ import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.SpecimenNode;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.TaxonNode;
+import org.eol.globi.service.DatasetLocal;
 import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
 import org.neo4j.graphdb.Node;
@@ -30,7 +31,7 @@ public class StudyImporterForLifeWatchGreeceTest extends GraphDBTestCase {
                 "429,\"Simpson, M. (1962) Reproduction of the Polychaete Glycera Dibranchiata at Solomons, Maryland. <i>The Biological Bulletin</i>, 123:396-411.\",\"Glycera rouxi\",\"http://polytraits.lifewatchgreece.eu/terms/SM_YES\",\"Organisms that undergo sexual metamorphosis\",\"http://polytraits.lifewatchgreece.eu/terms/SM\",\"Conspicuous change in the organism's body structure prior to reproduction.\",2,1\n" +
                 "778,\"Hartmann-Schröder, G. (1996) Annelida, Borstenwürmer, Polychaeta. Gustav Fischer Verlag, Jena. 648pp.\",\"Glycera rouxi\",\"http://polytraits.lifewatchgreece.eu/terms/SM_YES\",\"Organisms that undergo sexual metamorphosis\",\"http://polytraits.lifewatchgreece.eu/terms/SM\",\"Conspicuous change in the organism's body structure prior to reproduction.\",2,1\n" +
                 "429,\"Simpson, M. (1962) Reproduction of the Polychaete Glycera Dibranchiata at Solomons, Maryland. <i>The Biological Bulletin</i>, 123:396-411.\",\"Glycera tesselata\",\"http://polytraits.lifewatchgreece.eu/terms/SM_YES\",\"Organisms that undergo sexual metamorphosis\",\"http://polytraits.lifewatchgreece.eu/terms/SM\",\"Conspicuous change in the organism's body structure prior to reproduction.\",2,1\n"), nodeFactory);
-
+        importer.setDataset(new DatasetLocal());
         importStudy(importer);
     }
 
@@ -40,7 +41,9 @@ public class StudyImporterForLifeWatchGreeceTest extends GraphDBTestCase {
         List<Study> studies = NodeUtil.findAllStudies(getGraphDb());
         assertThat(studies.size(), is(0));
 
-        StudyImporterForLifeWatchGreece importer = new StudyImporterForLifeWatchGreece(null, nodeFactory);
+        ParserFactoryLocal parserFactory = new ParserFactoryLocal();
+        StudyImporterForLifeWatchGreece importer = new StudyImporterForLifeWatchGreece(parserFactory, nodeFactory);
+        importer.setDataset(new DatasetLocal());
         importStudy(importer);
 
         studies = NodeUtil.findAllStudies(getGraphDb());
