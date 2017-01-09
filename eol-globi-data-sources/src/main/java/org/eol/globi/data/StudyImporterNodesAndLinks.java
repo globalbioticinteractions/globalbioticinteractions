@@ -27,10 +27,6 @@ public abstract class StudyImporterNodesAndLinks extends BaseStudyImporter {
         return "links";
     }
 
-    public String getNodeResource() {
-        return getDataset().getResourceURI(getNodesResourceName()).toString();
-    }
-
     public String getNodesResourceName() {
         return "nodes";
     }

@@ -74,7 +74,7 @@ public class StudyImporterForICES extends BaseStudyImporter {
     }
 
     private LabeledCSVParser createParser() throws StudyImporterException {
-        LabeledCSVParser parser = null;
+        LabeledCSVParser parser;
         try {
             parser = parserFactory.createParser("ices/StomachDataSet.csv.gz", CharsetConstant.UTF8);
         } catch (IOException e) {
