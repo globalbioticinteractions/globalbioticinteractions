@@ -28,7 +28,7 @@ public class GitHubImporterFactoryIT {
     @Test
     public void createGoMexSI() throws StudyImporterException, DatasetFinderException  {
         final DatasetFinderGitHubRemote datasetFinderGitHubRemote = new DatasetFinderGitHubRemote();
-        StudyImporter importer = new GitHubImporterFactory().createImporter(DatasetFactory.datasetFor("gomexsi/interaction-data", datasetFinderGitHubRemote), null, null);
+        StudyImporter importer = new GitHubImporterFactory().createImporter(DatasetFactory.datasetFor("gomexsi/interaction-data", datasetFinderGitHubRemote), null);
         assertThat(importer, is(notNullValue()));
         assertThat(importer, is(instanceOf(StudyImporterForGoMexSI2.class)));
         StudyImporterForGoMexSI2 gomexsiImporter = (StudyImporterForGoMexSI2) importer;
@@ -38,7 +38,7 @@ public class GitHubImporterFactoryIT {
     @Test
     public void createSzoboszlai() throws StudyImporterException, DatasetFinderException  {
         final DatasetFinderGitHubRemote datasetFinderGitHubRemote = new DatasetFinderGitHubRemote();
-        StudyImporter importer = new GitHubImporterFactory().createImporter(DatasetFactory.datasetFor("globalbioticinteractions/szoboszlai2015", datasetFinderGitHubRemote), null, null);
+        StudyImporter importer = new GitHubImporterFactory().createImporter(DatasetFactory.datasetFor("globalbioticinteractions/szoboszlai2015", datasetFinderGitHubRemote), null);
         assertThat(importer, is(notNullValue()));
         assertThat(importer, is(instanceOf(StudyImporterForSzoboszlai.class)));
         StudyImporterForSzoboszlai importerz = (StudyImporterForSzoboszlai) importer;
@@ -48,7 +48,7 @@ public class GitHubImporterFactoryIT {
     @Test
     public void createWood() throws StudyImporterException, DatasetFinderException  {
         final DatasetFinderGitHubRemote datasetFinderGitHubRemote = new DatasetFinderGitHubRemote();
-        StudyImporter importer = new GitHubImporterFactory().createImporter(DatasetFactory.datasetFor("globalbioticinteractions/wood2015", datasetFinderGitHubRemote), null, null);
+        StudyImporter importer = new GitHubImporterFactory().createImporter(DatasetFactory.datasetFor("globalbioticinteractions/wood2015", datasetFinderGitHubRemote), null);
         assertThat(importer, is(notNullValue()));
         assertThat(importer, is(instanceOf(StudyImporterForWood.class)));
         StudyImporterForWood importerz = (StudyImporterForWood) importer;
@@ -59,7 +59,7 @@ public class GitHubImporterFactoryIT {
     @Test
     public void createPlanque() throws StudyImporterException, DatasetFinderException  {
         final DatasetFinderGitHubRemote datasetFinderGitHubRemote = new DatasetFinderGitHubRemote();
-        StudyImporter importer = new GitHubImporterFactory().createImporter(DatasetFactory.datasetFor("globalbioticinteractions/planque2014", datasetFinderGitHubRemote), null, null);
+        StudyImporter importer = new GitHubImporterFactory().createImporter(DatasetFactory.datasetFor("globalbioticinteractions/planque2014", datasetFinderGitHubRemote), null);
         assertThat(importer, is(notNullValue()));
         assertThat(importer, is(instanceOf(StudyImporterForPlanque.class)));
         StudyImporterForPlanque importerz = (StudyImporterForPlanque) importer;
@@ -72,7 +72,7 @@ public class GitHubImporterFactoryIT {
     @Test
     public void createArthopodEasyCapture() throws StudyImporterException, DatasetFinderException {
         final DatasetFinderGitHubRemote datasetFinderGitHubRemote = new DatasetFinderGitHubRemote();
-        StudyImporter importer = new GitHubImporterFactory().createImporter(DatasetFactory.datasetFor("globalbioticinteractions/arthropodEasyCaptureAMNH", datasetFinderGitHubRemote), null, null);
+        StudyImporter importer = new GitHubImporterFactory().createImporter(DatasetFactory.datasetFor("globalbioticinteractions/arthropodEasyCaptureAMNH", datasetFinderGitHubRemote), null);
         assertThat(importer, is(notNullValue()));
         assertThat(importer, is(instanceOf(StudyImporterForArthopodEasyCapture.class)));
         assertThat(((StudyImporterForArthopodEasyCapture)importer).getRssFeedUrlString(), is(notNullValue()));
@@ -81,7 +81,7 @@ public class GitHubImporterFactoryIT {
     @Test
     public void createMetaTable() throws DatasetFinderException, StudyImporterException {
         final DatasetFinderGitHubRemote datasetFinderGitHubRemote = new DatasetFinderGitHubRemote();
-        StudyImporter importer = new GitHubImporterFactory().createImporter(DatasetFactory.datasetFor("globalbioticinteractions/AfricaTreeDatabase", datasetFinderGitHubRemote), null, null);
+        StudyImporter importer = new GitHubImporterFactory().createImporter(DatasetFactory.datasetFor("globalbioticinteractions/AfricaTreeDatabase", datasetFinderGitHubRemote), null);
         assertThat(importer, is(notNullValue()));
         assertThat(importer, is(instanceOf(StudyImporterForMetaTable.class)));
         assertThat(((StudyImporterForMetaTable)importer).getConfig(), is(notNullValue()));
@@ -91,7 +91,7 @@ public class GitHubImporterFactoryIT {
     @Test
     public void createAfrotropicalBees() throws StudyImporterException, DatasetFinderException {
         final DatasetFinderGitHubRemote datasetFinderGitHubRemote = new DatasetFinderGitHubRemote();
-        StudyImporter importer = new GitHubImporterFactory().createImporter(DatasetFactory.datasetFor("globalbioticinteractions/Catalogue-of-Afrotropical-Bees", datasetFinderGitHubRemote), null, null);
+        StudyImporter importer = new GitHubImporterFactory().createImporter(DatasetFactory.datasetFor("globalbioticinteractions/Catalogue-of-Afrotropical-Bees", datasetFinderGitHubRemote), null);
         assertThat(importer, is(notNullValue()));
         assertThat(importer, is(instanceOf(StudyImporterForCoetzer.class)));
         assertThat(((StudyImporterForCoetzer)importer).getDataset(), is(notNullValue()));
@@ -131,7 +131,7 @@ public class GitHubImporterFactoryIT {
 
     StudyImporter getTemplateImporter(DatasetFinder datasetFinder) throws DatasetFinderException, StudyImporterException {
         Dataset dataset = DatasetFactory.datasetFor("globalbioticinteractions/template-dataset", datasetFinder);
-        StudyImporter importer = new GitHubImporterFactory().createImporter(dataset, null, null);
+        StudyImporter importer = new GitHubImporterFactory().createImporter(dataset, null);
         assertThat(importer, is(notNullValue()));
         assertThat(importer, is(instanceOf(StudyImporterForTSV.class)));
         return importer;
@@ -140,7 +140,7 @@ public class GitHubImporterFactoryIT {
     @Test
     public void createMetaTableREEM() throws StudyImporterException, DatasetFinderException  {
         final DatasetFinderGitHubRemote datasetFinderGitHubRemote = new DatasetFinderGitHubRemote();
-        StudyImporter importer = new GitHubImporterFactory().createImporter(DatasetFactory.datasetFor("globalbioticinteractions/noaa-reem", datasetFinderGitHubRemote), null, null);
+        StudyImporter importer = new GitHubImporterFactory().createImporter(DatasetFactory.datasetFor("globalbioticinteractions/noaa-reem", datasetFinderGitHubRemote), null);
         assertThat(importer, is(notNullValue()));
         assertThat(importer, is(instanceOf(StudyImporterForMetaTable.class)));
         final JsonNode config = ((StudyImporterForMetaTable) importer).getConfig();

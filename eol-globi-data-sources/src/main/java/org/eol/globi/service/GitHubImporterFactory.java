@@ -4,6 +4,7 @@ import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.JsonNode;
 import org.eol.globi.data.NodeFactory;
 import org.eol.globi.data.ParserFactory;
+import org.eol.globi.data.ParserFactoryForDataset;
 import org.eol.globi.data.StudyImporter;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.data.StudyImporterForAkin;
@@ -50,10 +51,11 @@ import java.util.HashMap;
 
 public class GitHubImporterFactory {
 
-    public StudyImporter createImporter(Dataset dataset, final ParserFactory parserFactory, final NodeFactory nodeFactory) throws StudyImporterException {
+    public StudyImporter createImporter(Dataset dataset, final NodeFactory nodeFactory) throws StudyImporterException {
         Class<? extends StudyImporter> anImporter = findImporterFor(dataset);
         try {
             Constructor<? extends StudyImporter> constructor = anImporter.getConstructor(ParserFactory.class, NodeFactory.class);
+            ParserFactoryForDataset parserFactory = new ParserFactoryForDataset(dataset);
             StudyImporter studyImporter = constructor.newInstance(parserFactory, nodeFactory);
             studyImporter.setDataset(dataset);
             return studyImporter;

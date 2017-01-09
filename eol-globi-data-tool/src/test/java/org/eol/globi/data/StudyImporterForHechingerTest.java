@@ -6,6 +6,7 @@ import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.domain.Study;
 import org.eol.globi.service.DatasetImpl;
+import org.eol.globi.service.DatasetLocal;
 import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
 import org.neo4j.cypher.javacompat.ExecutionEngine;
@@ -32,19 +33,19 @@ public class StudyImporterForHechingerTest extends GraphDBTestCase {
 
     @Test
     public void importStudy() throws StudyImporterException, IOException {
-        StudyImporterForHechinger importer = new StudyImporterForHechinger(new ParserFactoryLocal(), nodeFactory);
         JsonNode config = new ObjectMapper().readTree("{ \"citation\": \"Ryan F. Hechinger, Kevin D. Lafferty, John P. McLaughlin, Brian L. Fredensborg, Todd C. Huspeni, Julio Lorda, Parwant K. Sandhu, Jenny C. Shaw, Mark E. Torchin, Kathleen L. Whitney, and Armand M. Kuris 2011. Food webs including parasites, biomass, body sizes, and life stages for three California/Baja California estuaries. Ecology 92:791–791. http://dx.doi.org/10.1890/10-1383.1 .\",\n" +
                 "  \"doi\": \"http://dx.doi.org/10.1890/10-1383.1\",\n" +
                 "  \"format\": \"hechinger\",\n" +
                 "  \"delimiter\": \"\\t\",\n" +
                 "  \"resources\": {\n" +
-                "    \"nodes\": \"classpath:hechinger/Metaweb_Nodes.txt\",\n" +
-                "    \"links\": \"classpath:hechinger/Metaweb_Links.txt\"\n" +
+                "    \"nodes\": \"hechinger/Metaweb_Nodes.txt\",\n" +
+                "    \"links\": \"hechinger/Metaweb_Links.txt\"\n" +
                 "  }\n" +
                 "}");
-
-        DatasetImpl dataset = new DatasetImpl("some/namespace", URI.create("http://example.com"));
+        DatasetImpl dataset = new DatasetLocal();
         dataset.setConfig(config);
+        ParserFactory parserFactory = new ParserFactoryForDataset(dataset);
+        StudyImporterForHechinger importer = new StudyImporterForHechinger(parserFactory, nodeFactory);
         importer.setDataset(dataset);
 
         importer.setLogger(new ImportLogger() {

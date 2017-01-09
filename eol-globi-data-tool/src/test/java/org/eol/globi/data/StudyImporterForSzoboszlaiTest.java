@@ -43,9 +43,10 @@ public class StudyImporterForSzoboszlaiTest extends GraphDBTestCase {
                 "  }\n" +
                 "}");
 
-        StudyImporterForSzoboszlai importer = new StudyImporterForSzoboszlai(new ParserFactoryLocal(), nodeFactory);
         DatasetImpl dataset = new DatasetImpl("someRepo", URI.create("http://example.com"));
         dataset.setConfig(config);
+        ParserFactory parserFactory = new ParserFactoryForDataset(dataset);
+        StudyImporterForSzoboszlai importer = new StudyImporterForSzoboszlai(parserFactory, nodeFactory);
         importer.setDataset(dataset);
 
         importStudy(importer);

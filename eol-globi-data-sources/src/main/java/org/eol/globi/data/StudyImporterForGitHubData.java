@@ -77,7 +77,7 @@ public class StudyImporterForGitHubData extends BaseStudyImporter {
     }
 
     public void importData(Dataset repo) throws StudyImporterException {
-        StudyImporter importer = new GitHubImporterFactory().createImporter(repo, parserFactory, nodeFactory);
+        StudyImporter importer = new GitHubImporterFactory().createImporter(repo, nodeFactory);
         if (importer != null) {
             if (getLogger() != null) {
                 importer.setLogger(getLogger());

@@ -53,7 +53,8 @@ public class GitHubRepoCheck {
         NodeFactoryLogging nodeFactory = new NodeFactoryLogging();
         List<DatasetFinder> finders = Collections.singletonList(new DatasetFinderGitHubArchiveMaster(Arrays.asList(args)));
         DatasetFinderCaching finder = new DatasetFinderCaching(new DatasetFinderProxy(finders));
-        StudyImporterForGitHubData studyImporterForGitHubData = new StudyImporterForGitHubData(new ParserFactoryLocal(), nodeFactory);
+        ParserFactoryLocal parserFactory = new ParserFactoryLocal();
+        StudyImporterForGitHubData studyImporterForGitHubData = new StudyImporterForGitHubData(parserFactory, nodeFactory);
         studyImporterForGitHubData.setLogger(new ImportLogger() {
             @Override
             public void info(Study study, String message) {

@@ -23,10 +23,6 @@ public abstract class StudyImporterNodesAndLinks extends BaseStudyImporter {
         return nodeFactory.getOrCreateStudy(new StudyImpl(getNamespace(), getSourceCitation(), getSourceDOI(), null));
     }
 
-    public String getLinkResource() {
-        return getDataset().getResourceURI(getLinksResourceName()).toString();
-    }
-
     public String getLinksResourceName() {
         return "links";
     }
