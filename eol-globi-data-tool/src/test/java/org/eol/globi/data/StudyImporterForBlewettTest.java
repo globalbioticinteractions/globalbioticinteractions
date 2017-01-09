@@ -44,7 +44,7 @@ public class StudyImporterForBlewettTest extends GraphDBTestCase {
         instance.setTime(date);
         assertThat(instance.get(Calendar.YEAR), is(2000));
         assertThat(instance.get(Calendar.MONTH), is(Calendar.MARCH));
-        assertThat(StudyImporterForBlewett.dateToString(date), is("01-Mar-00 10:55:00 Central Standard Time"));
+        assertThat(StudyImporterForBlewett.dateToString(date), is("01-Mar-00 10:55:00 -06:00"));
     }
 
     @Test
@@ -95,7 +95,7 @@ public class StudyImporterForBlewettTest extends GraphDBTestCase {
         ParserFactory testFactory = new ParserFactory() {
             @Override
             public LabeledCSVParser createParser(String studyResource, String characterEncoding) throws IOException {
-                LabeledCSVParser parser = null;
+                LabeledCSVParser parser;
                 if (studyResource.contains("abundance")) {
                     parser = preyPredatorFactory.createParser(studyResource, characterEncoding);
                 } else {
