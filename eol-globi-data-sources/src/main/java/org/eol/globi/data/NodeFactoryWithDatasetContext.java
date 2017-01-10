@@ -11,7 +11,6 @@ import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.Term;
 import org.eol.globi.geo.EcoregionFinder;
 import org.eol.globi.service.AuthorIdResolver;
-import org.eol.globi.service.DOIResolver;
 import org.eol.globi.service.Dataset;
 import org.eol.globi.service.TermLookupService;
 
