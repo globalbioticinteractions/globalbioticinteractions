@@ -31,7 +31,9 @@ public class StudyNode extends NodeBacked implements Study {
     }
 
     @Override
-    public String getName() { return getTitle(); }
+    public String getName() {
+        return getTitle();
+    }
 
 
     @Override
@@ -86,6 +88,15 @@ public class StudyNode extends NodeBacked implements Study {
             msgs.add(new LogMessageImpl(rel.getEndNode()));
         }
         return msgs;
+    }
+
+    @Override
+    public String getSourceId() {
+        return getProperty(StudyConstant.SOURCE_ID);
+    }
+
+    public void setSourceId(String sourceId) {
+        setPropertyWithTx(StudyConstant.SOURCE_ID, sourceId);
     }
 
 }

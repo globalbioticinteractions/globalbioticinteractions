@@ -21,6 +21,7 @@ public class StudyImporterFactory {
     public StudyImporterFactory(NodeFactory nodeFactory) {
         this(new ParserFactoryLocal(), nodeFactory);
     }
+
     public StudyImporterFactory(ParserFactory parserFactory, NodeFactory nodeFactory) {
         this.parserFactory = parserFactory;
         this.nodeFactory = nodeFactory;

@@ -12,6 +12,7 @@ public class StudyImpl implements Study {
     private String source;
     private String doi;
     private String citation;
+    private String sourceId;
 
     public StudyImpl(String title) {
         this(title, null, null, null);
@@ -71,5 +72,13 @@ public class StudyImpl implements Study {
     @Override
     public List<LogMessage> getLogMessages() {
         return Collections.emptyList();
+    }
+
+    public String getSourceId() {
+        return sourceId;
+    }
+
+    public void setSourceId(String sourceId) {
+        this.sourceId = sourceId;
     }
 }

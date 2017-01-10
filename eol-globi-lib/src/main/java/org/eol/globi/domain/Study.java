@@ -15,4 +15,6 @@ public interface Study extends Named {
     void appendLogMessage(String message, Level warning);
 
     List<LogMessage> getLogMessages();
+
+    String getSourceId();
 }

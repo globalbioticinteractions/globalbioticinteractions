@@ -242,6 +242,7 @@ public class NodeFactoryNeo4j implements NodeFactory {
             studyNode.setCitation(study.getCitation());
             studyNode.setExternalId(study.getExternalId());
             studyNode.setDOI(study.getDOI());
+            studyNode.setSourceId(study.getSourceId());
             if (doiResolver != null) {
                 try {
                     String doiResolved = study.getDOI();
