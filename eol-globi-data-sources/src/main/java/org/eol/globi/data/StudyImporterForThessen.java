@@ -22,7 +22,9 @@ public class StudyImporterForThessen extends BaseStudyImporter {
         String citation = "A. Thessen. 2014. Species associations extracted from EOL text data objects via text mining. " + ReferenceUtil.createLastAccessedString(RESOURCE);
         StudyImpl study1 = new StudyImpl("Thessen 2014", citation, null, citation);
         study1.setExternalId("https://github.com/EOL/pseudonitzchia");
+        study1.setSourceId("globi:EOL/pseudonitzchia");
         Study study = nodeFactory.getOrCreateStudy(study1);
+
         try {
             LabeledCSVParser parser = parserFactory.createParser(RESOURCE, "UTF-8");
             parser.changeDelimiter('\t');

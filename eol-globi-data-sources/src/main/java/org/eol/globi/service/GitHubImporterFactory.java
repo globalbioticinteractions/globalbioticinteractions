@@ -3,6 +3,7 @@ package org.eol.globi.service;
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.JsonNode;
 import org.eol.globi.data.NodeFactory;
+import org.eol.globi.data.NodeFactoryWithDatasetContext;
 import org.eol.globi.data.ParserFactory;
 import org.eol.globi.data.ParserFactoryForDataset;
 import org.eol.globi.data.StudyImporter;
@@ -58,7 +59,8 @@ public class GitHubImporterFactory {
         try {
             Constructor<? extends StudyImporter> constructor = anImporter.getConstructor(ParserFactory.class, NodeFactory.class);
             ParserFactoryForDataset parserFactory = new ParserFactoryForDataset(dataset);
-            StudyImporter studyImporter = constructor.newInstance(parserFactory, nodeFactory);
+            StudyImporter studyImporter = constructor.newInstance(parserFactory,
+                    new NodeFactoryWithDatasetContext(nodeFactory, dataset));
             studyImporter.setDataset(dataset);
             return studyImporter;
         } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException e) {

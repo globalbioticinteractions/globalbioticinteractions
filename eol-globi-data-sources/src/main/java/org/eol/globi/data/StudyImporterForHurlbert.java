@@ -60,6 +60,7 @@ public class StudyImporterForHurlbert extends BaseStudyImporter {
 
     public void importRecords(Set<String> regions, Set<String> locales, Set<String> habitats, LabeledCSVParser parser, String sourceCitation) throws StudyImporterException {
         StudyImpl study1 = new StudyImpl(sourceCitation, "Allen Hurlbert. Avian Diet Database (https://github.com/hurlbertlab/dietdatabase/). " + ReferenceUtil.createLastAccessedString(RESOURCE), null, sourceCitation);
+        study1.setSourceId("globi:hurlbertlab/dietdatabase");
         Study study = nodeFactory.getOrCreateStudy(study1);
 
         //ID,Common_Name,Scientific_Name,,,,Prey_Common_Name,Fraction_Diet_By_Wt_or_Vol,Fraction_Diet_By_Items,Fraction_Occurrence,Fraction_Diet_Unspecified,Item Sample Size,Bird Sample size,Sites,StudyNode Type,Notes,Source

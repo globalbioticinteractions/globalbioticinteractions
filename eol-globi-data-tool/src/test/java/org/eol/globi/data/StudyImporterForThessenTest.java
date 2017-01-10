@@ -33,6 +33,7 @@ public class StudyImporterForThessenTest extends GraphDBTestCase {
         Study study = getStudySingleton(getGraphDb());
 
         assertThat(study.getExternalId(), containsString("github"));
+        assertThat(study.getSourceId(), is("globi:EOL/pseudonitzchia"));
         Iterable<Relationship> specimens = NodeUtil.getSpecimens(study);
         int specimenCount = 0;
         Set<String> taxonIds = new HashSet<String>();
