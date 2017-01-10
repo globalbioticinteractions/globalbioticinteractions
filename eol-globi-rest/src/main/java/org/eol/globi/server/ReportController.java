@@ -2,6 +2,7 @@ package org.eol.globi.server;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.server.util.ResultField;
+import org.eol.globi.server.util.ResultObject;
 import org.eol.globi.util.CypherQuery;
 import org.eol.globi.util.CypherUtil;
 import org.springframework.stereotype.Controller;
@@ -51,7 +52,7 @@ public class ReportController {
             searchMatch = "'" + searchKey + ":*'";
         }
         String cypherQuery = "START report = node:reports(" + searchMatch + ") "
-                + " WHERE not(has(report.title)) AND has(report.source)"
+                + " WHERE not(has(report.title)) AND has(report." + searchKey + ")"
                 + " RETURN report.citation? as " + ResultField.STUDY_CITATION
                 + ", report.externalId? as " + ResultField.STUDY_URL
                 + ", report.doi? as " + ResultField.STUDY_DOI
