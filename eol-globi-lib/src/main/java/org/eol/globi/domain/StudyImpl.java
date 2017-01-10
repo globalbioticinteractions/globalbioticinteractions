@@ -1,5 +1,7 @@
 package org.eol.globi.domain;
 
+import org.eol.globi.service.Dataset;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
@@ -13,6 +15,7 @@ public class StudyImpl implements Study {
     private String doi;
     private String citation;
     private String sourceId;
+    private Dataset originatingDataset;
 
     public StudyImpl(String title) {
         this(title, null, null, null);
@@ -80,5 +83,14 @@ public class StudyImpl implements Study {
 
     public void setSourceId(String sourceId) {
         this.sourceId = sourceId;
+    }
+
+    public void setOriginatingDataset(org.eol.globi.service.Dataset originatingDataset) {
+        this.originatingDataset = originatingDataset;
+    }
+
+    @Override
+    public Dataset getOriginatingDataset() {
+        return originatingDataset;
     }
 }

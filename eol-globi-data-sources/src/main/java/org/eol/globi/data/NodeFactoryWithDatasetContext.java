@@ -53,6 +53,7 @@ public class NodeFactoryWithDatasetContext implements NodeFactory {
         if (StringUtils.isNotBlank(dataset.getNamespace())) {
             study1.setSourceId("globi:" + StringUtils.trim(dataset.getNamespace()));
         }
+        study1.setOriginatingDataset(dataset);
         return study1;
     }
 

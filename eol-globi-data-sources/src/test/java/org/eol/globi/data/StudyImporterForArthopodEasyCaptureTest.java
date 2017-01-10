@@ -33,12 +33,28 @@ public class StudyImporterForArthopodEasyCaptureTest {
     public void embeddedDataset() throws IOException {
         Dataset embeddedDataset = StudyImporterForArthopodEasyCapture.embeddedDatasetFor(getDatasetGroup(), "some other citation", URI.create("http://example.com/archive.zip"));
         assertThat(embeddedDataset.getCitation(), is("some other citation"));
+        assertThat(embeddedDataset.getOrDefault(DatasetUtil.SHOULD_RESOLVE_REFERENCES, "foo"), is("foo"));
+        assertThat(DatasetUtil.getNamedResourceURI(embeddedDataset, "archive"), is("http://example.com/archive.zip"));
+    }
+
+    @Test
+    public void embeddedDatasetWithConfig() throws IOException {
+        Dataset embeddedDataset = StudyImporterForArthopodEasyCapture.embeddedDatasetFor(getDatasetGroupWithProperty(), "some other citation", URI.create("http://example.com/archive.zip"));
+        assertThat(embeddedDataset.getCitation(), is("some other citation"));
+        assertThat(embeddedDataset.getOrDefault(DatasetUtil.SHOULD_RESOLVE_REFERENCES, "true"), is("false"));
         assertThat(DatasetUtil.getNamedResourceURI(embeddedDataset, "archive"), is("http://example.com/archive.zip"));
     }
 
     private DatasetImpl getDatasetGroup() throws IOException {
         DatasetImpl dataset = new DatasetImpl("some/namespace", URI.create("http://example.com"));
         JsonNode config = new ObjectMapper().readTree("{ \"resources\": { \"rss\": \"http://amnh.begoniasociety.org/dwc/rss.xml\" } }");
+        dataset.setConfig(config);
+        return dataset;
+    }
+
+    private DatasetImpl getDatasetGroupWithProperty() throws IOException {
+        DatasetImpl dataset = new DatasetImpl("some/namespace", URI.create("http://example.com"));
+        JsonNode config = new ObjectMapper().readTree("{ \"" + DatasetUtil.SHOULD_RESOLVE_REFERENCES + "\": false, \"resources\": { \"rss\": \"http://amnh.begoniasociety.org/dwc/rss.xml\" } }");
         dataset.setConfig(config);
         return dataset;
     }

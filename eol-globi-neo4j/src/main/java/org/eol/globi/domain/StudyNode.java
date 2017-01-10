@@ -1,6 +1,7 @@
 package org.eol.globi.domain;
 
 import org.apache.commons.lang3.StringUtils;
+import org.eol.globi.service.Dataset;
 import org.eol.globi.util.ExternalIdUtil;
 import org.eol.globi.util.NodeUtil;
 import org.neo4j.graphdb.Direction;
@@ -93,6 +94,12 @@ public class StudyNode extends NodeBacked implements Study {
     @Override
     public String getSourceId() {
         return getProperty(StudyConstant.SOURCE_ID);
+    }
+
+    @Override
+    public Dataset getOriginatingDataset() {
+        // dataset not yet stored in neo4j
+        return null;
     }
 
     public void setSourceId(String sourceId) {

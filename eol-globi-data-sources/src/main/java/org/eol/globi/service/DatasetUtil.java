@@ -8,6 +8,8 @@ import java.io.InputStream;
 
 public final class DatasetUtil {
 
+    public static final String SHOULD_RESOLVE_REFERENCES = "shouldResolveReferences";
+
     public static String getNamedResourceURI(Dataset dataset, String resourceName) {
         String resourceValue = getNamedResource(dataset, resourceName);
         return resourceValue == null ? null : dataset.getResourceURI(resourceValue).toString();
@@ -39,5 +41,10 @@ public final class DatasetUtil {
         return config == null
                 ? defaultValue
                 : (config.has(key) ? config.get(key).asText() : defaultValue);
+    }
+
+    public static boolean shouldResolveReferences(Dataset dataset) {
+        return dataset == null
+        || StringUtils.equalsIgnoreCase("true", dataset.getOrDefault(SHOULD_RESOLVE_REFERENCES, "true"));
     }
 }

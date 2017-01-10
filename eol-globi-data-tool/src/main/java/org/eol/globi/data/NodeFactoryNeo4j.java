@@ -25,6 +25,8 @@ import org.eol.globi.geo.EcoregionFinder;
 import org.eol.globi.geo.EcoregionFinderException;
 import org.eol.globi.service.AuthorIdResolver;
 import org.eol.globi.service.DOIResolver;
+import org.eol.globi.service.Dataset;
+import org.eol.globi.service.DatasetUtil;
 import org.eol.globi.service.EnvoLookupService;
 import org.eol.globi.service.ORCIDResolverImpl;
 import org.eol.globi.service.QueryUtil;
@@ -243,7 +245,8 @@ public class NodeFactoryNeo4j implements NodeFactory {
             studyNode.setExternalId(study.getExternalId());
             studyNode.setDOI(study.getDOI());
             studyNode.setSourceId(study.getSourceId());
-            if (doiResolver != null) {
+            Dataset dataset = study.getOriginatingDataset();
+            if (doiResolver != null && DatasetUtil.shouldResolveReferences(dataset)) {
                 try {
                     String doiResolved = study.getDOI();
                     if (StringUtils.isBlank(study.getDOI()) && citationLikeString(study.getCitation())) {

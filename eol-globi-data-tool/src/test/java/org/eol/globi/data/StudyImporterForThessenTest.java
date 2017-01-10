@@ -21,7 +21,7 @@ import static org.junit.matchers.JUnitMatchers.containsString;
 public class StudyImporterForThessenTest extends GraphDBTestCase {
 
     @Test
-    public void importSome() throws StudyImporterException, NodeFactoryException {
+    public void importSome() throws StudyImporterException {
         StudyImporterForThessen importer = new StudyImporterForThessen(new ParserFactoryLocal(), nodeFactory);
         importer.setFilter(new ImportFilter() {
             @Override

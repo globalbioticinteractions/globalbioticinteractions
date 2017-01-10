@@ -14,7 +14,7 @@ import static org.junit.Assert.assertThat;
 public class StudyImporterForSIADTest extends GraphDBTestCase {
 
     @Test
-    public void importAll() throws StudyImporterException, NodeFactoryException {
+    public void importAll() throws StudyImporterException {
         StudyImporterForSIAD importer = new StudyImporterForSIAD(new ParserFactoryLocal(), nodeFactory);
         assertThat(importer.shouldCrossCheckReference(), is(false));
         importStudy(importer);
