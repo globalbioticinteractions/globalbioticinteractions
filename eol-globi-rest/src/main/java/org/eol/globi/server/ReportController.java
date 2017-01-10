@@ -6,6 +6,7 @@ import org.eol.globi.server.util.ResultObject;
 import org.eol.globi.util.CypherQuery;
 import org.eol.globi.util.CypherUtil;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -40,15 +41,39 @@ public class ReportController {
         return CypherQueryBuilder.createPagedQuery(request, new CypherQuery(cypherQuery, params));
     }
 
+    @RequestMapping(value = "/reports/sources/", method = RequestMethod.GET)
+    @ResponseBody
+    public CypherQuery sourceRoot(final HttpServletRequest request) throws IOException {
+        return sourceQuery(request, "sourceId", null);
+    }
+
+    @RequestMapping(value = "/reports/sources/{org}", method = RequestMethod.GET)
+    @ResponseBody
+    public CypherQuery sourceOrg(
+            @PathVariable("org") final String org,
+            final HttpServletRequest request) throws IOException {
+        return sourceQuery(request, "sourceId", org);
+    }
+
+    @RequestMapping(value = "/reports/sources/{org}/{name}", method = RequestMethod.GET)
+    @ResponseBody
+    public CypherQuery sourceOrgName(
+            @PathVariable("org") final String org,
+            @PathVariable("name") final String name,
+            final HttpServletRequest request) throws IOException {
+        return sourceQuery(request, "sourceId", org + "/" + name);
+    }
+
     @RequestMapping(value = "/reports/sources", method = RequestMethod.GET)
     @ResponseBody
     public CypherQuery sources(@RequestParam(required = false) final String source,
-                               @RequestParam(required = false) final String sourceId,
                                final HttpServletRequest request) throws IOException {
-        String searchKey = StringUtils.isBlank(sourceId) ? "source" : "sourceId";
-        String searchValue = StringUtils.isBlank(sourceId) ? source : sourceId;
+        return sourceQuery(request, "source", source);
+    }
+
+    private CypherQuery sourceQuery(HttpServletRequest request, String searchKey, final String searchValue) {
         String searchMatch = searchKey + "={source}";
-        if (StringUtils.isBlank(sourceId) && StringUtils.isBlank(source)) {
+        if (StringUtils.isBlank(searchValue)) {
             searchMatch = "'" + searchKey + ":*'";
         }
         String cypherQuery = "START report = node:reports(" + searchMatch + ") "
