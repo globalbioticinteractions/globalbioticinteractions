@@ -20,9 +20,12 @@ public class ReportGeneratorTest extends GraphDBTestCase {
 
     @Test
     public void generateStudyReport() throws NodeFactoryException {
-        createStudy(new StudyImpl("a second title", "a third source", null, null));
+        StudyImpl study1 = new StudyImpl("a second title", "a third source", null, null);
+        study1.setSourceId("a/third/source");
+        createStudy(study1);
 
         StudyImpl studyWithDoi = new StudyImpl("a title", "a third source", "doi:12345", "citation");
+        studyWithDoi.setSourceId("a/third/source");
         createStudy(studyWithDoi);
         resolveNames();
 
@@ -32,7 +35,7 @@ public class ReportGeneratorTest extends GraphDBTestCase {
         assertThat(reports.size(), is(1));
         Node reportNode = reports.getSingle();
         assertThat((String) reportNode.getProperty(StudyConstant.TITLE), is("a title"));
-        assertThat((String) reportNode.getProperty(StudyConstant.SOURCE), is("a third source"));
+        assertThat((String) reportNode.getProperty(StudyConstant.SOURCE_ID), is("a/third/source"));
         assertThat((String) reportNode.getProperty(StudyConstant.CITATION), is("citation:doi:12345"));
         assertThat((String) reportNode.getProperty(StudyConstant.DOI), is("doi:12345"));
         assertThat((String) reportNode.getProperty(PropertyAndValueDictionary.EXTERNAL_ID), is("http://dx.doi.org/12345"));
@@ -45,7 +48,7 @@ public class ReportGeneratorTest extends GraphDBTestCase {
         assertThat(reports.size(), is(1));
         reportNode = reports.getSingle();
         assertThat((String) reportNode.getProperty(StudyConstant.TITLE), is("a second title"));
-        assertThat((String) reportNode.getProperty(StudyConstant.SOURCE), is("a third source"));
+        assertThat((String) reportNode.getProperty(StudyConstant.SOURCE_ID), is("a/third/source"));
         assertThat(reportNode.hasProperty(StudyConstant.CITATION), is(false));
         assertThat(reportNode.hasProperty(StudyConstant.DOI), is(false));
         assertThat(reportNode.hasProperty(PropertyAndValueDictionary.EXTERNAL_ID), is(false));
@@ -57,16 +60,91 @@ public class ReportGeneratorTest extends GraphDBTestCase {
 
 
     @Test
-    public void generateStudySourceReport() throws NodeFactoryException {
-        createStudy(new StudyImpl("a title", "az source", null, "citation"));
-        createStudy(new StudyImpl("another title", "az source", null, "citation"));
-        createStudy(new StudyImpl("yet another title", "zother source", null, null));
+    public void generateIndividualStudySourceReports() throws NodeFactoryException {
+        StudyImpl study1 = new StudyImpl("a title", "az source", null, "citation");
+        study1.setSourceId("az/source");
+        createStudy(study1);
+        StudyImpl study2 = new StudyImpl("another title", "az source", null, "citation");
+        study2.setSourceId("az/source");
+        createStudy(study2);
+        StudyImpl study3 = new StudyImpl("yet another title", "zother source", null, null);
+        study3.setSourceId("zother/source");
+        createStudy(study3);
         resolveNames();
 
-        new ReportGenerator(getGraphDb()).generateReportForStudySources();
+        new ReportGenerator(getGraphDb()).generateReportForSourceIndividuals();
+
+        IndexHits<Node> reports = getGraphDb().index().forNodes("reports").get(StudyConstant.SOURCE_ID, "az/source");
+        Node reportNode = reports.getSingle();
+        assertThat((Integer) reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_STUDIES), is(2));
+        assertThat((Integer) reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_STUDIES), is(2));
+        assertThat((Integer) reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_INTERACTIONS), is(8));
+        assertThat((Integer) reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_DISTINCT_TAXA), is(3));
+        assertThat((Integer) reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_DISTINCT_TAXA_NO_MATCH), is(2));
+        assertThat((String) reportNode.getProperty(StudyConstant.SOURCE_ID), is("az/source"));
+        reports.close();
+
+        IndexHits<Node> otherReports = getGraphDb().index().forNodes("reports").get(StudyConstant.SOURCE_ID, "zother/source");
+        Node otherReport = otherReports.getSingle();
+        assertThat((String) otherReport.getProperty(StudyConstant.SOURCE_ID), is("zother/source"));
+        assertThat((Integer) otherReport.getProperty(PropertyAndValueDictionary.NUMBER_OF_STUDIES), is(1));
+        assertThat((Integer) otherReport.getProperty(PropertyAndValueDictionary.NUMBER_OF_INTERACTIONS), is(4));
+        assertThat((Integer) otherReport.getProperty(PropertyAndValueDictionary.NUMBER_OF_DISTINCT_TAXA), is(3));
+        assertThat((Integer) otherReport.getProperty(PropertyAndValueDictionary.NUMBER_OF_DISTINCT_TAXA_NO_MATCH), is(2));
+    }
+
+    @Test
+    public void generateStudySourceOrganizationReports() throws NodeFactoryException {
+        StudyImpl study1 = new StudyImpl("a title", "az source", null, "citation");
+        study1.setSourceId("az/source1");
+        createStudy(study1);
+        StudyImpl study2 = new StudyImpl("another title", "az source", null, "citation");
+        study2.setSourceId("az/source2");
+        createStudy(study2);
+        StudyImpl study3 = new StudyImpl("yet another title", "zother source", null, null);
+        study3.setSourceId("zother/source");
+        createStudy(study3);
+        resolveNames();
+
+        new ReportGenerator(getGraphDb()).generateReportForSourceOrganizations();
+
+        IndexHits<Node> reports = getGraphDb().index().forNodes("reports").get(StudyConstant.SOURCE_ID, "az");
+        Node reportNode = reports.getSingle();
+        assertThat((Integer) reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_STUDIES), is(2));
+        assertThat((Integer) reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_STUDIES), is(2));
+        assertThat((Integer) reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_INTERACTIONS), is(8));
+        assertThat((Integer) reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_DISTINCT_TAXA), is(3));
+        assertThat((Integer) reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_DISTINCT_TAXA_NO_MATCH), is(2));
+        assertThat((String) reportNode.getProperty(StudyConstant.SOURCE_ID), is("az"));
+        reports.close();
+
+        IndexHits<Node> otherReports = getGraphDb().index().forNodes("reports").get(StudyConstant.SOURCE_ID, "zother");
+        Node otherReport = otherReports.getSingle();
+        assertThat((String) otherReport.getProperty(StudyConstant.SOURCE_ID), is("zother"));
+        assertThat((Integer) otherReport.getProperty(PropertyAndValueDictionary.NUMBER_OF_STUDIES), is(1));
+        assertThat((Integer) otherReport.getProperty(PropertyAndValueDictionary.NUMBER_OF_INTERACTIONS), is(4));
+        assertThat((Integer) otherReport.getProperty(PropertyAndValueDictionary.NUMBER_OF_DISTINCT_TAXA), is(3));
+        assertThat((Integer) otherReport.getProperty(PropertyAndValueDictionary.NUMBER_OF_DISTINCT_TAXA_NO_MATCH), is(2));
+    }
+
+    @Test
+    public void generateStudySourceCitationReports() throws NodeFactoryException {
+        StudyImpl study1 = new StudyImpl("a title", "az source", null, "citation");
+        study1.setSourceId("az/source1");
+        createStudy(study1);
+        StudyImpl study2 = new StudyImpl("another title", "az source", null, "citation");
+        study2.setSourceId("az/source2");
+        createStudy(study2);
+        StudyImpl study3 = new StudyImpl("yet another title", "zother source", null, null);
+        study3.setSourceId("zother/source");
+        createStudy(study3);
+        resolveNames();
+
+        new ReportGenerator(getGraphDb()).generateReportForSourceCitations();
 
         IndexHits<Node> reports = getGraphDb().index().forNodes("reports").get(StudyConstant.SOURCE, "az source");
         Node reportNode = reports.getSingle();
+        assertThat((Integer) reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_STUDIES), is(2));
         assertThat((Integer) reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_STUDIES), is(2));
         assertThat((Integer) reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_INTERACTIONS), is(8));
         assertThat((Integer) reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_DISTINCT_TAXA), is(3));

@@ -6,6 +6,7 @@ import org.apache.commons.logging.LogFactory;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.RelTypes;
+import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyConstant;
 import org.eol.globi.domain.StudyNode;
 import org.eol.globi.util.NodeUtil;
@@ -39,13 +40,63 @@ public class ReportGenerator {
         generateReportForCollection();
         LOG.info("report for collection done.");
 
+        LOG.info("report for source citations generating ...");
+        generateReportForSourceCitations();
+        LOG.info("report for source citations done.");
+
         LOG.info("report for sources generating ...");
-        generateReportForStudySources();
+        generateReportForSourceIndividuals();
         LOG.info("report for sources done.");
+
+        LOG.info("report for source organizations generating ...");
+        generateReportForSourceOrganizations();
+        LOG.info("report for source organizations done.");
 
         LOG.info("report for studies generating ...");
         generateReportForStudies();
         LOG.info("report for studies done.");
+    }
+
+    public void generateReportForSourceCitations() {
+        generateReportForStudySources(new SourceHandler() {
+            @Override
+            public String parse(Study study) {
+                return study.getSource();
+            }
+
+            @Override
+            public boolean matches(Study study, String sourceId) {
+                return StringUtils.equals(parse(study), sourceId);
+            }
+
+            @Override
+            public String getGroupByKeyName() {
+                return StudyConstant.SOURCE;
+            }
+        });
+    }
+
+    public void generateReportForSourceIndividuals() {
+        generateReportForStudySources(new SourceHandlerBasic());
+    }
+
+    public void generateReportForSourceOrganizations() {
+        generateReportForStudySources(new SourceHandler() {
+            @Override
+            public String parse(Study source) {
+                return StringUtils.split(source.getSourceId(), "/")[0];
+            }
+
+            @Override
+            public boolean matches(Study study, String sourceId2) {
+                return StringUtils.equals(parse(study), sourceId2);
+            }
+
+            @Override
+            public String getGroupByKeyName() {
+                return StudyConstant.SOURCE_ID;
+            }
+        });
     }
 
     public void generateReportForStudies() {
@@ -71,7 +122,9 @@ public class ReportGenerator {
         Transaction tx = getGraphDb().beginTx();
         try {
             Node node = getGraphDb().createNode();
-            node.setProperty(StudyConstant.SOURCE, study.getSource());
+            if (StringUtils.isNotBlank(study.getSourceId())) {
+                node.setProperty(StudyConstant.SOURCE_ID, study.getSourceId());
+            }
             if (StringUtils.isNotBlank(study.getCitation())) {
                 node.setProperty(StudyConstant.CITATION, study.getCitation());
             }
@@ -96,16 +149,45 @@ public class ReportGenerator {
         }
     }
 
-    void generateReportForStudySources() {
-        final Set<String> sources = new HashSet<String>();
+    interface SourceHandler {
+        String parse(Study study);
+
+        boolean matches(Study study, String sourceId);
+
+        String getGroupByKeyName();
+    }
+
+    private static class SourceHandlerBasic implements SourceHandler {
+        @Override
+        public String parse(Study study) {
+            return study.getSourceId();
+        }
+
+        @Override
+        public boolean matches(Study study, String sourceId) {
+            return StringUtils.equals(parse(study), sourceId);
+        }
+
+        @Override
+        public String getGroupByKeyName() {
+            return StudyConstant.SOURCE_ID;
+        }
+    }
+
+
+    void generateReportForStudySources(SourceHandler sourceHandler) {
+        final Set<String> groupByKeys = new HashSet<String>();
         NodeUtil.findStudies(getGraphDb(), new StudyNodeListener() {
             @Override
             public void onStudy(StudyNode study) {
-                sources.add(study.getSource());
+                String groupByKey = sourceHandler.parse(study);
+                if (StringUtils.isNotBlank(groupByKey)) {
+                    groupByKeys.add(groupByKey);
+                }
             }
         });
 
-        for (final String source : sources) {
+        for (final String groupByKey : groupByKeys) {
             final Set<Long> distinctTaxonIds = new HashSet<>();
             final Set<Long> distinctTaxonIdsNoMatch = new HashSet<>();
             final Counter counter = new Counter();
@@ -114,7 +196,7 @@ public class ReportGenerator {
             NodeUtil.findStudies(getGraphDb(), new StudyNodeListener() {
                 @Override
                 public void onStudy(StudyNode study) {
-                    if (StringUtils.equals(study.getSource(), source)) {
+                    if (sourceHandler.matches(study, groupByKey)) {
                         Iterable<Relationship> specimens = NodeUtil.getSpecimens(study);
                         countInteractionsAndTaxa(specimens, distinctTaxonIds, counter, distinctTaxonIdsNoMatch);
                         studyCounter.count();
@@ -126,7 +208,7 @@ public class ReportGenerator {
             Transaction tx = getGraphDb().beginTx();
             try {
                 final Node node = getGraphDb().createNode();
-                node.setProperty(StudyConstant.SOURCE, source);
+                node.setProperty(sourceHandler.getGroupByKeyName(), groupByKey);
                 node.setProperty(PropertyAndValueDictionary.COLLECTION, GLOBI_COLLECTION_NAME);
                 node.setProperty(PropertyAndValueDictionary.NUMBER_OF_INTERACTIONS, counter.getCount() / 2);
                 node.setProperty(PropertyAndValueDictionary.NUMBER_OF_DISTINCT_TAXA, distinctTaxonIds.size());
@@ -134,7 +216,7 @@ public class ReportGenerator {
                 node.setProperty(PropertyAndValueDictionary.NUMBER_OF_STUDIES, studyCounter.getCount());
                 node.setProperty(PropertyAndValueDictionary.NUMBER_OF_SOURCES, 1);
 
-                getGraphDb().index().forNodes("reports").add(node, StudyConstant.SOURCE, source);
+                getGraphDb().index().forNodes("reports").add(node, sourceHandler.getGroupByKeyName(), groupByKey);
                 tx.success();
             } finally {
                 tx.finish();
@@ -145,8 +227,6 @@ public class ReportGenerator {
     }
 
     void generateReportForCollection() {
-
-
         final Set<Long> distinctTaxonIds = new HashSet<Long>();
         final Set<Long> distinctTaxonIdsNoMatch = new HashSet<Long>();
         final Counter counter = new Counter();
@@ -200,7 +280,7 @@ public class ReportGenerator {
                 Node taxonNode = classifiedAs.getEndNode();
                 ids.add(taxonNode.getId());
                 if (!taxonNode.hasProperty(PropertyAndValueDictionary.EXTERNAL_ID) ||
-                StringUtils.equals((CharSequence) taxonNode.getProperty(PropertyAndValueDictionary.EXTERNAL_ID), PropertyAndValueDictionary.NO_MATCH)) {
+                        StringUtils.equals((CharSequence) taxonNode.getProperty(PropertyAndValueDictionary.EXTERNAL_ID), PropertyAndValueDictionary.NO_MATCH)) {
                     idsNoMatch.add(taxonNode.getId());
                 }
             }
