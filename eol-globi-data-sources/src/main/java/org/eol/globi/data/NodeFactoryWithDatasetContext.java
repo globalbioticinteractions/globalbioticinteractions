@@ -132,8 +132,4 @@ public class NodeFactoryWithDatasetContext implements NodeFactory {
         return factory.getOrCreateBasisOfRecord(externalId, name);
     }
 
-    @Override
-    public void setDoiResolver(DOIResolver doiResolver) {
-        setDoiResolver(doiResolver);
-    }
 }
