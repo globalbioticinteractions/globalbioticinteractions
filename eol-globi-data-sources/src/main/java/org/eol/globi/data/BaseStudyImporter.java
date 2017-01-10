@@ -55,11 +55,6 @@ public abstract class BaseStudyImporter extends BaseImporter implements StudyImp
         this.importLogger = importLogger;
     }
 
-    @Override
-    public boolean shouldCrossCheckReference() {
-        return true;
-    }
-
     public ImportLogger getLogger() {
         return this.importLogger;
     }

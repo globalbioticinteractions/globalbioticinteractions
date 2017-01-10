@@ -1,13 +1,19 @@
 package org.eol.globi.data;
 
 import com.Ostermiller.util.LabeledCSVParser;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.node.ObjectNode;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.TaxonImpl;
+import org.eol.globi.service.DatasetImpl;
+import org.eol.globi.service.DatasetUtil;
+import org.eol.globi.service.GitHubUtil;
 
 import java.io.IOException;
+import java.net.URI;
 
 public class StudyImporterForThessen extends BaseStudyImporter {
 
@@ -22,7 +28,15 @@ public class StudyImporterForThessen extends BaseStudyImporter {
         String citation = "A. Thessen. 2014. Species associations extracted from EOL text data objects via text mining. " + ReferenceUtil.createLastAccessedString(RESOURCE);
         StudyImpl study1 = new StudyImpl("Thessen 2014", citation, null, citation);
         study1.setExternalId("https://github.com/EOL/pseudonitzchia");
-        study1.setSourceId("globi:EOL/pseudonitzchia");
+        String namespace = "EOL/pseudonitzchia";
+        study1.setSourceId("globi:" + namespace);
+
+        DatasetImpl originatingDataset = new DatasetImpl(namespace, URI.create(GitHubUtil.getBaseUrlMaster(namespace)));
+        ObjectNode objectNode = new ObjectMapper().createObjectNode();
+        objectNode.put(DatasetUtil.SHOULD_RESOLVE_REFERENCES, false);
+        originatingDataset.setConfig(objectNode);
+        study1.setOriginatingDataset(originatingDataset);
+
         Study study = nodeFactory.getOrCreateStudy(study1);
 
         try {
@@ -46,11 +60,6 @@ public class StudyImporterForThessen extends BaseStudyImporter {
         } catch (IOException e) {
             throw new StudyImporterException("failed to access [" + RESOURCE + "]", e);
         }
-    }
-
-    @Override
-    public boolean shouldCrossCheckReference() {
-        return false;
     }
 
 }

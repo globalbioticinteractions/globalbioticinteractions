@@ -67,11 +67,6 @@ public class StudyImporterForSIAD extends BaseStudyImporter {
         super(parserFactory, nodeFactory);
     }
 
-    @Override
-    public boolean shouldCrossCheckReference() {
-        return false;
-    }
-
 
     @Override
     public void importStudy() throws StudyImporterException {

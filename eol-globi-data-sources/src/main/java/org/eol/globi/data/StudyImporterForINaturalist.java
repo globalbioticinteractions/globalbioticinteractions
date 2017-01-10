@@ -340,11 +340,6 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
         return ISODateTimeFormat.dateTimeParser().parseDateTime(timeObservedAtUtc).withZone(DateTimeZone.UTC);
     }
 
-    @Override
-    public boolean shouldCrossCheckReference() {
-        return false;
-    }
-
     public void setTypeIgnoredURI(String typeIgnoredURI) {
         this.typeIgnoredURI = typeIgnoredURI;
     }

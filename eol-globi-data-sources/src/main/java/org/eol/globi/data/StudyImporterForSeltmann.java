@@ -238,8 +238,4 @@ public class StudyImporterForSeltmann extends BaseStudyImporter {
         prop.put(key, parser.getValueByLabel(key));
     }
 
-    @Override
-    public boolean shouldCrossCheckReference() {
-        return false;
-    }
 }

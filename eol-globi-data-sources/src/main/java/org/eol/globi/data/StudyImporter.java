@@ -12,5 +12,4 @@ public interface StudyImporter {
 
     void setDataset(Dataset dataset);
 
-    boolean shouldCrossCheckReference();
 }

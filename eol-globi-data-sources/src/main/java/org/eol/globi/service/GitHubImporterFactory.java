@@ -124,7 +124,7 @@ public class GitHubImporterFactory {
                 put("robledo", StudyImporterForRobledo.class);
                 put("roopnarine", StudyImporterForRoopnarine.class);
                 put("simons", StudyImporterForSimons.class);
-                put("said", StudyImporterForSIAD.class);
+                put("siad", StudyImporterForSIAD.class);
                 put("spire", StudyImporterForSPIRE.class);
                 put("strona", StudyImporterForStrona.class);
                 put("wrast", StudyImporterForWrast.class);

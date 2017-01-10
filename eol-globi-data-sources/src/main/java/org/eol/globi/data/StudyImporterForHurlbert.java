@@ -47,9 +47,7 @@ public class StudyImporterForHurlbert extends BaseStudyImporter {
                     importRecords(regions, locales, habitats, parser, sourceCitation);
                 }
             }
-        } catch (IOException e) {
-            throw new StudyImporterException("failed to import [" + RESOURCE + "]", e);
-        } catch (NodeFactoryException e) {
+        } catch (IOException | NodeFactoryException e) {
             throw new StudyImporterException("failed to import [" + RESOURCE + "]", e);
         }
 

@@ -16,7 +16,6 @@ public class StudyImporterForSIADTest extends GraphDBTestCase {
     @Test
     public void importAll() throws StudyImporterException {
         StudyImporterForSIAD importer = new StudyImporterForSIAD(new ParserFactoryLocal(), nodeFactory);
-        assertThat(importer.shouldCrossCheckReference(), is(false));
         importStudy(importer);
         List<Study> allStudies = NodeUtil.findAllStudies(getGraphDb());
         assertThat(allStudies.size() > 1, is(true));

@@ -217,6 +217,8 @@ public class Normalizer {
 
     private void importData(GraphDatabaseService graphService, Collection<Class<? extends StudyImporter>> importers) {
         NodeFactoryNeo4j factory = new NodeFactoryNeo4j(graphService);
+        factory.setEcoregionFinder(getEcoregionFinder());
+        factory.setDoiResolver(new DOIResolverImpl());
         for (Class<? extends StudyImporter> importer : importers) {
             try {
                 importData(importer, factory);
@@ -238,14 +240,7 @@ public class Normalizer {
     }
 
     private StudyImporter createStudyImporter(Class<? extends StudyImporter> studyImporter, NodeFactoryNeo4j factory) throws StudyImporterException {
-        factory.setEcoregionFinder(getEcoregionFinder());
         StudyImporter importer = new StudyImporterFactory(factory).instantiateImporter(studyImporter);
-        if (importer.shouldCrossCheckReference()) {
-            factory.setDoiResolver(new DOIResolverImpl());
-        } else {
-            factory.setDoiResolver(null);
-        }
-
         importer.setLogger(new StudyImportLogger());
         return importer;
     }

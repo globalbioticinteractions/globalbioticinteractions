@@ -44,7 +44,7 @@ public class StudyImporterForSimonsTest extends GraphDBTestCase {
     }
 
     @Test
-    public void createAndPopulateStudy() throws StudyImporterException, NodeFactoryException {
+    public void createAndPopulateStudy() throws StudyImporterException {
         String csvString
                 = "\"Obs\",\"spcode\", \"sizecl\", \"cruise\", \"stcode\", \"numstom\", \"numfood\", \"pctfull\", \"predator famcode\", \"prey\", \"number\", \"season\", \"depth\", \"transect\", \"alphcode\", \"taxord\", \"station\", \"long\", \"lat\", \"time\", \"sizeclass\", \"predator\"\n";
         csvString += "1, 1, 16, 3, 2, 6, 6, 205.5, 1, \"Ampelisca sp. (abdita complex)\", 1, \"Summer\", 60, \"Chandeleur Islands\", \"aabd\", 47.11, \"C2\", 348078.84, 3257617.25, 313, \"201-300\", \"Rhynchoconger flavus\"\n";
