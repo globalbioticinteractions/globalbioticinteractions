@@ -62,6 +62,7 @@ public enum ResultField {
     STUDY_DOI("study_doi"),
     STUDY_CITATION("study_citation"),
     STUDY_SOURCE_CITATION("study_source_citation"),
+    STUDY_SOURCE_ID("study_source_id"),
     NUMBER_OF_DISTINCT_TAXA("number_of_distinct_taxa", "only available for /reports/* queries"),
     NUMBER_OF_DISTINCT_TAXA_NO_MATCH("number_of_distinct_taxa_no_match", "only available for /reports/* queries"),
     NUMBER_OF_SOURCES("number_of_sources", "only available for /reports/* queries"),
