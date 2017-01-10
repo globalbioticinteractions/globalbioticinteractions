@@ -72,6 +72,7 @@ public enum ResultObject {
             put(ResultField.STUDY_CITATION, STUDY);
             put(ResultField.STUDY_DOI, STUDY);
             put(ResultField.STUDY_SOURCE_CITATION, STUDY);
+            put(ResultField.STUDY_SOURCE_ID, STUDY);
             put(ResultField.STUDY_TITLE, STUDY);
             put(ResultField.STUDY_URL, STUDY);
 
