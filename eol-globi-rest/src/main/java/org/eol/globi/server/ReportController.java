@@ -41,13 +41,13 @@ public class ReportController {
         return CypherQueryBuilder.createPagedQuery(request, new CypherQuery(cypherQuery, params));
     }
 
-    @RequestMapping(value = "/reports/sources/", method = RequestMethod.GET)
+    @RequestMapping(value = "/reports/source/", method = RequestMethod.GET)
     @ResponseBody
     public CypherQuery sourceRoot(final HttpServletRequest request) throws IOException {
         return sourceQuery(request, "sourceId", null);
     }
 
-    @RequestMapping(value = "/reports/sources/{org}", method = RequestMethod.GET)
+    @RequestMapping(value = "/reports/source/{org}", method = RequestMethod.GET)
     @ResponseBody
     public CypherQuery sourceOrg(
             @PathVariable("org") final String org,
@@ -55,7 +55,7 @@ public class ReportController {
         return sourceQuery(request, "sourceId", org);
     }
 
-    @RequestMapping(value = "/reports/sources/{org}/{name}", method = RequestMethod.GET)
+    @RequestMapping(value = "/reports/source/{org}/{name}", method = RequestMethod.GET)
     @ResponseBody
     public CypherQuery sourceOrgName(
             @PathVariable("org") final String org,
