@@ -12,8 +12,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eol.globi.Version;
 import org.eol.globi.data.NodeFactoryNeo4j;
-import org.eol.globi.data.ParserFactory;
-import org.eol.globi.data.ParserFactoryLocal;
 import org.eol.globi.data.StudyImporter;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.data.StudyImporterFactory;
@@ -27,8 +25,8 @@ import org.eol.globi.opentree.OpenTreeTaxonIndex;
 import org.eol.globi.service.DOIResolverImpl;
 import org.eol.globi.service.EcoregionFinderProxy;
 import org.eol.globi.service.PropertyEnricherException;
-import org.eol.globi.taxon.TaxonCacheService;
 import org.eol.globi.taxon.CorrectionService;
+import org.eol.globi.taxon.TaxonCacheService;
 import org.eol.globi.taxon.TaxonIndexNeo4j;
 import org.eol.globi.util.HttpUtil;
 import org.neo4j.graphdb.GraphDatabaseService;
@@ -40,15 +38,16 @@ import java.util.Collection;
 
 public class Normalizer {
     private static final Log LOG = LogFactory.getLog(Normalizer.class);
-    public static final String OPTION_HELP = "h";
-    public static final String OPTION_SKIP_IMPORT = "skipImport";
-    public static final String OPTION_SKIP_TAXON_CACHE = "skipTaxonCache";
-    public static final String OPTION_SKIP_RESOLVE = "skipResolve";
-    public static final String OPTION_SKIP_EXPORT = "skipExport";
-    public static final String OPTION_SKIP_LINK_THUMBNAILS = "skipLinkThumbnails";
-    public static final String OPTION_SKIP_LINK = "skipLink";
-    public static final String OPTION_SKIP_REPORT = "skipReport";
-    public static final String OPTION_USE_DARK_DATA = "useDarkData";
+    private static final String OPTION_HELP = "h";
+    private static final String OPTION_SKIP_IMPORT = "skipImport";
+    private static final String OPTION_SKIP_TAXON_CACHE = "skipTaxonCache";
+    private static final String OPTION_SKIP_RESOLVE = "skipResolve";
+    private static final String OPTION_SKIP_EXPORT = "skipExport";
+    private static final String OPTION_SKIP_LINK_THUMBNAILS = "skipLinkThumbnails";
+    private static final String OPTION_SKIP_LINK = "skipLink";
+    private static final String OPTION_SKIP_REPORT = "skipReport";
+    private static final String OPTION_USE_DARK_DATA = "useDarkData";
+    private static final String OPTION_SKIP_RESOLVE_CITATIONS = OPTION_SKIP_RESOLVE;
 
     private EcoregionFinder ecoregionFinder = null;
 
@@ -164,6 +163,12 @@ public class Normalizer {
             LOG.info("skipping taxa resolving ...");
         }
 
+        if (cmdLine == null || !cmdLine.hasOption(OPTION_SKIP_RESOLVE_CITATIONS)) {
+            new LinkerDOI().link(graphService);
+        } else {
+            LOG.info("skipping citation resolving ...");
+        }
+
         if (cmdLine == null || !cmdLine.hasOption(OPTION_SKIP_LINK)) {
             linkTaxa(graphService);
         } else {
@@ -189,9 +194,7 @@ public class Normalizer {
             if (StringUtils.isNotBlank(ottUrl)) {
                 new LinkerOpenTreeOfLife().link(graphService, new OpenTreeTaxonIndex(new URI(ottUrl).toURL()));
             }
-        } catch (MalformedURLException e) {
-            LOG.warn("failed to link against OpenTreeOfLife", e);
-        } catch (URISyntaxException e) {
+        } catch (MalformedURLException | URISyntaxException e) {
             LOG.warn("failed to link against OpenTreeOfLife", e);
         }
 

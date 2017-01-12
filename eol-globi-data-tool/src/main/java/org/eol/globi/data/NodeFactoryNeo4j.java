@@ -47,7 +47,6 @@ import org.neo4j.helpers.collection.MapUtil;
 import org.neo4j.index.lucene.QueryContext;
 import org.neo4j.index.lucene.ValueContext;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -62,6 +61,7 @@ public class NodeFactoryNeo4j implements NodeFactory {
 
     private GraphDatabaseService graphDb;
     private final Index<Node> studies;
+    private final Index<Node> datasets;
     private final Index<Node> seasons;
     private final Index<Node> locations;
     private final Index<Node> environments;
@@ -85,6 +85,7 @@ public class NodeFactoryNeo4j implements NodeFactory {
         this.bodyPartLookupService = new TermLookupServiceWithResource("body-part-mapping.csv");
         this.envoLookupService = new EnvoLookupService();
         this.studies = graphDb.index().forNodes("studies");
+        this.datasets = graphDb.index().forNodes("datasets");
         this.seasons = graphDb.index().forNodes("seasons");
         this.locations = graphDb.index().forNodes("locations");
         this.environments = graphDb.index().forNodes("environments");
@@ -245,27 +246,14 @@ public class NodeFactoryNeo4j implements NodeFactory {
             studyNode.setExternalId(study.getExternalId());
             studyNode.setDOI(study.getDOI());
             studyNode.setSourceId(study.getSourceId());
-            Dataset dataset = study.getOriginatingDataset();
-            if (doiResolver != null && DatasetUtil.shouldResolveReferences(dataset)) {
-                try {
-                    String doiResolved = study.getDOI();
-                    if (StringUtils.isBlank(study.getDOI()) && citationLikeString(study.getCitation())) {
-                        doiResolved = doiResolver.findDOIForReference(study.getCitation());
-                    }
 
-                    if (StringUtils.isNotBlank(doiResolved)) {
-                        studyNode.setDOI(doiResolved);
-                        final String citationForDOI = doiResolver.findCitationForDOI(doiResolved);
-                        if (StringUtils.isNotBlank(citationForDOI)) {
-                            studyNode.setCitation(citationForDOI);
-                        } else {
-                            LOG.warn("failed to find citation for doi [" + doiResolved + "], using [" + study.getDOI() + "] instead.");
-                        }
-                    }
-                } catch (IOException e) {
-                    LOG.warn("failed to lookup doi for citation [" + study.getCitation() + "] with id [" + study.getTitle() + "]", e);
-                }
+            Dataset originatingDataset = study.getOriginatingDataset();
+            if (originatingDataset != null) {
+                IndexHits<Node> datasetHits = datasets.get(DatasetUtil.NAMESPACE, originatingDataset.getNamespace());
+                Node datasetNode = datasetHits.hasNext() ? datasetHits.next() : createDatasetNode(originatingDataset);
+                studyNode.getUnderlyingNode().createRelationshipTo(datasetNode, NodeUtil.asNeo4j(RelTypes.IN_DATASET));
             }
+
             studies.add(node, StudyConstant.TITLE, study.getTitle());
             transaction.success();
         } finally {
@@ -275,8 +263,14 @@ public class NodeFactoryNeo4j implements NodeFactory {
         return studyNode;
     }
 
-    private boolean citationLikeString(String citation) {
-        return !StringUtils.startsWith(citation, "http://");
+    private Node createDatasetNode(Dataset dataset) {
+        Node datasetNode = graphDb.createNode();
+        datasetNode.setProperty(DatasetUtil.NAMESPACE, dataset.getNamespace());
+        datasetNode.setProperty("archiveURI", dataset.getArchiveURI().toString());
+        datasetNode.setProperty(StudyConstant.DOI, dataset.getDOI());
+        datasetNode.setProperty(DatasetUtil.SHOULD_RESOLVE_REFERENCES, dataset.getOrDefault(DatasetUtil.SHOULD_RESOLVE_REFERENCES, "true"));
+        datasets.add(datasetNode, DatasetUtil.NAMESPACE, dataset.getNamespace());
+        return datasetNode;
     }
 
     @Override

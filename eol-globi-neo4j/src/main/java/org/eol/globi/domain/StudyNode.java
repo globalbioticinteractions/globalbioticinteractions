@@ -1,6 +1,7 @@
 package org.eol.globi.domain;
 
 import org.apache.commons.lang3.StringUtils;
+import org.codehaus.jackson.JsonNode;
 import org.eol.globi.service.Dataset;
 import org.eol.globi.util.ExternalIdUtil;
 import org.eol.globi.util.NodeUtil;
@@ -10,7 +11,11 @@ import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.Transaction;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 
@@ -98,7 +103,6 @@ public class StudyNode extends NodeBacked implements Study {
 
     @Override
     public Dataset getOriginatingDataset() {
-        // dataset not yet stored in neo4j
         return null;
     }
 

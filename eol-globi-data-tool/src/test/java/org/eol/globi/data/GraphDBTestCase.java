@@ -1,16 +1,14 @@
 package org.eol.globi.data;
 
-import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.domain.Study;
-import org.eol.globi.taxon.TaxonIndexNeo4j;
 import org.eol.globi.domain.Term;
 import org.eol.globi.geo.Ecoregion;
 import org.eol.globi.geo.EcoregionFinder;
 import org.eol.globi.geo.EcoregionFinderException;
-import org.eol.globi.service.DOIResolver;
 import org.eol.globi.service.PropertyEnricher;
 import org.eol.globi.service.TermLookupService;
 import org.eol.globi.service.TermLookupServiceException;
+import org.eol.globi.taxon.TaxonIndexNeo4j;
 import org.eol.globi.tool.NameResolver;
 import org.eol.globi.util.NodeUtil;
 import org.junit.After;
@@ -48,6 +46,11 @@ public abstract class GraphDBTestCase {
         nodeFactory = createNodeFactory();
         getOrCreateTaxonIndex();
     }
+
+    protected NodeFactoryNeo4j getNodeFactory() {
+        return (NodeFactoryNeo4j) nodeFactory;
+    }
+
 
     protected TaxonIndex getOrCreateTaxonIndex() {
         if (taxonIndex == null) {
@@ -104,17 +107,6 @@ public abstract class GraphDBTestCase {
         });
         nodeFactoryNeo4j.setEnvoLookupService(getEnvoLookupService());
         nodeFactoryNeo4j.setTermLookupService(getTermLookupService());
-        nodeFactoryNeo4j.setDoiResolver(new DOIResolver() {
-            @Override
-            public String findDOIForReference(String reference) throws IOException {
-                return StringUtils.isBlank(reference) ? null : "doi:" + reference;
-            }
-
-            @Override
-            public String findCitationForDOI(String doi) throws IOException {
-                return StringUtils.isBlank(doi) ? null : "citation:" + doi;
-            }
-        });
         return nodeFactoryNeo4j;
     }
 

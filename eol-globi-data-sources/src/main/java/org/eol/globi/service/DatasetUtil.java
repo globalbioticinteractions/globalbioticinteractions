@@ -9,6 +9,7 @@ import java.io.InputStream;
 public final class DatasetUtil {
 
     public static final String SHOULD_RESOLVE_REFERENCES = "shouldResolveReferences";
+    public static final String NAMESPACE = "namespace";
 
     public static String getNamedResourceURI(Dataset dataset, String resourceName) {
         String resourceValue = getNamedResource(dataset, resourceName);
