@@ -5,6 +5,8 @@ import org.junit.Test;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.Arrays;
+import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.Is.is;
@@ -14,6 +16,12 @@ import static org.junit.internal.matchers.StringContains.containsString;
 
 public class DOIResolverImplIT {
 
+    public static final String HOCKING = "Hocking, B. 1968. Insect-flower associations in the high Arctic with special reference to nectar. Oikos 19:359-388.";
+    public static final String MEDAN = "Medan, D., N. H. Montaldo, M. Devoto, A. Mantese, V. Vasellati, and N. H. Bartoloni. 2002. Plant-pollinator relationships at two altitudes in the Andes of Mendoza, Argentina. Arctic Antarctic and Alpine Research 34:233-241.";
+    public static final String HOCKING_DOI = "http://dx.doi.org/10.2307/3565022";
+    public static final String MEDAN_DOI = "http://dx.doi.org/10.2307/1552480";
+
+    @Ignore
     @Test
     public void resolveDOIByReferenceNoMatch() throws IOException {
         String doi = new DOIResolverImpl().findDOIForReference("James D. Simons Food habits and trophic structure of the demersal fish assemblages on the Mississippi-Alabama continental shelf");
@@ -41,14 +49,21 @@ public class DOIResolverImplIT {
 
     @Test
     public void resolveDOIByReferenceMatch2() throws IOException {
-        String doi = new DOIResolverImpl().findDOIForReference("Medan, D., N. H. Montaldo, M. Devoto, A. Mantese, V. Vasellati, and N. H. Bartoloni. 2002. Plant-pollinator relationships at two altitudes in the Andes of Mendoza, Argentina. Arctic Antarctic and Alpine Research 34:233-241.");
-        assertThat(doi, is("http://dx.doi.org/10.2307/1552480"));
+        String doi = new DOIResolverImpl().findDOIForReference(MEDAN);
+        assertThat(doi, is(MEDAN_DOI));
     }
 
     @Test
     public void resolveDOIByReferenceMatch3() throws IOException {
-        String doi = new DOIResolverImpl().findDOIForReference("Hocking, B. 1968. Insect-flower associations in the high Arctic with special reference to nectar. Oikos 19:359-388.");
-        assertThat(doi, is("http://dx.doi.org/10.2307/3565022"));
+        String doi = new DOIResolverImpl().findDOIForReference(HOCKING);
+        assertThat(doi, is(HOCKING_DOI));
+    }
+
+    @Test
+    public void resolveDOIByReferenceMatchBatch() throws IOException {
+        Map<String, String> doiMap = new DOIResolverImpl().findDOIForReference(Arrays.asList(MEDAN, HOCKING));
+        assertThat(doiMap.get(HOCKING), is(HOCKING_DOI));
+        assertThat(doiMap.get(MEDAN), is(MEDAN_DOI));
     }
 
 

@@ -4,8 +4,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.StopWatch;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.eol.globi.domain.NamedNode;
-import org.eol.globi.domain.NodeBacked;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.StudyConstant;
 import org.eol.globi.domain.StudyNode;
@@ -13,7 +11,6 @@ import org.eol.globi.service.DOIResolver;
 import org.eol.globi.service.DOIResolverImpl;
 import org.eol.globi.service.Dataset;
 import org.eol.globi.service.DatasetUtil;
-import org.eol.globi.service.PropertyEnricherException;
 import org.eol.globi.util.ExternalIdUtil;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
@@ -21,10 +18,17 @@ import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.IndexHits;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 public class LinkerDOI {
 
     private static final Log LOG = LogFactory.getLog(LinkerDOI.class);
+    public static final int BATCH_SIZE = 25;
 
     public void link(final GraphDatabaseService graphDb) {
         Index<Node> taxons = graphDb.index().forNodes("studies");
@@ -36,18 +40,61 @@ public class LinkerDOI {
         LOG.info(msg + " started...");
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
+        Map<String, StudyNode> batch = new HashMap<>();
         for (Node hit : hits) {
             counter++;
-            if (counter % 100 == 0) {
-                LOG.info(logProgress(counter, stopWatch));
+            StudyNode study = new StudyNode(hit);
+            if (shouldResolve(study)) {
+                batch.put(study.getCitation(), study);
             }
-            linkStudy(doiResolver, new StudyNode(hit));
+
+            if (batch.size() >= BATCH_SIZE) {
+                LOG.info(logProgress(counter, stopWatch));
+                resolveBatch(doiResolver, batch);
+                batch.clear();
+            }
         }
+        resolveBatch(doiResolver, batch);
+
         LOG.info(msg + " complete.");
         if (counter % 100 != 0) {
             LOG.info(logProgress(counter, stopWatch));
         }
         stopWatch.stop();
+    }
+
+    public void resolveBatch(DOIResolver doiResolver, Map<String, StudyNode> batch) {
+        try {
+            resolve(doiResolver, batch, batch.keySet());
+        } catch (IOException e) {
+            LOG.info("failed to request DOIs by batch of [" + BATCH_SIZE + "], attempting to resolve one by one", e);
+            Map<String, Exception> errMap = new HashMap<>();
+            for (String citation : batch.keySet()) {
+                try {
+                    resolve(doiResolver, batch, Collections.singletonList(citation));
+                } catch (IOException e1) {
+                    errMap.put(citation, e1);
+                }
+            }
+            for (String s : errMap.keySet()) {
+                LOG.error("failed to retrieve DOI for [" + s + "]", errMap.get(s));
+            }
+        } finally {
+            batch.clear();
+        }
+    }
+
+    public void resolve(DOIResolver doiResolver, Map<String, StudyNode> batch, Collection<String> citations) throws IOException {
+        Map<String, String> doiMap = doiResolver.findDOIForReference(citations);
+        for (String s : doiMap.keySet()) {
+            StudyNode studyNode = batch.get(s);
+            if (studyNode != null) {
+                String doiResolved = doiMap.get(s);
+                if (StringUtils.isNotBlank(doiResolved)) {
+                    setDOIForStudy(studyNode, doiResolved);
+                }
+            }
+        }
     }
 
     public String logProgress(int counter, StopWatch stopWatch) {
@@ -57,25 +104,31 @@ public class LinkerDOI {
         return String.format(msg, counter, stopWatch.getTime(), 1000.0 * counter / stopWatch.getTime());
     }
 
-    public void linkStudy(DOIResolver doiResolver, StudyNode study) {
-        Dataset dataset = study.getOriginatingDataset();
-        if (DatasetUtil.shouldResolveReferences(dataset)) {
-            try {
-                String doiResolved = study.getDOI();
-                if (StringUtils.isBlank(study.getDOI()) && citationLikeString(study.getCitation())) {
-                    doiResolved = doiResolver.findDOIForReference(study.getCitation());
-                }
 
-                if (StringUtils.isNotBlank(doiResolved)) {
-                    study.setPropertyWithTx(StudyConstant.DOI, doiResolved);
-                    if (StringUtils.isBlank(study.getExternalId())) {
-                        study.setPropertyWithTx(PropertyAndValueDictionary.EXTERNAL_ID, ExternalIdUtil.urlForExternalId(doiResolved));
-                    }
-                }
+    public void linkStudy(DOIResolver doiResolver, StudyNode study) {
+        if (shouldResolve(study)) {
+            try {
+                String doiResolved = doiResolver.findDOIForReference(study.getCitation());
+                setDOIForStudy(study, doiResolved);
             } catch (IOException e) {
                 LOG.warn("failed to lookup doi for citation [" + study.getCitation() + "] with id [" + study.getTitle() + "]", e);
             }
         }
+    }
+
+    private void setDOIForStudy(StudyNode study, String doiResolved) {
+        if (StringUtils.isNotBlank(doiResolved)) {
+            study.setPropertyWithTx(StudyConstant.DOI, doiResolved);
+            if (StringUtils.isBlank(study.getExternalId())) {
+                study.setPropertyWithTx(PropertyAndValueDictionary.EXTERNAL_ID, ExternalIdUtil.urlForExternalId(doiResolved));
+            }
+        }
+    }
+
+    public boolean shouldResolve(StudyNode study) {
+        Dataset dataset = study.getOriginatingDataset();
+        return DatasetUtil.shouldResolveReferences(dataset)
+                && StringUtils.isBlank(study.getDOI()) && citationLikeString(study.getCitation());
     }
 
     private boolean citationLikeString(String citation) {

@@ -18,6 +18,9 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 public class DOIResolverImpl implements DOIResolver {
     private static final Log LOG = LogFactory.getLog(DOIResolverImpl.class);
@@ -32,29 +35,43 @@ public class DOIResolverImpl implements DOIResolver {
         this.baseURL = baseURL;
     }
 
-    public String findDOIForReference(final String reference) throws IOException {
-        ObjectMapper mapper = new ObjectMapper();
+    @Override
+    public Map<String, String> findDOIForReference(Collection<String> references) throws IOException {
+        return requestLinks(references);
+    }
 
+    public String findDOIForReference(final String reference) throws IOException {
+        ArrayList<String> references = new ArrayList<String>() {{
+            add(reference);
+        }};
+
+        return requestLinks(references).getOrDefault(reference, null);
+    }
+
+    public Map<String, String> requestLinks(Collection<String> references) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
         HttpPost post = new HttpPost(baseURL);
         post.setHeader("Content-Type", "application/json");
-        StringEntity entity = new StringEntity(mapper.writeValueAsString(new ArrayList<String>() {{
-            add(reference);
-        }}), "UTF-8");
+        StringEntity entity = new StringEntity(mapper.writeValueAsString(references), "UTF-8");
         post.setEntity(entity);
 
         BasicResponseHandler handler = new BasicResponseHandler();
         String response = HttpUtil.getHttpClient().execute(post, handler);
         JsonNode jsonNode = mapper.readTree(response);
         JsonNode results = jsonNode.get("results");
-        String doi = null;
+        Map<String, String> doiMap = new HashMap<>();
         if (jsonNode.get("query_ok").asBoolean()) {
             for (JsonNode result : results) {
                 if (result.get("match").asBoolean()) {
-                    doi = result.get("doi").getTextValue();
+                    String citation = result.get("text").getTextValue();
+                    String doi = result.get("doi").getTextValue();
+                    if (StringUtils.isNoneBlank(citation, doi)) {
+                        doiMap.put(citation, doi);
+                    }
                 }
             }
         }
-        return doi;
+        return doiMap;
     }
 
     public String findCitationForDOI(String doi) throws IOException {
