@@ -99,9 +99,9 @@ public class LinkerDOI {
 
     public String logProgress(int counter, StopWatch stopWatch) {
         stopWatch.suspend();
-        String msg = "linked [%d] reference(s) in [%d] ms  at rate of [%.1f] references/s)";
+        String msg = "linked [%d] reference(s) in [%.1f] s  at rate of [%.1f] references/s)";
         stopWatch.resume();
-        return String.format(msg, counter, stopWatch.getTime(), 1000.0 * counter / stopWatch.getTime());
+        return String.format(msg, counter, stopWatch.getTime() / 1000.0, 1000.0 * counter / stopWatch.getTime());
     }
 
 
