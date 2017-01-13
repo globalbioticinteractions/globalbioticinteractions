@@ -21,7 +21,7 @@ import java.net.URI;
 import static junit.framework.Assert.fail;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
 
 public class LinkerDOITest extends GraphDBTestCase {
 
@@ -65,7 +65,7 @@ public class LinkerDOITest extends GraphDBTestCase {
         new LinkerDOI().linkStudy(new TestDOIResolver(), study);
         assertThat(study.getSource(), is("some source"));
         assertThat(study.getDOI(), is("doi:some citation"));
-        assertThat(study.getCitation(), is("citation:doi:some citation"));
+        assertThat(study.getCitation(), is("some citation"));
         assertThat(study.getTitle(), is("title"));
     }
 
@@ -91,17 +91,12 @@ public class LinkerDOITest extends GraphDBTestCase {
             public String findDOIForReference(String reference) throws IOException {
                 return "doi:1234";
             }
-
-            @Override
-            public String findCitationForDOI(String doi) throws IOException {
-                return "my citation";
-            }
         };
         StudyNode study = getNodeFactory().getOrCreateStudy(new StudyImpl("my title", "some source", null, ExternalIdUtil.toCitation("my contr", "some description", null)));
         new LinkerDOI().linkStudy(doiResolver, study);
         assertThat(study.getDOI(), is("doi:1234"));
         assertThat(study.getExternalId(), is("http://dx.doi.org/1234"));
-        assertThat(study.getCitation(), is("my citation"));
+        assertThat(study.getCitation(), is("my contr. some description"));
 
         study = getNodeFactory().getOrCreateStudy(new StudyImpl("my other title", "some source", null, ExternalIdUtil.toCitation("my contr", "some description", null)));
         new LinkerDOI().linkStudy(new DOIResolverThatExplodes(), study);
@@ -116,11 +111,6 @@ public class LinkerDOITest extends GraphDBTestCase {
         public String findDOIForReference(String reference) throws IOException {
             throw new IOException("kaboom!");
         }
-
-        @Override
-        public String findCitationForDOI(String doi) throws IOException {
-            throw new IOException("kaboom!");
-        }
     }
 
     private static class DOIResolverThatFails implements DOIResolver {
@@ -130,11 +120,6 @@ public class LinkerDOITest extends GraphDBTestCase {
             return "bla";
         }
 
-        @Override
-        public String findCitationForDOI(String doi) throws IOException {
-            fail("should not call this");
-            return "bla";
-        }
     }
 
 
@@ -144,9 +129,5 @@ public class LinkerDOITest extends GraphDBTestCase {
             return StringUtils.isBlank(reference) ? null : "doi:" + reference;
         }
 
-        @Override
-        public String findCitationForDOI(String doi) throws IOException {
-            return StringUtils.isBlank(doi) ? null : "citation:" + doi;
-        }
     }
 }

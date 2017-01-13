@@ -57,7 +57,6 @@ public class DOIResolverImpl implements DOIResolver {
         return doi;
     }
 
-    @Override
     public String findCitationForDOI(String doi) throws IOException {
         String citation = null;
         try {
@@ -65,12 +64,8 @@ public class DOIResolverImpl implements DOIResolver {
             if (uri != null) {
                 citation = resolveCitation(uri);
             }
-        } catch (IllegalArgumentException ex) {
+        } catch (IllegalArgumentException | ClientProtocolException | URISyntaxException ex) {
             LOG.warn("potentially malformed doi found [" + doi + "]", ex);
-        } catch (ClientProtocolException e) {
-            LOG.warn("potentially malformed doi found [" + doi + "]", e);
-        } catch (URISyntaxException e) {
-            LOG.warn("potentially malformed doi found [" + doi + "]", e);
         }
         return citation;
     }

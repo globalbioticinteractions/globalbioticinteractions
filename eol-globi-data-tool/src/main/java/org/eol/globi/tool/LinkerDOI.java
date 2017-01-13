@@ -71,13 +71,6 @@ public class LinkerDOI {
                     if (StringUtils.isBlank(study.getExternalId())) {
                         study.setPropertyWithTx(PropertyAndValueDictionary.EXTERNAL_ID, ExternalIdUtil.urlForExternalId(doiResolved));
                     }
-
-                    final String citationForDOI = doiResolver.findCitationForDOI(doiResolved);
-                    if (StringUtils.isNotBlank(citationForDOI)) {
-                        study.setPropertyWithTx(StudyConstant.CITATION, citationForDOI);
-                    } else {
-                        LOG.warn("failed to find citation for doi [" + doiResolved + "], using [" + study.getDOI() + "] instead.");
-                    }
                 }
             } catch (IOException e) {
                 LOG.warn("failed to lookup doi for citation [" + study.getCitation() + "] with id [" + study.getTitle() + "]", e);
