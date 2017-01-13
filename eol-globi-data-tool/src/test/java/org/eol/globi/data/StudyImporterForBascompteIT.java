@@ -34,7 +34,7 @@ public class StudyImporterForBascompteIT extends GraphDBTestCase {
         }
 
         assertThat(references.size(), is(referenceSet.size()));
-        assertThat(references, hasItem("citation:doi:Arroyo, M.T.K., R. Primack & J.J. Armesto. 1982. Community studies in pollination ecology in the high temperate Andes of central Chile. I. Pollination mechanisms and altitudinal variation. Amer. J. Bot. 69:82-97."));
+        assertThat(references, hasItem("Arroyo, M.T.K., R. Primack & J.J. Armesto. 1982. Community studies in pollination ecology in the high temperate Andes of central Chile. I. Pollination mechanisms and altitudinal variation. Amer. J. Bot. 69:82-97."));
         assertThat(taxonIndex.findTaxonByName("Diplopterys pubipetala"), is(notNullValue()));
     }
 

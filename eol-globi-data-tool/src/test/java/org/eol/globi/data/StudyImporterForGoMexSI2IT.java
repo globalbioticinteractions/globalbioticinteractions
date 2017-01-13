@@ -100,7 +100,7 @@ public class StudyImporterForGoMexSI2IT extends GraphDBTestCase {
         assertNotNull(study);
         assertThat(study.getTitle(), is("Divita et al 1983"));
         assertThat(study.getExternalId(), is(ExternalIdUtil.urlForExternalId("GAME:2689")));
-        assertThat(study.getCitation(), is("citation:doi:Regina Divita, Mischelle Creel, Peter Sheridan. 1983. Foods of coastal fishes during brown shrimp Penaeus aztecus, migration from Texas estuaries (June - July 1981)."));
+        assertThat(study.getCitation(), is("Regina Divita, Mischelle Creel, Peter Sheridan. 1983. Foods of coastal fishes during brown shrimp Penaeus aztecus, migration from Texas estuaries (June - July 1981)."));
         assertNotNull(nodeFactory.findStudy("Beaumariage 1973"));
         assertNotNull(nodeFactory.findStudy("Baughman, 1943"));
 

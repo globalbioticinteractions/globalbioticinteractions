@@ -47,6 +47,7 @@ import org.neo4j.helpers.collection.MapUtil;
 import org.neo4j.index.lucene.QueryContext;
 import org.neo4j.index.lucene.ValueContext;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -248,7 +249,7 @@ public class NodeFactoryNeo4j implements NodeFactory {
             studyNode.setSourceId(study.getSourceId());
 
             Dataset originatingDataset = study.getOriginatingDataset();
-            if (originatingDataset != null) {
+            if (originatingDataset != null && StringUtils.isNotBlank(originatingDataset.getNamespace())) {
                 IndexHits<Node> datasetHits = datasets.get(DatasetUtil.NAMESPACE, originatingDataset.getNamespace());
                 Node datasetNode = datasetHits.hasNext() ? datasetHits.next() : createDatasetNode(originatingDataset);
                 studyNode.getUnderlyingNode().createRelationshipTo(datasetNode, NodeUtil.asNeo4j(RelTypes.IN_DATASET));
@@ -266,7 +267,10 @@ public class NodeFactoryNeo4j implements NodeFactory {
     private Node createDatasetNode(Dataset dataset) {
         Node datasetNode = graphDb.createNode();
         datasetNode.setProperty(DatasetUtil.NAMESPACE, dataset.getNamespace());
-        datasetNode.setProperty("archiveURI", dataset.getArchiveURI().toString());
+        URI archiveURI = dataset.getArchiveURI();
+        if (archiveURI != null) {
+            datasetNode.setProperty("archiveURI", archiveURI.toString());
+        }
         datasetNode.setProperty(StudyConstant.DOI, dataset.getDOI());
         datasetNode.setProperty(DatasetUtil.SHOULD_RESOLVE_REFERENCES, dataset.getOrDefault(DatasetUtil.SHOULD_RESOLVE_REFERENCES, "true"));
         datasets.add(datasetNode, DatasetUtil.NAMESPACE, dataset.getNamespace());

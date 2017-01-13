@@ -187,10 +187,33 @@ public class NodeFactoryNeo4jTest extends GraphDBTestCase {
         assertThat(datasetNode.getId(), is(datasetNodeOther.getId()));
     }
 
+    @Test
+    public void addDatasetToStudyNulls() throws NodeFactoryException {
+        StudyImpl study1 = new StudyImpl("my title", "some source", "some doi", "some citation");
+        DatasetImpl dataset = new DatasetImpl(null, null);
+        study1.setOriginatingDataset(dataset);
+        StudyNode study = getNodeFactory().getOrCreateStudy(study1);
+
+        assertThat(getDataSetForStudy(study), is(nullValue()));
+    }
+
+    @Test
+    public void addDatasetToStudyNulls2() throws NodeFactoryException {
+        StudyImpl study1 = new StudyImpl("my title", "some source", "some doi", "some citation");
+        DatasetImpl dataset = new DatasetImpl("some/namespace", null);
+        study1.setOriginatingDataset(dataset);
+        StudyNode study = getNodeFactory().getOrCreateStudy(study1);
+
+        Node datasetNode = getDataSetForStudy(study);
+        assertThat(datasetNode.getProperty(DatasetUtil.NAMESPACE), is("some/namespace"));
+        assertThat(datasetNode.hasProperty(DatasetUtil.ARCHIVE_URI), is(false));
+        assertThat(datasetNode.getProperty(DatasetUtil.SHOULD_RESOLVE_REFERENCES), is("true"));
+    }
+
     private Node getDataSetForStudy(StudyNode study) {
         Iterable<Relationship> rels = study.getUnderlyingNode().getRelationships(NodeUtil.asNeo4j(RelTypes.IN_DATASET), Direction.OUTGOING);
         Iterator<Relationship> iterator = rels.iterator();
-        return iterator.next().getEndNode();
+        return iterator.hasNext() ? iterator.next().getEndNode() : null;
     }
 
 

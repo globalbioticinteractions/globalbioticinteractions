@@ -127,7 +127,7 @@ public class StudyImporterForBioInfoTest extends GraphDBTestCase {
         assertThat(study.getExternalId(), is("http://bioinfo.org.uk/html/b60536.htm"));
         assertNull(nodeFactory.findStudy(TaxonomyProvider.BIO_INFO + "ref:bla"));
         Study study1 = nodeFactory.findStudy(TaxonomyProvider.BIO_INFO + "ref:60527");
-        assertThat(study1.getCitation(), is("citation:doi:citation A"));
+        assertThat(study1.getCitation(), is("citation A"));
         assertThat(study1, is(notNullValue()));
         Iterable<Relationship> specimens = NodeUtil.getSpecimens(study1);
         List<Node> specimenList = new ArrayList<Node>();

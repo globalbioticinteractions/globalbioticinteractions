@@ -171,7 +171,7 @@ public class StudyImporterForGitHubDataIT extends GraphDBTestCase {
             dois.add(study.getDOI());
         }
 
-        assertThat(citations, hasItem("citation:doi:F.  Seow-Choen, A Taxonomic Guide to the Stick Insects of Borneo. Kota Kinabalu: Natural History Publications (Borneo), 2016."));
+        assertThat(citations, hasItem("F.  Seow-Choen, A Taxonomic Guide to the Stick Insects of Borneo. Kota Kinabalu: Natural History Publications (Borneo), 2016."));
         assertThat(dois, hasItem("10.2307/3503496"));
     }
 

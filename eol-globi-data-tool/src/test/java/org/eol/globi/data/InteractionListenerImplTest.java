@@ -49,7 +49,7 @@ public class InteractionListenerImplTest extends GraphDBTestCase {
         final List<Study> allStudies = NodeUtil.findAllStudies(getGraphDb());
         assertThat(allStudies.size(), is(1));
         final Study study = allStudies.get(0);
-        assertThat(study.getCitation(), is("citation:doi:1234"));
+        assertThat(study.getCitation(), is(""));
 
         boolean foundPair = false;
         for (Relationship specimenRel : NodeUtil.getSpecimens(study)) {
