@@ -22,6 +22,7 @@ import org.eol.globi.export.GraphExporterImpl;
 import org.eol.globi.geo.EcoregionFinder;
 import org.eol.globi.geo.EcoregionFinderFactoryImpl;
 import org.eol.globi.opentree.OpenTreeTaxonIndex;
+import org.eol.globi.service.DOIResolverCache;
 import org.eol.globi.service.DOIResolverImpl;
 import org.eol.globi.service.EcoregionFinderProxy;
 import org.eol.globi.service.PropertyEnricherException;
@@ -164,7 +165,8 @@ public class Normalizer {
         }
 
         if (cmdLine == null || !cmdLine.hasOption(OPTION_SKIP_RESOLVE_CITATIONS)) {
-            new LinkerDOI().link(graphService);
+            new LinkerDOI(graphService, new DOIResolverCache()).link();
+            new LinkerDOI(graphService).link();
         } else {
             LOG.info("skipping citation resolving ...");
         }

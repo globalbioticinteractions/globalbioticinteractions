@@ -28,11 +28,22 @@ public class LinkerDOI {
     private static final Log LOG = LogFactory.getLog(LinkerDOI.class);
     public static final int BATCH_SIZE = 25;
 
-    public void link(final GraphDatabaseService graphDb) {
-        Index<Node> taxons = graphDb.index().forNodes("studies");
+    private final DOIResolver doiResolver;
+    private final GraphDatabaseService graphDb;
+
+    public LinkerDOI(GraphDatabaseService graphDb) {
+        this(graphDb, new DOIResolverImpl());
+    }
+
+    public LinkerDOI(GraphDatabaseService graphDb, DOIResolver resolver) {
+        this.graphDb = graphDb;
+        this.doiResolver = resolver;
+    }
+
+    public void link() {
+        Index<Node> taxons = this.graphDb.index().forNodes("studies");
         IndexHits<Node> hits = taxons.query("*:*");
 
-        DOIResolver doiResolver = new DOIResolverImpl();
         int counter = 0;
         String msg = "linking study citations to DOIs";
         LOG.info(msg + " started...");

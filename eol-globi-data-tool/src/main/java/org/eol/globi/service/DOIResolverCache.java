@@ -73,6 +73,7 @@ public class DOIResolverCache extends CacheService implements DOIResolver {
         final CSVParser parser = new CSVParser(reader);
         parser.changeDelimiter('\t');
 
+        LOG.info("doi cache building...");
         doiCitationMap = db
                 .createTreeMap("doiCache")
                 .pumpPresort(100000)
@@ -107,6 +108,7 @@ public class DOIResolverCache extends CacheService implements DOIResolver {
                 .keySerializer(BTreeKeySerializer.STRING)
                 .make();
         watch.stop();
+        LOG.info("doi cache built in [" + watch.getTime() / 1000 + "] s.");
     }
 
 }
