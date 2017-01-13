@@ -65,7 +65,7 @@ public class TaxonCacheServiceTest {
     }
 
     public TaxonCacheService getTaxonCacheService() {
-        final TaxonCacheService cacheService = new TaxonCacheService("taxonCache.tsv", "taxonMap.tsv");
+        final TaxonCacheService cacheService = new TaxonCacheService("/org/eol/globi/taxon/taxonCache.tsv", "/org/eol/globi/taxon/taxonMap.tsv");
         cacheService.setCacheDir(mapdbDir);
         return cacheService;
     }

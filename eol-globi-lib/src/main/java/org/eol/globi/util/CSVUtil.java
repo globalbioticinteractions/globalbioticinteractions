@@ -88,4 +88,10 @@ public class CSVUtil {
         String value = labeledCSVParser.getValueByLabel(columnName);
         return StringUtils.isBlank(value) ? defaultValue : value;
     }
+
+    public static CSVParser createTSVParser(Reader reader) {
+        final CSVParser parser = new CSVParser(reader);
+        parser.changeDelimiter('\t');
+        return parser;
+    }
 }

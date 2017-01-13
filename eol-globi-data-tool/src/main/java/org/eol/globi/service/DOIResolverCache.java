@@ -1,21 +1,17 @@
 package org.eol.globi.service;
 
 import com.Ostermiller.util.CSVParser;
-import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.StopWatch;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eol.globi.util.CSVUtil;
-import org.eol.globi.util.ResourceUtil;
 import org.mapdb.BTreeKeySerializer;
-import org.mapdb.BTreeMap;
 import org.mapdb.DB;
 import org.mapdb.Fun;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.Collection;
 import java.util.HashMap;
@@ -70,8 +66,7 @@ public class DOIResolverCache extends CacheService implements DOIResolver {
         DB db = initDb("doiCache");
         StopWatch watch = new StopWatch();
         watch.start();
-        final CSVParser parser = new CSVParser(reader);
-        parser.changeDelimiter('\t');
+        final CSVParser parser = CSVUtil.createTSVParser(reader);
 
         LOG.info("doi cache building...");
         doiCitationMap = db
