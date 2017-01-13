@@ -34,6 +34,7 @@ import org.eol.globi.service.TermLookupService;
 import org.eol.globi.service.TermLookupServiceException;
 import org.eol.globi.taxon.TermLookupServiceWithResource;
 import org.eol.globi.taxon.UberonLookupService;
+import org.eol.globi.util.ExternalIdUtil;
 import org.eol.globi.util.NodeUtil;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.GraphDatabaseService;
@@ -244,8 +245,12 @@ public class NodeFactoryNeo4j implements NodeFactory {
             studyNode = new StudyNode(node, study.getTitle());
             studyNode.setSource(study.getSource());
             studyNode.setCitation(study.getCitation());
-            studyNode.setExternalId(study.getExternalId());
             studyNode.setDOI(study.getDOI());
+            if (StringUtils.isBlank(study.getExternalId()) && StringUtils.isNotBlank(study.getDOI())) {
+                studyNode.setExternalId(ExternalIdUtil.urlForExternalId(study.getDOI()));
+            } else {
+                studyNode.setExternalId(study.getExternalId());
+            }
             studyNode.setSourceId(study.getSourceId());
 
             Dataset originatingDataset = study.getOriginatingDataset();

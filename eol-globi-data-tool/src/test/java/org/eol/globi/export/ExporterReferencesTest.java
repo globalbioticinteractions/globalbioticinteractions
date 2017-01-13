@@ -44,10 +44,10 @@ public class ExporterReferencesTest extends GraphDBTestCase {
 
     @Test
     public void exportReferenceEscapeCharacters() throws IOException, NodeFactoryException, ParseException {
-        Study myStudy = nodeFactory.createStudy(new StudyImpl("myStudy", null, null, "bla \"one\""));
+        Study myStudy = nodeFactory.createStudy(new StudyImpl("myStudy", null, "doi:some/doi", "bla \"one\""));
         StringWriter row = new StringWriter();
         new ExporterReferences().exportStudy(myStudy, row, false);
-        assertThat(row.getBuffer().toString(), equalTo("\nglobi:ref:1\t\tbla \"one\"\t\t\t\t\t\t\t\t\t\t\t\t\thttp://dx.doi.org/bla \"one\"\tdoi:bla \"one\"\t"));
+        assertThat(row.getBuffer().toString(), equalTo("\nglobi:ref:1\t\tbla \"one\"\t\t\t\t\t\t\t\t\t\t\t\t\thttp://dx.doi.org/some/doi\tdoi:some/doi\t"));
     }
 
 
@@ -57,7 +57,7 @@ public class ExporterReferencesTest extends GraphDBTestCase {
     }
 
     private String getExpectedRow() {
-        return "\nglobi:ref:1\t\t1234\t\t\t\t\t\t\t\t\t\t\t\t\thttps://public.myfwc.com/FWRI/GAME/Survey.aspx?id=444\tdoi:1234\t";
+        return "\nglobi:ref:1\t\tJohn Doe. 1927. description study 1\t\t\t\t\t\t\t\t\t\t\t\t\thttps://public.myfwc.com/FWRI/GAME/Survey.aspx?id=444\tdoi:1234\t";
     }
 
     @Test
