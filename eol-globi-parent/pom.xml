@@ -15,7 +15,7 @@
         <project.build.testResourceEncoding>UTF-8</project.build.testResourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <neo4j.version>1.9.9</neo4j.version>
-        <mapdb.version>1.0.6</mapdb.version>
+        <mapdb.version>1.0.9</mapdb.version>
         <jena.version>1.0.2</jena.version>
         <skip.import>false</skip.import>
         <skip.export>false</skip.export>

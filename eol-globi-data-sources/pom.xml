@@ -47,11 +47,6 @@
             <version>1.2.10</version>
         </dependency>
         <dependency>
-            <groupId>org.mapdb</groupId>
-            <artifactId>mapdb</artifactId>
-            <version>${mapdb.version}</version>
-        </dependency>
-        <dependency>
             <groupId>rome</groupId>
             <artifactId>rome</artifactId>
             <version>1.0</version>

@@ -1,42 +1,36 @@
 package org.eol.globi.taxon;
 
 import com.Ostermiller.util.LabeledCSVParser;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.StopWatch;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Taxon;
+import org.eol.globi.service.CacheService;
 import org.eol.globi.service.PropertyEnricher;
 import org.eol.globi.service.PropertyEnricherException;
 import org.eol.globi.service.TaxonUtil;
 import org.eol.globi.util.CSVUtil;
-import org.eol.globi.util.ResourceUtil;
 import org.mapdb.BTreeKeySerializer;
 import org.mapdb.BTreeMap;
 import org.mapdb.DB;
-import org.mapdb.DBMaker;
 import org.mapdb.Engine;
 import org.mapdb.Fun;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.Map;
 
-public class TaxonCacheService implements PropertyEnricher {
+public class TaxonCacheService extends CacheService implements PropertyEnricher {
     private static final Log LOG = LogFactory.getLog(TaxonCacheService.class);
 
     private BTreeMap<String, Map<String, String>> resolvedIdToTaxonMap = null;
     private BTreeMap<String, String> providedToResolvedMap = null;
     private String taxonCacheResource;
     private final String taxonMapResource;
-
-    private File cacheDir = new File("./mapdb/");
 
     public TaxonCacheService(String taxonCacheResource, String taxonMapResource) {
         this.taxonCacheResource = taxonCacheResource;
@@ -88,13 +82,7 @@ public class TaxonCacheService implements PropertyEnricher {
 
     public void init() throws PropertyEnricherException {
         LOG.info("taxon cache initializing...");
-        createCacheDir(cacheDir);
-        DB db = DBMaker
-                .newFileDB(new File(cacheDir, "taxonCache"))
-                .mmapFileEnableIfSupported()
-                .closeOnJvmShutdown()
-                .transactionDisable()
-                .make();
+        DB db = initDb("taxonCache");
 
         StopWatch watch = new StopWatch();
         watch.start();
@@ -134,15 +122,6 @@ public class TaxonCacheService implements PropertyEnricher {
         logCacheLoadStats(watch.getTime(), providedToResolvedMap.size());
 
         LOG.info("taxon cache initialized.");
-    }
-
-    static public void createCacheDir(File cacheDir) throws PropertyEnricherException {
-        FileUtils.deleteQuietly(cacheDir);
-        if (!cacheDir.exists()) {
-            if (!cacheDir.mkdirs()) {
-                throw new PropertyEnricherException("failed to create cache dir at [" + cacheDir.getAbsolutePath() + "]");
-            }
-        }
     }
 
     private enum ProcessingState {
@@ -280,10 +259,6 @@ public class TaxonCacheService implements PropertyEnricher {
                 && !StringUtils.equals(sourceValue, PropertyAndValueDictionary.NO_NAME);
     }
 
-    public static BufferedReader createBufferedReader(String taxonResourceUrl) throws IOException {
-        return new BufferedReader(new InputStreamReader(ResourceUtil.asInputStream(taxonResourceUrl, TaxonCacheService.class)));
-    }
-
     @Override
     public void shutdown() {
         if (resolvedIdToTaxonMap != null) {
@@ -294,17 +269,12 @@ public class TaxonCacheService implements PropertyEnricher {
             close(providedToResolvedMap.getEngine());
             resolvedIdToTaxonMap = null;
         }
-        FileUtils.deleteQuietly(cacheDir);
     }
 
     static public void close(Engine engine) {
         if (!engine.isClosed()) {
             engine.close();
         }
-    }
-
-    public void setCacheDir(File cacheFilename) {
-        this.cacheDir = cacheFilename;
     }
 
 }

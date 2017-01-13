@@ -24,44 +24,44 @@ public class DOIResolverImplIT {
     @Ignore
     @Test
     public void resolveDOIByReferenceNoMatch() throws IOException {
-        String doi = new DOIResolverImpl().findDOIForReference("James D. Simons Food habits and trophic structure of the demersal fish assemblages on the Mississippi-Alabama continental shelf");
+        String doi = new DOIResolverImpl().resolveDoiFor("James D. Simons Food habits and trophic structure of the demersal fish assemblages on the Mississippi-Alabama continental shelf");
         assertThat(doi, is(nullValue()));
     }
 
     @Test
     public void resolveDOIByReferenceMatch() throws IOException {
-        String doi = new DOIResolverImpl().findDOIForReference("J. N. Kremer and S. W. Nixon, A Coastal Marine Ecosystem:  Simulation and Analysis, Vol. 24 of Ecol. Studies (Springer-Verlag, Berlin, 1978), from p. 12.");
+        String doi = new DOIResolverImpl().resolveDoiFor("J. N. Kremer and S. W. Nixon, A Coastal Marine Ecosystem:  Simulation and Analysis, Vol. 24 of Ecol. Studies (Springer-Verlag, Berlin, 1978), from p. 12.");
         assertThat(doi, is("http://dx.doi.org/10.1002/aheh.19790070620"));
     }
 
     @Test
     @Ignore
     public void resolveDOIByReferenceURL() throws IOException {
-        String doi = new DOIResolverImpl().findDOIForReference("http://www.ncbi.nlm.nih.gov/nuccore/7109271");
+        String doi = new DOIResolverImpl().resolveDoiFor("http://www.ncbi.nlm.nih.gov/nuccore/7109271");
         assertThat(doi, is("http://dx.doi.org/10.1002/bimj.4710230217"));
     }
 
     @Test
     public void resolveDOIByReferenceTamarins() throws IOException {
-        String doi = new DOIResolverImpl().findDOIForReference("Raboy, Becky E., and James M. Dietz. Diet, Foraging, and Use of Space in Wild Golden-headed Lion Tamarins. American Journal of Primatology, 63(1):, 2004, 1-15. Accessed April 20, 2015. http://hdl.handle.net/10088/4251.");
+        String doi = new DOIResolverImpl().resolveDoiFor("Raboy, Becky E., and James M. Dietz. Diet, Foraging, and Use of Space in Wild Golden-headed Lion Tamarins. American Journal of Primatology, 63(1):, 2004, 1-15. Accessed April 20, 2015. http://hdl.handle.net/10088/4251.");
         assertThat(doi, is("http://dx.doi.org/10.1002/ajp.20032"));
     }
 
     @Test
     public void resolveDOIByReferenceMatch2() throws IOException {
-        String doi = new DOIResolverImpl().findDOIForReference(MEDAN);
+        String doi = new DOIResolverImpl().resolveDoiFor(MEDAN);
         assertThat(doi, is(MEDAN_DOI));
     }
 
     @Test
     public void resolveDOIByReferenceMatch3() throws IOException {
-        String doi = new DOIResolverImpl().findDOIForReference(HOCKING);
+        String doi = new DOIResolverImpl().resolveDoiFor(HOCKING);
         assertThat(doi, is(HOCKING_DOI));
     }
 
     @Test
     public void resolveDOIByReferenceMatchBatch() throws IOException {
-        Map<String, String> doiMap = new DOIResolverImpl().findDOIForReference(Arrays.asList(MEDAN, HOCKING));
+        Map<String, String> doiMap = new DOIResolverImpl().resolveDoiFor(Arrays.asList(MEDAN, HOCKING));
         assertThat(doiMap.get(HOCKING), is(HOCKING_DOI));
         assertThat(doiMap.get(MEDAN), is(MEDAN_DOI));
     }
@@ -82,7 +82,7 @@ public class DOIResolverImplIT {
 
     @Test
     public void resolveBioInfoCitation() throws IOException {
-        String doi = new DOIResolverImpl().findDOIForReference("Galea, V.J. & Price, T.V.. 1988. Infection of Lettuce by Microdochium panattonianum. Transactions of the British Mycological Society. Vol Vol 91 (3). pp 419-425");
+        String doi = new DOIResolverImpl().resolveDoiFor("Galea, V.J. & Price, T.V.. 1988. Infection of Lettuce by Microdochium panattonianum. Transactions of the British Mycological Society. Vol Vol 91 (3). pp 419-425");
         String expectedDoi = "http://dx.doi.org/10.1016/s0007-1536(88)80117-7";
         assertThat(doi, is(expectedDoi));
         String citation = new DOIResolverImpl().findCitationForDOI(doi);
@@ -133,7 +133,7 @@ public class DOIResolverImplIT {
 
     @Test(expected = IOException.class)
     public void findNotResponding() throws IOException {
-        new DOIResolverImpl("http://google.com").findDOIForReference("some reference");
+        new DOIResolverImpl("http://google.com").resolveDoiFor("some reference");
     }
 
     @Test

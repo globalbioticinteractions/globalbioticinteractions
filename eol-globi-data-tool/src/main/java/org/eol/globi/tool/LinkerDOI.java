@@ -18,12 +18,10 @@ import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.IndexHits;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 public class LinkerDOI {
 
@@ -85,7 +83,7 @@ public class LinkerDOI {
     }
 
     public void resolve(DOIResolver doiResolver, Map<String, StudyNode> batch, Collection<String> citations) throws IOException {
-        Map<String, String> doiMap = doiResolver.findDOIForReference(citations);
+        Map<String, String> doiMap = doiResolver.resolveDoiFor(citations);
         for (String s : doiMap.keySet()) {
             StudyNode studyNode = batch.get(s);
             if (studyNode != null) {
@@ -108,7 +106,7 @@ public class LinkerDOI {
     public void linkStudy(DOIResolver doiResolver, StudyNode study) {
         if (shouldResolve(study)) {
             try {
-                String doiResolved = doiResolver.findDOIForReference(study.getCitation());
+                String doiResolved = doiResolver.resolveDoiFor(study.getCitation());
                 setDOIForStudy(study, doiResolved);
             } catch (IOException e) {
                 LOG.warn("failed to lookup doi for citation [" + study.getCitation() + "] with id [" + study.getTitle() + "]", e);

@@ -36,11 +36,12 @@ public class DOIResolverImpl implements DOIResolver {
     }
 
     @Override
-    public Map<String, String> findDOIForReference(Collection<String> references) throws IOException {
+    public Map<String, String> resolveDoiFor(Collection<String> references) throws IOException {
         return requestLinks(references);
     }
 
-    public String findDOIForReference(final String reference) throws IOException {
+    @Override
+    public String resolveDoiFor(final String reference) throws IOException {
         ArrayList<String> references = new ArrayList<String>() {{
             add(reference);
         }};

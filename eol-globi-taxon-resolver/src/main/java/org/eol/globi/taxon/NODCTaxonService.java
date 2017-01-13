@@ -7,6 +7,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.TaxonomyProvider;
+import org.eol.globi.service.CacheService;
 import org.eol.globi.service.PropertyEnricher;
 import org.eol.globi.service.PropertyEnricherException;
 import org.eol.globi.util.ResourceUtil;
@@ -74,7 +75,7 @@ public class NODCTaxonService implements PropertyEnricher {
     }
 
     protected void init(NODCTaxonParser parser) throws PropertyEnricherException {
-        TaxonCacheService.createCacheDir(cacheDir);
+        CacheService.createCacheDir(cacheDir);
 
         LOG.info("NODC taxonomy importing...");
         StopWatch watch = new StopWatch();

@@ -64,6 +64,12 @@
             <artifactId>httpmime</artifactId>
             <version>${httpcomponents.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.mapdb</groupId>
+            <artifactId>mapdb</artifactId>
+            <version>${mapdb.version}</version>
+        </dependency>
+
         <!-- CVS Parsing, base 64 encoding and more -->
         <dependency>
             <groupId>org.ostermiller</groupId>

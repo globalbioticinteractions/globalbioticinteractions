@@ -288,6 +288,15 @@
                                             <overWrite>false</overWrite>
                                             <outputDirectory>${shapefiles.dir}/taxa</outputDirectory>
                                         </artifactItem>
+                                        <artifactItem>
+                                            <groupId>${project.groupId}</groupId>
+                                            <artifactId>${project.artifactId}</artifactId>
+                                            <version>${globi.taxa.version}</version>
+                                            <classifier>tsv</classifier>
+                                            <type>zip</type>
+                                            <overWrite>false</overWrite>
+                                            <outputDirectory>${shapefiles.dir}/tsv</outputDirectory>
+                                        </artifactItem>
                                     </artifactItems>
                                     <outputDirectory>${project.build.directory}</outputDirectory>
                                 </configuration>
