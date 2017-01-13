@@ -12,6 +12,7 @@
             <outputDirectory>/</outputDirectory>
             <includes>
                 <include>interactions.tsv.gz</include>
+                <include>citations.tsv.gz</include>
             </includes>
         </fileSet>
     </fileSets>

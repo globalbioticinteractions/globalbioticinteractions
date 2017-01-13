@@ -10,6 +10,7 @@ import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.Term;
+import org.eol.globi.util.InteractUtil;
 import org.junit.Test;
 
 import java.io.IOException;

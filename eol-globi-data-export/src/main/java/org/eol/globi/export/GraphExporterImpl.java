@@ -46,6 +46,7 @@ public class GraphExporterImpl implements GraphExporter {
         exportNames(baseDir, studies);
         // export to taxa for now, to avoid additional assemblies
         new ExportFlatInteractions().export(graphService, "tsv");
+        new ExportCitations().export(graphService, "tsv");
 
         exportNCBILinkOut(graphService, baseDir, studies);
 
