@@ -3,16 +3,11 @@ package org.eol.globi.tool;
 import org.eol.globi.domain.Taxon;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class KnownBadNameFilter implements TaxonFilter {
-    private static final List<String> KNOWN_BAD_NAMES = new ArrayList<String>() {
-        {
-            add("sp");
-            add("G.");
-            add("NA");
-        }
-    };
+    private static final List<String> KNOWN_BAD_NAMES = Arrays.asList("sp", "G.", "NA", "IV", "AV");
 
     @Override
     public boolean shouldInclude(Taxon taxon) {
