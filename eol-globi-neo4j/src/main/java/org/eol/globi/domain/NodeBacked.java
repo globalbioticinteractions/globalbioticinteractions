@@ -81,7 +81,7 @@ public class NodeBacked {
 
     protected String getPropertyStringValueOrNull(String propertyName) {
         Node node = getUnderlyingNode();
-        return NodeUtil.getPropertyStringValueOrNull(node, propertyName);
+        return NodeUtil.getPropertyStringValueOrDefault(node, propertyName, null);
     }
 
     public void setExternalId(String externalId) {

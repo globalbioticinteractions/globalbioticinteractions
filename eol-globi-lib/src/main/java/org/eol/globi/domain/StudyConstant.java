@@ -9,4 +9,5 @@ public final class StudyConstant  {
     public static final String CITATION = "citation";
     public static final String DOI = "doi";
     public static final String SOURCE_ID = "sourceId";
+    public static final String FORMAT = "format";
 }

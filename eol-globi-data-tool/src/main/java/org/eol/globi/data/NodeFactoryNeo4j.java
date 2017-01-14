@@ -3,6 +3,8 @@ package org.eol.globi.data;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.domain.Environment;
 import org.eol.globi.domain.EnvironmentNode;
 import org.eol.globi.domain.Location;
@@ -26,7 +28,7 @@ import org.eol.globi.geo.EcoregionFinderException;
 import org.eol.globi.service.AuthorIdResolver;
 import org.eol.globi.service.DOIResolver;
 import org.eol.globi.service.Dataset;
-import org.eol.globi.service.DatasetUtil;
+import org.eol.globi.service.DatasetConstant;
 import org.eol.globi.service.EnvoLookupService;
 import org.eol.globi.service.ORCIDResolverImpl;
 import org.eol.globi.service.QueryUtil;
@@ -48,6 +50,7 @@ import org.neo4j.helpers.collection.MapUtil;
 import org.neo4j.index.lucene.QueryContext;
 import org.neo4j.index.lucene.ValueContext;
 
+import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -255,7 +258,7 @@ public class NodeFactoryNeo4j implements NodeFactory {
 
             Dataset originatingDataset = study.getOriginatingDataset();
             if (originatingDataset != null && StringUtils.isNotBlank(originatingDataset.getNamespace())) {
-                IndexHits<Node> datasetHits = datasets.get(DatasetUtil.NAMESPACE, originatingDataset.getNamespace());
+                IndexHits<Node> datasetHits = datasets.get(DatasetConstant.NAMESPACE, originatingDataset.getNamespace());
                 Node datasetNode = datasetHits.hasNext() ? datasetHits.next() : createDatasetNode(originatingDataset);
                 studyNode.getUnderlyingNode().createRelationshipTo(datasetNode, NodeUtil.asNeo4j(RelTypes.IN_DATASET));
             }
@@ -271,14 +274,27 @@ public class NodeFactoryNeo4j implements NodeFactory {
 
     private Node createDatasetNode(Dataset dataset) {
         Node datasetNode = graphDb.createNode();
-        datasetNode.setProperty(DatasetUtil.NAMESPACE, dataset.getNamespace());
+        datasetNode.setProperty(DatasetConstant.NAMESPACE, dataset.getNamespace());
         URI archiveURI = dataset.getArchiveURI();
         if (archiveURI != null) {
-            datasetNode.setProperty("archiveURI", archiveURI.toString());
+            datasetNode.setProperty(DatasetConstant.ARCHIVE_URI, archiveURI.toString());
         }
+        URI configURI = dataset.getConfigURI();
+        if (configURI != null) {
+            datasetNode.setProperty(DatasetConstant.CONFIG_URI, configURI.toString());
+        }
+        JsonNode config = dataset.getConfig();
+        if (config != null) {
+            try {
+                datasetNode.setProperty(DatasetConstant.CONFIG, new ObjectMapper().writeValueAsString(config));
+            } catch (IOException e) {
+                LOG.warn("failed to serialize dataset config");
+            }
+        }
+        datasetNode.setProperty(StudyConstant.FORMAT, dataset.getFormat());
         datasetNode.setProperty(StudyConstant.DOI, dataset.getDOI());
-        datasetNode.setProperty(DatasetUtil.SHOULD_RESOLVE_REFERENCES, dataset.getOrDefault(DatasetUtil.SHOULD_RESOLVE_REFERENCES, "true"));
-        datasets.add(datasetNode, DatasetUtil.NAMESPACE, dataset.getNamespace());
+        datasetNode.setProperty(DatasetConstant.SHOULD_RESOLVE_REFERENCES, dataset.getOrDefault(DatasetConstant.SHOULD_RESOLVE_REFERENCES, "true"));
+        datasets.add(datasetNode, DatasetConstant.NAMESPACE, dataset.getNamespace());
         return datasetNode;
     }
 
@@ -415,10 +431,10 @@ public class NodeFactoryNeo4j implements NodeFactory {
         for (Relationship relationship : relationships) {
             Node ecoregionNode = relationship.getEndNode();
             Ecoregion ecoregion = new Ecoregion();
-            ecoregion.setGeometry(NodeUtil.getPropertyStringValueOrNull(ecoregionNode, "geometry"));
-            ecoregion.setName(NodeUtil.getPropertyStringValueOrNull(ecoregionNode, PropertyAndValueDictionary.NAME));
-            ecoregion.setId(NodeUtil.getPropertyStringValueOrNull(ecoregionNode, PropertyAndValueDictionary.EXTERNAL_ID));
-            ecoregion.setPath(NodeUtil.getPropertyStringValueOrNull(ecoregionNode, "path"));
+            ecoregion.setGeometry(NodeUtil.getPropertyStringValueOrDefault(ecoregionNode, "geometry", null));
+            ecoregion.setName(NodeUtil.getPropertyStringValueOrDefault(ecoregionNode, PropertyAndValueDictionary.NAME, null));
+            ecoregion.setId(NodeUtil.getPropertyStringValueOrDefault(ecoregionNode, PropertyAndValueDictionary.EXTERNAL_ID, null));
+            ecoregion.setPath(NodeUtil.getPropertyStringValueOrDefault(ecoregionNode, "path", null));
             if (ecoregions == null) {
                 ecoregions = new ArrayList<Ecoregion>();
             }

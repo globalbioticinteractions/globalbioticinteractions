@@ -8,8 +8,8 @@ import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.TaxonImpl;
+import org.eol.globi.service.DatasetConstant;
 import org.eol.globi.service.DatasetImpl;
-import org.eol.globi.service.DatasetUtil;
 import org.eol.globi.service.GitHubUtil;
 
 import java.io.IOException;
@@ -33,7 +33,7 @@ public class StudyImporterForThessen extends BaseStudyImporter {
 
         DatasetImpl originatingDataset = new DatasetImpl(namespace, URI.create(GitHubUtil.getBaseUrlMaster(namespace)));
         ObjectNode objectNode = new ObjectMapper().createObjectNode();
-        objectNode.put(DatasetUtil.SHOULD_RESOLVE_REFERENCES, false);
+        objectNode.put(DatasetConstant.SHOULD_RESOLVE_REFERENCES, false);
         originatingDataset.setConfig(objectNode);
         study1.setOriginatingDataset(originatingDataset);
 

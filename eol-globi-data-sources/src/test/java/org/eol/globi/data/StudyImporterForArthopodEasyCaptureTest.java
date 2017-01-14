@@ -3,6 +3,7 @@ package org.eol.globi.data;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.service.Dataset;
+import org.eol.globi.service.DatasetConstant;
 import org.eol.globi.service.DatasetImpl;
 import org.eol.globi.service.DatasetUtil;
 import org.junit.Test;
@@ -33,7 +34,7 @@ public class StudyImporterForArthopodEasyCaptureTest {
     public void embeddedDataset() throws IOException {
         Dataset embeddedDataset = StudyImporterForArthopodEasyCapture.embeddedDatasetFor(getDatasetGroup(), "some other citation", URI.create("http://example.com/archive.zip"));
         assertThat(embeddedDataset.getCitation(), is("some other citation"));
-        assertThat(embeddedDataset.getOrDefault(DatasetUtil.SHOULD_RESOLVE_REFERENCES, "foo"), is("foo"));
+        assertThat(embeddedDataset.getOrDefault(DatasetConstant.SHOULD_RESOLVE_REFERENCES, "foo"), is("foo"));
         assertThat(DatasetUtil.getNamedResourceURI(embeddedDataset, "archive"), is("http://example.com/archive.zip"));
     }
 
@@ -41,7 +42,7 @@ public class StudyImporterForArthopodEasyCaptureTest {
     public void embeddedDatasetWithConfig() throws IOException {
         Dataset embeddedDataset = StudyImporterForArthopodEasyCapture.embeddedDatasetFor(getDatasetGroupWithProperty(), "some other citation", URI.create("http://example.com/archive.zip"));
         assertThat(embeddedDataset.getCitation(), is("some other citation"));
-        assertThat(embeddedDataset.getOrDefault(DatasetUtil.SHOULD_RESOLVE_REFERENCES, "true"), is("false"));
+        assertThat(embeddedDataset.getOrDefault(DatasetConstant.SHOULD_RESOLVE_REFERENCES, "true"), is("false"));
         assertThat(DatasetUtil.getNamedResourceURI(embeddedDataset, "archive"), is("http://example.com/archive.zip"));
     }
 
@@ -54,7 +55,7 @@ public class StudyImporterForArthopodEasyCaptureTest {
 
     private DatasetImpl getDatasetGroupWithProperty() throws IOException {
         DatasetImpl dataset = new DatasetImpl("some/namespace", URI.create("http://example.com"));
-        JsonNode config = new ObjectMapper().readTree("{ \"" + DatasetUtil.SHOULD_RESOLVE_REFERENCES + "\": false, \"resources\": { \"rss\": \"http://amnh.begoniasociety.org/dwc/rss.xml\" } }");
+        JsonNode config = new ObjectMapper().readTree("{ \"" + DatasetConstant.SHOULD_RESOLVE_REFERENCES + "\": false, \"resources\": { \"rss\": \"http://amnh.begoniasociety.org/dwc/rss.xml\" } }");
         dataset.setConfig(config);
         return dataset;
     }

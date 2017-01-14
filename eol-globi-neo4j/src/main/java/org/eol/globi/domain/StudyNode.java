@@ -103,7 +103,8 @@ public class StudyNode extends NodeBacked implements Study {
 
     @Override
     public Dataset getOriginatingDataset() {
-        return null;
+        Node datasetNode = NodeUtil.getDataSetForStudy(this);
+        return datasetNode == null ? null : new DatasetNode(datasetNode);
     }
 
     public void setSourceId(String sourceId) {

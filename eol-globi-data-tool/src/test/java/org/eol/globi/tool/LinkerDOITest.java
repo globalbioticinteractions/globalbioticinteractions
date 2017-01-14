@@ -10,8 +10,8 @@ import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.StudyNode;
 import org.eol.globi.service.DOIResolver;
 import org.eol.globi.service.DOIResolverImplIT;
+import org.eol.globi.service.DatasetConstant;
 import org.eol.globi.service.DatasetImpl;
-import org.eol.globi.service.DatasetUtil;
 import org.eol.globi.service.PropertyEnricherException;
 import org.eol.globi.util.ExternalIdUtil;
 import org.junit.Test;
@@ -89,7 +89,7 @@ public class LinkerDOITest extends GraphDBTestCase {
         StudyImpl title = new StudyImpl("title", "some source", null, "some citation");
         DatasetImpl originatingDataset = new DatasetImpl("some/namespace", URI.create("some:uri"));
         ObjectNode objectNode = new ObjectMapper().createObjectNode();
-        objectNode.put(DatasetUtil.SHOULD_RESOLVE_REFERENCES, true);
+        objectNode.put(DatasetConstant.SHOULD_RESOLVE_REFERENCES, true);
         originatingDataset.setConfig(objectNode);
         title.setOriginatingDataset(originatingDataset);
         StudyNode study = getNodeFactory().getOrCreateStudy(title);
@@ -106,7 +106,7 @@ public class LinkerDOITest extends GraphDBTestCase {
         StudyImpl study1 = new StudyImpl("title", "some source", null, "some citation");
         DatasetImpl originatingDataset = new DatasetImpl("some/namespace", URI.create("some:uri"));
         ObjectNode objectNode = new ObjectMapper().createObjectNode();
-        objectNode.put(DatasetUtil.SHOULD_RESOLVE_REFERENCES, false);
+        objectNode.put(DatasetConstant.SHOULD_RESOLVE_REFERENCES, false);
         originatingDataset.setConfig(objectNode);
         study1.setOriginatingDataset(originatingDataset);
         Study study = getNodeFactory().getOrCreateStudy(study1);

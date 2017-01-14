@@ -22,11 +22,12 @@ import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.IndexHits;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public class NodeUtil {
-    public static String getPropertyStringValueOrNull(Node node, String propertyName) {
-        return node.hasProperty(propertyName) ? (String) node.getProperty(propertyName) : null;
+    public static String getPropertyStringValueOrDefault(Node node, String propertyName, String defaultValue) {
+        return node.hasProperty(propertyName) ? (String) node.getProperty(propertyName) : defaultValue;
     }
 
     public static String truncateTaxonName(String taxonName) {
@@ -104,5 +105,11 @@ public class NodeUtil {
     public static Iterable<Relationship> getSpecimenCaughtHere(Location location) {
         return ((NodeBacked)location).getUnderlyingNode().getRelationships(NodeUtil.asNeo4j(RelTypes.COLLECTED_AT), Direction.INCOMING);
 
+    }
+
+    public static Node getDataSetForStudy(StudyNode study) {
+        Iterable<Relationship> rels = study.getUnderlyingNode().getRelationships(asNeo4j(RelTypes.IN_DATASET), Direction.OUTGOING);
+        Iterator<Relationship> iterator = rels.iterator();
+        return iterator.hasNext() ? iterator.next().getEndNode() : null;
     }
 }

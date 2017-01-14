@@ -1,6 +1,7 @@
 package org.eol.globi.service;
 
 import org.codehaus.jackson.JsonNode;
+import org.eol.globi.data.BaseStudyImporter;
 import org.eol.globi.data.StudyImporter;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.data.StudyImporterForArthopodEasyCapture;
@@ -155,6 +156,17 @@ public class GitHubImporterFactoryIT {
         assertThat(importer, is(instanceOf(StudyImporterForMetaTable.class)));
         final JsonNode config = ((StudyImporterForMetaTable) importer).getConfig();
         assertThat(config, is(notNullValue()));
+    }
+
+    @Test
+    public void createSIAD() throws StudyImporterException, DatasetFinderException  {
+        final DatasetFinderGitHubRemote datasetFinderGitHubRemote = new DatasetFinderGitHubRemote();
+        StudyImporter importer = new GitHubImporterFactory().createImporter(DatasetFactory.datasetFor("globalbioticinteractions/siad", datasetFinderGitHubRemote), null);
+        assertThat(importer, is(notNullValue()));
+        Dataset dataset = ((BaseStudyImporter) importer).getDataset();
+        final JsonNode config = dataset.getConfig();
+        assertThat(config, is(notNullValue()));
+        assertThat(dataset.getOrDefault(DatasetConstant.SHOULD_RESOLVE_REFERENCES, "donald"), is("false"));
     }
 
 }

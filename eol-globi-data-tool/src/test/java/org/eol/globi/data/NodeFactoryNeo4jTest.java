@@ -2,6 +2,8 @@ package org.eol.globi.data;
 
 import junit.framework.Assert;
 import org.apache.commons.lang.StringUtils;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.node.ObjectNode;
 import org.eol.globi.domain.Environment;
 import org.eol.globi.domain.EnvironmentNode;
 import org.eol.globi.domain.InteractType;
@@ -17,8 +19,9 @@ import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.Term;
+import org.eol.globi.service.Dataset;
+import org.eol.globi.service.DatasetConstant;
 import org.eol.globi.service.DatasetImpl;
-import org.eol.globi.service.DatasetUtil;
 import org.eol.globi.service.TermLookupService;
 import org.eol.globi.service.TermLookupServiceException;
 import org.eol.globi.taxon.CorrectionService;
@@ -31,6 +34,7 @@ import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.index.IndexHits;
 
+import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -168,21 +172,32 @@ public class NodeFactoryNeo4jTest extends GraphDBTestCase {
 
 
     @Test
-    public void addDatasetToStudy() throws NodeFactoryException {
+    public void addDatasetToStudy() throws NodeFactoryException, IOException {
         StudyImpl study1 = new StudyImpl("my title", "some source", "some doi", "some citation");
         DatasetImpl dataset = new DatasetImpl("some/namespace", URI.create("some:uri"));
+        ObjectNode objectNode = new ObjectMapper().createObjectNode();
+        objectNode.put(DatasetConstant.SHOULD_RESOLVE_REFERENCES, false);
+        dataset.setConfig(objectNode);
         study1.setOriginatingDataset(dataset);
         StudyNode study = getNodeFactory().getOrCreateStudy(study1);
 
-        Node datasetNode = getDataSetForStudy(study);
-        assertThat(datasetNode.getProperty(DatasetUtil.NAMESPACE), is("some/namespace"));
+        Dataset origDataset = study.getOriginatingDataset();
+
+        assertThat(origDataset, is(notNullValue()));
+        assertThat(origDataset.getArchiveURI().toString(), is("some:uri"));
+        assertThat(origDataset.getOrDefault(DatasetConstant.SHOULD_RESOLVE_REFERENCES, "true"), is("false"));
+
+        String expectedConfig = new ObjectMapper().writeValueAsString(objectNode);
+        assertThat(new ObjectMapper().writeValueAsString(origDataset.getConfig()), is(expectedConfig));
+        Node datasetNode = NodeUtil.getDataSetForStudy(study);
+        assertThat(datasetNode.getProperty(DatasetConstant.NAMESPACE), is("some/namespace"));
         assertThat(datasetNode.getProperty("archiveURI"), is("some:uri"));
-        assertThat(datasetNode.getProperty(DatasetUtil.SHOULD_RESOLVE_REFERENCES), is("true"));
+        assertThat(datasetNode.getProperty(DatasetConstant.SHOULD_RESOLVE_REFERENCES), is("false"));
 
         StudyImpl otherStudy = new StudyImpl("my title", "some source", "some doi", "some citation");
         otherStudy.setOriginatingDataset(dataset);
         StudyNode studySameDataset = getNodeFactory().getOrCreateStudy(otherStudy);
-        Node datasetNodeOther = getDataSetForStudy(studySameDataset);
+        Node datasetNodeOther = NodeUtil.getDataSetForStudy(studySameDataset);
 
         assertThat(datasetNode.getId(), is(datasetNodeOther.getId()));
     }
@@ -194,7 +209,7 @@ public class NodeFactoryNeo4jTest extends GraphDBTestCase {
         study1.setOriginatingDataset(dataset);
         StudyNode study = getNodeFactory().getOrCreateStudy(study1);
 
-        assertThat(getDataSetForStudy(study), is(nullValue()));
+        assertThat(NodeUtil.getDataSetForStudy(study), is(nullValue()));
     }
 
     @Test
@@ -204,16 +219,10 @@ public class NodeFactoryNeo4jTest extends GraphDBTestCase {
         study1.setOriginatingDataset(dataset);
         StudyNode study = getNodeFactory().getOrCreateStudy(study1);
 
-        Node datasetNode = getDataSetForStudy(study);
-        assertThat(datasetNode.getProperty(DatasetUtil.NAMESPACE), is("some/namespace"));
-        assertThat(datasetNode.hasProperty(DatasetUtil.ARCHIVE_URI), is(false));
-        assertThat(datasetNode.getProperty(DatasetUtil.SHOULD_RESOLVE_REFERENCES), is("true"));
-    }
-
-    private Node getDataSetForStudy(StudyNode study) {
-        Iterable<Relationship> rels = study.getUnderlyingNode().getRelationships(NodeUtil.asNeo4j(RelTypes.IN_DATASET), Direction.OUTGOING);
-        Iterator<Relationship> iterator = rels.iterator();
-        return iterator.hasNext() ? iterator.next().getEndNode() : null;
+        Node datasetNode = NodeUtil.getDataSetForStudy(study);
+        assertThat(datasetNode.getProperty(DatasetConstant.NAMESPACE), is("some/namespace"));
+        assertThat(datasetNode.hasProperty(DatasetConstant.ARCHIVE_URI), is(false));
+        assertThat(datasetNode.getProperty(DatasetConstant.SHOULD_RESOLVE_REFERENCES), is("true"));
     }
 
 
