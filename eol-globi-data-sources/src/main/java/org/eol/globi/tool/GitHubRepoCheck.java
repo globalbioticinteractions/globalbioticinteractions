@@ -93,11 +93,11 @@ public class GitHubRepoCheck {
         });
         studyImporterForGitHubData.setFinder(finder);
         studyImporterForGitHubData.importData(repoName);
-        LOG.info("found [" + NodeFactoryLogging.counter.get() + "] interactions in [" + repoName + "]");
-        String msgErrorsAndWarnings = "found [" + warnings.get() + "] warnings and [" + errors.get() + "] errors";
-        LOG.info(msgErrorsAndWarnings);
-        if (warnings.get() > 0 || errors.get() > 0) {
-            throw new StudyImporterException(msgErrorsAndWarnings + ", please check your log.");
+        String msg = "found [" + NodeFactoryLogging.counter.get() + "] interactions in [" + repoName + "]"
+                + " and encountered [" + warnings.get() + "] warnings and [" + errors.get() + "] errors";
+        LOG.info(msg);
+        if (warnings.get() > 0 || errors.get() > 0 || NodeFactoryLogging.counter.get() == 0) {
+            throw new StudyImporterException(msg + ", please check your log.");
         }
     }
 
