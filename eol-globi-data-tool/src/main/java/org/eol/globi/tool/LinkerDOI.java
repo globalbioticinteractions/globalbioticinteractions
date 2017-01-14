@@ -45,6 +45,7 @@ public class LinkerDOI {
         IndexHits<Node> hits = taxons.query("*:*");
 
         int counter = 0;
+        int counterResolved = 0;
         String msg = "linking study citations to DOIs";
         LOG.info(msg + " started...");
         StopWatch stopWatch = new StopWatch();
@@ -54,20 +55,21 @@ public class LinkerDOI {
             counter++;
             StudyNode study = new StudyNode(hit);
             if (shouldResolve(study)) {
+                counterResolved++;
                 batch.put(study.getCitation(), study);
             }
 
             if (batch.size() >= BATCH_SIZE) {
-                LOG.info(logProgress(counter, stopWatch));
+                LOG.info(logProgress(counterResolved, stopWatch));
                 resolveBatch(doiResolver, batch);
                 batch.clear();
             }
         }
         resolveBatch(doiResolver, batch);
 
-        LOG.info(msg + " complete.");
+        LOG.info(msg + " complete. Out of [" + counter + "] references, [" + counterResolved + "] needed resolving.");
         if (counter % 100 != 0) {
-            LOG.info(logProgress(counter, stopWatch));
+            LOG.info(logProgress(counterResolved, stopWatch));
         }
         stopWatch.stop();
     }

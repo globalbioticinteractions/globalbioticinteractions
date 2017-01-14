@@ -31,34 +31,38 @@ public class ResourceUtil {
     }
 
     public static InputStream asInputStream(final String resource, Class clazz) throws IOException {
-        InputStream is = null;
-        if (isHttpURI(resource)) {
-            LOG.info("caching of [" + resource + "] started...");
-            is = getCachedRemoteInputStream(resource);
-            LOG.info("caching of [" + resource + "] complete.");
-        } else if (StringUtils.startsWith(resource, "file:/")) {
-            is = new FileInputStream(new File(URI.create(resource)));
-        } else if (StringUtils.startsWith(resource, "jar:file:/")) {
-            is = URI.create(resource).toURL().openStream();
-        } else if (clazz != null) {
-            String classpathResource = resource;
-            if (StringUtils.startsWith(resource, "classpath:")) {
-                classpathResource = StringUtils.replace(resource, "classpath:", "");
+        try {
+            InputStream is = null;
+            if (isHttpURI(resource)) {
+                LOG.info("caching of [" + resource + "] started...");
+                is = getCachedRemoteInputStream(resource);
+                LOG.info("caching of [" + resource + "] complete.");
+            } else if (StringUtils.startsWith(resource, "file:/")) {
+                is = new FileInputStream(new File(URI.create(resource)));
+            } else if (StringUtils.startsWith(resource, "jar:file:/")) {
+                is = URI.create(resource).toURL().openStream();
+            } else if (clazz != null) {
+                String classpathResource = resource;
+                if (StringUtils.startsWith(resource, "classpath:")) {
+                    classpathResource = StringUtils.replace(resource, "classpath:", "");
+                }
+                is = clazz.getResourceAsStream(classpathResource);
             }
-            is = clazz.getResourceAsStream(classpathResource);
-        }
-        if (is == null) {
-            final URI uri = fromShapefileDir(resource);
-            if (uri == null) {
-                throw new IOException("failed to open resource [" + resource + "]");
-            } else {
-                is = new FileInputStream(new File(uri));
+            if (is == null) {
+                final URI uri = fromShapefileDir(resource);
+                if (uri == null) {
+                    throw new IOException("failed to open resource [" + resource + "]");
+                } else {
+                    is = new FileInputStream(new File(uri));
+                }
             }
+            if (StringUtils.endsWith(resource, ".gz")) {
+                is = new GZIPInputStream(is);
+            }
+            return is;
+        } catch (IOException ex) {
+            throw new IOException("issue accessing [" + resource + "]", ex);
         }
-        if (StringUtils.endsWith(resource, ".gz")) {
-            is = new GZIPInputStream(is);
-        }
-        return is;
     }
 
     private static InputStream getCachedRemoteInputStream(String resource) throws IOException {
