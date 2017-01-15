@@ -20,21 +20,21 @@ public class ReportControllerTest {
     @Test
     public void distinctSourceOrgName() throws IOException {
         CypherQuery source = new ReportController().sourceOrgName("some", "name", null);
-        assertThat(source.getQuery(), is("START report = node:reports(sourceId={source}) WHERE not(has(report.title)) AND has(report.sourceId) RETURN report.citation? as study_citation, report.externalId? as study_url, report.doi? as study_doi, report.source? as study_source_citation, report.nInteractions as number_of_interactions, report.nTaxa as number_of_distinct_taxa, report.nStudies? as number_of_studies, report.nSources? as number_of_sources, report.nTaxaNoMatch? as number_of_distinct_taxa_no_match, report.sourceId? as study_source_id SKIP 0 LIMIT 1024"));
-        assertThat(source.getParams().get("source"), is("some/name"));
+        assertThat(source.getQuery(), is("START dataset = node:datasets(namespace={namespace}), report = node:reports('sourceId:*') where ('globi:' + dataset.namespace) = source.sourceId RETURN report.citation? as study_citation, report.externalId? as study_url, report.doi? as study_doi, report.source? as study_source_citation, report.nInteractions as number_of_interactions, report.nTaxa as number_of_distinct_taxa, report.nStudies? as number_of_studies, report.nSources? as number_of_sources, report.nTaxaNoMatch? as number_of_distinct_taxa_no_match, report.sourceId? as study_source_id, dataset.doi? as study_source_doi, dataset.format? as study_source_format, dataset.archiveURI? as study_source_archive_uri SKIP 0 LIMIT 1024"));
+        assertThat(source.getParams().get("namespace"), is("some/name"));
     }
 
     @Test
     public void distinctSourceOrg() throws IOException {
         CypherQuery source = new ReportController().sourceOrg("some", null);
-        assertThat(source.getQuery(), is("START report = node:reports(sourceId={source}) WHERE not(has(report.title)) AND has(report.sourceId) RETURN report.citation? as study_citation, report.externalId? as study_url, report.doi? as study_doi, report.source? as study_source_citation, report.nInteractions as number_of_interactions, report.nTaxa as number_of_distinct_taxa, report.nStudies? as number_of_studies, report.nSources? as number_of_sources, report.nTaxaNoMatch? as number_of_distinct_taxa_no_match, report.sourceId? as study_source_id SKIP 0 LIMIT 1024"));
-        assertThat(source.getParams().get("source"), is("some"));
+        assertThat(source.getQuery(), is("START dataset = node:datasets(namespace={namespace}), report = node:reports('sourceId:*') where ('globi:' + dataset.namespace) = source.sourceId RETURN report.citation? as study_citation, report.externalId? as study_url, report.doi? as study_doi, report.source? as study_source_citation, report.nInteractions as number_of_interactions, report.nTaxa as number_of_distinct_taxa, report.nStudies? as number_of_studies, report.nSources? as number_of_sources, report.nTaxaNoMatch? as number_of_distinct_taxa_no_match, report.sourceId? as study_source_id, dataset.doi? as study_source_doi, dataset.format? as study_source_format, dataset.archiveURI? as study_source_archive_uri SKIP 0 LIMIT 1024"));
+        assertThat(source.getParams().get("namespace"), is("some"));
     }
 
     @Test
     public void distinctSourceRoot() throws IOException {
         CypherQuery source = new ReportController().sourceRoot(null);
-        assertThat(source.getQuery(), is("START report = node:reports('sourceId:*') WHERE not(has(report.title)) AND has(report.sourceId) RETURN report.citation? as study_citation, report.externalId? as study_url, report.doi? as study_doi, report.source? as study_source_citation, report.nInteractions as number_of_interactions, report.nTaxa as number_of_distinct_taxa, report.nStudies? as number_of_studies, report.nSources? as number_of_sources, report.nTaxaNoMatch? as number_of_distinct_taxa_no_match, report.sourceId? as study_source_id SKIP 0 LIMIT 1024"));
+        assertThat(source.getQuery(), is("START dataset = node:datasets('namespace:*'), report = node:reports('sourceId:*') where ('globi:' + dataset.namespace) = source.sourceId RETURN report.citation? as study_citation, report.externalId? as study_url, report.doi? as study_doi, report.source? as study_source_citation, report.nInteractions as number_of_interactions, report.nTaxa as number_of_distinct_taxa, report.nStudies? as number_of_studies, report.nSources? as number_of_sources, report.nTaxaNoMatch? as number_of_distinct_taxa_no_match, report.sourceId? as study_source_id, dataset.doi? as study_source_doi, dataset.format? as study_source_format, dataset.archiveURI? as study_source_archive_uri SKIP 0 LIMIT 1024"));
         assertThat(source.getParams().size(), is(0));
     }
 

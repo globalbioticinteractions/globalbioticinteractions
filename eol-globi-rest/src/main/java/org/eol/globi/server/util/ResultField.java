@@ -67,7 +67,10 @@ public enum ResultField {
     NUMBER_OF_DISTINCT_TAXA_NO_MATCH("number_of_distinct_taxa_no_match", "only available for /reports/* queries"),
     NUMBER_OF_SOURCES("number_of_sources", "only available for /reports/* queries"),
     NUMBER_OF_STUDIES("number_of_studies", "only available for /reports/* queries"),
-    NUMBER_OF_INTERACTIONS("number_of_interactions", "available for /interaction queries by source/target taxon name and/or interactionType only");
+    NUMBER_OF_INTERACTIONS("number_of_interactions", "available for /interaction queries by source/target taxon name and/or interactionType only"),
+    STUDY_SOURCE_DOI("study_source_doi"),
+    STUDY_SOURCE_FORMAT("study_source_format"),
+    STUDY_SOURCE_ARCHIVE_URI("study_source_archive_uri");
 
     public String getLabel() {
         return label;
