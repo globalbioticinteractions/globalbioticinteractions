@@ -102,7 +102,7 @@ public class ReportController {
             searchMatch = "'" + searchKey + ":*'";
         }
         String cypherQuery = "START dataset = node:datasets(" + searchMatch + "), report = node:reports('sourceId:*') "
-                + " where ('globi:' + dataset.namespace) = source.sourceId "
+                + " WHERE ('globi:' + dataset.namespace) = report.sourceId "
                 + " RETURN report.citation? as " + ResultField.STUDY_CITATION
                 + ", report.externalId? as " + ResultField.STUDY_URL
                 + ", report.doi? as " + ResultField.STUDY_DOI
