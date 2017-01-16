@@ -32,6 +32,7 @@ public class CypherProxyControllerTest {
         assertThat(externalLink, is("{}"));
     }
 
+    @Ignore
     @Test
     public void findExternalLinkFoStudyWithTitle() throws IOException {
         String externalLink = new CypherProxyController().findExternalLinkForStudyWithTitle(null, "bioinfo:ref:147884");

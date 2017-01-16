@@ -23,6 +23,7 @@ public enum ResultObject {
 
     LOCATION("loc"),
     STUDY("study"),
+    DATASET("dataset"),
     STUDY_COUNT("studyCount"),
     STUDY_SOURCE_COUNT("sourceCount"),
 
@@ -75,6 +76,8 @@ public enum ResultObject {
             put(ResultField.STUDY_SOURCE_ID, STUDY);
             put(ResultField.STUDY_TITLE, STUDY);
             put(ResultField.STUDY_URL, STUDY);
+
+            put(ResultField.STUDY_SOURCE_DOI, DATASET);
 
             put(ResultField.COLLECTION_TIME_IN_UNIX_EPOCH, COLLECTED_REL);
             put(ResultField.INTERACTION_TYPE, INTERACTION);
