@@ -318,7 +318,7 @@ public class CypherQueryBuilderTest {
         };
 
         CypherQuery query = buildInteractionQuery(params, MULTI_TAXON_DISTINCT);
-        assertThat(query.getQuery(), is("START dataset = node:datasets(namespace={accordingTo}) " +
+        assertThat(query.getQuery(), is("START dataset = node:datasets({accordingTo}) " +
                 "MATCH study-[:IN_DATASET]->dataset " +
                 "WITH study " +
                 "MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen-[interaction:" + createInteractionTypeSelector(Collections.emptyList()) + "]" +
@@ -329,7 +329,7 @@ public class CypherQueryBuilderTest {
                 "ORDER BY number_of_sources DESC, number_of_studies DESC, number_of_interactions DESC"));
         Map<String, String> expected = new HashMap<String, String>() {{
             put("target_taxon_name", "path:\\\"Arthropoda\\\"");
-            put("accordingTo", "(some/namespace)");
+            put("accordingTo", "namespace:(some/namespace)");
         }};
         assertThat(query.getParams(), is(expected));
     }

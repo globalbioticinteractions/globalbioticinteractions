@@ -255,7 +255,7 @@ public class CypherQueryBuilder {
         if (accordingTo != null && accordingTo.size() > 0) {
             if (isAccordingToNamespaceQuery(accordingTo)) {
                 List<String> namespaces = getNamespaces(accordingTo);
-                paramMap.put("accordingTo", orNestedTerms(namespaces));
+                paramMap.put("accordingTo", "namespace:" + orNestedTerms(namespaces));
             } else {
                 paramMap.put("accordingTo", regexForAccordingTo(accordingTo));
             }
@@ -488,7 +488,7 @@ public class CypherQueryBuilder {
 
     private static void appendWithStudy(StringBuilder query, List<String> accordingToParams) {
         if (isAccordingToNamespaceQuery(accordingToParams)) {
-            query.append(" dataset = node:datasets(namespace={accordingTo})")
+            query.append(" dataset = node:datasets({accordingTo})")
                     .append(" MATCH study-[:IN_DATASET]->dataset")
                     .append(" WITH study");
         } else {
