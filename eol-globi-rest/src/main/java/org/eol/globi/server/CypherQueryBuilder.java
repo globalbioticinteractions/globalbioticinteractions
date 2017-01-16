@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.eol.globi.server.util.ResultField.INTERACTION_TYPE;
 import static org.eol.globi.server.util.ResultField.SOURCE_TAXON_NAME;
@@ -233,6 +234,10 @@ public class CypherQueryBuilder {
                     ? quote.replace("\\Q", "\\\\Q").replace("\\E", "\\\\E").replace("\"", "\\\"")
                     : quote);
         }
+        return orNestedTerms(quotedTerms);
+    }
+
+    private static String orNestedTerms(List<String> quotedTerms) {
         return "(" + StringUtils.join(quotedTerms, "|") + ")";
     }
 
@@ -248,7 +253,12 @@ public class CypherQueryBuilder {
 
         List<String> accordingTo = collectParamValues(parameterMap, ParamName.ACCORDING_TO);
         if (accordingTo != null && accordingTo.size() > 0) {
-            paramMap.put("accordingTo", regexForAccordingTo(accordingTo));
+            if (isAccordingToNamespaceQuery(accordingTo)) {
+                List<String> namespaces = getNamespaces(accordingTo);
+                paramMap.put("accordingTo", orNestedTerms(namespaces));
+            } else {
+                paramMap.put("accordingTo", regexForAccordingTo(accordingTo));
+            }
         }
 
         List<String> prefix = collectParamValues(parameterMap, ParamName.TAXON_ID_PREFIX);
@@ -458,15 +468,7 @@ public class CypherQueryBuilder {
         query.append("START");
         List<String> accordingToParams = collectParamValues(parameterMap, ParamName.ACCORDING_TO);
         if (accordingToParams.size() > 0) {
-            String whereClause;
-            if (hasAtLeastOneURL(accordingToParams)) {
-                whereClause = "(has(study.externalId) AND study.externalId =~ {accordingTo})";
-            } else {
-                whereClause = "(has(study.externalId) AND study.externalId =~ {accordingTo}) OR (has(study.citation) AND study.citation =~ {accordingTo}) OR (has(study.source) AND study.source =~ {accordingTo})";
-            }
-            query.append(" study = node:studies('*:*') WHERE ")
-                    .append(whereClause)
-                    .append(" WITH study");
+            appendWithStudy(query, accordingToParams);
         } else if (noSearchCriteria(RequestHelper.isSpatialSearch(parameterMap), sourceTaxa, targetTaxa)) {
             query.append(" study = node:studies('*:*')");
         } else if (sourceTaxa.size() == 0 && targetTaxa.size() == 0) {
@@ -482,6 +484,36 @@ public class CypherQueryBuilder {
             }
         }
         return query;
+    }
+
+    private static void appendWithStudy(StringBuilder query, List<String> accordingToParams) {
+        if (isAccordingToNamespaceQuery(accordingToParams)) {
+            query.append(" dataset = node:datasets(namespace={accordingTo})")
+                    .append(" MATCH study-[:IN_DATASET]->dataset")
+                    .append(" WITH study");
+        } else {
+            String whereClause;
+            if (hasAtLeastOneURL(accordingToParams)) {
+                whereClause = "(has(study.externalId) AND study.externalId =~ {accordingTo})";
+            } else {
+                whereClause = "(has(study.externalId) AND study.externalId =~ {accordingTo}) OR (has(study.citation) AND study.citation =~ {accordingTo}) OR (has(study.source) AND study.source =~ {accordingTo})";
+            }
+            query.append(" study = node:studies('*:*') WHERE ")
+                    .append(whereClause)
+                    .append(" WITH study");
+        }
+    }
+
+    private static boolean isAccordingToNamespaceQuery(List<String> accordingToParams) {
+        List<String> namespaceList = getNamespaces(accordingToParams);
+        return namespaceList.size() == accordingToParams.size();
+    }
+
+    private static List<String> getNamespaces(List<String> accordingToParams) {
+        Stream<String> namespaces = accordingToParams.stream()
+                .filter(accordingTo -> StringUtils.startsWith(accordingTo, "globi:"))
+                .map(accordingTo -> StringUtils.replaceOnce(accordingTo, "globi:", ""));
+        return namespaces.collect(Collectors.toList());
     }
 
     private static boolean hasAtLeastOneURL(List<String> accordingToParams) {
