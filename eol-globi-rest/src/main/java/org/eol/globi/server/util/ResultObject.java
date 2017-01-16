@@ -78,6 +78,8 @@ public enum ResultObject {
             put(ResultField.STUDY_URL, STUDY);
 
             put(ResultField.STUDY_SOURCE_DOI, DATASET);
+            put(ResultField.STUDY_SOURCE_FORMAT, DATASET);
+            put(ResultField.STUDY_SOURCE_ARCHIVE_URI, DATASET);
 
             put(ResultField.COLLECTION_TIME_IN_UNIX_EPOCH, COLLECTED_REL);
             put(ResultField.INTERACTION_TYPE, INTERACTION);
