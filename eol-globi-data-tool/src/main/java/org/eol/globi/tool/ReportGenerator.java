@@ -9,6 +9,8 @@ import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyConstant;
 import org.eol.globi.domain.StudyNode;
+import org.eol.globi.domain.TaxonNode;
+import org.eol.globi.service.TaxonUtil;
 import org.eol.globi.util.NodeUtil;
 import org.eol.globi.util.StudyNodeListener;
 import org.neo4j.graphdb.Direction;
@@ -279,8 +281,7 @@ public class ReportGenerator {
             if (classifiedAs != null) {
                 Node taxonNode = classifiedAs.getEndNode();
                 ids.add(taxonNode.getId());
-                if (!taxonNode.hasProperty(PropertyAndValueDictionary.EXTERNAL_ID) ||
-                        StringUtils.equals((CharSequence) taxonNode.getProperty(PropertyAndValueDictionary.EXTERNAL_ID), PropertyAndValueDictionary.NO_MATCH)) {
+                if (!TaxonUtil.isResolved(new TaxonNode(taxonNode))) {
                     idsNoMatch.add(taxonNode.getId());
                 }
             }

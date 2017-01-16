@@ -185,7 +185,9 @@ public class ReportGeneratorTest extends GraphDBTestCase {
         monkey.ate(nodeFactory.createSpecimen(study, new TaxonImpl("Banana")));
         monkey.ate(nodeFactory.createSpecimen(study, new TaxonImpl("Banana")));
         monkey.ate(nodeFactory.createSpecimen(study, new TaxonImpl("Banana")));
-        monkey.ate(nodeFactory.createSpecimen(study, new TaxonImpl("Apple", "some:id")));
+        TaxonImpl apple = new TaxonImpl("Apple", "some:id");
+        apple.setPath("some | path");
+        monkey.ate(nodeFactory.createSpecimen(study, apple));
         return study;
     }
 
