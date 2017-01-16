@@ -11,6 +11,7 @@ import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.Term;
+import org.eol.globi.service.GitHubUtil;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -58,7 +59,8 @@ public class StudyImporterForHurlbert extends BaseStudyImporter {
 
     public void importRecords(Set<String> regions, Set<String> locales, Set<String> habitats, LabeledCSVParser parser, String sourceCitation) throws StudyImporterException {
         StudyImpl study1 = new StudyImpl(sourceCitation, "Allen Hurlbert. Avian Diet Database (https://github.com/hurlbertlab/dietdatabase/). " + ReferenceUtil.createLastAccessedString(RESOURCE), null, sourceCitation);
-        study1.setSourceId("globi:hurlbertlab/dietdatabase");
+        GitHubUtil.configureStudyWithNamespace(study1, true, "hurlbertlab/dietdatabase");
+
         Study study = nodeFactory.getOrCreateStudy(study1);
 
         //ID,Common_Name,Scientific_Name,,,,Prey_Common_Name,Fraction_Diet_By_Wt_or_Vol,Fraction_Diet_By_Items,Fraction_Occurrence,Fraction_Diet_Unspecified,Item Sample Size,Bird Sample size,Sites,StudyNode Type,Notes,Source

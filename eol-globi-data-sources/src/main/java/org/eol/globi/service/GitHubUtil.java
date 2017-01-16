@@ -7,7 +7,9 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpHead;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.node.ObjectNode;
 import org.eol.globi.data.StudyImporterException;
+import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.util.HttpUtil;
 
 import java.io.IOException;
@@ -117,5 +119,16 @@ public class GitHubUtil {
 
     public static Dataset getArchiveDataset(String namespace, String commitSha) {
         return new DatasetImpl(namespace, URI.create("https://github.com/" + namespace + "/archive/" + commitSha + ".zip"));
+    }
+
+    public static void configureStudyWithNamespace(StudyImpl study, boolean shouldResolveReferences, String namespace) {
+        study.setExternalId("https://github.com/" + namespace);
+        study.setSourceId("globi:" + namespace);
+
+        DatasetImpl originatingDataset = new DatasetImpl(namespace, URI.create(getBaseUrlMaster(namespace)));
+        ObjectNode objectNode = new ObjectMapper().createObjectNode();
+        objectNode.put(DatasetConstant.SHOULD_RESOLVE_REFERENCES, shouldResolveReferences);
+        originatingDataset.setConfig(objectNode);
+        study.setOriginatingDataset(originatingDataset);
     }
 }
