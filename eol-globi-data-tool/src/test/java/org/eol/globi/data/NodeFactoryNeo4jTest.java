@@ -170,8 +170,18 @@ public class NodeFactoryNeo4jTest extends GraphDBTestCase {
         assertThat(anotherLocationNode.getEnvironments().size(), is(2));
     }
 
-
     @Test
+    public void createStudyWithExternalIdNoDOI() throws NodeFactoryException, IOException {
+        StudyImpl study1 = new StudyImpl("my title", "some source", null, "some citation");
+        study1.setExternalId("some:id");
+        StudyNode study = getNodeFactory().getOrCreateStudy(study1);
+
+        assertThat(study.getExternalId(), is("some:id"));
+        assertThat(study.getDOI(), is(nullValue()));
+
+    }
+
+        @Test
     public void addDatasetToStudy() throws NodeFactoryException, IOException {
         StudyImpl study1 = new StudyImpl("my title", "some source", "some doi", "some citation");
         DatasetImpl dataset = new DatasetImpl("some/namespace", URI.create("some:uri"));
@@ -179,6 +189,7 @@ public class NodeFactoryNeo4jTest extends GraphDBTestCase {
         objectNode.put(DatasetConstant.SHOULD_RESOLVE_REFERENCES, false);
         dataset.setConfig(objectNode);
         study1.setOriginatingDataset(dataset);
+
         StudyNode study = getNodeFactory().getOrCreateStudy(study1);
 
         Dataset origDataset = study.getOriginatingDataset();

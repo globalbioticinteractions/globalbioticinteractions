@@ -104,6 +104,7 @@ public class LinkerDOITest extends GraphDBTestCase {
     @Test
     public void createStudyDOIlookupCitationDisabled() throws NodeFactoryException {
         StudyImpl study1 = new StudyImpl("title", "some source", null, "some citation");
+        study1.setExternalId("some:id");
         DatasetImpl originatingDataset = new DatasetImpl("some/namespace", URI.create("some:uri"));
         ObjectNode objectNode = new ObjectMapper().createObjectNode();
         objectNode.put(DatasetConstant.SHOULD_RESOLVE_REFERENCES, false);
@@ -114,6 +115,7 @@ public class LinkerDOITest extends GraphDBTestCase {
         assertThat(study.getDOI(), is(nullValue()));
         assertThat(study.getCitation(), is("some citation"));
         assertThat(study.getTitle(), is("title"));
+        assertThat(study.getExternalId(), is("some:id"));
     }
 
     @Test
@@ -145,7 +147,6 @@ public class LinkerDOITest extends GraphDBTestCase {
         assertThat(study.getExternalId(), nullValue());
         assertThat(study.getCitation(), is("my contr. some description"));
     }
-
 
     private static class DOIResolverThatExplodes implements DOIResolver {
         @Override

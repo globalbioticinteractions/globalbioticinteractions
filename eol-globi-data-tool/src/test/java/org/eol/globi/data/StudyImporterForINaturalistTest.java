@@ -82,7 +82,8 @@ public class StudyImporterForINaturalistTest extends GraphDBTestCase {
                 new ArrayList<>(),
                 new HashMap<>());
         resolveNames();
-        assertThat(nodeFactory.findStudy("INAT:45209"), is(nullValue()));
+        Study study = nodeFactory.findStudy("INAT:45209");
+        assertThat(study, is(nullValue()));
     }
 
     @Test

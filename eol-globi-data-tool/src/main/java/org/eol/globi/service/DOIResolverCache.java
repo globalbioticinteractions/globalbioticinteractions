@@ -97,7 +97,7 @@ public class DOIResolverCache extends CacheService implements DOIResolver {
 
                     @Override
                     public Fun.Tuple2<String, String> next() {
-                        return new Fun.Tuple2<>(line[0], line[1]);
+                        return new Fun.Tuple2<>(line[1], line[0]);
                     }
                 })
                 .keySerializer(BTreeKeySerializer.STRING)
