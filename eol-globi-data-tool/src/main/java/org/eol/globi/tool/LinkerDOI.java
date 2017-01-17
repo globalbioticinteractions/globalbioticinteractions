@@ -140,7 +140,9 @@ public class LinkerDOI {
     public static boolean shouldResolve(Study study) {
         Dataset dataset = study.getOriginatingDataset();
         return DatasetUtil.shouldResolveReferences(dataset)
-                && StringUtils.isBlank(study.getDOI()) && citationLikeString(study.getCitation());
+                && StringUtils.isBlank(study.getDOI())
+                && StringUtils.isNotBlank(study.getCitation())
+                && citationLikeString(study.getCitation());
     }
 
     private static boolean citationLikeString(String citation) {

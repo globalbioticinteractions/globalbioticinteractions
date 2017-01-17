@@ -44,7 +44,7 @@ public class LinkerDOITest extends GraphDBTestCase {
         StudyImpl study = new StudyImpl("some title", "some source", "doi:some/doi", "some citation");
         assertFalse(LinkerDOI.shouldResolve(study));
     }
-    
+
     @Test
     public void shouldResolveStudyEmptyCitation() {
         StudyImpl study = new StudyImpl("some title", "some source", "", "");
