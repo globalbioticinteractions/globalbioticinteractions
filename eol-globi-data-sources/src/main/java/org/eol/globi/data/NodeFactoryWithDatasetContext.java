@@ -50,6 +50,7 @@ public class NodeFactoryWithDatasetContext implements NodeFactory {
 
     private Study studyForDataset(Study study) {
         StudyImpl study1 = new StudyImpl(study.getTitle(), study.getSource(), study.getDOI(), study.getCitation());
+        study1.setExternalId(study.getExternalId());
         if (StringUtils.isNotBlank(dataset.getNamespace())) {
             study1.setSourceId("globi:" + StringUtils.trim(dataset.getNamespace()));
         }

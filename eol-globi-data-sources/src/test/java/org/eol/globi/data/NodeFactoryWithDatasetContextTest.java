@@ -21,12 +21,17 @@ public class NodeFactoryWithDatasetContextTest {
         DatasetImpl dataset = new DatasetImpl("some/namespace", URI.create("some:uri"));
         NodeFactoryWithDatasetContext factoryWithDS = new NodeFactoryWithDatasetContext(factory, dataset);
 
-        factoryWithDS.createStudy(new StudyImpl("some title"));
+        StudyImpl study = new StudyImpl("some title", "some source", "some doi", "some citation");
+        study.setExternalId("some:id");
+        factoryWithDS.createStudy(study);
 
         ArgumentCaptor<Study> argument = ArgumentCaptor.forClass(Study.class);
         verify(factory).createStudy(argument.capture());
         assertEquals("globi:some/namespace", argument.getValue().getSourceId());
         assertEquals("some title", argument.getValue().getTitle());
+        assertEquals("some citation", argument.getValue().getCitation());
+        assertEquals("some doi", argument.getValue().getDOI());
+        assertEquals("some:id", argument.getValue().getExternalId());
     }
 
     @Test
