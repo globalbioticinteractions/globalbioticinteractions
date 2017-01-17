@@ -128,7 +128,7 @@ public class Normalizer {
     public void resolveAndLinkTaxa(CommandLine cmdLine, GraphDatabaseService graphService) {
         if (cmdLine == null || !cmdLine.hasOption(OPTION_SKIP_RESOLVE_CITATIONS)) {
             LOG.info("resolving citations to DOIs ...");
-//            new LinkerDOI(graphService, new DOIResolverCache()).link();
+            new LinkerDOI(graphService, new DOIResolverCache()).link();
             new LinkerDOI(graphService).link();
         } else {
             LOG.info("skipping citation resolving ...");
