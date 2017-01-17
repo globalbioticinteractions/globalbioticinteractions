@@ -17,6 +17,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 public class DOIResolverCache extends CacheService implements DOIResolver {
     private static final Log LOG = LogFactory.getLog(DOIResolverCache.class);
@@ -47,6 +48,7 @@ public class DOIResolverCache extends CacheService implements DOIResolver {
     public Map<String, String> getDoiCitationMap() {
         if (doiCitationMap == null) {
             try {
+                LOG.info("loading doi cache at [" + doiCacheResource + "]");
                 BufferedReader bufferedReader = createBufferedReader(doiCacheResource);
                 init(bufferedReader);
             } catch (PropertyEnricherException | IOException e) {
@@ -71,10 +73,18 @@ public class DOIResolverCache extends CacheService implements DOIResolver {
         LOG.info("doi cache building...");
         doiCitationMap = db
                 .createTreeMap("doiCache")
-                .pumpPresort(100000)
+                .pumpPresort(300000)
                 .pumpIgnoreDuplicates()
                 .pumpSource(new Iterator<Fun.Tuple2<String, String>>() {
                     private String[] line;
+
+                    String getCitation(String[] line) {
+                        return line[1];
+                    }
+
+                    String getDOI(String[] line) {
+                        return line[0];
+                    }
 
                     @Override
                     public boolean hasNext() {
@@ -84,11 +94,17 @@ public class DOIResolverCache extends CacheService implements DOIResolver {
                             }
                             while (line != null
                                     && line.length > 1
-                                    && !StringUtils.isNoneBlank(line[0], line[1]));
+                                    && !StringUtils.isNoneBlank(getCitation(line), getDOI(line)));
 
-                            return line != null
+
+
+                            boolean hasNext = line != null
                                     && line.length > 1
-                                    && StringUtils.isNoneBlank(line[0], line[1]);
+                                    && StringUtils.isNoneBlank(getCitation(line), getDOI(line));
+                            if (!hasNext) {
+                                System.out.println("[no more]");
+                            }
+                            return hasNext;
                         } catch (IOException e) {
                             LOG.error("problem reading", e);
                             return false;
@@ -97,10 +113,12 @@ public class DOIResolverCache extends CacheService implements DOIResolver {
 
                     @Override
                     public Fun.Tuple2<String, String> next() {
-                        return new Fun.Tuple2<>(StringUtils.defaultString(line[1], ""), StringUtils.defaultString(line[0], ""));
+                        String citationString = StringUtils.defaultString(line[1], "");
+                        String doi = StringUtils.defaultString(line[0], "");
+                        return new Fun.Tuple2<>(citationString, doi);
                     }
                 })
-                .keySerializer(BTreeKeySerializer.STRING)
+                //.keySerializer(BTreeKeySerializer.STRING)
                 .make();
         watch.stop();
         LOG.info("doi cache built in [" + watch.getTime() / 1000 + "] s.");

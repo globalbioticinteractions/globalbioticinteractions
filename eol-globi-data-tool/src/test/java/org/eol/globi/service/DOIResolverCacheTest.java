@@ -69,19 +69,11 @@ public class DOIResolverCacheTest {
 
     @Test
     public void initCache4() throws IOException, PropertyEnricherException {
-        String bla = "doi\tcitation\n" +
-                "doi:some/A\tcitationA\n" +
-                "\tcitationX\n" +
-                "\t\n" +
-                "doi:some/B\tcitationB";
-        Reader reader = new StringReader(bla);
+        DOIResolverCache doiResolverCache = new DOIResolverCache("/org/eol/globi/tool/citations.tsv.gz");
 
-
-        DOIResolverCache doiResolverCache = new DOIResolverCache("/does/not/exist");
-
-        doiResolverCache.init(reader);
-        Map<String, String> doiForReference = doiResolverCache.resolveDoiFor(Arrays.asList("citationA"));
-        assertThat(doiForReference.get("citationA"), is("doi:some/A"));
+        String ref1 = "Kalka, Margareta, and Elisabeth K. V. Kalko. Gleaning Bats as Underestimated Predators of Herbivorous Insects: Diet of Micronycteris Microtis (Phyllostomidae) in Panama. Journal of Tropical Ecology 1 (2006): 1-10.";
+        Map<String, String> doiForReference = doiResolverCache.resolveDoiFor(Arrays.asList(ref1));
+        assertThat(doiForReference.get(ref1), is("http://dx.doi.org/10.1017/S0266467405002920"));
     }
 
     @Test
