@@ -69,14 +69,18 @@ public class DOIResolverCacheTest {
 
     @Test
     public void initCache4() throws IOException, PropertyEnricherException {
-        String bla = "\t\n";
+        String bla = "doi\tcitation\n" +
+                "doi:some/A\tcitationA\n" +
+                "\tcitationX\n" +
+                "\t\n" +
+                "doi:some/B\tcitationB";
         Reader reader = new StringReader(bla);
-        DOIResolverCache doiResolverCache = new DOIResolverCache();
+
+
+        DOIResolverCache doiResolverCache = new DOIResolverCache("/does/not/exist");
 
         doiResolverCache.init(reader);
-        ArrayList<String> references = new ArrayList<>();
-        references.add(null);
-        Map<String, String> doiForReference = doiResolverCache.resolveDoiFor(references);
+        Map<String, String> doiForReference = doiResolverCache.resolveDoiFor(Arrays.asList("citationA"));
         assertThat(doiForReference.get("citationA"), is("doi:some/A"));
     }
 
