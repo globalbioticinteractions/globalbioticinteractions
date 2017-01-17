@@ -23,7 +23,7 @@ public class ITISService implements PropertyEnricher {
     public Map<String, String> enrich(Map<String, String> properties) throws PropertyEnricherException {
         Map<String, String> enriched = new HashMap<String, String>(properties);
         String externalId = properties.get(PropertyAndValueDictionary.EXTERNAL_ID);
-        if (StringUtils.startsWith(externalId, TaxonomyProvider.ITIS.getIdPrefix())) {
+        if (isNumericITISTsn(externalId)) {
             String tsn = externalId.replace(TaxonomyProvider.ID_PREFIX_ITIS, "");
             String acceptedResponse = getResponse("getAcceptedNamesFromTSN", "tsn=" + tsn);
             String[] split = StringUtils.splitByWholeSeparator(acceptedResponse, "acceptedTsn>");
@@ -51,6 +51,11 @@ public class ITISService implements PropertyEnricher {
             setPropertyToLastValue(PropertyAndValueDictionary.RANK, rankNames, enriched);
         }
         return enriched;
+    }
+
+    public boolean isNumericITISTsn(String externalId) {
+        return StringUtils.startsWith(externalId, TaxonomyProvider.ITIS.getIdPrefix())
+                && StringUtils.isNumeric(externalId.replace(TaxonomyProvider.ID_PREFIX_ITIS, ""));
     }
 
     public String subJoin(int taxonIdIndex, List<String> taxonNames) {

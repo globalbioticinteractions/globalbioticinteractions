@@ -34,6 +34,17 @@ public class ITISServiceTest {
     }
 
     @Test
+    public void lookupPathByNonTSN() throws PropertyEnricherException {
+        ITISService itisService = new ITISService();
+        HashMap<String, String> props = new HashMap<String, String>() {{
+            put(PropertyAndValueDictionary.EXTERNAL_ID, "ITIS:san280");
+        }};
+        Map<String, String> enrich = itisService.enrich(props);
+        assertThat(enrich.get(PropertyAndValueDictionary.EXTERNAL_ID), is ("ITIS:san280"));
+
+    }
+
+        @Test
     public void lookupPathByAcceptedTSN() throws PropertyEnricherException {
         ITISService itisService = new ITISService();
         HashMap<String, String> props = new HashMap<String, String>() {{
