@@ -3,8 +3,10 @@ package org.eol.globi.service;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringReader;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
@@ -45,6 +47,36 @@ public class DOIResolverCacheTest {
 
         doiResolverCache.init(reader);
         Map<String, String> doiForReference = doiResolverCache.resolveDoiFor(Arrays.asList("citationA"));
+        assertThat(doiForReference.get("citationA"), is("doi:some/A"));
+    }
+
+    @Test
+    public void initCache3() throws IOException, PropertyEnricherException {
+        String bla = "doi\tcitation\n" +
+                "doi:some/A\tcitationA\n" +
+                "\tcitationX\n" +
+                "\t\n" +
+                "doi:some/B\tcitationB";
+        Reader reader = new StringReader(bla);
+
+
+        DOIResolverCache doiResolverCache = new DOIResolverCache();
+
+        doiResolverCache.init(reader);
+        Map<String, String> doiForReference = doiResolverCache.resolveDoiFor(Arrays.asList("citationA"));
+        assertThat(doiForReference.get("citationA"), is("doi:some/A"));
+    }
+
+    @Test
+    public void initCache4() throws IOException, PropertyEnricherException {
+        String bla = "\t\n";
+        Reader reader = new StringReader(bla);
+        DOIResolverCache doiResolverCache = new DOIResolverCache();
+
+        doiResolverCache.init(reader);
+        ArrayList<String> references = new ArrayList<>();
+        references.add(null);
+        Map<String, String> doiForReference = doiResolverCache.resolveDoiFor(references);
         assertThat(doiForReference.get("citationA"), is("doi:some/A"));
     }
 

@@ -126,6 +126,15 @@ public class Normalizer {
     }
 
     public void resolveAndLinkTaxa(CommandLine cmdLine, GraphDatabaseService graphService) {
+        if (cmdLine == null || !cmdLine.hasOption(OPTION_SKIP_RESOLVE_CITATIONS)) {
+            LOG.info("resolving citations to DOIs ...");
+            new LinkerDOI(graphService, new DOIResolverCache()).link();
+            new LinkerDOI(graphService).link();
+        } else {
+            LOG.info("skipping citation resolving ...");
+        }
+
+
         if (cmdLine == null || !cmdLine.hasOption(OPTION_SKIP_TAXON_CACHE)) {
             LOG.info("resolving names with taxon cache ...");
             final TaxonCacheService enricher = new TaxonCacheService("/taxa/taxonCache.tsv.gz", "/taxa/taxonMap.tsv.gz");
@@ -162,13 +171,6 @@ public class Normalizer {
             new TaxonInteractionIndexer(graphService).index();
         } else {
             LOG.info("skipping taxa resolving ...");
-        }
-
-        if (cmdLine == null || !cmdLine.hasOption(OPTION_SKIP_RESOLVE_CITATIONS)) {
-            new LinkerDOI(graphService, new DOIResolverCache()).link();
-            new LinkerDOI(graphService).link();
-        } else {
-            LOG.info("skipping citation resolving ...");
         }
 
         if (cmdLine == null || !cmdLine.hasOption(OPTION_SKIP_LINK)) {
