@@ -22,6 +22,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.fail;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.Is.is;
@@ -36,6 +37,24 @@ public class LinkerDOITest extends GraphDBTestCase {
         Study studyResolved = nodeFactory.getOrCreateStudy(study);
         assertThat(studyResolved.getDOI(), is(nullValue()));
         assertThat(study.getDOI(), is(nullValue()));
+    }
+
+    @Test
+    public void shouldResolveStudy() {
+        StudyImpl study = new StudyImpl("some title", "some source", "doi:some/doi", "some citation");
+        assertFalse(LinkerDOI.shouldResolve(study));
+    }
+    
+    @Test
+    public void shouldResolveStudyEmptyCitation() {
+        StudyImpl study = new StudyImpl("some title", "some source", "", "");
+        assertFalse(LinkerDOI.shouldResolve(study));
+    }
+
+    @Test
+    public void shouldResolveStudyHttps() {
+        StudyImpl study = new StudyImpl("some title", "some source", "", "http://example.com");
+        assertFalse(LinkerDOI.shouldResolve(study));
     }
 
     @Test

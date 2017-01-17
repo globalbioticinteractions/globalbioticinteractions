@@ -5,6 +5,7 @@ import org.apache.commons.lang3.time.StopWatch;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eol.globi.domain.PropertyAndValueDictionary;
+import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyConstant;
 import org.eol.globi.domain.StudyNode;
 import org.eol.globi.service.DOIResolver;
@@ -136,13 +137,13 @@ public class LinkerDOI {
         }
     }
 
-    public boolean shouldResolve(StudyNode study) {
+    public static boolean shouldResolve(Study study) {
         Dataset dataset = study.getOriginatingDataset();
         return DatasetUtil.shouldResolveReferences(dataset)
                 && StringUtils.isBlank(study.getDOI()) && citationLikeString(study.getCitation());
     }
 
-    private boolean citationLikeString(String citation) {
+    private static boolean citationLikeString(String citation) {
         return !StringUtils.startsWith(citation, "http://");
     }
 
