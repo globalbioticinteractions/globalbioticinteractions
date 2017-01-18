@@ -22,7 +22,9 @@ public class StudyImporterForThessen extends BaseStudyImporter {
     public void importStudy() throws StudyImporterException {
         String citation = "A. Thessen. 2014. Species associations extracted from EOL text data objects via text mining. " + ReferenceUtil.createLastAccessedString(RESOURCE);
         StudyImpl study1 = new StudyImpl("Thessen 2014", citation, null, citation);
-        GitHubUtil.configureStudyWithNamespace(study1, false, "EOL/pseudonitzchia");
+        String namespace = "EOL/pseudonitzchia";
+        study1.setExternalId("https://github.com/" + namespace);
+        GitHubUtil.configureStudyWithNamespace(study1, false, namespace);
 
         Study study = nodeFactory.getOrCreateStudy(study1);
 

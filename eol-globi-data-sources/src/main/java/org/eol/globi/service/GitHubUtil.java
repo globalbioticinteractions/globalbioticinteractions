@@ -122,7 +122,6 @@ public class GitHubUtil {
     }
 
     public static void configureStudyWithNamespace(StudyImpl study, boolean shouldResolveReferences, String namespace) {
-        study.setExternalId("https://github.com/" + namespace);
         study.setSourceId("globi:" + namespace);
 
         DatasetImpl originatingDataset = new DatasetImpl(namespace, URI.create(getBaseUrlMaster(namespace)));
