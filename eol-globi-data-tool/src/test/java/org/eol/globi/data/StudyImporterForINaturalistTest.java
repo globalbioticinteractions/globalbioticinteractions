@@ -38,7 +38,7 @@ import static org.junit.matchers.JUnitMatchers.containsString;
 
 public class StudyImporterForINaturalistTest extends GraphDBTestCase {
 
-    private StudyImporterForINaturalist importer;
+    protected StudyImporterForINaturalist importer;
 
     @Before
     public void setup() throws DatasetFinderException {
@@ -49,11 +49,6 @@ public class StudyImporterForINaturalistTest extends GraphDBTestCase {
         importer.setDataset(dataset);
     }
 
-    @Test
-    public void importUsingINatAPI() throws StudyImporterException, PropertyEnricherException {
-        importStudy(importer);
-        assertThat(NodeUtil.findAllStudies(getGraphDb()).size() > 150, is(true));
-    }
 
     @Test
     public void loadInteractionMap() throws IOException {
