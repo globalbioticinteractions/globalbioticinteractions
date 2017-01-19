@@ -53,14 +53,14 @@ public class ReportControllerTest {
     @Test
     public void studiesForSource() throws IOException {
         CypherQuery source = new ReportController().studies("a source", null);
-        assertThat(source.getQuery(), is("START report = node:reports(source={source}) WHERE has(report.title) RETURN report.citation? as study_citation, report.externalId? as study_url, report.doi? as study_doi, report.source as study_source_citation, report.nInteractions as number_of_interactions, report.nTaxa as number_of_distinct_taxa, report.nStudies? as number_of_studies, report.nSources? as number_of_sources, report.nTaxaNoMatch? as number_of_distinct_taxa_no_match SKIP 0 LIMIT 1024"));
+        assertThat(source.getQuery(), is("START report = node:reports(source={source}) WHERE has(report.title) RETURN report.citation? as study_citation, report.externalId? as study_url, report.doi? as study_doi, report.source? as study_source_citation, report.nInteractions as number_of_interactions, report.nTaxa as number_of_distinct_taxa, report.nStudies? as number_of_studies, report.nSources? as number_of_sources, report.nTaxaNoMatch? as number_of_distinct_taxa_no_match SKIP 0 LIMIT 1024"));
         assertThat(source.getParams().get("source"), is("a source"));
     }
 
     @Test
     public void studies() throws IOException {
         CypherQuery source = new ReportController().studies(null, null);
-        assertThat(source.getQuery(), is("START report = node:reports('source:*') WHERE has(report.title) RETURN report.citation? as study_citation, report.externalId? as study_url, report.doi? as study_doi, report.source as study_source_citation, report.nInteractions as number_of_interactions, report.nTaxa as number_of_distinct_taxa, report.nStudies? as number_of_studies, report.nSources? as number_of_sources, report.nTaxaNoMatch? as number_of_distinct_taxa_no_match SKIP 0 LIMIT 1024"));
+        assertThat(source.getQuery(), is("START report = node:reports('source:*') WHERE has(report.title) RETURN report.citation? as study_citation, report.externalId? as study_url, report.doi? as study_doi, report.source? as study_source_citation, report.nInteractions as number_of_interactions, report.nTaxa as number_of_distinct_taxa, report.nStudies? as number_of_studies, report.nSources? as number_of_sources, report.nTaxaNoMatch? as number_of_distinct_taxa_no_match SKIP 0 LIMIT 1024"));
         assertThat(source.getParams().size(), is(0));
     }
 

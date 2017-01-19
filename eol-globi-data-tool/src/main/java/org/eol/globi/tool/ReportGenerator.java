@@ -124,6 +124,9 @@ public class ReportGenerator {
         Transaction tx = getGraphDb().beginTx();
         try {
             Node node = getGraphDb().createNode();
+            if (StringUtils.isNotBlank(study.getSource())) {
+                node.setProperty(StudyConstant.SOURCE, study.getSource());
+            }
             if (StringUtils.isNotBlank(study.getSourceId())) {
                 node.setProperty(StudyConstant.SOURCE_ID, study.getSourceId());
             }
