@@ -21,7 +21,7 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 import static org.junit.matchers.JUnitMatchers.containsString;
 
-public class StudyImporterForHurlbertTest extends GraphDBTestCase {
+public class StudyImporterForHurlbertIT extends GraphDBTestCase {
 
     @Test
     public void importAll() throws StudyImporterException, DatasetFinderException {
@@ -53,14 +53,6 @@ public class StudyImporterForHurlbertTest extends GraphDBTestCase {
 
         Taxon formicidae = taxonIndex.findTaxonByName("Formicidae");
         assertThat(formicidae.getStatus(), is(notNullValue()));
-    }
-
-    public String aFewLines() throws IOException {
-        return IOUtils.toString(getResource());
-    }
-
-    public static InputStream getResource() {
-        return StudyImporterForHurlbertTest.class.getResourceAsStream("hurlbert/avianDietFirst50.txt");
     }
 
 }

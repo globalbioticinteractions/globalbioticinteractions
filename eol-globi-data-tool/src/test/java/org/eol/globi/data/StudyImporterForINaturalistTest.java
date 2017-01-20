@@ -12,11 +12,7 @@ import org.eol.globi.domain.Study;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonomyProvider;
 import org.eol.globi.service.Dataset;
-import org.eol.globi.service.DatasetFinder;
-import org.eol.globi.service.DatasetFinderCaching;
 import org.eol.globi.service.DatasetFinderException;
-import org.eol.globi.service.DatasetFinderGitHubArchiveMaster;
-import org.eol.globi.service.PropertyEnricherException;
 import org.eol.globi.util.NodeUtil;
 import org.junit.Before;
 import org.junit.Test;
@@ -42,8 +38,7 @@ public class StudyImporterForINaturalistTest extends GraphDBTestCase {
 
     @Before
     public void setup() throws DatasetFinderException {
-        DatasetFinder finder = new DatasetFinderCaching(new DatasetFinderGitHubArchiveMaster());
-        Dataset dataset = finder.datasetFor("globalbioticinteractions/inaturalist");
+        Dataset dataset = datasetFor("globalbioticinteractions/inaturalist");
         ParserFactory parserFactory = new ParserFactoryForDataset(dataset);
         importer = new StudyImporterForINaturalist(parserFactory, nodeFactory);
         importer.setDataset(dataset);
@@ -110,7 +105,7 @@ public class StudyImporterForINaturalistTest extends GraphDBTestCase {
 
         assertThat(sourceTaxonNode, is(not(nullValue())));
 
-        Iterable<Relationship> relationships = ((NodeBacked)sourceTaxonNode).getUnderlyingNode().getRelationships(Direction.INCOMING, NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS));
+        Iterable<Relationship> relationships = ((NodeBacked) sourceTaxonNode).getUnderlyingNode().getRelationships(Direction.INCOMING, NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS));
         for (Relationship relationship : relationships) {
             Node sourceSpecimen = relationship.getStartNode();
 

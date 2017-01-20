@@ -1,6 +1,8 @@
 package org.eol.globi.data;
 
-import com.Ostermiller.util.LabeledCSVParser;
+import com.univocity.parsers.common.record.Record;
+import com.univocity.parsers.tsv.TsvParser;
+import com.univocity.parsers.tsv.TsvParserSettings;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -11,9 +13,9 @@ import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.Term;
-import org.eol.globi.service.GitHubUtil;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -22,7 +24,7 @@ import java.util.Set;
 
 public class StudyImporterForHurlbert extends BaseStudyImporter {
 
-    public static final String RESOURCE = "https://raw.githubusercontent.com/hurlbertlab/dietdatabase/master/AvianDietDatabase.txt";
+    public static final String RESOURCE = "AvianDietDatabase.txt";
 
     private static final Log LOG = LogFactory.getLog(StudyImporterForHurlbert.class);
 
@@ -32,35 +34,43 @@ public class StudyImporterForHurlbert extends BaseStudyImporter {
 
     @Override
     public void importStudy() throws StudyImporterException {
+
+        InputStream resource;
+        try {
+            resource = getDataset().getResource(RESOURCE);
+        } catch (IOException e) {
+            throw new StudyImporterException("failed to access [" + RESOURCE + "]", e);
+        }
+
+
         Set<String> regions = new HashSet<String>();
         Set<String> locales = new HashSet<String>();
         Set<String> habitats = new HashSet<String>();
 
-
-        try {
-            LabeledCSVParser parser = parserFactory.createParser(RESOURCE, "UTF-8");
-            parser.changeDelimiter('\t');
-            while (parser.getLine() != null) {
-                String sourceCitation = parser.getValueByLabel("Source");
-                if (StringUtils.isBlank(sourceCitation)) {
-                    LOG.warn("missing source on line [" + (parser.getLastLineNumber() + 1) + "]");
-                } else {
-                    importRecords(regions, locales, habitats, parser, sourceCitation);
-                }
+        TsvParserSettings settings = new TsvParserSettings();
+        settings.getFormat().setLineSeparator("\n");
+        settings.setHeaderExtractionEnabled(true);
+        TsvParser parser = new TsvParser(settings);
+        parser.beginParsing(resource, CharsetConstant.UTF8);
+        Record record;
+        while ((record = parser.parseNextRecord()) != null) {
+            String sourceCitation = record.getString("Source");
+            if (StringUtils.isBlank(sourceCitation)) {
+                LOG.warn("missing source in [" + RESOURCE + "] on line [" + (parser.getContext().currentLine() + 1) + "]");
+            } else {
+                importRecords(regions, locales, habitats, record, sourceCitation);
             }
-        } catch (IOException | NodeFactoryException e) {
-            throw new StudyImporterException("failed to import [" + RESOURCE + "]", e);
         }
+
 
         LOG.info("unmapped habitats [" + StringUtils.join(habitats.iterator(), ";") + "]");
         LOG.info("unmapped locales [" + StringUtils.join(locales.iterator(), ";") + "]");
         LOG.info("unmapped regions [" + StringUtils.join(regions.iterator(), ";") + "]");
     }
 
-    public void importRecords(Set<String> regions, Set<String> locales, Set<String> habitats, LabeledCSVParser parser, String sourceCitation) throws StudyImporterException {
+    public void importRecords(Set<String> regions, Set<String> locales, Set<String> habitats, Record record, String sourceCitation) throws StudyImporterException {
         StudyImpl study1 = new StudyImpl(sourceCitation, "Allen Hurlbert. Avian Diet Database (https://github.com/hurlbertlab/dietdatabase/). " + ReferenceUtil.createLastAccessedString(RESOURCE), null, sourceCitation);
-        GitHubUtil.configureStudyWithNamespace(study1, true, "hurlbertlab/dietdatabase");
-
+        study1.setOriginatingDataset(getDataset());
         Study study = nodeFactory.getOrCreateStudy(study1);
 
         //ID,Common_Name,Scientific_Name,,,,Prey_Common_Name,Fraction_Diet_By_Wt_or_Vol,Fraction_Diet_By_Items,Fraction_Occurrence,Fraction_Diet_Unspecified,Item Sample Size,Bird Sample size,Sites,StudyNode Type,Notes,Source
@@ -69,64 +79,64 @@ public class StudyImporterForHurlbert extends BaseStudyImporter {
         ArrayUtils.reverse(preyLabels);
         String preyTaxonName = null;
         for (String preyLabel : preyLabels) {
-            preyTaxonName = parser.getValueByLabel(preyLabel);
+            preyTaxonName = record.getString(preyLabel);
             if (StringUtils.isNotBlank(preyTaxonName) && !"NA".equalsIgnoreCase(preyTaxonName)) {
                 break;
             }
         }
 
-        String predatorTaxonName = StringUtils.trim(parser.getValueByLabel("Scientific_Name"));
+        String predatorTaxonName = StringUtils.trim(record.getString("Scientific_Name"));
         if (StringUtils.isNotBlank(StringUtils.trim(predatorTaxonName))
                 && StringUtils.isNotBlank(StringUtils.trim(preyTaxonName))) {
-            importInteraction(regions, locales, habitats, parser, study, preyTaxonName, predatorTaxonName);
+            importInteraction(regions, locales, habitats, record, study, preyTaxonName, predatorTaxonName);
         }
     }
 
-    protected void importInteraction(Set<String> regions, Set<String> locales, Set<String> habitats, LabeledCSVParser parser, Study study, String preyTaxonName, String predatorName) throws StudyImporterException {
+    protected void importInteraction(Set<String> regions, Set<String> locales, Set<String> habitats, Record record, Study study, String preyTaxonName, String predatorName) throws StudyImporterException {
         try {
             Taxon predatorTaxon = new TaxonImpl(predatorName);
             Specimen predatorSpecimen = nodeFactory.createSpecimen(study, predatorTaxon);
             setBasisOfRecordAsLiterature(predatorSpecimen);
 
             Taxon preyTaxon = new TaxonImpl(preyTaxonName);
-            String preyNameStatus = StringUtils.trim(parser.getValueByLabel("Prey_Name_Status"));
+            String preyNameStatus = StringUtils.trim(record.getString("Prey_Name_Status"));
             if (StringUtils.isNotBlank(preyNameStatus)) {
                 preyTaxon.setStatus(new Term("HURLBERT:" + preyNameStatus, preyNameStatus));
             }
             Specimen preySpecimen = nodeFactory.createSpecimen(study, preyTaxon);
             setBasisOfRecordAsLiterature(preySpecimen);
 
-            String preyStage = StringUtils.trim(parser.getValueByLabel("Prey_Stage"));
+            String preyStage = StringUtils.trim(record.getString("Prey_Stage"));
             if (StringUtils.isNotBlank(preyStage)) {
                 Term lifeStage = nodeFactory.getOrCreateLifeStage("HULBERT:" + StringUtils.replace(preyStage, " ", "_"), preyStage);
                 preySpecimen.setLifeStage(lifeStage);
             }
 
-            String preyPart = StringUtils.trim(parser.getValueByLabel("Prey_Part"));
+            String preyPart = StringUtils.trim(record.getString("Prey_Part"));
             if (StringUtils.isNotBlank(preyPart)) {
                 Term term = nodeFactory.getOrCreateBodyPart("HULBERT:" + StringUtils.replace(preyPart, " ", "_"), preyPart);
                 preySpecimen.setBodyPart(term);
             }
 
             predatorSpecimen.ate(preySpecimen);
-            Date date = addCollectionDate(parser, study);
+            Date date = addCollectionDate(record, study);
             nodeFactory.setUnixEpochProperty(predatorSpecimen, date);
             nodeFactory.setUnixEpochProperty(preySpecimen, date);
         } catch (NodeFactoryException e) {
-            throw new StudyImporterException("failed to create interaction between [" + predatorName + "] and [" + preyTaxonName + "] on line [" + parser.lastLineNumber() + "] in [" + RESOURCE + "]", e);
+            throw new StudyImporterException("failed to create interaction between [" + predatorName + "] and [" + preyTaxonName + "]", e);
         }
 
 
         //Location_Region,Location_Specific
-        regions.add(parser.getValueByLabel("Location_Region"));
-        locales.add(parser.getValueByLabel("Location_Specific"));
-        habitats.add(parser.getValueByLabel("Habitat_type"));
+        regions.add(record.getString("Location_Region"));
+        locales.add(record.getString("Location_Specific"));
+        habitats.add(record.getString("Habitat_type"));
     }
 
-    private Date addCollectionDate(LabeledCSVParser parser, Study study) {
-        String dateString = getDateString(parser, "Observation_Year_Begin", "Observation_Month_Begin");
+    private Date addCollectionDate(Record record, Study study) {
+        String dateString = getDateString(record, "Observation_Year_Begin", "Observation_Month_Begin");
         if (StringUtils.isBlank(dateString)) {
-            dateString = getDateString(parser, "Observation_Year_End", "Observation_Month_End");
+            dateString = getDateString(record, "Observation_Year_End", "Observation_Month_End");
         }
 
         Date date = null;
@@ -135,19 +145,24 @@ public class StudyImporterForHurlbert extends BaseStudyImporter {
             try {
                 date = dateFormat.parse(dateString);
             } catch (ParseException e) {
-                getLogger().warn(study, "not setting collection date, because [" + dateString + "] on line [" + parser.getLastLineNumber() + "] could not be read as date.");
+                SimpleDateFormat dateFormatYearOnly = new SimpleDateFormat("yyyy");
+                try {
+                    date = dateFormatYearOnly.parse(dateString);
+                } catch (ParseException e1) {
+                    getLogger().warn(study, "not setting collection date, because [" + dateString + "] could not be read as date.");
+                }
             }
         }
         return date;
     }
 
-    private String getDateString(LabeledCSVParser parser, String yearLabel, String monthLabel) {
+    private String getDateString(Record parser, String yearLabel, String monthLabel) {
         String dateString = "";
-        String year = parser.getValueByLabel(yearLabel);
+        String year = parser.getString(yearLabel);
         if (notBlankOrNA(year)) {
             dateString = StringUtils.trim(year);
         }
-        String month = parser.getValueByLabel(monthLabel);
+        String month = parser.getString(monthLabel);
         if (notBlankOrNA(month)) {
             dateString += "-" + StringUtils.trim(month);
         }

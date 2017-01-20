@@ -5,6 +5,11 @@ import org.eol.globi.domain.Term;
 import org.eol.globi.geo.Ecoregion;
 import org.eol.globi.geo.EcoregionFinder;
 import org.eol.globi.geo.EcoregionFinderException;
+import org.eol.globi.service.Dataset;
+import org.eol.globi.service.DatasetFinder;
+import org.eol.globi.service.DatasetFinderCaching;
+import org.eol.globi.service.DatasetFinderException;
+import org.eol.globi.service.DatasetFinderGitHubArchiveMaster;
 import org.eol.globi.service.PropertyEnricher;
 import org.eol.globi.service.TermLookupService;
 import org.eol.globi.service.TermLookupServiceException;
@@ -39,6 +44,11 @@ public abstract class GraphDBTestCase {
         Study study = allStudies.get(0);
         assertNotNull(study);
         return study;
+    }
+
+    public static Dataset datasetFor(String namespace) throws DatasetFinderException {
+        DatasetFinder finder = new DatasetFinderCaching(new DatasetFinderGitHubArchiveMaster());
+        return finder.datasetFor(namespace);
     }
 
     @Before

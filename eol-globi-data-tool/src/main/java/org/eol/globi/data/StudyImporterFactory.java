@@ -11,7 +11,6 @@ public class StudyImporterFactory {
 
     private static final Collection<Class<? extends StudyImporter>> IMPORTERS = Collections.unmodifiableCollection(new ArrayList<Class<? extends StudyImporter>>() {{
         add(StudyImporterForGitHubData.class);
-        add(StudyImporterForHurlbert.class);
         add(StudyImporterForThessen.class);
     }});
 
