@@ -24,39 +24,35 @@ import static org.junit.matchers.JUnitMatchers.containsString;
 public class StudyImporterForHurlbertTest extends GraphDBTestCase {
 
     @Test
-    public void importAll() throws StudyImporterException, DatasetFinderException {
-        Dataset dataset = datasetFor("hurlbertlab/dietdatabase");
-        ParserFactory parserFactory = new ParserFactoryForDataset(dataset);
-        StudyImporter importer = new StudyImporterForHurlbert(parserFactory, nodeFactory);
+    public void importSome() throws StudyImporterException, IOException {
+        StudyImporter importer = new StudyImporterForHurlbert(null, nodeFactory);
+        Dataset dataset = new DatasetImpl("some/namespace", URI.create("some:uri")) {
+            @Override
+            public InputStream getResource(String name){
+                return StudyImporterForHurlbertTest.getResource();
+            }
+
+        };
         importer.setDataset(dataset);
-        importer.setLogger(new ImportLogger() {
-            @Override
-            public void warn(Study study, String message) {
-                fail("did not expect warning [" + message + "]");
-            }
-
-            @Override
-            public void info(Study study, String message) {
-
-            }
-
-            @Override
-            public void severe(Study study, String message) {
-                fail("did not expect error [" + message + "]");
-            }
-        });
         importStudy(importer);
+
         List<Study> allStudies = NodeUtil.findAllStudies(getGraphDb());
-        assertThat(allStudies.size() > 10, is(true));
+        assertThat(allStudies.size(), is(2));
 
-        assertThat(allStudies.get(0).getOriginatingDataset(), is(notNullValue()));
+        Study study = allStudies.get(0);
+        assertThat(study.getSource(), startsWith("Allen Hurlbert. Avian Diet Database (https://github.com/hurlbertlab/dietdatabase/). Accessed at <AvianDietDatabase.txt>"));
+        assertThat(study.getCitation(), containsString("Brown, B. T., W. C. Leibfried"));
 
-        Taxon formicidae = taxonIndex.findTaxonByName("Formicidae");
-        assertThat(formicidae.getStatus(), is(notNullValue()));
-    }
+        study = allStudies.get(1);
+        assertThat(study.getSource(), startsWith("Allen Hurlbert. Avian Diet Database (https://github.com/hurlbertlab/dietdatabase/). Accessed at <AvianDietDatabase.txt>"));
+        assertThat(study.getCitation(), containsString("Cash, K. J., J. P. Austin-Smith"));
 
-    public String aFewLines() throws IOException {
-        return IOUtils.toString(getResource());
+        assertThat(taxonIndex.findTaxonByName("Haliaeetus leucocephalus"), is(notNullValue()));
+        Taxon preyTaxon = taxonIndex.findTaxonByName("Ictalurus");
+        assertThat(preyTaxon, is(notNullValue()));
+        assertThat(preyTaxon.getStatus().getId(), is("HURLBERT:verified"));
+        assertThat(preyTaxon.getStatus().getName(), is("verified"));
+
     }
 
     public static InputStream getResource() {
