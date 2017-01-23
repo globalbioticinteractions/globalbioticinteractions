@@ -15,7 +15,7 @@ import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 
-public class ITISServiceIT {
+public class ITISServiceTest {
 
 
     @Test
