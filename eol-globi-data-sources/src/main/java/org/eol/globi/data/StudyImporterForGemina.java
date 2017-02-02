@@ -13,19 +13,17 @@ import java.io.IOException;
 
 public class StudyImporterForGemina extends BaseStudyImporter {
 
-    public static final String RESOURCE = "http://sourceforge.net/projects/gemina/files/gemina%20database/gemina_complete_infection_dump_2008-01-03/gemina_search_2008-01-03.txt/download";
-
     public StudyImporterForGemina(ParserFactory parserFactory, NodeFactory nodeFactory) {
         super(parserFactory, nodeFactory);
     }
 
     @Override
     public void importStudy() throws StudyImporterException {
+        String studyResource = "gemina_search_2008-01-03.txt";
         try {
             String source = "Schriml, L. M., Arze, C., Nadendla, S., Ganapathy, A., Felix, V., Mahurkar, A., … Hall, N. (2009). GeMInA, Genomic Metadata for Infectious Agents, a geospatial surveillance pathogen database. Nucleic Acids Research, 38(Database), D754–D764. doi:10.1093/nar/gkp832";
             Study study = nodeFactory.getOrCreateStudy(new StudyImpl(source, source, "doi:10.1093/nar/gkp832", source));
-
-            LabeledCSVParser parser = parserFactory.createParser(RESOURCE, "UTF-8");
+            LabeledCSVParser parser = parserFactory.createParser(studyResource, "UTF-8");
             parser.changeDelimiter('\t');
             String line[];
             while ((line = parser.getLine()) != null) {
@@ -40,7 +38,7 @@ public class StudyImporterForGemina extends BaseStudyImporter {
                 }
             }
         } catch (IOException | NodeFactoryException e) {
-            throw new StudyImporterException("failed to import [" + RESOURCE + "]", e);
+            throw new StudyImporterException("failed to import [" + studyResource + "]", e);
         }
     }
 
