@@ -21,15 +21,15 @@ import static org.junit.Assert.*;
 
 public class NameResolverTest extends GraphDBTestCase {
 
-    private PropertyEnricher taxonEnricher;
+    private static PropertyEnricher taxonEnricher;
 
     @BeforeClass
-    public void init() {
+    public static void init() {
         taxonEnricher = PropertyEnricherFactory.createTaxonEnricher();
     }
 
     @AfterClass
-    public void shutdown() {
+    public static void shutdown() {
         taxonEnricher.shutdown();
     }
 

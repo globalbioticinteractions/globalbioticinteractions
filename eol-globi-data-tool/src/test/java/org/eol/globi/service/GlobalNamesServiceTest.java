@@ -46,7 +46,7 @@ public class GlobalNamesServiceTest {
     public void createTaxaListFromNameListNCBI() throws PropertyEnricherException {
         GlobalNamesService service = new GlobalNamesService();
         final List<Taxon> foundTaxa = new ArrayList<Taxon>();
-        service.findTermsForNames(Collections.singletonList("1|Prunus persicus L."), new TermMatchListener() {
+        service.findTermsForNames(Collections.singletonList("1|Prunus persica L."), new TermMatchListener() {
             @Override
             public void foundTaxonForName(Long id, String name, Taxon taxon, NameType nameType) {
                 assertNotNull(id);
