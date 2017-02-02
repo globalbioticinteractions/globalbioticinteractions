@@ -61,21 +61,7 @@ public class StudyImporterForGeminaTest extends GraphDBTestCase {
         assertThat(antraxHosts, hasItem("Equus caballus"));
     }
 
-    @Test
-    public void importAll() throws StudyImporterException, NodeFactoryException {
-        StudyImporterForGemina importer = new StudyImporterForGemina(new ParserFactoryLocal(), nodeFactory);
-        importStudy(importer);
-        assertHuman();
-
-        Index<Node> taxons = getGraphDb().index().forNodes("taxons");
-        IndexHits<Node> hits = taxons.query("*:*");
-        for (Node hit : hits) {
-            assertThat("taxon with name [" + hit.getProperty("name") + "] has no externalId", (String) hit.getProperty("externalId"), not(is("NCBI:")));
-        }
-
-    }
-
-    protected void assertHuman() throws NodeFactoryException {
+    private void assertHuman() throws NodeFactoryException {
         Taxon taxon = taxonIndex.findTaxonByName("Homo sapiens");
         assertThat(taxon, is(notNullValue()));
         assertThat(taxon.getExternalId(), is("NCBI:9606"));
