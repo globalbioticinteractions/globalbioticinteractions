@@ -6,7 +6,13 @@ import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
+import org.eol.globi.service.PropertyEnricher;
 import org.eol.globi.service.PropertyEnricherException;
+import org.eol.globi.service.PropertyEnricherFactory;
+import org.eol.globi.taxon.TaxonIndexNeo4j;
+import org.eol.globi.taxon.TaxonNameCorrector;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import static org.hamcrest.core.Is.is;
@@ -14,6 +20,18 @@ import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.*;
 
 public class NameResolverTest extends GraphDBTestCase {
+
+    private PropertyEnricher taxonEnricher;
+
+    @BeforeClass
+    public void init() {
+        taxonEnricher = PropertyEnricherFactory.createTaxonEnricher();
+    }
+
+    @AfterClass
+    public void shutdown() {
+        taxonEnricher.shutdown();
+    }
 
     @Test
     public void doNameResolving() throws NodeFactoryException, PropertyEnricherException {
@@ -26,7 +44,8 @@ public class NameResolverTest extends GraphDBTestCase {
         assertNull(taxonIndex.findTaxonById("EOL:1"));
         assertNull(taxonIndex.findTaxonByName("Homo sapiens"));
 
-        final NameResolver nameResolver = new NameResolver(getGraphDb());
+        final TaxonNameCorrector taxonNameCorrector = new TaxonNameCorrector();
+        final NameResolver nameResolver = new NameResolver(getGraphDb(), new TaxonIndexNeo4j(taxonEnricher, taxonNameCorrector, getGraphDb()));
         nameResolver.setBatchSize(1L);
         nameResolver.resolve();
 
@@ -53,7 +72,8 @@ public class NameResolverTest extends GraphDBTestCase {
         Specimen someOtherOrganism2 = nodeFactory.createSpecimen(nodeFactory.createStudy(new StudyImpl("bla", null, null, null)), new TaxonImpl("Redus rha", "INAT_TAXON:126777"));
         someOtherOrganism.ate(someOtherOrganism2);
 
-        final NameResolver nameResolver = new NameResolver(getGraphDb());
+        final TaxonNameCorrector taxonNameCorrector = new TaxonNameCorrector();
+        final NameResolver nameResolver = new NameResolver(getGraphDb(), new TaxonIndexNeo4j(taxonEnricher, taxonNameCorrector, getGraphDb()));
         nameResolver.setBatchSize(1L);
         nameResolver.resolve();
 

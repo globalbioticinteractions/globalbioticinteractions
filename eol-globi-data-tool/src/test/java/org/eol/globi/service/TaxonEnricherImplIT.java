@@ -12,6 +12,10 @@ import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.util.NodeUtil;
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.neo4j.graphdb.Relationship;
@@ -27,9 +31,21 @@ import static org.junit.internal.matchers.StringContains.containsString;
 
 public class TaxonEnricherImplIT extends GraphDBTestCase {
 
+    private static PropertyEnricher taxonEnricher;
+
+    @BeforeClass
+    public static void init() {
+        taxonEnricher = PropertyEnricherFactory.createTaxonEnricher();
+    }
+
+    @AfterClass
+    public static void shutdown() {
+        taxonEnricher.shutdown();
+    }
+
     @Override
     protected TaxonIndex getOrCreateTaxonIndex() {
-        return super.getOrCreateTaxonIndex(PropertyEnricherFactory.createTaxonEnricher());
+        return super.getOrCreateTaxonIndex(taxonEnricher);
     }
 
     @Test
@@ -147,7 +163,7 @@ public class TaxonEnricherImplIT extends GraphDBTestCase {
 
     @Test
     public void emptyTaxon() throws IOException, NodeFactoryException, PropertyEnricherException {
-        Taxon enrich = TaxonUtil.enrich(PropertyEnricherFactory.createTaxonEnricher(), new TaxonImpl("", ""));
+        Taxon enrich = TaxonUtil.enrich(taxonEnricher, new TaxonImpl("", ""));
         assertThat(enrich.getName(), is(""));
         assertThat(enrich.getExternalId(), is(""));
     }

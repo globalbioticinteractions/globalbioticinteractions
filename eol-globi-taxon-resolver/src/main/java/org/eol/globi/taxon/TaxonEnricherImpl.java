@@ -38,9 +38,7 @@ public class TaxonEnricherImpl implements PropertyEnricher {
 
     @Override
     public void shutdown() {
-        for (PropertyEnricher service : services) {
-            service.shutdown();
-        }
+        services.forEach(PropertyEnricher::shutdown);
         services.clear();
     }
 
@@ -84,15 +82,8 @@ public class TaxonEnricherImpl implements PropertyEnricher {
         }
     }
 
-    private void shutdownServices() {
-        for (PropertyEnricher service : services) {
-            service.shutdown();
-        }
-        services.clear();
-    }
-
     public void setServices(List<PropertyEnricher> services) {
-        shutdownServices();
+        shutdown();
         this.services.addAll(services);
     }
 

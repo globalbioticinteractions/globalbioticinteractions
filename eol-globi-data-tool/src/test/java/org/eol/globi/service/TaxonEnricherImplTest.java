@@ -5,6 +5,8 @@ import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.taxon.TaxonEnricherImpl;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -24,17 +26,28 @@ import static org.mockito.Mockito.when;
 
 public class TaxonEnricherImplTest {
 
+    private static TaxonEnricherImpl taxonEnricher;
+
+    @BeforeClass
+    public static void init() {
+        taxonEnricher = new TaxonEnricherImpl();
+    }
+
+    @AfterClass
+    public static void destroy() {
+        taxonEnricher.shutdown();
+    }
+
     @Test
     public void enrichNoServices() throws NodeFactoryException, IOException, PropertyEnricherException {
         List<PropertyEnricher> list = new ArrayList<PropertyEnricher>();
-        TaxonEnricherImpl enricher = new TaxonEnricherImpl();
-        enricher.setServices(list);
+        taxonEnricher.setServices(list);
         Map<String, String> properties = new HashMap<String, String>() {
             {
                 put(PropertyAndValueDictionary.NAME, "Homo sapiens");
             }
         };
-        Map<String, String> enrich = enricher.enrich(properties);
+        Map<String, String> enrich = taxonEnricher.enrich(properties);
         assertThat(enrich.get(PropertyAndValueDictionary.NAME), is("Homo sapiens"));
     }
 
@@ -108,7 +121,7 @@ public class TaxonEnricherImplTest {
     }
 
     private PropertyEnricher createEnricher(PropertyEnricher serviceA, PropertyEnricher serviceB) {
-        TaxonEnricherImpl enricher = new TaxonEnricherImpl();
+        TaxonEnricherImpl enricher = taxonEnricher;
         List<PropertyEnricher> list = new ArrayList<PropertyEnricher>();
         list.add(serviceA);
         list.add(serviceB);

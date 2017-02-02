@@ -25,10 +25,13 @@ import org.eol.globi.opentree.OpenTreeTaxonIndex;
 import org.eol.globi.service.DOIResolverCache;
 import org.eol.globi.service.DOIResolverImpl;
 import org.eol.globi.service.EcoregionFinderProxy;
+import org.eol.globi.service.PropertyEnricher;
 import org.eol.globi.service.PropertyEnricherException;
+import org.eol.globi.service.PropertyEnricherFactory;
 import org.eol.globi.taxon.CorrectionService;
 import org.eol.globi.taxon.TaxonCacheService;
 import org.eol.globi.taxon.TaxonIndexNeo4j;
+import org.eol.globi.taxon.TaxonNameCorrector;
 import org.eol.globi.util.HttpUtil;
 import org.neo4j.graphdb.GraphDatabaseService;
 
@@ -138,37 +141,45 @@ public class Normalizer {
         if (cmdLine == null || !cmdLine.hasOption(OPTION_SKIP_TAXON_CACHE)) {
             LOG.info("resolving names with taxon cache ...");
             final TaxonCacheService enricher = new TaxonCacheService("/taxa/taxonCache.tsv.gz", "/taxa/taxonMap.tsv.gz");
-            TaxonIndexNeo4j index = new TaxonIndexNeo4j(enricher, new CorrectionService() {
-                @Override
-                public String correct(String taxonName) {
-                    return taxonName;
-                }
-            }, graphService);
-            index.setIndexResolvedTaxaOnly(true);
+            try {
+                TaxonIndexNeo4j index = new TaxonIndexNeo4j(enricher, new CorrectionService() {
+                    @Override
+                    public String correct(String taxonName) {
+                        return taxonName;
+                    }
+                }, graphService);
+                index.setIndexResolvedTaxaOnly(true);
 
-            TaxonFilter taxonCacheFilter = new TaxonFilter() {
+                TaxonFilter taxonCacheFilter = new TaxonFilter() {
 
-                private KnownBadNameFilter knownBadNameFilter = new KnownBadNameFilter();
+                    private KnownBadNameFilter knownBadNameFilter = new KnownBadNameFilter();
 
-                @Override
-                public boolean shouldInclude(Taxon taxon) {
-                    return taxon != null
+                    @Override
+                    public boolean shouldInclude(Taxon taxon) {
+                        return taxon != null
                             && knownBadNameFilter.shouldInclude(taxon)
                             && (!StringUtils.startsWith(taxon.getExternalId(), TaxonomyProvider.INATURALIST_TAXON.getIdPrefix()));
-                }
-            };
+                    }
+                };
 
-            new NameResolver(graphService, index, taxonCacheFilter).resolve();
-
-            enricher.shutdown();
+                new NameResolver(graphService, index, taxonCacheFilter).resolve();
+            } finally {
+                enricher.shutdown();
+            }
             LOG.info("resolving names with taxon cache done.");
         } else {
             LOG.info("skipping taxon cache ...");
         }
 
         if (cmdLine == null || !cmdLine.hasOption(OPTION_SKIP_RESOLVE)) {
-            new NameResolver(graphService).resolve();
-            new TaxonInteractionIndexer(graphService).index();
+            final TaxonNameCorrector taxonNameCorrector = new TaxonNameCorrector();
+            PropertyEnricher taxonEnricher = PropertyEnricherFactory.createTaxonEnricher();
+            try {
+                new NameResolver(graphService, new TaxonIndexNeo4j(taxonEnricher, taxonNameCorrector, graphService)).resolve();
+                new TaxonInteractionIndexer(graphService).index();
+            } finally {
+                taxonEnricher.shutdown();
+            }
         } else {
             LOG.info("skipping taxa resolving ...");
         }

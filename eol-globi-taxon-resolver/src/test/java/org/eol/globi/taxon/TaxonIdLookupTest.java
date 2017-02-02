@@ -1,5 +1,6 @@
 package org.eol.globi.taxon;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.StopWatch;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -10,20 +11,25 @@ public class TaxonIdLookupTest {
 
     @Test
     public void lookupHumanEOL() {
-        doLookup("EOL:327955");
+        doLookup(new String[]{"EOL:327955"});
+    }
+
+    @Test
+    public void lookupNonExisting() {
+        doLookup(new String[]{"EXAMPLE:123"});
     }
 
     @Test
     public void lookupHumanNCBI() {
-        doLookup("NCBI:9606");
+        doLookup(new String[]{"NCBI:9606"});
     }
 
-    private void doLookup(String id) {
+    private void doLookup(String[] args) {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
-        TaxonIdLookup.main(new String[]{id});
+        TaxonIdLookup.main(args);
         stopWatch.stop();
-        LOG.info("lookup of [" + id + "] took: [" + stopWatch.getTime() + "] ms.");
+        LOG.info("lookup of [" + StringUtils.join(args, "|") + "] took: [" + stopWatch.getTime() + "] ms.");
     }
 
 

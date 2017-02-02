@@ -93,7 +93,7 @@ public class TaxonLookupServiceImpl implements TaxonImportListener, TaxonLookupS
         return findTaxon(FIELD_ID, taxonId);
     }
 
-    protected Taxon[] findTaxon(String fieldName1, String fieldValue) throws IOException {
+    private Taxon[] findTaxon(String fieldName1, String fieldValue) throws IOException {
         Taxon[] terms = new TaxonImpl[0];
         if (StringUtils.isNotBlank(fieldValue) && indexSearcher != null) {
             PhraseQuery query = new PhraseQuery();
@@ -150,6 +150,7 @@ public class TaxonLookupServiceImpl implements TaxonImportListener, TaxonLookupS
                     File indexPath1 = getIndexPath();
                     if (indexPath1 != null) {
                         FileUtils.deleteDirectory(indexPath1);
+                        LOG.info("index directory at [" + indexPath + "] deleted.");
                     }
                 } catch (IOException e) {
                     // ignore
@@ -167,7 +168,8 @@ public class TaxonLookupServiceImpl implements TaxonImportListener, TaxonLookupS
         try {
             if (indexDir == null) {
                 indexPath = new File(System.getProperty("java.io.tmpdir") + "/taxon" + System.currentTimeMillis());
-                LOG.info("creating index directory at [" + indexPath + "]");
+                LOG.info("index directory at [" + indexPath + "] created.");
+                //FileUtils.forceDeleteOnExit(indexPath);
                 indexDir = new SimpleFSDirectory(indexPath);
             }
             IndexWriterConfig config = new IndexWriterConfig(Version.LUCENE_35, null);

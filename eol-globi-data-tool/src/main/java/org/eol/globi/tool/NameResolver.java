@@ -6,11 +6,7 @@ import org.apache.commons.logging.LogFactory;
 import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.data.TaxonIndex;
 import org.eol.globi.domain.*;
-import org.eol.globi.service.PropertyEnricher;
-import org.eol.globi.service.PropertyEnricherFactory;
-import org.eol.globi.taxon.CorrectionService;
 import org.eol.globi.taxon.TaxonIndexNeo4j;
-import org.eol.globi.taxon.TaxonNameCorrector;
 import org.eol.globi.util.NodeUtil;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.GraphDatabaseService;
@@ -33,10 +29,6 @@ public class NameResolver {
 
     private Long batchSize = 10000L;
 
-    public NameResolver(GraphDatabaseService graphService) {
-        this(graphService, PropertyEnricherFactory.createTaxonEnricher(), new TaxonNameCorrector());
-    }
-
     public NameResolver(GraphDatabaseService graphService, TaxonIndex index) {
         this(graphService, index, new KnownBadNameFilter());
     }
@@ -44,10 +36,6 @@ public class NameResolver {
         this.graphService = graphService;
         this.taxonIndex = index;
         this.taxonFilter = taxonFilter;
-    }
-
-    public NameResolver(GraphDatabaseService graphService, PropertyEnricher enricher, CorrectionService corrector) {
-        this(graphService, new TaxonIndexNeo4j(enricher, corrector, graphService));
     }
 
     public void resolve() {

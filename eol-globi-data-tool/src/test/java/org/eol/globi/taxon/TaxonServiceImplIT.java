@@ -11,6 +11,7 @@ import org.eol.globi.service.PropertyEnricher;
 import org.eol.globi.service.PropertyEnricherFactory;
 import org.hamcrest.Matchers;
 import org.hamcrest.core.Is;
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -32,6 +33,11 @@ public class TaxonServiceImplIT extends GraphDBTestCase {
     @BeforeClass
     public static void initEnricher() {
         taxonEnricher = PropertyEnricherFactory.createTaxonEnricher();
+    }
+
+    @AfterClass
+    public static void shutdown() {
+        taxonEnricher.shutdown();
     }
 
     @Before

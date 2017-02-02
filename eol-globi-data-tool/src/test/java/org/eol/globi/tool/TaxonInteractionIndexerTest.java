@@ -8,8 +8,14 @@ import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
+import org.eol.globi.service.PropertyEnricher;
 import org.eol.globi.service.PropertyEnricherException;
+import org.eol.globi.service.PropertyEnricherFactory;
+import org.eol.globi.taxon.TaxonIndexNeo4j;
+import org.eol.globi.taxon.TaxonNameCorrector;
 import org.eol.globi.util.NodeUtil;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Relationship;
@@ -22,6 +28,18 @@ import static org.junit.Assert.*;
 import static org.junit.internal.matchers.IsCollectionContaining.hasItems;
 
 public class TaxonInteractionIndexerTest extends GraphDBTestCase {
+
+    private PropertyEnricher taxonEnricher;
+
+    @Before
+    public void init() {
+        taxonEnricher = PropertyEnricherFactory.createTaxonEnricher();
+    }
+
+    @After
+    public void shutdown() {
+        taxonEnricher.shutdown();
+    }
 
     @Test
     public void buildTaxonInterIndex() throws NodeFactoryException, PropertyEnricherException {
@@ -36,7 +54,8 @@ public class TaxonInteractionIndexerTest extends GraphDBTestCase {
         assertNull(taxonIndex.findTaxonById("EOL:1"));
         assertNull(taxonIndex.findTaxonByName("Homo sapiens"));
 
-        new NameResolver(getGraphDb()).resolve();
+        final TaxonNameCorrector taxonNameCorrector = new TaxonNameCorrector();
+        new NameResolver(getGraphDb(), new TaxonIndexNeo4j(taxonEnricher, taxonNameCorrector, getGraphDb())).resolve();
         new TaxonInteractionIndexer(getGraphDb()).index();
 
         Taxon homoSapiens = taxonIndex.findTaxonByName("Homo sapiens");

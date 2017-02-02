@@ -7,6 +7,7 @@ import org.apache.commons.logging.LogFactory;
 import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.data.TaxonIndex;
+import org.eol.globi.service.PropertyEnricher;
 import org.eol.globi.taxon.TaxonNameCorrector;
 import org.eol.globi.taxon.TaxonIndexNeo4j;
 import org.eol.globi.db.GraphService;
@@ -46,19 +47,24 @@ public class Indexer {
         ExecutionEngine executionEngine = new ExecutionEngine(previousGraphService);
 
         final GraphDatabaseService freshGraphService = GraphService.startNeo4j(baseDir);
-        TaxonIndex taxonIndex = new TaxonIndexNeo4j(PropertyEnricherFactory.createTaxonEnricher()
+        PropertyEnricher taxonEnricher = PropertyEnricherFactory.createTaxonEnricher();
+        try {
+            TaxonIndex taxonIndex = new TaxonIndexNeo4j(taxonEnricher
                 , new TaxonNameCorrector()
                 , freshGraphService);
-        indexUsingExternalIds(executionEngine, taxonIndex);
-        indexUsingNamesWithNoExternalIds(executionEngine, taxonIndex);
-        try {
-            new LinkerGlobalNames().link(freshGraphService);
-        } catch (PropertyEnricherException e) {
-            LOG.warn("failed to link taxa", e);
-        }
+            indexUsingExternalIds(executionEngine, taxonIndex);
+            indexUsingNamesWithNoExternalIds(executionEngine, taxonIndex);
+            try {
+                new LinkerGlobalNames().link(freshGraphService);
+            } catch (PropertyEnricherException e) {
+                LOG.warn("failed to link taxa", e);
+            }
 
-        freshGraphService.shutdown();
-        previousGraphService.shutdown();
+            freshGraphService.shutdown();
+            previousGraphService.shutdown();
+        } finally {
+            taxonEnricher.shutdown();
+        }
     }
 
     private void indexUsingNamesWithNoExternalIds(ExecutionEngine executionEngine, TaxonIndex taxonIndex) throws NodeFactoryException {

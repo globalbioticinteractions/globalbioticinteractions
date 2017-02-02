@@ -14,7 +14,16 @@ public class TaxonLookupServiceImplTest {
 
     @Test
     public void createIndexDoLookup() throws IOException {
-        TaxonLookupServiceImpl service = new TaxonLookupServiceImpl(new RAMDirectory());
+        lookup(new RAMDirectory());
+    }
+
+    @Test
+    public void createIndexDoLookupFile() throws IOException {
+        lookup(null);
+    }
+
+    public void lookup(RAMDirectory indexDir) throws IOException {
+        TaxonLookupServiceImpl service = new TaxonLookupServiceImpl(indexDir);
 
         service.start();
         TaxonImpl term = new TaxonImpl("Homo sapiens", "1234");
