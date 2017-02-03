@@ -153,6 +153,16 @@ public class TaxonIndexNeo4jTest extends GraphDBTestCase {
     }
 
     @Test
+    public void findNoMatchNoName() throws NodeFactoryException {
+        taxonService.getOrCreateTaxon(new TaxonImpl("some name", PropertyAndValueDictionary.NO_MATCH));
+        assertNull(taxonService.findTaxonById(PropertyAndValueDictionary.NO_MATCH));
+
+        taxonService.getOrCreateTaxon(new TaxonImpl(PropertyAndValueDictionary.NO_NAME));
+        assertNull(taxonService.findTaxonByName(PropertyAndValueDictionary.NO_MATCH));
+        assertNull(taxonService.findTaxonByName(PropertyAndValueDictionary.NO_NAME));
+    }
+
+    @Test
     public void ensureCorrectedIndexing() throws NodeFactoryException {
         taxonService.setCorrector(new CorrectionService() {
             @Override

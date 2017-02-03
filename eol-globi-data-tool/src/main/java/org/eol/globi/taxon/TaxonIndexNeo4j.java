@@ -123,7 +123,7 @@ public class TaxonIndexNeo4j implements TaxonIndex {
 
     private void indexOriginalNameForTaxon(String name, Taxon taxon, TaxonNode taxonNode) throws NodeFactoryException {
         if (!StringUtils.equals(taxon.getName(), name)) {
-            if (StringUtils.isNotBlank(name) && !StringUtils.equals(PropertyAndValueDictionary.NO_MATCH, name)) {
+            if (isNonEmptyTaxonNameOrId(name)) {
                 if (findTaxonByName(name) == null) {
                     indexTaxonByProperty(taxonNode, PropertyAndValueDictionary.NAME, name);
                 }
@@ -131,12 +131,16 @@ public class TaxonIndexNeo4j implements TaxonIndex {
         }
     }
 
+    private boolean isNonEmptyTaxonNameOrId(String name) {
+        return StringUtils.isNotBlank(name)
+            && !StringUtils.equals(PropertyAndValueDictionary.NO_MATCH, name)
+            && !StringUtils.equals(PropertyAndValueDictionary.NO_NAME, name);
+    }
+
     private void indexOriginalExternalIdForTaxon(String externalId, Taxon taxon, TaxonNode taxonNode) throws NodeFactoryException {
         if (!StringUtils.equals(taxon.getExternalId(), externalId)) {
-            if (StringUtils.isNotBlank(externalId) && !StringUtils.equals(PropertyAndValueDictionary.NO_MATCH, externalId)) {
-                if (findTaxonById(externalId) == null) {
-                    indexTaxonByProperty(taxonNode, PropertyAndValueDictionary.EXTERNAL_ID, externalId);
-                }
+            if (isNonEmptyTaxonNameOrId(externalId) && findTaxonById(externalId) == null) {
+                indexTaxonByProperty(taxonNode, PropertyAndValueDictionary.EXTERNAL_ID, externalId);
             }
         }
     }
@@ -156,8 +160,8 @@ public class TaxonIndexNeo4j implements TaxonIndex {
 
     private TaxonNode addNoMatchTaxon(Taxon origTaxon) throws NodeFactoryException {
         Taxon noMatchTaxon = TaxonUtil.copy(origTaxon);
-        noMatchTaxon.setName(StringUtils.isBlank(origTaxon.getName()) ? PropertyAndValueDictionary.NO_MATCH : origTaxon.getName());
-        noMatchTaxon.setExternalId(StringUtils.isBlank(origTaxon.getExternalId()) ? PropertyAndValueDictionary.NO_MATCH : origTaxon.getExternalId());
+        noMatchTaxon.setName(isNonEmptyTaxonNameOrId(origTaxon.getName()) ? origTaxon.getName() : PropertyAndValueDictionary.NO_MATCH);
+        noMatchTaxon.setExternalId(isNonEmptyTaxonNameOrId(origTaxon.getExternalId()) ? origTaxon.getExternalId() : PropertyAndValueDictionary.NO_MATCH);
         return createAndIndexTaxon(noMatchTaxon);
     }
 
@@ -200,14 +204,11 @@ public class TaxonIndexNeo4j implements TaxonIndex {
     }
 
     private void addToIndeces(TaxonNode taxon, String indexedName) {
-        if (StringUtils.isNotBlank(indexedName)) {
-            if (!StringUtils.equals(PropertyAndValueDictionary.NO_MATCH, indexedName)
-                    && !StringUtils.equals(PropertyAndValueDictionary.NO_NAME, indexedName)) {
-                taxons.add(taxon.getUnderlyingNode(), PropertyAndValueDictionary.NAME, indexedName);
-            }
+        if (isNonEmptyTaxonNameOrId(indexedName)) {
+            taxons.add(taxon.getUnderlyingNode(), PropertyAndValueDictionary.NAME, indexedName);
 
             String externalId = taxon.getExternalId();
-            if (!StringUtils.equals(PropertyAndValueDictionary.NO_MATCH, externalId)) {
+            if (isNonEmptyTaxonNameOrId(externalId)) {
                 taxons.add(taxon.getUnderlyingNode(), PropertyAndValueDictionary.EXTERNAL_ID, externalId);
             }
         }
