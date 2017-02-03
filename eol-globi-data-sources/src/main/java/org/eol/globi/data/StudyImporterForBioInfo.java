@@ -41,7 +41,7 @@ public class StudyImporterForBioInfo extends BaseStudyImporter implements StudyI
             put("Animal / epizoite", InteractType.LIVES_ON);
 
             // check on apparent typo
-            put("Animal / gamete vector / crsss fertilises", InteractType.DISPERSAL_VECTOR_OF);
+            put("Animal / gamete vector / crsss fertilises", InteractType.HAS_DISPERAL_VECTOR);
             put("Animal / guest", InteractType.GUEST_OF);
             put("Animal / honeydew feeder", InteractType.INTERACTS_WITH);
             put("Animal / inquiline", InteractType.GUEST_OF);
@@ -65,7 +65,7 @@ public class StudyImporterForBioInfo extends BaseStudyImporter implements StudyI
             put("Animal / resting place / within", InteractType.LIVES_INSIDE_OF);
             put("Animal / sequestrates", InteractType.INTERACTS_WITH);
             put("Animal / slave maker", InteractType.INTERACTS_WITH);
-            put("Animal / vector", InteractType.VECTOR_OF);
+            put("Animal / vector", InteractType.HAS_VECTOR);
             put("Bacterium / farmer", InteractType.FARMS);
             put("Bacterium / predator", InteractType.PREYS_UPON);
             put("Foodplant / collects", InteractType.VISITS_FLOWERS_OF);
@@ -102,7 +102,7 @@ public class StudyImporterForBioInfo extends BaseStudyImporter implements StudyI
             put("Fungus / external feeder", InteractType.ATE);
             put("Fungus / feeder", InteractType.ATE);
             put("Fungus / gall", InteractType.INTERACTS_WITH);
-            put("Fungus / infection vector", InteractType.VECTOR_OF);
+            put("Fungus / infection vector", InteractType.HAS_VECTOR);
             put("Fungus / internal feeder", InteractType.ATE);
             put("Fungus / nest", InteractType.INTERACTS_WITH);
             put("Fungus / parasite / endoparasite", InteractType.ENDOPARASITE_OF);
@@ -135,7 +135,7 @@ public class StudyImporterForBioInfo extends BaseStudyImporter implements StudyI
             put("Plant / resting place / on", InteractType.LIVES_ON);
             put("Plant / resting place / under", InteractType.LIVES_UNDER);
             put("Plant / resting place / within", InteractType.LIVES_INSIDE_OF);
-            put("Plant / vector", InteractType.VECTOR_OF);
+            put("Plant / vector", InteractType.HAS_VECTOR);
         }
     });
 

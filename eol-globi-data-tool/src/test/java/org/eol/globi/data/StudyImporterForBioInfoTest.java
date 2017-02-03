@@ -73,14 +73,17 @@ public class StudyImporterForBioInfoTest extends GraphDBTestCase {
             public boolean shouldImportRecord(Long recordNumber) {
                 return recordNumber < 1000
                         || recordNumber == 4585
+                        || (recordNumber > 47310 && recordNumber < 47320)
                         || (recordNumber > 24220 && recordNumber < 24340);
             }
         });
         importStudy(importer);
 
+        Study vectorStudy = nodeFactory.findStudy(TaxonomyProvider.BIO_INFO + "ref:153303");
+        assertThat(vectorStudy, is(notNullValue()));
+
         Study study = nodeFactory.findStudy(TaxonomyProvider.BIO_INFO + "ref:60527");
-        Iterable<Relationship> collectedRels = NodeUtil.getSpecimens(study);
-        for (Relationship collectedRel : collectedRels) {
+        for (Relationship collectedRel : NodeUtil.getSpecimens(study)) {
             SpecimenNode specimen = new SpecimenNode(collectedRel.getEndNode());
             String externalId = specimen.getExternalId();
             assertThat(externalId, is(notNullValue()));
@@ -98,6 +101,7 @@ public class StudyImporterForBioInfoTest extends GraphDBTestCase {
         assertThat(interactions, hasItem("NBN:NHMSYS0000455771 interacts_with NBN:NBNSYS0000024890"));
         assertThat(interactions, hasItem("NBN:NBNSYS0000030148 endoparasitoid_of NBN:NHMSYS0000502366"));
         assertThat(interactions, hasItem("NBN:NHMSYS0000500943 has_endoparasitoid NBN:NBNSYS0000030148"));
+        assertThat(interactions, hasItem("bioinfo:taxon:160260 has_vector bioinfo:taxon:162065"));
 
         assertThat(study.getTitle(), is("bioinfo:ref:60527"));
         assertThat(study.getSource(), is("Food Webs and Species Interactions in the Biodiversity of UK and Ireland (Online). 2015. Data provided by Malcolm Storey. Also available from http://bioinfo.org.uk."));
