@@ -1,13 +1,11 @@
 package org.eol.globi.data;
 
-import org.apache.commons.lang.StringUtils;
 import org.eol.globi.domain.Environment;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.LocationImpl;
 import org.eol.globi.domain.NodeBacked;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.SpecimenConstant;
-import org.eol.globi.domain.Study;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.service.TermLookupService;
 import org.eol.globi.taxon.UberonLookupService;
@@ -33,7 +31,7 @@ public class StudyImporterForBroseTest extends GraphDBTestCase {
     }
 
     @Test
-    public void importHeadAndTail() throws IOException, NodeFactoryException, StudyImporterException {
+    public void importHeadAndTail() throws IOException, StudyImporterException {
         final String headAndTail = "Link ID\tLink reference \tBody size reference\tGeographic location\tGeneral habitat\tSpecific habitat\tLink methodology\tBody size methodology\tTaxonomy consumer\tLifestage consumer\tCommon name(s) consumer\tMetabolic category consumer\tType of feeding interaction\tMinimum length (m) consumer\tMean length (m) consumer\tMaximum length (m) consumer\tMinimum mass (g) consumer\tMean mass (g) consumer\tMaximum mass (g) consumer\tTaxonomy resource\tLifestage - resource\tCommon name(s) resource\tMetabolic category resource\tMinimum length (m) resource\tMean length (m) resource\tMaximum length (m) resource\tMinimum mass (g) resource\tMean mass (g) resource\tMaximum mass (g) resource\tConsumer/resource body mass ratio\tNotes\n" +
                 "1\tYodzis (1998)\tYodzis (1998)\tAfrica, Benguela ecosystem\tmarine\tpelagic food web\tpublished account\t\"published account; expert; regression\"\t-999\tadults\tBacteria\theterotrophic bacteria\therbivorous\t-999\t-999\t-999\t-999\t0.00000001\t-999\t-999\tadults\tPhytoplankton\tphoto-autotroph\t-999\t-999\t-999\t-999\t0.0001\t-999\t0.0001\t-999\n" +
                 "2\tYodzis (1998)\tYodzis (1998)\tAfrica, Benguela ecosystem\tmarine\tpelagic food web\tpublished account\t\"published account; expert; regression\"\t-999\tadults\tBenthic carnivores\tinvertebrate\tpredacious\t-999\t-999\t-999\t-999\t10\t-999\t-999\tadults\tBenthic filter feeders\tinvertebrate\t-999\t-999\t-999\t-999\t10\t-999\t1\t-999\n" +
@@ -84,20 +82,6 @@ public class StudyImporterForBroseTest extends GraphDBTestCase {
         assertThat(environments.get(0).getExternalId(), is("TEST:terrestrial abandoned field"));
         assertThat(environments.get(0).getName(), is("terrestrial abandoned field"));
 
-    }
-
-    @Test
-    public void importAll() throws StudyImporterException {
-        StudyImporterForBrose studyImporterForBrose = new StudyImporterForBrose(new ParserFactoryLocal(), nodeFactory);
-        studyImporterForBrose.importStudy();
-
-        List<Study> studies = NodeUtil.findAllStudies(getGraphDb());
-        assertThat(studies.size(), is(20));
-        for (Study study : studies) {
-            assertThat(study.getTitle(), is(notNullValue()));
-            assertThat(study.getSource(), is(notNullValue()));
-            assertThat(StringUtils.isBlank(study.getCitation()), is(false));
-        }
     }
 
 }
