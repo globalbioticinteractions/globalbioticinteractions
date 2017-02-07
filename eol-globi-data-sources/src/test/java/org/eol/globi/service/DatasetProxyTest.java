@@ -2,6 +2,7 @@ package org.eol.globi.service;
 
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.hamcrest.core.Is;
 import org.junit.Test;
 
@@ -21,12 +22,21 @@ public class DatasetProxyTest {
 
     @Test
     public void getCitation() throws IOException {
+        assertCitationProxies("citation");
+    }
+
+    @Test
+    public void getBibliographicCitation() throws IOException {
+        assertCitationProxies(PropertyAndValueDictionary.DCTERMS_BIBLIOGRAPHIC_CITATION);
+    }
+
+    public void assertCitationProxies(String citationName) throws IOException {
         assertThat(getTestDataset().getCitation(), Is.is("<http://example.com>"));
 
-        JsonNode configProxy = new ObjectMapper().readTree("{ \"citation\": \"some citation\" }");
+        JsonNode configProxy = new ObjectMapper().readTree("{ \"" + citationName + "\": \"some citation\" }");
         assertThat(getTestDataset(null, configProxy).getCitation(), Is.is("some citation"));
 
-        JsonNode config = new ObjectMapper().readTree("{ \"citation\": \"some proxied citation.\" }");
+        JsonNode config = new ObjectMapper().readTree("{ \"" + citationName + "\": \"some proxied citation.\" }");
         assertThat(getTestDataset(config, configProxy).getCitation(), Is.is("some citation"));
 
         assertThat(getTestDataset(config, null).getCitation(), Is.is("some proxied citation."));

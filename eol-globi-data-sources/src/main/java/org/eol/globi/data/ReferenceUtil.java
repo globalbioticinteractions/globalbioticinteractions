@@ -4,7 +4,7 @@ import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.codehaus.jackson.JsonNode;
+import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.service.Dataset;
 import org.joda.time.DateTime;
 
@@ -73,7 +73,8 @@ public class ReferenceUtil {
     }
 
     public static String citationFor(Dataset dataset) {
-        String citation = dataset.getOrDefault("dcterms:bibliographicCitation", dataset.getOrDefault("citation", "<" + dataset.getArchiveURI().toString() + ">"));
+        String defaultCitation = "<" + dataset.getArchiveURI().toString() + ">";
+        String citation = citationOrDefaultFor(dataset, defaultCitation);
 
         if (!StringUtils.contains(citation, "doi.org") && !StringUtils.contains(citation, "doi:")) {
             String citationTrimmed = StringUtils.trim(defaultString(citation));
@@ -85,5 +86,9 @@ public class ReferenceUtil {
             }
         }
         return StringUtils.trim(citation);
+    }
+
+    public static String citationOrDefaultFor(Dataset dataset, String defaultCitation) {
+        return dataset.getOrDefault(PropertyAndValueDictionary.DCTERMS_BIBLIOGRAPHIC_CITATION, dataset.getOrDefault("citation", defaultCitation));
     }
 }

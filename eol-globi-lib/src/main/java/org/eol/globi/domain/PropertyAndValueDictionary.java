@@ -14,6 +14,7 @@ public class PropertyAndValueDictionary {
     public static final String RO_NAMESPACE = "http://purl.obolibrary.org/obo/RO_";
     public static final String STATUS_ID = "statusId";
     public static final String STATUS_LABEL = "statusLabel";
+    public static final String DCTERMS_BIBLIOGRAPHIC_CITATION = "dcterms:bibliographicCitation";
     protected final static String TYPE = "type";
     public static final String RANK = "rank";
     public static final String NO_NAME = "no name";

@@ -1,6 +1,8 @@
 package org.eol.globi.service;
 
 import org.codehaus.jackson.JsonNode;
+import org.eol.globi.data.ReferenceUtil;
+import org.eol.globi.util.ResourceUtil;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -42,7 +44,7 @@ public class DatasetProxy implements Dataset {
 
     @Override
     public String getCitation() {
-        return DatasetUtil.getValueOrDefault(config, "citation", datasetProxied.getCitation());
+        return ReferenceUtil.citationOrDefaultFor(this, datasetProxied.getCitation());
     }
 
     @Override
