@@ -76,7 +76,7 @@ public class LinkerGlobalNames {
             }
 
         } catch (PropertyEnricherException ex) {
-            LOG.error(msgPrefix + " problem matching terms: [" + StringUtils.join(names, "|") + "]", ex);
+            LOG.error(msgPrefix + " problem matching terms", ex);
         }
         stopWatch.stop();
         LOG.info(msgPrefix + " completed in [" + stopWatch.getTime() + "] ms (" + (1.0 * stopWatch.getTime() / BATCH_SIZE) + " ms/name )");
