@@ -2,6 +2,7 @@ package org.eol.globi.service;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.data.CharsetConstant;
+import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImage;
 import org.eol.globi.domain.TaxonImpl;
@@ -181,5 +182,11 @@ public class TaxonUtil {
                 && StringUtils.isNotBlank(properties.get(NAME))
                 && StringUtils.isNotBlank(properties.get(EXTERNAL_ID))
                 && StringUtils.isNotBlank(properties.get(PATH));
+    }
+
+    public static boolean isNonEmptyValue(String sourceValue) {
+        return StringUtils.isNotBlank(sourceValue)
+                && !StringUtils.equals(sourceValue, NO_MATCH)
+                && !StringUtils.equals(sourceValue, NO_NAME);
     }
 }

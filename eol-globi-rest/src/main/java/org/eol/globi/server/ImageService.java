@@ -2,6 +2,7 @@ package org.eol.globi.server;
 
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.TaxonImage;
+import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.service.ImageSearch;
 import org.eol.globi.service.TaxonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,22 +35,23 @@ public class ImageService {
     @ResponseBody
     public TaxonImage findTaxonImagesForTaxonWithName(@PathVariable("scientificName") String scientificName) throws IOException {
         TaxonImage taxonImage = null;
-        Map<String, String> taxonWithImage = taxonSearch.findTaxonWithImage(scientificName);
-        if (taxonWithImage == null || taxonWithImage.isEmpty()) {
-            Map<String, String> taxon = taxonSearch.findTaxon(scientificName, null);
-            if (taxon != null) {
-                if (taxon.containsKey(PropertyAndValueDictionary.EXTERNAL_ID)) {
-                    taxonImage = imageSearch.lookupImageForExternalId(taxon.get(PropertyAndValueDictionary.EXTERNAL_ID));
-                    if (taxonImage == null) {
-                        taxonImage = new TaxonImage();
+        if (TaxonUtil.isNonEmptyValue(scientificName)) {
+            Map<String, String> taxonWithImage = taxonSearch.findTaxonWithImage(scientificName);
+            if (taxonWithImage == null || taxonWithImage.isEmpty()) {
+                Map<String, String> taxon = taxonSearch.findTaxon(scientificName, null);
+                if (taxon != null) {
+                    if (taxon.containsKey(PropertyAndValueDictionary.EXTERNAL_ID)) {
+                        taxonImage = imageSearch.lookupImageForExternalId(taxon.get(PropertyAndValueDictionary.EXTERNAL_ID));
+                        if (taxonImage == null) {
+                            taxonImage = new TaxonImage();
+                        }
+                        TaxonUtil.enrichTaxonImageWithTaxon(taxon, taxonImage);
                     }
-                    TaxonUtil.enrichTaxonImageWithTaxon(taxon, taxonImage);
                 }
+            } else {
+                taxonImage = TaxonUtil.enrichTaxonImageWithTaxon(taxonWithImage, new TaxonImage());
             }
-        } else {
-            taxonImage = TaxonUtil.enrichTaxonImageWithTaxon(taxonWithImage, new TaxonImage());
         }
-
         if (taxonImage == null) {
             throw new ResourceNotFoundException("no image for [" + scientificName + "]");
         }

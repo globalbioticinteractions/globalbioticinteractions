@@ -49,9 +49,9 @@ public class TaxonCacheService extends CacheService implements PropertyEnricher 
 
     public Map<String, String> getTaxon(String value) {
         Map<String, String> enriched = null;
-        if (isNonEmptyValue(value)) {
+        if (TaxonUtil.isNonEmptyValue(value)) {
             String externalId = providedToResolvedMap.get(value);
-            if (isNonEmptyValue(externalId)) {
+            if (TaxonUtil.isNonEmptyValue(externalId)) {
                 enriched = resolvedIdToTaxonMap.get(externalId);
             }
         }
@@ -203,7 +203,7 @@ public class TaxonCacheService extends CacheService implements PropertyEnricher 
     }
 
     static private String valueOrNoMatch(String value) {
-        return isNonEmptyValue(value) ? value : PropertyAndValueDictionary.NO_MATCH;
+        return TaxonUtil.isNonEmptyValue(value) ? value : PropertyAndValueDictionary.NO_MATCH;
     }
 
     static public Iterator<Fun.Tuple2<String, Map<String, String>>> taxonCacheIterator(final String resource, final LineSkipper skipper) throws IOException {
@@ -251,12 +251,6 @@ public class TaxonCacheService extends CacheService implements PropertyEnricher 
                 timeElapsedInSeconds,
                 avgRate);
         log.info(msg);
-    }
-
-    static public boolean isNonEmptyValue(String sourceValue) {
-        return StringUtils.isNotBlank(sourceValue)
-                && !StringUtils.equals(sourceValue, PropertyAndValueDictionary.NO_MATCH)
-                && !StringUtils.equals(sourceValue, PropertyAndValueDictionary.NO_NAME);
     }
 
     @Override
