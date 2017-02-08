@@ -184,9 +184,9 @@ public class TaxonUtil {
                 && StringUtils.isNotBlank(properties.get(PATH));
     }
 
-    public static boolean isNonEmptyValue(String sourceValue) {
-        return StringUtils.isNotBlank(sourceValue)
-                && !StringUtils.equals(sourceValue, NO_MATCH)
-                && !StringUtils.equals(sourceValue, NO_NAME);
+    public static boolean isNonEmptyValue(String value) {
+        return StringUtils.isNotBlank(value)
+                && !StringUtils.equals(value, NO_MATCH)
+                && !StringUtils.equals(value, NO_NAME);
     }
 }
