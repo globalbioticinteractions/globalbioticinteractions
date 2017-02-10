@@ -105,6 +105,6 @@ public class CSVTSVUtil {
     }
 
     public static List<String> escapeValues(Stream<String> stream) {
-        return stream.map(value -> value.replace("\t", " ")).collect(Collectors.toList());
+        return stream.map(value -> value == null ? "" : value.replace("\t", " ")).collect(Collectors.toList());
     }
 }
