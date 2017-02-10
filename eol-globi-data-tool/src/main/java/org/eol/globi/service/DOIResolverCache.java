@@ -5,8 +5,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.StopWatch;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.eol.globi.util.CSVUtil;
-import org.mapdb.BTreeKeySerializer;
+import org.eol.globi.util.CSVTSVUtil;
 import org.mapdb.DB;
 import org.mapdb.Fun;
 
@@ -17,7 +16,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.NoSuchElementException;
 
 public class DOIResolverCache extends CacheService implements DOIResolver {
     private static final Log LOG = LogFactory.getLog(DOIResolverCache.class);
@@ -68,7 +66,7 @@ public class DOIResolverCache extends CacheService implements DOIResolver {
         DB db = initDb("doiCache");
         StopWatch watch = new StopWatch();
         watch.start();
-        final CSVParser parser = CSVUtil.createTSVParser(reader);
+        final CSVParser parser = CSVTSVUtil.createTSVParser(reader);
 
         LOG.info("doi cache building...");
         doiCitationMap = db

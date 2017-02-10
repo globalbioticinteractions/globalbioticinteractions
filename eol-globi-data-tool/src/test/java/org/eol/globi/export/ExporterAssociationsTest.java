@@ -42,7 +42,7 @@ public class ExporterAssociationsTest extends GraphDBTestCase {
     }
 
     private void createTestData(Double length) throws NodeFactoryException, ParseException {
-        Study myStudy = nodeFactory.getOrCreateStudy(new StudyImpl("myStudy", "data source description", null, ExternalIdUtil.toCitation("contributor", "description", "pubYear")));
+        Study myStudy = nodeFactory.getOrCreateStudy(new StudyImpl("myStudy", "data\tsource description", null, ExternalIdUtil.toCitation("contributor", "description", "pubYear")));
         Specimen specimen = nodeFactory.createSpecimen(myStudy, new TaxonImpl("Homo sapiens", "EOL:123"));
         specimen.setStomachVolumeInMilliLiter(666.0);
         specimen.setLifeStage(new Term("GLOBI:JUVENILE", "JUVENILE"));

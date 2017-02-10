@@ -14,7 +14,7 @@ import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.service.DatasetUtil;
-import org.eol.globi.util.CSVUtil;
+import org.eol.globi.util.CSVTSVUtil;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.mapdb.DB;
@@ -89,7 +89,7 @@ public class StudyImporterForSeltmann extends BaseStudyImporter {
             }
 
             BufferedReader assocReader = FileUtils.getUncompressedBufferedReader(new FileInputStream(assocTempFile), CharsetConstant.UTF8);
-            LabeledCSVParser parser = CSVUtil.createLabeledCSVParser(assocReader);
+            LabeledCSVParser parser = CSVTSVUtil.createLabeledCSVParser(assocReader);
             parser.changeDelimiter('\t');
             while (parser.getLine() != null) {
                 Map<String, String> prop = new HashMap<String, String>();
@@ -112,7 +112,7 @@ public class StudyImporterForSeltmann extends BaseStudyImporter {
                 }
             }
 
-            LabeledCSVParser occurrence = CSVUtil.createLabeledCSVParser(new FileInputStream(occTempFile));
+            LabeledCSVParser occurrence = CSVTSVUtil.createLabeledCSVParser(new FileInputStream(occTempFile));
             occurrence.changeDelimiter('\t');
             while (occurrence.getLine() != null) {
                 String references = occurrence.getValueByLabel("dcterms:references");

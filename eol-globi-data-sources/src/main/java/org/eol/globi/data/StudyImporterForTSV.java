@@ -2,7 +2,7 @@ package org.eol.globi.data;
 
 import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.lang.StringUtils;
-import org.eol.globi.util.CSVUtil;
+import org.eol.globi.util.CSVTSVUtil;
 import org.eol.globi.util.ExternalIdUtil;
 
 import java.io.IOException;
@@ -56,8 +56,8 @@ public class StudyImporterForTSV extends BaseStudyImporter {
             final Map<String, String> link = new TreeMap<String, String>();
             final String referenceDoi = StringUtils.replace(parser.getValueByLabel(REFERENCE_DOI), " ", "");
             putNotBlank(link, REFERENCE_DOI, referenceDoi);
-            putNotBlank(link, REFERENCE_CITATION, CSVUtil.valueOrNull(parser, REFERENCE_CITATION));
-            putNotBlank(link, REFERENCE_URL, CSVUtil.valueOrNull(parser, REFERENCE_URL));
+            putNotBlank(link, REFERENCE_CITATION, CSVTSVUtil.valueOrNull(parser, REFERENCE_CITATION));
+            putNotBlank(link, REFERENCE_URL, CSVTSVUtil.valueOrNull(parser, REFERENCE_URL));
             putNotBlank(link, STUDY_SOURCE_CITATION, ReferenceUtil.sourceCitationLastAccessed(getDataset(), sourceCitation == null ? "" : sourceCitation + ". "));
 
             putNotBlank(link, SOURCE_TAXON_ID, StringUtils.trimToNull(parser.getValueByLabel(SOURCE_TAXON_ID)));

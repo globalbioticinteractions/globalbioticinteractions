@@ -32,7 +32,7 @@ public class ExportTaxonCacheTest extends GraphDBTestCase {
                 TaxonUtil.mapToTaxon(properties, taxon);
                 if ("Homo sapiens".equals(taxon.getName())) {
                     taxon.setExternalId("homoSapiensId");
-                    taxon.setPath("one two three");
+                    taxon.setPath("one\ttwo three");
                 } else if ("Canis lupus".equals(taxon.getName())) {
                     taxon.setExternalId("canisLupusId");
                     taxon.setPath("four five six");

@@ -1,12 +1,7 @@
 package org.eol.globi.server.util;
 
 import org.codehaus.jackson.JsonNode;
-import org.eol.globi.util.CSVUtil;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import org.eol.globi.util.CSVTSVUtil;
 
 public class ResultFormatterTSV extends ResultFormatterSeparatedValues {
 
@@ -25,7 +20,7 @@ public class ResultFormatterTSV extends ResultFormatterSeparatedValues {
     @Override
     protected void writeAsCSVCell(StringBuilder resultBuilder, JsonNode node) {
         if (!node.isNull()) {
-            CSVUtil.escapeTSV(resultBuilder, node);
+            CSVTSVUtil.escapeTSV(resultBuilder, node);
         }
     }
 

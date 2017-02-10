@@ -3,7 +3,7 @@ package org.eol.globi.data;
 import com.Ostermiller.util.LabeledCSVParser;
 import org.eol.globi.domain.Study;
 import org.eol.globi.geo.LatLng;
-import org.eol.globi.util.CSVUtil;
+import org.eol.globi.util.CSVTSVUtil;
 import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
 
@@ -42,8 +42,8 @@ public class StudyImporterForRaymondTest extends GraphDBTestCase {
     @Test
     public void importPartialStudy() throws IOException, StudyImporterException {
         StudyImporterForRaymond importer = new StudyImporterForRaymond(new ParserFactoryLocal(), nodeFactory);
-        LabeledCSVParser dietParser = CSVUtil.createLabeledCSVParser(new StringReader(firstFewLinesOfDiet()));
-        LabeledCSVParser sourcesParser = CSVUtil.createLabeledCSVParser(new StringReader(firstFewLinesOfSourcesAlteredToFitDietDataSample()));
+        LabeledCSVParser dietParser = CSVTSVUtil.createLabeledCSVParser(new StringReader(firstFewLinesOfDiet()));
+        LabeledCSVParser sourcesParser = CSVTSVUtil.createLabeledCSVParser(new StringReader(firstFewLinesOfSourcesAlteredToFitDietDataSample()));
         importer.importData(sourcesParser, dietParser);
 
         assertThatAllStudiesHaveAtLeastOneInteraction();

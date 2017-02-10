@@ -10,7 +10,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.domain.InteractType;
-import org.eol.globi.util.CSVUtil;
+import org.eol.globi.util.CSVTSVUtil;
 import org.eol.globi.util.HttpUtil;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -100,12 +100,12 @@ public class StudyImporterForVertNetTest extends GraphDBTestCase {
         JsonNode recs = jsonNode1.get("recs");
 
         StringWriter linkOs = new StringWriter();
-        CSVPrint linkPrinter = CSVUtil.createCSVPrint(linkOs);
+        CSVPrint linkPrinter = CSVTSVUtil.createCSVPrint(linkOs);
         linkPrinter.print(new String[]{"source", "interaction_type", "target"});
         linkPrinter.setAutoFlush(true);
 
         StringWriter nodeOs = new StringWriter();
-        CSVPrint nodePrinter = CSVUtil.createCSVPrint(nodeOs);
+        CSVPrint nodePrinter = CSVTSVUtil.createCSVPrint(nodeOs);
         String[] nodeFields = {"individualid", "decimallongitude", "decimallatitude"
                 , "year", "month", "day", "basisofrecord", "scientificname"
                 , "dataset_citation"};

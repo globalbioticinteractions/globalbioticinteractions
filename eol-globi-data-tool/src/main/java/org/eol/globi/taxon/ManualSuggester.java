@@ -4,7 +4,7 @@ import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.data.CharsetConstant;
 import org.eol.globi.service.NameSuggester;
-import org.eol.globi.util.CSVUtil;
+import org.eol.globi.util.CSVTSVUtil;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -28,7 +28,7 @@ public class ManualSuggester implements NameSuggester {
         try {
             InputStream resourceAsStream = getClass().getResourceAsStream("/org/eol/globi/service/taxon-name-mapping.csv");
             BufferedReader is = org.eol.globi.data.FileUtils.getUncompressedBufferedReader(resourceAsStream, CharsetConstant.UTF8);
-            LabeledCSVParser labeledCSVParser = CSVUtil.createLabeledCSVParser(is);
+            LabeledCSVParser labeledCSVParser = CSVTSVUtil.createLabeledCSVParser(is);
             String[] line;
 
             corrections = new HashMap<String, String>();

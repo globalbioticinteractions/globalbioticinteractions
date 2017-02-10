@@ -11,7 +11,7 @@ import org.eol.globi.service.CacheService;
 import org.eol.globi.service.PropertyEnricher;
 import org.eol.globi.service.PropertyEnricherException;
 import org.eol.globi.service.TaxonUtil;
-import org.eol.globi.util.CSVUtil;
+import org.eol.globi.util.CSVTSVUtil;
 import org.mapdb.BTreeKeySerializer;
 import org.mapdb.BTreeMap;
 import org.mapdb.DB;
@@ -147,7 +147,7 @@ public class TaxonCacheService extends CacheService implements PropertyEnricher 
     public static Iterator<Fun.Tuple2<String, String>> taxonMapIterator(final String resource, final LineSkipper skipper) throws IOException {
         return new Iterator<Fun.Tuple2<String, String>>() {
             private BufferedReader reader = createBufferedReader(resource);
-            private final LabeledCSVParser labeledCSVParser = CSVUtil.createLabeledTSVParser(reader);
+            private final LabeledCSVParser labeledCSVParser = CSVTSVUtil.createLabeledTSVParser(reader);
             private ProcessingState state = ProcessingState.DONE;
 
             @Override
@@ -210,7 +210,7 @@ public class TaxonCacheService extends CacheService implements PropertyEnricher 
 
         return new Iterator<Fun.Tuple2<String, Map<String, String>>>() {
             private BufferedReader reader = createBufferedReader(resource);
-            private final LabeledCSVParser labeledCSVParser = CSVUtil.createLabeledTSVParser(reader);
+            private final LabeledCSVParser labeledCSVParser = CSVTSVUtil.createLabeledTSVParser(reader);
 
             @Override
             public boolean hasNext() {

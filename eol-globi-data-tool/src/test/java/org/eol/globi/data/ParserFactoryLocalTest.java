@@ -1,7 +1,7 @@
 package org.eol.globi.data;
 
 import com.Ostermiller.util.LabeledCSVParser;
-import org.eol.globi.util.CSVUtil;
+import org.eol.globi.util.CSVTSVUtil;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -25,7 +25,7 @@ public class ParserFactoryLocalTest {
             }
 
             public LabeledCSVParser createParser(String studyResource, String characterEncoding) throws IOException {
-                return CSVUtil.createLabeledCSVParser(new StringReader(createString()));
+                return CSVTSVUtil.createLabeledCSVParser(new StringReader(createString()));
             }
         }.createParser(StudyImporterForSimons.MISSISSIPPI_ALABAMA_DATA_SOURCE, "UTF-8");
 

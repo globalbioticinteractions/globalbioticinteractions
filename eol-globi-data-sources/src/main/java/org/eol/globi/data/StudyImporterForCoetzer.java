@@ -10,7 +10,7 @@ import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.service.DatasetUtil;
-import org.eol.globi.util.CSVUtil;
+import org.eol.globi.util.CSVTSVUtil;
 import org.mapdb.DB;
 import org.mapdb.DBMaker;
 import org.mapdb.HTreeMap;
@@ -92,21 +92,21 @@ public class StudyImporterForCoetzer extends BaseStudyImporter {
             }
 
             BufferedReader assocReader = FileUtils.getUncompressedBufferedReader(new FileInputStream(taxonTempFile), CharsetConstant.UTF8);
-            LabeledCSVParser parser = CSVUtil.createLabeledCSVParser(assocReader);
+            LabeledCSVParser parser = CSVTSVUtil.createLabeledCSVParser(assocReader);
             parser.changeDelimiter('\t');
             String[] line;
             while ((line = parser.getLine()) != null) {
                 taxonMap.put(Integer.parseInt(line[0]), nameFor(line));
             }
 
-            LabeledCSVParser refs = CSVUtil.createLabeledCSVParser(new FileInputStream(referencesTempFile));
+            LabeledCSVParser refs = CSVTSVUtil.createLabeledCSVParser(new FileInputStream(referencesTempFile));
             refs.changeDelimiter('\t');
             String[] refsLine;
             while ((refsLine = refs.getLine()) != null) {
                 refMap.put(Integer.parseInt(refsLine[0]), refsLine[1]);
             }
 
-            LabeledCSVParser assoc = CSVUtil.createLabeledCSVParser(new FileInputStream(assocTempFile));
+            LabeledCSVParser assoc = CSVTSVUtil.createLabeledCSVParser(new FileInputStream(assocTempFile));
             assoc.changeDelimiter('\t');
 
             final Map<String, InteractType> interactTypeMap = new HashMap<String, InteractType>();

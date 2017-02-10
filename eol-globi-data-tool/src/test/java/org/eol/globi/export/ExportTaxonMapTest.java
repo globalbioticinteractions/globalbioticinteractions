@@ -34,7 +34,7 @@ public class ExportTaxonMapTest extends GraphDBTestCase {
                     taxon.setPath("one two three");
                 } else if ("Canis lupus".equals(taxon.getName())) {
                     taxon.setExternalId("canisLupusId");
-                    taxon.setPath("four five six");
+                    taxon.setPath("four\tfive six");
                 }
                 return TaxonUtil.taxonToMap(taxon);
             }

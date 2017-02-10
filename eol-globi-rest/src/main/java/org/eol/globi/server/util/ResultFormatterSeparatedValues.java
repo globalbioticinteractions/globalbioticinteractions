@@ -1,7 +1,6 @@
 package org.eol.globi.server.util;
 
 import org.codehaus.jackson.JsonNode;
-import org.eol.globi.util.CSVUtil;
 
 import java.io.IOException;
 import java.util.ArrayList;

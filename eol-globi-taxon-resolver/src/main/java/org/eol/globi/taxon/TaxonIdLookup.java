@@ -8,6 +8,7 @@ import org.eol.globi.service.PropertyEnricher;
 import org.eol.globi.service.PropertyEnricherException;
 import org.eol.globi.service.PropertyEnricherFactory;
 import org.eol.globi.service.TaxonUtil;
+import org.eol.globi.util.CSVTSVUtil;
 
 import java.util.Map;
 
@@ -35,7 +36,7 @@ public class TaxonIdLookup {
                     taxon.getExternalUrl(),
                     taxon.getThumbnailUrl()
             };
-            System.out.println(StringUtils.join(row, "\t"));
+            System.out.println(StringUtils.join(CSVTSVUtil.escapeValues(row), "\t"));
             System.err.println("externalId [" + externalId + "] resolved.");
         } catch (PropertyEnricherException e) {
             System.err.println("failed to resolve taxon id [" + externalId + "]: [" + e.getMessage());

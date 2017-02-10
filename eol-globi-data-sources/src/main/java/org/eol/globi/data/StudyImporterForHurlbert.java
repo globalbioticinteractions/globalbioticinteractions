@@ -62,7 +62,6 @@ public class StudyImporterForHurlbert extends BaseStudyImporter {
             }
         }
 
-
         LOG.info("unmapped habitats [" + StringUtils.join(habitats.iterator(), ";") + "]");
         LOG.info("unmapped locales [" + StringUtils.join(locales.iterator(), ";") + "]");
         LOG.info("unmapped regions [" + StringUtils.join(regions.iterator(), ";") + "]");

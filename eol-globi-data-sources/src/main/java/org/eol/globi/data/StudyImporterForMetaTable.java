@@ -8,7 +8,7 @@ import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.TaxonomyProvider;
 import org.eol.globi.service.Dataset;
 import org.eol.globi.service.DatasetProxy;
-import org.eol.globi.util.CSVUtil;
+import org.eol.globi.util.CSVTSVUtil;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
@@ -333,7 +333,7 @@ public class StudyImporterForMetaTable extends BaseStudyImporter {
             final JsonNode dataUrl = config.get("url");
             int headerCount = headerRowCount == null ? 0 : headerRowCount.asInt();
 
-            final CSVParse csvParse = CSVUtil.createCSVParse(dataset.getResource(dataUrl.asText()));
+            final CSVParse csvParse = CSVTSVUtil.createCSVParse(dataset.getResource(dataUrl.asText()));
             csvParse.changeDelimiter(delimiterChar);
             for (int i = 0; i < headerCount; i++) {
                 csvParse.getLine();

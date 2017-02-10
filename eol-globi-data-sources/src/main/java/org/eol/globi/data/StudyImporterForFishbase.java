@@ -10,7 +10,7 @@ import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.TaxonImpl;
-import org.eol.globi.util.CSVUtil;
+import org.eol.globi.util.CSVTSVUtil;
 import org.eol.globi.util.ExternalIdUtil;
 
 import java.io.IOException;
@@ -52,7 +52,7 @@ public class StudyImporterForFishbase extends BaseStudyImporter {
             }
         });
         Reader reader = FileUtils.getUncompressedBufferedReader(filteredInputStream, CharsetConstant.UTF8);
-        LabeledCSVParser parser = CSVUtil.createLabeledCSVParser(reader);
+        LabeledCSVParser parser = CSVTSVUtil.createLabeledCSVParser(reader);
         parser.changeDelimiter('\t');
         return parser;
     }

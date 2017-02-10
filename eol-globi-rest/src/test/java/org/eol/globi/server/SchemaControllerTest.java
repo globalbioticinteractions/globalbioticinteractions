@@ -5,7 +5,7 @@ import org.apache.commons.io.IOUtils;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.server.util.ResultField;
-import org.eol.globi.util.CSVUtil;
+import org.eol.globi.util.CSVTSVUtil;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -48,7 +48,7 @@ public class SchemaControllerTest {
         when(request.getParameter("type")).thenReturn("csv");
 
         String interactionTypes = new SchemaController().getInteractionTypes(request);
-        LabeledCSVParser parser = CSVUtil.createLabeledCSVParser(IOUtils.toInputStream(interactionTypes));
+        LabeledCSVParser parser = CSVTSVUtil.createLabeledCSVParser(IOUtils.toInputStream(interactionTypes));
         assertThat(parser.getLabels(), is(new String[]{"interaction", "source", "target", "termIRI"}));
         while (parser.getLine() != null) {
             assertThat(parser.getValueByLabel("interaction"), is(notNullValue()));

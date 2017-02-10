@@ -1,8 +1,8 @@
 package org.eol.globi.export;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.eol.globi.util.CSVTSVUtil;
 import org.neo4j.cypher.javacompat.ExecutionEngine;
 import org.neo4j.cypher.javacompat.ExecutionResult;
 import org.neo4j.graphdb.GraphDatabaseService;
@@ -22,7 +22,7 @@ public final class ExportUtil {
         List<String> columns = rows.columns();
         if (includeHeader) {
             final String[] values = columns.toArray(new String[columns.size()]);
-            writer.write(StringUtils.join(values, '\t'));
+            writer.write(StringUtils.join(CSVTSVUtil.escapeValues(values), '\t'));
         }
 
         for (Map<String, Object> row : rows) {
@@ -32,8 +32,20 @@ public final class ExportUtil {
                 Object value = row.get(column);
                 values.add(value == null ? "" : value.toString());
             }
-            writer.write(StringUtils.join(values, '\t'));
+            writer.write(StringUtils.join(CSVTSVUtil.escapeValues(values.stream()), '\t'));
         }
+    }
+
+    public static void writeProperties(Writer writer, Map<String, String> properties, String[] fields) throws IOException {
+        String values[] = new String[fields.length];
+        for (int i = 0; i < fields.length; i++) {
+            if (properties.containsKey(fields[i])) {
+                values[i] = properties.get(fields[i]);
+            } else {
+                values[i] = "";
+            }
+        }
+        writer.write(StringUtils.join(CSVTSVUtil.escapeValues(values), '\t'));
     }
 
     public static void mkdirIfNeeded(String baseDir) throws IOException {
@@ -42,4 +54,5 @@ public final class ExportUtil {
             FileUtils.forceMkdir(parentDir);
         }
     }
+
 }

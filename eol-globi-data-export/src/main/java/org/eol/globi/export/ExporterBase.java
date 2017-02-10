@@ -1,6 +1,5 @@
 package org.eol.globi.export;
 
-import org.apache.commons.lang.StringUtils;
 import org.eol.globi.domain.NodeBacked;
 import org.eol.globi.domain.SpecimenConstant;
 import org.eol.globi.domain.Study;
@@ -84,19 +83,7 @@ public abstract class ExporterBase extends DarwinCoreExporter {
     protected void writeProperties(Writer writer, Map<String, String> properties) throws IOException {
         writer.write("\n");
         String[] fields = getFields();
-        writeProperties(writer, properties, fields);
-    }
-
-    protected static void writeProperties(Writer writer, Map<String, String> properties, String[] fields) throws IOException {
-        String values[] = new String[fields.length];
-        for (int i = 0; i < fields.length; i++) {
-            if (properties.containsKey(fields[i])) {
-                values[i] = properties.get(fields[i]);
-            } else {
-                values[i] = "";
-            }
-        }
-        writer.write(StringUtils.join(values, '\t'));
+        ExportUtil.writeProperties(writer, properties, fields);
     }
 
 

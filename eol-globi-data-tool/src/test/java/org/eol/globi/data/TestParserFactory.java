@@ -1,7 +1,7 @@
 package org.eol.globi.data;
 
 import com.Ostermiller.util.LabeledCSVParser;
-import org.eol.globi.util.CSVUtil;
+import org.eol.globi.util.CSVTSVUtil;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -26,7 +26,7 @@ public class TestParserFactory implements ParserFactory {
         if (content == null) {
             content = map.get(studyResource);
         }
-        return CSVUtil.createLabeledCSVParser(new StringReader(content));
+        return CSVTSVUtil.createLabeledCSVParser(new StringReader(content));
 
     }
 }

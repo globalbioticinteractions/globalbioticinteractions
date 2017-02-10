@@ -15,8 +15,7 @@ import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.TaxonImpl;
-import org.eol.globi.util.CSVUtil;
-import org.eol.globi.util.ResourceUtil;
+import org.eol.globi.util.CSVTSVUtil;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -92,7 +91,7 @@ public class StudyImporterForWebOfLife extends BaseStudyImporter {
             }
 
             BufferedReader assocReader = FileUtils.getUncompressedBufferedReader(new FileInputStream(referencesTempFile), CharsetConstant.UTF8);
-            LabeledCSVParser parser = CSVUtil.createLabeledCSVParser(assocReader);
+            LabeledCSVParser parser = CSVTSVUtil.createLabeledCSVParser(assocReader);
             while (parser.getLine() != null) {
                 final String citation = parser.getValueByLabel("Reference");
                 if (StringUtils.isBlank(citation)) {
@@ -147,7 +146,7 @@ public class StudyImporterForWebOfLife extends BaseStudyImporter {
     }
 
     public void importNetwork(InteractType interactType1, Location networkLocation, Study study, File file) throws IOException, NodeFactoryException {
-        LabeledCSVParser interactions = CSVUtil.createLabeledCSVParser(new FileInputStream(file));
+        LabeledCSVParser interactions = CSVTSVUtil.createLabeledCSVParser(new FileInputStream(file));
         final String[] targetLabels = interactions.getLabels();
         List<String> targetTaxonNames = new ArrayList<String>();
         List<String> ignoredLabels = Arrays.asList("number of hosts sampled", "");

@@ -14,6 +14,7 @@ import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.db.GraphService;
 import org.eol.globi.domain.TaxonImage;
 import org.eol.globi.service.EOLTaxonImageService;
+import org.eol.globi.util.CSVTSVUtil;
 import org.eol.globi.util.HttpUtil;
 import org.neo4j.cypher.javacompat.ExecutionEngine;
 import org.neo4j.cypher.javacompat.ExecutionResult;
@@ -100,7 +101,7 @@ public class ImageLinker {
 
                 if (out != null) {
                     for (Map<String, Object> stringObjectMap : execute) {
-                        out.println(StringUtils.join(stringObjectMap.values(), "\t"));
+                        out.println(StringUtils.join(CSVTSVUtil.escapeValues(stringObjectMap.values()), "\t"));
                     }
                 }
                 if (execute != null && execute.iterator() != null) {

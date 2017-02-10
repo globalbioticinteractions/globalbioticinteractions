@@ -22,7 +22,7 @@ import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.geo.GeoUtil;
 import org.eol.globi.geo.LatLng;
-import org.eol.globi.util.CSVUtil;
+import org.eol.globi.util.CSVTSVUtil;
 import org.eol.globi.util.ExternalIdUtil;
 import org.eol.globi.util.HttpUtil;
 import org.joda.time.DateTime;
@@ -113,10 +113,10 @@ public class StudyImporterForRaymond extends BaseStudyImporter {
             while ((entry = zis.getNextEntry()) != null) {
                 if (DIET_CSV.equals(entry.getName())) {
                     dietFile = File.createTempFile("raymondDiet", ".csv");
-                    dietParser = CSVUtil.createParser(dietFile, zis);
+                    dietParser = CSVTSVUtil.createParser(dietFile, zis);
                 } else if (SOURCES_CSV.equals(entry.getName())) {
                     sourcesFile = File.createTempFile("raymondSources", ".csv");
-                    sourcesParser = CSVUtil.createParser(sourcesFile, zis);
+                    sourcesParser = CSVTSVUtil.createParser(sourcesFile, zis);
                 } else {
                     IOUtils.copy(zis, new NullOutputStream());
                 }

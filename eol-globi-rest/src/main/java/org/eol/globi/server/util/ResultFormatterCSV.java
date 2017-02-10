@@ -1,12 +1,7 @@
 package org.eol.globi.server.util;
 
 import org.codehaus.jackson.JsonNode;
-import org.eol.globi.util.CSVUtil;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import org.eol.globi.util.CSVTSVUtil;
 
 public class ResultFormatterCSV extends ResultFormatterSeparatedValues {
 
@@ -28,7 +23,7 @@ public class ResultFormatterCSV extends ResultFormatterSeparatedValues {
             if (node.isTextual()) {
                 resultBuilder.append("\"");
             }
-            CSVUtil.escapeQuotes(resultBuilder, node);
+            CSVTSVUtil.escapeQuotes(resultBuilder, node);
             if (node.isTextual()) {
                 resultBuilder.append("\"");
             }

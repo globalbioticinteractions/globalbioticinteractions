@@ -2,7 +2,7 @@ package org.eol.globi.taxon;
 
 import com.Ostermiller.util.LabeledCSVParser;
 import org.eol.globi.domain.Taxon;
-import org.eol.globi.util.CSVUtil;
+import org.eol.globi.util.CSVTSVUtil;
 import org.junit.Test;
 
 import java.io.BufferedReader;
@@ -19,7 +19,7 @@ import static org.junit.Assert.*;
 public class TaxonCacheParserTest {
 
     public static void parse(BufferedReader reader, TaxonCacheListener listener) throws IOException {
-        LabeledCSVParser labeledCSVParser = CSVUtil.createLabeledCSVParser(reader);
+        LabeledCSVParser labeledCSVParser = CSVTSVUtil.createLabeledCSVParser(reader);
         listener.start();
         while (labeledCSVParser.getLine() != null) {
             Taxon taxa = TaxonCacheParser.parseLine(labeledCSVParser);

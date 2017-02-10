@@ -9,7 +9,7 @@ import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Term;
 import org.eol.globi.service.TermLookupService;
 import org.eol.globi.service.TermLookupServiceException;
-import org.eol.globi.util.CSVUtil;
+import org.eol.globi.util.CSVTSVUtil;
 import org.eol.globi.util.HttpUtil;
 
 import java.io.IOException;
@@ -46,11 +46,11 @@ public abstract class TermLookupServiceImpl implements TermLookupService {
         for (URI uri : uriList) {
             try {
                 String response = contentToString(uri);
-                CSVParse parser = CSVUtil.createCSVParse(new StringReader(response));
+                CSVParse parser = CSVTSVUtil.createCSVParse(new StringReader(response));
                 parser.changeDelimiter(getDelimiter());
 
                 if (hasHeader()) {
-                    parser = CSVUtil.createLabeledCSVParser(parser);
+                    parser = CSVTSVUtil.createLabeledCSVParser(parser);
                 }
                 String[] line;
                 while ((line = parser.getLine()) != null) {

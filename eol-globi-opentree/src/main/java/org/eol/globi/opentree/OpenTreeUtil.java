@@ -4,7 +4,7 @@ import com.Ostermiller.util.CSVParser;
 import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.eol.globi.util.CSVUtil;
+import org.eol.globi.util.CSVTSVUtil;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,7 +14,7 @@ import java.util.regex.Pattern;
 public class OpenTreeUtil {
 
     public static void readTaxonomy(OpenTreeListener listener, InputStream inputStream) throws IOException {
-        LabeledCSVParser parser = CSVUtil.createLabeledCSVParser(new CSVParser(IOUtils.toBufferedInputStream(inputStream), '\t'));
+        LabeledCSVParser parser = CSVTSVUtil.createLabeledCSVParser(new CSVParser(IOUtils.toBufferedInputStream(inputStream), '\t'));
         while (parser.getLine() != null) {
             String taxonId = parser.getValueByLabel("uid");
             String[] externalIds = StringUtils.split(parser.getValueByLabel("sourceinfo"), ",");

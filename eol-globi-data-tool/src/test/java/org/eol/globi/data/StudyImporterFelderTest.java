@@ -4,7 +4,7 @@ import com.Ostermiller.util.CSVParser;
 import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.eol.globi.util.CSVUtil;
+import org.eol.globi.util.CSVTSVUtil;
 import org.junit.Test;
 
 import java.io.File;
@@ -41,7 +41,7 @@ public class StudyImporterFelderTest {
             "Benthic Inverts",
             "Comments",
             "Occurrence"};
-    public static final String HEADER = StringUtils.join(FIELDS, '\t');
+    public static final String HEADER = StringUtils.join(CSVTSVUtil.escapeValues(FIELDS), '\t');
 
     @Test
     public void convertToTSVWithHeader() throws IOException {
@@ -52,7 +52,7 @@ public class StudyImporterFelderTest {
         IOUtils.write(HEADER + "\n", os);
         IOUtils.copy(convertToTSV(getClass().getResourceAsStream("felder/BIRDS.BDT")), os);
 
-        LabeledCSVParser parser = CSVUtil.createLabeledCSVParser(new FileInputStream(felder));
+        LabeledCSVParser parser = CSVTSVUtil.createLabeledCSVParser(new FileInputStream(felder));
         parser.changeDelimiter('\t');
         assertThat(parser.getLabels(), is(FIELDS));
         assertThat(parser.getLine(), is(notNullValue()));

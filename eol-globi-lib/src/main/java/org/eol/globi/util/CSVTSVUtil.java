@@ -19,16 +19,17 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Reader;
 import java.io.Writer;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import java.util.zip.ZipInputStream;
 
-public class CSVUtil {
+public class CSVTSVUtil {
 
     public static CSVPrint createCSVPrint(Writer writer) {
         return new ExcelCSVPrinter(writer);
-    }
-
-    public static CSVPrint createCSVPrint(OutputStream os) {
-        return new ExcelCSVPrinter(os);
     }
 
     public static CSVParse createCSVParse(InputStream inputStream) {
@@ -93,5 +94,17 @@ public class CSVUtil {
         final CSVParser parser = new CSVParser(reader);
         parser.changeDelimiter('\t');
         return parser;
+    }
+
+    public static List<String> escapeValues(String[] values) {
+        return escapeValues(Arrays.stream(values));
+    }
+
+    public static List<String> escapeValues(Collection<Object> values) {
+        return escapeValues(values.stream().map(Object::toString));
+    }
+
+    public static List<String> escapeValues(Stream<String> stream) {
+        return stream.map(value -> value.replace("\t", " ")).collect(Collectors.toList());
     }
 }

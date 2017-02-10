@@ -9,7 +9,7 @@ import org.eol.globi.domain.SpecimenNode;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonomyProvider;
-import org.eol.globi.util.CSVUtil;
+import org.eol.globi.util.CSVTSVUtil;
 import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
 import org.neo4j.cypher.javacompat.ExecutionEngine;
@@ -154,7 +154,7 @@ public class StudyImporterForBioInfoTest extends GraphDBTestCase {
     }
 
     private LabeledCSVParser createParser(String csvString) throws IOException {
-        return CSVUtil.createLabeledCSVParser(new StringReader(csvString));
+        return CSVTSVUtil.createLabeledCSVParser(new StringReader(csvString));
     }
 
     @Test
