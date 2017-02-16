@@ -1,10 +1,8 @@
 package org.eol.globi.data;
 
-import org.apache.commons.io.IOUtils;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.service.Dataset;
-import org.eol.globi.service.DatasetFinderException;
 import org.eol.globi.service.DatasetImpl;
 import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
@@ -18,7 +16,6 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.hamcrest.core.StringStartsWith.startsWith;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
 import static org.junit.matchers.JUnitMatchers.containsString;
 
 public class StudyImporterForHurlbertTest extends GraphDBTestCase {

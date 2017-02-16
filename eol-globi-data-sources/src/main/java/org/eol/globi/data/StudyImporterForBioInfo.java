@@ -290,7 +290,7 @@ public class StudyImporterForBioInfo extends BaseStudyImporter implements StudyI
             try {
                 Taxon taxon = taxonMap.get(bioTaxonId);
                 if (taxon == null) {
-                    getLogger().warn(study, "no taxon for id [" + bioTaxonId + "] on line [" + parser.lastLineNumber() + 1 + "]");
+                    getLogger().warn(study, "empty/no taxon name for  for bioinfo taxon id [" + bioTaxonId + "] on line [" + parser.lastLineNumber() + 1 + "]");
                 } else {
                     specimen = nodeFactory.createSpecimen(study, new TaxonImpl(taxon.getName(), TaxonomyProvider.BIO_INFO + "taxon:" + bioTaxonId));
                     setSpecimenExternalId(parser, specimen);

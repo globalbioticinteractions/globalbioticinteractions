@@ -54,9 +54,10 @@ public class StudyImporterForHurlbert extends BaseStudyImporter {
         parser.beginParsing(resource, CharsetConstant.UTF8);
         Record record;
         while ((record = parser.parseNextRecord()) != null) {
-            String sourceCitation = record.getString("Source");
+            String columnNameSource = "Source";
+            String sourceCitation = columnValueOrNull(record, columnNameSource);
             if (StringUtils.isBlank(sourceCitation)) {
-                LOG.warn("missing source in [" + RESOURCE + "] on line [" + (parser.getContext().currentLine() + 1) + "]");
+                LOG.warn("failed to extract source from column [" + columnNameSource + "] in [" + RESOURCE + "] on line [" + (parser.getContext().currentLine() + 1) + "]");
             } else {
                 importRecords(regions, locales, habitats, record, sourceCitation);
             }
@@ -78,17 +79,21 @@ public class StudyImporterForHurlbert extends BaseStudyImporter {
         ArrayUtils.reverse(preyLabels);
         String preyTaxonName = null;
         for (String preyLabel : preyLabels) {
-            preyTaxonName = record.getString(preyLabel);
+            preyTaxonName = columnValueOrNull(record, preyLabel);
             if (StringUtils.isNotBlank(preyTaxonName) && !"NA".equalsIgnoreCase(preyTaxonName)) {
                 break;
             }
         }
 
-        String predatorTaxonName = StringUtils.trim(record.getString("Scientific_Name"));
+        String predatorTaxonName = StringUtils.trim(columnValueOrNull(record, "Scientific_Name"));
         if (StringUtils.isNotBlank(StringUtils.trim(predatorTaxonName))
-                && StringUtils.isNotBlank(StringUtils.trim(preyTaxonName))) {
+            && StringUtils.isNotBlank(StringUtils.trim(preyTaxonName))) {
             importInteraction(regions, locales, habitats, record, study, preyTaxonName, predatorTaxonName);
         }
+    }
+
+    private static String columnValueOrNull(Record record, String columnName) {
+        return record.getMetaData().containsColumn(columnName) ? record.getString(columnName) : null;
     }
 
     protected void importInteraction(Set<String> regions, Set<String> locales, Set<String> habitats, Record record, Study study, String preyTaxonName, String predatorName) throws StudyImporterException {
@@ -98,20 +103,20 @@ public class StudyImporterForHurlbert extends BaseStudyImporter {
             setBasisOfRecordAsLiterature(predatorSpecimen);
 
             Taxon preyTaxon = new TaxonImpl(preyTaxonName);
-            String preyNameStatus = StringUtils.trim(record.getString("Prey_Name_Status"));
+            String preyNameStatus = StringUtils.trim(columnValueOrNull(record, "Prey_Name_Status"));
             if (StringUtils.isNotBlank(preyNameStatus)) {
                 preyTaxon.setStatus(new Term("HURLBERT:" + preyNameStatus, preyNameStatus));
             }
             Specimen preySpecimen = nodeFactory.createSpecimen(study, preyTaxon);
             setBasisOfRecordAsLiterature(preySpecimen);
 
-            String preyStage = StringUtils.trim(record.getString("Prey_Stage"));
+            String preyStage = StringUtils.trim(columnValueOrNull(record, "Prey_Stage"));
             if (StringUtils.isNotBlank(preyStage)) {
                 Term lifeStage = nodeFactory.getOrCreateLifeStage("HULBERT:" + StringUtils.replace(preyStage, " ", "_"), preyStage);
                 preySpecimen.setLifeStage(lifeStage);
             }
 
-            String preyPart = StringUtils.trim(record.getString("Prey_Part"));
+            String preyPart = StringUtils.trim(columnValueOrNull(record, "Prey_Part"));
             if (StringUtils.isNotBlank(preyPart)) {
                 Term term = nodeFactory.getOrCreateBodyPart("HULBERT:" + StringUtils.replace(preyPart, " ", "_"), preyPart);
                 preySpecimen.setBodyPart(term);
@@ -127,9 +132,9 @@ public class StudyImporterForHurlbert extends BaseStudyImporter {
 
 
         //Location_Region,Location_Specific
-        regions.add(record.getString("Location_Region"));
-        locales.add(record.getString("Location_Specific"));
-        habitats.add(record.getString("Habitat_type"));
+        regions.add(columnValueOrNull(record, "Location_Region"));
+        locales.add(columnValueOrNull(record, "Location_Specific"));
+        habitats.add(columnValueOrNull(record, "Habitat_type"));
     }
 
     private Date addCollectionDate(Record record, Study study) {
