@@ -40,8 +40,7 @@ public class StudyImporterForBioInfo extends BaseStudyImporter implements StudyI
             put("Animal / endozoite", InteractType.INHABITS);
             put("Animal / epizoite", InteractType.LIVES_ON);
 
-            // check on apparent typo
-            put("Animal / gamete vector / crsss fertilises", InteractType.HAS_DISPERAL_VECTOR);
+            put("Animal / gamete vector / cross fertilises", InteractType.HAS_DISPERAL_VECTOR);
             put("Animal / guest", InteractType.GUEST_OF);
             put("Animal / honeydew feeder", InteractType.INTERACTS_WITH);
             put("Animal / inquiline", InteractType.GUEST_OF);
@@ -130,7 +129,7 @@ public class StudyImporterForBioInfo extends BaseStudyImporter implements StudyI
             put("Plant / hibernates / under", InteractType.LIVES_UNDER);
             put("Plant / hibernates / within", InteractType.LIVES_INSIDE_OF);
             put("Plant / nest", InteractType.INTERACTS_WITH);
-            put("Plant / pollenated", InteractType.POLLINATES);
+            put("Plant / pollinated", InteractType.POLLINATES);
             put("Plant / resting place / among", InteractType.LIVES_NEAR);
             put("Plant / resting place / on", InteractType.LIVES_ON);
             put("Plant / resting place / under", InteractType.LIVES_UNDER);
