@@ -86,19 +86,24 @@ public class GitHubRepoCheck {
             }
 
         });
-        studyImporterForGitHubData.setFinder(finder);
-        studyImporterForGitHubData.importData(repoName);
 
-        infos.forEach(LOG::info);
-        warnings.forEach(LOG::warn);
-        errors.forEach(LOG::error);
-
-        String msg = "found [" + NodeFactoryLogging.counter.get() + "] interactions in [" + repoName + "]"
-                + " and encountered [" + warnings.size() + "] warnings and [" + errors.size() + "] errors";
-        LOG.info(msg);
-        if (warnings.size() > 0 || errors.size() > 0 || NodeFactoryLogging.counter.get() == 0) {
-            throw new StudyImporterException(msg + ", please check your log.");
+        try {
+            studyImporterForGitHubData.setFinder(finder);
+            studyImporterForGitHubData.importData(repoName);
+            if (warnings.size() > 0 || errors.size() > 0 || NodeFactoryLogging.counter.get() == 0) {
+                throw new StudyImporterException(getResultMsg(repoName, warnings, errors) + ", please check your log.");
+            }
+        } finally {
+            infos.forEach(LOG::info);
+            warnings.forEach(LOG::warn);
+            errors.forEach(LOG::error);
+            LOG.info(getResultMsg(repoName, warnings, errors));
         }
+    }
+
+    public static String getResultMsg(String repoName, Set<String> warnings, Set<String> errors) {
+        return "found [" + NodeFactoryLogging.counter.get() + "] interactions in [" + repoName + "]"
+                    + " and encountered [" + warnings.size() + "] warnings and [" + errors.size() + "] errors";
     }
 
     private static class NodeFactoryLogging implements NodeFactory {
