@@ -30,6 +30,7 @@ public class StudyImporterForBioInfo extends BaseStudyImporter implements StudyI
         {
             put("Animal / associate", InteractType.INTERACTS_WITH);
             put("Animal / carrion / dead animal feeder", InteractType.ATE);
+            put("Animal / commensal", InteractType.INTERACTS_WITH);
             // ensure to map the dung to a abiotic term rather than the producing taxon
             put("Animal / dung / associate", InteractType.INTERACTS_WITH);
             put("Animal / dung / debris feeder", InteractType.INTERACTS_WITH);
