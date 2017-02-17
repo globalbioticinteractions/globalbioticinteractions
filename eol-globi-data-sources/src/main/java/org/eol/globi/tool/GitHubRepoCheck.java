@@ -35,6 +35,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class GitHubRepoCheck {
@@ -46,9 +48,9 @@ public class GitHubRepoCheck {
         }
         LOG.info(Version.getVersionInfo(GitHubRepoCheck.class));
         final String repoName = args[0];
-        final AtomicInteger warnings = new AtomicInteger(0);
-        final AtomicInteger errors = new AtomicInteger(0);
-        final AtomicInteger infos = new AtomicInteger(0);
+        final Set<String> infos = Collections.synchronizedSortedSet(new TreeSet<String>());
+        final Set<String> warnings = Collections.synchronizedSortedSet(new TreeSet<String>());
+        final Set<String> errors = Collections.synchronizedSortedSet(new TreeSet<String>());
 
         NodeFactoryLogging nodeFactory = new NodeFactoryLogging();
         List<DatasetFinder> finders = Collections.singletonList(new DatasetFinderGitHubArchiveMaster(Arrays.asList(args)));
@@ -58,31 +60,24 @@ public class GitHubRepoCheck {
         studyImporterForGitHubData.setLogger(new ImportLogger() {
             @Override
             public void info(Study study, String message) {
-                int count = infos.incrementAndGet();
-                if (count == 500) {
-                    LOG.info("> 500 info messages, turning off logging.");
-                } else if (count < 500) {
-                    LOG.info(msgForRepo(message));
-                }
+                addUntilFull(message, infos);
             }
 
             @Override
             public void warn(Study study, String message) {
-                int count = warnings.incrementAndGet();
-                if (count == 500) {
-                    LOG.warn("> 500 warnings, turning off logging.");
-                } else if (count < 500) {
-                    LOG.warn(msgForRepo(message));
-                }
+                addUntilFull(message, warnings);
             }
 
             @Override
             public void severe(Study study, String message) {
-                int count = errors.incrementAndGet();
-                if (count == 500) {
-                    LOG.error("> 500 error messages, turning off logging.");
-                } else if (count < 500) {
-                    LOG.error(msgForRepo(message));
+                addUntilFull(message, errors);
+            }
+
+            private void addUntilFull(String message, Set<String> msgs) {
+                if (msgs.size() == 500) {
+                    msgs.add(">= 500 unique messages, turning off logging.");
+                } else if (msgs.size() < 500){
+                    msgs.add(msgForRepo(message));
                 }
             }
 
@@ -93,10 +88,15 @@ public class GitHubRepoCheck {
         });
         studyImporterForGitHubData.setFinder(finder);
         studyImporterForGitHubData.importData(repoName);
+
+        infos.forEach(LOG::info);
+        warnings.forEach(LOG::warn);
+        errors.forEach(LOG::error);
+
         String msg = "found [" + NodeFactoryLogging.counter.get() + "] interactions in [" + repoName + "]"
-                + " and encountered [" + warnings.get() + "] warnings and [" + errors.get() + "] errors";
+                + " and encountered [" + warnings.size() + "] warnings and [" + errors.size() + "] errors";
         LOG.info(msg);
-        if (warnings.get() > 0 || errors.get() > 0 || NodeFactoryLogging.counter.get() == 0) {
+        if (warnings.size() > 0 || errors.size() > 0 || NodeFactoryLogging.counter.get() == 0) {
             throw new StudyImporterException(msg + ", please check your log.");
         }
     }
