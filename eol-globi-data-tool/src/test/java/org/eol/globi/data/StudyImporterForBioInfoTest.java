@@ -108,7 +108,7 @@ public class StudyImporterForBioInfoTest extends GraphDBTestCase {
 
 
         assertThat("found unexpected log messages: [" + StringUtils.join(msgs, "\n") + "]", msgs.size(), is(1));
-        assertThat(msgs.get(0), is("no taxon for id [149359] on line [4171]"));
+        assertThat(msgs.get(0), is("empty/no taxon name for bioinfo taxon id [149359] on line [4171]"));
     }
 
 
