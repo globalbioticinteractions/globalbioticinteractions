@@ -86,7 +86,7 @@ public class StudyImporterForFishbase3 extends BaseStudyImporter {
     public static void handleTsvInputStream(RecordListener listener, InputStream is) throws StudyImporterException {
         TsvParserSettings settings = new TsvParserSettings();
         settings.getFormat().setLineSeparator("\n");
-        settings.setMaxCharsPerColumn(4096 * 2);
+        settings.setMaxCharsPerColumn(4096 * 8);
         settings.setHeaderExtractionEnabled(true);
         TsvParser parser = new TsvParser(settings);
         parser.beginParsing(is, CharsetConstant.UTF8);
