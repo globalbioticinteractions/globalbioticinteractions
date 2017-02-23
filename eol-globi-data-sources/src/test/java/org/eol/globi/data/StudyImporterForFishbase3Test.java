@@ -23,13 +23,13 @@ public class StudyImporterForFishbase3Test {
     public void importDependencies() throws StudyImporterException {
         references = new HashMap<>();
         InputStream resourceAsStream2 = getClass().getResourceAsStream("refrens_fishbase_first100.tsv");
-        StudyImporterForFishbase3.importReferences(references, resourceAsStream2);
+        StudyImporterForFishbase3.importReferences(references, resourceAsStream2, "FB");
 
         speciesMap = new HashMap<>();
-
         InputStream resourceAsStream1 = getClass().getResourceAsStream("species_fishbase_first100.tsv");
-        StudyImporterForFishbase3.importSpecies(speciesMap, resourceAsStream1);
-
+        StudyImporterForFishbase3.importSpecies(speciesMap, resourceAsStream1, "FB");
+        InputStream resourceAsStream3 = getClass().getResourceAsStream("species_sealifebase_first100.tsv");
+        StudyImporterForFishbase3.importSpecies(speciesMap, resourceAsStream3, "SLB");
 
         countries = new HashMap<>();
         InputStream resourceAsStream = getClass().getResourceAsStream("countref_fishbase_first100.tsv");
@@ -41,7 +41,7 @@ public class StudyImporterForFishbase3Test {
         final List<Map<String, String>> links = new ArrayList<>();
         InputStream is = getClass().getResourceAsStream("fooditems_fishbase_first100.tsv");
 
-        StudyImporterForFishbase3.importFoodItems(references, speciesMap, countries, links::add, is);
+        StudyImporterForFishbase3.importFoodItems(links::add, is, speciesMap, references, countries, "FB");
 
         Map<String, String> firstItem = links.get(0);
 
@@ -67,7 +67,7 @@ public class StudyImporterForFishbase3Test {
         final List<Map<String, String>> links = new ArrayList<>();
         InputStream is = getClass().getResourceAsStream("predats_fishbase_first100.tsv");
 
-        StudyImporterForFishbase3.importPredators(links::add, is, speciesMap, references, countries);
+        StudyImporterForFishbase3.importPredators(links::add, is, speciesMap, references, countries, "FB");
 
         Map<String, String> firstItem = links.get(0);
 
@@ -100,7 +100,7 @@ public class StudyImporterForFishbase3Test {
         final List<Map<String, String>> links = new ArrayList<>();
         InputStream is = getClass().getResourceAsStream("diet_fishbase_first100.tsv");
 
-        StudyImporterForFishbase3.importDiet(links, is, speciesMap, references, countries);
+        StudyImporterForFishbase3.importDiet(links::add, is, speciesMap, references, countries, "FB");
 
         Map<String, String> firstItem = links.get(0);
 
