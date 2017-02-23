@@ -23,6 +23,30 @@ public class StudyImporterForFishbase3 extends BaseStudyImporter {
         super(parserFactory, nodeFactory);
     }
 
+    @Override
+    public void importStudy() throws StudyImporterException {
+        try {
+            String defaultNamespace = getDataset().getOrDefault("namespace", "FB");
+
+            HashMap<String, Map<String, String>> countries = new HashMap<>();
+            importCountries(countries, getDataset().getResource("countrefs.tsv"));
+            HashMap<String, Map<String, String>> references = new HashMap<>();
+            importReferences(references, getDataset().getResource("refrens.tsv"), defaultNamespace);
+            HashMap<String, Map<String, String>> speciesMap = new HashMap<>();
+            importSpecies(speciesMap, getDataset().getResource("species_sealifebase.tsv"), "SLB");
+            importSpecies(speciesMap, getDataset().getResource("species_fishbase.tsv"), "FB");
+
+            InteractionListener listener = new InteractionListenerImpl(nodeFactory, getGeoNamesService(), getLogger());
+
+            importDiet(listener, getDataset().getResource("diet.tsv"), speciesMap, references, countries, defaultNamespace);
+            importPredators(listener, getDataset().getResource("predats.tsv"), speciesMap, references, countries, defaultNamespace);
+            importFoodItems(listener, getDataset().getResource("fooditems.tsv"), speciesMap, references, countries, defaultNamespace);
+        } catch (IOException e) {
+            throw new StudyImporterException("failed to import", e);
+        }
+
+    }
+
     protected static void importReferences(Map<String, Map<String, String>> references, InputStream resourceAsStream2, String defaultNamespace) throws StudyImporterException {
         handleTsvInputStream(record -> {
             Map<String, String> reference = new HashMap<>();
@@ -259,29 +283,6 @@ public class StudyImporterForFishbase3 extends BaseStudyImporter {
         handleTsvInputStream(listener1, is);
     }
 
-    @Override
-    public void importStudy() throws StudyImporterException {
-        try {
-            String defaultNamespace = getDataset().getOrDefault("namespace", "FB");
-
-            HashMap<String, Map<String, String>> countries = new HashMap<>();
-            importCountries(countries, getDataset().getResource("countrefs.tsv"));
-            HashMap<String, Map<String, String>> references = new HashMap<>();
-            importReferences(references, getDataset().getResource("refrens.tsv"), defaultNamespace + "_REF:");
-            HashMap<String, Map<String, String>> speciesMap = new HashMap<>();
-            importSpecies(speciesMap, getDataset().getResource("species.tsv"), defaultNamespace);
-
-            InteractionListener listener = new InteractionListenerImpl(nodeFactory, getGeoNamesService(), getLogger());
-
-            importDiet(listener, getDataset().getResource("diet.tsv"), speciesMap, references, countries, defaultNamespace);
-            importPredators(listener, getDataset().getResource("predats.tsv"), speciesMap, references, countries, defaultNamespace);
-            importFoodItems(listener, getDataset().getResource("fooditems.tsv"), speciesMap, references, countries, defaultNamespace);
-
-        } catch (IOException e) {
-            throw new StudyImporterException("failed to import", e);
-        }
-
-    }
 
     interface RecordListener {
         void onRecord(Record record) throws StudyImporterException;

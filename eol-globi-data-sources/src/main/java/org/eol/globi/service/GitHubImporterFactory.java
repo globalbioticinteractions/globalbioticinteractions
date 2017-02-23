@@ -21,6 +21,7 @@ import org.eol.globi.data.StudyImporterForCoetzer;
 import org.eol.globi.data.StudyImporterForCook;
 import org.eol.globi.data.StudyImporterForCruaud;
 import org.eol.globi.data.StudyImporterForDunne;
+import org.eol.globi.data.StudyImporterForFishbase3;
 import org.eol.globi.data.StudyImporterForGemina;
 import org.eol.globi.data.StudyImporterForGoMexSI2;
 import org.eol.globi.data.StudyImporterForGray;
@@ -116,6 +117,7 @@ public class GitHubImporterFactory {
                 put("cook", StudyImporterForCook.class);
                 put("cruaud", StudyImporterForCruaud.class);
                 put("ferrer-paris", StudyImporterForJRFerrerParis.class);
+                put("fishbase", StudyImporterForFishbase3.class);
                 put("gemina", StudyImporterForGemina.class);
                 put("hafner", StudyImporterForHafner.class);
                 put("hurlbert", StudyImporterForHurlbert.class);
