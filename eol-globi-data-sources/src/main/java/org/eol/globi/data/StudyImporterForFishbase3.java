@@ -29,7 +29,7 @@ public class StudyImporterForFishbase3 extends BaseStudyImporter {
             String defaultNamespace = getDataset().getOrDefault("namespace", "FB");
 
             HashMap<String, Map<String, String>> countries = new HashMap<>();
-            importCountries(countries, getDataset().getResource("countrefs.tsv"));
+            importCountries(countries, getDataset().getResource("countref.tsv"));
             HashMap<String, Map<String, String>> references = new HashMap<>();
             importReferences(references, getDataset().getResource("refrens.tsv"), defaultNamespace);
             HashMap<String, Map<String, String>> speciesMap = new HashMap<>();
