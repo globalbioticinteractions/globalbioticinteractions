@@ -92,8 +92,11 @@ public class StudyImporterForHurlbert extends BaseStudyImporter {
         }
     }
 
-    private static String columnValueOrNull(Record record, String columnName) {
-        return record.getMetaData().containsColumn(columnName) ? record.getString(columnName) : null;
+    public static String columnValueOrNull(Record record, String columnName) {
+        String value = record.getMetaData().containsColumn(columnName)
+            ? StringUtils.trim(record.getString(columnName))
+            : null;
+        return StringUtils.equals("null", value) ? null : value;
     }
 
     protected void importInteraction(Set<String> regions, Set<String> locales, Set<String> habitats, Record record, Study study, String preyTaxonName, String predatorName) throws StudyImporterException {
