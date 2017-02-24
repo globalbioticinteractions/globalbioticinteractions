@@ -18,6 +18,7 @@ import static org.eol.globi.data.StudyImporterForHurlbert.columnValueOrNull;
 
 public class StudyImporterForFishbase3 extends BaseStudyImporter {
     private static final Log LOG = LogFactory.getLog(StudyImporterForFishbase3.class);
+    public static final String C_CODE_GLOBAL = "9999";
 
     public StudyImporterForFishbase3(ParserFactory parserFactory, NodeFactory nodeFactory) {
         super(parserFactory, nodeFactory);
@@ -36,7 +37,15 @@ public class StudyImporterForFishbase3 extends BaseStudyImporter {
             importSpecies(speciesMap, getDataset().getResource("species_sealifebase.tsv"), "SLB");
             importSpecies(speciesMap, getDataset().getResource("species_fishbase.tsv"), "FB");
 
-            InteractionListener listener = new InteractionListenerImpl(nodeFactory, getGeoNamesService(), getLogger());
+            InteractionListener listener = new InteractionListener() {
+                private final InteractionListener listener = new InteractionListenerImpl(nodeFactory, getGeoNamesService(), getLogger());
+                @Override
+                public void newLink(Map<String, String> properties) throws StudyImporterException {
+                    listener.newLink(new HashMap<String, String>(properties) {{
+                        put(StudyImporterForTSV.STUDY_SOURCE_CITATION, ReferenceUtil.sourceCitationLastAccessed(getDataset()));
+                    }} );
+                }
+            };
 
             importDiet(listener, getDataset().getResource("diet.tsv"), speciesMap, references, countries, defaultNamespace);
             importPredators(listener, getDataset().getResource("predats.tsv"), speciesMap, references, countries, defaultNamespace);
@@ -228,7 +237,7 @@ public class StudyImporterForFishbase3 extends BaseStudyImporter {
         String locality = columnValueOrNull(record, "Locality");
         String countryCode = columnValueOrNull(record, "C_Code");
         Map<String, String> countryProperties = countries.get(countryCode);
-        if (countryProperties != null) {
+        if (!StringUtils.equals(C_CODE_GLOBAL, countryCode) && countryProperties != null) {
             props.put(StudyImporterForTSV.DECIMAL_LATITUDE, countryProperties.get(StudyImporterForTSV.DECIMAL_LATITUDE));
             props.put(StudyImporterForTSV.DECIMAL_LONGITUDE, countryProperties.get(StudyImporterForTSV.DECIMAL_LONGITUDE));
 
