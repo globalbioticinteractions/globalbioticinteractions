@@ -51,7 +51,7 @@ public class StudyImporterForFishbase3Test {
         assertThat(firstItem.get("referenceUrl"), Is.is("http://fishbase.org/references/FBRefSummary.php?id=6160"));
         assertThat(firstItem.get("localityName"), Is.is("Sudan|Sudd swamps, River Nile."));
         assertThat(firstItem.get("localityId"), Is.is("FB_COUNTRY:736|"));
-        assertThat(firstItem.get("sourceTaxonId"), Is.is("FB_SPECIES:2"));
+        assertThat(firstItem.get("sourceTaxonId"), Is.is("FBC:FB:SPECCODE:2"));
         assertThat(firstItem.get("sourceTaxonName"), Is.is("Oreochromis niloticus"));
         assertThat(firstItem.get("sourceLifeStage"), Is.is("juv./adults"));
         assertThat(firstItem.get("targetTaxonName"), Is.is("< 1 mm organic debris"));
@@ -77,10 +77,10 @@ public class StudyImporterForFishbase3Test {
         assertThat(firstItem.get("referenceUrl"), Is.is("http://fishbase.org/references/FBRefSummary.php?id=84"));
         assertThat(firstItem.get("localityName"), Is.is(nullValue()));
         assertThat(firstItem.get("localityId"), Is.is(nullValue()));
-        assertThat(firstItem.get("sourceTaxonId"), Is.is("FB_SPECIES:457"));
+        assertThat(firstItem.get("sourceTaxonId"), Is.is("FBC:FB:SPECCODE:457"));
         assertThat(firstItem.get("sourceTaxonName"), Is.is("Cichla ocellaris"));
         assertThat(firstItem.get("sourceLifeStage"), Is.is("juv./adults"));
-        assertThat(firstItem.get("targetTaxonId"), Is.is("FB_SPECIES:2"));
+        assertThat(firstItem.get("targetTaxonId"), Is.is("FBC:FB:SPECCODE:2"));
         assertThat(firstItem.get("targetTaxonName"), Is.is("Oreochromis niloticus"));
         assertThat(firstItem.get("targetLifeStage"), Is.is("recruits/juv."));
         assertThat(firstItem.get("studyTitle"), Is.is("FB_REF:84"));
@@ -110,7 +110,7 @@ public class StudyImporterForFishbase3Test {
         assertThat(firstItem.get("referenceUrl"), Is.is("http://fishbase.org/references/FBRefSummary.php?id=9604"));
         assertThat(firstItem.get("localityName"), Is.is("UK|Off the west coast of the Isle of Man, 1977-1978"));
         assertThat(firstItem.get("localityId"), Is.is("FB_COUNTRY:826|"));
-        assertThat(firstItem.get("sourceTaxonId"), Is.is("FB_SPECIES:69"));
+        assertThat(firstItem.get("sourceTaxonId"), Is.is("FBC:FB:SPECCODE:69"));
         assertThat(firstItem.get("sourceTaxonName"), Is.is("Gadus morhua"));
         assertThat(firstItem.get("sourceLifeStage"), Is.is("recruits/juv."));
         assertThat(firstItem.get("targetTaxonId"), Is.is(nullValue()));

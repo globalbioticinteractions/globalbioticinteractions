@@ -51,7 +51,7 @@ public class StudyImporterForFishbase3SLBTest {
         assertThat(firstItem.get("referenceUrl"), Is.is("http://sealifebase.org/references/FBRefSummary.php?id=53"));
         assertThat(firstItem.get("localityName"), Is.is(nullValue()));
         assertThat(firstItem.get("localityId"), Is.is(nullValue()));
-        assertThat(firstItem.get("sourceTaxonId"), Is.is("SLB_SPECIES:23"));
+        assertThat(firstItem.get("sourceTaxonId"), Is.is("FBC:SLB:SPECCODE:23"));
         assertThat(firstItem.get("sourceTaxonName"), Is.is("Trichoplax adhaerens"));
         assertThat(firstItem.get("sourceLifeStage"), Is.is("juv./adults"));
         assertThat(firstItem.get("targetTaxonName"), Is.is("dead animals"));
@@ -77,10 +77,10 @@ public class StudyImporterForFishbase3SLBTest {
         assertThat(firstItem.get("referenceUrl"), Is.is("http://sealifebase.org/references/FBRefSummary.php?id=97658"));
         assertThat(firstItem.get("localityName"), Is.is("Australia|eastern Australia"));
         assertThat(firstItem.get("localityId"), Is.is("SLB_COUNTRY:036|"));
-        assertThat(firstItem.get("sourceTaxonId"), Is.is("FB_SPECIES:96"));
+        assertThat(firstItem.get("sourceTaxonId"), Is.is("FBC:FB:SPECCODE:96"));
         assertThat(firstItem.get("sourceTaxonName"), Is.is("Euthynnus affinis"));
         assertThat(firstItem.get("sourceLifeStage"), Is.is("recruits/juv."));
-        assertThat(firstItem.get("targetTaxonId"), Is.is("SLB_SPECIES:83456"));
+        assertThat(firstItem.get("targetTaxonId"), Is.is("FBC:SLB:SPECCODE:83456"));
         assertThat(firstItem.get("targetTaxonName"), Is.is("Odontodactylus cultrifer"));
         assertThat(firstItem.get("targetLifeStage"), Is.is("juv./adults"));
         assertThat(firstItem.get("studyTitle"), Is.is("SLB_REF:97658"));
@@ -104,7 +104,7 @@ public class StudyImporterForFishbase3SLBTest {
         assertThat(firstItem.get("referenceUrl"), Is.is("http://sealifebase.org/references/FBRefSummary.php?id=8747"));
         assertThat(firstItem.get("localityName"), Is.is("Australia|Peel-Harvey (32°40'South, 115°40'East), Australia"));
         assertThat(firstItem.get("localityId"), Is.is("SLB_COUNTRY:036|"));
-        assertThat(firstItem.get("sourceTaxonId"), Is.is("SLB_SPECIES:9329"));
+        assertThat(firstItem.get("sourceTaxonId"), Is.is("FBC:SLB:SPECCODE:9329"));
         assertThat(firstItem.get("sourceTaxonName"), Is.is("Portunus pelagicus"));
         assertThat(firstItem.get("sourceLifeStage"), Is.is("juv./adults"));
         assertThat(firstItem.get("targetTaxonId"), Is.is(nullValue()));
@@ -116,7 +116,7 @@ public class StudyImporterForFishbase3SLBTest {
 
         Map<String, String> secondItem = links.get(1);
 
-        assertThat(secondItem.get("targetTaxonId"), Is.is("SLB_SPECIES:57331"));
+        assertThat(secondItem.get("targetTaxonId"), Is.is("FBC:SLB:SPECCODE:57331"));
         assertThat(secondItem.get("targetTaxonName"), Is.is("Taningia danae"));
     }
 
