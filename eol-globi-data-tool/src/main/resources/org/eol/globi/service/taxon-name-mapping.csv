@@ -139,6 +139,9 @@ Hunchback scorpionfish,Scorpaena dispar,,
 Rough scad,Trachurus lathami,,
 NA,no name,,
 NE,no name,,
+unspecified,no name,,
+not identified,no name,,
+EMPTY,no name,,
 Crab,Brachyura,,
 Cusk eel,Ophidiidae,,
 Goatfish sp.,Mullidae,,
@@ -916,6 +919,7 @@ anthozoan,Anthozoa,,replaced with scientific name http://eol.org/pages/1746/over
 errant annelid,Annelida,,replaced with scientific name https://en.wikipedia.org/wiki/Annelid
 errant large annelid,Annelida,,replaced with scientific https://en.wikipedia.org/wiki/Annelid
 annelid,Annelida,,replaced with scientific https://en.wikipedia.org/wiki/Annelid
+annelids,Annelida,,replaced with scientific https://en.wikipedia.org/wiki/Annelid
 annelid red,Annelida,,replaced with scientific https://en.wikipedia.org/wiki/Annelid
 annelid unknown,Annelida,,replaced with scientific https://en.wikipedia.org/wiki/Annelid
 Priomis,Piromis,,replaced with correct genus http://www.marinespecies.org/aphia.php?p=taxdetails&id=129294
