@@ -36,8 +36,6 @@ public class NodeUtil {
             String[] nameParts = StringUtils.split(taxonName);
             if (nameParts.length > 2) {
                 truncatedName = nameParts[0].trim() + " " + nameParts[1].trim();
-            } else if (nameParts.length > 1) {
-                truncatedName = nameParts[0];
             }
         }
         return truncatedName;

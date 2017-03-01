@@ -12,12 +12,12 @@ public class NodeUtilTest {
     public void truncatedTaxonName() {
         assertThat(NodeUtil.truncateTaxonName("one two three"), is("one two"));
         assertThat(NodeUtil.truncateTaxonName("one two three four"), is("one two"));
-        assertThat(NodeUtil.truncateTaxonName("one two"), is("one"));
+        assertThat(NodeUtil.truncateTaxonName("one two"), is("one two"));
         assertThat(NodeUtil.truncateTaxonName("one"), is("one"));
     }
 
     @Test
     public void doNotTruncateVirusName() {
-        assertThat(NodeUtil.truncateTaxonName("whatever virus"), is("whatever virus"));
+        assertThat(NodeUtil.truncateTaxonName("whatever something virus"), is("whatever something virus"));
     }
 }
