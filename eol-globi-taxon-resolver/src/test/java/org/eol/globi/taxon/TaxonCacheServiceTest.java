@@ -113,6 +113,22 @@ public class TaxonCacheServiceTest {
     }
 
     @Test
+    public void enrichByIdName() throws PropertyEnricherException {
+        Map<String, String> properties = new HashMap<String, String>() {
+            {
+                put(PropertyAndValueDictionary.NAME, "Gadus morhua");
+                put(PropertyAndValueDictionary.EXTERNAL_ID, "FBC:FB:SPECCODE:69");
+            }
+        };
+        final TaxonCacheService taxonCacheService = getTaxonCacheService();
+        Map<String, String> enrich = taxonCacheService.enrich(properties);
+        Taxon enrichedTaxon = TaxonUtil.mapToTaxon(enrich);
+        assertThat(enrichedTaxon.getName(), is("Gadus morhua"));
+        assertThat(enrichedTaxon.getExternalId(), is("EOL:1234"));
+        taxonCacheService.shutdown();
+    }
+
+    @Test
     public void enrichByNameAndId() throws PropertyEnricherException {
         Map<String, String> properties = new HashMap<String, String>() {
             {
@@ -124,8 +140,8 @@ public class TaxonCacheServiceTest {
         Map<String, String> enrich = taxonCacheService.enrich(properties);
         Taxon enrichedTaxon = TaxonUtil.mapToTaxon(enrich);
         assertThat(enrichedTaxon.getName(), is("Anas crecca carolinensis"));
-        assertThat(enrichedTaxon.getExternalId(), is("SOME:123"));
-        assertThat(TaxonUtil.isResolved(enrichedTaxon), is(false));
+        assertThat(enrichedTaxon.getExternalId(), is("EOL:1276240"));
+        assertThat(TaxonUtil.isResolved(enrichedTaxon), is(true));
         taxonCacheService.shutdown();
     }
 
