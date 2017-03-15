@@ -5,6 +5,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.eol.globi.domain.DatasetNode;
 import org.eol.globi.domain.Environment;
 import org.eol.globi.domain.EnvironmentNode;
 import org.eol.globi.domain.Location;
@@ -113,18 +114,18 @@ public class NodeFactoryNeo4j implements NodeFactory {
             final LocationNode foundLocation = new LocationNode(node);
 
             boolean altitudeMatches = foundLocation.getAltitude() == null && location.getAltitude() == null
-                    || location.getAltitude() != null && location.getAltitude().equals(foundLocation.getAltitude());
+                || location.getAltitude() != null && location.getAltitude().equals(foundLocation.getAltitude());
 
             boolean footprintWKTMatches = foundLocation.getFootprintWKT() == null && location.getFootprintWKT() == null
-                    || location.getFootprintWKT() != null && location.getFootprintWKT().equals(foundLocation.getFootprintWKT());
+                || location.getFootprintWKT() != null && location.getFootprintWKT().equals(foundLocation.getFootprintWKT());
 
             boolean localityMatches = foundLocation.getLocality() == null && location.getLocality() == null
-                    || location.getLocality() != null && location.getLocality().equals(foundLocation.getLocality());
+                || location.getLocality() != null && location.getLocality().equals(foundLocation.getLocality());
 
             if (location.getLongitude().equals(foundLocation.getLongitude())
-                    && altitudeMatches
-                    && footprintWKTMatches
-                    && localityMatches) {
+                && altitudeMatches
+                && footprintWKTMatches
+                && localityMatches) {
                 matchingLocation = node;
                 break;
             }
@@ -256,11 +257,11 @@ public class NodeFactoryNeo4j implements NodeFactory {
             }
             studyNode.setSourceId(study.getSourceId());
 
-            Dataset originatingDataset = study.getOriginatingDataset();
-            if (originatingDataset != null && StringUtils.isNotBlank(originatingDataset.getNamespace())) {
-                IndexHits<Node> datasetHits = datasets.get(DatasetConstant.NAMESPACE, originatingDataset.getNamespace());
-                Node datasetNode = datasetHits.hasNext() ? datasetHits.next() : createDatasetNode(originatingDataset);
-                studyNode.getUnderlyingNode().createRelationshipTo(datasetNode, NodeUtil.asNeo4j(RelTypes.IN_DATASET));
+            Dataset dataset = getOrCreateDatasetNoTx(study.getOriginatingDataset());
+            if (dataset != null && dataset instanceof DatasetNode) {
+                studyNode.getUnderlyingNode().createRelationshipTo((
+                        (DatasetNode) dataset).getUnderlyingNode(),
+                    NodeUtil.asNeo4j(RelTypes.IN_DATASET));
             }
 
             studies.add(node, StudyConstant.TITLE, study.getTitle());
@@ -294,6 +295,7 @@ public class NodeFactoryNeo4j implements NodeFactory {
         datasetNode.setProperty(StudyConstant.FORMAT, dataset.getFormat());
         datasetNode.setProperty(StudyConstant.DOI, dataset.getDOI());
         datasetNode.setProperty(DatasetConstant.SHOULD_RESOLVE_REFERENCES, dataset.getOrDefault(DatasetConstant.SHOULD_RESOLVE_REFERENCES, "true"));
+        datasetNode.setProperty(DatasetConstant.LAST_SEEN_AT, dataset.getOrDefault(DatasetConstant.LAST_SEEN_AT, new Long(System.currentTimeMillis()).toString()));
         datasets.add(datasetNode, DatasetConstant.NAMESPACE, dataset.getNamespace());
         return datasetNode;
     }
@@ -588,6 +590,28 @@ public class NodeFactoryNeo4j implements NodeFactory {
     @Override
     public Term getOrCreateBasisOfRecord(String externalId, String name) throws NodeFactoryException {
         return matchTerm(externalId, name);
+    }
+
+    @Override
+    public Dataset getOrCreateDataset(Dataset originatingDataset) {
+        Transaction transaction = graphDb.beginTx();
+        try {
+            Dataset datasetCreated = getOrCreateDatasetNoTx(originatingDataset);
+            transaction.success();
+            return datasetCreated;
+        } finally {
+            transaction.finish();
+        }
+    }
+
+    public Dataset getOrCreateDatasetNoTx(Dataset originatingDataset) {
+        Dataset datasetCreated = null;
+        if (originatingDataset != null && StringUtils.isNotBlank(originatingDataset.getNamespace())) {
+            IndexHits<Node> datasetHits = datasets.get(DatasetConstant.NAMESPACE, originatingDataset.getNamespace());
+            Node datasetNode = datasetHits.hasNext() ? datasetHits.next() : createDatasetNode(originatingDataset);
+            datasetCreated = new DatasetNode(datasetNode);
+        }
+        return datasetCreated;
     }
 }
 

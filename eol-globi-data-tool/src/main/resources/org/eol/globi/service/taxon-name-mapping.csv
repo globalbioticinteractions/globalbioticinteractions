@@ -1222,4 +1222,5 @@ clear plastic,plastic,https://github.com/EnvironmentOntology/envo/blob/master/en
 clear plastic bag,plastic,https://github.com/EnvironmentOntology/envo/blob/master/envo.obo,provided by Jorrit Poelen
 Plastic bag,plastic,https://github.com/EnvironmentOntology/envo/blob/master/envo.obo,provided by Jorrit Poelen
 blue plastic,plastic,https://github.com/EnvironmentOntology/envo/blob/master/envo.obo,provided by Jorrit Poelen
-EMPTY,no name
+EMPTY,no name,,provided by Jorrit Poelen
+Unidentified,no name,,provided by Jorrit Poelen

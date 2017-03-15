@@ -55,6 +55,7 @@ public class StudyImporterForGitHubData extends BaseStudyImporter {
         try {
             LOG.info("importing github repo [" + repository + "]...");
             Dataset dataset = DatasetFactory.datasetFor(repository, getDatasetFinder());
+            nodeFactory.getOrCreateDataset(dataset);
             importData(dataset);
             LOG.info("importing github repo [" + repository + "] done.");
         } catch (StudyImporterException | DatasetFinderException ex) {
@@ -76,8 +77,8 @@ public class StudyImporterForGitHubData extends BaseStudyImporter {
         this.finder = finder;
     }
 
-    public void importData(Dataset repo) throws StudyImporterException {
-        StudyImporter importer = new GitHubImporterFactory().createImporter(repo, nodeFactory);
+    public void importData(Dataset dataset) throws StudyImporterException {
+        StudyImporter importer = new GitHubImporterFactory().createImporter(dataset, nodeFactory);
         if (importer != null) {
             if (getLogger() != null) {
                 importer.setLogger(getLogger());

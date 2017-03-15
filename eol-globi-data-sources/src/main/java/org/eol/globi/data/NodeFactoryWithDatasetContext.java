@@ -133,4 +133,9 @@ public class NodeFactoryWithDatasetContext implements NodeFactory {
         return factory.getOrCreateBasisOfRecord(externalId, name);
     }
 
+    @Override
+    public Dataset getOrCreateDataset(Dataset dataset) {
+        return factory.getOrCreateDataset(dataset);
+    }
+
 }

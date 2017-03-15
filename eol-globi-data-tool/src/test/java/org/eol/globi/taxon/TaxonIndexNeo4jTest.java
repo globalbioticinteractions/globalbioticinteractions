@@ -67,6 +67,15 @@ public class TaxonIndexNeo4jTest extends GraphDBTestCase {
     }
 
     @Test
+    public void createNullTaxon() throws NodeFactoryException {
+        Taxon taxon1 = new TaxonImpl(null, "EOL:1234");
+        taxon1.setPath(null);
+        TaxonNode taxon = taxonService.getOrCreateTaxon(taxon1);
+        assertThat(taxon, is(notNullValue()));
+        assertEquals("bla bla", taxon.getName());
+    }
+
+    @Test
     public void createTaxonExternalIdIndex() throws NodeFactoryException {
         taxonService = new TaxonIndexNeo4j(new PassThroughEnricher(),
                 new CorrectionService() {

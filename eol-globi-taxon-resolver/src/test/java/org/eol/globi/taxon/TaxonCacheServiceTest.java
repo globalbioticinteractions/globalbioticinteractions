@@ -85,6 +85,19 @@ public class TaxonCacheServiceTest {
     }
 
     @Test
+    public void enrichNull() throws PropertyEnricherException {
+        Map<String, String> properties = new HashMap<String, String>() {
+            {
+                put(PropertyAndValueDictionary.NAME, "unidentified");
+            }
+        };
+        Map<String, String> enrich = getTaxonCacheService().enrich(properties);
+        Taxon enrichedTaxon = TaxonUtil.mapToTaxon(enrich);
+        assertThat(enrichedTaxon.getName(), is("some name"));
+        assertThat(enrichedTaxon.getExternalId(), is("some cached externalId"));
+    }
+
+    @Test
     public void enrichPassThroughNoMatch() throws PropertyEnricherException {
         Map<String, String> properties = new HashMap<String, String>() {
             {

@@ -21,6 +21,7 @@ import org.eol.globi.geo.Ecoregion;
 import org.eol.globi.geo.EcoregionFinder;
 import org.eol.globi.geo.EcoregionFinderException;
 import org.eol.globi.service.AuthorIdResolver;
+import org.eol.globi.service.Dataset;
 import org.eol.globi.service.DatasetFinder;
 import org.eol.globi.service.DatasetFinderCaching;
 import org.eol.globi.service.DatasetFinderException;
@@ -373,6 +374,11 @@ public class GitHubRepoCheck {
         @Override
         public Term getOrCreateBasisOfRecord(String externalId, String name) throws NodeFactoryException {
             return new Term(externalId, name);
+        }
+
+        @Override
+        public Dataset getOrCreateDataset(Dataset dataset) {
+            return dataset;
         }
     }
 }

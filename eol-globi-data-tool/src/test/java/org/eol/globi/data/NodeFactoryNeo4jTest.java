@@ -4,6 +4,7 @@ import junit.framework.Assert;
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ObjectNode;
+import org.eol.globi.domain.DatasetNode;
 import org.eol.globi.domain.Environment;
 import org.eol.globi.domain.EnvironmentNode;
 import org.eol.globi.domain.InteractType;
@@ -40,6 +41,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
@@ -71,7 +73,6 @@ public class NodeFactoryNeo4jTest extends GraphDBTestCase {
         assertThat(relInverted.getProperty("iri").toString(), is("http://purl.obolibrary.org/obo/RO_0002471"));
         assertThat(relInverted.getProperty("label").toString(), is("eatenBy"));
     }
-
 
 
     @Test
@@ -106,14 +107,14 @@ public class NodeFactoryNeo4jTest extends GraphDBTestCase {
         assertThat(location.getFootprintWKT(), is(nullValue()));
         final String expectedFootprintWKT = "POLYGON((10 20, 11 20, 11 21, 10 21, 10 20))";
         final LocationImpl otherLocation = new LocationImpl(location.getAltitude(), location.getLongitude(), location.getLatitude(),
-                expectedFootprintWKT);
+            expectedFootprintWKT);
 
         final LocationNode locationWithFootprintWKT = getNodeFactory().getOrCreateLocation(otherLocation);
         assertThat(locationWithFootprintWKT.getFootprintWKT(), is(expectedFootprintWKT));
         assertThat(getNodeFactory().findLocation(otherLocation).getFootprintWKT(), is(expectedFootprintWKT));
 
         final LocationImpl yetAnotherLocation = new LocationImpl(location.getAltitude(), location.getLongitude(), location.getLatitude(),
-                expectedFootprintWKT);
+            expectedFootprintWKT);
         yetAnotherLocation.setLocality("this is my place");
         getNodeFactory().getOrCreateLocation(yetAnotherLocation);
 
@@ -144,7 +145,7 @@ public class NodeFactoryNeo4jTest extends GraphDBTestCase {
         location = getNodeFactory().getOrCreateLocation(new LocationImpl(0.0, 1.0, 2.0, null));
         List<Environment> second = getNodeFactory().getOrCreateEnvironments(location, "BLA:123", "this and that");
         assertThat(first.size(), is(second.size()));
-        assertThat(((NodeBacked)first.get(0)).getNodeID(), is(((NodeBacked)second.get(0)).getNodeID()));
+        assertThat(((NodeBacked) first.get(0)).getNodeID(), is(((NodeBacked) second.get(0)).getNodeID()));
         EnvironmentNode foundEnvironment = getNodeFactory().findEnvironment("this_and_that");
         assertThat(foundEnvironment, is(notNullValue()));
 
@@ -159,7 +160,7 @@ public class NodeFactoryNeo4jTest extends GraphDBTestCase {
         Location anotherLocation = getNodeFactory().getOrCreateLocation(new LocationImpl(48.2, 123.1, null, null));
         LocationNode anotherLocationNode = (LocationNode) anotherLocation;
         assertThat(anotherLocationNode.getEnvironments().size(), is(0));
-        anotherLocationNode.addEnvironment((EnvironmentNode)environment);
+        anotherLocationNode.addEnvironment((EnvironmentNode) environment);
         assertThat(anotherLocationNode.getEnvironments().size(), is(1));
 
         // don't add environment that has already been associated
@@ -181,7 +182,26 @@ public class NodeFactoryNeo4jTest extends GraphDBTestCase {
 
     }
 
-        @Test
+    @Test
+    public void getOrCreateDataset() throws NodeFactoryException, IOException {
+        DatasetImpl dataset = new DatasetImpl("some/namespace", URI.create("some:uri"));
+        ObjectNode objectNode = new ObjectMapper().createObjectNode();
+        objectNode.put(DatasetConstant.SHOULD_RESOLVE_REFERENCES, false);
+        dataset.setConfig(objectNode);
+
+        Dataset origDataset = getNodeFactory().getOrCreateDataset(dataset);
+
+
+        assertThat(origDataset, is(notNullValue()));
+        assertThat(origDataset.getArchiveURI().toString(), is("some:uri"));
+        assertThat(origDataset.getOrDefault(DatasetConstant.SHOULD_RESOLVE_REFERENCES, "true"), is("false"));
+        assertThat(origDataset.getOrDefault(DatasetConstant.LAST_SEEN_AT, "1"), is(not("1")));
+
+        Dataset datasetAnother = getNodeFactory().getOrCreateDataset(dataset);
+        assertThat(((DatasetNode)datasetAnother).getNodeID(), is(((DatasetNode) origDataset).getNodeID()));
+    }
+
+    @Test
     public void addDatasetToStudy() throws NodeFactoryException, IOException {
         StudyImpl study1 = new StudyImpl("my title", "some source", "some doi", "some citation");
         DatasetImpl dataset = new DatasetImpl("some/namespace", URI.create("some:uri"));
@@ -277,7 +297,7 @@ public class NodeFactoryNeo4jTest extends GraphDBTestCase {
             }
         };
         this.taxonIndex = new TaxonIndexNeo4j(new PassThroughEnricher(),
-                correctionService, getGraphDb()
+            correctionService, getGraphDb()
         );
     }
 
@@ -317,7 +337,7 @@ public class NodeFactoryNeo4jTest extends GraphDBTestCase {
     }
 
     private void assertEcoRegions(Location location) {
-        Iterable<Relationship> relationships = ((NodeBacked)location).getUnderlyingNode().getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j(RelTypes.IN_ECOREGION));
+        Iterable<Relationship> relationships = ((NodeBacked) location).getUnderlyingNode().getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j(RelTypes.IN_ECOREGION));
         int count = 0;
         for (Relationship relationship : relationships) {
             Node associatedEcoRegion = relationship.getEndNode();
