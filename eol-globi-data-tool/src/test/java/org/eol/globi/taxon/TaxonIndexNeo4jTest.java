@@ -72,7 +72,7 @@ public class TaxonIndexNeo4jTest extends GraphDBTestCase {
         taxon1.setPath(null);
         TaxonNode taxon = taxonService.getOrCreateTaxon(taxon1);
         assertThat(taxon, is(notNullValue()));
-        assertEquals("bla bla", taxon.getName());
+        assertEquals("no name", taxon.getName());
     }
 
     @Test
@@ -113,7 +113,7 @@ public class TaxonIndexNeo4jTest extends GraphDBTestCase {
             @Override
             public Map<String, String> enrich(Map<String, String> properties) throws PropertyEnricherException {
                 Taxon taxon = TaxonUtil.mapToTaxon(properties);
-                if ("bla".equals(taxon.getName())) {
+                if ("bla bla".equals(taxon.getName())) {
                     taxon.setPath("a path");
                     taxon.setExternalId("anExternalId");
                     taxon.setCommonNames(EXPECTED_COMMON_NAMES);
@@ -129,15 +129,15 @@ public class TaxonIndexNeo4jTest extends GraphDBTestCase {
             }
         };
         taxonService.setEnricher(enricher);
-        TaxonNode taxon = taxonService.getOrCreateTaxon(new TaxonImpl("bla bla"));
-        assertEquals("bla", taxon.getName());
+        TaxonNode taxon = taxonService.getOrCreateTaxon(new TaxonImpl("bla bla bla"));
+        assertEquals("bla bla", taxon.getName());
         assertEquals("a path", taxon.getPath());
         assertEquals("anExternalId", taxon.getExternalId());
         assertEquals("someInfoUrl", taxon.getExternalUrl());
         assertEquals("someThumbnailUrl", taxon.getThumbnailUrl());
 
         taxon = taxonService.getOrCreateTaxon(new TaxonImpl("bla bla boo"));
-        assertEquals("bla", taxon.getName());
+        assertEquals("bla bla", taxon.getName());
         assertEquals("a path", taxon.getPath());
         assertEquals("anExternalId", taxon.getExternalId());
 
