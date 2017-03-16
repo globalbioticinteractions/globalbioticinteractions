@@ -70,7 +70,8 @@ public enum ResultField {
     NUMBER_OF_INTERACTIONS("number_of_interactions", "available for /interaction queries by source/target taxon name and/or interactionType only"),
     STUDY_SOURCE_DOI("study_source_doi"),
     STUDY_SOURCE_FORMAT("study_source_format"),
-    STUDY_SOURCE_ARCHIVE_URI("study_source_archive_uri");
+    STUDY_SOURCE_ARCHIVE_URI("study_source_archive_uri"),
+    STUDY_SOURCE_LAST_SEEN_AT("study_source_last_seen_at");
 
     public String getLabel() {
         return label;
