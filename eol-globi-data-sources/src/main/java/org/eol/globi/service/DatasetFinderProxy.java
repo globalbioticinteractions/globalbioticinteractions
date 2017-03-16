@@ -1,6 +1,8 @@
 package org.eol.globi.service;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -10,6 +12,8 @@ import java.util.List;
 import java.util.Map;
 
 public class DatasetFinderProxy implements DatasetFinder {
+
+    private final static Log LOG = LogFactory.getLog(DatasetFinderProxy.class);
 
     private final ArrayList<DatasetFinder> finders;
     private Map<String, DatasetFinder> finderForNamespace = null;
@@ -46,6 +50,8 @@ public class DatasetFinderProxy implements DatasetFinder {
                 Collection<String> namespaces = finder.findNamespaces();
                 Collection<String> newNamespaces = CollectionUtils.subtract(namespaces, namespacesAll);
                 for (String newNamespace : newNamespaces) {
+                    String msg = "associating [" + newNamespace + "] with [" + finder.getClass().getSimpleName() + "]";
+                    LOG.info(msg);
                     finderForNamespace.put(newNamespace, finder);
                 }
                 namespacesAll.addAll(namespaces);
