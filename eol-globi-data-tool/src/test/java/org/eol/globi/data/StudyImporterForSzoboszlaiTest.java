@@ -3,28 +3,18 @@ package org.eol.globi.data;
 import org.apache.commons.io.IOUtils;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.eol.globi.domain.Location;
-import org.eol.globi.domain.LocationImpl;
-import org.eol.globi.domain.Specimen;
-import org.eol.globi.domain.SpecimenNode;
-import org.eol.globi.domain.Study;
 import org.eol.globi.geo.LatLng;
 import org.eol.globi.service.Dataset;
-import org.eol.globi.service.DatasetImpl;
 import org.eol.globi.service.DatasetLocal;
-import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
-import org.neo4j.graphdb.Relationship;
 
 import java.io.IOException;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import static org.eol.globi.data.StudyImporterForTSV.*;
-import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
