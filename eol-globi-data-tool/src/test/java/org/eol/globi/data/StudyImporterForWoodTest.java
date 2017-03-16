@@ -15,28 +15,12 @@ import java.util.Map;
 import static org.eol.globi.data.StudyImporterForTSV.*;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.junit.internal.matchers.StringContains.containsString;
 
 public class StudyImporterForWoodTest extends GraphDBTestCase {
 
-    @Test
-    public void importFirst500() throws StudyImporterException, IOException {
-        StudyImporterForWood wood = createImporter();
-
-        wood.setFilter(new ImportFilter() {
-            @Override
-            public boolean shouldImportRecord(Long recordNumber) {
-                return recordNumber < 500;
-            }
-        });
-        importStudy(wood);
-
-        assertThat(taxonIndex.findTaxonByName("Amphipoda"), is(notNullValue()));
-    }
-
-    StudyImporterForWood createImporter() throws IOException {
+    static StudyImporterForWood createImporter(NodeFactory nodeFactory) throws IOException {
 
         JsonNode config = new ObjectMapper().readTree("{ \"citation\": \"Wood SA, Russell R, Hanson D, Williams RJ, Dunne JA (2015) Data from: Effects of spatial scale of sampling on food web structure. Dryad Digital Repository. http://dx.doi.org/10.5061/dryad.g1qr6\",\n" +
                 "  \"doi\": \"http://dx.doi.org/10.5061/dryad.g1qr6\",\n" +
@@ -63,16 +47,10 @@ public class StudyImporterForWoodTest extends GraphDBTestCase {
 
     @Test
     public void importLines() throws IOException, StudyImporterException {
-        StudyImporterForWood wood = createImporter();
+        StudyImporterForWood wood = createImporter(nodeFactory);
         final List<Map<String, String>> maps = new ArrayList<Map<String, String>>();
 
-        wood.importLinks(IOUtils.toInputStream(firstFewLines()), new InteractionListener() {
-
-            @Override
-            public void newLink(final Map<String, String> properties) {
-                maps.add(properties);
-            }
-        }, null);
+        wood.importLinks(IOUtils.toInputStream(firstFewLines()), properties -> maps.add(properties), null);
         resolveNames();
         assertThat(maps.size(), is(5));
         Map<String, String> firstLink = maps.get(0);
