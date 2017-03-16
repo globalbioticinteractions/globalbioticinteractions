@@ -148,7 +148,7 @@ public class ReportController {
             + ", null as " + ResultField.NUMBER_OF_STUDIES
             + ", null as " + ResultField.NUMBER_OF_SOURCES
             + ", null as " + ResultField.NUMBER_OF_DISTINCT_TAXA_NO_MATCH
-            + ", null as " + ResultField.STUDY_SOURCE_ID
+            + ", 'globi:' + dataset.namespace as " + ResultField.STUDY_SOURCE_ID
             + ", dataset.doi? as " + ResultField.STUDY_SOURCE_DOI
             + ", dataset.format? as " + ResultField.STUDY_SOURCE_FORMAT
             + ", dataset.archiveURI? as " + ResultField.STUDY_SOURCE_ARCHIVE_URI
