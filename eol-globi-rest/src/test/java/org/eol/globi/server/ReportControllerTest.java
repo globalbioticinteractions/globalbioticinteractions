@@ -21,7 +21,7 @@ public class ReportControllerTest {
     public void distinctSourceOrgName() throws IOException {
         CypherQuery source = new ReportController().sourceOrgName("some", "name", null);
         assertThat(source.getQuery(), is("START dataset = node:datasets(namespace={namespace}), report = node:reports('sourceId:*') " +
-                "WHERE ('globi:' + dataset.namespace) = report.sourceId RETURN report.citation? as study_citation, report.externalId? as study_url, report.doi? as study_doi, report.source? as study_source_citation, report.nInteractions as number_of_interactions, report.nTaxa as number_of_distinct_taxa, report.nStudies? as number_of_studies, report.nSources? as number_of_sources, report.nTaxaNoMatch? as number_of_distinct_taxa_no_match, report.sourceId? as study_source_id, dataset.doi? as study_source_doi, dataset.format? as study_source_format, dataset.archiveURI? as study_source_archive_uri SKIP 0 LIMIT 1024"));
+                "WHERE ('globi:' + dataset.namespace) = report.sourceId RETURN report.citation? as study_citation, report.externalId? as study_url, report.doi? as study_doi, report.source? as study_source_citation, report.nInteractions as number_of_interactions, report.nTaxa as number_of_distinct_taxa, report.nStudies? as number_of_studies, report.nSources? as number_of_sources, report.nTaxaNoMatch? as number_of_distinct_taxa_no_match, report.sourceId? as study_source_id, dataset.doi? as study_source_doi, dataset.format? as study_source_format, dataset.archiveURI? as study_source_archive_uri, dataset.lastSeenAt? as study_source_last_seen_at SKIP 0 LIMIT 1024"));
         assertThat(source.getParams().get("namespace"), is("some/name"));
     }
 
@@ -30,7 +30,7 @@ public class ReportControllerTest {
         CypherQuery source = new ReportController().sourceOrg("some", null);
         assertThat(source.getQuery(), is("START dataset = node:datasets(namespace={namespace}), report = node:reports('sourceId:*') " +
                 "WHERE ('globi:' + dataset.namespace) = report.sourceId " +
-                "RETURN report.citation? as study_citation, report.externalId? as study_url, report.doi? as study_doi, report.source? as study_source_citation, report.nInteractions as number_of_interactions, report.nTaxa as number_of_distinct_taxa, report.nStudies? as number_of_studies, report.nSources? as number_of_sources, report.nTaxaNoMatch? as number_of_distinct_taxa_no_match, report.sourceId? as study_source_id, dataset.doi? as study_source_doi, dataset.format? as study_source_format, dataset.archiveURI? as study_source_archive_uri SKIP 0 LIMIT 1024"));
+                "RETURN report.citation? as study_citation, report.externalId? as study_url, report.doi? as study_doi, report.source? as study_source_citation, report.nInteractions as number_of_interactions, report.nTaxa as number_of_distinct_taxa, report.nStudies? as number_of_studies, report.nSources? as number_of_sources, report.nTaxaNoMatch? as number_of_distinct_taxa_no_match, report.sourceId? as study_source_id, dataset.doi? as study_source_doi, dataset.format? as study_source_format, dataset.archiveURI? as study_source_archive_uri, dataset.lastSeenAt? as study_source_last_seen_at SKIP 0 LIMIT 1024"));
         assertThat(source.getParams().get("namespace"), is("some"));
     }
 
@@ -39,7 +39,7 @@ public class ReportControllerTest {
         CypherQuery source = new ReportController().sourceRoot(null);
         assertThat(source.getQuery(), is("START dataset = node:datasets('namespace:*'), report = node:reports('sourceId:*') " +
                 "WHERE ('globi:' + dataset.namespace) = report.sourceId " +
-                "RETURN report.citation? as study_citation, report.externalId? as study_url, report.doi? as study_doi, report.source? as study_source_citation, report.nInteractions as number_of_interactions, report.nTaxa as number_of_distinct_taxa, report.nStudies? as number_of_studies, report.nSources? as number_of_sources, report.nTaxaNoMatch? as number_of_distinct_taxa_no_match, report.sourceId? as study_source_id, dataset.doi? as study_source_doi, dataset.format? as study_source_format, dataset.archiveURI? as study_source_archive_uri SKIP 0 LIMIT 1024"));
+                "RETURN report.citation? as study_citation, report.externalId? as study_url, report.doi? as study_doi, report.source? as study_source_citation, report.nInteractions as number_of_interactions, report.nTaxa as number_of_distinct_taxa, report.nStudies? as number_of_studies, report.nSources? as number_of_sources, report.nTaxaNoMatch? as number_of_distinct_taxa_no_match, report.sourceId? as study_source_id, dataset.doi? as study_source_doi, dataset.format? as study_source_format, dataset.archiveURI? as study_source_archive_uri, dataset.lastSeenAt? as study_source_last_seen_at SKIP 0 LIMIT 1024"));
         assertThat(source.getParams().size(), is(0));
     }
 
