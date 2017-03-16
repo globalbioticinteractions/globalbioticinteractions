@@ -61,4 +61,11 @@ public class DatasetFinderZenodoTest {
         assertThat(uri.toString(), is("https://zenodo.org/record/207958/files/globalbioticinteractions/template-dataset-0.0.2.zip"));
     }
 
+    @Test
+    public void extractGitHubReposArchives2() throws DatasetFinderException {
+        URI uri = new DatasetFinderZenodo().datasetFor("millerse/Lara-C.-2006").getArchiveURI();
+        assertThat(uri, is(notNullValue()));
+        assertThat(uri.toString(), is("https://zenodo.org/record/258208/files/millerse/Lara-C.-2006-v1.0.zip"));
+    }
+
 }
