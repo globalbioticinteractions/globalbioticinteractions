@@ -146,6 +146,7 @@ public class ReportGenerator {
             node.setProperty(PropertyAndValueDictionary.NUMBER_OF_DISTINCT_TAXA_NO_MATCH, idsNoMatch.size());
             node.setProperty(PropertyAndValueDictionary.NUMBER_OF_STUDIES, 1);
             node.setProperty(PropertyAndValueDictionary.NUMBER_OF_SOURCES, 1);
+            node.setProperty(PropertyAndValueDictionary.NUMBER_OF_DATASETS, 1);
             getGraphDb().index().forNodes("reports").add(node, StudyConstant.TITLE, study.getTitle());
             getGraphDb().index().forNodes("reports").add(node, StudyConstant.SOURCE, study.getTitle());
             tx.success();
@@ -197,6 +198,8 @@ public class ReportGenerator {
             final Set<Long> distinctTaxonIdsNoMatch = new HashSet<>();
             final Counter counter = new Counter();
             final Counter studyCounter = new Counter();
+            final Set<String> distinctSources = new HashSet<String>();
+            final Set<String> distinctDatasets = new HashSet<String>();
 
             NodeUtil.findStudies(getGraphDb(), new StudyNodeListener() {
                 @Override
@@ -205,6 +208,8 @@ public class ReportGenerator {
                         Iterable<Relationship> specimens = NodeUtil.getSpecimens(study);
                         countInteractionsAndTaxa(specimens, distinctTaxonIds, counter, distinctTaxonIdsNoMatch);
                         studyCounter.count();
+                        distinctSources.add(study.getSource());
+                        distinctDatasets.add(study.getSourceId());
                     }
 
                 }
@@ -219,7 +224,8 @@ public class ReportGenerator {
                 node.setProperty(PropertyAndValueDictionary.NUMBER_OF_DISTINCT_TAXA, distinctTaxonIds.size());
                 node.setProperty(PropertyAndValueDictionary.NUMBER_OF_DISTINCT_TAXA_NO_MATCH, distinctTaxonIdsNoMatch.size());
                 node.setProperty(PropertyAndValueDictionary.NUMBER_OF_STUDIES, studyCounter.getCount());
-                node.setProperty(PropertyAndValueDictionary.NUMBER_OF_SOURCES, 1);
+                node.setProperty(PropertyAndValueDictionary.NUMBER_OF_SOURCES, distinctSources.size());
+                node.setProperty(PropertyAndValueDictionary.NUMBER_OF_DATASETS, distinctDatasets.size());
 
                 getGraphDb().index().forNodes("reports").add(node, sourceHandler.getGroupByKeyName(), groupByKey);
                 tx.success();
