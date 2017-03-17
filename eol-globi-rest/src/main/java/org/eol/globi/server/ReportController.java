@@ -111,7 +111,7 @@ public class ReportController {
             + " RETURN report.citation? as " + ResultField.STUDY_CITATION
             + ", report.externalId? as " + ResultField.STUDY_URL
             + ", report.doi? as " + ResultField.STUDY_DOI
-            + ", report.source? as " + ResultField.STUDY_SOURCE_CITATION
+            + ", dataset.citation? as " + ResultField.STUDY_SOURCE_CITATION
             + ", report.nInteractions as " + ResultField.NUMBER_OF_INTERACTIONS
             + ", report.nTaxa as " + ResultField.NUMBER_OF_DISTINCT_TAXA
             + ", report.nStudies? as " + ResultField.NUMBER_OF_STUDIES
