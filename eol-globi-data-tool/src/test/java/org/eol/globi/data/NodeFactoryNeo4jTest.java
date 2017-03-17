@@ -187,6 +187,7 @@ public class NodeFactoryNeo4jTest extends GraphDBTestCase {
         DatasetImpl dataset = new DatasetImpl("some/namespace", URI.create("some:uri"));
         ObjectNode objectNode = new ObjectMapper().createObjectNode();
         objectNode.put(DatasetConstant.SHOULD_RESOLVE_REFERENCES, false);
+        objectNode.put(DatasetConstant.CITATION, "some citation");
         dataset.setConfig(objectNode);
 
         Dataset origDataset = getNodeFactory().getOrCreateDataset(dataset);
@@ -195,6 +196,7 @@ public class NodeFactoryNeo4jTest extends GraphDBTestCase {
         assertThat(origDataset, is(notNullValue()));
         assertThat(origDataset.getArchiveURI().toString(), is("some:uri"));
         assertThat(origDataset.getOrDefault(DatasetConstant.SHOULD_RESOLVE_REFERENCES, "true"), is("false"));
+        assertThat(origDataset.getOrDefault(DatasetConstant.CITATION, "no citation"), is("some citation"));
         assertThat(origDataset.getOrDefault(DatasetConstant.LAST_SEEN_AT, "1"), is(not("1")));
 
         Dataset datasetAnother = getNodeFactory().getOrCreateDataset(dataset);
