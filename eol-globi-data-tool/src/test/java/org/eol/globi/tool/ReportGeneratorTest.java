@@ -8,9 +8,12 @@ import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyConstant;
 import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.TaxonImpl;
+import org.eol.globi.service.DatasetImpl;
 import org.junit.Test;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.index.IndexHits;
+
+import java.net.URI;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
@@ -163,8 +166,13 @@ public class ReportGeneratorTest extends GraphDBTestCase {
 
     @Test
     public void generateCollectionReport() throws NodeFactoryException {
-        createStudy(new StudyImpl("a title", "source", null, "citation"));
-        createStudy(new StudyImpl("another title", "another source", null, "citation"));
+        DatasetImpl originatingDataset = new DatasetImpl("some/namespace", URI.create("http://example.com"));
+        StudyImpl study1 = new StudyImpl("a title", "source", null, "citation");
+        study1.setOriginatingDataset(originatingDataset);
+        createStudy(study1);
+        StudyImpl study2 = new StudyImpl("another title", "another source", null, "citation");
+        study2.setOriginatingDataset(originatingDataset);
+        createStudy(study2);
         resolveNames();
 
         new ReportGenerator(getGraphDb()).generateReportForCollection();
@@ -173,6 +181,7 @@ public class ReportGeneratorTest extends GraphDBTestCase {
         assertThat(reports.size(), is(1));
         Node reportNode = reports.getSingle();
         assertThat((Integer) reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_SOURCES), is(2));
+        assertThat((Integer) reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_DATASETS), is(1));
         assertThat((Integer) reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_STUDIES), is(2));
         assertThat((Integer) reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_INTERACTIONS), is(8));
         assertThat((Integer) reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_DISTINCT_TAXA), is(3));

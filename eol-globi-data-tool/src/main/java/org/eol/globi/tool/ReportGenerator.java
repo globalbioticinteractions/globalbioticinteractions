@@ -237,6 +237,7 @@ public class ReportGenerator {
         final Counter counter = new Counter();
         final Counter studyCounter = new Counter();
         final Set<String> distinctSources = new HashSet<String>();
+        final Set<String> distinctDatasets = new HashSet<String>();
 
         NodeUtil.findStudies(getGraphDb(), new StudyNodeListener() {
             @Override
@@ -245,7 +246,7 @@ public class ReportGenerator {
                 countInteractionsAndTaxa(specimens, distinctTaxonIds, counter, distinctTaxonIdsNoMatch);
                 studyCounter.count();
                 distinctSources.add(study.getSource());
-
+                distinctDatasets.add(study.getSourceId());
             }
         });
 
@@ -258,6 +259,7 @@ public class ReportGenerator {
             node.setProperty(PropertyAndValueDictionary.NUMBER_OF_DISTINCT_TAXA_NO_MATCH, distinctTaxonIdsNoMatch.size());
             node.setProperty(PropertyAndValueDictionary.NUMBER_OF_STUDIES, studyCounter.getCount());
             node.setProperty(PropertyAndValueDictionary.NUMBER_OF_SOURCES, distinctSources.size());
+            node.setProperty(PropertyAndValueDictionary.NUMBER_OF_DATASETS, distinctDatasets.size());
             getGraphDb().index().forNodes("reports").add(node, PropertyAndValueDictionary.COLLECTION, GLOBI_COLLECTION_NAME);
             tx.success();
         } finally {

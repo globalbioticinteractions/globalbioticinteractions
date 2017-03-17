@@ -23,6 +23,7 @@ public class PropertyAndValueDictionary {
     public static final String NUMBER_OF_INTERACTIONS = "nInteractions";
     public static final String NUMBER_OF_DISTINCT_TAXA = "nTaxa";
     public static final java.lang.String NUMBER_OF_SOURCES = "nSources";
+    public static final java.lang.String NUMBER_OF_DATASETS = "nDatasets";
     public static final java.lang.String NUMBER_OF_STUDIES = "nStudies";
     public static final String COLLECTION = "collection";
     public static final String LABEL = "label";
