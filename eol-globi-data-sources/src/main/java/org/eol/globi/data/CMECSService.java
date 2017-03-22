@@ -1,6 +1,7 @@
 package org.eol.globi.data;
 
 import com.healthmarketscience.jackcess.Database;
+import com.healthmarketscience.jackcess.DatabaseBuilder;
 import com.healthmarketscience.jackcess.Table;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
@@ -43,7 +44,7 @@ public class CMECSService implements TermLookupService {
 
     private static Map<String, Term> buildTermMap() throws IOException {
         LOG.info(CMECSService.class.getSimpleName() + " instantiating...");
-        String uri = "http://cmecscatalog.org/documents/cmecs4.accdb";
+        String uri = "https://cmecscatalog.org/cmecs/documents/cmecs4.accdb";
         LOG.info("CMECS data [" + uri + "] downloading ...");
         HttpGet get = new HttpGet(uri);
         try {
@@ -53,7 +54,10 @@ public class CMECSService implements TermLookupService {
             IOUtils.copy(execute.getEntity().getContent(), new FileOutputStream(cmecs));
             LOG.info("CMECS data [" + uri + "] downloaded.");
 
-            Database db = Database.open(new File(cmecs.toURI()), true);
+            Database db = new DatabaseBuilder()
+                .setFile(new File(cmecs.toURI()))
+                .setReadOnly(true)
+                .open();
 
             Map<String, Term> aquaticSettingsTerms = new HashMap<String, Term>();
 
