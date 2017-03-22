@@ -2,8 +2,9 @@ package org.eol.globi.data;
 
 import com.healthmarketscience.jackcess.Column;
 import com.healthmarketscience.jackcess.Database;
-import com.healthmarketscience.jackcess.JetFormat;
+import com.healthmarketscience.jackcess.DatabaseBuilder;
 import com.healthmarketscience.jackcess.Table;
+import com.healthmarketscience.jackcess.impl.JetFormat;
 import org.apache.commons.collections4.CollectionUtils;
 import org.junit.Test;
 
@@ -35,8 +36,8 @@ public class StudyImporterForADWTest extends GraphDBTestCase {
     public void readMDB() throws URISyntaxException, IOException {
         URI uri = getClass().getResource("spire/econetvis.mdb").toURI();
         assertThat(uri, is(notNullValue()));
-        Database db = Database.open(new File(uri), true);
-        assertThat(db.getFileFormat().getJetFormat(), is(JetFormat.VERSION_4));
+        Database db = DatabaseBuilder.open(new File(uri));
+        assertThat(db.getFileFormat(), is(Database.FileFormat.V2000));
 
         String[] tableNames = new String[]{
                 "attribute_types",
@@ -94,7 +95,7 @@ public class StudyImporterForADWTest extends GraphDBTestCase {
     private void assertColumnNames(List<String> expectedColumnNames, Table table) throws IOException {
         Table links = table;
         List<String> actualColumnNames = new ArrayList<String>();
-        List<Column> columns = links.getColumns();
+        List<? extends Column> columns = links.getColumns();
         for (Column column : columns) {
             actualColumnNames.add(column.getName());
         }

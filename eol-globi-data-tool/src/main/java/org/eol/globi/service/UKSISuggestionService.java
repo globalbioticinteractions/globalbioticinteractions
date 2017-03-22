@@ -1,6 +1,7 @@
 package org.eol.globi.service;
 
 import com.healthmarketscience.jackcess.Database;
+import com.healthmarketscience.jackcess.DatabaseBuilder;
 import com.healthmarketscience.jackcess.Table;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
@@ -84,7 +85,7 @@ public class UKSISuggestionService implements PropertyEnricher, NameSuggester {
             FileOutputStream fileOutputStream = new FileOutputStream(tmpFile);
             IOUtils.copy(is, fileOutputStream);
 
-            Database db = Database.open(tmpFile, true);
+            Database db = DatabaseBuilder.open(tmpFile);
 
             Table names = db.getTable("NAMESERVER_FOR_WIDER_DELIVERY");
             for (Map<String, Object> study : names) {
