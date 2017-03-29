@@ -1,11 +1,13 @@
 package org.eol.globi.data;
 
+import org.eol.globi.domain.SpecimenConstant;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.service.Dataset;
 import org.eol.globi.service.DatasetImpl;
 import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
+import org.neo4j.graphdb.Relationship;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -15,6 +17,7 @@ import java.util.List;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.hamcrest.core.StringStartsWith.startsWith;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.matchers.JUnitMatchers.containsString;
 
@@ -34,7 +37,7 @@ public class StudyImporterForHurlbertTest extends GraphDBTestCase {
         importStudy(importer);
 
         List<Study> allStudies = NodeUtil.findAllStudies(getGraphDb());
-        assertThat(allStudies.size(), is(2));
+        assertThat(allStudies.size(), is(3));
 
         Study study = allStudies.get(0);
         assertThat(study.getSource(), startsWith("Allen Hurlbert. Avian Diet Database (https://github.com/hurlbertlab/dietdatabase/). Accessed at <AvianDietDatabase.txt>"));
@@ -49,6 +52,13 @@ public class StudyImporterForHurlbertTest extends GraphDBTestCase {
         assertThat(preyTaxon, is(notNullValue()));
         assertThat(preyTaxon.getStatus().getId(), is("HURLBERT:verified"));
         assertThat(preyTaxon.getStatus().getName(), is("verified"));
+
+        Study studyNoDate = allStudies.get(2);
+        assertThat(studyNoDate.getCitation(), startsWith("\"Beal, F. E. L. 1918"));
+        Iterable<Relationship> specimens = NodeUtil.getSpecimens(studyNoDate);
+        for (Relationship specimen : specimens) {
+            assertFalse(specimen.hasProperty(SpecimenConstant.DATE_IN_UNIX_EPOCH));
+        }
 
     }
 

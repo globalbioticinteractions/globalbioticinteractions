@@ -168,10 +168,10 @@ public class StudyImporterForHurlbert extends BaseStudyImporter {
         String year = parser.getString(yearLabel);
         if (notBlankOrNA(year)) {
             dateString = StringUtils.trim(year);
-        }
-        String month = parser.getString(monthLabel);
-        if (notBlankOrNA(month)) {
-            dateString += "-" + StringUtils.trim(month);
+            String month = parser.getString(monthLabel);
+            if (notBlankOrNA(month)) {
+                dateString += "-" + StringUtils.trim(month);
+            }
         }
         return dateString;
     }
