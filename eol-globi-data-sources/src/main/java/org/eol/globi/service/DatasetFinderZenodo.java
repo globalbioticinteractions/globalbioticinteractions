@@ -2,6 +2,7 @@ package org.eol.globi.service;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.eol.globi.taxon.XmlUtil;
 import org.eol.globi.util.HttpUtil;
 import org.w3c.dom.Node;
@@ -39,20 +40,22 @@ public class DatasetFinderZenodo implements DatasetFinder {
 
     static URI findZenodoGitHubArchives(NodeList records, String requestedRepo) throws XPathExpressionException, MalformedURLException {
         URI archiveURI = null;
+        Long idMax = null;
         for (int i = 0; i < records.getLength(); i++) {
             Node item = records.item(i);
             String fullId = (String) XmlUtil.applyXPath(item, "header/identifier", XPathConstants.STRING);
             if (StringUtils.startsWith(fullId, PREFIX_ZENODO)) {
-                String id = StringUtils.replace(fullId, PREFIX_ZENODO, "");
+                String idString = StringUtils.replace(fullId, PREFIX_ZENODO, "");
                 String relatedIdentifier = StringUtils.trim((String) XmlUtil.applyXPath(item, ".//*[local-name()='relatedIdentifier']", XPathConstants.STRING));
                 if (StringUtils.startsWith(relatedIdentifier, PREFIX_GITHUB_RELATION)) {
                     String replace = StringUtils.replace(StringUtils.trim(relatedIdentifier), PREFIX_GITHUB_RELATION, "");
                     String[] split = StringUtils.split(replace, "/");
-                    if (split.length > 3) {
+                    Long id = NumberUtils.createLong(idString);
+                    if (split.length > 3 && (idMax == null || id > idMax)) {
                         String githubRepo = split[0] + "/" + split[1];
                         if (StringUtils.equals(githubRepo, requestedRepo)) {
-                            archiveURI = URI.create("https://zenodo.org/record/" + id + "/files/" + githubRepo + "-" + split[3] + ".zip");
-                            break;
+                            archiveURI = URI.create("https://zenodo.org/record/" + idString + "/files/" + githubRepo + "-" + split[3] + ".zip");
+                            idMax = id;
                         }
                     }
                 }

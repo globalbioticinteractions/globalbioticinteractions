@@ -68,4 +68,11 @@ public class DatasetFinderZenodoTest {
         assertThat(uri.toString(), is("https://zenodo.org/record/258208/files/millerse/Lara-C.-2006-v1.0.zip"));
     }
 
+    @Test
+    public void extractGitHubReposArchives3() throws DatasetFinderException {
+        URI uri = new DatasetFinderZenodo().datasetFor("millerse/Lichenous").getArchiveURI();
+        assertThat(uri, is(notNullValue()));
+        assertThat(uri.toString(), is("https://zenodo.org/record/545807/files/millerse/Lichenous-v2.0.0.zip"));
+    }
+
 }
