@@ -22,8 +22,9 @@ public class NBNServiceTest {
         Map<String, String> enriched = getTaxonInfo("NHMSYS0020190380");
         assertThat(enriched.get(PropertyAndValueDictionary.NAME), is("Abacarus hystrix"));
         assertThat(enriched.get(PropertyAndValueDictionary.EXTERNAL_ID), is("NBN:NHMSYS0020190380"));
-        assertThat(enriched.get(PropertyAndValueDictionary.PATH_IDS), is("NBN:NBNSYS0100001342 | NBN:NHMSYS0020470198 | NBN:NHMSYS0021049469 | NBN:NBNSYS0000160799 | NBN:NBNSYS0000159970 | NBN:NHMSYS0020190379 | NBN:NHMSYS0020190380"));
-        assertThat(enriched.get(PropertyAndValueDictionary.PATH), is("Animalia | Arthropoda | Arachnida | Prostigmata | Eriophyidae | Abacarus | Abacarus hystrix"));
+        assertThat(enriched.get(PropertyAndValueDictionary.PATH), is("Biota | Animalia | Arthropoda | Chelicerata | Arachnida | Prostigmata | Eriophyidae | Abacarus | Abacarus hystrix"));
+        assertThat(enriched.get(PropertyAndValueDictionary.PATH_NAMES), is("unranked | kingdom | phylum | subphylum | class | order | family | genus | species"));
+        assertThat(enriched.get(PropertyAndValueDictionary.PATH_IDS), is("NBN:NHMSYS0021048735 | NBN:NBNSYS0100001342 | NBN:NHMSYS0020470198 | NBN:NHMSYS0000842068 | NBN:NHMSYS0021049469 | NBN:NBNSYS0000160799 | NBN:NBNSYS0000159970 | NBN:NHMSYS0020190379 | NBN:NHMSYS0020190380"));
     }
 
     @Test
@@ -47,9 +48,9 @@ public class NBNServiceTest {
         Map<String, String> enriched = getTaxonInfo("NBNSYS0000024889");
         assertThat(enriched.get(PropertyAndValueDictionary.NAME), is("Abdera biflexuosa"));
         assertThat(enriched.get(PropertyAndValueDictionary.EXTERNAL_ID), is("NBN:NBNSYS0000024889"));
-        assertThat(enriched.get(PropertyAndValueDictionary.PATH_IDS), is("NBN:NBNSYS0100001342 | NBN:NHMSYS0020470198 | NBN:NBNSYS0000160231 | NBN:NHMSYS0001717710 | NBN:NHMSYS0020152545 | NBN:NHMSYS0020151134 | NBN:NBNSYS0000024889"));
-        assertThat(enriched.get(PropertyAndValueDictionary.PATH_NAMES), is("Kingdom | Phylum | Class | Order | Family | Genus | Species"));
-        assertThat(enriched.get(PropertyAndValueDictionary.PATH), is("Animalia | Arthropoda | Insecta | Coleoptera | Melandryidae | Abdera | Abdera biflexuosa"));
+        assertThat(enriched.get(PropertyAndValueDictionary.PATH_NAMES), is("unranked | kingdom | phylum | subphylum | class | order | family | genus | species"));
+        assertThat(enriched.get(PropertyAndValueDictionary.PATH), is("Biota | Animalia | Arthropoda | Hexapoda | Insecta | Coleoptera | Melandryidae | Abdera | Abdera biflexuosa"));
+        assertThat(enriched.get(PropertyAndValueDictionary.PATH_IDS), is("NBN:NHMSYS0021048735 | NBN:NBNSYS0100001342 | NBN:NHMSYS0020470198 | NBN:NHMSYS0020191879 | NBN:NBNSYS0000160231 | NBN:NHMSYS0001717710 | NBN:NHMSYS0020152545 | NBN:NHMSYS0020151134 | NBN:NBNSYS0000024889"));
     }
 
     protected Map<String, String> getTaxonInfo(final String nbnCode) throws PropertyEnricherException {

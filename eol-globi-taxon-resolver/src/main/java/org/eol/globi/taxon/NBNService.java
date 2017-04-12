@@ -40,16 +40,40 @@ public class NBNService implements PropertyEnricher {
 
         try {
             String nbnId = StringUtils.replace(externalId, TaxonomyProvider.NBN.getIdPrefix(), "");
-            String response = HttpUtil.getContent("https://data.nbn.org.uk/api/taxa/" + nbnId + "/taxonomy");
+            String response = HttpUtil.getContent("https://species-ws.nbnatlas.org/classification/" + nbnId);
             JsonNode taxa = new ObjectMapper().readTree(response);
             for (JsonNode jsonNode : taxa) {
-                addTaxonNode(enriched, ids, names, ranks, jsonNode);
+                String externalId1;
+                externalId1 = jsonNode.has("guid") ? (TaxonomyProvider.NBN.getIdPrefix() + jsonNode.get("guid").asText()) : "";
+                String name = jsonNode.has("scientificName") ? jsonNode.get("scientificName").asText() : "";
+                String rank = jsonNode.has("rank") ? jsonNode.get("rank").asText() : "";
+                enriched.put(PropertyAndValueDictionary.NAME, name);
+                enriched.put(PropertyAndValueDictionary.RANK, rank);
+                enriched.put(PropertyAndValueDictionary.EXTERNAL_ID, externalId1);
+
+                String commonName = jsonNode.has("commonName") ? jsonNode.get("commonName").asText() : "";
+                if (StringUtils.isNotBlank(commonName)) {
+                    enriched.put(PropertyAndValueDictionary.COMMON_NAMES, commonName + " @en");
+                }
+                ids.add(externalId1);
+                names.add(name);
+                ranks.add(rank);
             }
 
-            response = HttpUtil.getContent("https://data.nbn.org.uk/api/taxa/" + nbnId);
+            response = HttpUtil.getContent("https://species-ws.nbnatlas.org/species/" + nbnId);
             if (StringUtils.isNotBlank(response)) {
-                JsonNode jsonNode = new ObjectMapper().readTree(response);
-                addTaxonNode(enriched, ids, names, ranks, jsonNode);
+                JsonNode jsonRootNode = new ObjectMapper().readTree(response);
+                if (jsonRootNode.has("commonNames")) {
+                    List<String> commonNames = new ArrayList<>();
+                    for (JsonNode commonName : jsonRootNode.get("commonNames")) {
+                        String name = commonName.has("nameString") ? commonName.get("nameString").asText() : "";
+                        String language = commonName.has("language") ? commonName.get("language").asText() : "en";
+                        commonNames.add(name + " @" + language);
+                    }
+                    if (commonNames.size() > 0) {
+                        enriched.put(PropertyAndValueDictionary.COMMON_NAMES, StringUtils.join(commonNames, CharsetConstant.SEPARATOR));
+                    }
+                }
             } else {
                 LOG.warn("empty response for nbn taxon lookup with id [" + nbnId + "]");
             }
@@ -64,8 +88,8 @@ public class NBNService implements PropertyEnricher {
 
     protected void addTaxonNode(Map<String, String> enriched, List<String> ids, List<String> names, List<String> ranks, JsonNode jsonNode) {
         String externalId;
-        externalId = jsonNode.has("taxonVersionKey") ? (TaxonomyProvider.NBN.getIdPrefix() + jsonNode.get("taxonVersionKey").asText()) : "";
-        String name = jsonNode.has("name") ? jsonNode.get("name").asText() : "";
+        externalId = jsonNode.has("guid") ? (TaxonomyProvider.NBN.getIdPrefix() + jsonNode.get("guid").asText()) : "";
+        String name = jsonNode.has("scientificName") ? jsonNode.get("scientificName").asText() : "";
         String rank = jsonNode.has("rank") ? jsonNode.get("rank").asText() : "";
         enriched.put(PropertyAndValueDictionary.NAME, name);
         enriched.put(PropertyAndValueDictionary.RANK, rank);
