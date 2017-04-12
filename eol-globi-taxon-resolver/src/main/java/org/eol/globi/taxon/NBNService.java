@@ -51,10 +51,6 @@ public class NBNService implements PropertyEnricher {
                 enriched.put(PropertyAndValueDictionary.RANK, rank);
                 enriched.put(PropertyAndValueDictionary.EXTERNAL_ID, externalId1);
 
-                String commonName = jsonNode.has("commonName") ? jsonNode.get("commonName").asText() : "";
-                if (StringUtils.isNotBlank(commonName)) {
-                    enriched.put(PropertyAndValueDictionary.COMMON_NAMES, commonName + " @en");
-                }
                 ids.add(externalId1);
                 names.add(name);
                 ranks.add(rank);
