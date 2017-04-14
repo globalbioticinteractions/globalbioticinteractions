@@ -32,7 +32,7 @@ public class NodeBacked {
 
     public Relationship createRelationshipTo(Object endNode, RelType relType) {
         Transaction tx = getUnderlyingNode().getGraphDatabase().beginTx();
-        Relationship rel = null;
+        Relationship rel;
         try {
             rel = createRelationshipToNoTx((NodeBacked)endNode, relType);
             tx.success();

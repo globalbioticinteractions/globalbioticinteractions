@@ -1,14 +1,7 @@
 package org.eol.globi.data;
 
 import org.apache.commons.lang3.StringUtils;
-import org.eol.globi.domain.Environment;
-import org.eol.globi.domain.Location;
-import org.eol.globi.domain.Season;
-import org.eol.globi.domain.Specimen;
-import org.eol.globi.domain.Study;
-import org.eol.globi.domain.StudyImpl;
-import org.eol.globi.domain.Taxon;
-import org.eol.globi.domain.Term;
+import org.eol.globi.domain.*;
 import org.eol.globi.geo.EcoregionFinder;
 import org.eol.globi.service.AuthorIdResolver;
 import org.eol.globi.service.Dataset;
@@ -36,6 +29,11 @@ public class NodeFactoryWithDatasetContext implements NodeFactory {
     @Override
     public Season createSeason(String seasonNameLower) {
         return factory.createSeason(seasonNameLower);
+    }
+
+    @Override
+    public Specimen createSpecimen(Interaction interaction, Taxon taxon) throws NodeFactoryException {
+        return factory.createSpecimen(interaction, taxon);
     }
 
     @Override
@@ -136,6 +134,11 @@ public class NodeFactoryWithDatasetContext implements NodeFactory {
     @Override
     public Dataset getOrCreateDataset(Dataset dataset) {
         return factory.getOrCreateDataset(dataset);
+    }
+
+    @Override
+    public Interaction createInteraction(Study study) throws NodeFactoryException {
+        return factory.createInteraction(study);
     }
 
 }

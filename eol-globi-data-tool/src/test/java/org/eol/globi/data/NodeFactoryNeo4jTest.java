@@ -4,22 +4,7 @@ import junit.framework.Assert;
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ObjectNode;
-import org.eol.globi.domain.DatasetNode;
-import org.eol.globi.domain.Environment;
-import org.eol.globi.domain.EnvironmentNode;
-import org.eol.globi.domain.InteractType;
-import org.eol.globi.domain.Location;
-import org.eol.globi.domain.LocationImpl;
-import org.eol.globi.domain.LocationNode;
-import org.eol.globi.domain.NodeBacked;
-import org.eol.globi.domain.PropertyAndValueDictionary;
-import org.eol.globi.domain.RelTypes;
-import org.eol.globi.domain.Specimen;
-import org.eol.globi.domain.SpecimenNode;
-import org.eol.globi.domain.StudyImpl;
-import org.eol.globi.domain.StudyNode;
-import org.eol.globi.domain.TaxonImpl;
-import org.eol.globi.domain.Term;
+import org.eol.globi.domain.*;
 import org.eol.globi.service.Dataset;
 import org.eol.globi.service.DatasetConstant;
 import org.eol.globi.service.DatasetImpl;
@@ -289,6 +274,20 @@ public class NodeFactoryNeo4jTest extends GraphDBTestCase {
         specimen.setBasisOfRecord(getNodeFactory().getOrCreateBasisOfRecord("something:123", "theBasis"));
         assertThat(specimen.getBasisOfRecord().getName(), is("theBasis"));
         assertThat(specimen.getBasisOfRecord().getId(), is("TEST:theBasis"));
+    }
+
+    @Test
+    public void interactionWithParticipants() throws NodeFactoryException {
+        initTaxonService();
+        StudyNode study = getNodeFactory().createStudy(new StudyImpl("bla", "some source", null, null));
+        Interaction interaction = getNodeFactory().createInteraction(study);
+        assertThat(interaction.getParticipants().size(), is(0));
+
+        getNodeFactory().createSpecimen(interaction, new TaxonImpl("mickey mouse", null));
+        getNodeFactory().createSpecimen(interaction, new TaxonImpl("donald duck", null));
+
+        assertThat(interaction.getParticipants().size(), is(2));
+
     }
 
     protected void initTaxonService() {

@@ -12,8 +12,10 @@ public enum RelTypes implements RelType {
     SIMILAR_TO(NameType.SIMILAR_TO),
     SYNONYM_OF(NameType.SYNONYM_OF),
     COLLECTED,
-    IN_DATASET;
-
+    IN_DATASET,
+    HAS_PARTICIPANT,
+    DERIVED_FROM,
+    ACCESSED_AT;
 
     private final NameType type;
 

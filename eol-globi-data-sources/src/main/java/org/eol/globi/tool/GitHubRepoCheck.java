@@ -9,14 +9,7 @@ import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.data.ParserFactoryLocal;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.data.StudyImporterForGitHubData;
-import org.eol.globi.domain.Environment;
-import org.eol.globi.domain.InteractType;
-import org.eol.globi.domain.Location;
-import org.eol.globi.domain.Season;
-import org.eol.globi.domain.Specimen;
-import org.eol.globi.domain.Study;
-import org.eol.globi.domain.Taxon;
-import org.eol.globi.domain.Term;
+import org.eol.globi.domain.*;
 import org.eol.globi.geo.Ecoregion;
 import org.eol.globi.geo.EcoregionFinder;
 import org.eol.globi.geo.EcoregionFinderException;
@@ -123,6 +116,11 @@ public class GitHubRepoCheck {
                     return seasonName;
                 }
             };
+        }
+
+        @Override
+        public Specimen createSpecimen(Interaction interaction, Taxon taxon) throws NodeFactoryException {
+            return null;
         }
 
         @Override
@@ -379,6 +377,11 @@ public class GitHubRepoCheck {
         @Override
         public Dataset getOrCreateDataset(Dataset dataset) {
             return dataset;
+        }
+
+        @Override
+        public Interaction createInteraction(Study study) {
+            return null;
         }
     }
 }

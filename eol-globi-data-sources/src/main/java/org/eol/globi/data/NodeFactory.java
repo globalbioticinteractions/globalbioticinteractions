@@ -1,12 +1,6 @@
 package org.eol.globi.data;
 
-import org.eol.globi.domain.Environment;
-import org.eol.globi.domain.Location;
-import org.eol.globi.domain.Season;
-import org.eol.globi.domain.Specimen;
-import org.eol.globi.domain.Study;
-import org.eol.globi.domain.Taxon;
-import org.eol.globi.domain.Term;
+import org.eol.globi.domain.*;
 import org.eol.globi.geo.EcoregionFinder;
 import org.eol.globi.service.AuthorIdResolver;
 import org.eol.globi.service.Dataset;
@@ -19,6 +13,8 @@ public interface NodeFactory {
     Location findLocation(Location location);
 
     Season createSeason(String seasonNameLower);
+
+    Specimen createSpecimen(Interaction interaction, Taxon taxon) throws NodeFactoryException;
 
     Specimen createSpecimen(Study study, Taxon taxon) throws NodeFactoryException;
 
@@ -55,4 +51,6 @@ public interface NodeFactory {
     Term getOrCreateBasisOfRecord(String externalId, String name) throws NodeFactoryException;
 
     Dataset getOrCreateDataset(Dataset dataset);
+
+    Interaction createInteraction(Study study) throws NodeFactoryException;
 }

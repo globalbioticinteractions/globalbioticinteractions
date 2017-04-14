@@ -5,24 +5,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.eol.globi.domain.DatasetNode;
-import org.eol.globi.domain.Environment;
-import org.eol.globi.domain.EnvironmentNode;
-import org.eol.globi.domain.Location;
-import org.eol.globi.domain.LocationConstant;
-import org.eol.globi.domain.LocationNode;
-import org.eol.globi.domain.NodeBacked;
-import org.eol.globi.domain.PropertyAndValueDictionary;
-import org.eol.globi.domain.RelTypes;
-import org.eol.globi.domain.SeasonNode;
-import org.eol.globi.domain.Specimen;
-import org.eol.globi.domain.SpecimenConstant;
-import org.eol.globi.domain.SpecimenNode;
-import org.eol.globi.domain.Study;
-import org.eol.globi.domain.StudyConstant;
-import org.eol.globi.domain.StudyNode;
-import org.eol.globi.domain.Taxon;
-import org.eol.globi.domain.Term;
+import org.eol.globi.domain.*;
 import org.eol.globi.geo.Ecoregion;
 import org.eol.globi.geo.EcoregionFinder;
 import org.eol.globi.geo.EcoregionFinderException;
@@ -80,7 +63,6 @@ public class NodeFactoryNeo4j implements NodeFactory {
     private final TermLookupService lifeStageLookupService;
     private final TermLookupService bodyPartLookupService;
 
-    private DOIResolver doiResolver;
     private EcoregionFinder ecoregionFinder;
 
     public NodeFactoryNeo4j(GraphDatabaseService graphDb) {
@@ -175,6 +157,13 @@ public class NodeFactoryNeo4j implements NodeFactory {
     }
 
     @Override
+    public SpecimenNode createSpecimen(Interaction interaction, Taxon taxon) throws NodeFactoryException {
+        SpecimenNode specimen = createSpecimen(interaction.getStudy(), taxon);
+        ((InteractionNode) interaction).createRelationshipTo(specimen, RelTypes.HAS_PARTICIPANT);
+        return specimen;
+    }
+
+        @Override
     public SpecimenNode createSpecimen(Study study, Taxon taxon) throws NodeFactoryException {
         if (null == study) {
             throw new NodeFactoryException("specimen needs study, but none is specified");
@@ -259,9 +248,7 @@ public class NodeFactoryNeo4j implements NodeFactory {
 
             Dataset dataset = getOrCreateDatasetNoTx(study.getOriginatingDataset());
             if (dataset != null && dataset instanceof DatasetNode) {
-                studyNode.getUnderlyingNode().createRelationshipTo((
-                        (DatasetNode) dataset).getUnderlyingNode(),
-                    NodeUtil.asNeo4j(RelTypes.IN_DATASET));
+                studyNode.createRelationshipTo(dataset, RelTypes.IN_DATASET);
             }
 
             studies.add(node, StudyConstant.TITLE, study.getTitle());
@@ -439,7 +426,7 @@ public class NodeFactoryNeo4j implements NodeFactory {
             ecoregion.setId(NodeUtil.getPropertyStringValueOrDefault(ecoregionNode, PropertyAndValueDictionary.EXTERNAL_ID, null));
             ecoregion.setPath(NodeUtil.getPropertyStringValueOrDefault(ecoregionNode, "path", null));
             if (ecoregions == null) {
-                ecoregions = new ArrayList<Ecoregion>();
+                ecoregions = new ArrayList<>();
             }
             ecoregions.add(ecoregion);
         }
@@ -559,7 +546,6 @@ public class NodeFactoryNeo4j implements NodeFactory {
     }
 
     public void setDoiResolver(DOIResolver doiResolver) {
-        this.doiResolver = doiResolver;
     }
 
     public void setEcoregionFinder(EcoregionFinder ecoregionFinder) {
@@ -605,7 +591,27 @@ public class NodeFactoryNeo4j implements NodeFactory {
         }
     }
 
-    public Dataset getOrCreateDatasetNoTx(Dataset originatingDataset) {
+    @Override
+    public Interaction createInteraction(Study study) throws NodeFactoryException {
+        Transaction transaction = graphDb.beginTx();
+        InteractionNode interactionNode;
+        try {
+            Node node = graphDb.createNode();
+            StudyNode studyNode = getOrCreateStudy(study);
+            interactionNode = new InteractionNode(node);
+            interactionNode.createRelationshipTo(studyNode, RelTypes.DERIVED_FROM);
+            Dataset dataset = getOrCreateDatasetNoTx(study.getOriginatingDataset());
+            if (dataset != null && dataset instanceof DatasetNode) {
+                studyNode.createRelationshipTo(dataset, RelTypes.ACCESSED_AT);
+            }
+            transaction.success();
+        } finally {
+            transaction.finish();
+        }
+        return interactionNode;
+    }
+
+    private Dataset getOrCreateDatasetNoTx(Dataset originatingDataset) {
         Dataset datasetCreated = null;
         if (originatingDataset != null && StringUtils.isNotBlank(originatingDataset.getNamespace())) {
             IndexHits<Node> datasetHits = datasets.get(DatasetConstant.NAMESPACE, originatingDataset.getNamespace());
