@@ -602,7 +602,7 @@ public class NodeFactoryNeo4j implements NodeFactory {
             interactionNode.createRelationshipTo(studyNode, RelTypes.DERIVED_FROM);
             Dataset dataset = getOrCreateDatasetNoTx(study.getOriginatingDataset());
             if (dataset != null && dataset instanceof DatasetNode) {
-                studyNode.createRelationshipTo(dataset, RelTypes.ACCESSED_AT);
+                interactionNode.createRelationshipTo(dataset, RelTypes.ACCESSED_AT);
             }
             transaction.success();
         } finally {
