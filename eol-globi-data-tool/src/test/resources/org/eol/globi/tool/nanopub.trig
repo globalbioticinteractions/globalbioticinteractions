@@ -26,8 +26,8 @@
 }
 
 :NanoPub_1_Provenance {
-  <http://example.com/dataset> dcterms:bibliographicCitation "some study citation" ;
-    opm:wasDerivedFrom <http://doi.org/123.23/222> .
+  <http://doi.org/123.23/222> dcterms:bibliographicCitation "some study citation" .
+  <http://example.com/dataset> opm:wasDerivedFrom <http://doi.org/123.23/222> .
   :NanoPub_1_Assertion opm:wasDerivedFrom <http://example.com/dataset> ;
     opm:wasGeneratedBy <http://doi.org/10.5281/zenodo.321714> .
 }

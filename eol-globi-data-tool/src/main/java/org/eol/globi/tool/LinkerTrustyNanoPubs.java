@@ -75,13 +75,11 @@ public class LinkerTrustyNanoPubs {
             String referenceURI = StringUtils.isBlank(studyNode.getDOI())
                     ? studyNode.getDOI()
                     : ExternalIdUtil.urlForExternalId(studyNode.getExternalId());
-            String citation = studyNode.getCitation();
-            builder.append(String.format("  <%s> dcterms:bibliographicCitation \"%s\" ", datasetURI, StringUtils.defaultString(citation, "")));
             if (StringUtils.isNotBlank(referenceURI)) {
-                builder.append(";\n");
-                builder.append(String.format("    opm:wasDerivedFrom <%s> ", referenceURI));
+                String citation = studyNode.getCitation();
+                builder.append(String.format("  <%s> dcterms:bibliographicCitation \"%s\" .\n", referenceURI, StringUtils.defaultString(citation, "")));
+                builder.append(String.format("  <%s> opm:wasDerivedFrom <%s> .\n", datasetURI, referenceURI));
             }
-            builder.append(".\n");
         }
 
         builder.append(String.format(

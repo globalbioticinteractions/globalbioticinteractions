@@ -1,5 +1,5 @@
-@prefix this: <http://np.globalbioticinteractions.org/RADu2Zi21LplyHGq3IBanK1j7uYOBSOA_lVTiiLPptYlE> .
-@prefix sub: <http://np.globalbioticinteractions.org/RADu2Zi21LplyHGq3IBanK1j7uYOBSOA_lVTiiLPptYlE#> .
+@prefix this: <http://np.globalbioticinteractions.org/RAS8llrfYzdQHzCHldX3Fc4gHbUa-Z42sOoelVN3WHTw4> .
+@prefix sub: <http://np.globalbioticinteractions.org/RAS8llrfYzdQHzCHldX3Fc4gHbUa-Z42sOoelVN3WHTw4#> .
 @prefix nanopub: <http://www.nanopub.org/nschema#> .
 @prefix dcterms: <http://purl.org/dc/terms/> .
 @prefix opm: <http://purl.org/net/opmv/ns#> .
@@ -24,8 +24,8 @@ sub:NanoPub_1_Assertion {
 }
 
 sub:NanoPub_1_Provenance {
-	<http://example.com/dataset> dcterms:bibliographicCitation "some study citation" ;
-		opm:wasDerivedFrom <http://doi.org/123.23/222> .
+	<http://doi.org/123.23/222> dcterms:bibliographicCitation "some study citation" .
+	<http://example.com/dataset> opm:wasDerivedFrom <http://doi.org/123.23/222> .
 	
 	sub:NanoPub_1_Assertion opm:wasDerivedFrom <http://example.com/dataset> ;
 		opm:wasGeneratedBy <http://doi.org/10.5281/zenodo.321714> .
