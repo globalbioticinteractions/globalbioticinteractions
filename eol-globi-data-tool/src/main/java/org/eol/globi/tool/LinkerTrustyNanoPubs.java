@@ -21,6 +21,8 @@ import org.neo4j.graphdb.index.Index;
 import org.openrdf.rio.RDFHandlerException;
 
 import java.util.Collection;
+import java.util.Map;
+import java.util.TreeMap;
 
 public class LinkerTrustyNanoPubs {
 
@@ -96,10 +98,12 @@ public class LinkerTrustyNanoPubs {
 
     public void generateOrganisms(StringBuilder builder, InteractionNode interaction) {
         Collection<Specimen> participants = interaction.getParticipants();
+        Map<Long, Integer> nodeIdParticipantMap = new TreeMap<Long, Integer>();
         int participantNumber = 0;
         for (Specimen participant : participants) {
             builder.append(String.format("\n    obo:RO_0000057 :Organism_%d ", participantNumber));
             builder.append(participants.size() - 1 == participantNumber ? "." : ";");
+            nodeIdParticipantMap.put(((NodeBacked) participant).getNodeID(), participantNumber);
             participantNumber++;
         }
 
@@ -129,7 +133,7 @@ public class LinkerTrustyNanoPubs {
                                 String interactIRI = relationship.getProperty(PropertyAndValueDictionary.IRI).toString();
                                 if (StringUtils.isNotBlank(interactIRI)) {
                                     builder.append(";\n");
-                                    builder.append(String.format("    <%s> :Organism_%d ", interactIRI, relationship.getEndNode().getId()));
+                                    builder.append(String.format("    <%s> :Organism_%d ", interactIRI, nodeIdParticipantMap.get(relationship.getEndNode().getId())));
                                 }
                             }
                         }
