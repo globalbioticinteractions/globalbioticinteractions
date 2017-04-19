@@ -26,12 +26,10 @@
 }
 
 :NanoPub_1_Provenance {
-  <http://doi.org/123.23/222> dcterms:bibliographicCitation "some study citation" .
-  <http://example.com/dataset> opm:wasDerivedFrom <http://doi.org/123.23/222> .
-  :NanoPub_1_Assertion opm:wasDerivedFrom <http://example.com/dataset> ;
-    opm:wasGeneratedBy <http://doi.org/10.5281/zenodo.321714> .
+   :NanoPub_1_Assertion opm:wasDerivedFrom <http://doi.org/123.23/222> , <http://example.com/dataset> ;
+	 opm:wasGeneratedBy <http://doi.org/10.5281/zenodo.321714> .
 }
 
 :NanoPub_1_Pubinfo {
-    : dcterms:bibliographicCitation "no citation" .
+	: dcterms:bibliographicCitation "no citation" .
 }

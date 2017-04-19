@@ -47,7 +47,7 @@ public class LinkerTrustyNanoPubsTest extends GraphDBTestCase {
         ByteArrayOutputStream actual = new ByteArrayOutputStream();
         Nanopub trustyNanopub = MakeTrustyNanopub.writeAsTrustyNanopub(nanopub, RDFFormat.TRIG, actual);
 
-        assertThat(TrustyUriUtils.getArtifactCode(trustyNanopub.getUri().toString()), is("RAS8llrfYzdQHzCHldX3Fc4gHbUa-Z42sOoelVN3WHTw4"));
+        assertThat(TrustyUriUtils.getArtifactCode(trustyNanopub.getUri().toString()), is("RAGTdA5YBcbrFgO7gVl1e_g6nlaqj8ikfoh2X0lgbmyaM"));
         String actualTrig = toTrigString(new ByteArrayInputStream(actual.toByteArray()));
         String expectedTrig = toTrigString(getClass().getResourceAsStream("trusty.nanopub.trig"));
 
