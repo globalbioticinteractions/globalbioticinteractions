@@ -1,5 +1,8 @@
 package org.eol.globi.tool;
 
+import net.trustyuri.TrustyUriException;
+import net.trustyuri.TrustyUriUtils;
+import org.apache.commons.io.output.NullOutputStream;
 import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.domain.DatasetNode;
 import org.eol.globi.domain.InteractType;
@@ -8,16 +11,22 @@ import org.eol.globi.domain.NodeBacked;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Specimen;
-import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.domain.TaxonomyProvider;
-import org.eol.globi.util.ExternalIdUtil;
 import org.eol.globi.util.NodeUtil;
+import org.nanopub.MalformedNanopubException;
+import org.nanopub.Nanopub;
+import org.nanopub.NanopubImpl;
+import org.nanopub.trusty.MakeTrustyNanopub;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
+import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.index.Index;
+import org.neo4j.graphdb.index.IndexHits;
+import org.openrdf.OpenRDFException;
+import org.openrdf.rio.RDFFormat;
 import org.openrdf.rio.RDFHandlerException;
 
 import java.util.Collection;
@@ -26,21 +35,41 @@ import java.util.TreeMap;
 
 public class LinkerTrustyNanoPubs {
 
-    public void link(GraphDatabaseService graphDb) throws RDFHandlerException {
+    public void link(GraphDatabaseService graphDb) throws OpenRDFException, MalformedNanopubException, TrustyUriException {
         Index<Node> datasets = graphDb.index().forNodes("datasets");
+        Index<Node> nanopubs = graphDb.index().forNodes("nanopubs");
         for (Node node : datasets.query("*:*")) {
             DatasetNode dataset = new DatasetNode(node);
             Iterable<Relationship> rels = dataset
                     .getUnderlyingNode()
                     .getRelationships(NodeUtil.asNeo4j(RelTypes.ACCESSED_AT), Direction.INCOMING);
             for (Relationship rel : rels) {
-                writeNanoPub(dataset, new InteractionNode(rel.getStartNode()), "2017-04-10T06:40:46-10:00");
+                InteractionNode interaction = new InteractionNode(rel.getStartNode());
+                String nanoPubString = writeNanoPub(dataset, interaction, "2017-04-10T06:40:46-10:00");
+                NanopubImpl nanopub = new NanopubImpl(nanoPubString, RDFFormat.TRIG);
+                Nanopub trustyNanopub = MakeTrustyNanopub.writeAsTrustyNanopub(nanopub, RDFFormat.TRIG, new NullOutputStream());
+                String artifactCode = TrustyUriUtils.getArtifactCode(trustyNanopub.getUri().toString());
+                IndexHits<Node> withSameCode = nanopubs.query("code:\"" + artifactCode + "\"");
+                if (!withSameCode.hasNext()) {
+                    Transaction tx = graphDb.beginTx();
+                    try {
+                        Node npubNode = graphDb.createNode();
+                        npubNode.setProperty("code", artifactCode);
+                        interaction
+                                .getUnderlyingNode()
+                                .createRelationshipTo(npubNode, NodeUtil.asNeo4j(RelTypes.SUPPORTS));
+                        nanopubs.add(npubNode, "code", artifactCode);
+                        tx.success();
+                    } finally {
+                        tx.finish();
+                    }
+                }
+                withSameCode.close();
             }
         }
     }
 
-    public String writeNanoPub(DatasetNode dataset, InteractionNode interaction, String pubDateTimeString) throws RDFHandlerException {
-
+    public static String writeNanoPub(DatasetNode dataset, InteractionNode interaction, String pubDateTimeString) throws RDFHandlerException {
         StringBuilder builder = new StringBuilder();
         builder.append("@prefix nanopub: <http://www.nanopub.org/nschema#> .\n" +
                 "@prefix dcterms: <http://purl.org/dc/terms/> .\n" +
@@ -81,7 +110,7 @@ public class LinkerTrustyNanoPubs {
         return builder.toString();
     }
 
-    public void generateOrganisms(StringBuilder builder, InteractionNode interaction) {
+    public static void generateOrganisms(StringBuilder builder, InteractionNode interaction) {
         Collection<Specimen> participants = interaction.getParticipants();
         Map<Long, Integer> nodeIdParticipantMap = new TreeMap<Long, Integer>();
         int participantNumber = 0;
@@ -130,7 +159,7 @@ public class LinkerTrustyNanoPubs {
         }
     }
 
-    public boolean isNCBITaxon(TaxonNode sameAsTaxon) {
+    public static boolean isNCBITaxon(TaxonNode sameAsTaxon) {
         return StringUtils.startsWith(sameAsTaxon.getExternalId(), TaxonomyProvider.NCBI.getIdPrefix());
     }
 

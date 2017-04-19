@@ -10,15 +10,22 @@ import org.eol.globi.data.TaxonIndex;
 import org.eol.globi.domain.DatasetNode;
 import org.eol.globi.domain.Interaction;
 import org.eol.globi.domain.InteractionNode;
+import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.service.DatasetImpl;
+import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
 import org.nanopub.MalformedNanopubException;
 import org.nanopub.Nanopub;
 import org.nanopub.NanopubImpl;
 import org.nanopub.trusty.MakeTrustyNanopub;
+import org.neo4j.graphdb.Direction;
+import org.neo4j.graphdb.Node;
+import org.neo4j.graphdb.Relationship;
+import org.neo4j.graphdb.index.Index;
+import org.neo4j.graphdb.index.IndexHits;
 import org.openrdf.OpenRDFException;
 import org.openrdf.model.Model;
 import org.openrdf.model.impl.LinkedHashModel;
@@ -34,9 +41,12 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.util.Iterator;
 
 import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 public class LinkerTrustyNanoPubsTest extends GraphDBTestCase {
 
@@ -45,8 +55,8 @@ public class LinkerTrustyNanoPubsTest extends GraphDBTestCase {
         NanopubImpl nanopub = new NanopubImpl(getClass().getResourceAsStream("nanopub.trig"), RDFFormat.TRIG);
         ByteArrayOutputStream actual = new ByteArrayOutputStream();
         Nanopub trustyNanopub = MakeTrustyNanopub.writeAsTrustyNanopub(nanopub, RDFFormat.TRIG, actual);
-
-        assertThat(TrustyUriUtils.getArtifactCode(trustyNanopub.getUri().toString()), is("RAYUKMe50zAqCZHDcWMOJ-16fucoQj6W4ZcT33CU92PuU"));
+        String artifactCode = TrustyUriUtils.getArtifactCode(trustyNanopub.getUri().toString());
+        assertThat(artifactCode, is("RAYUKMe50zAqCZHDcWMOJ-16fucoQj6W4ZcT33CU92PuU"));
         String actualTrig = toTrigString(new ByteArrayInputStream(actual.toByteArray()));
         String expectedTrig = toTrigString(getClass().getResourceAsStream("trusty.nanopub.trig"));
 
@@ -54,12 +64,63 @@ public class LinkerTrustyNanoPubsTest extends GraphDBTestCase {
     }
 
     @Test
-    public void linking() throws NodeFactoryException, RDFHandlerException, IOException, RDFParseException {
+    public void writingNanopub() throws NodeFactoryException, OpenRDFException, IOException, MalformedNanopubException, TrustyUriException {
+        DatasetImpl dataset = new DatasetImpl("some/namespace", URI.create("http://example.com/dataset"));
 
+        NodeFactoryWithDatasetContext factory = populateDataset(dataset);
+
+        LinkerTrustyNanoPubs linker = new LinkerTrustyNanoPubs();
+        linker.link(getGraphDb());
+
+        DatasetNode datasetNode = (DatasetNode) factory.getOrCreateDataset(dataset);
+        Iterable<Relationship> rels = datasetNode
+                .getUnderlyingNode()
+                .getRelationships(NodeUtil.asNeo4j(RelTypes.ACCESSED_AT), Direction.INCOMING);
+        InteractionNode interactionNode = new InteractionNode(rels.iterator().next().getStartNode());
+
+        String nanoPubText = linker.writeNanoPub(datasetNode, interactionNode, "2017-04-10T06:40:46-10:00");
+        InputStream rdfIn = IOUtils.toInputStream(nanoPubText);
+
+        String rdfActual = toTrigString(rdfIn);
+        String rdfExpected = toTrigString(getClass().getResourceAsStream("nanopub.trig"));
+
+        assertThat(rdfActual, is(rdfExpected));
+    }
+
+    @Test
+    public void link() throws NodeFactoryException, OpenRDFException, IOException, MalformedNanopubException, TrustyUriException {
+        DatasetImpl dataset = new DatasetImpl("some/namespace", URI.create("http://example.com/dataset"));
+
+        populateDataset(dataset);
+
+        LinkerTrustyNanoPubs linker = new LinkerTrustyNanoPubs();
+        linker.link(getGraphDb());
+
+        Index<Node> nanopubs = getGraphDb().index().forNodes("nanopubs");
+
+        IndexHits<Node> hits = nanopubs.query("code:\"RAYUKMe50zAqCZHDcWMOJ-16fucoQj6W4ZcT33CU92PuU\"");
+
+        assertThat(hits.hasNext(), is(true));
+
+        Node nanopubRef = hits.next();
+        assertThat(nanopubRef.getProperty("code"), is("RAYUKMe50zAqCZHDcWMOJ-16fucoQj6W4ZcT33CU92PuU"));
+
+        Iterable<Relationship> rels = nanopubRef.getRelationships(NodeUtil.asNeo4j(RelTypes.SUPPORTS), Direction.INCOMING);
+        assertThat(rels.iterator().hasNext(), is(true));
+        Relationship rel = rels.iterator().next();
+        Iterable<Relationship> participants = rel.getStartNode().getRelationships(NodeUtil.asNeo4j(RelTypes.HAS_PARTICIPANT), Direction.OUTGOING);
+        Iterator<Relationship> iter = participants.iterator();
+        assertTrue(iter.hasNext());
+        iter.next();
+        assertTrue(iter.hasNext());
+        iter.next();
+        assertFalse(iter.hasNext());
+    }
+
+    public NodeFactoryWithDatasetContext populateDataset(DatasetImpl dataset) throws NodeFactoryException {
         TaxonIndex taxonIndex = getOrCreateTaxonIndex();
         // see https://github.com/jhpoelen/eol-globi-data/wiki/Nanopubs
         StudyImpl study = new StudyImpl("some study", "some source", "http://doi.org/123.23/222", "some study citation");
-        DatasetImpl dataset = new DatasetImpl("some/namespace", URI.create("http://example.com/dataset"));
         NodeFactoryWithDatasetContext factory = new NodeFactoryWithDatasetContext(nodeFactory, dataset);
         Interaction interaction = factory.createInteraction(factory.createStudy(study));
         TaxonImpl donaldTaxon = new TaxonImpl("donald duck", "NCBI:1234");
@@ -70,17 +131,7 @@ public class LinkerTrustyNanoPubsTest extends GraphDBTestCase {
         mickey.classifyAs(taxonIndex.getOrCreateTaxon(mickeyTaxon));
 
         donald.ate(mickey);
-
-        LinkerTrustyNanoPubs linker = new LinkerTrustyNanoPubs();
-        linker.link(getGraphDb());
-
-        String nanoPubText = linker.writeNanoPub((DatasetNode)factory.getOrCreateDataset(dataset), new InteractionNode(((InteractionNode)interaction).getUnderlyingNode()), "2017-04-10T06:40:46-10:00");
-        InputStream rdfIn = IOUtils.toInputStream(nanoPubText);
-
-        String rdfActual = toTrigString(rdfIn);
-        String rdfExpected = toTrigString(getClass().getResourceAsStream("nanopub.trig"));
-
-        assertThat(rdfActual, is(rdfExpected));
+        return factory;
     }
 
     private String toTrigString(InputStream rdfIn) throws IOException, RDFParseException, RDFHandlerException {
