@@ -50,6 +50,12 @@
             <version>1.2</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.nanopub</groupId>
+            <artifactId>nanopub</artifactId>
+            <version>1.13</version>
+        </dependency>
+
         <!-- Bytecode manipulation -->
         <dependency>
             <groupId>cglib</groupId>
