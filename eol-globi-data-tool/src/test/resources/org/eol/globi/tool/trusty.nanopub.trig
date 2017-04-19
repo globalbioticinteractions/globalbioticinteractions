@@ -1,0 +1,36 @@
+@prefix this: <http://np.globalbioticinteractions.org/RAf08-0aU4gatkiIFBcQ4W53JqDtqd3_1dNEBwfhWw_Ds> .
+@prefix sub: <http://np.globalbioticinteractions.org/RAf08-0aU4gatkiIFBcQ4W53JqDtqd3_1dNEBwfhWw_Ds#> .
+@prefix nanopub: <http://www.nanopub.org/nschema#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix opm: <http://purl.org/net/opmv/ns#> .
+@prefix obo: <http://purl.obolibrary.org/obo/> .
+@prefix NCBITaxon: <http://purl.obolibrary.org/obo/NCBITaxon_> .
+
+sub:NanoPub_1_Head {
+	this: nanopub:hasAssertion sub:NanoPub_1_Assertion ;
+		nanopub:hasProvenance sub:NanoPub_1_Provenance ;
+		nanopub:hasPublicationInfo sub:NanoPub_1_Pubinfo ;
+		a nanopub:Nanopublication .
+}
+
+sub:NanoPub_1_Assertion {
+	sub:Interaction_1 obo:RO_0000057 sub:Organism_0 , sub:Organism_1 ;
+		a obo:GO_0044419 .
+	
+	sub:Organism_0 obo:RO_0002470 sub:Organism_7 ;
+		a NCBITaxon:NCBITaxon:1234 .
+	
+	sub:Organism_1 a NCBITaxon:NCBITaxon:4444 .
+}
+
+sub:NanoPub_1_Provenance {
+	<http://example.com/dataset> dcterms:bibliographicCitation "some study citation" ;
+		opm:wasDerivedFrom <http://doi.org/123.23/222> .
+	
+	sub:NanoPub_1_Assertion opm:wasDerivedFrom <http://example.com/dataset> ;
+		opm:wasGeneratedBy <http://doi.org/10.5281/zenodo.321714> .
+}
+
+sub:NanoPub_1_Pubinfo {
+	this: dcterms:bibliographicCitation "no citation" .
+}

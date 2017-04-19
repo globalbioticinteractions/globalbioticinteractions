@@ -1,5 +1,7 @@
 package org.eol.globi.tool;
 
+import net.trustyuri.TrustyUriException;
+import net.trustyuri.TrustyUriUtils;
 import org.apache.commons.io.IOUtils;
 import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.NodeFactoryException;
@@ -13,6 +15,12 @@ import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.service.DatasetImpl;
 import org.junit.Test;
+import org.nanopub.MalformedNanopubException;
+import org.nanopub.Nanopub;
+import org.nanopub.NanopubImpl;
+import org.nanopub.NanopubUtils;
+import org.nanopub.trusty.MakeTrustyNanopub;
+import org.openrdf.OpenRDFException;
 import org.openrdf.model.Model;
 import org.openrdf.model.impl.LinkedHashModel;
 import org.openrdf.rio.RDFFormat;
@@ -22,6 +30,7 @@ import org.openrdf.rio.Rio;
 import org.openrdf.rio.helpers.StatementCollector;
 import org.openrdf.rio.trig.TriGParser;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -31,6 +40,19 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
 public class LinkerTrustyNanoPubsTest extends GraphDBTestCase {
+
+    @Test
+    public void trustyURI() throws OpenRDFException, IOException, MalformedNanopubException, TrustyUriException {
+        NanopubImpl nanopub = new NanopubImpl(getClass().getResourceAsStream("nanopub.trig"), RDFFormat.TRIG);
+        ByteArrayOutputStream actual = new ByteArrayOutputStream();
+        Nanopub trustyNanopub = MakeTrustyNanopub.writeAsTrustyNanopub(nanopub, RDFFormat.TRIG, actual);
+
+        assertThat(TrustyUriUtils.getArtifactCode(trustyNanopub.getUri().toString()), is("RAf08-0aU4gatkiIFBcQ4W53JqDtqd3_1dNEBwfhWw_Ds"));
+        String actualTrig = toTrigString(new ByteArrayInputStream(actual.toByteArray()));
+        String expectedTrig = toTrigString(getClass().getResourceAsStream("trusty.nanopub.trig"));
+
+        assertThat(actualTrig, is(expectedTrig));
+    }
 
     @Test
     public void linking() throws NodeFactoryException, RDFHandlerException, IOException, RDFParseException {
