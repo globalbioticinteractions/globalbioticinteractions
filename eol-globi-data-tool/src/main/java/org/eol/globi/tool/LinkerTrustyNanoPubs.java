@@ -34,12 +34,12 @@ public class LinkerTrustyNanoPubs {
                     .getUnderlyingNode()
                     .getRelationships(NodeUtil.asNeo4j(RelTypes.ACCESSED_AT), Direction.INCOMING);
             for (Relationship rel : rels) {
-                writeNanoPub(dataset, new InteractionNode(rel.getStartNode()));
+                writeNanoPub(dataset, new InteractionNode(rel.getStartNode()), "2017-04-10T06:40:46-10:00");
             }
         }
     }
 
-    public String writeNanoPub(DatasetNode dataset, InteractionNode interaction) throws RDFHandlerException {
+    public String writeNanoPub(DatasetNode dataset, InteractionNode interaction, String pubDateTimeString) throws RDFHandlerException {
 
         StringBuilder builder = new StringBuilder();
         builder.append("@prefix nanopub: <http://www.nanopub.org/nschema#> .\n" +
@@ -69,26 +69,15 @@ public class LinkerTrustyNanoPubs {
 
         String datasetURI = StringUtils.isNotBlank(dataset.getDOI()) ? dataset.getDOI() : dataset.getArchiveURI().toString();
 
-        Iterable<Relationship> studyRels = interaction.getUnderlyingNode().getRelationships(NodeUtil.asNeo4j(RelTypes.DERIVED_FROM), Direction.OUTGOING);
-        for (Relationship studyRel : studyRels) {
-            StudyNode studyNode = new StudyNode(studyRel.getEndNode());
-            String referenceURI = StringUtils.isBlank(studyNode.getDOI())
-                    ? studyNode.getDOI()
-                    : ExternalIdUtil.urlForExternalId(studyNode.getExternalId());
-            if (StringUtils.isNotBlank(referenceURI)) {
-                builder.append(String.format(":NanoPub_1_Assertion opm:wasDerivedFrom <%s> .\n", referenceURI));
-            }
-        }
-
         builder.append(String.format(
                 "  :NanoPub_1_Assertion opm:wasDerivedFrom <%s> ;\n" +
                         "    opm:wasGeneratedBy <http://doi.org/10.5281/zenodo.321714> .\n" +
                         "}\n" +
                         " \n" +
                         ":NanoPub_1_Pubinfo {\n" +
-                        "    : dcterms:bibliographicCitation \"%s\" .\n" +
+                        ": pav:createdBy <http://globalbioticinteractions.org> .\n" +
                         "}", datasetURI
-                , dataset.getCitation()));
+                , pubDateTimeString));
         return builder.toString();
     }
 

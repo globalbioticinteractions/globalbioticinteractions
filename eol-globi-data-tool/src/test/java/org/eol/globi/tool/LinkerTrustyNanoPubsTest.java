@@ -18,7 +18,6 @@ import org.junit.Test;
 import org.nanopub.MalformedNanopubException;
 import org.nanopub.Nanopub;
 import org.nanopub.NanopubImpl;
-import org.nanopub.NanopubUtils;
 import org.nanopub.trusty.MakeTrustyNanopub;
 import org.openrdf.OpenRDFException;
 import org.openrdf.model.Model;
@@ -47,7 +46,7 @@ public class LinkerTrustyNanoPubsTest extends GraphDBTestCase {
         ByteArrayOutputStream actual = new ByteArrayOutputStream();
         Nanopub trustyNanopub = MakeTrustyNanopub.writeAsTrustyNanopub(nanopub, RDFFormat.TRIG, actual);
 
-        assertThat(TrustyUriUtils.getArtifactCode(trustyNanopub.getUri().toString()), is("RAGTdA5YBcbrFgO7gVl1e_g6nlaqj8ikfoh2X0lgbmyaM"));
+        assertThat(TrustyUriUtils.getArtifactCode(trustyNanopub.getUri().toString()), is("RAYUKMe50zAqCZHDcWMOJ-16fucoQj6W4ZcT33CU92PuU"));
         String actualTrig = toTrigString(new ByteArrayInputStream(actual.toByteArray()));
         String expectedTrig = toTrigString(getClass().getResourceAsStream("trusty.nanopub.trig"));
 
@@ -75,7 +74,7 @@ public class LinkerTrustyNanoPubsTest extends GraphDBTestCase {
         LinkerTrustyNanoPubs linker = new LinkerTrustyNanoPubs();
         linker.link(getGraphDb());
 
-        String nanoPubText = linker.writeNanoPub((DatasetNode)factory.getOrCreateDataset(dataset), new InteractionNode(((InteractionNode)interaction).getUnderlyingNode()));
+        String nanoPubText = linker.writeNanoPub((DatasetNode)factory.getOrCreateDataset(dataset), new InteractionNode(((InteractionNode)interaction).getUnderlyingNode()), "2017-04-10T06:40:46-10:00");
         InputStream rdfIn = IOUtils.toInputStream(nanoPubText);
 
         String rdfActual = toTrigString(rdfIn);
