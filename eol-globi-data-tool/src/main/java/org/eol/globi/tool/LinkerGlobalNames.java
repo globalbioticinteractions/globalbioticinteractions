@@ -1,17 +1,16 @@
 package org.eol.globi.tool;
 
 import org.apache.commons.lang.time.StopWatch;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eol.globi.domain.NameType;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonNode;
-import org.eol.globi.taxon.GlobalNamesService;
-import org.eol.globi.taxon.GlobalNamesSources;
 import org.eol.globi.service.PropertyEnricherException;
 import org.eol.globi.service.TaxonUtil;
+import org.eol.globi.taxon.GlobalNamesService;
+import org.eol.globi.taxon.GlobalNamesSources;
 import org.eol.globi.taxon.TermMatchListener;
 import org.eol.globi.util.NodeUtil;
 import org.neo4j.graphdb.GraphDatabaseService;
@@ -25,13 +24,19 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class LinkerGlobalNames {
+public class LinkerGlobalNames implements Linker {
 
     private static final int BATCH_SIZE = 100;
 
     private static final Log LOG = LogFactory.getLog(LinkerGlobalNames.class);
+    private final GraphDatabaseService graphDb;
 
-    public void link(final GraphDatabaseService graphDb) throws PropertyEnricherException {
+    public LinkerGlobalNames(GraphDatabaseService graphDb) {
+        this.graphDb = graphDb;
+    }
+
+    @Override
+    public void link() {
         GlobalNamesSources[] sources = GlobalNamesSources.values();
         List<GlobalNamesSources> desiredSources = Arrays.asList(sources);
         GlobalNamesService globalNamesService = new GlobalNamesService();
@@ -52,7 +57,7 @@ public class LinkerGlobalNames {
         handleBatch(graphDb, globalNamesService, nodeMap, counter, desiredSources);
     }
 
-    private void handleBatch(final GraphDatabaseService graphDb, GlobalNamesService globalNamesService, final Map<Long, TaxonNode> nodeMap, int counter, List<GlobalNamesSources> desiredSources) throws PropertyEnricherException {
+    private void handleBatch(final GraphDatabaseService graphDb, GlobalNamesService globalNamesService, final Map<Long, TaxonNode> nodeMap, int counter, List<GlobalNamesSources> desiredSources) {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         String msgPrefix = "batch #" + counter / BATCH_SIZE;

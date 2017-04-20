@@ -93,7 +93,7 @@ public class TaxonInteractionIndexerTest extends GraphDBTestCase {
 
         final TaxonNameCorrector taxonNameCorrector = new TaxonNameCorrector();
         new NameResolver(getGraphDb(), new TaxonIndexNeo4j(taxonEnricher, taxonNameCorrector, getGraphDb())).resolve();
-        //new TaxonInteractionIndexer(getGraphDb()).index();
+        //new TaxonInteractionIndexer(getGraphDb()).link();
 
         assertNotNull(taxonIndex.findTaxonByName("Homo sapiens"));
         assertNull(taxonIndex.findTaxonById(PropertyAndValueDictionary.NO_MATCH));

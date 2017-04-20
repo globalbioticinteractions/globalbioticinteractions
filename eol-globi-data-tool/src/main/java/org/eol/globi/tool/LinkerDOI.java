@@ -24,7 +24,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-public class LinkerDOI {
+public class LinkerDOI implements Linker {
 
     private static final Log LOG = LogFactory.getLog(LinkerDOI.class);
     public static final int BATCH_SIZE = 25;
@@ -41,6 +41,7 @@ public class LinkerDOI {
         this.doiResolver = resolver;
     }
 
+    @Override
     public void link() {
         Index<Node> taxons = this.graphDb.index().forNodes("studies");
         IndexHits<Node> hits = taxons.query("*:*");

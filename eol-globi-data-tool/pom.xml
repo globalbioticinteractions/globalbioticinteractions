@@ -53,7 +53,7 @@
         <dependency>
             <groupId>org.nanopub</groupId>
             <artifactId>nanopub</artifactId>
-            <version>1.13</version>
+            <version>1.14</version>
         </dependency>
 
         <!-- Bytecode manipulation -->

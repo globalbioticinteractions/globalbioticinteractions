@@ -71,8 +71,8 @@ public class LinkerTrustyNanoPubsTest extends GraphDBTestCase {
 
         NodeFactoryWithDatasetContext factory = populateDataset(dataset);
 
-        LinkerTrustyNanoPubs linker = new LinkerTrustyNanoPubs();
-        linker.link(getGraphDb());
+        LinkerTrustyNanoPubs linker = new LinkerTrustyNanoPubs(getGraphDb());
+        linker.link();
 
         DatasetNode datasetNode = (DatasetNode) factory.getOrCreateDataset(dataset);
         Iterable<Relationship> rels = datasetNode
@@ -95,8 +95,8 @@ public class LinkerTrustyNanoPubsTest extends GraphDBTestCase {
 
         populateDataset(dataset);
 
-        LinkerTrustyNanoPubs linker = new LinkerTrustyNanoPubs();
-        linker.link(getGraphDb());
+        LinkerTrustyNanoPubs linker = new LinkerTrustyNanoPubs(getGraphDb());
+        linker.link();
 
         Index<Node> nanopubs = getGraphDb().index().forNodes("nanopubs");
 

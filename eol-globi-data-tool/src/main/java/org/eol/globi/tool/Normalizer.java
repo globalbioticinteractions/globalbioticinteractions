@@ -1,6 +1,5 @@
 package org.eol.globi.tool;
 
-import net.trustyuri.TrustyUriException;
 import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -12,7 +11,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eol.globi.Version;
-import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.data.NodeFactoryNeo4j;
 import org.eol.globi.data.StudyImporter;
 import org.eol.globi.data.StudyImporterException;
@@ -28,21 +26,20 @@ import org.eol.globi.service.DOIResolverCache;
 import org.eol.globi.service.DOIResolverImpl;
 import org.eol.globi.service.EcoregionFinderProxy;
 import org.eol.globi.service.PropertyEnricher;
-import org.eol.globi.service.PropertyEnricherException;
 import org.eol.globi.service.PropertyEnricherFactory;
 import org.eol.globi.taxon.CorrectionService;
 import org.eol.globi.taxon.TaxonCacheService;
 import org.eol.globi.taxon.TaxonIndexNeo4j;
 import org.eol.globi.taxon.TaxonNameCorrector;
 import org.eol.globi.util.HttpUtil;
-import org.nanopub.MalformedNanopubException;
 import org.neo4j.graphdb.GraphDatabaseService;
-import org.openrdf.OpenRDFException;
 
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 public class Normalizer {
     private static final Log LOG = LogFactory.getLog(Normalizer.class);
@@ -161,8 +158,8 @@ public class Normalizer {
                     @Override
                     public boolean shouldInclude(Taxon taxon) {
                         return taxon != null
-                            && knownBadNameFilter.shouldInclude(taxon)
-                            && (!StringUtils.startsWith(taxon.getExternalId(), TaxonomyProvider.INATURALIST_TAXON.getIdPrefix()));
+                                && knownBadNameFilter.shouldInclude(taxon)
+                                && (!StringUtils.startsWith(taxon.getExternalId(), TaxonomyProvider.INATURALIST_TAXON.getIdPrefix()));
                     }
                 };
 
@@ -189,58 +186,33 @@ public class Normalizer {
         }
 
         if (cmdLine == null || !cmdLine.hasOption(OPTION_SKIP_LINK)) {
-            linkTaxa(graphService);
-            indexInteractions(graphService);
-            linkTrustyURIs(graphService);
+            List<Linker> linkers = new ArrayList<>();
+            linkers.add(new LinkerGlobalNames(graphService));
+            appendOpenTreeTaxonLinker(graphService, linkers);
+            linkers.add(new LinkerTaxonIndex(graphService));
+            linkers.add(new IndexInteractions(graphService));
+            linkers.add(new LinkerTrustyNanoPubs(graphService));
+            linkers.forEach(LinkUtil::doTimedLink);
         } else {
             LOG.info("skipping linking ...");
         }
 
         if (cmdLine == null || !cmdLine.hasOption(OPTION_SKIP_LINK_THUMBNAILS)) {
-            new ImageLinker().linkImages(graphService, null);
+            LinkUtil.doTimedLink(new ImageLinker(graphService, null));
         } else {
             LOG.info("skipping linking of taxa to thumbnails ...");
         }
     }
 
-    public void linkTrustyURIs(GraphDatabaseService graphService) {
-        try {
-            LOG.info("trusty uri linking started...");
-            new LinkerTrustyNanoPubs().link(graphService);
-            LOG.info("trusty uri linking done.");
-        } catch (MalformedNanopubException | TrustyUriException | OpenRDFException e) {
-            LOG.warn("Problem linking interactions to trusty uris", e);
-        }
-    }
-
-    public void indexInteractions(GraphDatabaseService graphService) {
-        try {
-            LOG.info("interaction indexing started...");
-            new IndexInteractions().link(graphService);
-            LOG.info("interaction indexing done.");
-        } catch (NodeFactoryException e) {
-            LOG.warn("Problem linking interactions with study and datasets", e);
-        }
-    }
-
-    private void linkTaxa(GraphDatabaseService graphService) {
-        try {
-            new LinkerGlobalNames().link(graphService);
-        } catch (PropertyEnricherException e) {
-            LOG.warn("Problem linking taxa using Global Names Resolver", e);
-        }
-
+    public void appendOpenTreeTaxonLinker(GraphDatabaseService graphService, List<Linker> linkers) {
         String ottUrl = System.getProperty("ott.url");
         try {
             if (StringUtils.isNotBlank(ottUrl)) {
-                new LinkerOpenTreeOfLife().link(graphService, new OpenTreeTaxonIndex(new URI(ottUrl).toURL()));
+                linkers.add(new LinkerOpenTreeOfLife(graphService, new OpenTreeTaxonIndex(new URI(ottUrl).toURL())));
             }
         } catch (MalformedURLException | URISyntaxException e) {
             LOG.warn("failed to link against OpenTreeOfLife", e);
         }
-
-        new LinkerTaxonIndex().link(graphService);
-
     }
 
     private EcoregionFinder getEcoregionFinder() {

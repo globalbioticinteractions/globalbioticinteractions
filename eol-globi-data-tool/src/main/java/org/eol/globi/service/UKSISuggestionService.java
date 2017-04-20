@@ -99,7 +99,7 @@ public class UKSISuggestionService implements PropertyEnricher, NameSuggester {
             }
         } catch (IOException e) {
             LOG.warn("[" + UKSISuggestionService.class.getSimpleName() + "] instantiation failed.");
-            throw new PropertyEnricherException("failed to created index", e);
+            throw new PropertyEnricherException("failed to created link", e);
         } finally {
             if (tmpFile != null) {
                 tmpFile.delete();

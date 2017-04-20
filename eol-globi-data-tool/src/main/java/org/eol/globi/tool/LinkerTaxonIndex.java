@@ -21,11 +21,16 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class LinkerTaxonIndex {
+public class LinkerTaxonIndex implements Linker {
 
     public static final String INDEX_TAXON_NAMES_AND_IDS = "taxonPaths";
+    private final GraphDatabaseService graphDb;
 
-    public void link(GraphDatabaseService graphDb) {
+    public LinkerTaxonIndex(GraphDatabaseService graphDb) {
+        this.graphDb = graphDb;
+    }
+
+    public void link() {
         Index<Node> taxons = graphDb.index().forNodes("taxons");
         Index<Node> ids = graphDb.index().forNodes(INDEX_TAXON_NAMES_AND_IDS, MapUtil.stringMap(IndexManager.PROVIDER, "lucene", "type", "fulltext"));
         TaxonFuzzySearchIndex fuzzySearchIndex = new TaxonFuzzySearchIndex(graphDb);

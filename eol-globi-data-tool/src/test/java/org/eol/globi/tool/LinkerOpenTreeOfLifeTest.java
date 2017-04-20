@@ -33,9 +33,8 @@ public class LinkerOpenTreeOfLifeTest extends GraphDBTestCase {
         try {
             index = new OpenTreeTaxonIndex(getClass().getResource("taxonomy-small.tsv"));
             taxonIndex.getOrCreateTaxon(new TaxonImpl(name, null));
-            LinkerGlobalNames linkerGlobalNames = new LinkerGlobalNames();
-            linkerGlobalNames.link(getGraphDb());
-            new LinkerOpenTreeOfLife().link(getGraphDb(), index);
+            new LinkerGlobalNames(getGraphDb()).link();
+            new LinkerOpenTreeOfLife(getGraphDb(), index).link();
             List<String> externalIds = LinkerTestUtil.assertHasOther(name, expectedCount, taxonIndex, RelTypes.SAME_AS);
             assertThat(externalIds, hasItem(TaxonomyProvider.OPEN_TREE_OF_LIFE.getIdPrefix() + ottId));
         } finally {

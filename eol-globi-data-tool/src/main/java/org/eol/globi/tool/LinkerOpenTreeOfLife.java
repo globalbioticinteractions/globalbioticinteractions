@@ -23,11 +23,18 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-public class LinkerOpenTreeOfLife {
+public class LinkerOpenTreeOfLife implements Linker {
 
     private static final Log LOG = LogFactory.getLog(LinkerOpenTreeOfLife.class);
+    private final GraphDatabaseService graphDb;
+    private final OpenTreeTaxonIndex index;
 
-    public void link(GraphDatabaseService graphDb, OpenTreeTaxonIndex index) {
+    public LinkerOpenTreeOfLife(GraphDatabaseService graphDb, OpenTreeTaxonIndex index){
+        this.graphDb = graphDb;
+        this.index = index;
+    }
+
+    public void link() {
             Index<Node> taxons = graphDb.index().forNodes("taxons");
             IndexHits<Node> hits = taxons.query("*:*");
             for (Node hit : hits) {

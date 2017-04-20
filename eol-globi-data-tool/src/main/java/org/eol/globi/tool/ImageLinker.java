@@ -26,10 +26,18 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ImageLinker {
+public class ImageLinker implements Linker {
     private static final Log LOG = LogFactory.getLog(ImageLinker.class);
     public static final String OPTION_HELP = "h";
     public static final String USE_NEO4J_SOURCE = "skipImport";
+
+    private final PrintStream out;
+    private final GraphDatabaseService graphDb;
+
+    public ImageLinker(GraphDatabaseService graphService, PrintStream out) {
+        this.graphDb = graphService;
+        this.out = out;
+    }
 
     public static void main(final String[] args) throws StudyImporterException, ParseException {
         CommandLine cmdLine = parseOptions(args);
@@ -37,7 +45,7 @@ public class ImageLinker {
             HelpFormatter formatter = new HelpFormatter();
             formatter.printHelp("java -jar eol-globi-data-tool-[VERSION]-jar-with-dependencies.jar", getOptions());
         } else {
-            new ImageLinker().run(cmdLine);
+            ImageLinker.run(cmdLine);
         }
     }
 
@@ -55,10 +63,10 @@ public class ImageLinker {
         return options;
     }
 
-    public void run(CommandLine cmdLine)  {
+    private static void run(CommandLine cmdLine)  {
         final GraphDatabaseService graphService = GraphService.getGraphService("./");
         try {
-            linkImages(graphService, System.out);
+            new ImageLinker(graphService, System.out).link();
         } finally {
             graphService.shutdown();
             HttpUtil.shutdown();
@@ -66,8 +74,9 @@ public class ImageLinker {
 
     }
 
-    public void linkImages(GraphDatabaseService graphService, PrintStream out) {
-        ExecutionEngine engine = new ExecutionEngine(graphService);
+    @Override
+    public void link() {
+        ExecutionEngine engine = new ExecutionEngine(graphDb);
         ExecutionResult executionResult = engine.execute("START taxon = node:taxons('*:*')\n" +
                 "WHERE not(has(taxon.thumbnailUrl)) AND has(taxon.externalId) AND taxon.externalId <> 'no:match'\n" +
                 "RETURN id(taxon) as `id`, taxon.externalId as `externalId`");

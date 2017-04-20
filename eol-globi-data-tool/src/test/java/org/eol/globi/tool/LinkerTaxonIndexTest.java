@@ -44,7 +44,7 @@ public class LinkerTaxonIndexTest extends GraphDBTestCase {
         taxon.setExternalId("FOO 1234");
         resolveNames();
 
-        new LinkerTaxonIndex().link(getGraphDb());
+        new LinkerTaxonIndex(getGraphDb()).link();
 
         IndexHits<Node> hits = getGraphDb().index().forNodes(LinkerTaxonIndex.INDEX_TAXON_NAMES_AND_IDS).query("*:*");
         Node next = hits.next();
@@ -89,7 +89,7 @@ public class LinkerTaxonIndexTest extends GraphDBTestCase {
         taxonService.setEnricher(enricher);
         taxonService.getOrCreateTaxon(new TaxonImpl("Homo sapiens"));
         resolveNames();
-        new LinkerTaxonIndex().link(getGraphDb());
+        new LinkerTaxonIndex(getGraphDb()).link();
 
         assertThat(getGraphDb().index().existsForNodes("taxonNameSuggestions"), is(true));
         Index<Node> index = getGraphDb().index().forNodes("taxonNameSuggestions");

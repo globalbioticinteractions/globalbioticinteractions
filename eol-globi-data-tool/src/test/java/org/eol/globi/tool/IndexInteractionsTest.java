@@ -5,7 +5,6 @@ import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.data.NodeFactoryNeo4j;
 import org.eol.globi.data.NodeFactoryWithDatasetContext;
 import org.eol.globi.data.TaxonIndex;
-import org.eol.globi.domain.Interaction;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
@@ -29,7 +28,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static com.sun.org.apache.xerces.internal.util.FeatureState.is;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
@@ -55,7 +53,7 @@ public class IndexInteractionsTest extends GraphDBTestCase {
 
         donald.ate(mickey);
 
-        new IndexInteractions().link(getGraphDb());
+        new IndexInteractions(getGraphDb()).link();
 
         NodeFactoryNeo4j nodeFactoryNeo4j = new NodeFactoryNeo4j(getGraphDb());
         StudyNode someStudy = nodeFactoryNeo4j.findStudy("some study");

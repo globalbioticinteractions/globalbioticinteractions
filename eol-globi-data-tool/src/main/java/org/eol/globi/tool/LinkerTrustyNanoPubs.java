@@ -4,6 +4,8 @@ import net.trustyuri.TrustyUriException;
 import net.trustyuri.TrustyUriUtils;
 import org.apache.commons.io.output.NullOutputStream;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.eol.globi.domain.DatasetNode;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.InteractionNode;
@@ -17,6 +19,7 @@ import org.eol.globi.util.NodeUtil;
 import org.nanopub.MalformedNanopubException;
 import org.nanopub.Nanopub;
 import org.nanopub.NanopubImpl;
+import org.nanopub.NanopubUtils;
 import org.nanopub.trusty.MakeTrustyNanopub;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.GraphDatabaseService;
@@ -28,14 +31,41 @@ import org.neo4j.graphdb.index.IndexHits;
 import org.openrdf.OpenRDFException;
 import org.openrdf.rio.RDFFormat;
 import org.openrdf.rio.RDFHandlerException;
+import org.openrdf.rio.RDFWriter;
+import org.openrdf.rio.Rio;
 
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.nio.charset.Charset;
 import java.util.Collection;
 import java.util.Map;
 import java.util.TreeMap;
 
-public class LinkerTrustyNanoPubs {
+public class LinkerTrustyNanoPubs implements Linker {
+    private static final Log LOG = LogFactory.getLog(LinkerTrustyNanoPubs.class);
 
-    public void link(GraphDatabaseService graphDb) throws OpenRDFException, MalformedNanopubException, TrustyUriException {
+    private final GraphDatabaseService graphDb;
+    private final NanopubOutputStreamFactory osFactory;
+
+    public LinkerTrustyNanoPubs(GraphDatabaseService graphDb) {
+        this(graphDb, nanopub -> new NullOutputStream());
+    }
+
+    public LinkerTrustyNanoPubs(GraphDatabaseService graphDb, NanopubOutputStreamFactory osFactory) {
+        this.graphDb = graphDb;
+        this.osFactory = osFactory;
+    }
+
+    @Override
+    public void link() {
+        try {
+            doLink();
+        } catch (MalformedNanopubException | TrustyUriException | OpenRDFException e) {
+            LOG.warn("issues linking with nanopubs", e);
+        }
+    }
+
+    public void doLink() throws MalformedNanopubException, OpenRDFException, TrustyUriException {
         Index<Node> datasets = graphDb.index().forNodes("datasets");
         Index<Node> nanopubs = graphDb.index().forNodes("nanopubs");
         for (Node node : datasets.query("*:*")) {
@@ -46,8 +76,8 @@ public class LinkerTrustyNanoPubs {
             for (Relationship rel : rels) {
                 InteractionNode interaction = new InteractionNode(rel.getStartNode());
                 String nanoPubString = writeNanoPub(dataset, interaction);
-                NanopubImpl nanopub = new NanopubImpl(nanoPubString, RDFFormat.TRIG);
-                Nanopub trustyNanopub = MakeTrustyNanopub.writeAsTrustyNanopub(nanopub, RDFFormat.TRIG, new NullOutputStream());
+                Nanopub trustyNanopub = generateTrustyNanopub(nanoPubString);
+
                 String artifactCode = TrustyUriUtils.getArtifactCode(trustyNanopub.getUri().toString());
                 IndexHits<Node> withSameCode = nanopubs.query("code:\"" + artifactCode + "\"");
                 if (!withSameCode.hasNext()) {
@@ -67,6 +97,14 @@ public class LinkerTrustyNanoPubs {
                 withSameCode.close();
             }
         }
+    }
+
+    public Nanopub generateTrustyNanopub(String nanoPubString) throws MalformedNanopubException, OpenRDFException, TrustyUriException {
+        NanopubImpl nanopub = new NanopubImpl(nanoPubString, RDFFormat.TRIG);
+        Nanopub trustyNanopub  = MakeTrustyNanopub.transform(nanopub);
+        RDFWriter w = Rio.createWriter(RDFFormat.TRIG, new OutputStreamWriter(osFactory.outputStreamFor(trustyNanopub), Charset.forName("UTF-8")));
+        NanopubUtils.propagateToHandler(trustyNanopub, w);
+        return trustyNanopub;
     }
 
     public static String writeNanoPub(DatasetNode dataset, InteractionNode interaction) throws RDFHandlerException {

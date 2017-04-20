@@ -1,5 +1,7 @@
 package org.eol.globi.tool;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.eol.globi.data.NodeFactory;
 import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.data.NodeFactoryNeo4j;
@@ -19,14 +21,20 @@ import org.neo4j.graphdb.RelationshipType;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.index.Index;
 
-public class IndexInteractions {
+public class IndexInteractions implements Linker {
+    private static final Log LOG = LogFactory.getLog(IndexInteractions.class);
 
     private static final RelationshipType HAS_PARTICIPANT = NodeUtil.asNeo4j(RelTypes.HAS_PARTICIPANT);
+    public static final RelationshipType[] INTERACTION_TYPES = NodeUtil.asNeo4j(InteractType.values());
+    private final GraphDatabaseService graphDb;
 
+    public IndexInteractions(GraphDatabaseService graphDb) {
+        this.graphDb = graphDb;
+    }
 
-    public void link(GraphDatabaseService graphDb) throws NodeFactoryException {
+    @Override
+    public void link() {
         Index<Node> datasets = graphDb.index().forNodes("datasets");
-        RelationshipType[] relationshipTypes = NodeUtil.asNeo4j(InteractType.values());
         for (Node node : datasets.query("*:*")) {
             DatasetNode dataset = new DatasetNode(node);
             NodeFactory factory = new NodeFactoryWithDatasetContext(new NodeFactoryNeo4j(graphDb), dataset);
@@ -37,27 +45,39 @@ public class IndexInteractions {
                 StudyNode study = new StudyNode(studyRel.getStartNode());
                 Iterable<Relationship> specimens = NodeUtil.getSpecimens(study);
                 for (Relationship specimen : specimens) {
-                    Iterable<Relationship> interactions = specimen.getEndNode().getRelationships(Direction.OUTGOING, relationshipTypes);
-                    InteractionNode interaction = (InteractionNode) factory.createInteraction(study);
-                    Transaction tx = graphDb.beginTx();
-                    try {
-                        for (Relationship interactionRel : interactions) {
-                            if (!interactionRel.hasProperty(PropertyAndValueDictionary.INVERTED)) {
-                                addParticipant(interaction, interactionRel.getStartNode());
-                                addParticipant(interaction, interactionRel.getEndNode());
+                    Node specimenNode = specimen.getEndNode();
+                    if (isNotIndexed(specimenNode)) {
+                        Iterable<Relationship> interactions = specimenNode.getRelationships(Direction.OUTGOING, INTERACTION_TYPES);
+                        InteractionNode interaction;
+                        try {
+                            interaction = (InteractionNode) factory.createInteraction(study);
+                            Transaction tx = graphDb.beginTx();
+                            try {
+                                for (Relationship interactionRel : interactions) {
+                                    if (!interactionRel.hasProperty(PropertyAndValueDictionary.INVERTED)) {
+                                        addParticipant(interaction, interactionRel.getStartNode());
+                                        addParticipant(interaction, interactionRel.getEndNode());
+                                    }
+                                    tx.success();
+                                }
+                            } finally {
+                                tx.finish();
                             }
-                            tx.success();
+                        } catch (NodeFactoryException e) {
+                            LOG.warn("failed to create interaction", e);
                         }
-                    } finally {
-                        tx.finish();
                     }
                 }
             }
         }
     }
 
+    private static boolean isNotIndexed(Node specimenNode) {
+        return !specimenNode.hasRelationship(Direction.INCOMING, HAS_PARTICIPANT);
+    }
+
     private static void addParticipant(InteractionNode interaction, Node participant) {
-        if (!participant.hasRelationship(Direction.INCOMING, HAS_PARTICIPANT)) {
+        if (isNotIndexed(participant)) {
             interaction.getUnderlyingNode().createRelationshipTo(participant, HAS_PARTICIPANT);
         }
     }

@@ -17,9 +17,9 @@ public abstract class GraphService {
     }
 
     public static GraphDatabaseService startNeo4j(String baseDir) {
-        System.out.println("neo4j starting...");
-
         String storePath = baseDir + "graph.db";
+        System.out.println("neo4j starting using [" + storePath + "]...");
+
         GraphDatabaseBuilder graphDatabaseBuilder = new GraphDatabaseFactory().newEmbeddedDatabaseBuilder(storePath);
         graphDatabaseBuilder.setConfig(MapUtil.stringMap("keep_logical_logs", "1M size"));
         final GraphDatabaseService graphService = graphDatabaseBuilder.newGraphDatabase();

@@ -50,15 +50,11 @@ public class Indexer {
         PropertyEnricher taxonEnricher = PropertyEnricherFactory.createTaxonEnricher();
         try {
             TaxonIndex taxonIndex = new TaxonIndexNeo4j(taxonEnricher
-                , new TaxonNameCorrector()
-                , freshGraphService);
+                    , new TaxonNameCorrector()
+                    , freshGraphService);
             indexUsingExternalIds(executionEngine, taxonIndex);
             indexUsingNamesWithNoExternalIds(executionEngine, taxonIndex);
-            try {
-                new LinkerGlobalNames().link(freshGraphService);
-            } catch (PropertyEnricherException e) {
-                LOG.warn("failed to link taxa", e);
-            }
+            new LinkerGlobalNames(freshGraphService).link();
 
             freshGraphService.shutdown();
             previousGraphService.shutdown();
