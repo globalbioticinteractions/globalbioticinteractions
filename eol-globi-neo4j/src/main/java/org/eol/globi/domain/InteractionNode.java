@@ -8,6 +8,7 @@ import org.neo4j.graphdb.Relationship;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.logging.Level;
 
 public class InteractionNode extends NodeBacked implements Interaction {
 
@@ -31,4 +32,13 @@ public class InteractionNode extends NodeBacked implements Interaction {
         return rels.iterator().hasNext() ? new StudyNode(rels.iterator().next().getEndNode()) : null;
     }
 
+    @Override
+    public void appendLogMessage(String message, Level level) {
+        getStudy().appendLogMessage(message, level);
+    }
+
+    @Override
+    public List<LogMessage> getLogMessages() {
+        return getStudy().getLogMessages();
+    }
 }

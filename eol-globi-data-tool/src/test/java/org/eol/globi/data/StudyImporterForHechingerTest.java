@@ -4,6 +4,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.eol.globi.domain.LogContext;
 import org.eol.globi.domain.Study;
 import org.eol.globi.service.DatasetImpl;
 import org.eol.globi.service.DatasetLocal;
@@ -14,7 +15,6 @@ import org.neo4j.cypher.javacompat.ExecutionResult;
 import org.neo4j.graphdb.Relationship;
 
 import java.io.IOException;
-import java.net.URI;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -25,7 +25,6 @@ import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.junit.internal.matchers.IsCollectionContaining.hasItem;
 import static org.junit.matchers.JUnitMatchers.containsString;
-import static org.junit.matchers.JUnitMatchers.hasItems;
 
 public class StudyImporterForHechingerTest extends GraphDBTestCase {
 
@@ -50,17 +49,17 @@ public class StudyImporterForHechingerTest extends GraphDBTestCase {
 
         importer.setLogger(new ImportLogger() {
             @Override
-            public void warn(Study study, String message) {
+            public void warn(LogContext study, String message) {
                 LOG.warn(message);
             }
 
             @Override
-            public void info(Study study, String message) {
+            public void info(LogContext study, String message) {
                 LOG.info(message);
             }
 
             @Override
-            public void severe(Study study, String message) {
+            public void severe(LogContext study, String message) {
                 LOG.error(message);
             }
         });

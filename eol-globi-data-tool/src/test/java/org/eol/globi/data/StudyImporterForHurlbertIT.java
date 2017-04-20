@@ -1,5 +1,6 @@
 package org.eol.globi.data;
 
+import org.eol.globi.domain.LogContext;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.service.Dataset;
@@ -24,17 +25,17 @@ public class StudyImporterForHurlbertIT extends GraphDBTestCase {
         importer.setDataset(dataset);
         importer.setLogger(new ImportLogger() {
             @Override
-            public void warn(Study study, String message) {
+            public void warn(LogContext study, String message) {
                 fail("did not expect warning [" + message + "]");
             }
 
             @Override
-            public void info(Study study, String message) {
+            public void info(LogContext study, String message) {
 
             }
 
             @Override
-            public void severe(Study study, String message) {
+            public void severe(LogContext study, String message) {
                 fail("did not expect error [" + message + "]");
             }
         });

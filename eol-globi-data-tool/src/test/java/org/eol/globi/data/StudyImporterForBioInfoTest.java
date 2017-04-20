@@ -3,6 +3,7 @@ package org.eol.globi.data;
 import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.lang.StringUtils;
 import org.eol.globi.domain.InteractType;
+import org.eol.globi.domain.LogContext;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.SpecimenNode;
@@ -52,31 +53,25 @@ public class StudyImporterForBioInfoTest extends GraphDBTestCase {
         final List<String> msgs = new ArrayList<String>();
         importer.setLogger(new ImportLogger() {
             @Override
-            public void warn(Study study, String message) {
+            public void warn(LogContext study, String message) {
                 msgs.add(message);
             }
 
             @Override
-            public void info(Study study, String message) {
+            public void info(LogContext study, String message) {
                 msgs.add(message);
             }
 
             @Override
-            public void severe(Study study, String message) {
+            public void severe(LogContext study, String message) {
                 msgs.add(message);
             }
         });
         // limit the number of line to be imported to make test runs reasonably fast
-        importer.setFilter(new ImportFilter() {
-
-            @Override
-            public boolean shouldImportRecord(Long recordNumber) {
-                return recordNumber < 1000
-                        || recordNumber == 4585
-                        || (recordNumber > 47310 && recordNumber < 47320)
-                        || (recordNumber > 24220 && recordNumber < 24340);
-            }
-        });
+        importer.setFilter(recordNumber -> recordNumber < 1000
+                || recordNumber == 4585
+                || (recordNumber > 47310 && recordNumber < 47320)
+                || (recordNumber > 24220 && recordNumber < 24340));
         importStudy(importer);
 
         Study vectorStudy = nodeFactory.findStudy(TaxonomyProvider.BIO_INFO + "ref:153303");

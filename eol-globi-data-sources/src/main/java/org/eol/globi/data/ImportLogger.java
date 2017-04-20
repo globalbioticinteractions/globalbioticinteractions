@@ -1,9 +1,9 @@
 package org.eol.globi.data;
 
-import org.eol.globi.domain.Study;
+import org.eol.globi.domain.LogContext;
 
 public interface ImportLogger {
-    void warn(Study study, String message);
-    void info(Study study, String message);
-    void severe(Study study, String message);
+    void warn(LogContext study, String message);
+    void info(LogContext study, String message);
+    void severe(LogContext study, String message);
 }

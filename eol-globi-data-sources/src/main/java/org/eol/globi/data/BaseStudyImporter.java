@@ -1,19 +1,14 @@
 package org.eol.globi.data;
 
+import org.eol.globi.domain.LogContext;
 import org.eol.globi.domain.Specimen;
-import org.eol.globi.domain.Study;
 import org.eol.globi.service.Dataset;
 import org.eol.globi.service.GeoNamesService;
 import org.eol.globi.service.GeoNamesServiceImpl;
 
 public abstract class BaseStudyImporter extends BaseImporter implements StudyImporter {
     protected ParserFactory parserFactory;
-    protected ImportFilter importFilter = new ImportFilter() {
-        @Override
-        public boolean shouldImportRecord(Long recordNumber) {
-            return true;
-        }
-    };
+    protected ImportFilter importFilter = recordNumber -> true;
 
     private Dataset dataset;
 
@@ -21,17 +16,17 @@ public abstract class BaseStudyImporter extends BaseImporter implements StudyImp
 
     private ImportLogger importLogger = new ImportLogger() {
         @Override
-        public void warn(Study study, String message) {
+        public void warn(LogContext study, String message) {
 
         }
 
         @Override
-        public void info(Study study, String message) {
+        public void info(LogContext study, String message) {
 
         }
 
         @Override
-        public void severe(Study study, String message) {
+        public void severe(LogContext study, String message) {
 
         }
     };

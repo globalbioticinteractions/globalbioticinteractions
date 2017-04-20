@@ -53,17 +53,17 @@ public class GitHubRepoCheck {
         StudyImporterForGitHubData studyImporterForGitHubData = new StudyImporterForGitHubData(parserFactory, nodeFactory);
         studyImporterForGitHubData.setLogger(new ImportLogger() {
             @Override
-            public void info(Study study, String message) {
+            public void info(LogContext study, String message) {
                 addUntilFull(message, infos);
             }
 
             @Override
-            public void warn(Study study, String message) {
+            public void warn(LogContext study, String message) {
                 addUntilFull(message, warnings);
             }
 
             @Override
-            public void severe(Study study, String message) {
+            public void severe(LogContext study, String message) {
                 addUntilFull(message, errors);
             }
 
