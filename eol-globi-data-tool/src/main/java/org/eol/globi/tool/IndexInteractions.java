@@ -32,7 +32,7 @@ public class IndexInteractions implements Linker {
     private int batchSize;
 
     public IndexInteractions(GraphDatabaseService graphDb) {
-        this(graphDb, 100);
+        this(graphDb, 20);
     }
 
     public IndexInteractions(GraphDatabaseService graphDb, int batchSize) {
