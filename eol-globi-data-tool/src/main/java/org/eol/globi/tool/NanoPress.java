@@ -59,12 +59,19 @@ public class NanoPress {
 
         LOG.info("reading from neo4j: [" + inputFilePath + "], writing nanopubs to [" + outputFilePath + "]");
 
-        Map<String, String> config = MapUtil.stringMap("keep_logical_logs", "false", "cache_type", "none");
+        Map<String, String> config = MapUtil.stringMap("keep_logical_logs", "1MB size"
+                , "cache_type", "none"
+                , "dump_configuration", "true");
         final GraphDatabaseService graphService = GraphService.getGraphService(inputFilePath, config);
 
         File pubDir = new File(outputFilePath);
         FileUtils.forceMkdir(pubDir);
 
+        createLinkers(cmdLine, graphService, pubDir)
+                .forEach(LinkUtil::doTimedLink);
+    }
+
+    public static List<Linker> createLinkers(CommandLine cmdLine, GraphDatabaseService graphService, File pubDir) {
         List<Linker> linkers = new ArrayList<Linker>();
         if (!cmdLine.hasOption("nanoOnly")) {
             linkers.add(new IndexInteractions(graphService));
@@ -82,8 +89,7 @@ public class NanoPress {
             }
             return os == null ? new NullOutputStream() : os;
         }));
-
-        linkers.forEach(LinkUtil::doTimedLink);
+        return linkers;
     }
 
 }
