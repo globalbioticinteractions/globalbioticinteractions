@@ -213,7 +213,7 @@ public class LinkerTrustyNanoPubs implements Linker {
                 }
             }
         }
-        return selected == null ? null : taxonNode.getExternalId().replace(TaxonomyProvider.NCBI.getIdPrefix(), "NCBITaxon:");
+        return selected == null ? null : selected.getExternalId().replace(TaxonomyProvider.NCBI.getIdPrefix(), "");
     }
 
     public static boolean isNCBITaxon(TaxonNode sameAsTaxon) {

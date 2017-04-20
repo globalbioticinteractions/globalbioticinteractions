@@ -22,9 +22,9 @@
   :Interaction_1 a obo:GO_0044419 ;
     obo:RO_0000057 :Organism_0 ;
     obo:RO_0000057 :Organism_1 .
-  :Organism_0 a NCBITaxon:NCBITaxon:1234 ;
+  :Organism_0 a NCBITaxon:1234 ;
     <http://purl.obolibrary.org/obo/RO_0002470> :Organism_1 .
-  :Organism_1 a NCBITaxon:NCBITaxon:4444 .
+  :Organism_1 a NCBITaxon:4444 .
 }
 
 :NanoPub_1_Provenance {

@@ -1,5 +1,5 @@
-@prefix this: <http://np.globalbioticinteractions.org/RAYUKMe50zAqCZHDcWMOJ-16fucoQj6W4ZcT33CU92PuU> .
-@prefix sub: <http://np.globalbioticinteractions.org/RAYUKMe50zAqCZHDcWMOJ-16fucoQj6W4ZcT33CU92PuU#> .
+@prefix this: <http://np.globalbioticinteractions.org/RA4BFes9AwZzlFEUTL1zyIQMqUgdErxsqNEbShbmiG4zk> .
+@prefix sub: <http://np.globalbioticinteractions.org/RA4BFes9AwZzlFEUTL1zyIQMqUgdErxsqNEbShbmiG4zk#> .
 @prefix nanopub: <http://www.nanopub.org/nschema#> .
 @prefix opm: <http://purl.org/net/opmv/ns#> .
 @prefix pav: <http://swan.mindinformatics.org/ontologies/1.2/pav/> .
@@ -18,9 +18,9 @@ sub:NanoPub_1_Assertion {
 		a obo:GO_0044419 .
 	
 	sub:Organism_0 obo:RO_0002470 sub:Organism_1 ;
-		a NCBITaxon:NCBITaxon:1234 .
+		a NCBITaxon:1234 .
 	
-	sub:Organism_1 a NCBITaxon:NCBITaxon:4444 .
+	sub:Organism_1 a NCBITaxon:4444 .
 }
 
 sub:NanoPub_1_Provenance {

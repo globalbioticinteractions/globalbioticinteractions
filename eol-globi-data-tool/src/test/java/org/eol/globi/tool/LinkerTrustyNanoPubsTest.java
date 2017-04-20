@@ -61,7 +61,7 @@ public class LinkerTrustyNanoPubsTest extends GraphDBTestCase {
         ByteArrayOutputStream actual = new ByteArrayOutputStream();
         Nanopub trustyNanopub = MakeTrustyNanopub.writeAsTrustyNanopub(nanopub, RDFFormat.TRIG, actual);
         String artifactCode = TrustyUriUtils.getArtifactCode(trustyNanopub.getUri().toString());
-        assertThat(artifactCode, is("RAYUKMe50zAqCZHDcWMOJ-16fucoQj6W4ZcT33CU92PuU"));
+        assertThat(artifactCode, is("RA4BFes9AwZzlFEUTL1zyIQMqUgdErxsqNEbShbmiG4zk"));
         String actualTrig = toTrigString(new ByteArrayInputStream(actual.toByteArray()));
         String expectedTrig = toTrigString(getClass().getResourceAsStream("trusty.nanopub.trig"));
 
@@ -131,12 +131,12 @@ public class LinkerTrustyNanoPubsTest extends GraphDBTestCase {
 
         Index<Node> nanopubs = getGraphDb().index().forNodes("nanopubs");
 
-        IndexHits<Node> hits = nanopubs.query("code:\"RAYUKMe50zAqCZHDcWMOJ-16fucoQj6W4ZcT33CU92PuU\"");
+        IndexHits<Node> hits = nanopubs.query("code:\"RA4BFes9AwZzlFEUTL1zyIQMqUgdErxsqNEbShbmiG4zk\"");
 
         assertThat(hits.hasNext(), is(true));
 
         Node nanopubRef = hits.next();
-        assertThat(nanopubRef.getProperty("code"), is("RAYUKMe50zAqCZHDcWMOJ-16fucoQj6W4ZcT33CU92PuU"));
+        assertThat(nanopubRef.getProperty("code"), is("RA4BFes9AwZzlFEUTL1zyIQMqUgdErxsqNEbShbmiG4zk"));
 
         Iterable<Relationship> rels = nanopubRef.getRelationships(NodeUtil.asNeo4j(RelTypes.SUPPORTS), Direction.INCOMING);
         assertThat(rels.iterator().hasNext(), is(true));
