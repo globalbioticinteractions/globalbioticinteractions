@@ -48,16 +48,13 @@ public class IndexInteractions implements Linker {
         Index<Node> datasets = graphDb.index().forNodes("datasets");
         Transaction tx = graphDb.beginTx();
         try {
-            for (Node node : datasets.query("*:*")) {
-                DatasetNode dataset = new DatasetNode(node);
-                Iterable<Relationship> studyRels = dataset
-                        .getUnderlyingNode()
-                        .getRelationships(NodeUtil.asNeo4j(RelTypes.IN_DATASET), Direction.INCOMING);
+            for (Node datasetNode : datasets.query("*:*")) {
+                Iterable<Relationship> studyRels = datasetNode.getRelationships(Direction.INCOMING, NodeUtil.asNeo4j(RelTypes.IN_DATASET));
                 for (Relationship studyRel : studyRels) {
-                    StudyNode study = new StudyNode(studyRel.getStartNode());
-                    Iterable<Relationship> specimens = NodeUtil.getSpecimens(study);
+                    Node studyNode = studyRel.getStartNode();
+                    Iterable<Relationship> specimens = NodeUtil.getSpecimens(studyNode);
                     for (Relationship specimen : specimens) {
-                        handleSpecimen(study, specimen, dataset);
+                        handleSpecimen(studyNode, specimen, studyNode);
                         progress.progress();
                     }
                 }
@@ -73,13 +70,13 @@ public class IndexInteractions implements Linker {
         }
     }
 
-    public void handleSpecimen(StudyNode study, Relationship specimen, DatasetNode dataset) {
+    public void handleSpecimen(Node study, Relationship specimen, Node dataset) {
         Node specimenNode = specimen.getEndNode();
         if (isNotIndexed(specimenNode)) {
             Iterable<Relationship> interactions = specimenNode.getRelationships(Direction.OUTGOING, INTERACTION_TYPES);
-            InteractionNode interactionNode = new InteractionNode(graphDb.createNode());
-            interactionNode.createRelationshipTo(study, RelTypes.DERIVED_FROM);
-            interactionNode.createRelationshipTo(dataset, RelTypes.ACCESSED_AT);
+            Node interactionNode = graphDb.createNode();
+            interactionNode.createRelationshipTo(study, NodeUtil.asNeo4j(RelTypes.DERIVED_FROM));
+            interactionNode.createRelationshipTo(dataset, NodeUtil.asNeo4j(RelTypes.ACCESSED_AT));
 
             for (Relationship interactionRel : interactions) {
                 if (!interactionRel.hasProperty(PropertyAndValueDictionary.INVERTED)) {
@@ -94,9 +91,9 @@ public class IndexInteractions implements Linker {
         return !specimenNode.hasRelationship(Direction.INCOMING, HAS_PARTICIPANT);
     }
 
-    private static void addParticipant(InteractionNode interaction, Node participant) {
+    private static void addParticipant(Node interaction, Node participant) {
         if (isNotIndexed(participant)) {
-            interaction.getUnderlyingNode().createRelationshipTo(participant, HAS_PARTICIPANT);
+            interaction.createRelationshipTo(participant, HAS_PARTICIPANT);
         }
     }
 
