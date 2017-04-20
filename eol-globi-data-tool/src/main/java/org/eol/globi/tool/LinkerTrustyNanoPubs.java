@@ -45,7 +45,7 @@ public class LinkerTrustyNanoPubs {
                     .getRelationships(NodeUtil.asNeo4j(RelTypes.ACCESSED_AT), Direction.INCOMING);
             for (Relationship rel : rels) {
                 InteractionNode interaction = new InteractionNode(rel.getStartNode());
-                String nanoPubString = writeNanoPub(dataset, interaction, "2017-04-10T06:40:46-10:00");
+                String nanoPubString = writeNanoPub(dataset, interaction);
                 NanopubImpl nanopub = new NanopubImpl(nanoPubString, RDFFormat.TRIG);
                 Nanopub trustyNanopub = MakeTrustyNanopub.writeAsTrustyNanopub(nanopub, RDFFormat.TRIG, new NullOutputStream());
                 String artifactCode = TrustyUriUtils.getArtifactCode(trustyNanopub.getUri().toString());
@@ -69,7 +69,7 @@ public class LinkerTrustyNanoPubs {
         }
     }
 
-    public static String writeNanoPub(DatasetNode dataset, InteractionNode interaction, String pubDateTimeString) throws RDFHandlerException {
+    public static String writeNanoPub(DatasetNode dataset, InteractionNode interaction) throws RDFHandlerException {
         StringBuilder builder = new StringBuilder();
         builder.append("@prefix nanopub: <http://www.nanopub.org/nschema#> .\n" +
                 "@prefix dcterms: <http://purl.org/dc/terms/> .\n" +
@@ -105,8 +105,7 @@ public class LinkerTrustyNanoPubs {
                         " \n" +
                         ":NanoPub_1_Pubinfo {\n" +
                         ": pav:createdBy <http://globalbioticinteractions.org> .\n" +
-                        "}", datasetURI
-                , pubDateTimeString));
+                        "}", datasetURI));
         return builder.toString();
     }
 

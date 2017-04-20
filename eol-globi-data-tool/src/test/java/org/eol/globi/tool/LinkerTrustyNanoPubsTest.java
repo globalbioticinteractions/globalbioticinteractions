@@ -80,7 +80,7 @@ public class LinkerTrustyNanoPubsTest extends GraphDBTestCase {
                 .getRelationships(NodeUtil.asNeo4j(RelTypes.ACCESSED_AT), Direction.INCOMING);
         InteractionNode interactionNode = new InteractionNode(rels.iterator().next().getStartNode());
 
-        String nanoPubText = LinkerTrustyNanoPubs.writeNanoPub(datasetNode, interactionNode, "2017-04-10T06:40:46-10:00");
+        String nanoPubText = LinkerTrustyNanoPubs.writeNanoPub(datasetNode, interactionNode);
         InputStream rdfIn = IOUtils.toInputStream(nanoPubText);
 
         String rdfActual = toTrigString(rdfIn);

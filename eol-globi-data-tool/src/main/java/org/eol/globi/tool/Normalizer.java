@@ -1,5 +1,6 @@
 package org.eol.globi.tool;
 
+import net.trustyuri.TrustyUriException;
 import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -11,6 +12,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eol.globi.Version;
+import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.data.NodeFactoryNeo4j;
 import org.eol.globi.data.StudyImporter;
 import org.eol.globi.data.StudyImporterException;
@@ -33,7 +35,9 @@ import org.eol.globi.taxon.TaxonCacheService;
 import org.eol.globi.taxon.TaxonIndexNeo4j;
 import org.eol.globi.taxon.TaxonNameCorrector;
 import org.eol.globi.util.HttpUtil;
+import org.nanopub.MalformedNanopubException;
 import org.neo4j.graphdb.GraphDatabaseService;
+import org.openrdf.OpenRDFException;
 
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -186,14 +190,36 @@ public class Normalizer {
 
         if (cmdLine == null || !cmdLine.hasOption(OPTION_SKIP_LINK)) {
             linkTaxa(graphService);
+            indexInteractions(graphService);
+            linkTrustyURIs(graphService);
         } else {
-            LOG.info("skipping taxa linking ...");
+            LOG.info("skipping linking ...");
         }
 
         if (cmdLine == null || !cmdLine.hasOption(OPTION_SKIP_LINK_THUMBNAILS)) {
             new ImageLinker().linkImages(graphService, null);
         } else {
             LOG.info("skipping linking of taxa to thumbnails ...");
+        }
+    }
+
+    public void linkTrustyURIs(GraphDatabaseService graphService) {
+        try {
+            LOG.info("trusty uri linking started...");
+            new LinkerTrustyNanoPubs().link(graphService);
+            LOG.info("trusty uri linking done.");
+        } catch (MalformedNanopubException | TrustyUriException | OpenRDFException e) {
+            LOG.warn("Problem linking interactions to trusty uris", e);
+        }
+    }
+
+    public void indexInteractions(GraphDatabaseService graphService) {
+        try {
+            LOG.info("interaction indexing started...");
+            new IndexInteractions().link(graphService);
+            LOG.info("interaction indexing done.");
+        } catch (NodeFactoryException e) {
+            LOG.warn("Problem linking interactions with study and datasets", e);
         }
     }
 
