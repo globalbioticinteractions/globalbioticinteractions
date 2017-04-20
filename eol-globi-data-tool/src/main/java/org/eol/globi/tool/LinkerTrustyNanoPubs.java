@@ -34,7 +34,6 @@ import org.openrdf.rio.RDFHandlerException;
 import org.openrdf.rio.RDFWriter;
 import org.openrdf.rio.Rio;
 
-import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
 import java.util.Collection;
@@ -66,6 +65,9 @@ public class LinkerTrustyNanoPubs implements Linker {
     }
 
     public void doLink() throws MalformedNanopubException, OpenRDFException, TrustyUriException {
+        LinkProgress progress = new LinkProgress(LOG::info);
+        progress.start();
+
         Index<Node> datasets = graphDb.index().forNodes("datasets");
         Index<Node> nanopubs = graphDb.index().forNodes("nanopubs");
         for (Node node : datasets.query("*:*")) {
@@ -95,6 +97,7 @@ public class LinkerTrustyNanoPubs implements Linker {
                     }
                 }
                 withSameCode.close();
+                progress.progress();
             }
         }
     }
