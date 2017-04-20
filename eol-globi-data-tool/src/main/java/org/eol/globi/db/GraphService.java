@@ -9,7 +9,7 @@ import java.util.Map;
 
 public abstract class GraphService {
 
-    public static final Map<String, String> CONFIG_DEFAULT = MapUtil.stringMap("keep_logical_logs", "1M size");
+    public static final Map<String, String> CONFIG_DEFAULT = MapUtil.stringMap("keep_logical_logs", "0M size");
     private static GraphDatabaseService graphDb;
 
 

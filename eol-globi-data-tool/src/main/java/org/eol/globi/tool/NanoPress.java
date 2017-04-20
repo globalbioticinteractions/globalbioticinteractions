@@ -59,7 +59,7 @@ public class NanoPress {
 
         LOG.info("reading from neo4j: [" + inputFilePath + "], writing nanopubs to [" + outputFilePath + "]");
 
-        Map<String, String> config = MapUtil.stringMap("keep_logical_logs", "1MB size"
+        Map<String, String> config = MapUtil.stringMap("keep_logical_logs", "0M size"
                 , "cache_type", "none"
                 , "dump_configuration", "true");
         final GraphDatabaseService graphService = GraphService.getGraphService(inputFilePath, config);
