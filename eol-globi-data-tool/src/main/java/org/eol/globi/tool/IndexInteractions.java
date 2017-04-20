@@ -29,16 +29,21 @@ public class IndexInteractions implements Linker {
     private static final RelationshipType HAS_PARTICIPANT = NodeUtil.asNeo4j(RelTypes.HAS_PARTICIPANT);
     public static final RelationshipType[] INTERACTION_TYPES = NodeUtil.asNeo4j(InteractType.values());
     private final GraphDatabaseService graphDb;
+    private int batchSize;
 
     public IndexInteractions(GraphDatabaseService graphDb) {
+        this(graphDb, 100);
+    }
+
+    public IndexInteractions(GraphDatabaseService graphDb, int batchSize) {
         this.graphDb = graphDb;
+        this.batchSize = batchSize;
     }
 
     @Override
     public void link() {
-        int batchSize = 100;
         AtomicLong specimenCount = new AtomicLong(0);
-        LinkProgress progress = new LinkProgress(LOG::info);
+        LinkProgress progress = new LinkProgress(LOG::info, 1000);
         progress.start();
         Index<Node> datasets = graphDb.index().forNodes("datasets");
         Transaction tx = graphDb.beginTx();
@@ -72,21 +77,15 @@ public class IndexInteractions implements Linker {
         Node specimenNode = specimen.getEndNode();
         if (isNotIndexed(specimenNode)) {
             Iterable<Relationship> interactions = specimenNode.getRelationships(Direction.OUTGOING, INTERACTION_TYPES);
-            Transaction tx = graphDb.beginTx();
-            try {
-                InteractionNode interactionNode = new InteractionNode(graphDb.createNode());
-                interactionNode.createRelationshipTo(study, RelTypes.DERIVED_FROM);
-                interactionNode.createRelationshipTo(dataset, RelTypes.ACCESSED_AT);
+            InteractionNode interactionNode = new InteractionNode(graphDb.createNode());
+            interactionNode.createRelationshipTo(study, RelTypes.DERIVED_FROM);
+            interactionNode.createRelationshipTo(dataset, RelTypes.ACCESSED_AT);
 
-                for (Relationship interactionRel : interactions) {
-                    if (!interactionRel.hasProperty(PropertyAndValueDictionary.INVERTED)) {
-                        addParticipant(interactionNode, interactionRel.getStartNode());
-                        addParticipant(interactionNode, interactionRel.getEndNode());
-                    }
-                    tx.success();
+            for (Relationship interactionRel : interactions) {
+                if (!interactionRel.hasProperty(PropertyAndValueDictionary.INVERTED)) {
+                    addParticipant(interactionNode, interactionRel.getStartNode());
+                    addParticipant(interactionNode, interactionRel.getEndNode());
                 }
-            } finally {
-                tx.finish();
             }
         }
     }

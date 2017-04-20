@@ -1,19 +1,23 @@
 package org.eol.globi.tool;
 
 import org.apache.commons.lang.time.StopWatch;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import java.util.concurrent.atomic.AtomicLong;
 
 public class LinkProgress {
     private final LinkProgressListener listener;
+    private final int reportInterval;
+
     private StopWatch stopWatch = new StopWatch();
     private AtomicLong counter = new AtomicLong(0);
-    private int reportInterval = 100;
 
     public LinkProgress(LinkProgressListener listener) {
+        this(listener, 100);
+    }
+
+    public LinkProgress(LinkProgressListener listener, int reportInterval) {
         this.listener = listener;
+        this.reportInterval = reportInterval;
     }
 
     public void start() {
