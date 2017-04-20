@@ -34,7 +34,6 @@ import static org.junit.Assert.assertTrue;
 
 public class IndexInteractionsTest extends GraphDBTestCase {
 
-
     @Test
     public void indexInteractions() throws NodeFactoryException {
         TaxonIndex taxonIndex = getOrCreateTaxonIndex();
