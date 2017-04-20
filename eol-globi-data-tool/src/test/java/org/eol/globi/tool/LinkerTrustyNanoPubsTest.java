@@ -159,11 +159,11 @@ public class LinkerTrustyNanoPubsTest extends GraphDBTestCase {
         TaxonImpl donaldTaxon = new TaxonImpl("donald duck", "NCBI:1234");
         Specimen donald = factory.createSpecimen(interaction, donaldTaxon);
         donald.classifyAs(taxonIndex.getOrCreateTaxon(donaldTaxon));
-        TaxonImpl mickeyTaxon = new TaxonImpl("mickey mouse", "NCBI:4444");
-        Taxon mickeyTaxonNCBI = taxonIndex.getOrCreateTaxon(new TaxonImpl("mickey mouse", "EOL:567"));
-        NodeUtil.connectTaxa(mickeyTaxon, (TaxonNode) mickeyTaxonNCBI, getGraphDb(), RelTypes.SAME_AS);
-        Specimen mickey = factory.createSpecimen(interaction, mickeyTaxon);
-        mickey.classifyAs(taxonIndex.getOrCreateTaxon(mickeyTaxon));
+        Taxon mickeyTaxon = new TaxonImpl("mickey mouse", "NCBI:4444");
+        Taxon mickeyTaxonEOL = taxonIndex.getOrCreateTaxon(new TaxonImpl("mickey mouse", "EOL:567"));
+        NodeUtil.connectTaxa(mickeyTaxon, (TaxonNode) mickeyTaxonEOL, getGraphDb(), RelTypes.SAME_AS);
+        Specimen mickey = factory.createSpecimen(interaction, mickeyTaxonEOL);
+        mickey.classifyAs(taxonIndex.getOrCreateTaxon(mickeyTaxonEOL));
 
         donald.ate(mickey);
         return factory;

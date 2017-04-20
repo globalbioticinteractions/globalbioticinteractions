@@ -207,8 +207,9 @@ public class LinkerTrustyNanoPubs implements Linker {
         } else {
             Iterable<Relationship> sameAs = taxonNode.getUnderlyingNode().getRelationships(NodeUtil.asNeo4j(RelTypes.SAME_AS), Direction.OUTGOING);
             for (Relationship sameAsTaxon : sameAs) {
-                if (isNCBITaxon(new TaxonNode(sameAsTaxon.getEndNode()))) {
-                    selected = taxonNode;
+                TaxonNode sameAsTaxonNode = new TaxonNode(sameAsTaxon.getEndNode());
+                if (isNCBITaxon(sameAsTaxonNode)) {
+                    selected = sameAsTaxonNode;
                     break;
                 }
             }
