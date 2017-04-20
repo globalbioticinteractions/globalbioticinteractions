@@ -37,7 +37,7 @@ public class IndexInteractions implements Linker {
     private Integer batchSize;
 
     public IndexInteractions(GraphDatabaseService graphDb) {
-        this(graphDb, 20);
+        this(graphDb, 100);
     }
 
     public IndexInteractions(GraphDatabaseService graphDb, int batchSize) {
@@ -59,7 +59,7 @@ public class IndexInteractions implements Linker {
                     "WHERE not(specimen<-[:HAS_PARTICIPANT]-()) " +
                     "AND not(specimen<-[:HAS_PARTICIPANT]-()) " +
                     "AND not(has(i.inverted))\n" +
-                    "WITH specimen, otherSpecimen, study, dataset LIMIT 100\n" +
+                    "WITH specimen, otherSpecimen, study, dataset LIMIT {batchSize}\n" +
                     "CREATE specimen<-[:HAS_PARTICIPANT]-interaction-[:DERIVED_FROM]->study" +
                     ", interaction-[:ACCESSED_AT]->dataset" +
                     ", otherSpecimen<-[:HAS_PARTICIPANT]-interaction\n" +
