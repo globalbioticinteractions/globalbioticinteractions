@@ -11,7 +11,10 @@ import org.eol.globi.domain.InteractionNode;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.StudyNode;
+import org.eol.globi.util.CypherUtil;
+import org.eol.globi.util.InteractUtil;
 import org.eol.globi.util.NodeUtil;
+import org.neo4j.cypher.javacompat.ExecutionEngine;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
@@ -44,61 +47,17 @@ public class IndexInteractions implements Linker {
 
     @Override
     public void link() {
-        AtomicLong specimenCount = new AtomicLong(0);
-        LinkProgress progress = new LinkProgress(LOG::info, 1000);
-        progress.start();
-        Index<Node> datasets = graphDb.index().forNodes("datasets");
-        Transaction tx = graphDb.beginTx();
-        try {
-            Iterator<Node> iterDataset = datasets.query("*:*").iterator();
-            while (iterDataset.hasNext()) {
-                Node datasetNode = iterDataset.next();
-                Iterable<Relationship> studyRels = datasetNode.getRelationships(Direction.INCOMING, NodeUtil.asNeo4j(RelTypes.IN_DATASET));
-                for (Relationship studyRel : studyRels) {
-                    Node studyNode = studyRel.getStartNode();
-                    Iterable<Relationship> specimens = NodeUtil.getSpecimens(studyNode);
-                    for (Relationship specimen : specimens) {
-                        handleSpecimen(studyNode, specimen, studyNode);
-                        progress.progress();
-                    }
-                }
-                if (specimenCount.getAndIncrement() % batchSize == 0) {
-                    tx.success();
-                    tx.finish();
-                    tx = graphDb.beginTx();
-                }
-            }
-            tx.success();
-        } finally {
-            tx.finish();
-        }
-    }
-
-    public void handleSpecimen(Node study, Relationship specimen, Node dataset) {
-        Node specimenNode = specimen.getEndNode();
-        if (isNotIndexed(specimenNode)) {
-            Iterable<Relationship> interactions = specimenNode.getRelationships(Direction.OUTGOING, INTERACTION_TYPES);
-            Node interactionNode = graphDb.createNode();
-            interactionNode.createRelationshipTo(study, NodeUtil.asNeo4j(RelTypes.DERIVED_FROM));
-            interactionNode.createRelationshipTo(dataset, NodeUtil.asNeo4j(RelTypes.ACCESSED_AT));
-
-            for (Relationship interactionRel : interactions) {
-                if (!interactionRel.hasProperty(PropertyAndValueDictionary.INVERTED)) {
-                    addParticipant(interactionNode, interactionRel.getStartNode());
-                    addParticipant(interactionNode, interactionRel.getEndNode());
-                }
-            }
-        }
-    }
-
-    private static boolean isNotIndexed(Node specimenNode) {
-        return !specimenNode.hasRelationship(Direction.INCOMING, HAS_PARTICIPANT);
-    }
-
-    private static void addParticipant(Node interaction, Node participant) {
-        if (isNotIndexed(participant)) {
-            interaction.createRelationshipTo(participant, HAS_PARTICIPANT);
-        }
+        ExecutionEngine engine = new ExecutionEngine(graphDb);
+        engine.execute("START dataset = node:datasets('*:*')\n" +
+                "MATCH dataset<-[:IN_DATASET]-study-[:COLLECTED]->specimen" +
+                        ", specimen-[i:" + InteractUtil.allInteractionsCypherClause() + "]->otherSpecimen\n" +
+                "WHERE not(specimen-[:HAS_PARTICIPANT]->()) " +
+                "AND not(specimen-[:HAS_PARTICIPANT]->()) " +
+                "AND not(has(i.inverted))\n" +
+                "CREATE specimen<-[:HAS_PARTICIPANT]-interaction-[:DERIVED_FROM]->study" +
+                ", interaction-[:ACCESSED_AT]->dataset" +
+                ", otherSpecimen<-[:HAS_PARTICIPANT]-interaction\n" +
+                "RETURN distinct(id(dataset))");
     }
 
 }
