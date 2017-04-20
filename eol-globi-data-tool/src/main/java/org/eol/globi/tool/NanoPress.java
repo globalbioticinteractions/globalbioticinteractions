@@ -31,7 +31,7 @@ public class NanoPress {
         CommandLineParser parser = new BasicParser();
         Option inputOpt = new Option("i", "input", true, "location of neo4j db");
         inputOpt.setRequired(true);
-        Option outputOpt = new Option("o", "input", true, "output location for nanopubs");
+        Option outputOpt = new Option("o", "output", true, "output location for nanopubs");
         outputOpt.setRequired(true);
 
         Options options = new Options();
