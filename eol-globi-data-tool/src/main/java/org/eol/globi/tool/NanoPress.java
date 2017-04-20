@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -35,9 +36,11 @@ public class NanoPress {
         inputOpt.setRequired(true);
         Option outputOpt = new Option("o", "output", true, "output location for nanopubs");
         outputOpt.setRequired(true);
+        Option opt = new Option("n", "nanoOnly", false, "output location for nanopubs");
 
         Options options = new Options();
         options.addOption(inputOpt);
+        options.addOption(opt);
         options.addOption(outputOpt);
 
         CommandLine cmdLine;
@@ -56,29 +59,30 @@ public class NanoPress {
 
         LOG.info("reading from neo4j: [" + inputFilePath + "], writing nanopubs to [" + outputFilePath + "]");
 
-        pressNanopubs(inputFilePath, outputFilePath);
-    }
-
-    private static void pressNanopubs(String inputFilePath, String outputFilePath) throws IOException {
         Map<String, String> config = MapUtil.stringMap("keep_logical_logs", "false", "cache_type", "none");
         final GraphDatabaseService graphService = GraphService.getGraphService(inputFilePath, config);
 
         File pubDir = new File(outputFilePath);
         FileUtils.forceMkdir(pubDir);
 
-        List<Linker> linkers = Arrays.asList(new IndexInteractions(graphService),
-                new LinkerTrustyNanoPubs(graphService, nanopub -> {
-                    String code = TrustyUriUtils.getArtifactCode(nanopub.getUri().toString());
-                    OutputStream os = null;
-                    if (StringUtils.isNotBlank(code)) {
-                        try {
-                            os = new GZIPOutputStream(new FileOutputStream(new File(pubDir, code + ".trig.gz")));
-                        } catch (IOException e) {
-                            LOG.error("failed to produce nanopub file for [" + code + "]", e);
-                        }
-                    }
-                    return os == null ? new NullOutputStream() : os;
-                }));
+        List<Linker> linkers = new ArrayList<Linker>();
+        if (!cmdLine.hasOption("nanoOnly")) {
+            linkers.add(new IndexInteractions(graphService));
+        }
+
+        linkers.add(new LinkerTrustyNanoPubs(graphService, nanopub -> {
+            String code = TrustyUriUtils.getArtifactCode(nanopub.getUri().toString());
+            OutputStream os = null;
+            if (StringUtils.isNotBlank(code)) {
+                try {
+                    os = new GZIPOutputStream(new FileOutputStream(new File(pubDir, code + ".trig.gz")));
+                } catch (IOException e) {
+                    LOG.error("failed to produce nanopub file for [" + code + "]", e);
+                }
+            }
+            return os == null ? new NullOutputStream() : os;
+        }));
+
         linkers.forEach(LinkUtil::doTimedLink);
     }
 
