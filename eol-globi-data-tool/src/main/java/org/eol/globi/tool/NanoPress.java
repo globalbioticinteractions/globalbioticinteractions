@@ -15,6 +15,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eol.globi.db.GraphService;
 import org.neo4j.graphdb.GraphDatabaseService;
+import org.neo4j.helpers.collection.MapUtil;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -22,6 +23,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.zip.GZIPOutputStream;
 
 public class NanoPress {
@@ -58,7 +60,8 @@ public class NanoPress {
     }
 
     private static void pressNanopubs(String inputFilePath, String outputFilePath) throws IOException {
-        final GraphDatabaseService graphService = GraphService.getGraphService(inputFilePath);
+        Map<String, String> config = MapUtil.stringMap("keep_logical_logs", "false", "cache_type", "none");
+        final GraphDatabaseService graphService = GraphService.getGraphService(inputFilePath, config);
 
         File pubDir = new File(outputFilePath);
         FileUtils.forceMkdir(pubDir);

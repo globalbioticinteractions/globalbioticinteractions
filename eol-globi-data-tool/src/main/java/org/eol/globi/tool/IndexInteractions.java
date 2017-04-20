@@ -19,7 +19,9 @@ import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.RelationshipType;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.index.Index;
+import org.neo4j.graphdb.index.IndexHits;
 
+import java.util.Iterator;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -48,7 +50,9 @@ public class IndexInteractions implements Linker {
         Index<Node> datasets = graphDb.index().forNodes("datasets");
         Transaction tx = graphDb.beginTx();
         try {
-            for (Node datasetNode : datasets.query("*:*")) {
+            Iterator<Node> iterDataset = datasets.query("*:*").iterator();
+            while (iterDataset.hasNext()) {
+                Node datasetNode = iterDataset.next();
                 Iterable<Relationship> studyRels = datasetNode.getRelationships(Direction.INCOMING, NodeUtil.asNeo4j(RelTypes.IN_DATASET));
                 for (Relationship studyRel : studyRels) {
                     Node studyNode = studyRel.getStartNode();
