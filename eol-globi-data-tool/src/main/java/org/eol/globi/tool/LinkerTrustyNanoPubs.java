@@ -133,7 +133,7 @@ public class LinkerTrustyNanoPubs implements Linker {
                 "@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .\n" +
                 "@prefix obo: <http://purl.obolibrary.org/obo/> .\n" +
                 "@prefix NCBITaxon: <http://purl.obolibrary.org/obo/NCBITaxon_> .\n" +
-                "@prefix : <http://np.globalbioticinteractions.org/> .\n" +
+                "@prefix : <http://purl.org/nanopub/temp/> .\n" +
                 "\n" +
                 ":NanoPub_1_Head {\n" +
                 "  : a nanopub:Nanopublication ;\n" +

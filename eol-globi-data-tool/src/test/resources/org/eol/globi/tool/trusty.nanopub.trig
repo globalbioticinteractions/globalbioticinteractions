@@ -1,5 +1,5 @@
-@prefix this: <http://np.globalbioticinteractions.org/RA4BFes9AwZzlFEUTL1zyIQMqUgdErxsqNEbShbmiG4zk> .
-@prefix sub: <http://np.globalbioticinteractions.org/RA4BFes9AwZzlFEUTL1zyIQMqUgdErxsqNEbShbmiG4zk#> .
+@prefix this: <http://purl.org/np/RA7XQvcOGTux6HTndtjAiVWXjEMZbQMH4yJIxTMCV8sx4> .
+@prefix sub: <http://purl.org/np/RA7XQvcOGTux6HTndtjAiVWXjEMZbQMH4yJIxTMCV8sx4#> .
 @prefix nanopub: <http://www.nanopub.org/nschema#> .
 @prefix opm: <http://purl.org/net/opmv/ns#> .
 @prefix pav: <http://swan.mindinformatics.org/ontologies/1.2/pav/> .

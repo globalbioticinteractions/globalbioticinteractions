@@ -61,7 +61,7 @@ public class LinkerTrustyNanoPubsTest extends GraphDBTestCase {
         ByteArrayOutputStream actual = new ByteArrayOutputStream();
         Nanopub trustyNanopub = MakeTrustyNanopub.writeAsTrustyNanopub(nanopub, RDFFormat.TRIG, actual);
         String artifactCode = TrustyUriUtils.getArtifactCode(trustyNanopub.getUri().toString());
-        assertThat(artifactCode, is("RA4BFes9AwZzlFEUTL1zyIQMqUgdErxsqNEbShbmiG4zk"));
+        assertThat(artifactCode, is("RA7XQvcOGTux6HTndtjAiVWXjEMZbQMH4yJIxTMCV8sx4"));
         String actualTrig = toTrigString(new ByteArrayInputStream(actual.toByteArray()));
         String expectedTrig = toTrigString(getClass().getResourceAsStream("trusty.nanopub.trig"));
 
@@ -120,7 +120,7 @@ public class LinkerTrustyNanoPubsTest extends GraphDBTestCase {
 
     }
 
-        @Test
+    @Test
     public void link() throws NodeFactoryException, OpenRDFException, IOException, MalformedNanopubException, TrustyUriException {
         DatasetImpl dataset = new DatasetImpl("some/namespace", URI.create("http://example.com/dataset"));
 
@@ -131,12 +131,12 @@ public class LinkerTrustyNanoPubsTest extends GraphDBTestCase {
 
         Index<Node> nanopubs = getGraphDb().index().forNodes("nanopubs");
 
-        IndexHits<Node> hits = nanopubs.query("code:\"RA4BFes9AwZzlFEUTL1zyIQMqUgdErxsqNEbShbmiG4zk\"");
+        IndexHits<Node> hits = nanopubs.query("code:\"RA7XQvcOGTux6HTndtjAiVWXjEMZbQMH4yJIxTMCV8sx4\"");
 
         assertThat(hits.hasNext(), is(true));
 
         Node nanopubRef = hits.next();
-        assertThat(nanopubRef.getProperty("code"), is("RA4BFes9AwZzlFEUTL1zyIQMqUgdErxsqNEbShbmiG4zk"));
+        assertThat(nanopubRef.getProperty("code"), is("RA7XQvcOGTux6HTndtjAiVWXjEMZbQMH4yJIxTMCV8sx4"));
 
         Iterable<Relationship> rels = nanopubRef.getRelationships(NodeUtil.asNeo4j(RelTypes.SUPPORTS), Direction.INCOMING);
         assertThat(rels.iterator().hasNext(), is(true));
