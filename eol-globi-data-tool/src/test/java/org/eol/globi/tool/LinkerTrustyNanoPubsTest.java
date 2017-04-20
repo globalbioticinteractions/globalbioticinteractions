@@ -13,7 +13,9 @@ import org.eol.globi.domain.InteractionNode;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.StudyImpl;
+import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
+import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.service.DatasetImpl;
 import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
@@ -78,7 +80,7 @@ public class LinkerTrustyNanoPubsTest extends GraphDBTestCase {
                 .getRelationships(NodeUtil.asNeo4j(RelTypes.ACCESSED_AT), Direction.INCOMING);
         InteractionNode interactionNode = new InteractionNode(rels.iterator().next().getStartNode());
 
-        String nanoPubText = linker.writeNanoPub(datasetNode, interactionNode, "2017-04-10T06:40:46-10:00");
+        String nanoPubText = LinkerTrustyNanoPubs.writeNanoPub(datasetNode, interactionNode, "2017-04-10T06:40:46-10:00");
         InputStream rdfIn = IOUtils.toInputStream(nanoPubText);
 
         String rdfActual = toTrigString(rdfIn);
@@ -127,6 +129,8 @@ public class LinkerTrustyNanoPubsTest extends GraphDBTestCase {
         Specimen donald = factory.createSpecimen(interaction, donaldTaxon);
         donald.classifyAs(taxonIndex.getOrCreateTaxon(donaldTaxon));
         TaxonImpl mickeyTaxon = new TaxonImpl("mickey mouse", "NCBI:4444");
+        Taxon mickeyTaxonNCBI = taxonIndex.getOrCreateTaxon(new TaxonImpl("mickey mouse", "EOL:567"));
+        NodeUtil.connectTaxa(mickeyTaxon, (TaxonNode) mickeyTaxonNCBI, getGraphDb(), RelTypes.SAME_AS);
         Specimen mickey = factory.createSpecimen(interaction, mickeyTaxon);
         mickey.classifyAs(taxonIndex.getOrCreateTaxon(mickeyTaxon));
 

@@ -112,7 +112,7 @@ public class LinkerTrustyNanoPubs {
 
     public static void generateOrganisms(StringBuilder builder, InteractionNode interaction) {
         Collection<Specimen> participants = interaction.getParticipants();
-        Map<Long, Integer> nodeIdParticipantMap = new TreeMap<Long, Integer>();
+        Map<Long, Integer> nodeIdParticipantMap = new TreeMap<>();
         int participantNumber = 0;
         for (Specimen participant : participants) {
             builder.append(String.format("\n    obo:RO_0000057 :Organism_%d ", participantNumber));
@@ -123,21 +123,10 @@ public class LinkerTrustyNanoPubs {
 
         participantNumber = 0;
         for (Specimen participant : participants) {
-            String ncbiTaxonId = null;
             Iterable<Relationship> classification = NodeUtil.getClassifications(participant);
             if (classification != null && classification.iterator().hasNext()) {
                 TaxonNode taxonNode = new TaxonNode(classification.iterator().next().getEndNode());
-                if (isNCBITaxon(taxonNode)) {
-                    ncbiTaxonId = taxonNode.getExternalId().replace(TaxonomyProvider.NCBI.getIdPrefix(), "NCBITaxon:");
-                }
-                Iterable<Relationship> sameAsRels = taxonNode.getUnderlyingNode().getRelationships(NodeUtil.asNeo4j(RelTypes.SAME_AS), Direction.OUTGOING);
-                for (Relationship sameAsRel : sameAsRels) {
-                    TaxonNode sameAsTaxon = new TaxonNode(sameAsRel.getEndNode());
-                    if (isNCBITaxon(sameAsTaxon)) {
-                        ncbiTaxonId = taxonNode.getExternalId().replace(TaxonomyProvider.NCBI.getIdPrefix(), "NCBITaxon:");
-                    }
-                }
-
+                String ncbiTaxonId = resolveNCBITaxonId(taxonNode);
                 if (StringUtils.isNotBlank(ncbiTaxonId)) {
                     builder.append(String.format("\n  :Organism_%d a NCBITaxon:%s ", participantNumber, ncbiTaxonId));
                     Iterable<Relationship> interactRel = ((NodeBacked) participant).getUnderlyingNode().getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j(InteractType.values()));
@@ -157,6 +146,22 @@ public class LinkerTrustyNanoPubs {
                 }
             }
         }
+    }
+
+    public static String resolveNCBITaxonId(TaxonNode taxonNode) {
+        TaxonNode selected = null;
+        if (isNCBITaxon(taxonNode)) {
+            selected = taxonNode;
+        } else {
+            Iterable<Relationship> sameAs = taxonNode.getUnderlyingNode().getRelationships(NodeUtil.asNeo4j(RelTypes.SAME_AS), Direction.OUTGOING);
+            for (Relationship sameAsTaxon : sameAs) {
+                if (isNCBITaxon(new TaxonNode(sameAsTaxon.getEndNode()))) {
+                    selected = taxonNode;
+                    break;
+                }
+            }
+        }
+        return selected == null ? null : taxonNode.getExternalId().replace(TaxonomyProvider.NCBI.getIdPrefix(), "NCBITaxon:");
     }
 
     public static boolean isNCBITaxon(TaxonNode sameAsTaxon) {
