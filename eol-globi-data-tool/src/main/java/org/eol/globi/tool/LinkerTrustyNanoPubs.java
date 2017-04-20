@@ -2,6 +2,7 @@ package org.eol.globi.tool;
 
 import net.trustyuri.TrustyUriException;
 import net.trustyuri.TrustyUriUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.NullOutputStream;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
@@ -34,6 +35,8 @@ import org.openrdf.rio.RDFHandlerException;
 import org.openrdf.rio.RDFWriter;
 import org.openrdf.rio.Rio;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
 import java.util.Collection;
@@ -105,8 +108,17 @@ public class LinkerTrustyNanoPubs implements Linker {
     public Nanopub generateTrustyNanopub(String nanoPubString) throws MalformedNanopubException, OpenRDFException, TrustyUriException {
         NanopubImpl nanopub = new NanopubImpl(nanoPubString, RDFFormat.TRIG);
         Nanopub trustyNanopub  = MakeTrustyNanopub.transform(nanopub);
-        RDFWriter w = Rio.createWriter(RDFFormat.TRIG, new OutputStreamWriter(osFactory.outputStreamFor(trustyNanopub), Charset.forName("UTF-8")));
+        OutputStream os = osFactory.outputStreamFor(trustyNanopub);
+        OutputStreamWriter writer = new OutputStreamWriter(os, Charset.forName("UTF-8"));
+        RDFWriter w = Rio.createWriter(RDFFormat.TRIG, writer);
         NanopubUtils.propagateToHandler(trustyNanopub, w);
+        try {
+            writer.flush();
+        } catch (IOException e) {
+            // ignore
+        } finally {
+            IOUtils.closeQuietly(writer);
+        }
         return trustyNanopub;
     }
 

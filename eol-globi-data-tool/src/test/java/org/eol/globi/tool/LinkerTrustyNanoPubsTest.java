@@ -42,8 +42,11 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URI;
 import java.util.Iterator;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertFalse;
@@ -90,6 +93,34 @@ public class LinkerTrustyNanoPubsTest extends GraphDBTestCase {
     }
 
     @Test
+    public void dataOutput() throws NodeFactoryException, OpenRDFException, IOException, MalformedNanopubException, TrustyUriException {
+        DatasetImpl dataset = new DatasetImpl("some/namespace", URI.create("http://example.com/dataset"));
+
+        populateDataset(dataset);
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+
+        LinkerTrustyNanoPubs linker = new LinkerTrustyNanoPubs(getGraphDb(), new NanopubOutputStreamFactory() {
+            @Override
+            public OutputStream outputStreamFor(Nanopub nanopub) {
+                try {
+                    return new GZIPOutputStream(byteArrayOutputStream);
+                } catch (IOException e) {
+                    throw new RuntimeException("kaboom!");
+                }
+            }
+        });
+        linker.link();
+
+        String actualTrig = toTrigString(new GZIPInputStream(new ByteArrayInputStream(byteArrayOutputStream.toByteArray())));
+
+        String expectedTrig = toTrigString(getClass().getResourceAsStream("trusty.nanopub.trig"));
+
+        assertThat(actualTrig, is(expectedTrig));
+
+
+    }
+
+        @Test
     public void link() throws NodeFactoryException, OpenRDFException, IOException, MalformedNanopubException, TrustyUriException {
         DatasetImpl dataset = new DatasetImpl("some/namespace", URI.create("http://example.com/dataset"));
 
