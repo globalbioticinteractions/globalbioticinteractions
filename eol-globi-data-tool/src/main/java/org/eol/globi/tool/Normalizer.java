@@ -190,8 +190,6 @@ public class Normalizer {
             linkers.add(new LinkerGlobalNames(graphService));
             appendOpenTreeTaxonLinker(graphService, linkers);
             linkers.add(new LinkerTaxonIndex(graphService));
-            linkers.add(new IndexInteractions(graphService));
-            linkers.add(new LinkerTrustyNanoPubs(graphService));
             linkers.forEach(LinkUtil::doTimedLink);
         } else {
             LOG.info("skipping linking ...");
