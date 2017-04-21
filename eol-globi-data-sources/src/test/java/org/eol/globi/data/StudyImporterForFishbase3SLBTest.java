@@ -41,7 +41,7 @@ public class StudyImporterForFishbase3SLBTest {
         final List<Map<String, String>> links = new ArrayList<>();
         InputStream is = getClass().getResourceAsStream("fooditems_sealifebase_first100.tsv");
 
-        StudyImporterForFishbase3.importFoodItems(links::add, is, speciesMap, references, countries, "SLB");
+        StudyImporterForFishbase3.importFoodItemsByFoodName(links::add, is, speciesMap, references, countries, "SLB");
 
         Map<String, String> firstItem = links.get(0);
 

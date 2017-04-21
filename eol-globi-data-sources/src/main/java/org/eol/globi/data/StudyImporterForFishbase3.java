@@ -50,7 +50,8 @@ public class StudyImporterForFishbase3 extends BaseStudyImporter {
 
             importDiet(listener, getDataset().getResource("diet.tsv"), speciesMap, references, countries, defaultNamespace);
             importPredators(listener, getDataset().getResource("predats.tsv"), speciesMap, references, countries, defaultNamespace);
-            importFoodItems(listener, getDataset().getResource("fooditems.tsv"), speciesMap, references, countries, defaultNamespace);
+            importFoodItemsByFoodName(listener, getDataset().getResource("fooditems.tsv"), speciesMap, references, countries, defaultNamespace);
+            importFoodItemsByFoodII(listener, getDataset().getResource("fooditems.tsv"), speciesMap, references, countries, defaultNamespace);
         } catch (IOException e) {
             throw new StudyImporterException("failed to import", e);
         }
@@ -132,51 +133,66 @@ public class StudyImporterForFishbase3 extends BaseStudyImporter {
         handleTsvInputStream(recordListener, resourceAsStream);
     }
 
-    protected static void importFoodItems(InteractionListener interactionListener, InputStream is, Map<String, Map<String, String>> speciesMap, Map<String, Map<String, String>> references, Map<String, Map<String, String>> countries, String namespace) throws StudyImporterException {
+    protected static void importFoodItemsByFoodName(InteractionListener interactionListener, InputStream is, Map<String, Map<String, String>> speciesMap, Map<String, Map<String, String>> references, Map<String, Map<String, String>> countries, String namespace) throws StudyImporterException {
         RecordListener listener = record -> {
-            Map<String, String> props = new HashMap<>();
-
-            String predatorSpeciesCode = columnValueOrNull(record, "SpecCode");
-            String sourceTaxonId = idForSpecies(namespace, predatorSpeciesCode);
-            props.put(StudyImporterForTSV.SOURCE_TAXON_ID, sourceTaxonId);
-            if (StringUtils.isNotBlank(predatorSpeciesCode)) {
-                Map<String, String> predatorProps = speciesMap.get(sourceTaxonId);
-                if (predatorProps != null) {
-                    props.put(StudyImporterForTSV.SOURCE_TAXON_NAME, predatorProps.get("name"));
-                }
-            }
-            String predatorStage = columnValueOrNull(record, "PredatorStage");
-            props.put(StudyImporterForTSV.SOURCE_LIFE_STAGE, predatorStage);
-
-            String preyName = columnValueOrNull(record, "Foodname");
-            props.put(StudyImporterForTSV.TARGET_TAXON_NAME, preyName);
-
-            String preySpeciesCode = columnValueOrNull(record, "PreySpecCode");
-            String preySpeciesCodeSLB = columnValueOrNull(record, "PreySpecCodeSLB");
-            String targetTaxonId = null;
-            if (StringUtils.isNotBlank(preySpeciesCode)) {
-                String preySpecCodeDB = columnValueOrNull(record, "PreySpecCodeDB");
-                String prefix = StringUtils.isBlank(preySpecCodeDB) ? "FB" : "SLB";
-                targetTaxonId = idForSpecies(prefix, preySpeciesCode);
-            } else if (StringUtils.isNotBlank(preySpeciesCodeSLB)) {
-                targetTaxonId = idForSpecies("SLB", preySpeciesCodeSLB);
-            }
-
-            props.put(StudyImporterForTSV.TARGET_TAXON_ID, targetTaxonId);
-
-            String preyLifestage = columnValueOrNull(record, "PreyStage");
-            props.put(StudyImporterForTSV.TARGET_LIFE_STAGE, preyLifestage);
-
-            lookupReference(references, namespace, record, props, "FoodsRefNo");
-            lookupLocality(countries, namespace, record, props);
-
-            props.put(StudyImporterForTSV.INTERACTION_TYPE_NAME, "eats");
-            props.put(StudyImporterForTSV.INTERACTION_TYPE_ID, "http://purl.obolibrary.org/obo/RO_0002470");
+            Map<String, String> props = generateFoodItemInteraction(speciesMap, references, countries, namespace, record, "Foodname");
+            appendTargetSpeciesInfo(record, props);
             interactionListener.newLink(props);
         };
-
-
         handleTsvInputStream(listener, is);
+    }
+
+    protected static void importFoodItemsByFoodII(InteractionListener interactionListener, InputStream is, Map<String, Map<String, String>> speciesMap, Map<String, Map<String, String>> references, Map<String, Map<String, String>> countries, String namespace) throws StudyImporterException {
+        RecordListener listener = record -> {
+            Map<String, String> props = generateFoodItemInteraction(speciesMap, references, countries, namespace, record, "FoodII");
+            interactionListener.newLink(props);
+        };
+        handleTsvInputStream(listener, is);
+    }
+
+    private static Map<String, String> generateFoodItemInteraction(Map<String, Map<String, String>> speciesMap, Map<String, Map<String, String>> references, Map<String, Map<String, String>> countries, String namespace, Record record, String foodItemName) {
+        Map<String, String> props = new HashMap<>();
+
+        String predatorSpeciesCode = columnValueOrNull(record, "SpecCode");
+        String sourceTaxonId = idForSpecies(namespace, predatorSpeciesCode);
+        props.put(StudyImporterForTSV.SOURCE_TAXON_ID, sourceTaxonId);
+        if (StringUtils.isNotBlank(predatorSpeciesCode)) {
+            Map<String, String> predatorProps = speciesMap.get(sourceTaxonId);
+            if (predatorProps != null) {
+                props.put(StudyImporterForTSV.SOURCE_TAXON_NAME, predatorProps.get("name"));
+            }
+        }
+        String predatorStage = columnValueOrNull(record, "PredatorStage");
+        props.put(StudyImporterForTSV.SOURCE_LIFE_STAGE, predatorStage);
+
+
+        String preyName = columnValueOrNull(record, foodItemName);
+        props.put(StudyImporterForTSV.TARGET_TAXON_NAME, preyName);
+
+        lookupReference(references, namespace, record, props, "FoodsRefNo");
+        lookupLocality(countries, namespace, record, props);
+
+        props.put(StudyImporterForTSV.INTERACTION_TYPE_NAME, "eats");
+        props.put(StudyImporterForTSV.INTERACTION_TYPE_ID, "http://purl.obolibrary.org/obo/RO_0002470");
+        return props;
+    }
+
+    private static void appendTargetSpeciesInfo(Record record, Map<String, String> props) {
+        String preySpeciesCode = columnValueOrNull(record, "PreySpecCode");
+        String preySpeciesCodeSLB = columnValueOrNull(record, "PreySpecCodeSLB");
+        String targetTaxonId = null;
+        if (StringUtils.isNotBlank(preySpeciesCode)) {
+            String preySpecCodeDB = columnValueOrNull(record, "PreySpecCodeDB");
+            String prefix = StringUtils.isBlank(preySpecCodeDB) ? "FB" : "SLB";
+            targetTaxonId = idForSpecies(prefix, preySpeciesCode);
+        } else if (StringUtils.isNotBlank(preySpeciesCodeSLB)) {
+            targetTaxonId = idForSpecies("SLB", preySpeciesCodeSLB);
+        }
+
+        props.put(StudyImporterForTSV.TARGET_TAXON_ID, targetTaxonId);
+
+        String preyLifestage = columnValueOrNull(record, "PreyStage");
+        props.put(StudyImporterForTSV.TARGET_LIFE_STAGE, preyLifestage);
     }
 
     private static void lookupReference(Map<String, Map<String, String>> references, String defaultNamespace, Record record, Map<String, String> props, String refColumnName) {

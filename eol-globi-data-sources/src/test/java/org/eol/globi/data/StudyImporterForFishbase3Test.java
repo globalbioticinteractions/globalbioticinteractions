@@ -41,7 +41,7 @@ public class StudyImporterForFishbase3Test {
         final List<Map<String, String>> links = new ArrayList<>();
         InputStream is = getClass().getResourceAsStream("fooditems_fishbase_first100.tsv");
 
-        StudyImporterForFishbase3.importFoodItems(links::add, is, speciesMap, references, countries, "FB");
+        StudyImporterForFishbase3.importFoodItemsByFoodName(links::add, is, speciesMap, references, countries, "FB");
 
         Map<String, String> firstItem = links.get(0);
 
@@ -56,6 +56,30 @@ public class StudyImporterForFishbase3Test {
         assertThat(firstItem.get("sourceLifeStage"), Is.is("juv./adults"));
         assertThat(firstItem.get("targetTaxonName"), Is.is("< 1 mm organic debris"));
         assertThat(firstItem.get("targetLifeStage"), Is.is("n.a./others"));
+        assertThat(firstItem.get("studyTitle"), Is.is("FB_REF:6160"));
+        assertThat(firstItem.get(StudyImporterForTSV.INTERACTION_TYPE_NAME), Is.is("eats"));
+        assertThat(firstItem.get(StudyImporterForTSV.INTERACTION_TYPE_ID), Is.is("http://purl.obolibrary.org/obo/RO_0002470"));
+    }
+
+    @Test
+    public void parseFoodItemII() throws StudyImporterException {
+        final List<Map<String, String>> links = new ArrayList<>();
+        InputStream is = getClass().getResourceAsStream("fooditems_fishbase_first100.tsv");
+
+        StudyImporterForFishbase3.importFoodItemsByFoodII(links::add, is, speciesMap, references, countries, "FB");
+
+        Map<String, String> firstItem = links.get(0);
+
+        assertThat(firstItem.get("referenceCitation"), Is.is("Hickley, P. and R.G. Bailey. 1987. Food and feeding relationships of fish in the Sudd swamps (River Nile, southern Sudan). J. Fish Biol. 30:147-159."));
+        assertThat(firstItem.get("decimalLongitude"), Is.is("30.0899425353"));
+        assertThat(firstItem.get("decimalLatitude"), Is.is("15.8871414568"));
+        assertThat(firstItem.get("referenceUrl"), Is.is("http://fishbase.org/references/FBRefSummary.php?id=6160"));
+        assertThat(firstItem.get("localityName"), Is.is("Sudan|Sudd swamps, River Nile."));
+        assertThat(firstItem.get("localityId"), Is.is("FB_COUNTRY:736|"));
+        assertThat(firstItem.get("sourceTaxonId"), Is.is("FBC:FB:SPECCODE:2"));
+        assertThat(firstItem.get("sourceTaxonName"), Is.is("Oreochromis niloticus"));
+        assertThat(firstItem.get("sourceLifeStage"), Is.is("juv./adults"));
+        assertThat(firstItem.get("targetTaxonName"), Is.is("detritus"));
         assertThat(firstItem.get("studyTitle"), Is.is("FB_REF:6160"));
         assertThat(firstItem.get(StudyImporterForTSV.INTERACTION_TYPE_NAME), Is.is("eats"));
         assertThat(firstItem.get(StudyImporterForTSV.INTERACTION_TYPE_ID), Is.is("http://purl.obolibrary.org/obo/RO_0002470"));
