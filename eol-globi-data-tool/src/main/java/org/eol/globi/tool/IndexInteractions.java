@@ -64,6 +64,7 @@ public class IndexInteractions implements Linker {
                     ", interaction-[:ACCESSED_AT]->dataset\n" +
                     "RETURN id(interaction)", MapUtil.map("batchSize", this.batchSize));
             done = !result.iterator().hasNext();
+            result.iterator().close();
             progress.progress();
         } while (!done);
     }

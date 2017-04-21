@@ -32,16 +32,20 @@ public class NanoPress {
 
     public static void main(final String[] args) throws IOException {
         CommandLineParser parser = new BasicParser();
-        Option inputOpt = new Option("i", "input", true, "location of neo4j db");
-        inputOpt.setRequired(true);
-        Option outputOpt = new Option("o", "output", true, "output location for nanopubs");
-        outputOpt.setRequired(true);
-        Option opt = new Option("n", "nanoOnly", false, "output location for nanopubs");
-
         Options options = new Options();
+        Option inputOpt = new Option("i", "input", true, "location of neo4j db");
         options.addOption(inputOpt);
-        options.addOption(opt);
+        inputOpt.setRequired(true);
+
+        Option outputOpt = new Option("o", "output", true, "output location for nanopubs");
         options.addOption(outputOpt);
+        outputOpt.setRequired(true);
+
+        Option batchSize = new Option("b", "batchSize", true, "number of interaction to be indexed at once");
+        options.addOption(batchSize);
+
+        Option opt = new Option("n", "nanoOnly", false, "output location for nanopubs");
+        options.addOption(opt);
 
         CommandLine cmdLine;
         try {
@@ -72,9 +76,10 @@ public class NanoPress {
     }
 
     public static List<Linker> createLinkers(CommandLine cmdLine, GraphDatabaseService graphService, File pubDir) {
-        List<Linker> linkers = new ArrayList<Linker>();
+        List<Linker> linkers = new ArrayList<>();
         if (!cmdLine.hasOption("nanoOnly")) {
-            linkers.add(new IndexInteractions(graphService));
+            String batchSize = cmdLine.getOptionValue("batchSize", "1000");
+            linkers.add(new IndexInteractions(graphService, Integer.parseInt(batchSize)));
         }
 
         linkers.add(new LinkerTrustyNanoPubs(graphService, nanopub -> {
