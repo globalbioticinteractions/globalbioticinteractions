@@ -54,15 +54,14 @@ public class IndexInteractions implements Linker {
         ExecutionEngine engine = new ExecutionEngine(graphDb);
         do {
             ExecutionResult result = engine.execute("START dataset = node:datasets('*:*')\n" +
-                    "MATCH dataset<-[:IN_DATASET]-study-[:COLLECTED]->specimen" +
-                    ", specimen-[i:" + InteractUtil.allInteractionsCypherClause() + "]->otherSpecimen\n" +
-                    "WHERE not(specimen<-[:HAS_PARTICIPANT]-()) " +
-                    "AND not(specimen<-[:HAS_PARTICIPANT]-()) " +
-                    "AND not(has(i.inverted))\n" +
-                    "WITH specimen, otherSpecimen, study, dataset LIMIT {batchSize}\n" +
+                    "MATCH dataset<-[:IN_DATASET]-study-[:COLLECTED]->specimen\n" +
+                    "WHERE not(specimen<-[:HAS_PARTICIPANT]-())\n" +
+                    "WITH specimen, study, dataset LIMIT {batchSize}\n" +
+                    "MATCH specimen-[i:" + InteractUtil.allInteractionsCypherClause() + "]->otherSpecimen\n" +
+                    "WHERE not(has(i.inverted))\n" +
                     "CREATE specimen<-[:HAS_PARTICIPANT]-interaction-[:DERIVED_FROM]->study" +
-                    ", interaction-[:ACCESSED_AT]->dataset" +
-                    ", otherSpecimen<-[:HAS_PARTICIPANT]-interaction\n" +
+                    ", interaction-[:HAS_PARTICIPANT]->otherSpecimen " +
+                    ", interaction-[:ACCESSED_AT]->dataset\n" +
                     "RETURN id(interaction)", MapUtil.map("batchSize", this.batchSize));
             done = !result.iterator().hasNext();
             progress.progress();
