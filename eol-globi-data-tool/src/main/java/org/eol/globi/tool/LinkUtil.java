@@ -10,7 +10,7 @@ public class LinkUtil {
     public static void doTimedLink(Linker linker) {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
-        String linkName = IndexInteractions.class.getSimpleName();
+        String linkName = Linker.class.getSimpleName();
         LOG.info(linkName + " started...");
         try {
             linker.link();
