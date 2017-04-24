@@ -102,7 +102,7 @@ Archirus lineatus,Achirus lineatus,,
 Fish bones,Actinopterygii,,
 Ort chrysoptera,Orthopristis chrysoptera,,
 Lagadon rhomboides,Lagodon rhomboides,,
-Unidentified invertebrate,Invertebrata,,
+Unidentified invertebrate,Animalia,,
 Menida penunsilae,Menidia peninsulae,,
 Neoponepe sayi,Neopanope sayi,,
 Fundulus mojalis,Fundulus majalis,,
@@ -329,9 +329,9 @@ Harpacticoida copepoda,Harpacticoida,Akin et al 2006,
 Hyperidae,Hyperiidea,Barnes 2008,
 Insect parts,Insecta,Wrast 2008,
 Insect wings,Insecta,Wrast 2008,
-Invertebrata digestate,Invertebrata,McMichael,
-unidentified invert larva,Invertebrata,Barnes 2008,
-unidentified invertebrate,Invertebrata,Barnes 2008,
+Invertebrata digestate,Animalia,McMichael,
+unidentified invert larva,Animalia,Barnes 2008,
+unidentified invertebrate,Animalia,Barnes 2008,
 Kimbergonuphis oligobranchiata,Kinbergonuphis oligobranchiata,Simons 1997,
 Kimbergonuphis cf multidentata,Kinbergonuphis,Simons 1997,cf. multidentata
 Kimbergonuphis sp.,Kinbergonuphis,Simons 1997,
@@ -974,9 +974,9 @@ sea stars/brittle stars,Ophiuroidea,,Term corrected to scientific notation by Br
 sea urchins,Echinoidea,,Term corrected to scientific notation by BrianHayden
 sea cucumbers,Holothuroidea,,Term corrected to scientific notation by BrianHayden
 n.a./other echinoderms,Echinodermata,,Term corrected to scientific notation by BrianHayden
-n.a./other benthic invertebrates,Arthropoda,,Term corrected to scientific notation by BrianHayden
-n.a./other benth. Invertebrates,Arthropoda,,Term corrected to scientific notation by BrianHayden
-n.a./other benth. invertebrates,Arthropoda,,Term corrected to scientific notation by BrianHayden
+n.a./other benthic invertebrates,Animalia,,
+n.a./other benth. Invertebrates,Animalia,,
+n.a./other benth. invertebrates,Animalia,,
 jellyfish/hydroids,Medusozoa,,Term corrected to scientific notation by BrianHayden
 planktonic copepods,Copepoda,,Term corrected to scientific notation by BrianHayden
 plank. copepods,Copepoda,,Term corrected to scientific notation by BrianHayden
@@ -987,9 +987,9 @@ euphausiids,Euphausiacea,,Term corrected to scientific notation by BrianHayden
 n.a./other planktonic crustaceans,Crustacea,,Term corrected to scientific notation by BrianHayden
 n.a./other plank. crustaceans,Crustacea,,Term corrected to scientific notation by BrianHayden
 n.a./other plank. Crustaceans,Crustacea,,Term corrected to scientific notation by BrianHayden
-n.a./other planktonic invertebrates,Arthropoda,,Term corrected to scientific notation by BrianHayden
-n.a./other plank. Invertebrates,Arthropoda,,Term corrected to scientific notation by BrianHayden
-n.a./other plank. invertebrates,Arthropoda,,Term corrected to scientific notation by BrianHayden
+n.a./other planktonic invertebrates,Animalia,,Term corrected to scientific notation by BrianHayden
+n.a./other plank. Invertebrates,Animalia,,Term corrected to scientific notation by BrianHayden
+n.a./other plank. invertebrates,Animalia,,Term corrected to scientific notation by BrianHayden
 fish eggs/larvae,Osteichthyes,,Term corrected to scientific notation by BrianHayden
 squids/cuttlefish,Decapodiformes,,Term corrected to scientific notation by BrianHayden
 bony fish,Osteichthyes,,Term corrected to scientific notation by BrianHayden
@@ -1057,17 +1057,17 @@ Albabesmyia,Ablabesmyia,,mapping provided by Brian Hayden
 Macropelopis,Macropalpis,,mapping provided by Brian Hayden
 Endochrionomus,Chironomidae,,mapping provided by Brian Hayden
 Cyclopoda,Cyclopoida,,mapping provided by Brian Hayden
-emerging aquatic invertebrates,Insecta,,mapping provided by Brian Hayden
-Terrestrial invertebrates,Insecta,,mapping provided by Brian Hayden
+emerging aquatic invertebrates,Animalia,,
+Terrestrial invertebrates,Animalia,,
 Aelosoma,Aeolosoma,,mapping provided by Brian Hayden
 Psilachorema bidens,Chironomidae,,mapping provided by Brian Hayden
 Maoridiamesea,Chironomidae,,mapping provided by Brian Hayden
 Baraeoptera roria,Balaeoptera roria,,mapping provided by Brian Hayden
 Polypedellum,Polypedilum,,mapping provided by Brian Hayden
 Amelotopsis perscitus,Ephemeroptera,,mapping provided by Brian Hayden
-Terrestial invertebrates,Insecta,,mapping provided by Brian Hayden
+Terrestial invertebrates,Animalia,,
 Orthoclad Blue Black,Chironomidae,,mapping provided by Brian Hayden
-Terrestrial invertebrate,Insecta,,mapping provided by Brian Hayden
+Terrestrial invertebrate,Animalia,,
 Diamesid Brown Orange,Chironomidae,,mapping provided by Brian Hayden
 Diamesid Blond,Chironomidae,,mapping provided by Brian Hayden
 Fish-Larvae,Actinopterygii,,mapping provided by Brian Hayden
@@ -1075,9 +1075,9 @@ Oxyrhyncha,Crustacea,,mapping provided by Brian Hayden
 Tricoptera,Trichoptera,,mapping provided by Brian Hayden
 Dipteran (not Chironomidae),Diptera,,mapping provided by Brian Hayden
 Filamentous algae,Algae,,mapping provided by Brian Hayden
-Small terrestrial inverts,Insecta,,mapping provided by Brian Hayden
+Small terrestrial inverts,Animalia,,
 Aquatic macrophytes,Plantae,,mapping provided by Brian Hayden
-Large terrestrial inverts,Insecta,,mapping provided by Brian Hayden
+Large terrestrial inverts,Animalia,,
 Terrestrial vegetation,Plantae,,mapping provided by Brian Hayden
 Fruit,Plantae,,mapping provided by Brian Hayden
 Collembolla,Collembola,,mapping provided by Brian Hayden
@@ -1223,3 +1223,23 @@ clear plastic bag,plastic,https://github.com/EnvironmentOntology/envo/blob/maste
 Plastic bag,plastic,https://github.com/EnvironmentOntology/envo/blob/master/envo.obo,provided by Jorrit Poelen
 blue plastic,plastic,https://github.com/EnvironmentOntology/envo/blob/master/envo.obo,provided by Jorrit Poelen
 EMPTY,no name,,
+benth. crust.,Crustacia,,
+birds,Aves,,
+cephalopods,Cephalopoda,,
+cnidarians,Cnidaria,,
+echinoderms,Echinodermata,,
+finfish,finfish,,,
+fish (early stages),Actinopterygii,,
+herps,herps,,
+mammals,Mammalia,,
+molluscs,Mollusca,,
+other benth. invertebrates,Animalia,,
+other plank. invertebrates,Animalia,,
+other plants,Plantae,,
+others benth. Invertebrates,Animalia,,
+other terrest. invertebrates,Animalia,,
+phytoplankton,Plantae,,
+plank. crust.,Crustacea,,
+plankt. crust,Crustacea,,
+sponges/tunicates,Animalia,,
+worms,Animalia,,
