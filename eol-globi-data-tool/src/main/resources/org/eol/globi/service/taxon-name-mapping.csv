@@ -1019,8 +1019,8 @@ Colletheca mutabilis,Collotheca mutabilis,http://eol.org/pages/1062104,suspected
 Chaoborys punctipennis,Chaoborus punctipennis,http://eol.org/pages/740825,suspected typo;confirmed by Brian Hayden
 Phoxinys neogaeus,Phoxinus neogaeus,http://eol.org/pages/208318,suspected typo;confirmed by Brian Hayden
 Micropogonius undulatus,Micropogonias undulatus,http://eol.org/pages/994841,suspected typo
-Macrozooplankton,Crustacea,,mapping provided by Brian Hayden
-mesozooplankton,Crustacea,,mapping provided by Brian Hayden
+Macrozooplankton,Animalia,,mapping provided by Brian Hayden
+mesozooplankton,Animalia,,mapping provided by Brian Hayden
 Paralepidae,Chalcidoidea,,mapping provided by Brian Hayden
 Fecal remains,Detritus,,mapping provided by Brian Hayden
 Fish-unidentified,Actinopterygii,,mapping provided by Brian Hayden
@@ -1030,7 +1030,7 @@ decomposers/microfauna,Protistae,,mapping provided by Brian Hayden
 herbivorous plankton,Crustacea,,mapping provided by Brian Hayden
 Epishura lacustris,Epischura lacustris,http://eol.org/pages/340949,mapping provided by Brian Hayden
 macrocrustacea,Crustacea,,mapping provided by Brian Hayden
-microzooplankton,Crustacea,,mapping provided by Brian Hayden
+microzooplankton,Animalia,,mapping provided by Brian Hayden
 Trisopterus-sp,Trisopterus,,remove non standard -sp notation
 Monogonanta,Monogononta,,mapping provided by Brian Hayden
 Eoparagyractis,Crambidae,,http://www.inaturalist.org/taxa/317682-Eoparargyractis
@@ -1063,7 +1063,7 @@ Terrestrial vegetation,Plantae,,mapping provided by Brian Hayden
 Fruit,Plantae,,mapping provided by Brian Hayden
 Collembolla,Collembola,,mapping provided by Brian Hayden
 Unicellular green algae,Algae,,mapping provided by Brian Hayden
-Undefined zooplankton,Crustacea,,mapping provided by Brian Hayden
+Undefined zooplankton,Animalia,,mapping provided by Brian Hayden
 Testate amoeba,Protistae,,mapping provided by Brian Hayden
 Pelegobia longicirrata,Pelagobia longicirrata,,mapping provided by Brian Hayden
 Crinoida,Crinoidea,,mapping provided by Brian Hayden
@@ -1100,7 +1100,7 @@ Suwalia,Plecoptera,,mapping provided by Brian Hayden
 Ostacoda,Ostracoda,,mapping provided by Brian Hayden
 Evadine sp.,Cladocera,,mapping provided by Brian Hayden
 Nauplii2,Copepoda,,mapping provided by Brian Hayden
-Unidefined zooplankton,Crustacea,,mapping provided by Brian Hayden
+Unidefined zooplankton,Animalia,,mapping provided by Brian Hayden
 Detrital sediment,Detritus,,mapping provided by Brian Hayden
 Acunmindeutopus naglei,Plantae,,mapping provided by Brian Hayden
 Paracerces caudata,Paracerceis caudata,,mapping provided by Brian Hayden
