@@ -40,18 +40,23 @@ public class StudyImporterForFishbase3 extends BaseStudyImporter {
 
             InteractionListener listener = new InteractionListener() {
                 private final InteractionListener listener = new InteractionListenerImpl(nodeFactory, getGeoNamesService(), getLogger());
+
                 @Override
                 public void newLink(Map<String, String> properties) throws StudyImporterException {
                     listener.newLink(new HashMap<String, String>(properties) {{
                         put(StudyImporterForTSV.STUDY_SOURCE_CITATION, ReferenceUtil.sourceCitationLastAccessed(getDataset()));
-                    }} );
+                    }});
                 }
             };
 
             importDiet(listener, getDataset().getResource("diet.tsv"), speciesMap, references, countries, defaultNamespace);
+            importDietFoodII(listener, getDataset().getResource("diet.tsv"), speciesMap, references, countries, defaultNamespace);
+
             importPredators(listener, getDataset().getResource("predats.tsv"), speciesMap, references, countries, defaultNamespace);
+
             importFoodItemsByFoodName(listener, getDataset().getResource("fooditems.tsv"), speciesMap, references, countries, defaultNamespace);
             importFoodItemsByFoodII(listener, getDataset().getResource("fooditems.tsv"), speciesMap, references, countries, defaultNamespace);
+
         } catch (IOException e) {
             throw new StudyImporterException("failed to import", e);
         }
@@ -73,8 +78,8 @@ public class StudyImporterForFishbase3 extends BaseStudyImporter {
             reference.put(StudyImporterForTSV.REFERENCE_DOI, doi);
 
             String hostname = StringUtils.equals(defaultNamespace, "SLB")
-                ? "sealifebase.org"
-                : "fishbase.org";
+                    ? "sealifebase.org"
+                    : "fishbase.org";
 
             reference.put(StudyImporterForTSV.REFERENCE_URL, "http://" + hostname + "/references/FBRefSummary.php?id=" + refNo);
             references.put(defaultNamespace + "_REF:" + refNo, reference);
@@ -269,48 +274,66 @@ public class StudyImporterForFishbase3 extends BaseStudyImporter {
 
     protected static void importDiet(InteractionListener listener, InputStream is, Map<String, Map<String, String>> speciesMap, Map<String, Map<String, String>> references, Map<String, Map<String, String>> countries, String namespace) throws StudyImporterException {
         RecordListener listener1 = record -> {
-            Map<String, String> props = new HashMap<>();
-            String predatorSpeciesCode = columnValueOrNull(record, "Speccode");
-            String sourceTaxonId = idForSpecies(namespace, predatorSpeciesCode);
-            props.put(StudyImporterForTSV.SOURCE_TAXON_ID, sourceTaxonId);
-            if (StringUtils.isNotBlank(predatorSpeciesCode)) {
-                Map<String, String> predatorProps = speciesMap.get(sourceTaxonId);
-                if (predatorProps != null) {
-                    props.put(StudyImporterForTSV.SOURCE_TAXON_NAME, predatorProps.get("name"));
-                }
-            }
-            String predatorStage = columnValueOrNull(record, "SampleStage");
-            props.put(StudyImporterForTSV.SOURCE_LIFE_STAGE, predatorStage);
-
-
-            String preySpeciesCode = columnValueOrNull(record, "DietSpeccode");
-            String targetTaxonId = null;
-            if (StringUtils.isNotBlank(preySpeciesCode)) {
-                targetTaxonId = idForSpecies(namespace, preySpeciesCode);
-            }
-
-            props.put(StudyImporterForTSV.TARGET_TAXON_ID, targetTaxonId);
-
-            Map<String, String> preySpecies = speciesMap.get(preySpeciesCode);
-            if (preySpecies != null) {
-                props.put(StudyImporterForTSV.TARGET_TAXON_NAME, preySpecies.get("name"));
-            } else {
-                props.put(StudyImporterForTSV.TARGET_TAXON_NAME, columnValueOrNull(record, "ItemName"));
-            }
-
-            String preyLifestage = columnValueOrNull(record, "Stage");
-            props.put(StudyImporterForTSV.TARGET_LIFE_STAGE, preyLifestage);
-
-            lookupReference(references, namespace, record, props, "DietRefNo");
-            lookupLocality(countries, namespace, record, props);
-
-            props.put(StudyImporterForTSV.INTERACTION_TYPE_NAME, InteractType.ATE.getLabel());
-            props.put(StudyImporterForTSV.INTERACTION_TYPE_ID, InteractType.ATE.getIRI());
+            Map<String, String> props = importPredator(speciesMap, references, countries, namespace, record);
+            appendPreyInfo(speciesMap, namespace, record, props);
             listener.newLink(props);
         };
 
 
         handleTsvInputStream(listener1, is);
+    }
+
+    protected static void importDietFoodII(InteractionListener listener, InputStream is, Map<String, Map<String, String>> speciesMap, Map<String, Map<String, String>> references, Map<String, Map<String, String>> countries, String namespace) throws StudyImporterException {
+        RecordListener listener1 = record -> {
+            Map<String, String> props = importPredator(speciesMap, references, countries, namespace, record);
+            props.put(StudyImporterForTSV.TARGET_TAXON_NAME, columnValueOrNull(record, "FoodII"));
+            listener.newLink(props);
+        };
+
+
+        handleTsvInputStream(listener1, is);
+    }
+
+    private static void appendPreyInfo(Map<String, Map<String, String>> speciesMap, String namespace, Record record, Map<String, String> props) {
+        String preySpeciesCode = columnValueOrNull(record, "DietSpeccode");
+        String targetTaxonId = null;
+        if (StringUtils.isNotBlank(preySpeciesCode)) {
+            targetTaxonId = idForSpecies(namespace, preySpeciesCode);
+        }
+
+        props.put(StudyImporterForTSV.TARGET_TAXON_ID, targetTaxonId);
+
+        Map<String, String> preySpecies = speciesMap.get(preySpeciesCode);
+        if (preySpecies != null) {
+            props.put(StudyImporterForTSV.TARGET_TAXON_NAME, preySpecies.get("name"));
+        } else {
+            props.put(StudyImporterForTSV.TARGET_TAXON_NAME, columnValueOrNull(record, "ItemName"));
+        }
+
+        String preyLifestage = columnValueOrNull(record, "Stage");
+        props.put(StudyImporterForTSV.TARGET_LIFE_STAGE, preyLifestage);
+    }
+
+    private static Map<String, String> importPredator(Map<String, Map<String, String>> speciesMap, Map<String, Map<String, String>> references, Map<String, Map<String, String>> countries, String namespace, Record record) {
+        Map<String, String> props = new HashMap<>();
+        String predatorSpeciesCode = columnValueOrNull(record, "Speccode");
+        String sourceTaxonId = idForSpecies(namespace, predatorSpeciesCode);
+        props.put(StudyImporterForTSV.SOURCE_TAXON_ID, sourceTaxonId);
+        if (StringUtils.isNotBlank(predatorSpeciesCode)) {
+            Map<String, String> predatorProps = speciesMap.get(sourceTaxonId);
+            if (predatorProps != null) {
+                props.put(StudyImporterForTSV.SOURCE_TAXON_NAME, predatorProps.get("name"));
+            }
+        }
+        String predatorStage = columnValueOrNull(record, "SampleStage");
+        props.put(StudyImporterForTSV.SOURCE_LIFE_STAGE, predatorStage);
+
+        lookupReference(references, namespace, record, props, "DietRefNo");
+        lookupLocality(countries, namespace, record, props);
+
+        props.put(StudyImporterForTSV.INTERACTION_TYPE_NAME, InteractType.ATE.getLabel());
+        props.put(StudyImporterForTSV.INTERACTION_TYPE_ID, InteractType.ATE.getIRI());
+        return props;
     }
 
 
