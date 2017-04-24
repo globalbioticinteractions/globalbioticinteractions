@@ -20,7 +20,7 @@ public class ManualSuggester implements NameSuggester {
         if (!isInitialized()) {
             doInit();
         }
-        String suggestedReplacement = corrections.get(name);
+        String suggestedReplacement = corrections.get(StringUtils.lowerCase(name));
         return StringUtils.isBlank(suggestedReplacement) ? name : suggestedReplacement;
     }
 
