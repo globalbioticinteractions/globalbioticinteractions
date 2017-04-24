@@ -287,7 +287,6 @@ Conus semathorum,Conus sennottorum,Torruco and Gonzalez 1994,according to ITIS; 
 Copepod copepodite,Copepoda,Barnes 2008,
 Copepod egg,Copepoda,Barnes 2008,
 copepod nauplius,Copepoda,Barnes 2008,
-Copepod nauplius,Copepoda,Barnes 2008,
 Copepoda juv.,Copepoda,Barnes 2008,
 Corophiidae Genus B,Corophiidae,Simons 1997,Genus B
 Crustacea digestate,Crustacea,McMichael,
@@ -331,7 +330,6 @@ Insect parts,Insecta,Wrast 2008,
 Insect wings,Insecta,Wrast 2008,
 Invertebrata digestate,Animalia,McMichael,
 unidentified invert larva,Animalia,Barnes 2008,
-unidentified invertebrate,Animalia,Barnes 2008,
 Kimbergonuphis oligobranchiata,Kinbergonuphis oligobranchiata,Simons 1997,
 Kimbergonuphis cf multidentata,Kinbergonuphis,Simons 1997,cf. multidentata
 Kimbergonuphis sp.,Kinbergonuphis,Simons 1997,
@@ -875,10 +873,8 @@ Monoicomyces brittanicus,Monoicomyces britannicus,BIO_INFO,Found at:  http://dat
 Mycosphaerella alchemilae,Mycosphaerella alchemillae,BIO_INFO,Found at:  http://data.gbif.org/species/3505475/
 Orthopristes chrysopterus,Orthopristis chrysoptera,Miles 1949,Found at:  http://www.itis.gov/servlet/SingleRpt/SingleRpt?search_topic=TSN&search_value=169077
 fish,Actinopterygii,,
-Fish,Actinopterygii,,
 fish eggs,Actinopterygii,,
 Fish scale,Actinopterygii,,
-Fish tissue,Actinopterygii,,
 Decapod,Decapoda,,
 Amphipod,Amphipoda,,
 Mice,Muridae,,
@@ -889,7 +885,6 @@ marine-detritus,Detritus,,
 carrion-detritus,Detritus,,
 terrestrial-detritus,Detritus,,
 Organic detritus,Detritus,,
-organic detritus,Detritus,,
 lichens,Fungi,,lichens are a kind of Fungi according to EOL
 Plant material,Plantae,,
 plant tissue,Plantae,,
@@ -902,7 +897,6 @@ Decapoa,Decapoda,,assuming typo
 Canis lupus ssp. familiaris,Canis lupus familiaris,,added genus to match with ITIS
 diatoms in sand,Bacillariophyta,,diatoms are Bacillariophyta according to ITIS
 Rocks,rock,,matching to ENVO ontology term
-amphipod,Amphipoda,,completed full scientific term using https://en.wikipedia.org/wiki/Amphipoda
 suspended organic matter,organic material,,suggest to use ENVO term label
 POM,organic material,,assumed to be acronym for particulate organic matter
 dissolved organic matter,organic material,,assumed to be acronym for particulate organic matter
@@ -925,7 +919,6 @@ Priomis,Piromis,,replaced with correct genus http://www.marinespecies.org/aphia.
 Pteromalitidae,Pteromalidae,,corrected assumed typo using http://eol.org/pages/706 and that the family is part of order Hymenoptera
 Hydropyschidae,Hydropsychidae,,corrected assumed typo using https://en.wikipedia.org/wiki/Hydropsychidae and http://eol.org/pages/1125/overview
 Echneidae,Echeneidae,,corrected assumed typo using https://en.wikipedia.org/wiki/Echeneidae and http://eol.org/pages/5331/overview
-crustacean,Crustacea,,replace with scientific term using http://eol.org/pages/2598871/overview
 Calazodion,Calozodion,,corrected assumed typo using http://eol.org/pages/39675/overview
 Malanoides tuberculata,Melanoides tuberculata,,corrected assumed typo using http://eol.org/pages/19662986/overview
 Centropomis undecimalis,Centropomus undecimalis,,corrected assumed typo using http://eol.org/pages/205157/overview
@@ -941,7 +934,6 @@ n.a./other phytoplankton,Plantae,,Term corrected to scientific notation by Brian
 benthic algae/weeds,Plantae,,Term corrected to scientific notation by BrianHayden
 periphyton,Other,,Term corrected to scientific notation by BrianHayden
 terrestrial plants,Embryophyta,,Term corrected to scientific notation by BrianHayden
-sponges,Porifera,,Term corrected to scientific notation by BrianHayden
 ascidians,Ascidiacea,,Term corrected to scientific notation by BrianHayden
 hard corals,Scleractinia,,Term corrected to scientific notation by BrianHayden
 n.a./other polyps,Cnidaria,,Term corrected to scientific notation by BrianHayden
@@ -949,16 +941,13 @@ polychaetes,Polychaeta,,Term corrected to scientific notation by BrianHayden
 n.a./other annelids,Clitellata,,Term corrected to scientific notation by BrianHayden
 non-annelids,Archiannelida,,Term corrected to scientific notation by BrianHayden
 chitons,Polyplacophora,,Term corrected to scientific notation by BrianHayden
-bivalves,Bivalvia,,Term corrected to scientific notation by BrianHayden
 gastropods,Gastropoda,,Term corrected to scientific notation by BrianHayden
 octopi,Octopoda,,Term corrected to scientific notation by BrianHayden
 n.a./other mollusks,Mollusca,,Term corrected to scientific notation by BrianHayden
 ostracods,Ostracoda,,Term corrected to scientific notation by BrianHayden
-Ostracods,Ostracoda,,Variation on term corrected to scientific notation by BrianHayden
 Ostracod,Ostracoda,,Vatiation on term corrected to scientific notation by BrianHayden
 benthic copepods,Copepoda,,Term corrected to scientific notation by BrianHayden
 benth. copepods,Copepoda,,Term corrected to scientific notation by BrianHayden
-isopods,Isopoda,,Term corrected to scientific notation by BrianHayden
 amphipods,Amphipoda,,Term corrected to scientific notation by BrianHayden
 stomatopods,Stomatopoda,,Term corrected to scientific notation by BrianHayden
 shrimps/prawns,Caridea,,Term corrected to scientific notation by BrianHayden
@@ -966,30 +955,24 @@ lobsters,Nephropidae,,Term corrected to scientific notation by BrianHayden
 crabs,Brachyura,,Term corrected to scientific notation by BrianHayden
 n.a./benthic crustaceans,Crustacea,,Term corrected to scientific notation by BrianHayden
 n.a./other benth. Crustaceans,Crustacea,,Term corrected to scientific notation by BrianHayden
-n.a./other benth. crustaceans,Crustacea,,Term corrected to scientific notation by BrianHayden
 insects,Insecta,,Term corrected to scientific notation by BrianHayden
 n.a./terrest. Insects,Insecta,,Term corrected to scientific notation by BrianHayden
-n.a./terrest. insects,Insecta,,Term corrected to scientific notation by BrianHayden
 sea stars/brittle stars,Ophiuroidea,,Term corrected to scientific notation by BrianHayden
 sea urchins,Echinoidea,,Term corrected to scientific notation by BrianHayden
 sea cucumbers,Holothuroidea,,Term corrected to scientific notation by BrianHayden
 n.a./other echinoderms,Echinodermata,,Term corrected to scientific notation by BrianHayden
 n.a./other benthic invertebrates,Animalia,,
 n.a./other benth. Invertebrates,Animalia,,
-n.a./other benth. invertebrates,Animalia,,
 jellyfish/hydroids,Medusozoa,,Term corrected to scientific notation by BrianHayden
 planktonic copepods,Copepoda,,Term corrected to scientific notation by BrianHayden
 plank. copepods,Copepoda,,Term corrected to scientific notation by BrianHayden
-plank. Copepods,Copepoda,,Term corrected to scientific notation by BrianHayden
 cladocerans,Cladocera,,Term corrected to scientific notation by BrianHayden
 mysids,Mysis,,Term corrected to scientific notation by BrianHayden
 euphausiids,Euphausiacea,,Term corrected to scientific notation by BrianHayden
 n.a./other planktonic crustaceans,Crustacea,,Term corrected to scientific notation by BrianHayden
 n.a./other plank. crustaceans,Crustacea,,Term corrected to scientific notation by BrianHayden
-n.a./other plank. Crustaceans,Crustacea,,Term corrected to scientific notation by BrianHayden
 n.a./other planktonic invertebrates,Animalia,,Term corrected to scientific notation by BrianHayden
 n.a./other plank. Invertebrates,Animalia,,Term corrected to scientific notation by BrianHayden
-n.a./other plank. invertebrates,Animalia,,Term corrected to scientific notation by BrianHayden
 fish eggs/larvae,Osteichthyes,,Term corrected to scientific notation by BrianHayden
 squids/cuttlefish,Decapodiformes,,Term corrected to scientific notation by BrianHayden
 bony fish,Osteichthyes,,Term corrected to scientific notation by BrianHayden
@@ -1037,9 +1020,7 @@ Chaoborys punctipennis,Chaoborus punctipennis,http://eol.org/pages/740825,suspec
 Phoxinys neogaeus,Phoxinus neogaeus,http://eol.org/pages/208318,suspected typo;confirmed by Brian Hayden
 Micropogonius undulatus,Micropogonias undulatus,http://eol.org/pages/994841,suspected typo
 Macrozooplankton,Crustacea,,mapping provided by Brian Hayden
-macrozooplankton,Crustacea,,mapping provided by Brian Hayden
 mesozooplankton,Crustacea,,mapping provided by Brian Hayden
-Mesozooplankton,Crustacea,,mapping provided by Brian Hayden
 Paralepidae,Chalcidoidea,,mapping provided by Brian Hayden
 Fecal remains,Detritus,,mapping provided by Brian Hayden
 Fish-unidentified,Actinopterygii,,mapping provided by Brian Hayden
@@ -1174,7 +1155,6 @@ Lepipoda,Lepidopa,http://www.itis.gov/servlet/SingleRpt/SingleRpt?search_topic=T
 Onychoteuthis banksi,Onychoteuthis banksii,http://eol.org/pages/448945/overview,suspected typo
 Ophiuroida,Ophiuroidea,https://en.wikipedia.org/wiki/Brittle_star,suspected typo
 Annelid worms,Annelida,https://en.wikipedia.org/wiki/Annelid,map common name to scientific name
-polycheate worm,Polychaeta,https://en.wikipedia.org/wiki/Polychaete,map common name to scientific name
 Anchovie,Engraulidae,http://www.itis.gov/servlet/SingleRpt/SingleRpt?search_topic=TSN&search_value=553173,map common name to scientific name
 Menidida sp.,Menidia,http://www.itis.gov/servlet/SingleRpt/SingleRpt?search_topic=TSN&search_value=165992,suspected typo
 Gambusa affinis,Gambusia affinis,http://eol.org/pages/218297,provided by Anne Thessen on 2015-06-05
@@ -1222,7 +1202,6 @@ clear plastic,plastic,https://github.com/EnvironmentOntology/envo/blob/master/en
 clear plastic bag,plastic,https://github.com/EnvironmentOntology/envo/blob/master/envo.obo,provided by Jorrit Poelen
 Plastic bag,plastic,https://github.com/EnvironmentOntology/envo/blob/master/envo.obo,provided by Jorrit Poelen
 blue plastic,plastic,https://github.com/EnvironmentOntology/envo/blob/master/envo.obo,provided by Jorrit Poelen
-EMPTY,no name,,
 benth. crust.,Crustacia,,
 birds,Aves,,
 cephalopods,Cephalopoda,,

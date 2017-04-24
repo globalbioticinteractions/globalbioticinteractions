@@ -31,7 +31,7 @@ public class ManualSuggester implements NameSuggester {
             LabeledCSVParser labeledCSVParser = CSVTSVUtil.createLabeledCSVParser(is);
             String[] line;
 
-            corrections = new HashMap<String, String>();
+            corrections = new HashMap<>();
             while ((line = labeledCSVParser.getLine()) != null) {
                 if (line.length > 1) {
                     String original = line[0];
@@ -40,7 +40,7 @@ public class ManualSuggester implements NameSuggester {
                         throw new RuntimeException("found invalid blank or single character conversion for [" + original + "], on line [" + labeledCSVParser.lastLineNumber() + 1 + "]");
                     }
 
-                    String existingCorrection = corrections.get(original);
+                    String existingCorrection = corrections.get(StringUtils.lowerCase(original));
                     if (StringUtils.isNotBlank(existingCorrection)) {
                         if (StringUtils.equals(existingCorrection, correction)) {
                             throw new RuntimeException("found duplicated mapping for term [" + original + "]. Please remove line [" + (labeledCSVParser.lastLineNumber() + 1) + "]");
@@ -48,7 +48,7 @@ public class ManualSuggester implements NameSuggester {
                             throw new RuntimeException("term [" + original + "] already mapped. Please revisit line [" + (labeledCSVParser.lastLineNumber() + 1) + "]");
                         }
                     }
-                    corrections.put(original, correction);
+                    corrections.put(StringUtils.lowerCase(original), correction);
                 }
             }
         } catch (IOException e) {

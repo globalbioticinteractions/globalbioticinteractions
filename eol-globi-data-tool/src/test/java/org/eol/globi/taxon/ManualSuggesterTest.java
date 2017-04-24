@@ -2,7 +2,7 @@ package org.eol.globi.taxon;
 
 import org.junit.Test;
 
-public class ManualSuggestorTest {
+public class ManualSuggesterTest {
 
     @Test
     public void throwOnDuplicates() {
