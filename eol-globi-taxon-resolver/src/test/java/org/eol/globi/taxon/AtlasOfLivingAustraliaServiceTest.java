@@ -24,10 +24,10 @@ public class AtlasOfLivingAustraliaServiceTest {
         };
         Map<String, String> enrich = new AtlasOfLivingAustraliaService().enrich(props);
 
-        assertThat(enrich.get(PropertyAndValueDictionary.NAME), is("Macropus rufus"));
-        assertThat(enrich.get(PropertyAndValueDictionary.PATH), is("Animalia | Chordata | Vertebrata | Mammalia | Marsupialia | Diprotodontia | Phalangerida | Macropodoidea | Macropodidae | Macropodinae | Macropus | Macropus rufus"));
-        assertThat(enrich.get(PropertyAndValueDictionary.PATH_NAMES), is("kingdom | phylum | subphylum | class | subclass | order | suborder | superfamily | family | subfamily | genus | species"));
-        assertThat(enrich.get(PropertyAndValueDictionary.EXTERNAL_ID), is("AFD:31a9b8b8-4e8f-4343-a15f-2ed24e0bf1ae"));
+        assertThat(enrich.get(PropertyAndValueDictionary.NAME), is("Osphranter rufus"));
+        assertThat(enrich.get(PropertyAndValueDictionary.PATH), is("Animalia | Chordata | Mammalia | Marsupialia | Diprotodontia | Phalangerida | Macropodoidea | Macropodidae | Macropodinae | Osphranter | Osphranter rufus"));
+        assertThat(enrich.get(PropertyAndValueDictionary.PATH_NAMES), is("kingdom | phylum | class | subclass | order | suborder | superfamily | family | subfamily | genus | species"));
+        assertThat(enrich.get(PropertyAndValueDictionary.EXTERNAL_ID), is("AFD:e6aff6af-ff36-4ad5-95f2-2dfdcca8caff"));
         assertThat(enrich.get(PropertyAndValueDictionary.COMMON_NAMES), is("Red Kangaroo @en"));
     }
 
@@ -40,10 +40,10 @@ public class AtlasOfLivingAustraliaServiceTest {
         };
         Map<String, String> enrich = new AtlasOfLivingAustraliaService().enrich(Collections.unmodifiableMap(props));
 
-        assertThat(enrich.get(PropertyAndValueDictionary.NAME), is("Macropus rufus"));
-        assertThat(enrich.get(PropertyAndValueDictionary.PATH), is("Animalia | Chordata | Vertebrata | Mammalia | Marsupialia | Diprotodontia | Phalangerida | Macropodoidea | Macropodidae | Macropodinae | Macropus | Macropus rufus"));
-        assertThat(enrich.get(PropertyAndValueDictionary.PATH_NAMES), is("kingdom | phylum | subphylum | class | subclass | order | suborder | superfamily | family | subfamily | genus | species"));
-        assertThat(enrich.get(PropertyAndValueDictionary.EXTERNAL_ID), is("AFD:31a9b8b8-4e8f-4343-a15f-2ed24e0bf1ae"));
+        assertThat(enrich.get(PropertyAndValueDictionary.NAME), is("Osphranter rufus"));
+        assertThat(enrich.get(PropertyAndValueDictionary.PATH), is("Animalia | Chordata | Mammalia | Marsupialia | Diprotodontia | Phalangerida | Macropodoidea | Macropodidae | Macropodinae | Osphranter | Osphranter rufus"));
+        assertThat(enrich.get(PropertyAndValueDictionary.PATH_NAMES), is("kingdom | phylum | class | subclass | order | suborder | superfamily | family | subfamily | genus | species"));
+        assertThat(enrich.get(PropertyAndValueDictionary.EXTERNAL_ID), is("AFD:e6aff6af-ff36-4ad5-95f2-2dfdcca8caff"));
         assertThat(enrich.get(PropertyAndValueDictionary.COMMON_NAMES), is("Red Kangaroo @en"));
     }
 
@@ -65,10 +65,10 @@ public class AtlasOfLivingAustraliaServiceTest {
         props.put(PropertyAndValueDictionary.NAME, "Macropus rufus");
         Map<String, String> enrich = new AtlasOfLivingAustraliaService().enrich(props);
 
-        assertThat(enrich.get(PropertyAndValueDictionary.NAME), is("Macropus rufus"));
-        assertThat(enrich.get(PropertyAndValueDictionary.EXTERNAL_ID), is("AFD:31a9b8b8-4e8f-4343-a15f-2ed24e0bf1ae"));
-        assertThat(enrich.get(PropertyAndValueDictionary.PATH), is("Animalia | Chordata | Vertebrata | Mammalia | Marsupialia | Diprotodontia | Phalangerida | Macropodoidea | Macropodidae | Macropodinae | Macropus | Macropus rufus"));
-        assertThat(enrich.get(PropertyAndValueDictionary.PATH_NAMES), is("kingdom | phylum | subphylum | class | subclass | order | suborder | superfamily | family | subfamily | genus | species"));
+        assertThat(enrich.get(PropertyAndValueDictionary.NAME), is("Osphranter rufus"));
+        assertThat(enrich.get(PropertyAndValueDictionary.EXTERNAL_ID), is("AFD:e6aff6af-ff36-4ad5-95f2-2dfdcca8caff"));
+        assertThat(enrich.get(PropertyAndValueDictionary.PATH), is("Animalia | Chordata | Mammalia | Marsupialia | Diprotodontia | Phalangerida | Macropodoidea | Macropodidae | Macropodinae | Osphranter | Osphranter rufus"));
+        assertThat(enrich.get(PropertyAndValueDictionary.PATH_NAMES), is("kingdom | phylum | class | subclass | order | suborder | superfamily | family | subfamily | genus | species"));
         assertThat(enrich.get(PropertyAndValueDictionary.COMMON_NAMES), is("Red Kangaroo @en"));
     }
 
@@ -80,13 +80,13 @@ public class AtlasOfLivingAustraliaServiceTest {
 
         assertThat(enrich.get(PropertyAndValueDictionary.NAME), is("Spermacoce"));
         String actualExternalId = enrich.get(PropertyAndValueDictionary.EXTERNAL_ID);
-        assertThat(actualExternalId, is("http://id.biodiversity.org.au/node/apni/2900718"));
+        assertThat(actualExternalId, is("http://id.biodiversity.org.au/node/apni/7845073"));
         assertThat(enrich.get(PropertyAndValueDictionary.PATH), is("Plantae | Charophyta | Equisetopsida | Magnoliidae | Gentianales | Rubiaceae | Spermacoce"));
         assertThat(enrich.get(PropertyAndValueDictionary.PATH_NAMES), is("kingdom | phylum | class | subclass | order | family | genus"));
-        assertThat(enrich.get(PropertyAndValueDictionary.PATH_IDS), is("http://id.biodiversity.org.au/node/apni/6337085 | http://id.biodiversity.org.au/node/apni/6337084 | http://id.biodiversity.org.au/node/apni/6337083 | http://id.biodiversity.org.au/node/apni/6337082 | http://id.biodiversity.org.au/node/apni/6210459 | http://id.biodiversity.org.au/node/apni/6210458 | http://id.biodiversity.org.au/node/apni/2900718"));
+        assertThat(enrich.get(PropertyAndValueDictionary.PATH_IDS), is("http://id.biodiversity.org.au/node/apni/8807563 | http://id.biodiversity.org.au/node/apni/8807562 | http://id.biodiversity.org.au/node/apni/8807565 | http://id.biodiversity.org.au/node/apni/8807566 | http://id.biodiversity.org.au/node/apni/8807368 | http://id.biodiversity.org.au/node/apni/8807273 | http://id.biodiversity.org.au/node/apni/7845073"));
         assertThat(enrich.get(PropertyAndValueDictionary.COMMON_NAMES), is(nullValue()));
 
-        assertThat(ExternalIdUtil.urlForExternalId(actualExternalId), is("http://id.biodiversity.org.au/node/apni/2900718"));
+        assertThat(ExternalIdUtil.urlForExternalId(actualExternalId), is("http://id.biodiversity.org.au/node/apni/7845073"));
     }
 
     @Test
@@ -96,7 +96,7 @@ public class AtlasOfLivingAustraliaServiceTest {
         Map<String, String> enrich = new AtlasOfLivingAustraliaService().enrich(props);
 
         assertThat(enrich.get(PropertyAndValueDictionary.NAME), is("Pretestis australianus"));
-        assertThat(enrich.get(PropertyAndValueDictionary.EXTERNAL_ID), is("AFD:adb20ef3-e841-4a9f-846e-39c4dd707252"));
+        assertThat(enrich.get(PropertyAndValueDictionary.EXTERNAL_ID), is("AFD:127a9e96-afae-4dde-95be-52b41e8a2e58"));
         assertThat(enrich.get(PropertyAndValueDictionary.PATH), is("Animalia | Platyhelminthes | Trematoda | Plagiorchiida | Pronocephalata | Paramphistomoidea | Cladorchiidae | Pretestis | Pretestis australianus"));
         assertThat(enrich.get(PropertyAndValueDictionary.PATH_NAMES), is("kingdom | phylum | class | order | suborder | superfamily | family | genus | species"));
         assertThat(enrich.get(PropertyAndValueDictionary.COMMON_NAMES), is(nullValue()));
