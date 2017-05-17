@@ -36,21 +36,30 @@ public class LinkerTaxonIndex implements Linker {
         TaxonFuzzySearchIndex fuzzySearchIndex = new TaxonFuzzySearchIndex(graphDb);
         IndexHits<Node> hits = taxons.query("*:*");
         for (Node hit : hits) {
-            List<String> externalIds = new ArrayList<String>();
+            List<String> taxonIds = new ArrayList<>();
+            List<String> taxonPathIdsAndNames = new ArrayList<>();
             TaxonNode taxonNode = new TaxonNode(hit);
-            collectIds(externalIds, taxonNode);
+            addTaxonId(taxonIds, taxonNode);
+            addPathIdAndNames(taxonPathIdsAndNames, taxonNode);
+
             addToFuzzyIndex(graphDb, fuzzySearchIndex, hit, taxonNode);
+
             Iterable<Relationship> rels = hit.getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j(RelTypes.SAME_AS));
             for (Relationship rel : rels) {
                 TaxonNode sameAsTaxon = new TaxonNode(rel.getEndNode());
-                collectIds(externalIds, sameAsTaxon);
+                addTaxonId(taxonIds, sameAsTaxon);
+                addPathIdAndNames(taxonPathIdsAndNames, sameAsTaxon);
                 addToFuzzyIndex(graphDb, fuzzySearchIndex, hit, sameAsTaxon);
             }
             Transaction tx = graphDb.beginTx();
             try {
-                String aggregateIds = StringUtils.join(externalIds, CharsetConstant.SEPARATOR);
+                taxonPathIdsAndNames.addAll(taxonIds);
+                String aggregateIds = StringUtils.join(taxonPathIdsAndNames, CharsetConstant.SEPARATOR);
                 ids.add(hit, PropertyAndValueDictionary.PATH, aggregateIds);
                 hit.setProperty(PropertyAndValueDictionary.EXTERNAL_IDS, aggregateIds);
+
+                String aggregateTaxonIds = StringUtils.join(taxonIds, CharsetConstant.SEPARATOR);
+                hit.setProperty(PropertyAndValueDictionary.NAME_IDS, aggregateTaxonIds);
                 tx.success();
             } finally {
                 tx.finish();
@@ -69,11 +78,14 @@ public class LinkerTaxonIndex implements Linker {
         }
     }
 
-    protected void collectIds(List<String> externalIds, TaxonNode taxonNode) {
+    private void addTaxonId(List<String> externalIds, TaxonNode taxonNode) {
         String externalId = taxonNode.getExternalId();
         if (StringUtils.isNotBlank(externalId)) {
             externalIds.add(externalId);
         }
+    }
+
+    private void addPathIdAndNames(List<String> externalIds, TaxonNode taxonNode) {
         addDelimitedList(externalIds, taxonNode.getPath());
         addDelimitedList(externalIds, taxonNode.getPathIds());
     }

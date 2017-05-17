@@ -61,7 +61,9 @@ public class LinkerTaxonIndexTest extends GraphDBTestCase {
 
         Taxon node = taxonIndex.findTaxonByName("Homo sapiens");
         assertThat(((NodeBacked)node).getUnderlyingNode().getProperty(PropertyAndValueDictionary.EXTERNAL_IDS).toString()
-                , is("Bar:123 | Animalia | Mammalia | Homo sapiens | FOO:444 | BARZ:111 | FOOZ:777"));
+                , is("Animalia | Mammalia | Homo sapiens | BARZ:111 | FOOZ:777 | Bar:123 | FOO:444"));
+        assertThat(((NodeBacked)node).getUnderlyingNode().getProperty(PropertyAndValueDictionary.NAME_IDS).toString()
+                , is("Bar:123 | FOO:444"));
 
         assertThat(new TaxonFuzzySearchIndex(getGraphDb()).query("name:sapienz~").size(), is(1));
         assertThat(new TaxonFuzzySearchIndex(getGraphDb()).query("name:sapienz").size(), is(0));
