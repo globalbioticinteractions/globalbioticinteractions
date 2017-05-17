@@ -9,4 +9,5 @@ public final class DatasetConstant {
     public static final String ARCHIVE_URI = "archiveURI";
     public static final String CONFIG_URI = "configURI";
     public static final String CONFIG = "config";
+    public static final String DOI = "doi";
 }

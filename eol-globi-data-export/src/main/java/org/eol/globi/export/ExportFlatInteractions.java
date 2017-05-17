@@ -3,6 +3,7 @@ package org.eol.globi.export;
 import org.apache.commons.io.IOUtils;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.domain.SpecimenConstant;
+import org.eol.globi.service.DatasetConstant;
 import org.eol.globi.util.InteractUtil;
 import org.neo4j.graphdb.GraphDatabaseService;
 
@@ -17,8 +18,8 @@ import java.util.zip.GZIPOutputStream;
 public class ExportFlatInteractions implements GraphExporter {
 
 
-    public static final String CYPHER_QUERY = "START study = node:studies('*:*') " +
-            "MATCH study-[c:COLLECTED]->sourceSpecimen-[:CLASSIFIED_AS]->sourceTaxon, " +
+    public static final String CYPHER_QUERY = "START dataset = node:datasets('namespace:*') " +
+            "MATCH dataset<-[:IN_DATASET]-study-[c:COLLECTED]->sourceSpecimen-[:CLASSIFIED_AS]->sourceTaxon, " +
             "sourceSpecimen-[?:COLLECTED_AT]->loc, " +
             "sourceSpecimen-[r:" + InteractUtil.allInteractionsCypherClause() + "]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon " +
             "WHERE has(sourceTaxon.path) AND has(targetTaxon.path) AND not(has(r.inverted)) " +
@@ -57,7 +58,11 @@ public class ExportFlatInteractions implements GraphExporter {
             ", study.citation? as referenceCitation" +
             ", study.doi? as referenceDoi" +
             ", study.externalUrl? as referenceUrl" +
-            ", study.source? as sourceCitation";
+            ", dataset." + DatasetConstant.CITATION + "? as sourceCitation" +
+            ", dataset." + DatasetConstant.NAMESPACE + "? as sourceNamespace" +
+            ", dataset." + DatasetConstant.ARCHIVE_URI + "? as sourceArchiveURI" +
+            ", dataset." + DatasetConstant.DOI + "? as sourceDOI" +
+            ", dataset." + DatasetConstant.LAST_SEEN_AT + "? as sourceLastSeenAtUnixEpoch";
 
     @Override
     public void export(GraphDatabaseService graphService, String baseDir) throws StudyImporterException {
