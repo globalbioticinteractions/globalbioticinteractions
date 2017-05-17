@@ -10,7 +10,7 @@ import java.util.Date;
 import java.util.List;
 
 public interface NodeFactory {
-    Location findLocation(Location location);
+    Location findLocation(Location location) throws NodeFactoryException;
 
     Season createSeason(String seasonNameLower);
 

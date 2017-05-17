@@ -23,8 +23,13 @@ public class LocationNode extends NodeBacked implements Location {
         if (location.getFootprintWKT() != null) {
             getUnderlyingNode().setProperty(LocationConstant.FOOTPRINT_WKT, location.getFootprintWKT());
         }
-        getUnderlyingNode().setProperty(LocationConstant.LATITUDE, location.getLatitude());
-        getUnderlyingNode().setProperty(LocationConstant.LONGITUDE, location.getLongitude());
+        if (location.getLongitude() != null) {
+            getUnderlyingNode().setProperty(LocationConstant.LATITUDE, location.getLatitude());
+        }
+        if (location.getLatitude() != null) {
+            getUnderlyingNode().setProperty(LocationConstant.LONGITUDE, location.getLongitude());
+        }
+
         getUnderlyingNode().setProperty(PropertyAndValueDictionary.TYPE, LocationNode.class.getSimpleName());
         if (StringUtils.isNotBlank(location.getLocality())) {
             getUnderlyingNode().setProperty(LocationConstant.LOCALITY, location.getLocality());
@@ -51,17 +56,21 @@ public class LocationNode extends NodeBacked implements Location {
 
     @Override
     public Double getAltitude() {
-        return getUnderlyingNode().hasProperty(LocationConstant.ALTITUDE) ? (Double) getUnderlyingNode().getProperty(LocationConstant.ALTITUDE) : null;
+        return getDoubleOrNull(LocationConstant.ALTITUDE);
+    }
+
+    private Double getDoubleOrNull(String altitude) {
+        return getUnderlyingNode().hasProperty(altitude) ? (Double) getUnderlyingNode().getProperty(altitude) : null;
     }
 
     @Override
     public Double getLongitude() {
-        return (Double) getUnderlyingNode().getProperty(LocationConstant.LONGITUDE);
+        return getDoubleOrNull(LocationConstant.LONGITUDE);
     }
 
     @Override
     public Double getLatitude() {
-        return (Double) getUnderlyingNode().getProperty(LocationConstant.LATITUDE);
+        return getDoubleOrNull(LocationConstant.LATITUDE);
     }
 
 

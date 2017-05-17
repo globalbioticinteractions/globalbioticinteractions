@@ -3,6 +3,7 @@ package org.eol.globi.data;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.lucene.queryParser.QueryParser;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.domain.*;
@@ -88,37 +89,103 @@ public class NodeFactoryNeo4j implements NodeFactory {
     }
 
     @Override
-    public LocationNode findLocation(Location location) {
-        QueryContext queryOrQueryObject = QueryContext.numericRange(LocationConstant.LATITUDE, location.getLatitude(), location.getLatitude());
-        IndexHits<Node> matchingLocations = locations.query(queryOrQueryObject);
+    public LocationNode findLocation(Location location) throws NodeFactoryException {
         Node matchingLocation = null;
+        if (hasLatLng(location)) {
+            matchingLocation = findLocationByLatitude(location);
+        }
+        if (matchingLocation == null) {
+            matchingLocation = findLocationByLocality(location);
+        }
+        if (matchingLocation == null) {
+            matchingLocation = findLocationByLocalityId(location);
+        }
+        return matchingLocation == null ? null : new LocationNode(matchingLocation);
+    }
+
+    private boolean hasLatLng(Location location) {
+        return location.getLatitude() != null && location.getLongitude() != null;
+    }
+
+    private Node findLocationByLocality(Location location) throws NodeFactoryException {
+        return location.getLocality() == null ? null : findLocationBy(location, LocationConstant.LOCALITY, location.getLocality());
+    }
+
+    private Node findLocationByLocalityId(Location location) throws NodeFactoryException {
+        return location.getLocalityId() == null ? null : findLocationBy(location, LocationConstant.LOCALITY_ID, location.getLocalityId());
+    }
+
+    private Node findLocationBy(Location location, String key, String value) {
+        Node matchingLocation = null;
+        String query = key + ":\"" + QueryParser.escape(value) + "\"";
+        IndexHits<Node> matchingLocations = locations.query(query);
         for (Node node : matchingLocations) {
             final LocationNode foundLocation = new LocationNode(node);
-
-            boolean altitudeMatches = foundLocation.getAltitude() == null && location.getAltitude() == null
-                    || location.getAltitude() != null && location.getAltitude().equals(foundLocation.getAltitude());
-
-            boolean footprintWKTMatches = foundLocation.getFootprintWKT() == null && location.getFootprintWKT() == null
-                    || location.getFootprintWKT() != null && location.getFootprintWKT().equals(foundLocation.getFootprintWKT());
-
-            boolean localityMatches = foundLocation.getLocality() == null && location.getLocality() == null
-                    || location.getLocality() != null && location.getLocality().equals(foundLocation.getLocality());
-
-            boolean localityIdMatches = foundLocation.getLocalityId() == null && location.getLocalityId() == null
-                    || location.getLocalityId() != null && location.getLocalityId().equals(foundLocation.getLocalityId());
-
-            if (location.getLongitude().equals(foundLocation.getLongitude())
-                    && altitudeMatches
-                    && footprintWKTMatches
-                    && localityMatches
-                    && localityIdMatches) {
+            if (isSameLocation(location, foundLocation)) {
                 matchingLocation = node;
                 break;
             }
-
         }
+
         matchingLocations.close();
-        return matchingLocation == null ? null : new LocationNode(matchingLocation);
+        return matchingLocation;
+    }
+
+    private boolean isSameLocation(Location location, Location foundLocation) {
+        return sameLatitude(location, foundLocation)
+                && sameLongitude(location, foundLocation)
+                && sameAltitude(location, foundLocation)
+                && sameFootprintWKT(location, foundLocation)
+                && sameLocality(location, foundLocation)
+                && sameLocalityId(location, foundLocation);
+    }
+
+    private boolean sameLocalityId(Location location, Location foundLocation) {
+        return foundLocation.getLocalityId() == null && location.getLocalityId() == null
+                || location.getLocalityId() != null && location.getLocalityId().equals(foundLocation.getLocalityId());
+    }
+
+    private boolean sameLocality(Location location, Location foundLocation) {
+        return foundLocation.getLocality() == null && location.getLocality() == null
+                || location.getLocality() != null && location.getLocality().equals(foundLocation.getLocality());
+    }
+
+    private boolean sameFootprintWKT(Location location, Location foundLocation) {
+        return foundLocation.getFootprintWKT() == null && location.getFootprintWKT() == null
+                || location.getFootprintWKT() != null && location.getFootprintWKT().equals(foundLocation.getFootprintWKT());
+    }
+
+    private boolean sameAltitude(Location location, Location foundLocation) {
+        return foundLocation.getAltitude() == null && location.getAltitude() == null
+                || location.getAltitude() != null && location.getAltitude().equals(foundLocation.getAltitude());
+    }
+
+    private boolean sameLatitude(Location location, Location foundLocation) {
+        return foundLocation.getLatitude() == null && location.getLatitude() == null
+                || location.getLatitude() != null && location.getLatitude().equals(foundLocation.getLatitude());
+    }
+
+    private boolean sameLongitude(Location location, Location foundLocation) {
+        return foundLocation.getLongitude() == null && location.getLongitude() == null
+                || location.getLongitude() != null && location.getLongitude().equals(foundLocation.getLongitude());
+    }
+
+
+    private Node findLocationByLatitude(Location location) throws NodeFactoryException {
+        Node matchingLocation = null;
+        validate(location);
+        QueryContext queryOrQueryObject = QueryContext.numericRange(LocationConstant.LATITUDE, location.getLatitude(), location.getLatitude());
+        IndexHits<Node> matchingLocations = locations.query(queryOrQueryObject);
+        for (Node node : matchingLocations) {
+            final LocationNode foundLocation = new LocationNode(node);
+            if (isSameLocation(location, foundLocation)) {
+                matchingLocation = node;
+                break;
+            }
+        }
+
+        matchingLocations.close();
+        return matchingLocation;
     }
 
     @Override
@@ -142,8 +209,12 @@ public class NodeFactoryNeo4j implements NodeFactory {
         try {
             Node node = graphDb.createNode();
             locationNode = new LocationNode(node, fromLocation(location));
-            locations.add(node, LocationConstant.LATITUDE, ValueContext.numeric(location.getLatitude()));
-            locations.add(node, LocationConstant.LONGITUDE, ValueContext.numeric(location.getLongitude()));
+            if (location.getLatitude() != null) {
+                locations.add(node, LocationConstant.LATITUDE, ValueContext.numeric(location.getLatitude()));
+            }
+            if (location.getLongitude() != null) {
+                locations.add(node, LocationConstant.LONGITUDE, ValueContext.numeric(location.getLongitude()));
+            }
             if (location.getAltitude() != null) {
                 locations.add(node, LocationConstant.ALTITUDE, ValueContext.numeric(location.getAltitude()));
             }
@@ -324,18 +395,14 @@ public class NodeFactoryNeo4j implements NodeFactory {
 
     @Override
     public LocationNode getOrCreateLocation(org.eol.globi.domain.Location location) throws NodeFactoryException {
-        LocationNode locationNode = null;
-        final Double latitude = location.getLatitude();
-        final Double longitude = location.getLongitude();
-        if (location.getLatitude() != null && location.getLongitude() != null) {
-            validate(location);
-            locationNode = findLocation(location);
-            if (null == locationNode) {
-                locationNode = createLocation(location);
+        LocationNode locationNode = findLocation(location);
+        if (null == locationNode) {
+            locationNode = createLocation(location);
+            if (hasLatLng(location)) {
                 try {
                     enrichLocationWithEcoRegions(locationNode);
                 } catch (NodeFactoryException e) {
-                    LOG.error("failed to create eco region for location (" + latitude + ", " + longitude + ")", e);
+                    LOG.error("failed to create eco region for location (" + locationNode.getLatitude() + ", " + locationNode.getLongitude() + ")", e);
                 }
             }
         }
@@ -440,7 +507,7 @@ public class NodeFactoryNeo4j implements NodeFactory {
         return ecoregions;
     }
 
-    public List<Ecoregion> enrichLocationWithEcoRegions(Location location) throws NodeFactoryException {
+    List<Ecoregion> enrichLocationWithEcoRegions(Location location) throws NodeFactoryException {
         LocationNode locationNode = (LocationNode) location;
         List<Ecoregion> associatedEcoregions = getEcoRegions(locationNode.getUnderlyingNode());
         return associatedEcoregions == null ? associateWithEcoRegions(locationNode) : associatedEcoregions;

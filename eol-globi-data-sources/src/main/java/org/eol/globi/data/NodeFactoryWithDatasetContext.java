@@ -22,7 +22,7 @@ public class NodeFactoryWithDatasetContext implements NodeFactory {
 
 
     @Override
-    public Location findLocation(Location location) {
+    public Location findLocation(Location location) throws NodeFactoryException {
         return factory.findLocation(location);
     }
 

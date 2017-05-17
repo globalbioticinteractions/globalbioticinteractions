@@ -77,6 +77,24 @@ public class NodeFactoryNeo4jTest extends GraphDBTestCase {
     }
 
     @Test
+    public void createFindLocationByLocality() throws NodeFactoryException {
+        LocationImpl providedLocation = new LocationImpl(null, null, null, null);
+        providedLocation.setLocality("some locale");
+        getNodeFactory().getOrCreateLocation(providedLocation);
+        Location foundLocation = getNodeFactory().findLocation(providedLocation);
+        Assert.assertNotNull(foundLocation);
+    }
+
+    @Test
+    public void createFindLocationByLocalityId() throws NodeFactoryException {
+        LocationImpl providedLocation = new LocationImpl(null, null, null, null);
+        providedLocation.setLocalityId("locality:id");
+        getNodeFactory().getOrCreateLocation(providedLocation);
+        Location foundLocation = getNodeFactory().findLocation(providedLocation);
+        Assert.assertNotNull(foundLocation);
+    }
+
+    @Test
     public void createFindLocationWith() throws NodeFactoryException {
         Location location = getNodeFactory().getOrCreateLocation(new LocationImpl(1.2d, 1.4d, -1.0d, null));
         getNodeFactory().getOrCreateLocation(new LocationImpl(2.2d, 1.4d, -1.0d, null));
