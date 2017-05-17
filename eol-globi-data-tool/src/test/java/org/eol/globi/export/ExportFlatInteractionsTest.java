@@ -34,8 +34,8 @@ public class ExportFlatInteractionsTest extends GraphDBTestCase {
         final String actualExport = writer.toString();
         final String[] actualExportLines = actualExport.split("\\n");
         assertThat(actualExportLines.length, is(22));
-        final String header = "sourceTaxonId\tsourceTaxonName\tsourceTaxonRank\tsourceTaxonPathNames\tsourceTaxonPathIds\tsourceTaxonPathRankNames\tinteractionTypeName\tinteractionTypeId\ttargetTaxonId\ttargetTaxonName\ttargetTaxonRank\ttargetTaxonPathNames\ttargetTaxonPathIds\ttargetTaxonPathRankNames\tdecimalLatitude\tdecimalLongitude\tlocality\teventDateUnixEpoch\treferenceCitation\treferenceDoi\treferenceUrl\tsourceCitation";
-        final String first = "EOL:333\tHomo sapiens\t\tpathElem1 | pathElem 2\t\t\teats\thttp://purl.obolibrary.org/obo/RO_0002470\tEOL:555\tCanis lupus\t\tpreyPathElem1 | preyPathElem2\t\t\t12.0\t-45.9\t\t701942400000\t\t\t\t";
+        final String header = "sourceTaxonId\tsourceTaxonIds\tsourceTaxonName\tsourceTaxonRank\tsourceTaxonPathNames\tsourceTaxonPathIds\tsourceTaxonPathRankNames\tinteractionTypeName\tinteractionTypeId\ttargetTaxonId\ttargetTaxonIds\ttargetTaxonName\ttargetTaxonRank\ttargetTaxonPathNames\ttargetTaxonPathIds\ttargetTaxonPathRankNames\tdecimalLatitude\tdecimalLongitude\tlocality\teventDateUnixEpoch\treferenceCitation\treferenceDoi\treferenceUrl\tsourceCitation";
+        final String first = "EOL:333\t\tHomo sapiens\t\tpathElem1 | pathElem 2\t\t\teats\thttp://purl.obolibrary.org/obo/RO_0002470\tEOL:555\t\tCanis lupus\t\tpreyPathElem1 | preyPathElem2\t\t\t12.0\t-45.9\t\t701942400000\t\t\t\t";
         assertThat(actualExportLines[0], is(header));
         assertThat(actualExportLines[1], is(first));
     }

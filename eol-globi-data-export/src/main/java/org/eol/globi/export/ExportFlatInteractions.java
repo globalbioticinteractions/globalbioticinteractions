@@ -22,6 +22,7 @@ public class ExportFlatInteractions implements GraphExporter {
             "sourceSpecimen-[r:" + InteractUtil.allInteractionsCypherClause() + "]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon " +
             "WHERE has(sourceTaxon.path) AND has(targetTaxon.path) AND not(has(r.inverted)) " +
             "RETURN sourceTaxon.externalId? as sourceTaxonId" +
+            ", sourceTaxon.nameIds? as sourceTaxonIds" +
             ", sourceTaxon.name? as sourceTaxonName" +
             ", sourceTaxon.rank? as sourceTaxonRank" +
             ", sourceTaxon.path? as sourceTaxonPathNames" +
@@ -30,6 +31,7 @@ public class ExportFlatInteractions implements GraphExporter {
             ", r.label as interactionTypeName" +
             ", r.iri as interactionTypeId" +
             ", targetTaxon.externalId? as targetTaxonId" +
+            ", targetTaxon.nameIds? as targetTaxonIds" +
             ", targetTaxon.name? as targetTaxonName" +
             ", targetTaxon.rank? as targetTaxonRank" +
             ", targetTaxon.path? as targetTaxonPathNames" +
