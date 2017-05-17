@@ -48,8 +48,8 @@ public class ExportFlatInteractionsTest extends GraphDBTestCase {
         final String actualExport = writer.toString();
         final String[] actualExportLines = actualExport.split("\\n");
         assertThat(actualExportLines.length, is(22));
-        final String header = "sourceTaxonId\tsourceTaxonIds\tsourceTaxonName\tsourceTaxonRank\tsourceTaxonPathNames\tsourceTaxonPathIds\tsourceTaxonPathRankNames\tsourceLifeStageId\tsourceLifeStageName\tsourceBodyPartId\tsourceBodyPartName\tsourcePhysiologicalStateId\tsourcePhysiologicalStateName\tinteractionTypeName\tinteractionTypeId\ttargetTaxonId\ttargetTaxonIds\ttargetTaxonName\ttargetTaxonRank\ttargetTaxonPathNames\ttargetTaxonPathIds\ttargetTaxonPathRankNames\ttargetLifeStageId\ttargetLifeStageName\ttargetBodyPartId\ttargetBodyPartName\ttargetPhysiologicalStateId\ttargetPhysiologicalStateName\tdecimalLatitude\tdecimalLongitude\tlocality\teventDateUnixEpoch\treferenceCitation\treferenceDoi\treferenceUrl\tsourceCitation\tsourceNamespace\tsourceArchiveURI\tsourceDOI\tsourceLastSeenAtUnixEpoch";
-        final String first = "EOL:333\t\tHomo sapiens\t\tpathElem1 | pathElem 2\t\t\tGLOBI:JUVENILE\tJUVENILE\tGLOBI:BONE\tBONE\tGLOBI:DIGESTATE\tDIGESTATE\teats\thttp://purl.obolibrary.org/obo/RO_0002470\tEOL:555\t\tCanis lupus\t\tpreyPathElem1 | preyPathElem2\t\t\t\t\t\t\t\t\t12.0\t-45.9\t\t701942400000\t\t\t\tno citation\tsome/namespace\thttp://example.com\t\t";
+        final String header = "sourceTaxonId\tsourceTaxonIds\tsourceTaxonName\tsourceTaxonRank\tsourceTaxonPathNames\tsourceTaxonPathIds\tsourceTaxonPathRankNames\tsourceLifeStageId\tsourceLifeStageName\tsourceBodyPartId\tsourceBodyPartName\tsourcePhysiologicalStateId\tsourcePhysiologicalStateName\tinteractionTypeName\tinteractionTypeId\ttargetTaxonId\ttargetTaxonIds\ttargetTaxonName\ttargetTaxonRank\ttargetTaxonPathNames\ttargetTaxonPathIds\ttargetTaxonPathRankNames\ttargetLifeStageId\ttargetLifeStageName\ttargetBodyPartId\ttargetBodyPartName\ttargetPhysiologicalStateId\ttargetPhysiologicalStateName\tdecimalLatitude\tdecimalLongitude\tlocalityId\tlocalityName\teventDateUnixEpoch\treferenceCitation\treferenceDoi\treferenceUrl\tsourceCitation\tsourceNamespace\tsourceArchiveURI\tsourceDOI\tsourceLastSeenAtUnixEpoch";
+        final String first = "EOL:333\t\tHomo sapiens\t\tpathElem1 | pathElem 2\t\t\tGLOBI:JUVENILE\tJUVENILE\tGLOBI:BONE\tBONE\tGLOBI:DIGESTATE\tDIGESTATE\teats\thttp://purl.obolibrary.org/obo/RO_0002470\tEOL:555\t\tCanis lupus\t\tpreyPathElem1 | preyPathElem2\t\t\t\t\t\t\t\t\t12.0\t-45.9\tsome:localeid\tsome locale\t701942400000\t\t\t\tno citation\tsome/namespace\thttp://example.com\t\t";
         assertThat(actualExportLines[0], is(header));
         assertThat(actualExportLines[1], startsWith(first));
     }
@@ -75,7 +75,10 @@ public class ExportFlatInteractionsTest extends GraphDBTestCase {
             specimen.setLengthInMm(length);
         }
 
-        Location location = factory.getOrCreateLocation(new LocationImpl(12.0, -45.9, -60.0, null));
+        LocationImpl location1 = new LocationImpl(12.0, -45.9, -60.0, null);
+        location1.setLocality("some locale");
+        location1.setLocalityId("some:localeid");
+        Location location = factory.getOrCreateLocation(location1);
         specimen.caughtIn(location);
     }
 

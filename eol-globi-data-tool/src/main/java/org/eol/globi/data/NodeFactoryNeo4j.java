@@ -96,18 +96,22 @@ public class NodeFactoryNeo4j implements NodeFactory {
             final LocationNode foundLocation = new LocationNode(node);
 
             boolean altitudeMatches = foundLocation.getAltitude() == null && location.getAltitude() == null
-                || location.getAltitude() != null && location.getAltitude().equals(foundLocation.getAltitude());
+                    || location.getAltitude() != null && location.getAltitude().equals(foundLocation.getAltitude());
 
             boolean footprintWKTMatches = foundLocation.getFootprintWKT() == null && location.getFootprintWKT() == null
-                || location.getFootprintWKT() != null && location.getFootprintWKT().equals(foundLocation.getFootprintWKT());
+                    || location.getFootprintWKT() != null && location.getFootprintWKT().equals(foundLocation.getFootprintWKT());
 
             boolean localityMatches = foundLocation.getLocality() == null && location.getLocality() == null
-                || location.getLocality() != null && location.getLocality().equals(foundLocation.getLocality());
+                    || location.getLocality() != null && location.getLocality().equals(foundLocation.getLocality());
+
+            boolean localityIdMatches = foundLocation.getLocalityId() == null && location.getLocalityId() == null
+                    || location.getLocalityId() != null && location.getLocalityId().equals(foundLocation.getLocalityId());
 
             if (location.getLongitude().equals(foundLocation.getLongitude())
-                && altitudeMatches
-                && footprintWKTMatches
-                && localityMatches) {
+                    && altitudeMatches
+                    && footprintWKTMatches
+                    && localityMatches
+                    && localityIdMatches) {
                 matchingLocation = node;
                 break;
             }
@@ -149,6 +153,9 @@ public class NodeFactoryNeo4j implements NodeFactory {
             if (StringUtils.isNotBlank(location.getLocality())) {
                 locations.add(node, LocationConstant.LOCALITY, location.getLocality());
             }
+            if (StringUtils.isNotBlank(location.getLocalityId())) {
+                locations.add(node, LocationConstant.LOCALITY_ID, location.getLocalityId());
+            }
             transaction.success();
         } finally {
             transaction.finish();
@@ -163,7 +170,7 @@ public class NodeFactoryNeo4j implements NodeFactory {
         return specimen;
     }
 
-        @Override
+    @Override
     public SpecimenNode createSpecimen(Study study, Taxon taxon) throws NodeFactoryException {
         if (null == study) {
             throw new NodeFactoryException("specimen needs study, but none is specified");

@@ -7,6 +7,7 @@ public class LocationUtil {
                 fromLocation.getAltitude(),
                 fromLocation.getFootprintWKT());
         toLocation.setLocality(fromLocation.getLocality());
+        toLocation.setLocalityId(fromLocation.getLocalityId());
         return toLocation;
     }
 }

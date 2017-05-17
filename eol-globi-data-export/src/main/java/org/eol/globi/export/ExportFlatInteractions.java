@@ -2,6 +2,8 @@ package org.eol.globi.export;
 
 import org.apache.commons.io.IOUtils;
 import org.eol.globi.data.StudyImporterException;
+import org.eol.globi.domain.LocationConstant;
+import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.SpecimenConstant;
 import org.eol.globi.service.DatasetConstant;
 import org.eol.globi.util.InteractUtil;
@@ -53,7 +55,8 @@ public class ExportFlatInteractions implements GraphExporter {
             ", targetSpecimen." + SpecimenConstant.PHYSIOLOGICAL_STATE_LABEL + "? as targetPhysiologicalStateName" +
             ", loc.latitude? as decimalLatitude" +
             ", loc.longitude? as decimalLongitude" +
-            ", loc.locality? as locality" +
+            ", loc.localityId? as localityId" +
+            ", loc.locality? as localityName" +
             ", c.dateInUnixEpoch? as eventDateUnixEpoch" +
             ", study.citation? as referenceCitation" +
             ", study.doi? as referenceDoi" +

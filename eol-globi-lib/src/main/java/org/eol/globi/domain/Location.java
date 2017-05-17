@@ -14,6 +14,8 @@ public interface Location  {
     // see http://rs.tdwg.org/dwc/terms/#locality
     String getLocality();
 
+    String getLocalityId();
+
     void addEnvironment(Environment environment);
 
     List<Environment> getEnvironments();

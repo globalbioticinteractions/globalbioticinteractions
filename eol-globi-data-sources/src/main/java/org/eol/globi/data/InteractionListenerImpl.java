@@ -25,6 +25,7 @@ import static org.eol.globi.data.StudyImporterForTSV.DECIMAL_LATITUDE;
 import static org.eol.globi.data.StudyImporterForTSV.DECIMAL_LONGITUDE;
 import static org.eol.globi.data.StudyImporterForTSV.INTERACTION_TYPE_ID;
 import static org.eol.globi.data.StudyImporterForTSV.LOCALITY_ID;
+import static org.eol.globi.data.StudyImporterForTSV.LOCALITY_NAME;
 import static org.eol.globi.data.StudyImporterForTSV.REFERENCE_CITATION;
 import static org.eol.globi.data.StudyImporterForTSV.REFERENCE_DOI;
 import static org.eol.globi.data.StudyImporterForTSV.REFERENCE_ID;
@@ -138,13 +139,22 @@ class InteractionListenerImpl implements InteractionListener {
                 getLogger().warn(study, "found invalid location: [" + e.getMessage() + "]");
             }
         }
+        String localityId = link.get(LOCALITY_ID);
+        String localityName = link.get(LOCALITY_NAME);
+
         if (centroid == null) {
-            String localityId = link.get(LOCALITY_ID);
             if (StringUtils.isNotBlank(localityId)) {
                 centroid = getGeoNamesService().findLatLng(localityId);
             }
         }
-        return centroid == null ? null : nodeFactory.getOrCreateLocation(new LocationImpl(centroid.getLat(), centroid.getLng(), null, null));
+        LocationImpl location = new LocationImpl(centroid.getLat(), centroid.getLng(), null, null);
+        if (StringUtils.isNotBlank(localityId)) {
+            location.setLocalityId(localityId);
+        }
+        if (StringUtils.isNotBlank(localityName)) {
+            location.setLocality(localityName);
+        }
+        return centroid == null ? null : nodeFactory.getOrCreateLocation(location);
     }
 
     private String getFirstValueForTerms(Map<String, String> link, String[] latitudes) {

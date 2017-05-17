@@ -29,6 +29,9 @@ public class LocationNode extends NodeBacked implements Location {
         if (StringUtils.isNotBlank(location.getLocality())) {
             getUnderlyingNode().setProperty(LocationConstant.LOCALITY, location.getLocality());
         }
+        if (StringUtils.isNotBlank(location.getLocalityId())) {
+            getUnderlyingNode().setProperty(LocationConstant.LOCALITY_ID, location.getLocalityId());
+        }
     }
 
     @Override
@@ -37,9 +40,14 @@ public class LocationNode extends NodeBacked implements Location {
     }
 
     @Override
-    public String getLocality()  {
-            return (String) getPropertyValueOrNull(LocationConstant.LOCALITY);
-        }
+    public String getLocality() {
+        return (String) getPropertyValueOrNull(LocationConstant.LOCALITY);
+    }
+
+    @Override
+    public String getLocalityId() {
+        return (String) getPropertyValueOrNull(LocationConstant.LOCALITY_ID);
+    }
 
     @Override
     public Double getAltitude() {
@@ -61,7 +69,7 @@ public class LocationNode extends NodeBacked implements Location {
         boolean needsAssociation = true;
         Iterable<Relationship> relationships = getUnderlyingNode().getRelationships(NodeUtil.asNeo4j(RelTypes.HAS_ENVIRONMENT), Direction.OUTGOING);
         for (Relationship relationship : relationships) {
-            if (relationship.getEndNode().getId() == ((NodeBacked)environment).getNodeID()) {
+            if (relationship.getEndNode().getId() == ((NodeBacked) environment).getNodeID()) {
                 needsAssociation = false;
                 break;
             }

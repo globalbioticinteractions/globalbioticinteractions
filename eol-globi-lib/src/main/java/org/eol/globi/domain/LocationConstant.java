@@ -6,4 +6,5 @@ public final class LocationConstant {
     public static final String LATITUDE = "latitude";
     public static final String FOOTPRINT_WKT = "footprintWKT";
     public static final String LOCALITY = "locality";
+    public static final String LOCALITY_ID = "localityId";
 }

@@ -9,6 +9,7 @@ public class LocationImpl implements Location {
     private Double latitude;
     private String footprintWKT;
     private String locality;
+    private String localityId;
     private final List<Environment> environments = new ArrayList<>();
 
     public LocationImpl(Double latitude, Double longitude, Double altitude, String footprintWKT) {
@@ -55,5 +56,14 @@ public class LocationImpl implements Location {
 
     public void setLocality(String locality) {
         this.locality = locality;
+    }
+
+    @Override
+    public String getLocalityId() {
+        return localityId;
+    }
+
+    public void setLocalityId(String localityId) {
+        this.localityId = localityId;
     }
 }
