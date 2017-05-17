@@ -147,14 +147,19 @@ class InteractionListenerImpl implements InteractionListener {
                 centroid = getGeoNamesService().findLatLng(localityId);
             }
         }
-        LocationImpl location = new LocationImpl(centroid.getLat(), centroid.getLng(), null, null);
-        if (StringUtils.isNotBlank(localityId)) {
-            location.setLocalityId(localityId);
+
+        LocationImpl location = null;
+        if (centroid != null) {
+            location = new LocationImpl(centroid.getLat(),
+                    centroid.getLng(), null, null);
+            if (StringUtils.isNotBlank(localityId)) {
+                location.setLocalityId(localityId);
+            }
+            if (StringUtils.isNotBlank(localityName)) {
+                location.setLocality(localityName);
+            }
         }
-        if (StringUtils.isNotBlank(localityName)) {
-            location.setLocality(localityName);
-        }
-        return centroid == null ? null : nodeFactory.getOrCreateLocation(location);
+        return location == null ? null : nodeFactory.getOrCreateLocation(location);
     }
 
     private String getFirstValueForTerms(Map<String, String> link, String[] latitudes) {
