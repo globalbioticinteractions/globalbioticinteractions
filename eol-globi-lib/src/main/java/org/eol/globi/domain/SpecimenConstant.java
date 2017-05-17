@@ -11,6 +11,7 @@ public final class SpecimenConstant  {
     public static final String BASIS_OF_RECORD_ID = "basisOfRecordId";
     public static final String LIFE_STAGE_LABEL = "lifeStageLabel";
     public static final String LIFE_STAGE_ID = "lifeStageId";
+    public static final String PHYSIOLOGICAL_STATE_ID = "physiologicalStateId";
     public static final String PHYSIOLOGICAL_STATE_LABEL = "physiologicalStateLabel";
     public static final String BODY_PART_LABEL = "bodyPartLabel";
     public static final String BODY_PART_ID = "bodyPartId";
@@ -20,5 +21,4 @@ public final class SpecimenConstant  {
     public static final String TOTAL_VOLUME_PERCENT = "totalVolumePercent";
     public static final String FREQUENCY_OF_OCCURRENCE = "frequencyOfOccurrence";
     public static final String FREQUENCY_OF_OCCURRENCE_PERCENT = "frequencyOfOccurrencePercent";
-    static final String PHYSIOLOGICAL_STATE_ID = "physiologicalStateId";
 }

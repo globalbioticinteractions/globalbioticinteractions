@@ -2,6 +2,7 @@ package org.eol.globi.export;
 
 import org.apache.commons.io.IOUtils;
 import org.eol.globi.data.StudyImporterException;
+import org.eol.globi.domain.SpecimenConstant;
 import org.eol.globi.util.InteractUtil;
 import org.neo4j.graphdb.GraphDatabaseService;
 
@@ -28,6 +29,12 @@ public class ExportFlatInteractions implements GraphExporter {
             ", sourceTaxon.path? as sourceTaxonPathNames" +
             ", sourceTaxon.pathIds? as sourceTaxonPathIds" +
             ", sourceTaxon.pathNames? as sourceTaxonPathRankNames" +
+            ", sourceSpecimen." + SpecimenConstant.LIFE_STAGE_ID + "? as sourceLifeStageId" +
+            ", sourceSpecimen." + SpecimenConstant.LIFE_STAGE_LABEL + "? as sourceLifeStageName" +
+            ", sourceSpecimen." + SpecimenConstant.BODY_PART_ID + "? as sourceBodyPartId" +
+            ", sourceSpecimen." + SpecimenConstant.BODY_PART_LABEL + "? as sourceBodyPartName" +
+            ", sourceSpecimen." + SpecimenConstant.PHYSIOLOGICAL_STATE_ID + "? as sourcePhysiologicalStateId" +
+            ", sourceSpecimen." + SpecimenConstant.PHYSIOLOGICAL_STATE_LABEL + "? as sourcePhysiologicalStateName" +
             ", r.label as interactionTypeName" +
             ", r.iri as interactionTypeId" +
             ", targetTaxon.externalId? as targetTaxonId" +
@@ -37,6 +44,12 @@ public class ExportFlatInteractions implements GraphExporter {
             ", targetTaxon.path? as targetTaxonPathNames" +
             ", targetTaxon.pathIds? as targetTaxonPathIds" +
             ", targetTaxon.pathNames? as targetTaxonPathRankNames" +
+            ", targetSpecimen." + SpecimenConstant.LIFE_STAGE_ID + "? as targetLifeStageId" +
+            ", targetSpecimen." + SpecimenConstant.LIFE_STAGE_LABEL + "? as targetLifeStageName" +
+            ", targetSpecimen." + SpecimenConstant.BODY_PART_ID + "? as targetBodyPartId" +
+            ", targetSpecimen." + SpecimenConstant.BODY_PART_LABEL + "? as targetBodyPartName" +
+            ", targetSpecimen." + SpecimenConstant.PHYSIOLOGICAL_STATE_ID + "? as targetPhysiologicalStateId" +
+            ", targetSpecimen." + SpecimenConstant.PHYSIOLOGICAL_STATE_LABEL + "? as targetPhysiologicalStateName" +
             ", loc.latitude? as decimalLatitude" +
             ", loc.longitude? as decimalLongitude" +
             ", loc.locality? as locality" +
