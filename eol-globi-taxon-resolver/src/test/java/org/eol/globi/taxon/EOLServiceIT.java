@@ -99,6 +99,15 @@ public class EOLServiceIT {
     }
 
     @Test
+    public void bibioFerruginatus() throws PropertyEnricherException {
+        HashMap<String, String> properties = new HashMap<>();
+        properties.put(EXTERNAL_ID, "EOL:756665");
+        Map<String, String> enrich = new EOLService().enrich(properties);
+        assertThat(enrich.get(NAME), is("Bibio ferruginatus"));
+        assertThat(enrich.get(EXTERNAL_ID), is("EOL:756665"));
+    }
+
+    @Test
     public void zikaVirus() throws PropertyEnricherException {
         HashMap<String, String> properties = new HashMap<String, String>();
         properties.put(EXTERNAL_ID, "EOL:541190");

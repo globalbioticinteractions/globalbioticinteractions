@@ -8,6 +8,7 @@ public enum GlobalNamesSources {
     IRMNG(8, TaxonomyProvider.INTERIM_REGISTER_OF_MARINE_AND_NONMARINE_GENERA),
     IF(5, TaxonomyProvider.INDEX_FUNGORUM),
     ITIS(3, TaxonomyProvider.ITIS),
+    OTT(179, TaxonomyProvider.OPEN_TREE_OF_LIFE),
     FISHBASE_CACHE(177, TaxonomyProvider.FISHBASE_CACHE),
     INATURALIST(180, TaxonomyProvider.INATURALIST_TAXON),
     WORMS(9, TaxonomyProvider.WORMS);

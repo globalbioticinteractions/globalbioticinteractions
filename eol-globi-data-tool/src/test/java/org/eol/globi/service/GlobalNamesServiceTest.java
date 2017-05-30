@@ -222,6 +222,16 @@ public class GlobalNamesServiceTest {
     }
 
     @Test
+    public void lookupOTT() throws PropertyEnricherException {
+        GlobalNamesService service = new GlobalNamesService(GlobalNamesSources.OTT);
+        HashMap<String, String> props = new HashMap<>();
+        props.put(PropertyAndValueDictionary.NAME, "Arius felis");
+        Map<String, String> enrich = service.enrich(props);
+        assertThat(enrich.get(PropertyAndValueDictionary.EXTERNAL_ID), is("OTT:139650"));
+        assertThat(enrich.get(PropertyAndValueDictionary.NAME), is("Ariopsis felis"));
+    }
+
+    @Test
     public void lookupITISSynonymSuccess() throws PropertyEnricherException {
         GlobalNamesService service = new GlobalNamesService();
         HashMap<String, String> props = new HashMap<String, String>();
