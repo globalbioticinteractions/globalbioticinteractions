@@ -265,19 +265,19 @@ public class GlobalNamesServiceTest {
         assertThat(enrich.get(PropertyAndValueDictionary.NAME), is("Bacteria"));
 
         final String path = enrich.get(PropertyAndValueDictionary.PATH);
-        assertThat(path, is(" | Eukaryota | Opisthokonta | Metazoa | Eumetazoa | Bilateria | Protostomia | Ecdysozoa | Panarthropoda | Arthropoda | Mandibulata | Pancrustacea | Hexapoda | Insecta | Dicondylia | Pterygota | Neoptera | Orthopteroidea | Phasmatodea | Verophasmatodea | Anareolatae | Diapheromeridae | Diapheromerinae | Diapheromerini | Bacteria"));
+        assertThat(path, is(" | Bacteria"));
 
         final String pathNames = enrich.get(PropertyAndValueDictionary.PATH_NAMES);
-        assertThat(pathNames, is(" | superkingdom |  | kingdom |  |  |  |  |  | phylum |  |  | superclass | class |  |  | subclass | infraclass | order | suborder | infraorder | family | subfamily | tribe | genus"));
+        assertThat(pathNames, is(" | superkingdom"));
 
         final String pathIds = enrich.get(PropertyAndValueDictionary.PATH_IDS);
-        assertThat(pathIds, is("NCBI:131567 | NCBI:2759 | NCBI:33154 | NCBI:33208 | NCBI:6072 | NCBI:33213 | NCBI:33317 | NCBI:1206794 | NCBI:88770 | NCBI:6656 | NCBI:197563 | NCBI:197562 | NCBI:6960 | NCBI:50557 | NCBI:85512 | NCBI:7496 | NCBI:33340 | NCBI:33341 | NCBI:7020 | NCBI:213547 | NCBI:523720 | NCBI:409189 | NCBI:524135 | NCBI:524136 | NCBI:629395"));
+        assertThat(pathIds, is("NCBI:131567 | NCBI:2"));
 
-        assertThat(StringUtils.split(path, CharsetConstant.SEPARATOR_CHAR).length, is(25));
-        assertThat(StringUtils.split(pathIds, CharsetConstant.SEPARATOR_CHAR).length, is(25));
-        assertThat(StringUtils.split(pathNames, CharsetConstant.SEPARATOR_CHAR).length, is(25));
+        assertThat(StringUtils.split(path, CharsetConstant.SEPARATOR_CHAR).length, is(2));
+        assertThat(StringUtils.split(pathIds, CharsetConstant.SEPARATOR_CHAR).length, is(2));
+        assertThat(StringUtils.split(pathNames, CharsetConstant.SEPARATOR_CHAR).length, is(2));
 
-        assertThat(enrich.get(PropertyAndValueDictionary.EXTERNAL_ID), is("NCBI:629395"));
+        assertThat(enrich.get(PropertyAndValueDictionary.EXTERNAL_ID), is("NCBI:2"));
         assertThat(enrich.get(PropertyAndValueDictionary.COMMON_NAMES), is(nullValue()));
     }
 

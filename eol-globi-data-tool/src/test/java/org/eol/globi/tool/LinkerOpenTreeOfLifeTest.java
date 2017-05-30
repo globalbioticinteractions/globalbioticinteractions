@@ -10,6 +10,7 @@ import org.eol.globi.opentree.OpenTreeTaxonIndex;
 import org.eol.globi.service.PropertyEnricherException;
 import org.junit.Test;
 
+import java.util.Collection;
 import java.util.List;
 
 import static org.hamcrest.core.Is.is;
@@ -20,7 +21,7 @@ public class LinkerOpenTreeOfLifeTest extends GraphDBTestCase {
 
     @Test
     public void homoSapiens() throws NodeFactoryException, PropertyEnricherException {
-        assertOTTLink("Homo sapiens", 6, "770315");
+        assertOTTLink("Homo sapiens", 7, "770315");
     }
 
     @Test
@@ -35,7 +36,7 @@ public class LinkerOpenTreeOfLifeTest extends GraphDBTestCase {
             taxonIndex.getOrCreateTaxon(new TaxonImpl(name, null));
             new LinkerGlobalNames(getGraphDb()).link();
             new LinkerOpenTreeOfLife(getGraphDb(), index).link();
-            List<String> externalIds = LinkerTestUtil.assertHasOther(name, expectedCount, taxonIndex, RelTypes.SAME_AS);
+            Collection<String> externalIds = LinkerTestUtil.assertHasOther(name, expectedCount, taxonIndex, RelTypes.SAME_AS);
             assertThat(externalIds, hasItem(TaxonomyProvider.OPEN_TREE_OF_LIFE.getIdPrefix() + ottId));
         } finally {
             if (index != null) {
