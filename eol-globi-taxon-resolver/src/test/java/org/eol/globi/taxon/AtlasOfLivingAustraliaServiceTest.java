@@ -3,6 +3,7 @@ package org.eol.globi.taxon;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.service.PropertyEnricherException;
 import org.eol.globi.util.ExternalIdUtil;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.Collections;
@@ -72,6 +73,7 @@ public class AtlasOfLivingAustraliaServiceTest {
         assertThat(enrich.get(PropertyAndValueDictionary.COMMON_NAMES), is("Red Kangaroo @en"));
     }
 
+    @Ignore("reported issue with ALA using https://biodiversity.org.au/nsl/services/node/apni/7845073 feedback button")
     @Test
     public void lookupByNameSpermacoce() throws PropertyEnricherException {
         HashMap<String, String> props = new HashMap<String, String>();

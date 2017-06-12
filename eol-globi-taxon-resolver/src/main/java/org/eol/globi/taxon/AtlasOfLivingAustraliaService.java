@@ -117,9 +117,9 @@ public class AtlasOfLivingAustraliaService implements PropertyEnricher {
                 if (node.has("classification")) {
                     info.putAll(parseClassification(node.get("classification")));
                     final Taxon taxon = TaxonUtil.mapToTaxon(info);
-                    taxon.setPath(taxon.getPath() + CharsetConstant.SEPARATOR + taxon.getName());
-                    taxon.setPathIds(taxon.getPathIds() + CharsetConstant.SEPARATOR + taxon.getExternalId());
-                    taxon.setPathNames(taxon.getPathNames() + CharsetConstant.SEPARATOR + taxon.getRank());
+                    taxon.setPath(taxon.getPath());
+                    taxon.setPathIds(taxon.getPathIds());
+                    taxon.setPathNames(taxon.getPathNames());
                     info.putAll(TaxonUtil.taxonToMap(taxon));
                 }
                 if (node.has("commonNames")) {
@@ -211,8 +211,6 @@ public class AtlasOfLivingAustraliaService implements PropertyEnricher {
         String response;
         try {
             response = HttpUtil.executeWithTimer(get, responseHandler);
-        } catch (ClientProtocolException e) {
-            throw new PropertyEnricherException("failed to lookup [" + uri.toString() + "]", e);
         } catch (IOException e) {
             throw new PropertyEnricherException("failed to lookup [" + uri.toString() + "]", e);
         }
