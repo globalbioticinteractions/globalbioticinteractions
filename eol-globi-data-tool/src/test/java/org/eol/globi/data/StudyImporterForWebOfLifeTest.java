@@ -25,11 +25,11 @@ public class StudyImporterForWebOfLifeTest extends GraphDBTestCase {
     public void importSome() throws StudyImporterException, IOException {
         StudyImporterForWebOfLife importer = new StudyImporterForWebOfLife(null, nodeFactory);
         importer.setDataset(new DatasetLocal());
-        importer.importNetworks("bascompte/web-of-life_2016-01-15_192434.zip", "Web of Life. " + ReferenceUtil.createLastAccessedString("http://www.web-of-life.es/"));
+        importer.importNetworks("weboflife/web-of-life_2016-01-15_192434.zip", "Web of Life. " + ReferenceUtil.createLastAccessedString("http://www.web-of-life.es/"));
         resolveNames();
 
         List<Study> allStudies = NodeUtil.findAllStudies(getGraphDb());
-        List<String> references = new ArrayList<String>();
+        List<String> references = new ArrayList<>();
         for (Study allStudy : allStudies) {
             assertThat(allStudy.getSource(), startsWith("Web of Life. Accessed at <http://www.web-of-life.es/>"));
             references.add(allStudy.getCitation());
@@ -54,7 +54,7 @@ public class StudyImporterForWebOfLifeTest extends GraphDBTestCase {
         final List<String> networkNames = Arrays.asList("A_HP_002", "A_HP_003");
         String generatedArchiveURL = StudyImporterForWebOfLife.generateArchiveURL(networkNames);
 
-        String expectedArchiveURL = "http://www.web-of-life.es/2.0/map_download_fast2.php?format=csv&networks=" + "A_HP_002,A_HP_003" + "&species=yes&type=All&data=All&speciesrange=&interactionsrange=&searchbox=&checked=false";
+        String expectedArchiveURL = "http://www.web-of-life.es/map_download_fast2.php?format=csv&networks=" + "A_HP_002,A_HP_003" + "&species=yes&type=All&data=All&speciesrange=&interactionsrange=&searchbox=&checked=false";
 
         assertThat(generatedArchiveURL, is(expectedArchiveURL));
     }

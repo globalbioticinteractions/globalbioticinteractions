@@ -33,7 +33,7 @@ import java.util.zip.ZipInputStream;
 
 public class StudyImporterForWebOfLife extends BaseStudyImporter {
     private static final Log LOG = LogFactory.getLog(StudyImporterForWebOfLife.class);
-    public static final String WEB_OF_LIFE_BASE_URL = "http://www.web-of-life.es/2.0";
+    public static final String WEB_OF_LIFE_BASE_URL = "http://www.web-of-life.es";
 
     public StudyImporterForWebOfLife(ParserFactory parserFactory, NodeFactory nodeFactory) {
         super(parserFactory, nodeFactory);
