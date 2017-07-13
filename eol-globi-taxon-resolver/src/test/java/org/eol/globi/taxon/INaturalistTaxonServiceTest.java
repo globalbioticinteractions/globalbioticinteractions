@@ -29,7 +29,7 @@ public class INaturalistTaxonServiceTest {
         assertThat(enriched.get(PropertyAndValueDictionary.EXTERNAL_ID), is("INAT_TAXON:406089"));
         assertThat(enriched.get(PropertyAndValueDictionary.COMMON_NAMES), containsString("Prostrate kowhai @en"));
         assertThat(enriched.get(PropertyAndValueDictionary.PATH_IDS), is("INAT_TAXON:47126 | INAT_TAXON:211194 | INAT_TAXON:47125 | INAT_TAXON:47124 | INAT_TAXON:47123 | INAT_TAXON:47122 | INAT_TAXON:70037 | INAT_TAXON:406089"));
-        assertThat(enriched.get(PropertyAndValueDictionary.PATH_NAMES), is("kingdom | clade | phylum | class | order | family | genus | species"));
+        assertThat(enriched.get(PropertyAndValueDictionary.PATH_NAMES), is("kingdom | subkingdom | phylum | class | order | family | genus | species"));
         assertThat(enriched.get(PropertyAndValueDictionary.PATH), is("Plantae | Tracheophyta | Magnoliophyta | Magnoliopsida | Fabales | Fabaceae | Sophora | Sophora prostrata"));
     }
 
