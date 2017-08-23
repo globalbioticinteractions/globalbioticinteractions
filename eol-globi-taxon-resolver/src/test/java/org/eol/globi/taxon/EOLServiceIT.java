@@ -136,6 +136,13 @@ public class EOLServiceIT {
     }
 
     @Test
+    public void boron() throws PropertyEnricherException {
+        // see https://github.com/jhpoelen/eol-globi-data/issues/307#issuecomment-322836016
+        assertThat(lookupPageIdByName("Boron deficiency"), is(nullValue()));
+        assertThat(lookupPageIdByName("Boron"), is(not("EOL:213908")));
+    }
+
+    @Test
     public void lookupBySquatLobster() throws PropertyEnricherException {
         HashMap<String, String> properties = new HashMap<String, String>();
         properties.put(NAME, "Squat lobster");
