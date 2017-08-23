@@ -14,6 +14,7 @@ import static org.junit.Assert.assertThat;
 
 public class CMECSServiceTest {
 
+    @Ignore(value="CMECS integration test disabled: see https://github.com/jhpoelen/eol-globi-data/issues/310")
     @Test
     public void lookupCMECSTerms() throws IOException, TermLookupServiceException {
         TermLookupService service = new CMECSService();
