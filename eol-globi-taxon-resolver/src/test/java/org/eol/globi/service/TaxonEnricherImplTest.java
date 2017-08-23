@@ -1,6 +1,5 @@
 package org.eol.globi.service;
 
-import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
@@ -10,7 +9,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -39,7 +37,7 @@ public class TaxonEnricherImplTest {
     }
 
     @Test
-    public void enrichNoServices() throws NodeFactoryException, IOException, PropertyEnricherException {
+    public void enrichNoServices() throws PropertyEnricherException {
         List<PropertyEnricher> list = new ArrayList<PropertyEnricher>();
         taxonEnricher.setServices(list);
         Map<String, String> properties = new HashMap<String, String>() {
@@ -52,7 +50,7 @@ public class TaxonEnricherImplTest {
     }
 
     @Test
-    public void enrichTwoService() throws NodeFactoryException, IOException, PropertyEnricherException {
+    public void enrichTwoService() throws PropertyEnricherException {
         PropertyEnricher serviceA = Mockito.mock(PropertyEnricher.class);
         PropertyEnricher serviceB = Mockito.mock(PropertyEnricher.class);
         enrich("Homo sapiens", serviceA, serviceB);
@@ -61,7 +59,7 @@ public class TaxonEnricherImplTest {
     }
 
     @Test
-    public void enrichTwoServiceOneBlowsUp() throws NodeFactoryException, IOException, PropertyEnricherException {
+    public void enrichTwoServiceOneBlowsUp() throws PropertyEnricherException {
         PropertyEnricher serviceA = Mockito.mock(PropertyEnricher.class);
         PropertyEnricher serviceB = Mockito.mock(PropertyEnricher.class);
         when(serviceB.enrich(anyMap())).thenThrow(PropertyEnricherException.class);
@@ -76,7 +74,7 @@ public class TaxonEnricherImplTest {
     }
 
     @Test
-    public void enrichTwoServiceFirstComplete() throws NodeFactoryException, IOException, PropertyEnricherException {
+    public void enrichTwoServiceFirstComplete() throws PropertyEnricherException {
         PropertyEnricher serviceA = new PropertyEnricher() {
 
             @Override
@@ -103,9 +101,8 @@ public class TaxonEnricherImplTest {
         verifyZeroInteractions(serviceB);
     }
 
-    private Taxon enrich(final String taxonName, PropertyEnricher serviceA, PropertyEnricher serviceB) throws IOException, PropertyEnricherException {
+    private Taxon enrich(final String taxonName, PropertyEnricher serviceA, PropertyEnricher serviceB) throws PropertyEnricherException {
         PropertyEnricher enricher = createEnricher(serviceA, serviceB);
-
         return enrich(taxonName, enricher);
     }
 
