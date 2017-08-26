@@ -17,13 +17,13 @@ public class ExportUtilTest {
     @Test
     public void appendRow() throws IOException {
         Iterable<Map<String, Object>> rows = Collections.singletonList(new HashMap<String, Object>() {{
-            put("oneKey", null);
-            put("twoKey", "two");
-            put("threeKey", "\t");
+            put("oneKey", "o\t\tn\ne");
+            put("twoKey", "two\n");
+            put("threeKey", "three\r\n\t");
         }});
         StringWriter writer = new StringWriter();
         ExportUtil.appendRow(writer, rows, Arrays.asList("oneKey", "twoKey", "threeKey"));
-        assertThat(writer.getBuffer().toString(), is("\n\ttwo\t "));
+        assertThat(writer.getBuffer().toString(), is("\no n e\ttwo\tthree"));
     }
 
 }
