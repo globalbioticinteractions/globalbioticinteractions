@@ -25,6 +25,10 @@ public final class ExportUtil {
             writer.write(StringUtils.join(CSVTSVUtil.escapeValues(values), '\t'));
         }
 
+        appendRow(writer, rows, columns);
+    }
+
+    public static void appendRow(Writer writer, Iterable<Map<String, Object>> rows, List<String> columns) throws IOException {
         for (Map<String, Object> row : rows) {
             writer.write("\n");
             List<String> values = new ArrayList<String>();
