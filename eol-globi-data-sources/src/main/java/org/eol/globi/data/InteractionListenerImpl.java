@@ -17,7 +17,7 @@ import org.joda.time.format.ISODateTimeFormat;
 
 import java.io.IOException;
 import java.util.Map;
-import java.util.logging.Level;
+import java.util.function.Predicate;
 
 import static org.eol.globi.data.StudyImporterForTSV.BASIS_OF_RECORD_ID;
 import static org.eol.globi.data.StudyImporterForTSV.BASIS_OF_RECORD_NAME;
@@ -51,38 +51,66 @@ class InteractionListenerImpl implements InteractionListener {
     @Override
     public void newLink(Map<String, String> properties) throws StudyImporterException {
         try {
-            if (properties != null) {
-                importLink(properties);
+            if (properties != null && validLink(properties)) {
+                importValidLink(properties);
             }
         } catch (NodeFactoryException | IOException e) {
             throw new StudyImporterException("failed to import: " + properties, e);
         }
     }
 
-    private void importLink(Map<String, String> link) throws StudyImporterException, IOException {
-        String sourceTaxonName = link.get(SOURCE_TAXON_NAME);
-        String sourceTaxonId = link.get(SOURCE_TAXON_ID);
-        String targetTaxonName = link.get(TARGET_TAXON_NAME);
-        String targetTaxonId = link.get(TARGET_TAXON_ID);
-        if ((StringUtils.isNotBlank(sourceTaxonName) || StringUtils.isNotBlank(sourceTaxonId))
-                && (StringUtils.isNotBlank(targetTaxonName) || StringUtils.isNotBlank(targetTaxonId))) {
-            String interactionTypeId = link.get(INTERACTION_TYPE_ID);
-            InteractType type = InteractType.typeOf(interactionTypeId);
-
-            Study study = nodeFactory.getOrCreateStudy(studyFromLink(link));
-            if (type == null) {
-                final String msg = "unsupported interaction type id [" + interactionTypeId + "]";
-                study.appendLogMessage(msg, Level.WARNING);
-            } else {
-                Specimen source = nodeFactory.createSpecimen(study, new TaxonImpl(sourceTaxonName, sourceTaxonId));
-                setBasisOfRecordIfAvailable(link, source);
-                setDateTimeIfAvailable(link, source);
-                Specimen target = nodeFactory.createSpecimen(study, new TaxonImpl(targetTaxonName, targetTaxonId));
-                setBasisOfRecordIfAvailable(link, target);
-                setDateTimeIfAvailable(link, target);
-                source.interactsWith(target, type, getOrCreateLocation(study, link));
+    private boolean validLink(Map<String, String> link) {
+        Predicate<Map<String, String>> hasSourceTaxon = (Map<String, String> l) -> {
+            String sourceTaxonName = l.get(SOURCE_TAXON_NAME);
+            String sourceTaxonId = l.get(SOURCE_TAXON_ID);
+            boolean isValid = StringUtils.isNotBlank(sourceTaxonName) || StringUtils.isNotBlank(sourceTaxonId);
+            if (!isValid) {
+                getLogger().warn(null, "no source taxon info found in [" + l + "]");
             }
-        }
+            return isValid;
+        };
+
+        Predicate<Map<String, String>> hasTargetTaxon = (Map<String, String> l) -> {
+            String targetTaxonName = l.get(TARGET_TAXON_NAME);
+            String targetTaxonId = l.get(TARGET_TAXON_ID);
+            boolean isValid = StringUtils.isNotBlank(targetTaxonName) || StringUtils.isNotBlank(targetTaxonId);
+            if (!isValid) {
+                getLogger().warn(null, "no target taxon info found in [" + l + "]");
+            }
+            return isValid;
+        };
+
+        Predicate<Map<String, String>> hasInteractionType = (Map<String, String> l) -> {
+            String interactionTypeId = link.get(INTERACTION_TYPE_ID);
+            boolean isValid = InteractType.typeOf(interactionTypeId) != null;
+            if (!isValid) {
+                getLogger().warn(null, "found unsupported interactionTypeId [" + interactionTypeId + "]");
+            }
+            return isValid;
+        };
+
+        return hasSourceTaxon.and(hasTargetTaxon).and(hasInteractionType).test(link);
+    }
+
+    private void importValidLink(Map<String, String> link) throws StudyImporterException, IOException {
+        Study study = nodeFactory.getOrCreateStudy(studyFromLink(link));
+
+        Specimen source = createSpecimen(link, study, SOURCE_TAXON_NAME, SOURCE_TAXON_ID);
+        Specimen target = createSpecimen(link, study, TARGET_TAXON_NAME, TARGET_TAXON_ID);
+
+        String interactionTypeId = link.get(INTERACTION_TYPE_ID);
+        InteractType type = InteractType.typeOf(interactionTypeId);
+
+        source.interactsWith(target, type, getOrCreateLocation(study, link));
+    }
+
+    private Specimen createSpecimen(Map<String, String> link, Study study, String taxonNameLabel, String taxonIdLabvel) throws StudyImporterException {
+        String sourceTaxonName = link.get(taxonNameLabel);
+        String sourceTaxonId = link.get(taxonIdLabvel);
+        Specimen source = nodeFactory.createSpecimen(study, new TaxonImpl(sourceTaxonName, sourceTaxonId));
+        setBasisOfRecordIfAvailable(link, source);
+        setDateTimeIfAvailable(link, source);
+        return source;
     }
 
     private StudyImpl studyFromLink(Map<String, String> link) {
