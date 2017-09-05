@@ -114,11 +114,12 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
             StringBuilder unsupportedInteractions = new StringBuilder();
             for (Map.Entry<Long, String> entry : unsupportedInteractionTypes.entrySet()) {
                 unsupportedInteractions.append("\n")
+                        .append("https://www.inaturalist.org/observations/")
                         .append(entry.getKey())
-                        .append(",https://www.inaturalist.org/observations/")
+                        .append(",")
                         .append(entry.getValue());
             }
-            String msg = "found unsupported (observationFieldName,observationFieldId,observationId) pairs: " + unsupportedInteractions.toString();
+            String msg = "found unsupported iNaturalist taxon fields: " + unsupportedInteractions.toString();
             throw new StudyImporterException(msg);
         }
     }
