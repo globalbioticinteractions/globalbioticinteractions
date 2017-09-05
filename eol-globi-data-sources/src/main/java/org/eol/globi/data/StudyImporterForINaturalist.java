@@ -113,13 +113,12 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
         if (unsupportedInteractionTypes.size() > 0) {
             StringBuilder unsupportedInteractions = new StringBuilder();
             for (Map.Entry<Long, String> entry : unsupportedInteractionTypes.entrySet()) {
-                unsupportedInteractions.append("([")
+                unsupportedInteractions.append("\n")
                         .append(entry.getKey())
-                        .append("], [")
-                        .append(entry.getValue())
-                        .append("]) ");
+                        .append(",https://www.inaturalist.org/observations/")
+                        .append(entry.getValue());
             }
-            String msg = "found unsupported (observationId, observationFieldNameId) pairs: " + unsupportedInteractions.toString();
+            String msg = "found unsupported (observationFieldName,observationFieldId,observationId) pairs: " + unsupportedInteractions.toString();
             throw new StudyImporterException(msg);
         }
     }
@@ -225,7 +224,7 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
             } else {
                 InteractType interactType = typeMap.get(interactionTypeId);
                 if (interactType == null) {
-                    unsupportedInteractionTypes.put(observationId, interactionTypeName + ":" + interactionTypeId);
+                    unsupportedInteractionTypes.put(observationId, interactionTypeName + ",https://www.inaturalist.org/observation_fields/" + interactionTypeId);
                     LOG.debug("no interaction type associated with observation field type [" + interactionTypeName + "] with id [" + interactionTypeId + "] for observation with id [" + observationId + "]");
                 } else {
                     handleObservation(jsonNode, targetTaxon, observationId, interactionDataType, interactType, interactionTypeName, sourceTaxon);
