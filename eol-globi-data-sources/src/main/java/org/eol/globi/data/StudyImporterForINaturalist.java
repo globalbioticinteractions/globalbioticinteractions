@@ -149,22 +149,15 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
         int pageNumber = 1;
         do {
             String uri = INATURALIST_URL + "/observation_field_values.json?type=taxon&page=" + pageNumber + "&per_page=100&quality_grade=research";
-            HttpGet httpGet = new HttpGet(uri);
+
             try {
-                httpGet.addHeader("accept", "application/json");
-                HttpResponse response = HttpUtil.getHttpClient().execute(httpGet);
-                if (response.getStatusLine().getStatusCode() != 200) {
-                    throw new StudyImporterException("failed to execute query to [" + uri + "]: status code [" + response.getStatusLine().getStatusCode() + "]");
-                }
-                previousResultCount = parseJSON(response.getEntity().getContent(),
+                previousResultCount = parseJSON(getDataset().getResource(uri),
                         typesIgnored,
                         typeMap);
                 pageNumber++;
                 totalInteractions += previousResultCount;
             } catch (IOException | StudyImporterException e) {
                 throw new StudyImporterException("failed to import iNaturalist at [" + uri + "]", e);
-            } finally {
-                httpGet.releaseConnection();
             }
 
         } while (previousResultCount > 0);
