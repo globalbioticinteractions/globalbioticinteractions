@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.zip.GZIPInputStream;
 
 public class GulfBaseTaxonReaderFactory implements TaxonReaderFactory {
     private static final String[] DATA_FILES = {
@@ -33,7 +34,7 @@ public class GulfBaseTaxonReaderFactory implements TaxonReaderFactory {
             if (null == resourceAsStream) {
                 throw new IOException("failed to open resource with name [" + resourceName + "]");
             }
-            readers.put(resourceName, FileUtils.getUncompressedBufferedReader(resourceAsStream, CharsetConstant.UTF8));
+            readers.put(resourceName, FileUtils.getUncompressedBufferedReader(new GZIPInputStream(resourceAsStream), CharsetConstant.UTF8));
         }
         return readers;
     }
