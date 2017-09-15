@@ -34,7 +34,7 @@ public class StudyImporterForJSONLD extends BaseStudyImporter {
         return getDataset().getConfigURI();
     }
 
-    public StudyImporterForJSONLD(ParserFactory parserFactory, NodeFactory nodeFactory) {
+    StudyImporterForJSONLD(ParserFactory parserFactory, NodeFactory nodeFactory) {
         super(parserFactory, nodeFactory);
     }
 
@@ -113,7 +113,7 @@ public class StudyImporterForJSONLD extends BaseStudyImporter {
 
     private Model buildModel() throws IOException {
         Model model = ModelFactory.createDefaultModel();
-        model.read(ResourceUtil.asInputStream(getResourceURI(), getClass()), getResourceURI().toString(), "JSON-LD");
+        model.read(getDataset().getResource(getResourceURI().toString()), getResourceURI().toString(), "JSON-LD");
         return model;
     }
 
