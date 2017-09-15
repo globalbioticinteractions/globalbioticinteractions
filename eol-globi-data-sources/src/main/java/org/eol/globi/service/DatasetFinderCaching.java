@@ -4,7 +4,8 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.eol.globi.util.ResourceUtil;
+import org.eol.globi.util.BlobStore;
+import org.eol.globi.util.BlobStoreTmpCache;
 
 import java.io.File;
 import java.io.IOException;
@@ -21,8 +22,15 @@ public class DatasetFinderCaching implements DatasetFinder {
 
     private final DatasetFinder finder;
 
+    private final BlobStore blobStore;
+
     public DatasetFinderCaching(DatasetFinder finder) {
+        this(finder, new BlobStoreTmpCache());
+    }
+
+    public DatasetFinderCaching(DatasetFinder finder, BlobStore blobStore) {
         this.finder = finder;
+        this.blobStore = blobStore;
     }
 
     @Override
@@ -30,19 +38,18 @@ public class DatasetFinderCaching implements DatasetFinder {
         return this.finder.findNamespaces();
     }
 
-
     @Override
     public Dataset datasetFor(String namespace) throws DatasetFinderException {
         try {
             Dataset dataset = finder.datasetFor(namespace);
-            return cache(dataset);
+            return cache(dataset, blobStore);
         } catch (IOException e) {
-            throw new DatasetFinderException("failed to retrieve/cache dataset in namespace [" + namespace + "]",e);
+            throw new DatasetFinderException("failed to retrieve/cache dataset in namespace [" + namespace + "]", e);
         }
     }
 
-    static Dataset cache(Dataset dataset) throws IOException {
-        File cache = cache(dataset, "target/cache/datasets");
+    static Dataset cache(Dataset dataset, BlobStore blobStore) throws IOException {
+        File cache = cache(dataset, "target/cache/datasets", blobStore);
         return cacheArchive(dataset, cache);
     }
 
@@ -50,7 +57,7 @@ public class DatasetFinderCaching implements DatasetFinder {
         Enumeration<? extends ZipEntry> entries = new ZipFile(archiveCache).entries();
 
         String archiveRoot = null;
-        while(entries.hasMoreElements()) {
+        while (entries.hasMoreElements()) {
             ZipEntry entry = entries.nextElement();
             if (entry.isDirectory()) {
                 archiveRoot = entry.getName();
@@ -62,15 +69,15 @@ public class DatasetFinderCaching implements DatasetFinder {
         return new DatasetCached(dataset, archiveCacheURI);
     }
 
-    static File cache(Dataset dataset, String pathname) throws IOException {
+    static File cache(Dataset dataset, String pathname, BlobStore blobStore) throws IOException {
         File cacheDir = new File(pathname);
         FileUtils.forceMkdir(cacheDir);
         URI sourceURI = dataset.getArchiveURI();
-        InputStream sourceStream = ResourceUtil.asInputStream(sourceURI.toString());
+        InputStream sourceStream = blobStore.asInputStream(sourceURI.toString());
         File directory = new File(cacheDir, dataset.getNamespace());
         FileUtils.forceMkdir(directory);
 
-        File destinationFile =  new File(directory, "archive.zip");
+        File destinationFile = new File(directory, "archive.zip");
         String msg = "caching [" + sourceURI + "] at [" + destinationFile.toURI() + "]";
         LOG.info(msg + " started...");
         FileUtils.copyInputStreamToFile(sourceStream, destinationFile);

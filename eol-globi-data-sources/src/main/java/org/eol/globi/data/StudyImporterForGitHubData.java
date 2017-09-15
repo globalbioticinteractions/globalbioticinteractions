@@ -12,6 +12,7 @@ import org.eol.globi.service.DatasetFinderGitHubArchive;
 import org.eol.globi.service.DatasetFinderProxy;
 import org.eol.globi.service.DatasetFinderZenodo;
 import org.eol.globi.service.GitHubImporterFactory;
+import org.eol.globi.util.BlobStoreTmpCache;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -68,7 +69,7 @@ public class StudyImporterForGitHubData extends BaseStudyImporter {
     private DatasetFinder getDatasetFinder() {
         if (finder == null) {
             List<DatasetFinder> finders = Arrays.asList(new DatasetFinderZenodo(), new DatasetFinderGitHubArchive());
-            finder = new DatasetFinderCaching(new DatasetFinderProxy(finders));
+            finder = new DatasetFinderCaching(new DatasetFinderProxy(finders), new BlobStoreTmpCache());
         }
         return finder;
     }

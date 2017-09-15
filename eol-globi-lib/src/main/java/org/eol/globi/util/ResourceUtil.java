@@ -19,31 +19,6 @@ public class ResourceUtil {
         return blobStore.asInputStream(resource);
     }
 
-    public static InputStream asInputStream(String resourceName, Dataset dataset) throws IOException {
-        String mappedResource = mapResourceNameIfRequested(resourceName, dataset.getConfig());
-        return ResourceUtil.asInputStream(dataset.getResourceURI(mappedResource).toString());
-    }
-
-    public static URI getResourceURI(String resourceName, Dataset dataset, URI archiveURI) {
-        String mappedResourceName = ResourceUtil.mapResourceNameIfRequested(resourceName, dataset.getConfig());
-        return blobStore.getAbsoluteResourceURI(archiveURI, mappedResourceName);
-    }
-
-    private static String mapResourceNameIfRequested(String resourceName, JsonNode config) {
-        String mappedResource = resourceName;
-        if (config != null && config.has("resources")) {
-            JsonNode resources = config.get("resources");
-            if (resources.isObject() && resources.has(resourceName)) {
-                JsonNode resourceName1 = resources.get(resourceName);
-                if (resourceName1.isTextual()) {
-                    String resourceNameCandidate = resourceName1.asText();
-                    mappedResource = StringUtils.isBlank(resourceNameCandidate) ? mappedResource : resourceNameCandidate;
-                }
-            }
-        }
-        return mappedResource;
-    }
-
     public static URI fromShapefileDir(String shapeFile) {
         URI resourceURI = null;
         String shapeFileDir = System.getProperty(SHAPEFILES_DIR);
