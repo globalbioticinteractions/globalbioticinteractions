@@ -27,7 +27,7 @@ public class DatasetImpl implements Dataset {
 
     @Override
     public URI getResourceURI(String resourceName) {
-        return ResourceUtil.getResourceURI(resourceName, this);
+        return ResourceUtil.getResourceURI(resourceName, this, getArchiveURI());
     }
 
     @Override

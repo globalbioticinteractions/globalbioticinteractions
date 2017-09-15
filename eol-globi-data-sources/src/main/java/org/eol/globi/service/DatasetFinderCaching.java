@@ -66,7 +66,7 @@ public class DatasetFinderCaching implements DatasetFinder {
         File cacheDir = new File(pathname);
         FileUtils.forceMkdir(cacheDir);
         URI sourceURI = dataset.getArchiveURI();
-        InputStream sourceStream = ResourceUtil.asInputStream(sourceURI.toString(), (Class)null);
+        InputStream sourceStream = ResourceUtil.asInputStream(sourceURI.toString());
         File directory = new File(cacheDir, dataset.getNamespace());
         FileUtils.forceMkdir(directory);
 

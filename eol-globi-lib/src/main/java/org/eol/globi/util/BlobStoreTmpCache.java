@@ -23,7 +23,7 @@ public class BlobStoreTmpCache implements BlobStore {
     private final static Log LOG = LogFactory.getLog(BlobStoreTmpCache.class);
 
     @Override
-    public InputStream asInputStream(String resource, Class clazz) throws IOException {
+    public InputStream asInputStream(String resource) throws IOException {
         try {
             InputStream is;
             if (isHttpURI(resource)) {
@@ -35,12 +35,11 @@ public class BlobStoreTmpCache implements BlobStore {
             } else if (StringUtils.startsWith(resource, "jar:file:/")) {
                 is = URI.create(resource).toURL().openStream();
             } else {
-                Class aClass = clazz == null ? getClass() : clazz;
                 String classpathResource = resource;
                 if (StringUtils.startsWith(resource, "classpath:")) {
                     classpathResource = StringUtils.replace(resource, "classpath:", "");
                 }
-                is = aClass.getResourceAsStream(classpathResource);
+                is = getClass().getResourceAsStream(classpathResource);
             }
             if (is == null) {
                 final URI uri = ResourceUtil.fromShapefileDir(resource);
@@ -75,7 +74,7 @@ public class BlobStoreTmpCache implements BlobStore {
                 HttpResponse resp = HttpUtil.getHttpClient().execute(new HttpHead(descriptor));
                 exists = resp.getStatusLine().getStatusCode() == HttpStatus.SC_OK;
             } else {
-                InputStream input = asInputStream(descriptor.toString(), ResourceUtil.class);
+                InputStream input = asInputStream(descriptor.toString());
                 IOUtils.closeQuietly(input);
                 exists = input != null;
             }

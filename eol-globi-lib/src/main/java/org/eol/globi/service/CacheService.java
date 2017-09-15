@@ -15,7 +15,7 @@ public class CacheService {
     private File cacheDir = new File("./mapdb/");
 
     public static BufferedReader createBufferedReader(String taxonResourceUrl) throws IOException {
-        return new BufferedReader(new InputStreamReader(ResourceUtil.asInputStream(taxonResourceUrl, CacheService.class)));
+        return new BufferedReader(new InputStreamReader(ResourceUtil.asInputStream(taxonResourceUrl)));
     }
 
     public DB initDb(String cacheName) throws PropertyEnricherException {

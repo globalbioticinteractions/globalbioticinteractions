@@ -40,7 +40,7 @@ public class StudyImporterForBascompteIT extends GraphDBTestCase {
 
     @Test
     public void getNetworkNames() throws IOException {
-        final List<String> networkNames = StudyImporterForWebOfLife.getNetworkNames(ResourceUtil.asInputStream(StudyImporterForWebOfLife.WEB_OF_LIFE_BASE_URL + "/networkslist.php?type=All&data=All", (Class)null));
+        final List<String> networkNames = StudyImporterForWebOfLife.getNetworkNames(ResourceUtil.asInputStream(StudyImporterForWebOfLife.WEB_OF_LIFE_BASE_URL + "/networkslist.php?type=All&data=All"));
         assertThat(networkNames, hasItem("A_HP_001"));
     }
 }

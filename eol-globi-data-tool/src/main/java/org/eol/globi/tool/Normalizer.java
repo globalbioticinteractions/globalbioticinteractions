@@ -143,12 +143,7 @@ public class Normalizer {
             LOG.info("resolving names with taxon cache ...");
             final TaxonCacheService enricher = new TaxonCacheService("/taxa/taxonCache.tsv.gz", "/taxa/taxonMap.tsv.gz");
             try {
-                TaxonIndexNeo4j index = new TaxonIndexNeo4j(enricher, new CorrectionService() {
-                    @Override
-                    public String correct(String taxonName) {
-                        return taxonName;
-                    }
-                }, graphService);
+                TaxonIndexNeo4j index = new TaxonIndexNeo4j(enricher, taxonName -> taxonName, graphService);
                 index.setIndexResolvedTaxaOnly(true);
 
                 TaxonFilter taxonCacheFilter = new TaxonFilter() {

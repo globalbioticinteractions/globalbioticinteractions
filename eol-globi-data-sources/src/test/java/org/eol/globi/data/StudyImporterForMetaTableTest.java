@@ -24,7 +24,7 @@ public class StudyImporterForMetaTableTest {
 
     @Test
     public void parseColumnNames() throws IOException, StudyImporterException {
-        final InputStream inputStream = ResourceUtil.asInputStream("test-meta-globi.json", StudyImporterForMetaTable.class);
+        final InputStream inputStream = StudyImporterForMetaTable.class.getResourceAsStream("test-meta-globi.json");
         final JsonNode config = new ObjectMapper().readTree(inputStream);
 
         List<StudyImporterForMetaTable.Column> columnNames = StudyImporterForMetaTable.columnNamesForMetaTable(config);
@@ -48,7 +48,7 @@ public class StudyImporterForMetaTableTest {
         final URL resource = clazz.getResource(metaTableDef);
         assertNotNull(resource);
 
-        final InputStream inputStream = ResourceUtil.asInputStream(metaTableDef, clazz);
+        final InputStream inputStream = clazz.getResourceAsStream(metaTableDef);
         final JsonNode config = new ObjectMapper().readTree(inputStream);
 
         String baseUrl = resource.toExternalForm().replaceFirst(metaTableDef + "$", "");

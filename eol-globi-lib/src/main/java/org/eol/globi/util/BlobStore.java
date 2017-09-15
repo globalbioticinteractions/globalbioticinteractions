@@ -5,7 +5,7 @@ import java.io.InputStream;
 import java.net.URI;
 
 public interface BlobStore {
-    InputStream asInputStream(final String resource, Class clazz) throws IOException;
+    InputStream asInputStream(final String resource) throws IOException;
 
     URI getAbsoluteResourceURI(URI context, String resourceName);
 

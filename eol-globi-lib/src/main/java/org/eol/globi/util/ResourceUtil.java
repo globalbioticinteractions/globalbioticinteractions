@@ -15,23 +15,18 @@ public class ResourceUtil {
 
     private static final BlobStore blobStore = new BlobStoreTmpCache();
 
-    public static InputStream asInputStream(final String resource, Class clazz) throws IOException {
-        return blobStore.asInputStream(resource, clazz);
+    public static InputStream asInputStream(final String resource) throws IOException {
+        return blobStore.asInputStream(resource);
     }
 
     public static InputStream asInputStream(String resourceName, Dataset dataset) throws IOException {
         String mappedResource = mapResourceNameIfRequested(resourceName, dataset.getConfig());
-        return ResourceUtil.asInputStream(dataset.getResourceURI(mappedResource).toString(), (Class)null);
+        return ResourceUtil.asInputStream(dataset.getResourceURI(mappedResource).toString());
     }
 
     public static URI getResourceURI(String resourceName, Dataset dataset, URI archiveURI) {
         String mappedResourceName = ResourceUtil.mapResourceNameIfRequested(resourceName, dataset.getConfig());
         return blobStore.getAbsoluteResourceURI(archiveURI, mappedResourceName);
-    }
-
-    public static URI getResourceURI(String resourceName, Dataset dataset) {
-        URI archiveURI = dataset.getArchiveURI();
-        return getResourceURI(resourceName, dataset, archiveURI);
     }
 
     private static String mapResourceNameIfRequested(String resourceName, JsonNode config) {
