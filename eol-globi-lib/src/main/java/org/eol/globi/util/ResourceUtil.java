@@ -40,11 +40,5 @@ public class ResourceUtil {
         return resourceURI;
     }
 
-    public static String getContent(URI uri) throws IOException {
-        try {
-            return IOUtils.toString(asInputStream(uri, null));
-        } catch (IOException ex) {
-            throw new IOException("failed to find [" + uri + "]", ex);
-        }
-    }
+
 }

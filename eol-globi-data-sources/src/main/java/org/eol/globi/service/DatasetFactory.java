@@ -1,5 +1,6 @@
 package org.eol.globi.service;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -34,13 +35,21 @@ public class DatasetFactory {
     }
 
     private static Dataset configureDataset(Dataset dataset, URI configURI) throws IOException {
-        String descriptor = ResourceUtil.getContent(configURI);
+        String descriptor = getContent(configURI);
         if (StringUtils.isNotBlank(descriptor)) {
             JsonNode desc = new ObjectMapper().readTree(descriptor);
             dataset.setConfigURI(configURI);
             dataset.setConfig(desc);
         }
         return dataset;
+    }
+
+    private static String getContent(URI uri) throws IOException {
+        try {
+            return IOUtils.toString(ResourceUtil.asInputStream(uri, null));
+        } catch (IOException ex) {
+            throw new IOException("failed to find [" + uri + "]", ex);
+        }
     }
 
 
