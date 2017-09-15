@@ -1,6 +1,5 @@
 package org.eol.globi.service;
 
-import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jackson.JsonNode;
 import org.eol.globi.data.ReferenceUtil;
 import org.eol.globi.util.ResourceUtil;
@@ -23,29 +22,12 @@ public class DatasetImpl implements Dataset {
 
     @Override
     public InputStream getResource(String resourceName) throws IOException {
-        String mappedResource = mapResourceNameIfRequested(resourceName, getConfig());
-        return ResourceUtil.asInputStream(getResourceURI(mappedResource), DatasetImpl.class);
-    }
-
-    public static String mapResourceNameIfRequested(String resourceName, JsonNode config) {
-        String mappedResource = resourceName;
-        if (config != null && config.has("resources")) {
-            JsonNode resources = config.get("resources");
-            if (resources.isObject() && resources.has(resourceName)) {
-                JsonNode resourceName1 = resources.get(resourceName);
-                if (resourceName1.isTextual()) {
-                    String resourceNameCandidate = resourceName1.asText();
-                    mappedResource = StringUtils.isBlank(resourceNameCandidate) ? mappedResource : resourceNameCandidate;
-                }
-            }
-        }
-        return mappedResource;
+        return ResourceUtil.getResource(resourceName, this);
     }
 
     @Override
     public URI getResourceURI(String resourceName) {
-        String mappedResourceName = mapResourceNameIfRequested(resourceName, getConfig());
-        return ResourceUtil.getAbsoluteResourceURI(getArchiveURI(), mappedResourceName);
+        return ResourceUtil.getResourceURI(resourceName, this);
     }
 
     @Override

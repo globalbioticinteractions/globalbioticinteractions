@@ -7,6 +7,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.util.ResourceUtil;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.List;
@@ -35,7 +36,7 @@ public class DatasetFactory {
     }
 
     private static Dataset configureDataset(Dataset dataset, URI configURI) throws IOException {
-        String descriptor = getContent(configURI);
+        String descriptor = getContent(configURI, dataset.getResource(configURI.toString()));
         if (StringUtils.isNotBlank(descriptor)) {
             JsonNode desc = new ObjectMapper().readTree(descriptor);
             dataset.setConfigURI(configURI);
@@ -44,9 +45,9 @@ public class DatasetFactory {
         return dataset;
     }
 
-    private static String getContent(URI uri) throws IOException {
+    private static String getContent(URI uri, InputStream input) throws IOException {
         try {
-            return IOUtils.toString(ResourceUtil.asInputStream(uri, null));
+            return IOUtils.toString(input);
         } catch (IOException ex) {
             throw new IOException("failed to find [" + uri + "]", ex);
         }

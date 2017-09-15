@@ -42,7 +42,7 @@ public class DatasetFinderCachingIT {
 
         assertThat(dataset.getArchiveURI().toString(), containsString("github.com"));
         assertThat(dataset.getResourceURI("globi.json").toString(), startsWith("jar:file:/"));
-        assertThat(dataset.getCitation(), is("Catalogue of Afrotropical Bees. 2011. http://doi.org/10.15468/u9ezbh"));
+        assertThat(dataset.getCitation(), is("Eardley C, Coetzer W. 2011. Catalogue of Afrotropical Bees. http://doi.org/10.15468/u9ezbh"));
 
     }
 
