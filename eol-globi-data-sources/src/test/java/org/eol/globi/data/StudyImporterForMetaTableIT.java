@@ -8,6 +8,7 @@ import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.service.Dataset;
 import org.eol.globi.service.DatasetImpl;
+import org.eol.globi.util.BlobStoreTmpCache;
 import org.eol.globi.util.ResourceUtil;
 import org.junit.Test;
 
@@ -35,8 +36,7 @@ public class StudyImporterForMetaTableIT {
         final URL resource = clazz.getResource(name);
         Assert.assertNotNull(resource);
 
-        final InputStream inputStream = ResourceUtil.asInputStream(name, clazz);
-        final JsonNode config = new ObjectMapper().readTree(inputStream);
+        final JsonNode config = new ObjectMapper().readTree(clazz.getResourceAsStream(name));
         DatasetImpl dataset = new DatasetImpl("some/namespace", URI.create("http://example.com"));
         dataset.setConfig(config);
         final List<JsonNode> tables = StudyImporterForMetaTable.collectTables(dataset);
@@ -168,7 +168,7 @@ public class StudyImporterForMetaTableIT {
     }
 
     static public void importAll(InteractionListener interactionListener, StudyImporterForMetaTable.TableParserFactory tableFactory, String baseUrl, String resource) throws IOException, StudyImporterException {
-        final InputStream inputStream = ResourceUtil.asInputStream(resource, null);
+        final InputStream inputStream = new BlobStoreTmpCache().asInputStream(resource, (Class)null);
         final JsonNode config = new ObjectMapper().readTree(inputStream);
         final Dataset dataset = new DatasetImpl("some/namespace", URI.create("http://example.com"));
         dataset.setConfig(config);

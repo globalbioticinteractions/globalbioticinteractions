@@ -15,31 +15,23 @@ public class ResourceUtil {
 
     private static final BlobStore blobStore = new BlobStoreTmpCache();
 
-    public static InputStream asInputStream(URI resource, Class clazz) throws IOException {
-        return blobStore.asInputStream(resource.toString(), clazz);
-    }
-
     public static InputStream asInputStream(final String resource, Class clazz) throws IOException {
         return blobStore.asInputStream(resource, clazz);
     }
 
-    public static boolean resourceExists(URI descriptor) {
-        return blobStore.resourceExists(descriptor);
+    public static InputStream asInputStream(String resourceName, Dataset dataset) throws IOException {
+        String mappedResource = mapResourceNameIfRequested(resourceName, dataset.getConfig());
+        return ResourceUtil.asInputStream(dataset.getResourceURI(mappedResource).toString(), (Class)null);
     }
 
-    public static InputStream getResource(String resourceName, Dataset dataset) throws IOException {
-        String mappedResource = mapResourceNameIfRequested(resourceName, dataset.getConfig());
-        return ResourceUtil.asInputStream(dataset.getResourceURI(mappedResource), null);
+    public static URI getResourceURI(String resourceName, Dataset dataset, URI archiveURI) {
+        String mappedResourceName = ResourceUtil.mapResourceNameIfRequested(resourceName, dataset.getConfig());
+        return blobStore.getAbsoluteResourceURI(archiveURI, mappedResourceName);
     }
 
     public static URI getResourceURI(String resourceName, Dataset dataset) {
         URI archiveURI = dataset.getArchiveURI();
         return getResourceURI(resourceName, dataset, archiveURI);
-    }
-
-    public static URI getResourceURI(String resourceName, Dataset dataset, URI archiveURI) {
-        String mappedResourceName = ResourceUtil.mapResourceNameIfRequested(resourceName, dataset.getConfig());
-        return ResourceUtil.getAbsoluteResourceURI(archiveURI, mappedResourceName);
     }
 
     private static String mapResourceNameIfRequested(String resourceName, JsonNode config) {
@@ -55,10 +47,6 @@ public class ResourceUtil {
             }
         }
         return mappedResource;
-    }
-
-    public static URI getAbsoluteResourceURI(URI context, String resourceName) {
-        return blobStore.getAbsoluteResourceURI(context, resourceName);
     }
 
     public static URI fromShapefileDir(String shapeFile) {

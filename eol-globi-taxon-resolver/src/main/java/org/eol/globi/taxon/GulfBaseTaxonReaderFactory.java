@@ -28,8 +28,8 @@ public class GulfBaseTaxonReaderFactory implements TaxonReaderFactory {
     public Map<String, BufferedReader> getAllReaders() throws IOException {
         Map<String, BufferedReader> readers = new HashMap<String, BufferedReader>();
         for (String filename : DATA_FILES) {
-            String resourceName = "gulfbase/" + filename;
-            InputStream resourceAsStream = ResourceUtil.asInputStream(resourceName, GulfBaseTaxonReaderFactory.class);
+            String resourceName = "/org/eol/globi/taxon/gulfbase/" + filename;
+            InputStream resourceAsStream = getClass().getResourceAsStream(resourceName);
             if (null == resourceAsStream) {
                 throw new IOException("failed to open resource with name [" + resourceName + "]");
             }

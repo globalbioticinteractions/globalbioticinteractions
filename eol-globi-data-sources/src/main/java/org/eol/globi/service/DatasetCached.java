@@ -19,7 +19,7 @@ public class DatasetCached implements Dataset {
 
     @Override
     public InputStream getResource(String resourceName) throws IOException {
-        return ResourceUtil.getResource(resourceName, this);
+        return ResourceUtil.asInputStream(resourceName, this);
     }
 
     @Override

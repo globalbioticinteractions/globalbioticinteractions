@@ -56,18 +56,13 @@ public class NODCTaxonService implements PropertyEnricher {
         return nodcResourceUrl;
     }
 
-    public void setNodcResourceUrl(String nodcResourceUrl) {
-        this.nodcResourceUrl = nodcResourceUrl;
-    }
-
-
     private void lazyInit() throws PropertyEnricherException {
         String nodcFilename = getNodcResourceUrl();
         if (StringUtils.isBlank(nodcResourceUrl)) {
             throw new PropertyEnricherException("cannot initialize NODC enricher: failed to find NODC taxon file. Did you install the NODC taxonomy and set -DnodcFile=...?");
         }
         try {
-            NODCTaxonParser parser = new NODCTaxonParser(new BufferedReader(new InputStreamReader(ResourceUtil.asInputStream(nodcFilename, null))));
+            NODCTaxonParser parser = new NODCTaxonParser(new BufferedReader(new InputStreamReader(ResourceUtil.asInputStream(nodcFilename, (Class)null))));
             init(parser);
         } catch (IOException e) {
             throw new PropertyEnricherException("failed to read from NODC resource [" + nodcFilename + "]", e);

@@ -43,7 +43,7 @@ public class StudyImporterForWebOfLifeTest extends GraphDBTestCase {
 
     @Test
     public void retrieveNetworkList() throws IOException {
-        final List<String> networkNames = StudyImporterForWebOfLife.getNetworkNames(ResourceUtil.asInputStream(StudyImporterForWebOfLife.WEB_OF_LIFE_BASE_URL + "/networkslist.php?type=All&data=All", null));
+        final List<String> networkNames = StudyImporterForWebOfLife.getNetworkNames(ResourceUtil.asInputStream(StudyImporterForWebOfLife.WEB_OF_LIFE_BASE_URL + "/networkslist.php?type=All&data=All", (Class)null));
 
         assertThat(networkNames, hasItem("A_HP_002"));
         assertThat(networkNames.size() > 50, is(true));

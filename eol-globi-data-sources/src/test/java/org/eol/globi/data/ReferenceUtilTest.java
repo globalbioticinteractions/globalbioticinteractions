@@ -41,7 +41,7 @@ public class ReferenceUtilTest {
 
     @Test
     public void generateSourceCitation() throws IOException, StudyImporterException {
-        final InputStream inputStream = ResourceUtil.asInputStream("/org/eol/globi/data/test-meta-globi.json", StudyImporterForMetaTable.class);
+        final InputStream inputStream = getClass().getResourceAsStream("/org/eol/globi/data/test-meta-globi.json");
 
         DatasetImpl dataset = new DatasetImpl(null, URI.create("http://base"));
         dataset.setConfig(new ObjectMapper().readTree(inputStream));

@@ -1,6 +1,5 @@
 package org.eol.globi.taxon;
 
-import org.eol.globi.util.ResourceUtil;
 import org.junit.Test;
 import org.mapdb.Fun;
 
@@ -33,16 +32,10 @@ public class NODCTaxonParserTest {
         assertThat(terms.get(5).b, is("ITIS:180725"));
     }
 
-    static public NODCTaxonParser getTestParser() throws IOException {
-        final String testResource = "nodc/test-taxbrief.dat";
-        NODCTaxonParser taxonParser;
-        try {
-            final BufferedReader reader = new BufferedReader(new InputStreamReader(ResourceUtil.asInputStream(testResource, NODCTaxonParserTest.class)));
-            taxonParser = new NODCTaxonParser(reader);
-        } catch (IOException ex) {
-            throw new IOException("problem parsing reader with name [" + testResource + "]");
-        }
-        return taxonParser;
+    static NODCTaxonParser getTestParser() throws IOException {
+        final String testResource = "/org/eol/globi/taxon/nodc/test-taxbrief.dat";
+        final BufferedReader reader = new BufferedReader(new InputStreamReader(NODCTaxonParserTest.class.getResourceAsStream(testResource)));
+        return new NODCTaxonParser(reader);
     }
 
 
