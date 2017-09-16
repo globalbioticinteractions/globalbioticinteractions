@@ -1,33 +1,35 @@
 package org.eol.globi.service;
 
 import org.codehaus.jackson.JsonNode;
-import org.eol.globi.util.ResourceCache;
-import org.eol.globi.util.ResourceCacheTmp;
+import org.eol.globi.util.ResourceUtil;
 import org.globalbioticinteractions.dataset.CitationUtil;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 
-public class DatasetImpl extends DatasetStored {
+public class DatasetImpl extends DatasetMapped {
 
     private String namespace;
     private URI archiveURI;
     private JsonNode config;
     private URI configURI;
-    private ResourceCache resourceCache;
 
     public DatasetImpl(String namespace, URI archiveURI) {
-        this(namespace, archiveURI, new ResourceCacheTmp());
-    }
-
-    public DatasetImpl(String namespace, URI archiveURI, ResourceCache store) {
         this.namespace = namespace;
         this.archiveURI = archiveURI;
-        this.resourceCache = store;
     }
 
     @Override
-    ResourceCache getResourceCache() {
-        return resourceCache;
+    public InputStream getResource(String resourceName) throws IOException {
+        String mappedResource = mapResourceNameIfRequested(resourceName, getConfig());
+        return ResourceUtil.asInputStream(getResourceURI(mappedResource).toString());
+    }
+
+    @Override
+    public URI getResourceURI(String resourceName) {
+        String mappedResource = mapResourceNameIfRequested(resourceName, getConfig());
+        return ResourceUtil.getAbsoluteResourceURI(getArchiveURI(), mappedResource);
     }
 
     @Override

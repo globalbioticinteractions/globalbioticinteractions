@@ -15,6 +15,9 @@ public class DatasetFinderCaching implements DatasetFinder {
     private final DatasetFinder finder;
     private final String cacheDir;
 
+    public DatasetFinderCaching(DatasetFinder finder) {
+        this(finder, "target/datasets");
+    }
     public DatasetFinderCaching(DatasetFinder finder, String cacheDir) {
         this.finder = finder;
         this.cacheDir = cacheDir;

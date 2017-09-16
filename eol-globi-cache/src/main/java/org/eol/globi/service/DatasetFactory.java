@@ -4,8 +4,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.eol.globi.util.ResourceCache;
-import org.eol.globi.util.ResourceCacheTmp;
+import org.eol.globi.util.ResourceUtil;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,16 +15,16 @@ import java.util.List;
 public class DatasetFactory {
 
     public static Dataset datasetFor(String repo, DatasetFinder finder) throws DatasetFinderException {
-        return configDataset(finder.datasetFor(repo), new ResourceCacheTmp());
+        return configDataset(finder.datasetFor(repo));
     }
 
-    private static Dataset configDataset(Dataset dataset, ResourceCache resourceCache) throws DatasetFinderException {
+    private static Dataset configDataset(Dataset dataset) throws DatasetFinderException {
         List<String> configResources = Arrays.asList("/globi.json", "/globi-dataset.jsonld");
 
         URI configURI = null;
         for (String configResource : configResources) {
             configURI = dataset.getResourceURI(configResource);
-            if (resourceCache.resourceExists(configURI)) {
+            if (ResourceUtil.resourceExists(configURI)) {
                 break;
             }
         }

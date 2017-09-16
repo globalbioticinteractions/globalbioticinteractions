@@ -10,36 +10,36 @@ import java.net.URL;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
 
-public class ResourceCacheTmpTest {
+public class ResourceUtilTest {
 
     @Test
     public void localResource() throws URISyntaxException {
         URL resource = getClass().getResource(getClass().getSimpleName() + ".class");
         assertThat(new File(resource.toURI()).exists(), is(true));
-        assertTrue(new ResourceCacheTmp().resourceExists(resource.toURI()));
+        assertTrue(ResourceUtil.resourceExists(resource.toURI()));
     }
 
     @Test
     public void relativeURI() throws URISyntaxException {
-        URI uri = new ResourceCacheTmp().getAbsoluteResourceURI(URI.create("some:/example/"), "/path");
+        URI uri = ResourceUtil.getAbsoluteResourceURI(URI.create("some:/example/"), "/path");
         assertThat(uri.toString(), is("some:/example/path"));
     }
 
     @Test
     public void relativeURINoSlash() throws URISyntaxException {
-        URI uri = new ResourceCacheTmp().getAbsoluteResourceURI(URI.create("some:/example"), "path");
+        URI uri = ResourceUtil.getAbsoluteResourceURI(URI.create("some:/example"), "path");
         assertThat(uri.toString(), is("some:/example/path"));
     }
 
    @Test
     public void relativeURISlashContext() throws URISyntaxException {
-        URI uri = new ResourceCacheTmp().getAbsoluteResourceURI(URI.create("some:/example/"), "path");
+        URI uri = ResourceUtil.getAbsoluteResourceURI(URI.create("some:/example/"), "path");
         assertThat(uri.toString(), is("some:/example/path"));
     }
 
    @Test
     public void relativeURISlashResource() throws URISyntaxException {
-        URI uri = new ResourceCacheTmp().getAbsoluteResourceURI(URI.create("some:/example"), "/path");
+        URI uri = ResourceUtil.getAbsoluteResourceURI(URI.create("some:/example"), "/path");
         assertThat(uri.toString(), is("some:/example/path"));
     }
 

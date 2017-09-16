@@ -6,11 +6,11 @@ import java.net.URI;
 
 import static org.junit.Assert.assertTrue;
 
-public class ResourceCacheTmpIT {
+public class ResourceUtilIT {
 
     @Test
     public void remoteResource() {
-        assertTrue(new ResourceCacheTmp().resourceExists(URI.create("https://example.com")));
+        assertTrue(ResourceUtil.resourceExists(URI.create("https://example.com")));
     }
 
 

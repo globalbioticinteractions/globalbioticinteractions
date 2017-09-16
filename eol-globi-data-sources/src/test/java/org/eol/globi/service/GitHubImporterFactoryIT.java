@@ -14,6 +14,7 @@ import org.eol.globi.data.StudyImporterForPlanque;
 import org.eol.globi.data.StudyImporterForSzoboszlai;
 import org.eol.globi.data.StudyImporterForTSV;
 import org.eol.globi.data.StudyImporterForWood;
+import org.globalbioticinteractions.dataset.DatasetFinderCaching;
 import org.junit.Test;
 
 import java.net.URI;

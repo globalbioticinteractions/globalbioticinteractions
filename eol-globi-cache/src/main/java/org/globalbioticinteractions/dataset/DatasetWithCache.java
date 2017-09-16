@@ -1,9 +1,9 @@
 package org.globalbioticinteractions.dataset;
 
-import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jackson.JsonNode;
 import org.eol.globi.service.Dataset;
-import org.eol.globi.util.ResourceCacheTmp;
+import org.eol.globi.service.DatasetMapped;
+import org.eol.globi.util.ResourceUtil;
 import org.globalbioticinteractions.cache.Cache;
 import org.globalbioticinteractions.cache.CachedURI;
 import org.joda.time.format.DateTimeFormat;
@@ -15,9 +15,13 @@ import java.io.InputStream;
 import java.net.URI;
 import java.util.Date;
 
-import static org.apache.commons.lang.StringUtils.*;
+import static org.apache.commons.lang.StringUtils.equalsIgnoreCase;
+import static org.apache.commons.lang.StringUtils.isBlank;
+import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.apache.commons.lang.StringUtils.startsWith;
+import static org.apache.commons.lang.StringUtils.trim;
 
-public class DatasetWithCache implements Dataset {
+public class DatasetWithCache extends DatasetMapped {
     private final Cache cache;
     private final Dataset datasetCached;
 
@@ -53,7 +57,7 @@ public class DatasetWithCache implements Dataset {
         } else {
             URI localArchiveURI = cache.asURI(getArchiveURI());
             URI archiveJarURI = DatasetFinderUtil.getLocalDatasetURIRoot(new File(localArchiveURI));
-            uri = new ResourceCacheTmp().getAbsoluteResourceURI(archiveJarURI, resourceName);
+            uri = ResourceUtil.getAbsoluteResourceURI(archiveJarURI, resourceName);
         }
         return uri;
     }
@@ -70,21 +74,6 @@ public class DatasetWithCache implements Dataset {
 
     public URI getArchiveURI() {
         return getDatasetCached().getArchiveURI();
-    }
-
-    private String mapResourceNameIfRequested(String resourceName, JsonNode config) {
-        String mappedResource = resourceName;
-        if (config != null && config.has("resources")) {
-            JsonNode resources = config.get("resources");
-            if (resources.isObject() && resources.has(resourceName)) {
-                JsonNode resourceName1 = resources.get(resourceName);
-                if (resourceName1.isTextual()) {
-                    String resourceNameCandidate = resourceName1.asText();
-                    mappedResource = StringUtils.isBlank(resourceNameCandidate) ? mappedResource : resourceNameCandidate;
-                }
-            }
-        }
-        return mappedResource;
     }
 
     @Override
