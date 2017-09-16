@@ -24,7 +24,7 @@ public class GitHubUtilTest {
 
 @Test
     public void baseUrlMaster() throws IOException {
-        assertThat(GitHubUtil.getBaseUrlMaster("org/globalbioticinteractions/template-dataset"),
+        assertThat(GitHubUtil.getBaseUrlMaster("globalbioticinteractions/template-dataset"),
                 is("https://raw.githubusercontent.com/globalbioticinteractions/template-dataset/master"));
     }
 

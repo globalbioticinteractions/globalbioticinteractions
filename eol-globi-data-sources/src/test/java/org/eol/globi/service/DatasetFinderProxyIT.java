@@ -14,7 +14,7 @@ public class DatasetFinderProxyIT {
     public void zenodoGitHubTest() throws DatasetFinderException {
         DatasetFinderProxy proxy = new DatasetFinderProxy(Arrays.asList(new DatasetFinderZenodo(), new DatasetFinderGitHubArchive()));
 
-        Dataset dataset = proxy.datasetFor("org/globalbioticinteractions/template-dataset");
+        Dataset dataset = proxy.datasetFor("globalbioticinteractions/template-dataset");
         assertThat(dataset.getArchiveURI().toString(), containsString("zenodo.org"));
 
         dataset = proxy.datasetFor("millerse/Bird-Parasite");
@@ -25,7 +25,7 @@ public class DatasetFinderProxyIT {
     public void gitHubOnlyTest() throws DatasetFinderException {
         DatasetFinderProxy proxy = new DatasetFinderProxy(Arrays.asList(new DatasetFinderGitHubArchive()));
 
-        Dataset dataset = proxy.datasetFor("org/globalbioticinteractions/template-dataset");
+        Dataset dataset = proxy.datasetFor("globalbioticinteractions/template-dataset");
         assertThat(dataset.getArchiveURI().toString(), not(containsString("zenodo.org")));
 
         dataset = proxy.datasetFor("millerse/Bird-Parasite");

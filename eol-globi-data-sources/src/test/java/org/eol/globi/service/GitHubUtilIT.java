@@ -13,8 +13,8 @@ import static org.junit.matchers.JUnitMatchers.hasItem;
 
 public class GitHubUtilIT {
 
-    public static final String TEMPLATE_DATA_REPOSITORY_TSV = "org/globalbioticinteractions/template-dataset";
-    public static final String TEMPLATE_DATA_REPOSITORY_JSONLD = "org/globalbioticinteractions/jsonld-template-dataset";
+    public static final String TEMPLATE_DATA_REPOSITORY_TSV = "globalbioticinteractions/template-dataset";
+    public static final String TEMPLATE_DATA_REPOSITORY_JSONLD = "globalbioticinteractions/jsonld-template-dataset";
 
     @Test
     public void discoverRepos() throws IOException, URISyntaxException {

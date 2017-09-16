@@ -38,7 +38,7 @@ public class StudyImporterForINaturalistTest extends GraphDBTestCase {
 
     @Before
     public void setup() throws DatasetFinderException {
-        Dataset dataset = datasetFor("org/globalbioticinteractions/inaturalist");
+        Dataset dataset = datasetFor("globalbioticinteractions/inaturalist");
         ParserFactory parserFactory = new ParserFactoryForDataset(dataset);
         importer = new StudyImporterForINaturalist(parserFactory, nodeFactory);
         importer.setDataset(dataset);

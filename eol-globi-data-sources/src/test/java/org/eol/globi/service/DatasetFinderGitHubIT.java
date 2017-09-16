@@ -21,7 +21,7 @@ public class DatasetFinderGitHubIT {
 
     @Test
     public void datasetFor() throws DatasetFinderException {
-        URI uri = new DatasetFinderGitHubArchive().datasetFor("org/globalbioticinteractions/template-dataset").getArchiveURI();
+        URI uri = new DatasetFinderGitHubArchive().datasetFor("globalbioticinteractions/template-dataset").getArchiveURI();
         assertThat(uri.toString(), startsWith("https://github.com/globalbioticinteractions/template-dataset/archive/"));
         assertThat(uri.toString(), endsWith(".zip"));
     }
