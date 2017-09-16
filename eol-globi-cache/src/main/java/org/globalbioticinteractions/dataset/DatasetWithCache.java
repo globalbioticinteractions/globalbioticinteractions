@@ -1,5 +1,7 @@
 package org.globalbioticinteractions.dataset;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.codehaus.jackson.JsonNode;
 import org.eol.globi.service.Dataset;
 import org.eol.globi.service.DatasetMapped;
@@ -22,6 +24,8 @@ import static org.apache.commons.lang.StringUtils.startsWith;
 import static org.apache.commons.lang.StringUtils.trim;
 
 public class DatasetWithCache extends DatasetMapped {
+    private final static Log LOG = LogFactory.getLog(DatasetWithCache.class);
+
     private final Cache cache;
     private final Dataset datasetCached;
 
@@ -37,11 +41,11 @@ public class DatasetWithCache extends DatasetMapped {
 
     @Override
     public URI getResourceURI(String resourceName) {
-        URI uri;
+        URI uri = null;
         try {
             uri = getResourceURI2(resourceName);
         } catch (IOException e) {
-            throw new RuntimeException("failed to get resource [" + resourceName + "]", e);
+            LOG.warn("failed to get resource [" + resourceName + "]", e);
         }
         return uri;
     }
