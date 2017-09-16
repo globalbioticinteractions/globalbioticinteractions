@@ -2,12 +2,9 @@ package org.eol.globi.service;
 
 import org.codehaus.jackson.JsonNode;
 import org.eol.globi.data.ReferenceUtil;
-import org.eol.globi.util.BlobStore;
-import org.eol.globi.util.BlobStoreTmpCache;
-import org.eol.globi.util.ResourceUtil;
+import org.eol.globi.util.ResourceCache;
+import org.eol.globi.util.ResourceCacheTmp;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.net.URI;
 
 public class DatasetImpl extends DatasetStored {
@@ -16,21 +13,21 @@ public class DatasetImpl extends DatasetStored {
     private URI archiveURI;
     private JsonNode config;
     private URI configURI;
-    private BlobStore blobStore;
+    private ResourceCache resourceCache;
 
     public DatasetImpl(String namespace, URI archiveURI) {
-        this(namespace, archiveURI, new BlobStoreTmpCache());
+        this(namespace, archiveURI, new ResourceCacheTmp());
     }
 
-    public DatasetImpl(String namespace, URI archiveURI, BlobStore store) {
+    public DatasetImpl(String namespace, URI archiveURI, ResourceCache store) {
         this.namespace = namespace;
         this.archiveURI = archiveURI;
-        this.blobStore = store;
+        this.resourceCache = store;
     }
 
     @Override
-    BlobStore getBlobStore() {
-        return blobStore;
+    ResourceCache getResourceCache() {
+        return resourceCache;
     }
 
     @Override

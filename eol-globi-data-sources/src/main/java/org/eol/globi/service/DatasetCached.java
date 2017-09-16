@@ -1,39 +1,36 @@
 package org.eol.globi.service;
 
 import org.codehaus.jackson.JsonNode;
-import org.eol.globi.util.BlobStore;
-import org.eol.globi.util.BlobStoreTmpCache;
-import org.eol.globi.util.ResourceUtil;
+import org.eol.globi.util.ResourceCache;
+import org.eol.globi.util.ResourceCacheTmp;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.net.URI;
 
 public class DatasetCached extends DatasetStored {
 
     private final URI archiveCacheURI;
     private final Dataset dataset;
-    private final BlobStore blobStore;
+    private final ResourceCache resourceCache;
 
     public DatasetCached(Dataset dataset, URI archiveCacheURI) {
-        this(dataset, archiveCacheURI, new BlobStoreTmpCache());
+        this(dataset, archiveCacheURI, new ResourceCacheTmp());
     }
 
-    public DatasetCached(Dataset dataset, URI archiveCacheURI, BlobStore blobStore) {
+    public DatasetCached(Dataset dataset, URI archiveCacheURI, ResourceCache resourceCache) {
         this.dataset = dataset;
         this.archiveCacheURI = archiveCacheURI;
-        this.blobStore = blobStore;
+        this.resourceCache = resourceCache;
     }
 
     @Override
-    BlobStore getBlobStore() {
-        return blobStore;
+    ResourceCache getResourceCache() {
+        return resourceCache;
     }
 
     @Override
     public URI getResourceURI(String resourceName) {
         String mappedResource = mapResourceNameIfRequested(resourceName, getConfig());
-        return blobStore.getAbsoluteResourceURI(archiveCacheURI, mappedResource);
+        return resourceCache.getAbsoluteResourceURI(archiveCacheURI, mappedResource);
     }
 
     @Override

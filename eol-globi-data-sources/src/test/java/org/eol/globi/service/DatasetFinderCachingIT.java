@@ -1,6 +1,6 @@
 package org.eol.globi.service;
 
-import org.eol.globi.util.BlobStoreTmpCache;
+import org.eol.globi.util.ResourceCacheTmp;
 import org.hamcrest.CoreMatchers;
 import org.junit.Test;
 
@@ -30,7 +30,7 @@ public class DatasetFinderCachingIT {
     public void cacheDatasetGitHub() throws DatasetFinderException, IOException {
         Dataset dataset = new DatasetFinderGitHubArchive()
                 .datasetFor("globalbioticinteractions/template-dataset");
-        File archiveCache = DatasetFinderCaching.cache(dataset, "target/cache/dataset", new BlobStoreTmpCache());
+        File archiveCache = DatasetFinderCaching.cache(dataset, "target/cache/dataset", new ResourceCacheTmp());
         assertThat(archiveCache.exists(), CoreMatchers.is(true));
         assertThat(archiveCache.toURI().toString(), startsWith("file:/"));
     }

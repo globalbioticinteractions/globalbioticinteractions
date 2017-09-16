@@ -1,8 +1,6 @@
 package org.eol.globi.util;
 
 import org.apache.commons.lang3.StringUtils;
-import org.codehaus.jackson.JsonNode;
-import org.eol.globi.service.Dataset;
 
 import java.io.File;
 import java.io.IOException;
@@ -13,10 +11,10 @@ public class ResourceUtil {
 
     public static final String SHAPEFILES_DIR = "shapefiles.dir";
 
-    private static final BlobStore blobStore = new BlobStoreTmpCache();
+    private static final ResourceCache RESOURCE_CACHE = new ResourceCacheTmp();
 
     public static InputStream asInputStream(final String resource) throws IOException {
-        return blobStore.asInputStream(resource);
+        return RESOURCE_CACHE.asInputStream(resource);
     }
 
     public static URI fromShapefileDir(String shapeFile) {

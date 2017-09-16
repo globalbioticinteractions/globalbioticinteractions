@@ -4,8 +4,8 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.eol.globi.util.BlobStore;
-import org.eol.globi.util.BlobStoreTmpCache;
+import org.eol.globi.util.ResourceCache;
+import org.eol.globi.util.ResourceCacheTmp;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,15 +22,15 @@ public class DatasetFinderCaching implements DatasetFinder {
 
     private final DatasetFinder finder;
 
-    private final BlobStore blobStore;
+    private final ResourceCache resourceCache;
 
     public DatasetFinderCaching(DatasetFinder finder) {
-        this(finder, new BlobStoreTmpCache());
+        this(finder, new ResourceCacheTmp());
     }
 
-    public DatasetFinderCaching(DatasetFinder finder, BlobStore blobStore) {
+    public DatasetFinderCaching(DatasetFinder finder, ResourceCache resourceCache) {
         this.finder = finder;
-        this.blobStore = blobStore;
+        this.resourceCache = resourceCache;
     }
 
     @Override
@@ -42,14 +42,14 @@ public class DatasetFinderCaching implements DatasetFinder {
     public Dataset datasetFor(String namespace) throws DatasetFinderException {
         try {
             Dataset dataset = finder.datasetFor(namespace);
-            return cache(dataset, blobStore);
+            return cache(dataset, resourceCache);
         } catch (IOException e) {
             throw new DatasetFinderException("failed to retrieve/cache dataset in namespace [" + namespace + "]", e);
         }
     }
 
-    static Dataset cache(Dataset dataset, BlobStore blobStore) throws IOException {
-        File cache = cache(dataset, "target/cache/datasets", blobStore);
+    static Dataset cache(Dataset dataset, ResourceCache resourceCache) throws IOException {
+        File cache = cache(dataset, "target/cache/datasets", resourceCache);
         return cacheArchive(dataset, cache);
     }
 
@@ -69,11 +69,11 @@ public class DatasetFinderCaching implements DatasetFinder {
         return new DatasetCached(dataset, archiveCacheURI);
     }
 
-    static File cache(Dataset dataset, String pathname, BlobStore blobStore) throws IOException {
+    static File cache(Dataset dataset, String pathname, ResourceCache resourceCache) throws IOException {
         File cacheDir = new File(pathname);
         FileUtils.forceMkdir(cacheDir);
         URI sourceURI = dataset.getArchiveURI();
-        InputStream sourceStream = blobStore.asInputStream(sourceURI.toString());
+        InputStream sourceStream = resourceCache.asInputStream(sourceURI.toString());
         File directory = new File(cacheDir, dataset.getNamespace());
         FileUtils.forceMkdir(directory);
 

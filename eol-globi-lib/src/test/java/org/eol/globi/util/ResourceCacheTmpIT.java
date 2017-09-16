@@ -6,11 +6,11 @@ import java.net.URI;
 
 import static org.junit.Assert.assertTrue;
 
-public class BlobStoreTmpCacheIT {
+public class ResourceCacheTmpIT {
 
     @Test
     public void remoteResource() {
-        assertTrue(new BlobStoreTmpCache().resourceExists(URI.create("https://example.com")));
+        assertTrue(new ResourceCacheTmp().resourceExists(URI.create("https://example.com")));
     }
 
 

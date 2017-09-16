@@ -19,8 +19,8 @@ import java.io.InputStream;
 import java.net.URI;
 import java.util.zip.GZIPInputStream;
 
-public class BlobStoreTmpCache implements BlobStore {
-    private final static Log LOG = LogFactory.getLog(BlobStoreTmpCache.class);
+public class ResourceCacheTmp implements ResourceCache {
+    private final static Log LOG = LogFactory.getLog(ResourceCacheTmp.class);
 
     @Override
     public InputStream asInputStream(String resource) throws IOException {
