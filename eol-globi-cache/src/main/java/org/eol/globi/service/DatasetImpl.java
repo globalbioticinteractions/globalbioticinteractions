@@ -1,9 +1,9 @@
 package org.eol.globi.service;
 
 import org.codehaus.jackson.JsonNode;
-import org.eol.globi.data.ReferenceUtil;
 import org.eol.globi.util.ResourceCache;
 import org.eol.globi.util.ResourceCacheTmp;
+import org.globalbioticinteractions.dataset.CitationUtil;
 
 import java.net.URI;
 
@@ -52,7 +52,7 @@ public class DatasetImpl extends DatasetStored {
 
     @Override
     public String getCitation() {
-        return ReferenceUtil.citationFor(this);
+        return CitationUtil.citationFor(this);
     }
 
     @Override

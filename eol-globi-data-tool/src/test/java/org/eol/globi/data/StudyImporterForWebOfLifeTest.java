@@ -4,6 +4,7 @@ import org.eol.globi.domain.Study;
 import org.eol.globi.service.DatasetLocal;
 import org.eol.globi.util.NodeUtil;
 import org.eol.globi.util.ResourceUtil;
+import org.globalbioticinteractions.dataset.CitationUtil;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -23,7 +24,7 @@ public class StudyImporterForWebOfLifeTest extends GraphDBTestCase {
     public void importSome() throws StudyImporterException, IOException {
         StudyImporterForWebOfLife importer = new StudyImporterForWebOfLife(null, nodeFactory);
         importer.setDataset(new DatasetLocal());
-        importer.importNetworks("weboflife/web-of-life_2016-01-15_192434.zip", "Web of Life. " + ReferenceUtil.createLastAccessedString("http://www.web-of-life.es/"));
+        importer.importNetworks("weboflife/web-of-life_2016-01-15_192434.zip", "Web of Life. " + CitationUtil.createLastAccessedString("http://www.web-of-life.es/"));
         resolveNames();
 
         List<Study> allStudies = NodeUtil.findAllStudies(getGraphDb());

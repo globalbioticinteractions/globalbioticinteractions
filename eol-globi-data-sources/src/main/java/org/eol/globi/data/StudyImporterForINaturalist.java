@@ -4,8 +4,6 @@ import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpGet;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.domain.InteractType;
@@ -18,7 +16,7 @@ import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TaxonomyProvider;
 import org.eol.globi.util.ExternalIdUtil;
-import org.eol.globi.util.HttpUtil;
+import org.globalbioticinteractions.dataset.CitationUtil;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.format.ISODateTimeFormat;
@@ -126,7 +124,7 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
 
     protected String getSourceString() {
         String description = "http://iNaturalist.org is a place where you can record what you see in nature, meet other nature lovers, and learn about the natural world. ";
-        return description + ReferenceUtil.createLastAccessedString(INATURALIST_URL);
+        return description + CitationUtil.createLastAccessedString(INATURALIST_URL);
     }
 
     private int retrieveDataParseResults() throws StudyImporterException {
@@ -238,7 +236,7 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
 
         StringBuilder citation = buildCitation(observation, interactionTypeName, targetTaxon.getName(), sourceTaxon.getName(), observationDate);
         String url = ExternalIdUtil.urlForExternalId(TaxonomyProvider.ID_PREFIX_INATURALIST + observationId);
-        citation.append(ReferenceUtil.createLastAccessedString(url));
+        citation.append(CitationUtil.createLastAccessedString(url));
 
         StudyImpl study1 = new StudyImpl(TaxonomyProvider.ID_PREFIX_INATURALIST + observationId, getSourceString(), null, citation.toString());
         study1.setExternalId(url);

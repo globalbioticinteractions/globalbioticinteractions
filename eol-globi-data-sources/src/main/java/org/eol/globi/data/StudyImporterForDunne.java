@@ -10,6 +10,7 @@ import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TaxonomyProvider;
+import org.globalbioticinteractions.dataset.CitationUtil;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -26,7 +27,7 @@ public class StudyImporterForDunne extends StudyImporterNodesAndLinks {
 
     @Override
     Study createStudy() throws NodeFactoryException {
-        return nodeFactory.getOrCreateStudy(new StudyImpl(getNamespace(), ReferenceUtil.sourceCitationLastAccessed(getDataset()), getSourceDOI(), null));
+        return nodeFactory.getOrCreateStudy(new StudyImpl(getNamespace(), CitationUtil.sourceCitationLastAccessed(getDataset()), getSourceDOI(), null));
     }
 
     @Override

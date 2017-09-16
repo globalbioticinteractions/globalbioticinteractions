@@ -8,6 +8,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.TaxonomyProvider;
+import org.globalbioticinteractions.dataset.CitationUtil;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -44,7 +45,7 @@ public class StudyImporterForFishbase3 extends BaseStudyImporter {
                 @Override
                 public void newLink(Map<String, String> properties) throws StudyImporterException {
                     listener.newLink(new HashMap<String, String>(properties) {{
-                        put(StudyImporterForTSV.STUDY_SOURCE_CITATION, ReferenceUtil.sourceCitationLastAccessed(getDataset()));
+                        put(StudyImporterForTSV.STUDY_SOURCE_CITATION, CitationUtil.sourceCitationLastAccessed(getDataset()));
                     }});
                 }
             };

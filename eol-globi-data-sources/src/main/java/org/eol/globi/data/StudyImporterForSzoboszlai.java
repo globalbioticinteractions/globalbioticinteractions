@@ -13,6 +13,7 @@ import org.eol.globi.geo.LatLng;
 import org.geotools.data.FeatureReader;
 import org.geotools.data.FileDataStore;
 import org.geotools.data.FileDataStoreFinder;
+import org.globalbioticinteractions.dataset.CitationUtil;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 
@@ -62,7 +63,7 @@ public class StudyImporterForSzoboszlai extends BaseStudyImporter {
     protected Map<String, String> importLink(LabeledCSVParser parser, Map<Integer, LatLng> localeMap) throws IOException, StudyImporterException {
         TreeMap<String, String> link = new TreeMap<String, String>();
 
-        link.put(STUDY_SOURCE_CITATION, ReferenceUtil.sourceCitationLastAccessed(getDataset()));
+        link.put(STUDY_SOURCE_CITATION, CitationUtil.sourceCitationLastAccessed(getDataset()));
 
         String predNum = StringUtils.trim(parser.getValueByLabel("PredatorSciNameTSN"));
         if (StringUtils.isNotBlank(predNum)) {

@@ -3,6 +3,7 @@ package org.eol.globi.data;
 import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.service.Dataset;
+import org.globalbioticinteractions.dataset.CitationUtil;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -18,7 +19,7 @@ public class TableInteractionListenerProxy implements InteractionListener {
 
     @Override
     public void newLink(final Map<String, String> properties) throws StudyImporterException {
-        final String dataSourceCitation = ReferenceUtil.sourceCitationLastAccessed(dataset);
+        final String dataSourceCitation = CitationUtil.sourceCitationLastAccessed(dataset);
 
         final HashMap<String, String> enrichedProperties = new HashMap<String, String>() {
             {

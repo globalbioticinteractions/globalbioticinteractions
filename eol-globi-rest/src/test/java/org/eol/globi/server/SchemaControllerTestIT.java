@@ -1,9 +1,5 @@
 package org.eol.globi.server;
 
-import org.apache.commons.lang3.ArrayUtils;
-import org.eol.globi.server.util.ResultField;
-import org.eol.globi.util.CypherQuery;
-import org.eol.globi.util.CypherUtil;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -12,10 +8,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.HashMap;
 
-import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.junit.matchers.JUnitMatchers.containsString;
 import static org.mockito.Mockito.when;

@@ -19,7 +19,7 @@ import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TaxonomyProvider;
 import org.eol.globi.service.DatasetLocal;
-import org.eol.globi.util.ResourceUtil;
+import org.globalbioticinteractions.dataset.CitationUtil;
 import org.joda.time.DateTime;
 
 import java.io.IOException;
@@ -68,7 +68,7 @@ public class StudyImporterForJSONLD extends BaseStudyImporter {
                 } catch (IOException e) {
                     throw new StudyImporterException("failed to resolve author URI [" + authorURI + "]");
                 }
-                final String source1 = author + ". " + new DateTime(parseDate(creationDate)).getYear() + ". " + ReferenceUtil.createLastAccessedString(getResourceURI().toString());
+                final String source1 = author + ". " + new DateTime(parseDate(creationDate)).getYear() + ". " + CitationUtil.createLastAccessedString(getResourceURI().toString());
                 Study study = nodeFactory.getOrCreateStudy(new StudyImpl(getResourceURI() + subj, source1, null, subj));
                 study.setExternalId(subj);
                 Specimen source = createSpecimen(solution, study, "subjTaxon");

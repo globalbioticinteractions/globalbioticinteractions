@@ -18,7 +18,7 @@ public class DatasetFinderCachingIT {
     public void zenodoTest() throws DatasetFinderException {
         DatasetFinder finder = new DatasetFinderCaching(new DatasetFinderZenodo());
 
-        Dataset dataset = DatasetFactory.datasetFor("globalbioticinteractions/template-dataset", finder);
+        Dataset dataset = DatasetFactory.datasetFor("org/globalbioticinteractions/template-dataset", finder);
 
         assertThat(dataset.getArchiveURI().toString(), containsString("zenodo.org"));
         assertThat(dataset.getResourceURI("globi.json").toString(), startsWith("jar:file:/"));
@@ -29,7 +29,7 @@ public class DatasetFinderCachingIT {
     @Test
     public void cacheDatasetGitHub() throws DatasetFinderException, IOException {
         Dataset dataset = new DatasetFinderGitHubArchive()
-                .datasetFor("globalbioticinteractions/template-dataset");
+                .datasetFor("org/globalbioticinteractions/template-dataset");
         File archiveCache = DatasetFinderCaching.cache(dataset, "target/cache/dataset", new ResourceCacheTmp());
         assertThat(archiveCache.exists(), CoreMatchers.is(true));
         assertThat(archiveCache.toURI().toString(), startsWith("file:/"));
@@ -39,7 +39,7 @@ public class DatasetFinderCachingIT {
     public void gitHubTest() throws DatasetFinderException {
         DatasetFinder finder = new DatasetFinderCaching(new DatasetFinderGitHubArchive());
 
-        Dataset dataset = DatasetFactory.datasetFor("globalbioticinteractions/Catalogue-of-Afrotropical-Bees", finder);
+        Dataset dataset = DatasetFactory.datasetFor("org/globalbioticinteractions/Catalogue-of-Afrotropical-Bees", finder);
 
         assertThat(dataset.getArchiveURI().toString(), containsString("github.com"));
         assertThat(dataset.getResourceURI("globi.json").toString(), startsWith("jar:file:/"));

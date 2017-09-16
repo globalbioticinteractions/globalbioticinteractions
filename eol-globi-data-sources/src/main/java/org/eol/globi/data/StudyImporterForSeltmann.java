@@ -15,6 +15,7 @@ import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.service.DatasetUtil;
 import org.eol.globi.util.CSVTSVUtil;
+import org.globalbioticinteractions.dataset.CitationUtil;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.mapdb.DB;
@@ -116,7 +117,7 @@ public class StudyImporterForSeltmann extends BaseStudyImporter {
             occurrence.changeDelimiter('\t');
             while (occurrence.getLine() != null) {
                 String references = occurrence.getValueByLabel("dcterms:references");
-                Study study = nodeFactory.getOrCreateStudy(new StudyImpl("seltmann" + references, ReferenceUtil.sourceCitationLastAccessed(this.getDataset(), references), null, references));
+                Study study = nodeFactory.getOrCreateStudy(new StudyImpl("seltmann" + references, CitationUtil.sourceCitationLastAccessed(this.getDataset(), references), null, references));
                 String recordId = occurrence.getValueByLabel(FIELD_IDIGBIO_RECORD_ID);
                 Map<String, String> assoc = assocMap.get(recordId);
                 if (assoc != null) {

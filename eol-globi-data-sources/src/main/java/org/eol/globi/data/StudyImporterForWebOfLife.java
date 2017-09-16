@@ -16,6 +16,7 @@ import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.util.CSVTSVUtil;
+import org.globalbioticinteractions.dataset.CitationUtil;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -43,7 +44,7 @@ public class StudyImporterForWebOfLife extends BaseStudyImporter {
     public void importStudy() throws StudyImporterException {
         try {
             List<StudyImporterException> errors = new ArrayList<StudyImporterException>();
-            final String sourceCitation = "Web of Life. " + ReferenceUtil.createLastAccessedString("http://www.web-of-life.es/");
+            final String sourceCitation = "Web of Life. " + CitationUtil.createLastAccessedString("http://www.web-of-life.es/");
             final List<String> networkNames = getNetworkNames(getDataset().getResource(WEB_OF_LIFE_BASE_URL + "/networkslist.php?type=All&data=All"));
             LOG.info("found [" + networkNames.size() + "] networks.");
             for (String networkName : networkNames) {

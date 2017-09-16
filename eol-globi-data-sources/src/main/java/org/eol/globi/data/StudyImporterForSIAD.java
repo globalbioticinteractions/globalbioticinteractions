@@ -6,6 +6,7 @@ import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.TaxonImpl;
+import org.globalbioticinteractions.dataset.CitationUtil;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -71,7 +72,7 @@ public class StudyImporterForSIAD extends BaseStudyImporter {
     @Override
     public void importStudy() throws StudyImporterException {
         String source = "Species Interactions of Australia Database (SIAD): Helping us to understand species interactions in Australia and beyond. "
-                + ReferenceUtil.createLastAccessedString("http://www.discoverlife.org/siad/");
+                + CitationUtil.createLastAccessedString("http://www.discoverlife.org/siad/");
         for (String resource : RESOURCES) {
             downloadAndImportResource(resource, source);
         }
@@ -88,7 +89,7 @@ public class StudyImporterForSIAD extends BaseStudyImporter {
                 String title = "SIAD-" + ref;
                 Study study = nodeFactory.findStudy(title);
                 if (study == null) {
-                    String citation = "ABRS 2009. Australian Faunal Directory. " + name + ". Australian Biological Resources StudyNode, Canberra. " + ReferenceUtil.createLastAccessedString(ref);
+                    String citation = "ABRS 2009. Australian Faunal Directory. " + name + ". Australian Biological Resources StudyNode, Canberra. " + CitationUtil.createLastAccessedString(ref);
                     StudyImpl study1 = new StudyImpl(title, source, null, citation);
                     study1.setExternalId(ref);
                     study = nodeFactory.getOrCreateStudy(study1);

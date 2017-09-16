@@ -3,7 +3,7 @@ package org.eol.globi.data;
 import com.Ostermiller.util.CSVParser;
 import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.lang3.StringUtils;
-import org.eol.globi.util.ResourceUtil;
+import org.globalbioticinteractions.dataset.CitationUtil;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -43,7 +43,7 @@ public class StudyImporterForWood extends StudyImporterNodesAndLinks {
         link.put(StudyImporterForTSV.SOURCE_TAXON_NAME, parser.getValueByLabel("PredName"));
         addTSN(parser, link, "PreyTSN", StudyImporterForTSV.TARGET_TAXON_ID);
         link.put(StudyImporterForTSV.TARGET_TAXON_NAME, parser.getValueByLabel("PreyName"));
-        link.put(StudyImporterForTSV.STUDY_SOURCE_CITATION, ReferenceUtil.sourceCitationLastAccessed(getDataset()));
+        link.put(StudyImporterForTSV.STUDY_SOURCE_CITATION, CitationUtil.sourceCitationLastAccessed(getDataset()));
         link.put(StudyImporterForTSV.REFERENCE_CITATION, getSourceCitation());
         link.put(StudyImporterForTSV.REFERENCE_ID, getSourceDOI());
         link.put(StudyImporterForTSV.REFERENCE_DOI, getSourceDOI());

@@ -11,6 +11,7 @@ import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.service.DatasetUtil;
 import org.eol.globi.util.CSVTSVUtil;
+import org.globalbioticinteractions.dataset.CitationUtil;
 import org.mapdb.DB;
 import org.mapdb.DBMaker;
 import org.mapdb.HTreeMap;
@@ -125,7 +126,7 @@ public class StudyImporterForCoetzer extends BaseStudyImporter {
                         final String reference = refMap.get(taxonId);
                         final String sourceTaxonName = taxonMap.get(taxonId);
                         if (StringUtils.isNotBlank(reference) && StringUtils.isNotBlank(sourceTaxonName)) {
-                            final Study study = nodeFactory.getOrCreateStudy(new StudyImpl(getSourceCitation() + reference, ReferenceUtil.sourceCitationLastAccessed(getDataset()), null, reference));
+                            final Study study = nodeFactory.getOrCreateStudy(new StudyImpl(getSourceCitation() + reference, CitationUtil.sourceCitationLastAccessed(getDataset()), null, reference));
                             final Specimen source = nodeFactory.createSpecimen(study, new TaxonImpl(StringUtils.trim(sourceTaxonName), null));
                             final Specimen target = nodeFactory.createSpecimen(study, new TaxonImpl(StringUtils.trim(targetTaxonName), null));
                             final InteractType relType = interactTypeMap.get(interactionString);

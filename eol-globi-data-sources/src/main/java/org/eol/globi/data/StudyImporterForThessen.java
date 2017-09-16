@@ -7,6 +7,7 @@ import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.service.GitHubUtil;
+import org.globalbioticinteractions.dataset.CitationUtil;
 
 import java.io.IOException;
 
@@ -20,7 +21,7 @@ public class StudyImporterForThessen extends BaseStudyImporter {
 
     @Override
     public void importStudy() throws StudyImporterException {
-        String citation = "A. Thessen. 2014. Species associations extracted from EOL text data objects via text mining. " + ReferenceUtil.createLastAccessedString(RESOURCE);
+        String citation = "A. Thessen. 2014. Species associations extracted from EOL text data objects via text mining. " + CitationUtil.createLastAccessedString(RESOURCE);
         StudyImpl study1 = new StudyImpl("Thessen 2014", citation, null, citation);
         String namespace = "EOL/pseudonitzchia";
         study1.setExternalId("https://github.com/" + namespace);

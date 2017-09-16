@@ -32,7 +32,7 @@ public class DatasetFinderZenodoTest {
         Collection<String> relations = DatasetFinderZenodo.getRelations(resourceAsStream);
         Collection<String> refs = DatasetFinderZenodo.findPublishedGitHubRepos(relations);
         assertThat(refs.size(), is(1));
-        assertThat(refs, hasItem("globalbioticinteractions/template-dataset"));
+        assertThat(refs, hasItem("org/globalbioticinteractions/template-dataset"));
     }
 
     @Test
@@ -41,7 +41,7 @@ public class DatasetFinderZenodoTest {
         Collection<String> relations = DatasetFinderZenodo.getRelations(resourceAsStream);
         Collection<String> refs = DatasetFinderZenodo.findPublishedGitHubRepos(relations);
         assertThat(refs.size(), is(3));
-        assertThat(refs, hasItem("globalbioticinteractions/template-dataset"));
+        assertThat(refs, hasItem("org/globalbioticinteractions/template-dataset"));
     }
 
     @Test
@@ -50,13 +50,13 @@ public class DatasetFinderZenodoTest {
         NodeList records = DatasetFinderZenodo.getRecordNodeList(resourceAsStream);
         URI uri = DatasetFinderZenodo.findZenodoGitHubArchives(records, "jhammock/Layman-and-Allgeier-Lionfish");
         assertThat(uri.toString(), is("https://zenodo.org/record/232498/files/jhammock/Layman-and-Allgeier-Lionfish-1.0.zip"));
-        uri = DatasetFinderZenodo.findZenodoGitHubArchives(records, "globalbioticinteractions/template-dataset");
+        uri = DatasetFinderZenodo.findZenodoGitHubArchives(records, "org/globalbioticinteractions/template-dataset");
         assertThat(uri.toString(), is("https://zenodo.org/record/207958/files/globalbioticinteractions/template-dataset-0.0.2.zip"));
     }
 
     @Test
     public void extractGitHubReposArchives() throws DatasetFinderException {
-        URI uri = new DatasetFinderZenodo().datasetFor("globalbioticinteractions/template-dataset").getArchiveURI();
+        URI uri = new DatasetFinderZenodo().datasetFor("org/globalbioticinteractions/template-dataset").getArchiveURI();
         assertThat(uri, is(notNullValue()));
         assertThat(uri.toString(), is("https://zenodo.org/record/207958/files/globalbioticinteractions/template-dataset-0.0.2.zip"));
     }
