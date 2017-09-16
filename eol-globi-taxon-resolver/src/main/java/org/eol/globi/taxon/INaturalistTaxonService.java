@@ -1,8 +1,6 @@
 package org.eol.globi.taxon;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.data.CharsetConstant;
@@ -16,7 +14,10 @@ import org.eol.globi.service.TaxonUtil;
 import org.eol.globi.util.HttpUtil;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.BinaryOperator;
 
 public class INaturalistTaxonService implements PropertyEnricher {
