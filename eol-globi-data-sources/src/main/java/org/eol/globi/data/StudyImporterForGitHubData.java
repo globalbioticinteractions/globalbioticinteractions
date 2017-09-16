@@ -22,10 +22,20 @@ import java.util.List;
 public class StudyImporterForGitHubData extends BaseStudyImporter {
     private static final Log LOG = LogFactory.getLog(StudyImporterForGitHubData.class);
 
-    private DatasetFinder finder = null;
+    private final DatasetFinder finder;
+
+    static DatasetFinder defaultFinder() {
+        List<DatasetFinder> finders = Arrays.asList(new DatasetFinderZenodo(), new DatasetFinderGitHubArchive());
+        return new DatasetFinderCaching(new DatasetFinderProxy(finders), new ResourceCacheTmp());
+    }
 
     public StudyImporterForGitHubData(ParserFactory parserFactory, NodeFactory nodeFactory) {
+        this(parserFactory, nodeFactory, defaultFinder());
+    }
+
+    public StudyImporterForGitHubData(ParserFactory parserFactory, NodeFactory nodeFactory, DatasetFinder finder) {
         super(parserFactory, nodeFactory);
+        this.finder = finder;
     }
 
     @Override
@@ -67,15 +77,7 @@ public class StudyImporterForGitHubData extends BaseStudyImporter {
     }
 
     private DatasetFinder getDatasetFinder() {
-        if (finder == null) {
-            List<DatasetFinder> finders = Arrays.asList(new DatasetFinderZenodo(), new DatasetFinderGitHubArchive());
-            finder = new DatasetFinderCaching(new DatasetFinderProxy(finders), new ResourceCacheTmp());
-        }
         return finder;
-    }
-
-    public void setFinder(DatasetFinder finder) {
-        this.finder = finder;
     }
 
     public void importData(Dataset dataset) throws StudyImporterException {
