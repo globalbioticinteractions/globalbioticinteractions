@@ -15,6 +15,7 @@ import java.io.IOException;
 
 import static org.hamcrest.core.StringContains.containsString;
 import static org.hamcrest.core.StringStartsWith.startsWith;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
 public class DatasetFinderCachingIT {
@@ -40,7 +41,7 @@ public class DatasetFinderCachingIT {
                 "Jorrit H. Poelen. 2014. Species associations manually extracted from literature. Accessed on");
     }
 
-    private void assertTemplateDataset(String expectedURIFragment, DatasetFinder datasetFinder, String expectedCitation) throws DatasetFinderException {
+    private void assertTemplateDataset(String expectedURIFragment, DatasetFinder datasetFinder, String expectedCitation) throws DatasetFinderException, IOException {
         DatasetFinder finder = new DatasetFinderCaching(datasetFinder, cachePath);
 
         Dataset dataset = DatasetFactory.datasetFor("globalbioticinteractions/template-dataset", finder);
@@ -59,7 +60,18 @@ public class DatasetFinderCachingIT {
 
         assertThat(dataset.getArchiveURI().toString(), containsString("github.com"));
         assertThat(dataset.getResourceURI("globi.json").toString(), startsWith("jar:file:/"));
-        assertThat(dataset.getCitation(), startsWith("Eardley C, Coetzer W. 2011. Catalogue of Afrotropical Bees. <http://doi.org/10.15468/u9ezbh>. Accessed on"));
+        assertThat(dataset.getCitation(), startsWith("Shan Kothari, Pers. Comm. 2014."));
+
+    }
+
+    @Test
+    public void hafnerTest() throws DatasetFinderException, IOException {
+        DatasetFinder finder = new DatasetFinderCaching(new DatasetFinderGitHubArchive(), cachePath);
+
+        Dataset dataset = DatasetFactory.datasetFor("globalbioticinteractions/hafner", finder);
+
+        assertNotNull(dataset.getResource("hafner/gopher_lice_int.csv"));
+
 
     }
 }
