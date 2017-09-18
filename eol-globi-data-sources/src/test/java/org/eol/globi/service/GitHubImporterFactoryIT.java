@@ -9,6 +9,7 @@ import org.eol.globi.data.StudyImporterForCoetzer;
 import org.eol.globi.data.StudyImporterForGoMexSI2;
 import org.eol.globi.data.StudyImporterForHafner;
 import org.eol.globi.data.StudyImporterForHurlbert;
+import org.eol.globi.data.StudyImporterForJSONLD;
 import org.eol.globi.data.StudyImporterForMetaTable;
 import org.eol.globi.data.StudyImporterForPlanque;
 import org.eol.globi.data.StudyImporterForSzoboszlai;
@@ -24,6 +25,7 @@ import static org.hamcrest.core.IsInstanceOf.instanceOf;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.hamcrest.core.StringEndsWith.endsWith;
 import static org.hamcrest.core.StringStartsWith.startsWith;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.internal.matchers.StringContains.containsString;
 
@@ -121,7 +123,7 @@ public class GitHubImporterFactoryIT {
     @Test
     public void defaultTSVImporterCached() throws StudyImporterException, DatasetFinderException  {
         final DatasetFinder datasetFinder = new DatasetFinderCaching(new DatasetFinderGitHubArchive());
-        StudyImporter importer = getTemplateImporter(datasetFinder);
+        StudyImporter importer = getTemplateImporter(datasetFinder, "globalbioticinteractions/template-dataset");
         StudyImporterForTSV importerTSV = (StudyImporterForTSV) importer;
         assertThat(importerTSV.getBaseUrl(), startsWith("https://github.com/globalbioticinteractions/template-dataset/"));
         String actual = importerTSV.getDataset().getResourceURI("this/is/relative").toString();
@@ -130,9 +132,18 @@ public class GitHubImporterFactoryIT {
     }
 
     @Test
+    public void jsonldImporterCached() throws StudyImporterException, DatasetFinderException  {
+        final DatasetFinder datasetFinder = new DatasetFinderCaching(new DatasetFinderGitHubArchive());
+        Dataset dataset = DatasetFactory.datasetFor("globalbioticinteractions/jsonld-template-dataset", datasetFinder);
+        StudyImporter importer = new GitHubImporterFactory().createImporter(dataset, null);
+        assertThat(importer, is(notNullValue()));
+        assertThat(importer, is(instanceOf(StudyImporterForJSONLD.class)));
+    }
+
+    @Test
     public void defaultTSVImporterCachedZenodo() throws StudyImporterException, DatasetFinderException  {
         final DatasetFinder datasetFinder = new DatasetFinderCaching(new DatasetFinderZenodo());
-        StudyImporter importer = getTemplateImporter(datasetFinder);
+        StudyImporter importer = getTemplateImporter(datasetFinder, "globalbioticinteractions/template-dataset");
         StudyImporterForTSV importerTSV = (StudyImporterForTSV) importer;
         assertThat(importerTSV.getSourceCitation(), containsString("doi.org"));
     }
@@ -140,15 +151,15 @@ public class GitHubImporterFactoryIT {
     @Test
     public void defaultTSVImporterNotCached() throws StudyImporterException, DatasetFinderException  {
         final DatasetFinder datasetFinder = new DatasetFinderGitHubRemote();
-        StudyImporter importer = getTemplateImporter(datasetFinder);
+        StudyImporter importer = getTemplateImporter(datasetFinder, "globalbioticinteractions/template-dataset");
         assertThat(((StudyImporterForTSV)importer).getBaseUrl(), startsWith("https://raw.githubusercontent.com/globalbioticinteractions/template-dataset/"));
         String actual = ((StudyImporterForTSV) importer).getDataset().getResourceURI("this/is/relative").toString();
         assertThat(actual, startsWith("https:/"));
         assertThat(actual, endsWith("this/is/relative"));
     }
 
-    StudyImporter getTemplateImporter(DatasetFinder datasetFinder) throws DatasetFinderException, StudyImporterException {
-        Dataset dataset = DatasetFactory.datasetFor("globalbioticinteractions/template-dataset", datasetFinder);
+    StudyImporter getTemplateImporter(DatasetFinder datasetFinder, String repo) throws DatasetFinderException, StudyImporterException {
+        Dataset dataset = DatasetFactory.datasetFor(repo, datasetFinder);
         StudyImporter importer = new GitHubImporterFactory().createImporter(dataset, null);
         assertThat(importer, is(notNullValue()));
         assertThat(importer, is(instanceOf(StudyImporterForTSV.class)));

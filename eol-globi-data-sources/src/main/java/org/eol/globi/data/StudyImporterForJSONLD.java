@@ -34,7 +34,7 @@ public class StudyImporterForJSONLD extends BaseStudyImporter {
         return getDataset().getConfigURI();
     }
 
-    StudyImporterForJSONLD(ParserFactory parserFactory, NodeFactory nodeFactory) {
+    public StudyImporterForJSONLD(ParserFactory parserFactory, NodeFactory nodeFactory) {
         super(parserFactory, nodeFactory);
     }
 
