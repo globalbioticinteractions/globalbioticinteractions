@@ -170,7 +170,7 @@ public class LinkerGlobalNamesTest extends GraphDBTestCase {
         Taxon lestes = taxonIndex.getOrCreateTaxon(new TaxonImpl("Lestes", null));
         assertThat(lestes.getPath(), is("Animalia | Insecta | Lestes"));
         new LinkerGlobalNames(getGraphDb()).link();
-        Collection<String> ids = LinkerTestUtil.assertHasOther("Lestes", 6, taxonIndex, RelTypes.SAME_AS);
+        Collection<String> ids = LinkerTestUtil.assertHasOther("Lestes", 7, taxonIndex, RelTypes.SAME_AS);
         assertThat(ids, hasItems("NCBI:181491", "ITIS:102061", "IRMNG:1320006", "GBIF:1423980", "OTT:1090993"));
         assertThat(ids, hasItems("INAT_TAXON:89475"));
     }
