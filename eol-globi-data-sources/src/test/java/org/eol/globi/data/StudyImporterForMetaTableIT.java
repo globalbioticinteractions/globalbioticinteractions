@@ -124,7 +124,7 @@ public class StudyImporterForMetaTableIT {
         final String resource = baseUrl + "/globi.json";
         importAll(interactionListener, new StudyImporterForMetaTable.TableParserFactoryImpl(), baseUrl, resource);
 
-        assertThat(links.size(), is(11751));
+        assertThat(links.size()> 10000, is(true));
 
         final Map<String, String> firstLine = links.get(0);
         assertThat(firstLine.get(StudyImporterForTSV.INTERACTION_TYPE_ID), startsWith("http://purl.obolibrary.org/obo/RO_"));
@@ -172,7 +172,7 @@ public class StudyImporterForMetaTableIT {
         final Dataset dataset = new DatasetImpl("some/namespace", URI.create("http://example.com"));
         dataset.setConfig(config);
         for (JsonNode table : StudyImporterForMetaTable.collectTables(dataset)) {
-            StudyImporterForMetaTable.importTable(interactionListener, tableFactory, table, new DatasetImpl(null, URI.create(baseUrl)));
+            StudyImporterForMetaTable.importTable(interactionListener, tableFactory, table, new DatasetImpl(null, URI.create(baseUrl)), null);
         }
 
     }

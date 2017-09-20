@@ -64,7 +64,7 @@ public class StudyImporterForMetaTable extends BaseStudyImporter {
 
                 InteractionListenerImpl interactionListener = new InteractionListenerImpl(nodeFactory, getGeoNamesService(), getLogger());
                 final InteractionListener listener = new TableInteractionListenerProxy(datasetProxy, interactionListener);
-                importTable(listener, new TableParserFactoryImpl(), tableConfig, datasetProxy);
+                importTable(listener, new TableParserFactoryImpl(), tableConfig, datasetProxy, getLogger());
             }
         } catch (IOException | NodeFactoryException e) {
             throw new StudyImporterException("problem importing from [" + getBaseUrl() + "]", e);
@@ -120,11 +120,11 @@ public class StudyImporterForMetaTable extends BaseStudyImporter {
         return config.has("url") && StringUtils.startsWith(config.get("url").asText(), "http://data.nhm.ac.uk/api");
     }
 
-    static public void importTable(InteractionListener interactionListener, TableParserFactory tableFactory, JsonNode tableConfig, Dataset dataset) throws IOException, StudyImporterException {
+    static public void importTable(InteractionListener interactionListener, TableParserFactory tableFactory, JsonNode tableConfig, Dataset dataset, ImportLogger importLogger) throws IOException, StudyImporterException {
         if (tableConfig.has("tableSchema")) {
             List<Column> columns = columnsForSchema(tableConfig, tableConfig.get("tableSchema"), dataset);
             final CSVParse csvParse = tableFactory.createParser(tableConfig, dataset);
-            importAll(interactionListener, columns, csvParse, tableConfig);
+            importAll(interactionListener, columns, csvParse, tableConfig, importLogger);
         }
     }
 
@@ -259,17 +259,22 @@ public class StudyImporterForMetaTable extends BaseStudyImporter {
 
     public static void importAll(InteractionListener interactionListener,
                                  List<Column> columnNames,
-                                 CSVParse csvParse, JsonNode config) throws IOException, StudyImporterException {
+                                 CSVParse csvParse, JsonNode config, ImportLogger importLogger) throws IOException, StudyImporterException {
         String[] line;
         while ((line = csvParse.getLine()) != null) {
             Map<String, String> mappedLine = new HashMap<String, String>();
-            if (line.length != columnNames.size()) {
+            if (line.length < columnNames.size()) {
                 throw new StudyImporterException("read [" + line.length + "] columns, but found [" + columnNames.size() + "] column definitions.");
+            } else if (line.length > columnNames.size()){
+                if (importLogger != null) {
+                    importLogger.warn(null, "found [" + line.length + "] columns, but only [" + columnNames.size() + "] columns are defined: ignoring remaining undefined columns.");
+                }
             }
+
             final JsonNode nullValues = config.get("null");
             final List<String> nullValueArray = parseNullValues(nullValues);
 
-            for (int i = 0; i < line.length; i++) {
+            for (int i = 0; i < columnNames.size(); i++) {
                 final String value = nullValueArray.contains(line[i]) ? null : line[i];
                 final Column column = columnNames.get(i);
                 mappedLine.put(column.getName(), parseValue(valueOrDefault(value, column), column));
