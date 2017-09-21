@@ -59,7 +59,7 @@ public class ExporterSiteMapForNamesTest extends GraphDBTestCase {
 
         final GraphExporter siteMapForNames = new ExporterSiteMapForNames();
         siteMapForNames.export(getGraphDb(), baseDirNames.getAbsolutePath());
-        assertSiteMap(baseDirNames, "http://www.globalbioticinteractions.org/?interactionType=interactsWith&sourceTaxon=Homo%20sapiens", "https://globi.s3.amazonaws.com/snapshot/target/data/sitemap/names/sitemap.xml.gz");
+        assertSiteMap(baseDirNames, "http://www.globalbioticinteractions.org/?interactionType=interactsWith&sourceTaxon=Homo%20sapiens", "https://depot.globalbioticinteractions.org/snapshot/target/data/sitemap/names/sitemap.xml.gz");
     }
 
     public void assertSiteMap(File baseDirCitations, String substring, String siteMapLocation) throws IOException {

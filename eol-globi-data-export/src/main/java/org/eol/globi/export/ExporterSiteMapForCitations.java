@@ -26,7 +26,7 @@ class ExporterSiteMapForCitations implements GraphExporter {
                 accordingToHits.add(doi);
             }
         }
-        final String siteMapLocation = "https://globi.s3.amazonaws.com/snapshot/target/data/sitemap/citations/";
+        final String siteMapLocation = "https://depot.globalbioticinteractions.org/snapshot/target/data/sitemap/citations/";
         SiteMapUtils.generateSiteMap(accordingToHits, baseDirName, "accordingTo=", siteMapLocation);
     }
 

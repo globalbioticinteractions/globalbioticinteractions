@@ -75,7 +75,7 @@
         <repository>
             <id>globi-datasets</id>
             <name>GloBI Thirdparty Datasets</name>
-            <url>https://s3.amazonaws.com/globi/datasets</url>
+            <url>https://depot.globalbioticinteractions.org/datasets</url>
             <snapshots>
                 <enabled>false</enabled>
             </snapshots>

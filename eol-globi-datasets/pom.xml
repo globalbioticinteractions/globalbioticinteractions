@@ -487,7 +487,7 @@
         <repository>
             <id>public-globi-snapshot</id>
             <name>GloBI snaphots</name>
-            <url>https://s3.amazonaws.com/globi/snapshot</url>
+            <url>https://depot.globalbioticinteractions.org/snapshot</url>
             <snapshots>
                 <enabled>true</enabled>
             </snapshots>
@@ -498,7 +498,7 @@
         <repository>
             <id>globi-datasets</id>
             <name>GloBI Thirdparty Datasets</name>
-            <url>https://s3.amazonaws.com/globi/datasets</url>
+            <url>https://depot.globalbioticinteractions.org/datasets</url>
             <snapshots>
                 <enabled>false</enabled>
             </snapshots>
@@ -509,7 +509,7 @@
         <repository>
             <id>public-globi-release</id>
             <name>GloBI Releases</name>
-            <url>https://s3.amazonaws.com/globi/release</url>
+            <url>https://depot.globalbioticinteractions.org/release</url>
             <snapshots>
                 <enabled>false</enabled>
             </snapshots>

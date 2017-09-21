@@ -99,7 +99,7 @@
         <repository>
             <id>globi</id>
             <name>GloBI Release</name>
-            <url>https://s3.amazonaws.com/globi/release/</url>
+            <url>https://depot.globalbioticinteractions.org/release/</url>
             <snapshots>
                 <enabled>false</enabled>
             </snapshots>

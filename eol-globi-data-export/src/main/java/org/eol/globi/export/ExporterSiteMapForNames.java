@@ -35,7 +35,7 @@ class ExporterSiteMapForNames implements GraphExporter {
             }
         }
         final String queryParamName = "interactionType=interactsWith&sourceTaxon=";
-        final String siteMapLocation = "https://globi.s3.amazonaws.com/snapshot/target/data/sitemap/names/";
+        final String siteMapLocation = "https://depot.globalbioticinteractions.org/snapshot/target/data/sitemap/names/";
         SiteMapUtils.generateSiteMap(names, baseDir, queryParamName, siteMapLocation);
     }
 

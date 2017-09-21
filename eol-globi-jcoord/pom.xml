@@ -28,7 +28,7 @@
         <repository>
             <id>globi-thirdparty-libs</id>
             <name>GloBI Thirdparty Libraries</name>
-            <url>https://s3.amazonaws.com/globi/release</url>
+            <url>https://depot.globalbioticinteractions.org/release</url>
             <snapshots>
                 <enabled>false</enabled>
             </snapshots>
