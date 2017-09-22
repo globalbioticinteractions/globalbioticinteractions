@@ -1,5 +1,6 @@
 package org.eol.globi.data;
 
+import org.eol.globi.service.DatasetLocal;
 import org.eol.globi.service.GeoNamesService;
 import org.eol.globi.service.GeoNamesServiceImpl;
 import org.junit.Test;
@@ -29,6 +30,7 @@ public class StudyImporterForRaymondIT extends GraphDBTestCase {
             }
 
         });
+        importer.setDataset(new DatasetLocal());
         importStudy(importer);
 
         importer.setGeoNamesService(new GeoNamesServiceImpl());

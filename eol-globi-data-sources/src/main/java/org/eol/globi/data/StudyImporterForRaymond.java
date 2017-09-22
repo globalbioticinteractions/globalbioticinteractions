@@ -6,7 +6,7 @@ import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
-import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.*;
 import org.apache.commons.io.output.NullOutputStream;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
@@ -32,6 +32,7 @@ import org.joda.time.format.DateTimeFormatter;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
@@ -70,27 +71,14 @@ public class StudyImporterForRaymond extends BaseStudyImporter {
         }
     }
 
-    protected boolean retrieveAndImport(String resourceUrl) throws StudyImporterException {
+    private boolean retrieveAndImport(String resourceUrl) throws StudyImporterException {
         boolean isDone = false;
         for (int attemptCount = 1; !isDone && attemptCount <= MAX_ATTEMPT; attemptCount++) {
             try {
                 LOG.info("[" + resourceUrl + "] downloading (attempt " + attemptCount + ")...");
-                CloseableHttpClient httpClientNoSSLCheck = HttpUtil.getHttpClientNoSSLCheck();
-                HttpGet request = new HttpGet(resourceUrl);
-                try {
-                    HttpResponse response = httpClientNoSSLCheck.execute(request);
-                    if (response.getStatusLine().getStatusCode() == 200) {
-                        importData(response);
-                        isDone = true;
-                    }
-                } finally {
-                    request.releaseConnection();
-                    try {
-                        httpClientNoSSLCheck.close();
-                    } catch (IOException ex) {
-                        //
-                    }
-                }
+                InputStream inputStream = getDataset().getResource(resourceUrl);
+                importData(inputStream);
+                isDone = true;
                 LOG.info("[" + resourceUrl + "] downloaded and imported.");
             } catch (IOException e) {
                 String msg = "failed to download [" + resourceUrl + "]";
@@ -103,13 +91,13 @@ public class StudyImporterForRaymond extends BaseStudyImporter {
         return isDone;
     }
 
-    private void importData(HttpResponse response) throws StudyImporterException {
+    private void importData(InputStream inputStream) throws IOException, StudyImporterException {
         File dietFile = null;
         File sourcesFile = null;
+        LabeledCSVParser sourcesParser = null;
+        LabeledCSVParser dietParser = null;
         try {
-            LabeledCSVParser sourcesParser = null;
-            LabeledCSVParser dietParser = null;
-            ZipInputStream zis = new ZipInputStream(response.getEntity().getContent());
+            ZipInputStream zis = new ZipInputStream(inputStream);
             ZipEntry entry;
             while ((entry = zis.getNextEntry()) != null) {
                 if (DIET_CSV.equals(entry.getName())) {
@@ -129,15 +117,9 @@ public class StudyImporterForRaymond extends BaseStudyImporter {
                 throw new StudyImporterException("failed to find [" + DIET_CSV + "] in [" + RESOURCE_URL + "]");
             }
             importData(sourcesParser, dietParser);
-        } catch (IOException e) {
-            throw new StudyImporterException("failed to import [" + getClass().getSimpleName() + "]", e);
         } finally {
-            if (dietFile != null) {
-                dietFile.delete();
-            }
-            if (sourcesFile != null) {
-                sourcesFile.delete();
-            }
+            org.apache.commons.io.FileUtils.deleteQuietly(dietFile);
+            org.apache.commons.io.FileUtils.deleteQuietly(sourcesFile);
         }
     }
 
