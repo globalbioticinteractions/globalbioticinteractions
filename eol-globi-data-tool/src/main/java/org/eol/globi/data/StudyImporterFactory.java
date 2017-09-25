@@ -3,15 +3,10 @@ package org.eol.globi.data;
 import org.eol.globi.service.DatasetLocal;
 
 import java.lang.reflect.Constructor;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 
 public class StudyImporterFactory {
-
-    private static final Collection<Class<? extends StudyImporter>> IMPORTERS = Collections.unmodifiableCollection(new ArrayList<Class<? extends StudyImporter>>() {{
-        add(StudyImporterForGitHubData.class);
-    }});
 
     private NodeFactory nodeFactory;
     private ParserFactory parserFactory;
@@ -36,9 +31,8 @@ public class StudyImporterFactory {
         }
     }
 
-
     public static Collection<Class<? extends StudyImporter>> getImporters() {
-        return IMPORTERS;
+        return Collections.singletonList(StudyImporterForGitHubData.class);
     }
 
 }
