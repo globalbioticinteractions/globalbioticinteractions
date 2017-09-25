@@ -301,6 +301,8 @@ public class StudyImporterForMetaTable extends BaseStudyImporter {
             if ("https://marinemetadata.org/references/nodctaxacodes".equals(column.getDataTypeId())) {
                 final String[] parts = value.trim().split("[^0-9]");
                 convertedValue = TaxonomyProvider.NATIONAL_OCEANOGRAPHIC_DATA_CENTER.getIdPrefix() + parts[0].replace("00", "");
+            } else if ("http://eol.org/schema/taxonID".equals(column.getDataTypeId())) {
+                convertedValue = TaxonomyProvider.ID_PREFIX_EOL + value.trim();
             } else if ("date".equals(column.getDataTypeBase())) {
                 final DateTimeFormatter dateTimeFormatter = StringUtils.isNotBlank(column.getDataTypeFormat())
                         ? DateTimeFormat.forPattern(column.getDataTypeFormat())

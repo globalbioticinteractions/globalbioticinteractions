@@ -120,6 +120,34 @@ public class StudyImporterForMetaTableTest {
         assertThat(parsedValue, is(nullValue()));
     }
 
+    @Test
+    public void parseValueEOLTaxonId() {
+        final StudyImporterForMetaTable.Column column = new StudyImporterForMetaTable.Column("foo", "http://eol.org/schema/taxonID");
+        final String parsedValue = StudyImporterForMetaTable.parseValue("123", column);
+        assertThat(parsedValue, is("EOL:123"));
+    }
+
+    @Test
+    public void parseValueEOLTaxonIdNull() {
+        final StudyImporterForMetaTable.Column column = new StudyImporterForMetaTable.Column("foo", "http://eol.org/schema/taxonID");
+        final String parsedValue = StudyImporterForMetaTable.parseValue(null, column);
+        assertThat(parsedValue, is(nullValue()));
+    }
+
+    @Test
+    public void parseValueNODC() {
+        final StudyImporterForMetaTable.Column column = new StudyImporterForMetaTable.Column("foo", "https://marinemetadata.org/references/nodctaxacodes");
+        final String parsedValue = StudyImporterForMetaTable.parseValue("123", column);
+        assertThat(parsedValue, is("NODC:123"));
+    }
+
+    @Test
+    public void parseValueNODCNull() {
+        final StudyImporterForMetaTable.Column column = new StudyImporterForMetaTable.Column("foo", "https://marinemetadata.org/references/nodctaxacodes");
+        final String parsedValue = StudyImporterForMetaTable.parseValue(null, column);
+        assertThat(parsedValue, is(nullValue()));
+    }
+
     public HashMap<String, String> interactMap(final String donald) {
         return new HashMap<String, String>() {
             {
