@@ -46,7 +46,6 @@ import org.eol.globi.data.StudyImporterForSimons;
 import org.eol.globi.data.StudyImporterForStrona;
 import org.eol.globi.data.StudyImporterForSzoboszlai;
 import org.eol.globi.data.StudyImporterForTSV;
-import org.eol.globi.data.StudyImporterForThessen;
 import org.eol.globi.data.StudyImporterForWebOfLife;
 import org.eol.globi.data.StudyImporterForWood;
 import org.eol.globi.data.StudyImporterForWrast;
@@ -132,7 +131,6 @@ public class GitHubImporterFactory {
                 put("siad", StudyImporterForSIAD.class);
                 put("spire", StudyImporterForSPIRE.class);
                 put("strona", StudyImporterForStrona.class);
-                put("thessen", StudyImporterForThessen.class);
                 put("wrast", StudyImporterForWrast.class);
                 put("web-of-life", StudyImporterForWebOfLife.class);
             }
