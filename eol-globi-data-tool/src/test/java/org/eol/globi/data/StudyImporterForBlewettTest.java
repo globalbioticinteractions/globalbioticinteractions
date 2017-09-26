@@ -15,7 +15,6 @@ import org.eol.globi.taxon.UberonLookupService;
 import org.eol.globi.util.NodeUtil;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
-import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
 import org.junit.Test;
@@ -60,7 +59,7 @@ public class StudyImporterForBlewettTest extends GraphDBTestCase {
 
     @Test
     public void importAll() throws StudyImporterException {
-        StudyImporter importer = new StudyImporterFactory(nodeFactory).instantiateImporter((Class) StudyImporterForBlewett.class);
+        StudyImporter importer = new StudyImporterTestFactory(nodeFactory).instantiateImporter((Class) StudyImporterForBlewett.class);
         importStudy(importer);
 
         Study study = getStudySingleton(getGraphDb());
@@ -116,7 +115,7 @@ public class StudyImporterForBlewettTest extends GraphDBTestCase {
             }
         };
 
-        StudyImporter importer = new StudyImporterFactory(testFactory, nodeFactory).instantiateImporter((Class) StudyImporterForBlewett.class);
+        StudyImporter importer = new StudyImporterTestFactory(testFactory, nodeFactory).instantiateImporter((Class) StudyImporterForBlewett.class);
         importStudy(importer);
 
         Study study = getStudySingleton(getGraphDb());

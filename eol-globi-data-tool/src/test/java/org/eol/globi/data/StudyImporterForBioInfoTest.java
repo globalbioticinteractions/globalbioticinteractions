@@ -49,7 +49,7 @@ public class StudyImporterForBioInfoTest extends GraphDBTestCase {
 
     @Test
     public void importAbout600Records() throws StudyImporterException {
-        StudyImporter importer = new StudyImporterFactory(nodeFactory).instantiateImporter((Class) StudyImporterForBioInfo.class);
+        StudyImporter importer = new StudyImporterTestFactory(nodeFactory).instantiateImporter((Class) StudyImporterForBioInfo.class);
         final List<String> msgs = new ArrayList<String>();
         importer.setLogger(new ImportLogger() {
             @Override

@@ -12,9 +12,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eol.globi.Version;
 import org.eol.globi.data.NodeFactoryNeo4j;
+import org.eol.globi.data.ParserFactoryLocal;
 import org.eol.globi.data.StudyImporter;
 import org.eol.globi.data.StudyImporterException;
-import org.eol.globi.data.StudyImporterFactory;
+import org.eol.globi.data.StudyImporterForGitHubData;
 import org.eol.globi.db.GraphService;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonomyProvider;
@@ -24,21 +25,25 @@ import org.eol.globi.geo.EcoregionFinderFactoryImpl;
 import org.eol.globi.opentree.OpenTreeTaxonIndex;
 import org.eol.globi.service.DOIResolverCache;
 import org.eol.globi.service.DOIResolverImpl;
+import org.eol.globi.service.DatasetFinder;
+import org.eol.globi.service.DatasetLocal;
 import org.eol.globi.service.EcoregionFinderProxy;
 import org.eol.globi.service.PropertyEnricher;
 import org.eol.globi.service.PropertyEnricherFactory;
-import org.eol.globi.taxon.CorrectionService;
 import org.eol.globi.taxon.TaxonCacheService;
 import org.eol.globi.taxon.TaxonIndexNeo4j;
 import org.eol.globi.taxon.TaxonNameCorrector;
 import org.eol.globi.util.HttpUtil;
+import org.globalbioticinteractions.cache.CacheFactory;
+import org.globalbioticinteractions.cache.CacheLocalReadonly;
+import org.globalbioticinteractions.dataset.DatasetFinderLocal;
+import org.globalbioticinteractions.dataset.DatasetFinderWithCache;
 import org.neo4j.graphdb.GraphDatabaseService;
 
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 public class Normalizer {
@@ -52,6 +57,7 @@ public class Normalizer {
     private static final String OPTION_SKIP_LINK = "skipLink";
     private static final String OPTION_SKIP_REPORT = "skipReport";
     private static final String OPTION_USE_DARK_DATA = "useDarkData";
+    private static final String OPTION_DATASET_CACHE_DIR = "cacheDir";
     private static final String OPTION_SKIP_RESOLVE_CITATIONS = OPTION_SKIP_RESOLVE;
 
     private EcoregionFinder ecoregionFinder = null;
@@ -84,6 +90,7 @@ public class Normalizer {
         options.addOption(OPTION_SKIP_LINK, false, "skip taxa cross-reference step");
         options.addOption(OPTION_SKIP_REPORT, false, "skip report generation step");
         options.addOption(OPTION_USE_DARK_DATA, false, "use only dark datasets (requires permission)");
+        options.addOption(OPTION_DATASET_CACHE_DIR, true, "specifies location of dataset cache");
 
         Option helpOpt = new Option(OPTION_HELP, "help", false, "print this help information");
         options.addOption(helpOpt);
@@ -104,7 +111,7 @@ public class Normalizer {
 
     }
 
-    public void exportData(CommandLine cmdLine, GraphDatabaseService graphService) throws StudyImporterException {
+    private void exportData(CommandLine cmdLine, GraphDatabaseService graphService) throws StudyImporterException {
         if (cmdLine == null || !cmdLine.hasOption(OPTION_SKIP_EXPORT)) {
             exportData(graphService, "./");
         } else {
@@ -112,7 +119,7 @@ public class Normalizer {
         }
     }
 
-    public void generateReports(CommandLine cmdLine, GraphDatabaseService graphService) {
+    private void generateReports(CommandLine cmdLine, GraphDatabaseService graphService) {
         if (cmdLine == null || !cmdLine.hasOption(OPTION_SKIP_REPORT)) {
             new ReportGenerator(graphService).run();
         } else {
@@ -120,16 +127,17 @@ public class Normalizer {
         }
     }
 
-    public void importDatasets(CommandLine cmdLine, GraphDatabaseService graphService) {
+    private void importDatasets(CommandLine cmdLine, GraphDatabaseService graphService) {
         if (cmdLine == null || !cmdLine.hasOption(OPTION_SKIP_IMPORT)) {
-            Collection<Class<? extends StudyImporter>> importers = StudyImporterFactory.getImporters();
-            importData(graphService, importers);
+            String defaultValue = "target/datasets";
+            String cacheDir = cmdLine == null ? defaultValue : cmdLine.getOptionValue(OPTION_DATASET_CACHE_DIR, defaultValue);
+            importData(graphService, cacheDir);
         } else {
             LOG.info("skipping data import...");
         }
     }
 
-    public void resolveAndLinkTaxa(CommandLine cmdLine, GraphDatabaseService graphService) {
+    private void resolveAndLinkTaxa(CommandLine cmdLine, GraphDatabaseService graphService) {
         if (cmdLine == null || !cmdLine.hasOption(OPTION_SKIP_RESOLVE_CITATIONS)) {
             LOG.info("resolving citations to DOIs ...");
             new LinkerDOI(graphService, new DOIResolverCache()).link();
@@ -215,43 +223,33 @@ public class Normalizer {
         return ecoregionFinder;
     }
 
-    public void setEcoregionFinder(EcoregionFinder finder) {
+    void setEcoregionFinder(EcoregionFinder finder) {
         this.ecoregionFinder = finder;
     }
 
-    protected void exportData(GraphDatabaseService graphService, String baseDir) throws StudyImporterException {
+    void exportData(GraphDatabaseService graphService, String baseDir) throws StudyImporterException {
         new GraphExporterImpl().export(graphService, baseDir);
     }
 
 
-    private void importData(GraphDatabaseService graphService, Collection<Class<? extends StudyImporter>> importers) {
+    private void importData(GraphDatabaseService graphService, String cacheDir) {
         NodeFactoryNeo4j factory = new NodeFactoryNeo4j(graphService);
         factory.setEcoregionFinder(getEcoregionFinder());
         factory.setDoiResolver(new DOIResolverImpl());
-        for (Class<? extends StudyImporter> importer : importers) {
-            try {
-                importData(importer, factory);
-            } catch (StudyImporterException e) {
-                LOG.error("problem encountered while importing [" + importer.getName() + "]", e);
-            }
+        try {
+            CacheFactory cacheFactory = dataset -> new CacheLocalReadonly(dataset.getNamespace(), cacheDir);
+            DatasetFinder finder = new DatasetFinderWithCache(new DatasetFinderLocal(cacheDir), cacheFactory);
+            StudyImporter importer = new StudyImporterForGitHubData(new ParserFactoryLocal(), factory, finder);
+            importer.setDataset(new DatasetLocal());
+            importer.setLogger(new StudyImportLogger());
+            importer.importStudy();
+        } catch (StudyImporterException e) {
+            LOG.error("problem encountered while importing [" + StudyImporterForGitHubData.class.getName() + "]", e);
         }
         EcoregionFinder regionFinder = getEcoregionFinder();
         if (regionFinder != null) {
             regionFinder.shutdown();
         }
-    }
-
-    protected void importData(Class<? extends StudyImporter> importer, NodeFactoryNeo4j factory) throws StudyImporterException {
-        StudyImporter studyImporter = createStudyImporter(importer, factory);
-        LOG.info("[" + importer + "] importing ...");
-        studyImporter.importStudy();
-        LOG.info("[" + importer + "] imported.");
-    }
-
-    private StudyImporter createStudyImporter(Class<? extends StudyImporter> studyImporter, NodeFactoryNeo4j factory) throws StudyImporterException {
-        StudyImporter importer = new StudyImporterFactory(factory).instantiateImporter(studyImporter);
-        importer.setLogger(new StudyImportLogger());
-        return importer;
     }
 
 }

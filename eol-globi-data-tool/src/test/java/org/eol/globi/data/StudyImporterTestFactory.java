@@ -6,16 +6,16 @@ import java.lang.reflect.Constructor;
 import java.util.Collection;
 import java.util.Collections;
 
-public class StudyImporterFactory {
+public class StudyImporterTestFactory {
 
     private NodeFactory nodeFactory;
     private ParserFactory parserFactory;
 
-    public StudyImporterFactory(NodeFactory nodeFactory) {
+    public StudyImporterTestFactory(NodeFactory nodeFactory) {
         this(new ParserFactoryLocal(), nodeFactory);
     }
 
-    public StudyImporterFactory(ParserFactory parserFactory, NodeFactory nodeFactory) {
+    public StudyImporterTestFactory(ParserFactory parserFactory, NodeFactory nodeFactory) {
         this.parserFactory = parserFactory;
         this.nodeFactory = nodeFactory;
     }
@@ -29,10 +29,6 @@ public class StudyImporterFactory {
         } catch (Exception ex) {
             throw new StudyImporterException("failed to create study importer for [" + clazz.toString() + "]", ex);
         }
-    }
-
-    public static Collection<Class<? extends StudyImporter>> getImporters() {
-        return Collections.singletonList(StudyImporterForGitHubData.class);
     }
 
 }

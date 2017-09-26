@@ -3,9 +3,13 @@ package org.eol.globi.tool;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.NodeFactoryNeo4j;
+import org.eol.globi.data.StudyImporter;
 import org.eol.globi.data.StudyImporterException;
+import org.eol.globi.data.StudyImporterTestFactory;
 import org.eol.globi.data.StudyImporterForSimons;
 import org.eol.globi.domain.Study;
 import org.eol.globi.geo.Ecoregion;
@@ -24,6 +28,10 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
 public class NormalizerTest extends GraphDBTestCase {
+
+    private final static Log LOG = LogFactory.getLog(NormalizerTest.class);
+
+
 
     @Test
     public void handleOptions() throws ParseException {
@@ -44,11 +52,14 @@ public class NormalizerTest extends GraphDBTestCase {
 
         commandLine = Normalizer.parseOptions(new String[]{"-skipLink", "--skipExport"});
         assertThat(commandLine.hasOption("skipLink"), is(true));
+
+        commandLine = Normalizer.parseOptions(new String[]{"-cacheDir", "some/bla"});
+        assertThat(commandLine.getOptionValue("cacheDir"), is("some/bla"));
     }
 
     @Test
     public void doSingleImport() throws IOException, StudyImporterException {
-        createNormalizer().importData(StudyImporterForSimons.class, new NodeFactoryNeo4j(getGraphDb()));
+        importData(StudyImporterForSimons.class, new NodeFactoryNeo4j(getGraphDb()));
         GraphDatabaseService graphService = getGraphDb();
 
         Study study = getStudySingleton(graphService);
@@ -86,12 +97,25 @@ public class NormalizerTest extends GraphDBTestCase {
         Normalizer dataNormalizationTool = createNormalizer();
 
         GraphDatabaseService graphService = getGraphDb();
-        dataNormalizationTool.importData(StudyImporterForSimons.class, new NodeFactoryNeo4j(graphService));
+        importData(StudyImporterForSimons.class, new NodeFactoryNeo4j(graphService));
 
 
         String baseDir = "./target/normalizer-test/";
         FileUtils.deleteQuietly(new File(baseDir));
         dataNormalizationTool.exportData(graphService, baseDir);
+    }
+
+    private static void importData(Class<? extends StudyImporter> importer, NodeFactoryNeo4j factory) throws StudyImporterException {
+        StudyImporter studyImporter = createStudyImporter(importer, factory);
+        LOG.info("[" + importer + "] importing ...");
+        studyImporter.importStudy();
+        LOG.info("[" + importer + "] imported.");
+    }
+
+    private static StudyImporter createStudyImporter(Class<? extends StudyImporter> studyImporter, NodeFactoryNeo4j factory) throws StudyImporterException {
+        StudyImporter importer = new StudyImporterTestFactory(factory).instantiateImporter(studyImporter);
+        importer.setLogger(new StudyImportLogger());
+        return importer;
     }
 
 }

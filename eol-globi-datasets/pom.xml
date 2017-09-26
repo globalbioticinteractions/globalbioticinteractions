@@ -20,7 +20,7 @@
         <github.client.id>specified on commandline</github.client.id>
         <github.client.secret>specified on commandline</github.client.secret>
         <shapefiles.dir>${project.build.directory}/shapefiles</shapefiles.dir>
-        <shapefiles.dir>${project.build.directory}/shapefiles</shapefiles.dir>
+        <dataset.cache.dir>change/me/in/pom.xml</dataset.cache.dir>
         <data.dir>${project.build.directory}/data</data.dir>
         <neo4j.data.dir>${data.dir}/graph.db</neo4j.data.dir>
         <wagon-maven-plugin.version>1.0</wagon-maven-plugin.version>
@@ -73,6 +73,8 @@
                         <argument>${normalizer.arg.4}</argument>
                         <argument>${normalizer.arg.5}</argument>
                         <argument>${normalizer.arg.6}</argument>
+                        <argument>-datasetCacheDir</argument>
+                        <argument>${dataset.cache.dir}</argument>
                     </arguments>
                     <workingDirectory>${data.dir}</workingDirectory>
                 </configuration>
