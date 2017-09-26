@@ -30,10 +30,6 @@ public class DatasetFinderLocal implements DatasetFinder {
     private final String cacheDir;
     private final CacheFactory cacheFactory;
 
-    public DatasetFinderLocal(String cacheDir) {
-        this(cacheDir, dataset -> CacheUtil.cacheFor(dataset.getNamespace(), cacheDir));
-    }
-
     public DatasetFinderLocal(String cacheDir, CacheFactory cacheFactory) {
         this.cacheDir = cacheDir;
         this.cacheFactory = cacheFactory;

@@ -2,6 +2,7 @@ package org.globalbioticinteractions.dataset;
 
 import org.eol.globi.service.Dataset;
 import org.eol.globi.service.DatasetFinderException;
+import org.globalbioticinteractions.cache.CacheUtil;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -25,7 +26,7 @@ public class DatasetFinderLocalTest {
         URL accessFile = getClass().getResource("/test-cache/globalbioticinteractions/template-dataset/access.tsv");
         assertNotNull(accessFile);
         File cacheDir = new File(accessFile.toURI()).getParentFile().getParentFile().getParentFile();
-        datasetFinderLocal = new DatasetFinderLocal(cacheDir.getAbsolutePath());
+        datasetFinderLocal = new DatasetFinderLocal(cacheDir.getAbsolutePath(), dataset -> CacheUtil.cacheFor(dataset.getNamespace(), cacheDir.getAbsolutePath()));
     }
 
     @Test

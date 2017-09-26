@@ -105,7 +105,7 @@ public class CacheLocalReadonly implements Cache {
     }
 
     static boolean isJarResource(URI candidateURI) {
-        return "jar".equals(candidateURI.getScheme());
+        return candidateURI != null && "jar".equals(candidateURI.getScheme());
     }
 
     @Override
