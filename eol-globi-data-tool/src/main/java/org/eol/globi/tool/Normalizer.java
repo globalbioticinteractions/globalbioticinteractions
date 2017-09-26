@@ -37,7 +37,6 @@ import org.eol.globi.util.HttpUtil;
 import org.globalbioticinteractions.cache.CacheFactory;
 import org.globalbioticinteractions.cache.CacheLocalReadonly;
 import org.globalbioticinteractions.dataset.DatasetFinderLocal;
-import org.globalbioticinteractions.dataset.DatasetFinderWithCache;
 import org.neo4j.graphdb.GraphDatabaseService;
 
 import java.net.MalformedURLException;
@@ -61,6 +60,7 @@ public class Normalizer {
     private static final String OPTION_SKIP_RESOLVE_CITATIONS = OPTION_SKIP_RESOLVE;
 
     private EcoregionFinder ecoregionFinder = null;
+    private DatasetFinderLocal finder;
 
     public static void main(final String[] args) throws StudyImporterException, ParseException {
         String o = Version.getVersionInfo(Normalizer.class);
@@ -127,7 +127,7 @@ public class Normalizer {
         }
     }
 
-    private void importDatasets(CommandLine cmdLine, GraphDatabaseService graphService) {
+    private void importDatasets(CommandLine cmdLine, GraphDatabaseService graphService) throws StudyImporterException {
         if (cmdLine == null || !cmdLine.hasOption(OPTION_SKIP_IMPORT)) {
             String defaultValue = "target/datasets";
             String cacheDir = cmdLine == null ? defaultValue : cmdLine.getOptionValue(OPTION_DATASET_DIR, defaultValue);
@@ -232,19 +232,20 @@ public class Normalizer {
     }
 
 
-    private void importData(GraphDatabaseService graphService, String cacheDir) {
+    void importData(GraphDatabaseService graphService, String cacheDir) throws StudyImporterException {
         NodeFactoryNeo4j factory = new NodeFactoryNeo4j(graphService);
         factory.setEcoregionFinder(getEcoregionFinder());
         factory.setDoiResolver(new DOIResolverImpl());
         try {
             CacheFactory cacheFactory = dataset -> new CacheLocalReadonly(dataset.getNamespace(), cacheDir);
-            DatasetFinder finder = new DatasetFinderWithCache(new DatasetFinderLocal(cacheDir), cacheFactory);
+            DatasetFinder finder =  new DatasetFinderLocal(cacheDir, cacheFactory);
             StudyImporter importer = new StudyImporterForGitHubData(new ParserFactoryLocal(), factory, finder);
             importer.setDataset(new DatasetLocal());
             importer.setLogger(new StudyImportLogger());
             importer.importStudy();
         } catch (StudyImporterException e) {
             LOG.error("problem encountered while importing [" + StudyImporterForGitHubData.class.getName() + "]", e);
+            throw e;
         }
         EcoregionFinder regionFinder = getEcoregionFinder();
         if (regionFinder != null) {

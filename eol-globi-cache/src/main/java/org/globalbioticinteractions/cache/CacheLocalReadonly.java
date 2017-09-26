@@ -9,7 +9,10 @@ import org.joda.time.format.ISODateTimeFormat;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.JarURLConnection;
 import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URLConnection;
 import java.util.Date;
 
 public class CacheLocalReadonly implements Cache {
@@ -21,6 +24,15 @@ public class CacheLocalReadonly implements Cache {
     public CacheLocalReadonly(String namespace, String cachePath) {
         this.namespace = namespace;
         this.cachePath = cachePath;
+    }
+
+    static URI getRemoteJarURIIfNeeded(URI remoteArchiveURI, URI localResourceURI) {
+        URI remoteResourceURI = localResourceURI;
+        if (isJarResource(localResourceURI)) {
+            URI datasetArchiveURI = getDatasetArchiveURI(localResourceURI);
+            remoteResourceURI = URI.create(StringUtils.replace(localResourceURI.toString(), datasetArchiveURI.toString(), remoteArchiveURI.toString()));
+        }
+        return remoteResourceURI;
     }
 
     @Override
@@ -36,7 +48,7 @@ public class CacheLocalReadonly implements Cache {
         try {
             File cacheDirForNamespace = CacheUtil.getCacheDirForNamespace(cachePath, namespace);
 
-            String hashCandidate = getHashCandidate(resourceURI, cacheDirForNamespace);
+            String hashCandidate = getHashCandidate(resourceURI, cacheDirForNamespace.toURI());
             accessFile = CacheLog.getAccessFile(cacheDirForNamespace);
             if (accessFile.exists()) {
                 String[] rows = IOUtils.toString(accessFile.toURI()).split("\n");
@@ -48,9 +60,12 @@ public class CacheLocalReadonly implements Cache {
                         if (StringUtils.isNotBlank(hash256)
                                 && (StringUtils.equals(resourceURI.toString(), sourceURI.toString())
                                 || StringUtils.equals(hashCandidate, hash256))) {
-                            File cachedArchiveFile = new File(accessFile.getParent(), hash256);
+                            URI localResourceURI = resourceURI;
+                            if (!isJarResource(resourceURI)) {
+                                localResourceURI = new File(accessFile.getParent(), hash256).toURI();// resource inside of cached archive
+                            }
                             Date accessedAt = ISODateTimeFormat.dateTimeParser().withZoneUTC().parseDateTime(split[3]).toDate();
-                            meta = new CachedURI(namespace, sourceURI, cachedArchiveFile.toURI(), hash256, accessedAt);
+                            meta = new CachedURI(namespace, getRemoteJarURIIfNeeded(sourceURI, resourceURI), localResourceURI, hash256, accessedAt);
                         }
                     }
                 }
@@ -62,12 +77,35 @@ public class CacheLocalReadonly implements Cache {
 
     }
 
-    private String getHashCandidate(URI resourceURI, File cacheDirForNamespace) {
+    static String getHashCandidate(URI resourceURI, URI cacheDir) {
         String hashCandidate = null;
-        if (StringUtils.startsWith(resourceURI.toString(), cacheDirForNamespace.toURI().toString())) {
-            hashCandidate = StringUtils.replace(resourceURI.toString(), cacheDirForNamespace.toURI().toString(), "");
+        URI candidateURI = resourceURI;
+        candidateURI = getDatasetArchiveURI(candidateURI);
+
+        if (StringUtils.startsWith(candidateURI.toString(), cacheDir.toString())) {
+            hashCandidate = StringUtils.replace(candidateURI.toString(), cacheDir.toString(), "");
         }
         return hashCandidate;
+    }
+
+    static URI getDatasetArchiveURI(URI candidateURI) {
+        if (isJarResource(candidateURI)) {
+            URLConnection urlConnection;
+            try {
+                urlConnection = candidateURI.toURL().openConnection();
+                if (urlConnection instanceof JarURLConnection) {
+                    candidateURI = ((JarURLConnection) urlConnection).getJarFileURL().toURI();
+                    IOUtils.closeQuietly(urlConnection.getInputStream());
+                }
+            } catch (IOException | URISyntaxException e) {
+                // ignore
+            }
+        }
+        return candidateURI;
+    }
+
+    static boolean isJarResource(URI candidateURI) {
+        return "jar".equals(candidateURI.getScheme());
     }
 
     @Override

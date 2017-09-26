@@ -12,6 +12,8 @@ import org.eol.globi.service.DatasetFactory;
 import org.eol.globi.service.DatasetFinder;
 import org.eol.globi.service.DatasetFinderException;
 import org.eol.globi.service.DatasetImpl;
+import org.globalbioticinteractions.cache.Cache;
+import org.globalbioticinteractions.cache.CacheFactory;
 import org.globalbioticinteractions.cache.CacheLog;
 import org.globalbioticinteractions.cache.CacheUtil;
 
@@ -26,9 +28,15 @@ import java.util.TreeSet;
 public class DatasetFinderLocal implements DatasetFinder {
     private final static Log LOG = LogFactory.getLog(DatasetFinderLocal.class);
     private final String cacheDir;
+    private final CacheFactory cacheFactory;
 
     public DatasetFinderLocal(String cacheDir) {
+        this(cacheDir, dataset -> CacheUtil.cacheFor(dataset.getNamespace(), cacheDir));
+    }
+
+    public DatasetFinderLocal(String cacheDir, CacheFactory cacheFactory) {
         this.cacheDir = cacheDir;
+        this.cacheFactory = cacheFactory;
     }
 
     @Override
@@ -76,13 +84,14 @@ public class DatasetFinderLocal implements DatasetFinder {
             dataset = sourceURI == null ? null : DatasetFactory.datasetFor(namespace, new DatasetFinder() {
                 @Override
                 public Collection<String> findNamespaces() throws DatasetFinderException {
-                    return Arrays.asList(namespace);
+                    return Collections.singletonList(namespace);
                 }
 
                 @Override
                 public Dataset datasetFor(String s) throws DatasetFinderException {
-                    return new DatasetWithCache(new DatasetImpl(namespace, sourceURI),
-                            CacheUtil.cacheFor(namespace, cacheDir));
+                    Dataset dataset = new DatasetImpl(namespace, sourceURI);
+                    return new DatasetWithCache(dataset,
+                            cacheFactory.cacheFor(dataset));
                 }
             });
         } catch (IOException e) {

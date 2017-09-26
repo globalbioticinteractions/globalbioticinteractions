@@ -20,6 +20,8 @@ import org.neo4j.graphdb.GraphDatabaseService;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -30,8 +32,6 @@ import static org.junit.Assert.assertThat;
 public class NormalizerTest extends GraphDBTestCase {
 
     private final static Log LOG = LogFactory.getLog(NormalizerTest.class);
-
-
 
     @Test
     public void handleOptions() throws ParseException {
@@ -93,12 +93,15 @@ public class NormalizerTest extends GraphDBTestCase {
     }
 
     @Test
-    public void doSingleImportExport() throws IOException, StudyImporterException {
+    public void doSingleImportExport() throws IOException, StudyImporterException, URISyntaxException {
         Normalizer dataNormalizationTool = createNormalizer();
 
         GraphDatabaseService graphService = getGraphDb();
-        importData(StudyImporterForSimons.class, new NodeFactoryNeo4j(graphService));
 
+        URL resource = getClass().getResource("datasets-test/globalbioticinteractions/template-dataset/access.tsv");
+        assertNotNull(resource);
+        String datasetDirTest = new File(resource.toURI()).getParentFile().getParentFile().getParentFile().getAbsolutePath();
+        dataNormalizationTool.importData(getGraphDb(), datasetDirTest);
 
         String baseDir = "./target/normalizer-test/";
         FileUtils.deleteQuietly(new File(baseDir));

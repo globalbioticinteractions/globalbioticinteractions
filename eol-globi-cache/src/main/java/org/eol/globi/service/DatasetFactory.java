@@ -36,7 +36,11 @@ public class DatasetFactory {
     }
 
     private static Dataset configureDataset(Dataset dataset, URI configURI) throws IOException {
-        String descriptor = getContent(configURI, dataset.getResource(configURI.toString()));
+        InputStream inputStream = dataset.getResource(configURI.toString());
+        if (inputStream == null) {
+            throw new IOException("failed to access resource [" + configURI.toString() + "]");
+        }
+        String descriptor = getContent(configURI, inputStream);
         if (StringUtils.isNotBlank(descriptor)) {
             JsonNode desc = new ObjectMapper().readTree(descriptor);
             dataset.setConfigURI(configURI);
