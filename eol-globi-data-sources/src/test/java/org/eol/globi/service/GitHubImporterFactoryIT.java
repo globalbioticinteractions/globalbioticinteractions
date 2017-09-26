@@ -15,7 +15,7 @@ import org.eol.globi.data.StudyImporterForPlanque;
 import org.eol.globi.data.StudyImporterForSzoboszlai;
 import org.eol.globi.data.StudyImporterForTSV;
 import org.eol.globi.data.StudyImporterForWood;
-import org.globalbioticinteractions.dataset.DatasetFinderCaching;
+import org.globalbioticinteractions.dataset.DatasetFinderWithCache;
 import org.junit.Test;
 
 import java.net.URI;
@@ -122,7 +122,7 @@ public class GitHubImporterFactoryIT {
 
     @Test
     public void defaultTSVImporterCached() throws StudyImporterException, DatasetFinderException  {
-        final DatasetFinder datasetFinder = new DatasetFinderCaching(new DatasetFinderGitHubArchive());
+        final DatasetFinder datasetFinder = new DatasetFinderWithCache(new DatasetFinderGitHubArchive());
         StudyImporter importer = getTemplateImporter(datasetFinder, "globalbioticinteractions/template-dataset");
         StudyImporterForTSV importerTSV = (StudyImporterForTSV) importer;
         assertThat(importerTSV.getBaseUrl(), startsWith("https://github.com/globalbioticinteractions/template-dataset/"));
@@ -133,7 +133,7 @@ public class GitHubImporterFactoryIT {
 
     @Test
     public void jsonldImporterCached() throws StudyImporterException, DatasetFinderException  {
-        final DatasetFinder datasetFinder = new DatasetFinderCaching(new DatasetFinderGitHubArchive());
+        final DatasetFinder datasetFinder = new DatasetFinderWithCache(new DatasetFinderGitHubArchive());
         Dataset dataset = DatasetFactory.datasetFor("globalbioticinteractions/jsonld-template-dataset", datasetFinder);
         StudyImporter importer = new GitHubImporterFactory().createImporter(dataset, null);
         assertThat(importer, is(notNullValue()));
@@ -142,7 +142,7 @@ public class GitHubImporterFactoryIT {
 
     @Test
     public void defaultTSVImporterCachedZenodo() throws StudyImporterException, DatasetFinderException  {
-        final DatasetFinder datasetFinder = new DatasetFinderCaching(new DatasetFinderZenodo());
+        final DatasetFinder datasetFinder = new DatasetFinderWithCache(new DatasetFinderZenodo());
         StudyImporter importer = getTemplateImporter(datasetFinder, "globalbioticinteractions/template-dataset");
         StudyImporterForTSV importerTSV = (StudyImporterForTSV) importer;
         assertThat(importerTSV.getSourceCitation(), containsString("doi.org"));

@@ -15,7 +15,7 @@ import org.eol.globi.service.TermLookupServiceException;
 import org.eol.globi.taxon.TaxonIndexNeo4j;
 import org.eol.globi.tool.NameResolver;
 import org.eol.globi.util.NodeUtil;
-import org.globalbioticinteractions.dataset.DatasetFinderCaching;
+import org.globalbioticinteractions.dataset.DatasetFinderWithCache;
 import org.junit.After;
 import org.junit.Before;
 import org.neo4j.graphdb.GraphDatabaseService;
@@ -47,7 +47,7 @@ public abstract class GraphDBTestCase {
     }
 
     public static Dataset datasetFor(String namespace) throws DatasetFinderException {
-        DatasetFinder finder = new DatasetFinderCaching(new DatasetFinderGitHubArchiveMaster());
+        DatasetFinder finder = new DatasetFinderWithCache(new DatasetFinderGitHubArchiveMaster());
         return finder.datasetFor(namespace);
     }
 

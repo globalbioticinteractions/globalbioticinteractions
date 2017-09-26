@@ -18,7 +18,7 @@ import static org.hamcrest.core.StringStartsWith.startsWith;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
-public class DatasetFinderCachingIT {
+public class DatasetFinderWithCacheIT {
 
     private String cachePath = "target/cache/datasets";
 
@@ -42,7 +42,7 @@ public class DatasetFinderCachingIT {
     }
 
     private void assertTemplateDataset(String expectedURIFragment, DatasetFinder datasetFinder, String expectedCitation) throws DatasetFinderException, IOException {
-        DatasetFinder finder = new DatasetFinderCaching(datasetFinder, cachePath);
+        DatasetFinder finder = new DatasetFinderWithCache(datasetFinder, cachePath);
 
         Dataset dataset = DatasetFactory.datasetFor("globalbioticinteractions/template-dataset", finder);
 
@@ -54,7 +54,7 @@ public class DatasetFinderCachingIT {
 
     @Test
     public void gitHubTest() throws DatasetFinderException {
-        DatasetFinder finder = new DatasetFinderCaching(new DatasetFinderGitHubArchive(), cachePath);
+        DatasetFinder finder = new DatasetFinderWithCache(new DatasetFinderGitHubArchive(), cachePath);
 
         Dataset dataset = DatasetFactory.datasetFor("globalbioticinteractions/Catalogue-of-Afrotropical-Bees", finder);
 
@@ -66,7 +66,7 @@ public class DatasetFinderCachingIT {
 
     @Test
     public void hafnerTest() throws DatasetFinderException, IOException {
-        DatasetFinder finder = new DatasetFinderCaching(new DatasetFinderGitHubArchive(), cachePath);
+        DatasetFinder finder = new DatasetFinderWithCache(new DatasetFinderGitHubArchive(), cachePath);
 
         Dataset dataset = DatasetFactory.datasetFor("globalbioticinteractions/hafner", finder);
 

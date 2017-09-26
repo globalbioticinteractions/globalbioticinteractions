@@ -8,7 +8,7 @@ import org.eol.globi.service.DatasetFinderProxy;
 import org.eol.globi.service.DatasetFinderZenodo;
 import org.eol.globi.service.GeoNamesService;
 import org.eol.globi.util.NodeUtil;
-import org.globalbioticinteractions.dataset.DatasetFinderCaching;
+import org.globalbioticinteractions.dataset.DatasetFinderWithCache;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.neo4j.graphdb.Relationship;
@@ -31,7 +31,7 @@ public class StudyImporterForGitHubDataIT extends GraphDBTestCase {
 
     public static DatasetFinder defaultFinder() {
         List<DatasetFinder> finders = Arrays.asList(new DatasetFinderZenodo(), new DatasetFinderGitHubArchive());
-        return new DatasetFinderCaching(new DatasetFinderProxy(finders), "target/datasets");
+        return new DatasetFinderWithCache(new DatasetFinderProxy(finders), "target/datasets");
     }
 
     @Test
