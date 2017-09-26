@@ -52,8 +52,7 @@ public class DatasetFinderCachingTest {
 
 
         String[] list = new File(cachePath + "/some/namespace").list();
-        assertThat(list.length, is(3));
-        assertThat(Arrays.asList(list), hasItem("1cc8eff62af0e6bb3e7771666e2e4109f351b7dfc6fc1dc8314e5671a8eecb80"));
+        assertThat(list.length, is(2));
         assertThat(Arrays.asList(list), hasItem("c9ecb3b0100c890bd00a5c201d06f0a78d92488591f726fbf4de5c88bda39147"));
         assertThat(Arrays.asList(list), hasItem("access.tsv"));
     }
