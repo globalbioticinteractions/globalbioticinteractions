@@ -57,7 +57,7 @@ public class Normalizer {
     private static final String OPTION_SKIP_LINK = "skipLink";
     private static final String OPTION_SKIP_REPORT = "skipReport";
     private static final String OPTION_USE_DARK_DATA = "useDarkData";
-    private static final String OPTION_DATASET_CACHE_DIR = "cacheDir";
+    private static final String OPTION_DATASET_DIR = "datasetDir";
     private static final String OPTION_SKIP_RESOLVE_CITATIONS = OPTION_SKIP_RESOLVE;
 
     private EcoregionFinder ecoregionFinder = null;
@@ -90,7 +90,7 @@ public class Normalizer {
         options.addOption(OPTION_SKIP_LINK, false, "skip taxa cross-reference step");
         options.addOption(OPTION_SKIP_REPORT, false, "skip report generation step");
         options.addOption(OPTION_USE_DARK_DATA, false, "use only dark datasets (requires permission)");
-        options.addOption(OPTION_DATASET_CACHE_DIR, true, "specifies location of dataset cache");
+        options.addOption(OPTION_DATASET_DIR, true, "specifies location of dataset cache");
 
         Option helpOpt = new Option(OPTION_HELP, "help", false, "print this help information");
         options.addOption(helpOpt);
@@ -130,7 +130,7 @@ public class Normalizer {
     private void importDatasets(CommandLine cmdLine, GraphDatabaseService graphService) {
         if (cmdLine == null || !cmdLine.hasOption(OPTION_SKIP_IMPORT)) {
             String defaultValue = "target/datasets";
-            String cacheDir = cmdLine == null ? defaultValue : cmdLine.getOptionValue(OPTION_DATASET_CACHE_DIR, defaultValue);
+            String cacheDir = cmdLine == null ? defaultValue : cmdLine.getOptionValue(OPTION_DATASET_DIR, defaultValue);
             importData(graphService, cacheDir);
         } else {
             LOG.info("skipping data import...");

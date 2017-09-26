@@ -53,8 +53,8 @@ public class NormalizerTest extends GraphDBTestCase {
         commandLine = Normalizer.parseOptions(new String[]{"-skipLink", "--skipExport"});
         assertThat(commandLine.hasOption("skipLink"), is(true));
 
-        commandLine = Normalizer.parseOptions(new String[]{"-cacheDir", "some/bla"});
-        assertThat(commandLine.getOptionValue("cacheDir"), is("some/bla"));
+        commandLine = Normalizer.parseOptions(new String[]{"-datasetDir", "some/bla"});
+        assertThat(commandLine.getOptionValue("datasetDir"), is("some/bla"));
     }
 
     @Test
