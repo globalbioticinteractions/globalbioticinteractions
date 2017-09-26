@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -30,16 +31,23 @@ public class CacheLog {
     }
 
     static List<String> compileLogEntries(CachedURI meta) {
-        return Arrays.asList(meta.getNamespace()
-                , meta.getSourceURI().toString()
-                , meta.getSha256() == null ? "" : meta.getSha256()
-                , ISODateTimeFormat.dateTimeNoMillis().withZoneUTC().print(meta.getAccessedAt().getTime())
-               , meta.getType());
+        List<String> logEntries;
+        if (CacheLocalReadonly.isJarResource(meta.getCachedURI())) {
+            logEntries = Collections.emptyList();
+        } else {
+            logEntries = Arrays.asList(meta.getNamespace()
+                    , meta.getSourceURI().toString()
+                    , meta.getSha256() == null ? "" : meta.getSha256()
+                    , ISODateTimeFormat.dateTimeNoMillis().withZoneUTC().print(meta.getAccessedAt().getTime())
+                    , meta.getType());
+        }
+        return logEntries;
     }
 
     public static File getAccessFile(String namespace, String cacheDir) {
         return getAccessFile(new File(cacheDir + "/" + namespace));
     }
+
     public static File getAccessFile(File dir) {
         return new File(dir, ACCESS_LOG_FILENAME);
     }
