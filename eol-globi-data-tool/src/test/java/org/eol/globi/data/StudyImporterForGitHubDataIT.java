@@ -2,14 +2,20 @@ package org.eol.globi.data;
 
 import org.eol.globi.domain.Study;
 import org.eol.globi.geo.LatLng;
+import org.eol.globi.service.DatasetFinder;
+import org.eol.globi.service.DatasetFinderGitHubArchive;
+import org.eol.globi.service.DatasetFinderProxy;
+import org.eol.globi.service.DatasetFinderZenodo;
 import org.eol.globi.service.GeoNamesService;
 import org.eol.globi.util.NodeUtil;
+import org.globalbioticinteractions.dataset.DatasetFinderCaching;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.neo4j.graphdb.Relationship;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -22,6 +28,11 @@ import static org.junit.Assert.assertThat;
 import static org.junit.internal.matchers.IsCollectionContaining.hasItem;
 
 public class StudyImporterForGitHubDataIT extends GraphDBTestCase {
+
+    public static DatasetFinder defaultFinder() {
+        List<DatasetFinder> finders = Arrays.asList(new DatasetFinderZenodo(), new DatasetFinderGitHubArchive());
+        return new DatasetFinderCaching(new DatasetFinderProxy(finders), "target/datasets");
+    }
 
     @Test
     public void importAll() throws StudyImporterException {
@@ -213,6 +224,6 @@ public class StudyImporterForGitHubDataIT extends GraphDBTestCase {
     }
 
     private StudyImporterForGitHubData createImporter() {
-        return new StudyImporterForGitHubData(new ParserFactoryLocal(), nodeFactory);
+        return new StudyImporterForGitHubData(new ParserFactoryLocal(), nodeFactory, defaultFinder());
     }
 }

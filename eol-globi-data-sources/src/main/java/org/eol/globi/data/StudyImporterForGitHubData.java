@@ -7,14 +7,9 @@ import org.eol.globi.service.Dataset;
 import org.eol.globi.service.DatasetFactory;
 import org.eol.globi.service.DatasetFinder;
 import org.eol.globi.service.DatasetFinderException;
-import org.eol.globi.service.DatasetFinderGitHubArchive;
-import org.eol.globi.service.DatasetFinderProxy;
-import org.eol.globi.service.DatasetFinderZenodo;
 import org.eol.globi.service.GitHubImporterFactory;
-import org.globalbioticinteractions.dataset.DatasetFinderCaching;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -22,15 +17,6 @@ public class StudyImporterForGitHubData extends BaseStudyImporter {
     private static final Log LOG = LogFactory.getLog(StudyImporterForGitHubData.class);
 
     private final DatasetFinder finder;
-
-    static DatasetFinder defaultFinder() {
-        List<DatasetFinder> finders = Arrays.asList(new DatasetFinderZenodo(), new DatasetFinderGitHubArchive());
-        return new DatasetFinderCaching(new DatasetFinderProxy(finders), "target/datasets");
-    }
-
-    public StudyImporterForGitHubData(ParserFactory parserFactory, NodeFactory nodeFactory) {
-        this(parserFactory, nodeFactory, defaultFinder());
-    }
 
     public StudyImporterForGitHubData(ParserFactory parserFactory, NodeFactory nodeFactory, DatasetFinder finder) {
         super(parserFactory, nodeFactory);
