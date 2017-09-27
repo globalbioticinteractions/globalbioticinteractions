@@ -29,7 +29,7 @@ public class CacheLocalReadonly implements Cache {
 
     static URI getRemoteJarURIIfNeeded(URI remoteArchiveURI, URI localResourceURI) {
         URI remoteResourceURI = localResourceURI;
-        if (isJarResource(localResourceURI)) {
+        if (isJarResource(localResourceURI) && !isJarResource(remoteArchiveURI)) {
             URI datasetArchiveURI = getDatasetArchiveURI(localResourceURI);
             remoteResourceURI = URI.create(StringUtils.replace(localResourceURI.toString(), datasetArchiveURI.toString(), remoteArchiveURI.toString()));
         }

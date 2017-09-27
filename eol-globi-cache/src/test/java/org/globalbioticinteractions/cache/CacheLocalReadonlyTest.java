@@ -34,4 +34,13 @@ public class CacheLocalReadonlyTest {
         assertThat(localResourceURI.toString(), is("jar:file:/bla/1234!/globi.json"));
     }
 
+   @Test
+    public void jarInJar() throws IOException, URISyntaxException {
+        URI remoteArchiveURI = URI.create("jar:file://example.com/dataset/whatever.zip!/bla.zip");
+        URI localResourceURI = URI.create("jar:file:/bla/1234!/globi.json");
+
+        URI remoteResourceURI = CacheLocalReadonly.getRemoteJarURIIfNeeded(remoteArchiveURI, localResourceURI);
+        assertThat(remoteResourceURI.toString(), is("jar:file:/bla/1234!/globi.json"));
+    }
+
 }
