@@ -34,7 +34,6 @@ public class ResourceUtil {
         return resourceURI;
     }
 
-
     public static InputStream asInputStream(String resource) throws IOException {
         try {
             InputStream is;

@@ -60,7 +60,6 @@ public class Normalizer {
     private static final String OPTION_SKIP_RESOLVE_CITATIONS = OPTION_SKIP_RESOLVE;
 
     private EcoregionFinder ecoregionFinder = null;
-    private DatasetFinderLocal finder;
 
     public static void main(final String[] args) throws StudyImporterException, ParseException {
         String o = Version.getVersionInfo(Normalizer.class);

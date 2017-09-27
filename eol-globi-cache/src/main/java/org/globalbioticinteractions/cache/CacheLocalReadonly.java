@@ -4,6 +4,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.eol.globi.util.ResourceUtil;
 import org.joda.time.format.ISODateTimeFormat;
 
 import java.io.File;
@@ -111,7 +112,7 @@ public class CacheLocalReadonly implements Cache {
     @Override
     public InputStream asInputStream(URI resourceURI) throws IOException {
         URI resourceURI1 = asURI(resourceURI);
-        return resourceURI1 == null ? null : resourceURI1.toURL().openStream();
+        return resourceURI1 == null ? null : ResourceUtil.asInputStream(resourceURI1.toString());
     }
 }
 
