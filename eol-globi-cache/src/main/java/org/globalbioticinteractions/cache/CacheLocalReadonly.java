@@ -56,17 +56,12 @@ public class CacheLocalReadonly implements Cache {
                 for (String row : rows) {
                     String[] split = row.split("\t");
                     if (split.length > 3) {
-                        String hash256 = split[2];
                         URI sourceURI = URI.create(split[1]);
-                        if (StringUtils.isNotBlank(hash256)
-                                && (StringUtils.equals(resourceURI.toString(), sourceURI.toString())
-                                || StringUtils.equals(hashCandidate, hash256))) {
-                            URI localResourceURI = resourceURI;
-                            if (!isJarResource(resourceURI)) {
-                                localResourceURI = new File(accessFile.getParent(), hash256).toURI();// resource inside of cached archive
-                            }
-                            Date accessedAt = ISODateTimeFormat.dateTimeParser().withZoneUTC().parseDateTime(split[3]).toDate();
-                            meta = new CachedURI(namespace, getRemoteJarURIIfNeeded(sourceURI, resourceURI), localResourceURI, hash256, accessedAt);
+                        String sha256 = split[2];
+                        Date accessedAt = ISODateTimeFormat.dateTimeParser().withZoneUTC().parseDateTime(split[3]).toDate();
+                        if (StringUtils.isNotBlank(sha256)) {
+                            CachedURI metaURI = getMetaURI(resourceURI, hashCandidate, sourceURI, sha256, accessedAt, cacheDirForNamespace);
+                            meta = metaURI == null ? meta : metaURI;
                         }
                     }
                 }
@@ -76,6 +71,22 @@ public class CacheLocalReadonly implements Cache {
         }
         return meta;
 
+    }
+
+    public CachedURI getMetaURI(URI resourceURI, String localArchiveSha256, URI sourceURI, String sha256, Date accessedAt, File cacheDir) {
+        CachedURI meta = null;
+        if (inCachedArchive(localArchiveSha256, sha256)) {
+            meta = new CachedURI(namespace, getRemoteJarURIIfNeeded(sourceURI, resourceURI), resourceURI, sha256, accessedAt);
+        } else if ((StringUtils.equals(resourceURI.toString(), sourceURI.toString())
+                && !inCachedArchive(localArchiveSha256, sha256))) {
+            URI localResourceURI = new File(cacheDir, sha256).toURI();
+            meta = new CachedURI(namespace, sourceURI, localResourceURI, sha256, accessedAt);
+        }
+        return meta;
+    }
+
+    public boolean inCachedArchive(String localArchiveSha256, String sha256) {
+        return StringUtils.isNotBlank(localArchiveSha256) && StringUtils.equals(localArchiveSha256, sha256);
     }
 
     static String getHashCandidate(URI resourceURI, URI cacheDir) {
