@@ -296,7 +296,7 @@ public class StudyImporterForGoMexSI2 extends BaseStudyImporter {
         try {
             return StringUtils.isBlank(value) || KNOWN_INVALID_INTEGER_STRINGS.contains(StringUtils.lowerCase(value)) ? null : Integer.parseInt(value);
         } catch (NumberFormatException ex) {
-            throw new StudyImporterException("failed to parse key [" + key + "] with value [" + value + "]", ex);
+            throw new StudyImporterException(errMsg(props, key, value), ex);
         }
     }
 
@@ -305,9 +305,13 @@ public class StudyImporterForGoMexSI2 extends BaseStudyImporter {
         try {
             return StringUtils.isBlank(value) || KNOWN_INVALID_DOUBLE_STRINGS.contains(StringUtils.lowerCase(value)) ? null : Double.parseDouble(value);
         } catch (NumberFormatException ex) {
-            final String msg = "failed to parse key [" + key + "] with value [" + value + "]";
+            final String msg = errMsg(props, key, value);
             throw new StudyImporterException(msg, ex);
         }
+    }
+
+    private String errMsg(Map<String, String> props, String key, String value) {
+        return "failed to parse key [" + key + "] with value [" + value + "] in properties [" + props + "]";
     }
 
     private Specimen createSpecimen(Study study, Map<String, String> properties) throws StudyImporterException {
