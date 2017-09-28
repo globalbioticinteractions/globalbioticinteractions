@@ -46,7 +46,7 @@ public class StudyImporterForHurlbertIT extends GraphDBTestCase {
         assertThat(allStudies.get(0).getOriginatingDataset(), is(notNullValue()));
 
         Taxon formicidae = taxonIndex.findTaxonByName("Formicidae");
-        assertThat(formicidae.getStatus(), is(notNullValue()));
+        assertThat(formicidae.getExternalId(), is(notNullValue()));
     }
 
 }

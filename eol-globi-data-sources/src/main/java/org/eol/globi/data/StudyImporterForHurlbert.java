@@ -12,6 +12,7 @@ import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
+import org.eol.globi.domain.TaxonomyProvider;
 import org.eol.globi.domain.Term;
 import org.globalbioticinteractions.dataset.CitationUtil;
 
@@ -107,9 +108,9 @@ public class StudyImporterForHurlbert extends BaseStudyImporter {
             setBasisOfRecordAsLiterature(predatorSpecimen);
 
             Taxon preyTaxon = new TaxonImpl(preyTaxonName);
-            String preyNameStatus = StringUtils.trim(columnValueOrNull(record, "Prey_Name_Status"));
-            if (StringUtils.isNotBlank(preyNameStatus)) {
-                preyTaxon.setStatus(new Term("HURLBERT:" + preyNameStatus, preyNameStatus));
+            String preyNameId = StringUtils.trim(columnValueOrNull(record, "Prey_Name_ITIS_ID"));
+            if (StringUtils.isNotBlank(preyNameId)) {
+                preyTaxon.setExternalId(TaxonomyProvider.ITIS.getIdPrefix() + preyNameId);
             }
             Specimen preySpecimen = nodeFactory.createSpecimen(study, preyTaxon);
             setBasisOfRecordAsLiterature(preySpecimen);
