@@ -13,7 +13,7 @@ import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
-public class ITISServiceIT {
+public class ITISServiceIntegrationTest {
 
 
     @Test
