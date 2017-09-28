@@ -231,7 +231,7 @@ public class Normalizer {
     }
 
 
-    void importData(GraphDatabaseService graphService, String cacheDir) throws StudyImporterException {
+    void importData(GraphDatabaseService graphService, String cacheDir) {
         NodeFactoryNeo4j factory = new NodeFactoryNeo4j(graphService);
         factory.setEcoregionFinder(getEcoregionFinder());
         factory.setDoiResolver(new DOIResolverImpl());
@@ -244,7 +244,6 @@ public class Normalizer {
             importer.importStudy();
         } catch (StudyImporterException e) {
             LOG.error("problem encountered while importing [" + StudyImporterForGitHubData.class.getName() + "]", e);
-            throw e;
         }
         EcoregionFinder regionFinder = getEcoregionFinder();
         if (regionFinder != null) {
