@@ -376,7 +376,18 @@ public class NodeFactoryNeo4j implements NodeFactory {
             throw new NodeFactoryException("null or empty study source");
         }
         StudyNode studyNode = findStudy(study.getTitle());
-        return null == studyNode ? createStudy(study) : studyNode;
+
+        return studyNode == null || differentDataset(study, studyNode)
+                ? createStudy(study)
+                : studyNode;
+    }
+
+    private boolean differentDataset(Study study, Study anotherStudy) {
+        return !StringUtils.equals(namespaceOrNull(study), namespaceOrNull(anotherStudy));
+    }
+
+    private String namespaceOrNull(Study study) {
+        return study != null && study.getOriginatingDataset() != null ? study.getOriginatingDataset().getNamespace() : null;
     }
 
     @Override

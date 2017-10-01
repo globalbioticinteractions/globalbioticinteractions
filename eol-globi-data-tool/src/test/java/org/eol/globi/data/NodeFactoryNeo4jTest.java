@@ -242,12 +242,46 @@ public class NodeFactoryNeo4jTest extends GraphDBTestCase {
         assertThat(datasetNode.getProperty("archiveURI"), is("some:uri"));
         assertThat(datasetNode.getProperty(DatasetConstant.SHOULD_RESOLVE_REFERENCES), is("false"));
 
-        StudyImpl otherStudy = new StudyImpl("my title", "some source", "some doi", "some citation");
+        StudyImpl otherStudy = new StudyImpl("my other title", "some source", "some doi", "some citation");
         otherStudy.setOriginatingDataset(dataset);
         StudyNode studySameDataset = getNodeFactory().getOrCreateStudy(otherStudy);
         Node datasetNodeOther = NodeUtil.getDataSetForStudy(studySameDataset);
 
         assertThat(datasetNode.getId(), is(datasetNodeOther.getId()));
+    }
+
+    @Test
+    public void sameStudyDifferentDataset() throws NodeFactoryException, IOException {
+        StudyImpl study1 = new StudyImpl("my title", "some source", "some doi", "some citation");
+        study1.setOriginatingDataset(datasetWithNamespace("some/namespace"));
+
+        StudyNode study = getNodeFactory().getOrCreateStudy(study1);
+        Node datasetNode = NodeUtil.getDataSetForStudy(study);
+
+        study1.setOriginatingDataset(datasetWithNamespace("some/othernamespace"));
+        StudyNode studyDifferentDataset = getNodeFactory().getOrCreateStudy(study1);
+        Node datasetNodeOther = NodeUtil.getDataSetForStudy(studyDifferentDataset);
+
+        assertThat(datasetNode.getId(), is(not(datasetNodeOther.getId())));
+    }
+
+    @Test
+    public void sameStudyNoDataset() throws NodeFactoryException, IOException {
+        StudyImpl study1 = new StudyImpl("my title", "some source", "some doi", "some citation");
+
+        StudyNode studyNoDataset1 = getNodeFactory().getOrCreateStudy(study1);
+        StudyNode studyNoDataset2 = getNodeFactory().getOrCreateStudy(study1);
+
+        assertThat(studyNoDataset1.getUnderlyingNode().getId(),
+                is(studyNoDataset2.getUnderlyingNode().getId()));
+    }
+
+    private DatasetImpl datasetWithNamespace(String namespace) {
+        DatasetImpl dataset = new DatasetImpl(namespace, URI.create("some:uri"));
+        ObjectNode objectNode = new ObjectMapper().createObjectNode();
+        objectNode.put(DatasetConstant.SHOULD_RESOLVE_REFERENCES, false);
+        dataset.setConfig(objectNode);
+        return dataset;
     }
 
     @Test
