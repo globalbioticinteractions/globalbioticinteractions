@@ -25,9 +25,9 @@ public class CitationUtil {
         return sourceCitationLastAccessed(dataset, dataset.getCitation());
     }
 
-    public static String separatorFor(String citationPart) {
+    static String separatorFor(String citationPart) {
         String separator = " ";
-        if (!StringUtils.endsWith(StringUtils.trim(citationPart), ".")) {
+        if (StringUtils.isNotBlank(citationPart) && !StringUtils.endsWith(StringUtils.trim(citationPart), ".")) {
             separator = ". ";
         }
         return separator;

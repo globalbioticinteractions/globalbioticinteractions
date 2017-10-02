@@ -1,13 +1,16 @@
 package org.globalbioticinteractions.dataset;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.codehaus.jackson.JsonNode;
 import org.eol.globi.service.Dataset;
+import org.eol.globi.service.DatasetConstant;
 import org.eol.globi.service.DatasetMapped;
 import org.eol.globi.util.ResourceUtil;
 import org.globalbioticinteractions.cache.Cache;
 import org.globalbioticinteractions.cache.CachedURI;
+import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.ISODateTimeFormat;
 
@@ -82,7 +85,7 @@ public class DatasetWithCache extends DatasetMapped {
 
     @Override
     public String getOrDefault(String key, String defaultValue) {
-        if (equalsIgnoreCase("accessedAt", key)) {
+        if (equalsIgnoreCase(DatasetConstant.LAST_SEEN_AT, key)) {
             Date accessedAt = getAccessedAt();
             return accessedAt == null ? "" : ISODateTimeFormat.dateTime().withZoneUTC().print(accessedAt.getTime());
         } else if (equalsIgnoreCase("contentHash", key)) {
@@ -119,11 +122,15 @@ public class DatasetWithCache extends DatasetMapped {
             citationGenerated.append(">");
         }
         citationGenerated.append(CitationUtil.separatorFor(citationGenerated.toString()));
-        citationGenerated.append("Accessed on ")
-                .append(DateTimeFormat.forPattern("dd MMM YYYY").print(getAccessedAt().getTime()))
-                .append(" via <")
+
+        citationGenerated.append("Accessed");
+        if (null != getAccessedAt()) {
+            citationGenerated.append(" on ")
+                    .append(DateTimeFormat.forPattern("dd MMM YYYY").withZone(DateTimeZone.UTC).print(getAccessedAt().getTime()));
+        }
+        citationGenerated.append(" via <")
                 .append(getArchiveURI()).append(">.");
-        return citationGenerated.toString();
+        return StringUtils.trim(citationGenerated.toString());
     }
 
     public String getFormat() {
