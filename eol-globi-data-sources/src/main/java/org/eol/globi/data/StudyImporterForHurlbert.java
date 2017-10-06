@@ -70,8 +70,9 @@ public class StudyImporterForHurlbert extends BaseStudyImporter {
         LOG.info("unmapped regions [" + StringUtils.join(regions.iterator(), ";") + "]");
     }
 
-    public void importRecords(Set<String> regions, Set<String> locales, Set<String> habitats, Record record, String sourceCitation) throws StudyImporterException {
-        StudyImpl study1 = new StudyImpl(sourceCitation, "Allen Hurlbert. Avian Diet Database (https://github.com/hurlbertlab/dietdatabase/). " + CitationUtil.createLastAccessedString(RESOURCE), null, sourceCitation);
+    private void importRecords(Set<String> regions, Set<String> locales, Set<String> habitats, Record record, String sourceCitation) throws StudyImporterException {
+        String namespace = getDataset() == null ? "" : getDataset().getNamespace();
+        StudyImpl study1 = new StudyImpl( namespace + sourceCitation, "Allen Hurlbert. Avian Diet Database (https://github.com/hurlbertlab/dietdatabase/). " + CitationUtil.createLastAccessedString(RESOURCE), null, sourceCitation);
         study1.setOriginatingDataset(getDataset());
         Study study = nodeFactory.getOrCreateStudy(study1);
 

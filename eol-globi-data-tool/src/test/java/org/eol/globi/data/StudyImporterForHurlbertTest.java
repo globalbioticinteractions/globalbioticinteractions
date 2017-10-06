@@ -22,16 +22,7 @@ public class StudyImporterForHurlbertTest extends GraphDBTestCase {
 
     @Test
     public void importSome() throws StudyImporterException, IOException {
-        StudyImporter importer = new StudyImporterForHurlbert(null, nodeFactory);
-        Dataset dataset = new DatasetImpl("some/namespace", URI.create("some:uri")) {
-            @Override
-            public InputStream getResource(String name){
-                return StudyImporterForHurlbertTest.getResource();
-            }
-
-        };
-        importer.setDataset(dataset);
-        importStudy(importer);
+        StudyImporter importer = doImport("some/namespace");
 
         List<Study> allStudies = NodeUtil.findAllStudies(getGraphDb());
         assertThat(allStudies.size(), is(2));
@@ -53,6 +44,26 @@ public class StudyImporterForHurlbertTest extends GraphDBTestCase {
 
     public static InputStream getResource() {
         return StudyImporterForHurlbertTest.class.getResourceAsStream("hurlbert/avianDietFirst50.txt");
+    }
+
+    @Test
+    public void importTwice() throws StudyImporterException {
+        StudyImporter importer = doImport("some/namespace");
+        doImport("some/namespace2");
+    }
+
+    public StudyImporter doImport(final String namespace) throws StudyImporterException {
+        StudyImporter importer = new StudyImporterForHurlbert(null, nodeFactory);
+        Dataset dataset = new DatasetImpl(namespace, URI.create("some:uri")) {
+            @Override
+            public InputStream getResource(String name){
+                return StudyImporterForHurlbertTest.getResource();
+            }
+
+        };
+        importer.setDataset(dataset);
+        importStudy(importer);
+        return importer;
     }
 
 }
