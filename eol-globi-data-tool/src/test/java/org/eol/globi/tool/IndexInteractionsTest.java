@@ -28,6 +28,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
@@ -40,7 +41,7 @@ public class IndexInteractionsTest extends GraphDBTestCase {
         // see https://github.com/jhpoelen/eol-globi-data/wiki/Nanopubs
         StudyImpl study = new StudyImpl("some study", "some source", "http://doi.org/123.23/222", "some study citation");
         NodeFactoryWithDatasetContext factory = new NodeFactoryWithDatasetContext(nodeFactory, new DatasetImpl("some/namespace", URI.create("https://some.uri")));
-        Study interaction = factory.createStudy(study);
+        Study interaction = factory.getOrCreateStudy(study);
         TaxonImpl donaldTaxon = new TaxonImpl("donald duck", "NCBI:1234");
         Specimen donald = factory.createSpecimen(interaction, donaldTaxon);
         donald.classifyAs(taxonIndex.getOrCreateTaxon(donaldTaxon));
@@ -55,9 +56,12 @@ public class IndexInteractionsTest extends GraphDBTestCase {
         new IndexInteractions(getGraphDb()).link();
 
         NodeFactoryNeo4j nodeFactoryNeo4j = new NodeFactoryNeo4j(getGraphDb());
-        StudyNode someStudy = nodeFactoryNeo4j.findStudy("some study");
+        StudyImpl study1 = new StudyImpl("some study", "some source", null, "come citation");
+        study1.setOriginatingDataset(new DatasetImpl("some/namespace", URI.create("some:uri")));
+        StudyNode someStudy = nodeFactoryNeo4j.getOrCreateStudy(study1);
 
-        assertNotNull(someStudy);
+        assertThat(interaction.getOriginatingDataset().getNamespace(), is(someStudy.getOriginatingDataset().getNamespace()));
+        assertThat(interaction.getTitle(), is(someStudy.getTitle()));
 
         Iterable<Relationship> specimens = NodeUtil.getSpecimens(someStudy);
 
