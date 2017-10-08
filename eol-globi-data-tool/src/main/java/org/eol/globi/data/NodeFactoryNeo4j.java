@@ -330,6 +330,7 @@ public class NodeFactoryNeo4j implements NodeFactory {
             }
 
             studies.add(node, StudyConstant.TITLE, study.getTitle());
+            studies.add(node, StudyConstant.TITLE_IN_NAMESPACE, getTitleInNamespace(study));
             transaction.success();
         } finally {
             transaction.finish();
@@ -375,26 +376,37 @@ public class NodeFactoryNeo4j implements NodeFactory {
         if (StringUtils.isBlank(study.getSource())) {
             throw new NodeFactoryException("null or empty study source");
         }
-        StudyNode studyNode = findStudy(study.getTitle());
+        StudyNode studyNode = findStudy(study);
 
-        return studyNode == null || differentDataset(study, studyNode)
+        return studyNode == null
                 ? createStudy(study)
                 : studyNode;
     }
 
-    private boolean differentDataset(Study study, Study anotherStudy) {
-        return !StringUtils.equals(namespaceOrNull(study), namespaceOrNull(anotherStudy));
-    }
-
     private String namespaceOrNull(Study study) {
-        return study != null && study.getOriginatingDataset() != null ? study.getOriginatingDataset().getNamespace() : null;
+        return study != null && study.getOriginatingDataset() != null
+                ? study.getOriginatingDataset().getNamespace()
+                : null;
     }
 
+    @Deprecated
     @Override
     public StudyNode findStudy(String title) {
-        final IndexHits<Node> nodes = title == null ? null : studies.get(StudyConstant.TITLE, title);
+        return findStudy(new StudyImpl(title));
+    }
+
+    private StudyNode findStudy(Study study) {
+        String titleNS = getTitleInNamespace(study);
+        final IndexHits<Node> nodes = studies.get(StudyConstant.TITLE_IN_NAMESPACE, titleNS);
         Node foundStudyNode = nodes != null ? nodes.getSingle() : null;
         return foundStudyNode == null ? null : new StudyNode(foundStudyNode);
+    }
+
+    private String getTitleInNamespace(Study study) {
+        String namespace = namespaceOrNull(study);
+        return StringUtils.isBlank(namespace)
+                ? study.getTitle()
+                : "globi:" + namespace + "/" + study.getTitle();
     }
 
     @Override

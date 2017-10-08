@@ -87,13 +87,10 @@ public class StudyImporterForSIAD extends BaseStudyImporter {
 
                 String ref = labeledCSVParser.getValueByLabel("source");
                 String title = "SIAD-" + ref;
-                Study study = nodeFactory.findStudy(title);
-                if (study == null) {
-                    String citation = "ABRS 2009. Australian Faunal Directory. " + name + ". Australian Biological Resources StudyNode, Canberra. " + CitationUtil.createLastAccessedString(ref);
-                    StudyImpl study1 = new StudyImpl(title, source, null, citation);
-                    study1.setExternalId(ref);
-                    study = nodeFactory.getOrCreateStudy(study1);
-                }
+                String citation = "ABRS 2009. Australian Faunal Directory. " + name + ". Australian Biological Resources StudyNode, Canberra. " + CitationUtil.createLastAccessedString(ref);
+                StudyImpl study1 = new StudyImpl(title, source, null, citation);
+                study1.setExternalId(ref);
+                Study study = nodeFactory.getOrCreateStudy(study1);
 
                 Specimen specimen = nodeFactory.createSpecimen(study, new TaxonImpl(name, null));
                 String hostName = labeledCSVParser.getValueByLabel("host name");

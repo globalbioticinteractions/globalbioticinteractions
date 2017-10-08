@@ -263,6 +263,8 @@ public class NodeFactoryNeo4jTest extends GraphDBTestCase {
         Node datasetNodeOther = NodeUtil.getDataSetForStudy(studyDifferentDataset);
 
         assertThat(datasetNode.getId(), is(not(datasetNodeOther.getId())));
+
+        getNodeFactory().getOrCreateStudy(study1);
     }
 
     @Test
