@@ -1,5 +1,6 @@
 package org.eol.globi.util;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.client.methods.HttpPost;
@@ -14,11 +15,16 @@ public class CypherUtil {
     private static final Log LOG = LogFactory.getLog(CypherUtil.class);
 
     public static String executeCypherQuery(CypherQuery query) throws IOException {
-        HttpPost httpPost = new HttpPost("http://neo4j.globalbioticinteractions.org/db/data/cypher");
+        HttpPost httpPost = new HttpPost(getCypherURI());
         HttpUtil.addJsonHeaders(httpPost);
         httpPost.setEntity(new StringEntity(wrapQuery(query)));
         BasicResponseHandler responseHandler = new BasicResponseHandler();
         return HttpUtil.getHttpClient().execute(httpPost, responseHandler);
+    }
+
+    private static String getCypherURI() {
+        String value = System.getProperty("neo4j.cypher.uri");
+        return StringUtils.isBlank(value) ? "http://neo4j.globalbioticinteractions.org/db/data/cypher" : StringUtils.trim(value);
     }
 
     private static String wrapQuery(CypherQuery cypherQuery) {
