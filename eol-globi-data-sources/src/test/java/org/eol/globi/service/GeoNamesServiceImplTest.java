@@ -97,6 +97,14 @@ public class GeoNamesServiceImplTest {
     }
 
     @Test
+    public void retrieveAnyGeoNamesIdYugoslavia() throws IOException {
+        // http://www.geonames.org/7500737
+        LatLng point = new GeoNamesServiceImpl().getCentroid(7500737L);
+        assertThat(point.getLat(), is(44.0d));
+        assertThat(point.getLng(), is(19.75));
+    }
+
+    @Test
     public void findPointForLocalitys() throws IOException {
         LatLng point = new GeoNamesServiceImpl().findLatLng("Kerguelen Island");
         assertThat(point, is(notNullValue()));
