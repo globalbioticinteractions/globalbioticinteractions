@@ -22,22 +22,7 @@ public class StudyImporterForAproxylicTest {
                 "{EAB80A48-DE82-454E-8A90-000157CE4E29}\t{D255447F-A514-4901-9C68-1B027AF67CEE}\t{575D9556-BE91-4E85-8BCC-85A159F5FCD3}\t{EC69560A-C33B-4D45-97D2-8D6AE8365B3C}\t{93D3102F-5CC8-48CF-88E7-FEE74F8E54AD}\t0\t0\t\t\tx\t\t{F90595F4-6872-4B42-B1B2-6F5D392A44F0}\t0\t";
 
         final TreeSet<Triple<String, String, String>> triples = new TreeSet<>();
-        StudyImporterForAproxylic.Tripler tripler = triples::add;
-
-        StudyImporterForAproxylic.LineListener listener = parser -> {
-            String sourceOccurrenceId = parser.getValueByLabel("OccurrenceA");
-            String targetOccurrenceId = parser.getValueByLabel("OccurrenceB");
-            String interactionTypeIdAB = parser.getValueByLabel("RoleA");
-            String interactionTypeIdBA = parser.getValueByLabel("RoleB");
-            tripler.on(StudyImporterForAproxylic.asTriple(sourceOccurrenceId, interactionTypeIdAB, targetOccurrenceId));
-            tripler.on(StudyImporterForAproxylic.asTriple(targetOccurrenceId, interactionTypeIdBA, sourceOccurrenceId));
-            String interactionId = parser.getValueByLabel("Oid");
-            tripler.on(StudyImporterForAproxylic.asTriple(targetOccurrenceId, "participates_in", interactionId));
-            tripler.on(StudyImporterForAproxylic.asTriple(sourceOccurrenceId, "participates_in", interactionId));
-            String referenceId = parser.getValueByLabel("Reference");
-            tripler.on(StudyImporterForAproxylic.asTriple(interactionId, "mentioned_by", referenceId));
-        };
-        StudyImporterForAproxylic.handleLines(listener, IOUtils.toInputStream(someAssociationRows));
+        StudyImporterForAproxylic.parseAssociations(triples::add, IOUtils.toInputStream(someAssociationRows));
 
         assertThat(triples.size(), is(10));
         assertThat(triples, hasItem(StudyImporterForAproxylic.asTriple("{505B49F3-1798-451C-99B0-00011BE9614D}", "mentioned_by", "{DF56D217-13B1-42B1-81A6-64553F91F7B6}")));
@@ -55,14 +40,8 @@ public class StudyImporterForAproxylicTest {
                 "{0A992435-37A5-4487-9E9B-000EE13AA5A0}\t\t\t{02759CAD-38BF-4353-8B37-00919DE7F65F}\t\t\t\tIneta  Salmane\t\t\t\t\t{32CA58DF-20BA-48D4-B8B6-D7685712C6ED}\t{32CA58DF-20BA-48D4-B8B6-D7685712C6ED}\twoody material\t{3E1845B1-2441-4986-8B31-D6C50167A271}\t\t\t0\t\n";
 
         final Set<Triple<String, String, String>> triples = new TreeSet<>();
-        StudyImporterForAproxylic.Tripler tripler = triples::add;
 
-        StudyImporterForAproxylic.handleLines(parser -> {
-            String occId = parser.getValueByLabel("Oid");
-            tripler.on(StudyImporterForAproxylic.asTriple(occId, "classifiedAs", parser.getValueByLabel("ExpertTaxon")));
-            tripler.on(StudyImporterForAproxylic.asTriple(occId, "inStage", parser.getValueByLabel("Stage")));
-            tripler.on(StudyImporterForAproxylic.triple(parser, occId));
-        }, IOUtils.toInputStream(someOccurrenceRows));
+        StudyImporterForAproxylic.parseOccurrences(triples::add, IOUtils.toInputStream(someOccurrenceRows));
 
         assertThat(triples, hasItem(StudyImporterForAproxylic.asTriple("{ACF1CDC2-BABD-4B63-AA57-0002A1C918E2}", "classifiedAs", "{BE612DC1-8E9E-4D77-936A-543E865DF829}")));
     }

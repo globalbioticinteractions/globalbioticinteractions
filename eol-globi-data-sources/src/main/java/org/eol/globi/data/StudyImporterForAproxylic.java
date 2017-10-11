@@ -13,8 +13,6 @@ import java.util.Arrays;
 import java.util.List;
 
 public class StudyImporterForAproxylic extends BaseStudyImporter {
-
-
     private static final String KINGDOM = "Kingdom";
     private static final String PHYLUM = "Phylum";
     private static final String CLASS = "Class";
@@ -24,11 +22,22 @@ public class StudyImporterForAproxylic extends BaseStudyImporter {
     private static final String GENUS = "Genus";
     private static final String SPECIES = "Species";
 
+    public static final String CLASSIFIED_AS = "classifiedAs";
+
+    public static final String IN_STAGE = "inStage";
+    public static final String FOUND_AT = "foundAt";
+    public static final String MENTIONED_BY = "mentioned_by";
+    public static final String PARTICIPATES_IN = "participates_in";
+    public static final String HAS_NAME = "hasName";
+    public static final String HAS_RANK = "hasRank";
+    public static final String HAS_PATH_IDS = "hasPathIds";
+    public static final String HAS_PATH_NAMES = "hasPathNames";
+
     public StudyImporterForAproxylic(ParserFactory parserFactory, NodeFactory nodeFactory) {
         super(parserFactory, nodeFactory);
     }
 
-    static void handleLines(LineListener listener, InputStream is) throws IOException, StudyImporterException {
+    private static void handleLines(LineListener listener, InputStream is) throws IOException, StudyImporterException {
         LabeledCSVParser parser = CSVTSVUtil.createLabeledTSVParser(is);
         while (parser.getLine() != null) {
             listener.onLine(parser);
@@ -37,10 +46,6 @@ public class StudyImporterForAproxylic extends BaseStudyImporter {
 
     static ImmutableTriple<String, String, String> asTriple(String subj, String verb, String obj) {
         return new ImmutableTriple<>(subj, verb, obj);
-    }
-
-    static ImmutableTriple<String, String, String> triple(LabeledCSVParser parser, String occId) {
-        return asTriple(occId, "foundAt", parser.getValueByLabel("Locality"));
     }
 
     static void parseTaxa(Tripler tripler, InputStream is) throws IOException, StudyImporterException {
@@ -61,10 +66,10 @@ public class StudyImporterForAproxylic extends BaseStudyImporter {
             String pathIds = StringUtils.join(ts, CharsetConstant.SEPARATOR);
             List<String> pathNames = Arrays.asList(KINGDOM, PHYLUM, CLASS, ORDER, SUB_ORDER, FAMILY, GENUS, SPECIES);
             String pathNamesJoined = StringUtils.join(pathNames, CharsetConstant.SEPARATOR);
-            tripler.on(asTriple(taxonId, "hasName", nameString));
-            tripler.on(asTriple(taxonId, "hasRank", rankId));
-            tripler.on(asTriple(taxonId, "hasPathIds", pathIds));
-            tripler.on(asTriple(taxonId, "hasPathNames", pathNamesJoined));
+            tripler.on(asTriple(taxonId, HAS_NAME, nameString));
+            tripler.on(asTriple(taxonId, HAS_RANK, rankId));
+            tripler.on(asTriple(taxonId, HAS_PATH_IDS, pathIds));
+            tripler.on(asTriple(taxonId, HAS_PATH_NAMES, pathNamesJoined));
         }, is);
     }
 
@@ -72,7 +77,7 @@ public class StudyImporterForAproxylic extends BaseStudyImporter {
         handleLines(parser -> {
             String localityId = parser.getValueByLabel("Oid");
             String name = parser.getValueByLabel("Name");
-            tripler.on(asTriple(localityId, "hasName", name));
+            tripler.on(asTriple(localityId, HAS_NAME, name));
         }, is);
     }
 
@@ -89,7 +94,7 @@ public class StudyImporterForAproxylic extends BaseStudyImporter {
             appendIfNotBlank(parser, citation, "p ", "Page1");
             appendIfNotBlank(parser, citation, "", "Jourfull");
             String citationJoined = StringUtils.join(citation, ". ");
-            tripler.on(asTriple(referenceId, "hasName", citationJoined));
+            tripler.on(asTriple(referenceId, HAS_NAME, citationJoined));
         }, is);
     }
 
@@ -117,6 +122,32 @@ public class StudyImporterForAproxylic extends BaseStudyImporter {
         }, is);
     }
 
+    static void parseAssociations(Tripler tripler, InputStream is) throws IOException, StudyImporterException {
+        LineListener listener = parser -> {
+            String sourceOccurrenceId = parser.getValueByLabel("OccurrenceA");
+            String targetOccurrenceId = parser.getValueByLabel("OccurrenceB");
+            String interactionTypeIdAB = parser.getValueByLabel("RoleA");
+            String interactionTypeIdBA = parser.getValueByLabel("RoleB");
+            tripler.on(asTriple(sourceOccurrenceId, interactionTypeIdAB, targetOccurrenceId));
+            tripler.on(asTriple(targetOccurrenceId, interactionTypeIdBA, sourceOccurrenceId));
+            String interactionId = parser.getValueByLabel("Oid");
+            tripler.on(asTriple(targetOccurrenceId, PARTICIPATES_IN, interactionId));
+            tripler.on(asTriple(sourceOccurrenceId, PARTICIPATES_IN, interactionId));
+            String referenceId = parser.getValueByLabel("Reference");
+            tripler.on(asTriple(interactionId, MENTIONED_BY, referenceId));
+        };
+        handleLines(listener, is);
+    }
+
+    static void parseOccurrences(Tripler tripler, InputStream is) throws IOException, StudyImporterException {
+        handleLines(parser -> {
+            String occId = parser.getValueByLabel("Oid");
+            tripler.on(asTriple(occId, CLASSIFIED_AS, parser.getValueByLabel("ExpertTaxon")));
+            tripler.on(asTriple(occId, IN_STAGE, parser.getValueByLabel("Stage")));
+            tripler.on(asTriple(occId, FOUND_AT, parser.getValueByLabel("Locality")));
+        }, is);
+    }
+
     @Override
     public void importStudy() throws StudyImporterException {
         try {
@@ -129,7 +160,6 @@ public class StudyImporterForAproxylic extends BaseStudyImporter {
         } catch (IOException e) {
             throw new StudyImporterException("failed to access resource", e);
         }
-
     }
 
     interface LineListener {
