@@ -16,7 +16,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.Reader;
 import java.io.Writer;
 import java.util.Arrays;
@@ -49,9 +48,11 @@ public class CSVTSVUtil {
     }
 
     public static LabeledCSVParser createLabeledTSVParser(Reader reader) throws IOException {
-        final LabeledCSVParser parser = new LabeledCSVParser(new CSVParser(reader));
-        parser.changeDelimiter('\t');
-        return parser;
+        return new LabeledCSVParser(new CSVParser(reader, '\t'));
+    }
+
+    public static LabeledCSVParser createLabeledTSVParser(InputStream is) throws IOException {
+        return new LabeledCSVParser(new CSVParser(is, '\t'));
     }
 
     public static LabeledCSVParser createLabeledCSVParser(CSVParse parser) throws IOException {
