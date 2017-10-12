@@ -32,7 +32,7 @@ import java.util.Map;
 import java.util.NavigableSet;
 import java.util.TreeMap;
 
-public class StudyImporterForAproxylic extends BaseStudyImporter {
+public class StudyImporterForSaproxylic extends BaseStudyImporter {
     private static final String KINGDOM = "Kingdom";
     private static final String PHYLUM = "Phylum";
     private static final String CLASS = "Class";
@@ -53,7 +53,7 @@ public class StudyImporterForAproxylic extends BaseStudyImporter {
     public static final String HAS_PATH_IDS = "hasPathIds";
     public static final String HAS_PATH_NAMES = "hasPathNames";
 
-    public StudyImporterForAproxylic(ParserFactory parserFactory, NodeFactory nodeFactory) {
+    public StudyImporterForSaproxylic(ParserFactory parserFactory, NodeFactory nodeFactory) {
         super(parserFactory, nodeFactory);
     }
 
