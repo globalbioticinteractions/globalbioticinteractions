@@ -1,16 +1,36 @@
 package org.eol.globi.data;
 
 import com.Ostermiller.util.LabeledCSVParser;
+import com.hp.hpl.jena.query.Query;
+import com.hp.hpl.jena.query.QueryExecution;
+import com.hp.hpl.jena.query.QueryExecutionFactory;
+import com.hp.hpl.jena.query.QueryFactory;
+import com.hp.hpl.jena.query.QuerySolution;
+import com.hp.hpl.jena.query.ResultSet;
+import com.hp.hpl.jena.query.ResultSetFormatter;
+import com.hp.hpl.jena.rdf.model.Model;
+import com.hp.hpl.jena.rdf.model.ModelFactory;
+import com.hp.hpl.jena.rdf.model.Property;
+import com.hp.hpl.jena.rdf.model.RDFNode;
+import com.hp.hpl.jena.rdf.model.Resource;
+import com.hp.hpl.jena.rdf.model.impl.SelectorImpl;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.commons.lang3.tuple.Triple;
+import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.util.CSVTSVUtil;
+import org.mapdb.DBMaker;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.NavigableSet;
+import java.util.TreeMap;
 
 public class StudyImporterForAproxylic extends BaseStudyImporter {
     private static final String KINGDOM = "Kingdom";
@@ -36,6 +56,90 @@ public class StudyImporterForAproxylic extends BaseStudyImporter {
     public StudyImporterForAproxylic(ParserFactory parserFactory, NodeFactory nodeFactory) {
         super(parserFactory, nodeFactory);
     }
+
+    @Override
+    public void importStudy() throws StudyImporterException {
+        try {
+            final Model model = ModelFactory.createDefaultModel();
+
+            NavigableSet<Triple<String, String, String>> triples = DBMaker.newTempTreeSet();
+            Tripler add = triple -> {
+                Resource resource = model.createResource("sx:" + triple.getLeft());
+                Property property = model.createProperty("sx:" + triple.getMiddle());
+                String obj = triple.getRight();
+                if (StringUtils.startsWith(obj, "{")) {
+                    Resource food = model.createResource("sx:" + obj);
+                    model.add(resource, property, food);
+                } else if (StringUtils.startsWith(obj, "http")) {
+                    model.add(resource, property, model.createResource(obj));
+                } else if (StringUtils.isNotBlank(obj)) {
+                    model.add(resource, property, obj);
+                }
+            };
+            parseReferences(add, getDataset().getResource("sx_txt/Reference.txt"));
+            parseLocalities(add, getDataset().getResource("sx_txt/Locality.txt"));
+            parseTaxa(add, getDataset().getResource("sx_txt/Taxon.txt"));
+            parseTaxonRanks(add, getDataset().getResource("sx_txt/TaxonRank.txt"));
+            parseOccurrences(add, getDataset().getResource("sx_txt/Occurrence.txt"));
+            parseAssociations(add, getDataset().getResource("sx_txt/SX_Association.txt"));
+            parseInteractionTypeMap(add, getDataset().getResource("interaction_type_map.tsv"));
+
+            // associations -> occurrences, taxa, reference
+            String queryString =
+                            "SELECT ?sourceTaxonName ?sourceLifeStage ?interactionTypeId ?targetTaxonName ?targetLifeStage ?referenceCitation ?localityName ?studyTitle " +
+                            "WHERE {" +
+                            "      ?interaction <sx:mentioned_by> ?studyTitle . " +
+                            "      ?studyTitle <sx:hasName> ?referenceCitation . " +
+                            "      ?sourceSpecimen <sx:participates_in> ?interaction . " +
+                            "      ?targetSpecimen <sx:participates_in> ?interaction . " +
+
+                            "      ?sourceSpecimen ?inter ?targetSpecimen . " +
+                            "      ?inter <sx:equivalentTo> ?interactionTypeId . " +
+
+                            "      ?sourceSpecimen <sx:classifiedAs> ?sourceTaxon . " +
+                            "      ?sourceTaxon <sx:hasName> ?sourceTaxonName . " +
+
+                            "      ?targetSpecimen <sx:classifiedAs> ?targetTaxon . " +
+                            "      ?targetTaxon <sx:hasName> ?targetTaxonName . " +
+
+                            "      ?sourceSpecimen <sx:inStage> ?sourceLifeStage . " +
+                            "      ?targetSpecimen <sx:inStage> ?targetLifeStage . " +
+
+                            "      ?targetSpecimen <sx:foundAt> ?locality . " +
+                            "      ?locality <sx:hasName> ?localityName . " +
+                            "}";
+
+            Query query = QueryFactory.create(queryString);
+            QueryExecution qe = QueryExecutionFactory.create(query, model);
+            ResultSet results = qe.execSelect();
+
+            toInteractions(results);
+            qe.close();
+        } catch (IOException e) {
+            throw new StudyImporterException("failed to access resource", e);
+        }
+    }
+
+    public void toInteractions(ResultSet results) throws StudyImporterException {
+        final InteractionListener listener = new InteractionListenerImpl(nodeFactory, getGeoNamesService(), getLogger());
+        while (results.hasNext()) {
+            QuerySolution next = results.next();
+            Iterator<String> nameIter = next.varNames();
+            Map<String, String> props = new TreeMap<>();
+            while (nameIter.hasNext()) {
+                String key = nameIter.next();
+                RDFNode rdfNode = next.get(key);
+                if (rdfNode.isURIResource()) {
+                    props.put(key, next.getResource(key).getURI());
+                } else {
+                    props.put(key, next.getLiteral(key).getString());
+                }
+            }
+            props.put(StudyImporterForTSV.STUDY_SOURCE_CITATION, getDataset().getCitation());
+            listener.newLink(props);
+        }
+    }
+
 
     private static void handleLines(LineListener listener, InputStream is) throws IOException, StudyImporterException {
         LabeledCSVParser parser = CSVTSVUtil.createLabeledTSVParser(is);
@@ -148,19 +252,6 @@ public class StudyImporterForAproxylic extends BaseStudyImporter {
         }, is);
     }
 
-    @Override
-    public void importStudy() throws StudyImporterException {
-        try {
-            getDataset().getResource("Reference.txt");
-            getDataset().getResource("SX_Association.txt");
-            getDataset().getResource("Taxon.txt");
-            getDataset().getResource("TaxonRank.txt");
-            getDataset().getResource("Occurrence.txt");
-            getDataset().getResource("Locality.txt");
-        } catch (IOException e) {
-            throw new StudyImporterException("failed to access resource", e);
-        }
-    }
 
     interface LineListener {
         void onLine(LabeledCSVParser parser) throws StudyImporterException;

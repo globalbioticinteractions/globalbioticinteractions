@@ -1,0 +1,2 @@
+Oid	Authors	Description	Comment	Year	UserId	Title	Type	Title2	Title3	Date2	Jourfull	Jourab	Pubcity	Publisher	Availability	Pubaddress	SN	Printst	Volume	Issue	Page1	Page2	Url	Keywords	OptimisticLockField	GCRecord
+{DF56D217-13B1-42B1-81A6-64553F91F7B6}	Klaus Koch			1989	340	[The beetles of Central Europe. Ecology]	0												I-III		440, 382, 389 pp.				0	
