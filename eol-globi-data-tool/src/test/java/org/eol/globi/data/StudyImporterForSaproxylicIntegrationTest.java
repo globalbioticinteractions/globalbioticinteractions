@@ -13,7 +13,7 @@ public class StudyImporterForSaproxylicIntegrationTest extends GraphDBTestCase {
     public void importAll() throws StudyImporterException {
         StudyImporter importer = new StudyImporterTestFactory(nodeFactory)
                 .instantiateImporter(StudyImporterForSaproxylic.class);
-        importer.setDataset(new DatasetImpl("some/test", URI.create("classpath:/org/eol/globi/data/aproxylic")));
+        importer.setDataset(new DatasetImpl("some/test", URI.create("classpath:/org/eol/globi/data/saproxylic")));
         importStudy(importer);
 
         assertNotNull(taxonIndex.findTaxonByName("Fagus sylvatica"));
