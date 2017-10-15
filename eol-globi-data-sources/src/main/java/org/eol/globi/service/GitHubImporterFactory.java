@@ -9,6 +9,7 @@ import org.eol.globi.data.ParserFactoryForDataset;
 import org.eol.globi.data.StudyImporter;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.data.StudyImporterForAkin;
+import org.eol.globi.data.StudyImporterForGlobalWebDb;
 import org.eol.globi.data.StudyImporterForSaproxylic;
 import org.eol.globi.data.StudyImporterForArthopodEasyCapture;
 import org.eol.globi.data.StudyImporterForBaremore;
@@ -135,6 +136,7 @@ public class GitHubImporterFactory {
                 put("wrast", StudyImporterForWrast.class);
                 put("web-of-life", StudyImporterForWebOfLife.class);
                 put("saproxylic", StudyImporterForSaproxylic.class);
+                put("globalwebdb", StudyImporterForGlobalWebDb.class);
             }
         };
         Class<? extends StudyImporter> anImporter = supportedFormats.get(format);

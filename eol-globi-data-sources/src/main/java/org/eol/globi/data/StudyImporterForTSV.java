@@ -30,6 +30,8 @@ public class StudyImporterForTSV extends BaseStudyImporter {
     public static final String INTERACTION_TYPE_NAME = "interactionTypeName";
     public static final String SOURCE_LIFE_STAGE = "sourceLifeStage";
     public static final String TARGET_LIFE_STAGE = "targetLifeStage";
+    public static final String HABITAT_NAME = "habitatName";
+    public static final String HABITAT_ID = "habitatId";
 
     public String getBaseUrl() {
         return getDataset().getArchiveURI().toString();
