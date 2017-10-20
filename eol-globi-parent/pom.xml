@@ -17,6 +17,7 @@
         <neo4j.version>1.9.9</neo4j.version>
         <mapdb.version>1.0.9</mapdb.version>
         <jena.version>1.0.2</jena.version>
+        <maven-assembly-plugin.version>3.1.0</maven-assembly-plugin.version>
         <skip.import>false</skip.import>
         <skip.export>false</skip.export>
     </properties>
