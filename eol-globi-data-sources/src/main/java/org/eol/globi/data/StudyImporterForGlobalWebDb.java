@@ -1,6 +1,7 @@
 package org.eol.globi.data;
 
 import com.Ostermiller.util.LabeledCSVParser;
+import com.Ostermiller.util.MD5;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.NullOutputStream;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -61,6 +62,7 @@ public class StudyImporterForGlobalWebDb extends BaseStudyImporter {
                     put(StudyImporterForTSV.LOCALITY_NAME, org.apache.commons.lang.StringUtils.trim(locality));
                     put(StudyImporterForTSV.INTERACTION_TYPE_NAME, InteractType.ATE.getLabel());
                     put(StudyImporterForTSV.INTERACTION_TYPE_ID, InteractType.ATE.getIRI());
+                    put(StudyImporterForTSV.REFERENCE_ID, MD5.getHashString(citation));
                     put(StudyImporterForTSV.REFERENCE_CITATION, citation);
                     put(StudyImporterForTSV.STUDY_SOURCE_CITATION, sourceCitation);
                 }};

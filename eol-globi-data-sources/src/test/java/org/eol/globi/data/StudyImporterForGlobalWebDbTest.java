@@ -70,6 +70,7 @@ public class StudyImporterForGlobalWebDbTest {
         assertThat(first.get(StudyImporterForTSV.INTERACTION_TYPE_ID), is("http://purl.obolibrary.org/obo/RO_0002470"));
         assertThat(first.get(StudyImporterForTSV.HABITAT_NAME), is("Exposed rocky shore"));
         assertThat(first.get(StudyImporterForTSV.LOCALITY_NAME), is("New England, U.S.A."));
+        assertThat(first.get(StudyImporterForTSV.REFERENCE_ID), is("df06df18abafa63a6f0473d6d0e6ce68"));
         assertThat(first.get(StudyImporterForTSV.REFERENCE_CITATION), is("B.A. Menge and J.P. Sutherland. Species Diversity Gradients: Synthesis of the Roles of Predation, Competition, and Temporal Heterogeneity. The American Naturalist, 110(973), pp. 351-369."));
         assertThat(first.get(StudyImporterForTSV.STUDY_SOURCE_CITATION), is("some source citation"));
 
@@ -80,6 +81,7 @@ public class StudyImporterForGlobalWebDbTest {
         assertThat(last.get(StudyImporterForTSV.INTERACTION_TYPE_ID), is("http://purl.obolibrary.org/obo/RO_0002470"));
         assertThat(last.get(StudyImporterForTSV.HABITAT_NAME), is("Exposed rocky shore"));
         assertThat(last.get(StudyImporterForTSV.LOCALITY_NAME), is("New England, U.S.A."));
+        assertThat(last.get(StudyImporterForTSV.REFERENCE_ID), is("df06df18abafa63a6f0473d6d0e6ce68"));
         assertThat(last.get(StudyImporterForTSV.REFERENCE_CITATION), is("B.A. Menge and J.P. Sutherland. Species Diversity Gradients: Synthesis of the Roles of Predation, Competition, and Temporal Heterogeneity. The American Naturalist, 110(973), pp. 351-369."));
         assertThat(last.get(StudyImporterForTSV.STUDY_SOURCE_CITATION), is("some source citation"));
     }
