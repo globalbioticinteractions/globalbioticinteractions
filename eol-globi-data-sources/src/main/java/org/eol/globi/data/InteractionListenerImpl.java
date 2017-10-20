@@ -82,7 +82,7 @@ class InteractionListenerImpl implements InteractionListener {
         };
 
         Predicate<Map<String, String>> hasInteractionType = (Map<String, String> l) -> {
-            String interactionTypeId = link.get(INTERACTION_TYPE_ID);
+            String interactionTypeId = l.get(INTERACTION_TYPE_ID);
             boolean isValid = InteractType.typeOf(interactionTypeId) != null;
             if (!isValid) {
                 getLogger().warn(null, "found unsupported interactionTypeId [" + interactionTypeId + "]");
@@ -90,7 +90,13 @@ class InteractionListenerImpl implements InteractionListener {
             return isValid;
         };
 
-        return hasSourceTaxon.and(hasTargetTaxon).and(hasInteractionType).test(link);
+        Predicate<Map<String, String>> hasReferenceId = (Map<String, String> l) -> StringUtils.isNotBlank(l.get(REFERENCE_ID));
+
+        return hasSourceTaxon
+                .and(hasTargetTaxon)
+                .and(hasInteractionType)
+                .and(hasReferenceId)
+                .test(link);
     }
 
     private void importValidLink(Map<String, String> link) throws StudyImporterException, IOException {
