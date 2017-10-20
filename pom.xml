@@ -28,7 +28,6 @@
             <id>generate-datasets</id>
             <modules>
                 <module>eol-globi-datasets</module>
-                <module>eol-globi-datasets-dark</module>
             </modules>
         </profile>
         <profile>
