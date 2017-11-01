@@ -404,7 +404,11 @@ public class StudyImporterForGoMexSI2 extends BaseStudyImporter {
             addOptionalProperty(parser, "PCT_VOL_CONS", SpecimenConstant.TOTAL_VOLUME_PERCENT, properties);
             addOptionalProperty(parser, "FREQ_OCC", SpecimenConstant.FREQUENCY_OF_OCCURRENCE, properties);
             addOptionalProperty(parser, "PCT_FREQ_OCC", SpecimenConstant.FREQUENCY_OF_OCCURRENCE_PERCENT, properties);
-            properties.put(PropertyAndValueDictionary.NAME, getMandatoryValue(datafile, parser, columnNamePrefix + "DATABASE_NAME"));
+            String taxonName = getMandatoryValue(datafile, parser, columnNamePrefix + "DATABASE_NAME");
+            if (StringUtils.isBlank(taxonName)) {
+                taxonName = getMandatoryValue(datafile, parser, columnNamePrefix + "SOURCE_NAME");
+            }
+            properties.put(PropertyAndValueDictionary.NAME, taxonName);
 
             String refId = getMandatoryValue(datafile, parser, "DATA_ID");
             String specimenId = getMandatoryValue(datafile, parser, "PRED_ID");

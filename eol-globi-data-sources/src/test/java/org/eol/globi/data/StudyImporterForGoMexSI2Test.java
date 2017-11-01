@@ -52,6 +52,23 @@ public class StudyImporterForGoMexSI2Test {
     }
 
     @Test
+    public void importSinglePreyMissingDatabaseName() throws IOException, StudyImporterException {
+        final Map<String, String> parsedProperties = new HashMap<String, String>();
+        String predOneLine = "DATA_ID,PRED_ID,PREY_SOURCE_NAME,PREY_DATABASE_NAME,PHYSIOLOG_STATE,SED_ORIGIN,PREY_PARTS,PREY_LIFE_HIST_STAGE,PREY_COND_INDEX,PREY_SEX,PREY_SEX_RATIO,PREY_LEN_TYPE,PREY_MIN_LEN,PREY_MAX_LEN,PREY_MN_LEN,PREY_MIN_WIDTH,PREY_MAX_WIDTH,PREY_MN_WIDTH,BIOMASS,BIOMASS_QUALIFIER,PCT_BIOMASS,PCT_BIOMASS_QUALIFIER,N_CONS,N_CONS_QUALIFIER,PCT_N_CONS,PCT_N_CONS_QUALIFIER,VOL_CONS,VOL_CONS_QUALIFIER,PCT_VOL_CONS,PCT_VOL_CONS_QUALIFIER,FREQ_OCC,FREQ_OCC_QUALIFIER,PCT_FREQ_OCC,PCT_FREQ_OCC_QUALIFIER,IRI,PCT_IRI,IRIa,IIR,E,PREY_NOTES,ENTRY_DATE,ENTRY_PERSON,EDITED_DATE,DATA_EDITOR,MODIFY_DATE,DATA_MODIFIER\n" +
+                "ACT_16R,Cchr.1,Crustacea,,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,1.245,NA,0.15,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Jim Simons,NA,Jim Simons,27/06/2016,Theresa Mitchell\n";
+        StudyImporterForGoMexSI2.parseSpecimen("test.txt", "PREY_", new ParseEventHandler() {
+            @Override
+            public void onSpecimen(String predatorUID, Map<String, String> properties) {
+                parsedProperties.putAll(properties);
+            }
+        }, new LabeledCSVParser(new CSVParser(new StringReader(predOneLine))));
+
+        assertThat(parsedProperties.get("name"), is("Crustacea"));
+        assertThat(parsedProperties.get("GOMEXSI:PREY_SOURCE_NAME"), is("Crustacea"));
+        assertThat(parsedProperties.get("GOMEXSI:PREY_DATABASE_NAME"), is(""));
+    }
+
+    @Test
     public void importSinglePreyWithPCTValues() throws IOException, StudyImporterException {
         final Map<String, String> parsedProperties = new HashMap<String, String>();
         String predOneLine = "DATA_ID,PRED_ID,PREY_SOURCE_NAME,PREY_DATABASE_NAME,PHYSIOLOG_STATE,SED_ORIGIN,PREY_PARTS,PREY_LIFE_HIST_STAGE,PREY_COND_INDEX,PREY_SEX,PREY_SEX_RATIO,PREY_LEN_TYPE,PREY_MIN_LEN,PREY_MAX_LEN,PREY_MN_LEN,PREY_MIN_WIDTH,PREY_MAX_WIDTH,PREY_MN_WIDTH,BIOMASS,BIOMASS_QUALIFIER,PCT_BIOMASS,PCT_BIOMASS_QUALIFIER,N_CONS,N_CONS_QUALIFIER,PCT_N_CONS,PCT_N_CONS_QUALIFIER,VOL_CONS,VOL_CONS_QUALIFIER,PCT_VOL_CONS,PCT_VOL_CONS_QUALIFIER,FREQ_OCC,FREQ_OCC_QUALIFIER,PCT_FREQ_OCC,PCT_FREQ_OCC_QUALIFIER,IRI,PCT_IRI,IRIa,IIR,E,PREY_NOTES,ENTRY_DATE,ENTRY_PERSON,EDITED_DATE,DATA_EDITOR,MODIFY_DATE,DATA_MODIFIER\n" +
