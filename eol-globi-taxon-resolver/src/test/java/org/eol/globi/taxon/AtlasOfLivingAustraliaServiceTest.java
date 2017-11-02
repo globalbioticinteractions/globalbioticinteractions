@@ -73,7 +73,6 @@ public class AtlasOfLivingAustraliaServiceTest {
         assertThat(enrich.get(PropertyAndValueDictionary.COMMON_NAMES), is("Red Kangaroo @en"));
     }
 
-    @Ignore("reported issue with ALA using https://biodiversity.org.au/nsl/services/node/apni/7845073 feedback button")
     @Test
     public void lookupByNameSpermacoce() throws PropertyEnricherException {
         HashMap<String, String> props = new HashMap<String, String>();
@@ -85,7 +84,7 @@ public class AtlasOfLivingAustraliaServiceTest {
         assertThat(actualExternalId, is("http://id.biodiversity.org.au/node/apni/7845073"));
         assertThat(enrich.get(PropertyAndValueDictionary.PATH), is("Plantae | Charophyta | Equisetopsida | Magnoliidae | Gentianales | Rubiaceae | Spermacoce"));
         assertThat(enrich.get(PropertyAndValueDictionary.PATH_NAMES), is("kingdom | phylum | class | subclass | order | family | genus"));
-        assertThat(enrich.get(PropertyAndValueDictionary.PATH_IDS), is("http://id.biodiversity.org.au/node/apni/8807563 | http://id.biodiversity.org.au/node/apni/8807562 | http://id.biodiversity.org.au/node/apni/8807565 | http://id.biodiversity.org.au/node/apni/8807566 | http://id.biodiversity.org.au/node/apni/8807368 | http://id.biodiversity.org.au/node/apni/8807273 | http://id.biodiversity.org.au/node/apni/7845073"));
+        assertThat(enrich.get(PropertyAndValueDictionary.PATH_IDS), is("http://id.biodiversity.org.au/node/apni/9443092 | http://id.biodiversity.org.au/node/apni/9443091 | http://id.biodiversity.org.au/node/apni/9443090 | http://id.biodiversity.org.au/node/apni/9443089 | http://id.biodiversity.org.au/node/apni/9387333 | http://id.biodiversity.org.au/node/apni/8807273 | http://id.biodiversity.org.au/node/apni/7845073"));
         assertThat(enrich.get(PropertyAndValueDictionary.COMMON_NAMES), is(nullValue()));
 
         assertThat(ExternalIdUtil.urlForExternalId(actualExternalId), is("http://id.biodiversity.org.au/node/apni/7845073"));
