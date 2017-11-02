@@ -104,6 +104,7 @@ public class AtlasOfLivingAustraliaServiceTest {
         assertThat(enrich.get(PropertyAndValueDictionary.COMMON_NAMES), is(nullValue()));
     }
 
+    @Ignore(value = "see https://github.com/AtlasOfLivingAustralia/bie-index/issues/165")
     @Test
     public void lookupTaxonByName2() throws PropertyEnricherException {
         HashMap<String, String> props = new HashMap<String, String>() {{
