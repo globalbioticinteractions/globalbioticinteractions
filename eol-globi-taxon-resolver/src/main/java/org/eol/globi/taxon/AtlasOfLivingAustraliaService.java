@@ -83,7 +83,11 @@ public class AtlasOfLivingAustraliaService implements PropertyEnricher {
                         if (result.has("name") && result.has("idxtype") && result.has("guid")) {
                             if (StringUtils.equals(taxonName, result.get("name").getTextValue())
                                     && StringUtils.equals("TAXON", result.get("idxtype").getTextValue())) {
-                                guid = result.get("guid").getTextValue();
+                                if (result.has("acceptedConceptID")) {
+                                    guid = result.get("acceptedConceptID").asText();
+                                } else {
+                                    guid = result.get("guid").getTextValue();
+                                }
                                 break;
                             }
                         }
