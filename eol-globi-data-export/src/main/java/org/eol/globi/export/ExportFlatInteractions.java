@@ -32,6 +32,11 @@ public class ExportFlatInteractions implements GraphExporter {
             ", sourceTaxon.path? as sourceTaxonPathNames" +
             ", sourceTaxon.pathIds? as sourceTaxonPathIds" +
             ", sourceTaxon.pathNames? as sourceTaxonPathRankNames" +
+            ", sourceSpecimen.externalId? as sourceId" +
+            ", sourceSpecimen.occurrenceID? as sourceOccurrenceId" +
+            ", sourceSpecimen.catalogNumber? as sourceCatalogNumber" +
+            ", sourceSpecimen.basisOfRecordId? as sourceBasisOfRecordId" +
+            ", sourceSpecimen.basisOfRecordLabel? as sourceBasisOfRecordName" +
             ", sourceSpecimen." + SpecimenConstant.LIFE_STAGE_ID + "? as sourceLifeStageId" +
             ", sourceSpecimen." + SpecimenConstant.LIFE_STAGE_LABEL + "? as sourceLifeStageName" +
             ", sourceSpecimen." + SpecimenConstant.BODY_PART_ID + "? as sourceBodyPartId" +
@@ -47,6 +52,11 @@ public class ExportFlatInteractions implements GraphExporter {
             ", targetTaxon.path? as targetTaxonPathNames" +
             ", targetTaxon.pathIds? as targetTaxonPathIds" +
             ", targetTaxon.pathNames? as targetTaxonPathRankNames" +
+            ", targetSpecimen.externalId? as targetId" +
+            ", targetSpecimen.occurrenceID? as targetOccurrenceId" +
+            ", targetSpecimen.catalogNumber? as targetCatalogNumber" +
+            ", targetSpecimen.basisOfRecordId? as targetBasisOfRecordId" +
+            ", targetSpecimen.basisOfRecordLabel? as targetBasisOfRecordName" +
             ", targetSpecimen." + SpecimenConstant.LIFE_STAGE_ID + "? as targetLifeStageId" +
             ", targetSpecimen." + SpecimenConstant.LIFE_STAGE_LABEL + "? as targetLifeStageName" +
             ", targetSpecimen." + SpecimenConstant.BODY_PART_ID + "? as targetBodyPartId" +
