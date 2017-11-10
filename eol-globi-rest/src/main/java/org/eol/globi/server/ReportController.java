@@ -71,18 +71,17 @@ public class ReportController {
 
     @RequestMapping(value = "/reports/sources", method = RequestMethod.GET)
     @ResponseBody
-    public CypherQuery sources(@RequestParam(required = false) final String source,
+    public CypherQuery sources(@RequestParam(required = false) final String sourceId,
                                final HttpServletRequest request) throws IOException {
-        return sourceQuery(request, "source", source);
+        return sourceQuery(request, sourceId);
     }
 
-    private CypherQuery sourceQuery(HttpServletRequest request, String searchKey, final String searchValue) {
-        String searchMatch = searchKey + "={source}";
-        if (StringUtils.isBlank(searchValue)) {
-            searchMatch = "'" + searchKey + ":*'";
+    private CypherQuery sourceQuery(HttpServletRequest request, final String sourceId) {
+        String searchMatch = "sourceId" + "={sourceId}";
+        if (StringUtils.isBlank(sourceId)) {
+            searchMatch = "'" + "sourceId" + ":*'";
         }
         String cypherQuery = "START report = node:reports(" + searchMatch + ") "
-            + " WHERE not(has(report.title)) AND has(report." + searchKey + ")"
             + " RETURN report.citation? as " + ResultField.STUDY_CITATION
             + ", report.externalId? as " + ResultField.STUDY_URL
             + ", report.doi? as " + ResultField.STUDY_DOI
@@ -94,8 +93,9 @@ public class ReportController {
             + ", report.nTaxaNoMatch? as " + ResultField.NUMBER_OF_DISTINCT_TAXA_NO_MATCH
             + ", report.sourceId? as " + ResultField.STUDY_SOURCE_ID;
 
-        Map<String, String> params = StringUtils.isBlank(searchValue) ? CypherQueryBuilder.EMPTY_PARAMS : new HashMap<String, String>() {{
-            put("source", searchValue);
+        String sourceIdActual = StringUtils.countMatches(sourceId, ":") > 0 ? sourceId : "globi:" + sourceId;
+        Map<String, String> params = StringUtils.isBlank(sourceId) ? CypherQueryBuilder.EMPTY_PARAMS : new HashMap<String, String>() {{
+            put("sourceId", sourceIdActual);
         }};
 
         return CypherQueryBuilder.createPagedQuery(request, new CypherQuery(cypherQuery, params));
