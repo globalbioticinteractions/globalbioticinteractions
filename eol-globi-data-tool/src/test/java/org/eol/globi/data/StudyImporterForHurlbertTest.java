@@ -12,6 +12,7 @@ import java.io.InputStream;
 import java.net.URI;
 import java.util.List;
 
+import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.hamcrest.core.StringStartsWith.startsWith;
@@ -40,6 +41,11 @@ public class StudyImporterForHurlbertTest extends GraphDBTestCase {
         assertThat(preyTaxon, is(notNullValue()));
         assertThat(preyTaxon.getName(), is("Ictalurus"));
         assertThat(preyTaxon.getExternalId(), is("ITIS:163996"));
+
+        preyTaxon = taxonIndex.findTaxonByName("Cyprinus carpio");
+        assertThat(preyTaxon, is(notNullValue()));
+        assertThat(preyTaxon.getName(), is("Cyprinus carpio"));
+        assertThat(preyTaxon.getExternalId(), not(is("ITIS:unverified")));
     }
 
     public static InputStream getResource() {

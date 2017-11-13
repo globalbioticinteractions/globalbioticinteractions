@@ -5,6 +5,7 @@ import com.univocity.parsers.tsv.TsvParser;
 import com.univocity.parsers.tsv.TsvParserSettings;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eol.globi.domain.Specimen;
@@ -110,7 +111,7 @@ public class StudyImporterForHurlbert extends BaseStudyImporter {
 
             Taxon preyTaxon = new TaxonImpl(preyTaxonName);
             String preyNameId = StringUtils.trim(columnValueOrNull(record, "Prey_Name_ITIS_ID"));
-            if (StringUtils.isNotBlank(preyNameId)) {
+            if (NumberUtils.isDigits(preyNameId)) {
                 preyTaxon.setExternalId(TaxonomyProvider.ITIS.getIdPrefix() + preyNameId);
             }
             Specimen preySpecimen = nodeFactory.createSpecimen(study, preyTaxon);
