@@ -124,6 +124,9 @@ public class RequestHelper {
     }
 
     public static void addSpatialWhereClause(List<LatLng> points, StringBuilder query) {
+        if (points.size() == 1 || points.size() == 2) {
+            query.append("has(loc.latitude) AND has(loc.longitude) AND ");
+        }
         if (points.size() == 1) {
             query.append("loc.latitude = ");
             query.append(points.get(0).getLat());
