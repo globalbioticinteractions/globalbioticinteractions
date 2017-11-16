@@ -17,6 +17,7 @@
     <properties>
         <globi.tool.version>0.6-SNAPSHOT</globi.tool.version>
         <globi.taxa.version>0.1</globi.taxa.version>
+        <globi.tsv.version>1.0-SNAPSHOT</globi.tsv.version>
         <github.client.id>specified on commandline</github.client.id>
         <github.client.secret>specified on commandline</github.client.secret>
         <shapefiles.dir>${project.build.directory}/shapefiles</shapefiles.dir>
@@ -292,7 +293,7 @@
                                         <artifactItem>
                                             <groupId>${project.groupId}</groupId>
                                             <artifactId>${project.artifactId}</artifactId>
-                                            <version>${globi.taxa.version}</version>
+                                            <version>${globi.tsv.version}</version>
                                             <classifier>tsv</classifier>
                                             <type>zip</type>
                                             <overWrite>false</overWrite>
