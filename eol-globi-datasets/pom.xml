@@ -16,7 +16,7 @@
 
     <properties>
         <globi.tool.version>0.6-SNAPSHOT</globi.tool.version>
-        <globi.taxa.version>1.0-SNAPSHOT</globi.taxa.version>
+        <globi.taxa.version>0.1</globi.taxa.version>
         <github.client.id>specified on commandline</github.client.id>
         <github.client.secret>specified on commandline</github.client.secret>
         <shapefiles.dir>${project.build.directory}/shapefiles</shapefiles.dir>
@@ -282,10 +282,9 @@
                                             <outputDirectory>${shapefiles.dir}</outputDirectory>
                                         </artifactItem>
                                         <artifactItem>
-                                            <groupId>${project.groupId}</groupId>
-                                            <artifactId>${project.artifactId}</artifactId>
+                                            <groupId>org.globalbioticinteractions</groupId>
+                                            <artifactId>taxon</artifactId>
                                             <version>${globi.taxa.version}</version>
-                                            <classifier>taxa</classifier>
                                             <type>zip</type>
                                             <overWrite>false</overWrite>
                                             <outputDirectory>${shapefiles.dir}/taxa</outputDirectory>
