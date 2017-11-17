@@ -15,14 +15,14 @@ public class RequestHelperTest {
 
     @Test
     public void parseSearch() {
-        Map<String, String[]> paramMap = new HashMap<String, String[]>();
+        Map<String, String[]> paramMap = new HashMap<>();
         List<LatLng> latLngs = RequestHelper.parseSpatialSearchParams(paramMap);
         assertThat(latLngs.size(), Is.is(0));
     }
 
     @Test
     public void parseSearchSinglePoint() {
-        Map<String, String[]> paramMap = new HashMap<String, String[]>();
+        Map<String, String[]> paramMap = new HashMap<>();
         paramMap.put("lat", new String[]{"12.2"});
         paramMap.put("lng", new String[]{"12.1"});
         List<LatLng> points = RequestHelper.parseSpatialSearchParams(paramMap);
@@ -32,7 +32,9 @@ public class RequestHelperTest {
 
         StringBuilder clause = new StringBuilder();
         RequestHelper.addSpatialClause(points, clause, QueryType.MULTI_TAXON_ALL);
-        assertThat(clause.toString().trim().replaceAll("\\s+", " "), Is.is(", sourceSpecimen-[:COLLECTED_AT]->loc WHERE loc.latitude = 12.2" +
+        assertThat(clause.toString().trim().replaceAll("\\s+", " "), Is.is(", sourceSpecimen-[:COLLECTED_AT]->loc " +
+                "WHERE has(loc.latitude) AND has(loc.longitude)" +
+                " AND loc.latitude = 12.2" +
                 " AND loc.longitude = 12.1"));
     }
 
@@ -47,7 +49,10 @@ public class RequestHelperTest {
         StringBuilder clause = new StringBuilder();
          RequestHelper.addSpatialClause(points, clause, QueryType.MULTI_TAXON_ALL);
         assertThat(clause.toString().trim().replaceAll("\\s+", " "),
-                Is.is(", sourceSpecimen-[:COLLECTED_AT]->loc WHERE loc.latitude < 10.0" +
+                Is.is(", sourceSpecimen-[:COLLECTED_AT]->loc WHERE" +
+                        " has(loc.latitude)" +
+                        " AND has(loc.longitude)" +
+                        " AND loc.latitude < 10.0" +
                         " AND loc.longitude > -20.0" +
                         " AND loc.latitude > -10.0" +
                         " AND loc.longitude < 20.0"));
@@ -55,7 +60,7 @@ public class RequestHelperTest {
 
     @Test
     public void buildCypherSpatialQueryClause() {
-        /**
+        /*
          * from http://www.opensearch.org/Specifications/OpenSearch/Extensions/Geo/1.0/Draft_2
          * and https://github.com/jhpoelen/eol-globi-data/issues/10
          *           N <---
@@ -79,7 +84,7 @@ public class RequestHelperTest {
 
     @Test
     public void buildCypherSpatialQueryClausePoint() {
-        /**
+        /*
          * from http://www.opensearch.org/Specifications/OpenSearch/Extensions/Geo/1.0/Draft_2
          */
         Map<String, String[]> paramMap = new HashMap<String, String[]>() {
@@ -95,7 +100,10 @@ public class RequestHelperTest {
         StringBuilder clause = new StringBuilder();
         RequestHelper.addSpatialClause(points, clause, QueryType.MULTI_TAXON_ALL);
         assertThat(clause.toString().trim().replaceAll("\\s+", " "),
-                Is.is(", sourceSpecimen-[:COLLECTED_AT]->loc WHERE loc.latitude = 10.0" +
+                Is.is(", sourceSpecimen-[:COLLECTED_AT]->loc WHERE" +
+                        " has(loc.latitude)" +
+                        " AND has(loc.longitude)" +
+                        " AND loc.latitude = 10.0" +
                         " AND loc.longitude = 12.4"));
     }
 
