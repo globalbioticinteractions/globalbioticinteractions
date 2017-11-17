@@ -1171,7 +1171,7 @@ public class CypherQueryBuilderTest {
 
     @Test
     public void locationsNoConstraints() {
-        assertThat(locations().getQuery(), is("START loc = node:locations('latitude:*') RETURN loc.latitude as latitude, loc.longitude as longitude, loc.footprintWKT? as footprintWKT"));
+        assertThat(locations().getQuery(), is("START loc = node:locations('latitude:*') RETURN loc.latitude? as latitude, loc.longitude? as longitude, loc.footprintWKT? as footprintWKT"));
     }
 
     @Test
@@ -1184,7 +1184,7 @@ public class CypherQueryBuilderTest {
 
         final CypherQuery locationsQuery = locations(params);
 
-        assertThat(locationsQuery.getQuery(), is(EXPECTED_ACCORDING_TO_START_CLAUSE + "MATCH study-[:COLLECTED]->specimen-[:COLLECTED_AT]->location WITH DISTINCT(location) as loc RETURN loc.latitude as latitude, loc.longitude as longitude, loc.footprintWKT? as footprintWKT"));
+        assertThat(locationsQuery.getQuery(), is(EXPECTED_ACCORDING_TO_START_CLAUSE + "MATCH study-[:COLLECTED]->specimen-[:COLLECTED_AT]->location WITH DISTINCT(location) as loc RETURN loc.latitude? as latitude, loc.longitude? as longitude, loc.footprintWKT? as footprintWKT"));
         assertThat(locationsQuery.getParams().toString(), is("{accordingTo=.*(\\\\Qsome source\\\\E).*}"));
     }
 
