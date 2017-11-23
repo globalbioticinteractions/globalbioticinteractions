@@ -28,7 +28,7 @@ public class DOIResolverImpl implements DOIResolver {
     private final String baseURL;
 
     public DOIResolverImpl() {
-        this("http://search.crossref.org/links");
+        this("https://search.crossref.org/links");
     }
 
     public DOIResolverImpl(String baseURL) {
