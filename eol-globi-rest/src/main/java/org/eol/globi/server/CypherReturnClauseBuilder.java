@@ -3,6 +3,7 @@ package org.eol.globi.server;
 import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.domain.LocationConstant;
 import org.eol.globi.domain.SpecimenConstant;
+import org.eol.globi.server.util.RequestHelper;
 import org.eol.globi.server.util.ResultField;
 import org.eol.globi.server.util.ResultObject;
 
@@ -15,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static org.eol.globi.server.CypherQueryBuilder.collectParamValues;
 import static org.eol.globi.server.util.ResultField.*;
 
 public class CypherReturnClauseBuilder {
@@ -102,7 +104,11 @@ public class CypherReturnClauseBuilder {
         appendReturnClause(query, queryType, requestedReturnFields);
 
         List<String> counters = QueryType.aggregateCountersIn(requestedReturnFields);
-        if (!counters.isEmpty()) {
+        // see #330 - avoid row scan in combination with order by
+        if (!counters.isEmpty()
+                && (collectParamValues(parameterMap, ParamName.SOURCE_TAXON).isEmpty()
+                || collectParamValues(parameterMap, ParamName.TARGET_TAXON).isEmpty())
+                ) {
             query.append(" ORDER BY ");
             query.append(StringUtils.join(counters.stream().map(c -> c + " DESC").collect(Collectors.toList()), ", "));
 
@@ -130,7 +136,7 @@ public class CypherReturnClauseBuilder {
     }
 
     private static void appendTaxonIdPrefixClause(StringBuilder query, QueryType queryType, Map parameterMap, List<String> requestedReturnFields) {
-        List<String> prefixes = CypherQueryBuilder.collectParamValues(parameterMap, ParamName.TAXON_ID_PREFIX);
+        List<String> prefixes = collectParamValues(parameterMap, ParamName.TAXON_ID_PREFIX);
         if (!prefixes.isEmpty()) {
             String sourceLabel = ResultObject.SOURCE_TAXON.getLabel();
 

@@ -164,7 +164,7 @@ public class CypherQueryBuilder {
                 builder.append(", ").append(FIELD_MAP.get(fieldName)).append("? as ").append(fieldName);
             }
         }
-        return new CypherQuery(builder.toString(), new HashMap<String, String>());
+        return new CypherQuery(builder.toString(), new HashMap<>());
     }
 
     protected static List<String> collectRequestedFields(Map params) {

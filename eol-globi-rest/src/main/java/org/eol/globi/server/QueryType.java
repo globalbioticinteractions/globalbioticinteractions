@@ -39,10 +39,10 @@ public enum QueryType {
         List<String> accordingTo = CypherQueryBuilder.collectParamValues(parameterMap, ParamName.ACCORDING_TO);
         List<String> bbox = CypherQueryBuilder.collectParamValues(parameterMap, ParamName.BBOX);
         List<String> fields = CypherQueryBuilder.collectRequestedFields(parameterMap);
-        return accordingTo.isEmpty() && bbox.isEmpty() && !containsAggregateCounters(fields);
+        return accordingTo.isEmpty() && bbox.isEmpty() && !containsAggregateCountersExcludingInteractionCount(fields);
     }
 
-    public static boolean containsAggregateCounters(List<String> fields) {
+    public static boolean containsAggregateCountersExcludingInteractionCount(List<String> fields) {
         return !aggregateCountersExcludingInteractionCountIn(fields).isEmpty();
     }
 
