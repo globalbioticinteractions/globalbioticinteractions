@@ -103,8 +103,8 @@ public class CypherReturnClauseBuilder {
 
         List<String> counters = QueryType.aggregateCountersIn(requestedReturnFields);
         if (!counters.isEmpty()) {
-//            query.append(" ORDER BY ");
-//            query.append(StringUtils.join(counters.stream().map(c -> c + " DESC").collect(Collectors.toList()), ", "));
+            query.append(" ORDER BY ");
+            query.append(StringUtils.join(counters.stream().map(c -> c + " DESC").collect(Collectors.toList()), ", "));
 
         }
     }
