@@ -983,6 +983,23 @@ public class CypherQueryBuilderTest {
     }
 
     @Test
+    public void findInteractionForAnimaliaAndAnimalia() throws IOException {
+        HashMap<String, String[]> params = new HashMap<String, String[]>() {
+            {
+                put("sourceTaxon", new String[]{"Animalia"});
+                put("targetTaxon", new String[]{"Animalia"});
+                put("interactionType", new String[]{"interactsWith"});
+                put("field", new String[]{"source_taxon_name", "source_taxon_external_id", "target_taxon_name", "target_taxon_external_id", "interaction_type", "number_of_interactions"});
+            }
+        };
+
+        String expectedQuery = "START sourceTaxon = node:taxonPaths({source_taxon_name}) MATCH sourceTaxon-[interaction:INTERACTS_WITH|PREYS_UPON|PARASITE_OF|HAS_HOST|HOST_OF|POLLINATES|PERCHING_ON|ATE|SYMBIONT_OF|PREYED_UPON_BY|POLLINATED_BY|EATEN_BY|HAS_PARASITE|PERCHED_ON_BY|HAS_PATHOGEN|PATHOGEN_OF|HAS_VECTOR|VECTOR_OF|VISITED_BY|VISITS|FLOWERS_VISITED_BY|VISITS_FLOWERS_OF|INHABITED_BY|INHABITS|ADJACENT_TO|CREATES_HABITAT_FOR|IS_HABITAT_OF|LIVED_ON_BY|LIVES_ON|LIVED_INSIDE_OF_BY|LIVES_INSIDE_OF|LIVED_NEAR_BY|LIVES_NEAR|LIVED_UNDER_BY|LIVES_UNDER|LIVES_WITH|ENDOPARASITE_OF|HAS_ENDOPARASITE|HYPERPARASITE_OF|HAS_HYPERPARASITE|HYPERPARASITOID_OF|HAS_HYPERPARASITOID|ECTOPARASITE_OF|HAS_ECTOPARASITE|KLEPTOPARASITE_OF|HAS_KLEPTOPARASITE|PARASITOID_OF|HAS_PARASITOID|ENDOPARASITOID_OF|HAS_ENDOPARASITOID|ECTOPARASITOID_OF|HAS_ECTOPARASITOID|GUEST_OF|HAS_GUEST_OF|FARMED_BY|FARMS|DAMAGED_BY|DAMAGES|DISPERSAL_VECTOR_OF|HAS_DISPERAL_VECTOR|KILLED_BY|KILLS|EPIPHITE_OF|HAS_EPIPHITE|LAYS_EGGS_ON|HAS_EGGS_LAYED_ON_BY]->targetTaxon WHERE (has(targetTaxon.externalIds) AND targetTaxon.externalIds =~ '(.*(Animalia).*)') RETURN sourceTaxon.name as source_taxon_name,sourceTaxon.externalId? as source_taxon_external_id,targetTaxon.name as target_taxon_name,targetTaxon.externalId? as target_taxon_external_id,interaction.label? as interaction_type,interaction.count as number_of_interactions ORDER BY number_of_interactions DESC";
+        CypherQuery query = buildInteractionQuery(params, MULTI_TAXON_DISTINCT_BY_NAME_ONLY);
+        assertThat(query.getQuery(), is(expectedQuery));
+        assertThat(query.getParams().toString(), is("{source_taxon_name=path:\\\"Animalia\\\", target_taxon_name=path:\\\"Animalia\\\"}"));
+    }
+
+    @Test
     public void findInteractionForSourceTaxaOnlyNoLocation() throws IOException {
         HashMap<String, String[]> params = new HashMap<String, String[]>() {
             {

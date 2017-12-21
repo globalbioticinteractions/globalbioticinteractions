@@ -43,12 +43,21 @@ public enum QueryType {
     }
 
     public static boolean containsAggregateCounters(List<String> fields) {
-        return !aggregateCountersIn(fields).isEmpty();
+        return !aggregateCountersExcludingInteractionCountIn(fields).isEmpty();
+    }
+
+    public static List<String> aggregateCountersExcludingInteractionCountIn(List<String> fields) {
+        List<String> aggregateCounters = Arrays.asList(ResultField.NUMBER_OF_SOURCES.getLabel(), ResultField.NUMBER_OF_STUDIES.getLabel());
+        return aggregateCountersIn(fields, aggregateCounters);
     }
 
     public static List<String> aggregateCountersIn(List<String> fields) {
-        List<String> aggregateCounters = Arrays.asList(ResultField.NUMBER_OF_SOURCES.getLabel(), ResultField.NUMBER_OF_STUDIES.getLabel(), ResultField.NUMBER_OF_INTERACTIONS.getLabel());
-        return aggregateCounters.stream().filter(fields::contains).collect(Collectors.toList());
+        List<String> counterLabels = Arrays.asList(ResultField.NUMBER_OF_SOURCES.getLabel(), ResultField.NUMBER_OF_STUDIES.getLabel(), ResultField.NUMBER_OF_INTERACTIONS.getLabel());
+        return aggregateCountersIn(fields, counterLabels);
+    }
+
+    public static List<String> aggregateCountersIn(List<String> fields, List<String> counterLabels) {
+        return counterLabels.stream().filter(fields::contains).collect(Collectors.toList());
     }
 
     public static boolean usesSpecimenData(QueryType queryType) {
