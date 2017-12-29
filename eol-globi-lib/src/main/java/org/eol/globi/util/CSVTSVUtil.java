@@ -106,8 +106,12 @@ public class CSVTSVUtil {
     }
 
     public static List<String> escapeValues(Stream<String> stream) {
-        return stream.map(value -> value == null ? "" : value.replaceAll("[\t\r\n]+", " "))
-                .map(StringUtils::trim)
+        return mapEscapedValues(stream)
                 .collect(Collectors.toList());
+    }
+
+    public static Stream<String> mapEscapedValues(Stream<String> stream) {
+        return stream.map(value -> StringUtils.isBlank(value) ? "" : value.replaceAll("[\t\r\n]+", " "))
+                .map(StringUtils::trim);
     }
 }

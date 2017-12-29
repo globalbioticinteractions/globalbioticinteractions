@@ -30,4 +30,7 @@ public class PropertyAndValueDictionary {
     public static final String IRI = "iri";
     public static final String NUMBER_OF_DISTINCT_TAXA_NO_MATCH = "nTaxaNoMatch";
     public static final String NAME_IDS = "nameIds";
+    public static final String NAME_SOURCE = "nameSource";
+    public static final String NAME_SOURCE_URL = "nameSourceUrl";
+    public static final String NAME_SOURCE_ACCESSED_AT = "nameSourceAccessedAt";
 }

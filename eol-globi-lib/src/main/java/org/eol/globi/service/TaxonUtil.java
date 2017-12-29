@@ -41,6 +41,11 @@ public class TaxonUtil {
             properties.put(STATUS_ID, status.getId());
             properties.put(STATUS_LABEL, status.getName());
         }
+
+        properties.put(NAME_SOURCE, taxon.getNameSource());
+        properties.put(NAME_SOURCE_URL, taxon.getNameSourceURL());
+        properties.put(NAME_SOURCE_ACCESSED_AT, taxon.getNameSourceAccessedAt());
+
         return Collections.unmodifiableMap(properties);
     }
 
@@ -68,6 +73,10 @@ public class TaxonUtil {
         if (StringUtils.isNotBlank(statusId) && StringUtils.isNotBlank(statusLabel)) {
             taxon.setStatus(new Term(statusId, statusLabel));
         }
+
+        taxon.setNameSource(properties.get(NAME_SOURCE));
+        taxon.setNameSourceURL(properties.get(NAME_SOURCE_URL));
+        taxon.setNameSourceAccessedAt(properties.get(NAME_SOURCE_ACCESSED_AT));
     }
 
     public static Taxon enrich(PropertyEnricher enricher, Taxon taxon) throws PropertyEnricherException {

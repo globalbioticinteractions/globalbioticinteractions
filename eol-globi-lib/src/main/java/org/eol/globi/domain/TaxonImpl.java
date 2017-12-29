@@ -11,6 +11,9 @@ public class TaxonImpl implements Taxon {
     private Term status;
     private String thumbnailUrl;
     private String externalUrl;
+    private String nameSource;
+    private String nameSourceURL;
+    private String nameSourceAccessedAt;
 
     public TaxonImpl(String name, String externalId) {
         this.name = name;
@@ -118,6 +121,36 @@ public class TaxonImpl implements Taxon {
     @Override
     public String getExternalUrl() {
         return externalUrl;
+    }
+
+    @Override
+    public void setNameSource(String nameSource) {
+        this.nameSource = nameSource;
+    }
+
+    @Override
+    public String getNameSource() {
+        return this.nameSource;
+    }
+
+    @Override
+    public void setNameSourceURL(String nameSourceURL) {
+        this.nameSourceURL = nameSourceURL;
+    }
+
+    @Override
+    public String getNameSourceURL() {
+        return this.nameSourceURL;
+    }
+
+    @Override
+    public void setNameSourceAccessedAt(String dateString) {
+        this.nameSourceAccessedAt = dateString;
+    }
+
+    @Override
+    public String getNameSourceAccessedAt() {
+        return this.nameSourceAccessedAt;
     }
 
     @Override

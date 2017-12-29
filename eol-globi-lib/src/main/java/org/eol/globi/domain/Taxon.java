@@ -40,4 +40,16 @@ public interface Taxon {
     String getThumbnailUrl();
 
     String getExternalUrl();
+
+    void setNameSource(String nameSource);
+
+    String getNameSource();
+
+    void setNameSourceURL(String nameSourceURL);
+
+    String getNameSourceURL();
+
+    void setNameSourceAccessedAt(String dateString);
+
+    String getNameSourceAccessedAt();
 }

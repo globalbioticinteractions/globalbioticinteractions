@@ -127,4 +127,34 @@ public class TaxonNode extends NamedNode implements Taxon {
         return getUnderlyingNode().hasProperty(EXTERNAL_URL) ?
                 (String) getUnderlyingNode().getProperty(EXTERNAL_URL) : null;
     }
+
+    @Override
+    public void setNameSource(String nameSource) {
+
+    }
+
+    @Override
+    public String getNameSource() {
+        return null;
+    }
+
+    @Override
+    public void setNameSourceURL(String nameSourceURL) {
+
+    }
+
+    @Override
+    public String getNameSourceURL() {
+        return null;
+    }
+
+    @Override
+    public void setNameSourceAccessedAt(String dateString) {
+
+    }
+
+    @Override
+    public String getNameSourceAccessedAt() {
+        return null;
+    }
 }

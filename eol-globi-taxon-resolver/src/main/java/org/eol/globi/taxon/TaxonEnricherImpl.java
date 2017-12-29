@@ -2,15 +2,20 @@ package org.eol.globi.taxon;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.eol.globi.Version;
+import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.service.PropertyEnricher;
 import org.eol.globi.service.PropertyEnricherException;
 import org.eol.globi.service.TaxonUtil;
+import org.eol.globi.util.DateUtil;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 public class TaxonEnricherImpl implements PropertyEnricher {
     private static final Log LOG = LogFactory.getLog(TaxonEnricherImpl.class);
@@ -19,6 +24,16 @@ public class TaxonEnricherImpl implements PropertyEnricher {
     private final HashMap<Class, Integer> errorCounts = new HashMap<Class, Integer>();
     private boolean hasLoggedError = false;
 
+    private Date date = null;
+
+    Date getDate() {
+        return date == null ? new Date() : date;
+    }
+
+    void setDate(Date date) {
+        this.date = date;
+    }
+
     @Override
     public Map<String, String> enrich(final Map<String, String> properties) throws PropertyEnricherException {
         Map<String, String> enrichedProperties = new HashMap<String, String>(properties);
@@ -26,6 +41,14 @@ public class TaxonEnricherImpl implements PropertyEnricher {
             try {
                 enrichedProperties = enrichTaxonWithPropertyValue(errorCounts, service, properties);
                 if (TaxonUtil.isResolved(enrichedProperties)) {
+                    enrichedProperties = new TreeMap<String, String>(enrichedProperties) {
+                        {
+                            put(PropertyAndValueDictionary.NAME_SOURCE, service.getClass().getSimpleName());
+                            Version.getGitHubBaseUrl();
+                            put(PropertyAndValueDictionary.NAME_SOURCE_URL, Version.getGitHubBaseUrl() + service.getClass().getName().replace(".", "/") + ".java");
+                            put(PropertyAndValueDictionary.NAME_SOURCE_ACCESSED_AT, DateUtil.printDate(getDate()));
+                        }
+                    };
                     break;
                 }
             } catch (PropertyEnricherException e) {
@@ -33,7 +56,7 @@ public class TaxonEnricherImpl implements PropertyEnricher {
                 service.shutdown();
             }
         }
-        return Collections.unmodifiableMap(enrichedProperties);
+        return TaxonUtil.isResolved(enrichedProperties) ? Collections.unmodifiableMap(enrichedProperties) : properties;
     }
 
     @Override

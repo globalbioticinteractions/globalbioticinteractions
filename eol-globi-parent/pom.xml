@@ -80,6 +80,7 @@
                 <artifactId>mavanagaiata</artifactId>
                 <version>0.7.2</version>
                 <configuration>
+                    <dirtyFlag>false</dirtyFlag>
                     <dateFormat>yyyy-MM-dd'T'HH:mm:ssZ</dateFormat>
                 </configuration>
                 <executions>

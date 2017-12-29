@@ -76,7 +76,7 @@ public class NCBIService implements PropertyEnricher {
     private String getResponse(String queryString) throws PropertyEnricherException {
         URI uri;
         try {
-            uri = new URI("http", null, "eutils.ncbi.nlm.nih.gov", 80, "/entrez/eutils/efetch.fcgi", queryString, null);
+            uri = new URI("https", null, "eutils.ncbi.nlm.nih.gov", 443, "/entrez/eutils/efetch.fcgi", queryString, null);
         } catch (URISyntaxException e) {
             throw new PropertyEnricherException("failed to create uri", e);
         }

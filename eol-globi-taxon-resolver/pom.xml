@@ -38,7 +38,7 @@
                     </descriptorRefs>
                     <archive>
                         <manifest>
-                            <mainClass>org.eol.globi.taxon.TaxonIdLookup</mainClass>
+                            <mainClass>org.eol.globi.taxon.NameTool</mainClass>
                         </manifest>
                         <manifestEntries>
                             <Implementation-Version>${project.version}@${mvngit.commit.sha}</Implementation-Version>

@@ -20,13 +20,13 @@ public class VersionTest {
     @Test
     public void getVersionStream() {
         InputStream is = IOUtils.toInputStream("Implementation-Version: build57\n");
-        assertThat(Version.versionFromStream(is), Is.is("build57"));
+        assertThat(Version.valueFromStream(is, "Implementation-Version"), Is.is("build57"));
     }
 
     @Test
     public void getVersionStreamNoVersion() {
         InputStream is = IOUtils.toInputStream("Implementation-Versionz: build57\n");
-        assertNull(Version.versionFromStream(is));
+        assertNull(Version.valueFromStream(is, "Implementation-Version"));
     }
 
 }

@@ -23,11 +23,12 @@ public class EnvoService implements PropertyEnricher {
     public static final String PLASTIC = ID_PREFIX_ENVO + "01000404";
     public static final String ROCK = ID_PREFIX_ENVO + "00001995";
     public static final String PIECE_OF_ROCK = ID_PREFIX_ENVO + "00000339";
+    public static final String DETRITUS = ID_PREFIX_ENVO + "01001103";
 
     private Map<String, String> mapping = new HashMap<String, String>() {{
         put("organic material", ORGANIC_MATERIAL);
-        put("detritus", ORGANIC_MATERIAL);
-        put("organic detritus", ORGANIC_MATERIAL);
+        put("detritus", DETRITUS);
+        put("organic detritus", DETRITUS);
         put("organic matter", ORGANIC_MATERIAL);
         put("Unidentified remains", ORGANIC_MATERIAL);
         put("suspended organic matter   ", ORGANIC_MATERIAL);
@@ -51,6 +52,7 @@ public class EnvoService implements PropertyEnricher {
         put(SEDIMENT, new String[]{"environmental material | sediment", "ENVO:00010483 | ENVO:00002007"});
         put(SOIL, new String[]{"environmental material | soil", "ENVO:00010483 | ENVO:00001998"});
         put(ORGANIC_MATERIAL, new String[]{"environmental material | organic material", "ENVO:00010483 | ENVO:01000155"});
+        put(DETRITUS, new String[]{"environmental material | organic material | detritus", "ENVO:00010483 | ENVO:01000155 | ENVO:01001103"});
         put(FECES, new String[]{"environmental material | organic material | bodily fluid | excreta | feces", "ENVO:00010483 | ENVO:01000155 | ENVO:02000019 | ENVO:02000022 | ENVO:00002003"});
         put(WOOD, new String[]{"environmental material | organic material | wood", "ENVO:00010483 | ENVO:01000155 | ENVO:00002040"});
         put(PLASTIC, new String[]{"environmental material | anthropogenic environmental material | plastic", "ENVO:00010483 | ENVO:0010001 | ENVO:01000404"});
