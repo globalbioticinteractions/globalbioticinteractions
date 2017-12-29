@@ -45,7 +45,7 @@ public class TaxonEnricherImpl implements PropertyEnricher {
                         {
                             put(PropertyAndValueDictionary.NAME_SOURCE, service.getClass().getSimpleName());
                             Version.getGitHubBaseUrl();
-                            put(PropertyAndValueDictionary.NAME_SOURCE_URL, Version.getGitHubBaseUrl() + service.getClass().getName().replace(".", "/") + ".java");
+                            put(PropertyAndValueDictionary.NAME_SOURCE_URL, Version.getGitHubBaseUrl() + "/eol-globi-taxon-resolver/src/main/java/" + service.getClass().getName().replace(".", "/") + ".java");
                             put(PropertyAndValueDictionary.NAME_SOURCE_ACCESSED_AT, DateUtil.printDate(getDate()));
                         }
                     };
