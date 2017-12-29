@@ -10,12 +10,12 @@ import java.util.HashMap;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
-public class PropertyEnrichmentFilterExternalIdTest {
+public class PropertyEnrichmentFilterExternalIdIT {
 
     @Test
     public void excludeEmptyPath() {
         PropertyEnrichmentFilter filter = new PropertyEnrichmentFilterExternalId();
-        assertThat(filter.shouldReject(new HashMap<String, String>()), is(true));
+        assertThat(filter.shouldReject(new HashMap<>()), is(true));
         HashMap<String, String> properties = new HashMap<String, String>();
         properties.put(PropertyAndValueDictionary.PATH, "path 123");
         assertThat(filter.shouldReject(properties), is(false));

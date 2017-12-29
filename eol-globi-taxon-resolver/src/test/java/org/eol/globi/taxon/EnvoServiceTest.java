@@ -35,7 +35,7 @@ public class EnvoServiceTest {
     public void findIdByName() throws PropertyEnricherException {
         TaxonImpl taxon = new TaxonImpl();
         taxon.setName("detritus");
-        assertThat(new EnvoService().enrich(TaxonUtil.taxonToMap(taxon)).get(PropertyAndValueDictionary.EXTERNAL_ID), is("ENVO:01000155"));
+        assertThat(new EnvoService().enrich(TaxonUtil.taxonToMap(taxon)).get(PropertyAndValueDictionary.EXTERNAL_ID), is("ENVO:01001103"));
     }
 
     @Test

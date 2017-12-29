@@ -26,7 +26,7 @@ public class PropertyEnrichmentFilterExternalId implements PropertyEnrichmentFil
 
     private Collection<String> getExcludedIds() {
         if (exludedEOLIds == null) {
-            exludedEOLIds = new HashSet<String>();
+            exludedEOLIds = new HashSet<>();
             try {
                 String response = HttpUtil.executeWithTimer(new HttpGet(EOL_NON_TAXON_PAGES), new BasicResponseHandler());
                 JsonNode jsonNode = new ObjectMapper().readTree(response);
