@@ -71,6 +71,7 @@ public class NameToolTest {
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         NameTool.resolve(is, new NameTool.GlobalNamesRowHandler(false, os));
         assertThat(os.toString(), containsString("Mammalia"));
+        assertThat(os.toString(), containsString("nih.gov"));
     }
 
     private static class PropertyEnricherPassThrough implements PropertyEnricher {

@@ -1,18 +1,21 @@
 package org.eol.globi.service;
 
 import org.apache.commons.lang3.StringUtils;
+import org.eol.globi.Version;
 import org.eol.globi.data.CharsetConstant;
-import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImage;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TaxonomyProvider;
 import org.eol.globi.domain.Term;
+import org.eol.globi.util.DateUtil;
 import org.eol.globi.util.ExternalIdUtil;
 
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 import static org.eol.globi.domain.PropertyAndValueDictionary.*;
 import static org.eol.globi.domain.PropertyAndValueDictionary.EXTERNAL_URL;
@@ -197,5 +200,16 @@ public class TaxonUtil {
         return StringUtils.isNotBlank(value)
                 && !StringUtils.equals(value, NO_MATCH)
                 && !StringUtils.equals(value, NO_NAME);
+    }
+
+    public static Map<String, String> appendNameSourceInfo(Map<String, String> enrichedProperties, final Class<? extends PropertyEnricher> serviceClass, final Date date) {
+        enrichedProperties = new TreeMap<String, String>(enrichedProperties) {
+            {
+                put(NAME_SOURCE, serviceClass.getSimpleName());
+                put(NAME_SOURCE_URL, Version.getGitHubBaseUrl() + "/eol-globi-taxon-resolver/src/main/java/" + serviceClass.getName().replace(".", "/") + ".java");
+                put(NAME_SOURCE_ACCESSED_AT, DateUtil.printDate(date));
+            }
+        };
+        return enrichedProperties;
     }
 }

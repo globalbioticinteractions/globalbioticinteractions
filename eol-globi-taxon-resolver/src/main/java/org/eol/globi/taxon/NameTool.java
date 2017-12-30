@@ -1,13 +1,11 @@
 package org.eol.globi.taxon;
 
-import org.apache.commons.lang.StringUtils;
 import org.eol.globi.Version;
 import org.eol.globi.domain.NameType;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.service.PropertyEnricher;
 import org.eol.globi.service.PropertyEnricherException;
-import org.eol.globi.service.PropertyEnricherFactory;
 import org.eol.globi.service.TaxonUtil;
 import org.eol.globi.util.CSVTSVUtil;
 
@@ -18,6 +16,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -125,7 +124,8 @@ public class NameTool {
             new GlobalNamesService().findTermsForNames(Arrays.asList(taxonProvided.getName()), new TermMatchListener() {
                 @Override
                 public void foundTaxonForName(Long id, String name, Taxon taxon, NameType nameType) {
-                    linesForTaxa(row, Stream.of(taxon), shouldReplace, p, nameType);
+                    Taxon taxonWithServiceInfo = (TaxonUtil.mapToTaxon(TaxonUtil.appendNameSourceInfo(TaxonUtil.taxonToMap(taxon), GlobalNamesService.class, new Date())));
+                    linesForTaxa(row, Stream.of(taxonWithServiceInfo), shouldReplace, p, nameType);
                 }
             }, Arrays.asList(GlobalNamesSources.values()));
         }
