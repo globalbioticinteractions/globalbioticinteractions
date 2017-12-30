@@ -1,6 +1,8 @@
 package org.eol.globi.taxon;
 
+import org.apache.commons.lang.StringUtils;
 import org.eol.globi.Version;
+import org.eol.globi.domain.NameType;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.service.PropertyEnricher;
@@ -15,6 +17,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -22,48 +25,37 @@ import java.util.stream.Stream;
 public class NameTool {
 
     public static void main(String[] args) {
-        PropertyEnricher taxonEnricher = PropertyEnricherFactory.createTaxonEnricher();
+        //PropertyEnricher taxonEnricher = PropertyEnricherFactory.createTaxonEnricher();
         try {
-            System.err.println(Version.getVersionInfo(TaxonIdLookup.class));
-            resolve(System.in, System.out, false, taxonEnricher);
+            System.err.println(Version.getVersionInfo(NameTool.class));
+            boolean shouldReplace = false;
+            resolve(System.in, new GlobalNamesRowHandler(shouldReplace, System.out));
+            //resolve(System.in, new ResolvingRowHandler(taxonEnricher, shouldReplace, System.out));
             System.exit(0);
         } catch (IOException | PropertyEnricherException e) {
             System.err.println("failed to resolve taxon: [" + e.getMessage() + "]");
             System.exit(1);
         } finally {
-            taxonEnricher.shutdown();
+            //taxonEnricher.shutdown();
         }
 
     }
 
-    static void resolve(InputStream is, OutputStream os, boolean shouldReplace, PropertyEnricher enricher) throws IOException, PropertyEnricherException {
-        PrintStream p = new PrintStream(os);
-
+    static void resolve(InputStream is, RowHandler rowHandler) throws IOException, PropertyEnricherException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(is));
         String line;
         while ((line = reader.readLine()) != null) {
             String[] row = line.split("\t");
-
-            Map<String, String> enriched = enricher.enrich(TaxonUtil.taxonToMap(asTaxon(row)));
-
-            Taxon taxon = TaxonUtil.mapToTaxon(enriched);
-
-            Stream<String> provided = Stream.of(row);
-
-            Stream<String> resolved = Stream.of(taxon.getExternalId(), taxon.getName(), taxon.getRank(), taxon.getCommonNames(), taxon.getPath(), taxon.getPathIds(), taxon.getPathNames(), taxon.getExternalUrl(), taxon.getThumbnailUrl(), taxon.getNameSource(), taxon.getNameSourceURL(), taxon.getNameSourceAccessedAt());
-
-            Stream<String> combined = shouldReplace
-                    ? Stream.concat(resolved.limit(2), provided.skip(2))
-                    : Stream.concat(provided, resolved);
-
-            p.println(CSVTSVUtil.mapEscapedValues(combined)
-                    .collect(Collectors.joining("\t"))
-            );
+            rowHandler.onRow(row);
         }
-        p.flush();
     }
 
-    private static Taxon asTaxon(String[] row) {
+    static Taxon resolveTaxon(PropertyEnricher enricher, Taxon taxonProvided) throws PropertyEnricherException {
+        Map<String, String> enriched = enricher.enrich(TaxonUtil.taxonToMap(taxonProvided));
+        return TaxonUtil.mapToTaxon(enriched);
+    }
+
+    static Taxon asTaxon(String[] row) {
         Taxon taxon;
         if (row.length == 1) {
             taxon = new TaxonImpl(null, row[0]);
@@ -76,4 +68,66 @@ public class NameTool {
     }
 
 
+    static class ResolvingRowHandler implements RowHandler {
+        private final PropertyEnricher enricher;
+        private final boolean shouldReplace;
+        private final PrintStream p;
+
+        public ResolvingRowHandler(PropertyEnricher enricher, boolean shouldReplace, OutputStream os) {
+            this.enricher = enricher;
+            this.shouldReplace = shouldReplace;
+            this.p = new PrintStream(os);
+        }
+
+        @Override
+        public void onRow(String[] row) throws PropertyEnricherException {
+            Stream<Taxon> resolvedTaxa = Stream.of(resolveTaxon(enricher, asTaxon(row)));
+            linesForTaxa(row, resolvedTaxa, shouldReplace, p, NameType.SAME_AS);
+        }
+
+    }
+
+    public static void linesForTaxa(String[] row, Stream<Taxon> resolvedTaxa, boolean shouldReplace, PrintStream p, NameType nameType) {
+        Stream<String> provided = Stream.of(row);
+
+        Stream<Stream<String>> lines = resolvedTaxa.map(taxon -> Stream.of(taxon.getExternalId(), taxon.getName(),
+                taxon.getRank(),
+                taxon.getCommonNames(),
+                taxon.getPath(),
+                taxon.getPathIds(),
+                taxon.getPathNames(),
+                taxon.getExternalUrl(),
+                taxon.getThumbnailUrl(),
+                taxon.getNameSource(),
+                taxon.getNameSourceURL(),
+                taxon.getNameSourceAccessedAt()))
+                .map(resolved -> shouldReplace
+                        ? Stream.concat(resolved.limit(2), provided.skip(2))
+                        : Stream.concat(provided, Stream.concat(Stream.of(nameType.name()), resolved)));
+
+        lines.map(combinedLine -> CSVTSVUtil.mapEscapedValues(combinedLine)
+                .collect(Collectors.joining("\t")))
+                .forEach(p::println);
+    }
+
+    static class GlobalNamesRowHandler implements RowHandler {
+        private final boolean shouldReplace;
+        private final PrintStream p;
+
+        public GlobalNamesRowHandler(boolean b, OutputStream os) {
+            this.shouldReplace = b;
+            this.p = new PrintStream(os);
+        }
+
+        @Override
+        public void onRow(final String[] row) throws PropertyEnricherException {
+            Taxon taxonProvided = asTaxon(row);
+            new GlobalNamesService().findTermsForNames(Arrays.asList(taxonProvided.getName()), new TermMatchListener() {
+                @Override
+                public void foundTaxonForName(Long id, String name, Taxon taxon, NameType nameType) {
+                    linesForTaxa(row, Stream.of(taxon), shouldReplace, p, nameType);
+                }
+            }, Arrays.asList(GlobalNamesSources.values()));
+        }
+    }
 }

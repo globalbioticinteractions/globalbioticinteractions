@@ -25,15 +25,15 @@ import java.util.Map;
 public class Indexer {
     private static final Log LOG = LogFactory.getLog(Indexer.class);
 
-    public static void main(final String[] commandLineArguments) throws StudyImporterException, NodeFactoryException {
+    public static void main(final String[] commandLineArguments) throws StudyImporterException {
         new Indexer().indexKnownTaxa();
     }
 
-    public void indexKnownTaxa() throws StudyImporterException, NodeFactoryException {
+    public void indexKnownTaxa() throws StudyImporterException {
         indexKnownTaxa("./");
     }
 
-    public void indexKnownTaxa(String baseDir) throws StudyImporterException, NodeFactoryException {
+    public void indexKnownTaxa(String baseDir) throws StudyImporterException {
         String previousDataDir = System.getProperty("previous.data.dir");
         if (StringUtils.isBlank(previousDataDir)) {
             throw new StudyImporterException("please specify -Dprevious.data.dir=[...] on the commandline");
