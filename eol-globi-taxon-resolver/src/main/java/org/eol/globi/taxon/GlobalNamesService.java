@@ -91,7 +91,7 @@ public class GlobalNamesService implements PropertyEnricher {
                 parseResult(termMatchListener, executeQuery(names, uri));
             } catch (IOException e) {
                 if (names.size() > 1) {
-                    LOG.warn("retrying names query one name at a time: failed to perform batch query" ,e);
+                    LOG.warn("retrying names query one name at a time: failed to perform batch query", e);
                     List<String> namesFailed = new ArrayList<>();
                     List<String> namesSuccess = new ArrayList<>();
                     for (String name : names) {
@@ -154,7 +154,18 @@ public class GlobalNamesService implements PropertyEnricher {
         if (dataList != null && dataList.isArray()) {
             for (JsonNode data : dataList) {
                 JsonNode results = data.get("results");
-                if (results != null && results.isArray()) {
+                if (results == null) {
+                    if (dataList.size() > 0) {
+                        JsonNode firstDataElement = dataList.get(0);
+                        firstDataElement.get("supplied_name_string");
+                        if (firstDataElement.has("is_known_name")
+                                && firstDataElement.has("supplied_name_string")
+                                && !firstDataElement.get("is_known_name").asBoolean(false)) {
+                            String nameString = firstDataElement.get("supplied_name_string").asText();
+                            termMatchListener.foundTaxonForName(null, nameString, new TaxonImpl(nameString), NameType.NONE);
+                        }
+                    }
+                } else if (results.isArray()) {
                     for (JsonNode aResult : results) {
                         Taxon taxon = new TaxonImpl();
                         TaxonomyProvider provider = getTaxonomyProvider(aResult);
@@ -164,6 +175,8 @@ public class GlobalNamesService implements PropertyEnricher {
                             if (aResult.has("classification_path")
                                     && aResult.has("classification_path_ranks")) {
                                 parseClassification(termMatchListener, data, aResult, taxon, provider);
+                            } else {
+                                termMatchListener.foundTaxonForName(333L, "bla", taxon, NameType.NONE);
                             }
                         }
                     }

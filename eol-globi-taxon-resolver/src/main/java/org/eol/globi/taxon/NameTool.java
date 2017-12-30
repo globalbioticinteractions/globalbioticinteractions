@@ -43,9 +43,17 @@ public class NameTool {
     static void resolve(InputStream is, RowHandler rowHandler) throws IOException, PropertyEnricherException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(is));
         String line;
+        long counter = 0;
         while ((line = reader.readLine()) != null) {
             String[] row = line.split("\t");
             rowHandler.onRow(row);
+            counter++;
+            if (counter % 25 == 0) {
+                System.err.print(".");
+            }
+            if (counter % (25 * 50) == 0) {
+                System.err.println();
+            }
         }
     }
 
@@ -81,15 +89,25 @@ public class NameTool {
         @Override
         public void onRow(String[] row) throws PropertyEnricherException {
             Stream<Taxon> resolvedTaxa = Stream.of(resolveTaxon(enricher, asTaxon(row)));
-            linesForTaxa(row, resolvedTaxa, shouldReplace, p, NameType.SAME_AS);
+            linesForTaxa(row,
+                    resolvedTaxa,
+                    shouldReplace,
+                    p,
+                    taxon -> TaxonUtil.isResolved(taxon) ? NameType.SAME_AS : NameType.NONE);
         }
 
     }
 
-    public static void linesForTaxa(String[] row, Stream<Taxon> resolvedTaxa, boolean shouldReplace, PrintStream p, NameType nameType) {
+    interface NameTypeOf {
+        NameType nameTypeOf(Taxon taxon);
+    }
+
+    public static void linesForTaxa(String[] row, Stream<Taxon> resolvedTaxa, boolean shouldReplace, PrintStream p, NameTypeOf nameTypeOf) {
         Stream<String> provided = Stream.of(row);
 
-        Stream<Stream<String>> lines = resolvedTaxa.map(taxon -> Stream.of(taxon.getExternalId(), taxon.getName(),
+        Stream<Stream<String>> lines = resolvedTaxa.map(taxon -> Stream.of(
+                nameTypeOf.nameTypeOf(taxon).name(),
+                taxon.getExternalId(), taxon.getName(),
                 taxon.getRank(),
                 taxon.getCommonNames(),
                 taxon.getPath(),
@@ -101,8 +119,8 @@ public class NameTool {
                 taxon.getNameSourceURL(),
                 taxon.getNameSourceAccessedAt()))
                 .map(resolved -> shouldReplace
-                        ? Stream.concat(resolved.limit(2), provided.skip(2))
-                        : Stream.concat(provided, Stream.concat(Stream.of(nameType.name()), resolved)));
+                        ? Stream.concat(resolved.skip(1).limit(2), provided.skip(2))
+                        : Stream.concat(provided, resolved));
 
         lines.map(combinedLine -> CSVTSVUtil.mapEscapedValues(combinedLine)
                 .collect(Collectors.joining("\t")))
@@ -125,7 +143,7 @@ public class NameTool {
                 @Override
                 public void foundTaxonForName(Long id, String name, Taxon taxon, NameType nameType) {
                     Taxon taxonWithServiceInfo = (TaxonUtil.mapToTaxon(TaxonUtil.appendNameSourceInfo(TaxonUtil.taxonToMap(taxon), GlobalNamesService.class, new Date())));
-                    linesForTaxa(row, Stream.of(taxonWithServiceInfo), shouldReplace, p, nameType);
+                    linesForTaxa(row, Stream.of(taxonWithServiceInfo), shouldReplace, p, taxon1 -> nameType);
                 }
             }, Arrays.asList(GlobalNamesSources.values()));
         }

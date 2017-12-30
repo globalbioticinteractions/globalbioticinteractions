@@ -2,6 +2,8 @@ package org.eol.globi.taxon;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.eol.globi.domain.NameType;
+import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.service.PropertyEnricher;
 import org.eol.globi.service.PropertyEnricherException;
 import org.eol.globi.service.TaxonUtil;
@@ -45,7 +47,11 @@ public class TaxonEnricherImpl implements PropertyEnricher {
                 service.shutdown();
             }
         }
-        return TaxonUtil.isResolved(enrichedProperties) ? Collections.unmodifiableMap(enrichedProperties) : properties;
+        return Collections.unmodifiableMap(TaxonUtil.isResolved(enrichedProperties)
+                ? enrichedProperties
+                : new HashMap<String, String>(properties) {{
+            put(PropertyAndValueDictionary.NAME_MATCH_TYPE, NameType.NONE.name());
+        }});
     }
 
     @Override

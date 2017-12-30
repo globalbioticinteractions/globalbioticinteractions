@@ -16,8 +16,8 @@ import java.util.Date;
 import java.util.Map;
 import java.util.TreeMap;
 
-import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.startsWith;
 import static org.junit.Assert.assertThat;
 
 public class NameToolTest {
@@ -26,22 +26,22 @@ public class NameToolTest {
     public void resolve() throws IOException, PropertyEnricherException {
         InputStream is = IOUtils.toInputStream("NCBI:9606\tHomo sapiens");
         ByteArrayOutputStream os = new ByteArrayOutputStream();
-        final PropertyEnricherPassThrough enricher = new PropertyEnricherPassThrough();
+        final PropertyEnricher enricher = new PropertyEnricherMatch();
         NameTool.resolve(is, new NameTool.ResolvingRowHandler(enricher, false, os));
-        assertThat(os.toString(), Is.is("NCBI:9606\tHomo sapiens\tSAME_AS\tNCBI:9606\tHomo sapiens\t\t\t\t\t\thttps://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=9606\t\tA name source\thttp://example.org\t1970-01-01T00:00:00Z\n"));
+        assertThat(os.toString(), Is.is("NCBI:9606\tHomo sapiens\tSAME_AS\tNCBI:9606\tHomo sapiens\t\t\tone | two\t\t\thttps://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=9606\t\tA name source\thttp://example.org\t1970-01-01T00:00:00Z\n"));
     }
 
     @Test
     public void resolveAppend() throws IOException, PropertyEnricherException {
         InputStream is = IOUtils.toInputStream("NCBI:9606\tHomo sapiens\tone");
         ByteArrayOutputStream os = new ByteArrayOutputStream();
-        final PropertyEnricherPassThrough enricher = new PropertyEnricherPassThrough();
+        final PropertyEnricher enricher = new PropertyEnricherMatch();
         NameTool.resolve(is, new NameTool.ResolvingRowHandler(enricher, false, os));
-        assertThat(os.toString(), Is.is("NCBI:9606\tHomo sapiens\tone\tSAME_AS\tNCBI:9606\tHomo sapiens\t\t\t\t\t\thttps://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=9606\t\tA name source\thttp://example.org\t1970-01-01T00:00:00Z\n"));
+        assertThat(os.toString(), Is.is("NCBI:9606\tHomo sapiens\tone\tSAME_AS\tNCBI:9606\tHomo sapiens\t\t\tone | two\t\t\thttps://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=9606\t\tA name source\thttp://example.org\t1970-01-01T00:00:00Z\n"));
     }
 
     @Test
-    public void resolveAppendFuzzyMatch() throws IOException, PropertyEnricherException {
+    public void resolveGlobalNamesAppendFuzzyMatch() throws IOException, PropertyEnricherException {
         InputStream is = IOUtils.toInputStream("\tHomo saliens\tone");
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         NameTool.resolve(is, new NameTool.GlobalNamesRowHandler(false, os));
@@ -74,6 +74,14 @@ public class NameToolTest {
         assertThat(os.toString(), containsString("nih.gov"));
     }
 
+    @Test
+    public void resolveGlobalNamesBatchAppendNoMatchName() throws IOException, PropertyEnricherException {
+        InputStream is = IOUtils.toInputStream("NCBI:9606\tDonald duck\tone");
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        NameTool.resolve(is, new NameTool.GlobalNamesRowHandler(false, os));
+        assertThat(os.toString(), startsWith("NCBI:9606\tDonald duck\tone\tNONE\t\tDonald duck"));
+    }
+
     private static class PropertyEnricherPassThrough implements PropertyEnricher {
 
         @Override
@@ -90,4 +98,23 @@ public class NameToolTest {
 
         }
     }
+
+    private static class PropertyEnricherMatch implements PropertyEnricher {
+
+        @Override
+        public Map<String, String> enrich(Map<String, String> properties) throws PropertyEnricherException {
+            return MapUtils.unmodifiableMap(new TreeMap<String, String>(properties) {{
+                put(PropertyAndValueDictionary.NAME_SOURCE, "A name source");
+                put(PropertyAndValueDictionary.NAME_SOURCE_URL, "http://example.org");
+                put(PropertyAndValueDictionary.NAME_SOURCE_ACCESSED_AT, DateUtil.printDate(new Date(0)));
+                put(PropertyAndValueDictionary.PATH, "one | two");
+            }});
+        }
+
+        @Override
+        public void shutdown() {
+
+        }
+    }
+
 }

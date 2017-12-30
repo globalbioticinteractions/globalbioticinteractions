@@ -33,4 +33,5 @@ public class PropertyAndValueDictionary {
     public static final String NAME_SOURCE = "nameSource";
     public static final String NAME_SOURCE_URL = "nameSourceUrl";
     public static final String NAME_SOURCE_ACCESSED_AT = "nameSourceAccessedAt";
+    public static final String NAME_MATCH_TYPE = "nameMatchType";
 }

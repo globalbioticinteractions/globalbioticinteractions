@@ -79,7 +79,7 @@ public class TaxonEnricherImplTest {
 
             @Override
             public Map<String, String> enrich(Map<String, String> properties) throws PropertyEnricherException {
-                properties = new HashMap<String, String>(properties);
+                properties = new HashMap<>(properties);
                 properties.put(PropertyAndValueDictionary.EXTERNAL_ID, "FIRST:123");
                 properties.put(PropertyAndValueDictionary.PATH, "one | two | three");
                 properties.put(PropertyAndValueDictionary.COMMON_NAMES, "four | five | six");
