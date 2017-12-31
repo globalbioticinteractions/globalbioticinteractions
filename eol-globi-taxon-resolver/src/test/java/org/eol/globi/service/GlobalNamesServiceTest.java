@@ -44,6 +44,22 @@ public class GlobalNamesServiceTest {
     }
 
     @Test
+    public void createTaxaListFromNoNameList() throws PropertyEnricherException {
+        GlobalNamesService service = new GlobalNamesService();
+        final List<Taxon> foundTaxa = new ArrayList<Taxon>();
+        service.findTermsForNames(Arrays.asList("1|Donald duck", "2|Mickey mouse"), new TermMatchListener() {
+            @Override
+            public void foundTaxonForName(Long id, String name, Taxon taxon, NameType nameType) {
+                assertNotNull(id);
+                assertThat(nameType, is(NameType.NONE));
+                foundTaxa.add(taxon);
+            }
+        }, Collections.singletonList(GlobalNamesSources.ITIS));
+
+        assertThat(foundTaxa.size(), is(2));
+    }
+
+    @Test
     public void createTaxaListFromNameListNCBI() throws PropertyEnricherException {
         GlobalNamesService service = new GlobalNamesService();
         final List<Taxon> foundTaxa = new ArrayList<Taxon>();
