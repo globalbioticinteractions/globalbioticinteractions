@@ -193,7 +193,7 @@ public class TaxonCacheService extends CacheService implements PropertyEnricher 
                         state = ProcessingState.DONE;
                         break;
                 }
-                return new Fun.Tuple2<String, String>(valueOrNoMatch(key), valueOrNoMatch(resolvedTaxon.getExternalId()));
+                return new Fun.Tuple2<>(valueOrNoMatch(key), valueOrNoMatch(resolvedTaxon.getExternalId()));
             }
 
             public void remove() {

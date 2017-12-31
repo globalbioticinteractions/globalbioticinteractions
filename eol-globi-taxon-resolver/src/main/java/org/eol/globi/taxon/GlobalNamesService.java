@@ -161,28 +161,31 @@ public class GlobalNamesService implements PropertyEnricher {
                         if (firstDataElement.has("is_known_name")
                                 && firstDataElement.has("supplied_name_string")
                                 && !firstDataElement.get("is_known_name").asBoolean(false)) {
-                            String nameString = firstDataElement.get("supplied_name_string").asText();
-                            termMatchListener.foundTaxonForName(null, nameString, new TaxonImpl(nameString), NameType.NONE);
+                            noMatch(termMatchListener, data);
                         }
                     }
                 } else if (results.isArray()) {
                     for (JsonNode aResult : results) {
-                        Taxon taxon = new TaxonImpl();
                         TaxonomyProvider provider = getTaxonomyProvider(aResult);
                         if (provider == null) {
                             LOG.warn("found unsupported data_source_id");
                         } else {
                             if (aResult.has("classification_path")
                                     && aResult.has("classification_path_ranks")) {
-                                parseClassification(termMatchListener, data, aResult, taxon, provider);
+                                parseClassification(termMatchListener, data, aResult, provider);
                             } else {
-                                termMatchListener.foundTaxonForName(333L, "bla", taxon, NameType.NONE);
+                                noMatch(termMatchListener, data);
                             }
                         }
                     }
                 }
             }
         }
+    }
+
+    private void noMatch(TermMatchListener termMatchListener, JsonNode data) {
+        String suppliedNameString = getSuppliedNameString(data);
+        termMatchListener.foundTaxonForName(requestId(data), suppliedNameString, new TaxonImpl(suppliedNameString), NameType.NONE);
     }
 
     private String parseList(String list) {
@@ -209,7 +212,8 @@ public class GlobalNamesService implements PropertyEnricher {
         return StringUtils.join(parsedList, CharsetConstant.SEPARATOR);
     }
 
-    protected void parseClassification(TermMatchListener termMatchListener, JsonNode data, JsonNode aResult, Taxon taxon, TaxonomyProvider provider) {
+    protected void parseClassification(TermMatchListener termMatchListener, JsonNode data, JsonNode aResult, TaxonomyProvider provider) {
+        Taxon taxon = new TaxonImpl();
         String classificationPath = aResult.get("classification_path").asText();
         taxon.setPath(parseList(classificationPath));
 
@@ -238,8 +242,7 @@ public class GlobalNamesService implements PropertyEnricher {
         if (!StringUtils.startsWith(taxonIdValue, "gn:")) {
             String externalId = provider.getIdPrefix() + taxonIdValue;
             taxon.setExternalId(externalId);
-            Long suppliedId = data.has("supplied_id") ? data.get("supplied_id").asLong() : null;
-            String suppliedNameString = data.get("supplied_name_string").getTextValue();
+            String suppliedNameString = getSuppliedNameString(data);
 
             boolean isExactMatch = aResult.has("match_type")
                     && aResult.get("match_type").getIntValue() < 3;
@@ -248,7 +251,7 @@ public class GlobalNamesService implements PropertyEnricher {
             if (isExactMatch && aResult.has("current_name_string")) {
                 nameType = NameType.SYNONYM_OF;
             }
-            termMatchListener.foundTaxonForName(suppliedId, suppliedNameString, taxon, nameType);
+            termMatchListener.foundTaxonForName(requestId(data), suppliedNameString, taxon, nameType);
         }
 
         if (aResult.has("vernaculars")) {
@@ -267,6 +270,14 @@ public class GlobalNamesService implements PropertyEnricher {
                 taxon.setCommonNames(StringUtils.join(commonNames, CharsetConstant.SEPARATOR));
             }
         }
+    }
+
+    private String getSuppliedNameString(JsonNode data) {
+        return data.get("supplied_name_string").getTextValue();
+    }
+
+    private Long requestId(JsonNode data) {
+        return data.has("supplied_id") ? data.get("supplied_id").asLong() : null;
     }
 
     private TaxonomyProvider getTaxonomyProvider(JsonNode aResult) {
