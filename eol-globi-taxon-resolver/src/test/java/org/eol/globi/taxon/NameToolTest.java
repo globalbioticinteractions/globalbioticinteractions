@@ -7,6 +7,7 @@ import org.eol.globi.service.PropertyEnricher;
 import org.eol.globi.service.PropertyEnricherException;
 import org.eol.globi.util.DateUtil;
 import org.hamcrest.core.Is;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.ByteArrayOutputStream;
@@ -31,6 +32,7 @@ public class NameToolTest {
         assertThat(os.toString(), Is.is("NCBI:9606\tHomo sapiens\tSAME_AS\tNCBI:9606\tHomo sapiens\t\t\tone | two\t\t\thttps://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=9606\t\tA name source\thttp://example.org\t1970-01-01T00:00:00Z\n"));
     }
 
+    @Ignore
     @Test
     public void resolveTaxonCache() throws IOException, PropertyEnricherException {
         InputStream is = IOUtils.toInputStream("EOL:327955\tHomo sapiens");
