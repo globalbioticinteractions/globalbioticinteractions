@@ -68,7 +68,6 @@ public class NameResolverTest extends GraphDBTestCase {
 
     @Test
     public void iNaturalistTaxon() throws NodeFactoryException {
-        Specimen someOrganism = nodeFactory.createSpecimen(nodeFactory.createStudy(new StudyImpl("bla1", null, null, null)), new TaxonImpl("Heterotheca grandiflora", null));
         Specimen someOtherOrganism = nodeFactory.createSpecimen(nodeFactory.createStudy(new StudyImpl("bla", null, null, null)), new TaxonImpl("Blaus bla", "INAT_TAXON:58831"));
         Specimen someOtherOrganism2 = nodeFactory.createSpecimen(nodeFactory.createStudy(new StudyImpl("bla", null, null, null)), new TaxonImpl("Redus rha", "INAT_TAXON:126777"));
         someOtherOrganism.ate(someOtherOrganism2);
@@ -84,7 +83,7 @@ public class NameResolverTest extends GraphDBTestCase {
         assertThat(resolvedTaxon.getName(), is("Heterotheca grandiflora"));
         Taxon resolvedTaxon2 = taxonIndex.findTaxonByName("Heterotheca grandiflora");
         assertThat(resolvedTaxon2, is(notNullValue()));
-        assertThat(resolvedTaxon2.getExternalId(), is("EOL:578180"));
+        assertThat(resolvedTaxon2.getExternalId(), is("INAT_TAXON:58831"));
     }
 
     @Test
