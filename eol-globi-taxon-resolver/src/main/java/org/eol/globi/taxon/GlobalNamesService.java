@@ -32,7 +32,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class GlobalNamesService implements PropertyEnricher {
+public class GlobalNamesService implements PropertyEnricher, TermMatcher {
     private static final Log LOG = LogFactory.getLog(GlobalNamesService.class);
 
     private final GlobalNamesSources source;
@@ -80,6 +80,7 @@ public class GlobalNamesService implements PropertyEnricher {
         return Collections.unmodifiableMap(enrichedProperties);
     }
 
+    @Override
     public void findTermsForNames(List<String> names, TermMatchListener termMatchListener, List<GlobalNamesSources> sources) throws PropertyEnricherException {
         if (names.size() == 0) {
             throw new IllegalArgumentException("need non-empty list of names");

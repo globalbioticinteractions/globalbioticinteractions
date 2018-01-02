@@ -24,11 +24,10 @@ import java.util.stream.Stream;
 public class NameTool {
 
     public static void main(String[] args) {
-        //PropertyEnricher taxonEnricher = PropertyEnricherFactory.createTaxonEnricher();
         try {
             System.err.println(Version.getVersionInfo(NameTool.class));
             boolean shouldReplace = false;
-            resolve(System.in, new GlobalNamesRowHandler(shouldReplace, System.out));
+            resolve(System.in, new TermMatchingRowHandler(shouldReplace, System.out, new GlobalNamesService()));
             //resolve(System.in, new ResolvingRowHandler(taxonEnricher, shouldReplace, System.out));
             System.exit(0);
         } catch (IOException | PropertyEnricherException e) {
@@ -127,19 +126,21 @@ public class NameTool {
                 .forEach(p::println);
     }
 
-    static class GlobalNamesRowHandler implements RowHandler {
+    static class TermMatchingRowHandler implements RowHandler {
         private final boolean shouldReplace;
         private final PrintStream p;
+        private TermMatcher termMatcher;
 
-        public GlobalNamesRowHandler(boolean b, OutputStream os) {
-            this.shouldReplace = b;
+        public TermMatchingRowHandler(boolean shouldReplace, OutputStream os, TermMatcher termMatcher) {
+            this.shouldReplace = shouldReplace;
             this.p = new PrintStream(os);
+            this.termMatcher = termMatcher;
         }
 
         @Override
         public void onRow(final String[] row) throws PropertyEnricherException {
             Taxon taxonProvided = asTaxon(row);
-            new GlobalNamesService().findTermsForNames(Arrays.asList(taxonProvided.getName()), new TermMatchListener() {
+            termMatcher.findTermsForNames(Arrays.asList(taxonProvided.getName()), new TermMatchListener() {
                 @Override
                 public void foundTaxonForName(Long id, String name, Taxon taxon, NameType nameType) {
                     Taxon taxonWithServiceInfo = (TaxonUtil.mapToTaxon(TaxonUtil.appendNameSourceInfo(TaxonUtil.taxonToMap(taxon), GlobalNamesService.class, new Date())));

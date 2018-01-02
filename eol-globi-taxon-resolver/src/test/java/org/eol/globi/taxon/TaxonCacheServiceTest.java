@@ -1,6 +1,7 @@
 package org.eol.globi.taxon;
 
 import org.apache.commons.io.FileUtils;
+import org.eol.globi.domain.NameType;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.service.PropertyEnricherException;
@@ -11,13 +12,17 @@ import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 public class TaxonCacheServiceTest {
 
@@ -46,6 +51,23 @@ public class TaxonCacheServiceTest {
         assertThat(enrichedTaxon.getName(), is("Anas crecca carolinensis"));
         assertThat(enrichedTaxon.getExternalId(), is("EOL:1276240"));
         assertThat(enrichedTaxon.getThumbnailUrl(), is("http://media.eol.org/content/2012/11/04/08/35791_98_68.jpg"));
+    }
+
+    @Test
+    public void matchTermByName() throws PropertyEnricherException {
+        final TaxonCacheService cacheService = getTaxonCacheService();
+
+        AtomicBoolean matched = new AtomicBoolean(false);
+        cacheService.findTermsForNames(Arrays.asList("Green-winged teal"), new TermMatchListener() {
+            @Override
+            public void foundTaxonForName(Long id, String name, Taxon enrichedTaxon, NameType nameType) {
+                assertThat(enrichedTaxon.getName(), is("Anas crecca carolinensis"));
+                assertThat(enrichedTaxon.getExternalId(), is("EOL:1276240"));
+                assertThat(enrichedTaxon.getThumbnailUrl(), is("http://media.eol.org/content/2012/11/04/08/35791_98_68.jpg"));
+                matched.set(true);
+            }
+        }, Collections.emptyList());
+        assertTrue(matched.get());
     }
 
     @Test
