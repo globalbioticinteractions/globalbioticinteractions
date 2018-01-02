@@ -1,6 +1,6 @@
 package org.eol.globi.service;
 
-import org.eol.globi.domain.Term;
+import org.eol.globi.domain.TermImpl;
 import org.junit.Test;
 
 import java.util.List;
@@ -13,9 +13,9 @@ public class EnvoLookupServiceTest {
     @Test
     public void lookupTerm() throws TermLookupServiceException {
         TermLookupService service = new EnvoLookupService();
-        List<Term> terms = service.lookupTermByName("Dung");
+        List<TermImpl> terms = service.lookupTermByName("Dung");
         assertThat(terms.size(), is(1));
-        Term term = terms.get(0);
+        TermImpl term = terms.get(0);
         assertThat(term.getName(), is("feces"));
         assertThat(term.getId(), is("ENVO:00002003"));
 
@@ -42,10 +42,10 @@ public class EnvoLookupServiceTest {
     @Test
     public void CMECShabitats() throws TermLookupServiceException {
         TermLookupService service = new EnvoLookupService();
-        List<Term> terms = service.lookupTermByName("Marine Nearshore Subtidal");
+        List<TermImpl> terms = service.lookupTermByName("Marine Nearshore Subtidal");
         assertThat(terms.size(), is(1));
 
-        Term term = terms.get(0);
+        TermImpl term = terms.get(0);
         assertThat(term.getName(), is("Marine Nearshore Subtidal"));
         assertThat(term.getId(), is("no:match"));
     }

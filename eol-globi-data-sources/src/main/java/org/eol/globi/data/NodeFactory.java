@@ -34,13 +34,13 @@ public interface NodeFactory {
 
     List<Environment> getOrCreateEnvironments(Location location, String externalId, String name) throws NodeFactoryException;
 
-    List<Environment> addEnvironmentToLocation(Location location, List<Term> terms);
+    List<Environment> addEnvironmentToLocation(Location location, List<TermImpl> terms);
 
-    Term getOrCreateBodyPart(String externalId, String name) throws NodeFactoryException;
+    TermImpl getOrCreateBodyPart(String externalId, String name) throws NodeFactoryException;
 
-    Term getOrCreatePhysiologicalState(String externalId, String name) throws NodeFactoryException;
+    TermImpl getOrCreatePhysiologicalState(String externalId, String name) throws NodeFactoryException;
 
-    Term getOrCreateLifeStage(String externalId, String name) throws NodeFactoryException;
+    TermImpl getOrCreateLifeStage(String externalId, String name) throws NodeFactoryException;
 
     TermLookupService getTermLookupService();
 
@@ -48,7 +48,7 @@ public interface NodeFactory {
 
     AuthorIdResolver getAuthorResolver();
 
-    Term getOrCreateBasisOfRecord(String externalId, String name) throws NodeFactoryException;
+    TermImpl getOrCreateBasisOfRecord(String externalId, String name) throws NodeFactoryException;
 
     Dataset getOrCreateDataset(Dataset dataset);
 

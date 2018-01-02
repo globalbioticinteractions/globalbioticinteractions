@@ -4,6 +4,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eol.globi.domain.NameType;
 import org.eol.globi.domain.PropertyAndValueDictionary;
+import org.eol.globi.domain.Term;
+import org.eol.globi.domain.TermImpl;
 import org.eol.globi.service.PropertyEnricher;
 import org.eol.globi.service.PropertyEnricherException;
 import org.eol.globi.service.TaxonUtil;
@@ -14,8 +16,10 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
+import java.util.stream.Collectors;
 
-public class TaxonEnricherImpl implements PropertyEnricher {
+public class TaxonEnricherImpl implements PropertyEnricher, TermMatcher {
     private static final Log LOG = LogFactory.getLog(TaxonEnricherImpl.class);
 
     private final List<PropertyEnricher> services = new ArrayList<PropertyEnricher>();
@@ -106,4 +110,22 @@ public class TaxonEnricherImpl implements PropertyEnricher {
     }
 
 
+    @Override
+    public void findTermsForNames(List<String> names, TermMatchListener termMatchListener, List<GlobalNamesSources> sources) throws PropertyEnricherException {
+        findTerms(names.stream().map(name -> new TermImpl(null, name)).collect(Collectors.toList()), termMatchListener, sources);
+    }
+
+    @Override
+    public void findTerms(List<Term> terms, TermMatchListener termMatchListener, List<GlobalNamesSources> sources) throws PropertyEnricherException {
+        for (Term name : terms) {
+            Map<String, String> enriched = enrich(new TreeMap<String, String>() {{
+                put(PropertyAndValueDictionary.NAME, name.getName());
+                put(PropertyAndValueDictionary.EXTERNAL_ID, name.getId());
+            }});
+            if (enriched != null) {
+                NameType nameMatchType = TaxonUtil.isResolved(enriched) ? NameType.SAME_AS : NameType.NONE;
+                termMatchListener.foundTaxonForName(null, name.getName(), TaxonUtil.mapToTaxon(enriched), nameMatchType);
+            }
+        }
+    }
 }

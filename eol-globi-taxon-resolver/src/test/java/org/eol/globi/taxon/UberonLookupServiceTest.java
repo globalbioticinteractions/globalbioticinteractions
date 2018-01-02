@@ -1,6 +1,6 @@
 package org.eol.globi.taxon;
 
-import org.eol.globi.domain.Term;
+import org.eol.globi.domain.TermImpl;
 import org.eol.globi.service.TermLookupServiceException;
 import org.hamcrest.core.Is;
 import org.junit.Assert;
@@ -14,7 +14,7 @@ public class UberonLookupServiceTest {
 
     @Test
     public void bodyPartMapping() throws TermLookupServiceException {
-        List<Term> scales = uberonLookupService.lookupTermByName("scales");
+        List<TermImpl> scales = uberonLookupService.lookupTermByName("scales");
         Assert.assertThat(scales.size(), Is.is(1));
         Assert.assertThat(scales.get(0).getId(), Is.is("UBERON:0002542"));
         Assert.assertThat(scales.get(0).getName(), Is.is("scale"));
@@ -22,7 +22,7 @@ public class UberonLookupServiceTest {
 
     @Test
     public void physiologicalStateMapping() throws TermLookupServiceException {
-        List<Term> scales = uberonLookupService.lookupTermByName("remains");
+        List<TermImpl> scales = uberonLookupService.lookupTermByName("remains");
         Assert.assertThat(scales.size(), Is.is(1));
         Assert.assertThat(scales.get(0).getId(), Is.is("GLOBI:REMAINS"));
         Assert.assertThat(scales.get(0).getName(), Is.is("REMAINS"));
@@ -30,7 +30,7 @@ public class UberonLookupServiceTest {
 
     @Test
     public void lifeStageMapping() throws TermLookupServiceException {
-        List<Term> scales = uberonLookupService.lookupTermByName("newborn");
+        List<TermImpl> scales = uberonLookupService.lookupTermByName("newborn");
         Assert.assertThat(scales.size(), Is.is(1));
         Assert.assertThat(scales.get(0).getId(), Is.is("GLOBI:NEWBORN"));
         Assert.assertThat(scales.get(0).getName(), Is.is("NEWBORN"));
@@ -38,7 +38,7 @@ public class UberonLookupServiceTest {
 
     @Test
     public void donaldDuck() throws TermLookupServiceException {
-        List<Term> scales = uberonLookupService.lookupTermByName("donald duck");
+        List<TermImpl> scales = uberonLookupService.lookupTermByName("donald duck");
         Assert.assertThat(scales.size(), Is.is(1));
         Assert.assertThat(scales.get(0).getId(), Is.is("no:match"));
         Assert.assertThat(scales.get(0).getName(), Is.is("donald duck"));
@@ -47,7 +47,7 @@ public class UberonLookupServiceTest {
     @Test
     public void noHeader() throws TermLookupServiceException {
         // ensure that header is not used as value
-        List<Term> scales = uberonLookupService.lookupTermByName("original_name");
+        List<TermImpl> scales = uberonLookupService.lookupTermByName("original_name");
         Assert.assertThat(scales.size(), Is.is(1));
         Assert.assertThat(scales.get(0).getId(), Is.is("no:match"));
         Assert.assertThat(scales.get(0).getName(), Is.is("original_name"));

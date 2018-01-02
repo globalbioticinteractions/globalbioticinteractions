@@ -10,9 +10,8 @@ import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.TaxonImpl;
-import org.eol.globi.domain.Term;
+import org.eol.globi.domain.TermImpl;
 import org.eol.globi.service.DatasetImpl;
-import org.eol.globi.util.InteractUtil;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -88,9 +87,9 @@ public class ExportFlatInteractionsTest extends GraphDBTestCase {
         taxon.setPath("pathElem1 | pathElem 2");
         Specimen specimen = factory.createSpecimen(myStudy, taxon);
         specimen.setStomachVolumeInMilliLiter(666.0);
-        specimen.setLifeStage(new Term("GLOBI:JUVENILE", "JUVENILE"));
-        specimen.setPhysiologicalState(new Term("GLOBI:DIGESTATE", "DIGESTATE"));
-        specimen.setBodyPart(new Term("GLOBI:BONE", "BONE"));
+        specimen.setLifeStage(new TermImpl("GLOBI:JUVENILE", "JUVENILE"));
+        specimen.setPhysiologicalState(new TermImpl("GLOBI:DIGESTATE", "DIGESTATE"));
+        specimen.setBodyPart(new TermImpl("GLOBI:BONE", "BONE"));
         factory.setUnixEpochProperty(specimen, new Date(ExportTestUtil.utcTestTime()));
         return specimen;
     }

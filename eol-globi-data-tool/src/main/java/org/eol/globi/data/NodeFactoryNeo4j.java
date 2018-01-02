@@ -47,7 +47,7 @@ import static org.eol.globi.domain.LocationUtil.fromLocation;
 public class NodeFactoryNeo4j implements NodeFactory {
 
     private static final Log LOG = LogFactory.getLog(NodeFactoryNeo4j.class);
-    public static final org.eol.globi.domain.Term NO_MATCH_TERM = new org.eol.globi.domain.Term(PropertyAndValueDictionary.NO_MATCH, PropertyAndValueDictionary.NO_MATCH);
+    public static final TermImpl NO_MATCH_TERM = new TermImpl(PropertyAndValueDictionary.NO_MATCH, PropertyAndValueDictionary.NO_MATCH);
 
     private GraphDatabaseService graphDb;
     private final Index<Node> studies;
@@ -267,8 +267,8 @@ public class NodeFactoryNeo4j implements NodeFactory {
 
     private void extractLifeStage(Specimen specimen, String part) throws NodeFactoryException {
         try {
-            List<Term> terms = lifeStageLookupService.lookupTermByName(part);
-            for (Term term : terms) {
+            List<TermImpl> terms = lifeStageLookupService.lookupTermByName(part);
+            for (TermImpl term : terms) {
                 if (!StringUtils.equals(term.getId(), PropertyAndValueDictionary.NO_MATCH)) {
                     specimen.setLifeStage(terms.get(0));
                     break;
@@ -281,8 +281,8 @@ public class NodeFactoryNeo4j implements NodeFactory {
 
     private void extractBodyPart(Specimen specimen, String part) throws NodeFactoryException {
         try {
-            List<Term> terms = bodyPartLookupService.lookupTermByName(part);
-            for (Term term : terms) {
+            List<TermImpl> terms = bodyPartLookupService.lookupTermByName(part);
+            for (TermImpl term : terms) {
                 if (!StringUtils.equals(term.getId(), PropertyAndValueDictionary.NO_MATCH)) {
                     specimen.setBodyPart(terms.get(0));
                     break;
@@ -478,11 +478,11 @@ public class NodeFactoryNeo4j implements NodeFactory {
 
     @Override
     public List<Environment> getOrCreateEnvironments(Location location, String externalId, String name) throws NodeFactoryException {
-        List<org.eol.globi.domain.Term> terms;
+        List<TermImpl> terms;
         try {
             terms = envoLookupService.lookupTermByName(name);
             if (terms.size() == 0) {
-                terms.add(new org.eol.globi.domain.Term(externalId, name));
+                terms.add(new TermImpl(externalId, name));
             }
         } catch (TermLookupServiceException e) {
             throw new NodeFactoryException("failed to lookup environment [" + name + "]", e);
@@ -492,9 +492,9 @@ public class NodeFactoryNeo4j implements NodeFactory {
     }
 
     @Override
-    public List<Environment> addEnvironmentToLocation(Location location, List<Term> terms) {
+    public List<Environment> addEnvironmentToLocation(Location location, List<TermImpl> terms) {
         List<Environment> normalizedEnvironments = new ArrayList<Environment>();
-        for (Term term : terms) {
+        for (TermImpl term : terms) {
             Environment environment = findEnvironment(term.getName());
             if (environment == null) {
                 Transaction transaction = graphDb.beginTx();
@@ -607,23 +607,23 @@ public class NodeFactoryNeo4j implements NodeFactory {
     }
 
     @Override
-    public org.eol.globi.domain.Term getOrCreateBodyPart(String externalId, String name) throws NodeFactoryException {
+    public TermImpl getOrCreateBodyPart(String externalId, String name) throws NodeFactoryException {
         return matchTerm(externalId, name);
     }
 
     @Override
-    public org.eol.globi.domain.Term getOrCreatePhysiologicalState(String externalId, String name) throws NodeFactoryException {
+    public TermImpl getOrCreatePhysiologicalState(String externalId, String name) throws NodeFactoryException {
         return matchTerm(externalId, name);
     }
 
     @Override
-    public org.eol.globi.domain.Term getOrCreateLifeStage(String externalId, String name) throws NodeFactoryException {
+    public TermImpl getOrCreateLifeStage(String externalId, String name) throws NodeFactoryException {
         return matchTerm(externalId, name);
     }
 
-    private org.eol.globi.domain.Term matchTerm(String externalId, String name) throws NodeFactoryException {
+    private TermImpl matchTerm(String externalId, String name) throws NodeFactoryException {
         try {
-            List<org.eol.globi.domain.Term> terms = getTermLookupService().lookupTermByName(name);
+            List<TermImpl> terms = getTermLookupService().lookupTermByName(name);
             return terms.size() == 0 ? NO_MATCH_TERM : terms.get(0);
         } catch (TermLookupServiceException e) {
             throw new NodeFactoryException("failed to lookup term [" + externalId + "]:[" + name + "]");
@@ -673,7 +673,7 @@ public class NodeFactoryNeo4j implements NodeFactory {
     }
 
     @Override
-    public Term getOrCreateBasisOfRecord(String externalId, String name) throws NodeFactoryException {
+    public TermImpl getOrCreateBasisOfRecord(String externalId, String name) throws NodeFactoryException {
         return matchTerm(externalId, name);
     }
 

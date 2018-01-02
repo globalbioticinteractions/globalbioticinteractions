@@ -4,7 +4,7 @@ import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImage;
 import org.eol.globi.domain.TaxonImpl;
-import org.eol.globi.domain.Term;
+import org.eol.globi.domain.TermImpl;
 import org.junit.Test;
 
 import java.util.Map;
@@ -67,7 +67,7 @@ public class TaxonUtilTest {
     @Test
     public void copyTaxon() {
         Taxon src = new TaxonImpl("name", "id");
-        src.setStatus(new Term("statusId", "statusLabel"));
+        src.setStatus(new TermImpl("statusId", "statusLabel"));
         Taxon target = new TaxonImpl();
         TaxonUtil.copy(src, target);
         assertThat(target.getStatus().getId(), is("statusId"));
@@ -77,7 +77,7 @@ public class TaxonUtilTest {
     @Test
     public void copyTaxonPrefillExternalURL() {
         Taxon src = new TaxonImpl("name", "GBIF:123");
-        src.setStatus(new Term("statusId", "statusLabel"));
+        src.setStatus(new TermImpl("statusId", "statusLabel"));
         Taxon target = new TaxonImpl();
         TaxonUtil.copy(src, target);
         assertThat(target.getStatus().getId(), is("statusId"));

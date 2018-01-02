@@ -15,7 +15,7 @@ import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyConstant;
 import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.TaxonImpl;
-import org.eol.globi.domain.Term;
+import org.eol.globi.domain.TermImpl;
 import org.eol.globi.geo.LatLng;
 
 import java.io.BufferedReader;
@@ -207,7 +207,7 @@ public class StudyImporterForSPIRE extends BaseStudyImporter {
     }
 
     private void addLifeStage(Specimen specimen, String name) throws NodeFactoryException {
-        Term terms;
+        TermImpl terms;
         terms = nodeFactory.getOrCreateLifeStage("SPIRE:" + name, name);
         specimen.setLifeStage(terms);
     }

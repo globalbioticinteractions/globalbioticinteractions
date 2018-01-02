@@ -9,7 +9,7 @@ import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TaxonomyProvider;
-import org.eol.globi.domain.Term;
+import org.eol.globi.domain.TermImpl;
 import org.eol.globi.service.TermLookupServiceException;
 import org.eol.globi.util.ExternalIdUtil;
 
@@ -305,17 +305,17 @@ public class StudyImporterForBioInfo extends BaseStudyImporter implements StudyI
     }
 
     private void addLifeStage(LabeledCSVParser parser, Specimen donorSpecimen, String columnName, Study study) throws StudyImporterException {
-        List<Term> lifeStage = parseTerms(parser, columnName, study);
+        List<TermImpl> lifeStage = parseTerms(parser, columnName, study);
         donorSpecimen.setLifeStage(lifeStage);
     }
 
     private void addBodyPart(LabeledCSVParser parser, Specimen donorSpecimen, String columnName, Study study) throws StudyImporterException {
-        List<Term> bodyParts = parseTerms(parser, columnName, study);
+        List<TermImpl> bodyParts = parseTerms(parser, columnName, study);
         donorSpecimen.setBodyPart(bodyParts);
     }
 
-    private List<Term> parseTerms(LabeledCSVParser parser, String stageColumnName, Study study) throws StudyImporterException {
-        List<Term> lifeStage = null;
+    private List<TermImpl> parseTerms(LabeledCSVParser parser, String stageColumnName, Study study) throws StudyImporterException {
+        List<TermImpl> lifeStage = null;
         String donorLifeStage = parser.getValueByLabel(stageColumnName);
         if (donorLifeStage != null && donorLifeStage.trim().length() > 0) {
             lifeStage = parseLifeStage(donorLifeStage, study);
@@ -326,9 +326,9 @@ public class StudyImporterForBioInfo extends BaseStudyImporter implements StudyI
         return lifeStage;
     }
 
-    private List<Term> parseLifeStage(String lifeStageString, Study study) throws StudyImporterException {
+    private List<TermImpl> parseLifeStage(String lifeStageString, Study study) throws StudyImporterException {
         try {
-            List<Term> terms = nodeFactory.getTermLookupService().lookupTermByName(lifeStageString);
+            List<TermImpl> terms = nodeFactory.getTermLookupService().lookupTermByName(lifeStageString);
             if (terms.size() > 0) {
             } else {
                 getLogger().warn(study, "failed to map life stage [" + lifeStageString + "]");

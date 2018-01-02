@@ -8,7 +8,8 @@ import org.apache.commons.logging.LogFactory;
 import org.eol.globi.domain.NameType;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Taxon;
-import org.eol.globi.domain.TaxonImpl;
+import org.eol.globi.domain.Term;
+import org.eol.globi.domain.TermImpl;
 import org.eol.globi.service.CacheService;
 import org.eol.globi.service.PropertyEnricher;
 import org.eol.globi.service.PropertyEnricherException;
@@ -28,6 +29,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class TaxonCacheService extends CacheService implements PropertyEnricher, TermMatcher {
     private static final Log LOG = LogFactory.getLog(TaxonCacheService.class);
@@ -156,31 +159,39 @@ public class TaxonCacheService extends CacheService implements PropertyEnricher,
 
     @Override
     public void findTermsForNames(List<String> names, TermMatchListener termMatchListener, List<GlobalNamesSources> sources) throws PropertyEnricherException {
-        lazyInit();
-        for (String name : names) {
-            if (StringUtils.isNotBlank(name)) {
-                Set<String> ids = providedToResolvedMaps.get(name);
+        Stream<Term> namesAndIds = names.stream().flatMap(name -> Stream.of(new TermImpl(null, name)));
+        findTerms(namesAndIds.collect(Collectors.toList()), termMatchListener, sources);
+    }
 
-                if (ids != null) {
-                    for (String resolvedId : ids) {
-                        Map<String, String> resolved = resolvedIdToTaxonMap.get(resolvedId);
-                        if (resolved != null) {
-                            Taxon resolvedTaxon = TaxonUtil.mapToTaxon(resolved);
-                            termMatchListener.foundTaxonForName(null, name, resolvedTaxon, NameType.SAME_AS);
-                        }
+    @Override
+    public void findTerms(List<Term> terms, TermMatchListener termMatchListener, List<GlobalNamesSources> sources) throws PropertyEnricherException {
+        lazyInit();
+        for (Term term : terms) {
+            if (!resolveName(termMatchListener, term.getId())) {
+                resolveName(termMatchListener, term.getName());
+            }
+        }
+    }
+
+    private boolean resolveName(TermMatchListener termMatchListener, String name) {
+        boolean hasResolved = false;
+
+        if (StringUtils.isNotBlank(name)) {
+            Set<String> ids = providedToResolvedMaps.get(name);
+
+            if (ids != null) {
+                for (String resolvedId : ids) {
+                    Map<String, String> resolved = resolvedIdToTaxonMap.get(resolvedId);
+                    if (resolved != null) {
+                        Taxon resolvedTaxon = TaxonUtil.mapToTaxon(resolved);
+                        termMatchListener.foundTaxonForName(null, name, resolvedTaxon, NameType.SAME_AS);
+                        hasResolved = true;
                     }
                 }
             }
         }
 
-    }
-
-    private enum ProcessingState {
-        PROVIDED_NAME,
-        PROVIDED_ID,
-        RESOLVED_NAME,
-        RESOLVED_ID,
-        DONE
+        return hasResolved;
     }
 
     interface LineSkipper {

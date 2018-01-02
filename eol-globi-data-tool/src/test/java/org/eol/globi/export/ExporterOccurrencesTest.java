@@ -8,7 +8,7 @@ import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.TaxonImpl;
-import org.eol.globi.domain.Term;
+import org.eol.globi.domain.TermImpl;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -88,7 +88,7 @@ public class ExporterOccurrencesTest extends GraphDBTestCase {
     public void dontExportToCSVSpecimenEmptyStomach() throws NodeFactoryException, IOException {
         Study myStudy = nodeFactory.createStudy(new StudyImpl("myStudy", null, null, null));
         Specimen specimen = nodeFactory.createSpecimen(myStudy, new TaxonImpl("Homo sapiens", "EOL:123"));
-        specimen.setBasisOfRecord(new Term("test:123", "aBasisOfRecord"));
+        specimen.setBasisOfRecord(new TermImpl("test:123", "aBasisOfRecord"));
         resolveNames();
 
         StringWriter row = new StringWriter();
@@ -106,9 +106,9 @@ public class ExporterOccurrencesTest extends GraphDBTestCase {
         Study myStudy = nodeFactory.createStudy(new StudyImpl("myStudy", null, null, null));
         Specimen specimen = nodeFactory.createSpecimen(myStudy, new TaxonImpl("Homo sapiens", "EOL:327955"));
         specimen.setStomachVolumeInMilliLiter(666.0);
-        specimen.setLifeStage(new Term("GLOBI:JUVENILE", "JUVENILE"));
-        specimen.setPhysiologicalState(new Term("GLOBI:DIGESTATE", "DIGESTATE"));
-        specimen.setBodyPart(new Term("GLOBI:BONE", "BONE"));
+        specimen.setLifeStage(new TermImpl("GLOBI:JUVENILE", "JUVENILE"));
+        specimen.setPhysiologicalState(new TermImpl("GLOBI:DIGESTATE", "DIGESTATE"));
+        specimen.setBodyPart(new TermImpl("GLOBI:BONE", "BONE"));
         nodeFactory.setUnixEpochProperty(specimen, ExportTestUtil.utcTestDate());
         if (null != length) {
             specimen.setLengthInMm(length);

@@ -17,6 +17,7 @@ import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TaxonomyProvider;
+import org.eol.globi.domain.Term;
 import org.eol.globi.service.PropertyEnricher;
 import org.eol.globi.service.PropertyEnricherException;
 import org.eol.globi.service.TaxonUtil;
@@ -31,6 +32,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class GlobalNamesService implements PropertyEnricher, TermMatcher {
     private static final Log LOG = LogFactory.getLog(GlobalNamesService.class);
@@ -81,6 +83,14 @@ public class GlobalNamesService implements PropertyEnricher, TermMatcher {
     }
 
     @Override
+    public void findTerms(List<Term> terms, TermMatchListener termMatchListener, List<GlobalNamesSources> sources) throws PropertyEnricherException {
+        if (terms.size() == 0) {
+            throw new IllegalArgumentException("need non-empty list of names");
+        }
+        findTermsForNames(terms.stream().map(Term::getName).collect(Collectors.toList()), termMatchListener, sources);
+    }
+
+    @Override
     public void findTermsForNames(List<String> names, TermMatchListener termMatchListener, List<GlobalNamesSources> sources) throws PropertyEnricherException {
         if (names.size() == 0) {
             throw new IllegalArgumentException("need non-empty list of names");
@@ -94,11 +104,9 @@ public class GlobalNamesService implements PropertyEnricher, TermMatcher {
                 if (names.size() > 1) {
                     LOG.warn("retrying names query one name at a time: failed to perform batch query", e);
                     List<String> namesFailed = new ArrayList<>();
-                    List<String> namesSuccess = new ArrayList<>();
                     for (String name : names) {
                         try {
                             parseResult(termMatchListener, executeQuery(Collections.singletonList(name), uri));
-                            namesSuccess.add(name);
                         } catch (IOException e1) {
                             namesFailed.add(name);
                         }

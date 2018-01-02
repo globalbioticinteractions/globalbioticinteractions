@@ -9,7 +9,7 @@ import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.TaxonImpl;
-import org.eol.globi.domain.Term;
+import org.eol.globi.domain.TermImpl;
 import org.hamcrest.core.Is;
 import org.junit.Test;
 
@@ -99,9 +99,9 @@ public class ExporterOccurrenceAggregatesTest extends GraphDBTestCase {
     private Specimen collectSpecimen(Study myStudy, String scientificName, String externalId) throws NodeFactoryException {
         Specimen specimen = nodeFactory.createSpecimen(myStudy, new TaxonImpl(scientificName, externalId));
         specimen.setStomachVolumeInMilliLiter(666.0);
-        specimen.setLifeStage(new Term("GLOBI:JUVENILE", "JUVENILE"));
-        specimen.setPhysiologicalState(new Term("GLOBI:DIGESTATE", "DIGESTATE"));
-        specimen.setBodyPart(new Term("GLOBI:BONE", "BONE"));
+        specimen.setLifeStage(new TermImpl("GLOBI:JUVENILE", "JUVENILE"));
+        specimen.setPhysiologicalState(new TermImpl("GLOBI:DIGESTATE", "DIGESTATE"));
+        specimen.setBodyPart(new TermImpl("GLOBI:BONE", "BONE"));
         nodeFactory.setUnixEpochProperty(specimen, new Date(ExportTestUtil.utcTestTime()));
         return specimen;
     }

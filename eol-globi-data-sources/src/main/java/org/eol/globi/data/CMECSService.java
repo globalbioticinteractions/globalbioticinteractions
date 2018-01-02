@@ -9,7 +9,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.eol.globi.domain.TaxonomyProvider;
-import org.eol.globi.domain.Term;
+import org.eol.globi.domain.TermImpl;
 import org.eol.globi.service.TermLookupService;
 import org.eol.globi.service.TermLookupServiceException;
 import org.eol.globi.util.HttpUtil;
@@ -27,10 +27,10 @@ public class CMECSService implements TermLookupService {
 
     private static Log LOG = LogFactory.getLog(CMECSService.class);
 
-    private Map<String, Term> termMap = null;
+    private Map<String, TermImpl> termMap = null;
 
     @Override
-    public List<Term> lookupTermByName(String name) throws TermLookupServiceException {
+    public List<TermImpl> lookupTermByName(String name) throws TermLookupServiceException {
         if (termMap == null) {
             try {
                 termMap = buildTermMap();
@@ -38,11 +38,11 @@ public class CMECSService implements TermLookupService {
                 throw new TermLookupServiceException("failed to instantiate terms", e);
             }
         }
-        Term term = termMap.get(name);
-        return term == null ? new ArrayList<Term>() : Arrays.asList(term);
+        TermImpl term = termMap.get(name);
+        return term == null ? new ArrayList<TermImpl>() : Arrays.asList(term);
     }
 
-    private static Map<String, Term> buildTermMap() throws IOException {
+    private static Map<String, TermImpl> buildTermMap() throws IOException {
         LOG.info(CMECSService.class.getSimpleName() + " instantiating...");
         String uri = "https://cmecscatalog.org/cmecs/documents/cmecs4.accdb";
         LOG.info("CMECS data [" + uri + "] downloading ...");
@@ -59,7 +59,7 @@ public class CMECSService implements TermLookupService {
                 .setReadOnly(true)
                 .open();
 
-            Map<String, Term> aquaticSettingsTerms = new HashMap<String, Term>();
+            Map<String, TermImpl> aquaticSettingsTerms = new HashMap<String, TermImpl>();
 
             Table table = db.getTable("Aquatic Setting");
             Map<String, Object> row;
@@ -67,7 +67,7 @@ public class CMECSService implements TermLookupService {
                 Integer id = (Integer) row.get("AquaticSetting_Id");
                 String name = (String) row.get("AquaticSettingName");
                 String termId = TaxonomyProvider.ID_CMECS + id;
-                aquaticSettingsTerms.put(name, new Term(termId, name));
+                aquaticSettingsTerms.put(name, new TermImpl(termId, name));
             }
             cmecs.delete();
             LOG.info(CMECSService.class.getSimpleName() + " instantiated.");

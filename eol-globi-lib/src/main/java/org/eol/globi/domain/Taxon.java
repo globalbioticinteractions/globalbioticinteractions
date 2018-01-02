@@ -1,6 +1,6 @@
 package org.eol.globi.domain;
 
-public interface Taxon {
+public interface Taxon extends Term {
     String getPath();
 
     void setPath(String path);
@@ -29,9 +29,9 @@ public interface Taxon {
 
     String getPathIds();
 
-    void setStatus(Term status);
+    void setStatus(TermImpl status);
 
-    Term getStatus();
+    TermImpl getStatus();
 
     void setExternalUrl(String externalUrl);
 

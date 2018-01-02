@@ -10,7 +10,7 @@ import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.TaxonImpl;
-import org.eol.globi.domain.Term;
+import org.eol.globi.domain.TermImpl;
 import org.eol.globi.service.TermLookupServiceException;
 import org.eol.globi.util.ExternalIdUtil;
 
@@ -102,7 +102,7 @@ public class StudyImporterForBarnes extends BaseStudyImporter {
     private void addLifeStage(LabeledCSVParser parser, Specimen predator) throws StudyImporterException {
         String lifeStageString = parser.getValueByLabel("Predator lifestage");
         try {
-            List<Term> terms = nodeFactory.getTermLookupService().lookupTermByName(lifeStageString);
+            List<TermImpl> terms = nodeFactory.getTermLookupService().lookupTermByName(lifeStageString);
             if (terms.size() == 0) {
                 throw new StudyImporterException("unsupported life stage [" + lifeStageString + "] on line [" + parser.getLastLineNumber() + "]");
             }

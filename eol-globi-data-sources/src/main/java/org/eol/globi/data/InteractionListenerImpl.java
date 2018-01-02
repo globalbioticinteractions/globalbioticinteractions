@@ -1,7 +1,6 @@
 package org.eol.globi.data;
 
 import org.apache.commons.lang.StringUtils;
-import org.eol.globi.domain.Environment;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.LocationImpl;
@@ -9,7 +8,7 @@ import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.TaxonImpl;
-import org.eol.globi.domain.Term;
+import org.eol.globi.domain.TermImpl;
 import org.eol.globi.geo.LatLng;
 import org.eol.globi.service.GeoNamesService;
 import org.eol.globi.util.InvalidLocationException;
@@ -155,7 +154,7 @@ class InteractionListenerImpl implements InteractionListener {
         final String basisOfRecordName = link.get(BASIS_OF_RECORD_NAME);
         final String basisOfRecordId = link.get(BASIS_OF_RECORD_ID);
         if (StringUtils.isNotBlank(basisOfRecordName) || StringUtils.isNotBlank(basisOfRecordId)) {
-            specimen.setBasisOfRecord(new Term(basisOfRecordId, basisOfRecordName));
+            specimen.setBasisOfRecord(new TermImpl(basisOfRecordId, basisOfRecordName));
         }
     }
 

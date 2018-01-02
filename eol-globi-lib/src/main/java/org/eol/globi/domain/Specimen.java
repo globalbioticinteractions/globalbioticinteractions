@@ -30,19 +30,19 @@ public interface Specimen extends WithId {
 
     void setOriginalTaxonDescription(Taxon taxon);
 
-    void setLifeStage(List<Term> lifeStages);
+    void setLifeStage(List<TermImpl> lifeStages);
 
-    void setLifeStage(Term lifeStage);
+    void setLifeStage(TermImpl lifeStage);
 
-    void setPhysiologicalState(Term physiologicalState);
+    void setPhysiologicalState(TermImpl physiologicalState);
 
-    void setBodyPart(List<Term> bodyParts);
+    void setBodyPart(List<TermImpl> bodyParts);
 
-    void setBodyPart(Term bodyPart);
+    void setBodyPart(TermImpl bodyPart);
 
-    void setBasisOfRecord(Term basisOfRecord);
+    void setBasisOfRecord(TermImpl basisOfRecord);
 
-    Term getBasisOfRecord();
+    TermImpl getBasisOfRecord();
 
     void setFrequencyOfOccurrence(Double frequencyOfOccurrence);
 
@@ -50,9 +50,9 @@ public interface Specimen extends WithId {
 
     void setTotalVolumeInMl(Double totalVolumeInMl);
 
-    Term getLifeStage();
+    TermImpl getLifeStage();
 
-    Term getBodyPart();
+    TermImpl getBodyPart();
 
     void setProperty(String name, Object value);
 }

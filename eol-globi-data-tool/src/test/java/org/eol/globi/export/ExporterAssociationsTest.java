@@ -9,7 +9,7 @@ import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.TaxonImpl;
-import org.eol.globi.domain.Term;
+import org.eol.globi.domain.TermImpl;
 import org.eol.globi.util.ExternalIdUtil;
 import org.junit.Test;
 
@@ -45,9 +45,9 @@ public class ExporterAssociationsTest extends GraphDBTestCase {
         Study myStudy = nodeFactory.getOrCreateStudy(new StudyImpl("myStudy", "data\tsource description", null, ExternalIdUtil.toCitation("contributor", "description", "pubYear")));
         Specimen specimen = nodeFactory.createSpecimen(myStudy, new TaxonImpl("Homo sapiens", "EOL:123"));
         specimen.setStomachVolumeInMilliLiter(666.0);
-        specimen.setLifeStage(new Term("GLOBI:JUVENILE", "JUVENILE"));
-        specimen.setPhysiologicalState(new Term("GLOBI:DIGESTATE", "DIGESTATE"));
-        specimen.setBodyPart(new Term("GLOBI:BONE", "BONE"));
+        specimen.setLifeStage(new TermImpl("GLOBI:JUVENILE", "JUVENILE"));
+        specimen.setPhysiologicalState(new TermImpl("GLOBI:DIGESTATE", "DIGESTATE"));
+        specimen.setBodyPart(new TermImpl("GLOBI:BONE", "BONE"));
         nodeFactory.setUnixEpochProperty(specimen, new Date(ExportTestUtil.utcTestTime()));
         eats(specimen, "Canis lupus", "EOL:456", myStudy);
         eats(specimen, "Felis whateverus", PropertyAndValueDictionary.NO_MATCH, myStudy);

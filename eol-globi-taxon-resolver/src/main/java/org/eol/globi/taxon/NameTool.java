@@ -28,15 +28,11 @@ public class NameTool {
             System.err.println(Version.getVersionInfo(NameTool.class));
             boolean shouldReplace = false;
             resolve(System.in, new TermMatchingRowHandler(shouldReplace, System.out, new GlobalNamesService()));
-            //resolve(System.in, new ResolvingRowHandler(taxonEnricher, shouldReplace, System.out));
             System.exit(0);
         } catch (IOException | PropertyEnricherException e) {
             System.err.println("failed to resolve taxon: [" + e.getMessage() + "]");
             System.exit(1);
-        } finally {
-            //taxonEnricher.shutdown();
         }
-
     }
 
     static void resolve(InputStream is, RowHandler rowHandler) throws IOException, PropertyEnricherException {
@@ -79,7 +75,7 @@ public class NameTool {
         private final boolean shouldReplace;
         private final PrintStream p;
 
-        public ResolvingRowHandler(PropertyEnricher enricher, boolean shouldReplace, OutputStream os) {
+        public ResolvingRowHandler(boolean shouldReplace, OutputStream os, PropertyEnricher enricher) {
             this.enricher = enricher;
             this.shouldReplace = shouldReplace;
             this.p = new PrintStream(os);
@@ -140,7 +136,7 @@ public class NameTool {
         @Override
         public void onRow(final String[] row) throws PropertyEnricherException {
             Taxon taxonProvided = asTaxon(row);
-            termMatcher.findTermsForNames(Arrays.asList(taxonProvided.getName()), new TermMatchListener() {
+            termMatcher.findTerms(Arrays.asList(taxonProvided), new TermMatchListener() {
                 @Override
                 public void foundTaxonForName(Long id, String name, Taxon taxon, NameType nameType) {
                     Taxon taxonWithServiceInfo = (TaxonUtil.mapToTaxon(TaxonUtil.appendNameSourceInfo(TaxonUtil.taxonToMap(taxon), GlobalNamesService.class, new Date())));

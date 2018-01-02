@@ -3,7 +3,7 @@ package org.eol.globi.data;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.SpecimenNode;
 import org.eol.globi.domain.Study;
-import org.eol.globi.domain.Term;
+import org.eol.globi.domain.TermImpl;
 import org.eol.globi.service.DatasetImpl;
 import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
@@ -50,7 +50,7 @@ public class StudyImporterForSeltmannIT extends GraphDBTestCase {
             Iterable<Relationship> specimens = NodeUtil.getSpecimens(allStudy);
             for (Relationship specimen : specimens) {
                 Specimen spec = new SpecimenNode(specimen.getEndNode());
-                Term basisOfRecord = spec.getBasisOfRecord();
+                TermImpl basisOfRecord = spec.getBasisOfRecord();
                 assertThat(basisOfRecord.getId(), either(is("TEST:PreservedSpecimen")).or(is("TEST:LabelObservation")));
                 assertThat(basisOfRecord.getName(), either(is("PreservedSpecimen")).or(is("LabelObservation")));
             }

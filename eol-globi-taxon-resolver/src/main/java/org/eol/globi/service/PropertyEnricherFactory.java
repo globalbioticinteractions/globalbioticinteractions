@@ -7,6 +7,10 @@ import java.util.List;
 
 public class PropertyEnricherFactory {
     public static PropertyEnricher createTaxonEnricher() {
+        return getTaxonEnricher();
+    }
+
+    private static TaxonEnricherImpl getTaxonEnricher() {
         return new TaxonEnricherImpl() {{
             setServices(new ArrayList<PropertyEnricher>() {
                 {
@@ -25,5 +29,9 @@ public class PropertyEnricherFactory {
                 }
             });
         }};
+    }
+
+    public static TermMatcher createTaxonMatcher() {
+        return getTaxonEnricher();
     }
 }

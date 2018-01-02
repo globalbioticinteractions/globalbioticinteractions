@@ -10,7 +10,7 @@ import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TaxonomyProvider;
-import org.eol.globi.domain.Term;
+import org.eol.globi.domain.TermImpl;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -77,7 +77,7 @@ public class StudyImporterForKelpForest extends BaseStudyImporter {
         String taxonExternalId = id == null ? null : TaxonomyProvider.ID_PREFIX_ITIS + id;
         Specimen sourceSpecimen = nodeFactory.createSpecimen(study, new TaxonImpl(sourceName, taxonExternalId));
         String sourceLifeStage = parser.getValueByLabel(stageLabel);
-        Term orCreateLifeStage = nodeFactory.getOrCreateLifeStage("KELP:" + sourceLifeStage, sourceLifeStage);
+        TermImpl orCreateLifeStage = nodeFactory.getOrCreateLifeStage("KELP:" + sourceLifeStage, sourceLifeStage);
         sourceSpecimen.setLifeStage(orCreateLifeStage);
         return sourceSpecimen;
     }

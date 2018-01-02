@@ -8,7 +8,7 @@ public class TaxonImpl implements Taxon {
     private String commonNames;
     private String rank;
     private String pathIds;
-    private Term status;
+    private TermImpl status;
     private String thumbnailUrl;
     private String externalUrl;
     private String nameSource;
@@ -59,6 +59,11 @@ public class TaxonImpl implements Taxon {
     }
 
     @Override
+    public String getId() {
+        return getExternalId();
+    }
+
+    @Override
     public String getName() {
         return name;
     }
@@ -99,7 +104,7 @@ public class TaxonImpl implements Taxon {
     }
 
     @Override
-    public Term getStatus() {
+    public TermImpl getStatus() {
         return status;
     }
 
@@ -154,7 +159,7 @@ public class TaxonImpl implements Taxon {
     }
 
     @Override
-    public void setStatus(Term status) {
+    public void setStatus(TermImpl status) {
         this.status = status;
     }
 }

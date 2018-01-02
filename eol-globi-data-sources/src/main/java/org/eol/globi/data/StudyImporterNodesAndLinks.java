@@ -4,9 +4,8 @@ import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.JsonNode;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyImpl;
-import org.eol.globi.domain.Term;
+import org.eol.globi.domain.TermImpl;
 import org.eol.globi.geo.LatLng;
-import org.eol.globi.service.DatasetUtil;
 
 public abstract class StudyImporterNodesAndLinks extends BaseStudyImporter {
 
@@ -40,7 +39,7 @@ public abstract class StudyImporterNodesAndLinks extends BaseStudyImporter {
         return loc == null ? null : loc;
     }
 
-    public Term getLocality() {
+    public TermImpl getLocality() {
         return parseLocality(getDataset().getConfig());
     }
 
@@ -59,8 +58,8 @@ public abstract class StudyImporterNodesAndLinks extends BaseStudyImporter {
         return loc;
     }
 
-    private static Term parseLocality(JsonNode desc) {
-        Term locality = null;
+    private static TermImpl parseLocality(JsonNode desc) {
+        TermImpl locality = null;
         JsonNode location = desc.get("location");
         if (location != null) {
             JsonNode locale = location.get("locality");
@@ -68,7 +67,7 @@ public abstract class StudyImporterNodesAndLinks extends BaseStudyImporter {
                 JsonNode id = locale.get("id");
                 JsonNode name = locale.get("name");
                 if (id != null && name != null) {
-                    locality = new Term(id.asText(), name.asText());
+                    locality = new TermImpl(id.asText(), name.asText());
                 }
             }
         }
