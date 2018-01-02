@@ -44,15 +44,15 @@ public class TaxonInteractionIndexerTest extends GraphDBTestCase {
 
     @Test
     public void buildTaxonInterIndex() throws NodeFactoryException, PropertyEnricherException {
-        Specimen human = nodeFactory.createSpecimen(nodeFactory.createStudy(new StudyImpl("bla", null, null, null)), new TaxonImpl("Homo sapiens", null));
-        Specimen animal = nodeFactory.createSpecimen(nodeFactory.createStudy(new StudyImpl("bla", null, null, null)), new TaxonImpl("Canis lupus", "EOL:1"));
+        Specimen human = nodeFactory.createSpecimen(nodeFactory.createStudy(new StudyImpl("bla", null, null, null)), new TaxonImpl("Homo sapiens", "NCBI:9606"));
+        Specimen animal = nodeFactory.createSpecimen(nodeFactory.createStudy(new StudyImpl("bla", null, null, null)), new TaxonImpl("Canis lupus", "WORMS:2"));
         human.ate(animal);
         for (int i = 0; i < 10; i++) {
-            Specimen fish = nodeFactory.createSpecimen(nodeFactory.createStudy(new StudyImpl("bla", null, null, null)), new TaxonImpl("Arius felis", null));
+            Specimen fish = nodeFactory.createSpecimen(nodeFactory.createStudy(new StudyImpl("bla", null, null, null)), new TaxonImpl("Arius felis", "WORMS:158711"));
             human.ate(fish);
         }
 
-        assertNull(taxonIndex.findTaxonById("EOL:1"));
+        assertNull(taxonIndex.findTaxonById("WORMS:2"));
         assertNull(taxonIndex.findTaxonByName("Homo sapiens"));
 
         final TaxonNameCorrector taxonNameCorrector = new TaxonNameCorrector();
