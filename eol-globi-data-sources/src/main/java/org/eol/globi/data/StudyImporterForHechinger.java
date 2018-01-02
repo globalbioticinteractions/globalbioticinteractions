@@ -8,6 +8,7 @@ import org.eol.globi.domain.LocationImpl;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.TaxonImpl;
+import org.eol.globi.domain.Term;
 import org.eol.globi.domain.TermImpl;
 
 import java.io.IOException;
@@ -69,7 +70,7 @@ public class StudyImporterForHechinger extends StudyImporterNodesAndLinks {
 
             nodes.changeDelimiter(getDelimiter());
 
-            Map<Integer, TermImpl> stageForNode = new HashMap<Integer, TermImpl>();
+            Map<Integer, Term> stageForNode = new HashMap<>();
             Map<Integer, String> taxonForNode = new HashMap<Integer, String>();
 
 
@@ -158,7 +159,7 @@ public class StudyImporterForHechinger extends StudyImporterNodesAndLinks {
         return name;
     }
 
-    private void addLink(Study study, Map<Integer, TermImpl> stageForNode, Map<Integer, String> taxonForNode, LabeledCSVParser links, Location location) throws StudyImporterException, NodeFactoryException {
+    private void addLink(Study study, Map<Integer, Term> stageForNode, Map<Integer, String> taxonForNode, LabeledCSVParser links, Location location) throws StudyImporterException, NodeFactoryException {
         Integer consumerNodeID = Integer.parseInt(links.getValueByLabel("ConsumerNodeID"));
         Integer resourceNodeID = Integer.parseInt(links.getValueByLabel("ResourceNodeID"));
         String linkType = links.getValueByLabel("LinkType");

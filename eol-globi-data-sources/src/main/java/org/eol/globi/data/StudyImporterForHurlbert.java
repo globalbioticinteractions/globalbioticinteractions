@@ -14,7 +14,7 @@ import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TaxonomyProvider;
-import org.eol.globi.domain.TermImpl;
+import org.eol.globi.domain.Term;
 import org.globalbioticinteractions.dataset.CitationUtil;
 
 import java.io.IOException;
@@ -119,13 +119,13 @@ public class StudyImporterForHurlbert extends BaseStudyImporter {
 
             String preyStage = StringUtils.trim(columnValueOrNull(record, "Prey_Stage"));
             if (StringUtils.isNotBlank(preyStage)) {
-                TermImpl lifeStage = nodeFactory.getOrCreateLifeStage("HULBERT:" + StringUtils.replace(preyStage, " ", "_"), preyStage);
+                Term lifeStage = nodeFactory.getOrCreateLifeStage("HULBERT:" + StringUtils.replace(preyStage, " ", "_"), preyStage);
                 preySpecimen.setLifeStage(lifeStage);
             }
 
             String preyPart = StringUtils.trim(columnValueOrNull(record, "Prey_Part"));
             if (StringUtils.isNotBlank(preyPart)) {
-                TermImpl term = nodeFactory.getOrCreateBodyPart("HULBERT:" + StringUtils.replace(preyPart, " ", "_"), preyPart);
+                Term term = nodeFactory.getOrCreateBodyPart("HULBERT:" + StringUtils.replace(preyPart, " ", "_"), preyPart);
                 preySpecimen.setBodyPart(term);
             }
 

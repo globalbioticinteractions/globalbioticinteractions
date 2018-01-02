@@ -8,6 +8,7 @@ import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.TaxonImpl;
+import org.eol.globi.domain.Term;
 import org.eol.globi.domain.TermImpl;
 import org.eol.globi.service.TermLookupServiceException;
 import org.eol.globi.util.ExternalIdUtil;
@@ -88,7 +89,7 @@ public class StudyImporterForBaremore extends BaseStudyImporter {
     private void addLifeStage(LabeledCSVParser parser, Specimen predatorSpecimen) throws StudyImporterException {
         String lifeStageString = parser.getValueByLabel("Mat State");
         try {
-            List<TermImpl> lifeStages = nodeFactory.getTermLookupService().lookupTermByName(lifeStageString);
+            List<Term> lifeStages = nodeFactory.getTermLookupService().lookupTermByName(lifeStageString);
             if (lifeStages.size() == 0) {
                 throw new StudyImporterException("unsupported lifeStage [" + lifeStageString + "] on line [" + parser.getLastLineNumber() + "]");
             }

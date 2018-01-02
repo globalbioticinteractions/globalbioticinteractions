@@ -13,6 +13,7 @@ import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TaxonomyProvider;
+import org.eol.globi.domain.Term;
 import org.eol.globi.domain.TermImpl;
 import org.eol.globi.service.TermLookupService;
 import org.eol.globi.service.TermLookupServiceException;
@@ -226,7 +227,7 @@ public class StudyImporterForGoMexSI2 extends BaseStudyImporter {
 
     private Location enrichLocation(Study metaStudy, String locationResource, TermLookupService cmecsService, LabeledCSVParser parser, Location location, String habitatSystem, String habitatSubsystem, String habitatTidalZone) {
         if (location != null) {
-            List<TermImpl> terms;
+            List<Term> terms;
             String cmecsLabel = habitatSystem + " " + habitatSubsystem + " " + habitatTidalZone;
             String msg = "failed to map CMECS habitat [" + cmecsLabel + "] on line [" + parser.lastLineNumber() + "] of image [" + locationResource + "]";
             try {
@@ -343,7 +344,7 @@ public class StudyImporterForGoMexSI2 extends BaseStudyImporter {
     private void addLifeStage(Map<String, String> properties, Specimen specimen) throws StudyImporterException {
         try {
             String lifeStageName = properties.get(SpecimenConstant.LIFE_STAGE_LABEL);
-            TermImpl term = nodeFactory.getOrCreateLifeStage(GOMEXSI_NAMESPACE + lifeStageName, lifeStageName);
+            Term term = nodeFactory.getOrCreateLifeStage(GOMEXSI_NAMESPACE + lifeStageName, lifeStageName);
             specimen.setLifeStage(term);
         } catch (NodeFactoryException e) {
             throw new StudyImporterException("failed to map life stage", e);
@@ -353,7 +354,7 @@ public class StudyImporterForGoMexSI2 extends BaseStudyImporter {
     private void addPhysiologicalState(Map<String, String> properties, Specimen specimen) throws StudyImporterException {
         try {
             String name = properties.get(SpecimenConstant.PHYSIOLOGICAL_STATE_LABEL);
-            TermImpl term = nodeFactory.getOrCreatePhysiologicalState(GOMEXSI_NAMESPACE + name, name);
+            Term term = nodeFactory.getOrCreatePhysiologicalState(GOMEXSI_NAMESPACE + name, name);
             specimen.setPhysiologicalState(term);
         } catch (NodeFactoryException e) {
             throw new StudyImporterException("failed to map life stage", e);
@@ -363,7 +364,7 @@ public class StudyImporterForGoMexSI2 extends BaseStudyImporter {
     private void addBodyPart(Map<String, String> properties, Specimen specimen) throws StudyImporterException {
         try {
             String name = properties.get(SpecimenConstant.BODY_PART_LABEL);
-            TermImpl term = nodeFactory.getOrCreateBodyPart(GOMEXSI_NAMESPACE + name, name);
+            Term term = nodeFactory.getOrCreateBodyPart(GOMEXSI_NAMESPACE + name, name);
             specimen.setBodyPart(term);
         } catch (NodeFactoryException e) {
             throw new StudyImporterException("failed to map body part", e);

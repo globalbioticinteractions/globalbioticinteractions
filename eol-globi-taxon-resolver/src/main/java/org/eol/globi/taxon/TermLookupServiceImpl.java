@@ -6,6 +6,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eol.globi.domain.PropertyAndValueDictionary;
+import org.eol.globi.domain.Term;
 import org.eol.globi.domain.TermImpl;
 import org.eol.globi.service.TermLookupService;
 import org.eol.globi.service.TermLookupServiceException;
@@ -23,25 +24,25 @@ import java.util.Map;
 public abstract class TermLookupServiceImpl implements TermLookupService {
     private static final Log LOG = LogFactory.getLog(TermLookupServiceImpl.class);
 
-    private Map<String, List<TermImpl>> mapping = null;
+    private Map<String, List<Term>> mapping = null;
 
     protected abstract List<URI> getMappingURIList();
 
     protected abstract char getDelimiter();
 
     @Override
-    public List<TermImpl> lookupTermByName(final String name) throws TermLookupServiceException {
+    public List<Term> lookupTermByName(final String name) throws TermLookupServiceException {
         if (mapping == null) {
             buildMapping(getMappingURIList());
         }
-        List<TermImpl> terms = mapping.get(name);
-        return terms == null ? new ArrayList<TermImpl>() {{
+        List<Term> terms = mapping.get(name);
+        return terms == null ? new ArrayList<Term>() {{
             add(new TermImpl(PropertyAndValueDictionary.NO_MATCH, name));
         }} : terms;
     }
 
     private void buildMapping(List<URI> uriList) throws TermLookupServiceException {
-        mapping = new HashMap<String, List<TermImpl>>();
+        mapping = new HashMap<>();
 
         for (URI uri : uriList) {
             try {
@@ -63,11 +64,8 @@ public abstract class TermLookupServiceImpl implements TermLookupService {
                         if (StringUtils.isNotBlank(sourceName)
                                 && StringUtils.isNotBlank(targetId)
                                 && StringUtils.isNotBlank(targetName)) {
-                            List<TermImpl> terms = mapping.get(sourceName);
-                            if (terms == null) {
-                                terms = new ArrayList<TermImpl>();
-                                mapping.put(sourceName, terms);
-                            }
+                            List<Term> terms = mapping
+                                    .computeIfAbsent(sourceName, k -> new ArrayList<>());
                             terms.add(new TermImpl(targetId, targetName));
                         }
                     }

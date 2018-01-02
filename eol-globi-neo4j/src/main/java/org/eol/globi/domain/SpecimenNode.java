@@ -141,14 +141,14 @@ public class SpecimenNode extends NodeBacked implements Specimen {
     }
 
     @Override
-    public void setLifeStage(List<TermImpl> lifeStages) {
+    public void setLifeStage(List<Term> lifeStages) {
         if (lifeStages != null && lifeStages.size() > 0) {
             setLifeStage(lifeStages.get(0));
         }
     }
 
     @Override
-    public void setLifeStage(TermImpl lifeStage) {
+    public void setLifeStage(Term lifeStage) {
         if (lifeStage != null) {
             setPropertyWithTx(SpecimenConstant.LIFE_STAGE_LABEL, lifeStage.getName());
             setPropertyWithTx(SpecimenConstant.LIFE_STAGE_ID, lifeStage.getId());
@@ -156,7 +156,7 @@ public class SpecimenNode extends NodeBacked implements Specimen {
     }
 
     @Override
-    public void setPhysiologicalState(TermImpl physiologicalState) {
+    public void setPhysiologicalState(Term physiologicalState) {
         if (physiologicalState != null) {
             setPropertyWithTx(SpecimenConstant.PHYSIOLOGICAL_STATE_LABEL, physiologicalState.getName());
             setPropertyWithTx(SpecimenConstant.PHYSIOLOGICAL_STATE_ID, physiologicalState.getId());
@@ -164,14 +164,14 @@ public class SpecimenNode extends NodeBacked implements Specimen {
     }
 
     @Override
-    public void setBodyPart(List<TermImpl> bodyParts) {
+    public void setBodyPart(List<Term> bodyParts) {
         if (bodyParts != null && bodyParts.size() > 0) {
             setBodyPart(bodyParts.get(0));
         }
     }
 
     @Override
-    public void setBodyPart(TermImpl bodyPart) {
+    public void setBodyPart(Term bodyPart) {
         if (bodyPart != null) {
             setPropertyWithTx(SpecimenConstant.BODY_PART_LABEL, bodyPart.getName());
             setPropertyWithTx(SpecimenConstant.BODY_PART_ID, bodyPart.getId());
@@ -179,7 +179,7 @@ public class SpecimenNode extends NodeBacked implements Specimen {
     }
 
     @Override
-    public void setBasisOfRecord(TermImpl basisOfRecord) {
+    public void setBasisOfRecord(Term basisOfRecord) {
         if (basisOfRecord != null) {
             setPropertyWithTx(SpecimenConstant.BASIS_OF_RECORD_LABEL, basisOfRecord.getName());
             setPropertyWithTx(SpecimenConstant.BASIS_OF_RECORD_ID, basisOfRecord.getId());
@@ -187,7 +187,7 @@ public class SpecimenNode extends NodeBacked implements Specimen {
     }
 
     @Override
-    public TermImpl getBasisOfRecord() {
+    public Term getBasisOfRecord() {
         return new TermImpl(getPropertyStringValueOrNull(SpecimenConstant.BASIS_OF_RECORD_ID), getPropertyStringValueOrNull(SpecimenConstant.BASIS_OF_RECORD_LABEL));
     }
 
@@ -208,12 +208,12 @@ public class SpecimenNode extends NodeBacked implements Specimen {
     }
 
     @Override
-    public TermImpl getLifeStage() {
+    public Term getLifeStage() {
         return new TermImpl(getPropertyStringValueOrNull(SpecimenConstant.LIFE_STAGE_ID), getPropertyStringValueOrNull(SpecimenConstant.LIFE_STAGE_LABEL));
     }
 
     @Override
-    public TermImpl getBodyPart() {
+    public Term getBodyPart() {
         return new TermImpl(getPropertyStringValueOrNull(SpecimenConstant.BODY_PART_ID), getPropertyStringValueOrNull(SpecimenConstant.BODY_PART_LABEL));
     }
 

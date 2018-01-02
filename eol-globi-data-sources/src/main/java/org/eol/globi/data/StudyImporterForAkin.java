@@ -9,7 +9,7 @@ import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.TaxonImpl;
-import org.eol.globi.domain.TermImpl;
+import org.eol.globi.domain.Term;
 import org.eol.globi.service.TermLookupService;
 import org.eol.globi.service.TermLookupServiceException;
 import org.eol.globi.util.ExternalIdUtil;
@@ -135,8 +135,8 @@ public class StudyImporterForAkin extends BaseStudyImporter {
         }
     }
 
-    protected static List<TermImpl> parseLifeStage(TermLookupService service, String preySpeciesName) throws TermLookupServiceException {
-        List<TermImpl> terms = Collections.EMPTY_LIST;
+    protected static List<Term> parseLifeStage(TermLookupService service, String preySpeciesName) throws TermLookupServiceException {
+        List<Term> terms = Collections.emptyList();
         if (preySpeciesName.contains(" larvae")) {
             terms = service.lookupTermByName("larvae");
         } else if (preySpeciesName.contains(" egg")) {

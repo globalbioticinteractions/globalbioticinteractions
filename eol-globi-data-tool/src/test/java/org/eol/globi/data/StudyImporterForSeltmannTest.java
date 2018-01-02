@@ -4,6 +4,7 @@ import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.domain.SpecimenNode;
 import org.eol.globi.domain.Study;
+import org.eol.globi.domain.Term;
 import org.eol.globi.domain.TermImpl;
 import org.eol.globi.service.Dataset;
 import org.eol.globi.service.DatasetLocal;
@@ -40,7 +41,7 @@ public class StudyImporterForSeltmannTest extends GraphDBTestCase {
                 final String recordId = (String) spec.getUnderlyingNode().getProperty("idigbio:recordID");
                 assertThat(recordId, is(notNullValue()));
                 assertThat(spec.getExternalId(), is(recordId));
-                TermImpl basisOfRecord = spec.getBasisOfRecord();
+                Term basisOfRecord = spec.getBasisOfRecord();
                 assertThat(basisOfRecord.getId(), either(is("TEST:PreservedSpecimen")).or(is("TEST:LabelObservation")));
                 assertThat(basisOfRecord.getName(), either(is("PreservedSpecimen")).or(is("LabelObservation")));
             }

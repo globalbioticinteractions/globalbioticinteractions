@@ -1,6 +1,7 @@
 package org.eol.globi.data;
 
 import org.eol.globi.domain.Study;
+import org.eol.globi.domain.Term;
 import org.eol.globi.domain.TermImpl;
 import org.eol.globi.geo.Ecoregion;
 import org.eol.globi.geo.EcoregionFinder;
@@ -135,8 +136,8 @@ public abstract class GraphDBTestCase {
 
     private static class TestTermLookupService implements TermLookupService {
         @Override
-        public List<TermImpl> lookupTermByName(final String name) throws TermLookupServiceException {
-            return new ArrayList<TermImpl>() {{
+        public List<Term> lookupTermByName(final String name) throws TermLookupServiceException {
+            return new ArrayList<Term>() {{
                 add(new TermImpl("TEST:" + name, name));
             }};
         }

@@ -1,9 +1,9 @@
 package org.eol.globi.service;
 
-import org.eol.globi.domain.TermImpl;
+import org.eol.globi.domain.Term;
 
 import java.util.List;
 
 public interface TermLookupService {
-    List<TermImpl> lookupTermByName(String name) throws TermLookupServiceException;
+    List<Term> lookupTermByName(String name) throws TermLookupServiceException;
 }

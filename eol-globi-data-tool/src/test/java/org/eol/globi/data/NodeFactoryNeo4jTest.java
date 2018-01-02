@@ -140,8 +140,8 @@ public class NodeFactoryNeo4jTest extends GraphDBTestCase {
     public void createAndFindEnvironment() throws NodeFactoryException {
         getNodeFactory().setEnvoLookupService(new TermLookupService() {
             @Override
-            public List<TermImpl> lookupTermByName(String name) throws TermLookupServiceException {
-                ArrayList<TermImpl> terms = new ArrayList<TermImpl>();
+            public List<Term> lookupTermByName(String name) throws TermLookupServiceException {
+                ArrayList<Term> terms = new ArrayList<>();
                 terms.add(new TermImpl("NS:" + name, StringUtils.replace(name, " ", "_")));
                 return terms;
             }

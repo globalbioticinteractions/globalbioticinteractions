@@ -92,22 +92,22 @@ public class NodeFactoryWithDatasetContext implements NodeFactory {
     }
 
     @Override
-    public List<Environment> addEnvironmentToLocation(Location location, List<TermImpl> terms) {
+    public List<Environment> addEnvironmentToLocation(Location location, List<Term> terms) {
         return factory.addEnvironmentToLocation(location, terms);
     }
 
     @Override
-    public TermImpl getOrCreateBodyPart(String externalId, String name) throws NodeFactoryException {
+    public Term getOrCreateBodyPart(String externalId, String name) throws NodeFactoryException {
         return factory.getOrCreateBodyPart(externalId, name);
     }
 
     @Override
-    public TermImpl getOrCreatePhysiologicalState(String externalId, String name) throws NodeFactoryException {
+    public Term getOrCreatePhysiologicalState(String externalId, String name) throws NodeFactoryException {
         return factory.getOrCreatePhysiologicalState(externalId, name);
     }
 
     @Override
-    public TermImpl getOrCreateLifeStage(String externalId, String name) throws NodeFactoryException {
+    public Term getOrCreateLifeStage(String externalId, String name) throws NodeFactoryException {
         return factory.getOrCreateLifeStage(externalId, name);
     }
 
@@ -127,7 +127,7 @@ public class NodeFactoryWithDatasetContext implements NodeFactory {
     }
 
     @Override
-    public TermImpl getOrCreateBasisOfRecord(String externalId, String name) throws NodeFactoryException {
+    public Term getOrCreateBasisOfRecord(String externalId, String name) throws NodeFactoryException {
         return factory.getOrCreateBasisOfRecord(externalId, name);
     }
 

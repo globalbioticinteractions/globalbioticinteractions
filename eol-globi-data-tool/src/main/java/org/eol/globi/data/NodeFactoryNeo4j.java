@@ -267,8 +267,8 @@ public class NodeFactoryNeo4j implements NodeFactory {
 
     private void extractLifeStage(Specimen specimen, String part) throws NodeFactoryException {
         try {
-            List<TermImpl> terms = lifeStageLookupService.lookupTermByName(part);
-            for (TermImpl term : terms) {
+            List<Term> terms = lifeStageLookupService.lookupTermByName(part);
+            for (Term term : terms) {
                 if (!StringUtils.equals(term.getId(), PropertyAndValueDictionary.NO_MATCH)) {
                     specimen.setLifeStage(terms.get(0));
                     break;
@@ -281,8 +281,8 @@ public class NodeFactoryNeo4j implements NodeFactory {
 
     private void extractBodyPart(Specimen specimen, String part) throws NodeFactoryException {
         try {
-            List<TermImpl> terms = bodyPartLookupService.lookupTermByName(part);
-            for (TermImpl term : terms) {
+            List<Term> terms = bodyPartLookupService.lookupTermByName(part);
+            for (Term term : terms) {
                 if (!StringUtils.equals(term.getId(), PropertyAndValueDictionary.NO_MATCH)) {
                     specimen.setBodyPart(terms.get(0));
                     break;
@@ -478,7 +478,7 @@ public class NodeFactoryNeo4j implements NodeFactory {
 
     @Override
     public List<Environment> getOrCreateEnvironments(Location location, String externalId, String name) throws NodeFactoryException {
-        List<TermImpl> terms;
+        List<Term> terms;
         try {
             terms = envoLookupService.lookupTermByName(name);
             if (terms.size() == 0) {
@@ -492,9 +492,9 @@ public class NodeFactoryNeo4j implements NodeFactory {
     }
 
     @Override
-    public List<Environment> addEnvironmentToLocation(Location location, List<TermImpl> terms) {
+    public List<Environment> addEnvironmentToLocation(Location location, List<Term> terms) {
         List<Environment> normalizedEnvironments = new ArrayList<Environment>();
-        for (TermImpl term : terms) {
+        for (Term term : terms) {
             Environment environment = findEnvironment(term.getName());
             if (environment == null) {
                 Transaction transaction = graphDb.beginTx();
@@ -607,23 +607,23 @@ public class NodeFactoryNeo4j implements NodeFactory {
     }
 
     @Override
-    public TermImpl getOrCreateBodyPart(String externalId, String name) throws NodeFactoryException {
+    public Term getOrCreateBodyPart(String externalId, String name) throws NodeFactoryException {
         return matchTerm(externalId, name);
     }
 
     @Override
-    public TermImpl getOrCreatePhysiologicalState(String externalId, String name) throws NodeFactoryException {
+    public Term getOrCreatePhysiologicalState(String externalId, String name) throws NodeFactoryException {
         return matchTerm(externalId, name);
     }
 
     @Override
-    public TermImpl getOrCreateLifeStage(String externalId, String name) throws NodeFactoryException {
+    public Term getOrCreateLifeStage(String externalId, String name) throws NodeFactoryException {
         return matchTerm(externalId, name);
     }
 
-    private TermImpl matchTerm(String externalId, String name) throws NodeFactoryException {
+    private Term matchTerm(String externalId, String name) throws NodeFactoryException {
         try {
-            List<TermImpl> terms = getTermLookupService().lookupTermByName(name);
+            List<Term> terms = getTermLookupService().lookupTermByName(name);
             return terms.size() == 0 ? NO_MATCH_TERM : terms.get(0);
         } catch (TermLookupServiceException e) {
             throw new NodeFactoryException("failed to lookup term [" + externalId + "]:[" + name + "]");
@@ -673,7 +673,7 @@ public class NodeFactoryNeo4j implements NodeFactory {
     }
 
     @Override
-    public TermImpl getOrCreateBasisOfRecord(String externalId, String name) throws NodeFactoryException {
+    public Term getOrCreateBasisOfRecord(String externalId, String name) throws NodeFactoryException {
         return matchTerm(externalId, name);
     }
 

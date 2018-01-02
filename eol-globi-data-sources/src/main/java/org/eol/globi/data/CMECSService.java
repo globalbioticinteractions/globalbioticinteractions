@@ -9,6 +9,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.eol.globi.domain.TaxonomyProvider;
+import org.eol.globi.domain.Term;
 import org.eol.globi.domain.TermImpl;
 import org.eol.globi.service.TermLookupService;
 import org.eol.globi.service.TermLookupServiceException;
@@ -17,8 +18,7 @@ import org.eol.globi.util.HttpUtil;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,10 +27,10 @@ public class CMECSService implements TermLookupService {
 
     private static Log LOG = LogFactory.getLog(CMECSService.class);
 
-    private Map<String, TermImpl> termMap = null;
+    private Map<String, Term> termMap = null;
 
     @Override
-    public List<TermImpl> lookupTermByName(String name) throws TermLookupServiceException {
+    public List<Term> lookupTermByName(String name) throws TermLookupServiceException {
         if (termMap == null) {
             try {
                 termMap = buildTermMap();
@@ -38,11 +38,11 @@ public class CMECSService implements TermLookupService {
                 throw new TermLookupServiceException("failed to instantiate terms", e);
             }
         }
-        TermImpl term = termMap.get(name);
-        return term == null ? new ArrayList<TermImpl>() : Arrays.asList(term);
+        Term term = termMap.get(name);
+        return term == null ? Collections.emptyList() : Collections.singletonList(term);
     }
 
-    private static Map<String, TermImpl> buildTermMap() throws IOException {
+    private static Map<String, Term> buildTermMap() throws IOException {
         LOG.info(CMECSService.class.getSimpleName() + " instantiating...");
         String uri = "https://cmecscatalog.org/cmecs/documents/cmecs4.accdb";
         LOG.info("CMECS data [" + uri + "] downloading ...");
@@ -59,7 +59,7 @@ public class CMECSService implements TermLookupService {
                 .setReadOnly(true)
                 .open();
 
-            Map<String, TermImpl> aquaticSettingsTerms = new HashMap<String, TermImpl>();
+            Map<String, Term> aquaticSettingsTerms = new HashMap<>();
 
             Table table = db.getTable("Aquatic Setting");
             Map<String, Object> row;
