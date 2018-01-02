@@ -27,7 +27,7 @@ public class PropertyEnricherFactoryTest {
 
     @Test
     public void zikaVirus() throws PropertyEnricherException {
-        Taxon taxon = new TaxonImpl("Zika virus (ZIKV)", "EOL:541190");
+        Taxon taxon = new TaxonImpl("Zika virus (ZIKV)", "NCBI:64320");
         final Map<String, String> enriched = taxonEnricher.enrich(TaxonUtil.taxonToMap(taxon));
         assertThat(TaxonUtil.mapToTaxon(enriched).getPath(), containsString("Flaviviridae"));
     }

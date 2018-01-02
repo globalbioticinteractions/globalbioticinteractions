@@ -15,6 +15,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.*;
@@ -35,13 +36,13 @@ public class NameResolverTest extends GraphDBTestCase {
 
     @Test
     public void doNameResolving() throws NodeFactoryException, PropertyEnricherException {
-        Specimen human = nodeFactory.createSpecimen(nodeFactory.createStudy(new StudyImpl("bla", null, null, null)), new TaxonImpl("Homo sapiens", null));
-        Specimen animal = nodeFactory.createSpecimen(nodeFactory.createStudy(new StudyImpl("bla", null, null, null)), new TaxonImpl("Canis lupus", "EOL:1"));
+        Specimen human = nodeFactory.createSpecimen(nodeFactory.createStudy(new StudyImpl("bla", null, null, null)), new TaxonImpl("Homo sapiens", "NCBI:9606"));
+        Specimen animal = nodeFactory.createSpecimen(nodeFactory.createStudy(new StudyImpl("bla", null, null, null)), new TaxonImpl("Canis lupus", "WORMS:2"));
         human.ate(animal);
-        Specimen fish = nodeFactory.createSpecimen(nodeFactory.createStudy(new StudyImpl("bla", null, null, null)), new TaxonImpl("Arius felis", null));
+        Specimen fish = nodeFactory.createSpecimen(nodeFactory.createStudy(new StudyImpl("bla", null, null, null)), new TaxonImpl("Arius felis", "WORMS:158711"));
         human.ate(fish);
 
-        assertNull(taxonIndex.findTaxonById("EOL:1"));
+        assertNull(taxonIndex.findTaxonById("NCBI:9606"));
         assertNull(taxonIndex.findTaxonByName("Homo sapiens"));
 
         final TaxonNameCorrector taxonNameCorrector = new TaxonNameCorrector();
@@ -49,20 +50,20 @@ public class NameResolverTest extends GraphDBTestCase {
         nameResolver.setBatchSize(1L);
         nameResolver.resolve();
 
-        assertAnimalia(taxonIndex.findTaxonById("EOL:1"));
+        assertAnimalia(taxonIndex.findTaxonById("WORMS:2"));
 
         assertThat(taxonIndex.findTaxonByName("Arius felis"), is(notNullValue()));
         assertThat(taxonIndex.findTaxonByName("Ariopsis felis"), is(notNullValue()));
 
         Taxon homoSapiens = taxonIndex.findTaxonByName("Homo sapiens");
         assertNotNull(homoSapiens);
-        assertThat(homoSapiens.getExternalId(), is("EOL:327955"));
+        assertThat(homoSapiens.getExternalId(), is("NCBI:9606"));
     }
 
     public void assertAnimalia(Taxon animalia) {
         assertNotNull(animalia);
-        assertThat(animalia.getName(), is("Animalia"));
-        assertThat(animalia.getPath(), is("Animalia"));
+        assertThat(animalia.getName(), containsString("Animalia"));
+        assertThat(animalia.getPath(), containsString("Animalia"));
     }
 
     @Test
