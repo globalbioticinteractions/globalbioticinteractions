@@ -96,6 +96,7 @@ public class TaxonCacheService extends CacheService implements PropertyEnricher,
 
     public void init() throws PropertyEnricherException {
         LOG.info("taxon cache initializing...");
+        LOG.info("taxon cache loading [" + taxonCacheResource + "]...");
         DB db = initDb("taxonCache");
 
         StopWatch watch = new StopWatch();
@@ -115,11 +116,13 @@ public class TaxonCacheService extends CacheService implements PropertyEnricher,
                     .keySerializer(BTreeKeySerializer.STRING)
                     .make();
         } catch (IOException e) {
-            throw new PropertyEnricherException("failed to instantiate taxonCache", e);
+            throw new PropertyEnricherException("failed to instantiate taxonCache: [" + e.getMessage() + "]", e);
         }
         watch.stop();
+        LOG.info("taxon cache loading [" + taxonCacheResource + "] done.");
         logCacheLoadStats(watch.getTime(), resolvedIdToTaxonMap.size());
         watch.reset();
+        LOG.info("taxon cache loading [" + taxonMapResource + "] ...");
         watch.start();
         try {
             providedToResolvedMaps = db
@@ -142,6 +145,7 @@ public class TaxonCacheService extends CacheService implements PropertyEnricher,
         }
         watch.stop();
         logCacheLoadStats(watch.getTime(), providedToResolvedMaps.size());
+        LOG.info("taxon cache loading [" + taxonMapResource + "] done.");
 
         LOG.info("taxon cache initialized.");
     }
