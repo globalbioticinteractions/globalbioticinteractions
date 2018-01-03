@@ -4,6 +4,7 @@ import org.apache.commons.io.FileUtils;
 import org.eol.globi.domain.NameType;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Taxon;
+import org.eol.globi.domain.TermImpl;
 import org.eol.globi.service.PropertyEnricherException;
 import org.eol.globi.service.TaxonUtil;
 import org.junit.After;
@@ -12,9 +13,11 @@ import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -239,6 +242,27 @@ public class TaxonCacheServiceTest {
         Taxon enrichedTaxon = TaxonUtil.mapToTaxon(enrich);
         assertThat(enrichedTaxon.getName(), is("Felis catus"));
         assertThat(enrichedTaxon.getExternalId(), is("EOL:1037781"));
+        taxonCacheService.shutdown();
+    }
+
+    @Test
+    public void resolveWithoutDuplicates() throws PropertyEnricherException {
+        Map<String, String> properties = new HashMap<String, String>() {
+            {
+                put(PropertyAndValueDictionary.NAME, "Felis catus");
+            }
+        };
+        final TaxonCacheService taxonCacheService = getTaxonCacheService();
+        List<Taxon> taxa = new ArrayList<Taxon>();
+        taxonCacheService.findTerms(Arrays.asList(new TermImpl(null, "Felis catus")), new TermMatchListener() {
+            @Override
+            public void foundTaxonForName(Long id, String name, Taxon taxon, NameType nameType) {
+                taxa.add(taxon);
+            }
+        }, Arrays.asList(GlobalNamesSources.values()));
+
+
+        assertThat(taxa.size(), is(1));
         taxonCacheService.shutdown();
     }
 

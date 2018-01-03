@@ -24,6 +24,7 @@ import org.mapdb.Fun;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -198,8 +199,11 @@ public class TaxonCacheService extends CacheService implements PropertyEnricher,
         if (StringUtils.isNotBlank(name)) {
             Taxon[] ids = lookupTerm(name);
             if (ids != null) {
-                for (Taxon resolvedId : ids) {
-                    Map<String, String> resolved = resolvedIdToTaxonMap.get(resolvedId.getExternalId());
+                List<String> idsDistinct = Arrays.stream(ids)
+                        .filter(t -> StringUtils.isNotBlank(t.getExternalId()))
+                        .map(Taxon::getExternalId).distinct().collect(Collectors.toList());
+                for(String resolvedId : idsDistinct) {
+                    Map<String, String> resolved = resolvedIdToTaxonMap.get(resolvedId);
                     if (resolved != null) {
                         Taxon resolvedTaxon = TaxonUtil.mapToTaxon(resolved);
                         termMatchListener.foundTaxonForName(null, name, resolvedTaxon, NameType.SAME_AS);

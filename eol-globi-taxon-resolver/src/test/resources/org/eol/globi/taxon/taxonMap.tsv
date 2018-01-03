@@ -8,5 +8,6 @@ EOL:327955	Homo sapiens	NCBI:9606	Homo sapiens
 foo	bar	EOL:327955	Homo sapiens
 	Felis catus	no:match	Felis catus
 	Felis catus	EOL:1037781	Felis catus
+	Felis catus	EOL:1037781	Felis catus
 EOL:541190	Zika virus (ZIKV)	EOL:541190	Zika virus (ZIKV)
 	Canis lupus dingo	no:match	Canis lupus dingo
