@@ -234,7 +234,11 @@ public class TaxonCacheService extends CacheService implements PropertyEnricher,
 
             private boolean consumeLine(LabeledCSVParser labeledCSVParser) throws IOException {
                 boolean hasNext = labeledCSVParser.getLine() != null;
-                lineReady.set(hasNext);
+                if (skipper.shouldSkipLine(labeledCSVParser)) {
+                    lineReady.set(false);
+                } else {
+                    lineReady.set(hasNext);
+                }
                 return hasNext;
             }
 

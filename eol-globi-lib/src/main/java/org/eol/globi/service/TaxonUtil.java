@@ -202,7 +202,7 @@ public class TaxonUtil {
                 && !StringUtils.equals(value, NO_NAME);
     }
 
-    public static Map<String, String> appendNameSourceInfo(Map<String, String> enrichedProperties, final Class<? extends PropertyEnricher> serviceClass, final Date date) {
+    public static Map<String, String> appendNameSourceInfo(Map<String, String> enrichedProperties, final Class serviceClass, final Date date) {
         enrichedProperties = new TreeMap<String, String>(enrichedProperties) {
             {
                 put(NAME_SOURCE, serviceClass.getSimpleName());

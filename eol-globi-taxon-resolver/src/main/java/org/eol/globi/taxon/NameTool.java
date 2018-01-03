@@ -143,7 +143,7 @@ public class NameTool {
             termMatcher.findTerms(Arrays.asList(taxonProvided), new TermMatchListener() {
                 @Override
                 public void foundTaxonForName(Long id, String name, Taxon taxon, NameType nameType) {
-                    Taxon taxonWithServiceInfo = (TaxonUtil.mapToTaxon(TaxonUtil.appendNameSourceInfo(TaxonUtil.taxonToMap(taxon), GlobalNamesService.class, new Date())));
+                    Taxon taxonWithServiceInfo = (TaxonUtil.mapToTaxon(TaxonUtil.appendNameSourceInfo(TaxonUtil.taxonToMap(taxon), termMatcher.getClass(), new Date())));
                     linesForTaxa(row, Stream.of(taxonWithServiceInfo), shouldReplace, p, taxon1 -> nameType);
                 }
             }, Arrays.asList(GlobalNamesSources.values()));
