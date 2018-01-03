@@ -56,7 +56,6 @@ public class TaxonLookupServiceImpl implements TaxonImportListener, TaxonLookupS
 
     public void addTerm(String name, Taxon taxonTerm) {
         if (hasStarted()) {
-            System.out.println("add term [" + taxonTerm.getExternalId() + "] for [" + name + "]");
             Document doc = new Document();
             doc.add(new Field(FIELD_NAME, name, Field.Store.YES, Field.Index.NOT_ANALYZED_NO_NORMS));
             if (taxonTerm.getName() != null) {
