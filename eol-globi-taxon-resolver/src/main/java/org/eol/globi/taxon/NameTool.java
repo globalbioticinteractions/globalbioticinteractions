@@ -1,5 +1,6 @@
 package org.eol.globi.taxon;
 
+import org.apache.commons.lang.StringUtils;
 import org.eol.globi.Version;
 import org.eol.globi.domain.NameType;
 import org.eol.globi.domain.Taxon;
@@ -24,18 +25,32 @@ import java.util.stream.Stream;
 
 public class NameTool {
 
+    private static final String DEPOT_PREFIX = "https://depot.globalbioticinteractions.org/snapshot/target/data/taxa/";
+    private final static String TAXON_CACHE_DEFAULT_URL = DEPOT_PREFIX + "taxonCache.tsv.gz";
+    private final static String TAXON_MAP_DEFAULT_URL = DEPOT_PREFIX +"taxonMap.tsv.gz";
+
     public static void main(String[] args) {
+        TaxonCacheService cacheService = null;
         try {
+            String taxonCacheURI = StringUtils.defaultIfBlank(args.length > 0 ? args[0] : "", TAXON_CACHE_DEFAULT_URL);
+            String taxonMapURI = StringUtils.defaultIfBlank(args.length > 1 ? args[1] : "", TAXON_MAP_DEFAULT_URL);
+            cacheService = new TaxonCacheService(taxonCacheURI, taxonMapURI);
+            cacheService.setTemporary(false);
+
             System.err.println(Version.getVersionInfo(NameTool.class));
             boolean shouldReplace = false;
             TermMatcher termMatcher = new GlobalNamesService();
             termMatcher = PropertyEnricherFactory.createTaxonMatcher();
-            termMatcher = new TaxonCacheService(args[0], args[1]);
+            termMatcher = cacheService;
             resolve(System.in, new TermMatchingRowHandler(shouldReplace, System.out, termMatcher));
             System.exit(0);
         } catch (IOException | PropertyEnricherException e) {
             System.err.println("failed to resolve taxon: [" + e.getMessage() + "]");
             System.exit(1);
+        } finally {
+            if (cacheService != null) {
+                cacheService.shutdown();
+            }
         }
     }
 

@@ -12,25 +12,37 @@ import java.io.InputStreamReader;
 
 public class CacheService {
 
-    private File cacheDir = new File("./mapdb/");
+    private File cacheDir = new File("./target/term-cache");
+
+    private boolean temporary = true;
 
     public static BufferedReader createBufferedReader(String taxonResourceUrl) throws IOException {
         return new BufferedReader(new InputStreamReader(ResourceUtil.asInputStream(taxonResourceUrl)));
     }
 
     public DB initDb(String cacheName) throws PropertyEnricherException {
-        createCacheDir(cacheDir);
-        return DBMaker
-                .newFileDB(new File(cacheDir, cacheName))
-                .deleteFilesAfterClose()
+        File mapdbCacheDir = new File(getCacheDir(), "mapdb");
+        createCacheDir(mapdbCacheDir, isTemporary());
+        DBMaker dbMaker = DBMaker
+                .newFileDB(new File(mapdbCacheDir, cacheName))
                 .mmapFileEnableIfSupported()
                 .closeOnJvmShutdown()
-                .transactionDisable()
+                .transactionDisable();
+        if (isTemporary()) {
+            dbMaker.deleteFilesAfterClose();
+        }
+        return dbMaker
                 .make();
     }
 
     public static void createCacheDir(File cacheDir) throws PropertyEnricherException {
-        FileUtils.deleteQuietly(cacheDir);
+        createCacheDir(cacheDir, true);
+    }
+
+    protected static void createCacheDir(File cacheDir, boolean temporary) throws PropertyEnricherException {
+        if (temporary) {
+            FileUtils.deleteQuietly(cacheDir);
+        }
         if (!cacheDir.exists()) {
             if (!cacheDir.mkdirs()) {
                 throw new PropertyEnricherException("failed to create cache dir at [" + cacheDir.getAbsolutePath() + "]");
@@ -42,4 +54,15 @@ public class CacheService {
         this.cacheDir = cacheFilename;
     }
 
+    public File getCacheDir() {
+        return this.cacheDir;
+    }
+
+    public boolean isTemporary() {
+        return temporary;
+    }
+
+    public void setTemporary(boolean temporary) {
+        this.temporary = temporary;
+    }
 }

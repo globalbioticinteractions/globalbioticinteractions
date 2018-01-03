@@ -5,6 +5,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.StopWatch;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.lucene.store.SimpleFSDirectory;
 import org.eol.globi.domain.NameType;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Taxon;
@@ -23,6 +24,7 @@ import org.mapdb.Engine;
 import org.mapdb.Fun;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
@@ -107,64 +109,88 @@ public class TaxonCacheService extends CacheService implements PropertyEnricher,
     }
 
     public void init() throws PropertyEnricherException {
-        LOG.info("taxon cache initializing...");
-        LOG.info("taxon cache loading [" + taxonCacheResource + "]...");
-        DB db = initDb("taxonCache");
+        LOG.info("taxon cache initializing at [" + getCacheDir().getAbsolutePath() + "...");
 
-        StopWatch watch = new StopWatch();
-        watch.start();
-        try {
-            resolvedIdToTaxonMap = db
-                    .createTreeMap("taxonCacheById")
-                    .pumpPresort(100000)
-                    .pumpIgnoreDuplicates()
-                    .pumpSource(taxonCacheIterator(taxonCacheResource, new LineSkipper() {
-                        @Override
-                        public boolean shouldSkipLine(LabeledCSVParser parser) {
-                            final Taxon taxon = TaxonCacheParser.parseLine(parser);
-                            return StringUtils.isBlank(taxon.getPath());
-                        }
-                    }))
-                    .keySerializer(BTreeKeySerializer.STRING)
-                    .make();
-        } catch (IOException e) {
-            throw new PropertyEnricherException("failed to instantiate taxonCache: [" + e.getMessage() + "]", e);
-        }
-        watch.stop();
-        LOG.info("taxon cache loading [" + taxonCacheResource + "] done.");
-        logCacheLoadStats(watch.getTime(), resolvedIdToTaxonMap.size());
-        watch.reset();
-        LOG.info("taxon map loading [" + taxonMapResource + "] ...");
-        watch.start();
-        LOG.info("taxon lookup service instantiating...");
-        TaxonLookupServiceImpl taxonLookupService = new TaxonLookupServiceImpl();
-        taxonLookupService.start();
+        initTaxonCache();
+        initTaxonIdMap();
 
-        int count = 0;
+        LOG.info("taxon cache at [" + getCacheDir().getAbsolutePath() + " initialized.");
+    }
+
+    private void initTaxonIdMap() throws PropertyEnricherException {
         try {
-            BufferedReader reader = createBufferedReader(taxonMapResource);
-            final LabeledCSVParser labeledCSVParser = CSVTSVUtil.createLabeledTSVParser(reader);
-            while (labeledCSVParser.getLine() != null) {
-                Taxon provided = TaxonMapParser.parseProvidedTaxon(labeledCSVParser);
-                Taxon resolved = TaxonMapParser.parseResolvedTaxon(labeledCSVParser);
-                addIfNeeded(taxonLookupService, provided.getExternalId(), resolved.getExternalId());
-                addIfNeeded(taxonLookupService, provided.getName(), resolved.getExternalId());
-                addIfNeeded(taxonLookupService, resolved.getName(), resolved.getExternalId());
-                count++;
+            LOG.info("taxon lookup service instantiating...");
+            File luceneDir = new File(getCacheDir().getAbsolutePath(), "lucene");
+            boolean preexisting = luceneDir.exists();
+            createCacheDir(luceneDir, isTemporary());
+            TaxonLookupServiceImpl taxonLookupService = new TaxonLookupServiceImpl(new SimpleFSDirectory(luceneDir));
+            taxonLookupService.start();
+            if (!isTemporary() && preexisting) {
+                LOG.info("pre-existing taxon lookup index found, no need to re-index...");
+            } else {
+                LOG.info("no pre-existing taxon lookup index found, re-indexing...");
+                int count = 0;
+                LOG.info("taxon map loading [" + taxonMapResource + "] ...");
+
+                StopWatch watch = new StopWatch();
+                watch.start();
+                BufferedReader reader = createBufferedReader(taxonMapResource);
+                final LabeledCSVParser labeledCSVParser = CSVTSVUtil.createLabeledTSVParser(reader);
+                while (labeledCSVParser.getLine() != null) {
+                    Taxon provided = TaxonMapParser.parseProvidedTaxon(labeledCSVParser);
+                    Taxon resolved = TaxonMapParser.parseResolvedTaxon(labeledCSVParser);
+                    addIfNeeded(taxonLookupService, provided.getExternalId(), resolved.getExternalId());
+                    addIfNeeded(taxonLookupService, provided.getName(), resolved.getExternalId());
+                    addIfNeeded(taxonLookupService, resolved.getName(), resolved.getExternalId());
+                    count++;
+                }
+                watch.stop();
+                logCacheLoadStats(watch.getTime(), count);
+                LOG.info("taxon map loading [" + taxonMapResource + "] done.");
             }
+            taxonLookupService.finish();
+            this.taxonLookupService = taxonLookupService;
+            LOG.info("taxon lookup service instantiating done.");
+
         } catch (IOException e) {
             throw new PropertyEnricherException("problem initiating taxon cache index", e);
         }
-        taxonLookupService.finish();
-        this.taxonLookupService = taxonLookupService;
+    }
 
-        LOG.info("taxon lookup service instantiating done.");
+    private void initTaxonCache() throws PropertyEnricherException {
+        DB db = initDb("taxonCache");
 
-        watch.stop();
-        logCacheLoadStats(watch.getTime(), count);
-        LOG.info("taxon map loading [" + taxonMapResource + "] done.");
-
-        LOG.info("taxon cache initialized.");
+        String taxonCacheName = "taxonCacheById";
+        if (db.exists(taxonCacheName)) {
+            LOG.info("re-using pre-existing cache");
+            resolvedIdToTaxonMap = db.getTreeMap(taxonCacheName);
+        } else {
+            LOG.info("no pre-existing cache found, rebuilding...");
+            LOG.info("taxon cache loading [" + taxonCacheResource + "]...");
+            StopWatch watch = new StopWatch();
+            watch.start();
+            try {
+                resolvedIdToTaxonMap = db
+                        .createTreeMap(taxonCacheName)
+                        .pumpPresort(100000)
+                        .pumpIgnoreDuplicates()
+                        .pumpSource(taxonCacheIterator(taxonCacheResource, new LineSkipper() {
+                            @Override
+                            public boolean shouldSkipLine(LabeledCSVParser parser) {
+                                final Taxon taxon = TaxonCacheParser.parseLine(parser);
+                                return StringUtils.isBlank(taxon.getPath());
+                            }
+                        }))
+                        .keySerializer(BTreeKeySerializer.STRING)
+                        .make();
+            } catch (IOException e) {
+                throw new PropertyEnricherException("failed to instantiate taxonCache: [" + e.getMessage() + "]", e);
+            }
+            watch.stop();
+            LOG.info("taxon cache loading [" + taxonCacheResource + "] done.");
+            logCacheLoadStats(watch.getTime(), resolvedIdToTaxonMap.size());
+            watch.reset();
+        }
     }
 
     public void addIfNeeded(TaxonLookupServiceImpl lookupService, String providedKey, String resolvedId) {
