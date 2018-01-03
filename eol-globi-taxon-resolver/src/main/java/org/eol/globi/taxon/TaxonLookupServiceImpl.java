@@ -56,6 +56,7 @@ public class TaxonLookupServiceImpl implements TaxonImportListener, TaxonLookupS
 
     public void addTerm(String name, Taxon taxonTerm) {
         if (hasStarted()) {
+            System.out.println("add term [" + taxonTerm.getExternalId() + "] for [" + name + "]");
             Document doc = new Document();
             doc.add(new Field(FIELD_NAME, name, Field.Store.YES, Field.Index.NOT_ANALYZED_NO_NORMS));
             if (taxonTerm.getName() != null) {
@@ -104,8 +105,9 @@ public class TaxonLookupServiceImpl implements TaxonImportListener, TaxonLookupS
             TopDocs docs = indexSearcher.search(query, maxHits);
 
             if (docs.totalHits > 0) {
-                terms = new TaxonImpl[Math.min(docs.totalHits, maxHits)];
-                for (int i = 0; i < docs.totalHits && i < maxHits; i++) {
+                int maxResults = Math.min(docs.totalHits, maxHits);
+                terms = new TaxonImpl[maxResults];
+                for (int i = 0; i < maxResults; i++) {
                     ScoreDoc scoreDoc = docs.scoreDocs[i];
                     Document foundDoc = indexSearcher.doc(scoreDoc.doc);
                     Taxon term = new TaxonImpl();

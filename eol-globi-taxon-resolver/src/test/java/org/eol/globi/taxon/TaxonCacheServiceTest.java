@@ -247,13 +247,8 @@ public class TaxonCacheServiceTest {
 
     @Test
     public void resolveWithoutDuplicates() throws PropertyEnricherException {
-        Map<String, String> properties = new HashMap<String, String>() {
-            {
-                put(PropertyAndValueDictionary.NAME, "Felis catus");
-            }
-        };
         final TaxonCacheService taxonCacheService = getTaxonCacheService();
-        List<Taxon> taxa = new ArrayList<Taxon>();
+        List<Taxon> taxa = new ArrayList<>();
         taxonCacheService.findTerms(Arrays.asList(new TermImpl(null, "Felis catus")), new TermMatchListener() {
             @Override
             public void foundTaxonForName(Long id, String name, Taxon taxon, NameType nameType) {
@@ -263,6 +258,22 @@ public class TaxonCacheServiceTest {
 
 
         assertThat(taxa.size(), is(1));
+        taxonCacheService.shutdown();
+    }
+
+    @Test
+    public void resolveWithCrossDomainMapping() throws PropertyEnricherException {
+        final TaxonCacheService taxonCacheService = getTaxonCacheService();
+        List<Taxon> taxa = new ArrayList<>();
+        taxonCacheService.findTerms(Arrays.asList(new TermImpl("EOL:327955", null)), new TermMatchListener() {
+            @Override
+            public void foundTaxonForName(Long id, String name, Taxon taxon, NameType nameType) {
+                taxa.add(taxon);
+            }
+        }, Arrays.asList(GlobalNamesSources.values()));
+
+
+        assertThat(taxa.size(), is(2));
         taxonCacheService.shutdown();
     }
 

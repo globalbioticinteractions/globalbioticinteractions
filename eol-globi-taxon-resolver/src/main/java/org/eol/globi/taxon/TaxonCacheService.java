@@ -77,10 +77,7 @@ public class TaxonCacheService extends CacheService implements PropertyEnricher,
     private Taxon[] lookupTerm(String value) throws PropertyEnricherException {
         Taxon[] ids;
         try {
-            ids = taxonLookupService.lookupTermsById(value);
-            if (ids != null && ids.length == 0) {
-                ids = taxonLookupService.lookupTermsByName(value);
-            }
+            ids = taxonLookupService.lookupTermsByName(value);
         } catch (IOException e) {
             throw new PropertyEnricherException("failed to lookup [" + value + "]", e);
         }
