@@ -11,7 +11,7 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
 
-public class StudyImporterForSIADTest extends GraphDBTestCase {
+public class StudyImporterForSIADIT extends GraphDBTestCase {
 
     @Test
     public void importAll() throws StudyImporterException {
