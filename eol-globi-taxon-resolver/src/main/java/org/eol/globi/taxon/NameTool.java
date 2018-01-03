@@ -6,6 +6,7 @@ import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.service.PropertyEnricher;
 import org.eol.globi.service.PropertyEnricherException;
+import org.eol.globi.service.PropertyEnricherFactory;
 import org.eol.globi.service.TaxonUtil;
 import org.eol.globi.util.CSVTSVUtil;
 
@@ -27,7 +28,10 @@ public class NameTool {
         try {
             System.err.println(Version.getVersionInfo(NameTool.class));
             boolean shouldReplace = false;
-            resolve(System.in, new TermMatchingRowHandler(shouldReplace, System.out, new GlobalNamesService()));
+            TermMatcher termMatcher = new GlobalNamesService();
+            termMatcher = PropertyEnricherFactory.createTaxonMatcher();
+            termMatcher = new TaxonCacheService(args[0], args[1]);
+            resolve(System.in, new TermMatchingRowHandler(shouldReplace, System.out, termMatcher));
             System.exit(0);
         } catch (IOException | PropertyEnricherException e) {
             System.err.println("failed to resolve taxon: [" + e.getMessage() + "]");

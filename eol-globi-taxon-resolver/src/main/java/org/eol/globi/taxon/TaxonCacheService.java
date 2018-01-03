@@ -8,6 +8,7 @@ import org.apache.commons.logging.LogFactory;
 import org.eol.globi.domain.NameType;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Taxon;
+import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.Term;
 import org.eol.globi.domain.TermImpl;
 import org.eol.globi.service.CacheService;
@@ -29,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -122,7 +124,7 @@ public class TaxonCacheService extends CacheService implements PropertyEnricher,
         LOG.info("taxon cache loading [" + taxonCacheResource + "] done.");
         logCacheLoadStats(watch.getTime(), resolvedIdToTaxonMap.size());
         watch.reset();
-        LOG.info("taxon cache loading [" + taxonMapResource + "] ...");
+        LOG.info("taxon map loading [" + taxonMapResource + "] ...");
         watch.start();
         try {
             providedToResolvedMaps = db
@@ -145,7 +147,7 @@ public class TaxonCacheService extends CacheService implements PropertyEnricher,
         }
         watch.stop();
         logCacheLoadStats(watch.getTime(), providedToResolvedMaps.size());
-        LOG.info("taxon cache loading [" + taxonMapResource + "] done.");
+        LOG.info("taxon map loading [" + taxonMapResource + "] done.");
 
         LOG.info("taxon cache initialized.");
     }
@@ -172,7 +174,9 @@ public class TaxonCacheService extends CacheService implements PropertyEnricher,
         lazyInit();
         for (Term term : terms) {
             if (!resolveName(termMatchListener, term.getId())) {
-                resolveName(termMatchListener, term.getName());
+                if (!resolveName(termMatchListener, term.getName())) {
+                    termMatchListener.foundTaxonForName(null, term.getName(), new TaxonImpl(term.getName(), term.getId()), NameType.NONE);
+                }
             }
         }
     }
@@ -211,13 +215,14 @@ public class TaxonCacheService extends CacheService implements PropertyEnricher,
         return new Iterator<Fun.Tuple2<String, Map<String, String>>>() {
             private BufferedReader reader = createBufferedReader(resource);
             private final LabeledCSVParser labeledCSVParser = CSVTSVUtil.createLabeledTSVParser(reader);
+            private AtomicBoolean lineReady = new AtomicBoolean(false);
 
             @Override
             public boolean hasNext() {
                 try {
                     boolean hasNext;
                     do {
-                        hasNext = labeledCSVParser.getLine() != null;
+                        hasNext = lineReady.get() || consumeLine(labeledCSVParser);
                     } while (hasNext && skipper.shouldSkipLine(labeledCSVParser));
 
                     return hasNext;
@@ -227,10 +232,17 @@ public class TaxonCacheService extends CacheService implements PropertyEnricher,
                 }
             }
 
+            private boolean consumeLine(LabeledCSVParser labeledCSVParser) throws IOException {
+                boolean hasNext = labeledCSVParser.getLine() != null;
+                lineReady.set(hasNext);
+                return hasNext;
+            }
+
             @Override
             public Fun.Tuple2<String, Map<String, String>> next() {
                 final Taxon taxon = TaxonCacheParser.parseLine(labeledCSVParser);
-                return new Fun.Tuple2<String, Map<String, String>>(valueOrNoMatch(taxon.getExternalId()), TaxonUtil.taxonToMap(taxon));
+                lineReady.set(false);
+                return new Fun.Tuple2<>(valueOrNoMatch(taxon.getExternalId()), TaxonUtil.taxonToMap(taxon));
             }
 
             public void remove() {
