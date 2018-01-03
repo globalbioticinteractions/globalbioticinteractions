@@ -39,6 +39,7 @@ public class TaxonLookupServiceImpl implements TaxonImportListener, TaxonLookupS
     private IndexWriter indexWriter;
     private IndexSearcher indexSearcher;
     private File indexPath;
+    private int maxHits = 10;
 
     public TaxonLookupServiceImpl() {
         this(null);
@@ -57,7 +58,9 @@ public class TaxonLookupServiceImpl implements TaxonImportListener, TaxonLookupS
         if (hasStarted()) {
             Document doc = new Document();
             doc.add(new Field(FIELD_NAME, name, Field.Store.YES, Field.Index.NOT_ANALYZED_NO_NORMS));
-            doc.add(new Field(FIELD_RECOMMENDED_NAME, taxonTerm.getName(), Field.Store.YES, Field.Index.NOT_ANALYZED_NO_NORMS));
+            if (taxonTerm.getName() != null) {
+                doc.add(new Field(FIELD_RECOMMENDED_NAME, taxonTerm.getName(), Field.Store.YES, Field.Index.NOT_ANALYZED_NO_NORMS));
+            }
             doc.add(new Field(FIELD_ID, taxonTerm.getExternalId(), Field.Store.YES, Field.Index.NOT_ANALYZED_NO_NORMS));
             String rankPath = taxonTerm.getPath();
             if (rankPath != null) {
@@ -98,11 +101,10 @@ public class TaxonLookupServiceImpl implements TaxonImportListener, TaxonLookupS
         if (StringUtils.isNotBlank(fieldValue) && indexSearcher != null) {
             PhraseQuery query = new PhraseQuery();
             query.add(new Term(fieldName1, fieldValue));
-            int maxHits = 3;
             TopDocs docs = indexSearcher.search(query, maxHits);
 
             if (docs.totalHits > 0) {
-                terms = new TaxonImpl[docs.totalHits];
+                terms = new TaxonImpl[Math.min(docs.totalHits, maxHits)];
                 for (int i = 0; i < docs.totalHits && i < maxHits; i++) {
                     ScoreDoc scoreDoc = docs.scoreDocs[i];
                     Document foundDoc = indexSearcher.doc(scoreDoc.doc);
@@ -196,4 +198,13 @@ public class TaxonLookupServiceImpl implements TaxonImportListener, TaxonLookupS
     public File getIndexPath() {
         return indexPath;
     }
+
+    public void setMaxHits(int maxHits) {
+        this.maxHits = maxHits;
+    }
+
+    public int getMaxHits() {
+        return maxHits;
+    }
+
 }

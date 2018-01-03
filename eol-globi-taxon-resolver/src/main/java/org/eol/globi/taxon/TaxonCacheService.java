@@ -28,8 +28,6 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -38,8 +36,9 @@ public class TaxonCacheService extends CacheService implements PropertyEnricher,
     private static final Log LOG = LogFactory.getLog(TaxonCacheService.class);
 
     private BTreeMap<String, Map<String, String>> resolvedIdToTaxonMap = null;
-    private BTreeMap<String, String> providedToResolvedMap = null;
-    private BTreeMap<String, Set<String>> providedToResolvedMaps = null;
+
+    private TaxonLookupService taxonLookupService = null;
+
     private String taxonCacheResource;
     private final String taxonMapResource;
 
@@ -62,16 +61,29 @@ public class TaxonCacheService extends CacheService implements PropertyEnricher,
         return enriched == null ? Collections.unmodifiableMap(properties) : enriched;
     }
 
-    public Map<String, String> getTaxon(String value) {
+    private Map<String, String> getTaxon(String value) throws PropertyEnricherException {
         Map<String, String> enriched = null;
         if (TaxonUtil.isNonEmptyValue(value)) {
-            Set<String> ids = providedToResolvedMaps.get(value);
-            if (ids != null && !ids.isEmpty()) {
-                String resolvedId = ids.iterator().next();
+            Taxon[] ids = lookupTerm(value);
+            if (ids != null && ids.length > 0) {
+                String resolvedId = ids[0].getExternalId();
                 enriched = resolvedIdToTaxonMap.get(resolvedId);
             }
         }
         return enriched;
+    }
+
+    private Taxon[] lookupTerm(String value) throws PropertyEnricherException {
+        Taxon[] ids;
+        try {
+            ids = taxonLookupService.lookupTermsById(value);
+            if (ids != null && ids.length == 0) {
+                ids = taxonLookupService.lookupTermsByName(value);
+            }
+        } catch (IOException e) {
+            throw new PropertyEnricherException("failed to lookup [" + value + "]", e);
+        }
+        return ids;
     }
 
     public String getName(Map<String, String> properties) {
@@ -91,7 +103,7 @@ public class TaxonCacheService extends CacheService implements PropertyEnricher,
     }
 
     public void lazyInit() throws PropertyEnricherException {
-        if (resolvedIdToTaxonMap == null || providedToResolvedMaps == null) {
+        if (resolvedIdToTaxonMap == null || taxonLookupService == null) {
             init();
         }
     }
@@ -126,40 +138,40 @@ public class TaxonCacheService extends CacheService implements PropertyEnricher,
         watch.reset();
         LOG.info("taxon map loading [" + taxonMapResource + "] ...");
         watch.start();
-        try {
-            providedToResolvedMaps = db
-                    .createTreeMap("taxonMappingById")
-                    .keySerializer(BTreeKeySerializer.STRING)
-                    .make();
+        LOG.info("taxon lookup service instantiating...");
+        TaxonLookupServiceImpl taxonLookupService = new TaxonLookupServiceImpl();
+        taxonLookupService.start();
 
+        int count = 0;
+        try {
             BufferedReader reader = createBufferedReader(taxonMapResource);
             final LabeledCSVParser labeledCSVParser = CSVTSVUtil.createLabeledTSVParser(reader);
             while (labeledCSVParser.getLine() != null) {
                 Taxon provided = TaxonMapParser.parseProvidedTaxon(labeledCSVParser);
                 Taxon resolved = TaxonMapParser.parseResolvedTaxon(labeledCSVParser);
-                addIfNeeded(providedToResolvedMaps, provided.getExternalId(), resolved.getExternalId());
-                addIfNeeded(providedToResolvedMaps, provided.getName(), resolved.getExternalId());
-                addIfNeeded(providedToResolvedMaps, resolved.getName(), resolved.getExternalId());
+                addIfNeeded(taxonLookupService, provided.getExternalId(), resolved.getExternalId());
+                addIfNeeded(taxonLookupService, provided.getName(), resolved.getExternalId());
+                addIfNeeded(taxonLookupService, resolved.getName(), resolved.getExternalId());
+                count++;
             }
-
         } catch (IOException e) {
-            throw new PropertyEnricherException("failed to build taxon cache map", e);
+            throw new PropertyEnricherException("problem initiating taxon cache index", e);
         }
+        taxonLookupService.finish();
+        this.taxonLookupService = taxonLookupService;
+
+        LOG.info("taxon lookup service instantiating done.");
+
         watch.stop();
-        logCacheLoadStats(watch.getTime(), providedToResolvedMaps.size());
+        logCacheLoadStats(watch.getTime(), count);
         LOG.info("taxon map loading [" + taxonMapResource + "] done.");
 
         LOG.info("taxon cache initialized.");
     }
 
-    public void addIfNeeded(BTreeMap<String, Set<String>> providedToResolvedIds, String providedKey, String resolvedId) {
-        if (StringUtils.isNotBlank(providedKey) && StringUtils.isNotBlank(resolvedId)) {
-            Set<String> someIds = providedToResolvedIds.get(providedKey);
-            if (someIds == null) {
-                someIds = new TreeSet<>();
-            }
-            someIds.add(resolvedId);
-            providedToResolvedIds.put(providedKey, someIds);
+    public void addIfNeeded(TaxonLookupServiceImpl lookupService, String providedKey, String resolvedId) {
+        if (TaxonUtil.isNonEmptyValue(providedKey) && TaxonUtil.isNonEmptyValue(resolvedId)) {
+            lookupService.addTerm(providedKey, new TaxonImpl(null, resolvedId));
         }
     }
 
@@ -181,15 +193,13 @@ public class TaxonCacheService extends CacheService implements PropertyEnricher,
         }
     }
 
-    private boolean resolveName(TermMatchListener termMatchListener, String name) {
+    private boolean resolveName(TermMatchListener termMatchListener, String name) throws PropertyEnricherException {
         boolean hasResolved = false;
-
         if (StringUtils.isNotBlank(name)) {
-            Set<String> ids = providedToResolvedMaps.get(name);
-
+            Taxon[] ids = lookupTerm(name);
             if (ids != null) {
-                for (String resolvedId : ids) {
-                    Map<String, String> resolved = resolvedIdToTaxonMap.get(resolvedId);
+                for (Taxon resolvedId : ids) {
+                    Map<String, String> resolved = resolvedIdToTaxonMap.get(resolvedId.getExternalId());
                     if (resolved != null) {
                         Taxon resolvedTaxon = TaxonUtil.mapToTaxon(resolved);
                         termMatchListener.foundTaxonForName(null, name, resolvedTaxon, NameType.SAME_AS);
@@ -198,7 +208,6 @@ public class TaxonCacheService extends CacheService implements PropertyEnricher,
                 }
             }
         }
-
         return hasResolved;
     }
 
@@ -275,9 +284,9 @@ public class TaxonCacheService extends CacheService implements PropertyEnricher,
             close(resolvedIdToTaxonMap.getEngine());
             resolvedIdToTaxonMap = null;
         }
-        if (providedToResolvedMap != null) {
-            close(providedToResolvedMap.getEngine());
-            resolvedIdToTaxonMap = null;
+        if (taxonLookupService != null) {
+            taxonLookupService.destroy();
+            taxonLookupService = null;
         }
     }
 

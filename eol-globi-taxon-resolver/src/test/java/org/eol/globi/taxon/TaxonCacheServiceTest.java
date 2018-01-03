@@ -61,8 +61,8 @@ public class TaxonCacheServiceTest {
         cacheService.findTermsForNames(Arrays.asList("Green-winged teal"), new TermMatchListener() {
             @Override
             public void foundTaxonForName(Long id, String name, Taxon enrichedTaxon, NameType nameType) {
-                assertThat(enrichedTaxon.getName(), is("Anas crecca carolinensis"));
                 assertThat(enrichedTaxon.getExternalId(), is("EOL:1276240"));
+                assertThat(enrichedTaxon.getName(), is("Anas crecca carolinensis"));
                 assertThat(enrichedTaxon.getThumbnailUrl(), is("http://media.eol.org/content/2012/11/04/08/35791_98_68.jpg"));
                 matched.set(true);
             }
