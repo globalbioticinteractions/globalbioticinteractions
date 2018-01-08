@@ -12,6 +12,7 @@ import org.eol.globi.service.TaxonUtil;
 import org.eol.globi.taxon.GlobalNamesService;
 import org.eol.globi.taxon.GlobalNamesSources;
 import org.eol.globi.taxon.TermMatchListener;
+import org.eol.globi.taxon.TermMatcher;
 import org.eol.globi.util.NodeUtil;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
@@ -39,7 +40,7 @@ public class LinkerGlobalNames implements Linker {
     public void link() {
         GlobalNamesSources[] sources = GlobalNamesSources.values();
         List<GlobalNamesSources> desiredSources = Arrays.asList(sources);
-        GlobalNamesService globalNamesService = new GlobalNamesService();
+        GlobalNamesService globalNamesService = new GlobalNamesService(desiredSources);
 
         Index<Node> taxons = graphDb.index().forNodes("taxons");
         IndexHits<Node> hits = taxons.query("*:*");
@@ -57,7 +58,7 @@ public class LinkerGlobalNames implements Linker {
         handleBatch(graphDb, globalNamesService, nodeMap, counter, desiredSources);
     }
 
-    private void handleBatch(final GraphDatabaseService graphDb, GlobalNamesService globalNamesService, final Map<Long, TaxonNode> nodeMap, int counter, List<GlobalNamesSources> desiredSources) {
+    private void handleBatch(final GraphDatabaseService graphDb, TermMatcher termMatcher, final Map<Long, TaxonNode> nodeMap, int counter, List<GlobalNamesSources> desiredSources) {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         String msgPrefix = "batch #" + counter / BATCH_SIZE;
@@ -69,7 +70,7 @@ public class LinkerGlobalNames implements Linker {
         }
         try {
             if (names.size() > 0) {
-                globalNamesService.findTermsForNames(names, new TermMatchListener() {
+                termMatcher.findTermsForNames(names, new TermMatchListener() {
                     @Override
                     public void foundTaxonForName(Long id, String name, Taxon taxon, NameType relType) {
                         TaxonNode taxonNode = nodeMap.get(id);
@@ -77,7 +78,7 @@ public class LinkerGlobalNames implements Linker {
                             NodeUtil.connectTaxa(taxon, taxonNode, graphDb, RelTypes.forType(relType));
                         }
                     }
-                }, desiredSources);
+                });
             }
 
         } catch (PropertyEnricherException ex) {

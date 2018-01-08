@@ -37,7 +37,7 @@ import java.util.stream.Collectors;
 public class GlobalNamesService implements PropertyEnricher, TermMatcher {
     private static final Log LOG = LogFactory.getLog(GlobalNamesService.class);
 
-    private final GlobalNamesSources source;
+    private final List<GlobalNamesSources> sources;
     private boolean includeCommonNames = false;
 
     public GlobalNamesService() {
@@ -45,8 +45,12 @@ public class GlobalNamesService implements PropertyEnricher, TermMatcher {
     }
 
     public GlobalNamesService(GlobalNamesSources source) {
+        this(Collections.singletonList(source));
+    }
+
+    public GlobalNamesService(List<GlobalNamesSources> sources) {
         super();
-        this.source = source;
+        this.sources = sources;
     }
 
     public void setIncludeCommonNames(boolean includeCommonNames) {
@@ -71,7 +75,7 @@ public class GlobalNamesService implements PropertyEnricher, TermMatcher {
                     synonyms.add(taxon);
                 }
             }
-        }, Collections.singletonList(source));
+        });
 
         if (exactMatches.size() > 0) {
             enrichedProperties.putAll(TaxonUtil.taxonToMap(exactMatches.get(0)));
@@ -83,15 +87,15 @@ public class GlobalNamesService implements PropertyEnricher, TermMatcher {
     }
 
     @Override
-    public void findTerms(List<Term> terms, TermMatchListener termMatchListener, List<GlobalNamesSources> sources) throws PropertyEnricherException {
+    public void findTerms(List<Term> terms, TermMatchListener termMatchListener) throws PropertyEnricherException {
         if (terms.size() == 0) {
             throw new IllegalArgumentException("need non-empty list of names");
         }
-        findTermsForNames(terms.stream().map(Term::getName).collect(Collectors.toList()), termMatchListener, sources);
+        findTermsForNames(terms.stream().map(Term::getName).collect(Collectors.toList()), termMatchListener);
     }
 
     @Override
-    public void findTermsForNames(List<String> names, TermMatchListener termMatchListener, List<GlobalNamesSources> sources) throws PropertyEnricherException {
+    public void findTermsForNames(List<String> names, TermMatchListener termMatchListener) throws PropertyEnricherException {
         if (names.size() == 0) {
             throw new IllegalArgumentException("need non-empty list of names");
         }
@@ -305,8 +309,8 @@ public class GlobalNamesService implements PropertyEnricher, TermMatcher {
         return provider;
     }
 
-    public GlobalNamesSources getSource() {
-        return source;
+    public List<GlobalNamesSources> getSources() {
+        return sources;
     }
 
     public void shutdown() {

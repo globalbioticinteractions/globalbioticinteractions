@@ -30,7 +30,7 @@ public class GlobalNamesServiceTest {
 
     @Test
     public void createTaxaListFromNameList() throws PropertyEnricherException {
-        GlobalNamesService service = new GlobalNamesService();
+        GlobalNamesService service = new GlobalNamesService(GlobalNamesSources.ITIS);
         final List<Taxon> foundTaxa = new ArrayList<Taxon>();
         service.findTermsForNames(Arrays.asList("1|Homo sapiens", "2|Ariopsis felis"), new TermMatchListener() {
             @Override
@@ -38,14 +38,14 @@ public class GlobalNamesServiceTest {
                 assertNotNull(id);
                 foundTaxa.add(taxon);
             }
-        }, Collections.singletonList(GlobalNamesSources.ITIS));
+        });
 
         assertThat(foundTaxa.size(), is(2));
     }
 
     @Test
     public void createTaxaListFromNoNameList() throws PropertyEnricherException {
-        GlobalNamesService service = new GlobalNamesService();
+        GlobalNamesService service = new GlobalNamesService(GlobalNamesSources.ITIS);
         final List<Taxon> foundTaxa = new ArrayList<Taxon>();
         service.findTermsForNames(Arrays.asList("1|Donald duck", "2|Mickey mouse"), new TermMatchListener() {
             @Override
@@ -54,14 +54,14 @@ public class GlobalNamesServiceTest {
                 assertThat(nameType, is(NameType.NONE));
                 foundTaxa.add(taxon);
             }
-        }, Collections.singletonList(GlobalNamesSources.ITIS));
+        });
 
         assertThat(foundTaxa.size(), is(2));
     }
 
     @Test
     public void createTaxaListFromNameListNCBI() throws PropertyEnricherException {
-        GlobalNamesService service = new GlobalNamesService();
+        GlobalNamesService service = new GlobalNamesService(GlobalNamesSources.NCBI);
         final List<Taxon> foundTaxa = new ArrayList<Taxon>();
         service.findTermsForNames(Collections.singletonList("1|Prunus persica L."), new TermMatchListener() {
             @Override
@@ -69,7 +69,7 @@ public class GlobalNamesServiceTest {
                 assertNotNull(id);
                 foundTaxa.add(taxon);
             }
-        }, Collections.singletonList(GlobalNamesSources.NCBI));
+        });
 
         assertThat(foundTaxa.size(), is(1));
         assertThat(foundTaxa.get(0).getExternalId(), is(TaxonomyProvider.NCBI.getIdPrefix() + "3760"));
@@ -77,7 +77,7 @@ public class GlobalNamesServiceTest {
 
     @Test
     public void createTaxaListFromNameWithSpecialCharacter() throws PropertyEnricherException {
-        GlobalNamesService service = new GlobalNamesService();
+        GlobalNamesService service = new GlobalNamesService(GlobalNamesSources.IF);
         final List<Taxon> foundTaxa = new ArrayList<Taxon>();
         service.findTermsForNames(Collections.singletonList("4594386|Epichloë"), new TermMatchListener() {
             @Override
@@ -85,7 +85,7 @@ public class GlobalNamesServiceTest {
                 assertNotNull(id);
                 foundTaxa.add(taxon);
             }
-        }, Collections.singletonList(GlobalNamesSources.IF));
+        });
 
         assertThat(foundTaxa.size(), is(1));
     }
@@ -173,7 +173,7 @@ public class GlobalNamesServiceTest {
         List<String> names = namesListWithMaximumOf(100);
 
         final List<Taxon> foundTaxa = new ArrayList<Taxon>();
-        GlobalNamesService service = new GlobalNamesService();
+        GlobalNamesService service = new GlobalNamesService(Arrays.asList(GlobalNamesSources.values()));
 
         try {
             service.findTermsForNames(names, new TermMatchListener() {
@@ -182,7 +182,7 @@ public class GlobalNamesServiceTest {
                     assertNotNull(id);
                     foundTaxa.add(taxon);
                 }
-            }, Arrays.asList(GlobalNamesSources.values()));
+            });
         } catch (PropertyEnricherException ex) {
             fail("failed to lookup name with id: [" + names + "]");
         }
@@ -202,7 +202,7 @@ public class GlobalNamesServiceTest {
 
     public void assertAtLeastFortyFound(String response, final List<Taxon> foundTaxa, List<GlobalNamesSources> sources) {
         String[] idsNames = response.split("\\|");
-        GlobalNamesService service = new GlobalNamesService();
+        GlobalNamesService service = new GlobalNamesService(sources);
 
         List<String> names = new ArrayList<String>();
         for (int i = 0; i < idsNames.length; i += 2) {
@@ -215,7 +215,7 @@ public class GlobalNamesServiceTest {
                     assertNotNull(id);
                     foundTaxa.add(taxon);
                 }
-            }, sources);
+            });
         } catch (PropertyEnricherException ex) {
             fail("failed to lookup name with id: [" + names + "]");
         }
@@ -393,14 +393,14 @@ public class GlobalNamesServiceTest {
 
     @Test
     public void lookupMultipleSources() throws PropertyEnricherException {
-        GlobalNamesService service = new GlobalNamesService();
+        GlobalNamesService service = new GlobalNamesService(Arrays.asList(GlobalNamesSources.GBIF, GlobalNamesSources.ITIS));
         final List<Taxon> taxa = new ArrayList<Taxon>();
         service.findTermsForNames(Collections.singletonList("Homo sapiens"), new TermMatchListener() {
             @Override
             public void foundTaxonForName(Long id, String name, Taxon taxon, NameType nameType) {
                 taxa.add(taxon);
             }
-        }, Arrays.asList(GlobalNamesSources.GBIF, GlobalNamesSources.ITIS));
+        });
 
         assertThat(taxa.size(), is(2));
 

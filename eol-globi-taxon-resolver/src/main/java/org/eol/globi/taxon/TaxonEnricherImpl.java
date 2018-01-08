@@ -111,12 +111,12 @@ public class TaxonEnricherImpl implements PropertyEnricher, TermMatcher {
 
 
     @Override
-    public void findTermsForNames(List<String> names, TermMatchListener termMatchListener, List<GlobalNamesSources> sources) throws PropertyEnricherException {
-        findTerms(names.stream().map(name -> new TermImpl(null, name)).collect(Collectors.toList()), termMatchListener, sources);
+    public void findTermsForNames(List<String> names, TermMatchListener termMatchListener) throws PropertyEnricherException {
+        findTerms(names.stream().map(name -> new TermImpl(null, name)).collect(Collectors.toList()), termMatchListener);
     }
 
     @Override
-    public void findTerms(List<Term> terms, TermMatchListener termMatchListener, List<GlobalNamesSources> sources) throws PropertyEnricherException {
+    public void findTerms(List<Term> terms, TermMatchListener termMatchListener) throws PropertyEnricherException {
         for (Term name : terms) {
             Map<String, String> enriched = enrich(new TreeMap<String, String>() {{
                 put(PropertyAndValueDictionary.NAME, name.getName());

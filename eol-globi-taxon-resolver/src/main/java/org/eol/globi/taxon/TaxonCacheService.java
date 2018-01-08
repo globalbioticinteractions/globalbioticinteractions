@@ -200,13 +200,13 @@ public class TaxonCacheService extends CacheService implements PropertyEnricher,
     }
 
     @Override
-    public void findTermsForNames(List<String> names, TermMatchListener termMatchListener, List<GlobalNamesSources> sources) throws PropertyEnricherException {
+    public void findTermsForNames(List<String> names, TermMatchListener termMatchListener) throws PropertyEnricherException {
         Stream<Term> namesAndIds = names.stream().flatMap(name -> Stream.of(new TermImpl(null, name)));
-        findTerms(namesAndIds.collect(Collectors.toList()), termMatchListener, sources);
+        findTerms(namesAndIds.collect(Collectors.toList()), termMatchListener);
     }
 
     @Override
-    public void findTerms(List<Term> terms, TermMatchListener termMatchListener, List<GlobalNamesSources> sources) throws PropertyEnricherException {
+    public void findTerms(List<Term> terms, TermMatchListener termMatchListener) throws PropertyEnricherException {
         lazyInit();
         for (Term term : terms) {
             if (!resolveName(termMatchListener, term.getId())) {

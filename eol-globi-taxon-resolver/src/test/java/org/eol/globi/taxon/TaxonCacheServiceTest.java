@@ -15,7 +15,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -69,7 +68,7 @@ public class TaxonCacheServiceTest {
                 assertThat(enrichedTaxon.getThumbnailUrl(), is("http://media.eol.org/content/2012/11/04/08/35791_98_68.jpg"));
                 matched.set(true);
             }
-        }, Collections.emptyList());
+        });
         assertTrue(matched.get());
     }
 
@@ -89,7 +88,7 @@ public class TaxonCacheServiceTest {
         assertThat(enrichedTaxon.getThumbnailUrl(), is(""));
     }
 
-    public TaxonCacheService getTaxonCacheService() {
+    private TaxonCacheService getTaxonCacheService() {
         final TaxonCacheService cacheService = new TaxonCacheService("/org/eol/globi/taxon/taxonCache.tsv", "/org/eol/globi/taxon/taxonMap.tsv");
         cacheService.setCacheDir(mapdbDir);
         return cacheService;
@@ -254,7 +253,7 @@ public class TaxonCacheServiceTest {
             public void foundTaxonForName(Long id, String name, Taxon taxon, NameType nameType) {
                 taxa.add(taxon);
             }
-        }, Arrays.asList(GlobalNamesSources.values()));
+        });
 
 
         assertThat(taxa.size(), is(1));
@@ -270,8 +269,7 @@ public class TaxonCacheServiceTest {
             public void foundTaxonForName(Long id, String name, Taxon taxon, NameType nameType) {
                 taxa.add(taxon);
             }
-        }, Arrays.asList(GlobalNamesSources.values()));
-
+        });
 
         assertThat(taxa.size(), is(2));
         taxonCacheService.shutdown();

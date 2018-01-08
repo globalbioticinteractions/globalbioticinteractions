@@ -39,7 +39,7 @@ public class NameTool {
 
             System.err.println(Version.getVersionInfo(NameTool.class));
             boolean shouldReplace = false;
-            TermMatcher termMatcher = new GlobalNamesService();
+            TermMatcher termMatcher = new GlobalNamesService(Arrays.asList(GlobalNamesSources.values()));
             termMatcher = PropertyEnricherFactory.createTaxonMatcher();
             termMatcher = cacheService;
             resolve(System.in, new TermMatchingRowHandler(shouldReplace, System.out, termMatcher));
@@ -161,7 +161,7 @@ public class NameTool {
                     Taxon taxonWithServiceInfo = (TaxonUtil.mapToTaxon(TaxonUtil.appendNameSourceInfo(TaxonUtil.taxonToMap(taxon), termMatcher.getClass(), new Date())));
                     linesForTaxa(row, Stream.of(taxonWithServiceInfo), shouldReplace, p, taxon1 -> nameType);
                 }
-            }, Arrays.asList(GlobalNamesSources.values()));
+            });
         }
     }
 }
