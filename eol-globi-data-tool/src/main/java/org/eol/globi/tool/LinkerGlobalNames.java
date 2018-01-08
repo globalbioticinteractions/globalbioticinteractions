@@ -73,7 +73,7 @@ public class LinkerGlobalNames implements Linker {
                     @Override
                     public void foundTaxonForName(Long id, String name, Taxon taxon, NameType relType) {
                         TaxonNode taxonNode = nodeMap.get(id);
-                        if (!TaxonUtil.likelyHomonym(taxon, taxonNode)) {
+                        if (NameType.NONE != relType && !TaxonUtil.likelyHomonym(taxon, taxonNode)) {
                             NodeUtil.connectTaxa(taxon, taxonNode, graphDb, RelTypes.forType(relType));
                         }
                     }

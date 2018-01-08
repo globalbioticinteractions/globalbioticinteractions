@@ -107,13 +107,17 @@ public class TaxonUtil {
     }
 
     public static boolean likelyHomonym(Taxon taxonA, Taxon taxonB) {
-        Map<String, String> pathMapA = toPathMap(taxonA);
-        Map<String, String> pathMapB = toPathMap(taxonB);
-        return hasHigherOrderTaxaMismatch(pathMapA, pathMapB)
-                || taxonPathLengthMismatch(pathMapA, pathMapB);
+        if (isResolved(taxonA) && isResolved(taxonB)) {
+            Map<String, String> pathMapA = toPathMap(taxonA);
+            Map<String, String> pathMapB = toPathMap(taxonB);
+            return hasHigherOrderTaxaMismatch(pathMapA, pathMapB)
+                    || taxonPathLengthMismatch(pathMapA, pathMapB);
+        } else {
+            return false;
+        }
     }
 
-    public static boolean hasHigherOrderTaxaMismatch(Map<String, String> pathMapA, Map<String, String> pathMapB) {
+    private static boolean hasHigherOrderTaxaMismatch(Map<String, String> pathMapA, Map<String, String> pathMapB) {
         boolean hasAtLeastOneMatchingRank = false;
         boolean hasAtLeastOneSharedRank = false;
         String[] ranks = new String[]{"phylum", "class", "order", "family"};
@@ -135,7 +139,7 @@ public class TaxonUtil {
         return Math.min(pathMapA.size(), pathMapB.size()) == 1 && Math.max(pathMapA.size(), pathMapB.size()) > 4;
     }
 
-    protected static Map<String, String> toPathMap(Taxon taxonA) {
+    private static Map<String, String> toPathMap(Taxon taxonA) {
         String[] pathNames = StringUtils.splitPreserveAllTokens(taxonA.getPathNames(), CharsetConstant.SEPARATOR_CHAR);
         String[] path = StringUtils.splitPreserveAllTokens(taxonA.getPath(), CharsetConstant.SEPARATOR_CHAR);
         Map<String, String> pathMap = new HashMap<String, String>();

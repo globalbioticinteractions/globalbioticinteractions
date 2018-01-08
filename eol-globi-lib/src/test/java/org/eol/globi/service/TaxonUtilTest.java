@@ -49,6 +49,17 @@ public class TaxonUtilTest {
     }
 
     @Test
+    public void homonymNull() {
+        TaxonImpl otherTaxon = new TaxonImpl();
+        otherTaxon.setName("Lestes");
+        otherTaxon.setPath("Mammalia|Mesonychidae|Lestes");
+        otherTaxon.setPathNames("class|family|genus");
+
+        assertFalse(TaxonUtil.likelyHomonym(null, otherTaxon));
+        assertFalse(TaxonUtil.likelyHomonym(otherTaxon, null));
+    }
+
+    @Test
     public void homonymBacteria() {
         TaxonImpl taxon = new TaxonImpl();
 
