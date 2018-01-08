@@ -22,11 +22,13 @@ public class TaxonUtilTest {
     public void homonym() {
         TaxonImpl taxon = new TaxonImpl();
         taxon.setName("Lestes");
+        taxon.setExternalId("some:id");
         taxon.setPath("Insecta|Lestidae|Lestes");
         taxon.setPathNames("class|family|genus");
 
         TaxonImpl otherTaxon = new TaxonImpl();
         otherTaxon.setName("Lestes");
+        otherTaxon.setExternalId("some:otherid");
         otherTaxon.setPath("Mammalia|Mesonychidae|Lestes");
         otherTaxon.setPathNames("class|family|genus");
 
@@ -64,11 +66,13 @@ public class TaxonUtilTest {
         TaxonImpl taxon = new TaxonImpl();
 
         taxon.setName("Bacteria");
+        taxon.setExternalId("some:id");
         taxon.setPath(" | Eukaryota | Opisthokonta | Metazoa | Eumetazoa | Bilateria | Protostomia | Ecdysozoa | Panarthropoda | Arthropoda | Mandibulata | Pancrustacea | Hexapoda | Insecta | Dicondylia | Pterygota | Neoptera | Orthopteroidea | Phasmatodea | Verophasmatodea | Anareolatae | Diapheromeridae | Diapheromerinae | Diapheromerini | Bacteria");
         taxon.setPathNames(" | superkingdom |  | kingdom |  |  |  |  |  | phylum |  |  | superclass | class |  |  | subclass | infraclass | order | suborder | infraorder | family | subfamily | tribe | genus");
 
         TaxonImpl otherTaxon = new TaxonImpl();
         otherTaxon.setName("Bacteria");
+        otherTaxon.setExternalId("some:otherid");
         otherTaxon.setPath("Bacteria");
         otherTaxon.setPathNames("kingdom");
 
