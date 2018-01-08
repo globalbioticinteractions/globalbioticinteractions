@@ -109,7 +109,7 @@ public class NameToolTest {
     public void resolveGlobalNamesBatch() throws IOException, PropertyEnricherException {
         InputStream is = IOUtils.toInputStream("NCBI:9606\tHomo sapiens\tone");
         ByteArrayOutputStream os = new ByteArrayOutputStream();
-        NameTool.resolve(is, new NameTool.TermMatchingRowHandler(true, os, new GlobalNamesService()));
+        NameTool.resolve(is, new NameTool.TermMatchingRowHandler(true, os, new GlobalNamesService(GlobalNamesSources.NCBI)));
         assertThat(os.toString(), containsString("NCBI:9606\tHomo sapiens\tone\n"));
     }
 
@@ -133,7 +133,7 @@ public class NameToolTest {
     public void resolveGlobalNamesBatchAppend() throws IOException, PropertyEnricherException {
         InputStream is = IOUtils.toInputStream("NCBI:9606\tHomo sapiens\tone");
         ByteArrayOutputStream os = new ByteArrayOutputStream();
-        NameTool.resolve(is, new NameTool.TermMatchingRowHandler(false, os, new GlobalNamesService()));
+        NameTool.resolve(is, new NameTool.TermMatchingRowHandler(false, os, new GlobalNamesService(GlobalNamesSources.NCBI)));
         assertThat(os.toString(), containsString("Mammalia"));
         assertThat(os.toString(), containsString("nih.gov"));
     }
@@ -142,7 +142,7 @@ public class NameToolTest {
     public void resolveGlobalNamesBatchAppendNoMatchName() throws IOException, PropertyEnricherException {
         InputStream is = IOUtils.toInputStream("NCBI:9606\tDonald duck\tone");
         ByteArrayOutputStream os = new ByteArrayOutputStream();
-        NameTool.resolve(is, new NameTool.TermMatchingRowHandler(false, os, new GlobalNamesService()));
+        NameTool.resolve(is, new NameTool.TermMatchingRowHandler(false, os, new GlobalNamesService(GlobalNamesSources.NCBI)));
         assertThat(os.toString(), startsWith("NCBI:9606\tDonald duck\tone\tNONE\t\tDonald duck"));
     }
 
